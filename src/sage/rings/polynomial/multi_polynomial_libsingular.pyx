@@ -149,13 +149,15 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ********************************************************************
+#       Copyright (C) 2005 William Stein <wstein@gmail.com>
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ********************************************************************
 
 # The Singular API is as follows:
 #
@@ -1530,9 +1532,9 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         return old
 
-    ### The following methods are handy for implementing Groebner
-    ### basis algorithms. They do only superficial type/sanity checks
-    ### and should be called carefully.
+    # The following methods are handy for implementing Groebner
+    # basis algorithms. They do only superficial type/sanity checks
+    # and should be called carefully.
 
     def monomial_quotient(self, MPolynomial_libsingular f, MPolynomial_libsingular g, coeff=False):
         r"""
@@ -1676,7 +1678,6 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             return False
         else:
             return True
-
 
     def monomial_lcm(self, MPolynomial_libsingular f, MPolynomial_libsingular g):
         """
@@ -5242,7 +5243,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             y += base_map(c)*mul([ im_gens[i]**m[i] for i in range(n) if m[i]])
         return y
 
-
     def _derivative(self, MPolynomial_libsingular var):
         """
         Differentiates this polynomial with respect to the provided
@@ -5693,7 +5693,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         for k from 0 < k <= r.N:
             i.append( new_MP(self._parent, pDiff(self._poly, k)))
         return i
-
 
     def numerator(self):
         """

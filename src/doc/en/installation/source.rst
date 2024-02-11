@@ -90,121 +90,109 @@ approach.
 
 .. _sec-installation-from-sources-linux-recommended-installation:
 
-Debian/Ubuntu package installation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Linux system package installation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-On Debian ("buster" or newer) or Ubuntu ("bionic" or newer), we recommend that you
-install:
+We recommend that you install the following packages, depending on your distribution:
 
-.. literalinclude:: debian.txt
+.. tab:: Debian/Ubuntu
+
+   .. literalinclude:: debian.txt
+
+.. tab:: Fedora/Redhat/CentOS
+
+   .. literalinclude:: fedora.txt
+
+.. tab:: Arch Linux
+
+   .. literalinclude:: arch.txt
+
+.. tab:: OpenSUSE
+
+   .. literalinclude:: opensuse.txt
+
+.. tab:: Void Linux
+
+   .. literalinclude:: void.txt
 
 If you wish to do Sage development, we recommend that you additionally
 install the following:
 
-.. literalinclude:: debian-develop.txt
+.. tab:: Debian/Ubuntu
 
-For all users, we recommend that you install the following system packages,
-which provide additional functionality and cannot be installed by Sage:
+   .. literalinclude:: debian-develop.txt
 
-.. literalinclude:: debian-recommended.txt
+.. tab:: Fedora/Redhat/CentOS
+
+   .. literalinclude:: fedora-develop.txt
+
+.. tab:: Arch Linux
+
+   .. literalinclude:: arch-develop.txt
+
+.. tab:: OpenSUSE
+
+   .. literalinclude:: opensuse-develop.txt
+
+.. tab:: Void Linux
+
+   .. literalinclude:: void-develop.txt
+
+For all users, we recommend that you install the following system
+packages, which provide additional functionality and cannot be
+installed by Sage.  In particular, this includes :wikipedia:`LaTeX
+<LaTeX>` and related tools. In addition to a base install of :ref:`TeX
+Live <spkg_texlive>`, our lists of system packages below include
+everything that is needed for generating the Sage documentation in PDF
+format.  For converting Jupyter notebooks to PDF, also the document
+converter :ref:`pandoc <spkg_pandoc>` is needed.  For making
+animations, Sage needs to use one of the packages :ref:`FFmpeg
+<spkg_ffmpeg>` and :ref:`ImageMagick <spkg_imagemagick>`.
+
+.. tab:: Debian/Ubuntu
+
+   .. literalinclude:: debian-recommended.txt
+
+.. tab:: Fedora/Redhat/CentOS
+
+   .. literalinclude:: fedora-recommended.txt
+
+.. tab:: Arch Linux
+
+   .. literalinclude:: arch-recommended.txt
+
+.. tab:: OpenSUSE
+
+   .. literalinclude:: opensuse-recommended.txt
+
+.. tab:: Void Linux
+
+   .. literalinclude:: void-recommended.txt
 
 In addition to these, if you don't want Sage to build optional packages that might
 be available from your OS, cf. the growing list of such packages on :trac:`27330`,
 install:
 
-.. literalinclude:: debian-optional.txt
+.. tab:: Debian/Ubuntu
 
-Fedora/Redhat/CentOS package installation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   .. literalinclude:: debian-optional.txt
 
-On Fedora/Redhat/CentOS, we recommend that you install:
+.. tab:: Fedora/Redhat/CentOS
 
-.. literalinclude:: fedora.txt
+   .. literalinclude:: fedora-optional.txt
 
-If you wish to do Sage development, we recommend that you additionally
-install the following:
+.. tab:: Arch Linux
 
-.. literalinclude:: fedora-develop.txt
+   .. literalinclude:: arch-optional.txt
 
-For all users, we recommend that you install the following system packages,
-which provide additional functionality and cannot be installed by Sage:
+.. tab:: OpenSUSE
 
-.. literalinclude:: fedora-recommended.txt
+   .. literalinclude:: opensuse-optional.txt
 
-In addition to these, if you don't want Sage to build optional packages that might
-be available from your OS, cf. the growing list of such packages on :trac:`27330`,
-install:
+.. tab:: Void Linux
 
-.. literalinclude:: fedora-optional.txt
+   .. literalinclude:: void-optional.txt
 
-Arch Linux package installation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-On ArchLinux, we recommend that you install:
-
-.. literalinclude:: arch.txt
-
-If you wish to do Sage development, we recommend that you additionally
-install the following:
-
-.. literalinclude:: arch-develop.txt
-
-For all users, we recommend that you install the following system packages,
-which provide additional functionality and cannot be installed by Sage:
-
-.. literalinclude:: arch-recommended.txt
-
-In addition to these, if you don't want Sage to build optional packages that might
-be available from your OS, cf. the growing list of such packages on :trac:`27330`,
-install:
-
-.. literalinclude:: arch-optional.txt
-
-OpenSUSE package installation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-On OpenSUSE, we recommend that you install:
-
-.. literalinclude:: opensuse.txt
-
-If you wish to do Sage development, we recommend that you additionally
-install the following:
-
-.. literalinclude:: opensuse-develop.txt
-
-For all users, we recommend that you install the following system packages,
-which provide additional functionality and cannot be installed by Sage:
-
-.. literalinclude:: opensuse-recommended.txt
-
-In addition to these, if you don't want Sage to build optional packages that might
-be available from your OS, cf. the growing list of such packages on :trac:`27330`,
-install:
-
-.. literalinclude:: opensuse-optional.txt
-
-Void Linux package installation
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-On Void Linux, we recommend that you install:
-
-.. literalinclude:: void.txt
-
-If you wish to do Sage development, we recommend that you additionally
-install the following:
-
-.. literalinclude:: void-develop.txt
-
-For all users, we recommend that you install the following system packages,
-which provide additional functionality and cannot be installed by Sage:
-
-.. literalinclude:: void-recommended.txt
-
-In addition to these, if you don't want Sage to build optional packages that might
-be available from your OS, cf. the growing list of such packages on :trac:`27330`,
-install:
-
-.. literalinclude:: void-optional.txt
 
 .. _section_macprereqs:
 
@@ -1072,56 +1060,3 @@ a single copy of Sage in a multi-user computer network.
    the installation by yourself::
 
        $ sudo chown -R root SAGE_LOCAL
-
-
-Additional software
--------------------
-
-The following programs are not strictly required at build time or at run time,
-but provide additional capabilities to Sage. We highly recommend a Sage user to
-install them.
-
-LaTeX
-^^^^^
-
-It is highly recommended that you have :wikipedia:`LaTeX <LaTeX>` installed,
-but it is not required. The most popular packaging is `TeX Live
-<https://www.tug.org/texlive/>`_, which can be installed following the
-directions on their web site. On Linux systems you can alternatively install
-your distribution's texlive packages::
-
-    $ sudo apt-get install texlive       # debian
-    $ sudo yum install texlive           # redhat
-
-or similar commands. In addition to the base TeX Live install, you may
-need some optional TeX Live packages, for example
-country-specific Babel packages for the localized Sage
-documentation.
-
-Additionally, the following system packages are recommended on Debian/Ubuntu:
-
-- ``texlive-generic-extra`` (to generate pdf documentation)
-
-- ``texlive-xetex`` (to convert Jupyter notebooks to pdf)
-
-- ``latexmk`` (to generate pdf documentation)
-
-- ``dvipng`` (to render text with LaTeX in Matplotlib)
-
-pandoc
-^^^^^^
-
-This is useful to convert Jupyter notebooks to pdf.
-
-ffmpeg, ImageMagick
-^^^^^^^^^^^^^^^^^^^
-
-If you don't have either ImageMagick or ffmpeg, you won't be able to view
-animations. ffmpeg can produce animations in more different formats than
-ImageMagick, and seems to be faster than ImageMagick when creating animated
-GIFs.
-
-``libavdevice-dev`` is a component of ffmpeg to produce animations, and
-recommended to install on Debian/Ubuntu.
-
-

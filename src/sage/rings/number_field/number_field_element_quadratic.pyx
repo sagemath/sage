@@ -49,9 +49,7 @@ from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
 from sage.libs.mpfi cimport *
 
-
 from sage.structure.parent cimport Parent
-from sage.structure.parent_base cimport ParentWithBase
 from sage.structure.element cimport Element
 from sage.structure.richcmp cimport rich_to_bool_sgn
 
@@ -611,7 +609,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
         mpz_clear(tmp_mpz)
 
-        x._parent = <ParentWithBase>new_parent
+        x._parent = <Parent>new_parent
         x._fld_numerator, x._fld_denominator = new_parent.polynomial_ntl()
         x._denominator = elt_den
         cdef ZZX_c result

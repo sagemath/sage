@@ -97,14 +97,14 @@ In case you are familiar with gp, please note that the PARI C function
 may have a name that is different from the corresponding gp function
 (for example, see ``mathnf``), so always check the manual.
 
-We can also add a ``frobenius(flag)`` method to the ``matrix_integer``
+We can also add a ``frobenius_form(flag)`` method to the ``matrix_integer``
 class where we call the ``matfrobenius()`` method on the PARI object
 associated to the matrix after doing some sanity checking. Then we
 convert output from PARI to Sage objects:
 
 .. CODE-BLOCK:: cython
 
-    def frobenius(self, flag=0, var='x'):
+    def frobenius_form(self, flag=0, var='x'):
         """
         Return the Frobenius form (rational canonical form) of this matrix.
 
@@ -129,13 +129,13 @@ convert output from PARI to Sage objects:
         EXAMPLES::
 
             sage: A = MatrixSpace(ZZ, 3)(range(9))
-            sage: A.frobenius(0)
+            sage: A.frobenius_form(0)
             [ 0  0  0]
             [ 1  0 18]
             [ 0  1 12]
-            sage: A.frobenius(1)
+            sage: A.frobenius_form(1)
             [x^3 - 12*x^2 - 18*x]
-            sage: A.frobenius(1, var='y')
+            sage: A.frobenius_form(1, var='y')
             [y^3 - 12*y^2 - 18*y]
         """
         if not self.is_square():

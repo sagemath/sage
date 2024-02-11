@@ -3525,7 +3525,8 @@ cdef class Matrix(Matrix1):
         cdef Py_ssize_t i, j, m, n, r
         n = self._nrows
 
-        tm = verbose("Computing Hessenberg Normal Form of %sx%s matrix"%(n, n))
+        tm = verbose(f"Computing Hessenberg Normal Form of {n}x{n} matrix",
+                     level=2)
 
         if not self.is_square():
             raise TypeError("self must be square")
@@ -3576,7 +3577,8 @@ cdef class Matrix(Matrix1):
                         # column m, and we're only worried about column m-1 right now.
                         # Add u*column_j to column_m.
                         self.add_multiple_of_column_c(m, j, u, 0)
-        verbose("Finished Hessenberg Normal Form of %sx%s matrix"%(n, n), tm)
+        verbose(f"Finished Hessenberg Normal Form of {n}x{n} matrix",
+                level=2, t=tm)
 
     def _charpoly_hessenberg(self, var):
         """
@@ -3769,12 +3771,12 @@ cdef class Matrix(Matrix1):
             [0 0 1]
         """
         from sage.matrix.matrix_space import MatrixSpace
-        tm = verbose("computing right kernel matrix over a number field for %sx%s matrix" % (self.nrows(), self.ncols()), level=1)
+        tm = verbose("computing right kernel matrix over a number field for %sx%s matrix" % (self.nrows(), self.ncols()), level=2)
         basis = self.__pari__().matker()
         # Coerce PARI representations into the number field
         R = self.base_ring()
         basis = [[R(x) for x in row] for row in basis]
-        verbose("done computing right kernel matrix over a number field for %sx%s matrix" % (self.nrows(), self.ncols()), level=1, t=tm)
+        verbose("done computing right kernel matrix over a number field for %sx%s matrix" % (self.nrows(), self.ncols()), level=2, t=tm)
         return 'pivot-pari-numberfield', MatrixSpace(R, len(basis), ncols=self._ncols)(basis)
 
     def _right_kernel_matrix_over_field(self, *args, **kwds):
@@ -3828,7 +3830,7 @@ cdef class Matrix(Matrix1):
             [0 0 1]
         """
         from sage.matrix.matrix_space import MatrixSpace
-        tm = verbose("computing right kernel matrix over an arbitrary field for %sx%s matrix" % (self.nrows(), self.ncols()), level=1)
+        tm = verbose("computing right kernel matrix over an arbitrary field for %sx%s matrix" % (self.nrows(), self.ncols()), level=2)
         E = self.echelon_form(*args, **kwds)
         pivots = E.pivots()
         pivots_set = set(pivots)
@@ -3857,7 +3859,7 @@ cdef class Matrix(Matrix1):
                     basis.append(v)
             M = MS(basis, coerce=False)
         tm = verbose("done computing right kernel matrix over an arbitrary field for %sx%s matrix"
-                     % (self.nrows(), self.ncols()), level=1, t=tm)
+                     % (self.nrows(), self.ncols()), level=2, t=tm)
         return 'pivot-generic', M
 
     def _right_kernel_matrix_over_domain(self):
@@ -3915,7 +3917,7 @@ cdef class Matrix(Matrix1):
             [0 0 1]
         """
         tm = verbose("computing right kernel matrix over a domain for %sx%s matrix"
-                     % (self.nrows(), self.ncols()), level=1)
+                     % (self.nrows(), self.ncols()), level=2)
         d, _, v = self.smith_form()
         basis = []
         cdef Py_ssize_t i, nrows = self._nrows
@@ -3923,7 +3925,7 @@ cdef class Matrix(Matrix1):
             if i >= nrows or d[i, i] == 0:
                 basis.append(v.column(i))
         verbose("done computing right kernel matrix over a domain for %sx%s matrix"
-                % (self.nrows(), self.ncols()), level=1, t=tm)
+                % (self.nrows(), self.ncols()), level=2, t=tm)
         return 'computed-smith-form', self.new_matrix(nrows=len(basis), ncols=self._ncols, entries=basis)
 
     def _right_kernel_matrix_over_integer_mod_ring(self):
@@ -4077,16 +4079,16 @@ cdef class Matrix(Matrix1):
             ....:            sparse=False)
             sage: B = copy(A).sparse_matrix()
             sage: from sage.misc.verbose import set_verbose
-            sage: set_verbose(1)
+            sage: set_verbose(2)
             sage: D = A.right_kernel(); D
-            verbose 1 (<module>) computing a right kernel for 4x5 matrix over Rational Field
+            verbose 2 (<module>) computing a right kernel for 4x5 matrix over Rational Field
             ...
             Vector space of degree 5 and dimension 2 over Rational Field
             Basis matrix:
             [   1    0    1  1/2 -1/2]
             [   0    1 -1/2 -1/4 -1/4]
             sage: S = B.right_kernel(); S
-            verbose 1 (<module>) computing a right kernel for 4x5 matrix over Rational Field
+            verbose 2 (<module>) computing a right kernel for 4x5 matrix over Rational Field
             ...
             Vector space of degree 5 and dimension 2 over Rational Field
             Basis matrix:
@@ -4145,11 +4147,11 @@ cdef class Matrix(Matrix1):
             sage: Q = QuadraticField(-7)
             sage: a = Q.gen(0)
             sage: A = matrix(Q, [[2, 5-a, 15-a, 16+4*a], [2+a, a, -7 + 5*a, -3+3*a]])
-            sage: set_verbose(1)
+            sage: set_verbose(2)
             sage: A.right_kernel(algorithm='default')
             verbose ...
-            verbose 1 (<module>) computing right kernel matrix over a number field for 2x4 matrix
-            verbose 1 (<module>) done computing right kernel matrix over a number field for 2x4 matrix
+            verbose 2 (<module>) computing right kernel matrix over a number field for 2x4 matrix
+            verbose 2 (<module>) done computing right kernel matrix over a number field for 2x4 matrix
             ...
             Vector space of degree 4 and dimension 2 over
              Number Field in a with defining polynomial x^2 + 7 with a = 2.645751311064591?*I
@@ -4209,11 +4211,11 @@ cdef class Matrix(Matrix1):
             sage: A = matrix(GF(2), [[0, 1, 1, 0, 0, 0],
             ....:                    [1, 0, 0, 0, 1, 1,],
             ....:                    [1, 0, 0, 0, 1, 1]])
-            sage: set_verbose(1)
+            sage: set_verbose(2)
             sage: A.right_kernel(algorithm='default')
             verbose ...
-            verbose 1 (<module>) computing right kernel matrix over integers mod 2 for 3x6 matrix
-            verbose 1 (<module>) done computing right kernel matrix over integers mod 2 for 3x6 matrix
+            verbose ... (<module>) computing right kernel matrix over integers mod 2 for 3x6 matrix
+            verbose ... (<module>) done computing right kernel matrix over integers mod 2 for 3x6 matrix
             ...
             Vector space of degree 6 and dimension 4 over Finite Field of size 2
             Basis matrix:
@@ -4274,10 +4276,10 @@ cdef class Matrix(Matrix1):
             sage: A = matrix(F, 3, 4, [[  1,   a,     1+a,  a^3+a^5],
             ....:                      [  a, a^4,   a+a^4,  a^4+a^8],
             ....:                      [a^2, a^6, a^2+a^6, a^5+a^10]])
-            sage: set_verbose(1)
+            sage: set_verbose(2)
             sage: A.right_kernel(algorithm='default')
             verbose ...
-            verbose 1 (<module>) computing right kernel matrix over an arbitrary field for 3x4 matrix
+            verbose 2 (<module>) computing right kernel matrix over an arbitrary field for 3x4 matrix
             ...
             Vector space of degree 4 and dimension 2 over Finite Field in a of size 5^2
             Basis matrix:
@@ -4339,12 +4341,12 @@ cdef class Matrix(Matrix1):
             ....:                 [0, 3, 1, 2, 3, 6, 2]],
             ....:            sparse=False)
             sage: B = copy(A).sparse_matrix()
-            sage: set_verbose(1)
+            sage: set_verbose(2)
             sage: D = A.right_kernel(); D
-            verbose 1 (<module>) computing a right kernel for 4x7 matrix over Integer Ring
-            verbose 1 (<module>) computing right kernel matrix over the integers for 4x7 matrix
+            verbose ... (<module>) computing a right kernel for 4x7 matrix over Integer Ring
+            verbose ... (<module>) computing right kernel matrix over the integers for 4x7 matrix
             ...
-            verbose 1 (<module>) done computing right kernel matrix over the integers for 4x7 matrix
+            verbose ... (<module>) done computing right kernel matrix over the integers for 4x7 matrix
             ...
             Free module of degree 7 and rank 3 over Integer Ring
             Echelon basis matrix:
@@ -4352,10 +4354,10 @@ cdef class Matrix(Matrix1):
             [  0  35   0  25  -1 -31  17]
             [  0   0   7  12  -3  -1  -8]
             sage: S = B.right_kernel(); S
-            verbose 1 (<module>) computing a right kernel for 4x7 matrix over Integer Ring
-            verbose 1 (<module>) computing right kernel matrix over the integers for 4x7 matrix
+            verbose ... (<module>) computing a right kernel for 4x7 matrix over Integer Ring
+            verbose ... (<module>) computing right kernel matrix over the integers for 4x7 matrix
             ...
-            verbose 1 (<module>) done computing right kernel matrix over the integers for 4x7 matrix
+            verbose ... (<module>) done computing right kernel matrix over the integers for 4x7 matrix
             ...
             Free module of degree 7 and rank 3 over Integer Ring
             Echelon basis matrix:
@@ -4399,11 +4401,11 @@ cdef class Matrix(Matrix1):
             sage: R.<y> = QQ[]
             sage: A = matrix(R, [[  1,   y, 1+y^2],
             ....:                [y^3, y^2, 2*y^3]])
-            sage: set_verbose(1)
+            sage: set_verbose(2)
             sage: A.right_kernel(algorithm='default', basis='echelon')
             verbose ...
-            verbose 1 (<module>) computing right kernel matrix over a domain for 2x3 matrix
-            verbose 1 (<module>) done computing right kernel matrix over a domain for 2x3 matrix
+            verbose 2 (<module>) computing right kernel matrix over a domain for 2x3 matrix
+            verbose 2 (<module>) done computing right kernel matrix over a domain for 2x3 matrix
             ...
             Free module of degree 3 and rank 1 over
              Univariate Polynomial Ring in y over Rational Field
@@ -4988,7 +4990,7 @@ cdef class Matrix(Matrix1):
             return K
 
         R = self.base_ring()
-        tm = verbose(lazy_string("computing a right kernel for %sx%s matrix over %s", self.nrows(), self.ncols(), R), level=1)
+        tm = verbose(lazy_string("computing a right kernel for %sx%s matrix over %s", self.nrows(), self.ncols(), R), level=2)
 
         # Sanitize basis format
         #   'computed' is OK in right_kernel_matrix(), but not here
@@ -5010,7 +5012,7 @@ cdef class Matrix(Matrix1):
         else:
             K = ambient.submodule_with_basis(M.rows(), already_echelonized=False, check=False)
 
-        verbose(lazy_string("done computing a right kernel for %sx%s matrix over %s", self.nrows(), self.ncols(), R), level=1, t=tm)
+        verbose(lazy_string("done computing a right kernel for %sx%s matrix over %s", self.nrows(), self.ncols(), R), level=2, t=tm)
         self.cache('right_kernel', K)
         return K
 
@@ -5162,10 +5164,10 @@ cdef class Matrix(Matrix1):
         if K is not None:
             return K
 
-        tm = verbose("computing left kernel for %sx%s matrix" % (self.nrows(), self.ncols()), level=1)
+        tm = verbose("computing left kernel for %sx%s matrix" % (self.nrows(), self.ncols()), level=2)
         K = self.transpose().right_kernel(*args, **kwds)
         self.cache('left_kernel', K)
-        verbose("done computing left kernel for %sx%s matrix" % (self.nrows(), self.ncols()), level=1, t=tm)
+        verbose("done computing left kernel for %sx%s matrix" % (self.nrows(), self.ncols()), level=2, t=tm)
         return K
 
     kernel = left_kernel
@@ -5680,7 +5682,7 @@ cdef class Matrix(Matrix1):
                 B = g(self)
                 t2 = verbose('decomposition -- raising g(self) to the power %s'%m, level=2)
                 B = B ** m
-                verbose('done powering', t2)
+                verbose('done powering', level=2, t=t2)
             t = verbose('decomposition -- done computing g(self)', level=2, t=t)
             E.append((B.kernel(), m==1))
             t = verbose('decomposition -- time to compute kernel', level=2, t=t)
@@ -5772,11 +5774,11 @@ cdef class Matrix(Matrix1):
         if M.degree() != self.ncols():
             raise ArithmeticError("M must be a subspace of an %s-dimensional space" % self.ncols())
 
-        time = verbose(t=0)
+        time = verbose(level=2, t=0)
 
         # 1. Restrict
         B = self.restrict(M, check=check_restrict)
-        time0 = verbose("decompose restriction -- ", time)
+        time0 = verbose("decompose restriction -- ", level=2, t=time)
 
         # 2. Decompose restriction
         D = B.decomposition(**kwds)
@@ -5791,13 +5793,13 @@ cdef class Matrix(Matrix1):
         # combination of the basis of W, and these linear combinations
         # define the corresponding subspaces of the ambient space M.
 
-        verbose("decomposition -- ", time0)
+        verbose("decomposition -- ", level=2, t=time0)
         C = M.basis_matrix()
 
         D = [((W.basis_matrix() * C).row_module(self.base_ring()), is_irred) for W, is_irred in D]
         D = decomp_seq(D)
 
-        verbose(t=time)
+        verbose(level=2, t=time)
         return D
 
     def restrict(self, V, check=True):
@@ -6040,9 +6042,9 @@ cdef class Matrix(Matrix1):
             raise ArithmeticError("self must be a square matrix")
         n = self.nrows()
         v = sage.modules.free_module.VectorSpace(self.base_ring(), n).gen(i)
-        tm = verbose('computing iterates...')
+        tm = verbose('computing iterates...', level=2)
         cols = self.iterates(v, 2*n).columns()
-        tm = verbose('computed iterates', tm)
+        tm = verbose('computed iterates', level=2, t=tm)
         f = None
         # Compute the minimal polynomial of the linear recurrence
         # sequence corresponding to the 0-th entries of the iterates,
@@ -6052,9 +6054,9 @@ cdef class Matrix(Matrix1):
         else:
             R = [t]
         for i in R:
-            tm = verbose('applying berlekamp-massey')
+            tm = verbose('applying berlekamp-massey', level=2)
             g = berlekamp_massey.berlekamp_massey(cols[i].list())
-            verbose('berlekamp-massey done', tm)
+            verbose('berlekamp-massey done', level=2, t=tm)
             if f is None:
                 f = g
             else:
@@ -8100,7 +8102,7 @@ cdef class Matrix(Matrix1):
         if self.fetch('in_echelon_form'):
             return self.fetch('pivots')
 
-        _ = verbose('generic in-place Gauss elimination on %s x %s matrix using %s algorithm' % (self._nrows, self._ncols, algorithm))
+        _ = verbose('generic in-place Gauss elimination on %s x %s matrix using %s algorithm' % (self._nrows, self._ncols, algorithm), level=2)
         self.check_mutability()
         cdef Matrix A
 
@@ -8852,7 +8854,7 @@ cdef class Matrix(Matrix1):
             [ 0  0  0  0]
             [ 0  0  0  0]
         """
-        tm = verbose('strassen echelon of %s x %s matrix'%(self._nrows, self._ncols))
+        tm = verbose('strassen echelon of %s x %s matrix'%(self._nrows, self._ncols), level=2)
 
         self.check_mutability()
 
@@ -8872,7 +8874,7 @@ cdef class Matrix(Matrix1):
         from sage.matrix import strassen
         pivots = strassen.strassen_echelon(self.matrix_window(), cutoff)
         self.cache('pivots', pivots)
-        verbose('done with strassen', tm)
+        verbose('done with strassen', level=2, t=tm)
 
     cpdef matrix_window(self, Py_ssize_t row=0, Py_ssize_t col=0,
                         Py_ssize_t nrows=-1, Py_ssize_t ncols=-1,

@@ -702,7 +702,7 @@ class FGP_Module_class(Module):
         try:
             self(x)
             return True
-        except TypeError:
+        except (TypeError, ValueError):
             return False
 
     def submodule(self, x):

@@ -1177,7 +1177,7 @@ class EllipticCurveCanonicalHeight:
             3.51086196882538
             sage: L(P) / L.real_period()
             0.867385122699931
-            sage: xP = v(P.xy()[0])
+            sage: xP = v(P.x())
             sage: H = E.height_function()
             sage: H.psi(xP, v)
             0.867385122699931

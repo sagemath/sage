@@ -36,10 +36,11 @@ Pickling test::
 # ****************************************************************************
 
 from sage.arith.misc import (hilbert_conductor_inverse,
-                             hilbert_conductor,
+                             hilbert_symbol,
                              factor,
                              gcd,
                              kronecker as kronecker_symbol,
+                             prime_divisors,
                              valuation)
 from sage.rings.real_mpfr import RR
 from sage.rings.integer import Integer
@@ -77,6 +78,7 @@ from sage.modular.modsym.p1list import P1List
 from sage.misc.cachefunc import cached_method
 
 from sage.categories.algebras import Algebras
+from sage.categories.number_fields import NumberFields
 
 ########################################################
 # Constructor
@@ -1031,9 +1033,8 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
     @cached_method
     def discriminant(self):
         """
-        Given a quaternion algebra `A` defined over a number field,
-        return the discriminant of `A`, i.e. the
-        product of the ramified primes of `A`.
+        Return the discriminant of this quaternion algebra, i.e. the product of the finite
+        primes it ramifies at.
 
         EXAMPLES::
 
@@ -1058,25 +1059,36 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             except NotImplementedError:
                 raise ValueError("base field must be rational numbers or number field")
         else:
-            return hilbert_conductor(self._a, self._b)
+            return ZZ.prod(self.ramified_primes())
 
+    @cached_method
     def ramified_primes(self):
         """
-        Return the primes that ramify in this quaternion algebra.
+        Return the (finite) primes that ramify in this rational quaternion algebra.
 
-        Currently only implemented over the rational numbers.
+        OUTPUT:
+
+        The list of prime numbers at which ``self`` ramifies (given as integers), sorted by their
+        magnitude (small to large).
 
         EXAMPLES::
 
             sage: QuaternionAlgebra(QQ, -1, -1).ramified_primes()
             [2]
+
+            sage: QuaternionAlgebra(QQ, -58, -69).ramified_primes()
+            [3, 23, 29]
         """
-        # TODO: more examples
-        return [f[0] for f in factor(self.discriminant())]
+        if not is_RationalField(self.base_ring()):
+            raise ValueError("base field must be the rational numbers")
+
+        return sorted([p for p in set([2]).union(prime_divisors(self._a.numerator()),
+                prime_divisors(self._a.denominator()), prime_divisors(self._b.numerator()),
+                prime_divisors(self._b.denominator())) if hilbert_symbol(self._a, self._b, p) == -1])
 
     def is_isomorphic(self, A) -> bool:
-        r"""
-        Return ``True`` if ``self`` and ``A`` are isomorphic quaternion algebras over Q.
+        """
+        Return ``True`` if (and only if) ``self`` and ``A`` are isomorphic quaternion algebras over Q.
 
         INPUT:
 
@@ -1097,7 +1109,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         if self.base_ring() != QQ or A.base_ring() != QQ:
             raise NotImplementedError("isomorphism check only implemented for rational quaternion algebras")
 
-        return self.discriminant() == A.discriminant()
+        return self.ramified_primes() == A.ramified_primes()
 
     def _magma_init_(self, magma):
         """
@@ -1783,6 +1795,42 @@ class QuaternionOrder(Parent):
 
         return (MatrixSpace(QQ, 4, 4)(L)).determinant().sqrt()
 
+    def is_maximal(self):
+        r"""
+        Check whether the order of ``self`` is maximal in the ambient quaternion algebra.
+
+        Only works in quaternion algebras over number fields
+
+        OUTPUT: Boolean
+
+        EXAMPLES::
+
+            sage: p = 11
+            sage: B = QuaternionAlgebra(QQ, -1, -p)
+            sage: i, j, k = B.gens()
+            sage: O0_basis = (1, i, (i+j)/2, (1+i*j)/2)
+            sage: O0 = B.quaternion_order(O0_basis)
+            sage: O0.is_maximal()
+            True
+            sage: O1 = B.quaternion_order([1, i, j, i*j])
+            sage: O1.is_maximal()
+            False
+
+        TESTS::
+
+            sage: B = QuaternionAlgebra(GF(13), -1, -11)
+            sage: i, j, k = B.gens()
+            sage: O0_basis = (1, i, j, k)
+            sage: O0 = B.quaternion_order(O0_basis)
+            sage: O0.is_maximal()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: check for maximality is only implemented for quaternion algebras over number fields
+        """
+        if self.quaternion_algebra().base_ring() not in NumberFields():
+            raise NotImplementedError("check for maximality is only implemented for quaternion algebras over number fields")
+        return self.discriminant() == self.quaternion_algebra().discriminant()
+
     def left_ideal(self, gens, check=True, *, is_basis=False):
         r"""
         Return the left ideal of this order generated by the given generators.
@@ -2164,18 +2212,16 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         """
         Return the ambient quaternion algebra that contains this fractional ideal.
 
-        OUTPUT: a quaternion algebra
+        This is an alias for `self.ring()`.
 
         EXAMPLES::
 
-            sage: I = BrandtModule(3,5).right_ideals()[1]; I
+            sage: I = BrandtModule(3, 5).right_ideals()[1]; I
             Fractional ideal (2 + 6*j + 4*k, 2*i + 4*j + 34*k, 8*j + 32*k, 40*k)
             sage: I.quaternion_algebra()
             Quaternion Algebra (-1, -3) with base ring Rational Field
         """
-        # TODO: when the ring() method is removed from this class, the
-        # following line can be changed to self.ring().
-        return Ideal_fractional.ring(self)
+        return self.ring()
 
     def _compute_order(self, side='left'):
         r"""
@@ -2333,67 +2379,6 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             True
         """
         return sum(ZZ.random_element(*args, **kwds) * g for g in self.gens())
-
-    def quaternion_order(self):
-        """
-        Return the order for which this ideal is a left or right
-        fractional ideal.
-
-        If this ideal has both a left and right
-        ideal structure, then the left order is returned.  If it has
-        neither structure, then an error is raised.
-
-        OUTPUT: QuaternionOrder
-
-        EXAMPLES::
-
-            sage: R = QuaternionAlgebra(-11,-1).maximal_order()
-            sage: R.unit_ideal().quaternion_order() is R
-            doctest:...:  DeprecationWarning: quaternion_order() is deprecated,
-            please use left_order() or right_order()
-            See https://github.com/sagemath/sage/issues/31583 for details.
-            True
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(31583, 'quaternion_order() is deprecated, please use left_order() or right_order()')
-        try:
-            return self.__quaternion_order
-        except AttributeError:
-            pass
-        if self.__left_order is not None:
-            A = self.__left_order
-        elif self.__right_order is not None:
-            A = self.__right_order
-        else:
-            raise RuntimeError("unable to determine quaternion order of ideal without known order")
-        self.__quaternion_order = A
-        return A
-
-    def ring(self):
-        """
-        Return ring that this is a fractional ideal for.
-
-        The :meth:`ring` method will be removed from this class in the
-        future.  Calling :meth:`ring` will then return the ambient
-        quaternion algebra.  This is consistent with the behaviour for
-        number fields.
-
-        EXAMPLES::
-
-            sage: R = QuaternionAlgebra(-11,-1).maximal_order()
-            sage: R.unit_ideal().ring() is R
-            doctest:...:  DeprecationWarning: ring() will return the quaternion algebra in the future, please use left_order() or right_order()
-            See https://github.com/sagemath/sage/issues/31583 for details.
-            True
-        """
-        from sage.misc.superseded import deprecation
-        deprecation(31583, 'ring() will return the quaternion algebra in the future, please use left_order() or right_order()')
-        if self.__left_order is not None:
-            return self.__left_order
-        elif self.__right_order is not None:
-            return self.__right_order
-        else:
-            raise RuntimeError("unable to determine quaternion order of ideal without known order")
 
     def basis(self):
         """
@@ -3058,6 +3043,112 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             J = R.right_ideal(gens, check=False)
             ans.append(J)
         return ans
+
+    def is_integral(self):
+        r"""
+        Check if a quaternion fractional ideal is integral. An ideal in a quaternion algebra is
+        said integral if it is contained in its left order. If the left order is already defined it just
+        check the definition, otherwise it uses one of the alternative definition of Lemma 16.2.8 of
+        [Voi2021]_.
+
+        OUTPUT: a boolean.
+
+        EXAMPLES::
+
+            sage: R.<i,j,k> = QuaternionAlgebra(QQ, -1,-11)
+            sage: I = R.ideal([2 + 2*j + 140*k, 2*i + 4*j + 150*k, 8*j + 104*k, 152*k])
+            sage: I.is_integral()
+            True
+            sage: O = I.left_order()
+            sage: I.is_integral()
+            True
+            sage: I = R.ideal([1/2 + 2*j + 140*k, 2*i + 4*j + 150*k, 8*j + 104*k, 152*k])
+            sage: I.is_integral()
+            False
+
+        """
+        if self.__left_order is not None:
+            return self.free_module() <= self.left_order().free_module()
+        elif self.__right_order is not None:
+            return self.free_module() <= self.right_order().free_module()
+        else:
+            self_square = self**2
+            return self_square.free_module() <= self.free_module()
+
+    def primitive_decomposition(self):
+        r"""
+        Let `I` = ``self``. If `I` is an integral left `\mathcal{O}`-ideal return its decomposition
+        as an equivalent primitive ideal and an integer such that their product is the initial ideal.
+
+        OUTPUTS: and quivalent primitive ideal to `I`, i.e. equivalent ideal not contained in `n\mathcal{O}` for any `n>0`, and the smallest integer such that `I \subset g\mathcal{O}`.
+
+        EXAMPLES::
+
+            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-11)
+            sage: I = A.ideal([1/2 + 1/2*i + 1/2*j + 3/2*k, i + k, j + k, 2*k])
+            sage: I.primitive_decomposition()
+            (Fractional ideal (1/2 + 1/2*i + 1/2*j + 3/2*k, i + k, j + k, 2*k), 1)
+            sage: J = A.ideal([7/2 + 7/2*i + 49/2*j + 91/2*k, 7*i + 21*k, 35*j + 35*k, 70*k])
+            sage: Jequiv, g = J.primitive_decomposition()
+            sage: Jequiv*g == J
+            True
+            sage: Jequiv, g
+            (Fractional ideal (1/2 + 1/2*i + 7/2*j + 13/2*k, i + 3*k, 5*j + 5*k, 10*k), 7)
+
+        TESTS:
+
+        Checks on random crafted ideals that they decompose as expected::
+
+            sage: for d in ( m for m in range(400, 750) if is_squarefree(m) ):
+            ....:     A = QuaternionAlgebra(d)
+            ....:     O = A.maximal_order()
+            ....:     for _ in range(10):
+            ....:         a = O.random_element()
+            ....:         if not a.is_constant(): # avoids a = 0
+            ....:             I = a*O + a.reduced_norm()*O
+            ....:             if I.is_integral():
+            ....:                 J,g = I.primitive_decomposition()
+            ....:                 assert J*g == I
+            ....:                 assert J.is_primitive()
+        """
+        if not self.is_integral():
+            raise ValueError("primitive ideals are defined only for integral ideals")
+
+        I_basis = self.basis_matrix()
+        O_basis = self.left_order().basis_matrix()
+
+        # Write I in the basis of its left order via rref
+        M = O_basis.solve_left(I_basis)
+        g = Integer(gcd(M.list()))
+
+        # If g is 1 then the ideal is primitive
+        if g.is_one():
+            return self, g
+
+        J = self.scale(1/g)
+
+        return J, g
+
+    def is_primitive(self):
+        r"""
+        Check if the quaternion fractional ideal is primitive. An integral left
+        $O$-ideal for some order $O$ is said primitive if for all integers $n > 1$
+        $I$ is not contained in $nO$.
+
+        OUTPUT: a boolean.
+
+        EXAMPLES::
+
+            sage: A.<i,j,k> = QuaternionAlgebra(QQ, -1,-11)
+            sage: I = A.ideal([1/2 + 1/2*i + 1/2*j + 3/2*k, i + k, j + k, 2*k])
+            sage: I.is_primitive()
+            True
+            sage: (2*I).is_primitive()
+            False
+
+        """
+        _,g = self.primitive_decomposition()
+        return g.is_one()
 
 #######################################################################
 # Some utility functions that are needed here and are too

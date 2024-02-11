@@ -847,7 +847,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
     TESTS:
 
-    Domain and codomain tests (see :trac:`12880`)::
+    Domain and codomain tests (see :issue:`12880`)::
 
         sage: E = EllipticCurve(QQ, [0,0,0,1,0])
         sage: phi = EllipticCurveIsogeny(E, E(0,0))
@@ -863,7 +863,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         sage: phi.codomain()
         Elliptic Curve defined by y^2 + x*y = x^3 + 24*x + 6 over Finite Field of size 31
 
-    Composition tests (see :trac:`16245`, cf. :trac:`34410`)::
+    Composition tests (see :issue:`16245`, cf. :issue:`34410`)::
 
         sage: E = EllipticCurve(j=GF(7)(0))
         sage: phi = E.isogeny([E(0), E((0,1)), E((0,-1))]); phi
@@ -875,7 +875,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
           From: Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7
           To:   Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7
 
-    Examples over relative number fields used not to work (see :trac:`16779`)::
+    Examples over relative number fields used not to work (see :issue:`16779`)::
 
         sage: # long time, needs sage.rings.number_field
         sage: pol26 = hilbert_class_polynomial(-4*26)
@@ -891,7 +891,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         sage: iso3 = EL.isogenies_prime_degree(3); len(iso3)
         2
 
-    Examples over function fields used not to work (see :trac:`11327`)::
+    Examples over function fields used not to work (see :issue:`11327`)::
 
         sage: F.<t> = FunctionField(QQ)
         sage: E = EllipticCurve([0,0,0,-t^2,0])
@@ -1189,7 +1189,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         TESTS:
 
-        Tests for :trac:`10888`::
+        Tests for :issue:`10888`::
 
             sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
@@ -1204,7 +1204,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: phihat(Q)
             (-1/48 : 127/576*th : 1)
 
-        Call a composed isogeny (added for :trac:`16238`)::
+        Call a composed isogeny (added for :issue:`16238`)::
 
             sage: E = EllipticCurve(j=GF(7)(0))
             sage: phi = E.isogeny([E(0), E((0,1)), E((0,-1))])
@@ -1214,7 +1214,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: phi2(E.points()[0])
             (0 : 1 : 0)
 
-        Coercion works fine with :meth:`_call_` (added for :trac:`16238`)::
+        Coercion works fine with :meth:`_call_` (added for :issue:`16238`)::
 
             sage: # needs sage.rings.number_field
             sage: K.<th> = NumberField(x^2 + 3)
@@ -1243,7 +1243,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: phi(Q)._order
             27
 
-        Test for :trac:`35983`::
+        Test for :issue:`35983`::
 
             sage: E = EllipticCurve([1,0,0,-1,0])
             sage: P = E([1,0])
@@ -2106,7 +2106,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         TESTS:
 
-        Check for :trac:`33214`::
+        Check for :issue:`33214`::
 
             sage: # needs sage.rings.finite_rings
             sage: z2 = GF(71^2).gen()
@@ -2120,7 +2120,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             (33 : 61*z2 + 10 : 1)
 
         The rational maps are also computed via this code path; check
-        that they are plausible (this failed prior to :trac:`33214`)::
+        that they are plausible (this failed prior to :issue:`33214`)::
 
             sage: # needs sage.rings.finite_rings
             sage: fx,fy = phi.rational_maps()  # indirect doctest
@@ -2601,7 +2601,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: phi._EllipticCurveIsogeny__compute_omega_general(E, psi, psi_pr, fi, fi_pr)
             (x^3 + (alpha^2 + 1)*x^2 + (alpha^2 + 1)*x + alpha)*y + (alpha^2 + alpha + 1)*x^2 + (alpha^2 + alpha)*x + alpha
 
-        A bug fixed in :trac:`7907`::
+        A bug fixed in :issue:`7907`::
 
             sage: # needs sage.rings.finite_rings
             sage: F = GF(128,'a')
@@ -3151,7 +3151,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         TESTS:
 
-        Test for :trac:`23928`::
+        Test for :issue:`23928`::
 
             sage: E = EllipticCurve(j=GF(431**2)(4))                                    # needs sage.rings.finite_rings
             sage: phi = E.isogeny(E.lift_x(0))                                          # needs sage.rings.finite_rings
@@ -3160,7 +3160,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
              from Elliptic Curve defined by y^2 = x^3 + 427*x over Finite Field in z2 of size 431^2
                to Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 431^2
 
-        Test (for :trac:`7096`)::
+        Test (for :issue:`7096`)::
 
             sage: E = EllipticCurve('11a1')
             sage: phi = E.isogeny(E(5,5))
@@ -3186,7 +3186,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
              from Elliptic Curve defined by y^2 + x*y = x^3 + 84*x + 34 over Finite Field of size 103
                to Elliptic Curve defined by y^2 + x*y = x^3 + x + 102 over Finite Field of size 103
 
-        Check that :trac:`17293` is fixed::
+        Check that :issue:`17293` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: k.<s> = QuadraticField(2)
@@ -3197,6 +3197,18 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: phi._EllipticCurveIsogeny__clear_cached_values()  # forget the dual
             sage: -phi.dual() == (-phi).dual()
             True
+
+        Check that :issue:`37168` is fixed::
+
+            sage: R.<x> = GF(23)[]
+            sage: F.<a> = FiniteField(23^2, modulus=x^2-x+1)
+            sage: E0 = EllipticCurve(F, (0, 1))
+            sage: E1 = EllipticCurve(F, (8, 1))
+            sage: phi = E0.isogeny(kernel=E0((a, 0)), codomain=E1)
+            sage: phi.dual()
+            Isogeny of degree 2
+             from Elliptic Curve defined by y^2 = x^3 + 8*x + 1 over Finite Field in a of size 23^2
+             to Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in a of size 23^2
         """
         if self.__base_field.characteristic() in (2, 3):
             raise NotImplementedError("computation of dual isogenies not yet implemented in characteristics 2 and 3")
@@ -3260,17 +3272,18 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             E2 = E2pr.change_weierstrass_model(u/F(d), 0, 0, 0)
 
             phi_hat = EllipticCurveIsogeny(E1, None, E2, d)
-
-            pre_iso = self._codomain.isomorphism_to(E1)
-            post_iso = E2.isomorphism_to(self._domain)
-
 #            assert phi_hat.scaling_factor() == 1
-            sc = u * pre_iso.scaling_factor() * post_iso.scaling_factor() / F(d)
-            if not sc.is_one():
-                auts = self._codomain.automorphisms()
-                aut = [a for a in auts if a.u == sc]
-                assert len(aut) == 1, "bug in dual()"
-                pre_iso *= aut[0]
+
+            for pre_iso in self._codomain.isomorphisms(E1):
+                for post_iso in E2.isomorphisms(self._domain):
+                    sc = u * pre_iso.scaling_factor() * post_iso.scaling_factor()
+                    if sc == d:
+                        break
+                else:
+                    continue
+                break
+            else:
+                assert "bug in dual()"
 
             phi_hat._set_pre_isomorphism(pre_iso)
             phi_hat._set_post_isomorphism(post_iso)

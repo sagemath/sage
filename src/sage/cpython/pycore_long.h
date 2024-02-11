@@ -89,7 +89,7 @@ _PyLong_SetSignAndDigitCount(PyLongObject *op, int sign, Py_ssize_t size)
 {
 #if (PY_MAJOR_VERSION == 3) && (PY_MINOR_VERSION < 9)
 // The function Py_SET_SIZE is defined starting with python 3.9.
-    Py_SIZE(o) = size;
+    Py_SIZE(op) = size;
 #else
     Py_SET_SIZE(op, sign < 0 ? -size : size);
 #endif

@@ -6414,7 +6414,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
            :class:`ValueError` if the square is not in the base ring. Ignored if ``prec``
            is not ``None``.
 
-        -  ``all`` - bool (default: ``False``); if ``True``, return all
+        -  ``all`` -- bool (default: ``False``); if ``True``, return all
            square roots of ``self`` (a list of length 0, 1, or 2).
 
         EXAMPLES::

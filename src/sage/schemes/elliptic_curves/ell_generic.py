@@ -619,7 +619,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
             sage: E = EllipticCurve([1,-1,0,94,9])
             sage: R = E([0,3]) + 5*E([8,31])
-            sage: factor(R.xy()[0].denominator())
+            sage: factor(R.x().denominator())
             2^2 * 11^2 * 1457253032371^2
 
         Since 11 is a factor of the denominator, this point corresponds to the

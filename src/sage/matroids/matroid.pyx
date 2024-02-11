@@ -111,6 +111,7 @@ additional functionality (e.g. linear extensions).
     - :meth:`connectivity() <sage.matroids.matroid.Matroid.connectivity>`
     - :meth:`is_paving() <sage.matroids.matroid.Matroid.is_paving>`
     - :meth:`is_sparse_paving() <sage.matroids.matroid.Matroid.is_sparse_paving>`
+    - :meth:`girth() <sage.matroids.matroid.Matroid.girth>`
 
 - Representation
     - :meth:`binary_matroid() <sage.matroids.matroid.Matroid.binary_matroid>`
@@ -5975,6 +5976,34 @@ cdef class Matroid(SageObject):
             if len(C1 ^ C2) <= 2:
                 return False
         return True
+
+    cpdef girth(self) noexcept:
+        r"""
+        Return the girth of the matroid.
+
+        The girth is the size of the smallest circuit. In case the matroid has
+        no circuits the girth is `\infty`.
+
+        EXAMPLES::
+
+            sage: matroids.Uniform(5, 5).girth()
+            +Infinity
+            sage: matroids.catalog.K4().girth()
+            3
+            sage: matroids.catalog.Vamos().girth()
+            4
+
+        REFERENCES:
+
+        [Oxl2011]_, p. 327.
+        """
+        for k in range(self.rank() + 2):
+            for X in combinations(self.groundset(), k):
+                X = frozenset(X)
+                if self._is_circuit(X):
+                    return k
+        from sage.rings.infinity import infinity
+        return infinity
 
     # representability
 

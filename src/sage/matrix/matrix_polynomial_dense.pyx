@@ -675,7 +675,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: M.reverse([2,3,-1])
             Traceback (most recent call last):
             ...
-            OverflowError: can't convert negative value to unsigned long
+            ValueError: degree argument must be a non-negative integer, got -1
 
         .. SEEALSO::
 
@@ -3980,6 +3980,13 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: Matrix(pR, 3, 2, [[x,0],[1,0],[x+1,0]]).minimal_kernel_basis()
             [6 x 0]
             [6 6 1]
+
+        TESTS:
+
+        We check that PR #37208 is fixed::
+
+            sage: Matrix(pR, 2, 0).minimal_kernel_basis().is_sparse()
+            False
         """
         from sage.matrix.constructor import matrix
 
@@ -4001,11 +4008,11 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                 return matrix(self.base_ring(), 0, m)
 
             if n == 0: # early exit: kernel is identity
-                return matrix.identity(self.base_ring(), m, m)
+                return matrix.identity(self.base_ring(), m)
 
             d = self.degree() # well defined since m > 0 and n > 0
             if d == -1: # matrix is zero: kernel is identity
-                return matrix.identity(self.base_ring(), m, m)
+                return matrix.identity(self.base_ring(), m)
 
             # degree bounds on the kernel basis
             degree_bound = min(m,n)*d+max(shifts)
@@ -4040,11 +4047,11 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                 return matrix(self.base_ring(), n, 0)
 
             if m == 0: # early exit: kernel is identity
-                return matrix.identity(self.base_ring(), n, n)
+                return matrix.identity(self.base_ring(), n)
 
             d = self.degree() # well defined since m > 0 and n > 0
             if d == -1: # matrix is zero
-                return matrix.identity(self.base_ring(), n, n)
+                return matrix.identity(self.base_ring(), n)
 
             # degree bounds on the kernel basis
             degree_bound = min(m,n)*d+max(shifts)

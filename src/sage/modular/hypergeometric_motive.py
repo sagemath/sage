@@ -65,7 +65,7 @@ from sage.arith.misc import gauss_sum, kronecker_symbol
 from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
 from sage.functions.generalized import sgn
 from sage.functions.log import log
-from sage.functions.other import floor, ceil
+from sage.functions.other import floor, ceil, frac
 from sage.misc.cachefunc import cached_method
 from sage.misc.functional import cyclotomic_polynomial
 from sage.misc.misc_c import prod
@@ -74,13 +74,14 @@ from sage.rings.fraction_field import FractionField
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
 from sage.rings.integer_ring import ZZ
 from sage.rings.padics.padic_generic_element import gauss_table
-from sage.rings.polynomial.polynomial_ring import polygen
+from sage.rings.polynomial.polynomial_ring import polygen, polygens
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
 from sage.schemes.generic.spec import Spec
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
+
 
 def characteristic_polynomial_from_traces(traces, d, q, i, sign):
     r"""
@@ -899,6 +900,80 @@ class HypergeometricData():
             lst.append((lst[-1][0] + hn[i], lst[-1][1] + i * hn[i]))
         return lst
 
+    def E_polynomial(self, vars=None):
+        """
+        Return the E-polynomial of ``self``.
+
+        This is a bivariate polynomial.
+
+        The algorithm is taken from [FRV2019]_.
+
+        INPUT:
+
+        - ``vars`` -- optional pair of variables (default `u,v`)
+
+        REFERENCES:
+
+        .. [FRV2019] Fernando Rodriguez Villegas, *Mixed Hodge numbers
+           and factorial ratios*, :arxiv:`1907.02722`
+
+        EXAMPLES::
+
+            sage: from sage.modular.hypergeometric_motive import HypergeometricData
+            sage: H = HypergeometricData(gamma_list=[-30,-1,6,10,15])
+            sage: H.E_polynomial()
+            8*u*v + 7*u + 7*v + 8
+
+            sage: p, q = polygens(QQ,'p,q')
+            sage: H.E_polynomial((p, q))
+            8*p*q + 7*p + 7*q + 8
+
+            sage: H = HypergeometricData(gamma_list=(-11, -2, 1, 3, 4, 5))
+            sage: H.E_polynomial()
+            5*u^2*v + 5*u*v^2 + u*v + 1
+
+            sage: H = HypergeometricData(gamma_list=(-63, -8, -2, 1, 4, 16, 21, 31))
+            sage: H.E_polynomial()
+            21*u^3*v^2 + 21*u^2*v^3 + u^3*v + 23*u^2*v^2 + u*v^3 + u^2*v + u*v^2 + 2*u*v + 1
+        """
+        gamma = self.gamma_list()
+        ell = len(gamma)
+
+        gamma_plus = [g for g in gamma if g > 0]
+        gamma_minus = [g for g in gamma if g < 0]
+
+        domain = set(d for g in gamma for d in divisors(g.abs()))
+
+        m_plus = {d: len([1 for g in gamma_plus if not g % d])
+                  for d in domain}
+
+        m_minus = {d: len([1 for g in gamma_minus if not g % d])
+                   for d in domain}
+
+        if vars is None:
+            u, v = polygens(ZZ, 'u,v')
+        else:
+            u, v = vars
+        uqv = u / v
+        uv = u * v
+
+        A = u.parent()
+        delta_sharp_N = {d: A.sum(uqv**sum(frac(j * gi / d) for gi in gamma)
+                                  for j in d.coprime_integers(d))
+                         for d in domain}
+
+        loop = [(d, m_plus[d], m_minus[d]) for d in domain]
+
+        delta_sharp = sum((uqv**m - uqv**p) // (uqv - 1) * v**(ell - 1)
+                          * delta_sharp_N[d]
+                          for d, p, m in loop if m > p)
+
+        delta_zero = sum((uv**min(m, p) - 1) // (uv - 1) * v**(ell - m - p)
+                         * delta_sharp_N[d]
+                         for d, p, m in loop)
+
+        return (delta_sharp + delta_zero - 1).numerator() // (u * v)
+
     def M_value(self):
         """
         Return the `M` coefficient that appears in the trace formula.
@@ -981,6 +1056,30 @@ class HypergeometricData():
         """
         beta_twist = self.twist()._beta
         return self.degree() % 2 == 0 and self._alpha == beta_twist
+
+    def lfunction(self, t, prec=53):
+        """
+        Return the L-function of ``self``.
+
+        The result is a wrapper around a PARI L-function.
+
+        INPUT:
+
+        - ``prec`` -- precision (default 53)
+
+        EXAMPLES::
+
+            sage: from sage.modular.hypergeometric_motive import HypergeometricData as Hyp
+            sage: H = Hyp(cyclotomic=([3],[4]))
+            sage: L = H.lfunction(1/64); L
+            PARI L-function associated to Hypergeometric data for [1/3, 2/3] and [1/4, 3/4]
+            sage: L(4)
+            0.997734256321692
+        """
+        from sage.lfunctions.pari import lfun_hgm, LFunction
+        Z = LFunction(lfun_hgm(self, t), prec=prec)
+        Z.rename('PARI L-function associated to %s' % self)
+        return Z
 
     def canonical_scheme(self, t=None):
         """

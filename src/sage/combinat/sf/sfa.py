@@ -234,6 +234,7 @@ from sage.misc.misc_c import prod
 from sage.data_structures.blas_dict import convert_remove_zeroes, linear_combination
 from copy import copy
 from functools import reduce
+from sage.misc.superseded import deprecated_function_alias
 
 
 def is_SymmetricFunctionAlgebra(x):
@@ -3322,7 +3323,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         .. SEEALSO::
 
-            :meth:`frobenius`
+            :meth:`adams_operator`
 
         TESTS::
 
@@ -5075,12 +5076,12 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             res = res._derivative_with_respect_to_p1()
         return self.parent()(res)
 
-    def frobenius(self, n):
+    def adams_operator(self, n):
         r"""
         Return the image of the symmetric function ``self`` under the
-        `n`-th Frobenius operator.
+        `n`-th Adams operator.
 
-        The `n`-th Frobenius operator `\mathbf{f}_n` is defined to be the
+        The `n`-th Adams operator `\mathbf{f}_n` is defined to be the
         map from the ring of symmetric functions to itself that sends
         every symmetric function `P(x_1, x_2, x_3, \ldots)` to
         `P(x_1^n, x_2^n, x_3^n, \ldots)`. This operator `\mathbf{f}_n`
@@ -5096,15 +5097,15 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         `\mathbf{f}_n (p_r) = p_{nr}` for every positive integer `r` (where
         `p_k` denotes the `k`-th powersum symmetric function).
 
-        The `n`-th Frobenius operator is also called the `n`-th
+        The `n`-th Adams operator is also called the `n`-th
         Frobenius endomorphism. It is not related to the Frobenius map
         which connects the ring of symmetric functions with the
         representation theory of the symmetric group.
 
-        The `n`-th Frobenius operator is also the `n`-th Adams operator
+        The `n`-th Adams operator is also the `n`-th Adams operator
         of the `\Lambda`-ring of symmetric functions over the integers.
 
-        The `n`-th Frobenius operator can also be described via plethysm:
+        The `n`-th Adams operator can also be described via plethysm:
         Every symmetric function `P` satisfies
         `\mathbf{f}_n(P) = p_n \circ P = P \circ p_n`,
         where `p_n` is the `n`-th powersum symmetric function, and `\circ`
@@ -5116,7 +5117,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         OUTPUT:
 
-        The result of applying the `n`-th Frobenius operator (on the ring of
+        The result of applying the `n`-th Adams operator (on the ring of
         symmetric functions) to ``self``.
 
         EXAMPLES::
@@ -5126,38 +5127,38 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: h = Sym.h()
             sage: s = Sym.s()
             sage: m = Sym.m()
-            sage: s[3].frobenius(2)
+            sage: s[3].adams_operator(2)
             -s[3, 3] + s[4, 2] - s[5, 1] + s[6]
-            sage: m[4,2,1].frobenius(3)
+            sage: m[4,2,1].adams_operator(3)
             m[12, 6, 3]
-            sage: p[4,2,1].frobenius(3)
+            sage: p[4,2,1].adams_operator(3)
             p[12, 6, 3]
-            sage: h[4].frobenius(2)
+            sage: h[4].adams_operator(2)
             h[4, 4] - 2*h[5, 3] + 2*h[6, 2] - 2*h[7, 1] + 2*h[8]
 
-        The Frobenius endomorphisms are multiplicative::
+        The Adams endomorphisms are multiplicative::
 
-            sage: all( all( s(lam).frobenius(3) * s(mu).frobenius(3) # long time
-            ....:           == (s(lam) * s(mu)).frobenius(3)
+            sage: all( all( s(lam).adams_operator(3) * s(mu).adams_operator(3) # long time
+            ....:           == (s(lam) * s(mu)).adams_operator(3)
             ....:           for mu in Partitions(3) )
             ....:      for lam in Partitions(3) )
             True
-            sage: all( all( m(lam).frobenius(2) * m(mu).frobenius(2)
-            ....:           == (m(lam) * m(mu)).frobenius(2)
+            sage: all( all( m(lam).adams_operator(2) * m(mu).adams_operator(2)
+            ....:           == (m(lam) * m(mu)).adams_operator(2)
             ....:           for mu in Partitions(4) )
             ....:      for lam in Partitions(4) )
             True
-            sage: all( all( p(lam).frobenius(2) * p(mu).frobenius(2)
-            ....:           == (p(lam) * p(mu)).frobenius(2)
+            sage: all( all( p(lam).adams_operator(2) * p(mu).adams_operator(2)
+            ....:           == (p(lam) * p(mu)).adams_operator(2)
             ....:           for mu in Partitions(3) )
             ....:      for lam in Partitions(4) )
             True
 
-        Being Hopf algebra endomorphisms, the Frobenius operators
+        Being Hopf algebra endomorphisms, the Adams operators
         commute with the antipode::
 
-            sage: all( p(lam).frobenius(4).antipode()
-            ....:      == p(lam).antipode().frobenius(4)
+            sage: all( p(lam).adams_operator(4).antipode()
+            ....:      == p(lam).antipode().adams_operator(4)
             ....:      for lam in Partitions(3) )
             True
 
@@ -5168,7 +5169,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: Sym = SymmetricFunctions(QQ)
             sage: s = Sym.s()
             sage: p = Sym.p()
-            sage: all( s(lam).frobenius(3) == s(lam).plethysm(p[3])
+            sage: all( s(lam).adams_operator(3) == s(lam).plethysm(p[3])
             ....:      == s(p[3].plethysm(s(lam)))
             ....:      for lam in Partitions(4) )
             True
@@ -5183,7 +5184,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
             sage: all( all( all( (coeff == -1 or coeff == 1)
             ....:                and lam.core(n) == Partition([])
-            ....:                for lam, coeff in s([m]).frobenius(n) )
+            ....:                for lam, coeff in s([m]).adams_operator(n) )
             ....:           for n in range(2, 4) )
             ....:      for m in range(4) )
             True
@@ -5203,13 +5204,15 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             or Y. M. Chen, A. M. Garsia, and J. B. Remmel, Contemp.
             Math. 34 (1984), 109-153".)
         """
-        # Convert to the monomial basis, there apply Frobenius componentwise,
+        # Convert to the monomial basis, there apply componentwise,
         # then convert back.
         parent = self.parent()
         m = parent.realization_of().monomial()
         dct = {lam.stretch(n): coeff for lam, coeff in m(self)}
         result_in_m_basis = m._from_dict(dct)
         return parent(result_in_m_basis)
+
+    frobenius = deprecated_function_alias(36396, adams_operator)
 
     def verschiebung(self, n):
         r"""
@@ -5243,7 +5246,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         (German for "shift") endomorphism of the Witt vectors.
 
         The `n`-th Verschiebung operator is adjoint to the `n`-th
-        Frobenius operator (see :meth:`frobenius` for its definition)
+        Adams operator (see :meth:`adams_operator` for its definition)
         with respect to the Hall scalar product (:meth:`scalar`).
 
         The action of the `n`-th Verschiebung operator on the Schur basis
@@ -5322,7 +5325,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             ....:      for lam in Partitions(6) )
             True
 
-        Testing the adjointness between the Frobenius operators
+        Testing the adjointness between the Adams operators
         `\mathbf{f}_n` and the Verschiebung operators
         `\mathbf{V}_n`::
 
@@ -5330,7 +5333,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             sage: s = Sym.s()
             sage: p = Sym.p()
             sage: all( all( s(lam).verschiebung(2).scalar(p(mu))
-            ....:           == s(lam).scalar(p(mu).frobenius(2))
+            ....:           == s(lam).scalar(p(mu).adams_operator(2))
             ....:           for mu in Partitions(3) )
             ....:      for lam in Partitions(6) )
             True

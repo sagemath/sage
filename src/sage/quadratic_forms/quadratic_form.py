@@ -25,14 +25,15 @@ from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.lazy_import import lazy_import
 from sage.structure.element import is_Matrix
+from sage.categories.rings import Rings
+from sage.categories.fields import Fields
+from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.rings.integer_ring import IntegerRing, ZZ
-from sage.rings.ring import Ring
 from sage.misc.functional import denominator, is_even
 from sage.arith.misc import GCD
 from sage.arith.functions import lcm as LCM
 from sage.rings.ideal import Ideal
 from sage.rings.rational_field import QQ
-from sage.rings.ring import is_Ring, PrincipalIdealDomain
 from sage.structure.element import is_Vector
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_element import Polynomial
@@ -552,7 +553,7 @@ class QuadraticForm(SageObject):
         """
         # Deal with:  QuadraticForm(ring, matrix)
         matrix_init_flag = False
-        if isinstance(R, Ring):
+        if R in Rings():
             if is_Matrix(n):
                 # Test if n is symmetric and has even diagonal
                 if not self._is_even_symmetric_matrix_(n, R):
@@ -1110,7 +1111,7 @@ class QuadraticForm(SageObject):
             R = A.base_ring()
             ring_coerce_test = False
 
-        if not isinstance(R, Ring):
+        if R not in Rings():
             raise TypeError("R is not a ring.")
 
         if not (A.is_square() and A.is_symmetric()):
@@ -1260,17 +1261,16 @@ class QuadraticForm(SageObject):
 
         """
         # Warning over fields
-        if self.base_ring().is_field():
+        if self.base_ring() in Fields():
             warn("Warning -- A quadratic form over a field always has integral Gram matrix.  Do you really want to do this?!?")
 
         # Determine integrality of the Gram matrix
-        flag = True
         try:
             self.Gram_matrix()
-        except Exception:
-            flag = False
-
-        return flag
+        except TypeError:
+            return False
+        else:
+            return True
 
     def gcd(self):
         """
@@ -1297,9 +1297,9 @@ class QuadraticForm(SageObject):
 
         INPUT:
 
-        - ``self`` - a quadratic form over a commutative ring
+        - ``self`` -- a quadratic form over a commutative ring
 
-        - ``names`` - specification of the names of the variables; see :func:`PolynomialRing`
+        - ``names`` -- specification of the names of the variables; see :func:`PolynomialRing`
 
         OUTPUT: The polynomial form of the quadratic form.
 
@@ -1328,21 +1328,19 @@ class QuadraticForm(SageObject):
             sage: Q.polynomial()
             Traceback (most recent call last):
             ...
-            ValueError: Can only create polynomial rings over commutative rings.
+            ValueError: Can only create polynomial rings over commutative rings
         """
         B = self.base_ring()
+        if B not in Rings().Commutative():
+            raise ValueError('Can only create polynomial rings over commutative rings')
         n = self.dim()
         M = matrix(B, n)
         for i in range(n):
             for j in range(i, n):
                 M[i, j] = self[i, j]
-        try:
-            R = PolynomialRing(self.base_ring(), names, n)
-        except Exception:
-            raise ValueError('Can only create polynomial rings over commutative rings.')
+        R = PolynomialRing(self.base_ring(), names, n)
         V = vector(R.gens())
-        P = (V*M).dot_product(V)
-        return P
+        return (V * M).dot_product(V)
 
     @staticmethod
     def from_polynomial(poly):
@@ -1568,7 +1566,7 @@ class QuadraticForm(SageObject):
             1
         """
         # Check that a canonical coercion is possible
-        if not is_Ring(R):
+        if R not in Rings():
             raise TypeError("R is not a ring")
         if not R.has_coerce_map_from(self.base_ring()):
             raise TypeError(f"there is no canonical coercion from {self.base_ring()} to R")
@@ -1609,11 +1607,11 @@ class QuadraticForm(SageObject):
         except AttributeError:
 
             # Check that the base ring is a PID
-            if not isinstance(self.base_ring(), PrincipalIdealDomain):
+            if self.base_ring() not in PrincipalIdealDomains():
                 raise TypeError("the level (as a number) is only defined over a Principal Ideal Domain ; try using level_ideal()")
 
             # Warn the user if the form is defined over a field!
-            if self.base_ring().is_field():
+            if self.base_ring() in Fields():
                 warn("Warning -- The level of a quadratic form over a field is always 1.  Do you really want to do this?!?")
                 # raise RuntimeError("Warning -- The level of a quadratic form over a field is always 1.  Do you really want to do this?!?")
 

@@ -5333,7 +5333,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         2. We linearize and compute the echelon form::
 
-               sage: A, v = F.coefficient_matrix()
+               sage: A, v = F.coefficients_monomials()
                sage: A.echelonize()
 
         3. The result is the desired Gröbner basis::

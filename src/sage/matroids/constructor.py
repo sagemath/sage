@@ -191,7 +191,7 @@ def Matroid(groundset=None, data=None, **kwds):
       the closure of a circuit, and ``k`` the rank of ``C``, or a dictionary
       ``D`` with ``D[k]`` the set of closures of rank-``k`` circuits.
     - ``revlex`` -- the encoding as a string of ``0`` and ``*`` symbols.
-      Used by [MatroidDatabase]_ and explained in [MMIB2012]_.
+      Used by [Mat2012]_ and explained in [MMIB2012]_.
     - ``matroid`` -- An object that is already a matroid. Useful only with the
       ``regular`` option.
 

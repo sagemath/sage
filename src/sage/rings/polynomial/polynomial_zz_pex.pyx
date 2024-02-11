@@ -513,13 +513,18 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             sage: f.reverse(degree=200)
             2*x^200 + 3*x^199 + 5*x^198 + 7*x^197 + 11*x^196 + 13*x^195 + 17*x^194 + 19*x^193
             sage: f.reverse(degree=0)
-            Traceback (most recent call last):
-            ...
-            ValueError: degree argument must be a non-negative integer, got 0
+            2
             sage: f.reverse(degree=-5)
             Traceback (most recent call last):
             ...
             ValueError: degree argument must be a non-negative integer, got -5
+
+        Check that this implementation is compatible with the generic one::
+
+            sage: p = R([0,1,0,2])
+            sage: all(p.reverse(d) == Polynomial.reverse(p, d)
+            ....:     for d in [None, 0, 1, 2, 3, 4])
+            True
         """
         self._parent._modulus.restore()
 
@@ -533,11 +538,10 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         # When a degree has been supplied, ensure it is a valid input
         cdef unsigned long d
         if degree is not None:
-            if degree <= 0:
+            if degree < 0:
                 raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
-            try:
-                d = degree
-            except ValueError:
+            d = degree
+            if d != degree:
                 raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
             ZZ_pEX_reverse_hi(r.x, (<Polynomial_ZZ_pEX> self).x, d)
         else:

@@ -49,6 +49,7 @@ extensions = [
     'sphinx.ext.extlinks',
     'sphinx.ext.mathjax',
     'sphinx_copybutton',
+    'sphinx_inline_tabs',
     'IPython.sphinxext.ipython_directive',
     'matplotlib.sphinxext.plot_directive',
     'jupyter_sphinx',

@@ -61,7 +61,7 @@ from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 from sage.structure.coerce cimport is_numpy_type
 from sage.structure.element cimport parent
-from sage.structure.parent_gens import ParentWithGens
+from sage.structure.parent cimport Parent
 from sage.structure.richcmp cimport rich_to_bool
 
 from sage.misc.misc_c import prod
@@ -311,8 +311,8 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             sage: A in InfiniteEnumeratedSets()
             True
         """
-        ParentWithGens.__init__(self, self, ('x',), normalize=False,
-                                category=(EuclideanDomains(), InfiniteEnumeratedSets().Metric()))
+        Parent.__init__(self, base=self, names=('x',), normalize=False,
+                        category=(EuclideanDomains(), InfiniteEnumeratedSets().Metric()))
         self._populate_coercion_lists_(init_no_parent=True,
                                        convert_method_name='_integer_')
 

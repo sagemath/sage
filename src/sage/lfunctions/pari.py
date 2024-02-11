@@ -256,6 +256,28 @@ def lfun_character(chi):
     return pari.lfuncreate([G, v])
 
 
+def lfun_hgm(motif, t):
+    """
+    Create the L-function of an hypergeometric motive.
+
+    OUTPUT:
+
+    one :pari:`lfun` object
+
+    EXAMPLES::
+
+        sage: from sage.lfunctions.pari import lfun_hgm, LFunction
+        sage: from sage.modular.hypergeometric_motive import HypergeometricData as Hyp
+        sage: H = Hyp(gamma_list=([3,-1,-1,-1]))
+        sage: L = LFunction(lfun_hgm(H, 1/5))
+        sage: L(3)
+        0.901925346034773
+    """
+    H = pari.hgminit(*motif.alpha_beta())
+    lf = pari.lfunhgm(H, t)
+    return pari.lfuncreate(lf)
+
+
 def lfun_elliptic_curve(E):
     """
     Create the L-function of an elliptic curve.
