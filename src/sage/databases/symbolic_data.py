@@ -149,11 +149,11 @@ class SymbolicData:
         try:
             name = self.__intpath + name + ".xml"
             open(name)
-        except IOError:
+        except OSError:
             try:
                 name = self.__genpath + name + ".xml"
                 open(name)
-            except IOError:
+            except OSError:
                 raise AttributeError("No ideal matching '%s' found in database." % orig_name)
 
         dom = parse(name)

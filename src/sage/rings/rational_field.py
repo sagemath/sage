@@ -62,7 +62,7 @@ ZZ = None
 import sage.rings.number_field.number_field_base as number_field_base
 from sage.misc.fast_methods import Singleton
 from sage.misc.superseded import deprecated_function_alias
-from sage.structure.parent_gens import ParentWithGens
+from sage.structure.parent import Parent
 from sage.structure.sequence import Sequence
 
 
@@ -235,8 +235,9 @@ class RationalField(Singleton, number_field_base.NumberField):
         """
         from sage.categories.basic import QuotientFields
         from sage.categories.number_fields import NumberFields
-        ParentWithGens.__init__(self, self, category=[QuotientFields().Metric(),
-                                                      NumberFields()])
+        Parent.__init__(self, base=self,
+                        category=[QuotientFields().Metric(),
+                                  NumberFields()])
         self._assign_names(('x',), normalize=False)  # ?????
         self._populate_coercion_lists_(init_no_parent=True)
 
@@ -862,7 +863,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             if p != infty:
                 if check and not is_prime(p):
                     raise ValueError("all entries in list must be prime"
-                                    " or -1 for infinite place")
+                                     " or -1 for infinite place")
                 R = Qp(p)
                 if R(b).is_square():
                     raise ValueError("second argument must be a nonsquare with"
@@ -1055,7 +1056,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: QQ.power_basis()
             [1]
         """
-        return [ self.gen() ]
+        return [self.gen()]
 
     def extension(self, poly, names, **kwds):
         r"""
@@ -1133,7 +1134,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             sage: QQ.an_element() # indirect doctest
             1/2
         """
-        return Rational((1,2))
+        return Rational((1, 2))
 
     def some_elements(self):
         r"""
@@ -1247,7 +1248,7 @@ class RationalField(Singleton, number_field_base.NumberField):
             den = ZZ.random_element(1, den_bound+1, *args, **kwds)
             while den == 0:
                 den = ZZ.random_element(1, den_bound+1, *args, **kwds)
-            return self((num,den))
+            return self((num, den))
 
     def zeta(self, n=2):
         """
@@ -1381,7 +1382,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         from sage.misc.misc_c import prod
         for ev in product(*[range(o) for o in ords]):
-            yield prod((p**e for p,e in zip(KSgens, ev)), one)
+            yield prod((p**e for p, e in zip(KSgens, ev)), one)
 
     def selmer_space(self, S, p, proof=None):
         r"""
@@ -1520,7 +1521,7 @@ class RationalField(Singleton, number_field_base.NumberField):
                 return v + 1
 
     #################################
-    ## Coercions to interfaces
+    #  Coercions to interfaces
     #################################
     def _gap_init_(self):
         r"""
@@ -1658,12 +1659,12 @@ class RationalField(Singleton, number_field_base.NumberField):
             (10) * (x^5 - 1/10)
             sage: QQ._factor_univariate_polynomial(10*x^5 - 10)
             (10) * (x - 1) * (x^4 + x^3 + x^2 + x + 1)
-
         """
-        G = list(f._pari_with_name().factor())
+        G = f._pari_with_name().factor()
 
         # normalize the leading coefficients
-        F = [(f.parent()(g).monic(), int(e)) for (g,e) in zip(*G)]
+        P = f.parent()
+        F = [(P(g).monic(), int(e)) for g, e in zip(*G)]
 
         from sage.structure.factorization import Factorization
         return Factorization(F, f.leading_coefficient())

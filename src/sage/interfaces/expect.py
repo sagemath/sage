@@ -158,7 +158,7 @@ class Expect(Interface):
         else:
             self.__path = os.path.join(SAGE_EXTCODE, name, script_subdirectory)
         if not os.path.isdir(self.__path):
-            raise EnvironmentError("path %r does not exist" % self.__path)
+            raise OSError("path %r does not exist" % self.__path)
         self.__initialized = False
         self.__seq = -1
         self._session_number = 0

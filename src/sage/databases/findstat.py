@@ -881,7 +881,7 @@ def _get_code_from_callable(function):
                 code = inspect.getsource(function.f)
             else:
                 code = inspect.getsource(function)
-        except (IOError, TypeError):
+        except (OSError, TypeError):
             verbose("inspect.getsource could not get code from function provided",
                     caller_name='FindStat')
     return code
@@ -4318,6 +4318,7 @@ class FindStatCollection(Element,
             Cc0027: Signed permutations 4282 True
             Cc0028: Skew partitions 1250 True
             Cc0029: Lattices 1378 True
+            Cc0030: Ordered set partitions 5316 True
         """
         return self._data["Code"].element_level(element) in self._data["LevelsWithSizes"]
 
@@ -4711,7 +4712,8 @@ class FindStatCollections(UniqueRepresentation, Parent):
          Cc0026: Decorated permutations,
          Cc0027: Signed permutations,
          Cc0028: Skew partitions,
-         Cc0029: Lattices]
+         Cc0029: Lattices,
+         Cc0030: Ordered set partitions]
     """
     def __init__(self):
         """
@@ -4787,7 +4789,8 @@ class FindStatCollections(UniqueRepresentation, Parent):
              Cc0026: Decorated permutations,
              Cc0027: Signed permutations,
              Cc0028: Skew partitions,
-             Cc0029: Lattices]
+             Cc0029: Lattices,
+             Cc0030: Ordered set partitions]
 
             sage: FindStatCollection(Permutation([1,2,3]))                      # optional -- internet
             Cc0001: Permutations
