@@ -376,6 +376,8 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
             True
             sage: H.is_submodule(F)
             False
+            sage: H.is_submodule(G)
+            False
         """
         if other is self._ambient:
             return True
@@ -384,6 +386,8 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
         if self not in ModulesWithBasis.FiniteDimensional:
             raise NotImplementedError("only implemented for finite dimensional submodules")
         if self.dimension() > other.dimension():  # quick dimension check
+            return False
+        if not set(self._support_order) >= set(other._support_order):  # quick support check
             return False
         for b in self.basis():
             try:
@@ -396,6 +400,57 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
         """
         Helper method to return a pair of submodules of the same ambient
         free modules to do the corresponding linear algebra.
+
+        EXAMPLES::
+
+            sage: X = CombinatorialFreeModule(QQ, range(4)); x = X.basis()
+            sage: F = X.submodule([x[0]-x[1], x[1]-3*x[2], x[2]-5*x[3]])
+            sage: G = X.submodule([x[0]-x[1], x[1]-2*x[2], x[2]-3*x[3]])
+            sage: H = X.submodule([x[0]-x[1], x[1]-2*x[2], x[2]-3*x[3]], support_order=(3,2,1,0))
+            sage: F._common_submodules(G)
+            (Vector space of degree 4 and dimension 3 over Rational Field
+             Basis matrix:
+             [  1   0   0 -15]
+             [  0   1   0 -15]
+             [  0   0   1  -5],
+             Vector space of degree 4 and dimension 3 over Rational Field
+             Basis matrix:
+             [ 1  0  0 -6]
+             [ 0  1  0 -6]
+             [ 0  0  1 -3])
+            sage: H._common_submodules(F)
+            (Vector space of degree 4 and dimension 3 over Rational Field
+             Basis matrix:
+             [   1    0    0 -1/6]
+             [   0    1    0 -1/2]
+             [   0    0    1   -1],
+             Vector space of degree 4 and dimension 3 over Rational Field
+             Basis matrix:
+             [    1     0     0 -1/15]
+             [    0     1     0  -1/3]
+             [    0     0     1    -1])
+            sage: G._common_submodules(H)
+            (Vector space of degree 4 and dimension 3 over Rational Field
+             Basis matrix:
+             [ 1  0  0 -6]
+             [ 0  1  0 -6]
+             [ 0  0  1 -3],
+             Vector space of degree 4 and dimension 3 over Rational Field
+             Basis matrix:
+             [ 1  0  0 -6]
+             [ 0  1  0 -6]
+             [ 0  0  1 -3])
+            sage: H._common_submodules(G)
+            (Vector space of degree 4 and dimension 3 over Rational Field
+             Basis matrix:
+             [   1    0    0 -1/6]
+             [   0    1    0 -1/2]
+             [   0    0    1   -1],
+             Vector space of degree 4 and dimension 3 over Rational Field
+             Basis matrix:
+             [   1    0    0 -1/6]
+             [   0    1    0 -1/2]
+             [   0    0    1   -1])
         """
         from sage.modules.free_module import FreeModule
         supp_order = self._support_order
@@ -434,7 +489,7 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
             True
             sage: F == H  # different support orders
             False
-            sage: F.is_equal_subspace(G)
+            sage: F.is_equal_subspace(H)
             True
 
         ::
