@@ -395,7 +395,7 @@ class LiE(ExtraTabCompletion, Expect):
                 self._tab_completion_dict = trait_dict
                 self._help_dict = help_dict
                 return
-            except IOError:
+            except OSError:
                 pass
 
         # Go through INFO.3 and get the necessary information

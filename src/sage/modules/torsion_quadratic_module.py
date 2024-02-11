@@ -115,7 +115,7 @@ class TorsionQuadraticModuleElement(FGP_Element):
         sage: Q = TorsionQuadraticModule(V, W)
         sage: x = Q(b[0] - b[1])
         sage: TestSuite(x).run()
-        """
+    """
 
     def _mul_(self, other):
         r"""
@@ -615,7 +615,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
             sage: genera = flatten([genera(s, d, even=False) for d in dets for s in signatures])  # long time
             sage: all(g == g.discriminant_form().genus(g.signature_pair()) for g in genera)  # long time
             True
-            """
+        """
         from sage.quadratic_forms.genera.genus import (Genus_Symbol_p_adic_ring,
                                                        GenusSymbol_global_ring,
                                                        p_adic_symbol,
@@ -978,7 +978,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
                 1 & 0
             \end{matrix}\right).
 
-       The blocks are ordered by their valuation.
+        The blocks are ordered by their valuation.
 
         INPUT:
 

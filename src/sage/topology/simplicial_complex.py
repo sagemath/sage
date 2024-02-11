@@ -1343,8 +1343,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sub_facets = {}
             dimension = max([face.dimension() for face in self._facets])
             for i in range(-1, dimension + 1):
-                Faces[i] = set([])
-                sub_facets[i] = set([])
+                Faces[i] = set()
+                sub_facets[i] = set()
             for f in self._facets:
                 dim = f.dimension()
                 Faces[dim].add(f)
@@ -2085,7 +2085,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
     def chain_complex(self, subcomplex=None, augmented=False,
                       verbose=False, check=False, dimensions=None,
                       base_ring=ZZ, cochain=False):
-        """
+        r"""
         The chain complex associated to this simplicial complex.
 
         :param dimensions: if ``None``, compute the chain complex in all
@@ -2187,7 +2187,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
                     differentials[n] = self._complex[(n, subcomplex)].change_ring(base_ring)
                     mat = differentials[n]
                 if verbose:
-                    print("    boundary matrix (cached): it's %s by %s." % (mat.nrows(), mat.ncols()))
+                    print("    boundary matrix (cached): it's {} by {}.".format(mat.nrows(), mat.ncols()))
             else:
                 # 'current' is the list of faces in dimension n
                 #
@@ -2226,7 +2226,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
                     self._complex[(n, subcomplex)] = mat
                     differentials[n] = mat.change_ring(base_ring)
                 if verbose:
-                    print("    boundary matrix computed: it's %s by %s." % (mat.nrows(), mat.ncols()))
+                    print("    boundary matrix computed: it's {} by {}.".format(mat.nrows(), mat.ncols()))
         # now for the cochain complex, compute the last dimension by
         # hand, and don't cache it.
         if cochain:
@@ -2942,8 +2942,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         keep_left = self._facets[0]
         keep_right = other._facets[0]
         # construct the set of facets:
-        left = set(self._facets).difference(set([keep_left]))
-        right = set(other._facets).difference(set([keep_right]))
+        left = set(self._facets).difference({keep_left})
+        right = set(other._facets).difference({keep_right})
         facet_set = ([[rename_vertex(v, keep=list(keep_left))
                        for v in face] for face in left]
                      + [[rename_vertex(v, keep=list(keep_right), left=False)
@@ -3067,7 +3067,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             from sage.parallel.ncpus import ncpus as get_ncpus
             ncpus = get_ncpus()
 
-        facs = [x for x in self.face_iterator()]
+        facs = list(self.face_iterator())
         n = len(facs)
         facs_divided = [[] for i in range(ncpus)]
         for i in range(n):
@@ -3957,7 +3957,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
                 print(f"  looping through {len(faces)} facets")
             for f in faces:
                 f_set = f.set()
-                int_facets = set(a.set().intersection(f_set) for a in new_facets)
+                int_facets = {a.set().intersection(f_set) for a in new_facets}
                 intersection = SimplicialComplex(int_facets)
                 if not intersection._facets[0].is_empty():
                     if (len(intersection._facets) == 1 or
@@ -3970,7 +3970,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             for f in remove_these:
                 faces.remove(f)
         if verbose:
-            print("  now constructing a simplicial complex with %s vertices and %s facets" % (len(self.vertices()), len(new_facets)))
+            print("  now constructing a simplicial complex with {} vertices and {} facets".format(len(self.vertices()), len(new_facets)))
         L = SimplicialComplex(new_facets, maximality_check=False,
                               is_immutable=self._is_immutable)
         self.__enlarged[subcomplex] = L
@@ -4181,7 +4181,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         # simplicial complex, so convert the edges to frozensets so we
         # don't have to worry about it. Convert spanning_tree to a set
         # to make lookup faster.
-        spanning_tree = set(frozenset((u, v)) for u, v, _ in G.min_spanning_tree())
+        spanning_tree = {frozenset((u, v)) for u, v, _ in G.min_spanning_tree()}
         gens = [e for e in G.edge_iterator(labels=False)
                 if frozenset(e) not in spanning_tree]
         if not gens:
@@ -4192,7 +4192,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         rels = []
         for f in self._n_cells_sorted(2):
             bdry = [tuple(e) for e in f.faces()]
-            z = dict()
+            z = {}
             for i in range(3):
                 x = frozenset(bdry[i])
                 if x in spanning_tree:
@@ -5049,7 +5049,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: Y.is_golod()
             True
         """
-        H = list(a+b for (a, b) in self.bigraded_betti_numbers())
+        H = [a+b for (a, b) in self.bigraded_betti_numbers()]
         if 0 in H:
             H.remove(0)
 

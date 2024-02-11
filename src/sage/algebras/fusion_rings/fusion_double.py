@@ -175,12 +175,16 @@ class FusionDouble(CombinatorialFreeModule):
         self._names = {}
         self._elt = {}
         self._chi = {}
+        self._unit_index = None  # index of the unit element
         count = ZZ.zero()
         for g in G.conjugacy_classes_representatives():
             for chi in G.centralizer(g).irreducible_characters():
+                # NOTE: the trivial char is not necessarily the first one
                 self._names[count] = "%s%s" % (prefix, count)
                 self._elt[count] = g
                 self._chi[count] = chi
+                if self._unit_index is None and all(v == 1 for v in chi):
+                    self._unit_index = count
                 count += ZZ.one()
         self._cyclotomic_order = G.exponent()
         self._basecoer = None
@@ -650,9 +654,9 @@ class FusionDouble(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: FusionDouble(CyclicPermutationGroup(2), prefix="h").one()
-            h0
+            h1
         """
-        return ZZ.zero()
+        return self._unit_index
 
     @cached_method
     def dual(self, i):

@@ -1529,10 +1529,10 @@ class GraphGenerators:
                     has_loops = True
             G = graph.Graph(edges_g, loops=has_loops)
 
-            if not(G.has_multiple_edges() or has_loops):
+            if not (G.has_multiple_edges() or has_loops):
                 embed_g = {i + 1: di for i, di in enumerate(g)}
                 G.set_embedding(embed_g)
-            yield(G)
+            yield G
 
     def fullerenes(self, order, ipr=False):
         r"""
@@ -1710,7 +1710,7 @@ class GraphGenerators:
             g = {1: [6, 2], 2: [1, 3], 3: [2, 4], 4: [3, 5], 5: [4, 6], 6: [5, 1]}
             G = graph.Graph(g)
             G.set_embedding(g)
-            yield(G)
+            yield G
             return
 
         from sage.features.graph_generators import Benzene
@@ -1728,7 +1728,7 @@ class GraphGenerators:
         sp.stdout.reconfigure(newline='')
 
         for G in graphs._read_planar_code(sp.stdout):
-            yield(G)
+            yield G
 
     def plantri_gen(self, options=""):
         r"""
@@ -2144,7 +2144,7 @@ class GraphGenerators:
             if minimum_degree == 0:
                 G = graph.Graph(1)
                 G.set_embedding({0: []})
-                yield(G)
+                yield G
             return
 
         cmd = '-p{}m{}c{}{}{} {} {} {}'

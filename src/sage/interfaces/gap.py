@@ -206,7 +206,6 @@ import sage.interfaces.abc
 
 import re
 import os
-import io
 import pexpect
 import time
 import platform
@@ -221,7 +220,7 @@ if SAGE_GAP_COMMAND is None:
     # Passing -A allows us to use a minimal GAP installation without
     # producing errors at start-up. The files sage.g and sage.gaprc are
     # used to load any additional packages that may be available.
-    gap_cmd  = f'gap -A -l "{GAP_ROOT_PATHS}"'
+    gap_cmd = f'gap -A -l "{GAP_ROOT_PATHS}"'
     if SAGE_GAP_MEMORY is not None:
         gap_cmd += " -s " + SAGE_GAP_MEMORY + " -o " + SAGE_GAP_MEMORY
 else:
@@ -591,7 +590,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
         except pexpect.EOF:
             if not expect_eof:
                 raise RuntimeError("Unexpected EOF from %s executing %s" % (self, line))
-        except IOError:
+        except OSError:
             raise RuntimeError("IO Error from %s executing %s" % (self, line))
         return (b"".join(normal_outputs), b"".join(error_outputs))
 
@@ -1320,8 +1319,8 @@ class Gap(Gap_generic):
             sline = int(sline) - 1
             if self.is_remote():
                 self._get_tmpfile()
-            with io.open(self._local_tmpfile(), "r",
-                         encoding=gap_encoding) as fobj:
+            with open(self._local_tmpfile(), "r",
+                      encoding=gap_encoding) as fobj:
                 help = fobj.read()
             if pager:
                 from IPython.core.page import page
@@ -1491,17 +1490,11 @@ def gap_reset_workspace(max_workspace_size=None, verbose=False):
     default when Sage first starts GAP.
 
     The first time you start GAP from Sage, it saves the startup state
-    of GAP in a file ``$HOME/.sage/gap/workspace-gap-HASH``, where ``HASH``
-    is a hash of the directory where Sage is installed.
-
-    This is useful, since then subsequent startup of GAP is at least 10
-    times as fast. Unfortunately, if you install any new code for GAP,
-    it won't be noticed unless you explicitly load it, e.g., with
-    gap.load_package("my_package")
-
-    The packages sonata, guava, factint, gapdoc, grape, design, toric,
-    and laguna are loaded in all cases before the workspace is saved,
-    if they are available.
+    of GAP in a file ``$HOME/.sage/gap/workspace-gap-HASH``, where
+    ``HASH`` is a hash of the directory where Sage is installed. This
+    is useful because the subsequent startup of GAP is at least ten
+    times as fast. But if you update GAP or any of its packages, those
+    changes won't take effect until the workspace is reset.
 
     TESTS:
 
@@ -1527,19 +1520,9 @@ def gap_reset_workspace(max_workspace_size=None, verbose=False):
         sage: sage.interfaces.gap.WORKSPACE = ORIGINAL_WORKSPACE
         sage: sage.interfaces.gap.first_try = saved_first_try
     """
-    # Create new workspace with filename WORKSPACE
+    # The use_workspace_cache=False causes a new workspace to
+    # be created, and we save it immediately thereafter.
     g = Gap(use_workspace_cache=False, max_workspace_size=None)
-    g.eval('ColorPrompt(false)')
-    g.eval('SetUserPreference("UseColorPrompt", false)')
-    g.eval('SetUserPreference("HistoryMaxLines", 30)')
-    from sage.tests.gap_packages import all_installed_packages
-    for pkg in all_installed_packages(gap=g):
-        try:
-            g.load_package(pkg, verbose=verbose)
-        except RuntimeError as msg:
-            if verbose:
-                print('*** %s' % msg)
-    # end for
     g.save_workspace()
     g.quit()
 

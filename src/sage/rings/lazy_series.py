@@ -257,6 +257,7 @@ from sage.data_structures.stream import (
     Stream_truncated,
     Stream_function,
     Stream_derivative,
+    Stream_integral,
     Stream_dirichlet_convolve,
     Stream_dirichlet_invert,
     Stream_plethysm
@@ -4533,6 +4534,172 @@ class LazyLaurentSeries(LazyCauchyProductSeries):
                                                    P.is_sparse())
         return P.element_class(P, coeff_stream)
 
+    def integral(self, variable=None, *, constants=None):
+        r"""
+        Return the integral of ``self`` with respect to ``variable``.
+
+        INPUT:
+
+        - ``variable`` -- (optional) the variable to integrate
+        - ``constants`` -- (optional; keyword-only) list of integration
+          constants for the integrals of ``self`` (the last constant
+          corresponds to the first integral)
+
+        If the first argument is a list, then this method iterprets it as
+        integration constants. If it is a positive integer, the method
+        interprets it as the number of times to integrate the function.
+        If ``variable`` is not the variable of the Laurent series, then
+        the coefficients are integrated with respect to ``variable``.
+
+        If the integration constants are not specified, they are considered
+        to be `0`.
+
+        EXAMPLES::
+
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: f = t^-3 + 2 + 3*t + t^5
+            sage: f.integral()
+            -1/2*t^-2 + 2*t + 3/2*t^2 + 1/6*t^6
+            sage: f.integral([-2, -2])
+            1/2*t^-1 - 2 - 2*t + t^2 + 1/2*t^3 + 1/42*t^7
+            sage: f.integral(t)
+            -1/2*t^-2 + 2*t + 3/2*t^2 + 1/6*t^6
+            sage: f.integral(2)
+            1/2*t^-1 + t^2 + 1/2*t^3 + 1/42*t^7
+            sage: L.zero().integral()
+            0
+            sage: L.zero().integral([0, 1, 2, 3])
+            t + t^2 + 1/2*t^3
+
+        We solve the ODE `f' = a f` by integrating both sides and
+        the recursive definition::
+
+            sage: R.<a, C> = QQ[]
+            sage: L.<x> = LazyLaurentSeriesRing(R)
+            sage: f = L.undefined(0)
+            sage: f.define((a*f).integral(constants=[C]))
+            sage: f
+            C + a*C*x + 1/2*a^2*C*x^2 + 1/6*a^3*C*x^3 + 1/24*a^4*C*x^4
+             + 1/120*a^5*C*x^5 + 1/720*a^6*C*x^6 + O(x^7)
+            sage: C * exp(a*x)
+            C + a*C*x + 1/2*a^2*C*x^2 + 1/6*a^3*C*x^3 + 1/24*a^4*C*x^4
+             + 1/120*a^5*C*x^5 + 1/720*a^6*C*x^6 + O(x^7)
+
+        We can integrate both the series and coefficients::
+
+            sage: R.<x,y,z> = QQ[]
+            sage: L.<t> = LazyLaurentSeriesRing(R)
+            sage: f = (x*t^2 + y*t^-2 + z)^2; f
+            y^2*t^-4 + 2*y*z*t^-2 + (2*x*y + z^2) + 2*x*z*t^2 + x^2*t^4
+            sage: f.integral(x)
+            x*y^2*t^-4 + 2*x*y*z*t^-2 + (x^2*y + x*z^2) + x^2*z*t^2 + 1/3*x^3*t^4
+            sage: f.integral(t)
+            -1/3*y^2*t^-3 - 2*y*z*t^-1 + (2*x*y + z^2)*t + 2/3*x*z*t^3 + 1/5*x^2*t^5
+            sage: f.integral(y, constants=[x*y*z])
+            -1/9*y^3*t^-3 - y^2*z*t^-1 + x*y*z + (x*y^2 + y*z^2)*t + 2/3*x*y*z*t^3 + 1/5*x^2*y*t^5
+
+        TESTS::
+
+            sage: L.<t> = LazyLaurentSeriesRing(QQ)
+            sage: f = t^-2
+            sage: f.integral(t, constants=[0, 0, 0])
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot integrate 3 times the series t^-2
+            sage: f = t^-5 + t^-2
+            sage: f.integral(3)
+            Traceback (most recent call last):
+            ...
+            ValueError: cannot integrate 3 times the series t^-5 + t^-2
+            sage: f.integral([0, 1], constants=[0, 1])
+            Traceback (most recent call last):
+            ...
+            ValueError: integration constants given twice
+            sage: f.integral(4, constants=[0, 1])
+            Traceback (most recent call last):
+            ...
+            ValueError: the number of integrations does not match the number of integration constants
+        """
+        P = self.parent()
+        zero = P.base_ring().zero()
+        if variable is None:
+            if constants is None:
+                constants = [zero]
+        elif variable != P.gen():
+            if isinstance(variable, (list, tuple)):
+                if constants is not None:
+                    raise ValueError("integration constants given twice")
+                constants = tuple(variable)
+                variable = None
+            elif variable in ZZ and ZZ(variable) >= 0:
+                if constants is None:
+                    constants = [zero] * ZZ(variable)
+                elif ZZ(variable) != len(constants):
+                    raise ValueError("the number of integrations does not match"
+                                     " the number of integration constants")
+                variable = None
+            if constants is None:
+                constants = []
+        else:
+            if constants is None:
+                constants = [zero]
+            variable = None
+
+        nints = len(constants)
+
+        coeff_stream = self._coeff_stream
+        if isinstance(coeff_stream, Stream_zero):
+            if any(constants):
+                coeff_stream = Stream_exact([c / ZZ.prod(k for k in range(1, i+1))
+                                             for i, c in enumerate(constants)],
+                                            order=0,
+                                            constant=zero)
+                return P.element_class(P, coeff_stream)
+            return self
+
+        if (isinstance(coeff_stream, Stream_exact) and not coeff_stream._constant):
+            coeffs = [c / ZZ.prod(k for k in range(1, i+1))
+                      for i, c in enumerate(constants)]
+            if coeff_stream._approximate_order < 0:
+                ic = coeff_stream._initial_coefficients
+                ao = coeff_stream._approximate_order
+                if nints > -ao or any(ic[-ao-nints:-ao]):
+                    raise ValueError(f"cannot integrate {nints} times the series {self}")
+                if variable is not None:
+                    coeffs = [c.integral(variable) / ZZ.prod(i+k for k in range(1, nints+1))
+                              for i, c in enumerate(ic[:-ao-nints], ao)] + coeffs
+                else:
+                    coeffs = [c / ZZ.prod(i+k for k in range(1, nints+1))
+                              for i, c in enumerate(ic[:-ao-nints], ao)] + coeffs
+
+                ic = ic[-ao:]
+                val = ao + nints
+                ao = 0
+            else:
+                coeffs += [zero] * coeff_stream._approximate_order
+                ic = coeff_stream._initial_coefficients
+                val = 0
+                ao = coeff_stream._approximate_order
+            if variable:
+                coeffs += [c.integral(variable) / ZZ.prod(i+k for k in range(1, nints+1))
+                           for i, c in enumerate(ic, ao)]
+            else:
+                coeffs += [c / ZZ.prod(i+k for k in range(1, nints+1))
+                           for i, c in enumerate(ic, ao)]
+            if not any(coeffs):
+                return P.zero()
+            coeff_stream = Stream_exact(coeffs, order=val, constant=zero)
+            return P.element_class(P, coeff_stream)
+
+        if nints:
+            coeff_stream = Stream_integral(coeff_stream, constants, P.is_sparse())
+
+        if variable is not None:
+            coeff_stream = Stream_map_coefficients(coeff_stream,
+                                                   lambda c: c.integral(variable),
+                                                   P.is_sparse())
+        return P.element_class(P, coeff_stream)
+
     def approximate_series(self, prec, name=None):
         r"""
         Return the Laurent series with absolute precision ``prec`` approximated
@@ -5301,14 +5468,18 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: T.<z> = LazyPowerSeriesRing(ZZ)
             sage: z.derivative()
             1
-            sage: (1+z+z^2).derivative(3)
+            sage: (1 + z + z^2).derivative(3)
             0
-            sage: (1/(1-z)).derivative()
+            sage: (z^2 + z^4 + z^10).derivative(3)
+            24*z + 720*z^7
+            sage: (1 / (1-z)).derivative()
             1 + 2*z + 3*z^2 + 4*z^3 + 5*z^4 + 6*z^5 + 7*z^6 + O(z^7)
+            sage: T([1, 1, 1], constant=4).derivative()
+            1 + 2*z + 12*z^2 + 16*z^3 + 20*z^4 + 24*z^5 + 28*z^6 + O(z^7)
 
             sage: R.<q> = QQ[]
             sage: L.<x, y> = LazyPowerSeriesRing(R)
-            sage: f = 1/(1-q*x+y); f
+            sage: f = 1 / (1-q*x+y); f
             1 + (q*x-y) + (q^2*x^2+(-2*q)*x*y+y^2)
              + (q^3*x^3+(-3*q^2)*x^2*y+3*q*x*y^2-y^3)
              + (q^4*x^4+(-4*q^3)*x^3*y+6*q^2*x^2*y^2+(-4*q)*x*y^3+y^4)
@@ -5321,6 +5492,53 @@ class LazyPowerSeries(LazyCauchyProductSeries):
              + (5*q^4*x^5+(-20*q^3)*x^4*y+30*q^2*x^3*y^2+(-20*q)*x^2*y^3+5*x*y^4)
              + (6*q^5*x^6+(-30*q^4)*x^5*y+60*q^3*x^4*y^2+(-60*q^2)*x^3*y^3+30*q*x^2*y^4+(-6)*x*y^5)
              + O(x,y)^7
+
+        Multivariate::
+
+            sage: L.<x,y,z> = LazyPowerSeriesRing(QQ)
+            sage: f = (x + y^2 + z)^3; f
+            (x^3+3*x^2*z+3*x*z^2+z^3) + (3*x^2*y^2+6*x*y^2*z+3*y^2*z^2) + (3*x*y^4+3*y^4*z) + y^6
+            sage: f.derivative(x)
+            (3*x^2+6*x*z+3*z^2) + (6*x*y^2+6*y^2*z) + 3*y^4
+            sage: f.derivative(y, 5)
+            720*y
+            sage: f.derivative(z, 5)
+            0
+            sage: f.derivative(x, y, z)
+            12*y
+
+            sage: f = (1 + x + y^2 + z)^-1
+            sage: f.derivative(x)
+            -1 + (2*x+2*z) + (-3*x^2+2*y^2-6*x*z-3*z^2) + ... + O(x,y,z)^6
+            sage: f.derivative(y, 2)
+            -2 + (4*x+4*z) + (-6*x^2+12*y^2-12*x*z-6*z^2) + ... + O(x,y,z)^5
+            sage: f.derivative(x, y)
+            4*y + (-12*x*y-12*y*z) + (24*x^2*y-12*y^3+48*x*y*z+24*y*z^2)
+             + (-40*x^3*y+48*x*y^3-120*x^2*y*z+48*y^3*z-120*x*y*z^2-40*y*z^3) + O(x,y,z)^5
+            sage: f.derivative(x, y, z)
+            (-12*y) + (48*x*y+48*y*z) + (-120*x^2*y+48*y^3-240*x*y*z-120*y*z^2) + O(x,y,z)^4
+
+            sage: R.<t> = QQ[]
+            sage: L.<x,y,z> = LazyPowerSeriesRing(R)
+            sage: f = ((t^2-3)*x + t*y^2 - t*z)^2
+            sage: f.derivative(t,x,t,y)
+            24*t*y
+            sage: f.derivative(t, 2)
+            ((12*t^2-12)*x^2+(-12*t)*x*z+2*z^2) + (12*t*x*y^2+(-4)*y^2*z) + 2*y^4
+            sage: f.derivative(z, t)
+            ((-6*t^2+6)*x+4*t*z) + ((-4*t)*y^2)
+            sage: f.derivative(t, 10)
+            0
+
+            sage: f = (1 + t*(x + y + z))^-1
+            sage: f.derivative(x, t, y)
+            4*t + ((-18*t^2)*x+(-18*t^2)*y+(-18*t^2)*z)
+             + (48*t^3*x^2+96*t^3*x*y+48*t^3*y^2+96*t^3*x*z+96*t^3*y*z+48*t^3*z^2)
+             + ... + O(x,y,z)^5
+            sage: f.derivative(t, 2)
+            (2*x^2+4*x*y+2*y^2+4*x*z+4*y*z+2*z^2) + ... + O(x,y,z)^7
+            sage: f.derivative(x, y, z, t)
+            (-18*t^2) + (96*t^3*x+96*t^3*y+96*t^3*z) + ... + O(x,y,z)^4
 
         TESTS:
 
@@ -5341,7 +5559,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             if x is None:
                 order += 1
             elif x in V:
-                gen_vars.append(x)
+                gen_vars.append(x._coeff_stream[1])
             else:
                 vars.append(x)
 
@@ -5357,6 +5575,16 @@ class LazyPowerSeries(LazyCauchyProductSeries):
         if P._arity > 1:
             v = gen_vars + vars
             d = -len(gen_vars)
+
+            if isinstance(coeff_stream, Stream_exact): # the constant should be 0
+                ao = coeff_stream._approximate_order
+                val = max(ao + d, 0)
+                coeffs = [R(c).derivative(v) for c in coeff_stream._initial_coefficients[val-(ao+d):]]
+                if any(coeffs):
+                    coeff_stream = Stream_exact(coeffs, order=val, constant=coeff_stream._constant)
+                    return P.element_class(P, coeff_stream)
+                return P.zero()
+
             coeff_stream = Stream_map_coefficients(coeff_stream,
                                                    lambda c: R(c).derivative(v),
                                                    P.is_sparse())
@@ -5387,6 +5615,248 @@ class LazyPowerSeries(LazyCauchyProductSeries):
         if vars:
             coeff_stream = Stream_map_coefficients(coeff_stream,
                                                    lambda c: c.derivative(vars),
+                                                   P.is_sparse())
+        return P.element_class(P, coeff_stream)
+
+    def integral(self, variable=None, *, constants=None):
+        r"""
+        Return the integral of ``self`` with respect to ``variable``.
+
+        INPUT:
+
+        - ``variable`` -- (optional) the variable to integrate
+        - ``constants`` -- (optional; keyword-only) list of integration
+          constants for the integrals of ``self`` (the last constant
+          corresponds to the first integral)
+
+        For multivariable series, only ``variable`` should be
+        specified; the integration constant is taken to be `0`.
+
+        Now we assume the series is univariate. If the first argument is a
+        list, then this method iterprets it as integration constants. If it
+        is a positive integer, the method interprets it as the number of times
+        to integrate the function. If ``variable`` is not the variable of
+        the power series, then the coefficients are integrated with respect
+        to ``variable``. If the integration constants are not specified,
+        they are considered to be `0`.
+
+        EXAMPLES::
+
+            sage: L.<t> = LazyPowerSeriesRing(QQ)
+            sage: f = 2 + 3*t + t^5
+            sage: f.integral()
+            2*t + 3/2*t^2 + 1/6*t^6
+            sage: f.integral([-2, -2])
+            -2 - 2*t + t^2 + 1/2*t^3 + 1/42*t^7
+            sage: f.integral(t)
+            2*t + 3/2*t^2 + 1/6*t^6
+            sage: f.integral(2)
+            t^2 + 1/2*t^3 + 1/42*t^7
+            sage: (t^3 + t^5).integral()
+            1/4*t^4 + 1/6*t^6
+            sage: L.zero().integral()
+            0
+            sage: L.zero().integral([0, 1, 2, 3])
+            t + t^2 + 1/2*t^3
+            sage: L([1, 2 ,3], constant=4).integral()
+            t + t^2 + t^3 + t^4 + 4/5*t^5 + 2/3*t^6 + O(t^7)
+
+        We solve the ODE `f'' - f' - 2 f = 0` by solving for `f''`, then
+        integrating and applying a recursive definition::
+
+            sage: R.<C, D> = QQ[]
+            sage: L.<x> = LazyPowerSeriesRing(R)
+            sage: f = L.undefined()
+            sage: f.define((f.derivative() + 2*f).integral(constants=[C, D]))
+            sage: f
+            C + D*x + ((C+1/2*D)*x^2) + ((1/3*C+1/2*D)*x^3)
+             + ((1/4*C+5/24*D)*x^4) + ((1/12*C+11/120*D)*x^5)
+             + ((11/360*C+7/240*D)*x^6) + O(x^7)
+            sage: f.derivative(2) - f.derivative() - 2*f
+            O(x^7)
+
+        We compare this with the answer we get from the
+        characteristic polynomial::
+
+            sage: g = C * exp(-x) + D * exp(2*x); g
+            (C+D) + ((-C+2*D)*x) + ((1/2*C+2*D)*x^2) + ((-1/6*C+4/3*D)*x^3)
+             + ((1/24*C+2/3*D)*x^4) + ((-1/120*C+4/15*D)*x^5)
+             + ((1/720*C+4/45*D)*x^6) + O(x^7)
+            sage: g.derivative(2) - g.derivative() - 2*g
+            O(x^7)
+
+        Note that ``C`` and ``D`` are playing different roles, so we need
+        to perform a substitution to the coefficients of ``f`` to recover
+        the solution ``g``::
+
+            sage: fp = f.map_coefficients(lambda c: c(C=C+D, D=2*D-C)); fp
+            (C+D) + ((-C+2*D)*x) + ((1/2*C+2*D)*x^2) + ((-1/6*C+4/3*D)*x^3)
+             + ((1/24*C+2/3*D)*x^4) + ((-1/120*C+4/15*D)*x^5)
+             + ((1/720*C+4/45*D)*x^6) + O(x^7)
+            sage: fp - g
+            O(x^7)
+
+        We can integrate both the series and coefficients::
+
+            sage: R.<x,y,z> = QQ[]
+            sage: L.<t> = LazyPowerSeriesRing(R)
+            sage: f = (x*t^2 + y*t + z)^2; f
+            z^2 + 2*y*z*t + ((y^2+2*x*z)*t^2) + 2*x*y*t^3 + x^2*t^4
+            sage: f.integral(x)
+            x*z^2 + 2*x*y*z*t + ((x*y^2+x^2*z)*t^2) + x^2*y*t^3 + 1/3*x^3*t^4
+            sage: f.integral(t)
+            z^2*t + y*z*t^2 + ((1/3*y^2+2/3*x*z)*t^3) + 1/2*x*y*t^4 + 1/5*x^2*t^5
+            sage: f.integral(y, constants=[x*y*z])
+            x*y*z + y*z^2*t + 1/2*y^2*z*t^2 + ((1/9*y^3+2/3*x*y*z)*t^3) + 1/4*x*y^2*t^4 + 1/5*x^2*y*t^5
+
+        We can integrate multivariate power series::
+
+            sage: R.<t> = QQ[]
+            sage: L.<x,y,z> = LazyPowerSeriesRing(R)
+            sage: f = ((t^2 + t) - t * y^2 + t^2 * (y + z))^2; f
+            (t^4+2*t^3+t^2) + ((2*t^4+2*t^3)*y+(2*t^4+2*t^3)*z)
+             + ((t^4-2*t^3-2*t^2)*y^2+2*t^4*y*z+t^4*z^2)
+             + ((-2*t^3)*y^3+(-2*t^3)*y^2*z) + t^2*y^4
+            sage: g = f.integral(x); g
+            ((t^4+2*t^3+t^2)*x) + ((2*t^4+2*t^3)*x*y+(2*t^4+2*t^3)*x*z)
+             + ((t^4-2*t^3-2*t^2)*x*y^2+2*t^4*x*y*z+t^4*x*z^2)
+             + ((-2*t^3)*x*y^3+(-2*t^3)*x*y^2*z) + t^2*x*y^4
+            sage: g[0]
+            0
+            sage: g[1]
+            (t^4 + 2*t^3 + t^2)*x
+            sage: g[2]
+            (2*t^4 + 2*t^3)*x*y + (2*t^4 + 2*t^3)*x*z
+            sage: f.integral(z)
+            ((t^4+2*t^3+t^2)*z) + ((2*t^4+2*t^3)*y*z+(t^4+t^3)*z^2)
+             + ((t^4-2*t^3-2*t^2)*y^2*z+t^4*y*z^2+1/3*t^4*z^3)
+             + ((-2*t^3)*y^3*z+(-t^3)*y^2*z^2) + t^2*y^4*z
+            sage: f.integral(t)
+            (1/5*t^5+1/2*t^4+1/3*t^3) + ((2/5*t^5+1/2*t^4)*y+(2/5*t^5+1/2*t^4)*z)
+             + ((1/5*t^5-1/2*t^4-2/3*t^3)*y^2+2/5*t^5*y*z+1/5*t^5*z^2)
+             + ((-1/2*t^4)*y^3+(-1/2*t^4)*y^2*z) + 1/3*t^3*y^4
+
+            sage: L.<x,y,z> = LazyPowerSeriesRing(QQ)
+            sage: (x + y - z^2).integral(z)
+            (x*z+y*z) + (-1/3*z^3)
+
+        TESTS::
+
+            sage: L.<t> = LazyPowerSeriesRing(QQ)
+            sage: f = t^2
+            sage: f.integral([0, 1], constants=[0, 1])
+            Traceback (most recent call last):
+            ...
+            ValueError: integration constants given twice
+            sage: f.integral(4, constants=[0, 1])
+            Traceback (most recent call last):
+            ...
+            ValueError: the number of integrations does not match the number of integration constants
+
+            sage: L.<x,y,z> = LazyPowerSeriesRing(QQ)
+            sage: x.integral(y, constants=[2])
+            Traceback (most recent call last):
+            ...
+            ValueError: integration constants must not be given for multivariate series
+            sage: x.integral()
+            Traceback (most recent call last):
+            ...
+            ValueError: the integration variable must be specified
+        """
+        P = self.parent()
+        coeff_stream = self._coeff_stream
+        R = P._laurent_poly_ring
+
+        if P._arity > 1:
+            if constants is not None:
+                raise ValueError("integration constants must not be given for multivariate series")
+            if variable is None:
+                raise ValueError("the integration variable must be specified")
+
+            if isinstance(coeff_stream, Stream_zero):
+                return self
+
+            if variable in P.gens():
+                variable = variable._coeff_stream[1]
+                shift = 1
+            else:
+                shift = 0
+
+            if isinstance(coeff_stream, Stream_exact): # constant is 0 because arity is at least 2
+                ao = coeff_stream._approximate_order
+                coeffs = [R(c).integral(variable) for c in coeff_stream._initial_coefficients]
+                coeff_stream = Stream_exact(coeffs, order=ao+shift, constant=coeff_stream._constant)
+                return P.element_class(P, coeff_stream)
+
+            coeff_stream = Stream_map_coefficients(coeff_stream,
+                                                   lambda c: c.integral(variable),
+                                                   P.is_sparse())
+            if shift:
+                coeff_stream = Stream_shift(coeff_stream, 1)
+            return P.element_class(P, coeff_stream)
+
+        # the univariate case
+
+        zero = P.base_ring().zero()
+        # This is copied from the LazyLaurentSeries.integral
+        if variable is None:
+            if constants is None:
+                constants = [zero]
+        elif variable != P.gen():
+            if isinstance(variable, (list, tuple)):
+                if constants is not None:
+                    raise ValueError("integration constants given twice")
+                constants = tuple(variable)
+                variable = None
+            elif variable in ZZ and ZZ(variable) >= 0:
+                if constants is None:
+                    constants = [zero] * ZZ(variable)
+                elif ZZ(variable) != len(constants):
+                    raise ValueError("the number of integrations does not match"
+                                     " the number of integration constants")
+                variable = None
+            if constants is None:
+                constants = []
+        else:
+            if constants is None:
+                constants = [zero]
+            variable = None
+
+        nints = len(constants)
+
+        if isinstance(coeff_stream, Stream_zero):
+            if any(constants):
+                coeff_stream = Stream_exact([c / ZZ.prod(k for k in range(1, i+1))
+                                             for i, c in enumerate(constants)],
+                                            order=0,
+                                            constant=zero)
+                return P.element_class(P, coeff_stream)
+
+            return self
+
+        if (isinstance(coeff_stream, Stream_exact) and not coeff_stream._constant):
+            coeffs = [c / ZZ.prod(k for k in range(1, i+1))
+                      for i, c in enumerate(constants)]
+            coeffs += [zero] * coeff_stream._approximate_order
+            ic = coeff_stream._initial_coefficients
+            ao = coeff_stream._approximate_order
+            if variable:
+                coeffs += [c.integral(variable) / ZZ.prod(i+k for k in range(1, nints+1))
+                           for i, c in enumerate(ic, ao)]
+            else:
+                coeffs += [c / ZZ.prod(i+k for k in range(1, nints+1))
+                           for i, c in enumerate(ic, ao)]
+            if not any(coeffs):
+                return P.zero()
+            coeff_stream = Stream_exact(coeffs, order=0, constant=zero)
+            return P.element_class(P, coeff_stream)
+
+        if nints:
+            coeff_stream = Stream_integral(coeff_stream, constants, P.is_sparse())
+
+        if variable is not None:
+            coeff_stream = Stream_map_coefficients(coeff_stream,
+                                                   lambda c: c.integral(variable),
                                                    P.is_sparse())
         return P.element_class(P, coeff_stream)
 

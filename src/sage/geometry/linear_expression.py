@@ -761,7 +761,7 @@ class LinearExpressionModule(Parent, UniqueRepresentation):
             sage: from sage.geometry.linear_expression import LinearExpressionModule
             sage: L.<x> = LinearExpressionModule(QQ);  L
             Module of linear expressions in variable x over Rational Field
-       """
+        """
         return 'Module of linear expressions in variable{2} {0} over {1}'.format(
             ', '.join(self._names), self.base_ring(), 's' if self.ngens() > 1 else '')
 

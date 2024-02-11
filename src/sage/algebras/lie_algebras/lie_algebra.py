@@ -30,7 +30,6 @@ from sage.categories.homset import Hom
 from sage.algebras.lie_algebras.lie_algebra_element import (LieAlgebraElementWrapper,
                                                             LieAlgebraMatrixWrapper)
 from sage.rings.integer_ring import ZZ
-from sage.rings.ring import Ring
 from sage.matrix.matrix_space import MatrixSpace
 from sage.sets.family import Family, AbstractFamily
 
@@ -419,7 +418,7 @@ class LieAlgebra(Parent, UniqueRepresentation):  # IndexedGenerators):
             raise ValueError("invalid arguments")
 
         def check_assoc(A):
-            return (isinstance(A, (Ring, MatrixSpace))
+            return (isinstance(A, MatrixSpace)
                     or A in Rings()
                     or A in Algebras(R).Associative())
         if arg0 in ZZ or check_assoc(arg1):

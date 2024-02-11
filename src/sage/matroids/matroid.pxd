@@ -175,6 +175,8 @@ cdef class Matroid(SageObject):
     cpdef _is_3connected_CE(self, certificate=*) noexcept
     cpdef _is_3connected_BC(self, certificate=*) noexcept
     cpdef _is_3connected_BC_recursion(self, basis, fund_cocircuits) noexcept
+    cpdef is_paving(self) noexcept
+    cpdef is_sparse_paving(self) noexcept
 
     # representability
     cpdef _local_binary_matroid(self, basis=*) noexcept
@@ -213,6 +215,7 @@ cdef class Matroid(SageObject):
     cpdef flat_cover(self, solver=*, verbose=*, integrality_tolerance=*) noexcept
 
     # misc
+    cpdef automorphism_group(self) noexcept
     cpdef bergman_complex(self) noexcept
     cpdef augmented_bergman_complex(self) noexcept
 

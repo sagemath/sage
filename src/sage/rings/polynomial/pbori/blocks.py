@@ -57,10 +57,7 @@ class AlternatingBlock():
 
         if reverse:
             indices = reversed(indices)
-        names = []
-        for i in indices:
-            for n in var_names:
-                names.append(n + "(" + str(i) + ")")
+        names = [f"{n}({str(i)})" for i in indices for n in var_names]
         self.indices = indices
         self.index2pos = {v: k for k, v in enumerate(indices)}
         self.names = names

@@ -17,12 +17,12 @@ AUTHORS:
 - Volker Braun (October 2010): Bugfixes, exterior and symmetric power.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2008 Franco Saliola <saliola@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp, richcmp_method
@@ -66,24 +66,26 @@ def ClassFunction(group, values):
         sage: chi = ClassFunction(G, values); chi
         Character of Cyclic group of order 4 as a permutation group
     """
+    from sage.misc.superseded import deprecation
     try:
         return group.class_function(values)
     except AttributeError:
         pass
 
-    if isinstance(values, LibGapElement):
+    if isinstance(values, (LibGapElement, tuple, list)):
         return ClassFunction_libgap(group, values)
 
+    # deprecation(36889, "please use libgap class functions instead")
     return ClassFunction_gap(group, values)
 
 
 #####################################################################
-###
-### GAP Interface-based Class Function
-###
-### This is old code that should be deleted once we have transitioned
-### everything to using the library interface to GAP.
-###
+#
+#   GAP Interface-based Class Function
+#
+#   This is old code that should be deleted once we have transitioned
+#   everything to using the library interface to GAP.
+#
 #####################################################################
 
 @richcmp_method
@@ -130,13 +132,13 @@ class ClassFunction_gap(SageObject):
 
     def _gap_init_(self):
         r"""
-        Returns a string showing how to declare / initialize self in Gap.
+        Return a string showing how to declare / initialize self in Gap.
         Stored in the \code{self._gap_string} attribute.
 
         EXAMPLES::
 
             sage: G = CyclicPermutationGroup(4)
-            sage: values  = [1, -1, 1, -1]
+            sage: values  = gap([1, -1, 1, -1])
             sage: ClassFunction(G, values)._gap_init_()
             'ClassFunction( CharacterTable( Group( [ (1,2,3,4) ] ) ), [ 1, -1, 1, -1 ] )'
         """
@@ -149,7 +151,7 @@ class ClassFunction_gap(SageObject):
         EXAMPLES::
 
             sage: G = CyclicPermutationGroup(4)
-            sage: values  = [1, -1, 1, -1]
+            sage: values  = gap([1, -1, 1, -1])
             sage: chi = ClassFunction(G, values);  chi
             Character of Cyclic group of order 4 as a permutation group
             sage: type(_)
@@ -173,7 +175,7 @@ class ClassFunction_gap(SageObject):
 
             sage: G = SymmetricGroup(4)
             sage: values  = [1, -1, 1, 1, -1]
-            sage: ClassFunction(G, values)
+            sage: ClassFunction(G, gap(values))
             Character of Symmetric group of order 4! as a permutation group
         """
         return "Character of %s" % repr(self._group)
@@ -185,7 +187,7 @@ class ClassFunction_gap(SageObject):
 
         EXAMPLES::
 
-            sage: xi = ClassFunction(SymmetricGroup(4), [1, -1, 1, 1, -1])
+            sage: xi = ClassFunction(SymmetricGroup(4), gap([1, -1, 1, 1, -1]))
             sage: list(xi)
             [1, -1, 1, 1, -1]
         """
@@ -239,7 +241,7 @@ class ClassFunction_gap(SageObject):
         EXAMPLES::
 
             sage: G = PermutationGroup([[(1,2,3),(4,5)],[(3,4)]])
-            sage: chi = ClassFunction(G, [1, 1, 1, 1, 1, 1, 1])
+            sage: chi = ClassFunction(G, gap([1, 1, 1, 1, 1, 1, 1]))
             sage: type(chi)
             <class 'sage.groups.class_function.ClassFunction_gap'>
             sage: loads(dumps(chi)) == chi
@@ -249,7 +251,7 @@ class ClassFunction_gap(SageObject):
 
     def domain(self):
         r"""
-        Returns the domain of the self.
+        Return the domain of the ``self``.
 
         OUTPUT:
 
@@ -294,7 +296,7 @@ class ClassFunction_gap(SageObject):
 
     def __add__(self, other):
         r"""
-        Returns the sum of the characters self and other.
+        Return the sum of the characters self and other.
 
         INPUT:
 
@@ -307,7 +309,7 @@ class ClassFunction_gap(SageObject):
 
         EXAMPLES::
 
-            sage: chi = ClassFunction(SymmetricGroup(4), [3, 1, -1, 0, -1])
+            sage: chi = ClassFunction(SymmetricGroup(4), gap([3, 1, -1, 0, -1]))
             sage: s = chi+chi
             sage: s
             Character of Symmetric group of order 4! as a permutation group
@@ -321,7 +323,7 @@ class ClassFunction_gap(SageObject):
 
     def __sub__(self, other):
         r"""
-        Returns the difference of the characters ``self`` and ``other``.
+        Return the difference of the characters ``self`` and ``other``.
 
         INPUT:
 
@@ -366,7 +368,7 @@ class ClassFunction_gap(SageObject):
         EXAMPLES::
 
             sage: G = SymmetricGroup(4)
-            sage: chi1 = ClassFunction(G, [3, 1, -1, 0, -1])
+            sage: chi1 = ClassFunction(G, gap([3, 1, -1, 0, -1]))
             sage: 3*chi1
             Character of Symmetric group of order 4! as a permutation group
             sage: 3*chi1 == chi1+chi1+chi1
@@ -384,7 +386,7 @@ class ClassFunction_gap(SageObject):
             sage: (zeta3 * chi1).values()
             [3*zeta3, zeta3, -zeta3, 0, -zeta3]
 
-            sage: chi2 = ClassFunction(G, [1, -1, 1, 1, -1])
+            sage: chi2 = ClassFunction(G, gap([1, -1, 1, 1, -1]))
             sage: p = chi1*chi2
             sage: p
             Character of Symmetric group of order 4! as a permutation group
@@ -456,7 +458,7 @@ class ClassFunction_gap(SageObject):
 
     def __pow__(self, other):
         r"""
-        Returns the product of self with itself other times.
+        Return the product of self with itself other times.
 
         EXAMPLES::
 
@@ -467,13 +469,13 @@ class ClassFunction_gap(SageObject):
             sage: p.values()
             [27, 1, -1, 0, -1]
         """
-        if not isinstance(other, (int,Integer)):
+        if not isinstance(other, (int, Integer)):
             raise NotImplementedError
         return ClassFunction(self._group, self._gap_classfunction ** other)
 
     def symmetric_power(self, n):
         r"""
-        Returns the symmetrized product of self with itself ``n`` times.
+        Return the symmetrized product of self with itself ``n`` times.
 
         INPUT:
 
@@ -486,7 +488,7 @@ class ClassFunction_gap(SageObject):
 
         EXAMPLES::
 
-            sage: chi = ClassFunction(SymmetricGroup(4), [3, 1, -1, 0, -1])
+            sage: chi = ClassFunction(SymmetricGroup(4), gap([3, 1, -1, 0, -1]))
             sage: p = chi.symmetric_power(3)
             sage: p
             Character of Symmetric group of order 4! as a permutation group
@@ -495,11 +497,11 @@ class ClassFunction_gap(SageObject):
         """
         n = Integer(n)
         tbl = gap.UnderlyingCharacterTable(self)
-        return ClassFunction(self._group, gap.SymmetricParts(tbl,[self],n)[1])
+        return ClassFunction(self._group, gap.SymmetricParts(tbl, [self], n)[1])
 
     def exterior_power(self, n):
         r"""
-        Returns the anti-symmetrized product of self with itself ``n`` times.
+        Return the anti-symmetrized product of self with itself ``n`` times.
 
         INPUT:
 
@@ -512,7 +514,7 @@ class ClassFunction_gap(SageObject):
 
         EXAMPLES::
 
-            sage: chi = ClassFunction(SymmetricGroup(4), [3, 1, -1, 0, -1])
+            sage: chi = ClassFunction(SymmetricGroup(4), gap([3, 1, -1, 0, -1]))
             sage: p = chi.exterior_power(3)   # the highest anti-symmetric power for a 3-d character
             sage: p
             Character of Symmetric group of order 4! as a permutation group
@@ -523,11 +525,11 @@ class ClassFunction_gap(SageObject):
         """
         n = Integer(n)
         tbl = gap.UnderlyingCharacterTable(self)
-        return ClassFunction(self._group, gap.AntiSymmetricParts(tbl,[self],n)[1])
+        return ClassFunction(self._group, gap.AntiSymmetricParts(tbl, [self], n)[1])
 
     def scalar_product(self, other):
         r"""
-        Returns the scalar product of self with other.
+        Return the scalar product of self with other.
 
         EXAMPLES::
 
@@ -544,7 +546,7 @@ class ClassFunction_gap(SageObject):
 
     def is_irreducible(self):
         r"""
-        Returns True if self cannot be written as the sum of two nonzero
+        Return True if self cannot be written as the sum of two nonzero
         characters of self.
 
         EXAMPLES::
@@ -558,7 +560,7 @@ class ClassFunction_gap(SageObject):
 
     def degree(self):
         r"""
-        Returns the degree of the character self.
+        Return the degree of the character self.
 
         EXAMPLES::
 
@@ -571,7 +573,7 @@ class ClassFunction_gap(SageObject):
 
     def irreducible_constituents(self):
         r"""
-        Returns a list of the characters that appear in the decomposition
+        Return a list of the characters that appear in the decomposition
         of chi.
 
         EXAMPLES::
@@ -694,7 +696,7 @@ class ClassFunction_gap(SageObject):
             sage: chi1.tensor_product(chi3).values()
             [1, -1, 1]
         """
-        return ClassFunction(self._group, gap.Tensored([self],[other])[1])
+        return ClassFunction(self._group, gap.Tensored([self], [other])[1])
 
     def restrict(self, H):
         r"""
@@ -791,9 +793,9 @@ class ClassFunction_gap(SageObject):
 
 
 #####################################################################
-###
-### Class function using the GAP library
-###
+#
+#   Class function using the GAP library
+#
 #####################################################################
 
 
@@ -834,12 +836,11 @@ class ClassFunction_libgap(SageObject):
         if isinstance(values, LibGapElement) and values.IsClassFunction():
             self._gap_classfunction = values
         else:
-            self._gap_classfunction = libgap.ClassFunction(G._libgap_(),
-                                                           list(values))
+            self._gap_classfunction = libgap.ClassFunction(G, list(values))
         e = self._gap_classfunction.Conductor().sage()
         self._base_ring = CyclotomicField(e)
 
-    def gap(self):
+    def _libgap_(self):
         r"""
         Return the underlying LibGAP element.
 
@@ -850,15 +851,15 @@ class ClassFunction_libgap(SageObject):
             sage: chi = ClassFunction(G, values);  chi
             Character of Cyclic group of order 4 as a permutation group
             sage: type(chi)
-            <class 'sage.groups.class_function.ClassFunction_gap'>
-            sage: gap(chi)
-            ClassFunction( CharacterTable( Group( [ (1,2,3,4) ] ) ), [ 1, -1, 1, -1 ] )
+            <class 'sage.groups.class_function.ClassFunction_libgap'>
+            sage: libgap(chi)
+            ClassFunction( CharacterTable( Group([ (1,2,3,4) ]) ), [ 1, -1, 1, -1 ] )
             sage: type(_)
-            <class 'sage.interfaces.gap.GapElement'>
+            <class 'sage.libs.gap.element.GapElement_List'>
         """
         return self._gap_classfunction
 
-    _libgap_ = _gap_ = gap
+    gap = _gap_ = _libgap_
 
     def _repr_(self):
         r"""
@@ -876,6 +877,16 @@ class ClassFunction_libgap(SageObject):
             Character of Symmetric group of order 4! as a permutation group
         """
         return "Character of %s" % repr(self._group)
+
+    def __hash__(self):
+        r"""
+        TESTS::
+
+            sage: G = SymmetricGroup(5)
+            sage: chi1 = ClassFunction(G,[1,1,1,1,1,1,1])
+            sage: d = {chi1:'trivial'}
+        """
+        return hash((self._group, tuple(self)))
 
     def __iter__(self):
         r"""
@@ -1162,7 +1173,7 @@ class ClassFunction_libgap(SageObject):
             sage: p.values()
             [27, 1, -1, 0, -1]
         """
-        if not isinstance(other, (int,Integer)):
+        if not isinstance(other, (int, Integer)):
             raise NotImplementedError
         return ClassFunction(self._group, self._gap_classfunction ** other)
 
@@ -1189,8 +1200,8 @@ class ClassFunction_libgap(SageObject):
             [10, 2, -2, 1, 0]
         """
         n = Integer(n)
-        tbl = self._gap_classfunction.UnderlyingCharacterTable(self)
-        return ClassFunction(self._group, tbl.SymmetricParts([self],n)[1])
+        tbl = self._gap_classfunction.UnderlyingCharacterTable()
+        return ClassFunction(self._group, tbl.SymmetricParts([self], n)[0])
 
     def exterior_power(self, n):
         r"""
@@ -1217,8 +1228,8 @@ class ClassFunction_libgap(SageObject):
             True
         """
         n = Integer(n)
-        tbl = self._gap_classfunction.UnderlyingCharacterTable(self)
-        return ClassFunction(self._group, tbl.AntiSymmetricParts([self],n)[1])
+        tbl = self._gap_classfunction.UnderlyingCharacterTable()
+        return ClassFunction(self._group, tbl.AntiSymmetricParts([self], n)[0])
 
     def scalar_product(self, other):
         r"""

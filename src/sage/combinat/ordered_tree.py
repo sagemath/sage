@@ -933,7 +933,7 @@ class OrderedTrees_all(DisjointUnionEnumeratedSets, OrderedTrees):
             sage: B is OrderedTrees_all()
             True
             sage: TestSuite(B).run() # long time
-            """
+        """
         DisjointUnionEnumeratedSets.__init__(
             self, Family(NonNegativeIntegers(), OrderedTrees_size),
             facade=True, keepkey=False)

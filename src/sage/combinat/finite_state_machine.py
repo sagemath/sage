@@ -5564,7 +5564,7 @@ class FiniteStateMachine(SageObject):
             Transition from 'A' to 'B': 0|-
             sage: id(t) == id(F.transition(('A', 'B', 0)))
             True
-       """
+        """
         if not is_FSMTransition(transition):
             transition = FSMTransition(*transition)
         for s in self.iter_transitions(transition.from_state):
@@ -13662,7 +13662,7 @@ class _FSMTapeCache_(SageObject):
             False
             sage: TC2._transition_possible_test_([(None, None)])
             False
-            """
+        """
         if self._transition_possible_epsilon_(word_in):
             return False
         word_in_transposed = wordoftuples_to_tupleofwords(word_in)
@@ -15170,7 +15170,7 @@ class _FSMProcessIteratorAll_(FSMProcessIterator):
             sage: T.determine_alphabets()
             sage: list(T.language(2))  # indirect doctest
             [[], ['a'], ['a', 'b']]
-       """
+        """
         max_length = kwargs.get('max_length')
         if max_length is None:
             kwargs['input_tape'] = itertools.count()

@@ -1175,12 +1175,13 @@ class Polyhedron_base(Polyhedron_base7):
 
         Floating-point polyhedron::
 
-            sage: P = polytopes.dodecahedron(exact=False); P                            # needs sage.groups
+            sage: # optional - jupymake, needs sage.groups
+            sage: P = polytopes.dodecahedron(exact=False); P
             A 3-dimensional polyhedron in RDF^3 defined as the convex hull of 20 vertices
-            sage: print("Maybe recompile warning"); PP = polymake(P); PP        # optional - jupymake, needs sage.groups
+            sage: print("There may be a recompilation warning"); PP = polymake(P); PP
             There may be a recompilation warning...
             Polytope<Float>[...]
-            sage: sorted(PP.VERTICES[:], key=repr)[0]                           # optional - jupymake, needs sage.groups
+            sage: sorted(PP.VERTICES[:], key=repr)[0]
             1 -0.472135955 0 -1.236067978
 
         """

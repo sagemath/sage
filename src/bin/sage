@@ -1019,10 +1019,10 @@ if [ "$1" = '-pytest' -o "$1" = '--pytest' ]; then
             for a in $*; do
                 case $a in
                     -*) ;;
-                    *)  exec pytest --rootdir="$SAGE_SRC" --doctest-modules "$@"
+                    *)  exec pytest --rootdir="$SAGE_SRC" --doctest "$@"
                 esac
             done
-            exec pytest --rootdir="$SAGE_SRC" --doctest-modules "$@" "$SAGE_SRC"
+            exec pytest --rootdir="$SAGE_SRC" --doctest "$@" "$SAGE_SRC"
         else
             echo "Run 'sage -i pytest' to install"
             exit 1

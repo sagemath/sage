@@ -229,11 +229,11 @@ class SplittingAlgebra(PolynomialQuotientRing_domain):
             if not base_ring.is_integral_domain():
                 raise TypeError("base_ring must be an integral domain")
         except NotImplementedError:
-            from sage.rings.ring import Ring
-            if not isinstance(base_ring, Ring):
-                raise TypeError("base_ring must be an instance of ring")
+            from sage.categories.rings import Rings
+            if base_ring not in Rings():
+                raise TypeError("base_ring must be a ring")
             if warning:
-                warn('Assuming %s to be an integral domain!' % (base_ring))
+                warn('Assuming %s to be an integral domain!' % base_ring)
 
         if deg < 1:
             raise ValueError("the degree of the polynomial must positive")

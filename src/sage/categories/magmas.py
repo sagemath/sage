@@ -255,7 +255,7 @@ class Magmas(Category_singleton):
 
                 The use of this shorthand should be reserved for casual
                 interactive use or when there is no risk of ambiguity.
-                """
+            """
             from sage.categories.additive_magmas import AdditiveMagmas
             if self.is_subcategory(AdditiveMagmas()):
                 raise ValueError("FinitelyGenerated is ambiguous for {}.\nPlease use explicitly one of the FinitelyGeneratedAsXXX methods".format(self))

@@ -1578,7 +1578,7 @@ class OddArithmeticSubgroup_Permutation(ArithmeticSubgroup_Permutation_class):
         R=(1,4,3,2)
         sage: type(G)
         <class 'sage.modular.arithgroup.arithgroup_perm.OddArithmeticSubgroup_Permutation_with_category'>
-        """
+    """
 
     def __init__(self, S2, S3, L, R, canonical_labels=False):
         r"""

@@ -754,8 +754,8 @@ class FockSpace(Parent, UniqueRepresentation):
 
             def e(self, *data):
                 r"""
-                Apply the action of the divided difference operator
-                `e_i^{(p)}` on ``self``.
+                Apply the action of the divided power operator
+                `e_i^{(p)} = e_i^{p} / [p]_q` on ``self``.
 
                 INPUT:
 
@@ -850,8 +850,8 @@ class FockSpace(Parent, UniqueRepresentation):
 
             def f(self, *data):
                 r"""
-                Apply the action of the divided difference operator
-                `f_i^{(p)}` on ``self``.
+                Apply the action of the divided power operator
+                `f_i^{(p)} = f_i^{p} / [p]_q` on ``self``.
 
                 INPUT:
 

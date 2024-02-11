@@ -355,8 +355,7 @@ class ProjectiveConic_number_field(ProjectiveConic_field):
             sage: C.is_locally_solvable(p2)
             True
 
-            sage: O = K.maximal_order()
-            sage: f = (2*O).factor()
+            sage: f = (2*K).factor()
             sage: C.is_locally_solvable(f[0][0])
             True
 

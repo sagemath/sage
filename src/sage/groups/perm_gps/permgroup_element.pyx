@@ -410,7 +410,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: k._gap_()
             (1,2)(3,5,6)
             sage: k._gap_().parent()
-            Gap
+            C library interface to GAP
 
         List notation::
 
@@ -835,13 +835,11 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: g._gap_()
             (1,2,3)(4,5)
         """
-        if gap is None:
-            from sage.interfaces.gap import gap
-        return gap(self._gap_init_())
+        return self._libgap_()
 
     def _libgap_(self):
         r"""
-        Returns self as a libgap element
+        Return ``self`` as a libgap element.
 
         EXAMPLES::
 
@@ -867,7 +865,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: p_libgap == p_pexpect
             True
             sage: type(p_libgap) == type(p_pexpect)
-            False
+            True
 
         If the permutation element is built from a libgap element, it is cached
         and returned by this function::

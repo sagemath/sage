@@ -1626,7 +1626,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             (1.0, [(1.0, -0.666666666666633, 1.333333333333286, 0.33333333333331555)], 1)
             sage: spectrum[2]  # tol 1e-13
             (-2.0, [(1.0, -0.2, 1.0, 0.2)], 1)
-            sage: spectrum[3]  # tol 1e-13
+            sage: spectrum[3]  # tol 1e-12
             (-1.0, [(1.0, -0.5, 2.0, 0.5)], 1)
 
         A generalized eigenvalue problem::

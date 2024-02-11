@@ -195,18 +195,26 @@ SAGE_STARTUP_FILE = var("SAGE_STARTUP_FILE", join(DOT_SAGE, "init.sage"))
 SAGE_ARCHFLAGS = var("SAGE_ARCHFLAGS", "unset")
 SAGE_PKG_CONFIG_PATH = var("SAGE_PKG_CONFIG_PATH")
 
-# installation directories for various packages
-GRAPHS_DATA_DIR = var("GRAPHS_DATA_DIR", join(SAGE_SHARE, "graphs"))
-ELLCURVE_DATA_DIR = var("ELLCURVE_DATA_DIR", join(SAGE_SHARE, "ellcurves"))
-POLYTOPE_DATA_DIR = var("POLYTOPE_DATA_DIR", join(SAGE_SHARE, "reflexive_polytopes"))
+# colon-separated search path for databases.
+SAGE_DATA_PATH = var("SAGE_DATA_PATH",
+                     os.pathsep.join(filter(None, [
+                         join(DOT_SAGE, "db"),
+                         join(SAGE_SHARE, "sagemath"),
+                         SAGE_SHARE,
+                         ])))
 
-COMBINATORIAL_DESIGN_DATA_DIR = var("COMBINATORIAL_DESIGN_DATA_DIR", join(SAGE_SHARE, "combinatorial_designs"))
-CREMONA_MINI_DATA_DIR = var("CREMONA_MINI_DATA_DIR", join(SAGE_SHARE, "cremona"))
-CREMONA_LARGE_DATA_DIR = var("CREMONA_LARGE_DATA_DIR", join(SAGE_SHARE, "cremona"))
-JMOL_DIR = var("JMOL_DIR", join(SAGE_SHARE, "jmol"))
+# database directories, the default is to search in SAGE_DATA_PATH
+CREMONA_LARGE_DATA_DIR = var("CREMONA_LARGE_DATA_DIR")
+CREMONA_MINI_DATA_DIR = var("CREMONA_MINI_DATA_DIR")
+ELLCURVE_DATA_DIR = var("ELLCURVE_DATA_DIR")
+GRAPHS_DATA_DIR = var("GRAPHS_DATA_DIR")
+POLYTOPE_DATA_DIR = var("POLYTOPE_DATA_DIR")
+
+# installation directories for various packages
+JMOL_DIR = var("JMOL_DIR")
 MATHJAX_DIR = var("MATHJAX_DIR", join(SAGE_SHARE, "mathjax"))
 MTXLIB = var("MTXLIB", join(SAGE_SHARE, "meataxe"))
-THREEJS_DIR = var("THREEJS_DIR", join(SAGE_SHARE, "threejs-sage"))
+THREEJS_DIR = var("THREEJS_DIR")
 PPLPY_DOCS = var("PPLPY_DOCS", join(SAGE_SHARE, "doc", "pplpy"))
 MAXIMA = var("MAXIMA", "maxima")
 MAXIMA_FAS = var("MAXIMA_FAS")
@@ -312,6 +320,7 @@ def sage_include_directories(use_sources=False):
     dirs.append(sysconfig.get_config_var('INCLUDEPY'))
 
     return dirs
+
 
 def get_cblas_pc_module_name() -> str:
     """
@@ -420,7 +429,7 @@ def cython_aliases(required_modules=None,
             aliases["ECL_INCDIR"] = list(map(lambda s: s[2:], filter(lambda s: s.startswith('-I'), ecl_cflags)))
             aliases["ECL_LIBDIR"] = list(map(lambda s: s[2:], filter(lambda s: s.startswith('-L'), ecl_libs)))
             aliases["ECL_LIBRARIES"] = list(map(lambda s: s[2:], filter(lambda s: s.startswith('-l'), ecl_libs)))
-            aliases["ECL_LIBEXTRA"] = list(filter(lambda s: not s.startswith(('-l','-L')), ecl_libs))
+            aliases["ECL_LIBEXTRA"] = list(filter(lambda s: not s.startswith(('-l', '-L')), ecl_libs))
             continue
         else:
             try:
@@ -439,7 +448,7 @@ def cython_aliases(required_modules=None,
         # include search order matters.
         aliases[var + "INCDIR"] = pc['include_dirs']
         aliases[var + "LIBDIR"] = pc['library_dirs']
-        aliases[var + "LIBEXTRA"] = list(filter(lambda s: not s.startswith(('-l','-L')), libs.split()))
+        aliases[var + "LIBEXTRA"] = list(filter(lambda s: not s.startswith(('-l', '-L')), libs.split()))
         aliases[var + "LIBRARIES"] = pc['libraries']
 
     # uname-specific flags

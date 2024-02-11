@@ -17,7 +17,7 @@ requires = [
     'cysignals >=1.10.2',
     # Exclude 3.0.3 because of https://github.com/cython/cython/issues/5748
     'cython >=3.0, != 3.0.3, <4.0',
-    'gmpy2 >=2.1.0',
+    'gmpy2 ~=2.1.b999',
     'jupyter_core >=4.6.3',
     'memory_allocator',
     'numpy >=1.19',
@@ -26,3 +26,8 @@ requires = [
     'pplpy >=0.8.6',
 ]
 build-backend = "setuptools.build_meta"
+
+[tool.conda-lock]
+platforms = [
+    'osx-64', 'linux-64', 'linux-aarch64', 'osx-arm64'
+]

@@ -2624,7 +2624,7 @@ class MutablePoset(SageObject):
 
             sage: P.union(P, Q, Q, P)
             poset(3, 4, 7, 8, 42)
-       """
+        """
         new = self.copy()
         new.update(*other)
         return new

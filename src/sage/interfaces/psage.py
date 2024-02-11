@@ -129,8 +129,10 @@ class PSage(Sage):
 
     def eval(self, x, strip=True, **kwds):
         """
-            x -- code
-            strip --ignored
+        INPUT:
+
+        - ``x`` -- code
+        - ``strip`` --ignored
         """
         if self.is_locked():
             return "<<currently executing code>>"

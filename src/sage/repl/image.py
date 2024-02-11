@@ -306,7 +306,7 @@ class Image(SageObject):
                 stream = io.BytesIO()
                 try:
                     self.pil.save(stream, format=format)
-                except IOError:
+                except OSError:
                     # not all formats support all modes, e.g. no alpha support in gif
                     continue
                 buf = OutputBuffer(stream.getvalue())

@@ -160,8 +160,11 @@ class EllipticCurveHom(Morphism):
             phis += other.summands()
         else:
             phis.append(other)
+
         #TODO should probably try to simplify some more?
-        return EllipticCurveHom_sum(phis)
+
+        assert other.domain() == self.domain() and other.codomain() == self.codomain()
+        return EllipticCurveHom_sum(phis, domain=self.domain(), codomain=self.codomain())
 
     def _sub_(self, other):
         r"""

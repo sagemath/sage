@@ -63,11 +63,8 @@ def _cubical_complex_union(c1, c2):
         sage: union(C1, C1) == C1
         True
     """
-    facets = []
-    for f in c1.maximal_cells():
-        facets.append(f)
-    for f in c2.maximal_cells():
-        facets.append(f)
+    facets = list(c1.maximal_cells())
+    facets.extend(c2.maximal_cells())
     return CubicalComplex(facets)
 
 

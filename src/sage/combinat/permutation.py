@@ -707,7 +707,7 @@ class Permutation(CombinatorialElement):
             sage: gap(Permutation((1,2,3)))                                             # needs sage.libs.gap
             (1,2,3)
             sage: type(_)                                                               # needs sage.libs.gap
-            <class 'sage.interfaces.gap.GapElement'>
+            <class 'sage.libs.gap.element.GapElement_Permutation'>
         """
         return self.to_permutation_group_element()._gap_(gap)
 

@@ -319,7 +319,7 @@ class FreeAlgebraQuotient(UniqueRepresentation, Algebra):
         """
         The free monoid of generators of the algebra.
 
-       EXAMPLES::
+        EXAMPLES::
 
             sage: sage.algebras.free_algebra_quotient.hamilton_quatalg(QQ)[0].monoid()
             Free monoid on 3 generators (i0, i1, i2)

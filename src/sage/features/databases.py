@@ -16,14 +16,27 @@ Features for testing the presence of various databases
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
+import os
 
 from . import StaticFile, PythonModule
-from sage.env import (
-    CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR,
-    POLYTOPE_DATA_DIR)
+from sage.env import SAGE_DATA_PATH
 
 
-CREMONA_DATA_DIRS = set([CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR])
+def sage_data_path(data_name):
+    r"""
+    Search path for database `data_name`.
+
+    EXAMPLES::
+
+        sage: from sage.features.databases import sage_data_path
+        sage: sage_data_path("cremona")
+        ['.../cremona']
+    """
+    if not SAGE_DATA_PATH:
+        return []
+
+    return [os.path.join(p, data_name)
+            for p in SAGE_DATA_PATH.split(os.pathsep)]
 
 
 class DatabaseCremona(StaticFile):
@@ -44,7 +57,7 @@ class DatabaseCremona(StaticFile):
         sage: DatabaseCremona().is_present()                                    # optional - database_cremona_ellcurve
         FeatureTestResult('database_cremona_ellcurve', True)
     """
-    def __init__(self, name="cremona", spkg="database_cremona_ellcurve"):
+    def __init__(self, name="cremona"):
         r"""
         TESTS::
 
@@ -52,12 +65,84 @@ class DatabaseCremona(StaticFile):
             sage: isinstance(DatabaseCremona(), DatabaseCremona)
             True
         """
+        from sage.env import CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR
+        CREMONA_DATA_DIRS = set([CREMONA_MINI_DATA_DIR, CREMONA_LARGE_DATA_DIR])
+        CREMONA_DATA_DIRS.discard(None)
+        search_path = CREMONA_DATA_DIRS or sage_data_path("cremona")
+
+        spkg = "database_cremona_ellcurve"
+        spkg_type = "optional"
+        if name == 'cremona_mini':
+            spkg = "elliptic_curves"
+            spkg_type = "standard"
+
         StaticFile.__init__(self, f"database_{name}_ellcurve",
-                            filename='{}.db'.format(name.replace(' ', '_')),
-                            search_path=CREMONA_DATA_DIRS,
+                            filename=f"{name}.db",
+                            search_path=search_path,
                             spkg=spkg,
+                            type=spkg_type,
                             url="https://github.com/JohnCremona/ecdata",
                             description="Cremona's database of elliptic curves")
+
+
+class DatabaseEllcurves(StaticFile):
+    r"""
+    A :class:`~sage.features.Feature` which describes the presence of
+    William Stein's database of interesting curves.
+
+    EXAMPLES::
+
+        sage: from sage.features.databases import DatabaseEllcurves
+        sage: bool(DatabaseEllcurves().is_present())  # optional - database_ellcurves
+        True
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.databases import DatabaseEllcurves
+            sage: isinstance(DatabaseEllcurves(), DatabaseEllcurves)
+            True
+        """
+        from sage.env import ELLCURVE_DATA_DIR
+        search_path = ELLCURVE_DATA_DIR or sage_data_path("ellcurves")
+
+        StaticFile.__init__(self, "database_ellcurves",
+                            filename='rank0',
+                            search_path=search_path,
+                            spkg="elliptic_curves",
+                            type="standard",
+                            description="William Stein's database of interesting curve")
+
+
+class DatabaseGraphs(StaticFile):
+    r"""
+    A :class:`~sage.features.Feature` which describes the presence of
+    the graphs database.
+
+    EXAMPLES::
+
+        sage: from sage.features.databases import DatabaseGraphs
+        sage: bool(DatabaseGraphs().is_present())  # optional - database_graphs
+        True
+    """
+    def __init__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.features.databases import DatabaseGraphs
+            sage: isinstance(DatabaseGraphs(), DatabaseGraphs)
+            True
+        """
+        from sage.env import GRAPHS_DATA_DIR
+        search_path = GRAPHS_DATA_DIR or sage_data_path("graphs")
+
+        StaticFile.__init__(self, "database_graphs",
+                            filename='graphs.db',
+                            search_path=search_path,
+                            spkg="graphs",
+                            type="standard",
+                            description="A database of graphs")
 
 
 class DatabaseJones(StaticFile):
@@ -80,7 +165,8 @@ class DatabaseJones(StaticFile):
             True
         """
         StaticFile.__init__(self, "database_jones_numfield",
-                            filename='jones/jones.sobj',
+                            filename='jones.sobj',
+                            search_path=sage_data_path("jones"),
                             spkg="database_jones_numfield",
                             description="John Jones's tables of number fields")
 
@@ -146,27 +232,43 @@ class DatabaseReflexivePolytopes(StaticFile):
     EXAMPLES::
 
         sage: from sage.features.databases import DatabaseReflexivePolytopes
-        sage: bool(DatabaseReflexivePolytopes().is_present())                              # optional - polytopes_db
+        sage: bool(DatabaseReflexivePolytopes().is_present())                   # optional - polytopes_db
         True
-        sage: bool(DatabaseReflexivePolytopes('polytopes_db_4d', 'Hodge4d').is_present())  # optional - polytopes_db_4d
+        sage: bool(DatabaseReflexivePolytopes('polytopes_db_4d').is_present())  # optional - polytopes_db_4d
         True
     """
-    def __init__(self, name='polytopes_db', dirname='Full3D'):
+    def __init__(self, name='polytopes_db'):
         """
         TESTS::
 
             sage: from sage.features.databases import DatabaseReflexivePolytopes
             sage: isinstance(DatabaseReflexivePolytopes(), DatabaseReflexivePolytopes)
             True
+            sage: DatabaseReflexivePolytopes().filename
+            'Full3d'
+            sage: DatabaseReflexivePolytopes('polytopes_db_4d').filename
+            'Hodge4d'
         """
-        StaticFile.__init__(self, name, dirname,
-                            search_path=[POLYTOPE_DATA_DIR])
+        from sage.env import POLYTOPE_DATA_DIR
+        search_path = POLYTOPE_DATA_DIR or sage_data_path("reflexive_polytopes")
+
+        dirname = "Full3d"
+        if name == "polytopes_db_4d":
+            dirname = "Hodge4d"
+
+        StaticFile.__init__(self, name,
+                            filename=dirname,
+                            search_path=search_path)
 
 
 def all_features():
-    return [DatabaseCremona(), DatabaseCremona('cremona_mini'),
+    return [PythonModule('conway_polynomials'),
+            DatabaseCremona(),
+            DatabaseCremona('cremona_mini'),
+            DatabaseEllcurves(),
+            DatabaseGraphs(),
             DatabaseJones(),
             DatabaseKnotInfo(),
             DatabaseCubicHecke(),
             DatabaseReflexivePolytopes(),
-            DatabaseReflexivePolytopes('polytopes_db_4d', 'Hodge4d')]
+            DatabaseReflexivePolytopes('polytopes_db_4d')]

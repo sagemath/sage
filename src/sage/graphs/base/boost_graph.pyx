@@ -515,7 +515,8 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee') noexcept:
     Unfortunately, exactly computing the bandwidth is NP-hard (and an
     exponential algorithm is implemented in Sagemath in routine
     :func:`~sage.graphs.graph_decompositions.bandwidth.bandwidth`). Here, we
-    implement two heuristics to find good orderings: Cuthill-McKee, and King.
+    implement two heuristics to find good orderings: Cuthill-McKee, reverse
+    Cuthill-McKee (also known as ``RCM``) and King.
 
     This function works only in undirected graphs, and its running time is
     `O(md_{max}\log d_{max})` for the Cuthill-McKee ordering, and
@@ -527,7 +528,8 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee') noexcept:
     - ``g`` -- the input Sage graph
 
     - ``algorithm`` -- string (default: ``'cuthill_mckee'``); the heuristic used
-      to compute the ordering among ``'cuthill_mckee'`` and ``'king'``
+      to compute the ordering among ``'cuthill_mckee'``,
+      ``'reverse_cuthill_mckee'`` and ``'king'``
 
     OUTPUT:
 
@@ -542,6 +544,8 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee') noexcept:
         (1, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
         sage: bandwidth_heuristics(graphs.GridGraph([3,3]))
         (3, [(0, 0), (1, 0), (0, 1), (2, 0), (1, 1), (0, 2), (2, 1), (1, 2), (2, 2)])
+        sage: bandwidth_heuristics(graphs.GridGraph([3,3]), algorithm='reverse_cuthill_mckee')
+        (3, [(2, 2), (1, 2), (2, 1), (0, 2), (1, 1), (2, 0), (0, 1), (1, 0), (0, 0)])
         sage: bandwidth_heuristics(graphs.GridGraph([3,3]), algorithm='king')
         (3, [(0, 0), (1, 0), (0, 1), (2, 0), (1, 1), (0, 2), (2, 1), (1, 2), (2, 2)])
 
@@ -581,10 +585,15 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee') noexcept:
     # Tests for errors and trivial cases
     if not isinstance(g, Graph):
         raise TypeError("the input must be a Sage Graph")
-    if algorithm not in ['cuthill_mckee', 'king']:
+    if algorithm not in ['cuthill_mckee', 'reverse_cuthill_mckee', 'king']:
         raise ValueError(f"unknown algorithm {algorithm!r}")
     if not g.num_edges():
         return (0, list(g))
+
+    cdef bint reverse = False
+    if algorithm == 'reverse_cuthill_mckee':
+        reverse = True
+        algorithm = 'cuthill_mckee'
 
     # These variables are automatically deleted when the function terminates.
     cdef BoostVecGraph g_boost
@@ -601,8 +610,12 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee') noexcept:
 
     cdef int n = g.num_verts()
     cdef dict pos = {int_to_vertex[<int> result[i]]: i for i in range(n)}
-    cdef int bandwidth = max([abs(pos[u] - pos[v]) for u, v in g.edge_iterator(labels=False)])
+    cdef int bandwidth = max([abs(pos[u] - pos[v])
+                              for u, v in g.edge_iterator(labels=False)])
 
+    if reverse:
+        return (bandwidth, [int_to_vertex[<int> result[i]]
+                            for i in range(n - 1, -1, -1)])
     return (bandwidth, [int_to_vertex[<int> result[i]] for i in range(n)])
 
 

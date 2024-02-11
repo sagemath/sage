@@ -406,8 +406,8 @@ class EllipticCurveHom_sum(EllipticCurveHom):
         """
         if self._degree is not None:
             return
-        if len(self._phis) == 0:
-            self._degree = 0
+        if not self._phis:
+            self._degree = ZZ.zero()
         elif len(self._phis) == 1:
             self._degree = self._phis[0].degree()
         else:

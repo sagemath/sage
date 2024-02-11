@@ -60,15 +60,15 @@ cdef enum token_types:
     MATRIX
 
 enum_map = {
-  INT:        'INT',
-  FLOAT:      'FLOAT',
-  NAME:       'NAME',
-  EOS:        'EOS',
-  ERROR:      'ERROR',
-  LESS_EQ:    'LESS_EQ',
+  INT: 'INT',
+  FLOAT: 'FLOAT',
+  NAME: 'NAME',
+  EOS: 'EOS',
+  ERROR: 'ERROR',
+  LESS_EQ: 'LESS_EQ',
   GREATER_EQ: 'GREATER_EQ',
-  NOT_EQ:     'NOT_EQ',
-  MATRIX:     'MATRIX',
+  NOT_EQ: 'NOT_EQ',
+  MATRIX: 'MATRIX',
 }
 
 

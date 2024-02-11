@@ -1867,4 +1867,4 @@ cdef Py_ssize_t count_leading(list row, letter) noexcept:
 
 # for unpickling
 from sage.misc.persist import register_unpickle_override
-register_unpickle_override('sage.combinat.crystals.tensor_product', 'ImmutableListWithParent',  ImmutableListWithParent)
+register_unpickle_override('sage.combinat.crystals.tensor_product', 'ImmutableListWithParent', ImmutableListWithParent)

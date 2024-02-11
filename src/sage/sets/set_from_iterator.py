@@ -482,7 +482,7 @@ class Decorator():
                 filename = sage_getfile_relative(f)
                 file_info = "File: %s (starting at line %d)\n" % (filename, sourcelines[1])
                 doc = file_info + doc
-            except IOError:
+            except OSError:
                 pass
         return doc
 

@@ -713,7 +713,7 @@ class ManifoldSubsetPullback(ManifoldSubset):
             Point on the 3-dimensional topological manifold R^3
             sage: q in McCube
             False
-         """
+        """
         if super().__contains__(point):
             return True
         coords = self._map(point)

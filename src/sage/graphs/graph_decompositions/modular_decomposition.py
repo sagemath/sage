@@ -1245,7 +1245,7 @@ def test_gamma_modules(trials, vertices, prob, verbose=False):
             m_list = list(module)
             for v in g:
                 if v not in module:
-                    assert(either_connected_or_not_connected(v, m_list, g))
+                    assert either_connected_or_not_connected(v, m_list, g)
         if verbose:
             print("Passes!")
 
@@ -1275,10 +1275,10 @@ def permute_decomposition(trials, algorithm, vertices, prob, verbose=False):
             print(random_perm)
         t1 = algorithm(g1)
         t2 = algorithm(g2)
-        assert(test_modular_decomposition(t1, g1))
-        assert(test_modular_decomposition(t2, g2))
+        assert test_modular_decomposition(t1, g1)
+        assert test_modular_decomposition(t2, g2)
         t1p = relabel_tree(t1, random_perm)
-        assert(equivalent_trees(t1p, t2))
+        assert equivalent_trees(t1p, t2)
         if verbose:
             print("Passes!")
 
@@ -1422,6 +1422,6 @@ def recreate_decomposition(trials, algorithm, max_depth, max_fan_out,
         reconstruction = algorithm(graph)
         if verbose:
             print_md_tree(reconstruction)
-        assert(equivalent_trees(rand_tree, reconstruction))
+        assert equivalent_trees(rand_tree, reconstruction)
         if verbose:
             print("Passes!")

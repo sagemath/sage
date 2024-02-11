@@ -407,8 +407,8 @@ def bell_number(n, algorithm='flint', **options) -> Integer:
         return ZZ(int(ret_mp))
 
     elif algorithm == 'flint':
-        import sage.libs.flint.arith
-        return sage.libs.flint.arith.bell_number(n)
+        import sage.libs.flint.arith_sage
+        return sage.libs.flint.arith_sage.bell_number(n)
 
     elif algorithm == 'gap':
         from sage.libs.gap.libgap import libgap
@@ -576,8 +576,8 @@ def euler_number(n, algorithm='flint') -> Integer:
     if algorithm == 'maxima':
         return ZZ(maxima.euler(n))  # type:ignore
     elif algorithm == 'flint':
-        import sage.libs.flint.arith
-        return sage.libs.flint.arith.euler_number(n)
+        import sage.libs.flint.arith_sage
+        return sage.libs.flint.arith_sage.euler_number(n)
     else:
         raise ValueError("algorithm must be 'flint' or 'maxima'")
 
@@ -906,8 +906,8 @@ def stirling_number1(n, k, algorithm="gap") -> Integer:
         from sage.libs.gap.libgap import libgap
         return libgap.Stirling1(n, k).sage()
     if algorithm == 'flint':
-        import sage.libs.flint.arith
-        return sage.libs.flint.arith.stirling_number_1(n, k)
+        import sage.libs.flint.arith_sage
+        return sage.libs.flint.arith_sage.stirling_number_1(n, k)
     raise ValueError("unknown algorithm: %s" % algorithm)
 
 
@@ -1034,8 +1034,8 @@ def stirling_number2(n, k, algorithm=None) -> Integer:
         from sage.libs.gap.libgap import libgap
         return libgap.Stirling2(n, k).sage()
     if algorithm == 'flint':
-        import sage.libs.flint.arith
-        return sage.libs.flint.arith.stirling_number_2(n, k)
+        import sage.libs.flint.arith_sage
+        return sage.libs.flint.arith_sage.stirling_number_2(n, k)
     if algorithm == 'maxima':
         return ZZ(maxima.stirling2(n, k))  # type:ignore
     raise ValueError("unknown algorithm: %s" % algorithm)

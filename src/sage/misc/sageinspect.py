@@ -643,7 +643,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
             sage: vis = lambda x: visitor.visit_List(ast.parse(x).body[0].value)
             sage: [vis(l) for l in ['[]', "['s', 't', 'u']", '[[e], [], [pi]]']]
             [[], ['s', 't', 'u'], [['e'], [], ['pi']]]
-         """
+        """
         t = []
         for n in node.elts:
             t.append(self.visit(n))

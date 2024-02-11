@@ -162,13 +162,15 @@ class DocTestReporter(SageObject):
             return True
         return False
 
-    def report_head(self, source):
+    def report_head(self, source, fail_msg=None):
         """
-        Return the "sage -t [options] file.py" line as string.
+        Return the ``sage -t [options] file.py`` line as string.
 
         INPUT:
 
         - ``source`` -- a source from :mod:`sage.doctest.sources`
+
+        - ``fail_msg`` -- ``None`` or a string
 
         EXAMPLES::
 
@@ -190,6 +192,8 @@ class DocTestReporter(SageObject):
             sage: DD.long = True
             sage: print(DTR.report_head(FDS))
             sage -t --long .../sage/doctest/reporting.py
+            sage: print(DTR.report_head(FDS, "Failed by self-sabotage"))
+            sage -t --long .../sage/doctest/reporting.py  # Failed by self-sabotage
         """
         cmd = "sage -t"
         if self.controller.options.long:
@@ -206,6 +210,13 @@ class DocTestReporter(SageObject):
         if environment != "sage.repl.ipython_kernel.all_jupyter":
             cmd += f" --environment={environment}"
         cmd += " " + source.printpath
+        baseline = self.controller.source_baseline(source)
+        if fail_msg:
+            cmd += "  # " + fail_msg
+        if baseline.get('failed', False):
+            if not fail_msg:
+                cmd += "  #"
+            cmd += " [failed in baseline]"
         return cmd
 
     def report(self, source, timeout, return_code, results, output, pid=None):
@@ -399,10 +410,7 @@ class DocTestReporter(SageObject):
             postscript = self.postscript
             stats = self.stats
             basename = source.basename
-            if self.controller.baseline_stats:
-                the_baseline_stats = self.controller.baseline_stats.get(basename, {})
-            else:
-                the_baseline_stats = {}
+            baseline = self.controller.source_baseline(source)
             cmd = self.report_head(source)
             try:
                 ntests, result_dict = results
@@ -423,14 +431,12 @@ class DocTestReporter(SageObject):
                         fail_msg += " (and interrupt failed)"
                     else:
                         fail_msg += " (with %s after interrupt)" % signal_name(sig)
-                if the_baseline_stats.get('failed', False):
-                    fail_msg += " [failed in baseline]"
                 log("    %s\n%s\nTests run before %s timed out:" % (fail_msg, "*"*70, process_name))
                 log(output)
                 log("*"*70)
-                postscript['lines'].append(cmd + "  # %s" % fail_msg)
+                postscript['lines'].append(self.report_head(source, fail_msg))
                 stats[basename] = {"failed": True, "walltime": 1e6, "ntests": ntests}
-                if not the_baseline_stats.get('failed', False):
+                if not baseline.get('failed', False):
                     self.error_status |= 4
             elif return_code:
                 if return_code > 0:
@@ -439,14 +445,12 @@ class DocTestReporter(SageObject):
                     fail_msg = "Killed due to %s" % signal_name(-return_code)
                 if ntests > 0:
                     fail_msg += " after testing finished"
-                if the_baseline_stats.get('failed', False):
-                    fail_msg += " [failed in baseline]"
                 log("    %s\n%s\nTests run before %s failed:" % (fail_msg,"*"*70, process_name))
                 log(output)
                 log("*"*70)
-                postscript['lines'].append(cmd + "  # %s" % fail_msg)
+                postscript['lines'].append(self.report_head(source, fail_msg))
                 stats[basename] = {"failed": True, "walltime": 1e6, "ntests": ntests}
-                if not the_baseline_stats.get('failed', False):
+                if not baseline.get('failed', False):
                     self.error_status |= (8 if return_code > 0 else 16)
             else:
                 if hasattr(result_dict, 'walltime') and hasattr(result_dict.walltime, '__len__') and len(result_dict.walltime) > 0:
@@ -461,13 +465,13 @@ class DocTestReporter(SageObject):
                     log("    Error in doctesting framework (bad result returned)\n%s\nTests run before error:" % ("*"*70))
                     log(output)
                     log("*"*70)
-                    postscript['lines'].append(cmd + "  # Testing error: bad result")
+                    postscript['lines'].append(self.report_head(source, "Testing error: bad result"))
                     self.error_status |= 64
                 elif result_dict.err == 'noresult':
                     log("    Error in doctesting framework (no result returned)\n%s\nTests run before error:" % ("*"*70))
                     log(output)
                     log("*"*70)
-                    postscript['lines'].append(cmd + "  # Testing error: no result")
+                    postscript['lines'].append(self.report_head(source, "Testing error: no result"))
                     self.error_status |= 64
                 elif result_dict.err == 'tab':
                     if len(result_dict.tab_linenos) > 5:
@@ -476,11 +480,11 @@ class DocTestReporter(SageObject):
                     if len(result_dict.tab_linenos) > 1:
                         tabs = "s" + tabs
                     log("    Error: TAB character found at line%s" % (tabs))
-                    postscript['lines'].append(cmd + "  # Tab character found")
+                    postscript['lines'].append(self.report_head(source, "Tab character found"))
                     self.error_status |= 32
                 elif result_dict.err == 'line_number':
                     log("    Error: Source line number found")
-                    postscript['lines'].append(cmd + "  # Source line number found")
+                    postscript['lines'].append(self.report_head(source, "Source line number found"))
                     self.error_status |= 256
                 elif result_dict.err is not None:
                     # This case should not occur
@@ -497,22 +501,25 @@ class DocTestReporter(SageObject):
                     if output:
                         log("Tests run before doctest exception:\n" + output)
                         log("*"*70)
-                    postscript['lines'].append(cmd + "  # %s" % fail_msg)
+                    postscript['lines'].append(self.report_head(source, fail_msg))
                     if hasattr(result_dict, 'tb'):
                         log(result_dict.tb)
                     if hasattr(result_dict, 'walltime'):
                         stats[basename] = {"failed": True, "walltime": wall, "ntests": ntests}
                     else:
                         stats[basename] = {"failed": True, "walltime": 1e6, "ntests": ntests}
-                    self.error_status |= 64
+                    # This codepath is triggered by doctests that test some timeout
+                    # ("AlarmInterrupt in doctesting framework") or other signal handling
+                    # behavior. This is why we handle the baseline in this codepath,
+                    # in contrast to other "Error in doctesting framework" codepaths.
+                    if not baseline.get('failed', False):
+                        self.error_status |= 64
                 if result_dict.err is None or result_dict.err == 'tab':
                     f = result_dict.failures
                     if f:
                         fail_msg = "%s failed" % (count_noun(f, "doctest"))
-                        if the_baseline_stats.get('failed', False):
-                            fail_msg += " [failed in baseline]"
-                        postscript['lines'].append(cmd + "  # %s" % fail_msg)
-                        if not the_baseline_stats.get('failed', False):
+                        postscript['lines'].append(self.report_head(source, fail_msg))
+                        if not baseline.get('failed', False):
                             self.error_status |= 1
                     if f or result_dict.err == 'tab':
                         stats[basename] = {"failed": True, "walltime": wall, "ntests": ntests}

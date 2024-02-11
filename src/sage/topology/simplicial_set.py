@@ -1376,11 +1376,11 @@ class SimplicialSet_arbitrary(Parent):
         if self.is_finite():
             if max_dim is None:
                 return list(self._simplices)
-            return list(sigma for sigma in self._simplices if sigma.dimension() <= max_dim)
+            return [sigma for sigma in self._simplices if sigma.dimension() <= max_dim]
         if max_dim is None:
             raise NotImplementedError('this simplicial set may be '
                                       'infinite, so specify max_dim')
-        return list(sigma for sigma in self.n_skeleton(max_dim)._simplices)
+        return list(self.n_skeleton(max_dim)._simplices)
 
     def cells(self, subcomplex=None, max_dim=None):
         """
@@ -1547,8 +1547,8 @@ class SimplicialSet_arbitrary(Parent):
              f^2 * f,
              f^2 * f^2, s_0 f, s_0 f^2, s_1 f, s_1 f^2, s_1 s_0 1]
         """
-        non_degen = [_ for _ in self.nondegenerate_simplices(max_dim=n)]
-        ans = set([_ for _ in non_degen if _.dimension() == n])
+        non_degen = list(self.nondegenerate_simplices(max_dim=n))
+        ans = {_ for _ in non_degen if _.dimension() == n}
         for sigma in non_degen:
             d = sigma.dimension()
             ans.update([sigma.apply_degeneracies(*_)
@@ -1844,7 +1844,7 @@ class SimplicialSet_arbitrary(Parent):
                 d = f.dimension()
                 found = False
                 for x in self.n_cells(d):
-                    if str(x) == str(tuple(sorted(tuple(f), key=str))):
+                    if str(x) == str(tuple(sorted(f, key=str))):
                         new.append(x)
                         found = True
                         break
@@ -3287,7 +3287,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
                     faces = {}
                     for idx, sigma in enumerate(data.n_cells(d)):
                         new_sigma = AbstractSimplex(d)
-                        new_sigma.rename(str(tuple(sorted(tuple(sigma), key=str))))
+                        new_sigma.rename(str(tuple(sorted(sigma, key=str))))
                         if d > 0:
                             simplices[new_sigma] = [old_faces[_] for _ in sigma.faces()]
                         else:
@@ -3360,7 +3360,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
         # simplicial set.
         self._data = tuple(data.items())
         # self._simplices: a sorted tuple of non-degenerate simplices.
-        self._simplices = sorted(tuple(simplices))
+        self._simplices = sorted(simplices)
         # self._basepoint: the base point, or None.
         if base_point is not None:
             if base_point not in simplices:
@@ -3941,13 +3941,13 @@ def all_degeneracies(n, l=1):
         {(2, 1, 0), (3, 1, 0), (3, 2, 0), (3, 2, 1)}
     """
     if l == 0:
-        return set(())
+        return set()
     if l == 1:
-        return set([tuple([_]) for _ in range(n+1)])
+        return {(_,) for _ in range(n+1)}
     ans = set()
     for i in range(n+l):
-        ans.update(set([tuple(standardize_degeneracies(*([i] + list(_))))
-                        for _ in all_degeneracies(n, l-1)]))
+        ans.update({tuple(standardize_degeneracies(*([i] + list(_))))
+                        for _ in all_degeneracies(n, l-1)})
     return ans
 
 

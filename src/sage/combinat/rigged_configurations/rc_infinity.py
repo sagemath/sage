@@ -335,7 +335,7 @@ class InfinityCrystalOfNonSimplyLacedRC(InfinityCrystalOfRiggedConfigurations):
             sage: vct = CartanType(['C', 2, 1]).as_folding()
             sage: RC = crystals.infinity.RiggedConfigurations(vct)
             sage: TestSuite(RC).run() # long time
-         """
+        """
         self._folded_ct = vct
         InfinityCrystalOfRiggedConfigurations.__init__(self, vct._cartan_type)
 

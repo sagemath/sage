@@ -1143,7 +1143,7 @@ class Projection(SageObject):
             sage: q4 = p4.projection()
             sage: q1.plot() + q2.plot() + q3.plot() + q4.plot()                         # needs sage.plot
             Graphics object consisting of 18 graphics primitives
-         """
+        """
         plt = Graphics()
         if point_opts is None:
             point_opts = {}

@@ -949,7 +949,7 @@ class DES_KS(SageObject):
             '6f26cc480fc6'
             sage: K[15].hex() # indirect doctest
             '9778f17524a'
-       """
+        """
         if self._masterKey is None:
             raise ValueError('Key not set during initialisation')
         return iter(self(self._masterKey))

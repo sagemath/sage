@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Integer-valued polynomial rings
 
@@ -12,23 +11,23 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
-from sage.arith.misc import (binomial, factorial)
+from sage.arith.misc import binomial, factorial
 from sage.categories.algebras import Algebras
-from sage.categories.rings import Rings
 from sage.categories.realizations import Category_realization_of_parent
+from sage.categories.rings import Rings
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.matrix.constructor import matrix
+from sage.misc.bindable_class import BindableClass
 from sage.misc.cachefunc import cached_method
 from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
-from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.sets.family import Family
-from sage.misc.bindable_class import BindableClass
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
@@ -812,7 +811,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
 
                 If ``self`` is an Ehrhart polynomial, this is the `h`-vector.
 
-                .. SEEALSO:: :meth:`h_polynomial`
+                .. SEEALSO:: :meth:`h_polynomial`, :meth:`fraction`
 
                 EXAMPLES::
 
@@ -832,7 +831,7 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                 """
                 Return the `h`-vector as a polynomial.
 
-                .. SEEALSO:: :meth:`h_vector`
+                .. SEEALSO:: :meth:`h_vector`, :meth:`fraction`
 
                 EXAMPLES::
 
@@ -840,10 +839,52 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                     sage: A = IntegerValuedPolynomialRing(ZZ).S()
                     sage: ex = A.from_polynomial((1+x)**3)
                     sage: ex.h_polynomial()
-                    z^3 + 4*z^2 + z
+                    z^2 + 4*z + 1
                 """
                 anneau = PolynomialRing(self.parent().base_ring(), 'z')
-                return anneau(list(self.h_vector()))
+                return anneau(list(reversed(self.h_vector())))
+
+            def fraction(self):
+                """
+                Return the generating series of values as a fraction.
+
+                In the case of Ehrhart polynomials, this is known as
+                the Ehrhart series.
+
+                .. SEEALSO:: :meth:`h_vector`, :meth:`h_polynomial`
+
+                EXAMPLES::
+
+                    sage: A = IntegerValuedPolynomialRing(ZZ).S()
+                    sage: ex = A.monomial(4)
+                    sage: f = ex.fraction();f
+                    -1/(t^5 - 5*t^4 + 10*t^3 - 10*t^2 + 5*t - 1)
+
+                    sage: F = LazyPowerSeriesRing(QQ, 't')
+                    sage: F(f)
+                    1 + 5*t + 15*t^2 + 35*t^3 + 70*t^4 + 126*t^5 + 210*t^6 + O(t^7)
+
+                    sage: poly = ex.polynomial()
+                    sage: [poly(i) for i in range(6)]
+                    [1, 5, 15, 35, 70, 126]
+
+                    sage: y = polygen(QQ, 'y')
+                    sage: penta = A.from_polynomial(7/2*y^2 + 7/2*y + 1)
+                    sage: penta.fraction()
+                    (-t^2 - 5*t - 1)/(t^3 - 3*t^2 + 3*t - 1)
+
+                TESTS::
+
+                    sage: A.zero().fraction()
+                    0
+                    sage: A.zero().fraction().parent()
+                    Fraction Field of Univariate Polynomial Ring in t over Integer Ring
+                """
+                v = self.h_vector()
+                d = len(v)
+                t = polygen(self.parent().base_ring(), 't')
+                numer = sum(v[i] * t**(d - 1 - i) for i in range(d))
+                return numer / (1 - t)**d
 
     S = Shifted
 

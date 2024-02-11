@@ -737,7 +737,7 @@ class ChainComplex_class(Parent):
             sage: D = ChainComplex({0: matrix(ZZ, 2, 2, [1,0,0,2])})
             sage: D.random_element()    # random output
             Chain with 1 nonzero terms over Integer Ring
-       """
+        """
         vec = dict()
         for d in self.nonzero_degrees():
             vec[d] = self.free_module(d).random_element()

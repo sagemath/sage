@@ -629,12 +629,12 @@ cdef inline int SC_realloc_gens(StabilizerChain *SC, int level, int size) noexce
     cdef int *temp
     cdef int n = SC.degree
 
-    temp = <int *> sig_realloc( SC.generators[level],   n * size * sizeof(int) )
+    temp = <int *> sig_realloc(SC.generators[level], n * size * sizeof(int))
     if temp is NULL:
         return 1
     SC.generators[level] = temp
 
-    temp = <int *> sig_realloc( SC.gen_inverses[level], n * size * sizeof(int) )
+    temp = <int *> sig_realloc(SC.gen_inverses[level], n * size * sizeof(int))
     if temp is NULL:
         return 1
     SC.gen_inverses[level] = temp

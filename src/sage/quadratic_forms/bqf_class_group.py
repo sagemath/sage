@@ -82,11 +82,15 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element import AdditiveGroupElement
+from sage.categories.morphism import Morphism
 
 from sage.misc.prandom import randrange
 from sage.rings.integer_ring import ZZ
+from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.finite_rings.integer_mod import Mod
+from sage.rings.polynomial.polynomial_ring import polygen
 from sage.arith.misc import random_prime
+from sage.matrix.constructor import matrix
 from sage.groups.generic import order_from_multiple, multiple
 from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
 from sage.quadratic_forms.binary_qf import BinaryQF
@@ -330,6 +334,34 @@ class BQFClassGroup(Parent, UniqueRepresentation):
         """
         return [g.element() for g in self.abelian_group().gens()]
 
+    def _coerce_map_from_(self, other):
+        r"""
+        Return the natural projection map between two class groups
+        of binary quadratic forms when it is defined.
+
+        .. SEEALSO:: :class:`BQFClassGroupQuotientMorphism`
+
+        EXAMPLES::
+
+            sage: G = BQFClassGroup(-4*117117)
+            sage: H = BQFClassGroup(-4*77)
+            sage: proj = G.hom(H); proj  # implicit doctest
+            Coercion morphism:
+              From: Form Class Group of Discriminant -468468
+              To:   Form Class Group of Discriminant -308
+            sage: elt = G(BinaryQF(333, 306, 422)); elt
+            Class of 333*x^2 + 306*x*y + 422*y^2
+            sage: proj(elt)
+            Class of 9*x^2 + 4*x*y + 9*y^2
+        """
+        if not isinstance(other, BQFClassGroup):
+            return super()._coerce_map_from_(other)
+        try:
+            proj = BQFClassGroupQuotientMorphism(other, self)
+        except (TypeError, ValueError):
+            return super()._coerce_map_from_(other)
+        return proj
+
 
 class BQFClassGroup_element(AdditiveGroupElement):
     r"""
@@ -376,7 +408,7 @@ class BQFClassGroup_element(AdditiveGroupElement):
             if not F.is_primitive():
                 raise ValueError('given quadratic form is not primitive')
             if not F.is_positive_definite():
-                raise NotImplemented('only positive definite forms are currently supported')
+                raise NotImplementedError('only positive definite forms are currently supported')
         if reduce:
             F = F.reduced_form()
         self._form = F
@@ -611,3 +643,168 @@ class BQFClassGroup_element(AdditiveGroupElement):
             2
         """
         return order_from_multiple(self, self.parent().cardinality())
+
+
+def _project_bqf(bqf, q):
+    r"""
+    Internal helper function to compute the image of a
+    :class:`BQFClassGroup_element` of discriminant `D`
+    in the form class group of discriminant `D/q^2`.
+
+    ALGORITHM: Find a class representative with `q^2 \mid a`
+    (and `q \mid b`) and substitute `x\mapsto x/q`.
+
+    EXAMPLES::
+
+        sage: from sage.quadratic_forms.bqf_class_group import _project_bqf
+        sage: f1 = BinaryQF([4, 2, 105])
+        sage: f2 = _project_bqf(f1, 2); f2
+        x^2 + x*y + 105*y^2
+        sage: f1.discriminant().factor()
+        -1 * 2^2 * 419
+        sage: f2.discriminant().factor()
+        -1 * 419
+
+    ::
+
+        sage: f1 = BinaryQF([109, 92, 113])
+        sage: f2 = _project_bqf(f1, 101); f2
+        53*x^2 - 152*x*y + 109*y^2
+        sage: f1.discriminant().factor()
+        -1 * 2^2 * 101^2
+        sage: f2.discriminant().factor()
+        -1 * 2^2
+    """
+    q2 = q**2
+    disc = bqf.discriminant()
+    if not q2.divides(disc) or disc//q2 % 4 not in (0,1):
+        raise ValueError('discriminant not divisible by q^2')
+
+    a,b,c = bqf
+
+    # lucky case: q^2|c (and q|b)
+    if q2.divides(c):
+        a,b,c = c,-b,a
+
+    # general case: neither q^2|a nor q^2|c
+    elif not q2.divides(a):
+
+        # represent some multiple of q^2
+        R = Zmod(q2)
+        x = polygen(R)
+        for v in R:
+            eq = a*x**2 + b*x*v + c*v**2
+            try:
+                u = eq.any_root()
+            except (ValueError, IndexError):  # why IndexError? see #37034
+                continue
+            if u or v:
+                break
+        else:
+            assert False
+
+        # find equivalent form with q^2|a (and q|b)
+        u,v = map(ZZ, (u,v))
+        assert q2.divides(bqf(u,v))
+        if not v:
+            v += q
+        g,r,s = u.xgcd(v)
+        assert g.is_one()
+        M = matrix(ZZ, [[u,-v],[s,r]])
+        assert M.det().is_one()
+        a,b,c = bqf * M
+
+    # remaining case: q^2|a (and q|b)
+    assert q2.divides(a)
+    assert q.divides(b)
+    return BinaryQF(a//q2, b//q, c)
+
+class BQFClassGroupQuotientMorphism(Morphism):
+    r"""
+    Let `D` be a discriminant and `f > 0` an integer.
+
+    Given the class groups `G` and `H` of discriminants `f^2 D` and `D`,
+    this class represents the natural projection morphism `G \to H` which
+    is defined by finding a class representative `[a,b,c]` satisfying
+    `f^2 \mid a` and `f \mid b` and substituting `x \mapsto x/f`.
+
+    Alternatively, one may pass the discriminants `f^2 D` and `D` instead
+    of the :class:`BQFClassGroup` objects `G` and `H`.
+
+    This map is a well-defined group homomorphism.
+
+    EXAMPLES::
+
+        sage: from sage.quadratic_forms.bqf_class_group import BQFClassGroupQuotientMorphism
+        sage: G = BQFClassGroup(-4*117117)
+        sage: H = BQFClassGroup(-4*77)
+        sage: proj = BQFClassGroupQuotientMorphism(G, H)
+        sage: elt = G(BinaryQF(333, 306, 422))
+        sage: proj(elt)
+        Class of 9*x^2 + 4*x*y + 9*y^2
+
+    TESTS:
+
+    Check that it is really a group homomorphism::
+
+        sage: D = -randrange(1, 10^4)
+        sage: D *= 4 if D%4 not in (0,1) else 1
+        sage: f = randrange(1, 10^3)
+        sage: G = BQFClassGroup(f^2*D)
+        sage: H = BQFClassGroup(D)
+        sage: proj = G.hom(H)
+        sage: proj(G.zero()) == H.zero()
+        True
+        sage: elt1 = G.random_element()
+        sage: elt2 = G.random_element()
+        sage: proj(elt1 + elt2) == proj(elt1) + proj(elt2)
+        True
+    """
+    def __init__(self, G, H):
+        r"""
+        Initialize this morphism between class groups of binary
+        quadratic forms.
+
+        EXAMPLES::
+
+            sage: from sage.quadratic_forms.bqf_class_group import BQFClassGroupQuotientMorphism
+            sage: G = BQFClassGroup(-4*117117)
+            sage: H = BQFClassGroup(-4*77)
+            sage: f = BQFClassGroupQuotientMorphism(G, H)
+            sage: TestSuite(f).run(skip='_test_category')
+        """
+        if not isinstance(G, BQFClassGroup):
+            raise TypeError('G needs to be a BQFClassGroup')
+        if not isinstance(H, BQFClassGroup):
+            raise TypeError('H needs to be a BQFClassGroup')
+        try:
+            self.f = ZZ((G.discriminant() / H.discriminant()).sqrt(extend=False)).factor()
+        except ValueError:
+            raise ValueError('morphism only defined when disc(G) = f^2 * disc(H)')
+        super().__init__(G, H)
+
+    def _call_(self, elt):
+        r"""
+        Evaluate this morphism.
+
+        EXAMPLES::
+
+            sage: from sage.quadratic_forms.bqf_class_group import BQFClassGroupQuotientMorphism, _project_bqf
+            sage: G = BQFClassGroup(-4*117117)
+            sage: H = BQFClassGroup(-4*77)
+            sage: proj = BQFClassGroupQuotientMorphism(G, H)
+            sage: elt = G(BinaryQF(333, 306, 422))
+            sage: proj(elt)
+            Class of 9*x^2 + 4*x*y + 9*y^2
+            sage: proj(elt) == H(_project_bqf(_project_bqf(elt.form(), 3), 13))
+            True
+            sage: proj(elt) == H(_project_bqf(_project_bqf(elt.form(), 13), 3))
+            True
+
+        ALGORITHM: Repeated application of :func:`_project_bqf` for the prime factors in `f`.
+        """
+        bqf = elt.form()
+        for q,m in self.f:
+            for _ in range(m):
+                bqf = _project_bqf(bqf, q)
+        return self.codomain()(bqf)

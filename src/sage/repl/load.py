@@ -242,7 +242,7 @@ def load(filename, globals, attach=False):
         if os.path.isfile(fpath):
             break
     else:
-        raise IOError('did not find file %r to load or attach' % filename)
+        raise OSError('did not find file %r to load or attach' % filename)
 
     ext = os.path.splitext(fpath)[1].lower()
     if ext == '.py':

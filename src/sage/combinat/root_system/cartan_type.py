@@ -1707,7 +1707,7 @@ class CartanType_crystallographic(CartanType_abstract):
             O=<=O---O---O---O=<=O
             1   2   2   2   2   4
 
-       Here is the symmetrizer of some reducible Cartan types::
+        Here is the symmetrizer of some reducible Cartan types::
 
             sage: T = CartanType(["D", 2])
             sage: print(T.ascii_art(T.symmetrizer().__getitem__))                       # needs sage.graphs

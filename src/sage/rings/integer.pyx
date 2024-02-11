@@ -3996,7 +3996,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             global n_factor_to_list
             if n_factor_to_list is None:
                 try:
-                    from sage.libs.flint.ulong_extras import n_factor_to_list
+                    from sage.libs.flint.ulong_extras_sage import n_factor_to_list
                 except ImportError:
                     pass
             if n_factor_to_list is not None:
@@ -4042,7 +4042,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             message = "the factorization returned by qsieve may be incomplete (the factors may not be prime) or even wrong; see qsieve? for details"
             from warnings import warn
             warn(message, RuntimeWarning, stacklevel=5)
-            from sage.libs.flint.qsieve import qsieve
+            from sage.libs.flint.qsieve_sage import qsieve
             F = qsieve(n)
             F.sort()
             return IntegerFactorization(F, unit=unit, unsafe=True,

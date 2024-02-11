@@ -167,7 +167,7 @@ class sage_build_cython(Command):
                 # we remove the version_file now to force a
                 # recythonization the next time we build Sage.
                 os.unlink(self._version_file)
-        except IOError:
+        except OSError:
             # Most likely, the version_file does not exist
             # => (re)cythonize all Cython code.
             force = True

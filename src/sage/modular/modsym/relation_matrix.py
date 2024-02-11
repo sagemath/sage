@@ -28,7 +28,7 @@ from sage.misc.search import search
 from sage.misc.verbose import verbose
 from sage.modular.modsym.manin_symbol_list import ManinSymbolList
 from sage.rings.rational_field import is_RationalField
-from sage.rings.ring import Ring
+from sage.categories.rings import Rings
 
 
 SPARSE = True
@@ -551,8 +551,8 @@ def sparse_2term_quotient(rels, n, F):
         [(3, -1/3), (3, -1), (3, -1), (3, 1), (5, 1), (5, 1)]
     """
     n = int(n)
-    if not isinstance(F, Ring):
-        raise TypeError("F must be a ring.")
+    if F not in Rings():
+        raise TypeError("F must be a ring")
 
     tm = verbose("Starting sparse 2-term quotient...")
     free = list(range(n))

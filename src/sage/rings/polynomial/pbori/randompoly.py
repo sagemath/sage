@@ -67,10 +67,8 @@ def sparse_random_system(ring, number_of_polynomials, variables_per_polynomial,
     if random_seed is not None:
         set_random_seed(random_seed)
     random_generator = Random(random_seed)
-    solutions = []
     variables = [ring.variable(i) for i in range(ring.n_variables())]
-    for v in variables:
-        solutions.append(v + random_generator.randint(0, 1))
+    solutions = [v + random_generator.randint(0, 1) for v in variables]
     solutions = ll_encode(solutions)
     res = []
     while len(res) < number_of_polynomials:

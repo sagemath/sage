@@ -77,7 +77,7 @@ def MultiFilteredVectorSpace(arg, base_ring=None, check=True):
         Filtrations
             1: QQ^2 >=  0   >=  0   >= 0
             2: QQ^2 >= QQ^2 >= QQ^2 >= 0
-   """
+    """
     if arg in ZZ:
         dim = ZZ(arg)
         filtration = {}

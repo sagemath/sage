@@ -194,7 +194,7 @@ class EllipticCurveHom_scalar(EllipticCurveHom):
         EXAMPLES::
 
             sage: from sage.schemes.elliptic_curves.hom_scalar import EllipticCurveHom_scalar
-            sage: E = EllipticCurve(j=Mod(1728,419))
+            sage: E = EllipticCurve(j=GF(419)(1728))
             sage: psi = EllipticCurveHom_scalar(E, 13)
             sage: P = E.change_ring(GF(419**2)).lift_x(5)
             sage: P = min({P, -P})  # fix choice of y

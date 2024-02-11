@@ -489,7 +489,7 @@ class SageCustomizations():
         try:
             with open(SAGE_STARTUP_FILE, 'r') as f:
                 self.shell.run_cell(f.read(), store_history=False)
-        except IOError:
+        except OSError:
             pass
 
     def init_inspector(self):

@@ -971,9 +971,9 @@ def extend(v):
     """
     if v[0] == v[1] == 0:
         if v[2] < 0:
-            return v[0], 0, 1,  v[1], 1, 0,  v[2], 0, 0
+            return v[0], 0, 1, v[1], 1, 0, v[2], 0, 0
         else:
-            return v[0], 1, 0,  v[1], 0, 1,  v[2], 0, 0
+            return v[0], 1, 0, v[1], 0, 1, v[2], 0, 0
 
     b1 = xgcd(v[0], v[1])
     b2 = xgcd(b1[1], b1[2])

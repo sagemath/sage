@@ -22,7 +22,8 @@ from sage.misc.latex import latex, LatexExpr
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.misc_c import prod
 from sage.structure.richcmp import richcmp
-from sage.structure.element import AlgebraElement
+from sage.structure.element import Element
+from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.action import Action
 from sage.categories.rings import Rings
@@ -36,7 +37,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.global_options import GlobalOptions
 
 
-def repr_from_monomials(monomials, term_repr, use_latex=False):
+def repr_from_monomials(monomials, term_repr, use_latex=False) -> str:
     r"""
     Return a string representation of an element of a free module
     from the dictionary ``monomials``.
@@ -161,7 +162,7 @@ def repr_from_monomials(monomials, term_repr, use_latex=False):
     return ret
 
 
-def repr_factored(w, latex_output=False):
+def repr_factored(w, latex_output=False) -> str:
     r"""
     Return a string representation of ``w`` with the `dx_i` generators
     factored on the right.
@@ -231,11 +232,11 @@ def repr_factored(w, latex_output=False):
     return ret
 
 
-class DifferentialWeylAlgebraElement(AlgebraElement):
+class DifferentialWeylAlgebraElement(Element):
     """
     An element in a differential Weyl algebra.
     """
-    def __init__(self, parent, monomials):
+    def __init__(self, parent, monomials) -> None:
         """
         Initialize ``self``.
 
@@ -246,10 +247,10 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
             sage: elt = ((x^3-z)*dx + dy)^2
             sage: TestSuite(elt).run()
         """
-        AlgebraElement.__init__(self, parent)
+        Element.__init__(self, parent)
         self.__monomials = monomials
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -279,7 +280,7 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
             return ret
         return repr_from_monomials(self.list(), term)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a `\LaTeX` representation of ``self``.
 
@@ -319,15 +320,15 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
                 return ret
             p = half_term(m[0], True)
             d = half_term(m[1], False)
-            if p == '1': # No polynomial part
+            if p == '1':  # No polynomial part
                 return d
-            elif d == '1': # No differential part
+            elif d == '1':  # No differential part
                 return p
             else:
                 return p + ' ' + d
         return repr_from_monomials(self.list(), term, True)
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Rich comparison for equal parents.
 
@@ -369,7 +370,7 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
             dy + z*dx - 3*x*dx
         """
         return self.__class__(self.parent(),
-                              {m:-c for m, c in self.__monomials.items()})
+                              {m: -c for m, c in self.__monomials.items()})
 
     def _add_(self, other):
         """
@@ -399,28 +400,30 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
             dx*dy*dz^2 + x^3*dx^2*dz^2 - z*dx^2*dz^2 - 10*x*dy - 10*x^4*dx
              + 10*x*z*dx - 10*x^3 + 10*z
         """
-        add_tuples = lambda x,y: tuple(a + y[i] for i,a in enumerate(x))
+        def add_tuples(x, y):
+            return tuple(a + y[i] for i, a in enumerate(x))
+
         d = {}
         n = self.parent()._n
-        t = tuple([0]*n)
+        t = tuple([0] * n)
         zero = self.parent().base_ring().zero()
         for ml in self.__monomials:
             cl = self.__monomials[ml]
             for mr in other.__monomials:
                 cr = other.__monomials[mr]
-                cur = [ ((mr[0], t), cl * cr) ]
+                cur = [((mr[0], t), cl * cr)]
                 for i, p in enumerate(ml[1]):
                     for _ in range(p):
                         next = []
                         for m, c in cur:  # Distribute and apply the derivative
                             diff = list(m[1])
                             diff[i] += 1
-                            next.append( ((m[0], tuple(diff)), c) )
+                            next.append(((m[0], tuple(diff)), c))
                             if m[0][i] != 0:
                                 poly = list(m[0])
                                 c *= poly[i]
                                 poly[i] -= 1
-                                next.append( ((tuple(poly), m[1]), c) )
+                                next.append(((tuple(poly), m[1]), c))
                         cur = next
 
                 for m, c in cur:
@@ -446,7 +449,7 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
         if other == 0:
             return self.parent().zero()
         M = self.__monomials
-        return self.__class__(self.parent(), {t: other*M[t] for t in M})
+        return self.__class__(self.parent(), {t: other * M[t] for t in M})
 
     def _lmul_(self, other):
         """
@@ -463,9 +466,9 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
         if other == 0:
             return self.parent().zero()
         M = self.__monomials
-        return self.__class__(self.parent(), {t: M[t]*other for t in M})
+        return self.__class__(self.parent(), {t: M[t] * other for t in M})
 
-    def monomial_coefficients(self, copy=True):
+    def monomial_coefficients(self, copy=True) -> dict:
         """
         Return a dictionary which has the basis keys in the support
         of ``self`` as keys and their corresponding coefficients
@@ -509,7 +512,7 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
         """
         return iter(self.list())
 
-    def list(self):
+    def list(self) -> list:
         """
         Return ``self`` as a list.
 
@@ -529,9 +532,9 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
              (((1, 0, 0), (1, 0, 0)), -3)]
         """
         return sorted(self.__monomials.items(),
-                      key=lambda x: (-sum(x[0][1]), x[0][1], -sum(x[0][0]), x[0][0]) )
+                      key=lambda x: (-sum(x[0][1]), x[0][1], -sum(x[0][0]), x[0][0]))
 
-    def support(self):
+    def support(self) -> list:
         """
         Return the support of ``self``.
 
@@ -567,15 +570,15 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
         F = self.parent()
         D = self.__monomials
         if F.base_ring().is_field():
-            x = F.base_ring()( x )
+            x = F.base_ring()(x)
             x_inv = x**-1
-            D = blas.linear_combination( [ ( D, x_inv ) ] )
+            D = blas.linear_combination([(D, x_inv)])
 
             return self.__class__(F, D)
 
         return self.__class__(F, {t: D[t]._divide_if_possible(x) for t in D})
 
-    def factor_differentials(self):
+    def factor_differentials(self) -> dict:
         """
         Return a dict representing ``self`` with the differentials
         factored out.
@@ -617,7 +620,7 @@ class DifferentialWeylAlgebraElement(AlgebraElement):
         DW = self.parent()
         P = DW.polynomial_ring()
         gens = P.gens()
-        for m,c in self:
+        for m, c in self:
             x, dx = m
             if dx not in ret:
                 ret[dx] = P.zero()
@@ -743,7 +746,7 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
             raise TypeError("argument R must be a commutative ring")
         return super().__classcall__(cls, R, names)
 
-    def __init__(self, R, names=None):
+    def __init__(self, R, names=None) -> None:
         r"""
         Initialize ``self``.
 
@@ -765,9 +768,9 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
             cat = AlgebrasWithBasis(R).NoZeroDivisors().Super()
         else:
             cat = AlgebrasWithBasis(R).Super()
-        Algebra.__init__(self, R, names, category=cat)
+        Parent.__init__(self, base=R, names=names, category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -779,7 +782,7 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
         """
         poly_gens = ', '.join(repr(x) for x in self.gens()[:self._n])
         return "Differential Weyl algebra of polynomials in {} over {}".format(
-                    poly_gens, self.base_ring())
+            poly_gens, self.base_ring())
 
     # add options to class
     class options(GlobalOptions):
@@ -829,7 +832,7 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
             sage: W(x^2 - y*z)
             -y*z + x^2
         """
-        t = tuple([0]*(self._n))
+        t = tuple([0] * (self._n))
         if x in self.base_ring():
             if x == self.base_ring().zero():
                 return self.zero()
@@ -839,7 +842,7 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
             if x.parent().base_ring() is R:
                 return self.element_class(self, dict(x))
             zero = R.zero()
-            return self.element_class(self, {i: R(c) for i,c in x if R(c) != zero})
+            return self.element_class(self, {i: R(c) for i, c in x if R(c) != zero})
         x = self._poly_ring(x)
         return self.element_class(self, {(tuple(m), t): c
                                          for m, c in x.dict().items()})
@@ -888,8 +891,8 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
         if self._poly_ring.has_coerce_map_from(R):
             return True
         if isinstance(R, DifferentialWeylAlgebra):
-            return ( R.variable_names() == self.variable_names()
-                     and self.base_ring().has_coerce_map_from(R.base_ring()) )
+            return (R.variable_names() == self.variable_names()
+                    and self.base_ring().has_coerce_map_from(R.base_ring()))
         return super()._coerce_map_from_(R)
 
     def degree_on_basis(self, i):
@@ -952,10 +955,16 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
         """
         n = self._n
         from sage.combinat.integer_lists.nn import IntegerListsNN
-        elt_map = lambda u : (tuple(u[:n]), tuple(u[n:]))
-        I = IntegerListsNN(length=2*n, element_constructor=elt_map)
+
+        def elt_map(u):
+            return (tuple(u[:n]), tuple(u[n:]))
+
+        I = IntegerListsNN(length=2 * n, element_constructor=elt_map)
         one = self.base_ring().one()
-        f = lambda x: self.element_class(self, {(x[0], x[1]): one})
+
+        def f(x):
+            return self.element_class(self, {(x[0], x[1]): one})
+
         return Family(I, f, name="basis map")
 
     @cached_method
@@ -1012,7 +1021,7 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
             Finite family {'dx': dx, 'dy': dy, 'dz': dz}
         """
         N = self.variable_names()[self._n:]
-        d = {x: self.gen(self._n+i) for i, x in enumerate(N)}
+        d = {x: self.gen(self._n + i) for i, x in enumerate(N)}
         return Family(N, lambda x: d[x])
 
     def gen(self, i):
@@ -1035,8 +1044,8 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
         if i < self._n:
             P[i] = 1
         else:
-            D[i-self._n] = 1
-        return self.element_class(self, {(tuple(P), tuple(D)): self.base_ring().one()} )
+            D[i - self._n] = 1
+        return self.element_class(self, {(tuple(P), tuple(D)): self.base_ring().one()})
 
     def ngens(self):
         """
@@ -1063,8 +1072,8 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
             sage: W.one()
             1
         """
-        t = tuple([0]*self._n)
-        return self.element_class( self, {(t, t): self.base_ring().one()} )
+        t = tuple([0] * self._n)
+        return self.element_class(self, {(t, t): self.base_ring().one()})
 
     @cached_method
     def zero(self):
@@ -1140,7 +1149,7 @@ class DifferentialWeylAlgebraAction(Action):
         True
     """
 
-    def __init__(self, G):
+    def __init__(self, G) -> None:
         """
         INPUT:
 

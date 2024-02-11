@@ -722,7 +722,7 @@ cdef class ModularSymbolNumerical:
         -4/5
     """
     cdef:
-        llong _N_E,  _cut_val, _t_plus, _t_minus
+        llong _N_E, _cut_val, _t_plus, _t_minus
         llong _t_unitary_minus, _t_unitary_plus
         int _lans
         int * _ans
@@ -736,10 +736,10 @@ cdef class ModularSymbolNumerical:
         int _global_sign
 
         # debug and optimisation
-        #public Integer nc_sums # number of calls to summation
-        #public Integer nc_direct # number of direct integrations vs
-        #public Integer nc_indirect # number of indirect
-        #public Integer nc_terms # number of terms summed in total
+        # public Integer nc_sums # number of calls to summation
+        # public Integer nc_direct # number of direct integrations vs
+        # public Integer nc_indirect # number of indirect
+        # public Integer nc_terms # number of terms summed in total
 
     def __cinit__(self):
         r"""

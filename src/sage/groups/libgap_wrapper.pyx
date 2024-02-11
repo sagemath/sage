@@ -345,6 +345,39 @@ class ParentLibGAP(SageObject):
         """
         return self._libgap._repr_()
 
+    def minimal_normal_subgroups(self):
+        """
+        Return the nontrivial minimal normal subgroups ``self``.
+
+        EXAMPLES::
+
+            sage: SL(2,GF(49)).minimal_normal_subgroups()
+            [Subgroup with 1 generators (
+             [6 0]
+             [0 6]
+             ) of Special Linear Group of degree 2 over Finite Field in z2 of size 7^2]
+        """
+        return [self._subgroup_constructor(gap_subgroup)
+                for gap_subgroup in self._libgap.MinimalNormalSubgroups()]
+
+    def maximal_normal_subgroups(self):
+        """
+        Return the maximal proper normal subgroups of ``self``.
+
+        This raises an error if `G/[G, G]` is infinite, yielding infinitely
+        many maximal normal subgroups.
+
+        EXAMPLES::
+
+            sage: SL(2,GF(49)).minimal_normal_subgroups()
+            [Subgroup with 1 generators (
+             [6 0]
+             [0 6]
+             ) of Special Linear Group of degree 2 over Finite Field in z2 of size 7^2]
+        """
+        return [self._subgroup_constructor(gap_subgroup)
+                for gap_subgroup in self._libgap.MaximalNormalSubgroups()]
+
     @cached_method
     def gens(self):
         """

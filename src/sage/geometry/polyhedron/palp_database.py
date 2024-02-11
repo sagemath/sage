@@ -36,6 +36,7 @@ from subprocess import Popen, PIPE
 from sage.structure.sage_object import SageObject
 from sage.rings.integer_ring import ZZ
 from sage.features.palp import PalpExecutable
+from sage.features.databases import DatabaseReflexivePolytopes
 
 from sage.interfaces.process import terminate
 
@@ -108,9 +109,10 @@ class PALPreader(SageObject):
         if data_basename is not None:
             self._data_basename = data_basename
         else:
-            from sage.env import POLYTOPE_DATA_DIR
-            self._data_basename = os.path.join(POLYTOPE_DATA_DIR,
-                                               'Full{}d'.format(dim), 'zzdb')
+            db = DatabaseReflexivePolytopes()
+            self._data_basename = os.path.join(
+                    os.path.dirname(db.absolute_filename()),
+                    f'Full{dim}d', 'zzdb')
             info = self._data_basename + '.info'
             if not os.path.exists(info):
                 raise ValueError('Cannot find PALP database: {}'.format(info))
@@ -431,9 +433,8 @@ class Reflexive4dHodge(PALPreader):
         """
         dim = 4
         if data_basename is None:
-            from sage.env import POLYTOPE_DATA_DIR
-            data_basename = os.path.join(POLYTOPE_DATA_DIR,
-                                         'Hodge4d', 'all')
+            db = DatabaseReflexivePolytopes('polytopes_db_4d')
+            data_basename = os.path.join(db.absolute_filename(), 'all')
             info = data_basename + '.vinfo'
             if not os.path.exists(info):
                 raise ValueError(

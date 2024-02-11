@@ -645,10 +645,6 @@ class Scheme(Parent):
             sage: S._Hom_(P).__class__
             <class 'sage.schemes.generic.homset.SchemeHomset_generic_with_category'>
 
-            sage: E = EllipticCurve('37a1')                                             # needs sage.schemes
-            sage: Hom(E, E).__class__                                                   # needs sage.schemes
-            <class 'sage.schemes.projective.projective_homset.SchemeHomset_polynomial_projective_space_with_category'>
-
             sage: Hom(Spec(ZZ), Spec(ZZ)).__class__
             <class 'sage.schemes.generic.homset.SchemeHomset_generic_with_category_with_equality_by_id'>
         """

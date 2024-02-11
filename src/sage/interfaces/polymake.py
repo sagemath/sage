@@ -957,7 +957,7 @@ class PolymakeElement(ExtraTabCompletion, InterfaceElement):
             sage: p.TWO_FACE_SIZES                              # optional - jupymake
             {(3 20)}
 
-    """
+        """
         T1, T2 = self.typeof()
         P = self._check_valid()
         name = self._name

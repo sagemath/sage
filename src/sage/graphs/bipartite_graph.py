@@ -979,7 +979,7 @@ class BipartiteGraph(Graph):
                 self.right.remove(vertex)
                 self.left.add(vertex)
             else:
-                raise RuntimeError("vertex ({0}) is neither in left nor in right".format(vertex))
+                raise RuntimeError(f"vertex ({vertex}) is neither in left nor in right")
 
     def add_edge(self, u, v=None, label=None):
         r"""
@@ -1749,7 +1749,7 @@ class BipartiteGraph(Graph):
         # open the file
         try:
             fi = open(fname, "r")
-        except IOError:
+        except OSError:
             print("unable to open file <<" + fname + ">>")
             return None
 
@@ -1849,7 +1849,7 @@ class BipartiteGraph(Graph):
         # open the file
         try:
             fi = open(fname, "w")
-        except IOError:
+        except OSError:
             print("Unable to open file <<" + fname + ">>.")
             return
 

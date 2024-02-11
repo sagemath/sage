@@ -214,8 +214,8 @@ class SteinWatkinsAllData:
         """
         try:
             file = bz2.open(self._file, 'rt', encoding="utf-8")
-        except IOError:
-            raise IOError("The Stein-Watkins data file %s must be installed." % self._file)
+        except OSError:
+            raise OSError("The Stein-Watkins data file %s must be installed." % self._file)
         C = None
         for L in file:
             if len(L) == 0:

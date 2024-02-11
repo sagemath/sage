@@ -32,6 +32,7 @@ class FiniteDimensionalGradedLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ri
         Category of finite dimensional graded Lie algebras with basis over Integer Ring
         sage: C.super_categories()
         [Category of graded Lie algebras with basis over Integer Ring,
+         Category of finite dimensional filtered modules with basis over Integer Ring,
          Category of finite dimensional Lie algebras with basis over Integer Ring]
 
         sage: C is LieAlgebras(ZZ).WithBasis().FiniteDimensional().Graded()

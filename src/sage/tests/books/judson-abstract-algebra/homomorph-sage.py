@@ -155,8 +155,8 @@ r"""
     sage: tau.kernel()
     Traceback (most recent call last):
     ...
-    RuntimeError: Gap produced error output
-    ...
+    sage.libs.gap.util.GAPError: Error, no method found! Error, no 1st choice method found for `Kernel' on 1 arguments
+    The 1st argument is 'fail' which might point to an earlier problem
 
 ~~~~~~~~~~~~~~~~~~~~~~ ::
 

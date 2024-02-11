@@ -45,6 +45,8 @@ from sage.rings.integer cimport Integer
 
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
+from sage.libs.flint.fmpz_poly_sage cimport *
+
 
 x = polygen(ZZ, 'x')
 

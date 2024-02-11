@@ -1033,8 +1033,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         cdef m4ri_word x = poly_to_word(multiple)
         mzed_rescale_row(self._entries, row, start_col, x)
 
-
-    cdef add_multiple_of_row_c(self,  Py_ssize_t row_to, Py_ssize_t row_from, multiple, Py_ssize_t start_col) noexcept:
+    cdef add_multiple_of_row_c(self, Py_ssize_t row_to, Py_ssize_t row_from, multiple, Py_ssize_t start_col) noexcept:
         """
         Compute ``self[row_to][start_col:] += multiple * self[row_from][start_col:]``.
 

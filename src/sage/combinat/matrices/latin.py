@@ -2496,7 +2496,7 @@ def check_bitrade_generators(a, b, c):
         sage: a, b, c, G = p3_group_bitrade_generators(3)
         sage: check_bitrade_generators(a, b, c)
         True
-        sage: check_bitrade_generators(a, b, gap('()'))
+        sage: check_bitrade_generators(a, b, libgap(gap('()')))
         False
     """
     A = PermutationGroup([a])

@@ -46,22 +46,6 @@ from sage.repl.rich_output.output_browser import (
 from sage.repl.rich_output.preferences import DisplayPreferences
 
 
-def _required_threejs_version():
-    """
-    Return the version of threejs that Sage requires.
-
-    EXAMPLES::
-
-        sage: from sage.repl.rich_output.display_manager import _required_threejs_version
-        sage: _required_threejs_version()                                               # needs sage.plot
-        'r...'
-    """
-    import os
-    import sage.env
-    with open(os.path.join(sage.env.SAGE_EXTCODE, 'threejs', 'threejs-version.txt')) as f:
-        return f.read().strip()
-
-
 class DisplayException(Exception):
     """
     Base exception for all rich output-related exceptions.
@@ -768,8 +752,9 @@ class DisplayManager(SageObject):
             ValueError: current backend does not support
             offline threejs graphics
         """
+        from sage.features.threejs import Threejs
         if online:
-            version = _required_threejs_version()
+            version = Threejs().required_version()
             return """
 <script src="https://cdn.jsdelivr.net/gh/sagemath/threejs-sage@{0}/build/three.min.js"></script>
             """.format(version)

@@ -161,7 +161,7 @@ from cpython.complex cimport PyComplex_FromDoubles
 from sage.ext.stdsage cimport PY_NEW
 
 from sage.libs.mpfr cimport MPFR_RNDU, MPFR_RNDD, MPFR_PREC_MIN, mpfr_get_d_2exp
-from sage.libs.arb.types cimport ARF_RND_NEAR
+from sage.libs.arb.types cimport ARF_RND_NEAR, arf_t, mag_t
 from sage.libs.arb.arb cimport *
 from sage.libs.arb.acb cimport *
 from sage.libs.arb.acb_calc cimport *

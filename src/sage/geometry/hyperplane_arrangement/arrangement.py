@@ -3785,7 +3785,7 @@ class HyperplaneArrangements(Parent, UniqueRepresentation):
             Traceback (most recent call last):
             ...
             ValueError: linear expression must be non-constant to define a hyperplane
-       """
+        """
         if len(args) == 1:
             arg = args[0]
             if isinstance(arg, HyperplaneArrangementElement) and args[0].parent() is self:

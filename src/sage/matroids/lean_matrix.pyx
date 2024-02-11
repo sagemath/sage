@@ -17,7 +17,6 @@ Cython code.
 AUTHORS:
 
 - Rudi Pendavingh, Stefan van Zwam (2013-04-01): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
@@ -543,7 +542,6 @@ cdef class LeanMatrix:
 
         - `False, None`  -- if the input submatrices does not induce a `m``-separator.
         - `True, E` -- if there exist a ``m``-separator ``E``.
-
         """
         for z in range(self.ncols()):
             if z in P_cols+Q_cols:

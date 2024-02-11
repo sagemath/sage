@@ -1,9 +1,8 @@
 r"""
 Galois groups of field extensions as permutation groups
 """
-
 from sage.groups.galois_group import _GaloisMixin, _SubGaloisMixin
-from sage.groups.perm_gps.permgroup import PermutationGroup, PermutationGroup_generic, PermutationGroup_subgroup
+from sage.groups.perm_gps.permgroup import PermutationGroup_generic, PermutationGroup_subgroup
 from sage.misc.abstract_method import abstract_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
@@ -27,7 +26,7 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
     @abstract_method
     def transitive_number(self, algorithm=None, recompute=False):
         """
-        The transitive number (as in the GAP and Magma databases of transitive groups)
+        Return the transitive number (as in the GAP and Magma databases of transitive groups)
         for the action on the roots of the defining polynomial of the top field.
 
         EXAMPLES::
@@ -42,8 +41,10 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
     @lazy_attribute
     def _gens(self):
         """
-        The generators of this Galois group as permutations of the roots.  It's important that this
-        be computed lazily, since it's often possible to compute other attributes (such as the order
+        The generators of this Galois group as permutations of the roots.
+
+        It is important that this be computed lazily, since it is
+        often possible to compute other attributes (such as the order
         or transitive number) more cheaply.
 
         EXAMPLES::
@@ -67,7 +68,6 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
         """
         self._field = field
         self._default_algorithm = algorithm
-        self._base = field.base_field()
         self._gc_numbering = gc_numbering
         if names is None:
             # add a c for Galois closure
@@ -103,11 +103,11 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
         """
         if self._gc_numbering:
             return self.order()
-        else:
-            try:
-                return self._field.degree()
-            except NotImplementedError: # relative number fields don't support degree
-                return self._field.relative_degree()
+
+        try:
+            return self._field.degree()
+        except NotImplementedError:  # relative number fields don't support degree
+            return self._field.relative_degree()
 
     @lazy_attribute
     def _domain(self):
@@ -126,12 +126,12 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
             sage: G = K.galois_group(gc_numbering=True); G._domain
             {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}
         """
-        return FiniteEnumeratedSet(range(1, self._deg+1))
+        return FiniteEnumeratedSet(range(1, self._deg + 1))
 
     @lazy_attribute
-    def _domain_to_gap(self):
+    def _domain_to_gap(self) -> dict:
         r"""
-        Dictionary implementing the identity (used by PermutationGroup_generic).
+        The dictionary implementing the identity (used by PermutationGroup_generic).
 
         EXAMPLES::
 
@@ -141,12 +141,12 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
             sage: G._domain_to_gap[5]                                                   # needs sage.rings.number_field
             5
         """
-        return {key: i+1 for i, key in enumerate(self._domain)}
+        return {key: i + 1 for i, key in enumerate(self._domain)}
 
     @lazy_attribute
-    def _domain_from_gap(self):
+    def _domain_from_gap(self) -> dict:
         r"""
-        Dictionary implementing the identity (used by PermutationGroup_generic).
+        The dictionary implementing the identity (used by PermutationGroup_generic).
 
         EXAMPLES::
 
@@ -156,11 +156,11 @@ class GaloisGroup_perm(_GaloisMixin, PermutationGroup_generic):
             sage: G._domain_from_gap[20]                                                # needs sage.rings.number_field
             20
         """
-        return {i+1: key for i, key in enumerate(self._domain)}
+        return {i + 1: key for i, key in enumerate(self._domain)}
 
-    def ngens(self):
+    def ngens(self) -> int:
         r"""
-        Number of generators of this Galois group
+        Return the number of generators of this Galois group.
 
         EXAMPLES::
 

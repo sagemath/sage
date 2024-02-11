@@ -556,7 +556,7 @@ connection to a server running Maple; for hints, type
                 try:
                     self.__tab_completion = sage.misc.persist.load(COMMANDS_CACHE)
                     return self.__tab_completion
-                except IOError:
+                except OSError:
                     pass
             if verbose:
                 print("\nBuilding Maple command completion list (this takes")

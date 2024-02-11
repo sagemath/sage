@@ -590,11 +590,11 @@ class Pi(Constant):
 
     def _real_double_(self, R):
         """
-         EXAMPLES::
+        EXAMPLES::
 
-             sage: pi._real_double_(RDF)
-             3.141592653589793
-         """
+            sage: pi._real_double_(RDF)
+            3.141592653589793
+        """
         return R.pi()
 
     def _sympy_(self):

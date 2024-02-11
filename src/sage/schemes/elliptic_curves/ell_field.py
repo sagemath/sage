@@ -28,6 +28,28 @@ from . import ell_generic
 
 class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurve_field):
 
+    def __init__(self, R, data, category=None):
+        r"""
+        Constructor for elliptic curves over fields.
+
+        Identical to the constructor for elliptic curves over
+        general rings, except for setting the default category
+        to :class:`AbelianVarieties`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(QQ, [1,1])
+            sage: E.category()
+            Category of abelian varieties over Rational Field
+            sage: E = EllipticCurve(GF(101), [1,1])
+            sage: E.category()
+            Category of abelian varieties over Finite Field of size 101
+        """
+        from sage.categories.schemes import AbelianVarieties
+        if category is None:
+            category = AbelianVarieties(R)
+        super().__init__(R, data, category=category)
+
     base_field = ell_generic.EllipticCurve_generic.base_ring
 
     _point = EllipticCurvePoint_field
@@ -1113,6 +1135,27 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             L = L, F_to_K.post_compose(K_to_L)
         return L
 
+    def _Hom_(self, other, category=None):
+        r"""
+        Hook to make :class:`~sage.categories.homset.Hom`
+        set the correct parent
+        :class:`~sage.schemes.elliptic_curves.homset.EllipticCurveHomset`
+        for
+        :class:`~sage.schemes.elliptic_curves.hom.EllipticCurveHom`
+        objects.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(19), [1,0])
+            sage: type(E._Hom_(E))
+            <class 'sage.schemes.elliptic_curves.homset.EllipticCurveHomset_with_category'>
+        """
+        if isinstance(other, ell_generic.EllipticCurve_generic) and self.base_ring() == other.base_ring():
+            from . import homset
+            return homset.EllipticCurveHomset(self, other, category=category)
+        from sage.schemes.generic.homset import SchemeHomset_generic
+        return SchemeHomset_generic(self, other, category=category)
+
     def isogeny(self, kernel, codomain=None, degree=None, model=None, check=True, algorithm=None):
         r"""
         Return an elliptic-curve isogeny from this elliptic curve.
@@ -2025,6 +2068,45 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         # inplace relabelling is necessary for static_sparse graphs
         GL = G.relabel(labels, inplace=False)
         return GL
+
+    def endomorphism_ring_is_commutative(self):
+        r"""
+        Check whether the endomorphism ring of this elliptic curve
+        *over its base field* is commutative.
+
+        ALGORITHM: The endomorphism ring is always commutative in
+        characteristic zero. Over finite fields, it is commutative
+        if and only if the Frobenius endomorphism is not in `\ZZ`.
+        All elliptic curves with non-commutative endomorphism ring
+        are supersingular. (The converse holds over the algebraic
+        closure, but here we consider endomorphisms *over the field
+        of definition*.)
+
+        EXAMPLES::
+
+            sage: EllipticCurve(QQ, [1,1]).endomorphism_ring_is_commutative()
+            True
+            sage: EllipticCurve(QQ, [1,0]).endomorphism_ring_is_commutative()
+            True
+            sage: EllipticCurve(GF(19), [1,1]).endomorphism_ring_is_commutative()
+            True
+            sage: EllipticCurve(GF(19^2), [1,1]).endomorphism_ring_is_commutative()
+            True
+            sage: EllipticCurve(GF(19), [1,0]).endomorphism_ring_is_commutative()
+            True
+            sage: EllipticCurve(GF(19^2), [1,0]).endomorphism_ring_is_commutative()
+            False
+            sage: EllipticCurve(GF(19^3), [1,0]).endomorphism_ring_is_commutative()
+            True
+        """
+        k = self.base()
+        if k.characteristic() == 0 or self.is_ordinary():
+            return True
+
+        if not k.is_finite():
+            raise NotImplementedError
+
+        return self.frobenius() not in ZZ
 
 
 def compute_model(E, name):

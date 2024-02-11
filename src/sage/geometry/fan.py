@@ -1238,7 +1238,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             sage: fan = Fan([Cone([(1,0), (1,1)]), Cone([(-1,-1)])])
             sage: sage_input(fan)
             Fan(cones=[[1, 2], [0]], rays=[(-1, -1), (1, 0), (1, 1)])
-       """
+        """
         cones = [[ZZ(_) for _ in c.ambient_ray_indices()] for c in self.generating_cones()]
         rays = [sib(tuple(r)) for r in self.rays()]
         return sib.name('Fan')(cones=cones, rays=rays)
@@ -1382,7 +1382,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             N( 0, 1),
             N(-1, 0)
             in 2-d lattice N
-         """
+        """
         return iter(self.generating_cones())
 
     def _compute_cone_lattice(self):

@@ -408,7 +408,7 @@ command-line version of MuPAD.
                 try:
                     self.__tab_completion = sage.misc.persist.load(COMMANDS_CACHE)
                     return self.__tab_completion
-                except IOError:
+                except OSError:
                     pass
             if verbose:
                 print("\nBuilding MuPAD command completion list (this takes")

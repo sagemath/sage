@@ -559,7 +559,7 @@ class FiniteSetEndoMaps_Set(FiniteSetMaps_Set, FiniteSetEndoMaps_N):
     - ``category`` -- the category in which the sets of maps is
       constructed. It must be a sub-category of ``Monoids().Finite()``
       and ``EnumeratedSets().Finite()`` which is the default value.
-     """
+    """
     def __init__(self, domain, action, category=None):
         """
         TESTS::

@@ -49,9 +49,9 @@ import os
 import re
 from sage.rings.integer import Integer
 from sage.databases.sql_db import SQLDatabase, SQLQuery
-from sage.env import GRAPHS_DATA_DIR
+from sage.features.databases import DatabaseGraphs
 from sage.graphs.graph import Graph
-dblocation = os.path.join(GRAPHS_DATA_DIR, 'graphs.db')
+dblocation = DatabaseGraphs().absolute_filename()
 
 
 def degseq_to_data(degree_sequence):

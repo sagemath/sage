@@ -375,7 +375,7 @@ def bernoulli(n, algorithm='default', num_threads=1):
         if n >= 100000:
             from warnings import warn
             warn("flint is known to not be accurate for large Bernoulli numbers")
-        from sage.libs.flint.arith import bernoulli_number as flint_bernoulli
+        from sage.libs.flint.arith_sage import bernoulli_number as flint_bernoulli
         return flint_bernoulli(n)
     elif algorithm == 'pari' or algorithm == 'gp':
         from sage.libs.pari.all import pari
@@ -6230,7 +6230,7 @@ def dedekind_sum(p, q, algorithm='default'):
     - :wikipedia:`Dedekind\_sum`
     """
     if algorithm == 'default' or algorithm == 'flint':
-        from sage.libs.flint.arith import dedekind_sum as flint_dedekind_sum
+        from sage.libs.flint.arith_sage import dedekind_sum as flint_dedekind_sum
         return flint_dedekind_sum(p, q)
 
     if algorithm == 'pari':

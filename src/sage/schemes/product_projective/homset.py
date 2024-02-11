@@ -39,7 +39,7 @@ class SchemeHomset_points_product_projective_spaces_ring(SchemeHomset_points):
         sage: SchemeHomset_points_product_projective_spaces_ring(
         ....:     Spec(QQ), ProductProjectiveSpaces([1, 1], QQ, 'z'))
         Set of rational points of Product of projective spaces P^1 x P^1 over Rational Field
-        """
+    """
 
     def _element_constructor_(self, v, **kwds):
         r"""
@@ -178,7 +178,7 @@ class SchemeHomset_points_product_projective_spaces_field(SchemeHomset_points_pr
             sage: X = PP.subscheme([x*u^2*a, b*z*u*v, z*v^2*c])
             sage: len(X.rational_points(bound=1, algorithm='enumerate'))                # needs sage.libs.singular
             232
-         """
+        """
         B = kwds.pop('bound', 0)
         X = self.codomain()
 

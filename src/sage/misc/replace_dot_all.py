@@ -364,7 +364,7 @@ def make_replacements_in_file(location, package_regex=None, verbose=False, outpu
         ....:             print(line.strip())
         from sage.plot.point import point2d
         from sage.plot.line import line
-        """
+    """
     replacements = find_replacements(location, package_regex, verbose)
     with open(location, "r") as file:
         lines = file.readlines()

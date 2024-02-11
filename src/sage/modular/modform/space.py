@@ -72,7 +72,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.power_series_ring_element import is_PowerSeries
 from sage.rings.rational_field import QQ
-from sage.rings.ring import Ring
+from sage.categories.rings import Rings
 
 from sage.structure.all import Sequence
 from sage.structure.richcmp import (richcmp_method, richcmp, rich_to_bool,
@@ -145,7 +145,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         weight = Integer(weight)
         if not ((character is None) or isinstance(character, dirichlet.DirichletCharacter)):
             raise TypeError("character must be a Dirichlet character")
-        if not isinstance(base_ring, Ring):
+        if base_ring not in Rings():
             raise TypeError("base_ring must be a ring")
         self.__sturm_bound = None
         self.__weight, self.__group, self.__character = weight, group, character
@@ -608,7 +608,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         pr = W.degree()
         B = self.q_integral_basis(pr)
         I = [self.linear_combination_of_basis(
-                  W.coordinates(f.padded_list(pr))) for f in B]
+            W.coordinates(f.padded_list(pr))) for f in B]
         return Sequence(I, cr=True, immutable=True)
 
     @cached_method
@@ -688,7 +688,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             ]
         """
         if prec is None:
-            try: # don't care about precision -- just must be big enough to determine forms
+            try:  # don't care about precision -- just must be big enough to determine forms
                 return self.__q_expansion_basis[1]
             except AttributeError:
                 pass
@@ -697,8 +697,8 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             prec = Integer(self.__normalize_prec(prec))
 
         if prec == 0:
-            z = self._q_expansion_ring()(0,prec)
-            return Sequence([z]*int(self.dimension()), immutable=True, cr=True)
+            z = self._q_expansion_ring()(0, prec)
+            return Sequence([z] * int(self.dimension()), immutable=True, cr=True)
         elif prec != -1:
             try:
                 current_prec, B = self.__q_expansion_basis
@@ -710,7 +710,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
                 pass
 
         d = self.dimension()
-        current_prec = max(prec, self.prec(), int(1.2*d) + 3)         # +3 for luck.
+        current_prec = max(prec, self.prec(), int(1.2 * d) + 3)  # +3 for luck.
         tries = 0
         while True:
             B = [f for f in self._compute_q_expansion_basis(current_prec) if f != 0]
@@ -769,8 +769,8 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         """
         prec = self.__normalize_prec(prec)
         if prec == 0:
-            z = self._q_expansion_ring()(0,0)
-            return Sequence([z]*int(self.dimension()), cr=True)
+            z = self._q_expansion_ring()(0, 0)
+            return Sequence([z] * int(self.dimension()), cr=True)
         try:
             current_prec, B = self.__q_echelon_basis
         except AttributeError:
@@ -789,7 +789,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         T = self._q_expansion_ring()
         S = [T(f.list(), prec) for f in C.basis()]
         for _ in range(self.dimension() - len(S)):
-            S.append(T(0,prec))
+            S.append(T(0, prec))
         S = Sequence(S, immutable=True, cr=True)
         self.__q_echelon_basis = (prec, S)
         return S
@@ -818,8 +818,8 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
         prec = self.__normalize_prec(prec)
         R = PowerSeriesRing(ZZ, name=defaults.DEFAULT_VARIABLE)
         if prec == 0:
-            z = R(0,prec)
-            return Sequence([z]*int(self.dimension()), cr=True)
+            z = R(0, prec)
+            return Sequence([z] * int(self.dimension()), cr=True)
         try:
             current_prec, B = self.__q_integral_basis
         except AttributeError:
@@ -1610,21 +1610,22 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
 
     def new_submodule(self, p=None):
         """
-         Return the new submodule of self. If p is specified, return the
-         p-new submodule of self.
+        Return the new submodule of self.
 
-         .. note::
+        If p is specified, return the p-new submodule of self.
+
+        .. note::
 
             This function should be overridden by all derived classes.
 
-         EXAMPLES::
+        EXAMPLES::
 
             sage: # needs sage.rings.number_field
             sage: M = sage.modular.modform.space.ModularFormsSpace(Gamma0(11), 2, DirichletGroup(1)[0], base_ring=QQ); M.new_submodule()
             Traceback (most recent call last):
             ...
             NotImplementedError: computation of new submodule not yet implemented
-         """
+        """
         raise NotImplementedError("computation of new submodule not yet implemented")
 
     def new_subspace(self, p=None):

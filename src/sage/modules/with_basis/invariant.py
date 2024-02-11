@@ -22,6 +22,7 @@ from sage.categories.finitely_generated_semigroups import FinitelyGeneratedSemig
 from sage.categories.finite_dimensional_modules_with_basis import FiniteDimensionalModulesWithBasis
 from sage.sets.family import Family
 from sage.matrix.constructor import Matrix
+from sage.libs.gap.libgap import libgap
 
 
 class FiniteDimensionalInvariantModule(SubmoduleWithBasis):
@@ -801,25 +802,22 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
 
         Check the :class:`ValueError`::
 
-            sage: from sage.groups.class_function import ClassFunction_libgap
-            sage: chi = ClassFunction_libgap(G, chi)
-            sage: T = M.twisted_invariant_module(G, chi, action_on_basis=action)
+            sage: T = M.twisted_invariant_module(G, "ichigo", action_on_basis=action)
             Traceback (most recent call last):
             ...
             ValueError: chi must be a list/tuple or a class function of the group G
         """
+        from sage.groups.class_function import ClassFunction, ClassFunction_libgap
 
-        from sage.groups.class_function import ClassFunction, ClassFunction_gap
-
-        if isinstance(chi,(list,tuple)):
-            chi = ClassFunction(G, chi)
-        elif not isinstance(chi, ClassFunction_gap):
+        if isinstance(chi, (list, tuple)):
+            chi = ClassFunction(G, libgap(chi))
+        elif not isinstance(chi, ClassFunction_libgap):
             raise ValueError("chi must be a list/tuple or a class function of the group G")
 
         try:
-            is_trivial = all(chi(conj.an_element()) == 1 for conj in G.conjugacy_classes())
-        except AttributeError: # to handle ReflectionGroups
-            is_trivial = all(chi(G(list(conj)[0])) == 1 for conj in G.conjugacy_classes().values())
+            is_trivial = all(chi(next(iter(conj))) == 1 for conj in G.conjugacy_classes())
+        except AttributeError:  # to handle ReflectionGroups
+            is_trivial = all(chi(G(next(iter(conj)))) == 1 for conj in G.conjugacy_classes())
 
         if is_trivial:
             action_on_basis = kwargs.pop('action_on_basis', None)

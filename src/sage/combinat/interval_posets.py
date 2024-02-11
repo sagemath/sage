@@ -3625,7 +3625,7 @@ class TamariIntervalPosets_all(DisjointUnionEnumeratedSets, TamariIntervalPosets
             sage: S is TamariIntervalPosets_all()
             True
             sage: TestSuite(S).run()  # long time (7s)
-            """
+        """
         DisjointUnionEnumeratedSets.__init__(
             self, Family(NonNegativeIntegers(), TamariIntervalPosets_size),
             facade=True, keepkey=False,

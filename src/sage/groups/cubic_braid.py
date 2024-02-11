@@ -1768,7 +1768,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
            sage: R3.simple_coroots()
            Finite family {1: (0, 1), 2: (1/3*E(3) - 1/3*E(3)^2, 1/3*E(3) - 1/3*E(3)^2)}
 
-       Conversion maps::
+        Conversion maps::
 
            sage: # optional - gap3
            sage: r = R3.an_element()

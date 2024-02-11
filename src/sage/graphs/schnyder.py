@@ -804,7 +804,7 @@ def minimal_schnyder_wood(graph, root_edge=None, minimal=True, check=True):
             raise ValueError('not a planar graph')
         if not all(len(u) == 3 for u in graph.faces()):
             raise ValueError('not a triangulation')
-        if not(a in graph.neighbors(b)):
+        if a not in graph.neighbors(b):
             raise ValueError('not a valid root edge')
 
     new_g = DiGraph()
