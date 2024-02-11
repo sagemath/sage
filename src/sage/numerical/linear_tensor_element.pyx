@@ -6,7 +6,7 @@ Here is an example of a linear function tensored with a vector space::
     sage: mip.<x> = MixedIntegerLinearProgram('ppl')   # base ring is QQ
     sage: lt = x[0] * vector([3,4]) + 1;   lt
     (1, 1) + (3, 4)*x_0
-    sage: type(lt)
+    sage: type(lt)  # known bug (sporadic abort error, see #28559)
     <class 'sage.numerical.linear_tensor_element.LinearTensor'>
 """
 
