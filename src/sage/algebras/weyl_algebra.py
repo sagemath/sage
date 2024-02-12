@@ -654,7 +654,7 @@ class DifferentialWeylAlgebraElement(Element):
         return self.parent().diff_action(self, p)
 
 
-class DifferentialWeylAlgebra(Parent, UniqueRepresentation):
+class DifferentialWeylAlgebra(UniqueRepresentation, Parent):
     r"""
     The differential Weyl algebra of a polynomial ring.
 
