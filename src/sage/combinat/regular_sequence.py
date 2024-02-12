@@ -763,7 +763,7 @@ class RegularSequence(RecognizableSeries):
             sage: S.regenerated().subsequence(1, -4)
             2-regular sequence 0, 0, 0, 0, 1, 3, 6, 9, 12, 18, ...
 
-        Check that the zero sequence is handeled correctly (issue:`37282`)
+        Check that the zero sequence is handled correctly (issue:`37282`)
         ::
 
             sage: Seq2.zero().subsequence(1, 1)
