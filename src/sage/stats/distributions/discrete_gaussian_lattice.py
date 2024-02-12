@@ -10,7 +10,7 @@ to `\exp(-|x - c|_2^2 / (2\sigma^2))`. More precisely lattice vectors in `x \in
 
 .. MATH::
 
-    `\frac{\exp(-|x - c|_2^2 / (2\sigma^2))}{\sum_{x \in \Lambda} \exp(-|x|_2^2 /
+    `\frac{\exp(-|x - c|_2^2 / (2\sigma^2))}{\sum_{v \in \Lambda} \exp(-|v|_2^2 /
     (2\sigma^2))}`
 
 AUTHORS:

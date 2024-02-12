@@ -15,7 +15,7 @@ Let ``<tab>`` indicate pressing the :kbd:`Tab` key.  So begin by typing
 
 To import these names into the global namespace, use::
 
-    sage: from sage.stats.channels_catalog import *
+    sage: from sage.stats.distributions.catalog import *
 
 """
 #*****************************************************************************
@@ -27,7 +27,8 @@ To import these names into the global namespace, use::
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.lazy_import import lazy_import as _lazy_import
-_lazy_import("sage.stats.distributions.discrete_gaussian_integer", ["DiscreteGaussianDistributionIntegerSampler"])
-_lazy_import("sage.stats.distributions.discrete_gaussian_lattice", ["DiscreteGaussianDistributionLatticeSampler"])
-_lazy_import("sage.stats.distributions.discrete_gaussian_polynomial", ["DiscreteGaussianDistributionPolynomialSampler"])
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.stats.distributions.discrete_gaussian_integer", ["DiscreteGaussianDistributionIntegerSampler"])
+lazy_import("sage.stats.distributions.discrete_gaussian_lattice", ["DiscreteGaussianDistributionLatticeSampler"])
+lazy_import("sage.stats.distributions.discrete_gaussian_polynomial", ["DiscreteGaussianDistributionPolynomialSampler"])
+del lazy_import
