@@ -1265,7 +1265,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
           If none of the previous apply, ``"traditional"`` is selected.
 
-        - ``velu_sqrt_bound``: -- an integer (default: ``None``). Establish the highest
+        - ``velu_sqrt_bound`` -- an integer (default: ``None``). Establish the highest
           (prime) degree for which the ``"traditional"`` algorithm should be selected
           instead of ``"velusqrt"``. If ``None``, the default value from
           :class:`~sage.schemes.elliptic_curves.hom_velusqrt._VeluBoundObj` is used.
