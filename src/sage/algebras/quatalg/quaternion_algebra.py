@@ -202,7 +202,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
         sage: QuaternionAlgebra(QQ, [(2), (3)], [1/2])
         Traceback (most recent call last):
         ...
-        ValueError: Quaternion algebra over the rationals must have an even number of ramified places
+        ValueError: quaternion algebra over the rationals must have an even number of ramified places
         sage: K.<w> = NumberField(x^2-x-1)
         sage: P = K.prime_above(2)
         sage: Q = K.prime_above(3)
@@ -212,7 +212,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
         sage: A = QuaternionAlgebra(K, [P,Q], [1/2,0])
         Traceback (most recent call last):
         ...
-        ValueError: Quaternion algebra over the rationals must have an even number of ramified places
+        ValueError: quaternion algebra over a number field must have an even number of ramified places
 
     If the coefficients `a` and `b` in the definition of the quaternion
     algebra are not integral, then a slower generic type is used for
@@ -301,7 +301,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
             if isinstance(arg1, list) and isinstance(arg2, list):
                 if not set(arg2).issubset(set([0,QQ(1/2)])):
                     raise ValueError("list of local invariants specifying ramification should contain only 0 and 1/2")
-                arg1 = list(set(arg1))
+                arg1 = set(arg1)
                 if not all([p.is_prime() for p in arg1]):
                     raise ValueError("quaternion algebra constructor requires a list of primes specifying the ramification")
                 if is_RationalField(K):
@@ -315,7 +315,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
                     if len(arg2) != len(K.real_places()):
                         raise ValueError("must specify ramification at the real places of %s" % K)
                     if is_odd(len(arg1) + 2 * sum(arg2)):
-                        raise ValueError("quaternion algebra over the rationals must have an even number of ramified places")
+                        raise ValueError("quaternion algebra over a number field must have an even number of ramified places")
                     fin_places_pari = [I.pari_prime() for I in arg1]
                     A = pari(K).alginit([2, [fin_places_pari, [QQ(1/2)] * len(fin_places_pari)], arg2], maxord=0)
                     a = K(A.algsplittingfield().disc()[1])
