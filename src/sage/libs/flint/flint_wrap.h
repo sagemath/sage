@@ -168,4 +168,10 @@
 
 #pragma pop_macro("ulong")
 
+/* CPU_SIZE_1 and SIZE_RED_FAILURE_THRESH are defined as macros in flint/fmpz_lll.h
+ * and as variables in fplll/defs.h, which breaks build if linbox is compiled with fplll */
+
+#undef CPU_SIZE_1
+#undef SIZE_RED_FAILURE_THRESH
+
 #endif

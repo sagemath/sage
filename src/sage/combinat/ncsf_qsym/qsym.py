@@ -102,6 +102,7 @@ from sage.combinat.ncsf_qsym.ncsf import NonCommutativeSymmetricFunctions
 from sage.combinat.words.word import Word
 from sage.combinat.tableau import StandardTableaux
 from sage.misc.cachefunc import cached_method
+from sage.misc.superseded import deprecated_function_alias
 
 
 class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
@@ -1064,12 +1065,12 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
 
             kronecker_coproduct = internal_coproduct
 
-            def frobenius(self, n):
+            def adams_operator(self, n):
                 r"""
                 Return the image of the quasi-symmetric function ``self``
-                under the `n`-th Frobenius operator.
+                under the `n`-th Adams operator.
 
-                The `n`-th Frobenius operator `\mathbf{f}_n` is defined to be
+                The `n`-th Adams operator `\mathbf{f}_n` is defined to be
                 the map from the `R`-algebra of quasi-symmetric functions
                 to itself that sends every symmetric function
                 `P(x_1, x_2, x_3, \ldots)` to
@@ -1084,18 +1085,18 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                 for every composition `(i_1, i_2, i_3, \ldots)`
                 (where `M` means the monomial basis).
 
-                The `n`-th Frobenius operator is also called the `n`-th
+                The `n`-th Adams operator is also called the `n`-th
                 Frobenius endomorphism. It is not related to the Frobenius map
                 which connects the ring of symmetric functions with the
                 representation theory of the symmetric group.
 
-                The `n`-th Frobenius operator is also the `n`-th Adams operator
+                The `n`-th Adams operator is the `n`-th Adams operator
                 of the `\Lambda`-ring of quasi-symmetric functions over the
                 integers.
 
-                The restriction of the `n`-th Frobenius operator to the
+                The restriction of the `n`-th Adams operator to the
                 subring formed by all symmetric functions is, not
-                unexpectedly, the `n`-th Frobenius operator of the ring of
+                unexpectedly, the `n`-th Adams operator of the ring of
                 symmetric functions.
 
                 .. SEEALSO::
@@ -1109,7 +1110,7 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
 
                 OUTPUT:
 
-                The result of applying the `n`-th Frobenius operator (on the
+                The result of applying the `n`-th Adams operator (on the
                 ring of quasi-symmetric functions) to ``self``.
 
                 EXAMPLES::
@@ -1117,42 +1118,42 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                     sage: QSym = QuasiSymmetricFunctions(ZZ)
                     sage: M = QSym.M()
                     sage: F = QSym.F()
-                    sage: M[3,2].frobenius(2)
+                    sage: M[3,2].adams_operator(2)
                     M[6, 4]
-                    sage: (M[2,1] - 2*M[3]).frobenius(4)
+                    sage: (M[2,1] - 2*M[3]).adams_operator(4)
                     M[8, 4] - 2*M[12]
-                    sage: M([]).frobenius(3)
+                    sage: M([]).adams_operator(3)
                     M[]
-                    sage: F[1,1].frobenius(2)
+                    sage: F[1,1].adams_operator(2)
                     F[1, 1, 1, 1] - F[1, 1, 2] - F[2, 1, 1] + F[2, 2]
 
-                The Frobenius endomorphisms are multiplicative::
+                The Adams endomorphisms are multiplicative::
 
-                    sage: all( all( M(I).frobenius(3) * M(J).frobenius(3)
-                    ....:           == (M(I) * M(J)).frobenius(3)
+                    sage: all( all( M(I).adams_operator(3) * M(J).adams_operator(3)
+                    ....:           == (M(I) * M(J)).adams_operator(3)
                     ....:           for I in Compositions(3) )
                     ....:      for J in Compositions(2) )
                     True
 
-                Being Hopf algebra endomorphisms, the Frobenius operators
+                Being Hopf algebra endomorphisms, the Adams operators
                 commute with the antipode::
 
-                    sage: all( M(I).frobenius(4).antipode()
-                    ....:      == M(I).antipode().frobenius(4)
+                    sage: all( M(I).adams_operator(4).antipode()
+                    ....:      == M(I).antipode().adams_operator(4)
                     ....:      for I in Compositions(3) )
                     True
 
-                The restriction of the Frobenius operators to the subring
-                of symmetric functions are the Frobenius operators of
+                The restriction of the Adams operators to the subring
+                of symmetric functions are the Adams operators of
                 the latter::
 
                     sage: e = SymmetricFunctions(ZZ).e()
-                    sage: all( M(e(lam)).frobenius(3)
-                    ....:      == M(e(lam).frobenius(3))
+                    sage: all( M(e(lam)).adams_operator(3)
+                    ....:      == M(e(lam).adams_operator(3))
                     ....:      for lam in Partitions(3) )
                     True
                 """
-                # Convert to the monomial basis, there apply Frobenius componentwise,
+                # Convert to the monomial basis, there apply componentwise,
                 # then convert back.
                 parent = self.parent()
                 M = parent.realization_of().M()
@@ -1161,6 +1162,8 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
                        for (I, coeff) in M(self)}
                 result_in_M_basis = M._from_dict(dct)
                 return parent(result_in_M_basis)
+
+            frobenius = deprecated_function_alias(36396, adams_operator)
 
             def star_involution(self):
                 r"""
@@ -1825,8 +1828,8 @@ class QuasiSymmetricFunctions(UniqueRepresentation, Parent):
             `\lambda^i(x_j)` is `x_j` if `i = 1` and `0` if `i > 1`).
 
             The Adams operations of this `\lambda`-ring are the
-            Frobenius endomorphisms `\mathbf{f}_n` (see
-            :meth:`~sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Bases.ElementMethods.frobenius`
+            Adams endomorphisms `\mathbf{f}_n` (see
+            :meth:`~sage.combinat.ncsf_qsym.qsym.QuasiSymmetricFunctions.Bases.ElementMethods.adams_operator`
             for their definition). Using these endomorphisms, the
             `\lambda`-operations can be explicitly computed via the formula
 

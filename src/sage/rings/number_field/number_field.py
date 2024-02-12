@@ -77,8 +77,7 @@ AUTHORS:
 # ****************************************************************************
 from __future__ import annotations
 from sage.misc.cachefunc import cached_method
-from sage.misc.superseded import (deprecation,
-                                  deprecated_function_alias)
+from sage.misc.superseded import deprecation
 
 
 import sage.libs.ntl.all as ntl
@@ -109,6 +108,7 @@ from .class_group import ClassGroup
 from .class_group import SClassGroup
 
 from sage.structure.element import is_Element
+from sage.structure.parent import Parent
 from sage.structure.sequence import Sequence
 from sage.structure.factorization import Factorization
 from sage.structure.category_object import normalize_names
@@ -121,7 +121,6 @@ from . import structure
 from . import number_field_morphisms
 from itertools import count
 from collections import Counter
-from builtins import zip
 
 from sage.categories.homset import Hom
 from sage.categories.sets_cat import Sets
@@ -210,7 +209,6 @@ import sage.rings.polynomial.polynomial_element as polynomial_element
 import sage.groups.abelian_gps.abelian_group
 import sage.rings.complex_interval_field
 
-from sage.structure.parent_gens import ParentWithGens
 from sage.structure.factory import UniqueFactory
 from . import number_field_element
 from . import number_field_element_quadratic
@@ -1380,7 +1378,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         else:
             assert category.is_subcategory(default_category), "%s is not a subcategory of %s" % (category, default_category)
 
-        ParentWithGens.__init__(self, QQ, name, category=category)
+        Parent.__init__(self, base=QQ, names=name, category=category)
         if not isinstance(polynomial, polynomial_element.Polynomial):
             raise TypeError("polynomial (=%s) must be a polynomial" % repr(polynomial))
 
@@ -10163,11 +10161,11 @@ class NumberField_absolute(NumberField_generic):
 
         More local examples::
 
-            sage: K.hilbert_symbol(a, 0, K.ideal(5))
+            sage: K.hilbert_symbol(a, 0, K.fractional_ideal(5))
             0
-            sage: K.hilbert_symbol(a, a + 5, K.ideal(5))
+            sage: K.hilbert_symbol(a, a + 5, K.fractional_ideal(5))
             1
-            sage: K.hilbert_symbol(a + 1, 13, (a+6)*K.maximal_order())
+            sage: K.hilbert_symbol(a + 1, 13, (a+6)*K)
             -1
             sage: [emb1, emb2] = K.embeddings(AA)
             sage: K.hilbert_symbol(a, -1, emb1)
@@ -10199,8 +10197,7 @@ class NumberField_absolute(NumberField_generic):
         Primes above 2::
 
             sage: K.<a> = NumberField(x^5 - 23)
-            sage: O = K.maximal_order()
-            sage: p = [p[0] for p in (2*O).factor() if p[0].norm() == 16][0]
+            sage: p = [p[0] for p in (2*K).factor() if p[0].norm() == 16][0]
             sage: K.hilbert_symbol(a, a + 5, p)
             1
             sage: K.hilbert_symbol(a, 2, p)
@@ -10248,8 +10245,7 @@ class NumberField_absolute(NumberField_generic):
         `a` and `b` do not have to be integral or coprime::
 
             sage: K.<i> = QuadraticField(-1)
-            sage: O = K.maximal_order()
-            sage: K.hilbert_symbol(1/2, 1/6, 3*O)
+            sage: K.hilbert_symbol(1/2, 1/6, 3*K)
             1
             sage: p = 1 + i
             sage: K.hilbert_symbol(p, p, p)
@@ -12762,7 +12758,6 @@ def _splitting_classes_gens_(K, m, d):
     """
     from sage.groups.abelian_gps.abelian_group import AbelianGroup
 
-    R = K.ring_of_integers()
     Zm = IntegerModRing(m)
     unit_gens = Zm.unit_gens()
     Zmstar = AbelianGroup(len(unit_gens), [x.multiplicative_order() for x in unit_gens])
