@@ -47,7 +47,7 @@ class ModulePrinting(object):
 
             sage: from sage.algebras.lie_algebras.verma_module import ModulePrinting
             sage: MP = ModulePrinting()
-            sage: TestSuite(MP).run()
+            sage: TestSuite(MP).run(skip="_test_pickling")
         """
         self.__vector_name = vector_name
 

@@ -145,6 +145,7 @@ class BGGResolution(UniqueRepresentation, ChainComplex_class):
             return []
         return self._module_order[i]
 
+
 @cached_function
 def build_differentials(W):
     r"""
@@ -164,10 +165,10 @@ def build_differentials(W):
 
     EXAMPLES::
 
-        sage: from sage.algebras.lie_algebras.bgg_dual_module import build_differentials
+        sage: from sage.algebras.lie_algebras.bgg_resolution import build_differentials
         sage: W = WeylGroup(['B', 2], prefix='s')
         sage: D, O = build_differentials(W)
-        sage: unicode_art(D)
+        sage: D
         {0: [],
          1: [-1  1],
          2: [1 1]
