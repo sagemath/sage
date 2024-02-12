@@ -3,7 +3,6 @@ import sage.stats.distributions.catalog as distributions
 from .r import ttest
 from .basic_stats import (mean, mode, std, variance, median, moving_average)
 from .hmm import all as hmm
-from .distributions.all import *
 
 # We lazy_import the following modules since they import numpy which
 # slows down sage startup
