@@ -191,7 +191,7 @@ class Algebras(CategoryWithAxiom_over_base_ring):
             try:
                 basis = self.basis()
             except AttributeError:
-                raise AttributeError("Basis is not yet implemented for this algebra.")
+                raise AttributeError("basis is not yet implemented for this algebra")
             try:
                 # TODO: The following code is specific to the quaternion algebra
                 #   and should belong there
