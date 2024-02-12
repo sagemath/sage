@@ -3937,22 +3937,28 @@ class RootLatticeRealizations(Category_over_base_ring):
 
                 sage: P = RootSystem(['A', 3]).weight_space()
                 sage: La = P.fundamental_weights()
+                sage: alphacheck = P.coroot_lattice().positive_roots()
+                sage: rho = P.rho()
                 sage: (La[1] + 2*La[2]).is_verma_dominant()
                 True
-                sage: (La[1] - 3/2*La[3]).is_verma_dominant()
+                sage: la = La[1] - 3/2*La[3] - rho
+                sage: la.is_verma_dominant()
                 True
-                sage: (La[1] - 3/2*La[3]).is_verma_dominant(positive=False)
-                True
-                sage: (1/2*La[1] - 3/2*La[3]).is_verma_dominant()
+                sage: la.is_verma_dominant(positive=False)
                 False
-                sage: alphacheck = P.coroot_lattice().positive_roots()
-                sage: [(1/2*La[1] - 3/2*La[3]).scalar(coroot) for coroot in alphacheck]
-                [1/2, 0, -3/2, 1/2, -3/2, -1]
-                sage: (1/2*La[1] - 3/2*La[3]).is_verma_dominant(positive=False)
+                sage: [(la+rho).scalar(coroot) for coroot in alphacheck]
+                [1, 0, -3/2, 1, -3/2, -1/2]
+                sage: mu = 1/2*La[1] - 3/2*La[3] - rho
+                sage: mu.is_verma_dominant()
+                False
+                sage: mu.is_verma_dominant(positive=False)
                 True
+                sage: [(mu+rho).scalar(coroot) for coroot in alphacheck]
+                [1/2, 0, -3/2, 1/2, -3/2, -1]
             """
-            alphacheck = self.parent().coroot_lattice().positive_roots()
-            wt = self + self.parent().rho()
+            P = self.parent()
+            alphacheck = P.coroot_lattice().positive_roots()
+            wt = self + P.rho()
             if positive:
                 return not any((c := wt.scalar(ac)) in ZZ and c < 0 for ac in alphacheck)
             return not any((c := wt.scalar(ac)) in ZZ and c > 0 for ac in alphacheck)
