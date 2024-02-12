@@ -138,7 +138,6 @@ Here we assume that you are using a git checkout.
   - Bootstrap the source tree and install the build prerequisites and the Sage library::
 
       $ ./bootstrap
-      $ pip install --no-build-isolation -v -v --editable ./pkgs/sage-setup
       $ pip install --no-build-isolation --config-settings editable_mode=compat -v -v --editable ./src
 
     If you encounter any errors, try to install the ``sage-conf`` package first::

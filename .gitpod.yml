@@ -11,7 +11,6 @@ tasks:
       && conda config --append envs_dirs $(pwd)
       && conda activate $(pwd)/venv
       && ./bootstrap
-      && pip install --no-build-isolation -v -v -e ./pkgs/sage-setup
       && pip install --no-build-isolation -v -v -e ./src
     # Activate conda environment, set up Trac remote
     # RestructuredText extension recommends python extension, although we have already installed it
