@@ -7093,7 +7093,7 @@ class StandardPermutations_n_abstract(Permutations):
             sage: Permutations(6)(x)            # known bug
             [1, 4, 5, 2, 3, 6]
 
-            check if :trac:`37284` is fixed::
+        Ensure that :issue:`37284` is fixed::
 
             sage: S5 = SymmetricGroup(5)
             sage: P5 = Permutations(5)
