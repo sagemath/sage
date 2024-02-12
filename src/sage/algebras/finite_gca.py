@@ -26,10 +26,9 @@ from sage.misc.functional import is_even
 from sage.rings.integer_ring import ZZ
 from sage.sets.condition_set import ConditionSet
 from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
-from sage.structure.parent import Parent
 
 
-class FiniteGCAlgebra(CombinatorialFreeModule, Parent):
+class FiniteGCAlgebra(CombinatorialFreeModule):
     r"""
     Finite dimensional graded commutative algebras.
 
