@@ -1974,16 +1974,14 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         from sage.schemes.elliptic_curves.weierstrass_morphism import identity_morphism
 
         if not isinstance(n, Factorization):
-            n_fac = Integer(n).factor()
-        else:
-            n_fac = n
+            n = Integer(n).factor()
 
-        if n_fac.value() == 1:
+        if n.value() == 1:
             yield identity_morphism(self)
             return
 
-        p = n_fac[-1][0]
-        for iso in self.isogenies_degree(n_fac / p, _intermediate=_intermediate):
+        p = n[-1][0]
+        for iso in self.isogenies_degree(n / p, _intermediate=_intermediate):
             if _intermediate:
                 yield iso
 
