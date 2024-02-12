@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-r""" Discrete Gaussian Samplers over Lattices
+r"""
+Discrete Gaussian Samplers over Lattices
 
 This file implements oracles which return samples from a lattice following a
 discrete Gaussian distribution. That is, if `\sigma` is big enough relative to
@@ -7,8 +8,10 @@ the provided basis, then vectors are returned with a probability proportional
 to `\exp(-|x - c|_2^2 / (2\sigma^2))`. More precisely lattice vectors in `x \in
 \Lambda` are returned with probability:
 
-    `\exp(-|x - c|_2^2 / (2\sigma^2)) / (\Sigma_{x \in \Lambda} \exp(-|x|_2^2 /
-    (2\sigma^2)))`
+.. MATH::
+
+    `\frac{\exp(-|x - c|_2^2 / (2\sigma^2))}{\sum_{x \in \Lambda} \exp(-|x|_2^2 /
+    (2\sigma^2))}`
 
 AUTHORS:
 
@@ -189,8 +192,8 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
     def _normalisation_factor_zz(self, tau=None, prec=None):
         r"""
-        This function returns an approximation of `\Sigma_{x \in B}
-        \exp(-|x|_2^2 / (2\sigma²))`, i.e. the normalisation factor such that the sum
+        This function returns an approximation of `\sum_{x \in B}
+        \exp(-|x|_2^2 / (2\sigma^2))`, i.e. the normalization factor such that the sum
         over all probabilities is 1 for `B`, via Poisson summation.
 
 
@@ -270,7 +273,6 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             ...
             NotImplementedError: lattice must be integral for now
         """
-
         # If σ > 1:
         # We use the Fourier transform g(t) of f(x) = exp(-k^2 / 2σ^2), but
         # taking the norm of vector t^2 as input, and with norm_factor factored.
@@ -350,7 +352,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
     @cached_method
     def _maximal_r(self):
         r"""
-        This function computes the largest value `r > 0` such that `Σ - r²BBᵀ`
+        This function computes the largest value `r > 0` such that `\Sigma - r^2BB^@`
         is positive definite.
 
         This is equivalent to finding `\lambda_1(\Sigma / Q) = 1 / \lambda_n(Q
@@ -401,7 +403,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
     def __init__(self, B, sigma=1, c=0, r=None, precision=None, sigma_basis=False):
         r"""
-        Construct a discrete Gaussian sampler over the lattice `\LAmbda(B)`
+        Construct a discrete Gaussian sampler over the lattice `\Lambda(B)`
         with parameter ``sigma`` and center `c`.
 
         INPUT:
@@ -583,7 +585,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             [0 1 0]
             [0 0 1]
 
-        .. note:
+        .. NOTE::
 
            Do not call this method directly, it is called automatically from
            :func:`DiscreteGaussianDistributionLatticeSampler.__init__`.
@@ -795,7 +797,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: norm(mean_L.n() - D.c()) < 0.25
             True
 
-        .. note::
+        .. NOTE::
 
            Do not call this method directly, call
            :func:`DiscreteGaussianDistributionLatticeSampler.__call__` instead.
@@ -815,7 +817,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: norm(mean_L.n() - D.c()) < 0.25
             True
 
-        .. note::
+        .. NOTE::
 
            Do not call this method directly, call
            :func:`DiscreteGaussianDistributionLatticeSampler.__call__` instead.
@@ -837,7 +839,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
 
     def add_offline_samples(self, cnt=1):
         """
-        Precompute samples from `B^{-1}D_1` to be used in :meth:`_call_non_spherical`
+        Precompute samples from `B^{-1}D_1` to be used in :meth:`_call_non_spherical`.
 
         EXAMPLES::
 
@@ -868,7 +870,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
             sage: norm(mean_L.n() - D.c()) < 0.25
             True
 
-        .. note::
+        .. NOTE::
 
            Do not call this method directly, call
            :func:`DiscreteGaussianDistributionLatticeSampler.__call__` instead.
