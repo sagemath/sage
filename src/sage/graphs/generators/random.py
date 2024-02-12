@@ -1505,7 +1505,7 @@ def RandomKTree(n, k, seed=None):
 
     # A graph with treewidth 0 has no edges
     if k == 0:
-        g = Graph(n, name=f"Random 0-tree of order {n}")
+        g = Graph(n, name=f"Random 0-tree")
         return g
 
     if n < k + 1:
@@ -1514,7 +1514,7 @@ def RandomKTree(n, k, seed=None):
     if seed is not None:
         set_random_seed(seed)
 
-    g = Graph(name=f"Random {k}-tree of order {n}")
+    g = Graph(name=f"Random {k}-tree")
     g.add_clique(list(range(k + 1)))
 
     cliques = [list(range(k+1))]
@@ -1575,7 +1575,7 @@ def RandomPartialKTree(n, k, x, seed=None):
 
     # A graph with treewidth 0 has no edges
     if k == 0:
-        g = Graph(n, name=f"Random Partial 0-tree of order {n}")
+        g = Graph(n, name=f"Random partial 0-tree")
         return g
 
     if n < k + 1:
@@ -1593,7 +1593,7 @@ def RandomPartialKTree(n, k, x, seed=None):
 
     # The graph will have no edges
     if x == edgesInKTree:
-        g = Graph(n, name=f"Random Partial {k}-tree of order {n}")
+        g = Graph(n, name=f"Random partial {k}-tree")
         return g
 
     g = RandomKTree(n, k, seed)
@@ -1605,7 +1605,7 @@ def RandomPartialKTree(n, k, x, seed=None):
     shuffle(edges)
     g.delete_edges(edges[:x])
 
-    g.name(f"Random Partial {k}-tree of order {n}")
+    g.name(f"Random partial {k}-tree")
     return g
 
 
