@@ -122,11 +122,24 @@ Optional Packages
 For additional functionality, you can install some of the following
 optional packages.
 
+Mathematics
+~~~~~~~~~~~
+
 EOF
-for PKG_BASE in $(sage-package list --has-file SPKG.rst :optional: | grep -v '^sagemath_'); do
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --has-file math :optional: | grep -v '^sagemath_'); do
     echo "* :ref:\`spkg_$PKG_BASE\`"
 done >> "$OUTPUT_INDEX"
 cat >> "$OUTPUT_INDEX" <<EOF
+
+Other
+~~~~~
+
+EOF
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --no-file math :optional: | grep -v '^sagemath_'); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done >> "$OUTPUT_INDEX"
+cat >> "$OUTPUT_INDEX" <<EOF
+
 
 Features
 --------
