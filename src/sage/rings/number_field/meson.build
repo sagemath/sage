@@ -16,6 +16,7 @@ py.install_sources(
     'number_field_ideal_rel.py',
     'number_field_rel.py',
     'order.py',
+    'order_ideal.py',
     'selmer_group.py',
     'small_primes_of_degree_one.py',
     'splitting_field.py',
