@@ -162,9 +162,6 @@ class _VeluBoundObj:
     def __repr__(self):
         return f"VeluSqrtBound Object with bound = {self.bound}"
 
-    def __str__(self):
-        return self.__repr__()
-
 
 _velu_sqrt_bound = _VeluBoundObj()
 
