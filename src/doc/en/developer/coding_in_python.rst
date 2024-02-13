@@ -473,12 +473,11 @@ example:
 Note that the syntax in ``except`` is to list all the exceptions that
 are caught as a tuple, followed by an error message.
 
-If you are writing new code to Sage, you soon face the problem of choosing an
-exception most suitable for an errorneous situation. This is often a tricky
-business. The following aims to guide you in choosing from the most relevant
-exceptions to Sage developers. A method (or a function) accepts input described
-in the ``INPUT`` block of :ref:`the docstring <section-docstring-function>` and
-returns output. You may raise
+A method or a function accepts input described in the ``INPUT`` block of
+:ref:`the docstring <section-docstring-function>` and returns output. If the
+input cannot be handled by the code, then it may raise an exception.  The
+following aims to guide you in choosing from the most relevant exceptions to
+Sage:
 
 - `TypeError <https://docs.python.org/3/library/exceptions.html#TypeError>`_:
   if the input belongs to a class of objects that are not supported by the
