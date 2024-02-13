@@ -81,7 +81,13 @@ jobs:
             eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install python-pip python3-pip)
           fi
           eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install $(build/bin/sage-get-system-packages $SYSTEM $(build/bin/sage-package list :standard:)))
-          pip3 install --upgrade pip
+          pip3 install --user --upgrade pip
+          
+          # Create a virtual environment (some systems do not allow to install packages globally)
+          pip3 install --user --upgrade virtualenv
+          python3 -m venv venv
+          source venv/bin/activate
+          echo PATH=$PATH >> $GITHUB_ENV # Make it so venv is inherited for other steps
 
           # Needed for bootstrap
           pip3 install jinja2
@@ -101,7 +107,8 @@ jobs:
           PARI_VERSION: pari-2.15.4
 
       - name: Bootstrap
-        run: python3 -m sage_setup.autogen.interpreters src/sage/ext/interpreters
+        run: |
+          python3 -m sage_setup.autogen.interpreters src/sage/ext/interpreters
         env:
           PYTHONPATH: src   
 
@@ -115,5 +122,6 @@ jobs:
           pip3 install --no-build-isolation . -v
 
       - name: Test
-        run: ./sage -t --all -p4 || true
+        run: |
+          ./sage -t --all -p4 || true
         
