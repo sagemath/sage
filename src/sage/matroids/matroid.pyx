@@ -7960,6 +7960,12 @@ cdef class Matroid(SageObject):
             sage: M.broken_circuit_complex([5,4,3,2,1])                                 # needs sage.graphs
             Simplicial complex with vertex set (1, 2, 3, 4, 5)
              and facets {(1, 3, 5), (1, 4, 5), (2, 3, 5), (2, 4, 5)}
+
+        TESTS::
+
+            sage: M = Matroid(groundset=[0,1,2], circuits=[[0]])
+            sage: M.broken_circuit_complex()
+            Simplicial complex with vertex set () and facets {}
         """
         from sage.topology.simplicial_complex import SimplicialComplex
         return SimplicialComplex(self.no_broken_circuits_sets(ordering))
