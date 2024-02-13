@@ -3075,6 +3075,9 @@ class HeckeAlgebraSymmetricGroup_generic(CombinatorialFreeModule):
             sage: H3( SymmetricGroup(3).an_element() )
             [1, 3, 2]
             sage: H3( [2, 1] )
+            T[2, 1, 3]
+            sage: H3( [2, 1, 3, 4, 5, 6] )
+            T[2, 1, 3]
         """
         ###################################################
         # Coerce permutations of size smaller that self.n #
@@ -3086,12 +3089,10 @@ class HeckeAlgebraSymmetricGroup_generic(CombinatorialFreeModule):
                 return self.monomial(self._indices(
                             list(x) + list(range(len(x) + 1, self.n + 1))
                         ))
-            if all(x[i] == i for i in range(self.n+1, len(x))):
+            if all(x[i] == i+1 for i in range(self.n, len(x))):
                 return self.monomial(self._indices(x[:self.n]))
 
         return self._indices(x)
-
-        raise TypeError
 
 
 class HeckeAlgebraSymmetricGroup_t(HeckeAlgebraSymmetricGroup_generic):
