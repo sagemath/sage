@@ -111,7 +111,7 @@ jobs:
             && cd lrcalc-2.1 \
             && ./configure \
             && make \
-            && sudo make install
+            && make install
           fi
 
           # Needed for fpylll
