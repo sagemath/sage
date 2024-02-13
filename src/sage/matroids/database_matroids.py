@@ -198,8 +198,8 @@ def Whirl3():
         sage: W.automorphism_group().is_transitive()
         False
 
-    For all elements `e`, neither `\mathcal{W}_3 \setminus \{e\}` nor
-    `\mathcal{W}_3 / \{e\}` is `3`-connected::
+    For all elements `e`, neither `\mathcal{W}_3 \setminus \{e\}` nor `\mathcal{W}_3 / \{e\}`
+    is `3`-connected::
 
         sage: import random
         sage: e = random.choice(list(W.groundset()))
@@ -266,8 +266,7 @@ def P6():
         {2: {{'a', 'b', 'c'}}, 3: {{'a', 'b', 'c', 'd', 'e', 'f'}}}
         sage: len(set(M.nonspanning_circuits()).difference(M.nonbases())) == 0
         True
-        sage: Matroid(matrix=random_matrix(GF(4, 'a'), ncols=5,
-        ....:                                          nrows=5)).has_minor(M)
+        sage: Matroid(matrix=random_matrix(GF(4, 'a'), ncols=5, nrows=5)).has_minor(M)
         False
         sage: M.is_valid()
         True
@@ -445,8 +444,8 @@ def NonFano():
         sage: M = matroids.catalog.NonFano(); M
         NonFano: Ternary matroid of rank 3 on 7 elements, type 0-
         sage: setprint(M.nonbases())
-        [{'a', 'b', 'f'}, {'a', 'c', 'e'}, {'a', 'd', 'g'}, {'b', 'c', 'd'},
-         {'b', 'e', 'g'}, {'c', 'f', 'g'}]
+        [{'a', 'b', 'f'}, {'a', 'c', 'e'}, {'a', 'd', 'g'},
+         {'b', 'c', 'd'}, {'b', 'e', 'g'}, {'c', 'f', 'g'}]
         sage: M.delete('f').is_isomorphic(matroids.CompleteGraphic(4))
         True
         sage: M.delete('g').is_isomorphic(matroids.CompleteGraphic(4))
@@ -479,8 +478,8 @@ def NonFanoDual():
         sage: sorted(M.groundset())
         ['a', 'b', 'c', 'd', 'e', 'f', 'g']
 
-    Every single-element contraction of `(F_7^-)^*` is isomorphic to `M(K_4)`
-    or `\mathcal{W}^3`::
+    Every single-element contraction of `(F_7^-)^*` is isomorphic to `M(K_4)` or
+    `\mathcal{W}^3`::
 
         sage: import random
         sage: e = random.choice(list(M.groundset()))
@@ -585,8 +584,8 @@ def AG32():
         sage: M.equals(M.dual())
         True
 
-    Every single-element deletion is isomorphic to `F_7^*` and every
-    single-element contraction is isomorphic to `F_7`::
+    Every single-element deletion is isomorphic to `F_7^*` and every single-element
+    contraction is isomorphic to `F_7`::
 
         sage: F7 = matroids.catalog.Fano()
         sage: F7D = matroids.catalog.FanoDual()
@@ -640,8 +639,8 @@ def AG32prime():
         sage: M.is_isomorphic(M.dual()) and not M.equals(M.dual())
         True
 
-    Every single-element deletion is isomorphic to `F_7^*` or `(F_7^-)^*` and
-    every single-element contraction is isomorphic to `F_7` or `F_7^-`::
+    Every single-element deletion is isomorphic to `F_7^*` or `(F_7^-)^*` and every
+    single-element contraction is isomorphic to `F_7` or `F_7^-`::
 
         sage: F7 = matroids.catalog.Fano()
         sage: F7D = matroids.catalog.FanoDual()
@@ -740,8 +739,7 @@ def F8():
              {'a', 'e', 'f', 'h'}, {'b', 'c', 'd', 'g'}, {'b', 'c', 'e', 'f'},
              {'c', 'd', 'e', 'h'}, {'c', 'f', 'g', 'h'}, {'d', 'e', 'f', 'g'}},
          4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
-        sage: D = get_nonisomorphic_matroids([M.contract(i)
-        ....:                                         for i in M.groundset()])
+        sage: D = get_nonisomorphic_matroids([M.contract(i) for i in M.groundset()])
         sage: len(D)
         3
         sage: [N.is_isomorphic(matroids.catalog.Fano()) for N in D]
@@ -891,8 +889,7 @@ def S8():
         sage: M.is_graphic()
         False
         sage: D = get_nonisomorphic_matroids(
-        ....:       list(matroids.catalog.Fano().linear_coextensions(
-        ....:                                                 cosimple=True)))
+        ....:       list(matroids.catalog.Fano().linear_coextensions(cosimple=True)))
         sage: len(D)
         2
         sage: [N.is_isomorphic(M) for N in D]
@@ -1055,8 +1052,7 @@ def P8():
         P8: Ternary matroid of rank 4 on 8 elements, type 2+
         sage: M.is_isomorphic(M.dual()) and not M.equals(M.dual())
         True
-        sage: Matroid(matrix=random_matrix(GF(4, 'a'), ncols=5,
-        ....:                              nrows=5)).has_minor(M)
+        sage: Matroid(matrix=random_matrix(GF(4, 'a'), ncols=5, nrows=5)).has_minor(M)
         False
         sage: M.bicycle_dimension()
         2
@@ -1099,8 +1095,7 @@ def P8pp():
          4: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'}}}
         sage: M.is_isomorphic(M.dual()) and not M.equals(M.dual())
         True
-        sage: len(get_nonisomorphic_matroids([M.contract(i)
-        ....:                                        for i in M.groundset()]))
+        sage: len(get_nonisomorphic_matroids([M.contract(i) for i in M.groundset()]))
         1
         sage: M.is_valid()  # long time
         True
@@ -1181,8 +1176,7 @@ def K33dual():
 
         sage: M = matroids.catalog.K33dual(); M
         M*(K3, 3): Regular matroid of rank 4 on 9 elements with 81 bases
-        sage: any(N.is_3connected()
-        ....:     for N in M.linear_extensions(simple=True))
+        sage: any(N.is_3connected() for N in M.linear_extensions(simple=True))
         False
         sage: M.is_valid()
         True
@@ -1308,7 +1302,7 @@ def R9():
     EXAMPLES::
 
         sage: M = matroids.catalog.R9(); M
-        R9: Matroid of rank 3 on 9 elements with 69 bases
+        R9: Matroid of rank 3 on 9 elements with 15 nonspanning circuits
         sage: M.is_valid()
         True
         sage: len(M.nonspanning_circuits())
@@ -1471,7 +1465,7 @@ def R10():
         R10: Regular matroid of rank 5 on 10 elements with 162 bases
         sage: cct = []
         sage: for i in M.circuits():
-        ....:      cct.append(len(i))
+        ....:     cct.append(len(i))
         sage: Set(cct)
         {4, 6}
         sage: M.is_isomorphic(M.dual()) and not M.equals(M.dual())
@@ -1527,7 +1521,8 @@ def NonDesargues(groundset=None):
 
     EXAMPLES::
 
-        sage: M = matroids.catalog.NonDesargues()
+        sage: M = matroids.catalog.NonDesargues(); M
+        NonDesargues: Matroid of rank 3 on 10 elements with 9 nonspanning circuits
         sage: M.is_valid()
         True
         sage: M.automorphism_group().is_transitive()
@@ -1728,9 +1723,7 @@ def Wheel(r, field=None, ring=None):
       will be a regular matroid.
     - ``field`` -- any field; same as ``ring``, but only fields are allowed
 
-    OUTPUT:
-
-    the rank-`r` wheel matroid, represented as a regular matroid
+    OUTPUT: the rank-`r` wheel matroid, represented as a regular matroid
 
     EXAMPLES::
 
@@ -1802,9 +1795,7 @@ def Whirl(r):
 
     - ``r`` -- a positive integer; the rank of the desired matroid.
 
-    OUTPUT:
-
-    the rank-`r` whirl matroid, represented as a ternary matroid
+    OUTPUT: the rank-`r` whirl matroid, represented as a ternary matroid
 
     EXAMPLES::
 
@@ -1813,8 +1804,8 @@ def Whirl(r):
         sage: M.is_valid()
         True
         sage: M.tutte_polynomial()
-        x^5 + y^5 + 5*x^4 + 5*x^3*y + 5*x^2*y^2 + 5*x*y^3 + 5*y^4 + 10*x^3 +
-        15*x^2*y + 15*x*y^2 + 10*y^3 + 10*x^2 + 15*x*y + 10*y^2 + 5*x + 5*y
+        x^5 + y^5 + 5*x^4 + 5*x^3*y + 5*x^2*y^2 + 5*x*y^3 + 5*y^4 + 10*x^3 + 15*x^2*y +
+         15*x*y^2 + 10*y^3 + 10*x^2 + 15*x*y + 10*y^2 + 5*x + 5*y
         sage: M.is_isomorphic(matroids.Wheel(5))
         False
         sage: M = matroids.Whirl(3)
@@ -1876,9 +1867,7 @@ def Uniform(r, n):
     - ``n`` -- a nonnegative integer; the number of elements of the uniform
       matroid
 
-    OUTPUT:
-
-    the uniform matroid `U_{r,n}`
+    OUTPUT: the uniform matroid `U_{r,n}`
 
     EXAMPLES::
 
@@ -1930,9 +1919,7 @@ def PG(n, q, x=None):
       non-prime field, used for non-prime fields. If not supplied, ``'x'`` is
       used.
 
-    OUTPUT:
-
-    a linear matroid whose elements are the points of `PG(n, q)`
+    OUTPUT: a linear matroid whose elements are the points of `PG(n, q)`
 
     EXAMPLES::
 
@@ -1942,8 +1929,8 @@ def PG(n, q, x=None):
         sage: matroids.PG(5, 4, 'z').size() == (4^6 - 1) / (4 - 1)
         True
         sage: M = matroids.PG(4, 7); M
-        PG(4, 7): Linear matroid of rank 5 on 2801 elements represented over
-        the Finite Field of size 7
+        PG(4, 7): Linear matroid of rank 5 on 2801 elements represented over the Finite Field
+         of size 7
 
     REFERENCES:
 
@@ -1977,17 +1964,14 @@ def AG(n, q, x=None):
       non-prime field, used for non-prime fields. If not supplied, ``'x'`` is
       used.
 
-    OUTPUT:
-
-    a linear matroid whose elements are the points of `AG(n, q)`
+    OUTPUT: a linear matroid whose elements are the points of `AG(n, q)`
 
     EXAMPLES::
 
         sage: M = matroids.AG(2, 3).delete(8)
         sage: M.is_isomorphic(matroids.catalog.AG23minus())
         True
-        sage: matroids.AG(5, 4, 'z').size() == ((4 ^ 6 - 1) / (4 - 1) -
-        ....:                                             (4 ^ 5 - 1)/(4 - 1))
+        sage: matroids.AG(5, 4, 'z').size() == ((4 ^ 6 - 1) / (4 - 1) - (4 ^ 5 - 1)/(4 - 1))
         True
         sage: M = matroids.AG(4, 2); M
         AG(4, 2): Binary matroid of rank 5 on 16 elements, type (5, 0)
@@ -2019,9 +2003,7 @@ def Z(r, t=True):
     - ``r`` -- an integer (`r \ge 3`); the rank of the spike
     - ``t`` -- a Boolean (default: ``True``); whether the spike is tipped
 
-    OUTPUT:
-
-    a matroid; the unique rank-`r` binary spike (tipped or tipless)
+    OUTPUT: a matroid; the unique rank-`r` binary spike (tipped or tipless)
 
     EXAMPLES::
 
@@ -2096,7 +2078,7 @@ def Spike(r, t=True, C3=[]):
     The groundset is `E = \{t, x_1, x_2, \ldots, x_r, y_1, y_2, \ldots,
     y_r\}` with `r(E) = r`.
 
-    The non-spanning circuits are `\{L_1, L_2, \ldots, L_r\}`, all sets of the
+    The nonspanning circuits are `\{L_1, L_2, \ldots, L_r\}`, all sets of the
     form `(L_i \cup L_j) \setminus t` for `1 \le i < j \le r`, and some
     (possibly empty) collection `C_3` of sets of the form `\{z_1, z_2, \ldots,
     z_r\}` where `z_i \in \{x_i, y_i\}` for all `i`, and no two members of
@@ -2105,18 +2087,17 @@ def Spike(r, t=True, C3=[]):
     INPUT:
 
     - ``r`` -- an integer (`r \ge 3`); the rank of the spike
-    - ``t`` -- a boolean (default: ``True``); whether the spike is tipped
+    - ``t`` -- boolean (default: ``True``); whether the spike is tipped
     - ``C3`` -- a list (default: ``[]``); a list of extra nonspanning circuits.
       The default (i.e. the empty list) results in a free `r`-spike
 
-    OUTPUT:
-
-    a matroid; a rank-`r` spike (tipped or tipless)
+    OUTPUT: a matroid; a rank-`r` spike (tipped or tipless)
 
     EXAMPLES::
 
         sage: M = matroids.Spike(3, False); M
-        Free 3-spike\t: Matroid of rank 3 on 6 elements with 20 bases
+        Free 3-spike\t: M \ {'t'}, where M is Matroid of rank 3 on 7 elements with 3
+         nonspanning circuits
         sage: M.is_isomorphic(matroids.Uniform(3, 6))
         True
         sage: len(matroids.Spike(8).bases())
@@ -2227,9 +2208,7 @@ def Theta(n):
 
     - ``n`` -- an integer (`n \ge 2`); the rank of the matroid
 
-    OUTPUT:
-
-    a matroid (`\Theta_n`)
+    OUTPUT: a matroid (`\Theta_n`)
 
     EXAMPLES::
 
@@ -2253,8 +2232,7 @@ def Theta(n):
         sage: M.is_isomorphic(M.dual()) and not M.equals(M.dual())
         True
 
-    For `n \le 3`, its automorphism group is transitive, while for `n \ge 4`
-    it is not::
+    For `n \le 3`, its automorphism group is transitive, while for `n \ge 4` it is not::
 
         sage: n = random.choice(range(4, 8))
         sage: M = matroids.Theta(2 + n % 2)
@@ -2301,17 +2279,14 @@ def Psi(r):
 
     - ``r`` -- an integer (`r \ge 3`); the rank of the matroid
 
-    OUTPUT:
-
-    a matroid (`\Psi_r`)
+    OUTPUT: a matroid (`\Psi_r`)
 
     EXAMPLES::
 
         sage: matroids.Psi(7)
         Psi_7: Matroid of rank 7 on 14 elements with 2060 bases
 
-    The matroid `\Psi_r` is `3`-connected but, for all `r \ge 4`, not
-    `4`-connected::
+    The matroid `\Psi_r` is `3`-connected but, for all `r \ge 4`, not `4`-connected::
 
         sage: M = matroids.Psi(3)
         sage: M.is_4connected()
@@ -2847,8 +2822,7 @@ def BB9gDY():
     EXAMPLES::
 
         sage: M = matroids.catalog.BB9gDY(); M
-        Segment cosegment exchange on BB9: Quaternary matroid of rank 5 on 9
-        elements
+        Segment cosegment exchange on BB9: Quaternary matroid of rank 5 on 9 elements
         sage: M.is_valid()
         True
     """
@@ -4812,7 +4786,7 @@ def R9B():
 
 def Block_9_4():
     """
-    Return the paving matroid whose non-spanning circuits form the blocks of a
+    Return the paving matroid whose nonspanning circuits form the blocks of a
     `2-(9, 4, 3)` design.
 
     EXAMPLES::
@@ -4897,7 +4871,7 @@ def N1():
 
 def Block_10_5():
     """
-    Return the paving matroid whose non-spanning circuits form the blocks of a
+    Return the paving matroid whose nonspanning circuits form the blocks of a
     `3-(10, 5, 3)` design.
 
     EXAMPLES::
@@ -5099,8 +5073,7 @@ def ExtendedBinaryGolayCode():
     EXAMPLES::
 
         sage: M = matroids.catalog.ExtendedBinaryGolayCode(); M
-        Extended Binary Golay Code: Binary matroid of rank 12 on 24 elements,
-        type (12, 0)
+        Extended Binary Golay Code: Binary matroid of rank 12 on 24 elements, type (12, 0)
         sage: C = LinearCode(M.representation())
         sage: C.is_permutation_equivalent(codes.GolayCode(GF(2)))
         True
@@ -5151,9 +5124,7 @@ def CompleteGraphic(n):
     - ``n`` -- an integer, the number of vertices of the underlying complete
       graph.
 
-    OUTPUT:
-
-    The graphic matroid associated with the `n`-vertex complete graph.
+    OUTPUT: The graphic matroid associated with the `n`-vertex complete graph.
     This matroid has rank `n - 1`.
 
     EXAMPLES::

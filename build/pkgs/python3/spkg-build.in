@@ -48,12 +48,6 @@ if [ "$UNAME" = Darwin ]; then
         echo "OS X 10.$[$MACOSX_VERSION-4] Building with clang."
         CC=clang
     fi
-elif [ "$UNAME" = SunOS ]; then
-    # Enable some C99 features on Solaris. This in particular enables
-    # the isinf() and isfinite() functions. It works both for C and
-    # C++ code (which is not true for -std=c99).  See
-    # https://github.com/sagemath/sage/issues/14265
-    export CFLAGS="-D__C99FEATURES__ $CFLAGS"
 fi
 
 # Use EXTRA_CFLAGS for user-defined CFLAGS since Python puts its own

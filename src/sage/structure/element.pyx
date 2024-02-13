@@ -827,6 +827,28 @@ cdef class Element(SageObject):
                 variables.append(gen)
         return self(*variables)
 
+    def substitute(self, *args, **kwds):
+        """
+        This calls :meth:`self.subs`.
+
+        EXAMPLES::
+
+            sage: x, y = PolynomialRing(ZZ, 2, 'xy').gens()
+            sage: f = x^2 + y + x^2*y^2 + 5
+            sage: f((5,y))
+            25*y^2 + y + 30
+            sage: f.substitute({x: 5})
+            25*y^2 + y + 30
+            sage: f.substitute(x=5)
+            25*y^2 + y + 30
+            sage: (1/f).substitute(x=5)
+            1/(25*y^2 + y + 30)
+            sage: Integer(5).substitute(x=4)
+            5
+        """
+        return self.subs(*args, **kwds)
+
+
     def numerical_approx(self, prec=None, digits=None, algorithm=None):
         """
         Return a numerical approximation of ``self`` with ``prec`` bits
@@ -905,37 +927,6 @@ cdef class Element(SageObject):
             mpf('4.14159265358979323846264338327933')
         """
         return self.n(prec)._mpmath_(prec=prec)
-
-    def substitute(self,in_dict=None,**kwds):
-        """
-        This is an alias for self.subs().
-
-        INPUT:
-
-        - ``in_dict`` - (optional) dictionary of inputs
-
-        - ``**kwds``  - named parameters
-
-        OUTPUT:
-
-        - new object if substitution is possible, otherwise self.
-
-        EXAMPLES::
-
-            sage: x, y = PolynomialRing(ZZ, 2, 'xy').gens()
-            sage: f = x^2 + y + x^2*y^2 + 5
-            sage: f((5,y))
-            25*y^2 + y + 30
-            sage: f.substitute({x: 5})
-            25*y^2 + y + 30
-            sage: f.substitute(x=5)
-            25*y^2 + y + 30
-            sage: (1/f).substitute(x=5)
-            1/(25*y^2 + y + 30)
-            sage: Integer(5).substitute(x=4)
-            5
-         """
-        return self.subs(in_dict,**kwds)
 
     cpdef _act_on_(self, x, bint self_on_left) noexcept:
         """
@@ -3344,12 +3335,12 @@ cdef class CommutativeRingElement(RingElement):
         #This code is very general, it works for all integral domains that have the
         #is_square(root = True) option
 
-        from sage.rings.ring import IntegralDomain
+        from sage.categories.integral_domains import IntegralDomains
         P = self._parent
         is_sqr, sq_rt = self.is_square(root=True)
         if is_sqr:
             if all:
-                if not isinstance(P, IntegralDomain):
+                if P not in IntegralDomains():
                     raise NotImplementedError('sqrt() with all=True is only implemented for integral domains, not for %s' % P)
                 if P.characteristic()==2 or sq_rt==0:
                     #0 has only one square root, and in characteristic 2 everything also has only 1 root
@@ -3357,7 +3348,7 @@ cdef class CommutativeRingElement(RingElement):
                 return [ sq_rt, -sq_rt ]
             return sq_rt
         #from now on we know that self is not a square
-        if not isinstance(P, IntegralDomain):
+        if P not in IntegralDomains():
             raise NotImplementedError('sqrt() of non squares is only implemented for integral domains, not for %s' % P)
         if not extend:
             #all square roots of a non-square should be an empty list

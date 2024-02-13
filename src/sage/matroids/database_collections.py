@@ -250,8 +250,8 @@ def OxleyMatroids():
 
     REFERENCES:
 
-    These matroids are the nonparametrized matroids that appear in the
-    Appendix ``Some Interesting Matroids`` in [Oxl2011]_ (p. 639-64).
+    These matroids are the nonparametrized matroids that appear in the Appendix
+    ``Some Interesting Matroids`` in [Oxl2011]_ (p. 639-64).
     """
     from sage.matroids.database_matroids import (
         U24, U25, U35, K4, Whirl3, Q6, P6, U36, R6,

@@ -2453,7 +2453,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         """
         return self.rpow('e', precision=precision)
 
-    def substitute(self, rules=None, domain=None, **kwds):
+    def subs(self, rules=None, domain=None, **kwds):
         r"""
         Substitute the given ``rules`` in this asymptotic expansion.
 
@@ -2676,8 +2676,6 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             raise combine_exceptions(
                 TypeError('Cannot apply the substitution rules %s on %s '
                           'in %s.' % (rules, self, self.parent())), e)
-
-    subs = substitute
 
     def _substitute_(self, rules):
         r"""
