@@ -127,7 +127,7 @@ AC_DEFUN([WITH_SAGE_PYTHONUSERBASE], [dnl
   dnl user points PYTHONUSERBASE to any path (even the default), then
   dnl his local pip packages will be detected.
   PYTHONUSERBASE_SAVED="${PYTHONUSERBASE}"
-  AS_IF([test -z "${PYTHONUSERBASE}"], [
+  AS_IF([test -z "${PYTHONUSERBASE}"], [dnl
     PYTHONUSERBASE="${HOME}/.sage/local"
     export PYTHONUSERBASE
   ])
