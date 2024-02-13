@@ -71,8 +71,8 @@ Consider the following example which you should put in a script ``mpi_2.py``
     print(data)
 
 The same command as above with ``mpi_1.py`` replaced by ``mpi_2.py`` will
-produce 5 outputs and you will see each process creates an array and
-then passes it to the next guy (where the last guy passes to the
+produce 5 outputs. Each process will create an array and pass
+it to the next process, where the last process passes to the
 first. Note that ``MPI.size`` is the total number of MPI
 processes. ``MPI.COMM_WORLD`` is the communication world.
 
