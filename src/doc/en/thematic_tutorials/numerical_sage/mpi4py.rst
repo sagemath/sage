@@ -187,7 +187,3 @@ the string "done", which is printed out.
         sendbuf = "done"
     recvbuf = MPI.COMM_WORLD.bcast(sendbuf,root)
     print(recvbuf)
-
-MPI programming is difficult. It is "schizophrenic programming" in
-that you are writing a single programming with multiple threads of
-execution "many voices in one head".
