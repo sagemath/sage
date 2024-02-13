@@ -3065,23 +3065,32 @@ class HeckeAlgebraSymmetricGroup_generic(CombinatorialFreeModule):
         """
         return self._q
 
-    def _coerce_start(self, x):
+    def _element_constructor_(self, x):
         """
         EXAMPLES::
 
             sage: H3 = HeckeAlgebraSymmetricGroupT(QQ, 3)
-            sage: H3._coerce_start([2,1])
+            sage: H3([2,1])  # indirect doc test
             T[2, 1, 3]
+            sage: H3( SymmetricGroup(3).an_element() )
+            [1, 3, 2]
+            sage: H3( [2, 1] )
         """
         ###################################################
         # Coerce permutations of size smaller that self.n #
         ###################################################
         if not x:
             return self.one()
-        if len(x) < self.n and x in Permutations():
-            return self.monomial(self._indices(list(x) +
-                                               list(range(len(x) + 1,
-                                                          self.n + 1))))
+        if x in Permutations():
+            if len(x) < self.n:
+                return self.monomial(self._indices(
+                            list(x) + list(range(len(x) + 1, self.n + 1))
+                        ))
+            if all(x[i] == i for i in range(self.n+1, len(x))):
+                return self.monomial(self._indices(x[:self.n]))
+
+        return self._indices(x)
+
         raise TypeError
 
 
