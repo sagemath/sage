@@ -3004,6 +3004,13 @@ def HeckeAlgebraSymmetricGroupT(R, n, q=None):
         [2, 3, 1]
 
         sage: TestSuite(H3).run()
+
+    .. NOTE::
+
+        :class:`~sage.algebras.iwahori_hecke_algebra.IwahoriHeckeAlgebra` gives
+        a different implementation of the Iwahori-Hecke algebras of a Coxeter
+        system `(W,S)`. This includes the Hecke algebras of the symmetric group
+        as special case.
     """
     return HeckeAlgebraSymmetricGroup_t(R, n, q)
 
