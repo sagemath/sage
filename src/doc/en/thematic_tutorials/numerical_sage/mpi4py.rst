@@ -61,12 +61,12 @@ Consider the following example which you should put in a script ``mpi_2.py``
     from mpi4py import MPI
     import numpy
     comm = MPI.COMM_WORLD
-    rank=comm.rank
-    size=comm.size
-    v=numpy.array([rank]*5,dtype=float)
-    comm.send(v,dest=(rank+1)%size)
-    data=comm.recv(source=(rank-1)%size)
-    print("my rank is %d"%rank)
+    rank = comm.rank
+    size = comm.size
+    v = numpy.array([rank] * 5, dtype=float)
+    comm.send(v, dest=(rank+1) % size)
+    data = comm.recv(source=(rank-1) % size)
+    print(f"my rank is: {rank}")
     print("I received this:")
     print(data)
 
@@ -90,18 +90,18 @@ fact, the above code will hang if ``[rank]*5`` is replaced by
     from mpi4py import MPI
     import numpy
     comm = MPI.COMM_WORLD
-    rank=comm.rank
-    size=comm.size
-    v=numpy.array([rank]*500,dtype=float)
-    if comm.rank==0:
-       comm.send(v,dest=(rank+1)%size)
+    rank = comm.rank
+    size = comm.size
+    v = numpy.array([rank] * 500, dtype=float)
+    if comm.rank == 0:
+       comm.send(v, dest=(rank+1) % size)
     if comm.rank > 0:
-        data=comm.recv(source=(rank-1)%size)
-        comm.send(v,dest=(rank+1)%size)
-    if comm.rank==0:
-        data=comm.recv(source=size-1)
+        data = comm.recv(source=(rank-1) % size)
+        comm.send(v, dest=(rank+1) % size)
+    if comm.rank == 0:
+        data = comm.recv(source=size - 1)
 
-    print("my rank is %d"%rank)
+    print(f"my rank is: {rank}")
     print("I received this:")
     print(data)
 
@@ -119,15 +119,15 @@ computation should proceed. Consider the following code
 
     from mpi4py import MPI
     import numpy
-    sendbuf=[]
-    root=0
+    sendbuf = []
+    root = 0
     comm = MPI.COMM_WORLD
-    if comm.rank==0:
-        m=numpy.random.randn(comm.size,comm.size)
+    if comm.rank == 0:
+        m = numpy.random.randn(comm.size, comm.size)
         print(m)
         sendbuf=m
 
-    v=comm.scatter(sendbuf,root)
+    v = comm.scatter(sendbuf, root)
 
     print("I got this array:")
     print(v)
@@ -152,20 +152,20 @@ The root process then gathers the rows into a new matrix.
     from mpi4py import MPI
     import numpy
     comm = MPI.COMM_WORLD
-    sendbuf=[]
-    root=0
-    if comm.rank==0:
-        m=numpy.array(range(comm.size*comm.size),dtype=float)
-        m.shape=(comm.size,comm.size)
+    sendbuf = []
+    root = 0
+    if comm.rank == 0:
+        m = numpy.array(range(comm.size * comm.size), dtype=float)
+        m.shape = (comm.size, comm.size)
         print(m)
-        sendbuf=m
+        sendbuf = m
 
-    v=comm.scatter(sendbuf,root)
+    v = comm.scatter(sendbuf, root)
     print("I got this array:")
     print(v)
-    v=v*v
-    recvbuf=comm.gather(v,root)
-    if comm.rank==0:
+    v = v*v
+    recvbuf = comm.gather(v, root)
+    if comm.rank == 0:
         print(numpy.array(recvbuf))
 
 There is also a ``broadcast`` command that sends a single object to
@@ -175,17 +175,17 @@ the string "done", which is printed out.
 
 .. CODE-BLOCK:: python
 
-    v=MPI.COMM_WORLD.scatter(sendbuf,root)
+    v = MPI.COMM_WORLD.scatter(sendbuf, root)
     print("I got this array:")
     print(v)
-    v=v*v
-    recvbuf=MPI.COMM_WORLD.gather(v,root)
-    if MPI.COMM_WORLD.rank==0:
+    v = v*v
+    recvbuf = MPI.COMM_WORLD.gather(v, root)
+    if MPI.COMM_WORLD.rank == 0:
         print(numpy.array(recvbuf))
 
-    if MPI.COMM_WORLD.rank==0:
-        sendbuf="done"
-    recvbuf=MPI.COMM_WORLD.bcast(sendbuf,root)
+    if MPI.COMM_WORLD.rank == 0:
+        sendbuf = "done"
+    recvbuf = MPI.COMM_WORLD.bcast(sendbuf,root)
     print(recvbuf)
 
 MPI programming is difficult. It is "schizophrenic programming" in
