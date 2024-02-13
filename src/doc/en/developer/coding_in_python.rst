@@ -478,7 +478,7 @@ exception most suitable for an errorneous situation. This is often a tricky
 business. The following aims to guide you in choosing from the most relevant
 exceptions to Sage developers. A method (or a function) accepts input described
 in the ``INPUT`` block of :ref:`the docstring <section-docstring-function>` and
-returns output. You may raise one of
+returns output. You may raise
 
 - `TypeError <https://docs.python.org/3/library/exceptions.html#TypeError>`_:
   if the input belongs to a class of objects that are not supported by the
