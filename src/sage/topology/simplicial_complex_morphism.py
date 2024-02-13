@@ -469,7 +469,7 @@ class SimplicialComplexMorphism(Morphism):
             sage: H = Hom(S,S)
             sage: i = H.identity()
             sage: i.image()
-            Simplicial complex with vertex set () and facets {()}
+            Simplicial complex with vertex set () and facets {}
             sage: i.is_surjective()
             True
             sage: S = SimplicialComplex([[0,1]], is_mutable=False)
