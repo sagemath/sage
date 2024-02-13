@@ -3,6 +3,8 @@ py.install_sources(
     'all.py',
     'catalog.py',
     'constructor.py',
+    'database_collections.py',
+    'database_matroids.py',
     'dual_matroid.py',
     'graphic_matroid.py',
     'matroids_catalog.py',

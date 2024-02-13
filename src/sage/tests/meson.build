@@ -11,7 +11,6 @@ py.install_sources(
     'combinatorial_hopf_algebras.py',
     'finite_poset.py',
     'functools_partial_src.py',
-    'gap_packages.py',
     'gosper-sum.py',
     'lazy_imports.py',
     'modular_group_cohomology.py',

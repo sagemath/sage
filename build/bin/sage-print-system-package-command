@@ -7,7 +7,7 @@ SUDO=
 PROMPT=
 SPKG=no
 if [ -n "$OUTPUT_RST" ]; then
-    COMMENT=""
+    COMMENT="$RST_INDENT"
 else
     COMMENT="# "
 fi
@@ -89,7 +89,7 @@ function print_shell_command()
 {
     if [ -n "$OUTPUT_RST" ]; then
         echo
-        echo ".. CODE-BLOCK:: bash"
+        echo "$RST_INDENT.. CODE-BLOCK:: bash"
         echo
     fi
     # shell-quote arguments if necessary
@@ -106,6 +106,9 @@ function print_shell_command()
 
 function print_comment()
 {
+    if [ -n "$OUTPUT_RST" ]; then
+        echo
+    fi
     echo "${COMMENT}$1"
 }
 
