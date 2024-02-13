@@ -97,11 +97,24 @@ The Sage distribution includes most programs and libraries on which
 Sage depends.  It installs them automatically if it does not find
 equivalent system packages.
 
+Mathematics
+~~~~~~~~~~~
+
 EOF
-for PKG_BASE in $(sage-package list --has-file SPKG.rst :standard: | grep -v '^sagemath_'); do
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --has-file math :standard: | grep -v '^sagemath_'); do
     echo "* :ref:\`spkg_$PKG_BASE\`"
 done >> "$OUTPUT_INDEX"
 cat >> "$OUTPUT_INDEX" <<EOF
+
+Other
+~~~~~
+
+EOF
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --no-file math :standard: | grep -v '^sagemath_'); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done >> "$OUTPUT_INDEX"
+cat >> "$OUTPUT_INDEX" <<EOF
+
 
 Optional Packages
 -----------------
