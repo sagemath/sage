@@ -40,7 +40,7 @@ example. Create a script with the following code in a file ``mpi_1.py``
     from mpi4py import MPI
     comm = MPI.COMM_WORLD
     print("hello world")
-    print("my rank is: %d"%comm.rank)
+    print(f"my rank is: {comm.rank}")
 
 To run it you can do (from the command line in your Sage
 directory)
