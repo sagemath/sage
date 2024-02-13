@@ -1470,10 +1470,11 @@ def has_order(P, n, operation='+'):
         In some cases, order *testing* can be much faster than
         *computing* the order using :func:`order_from_multiple`.
     """
-    if isinstance(n, sage.rings.integer.Integer):
-        n = n.factor()
+    from sage.arith.misc import factor
 
-    G = P.parent()
+    # n might be an int, so `.factor` might not be available
+    n = factor(n)
+
     if operation in addition_names:
         isid = lambda el: not el
         mult = lambda el, n: multiple(el, n, operation='+')
