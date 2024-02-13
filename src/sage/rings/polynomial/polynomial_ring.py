@@ -1459,11 +1459,11 @@ class PolynomialRing_general(ring.Algebra):
 
             sage: from collections import Counter
             sage: R = GF(3)["x"]
-            sage: samples = [R.random_element(degree=(-1, 2)) for _ in range(27 * 1000)] # long time
-            sage: assert all(750 <= f <= 1250 for f in Counter(samples).values())
+            sage: samples = [R.random_element(degree=(-1, 2)) for _ in range(27000)]    # long time
+            sage: assert all(750 <= f <= 1250 for f in Counter(samples).values())       # long time
 
-            sage: samples = [R.random_element(degree=(-1, 2), monic=True) for _ in range(13 * 1000)] # long time
-            sage: assert all(750 <= f <= 1250 for f in Counter(samples).values())
+            sage: samples = [R.random_element(degree=(-1, 2), monic=True) for _ in range(13000)] # long time
+            sage: assert all(750 <= f <= 1250 for f in Counter(samples).values())       # long time
         """
         R = self.base_ring()
 
