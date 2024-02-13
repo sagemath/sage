@@ -355,7 +355,7 @@ cdef class Polynomial_template(Polynomial):
 
         TESTS:
 
-        Ensure non-invertible elements do not crash Sage::
+        Ensure non-invertible elements does not crash Sage (:issue:`37317`)::
 
             sage: R.<x> = Zmod(4)[]
             sage: f = R(2 * x)
