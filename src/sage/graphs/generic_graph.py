@@ -7976,6 +7976,17 @@ class GenericGraph(GenericGraph_pyx):
 
         TESTS:
 
+        Check that the example from :issue:`37028` is fixed::
+
+            sage: d = {0: [4, 6, 10, 11], 1: [5, 7, 10, 11], 2: [8, 9, 10, 11],
+            ....:      3: [8, 9, 11], 4: [6, 10, 11], 5: [7, 10, 11],
+            ....:      6: [10, 11],  7: [10], 8: [10], 9: [11]}
+            sage: Z = Graph(d)
+            sage: Z.longest_cycle()
+            longest cycle: Graph on 9 vertices
+            sage: Z.longest_cycle(induced=True)
+            longest induced cycle: Graph on 5 vertices
+
         Small cases::
 
             sage: Graph().longest_cycle()
@@ -8085,8 +8096,8 @@ class GenericGraph(GenericGraph_pyx):
                                       constraint_generation=True)
 
         # We need one binary variable per vertex and per edge
-        vertex = p.new_variable(binary=True)
-        edge = p.new_variable(binary=True)
+        vertex = p.new_variable(binary=True, name='vertex')
+        edge = p.new_variable(binary=True, name='edge')
 
         # Objective function: maximize the size of the cycle
         p.set_objective(p.sum(weight(e) * edge[F(e)] for e in G.edge_iterator()))
@@ -8165,12 +8176,14 @@ class GenericGraph(GenericGraph_pyx):
 
                 # Add subtour elimination constraints
                 if directed:
-                    p.add_constraint(p.sum(edge[F(e)] for e in G.edge_boundary(c)), min=1)
                     c = set(c)
                     cbar = (v for v in G if v not in c)
-                    p.add_constraint(p.sum(edge[F(e)] for e in G.edge_boundary(cbar, c)), min=1)
+                    for u in c:
+                        p.add_constraint(vertex[u] <= p.sum(edge[F(e)] for e in G.edge_boundary(c)))
+                        p.add_constraint(vertex[u] <= p.sum(edge[F(e)] for e in G.edge_boundary(cbar, c)))
                 else:
-                    p.add_constraint(p.sum(edge[F(e)] for e in G.edge_boundary(c)), min=2)
+                    for u in c:
+                        p.add_constraint(2*vertex[u] <= p.sum(edge[F(e)] for e in G.edge_boundary(c)))
 
                 if induced:
                     # We eliminate this cycle

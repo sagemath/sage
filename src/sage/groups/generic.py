@@ -1462,7 +1462,18 @@ def has_order(P, n, operation='+'):
         True
         sage: has_order(el, o.factor())
         True
-        sage: has_order(el, ZZ(randrange(100)*o + randrange(o)))
+        sage: not_o = ZZ(randrange(100*o))
+        sage: not_o += (not_o == o)
+        sage: has_order(el, not_o)
+        False
+
+    Check for :issue:`37102`::
+
+        sage: from sage.groups.generic import has_order
+        sage: x = Mod(9, 24)
+        sage: has_order(x, 0)
+        False
+        sage: has_order(x, -8)
         False
 
     .. NOTE::
@@ -1471,9 +1482,11 @@ def has_order(P, n, operation='+'):
         *computing* the order using :func:`order_from_multiple`.
     """
     from sage.arith.misc import factor
-
-    # n might be an int, so `.factor` might not be available
-    n = factor(n)
+    
+    if isinstance(n, (int, sage.rings.integer.Integer)):
+        if n <= 0:
+            return False
+        n = factor(n)
 
     if operation in addition_names:
         isid = lambda el: not el
