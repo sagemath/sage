@@ -50,7 +50,7 @@ directory)
     mpirun -np 5 ./sage -python mpi_1.py
 
 The command ``mpirun -np 5`` starts 5 copies of a program under MPI. In
-this case we have 5 copies of Sage in pure Python mode run the
+this case we have 5 copies of Sage in pure Python mode running the
 script ``mpi_1.py``. The result should be 5 "hello worlds" plus 5 distinct ranks.
 
 The two most important MPI operations are sending and receiving.
@@ -73,7 +73,7 @@ Consider the following example which you should put in a script ``mpi_2.py``
 The same command as above with ``mpi_1.py`` replaced by ``mpi_2.py`` will
 produce 5 outputs and you will see each process creates an array and
 then passes it to the next guy (where the last guy passes to the
-first.) Note that ``MPI.size`` is the total number of MPI
+first. Note that ``MPI.size`` is the total number of MPI
 processes. ``MPI.COMM_WORLD`` is the communication world.
 
 There are some subtleties regarding MPI to be aware of. Small sends
@@ -112,7 +112,7 @@ of an array we pass.
 
 A common idiom is to have one process, usually the one with rank 0,
 act as a leader. That process sends data out to the other
-processes and processes the results and decides how further
+processes, compute on the results, and decides how much further
 computation should proceed. Consider the following code
 
 .. CODE-BLOCK:: python
@@ -144,9 +144,8 @@ is just a ``receive``.
 There is a complementary ``gather`` command that collects results from
 all the processes into a list. The next example uses ``scatter`` and
 ``gather`` together. Now the root process scatters the rows of a
-matrix, each process then squares the elements of the row it gets.
-Then the rows are all gathered up again by the root process who
-collects them into a new matrix.
+matrix. Each process squares the elements of the row it receives.
+The root process then gathers the rows into a new matrix.
 
 .. CODE-BLOCK:: python
 
