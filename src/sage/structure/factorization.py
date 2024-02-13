@@ -755,6 +755,21 @@ class Factorization(SageObject):
         """
         return self.__unit
 
+    def factor(self):
+        r"""
+        Return the :class:`Factorization` of this object, i.e. itself.
+
+        EXAMPLES::
+
+            sage: f = factor(12); f
+            2^2 * 3
+            sage: factor(f)
+            2^2 * 3
+            sage: factor(f) is f
+            True
+        """
+        return self
+
     def _cr(self):
         """
         Return whether or not factorizations are printed with carriage
