@@ -1489,6 +1489,21 @@ def RandomKTree(n, k, seed=None):
         50
         sage: g.treewidth()
         5
+        sage: graphs.RandomKTree(-5, 5)
+        Traceback (most recent call last):
+        ...
+        ValueError: n must not be negative
+        sage: graphs.RandomKTree(5, -5)
+        Traceback (most recent call last):
+        ...
+        ValueError: k must not be negative
+        sage: graphs.RandomKTree(2, 5, 1)
+        Traceback (most recent call last):
+        ...
+        ValueError: n must be greater than k
+        sage: G = graphs.RandomKTree(50, 0)
+        sage: G.treewidth()
+        0
 
     EXAMPLES::
 
@@ -1559,6 +1574,30 @@ def RandomPartialKTree(n, k, x, seed=None):
         233
         sage: g.treewidth()
         5
+        sage: graphs.RandomPartialKTree(-5, 5, 2)
+        Traceback (most recent call last):
+        ...
+        ValueError: n must not be negative
+        sage: graphs.RandomPartialKTree(5, -5, 2)
+        Traceback (most recent call last):
+        ...
+        ValueError: k must not be negative
+        sage: G = graphs.RandomPartialKTree(2, 5, 2, 1)
+        Traceback (most recent call last):
+        ...
+        ValueError: n must be greater than k
+        sage: G = graphs.RandomPartialKTree(5, 2, 100)
+        Traceback (most recent call last):
+        ...
+        ValueError: x must be less than the number of edges in the `k`-tree with `n` nodes
+        sage: G = graphs.RandomPartialKTree(50, 0, 0)
+        sage: G.treewidth()
+        0
+        sage: G = graphs.RandomPartialKTree(5, 2, 7)
+        sage: G.treewidth()
+        0
+        sage :g.size()
+        0
 
     EXAMPLES::
 
