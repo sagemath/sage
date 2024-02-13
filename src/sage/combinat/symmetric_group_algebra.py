@@ -3072,10 +3072,10 @@ class HeckeAlgebraSymmetricGroup_generic(CombinatorialFreeModule):
             sage: H3 = HeckeAlgebraSymmetricGroupT(QQ, 3)
             sage: H3([2,1])  # indirect doc test
             T[2, 1, 3]
+            sage: H3( Permutations(3).an_element() )
+            T[3, 1, 2]
             sage: H3( SymmetricGroup(3).an_element() )
             [1, 3, 2]
-            sage: H3( [2, 1] )
-            T[2, 1, 3]
             sage: H3( [2, 1, 3, 4, 5, 6] )
             T[2, 1, 3]
         """
