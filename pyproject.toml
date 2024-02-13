@@ -45,3 +45,6 @@ dependencies = [
     'fpylll >=0.5.9',
     'ptyprocess > 0.5'
 ]
+
+[tool.meson-python.args]
+install = ['--skip-subprojects']
