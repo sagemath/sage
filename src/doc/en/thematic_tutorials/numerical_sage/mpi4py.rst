@@ -105,10 +105,10 @@ fact, the above code will hang if ``[rank]*5`` is replaced by
     print("I received this:")
     print(data)
 
-Now the first process initiates a send, and then process 1 will be
-ready to receive and then he will send and process 2 will be
-waiting to receive, etc. This will not lock regardless of how large
-of an array we pass.
+Now, process 0 sends the data to process 1, then waits to receive from
+process ``MPI.size - 1``.  Simultaneously, process 1 will send the
+data to process 2, then receives the data from process 0.  This will
+not lock even if the array transmitted is huge.
 
 A common idiom is to have one process, usually the one with rank 0,
 act as a leader. That process sends data out to the other
