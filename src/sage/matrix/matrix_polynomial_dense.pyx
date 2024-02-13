@@ -28,8 +28,8 @@ AUTHORS:
 - Vincent Neiger (2021-08-07): added inverse_series_trunc(),
   solve_{left/right}_series_trunc(), {left/right}_quo_rem(), reduce().
 
-- Vincent Neiger (2024-02-13): added basis_completion(),
-  _basis_completion_via_reversed_approx(), _basis_completion_via_smith().
+- Vincent Neiger (2024-02-13): added basis_completion(), is_basis_completion(),
+  _basis_completion_via_reversed_approx().
 """
 # ****************************************************************************
 #       Copyright (C) 2016 Kwankyu Lee <ekwankyu@gmail.com>
@@ -4101,8 +4101,11 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         m = self.nrows()
         n = self.ncols()
 
+        # corner cases: after this, m>0 and n>0
         if m == 0 :
             return matrix.identity(ring, n)
+        if n == 0 :
+            return matrix(ring, 0, 0)
 
         # find column degrees (zero columns have degree -1)
         cdeg = self.column_degrees()
@@ -4288,7 +4291,11 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         cmat_factors = [snf_cmat[i,i] for i in range(min(cmat.nrows(),cmat.ncols())-1, -1, -1)]
 
         # check first rk = rank(mat) factors match
-        if mat_factors != cmat_factors[:rk] :
+        # note: largest factors may not be monic, compare their monic counterparts
+        if rk > 0 and mat_factors[0].monic() != cmat_factors[0].monic():
+            return False
+        # other factors are monic
+        if mat_factors[1:] != cmat_factors[1:rk] :
             return False
 
         # check remaining factors for cmat are 1
