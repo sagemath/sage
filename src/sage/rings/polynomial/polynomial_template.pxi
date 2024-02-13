@@ -352,10 +352,30 @@ cdef class Polynomial_template(Polynomial):
             x + 1
             sage: f.gcd(x^2)
             x
+
+        TESTS:
+
+        Ensure non-invertible elements does not crash Sage::
+
+            sage: R.<x> = Zmod(4)[]
+            sage: f = R(2 * x)
+            sage: f.gcd(f)
+            2*x
+
+        ::
+
+            sage: f = x^2 + 3 * x + 1
+            sage: g = x^2 + x + 1
+            sage: f.gcd(g)
+            Traceback (most recent call last):
+            ...
+            ValueError: non-invertible elements encountered during GCD
         """
-        if(celement_is_zero(&self.x, (<Polynomial_template>self)._cparent)):
+        if celement_is_zero(&self.x, (<Polynomial_template>self)._cparent):
             return other
-        if(celement_is_zero(&other.x, (<Polynomial_template>self)._cparent)):
+        if celement_is_zero(&other.x, (<Polynomial_template>self)._cparent):
+            return self
+        if celement_equal(&self.x, &other.x, (<Polynomial_template>self)._cparent):
             return self
 
         cdef type T = type(self)

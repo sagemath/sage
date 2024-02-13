@@ -757,9 +757,12 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             ...
             ValueError: leading coefficient must be invertible
         """
-        if self.base_ring().characteristic().gcd(
-                self.leading_coefficient().lift()) != 1:
+        cdef unsigned long leadcoeff, modulus
+        leadcoeff = nmod_poly_get_coeff_ui(&self.x, nmod_poly_degree(&self.x))
+        modulus = nmod_poly_modulus(&self.x)
+        if leadcoeff > 1 and n_gcd(modulus, leadcoeff) != 1:
             raise ValueError("leading coefficient must be invertible")
+
         cdef Polynomial_zmod_flint res = self._new()
         nmod_poly_make_monic(&res.x, &self.x)
         return res
