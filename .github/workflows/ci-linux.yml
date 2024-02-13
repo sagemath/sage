@@ -105,7 +105,7 @@ jobs:
           fi
 
           # Needed for lrcalc
-          if [ ${{ matrix.container }} == "ubuntu:jammy" ] || [ ${{ matrix.container }} == "ubuntu:lunar" ] || [ ${{ matrix.container }} == "ubuntu:mantic" ] || [ ${{ matrix.container }} == "debian:bookworm" ] || [ ${{ matrix.container }} == "debian:sid" ] || [ ${{ matrix.container }} == "debian:experimental" ] || [ ${{ matrix.container }} == "linuxmintd/mint21-amd64" ] || [ ${{ matrix.container }} == "fedora:38" ]; then
+          if [ ${{ matrix.container }} = "ubuntu:jammy" ] || [ ${{ matrix.container }} = "ubuntu:lunar" ] || [ ${{ matrix.container }} = "ubuntu:mantic" ] || [ ${{ matrix.container }} = "debian:bookworm" ] || [ ${{ matrix.container }} = "debian:sid" ] || [ ${{ matrix.container }} = "debian:experimental" ] || [ ${{ matrix.container }} = "linuxmintd/mint21-amd64" ] || [ ${{ matrix.container }} = "fedora:38" ]; then
             wget math.rutgers.edu/~asbuch/lrcalc/lrcalc-2.1.tar.gz \
             && tar zxvf lrcalc-2.1.tar.gz \
             && cd lrcalc-2.1 \
@@ -115,7 +115,7 @@ jobs:
           fi
 
           # Needed for fpylll
-          if [ ${{ matrix.container }} == "fedora:36" ] || [ ${{ matrix.container }} == "fedora:37" ]; then
+          if [ ${{ matrix.container }} = "fedora:36" ] || [ ${{ matrix.container }} = "fedora:37" ]; then
             FPLLL_VERSION=5.4.5
             wget https://github.com/fplll/fplll/releases/download/${FPLLL_VERSION}/fplll-${FPLLL_VERSION}.tar.gz \
             && tar -xf fplll-${FPLLL_VERSION}.tar.gz \
