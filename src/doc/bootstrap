@@ -196,12 +196,26 @@ Some packages that provide additional functionality are marked as
 "experimental".  Developers are needed in order to improve the
 integration of these packages into the Sage distribution.
 
+Mathematics
+~~~~~~~~~~~
+
 EOF
-for PKG_BASE in $(sage-package list --has-file SPKG.rst :experimental: | grep -v '^sagemath_'); do
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --has-file math :experimental: | grep -v '^sagemath_'); do
     echo "* :ref:\`spkg_$PKG_BASE\`"
 done >> "$OUTPUT_INDEX"
 
 cat >> "$OUTPUT_INDEX" <<EOF
+
+Other
+~~~~~
+
+EOF
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --no-file math :experimental: | grep -v '^sagemath_'); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done >> "$OUTPUT_INDEX"
+
+cat >> "$OUTPUT_INDEX" <<EOF
+
 
 All External Packages
 ---------------------
