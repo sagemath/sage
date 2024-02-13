@@ -86,7 +86,7 @@ jobs:
           # Create a virtual environment (some systems do not allow to install packages globally)
           pip3 install --user --upgrade virtualenv
           python3 -m venv venv
-          source venv/bin/activate
+          . ./venv/bin/activate
           echo PATH=$PATH >> $GITHUB_ENV # Make it so venv is inherited for other steps
 
           # Needed for bootstrap
