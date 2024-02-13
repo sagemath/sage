@@ -60,8 +60,12 @@ pari = cc.find_library('pari')
 
 mpfr = cc.find_library('mpfr')
 
-# Cannot be found by pkg-config
-flint = cc.find_library('flint')
+# Once https://github.com/mesonbuild/meson/pull/12616 is released, we can simply do the following:
+# flint = dependency('flint', version : '>=3.0.0')
+flint = dependency('flint', version : '>=3.0.0', required: false, allow_fallback: false)
+if not flint.found()
+    flint = subproject('flint').get_variable('flint_dep')
+endif
 
 blas_order = []
 if host_machine.system() == 'darwin'
