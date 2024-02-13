@@ -461,8 +461,8 @@ def voronoi_cells(V, vertical_lines=frozenset()):
     points = [p for p in V.regions().keys() if V.regions()[p].is_compact()]
     compact_regions = [regions[p] for p in points]
     vertical_regions = {}
-    non_compact_regions = [_ for _ in V.regions().values()
-                           if not _.is_compact()]
+    non_compact_regions = [reg for reg in V.regions().values()
+                           if not reg.is_compact()]
     G = Graph([u.vertices() for v in compact_regions for u in v.faces(1)],
               format='list_of_edges')
     E = Graph([u.vertices() for v in non_compact_regions for u in v.faces(1)
@@ -1476,10 +1476,7 @@ def conjugate_positive_form(braid):
             A1 = rightnormalform(sg)
             par = A1[-1][0] % 2
             A1 = [B(a) for a in A1[:-1]]
-            if not A1:
-                b = B.one()
-            else:
-                b = prod(A1)
+            b = prod(A1, B.one())
             b1 = len(b.Tietze()) / (len(A1) + 1)
             if res is None or b1 < res[3]:
                 res = [tau, A1, par, b1]
@@ -1533,13 +1530,13 @@ def braid2rels(L):
     k = min(T1) - 1
     B0 = BraidGroup(m)
     F0 = FreeGroup(m)
-    br0 = B0([_-k for _ in T])
+    br0 = B0([j-k for j in T])
     br0_left = leftnormalform(br0)
     q, r = ZZ(br0_left[0][0]).quo_rem(2)
-    br1 = B0.delta()**r * B0(prod(B0(_) for _ in br0_left[1:]))
+    br1 = B0.delta()**r * prod(map(B0, br0_left[1:]), B0.one())
     cox = prod(F0.gens())
     U0 = [cox**q * (f0 * br1) / cox**q / f0 for f0 in F0.gens()[:-1]]
-    U = [tuple(sign(k1) * (abs(k1) + k) for k1 in _.Tietze()) for _ in U0]
+    U = [tuple(sign(k1) * (abs(k1) + k) for k1 in br.Tietze()) for br in U0]
     pasos = [B.one()] + list(reversed(L1))
     for C in pasos:
         U = [(F(a) * C.inverse()).Tietze() for a in U]
@@ -1552,7 +1549,7 @@ def braid2rels(L):
         P.TzGoGo()
         P.TzGoGo()
         gb = wrap_FpGroup(P.FpGroupPresentation())
-        U = [_.Tietze() for _ in gb.relations()]
+        U = [rel.Tietze() for rel in gb.relations()]
     return U
 
 
@@ -1933,7 +1930,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
         t = prod(hom(a) for a in g.gens()).inverse()
         dic1[len(flist1)] = [t]
     n = g1.ngens()
-    rels = [_.Tietze() for _ in g1.relations()]
+    rels = [rel.Tietze() for rel in g1.relations()]
     g1 = FreeGroup(n) / rels
     dic1 = {i: list(set([g1(el.Tietze()) for el in dic1[i]])) for i in dic1}
     return (g1, dic1)
