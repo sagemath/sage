@@ -87,7 +87,7 @@ jobs:
           python3 -m venv ../venv --system-site-packages
           . ../venv/bin/activate
           echo PATH=$PATH >> $GITHUB_ENV # Make it so venv is inherited for other steps
-          pip3 install --user --upgrade pip
+          pip3 install --upgrade pip
 
           # Needed for bootstrap
           pip3 install jinja2
