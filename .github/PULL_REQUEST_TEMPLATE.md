@@ -17,7 +17,6 @@
 - [ ] I have created tests covering the changes.
 - [ ] I have updated the documentation accordingly.
 
-
 ### :hourglass: Dependencies
 
 <!-- List all open PRs that this PR logically depends on. For example, -->
