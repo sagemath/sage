@@ -20,21 +20,21 @@ jobs:
           #- ubuntu:xenial # TODO: Upgrade Python to 3.9
           #- ubuntu:bionic # TODO: Upgrade Python to 3.9
           - ubuntu:focal # TODO: Cannot find gap although installed
-          - ubuntu:jammy
-          - ubuntu:lunar
-          - ubuntu:mantic
+          - ubuntu:jammy # TODO: Could not build wheels for fpylll, lrcalc
+          - ubuntu:lunar # TODO: Could not build wheels for lrcalc
+          - ubuntu:mantic # TODO: Could not build wheels for lrcalc 
           #- debian:buster # TODO: Upgrade Python to 3.9
           - debian:bullseye # TODO: Fix lcalc include (its installed)
-          - debian:bookworm
+          - debian:bookworm # TODO: Could not build wheels for lrcalc
           #- debian:trixie # libbrial-dev is not available (has been removed?)
           - debian:sid # TODO: Could not build wheels for lrcalc
           - debian:experimental # TODO: ERROR: Could not build wheels for lrcalc
           - linuxmintd/mint20.1-amd64 # TODO: Cannot find gap although installed
           - linuxmintd/mint20.2-amd64 # TODO: Cannot find gap although installed
           - linuxmintd/mint20.3-amd64 # TODO: Cannot find gap although installed
-          - linuxmintd/mint21-amd64
-          - linuxmintd/mint21.1-amd64
-          - linuxmintd/mint21.2-amd64
+          - linuxmintd/mint21-amd64 # TODO: Could not build wheels for fpylll, lrcalc
+          - linuxmintd/mint21.1-amd64 # TODO: Could not build wheels for fpylll, lrcalc
+          - linuxmintd/mint21.2-amd64 # TODO: Could not build wheels for fpylll, lrcalc
           #- fedora:30 # TODO: Upgrade Python to 3.9
           #- fedora:31 # TODO: Upgrade Python to 3.9
           #- fedora:32 # TODO: Upgrade Python to 3.9
@@ -102,6 +102,16 @@ jobs:
           # see https://github.com/sagemath/sage/pull/36391 for details
           if [ $SYSTEM = 'archlinux' ]; then
             sed -i '/^NoExtract/d' /etc/pacman.conf;
+          fi
+
+          # Needed for lrcalc
+          if [ ${{ matrix.container }} == "ubuntu:jammy" ] ||  [ ${{ matrix.container }} == "ubuntu:lunar" ] || [ ${{ matrix.container }} == "ubuntu:mantic" ] || [ ${{ matrix.container }} == "debian:bookworm" ] || [ ${{ matrix.container }} == "debian:sid" ] || [ ${{ matrix.container }} == "debian:experimental" ] || [ ${{ matrix.container }} == "linuxmintd/mint21-amd64" ] || [ ${{ matrix.container }} == "fedora:38" ]; then
+            wget math.rutgers.edu/~asbuch/lrcalc/lrcalc-2.1.tar.gz
+            tar zxvf lrcalc-2.1.tar.gz
+            cd lrcalc-2.1
+            ./configure
+            make
+            sudo make install
           fi
         env:
           PARI_VERSION: pari-2.15.4
