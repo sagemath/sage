@@ -131,9 +131,8 @@ in the Installation Guide.
     - On personal computers, any subdirectory of your :envvar:`HOME`
       directory should do.
 
-    - For example, you could use `SAGE_ROOT=~/sage/sage-x.y`, which we
-      will use as the running example below, where `x.y` is the
-      current Sage version.
+    - For example, you could use `SAGE_ROOT=~/sage/sage`, which we
+      will use as the running example below.
 
     - You need at least 10 GB of free disk space.
 
@@ -151,31 +150,19 @@ in the Installation Guide.
       capitalization when changing into :envvar:`SAGE_ROOT` can lead to build
       errors for dependencies requiring exact capitalization in path names.
 
-2.  Download/unpack or clone the sources.
+2.  Clone the sources.
 
-    - Go to https://www.sagemath.org/download-source.html, select a mirror,
-      and download the file :file:`sage-x.y.tar.gz`.
+    - Create the directory where `SAGE_ROOT` should be established:
 
-      This compressed archive file contains the source code for Sage and
-      the source for all programs on which Sage depends.
+            $ mkdir -p ~/sage
+            $ cd ~/sage
 
-    - After downloading the source tarball `sage-x.y.tar.gz` into
-      `~/sage/`:
-
-            $ cd ~/sage/
-            $ tar xf sage-x.y.tar.gz  # adapt x.y; takes a while
-
-      This creates the subdirectory `sage-x.y`. Now change into it:
-
-            $ cd sage-x.y/  # adapt x.y
-
-    - [Git] Alternatively, and required for Sage development, clone the Sage
-      git repository:
+    - Clone the Sage git repository:
 
             $ ORIG=https://github.com/sagemath/sage.git
-            $ git clone -c core.symlinks=true --branch develop --tags $ORIG
+            $ git clone -c core.symlinks=true --origin upstream --branch develop --tags $ORIG
 
-      This will create the directory `sage`. (See the section
+      This will create the subdirectory `~/sage/sage`. (See the section
       [Setting up git](https://doc.sagemath.org/html/en/developer/git_setup.html)
       and the following sections in the Sage Developer's Guide
       for more information.)
@@ -190,11 +177,8 @@ in the Installation Guide.
       build will not work if Windows line endings rather than UNIX
       line endings are used.
 
-      Therefore it is crucial that you unpack the source tree from the
-      WSL `bash` using the WSL `tar` utility and not using other
-      Windows tools (including mingw). Likewise, when using `git`, it
-      is recommended (but not necessary) to use the WSL version of
-      `git`.
+      Therefore it is recommended (but not necessary) to use the
+      WSL version of `git`.
 
 3.  [Linux, WSL] Install the required minimal build prerequisites.
 
@@ -473,7 +457,7 @@ Directory Layout
 
 Simplified directory layout (only essential files/directories):
 ```
-SAGE_ROOT                 Root directory (sage-x.y in Sage tarball)
+SAGE_ROOT                 Root directory (create by git clone)
 ├── build
 │   └── pkgs              Every package is a subdirectory here
 │       ├── 4ti2/
