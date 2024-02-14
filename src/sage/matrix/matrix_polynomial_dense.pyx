@@ -4098,12 +4098,12 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
             sage: ring.<x> = GF(7)[]
             sage: mat = matrix([[x*(x-1)*(x-2), (x-2)*(x-3)*(x-4), (x-4)*(x-5)*(x-6)]])
-            sage: print(mat)
+            sage: mat
             [      x^3 + 4*x^2 + 2*x   x^3 + 5*x^2 + 5*x + 4   x^3 + 6*x^2 + 4*x + 6]
-            sage: rcomp = mat._basis_completion_via_reversed_approx(); print(rcomp)
+            sage: rcomp = mat._basis_completion_via_reversed_approx(); rcomp
             [        5*x^2 + 4*x + 1             5*x^2 + 2*x                   5*x^2]
             [          2*x^3 + 4*x^2 2*x^3 + 6*x^2 + 2*x + 1       2*x^3 + x^2 + 3*x]
-            sage: basis = mat.stack(rcomp); print(basis)
+            sage: basis = mat.stack(rcomp); basis
             [      x^3 + 4*x^2 + 2*x   x^3 + 5*x^2 + 5*x + 4   x^3 + 6*x^2 + 4*x + 6]
             [        5*x^2 + 4*x + 1             5*x^2 + 2*x                   5*x^2]
             [          2*x^3 + 4*x^2 2*x^3 + 6*x^2 + 2*x + 1       2*x^3 + x^2 + 3*x]
@@ -4116,7 +4116,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: mat = matrix(ring, 2, 3, \
                     [[x^2 + 5*x + 5,   3*x^2 + x + 3, 4*x^2 + 5*x + 4], \
                      [5*x^2 + 4*x,   3*x^2 + 4*x + 5, 5*x^2 + 5*x + 3]])
-            sage: rcomp = mat._basis_completion_via_reversed_approx(); print(rcomp)
+            sage: rcomp = mat._basis_completion_via_reversed_approx(); rcomp
             [  2*x^2 + 1 4*x^2 + 3*x 2*x^2 + 3*x]
             sage: mat.stack(rcomp).determinant()
             3
@@ -4133,9 +4133,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             [x + 3     0]
             [    0     0]
             [    0     0]
-            sage: rcomp = mat._basis_completion_via_reversed_approx(); print(rcomp)
+            sage: rcomp = mat._basis_completion_via_reversed_approx(); rcomp
             [x + 1   2*x]
-            sage: ccomp = mat.transpose()._basis_completion_via_reversed_approx().transpose(); print(ccomp)
+            sage: ccomp = mat.transpose()._basis_completion_via_reversed_approx().transpose(); ccomp
             [3*x + 1 4*x + 4]
             [    2*x 5*x + 1]
             [    6*x       x]
@@ -4282,9 +4282,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         - ``row_wise`` -- (optional, default: ``True``) boolean, if ``True`` then
           compute a row-wise completion, else compute a column-wise completion.
 
-        - ``algorithm`` -- (optional, default: ``approximant``) selects the
+        - ``algorithm`` -- (optional, default: ``"approximant"``) selects the
           approach for computing the completion; currently supported:
-          ``approximant`` and ``smith``.
+          ``"approximant"`` and ``"smith"``.
 
         OUTPUT: a matrix over the same base ring as the input matrix, which forms a
         completion as defined above.
@@ -4307,12 +4307,12 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
             sage: ring.<x> = GF(7)[]
             sage: mat = matrix([[x*(x-1)*(x-2), (x-2)*(x-3)*(x-4), (x-4)*(x-5)*(x-6)]])
-            sage: print(mat)
+            sage: mat
             [      x^3 + 4*x^2 + 2*x   x^3 + 5*x^2 + 5*x + 4   x^3 + 6*x^2 + 4*x + 6]
-            sage: rcomp = mat.basis_completion(); print(rcomp)
+            sage: rcomp = mat.basis_completion(); rcomp
             [        5*x^2 + 4*x + 1             5*x^2 + 2*x                   5*x^2]
             [          2*x^3 + 4*x^2 2*x^3 + 6*x^2 + 2*x + 1       2*x^3 + x^2 + 3*x]
-            sage: basis = mat.stack(rcomp); print(basis)
+            sage: basis = mat.stack(rcomp); basis
             [      x^3 + 4*x^2 + 2*x   x^3 + 5*x^2 + 5*x + 4   x^3 + 6*x^2 + 4*x + 6]
             [        5*x^2 + 4*x + 1             5*x^2 + 2*x                   5*x^2]
             [          2*x^3 + 4*x^2 2*x^3 + 6*x^2 + 2*x + 1       2*x^3 + x^2 + 3*x]
@@ -4326,11 +4326,11 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: mat = matrix(ring, 2, 3, \
                     [[x^2 + 5*x + 5,   3*x^2 + x + 3, 4*x^2 + 5*x + 4], \
                      [5*x^2 + 4*x,   3*x^2 + 4*x + 5, 5*x^2 + 5*x + 3]])
-            sage: rcomp = mat.basis_completion(); print(rcomp)
+            sage: rcomp = mat.basis_completion(); rcomp
             [  2*x^2 + 1 4*x^2 + 3*x 2*x^2 + 3*x]
             sage: mat.stack(rcomp).determinant()
             3
-            sage: print(mat.basis_completion(row_wise=False))
+            sage: mat.basis_completion(row_wise=False)
             []
 
         The following matrix has rank 1 and its nonzero Smith factor is `x+3`.
@@ -4345,9 +4345,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             [x + 3     0]
             [    0     0]
             [    0     0]
-            sage: rcomp = mat.basis_completion(); print(rcomp)
+            sage: rcomp = mat.basis_completion(); rcomp
             [x + 1   2*x]
-            sage: ccomp = mat.basis_completion(row_wise=False); print(ccomp)
+            sage: ccomp = mat.basis_completion(row_wise=False); ccomp
             [3*x + 1 4*x + 4]
             [    2*x 5*x + 1]
             [    6*x       x]
@@ -4506,7 +4506,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             False
 
             sage: zero_mat = matrix(ring, 2, 2)
-            sage: comp = zero_mat.basis_completion(); print(comp)
+            sage: comp = zero_mat.basis_completion(); comp
             [1 0]
             [0 1]
             sage: comp._is_basis_completion(zero_mat, row_wise=True)
