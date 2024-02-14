@@ -27,6 +27,31 @@ from sage.categories.subobjects import SubobjectsCategory
 from sage.sets.family import Family
 
 
+def _ce_complex_key(self, M, d, s, n):
+    """
+    The key for caching the Chevalley-Eilenberg complex.
+
+    TESTS::
+
+        sage: from sage.categories.finite_dimensional_lie_algebras_with_basis import _ce_complex_key
+        sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'y':1}})
+        sage: _ce_complex_key(L, None, False, True, 5)
+        (None, False, True)
+        sage: f = ({x: Matrix([[1,0],[0,0]]), y: Matrix([[0,1],[0,0]])})
+        sage: _ce_complex_key(L, f, False, True, 5)
+        (Representation of Lie algebra on 2 generators (x, y) over Rational Field defined by:
+                [1 0]
+         x |--> [0 0]
+                [0 1]
+         y |--> [0 0],
+         False,
+         True)
+    """
+    if isinstance(M, dict):
+        M = self.representation(M)
+    return (M, d, s)
+
+
 class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     """
     Category of finite dimensional Lie algebras with a basis.
@@ -1103,7 +1128,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             """
             return not self.killing_form_matrix().is_singular()
 
-        @cached_method(key=lambda self,M,d,s,n: (M,d,s))
+        @cached_method(key=_ce_complex_key)
         def chevalley_eilenberg_complex(self, M=None, dual=False, sparse=True, ncpus=None):
             r"""
             Return the Chevalley-Eilenberg complex of ``self``.
@@ -1134,7 +1159,13 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             INPUT:
 
             - ``M`` -- (default: the trivial 1-dimensional module)
-              the module `M`
+              one of the following:
+
+              * a module `M` with an action of ``self``
+              * a dictionary whose keys are basis elements and values
+                are matrices representing a Lie algebra homomorphism
+                defining the representation
+
             - ``dual`` -- (default: ``False``) if ``True``, causes
               the dual of the complex to be computed
             - ``sparse`` -- (default: ``True``) whether to use sparse
@@ -1148,15 +1179,15 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: C = L.chevalley_eilenberg_complex(); C
                 Chain complex with at most 4 nonzero terms over Integer Ring
                 sage: ascii_art(C)
-                                          [ 2  0  0]       [0]
-                                          [ 0 -1  0]       [0]
-                            [0 0 0]       [ 0  0  2]       [0]
+                                          [-2  0  0]       [0]
+                                          [ 0  1  0]       [0]
+                            [0 0 0]       [ 0  0 -2]       [0]
                  0 <-- C_0 <-------- C_1 <----------- C_2 <---- C_3 <-- 0
 
-                sage: # long time, needs sage.combinat sage.modules
+                sage: # needs sage.combinat sage.modules
                 sage: L = LieAlgebra(QQ, cartan_type=['C',2])
-                sage: C = L.chevalley_eilenberg_complex()
-                sage: [C.free_module_rank(i) for i in range(11)]
+                sage: C = L.chevalley_eilenberg_complex()  # long time
+                sage: [C.free_module_rank(i) for i in range(11)]  # long time
                 [1, 10, 45, 120, 210, 252, 210, 120, 45, 10, 1]
 
                 sage: # needs sage.combinat sage.modules
@@ -1164,47 +1195,63 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: E, F, H = g.basis()
                 sage: n = g.subalgebra([F, H])
                 sage: ascii_art(n.chevalley_eilenberg_complex())
-                                        [0]
-                            [0 0]       [2]
-                 0 <-- C_0 <------ C_1 <---- C_2 <-- 0
+                                        [ 0]
+                            [0 0]       [-2]
+                 0 <-- C_0 <------ C_1 <----- C_2 <-- 0
+
+                sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'y':1}})
+                sage: f = ({x: Matrix([[1,0],[0,0]]), y: Matrix([[0,1],[0,0]])})
+                sage: C = L.chevalley_eilenberg_complex(f); C
+                Chain complex with at most 3 nonzero terms over Rational Field
+                sage: ascii_art(C)
+                                            [ 0 -1]
+                                            [ 2  0]
+                            [1 0 0 1]       [ 0  0]
+                            [0 0 0 0]       [ 0  1]
+                 0 <-- C_0 <---------- C_1 <-------- C_2 <-- 0
+
+                sage: ascii_art(L.chevalley_eilenberg_complex(f, sparse=False))
+                                            [ 0 -1]
+                                            [ 2  0]
+                            [1 0 0 1]       [ 0  0]
+                            [0 0 0 0]       [ 0  1]
+                 0 <-- C_0 <---------- C_1 <-------- C_2 <-- 0
 
             REFERENCES:
 
             - :wikipedia:`Lie_algebra_cohomology#Chevalley-Eilenberg_complex`
             - [Wei1994]_ Chapter 7
-
-            .. TODO::
-
-                Currently this is only implemented for coefficients
-                given by the trivial module `R`, where `R` is the
-                base ring and `g R = 0` for all `g \in \mathfrak{g}`.
-                Allow generic coefficient modules `M`.
             """
             if dual:
                 return self.chevalley_eilenberg_complex(M, dual=False,
                                                         sparse=sparse,
                                                         ncpus=ncpus).dual()
 
-            if M is not None:
-                raise NotImplementedError("only implemented for the default"
-                                          " (the trivial module)")
-
-            from itertools import combinations
+            import itertools
+            from itertools import combinations, product
             from sage.arith.misc import binomial
             from sage.matrix.matrix_space import MatrixSpace
+            from sage.algebras.lie_algebras.representation import Representation_abstract
             R = self.base_ring()
             zero = R.zero()
             mone = -R.one()
-            if M is not None:
-                raise NotImplementedError("coefficient module M cannot be passed")
 
             # Make sure we specify the ordering of the basis
-            B = self.basis()
-            K = list(B.keys())
-            B = [B[k] for k in K]
-            Ind = list(range(len(K)))
-            M = self.module()
-            ambient = M.is_ambient()
+            LB = self.basis()
+            LK = list(LB.keys())
+            LB = [LB[k] for k in LK]
+            LI = list(range(len(LK)))
+            Lmod = self.module()
+            ambient = Lmod.is_ambient()
+
+            if M is not None:
+                if not isinstance(M, Representation_abstract):
+                    M = self.representation(M)
+
+                MB = M.basis()
+                MK = list(MB.keys())
+                MB = [MB[k] for k in MK]
+                MI = list(range(len(MK)))
 
             def sgn(k, X):
                 """
@@ -1231,27 +1278,30 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 return R.one(), tuple(Y)
 
             from sage.parallel.decorate import parallel
+            from sage.matrix.constructor import matrix
 
             @parallel(ncpus=ncpus)
             def compute_diff(k):
                 """
                 Build the ``k``-th differential (in parallel).
                 """
-                indices = {tuple(X): i for i,X in enumerate(combinations(Ind, k-1))}
+                # The indices for the exterior algebra
+                ext_ind = {tuple(X): i for i, X in enumerate(combinations(LI, k-1))}
+
+                # Compute the part independent of the module first ("part 2" of the computation)
                 if sparse:
-                    data = {}
+                    p2_data = {}
                     row = 0
                 else:
-                    data = []
+                    p2_data = []
                 if not sparse:
-                    zero = [zero] * len(indices)
-                for X in combinations(Ind, k):
+                    zv = [zero] * len(ext_ind)
+                for X in combinations(LI, k):
                     if not sparse:
-                        ret = list(zero)
+                        ret = list(zv)
                     for i in range(k):
                         Y = list(X)
                         Y.pop(i)
-                        # We do mone**i because we are 0-based
                         # This is where we would do the action on
                         #   the coefficients module
                         #ret[indices[tuple(Y)]] += mone**i * zero
@@ -1259,41 +1309,89 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                             # We shift j by 1 because we already removed
                             #   an earlier element from X.
                             Z = tuple(Y[:j-1] + Y[j:])
-                            elt = mone**(i+j) * B[X[i]].bracket(B[X[j]])
+                            elt = mone**(i+j+1) * LB[X[i]].bracket(LB[X[j]])
+                            if not elt:
+                                continue
                             if ambient:
                                 vec = elt.to_vector()
                             else:
-                                vec = M.coordinate_vector(elt.to_vector())
+                                vec = Lmod.coordinate_vector(elt.to_vector())
                             for key, coeff in vec.iteritems():
+                                if not coeff:
+                                    continue
                                 s, A = sgn(key, Z)
                                 if A is None:
                                     continue
                                 if sparse:
-                                    coords = (row, indices[A])
-                                    if coords in data:
-                                        data[coords] += s * coeff
+                                    coords = (row, ext_ind[A])
+                                    if coords in p2_data:
+                                        p2_data[coords] += s * coeff
                                     else:
-                                        data[coords] = s * coeff
+                                        p2_data[coords] = s * coeff
                                 else:
-                                    ret[indices[A]] += s * coeff
+                                    ret[ext_ind[A]] += s * coeff
                     if sparse:
                         row += 1
                     else:
-                        data.append(ret)
-                nrows = binomial(len(Ind), k)
-                ncols = binomial(len(Ind), k-1)
+                        p2_data.append(ret)
+
+                nrows = binomial(len(LI), k)
+                ncols = binomial(len(LI), k-1)
                 MS = MatrixSpace(R, nrows, ncols, sparse=sparse)
-                ret = MS(data).transpose()
+                if M is None:
+                    p2 = MS(p2_data).transpose()
+                    p2.set_immutable()
+                    return p2
+                p2 = matrix.identity(len(MI)).tensor_product(MS(p2_data)).transpose()
+
+                ten_ind = {tuple(Y): i for i, Y in enumerate(product(MI, ext_ind))}
+
+                # Now compute the part from the module ("part 1")
+                if sparse:
+                    p1_data = {}
+                    row = 0
+                else:
+                    p1_data = []
+                if not sparse:
+                    zv = [zero] * len(ten_ind)
+                for v, X in product(MI, combinations(LI, k)):
+                    if not sparse:
+                        ret = list(zv)
+                    for i in range(k):
+                        # We do mone**i because we are 0-based
+                        elt = mone**i * LB[X[i]] * MB[v]
+                        if not elt:
+                            continue
+                        Y = X[:i] + X[i+1:]
+                        for j in MI:
+                            coeff = elt[MK[j]]
+                            if not coeff:
+                                continue
+                            if sparse:
+                                coords = (row, ten_ind[j, Y])
+                                if coords in p1_data:
+                                    p1_data[coords] += coeff
+                                else:
+                                    p1_data[coords] = coeff
+                            else:
+                                ret[ten_ind[j, Y]] += coeff
+                    if sparse:
+                        row += 1
+                    else:
+                        p1_data.append(ret)
+
+                nrows = len(MI) * binomial(len(LI), k)
+                ncols = len(ten_ind)
+                MS = MatrixSpace(R, nrows, ncols, sparse=sparse)
+                ret = MS(p1_data).transpose() + p2
                 ret.set_immutable()
                 return ret
 
-            chain_data = {X[0][0]: M for X, M in compute_diff(list( range(1,len(Ind)+1) ))}
-
             from sage.homology.chain_complex import ChainComplex
-            try:
-                return ChainComplex(chain_data, degree_of_differential=-1)
-            except TypeError:
-                return chain_data
+            ind = list(range(1, len(LI) + 1))
+            chain_data = {X[0][0]: M for X, M in compute_diff(ind)}
+            C = ChainComplex(chain_data, degree_of_differential=-1)
+            return C
 
         def homology(self, deg=None, M=None, sparse=True, ncpus=None):
             r"""
