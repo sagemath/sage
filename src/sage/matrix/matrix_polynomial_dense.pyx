@@ -4093,7 +4093,73 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         EXAMPLES::
 
-            sage: pR.<x> = GF(7)[]
+        Three polynomials whose GCD is `1` can be completed into a unimodular
+        matrix::
+
+            sage: ring.<x> = GF(7)[]
+            sage: mat = matrix([[x*(x-1)*(x-2), (x-2)*(x-3)*(x-4), (x-4)*(x-5)*(x-6)]])
+            sage: print(mat)
+            [      x^3 + 4*x^2 + 2*x   x^3 + 5*x^2 + 5*x + 4   x^3 + 6*x^2 + 4*x + 6]
+            sage: rcomp = mat._basis_completion_via_reversed_approx(); print(rcomp)
+            [        5*x^2 + 4*x + 1             5*x^2 + 2*x                   5*x^2]
+            [          2*x^3 + 4*x^2 2*x^3 + 6*x^2 + 2*x + 1       2*x^3 + x^2 + 3*x]
+            sage: basis = mat.stack(rcomp); print(basis)
+            [      x^3 + 4*x^2 + 2*x   x^3 + 5*x^2 + 5*x + 4   x^3 + 6*x^2 + 4*x + 6]
+            [        5*x^2 + 4*x + 1             5*x^2 + 2*x                   5*x^2]
+            [          2*x^3 + 4*x^2 2*x^3 + 6*x^2 + 2*x + 1       2*x^3 + x^2 + 3*x]
+            sage: basis.determinant()
+            6
+
+        The following matrix has rank `2` and trivial Smith form. It can be
+        completed row-wise into a `3 \times 3` unimodular matrix::
+
+            sage: mat = matrix(ring, 2, 3, \
+                    [[x^2 + 5*x + 5,   3*x^2 + x + 3, 4*x^2 + 5*x + 4], \
+                     [5*x^2 + 4*x,   3*x^2 + 4*x + 5, 5*x^2 + 5*x + 3]])
+            sage: rcomp = mat._basis_completion_via_reversed_approx(); print(rcomp)
+            [  2*x^2 + 1 4*x^2 + 3*x 2*x^2 + 3*x]
+            sage: mat.stack(rcomp).determinant()
+            3
+
+        The following matrix has rank 1 and its nonzero Smith factor is `x+3`.
+        A row-wise completion has a single nonzero row, whereas a column-wise
+        completion has two columns; in both cases, the Smith form is preserved::
+
+            sage: mat = matrix(ring, 3, 2, \
+                    [[    x^3 + x^2 + 5*x + 5,         2*x^3 + 2*x + 4], \
+                     [  3*x^3 + 2*x^2 + x + 3,   6*x^3 + 5*x^2 + x + 1], \
+                     [2*x^3 + 5*x^2 + 3*x + 4, 4*x^3 + 6*x^2 + 5*x + 6]])
+            sage: mat.smith_form(transformation=False)
+            [x + 3     0]
+            [    0     0]
+            [    0     0]
+            sage: rcomp = mat._basis_completion_via_reversed_approx(); print(rcomp)
+            [x + 1   2*x]
+            sage: ccomp = mat.transpose()._basis_completion_via_reversed_approx().transpose(); print(ccomp)
+            [3*x + 1 4*x + 4]
+            [    2*x 5*x + 1]
+            [    6*x       x]
+            sage: rcomp.stack(mat).smith_form(transformation=False)
+            [    1     0]
+            [    0 x + 3]
+            [    0     0]
+            [    0     0]
+            sage: ccomp.augment(mat).smith_form(transformation=False)
+            [    1     0     0     0]
+            [    0     1     0     0]
+            [    0     0 x + 3     0]
+
+        TESTS:
+
+        Corner cases are handled correctly::
+
+            sage: matrix(ring, 0, 0)._basis_completion_via_reversed_approx()
+            []
+            sage: matrix(ring, 0, 2)._basis_completion_via_reversed_approx()
+            [1 0]
+            [0 1]
+            sage: matrix(ring, 2, 0)._basis_completion_via_reversed_approx()
+            []
         """
         from sage.matrix.constructor import matrix # for identity
 
