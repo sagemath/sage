@@ -20,31 +20,31 @@ jobs:
           #- ubuntu:xenial # TODO: Upgrade Python to 3.9
           #- ubuntu:bionic # TODO: Upgrade Python to 3.9
           - ubuntu:focal # TODO: Cannot find gap although installed
-          - ubuntu:jammy # TODO: Could not build wheels for fpylll, lrcalc
-          - ubuntu:lunar # TODO: Could not build wheels for lrcalc
-          - ubuntu:mantic # TODO: Could not build wheels for lrcalc 
+          - ubuntu:jammy
+          - ubuntu:lunar
+          - ubuntu:mantic
           #- debian:buster # TODO: Upgrade Python to 3.9
           - debian:bullseye # TODO: Fix lcalc include (its installed)
-          - debian:bookworm # TODO: Could not build wheels for lrcalc
+          - debian:bookworm
           #- debian:trixie # libbrial-dev is not available (has been removed?)
-          - debian:sid # TODO: Could not build wheels for lrcalc
-          - debian:experimental # TODO: ERROR: Could not build wheels for lrcalc
+          - debian:sid
+          - debian:experimental
           - linuxmintd/mint20.1-amd64 # TODO: Cannot find gap although installed
           - linuxmintd/mint20.2-amd64 # TODO: Cannot find gap although installed
           - linuxmintd/mint20.3-amd64 # TODO: Cannot find gap although installed
-          - linuxmintd/mint21-amd64 # TODO: Could not build wheels for fpylll, lrcalc
-          - linuxmintd/mint21.1-amd64 # TODO: Could not build wheels for fpylll, lrcalc
-          - linuxmintd/mint21.2-amd64 # TODO: Could not build wheels for fpylll, lrcalc
+          - linuxmintd/mint21-amd64
+          - linuxmintd/mint21.1-amd64
+          - linuxmintd/mint21.2-amd64
           #- fedora:30 # TODO: Upgrade Python to 3.9
           #- fedora:31 # TODO: Upgrade Python to 3.9
           #- fedora:32 # TODO: Upgrade Python to 3.9
           - fedora:33 # TODO: Fix lcalc include (its installed)
           - fedora:34 # TODO: Fix lcalc include (its installed)
           - fedora:35 # TODO: Fix lcalc include (its installed)
-          - fedora:36 # TODO: Could not build wheels for fpylll,
-          - fedora:37 # TODO: Could not build wheels for fpylll
+          - fedora:36
+          - fedora:37
           - fedora:38
-          - fedora:39 # TODO: Could not build wheels for gmpy2
+          - fedora:39 # TODO: Could not build wheels for gmpy2 (python 3.12)
           #- centos:centos7 # TODO: Upgrade Python to 3.9
           #- quay.io/centos/centos:stream8 # TODO: Upgrade Python to 3.9
           #- quay.io/centos/centos:stream9 # TODO (cypari): Figure out how to install pari
@@ -105,7 +105,7 @@ jobs:
           fi
 
           # Needed for lrcalc
-          if [ ${{ matrix.container }} = "ubuntu:jammy" ] || [ ${{ matrix.container }} = "ubuntu:lunar" ] || [ ${{ matrix.container }} = "ubuntu:mantic" ] || [ ${{ matrix.container }} = "debian:bookworm" ] || [ ${{ matrix.container }} = "debian:sid" ] || [ ${{ matrix.container }} = "debian:experimental" ] || [ ${{ matrix.container }} = "linuxmintd/mint21-amd64" ] || [ ${{ matrix.container }} = "fedora:38" ]; then
+          if [ ${{ matrix.container }} = "ubuntu:jammy" ] || [ ${{ matrix.container }} = "ubuntu:lunar" ] || [ ${{ matrix.container }} = "ubuntu:mantic" ] || [ ${{ matrix.container }} = "debian:bookworm" ] || [ ${{ matrix.container }} = "debian:sid" ] || [ ${{ matrix.container }} = "debian:experimental" ] || [ ${{ matrix.container }} = "linuxmintd/mint21-amd64" ] || [ ${{ matrix.container }} = "linuxmintd/mint21.1-amd64" ] || [ ${{ matrix.container }} = "linuxmintd/mint21.2-amd64" ] || [ ${{ matrix.container }} = "fedora:38" ]; then
             wget math.rutgers.edu/~asbuch/lrcalc/lrcalc-2.1.tar.gz \
             && tar zxvf lrcalc-2.1.tar.gz \
             && cd lrcalc-2.1 \
@@ -115,12 +115,11 @@ jobs:
           fi
 
           # Needed for fpylll
-          if [ ${{ matrix.container }} = "fedora:36" ] || [ ${{ matrix.container }} = "fedora:37" ]; then
+          if [ ${{ matrix.container }} = "ubuntu:jammy" ] || [ ${{ matrix.container }} = "linuxmintd/mint21-amd64" ] || [ ${{ matrix.container }} = "linuxmintd/mint21.1-amd64" ] || [ ${{ matrix.container }} = "linuxmintd/mint21.2-amd64" ] || [ ${{ matrix.container }} = "fedora:36" ] || [ ${{ matrix.container }} = "fedora:37" ]; then
             FPLLL_VERSION=5.4.5
             wget https://github.com/fplll/fplll/releases/download/${FPLLL_VERSION}/fplll-${FPLLL_VERSION}.tar.gz \
             && tar -xf fplll-${FPLLL_VERSION}.tar.gz \
             && cd fplll-${FPLLL_VERSION} \
-            && ./autogen.sh \
             && ./configure \
             && make \
             && make install
