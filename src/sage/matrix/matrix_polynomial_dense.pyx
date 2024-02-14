@@ -4186,7 +4186,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                 nonzcols.append(j)
 
         if len(nonzcols) == 0:
-            return matrix.identity(ring, n).matrix_from_rows(zcols)
+            return matrix.identity(ring, n)
 
         # restrict to nonzero columns, and reverse entries column-wise
         mat = self.matrix_from_columns(nonzcols)
