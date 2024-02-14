@@ -2130,6 +2130,9 @@ class QuaternionOrder(Parent):
             This method is currently only implemented for maximal orders in
             definite quaternion orders over `\QQ`. For a general algorithm,
             see [KV2010]_ (Problem ``IsConjugate``).
+            Currently not working for all maximal orders, see
+            https://github.com/sagemath/sage/issues/37337
+            for more details.
 
         EXAMPLES::
 
@@ -2246,7 +2249,7 @@ class QuaternionOrder(Parent):
             sage: O1.isomorphism_to(O2)
             Traceback (most recent call last):
             ...
-            ValueError: quaternion orders not isomorphic
+            NotImplementedError: isomorphism_to was not able to recognize the given orders as isomorphic
 
         ALGORITHM:
 
@@ -2272,7 +2275,7 @@ class QuaternionOrder(Parent):
         I = N * self * other
         gamma = I.minimal_element()
         if self*gamma != I:
-            raise ValueError('quaternion orders not isomorphic')
+            raise NotImplementedError('isomorphism_to was not able to recognize the given orders as isomorphic')
         assert gamma*other == I
 
         if conjugator:
