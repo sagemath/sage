@@ -2185,7 +2185,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             for c in range(n):
                 d = M.get_unsafe(i,c).degree()
 
-                if shifts and d >= 0 :
+                if shifts and d >= 0:
                     d += shifts[c]
 
                 if d >= best:
@@ -4168,9 +4168,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         n = self.ncols()
 
         # corner cases: after this, m>0 and n>0
-        if m == 0 :
+        if m == 0:
             return matrix.identity(ring, n)
-        if n == 0 :
+        if n == 0:
             return matrix(ring, 0, 0)
 
         # find column degrees (zero columns have degree -1)
@@ -4182,10 +4182,10 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         for j in range(n):
             if cdeg[j] < 0:
                 zcols.append(j)
-            else :
+            else:
                 nonzcols.append(j)
 
-        if len(nonzcols) == 0 :
+        if len(nonzcols) == 0:
             return matrix.identity(ring, n).matrix_from_rows(zcols)
 
         # restrict to nonzero columns, and reverse entries column-wise
@@ -4197,7 +4197,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         kernel_basis = mat_rev.minimal_kernel_basis(row_wise=False, shifts=cdeg)
         # if kernel_basis has zero columns, then mat is full column rank, there is
         # nothing to complete, just return the trivial completion
-        if kernel_basis.ncols() == 0 :
+        if kernel_basis.ncols() == 0:
             return matrix.identity(ring, n).matrix_from_rows(zcols)
 
         # compute shifted-minimal left approximant basis
@@ -4227,7 +4227,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         # to each zero column of input mat corresponds an identity row
         # -> the following loop has the same effect as the next commented line:
         #   completion[0:len(zcols),:] = matrix.identity(ring, n).matrix_from_rows(zcols)
-        for k in range(len(zcols)) :
+        for k in range(len(zcols)):
             completion[k,zcols[k]] = 1
 
         # fill nontrivial part of result matrix: this is
@@ -4394,14 +4394,14 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             [1 0]
             [0 1]
         """
-        if algorithm == "approximant" :
-            if row_wise :
+        if algorithm == "approximant":
+            if row_wise:
                 return self._basis_completion_via_reversed_approx()
-            else :
+            else:
                 Ctrsp = self.transpose()._basis_completion_via_reversed_approx()
                 return Ctrsp.transpose()
 
-        elif algorithm == "smith" :
+        elif algorithm == "smith":
             ring = self.base_ring()
             m = self.nrows()
             n = self.ncols()
@@ -4416,23 +4416,23 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
             # case: matrix is zero (including if m == 0 || n == 0)
             from sage.matrix.constructor import matrix
-            if rk == 0 :
-                if row_wise :
+            if rk == 0:
+                if row_wise:
                     return matrix.identity(ring, n)
-                else :
+                else:
                     return matrix.identity(ring, m)
 
             # now, matrix is nonzero (and nonempty)
-            if row_wise :
+            if row_wise:
                 C = matrix.identity(ring, n)[rk:,:]
                 VV = V.inverse_of_unit()
                 return C * VV
-            else :
+            else:
                 C = matrix.identity(ring, m)[:,rk:]
                 UU = U.inverse_of_unit()
                 return UU * C
 
-        else :
+        else:
             raise ValueError("algorithm must be one of \"approximant\" or \"smith\".")
 
 
@@ -4571,9 +4571,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         """
 
         # compute completed matrix
-        if row_wise :
+        if row_wise:
             cmat = mat.stack(self)
-        else :
+        else:
             cmat = mat.augment(self)
 
         # compute (nonzero) invariant factors for mat, from largest to nonzero smallest
@@ -4583,9 +4583,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         rk = len(mat_factors)
 
         # check completion has right completing dimension
-        if row_wise and self.nrows() != (mat.ncols() - rk) :
+        if row_wise and self.nrows() != (mat.ncols() - rk):
             return False
-        if (not row_wise) and self.ncols() != (mat.nrows() - rk) :
+        if (not row_wise) and self.ncols() != (mat.nrows() - rk):
             return False
 
         # compute invariant factors for completed matrix, from largest to smallest
@@ -4597,15 +4597,14 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         if rk > 0 and mat_factors[0].monic() != cmat_factors[0].monic():
             return False
         # other factors are monic
-        if mat_factors[1:] != cmat_factors[1:rk] :
+        if mat_factors[1:] != cmat_factors[1:rk]:
             return False
 
         # check remaining factors for cmat are 1
         # this guarantees Smith-form preserving property, and also
         # the fact that cmat has the required rank
         # (this rank being mat.ncols() if row-wise; mat.nrows() if column-wise)
-        if not all(f.is_one() for f in cmat_factors[rk:]) :
+        if not all(f.is_one() for f in cmat_factors[rk:]):
             return False
 
         return True
-
