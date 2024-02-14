@@ -132,8 +132,10 @@ class EllipticCurves:
             sage: elliptic_curves.rank(6, n=3, labels=True)
             []
         """
-        from sage.env import ELLCURVE_DATA_DIR
-        data = os.path.join(ELLCURVE_DATA_DIR, 'rank%s' % rank)
+        from sage.features.databases import DatabaseEllcurves
+        db = DatabaseEllcurves()
+        data = os.path.join(os.path.dirname(db.absolute_filename()),
+                            f'rank{rank}')
         try:
             f = open(data)
         except OSError:

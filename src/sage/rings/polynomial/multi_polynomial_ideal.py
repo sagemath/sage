@@ -405,7 +405,7 @@ class MPolynomialIdeal_magma_repr:
             sage: len(gb)
             5
         """
-        R   = self.ring()
+        R = self.ring()
         if not deg_bound:
             mself = magma(self)
         else:
@@ -605,9 +605,8 @@ class MPolynomialIdeal_singular_base_repr:
         from sage.libs.singular.function import lib, singular_function
         lib("grobcov.lib")
         grobcov = singular_function("grobcov")
-        polynomials = []
-        for f in self.gens():
-            polynomials.append(f * lcm([c.denominator() for c in f.coefficients()]))
+        polynomials = [f * lcm([c.denominator() for c in f.coefficients()])
+                       for f in self.gens()]
         return grobcov(self.ring().ideal(polynomials))
 
 
@@ -2853,10 +2852,8 @@ class MPolynomialIdeal_singular_repr(
         from sage.misc.converting_dict import KeyConvertingDict
         V = []
         for t in T:
-            Vbar = _variety([P(f) for f in t], [])
-
-            for v in Vbar:
-                V.append(KeyConvertingDict(P, v))
+            V.extend(KeyConvertingDict(P, v)
+                     for v in _variety([P(f) for f in t], []))
         return V
 
     @require_field
@@ -3618,7 +3615,7 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         ALGORITHM: Uses Singular's ``std`` command
         """
-        if self.side()  == 'twosided':
+        if self.side() == 'twosided':
             return self.twostd()
         return self.ring().ideal( self.__call_singular('std'), side=self.side())
 #        return self.__call_singular('std')
@@ -3917,7 +3914,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
            Ideal (x, y + 1) of Multivariate Polynomial Ring in x, y over Rational Field
            sage: I.gens()
            [x, y + 1]
-         """
+        """
         from sage.rings.polynomial.multi_polynomial_sequence import \
             PolynomialSequence
         return PolynomialSequence(self.ring(), Ideal_generic.gens(self), immutable=True)
@@ -5336,7 +5333,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         2. We linearize and compute the echelon form::
 
-               sage: A, v = F.coefficient_matrix()
+               sage: A, v = F.coefficients_monomials()
                sage: A.echelonize()
 
         3. The result is the desired Gröbner basis::
@@ -5586,8 +5583,8 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         map_ideal = [a]
 
         variables = iter(intermediate_ring.gens()[1:])
-        for _ in range(nvars):
-            map_ideal.append(sum([a**i * next(variables) for i in range(r)]))
+        map_ideal.extend(sum([a**i * next(variables) for i in range(r)])
+                         for _ in range(nvars))
 
         myminpoly = myminpoly(*map_ideal)
         l = [f(*map_ideal).reduce([myminpoly]) for f in l]

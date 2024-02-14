@@ -1642,8 +1642,8 @@ class PartitionTuple(CombinatorialElement):
             sage: PartitionTuple([[2,1],[2,2]]).prime_degree(7)
             0
 
-       Therefore, the Gram determinant of `S(2,1|2,2)` when `q=1` is
-       `2^{728} 3^{259}5^{105}`. Compare with :meth:`degree`.
+        Therefore, the Gram determinant of `S(2,1|2,2)` when `q=1` is
+        `2^{728} 3^{259}5^{105}`. Compare with :meth:`degree`.
         """
         ps = [p]
 

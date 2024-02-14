@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sphinx
 r"""
 Sphinx build script
 

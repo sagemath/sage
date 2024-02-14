@@ -101,12 +101,9 @@ class FiniteGroups(CategoryWithAxiom):
                 sage: G.cardinality()
                 384
             """
-            try:
-                o = self.order
-            except AttributeError:
-                return self._cardinality_from_iterator()
-            else:
-                return o()
+            if hasattr(self, 'order'):
+                return self.order()
+            return self._cardinality_from_iterator()
 
         def some_elements(self):
             """
@@ -177,7 +174,7 @@ class FiniteGroups(CategoryWithAxiom):
                 sage: G = SymmetricGroup(3)
                 sage: G.conjugacy_classes_representatives()
                 [(), (1,2), (1,2,3)]
-           """
+            """
             return [C.representative() for C in self.conjugacy_classes()]
 
     class ElementMethods:
