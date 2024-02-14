@@ -193,7 +193,6 @@ AUTHORS:
 # ****************************************************************************
 
 from .expect import Expect, ExpectElement, FunctionElement, ExpectFunction
-from .gap_workspace import gap_workspace_file, prepare_workspace_dir
 from sage.cpython.string import bytes_to_str
 from sage.env import SAGE_EXTCODE, SAGE_GAP_COMMAND, SAGE_GAP_MEMORY, GAP_ROOT_PATHS
 from sage.misc.misc import is_in_string
@@ -211,8 +210,6 @@ import time
 import platform
 import string
 import warnings
-
-WORKSPACE = gap_workspace_file()
 
 first_try = True
 
@@ -1050,6 +1047,7 @@ class Gap(Gap_generic):
     def __init__(self, max_workspace_size=None,
                  maxread=None, script_subdirectory=None,
                  use_workspace_cache=True,
+                 workspace_file=None,
                  server=None,
                  server_tmpdir=None,
                  logfile=None,
@@ -1061,11 +1059,14 @@ class Gap(Gap_generic):
             sage: gap == loads(dumps(gap))
             True
         """
+        from .gap_workspace import gap_workspace_file
+        self.__workspace_file = workspace_file or gap_workspace_file()
         self.__use_workspace_cache = use_workspace_cache
+
         cmd = gap_cmd
         # -L: restore a saved workspace (TO DO: Use remote workspace)
         if use_workspace_cache and server is None:
-            cmd += f" -L {WORKSPACE}"
+            cmd += f" -L {self.__workspace_file}"
         # -b: suppress banner
         # -p: enable "package output mode"; this confusingly named option
         #     causes GAP to output special control characters that are normally
@@ -1169,14 +1170,14 @@ class Gap(Gap_generic):
                 # workspace, i.e., if the gap script is more recent
                 # than the saved workspace, which signals that gap has
                 # been upgraded.
-                if os.path.getmtime(WORKSPACE) < timestamp():
+                if os.path.getmtime(self.__workspace_file) < timestamp():
                     raise OSError("GAP workspace too old")
                 # Set the modification time of the workspace to the
                 # current time.  This ensures the workspace doesn't
                 # get deleted too soon by gap_reset_workspace().
-                os.utime(WORKSPACE, None)
+                os.utime(self.__workspace_file, None)
             except OSError:
-                gap_reset_workspace(verbose=False)
+                gap_reset_workspace(workspace_file=self.__workspace_file)
 
         global first_try
         n = self._session_number
@@ -1186,7 +1187,7 @@ class Gap(Gap_generic):
             if self.__use_workspace_cache and first_try:
                 first_try = False
                 self.quit()
-                gap_reset_workspace(verbose=False)
+                gap_reset_workspace(workspace_file=self.__workspace_file)
                 Expect._start(self, "Failed to start GAP.")
                 self._session_number = n
             else:
@@ -1250,15 +1251,13 @@ class Gap(Gap_generic):
         to the GAP workspace file contains more than 82 characters) is
         fixed::
 
-            sage: ORIGINAL_WORKSPACE = sage.interfaces.gap.WORKSPACE
             sage: import tempfile
             sage: with tempfile.NamedTemporaryFile(prefix="0"*80) as f:    # long time (4s on sage.math, 2013)
-            ....:     sage.interfaces.gap.WORKSPACE = f.name
-            ....:     gap = Gap()
+            ....:     gap = Gap(workspace_file=f.name)
             ....:     gap('3+2')
             5
-            sage: sage.interfaces.gap.WORKSPACE = ORIGINAL_WORKSPACE
         """
+        from .gap_workspace import prepare_workspace_dir
         prepare_workspace_dir()
 
         # According to the GAP Reference Manual,
@@ -1267,7 +1266,7 @@ class Gap(Gap_generic):
         # be included in the body of a loop or function, or called from a
         # break loop.
         from sage.misc.temporary_file import atomic_write
-        with atomic_write(WORKSPACE) as f:
+        with atomic_write(self.__workspace_file) as f:
             f.close()
             self.eval('SaveWorkspace("%s");' % (f.name), allow_use_file=False)
 
@@ -1473,7 +1472,9 @@ class Gap(Gap_generic):
         return [n for n in names if n[0] in string.ascii_letters]
 
 
-def gap_reset_workspace(max_workspace_size=None, verbose=False):
+def gap_reset_workspace(max_workspace_size=None,
+                        verbose=False,
+                        workspace_file=None):
     r"""
     Call this to completely reset the GAP workspace, which is used by
     default when Sage first starts GAP.
@@ -1492,26 +1493,24 @@ def gap_reset_workspace(max_workspace_size=None, verbose=False):
     ``first_try=True`` to ensure that the new workspace is created::
 
         sage: # long time
-        sage: ORIGINAL_WORKSPACE = sage.interfaces.gap.WORKSPACE
         sage: saved_first_try = sage.interfaces.gap.first_try
         sage: sage.interfaces.gap.first_try = True
-        sage: sage.interfaces.gap.WORKSPACE = tmp_filename()
+        sage: fname = tmp_filename()
         sage: from multiprocessing import Process
         sage: import time
-        sage: gap = Gap()  # reset GAP session
+        sage: gap = Gap(workspace_file=fname)  # reset GAP session
         sage: P = [Process(target=gap, args=("14242",)) for i in range(4)]
         sage: for p in P:  # indirect doctest
         ....:     p.start()
         ....:     time.sleep(float(0.2))
         sage: for p in P:
         ....:     p.join()
-        sage: os.unlink(sage.interfaces.gap.WORKSPACE)
-        sage: sage.interfaces.gap.WORKSPACE = ORIGINAL_WORKSPACE
+        sage: os.unlink(fname)
         sage: sage.interfaces.gap.first_try = saved_first_try
     """
     # The use_workspace_cache=False causes a new workspace to
     # be created, and we save it immediately thereafter.
-    g = Gap(use_workspace_cache=False, max_workspace_size=None)
+    g = Gap(use_workspace_cache=False, workspace_file=workspace_file)
     g.save_workspace()
     g.quit()
 
