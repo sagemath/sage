@@ -914,7 +914,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             x[i] = 1
         return self.element_class(self, x)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of the group.
 
@@ -1861,7 +1861,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
         s += '{' + ', '.join(map(str, self.gens())) + '}'
         return s
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators for this subgroup.
 

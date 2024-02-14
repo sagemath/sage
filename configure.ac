@@ -1,7 +1,14 @@
 #*****************************************************************************
 #       Copyright (C) 2005-2007 William Stein
-#       Copyright (C) 2009-2011 David Kirkby
-#       Copyright (C) 2012-2016 Jeroen Demeyer
+#                     2009-2011 David Kirkby
+#                     2012-2015 Volker Braun
+#                     2012-2019 Jeroen Demeyer
+#                     2014-2017 François Bissey
+#                     2016-2022 Matthias Koeppe
+#                     2017-2018 Erik M. Bray
+#                     2018      Dima Pasechnik
+#                     2020      Jonathan Kliem
+#                     2021-2023 Michael Orlitzky
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -56,13 +63,6 @@ dnl AM_ICONV macro from the same source (which ultimately calls AC_LIB_RPATH), a
 dnl avoid involving libtool by using it to get the shared library extension.
 AC_LIB_RPATH
 AC_SUBST(SHLIBEXT, "${acl_shlibext}")
-
-#---------------------------------------------------------
-#
-# This is essentially the configure part of the old "install" file.
-# Over time, this should be changed to proper autoconf style with
-# configure options.
-#
 
 ########################################################################
 # Set various environment variables (needed at configure time)
@@ -143,79 +143,16 @@ AC_CANONICAL_BUILD()
 AC_CANONICAL_HOST()
 
 case $host in
-*-*-sunos*|*-*-solaris2.[1-9])
-AC_MSG_ERROR([[
-Sage is not supported on any version of Solaris earlier than 10.
-Sage has been tested on the first release of Solaris 10
-(03/2005) and works on that. Sage may or may not work with
-your version of Solaris.
-
-More information can be found about Sage on Solaris
-on the Wiki at http://wiki.sagemath.org/solaris]]);;
-
-*-*-darwin[1-7].*)
-AC_MSG_ERROR([[
-Sage has never been built on OS X 10.3 (Panther)
-or earlier. The oldest version of OS X successfully used
-is OS X version 10.4 (Tiger). You might consider updating
-your version of OS X if your hardware permits this, but
-Apple charges for upgrades of OS X]]);;
-
-*-*-hpux*)
-AC_MSG_ERROR([[
-You are attempting to build Sage on HP's HP-UX operating system,
-which is not a supported platform for Sage yet though
-some work has been done on HP-UX. A port does not look to
-be particularly difficult. Some information can be
-found on the Sage Wiki at http://wiki.sagemath.org/HP-UX
-
-If you would like to help port Sage to HP-UX,
-please join the sage-devel discussion list - see
-http://groups.google.com/group/sage-devel
-The Sage community would also appreciate any patches you submit]]);;
-
-*-*-aix*)
-AC_MSG_ERROR([[
-You are attempting to build Sage on IBM's AIX operating system,
-which is not a supported platform for Sage yet. Things may or
-may not work. If you would like to help port Sage to AIX,
-please join the sage-devel discussion list - see
-http://groups.google.com/group/sage-devel
-The Sage community would also appreciate any patches you submit]]);;
-
-*-*-irix*)
-AC_MSG_ERROR([[
-You are attempting to build Sage on SGI's IRIX operating system,
-which is not a supported platform for Sage yet. Things may or
-may not work. If you would like to help port Sage to IRIX,
-please join the sage-devel discussion list - see
-http://groups.google.com/group/sage-devel
-The Sage community would also appreciate any patches you submit]]);;
-
-*-*-osf*)
-AC_MSG_ERROR([[
-You are attempting to build Sage on HP's Tru64 operating system,
-which is not a supported platform for Sage yet. Things may or
-may not work. If you would like to help port Sage to Tru64,
-please join the sage-devel discussion list - see
-http://groups.google.com/group/sage-devel
-The Sage community would also appreciate any patches you submit]]);;
-
-# The following are all supported platforms.
+dnl The following are all supported platforms.
 *-*-freebsd*);;
 *-*-linux*);;
 *-*-darwin*);;
-*-*-solaris*);;
 
-# Wildcard for other unsupported platforms
+dnl Wildcard for unsupported platforms
 *)
 AC_MSG_ERROR([[
 You are attempting to build Sage on $host,
-which is not a supported platform for Sage yet. Things may or
-may not work. If you would like to help port Sage to $host,
-please join the sage-devel discussion list - see
-http://groups.google.com/group/sage-devel
-The Sage community would also appreciate any patches you submit]]);;
+which is not a supported platform for Sage]]);;
 esac
 
 
@@ -328,17 +265,6 @@ else
     AC_MSG_ERROR([You do not have a suitable version of Python installed])
 fi
 
-# Check for Latex, the use of which is less important in Sage than
-# it used to be, as it was at one time required to build any documentation
-# but this is no longer so.
-AC_CHECK_PROG(found_latex, latex, yes, no)
-if test x$found_latex != xyes
-then
-    AC_MSG_NOTICE([You do not have 'latex', which is recommended, but not])
-    AC_MSG_NOTICE([required. Latex is only really used for building pdf])
-    AC_MSG_NOTICE([documents and for %latex mode in the AC_PACKAGE_NAME notebook.])
-fi
-
 # Check that perl is available, with version 5.8.0 or later.
 # Some packages need perl, however it is not clear whether Sage really
 # requires version >= 5.8.0.  The R package *used* to require it, but
@@ -403,27 +329,13 @@ AC_CHECK_HEADER([complex.h],[],[
 # First check for something that should be in any maths library (sqrt).
 AC_LANG(C++)
 AC_CHECK_LIB(m,sqrt,[],[
-                       AC_MSG_NOTICE([This system has no maths library installed.])
-                       # On AIX this is not installed by default - strange as that might seem.
-                       # but is in a fileset bos.adt.libm. However, the fileset bos.adt
-                       # includes other things that are probably useful.
-                       if test "x`uname`" = 'xAIX'
-                       then
-                          AC_MSG_NOTICE([On AIX, libm is contained in the bos.adt.libm fileset.])
-                          AC_MSG_NOTICE([Actually, we recommend to install the complete bos.adt fileset.])
-                          AC_MSG_NOTICE([This needs to be performed by a system administrator.])
-                       fi
                        AC_MSG_ERROR([Exiting, since a maths library was not found.])
                        ])
-
-# Check for system services
 
 # Check that we are not building in a directory containing spaces
 AS_IF([echo "$ac_pwd" |grep " " >/dev/null],
       AC_MSG_ERROR([the path to the Sage root directory ($ac_pwd) contains a space. Sage will not build correctly in this case])
 )
-
-SAGE_CHECK_OSX_SUPPORTED()
 
 ###############################################################################
 # Collect substitutions for build/make/Makefile.in
@@ -567,7 +479,6 @@ AS_VAR_SET([sage_use_system_gcc], [force])
 
 SAGE_SPKG_COLLECT()
 
-dnl AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([build/make/Makefile-auto build/make/Makefile])
 AC_CONFIG_FILES([src/bin/sage-env-config src/bin/sage-src-env-config build/bin/sage-build-env-config])
 
