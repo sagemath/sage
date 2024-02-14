@@ -26,7 +26,7 @@ class InventoryBuilder(DummyBuilder):
 
     name = "inventory"
     format = "inventory"
-    epilog = "The inventory files are in %(outdir)s."
+    epilog = "saved inventory file " + INVENTORY_FILENAME  + " in %(outdir)s"
 
     def get_outdated_docs(self) -> Iterable[str]:
         """
