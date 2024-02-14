@@ -53,6 +53,7 @@ AUTHORS:
 # ****************************************************************************
 
 import math
+from sage.arith.misc import valuation
 
 import sage.rings.abc
 from sage.rings.finite_rings.integer_mod import mod
@@ -66,8 +67,6 @@ import sage.groups.generic as generic
 
 from sage.arith.functions import lcm
 from sage.rings.integer import Integer
-from sage.rings.big_oh import O
-from sage.rings.infinity import Infinity as oo
 from sage.rings.rational import Rational
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.rational_field import RationalField
@@ -963,6 +962,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         else:
             ys = [y1, y2]
         ys.sort()  # ensure deterministic behavior
+        x = M(x)
         one = M.one()
         if all:
             return [EM.point([x, y, one], check=False) for y in ys]
@@ -2421,15 +2421,53 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: my_eval = lambda f,P: [fi(P[0],P[1]) for fi in f]
             sage: f = E.multiplication_by_m(2)
             sage: assert(E(eval(f,P)) == 2*P)
+
+        The following test shows that :trac:`6413` is fixed for elliptic curves over finite fields::
+            sage: p = 7
+            sage: K.<a> = GF(p^2)
+            sage: E = EllipticCurve(K, [a + 3, 5 - a])
+            sage: k = p^2 * 3
+            sage: f, g = E.multiplication_by_m(k)
+            sage: for _ in range(100):
+            ....:     P = E.random_point()
+            ....:     if P * k == 0:
+            ....:         continue
+            ....:     Qx = f.subs(x=P[0])
+            ....:     Qy = g.subs(x=P[0], y=P[1])
+            ....:     assert (P * k).xy() == (Qx, Qy)
+
+        However, it still fails for elliptic curves over positive-characteristic fields::
+
+            sage: F.<a> = FunctionField(GF(7))
+            sage: E = EllipticCurve(F, [a, 1 / a])
+            sage: E.multiplication_by_m(7)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: multiplication by integer not coprime to p is only implemented for curves over finite fields
+
+        ::
+
+            sage: p = 7
+            sage: K.<a> = GF(p^2)
+            sage: E = EllipticCurve(K, [K.random_element(), K.random_element()])
+            sage: E.multiplication_by_m(p * 2)[0] == E.multiplication_by_m(p * 2, x_only=True)
+            True
         """
         # Coerce the input m to be an integer
         m = Integer(m)
+        p = self.base_ring().characteristic()
+
         if m == 0:
             raise ValueError("m must be a non-zero integer")
 
         if x_only:
             x = polygen(self.base_ring(), 'x')
         else:
+            from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
+            if p != 0 and m % p == 0 and not isinstance(self.base_ring(), FiniteField_generic):
+                # TODO: Implement the correct formula?
+                raise NotImplementedError("multiplication by integer not coprime to p "
+                                          "is only implemented for curves over finite fields")
             x, y = polygens(self.base_ring(), 'x,y')
 
         # Special case of multiplication by 1 is easy.
@@ -2440,7 +2478,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
                 return x
 
         # Grab curve invariants
-        a1, a2, a3, a4, a6 = self.a_invariants()
+        a1, _, a3, _, _ = self.a_invariants()
 
         if m == -1:
             if not x_only:
@@ -2448,21 +2486,32 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             else:
                 return x
 
-        # the x-coordinate does not depend on the sign of m.  The work
+        # If we only require the x coordinate, it is faster to use the recursive formula
+        # since substituting polynomials is quite slow.
+        v_p = 0 if p == 0 else valuation(m, p)
+        if not x_only:
+            m //= p**v_p
+
+        # the x-coordinate does not depend on the sign of m. The work
         # here is done by functions defined earlier:
 
         mx = (x.parent()(self._multiple_x_numerator(m.abs(), x))
               / x.parent()(self._multiple_x_denominator(m.abs(), x)))
 
         if x_only:
-            # Return it if the optional parameter x_only is set.
             return mx
 
-        #  Consideration of the invariant differential
-        #  w=dx/(2*y+a1*x+a3) shows that m*w = d(mx)/(2*my+a1*mx+a3)
-        #  and hence 2*my+a1*mx+a3 = (1/m)*(2*y+a1*x+a3)*d(mx)/dx
-
+        # Consideration of the invariant differential
+        # w=dx/(2*y+a1*x+a3) shows that m*w = d(mx)/(2*my+a1*mx+a3)
+        # and hence 2*my+a1*mx+a3 = (1/m)*(2*y+a1*x+a3)*d(mx)/dx
         my = ((2*y+a1*x+a3)*mx.derivative(x)/m - a1*mx-a3)/2
+
+        if v_p > 0:
+            isog = self.multiplication_by_p_isogeny()**v_p
+            fx, fy = isog.rational_maps()
+            # slow...
+            mx = mx.subs(x=fx)
+            my = my.subs(x=fx, y=fy)
 
         return mx, my
 

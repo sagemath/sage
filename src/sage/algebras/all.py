@@ -1,8 +1,7 @@
 """
 Algebras
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,9 +13,12 @@ Algebras
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.misc.lazy_import import lazy_import
+
+# old-style class for associative algebras, use Parent instead
+from sage.rings.ring import Algebra
 
 import sage.algebras.catalog as algebras
 
@@ -28,10 +30,8 @@ from .quantum_groups.all import *
 from .lie_conformal_algebras.all import *
 
 # Algebra base classes
-from .algebra import Algebra
 from .free_algebra import FreeAlgebra
 from .free_algebra_quotient import FreeAlgebraQuotient
-
 
 from .finite_dimensional_algebras.all import FiniteDimensionalAlgebra
 
