@@ -638,29 +638,18 @@ Most users won't need to set any of these: the build process just works on many
 platforms.
 (Note though that setting :envvar:`MAKE`, as described below, can significantly
 speed up the process.)
-Building Sage involves building about 100 packages, each of which has its own
+Building Sage involves building many packages, each of which has its own
 compilation instructions.
 
-The Sage source tarball already includes the sources for all standard
-packages, that is, it allows you to build Sage without internet
-connection. The git repository, however, does not contain the source
-code for third-party packages. Instead, it will be downloaded as
-needed (Note: you can run ``make download`` to force downloading
-packages before building). Package downloads use the Sage mirror
-network, the nearest mirror will be determined automatically for
-you. This is influenced by the following environment variable:
 
-- :envvar:`SAGE_SERVER` - Try the specified mirror first, before
-  falling back to the official Sage mirror list. Note that Sage will
-  search the directory
-
-  - ``SAGE_SERVER/spkg/upstream``
-
-  for upstream tarballs.
+Standard environment controlling the build process
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Here are some of the more commonly used variables affecting the build process:
 
-- :envvar:`MAKE` - one useful setting for this variable when building Sage is
+.. envvar:: MAKE
+
+  One useful setting for this variable when building Sage is
   ``MAKE='make -jNUM'`` to tell the ``make`` program to run ``NUM`` jobs in
   parallel when building.
   Note that some Sage packages may not support this variable.
@@ -676,14 +665,99 @@ Here are some of the more commonly used variables affecting the build process:
   and `Parallel building
   <https://www.gnu.org/software/make/manual/make.html#Parallel>`_.
 
-  .. warning::
+.. envvar:: V
 
-      Some users on single-core macOS machines have reported problems when
-      building Sage with ``MAKE='make -jNUM'`` with ``NUM`` greater than one.
+  If set to ``0``, silence the build.  Instead of showing a detailed
+  compilation log, only one line of output is shown at the beginning
+  and at the end of the installation of each Sage package.  To see
+  even less output, use::
 
-- :envvar:`SAGE_NUM_THREADS` - if set to a number, then when rebuilding with
-  ``sage -b`` or parallel doctesting with ``sage -t -p 0``, use at most this
-  many threads.
+    $ make -s V=0
+
+  (Note that the above uses the syntax of setting a Makefile variable.)
+
+.. envvar:: CC
+
+  While some programs allow you to use this to specify your C
+  compiler, **not every Sage package recognizes this**.
+  If GCC is installed within Sage, :envvar:`CC` is ignored and Sage's ``gcc``
+  is used instead.
+
+.. envvar:: CPP
+
+  Similarly, this will set the C preprocessor for some Sage
+  packages, and similarly, using it is likely quite risky.
+  If GCC is installed within Sage, :envvar:`CPP` is ignored and Sage's ``cpp``
+  is used instead.
+
+.. envvar:: CXX
+
+  Similarly, this will set the C++ compiler for some Sage
+  packages, and similarly, using it is likely quite risky.
+  If GCC is installed within Sage, :envvar:`CXX` is ignored and Sage's ``g++``
+  is used instead.
+
+.. envvar:: FC
+
+  Similarly, this will set the Fortran compiler.
+  This is supported by all Sage packages which have Fortran code.
+  However, for historical reasons, the value is hardcoded during the initial
+  ``make`` and subsequent changes to ``$FC`` might be ignored (in which case,
+  the original value will be used instead).
+  If GCC is installed within Sage, :envvar:`FC` is ignored and Sage's
+  ``gfortran`` is used instead.
+
+.. envvar:: CFLAGS
+.. envvar:: CXXFLAGS
+.. envvar:: FCFLAGS
+
+  The flags for
+  the C compiler, the C++ compiler and the Fortran compiler, respectively.
+  The same comments apply to these: setting them may cause problems, because
+  they are not universally respected among the Sage packages. Note
+  also that ``export CFLAGS=""`` does not have the same effect as
+  ``unset CFLAGS``. The latter is preferable.
+
+.. envvar:: CPPFLAGS
+.. envvar:: LDFLAGS
+.. envvar:: CXXFLAG64
+.. envvar:: LDFLAG64
+.. envvar:: LD
+
+  Similar comments apply to these compiler and linker flags.
+
+
+Sage-specific environment variables controlling the build process
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. envvar:: SAGE_SERVER
+
+  The Sage source tarball already includes the sources for all standard
+  packages, that is, it allows you to build Sage without internet
+  connection. The git repository, however, does not contain the source
+  code for third-party packages. Instead, it will be downloaded as
+  needed (note: you can run ``make download`` to force downloading
+  packages before building).
+
+  If :envvar:`SAGE_SERVER` is set, the specified Sage mirror is contacted
+  first. Note that Sage will search the directory
+  ``SAGE_SERVER/spkg/upstream`` for upstream tarballs.
+
+  If downloading a file from there fails or :envvar:`SAGE_SERVER` is not set,
+  files will be attempted to download from release assets of the
+  Sage GitHub repository.
+
+  If that fails too, the Sage mirror network is contacted to determine
+  the nearest mirrors.
+
+  This sequence of operations is defined by the files in the directory
+  :file:`$SAGE_ROOT/.upstream.d`.
+
+.. envvar:: SAGE_NUM_THREADS
+
+  If set to a number, then when rebuilding with ``sage -b`` or
+  parallel doctesting with ``sage -t -p 0``, use at most this many
+  threads.
 
   If this is not set, then determine the number of threads using the value of
   the :envvar:`MAKE` (see above) or :envvar:`MAKEFLAGS` environment variables.
@@ -697,23 +771,18 @@ Here are some of the more commonly used variables affecting the build process:
   When ``sage -t -p`` runs under the control of the GNU ``make``
   jobserver, then Sage will request as most this number of job slots.
 
-- :envvar:`V` - if set to ``0``, silence the build.  Instead of
-  showing a detailed compilation log, only one line of output is shown
-  at the beginning and at the end of the installation of each Sage
-  package.  To see even less output, use::
+.. envvar:: SAGE_CHECK
 
-    $ make -s V=0
-
-  (Note that the above uses the syntax of setting a Makefile variable.)
-
-- :envvar:`SAGE_CHECK` - if set to ``yes``, then during the build process,
+  If set to ``yes``, then during the build process,
   or when installing packages manually,
   run the test suite for each package which has one, and stop with an error
   if tests are failing.  If set to ``warn``, then only a warning is printed
   in this case.
   See also :envvar:`SAGE_CHECK_PACKAGES`.
 
-- :envvar:`SAGE_CHECK_PACKAGES` - if :envvar:`SAGE_CHECK` is set to ``yes``,
+.. envvar:: SAGE_CHECK_PACKAGES
+
+  If :envvar:`SAGE_CHECK` is set to ``yes``,
   then the default behavior is to run test suites for all spkgs which contain
   them.
   If :envvar:`SAGE_CHECK_PACKAGES` is set, it should be a comma-separated list
@@ -730,9 +799,13 @@ Here are some of the more commonly used variables affecting the build process:
      on most platforms.  So when this variable is empty or unset, Sage
      uses a default of ``!python2,!python3``.
 
-- :envvar:`SAGE_INSTALL_GCC` - **Obsolete, do not use, to be removed**
+.. envvar:: SAGE_INSTALL_GCC
 
-- :envvar:`SAGE_INSTALL_CCACHE` - by default Sage doesn't install ccache,
+  **Obsolete, do not use, to be removed**
+
+.. envvar:: SAGE_INSTALL_CCACHE
+
+  By default Sage doesn't install :ref:`ccache <spkg_ccache>`,
   however by setting ``SAGE_INSTALL_CCACHE=yes`` Sage will install ccache.
   Because the Sage distribution is quite large, the maximum cache is set to 4G.
   This can be changed by running ``sage -sh -c "ccache --max-size=SIZE"``,
@@ -744,10 +817,9 @@ Here are some of the more commonly used variables affecting the build process:
   building ccache for Sage, so that Sage can pull down the necessary
   sources.
 
-- .. _sage_debug:
+.. envvar:: SAGE_DEBUG
 
-  :envvar:`SAGE_DEBUG` - controls debugging support.
-  There are three different possible values:
+  Controls debugging support. There are three different possible values:
 
   * Not set (or set to anything else than "yes" or "no"): build binaries with
     debugging symbols, but no special debug builds.
@@ -766,12 +838,16 @@ Here are some of the more commonly used variables affecting the build process:
   Instead of using :envvar:`SAGE_DEBUG` one can configure with
   ``--enable-debug={no|symbols|yes}``.
 
-- :envvar:`SAGE_PROFILE` - controls profiling support. If this is set
+.. envvar:: SAGE_PROFILE
+
+  Controls profiling support. If this is set
   to ``yes``, profiling support is enabled where possible. Note that
-  Python-level profiling is always available; This option enables
+  Python-level profiling is always available; this option enables
   profiling in Cython modules.
 
-- :envvar:`SAGE_BUILD_DIR` - the default behavior is to build each spkg in a
+.. envvar:: SAGE_BUILD_DIR
+
+  The default behavior is to build each spkg in a
   subdirectory of :file:`$SAGE_ROOT/local/var/tmp/sage/build/`; for
   example, build version 7.27.0 of
   :file:`ipython` in the directory
@@ -794,7 +870,9 @@ Here are some of the more commonly used variables affecting the build process:
       permission to create.
       The path name must contain **no spaces**.
 
-- :envvar:`SAGE_KEEP_BUILT_SPKGS` - the default behavior is to delete each
+.. envvar:: SAGE_KEEP_BUILT_SPKGS
+
+  The default behavior is to delete each
   build directory -- the appropriate subdirectory of
   :file:`$SAGE_ROOT/local/var/tmp/sage/build` or
   :file:`$SAGE_BUILD_DIR` -- after each spkg
@@ -829,9 +907,9 @@ Here are some of the more commonly used variables affecting the build process:
       So you can set this variable to ``yes`` instead of using the ``-s`` flag
       for ``sage -i`` and ``sage -f``.
 
-- .. _sage_fat_binary:
+.. envvar:: SAGE_FAT_BINARY
 
-  :envvar:`SAGE_FAT_BINARY` - to build binaries that will run on the
+  To build binaries that will run on the
   widest range of target CPUs set this variable to ``yes`` before
   building Sage or configure with ``--enable-fat-binary``.
   This does not make the binaries relocatable, it only
@@ -839,7 +917,9 @@ Here are some of the more commonly used variables affecting the build process:
   be moved to a different directory) binaries, you must use
   https://github.com/sagemath/binary-pkg
 
-- :envvar:`SAGE_SUDO` - set this to ``sudo -E`` or to any other
+.. envvar:: SAGE_SUDO
+
+  Set this to ``sudo -E`` or to any other
   command prefix that is necessary to write into a installation
   hierarchy (:envvar:`SAGE_LOCAL`) owned by root or another user.
   Note that this command needs to preserve environment variable
@@ -852,9 +932,13 @@ Here are some of the more commonly used variables affecting the build process:
   supports :envvar:`SAGE_SUDO`, into a root-owned installation
   hierarchy (:envvar:`SAGE_LOCAL`).
 
-Environment variables for documentation build:
 
-- :envvar:`SAGE_DOCBUILD_OPTS` - the value of this variable is passed as an
+Environment variables controlling the documentation build
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. envvar:: SAGE_DOCBUILD_OPTS
+
+  The value of this variable is passed as an
   argument to ``sage --docbuild all html`` or ``sage --docbuild all pdf`` when
   you run ``make``, ``make doc``, or ``make doc-pdf``.  For example, you can
   add ``--no-plot`` to this variable to avoid building the graphics coming from
@@ -862,18 +946,24 @@ Environment variables for documentation build:
   ``--include-tests-blocks`` to include all "TESTS" blocks in the reference
   manual. Run ``sage --docbuild help`` to see the full list of options.
 
-- :envvar:`SAGE_SPKG_INSTALL_DOCS` - if set to ``yes``, then install
+.. envvar:: SAGE_SPKG_INSTALL_DOCS
+
+  If set to ``yes``, then install
   package-specific documentation to
   :file:`$SAGE_ROOT/local/share/doc/PACKAGE_NAME/` when an spkg is installed.
   This option may not be supported by all spkgs. Some spkgs might also assume
   that certain programs are available on the system (for example, ``latex`` or
   ``pdflatex``).
 
-- :envvar:`SAGE_USE_CDNS` -- if set to ``yes``, then build the documentation
+.. envvar:: SAGE_USE_CDNS
+
+  If set to ``yes``, then build the documentation
   using CDNs (Content Distribution Networks) for scripts necessary for HTML
   documentation, such as `MathJax <https://www.mathjax.org/>`_.
 
-- :envvar:`SAGE_LIVE_DOC` -- if set to ``yes``, then build live Sage
+.. envvar:: SAGE_LIVE_DOC
+
+  If set to ``yes``, then build live Sage
   documentation. If the ``Make live`` button on any webpage of the live doc is
   clicked, every example code gets a `CodeMirror <https://codemirror.net>`_
   code cell runnable via `Thebe <https://thebe.readthedocs.io/en/stable/>`_.
@@ -883,9 +973,10 @@ Environment variables for documentation build:
   local Jupyter server. The environment variable :envvar:`SAGE_JUPYTER_SERVER`
   is used for this purpose.
 
-  :envvar:`SAGE_JUPYTER_SERVER` - set this to either ``binder``,
-  ``binder:repo`` with ``repo`` specifying a Binder repo or the URL to a local
-  Jupyter server.
+.. envvar:: SAGE_JUPYTER_SERVER
+
+  Set this to either ``binder``, ``binder:repo`` with ``repo``
+  specifying a Binder repo or the URL to a local Jupyter server.
 
   - ``binder`` refers to `Sage's official Binder repo
     <https://github.com/sagemath/sage-binder-env>`_. This is assumed if the
@@ -913,83 +1004,71 @@ Environment variables for documentation build:
     before opening the Sage documentation webpage.
 
 
-Environment variables dealing with specific Sage packages:
+Environment variables dealing with specific Sage packages
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- :envvar:`SAGE_MATPLOTLIB_GUI` - if set to anything non-empty except ``no``,
+.. envvar:: SAGE_MATPLOTLIB_GUI
+
+  If set to anything non-empty except ``no``,
   then Sage will attempt to build the graphical backend when it builds the
   matplotlib package.
 
-- :envvar:`PARI_CONFIGURE` - use this to pass extra parameters to
+.. envvar:: OPENBLAS_CONFIGURE
+
+  Adds additional configuration flags for
+  the OpenBLAS package that gets added to the ``make`` command. (see :trac:`23272`)
+
+.. envvar:: PARI_CONFIGURE
+
+  Use this to pass extra parameters to
   PARI's ``Configure`` script, for example to specify graphics
   support (which is disabled by default). See the file
   :file:`build/pkgs/pari/spkg-install.in` for more information.
 
-- :envvar:`SAGE_TUNE_PARI` - if yes, enable PARI self-tuning. Note that
+.. envvar:: SAGE_TUNE_PARI
+
+  If yes, enable PARI self-tuning. Note that
   this can be time-consuming. If you set this variable to "yes", you
   will also see this: ``WARNING: Tuning PARI/GP is unreliable. You may
   find your build of PARI fails, or PARI/GP does not work properly
   once built. We recommend to build this package with
   SAGE_CHECK="yes".``
 
-- :envvar:`PARI_MAKEFLAGS` - The value of this variable is passed as an
+.. envvar:: PARI_MAKEFLAGS
+
+  The value of this variable is passed as an
   argument to the ``$MAKE`` command when compiling PARI.
 
-Some standard environment variables which are used by Sage:
 
-- :envvar:`CC` - while some programs allow you to use this to specify your C
-  compiler, **not every Sage package recognizes this**.
-  If GCC is installed within Sage, :envvar:`CC` is ignored and Sage's ``gcc``
-  is used instead.
+Environment variables dealing with doctesting
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- :envvar:`CPP` - similarly, this will set the C preprocessor for some Sage
-  packages, and similarly, using it is likely quite risky.
-  If GCC is installed within Sage, :envvar:`CPP` is ignored and Sage's ``cpp``
-  is used instead.
+.. envvar:: SAGE_TIMEOUT
 
-- :envvar:`CXX` - similarly, this will set the C++ compiler for some Sage
-  packages, and similarly, using it is likely quite risky.
-  If GCC is installed within Sage, :envvar:`CXX` is ignored and Sage's ``g++``
-  is used instead.
-
-- :envvar:`FC` - similarly, this will set the Fortran compiler.
-  This is supported by all Sage packages which have Fortran code.
-  However, for historical reasons, the value is hardcoded during the initial
-  ``make`` and subsequent changes to ``$FC`` might be ignored (in which case,
-  the original value will be used instead).
-  If GCC is installed within Sage, :envvar:`FC` is ignored and Sage's
-  ``gfortran`` is used instead.
-
-- :envvar:`CFLAGS`, :envvar:`CXXFLAGS` and :envvar:`FCFLAGS` - the flags for
-  the C compiler, the C++ compiler and the Fortran compiler, respectively.
-  The same comments apply to these: setting them may cause problems, because
-  they are not universally respected among the Sage packages. Note
-  also that ``export CFLAGS=""`` does not have the same effect as
-  ``unset CFLAGS``. The latter is preferable.
-
-- Similar comments apply to other compiler and linker flags like
-  :envvar:`CPPFLAGS`, :envvar:`LDFLAGS`, :envvar:`CXXFLAG64`,
-  :envvar:`LDFLAG64`, and :envvar:`LD`.
-
-- :envvar:`OPENBLAS_CONFIGURE` - adds additional configuration flags for
-  the OpenBLAS package that gets added to the make command. (see :trac:`23272`)
-
-Environment variables dealing with doctesting:
-
-- :envvar:`SAGE_TIMEOUT` - used for Sage's doctesting: the number of seconds
+  Used for Sage's doctesting: the number of seconds
   to allow a doctest before timing it out.
   If this isn't set, the default is 300 seconds (5 minutes).
 
-- :envvar:`SAGE_TIMEOUT_LONG` - used for Sage's doctesting: the number of
+.. envvar:: SAGE_TIMEOUT_LONG
+
+  Used for Sage's doctesting: the number of
   seconds to allow a doctest before timing it out, if tests are run using
   ``sage -t --long``.
   If this isn't set, the default is 1800 seconds (30 minutes).
 
-- :envvar:`SAGE_TEST_GLOBAL_ITER`, :envvar:`SAGE_TEST_ITER` - these can
+.. envvar:: SAGE_TEST_GLOBAL_ITER
+.. envvar:: SAGE_TEST_ITER
+
+  These can
   be used instead of passing the flags ``--global-iterations`` and
   ``--file-iterations``, respectively, to ``sage -t``. Indeed, these
   variables are only used if the flags are unset. Run ``sage -t -h``
   for more information on the effects of these flags (and therefore
   these variables).
+
+
+Environment variables set within Sage environments
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Sage sets some other environment variables. The most accurate way to
 see what Sage does is to first run ``env`` from a shell prompt to see
