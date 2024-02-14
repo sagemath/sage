@@ -148,7 +148,8 @@ from sage.structure.element import Element
 import sage.categories as categories
 from sage.categories.morphism import IdentityMorphism
 
-import sage.rings.ring as ring
+from sage.rings.ring import (Algebra, CommutativeAlgebra, IntegralDomain,
+                             PrincipalIdealDomain, is_Ring)
 from sage.structure.element import is_RingElement
 import sage.rings.rational_field as rational_field
 from sage.rings.rational_field import QQ
@@ -225,7 +226,7 @@ def is_PolynomialRing(x):
 
 #########################################################################################
 
-class PolynomialRing_general(ring.Algebra):
+class PolynomialRing_general(Algebra):
     """
     Univariate polynomial ring over a ring.
     """
@@ -244,7 +245,8 @@ class PolynomialRing_general(ring.Algebra):
             sage: category(ZZ['x'])
             Join of Category of unique factorization domains
              and Category of commutative algebras over
-              (euclidean domains and infinite enumerated sets and metric spaces)
+              (Dedekind domains and euclidean domains
+               and infinite enumerated sets and metric spaces)
              and Category of infinite sets
             sage: category(GF(7)['x'])
             Join of Category of euclidean domains
@@ -301,7 +303,7 @@ class PolynomialRing_general(ring.Algebra):
         self.Element = self._polynomial_class
         self.__cyclopoly_cache = {}
         self._has_singular = False
-        ring.Algebra.__init__(self, base_ring, names=name, normalize=True, category=category)
+        Algebra.__init__(self, base_ring, names=name, normalize=True, category=category)
         self._populate_coercion_lists_(convert_method_name='_polynomial_')
 
     def __reduce__(self):
@@ -1707,7 +1709,7 @@ class PolynomialRing_general(ring.Algebra):
         raise ValueError("you should pass exactly one of of_degree and max_degree")
 
 
-class PolynomialRing_commutative(PolynomialRing_general, ring.CommutativeAlgebra):
+class PolynomialRing_commutative(PolynomialRing_general, CommutativeAlgebra):
     """
     Univariate polynomial ring over a commutative ring.
     """
@@ -1834,7 +1836,7 @@ class PolynomialRing_commutative(PolynomialRing_general, ring.CommutativeAlgebra
 
 
 class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_singular_repr,
-                                     ring.IntegralDomain):
+                                     IntegralDomain):
     def __init__(self, base_ring, name="x", sparse=False, implementation=None,
             element_class=None, category=None):
         """
@@ -2054,8 +2056,9 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
         return categories.pushout.PolynomialFunctor(self.variable_name(), sparse=self.is_sparse(),
                                                     implementation=implementation), self.base_ring()
 
+
 class PolynomialRing_field(PolynomialRing_integral_domain,
-                           ring.PrincipalIdealDomain):
+                           PrincipalIdealDomain):
     def __init__(self, base_ring, name="x", sparse=False, implementation=None,
                  element_class=None, category=None):
         """
@@ -3593,7 +3596,7 @@ def polygen(ring_or_element, name="x"):
     """
     if is_RingElement(ring_or_element):
         base_ring = ring_or_element.parent()
-    elif ring.is_Ring(ring_or_element):
+    elif is_Ring(ring_or_element):
         base_ring = ring_or_element
     else:
         raise TypeError("input must be a ring or ring element")

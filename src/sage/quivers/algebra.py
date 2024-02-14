@@ -173,7 +173,7 @@ class PathAlgebra(CombinatorialFreeModule):
                          bracket=False)
         self._assign_names(self._semigroup.variable_names())
 
-    def order_string(self):
+    def order_string(self) -> str:
         """
         Return the string that defines the monomial order of this algebra.
 
@@ -196,7 +196,7 @@ class PathAlgebra(CombinatorialFreeModule):
         return self._ordstr
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of this algebra (idempotents and arrows).
 

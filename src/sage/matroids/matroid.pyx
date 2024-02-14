@@ -2956,9 +2956,12 @@ cdef class Matroid(SageObject):
 
         - ``ordering`` -- a total ordering of the groundset given as a list
 
+        OUTPUT: a list of frozensets
+
         EXAMPLES::
 
-            sage: M = Matroid(circuits=[[1,2,3], [3,4,5], [1,2,4,5]])
+            sage: from sage.matroids.basis_matroid import BasisMatroid
+            sage: M = BasisMatroid(Matroid(circuits=[[1,2,3], [3,4,5], [1,2,4,5]]))
             sage: SimplicialComplex(M.no_broken_circuits_sets())                        # needs sage.graphs
             Simplicial complex with vertex set (1, 2, 3, 4, 5)
              and facets {(1, 2, 4), (1, 2, 5), (1, 3, 4), (1, 3, 5)}
@@ -3121,9 +3124,9 @@ cdef class Matroid(SageObject):
             A 6-dimensional polyhedron in ZZ^7 defined as the convex hull
             of 29 vertices
 
-        REFERENCE:
+        REFERENCES:
 
-        - [DLHK2007]_
+        [DLHK2007]_
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
         from sage.modules.free_module import FreeModule
@@ -3164,7 +3167,7 @@ cdef class Matroid(SageObject):
             A 7-dimensional polyhedron in ZZ^7 defined as the convex hull
             of 58 vertices
 
-        REFERENCE:
+        REFERENCES:
 
         [DLHK2007]_
         """
