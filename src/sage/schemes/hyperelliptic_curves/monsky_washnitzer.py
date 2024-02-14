@@ -68,7 +68,7 @@ from sage.rings.rational import Rational
 from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.rational_field import QQ
 from sage.rings.integer_ring import ZZ
-from sage.rings.ring import IntegralDomain
+from sage.categories.integral_domains import IntegralDomains
 from sage.rings.infinity import Infinity
 from sage.rings.laurent_series_ring import is_LaurentSeriesRing
 from sage.rings.padics.factory import Qp as pAdicField
@@ -3837,13 +3837,11 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
             pass
 
         # The smallest y term of (1/j) d(x^i y^j) is constant for all j.
-        L = []
         x, y = self.base_ring().gens()
         n = self.degree()
-        for i in range(n):
-            L.append((y*x**i).diff().extract_pow_y(0))
+        L = [(y * x**i).diff().extract_pow_y(0) for i in range(n)]
         A = matrix(L).transpose()
-        if not isinstance(A.base_ring(), IntegralDomain):
+        if A.base_ring() not in IntegralDomains():
             # must be using integer_mod or something to approximate
             self._helper_matrix = (~A.change_ring(QQ)).change_ring(A.base_ring())
         else:
