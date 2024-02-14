@@ -2,10 +2,12 @@
 r"""
 `\nu`-Tamari lattice
 
-A class of the `\nu`-Tamari lattice, and `(\delta,\nu)`-Tamari lattice (or alt `\nu`-Tamari lattices), see [PRV2017]_ and [CC2023]_ for details.
+A class of the `\nu`-Tamari lattice, and `(\delta,\nu)`-Tamari lattice (or alt
+`\nu`-Tamari lattices), see [PRV2017]_ and [CC2023]_ for details.
 
 These lattices depend on a parameter `\nu` where `\nu` is a path of North
-and East steps. The alt `\nu`-Tamari lattice depends on an additional parameter `\delta`, which is an increment vector with respect to `\nu`.
+and East steps. The alt `\nu`-Tamari lattice depends on an additional parameter
+`\delta`, which is an increment vector with respect to `\nu`.
 
 The elements are :func:`\nu-Dyck paths<sage.combinat.nu_dyck_word.NuDyckWord>`
 which are weakly above `\nu`.
@@ -38,7 +40,8 @@ special cases of this construction and are also available with this poset::
 
 .. SEEALSO::
 
-    For more detailed information see :meth:`NuTamariLattice` and :meth:`AltNuTamariLattice`. For more
+    For more detailed information see :meth:`NuTamariLattice` and
+    :meth:`AltNuTamariLattice`. For more
     information on the standard Tamari lattice see
     :meth:`sage.combinat.tamari_lattices.TamariLattice`,
     :meth:`sage.combinat.tamari_lattices.. GeneralizedTamariLattice`
@@ -115,11 +118,16 @@ def NuTamariLattice(nu):
 
 def delta_swap(p, k, delta):
     r"""
-    Perform a covering move in the `(\delta,\nu)`-Tamari lattice (or alt `\nu`-Tamari lattice, see [CC2023]_).
+    Perform a covering move in the `(\delta,\nu)`-Tamari lattice (or alt
+    `\nu`-Tamari lattice, see [CC2023]_).
 
-    The letter at position `k` is a North step of the `\nu`-Dyck word `p`, and must be preceded by an East step.
+    The letter at position `k` is a North step of the `\nu`-Dyck word `p`, and
+    must be preceded by an East step.
 
-    The vector `\delta = (\delta_1, \dots, \delta_n)` is an increment vector with respect to the path `\nu`, that is to say `\delta_i \leq \nu_i`, where `\nu_i` is the number of East steps following the `i`-th North step of `\nu`.
+    The vector `\delta = (\delta_1, \dots, \delta_n)` is an increment vector
+    with respect to the path `\nu`, that is to say `\delta_i \leq \nu_i`, where
+    `\nu_i` is the number of East steps following the `i`-th North step of
+    `\nu`.
 
     INPUT:
 
@@ -189,9 +197,14 @@ def AltNuTamariLattice(nu, delta=None):
 
     For more information, see [CC2023]_.
 
-    The path `\nu` is a path of North steps (represented as `1` s) and East steps (represented as `0` s).
+    The path `\nu` is a path of North steps (represented as `1` s) and East
+    steps (represented as `0` s).
 
-    The vector `\delta = (\delta_1, \dots, \delta_n)` is an increment vector with respect to the path `\nu`, that is to say `\delta_i \leq \nu_i`, where `\nu_i` is the number of `0` s following the `i`-th `1` of `\nu`. If not provided, `\delta` is set by default to produce the classical `\nu`-Tamari lattice.
+    The vector `\delta = (\delta_1, \dots, \delta_n)` is an increment vector
+    with respect to the path `\nu`, that is to say `\delta_i \leq \nu_i`, where
+    `\nu_i` is the number of `0` s following the `i`-th `1` of `\nu`. If not
+    provided, `\delta` is set by default to produce the classical `\nu`-Tamari
+    lattice.
 
     INPUT:
 
@@ -225,6 +238,14 @@ def AltNuTamariLattice(nu, delta=None):
         Traceback (most recent call last):
         ...
         ValueError: nu must be a list or a string of 0s and 1s
+        sage: AltNuTamariLattice('01001', [0, 1, 0])
+        Traceback (most recent call last):
+        ...
+        ValueError: delta is not a valid increment vector
+        sage: AltNuTamariLattice('0100101', [3, 0, 0])
+        Traceback (most recent call last):
+        ...
+        ValueError: delta is not a valid increment vector
 
     REFERENCES:
 
