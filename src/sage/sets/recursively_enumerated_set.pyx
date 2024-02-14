@@ -13,7 +13,7 @@ search, breadth first search and elements of given depth.
 
 See :wikipedia:`Recursively_enumerable_set`.
 
-See documentation of :func:`RecursivelyEnumeratedSet` below for the
+See the documentation of :func:`RecursivelyEnumeratedSet` below for the
 description of the inputs.
 
 AUTHORS:
@@ -25,7 +25,7 @@ No hypothesis on the structure
 
 What we mean by "no hypothesis" is that the set is not known
 to be a forest, symmetric, or graded. However, it may have other
-structure, like not containing an oriented cycle, that does not
+structures, such as not containing an oriented cycle, that do not
 help with the enumeration.
 
 In this example, the seed is 0 and the successor function is either ``+2``
@@ -139,7 +139,7 @@ Forest structure
 ----------------
 
 The set of words over the alphabet `\{a,b\}` can be generated from the
-empty word by appending letter `a` or `b` as a successor function. This set
+empty word by appending the letter `a` or `b` as a successor function. This set
 has a forest structure::
 
     sage: seeds = ['']
@@ -182,7 +182,7 @@ For the previous example, the two necessary pieces of information are:
 
       lambda x: [x + letter for letter in ['a', 'b', 'c']
 
-This would actually describe an **infinite** set, as such rules describes
+This would actually describe an **infinite** set, as such rules describe
 "all words" on 3 letters. Hence, it is a good idea to replace the function by::
 
     lambda x: [x + letter for letter in ['a', 'b', 'c']] if len(x) < 2 else []
@@ -283,7 +283,7 @@ def RecursivelyEnumeratedSet(seeds, successors, structure=None,
 
     A set `S` is called recursively enumerable if there is an algorithm that
     enumerates the members of `S`. We consider here the recursively
-    enumerated set that are described by some ``seeds`` and a successor
+    enumerated sets that are described by some ``seeds`` and a successor
     function ``successors``.
 
     Let `U` be a set and ``successors`` `:U \to 2^U` be a successor function
@@ -369,7 +369,7 @@ def RecursivelyEnumeratedSet(seeds, successors, structure=None,
 
     .. WARNING::
 
-        If you do not set the good structure, you might obtain bad results,
+        If you do not set a good structure, you might obtain bad results,
         like elements generated twice::
 
             sage: f = lambda a: [a-1,a+1]
@@ -744,8 +744,8 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
         r"""
         Iterate over the elements of ``self`` of given depth.
 
-        An element of depth `n` can be obtained applying `n` times the
-        successor function to a seed.
+        An element of depth `n` can be obtained by applying the
+        successor function `n` times to a seed.
 
         INPUT:
 
@@ -810,7 +810,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
         r"""
         Iterate on the elements of ``self`` (breadth first).
 
-        This code remembers every elements generated and uses python
+        This code remembers every element generated and uses python
         queues. It is 3 times slower than the other one.
 
         See :wikipedia:`Breadth-first_search`.
@@ -839,7 +839,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
         r"""
         Iterate on the elements of ``self`` (in no particular order).
 
-        This code remembers every elements generated.
+        This code remembers every element generated.
 
         TESTS:
 
@@ -868,7 +868,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
         r"""
         Iterate on the elements of ``self`` (depth first).
 
-        This code remembers every elements generated.
+        This code remembers every element generated.
 
         The elements are traversed right-to-left, so the last element returned
         by the successor function is visited first.
@@ -1515,7 +1515,7 @@ def search_forest_iterator(roots, children, algorithm='depth'):
          [0, 0, 0], [0, 0, 1], [0, 1, 0], [0, 1, 1],
          [1, 0, 0], [1, 0, 1], [1, 1, 0], [1, 1, 1]]
 
-    This allows for iterating trough trees of infinite depth::
+    This allows for iterating through trees of infinite depth::
 
         sage: it = search_forest_iterator([[]], lambda l: [l+[0], l+[1]], algorithm='breadth')
         sage: [ next(it) for i in range(16) ]
@@ -1537,7 +1537,7 @@ def search_forest_iterator(roots, children, algorithm='depth'):
          [0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]]
     """
     # Little trick: the same implementation handles both depth and
-    # breadth first search. Setting position to -1 makes a depth search
+    # breadth first search. Setting the position to -1 makes a depth search
     # (you ask the children for the last node you met). Setting
     # position on 0 makes a breadth search (enumerate all the
     # descendants of a node before going on to the next father)
@@ -1883,8 +1883,8 @@ class RecursivelyEnumeratedSet_forest(Parent):
     def _elements_of_depth_iterator_rec(self, depth=0):
         r"""
         Return an iterator over the elements of ``self`` of given depth.
-        An element of depth `n` can be obtained applying `n` times the
-        children function from a root. This function is not affected
+        An element of depth `n` can be obtained by applying the
+        children function `n` times from the root. This function is not affected
         by post processing.
 
         EXAMPLES::
@@ -1914,8 +1914,8 @@ class RecursivelyEnumeratedSet_forest(Parent):
     def elements_of_depth_iterator(self, depth=0):
         r"""
         Return an iterator over the elements of ``self`` of given depth.
-        An element of depth `n` can be obtained applying `n` times the
-        children function from a root.
+        An element of depth `n` can be obtained by applying the
+        children function `n` times from the root.
 
         EXAMPLES::
 
@@ -1973,7 +1973,7 @@ class RecursivelyEnumeratedSet_forest(Parent):
         depth first search and breadth first search failed. The
         following example enumerates all ordered pairs of nonnegative
         integers, starting from an infinite set of roots, where each
-        roots has an infinite number of children::
+        root has an infinite number of children::
 
             sage: from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
             sage: S = RecursivelyEnumeratedSet_forest(Family(NN, lambda x : (x, 0)),
