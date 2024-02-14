@@ -60,14 +60,38 @@ Sometimes even conduct that is intended to be helpful can be offensive to others
 
 ## The sage-abuse committee ##
 
-
-### Examples of sanctions ###
+The sage-abuse committee was established in 2014 with the adoption of the
+Code of Conduct by majority vote; the post
+https://groups.google.com/g/sage-devel/c/XON6NTJa33o/m/RP_oFsfPBQAJ has a
+selection of quotes from the 2014 discussion.
 
 Types of sanctions that the sage-abuse committee has used in the past include
 the following:
 
 - Deleting comments (on GitHub Issues/PRs and Google Groups) that violate
   the Code of Conduct.
+
+- Setting Google Groups to hold posts of a participant for moderation
+  by an administrator.
+
+- Privilege changes in the GitHub organization.
+
+  - Removing the Maintainer role of a participant.
+
+  - Removing a participant from the Triage team.
+
+
+### How the committee will respond to reports ###
+
+TODO: Build upon good examples such as
+https://docs.scipy.org/doc/scipy/dev/conduct/report_handling_manual.html#how-the-committee-will-respond-to-reports
+
+
+TODO: Analysis of what specific possible sanctions do -- and don't do --
+as part of the resolution process.
+
+- Deleting comments (on GitHub Issues/PRs and Google Groups) that violate
+  the Code of Conduct:
 
   - This eliminates the potential of damage that the violations can cause
     in the future, when participants visit the Issues/PRs or Google Groups
@@ -81,17 +105,11 @@ the following:
     email (notifications of subscribers to GitHub Issues/PRs, Google Groups
     as mailing lists).
 
-  - Before deleting a comment, a screenshot should be taken in case it is
-    needed as evidence for future proceedings.
 
-- Setting Google Groups to hold posts of a participant for moderation
-  by an administrator.
+### Retaining an archive of all activities of the committee ###
 
-- Privilege changes in the GitHub organization.
-
-  - Removing the Maintainer role of a participant.
-
-  - Removing a participant from the Triage team.
+- Before deleting a comment (on GitHub Issues/PRs and Google Groups),
+  a screenshot should be taken.
 
 
 ### Appointment procedure ###
