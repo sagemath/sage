@@ -7162,7 +7162,44 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             return the_integer_ring(self.__pari__().binomial(mm))
         else:
             raise ValueError("algorithm must be one of: 'pari' or 'gmp' (alias: 'mpir')")
+    
+    def to_bytes(self, length=1, byteorder="big", is_signed=False):
+        """
+        Return an array of bytes representing an integer. Internally relies
+        on the python ``int.to_bytes()`` method.
 
+        INPUT:
+
+        - ``length`` -- positive integer (default: ``1``); integer is represented in
+        ``length`` bytes. ``OverflowError`` is raised if the integer is not representable
+        with the given length.
+
+        - ``byteorder`` -- str (default: ``"big"``); determines the byte order of
+          ``input_bytes``; can only be ``"big"`` or ``"little"``
+
+        - ``is_signed`` -- boolean (default: ``False``); determines whether to use two's
+          compliment to represent the integer
+
+        OUTPUT:
+
+        - Bytes representing ``self``
+
+        TODO: should we convert straight from the gmp type in cython? This is definitely
+        possible but I'm not sure the cleanest way to do this
+
+        EXAMPLES::
+
+            sage: (1024).to_bytes(2, byteorder='big')
+            b'\x04\x00'
+            sage: (1024).to_bytes(10, byteorder='big')
+            b'\x00\x00\x00\x00\x00\x00\x00\x00\x04\x00'
+            sage: (-1024).to_bytes(10, byteorder='big', is_signed=True)
+            b'\xff\xff\xff\xff\xff\xff\xff\xff\xfc\x00'
+            sage: x = 1000
+            sage: x.to_bytes((x.bit_length() + 7) // 8, byteorder='little')
+            b'\xe8\x03'
+        """
+        return int(self).to_bytes(length=length, byteorder=byteorder, signed=is_signed)
 
 cdef int mpz_set_str_python(mpz_ptr z, char* s, int base) except -1:
     """
