@@ -56,7 +56,7 @@ import sage.rings.rational_field
 import sage.rings.ideal
 import sage.libs.pari.all
 import sage.rings.ideal
-from sage.categories.basic import EuclideanDomains
+from sage.categories.basic import EuclideanDomains, DedekindDomains
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 from sage.structure.coerce cimport is_numpy_type
@@ -122,7 +122,8 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         sage: Z.is_field()
         False
         sage: Z.category()
-        Join of Category of euclidean domains
+        Join of Category of Dedekind domains
+            and Category of euclidean domains
             and Category of infinite enumerated sets
             and Category of metric spaces
         sage: Z(2^(2^5) + 1)
@@ -312,7 +313,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             True
         """
         Parent.__init__(self, base=self, names=('x',), normalize=False,
-                        category=(EuclideanDomains(), InfiniteEnumeratedSets().Metric()))
+                        category=(EuclideanDomains(), DedekindDomains(), InfiniteEnumeratedSets().Metric()))
         self._populate_coercion_lists_(init_no_parent=True,
                                        convert_method_name='_integer_')
 
@@ -852,17 +853,6 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         except TypeError:
             return False
 
-    def is_noetherian(self):
-        """
-        Return ``True`` since the integers are a Noetherian ring.
-
-        EXAMPLES::
-
-            sage: ZZ.is_noetherian()
-            True
-        """
-        return True
-
     def _repr_option(self, key):
         """
         Metadata about the :meth:`_repr_` output.
@@ -1132,6 +1122,11 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         """
         Return the Krull dimension of the integers, which is 1.
 
+        .. NOTE::
+
+            This should rather be inherited from the category
+            of ``DedekindDomains``.
+
         EXAMPLES::
 
             sage: ZZ.krull_dimension()
@@ -1142,6 +1137,11 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
     def is_integrally_closed(self):
         """
         Return that the integer ring is, in fact, integrally closed.
+
+        .. NOTE::
+
+            This should rather be inherited from the category
+            of ``DedekindDomains``.
 
         EXAMPLES::
 

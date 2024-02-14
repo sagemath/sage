@@ -1848,8 +1848,8 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
         to the algebraic field::
 
             sage: # needs sage.rings.number_field
-            sage: T.<t> = QQ[]
-            sage: a = (t^2 + 5).roots(QQbar)[0][0]
+            sage: x = polygen(ZZ)
+            sage: a = QQ[x](x^2 + 5).roots(QQbar)[0][0]
             sage: F = NumberField(a.minpoly(), 'a', embedding=a)
             sage: F.inject_variables()
             Defining a

@@ -66,6 +66,8 @@ from sage.categories.groups import Groups
 from sage.groups.matrix_gps.named_group import (
     normalize_args_vectorspace, NamedMatrixGroup_generic)
 from sage.misc.latex import latex
+from sage.misc.misc_c import prod
+from sage.rings.infinity import Infinity
 
 
 ###############################################################################
@@ -307,3 +309,49 @@ class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
         else:
             if x.determinant() == 0:
                 raise TypeError('matrix must non-zero determinant')
+
+    def order(self):
+        """
+        Return the order of ``self``.
+
+        EXAMPLES::
+
+            sage: G = SL(3, GF(5))
+            sage: G.order()
+            372000
+
+        TESTS:
+
+        Check if :trac:`36876` is fixed::
+
+            sage: SL(1, QQ).order()
+            1
+            sage: SL(2, ZZ).cardinality()
+            +Infinity
+
+        Check if :trac:`35490` is fixed::
+
+            sage: q = 7
+            sage: FqT.<T> = GF(q)[]
+            sage: N = T^2+1
+            sage: FqTN = QuotientRing(FqT, N*FqT)
+            sage: S = SL(2, FqTN)
+            sage: S.is_finite()
+            True
+            sage: S.order()
+            117600
+        """
+        n = self.degree()
+
+        if self.base_ring().is_finite():
+            q = self.base_ring().order()
+            ord = prod(q**n - q**i for i in range(n))
+            if self._special:
+                return ord / (q-1)
+            return ord
+
+        if self._special and n == 1:
+            return 1
+        return Infinity
+
+    cardinality = order
