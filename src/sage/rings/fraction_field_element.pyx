@@ -23,6 +23,7 @@ from sage.structure.element cimport FieldElement, parent
 from sage.structure.richcmp cimport richcmp
 
 from sage.rings.rational_field import QQ
+from sage.rings.integer_ring import ZZ
 
 import sage.misc.latex as latex
 
@@ -445,6 +446,41 @@ cdef class FractionFieldElement(FieldElement):
             (-2*x1*x2 + x1 + 1)/(x1 + x2)
         """
         return self._numerator(*x, **kwds) / self._denominator(*x, **kwds)
+
+    def subs(self, in_dict=None, *args, **kwds):
+        r"""
+        Substitute variables in the numerator and denominator of ``self``.
+
+        If a dictionary is passed, the keys are mapped to generators
+        of the parent ring.  Otherwise, the arguments are transmitted
+        unchanged to the method ``subs`` of the numerator and the
+        denominator.
+
+        EXAMPLES::
+
+            sage: x, y = PolynomialRing(ZZ, 2, 'xy').gens()
+            sage: f = x^2 + y + x^2*y^2 + 5
+            sage: (1/f).subs(x=5)
+            1/(25*y^2 + y + 30)
+
+        TESTS:
+
+        Check that :issue:`37122` is fixed::
+
+            sage: P = PolynomialRing(QQ, ["x%s" % i for i in range(10000)])
+            sage: PF = P.fraction_field()
+            sage: p = sum(i*P.gen(i) for i in range(5)) / sum(i*P.gen(i) for i in range(8))
+            sage: v = P.gen(4)
+            sage: p.subs({v: 100})
+            (x1 + 2*x2 + 3*x3 + 400)/(x1 + 2*x2 + 3*x3 + 5*x5 + 6*x6 + 7*x7 + 400)
+        """
+        if isinstance(in_dict, dict):
+            R = self.parent().base()
+            in_dict = {ZZ(m) if m in ZZ else R(m): v for m, v in in_dict.items()}
+
+        num = self._numerator.subs(in_dict, *args, **kwds)
+        den = self._denominator.subs(in_dict, *args, **kwds)
+        return num / den
 
     def _is_atomic(self):
         """
