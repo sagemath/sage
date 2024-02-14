@@ -113,6 +113,7 @@ import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid
 from .rank_matroid import RankMatroid
 from .circuits_matroid import CircuitsMatroid
+from .flats_matroid import FlatsMatroid
 from .circuit_closures_matroid import CircuitClosuresMatroid
 from .basis_matroid import BasisMatroid
 from .linear_matroid import LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
@@ -180,6 +181,7 @@ def Matroid(groundset=None, data=None, **kwds):
     - ``circuits`` -- The list of circuits of the matroid.
     - ``nonspanning_circuits`` -- The list of nonspanning_circuits of the
       matroid.
+    - ``flats`` -- The dictionary of flats indexed by their rank.
     - ``graph`` -- A graph, whose edges form the elements of the matroid.
     - ``matrix`` -- A matrix representation of the matroid.
     - ``reduced_matrix`` -- A reduced representation of the matroid: if
@@ -698,8 +700,9 @@ def Matroid(groundset=None, data=None, **kwds):
     key = None
     if data is None:
         for k in ['bases', 'independent_sets', 'circuits',
-                  'nonspanning_circuits', 'graph', 'matrix', 'reduced_matrix',
-                  'rank_function', 'revlex', 'circuit_closures', 'matroid']:
+                  'nonspanning_circuits', 'flats', 'graph', 'matrix',
+                  'reduced_matrix', 'rank_function', 'revlex',
+                  'circuit_closures', 'matroid']:
             if k in kwds:
                 data = kwds.pop(k)
                 key = k
@@ -790,6 +793,16 @@ def Matroid(groundset=None, data=None, **kwds):
             BasisMatroid(groundset=groundset, bases=B),
             nsc_defined=True
         )
+
+    # Flats
+    elif key == 'flats':
+        # Determine groundset
+        if groundset is None:
+            groundset = set()
+            for i in data:
+                for F in data[i]:
+                    groundset.update(F)
+        M = FlatsMatroid(groundset=groundset, flats=data)
 
     # Graphs:
     elif key == 'graph':

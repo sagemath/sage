@@ -14,6 +14,7 @@ Python terminology) functions for Sage's matroids.
 AUTHORS:
 
 - Rudi Pendavingh, Stefan van Zwam (2013-07-01): initial version
+- Giorgos Mousa (2024-01-01): add CircuitsMatroid and FlatsMatroid
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
@@ -32,6 +33,7 @@ from sage.rings.rational cimport Rational
 from sage.matroids.basis_matroid cimport BasisMatroid
 from sage.matroids.circuits_matroid cimport CircuitsMatroid
 from sage.matroids.circuit_closures_matroid cimport CircuitClosuresMatroid
+from sage.matroids.flats_matroid cimport FlatsMatroid
 from sage.matroids.dual_matroid import DualMatroid
 from sage.matroids.graphic_matroid import GraphicMatroid
 from sage.matroids.lean_matrix cimport GenericMatrix, BinaryMatrix, TernaryMatrix, QuaternaryMatrix, PlusMinusOneMatrix, RationalMatrix
@@ -168,6 +170,50 @@ def unpickle_circuit_closures_matroid(version, data):
     if version != 0:
         raise TypeError("object was created with newer version of Sage. Please upgrade.")
     M = CircuitClosuresMatroid(groundset=data[0], circuit_closures=data[1])
+    if data[2] is not None:
+        M.rename(data[2])
+    return M
+
+
+#############################################################################
+# FlatsMatroid
+#############################################################################
+
+def unpickle_flats_matroid(version, data):
+    """
+    Unpickle a FlatsMatroid.
+
+    *Pickling* is Python's term for the loading and saving of objects.
+    Functions like these serve to reconstruct a saved object. This all happens
+    transparently through the ``load`` and ``save`` commands, and you should
+    never have to call this function directly.
+
+    INPUT:
+
+    - ``version`` -- an integer, expected to be 0
+    - ``data`` -- a tuple ``(E, F, name)`` in which ``E`` is the groundset of
+      the matroid, ``F`` is the dictionary of flats, and ``name`` is a custom
+      name.
+
+    OUTPUT:
+
+    A matroid.
+
+    .. WARNING::
+
+        Users should never call this function directly.
+
+    EXAMPLES::
+
+        sage: from sage.matroids.flats_matroid import FlatsMatroid
+        sage: M = FlatsMatroid(matroids.catalog.Vamos())
+        sage: M == loads(dumps(M))  # indirect doctest
+        True
+    """
+    cdef FlatsMatroid M
+    if version != 0:
+        raise TypeError("object was created with newer version of Sage. Please upgrade.")
+    M = FlatsMatroid(groundset=data[0], flats=data[1])
     if data[2] is not None:
         M.rename(data[2])
     return M
