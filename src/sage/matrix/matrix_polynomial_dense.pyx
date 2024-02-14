@@ -4435,8 +4435,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         else:
             raise ValueError("algorithm must be one of \"approximant\" or \"smith\".")
 
-
-    def is_basis_completion(self, mat, row_wise=True):
+    def _is_basis_completion(self, mat, row_wise=True):
         r"""
         Return true if and only if this matrix is a basis completion for
         ``mat``. For the definition of basis completion, including its
