@@ -264,7 +264,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
     def is_constant(self):
         r"""
-        Return ``True`` if and only if this polynomial matrix is constant,
+        Return whether this polynomial matrix is constant,
         that is, all its entries are constant.
 
         OUTPUT: a boolean.
@@ -3261,7 +3261,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             row_wise=True,
             normal_form=False):
         r"""
-        Return ``True`` if and only if this matrix is an approximant basis in
+        Return whether this matrix is an approximant basis in
         ``shifts``-ordered weak Popov form for the polynomial matrix ``pmat``
         at order ``order``.
 
@@ -3784,7 +3784,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             row_wise=True,
             normal_form=False):
         r"""
-        Return ``True`` if and only if this matrix is a left kernel basis in
+        Return whether this matrix is a left kernel basis in
         ``shifts``-ordered weak Popov form for the polynomial matrix ``pmat``.
 
         If ``normal_form`` is ``True``, then the kernel basis must furthermore
@@ -4437,10 +4437,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
     def _is_basis_completion(self, mat, row_wise=True):
         r"""
-        Return true if and only if this matrix is a basis completion for
-        ``mat``. For the definition of basis completion, including its
-        orientation row-wise or column-wise, see the documentation of
-        :meth:`basis_completion`.
+        Return whether this matrix is a basis completion for ``mat``. For the
+        definition of basis completion, including its orientation row-wise or
+        column-wise, see the documentation of :meth:`basis_completion`.
 
         INPUT:
 
