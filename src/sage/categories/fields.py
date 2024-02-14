@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Fields
 """
@@ -119,9 +118,9 @@ class Fields(CategoryWithAxiom):
             0
 
         """
-        import sage.rings.ring
+        from sage.rings.ring import _is_Field
         try:
-            return self._contains_helper(x) or sage.rings.ring._is_Field(x)
+            return self._contains_helper(x) or _is_Field(x)
         except Exception:
             return False
 
@@ -809,7 +808,7 @@ class Fields(CategoryWithAxiom):
                 1/2
 
             Trying to invert the zero element typically raises a
-            ``ZeroDivisionError``::
+            :class:`ZeroDivisionError`::
 
                 sage: QQ(0).inverse_of_unit()
                 Traceback (most recent call last):

@@ -196,7 +196,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
             sage: P == P
             True
 
-       The polytope ``Q`` is strictly contained in ``P``::
+        The polytope ``Q`` is strictly contained in ``P``::
 
             sage: P > Q
             True
@@ -214,7 +214,7 @@ class Polyhedron_base1(Polyhedron_base0, ConvexSet_closed):
             False
             sage: P > Q
             False
-         """
+        """
         if self.Vrepresentation() is None or other.Vrepresentation() is None:
             raise RuntimeError('some V representation is missing')
             # make sure deleted polyhedra are not used in cache

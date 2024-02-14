@@ -271,7 +271,7 @@ def is_HCP(f, check_monic_irreducible=True):
             continue
         if d < h and d not in h2list:
             return zero
-        jp = fp.any_root(degree=-1, assume_squarefree=True)
+        jp = fp.any_root(degree=1, assume_squarefree=True, assume_distinct_deg=True)
         E = EllipticCurve(j=jp)
         if E.is_supersingular():
             continue
@@ -973,7 +973,7 @@ def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None):
 
     if j in ZZ:
         j = ZZ(j)
-        table = dict([(jj,(d,f)) for d,f,jj in cm_j_invariants_and_orders(QQ)])
+        table = {jj: (d,f) for d,f,jj in cm_j_invariants_and_orders(QQ)}
         if j in table:
             return True, table[j]
         return False, None

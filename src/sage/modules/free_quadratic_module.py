@@ -69,7 +69,7 @@ import weakref
 
 import sage.matrix.matrix_space
 import sage.misc.latex as latex
-import sage.rings.ring as ring
+from sage.rings.ring import Field, IntegralDomain
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.modules import free_module
 
@@ -174,7 +174,7 @@ def FreeQuadraticModule(base_ring, rank, inner_product_matrix,
         M = FreeQuadraticModule_ambient_pid(
             base_ring, rank, sparse=sparse, inner_product_matrix=inner_product_matrix)
 
-    elif isinstance(base_ring, ring.IntegralDomain) or base_ring.is_integral_domain():
+    elif isinstance(base_ring, IntegralDomain) or base_ring.is_integral_domain():
         M = FreeQuadraticModule_ambient_domain(
             base_ring, rank, sparse=sparse, inner_product_matrix=inner_product_matrix)
     else:
@@ -207,7 +207,7 @@ def QuadraticSpace(K, dimension, inner_product_matrix, sparse=False):
         (0, 0, 1)
         ]
 
-    The base must be a field or a ``TypeError`` is raised::
+    The base must be a field or a :class:`TypeError` is raised::
 
         sage: QuadraticSpace(ZZ,5,identity_matrix(ZZ,2))
         Traceback (most recent call last):
@@ -713,7 +713,7 @@ class FreeQuadraticModule_generic_field(free_module.FreeModule_generic_field,
             [0 0 0 0 0 1 0]
             [0 0 0 0 0 0 1]
         """
-        if not isinstance(base_field, ring.Field):
+        if not isinstance(base_field, Field):
             raise TypeError("the base_field (=%s) must be a field" % base_field)
         free_module.FreeModule_generic_field.__init__(
             self, base_field=base_field, dimension=dimension, degree=degree, sparse=sparse)
@@ -791,7 +791,7 @@ class FreeQuadraticModule_generic_field(free_module.FreeModule_generic_field,
             [3 3 0]
 
         The basis vectors must be linearly independent or a
-        ``ValueError`` exception is raised::
+        :class:`ValueError` exception is raised::
 
             sage: W.span_of_basis([[2,2,2], [3,3,3]])
             Traceback (most recent call last):
@@ -1341,7 +1341,7 @@ class FreeQuadraticModule_submodule_with_basis_pid(free_module.FreeModule_submod
         element of ``self`` into a vector over the fraction field of `R`,
         then taking the resulting `R`-module.
 
-        This raises a ``TypeError`` if coercion is not possible.
+        This raises a :class:`TypeError` if coercion is not possible.
 
         INPUT:
 

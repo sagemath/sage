@@ -67,7 +67,7 @@ def get_dist_classes(p, prec_cap, base, symk, implementation):
 
     - ``implementation`` - string - If not None, override the
       automatic choice of implementation. May be 'long' or 'vector',
-      otherwise raise a ``NotImplementedError``
+      otherwise raise a :class:`NotImplementedError`
 
     OUTPUT:
 
@@ -293,9 +293,9 @@ cdef class Dist(ModuleElement):
     def find_scalar(self, _other, p, M=None, check=True):
         r"""
         Return an ``alpha`` with ``other = self * alpha``, or raises
-        a ``ValueError``.
+        a :class:`ValueError`.
 
-        It will also raise a ``ValueError`` if this distribution is zero.
+        It will also raise a :class:`ValueError` if this distribution is zero.
 
         INPUT:
 
@@ -417,9 +417,9 @@ cdef class Dist(ModuleElement):
     def find_scalar_from_zeroth_moment(self, _other, p, M=None, check=True):
         r"""
         Return an ``alpha`` with ``other = self * alpha`` using only
-        the zeroth moment, or raises a ``ValueError``.
+        the zeroth moment, or raises a :class:`ValueError`.
 
-        It will also raise a ``ValueError`` if the zeroth moment of the
+        It will also raise a :class:`ValueError` if the zeroth moment of the
         distribution is zero.
 
         INPUT:

@@ -1239,7 +1239,7 @@ class R(ExtraTabCompletion, Interface):
                 try:
                     self.__tab_completion = sage.misc.persist.load(COMMANDS_CACHE)
                     return self.__tab_completion
-                except IOError:
+                except OSError:
                     pass
             if verbose and use_disk_cache:
                 print("\nBuilding R command completion list (this takes")

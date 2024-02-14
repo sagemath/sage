@@ -9,11 +9,12 @@ license_files = LICENSE.txt
 include(`setup_cfg_metadata.m4')dnl'
 
 [options]
-python_requires = >=3.9, <3.12
+python_requires = >=3.9, <3.13
 install_requires =
     SPKG_INSTALL_REQUIRES_sage_conf
     SPKG_INSTALL_REQUIRES_six
 dnl From build/pkgs/sagelib/dependencies
+    SPKG_INSTALL_REQUIRES_conway_polynomials
     SPKG_INSTALL_REQUIRES_cypari
     SPKG_INSTALL_REQUIRES_cysignals
     SPKG_INSTALL_REQUIRES_cython
@@ -85,10 +86,6 @@ scripts =
     bin/sage-num-threads.py
     bin/sage-preparse
     bin/sage-python
-    bin/sage-rebase.bat
-    bin/sage-rebase.sh
-    bin/sage-rebaseall.bat
-    bin/sage-rebaseall.sh
     bin/sage-run
     bin/sage-run-cython
     bin/sage-startuptime.py

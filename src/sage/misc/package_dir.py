@@ -118,8 +118,7 @@ def read_distribution(src_file):
         sage: read_distribution(os.path.join(SAGE_SRC, 'sage', 'graphs', 'graph_decompositions', 'modular_decomposition.py'))
         ''
     """
-    from Cython.Utils import open_source_file
-    with open_source_file(src_file, error_handling='ignore') as fh:
+    with open(src_file, encoding='utf-8', errors='ignore') as fh:
         for line in fh:
             # Adapted from Cython's Build/Dependencies.py
             line = line.lstrip()
@@ -615,7 +614,7 @@ if __name__ == '__main__':
         if package in ordinary_packages:
             pass
         elif ((missing_all_files := distributions_per_directives - package_distributions_per_all_files[package])
-                and not(missing_all_files == set(['']) and len(distributions_per_directives) < 2)):
+                and not (missing_all_files == set(['']) and len(distributions_per_directives) < 2)):
             s = '' if len(missing_all_files) == 1 else 's'
             print(f'{package}: missing file{s} ' + ', '.join(_all_filename(distribution)
                                                              for distribution in missing_all_files))

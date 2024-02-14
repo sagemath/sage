@@ -41,7 +41,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         sage: D == D + J(0)
         True
 
-    An more extended example, demonstrating arithmetic in J(QQ) and
+    A more extended example, demonstrating arithmetic in J(QQ) and
     J(K) for a number field K/QQ.
 
     ::

@@ -553,7 +553,7 @@ class GenericCombinatorialSpecies(SageObject):
             pass
 
         # Try to return things like self._gs_callable(base_ring).
-        # This is used when the subclass just provides an callable
+        # This is used when the subclass just provides a callable
         # for the coefficients of the generating series.  Optionally,
         # the subclass can specify the order of the series.
         try:

@@ -15,8 +15,10 @@ on:
       tox_system_factors:
         description: 'Stringified JSON object listing tox system factors'
         type: string
+        # 'tox -e update_docker_platforms' updates below
         default: >-
-          ["ubuntu-trusty-toolchain-gcc_9",
+          [
+           "ubuntu-trusty-toolchain-gcc_9",
            "ubuntu-xenial-toolchain-gcc_9",
            "ubuntu-bionic-gcc_8",
            "ubuntu-focal",
@@ -60,7 +62,8 @@ on:
            "conda-forge-python3.11",
            "ubuntu-bionic-gcc_8-i386",
            "debian-bullseye-i386",
-           ]
+          ]
+        # 'tox -e update_docker_platforms' updates above
       tox_packages_factors:
         description: 'Stringified JSON object listing tox packages factors'
         type: string
@@ -149,15 +152,16 @@ jobs:
       EXTRA_SAGE_PACKAGES:  ${{ inputs.extra_sage_packages }}
     steps:
       - name: Maximize build disk space
-        uses: easimon/maximize-build-space@v8
+        uses: easimon/maximize-build-space@v10
         with:
           # need space in /var for Docker images
-          root-reserve-mb:      40000
+          root-reserve-mb:      30000
           remove-dotnet:        true
           remove-android:       true
           remove-haskell:       true
           remove-codeql:        true
           remove-docker-images: true
+        continue-on-error: true
         if: inputs.free_disk_space
       - name: Check out SageMath
         uses: actions/checkout@v4
@@ -229,8 +233,17 @@ jobs:
           df -h
         if: inputs.free_disk_space
       - name: Configure and build Sage distribution within a Docker container
+        # The first command below is a self-destruct sequence,
+        # which preempts the GitHub Actions 6-hour job cancellation.
+        #
+        # Using "docker exec", we enter the temporary containers used by
+        # "docker build" and kill the "make" processes of the Sage distribution.
+        #
+        # The arcane "find" command is a replacement for "pkill make",
+        # which we use because pkill is not installed in the "minimal" package
+        # configuration on many platforms.
         run: |
-          (sleep ${{ inputs.timeout }}; for id in $(docker ps -q); do docker exec $id pkill make; done) &
+          (sleep ${{ inputs.timeout }}; for id in $(docker ps -q); do docker exec $id find /proc -maxdepth 2 -name cmdline -exec bash -c "grep -l [m][a][k][e] {} | cut -d/ -f3 | xargs --no-run-if-empty kill" \;; done) &
           set -o pipefail; EXTRA_DOCKER_BUILD_ARGS="--build-arg NUMPROC=4 --build-arg USE_MAKEFLAGS=\"-k V=0 SAGE_NUM_THREADS=3\"" tox -e $TOX_ENV -- $TARGETS 2>&1 | sed "/^configure: notice:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: warning:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: error:/s|^|::error file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;"
       - name: Copy logs from the Docker image or build container
         run: |

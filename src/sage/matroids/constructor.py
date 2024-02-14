@@ -50,10 +50,10 @@ or::
    sage: U36.equals(U36.dual())
    True
 
-A number of special matroids are collected under a ``named_matroids`` submenu.
-To see which, type ``matroids.named_matroids.<tab>`` as above::
+A number of special matroids are collected under a ``catalog`` submenu.
+To see which, type ``matroids.catalog.<tab>`` as above::
 
-    sage: F7 = matroids.named_matroids.Fano()
+    sage: F7 = matroids.catalog.Fano()
     sage: len(F7.nonspanning_circuits())
     7
 
@@ -72,7 +72,7 @@ EXAMPLES::
    ....:                    [0, 1, 0, 1, 0, 1, 1],
    ....:                    [0, 0, 1, 1, 1, 0, 1]])
    sage: M = Matroid(A)
-   sage: M.is_isomorphic(matroids.named_matroids.Fano())
+   sage: M.is_isomorphic(matroids.catalog.Fano())
    True
 
    sage: M = Matroid(graphs.PetersenGraph())                                            # needs sage.graphs
@@ -112,6 +112,7 @@ from sage.rings.finite_rings.finite_field_base import FiniteField
 import sage.matroids.matroid
 import sage.matroids.basis_exchange_matroid
 from .rank_matroid import RankMatroid
+from .circuits_matroid import CircuitsMatroid
 from .circuit_closures_matroid import CircuitClosuresMatroid
 from .basis_matroid import BasisMatroid
 from .linear_matroid import LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
@@ -147,7 +148,7 @@ def Matroid(groundset=None, data=None, **kwds):
     You will see a list of methods which will construct matroids. For
     example::
 
-        sage: F7 = matroids.named_matroids.Fano()
+        sage: F7 = matroids.catalog.Fano()
         sage: len(F7.nonspanning_circuits())
         7
 
@@ -177,6 +178,8 @@ def Matroid(groundset=None, data=None, **kwds):
       matroid.
     - ``independent_sets`` -- The list of independent sets of the matroid.
     - ``circuits`` -- The list of circuits of the matroid.
+    - ``nonspanning_circuits`` -- The list of nonspanning_circuits of the
+      matroid.
     - ``graph`` -- A graph, whose edges form the elements of the matroid.
     - ``matrix`` -- A matrix representation of the matroid.
     - ``reduced_matrix`` -- A reduced representation of the matroid: if
@@ -189,7 +192,7 @@ def Matroid(groundset=None, data=None, **kwds):
       the closure of a circuit, and ``k`` the rank of ``C``, or a dictionary
       ``D`` with ``D[k]`` the set of closures of rank-``k`` circuits.
     - ``revlex`` -- the encoding as a string of ``0`` and ``*`` symbols.
-      Used by [MatroidDatabase]_ and explained in [MMIB2012]_.
+      Used by [Mat2012]_ and explained in [MMIB2012]_.
     - ``matroid`` -- An object that is already a matroid. Useful only with the
       ``regular`` option.
 
@@ -300,21 +303,23 @@ def Matroid(groundset=None, data=None, **kwds):
         ::
 
             sage: M1 = Matroid(groundset='abc', circuits=['bc'])
-            sage: M2 = Matroid(bases=['ab', 'ac'])
-            sage: M1 == M2
-            True
 
         A matroid specified by a list of circuits gets converted to a
-        :class:`BasisMatroid <sage.matroids.basis_matroid.BasisMatroid>`
+        :class:`CircuitsMatroid <sage.matroids.basis_matroid.CircuitsMatroid>`
         internally::
+
+            sage: from sage.matroids.circuits_matroid import CircuitsMatroid
+            sage: M2 = CircuitsMatroid(Matroid(bases=['ab', 'ac']))
+            sage: M1 == M2
+            True
 
             sage: M = Matroid(groundset='abcd', circuits=['abc', 'abd', 'acd',
             ....:                                         'bcd'])
             sage: type(M)
-            <... 'sage.matroids.basis_matroid.BasisMatroid'>
+            <class 'sage.matroids.circuits_matroid.CircuitsMatroid'>
 
         Strange things can happen if the input does not satisfy the circuit
-        axioms, and these are not always caught by the
+        axioms, and these can be caught by the
         :meth:`is_valid() <sage.matroids.matroid.Matroid.is_valid>` method. So
         always check whether your input makes sense!
 
@@ -322,11 +327,7 @@ def Matroid(groundset=None, data=None, **kwds):
 
             sage: M = Matroid('abcd', circuits=['ab', 'acd'])
             sage: M.is_valid()
-            True
-            sage: [sorted(C) for C in M.circuits()] # random
-            [['a']]
-
-
+            False
 
     #.  Graph:
 
@@ -538,7 +539,7 @@ def Matroid(groundset=None, data=None, **kwds):
             sage: M = Matroid(circuit_closures={3: ['edfg', 'acdg', 'bcfg',
             ....:     'cefh', 'afgh', 'abce', 'abdf', 'begh', 'bcdh', 'adeh'],
             ....:     4: ['abcdefgh']})
-            sage: M.equals(matroids.named_matroids.P8())
+            sage: M.equals(matroids.catalog.P8())
             True
 
         You can also input tuples `(k, X)` where `X` is the closure of a
@@ -546,7 +547,7 @@ def Matroid(groundset=None, data=None, **kwds):
 
             sage: M = Matroid(circuit_closures=[(2, 'abd'), (3, 'abcdef'),
             ....:                               (2, 'bce')])
-            sage: M.equals(matroids.named_matroids.Q6())                                # needs sage.rings.finite_rings
+            sage: M.equals(matroids.catalog.Q6())                                # needs sage.rings.finite_rings
             True
 
     #.  RevLex-Index:
@@ -593,7 +594,7 @@ def Matroid(groundset=None, data=None, **kwds):
 
         Most of the time, the matroid itself is returned::
 
-            sage: M = matroids.named_matroids.Fano()
+            sage: M = matroids.catalog.Fano()
             sage: N = Matroid(M)
             sage: N is M
             True
@@ -626,7 +627,7 @@ def Matroid(groundset=None, data=None, **kwds):
     By default we check if the resulting matroid is actually regular. To
     increase speed, this check can be skipped::
 
-        sage: M = matroids.named_matroids.Fano()
+        sage: M = matroids.catalog.Fano()
         sage: N = Matroid(M, regular=True)                                              # needs sage.graphs
         Traceback (most recent call last):
         ...
@@ -696,9 +697,9 @@ def Matroid(groundset=None, data=None, **kwds):
     # "key" is the kind of data we got
     key = None
     if data is None:
-        for k in ['bases', 'independent_sets', 'circuits', 'graph',
-                'matrix', 'reduced_matrix', 'rank_function', 'revlex',
-                'circuit_closures', 'matroid']:
+        for k in ['bases', 'independent_sets', 'circuits',
+                  'nonspanning_circuits', 'graph', 'matrix', 'reduced_matrix',
+                  'rank_function', 'revlex', 'circuit_closures', 'matroid']:
             if k in kwds:
                 data = kwds.pop(k)
                 key = k
@@ -760,20 +761,37 @@ def Matroid(groundset=None, data=None, **kwds):
             groundset = set()
             for C in data:
                 groundset.update(C)
-        # determine the rank by computing a basis element
-        b = set(groundset)
-        for C in data:
-            I = b.intersection(C)
-            if len(I) >= len(C):
-                b.discard(I.pop())
-        rk = len(b)
+        M = CircuitsMatroid(groundset=groundset, circuits=data)
+
+    # Nonspanning circuits:
+    elif key == 'nonspanning_circuits':
+        try:
+            rk = kwds.pop("rank")
+        except TypeError:
+            raise TypeError("the rank needs to be specified alongside the " +
+                            "nonspanning circuits")
+        # Determine groundset (note that this cannot detect coloops)
+        if groundset is None:
+            groundset = set()
+            for C in data:
+                groundset.update(C)
         # Construct the basis matroid of appropriate rank. Note: slow!
-        BB = [frozenset(B) for B in combinations(groundset, rk)
-              if not any(frozenset(C).issubset(B) for C in data)]
-        M = BasisMatroid(groundset=groundset, bases=BB)
+        B = []  # bases
+        for b in combinations(groundset, rk):
+            flag = True
+            for C in data:
+                if set(b) >= set(C):
+                    flag = False
+                    break
+            if flag:
+                B += [list(b)]
+        # convert to circuits matroid defined by non-spanning circuits
+        M = CircuitsMatroid(
+            BasisMatroid(groundset=groundset, bases=B),
+            nsc_defined=True
+        )
 
     # Graphs:
-
     elif key == 'graph':
         from sage.graphs.graph import Graph
 

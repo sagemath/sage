@@ -73,19 +73,6 @@ def default_viewer(viewer=None):
         PDF_VIEWER = BROWSER
         PNG_VIEWER = BROWSER
 
-    elif os.uname()[0][:6] == 'CYGWIN':
-        # Windows is also easy, since it has a system for
-        # determining what opens things.  However, on Cygwin we
-        # should access this through the 'cygstart' program rather
-        # than trying to run rundll32 directly, which on newer Windows versions
-        # has security implications
-        # Indeed, on Sage for Windows, BROWSER is set by default to cygstart,
-        # so we just canonize that here
-        BROWSER = os.environ.get('BROWSER', 'cygstart')
-        DVI_VIEWER = BROWSER
-        PDF_VIEWER = BROWSER
-        PNG_VIEWER = BROWSER
-
     elif have_program('xdg-open'):
         # On other OS'es try xdg-open if present.
         # See http://portland.freedesktop.org/xdg-utils-1.0.

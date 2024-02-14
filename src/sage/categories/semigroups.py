@@ -341,7 +341,7 @@ class Semigroups(CategoryWithAxiom):
                 else:
                     generators = self.semigroup_generators()
             if isinstance(generators, (list, tuple)):
-                generators = dict((self(g), self(g)) for g in generators)
+                generators = {self(g): self(g) for g in generators}
             left = (side == "left"  or side == "twosided")
             right = (side == "right" or side == "twosided")
 
@@ -906,7 +906,7 @@ class Semigroups(CategoryWithAxiom):
             # gens / monoid/group/*_generators, these methods could possibly
             # be removed in favor of aliases gens -> xxx_generators in
             # the Algebras.FinitelyGenerated hierarchy
-            def gens(self):
+            def gens(self) -> tuple:
                 r"""
                 Return the generators of ``self``.
 

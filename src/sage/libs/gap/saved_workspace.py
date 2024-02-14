@@ -8,7 +8,7 @@ workspaces.
 
 import os
 import glob
-from sage.env import GAP_LIB_DIR
+from sage.env import GAP_ROOT_PATHS
 from sage.interfaces.gap_workspace import gap_workspace_file
 
 
@@ -31,7 +31,13 @@ def timestamp():
     """
     libgap_dir = os.path.dirname(__file__)
     libgap_files = glob.glob(os.path.join(libgap_dir, '*'))
-    gap_packages = glob.glob(os.path.join(GAP_LIB_DIR, 'pkg', '*'))
+    gap_packages = []
+    for d in GAP_ROOT_PATHS.split(";"):
+        if d:
+            # If GAP_ROOT_PATHS begins or ends with a semicolon,
+            # we'll get one empty d.
+            gap_packages += glob.glob(os.path.join(d, 'pkg', '*'))
+
     files = libgap_files + gap_packages
     if len(files) == 0:
         print('Unable to find LibGAP files.')

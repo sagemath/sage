@@ -17,7 +17,6 @@ Cython code.
 AUTHORS:
 
 - Rudi Pendavingh, Stefan van Zwam (2013-04-01): initial version
-
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
@@ -543,7 +542,6 @@ cdef class LeanMatrix:
 
         - `False, None`  -- if the input submatrices does not induce a `m``-separator.
         - `True, E` -- if there exist a ``m``-separator ``E``.
-
         """
         for z in range(self.ncols()):
             if z in P_cols+Q_cols:
@@ -2903,7 +2901,7 @@ cdef class PlusMinusOneMatrix(LeanMatrix):
 
     cdef LeanMatrix stack(self, LeanMatrix M) noexcept:
         """
-        Warning: assumes ``M`` is an PlusMinusOneMatrix instance of right
+        Warning: assumes ``M`` is a PlusMinusOneMatrix instance of right
         dimensions!
         """
         cdef PlusMinusOneMatrix A
@@ -3360,7 +3358,7 @@ cdef class RationalMatrix(LeanMatrix):
 
     cdef LeanMatrix stack(self, LeanMatrix M) noexcept:
         """
-        Warning: assumes ``M`` is an RationalMatrix instance of right
+        Warning: assumes ``M`` is a RationalMatrix instance of right
         dimensions!
         """
         cdef RationalMatrix A
