@@ -90,8 +90,12 @@ logger = logging.getLogger(__name__)
 # here in most Python versions
 MethodDescriptorType = type(type.__subclasses__)
 
+# ------------------------------------------------------------------------
+# As of Sphinx 7.2.6, Sphinx is confused with unquoted "::" in the comment
+# below.
+# ------------------------------------------------------------------------
 
-#: extended signature RE: with explicit module name separated by ::
+#: extended signature RE: with explicit module name separated by "::"
 py_ext_sig_re = re.compile(
     r'''^ ([\w.]+::)?            # explicit module name
           ([\w.]+\.)?            # module and/or class name(s)
