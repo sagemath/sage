@@ -9,7 +9,7 @@ sets that are described by some ``seeds`` and a successor function
 graded, forest) or not. The elements of a set having a symmetric, graded or
 forest structure can be enumerated uniquely without keeping all of them in
 memory. Many kinds of iterators are provided in this module: depth first
-search, breadth first search or elements of given depth.
+search, breadth first search and elements of given depth.
 
 See :wikipedia:`Recursively_enumerable_set`.
 
@@ -19,8 +19,6 @@ description of the inputs.
 AUTHORS:
 
 - Sébastien Labbé, April 2014, at Sage Days 57, Cernay-la-ville
-
-EXAMPLES:
 
 No hypothesis on the structure
 ------------------------------
@@ -173,43 +171,8 @@ Only two things are necessary to define a set using a
 :class:`RecursivelyEnumeratedSet` object (the other
 classes being very similar):
 
-.. MATH::
-
-    \begin{picture}(-300,0)(600,0)
-    % Root
-    \put(0,0){\circle*{7}}
-    \put(0,10){\makebox(0,10){``\ ''}}
-    % First Children
-    \put(-150,-60){\makebox(0,10){``a''}}
-    \put(0,-60){\makebox(0,10){``b''}}
-    \put(150,-60){\makebox(0,10){``c''}}
-    \multiput(-150,-70)(150,0){3}{\circle*{7}}
-    % Second children
-    \put(-200,-130){\makebox(0,10){``aa''}}
-    \put(-150,-130){\makebox(0,10){``ab''}}
-    \put(-100,-130){\makebox(0,10){``ac''}}
-    \put(-50,-130){\makebox(0,10){``ba''}}
-    \put(0,-130){\makebox(0,10){``bb''}}
-    \put(50,-130){\makebox(0,10){``bc''}}
-    \put(100,-130){\makebox(0,10){``ca''}}
-    \put(150,-130){\makebox(0,10){``cb''}}
-    \put(200,-130){\makebox(0,10){``cc''}}
-    \multiput(-200,-140)(50,0){9}{\circle*{7}}
-    % Legend
-    \put(100,-5){\makebox(0,10)[l]{1) An initial element}}
-    \put(-250,-5){\makebox(0,10)[l]{2) A function of an element enumerating}}
-    \put(-235,-20){\makebox(0,10)[l]{its children (if any)}}
-    % Arrows
-    \thicklines
-    \put(0,-10){\vector(0,-1){30}}
-    \put(-15,-5){\vector(-2,-1){110}}
-    \put(15,-5){\vector(2,-1){110}}
-    \multiput(-150,-80)(150,0){3}{\vector(0,-1){30}}
-    \multiput(-160,-80)(150,0){3}{\vector(-1,-1){30}}
-    \multiput(-140,-80)(150,0){3}{\vector(1,-1){30}}
-    \put(90,0){\vector(-1,0){70}}
-    \put(-215,-30){\vector(1,-1){40}}
-    \end{picture}
+.. figure:: ../../media/recursively-enumerated-set.png
+    :scale: 67 %
 
 For the previous example, the two necessary pieces of information are:
 
@@ -256,7 +219,7 @@ This example was provided by Florent Hivert.
 
 Here is a little more involved example. We want to iterate through all
 permutations of a given set `S`. One solution is to take elements of `S` one
-by one an insert them at every positions. So a node of the generating tree
+by one and insert them at every positions. So a node of the generating tree
 contains two pieces of information:
 
 - the list ``lst`` of already inserted element;
