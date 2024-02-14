@@ -229,6 +229,45 @@ if platform.processor() == 'ia64' and os.path.exists('/usr/bin/prctl'):
     gap_cmd = 'prctl --unaligned=silent ' + gap_cmd
 
 
+class KERNEL_INFO(dict):
+    """
+    doc
+    """
+
+    # singleton pattern
+    __instance = None
+
+    def __new__(cls):
+        if cls.__instance is None:
+            cls.__instance = super().__new__(cls)
+
+        return cls.__instance
+
+    def __init__(self):
+
+        if self.__dict__ is self:
+            # already initialized
+            return
+
+        from sage.misc.timing import cputime, walltime
+        t = cputime()
+        w = walltime()
+
+        # access keys as object attributes
+        self.__dict__ = self
+
+        from importlib.resources import files
+        import subprocess
+
+        gap_kernel_info = files(__package__).joinpath('gap_kernel_info.g')
+
+        for line in subprocess.getoutput(
+                f"{gap_cmd} --systemfile {gap_kernel_info}"
+                ).split('\n'):
+            var, value = line.split("=")
+            self[var] = value
+
+
 # ########### Classes with methods for both the GAP3 and GAP4 interface
 
 class Gap_generic(ExtraTabCompletion, Expect):
