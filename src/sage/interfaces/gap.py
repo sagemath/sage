@@ -232,17 +232,6 @@ if platform.processor() == 'ia64' and os.path.exists('/usr/bin/prctl'):
     gap_cmd = 'prctl --unaligned=silent ' + gap_cmd
 
 
-def gap_command(use_workspace_cache=True, local=True):
-    if use_workspace_cache:
-        if local:
-            return "%s -L %s" % (gap_cmd, WORKSPACE), False
-        else:
-            # TO DO: Use remote workspace
-            return gap_cmd, False
-    else:
-        return gap_cmd, True
-
-
 # ########### Classes with methods for both the GAP3 and GAP4 interface
 
 class Gap_generic(ExtraTabCompletion, Expect):
@@ -1073,7 +1062,10 @@ class Gap(Gap_generic):
             True
         """
         self.__use_workspace_cache = use_workspace_cache
-        cmd, _ = gap_command(use_workspace_cache, server is None)
+        cmd = gap_cmd
+        # -L: restore a saved workspace (TO DO: Use remote workspace)
+        if use_workspace_cache and server is None:
+            cmd += f" -L {WORKSPACE}"
         # -b: suppress banner
         # -p: enable "package output mode"; this confusingly named option
         #     causes GAP to output special control characters that are normally
@@ -1805,8 +1797,8 @@ def gap_console():
     TESTS::
 
         sage: import subprocess as sp
-        sage: from sage.interfaces.gap import gap_command
-        sage: cmd = 'echo "quit;" | ' + gap_command(use_workspace_cache=False)[0]
+        sage: from sage.interfaces.gap import gap_cmd
+        sage: cmd = 'echo "quit;" | ' + gap_cmd
         sage: gap_startup = sp.check_output(cmd, shell=True,
         ....:                               stderr=sp.STDOUT,
         ....:                               encoding='latin1')
@@ -1820,6 +1812,6 @@ def gap_console():
     from sage.repl.rich_output.display_manager import get_display_manager
     if not get_display_manager().is_in_terminal():
         raise RuntimeError('Can use the console only in the terminal. Try %%gap magics instead.')
-    cmd, _ = gap_command(use_workspace_cache=False)
+    cmd = gap_cmd
     cmd += ' ' + os.path.join(SAGE_EXTCODE, 'gap', 'console.g')
     os.system(cmd)
