@@ -80,7 +80,7 @@ Windows
     Then go to the Microsoft Store and install Ubuntu (or another
     Linux distribution). Start Ubuntu from the start menu.
 
-    In an Ubuntu (WSL) terminal, type the following commands to install
+    Type the following commands to install
     Sage from conda-forge.
 
     .. code-block:: shell
