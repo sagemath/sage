@@ -1073,7 +1073,7 @@ class Gap(Gap_generic):
             True
         """
         self.__use_workspace_cache = use_workspace_cache
-        cmd, self.__make_workspace = gap_command(use_workspace_cache, server is None)
+        cmd, _ = gap_command(use_workspace_cache, server is None)
         # -b: suppress banner
         # -p: enable "package output mode"; this confusingly named option
         #     causes GAP to output special control characters that are normally
@@ -1197,12 +1197,9 @@ class Gap(Gap_generic):
                 gap_reset_workspace(verbose=False)
                 Expect._start(self, "Failed to start GAP.")
                 self._session_number = n
-                self.__make_workspace = False
             else:
                 raise
 
-        if self.__use_workspace_cache and self.__make_workspace:
-            self.save_workspace()
         # Now, as self._expect exists, we can compile some useful pattern:
         self._compiled_full_pattern = self._expect.compile_pattern_list([
             r'@p\d+\.', '@@', '@[A-Z]', r'@[123456!"#$%&][^+]*\+',
