@@ -219,7 +219,7 @@ This example was provided by Florent Hivert.
 
 Here is a little more involved example. We want to iterate through all
 permutations of a given set `S`. One solution is to take elements of `S` one
-by one and insert them at every positions. So a node of the generating tree
+by one and insert them at every position. So a node of the generating tree
 contains two pieces of information:
 
 - the list ``lst`` of already inserted element;
