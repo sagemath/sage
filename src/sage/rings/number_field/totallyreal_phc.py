@@ -1,9 +1,9 @@
 """
-Enumeration of Totally Real Fields: PHC interface
+Enumeration of totally real fields: PHC interface
 
 AUTHORS:
 
-- John Voight (2007-10-10): Zeroth attempt.
+- John Voight (2007-09-19): initial version
 """
 
 # ****************************************************************************
@@ -38,10 +38,6 @@ def coefficients_to_power_sums(n, m, a):
     .. NOTE::
 
         This uses Newton's relations, which are classical.
-
-    AUTHORS:
-
-    - John Voight (2007-09-19)
 
     EXAMPLES::
 
@@ -80,21 +76,18 @@ def __lagrange_bounds_phc(n, m, a, tmpfile=None):
         See Cohen [Coh2000]_ for the general idea and unpublished work of the
         author for more detail.
 
-    AUTHORS:
-
-    - John Voight (2007-09-19)
-
     EXAMPLES::
 
+        sage: # optional - phc
         sage: from sage.rings.number_field.totallyreal_phc import __lagrange_bounds_phc
-        sage: __lagrange_bounds_phc(3,5,[8,1,2,0,1]) # optional - phc
+        sage: __lagrange_bounds_phc(3,5,[8,1,2,0,1])
         []
-        sage: x, y = __lagrange_bounds_phc(3,2,[8,1,2,0,1]) # optional - phc
-        sage: x # optional - phc
+        sage: x, y = __lagrange_bounds_phc(3,2,[8,1,2,0,1])
+        sage: x
         -1.3333333333333299
-        sage: y < 0.00000001 # optional - phc
+        sage: y < 0.00000001
         True
-        sage: __lagrange_bounds_phc(3,1,[8,1,2,0,1]) # optional - phc
+        sage: __lagrange_bounds_phc(3,1,[8,1,2,0,1])
         []
     """
 
@@ -125,12 +118,12 @@ def __lagrange_bounds_phc(n, m, a, tmpfile=None):
     for P in sage.combinat.partition.Partitions(n-1,length=m-1):
         f = open(tmpfile, 'w')
         # First line: number of variables/equations
-        f.write('%d'%m + '\n')
+        f.write('%d' % m + '\n')
         # In the next m-1 lines, write the equation S_j(x) = S[j]
         for j in range(1,m+1):
             for i in range(m-1):
-                f.write('%d'%P[i] + '*x%d'%i + '**%d'%j + ' + ')
-            f.write('xn**%d'%j + ' - (%d'%S[j] + ');\n')
+                f.write('%d' % P[i] + '*x%d' % i + '**%d' % j + ' + ')
+            f.write('xn**%d' % j + ' - (%d' % S[j] + ');\n')
         f.close()
 
         os.remove(tmpfile + '.phc')

@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([dateutil], [SAGE_PYTHON_PACKAGE_CHECK([dateutil])])

@@ -155,8 +155,8 @@ def _is_a_splitting(S1, S2, n, return_automorphism=False):
     This is a special case of Theorem 6.4.3 in [HP2003]_.
     """
     R = IntegerModRing(n)
-    S1 = set(R(x) for x in S1)
-    S2 = set(R(x) for x in S2)
+    S1 = {R(x) for x in S1}
+    S2 = {R(x) for x in S2}
 
     # we first check whether (S1,S2) is a partition of R - {0}
     if (len(S1) + len(S2) != n-1 or len(S1) != len(S2) or
@@ -321,7 +321,7 @@ def walsh_matrix(m0):
     if m > 1:
         row2 = [x.list() for x in walsh_matrix(m-1).augment(walsh_matrix(m-1)).rows()]
         return matrix(GF(2), m, 2**m, [[0]*2**(m-1) + [1]*2**(m-1)] + row2)
-    raise ValueError("%s must be an integer > 0."%m0)
+    raise ValueError("%s must be an integer > 0." % m0)
 
 ##################### main constructions #####################
 
@@ -356,7 +356,7 @@ def DuadicCodeEvenPair(F,S1,S2):
     from .cyclic_code import CyclicCode
     n = len(S1) + len(S2) + 1
     if not _is_a_splitting(S1,S2,n):
-        raise TypeError("%s, %s must be a splitting of %s."%(S1,S2,n))
+        raise TypeError("%s, %s must be a splitting of %s." % (S1,S2,n))
     q = F.order()
     k = Mod(q,n).multiplicative_order()
     FF = GF(q**k,"z")
@@ -406,7 +406,7 @@ def DuadicCodeOddPair(F,S1,S2):
     from .cyclic_code import CyclicCode
     n = len(S1) + len(S2) + 1
     if not _is_a_splitting(S1,S2,n):
-        raise TypeError("%s, %s must be a splitting of %s."%(S1,S2,n))
+        raise TypeError("%s, %s must be a splitting of %s." % (S1,S2,n))
     q = F.order()
     k = Mod(q,n).multiplicative_order()
     FF = GF(q**k,"z")
@@ -731,16 +731,15 @@ def ToricCode(P,F):
          [36, 5] linear code over GF(7)
          sage: C.minimum_distance()
          24
-         sage: C.minimum_distance(algorithm="guava")  # optional - gap_packages (Guava package)
-         ...
-         24
+         sage: C.minimum_distance(algorithm="guava")  # optional - gap_package_guava
+         ...24
          sage: C = codes.ToricCode([[-2,-2],[-1,-2],[-1,-1],[-1,0],
          ....:                      [0,-1],[0,0],[0,1],[1,-1],[1,0]], GF(5))
          sage: C
          [16, 9] linear code over GF(5)
          sage: C.minimum_distance()
          6
-         sage: C.minimum_distance(algorithm="guava")  # optional - gap_packages (Guava package)
+         sage: C.minimum_distance(algorithm="guava")  # optional - gap_package_guava
          6
          sage: C = codes.ToricCode([[0,0],[1,1],[1,2],[1,3],[1,4],[2,1],
          ....:                      [2,2],[2,3],[3,1],[3,2],[4,1]], GF(8,"a"))

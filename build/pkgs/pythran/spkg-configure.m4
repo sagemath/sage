@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([pythran], [SAGE_PYTHON_PACKAGE_CHECK([pythran])])

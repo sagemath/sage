@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Partition/Diagram Algebras
 """
@@ -1930,7 +1931,7 @@ def to_set_partition(l, k=None):
         if not l:
             return Set([])
         else:
-            k = max((max(map(abs, x)) for x in l))
+            k = max(max(map(abs, x)) for x in l)
 
     to_be_added = Set(list(range(1, k + 1)) + [-x for x in range(1, k + 1)])
 
@@ -1974,13 +1975,13 @@ def set_partition_composition(sp1, sp2):
         True
     """
     g = pair_to_graph(sp1, sp2)
-    connected_components = g.connected_components()
+    connected_components = g.connected_components(sort=False)
 
     res = []
     total_removed = 0
     for cc in connected_components:
         # Remove the vertices that live in the middle two rows
-        new_cc = [x for x in cc if not((x[0] < 0 and x[1] == 1) or
+        new_cc = [x for x in cc if not ((x[0] < 0 and x[1] == 1) or
                                        (x[0] > 0 and x[1] == 2))]
 
         if not new_cc:

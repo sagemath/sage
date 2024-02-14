@@ -16,18 +16,18 @@ that Sage supports.  The information regarding the supported versions
 can be found in the files ``build/pkgs/python3/spkg-configure.m4`` and
 ``src/setup.cfg.m4``.
 
-As of Sage 9.7, Python 3.8 is the oldest supported version.  Hence,
-all language and library features that are available in Python 3.8 can
-be used; but features introduced in Python 3.9 cannot be used.  If a
+Python 3.9 is the oldest supported version.  Hence,
+all language and library features that are available in Python 3.9 can
+be used; but features introduced in Python 3.10 cannot be used.  If a
 feature is deprecated in a newer supported version, it must be ensured
 that deprecation warnings issued by Python do not lead to failures in
 doctests.
 
-Some key language and library features have been backported to Python 3.8
+Some key language and library features have been backported to older Python versions
 using one of two mechanisms:
 
 - ``from __future__ import annotations`` (see Python reference for
-  `__future__ <https://docs.python.org/3.8/library/__future__.html>`_)
+  `__future__ <https://docs.python.org/3/library/__future__.html>`_)
   modernizes type annotations according to `PEP 563
   <https://www.python.org/dev/peps/pep-0563>`_ (Postponed evaluation
   of annotations).  All Sage library code that uses type annotations
@@ -583,6 +583,57 @@ by
     @cached_function                  # good: runs on first use
     def big_data():
         return initialize_big_data()
+
+
+Static typing
+=============
+
+Python libraries are increasingly annotated with static typing information;
+see the `Python reference on typing <https://docs.python.org/3/library/typing.html>`_.
+
+For typechecking the Sage library, the project uses :ref:`pyright <section-tools-pyright>`;
+it automatically runs in the GitHub Actions CI and can also be run locally.
+
+As of Sage 10.2, the Sage library only contains a minimal set of such type
+annotations. Pull requests that add more annotations are generally welcome.
+
+The Sage library makes very extensive use of Cython (see chapter :ref:`chapter-cython`).
+Although Cython source code often declares static types for the purpose of
+compilation to efficient machine code, this typing information is unfortunately
+not visible to static checkers such as Pyright. It is necessary to create `type stub
+files (".pyi") <https://github.com/microsoft/pyright/blob/main/docs/type-stubs.md>`_
+that provide this information. Although various
+`tools for writing and maintaining type stub files
+<https://typing.readthedocs.io/en/latest/source/writing_stubs.html#writing-and-maintaining-stub-files>`_
+are available, creating stub files for Cython files involves manual work.
+There is hope that better tools become available soon, see for example
+`cython/cython #5744 <https://github.com/cython/cython/pull/5744>`_.
+Contributing to the development and testing of such tools likely will have a
+greater impact than writing the typestub files manually.
+
+For Cython modules of the Sage library, these type stub files would be placed
+next to the ``.pyx`` and ``.pxd`` files.
+
+When importing from other Python libraries that do not provide sufficient typing
+information, it is possible to augment the library's typing information for
+the purposes of typechecking the Sage library:
+
+- Create typestub files and place them in the directory ``SAGE_ROOT/src/typings``.
+  For example, the distribution **pplpy** provides the top-level package :mod:`ppl`,
+  which publishes no typing information. We can create a typestub file
+  ``SAGE_ROOT/src/typings/ppl.pyi`` or ``SAGE_ROOT/src/typings/ppl/__init__.pyi``.
+
+- When these typestub files are working well, it is preferable from the viewpoint
+  of the Sage project that they are "upstreamed", i.e., contributed to the
+  project that maintains the library. If a new version of the upstream library
+  becomes available that provides the necessary typing information, we can
+  update the package in the Sage distribution and remove the typestub files again
+  from ``SAGE_ROOT/src/typings``.
+
+- As a fallback, when neither adding typing annotations to source files
+  nor adding typestub files is welcomed by the upstream project, it is possible
+  to `contribute typestubs files instead to the typeshed community project
+  <https://github.com/python/typeshed/blob/main/CONTRIBUTING.md>`_.
 
 
 Deprecation

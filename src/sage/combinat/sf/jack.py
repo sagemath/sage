@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Jack Symmetric Functions
 
@@ -71,8 +72,8 @@ class Jack(UniqueRepresentation):
         self._sym = Sym
         self.t = Sym.base_ring()(t)
         self._name_suffix = ""
-        if str(t) !='t':
-            self._name_suffix += " with t=%s"%t
+        if str(t) != 't':
+            self._name_suffix += " with t=%s" % t
         self._name = "Jack polynomials"+self._name_suffix+" over "+repr(Sym.base_ring())
 
     def __repr__(self):
@@ -1084,7 +1085,7 @@ class JackPolynomials_j(JackPolynomials_generic):
                                    codomain=self._P, category=category)
         # should use module_morphism(on_coeffs = ...) once it exists
         self._P.register_coercion(self._P._normalize_morphism(category) * phi)
-        self   .register_coercion(self   ._normalize_morphism(category) *~phi)
+        self   .register_coercion(self   ._normalize_morphism(category) * ~phi)
 
     class Element(JackPolynomials_generic.Element):
         pass

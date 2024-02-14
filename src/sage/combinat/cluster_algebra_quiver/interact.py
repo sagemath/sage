@@ -25,8 +25,8 @@ def cluster_interact(self, fig_size=1, circular=True, kind='seed'):
 
     TESTS::
 
-        sage: S = ClusterSeed(['A',4])                                                  # optional - sage.graphs
-        sage: S.interact()   # indirect doctest                                         # optional - sage.graphs sage.symbolic
+        sage: S = ClusterSeed(['A',4])                                                  # needs sage.graphs sage.modules
+        sage: S.interact()   # indirect doctest                                         # needs sage.graphs sage.modules sage.symbolic
         ...VBox(children=...
     """
     if kind not in ['seed', 'quiver']:

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.groups
 """
 Representations of a semigroup
 

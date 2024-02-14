@@ -1235,7 +1235,7 @@ class GRSBerlekampWelchDecoder(Decoder):
         l0 = n-1-t
         l1 = n-1-t-(k-1)
         S = matrix(C.base_field(), n, l0+l1+2,
-                    lambda i, j: (C.evaluation_points()[i])**j if j<(l0+1)
+                    lambda i, j: (C.evaluation_points()[i])**j if j < (l0+1)
                     else r_list[i]*(C.evaluation_points()[i])**(j-(l0+1)))
         S = S.right_kernel()
         S = S.basis_matrix().row(0)
@@ -1978,9 +1978,9 @@ class GRSErrorErasureDecoder(Decoder):
         if C1_length == k:
             return self.connected_encoder().unencode_nocheck(word)
         C1_evaluation_points = [self.code().evaluation_points()[i] for i in
-                range(n) if erasure_vector[i]!=1]
+                range(n) if erasure_vector[i] != 1]
         C1_column_multipliers = [self.code().column_multipliers()[i] for i in
-                range(n) if erasure_vector[i]!=1]
+                range(n) if erasure_vector[i] != 1]
         C1 = GeneralizedReedSolomonCode(C1_evaluation_points, k,
                 C1_column_multipliers)
         return C1.decode_to_message(punctured_word)

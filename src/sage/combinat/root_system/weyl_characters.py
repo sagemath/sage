@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.graphs sage.groups sage.modules
 """
 Weyl Character Rings
 """
@@ -690,7 +691,7 @@ class WeylCharacterRing(CombinatorialFreeModule):
         dd = {}
         h = tuple(int(hwv.inner_product(alphacheck[j]))
                   for j in self._space.index_set())
-        dd[h] = int(1)
+        dd[h] = 1
         return self._demazure_helper(dd, word=word, debug=debug)
 
     def _demazure_helper(self, dd, word="long", debug=False):

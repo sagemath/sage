@@ -445,10 +445,10 @@ class Derangements(UniqueRepresentation, Parent):
         mark = [x < 0 for x in A]
         i, u = n, n
         while u >= 2:
-            if not(mark[i - 1]):
+            if not mark[i - 1]:
                 while True:
                     j = randrange(1, i)
-                    if not(mark[j - 1]):
+                    if not mark[j - 1]:
                         A[i - 1], A[j - 1] = A[j - 1], A[i - 1]
                         break
                 p = random()
@@ -461,7 +461,7 @@ class Derangements(UniqueRepresentation, Parent):
 
     def random_element(self):
         r"""
-        Produces all derangements of a positive integer, a list, or
+        Produce all derangements of a positive integer, a list, or
         a string.  The list or string may contain repeated elements.
         If an integer `n` is given, then a random
         derangements of `[1, 2, 3, \ldots, n]` is returned

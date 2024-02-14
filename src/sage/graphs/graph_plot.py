@@ -168,8 +168,7 @@ layout_options = {
         'Which graphviz layout program to use -- one of '
         '"circo", "dot", "fdp", "neato", or "twopi".',
     'by_component':
-        'Whether to do the spring layout by connected component -- a boolean.',
-    }
+        'Whether to do the spring layout by connected component -- a boolean.'}
 
 graphplot_options = layout_options.copy()
 
@@ -225,8 +224,7 @@ graphplot_options.update({
     'graph_border':
         'Whether or not to draw a frame around the graph.',
     'edge_labels_background':
-        'The color of the background of the edge labels.',
-    })
+        'The color of the background of the edge labels.'})
 
 _PLOT_OPTIONS_TABLE = ""
 
@@ -235,9 +233,7 @@ for key, value in graphplot_options.items():
 
 __doc__ = __doc__.format(PLOT_OPTIONS_TABLE=_PLOT_OPTIONS_TABLE)
 
-DEFAULT_SHOW_OPTIONS = {
-    'figsize'                   : (4, 4)
-    }
+DEFAULT_SHOW_OPTIONS = {'figsize': (4, 4)}
 
 DEFAULT_PLOT_OPTIONS = {
     'vertex_size'               : 200,
@@ -258,8 +254,7 @@ DEFAULT_PLOT_OPTIONS = {
     'dist'                      : .075,
     'max_dist'                  : 1.5,
     'loop_size'                 : .075,
-    'edge_labels_background'    : 'white'
-    }
+    'edge_labels_background'    : 'white'}
 
 
 class GraphPlot(SageObject):
@@ -582,7 +577,7 @@ class GraphPlot(SageObject):
         Set edge plotting parameters for the ``GraphPlot`` object.
 
         This function is called by the constructor but can also be called to
-        update the vertex options of an existing ``GraphPlot`` object.
+        update the edge options of an existing ``GraphPlot`` object.
         Note that the changes are cumulative.
 
         EXAMPLES::
@@ -719,8 +714,8 @@ class GraphPlot(SageObject):
         if 'edge_style' in self._options:
             from sage.plot.misc import get_matplotlib_linestyle
             eoptions['linestyle'] = get_matplotlib_linestyle(
-                                        self._options['edge_style'],
-                                        return_type='long')
+                self._options['edge_style'],
+                return_type='long')
         if 'edge_thickness' in self._options:
             eoptions['thickness'] = self._options['edge_thickness']
 
@@ -832,20 +827,20 @@ class GraphPlot(SageObject):
                     # Compute perpendicular bisector
                     p1 = self._pos[a]
                     p2 = self._pos[b]
-                    m = ((p1[0] + p2[0])/2., (p1[1] + p2[1])/2.)  # midpoint
+                    m = ((p1[0] + p2[0]) / 2., (p1[1] + p2[1]) / 2.)  # midpoint
                     if not p1[1] == p2[1]:
-                        s = (p1[0] - p2[0])/(p2[1] - p1[1])  # perp slope
+                        s = (p1[0] - p2[0]) / (p2[1] - p1[1])  # perp slope
 
                         def y(x):
-                            return s*(x - m[0]) + m[1]  # perp bisector line
+                            return s * (x - m[0]) + m[1]  # perp bisector line
 
                         # f, g are functions to determine x-values of point
                         # on line y at distance d from point m (on each side)
                         def f(d):
-                            return sqrt(d**2/(1. + s**2)) + m[0]
+                            return sqrt(d**2 / (1. + s**2)) + m[0]
 
                         def g(d):
-                            return -sqrt(d**2/(1. + s**2)) + m[0]
+                            return -sqrt(d**2 / (1. + s**2)) + m[0]
 
                         odd_x = f
                         even_x = g
@@ -897,31 +892,31 @@ class GraphPlot(SageObject):
                             even_end = ph(even_xy(k), p2, vr)[1]
                             self._plot_components['edges'].append(
                                 arrow(path=[[odd_start, odd_xy(k), odd_end]],
-                                      head=local_labels[2*i][2], zorder=1,
-                                      rgbcolor=local_labels[2*i][1],
+                                      head=local_labels[2 * i][2], zorder=1,
+                                      rgbcolor=local_labels[2 * i][1],
                                       **eoptions))
                             self._plot_components['edges'].append(
                                 arrow(path=[[even_start, even_xy(k), even_end]],
-                                      head=local_labels[2*i + 1][2], zorder=1,
-                                      rgbcolor=local_labels[2*i + 1][1],
+                                      head=local_labels[2 * i + 1][2], zorder=1,
+                                      rgbcolor=local_labels[2 * i + 1][1],
                                       **eoptions))
                         else:
                             self._plot_components['edges'].append(
                                 bezier_path([[p1, odd_xy(k), p2]], zorder=1,
-                                            rgbcolor=local_labels[2*i][1],
+                                            rgbcolor=local_labels[2 * i][1],
                                             **eoptions))
                             self._plot_components['edges'].append(
                                 bezier_path([[p1, even_xy(k), p2]], zorder=1,
-                                            rgbcolor=local_labels[2*i + 1][1],
+                                            rgbcolor=local_labels[2 * i + 1][1],
                                             **eoptions))
                         if labels:
                             j = k / 2.0
                             bg = self._options['edge_labels_background']
                             self._plot_components['edge_labels'].append(
-                                text(local_labels[2*i][0], odd_xy(j),
+                                text(local_labels[2 * i][0], odd_xy(j),
                                      background_color=bg))
                             self._plot_components['edge_labels'].append(
-                                text(local_labels[2*i + 1][0], even_xy(j),
+                                text(local_labels[2 * i + 1][0], even_xy(j),
                                      background_color=bg))
                     if len_local_labels % 2:
                         # draw line for last odd
@@ -941,7 +936,7 @@ class GraphPlot(SageObject):
                     bg = self._options['edge_labels_background']
                     self._plot_components['edge_labels'].append(
                         text(str(edges_to_draw[a, b][0][0]),
-                             [(C[0] + D[0])/2., (C[1] + D[1])/2.],
+                             [(C[0] + D[0]) / 2., (C[1] + D[1]) / 2.],
                              background_color=bg))
             elif is_directed:
                 self._plot_components['edges'].append(
@@ -959,8 +954,8 @@ class GraphPlot(SageObject):
                 bg = self._options['edge_labels_background']
                 self._plot_components['edge_labels'].append(
                     text(str(edges_to_draw[a, b][0][0]),
-                         [(self._pos[a][0] + self._pos[b][0])/2.,
-                         (self._pos[a][1] + self._pos[b][1])/2.],
+                         [(self._pos[a][0] + self._pos[b][0]) / 2.,
+                         (self._pos[a][1] + self._pos[b][1]) / 2.],
                          background_color=bg))
 
     def _polar_hack_for_multidigraph(self, A, B, VR):
@@ -991,7 +986,6 @@ class GraphPlot(SageObject):
             sage: GP._polar_hack_for_multidigraph((int(0), int(1)),
             ....:                                 (int(2), int(2)), .1)
             ([0.08..., 1.04...], [1.91..., 1.95...])
-
         """
         D = [float(B[i] - A[i]) for i in range(2)]
         R = sqrt(D[0]**2 + D[1]**2)
@@ -1415,7 +1409,7 @@ class GraphPlot(SageObject):
             sage: p = graphs.PetersenGraph().plot(egabrag='garbage')
             Traceback (most recent call last):
             ...
-            ValueError: Invalid input 'egabrag=garbage'
+            ValueError: invalid input 'egabrag=garbage'
 
         Make sure that no graphics primitive is clipped::
 
@@ -1441,7 +1435,7 @@ class GraphPlot(SageObject):
         # Check the arguments
         for o in options:
             if o not in graphplot_options and o not in G._extra_kwds:
-                raise ValueError("Invalid input '{}={}'".format(o, options[o]))
+                raise ValueError("invalid input '{}={}'".format(o, options[o]))
 
         for comp in self._plot_components.values():
             if not isinstance(comp, list):
@@ -1488,13 +1482,12 @@ class GraphPlot(SageObject):
             sage: T = Graph()
             sage: T.add_edges(G.min_spanning_tree(starting_vertex=0))
             sage: T.show(layout='tree', tree_root=0)  # indirect doctest
-
         """
         T = self._graph
 
         if not self._graph.is_tree():
-            raise RuntimeError("Cannot use tree layout on this graph: "
-                               "self.is_tree() returns False.")
+            raise RuntimeError("cannot use tree layout on this graph: "
+                               "self.is_tree() returns False")
 
         children = {root: T.neighbors(root)}
 
@@ -1544,7 +1537,7 @@ class GraphPlot(SageObject):
                     if x < ox:
                         slide(p, ox - x)
                         x = ox
-                obstruction[y] = x+1
+                obstruction[y] = x + 1
                 continue
 
             t = C.pop()

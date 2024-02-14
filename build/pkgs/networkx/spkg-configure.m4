@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([networkx], [SAGE_PYTHON_PACKAGE_CHECK([networkx])])

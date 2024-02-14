@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Ariki-Koike Algebras
 
@@ -234,6 +234,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
     We construct an Ariki-Koike algebra with `u = (1, \zeta_3, \zeta_3^2)`,
     where `\zeta_3` is a primitive third root of unity::
 
+        sage: # needs sage.rings.number_field
         sage: F = CyclotomicField(3)
         sage: zeta3 = F.gen()
         sage: R.<q> = LaurentPolynomialRing(F)
@@ -248,6 +249,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
     Next, we additionally take `q = 1` to obtain the group algebra
     of `G(r, 1, n)`::
 
+        sage: # needs sage.rings.number_field
         sage: F = CyclotomicField(3)
         sage: zeta3 = F.gen()
         sage: H = algebras.ArikiKoike(3, 4, q=1, u=[1, zeta3, zeta3^2], R=F)
@@ -366,7 +368,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             sage: latex(H)
             \mathcal{H}_{5,2}(q)
         """
-        return "\\mathcal{H}_{%s,%s}(%s)"%(self._r, self._n, self._q)
+        return "\\mathcal{H}_{%s,%s}(%s)" % (self._r, self._n, self._q)
 
     def hecke_parameter(self):
         r"""
@@ -479,7 +481,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                     Ariki-Koike algebra of rank 5 and order 2
                      with q=q and u=(u0, u1, u2, u3, u4) ... in the LT-basis
                 """
-                return "%s in the %s-basis"%(self.realization_of(), self._realization_name())
+                return "%s in the %s-basis" % (self.realization_of(), self._realization_name())
 
             def hecke_parameter(self):
                 r"""
@@ -602,8 +604,8 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 sage: LT._repr_term( ((1, 0, 2), Permutation([3,2,1])) )
                 'L1*L3^2*T[2,1,2]'
             """
-            gen_str = lambda e: '' if e == 1 else '^%s'%e
-            lhs = '*'.join('L%s'%(j+1) + gen_str(i)
+            gen_str = lambda e: '' if e == 1 else '^%s' % e
+            lhs = '*'.join('L%s' % (j+1) + gen_str(i)
                            for j,i in enumerate(m[0]) if i > 0)
             redword = m[1].reduced_word()
             if not redword:
@@ -625,15 +627,15 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 sage: LT._latex_term( ((1, 0, 2), Permutation([3,2,1])) )
                 'L_{1} L_{3}^{2} T_{2} T_{1} T_{2}'
             """
-            gen_str = lambda e: '' if e == 1 else '^{%s}'%e
-            lhs = ' '.join('L_{%s}'%(j+1) + gen_str(i)
+            gen_str = lambda e: '' if e == 1 else '^{%s}' % e
+            lhs = ' '.join('L_{%s}' % (j+1) + gen_str(i)
                            for j,i in enumerate(m[0]) if i > 0)
             redword = m[1].reduced_word()
             if not redword:
                 if not lhs:
                     return '1'
                 return lhs
-            return lhs + ' ' + ' '.join("T_{%d}"%i for i in redword)
+            return lhs + ' ' + ' '.join("T_{%d}" % i for i in redword)
 
         def _from_T_basis(self, t):
             r"""
@@ -698,10 +700,10 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 for i in range(self._n):
                     r = list(self._zero_tuple) # Make a copy
                     r[i] = 1
-                    d['L%s'%(i+1)] = self.monomial( (tuple(r), self._one_perm) )
+                    d['L%s' % (i+1)] = self.monomial( (tuple(r), self._one_perm) )
             G = self._Pn.group_generators()
             for i in range(1, self._n):
-                d['T%s'%i] = self.monomial( (self._zero_tuple, G[i]) )
+                d['T%s' % i] = self.monomial( (self._zero_tuple, G[i]) )
             return Family(sorted(d), lambda i: d[i])
 
         def T(self, i=None):
@@ -725,10 +727,10 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             """
             G = self.algebra_generators()
             if i is None:
-                return [G['L1']] + [G['T%s'%j] for j in range(1, self._n)]
+                return [G['L1']] + [G['T%s' % j] for j in range(1, self._n)]
             if i == 0:
                 return G['L1']
-            return G['T%s'%i]
+            return G['T%s' % i]
 
         def L(self, i=None):
             r"""
@@ -759,10 +761,10 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             if i is None:
                 if self._r == 1:
                     return [self._Li_power(j, 1) for j in range(1, self._n+1)]
-                return [G['L%s'%j] for j in range(1, self._n+1)]
+                return [G['L%s' % j] for j in range(1, self._n+1)]
             if self._r == 1:
                 return self._Li_power(i, 1)
-            return G['L%s'%i]
+            return G['L%s' % i]
 
         @cached_method
         def product_on_basis(self, m1, m2):
@@ -1179,7 +1181,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
                 sage: TestSuite(T).run() # long time
             """
             _Basis.__init__(self, algebra, prefix='T')
-            self._assign_names(['T%s'%i for i in range(self._n)])
+            self._assign_names(['T%s' % i for i in range(self._n)])
 
         def _repr_term(self, t):
             r"""
@@ -1200,7 +1202,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             if len(redword) == 0:
                 return "1"
             return (self._print_options['prefix']
-                    + '[%s]'%','.join('%d'%i for i in redword))
+                    + '[%s]' % ','.join('%d' % i for i in redword))
 
         def _latex_term(self, t):
             r"""
@@ -1220,7 +1222,7 @@ class ArikiKoikeAlgebra(Parent, UniqueRepresentation):
             redword += t[1].reduced_word()
             if len(redword) == 0:
                 return "1"
-            return ''.join("%s_{%d}"%(self._print_options['prefix'], i)
+            return ''.join("%s_{%d}" % (self._print_options['prefix'], i)
                            for i in redword)
 
         def _from_LT_basis(self, m):

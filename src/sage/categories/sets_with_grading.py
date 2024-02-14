@@ -8,11 +8,11 @@ Sets With a Grading
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.misc.abstract_method import abstract_method
-from .category_types import Category
-from sage.categories.sets_cat import Sets
+from sage.categories.category_types import Category
 from sage.categories.enumerated_sets import EnumeratedSets
+from sage.categories.sets_cat import Sets
+from sage.misc.abstract_method import abstract_method
+from sage.misc.cachefunc import cached_method
 
 
 class SetsWithGrading(Category):
@@ -161,9 +161,9 @@ class SetsWithGrading(Category):
 
             EXAMPLES::
 
-                sage: W = WeightedIntegerVectors([3,2,1]); W                            # optional - sage.combinat
+                sage: W = WeightedIntegerVectors([3,2,1]); W                            # needs sage.combinat
                 Integer vectors weighted by [3, 2, 1]
-                sage: W.subset(4)                                                       # optional - sage.combinat
+                sage: W.subset(4)                                                       # needs sage.combinat
                 Integer vectors of 4 weighted by [3, 2, 1]
             """
 
@@ -213,16 +213,16 @@ class SetsWithGrading(Category):
                 sage: N.generating_series()
                 1/(-z + 1)
 
-                sage: Permutations().generating_series()                                # optional - sage.combinat
+                sage: Permutations().generating_series()                                # needs sage.combinat
                 1 + z + 2*z^2 + 6*z^3 + 24*z^4 + 120*z^5 + 720*z^6 + O(z^7)
 
              .. TODO::
 
                  - Very likely, this should always return a lazy power series.
             """
-            from sage.sets.non_negative_integers import NonNegativeIntegers
-            from sage.rings.lazy_series_ring import LazyPowerSeriesRing
             from sage.rings.integer_ring import ZZ
+            from sage.rings.lazy_series_ring import LazyPowerSeriesRing
+            from sage.sets.non_negative_integers import NonNegativeIntegers
             if isinstance(self.grading_set(), NonNegativeIntegers):
                 R = LazyPowerSeriesRing(ZZ, names="z")
                 return R(lambda n: self.graded_component(n).cardinality())

@@ -154,7 +154,7 @@ cdef class ntl_ZZ_p():
             self.c = <ntl_ZZ_pContext_class>ntl_ZZ_pContext(modulus)
             self.c.restore_c()
 
-    cdef ntl_ZZ_p _new(self):
+    cdef ntl_ZZ_p _new(self) noexcept:
         cdef ntl_ZZ_p r
         self.c.restore_c()
         r = ntl_ZZ_p.__new__(ntl_ZZ_p)
@@ -348,7 +348,7 @@ cdef class ntl_ZZ_p():
         """
         return self.get_as_int()
 
-    cdef int get_as_int(ntl_ZZ_p self):
+    cdef int get_as_int(ntl_ZZ_p self) noexcept:
         r"""
         Returns value as C int.
         Return value is only valid if the result fits into an int.
@@ -375,7 +375,7 @@ cdef class ntl_ZZ_p():
         self.c.restore_c()
         return self.get_as_int()
 
-    cdef void set_from_int(ntl_ZZ_p self, int value):
+    cdef void set_from_int(ntl_ZZ_p self, int value) noexcept:
         r"""
         Sets the value from a C int.
 

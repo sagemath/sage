@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.graphs
 r"""
 Cluster complex (or generalized dual associahedron)
 
@@ -222,10 +223,6 @@ class ClusterComplex(SubwordComplex):
         self._W = W
         self._w0 = w
         self._k = k
-        if k == 1:
-            self.__custom_name = 'Cluster complex'
-        else:
-            self.__custom_name = 'Multi-cluster complex'
 
         self.set_immutable()
 
@@ -271,7 +268,10 @@ class ClusterComplex(SubwordComplex):
             sage: ClusterComplex(['A', 2])._repr_()
             "Cluster complex of type ['A', 2] with 5 vertices and 5 facets"
         """
-        name = self.__custom_name
+        if self._k == 1:
+            name = 'Cluster complex'
+        else:
+            name = 'Multi-cluster complex'
         name += (' of type %s with %s vertices and %s facets'
                  % (self.cartan_type(), len(self.vertices()),
                     len(self._facets)))

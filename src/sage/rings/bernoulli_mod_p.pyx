@@ -15,19 +15,20 @@ AUTHOR:
 - David Harvey (2007-08-31): algorithm for a single Bernoulli number mod p
 - David Harvey (2008-06): added interface to bernmm, removed old code
 """
-
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #                     2006 David Harvey <dmharvey@math.harvard.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
+
+from sage.arith.misc import is_prime, primitive_root
 
 cimport sage.rings.fast_arith
 import sage.rings.fast_arith
 cdef sage.rings.fast_arith.arith_int arith_int
-arith_int  = sage.rings.fast_arith.arith_int()
+arith_int = sage.rings.fast_arith.arith_int()
 
 ctypedef long long llong
 
@@ -35,7 +36,6 @@ import sage.arith.all
 
 from sage.libs.ntl import all as ntl
 from sage.libs.ntl.ntl_ZZ_pX cimport ntl_ZZ_pX
-from sage.rings.finite_rings.integer_mod_ring import Integers
 from sage.rings.bernmm import bernmm_bern_modp
 
 
@@ -133,18 +133,16 @@ def bernoulli_mod_p(int p):
     AUTHOR:
 
     - David Harvey (2006-08-06)
-
     """
-
     if p <= 2:
         raise ValueError("p (=%s) must be a prime >= 3" % p)
 
-    if not sage.arith.all.is_prime(p):
+    if not is_prime(p):
         raise ValueError("p (=%s) must be a prime" % p)
 
     cdef int g, gSqr, gInv, gInvSqr, isOdd
 
-    g = sage.arith.all.primitive_root(p)
+    g = primitive_root(p)
     gInv = arith_int.c_inverse_mod_int(g, p)
     gSqr = ((<llong> g) * g) % p
     gInvSqr = ((<llong> gInv) * gInv) % p
@@ -303,12 +301,11 @@ def bernoulli_mod_p_single(long p, long k):
 
     - David Harvey (2007-08-31)
     - David Harvey (2008-06): rewrote to use bernmm library
-
     """
     if p <= 2:
         raise ValueError("p (=%s) must be a prime >= 3" % p)
 
-    if not sage.arith.all.is_prime(p):
+    if not is_prime(p):
         raise ValueError("p (=%s) must be a prime" % p)
 
     cdef long x = bernmm_bern_modp(p, k)

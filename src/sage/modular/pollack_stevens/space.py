@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.rings.padics
 r"""
 Pollack-Stevens' modular symbols spaces
 
@@ -188,6 +188,7 @@ class PollackStevensModularSymbols_factory(UniqueFactory):
             True
         """
         return PollackStevensModularSymbolspace(*key)
+
 
 PollackStevensModularSymbols = PollackStevensModularSymbols_factory('PollackStevensModularSymbols')
 

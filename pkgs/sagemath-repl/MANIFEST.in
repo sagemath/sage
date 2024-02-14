@@ -1,7 +1,5 @@
 prune sage
 
-global-include all__sagemath_repl.py
-
 graft sage/doctest
 graft sage/repl
 include sage/misc/banner.py
@@ -10,6 +8,9 @@ include sage/misc/sage_input.py
 include sage/misc/sage_eval.py
 
 include VERSION.txt
+
+global-exclude all__*.py
+global-include all__sagemath_repl.py
 
 global-exclude __pycache__
 global-exclude *.py[co]

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.graphs sage.modules
 r"""
 ClusterSeed
 
@@ -44,10 +44,10 @@ from sage.rings.fraction_field import FractionField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.sets.set import Set
-from sage.graphs.digraph import DiGraph
 from sage.combinat.cluster_algebra_quiver.quiver_mutation_type import QuiverMutationType_Irreducible, QuiverMutationType_Reducible
 from sage.combinat.cluster_algebra_quiver.mutation_type import is_mutation_finite
 from random import randint
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.matrix.special import identity_matrix
 from sage.matrix.constructor import matrix
@@ -56,6 +56,8 @@ from sage.rings.integer import Integer
 from copy import deepcopy
 
 from sage.combinat.cluster_algebra_quiver.interact import cluster_interact
+
+lazy_import('sage.graphs.digraph', 'DiGraph')
 
 
 class ClusterSeed(SageObject):
@@ -1040,11 +1042,11 @@ class ClusterSeed(SageObject):
         EXAMPLES::
 
             sage: S = ClusterSeed(['A',5])
-            sage: S.plot()                                                              # optional - sage.plot sage.symbolic
+            sage: S.plot()                                                              # needs sage.plot sage.symbolic
             Graphics object consisting of 15 graphics primitives
-            sage: S.plot(circular=True)                                                 # optional - sage.plot sage.symbolic
+            sage: S.plot(circular=True)                                                 # needs sage.plot sage.symbolic
             Graphics object consisting of 15 graphics primitives
-            sage: S.plot(circular=True, mark=1)                                         # optional - sage.plot sage.symbolic
+            sage: S.plot(circular=True, mark=1)                                         # needs sage.plot sage.symbolic
             Graphics object consisting of 15 graphics primitives
         """
         greens = []
@@ -1086,7 +1088,7 @@ class ClusterSeed(SageObject):
         TESTS::
 
             sage: S = ClusterSeed(['A',5])
-            sage: S.show()  # long time                                                 # optional - sage.plot sage.symbolic
+            sage: S.show()                      # long time                             # needs sage.plot sage.symbolic
         """
         greens = []
         if with_greens:
@@ -1120,7 +1122,7 @@ class ClusterSeed(SageObject):
         TESTS::
 
             sage: S = ClusterSeed(['A',4])
-            sage: S.interact()                                                          # optional - sage.plot sage.symbolic
+            sage: S.interact()                                                          # needs sage.plot sage.symbolic
             ...VBox(children=...
         """
         return cluster_interact(self, fig_size, circular, kind='seed')
@@ -1142,7 +1144,7 @@ class ClusterSeed(SageObject):
 
             sage: S = ClusterSeed(['F',4,[1,2]])
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                 # optional - sage.plot sage.symbolic
+            sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                 # needs sage.plot sage.symbolic
             ....:     S.save_image(f.name)
         """
         graph_plot = self.plot(circular=circular, mark=mark, save_pos=save_pos)
@@ -1553,7 +1555,6 @@ class ClusterSeed(SageObject):
             sage: [S.g_vector(k) for k in range(3)]
             [(1, 0, 0), (0, 0, -1), (0, -1, 0)]
         """
-
         if not (self._is_principal or self._use_g_vec or (self._use_fpolys and self._cluster)):
             raise ValueError("Unable to calculate g-vectors. Need to use g vectors.")
         if k not in range(self._n):
@@ -1821,8 +1822,6 @@ class ClusterSeed(SageObject):
             [1 1 1 1]
             [1 0 1 1]
             [0 0 0 1]
-
-
         """
         if not (self._use_d_vec or self._use_fpolys or self._track_mut):
             # raise ValueError("No d-vectors initialized.")
@@ -3879,8 +3878,7 @@ class ClusterSeed(SageObject):
             ]
         """
         Q = self.quiver()
-        for M in Q.mutation_class_iter(depth=depth, up_to_equivalence=up_to_equivalence, data_type='matrix'):
-            yield M
+        yield from Q.mutation_class_iter(depth=depth, up_to_equivalence=up_to_equivalence, data_type='matrix')
 
     def b_matrix_class(self, depth=infinity, up_to_equivalence=True):
         r"""
@@ -4343,7 +4341,7 @@ class ClusterSeed(SageObject):
                     j = i.mutate(k, inplace=False)
                     Varj = tuple(sorted(j.cluster()))
                     covers.append((Vari, Varj))
-                    if not(Varj in known_clusters):
+                    if Varj not in known_clusters:
                         known_clusters += [Varj]
                         stack.append(j)
 
@@ -4454,7 +4452,7 @@ class ClusterSeed(SageObject):
                 new_gen_found = False
                 i = 0
                 M_gens = M.gens()
-                while (not new_gen_found) and i < len(M_gens):
+                while not new_gen_found and i < len(M_gens):
                     f = initial_product_ideal.reduce(M_gens[i])
                     if f != 0:
                         rels.append('z' + str(len(gens) - 2 * rank - 1) + '*' + initial_product + '-(' + str(f) + ')')
@@ -4464,7 +4462,7 @@ class ClusterSeed(SageObject):
                             print('')
                     i += 1
 
-    def get_upper_cluster_algebra_element(self,a):
+    def get_upper_cluster_algebra_element(self, a):
         r"""
         Compute an element in the upper cluster algebra of `B` corresponding to the vector `a \in \ZZ^n`.
 
@@ -4506,13 +4504,13 @@ class ClusterSeed(SageObject):
             sage: C.get_upper_cluster_algebra_element([1,1,1])
             x0^4*x1^2*x2^3 + x0^2*x1^3*x2^4
         """
-        B=self.b_matrix()
+        B = self.b_matrix()
         # Checks if the length of the
         if len(a) != B.ncols():
             raise ValueError('The length of the input vector must be the same as the number of columns of B.')
         # Runs helper functions.
-        v=_vector_decomposition(a,B.nrows())
-        c=self._compute_compatible_vectors(v)
+        v = _vector_decomposition(a,B.nrows())
+        c = self._compute_compatible_vectors(v)
         return self._produce_upper_cluster_algebra_element(v,c)
 
     def LLM_gen_set(self, size_limit=-1):
@@ -4554,7 +4552,7 @@ class ClusterSeed(SageObject):
                 break
             a = aSet[i]
             genSet.append(self.get_upper_cluster_algebra_element(a))
-        return (genSet)
+        return genSet
 
     def _compute_compatible_vectors(self, vd):
         r"""

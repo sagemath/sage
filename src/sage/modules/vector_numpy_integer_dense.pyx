@@ -1,3 +1,4 @@
+# sage.doctest: optional - numpy
 r"""
 Dense integer vectors using a NumPy backend.
 

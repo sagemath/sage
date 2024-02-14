@@ -66,87 +66,94 @@ EXAMPLES:
 This more complicated example involving polynomials also illustrates
 that the unit part is not discarded from factorizations::
 
+    sage: # needs sage.libs.pari
     sage: x = QQ['x'].0
     sage: f = -5*(x-2)*(x-3)
     sage: f
     -5*x^2 + 25*x - 30
-    sage: F = f.factor(); F                                                             # optional - sage.libs.pari
+    sage: F = f.factor(); F
     (-5) * (x - 3) * (x - 2)
-    sage: F.unit()                                                                      # optional - sage.libs.pari
+    sage: F.unit()
     -5
-    sage: F.value()                                                                     # optional - sage.libs.pari
+    sage: F.value()
     -5*x^2 + 25*x - 30
 
 The underlying list is the list of pairs `(p_i, e_i)`, where each
 `p_i` is a 'prime' and each `e_i` is an integer. The unit part
 is discarded by the list::
 
-    sage: list(F)                                                                       # optional - sage.libs.pari
+    sage: # needs sage.libs.pari
+    sage: list(F)
     [(x - 3, 1), (x - 2, 1)]
-    sage: len(F)                                                                        # optional - sage.libs.pari
+    sage: len(F)
     2
-    sage: F[1]                                                                          # optional - sage.libs.pari
+    sage: F[1]
     (x - 2, 1)
 
 In the ring `\ZZ[x]`, the integer `-5` is not a unit, so the
 factorization has three factors::
 
+    sage: # needs sage.libs.pari
     sage: x = ZZ['x'].0
     sage: f = -5*(x-2)*(x-3)
     sage: f
     -5*x^2 + 25*x - 30
-    sage: F = f.factor(); F                                                             # optional - sage.libs.pari
+    sage: F = f.factor(); F
     (-1) * 5 * (x - 3) * (x - 2)
-    sage: F.universe()                                                                  # optional - sage.libs.pari
+    sage: F.universe()
     Univariate Polynomial Ring in x over Integer Ring
-    sage: F.unit()                                                                      # optional - sage.libs.pari
+    sage: F.unit()
     -1
-    sage: list(F)                                                                       # optional - sage.libs.pari
+    sage: list(F)
     [(5, 1), (x - 3, 1), (x - 2, 1)]
-    sage: F.value()                                                                     # optional - sage.libs.pari
+    sage: F.value()
     -5*x^2 + 25*x - 30
-    sage: len(F)                                                                        # optional - sage.libs.pari
+    sage: len(F)
     3
 
 On the other hand, -1 is a unit in `\ZZ`, so it is included in the unit::
 
+    sage: # needs sage.libs.pari
     sage: x = ZZ['x'].0
-    sage: f = -1*(x-2)*(x-3)                                                            # optional - sage.libs.pari
-    sage: F = f.factor(); F                                                             # optional - sage.libs.pari
+    sage: f = -1 * (x-2) * (x-3)
+    sage: F = f.factor(); F
     (-1) * (x - 3) * (x - 2)
-    sage: F.unit()                                                                      # optional - sage.libs.pari
+    sage: F.unit()
     -1
-    sage: list(F)                                                                       # optional - sage.libs.pari
+    sage: list(F)
     [(x - 3, 1), (x - 2, 1)]
 
 Factorizations can involve fairly abstract mathematical objects::
 
-    sage: F = ModularSymbols(11,4).factorization(); F                                   # optional - sage.modular
+    sage: # needs sage.modular
+    sage: F = ModularSymbols(11,4).factorization(); F
     (Modular Symbols subspace of dimension 2 of Modular Symbols space
       of dimension 6 for Gamma_0(11) of weight 4 with sign 0 over Rational Field) *
     (Modular Symbols subspace of dimension 2 of Modular Symbols space
       of dimension 6 for Gamma_0(11) of weight 4 with sign 0 over Rational Field) *
     (Modular Symbols subspace of dimension 2 of Modular Symbols space
       of dimension 6 for Gamma_0(11) of weight 4 with sign 0 over Rational Field)
-    sage: type(F)                                                                       # optional - sage.modular
+    sage: type(F)
     <class 'sage.structure.factorization.Factorization'>
 
 
-    sage: K.<a> = NumberField(x^2 + 3); K                                               # optional - sage.rings.number_field
+    sage: # needs sage.rings.number_field
+    sage: x = ZZ['x'].0
+    sage: K.<a> = NumberField(x^2 + 3); K
     Number Field in a with defining polynomial x^2 + 3
-    sage: f = K.factor(15); f                                                           # optional - sage.rings.number_field
+    sage: f = K.factor(15); f
     (Fractional ideal (1/2*a + 3/2))^2 * (Fractional ideal (5))
-    sage: f.universe()                                                                  # optional - sage.rings.number_field
+    sage: f.universe()
     Monoid of ideals of Number Field in a with defining polynomial x^2 + 3
-    sage: f.unit()                                                                      # optional - sage.rings.number_field
+    sage: f.unit()
     Fractional ideal (1)
-    sage: g = K.factor(9); g                                                            # optional - sage.rings.number_field
+    sage: g = K.factor(9); g
     (Fractional ideal (1/2*a + 3/2))^4
-    sage: f.lcm(g)                                                                      # optional - sage.rings.number_field
+    sage: f.lcm(g)
     (Fractional ideal (1/2*a + 3/2))^4 * (Fractional ideal (5))
-    sage: f.gcd(g)                                                                      # optional - sage.rings.number_field
+    sage: f.gcd(g)
     (Fractional ideal (1/2*a + 3/2))^2
-    sage: f.is_integral()                                                               # optional - sage.rings.number_field
+    sage: f.is_integral()
     True
 
 TESTS::
@@ -173,15 +180,15 @@ AUTHORS:
   universe functions
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.sage_object import SageObject
 from sage.structure.element import Element
@@ -208,7 +215,7 @@ class Factorization(SageObject):
         -1
         sage: loads(F.dumps()) == F
         True
-        sage: F = Factorization([(x, 1/3)])                                             # optional - sage.symbolic
+        sage: F = Factorization([(x, 1/3)])                                             # needs sage.symbolic
         Traceback (most recent call last):
         ...
         TypeError: no conversion of this rational to integer
@@ -219,24 +226,25 @@ class Factorization(SageObject):
 
         INPUT:
 
-        - ``x`` - a list of pairs (p, e) with e an integer;
-          otherwise a TypeError is raised
+        - ``x`` -- a list of pairs (p, e) with e an integer;
+          otherwise a :class:`TypeError` is raised
 
-        - ``unit`` - (default: 1) the unit part of the factorization.
+        - ``unit`` -- (default: 1); the unit part of the factorization.
 
-        - ``cr`` - (default: False) if True, print the factorization with
-          carriage returns between factors.
+        - ``cr`` -- (default: ``False``); if ``True``, print the factorization
+          with carriage returns between factors.
 
-        - ``sort`` - (default: True) if True, sort the factors by calling
-          the sort function ``self.sort()`` after creating the factorization
+        - ``sort`` - (default: ``True``); if ``True``, sort the factors by
+          calling the sort function ``self.sort()`` after creating
+          the factorization
 
-        - ``simplify`` - (default: True) if True, remove duplicate
+        - ``simplify`` -- (default: ``True``); if ``True``, remove duplicate
           factors from the factorization.  See the documentation for
           self.simplify.
 
         OUTPUT:
 
-        - a Factorization object
+        a Factorization object
 
         EXAMPLES:
 
@@ -283,13 +291,13 @@ class Factorization(SageObject):
 
             sage: Factorization([(2, 7), (5,2), (2, 5)])
             2^12 * 5^2
-            sage: R.<a,b> = FreeAlgebra(QQ, 2)                                          # optional - sage.combinat sage.modules
-            sage: Factorization([(a,1), (b,1), (a,2)])                                  # optional - sage.combinat sage.modules
+            sage: R.<a,b> = FreeAlgebra(QQ, 2)                                          # needs sage.combinat sage.modules
+            sage: Factorization([(a,1), (b,1), (a,2)])                                  # needs sage.combinat sage.modules
             a * b * a^2
 
         Autosorting (the default) swaps around the factors below::
 
-            sage: F = Factorization([(ZZ^3, 2), (ZZ^2, 5)], cr=True); F                 # optional - sage.modules
+            sage: F = Factorization([(ZZ^3, 2), (ZZ^2, 5)], cr=True); F                 # needs sage.modules
             (Ambient free module of rank 2 over the principal ideal domain Integer Ring)^5 *
             (Ambient free module of rank 3 over the principal ideal domain Integer Ring)^2
         """
@@ -319,7 +327,7 @@ class Factorization(SageObject):
 
     def __getitem__(self, i):
         """
-        Return `i^{th}` factor of self.
+        Return `i^{th}` factor of ``self``.
 
         EXAMPLES::
 
@@ -340,7 +348,7 @@ class Factorization(SageObject):
 
     def __setitem__(self, i, v):
         """
-        Set the `i^{th}` factor of self.
+        Set the `i^{th}` factor of ``self``.
 
         .. warning::
 
@@ -359,7 +367,7 @@ class Factorization(SageObject):
 
     def __len__(self):
         """
-        Return the number of prime factors of self, not counting
+        Return the number of prime factors of ``self``, not counting
         the unit part.
 
         EXAMPLES::
@@ -415,7 +423,7 @@ class Factorization(SageObject):
             sage: x = polygen(QQ)
             sage: x^2 - 1 > x^2 - 4
             True
-            sage: factor(x^2 - 1) > factor(x^2 - 4)                                     # optional - sage.libs.pari
+            sage: factor(x^2 - 1) > factor(x^2 - 4)                                     # needs sage.libs.pari
             True
         """
         if not isinstance(other, Factorization):
@@ -435,11 +443,11 @@ class Factorization(SageObject):
 
     def __copy__(self):
         r"""
-        Return a copy of self.
+        Return a copy of ``self``.
 
         This is *not* a deepcopy -- only references to the factors are
         returned, not copies of them.  Use ``deepcopy(self)`` if you need
-        a deep copy of self.
+        a deep copy of ``self``.
 
         EXAMPLES:
 
@@ -465,11 +473,11 @@ class Factorization(SageObject):
         # No need to sort, since the factorization is already sorted
         # in whatever order is desired.
         return Factorization(self.__x, unit=self.__unit, cr=self.__cr,
-                                       sort=False, simplify=False)
+                             sort=False, simplify=False)
 
     def __deepcopy__(self, memo):
         r"""
-        Return a deep copy of self.
+        Return a deep copy of ``self``.
 
         EXAMPLES:
 
@@ -522,13 +530,13 @@ class Factorization(SageObject):
             sage: F.universe()
             Integer Ring
 
-            sage: R.<x,y,z> = FreeAlgebra(QQ, 3)                                        # optional - sage.combinat sage.modules
-            sage: F = Factorization([(z, 2)], 3)                                        # optional - sage.combinat sage.modules
-            sage: (F*F^-1).universe()                                                   # optional - sage.combinat sage.modules
+            sage: R.<x,y,z> = FreeAlgebra(QQ, 3)                                        # needs sage.combinat sage.modules
+            sage: F = Factorization([(z, 2)], 3)                                        # needs sage.combinat sage.modules
+            sage: (F*F^-1).universe()                                                   # needs sage.combinat sage.modules
             Free Algebra on 3 generators (x, y, z) over Rational Field
 
-            sage: F = ModularSymbols(11,4).factorization()                              # optional - sage.modular
-            sage: F.universe()                                                          # optional - sage.modular
+            sage: F = ModularSymbols(11,4).factorization()                              # needs sage.modular
+            sage: F.universe()                                                          # needs sage.modular
         """
         try:
             return self.__universe
@@ -537,7 +545,7 @@ class Factorization(SageObject):
 
     def base_change(self, U):
         """
-        Return the factorization self, with its factors (including the
+        Return the factorization ``self``, with its factors (including the
         unit part) coerced into the universe `U`.
 
         EXAMPLES::
@@ -549,15 +557,15 @@ class Factorization(SageObject):
             sage: F.base_change(P).universe()
             Univariate Polynomial Ring in x over Integer Ring
 
-        This method will return a TypeError if the coercion is not
+        This method will return a :class:`TypeError` if the coercion is not
         possible::
 
             sage: g = x^2 - 1
-            sage: F = factor(g); F                                                      # optional - sage.libs.pari
+            sage: F = factor(g); F                                                      # needs sage.libs.pari
             (x - 1) * (x + 1)
-            sage: F.universe()                                                          # optional - sage.libs.pari
+            sage: F.universe()                                                          # needs sage.libs.pari
             Univariate Polynomial Ring in x over Integer Ring
-            sage: F.base_change(ZZ)                                                     # optional - sage.libs.pari
+            sage: F.base_change(ZZ)                                                     # needs sage.libs.pari
             Traceback (most recent call last):
             ...
             TypeError: Impossible to coerce the factors of (x - 1) * (x + 1) into Integer Ring
@@ -567,26 +575,30 @@ class Factorization(SageObject):
         try:
             return Factorization([(U(f[0]), f[1]) for f in list(self)], unit=U(self.unit()))
         except TypeError:
-            raise TypeError("Impossible to coerce the factors of %s into %s"%(self, U))
+            raise TypeError("Impossible to coerce the factors of %s into %s" % (self, U))
 
-    def is_commutative(self):
+    def is_commutative(self) -> bool:
         """
-        Return True if my factors commute.
+        Return whether the factors commute.
 
         EXAMPLES::
 
             sage: F = factor(2006)
             sage: F.is_commutative()
             True
-            sage: K = QuadraticField(23, 'a')                                           # optional - sage.rings.number_field
-            sage: F = K.factor(13)                                                      # optional - sage.rings.number_field
-            sage: F.is_commutative()                                                    # optional - sage.rings.number_field
+
+            sage: # needs sage.rings.number_field
+            sage: K = QuadraticField(23, 'a')
+            sage: F = K.factor(13)
+            sage: F.is_commutative()
             True
-            sage: R.<x,y,z> = FreeAlgebra(QQ, 3)                                        # optional - sage.combinat sage.modules
-            sage: F = Factorization([(z, 2)], 3)                                        # optional - sage.combinat sage.modules
-            sage: F.is_commutative()                                                    # optional - sage.combinat sage.modules
+
+            sage: # needs sage.combinat sage.modules
+            sage: R.<x,y,z> = FreeAlgebra(QQ, 3)
+            sage: F = Factorization([(z, 2)], 3)
+            sage: F.is_commutative()
             False
-            sage: (F*F^-1).is_commutative()                                             # optional - sage.combinat sage.modules
+            sage: (F*F^-1).is_commutative()
             False
         """
         try:
@@ -604,14 +616,14 @@ class Factorization(SageObject):
         EXAMPLES::
 
             sage: x = polygen(QQ,'x')
-            sage: F = factor(x^6 - 1); F                                                # optional - sage.libs.pari
+            sage: F = factor(x^6 - 1); F                                                # needs sage.libs.pari
             (x - 1) * (x + 1) * (x^2 - x + 1) * (x^2 + x + 1)
-            sage: F._set_cr(True); F                                                    # optional - sage.libs.pari
+            sage: F._set_cr(True); F                                                    # needs sage.libs.pari
             (x - 1) *
             (x + 1) *
             (x^2 - x + 1) *
             (x^2 + x + 1)
-            sage: F._set_cr(False); F                                                   # optional - sage.libs.pari
+            sage: F._set_cr(False); F                                                   # needs sage.libs.pari
             (x - 1) * (x + 1) * (x^2 - x + 1) * (x^2 + x + 1)
         """
         self.__cr = bool(cr)
@@ -622,12 +634,13 @@ class Factorization(SageObject):
 
         TESTS::
 
-            sage: R.<x,y> = FreeAlgebra(ZZ, 2)                                          # optional - sage.combinat sage.modules
-            sage: F = Factorization([(x,3), (y, 2), (y,2)], simplify=False); F          # optional - sage.combinat sage.modules
+            sage: # needs sage.combinat sage.modules
+            sage: R.<x,y> = FreeAlgebra(ZZ, 2)
+            sage: F = Factorization([(x,3), (y, 2), (y,2)], simplify=False); F
             x^3 * y^2 * y^2
-            sage: F.simplify(); F                                                       # optional - sage.combinat sage.modules
+            sage: F.simplify(); F
             x^3 * y^4
-            sage: F * Factorization([(y, -2)], 2)                                       # optional - sage.combinat sage.modules
+            sage: F * Factorization([(y, -2)], 2)
             (2) * x^3 * y^2
         """
         repeat = False
@@ -650,7 +663,7 @@ class Factorization(SageObject):
 
         INPUT:
 
-        - ``key`` - (default: ``None``) comparison key
+        - ``key`` -- (default: ``None``); comparison key
 
         OUTPUT:
 
@@ -676,13 +689,13 @@ class Factorization(SageObject):
         We create a factored polynomial::
 
             sage: x = polygen(QQ, 'x')
-            sage: F = factor(x^3 + 1); F                                                # optional - sage.libs.pari
+            sage: F = factor(x^3 + 1); F                                                # needs sage.libs.pari
             (x + 1) * (x^2 - x + 1)
 
         We sort it by decreasing degree::
 
-            sage: F.sort(key=lambda x: (-x[0].degree(), x))                             # optional - sage.libs.pari
-            sage: F                                                                     # optional - sage.libs.pari
+            sage: F.sort(key=lambda x: (-x[0].degree(), x))                             # needs sage.libs.pari
+            sage: F                                                                     # needs sage.libs.pari
             (x^2 - x + 1) * (x + 1)
         """
         if len(self) == 0:
@@ -727,12 +740,12 @@ class Factorization(SageObject):
         We create a polynomial over the real double field and factor it::
 
             sage: x = polygen(RDF, 'x')
-            sage: F = factor(-2*x^2 - 1); F
+            sage: F = factor(-2*x^2 - 1); F                                             # needs numpy
             (-2.0) * (x^2 + 0.5000000000000001)
 
         Note that the unit part of the factorization is `-2.0`::
 
-            sage: F.unit()
+            sage: F.unit()                                                              # needs numpy
             -2.0
 
             sage: F = factor(-2006); F
@@ -771,7 +784,7 @@ class Factorization(SageObject):
 
         Next we factor a modular symbols space::
 
-            sage: F = ModularSymbols(11).factor(); F                                    # optional - sage.modular
+            sage: F = ModularSymbols(11).factor(); F                                    # needs sage.modular
             (Modular Symbols subspace of dimension 1 of ...) *
             (Modular Symbols subspace of dimension 1 of ...) *
             (Modular Symbols subspace of dimension 1 of ...)
@@ -800,7 +813,7 @@ class Factorization(SageObject):
             sage: f
             factorization of -100
 
-        However _repr_ always prints normally::
+        However ``_repr_`` always prints normally::
 
             sage: f._repr_()
             '-1 * 2^2 * 5^2'
@@ -837,17 +850,17 @@ class Factorization(SageObject):
             n = self.__x[i][1]
             if not atomic and (n != 1 or len(self) > 1 or self.__unit != one):
                 if '+' in t or '-' in t or ' ' in t:
-                    t = '(%s)'%t
+                    t = '(%s)' % t
             if n != 1:
-                t += '^%s'%n
+                t += '^%s' % n
             s += t
-            if i < len(self)-1:
+            if i < len(self) - 1:
                 s += mul
         if self.__unit != one:
             if atomic:
                 u = repr(self.__unit)
             else:
-                u = '(%s)'%self.__unit
+                u = '(%s)' % self.__unit
             s = u + mul + s
         return s
 
@@ -863,7 +876,7 @@ class Factorization(SageObject):
             -1 \cdot 2^{2} \cdot 5^{2}
             sage: f._latex_()
             '-1 \\cdot 2^{2} \\cdot 5^{2}'
-            sage: x = AA['x'].0; factor(x^2 + x + 1)._latex_() # trac 12178             # optional - sage.rings.number_field
+            sage: x = AA['x'].0; factor(x^2 + x + 1)._latex_() # trac 12178             # needs sage.rings.number_field
             '(x^{2} + x + 1.000000000000000?)'
         """
         if len(self) == 0:
@@ -877,18 +890,18 @@ class Factorization(SageObject):
         for i in range(len(self)):
             t = self.__x[i][0]._latex_()
             if not atomic and ('+' in t or '-' in t or ' ' in t):
-                t = '(%s)'%t
+                t = '(%s)' % t
             n = self.__x[i][1]
             if n != 1:
-                t += '^{%s}'%n
+                t += '^{%s}' % n
             s += t
-            if i < len(self)-1:
+            if i < len(self) - 1:
                 s += ' \\cdot '
         if self.__unit != 1:
             if atomic:
                 u = self.__unit._latex_()
             else:
-                u = '\\left(%s\\right)'%self.__unit._latex_()
+                u = '\\left(%s\\right)' % self.__unit._latex_()
             s = u + ' \\cdot ' + s
         return s
 
@@ -900,12 +913,12 @@ class Factorization(SageObject):
         EXAMPLES::
 
             sage: f = factor(-24)
-            sage: pari(f)                                                               # optional - sage.libs.pari
+            sage: pari(f)                                                               # needs sage.libs.pari
             [-1, 1; 2, 3; 3, 1]
 
             sage: R.<x> = QQ[]
-            sage: g = factor(x^10 - 1)                                                  # optional - sage.libs.pari
-            sage: pari(g)                                                               # optional - sage.libs.pari
+            sage: g = factor(x^10 - 1)                                                  # needs sage.libs.pari
+            sage: pari(g)                                                               # needs sage.libs.pari
             [x - 1, 1; x + 1, 1; x^4 - x^3 + x^2 - x + 1, 1; x^4 + x^3 + x^2 + x + 1, 1]
 
         """
@@ -924,7 +937,7 @@ class Factorization(SageObject):
 
     def __add__(self, other):
         """
-        Return the (unfactored) sum of self and other.
+        Return the (unfactored) sum of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -941,7 +954,7 @@ class Factorization(SageObject):
 
     def __sub__(self, other):
         """
-        Return the (unfactored) difference of self and other.
+        Return the (unfactored) difference of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -956,7 +969,7 @@ class Factorization(SageObject):
 
     def __radd__(self, left):
         """
-        Return the (unfactored) sum of self and left.
+        Return the (unfactored) sum of ``self`` and ``left``.
 
         EXAMPLES::
 
@@ -967,7 +980,7 @@ class Factorization(SageObject):
 
     def __rsub__(self, left):
         """
-        Return the (unfactored) difference of left and self.
+        Return the (unfactored) difference of ``left`` and ``self``.
 
         EXAMPLES::
 
@@ -995,7 +1008,7 @@ class Factorization(SageObject):
 
     def __rmul__(self, left):
         """
-        Return the product left * self, where left is not a Factorization.
+        Return the product ``left * self``, where ``left`` is not a Factorization.
 
         EXAMPLES::
 
@@ -1005,12 +1018,12 @@ class Factorization(SageObject):
             -2 * 3 * 5
             sage: a * -2
             -2 * 3 * 5
-            sage: R.<x,y> = FreeAlgebra(QQ, 2)                                          # optional - sage.combinat sage.modules
-            sage: f = Factorization([(x,2), (y,3)]); f                                  # optional - sage.combinat sage.modules
+            sage: R.<x,y> = FreeAlgebra(QQ, 2)                                          # needs sage.combinat sage.modules
+            sage: f = Factorization([(x,2), (y,3)]); f                                  # needs sage.combinat sage.modules
             x^2 * y^3
-            sage: x * f                                                                 # optional - sage.combinat sage.modules
+            sage: x * f                                                                 # needs sage.combinat sage.modules
             x^3 * y^3
-            sage: f * x                                                                 # optional - sage.combinat sage.modules
+            sage: f * x                                                                 # needs sage.combinat sage.modules
             x^2 * y^3 * x
 
         Note that this does not automatically factor ``left``::
@@ -1028,7 +1041,7 @@ class Factorization(SageObject):
 
         If the two factorizations have different universes, this
         method will attempt to find a common universe for the
-        product.  A TypeError is raised if this is impossible.
+        product.  A :class:`TypeError` is raised if this is impossible.
 
         EXAMPLES::
 
@@ -1037,12 +1050,13 @@ class Factorization(SageObject):
             sage: factor(-10) * factor(16)
             -1 * 2^5 * 5
 
-            sage: R.<x,y> = FreeAlgebra(ZZ, 2)                                          # optional - sage.combinat sage.modules
-            sage: F = Factorization([(x,3), (y, 2), (x,1)]); F                          # optional - sage.combinat sage.modules
+            sage: # needs sage.combinat sage.modules
+            sage: R.<x,y> = FreeAlgebra(ZZ, 2)
+            sage: F = Factorization([(x,3), (y, 2), (x,1)]); F
             x^3 * y^2 * x
-            sage: F*F                                                                   # optional - sage.combinat sage.modules
+            sage: F*F
             x^3 * y^2 * x^4 * y^2 * x
-            sage: -1 * F                                                                # optional - sage.combinat sage.modules
+            sage: -1 * F
             (-1) * x^3 * y^2 * x
 
             sage: P.<x> = ZZ[]
@@ -1073,17 +1087,17 @@ class Factorization(SageObject):
                 self = self.base_change(U)
                 other = other.base_change(U)
             except TypeError:
-                raise TypeError("Cannot multiply %s and %s because they cannot be coerced into a common universe"%(self,other))
+                raise TypeError("Cannot multiply %s and %s because they cannot be coerced into a common universe" % (self, other))
 
         if self.is_commutative() and other.is_commutative():
             d1 = dict(self)
             d2 = dict(other)
             s = {}
             for a in set(d1).union(set(d2)):
-                s[a] = d1.get(a,0) + d2.get(a,0)
-            return Factorization(list(s.items()), unit=self.unit()*other.unit())
+                s[a] = d1.get(a, 0) + d2.get(a, 0)
+            return Factorization(list(s.items()), unit=self.unit() * other.unit())
         else:
-            return Factorization(list(self) + list(other), unit=self.unit()*other.unit())
+            return Factorization(list(self) + list(other), unit=self.unit() * other.unit())
 
     def __pow__(self, n):
         """
@@ -1100,16 +1114,16 @@ class Factorization(SageObject):
             2^8 * 5^8
 
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^3 - 39*x - 91)                                                          # optional - sage.rings.number_field
-            sage: F = K.factor(7); F                                                                            # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(x^3 - 39*x - 91)                                  # needs sage.rings.number_field
+            sage: F = K.factor(7); F                                                    # needs sage.rings.number_field
             (Fractional ideal (7, a)) * (Fractional ideal (7, a + 2)) * (Fractional ideal (7, a - 2))
-            sage: F^9                                                                                           # optional - sage.rings.number_field
+            sage: F^9                                                                   # needs sage.rings.number_field
             (Fractional ideal (7, a))^9 * (Fractional ideal (7, a + 2))^9 * (Fractional ideal (7, a - 2))^9
 
-            sage: R.<x,y> = FreeAlgebra(ZZ, 2)                                                                  # optional - sage.combinat sage.modules
-            sage: F = Factorization([(x,3), (y, 2), (x,1)]); F                                                  # optional - sage.combinat sage.modules
+            sage: R.<x,y> = FreeAlgebra(ZZ, 2)                                          # needs sage.combinat sage.modules
+            sage: F = Factorization([(x,3), (y, 2), (x,1)]); F                          # needs sage.combinat sage.modules
             x^3 * y^2 * x
-            sage: F**2                                                                                          # optional - sage.combinat sage.modules
+            sage: F**2                                                                  # needs sage.combinat sage.modules
             x^3 * y^2 * x^4 * y^2 * x
         """
         from sage.rings.integer import Integer
@@ -1123,7 +1137,8 @@ class Factorization(SageObject):
         if n == 0:
             return Factorization([])
         if self.is_commutative():
-            return Factorization([(p, n*e) for p, e in self], unit=self.unit()**n, cr=self.__cr, sort=False, simplify=False)
+            return Factorization([(p, n * e) for p, e in self], unit=self.unit()**n,
+                                 cr=self.__cr, sort=False, simplify=False)
         if n < 0:
             self = ~self
             n = -n
@@ -1141,14 +1156,14 @@ class Factorization(SageObject):
             sage: F^-1
             2^-1 * 17^-1 * 59^-1
 
-            sage: R.<x,y> = FreeAlgebra(QQ, 2)                                          # optional - sage.combinat sage.modules
-            sage: F = Factorization([(x,3), (y, 2), (x,1)], 2); F                       # optional - sage.combinat sage.modules
+            sage: R.<x,y> = FreeAlgebra(QQ, 2)                                          # needs sage.combinat sage.modules
+            sage: F = Factorization([(x,3), (y, 2), (x,1)], 2); F                       # needs sage.combinat sage.modules
             (2) * x^3 * y^2 * x
-            sage: F^-1                                                                  # optional - sage.combinat sage.modules
+            sage: F^-1                                                                  # needs sage.combinat sage.modules
             (1/2) * x^-1 * y^-2 * x^-3
         """
-        return Factorization([(p,-e) for p,e in reversed(self)],
-            cr=self._cr(), unit=self.unit()**(-1))
+        return Factorization([(p, -e) for p, e in reversed(self)],
+                             cr=self._cr(), unit=self.unit()**(-1))
 
     def __truediv__(self, other):
         r"""
@@ -1162,17 +1177,76 @@ class Factorization(SageObject):
             sage: factor(-10) / factor(16)
             -1 * 2^-3 * 5
 
-            sage: R.<x,y> = FreeAlgebra(QQ, 2)                                          # optional - sage.combinat sage.modules
-            sage: F = Factorization([(x,3), (y, 2), (x,1)]); F                          # optional - sage.combinat sage.modules
+            sage: # needs sage.combinat sage.modules
+            sage: R.<x,y> = FreeAlgebra(QQ, 2)
+            sage: F = Factorization([(x,3), (y, 2), (x,1)]); F
             x^3 * y^2 * x
-            sage: G = Factorization([(y, 1), (x,1)],1); G                               # optional - sage.combinat sage.modules
+            sage: G = Factorization([(y, 1), (x,1)],1); G
             y * x
-            sage: F / G                                                                 # optional - sage.combinat sage.modules
+            sage: F / G
             x^3 * y
         """
         if not isinstance(other, Factorization):
             return self / Factorization([(other, 1)])
         return self * other**-1
+
+    def __call__(self, *args, **kwds):
+        """
+        Implement the substitution.
+
+        This is assuming that each term can be substituted.
+
+        There is another mechanism for substitution
+        in symbolic products.
+
+        EXAMPLES::
+
+            sage: # needs sage.combinat sage.modules
+            sage: R.<x,y> = FreeAlgebra(QQ, 2)
+            sage: F = Factorization([(x,3), (y, 2), (x,1)])
+            sage: F(x=4)
+            (1) * 4^3 * y^2 * 4
+            sage: F.subs({y:2})
+            x^3 * 2^2 * x
+
+            sage: R.<x,y> = PolynomialRing(QQ, 2)
+            sage: F = Factorization([(x,3), (y, 2), (x,1)])
+            sage: F(x=4)
+            4 * 4^3 * y^2
+            sage: F.subs({y:x})
+            x * x^2 * x^3
+            sage: F(x=y+x)
+            (x + y) * y^2 * (x + y)^3
+
+        TESTS::
+
+            sage: R.<x,y> = PolynomialRing(QQ, 2)
+            sage: F = Factorization([(x-2,3), (y+3, 2)])
+            sage: F(x=2)
+            0
+
+            sage: QQt = QQ['t'].fraction_field()
+            sage: t = QQt.gen()
+            sage: R.<x> = PolynomialRing(QQt, 1)
+            sage: F = Factorization([(x,3), (x+t, 2)], unit=QQt.gen())
+            sage: F(t=0)
+            0
+
+            sage: # needs sage.libs.pari sage.modules
+            sage: R.<x> = LaurentPolynomialRing(QQ, 1)
+            sage: F = ((x+2)/x**3).factor()
+            sage: F(x=4)
+            1/64 * 6
+        """
+        unit = self.__unit.subs(*args, **kwds)
+        if unit == 0:
+            return self.universe().zero()
+        data = [(p.subs(*args, **kwds), e) for p, e in self.__x]
+        if any(p == 0 for p, _ in data):
+            return self.universe().zero()
+        return Factorization(data, unit=unit, simplify=False)
+
+    subs = __call__
 
     def value(self):
         """
@@ -1185,10 +1259,10 @@ class Factorization(SageObject):
             sage: F.value()
             -2006
 
-            sage: R.<x,y> = FreeAlgebra(ZZ, 2)                                          # optional - sage.combinat sage.modules
-            sage: F = Factorization([(x,3), (y, 2), (x,1)]); F                          # optional - sage.combinat sage.modules
+            sage: R.<x,y> = FreeAlgebra(ZZ, 2)                                          # needs sage.combinat sage.modules
+            sage: F = Factorization([(x,3), (y, 2), (x,1)]); F                          # needs sage.combinat sage.modules
             x^3 * y^2 * x
-            sage: F.value()                                                             # optional - sage.combinat sage.modules
+            sage: F.value()                                                             # needs sage.combinat sage.modules
             x^3*y^2*x
         """
         from sage.misc.misc_c import prod
@@ -1196,7 +1270,7 @@ class Factorization(SageObject):
 
     # Two aliases for ``value(self)``.
     expand = value
-    prod   = value
+    prod = value
 
     def gcd(self, other):
         r"""
@@ -1204,7 +1278,7 @@ class Factorization(SageObject):
 
         If the two factorizations have different universes, this
         method will attempt to find a common universe for the
-        gcd.  A TypeError is raised if this is impossible.
+        gcd.  A :class:`TypeError` is raised if this is impossible.
 
         EXAMPLES::
 
@@ -1214,7 +1288,7 @@ class Factorization(SageObject):
             2 * 5
 
             sage: R.<x> = ZZ[]
-            sage: (factor(-20).gcd(factor(5*x+10))).universe()                          # optional - sage.libs.pari
+            sage: (factor(-20).gcd(factor(5*x+10))).universe()                          # needs sage.libs.pari
             Univariate Polynomial Ring in x over Integer Ring
         """
         if not isinstance(other, Factorization):
@@ -1228,14 +1302,14 @@ class Factorization(SageObject):
                 self = self.base_change(U)
                 other = other.base_change(U)
             except TypeError:
-                raise TypeError("Cannot take the gcd of %s and %s because they cannot be coerced into a common universe"%(self,other))
+                raise TypeError("Cannot take the gcd of %s and %s because they cannot be coerced into a common universe" % (self, other))
 
         if self.is_commutative() and other.is_commutative():
             d1 = dict(self)
             d2 = dict(other)
             s = {}
             for a in set(d1).intersection(set(d2)):
-                s[a] = min(d1[a],d2[a])
+                s[a] = min(d1[a], d2[a])
             return Factorization(list(s.items()))
         else:
             raise NotImplementedError("gcd is not implemented for non-commutative factorizations")
@@ -1246,7 +1320,7 @@ class Factorization(SageObject):
 
         If the two factorizations have different universes, this
         method will attempt to find a common universe for the
-        lcm.  A TypeError is raised if this is impossible.
+        lcm.  A :class:`TypeError` is raised if this is impossible.
 
         EXAMPLES::
 
@@ -1256,7 +1330,7 @@ class Factorization(SageObject):
             2^4 * 5
 
             sage: R.<x> = ZZ[]
-            sage: (factor(-20).lcm(factor(5*x + 10))).universe()                        # optional - sage.libs.pari
+            sage: (factor(-20).lcm(factor(5*x + 10))).universe()                        # needs sage.libs.pari
             Univariate Polynomial Ring in x over Integer Ring
         """
         if not isinstance(other, Factorization):
@@ -1270,21 +1344,21 @@ class Factorization(SageObject):
                 self = self.base_change(U)
                 other = other.base_change(U)
             except TypeError:
-                raise TypeError("Cannot take the lcm of %s and %s because they cannot be coerced into a common universe"%(self,other))
+                raise TypeError("Cannot take the lcm of %s and %s because they cannot be coerced into a common universe" % (self, other))
 
         if self.is_commutative() and other.is_commutative():
             d1 = dict(self)
             d2 = dict(other)
             s = {}
             for a in set(d1).union(set(d2)):
-                s[a] = max(d1.get(a,0),d2.get(a,0))
+                s[a] = max(d1.get(a, 0), d2.get(a, 0))
             return Factorization(list(s.items()))
         else:
             raise NotImplementedError("lcm is not implemented for non-commutative factorizations")
 
-    def is_integral(self):
+    def is_integral(self) -> bool:
         r"""
-        Return True iff all exponents of this Factorization are non-negative.
+        Return whether all exponents of this Factorization are non-negative.
 
         EXAMPLES::
 
@@ -1302,11 +1376,11 @@ class Factorization(SageObject):
 
     def radical(self):
         """
-        Return the factorization of the radical of the value of self.
+        Return the factorization of the radical of the value of ``self``.
 
         First, check that all exponents in the factorization are
-        positive, raise ValueError otherwise.  If all exponents are
-        positive, return self with all exponents set to 1 and with the
+        positive, raise :class:`ValueError` otherwise.  If all exponents are
+        positive, return ``self`` with all exponents set to 1 and with the
         unit set to 1.
 
         EXAMPLES::
@@ -1318,21 +1392,22 @@ class Factorization(SageObject):
             sage: factor(1/2).radical()
             Traceback (most recent call last):
             ...
-            ValueError: All exponents in the factorization must be positive.
+            ValueError: all exponents in the factorization must be positive
         """
-        if not all(e > 0 for p, e in self.__x):
-            raise ValueError("All exponents in the factorization must be positive.")
-        return Factorization([(p,1) for p,e in self.__x], unit=self.unit().parent()(1), cr=self.__cr, sort=False, simplify=False)
+        if not all(e > 0 for _, e in self.__x):
+            raise ValueError("all exponents in the factorization must be positive")
+        return Factorization([(p, 1) for p, _ in self.__x], unit=self.unit().parent()(1),
+                             cr=self.__cr, sort=False, simplify=False)
 
     def radical_value(self):
         """
-        Return the product of the prime factors in self.
+        Return the product of the prime factors in ``self``.
 
         First, check that all exponents in the factorization are
-        positive, raise ValueError otherwise.  If all exponents are
-        positive, return the product of the prime factors in self.
+        positive, raise :class:`ValueError` otherwise.  If all exponents are
+        positive, return the product of the prime factors in ``self``.
         This should be functionally equivalent to
-        self.radical().value()
+        ``self.radical().value()``.
 
         EXAMPLES::
 
@@ -1343,9 +1418,9 @@ class Factorization(SageObject):
             sage: factor(1/2).radical_value()
             Traceback (most recent call last):
             ...
-            ValueError: All exponents in the factorization must be positive.
+            ValueError: all exponents in the factorization must be positive
         """
-        if not all(e > 0 for p, e in self.__x):
-            raise ValueError("All exponents in the factorization must be positive.")
+        if not all(e > 0 for _, e in self.__x):
+            raise ValueError("all exponents in the factorization must be positive")
         from sage.misc.misc_c import prod
-        return prod([p for p, e in self.__x])
+        return prod([p for p, _ in self.__x])

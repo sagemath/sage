@@ -36,7 +36,7 @@ from sage.rings.integer_ring import ZZ
 from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet_forest
 
 
-class GenericBacktracker():
+class GenericBacktracker:
     r"""
     A generic backtrack tool for exploring a search space organized as a tree,
     with branch pruning, etc.
@@ -63,7 +63,7 @@ class GenericBacktracker():
 
             sage: from sage.combinat.permutation import PatternAvoider
             sage: p = PatternAvoider(Permutations(4), [[1,3,2]])
-            sage: len(list(p))                                                          # optional - sage.combinat
+            sage: len(list(p))                                                          # needs sage.combinat
             14
         """
         # Initialize the stack of generators with the initial data.

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.groups sage.modules
 r"""
 `q`-Commuting Polynomials
 

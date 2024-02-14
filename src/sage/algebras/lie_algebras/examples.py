@@ -309,6 +309,7 @@ def regular_vector_fields(R):
     from sage.algebras.lie_algebras.virasoro import LieAlgebraRegularVectorFields
     return LieAlgebraRegularVectorFields(R)
 
+
 witt = regular_vector_fields
 
 def pwitt(R, p):

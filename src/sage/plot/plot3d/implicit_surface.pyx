@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.symbolic
 r"""
 Graphics 3D object for representing and triangulating isosurfaces
 
@@ -96,7 +97,7 @@ DEFAULT_PLOT_POINTS = 40
 
 cdef double nan = float(RDF('NaN'))
 
-cdef inline bint marching_has_edge(double a, double b, double contour, double *f, bint *has_nan):
+cdef inline bint marching_has_edge(double a, double b, double contour, double *f, bint *has_nan) noexcept:
     if isnan(a) or isnan(b):
         has_nan[0] = True
         return False
@@ -110,10 +111,10 @@ cdef inline bint marching_has_edge(double a, double b, double contour, double *f
     return True
 
 # Returns 0 or 1
-cdef inline int marching_is_inside(double v, double contour):
+cdef inline int marching_is_inside(double v, double contour) noexcept:
     return isnan(v) or v < contour
 
-cdef void interpolate_point_c(point_c *result, double frac, point_c *inputs):
+cdef void interpolate_point_c(point_c *result, double frac, point_c *inputs) noexcept:
     result[0].x = inputs[0].x + frac*(inputs[1].x - inputs[0].x)
     result[0].y = inputs[0].y + frac*(inputs[1].y - inputs[0].y)
     result[0].z = inputs[0].z + frac*(inputs[1].z - inputs[0].z)
@@ -132,7 +133,7 @@ cdef class VertexInfo:
     # This point in "evaluation space"
     cdef point_c eval_pt
 
-    cdef void update_eval_pt(self, point_c *eval_min, point_c *eval_scale):
+    cdef void update_eval_pt(self, point_c *eval_min, point_c *eval_scale) noexcept:
         """
         Use eval_min and eval_scale to transform self.pt into evaluation space
         and store the result in self.eval_pt.
@@ -152,7 +153,7 @@ cdef class VertexInfo:
         return '<{}, {}, {}>'.format(self.pt.x, self.pt.y, self.pt.z)
 
 
-cdef mk_VertexInfo(double x, double y, double z, point_c *eval_min, point_c *eval_scale):
+cdef mk_VertexInfo(double x, double y, double z, point_c *eval_min, point_c *eval_scale) noexcept:
     cdef VertexInfo v
     v = VertexInfo.__new__(VertexInfo)
     v.pt.x = x
@@ -451,7 +452,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
 
             self.process_cubes(self.slices[0], self.slices[1])
 
-    cpdef _update_yz_vertices(self, int x, np.ndarray _prev, np.ndarray _cur, np.ndarray _next):
+    cpdef _update_yz_vertices(self, int x, np.ndarray _prev, np.ndarray _cur, np.ndarray _next) noexcept:
         """
         TESTS::
 
@@ -493,8 +494,8 @@ cdef class MarchingCubesTriangles(MarchingCubes):
         cdef bint has_nan
         cdef point_c gradients[2]
         cdef int i
-        for y from 0 <= y < ny - 1:
-            for z from 0 <= z < nz:
+        for y in range(ny - 1):
+            for z in range(nz):
                 if marching_has_edge(cur[y,z], cur[y+1,z], self.contour, &frac, &has_nan):
                     v = mk_VertexInfo(x, y+frac, z, &self.eval_min, &self.eval_scale)
                     if self.region is not None:
@@ -507,7 +508,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
                             self.apply_point_func(&v.gradient, self.gradient, v)
                         else:
                             # Use central differencing.
-                            for i from 0 <= i < 2:
+                            for i in range(2):
                                 self.get_gradient(&gradients[i],
                                                    x, y+i, z,
                                                    cur[y+i,z],
@@ -527,8 +528,8 @@ cdef class MarchingCubesTriangles(MarchingCubes):
 
         # OK, that updated the Y vertices.  Now we do almost exactly
         # the same thing to update Z vertices.
-        for y from 0 <= y < ny:
-            for z from 0 <= z < nz - 1:
+        for y in range(ny):
+            for z in range(nz - 1):
                 if marching_has_edge(cur[y,z], cur[y,z+1], self.contour, &frac, &has_nan):
                     v = mk_VertexInfo(x, y, z+frac, &self.eval_min, &self.eval_scale)
                     if self.region is not None:
@@ -541,7 +542,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
                             self.apply_point_func(&v.gradient, self.gradient, v)
                         else:
                             # Use central differencing.
-                            for i from 0 <= i < 2:
+                            for i in range(2):
                                 self.get_gradient(&gradients[i],
                                                    x, y, z+i,
                                                    cur[y,z+i],
@@ -559,7 +560,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
                 else:
                     z_vertices[y,z] = None
 
-    cpdef _update_x_vertices(self, int x, np.ndarray _prev, np.ndarray _left, np.ndarray _right, np.ndarray _next):
+    cpdef _update_x_vertices(self, int x, np.ndarray _prev, np.ndarray _left, np.ndarray _right, np.ndarray _next) noexcept:
         """
         TESTS::
 
@@ -594,8 +595,8 @@ cdef class MarchingCubesTriangles(MarchingCubes):
         cdef double frac
         cdef bint has_nan
         cdef point_c gradients[2]
-        for y from 0 <= y < ny:
-            for z from 0 <= z < nz:
+        for y in range(ny):
+            for z in range(nz):
                 if marching_has_edge(left[y,z], right[y,z], self.contour, &frac, &has_nan):
                     v = mk_VertexInfo(x+frac, y, z, &self.eval_min, &self.eval_scale)
                     if self.region is not None:
@@ -634,10 +635,10 @@ cdef class MarchingCubesTriangles(MarchingCubes):
                 else:
                     x_vertices[y,z] = None
 
-    cdef bint in_region(self, VertexInfo v):
+    cdef bint in_region(self, VertexInfo v) noexcept:
         return (self.region(v.eval_pt.x, v.eval_pt.y, v.eval_pt.z) > 0)
 
-    cdef apply_point_func(self, point_c *pt, fn, VertexInfo v):
+    cdef apply_point_func(self, point_c *pt, fn, VertexInfo v) noexcept:
         if isinstance(fn, tuple):
             pt[0].x = fn[0](v.eval_pt.x, v.eval_pt.y, v.eval_pt.z)
             pt[0].y = fn[1](v.eval_pt.x, v.eval_pt.y, v.eval_pt.z)
@@ -648,7 +649,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
             pt[0].y = t[1]
             pt[0].z = t[2]
 
-    cdef apply_color_func(self, color_c *pt, fn, cm, VertexInfo v):
+    cdef apply_color_func(self, color_c *pt, fn, cm, VertexInfo v) noexcept:
         t = fn(v.eval_pt.x, v.eval_pt.y, v.eval_pt.z)
         pt[0].r, pt[0].g, pt[0].b, _ = cm(t)
 
@@ -658,7 +659,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
                       double center,
                       double lx, double ux,
                       double ly, double uy,
-                      double lz, double uz):
+                      double lz, double uz) noexcept:
         # What a mess!  It would be much nicer-looking code to pass slices
         # in here and do the subscripting in here.  Unfortunately,
         # that would also be much slower, because we'd have to re-initialize
@@ -683,7 +684,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
         g[0].y = gy
         g[0].z = gz
 
-    cpdef process_cubes(self, np.ndarray _left, np.ndarray _right):
+    cpdef process_cubes(self, np.ndarray _left, np.ndarray _right) noexcept:
         """
         TESTS::
 
@@ -744,8 +745,8 @@ cdef class MarchingCubesTriangles(MarchingCubes):
 
         cdef int i
 
-        for y from 0 <= y < ny-1:
-            for z from 0 <= z < nz-1:
+        for y in range(ny - 1):
+            for z in range(nz - 1):
                 # For each vertex (0 to 7), set the corresponding bit
                 # of insideMask iff the vertex is inside the surface.
                 insideMask = 0
@@ -787,7 +788,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
                                       all_vertex_info[my_triangles[i+1]],
                                       all_vertex_info[my_triangles[i+2]])
 
-    cpdef add_triangle(self, VertexInfo v1, VertexInfo v2, VertexInfo v3):
+    cpdef add_triangle(self, VertexInfo v1, VertexInfo v2, VertexInfo v3) noexcept:
         """
         Called when a new triangle is generated by the marching cubes algorithm
         to update the results array.
@@ -844,7 +845,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
         self.results.append(face)
 
 
-cpdef render_implicit(f, xrange, yrange, zrange, plot_points, cube_marchers):
+cpdef render_implicit(f, xrange, yrange, zrange, plot_points, cube_marchers) noexcept:
     """
     INPUT:
 
@@ -908,13 +909,13 @@ cpdef render_implicit(f, xrange, yrange, zrange, plot_points, cube_marchers):
 
     cdef MarchingCubes marcher
 
-    for n from 0 <= n < nx:
+    for n in range(nx):
         x = nx-1-n
         eval_x = eval_min.x + eval_scale.x * x
         slice = data[n % 4, :, :]
-        for y from 0 <= y < ny:
+        for y in range(ny):
             eval_y = eval_min.y + eval_scale.y * y
-            for z from 0 <= z < nz:
+            for z in range(nz):
                 eval_z = eval_min.z + eval_scale.z * z
                 slice[y, z] = f(eval_x, eval_y, eval_z)
 
@@ -1217,7 +1218,7 @@ cdef class ImplicitSurface(IndexFaceSet):
             int fcount = len(results)
 
         self.realloc(fcount * 3, fcount, fcount * 3)
-        for i from 0 <= i < fcount:
+        for i in range(fcount):
             dest_face = &self._faces[i]
             src_face = results[i]
 
@@ -1233,7 +1234,7 @@ cdef class ImplicitSurface(IndexFaceSet):
                 # ct is the mean of the colors of vertices
                 dest_face.color.r, dest_face.color.g, dest_face.color.b = ct
 
-            for j from 0 <= j < 3:
+            for j in range(3):
                 dest_face.vertices[j] = (3 * i) + j
                 dest_vertex = &self.vs[(3 * i) + j]
                 dest_vertex.x = src_face[j]['x']
