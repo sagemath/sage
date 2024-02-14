@@ -41,8 +41,22 @@ class SageSphinxLogger():
     This implements the file object interface to serve as
     ``sys.stdout``/``sys.stderr`` replacement.
     """
-    ansi_color = re.compile(r'\x1b\[[0-9;]*m')
-    ansi_reset = re.compile(r'\x1b\[39;49;00m')
+    # https://en.wikipedia.org/wiki/ANSI_escape_code
+    ansi_escape_sequence = re.compile(r'''
+        \x1b    # ESC
+        \[      # CSI sequence starts
+        [0-?]*  # parameter bytes
+        [ -/]*  # intermediate bytes
+        [@-~]   # final byte
+        ''', re.VERBOSE)
+    ansi_escape_sequence_color = re.compile(r'''
+        \x1b    # ESC
+        \[      # CSI sequence starts
+        [0-9;]* # parameter bytes
+                # intermediate bytes
+        m       # final byte
+        ''', re.VERBOSE)
+
     prefix_len = 9
 
     def __init__(self, stream, prefix):
@@ -164,7 +178,7 @@ class SageSphinxLogger():
         if self._error is not None and self._is_stdout:
             # swallow non-errors after an error occurred
             return True
-        line = re.sub(self.ansi_color, '', line)
+        line = re.sub(self.ansi_escape_sequence, '', line)
         line = line.strip()
         for regex in self._useless_chatter:
             if regex.search(line) is not None:
@@ -233,7 +247,7 @@ class SageSphinxLogger():
             line = old.sub(new, line)
         line = self._prefix + ' ' + line.rstrip() + '\n'
         if not self._color:
-            line = self.ansi_color.sub('', line)
+            line = self.ansi_escape_sequence_color.sub('', line)
         if not skip_this_line:
             # sphinx does produce messages in the current locals which
             # could be non-ascii
