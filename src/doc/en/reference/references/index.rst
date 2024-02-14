@@ -508,6 +508,11 @@ REFERENCES:
             Springer, 2012,
             http://homepages.cwi.nl/~aeb/math/ipm/ipm.pdf
 
+.. [BMFPR2011] \M. Bousquet-Melou, É. Fusy, L.-F. Préville-Ratelle,
+                *The number of intervals in the m-Tamari lattices*.
+                Electronic Journal of Combinatorics 18(2), 2011.
+                :doi:`10.37236/2027`
+
 .. [BPPSST2017] Banik, Pandey, Peyrin, Sasaki, Sim, and Todo,
                 GIFT : A Small Present Towards Reaching the Limit of Lightweight
                 Encryption. *Cryptographic Hardware and Embedded Systems - CHES 2017*,
@@ -1425,6 +1430,9 @@ REFERENCES:
 .. [CC2013] Mahir Bilen Can and Yonah Cherniavsky.
             *Omitting parentheses from the cyclic notation*. (2013).
             :arxiv:`1308.0936v2`.
+
+.. [CC2023] \C. Ceballos and C. Chenevière.
+                *On linear intervals in the alt `\nu`-Tamari lattices* :arxiv:`2305.02250`
 
 .. [CCL2015] \N. Cohen, D. Coudert, and A. Lancin. *On computing the Gromov
              hyperbolicity*. ACM Journal of Experimental Algorithmics,
