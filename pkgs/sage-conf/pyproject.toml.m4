@@ -30,6 +30,7 @@ classifiers = [
 ]
 urls = {Homepage = "https://www.sagemath.org"}
 requires-python = ">=3.9, <3.13"
+dependencies = []
 dynamic = ["version"]
 
 [project.scripts]

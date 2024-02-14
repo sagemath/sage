@@ -265,12 +265,12 @@ class FreeAbelianMonoid_class(Parent):
         n = self.__ngens
         if i < 0 or not i < n:
             raise IndexError(f"argument i (= {i}) must be between 0 and {n-1}")
-        x = [ 0 for j in range(n) ]
+        x = [0 for j in range(n)]
         x[int(i)] = 1
         return self.element_class(self, x)
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 
@@ -280,7 +280,7 @@ class FreeAbelianMonoid_class(Parent):
             sage: F.gens()
             (a0, a1, a2, a3, a4)
         """
-        return tuple([self.gen(i) for i in range(self.__ngens)])
+        return tuple(self.gen(i) for i in range(self.__ngens))
 
     def ngens(self):
         """

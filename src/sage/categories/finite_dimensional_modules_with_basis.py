@@ -36,7 +36,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
     class ParentMethods:
 
-        def gens(self):
+        def gens(self) -> tuple:
             """
             Return the generators of ``self``.
 
