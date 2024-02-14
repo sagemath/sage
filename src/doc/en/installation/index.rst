@@ -80,9 +80,25 @@ Windows
     Then go to the Microsoft Store and install Ubuntu (or another
     Linux distribution). Start Ubuntu from the start menu.
 
-    On the Linux running on WSL, you always have root access, so you
-    can use any of the installation methods described below for
-    Linux.
+    In an Ubuntu (WSL) terminal, type the following commands to install
+    Sage from conda-forge.
+
+    .. code-block:: shell
+
+       $ curl -L -O https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-$(uname)-$(uname -m).sh
+       $ sh Mambaforge-$(uname)-$(uname -m).sh
+       $ mamba create -n sage sage python=3.11
+
+    (If there are any installation failures, please report them to
+    the conda-forge maintainers by opening a `GitHub Issue for
+    conda-forge/sage-feedstock <https://github.com/conda-forge/sage-feedstock/issues>`_.)
+
+    You can now start SageMath as follows:
+
+    .. code-block:: shell
+
+       $ conda activate sage
+       $ sage
 
 Linux
 =====
