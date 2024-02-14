@@ -2578,7 +2578,7 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
         TESTS::
 
             sage: F = ModularForms(1, 12).0
-            sage: (F**5).qexp(20)
+            sage: (F^5).qexp(20)
             q^5 - 120*q^6 + 7020*q^7 - 266560*q^8 + 7379190*q^9 - 158562144*q^10 + 2748847640*q^11 -
             39443189760*q^12 + 476711357265*q^13 - 4910778324400*q^14 + 43440479153652*q^15 -
             331129448133120*q^16 + 2173189785854230*q^17 - 12199334429782080*q^18 +
@@ -2587,7 +2587,7 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
             Exponentiation is a lot faster than chain multiplication:
 
             sage: F = ModularForms(DirichletGroup(6).0, 3).0
-            sage: G = F**8 # long time -- around 3 seconds
+            sage: G = F**8                                                              # long time -- around 3 seconds
         """
         # shamelessly copied from above
         try:
@@ -2604,7 +2604,7 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
             verbose("creating a parent with char")
             newparent = ModularForms(newchar, self.weight() * n,
                                      base_ring=newchar.base_ring())
-            verbose("parent is %s" % newparent)
+            verbose(f"parent is {newparent}")
         else:
             newparent = ModularForms(self.group(), self.weight() * n,
                                      base_ring=ZZ)
@@ -3847,11 +3847,11 @@ class GradedModularFormElement(ModuleElement):
 
         INPUT:
 
-        - ``names`` -- a list or tuple of names (strings), or a comma separated string. Correspond
-          to the names of the variables;
-        - ``gens`` -- (default: None) a list of generator of the parent of ``self``. If set to ``None``,
-          the list returned by :meth:`~sage.modular.modform.ring.ModularFormsRing.gen_forms`
-          is used instead
+        - ``names`` -- a list or tuple of names (strings), or a comma separated string,
+          corresponding to the names of the variables.
+        - ``gens`` -- (default: None) a list of generator of the parent of ``self``. If set to
+          ``None``, the list returned by
+          :meth:`~sage.modular.modform.ring.ModularFormsRing.gen_forms` is used instead.
 
         OUTPUT: A polynomial in the variables ``names``
 
@@ -3863,8 +3863,9 @@ class GradedModularFormElement(ModuleElement):
             sage: (M.0^10 + M.0 * M.1).to_polynomial()
             x0^10 + x0*x1
 
-        This method is not necessarily the inverse of :meth:`~sage.modular.modform.ring.ModularFormsRing.from_polynomial`
-        since there may be some relations between the generators of the modular forms ring::
+        This method is not necessarily the inverse of
+        :meth:`~sage.modular.modform.ring.ModularFormsRing.from_polynomial` since there may be some
+        relations between the generators of the modular forms ring::
 
             sage: M = ModularFormsRing(Gamma0(6))
             sage: P.<x0,x1,x2> = M.polynomial_ring()

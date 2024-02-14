@@ -1189,15 +1189,15 @@ class ModularFormsRing(Parent):
 
     def _to_matrix(self, gens=None, prec=None):
         r"""
-        Returns a matrix corresponding to the q-expansion of the generators to precision.
+        Return a matrix corresponding to the `q`-expansion of the generators to the given precision.
 
         INPUT:
 
-        - ``gens`` -- (default: None) a list of generators. If set to ``None``,
-          the list returned by :meth:`~sage.modular.modform.ring.ModularFormsRing.gen_forms`
-          is used instead
-        - ``prec`` -- (default: None) precision to compute up to, or the Sturm
-          bound if ``prec`` is None.
+        - ``gens`` -- (default: ``None``) a list of generators. If not provided,
+          the list returned by :meth:`ModularFormsRing.gen_forms`
+          is used instead.
+        - ``prec`` -- (default: ``None``) precision to compute up to, or the Sturm
+          bound if not provided.
 
         OUTPUT: A matrix.
 
@@ -1205,9 +1205,16 @@ class ModularFormsRing(Parent):
 
             sage: M = ModularFormsRing(1)
             sage: E4 = M.0; E6 = M.1
-            sage: gens = [E4^3, E6^2]
+            sage: gens = [E4^3, E6^2]; gens
+            [1 + 720*q + 179280*q^2 + 16954560*q^3 + 396974160*q^4 + 4632858720*q^5 + O(q^6),
+             1 - 1008*q + 220752*q^2 + 16519104*q^3 + 399517776*q^4 + 4624512480*q^5 + O(q^6)]
+            sage: M._to_matrix(gens)
+            [    1   720]
+            [    1 -1008]
+            sage: M._to_matrix(gens, 6)
+            [          1         720      179280    16954560   396974160  4632858720 34413301440]
+            [          1       -1008      220752    16519104   399517776  4624512480 34423752384]
         """
-
         if gens is None:
             gens = self.gen_forms()
 
@@ -1215,15 +1222,9 @@ class ModularFormsRing(Parent):
             # we don't default to prec=6 because this is an internal function
             # and is usually used to write other forms as a linear combination
             # of generators, in which case using the Sturm bound is more reasonable
-            prec = 0
-            for gen in gens:
-                prec = max(prec, gen.group().sturm_bound(gen.weight()))
+            prec = max(gen.group().sturm_bound(gen.weight()) for gen in gens)
 
-        matrix_datum = []
-        for gen in gens:
-            matrix_datum.append(gen.coefficients(range(0, prec + 1)))
-
-        return Matrix(matrix_datum)
+        return Matrix(gen.coefficients(range(prec + 1)) for gen in gens)
 
 
 # Deprecated functions
