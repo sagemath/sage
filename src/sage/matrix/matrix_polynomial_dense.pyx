@@ -28,7 +28,7 @@ AUTHORS:
 - Vincent Neiger (2021-08-07): added inverse_series_trunc(),
   solve_{left/right}_series_trunc(), {left/right}_quo_rem(), reduce().
 
-- Vincent Neiger (2024-02-13): added basis_completion(), is_basis_completion(),
+- Vincent Neiger (2024-02-13): added basis_completion(), _is_basis_completion(),
   _basis_completion_via_reversed_approx().
 """
 # ****************************************************************************
@@ -4459,17 +4459,17 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: rcomp1 = matrix(ring, 2, 3, \
                     [[5*x^2 + 4*x + 1, 5*x^2 + 2*x, 5*x^2], \
                      [2*x^3 + 4*x^2, 2*x^3 + 6*x^2 + 2*x + 1, 2*x^3 + x^2 + 3*x]])
-            sage: rcomp1.is_basis_completion(mat1)
+            sage: rcomp1._is_basis_completion(mat1)
             True
 
             sage: mat2 = matrix(ring, 2, 3, \
                     [[x^2 + 5*x + 5,   3*x^2 + x + 3, 4*x^2 + 5*x + 4], \
                      [5*x^2 + 4*x,   3*x^2 + 4*x + 5, 5*x^2 + 5*x + 3]])
             sage: rcomp2 = matrix(ring, 1, 3, [[2*x^2 + 1, 4*x^2 + 3*x, 2*x^2 + 3*x]])
-            sage: rcomp2.is_basis_completion(mat2)
+            sage: rcomp2._is_basis_completion(mat2)
             True
             sage: ccomp2 = matrix(ring, 2, 0)
-            sage: ccomp2.is_basis_completion(mat2, row_wise=False)
+            sage: ccomp2._is_basis_completion(mat2, row_wise=False)
             True
 
             sage: mat3 = matrix(ring, 3, 2, \
@@ -4477,60 +4477,60 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                      [  3*x^3 + 2*x^2 + x + 3,   6*x^3 + 5*x^2 + x + 1], \
                      [2*x^3 + 5*x^2 + 3*x + 4, 4*x^3 + 6*x^2 + 5*x + 6]])
             sage: rcomp3 = matrix(ring, 1, 2, [[x + 1, 2*x]])
-            sage: rcomp3.is_basis_completion(mat3)
+            sage: rcomp3._is_basis_completion(mat3)
             True
             sage: ccomp3 = matrix(ring, 3, 2, \
                                     [[3*x + 1, 4*x + 4], \
                                      [    2*x, 5*x + 1], \
                                      [    6*x,       x]])
-            sage: ccomp3.is_basis_completion(mat3, row_wise=False)
+            sage: ccomp3._is_basis_completion(mat3, row_wise=False)
             True
 
         A row-wise completion is generally not a column-wise completion (most
         often, matrix dimensions are not even compatible), one exception being
         the completions of square zero matrices::
 
-            sage: rcomp2.is_basis_completion(mat2, row_wise=False)
+            sage: rcomp2._is_basis_completion(mat2, row_wise=False)
             Traceback (most recent call last):
             ...
             TypeError: number of rows must be the same, 2 != 1
-            sage: ccomp2.is_basis_completion(mat2, row_wise=True)
+            sage: ccomp2._is_basis_completion(mat2, row_wise=True)
             Traceback (most recent call last):
             ...
             TypeError: number of columns must be the same, not 3 and 0
-            sage: rcomp3.is_basis_completion(mat3, row_wise=False)
+            sage: rcomp3._is_basis_completion(mat3, row_wise=False)
             Traceback (most recent call last):
             ...
             TypeError: number of rows must be the same, 3 != 1
-            sage: ccomp3.is_basis_completion(mat3, row_wise=True)
+            sage: ccomp3._is_basis_completion(mat3, row_wise=True)
             False
 
             sage: zero_mat = matrix(ring, 2, 2)
             sage: comp = zero_mat.basis_completion(); print(comp)
             [1 0]
             [0 1]
-            sage: comp.is_basis_completion(zero_mat, row_wise=True)
+            sage: comp._is_basis_completion(zero_mat, row_wise=True)
             True
-            sage: comp.is_basis_completion(zero_mat, row_wise=False)
+            sage: comp._is_basis_completion(zero_mat, row_wise=False)
             True
 
         Completions that do not preserve the Smith factors are not valid,
         even when the sought rank is reached::
 
-            sage: (x * rcomp2).is_basis_completion(mat2)
+            sage: (x * rcomp2)._is_basis_completion(mat2)
             False
-            sage: ((x+2) * rcomp3).is_basis_completion(mat3)
+            sage: ((x+2) * rcomp3)._is_basis_completion(mat3)
             False
-            sage: (ccomp3 * matrix.diagonal([x,1])).is_basis_completion(mat3, row_wise=False)
+            sage: (ccomp3 * matrix.diagonal([x,1]))._is_basis_completion(mat3, row_wise=False)
             False
 
         Preserving Smith factors without reaching full rank is not a valid
         completion::
 
             sage: mat = matrix(ring, [[1,0,0]])
-            sage: matrix(ring, [[0,1,0]]).is_basis_completion(mat)
+            sage: matrix(ring, [[0,1,0]])._is_basis_completion(mat)
             False
-            sage: matrix(ring, [[0,1,0], [0,0,1]]).is_basis_completion(mat)
+            sage: matrix(ring, [[0,1,0], [0,0,1]])._is_basis_completion(mat)
             True
 
         TESTS:
@@ -4542,30 +4542,30 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: empty_columns = matrix(ring, 0, 2)
             sage: id22 = matrix.identity(ring, 2)
 
-            sage: empty_mat.is_basis_completion(empty_mat)
+            sage: empty_mat._is_basis_completion(empty_mat)
             True
-            sage: empty_mat.is_basis_completion(empty_mat, row_wise=False)
+            sage: empty_mat._is_basis_completion(empty_mat, row_wise=False)
             True
-            sage: empty_mat.is_basis_completion(empty_rows)
+            sage: empty_mat._is_basis_completion(empty_rows)
             True
-            sage: empty_mat.is_basis_completion(empty_columns, row_wise=False)
+            sage: empty_mat._is_basis_completion(empty_columns, row_wise=False)
             True
-            sage: empty_mat.is_basis_completion(empty_columns)
+            sage: empty_mat._is_basis_completion(empty_columns)
             Traceback (most recent call last):
             ...
             TypeError: number of columns must be the same, not 2 and 0
 
-            sage: empty_columns.is_basis_completion(id22)
+            sage: empty_columns._is_basis_completion(id22)
             True
-            sage: empty_columns.is_basis_completion(id22, row_wise=False)
+            sage: empty_columns._is_basis_completion(id22, row_wise=False)
             Traceback (most recent call last):
             ...
             TypeError: number of rows must be the same, 2 != 0
-            sage: empty_columns.is_basis_completion(empty_columns)
+            sage: empty_columns._is_basis_completion(empty_columns)
             False
-            sage: empty_rows.is_basis_completion(id22, row_wise=False)
+            sage: empty_rows._is_basis_completion(id22, row_wise=False)
             True
-            sage: empty_rows.is_basis_completion(empty_rows, row_wise=True)
+            sage: empty_rows._is_basis_completion(empty_rows, row_wise=True)
             False
         """
 
