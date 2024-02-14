@@ -12,7 +12,7 @@ The original header of :mod:`sphinx.ext.autodoc`:
     for those who like elaborate docstrings.
 
 This module is currently based on :mod:`sphinx.ext.autodoc` from Sphinx version
-7.2.6. Compare against the upstream original source file
+7.2.6. Compare (do diff) with the upstream source file
 `sphinx/ext/autodoc/__init__.py
 <https://github.com/sphinx-doc/sphinx/blob/v7.2.6/sphinx/ext/autodoc/__init__.py>`_.
 
@@ -223,8 +223,21 @@ def cut_lines(pre: int, post: int = 0, what: str | None = None) -> Callable:
        from sphinx.ext.autodoc import cut_lines
        app.connect('autodoc-process-docstring', cut_lines(4, what=['module']))
 
-    This can (and should) be used in place of :confval:`automodule_skip_lines`.
+    This can (and should) be used in place of ``automodule_skip_lines``.
     """
+    # -------------------------------------------------------------------------
+    # Sphinx in Sage does not use 'sphinx_toolbox.confval' extension, and hence
+    # does not know the role ":confval:". Use of the role in this module
+    # results in failure of building the reference manual.
+    #
+    # In the above docstring,
+    #
+    #     ... in place of :confval:`automodule_skip_lines`.
+    #
+    # was changed to
+    #
+    #     ... in place of ``automodule_skip_lines``.
+    # -------------------------------------------------------------------------
     def process(app: Sphinx, what_: str, name: str, obj: Any, options: Any, lines: list[str],
                 ) -> None:
         if what and what_ not in what:
