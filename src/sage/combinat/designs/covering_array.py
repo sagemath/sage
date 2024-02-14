@@ -16,12 +16,16 @@ following functions:
 
 .. csv-table::
     :class: contentstable
-    :widths: 30, 70
+    :widths: 50, 50
     :delim: |
 
     :meth:`~sage.combinat.designs.designs_pyx.is_covering_array` | Check that an input list of lists is a `CA(N;t,k,v)`.
-    :meth:`~sage.combinat.designs.covering_array.CA_relabel` | Return a relabelled version of the CA.
-    :meth:`~sage.combinat.designs.covering_array.CA_standard_label` | Return a version of the CA relabelled to symbols `(0,\dots,n-1)`.
+    :meth:`~sage.combinat.designs.covering_array.CA_relabel` | Return a relabelled version of the `CA`.
+    :meth:`~sage.combinat.designs.covering_array.CA_standard_label` | Return a version of the `CA` relabelled to symbols `(0,\dots,n-1)`.
+    :meth:`~sage.combinat.designs.covering_array.truncate_columns` | Return an array with `k` columns from a larger one.
+    :meth:`~sage.combinat.designs.covering_array.Kleitman_Spencer_Katona` | Return a `CA(N; 2, k, 2)` using N as input.
+    :meth:`~sage.combinat.designs.covering_array.column_Kleitman_Spencer_Katona` | Return a `CA(N; 2, k, 2)` using k as input.
+    :meth:`~sage.combinat.designs.covering_array.covering_array` | Return a `CA` with given parameters.
 
 REFERENCES:
 
@@ -50,3 +54,186 @@ AUTHORS:
 from .orthogonal_arrays import OA_relabel, OA_standard_label
 CA_relabel = OA_relabel
 CA_standard_label = OA_standard_label
+
+def truncate_columns(array, k):
+    r"""
+    Return a covering array with `k` columns, obtained by removing excess
+    columns from a larger covering array.
+
+    INPUT:
+
+    - ``array`` -- the array to be truncated.
+
+    - ``k`` -- the number of columns desired. Must be less than the
+      number of columns in ``array``.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: from sage.combinat.designs.covering_array import truncate_columns
+        sage: from sage.combinat.designs.database import ca_11_2_5_3
+        sage: C = ca_11_2_5_3()
+        sage: D = truncate_columns(C,7)
+        Traceback (most recent call last):
+        ...
+        ValueError: array only has 5 columns
+        sage: E = truncate_columns(C,4)
+        sage: is_covering_array(E,parameters=True)
+        (True, (11, 2, 4, 3))
+
+    """
+    oldk = len(array[0])
+
+    if oldk == k:
+        return array
+
+    elif oldk < k:
+        raise ValueError("array only has {} columns".format(oldk))
+
+    else:
+        result = []
+        for row in array:
+            result.append(row[:k])
+        return result
+
+def Kleitman_Spencer_Katona(N):
+    r"""
+    Return a `CA(N; 2, k, 2)` where `k = \binom {N-1}{\lceil \frac{N}{2} \rceil}`.
+
+    INPUT:
+
+    - ``N`` -- the number of rows in the array, must be an integer greater
+      than 3 since any smaller would not produce enough columns for a
+      strength 2 array.
+
+    This construction is referenced in [Colb2004]_ from [KS1973]_ and [Kat1973]_
+
+    **Construction**
+
+    Take all distinct binary `N`-tuples of weight `\frac{N}{2}` that have a 0
+    in the first position and place them as columns in an array.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.covering_array import Kleitman_Spencer_Katona
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: C = Kleitman_Spencer_Katona(2)
+        Traceback (most recent call last):
+        ...
+        ValueError: N must be greater than 3
+        sage: C = Kleitman_Spencer_Katona(5)
+        sage: is_covering_array(C,parameters=True)
+        (True, (5, 2, 4, 2))
+
+    """
+    from math import ceil
+    from itertools import combinations
+
+    if N < 4:
+        raise ValueError("N must be greater than 3")
+
+    result = []
+    for p in combinations(range(N-1), ceil(N/2)):
+        S = [0]*N
+        for i in p:
+            S[i] = 1
+        result.append(S)
+    return(list(map(list, zip(*result))))
+
+def column_Kleitman_Spencer_Katona(k):
+    r"""
+    Return a covering array with `k` columns using the Kleitman Spencer Katona
+    method.
+
+    See :func:`~sage.combinat.designs.covering_array.Kleitman_Spencer_Katona`
+
+    INPUT:
+
+    - ``k`` -- the number of columns in the array, must be an integer
+      greater than 3 since any smaller is a trivial array for strength 2.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: from sage.combinat.designs.covering_array import column_Kleitman_Spencer_Katona
+        sage: C = column_Kleitman_Spencer_Katona(20)
+        sage: is_covering_array(C,parameters=True)
+        (True, (8, 2, 20, 2))
+        sage: column_Kleitman_Spencer_Katona(25000)
+        Traceback (most recent call last):
+        ...
+        AssertionError: not implemented for k > 24310
+
+    """
+    assert k <= 24310, "not implemented for k > 24310"
+
+    kdict = {3:4,4:5,10:6,15:7,35:8,56:9,126:10,210:11,462:12,792:13,
+            1716:14,3003:15,6435:16,11440:17,24310:18}
+
+    for ki in kdict:
+        if k <= ki:
+            N = kdict[ki]
+            break
+    return truncate_columns(Kleitman_Spencer_Katona(N), k)
+
+def covering_array(strength, number_columns, levels):
+    r"""
+    Build a `CA(N; t, k, v)` using direct constructions, where `N` is the
+    smallest size known.
+
+    INPUT:
+
+    - ``strength`` (integer) -- the parameter `t` of the covering array,
+      such that in any selection of `t` columns of the array, every `t`
+      -tuple appears at least once.
+
+    - ``levels`` (integer) -- the parameter `v` which is the number of
+      unique symbols that appear in the covering array.
+
+    - ``number_columns`` (integer) -- the number of columns desired for
+      the covering array.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.designs_pyx import is_covering_array
+        sage: from sage.combinat.designs.covering_array import covering_array
+        sage: C1 = covering_array(2, 7, 3)
+        sage: is_covering_array(C1,parameters=True)
+        (True, (12, 2, 7, 3))
+        sage: C2 = covering_array(2, 11, 2)
+        sage: is_covering_array(C2,parameters=True)
+        (True, (7, 2, 11, 2))
+        sage: C3 = covering_array(2, 8, 7)
+        sage: is_covering_array(C3,parameters=True)
+        (True, (49, 2, 8, 7))
+        sage: C4 = covering_array(3, 9, 3)
+        Traceback (most recent call last):
+        ...
+        ValueError: CAs and OAs only implemented for strength 2
+        sage: C5 = covering_array(2, 50, 7)
+        No direct construction known and/or implemented for a CA(N; 2, 50, 7)
+
+    """
+    from sage.combinat.designs.orthogonal_arrays import orthogonal_array
+
+    if strength != 2:
+        raise ValueError("CAs and OAs only implemented for strength 2")
+
+    elif levels == 2:
+        return column_Kleitman_Spencer_Katona(number_columns)
+
+    elif 3 <= levels <= 6:
+        import sage.combinat.designs.database as DB
+        for i in DB.CA_constructions[(strength, levels)]:
+            if number_columns <= i[1]:
+                CA = "ca_{}_{}_{}_{}".format(i[0], strength, i[1], levels)
+                f = getattr(DB, CA)
+                return truncate_columns(f(), number_columns)
+
+    elif orthogonal_array(number_columns, levels, existence=True):
+        return orthogonal_array(number_columns, levels)
+
+    else:
+        print("No direct construction known and/or implemented for a CA(N; {}, {}, {})".format(
+            strength, number_columns, levels))
+        return
