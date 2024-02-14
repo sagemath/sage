@@ -1013,6 +1013,12 @@ def minimum_generating_set(group, gap_based=False):
         sage: minimum_generating_set(G)
         {[1, 3, 2], [2, 3, 1]}
 
+        sage: SL(2, 5).minimum_generating_set()
+        {[3 0]
+         [0 2],
+         [4 4]
+         [1 0]}
+
         sage: G = GL(2,GF(3))
         sage: s = minimum_generating_set(G, gap_based=True);s
         {[ [ Z(3)^0, Z(3)^0 ], [ Z(3), 0*Z(3) ] ],
