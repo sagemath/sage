@@ -273,43 +273,11 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             v = list(v)
         elif v == 0:
             v = (R.zero(), R.one(), R.zero())
-        if check:
-            # mostly from SchemeMorphism_point_projective_field
-            d = point_homset.codomain().ambient_space().ngens()
-            if not isinstance(v, (list, tuple)):
-                raise TypeError("Argument v (= %s) must be a scheme point, list, or tuple." % str(v))
-            if len(v) != d and len(v) != d-1:
-                raise TypeError("v (=%s) must have %s components" % (v, d))
-            v = Sequence(v, R)
-            if len(v) == d-1:     # very common special case
-                v.append(v.universe()(1))
 
-            n = len(v)
-            all_zero = True
-            for i in range(n):
-                c = v[n-1-i]
-                if c:
-                    all_zero = False
-                    if c == 1:
-                        break
-                    for j in range(n-i):
-                        v[j] /= c
-                    break
-            if all_zero:
-                raise ValueError("%s does not define a valid point "
-                                 "since all entries are 0" % repr(v))
-
-            x, y, z = v
-            if z == 0:
-                test = x
-            else:
-                a1, a2, a3, a4, a6 = curve.ainvs()
-                test = y**2 + (a1*x+a3)*y - (((x+a2)*x+a4)*x+a6)
-            if not test == 0:
-                raise TypeError("Coordinates %s do not define a point on %s" % (list(v), curve))
-
-        SchemeMorphism_point_abelian_variety_field.__init__(self, point_homset, v, check=False)
+        SchemeMorphism_point_abelian_variety_field.__init__(self, point_homset, v, check=check)
         # AdditiveGroupElement.__init__(self, point_homset)
+
+        self.normalize_coordinates()
 
     def _repr_(self):
         """
@@ -452,8 +420,9 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: pari(E).elladd(O, P)
             [Mod(1, 11), Mod(2, 11)]
         """
-        if self[2]:
-            return pari([self[0]/self[2], self[1]/self[2]])
+        x,y,z = self._coords
+        if z:
+            return pari([x/z, y/z])
         else:
             return pari([0])
 
@@ -558,7 +527,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: P.is_zero()
             False
         """
-        return bool(self[2])
+        return bool(self._coords[2])
 
     def has_order(self, n):
         r"""

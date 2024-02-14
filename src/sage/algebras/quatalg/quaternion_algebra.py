@@ -11,6 +11,9 @@ AUTHORS:
 
 - Peter Bruin (2021): do not require the base ring to be a field
 
+- Lorenz Panny (2022): :meth:`QuaternionOrder.isomorphism_to`,
+  :meth:`QuaternionFractionalIdeal_rational.minimal_element`
+
 This code is partly based on Sage code by David Kohel from 2005.
 
 TESTS:
@@ -63,6 +66,7 @@ from sage.structure.element import is_RingElement
 from sage.structure.factory import UniqueFactory
 from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import vector
+from sage.quadratic_forms.quadratic_form import QuadraticForm
 
 from operator import itemgetter
 
@@ -2081,12 +2085,176 @@ class QuaternionOrder(Parent):
         G = tr0.intersection(S)
         B = [Q(a) for a in G.basis()]
         m = matrix(QQ, [[x.pair(y) for x in B] for y in B])
-        from sage.quadratic_forms.quadratic_form import QuadraticForm
         Q = QuadraticForm(m)
         if include_basis:
             return Q, B
         else:
             return Q
+
+    def isomorphism_to(self, other, *, conjugator=False):
+        r"""
+        Compute an isomorphism from this quaternion order `O`
+        to another order `O'` in the same quaternion algebra.
+
+        If the optional keyword argument ``conjugator`` is set
+        to ``True``, this method returns a single quaternion
+        `\gamma \in O \cap O'` of minimal norm such that
+        `O' = \gamma^{-1} O \gamma`,
+        rather than the ring isomorphism it defines.
+
+        .. NOTE::
+
+            This method is currently only implemented for maximal orders in
+            definite quaternion orders over `\QQ`. For a general algorithm,
+            see [KV2010]_ (Problem ``IsConjugate``).
+
+        EXAMPLES::
+
+            sage: Quat.<i,j,k> = QuaternionAlgebra(-1, -19)
+            sage: O0 = Quat.quaternion_order([1, i, (i+j)/2, (1+k)/2])
+            sage: O1 = Quat.quaternion_order([1, 667*i, 1/2+j/2+9*i, (222075/2*i+333*j+k/2)/667])
+            sage: iso = O0.isomorphism_to(O1)
+            sage: iso
+            Ring morphism:
+              From: Order of Quaternion Algebra (-1, -19) with base ring Rational Field with basis (1, i, 1/2*i + 1/2*j, 1/2 + 1/2*k)
+              To:   Order of Quaternion Algebra (-1, -19) with base ring Rational Field with basis (1, 667*i, 1/2 + 9*i + 1/2*j, 222075/1334*i + 333/667*j + 1/1334*k)
+              Defn: i |--> 629/667*i + 36/667*j - 36/667*k
+                    j |--> 684/667*i - 648/667*j - 19/667*k
+                    k |--> -684/667*i - 19/667*j - 648/667*k
+            sage: iso(1)
+            1
+            sage: iso(i)
+            629/667*i + 36/667*j - 36/667*k
+            sage: iso(i/3)
+            Traceback (most recent call last):
+            ...
+            TypeError: 1/3*i fails to convert into the map's domain ...
+
+        ::
+
+            sage: gamma = O0.isomorphism_to(O1, conjugator=True); gamma
+            -36*i - j + k
+            sage: gamma in O0
+            True
+            sage: gamma in O1
+            True
+            sage: O1.unit_ideal() == ~gamma * O0 * gamma
+            True
+
+        TESTS:
+
+        Some random testing::
+
+            sage: q = randrange(1,1000)
+            sage: p = randrange(1,1000)
+            sage: Quat.<i,j,k> = QuaternionAlgebra(-q, -p)
+            sage: O0 = Quat.maximal_order()
+            sage: while True:
+            ....:     b = Quat.random_element()
+            ....:     if gcd(b.reduced_norm(), Quat.discriminant()) == 1:
+            ....:         break
+            sage: O1 = (b * O0).left_order()
+            sage: iso = O0.isomorphism_to(O1); iso
+            Ring morphism: ...
+            sage: iso.domain() == O0
+            True
+            sage: iso.codomain() == O1
+            True
+            sage: iso(O0.random_element()) in O1
+            True
+            sage: iso(1) == 1
+            True
+            sage: els = list(O0.basis())
+            sage: els += [O0.random_element() for _ in range(5)]
+            sage: {iso(g).reduced_norm() == g.reduced_norm() for g in els}
+            {True}
+            sage: {iso(g).reduced_trace() == g.reduced_trace() for g in els}
+            {True}
+            sage: {iso(g * h) == iso(g) * iso(h) for g in els for h in els}
+            {True}
+
+        Test error cases::
+
+            sage: Quat.<i,j,k> = QuaternionAlgebra(-1,-11)
+            sage: O = Quat.maximal_order()
+            sage: O.isomorphism_to('potato')
+            Traceback (most recent call last):
+            ...
+            TypeError: not a quaternion order
+
+        ::
+
+            sage: Quat1.<i1,j1,k1> = QuaternionAlgebra(-1,-11)
+            sage: Quat2.<i2,j2,k2> = QuaternionAlgebra(-3,-11)
+            sage: Quat1.discriminant() == Quat2.discriminant()  # isomorphic
+            True
+            sage: O1 = Quat1.maximal_order()
+            sage: O2 = Quat2.maximal_order()
+            sage: O1.isomorphism_to(O2)
+            Traceback (most recent call last):
+            ...
+            TypeError: not an order in the same quaternion algebra
+
+        ::
+
+            sage: Quat.<i,j,k> = QuaternionAlgebra(7,11)
+            sage: O1 = Quat.maximal_order()
+            sage: O2 = (O1 * (i+j)).right_order()
+            sage: O1.isomorphism_to(O2)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: only implemented for definite quaternion orders
+
+        ::
+
+            sage: Quat.<i,j,k> = QuaternionAlgebra(-1,-11)
+            sage: O1 = Quat.quaternion_order([1, i, j, k])
+            sage: O2 = Quat.quaternion_order([1,-i, j,-k])
+            sage: O1.isomorphism_to(O2)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: only implemented for maximal orders
+
+        ::
+
+            sage: Quat.<i,j,k> = QuaternionAlgebra(-1,-11)
+            sage: O1 = Quat.quaternion_order([1, i, (i+j)/2, (1+k)/2])
+            sage: O2 = Quat.quaternion_order([1, (2+i+k)/4, (-11*i+2*j+k)/4, (-5*i+k)/3])
+            sage: O1.isomorphism_to(O2)
+            Traceback (most recent call last):
+            ...
+            ValueError: quaternion orders not isomorphic
+
+        ALGORITHM:
+
+        Find a generator of the principal lattice `N\cdot O\cdot O'`
+        where `N = [O : O cap O']` using
+        :meth:`QuaternionFractionalIdeal_rational.minimal_element()`.
+        An isomorphism is given by conjugation by such an element.
+        """
+        if not isinstance(other, QuaternionOrder):
+            raise TypeError('not a quaternion order')
+        Q = self.quaternion_algebra()
+        if other.quaternion_algebra() != Q:
+            raise TypeError('not an order in the same quaternion algebra')
+
+        if not self.quadratic_form().is_positive_definite():
+            raise NotImplementedError('only implemented for definite quaternion orders')
+        if not (self.discriminant() == Q.discriminant() == other.discriminant()):
+            raise NotImplementedError('only implemented for maximal orders')
+
+        N = self.intersection(other).free_module().index_in(self.free_module())
+        I = N * self * other
+        gamma = I.minimal_element()
+        if self*gamma != I:
+            raise ValueError('quaternion orders not isomorphic')
+        assert gamma*other == I
+
+        if conjugator:
+            return gamma
+
+        ims = [~gamma * gen * gamma for gen in Q.gens()]
+        return self.hom(ims, other, check=False)
 
 
 class QuaternionFractionalIdeal(Ideal_fractional):
@@ -2417,8 +2585,35 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
             sage: I != I                # indirect doctest
             False
+
+        TESTS::
+
+            sage: B = QuaternionAlgebra(QQ,-1,-11)
+            sage: i,j,k = B.gens()
+            sage: I = B.ideal([1,i,j,i*j])
+            sage: I == I
+            True
+            sage: O = B.ideal([1,i,(i+j)/2,(1+i*j)/2])
+            sage: I <= O
+            True
+            sage: I >= O
+            False
+            sage: I != O
+            True
+            sage: I == O
+            False
+            sage: I != I
+            False
+            sage: I < I
+            False
+            sage: I < O
+            True
+            sage: I <= I
+            True
+            sage: O >= O
+            True
         """
-        return self.basis_matrix()._richcmp_(right.basis_matrix(), op)
+        return self.free_module().__richcmp__(right.free_module(), op)
 
     def __hash__(self):
         """
@@ -2519,7 +2714,6 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: I.theta_series(10)
             1 + 12*q^2 + 12*q^3 + 12*q^4 + 12*q^5 + 24*q^6 + 24*q^7 + 36*q^8 + 36*q^9 + O(q^10)
         """
-        from sage.quadratic_forms.quadratic_form import QuadraticForm
         # first get the gram matrix
         gram_matrix = self.gram_matrix()
         # rescale so that there are no denominators
@@ -2530,6 +2724,35 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             gram_matrix = gram_matrix / g
         # now get the quadratic form
         return QuadraticForm(gram_matrix)
+
+    def minimal_element(self):
+        r"""
+        Return an element in this quaternion ideal of minimal norm.
+
+        If the ideal is a principal lattice, this method can be used
+        to find a generator; see [Piz1980]_, Corollary 1.20.
+
+        EXAMPLES::
+
+            sage: Quat.<i,j,k> = QuaternionAlgebra(-3,-101)
+            sage: O = Quat.maximal_order(); O
+            Order of Quaternion Algebra (-3, -101) with base ring Rational Field with basis (1/2 + 1/2*i, 1/2*j - 1/2*k, -1/3*i + 1/3*k, -k)
+            sage: (O * 5).minimal_element()
+            5/2 + 5/2*i
+            sage: alpha = 1/2 + 1/6*i + j + 55/3*k
+            sage: I = O*141 + O*alpha; I.norm()
+            141
+            sage: el = I.minimal_element(); el
+            13/2 - 7/6*i + j + 2/3*k
+            sage: el.reduced_norm()
+            282
+        """
+        qf = self.quadratic_form()
+        if not qf.is_positive_definite():
+            raise ValueError('quaternion algebra must be definite')
+        pariqf = qf.__pari__()
+        _,v = pariqf.qfminim(None, None, 1)
+        return sum(ZZ(c)*g for c,g in zip(v, self.basis()))
 
     def theta_series(self, B, var='q'):
         r"""
