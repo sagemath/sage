@@ -4163,7 +4163,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         """
         from sage.matrix.constructor import matrix # for identity
 
-        ring,var = self.base_ring().objgen()
+        ring, var = self.base_ring().objgen()
         m = self.nrows()
         n = self.ncols()
 
