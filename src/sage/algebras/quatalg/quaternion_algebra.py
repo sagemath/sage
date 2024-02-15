@@ -2134,9 +2134,6 @@ class QuaternionOrder(Parent):
             This method is currently only implemented for maximal orders in
             definite quaternion orders over `\QQ`. For a general algorithm,
             see [KV2010]_ (Problem ``IsConjugate``).
-            Currently not working for all maximal orders, see
-            https://github.com/sagemath/sage/issues/37337
-            for more details.
 
         EXAMPLES::
 
@@ -2238,18 +2235,18 @@ class QuaternionOrder(Parent):
         ::
 
             sage: Quat.<i,j,k> = QuaternionAlgebra(-1,-11)
-            sage: O1 = Quat.quaternion_order([1, i, j, k])
-            sage: O2 = Quat.quaternion_order([1,-i, j,-k])
+            sage: O1 = Quat.quaternion_order([1, i, (i+j)/2, (1+k)/2])
+            sage: O2 = Quat.quaternion_order([1, (2+i+k)/4, (-11*i+2*j+k)/4, (-5*i+k)/3])
             sage: O1.isomorphism_to(O2)
             Traceback (most recent call last):
             ...
-            NotImplementedError: only implemented for maximal orders
+            ValueError: quaternion orders not isomorphic
 
         ::
 
-            sage: Quat.<i,j,k> = QuaternionAlgebra(-1,-11)
-            sage: O1 = Quat.quaternion_order([1, i, (i+j)/2, (1+k)/2])
-            sage: O2 = Quat.quaternion_order([1, (2+i+k)/4, (-11*i+2*j+k)/4, (-5*i+k)/3])
+            sage: Quat.<i,j,k> = QuaternionAlgebra(-5, -17)
+            sage: O1 = Quat.quaternion_order([1, i, j, 1/2 + 1/2*i + 1/2*j + 1/2*k])
+            sage: O2 = Quat.quaternion_order([1/2 + 1/2*i + 1/6*j + 13/6*k, i, 1/3*j + 4/3*k, 3*k])
             sage: O1.isomorphism_to(O2)
             Traceback (most recent call last):
             ...
@@ -2272,7 +2269,7 @@ class QuaternionOrder(Parent):
         def attempt_isomorphism(self, other):
             N = self.intersection(other).free_module().index_in(self.free_module())
             I = N * self * other
-            gamma = I.miminal_element()
+            gamma = I.minimal_element()
             if self*gamma != I:
                 return False, None
             if gamma*other != I:
@@ -2300,7 +2297,7 @@ class QuaternionOrder(Parent):
         # and each time try attempt_isomorphism with the order conjugated by alpha.
         # But in general finding all such elements alpha is hard,
         # so we just try 1, i, j, k first.
-        for alpha in [1] + Q.gens():
+        for alpha in [1] + list(Q.gens()):
             other_conj = other
             if alpha != 1:
                 other_conj = Q.quaternion_order((alpha.inverse() * other * alpha).basis())
