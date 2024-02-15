@@ -7095,11 +7095,11 @@ class StandardPermutations_n_abstract(Permutations):
 
         Ensure that :issue:`37284` is fixed::
 
-            sage: S5 = SymmetricGroup(5)
+            sage: PG = PermutationGroup(SymmetricGroup(5).gens())
             sage: P5 = Permutations(5)
-            sage: p = S5.list()[3]
-            sage: P5(p)
-            [4, 5, 1, 2, 3]
+            sage: p = PG.list()[0]
+            sage: s = P5(p); s
+            [1, 2, 3, 4, 5]
         """
         if isinstance(x, PermutationGroupElement):
             return self. _from_permutation_group_element(x)
