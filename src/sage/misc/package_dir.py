@@ -118,8 +118,7 @@ def read_distribution(src_file):
         sage: read_distribution(os.path.join(SAGE_SRC, 'sage', 'graphs', 'graph_decompositions', 'modular_decomposition.py'))
         ''
     """
-    from Cython.Utils import open_source_file
-    with open_source_file(src_file, error_handling='ignore') as fh:
+    with open(src_file, encoding='utf-8', errors='ignore') as fh:
         for line in fh:
             # Adapted from Cython's Build/Dependencies.py
             line = line.lstrip()
