@@ -474,10 +474,9 @@ Note that the syntax in ``except`` is to list all the exceptions that
 are caught as a tuple, followed by an error message.
 
 A method or a function accepts input described in the ``INPUT`` block of
-:ref:`the docstring <section-docstring-function>` and returns output. If the
-input cannot be handled by the code, then it may raise an exception.  The
-following aims to guide you in choosing from the most relevant exceptions to
-Sage. Raise
+:ref:`the docstring <section-docstring-function>`. If the input cannot be
+handled by the code, then it may raise an exception.  The following aims to
+guide you in choosing from the most relevant exceptions to Sage. Raise
 
 - `TypeError <https://docs.python.org/3/library/exceptions.html#TypeError>`_:
   if the input belongs to a class of objects that are not supported by the
