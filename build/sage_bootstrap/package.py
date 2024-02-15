@@ -520,22 +520,22 @@ class Package(object):
     def _init_dependencies(self):
         try:
             with open(os.path.join(self.path, 'dependencies')) as f:
-                self.__dependencies = f.readline().strip()
+                self.__dependencies = f.readline().partition('#')[0].strip()
         except IOError:
             self.__dependencies = ''
         try:
             with open(os.path.join(self.path, 'dependencies_check')) as f:
-                self.__dependencies_check = f.readline().strip()
+                self.__dependencies_check = f.readline().partition('#')[0].strip()
         except IOError:
             self.__dependencies_check = ''
         try:
             with open(os.path.join(self.path, 'dependencies_optional')) as f:
-                self.__dependencies_optional = f.readline()
+                self.__dependencies_optional = f.readline().partition('#')[0].strip()
         except IOError:
             self.__dependencies_optional = ''
         try:
             with open(os.path.join(self.path, 'dependencies_order_only')) as f:
-                self.__dependencies_order_only = f.readline()
+                self.__dependencies_order_only = f.readline().partition('#')[0].strip()
         except IOError:
             self.__dependencies_order_only = ''
 
