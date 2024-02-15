@@ -7166,7 +7166,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
     def to_bytes(self, length=1, byteorder="big", is_signed=False):
         """
         Return an array of bytes representing an integer. Internally relies
-        on the python ``int.to_bytes()`` method.
+        on the Python ``int.to_bytes()`` method.
 
         INPUT:
 

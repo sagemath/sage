@@ -145,8 +145,8 @@ cdef class FiniteRingElement(CommutativeRingElement):
     def to_bytes(self, byteorder="big"):
         """
         Return an array of bytes representing an integer. Internally relies
-        on the python ``int.to_bytes()`` method. Length of byte array is
-        determined from the field's order.
+        on the Python ``int.to_bytes()`` method. The length of the byte array
+        is fixed by the parent field's order.
 
         INPUT:
 
@@ -1112,8 +1112,8 @@ cdef class FinitePolyExtElement(FiniteRingElement):
     def to_bytes(self, byteorder="big"):
         """
         Return an array of bytes representing an integer. Internally relies
-        on the python ``int.to_bytes()`` method. Length of byte array is
-        determined from the field's order.
+        on the Python ``int.to_bytes()`` method. The length of the byte array
+        is fixed by the parent field's order.
 
         INPUT:
 
