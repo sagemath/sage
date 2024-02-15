@@ -2265,7 +2265,7 @@ class QuaternionOrder(Parent):
         a ramified prime times a square. To cover cases where it is
         we repeat the check for orders conjugated by i, j, and k.
         """
-        
+
         # Method to find isomorphism, which does not work when O2 is
         # O1 conjugated by an alpha such that nrd(alpha) is a
         # ramified prime times a square
