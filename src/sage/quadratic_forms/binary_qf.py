@@ -1596,7 +1596,7 @@ class BinaryQF(SageObject):
                 raise ValueError("Unable to find a prime value of %s" % self)
             B += 10
 
-    def solve_integer(self, n, *, algorithm="general", flag=2):
+    def solve_integer(self, n, *, algorithm="general", _flag=2):
         r"""
         Solve `Q(x, y) = n` in integers `x` and `y` where `Q` is this
         quadratic form.
@@ -1608,7 +1608,7 @@ class BinaryQF(SageObject):
 
         - ``algorithm`` -- ``"general"`` (default) or ``"cornacchia"``
 
-        - ``flag`` -- ``1``, ``2`` (default) or ``3``
+        - ``_flag`` -- ``1``, ``2`` (default) or ``3``
 
         To use the Cornacchia algorithm, the quadratic form must have
         `a=1` and `b=0` and `c>0`, and ``n`` must be a prime or four
@@ -1725,15 +1725,15 @@ class BinaryQF(SageObject):
             sage: Q(*xy)
             0
 
-        Test for different `flag` values::
+        Test for different `_flag` values::
 
             sage: # needs sage.libs.pari
             sage: Q = BinaryQF([1, 0, 5])
-            sage: Q.solve_integer(126, flag=1)
+            sage: Q.solve_integer(126, _flag=1)
             [(11, -1), (-1, -5), (-1, 5), (-11, -1)]
-            sage: Q.solve_integer(126, flag=2)
+            sage: Q.solve_integer(126, _flag=2)
             (11, -1)
-            sage: Q.solve_integer(126, flag=3)
+            sage: Q.solve_integer(126, _flag=3)
             [(11, -1), (-1, -5), (-1, 5), (-11, -1), (-9, -3), (9, -3)]
         """
         if self.is_negative_definite():  # not supported by PARI
@@ -1788,8 +1788,8 @@ class BinaryQF(SageObject):
         if algorithm != 'general':
             raise ValueError(f'algorithm {algorithm!r} is not a valid algorithm')
 
-        sol = self.__pari__().qfbsolve(n, flag)
-        if flag == 2:
+        sol = self.__pari__().qfbsolve(n, _flag)
+        if _flag == 2:
             return tuple(map(ZZ, sol)) if sol else None
         return list(map(lambda tup: tuple(map(ZZ, tup)), sol))
 
