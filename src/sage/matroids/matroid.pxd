@@ -124,6 +124,8 @@ cdef class Matroid(SageObject):
     cpdef coflats(self, r) noexcept
     cpdef hyperplanes(self) noexcept
     cpdef f_vector(self) noexcept
+    cpdef whitney_numbers(self) noexcept
+    cpdef whitney_numbers2(self) noexcept
     cpdef broken_circuits(self, ordering=*) noexcept
     cpdef no_broken_circuits_sets(self, ordering=*) noexcept
 
@@ -213,6 +215,7 @@ cdef class Matroid(SageObject):
     cpdef _internal(self, B) noexcept
     cpdef _external(self, B) noexcept
     cpdef tutte_polynomial(self, x=*, y=*) noexcept
+    cpdef characteristic_polynomial(self, l=*) noexcept
     cpdef flat_cover(self, solver=*, verbose=*, integrality_tolerance=*) noexcept
 
     # misc

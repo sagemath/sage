@@ -61,8 +61,8 @@ cdef class BasisExchangeMatroid(Matroid):
     cpdef _augment(self, X, Y) noexcept
     cpdef _is_independent(self, F) noexcept
 
-    cpdef f_vector(self) noexcept
-    cdef  _f_vector_rec(self, object f_vec, bitset_t* flats, bitset_t* todo, long elt, long rnk) noexcept
+    cpdef whitney_numbers2(self) noexcept
+    cdef  _whitney_numbers2_rec(self, object f_vec, bitset_t* flats, bitset_t* todo, long elt, long rnk) noexcept
     cpdef flats(self, R) noexcept
     cdef  _flats_rec(self, SetSystem Rflats, long R, bitset_t* flats, bitset_t* todo, long elt, long rnk) noexcept
     cpdef coflats(self, R) noexcept
