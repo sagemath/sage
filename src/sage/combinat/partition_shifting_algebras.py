@@ -92,7 +92,7 @@ class ShiftingSequenceSpace(Singleton, Parent):
         r"""
         Verify that ``seq`` is a valid shifting sequence.
 
-        If it is not, raise a ``ValueError``.
+        If it is not, raise a :class:`ValueError`.
 
         EXAMPLES::
 
