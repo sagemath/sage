@@ -1497,7 +1497,7 @@ def RandomKTree(n, k, seed=None):
         Traceback (most recent call last):
         ...
         ValueError: k must not be negative
-        sage: graphs.RandomKTree(2, 5, 1)
+        sage: graphs.RandomKTree(2, 5)
         Traceback (most recent call last):
         ...
         ValueError: n must be greater than k
@@ -1582,7 +1582,7 @@ def RandomPartialKTree(n, k, x, seed=None):
         Traceback (most recent call last):
         ...
         ValueError: k must not be negative
-        sage: G = graphs.RandomPartialKTree(2, 5, 2, 1)
+        sage: G = graphs.RandomPartialKTree(2, 5, 2)
         Traceback (most recent call last):
         ...
         ValueError: n must be greater than k
