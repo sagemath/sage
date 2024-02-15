@@ -1,0 +1,25 @@
+// The command "tox -e update_docker_platforms"
+//   creates .devcontainer/portability-*-*/devcontainer.json
+//      from .devcontainer/portability-devcontainer.json.in
+// See https://aka.ms/devcontainer.json for format details.
+{
+    "name": "ubuntu-noble-minimal (≥ 8-core)",
+    "build": {
+        "dockerfile": "portability-Dockerfile",
+        // See tox.ini for definitions
+        "args": {
+            "SYSTEM_FACTOR": "ubuntu-noble",
+            "PACKAGE_FACTOR": "minimal",
+            "DOCKER_TARGET": "with-targets",
+            "DOCKER_TAG": "dev"
+        }
+    },
+    "containerEnv": {
+        "MAKE": "make -j4"
+    },
+    "onCreateCommand": ".devcontainer/onCreate.sh",
+    "updateContentCommand": ".devcontainer/portability-updateContent.sh",
+    "extensions": [
+        "ms-python.python"
+    ]
+}
