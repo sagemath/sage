@@ -4091,7 +4091,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         this matrix. For a more detailed description, see
         :meth:`basis_completion`, in the row-wise case.
 
-        EXAMPLES::
+        EXAMPLES:
 
         Three polynomials whose GCD is `1` can be completed into a unimodular
         matrix::
