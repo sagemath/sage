@@ -377,7 +377,7 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
         MatrixGroup_generic.__init__(self, degree, base_ring, category=category)
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of the matrix group.
 

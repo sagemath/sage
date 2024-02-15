@@ -2383,7 +2383,7 @@ def point_of_order(E, n):
 
         sage: from sage.schemes.elliptic_curves.ell_field import point_of_order
         sage: E = EllipticCurve(GF(101), [1,2,3,4,5])
-        sage: P = point_of_order(E, 5); P
+        sage: P = point_of_order(E, 5); P  # random
         (50*Y^5 + 48*Y^4 + 26*Y^3 + 37*Y^2 + 48*Y + 15 : 25*Y^5 + 31*Y^4 + 79*Y^3 + 39*Y^2 + 3*Y + 20 : 1)
         sage: P.base_ring()
         Finite Field in Y of size 101^6
@@ -2394,7 +2394,7 @@ def point_of_order(E, n):
 
     ::
 
-        sage: Q = point_of_order(E, 8); Q
+        sage: Q = point_of_order(E, 8); Q  # random
         (69*x^5 + 24*x^4 + 100*x^3 + 65*x^2 + 88*x + 97 : 65*x^5 + 28*x^4 + 5*x^3 + 45*x^2 + 42*x + 18 : 1)
         sage: 8*Q == 0 and 4*Q != 0
         True
