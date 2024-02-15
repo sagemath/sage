@@ -44,7 +44,7 @@ special cases of this construction and are also available with this poset::
     :meth:`AltNuTamariLattice`. For more
     information on the standard Tamari lattice see
     :meth:`sage.combinat.tamari_lattices.TamariLattice`,
-    :meth:`sage.combinat.tamari_lattices.. GeneralizedTamariLattice`
+    :meth:`sage.combinat.tamari_lattices.GeneralizedTamariLattice`
 
 AUTHORS:
 
@@ -133,9 +133,9 @@ def delta_swap(p, k, delta):
 
     - ``p`` -- a `\nu`-Dyck word
 
-    - ``k`` -- an integer between `0` and `p.length()-1`
+    - ``k`` -- an integer between `0` and ``p.length()-1``
 
-    - ``delta`` -- a list of nonnegative integers of length p.height()
+    - ``delta`` -- a list of nonnegative integers of length ``p.height()``
 
     OUTPUT:
 
