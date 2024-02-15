@@ -35,7 +35,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.modules.free_module import (
-    FreeModule_ambient_domain,
+    FreeModule_ambient,
     Module_free_ambient,
     basis_seq,
 )
@@ -99,7 +99,7 @@ class Submodule_free_ambient(Module_free_ambient):
             sage: N.is_submodule(M)
             True
         """
-        if not isinstance(ambient, (FreeModule_ambient_domain, QuotientModule_free_ambient)):
+        if not isinstance(ambient, (FreeModule_ambient, QuotientModule_free_ambient)):
             raise TypeError("ambient (=%s) must be ambient or a quotient" % ambient)
         R = ambient.base_ring()
         degree = ambient.degree()
