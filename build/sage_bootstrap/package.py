@@ -381,6 +381,23 @@ class Package(object):
         return self.__dependencies.partition('|')[2].strip().split() + self.__dependencies_order_only.strip().split()
 
     @property
+    def dependencies_optional(self):
+        """
+        Return a list of strings, the package names of the optional build dependencies
+        """
+        return self.__dependencies_optional.strip().split()
+
+    @property
+    def dependencies_runtime(self):
+        """
+        Return a list of strings, the package names of the runtime dependencies
+        """
+        # after a '|', we have order-only build dependencies
+        return self.__dependencies.partition('|')[0].strip().split()
+
+    dependencies = dependencies_runtime
+
+    @property
     def dependencies_check(self):
         """
         Return a list of strings, the package names of the check dependencies
@@ -511,6 +528,11 @@ class Package(object):
                 self.__dependencies_check = f.readline().strip()
         except IOError:
             self.__dependencies_check = ''
+        try:
+            with open(os.path.join(self.path, 'dependencies_optional')) as f:
+                self.__dependencies_optional = f.readline()
+        except IOError:
+            self.__dependencies_optional = ''
         try:
             with open(os.path.join(self.path, 'dependencies_order_only')) as f:
                 self.__dependencies_order_only = f.readline()

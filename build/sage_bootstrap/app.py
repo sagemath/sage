@@ -108,6 +108,39 @@ class Application(object):
                 else:
                     print("{0}_{1}='{2}'".format(p, package_name, value))
 
+    def dependencies(self, *package_classes, types=None, format='plain'):
+        """
+        Find the dependencies given package names
+
+        $ sage --package dependencies maxima --runtime --order-only
+        ecl
+        info
+        """
+        log.debug('Looking up dependencies')
+        pc = PackageClass(*package_classes)
+        if format == 'plain':
+            if types is None:
+                types = ['order_only', 'runtime']
+            deps = []
+            for package_name in pc.names:
+                package = Package(package_name)
+                for t in types:
+                    deps.extend(getattr(package, 'dependencies_' + t))
+            for dep in sorted(set(deps)):
+                print(dep)
+        elif format == 'shell':
+            if types is None:
+                types = ['order_only', 'optional', 'runtime', 'check']
+            for package_name in pc.names:
+                package = Package(package_name)
+                for t in types:
+                    # We single-quote the values because dependencies
+                    # may contain Makefile variable substitutions
+                    deps = getattr(package, 'dependencies_' + t)
+                    print("{0}_deps_{1}='{2}'".format(t, package_name, ' '.join(deps)))
+        else:
+            raise ValueError('format must be one of "plain" and "shell"')
+
     def name(self, tarball_filename):
         """
         Find the package name given a tarball filename
