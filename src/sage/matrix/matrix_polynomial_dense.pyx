@@ -4362,6 +4362,44 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             [    0     1     0     0]
             [    0     0 x + 3     0]
 
+        Here are a few more examples, similar to the above but over fields
+        other than ``GF(7)``::
+
+            sage: ring.<x> = QQ[]
+            sage: mat = matrix([[x*(x-1)*(x-2), (x-2)*(x-3)*(x-4), (x-4)*(x-5)*(x-6)]])
+            sage: mat
+            [        x^3 - 3*x^2 + 2*x   x^3 - 9*x^2 + 26*x - 24 x^3 - 15*x^2 + 74*x - 120]
+            sage: rcomp = mat.basis_completion(algorithm="smith"); rcomp
+            [        -1/12*x - 1/12         -1/12*x + 5/12                      0]
+            [                  1/12                   1/12 1/24*x^2 - 13/24*x + 2]
+            sage: mat.stack(rcomp).determinant()
+            1
+
+            sage: mat = matrix([[x*(x-1), x*(x-2)], \
+                                [x*(x-2), x*(x-3)], \
+                                [(x-1)*(x-2), (x-1)*(x-3)]])
+            sage: mat.smith_form(transformation=False)
+            [1 0]
+            [0 x]
+            [0 0]
+            sage: ccomp = mat.basis_completion(row_wise=False, algorithm="smith")
+            sage: ccomp
+            [1/2*x - 1/2]
+            [  1/2*x - 1]
+            [1/2*x - 3/2]
+            sage: ccomp.augment(mat).smith_form(transformation=False)
+            [    1     0     0]
+            [    0     1     0]
+            [    0     0 1/2*x]
+
+            sage: ring.<y> = NumberField(x**2 - 2, "a")[]
+            sage: a = ring.base_ring().gen()
+            sage: mat = matrix([[3*a*y - 1, (-8*a - 1)*y - 2*a + 1]])
+            sage: rcomp = mat.basis_completion(algorithm="smith"); rcomp
+            [ 39/119*a - 30/119 -99/119*a + 67/119]
+            sage: mat.stack(rcomp).determinant()
+            1
+
         TESTS:
 
         Corner cases are handled correctly::
