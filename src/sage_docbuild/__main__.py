@@ -1,3 +1,4 @@
+# sage.doctest: needs sphinx
 r"""
 Sage docbuild main
 
