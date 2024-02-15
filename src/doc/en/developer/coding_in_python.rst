@@ -494,7 +494,7 @@ Sage. Raise
   like) but the input is not appropriate.
 
 - `ZeroDivisionError
-  <https://docs.python.org/3/library/exceptions.html#TypeError>`_: if the
+  <https://docs.python.org/3/library/exceptions.html#ZeroDivisionError>`_: if the
   method performs division but the input is zero. Note that for non-invertible
   input values, ``ArithmeticError`` is more appropriate.
 
