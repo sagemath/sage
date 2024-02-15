@@ -44,6 +44,7 @@ py.install_sources(
     'coxeter_groups.py',
     'crystals.py',
     'cw_complexes.py',
+    'dedekind_domains.py',
     'discrete_valuation.py',
     'distributive_magmas_and_additive_magmas.py',
     'division_rings.py',
