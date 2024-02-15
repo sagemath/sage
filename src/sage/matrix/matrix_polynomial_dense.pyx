@@ -4161,7 +4161,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: matrix(ring, 2, 0)._basis_completion_via_reversed_approx()
             []
         """
-        from sage.matrix.constructor import matrix # for identity
+        from sage.matrix.constructor import matrix  # for identity
 
         ring = self.base_ring()
         m = self.nrows()
