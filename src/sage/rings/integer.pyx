@@ -7162,7 +7162,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             return the_integer_ring(self.__pari__().binomial(mm))
         else:
             raise ValueError("algorithm must be one of: 'pari' or 'gmp' (alias: 'mpir')")
-    
+
     def to_bytes(self, length=1, byteorder="big", is_signed=False):
         """
         Return an array of bytes representing an integer. Internally relies
