@@ -76,14 +76,14 @@ cdef class FlatsMatroid(Matroid):
                         self._F[i].add(frozenset(F))
         else:
             self._groundset = frozenset(groundset)
-            for i in flats:
+            for i in sorted(flats):
                 for F in flats[i]:
                     try:
                         self._F[i].add(frozenset(F))
                     except KeyError:
                         self._F[i] = set()
                         self._F[i].add(frozenset(F))
-        self._matroid_rank = self.rank(self._groundset)
+        self._matroid_rank = max([0] + list(self._F))
 
     cpdef groundset(self) noexcept:
         """
@@ -121,16 +121,20 @@ cdef class FlatsMatroid(Matroid):
             sage: M = FlatsMatroid(matroids.Theta(3))
             sage: M._rank(['x1', 'y0', 'y2'])
             2
+
+        TESTS::
+
+            sage: from sage.matroids.flats_matroid import FlatsMatroid
+            sage: M = matroids.catalog.NonDesargues()
+            sage: F = FlatsMatroid(M)
+            sage: for S in powerset(M.groundset()):
+            ....:     assert M.rank(S) == F.rank(S)
         """
         cdef frozenset XX = frozenset(X)
-        cdef int min = len(self._groundset)
-        for i in self._F:
-            if i < min:
+        for i in range(self.rank() + 1):
                 for f in self._F[i]:
                     if f >= XX:
-                        min = i
-                        break
-        return min
+                        return i
 
     # optional
 
@@ -409,7 +413,7 @@ cdef class FlatsMatroid(Matroid):
         """
         cdef list W = []
         cdef int i
-        for i in sorted(self._F):
+        for i in self._F:
             W.append(len(self._F[i]))
         return W
 
@@ -476,7 +480,7 @@ cdef class FlatsMatroid(Matroid):
         cdef bint flag
 
         # check flats dictionary for invalid ranks and repeated flats
-        ranks = sorted(self._F)
+        ranks = list(self._F)
         if ranks != list(range(len(ranks))):
             return False
         flats_lst = [F for i in self._F for F in self._F[i]]
