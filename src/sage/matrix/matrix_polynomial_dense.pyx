@@ -4163,7 +4163,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         """
         from sage.matrix.constructor import matrix # for identity
 
-        ring, var = self.base_ring().objgen()
+        ring = self.base_ring()
         m = self.nrows()
         n = self.ncols()
 
@@ -4241,6 +4241,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
         # left_diag = matrix.diagonal([ring.monomial(d) for d in rdeg])
         # right_diag = matrix.diagonal([ring.monomial(d) for d in cdeg])
         # completion[len(zcols):,nonzcols] = left_diag * completion_rev(var**(-1)) * right_diag
+        # where var = ring.gen()
         for i in range(len(completion_indices)):
             for j in range(len(nonzcols)):
                 completion[i + len(zcols), nonzcols[j]] = completion_rev[i,j].reverse(rdeg[i]+cdeg[j])
