@@ -514,3 +514,29 @@ class EllipticCurveHom_scalar(EllipticCurveHom):
             w = negation_morphism(self._domain).rational_maps()
             result._rational_maps = tuple(f(*w) if f is not None else None for f in self._rational_maps)
         return result
+
+    def is_cyclic(self):
+        """
+        Determine whether the isogeny is cyclic (separable with cyclic kernel).
+
+        Since this class implements only scalar multiplication isogenies,
+        they are never cyclic, except the trivial [1].
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(79), [7,7])
+            sage: phi = E.scalar_multiplication(5)
+            sage: phi.is_cyclic()
+            False
+            sage: phi = E.scalar_multiplication(1)
+            sage: phi.is_cyclic()
+            True
+            sage: phi = E.scalar_multiplication(79)
+            sage: phi.is_cyclic()
+            False
+
+        .. SEEALSO::
+
+        - :meth:`sage.schemes.elliptic_curves.hom.EllipticCurveHom.is_cyclic`
+        """
+        return self._m == 1

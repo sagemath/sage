@@ -87,7 +87,10 @@ from sage.structure.richcmp import op_EQ
 from sage.misc.cachefunc import cached_method
 from sage.structure.sequence import Sequence
 
-from sage.arith.misc import prod
+from sage.rings.integer_ring import ZZ
+
+from sage.arith.misc import prod, is_prime, gcd
+from sage.structure.factorization import Factorization
 
 from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
 from sage.schemes.elliptic_curves.hom import EllipticCurveHom, compare_via_evaluation
@@ -893,3 +896,101 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             1331
         """
         return prod(phi.inseparable_degree() for phi in self._phis)
+
+    def is_cyclic(self):
+        r"""
+        Determine whether the isogeny is cyclic (separable with cyclic kernel).
+
+        ALGORITHM:
+
+        For each prime $\ell$ with $\ell^2$ dividing the isogeny degree,
+        test that $\ell$-torsion is not fully nullified. This is done by
+        evaluating the isogeny modulo the division polynomial of the domain curve,
+        reducing the modulus on the way when parts of the torsion get nullified.
+
+        For each $\ell$, only the smallest segment of isogenies is considered,
+        such that it includes all isogenies whose degrees are divisible by $\ell$.
+
+        EXAMPLES::
+
+            sage: E0 = EllipticCurve(GF((2**64+13)**2), [4, 0])
+
+            sage: phi1 = E0.isogenies_prime_degree(2)[0]
+            sage: (phi1.dual() * phi1).is_cyclic()
+            False
+
+            sage: phi2_list = phi1.codomain().isogenies_prime_degree(2)
+            sage: sorted((phi2 * phi1).is_cyclic() for phi2 in phi2_list)
+            [False, True, True]
+
+        Works even if the cyclicity is broken across more than 2 isogenies:
+        (e.g., when commuting isogenies are swapped: degrees 2-2-3 <-> 2-3-2)
+
+            sage: phi2 = phi1.codomain().isogenies_prime_degree(5)[0]
+            sage: phi3_list = phi2.codomain().isogenies_prime_degree(2)
+            sage: sorted((phi3 * phi2 * phi1).is_cyclic() for phi3 in phi3_list)
+            [False, True, True]
+
+        .. SEEALSO::
+
+        - :meth:`sage.schemes.elliptic_curves.hom.EllipticCurveHom.is_cyclic`
+        """
+        if self.is_zero() or not self.is_separable():
+            return False
+
+        deg_fac = Factorization(())
+        for phi in self._phis:
+            deg_fac *= ZZ(phi.degree()).factor()
+
+        for ell, e in deg_fac:
+            # check only prime factors with e >= 2 and not the characteristic
+            # since E[p] is always cyclic, no need to check
+            # (inseparability is already checked)
+            if e <= 1 or ell == self.base_ring().characteristic():
+                continue
+
+            # we only need to check compositions of isogenies
+            # with degree divisible by ell
+            # so we restrict ourselves to the smallest segment
+            # containing all occurrences of ell in the degree
+            first = None
+            last = None
+            for i, phi in enumerate(self._phis):
+                if phi.degree() % ell == 0:
+                    if first is None:
+                        first = i
+                    last = i
+            assert first is not None and last is not None
+
+            # evalute isogenies step by step
+            # modulo the division polynomial of the starting curve
+            # i.e. "working with full torsion" at the same time
+            # gradually removing torsion factors that are being nullified
+            mod = self._phis[first].domain().division_polynomial(ell)
+            # x : the x-coordinate of the generic ell-torsion point
+            # on the starting curve
+            # y : current value of isogenies applied to x
+            x = mod.parent().quotient(mod).gen()
+            y = x
+
+            for phi in self._phis[first:last+1]:
+                x_rational_map = phi.x_rational_map()
+
+                den = x_rational_map.denominator()(y)
+                g = gcd(den.lift(), mod)
+                if g != 1:
+                    # a new part of torsion is nullified
+                    # so we need to update the modulus and the quotient ring
+                    mod //= g
+                    if mod.degree() <= 0:
+                        # full torsion is killed
+                        # => non-cyclic
+                        return False
+
+                    # move to new ring (reduced modulus)
+                    x = mod.parent().quotient(mod).gen()
+                    y = y.lift()(x)
+
+                # evaluate the isogeny
+                y = x_rational_map(y)
+        return True

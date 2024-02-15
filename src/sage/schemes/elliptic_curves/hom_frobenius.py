@@ -519,3 +519,30 @@ class EllipticCurveHom_frobenius(EllipticCurveHom):
             True
         """
         return self._degree
+
+    def is_cyclic(self):
+        """
+        Determine whether the isogeny is cyclic (separable with cyclic kernel).
+
+        Since this class implements only purely inseparable isogenies,
+        they are only cyclic in the trivial case (degree = p^0 = 1).
+
+        EXAMPLES::
+
+            sage: from sage.schemes.elliptic_curves.hom_frobenius import EllipticCurveHom_frobenius
+            sage: E = EllipticCurve(GF(11), [1,1])
+            sage: pi = EllipticCurveHom_frobenius(E)
+            sage: pi.is_cyclic()
+            False
+            sage: pi = EllipticCurveHom_frobenius(E, 4)
+            sage: pi.is_cyclic()
+            False
+            sage: pi = EllipticCurveHom_frobenius(E, 0)
+            sage: pi.is_cyclic()
+            True
+
+        .. SEEALSO::
+
+        - :meth:`sage.schemes.elliptic_curves.hom.EllipticCurveHom.is_cyclic`
+        """
+        return self._degree == 1

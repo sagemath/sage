@@ -924,6 +924,75 @@ class EllipticCurveHom(Morphism):
         """
         return not self.degree()
 
+    def is_cyclic(self):
+        r"""
+        Determine whether the isogeny is cyclic (separable with cyclic kernel).
+
+        This is a general method, it requires factorization of the degree
+        and computation on the kernel polynomial (if not squarefree).
+        For special isogeny implementations (Frobenius, scalar multiplication,
+        composite) more efficient methods are used.
+
+        ALGORITHM:
+
+        Separable isogenies with squarefree degrees are cyclic.
+        For each $\ell \ne p$ such that its square divides the degree of the isogeny,
+        test if $E[\ell]$ is mapped to 0 by reducing the kernel polynomial
+        modulo the division polynomial. If for all $\ell$ it does not happen,
+        then the result is cyclic.
+
+        EXAMPLES:
+
+        Here we include also special cases which do not use the general algorithm. ::
+
+            sage: E = EllipticCurve(GF(79), [7,7])
+            sage: phi = E.scalar_multiplication(5)
+            sage: phi.is_cyclic()
+            False
+            sage: phi = E.scalar_multiplication(1)
+            sage: phi.is_cyclic()
+            True
+            sage: phi = E.isogenies_prime_degree(2)[0]
+            sage: phi.is_cyclic()
+            True
+            sage: phi.dual().is_cyclic()
+            True
+            sage: (phi.dual() * phi).is_cyclic()
+            False
+
+            sage: phi = E.isogenies_prime_degree(79)[0]
+            sage: phi.is_cyclic()
+            True
+            sage: (phi.dual() * phi).is_cyclic()
+            False
+
+        .. SEEALSO::
+
+        - :meth:`sage.schemes.elliptic_curves.hom_composie.EllipticCurveHom_composite.is_cyclic`
+        - :meth:`sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius.is_cyclic`
+        - :meth:`sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar.is_cyclic`
+        """
+        if self.is_zero() or not self.is_separable():
+            return False
+
+        deg_fac = ZZ(self.degree()).factor()
+        # squarefree => cyclic
+        if not deg_fac or max(e for ell, e in deg_fac) <= 1:
+            return True
+
+        E0 = self.domain()
+        ker_poly = self.kernel_polynomial()
+        for ell, e in deg_fac:
+            # check only prime factors with e >= 2 and not the characteristic
+            # since E[p] is always cyclic, no need to check
+            # (inseparability is already checked)
+            if e <= 1 or ell == self.base_ring().characteristic():
+                continue
+            div_poly = E0.division_polynomial(ell)
+            if ker_poly % div_poly == 0:
+                return False
+        return True
+
     def __neg__(self):
         r"""
         Return the negative of this elliptic-curve morphism. In other
