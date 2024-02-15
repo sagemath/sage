@@ -50,6 +50,11 @@ class Threejs(StaticFile):
         """
         Return the version of threejs that Sage requires.
 
+        Defining what version is required is delegated to the distribution package
+        that provides the file ``threejs-version.txt`` in :mod:`sage.ext_data.threejs`.
+
+        If the file is not provided, :class:`FileNotFoundError` is raised.
+
         EXAMPLES::
 
             sage: from sage.features.threejs import Threejs
