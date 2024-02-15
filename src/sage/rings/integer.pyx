@@ -7171,11 +7171,11 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         INPUT:
 
         - ``length`` -- positive integer (default: ``1``); integer is represented in
-        ``length`` bytes. ``OverflowError`` is raised if the integer is not representable
-        with the given length.
+          ``length`` bytes. ``OverflowError`` is raised if the integer is not representable
+          with the given length.
 
         - ``byteorder`` -- str (default: ``"big"``); determines the byte order of
-          ``input_bytes``; can only be ``"big"`` or ``"little"``
+          the output; can only be ``"big"`` or ``"little"``
 
         - ``is_signed`` -- boolean (default: ``False``); determines whether to use two's
           compliment to represent the integer
