@@ -1596,7 +1596,7 @@ def RandomPartialKTree(n, k, x, seed=None):
         sage: G = graphs.RandomPartialKTree(5, 2, 7)
         sage: G.treewidth()
         0
-        sage: g.size()
+        sage: G.size()
         0
 
     EXAMPLES::
