@@ -7,6 +7,7 @@ py.install_sources(
     'covering_design.py',
     'database.py',
     'design_catalog.py',
+    'designs_pyx.pxd',
     'difference_family.py',
     'difference_matrices.py',
     'ext_rep.py',
