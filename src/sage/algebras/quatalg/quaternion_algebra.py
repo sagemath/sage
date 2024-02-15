@@ -2235,6 +2235,16 @@ class QuaternionOrder(Parent):
         ::
 
             sage: Quat.<i,j,k> = QuaternionAlgebra(-1,-11)
+            sage: O1 = Quat.quaternion_order([1, i, j, k])
+            sage: O2 = Quat.quaternion_order([1,-i, j,-k])
+            sage: O1.isomorphism_to(O2)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: only implemented for maximal orders
+
+        ::
+
+            sage: Quat.<i,j,k> = QuaternionAlgebra(-1,-11)
             sage: O1 = Quat.quaternion_order([1, i, (i+j)/2, (1+k)/2])
             sage: O2 = Quat.quaternion_order([1, (2+i+k)/4, (-11*i+2*j+k)/4, (-5*i+k)/3])
             sage: O1.isomorphism_to(O2)
