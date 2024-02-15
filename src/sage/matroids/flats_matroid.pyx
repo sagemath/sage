@@ -83,7 +83,7 @@ cdef class FlatsMatroid(Matroid):
                     except KeyError:
                         self._F[i] = set()
                         self._F[i].add(frozenset(F))
-        self._matroid_rank = max([0] + list(self._F))
+        self._matroid_rank = max(self._F, default=-1)
 
     cpdef groundset(self) noexcept:
         """
