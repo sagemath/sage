@@ -194,7 +194,7 @@ AUTHORS:
 
 from .expect import Expect, ExpectElement, FunctionElement, ExpectFunction
 from sage.cpython.string import bytes_to_str
-from sage.env import SAGE_EXTCODE, SAGE_GAP_COMMAND, SAGE_GAP_MEMORY
+from sage.env import GAP_BIN, SAGE_EXTCODE, SAGE_GAP_COMMAND, SAGE_GAP_MEMORY
 from sage.misc.misc import is_in_string
 from sage.misc.cachefunc import cached_method
 from sage.misc.instancedoc import instancedoc
@@ -217,7 +217,7 @@ if SAGE_GAP_COMMAND is None:
     # Passing -A allows us to use a minimal GAP installation without
     # producing errors at start-up. The files sage.g and sage.gaprc are
     # used to load any additional packages that may be available.
-    gap_cmd = f'gap -r -A'
+    gap_cmd = f'{GAP_BIN} -r -A'
     if SAGE_GAP_MEMORY is not None:
         gap_cmd += " -s " + SAGE_GAP_MEMORY + " -o " + SAGE_GAP_MEMORY
 else:
