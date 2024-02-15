@@ -305,6 +305,14 @@ class UnitGroup(AbelianGroupWithValues_class):
             sage: tuple(US(K(u)) for u in US.gens()) == US.gens()
             True
 
+        Bug :issue:`36386` (pari stack overflow while expanding units)::
+
+            sage: d = 12936642
+            sage: K = QuadraticField(d)
+            sage: K.unit_group(proof=False)
+            Unit group with structure C2 x Z of Number Field in a with defining polynomial x^2 - 12936642 with a = 3596.754370262167?
+
+
         """
         proof = get_flag(proof, "number_field")
         K = number_field
@@ -340,20 +348,20 @@ class UnitGroup(AbelianGroupWithValues_class):
         # compute the additional S-unit generators:
         if S:
             self.__S_unit_data = pK.bnfunits(pS)
+            # TODO: converting the factored matrix representation of bnfunits into polynomial
+            # form is a *big* waste of time
+            su = [pK.nfbasistoalg(pK.nffactorback(z)) for z in self.__S_unit_data[0][0:len(S)]]
+            su = [K(u, check=False) for u in su]
         else:
-            self.__S_unit_data = pK.bnfunits()
-        # TODO: converting the factored matrix representation of bnfunits into polynomial
-        # form is a *big* waste of time
-        su_fu_tu = [pK.nfbasistoalg(pK.nffactorback(z)) for z in self.__S_unit_data[0]]
+            su = []
 
-        self.__nfu = len(pK.bnf_get_fu())           # number of fundamental units
-        self.__nsu = len(su_fu_tu) - self.__nfu - 1 # number of S-units
-        self.__ntu = pK.bnf_get_tu()[0]             # order of torsion
+        self.__nfu = len(fu)            # number of fundamental units
+        self.__nsu = len(su)            # number of S-units
+        self.__ntu = pK.bnf_get_tu()[0] # order of torsion
         self.__rank = self.__nfu + self.__nsu
 
-        # Move the torsion unit first, then fundamental units then S-units
-        gens = [K(u, check=False) for u in su_fu_tu]
-        gens = [gens[-1]] + gens[self.__nsu:-1] + gens[:self.__nsu]
+        # Put the torsion unit first, then fundamental units then S-units
+        gens = [K(pK.bnf_get_tu()[1], check=False)] + fu + su
 
         # Construct the abstract group:
         gens_orders = tuple([ZZ(self.__ntu)]+[ZZ(0)]*(self.__rank))
