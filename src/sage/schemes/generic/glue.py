@@ -16,16 +16,16 @@ class GluedScheme(scheme.Scheme):
     INPUT:
 
 
-    -  ``f`` - open immersion from a scheme `U` to a scheme
+    -  ``f`` -- open immersion from a scheme `U` to a scheme
        `X`
 
-    -  ``g`` - open immersion from `U` to a scheme `Y`
+    -  ``g`` -- open immersion from `U` to a scheme `Y`
 
 
     OUTPUT: The scheme obtained by gluing `X` and `Y` along the open set
     `U`.
 
-    .. note::
+    .. NOTE::
 
        Checking that `f` and `g` are open
        immersions is not implemented.
@@ -62,6 +62,7 @@ class GluedScheme(scheme.Scheme):
         Return the gluing maps of this glued scheme, i.e. the maps `f` and `g`.
 
         EXAMPLES::
+
             sage: S.<xbar, ybar> = R.quotient(x * y - 1)
             sage: Rx = QQ["x"]
             sage: Ry = QQ["y"]
