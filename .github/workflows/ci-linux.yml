@@ -50,7 +50,7 @@ jobs:
           #- quay.io/centos/centos:stream9 # TODO (cypari): Figure out how to install pari
           #- almalinux:8 # TODO: Upgrade Python to 3.9
           #- almalinux:9 # TODO (cypari): Figure out how to install pari
-          - sheerluck/sage-on-gentoo-stage4
+          #- sheerluck/sage-on-gentoo-stage4: TODO: dependency (python?) installation takes ages
           - archlinux
           #- opensuse/leap:15.3 # TODO: Preinstall git in image
           #- opensuse/leap:15.4 # TODO: Preinstall git in image
