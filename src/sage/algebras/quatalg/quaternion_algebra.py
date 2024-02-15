@@ -2114,16 +2114,20 @@ class QuaternionOrder(Parent):
         else:
             return Q
 
-    def isomorphism_to(self, other, *, conjugator=False):
+    def isomorphism_to(self, other, *, conjugator=False, B=10):
         r"""
         Compute an isomorphism from this quaternion order `O`
         to another order `O'` in the same quaternion algebra.
 
-        If the optional keyword argument ``conjugator`` is set
-        to ``True``, this method returns a single quaternion
-        `\gamma \in O \cap O'` of minimal norm such that
-        `O' = \gamma^{-1} O \gamma`,
-        rather than the ring isomorphism it defines.
+        INPUT:
+
+        - ``conjugator`` -- bool (default: False), if True this
+          method returns a single quaternion `\gamma \in O \cap O'`
+          of minimal norm such that `O' = \gamma^{-1} O \gamma`,
+          rather than the ring isomorphism it defines.
+
+        - ``B`` -- postive integer, bound on theta series
+          coefficients to rule out non isomorphic orders.
 
         .. NOTE::
 
@@ -2257,7 +2261,24 @@ class QuaternionOrder(Parent):
         where `N = [O : O cap O']` using
         :meth:`QuaternionFractionalIdeal_rational.minimal_element()`.
         An isomorphism is given by conjugation by such an element.
+        Works providing reduced norm of conjugation element is not
+        a ramified prime times a square. To cover cases where it is
+        we repeat the check for orders conjugated by i, j, and k.
         """
+        
+        # Method to find isomorphism, which does not work when O2 is
+        # O1 conjugated by an alpha such that nrd(alpha) is a
+        # ramified prime times a square
+        def attempt_isomorphism(self, other):
+            N = self.intersection(other).free_module().index_in(self.free_module())
+            I = N * self * other
+            gamma = I.miminal_element()
+            if self*gamma != I:
+                return False, None
+            if gamma*other != I:
+                return False, None
+            return True, gamma
+
         if not isinstance(other, QuaternionOrder):
             raise TypeError('not a quaternion order')
         Q = self.quaternion_algebra()
@@ -2271,18 +2292,37 @@ class QuaternionOrder(Parent):
         if not (self.discriminant() == Q.discriminant() == other.discriminant()):
             raise NotImplementedError('only implemented for maximal orders')
 
-        N = self.intersection(other).free_module().index_in(self.free_module())
-        I = N * self * other
-        gamma = I.minimal_element()
-        if self*gamma != I:
-            raise NotImplementedError('isomorphism_to was not able to recognize the given orders as isomorphic')
-        assert gamma*other == I
+        # First try a theta series check, up to bound B
+        if self.unit_ideal().theta_series_vector(B) != other.unit_ideal().theta_series_vector(B):
+            raise ValueError('quaternion orders not isomorphic')
 
-        if conjugator:
-            return gamma
+        # Want to iterate over elements alpha where the square-free part of nrd(alpha) divides prod(Q.ramified_primes()),
+        # and each time try attempt_isomorphism with the order conjugated by alpha.
+        # But in general finding all such elements alpha is hard,
+        # so we just try 1, i, j, k first.
+        for alpha in [1] + Q.gens():
+            other_conj = other
+            if alpha != 1:
+                other_conj = Q.quaternion_order((alpha.inverse() * other * alpha).basis())
+            found, gamma = attempt_isomorphism(self, other_conj)
+            if found:
+                if conjugator:
+                    return gamma
+                else:
+                    ims = [~gamma * gen * gamma for gen in Q.gens()]
+                    return self.hom(ims, other, check=False)
 
-        ims = [~gamma * gen * gamma for gen in Q.gens()]
-        return self.hom(ims, other, check=False)
+        # We can tell if 1, i, j, k cover all the alpha we need to test,
+        # by checking if we have additional ramified primes which are not the square-free parts of nrd(i), nrd(j) or nrd(k)
+        a, b = -Q.invariants()[0], -Q.invariants()[1]
+        square_free_invariants = [a.squarefree_part(), b.squarefree_part(), (a*b).squarefree_part()]
+        is_result_guaranteed = len([a for a in Q.ramified_primes() if a not in square_free_invariants]) == 0
+
+        if is_result_guaranteed:
+            raise ValueError('quaternion orders not isomorphic')
+
+        # Otherwise, there might be other unknown alpha's giving isomorphism. If so we can't find them.
+        raise NotImplementedError("isomorphism_to was not able to recognize the given orders as isomorphic")
 
 
 class QuaternionFractionalIdeal(Ideal_fractional):
