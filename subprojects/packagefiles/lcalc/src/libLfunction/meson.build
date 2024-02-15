@@ -53,4 +53,5 @@ lfunction = shared_library('Lfunction', sources,
 lcalc_dep = declare_dependency(
     link_with : lfunction,
     include_directories: include_directories('.'),
+    sources : headers_copy
 )
