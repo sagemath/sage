@@ -2448,10 +2448,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         ::
 
             sage: p = 7
-            sage: K.<i> = GF(p^2)
-            sage: a, b = K.random_element(), K.random_element()
-            sage: while 4*a^3 + 27*b^2 == 0: a, b = K.random_element(), K.random_element()
-            sage: E = EllipticCurve(K, a, b)
+            sage: K.<a> = GF(p^2)
+            sage: E = EllipticCurve(j=K.random_element())
             sage: E.multiplication_by_m(p * 2)[0] == E.multiplication_by_m(p * 2, x_only=True)
             True
         """
