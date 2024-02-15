@@ -47,10 +47,11 @@ def acyclic_orientations(G):
 
     ALGORITHM:
 
-    The algorithm is based on a paper by Mathew B. Squire, presenting an efficient
-    algorithm for listing the acyclic orientations of a graph. The algorithm is
-    shown to require O(n) time per acyclic orientation generated, making it the
-    most efficient known algorithm for generating acyclic orientations.
+    The algorithm is based on [Sq1998]_.
+    It presents an efficient algorithm for listing the acyclic orientations of a
+    graph. The algorithm is shown to require O(n) time per acyclic orientation
+    generated, making it the most efficient known algorithm for generating acyclic
+    orientations.
 
     The function uses a recursive approach to generate acyclic orientations of the
     graph. It reorders the vertices and edges of the graph, creating a new graph
@@ -246,7 +247,7 @@ def acyclic_orientations(G):
 
     # Reorder vertices based on the logic in reorder_vertices function
     vertex_labels = reorder_vertices(G)
-    
+
     # Create a new graph with updated vertex labels using SageMath
     new_G = Graph()
     for u, v in G.edges(labels=False):  # Assuming the graph edges are unlabelled
