@@ -758,7 +758,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
                 self('nan'), self('nan', 'nan'), self('inf', 'nan')]
 
     def _roots_univariate_polynomial(self, pol, ring, multiplicities,
-                                     algorithm, proof=True):
+                                     algorithm, proof=True, warn=True):
         r"""
         Compute the roots of ``pol``.
 
@@ -883,8 +883,8 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
         try:
             sig_on()
             while ((isolated < deg or any(acb_rel_accuracy_bits(&roots[i]) < tgtprec
-                                        for i in range(deg)))
-                and prec < maxprec):
+                                          for i in range(deg)))
+                   and prec < maxprec):
                 acb_poly_set_round(rounded_poly, poly._poly, prec)
                 maxiter = min(max(deg, 32), prec)
                 if (prec == initial_prec):
@@ -898,7 +898,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
                 if proof:
                     raise ValueError("unable to isolate the roots (try using "
                             "proof=False or increasing the precision)")
-                else:
+                elif warn:
                     warnings.warn("roots may have been lost")
 
             _acb_vec_sort_pretty(roots, deg)
