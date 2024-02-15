@@ -6,7 +6,7 @@ conf.set('PRECISION_DOUBLE', 1) # TODO: add more precision options
 # doing the latter causes the other files in src/libLfunction
 # to prefer the source-tree version of config.h from the dist
 # tarball over the one in the build-tree that the user generates.
-configure_file(
+config_h = configure_file(
     output : 'config.h',
     configuration : conf,
     install_dir : get_option('includedir'),

@@ -1,4 +1,4 @@
-headers = [
+headers = files(
     'L.h',
     'Lcomplex.h',
     'Ldokchitser.h',
@@ -17,8 +17,9 @@ headers = [
     'Lnumberzeros.h',
     'Lriemannsiegel.h',
     'Lvalue.h'
-]
+) + config_h
 install_headers(headers, subdir : 'lcalc')
+subdir('lcalc')
 
 # TODO: if PRECISION_MULTIPLE
 # pkginclude_HEADERS += mpreal.h Lmpreal.h
@@ -48,4 +49,8 @@ lfunction = shared_library('Lfunction', sources,
     include_directories : include_directories('.'),
     dependencies : [config_h_dep],
     install : true
+)
+lcalc_dep = declare_dependency(
+    link_with : lfunction,
+    include_directories: include_directories('.'),
 )

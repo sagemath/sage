@@ -22,6 +22,3 @@ cc.has_function('mkstemp', required : true)
 #subdir('doc')
 subdir('src')
 #subdir('tests')
-
-lcalc_dep = declare_dependency(
-    link_with : lfunction)
