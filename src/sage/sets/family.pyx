@@ -42,7 +42,7 @@ Check :trac:`12482` (shall be run in a fresh session)::
 import types
 from copy import copy
 from pprint import pformat, saferepr
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping, Sequence
 
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
@@ -58,23 +58,47 @@ from sage.sets.non_negative_integers import NonNegativeIntegers
 CombinatorialClass = LazyImport('sage.combinat.combinat', 'CombinatorialClass')
 
 
+
 def Family(indices, function=None, hidden_keys=[], hidden_function=None,
            lazy=False, name=None, *, category=None):
     r"""
-    A Family is an associative container which models a family
-    `(f_i)_{i \in I}`. Then, ``f[i]`` returns the element of the family
-    indexed by `i`. Whenever available, set and combinatorial class
-    operations (counting, iteration, listing) on the family are induced
-    from those of the index set.
+    An immutable :class:`Container`, modeling a family `(f_i)_{i \in I}`.
 
-    There are several available implementations (classes) for different
-    usages; Family serves as a factory, and will create instances of
-    the appropriate classes depending on its arguments.
+    :func:`Family` serves as a factory. Depending on its arguments, it constructs
+    an instance of a subclass of :class:`~sage.sets.family.AbstractFamily`.
+    Whenever possible, set and combinatorial operations (counting, iteration,
+    listing) on the family are induced from those of the ``indices``.
+
+    Like :class:`collections.abc.Mapping` subclasses such as :class:`dict`, it is an
+    associative container, providing methods :meth:`~sage.sets.family.AbstractFamily.keys`
+    and :meth:`~sage.sets.family.AbstractFamily.values`.
+    Thus, ``f[i]`` returns the element of the family ``f`` indexed by the key ``i``.
+
+    However, in contrast to :class:`Mapping` subclasses, not the
+    :meth:`~sage.sets.family.AbstractFamily.keys`
+    but the :meth:`~sage.sets.family.AbstractFamily.values` are considered the
+    "elements" of a :func:`Family` for methods such as
+    :meth:`~sage.sets.family.AbstractFamily.__contains__`
+    and :meth:`~sage.sets.family.AbstractFamily.__iter__`.
+
+    A :func:`Family` is a :class:`Parent` in a suitable subcategory of :class:`Sets`.
+    Also parent methods of this category such as
+    :meth:`~sage.category.sets_cat.Sets.ParentMethods.cardinality` refer to the
+    :meth:`~sage.sets.family.AbstractFamily.values` side of a `Family`.
+
+    .. NOTE::
+
+       The current implementation often assumes that the function $f$
+       is injective; if it is not, `__iter__` may repeat elements, and
+       :meth:`cardinality` may be wrong.
+
+    Equality of families takes the indices into account; it is not just equality of sets.
 
     INPUT:
 
-    - ``indices`` -- the indices for the family
-    - ``function`` -- (optional) the function `f` applied to all visible
+    - ``indices`` -- the indices (keys) for the family, or a :class:`dict`
+      (or any :class:`collections.abc.Mapping`) sending keys to values
+    - ``function`` -- (optional) the function `f` to be applied to all visible
       indices; the default is the identity function
     - ``hidden_keys`` -- (optional) a list of hidden indices that can be
       accessed through ``my_family[i]``
@@ -190,7 +214,7 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None,
         True
 
     Beware that for those kind of families len(f) is not supposed to
-    work. As a replacement, use the .cardinality() method::
+    work. As a replacement, use the method :meth:`cardinality`::
 
        sage: f = Family(Permutations(3), attrcall("to_lehmer_code"))
        sage: list(f)
@@ -199,8 +223,9 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None,
        6
 
     Caveat: Only certain families with lazy behavior can be pickled. In
-    particular, only functions that work with Sage's pickle_function
-    and unpickle_function (in sage.misc.fpickle) will correctly
+    particular, only functions that work with Sage's
+    :func:`~sage.misc.fpickle.pickle_function`
+    and :func:`~sage.misc.fpickle.unpickle_function` will correctly
     unpickle. The following two work::
 
        sage: f = Family(Permutations(3), lambda p: p.to_lehmer_code()); f
@@ -296,7 +321,8 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None,
         sage: len(f)
         3
 
-    Family accept finite and infinite EnumeratedSets as input::
+    Family accept finite and infinite
+    :class:`~sage.categories.enumerated_sets.EnumeratedSets` as input::
 
         sage: f = Family(FiniteEnumeratedSet([1,2,3]))
         sage: f
@@ -399,9 +425,9 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None,
                 raise ValueError("keyword 'lazy' only makes sense together with keyword 'function'")
             if isinstance(indices, (FiniteFamily, LazyFamily, TrivialFamily)) and category is None:
                 return indices
-            if isinstance(indices, dict):
+            if isinstance(indices, Mapping):
                 return FiniteFamily(indices, category=category)
-            if isinstance(indices, (list, tuple)):
+            if isinstance(indices, Sequence):
                 return TrivialFamily(indices, category=category)
             if (indices in EnumeratedSets()
                     or isinstance(indices, CombinatorialClass)):
@@ -433,7 +459,7 @@ cdef class AbstractFamily(Parent):
     """
     def hidden_keys(self):
         """
-        Returns the hidden keys of the family, if any.
+        Return the hidden keys of the family, if any.
 
         EXAMPLES::
 
@@ -455,6 +481,7 @@ cdef class AbstractFamily(Parent):
         """
         raise NotImplementedError
 
+    @abstract_method
     def values(self):
         """
         Return the elements (values) of this family.
@@ -485,7 +512,7 @@ cdef class AbstractFamily(Parent):
     def zip(self, f, other, name=None):
         r"""
         Given two families with same index set `I` (and same hidden
-        keys if relevant), returns the family
+        keys if relevant), return the family
         `( f(self[i], other[i]) )_{i \in I}`
 
         .. TODO:: generalize to any number of families and merge with map?
@@ -506,7 +533,7 @@ cdef class AbstractFamily(Parent):
     def map(self, f, name=None):
         r"""
         Return the family `( f(\mathtt{self}[i]) )_{i \in I}`, where
-        `I` is the index set of self.
+        `I` is the index set of ``self``.
 
         .. TODO:: good name?
 
@@ -525,7 +552,7 @@ cdef class AbstractFamily(Parent):
     @cached_method
     def inverse_family(self):
         """
-        Returns the inverse family, with keys and values
+        Return the inverse family, with keys and values
         exchanged. This presumes that there are no duplicate values in
         ``self``.
 
@@ -656,7 +683,7 @@ cdef class FiniteFamily(AbstractFamily):
 
     def keys(self):
         """
-        Returns the index set of this family
+        Return the index set of this family
 
         EXAMPLES::
 
@@ -669,7 +696,7 @@ cdef class FiniteFamily(AbstractFamily):
 
     def values(self):
         """
-        Returns the elements of this family
+        Return the elements of this family
 
         EXAMPLES::
 
