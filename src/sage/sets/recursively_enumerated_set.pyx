@@ -25,7 +25,7 @@ No hypothesis on the structure
 
 What we mean by "no hypothesis" is that the set is not known
 to be a forest, symmetric, or graded. However, it may have other
-structures, such as not containing an oriented cycle, that do not
+structure, such as not containing an oriented cycle, that does not
 help with the enumeration.
 
 In this example, the seed is 0 and the successor function is either ``+2``
@@ -171,8 +171,25 @@ Only two things are necessary to define a set using a
 :class:`RecursivelyEnumeratedSet` object (the other
 classes being very similar):
 
-.. figure:: ../../media/recursively-enumerated-set.png
-    :scale: 67 %
+.. MATH::
+
+    \begin{array}{rcl}
+                                   & ^{``}\hspace{0.5em}^{"} \\
+                          \swarrow & \downarrow & \searrow \\[5pt]
+        ^{``}a^{"} \hspace{3.125em} & ^{``}b^{"} & \hspace{3.125em}^{``}c^{"} \\
+        \begin{array}{rcl}
+                         \swarrow  & \downarrow & \searrow \\[5pt]
+                  ^{``}aa^{"}\: & ^{``}ab^{"} & \:^{``}ac^{"} \\
+        \end{array} & 
+        \begin{array}{rcl}
+                         \swarrow  & \downarrow & \searrow \\[5pt]
+                  ^{``}ba^{"}\: & ^{``}bb^{"} & \:^{``}bc^{"} \\
+        \end{array} & 
+        \begin{array}{rcl}
+                         \swarrow  & \downarrow & \searrow \\[5pt]
+                  ^{``}ca^{"}\: & ^{``}cb^{"} & \:^{``}cc^{"} \\
+        \end{array}
+    \end{array}
 
 For the previous example, the two necessary pieces of information are:
 
@@ -369,7 +386,7 @@ def RecursivelyEnumeratedSet(seeds, successors, structure=None,
 
     .. WARNING::
 
-        If you do not set a good structure, you might obtain bad results,
+        If you do not set a valid structure, you might obtain bad results,
         like elements generated twice::
 
             sage: f = lambda a: [a-1,a+1]
@@ -1537,9 +1554,9 @@ def search_forest_iterator(roots, children, algorithm='depth'):
          [0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]]
     """
     # Little trick: the same implementation handles both depth and
-    # breadth first search. Setting the position to -1 makes a depth search
+    # breadth first search. Setting position to -1 initiates a depth search
     # (you ask the children for the last node you met). Setting
-    # position on 0 makes a breadth search (enumerate all the
+    # position on 0 initiates a breadth search (enumerate all the
     # descendants of a node before going on to the next father)
     if algorithm == 'depth':
         position = -1
@@ -1884,7 +1901,7 @@ class RecursivelyEnumeratedSet_forest(Parent):
         r"""
         Return an iterator over the elements of ``self`` of given depth.
         An element of depth `n` can be obtained by applying the
-        children function `n` times from the root. This function is not affected
+        children function `n` times from a root. This function is not affected
         by post processing.
 
         EXAMPLES::
@@ -1915,7 +1932,7 @@ class RecursivelyEnumeratedSet_forest(Parent):
         r"""
         Return an iterator over the elements of ``self`` of given depth.
         An element of depth `n` can be obtained by applying the
-        children function `n` times from the root.
+        children function `n` times from a root.
 
         EXAMPLES::
 
