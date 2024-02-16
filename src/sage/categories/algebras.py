@@ -73,10 +73,7 @@ class Algebras(CategoryWithAxiom_over_base_ring):
             sage: QQ['x'] in Algebras(CDF)                                              # needs sage.rings.complex_double
             False
         """
-        if super().__contains__(x):
-            return True
-        from sage.rings.ring import Algebra
-        return isinstance(x, Algebra) and x.base_ring() == self.base_ring()
+        return super().__contains__(x)
 
     # def extra_super_categories(self):
     #     """
