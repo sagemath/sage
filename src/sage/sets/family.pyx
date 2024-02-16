@@ -314,7 +314,8 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None,
     Here is a close variant where the function for the hidden keys is
     different from that for the other keys::
 
-        sage: f = Family([3,4,7], lambda i: 2*i, hidden_keys=[2], hidden_function = lambda i: 3*i)
+        sage: f = Family([3,4,7], lambda i: 2*i,
+        ....:            hidden_keys=[2], hidden_function=lambda i: 3*i)
         sage: f
         Finite family {3: 6, 4: 8, 7: 14}
         sage: f.keys()
@@ -412,7 +413,7 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None,
 
     TESTS::
 
-        sage: f = Family({1:'a', 2:'b', 3:'c'})
+        sage: f = Family({1: 'a', 2: 'b', 3: 'c'})
         sage: f
         Finite family {1: 'a', 2: 'b', 3: 'c'}
         sage: f[2]
@@ -422,7 +423,7 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None,
 
     ::
 
-        sage: f = Family({1:'a', 2:'b', 3:'c'}, lazy=True)
+        sage: f = Family({1: 'a', 2: 'b', 3: 'c'}, lazy=True)
         Traceback (most recent call last):
         ...
         ValueError: keyword 'lazy' only makes sense together with keyword 'function'
@@ -431,7 +432,10 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None,
 
         sage: f = Family(list(range(1,27)), lambda i: chr(i+96))
         sage: f
-            Finite family {1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 6: 'f', 7: 'g', 8: 'h', 9: 'i', 10: 'j', 11: 'k', 12: 'l', 13: 'm', 14: 'n', 15: 'o', 16: 'p', 17: 'q', 18: 'r', 19: 's', 20: 't', 21: 'u', 22: 'v', 23: 'w', 24: 'x', 25: 'y', 26: 'z'}
+        Finite family {1: 'a', 2: 'b', 3: 'c', 4: 'd', 5: 'e', 6: 'f', 7: 'g', 8: 'h',
+                       9: 'i', 10: 'j', 11: 'k', 12: 'l', 13: 'm', 14: 'n', 15: 'o',
+                       16: 'p', 17: 'q', 18: 'r', 19: 's', 20: 't', 21: 'u', 22: 'v',
+                       23: 'w', 24: 'x', 25: 'y', 26: 'z'}
         sage: f[2]
         'b'
 
@@ -714,7 +718,7 @@ cdef class FiniteFamily(AbstractFamily):
 
     The order of the elements can be specified using the ``keys`` optional argument::
 
-        sage: f = FiniteFamily({"a": "aa", "b": "bb", "c" : "cc" }, keys = ["c", "a", "b"])
+        sage: f = FiniteFamily({"a": "aa", "b": "bb", "c" : "cc"}, keys=["c", "a", "b"])
         sage: list(f)
         ['cc', 'aa', 'bb']
 
@@ -753,13 +757,13 @@ cdef class FiniteFamily(AbstractFamily):
 
         EXAMPLES::
 
-            sage: f = Family(["c", "a", "b"], lambda x: x+x)
+            sage: f = Family(["c", "a", "b"], lambda x: x + x)
             sage: hash(f) == hash(f)
             True
-            sage: f2 = Family(["a", "c", "b"], lambda x: x+x)
+            sage: f2 = Family(["a", "c", "b"], lambda x: x + x)
             sage: hash(f) == hash(f2)
             True
-            sage: g = Family(["b", "c", "a"], lambda x: x+x+x)
+            sage: g = Family(["b", "c", "a"], lambda x: x + x + x)
             sage: hash(f) == hash(g)
             False
 
@@ -782,13 +786,13 @@ cdef class FiniteFamily(AbstractFamily):
         EXAMPLES::
 
             sage: from sage.sets.family import TrivialFamily
-            sage: f = Family(["c", "a", "b"], lambda x: x+x)
+            sage: f = Family(["c", "a", "b"], lambda x: x + x)
             sage: bool(f)
             True
             sage: g = Family({})
             sage: bool(g)
             False
-            sage: h = Family([], lambda x: x+x)
+            sage: h = Family([], lambda x: x + x)
             sage: bool(h)
             False
         """
@@ -800,7 +804,7 @@ cdef class FiniteFamily(AbstractFamily):
 
         EXAMPLES::
 
-            sage: f = Family(["c", "a", "b"], lambda x: x+x)
+            sage: f = Family(["c", "a", "b"], lambda x: x + x)
             sage: f.keys()
             ['c', 'a', 'b']
         """
@@ -813,7 +817,7 @@ cdef class FiniteFamily(AbstractFamily):
 
         EXAMPLES::
 
-            sage: f = Family(["c", "a", "b"], lambda x: x+x)
+            sage: f = Family(["c", "a", "b"], lambda x: x + x)
             sage: f.values()
             ['cc', 'aa', 'bb']
         """
@@ -828,9 +832,9 @@ cdef class FiniteFamily(AbstractFamily):
 
         EXAMPLES::
 
-            sage: Family({"a":1, "b":2, "c":3}).has_key("a")
+            sage: Family({"a": 1, "b": 2, "c": 3}).has_key("a")
             True
-            sage: Family({"a":1, "b":2, "c":3}).has_key("d")
+            sage: Family({"a": 1, "b": 2, "c": 3}).has_key("d")
             False
         """
         return k in self._dictionary
@@ -839,8 +843,8 @@ cdef class FiniteFamily(AbstractFamily):
         """
         EXAMPLES::
 
-            sage: f = Family({1:'a', 2:'b', 3:'c'})
-            sage: g = Family({1:'a', 2:'b', 3:'c'})
+            sage: f = Family({1: 'a', 2: 'b', 3: 'c'})
+            sage: g = Family({1: 'a', 2: 'b', 3: 'c'})
             sage: f == g
             True
 
@@ -848,9 +852,9 @@ cdef class FiniteFamily(AbstractFamily):
 
             sage: from sage.sets.family import FiniteFamily
 
-            sage: f1 = FiniteFamily({1:'a', 2:'b', 3:'c'}, keys = [1,2,3])
-            sage: g1 = FiniteFamily({1:'a', 2:'b', 3:'c'}, keys = [1,2,3])
-            sage: h1 = FiniteFamily({1:'a', 2:'b', 3:'c'}, keys = [2,1,3])
+            sage: f1 = FiniteFamily({1: 'a', 2: 'b', 3: 'c'}, keys=[1,2,3])
+            sage: g1 = FiniteFamily({1: 'a', 2: 'b', 3: 'c'}, keys=[1,2,3])
+            sage: h1 = FiniteFamily({1: 'a', 2: 'b', 3: 'c'}, keys=[2,1,3])
 
             sage: f1 == g1
             True
@@ -970,7 +974,7 @@ cdef class FiniteFamily(AbstractFamily):
 
             sage: from sage.sets.family import FiniteFamily
             sage: f = FiniteFamily({3: 'a'})
-            sage: f.__setstate__({'dictionary': {4:'b'}})
+            sage: f.__setstate__({'dictionary': {4: 'b'}})
             sage: f
             Finite family {4: 'b'}
         """
@@ -1184,7 +1188,7 @@ class LazyFamily(AbstractFamily):
             sage: g = LazyFamily([], lambda i: 2*i)
             sage: bool(g)
             False
-            sage: h = Family(ZZ, lambda x: x+x)
+            sage: h = Family(ZZ, lambda x: x + x)
             sage: bool(h)
             True
         """
