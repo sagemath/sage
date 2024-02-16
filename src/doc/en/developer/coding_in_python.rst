@@ -493,13 +493,16 @@ guide you in choosing from the most relevant exceptions to Sage. Raise
   like) but the input is not appropriate.
 
 - `ZeroDivisionError
-  <https://docs.python.org/3/library/exceptions.html#ZeroDivisionError>`_: if the
-  method performs division but the input is zero. Note that for non-invertible
-  input values, ``ArithmeticError`` is more appropriate.
+  <https://docs.python.org/3/library/exceptions.html#ZeroDivisionError>`_: if
+  the method performs division but the input is zero. Note that for
+  non-invertible input values, ``ArithmeticError`` is more appropriate. As
+  derived from ``ArithmeticError``, ``ZeroDivisionError`` can be caught as
+  ``ArithmeticError``.
 
 - `NotImplementedError
   <https://docs.python.org/3/library/exceptions.html#NotImplementedError>`_: if
-  the input is for a feature not yet implemented by the method.
+  the input is for a feature not yet implemented by the method. Note that
+  ``NotImplementedError`` is derived from ``RuntimeError``.
 
 If no specific error seems to apply for your situation, `RuntimeError
 <https://docs.python.org/3/library/exceptions.html#RuntimeError>`_ can be used.
