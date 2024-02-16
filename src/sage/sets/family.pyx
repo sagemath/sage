@@ -55,6 +55,7 @@ from sage.misc.lazy_import import LazyImport
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
+from sage.sets.image_set import ImageSubobject
 from sage.sets.non_negative_integers import NonNegativeIntegers
 from sage.structure.parent import Parent
 
@@ -1004,7 +1005,7 @@ class LazyFamily(AbstractFamily):
     Instances should be created via the :func:`Family` factory. See its
     documentation for examples and tests.
     """
-    def __init__(self, set, function, name=None, category=None):
+    def __init__(self, set, function, name=None, category=None, is_injective=None):
         """
         TESTS::
 
@@ -1032,11 +1033,29 @@ class LazyFamily(AbstractFamily):
         elif category is None:
             category = EnumeratedSets()
 
+        set = copy(set)
+
+        if is_injective is None:
+            from sage.categories.map import is_Map
+            # This duplicates code in ImageSubobject.__init__
+            # but we use the different default is_injective=True here
+            if is_Map(function):
+                try:
+                    is_injective = map.is_injective()
+                except NotImplementedError:
+                    is_injective = True
+            else:
+                is_injective = True
+
+        self._values = ImageSubobject(function, set, category=category, is_injective=is_injective)
         super().__init__(category=category)
 
-        self.set = copy(set)
+        self.set = set
         self.function = function
         self.function_name = name
+
+    def _element_constructor_(self, x):
+        return self.values()(x)
 
     def __bool__(self):
         r"""
@@ -1161,6 +1180,12 @@ class LazyFamily(AbstractFamily):
         """
         return self.set
 
+    def values(self):
+        """
+        Return the set of values of ``self`` as an :class:`~sage.sets.image_set.ImageSubobject`.
+        """
+        return self._values
+
     def cardinality(self):
         """
         Return the number of elements in ``self``.
@@ -1185,11 +1210,8 @@ class LazyFamily(AbstractFamily):
             sage: F = Family(C, lambda x: x)
             sage: F.cardinality()
             +Infinity
-            """
-        try:
-            return Integer(len(self.set))
-        except (AttributeError, NotImplementedError, TypeError):
-            return self.set.cardinality()
+        """
+        return self.values().cardinality()
 
     def __iter__(self):
         """
@@ -1200,8 +1222,7 @@ class LazyFamily(AbstractFamily):
             sage: [i for i in f]
             [6, 8, 14]
         """
-        for i in self.set:
-            yield self[i]
+        yield from self.values()
 
     def __contains__(self, x):
         """
@@ -1218,10 +1239,10 @@ class LazyFamily(AbstractFamily):
             sage: 5 in LazyFamily(NonNegativeIntegers(), lambda i: 2*i)
             Traceback (most recent call last):
             ...
-            ValueError: family must be finite to check containment
+            NotImplementedError
         """
         if self not in FiniteEnumeratedSets():
-            raise ValueError('family must be finite to check containment')
+            return x in self.values()
         return x in iter(self)
 
     def __getitem__(self, i):
