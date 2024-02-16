@@ -572,10 +572,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         P = args[0]
         if isinstance(P, groups.AdditiveAbelianGroupElement) and isinstance(P.parent(),ell_torsion.EllipticCurveTorsionSubgroup):
             return self(P.element())
-        if isinstance(args[0],
-                      (ell_point.EllipticCurvePoint_field,
-                       ell_point.EllipticCurvePoint_number_field,
-                       ell_point.EllipticCurvePoint)):
+        if isinstance(args[0], ell_point.EllipticCurvePoint):
             if P.curve() is self:
                 return P
             # check if denominator of the point contains a factor of the
