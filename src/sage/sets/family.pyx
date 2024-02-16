@@ -47,6 +47,7 @@ from collections.abc import Iterable, Mapping, Sequence
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
+<<<<<<< HEAD:src/sage/sets/family.pyx
 from sage.misc.cachefunc import cached_method
 from sage.misc.call import AttrCallObject
 from sage.misc.lazy_import import LazyImport
@@ -57,6 +58,19 @@ from sage.sets.non_negative_integers import NonNegativeIntegers
 
 CombinatorialClass = LazyImport('sage.combinat.combinat', 'CombinatorialClass')
 
+=======
+from sage.categories.sets_cat import Sets
+from sage.misc.abstract_method import abstract_method
+from sage.misc.cachefunc import cached_method
+from sage.misc.call import AttrCallObject
+from sage.misc.lazy_import import lazy_import
+from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
+from sage.sets.non_negative_integers import NonNegativeIntegers
+from sage.rings.infinity import Infinity
+from sage.rings.integer import Integer
+from sage.structure.parent import Parent
+lazy_import('sage.combinat.combinat', 'CombinatorialClass')
+>>>>>>> 3b2468e8aea (src/sage/sets/family.py: Accept init arg 'category' in Family implementation classes):src/sage/sets/family.py
 
 
 def Family(indices, function=None, hidden_keys=[], hidden_function=None,
@@ -362,7 +376,7 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None,
         sage: f = Family({1:'a', 2:'b', 3:'c'}, lazy=True)
         Traceback (most recent call last):
         ...
-        ValueError: lazy keyword only makes sense together with function keyword
+        ValueError: keyword 'lazy' only makes sense together with keyword 'function'
 
     ::
 
@@ -481,7 +495,7 @@ cdef class AbstractFamily(Parent):
         """
         raise NotImplementedError
 
-    @abstract_method
+    @abstract_method(optional=True)
     def values(self):
         """
         Return the elements (values) of this family.
@@ -569,7 +583,6 @@ cdef class AbstractFamily(Parent):
         return Family({self[k]: k for k in self.keys()})
 
 
-
 cdef class FiniteFamily(AbstractFamily):
     r"""
     A :class:`FiniteFamily` is an associative container which models a finite
@@ -612,7 +625,7 @@ cdef class FiniteFamily(AbstractFamily):
 
     """
 
-    def __init__(self, dictionary, keys=None):
+    def __init__(self, dictionary, keys=None, category=None):
         """
         TESTS::
 
@@ -629,7 +642,7 @@ cdef class FiniteFamily(AbstractFamily):
             Finite family {1: 'a', 3: 'b', 4: 'c'}
             """
         # TODO: use keys to specify the order of the elements
-        Parent.__init__(self, category=FiniteEnumeratedSets())
+        super().__init__(category=FiniteEnumeratedSets().or_subcategory(category))
         self._dictionary = dict(dictionary)
         self._keys = keys
 
@@ -864,6 +877,7 @@ cdef class FiniteFamily(AbstractFamily):
         self.__init__(state['dictionary'], keys=state.get("keys"))
 
 
+
 class FiniteFamilyWithHiddenKeys(FiniteFamily):
     r"""
     A close variant of :class:`FiniteFamily` where the family contains some
@@ -874,14 +888,14 @@ class FiniteFamilyWithHiddenKeys(FiniteFamily):
     Caveat: Only instances of this class whose functions are compatible
     with :mod:`sage.misc.fpickle` can be pickled.
     """
-    def __init__(self, dictionary, hidden_keys, hidden_function, keys=None):
+    def __init__(self, dictionary, hidden_keys, hidden_function, keys=None, category=None):
         """
         EXAMPLES::
 
             sage: f = Family([3,4,7], lambda i: 2*i, hidden_keys=[2])
             sage: TestSuite(f).run()
         """
-        FiniteFamily.__init__(self, dictionary, keys=keys)
+        super().__init__(dictionary, keys=keys, category=category)
         self._hidden_keys = hidden_keys
         self.hidden_function = hidden_function
         self.hidden_dictionary = {}
@@ -980,7 +994,7 @@ class LazyFamily(AbstractFamily):
     Instances should be created via the :func:`Family` factory. See its
     documentation for examples and tests.
     """
-    def __init__(self, set, function, name=None):
+    def __init__(self, set, function, name=None, category=None):
         """
         TESTS::
 
@@ -998,15 +1012,17 @@ class LazyFamily(AbstractFamily):
             Lazy family (<lambda>(i))_{i in [3, 4, 7]}
         """
         if set in FiniteEnumeratedSets():
-            category = FiniteEnumeratedSets()
+            category = FiniteEnumeratedSets().or_subcategory(category)
         elif set in InfiniteEnumeratedSets():
-            category = InfiniteEnumeratedSets()
+            category = InfiniteEnumeratedSets().or_subcategory(category)
         elif isinstance(set, (list, tuple, range, CombinatorialClass)):
-            category = FiniteEnumeratedSets()
-        else:
+            category = FiniteEnumeratedSets().or_subcategory(category)
+        elif set in Sets():
+            category = Sets().or_subcategory(category)
+        elif category is None:
             category = EnumeratedSets()
 
-        Parent.__init__(self, category=category)
+        super().__init__(category=category)
 
         self.set = copy(set)
         self.function = function
@@ -1273,7 +1289,7 @@ class TrivialFamily(AbstractFamily):
     Instances should be created via the :func:`Family` factory. See its
     documentation for examples and tests.
     """
-    def __init__(self, enumeration):
+    def __init__(self, enumeration, category=None):
         """
         EXAMPLES::
 
@@ -1284,7 +1300,8 @@ class TrivialFamily(AbstractFamily):
             Family (3, 4, 7)
             sage: TestSuite(f).run()
         """
-        Parent.__init__(self, category=FiniteEnumeratedSets())
+        category = FiniteEnumeratedSets().or_subcategory(category)
+        super().__init__(category=category)
         self._enumeration = tuple(enumeration)
 
     def __bool__(self):
@@ -1449,7 +1466,7 @@ class EnumeratedFamily(LazyFamily):
     Instances should be created via the :func:`Family` factory. See its
     documentation for examples and tests.
     """
-    def __init__(self, enumset):
+    def __init__(self, enumset, category=None):
         """
         EXAMPLES::
 
@@ -1479,7 +1496,7 @@ class EnumeratedFamily(LazyFamily):
             baseset = NonNegativeIntegers()
         else:
             baseset = range(enumset.cardinality())
-        LazyFamily.__init__(self, baseset, enumset.unrank)
+        super().__init__(baseset, enumset.unrank, category=category)
         self.enumset = enumset
 
     def __eq__(self, other):
