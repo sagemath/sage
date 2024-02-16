@@ -19,7 +19,7 @@ Check :trac:`12482` (shall be run in a fresh session)::
 
     sage: P = Partitions(3)                                                             # needs sage.combinat
     sage: Family(P, lambda x: x).category()                                             # needs sage.combinat
-    Category of finite enumerated sets
+    Category of finite enumerated families
 """
 
 # *****************************************************************************
@@ -45,6 +45,7 @@ from pprint import pformat, saferepr
 from collections.abc import Iterable, Mapping, Sequence
 
 from sage.categories.enumerated_sets import EnumeratedSets
+from sage.categories.families import Families
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.sets_cat import Sets
@@ -367,14 +368,14 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None,
         sage: PA[(4, 10, 5, 0, 0)]
         A 2-dimensional polyhedron in RDF^2 defined as the convex hull of 4 vertices
         sage: PA.category()
-        Category of sets
+        Category of families
 
     We can refine the category::
 
         sage: PA = Family(b_set, polyhedron_Ax_le_b, is_injective=False,
         ....:             category=PolyhedralSets(RDF))
         sage: PA.category()
-        Category of polyhedral sets over Real Double Field
+        Join of Category of polyhedral sets over Real Double Field and Category of families
 
     The map is not injective::
 
@@ -570,9 +571,9 @@ cdef class AbstractFamily(Parent):
         This is the same as calling :func:`~sage.sets.set.Set`::
 
             sage: f.as_set()
-            {'c', 'a', 'b'}
+            {...}
             sage: Set(f)
-            {'c', 'a', 'b'}
+            {...}
         """
         return Set(self.values())
 
@@ -733,7 +734,7 @@ cdef class FiniteFamily(AbstractFamily):
             Finite family {1: 'a', 3: 'b', 4: 'c'}
             """
         # TODO: use keys to specify the order of the elements
-        super().__init__(category=FiniteEnumeratedSets().or_subcategory(category))
+        super().__init__(category=Families() & FiniteEnumeratedSets().or_subcategory(category))
         self._dictionary = dict(dictionary)
         self._keys = keys
 
@@ -1103,15 +1104,17 @@ class LazyFamily(AbstractFamily):
             Lazy family (<lambda>(i))_{i in [3, 4, 7]}
         """
         if set in FiniteEnumeratedSets():
-            category = FiniteEnumeratedSets().or_subcategory(category)
+            set_category = FiniteEnumeratedSets()
         elif set in InfiniteEnumeratedSets():
-            category = InfiniteEnumeratedSets().or_subcategory(category)
+            set_category = InfiniteEnumeratedSets()
         elif isinstance(set, (list, tuple, range, CombinatorialClass)):
-            category = FiniteEnumeratedSets().or_subcategory(category)
+            set_category = FiniteEnumeratedSets()
         elif set in Sets():
-            category = Sets().or_subcategory(category)
+            set_category = Sets()
         elif category is None:
-            category = EnumeratedSets()
+            set_category = EnumeratedSets()
+
+        category = Families() & set_category.or_subcategory(category)
 
         set = copy(set)
 
@@ -1134,6 +1137,7 @@ class LazyFamily(AbstractFamily):
         self.function_name = name
         self._is_injective = is_injective
         self._inverse = inverse
+        self._set_category = set_category
 
     def __bool__(self):
         r"""
@@ -1301,7 +1305,7 @@ class LazyFamily(AbstractFamily):
         """
         Return the set of values of ``self`` as an :class:`~sage.sets.image_set.ImageSet`.
         """
-        return ImageSubobject(self.function, self.set, category=self.category(),
+        return ImageSubobject(self.function, self.set, category=self._set_category,
                               is_injective=self._is_injective, inverse=self._inverse)
 
     def cardinality(self):
@@ -1461,7 +1465,7 @@ class TrivialFamily(AbstractFamily):
             Family (3, 4, 7)
             sage: TestSuite(f).run()
         """
-        category = FiniteEnumeratedSets().or_subcategory(category)
+        category = Families() & FiniteEnumeratedSets().or_subcategory(category)
         super().__init__(category=category)
         self._enumeration = tuple(enumeration)
 
@@ -1664,7 +1668,7 @@ class EnumeratedFamily(LazyFamily):
             sage: from sage.sets.family import EnumeratedFamily
             sage: f = EnumeratedFamily(Permutations(4))
             sage: f.category()
-            Category of finite enumerated sets
+            Category of finite enumerated families
             sage: list(f.keys()) == list(range(f.cardinality()))
             True
             sage: Family(Permutations()).keys()
