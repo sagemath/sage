@@ -1227,7 +1227,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: M._is_binary_linear_matroid_regular()
             True
 
-            sage: MF = matroids.named_matroids.Fano(); MF
+            sage: MF = matroids.catalog.Fano(); MF
             Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
             sage: MFR = MF.representation().change_ring(ZZ); MFR
             [1 0 0 0 1 1 1]
@@ -1368,7 +1368,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: M.is_totally_unimodular(certificate=True)
             (True, GraphicNode (3×2))
 
-            sage: MF = matroids.named_matroids.Fano(); MF
+            sage: MF = matroids.catalog.Fano(); MF
             Fano: Binary matroid of rank 3 on 7 elements, type (3, 0)
             sage: MFR = MF.representation().change_ring(ZZ); MFR
             [1 0 0 0 1 1 1]
