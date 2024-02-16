@@ -322,6 +322,51 @@ cdef class OneSumNode(SumNode):
         """
         return Matrix_cmr_chr_sparse.one_sum(*self.summand_matrices())
 
+    @staticmethod
+    def check(result_matrix, summand_matrices, summand_parent_rows_and_columns):
+        r"""
+        Check that ``result_matrix`` is a 1-sum of ``summand_matrices``.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: from sage.matrix.seymour_decomposition import OneSumNode
+
+            sage: M2 = Matrix_cmr_chr_sparse.one_sum([[1, 0], [-1, 1]],
+            ....:                                    [[1, 1], [-1, 0]])
+            sage: result, certificate = M2.is_totally_unimodular(certificate=True); certificate
+            OneSumNode (4×4) with 2 children
+            sage: OneSumNode.check(M2,
+            ....:                  certificate.summand_matrices(),
+            ....:                  [summand.parent_rows_and_columns()
+            ....:                   for summand in certificate.summands()])
+
+        Symbolic identities::
+
+            sage: from sage.matrix.seymour_decomposition import OneSumNode
+            sage: R.<x,y> = QQ[]
+            sage: A = matrix([[x, 0], [-x, 1]])
+            sage: B = matrix([[x, y], [-x, 0]])
+            sage: A1B = block_diagonal_matrix([A, B])
+            sage: OneSumNode.check(A1B, [A, B], [([0, 1], [0, 1]),
+            ....:                                ([2, 3], [2, 3])])
+
+        Using program analysis::
+
+            sage: # optional - cutgeneratingfunctionology
+            sage: R.<x,y,z> = ParametricRealField({x: 1}, {y: -1}, {z: 0})  # true example
+            sage: A = matrix([[x, 0], [-x, 1]])
+            sage: B = matrix([[x, y], [-x, 0]])
+            sage: A1B = matrix([[z, 0, 0, 0], [-x, z, 0, 0], [], []])
+            sage: OneSumNode.check(A1B, [A, B], [([0, 1], [0, 1]),
+            ....:                                ([2, 3], [2, 3])])
+            sage: # side-effect: R stores polynomial identities
+        """
+        # TODO: Check that summand_parent_rows_and_columns form partitions of rows and columns
+        for matrix, rows_and_columns in zip(summand_matrices, summand_parent_rows_and_columns):
+            assert result_matrix.matrix_from_rows_and_columns(*rows_and_columns) == matrix
+        # TODO: Check zero blocks
+
 
 cdef class TwoSumNode(SumNode):
     r"""
