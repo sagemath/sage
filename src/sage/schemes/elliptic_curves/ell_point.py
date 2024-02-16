@@ -3877,6 +3877,19 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
         return Q
 
+    def __mul__(self, other):
+        r"""
+        For all sage types, _acted_upon_ is called, but for
+        multiplication by a Python int, the slower __mul__
+        is called. Here we bind __mul__ to acted upon so that
+        the fast Pari multiplication is called when possible,
+        even when the scalar is a Python int rather than Sage
+        Integer.
+        """
+        return self._acted_upon_(other, None)
+
+    __rmul__ = __mul__
+
     def log(self, base):
         r"""
         Return the discrete logarithm of this point to the given ``base``.
