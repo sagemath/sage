@@ -147,6 +147,7 @@ additional functionality (e.g. linear extensions).
     - :meth:`chow_ring() <sage.matroids.matroid.Matroid.chow_ring>`
     - :meth:`matroid_polytope() <sage.matroids.matroid.Matroid.matroid_polytope>`
     - :meth:`independence_matroid_polytope() <sage.matroids.matroid.Matroid.independence_matroid_polytope>`
+    - :meth:`lattice_of_flats() <sage.matroids.matroid.Matroid.lattice_of_flats>`
     - :meth:`orlik_solomon_algebra() <sage.matroids.matroid.Matroid.orlik_solomon_algebra>`
     - :meth:`bergman_complex() <sage.matroids.matroid.Matroid.bergman_complex>`
     - :meth:`augmented_bergman_complex() <sage.matroids.matroid.Matroid.augmented_bergman_complex>`
@@ -1113,9 +1114,9 @@ cdef class Matroid(SageObject):
             if certificate:
                 return False, None
             return False
-        YY = self.dual().independent_r_sets(cd)
-        for X in self.independent_r_sets(rd):
-            for Y in YY:
+        D = self.dual()
+        for X in self.independent_r_sets_iterator(rd):
+            for Y in D.independent_r_sets_iterator(cd):
                 if X.isdisjoint(Y):
                     if N._is_isomorphic(self._minor(contractions=X, deletions=Y)):
                         if certificate:
@@ -2405,27 +2406,6 @@ cdef class Matroid(SageObject):
             C.update([self._cocircuit(self.groundset().difference(B).union(set([e]))) for e in B])
         return list(C)
 
-    def cocircuits_iterator(self):
-        """
-        Return an iterator over the cocircuits of the matroid.
-
-        .. SEEALSO::
-
-            :meth:`M.cocircuit() <sage.matroids.matroid.Matroid.cocircuit>`
-
-        EXAMPLES::
-
-            sage: M = matroids.catalog.Fano()
-            sage: sorted([sorted(C) for C in M.cocircuits_iterator()])
-            [['a', 'b', 'c', 'g'], ['a', 'b', 'd', 'e'], ['a', 'c', 'd', 'f'],
-            ['a', 'e', 'f', 'g'], ['b', 'c', 'e', 'f'], ['b', 'd', 'f', 'g'],
-            ['c', 'd', 'e', 'g']]
-        """
-        C = set()
-        for B in self.bases_iterator():
-            C.update([self._cocircuit(self.groundset().difference(B).union(set([e]))) for e in B])
-        return list(C)
-
     cpdef noncospanning_cocircuits(self) noexcept:
         """
         Return the noncospanning cocircuits of the matroid.
@@ -3019,7 +2999,7 @@ cdef class Matroid(SageObject):
         `(w_0=1, ..., w_r)` -- are numbers of alternating sign, where `w_i` is
         the value of the coefficient of the `(r-i)`-th degree term of the
         matroid's characteristic polynomial. Moreover, `|w_i|` is the number of
-        `i`-faces of the broken circuit complex of the matroid.
+        `(i-1)`-dimensional faces of the broken circuit complex of the matroid.
 
         OUTPUT: a list of integers
 
@@ -3318,7 +3298,7 @@ cdef class Matroid(SageObject):
 
     # polytopes
 
-    def matroid_polytope(self):
+    cpdef matroid_polytope(self) noexcept:
         r"""
         Return the matroid polytope of ``self``.
 
@@ -3357,10 +3337,15 @@ cdef class Matroid(SageObject):
         n = self.size()
         vector_e = FreeModule(ZZ, n).basis()
         convert = {ind: i for i, ind in enumerate(self.groundset())}
-        vertices = [sum(vector_e[convert[i]] for i in B) for B in self.bases_iterator()]
+        vertices = []
+        for B in self.bases_iterator():
+            sum = 0
+            for i in B:
+                sum += vector_e[convert[i]]
+            vertices += [sum]
         return Polyhedron(vertices)
 
-    def independence_matroid_polytope(self):
+    cpdef independence_matroid_polytope(self) noexcept:
         r"""
         Return the independence matroid polytope of ``self``.
 
@@ -3400,7 +3385,12 @@ cdef class Matroid(SageObject):
         ambient = FreeModule(ZZ, n)
         vector_e = ambient.basis()
         convert = {ind: i for i, ind in enumerate(self.groundset())}
-        vertices = [ambient.sum(vector_e[convert[i]] for i in IS) for IS in self.independent_sets_iterator()]
+        vertices = []
+        for IS in self.independent_sets_iterator():
+            lst = []
+            for i in IS:
+                lst += [vector_e[convert[i]]]
+            vertices += [ambient.sum(lst)]
         return Polyhedron(vertices)
 
     # isomorphism and equality
@@ -4256,8 +4246,7 @@ cdef class Matroid(SageObject):
             sage: matroids.catalog.NonFano().has_minor(M)
             True
             sage: matroids.catalog.NonFano().has_minor(M, certificate=True)
-            (True, (frozenset(), frozenset({'g'}),
-                {0: 'b', 1: 'c', 2: 'a', 3: 'd', 4: 'e', 5: 'f'}))
+            (True, (frozenset(), frozenset({...}), {...}))
             sage: M = matroids.catalog.Fano()
             sage: M.has_minor(M, True)
             (True,
@@ -4735,7 +4724,7 @@ cdef class Matroid(SageObject):
                 raise ValueError("cannot extend by element already in groundset")
         return extension.MatroidExtensions(self, element, line_length=line_length, subsets=subsets)  # return enumerator
 
-    def coextensions(self, element=None, coline_length=None, subsets=None):
+    cpdef coextensions(self, element=None, coline_length=None, subsets=None) noexcept:
         r"""
         Return an iterable set of single-element coextensions of the matroid.
 
@@ -6632,12 +6621,12 @@ cdef class Matroid(SageObject):
             sage: M.is_chordal(4, 5)
             False
             sage: M.is_chordal(4, 5, certificate=True)
-            (False, frozenset({'a', 'b', 'e', 'f', 'g'}))
+            (False, frozenset({...}))
         """
         cdef frozenset C
         if k2 is None:
             k2 = len(self.groundset()) + 1 # This is always larger than the rank
-        for C in self.circuits():
+        for C in self.circuits_iterator():
             if len(C) < k1 or len(C) > k2:
                 continue
             if not self._is_circuit_chordal(C):
@@ -7754,9 +7743,9 @@ cdef class Matroid(SageObject):
 
             \chi_M(\lambda) = \sum_{S \subseteq E} (-1)^{|S|}\lambda^{r(E)-r(S)},
 
-        where `E` is the groundset and`r` is the matroid's rank function. The
+        where `E` is the groundset and `r` is the matroid's rank function. The
         characteristic polynomial is also equal to
-        \sum_{i = 0}^r w_i\lambda^{r-i}, where `\{w_i\}_{i=0}^r` are the
+        `\sum_{i = 0}^r w_i\lambda^{r-i}`, where `\{w_i\}_{i=0}^r` are the
         Whitney numbers of the first kind.
 
         INPUT:
@@ -8106,7 +8095,7 @@ cdef class Matroid(SageObject):
                 self._cached_info = {'plot_positions': pos_dict, 'lineorders': lineorders}
         return
 
-    def broken_circuit_complex(self, ordering=None):
+    cpdef broken_circuit_complex(self, ordering=None) noexcept:
         r"""
         Return the broken circuit complex of ``self``.
 
@@ -8171,7 +8160,7 @@ cdef class Matroid(SageObject):
         [Oxl2011]_, p. 189.
         """
         from sage.topology.simplicial_complex import SimplicialComplex
-        return SimplicialComplex(self.bases()).automorphism_group()
+        return SimplicialComplex(self.bases(), maximality_check=False).automorphism_group()
 
     cpdef bergman_complex(self) noexcept:
         r"""
@@ -8265,7 +8254,7 @@ cdef class Matroid(SageObject):
         """
         # Construct independent set complex from bases
         from sage.topology.simplicial_complex import SimplicialComplex
-        IM = SimplicialComplex(self.bases())
+        IM = SimplicialComplex(self.bases(), maximality_check=False)
 
         LM = self.lattice_of_flats()
 
@@ -8332,7 +8321,7 @@ cdef class Matroid(SageObject):
         matroids.insert(0, self)
         return union_matroid.MatroidUnion(iter(matroids))
 
-    def direct_sum(self, matroids):
+    cpdef direct_sum(self, matroids) noexcept:
         r"""
         Return the matroid direct sum with another matroid or list of
         matroids.
