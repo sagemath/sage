@@ -19,7 +19,7 @@ Check :trac:`12482` (shall be run in a fresh session)::
 
     sage: P = Partitions(3)                                                             # needs sage.combinat
     sage: Family(P, lambda x: x).category()                                             # needs sage.combinat
-    Category of finite enumerated families
+    Category of finitely enumerated families
 """
 
 # *****************************************************************************
@@ -46,6 +46,7 @@ from collections.abc import Iterable, Mapping, Sequence
 
 from sage.categories.enumerated_families import EnumeratedFamilies
 from sage.categories.enumerated_sets import EnumeratedSets
+from sage.categories.finitely_enumerated_families import FinitelyEnumeratedFamilies
 from sage.categories.families import Families
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
@@ -1123,25 +1124,28 @@ class LazyFamily(AbstractFamily):
             else:
                 is_injective = True
 
+        if category is None:
+            category = Families()
+        else:
+            category &= Families()
+
+        set_category = Sets()
         if set in FiniteEnumeratedSets():
-            set_category = FiniteEnumeratedSets()
+            set_category &= FiniteEnumeratedSets()
+            category &= FinitelyEnumeratedFamilies()
         elif set in InfiniteEnumeratedSets():
             if is_injective:
-                set_category = InfiniteEnumeratedSets()
+                set_category &= InfiniteEnumeratedSets()
             else:
-                set_category = EnumeratedSets()
+                set_category &= EnumeratedSets()
         elif isinstance(set, (list, tuple, range, CombinatorialClass)):
-            set_category = FiniteEnumeratedSets()
+            set_category &= FiniteEnumeratedSets()
         elif set in EnumeratedSets():
-            set_category = EnumeratedSets()
-        else:
-            set_category = Sets()
+            set_category &= EnumeratedSets()
 
-        if category is None:
-            category = Sets()
-        category = Families() & set_category & category
+        category &= set_category
         if set_category.is_subcategory(EnumeratedSets()):
-            category = EnumeratedFamilies() & category
+            category &= EnumeratedFamilies()
 
         try:
             facade = function.codomain()
