@@ -4392,8 +4392,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             [    0     1     0]
             [    0     0 1/2*x]
 
-            sage: ring.<y> = NumberField(x**2 - 2, "a")[]
-            sage: a = ring.base_ring().gen()
+            sage: field.<a> = NumberField(x**2 - 2)
+            sage: ring.<y> = field[]
             sage: mat = matrix([[3*a*y - 1, (-8*a - 1)*y - 2*a + 1]])
             sage: rcomp = mat.basis_completion(algorithm="smith"); rcomp
             [ 39/119*a - 30/119 -99/119*a + 67/119]
