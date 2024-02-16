@@ -478,35 +478,28 @@ A method or a function accepts input described in the ``INPUT`` block of
 handled by the code, then it may raise an exception.  The following aims to
 guide you in choosing from the most relevant exceptions to Sage. Raise
 
-- `TypeError <https://docs.python.org/3/library/exceptions.html#TypeError>`_:
-  if the input belongs to a class of objects that are not supported by the
-  method.  For example, a method works only with monic polynomials over a
-  finite field, but a polynomial over rationals was given.
+- :class:`TypeError`: if the input belongs to a class of objects that are not
+  supported by the method.  For example, a method works only with monic
+  polynomials over a finite field, but a polynomial over rationals was given.
 
-- `ValueError <https://docs.python.org/3/library/exceptions.html#ValueError>`_:
-  if the input has a value not supported by the method. For example, the above
-  method was given a non-monic polynomial.
+- :class:`ValueError`: if the input has a value not supported by the method.
+  For example, the above method was given a non-monic polynomial.
 
-- `ArithmeticError
-  <https://docs.python.org/3/library/exceptions.html#ArithmeticError>`_: if the
-  method performs an arithmetic operation (sum, product, quotient, and the
-  like) but the input is not appropriate.
+- :class:`ArithmeticError`: if the method performs an arithmetic operation
+  (sum, product, quotient, and the like) but the input is not appropriate.
 
-- `ZeroDivisionError
-  <https://docs.python.org/3/library/exceptions.html#ZeroDivisionError>`_: if
-  the method performs division but the input is zero. Note that for
-  non-invertible input values, ``ArithmeticError`` is more appropriate. As
-  derived from ``ArithmeticError``, ``ZeroDivisionError`` can be caught as
-  ``ArithmeticError``.
+- :class:`ZeroDivisionError`: if the method performs division but the input is
+  zero. Note that for non-invertible input values, :class:`ArithmeticError` is
+  more appropriate. As derived from :class:`ArithmeticError`,
+  :class:`ZeroDivisionError` can be caught as :class:`ArithmeticError`.
 
-- `NotImplementedError
-  <https://docs.python.org/3/library/exceptions.html#NotImplementedError>`_: if
-  the input is for a feature not yet implemented by the method. Note that
-  ``NotImplementedError`` is derived from ``RuntimeError``.
+- :class:`NotImplementedError`: if the input is for a feature not yet
+  implemented by the method. Note that this exception is derived from
+  :class:`RuntimeError`.
 
-If no specific error seems to apply for your situation, `RuntimeError
-<https://docs.python.org/3/library/exceptions.html#RuntimeError>`_ can be used.
-In all cases, the string associated with the exception should describe the
+If no specific error seems to apply for your situation, :class:`RuntimeError`
+can be used.  In all cases, the string associated with the exception should
+describe the
 details of what went wrong.
 
 
