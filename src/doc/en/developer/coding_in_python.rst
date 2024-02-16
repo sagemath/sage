@@ -499,8 +499,7 @@ guide you in choosing from the most relevant exceptions to Sage. Raise
 
 If no specific error seems to apply for your situation, :class:`RuntimeError`
 can be used.  In all cases, the string associated with the exception should
-describe the
-details of what went wrong.
+describe the details of what went wrong.
 
 
 Integer return values
