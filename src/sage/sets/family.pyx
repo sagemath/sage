@@ -47,7 +47,8 @@ from collections.abc import Iterable, Mapping, Sequence
 from sage.categories.enumerated_sets import EnumeratedSets
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
-<<<<<<< HEAD:src/sage/sets/family.pyx
+from sage.categories.sets_cat import Sets
+from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.misc.call import AttrCallObject
 from sage.misc.lazy_import import LazyImport
@@ -55,22 +56,9 @@ from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.sets.non_negative_integers import NonNegativeIntegers
+from sage.structure.parent import Parent
 
 CombinatorialClass = LazyImport('sage.combinat.combinat', 'CombinatorialClass')
-
-=======
-from sage.categories.sets_cat import Sets
-from sage.misc.abstract_method import abstract_method
-from sage.misc.cachefunc import cached_method
-from sage.misc.call import AttrCallObject
-from sage.misc.lazy_import import lazy_import
-from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
-from sage.sets.non_negative_integers import NonNegativeIntegers
-from sage.rings.infinity import Infinity
-from sage.rings.integer import Integer
-from sage.structure.parent import Parent
-lazy_import('sage.combinat.combinat', 'CombinatorialClass')
->>>>>>> 3b2468e8aea (src/sage/sets/family.py: Accept init arg 'category' in Family implementation classes):src/sage/sets/family.py
 
 
 def Family(indices, function=None, hidden_keys=[], hidden_function=None,
