@@ -57,6 +57,7 @@ from sage.rings.integer import Integer
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.sets.image_set import ImageSubobject
 from sage.sets.non_negative_integers import NonNegativeIntegers
+from sage.sets.set import Set
 from sage.structure.parent import Parent
 
 CombinatorialClass = LazyImport('sage.combinat.combinat', 'CombinatorialClass')
@@ -518,6 +519,21 @@ cdef class AbstractFamily(Parent):
             ['aa', 'bb', 'cc']
         """
         raise NotImplementedError
+
+    def as_set(self):
+        """
+        Return the elements (values) of this family as a set.
+
+        EXAMPLES::
+
+            sage: f = Family({1: 'a', 2: 'b', 3: 'c'})
+            sage: g = Family({1: 'b', 2: 'c', 3: 'a'})
+            sage: f == g
+            False
+            sage: f.as_set() == g.as_set()
+            True
+        """
+        return Set(self.values())
 
     def items(self):
         """
