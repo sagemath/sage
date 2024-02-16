@@ -55,6 +55,7 @@ from .orthogonal_arrays import OA_relabel, OA_standard_label
 CA_relabel = OA_relabel
 CA_standard_label = OA_standard_label
 
+
 def truncate_columns(array, k):
     r"""
     Return a covering array with `k` columns, obtained by removing excess
@@ -95,6 +96,7 @@ def truncate_columns(array, k):
         for row in array:
             result.append(row[:k])
         return result
+
 
 def Kleitman_Spencer_Katona(N):
     r"""
@@ -140,6 +142,7 @@ def Kleitman_Spencer_Katona(N):
         result.append(S)
     return(list(map(list, zip(*result))))
 
+
 def column_Kleitman_Spencer_Katona(k):
     r"""
     Return a covering array with `k` columns using the Kleitman Spencer Katona
@@ -175,6 +178,7 @@ def column_Kleitman_Spencer_Katona(k):
             N = kdict[ki]
             break
     return truncate_columns(Kleitman_Spencer_Katona(N), k)
+
 
 def covering_array(strength, number_columns, levels):
     r"""

@@ -5035,6 +5035,7 @@ LIST_OF_EDS = "\n".join("    - `k = {}`: {}".format(
                         k, ', '.join('`{}`'.format(q) for q in sorted(EDS[k]) if EDS[k][q] is not False))
                         for k in sorted(EDS))
 
+
 def ca_11_2_5_3():
     r"""
     Return a CA with the given parameters, This CA is proven to be optimal.
@@ -5061,6 +5062,7 @@ def ca_11_2_5_3():
             [2, 0, 2, 2, 2],
             [2, 1, 1, 1, 1],
             [2, 2, 0, 0, 0]]
+
 
 def ca_12_2_7_3():
     r"""
@@ -5090,6 +5092,7 @@ def ca_12_2_7_3():
             [2, 2, 0, 0, 2, 1, 1],
             [2, 2, 2, 1, 0, 0, 0]]
 
+
 def ca_13_2_9_3():
     r"""
     Return a CA with the given parameters, This CA is proven to be optimal.
@@ -5118,6 +5121,7 @@ def ca_13_2_9_3():
             [2, 1, 1, 2, 1, 2, 0, 0, 1],
             [2, 2, 0, 1, 2, 1, 2, 2, 1],
             [2, 2, 1, 0, 0, 2, 1, 1, 2]]
+
 
 def ca_14_2_10_3():
     r"""
@@ -5149,6 +5153,7 @@ def ca_14_2_10_3():
             [2, 2, 1, 0, 2, 1, 0, 0, 0, 1],
             [2, 2, 1, 1, 0, 0, 2, 1, 1, 0]]
 
+
 def ca_15_2_20_3():
     r"""
     Return a CA with the given parameters, This CA is proven to be optimal.
@@ -5179,6 +5184,7 @@ def ca_15_2_20_3():
             [2, 1, 2, 0, 1, 1, 2, 0, 2, 1, 0, 1, 1, 2, 1, 0, 2, 0, 2, 1],
             [2, 1, 2, 1, 0, 1, 2, 2, 1, 1, 2, 0, 2, 1, 0, 0, 1, 2, 0, 0],
             [2, 2, 1, 1, 1, 1, 0, 1, 0, 0, 2, 2, 1, 2, 2, 1, 0, 1, 0, 2]]
+
 
 def ca_19_2_6_4():
     r"""
@@ -5214,6 +5220,7 @@ def ca_19_2_6_4():
             [3, 1, 1, 1, 0, 3],
             [3, 2, 2, 2, 1, 1],
             [3, 3, 0, 0, 2, 2]]
+
 
 def ca_21_2_7_4():
     r"""
@@ -5252,6 +5259,7 @@ def ca_21_2_7_4():
             [3, 2, 1, 0, 2, 1, 0],
             [3, 3, 0, 1, 0, 2, 3],
             [3, 3, 3, 3, 2, 0, 2]]
+
 
 def ca_29_2_7_5():
     r"""
@@ -5297,6 +5305,7 @@ def ca_29_2_7_5():
             [2, 2, 3, 3, 1, 4, 4],
             [3, 3, 4, 4, 4, 0, 4],
             [4, 0, 1, 0, 0, 3, 4]]
+
 
 def ca_37_2_4_6():
     r"""
@@ -5350,6 +5359,7 @@ def ca_37_2_4_6():
             [5, 3, 2, 4],
             [5, 4, 3, 2],
             [5, 5, 0, 1]]
+
 
 def ca_39_2_5_6():
     r"""
@@ -5405,6 +5415,7 @@ def ca_39_2_5_6():
             [3, 3, 1, 4, 5],
             [4, 4, 0, 2, 5],
             [5, 2, 5, 1, 5]]
+
 
 def ca_41_2_6_6():
     r"""
@@ -5464,6 +5475,7 @@ def ca_41_2_6_6():
             [4, 3, 2, 0, 1, 5],
             [5, 5, 0, 3, 2, 5]]
 
+
 # Make dictionary with keys (t, v) and values (N, k) which are the
 # smallest N and largest k such that a CA(N; t, k, v) can be made using
 # the database.
@@ -5477,6 +5489,7 @@ CA_constructions = {
 # Add this data to the module's doc.
 LIST_OF_CA_CONSTRUCTIONS = ", ".join(":func:`CA({},{},{},{}) <ca_{}_{}_{}_{}>`".format(N,t,k,v,N,t,k,v)
                                      for (t,v) in CA_constructions for (N,k) in CA_constructions[(t,v)])
+
 
 __doc__ = __doc__.format(
     LIST_OF_OA_CONSTRUCTIONS=LIST_OF_OA_CONSTRUCTIONS,
