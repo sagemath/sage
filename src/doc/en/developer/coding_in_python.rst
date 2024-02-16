@@ -475,7 +475,7 @@ are caught as a tuple, followed by an error message.
 
 A method or a function accepts input described in the ``INPUT`` block of
 :ref:`the docstring <section-docstring-function>`. If the input cannot be
-handled by the code, then it may raise an exception.  The following aims to
+handled by the code, then it may raise an exception. The following aims to
 guide you in choosing from the most relevant exceptions to Sage. Raise
 
 - :class:`TypeError`: if the input belongs to a class of objects that are not
@@ -498,7 +498,7 @@ guide you in choosing from the most relevant exceptions to Sage. Raise
   :class:`RuntimeError`.
 
 If no specific error seems to apply for your situation, :class:`RuntimeError`
-can be used.  In all cases, the string associated with the exception should
+can be used. In all cases, the string associated with the exception should
 describe the details of what went wrong.
 
 
