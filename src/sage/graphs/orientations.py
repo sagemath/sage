@@ -85,7 +85,7 @@ def acyclic_orientations(G):
         sage: from itertools import islice
         sage: import timeit
         sage: G_C100, start_time = graphs.CycleGraph(100), timeit.default_timer()
-        sage: it_C100, first_10_orientations = acyclic_orientations(G_C100), list(islice(acyclic_orientations(G_C100), 10))
+        sage: it_C100, first_10_orientations = g.acyclic_orientations(G_C100), list(islice(g.acyclic_orientations(G_C100), 10))
         sage: print(timeit.default_timer() - start_time < 0.05)
         True
 
@@ -168,19 +168,12 @@ def acyclic_orientations(G):
 
         # Create a new graph to determine reachable vertices
         new_G = DiGraph()
-        for i in range(0, starting_of_Ek):
-            u, v = keys[i]
-            if globO[(u, v)] == 1:
-                new_G.add_edge(v, u)
-            else:
-                new_G.add_edge(u, v)
 
-        for i in range(starting_of_Ek, m - 1):
-            u, v = keys[i]
-            if not new_G.has_vertex(u):
-                new_G.add_vertex(u)
-            elif not new_G.has_vertex(v):
-                new_G.add_vertex(v)
+        # Process vertices up to starting_of_Ek
+        new_G.add_edges([(v, u) if globO[(u, v)] == 1 else (u, v) for u, v in keys[:starting_of_Ek]])
+
+        # Process vertices starting from starting_of_Ek
+        new_G.add_vertices([u for u, _ in keys[starting_of_Ek:]] + [v for _, v in keys[starting_of_Ek:]])
 
         if (globO[(k-1, k)] == 1):
             new_G.add_edge(k, k - 1)
@@ -192,7 +185,7 @@ def acyclic_orientations(G):
                 u, v = keys[i]
                 w, x = keys[j]
                 # w should be reachable from u and v should be reachable from x
-                if (new_G.shortest_path_length(u, w) < Infinity and new_G.shortest_path_length(x, v) < Infinity):
+                if w in new_G.depth_first_search(u) and v in new_G.depth_first_search(x):
                     Poset[(u, v), (w, x)] = 1
 
         # For each subset of the base set of E_k, check if it is an upset or not
@@ -259,11 +252,9 @@ def acyclic_orientations(G):
     edge_labels = order_edges(G, vertex_labels)
 
     # Create globO array
-    m = len(edge_labels)
-    globO = {}
-    for (u, v) in edge_labels:
-        globO[(u, v)] = 0
+    globO = {uv: 0 for uv in edge_labels}
 
+    m = len(edge_labels)
     k = len(vertex_labels)
     orientations = helper(G, globO, m, k)
     return orientations
