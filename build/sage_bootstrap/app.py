@@ -108,7 +108,7 @@ class Application(object):
                 else:
                     print("{0}_{1}='{2}'".format(p, package_name, value))
 
-    def dependencies(self, *package_classes, types=None, format='plain'):
+    def dependencies(self, *package_classes, **kwds):
         """
         Find the dependencies given package names
 
@@ -116,6 +116,8 @@ class Application(object):
         ecl
         info
         """
+        types = kwds.pop('types', None)
+        format = kwds.pop('format', 'plain')
         log.debug('Looking up dependencies')
         pc = PackageClass(*package_classes)
         if format == 'plain':
