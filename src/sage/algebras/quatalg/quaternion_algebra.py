@@ -2200,6 +2200,15 @@ class QuaternionOrder(Parent):
             sage: {iso(g * h) == iso(g) * iso(h) for g in els for h in els}
             {True}
 
+        Test edge case::
+
+            sage: Quat.<i,j,k> = QuaternionAlgebra(419)
+            sage: O = Quat.quaternion_order([1/2 + 3/2*j + k, 1/18*i + 25/9*j + 5/6*k, 3*j + 2*k, 3*k])
+            sage: Oconj = j.inverse() * O * j
+            sage: Oconj = Quat.quaternion_order(Oconj.basis())
+            sage: O.isomorphism_to(Oconj, conjugator=True)
+            -j
+
         Test error cases::
 
             sage: Quat.<i,j,k> = QuaternionAlgebra(-1,-11)
@@ -2273,7 +2282,7 @@ class QuaternionOrder(Parent):
         we repeat the check for orders conjugated by i, j, and k.
         """
 
-        # Method to find isomorphism, which does not work when O2 is
+        # Method to find isomorphism, which might not work when O2 is
         # O1 conjugated by an alpha such that nrd(alpha) is a
         # ramified prime times a square
         def attempt_isomorphism(self, other):
@@ -2310,9 +2319,10 @@ class QuaternionOrder(Parent):
         for alpha in [1] + list(Q.gens()):
             other_conj = other
             if alpha != 1:
-                other_conj = Q.quaternion_order((alpha.inverse() * other * alpha).basis())
+                other_conj = Q.quaternion_order((alpha * other * alpha.inverse()).basis())
             found, gamma = attempt_isomorphism(self, other_conj)
             if found:
+                gamma = gamma * alpha
                 if conjugator:
                     return gamma
                 else:
