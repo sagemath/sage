@@ -92,7 +92,7 @@ the following source types:
 
    - its version number is defined by the required file ``package-version.txt``;
 
-   - No build and install scripts are needed
+   - no build and install scripts are needed
      (with one exception: the package :ref:`spkg_pip` installs itself from
      its wheel using a custom install script);
 

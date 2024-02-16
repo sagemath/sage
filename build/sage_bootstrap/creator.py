@@ -82,11 +82,10 @@ class PackageCreator(object):
 
     def _remove_files(self, files):
         """
-        Remove ``files`` from the package directory if they exist
+        Remove ``files`` from the package directory if they exist.
         """
         for file in files:
             try:
-                # Remove this file, which would mark the package as a pip package.
                 os.remove(os.path.join(self.path, file))
             except OSError:
                 pass
@@ -125,7 +124,7 @@ class PackageCreator(object):
                 # 'pip' should be the only wheel package that has a custom spkg-install.in script.
                 # Remove the script for all other wheel packages, to avoid errors when
                 # switching from normal to wheel packages.
-                self._remove_files(['spkg-build.in', 'spkg-install.in'])
+                self._remove_files(['spkg-build.in', 'spkg-install.in', 'spkg-install'])
         elif source == 'pip':
             with open(os.path.join(self.path, 'requirements.txt'), 'w+') as f:
                 f.write('{0}\n'.format(pypi_package_name))
