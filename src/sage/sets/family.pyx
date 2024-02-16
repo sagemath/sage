@@ -58,7 +58,8 @@ from sage.sets.non_negative_integers import NonNegativeIntegers
 CombinatorialClass = LazyImport('sage.combinat.combinat', 'CombinatorialClass')
 
 
-def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=False, name=None):
+def Family(indices, function=None, hidden_keys=[], hidden_function=None,
+           lazy=False, name=None, *, category=None):
     r"""
     A Family is an associative container which models a family
     `(f_i)_{i \in I}`. Then, ``f[i]`` returns the element of the family
@@ -83,6 +84,7 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=Fa
       made ``True``
     - ``name`` -- (optional) the name of the function; only used when the
       family is lazily created via a function
+    - ``category`` -- (optional) the category
 
     EXAMPLES:
 
@@ -390,36 +392,37 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=Fa
 
     if not hidden_keys:
         if hidden_function is not None:
-            raise ValueError("hidden_function keyword only makes sense "
-                             "together with hidden_keys keyword !")
+            raise ValueError("keyword 'hidden_function' only makes sense "
+                             "together with keyword 'hidden_keys'")
         if function is None:
             if lazy:
-                raise ValueError("lazy keyword only makes sense together with function keyword")
-            if isinstance(indices, dict):
-                return FiniteFamily(indices)
-            if isinstance(indices, (list, tuple)):
-                return TrivialFamily(indices)
-            if isinstance(indices, (FiniteFamily, LazyFamily, TrivialFamily)):
+                raise ValueError("keyword 'lazy' only makes sense together with keyword 'function'")
+            if isinstance(indices, (FiniteFamily, LazyFamily, TrivialFamily)) and category is None:
                 return indices
-            if indices in EnumeratedSets():
-                return EnumeratedFamily(indices)
+            if isinstance(indices, dict):
+                return FiniteFamily(indices, category=category)
+            if isinstance(indices, (list, tuple)):
+                return TrivialFamily(indices, category=category)
+            if (indices in EnumeratedSets()
+                    or isinstance(indices, CombinatorialClass)):
+                return EnumeratedFamily(indices, category=category)
             if isinstance(indices, Iterable):
-                return TrivialFamily(indices)
+                return TrivialFamily(indices, category=category)
 
             raise NotImplementedError
         if (isinstance(indices, (list, tuple, FiniteEnumeratedSet))
                 and not lazy):
             return FiniteFamily({i: function(i) for i in indices},
-                                keys=indices)
+                                keys=indices, category=category)
 
-        return LazyFamily(indices, function, name)
+        return LazyFamily(indices, function, name, category=category)
     if lazy:
-        raise ValueError("lazy keyword is incompatible with hidden keys")
+        raise ValueError("keyword 'lazy' is incompatible with keyword 'hidden_keys'")
     if hidden_function is None:
         hidden_function = function
     return FiniteFamilyWithHiddenKeys({i: function(i) for i in indices},
                                       hidden_keys, hidden_function,
-                                      keys=indices)
+                                      keys=indices, category=category)
 
 
 cdef class AbstractFamily(Parent):
