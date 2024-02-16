@@ -479,7 +479,7 @@ handled by the code, then it may raise an exception. The following aims to
 guide you in choosing from the most relevant exceptions to Sage. Raise
 
 - :class:`TypeError`: if the input belongs to a class of objects that are not
-  supported by the method.  For example, a method works only with monic
+  supported by the method. For example, a method works only with monic
   polynomials over a finite field, but a polynomial over rationals was given.
 
 - :class:`ValueError`: if the input has a value not supported by the method.
