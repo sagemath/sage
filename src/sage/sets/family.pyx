@@ -31,7 +31,7 @@ Check :trac:`12482` (shall be run in a fresh session)::
 #                     2017      Erik M. Bray
 #                     2018      Frédéric Chapoton
 #                     2019      Markus Wageringel
-#                     2022-2023 Matthias Koeppe
+#                     2022-2024 Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -51,7 +51,6 @@ from sage.categories.families import Families
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.sets_cat import Sets
-from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.misc.call import AttrCallObject
 from sage.misc.lazy_import import LazyImport
@@ -546,7 +545,6 @@ cdef class AbstractFamily(Parent):
         """
         raise NotImplementedError
 
-    @abstract_method(optional=True)
     def values(self):
         """
         Return the elements (values) of this family.
