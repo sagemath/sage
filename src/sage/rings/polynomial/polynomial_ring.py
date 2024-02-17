@@ -2460,10 +2460,9 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
 
         EXAMPLES::
 
-            sage: R.<t> = GF(5)[]
-            sage: R.fraction_field()
-            Fraction Field of Univariate Polynomial Ring in t
-             over Finite Field of size 5
+            sage: QQbar['x'].fraction_field()
+            Fraction Field of Univariate Polynomial Ring in x over Algebraic
+            Field
 
         TESTS:
 
@@ -2483,17 +2482,14 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
             sage: t(x)
             x
 
+        Issue :issue:`37374`:
+
+            sage: x = PolynomialRing(GF(37), ['x'], sparse=True).fraction_field().gen()
+            sage: type(x.numerator())
+            <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category.element_class'>
+            sage: (x^8 + 16*x^6 + 4*x^4 + x^2 + 12).numerator() - 1
+            x^8 + 16*x^6 + 4*x^4 + x^2 + 11
         """
-        R = self.base_ring()
-        p = R.characteristic()
-        if p != 0 and R.is_prime_field():
-            try:
-                from sage.rings.fraction_field_FpT import FpT
-            except ImportError:
-                pass
-            else:
-                if 2 < p and p < FpT.INTEGER_LIMIT:
-                    return FpT(self)
         from sage.rings.fraction_field import FractionField_1poly_field
         return FractionField_1poly_field(self)
 
@@ -3565,6 +3561,31 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
 
         # No suitable algorithm found, try algorithms from the base class.
         return PolynomialRing_dense_finite_field.irreducible_element(self, n, algorithm)
+
+    @cached_method
+    def fraction_field(self):
+        """
+        Returns the fraction field of self.
+
+        EXAMPLES::
+
+            sage: R.<t> = GF(5)[]
+            sage: R.fraction_field()
+            Fraction Field of Univariate Polynomial Ring in t
+             over Finite Field of size 5
+        """
+        try:
+            from sage.rings.fraction_field_FpT import FpT
+            from sage.rings.polynomial.polynomial_zmod_flint import Polynomial_zmod_flint
+        except ImportError:
+            pass
+        else:
+            p = self.base_ring().characteristic()
+            if (issubclass(self.element_class, Polynomial_zmod_flint)
+                    and 2 < p < FpT.INTEGER_LIMIT):
+                return FpT(self)
+        return super().fraction_field()
+
 
 def polygen(ring_or_element, name="x"):
     """
