@@ -897,7 +897,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         """
         return prod(phi.inseparable_degree() for phi in self._phis)
 
-    def is_cyclic(self):
+    def is_cyclic(self, _check_j=True, _reduce_kernel=True):
         r"""
         Determine whether the isogeny is cyclic (separable with cyclic kernel).
 
@@ -962,15 +962,50 @@ class EllipticCurveHom_composite(EllipticCurveHom):
                     last = i
             assert first is not None and last is not None
 
-            survived = _propagate_torsion_through_isogenies(self._phis[first:last+1], ell)
-            if survived.degree() <= 0:
-                # fully destroyed, non-cyclic
-                return False
+            # skip some checks by checking j-invariants
+            # (two consequent ell-isogenies with prime ell
+            #  must form a j-invariant cycle to make the isogeny non-cyclic)
+            # (but this is not a sufficient check, just optimization)
+            if _check_j:
+                # do j-invariant checks
+                # on the prefix of l-l-l-l-... isogenies
+                while first < last:
+                    phi1 = self._phis[first]
+                    phi2 = self._phis[first + 1]
+                    if not phi1.degree() == phi2.degree() == ell:
+                        # can not perform j-invariant criteria check
+                        break
+                    if phi1.domain().j_invariant() == phi2.codomain().j_invariant():
+                        # j-invariant criteria failed
+                        break
+                    first += 1
 
+                # do j-invariant checks
+                # on the suffix of ...-l-l-l-l-l isogenies
+                while first < last:
+                    phi1 = self._phis[last - 1]
+                    phi2 = self._phis[last]
+                    if not phi1.degree() == phi2.degree() == ell:
+                        # can not perform j-invariant criteria check
+                        break
+                    if phi1.domain().j_invariant() == phi2.codomain().j_invariant():
+                        # j-invariant criteria failed
+                        break
+                    last -= 1
+
+            assert first <= last
+
+            # no need to check if only factor ell^1 left
+            if first < last or self._phis[first].degree() % ell**2 == 0:
+                survived = _propagate_torsion_through_isogenies(
+                    self._phis[first:last+1], ell, _reduce_kernel=_reduce_kernel)
+                if survived.degree() <= 0:
+                    # fully destroyed, non-cyclic
+                    return False
         return True
 
 
-def _propagate_torsion_through_isogenies(phis, ell):
+def _propagate_torsion_through_isogenies(phis, ell, _reduce_kernel=True):
     r"""
     Sieve $\ell$-torsion through isogenies.
 
@@ -1005,7 +1040,7 @@ def _propagate_torsion_through_isogenies(phis, ell):
     x = mod.parent().quotient(mod).gen()
     y = x
 
-    for phi in phis:
+    for i, phi in enumerate(phis):
         x_rational_map = phi.x_rational_map()
 
         den = x_rational_map.denominator()(y)
@@ -1026,5 +1061,13 @@ def _propagate_torsion_through_isogenies(phis, ell):
 
         # evaluate the isogeny
         y = x_rational_map(y)
+
+        if i == 0 and _reduce_kernel:
+            # the div poly has degree (\ell^2-1)/2
+            # and the gcd with kernel poly cuts off only degree \ell
+            # so we compute the kernel polynomial of the dual isogeny
+            # and work with it instead (it has degree \ell)
+            mod = y.minpoly()
+            y = x = mod.parent().quotient(mod).gen()
 
     return mod
