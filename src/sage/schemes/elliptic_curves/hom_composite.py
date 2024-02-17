@@ -938,11 +938,25 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         if self.is_zero() or not self.is_separable():
             return False
 
-        deg_fac = Factorization(())
+        # this code is 40x slower.. even on degrees [2, 2, 2, 2, 2]
+        # even without separate prime test
+        # deg_fac = Factorization(())
+        # for phi in self._phis:
+        #     deg_fac *= ZZ(phi.degree()).factor()
+        deg_fac = {}
         for phi in self._phis:
-            deg_fac *= ZZ(phi.degree()).factor()
+            phi_deg = ZZ(phi.degree())
+            # note: prime degrees are a very typical case in HomComposite
+            # so the optimization is worth it
+            if phi_deg.is_prime():
+                deg_fac.setdefault(phi_deg, 0)
+                deg_fac[phi_deg] += 1
+            else:
+                for ell, e in phi_deg.factor():
+                    deg_fac.setdefault(ell, 0)
+                    deg_fac[ell] += e
 
-        for ell, e in deg_fac:
+        for ell, e in deg_fac.items():
             # check only prime factors with e >= 2 and not the characteristic
             # since E[p] is always cyclic, no need to check
             # (inseparability is already checked)
