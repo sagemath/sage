@@ -89,7 +89,7 @@ from sage.structure.sequence import Sequence
 
 from sage.rings.integer_ring import ZZ
 
-from sage.arith.misc import prod, is_prime, gcd
+from sage.arith.misc import prod, is_prime
 from sage.structure.factorization import Factorization
 
 from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
@@ -1029,7 +1029,7 @@ def _propagate_torsion_through_isogenies(phis, ell, _reduce_kernel=True):
     # i.e. "working with full torsion" at the same time
     # gradually removing torsion factors that are being nullified
     mod = E0.division_polynomial(ell)
-    if gcd(p, ell) != 1:
+    if ZZ(p).gcd(ell) != 1:
         # if the order is not coprime with the characteristic,
         # we may get repeated roots
         mod = mod.radical()
@@ -1044,7 +1044,7 @@ def _propagate_torsion_through_isogenies(phis, ell, _reduce_kernel=True):
         x_rational_map = phi.x_rational_map()
 
         den = x_rational_map.denominator()(y)
-        g = gcd(den.lift(), mod)
+        g = den.lift().gcd(mod)
         if g != 1:
             # a new part of torsion is nullified
             # so we need to update the modulus and the quotient ring
