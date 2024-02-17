@@ -106,7 +106,7 @@ def acyclic_orientations(G):
         ko = n
         k = n
         G_copy = G.copy()
-        vertex_labels = [None] * n
+        vertex_labels = {v: None for v in G_copy.vertices()}
 
         while G_copy.size() > 0:
             min_val = float('inf')
@@ -130,9 +130,9 @@ def acyclic_orientations(G):
             if G_copy.size() == 0:
                 break
 
-        for i, label in enumerate(vertex_labels):
+        for vertex, label in vertex_labels.items():
             if label is None:
-                vertex_labels[i] = ko
+                vertex_labels[vertex] = ko
                 ko -= 1
 
         return vertex_labels
