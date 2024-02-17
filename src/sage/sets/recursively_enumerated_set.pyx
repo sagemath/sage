@@ -173,21 +173,21 @@ classes being very similar):
 
 .. MATH::
 
-    \begin{array}{rcl}
-                                   & ^{``}\hspace{0.5em}^{"} \\
-                          \swarrow & \downarrow & \searrow \\[5pt]
-        ^{``}a^{"} \hspace{3.125em} & ^{``}b^{"} & \hspace{3.125em}^{``}c^{"} \\
-        \begin{array}{rcl}
-                         \swarrow  & \downarrow & \searrow \\[5pt]
-                  ^{``}aa^{"}\: & ^{``}ab^{"} & \:^{``}ac^{"} \\
-        \end{array} & 
-        \begin{array}{rcl}
-                         \swarrow  & \downarrow & \searrow \\[5pt]
-                  ^{``}ba^{"}\: & ^{``}bb^{"} & \:^{``}bc^{"} \\
-        \end{array} & 
-        \begin{array}{rcl}
-                         \swarrow  & \downarrow & \searrow \\[5pt]
-                  ^{``}ca^{"}\: & ^{``}cb^{"} & \:^{``}cc^{"} \\
+    \begin{array}{ccc}
+                      & ``\," \\
+        \hfil\swarrow & \downarrow & \searrow\hfil\\
+                 ``a" & ``b" & ``c" \\
+        \begin{array}{ccc}
+             \swarrow & \downarrow & \searrow \\
+                ``aa" & ``ab" & ``ac" \\
+        \end{array}   & 
+        \begin{array}{ccc}
+             \swarrow & \downarrow & \searrow \\
+                ``ba" & ``bb" & ``bc" \\
+        \end{array}   & 
+        \begin{array}{ccc}
+             \swarrow & \downarrow & \searrow \\
+                ``ca" & ``cb" & ``cc" \\
         \end{array}
     \end{array}
 
