@@ -75,8 +75,8 @@ def acyclic_orientations(G):
 
     To count number acyclic orientations for a graph::
 
-        sage: G = Graph([(0, 3), (0, 4), (3, 4), (1, 3), (1, 2), (2, 3), (2, 4)])
-        sage: it = g.acyclic_orientations(G)
+        sage: g = Graph([(0, 3), (0, 4), (3, 4), (1, 3), (1, 2), (2, 3), (2, 4)])
+        sage: it = g.acyclic_orientations()
         sage: len(list(it))
         54
 
@@ -85,7 +85,7 @@ def acyclic_orientations(G):
         sage: from itertools import islice
         sage: import timeit
         sage: G_C100, start_time = graphs.CycleGraph(100), timeit.default_timer()
-        sage: it_C100, first_10_orientations = g.acyclic_orientations(G_C100), list(islice(g.acyclic_orientations(G_C100), 10))
+        sage: it_C100, first_10_orientations = G_C100.acyclic_orientations(), list(islice(G_C100.acyclic_orientations(), 10))
         sage: print(timeit.default_timer() - start_time < 0.05)
         True
 
@@ -93,10 +93,17 @@ def acyclic_orientations(G):
 
     Acyclic orientations of a complete graph::
 
-        sage: G = graphs.CompleteGraph(5)
-        sage: it = g.acyclic_orientations(G)
+        sage: g = graphs.CompleteGraph(5)
+        sage: it = g.acyclic_orientations()
         sage: len(list(it))
         120
+
+    Test for arbitary vertex labels::
+
+        sage: g_str = Graph([('abc', 'def'), ('ghi', 'def'), ('xyz', 'abc'), ('xyz', 'uvw'), ('uvw', 'abc'), ('uvw', 'ghi')])
+        sage: it = acyclic_orientations(G_str)
+        sage: len(list(it))
+        42
     """
     from sage.rings.infinity import Infinity
     from sage.combinat.subset import Subsets
