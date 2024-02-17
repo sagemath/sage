@@ -478,7 +478,7 @@ A method or a function accepts input described in the ``INPUT`` block of
 handled by the code, then it may raise an exception. The following aims to
 guide you in choosing from the most relevant exceptions to Sage. Raise
 
-- :class:`TypeError`: if the input belongs to a class of objects that are not
+- :class:`TypeError`: if the input belongs to a class of objects that is not
   supported by the method. For example, a method works only with monic
   polynomials over a finite field, but a polynomial over rationals was given.
 
