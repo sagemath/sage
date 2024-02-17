@@ -56,7 +56,6 @@ script-files = [
     # - bin/sage-run, bin/sage-runtests, ... -- installed by sagemath-repl
     # - bin/sage-ipython  -- uses sage.repl, so installed by sagemath-repl
 ]
-include-package-data = false
 
 [tool.setuptools.dynamic]
 version = {file = ["VERSION.txt"]}
