@@ -962,35 +962,69 @@ class EllipticCurveHom_composite(EllipticCurveHom):
                     last = i
             assert first is not None and last is not None
 
-            # evalute isogenies step by step
-            # modulo the division polynomial of the starting curve
-            # i.e. "working with full torsion" at the same time
-            # gradually removing torsion factors that are being nullified
-            mod = self._phis[first].domain().division_polynomial(ell)
-            # x : the x-coordinate of the generic ell-torsion point
-            # on the starting curve
-            # y : current value of isogenies applied to x
-            x = mod.parent().quotient(mod).gen()
-            y = x
+            survived = _propagate_torsion_through_isogenies(self._phis[first:last+1], ell)
+            if survived.degree() <= 0:
+                # fully destroyed, non-cyclic
+                return False
 
-            for phi in self._phis[first:last+1]:
-                x_rational_map = phi.x_rational_map()
-
-                den = x_rational_map.denominator()(y)
-                g = gcd(den.lift(), mod)
-                if g != 1:
-                    # a new part of torsion is nullified
-                    # so we need to update the modulus and the quotient ring
-                    mod //= g
-                    if mod.degree() <= 0:
-                        # full torsion is killed
-                        # => non-cyclic
-                        return False
-
-                    # move to new ring (reduced modulus)
-                    x = mod.parent().quotient(mod).gen()
-                    y = y.lift()(x)
-
-                # evaluate the isogeny
-                y = x_rational_map(y)
         return True
+
+
+def _propagate_torsion_through_isogenies(phis, ell):
+    r"""
+    Sieve $\ell$-torsion through isogenies.
+
+    Helper for :meth:`EllipticCurveHom_composite.is_cyclic`.
+    The torsion is represented by the polynomial with
+    x-coordinates as roots (a divisor of the division polynomial
+    of the starting curve).
+
+    OUTPUT: a polynomial dividing the division polynomial of the
+    starting curve, representing the torsion subgroup that is not
+    nullified by the isogeny.
+    """
+    if not phis:
+        raise ValueError("List of isogenies must be nonempty")
+
+    E0 = phis[0].domain()
+    p = E0.base_ring().characteristic()
+
+    # evalute isogenies step by step
+    # modulo the division polynomial of the starting curve
+    # i.e. "working with full torsion" at the same time
+    # gradually removing torsion factors that are being nullified
+    mod = E0.division_polynomial(ell)
+    if gcd(p, ell) != 1:
+        # if the order is not coprime with the characteristic,
+        # we may get repeated roots
+        mod = mod.radical()
+
+    # x : the x-coordinate of the generic ell-torsion point
+    # on the starting curve
+    # y : current value of isogenies applied to x
+    x = mod.parent().quotient(mod).gen()
+    y = x
+
+    for phi in phis:
+        x_rational_map = phi.x_rational_map()
+
+        den = x_rational_map.denominator()(y)
+        g = gcd(den.lift(), mod)
+        if g != 1:
+            # a new part of torsion is nullified
+            # so we need to update the modulus and the quotient ring
+            mod //= g
+            assert mod
+            if mod.degree() <= 0:  # just 1? or -1?
+                # full torsion is killed
+                # => non-cyclic
+                return mod
+
+            # move to the new ring (reduced modulus)
+            x = mod.parent().quotient(mod).gen()
+            y = y.lift()(x)
+
+        # evaluate the isogeny
+        y = x_rational_map(y)
+
+    return mod
