@@ -46,8 +46,8 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
             EXAMPLES::
 
-                sage: m = SymmetricFunctions(QQ).m()                                    # optional - sage.combinat
-                sage: m.graded_algebra() is m                                           # optional - sage.combinat sage.modules
+                sage: m = SymmetricFunctions(QQ).m()                                    # needs sage.combinat sage.modules
+                sage: m.graded_algebra() is m                                           # needs sage.combinat sage.modules
                 True
 
             TESTS:
@@ -57,21 +57,22 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
             and :meth:`projection` (which form the interface of the
             associated graded algebra) work correctly here::
 
-                sage: to_gr = m.to_graded_conversion()                                  # optional - sage.combinat sage.modules
-                sage: from_gr = m.from_graded_conversion()                              # optional - sage.combinat sage.modules
-                sage: m[2] == to_gr(m[2]) == from_gr(m[2])                              # optional - sage.combinat sage.modules
+                sage: # needs sage.combinat sage.modules
+                sage: to_gr = m.to_graded_conversion()
+                sage: from_gr = m.from_graded_conversion()
+                sage: m[2] == to_gr(m[2]) == from_gr(m[2])
                 True
-                sage: u = 3*m[1] - (1/2)*m[3]                                           # optional - sage.combinat sage.modules
-                sage: u == to_gr(u) == from_gr(u)                                       # optional - sage.combinat sage.modules
+                sage: u = 3*m[1] - (1/2)*m[3]
+                sage: u == to_gr(u) == from_gr(u)
                 True
-                sage: m.zero() == to_gr(m.zero()) == from_gr(m.zero())                  # optional - sage.combinat sage.modules
+                sage: m.zero() == to_gr(m.zero()) == from_gr(m.zero())
                 True
-                sage: p2 = m.projection(2)                                              # optional - sage.combinat sage.modules
-                sage: p2(m[2] - 4*m[1,1] + 3*m[1] - 2*m[[]])                            # optional - sage.combinat sage.modules
+                sage: p2 = m.projection(2)
+                sage: p2(m[2] - 4*m[1,1] + 3*m[1] - 2*m[[]])
                 -4*m[1, 1] + m[2]
-                sage: p2(4*m[1])                                                        # optional - sage.combinat sage.modules
+                sage: p2(4*m[1])
                 0
-                sage: p2(m.zero()) == m.zero()                                          # optional - sage.combinat sage.modules
+                sage: p2(m.zero()) == m.zero()
                 True
             """
             return self
@@ -111,13 +112,14 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
             EXAMPLES::
 
-                sage: Q = QuadraticForm(QQ, 3, [1,2,3,4,5,6])                           # optional - sage.modules
-                sage: Cl = CliffordAlgebra(Q)                                           # optional - sage.combinat sage.modules
-                sage: M = Cl.free_graded_module((0, 2, 3))                              # optional - sage.combinat sage.modules
-                sage: M.gens()                                                          # optional - sage.combinat sage.modules
+                sage: # needs sage.combinat sage.modules
+                sage: Q = QuadraticForm(QQ, 3, [1,2,3,4,5,6])
+                sage: Cl = CliffordAlgebra(Q)
+                sage: M = Cl.free_graded_module((0, 2, 3))
+                sage: M.gens()
                 (g[0], g[2], g[3])
-                sage: N.<xy, z> = Cl.free_graded_module((1, 2))                         # optional - sage.combinat sage.modules
-                sage: N.generators()                                                    # optional - sage.combinat sage.modules
+                sage: N.<xy, z> = Cl.free_graded_module((1, 2))
+                sage: N.generators()
                 (xy, z)
             """
             try:
@@ -134,10 +136,11 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
             EXAMPLES::
 
-                sage: NCSF = NonCommutativeSymmetricFunctions(QQ)                       # optional - sage.combinat
-                sage: S = NCSF.Complete()                                               # optional - sage.combinat
-                sage: L = S.formal_series_ring()                                        # optional - sage.combinat
-                sage: L                                                                 # optional - sage.combinat
+                sage: # needs sage.combinat sage.modules
+                sage: NCSF = NonCommutativeSymmetricFunctions(QQ)
+                sage: S = NCSF.Complete()
+                sage: L = S.formal_series_ring()
+                sage: L
                 Lazy completion of Non-Commutative Symmetric Functions over
                  the Rational Field in the Complete basis
             """
@@ -185,13 +188,14 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
                 EXAMPLES::
 
-                    sage: A.<x,y> = ExteriorAlgebra(QQ)                                 # optional - sage.combinat sage.modules
-                    sage: A.one_basis()                                                 # optional - sage.combinat sage.modules
+                    sage: # needs sage.combinat sage.modules
+                    sage: A.<x,y> = ExteriorAlgebra(QQ)
+                    sage: A.one_basis()
                     0
-                    sage: B = tensor((A, A, A))                                         # optional - sage.combinat sage.modules
-                    sage: B.one_basis()                                                 # optional - sage.combinat sage.modules
+                    sage: B = tensor((A, A, A))
+                    sage: B.one_basis()
                     (0, 0, 0)
-                    sage: B.one()                                                       # optional - sage.combinat sage.modules
+                    sage: B.one()
                     1 # 1 # 1
                 """
                 # FIXME: this method should be conditionally defined,
@@ -211,16 +215,17 @@ class GradedAlgebrasWithBasis(GradedModulesCategory):
 
                 Test the sign in the super tensor product::
 
-                    sage: A = SteenrodAlgebra(3)                                        # optional - sage.combinat sage.modules
-                    sage: x = A.Q(0)                                                    # optional - sage.combinat sage.modules
-                    sage: y = x.coproduct()                                             # optional - sage.combinat sage.modules
-                    sage: y^2                                                           # optional - sage.combinat sage.modules
+                    sage: # needs sage.combinat sage.modules
+                    sage: A = SteenrodAlgebra(3)
+                    sage: x = A.Q(0)
+                    sage: y = x.coproduct()
+                    sage: y^2
                     0
 
                 TODO: optimize this implementation!
                 """
-                basic = tensor_signed((module.monomial(x0) * module.monomial(x1)
-                                      for (module, x0, x1) in zip(self._sets, t0, t1)))
+                basic = tensor_signed(module.monomial(x0) * module.monomial(x1)
+                                      for (module, x0, x1) in zip(self._sets, t0, t1))
                 n = len(self._sets)
                 parity0 = [self._sets[idx].degree_on_basis(x0)
                            for (idx, x0) in enumerate(t0)]

@@ -604,7 +604,7 @@ class AsymptoticExpansionGenerators(SageObject):
                             precision=None, normalized=True):
         r"""
         Return the asymptotic expansion of the coefficients of
-        an power series with specified pole and logarithmic singularity.
+        a power series with specified pole and logarithmic singularity.
 
         More precisely, this extracts the `n`-th coefficient
 

@@ -362,9 +362,9 @@ class DefiniteIntegral(BuiltinFunction):
 
         EXAMPLES::
 
-            sage: integral(x, x, 0, 1, hold=True)._sympy_()
+            sage: integral(x, x, 0, 1, hold=True)._sympy_()                             # needs sympy
             Integral(x, (x, 0, 1))
-            sage: _.doit()
+            sage: _.doit()                                                              # needs sympy
             1/2
         """
         from sympy.integrals import Integral
@@ -619,12 +619,12 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
         sage: integrate(x*sin(log(x)), x)
         -1/5*x^2*(cos(log(x)) - 2*sin(log(x)))
-        sage: integrate(x*sin(log(x)), x, algorithm='sympy')
+        sage: integrate(x*sin(log(x)), x, algorithm='sympy')                            # needs sympy
         -1/5*x^2*cos(log(x)) + 2/5*x^2*sin(log(x))
         sage: _ = var('y, z')
         sage: (x^y - z).integrate(y)
         -y*z + x^y/log(x)
-        sage: (x^y - z).integrate(y, algorithm="sympy")
+        sage: (x^y - z).integrate(y, algorithm="sympy")                                 # needs sympy
         -y*z + cases(((log(x) != 0, x^y/log(x)), (1, y)))
 
     We integrate the above function in Maple now::
@@ -681,7 +681,7 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
         sage: integrate(f(x), x, 1, 2, algorithm="fricas")  # optional - fricas
         -1/2*pi + arctan(8) + arctan(5) + arctan(2) + arctan(1/2)
-        sage: integrate(f(x), x, 1, 2, algorithm="sympy")
+        sage: integrate(f(x), x, 1, 2, algorithm="sympy")                               # needs sympy
         -1/2*pi + arctan(8) + arctan(5) + arctan(2) + arctan(1/2)
 
     Using Giac to integrate the absolute value of a trigonometric expression::
@@ -856,7 +856,7 @@ def integrate(expression, v=None, a=None, b=None, algorithm=None, hold=False):
 
     Verify that MinusInfinity works with sympy (:trac:`12345`)::
 
-        sage: integral(1/x^2, x, -infinity, -1, algorithm='sympy')
+        sage: integral(1/x^2, x, -infinity, -1, algorithm='sympy')                      # needs sympy
         1
 
     Check that :trac:`11737` is fixed::

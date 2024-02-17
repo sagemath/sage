@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.groups sage.libs.gap sage.libs.ntl sage.libs.pari
+# sage.doctest: needs sage.groups sage.libs.gap sage.libs.ntl sage.libs.pari
 r"""
 Random Number States
 
@@ -443,7 +443,7 @@ cdef randstate _pari_seed_randstate
 # randstate object was the most recent one to seed it.
 _gp_seed_randstates = weakref.WeakKeyDictionary()
 
-cpdef randstate current_randstate():
+cpdef randstate current_randstate() noexcept:
     r"""
     Return the current random number state.
 
@@ -610,7 +610,7 @@ cdef class randstate:
         self._python_random = rand
         return rand
 
-    cpdef ZZ_seed(self):
+    cpdef ZZ_seed(self) noexcept:
         r"""
         When called on the current :class:`randstate`, returns a 128-bit
         :mod:`Integer <sage.rings.integer_ring>` suitable for seeding another
@@ -625,7 +625,7 @@ cdef class randstate:
         from sage.rings.integer_ring import ZZ
         return ZZ.random_element(long(1)<<128)
 
-    cpdef long_seed(self):
+    cpdef long_seed(self) noexcept:
         r"""
         When called on the current :class:`randstate`, returns a 128-bit
         Python long suitable for seeding another random number generator.
@@ -639,7 +639,7 @@ cdef class randstate:
         from sage.rings.integer_ring import ZZ
         return long(ZZ.random_element(long(1)<<128))
 
-    cpdef set_seed_libc(self, bint force):
+    cpdef set_seed_libc(self, bint force) noexcept:
         r"""
         Checks to see if ``self`` was the most recent :class:`randstate`
         to seed the libc random number generator.  If not, seeds the
@@ -664,7 +664,7 @@ cdef class randstate:
             c_libc_srandom(gmp_urandomb_ui(self.gmp_state, sizeof(int)*8))
             _libc_seed_randstate = self
 
-    cpdef set_seed_ntl(self, bint force):
+    cpdef set_seed_ntl(self, bint force) noexcept:
         r"""
         Checks to see if ``self`` was the most recent :class:`randstate`
         to seed the NTL random number generator.  If not, seeds
@@ -679,8 +679,8 @@ cdef class randstate:
         seed the generator itself.  However, we put the call in
         to make the coverage tester happy. ::
 
-            sage: current_randstate().set_seed_ntl(False)                               # optional - sage.libs.ntl
-            sage: ntl.ZZ_random(10^40)                                                  # optional - sage.libs.ntl
+            sage: current_randstate().set_seed_ntl(False)
+            sage: ntl.ZZ_random(10^40)
             1495283511775355459459209288047895196007
         """
         global _ntl_seed_randstate
@@ -699,10 +699,10 @@ cdef class randstate:
         EXAMPLES::
 
             sage: set_random_seed(99900000999)
-            sage: current_randstate().set_seed_gap()                                    # optional - sage.libs.gap
-            sage: gap.Random(1, 10^50)                                                  # optional - sage.libs.gap
+            sage: current_randstate().set_seed_gap()
+            sage: gap.Random(1, 10^50)
             1496738263332555434474532297768680634540939580077
-            sage: gap(35).SCRRandomString()                                             # optional - sage.libs.gap
+            sage: gap(35).SCRRandomString()
             [ 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1,
               1, 0, 0, 1, 1, 1, 1, 1, 0, 1 ]
         """
@@ -737,8 +737,8 @@ cdef class randstate:
         EXAMPLES::
 
             sage: set_random_seed(987654321)
-            sage: current_randstate().set_seed_gp()                                     # optional - sage.libs.pari
-            sage: gp.random()                                                           # optional - sage.libs.pari
+            sage: current_randstate().set_seed_gp()
+            sage: gp.random()
             23289294
         """
         if gp is None:
@@ -784,8 +784,8 @@ cdef class randstate:
         EXAMPLES::
 
             sage: set_random_seed(5551212)
-            sage: current_randstate().set_seed_pari()                                   # optional - sage.libs.pari
-            sage: pari.getrand().type()                                                 # optional - sage.libs.pari
+            sage: current_randstate().set_seed_pari()
+            sage: pari.getrand().type()
             't_INT'
         """
         global _pari_seed_randstate
@@ -805,7 +805,7 @@ cdef class randstate:
 
             _pari_seed_randstate = self
 
-    cpdef int c_random(self):
+    cpdef int c_random(self) noexcept:
         r"""
         Returns a 31-bit random number.  Intended for internal
         use only; instead of calling ``current_randstate().c_random()``,
@@ -828,7 +828,7 @@ cdef class randstate:
         """
         return gmp_urandomb_ui(self.gmp_state, 31)
 
-    cpdef double c_rand_double(self):
+    cpdef double c_rand_double(self) noexcept:
         r"""
         Returns a random floating-point number between 0 and 1.
 
@@ -922,7 +922,7 @@ cdef class randstate:
         return False
 
 
-cpdef set_random_seed(seed=None):
+cpdef set_random_seed(seed=None) noexcept:
     r"""
     Set the current random number seed from the given ``seed``
     (which must be coercible to a Python long).
@@ -954,7 +954,7 @@ set_random_seed()
 # Create an alias for randstate to be used in context managers
 seed = randstate
 
-cpdef int random():
+cpdef int random() noexcept:
     r"""
     Returns a 31-bit random number.  Intended as a drop-in replacement for
     the libc :func:`random()` function.
@@ -1025,7 +1025,7 @@ def benchmark_mt():
     for i from 0 <= i < 100000:
         gmp_urandomb_ui(rstate.gmp_state, 32)
 
-cpdef int _doctest_libc_random():
+cpdef int _doctest_libc_random() noexcept:
     r"""
     Returns the result of :func:`random()` from libc.
 

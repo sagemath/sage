@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.gap
 r"""
 Series constructor for modular forms for Hecke triangle groups
 

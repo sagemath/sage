@@ -442,8 +442,10 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
 
         TESTS::
 
+            sage: TestSuite(LaurentPolynomialRing(Zmod(2), 'y')).run()
             sage: TestSuite(LaurentPolynomialRing(Zmod(4), 'y')).run()
             sage: TestSuite(LaurentPolynomialRing(ZZ, 'u')).run()
+            sage: TestSuite(LaurentPolynomialRing(Zmod(2)['T'], 'u')).run()
             sage: TestSuite(LaurentPolynomialRing(Zmod(4)['T'], 'u')).run()
         """
         if R.ngens() != 1:
@@ -459,7 +461,7 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
             sage: LaurentPolynomialRing(QQ,'x')  # indirect doctest
             Univariate Laurent Polynomial Ring in x over Rational Field
         """
-        return "Univariate Laurent Polynomial Ring in %s over %s"%(self._R.variable_name(), self._R.base_ring())
+        return "Univariate Laurent Polynomial Ring in %s over %s" % (self._R.variable_name(), self._R.base_ring())
 
     def _element_constructor_(self, x):
         """
@@ -607,7 +609,7 @@ class LaurentPolynomialRing_mpair(LaurentPolynomialRing_generic):
             sage: LaurentPolynomialRing(QQ,1,'x').__repr__()                            # needs sage.modules
             'Multivariate Laurent Polynomial Ring in x over Rational Field'
         """
-        return "Multivariate Laurent Polynomial Ring in %s over %s"%(", ".join(self._R.variable_names()), self._R.base_ring())
+        return "Multivariate Laurent Polynomial Ring in %s over %s" % (", ".join(self._R.variable_names()), self._R.base_ring())
 
     def monomial(self, *args):
         r"""

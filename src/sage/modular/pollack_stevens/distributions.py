@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.rings.padics
 r"""
 Spaces of distributions for Pollack-Stevens modular symbols
 
@@ -31,14 +31,14 @@ EXAMPLES::
     (1 + O(11^5), 2 + O(11^4), 3 + O(11^3), 4 + O(11^2), 5 + O(11))
 
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2012 Robert Pollack <rpollack@math.bu.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.misc.lazy_import import lazy_import
 from sage.modules.module import Module
@@ -49,7 +49,7 @@ from sage.misc.cachefunc import cached_method
 from sage.categories.modules import Modules
 from sage.structure.factory import UniqueFactory
 
-import sage.rings.ring as ring
+from sage.rings.ring import Ring
 
 lazy_import('sage.modular.pollack_stevens.dist', 'get_dist_classes')
 lazy_import('sage.rings.padics.factory', ['ZpCA', 'QpCR'])
@@ -224,6 +224,7 @@ class Symk_factory(UniqueFactory):
         """
         return Symk_class(*key)
 
+
 OverconvergentDistributions = OverconvergentDistributions_factory('OverconvergentDistributions')
 Symk = Symk_factory('Symk')
 
@@ -280,7 +281,7 @@ class OverconvergentDistributions_abstract(Module):
             ...
             ValueError: p must be prime
         """
-        if not isinstance(base, ring.Ring):
+        if not isinstance(base, Ring):
             raise TypeError("base must be a ring")
         #from sage.rings.padics.pow_computer import PowComputer
         # should eventually be the PowComputer on ZpCA once that uses longs.
@@ -318,7 +319,7 @@ class OverconvergentDistributions_abstract(Module):
         """
         ordp = kwargs.get('ord',0)
         check = kwargs.get('check',True)
-        normalize= kwargs.get('normalize',True)
+        normalize = kwargs.get('normalize',True)
         return self.Element(val, self, ordp, check, normalize)
 
     def _coerce_map_from_(self, other):

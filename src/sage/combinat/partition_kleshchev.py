@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Kleshchev partitions
 ====================
@@ -860,7 +861,7 @@ class KleshchevPartitionTuple(PartitionTuple):
         return _is_restricted(self.to_list(), KP._multicharge, KP._convention)
 
 
-class KleshchevCrystalMixin():
+class KleshchevCrystalMixin:
     """
     Mixin class for the crystal structure of a Kleshchev partition.
     """
@@ -994,7 +995,7 @@ class KleshchevPartitionCrystal(KleshchevPartition, KleshchevCrystalMixin):
         cell = self.good_cells(i)
         if cell is None:
             return None
-        r,c = cell
+        r, _ = cell
         mu = list(self)
         mu[r] -= 1
         return type(self)(P, mu)
@@ -1055,7 +1056,7 @@ class KleshchevPartitionTupleCrystal(KleshchevPartitionTuple, KleshchevCrystalMi
         cell = self.good_cells(i)
         if cell is None:
             return None
-        k,r,c = cell
+        k, r, _ = cell
         mu = self.to_list()
         mu[k][r] -= 1
         return type(self)(P, mu)
@@ -1228,7 +1229,7 @@ class KleshchevPartitions(PartitionTuples):
             sage: KP = KleshchevPartitions(5, [3,0,1], 1, convention='LS')
             sage: KP.multicharge()
             (3, 0, 1)
-            """
+        """
         return self._multicharge
 
     def convention(self):
@@ -1286,11 +1287,11 @@ class KleshchevPartitions(PartitionTuples):
                 return mu
 
             if KPmu._level != self._level or KPmu._e != self._e:
-                raise ValueError('%s is not an element of %s'%(mu, self))
+                raise ValueError('%s is not an element of %s' % (mu, self))
 
             if KPmu._convention[1] != self._convention[1]:
                 mu = [nu.conjugate() for nu in mu]
-                if self._level>1 and KPmu._convention[0] == self._convention[0]:
+                if self._level > 1 and KPmu._convention[0] == self._convention[0]:
                     mu = mu[::-1]
 
         return super()._element_constructor_(mu)
@@ -1483,7 +1484,7 @@ class KleshchevPartitions_all(KleshchevPartitions):
             return 'Kleshchev partitions with e=%s' % (self._e)
 
         return 'Kleshchev partitions with e=%s and multicharge=(%s)' % (
-                        self._e,','.join('%s'%m for m in self._multicharge))
+                        self._e,','.join('%s' % m for m in self._multicharge))
 
     def __contains__(self, mu):
         """
@@ -1707,7 +1708,7 @@ class KleshchevPartitions_size(KleshchevPartitions):
             return 'Kleshchev partitions with e=%s and size %s' % (self._e, self._size)
 
         return 'Kleshchev partitions with e=%s and multicharge=(%s) and size %s' % (
-            self._e,','.join('%s'%m for m in self._multicharge), self._size
+            self._e,','.join('%s' % m for m in self._multicharge), self._size
         )
 
     def __contains__(self, mu):
@@ -1938,7 +1939,7 @@ def _is_regular(kpt, multicharge, convention):
     convention = convention[0] + 'G'
     cell = _a_good_cell(kpt, multicharge, convention)
     while cell is not None:
-        k,r,c = cell
+        k, r, _ = cell
         if kpt[k][r] == 1:
             kpt[k].pop()
         else:
@@ -1964,15 +1965,15 @@ def _is_restricted(kpt, multicharge, convention):
         sage: _is_restricted([[], []], [I3(0),I3(2)], 'RG')
         True
     """
-    if all(part == [] for part in kpt):
+    if all(not part for part in kpt):
         return True
     convention = convention[0] + 'S'
     cell = _a_good_cell(kpt, multicharge, convention)
     while cell is not None:
-        k,r,c = cell
+        k, r, _ = cell
         if kpt[k][r] == 1:
             kpt[k].pop()
         else:
             kpt[k][r] -= 1
         cell = _a_good_cell(kpt, multicharge, convention)
-    return all(part == [] for part in kpt)
+    return all(not part for part in kpt)

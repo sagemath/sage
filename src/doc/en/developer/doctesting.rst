@@ -512,7 +512,10 @@ doctests.  This determines the number of threads by reading the
 environment variable :envvar:`MAKE`: if it is set to ``make -j12``, then
 use 12 threads.  If :envvar:`MAKE` is not set, then by default it uses
 the number of CPU cores (as determined by the Python function
-``multiprocessing.cpu_count()``) with a minimum of 2 and a maximum of 8.
+:func:`multiprocessing.cpu_count`) with a minimum of 2 and a maximum of 8.
+(When this runs under the control of the `GNU make jobserver
+<https://www.gnu.org/software/make/manual/make.html#Parallel>`_, then Sage
+will request as most this number of job slots.)
 
 In any case, this will test the Sage library with multiple threads::
 
@@ -1080,7 +1083,7 @@ under the control of gdb, use the ``--gdb`` flag::
 
     [roed@localhost sage]$ ./sage -t --gdb \
                                   src/sage/schemes/elliptic_curves/constructor.py
-    exec gdb --eval-commands="run" --args /home/roed/sage/local/var/lib/sage/venv-python3.9/bin/python3 sage-runtests --serial --timeout=0 --stats_path=/home/roed/.sage/timings2.json --optional=pip,sage,sage_spkg src/sage/schemes/elliptic_curves/constructor.py
+    exec gdb --eval-commands="run" --args /home/roed/sage/local/var/lib/sage/venv-python3.9/bin/python3 sage-runtests --serial --timeout=0 --stats-path=/home/roed/.sage/timings2.json --optional=pip,sage,sage_spkg src/sage/schemes/elliptic_curves/constructor.py
     GNU gdb 6.8-debian
     Copyright (C) 2008 Free Software Foundation, Inc.
     License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
@@ -1308,6 +1311,8 @@ code loads the globals from that file into the namespace before
 running tests.  To disable this behaviour (and require imports to be
 explicitly specified), use the ``--force-lib`` option.
 
+.. _section-doctest-auxiliary-files:
+
 Auxiliary files
 ^^^^^^^^^^^^^^^
 
@@ -1338,10 +1343,11 @@ To specify a logfile (rather than use the default which is created for
         cumulative wall time: 4.3 seconds
 
 
-To give a json file storing the timings for each file, use the
-``--stats_path`` flag.  These statistics are used in sorting files so
-that slower tests are run first (and thus multiple processes are
-utilized most efficiently)::
+To give a json file storing the timings and pass/fail status for each file, use the
+``--stats-path`` flag; the default location of this file is ``~/.sage/timings2.json``.
+The doctester reads it if it exists, for the purpose of sorting the files
+so that slower tests are run first (and thus multiple processes are utilized most
+efficiently)::
 
     [roed@localhost sage]$ ./sage -tp 2 --stats-path ~/.sage/timings2.json --all
     Running doctests with ID 2012-07-07-01-28-34-2df4251d.
@@ -1349,6 +1355,22 @@ utilized most efficiently)::
     Sorting sources by runtime so that slower doctests are run first....
     Doctesting 2067 files using 2 threads.
     ...
+
+At the end of the doctest run, Sage updates the json file if it exists or creates
+a new one.
+
+The recorded pass/fail status of the files can be used for running only those files
+that failed their most recent test by using the ``--failed`` flag (``-f`` for short).
+
+Using the option ``--baseline-stats-path known-test-failures.json``,
+it is possible to distinguish files with known doctest failures
+from new failures. The file ``known-test-failures.json`` should be
+prepared in the same format as ``timings2.json``.
+
+Source files marked as failed there will be marked as "[failed in baseline]"
+failures in the doctest report; and if there are only baseline failures, no
+new failures, then ``sage -t`` will exit with status code 0 (success).
+
 
 .. _section-doctesting-venv:
 
@@ -1614,6 +1636,9 @@ To have the doctest fixer take care of the ``# optional/needs`` tags,
 but not change the expected results of examples, use the option ``--only-tags``.
 This mode is suitable for mostly unattended runs on many files.
 
+With the option ``--verbose``, the doctest fixer shows the doctester's messages
+one by one and reports the changes made.
+
 .. warning::
 
    While the doctest fixer guarantees to preserve any comments that
@@ -1655,3 +1680,26 @@ to the doctest.
 
 Likewise, when the doctester runs into a :class:`ModuleNotFoundError`,
 the doctest fixer will automatically add a ``# needs ...`` tag.
+
+The switch ``--distribution`` can be repeated; the given distributions
+will be tested in sequence.  Using ``--distribution all`` is equivalent
+to a preset list of ``--distribution`` switches.  With the switch
+``--fixed-point``, the doctest fixer runs the given distributions until
+no more changes are made.
+
+
+Updating baseline files
+-----------------------
+
+The modularized distribution packages ``pkgs/sagemath-categories`` and
+``pkgs/sagemath-repl`` contain files ``known-test-failures*.json`` for use
+with the option ``--baseline-stats-path``, see section
+:ref:`section-doctest-auxiliary-files`.
+
+After running the doctesters of the distributions, for example, via
+``sage --fixdoctests``, you can use the test results stored in
+``timings2.json`` files to update the ``known-test-failures*.json`` files.
+This update can be done using the command::
+
+    [mkoeppe@localhost sage]$ ./sage --fixdoctests --no-test                        \
+                                --update-known-test-failures --distribution all

@@ -110,14 +110,14 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
         """
         self.center = CC(center)
         if self.center.imag() <= 0:
-            raise ValueError("center: %s is not a valid point in the upper half plane model of the hyperbolic plane"%(self.center))
+            raise ValueError("center: %s is not a valid point in the upper half plane model of the hyperbolic plane" % (self.center))
         if sides < 3:
             raise ValueError("degenerated polygons (sides<=2) are not supported")
         if i_angle <= 0 or i_angle >= pi:
-            raise ValueError("interior angle %s must be in (0, pi) interval"%(i_angle))
+            raise ValueError("interior angle %s must be in (0, pi) interval" % (i_angle))
         if pi*(sides-2) - sides*i_angle <= 0:
             raise ValueError("there exists no hyperbolic regular compact polygon,"
-                             " for sides=%s the interior angle must be less than %s"%(sides, pi * (sides-2) / sides))
+                             " for sides=%s the interior angle must be less than %s" % (sides, pi * (sides-2) / sides))
         self.sides = sides
         self.i_angle = i_angle
         beta = 2 * pi / self.sides # compute the rotation angle to be used ahead
@@ -151,7 +151,7 @@ class HyperbolicRegularPolygon(HyperbolicPolygon):
             new_z_k = self._i_rotation(z_k[-1], beta).n(digits=8)
             z_k = z_k + [new_z_k]
             d_z_k = d_z_k + [new_z_k * scale + h_disp]
-            r_z_k=[-(new_z_k).conjugate() * scale + h_disp] + r_z_k
+            r_z_k = [-(new_z_k).conjugate() * scale + h_disp] + r_z_k
         if is_odd(self.sides):
             HyperbolicPolygon.__init__(self, d_z_k + r_z_k, "UHP", options)
         else:

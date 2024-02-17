@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint sage.libs.pari
 r"""
 Homology of modular abelian varieties
 
@@ -37,7 +38,8 @@ EXAMPLES::
     [-4  0]
     [ 0 -4]
     sage: a.T(7)
-    Hecke operator T_7 on Submodule of rank 2 of Integral Homology of Abelian variety J0(43) of dimension 3
+    Hecke operator T_7 on
+     Submodule of rank 2 of Integral Homology of Abelian variety J0(43) of dimension 3
 """
 
 # ****************************************************************************
@@ -50,11 +52,11 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.categories.commutative_rings import CommutativeRings
 from sage.modular.hecke.module import HeckeModule_free_module
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.ring import CommutativeRing
 from sage.structure.richcmp import richcmp_method, richcmp, richcmp_not_equal
 
 # TODO: we will probably also need homology that is *not* a Hecke module.
@@ -72,11 +74,9 @@ class Homology(HeckeModule_free_module):
 
         INPUT:
 
+        -  ``n`` -- positive integer
 
-        -  ``n`` - positive integer
-
-        -  ``var`` - string (default: 'x') the variable name
-
+        -  ``var`` -- string (default: 'x') the variable name
 
         OUTPUT: a polynomial over ZZ in the given variable
 
@@ -115,7 +115,7 @@ class Homology_abvar(Homology):
             sage: loads(dumps(H)) == H
             True
         """
-        if not isinstance(base, CommutativeRing):
+        if base not in CommutativeRings():
             raise TypeError("base ring must be a commutative ring")
         HeckeModule_free_module.__init__(
             self, base, abvar.level(), weight=2)
@@ -272,7 +272,8 @@ class Homology_abvar(Homology):
 
             sage: J = J0(23)
             sage: J.homology(QQ[I]).hecke_matrix(3).parent()
-            Full MatrixSpace of 4 by 4 dense matrices over Number Field in I with defining polynomial x^2 + 1 with I = 1*I
+            Full MatrixSpace of 4 by 4 dense matrices over
+             Number Field in I with defining polynomial x^2 + 1 with I = 1*I
         """
         raise NotImplementedError
 
@@ -694,16 +695,19 @@ class Homology_submodule(Homology):
 
     def hecke_matrix(self, n):
         """
-        Return the matrix of the n-th Hecke operator acting on this
+        Return the matrix of the `n`-th Hecke operator acting on this
         homology group.
 
         EXAMPLES::
 
             sage: d = J0(125).homology(GF(17)).decomposition(2); d
             [
-            Submodule of rank 4 of Homology with coefficients in Finite Field of size 17 of Abelian variety J0(125) of dimension 8,
-            Submodule of rank 4 of Homology with coefficients in Finite Field of size 17 of Abelian variety J0(125) of dimension 8,
-            Submodule of rank 8 of Homology with coefficients in Finite Field of size 17 of Abelian variety J0(125) of dimension 8
+            Submodule of rank 4 of Homology with coefficients in Finite Field of size 17
+             of Abelian variety J0(125) of dimension 8,
+            Submodule of rank 4 of Homology with coefficients in Finite Field of size 17
+             of Abelian variety J0(125) of dimension 8,
+            Submodule of rank 8 of Homology with coefficients in Finite Field of size 17
+             of Abelian variety J0(125) of dimension 8
             ]
             sage: t = d[0].hecke_matrix(17); t
             [16 15 15  0]

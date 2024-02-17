@@ -9,8 +9,8 @@ Testing on Multiple Platforms
 =============================
 
 Sage is intended to build and run on a variety of platforms,
-including all major Linux distributions, as well as MacOS, and
-Windows (with Cygwin and WSL).
+including all major Linux distributions, as well as macOS, and
+Windows (with WSL).
 
 There is considerable variation among these platforms.
 To ensure that Sage continues to build correctly on users'
@@ -60,13 +60,28 @@ Make sure that your Docker client is configured to provide enough RAM
 to the containers (8 GB are a good choice). In Docker Desktop this
 setting is in Preferences -> Resources -> Advanced.
 
-All examples in this section were obtained using Docker Desktop for
-Mac; but the `command-line user interface
-<https://docs.docker.com/engine/reference/commandline/cli/>`_ for the
-other platforms is identical.
+.. NOTE::
+
+   All examples in this section were obtained using Docker Desktop for
+   Mac; but the `command-line user interface
+   <https://docs.docker.com/engine/reference/commandline/cli/>`_ for the
+   other platforms is identical.
+
+   As an alternative, you can also run Docker in GitHub Codespaces
+   (or another cloud service) using a container with the Docker-in-Docker
+   feature. Sage provides a suitable dev container configuration
+   `.devcontainer/tox-docker-in-docker
+   <https://github.com/sagemath/sage/tree/develop/.devcontainer/tox-docker-in-docker>`_:
+
+   .. ONLY:: html
+
+      .. image:: https://github.com/codespaces/badge.svg
+         :align: center
+         :target: https://codespaces.new/sagemath/sage?devcontainer_path=.devcontainer%2Ftox-docker-in-docker%2Fdevcontainer.json
 
 All major Linux distributions provide ready-to-use Docker images,
-which are published via `Docker Hub <https://hub.docker.com>`_.  For
+which are published via `Docker Hub <https://hub.docker.com>`_
+or other container registries.  For
 example, to run the current stable (LTS) version of Ubuntu
 interactively, you can use the shell command::
 
@@ -128,9 +143,9 @@ Typical Docker images provide minimal installations of packages only::
 
 As you can see above, the image ``ubuntu:latest`` has neither a Python nor
 a GCC installed, which are among the build prerequisites of Sage.  We
-need to install them using the distribution's package manager first.
+need to install them using the Linux distribution's package manager first.
 
-Sage facilitates testing various distributions on Docker as follows.
+Sage facilitates testing various Linux distributions on Docker as follows.
 
 Discovering the system's package system
 ---------------------------------------
@@ -142,7 +157,7 @@ Discovering the system's package system
 
 Let's install gcc, hoping that the Ubuntu package providing it is
 simply named ``gcc``.  If we forgot what the package manager on
-Debian-derived distributions is called, we can ask Sage for a
+Debian-derived Linux distributions is called, we can ask Sage for a
 reminder::
 
   root@39d693b2a75d:/sage# build/bin/sage-print-system-package-command debian install gcc
@@ -190,7 +205,8 @@ example, the file ``build/pkgs/_prereq/distros/debian.txt`` contains the followi
 From this information, we know that we can use the following command
 on our container to install the necessary build prerequisites::
 
-  root@39d693b2a75d:/sage# apt-get install binutils make m4 perl python3 tar bc gcc g++ ca-certificates
+  root@39d693b2a75d:/sage# apt-get install binutils make m4 perl python3 \
+                                           tar bc gcc g++ ca-certificates
   Reading package lists... Done
   Building dependency tree
   Reading state information... Done
@@ -208,7 +224,8 @@ Now we can start the build::
   root@39d693b2a75d:/sage# ./configure
   checking for a BSD-compatible install... /usr/bin/install -c
   checking for root user... yes
-  configure: error: You cannot build Sage as root, switch to an unprivileged user.  (If building in a container, use --enable-build-as-root.)
+  configure: error: You cannot build Sage as root, switch to an unprivileged user.
+  (If building in a container, use --enable-build-as-root.)
 
 Let's just follow this helpful hint::
 
@@ -225,14 +242,16 @@ Using Sage's database of equivalent distribution packages
 At the end of the ``./configure`` run, Sage issued a message like the
 following::
 
-  configure: notice: the following SPKGs did not find equivalent system packages: arb boost_cropped bzip2 ... zeromq zlib
+  configure: notice: the following SPKGs did not find equivalent system packages:
+                     arb boost_cropped bzip2 ... zeromq zlib
   checking for the package system in use... debian
-  configure: hint: installing the following system packages is recommended and may avoid building some of the above SPKGs from source:
+  configure: hint: installing the following system packages is recommended and
+                   may avoid building some of the above SPKGs from source:
   configure:   $ sudo apt-get install libflint-arb-dev ... libzmq3-dev libz-dev
   configure: After installation, re-run configure using:
-  configure:   $ ./config.status --recheck && ./config.status
+  configure:   $ make reconfigure
 
-This information comes from Sage's database of equivalent distribution
+This information comes from Sage's database of equivalent system
 packages.  For example::
 
   root@39d693b2a75d:/sage# ls build/pkgs/arb/distros/
@@ -268,9 +287,9 @@ corresponding to its current state::
 
   root@39d693b2a75d:/sage# ^D
   [mkoeppe@sage worktree-ubuntu-latest]$ docker ps -a | head -n3
-  CONTAINER ID        IMAGE                   COMMAND                   CREATED             STATUS
-  39d693b2a75d        ubuntu:latest           "/bin/bash"               8 minutes ago       Exited (0) 6 seconds ago
-  9f3398da43c2        ubuntu:latest           "/bin/bash"               8 minutes ago       Exited (0) 8 minutes ago
+  CONTAINER ID   IMAGE           COMMAND       CREATED         STATUS
+  39d693b2a75d   ubuntu:latest   "/bin/bash"   8 minutes ago   Exited (0) 6 seconds ago
+  9f3398da43c2   ubuntu:latest   "/bin/bash"   8 minutes ago   Exited (0) 8 minutes ago
   [mkoeppe@sage worktree-ubuntu-latest]$ docker commit 39d693b2a75d ubuntu-latest-minimal-17
   sha256:4151c5ca4476660f6181cdb13923da8fe44082222b984c377fb4fd6cc05415c1
 
@@ -506,7 +525,8 @@ might not work on all platforms, ``surf``, which was marked as
   ...
   Makefile:31: recipe for target 'surf' failed
   make: *** [surf] Error 1
-  The command '/bin/sh -c make SAGE_SPKG="sage-spkg -y -o" ${USE_MAKEFLAGS} ${TARGETS_PRE}' returned a non-zero code: 2
+  The command '/bin/sh -c make SAGE_SPKG="sage-spkg -y -o" ${USE_MAKEFLAGS} ${TARGETS_PRE}'
+  returned a non-zero code: 2
 
 Note that no image id is shown at the end; the build failed, and no
 image is created.  However, the container in which the last step of
@@ -573,14 +593,22 @@ Automatic Docker-based build testing using tox
 `tox <https://tox.readthedocs.io/en/latest/>`_ is a Python package that
 is widely used for automating tests of Python projects.
 
-Install ``tox`` for use with your system Python, for example using::
+If you are using Docker locally, install ``tox`` for use with your system Python,
+for example using::
 
   [mkoeppe@sage sage]$ pip install --user tox
 
+If you run Docker-in-Docker on GitHub Codespaces using our dev container
+configuration `.devcontainer/tox-docker-in-docker
+<https://github.com/sagemath/sage/tree/develop/.devcontainer/tox-docker-in-docker>`_,
+``tox`` is already installed.
+
+Sage provides a sophisticated tox configuration in the file
+``$SAGE_ROOT/tox.ini`` for the purpose of portability testing.
+
 A tox "environment" is identified by a symbolic name composed of
 several `Tox "factors"
-<https://tox.readthedocs.io/en/latest/config.html#complex-factor-conditions>`_,
-which are defined in the file ``$SAGE_ROOT/tox.ini``.
+<https://tox.readthedocs.io/en/latest/config.html#complex-factor-conditions>`_.
 
 The **technology** factor describes how the environment is run:
 
@@ -688,11 +716,11 @@ the one just after running the ``configure`` script (``configured``)::
 
 Let's verify that the images are available::
 
-  (base) egret:~/s/sage/sage-rebasing/worktree-algebraic-2018-spring (mkoeppe *$%>)$ docker images | head
-  REPOSITORY                                                TAG                               IMAGE ID
-  sage-centos-8-standard-with-targets                9.1.beta9-435-g861ba33bbc-dirty   7ecfa86fceab
-  sage-centos-8-standard-configured                  9.1.beta9-435-g861ba33bbc-dirty   4314929e2b4c
-  sage-centos-8-standard-with-system-packages        9.1.beta9-435-g861ba33bbc-dirty   4bb14c3d5646
+  [mkoeppe@sage sage]$ docker images | head
+  REPOSITORY                                    TAG                               IMAGE ID
+  sage-centos-8-standard-with-targets           9.1.beta9-435-g861ba33bbc-dirty   7ecfa86fceab
+  sage-centos-8-standard-configured             9.1.beta9-435-g861ba33bbc-dirty   4314929e2b4c
+  sage-centos-8-standard-with-system-packages   9.1.beta9-435-g861ba33bbc-dirty   4bb14c3d5646
   ...
 
 
@@ -922,21 +950,21 @@ Options for build testing with the local technology
 The environments using the ``local`` technology can be customized
 by setting environment variables.
 
- - If ``SKIP_SYSTEM_PKG_INSTALL`` is set to ``1`` (or ``yes``),
-   then all steps of installing system packages are skipped in this run.
-   When reusing a previously created tox environment, this option can
-   save time and also give developers more control for experiments
-   with system packages.
+- If ``SKIP_SYSTEM_PKG_INSTALL`` is set to ``1`` (or ``yes``),
+  then all steps of installing system packages are skipped in this run.
+  When reusing a previously created tox environment, this option can
+  save time and also give developers more control for experiments
+  with system packages.
 
- - If ``SKIP_BOOTSTRAP`` is set to ``1`` (or ``yes``), then the
-   bootstrapping phase is skipped.  When reusing a previously created
-   tox environment, this option can save time.
+- If ``SKIP_BOOTSTRAP`` is set to ``1`` (or ``yes``), then the
+  bootstrapping phase is skipped.  When reusing a previously created
+  tox environment, this option can save time.
 
- - If ``SKIP_CONFIGURE`` is set to ``1`` (or ``yes``), then the
-   ``configure`` script is not run explicitly.  When reusing a
-   previously created tox environment, this option can save time.
-   (The ``Makefile`` may still rerun configuration using
-   ``config.status --recheck``.)
+- If ``SKIP_CONFIGURE`` is set to ``1`` (or ``yes``), then the
+  ``configure`` script is not run explicitly.  When reusing a
+  previously created tox environment, this option can save time.
+  (The ``Makefile`` may still rerun configuration using
+  ``config.status --recheck``.)
 
 The ``local`` technology also defines a special target ``bash``:
 Instead of building anything with ``make``, it just starts an
@@ -962,15 +990,10 @@ This is defined in the files
 - `$SAGE_ROOT/.github/workflows/ci-linux.yml
   <https://github.com/sagemath/sage/tree/develop/.github/workflows/ci-linux.yml>`_
   (which calls `$SAGE_ROOT/.github/workflows/docker.yml
-  <https://github.com/sagemath/sage/tree/develop/.github/workflows/docker.yml>`_),
+  <https://github.com/sagemath/sage/tree/develop/.github/workflows/docker.yml>`_) and
 
 - `$SAGE_ROOT/.github/workflows/ci-macos.yml
-  <https://github.com/sagemath/sage/tree/develop/.github/workflows/ci-macos.yml>`_, and
-
-- `$SAGE_ROOT/.github/workflows/ci-cygwin-standard.yml
-  <https://github.com/sagemath/sage/tree/develop/.github/workflows/ci-cygwin-standard.yml>`_
-  (which calls `$SAGE_ROOT/.github/workflows/cygwin.yml
-  <https://github.com/sagemath/sage/tree/develop/.github/workflows/cygwin.yml>`_).
+  <https://github.com/sagemath/sage/tree/develop/.github/workflows/ci-macos.yml>`_.
 
 GitHub Actions runs these build jobs on 2-core machines with 7 GB of
 RAM memory and 14 GB of SSD disk space, cf.
@@ -1137,33 +1160,90 @@ Also `smaller images corresponding to earlier build stages
 <https://github.com/orgs/sagemath/packages?tab=packages&q=sage-debian-bullseye-standard>`_
 are available:
 
- * ``-with-system-packages`` provides a system installation with
-   system packages installed, no source tree,
+* ``-with-system-packages`` provides a system installation with
+  system packages installed, no source tree,
 
- * ``-configured`` contains a partial source tree
-   (:envvar:`SAGE_ROOT`) and has completed the bootstrapping phase and
-   the run of the ``configure`` script,
+* ``-configured`` contains a partial source tree
+  (:envvar:`SAGE_ROOT`) and has completed the bootstrapping phase and
+  the run of the ``configure`` script,
 
- * ``-with-targets-pre`` contains the full source tree and a full
-   installation of all non-Python packages (:envvar:`SAGE_LOCAL`),
+* ``-with-targets-pre`` contains a partial source tree
+  (:envvar:`SAGE_ROOT`) and a full installation
+  of all non-Python packages (:envvar:`SAGE_LOCAL`),
 
- * ``-with-targets`` contains the full source tree and a full
-   installation of Sage, including the HTML documentation, but ``make
-   ptest`` has not been run yet.
+* ``-with-targets`` contains the full source tree and a full
+  installation of Sage, including the HTML documentation, but ``make
+  ptest`` has not been run yet.
 
+.. only:: html
+
+   .. include:: portability_platform_table.rst
+
+
+Testing GitHub Actions locally
+==============================
+
+`act <https://github.com/nektos/act>`_ is a tool, written in Go, and using Docker,
+to run GitHub Actions locally; in particular, it speeds up developing Actions.
+We recommend using ``gh extension`` facility to install ``act``. ::
+
+    [alice@localhost sage]$ gh extension install https://github.com/nektos/gh-act
+
+Extra steps needed for configuration of Docker to run Actions locally can be found on
+`act's GitHub <https://github.com/nektos/act>`_
+
+Here we give a very short sampling of ``act``'s capabilities. If you installed standalone
+``act``, it should be invoked as ``act``, not as ``gh act``.
+After the set up, one can e.g. list all the available linting actions::
+
+    [alice@localhost sage]$ gh act -l | grep lint
+    0      lint-pycodestyle        Code style check with pycodestyle                          Lint                                               lint.yml                push,pull_request
+    0      lint-relint             Code style check with relint                               Lint                                               lint.yml                push,pull_request
+    0      lint-rst                Validate docstring markup as RST                           Lint                                               lint.yml                push,pull_request
+    [alice@localhost sage]$
+
+run a particular action ``lint-rst`` ::
+
+    [alice@localhost sage]$ gh act -j lint-rst
+    ...
+
+and so on.
+
+By default, ``act`` pulls all the data needed from the next, but it can also cache it,
+speeding up repeated runs quite a lot. The following repeats running of ``lint-rst`` using cached data::
+
+    [alice@localhost sage]$ gh act -p false -r -j lint-rst
+    [Lint/Validate docstring markup as RST]   Start image=catthehacker/ubuntu:act-latest
+    ...
+    | rst: commands[0] /home/alice/work/software/sage/src> flake8 --select=RST
+    |   rst: OK (472.60=setup[0.09]+cmd[472.51] seconds)
+    |   congratulations :) (474.10 seconds)
+    ...
+    [Lint/Validate docstring markup as RST]     Success - Main Lint using tox -e rst
+    [Lint/Validate docstring markup as RST]  Run Post Set up Python
+    [Lint/Validate docstring markup as RST]     docker exec cmd=[node /var/run/act/actions/actions-setup-python@v4/dist/cache-save/index.js] user= workdir=
+    [Lint/Validate docstring markup as RST]     Success - Post Set up Python
+    [Lint/Validate docstring markup as RST]   Job succeeded
+
+Here ``-p false`` means using already pulled Docker images, and ``-r`` means do not remove Docker images
+after a successful run which used them. This, and many more details, can be found by running ``gh act -h``, as well
+as reading ``act``'s documentation.
+
+.. This sectuion is a stub. 
+   More Sage-specfic details for using ``act`` should be added. PRs welcome!
 
 Using our pre-built Docker images for development in VS Code
 ============================================================
 
 `VS Code <https://code.visualstudio.com/>`_ is very
 convenient for developing with Docker containers thanks to the `Visual
-Studio Code Remote - Containers
-<https://code.visualstudio.com/docs/remote/containers>`_ extension.
+Studio Code Dev Containers
+<https://code.visualstudio.com/docs/devcontainers/containers>`_ extension.
 
 If the extension is not already installed, then in VS Code, click the
 "Extension" icon on the left (or press :kbd:`Ctrl` + :kbd:`Shift` + :kbd:`X`;
 on macOS, :kbd:`Command` + :kbd:`Shift` + :kbd:`X`) to open a list of
-extensions. Search for "Remote - Containers" and install it.
+extensions. Search for "Dev Containers" and install it.
 
 The extension needs a ``devcontainer.json`` configuration file to work. Sage
 provides sample ``devcontainer.json`` configuration files
@@ -1173,16 +1253,16 @@ purpose.
 
 If you open the sage folder in VS Code, it may prompt you whether you would like to open the current
 directory in the dev container (yes).  If it does not, use the command palette
-(:kbd:`Ctrl` + :kbd:`Shift` + :kbd:`P`), enter the command "Remote-Containers:
+(:kbd:`Ctrl` + :kbd:`Shift` + :kbd:`P`), enter the command "Dev Containers:
 Reopen Folder in Container" , and hit :kbd:`Enter`.
 
 If the above ``code .`` command does not work, start VS Code as a regular
-application, then in the command palette of VS Code, enter "Remote-Containers:
+application, then in the command palette of VS Code, enter "Dev Containers:
 Open Folder in Container", and hit :kbd:`Enter`, and choose the directory
 ``$SAGE_ROOT`` of your local Sage repository.
 
 VS Code then prompts you to choose a dev container configuration.
-For example, choose "Ubuntu jammy" `.devcontainer/portability-ubuntu-jammy-standard/devcontainer.json
+For example, choose "ubuntu-jammy-standard" `.devcontainer/portability-ubuntu-jammy-standard/devcontainer.json
 <https://github.com/sagemath/sage/tree/develop/.devcontainer/portability-ubuntu-jammy-standard/devcontainer.json>`_,
 which uses the Docker image based on ``ubuntu-jammy-standard``, the most recent
 development version of Sage (``dev`` tag), and a full installation of
@@ -1223,8 +1303,15 @@ in a terminal, `open a new terminal in VS Code
    you will want to remove ``logs`` if it is a symbolic link, and rerun the
    ``configure`` script.
 
+The Sage source tree contains premade configuration files for all platforms
+for which our portability CI builds Docker images, both in the ``minimal`` and
+``standard`` system package configurations. The configuration files can be
+generated using the command ``tox -e update_docker_platforms`` (see
+`$SAGE_ROOT/tox.ini <https://github.com/sagemath/sage/tree/develop/tox.ini>`_
+for environment variables that take effect).
+
 You can edit a copy of the configuration file to change to a different platform, another
-version, or build stage.  After editing the configuration file, run "Remote-Containers: Rebuild Container" from the command
+version, or build stage.  After editing the configuration file, run "Dev Containers: Rebuild Container" from the command
 palette. See the `VS Code devcontainer.json reference
 <https://code.visualstudio.com/docs/remote/devcontainerjson-reference>`_
 and the `GitHub introduction to dev containers

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Directed graphs
 
@@ -71,6 +70,7 @@ graphs. Here is what they can do
     :delim: |
 
     :meth:`~DiGraph.path_semigroup` | Return the (partial) semigroup formed by the paths of the digraph.
+    :meth:`~DiGraph.auslander_reiten_quiver` | Return the Auslander-Reiten quiver of ``self``.
 
 **Connectivity:**
 
@@ -84,7 +84,6 @@ graphs. Here is what they can do
     :meth:`~DiGraph.strongly_connected_components_subgraphs` | Return the strongly connected components as a list of subgraphs.
     :meth:`~DiGraph.strongly_connected_component_containing_vertex` | Return the strongly connected component containing a given vertex
     :meth:`~DiGraph.strongly_connected_components` | Return the list of strongly connected components.
-    :meth:`~DiGraph.immediate_dominators` | Return the immediate dominators of all vertices reachable from `root`.
     :meth:`~DiGraph.strong_articulation_points` | Return the strong articulation points of this digraph.
 
 
@@ -445,9 +444,9 @@ class DiGraph(GenericGraph):
     #. An igraph directed Graph (see also
        :meth:`~sage.graphs.generic_graph.GenericGraph.igraph_graph`)::
 
-           sage: import igraph                                  # optional - python_igraph
-           sage: g = igraph.Graph([(0,1),(0,2)], directed=True) # optional - python_igraph
-           sage: DiGraph(g)                                     # optional - python_igraph
+           sage: import igraph                                   # optional - python_igraph
+           sage: g = igraph.Graph([(0,1),(0,2)], directed=True)  # optional - python_igraph
+           sage: DiGraph(g)                                      # optional - python_igraph
            Digraph on 3 vertices
 
        If ``vertex_labels`` is ``True``, the names of the vertices are given by
@@ -463,8 +462,9 @@ class DiGraph(GenericGraph):
 
        If the igraph Graph has edge attributes, they are used as edge labels::
 
-           sage: g = igraph.Graph([(0,1),(0,2)], directed=True, edge_attrs={'name':['a','b'], 'weight':[1,3]}) # optional - python_igraph
-           sage: DiGraph(g).edges(sort=True)               # optional - python_igraph
+           sage: g = igraph.Graph([(0, 1), (0, 2)], directed=True,                  # optional - python_igraph
+           ....:                  edge_attrs={'name':['a', 'b'], 'weight':[1, 3]})
+           sage: DiGraph(g).edges(sort=True)                                        # optional - python_igraph
            [(0, 1, {'name': 'a', 'weight': 1}), (0, 2, {'name': 'b', 'weight': 3})]
 
 
@@ -622,8 +622,8 @@ class DiGraph(GenericGraph):
 
         Sage DiGraph from igraph undirected graph::
 
-            sage: import igraph           # optional - python_igraph
-            sage: DiGraph(igraph.Graph()) # optional - python_igraph
+            sage: import igraph            # optional - python_igraph
+            sage: DiGraph(igraph.Graph())  # optional - python_igraph
             Traceback (most recent call last):
             ...
             ValueError: a *directed* igraph graph was expected. To build an undirected graph, call the Graph constructor
@@ -906,8 +906,7 @@ class DiGraph(GenericGraph):
             raise ValueError('dig6 format supports graphs on 0 to 262143 vertices only')
         elif self.has_multiple_edges():
             raise ValueError('dig6 format does not support multiple edges')
-        else:
-            return generic_graph_pyx.small_integer_to_graph6(n) + generic_graph_pyx.binary_string_to_graph6(self._bit_vector())
+        return generic_graph_pyx.small_integer_to_graph6(n) + generic_graph_pyx.binary_string_to_graph6(self._bit_vector())
 
     # Attributes
 
@@ -1196,7 +1195,7 @@ class DiGraph(GenericGraph):
         """
         Return an iterator over the in-neighbors of ``vertex``.
 
-        An vertex `u` is an in-neighbor of a vertex `v` if `uv` in an edge.
+        A vertex `u` is an in-neighbor of a vertex `v` if `uv` in an edge.
 
         EXAMPLES::
 
@@ -1642,8 +1641,7 @@ class DiGraph(GenericGraph):
                                       integrality_tolerance=integrality_tolerance)
             if value_only:
                 return FAS + len(loops)
-            else:
-                return FAS + loops
+            return FAS + loops
 
         if not self.is_strongly_connected():
             # If the digraph is not strongly connected, we solve the problem on
@@ -1674,7 +1672,7 @@ class DiGraph(GenericGraph):
             p = MixedIntegerLinearProgram(constraint_generation=True,
                                           maximization=False, solver=solver)
 
-            # An variable for each edge
+            # A variable for each edge
             b = p.new_variable(binary=True)
 
             # Variables are binary, and their coefficient in the objective is
@@ -2367,12 +2365,11 @@ class DiGraph(GenericGraph):
 
         if with_labels:
             return ecc
-        else:
-            if len(ecc) == 1:
-                # return single value
-                v, = ecc.values()
-                return v
-            return [ecc[u] for u in v]
+        if len(ecc) == 1:
+            # return single value
+            v, = ecc.values()
+            return v
+        return [ecc[u] for u in v]
 
     def radius(self, by_weight=False, algorithm=None, weight_function=None,
                check_weight=True):
@@ -3004,7 +3001,7 @@ class DiGraph(GenericGraph):
             try:
                 cycle = next(vi)
                 cycles.append((len(cycle), cycle))
-            except(StopIteration):
+            except StopIteration:
                 pass
         # Since we always extract a shortest path, using a heap
         # can speed up the algorithm
@@ -3019,7 +3016,7 @@ class DiGraph(GenericGraph):
             try:
                 cycle = next(vertex_iterators[shortest_cycle[0]])
                 heappush(cycles, (len(cycle), cycle))
-            except(StopIteration):
+            except StopIteration:
                 pass
 
     def all_simple_cycles(self, starting_vertices=None, rooted=False,
@@ -3184,15 +3181,32 @@ class DiGraph(GenericGraph):
         from sage.quivers.path_semigroup import PathSemigroup
         return PathSemigroup(self)
 
+    def auslander_reiten_quiver(self):
+        r"""
+        Return the Auslander-Reiten quiver of ``self``.
+
+        .. SEEALSO::
+
+            :class:`~sage.quivers.ar_quiver.AuslanderReitenQuiver`
+
+        EXAMPLES::
+
+            sage: D = DiGraph([[1,2,'a'], [1,2,'b']], multiedges=True)
+            sage: D.auslander_reiten_quiver()
+            Auslander-Reiten quiver of Multi-digraph on 2 vertices
+        """
+        from sage.quivers.ar_quiver import AuslanderReitenQuiver
+        return AuslanderReitenQuiver(self)
+
     # Directed Acyclic Graphs (DAGs)
 
     def topological_sort(self, implementation="default"):
         """
         Return a topological sort of the digraph if it is acyclic.
 
-        If the digraph contains a directed cycle, a ``TypeError`` is raised. As
-        topological sorts are not necessarily unique, different implementations
-        may yield different results.
+        If the digraph contains a directed cycle, a :class:`TypeError`
+        is raised. As topological sorts are not necessarily unique,
+        different implementations may yield different results.
 
         A topological sort is an ordering of the vertices of the digraph such
         that each vertex comes before all of its successors. That is, if `u`
@@ -3265,15 +3279,15 @@ class DiGraph(GenericGraph):
             else:
                 return S
 
-        else:
-            raise ValueError("implementation must be set to one of \"default\" or \"NetworkX\"")
+        raise ValueError("implementation must be set to one of \"default\" or \"NetworkX\"")
 
     def topological_sort_generator(self):
         """
         Return an iterator over all topological sorts of the digraph if
         it is acyclic.
 
-        If the digraph contains a directed cycle, a ``TypeError`` is raised.
+        If the digraph contains a directed cycle, a :class:`TypeError`
+        is raised.
 
         A topological sort is an ordering of the vertices of the digraph such
         that each vertex comes before all of its successors. That is, if u comes
@@ -3366,8 +3380,7 @@ class DiGraph(GenericGraph):
         """
         if have_dot2tex():
             return self.layout_graphviz(rankdir=rankdir, **options)
-        else:
-            return self.layout_acyclic_dummy(rankdir=rankdir, **options)
+        return self.layout_acyclic_dummy(rankdir=rankdir, **options)
 
     def layout_acyclic_dummy(self, heights=None, rankdir='up', **options):
         """

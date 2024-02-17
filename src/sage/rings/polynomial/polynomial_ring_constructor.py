@@ -21,7 +21,7 @@ rings but rather quotients of them (see module
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.structure.category_object import normalize_names
-import sage.rings.ring as ring
+from sage.rings.ring import is_Ring, IntegralDomain
 
 try:
     import sage.rings.padics.padic_base_leaves as padic_base_leaves
@@ -442,7 +442,7 @@ def PolynomialRing(base_ring, *args, **kwds):
         sage: S = PolynomialRing(GF(2), 'j'); TestSuite(S).run(); type(S)
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_dense_mod_p_with_category'>
 
-        sage: R = PolynomialRing(ZZ, 'x,y', implementation="generic"); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R)       # needs sage.libs.singular
+        sage: R = PolynomialRing(ZZ, 'x,y', implementation="generic"); TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive']); type(R)
         <class 'sage.rings.polynomial.multi_polynomial_ring.MPolynomialRing_polydict_domain_with_category'>
         sage: S = PolynomialRing(ZZ, 'x,y'); TestSuite(S).run(skip='_test_elements'); type(S)       # needs sage.libs.singular
         <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomialRing_libsingular'>
@@ -578,7 +578,7 @@ def PolynomialRing(base_ring, *args, **kwds):
 
         sage: R.<w> = PolynomialRing(PolynomialRing(GF(7),'k')); TestSuite(R).run(); R
         Univariate Polynomial Ring in w over Univariate Polynomial Ring in k over Finite Field of size 7
-        sage: ZxNTL = PolynomialRing(ZZ, 'x', implementation='NTL'); TestSuite(ZxNTL).run(skip='_test_pickling'); ZxNTL
+        sage: ZxNTL = PolynomialRing(ZZ, 'x', implementation='NTL'); TestSuite(ZxNTL).run(skip='_test_pickling'); ZxNTL                                         # needs sage.libs.ntl
         Univariate Polynomial Ring in x over Integer Ring (using NTL)
         sage: ZxFLINT = PolynomialRing(ZZ, 'x', implementation='FLINT'); TestSuite(ZxFLINT).run(); ZxFLINT
         Univariate Polynomial Ring in x over Integer Ring
@@ -611,14 +611,17 @@ def PolynomialRing(base_ring, *args, **kwds):
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_integral_domain_with_category'>
         sage: R = PolynomialRing(GF(49), 'j', sparse=True); TestSuite(R).run(); type(R)             # needs sage.rings.finite_rings
         <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category'>
+
+        sage: # needs sage.rings.real_interval_field
         sage: P.<y,z> = PolynomialRing(RealIntervalField(2))
         sage: TestSuite(P).run(skip=['_test_elements', '_test_elements_eq_transitive'])
         sage: Q.<x> = PolynomialRing(P)
-        sage: TestSuite(Q).run(skip=['_test_additive_associativity', '_test_associativity', '_test_distributivity', '_test_prod'])
+        sage: TestSuite(Q).run(skip=['_test_additive_associativity', '_test_associativity',
+        ....:                        '_test_distributivity', '_test_prod'])
         sage: R.<x,y> = PolynomialRing(RIF,2)
         sage: TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive'])
     """
-    if not ring.is_Ring(base_ring):
+    if not is_Ring(base_ring):
         raise TypeError("base_ring {!r} must be a ring".format(base_ring))
 
     n = -1  # Unknown number of variables
@@ -857,7 +860,7 @@ def _multi_variate(base_ring, names, sparse=None, order="degrevlex", implementat
 
     if R is None and implementation == "generic":
         from . import multi_polynomial_ring
-        if isinstance(base_ring, ring.IntegralDomain):
+        if isinstance(base_ring, IntegralDomain):
             constructor = multi_polynomial_ring.MPolynomialRing_polydict_domain
         else:
             constructor = multi_polynomial_ring.MPolynomialRing_polydict

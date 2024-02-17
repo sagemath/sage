@@ -153,9 +153,9 @@ class FiniteFieldHomset(RingHomset_generic):
         D = self.domain()
         C = self.codomain()
         if C == D:
-            return "Automorphism group of %s"%D
+            return "Automorphism group of %s" % D
         else:
-            return "Set of field embeddings from %s to %s"%(D, C)
+            return "Set of field embeddings from %s to %s" % (D, C)
 
     def is_aut(self):
         """
@@ -334,7 +334,7 @@ class FiniteFieldHomset(RingHomset_generic):
 
         TESTS::
 
-            sage: Hom(GF(3^3, 'a'), GF(3^6, 'b')).an_element()
+            sage: Hom(GF(3^3, 'a'), GF(3^6, 'b')).an_element()  # random
             Ring morphism:
               From: Finite Field in a of size 3^3
               To:   Finite Field in b of size 3^6

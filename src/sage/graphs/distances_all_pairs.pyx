@@ -145,7 +145,7 @@ from sage.graphs.base.static_sparse_graph cimport (short_digraph,
 cdef inline c_all_pairs_shortest_path_BFS(short_digraph sd,
                                           unsigned short* predecessors,
                                           unsigned short* distances,
-                                          uint32_t* eccentricity):
+                                          uint32_t* eccentricity) noexcept:
     r"""
     See the module's documentation.
     """
@@ -192,8 +192,6 @@ cdef inline c_all_pairs_shortest_path_BFS(short_digraph sd,
     # This data structure is well documented in the module
     # sage.graphs.base.static_sparse_graph
     cdef uint32_t** p_vertices = sd.neighbors
-    cdef uint32_t* p_edges = sd.edges
-    cdef uint32_t* p_next = p_edges
 
     # We run n different BFS taking each vertex as a source
     for source in range(n):
@@ -271,7 +269,7 @@ cdef inline all_pairs_shortest_path_BFS(gg,
                                         unsigned short* predecessors,
                                         unsigned short* distances,
                                         uint32_t* eccentricity,
-                                        vertex_list=None):
+                                        vertex_list=None) noexcept:
     r"""
     See the module's documentation.
 
@@ -412,7 +410,7 @@ def shortest_path_all_pairs(G):
 # Distances #
 #############
 
-cdef unsigned short * c_distances_all_pairs(G, vertex_list=None):
+cdef unsigned short * c_distances_all_pairs(G, vertex_list=None) noexcept:
     r"""
     Returns the matrix of distances in G.
 
@@ -549,7 +547,7 @@ def is_distance_regular(G, parameters=False):
         ([3, 2, 2, 2, 2, 2, None], [None, 1, 1, 1, 1, 1, 3])
 
     """
-    cdef int i, l, u, v, d, b, c, k
+    cdef int i, u, v, d, b, c, k
     cdef int n = G.order()
     cdef int infinity = <unsigned short> -1
 
@@ -629,8 +627,7 @@ def is_distance_regular(G, parameters=False):
         bi[diameter] = None
         ci[0] = None
         return bi, ci
-    else:
-        return True
+    return True
 
 
 ###################################
@@ -777,7 +774,7 @@ cdef uint32_t * c_eccentricity_bounding(short_digraph sd) except NULL:
     cdef bitset_t seen
     bitset_init(seen, n)
 
-    cdef uint32_t v, w, next_v, tmp, cpt = 0
+    cdef uint32_t v, w, next_v, cpt = 0
 
     # The first vertex is the one with largest degree
     next_v = max((out_degree(sd, v), v) for v in range(n))[1]
@@ -1086,7 +1083,7 @@ cdef uint32_t diameter_lower_bound_2sweep(short_digraph g,
                                           uint32_t* distances,
                                           uint32_t* predecessors,
                                           uint32_t* waiting_list,
-                                          bitset_t seen):
+                                          bitset_t seen) noexcept:
     """
     Compute a lower bound on the diameter using the 2-sweep algorithm.
 
@@ -1123,9 +1120,8 @@ cdef uint32_t diameter_lower_bound_2sweep(short_digraph g,
     - ``seen`` -- bitset of size ``n`` that must be initialized before calling
       this method (i.e., bitset_init(seen, n)). However, there is no need to
       clear it.
-
     """
-    cdef uint32_t LB, i, k, tmp
+    cdef uint32_t LB
 
     # We do a first BFS from source and get the eccentricity of source
     LB = simple_BFS(g, source, distances, NULL, waiting_list, seen)
@@ -1145,7 +1141,7 @@ cdef uint32_t diameter_lower_bound_2sweep(short_digraph g,
 
 cdef tuple diameter_lower_bound_2Dsweep(short_digraph g,
                                         short_digraph rev_g,
-                                        uint32_t source):
+                                        uint32_t source) noexcept:
     r"""
     Lower bound on the diameter of digraph using directed version of 2-sweep.
 
@@ -1259,7 +1255,7 @@ cdef tuple diameter_lower_bound_2Dsweep(short_digraph g,
 
 
 cdef tuple diameter_lower_bound_multi_sweep(short_digraph g,
-                                            uint32_t source):
+                                            uint32_t source) noexcept:
     """
     Lower bound on the diameter using multi-sweep.
 
@@ -1337,7 +1333,7 @@ cdef tuple diameter_lower_bound_multi_sweep(short_digraph g,
 
 
 cdef uint32_t diameter_iFUB(short_digraph g,
-                            uint32_t source):
+                            uint32_t source) noexcept:
     """
     Compute the diameter of the input Graph using the ``iFUB`` algorithm.
 
@@ -1355,11 +1351,11 @@ cdef uint32_t diameter_iFUB(short_digraph g,
     - ``source`` -- starting node of the first BFS
 
     """
-    cdef uint32_t i, LB, s, m, d
+    cdef uint32_t i, LB, m
     cdef uint32_t n = g.n
 
     # We select a vertex m with low eccentricity using multi-sweep
-    LB, s, m, d = diameter_lower_bound_multi_sweep(g, source)
+    LB, _, m, _ = diameter_lower_bound_multi_sweep(g, source)
 
     # If the lower bound is a very large number, it means that the graph is not
     # connected and so the diameter is infinite.
@@ -1421,7 +1417,7 @@ cdef uint32_t diameter_iFUB(short_digraph g,
 
 
 cdef uint32_t diameter_DiFUB(short_digraph sd,
-                             uint32_t source):
+                             uint32_t source) noexcept:
     r"""
     Return the diameter of unweighted directed graph.
 
@@ -1458,12 +1454,12 @@ cdef uint32_t diameter_DiFUB(short_digraph sd,
     cdef short_digraph rev_sd  # Copy of sd with edges reversed
     init_reverse(rev_sd, sd)
 
-    cdef uint32_t LB, s, m, d, LB_1, LB_2, UB
+    cdef uint32_t LB, m, LB_1, LB_2, UB
     cdef size_t i
     cdef bitset_t seen
 
     # We select a vertex with low eccentricity using 2Dsweep
-    LB, s, m, d = diameter_lower_bound_2Dsweep(sd, rev_sd, source)
+    LB, _, m, _ = diameter_lower_bound_2Dsweep(sd, rev_sd, source)
 
     # If the lower bound is a very large number, it means that the digraph is
     # not strongly connected and so the diameter is infinite.
@@ -1546,7 +1542,7 @@ cdef uint32_t diameter_DiFUB(short_digraph sd,
     return LB
 
 
-cdef uint32_t diameter_DHV(short_digraph g):
+cdef uint32_t diameter_DHV(short_digraph g) noexcept:
     r"""
     Return the diameter of unweighted graph `g`.
 
@@ -1882,8 +1878,7 @@ def diameter(G, algorithm=None, source=None):
     if LB < 0 or LB > n:
         from sage.rings.infinity import Infinity
         return +Infinity
-    else:
-        return int(LB)
+    return int(LB)
 
 
 ###########
@@ -2090,7 +2085,7 @@ def wiener_index(G):
 # Szeged index #
 ################
 
-cdef uint64_t c_szeged_index_low_memory(short_digraph sd):
+cdef uint64_t c_szeged_index_low_memory(short_digraph sd) noexcept:
     r"""
     Return the Szeged index of the graph.
 
@@ -2198,7 +2193,7 @@ cdef uint64_t c_szeged_index_low_memory(short_digraph sd):
     return s
 
 
-cdef uint64_t c_szeged_index_high_memory(short_digraph sd):
+cdef uint64_t c_szeged_index_high_memory(short_digraph sd) noexcept:
     r"""
     Return the Szeged index of the graph.
 
@@ -2296,7 +2291,7 @@ def szeged_index(G, algorithm=None):
 
     Check that both algorithms return same value::
 
-        sage: # long time
+        sage: # long time, needs networkx
         sage: G = graphs.RandomBarabasiAlbert(100, 2)
         sage: a = szeged_index(G, algorithm='low')
         sage: b = szeged_index(G, algorithm='high')
@@ -2722,21 +2717,20 @@ def floyd_warshall(gg, paths=True, distances=False):
     if not gverts:
         if distances and paths:
             return {}, {}
-        else:
-            return {}
+        return {}
 
     cdef unsigned int n = max(gverts) + 1
 
     if n >= <unsigned short> -1:
-        raise ValueError("the graph backend contains more than "+str(<unsigned short> -1)+" nodes")
+        raise ValueError("the graph backend contains more than " + str(<unsigned short> -1) + " nodes")
 
     # All this just creates two tables prec[n][n] and dist[n][n]
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef unsigned short* t_prec = NULL
-    cdef unsigned short**  prec = NULL
+    cdef unsigned short** prec = NULL
     # init dist
-    cdef unsigned short* t_dist = <unsigned short*>  mem.allocarray(n * n, sizeof(unsigned short))
-    cdef unsigned short**  dist = <unsigned short**> mem.allocarray(n, sizeof(unsigned short*))
+    cdef unsigned short* t_dist = <unsigned short*> mem.allocarray(n * n, sizeof(unsigned short))
+    cdef unsigned short** dist = <unsigned short**> mem.allocarray(n, sizeof(unsigned short*))
     dist[0] = t_dist
     cdef unsigned int i
     for i in range(1, n):

@@ -1,6 +1,0 @@
-cd src
-if python3 -c 'import sys; sys.exit(0 if sys.hexversion < 0x03090000 else 1)'; then
-   sdh_pip_install .
-else
-   echo >&2 "Skipping install, not needed for Python >= 3.9"
-fi

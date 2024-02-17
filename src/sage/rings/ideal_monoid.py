@@ -3,15 +3,15 @@ Monoid of ideals in a commutative ring
 
 WARNING: This is used by some rings that are not commutative! ::
 
-    sage: MS = MatrixSpace(QQ, 3, 3)                                                    # optional - sage.modules
-    sage: type(MS.ideal(MS.one()).parent())                                             # optional - sage.modules
+    sage: MS = MatrixSpace(QQ, 3, 3)                                                    # needs sage.modules
+    sage: type(MS.ideal(MS.one()).parent())                                             # needs sage.modules
     <class 'sage.rings.ideal_monoid.IdealMonoid_c_with_category'>
 """
 
-from sage.structure.parent import Parent
 import sage.rings.integer_ring
-from . import ideal
 from sage.categories.monoids import Monoids
+from sage.rings import ideal
+from sage.structure.parent import Parent
 
 
 def IdealMonoid(R):
@@ -53,9 +53,9 @@ class IdealMonoid_c(Parent):
 
         TESTS::
 
-            sage: R = QuadraticField(-23, 'a')                                          # optional - sage.rings.number_field
+            sage: R = QuadraticField(-23, 'a')                                          # needs sage.rings.number_field
             sage: from sage.rings.ideal_monoid import IdealMonoid
-            sage: M = IdealMonoid(R); M # indirect doctest                              # optional - sage.rings.number_field
+            sage: M = IdealMonoid(R); M  # indirect doctest                             # needs sage.rings.number_field
             Monoid of ideals of Number Field in a with defining polynomial x^2 + 23
              with a = 4.795831523312720?*I
 
@@ -63,8 +63,8 @@ class IdealMonoid_c(Parent):
             sage: id.parent().category()
             Category of commutative monoids
 
-            sage: MS = MatrixSpace(QQ, 3, 3)                                            # optional - sage.modules
-            sage: MS.ideal(MS.one()).parent().category()                                # optional - sage.modules
+            sage: MS = MatrixSpace(QQ, 3, 3)                                            # needs sage.modules
+            sage: MS.ideal(MS.one()).parent().category()                                # needs sage.modules
             Category of monoids
         """
         self.__R = R
@@ -81,9 +81,9 @@ class IdealMonoid_c(Parent):
 
         TESTS::
 
-            sage: R = QuadraticField(-23, 'a')                                          # optional - sage.rings.number_field
+            sage: R = QuadraticField(-23, 'a')                                          # needs sage.rings.number_field
             sage: from sage.rings.ideal_monoid import IdealMonoid
-            sage: M = IdealMonoid(R); M._repr_()                                        # optional - sage.rings.number_field
+            sage: M = IdealMonoid(R); M._repr_()                                        # needs sage.rings.number_field
             'Monoid of ideals of Number Field in a with defining polynomial x^2 + 23
              with a = 4.795831523312720?*I'
         """
@@ -95,9 +95,9 @@ class IdealMonoid_c(Parent):
 
         EXAMPLES::
 
-            sage: R = QuadraticField(-23, 'a')                                          # optional - sage.rings.number_field
+            sage: R = QuadraticField(-23, 'a')                                          # needs sage.rings.number_field
             sage: from sage.rings.ideal_monoid import IdealMonoid
-            sage: M = IdealMonoid(R); M.ring() is R                                     # optional - sage.rings.number_field
+            sage: M = IdealMonoid(R); M.ring() is R                                     # needs sage.rings.number_field
             True
         """
         return self.__R
@@ -108,12 +108,13 @@ class IdealMonoid_c(Parent):
 
         EXAMPLES::
 
-            sage: R.<a> = QuadraticField(-23)                                           # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R.<a> = QuadraticField(-23)
             sage: from sage.rings.ideal_monoid import IdealMonoid
-            sage: M = IdealMonoid(R)                                                    # optional - sage.rings.number_field
-            sage: M(a)   # indirect doctest                                             # optional - sage.rings.number_field
+            sage: M = IdealMonoid(R)
+            sage: M(a)   # indirect doctest
             Fractional ideal (a)
-            sage: M([a-4, 13])                                                          # optional - sage.rings.number_field
+            sage: M([a-4, 13])
             Fractional ideal (13, 1/2*a + 9/2)
         """
         try:
@@ -137,15 +138,16 @@ class IdealMonoid_c(Parent):
 
         EXAMPLES::
 
-            sage: R = QuadraticField(-23, 'a')                                          # optional - sage.rings.number_field
-            sage: M = R.ideal_monoid()                                                  # optional - sage.rings.number_field
-            sage: M.has_coerce_map_from(R) # indirect doctest                           # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R = QuadraticField(-23, 'a')
+            sage: M = R.ideal_monoid()
+            sage: M.has_coerce_map_from(R) # indirect doctest
             True
-            sage: M.has_coerce_map_from(QQ.ideal_monoid())                              # optional - sage.rings.number_field
+            sage: M.has_coerce_map_from(QQ.ideal_monoid())
             True
-            sage: M.has_coerce_map_from(Zmod(6))                                        # optional - sage.rings.number_field
+            sage: M.has_coerce_map_from(Zmod(6))
             False
-            sage: M.has_coerce_map_from(loads(dumps(M)))                                # optional - sage.rings.number_field
+            sage: M.has_coerce_map_from(loads(dumps(M)))
             True
         """
         if isinstance(x, IdealMonoid_c):
@@ -159,13 +161,14 @@ class IdealMonoid_c(Parent):
 
         EXAMPLES::
 
-            sage: R = QuadraticField(-23, 'a')                                          # optional - sage.rings.number_field
-            sage: M = R.ideal_monoid()                                                  # optional - sage.rings.number_field
-            sage: M == QQ                                                               # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R = QuadraticField(-23, 'a')
+            sage: M = R.ideal_monoid()
+            sage: M == QQ
             False
-            sage: M == 17                                                               # optional - sage.rings.number_field
+            sage: M == 17
             False
-            sage: M == R.ideal_monoid()                                                 # optional - sage.rings.number_field
+            sage: M == R.ideal_monoid()
             True
         """
         if not isinstance(other, IdealMonoid_c):
@@ -179,13 +182,14 @@ class IdealMonoid_c(Parent):
 
         EXAMPLES::
 
-            sage: R = QuadraticField(-23, 'a')                                          # optional - sage.rings.number_field
-            sage: M = R.ideal_monoid()                                                  # optional - sage.rings.number_field
-            sage: M != QQ                                                               # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R = QuadraticField(-23, 'a')
+            sage: M = R.ideal_monoid()
+            sage: M != QQ
             True
-            sage: M != 17                                                               # optional - sage.rings.number_field
+            sage: M != 17
             True
-            sage: M != R.ideal_monoid()                                                 # optional - sage.rings.number_field
+            sage: M != R.ideal_monoid()
             False
         """
         return not (self == other)
@@ -196,13 +200,14 @@ class IdealMonoid_c(Parent):
 
         EXAMPLES::
 
-            sage: R = QuadraticField(-23, 'a')                                          # optional - sage.rings.number_field
-            sage: M = R.ideal_monoid()                                                  # optional - sage.rings.number_field
-            sage: hash(M) == hash(QQ)                                                   # optional - sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: R = QuadraticField(-23, 'a')
+            sage: M = R.ideal_monoid()
+            sage: hash(M) == hash(QQ)
             False
-            sage: hash(M) == 17                                                         # optional - sage.rings.number_field
+            sage: hash(M) == 17
             False
-            sage: hash(M) == hash(R.ideal_monoid())                                     # optional - sage.rings.number_field
+            sage: hash(M) == hash(R.ideal_monoid())
             True
         """
         # uses a random number, to have a distinct hash

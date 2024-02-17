@@ -176,8 +176,7 @@ class SubSimplicialSet(SimplicialSet_finite, UniqueRepresentation):
         else:
             SimplicialSet_finite.__init__(self, data)
         if self == ambient:
-            if hasattr(ambient, '__custom_name'):
-                self.rename(str(ambient))
+            self.rename(ambient.get_custom_name())
             self._latex_name = latex(ambient)
         # When constructing the inclusion map, we do not need to check
         # the validity of the morphism, and more importantly, we
@@ -713,7 +712,7 @@ class PullbackOfSimplicialSets_finite(PullbackOfSimplicialSets, SimplicialSet_fi
         return domain.Hom(self)(data)
 
 
-class Factors():
+class Factors:
     """
     Classes which inherit from this should define a ``_factors``
     attribute for their instances, and this class accesses that

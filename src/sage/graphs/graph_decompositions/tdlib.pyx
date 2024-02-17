@@ -76,7 +76,7 @@ cdef extern from "sage_tdlib.cpp":
 # the following will be used implicitly to do the translation
 # between Sage graph encoding and BGL graph encoding.
 
-cdef make_tdlib_graph(G, vertex_to_int, vector[unsigned int] &V, vector[unsigned int] &E):
+cdef make_tdlib_graph(G, vertex_to_int, vector[unsigned int] &V, vector[unsigned int] &E) noexcept:
     for i in range(G.order()):
         V.push_back(i)
 
@@ -85,7 +85,7 @@ cdef make_tdlib_graph(G, vertex_to_int, vector[unsigned int] &V, vector[unsigned
         E.push_back(vertex_to_int[v])
 
 
-cdef make_sage_decomp(G, vector[vector[int]] &V, vector[unsigned int] &E, int_to_vertex):
+cdef make_sage_decomp(G, vector[vector[int]] &V, vector[unsigned int] &E, int_to_vertex) noexcept:
     cdef int i, j
     for i in range(len(V)):
         G.add_vertex(Set([int_to_vertex[j] for j in V[i]]))

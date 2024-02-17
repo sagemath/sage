@@ -74,7 +74,7 @@ from sage.graphs.digraph import DiGraph
 from sage.graphs.graph import Graph
 
 
-class DiGraphGenerators():
+class DiGraphGenerators:
     r"""
     A class consisting of constructors for several common digraphs,
     including orderly generation of isomorphism class representatives.
@@ -182,7 +182,7 @@ class DiGraphGenerators():
         sage: L = list(digraphs(4, lambda G: G.size() <= 3))
         sage: len(L)
         20
-        sage: graphs_list.show_graphs(L)  # long time
+        sage: graphs_list.show_graphs(L)        # long time                             # needs sage.plot
 
     Generate all digraphs with degree at most 2, up to 5 vertices::
 
@@ -371,7 +371,7 @@ class DiGraphGenerators():
         A Strongly Regular digraph satisfies the condition `AJ = JA = kJ` where
         `A` is the adjacency matrix::
 
-            sage: # needs sage.modules
+            sage: # needs sage.combinat sage.modules
             sage: g = digraphs.StronglyRegular(7); g
             Strongly regular digraph: Digraph on 7 vertices
             sage: A = g.adjacency_matrix()*ones_matrix(7)
@@ -383,7 +383,7 @@ class DiGraphGenerators():
 
         Wrong parameter::
 
-            sage: digraphs.StronglyRegular(73)                                          # needs sage.modules
+            sage: digraphs.StronglyRegular(73)                                          # needs sage.combinat sage.modules
             Traceback (most recent call last):
             ...
             ValueError: strongly regular digraph with 73 vertices not yet implemented
@@ -516,7 +516,7 @@ class DiGraphGenerators():
 
             sage: T = digraphs.RandomTournament(10); T
             Random Tournament: Digraph on 10 vertices
-            sage: T.size() == binomial(10, 2)
+            sage: T.size() == binomial(10, 2)                                           # needs sage.symbolic
             True
             sage: T.is_tournament()
             True
@@ -649,14 +649,16 @@ class DiGraphGenerators():
 
         INPUT:
 
-        - ``graphs`` -- a :class:`Graph` or an iterable containing :class:`Graph`
-          the graph6 string of these graphs is used as an input for ``directg``.
+        - ``graphs`` -- a :class:`Graph` or an iterable containing
+          :class:`Graph`.  The graph6 string of these graphs is used as an input
+          for ``directg``.
 
         - ``options`` (str) -- a string passed to directg as if it was run at
           a system command line. Available options from directg --help::
 
             -e<int> | -e<int>:<int>  specify a value or range of the total number of arcs
             -o       orient each edge in only one direction, never both
+            -a       only make acyclic orientations (implies -o)
             -f<int>  Use only the subgroup that fixes the first <int> vertices setwise
             -V       only output graphs with nontrivial groups (including exchange of
                      isolated vertices).  The -f option is respected.
@@ -679,6 +681,19 @@ class DiGraphGenerators():
             '001001000'
             sage: len(list(digraphs.nauty_directg(graphs.PetersenGraph(), options="-o")))
             324
+
+        Generate non-isomorphic acyclic orientations::
+
+            sage: K = graphs.CompleteGraph(4)
+            sage: all(d.is_directed_acyclic() for d in digraphs.nauty_directg(K, options='-a'))
+            True
+            sage: sum(1 for _ in digraphs.nauty_directg(K, options='-a'))
+            1
+            sage: S = graphs.StarGraph(4)
+            sage: all(d.is_directed_acyclic() for d in digraphs.nauty_directg(S, options='-a'))
+            True
+            sage: sum(1 for _ in digraphs.nauty_directg(S, options='-a'))
+            5
 
         TESTS::
 
@@ -1331,7 +1346,7 @@ class DiGraphGenerators():
 
         return D
 
-    def RandomDirectedGN(self, n, kernel=lambda x: x, seed=None):
+    def RandomDirectedGN(self, n, kernel=None, seed=None):
         r"""
         Return a random growing network (GN) digraph with `n` vertices.
 
@@ -1346,7 +1361,7 @@ class DiGraphGenerators():
 
         - ``n`` -- integer; number of vertices
 
-        - ``kernel`` -- the attachment kernel
+        - ``kernel`` -- the attachment kernel (default: identity function)
 
         - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the
           random number generator (default: ``None``)
@@ -1365,6 +1380,8 @@ class DiGraphGenerators():
             True
             sage: D.show()                      # long time
         """
+        if kernel is None:
+            kernel = lambda x: x
         if seed is None:
             seed = int(current_randstate().long_seed() % sys.maxsize)
         import networkx
@@ -1635,7 +1652,7 @@ class DiGraphGenerators():
 
             sage: SC = digraphs.RandomSemiComplete(10); SC
             Random Semi-Complete digraph: Digraph on 10 vertices
-            sage: SC.size() >= binomial(10, 2)
+            sage: SC.size() >= binomial(10, 2)                                          # needs sage.symbolic
             True
             sage: digraphs.RandomSemiComplete(-1)
             Traceback (most recent call last):

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.graphs
 r"""
 Subspaces of modular forms for Hecke triangle groups
 
@@ -207,7 +208,7 @@ class SubSpaceForms(FormsSpace_abstract, Module, UniqueRepresentation):
         Module.__init__(self, base=ambient_space.base_ring())
 
         self._ambient_space = ambient_space
-        self._basis = [v for v in basis]
+        self._basis = list(basis)
         # self(v) instead would somehow mess up the coercion model
         self._gens = [self._element_constructor_(v) for v in basis]
         self._module = ambient_space._module.submodule([ambient_space.coordinate_vector(v) for v in basis])

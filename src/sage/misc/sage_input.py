@@ -13,7 +13,7 @@ that are readable and idiomatic.::
 
     sage: sage_input(3)
     3
-    sage: sage_input((polygen(RR) + RR(pi))^2, verify=True)                             # optional - sage.symbolic
+    sage: sage_input((polygen(RR) + RR(pi))^2, verify=True)                             # needs sage.symbolic
     # Verified
     R.<x> = RR[]
     x^2 + 6.2831853071795862*x + 9.869604401089358
@@ -172,6 +172,11 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.rings.real_mpfi', 'RealIntervalFieldElement')
+lazy_import('sage.rings.complex_interval', 'ComplexIntervalFieldElement')
+
 
 def sage_input(x, preparse=True, verify=False, allow_locals=False):
     r"""
@@ -224,6 +229,7 @@ def sage_input(x, preparse=True, verify=False, allow_locals=False):
     The result of :func:`sage_input` is actually a pair of strings with a
     special ``__repr__`` method to print nicely.::
 
+        sage: # needs sage.rings.real_mpfr sage.symbolic
         sage: r = sage_input(RealField(20)(pi), verify=True)
         sage: r
         # Verified
@@ -373,9 +379,9 @@ class SageInputBuilder:
             sage: sib = SageInputBuilder()
             sage: sib.result(sib(GF(17)(5), True))
             5
-            sage: sib.result(sib(RealField(200)(1.5), True))
+            sage: sib.result(sib(RealField(200)(1.5), True))                            # needs sage.rings.real_mpfr
             1.5000000000000000000000000000000000000000000000000000000000000
-            sage: sib.result(sib(RealField(200)(1.5), 2))
+            sage: sib.result(sib(RealField(200)(1.5), 2))                               # needs sage.rings.real_mpfr
             1.5
 
         Since :func:`sage_input` directly calls this method, all
@@ -395,13 +401,13 @@ class SageInputBuilder:
             sage: sage_input(float(-infinity), preparse=True, verify=True)
             # Verified
             -float(infinity)
-            sage: sage_input(float(NaN), preparse=True, verify=True)
+            sage: sage_input(float(NaN), preparse=True, verify=True)                    # needs sage.symbolic
             # Verified
             float(NaN)
-            sage: sage_input(float(-pi), preparse=True, verify=True)
+            sage: sage_input(float(-pi), preparse=True, verify=True)                    # needs sage.symbolic
             # Verified
             float(-RR(3.1415926535897931))
-            sage: sage_input(float(42), preparse=True, verify=True)
+            sage: sage_input(float(42), preparse=True, verify=True)                     # needs sage.rings.real_mpfr
             # Verified
             float(42)
             sage: sage_input("Hello, world\n", verify=True)
@@ -422,7 +428,7 @@ class SageInputBuilder:
             sage: sage_input('unicode with spectral: \u1234\U00012345', verify=True)
             # Verified
             'unicode with spectral: \u1234\U00012345'
-            sage: sage_input((2, 3.5, 'Hi'), verify=True)
+            sage: sage_input((2, 3.5, 'Hi'), verify=True)                               # needs sage.rings.real_mpfr
             # Verified
             (2, 3.5, 'Hi')
             sage: sage_input(lambda x: x)
@@ -581,7 +587,7 @@ class SageInputBuilder:
             sage: from sage.misc.sage_input import SageInputBuilder
 
             sage: sib = SageInputBuilder()
-            sage: sib.result(sib.float_str(repr(RR(e))))
+            sage: sib.result(sib.float_str(repr(RR(e))))                                # needs sage.symbolic
             2.71828182845905
         """
         return SIE_literal_stringrep(self, n)
@@ -1747,7 +1753,7 @@ class SIE_literal_stringrep(SIE_literal):
         sage: sib = SageInputBuilder()
         sage: isinstance(sib(3), SIE_literal_stringrep)
         True
-        sage: isinstance(sib(3.14159, True), SIE_literal_stringrep)
+        sage: isinstance(sib(3.14159, True), SIE_literal_stringrep)                     # needs sage.rings.real_mpfr
         True
         sage: isinstance(sib.name('pi'), SIE_literal_stringrep)
         True
@@ -2153,7 +2159,7 @@ class SIE_tuple(SageInputExpression):
             sage: from sage.misc.sage_input import SageInputBuilder
 
             sage: sib = SageInputBuilder()
-            sage: sib((3.5, -2))
+            sage: sib((3.5, -2))                                                        # needs sage.rings.real_mpfr
             {tuple: ({atomic:3.5}, {unop:- {atomic:2}})}
             sage: sib(["Hello", "world"])
             {list: ({atomic:'Hello'}, {atomic:'world'})}
@@ -2238,10 +2244,12 @@ class SIE_dict(SageInputExpression):
         sage: from sage.misc.sage_input import SageInputBuilder
 
         sage: sib = SageInputBuilder()
-        sage: sib.dict([('TeX', RR(pi)), ('Metafont', RR(e))])
-        {dict: {{atomic:'TeX'}:{call: {atomic:RR}({atomic:3.1415926535897931})}, {atomic:'Metafont'}:{call: {atomic:RR}({atomic:2.7182818284590451})}}}
+        sage: sib.dict([('TeX', RR(pi)), ('Metafont', RR(e))])                          # needs sage.symbolic
+        {dict: {{atomic:'TeX'}:{call: {atomic:RR}({atomic:3.1415926535897931})},
+                {atomic:'Metafont'}:{call: {atomic:RR}({atomic:2.7182818284590451})}}}
         sage: sib.dict({-40:-40, 0:32, 100:212})
-        {dict: {{unop:- {atomic:40}}:{unop:- {atomic:40}}, {atomic:0}:{atomic:32}, {atomic:100}:{atomic:212}}}
+        {dict: {{unop:- {atomic:40}}:{unop:- {atomic:40}},
+                {atomic:0}:{atomic:32}, {atomic:100}:{atomic:212}}}
     """
 
     def __init__(self, sib, entries):
@@ -2812,14 +2820,14 @@ class SIE_gens_constructor(SageInputExpression):
         We also can't use the preparser syntax if there is a conflict
         between generator names.  For example, this works::
 
-            sage: sage_input((polygen(ZZ), polygen(GF(17), 'y')))                       # optional - sage.rings.finite_rings
+            sage: sage_input((polygen(ZZ), polygen(GF(17), 'y')))
             R1.<x> = ZZ[]
             R2.<y> = GF(17)[]
             (x, y)
 
         but this can't use the preparser syntax.::
 
-            sage: sage_input((polygen(ZZ), polygen(GF(17))))                            # optional - sage.rings.finite_rings
+            sage: sage_input((polygen(ZZ), polygen(GF(17))))
             R1 = ZZ['x']
             x1 = R1.gen()
             R2 = GF(17)['x']
@@ -3453,7 +3461,7 @@ def verify_same(a, b):
         sage: verify_same(1, 1r)
         Traceback (most recent call last):
         ...
-        AttributeError: 'int' object has no attribute 'parent'
+        AttributeError: 'int' object has no attribute 'parent'...
         sage: verify_same(1r, 1)
         Traceback (most recent call last):
         ...
@@ -3467,13 +3475,11 @@ def verify_same(a, b):
     """
     from sage.structure.element import is_Element
     if is_Element(a):
-        assert(a.parent() == b.parent())
+        assert a.parent() == b.parent()
     else:
-        assert(type(a) is type(b))
-    from sage.rings.real_mpfi import is_RealIntervalFieldElement
-    from sage.rings.complex_interval import is_ComplexIntervalFieldElement
-    if is_RealIntervalFieldElement(a) or is_ComplexIntervalFieldElement(a):
-        assert(a.endpoints() == b.endpoints()), "Expected %s == %s" % (a, b)
+        assert type(a) is type(b)
+    if isinstance(a, (RealIntervalFieldElement, ComplexIntervalFieldElement)):
+        assert a.endpoints() == b.endpoints(), "Expected %s == %s" % (a, b)
         return
 
     if not (a == b):
@@ -3519,7 +3525,7 @@ def verify_si_answer(x, answer, preparse):
         sage: verify_si_answer(1, '1', False)
         Traceback (most recent call last):
         ...
-        AttributeError: 'int' object has no attribute 'parent'
+        AttributeError: 'int' object has no attribute 'parent'...
         sage: verify_si_answer(1, 'ZZ(1)', None)
     """
     from sage.misc.sage_eval import sage_eval

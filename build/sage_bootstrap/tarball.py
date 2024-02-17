@@ -159,7 +159,10 @@ class Tarball(object):
         successful_download = False
         log.info('Attempting to download package {0} from mirrors'.format(self.filename))
         for mirror in MirrorList():
-            url = mirror + '/'.join(['spkg', 'upstream', self.package.name, self.filename])
+            url = mirror.replace('${SPKG}', self.package.name)
+            if not url.endswith('/'):
+                url += '/'
+            url += self.filename
             log.info(url)
             try:
                 Download(url, destination).run()
