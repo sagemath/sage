@@ -966,6 +966,21 @@ class EllipticCurveHom(Morphism):
             sage: (phi.dual() * phi).is_cyclic()
             False
 
+        TESTS:
+
+        Regression test (failed because of :issue:`37374`)::
+
+            sage: from sage.schemes.elliptic_curves.hom_frobenius import EllipticCurveHom_frobenius
+            sage: E0 = EllipticCurve(GF(37), [4, 0])
+            sage: frob = EllipticCurveHom_frobenius(E0, 0)  # note zero power (identity morphism)
+            sage: phi1 = E0.isogenies_prime_degree(3)[2]
+            sage: phi = phi1.dual() * phi1 * frob
+            sage: phi.is_cyclic()
+            False
+            sage: super(type(phi), phi).is_cyclic()  # previous incorrectly returned True
+            False
+            sage: t = factor(phi.x_rational_map().denominator())  # previously raised AttributeError
+
         .. SEEALSO::
 
         - :meth:`sage.schemes.elliptic_curves.hom_composie.EllipticCurveHom_composite.is_cyclic`
