@@ -1,12 +1,12 @@
 py.install_sources(
-    'algebra.py',
-    'all.py',
-    'calculus.py',
-    'fractals.py',
-    'geometry.py',
-    'library.py',
-    'statistics.py',
-    subdir: 'sage/interacts',
+  'algebra.py',
+  'all.py',
+  'calculus.py',
+  'fractals.py',
+  'geometry.py',
+  'library.py',
+  'statistics.py',
+  subdir : 'sage/interacts'
 )
 
 extension_data = {

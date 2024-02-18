@@ -1,10 +1,10 @@
 py.install_sources(
-    'all.py',
-    'dokchitser.py',
-    'lcalc.py',
-    'pari.py',
-    'sympow.py',
-    subdir: 'sage/lfunctions',
+  'all.py',
+  'dokchitser.py',
+  'lcalc.py',
+  'pari.py',
+  'sympow.py',
+  subdir : 'sage/lfunctions'
 )
 
 extension_data = {

@@ -1,14 +1,16 @@
 py.install_sources(
-    'all.py',
-    'calculus.py',
-    'desolvers.py',
-    'functional.py',
-    'functions.py',
-    'predefined.py',
-    'test_sympy.py',
-    'tests.py',
-    'wester.py',
-    subdir: 'sage/calculus',
+  'all.py',
+  'calculus.py',
+  'desolvers.py',
+  'functional.py',
+  'functions.py',
+  'interpolation.pxd',
+  'ode.pxd',
+  'predefined.py',
+  'test_sympy.py',
+  'tests.py',
+  'wester.py',
+  subdir : 'sage/calculus'
 )
 
 extension_data = {

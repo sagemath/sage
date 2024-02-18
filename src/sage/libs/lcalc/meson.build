@@ -1,9 +1,4 @@
-py.install_sources(
-    '__init__.py',
-    'lcalc_Lfunction.pxd',
-    'lcalc_sage.h',
-    subdir: 'sage/libs/lcalc',
-)
+py.install_sources('__init__.py', 'lcalc_Lfunction.pxd', 'lcalc_sage.h', subdir : 'sage/libs/lcalc')
 
 extension_data_cpp = {
     'lcalc_Lfunction': files('lcalc_Lfunction.pyx'),

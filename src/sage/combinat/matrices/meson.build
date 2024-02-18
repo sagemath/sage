@@ -1,10 +1,4 @@
-py.install_sources(
-    'all.py',
-    'dlxcpp.py',
-    'hadamard_matrix.py',
-    'latin.py',
-    subdir: 'sage/combinat/matrices',
-)
+py.install_sources('all.py', 'dlxcpp.py', 'hadamard_matrix.py', 'latin.py', subdir : 'sage/combinat/matrices')
 
 extension_data_cpp = {
     'dancing_links': files('dancing_links.pyx'),

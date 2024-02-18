@@ -1,9 +1,4 @@
-py.install_sources(
-    'all.py',
-    'quaternion_algebra.py',
-    'quaternion_algebra_element.pxd',
-    subdir: 'sage/algebras/quatalg',
-)
+py.install_sources('all.py', 'quaternion_algebra.py', 'quaternion_algebra_element.pxd', subdir : 'sage/algebras/quatalg')
 
 extension_data_cpp = {
     'quaternion_algebra_cython': files('quaternion_algebra_cython.pyx'),

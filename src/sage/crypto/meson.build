@@ -1,18 +1,18 @@
 py.install_sources(
-    '__init__.py',
-    'all.py',
-    'cipher.py',
-    'classical.py',
-    'classical_cipher.py',
-    'cryptosystem.py',
-    'lattice.py',
-    'lfsr.py',
-    'lwe.py',
-    'sboxes.py',
-    'stream.py',
-    'stream_cipher.py',
-    'util.py',
-    subdir: 'sage/crypto',
+  '__init__.py',
+  'all.py',
+  'cipher.py',
+  'classical.py',
+  'classical_cipher.py',
+  'cryptosystem.py',
+  'lattice.py',
+  'lfsr.py',
+  'lwe.py',
+  'sboxes.py',
+  'stream.py',
+  'stream_cipher.py',
+  'util.py',
+  subdir : 'sage/crypto'
 )
 
 extension_data = {

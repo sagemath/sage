@@ -1,9 +1,4 @@
-py.install_sources(
-    'all.py',
-    'free_algebra_element_letterplace.pxd',
-    'free_algebra_letterplace.pxd',
-    subdir: 'sage/algebras/letterplace',
-)
+py.install_sources('all.py', 'free_algebra_element_letterplace.pxd', 'free_algebra_letterplace.pxd', subdir : 'sage/algebras/letterplace')
 
 extension_data_cpp = {
     'free_algebra_element_letterplace': files('free_algebra_element_letterplace.pyx'),

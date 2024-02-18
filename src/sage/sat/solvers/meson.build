@@ -1,10 +1,10 @@
 py.install_sources(
-    '__init__.py',
-    'cryptominisat.py',
-    'dimacs.py',
-    'picosat.py',
-    'sat_lp.py',
-    subdir: 'sage/sat/solvers',
+  '__init__.py',
+  'cryptominisat.py',
+  'dimacs.py',
+  'picosat.py',
+  'sat_lp.py',
+  subdir : 'sage/sat/solvers'
 )
 
 extension_data = {

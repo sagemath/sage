@@ -12,22 +12,22 @@ iml = declare_dependency(
 
 
 py.install_sources(
-    '__init__.py',
-    'all.py',
-    'all__sagemath_meataxe.py',
-    'benchmark.py',
-    'berlekamp_massey.py',
-    'compute_J_ideal.py',
-    'docs.py',
-    'matrix_integer_dense_hnf.py',
-    'matrix_integer_dense_saturation.py',
-    'matrix_misc.py',
-    'matrix_space.py',
-    'operation_table.py',
-    'special.py',
-    'symplectic_basis.py',
-    'tests.py',
-    subdir: 'sage/matrix',
+  '__init__.py',
+  'all.py',
+  'all__sagemath_meataxe.py',
+  'benchmark.py',
+  'berlekamp_massey.py',
+  'compute_J_ideal.py',
+  'docs.py',
+  'matrix_integer_dense_hnf.py',
+  'matrix_integer_dense_saturation.py',
+  'matrix_misc.py',
+  'matrix_space.py',
+  'operation_table.py',
+  'special.py',
+  'symplectic_basis.py',
+  'tests.py',
+  subdir : 'sage/matrix'
 )
 
 extension_data = {

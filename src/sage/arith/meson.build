@@ -1,15 +1,15 @@
 py.install_sources(
-    'all.py',
-    'all__sagemath_objects.py',
-    'constants.pxd',
-    'functions.pxd',
-    'long.pxd',
-    'misc.py',
-    'multi_modular.pxd',
-    'numerical_approx.pxd',
-    'power.pxd',
-    'rational_reconstruction.pxd',
-    subdir: 'sage/arith',
+  'all.py',
+  'all__sagemath_objects.py',
+  'constants.pxd',
+  'functions.pxd',
+  'long.pxd',
+  'misc.py',
+  'multi_modular.pxd',
+  'numerical_approx.pxd',
+  'power.pxd',
+  'rational_reconstruction.pxd',
+  subdir : 'sage/arith'
 )
 
 extension_data = {

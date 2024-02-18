@@ -4,12 +4,7 @@ giac = declare_dependency(
   ]
 )
 
-py.install_sources(
-    '__init__.py',
-    'giac.pxd',
-    'misc.h',
-    subdir: 'sage/libs/giac',
-)
+py.install_sources('__init__.py', 'giac.pxd', 'misc.h', subdir : 'sage/libs/giac')
 
 extension_data_cpp = {
     'giac': files('giac.pyx'),

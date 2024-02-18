@@ -1,15 +1,15 @@
 py.install_sources(
-    'affine_ds.py',
-    'all.py',
-    'berkovich_ds.py',
-    'dynamical_semigroup.py',
-    'endPN_automorphism_group.py',
-    'endPN_minimal_model.py',
-    'generic_ds.py',
-    'product_projective_ds.py',
-    'projective_ds.py',
-    'wehlerK3.py',
-    subdir: 'sage/dynamics/arithmetic_dynamics',
+  'affine_ds.py',
+  'all.py',
+  'berkovich_ds.py',
+  'dynamical_semigroup.py',
+  'endPN_automorphism_group.py',
+  'endPN_minimal_model.py',
+  'generic_ds.py',
+  'product_projective_ds.py',
+  'projective_ds.py',
+  'wehlerK3.py',
+  subdir : 'sage/dynamics/arithmetic_dynamics'
 )
 
 extension_data = {

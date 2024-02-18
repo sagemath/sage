@@ -1,18 +1,18 @@
 py.install_sources(
-    'all.py',
-    'cartesian_product.py',
-    'd_complete.py',
-    'elements.py',
-    'forest.py',
-    'hasse_diagram.py',
-    'incidence_algebras.py',
-    'lattices.py',
-    'linear_extensions.py',
-    'mobile.py',
-    'moebius_algebra.py',
-    'poset_examples.py',
-    'posets.py',
-    subdir: 'sage/combinat/posets',
+  'all.py',
+  'cartesian_product.py',
+  'd_complete.py',
+  'elements.py',
+  'forest.py',
+  'hasse_diagram.py',
+  'incidence_algebras.py',
+  'lattices.py',
+  'linear_extensions.py',
+  'mobile.py',
+  'moebius_algebra.py',
+  'poset_examples.py',
+  'posets.py',
+  subdir : 'sage/combinat/posets'
 )
 
 extension_data = {

@@ -1,9 +1,4 @@
-py.install_sources(
-    'all.py',
-    'element.py',
-    'point_configuration.py',
-    subdir: 'sage/geometry/triangulation',
-)
+py.install_sources('all.py', 'element.py', 'point_configuration.py', subdir : 'sage/geometry/triangulation')
 
 extension_data_cpp = {
     'base': files('base.pyx', 'functions.cc', 'data.cc', 'triangulations.cc'),

@@ -1,11 +1,11 @@
 py.install_sources(
-    'all.py',
-    'cell_module.py',
-    'invariant.py',
-    'morphism.py',
-    'representation.py',
-    'subquotient.py',
-    subdir: 'sage/modules/with_basis',
+  'all.py',
+  'cell_module.py',
+  'invariant.py',
+  'morphism.py',
+  'representation.py',
+  'subquotient.py',
+  subdir : 'sage/modules/with_basis'
 )
 
 extension_data = {

@@ -1,7 +1,4 @@
-py.install_sources(
-    'all.py',
-    subdir: 'sage/stats/hmm',
-)
+py.install_sources('all.py', subdir : 'sage/stats/hmm')
 
 extension_data = {
     'chmm': files('chmm.pyx'),
