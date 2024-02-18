@@ -518,7 +518,6 @@ else
             error_msg "Error: failed to extract $PKG_SRC"
             exit 1
         fi
-        echo "Finished extraction"
         cd src
         if ! sage-apply-patches; then
             error_msg "Error applying patches"
