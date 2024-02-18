@@ -7097,9 +7097,10 @@ class StandardPermutations_n_abstract(Permutations):
 
             sage: PG = PermutationGroup(SymmetricGroup(5).gens())
             sage: P5 = Permutations(5)
-            sage: p = PG.list()[0]
-            sage: s = P5(p); s
-            [1, 2, 3, 4, 5]
+            sage: p = PG.an_element()
+            sage: x = PG([4,3,5,1,2])
+            sage: s = P5(x); s
+            [4, 3, 5, 1, 2]
         """
         if isinstance(x, PermutationGroupElement):
             return self. _from_permutation_group_element(x)
