@@ -967,6 +967,25 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             sage: EllipticCurveHom_composite.from_factors([EllipticCurveHom_frobenius(E0, 1)]).is_cyclic()
             False
 
+        This test involves multiple "backtracking" edges which are not duals. We have only 2 supersingular
+        j-invariants, and so all supersingular isogenies have to be between them. In particular,
+        there are $7^2$-isogenies on j-invariants 7-7-7 which is cyclic.
+
+            sage: [j for j in GF(19**2) if EllipticCurve(j=j).is_supersingular()]
+            [7, 18]
+            sage: 1728 % 19
+            18
+
+            sage: E0 = EllipticCurve(GF(19**24), [10, 2])  # field of definition of the full 7-torsion
+            sage: E0.j_invariant()  # 7 is not 1728
+            7
+
+            sage: phi1 = choice(E0.isogenies_prime_degree(7))
+            sage: phi2_list = phi1.codomain().isogenies_prime_degree(7)
+            sage: n_cyclic = sum((phi2 * phi1).is_cyclic() for phi2 in phi2_list)
+            sage: n_cyclic, len(phi2_list)
+            (7, 8)
+
         .. SEEALSO::
 
         - :meth:`sage.schemes.elliptic_curves.hom.EllipticCurveHom.is_cyclic`
