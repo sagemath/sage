@@ -975,11 +975,11 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
 
     def is_identity(self):
         r"""
-        Returns if the Weierstrass isomorphims is the identity.
+        Check if this Weierstrass isomorphism is the identity.
 
         EXAMPLES::
 
-            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import *
+            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
             sage: p = 97
             sage: Fp = GF(p)
             sage: E = EllipticCurve(Fp, [1, 28])
@@ -989,7 +989,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
 
         ::
 
-            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import *
+            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
             sage: p = 97
             sage: Fp = GF(p)
             sage: E = EllipticCurve(Fp, [1, 28])
@@ -1001,11 +1001,11 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
 
     def order(self):
         r"""
-        If the Weierstrass isomorphism is an automorphism, computes the order of the automorphism.
+        Compute the order of this Weierstrass isomorphism if it is an automorphism.
 
-        If the domain is not equal to the codomain a `ValueError` is returned.
+        A ``ValueError`` is raised if the domain is not equal to the codomain.
 
-        If the order of the automorphism is not 2,3,4 or 6 a `NotImplementedError` is returned.
+        A ``NotImplementedError`` is raised if the order of the automorphism is not 1, 2, 3, 4 or 6.
 
         EXAMPLES::
 
@@ -1071,7 +1071,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         if ws6.is_identity():
             return Integer(6)
 
-        raise NotImplementedError("the order of the endomorphism is not 2,3,4 or 6")
+        raise NotImplementedError("the order of the endomorphism is not 1, 2, 3, 4 or 6")
 
 def identity_morphism(E):
     r"""
