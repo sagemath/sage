@@ -61,6 +61,20 @@ cdef class SCIPBackend(GenericBackend):
     def get_constraints(self):
         """
         Get all constraints of the problem.
+
+        EXAMPLES::
+
+            sage: from sage.numerical.backends.generic_backend import get_solver
+            sage: lp = get_solver(solver="SCIP")
+            sage: lp.add_variables(3)
+            2
+            sage: lp.add_linear_constraint(zip([0, 1, 2], [8, 6, 1]), None, 48)
+            sage: lp.add_linear_constraint(zip([0, 1, 2], [2, 1.5, 0.5]), None, 8)
+
+            sage: lp.get_constraints()
+            [c1, c2]
+            sage: lp.row(1)                                                     # indirect doctest
+            ([0, 1, 2], [2.0, 1.5, 0.5])
         """
         if self.constraints is None:
             self.constraints = self.model.getConss()
@@ -71,10 +85,11 @@ cdef class SCIPBackend(GenericBackend):
         Get the model as a pyscipopt Model.
 
         EXAMPLES::
-        sage: from sage.numerical.backends.generic_backend import get_solver
-        sage: p = get_solver(solver = "SCIP")
-        sage: p._get_model()
-        <pyscipopt.scip.Model object at ...
+
+            sage: from sage.numerical.backends.generic_backend import get_solver
+            sage: p = get_solver(solver = "SCIP")
+            sage: p._get_model()
+            <pyscipopt.scip.Model object at ...
         """
         return self.model
 
@@ -385,7 +400,11 @@ cdef class SCIPBackend(GenericBackend):
             1
             sage: p.add_linear_constraint([(0, 2), (1, 3)], None, 6)
             sage: p.add_linear_constraint([(0, 3), (1, 2)], None, 6)
+            sage: p.row(0)
+            ([0, 1], [2.0, 3.0])
             sage: p.remove_constraints([0, 1])
+            sage: p.nrows()
+            0
         """
         if isinstance(constraints, int):
             self.remove_constraint(constraints)
@@ -560,7 +579,7 @@ cdef class SCIPBackend(GenericBackend):
 
         INPUT:
 
-        - ``indices`` (list of integers) -- this list constains the
+        - ``indices`` (list of integers) -- this list contains the
           indices of the constraints in which the variable's
           coefficient is nonzero
 
@@ -724,6 +743,20 @@ cdef class SCIPBackend(GenericBackend):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
+            sage: g = graphs.CubeGraph(9)
+            sage: p = MixedIntegerLinearProgram(solver="SCIP")
+            sage: p.solver_parameter("limits/gap", 100)
+            sage: b = p.new_variable(binary=True)
+            sage: p.set_objective(p.sum(b[v] for v in g))
+            sage: for v in g:
+            ....:     p.add_constraint(b[v]+p.sum(b[u] for u in g.neighbors(v)) <= 1)
+            sage: p.add_constraint(b[v] == 1) # Force an easy non-0 solution
+            sage: p.solve() # rel tol 100
+            1.0
+            sage: backend = p.get_backend()
+            sage: backend.best_known_objective_bound() # random
+            31.0
         """
         return self.model.getPrimalbound()
 
@@ -745,12 +778,28 @@ cdef class SCIPBackend(GenericBackend):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs
+            sage: g = graphs.CubeGraph(9)
+            sage: p = MixedIntegerLinearProgram(solver="SCIP")
+            sage: p.solver_parameter("limits/gap", 100)
+            sage: b = p.new_variable(binary=True)
+            sage: p.set_objective(p.sum(b[v] for v in g))
+            sage: for v in g:
+            ....:     p.add_constraint(b[v]+p.sum(b[u] for u in g.neighbors(v)) <= 1)
+            sage: p.add_constraint(b[v] == 1) # Force an easy non-0 solution
+            sage: p.solve() # rel tol 100
+            1.0
+            sage: backend = p.get_backend()
+            sage: backend.get_relative_objective_gap() # random
+            46.99999999999999
 
         TESTS:
 
         Just make sure that the variable *has* been defined, and is not just
         undefined::
 
+            sage: backend.get_relative_objective_gap() > 1                              # needs sage.graphs
+            True
         """
         return self.model.getGap()
 
@@ -843,6 +892,23 @@ cdef class SCIPBackend(GenericBackend):
             sage: p.add_linear_constraints(2, 2, None)
             sage: p.nrows()
             2
+
+        TESTS::
+
+        After calling :meth:`remove_constraints` we know that
+        `self.constraints is None`.  `SCIP` keeps track of the number
+        of constraints, so we can do the optimization::
+
+            sage: from sage.numerical.backends.generic_backend import get_solver
+            sage: p = get_solver(solver='SCIP')
+            sage: p.add_variables(2)
+            1
+            sage: p.add_linear_constraint([(0, 2), (1, 3)], None, 6)
+            sage: p.row(0)
+            ([0, 1], [2.0, 3.0])
+            sage: p.remove_constraints([0])
+            sage: p.nrows()
+            0
         """
         if self.constraints is None:
             return self.model.getNConss()
@@ -904,7 +970,6 @@ cdef class SCIPBackend(GenericBackend):
             sage: p.set_variable_type(0,0)
             sage: p.is_variable_binary(0)
             True
-
         """
         return self.variables[index].vtype() == 'BINARY'
 
@@ -1206,6 +1271,13 @@ cdef class SCIPBackend(GenericBackend):
         - ``value`` -- the parameter's value if it is to be defined,
           or ``None`` (default) to obtain its current value.
 
+        EXAMPLES:
+
+            sage: from sage.numerical.backends.generic_backend import get_solver
+            sage: lp = get_solver(solver="SCIP")
+            sage: p.solver_parameter("limits/time", 1)
+            sage: p.solver_parameter("limits/time")
+            1.0
         """
         if value is not None:
             if name.lower() == 'timelimit':
