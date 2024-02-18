@@ -86,6 +86,7 @@ if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
 fi
 OUTPUT_INDEX="$OUTPUT_DIR"/index.rst
 cat > "$OUTPUT_INDEX" <<EOF
+.. _spkg:
 
 Packages and Features
 =====================
