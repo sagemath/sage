@@ -2,8 +2,7 @@ project(
   'SageMath',
   ['c', 'cpp', 'cython'],
   version: files('src/VERSION.txt'),
-  license: 'GPL v3',
-  meson_version: '>= 1.2.0',
+  license: 'GPL v3'
 )
 
 # Python module
