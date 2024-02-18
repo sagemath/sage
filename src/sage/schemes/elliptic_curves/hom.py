@@ -973,6 +973,9 @@ class EllipticCurveHom(Morphism):
             sage: from sage.schemes.elliptic_curves.hom_frobenius import EllipticCurveHom_frobenius
             sage: E0 = EllipticCurve(GF(37), [4, 0])
             sage: frob = EllipticCurveHom_frobenius(E0, 0)  # note zero power (identity morphism)
+            sage: frob.is_cyclic()
+            True
+
             sage: phi1 = E0.isogenies_prime_degree(3)[2]
             sage: phi = phi1.dual() * phi1 * frob
             sage: phi.is_cyclic()
@@ -980,6 +983,15 @@ class EllipticCurveHom(Morphism):
             sage: super(type(phi), phi).is_cyclic()  # previous incorrectly returned True
             False
             sage: t = factor(phi.x_rational_map().denominator())  # previously raised AttributeError
+
+            sage: E0.scalar_multiplication(0).is_cyclic()
+            False
+            sage: E0.scalar_multiplication(37).is_cyclic()
+            False
+            sage: EllipticCurveHom_frobenius(E0, 0).is_cyclic()
+            True
+            sage: EllipticCurveHom_frobenius(E0, 1).is_cyclic()
+            False
 
         .. SEEALSO::
 

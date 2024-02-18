@@ -954,6 +954,19 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             sage: EllipticCurveHom_composite.from_factors([phi2 * phi1]).is_cyclic()
             True
 
+        TESTS::
+
+            sage: from sage.schemes.elliptic_curves.hom_frobenius import EllipticCurveHom_frobenius
+            sage: E0 = EllipticCurve(GF(37), [4, 0])
+            sage: EllipticCurveHom_composite.from_factors([E0.scalar_multiplication(0)]).is_cyclic()
+            False
+            sage: EllipticCurveHom_composite.from_factors([E0.scalar_multiplication(37)]).is_cyclic()
+            False
+            sage: EllipticCurveHom_composite.from_factors([EllipticCurveHom_frobenius(E0, 0)]).is_cyclic()
+            True
+            sage: EllipticCurveHom_composite.from_factors([EllipticCurveHom_frobenius(E0, 1)]).is_cyclic()
+            False
+
         .. SEEALSO::
 
         - :meth:`sage.schemes.elliptic_curves.hom.EllipticCurveHom.is_cyclic`
@@ -1034,15 +1047,15 @@ class EllipticCurveHom_composite(EllipticCurveHom):
 
             # no need to check if only factor ell^1 left
             if first < last or self._phis[first].degree() % ell**2 == 0:
-                survived = _propagate_torsion_through_isogenies(
-                    self._phis[first:last+1], ell, _reduce_kernel=_reduce_kernel)
+                survived = _sieve_torsion_through_isogenies(
+                    self._phis[first:last+1], ell, use_second_curve=_reduce_kernel)
                 if survived.degree() <= 0:
                     # fully destroyed, non-cyclic
                     return False
         return True
 
 
-def _propagate_torsion_through_isogenies(phis, ell, _reduce_kernel=True):
+def _sieve_torsion_through_isogenies(phis, ell, use_second_curve=True):
     r"""
     Sieve $\ell$-torsion through isogenies.
 
@@ -1051,12 +1064,56 @@ def _propagate_torsion_through_isogenies(phis, ell, _reduce_kernel=True):
     x-coordinates as roots (a divisor of the division polynomial
     of the starting curve).
 
+    INPUT:
+
+    - phis (list of isogenies) -- list of isogenies to propagate the torsion through
+
+    - ell -- an integer defining the torsion $E[\ell]$
+
+    - use_second_curve (optional, default: ``True``): whether to base
+      the remaining torsion representation to the second curve (which is faster
+      because of lower degree).
+
+
     OUTPUT: a polynomial dividing the division polynomial of the
-    starting curve, representing the torsion subgroup that is not
-    nullified by the isogeny.
+    starting curve (or of the second curve if `use_second_curve` is set),
+    representing the torsion subgroup that is not nullified by the isogeny.
+
+    TESTS::
+
+        sage: from sage.schemes.elliptic_curves.hom_composite import _sieve_torsion_through_isogenies
+
+        sage: _sieve_torsion_through_isogenies([], 2)
+        Traceback (most recent call last):
+        ...
+        ValueError: List of isogenies must be nonempty
+
+        sage: E0 = EllipticCurve(GF(37), [4, 0])
+        sage: phi = E0.scalar_multiplication(0)
+        sage: _sieve_torsion_through_isogenies([phi], 2)
+        1
+        sage: phi = E0.scalar_multiplication(2)
+        sage: _sieve_torsion_through_isogenies([phi], 2)
+        1
+        sage: phi = E0.isogeny(E0(0,0)); phi.kernel_polynomial()
+        x
+        sage: _sieve_torsion_through_isogenies([phi], 2) == phi.dual().kernel_polynomial()
+        True
+        sage: _sieve_torsion_through_isogenies([phi], 2, use_second_curve=False).monic()
+        x^2 + 4
+        sage: div = E0.division_polynomial(2); (div // phi.kernel_polynomial()).monic()
+        x^2 + 4
+        sage: _sieve_torsion_through_isogenies([phi], 3).degree()
+        4
+
+    .. SEEALSO::
+
+        - :meth:`sage.schemes.elliptic_curves.hom_composit.EllipticCurveHom_composite.is_cyclic`
     """
     if not phis:
         raise ValueError("List of isogenies must be nonempty")
+    if any(phi.is_zero() or not phi.is_separable() for phi in phis):
+        return phis[0].domain().base_ring()['x'](1)
 
     E0 = phis[0].domain()
     p = E0.base_ring().characteristic()
@@ -1099,7 +1156,7 @@ def _propagate_torsion_through_isogenies(phis, ell, _reduce_kernel=True):
         # evaluate the isogeny
         y = x_rational_map(y)
 
-        if i == 0 and _reduce_kernel:
+        if i == 0 and use_second_curve:
             # the div poly has degree (\ell^2-1)/2
             # and the gcd with kernel poly cuts off only degree \ell
             # so we compute the kernel polynomial of the dual isogeny
