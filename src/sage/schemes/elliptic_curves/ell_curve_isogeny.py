@@ -3145,6 +3145,15 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: (Xm, Ym) == E.multiplication_by_m(5)
             True
 
+        Duals of isogenies of degree large than the characteristic are also ok:
+
+            sage: E0 = EllipticCurve(GF(19**24), [10, 2])
+            sage: phi = choice(E0.isogenies_prime_degree(7))
+            sage: phi.dual().dual() == phi
+            True
+            sage: phi.dual() * phi == E0.scalar_multiplication(7)
+            True
+
         Inseparable duals should be computed correctly::
 
             sage: # needs sage.rings.finite_rings
@@ -3287,7 +3296,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         else:
             pre_iso = self._codomain.isomorphism_to(E1)
-            u = self.scaling_factor()
 
             # compute  the kernel polynomial of the dual
             # by computing the image of the division polynomial
@@ -3304,12 +3312,14 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             f = mu.minpoly()
 
             # propagate the kernel through ~pre_iso
+            # from self.codomain() to E1
             iso_u, iso_r, _, _ = (F(c) for c in pre_iso.tuple())
             x = f.parent().gen()
             f = f(x * iso_u**2 + iso_r)
 
-            # compute the isogeny E1 -> E2', E2' not necessarily the
-            # predicted one, but should be normalized
+            # compute the isogeny E1 -> E2' from the computed kernel
+            # E2' is not necessarily the predicted one,
+            # but should be normalized
             phi_hat = E1.isogeny(f)
             # assert phi_hat.scaling_factor() == 1
 
@@ -3317,7 +3327,9 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             E2 = phi_hat.codomain()
             post_iso = E2.isomorphism_to(self._domain)
 
-            sc = u * pre_iso.scaling_factor() * post_iso.scaling_factor() / F(d)
+            # trac 7096
+            # this should take care of the case when the isogeny is not normalized.
+            sc = self.scaling_factor() * pre_iso.scaling_factor() * post_iso.scaling_factor() / F(d)
             if not sc.is_one():
                 auts = self._codomain.automorphisms()
                 aut = [a for a in auts if a.u == sc]
