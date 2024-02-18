@@ -952,13 +952,42 @@ class CoxeterGroups(Category_singleton):
                 Sign representation of
                  Weyl Group of type ['A', 1, 1] (as a matrix group acting on the root space)
                  over Integer Ring
-
             """
             if base_ring is None:
                 from sage.rings.integer_ring import ZZ
                 base_ring = ZZ
             from sage.modules.with_basis.representation import SignRepresentationCoxeterGroup
             return SignRepresentationCoxeterGroup(self, base_ring)
+
+        def reflection_representation(self, base_ring=None, side="left"):
+            r"""
+            Return the reflection representation of ``self``.
+
+            This is also the canonical faithful representation of a
+            Coxeter group.
+
+            INPUT:
+
+            - ``base_ring`` -- (optional) the base ring; the default is
+              the base ring of :meth:`canonical_representation`
+            - ``side`` -- ignored
+
+            EXAMPLES::
+
+                sage: W = CoxeterGroup(['D', 4])
+                sage: W.reflection_representation()
+
+                sage: W = CoxeterGroup(['I', 13])
+                sage: W.reflection_representation()
+
+                sage: W = WeylGroup(["B", 3, 1])
+                sage: W.reflection_representation(QQ)
+                Sign representation of
+                 Weyl Group of type ['A', 1, 1] (as a matrix group acting on the root space)
+                 over Integer Ring
+            """
+            from sage.modules.with_basis.representation import ReflectionRepresentation
+            return ReflectionRepresentation(self, base_ring)
 
         def demazure_product(self, Q):
             r"""
@@ -1168,6 +1197,11 @@ class CoxeterGroups(Category_singleton):
         def canonical_representation(self):
             r"""
             Return the canonical faithful representation of ``self``.
+
+            .. SEEALSO::
+
+                To obtain the underlying module with the action, use
+                :meth:`reflection_representation`.
 
             EXAMPLES::
 

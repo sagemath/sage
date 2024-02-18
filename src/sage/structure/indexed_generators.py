@@ -491,6 +491,8 @@ class IndexedGenerators():
             return ascii_art(ret)
 
         pref = AsciiArt([self.prefix()])
+        if not pref:
+            return ascii_art(m)
         r = pref * (AsciiArt([" " * len(pref)]) + ascii_art(m))
         r._baseline = r._h - 1
         return r
@@ -530,6 +532,8 @@ class IndexedGenerators():
             return unicode_art(ret)
 
         pref = UnicodeArt([self.prefix()])
+        if not pref:
+            return unicode_art(m)
         r = pref * (UnicodeArt([" " * len(pref)]) + unicode_art(m))
         r._baseline = r._h - 1
         return r
