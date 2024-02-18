@@ -662,6 +662,9 @@ if [ -n "$PKG_NAME_UPSTREAM" ]; then
     export rsync_proxy=$http_proxy
 fi
 
+# Make sage-logger show the full logs
+unset SAGE_SILENT_BUILD
+unset V
 
 # First uninstall the previous version of this package, if any
 if [ "$KEEP_EXISTING" != "yes" ]; then
