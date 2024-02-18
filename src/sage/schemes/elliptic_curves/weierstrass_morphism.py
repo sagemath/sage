@@ -1003,9 +1003,9 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         r"""
         Compute the order of this Weierstrass isomorphism if it is an automorphism.
 
-        A ``ValueError`` is raised if the domain is not equal to the codomain.
+        A :class:`ValueError` is raised if the domain is not equal to the codomain.
 
-        A ``NotImplementedError`` is raised if the order of the automorphism is not 1, 2, 3, 4 or 6.
+        A :class:`NotImplementedError` is raised if the order of the automorphism is not 1, 2, 3, 4 or 6.
 
         EXAMPLES::
 
