@@ -180,11 +180,11 @@ classes being very similar):
         \begin{array}{ccc}
              \swarrow & \downarrow & \searrow \\
                 ``aa" & ``ab" & ``ac" \\
-        \end{array}   & 
+        \end{array}   &
         \begin{array}{ccc}
              \swarrow & \downarrow & \searrow \\
                 ``ba" & ``bb" & ``bc" \\
-        \end{array}   & 
+        \end{array}   &
         \begin{array}{ccc}
              \swarrow & \downarrow & \searrow \\
                 ``ca" & ``cb" & ``cc" \\
