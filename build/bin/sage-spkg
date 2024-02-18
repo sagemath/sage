@@ -647,14 +647,8 @@ case "$PKG_SRC" in
         # Silence is golden.
         ;;
     *)
-        echo "****************************************************"
-        echo "Host system:"
-        uname -a
-        echo "****************************************************"
-        echo "C compiler: $CC"
-        echo "C compiler version:"
-        $CC -v
-        echo "****************************************************"
+        echo "Host system: $(uname -a)"
+        echo "C compiler: $CC$($CC -v 2>&1 | while read -r line; do echo -n ", $line"; done)"
         ;;
 esac
 
