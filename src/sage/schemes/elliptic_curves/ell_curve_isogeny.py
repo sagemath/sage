@@ -3050,37 +3050,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         self.__set_post_isomorphism(codomain, isom)
 
-    def decompose_inseparable(self):
-        """
-        Decompose the isogeny into purely inseparable part and a separable part.
-
-        OUTPUT: a pair of a purely inseparable (or identity) isogeny and a separable isogeny,
-        which equal to the current one when composed as (separable * purely inseparable).
-        """
-        F = self.__base_field
-        p = F.characteristic()
-        frob_k = self._degree.valuation(p)
-        deg = self._degree // p**frob_k
-        # degree = deg * p**k
-
-        from sage.schemes.elliptic_curves.hom_frobenius import EllipticCurveHom_frobenius
-        frob = EllipticCurveHom_frobenius(self._codomain, frob_k)
-
-        f = self.kernel_polynomial()
-
-        psi = self._domain.division_polynomial(p)
-        mu_num = self._domain._multiple_x_numerator(p)
-        mu_den = self._domain._multiple_x_denominator(p)
-
-        for _ in range(frob_k):
-            f //= f.gcd(psi)
-            S = f.parent().quotient_ring(f)
-            mu = S(mu_num) / S(mu_den)
-            f = mu.minpoly()
-
-        sep = self._domain.isogeny(f, codomain=frob.codomain())
-        return frob, sep
-
     def dual(self):
         r"""
         Return the isogeny dual to this isogeny.
