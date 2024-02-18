@@ -84,8 +84,8 @@ Modes of operation (provide at most one):
    -x, --check-only: exclusively run the test suite;
        this may assume that:
         * the package has been installed already and/or that
-        * the temporary build directory has not been deleted
-   -e, --erase-build-directory-only: erase (delete) the temporary
+        * the build directory has not been deleted
+   -e, --erase-build-directory-only: erase (delete) the
        build directory only
    --info: print information on the package only
    --help: print this help only
@@ -103,7 +103,7 @@ Other options:
        exit with an error on test suite failures
    -w: after installing, run the test suite for the package;
        print a warning on test suite failures
-   -s: save (do not delete) the temporary build directory,
+   -s: save (do not delete) the build directory,
        even when the installation was successful
 EOF
 }
@@ -870,7 +870,7 @@ __EOF__
 } ###################################### write_installation_record
 
 delete_the_temporary_build_directory() { #########################
-    echo "Deleting temporary build directory $SAGE_BUILD_DIR/$PKG_NAME"
+    echo "Deleting build directory $SAGE_BUILD_DIR/$PKG_NAME"
     # On Solaris, the current working directory cannot be deleted,
     # so we "cd" out of $SAGE_BUILD_DIR/$PKG_NAME. See #12637.
     cd "$SAGE_BUILD_DIR"
@@ -881,7 +881,7 @@ delete_the_temporary_build_directory_if_required() { #############
 if [ ! -e "$SAGE_BUILD_DIR/$PKG_NAME/.keep" ]; then
     delete_the_temporary_build_directory
 else
-    echo "You can safely delete the temporary build directory $SAGE_BUILD_DIR/$PKG_NAME"
+    echo "You can safely delete the build directory $SAGE_BUILD_DIR/$PKG_NAME"
 fi
 } ############### delete_the_temporary_build_directory_if_required
 
