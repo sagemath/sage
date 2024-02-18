@@ -176,7 +176,7 @@ def SymmetricGroupAlgebra(R, W, category=None):
         usual multiplication function, but rather use the methods
         :meth:`left_action_product` and :meth:`right_action_product`
         for multiplying permutations (these methods don't depend on the
-        setting). See :trac:`14885` for more information.
+        setting). See :issue:`14885` for more information.
 
     We conclude by constructing the algebra of the symmetric group as
     a monoid algebra::
@@ -242,7 +242,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             sage: QS3 in FiniteDimensionalAlgebrasWithBasis(QQ)
             True
 
-        Check that :trac:`16926` works::
+        Check that :issue:`16926` works::
 
             sage: S = SymmetricGroup(4)
             sage: SGA = S.algebra(QQ)
@@ -1267,7 +1267,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
         TESTS:
 
-        Check that :trac:`15309` is fixed::
+        Check that :issue:`15309` is fixed::
 
             sage: S3 = SymmetricGroupAlgebra(QQ, 3)
             sage: S3.algebra_generators()

@@ -190,7 +190,7 @@ def unrank(L, i):
     tuple (or more generally a :class:`collections.abc.Sequence`), an
     enumerated set, some old parent of Sage still implementing
     unranking in the method ``__getitem__``, or an iterable (see
-    :class:`collections.abc.Iterable`). See :trac:`15919`.
+    :class:`collections.abc.Iterable`). See :issue:`15919`.
 
     EXAMPLES:
 

@@ -962,7 +962,7 @@ cdef class SCIPBackend(GenericBackend):
 
         TESTS:
 
-        :trac:`14581`::
+        :issue:`14581`::
 
             sage: P = MixedIntegerLinearProgram(solver="SCIP")
             sage: x = P["x"]
@@ -970,7 +970,7 @@ cdef class SCIPBackend(GenericBackend):
             sage: P.get_max(x)
             0.0
 
-        Check that :trac:`10232` is fixed::
+        Check that :issue:`10232` is fixed::
 
             sage: p = get_solver(solver="SCIP")
             sage: p.variable_upper_bound(2)
@@ -1023,7 +1023,7 @@ cdef class SCIPBackend(GenericBackend):
 
         TESTS:
 
-        :trac:`14581`::
+        :issue:`14581`::
 
             sage: P = MixedIntegerLinearProgram(solver="SCIP")
             sage: x = P["x"]
@@ -1032,7 +1032,7 @@ cdef class SCIPBackend(GenericBackend):
             sage: P.get_min(x)
             0.0
 
-        Check that :trac:`10232` is fixed::
+        Check that :issue:`10232` is fixed::
 
             sage: p = get_solver(solver="SCIP")
             sage: p.variable_lower_bound(2)

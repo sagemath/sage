@@ -825,7 +825,7 @@ def braid_in_segment(glist, x0, x1, precision={}):
 
     TESTS:
 
-    Check that :trac:`26503` is fixed::
+    Check that :issue:`26503` is fixed::
 
         sage: # needs sage.rings.real_mpfr sage.symbolic
         sage: wp = QQ['t']([1, 1, 1]).roots(QQbar)[0][0]

@@ -173,7 +173,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             sage: Sp(6,3).as_permutation_group().cardinality()
             9170703360
 
-        Check that :trac:`25706` still works after :trac:`26903`::
+        Check that :issue:`25706` still works after :issue:`26903`::
 
             sage: # needs sage.libs.pari
             sage: MG = GU(3,2).as_matrix_group()

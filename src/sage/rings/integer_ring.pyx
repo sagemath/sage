@@ -307,7 +307,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             sage: A = IntegerRing_class()
 
         We check that ``ZZ`` is an infinite enumerated set
-        (see :trac:`16239`)::
+        (see :issue:`16239`)::
 
             sage: A in InfiniteEnumeratedSets()
             True
@@ -456,7 +456,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
              3626777458843887524118528, 4835703278458516698824704, 6044629098073145873530880,
              7253554917687775048237056, 8462480737302404222943232]
 
-        Make sure :trac:`8818` is fixed::
+        Make sure :issue:`8818` is fixed::
 
             sage: ZZ.range(1r, 10r)
             [1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -731,7 +731,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         TESTS:
 
-        Check that :trac:`32124` is fixed::
+        Check that :issue:`32124` is fixed::
 
             sage: ZZ.random_element(5, -5, distribution="1/n").parent() is ZZ
             True

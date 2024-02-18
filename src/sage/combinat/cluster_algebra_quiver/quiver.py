@@ -747,7 +747,7 @@ class ClusterQuiver(SageObject):
             sage: with tempfile.NamedTemporaryFile(suffix=".qmu") as f:                 # needs sage.plot sage.symbolic
             ....:     Q.qmu_save(f.name)
 
-        Make sure we can save quivers with `m != n` frozen variables, see :trac:`14851`::
+        Make sure we can save quivers with `m != n` frozen variables, see :issue:`14851`::
 
             sage: S = ClusterSeed(['A',3])
             sage: T1 = S.principal_extension()
