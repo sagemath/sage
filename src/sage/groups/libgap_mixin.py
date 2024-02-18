@@ -1038,9 +1038,9 @@ def minimum_generating_set(group, gap_based=False):
     if not isinstance(group, GapElement):
         convertor = group._element_constructor_
         group = group._libgap_()
-    else:
-        if not gap_based:
-            raise ValueError("The group should be a sage group to get answer in sage format")
+    elif not gap_based:
+        return minimum_generating_set(group, gap_based=True)
+
     if not group.IsFinite().sage():
         raise NotImplementedError("Implemented for finite group only")
 
