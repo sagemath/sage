@@ -65,6 +65,10 @@ mpfr = cc.find_library('mpfr')
 flint = dependency('flint', version : '>=3.0.0', required: false, allow_fallback: false)
 if not flint.found()
     flint = subproject('flint').get_variable('flint_dep')
+else
+    # Currently the flint pkg-config file is broken, so we manually use find_library
+    # Can be removed once we require a version of flint that ships https://github.com/flintlib/flint/pull/1647
+    flint = cc.find_library('flint')
 endif
 
 blas_order = []
