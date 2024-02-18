@@ -3286,13 +3286,15 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             return self.__dual
 
         else:
-            # trac 7096
-            # this should take care of the case when the isogeny is not normalized.
+            pre_iso = self._codomain.isomorphism_to(E1)
+            u = self.scaling_factor()
 
+            # compute  the kernel polynomial of the dual
+            # by computing the image of the division polynomial
+            # through the isogeny
             x_map = self.x_rational_map()
             f = self.kernel_polynomial()
-
-            assert x_map.denominator().monic().radical() == self.kernel_polynomial().monic()
+            # assert x_map.denominator().monic().radical() == self.kernel_polynomial().monic()
 
             psi = self._domain.division_polynomial(self._degree)
             psi //= psi.gcd(f)
@@ -3301,43 +3303,19 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
             f = mu.minpoly()
 
-            u = self.scaling_factor()
-            E2 = E2pr.change_weierstrass_model(u/F(d), 0, 0, 0)
+            # propagate the kernel through ~pre_iso
+            iso_u, iso_r, _, _ = (F(c) for c in pre_iso.tuple())
+            x = f.parent().gen()
+            f = f(x * iso_u**2 + iso_r)
 
-            #return sep
+            # compute the isogeny E1 -> E2', E2' not necessarily the
+            # predicted one, but should be normalized
+            phi_hat = E1.isogeny(f)
+            # assert phi_hat.scaling_factor() == 1
 
-            phi_hat = self._codomain.isogeny(f)
-            assert phi_hat.scaling_factor() == 1
-            pre_iso = self._codomain.isomorphism_to(E1)
+            # set the actual E2
+            E2 = phi_hat.codomain()
             post_iso = E2.isomorphism_to(self._domain)
-
-            post_iso = [
-                iso
-                for iso in phi_hat.codomain().isomorphisms(self._domain)
-                if iso.scaling_factor() == post_iso.scaling_factor()][0]
-
-            assert phi_hat.codomain() == post_iso.domain()
-            phi_hat._set_pre_isomorphism(~pre_iso)
-            #phi_hat._set_post_isomorphism(post_iso)
-
-            #assert 0, (pre_iso.scaling_factor(), post_iso.scaling_factor(), u, d)
-            #assert 0, (phi_hat.codomain(), self._domain)
-
-            if 0:
-                pre_iso = self._codomain.isomorphism_to(E1)
-                iso_u, iso_r, _, _ = (F(c) for c in (~pre_iso).tuple())
-                x = f.parent().gen()
-                f = f( (x-iso_r) / iso_u**2)
-                phi_hat = E1.isogeny(f)
-                assert phi_hat.scaling_factor() == 1
-
-                E2 = phi_hat.codomain()
-
-                post_iso = E2.isomorphism_to(self._domain)
-
-
-            #phi_hat = EllipticCurveIsogeny(E1, None, E2, d)
-            #assert phi_hat.scaling_factor() == 1
 
             sc = u * pre_iso.scaling_factor() * post_iso.scaling_factor() / F(d)
             if not sc.is_one():
@@ -3345,7 +3323,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
                 aut = [a for a in auts if a.u == sc]
                 assert len(aut) == 1, "bug in dual()"
                 pre_iso *= aut[0]
-
 
             phi_hat._set_pre_isomorphism(pre_iso)
             phi_hat._set_post_isomorphism(post_iso)
