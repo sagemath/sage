@@ -324,13 +324,12 @@ sdh_store_wheel() {
         distname="${wheel_basename%%-*}"
         # Record name and wheel file location
         if [ -n "$SAGE_DESTDIR" ]; then
-            echo "Staged wheel file and ${SAGE_SPKG_SCRIPTS}/${PKG_BASE}/spkg-requirements.txt file:"
+            echo "Staged wheel file, staged ${SAGE_SPKG_SCRIPTS}/${PKG_BASE}/spkg-requirements.txt"
         else
-            echo "Copied wheel file and wrote ${SAGE_SPKG_SCRIPTS}/${PKG_BASE}/spkg-requirements.txt file:"
+            echo "Copied wheel file, wrote ${SAGE_SPKG_SCRIPTS}/${PKG_BASE}/spkg-requirements.txt"
         fi
         mkdir -p ${SAGE_DESTDIR}${SAGE_SPKG_SCRIPTS}/${PKG_BASE}
         echo "${distname} @ file://${wheel}" >> "${SAGE_DESTDIR}${SAGE_SPKG_SCRIPTS}/${PKG_BASE}/spkg-requirements.txt"
-        cat "${SAGE_DESTDIR}${SAGE_SPKG_SCRIPTS}/${PKG_BASE}/spkg-requirements.txt"
     fi
     wheel="${SAGE_DESTDIR}${wheel}"
 }
