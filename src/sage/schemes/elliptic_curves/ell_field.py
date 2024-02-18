@@ -1626,6 +1626,16 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             Traceback (most recent call last):
             ...
             ValueError: 4 is not prime.
+
+        Test for bug in PR#37388::
+
+            sage: E0 = EllipticCurve(GF(19), [4, 0])
+            sage: phi1 = E0.isogenies_prime_degree(5)[0]
+            sage: phi2 = phi1.codomain().isogenies_prime_degree(2)[0]
+            sage: phi12 = phi2 * phi1
+            sage: phi3_list = phi12.codomain().isogenies_prime_degree(2, cyclic_after=phi12)
+            sage: [(phi3 * phi12).is_cyclic() for phi3 in phi3_list]
+            [True, True]
         """
         F = self.base_ring()
         if isinstance(F, sage.rings.abc.RealField):
@@ -1653,6 +1663,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             dom = cyclic_after.domain()
             if cyclic_after.codomain() != self:
                 raise ValueError("The codomain of `cyclic_after` must be the same curve")
+            if not cyclic_after.is_separable():
+                raise ValueError("The `cyclic_after` isogeny must be separable")
             ret = []
             for d in L:
                 for phi in isogenies_prime_degree(self, d):
@@ -1660,7 +1672,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                     # but also do some overhead (construct composte map, check degrees
                     # are primes, etc.)
                     # So we check j-invariants here to make most cases pass fast
-                    if phi.codomain().j_invariant() != dom.j_invariant() or (phi * cyclic_after).is_cyclic():
+                    if (cyclic_after.degree().is_prime() and phi.codomain().j_invariant() != dom.j_invariant()):
+                        ret.append(phi)
+                    elif (phi * cyclic_after).is_cyclic():
                         ret.append(phi)
             return ret
 
