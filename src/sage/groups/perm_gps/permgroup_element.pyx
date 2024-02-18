@@ -948,10 +948,15 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: S = SymmetricGroup(['a', 'b'])
             sage: latex(S.gens())
             \left((\text{\texttt{a}},\text{\texttt{b}})\right)
+            sage: latex(S.one())
+            1
         """
+        cycle_tuples = self.cycle_tuples()
+        if not cycle_tuples:
+            return '1'
         from sage.misc.latex import latex
         return "".join(("(" + ",".join(latex(x) for x in cycle) + ")")
-                       for cycle in self.cycle_tuples())
+                       for cycle in cycle_tuples)
 
     def __getitem__(self, i):
         r"""
