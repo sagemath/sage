@@ -3113,7 +3113,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: (Xm, Ym) == E.multiplication_by_m(5)
             True
 
-        Duals of isogenies of degree large than the characteristic are also ok:
+        Duals of isogenies of large degree (compared to the characteristic)::
 
             sage: E0 = EllipticCurve(GF(19**24), [10, 2])
             sage: phi = choice(E0.isogenies_prime_degree(7))
