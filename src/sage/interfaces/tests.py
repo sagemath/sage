@@ -59,7 +59,7 @@ def manyvars(s, num=70000, inlen=1, step=2000):
         v = []
         for i in range(num):
             if not i % step:
-                sys.stdout.write('{i} ')
+                sys.stdout.write(f'{i} ')
                 sys.stdout.flush()
             v.append(s(t))
         print('\nsuccess -- time = cpu: %s, wall: %s' % (cputime(t),

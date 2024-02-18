@@ -137,7 +137,7 @@ language works). Use square brackets or the set function::
                8           1           1
 """
 
-##############################################################################
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL).
@@ -150,7 +150,7 @@ language works). Use square brackets or the set function::
 #  The full text of the GPL is available at:
 #
 #                  https://www.gnu.org/licenses/
-##############################################################################
+# ****************************************************************************
 
 import os
 

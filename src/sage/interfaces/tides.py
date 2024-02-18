@@ -12,14 +12,14 @@ expression of the differential equation.
 
 ::
 
-    ##########################################################################
+    # ************************************************************************
     #  Copyright (C) 2014 Miguel Marco <mmarco@unizar.es>, Marcos Rodriguez
     #   <marcos@uunizar.es>
     #
     #  Distributed under the terms of the GNU General Public License (GPL):
     #
     #                  https://www.gnu.org/licenses/
-    ##########################################################################
+    # ************************************************************************
 
 AUTHORS:
 

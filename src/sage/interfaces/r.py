@@ -258,7 +258,7 @@ AUTHORS:
 - Emmanuel Charpentier (2015-12-12, RPy2 interface)
 """
 
-##########################################################################
+# ************************************************************************
 #
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #                     2007 Mike Hansen   <mhansen@gmail.com>
@@ -268,7 +268,7 @@ AUTHORS:
 #
 #                  https://www.gnu.org/licenses/
 #
-##########################################################################
+# ************************************************************************
 import os
 
 from .interface import Interface, InterfaceElement, InterfaceFunction, InterfaceFunctionElement
@@ -486,8 +486,8 @@ class R(ExtraTabCompletion, Interface):
             True
         """
         Interface.__init__(
-                self,
-                name='r',  # The capitalized version of this is used for printing.
+            self,
+            name='r',  # The capitalized version of this is used for printing.
         )
         self._seed = seed
         self._initialized = False  # done lazily
@@ -1075,7 +1075,7 @@ class R(ExtraTabCompletion, Interface):
         args, kwds = self._convert_args_kwds(args, kwds)
         self._check_valid_function_name(function)
         return self.new("%s(%s)" % (function, ",".join([s.name() for s in args] +
-                                                       [self._sage_to_r_name(key)+'='+kwds[key].name() for key in kwds])))
+                                                       [self._sage_to_r_name(key) + '=' + kwds[key].name() for key in kwds])))
 
     def call(self, function_name, *args, **kwds):
         r"""
@@ -1118,10 +1118,8 @@ class R(ExtraTabCompletion, Interface):
             sage: r.set('a', '2 + 3')  # optional - rpy2
             sage: r.get('a')  # optional - rpy2
             '[1] 5'
-
         """
-        cmd = '%s <- %s' % (var, value)
-        out = self.eval(cmd)
+        _ = self.eval(f'{var} <- {value}')
 
     def get(self, var):
         """
@@ -1822,8 +1820,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
         P = self.parent()
 
         with localconverter(P._r_to_sage_converter) as cv:
-            parsed = robjects.r(self.name())
-            return parsed
+            return robjects.r(self.name())
 
     def _latex_(self):
         r"""

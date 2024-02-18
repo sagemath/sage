@@ -283,10 +283,11 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
                 k = convert(k)
                 v = convert(v)
                 z[k] = v
-                A.append("{}=>{}".format(k.name(), v.name()))
+                A.append(f"{k.name()}=>{v.name()}")
             r = self.new("{" + ",".join(A) + "}")
-            r.__sage_dict = z
+
             # this to avoid having the entries of the list be garbage collected
+            r.__sage_dict = z
             return r
 
         import sage.rings.abc
@@ -849,8 +850,9 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
         return f(*args, **kwds)
 
 
-########################################
-#  Elements
+# --------
+# Elements
+# --------
 
 class PolymakeElement(ExtraTabCompletion, InterfaceElement):
     """
