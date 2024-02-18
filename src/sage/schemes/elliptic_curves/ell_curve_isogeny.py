@@ -3050,6 +3050,38 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         self.__set_post_isomorphism(codomain, isom)
 
+    def decompose_inseparable(self):
+        """
+        Decompose the isogeny into purely inseparable part and a separable part.
+
+        OUTPUT: a pair of a purely inseparable (or identity) isogeny and a separable isogeny,
+        which equal to the current one when composed as (separable * purely inseparable).
+        """
+        F = self.__base_field
+        p = F.characteristic()
+        frob_k = self._degree.valuation(p)
+        deg = self._degree // p**frob_k
+        # degree = deg * p**k
+
+        from sage.schemes.elliptic_curves.hom_frobenius import EllipticCurveHom_frobenius
+        frob = EllipticCurveHom_frobenius(self._codomain, frob_k)
+
+        f = self.kernel_polynomial()
+
+        psi = self._domain.division_polynomial(p)
+        mu_num = self._domain._multiple_x_numerator(p)
+        mu_den = self._domain._multiple_x_denominator(p)
+
+        for _ in range(frob_k):
+            f //= f.gcd(psi)
+            S = f.parent().quotient_ring(f)
+            mu = S(mu_num) / S(mu_den)
+            f = mu.minpoly()
+
+        sep = self._domain.isogeny(f, codomain=frob.codomain())
+        return frob, sep
+
+
     def dual(self):
         r"""
         Return the isogeny dual to this isogeny.
@@ -3256,21 +3288,64 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         else:
             # trac 7096
             # this should take care of the case when the isogeny is not normalized.
+
+            x_map = self.x_rational_map()
+            f = self.kernel_polynomial()
+
+            assert x_map.denominator().monic().radical() == self.kernel_polynomial().monic()
+
+            psi = self._domain.division_polynomial(self._degree)
+            psi //= psi.gcd(f)
+            S = psi.parent().quotient_ring(psi)
+            mu = S(x_map.numerator()) / S(x_map.denominator())
+
+            f = mu.minpoly()
+
             u = self.scaling_factor()
             E2 = E2pr.change_weierstrass_model(u/F(d), 0, 0, 0)
 
-            phi_hat = EllipticCurveIsogeny(E1, None, E2, d)
+            #return sep
 
+            phi_hat = self._codomain.isogeny(f)
+            assert phi_hat.scaling_factor() == 1
             pre_iso = self._codomain.isomorphism_to(E1)
             post_iso = E2.isomorphism_to(self._domain)
 
-#            assert phi_hat.scaling_factor() == 1
+            post_iso = [
+                iso
+                for iso in phi_hat.codomain().isomorphisms(self._domain)
+                if iso.scaling_factor() == post_iso.scaling_factor()][0]
+
+            assert phi_hat.codomain() == post_iso.domain()
+            phi_hat._set_pre_isomorphism(~pre_iso)
+            #phi_hat._set_post_isomorphism(post_iso)
+
+            #assert 0, (pre_iso.scaling_factor(), post_iso.scaling_factor(), u, d)
+            #assert 0, (phi_hat.codomain(), self._domain)
+
+            if 0:
+                pre_iso = self._codomain.isomorphism_to(E1)
+                iso_u, iso_r, _, _ = (F(c) for c in (~pre_iso).tuple())
+                x = f.parent().gen()
+                f = f( (x-iso_r) / iso_u**2)
+                phi_hat = E1.isogeny(f)
+                assert phi_hat.scaling_factor() == 1
+
+                E2 = phi_hat.codomain()
+
+                post_iso = E2.isomorphism_to(self._domain)
+
+
+            #phi_hat = EllipticCurveIsogeny(E1, None, E2, d)
+            #assert phi_hat.scaling_factor() == 1
+
             sc = u * pre_iso.scaling_factor() * post_iso.scaling_factor() / F(d)
             if not sc.is_one():
                 auts = self._codomain.automorphisms()
                 aut = [a for a in auts if a.u == sc]
                 assert len(aut) == 1, "bug in dual()"
                 pre_iso *= aut[0]
+
 
             phi_hat._set_pre_isomorphism(pre_iso)
             phi_hat._set_post_isomorphism(post_iso)
