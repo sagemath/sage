@@ -7101,6 +7101,8 @@ class StandardPermutations_n_abstract(Permutations):
             sage: x = PG([4,3,5,1,2])
             sage: s = P5(x); s
             [4, 3, 5, 1, 2]
+            sage: s.parent()
+            Standard permutations of 5
         """
         if isinstance(x, PermutationGroupElement):
             return self. _from_permutation_group_element(x)
