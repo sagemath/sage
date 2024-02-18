@@ -936,7 +936,6 @@ fi
 
 if [ $POST_INSTALL = 1 ]; then
     write_installation_record
-    echo "Successfully installed $PKG_NAME"
     delete_the_temporary_build_directory_if_required
     echo "Finished installing $PKG_NAME"
 fi
