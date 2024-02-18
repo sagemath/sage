@@ -646,14 +646,21 @@ done
 
 actually_build_and_install() { ###################################
 
-echo "****************************************************"
-echo "Host system:"
-uname -a
-echo "****************************************************"
-echo "C compiler: $CC"
-echo "C compiler version:"
-$CC -v
-echo "****************************************************"
+case "$PKG_SRC" in
+    *.whl)
+        # Silence is golden.
+        ;;
+    *)
+        echo "****************************************************"
+        echo "Host system:"
+        uname -a
+        echo "****************************************************"
+        echo "C compiler: $CC"
+        echo "C compiler version:"
+        $CC -v
+        echo "****************************************************"
+        ;;
+esac
 
 # Poison the proxy variable to forbid downloads in spkg-install
 # for normal packages
