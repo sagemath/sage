@@ -1350,7 +1350,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             E._fetch_cached_order(self)
         return E
 
-    def isogenies_prime_degree(self, l=None, max_l=31):
+    def isogenies_prime_degree(self, l=None, max_l=31, cyclic_after=None):
         """
         Return a list of all separable isogenies of given prime degree(s)
         with domain equal to ``self``, which are defined over the base
@@ -1362,6 +1362,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         - ``max_l`` -- (default: 31) a bound on the primes to be tested.
           This is only used if ``l`` is None.
+
+        - ``cyclic_after`` -- (default: None) an isogeny with codomain equal to
+          `self`. If set, then only isogenies that are cyclic continuations of
+          the given isogeny are returned.
 
         OUTPUT:
 
@@ -1529,6 +1533,15 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: E.isogenies_prime_degree(5)
             []
 
+        The optional argument `cyclic_after` can be used to easily construct cyclic
+        isogeny chains (i.e., avoid hitting dual isogenies):
+
+            sage: E = EllipticCurve(GF(13^6), [2,8])
+            sage: phi1 = choice(E.isogenies_prime_degree(3))
+            sage: phi2_list = phi1.codomain().isogenies_prime_degree(3, cyclic_after=phi1)
+            sage: [(phi2 * phi1).is_cyclic() for phi2 in phi2_list]
+            [True, True, True]
+
         An example over a rational function field::
 
             sage: R.<t> = GF(5)[]
@@ -1634,7 +1647,22 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                 L = [ZZ(d) for d in l]
 
         from .isogeny_small_degree import isogenies_prime_degree
-        return sum([isogenies_prime_degree(self, d) for d in L], [])
+        if cyclic_after is None:
+            return sum([isogenies_prime_degree(self, d) for d in L], [])
+        else:
+            dom = cyclic_after.domain()
+            if cyclic_after.codomain() != self:
+                raise ValueError("The codomain of `cyclic_after` must be the same curve")
+            ret = []
+            for d in L:
+                for phi in isogenies_prime_degree(self, d):
+                    # .is_cyclic() would only check j-invariants in most cases
+                    # but also do some overhead (construct composte map, check degrees
+                    # are primes, etc.)
+                    # So we check j-invariants here to make most cases pass fast
+                    if phi.codomain().j_invariant() != dom.j_invariant() or (phi * cyclic_after).is_cyclic():
+                        ret.append(phi)
+            return ret
 
     def is_isogenous(self, other, field=None):
         """
