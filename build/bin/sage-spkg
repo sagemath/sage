@@ -451,9 +451,6 @@ if [ ! -w "$SAGE_INST_LOCAL" ]; then
     exit 1
 fi
 
-echo "$PKG_NAME"
-echo "===================================================="
-
 # Make absolutely sure that we are in the build directory before doing
 # a scary "rm -rf" below.
 cd "$SAGE_BUILD_DIR" || exit $?
