@@ -62,14 +62,14 @@ from sage.plot.colors import Color, float_to_integer
 from sage.plot.plot3d.base import Graphics3dGroup
 from sage.plot.plot3d.texture import Texture
 
-from .transform cimport Transformation
+from sage.plot.plot3d.transform cimport Transformation
 
 
 # --------------------------------------------------------------------
 # Fast routines for generating string representations of the polygons.
 # --------------------------------------------------------------------
 
-cdef inline format_tachyon_texture(color_c rgb):
+cdef inline format_tachyon_texture(color_c rgb) noexcept:
     cdef char rs[200]
     cdef Py_ssize_t cr = sprintf_3d(rs,
                                    "TEXTURE\n AMBIENT 0.3 DIFFUSE 0.7 SPECULAR 0 OPACITY 1.0\n COLOR %g %g %g \n TEXFUNC 0",
@@ -77,7 +77,7 @@ cdef inline format_tachyon_texture(color_c rgb):
     return bytes_to_str(PyBytes_FromStringAndSize(rs, cr))
 
 
-cdef inline format_tachyon_triangle(point_c P, point_c Q, point_c R):
+cdef inline format_tachyon_triangle(point_c P, point_c Q, point_c R) noexcept:
     cdef char ss[250]
     # PyBytes_FromFormat doesn't do floats?
     cdef Py_ssize_t r = sprintf_9d(ss,
@@ -88,22 +88,22 @@ cdef inline format_tachyon_triangle(point_c P, point_c Q, point_c R):
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
 
-cdef inline format_json_vertex(point_c P):
+cdef inline format_json_vertex(point_c P) noexcept:
     cdef char ss[100]
     cdef Py_ssize_t r = sprintf_3d(ss, '{"x":%g,"y":%g,"z":%g}', P.x, P.y, P.z)
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
-cdef inline format_json_face(face_c face):
+cdef inline format_json_face(face_c face) noexcept:
     s = "[{}]".format(",".join(str(face.vertices[i]) for i in range(face.n)))
     return s
 
-cdef inline format_obj_vertex(point_c P):
+cdef inline format_obj_vertex(point_c P) noexcept:
     cdef char ss[100]
     # PyBytes_FromFormat doesn't do floats?
     cdef Py_ssize_t r = sprintf_3d(ss, "v %g %g %g", P.x, P.y, P.z)
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
-cdef inline format_obj_face(face_c face, int off):
+cdef inline format_obj_face(face_c face, int off) noexcept:
     cdef char ss[100]
     cdef Py_ssize_t r, i
     if face.n == 3:
@@ -115,7 +115,7 @@ cdef inline format_obj_face(face_c face, int off):
     # PyBytes_FromFormat is almost twice as slow
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
-cdef inline format_obj_face_back(face_c face, int off):
+cdef inline format_obj_face_back(face_c face, int off) noexcept:
     cdef char ss[100]
     cdef Py_ssize_t r, i
     if face.n == 3:
@@ -126,13 +126,13 @@ cdef inline format_obj_face_back(face_c face, int off):
         return "f " + " ".join(str(face.vertices[i] + off) for i from face.n > i >= 0)
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
-cdef inline format_pmesh_vertex(point_c P):
+cdef inline format_pmesh_vertex(point_c P) noexcept:
     cdef char ss[100]
     # PyBytes_FromFormat doesn't do floats?
     cdef Py_ssize_t r = sprintf_3d(ss, "%g %g %g", P.x, P.y, P.z)
     return bytes_to_str(PyBytes_FromStringAndSize(ss, r))
 
-cdef inline format_pmesh_face(face_c face, int has_color):
+cdef inline format_pmesh_face(face_c face, int has_color) noexcept:
     cdef char ss[100]
     cdef Py_ssize_t r, i
     cdef int color
@@ -1550,7 +1550,7 @@ cdef class IndexFaceSet(PrimitiveObject):
                str(self.fcount + extra_faces),
                faces]
 
-        from .base import flatten_list
+        from sage.plot.plot3d.base import flatten_list
         name = render_params.unique_name('obj')
         all = flatten_list(all)
         if render_params.output_archive:
@@ -1722,14 +1722,13 @@ cdef class IndexFaceSet(PrimitiveObject):
             sage: S = B.stickers(['red','yellow','blue'], 0.1, 0.05)
             sage: S.show()
             sage: (S+B).show()
-
         """
         all = []
         n = self.fcount
         ct = len(colors)
         for k in range(len(colors)):
             if colors[k]:
-                all.append(self.sticker(list(xrange(k, n, ct)), width, hover,
+                all.append(self.sticker(list(range(k, n, ct)), width, hover,
                                         texture=colors[k]))
         return Graphics3dGroup(all)
 

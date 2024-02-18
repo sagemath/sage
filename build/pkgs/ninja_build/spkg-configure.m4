@@ -3,8 +3,10 @@ SAGE_SPKG_CONFIGURE(
         dnl meson_python needs 1.8.2 or later
         AC_CACHE_CHECK([for ninja >= 1.8.2], [ac_cv_path_NINJA], [
         AC_PATH_PROGS_FEATURE_CHECK([NINJA], [ninja], [
+            dnl support both two- and three-component version schemes
+            dnl since samurai (a ninja alternative) uses two
             ninja_version=`$ac_path_NINJA --version 2>&1 \
-                | $SED -n -e 's/\([[0-9]]*\.[[0-9]]*\.[[0-9]]*\).*/\1/p'`
+                | $SED -n -e 's/\([[0-9]]*\(\.[[0-9]]*\)\{1,2\}\).*/\1/p'`
             AS_IF([test -n "$ninja_version"], [
                 AX_COMPARE_VERSION([$ninja_version], [ge], [1.8.2], [
                     ac_cv_path_NINJA="$ac_path_NINJA"

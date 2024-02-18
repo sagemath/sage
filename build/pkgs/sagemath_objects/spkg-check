@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+cd src
+
+export PIP_NO_INDEX=true
+export PIP_FIND_LINKS="file://$SAGE_SPKG_WHEELS"
+
+export TOX_PARALLEL_NO_SPINNER=1
+wheel="$(sed -n '1s,.*@ file://,,p' $SAGE_SPKG_SCRIPTS/$PKG_BASE/spkg-requirements.txt)"
+echo Running "tox -r -p auto -v --installpkg $wheel"
+tox -r -p auto -v --installpkg "$wheel"
+status=$?
+case $status:$SAGE_CHECK:$([ -r known-test-failures.json ]; echo $?) in
+    0:*:0)    echo "Passed the test suite (modulo baseline known-test-failures*.json)";;
+    0:*:*)    echo "Passed the test suite";;
+    *:warn:0) echo "Warning: New failures (not in baseline known-test-failures*.json (ignored)"; status=0;;
+    *:warn:*) echo "Warning: Failures testing the package (ignored)"; status=0;;
+    *:yes:0)  echo "New failures, not in baseline known-test-failures*.json";;
+    *:yes:*)  echo "Failures testing the package";;
+esac
+# Show summaries of failures (suppress lines ending with '[failed in baseline]')
+for f in $(pwd)/.tox/sagepython-sagewheels-nopypi-norequirements*/log/*-command*.log; do
+    if [ -r "$f" ]; then
+        echo "$f"
+        grep '^sage -t.*#[^]]*$' "$f"
+    fi
+done
+exit $status

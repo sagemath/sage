@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.modules
 r"""
 Cubic Hecke matrix representations
 
@@ -890,7 +890,7 @@ class CubicHeckeMatrixSpace(MatrixSpace):
             """
             cfs = ch_algebra.cubic_equation(as_coefficients=True, generic=True)
             fac = - 1 / cfs[0]
-            cf0, cf1, cf2, cf3 = [original_base_ring(cf * fac) for cf in cfs]
+            cf0, cf1, cf2, cf3 = (original_base_ring(cf * fac) for cf in cfs)
 
             matri = cf1 * matr.parent().one()
             matri += cf2 * matr
@@ -968,7 +968,7 @@ class CubicHeckeMatrixSpace(MatrixSpace):
                 for gen_ind in ele_Tietze:
                     gen_matrix_list = self._image_on_gen(gen_ind)
                     if matrix_list is None:
-                        matrix_list = [m for m in gen_matrix_list]
+                        matrix_list = list(gen_matrix_list)
                     else:
                         for i in range(len(matrix_list)):
                             matrix_list[i] *= gen_matrix_list[i]

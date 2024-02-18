@@ -88,7 +88,7 @@ def signal_name(sig):
         return "terminate"
     if sig == SIGBUS:
         return "bus error"
-    return "signal %s"%sig
+    return "signal %s" % sig
 
 class DocTestReporter(SageObject):
     """
@@ -116,7 +116,7 @@ class DocTestReporter(SageObject):
             sage: DTR = DocTestReporter(DC)
         """
         self.controller = controller
-        self.postscript = dict(lines=[], cputime=0, walltime=0)
+        self.postscript = {"lines": [], "cputime": 0, "walltime": 0}
         self.sources_completed = 0
         self.stats = {}
         self.error_status = 0
@@ -162,13 +162,15 @@ class DocTestReporter(SageObject):
             return True
         return False
 
-    def report_head(self, source):
+    def report_head(self, source, fail_msg=None):
         """
-        Return the "sage -t [options] file.py" line as string.
+        Return the ``sage -t [options] file.py`` line as string.
 
         INPUT:
 
         - ``source`` -- a source from :mod:`sage.doctest.sources`
+
+        - ``fail_msg`` -- ``None`` or a string
 
         EXAMPLES::
 
@@ -190,6 +192,8 @@ class DocTestReporter(SageObject):
             sage: DD.long = True
             sage: print(DTR.report_head(FDS))
             sage -t --long .../sage/doctest/reporting.py
+            sage: print(DTR.report_head(FDS, "Failed by self-sabotage"))
+            sage -t --long .../sage/doctest/reporting.py  # Failed by self-sabotage
         """
         cmd = "sage -t"
         if self.controller.options.long:
@@ -206,6 +210,16 @@ class DocTestReporter(SageObject):
         if environment != "sage.repl.ipython_kernel.all_jupyter":
             cmd += f" --environment={environment}"
         cmd += " " + source.printpath
+        baseline = self.controller.source_baseline(source)
+        if fail_msg:
+            cmd += "  # " + fail_msg
+        if failed := baseline.get('failed', False):
+            if not fail_msg:
+                cmd += "  #"
+            if failed is True:
+                cmd += " [failed in baseline]"
+            else:
+                cmd += f" [failed in baseline: {failed}]"
         return cmd
 
     def report(self, source, timeout, return_code, results, output, pid=None):
@@ -264,7 +278,9 @@ class DocTestReporter(SageObject):
             Output so far...
             **********************************************************************
             sage: DTR.stats
-            {'sage.doctest.reporting': {'failed': True, 'walltime': 1000000.0}}
+            {'sage.doctest.reporting': {'failed': True,
+                                        'ntests': 0,
+                                        'walltime': 1000000.0}}
 
         Or a process that returned a bad exit code::
 
@@ -275,7 +291,9 @@ class DocTestReporter(SageObject):
             Output before trouble
             **********************************************************************
             sage: DTR.stats
-            {'sage.doctest.reporting': {'failed': True, 'walltime': 1000000.0}}
+            {'sage.doctest.reporting': {'failed': True,
+                                        'ntests': 0,
+                                        'walltime': 1000000.0}}
 
         Or a process that segfaulted::
 
@@ -287,7 +305,9 @@ class DocTestReporter(SageObject):
             Output before trouble
             **********************************************************************
             sage: DTR.stats
-            {'sage.doctest.reporting': {'failed': True, 'walltime': 1000000.0}}
+            {'sage.doctest.reporting': {'failed': True,
+                                        'ntests': 0,
+                                        'walltime': 1000000.0}}
 
         Report a timeout with results and a ``SIGKILL``::
 
@@ -299,7 +319,9 @@ class DocTestReporter(SageObject):
             Output before trouble
             **********************************************************************
             sage: DTR.stats
-            {'sage.doctest.reporting': {'failed': True, 'walltime': 1000000.0}}
+            {'sage.doctest.reporting': {'failed': True,
+                                        'ntests': 1,
+                                        'walltime': 1000000.0}}
 
         This is an internal error since results is None::
 
@@ -310,12 +332,15 @@ class DocTestReporter(SageObject):
             All output
             **********************************************************************
             sage: DTR.stats
-            {'sage.doctest.reporting': {'failed': True, 'walltime': 1000000.0}}
+            {'sage.doctest.reporting': {'failed': True,
+                                        'ntests': 1,
+                                        'walltime': 1000000.0}}
 
         Or tell the user that everything succeeded::
 
             sage: doctests, extras = FDS.create_doctests(globals())
-            sage: runner = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            sage: runner = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD,
+            ....:                            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: Timer().start().stop().annotate(runner)
             sage: D = DictAsObject({'err':None})
             sage: runner.update_results(D)
@@ -323,7 +348,7 @@ class DocTestReporter(SageObject):
             sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D), "Good tests")
                 [... tests, ... s]
             sage: DTR.stats
-            {'sage.doctest.reporting': {'walltime': ...}}
+            {'sage.doctest.reporting': {'ntests': ..., 'walltime': ...}}
 
         Or inform the user that some doctests failed::
 
@@ -357,7 +382,7 @@ class DocTestReporter(SageObject):
             sage: DTR.report(None, None, None, None, None)
             Traceback (most recent call last):
             ...
-            AttributeError: 'NoneType' object has no attribute 'basename'
+            AttributeError: 'NoneType' object has no attribute 'basename'...
 
         The only-errors mode does not output anything on success::
 
@@ -366,7 +391,8 @@ class DocTestReporter(SageObject):
             sage: DC = DocTestController(DD, [filename])
             sage: DTR = DocTestReporter(DC)
             sage: doctests, extras = FDS.create_doctests(globals())
-            sage: runner = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            sage: runner = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD,
+            ....:                            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: Timer().start().stop().annotate(runner)
             sage: D = DictAsObject({'err':None})
             sage: runner.update_results(D)
@@ -387,16 +413,13 @@ class DocTestReporter(SageObject):
             postscript = self.postscript
             stats = self.stats
             basename = source.basename
-            if self.controller.baseline_stats:
-                the_baseline_stats = self.controller.baseline_stats.get(basename, {})
-            else:
-                the_baseline_stats = {}
+            baseline = self.controller.source_baseline(source)
             cmd = self.report_head(source)
             try:
                 ntests, result_dict = results
             except (TypeError, ValueError):
                 ntests = 0
-                result_dict = DictAsObject(dict(err='badresult'))
+                result_dict = DictAsObject({"err": 'badresult'})
             if timeout:
                 fail_msg = "Timed out"
                 if ntests > 0:
@@ -410,31 +433,27 @@ class DocTestReporter(SageObject):
                     elif sig == SIGKILL:
                         fail_msg += " (and interrupt failed)"
                     else:
-                        fail_msg += " (with %s after interrupt)"%signal_name(sig)
-                if the_baseline_stats.get('failed', False):
-                    fail_msg += " [failed in baseline]"
-                log("    %s\n%s\nTests run before %s timed out:"%(fail_msg, "*"*70, process_name))
+                        fail_msg += " (with %s after interrupt)" % signal_name(sig)
+                log("    %s\n%s\nTests run before %s timed out:" % (fail_msg, "*"*70, process_name))
                 log(output)
                 log("*"*70)
-                postscript['lines'].append(cmd + "  # %s"%fail_msg)
-                stats[basename] = dict(failed=True, walltime=1e6)
-                if not the_baseline_stats.get('failed', False):
+                postscript['lines'].append(self.report_head(source, fail_msg))
+                stats[basename] = {"failed": True, "walltime": 1e6, "ntests": ntests}
+                if not baseline.get('failed', False):
                     self.error_status |= 4
             elif return_code:
                 if return_code > 0:
-                    fail_msg = "Bad exit: %s"%return_code
+                    fail_msg = "Bad exit: %s" % return_code
                 else:
-                    fail_msg = "Killed due to %s"%signal_name(-return_code)
+                    fail_msg = "Killed due to %s" % signal_name(-return_code)
                 if ntests > 0:
                     fail_msg += " after testing finished"
-                if the_baseline_stats.get('failed', False):
-                    fail_msg += " [failed in baseline]"
-                log("    %s\n%s\nTests run before %s failed:"%(fail_msg,"*"*70, process_name))
+                log("    %s\n%s\nTests run before %s failed:" % (fail_msg,"*"*70, process_name))
                 log(output)
                 log("*"*70)
-                postscript['lines'].append(cmd + "  # %s" % fail_msg)
-                stats[basename] = dict(failed=True, walltime=1e6)
-                if not the_baseline_stats.get('failed', False):
+                postscript['lines'].append(self.report_head(source, fail_msg))
+                stats[basename] = {"failed": True, "walltime": 1e6, "ntests": ntests}
+                if not baseline.get('failed', False):
                     self.error_status |= (8 if return_code > 0 else 16)
             else:
                 if hasattr(result_dict, 'walltime') and hasattr(result_dict.walltime, '__len__') and len(result_dict.walltime) > 0:
@@ -446,16 +465,16 @@ class DocTestReporter(SageObject):
                 else:
                     cpu = 1e6
                 if result_dict.err == 'badresult':
-                    log("    Error in doctesting framework (bad result returned)\n%s\nTests run before error:"%("*"*70))
+                    log("    Error in doctesting framework (bad result returned)\n%s\nTests run before error:" % ("*"*70))
                     log(output)
                     log("*"*70)
-                    postscript['lines'].append(cmd + "  # Testing error: bad result")
+                    postscript['lines'].append(self.report_head(source, "Testing error: bad result"))
                     self.error_status |= 64
                 elif result_dict.err == 'noresult':
-                    log("    Error in doctesting framework (no result returned)\n%s\nTests run before error:"%("*"*70))
+                    log("    Error in doctesting framework (no result returned)\n%s\nTests run before error:" % ("*"*70))
                     log(output)
                     log("*"*70)
-                    postscript['lines'].append(cmd + "  # Testing error: no result")
+                    postscript['lines'].append(self.report_head(source, "Testing error: no result"))
                     self.error_status |= 64
                 elif result_dict.err == 'tab':
                     if len(result_dict.tab_linenos) > 5:
@@ -463,12 +482,12 @@ class DocTestReporter(SageObject):
                     tabs = " " + ",".join(result_dict.tab_linenos)
                     if len(result_dict.tab_linenos) > 1:
                         tabs = "s" + tabs
-                    log("    Error: TAB character found at line%s"%(tabs))
-                    postscript['lines'].append(cmd + "  # Tab character found")
+                    log("    Error: TAB character found at line%s" % (tabs))
+                    postscript['lines'].append(self.report_head(source, "Tab character found"))
                     self.error_status |= 32
                 elif result_dict.err == 'line_number':
                     log("    Error: Source line number found")
-                    postscript['lines'].append(cmd + "  # Source line number found")
+                    postscript['lines'].append(self.report_head(source, "Source line number found"))
                     self.error_status |= 256
                 elif result_dict.err is not None:
                     # This case should not occur
@@ -479,67 +498,70 @@ class DocTestReporter(SageObject):
                             err = result_dict.err.__name__
                         else:
                             err = repr(result_dict.err)
-                        fail_msg = "%s in doctesting framework"%err
+                        fail_msg = "%s in doctesting framework" % err
 
-                    log("    %s\n%s"%(fail_msg, "*"*70))
+                    log("    %s\n%s" % (fail_msg, "*"*70))
                     if output:
                         log("Tests run before doctest exception:\n" + output)
                         log("*"*70)
-                    postscript['lines'].append(cmd + "  # %s"%fail_msg)
+                    postscript['lines'].append(self.report_head(source, fail_msg))
                     if hasattr(result_dict, 'tb'):
                         log(result_dict.tb)
                     if hasattr(result_dict, 'walltime'):
-                        stats[basename] = dict(failed=True, walltime=wall)
+                        stats[basename] = {"failed": True, "walltime": wall, "ntests": ntests}
                     else:
-                        stats[basename] = dict(failed=True, walltime=1e6)
-                    self.error_status |= 64
+                        stats[basename] = {"failed": True, "walltime": 1e6, "ntests": ntests}
+                    # This codepath is triggered by doctests that test some timeout
+                    # ("AlarmInterrupt in doctesting framework") or other signal handling
+                    # behavior. This is why we handle the baseline in this codepath,
+                    # in contrast to other "Error in doctesting framework" codepaths.
+                    if not baseline.get('failed', False):
+                        self.error_status |= 64
                 if result_dict.err is None or result_dict.err == 'tab':
                     f = result_dict.failures
                     if f:
                         fail_msg = "%s failed" % (count_noun(f, "doctest"))
-                        if the_baseline_stats.get('failed', False):
-                            fail_msg += " [failed in baseline]"
-                        postscript['lines'].append(cmd + "  # %s" % fail_msg)
-                        if not the_baseline_stats.get('failed', False):
+                        postscript['lines'].append(self.report_head(source, fail_msg))
+                        if not baseline.get('failed', False):
                             self.error_status |= 1
                     if f or result_dict.err == 'tab':
-                        stats[basename] = dict(failed=True, walltime=wall)
+                        stats[basename] = {"failed": True, "walltime": wall, "ntests": ntests}
                     else:
-                        stats[basename] = dict(walltime=wall)
+                        stats[basename] = {"walltime": wall, "ntests": ntests}
                     postscript['cputime'] += cpu
                     postscript['walltime'] += wall
 
                     try:
                         optionals = result_dict.optionals
                     except AttributeError:
-                        optionals = dict()
+                        optionals = {}
                     for tag in sorted(optionals):
                         nskipped = optionals[tag]
                         if tag == "long time":
                             if not self.controller.options.long:
                                 if self.controller.options.show_skipped:
-                                    log("    %s not run"%(count_noun(nskipped, "long test")))
+                                    log("    %s not run" % (count_noun(nskipped, "long test")))
                         elif tag == "not tested":
                             if self.controller.options.show_skipped:
-                                log("    %s not run"%(count_noun(nskipped, "not tested test")))
+                                log("    %s not run" % (count_noun(nskipped, "not tested test")))
                         elif tag == "not implemented":
                             if self.controller.options.show_skipped:
-                                log("    %s for not implemented functionality not run"%(count_noun(nskipped, "test")))
+                                log("    %s for not implemented functionality not run" % (count_noun(nskipped, "test")))
                         else:
                             if not self.were_doctests_with_optional_tag_run(tag):
                                 if tag == "bug":
                                     if self.controller.options.show_skipped:
-                                        log("    %s not run due to known bugs"%(count_noun(nskipped, "test")))
+                                        log("    %s not run due to known bugs" % (count_noun(nskipped, "test")))
                                 elif tag == "":
                                     if self.controller.options.show_skipped:
-                                        log("    %s not run"%(count_noun(nskipped, "unlabeled test")))
+                                        log("    %s not run" % (count_noun(nskipped, "unlabeled test")))
                                 else:
                                     if self.controller.options.show_skipped:
-                                        log("    %s not run"%(count_noun(nskipped, tag + " test")))
+                                        log("    %s not run" % (count_noun(nskipped, tag + " test")))
 
                     nskipped = result_dict.walltime_skips
                     if self.controller.options.show_skipped:
-                        log("    %s not run because we ran out of time"%(count_noun(nskipped, "test")))
+                        log("    %s not run because we ran out of time" % (count_noun(nskipped, "test")))
 
                     if nskipped != 0:
                         # It would be nice to report "a/b tests run" instead of
@@ -550,11 +572,11 @@ class DocTestReporter(SageObject):
                         # tests multiple times, and some other unclear mangling
                         # of these numbers that was not clear to the author.
                         ntests_run = result_dict.tests
-                        total = "%d%% of tests run"%(round(100*ntests_run/float(ntests_run + nskipped)))
+                        total = "%d%% of tests run" % (round(100*ntests_run/float(ntests_run + nskipped)))
                     else:
                         total = count_noun(ntests, "test")
                     if not (self.controller.options.only_errors and not f):
-                        log("    [%s, %s%.2f s]" % (total, "%s, "%(count_noun(f, "failure")) if f else "", wall))
+                        log("    [%s, %s%.2f s]" % (total, "%s, " % (count_noun(f, "failure")) if f else "", wall))
 
             self.sources_completed += 1
 
@@ -646,7 +668,7 @@ class DocTestReporter(SageObject):
         log = self.controller.log
         postscript = self.postscript
         if self.sources_completed < len(self.controller.sources) * self.controller.options.global_iterations:
-            postscript['lines'].append("Doctests interrupted: %s/%s files tested"%(self.sources_completed, len(self.controller.sources)))
+            postscript['lines'].append("Doctests interrupted: %s/%s files tested" % (self.sources_completed, len(self.controller.sources)))
             self.error_status |= 128
         elif not postscript['lines']:
             postscript['lines'].append("All tests passed!")

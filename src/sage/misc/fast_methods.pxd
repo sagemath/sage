@@ -4,7 +4,7 @@ cdef extern from "Python.h":
 cdef class FastHashable_class:
     cdef Py_ssize_t _hash
 
-cdef inline long hash_by_id(void * p):
+cdef inline long hash_by_id(void * p) noexcept:
     r"""
     This function is a copy paste from the default Python hash function.
     """

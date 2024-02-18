@@ -135,9 +135,10 @@ class RationalFunctionField(FunctionField):
 
         EXAMPLES::
 
+
             sage: K.<t> = FunctionField(CC); K                                          # needs sage.rings.real_mpfr
             Rational function field in t over Complex Field with 53 bits of precision
-            sage: TestSuite(K).run()               # long time (5s)
+            sage: TestSuite(K).run()            # long time (5s)                        # needs sage.rings.real_mpfr
 
             sage: FunctionField(QQ[I], 'alpha')                                         # needs sage.rings.number_field
             Rational function field in alpha over
@@ -220,7 +221,7 @@ class RationalFunctionField(FunctionField):
             sage: K._repr_()
             'Rational function field in t over Rational Field'
         """
-        return "Rational function field in %s over %s"%(
+        return "Rational function field in %s over %s" % (
             self.variable_name(), self._constant_field)
 
     def _element_constructor_(self, x):
@@ -304,7 +305,7 @@ class RationalFunctionField(FunctionField):
             # When K is not exact, f.denominator() might not be an exact 1, so
             # we need to divide explicitly to get the correct precision
             return K(f.numerator()) / K(f.denominator())
-        raise ValueError("only constants can be converted into the constant base field but %r is not a constant"%(f,))
+        raise ValueError("only constants can be converted into the constant base field but %r is not a constant" % (f,))
 
     def _to_polynomial(self, f):
         """
@@ -322,7 +323,7 @@ class RationalFunctionField(FunctionField):
         """
         K = f.parent().constant_base_field()
         if f.denominator() in K:
-            return f.numerator()/K(f.denominator())
+            return f.numerator() / K(f.denominator())
         raise ValueError("only polynomials can be converted to the underlying polynomial ring")
 
     def _to_bivariate_polynomial(self, f):
@@ -349,7 +350,8 @@ class RationalFunctionField(FunctionField):
         v = f.list()
         denom = lcm([a.denominator() for a in v])
         S = denom.parent()
-        x,t = S.base_ring()['%s,%s'%(f.parent().variable_name(),self.variable_name())].gens()
+        x, t = S.base_ring()['%s,%s' % (f.parent().variable_name(),
+                                        self.variable_name())].gens()
         phi = S.hom([t])
         return sum([phi((denom * v[i]).numerator()) * x**i for i in range(len(v))]), denom
 
@@ -419,12 +421,12 @@ class RationalFunctionField(FunctionField):
         x = f.parent().gen()
         t = f.parent().base_ring().gen()
         phi = F.parent().hom([x, t])
-        v = [(phi(P),e) for P, e in fac]
-        unit = phi(fac.unit())/d
+        v = [(phi(P), e) for P, e in fac]
+        unit = phi(fac.unit()) / d
         w = []
         for a, e in v:
             c = a.leading_coefficient()
-            a = a/c
+            a = a / c
             # undo any variable substitution that we introduced for the bivariate polynomial
             if old_variable_name != a.variable_name():
                 a = a.change_variable_name(old_variable_name)
@@ -432,7 +434,7 @@ class RationalFunctionField(FunctionField):
             if a.is_unit():
                 unit *= a**e
             else:
-                w.append((a,e))
+                w.append((a, e))
         from sage.structure.factorization import Factorization
         return Factorization(w, unit=unit)
 
@@ -552,7 +554,7 @@ class RationalFunctionField(FunctionField):
         if not map:
             return V
         from_V = MapVectorSpaceToFunctionField(V, self)
-        to_V   = MapFunctionFieldToVectorSpace(self, V)
+        to_V = MapFunctionFieldToVectorSpace(self, V)
         return (V, from_V, to_V)
 
     def random_element(self, *args, **kwds):
@@ -596,7 +598,7 @@ class RationalFunctionField(FunctionField):
     def gen(self, n=0):
         """
         Return the ``n``-th generator of the function field.  If ``n`` is not
-        0, then an IndexError is raised.
+        0, then an :class:` IndexError` is raised.
 
         EXAMPLES::
 
@@ -682,7 +684,7 @@ class RationalFunctionField(FunctionField):
         """
         if isinstance(im_gens, CategoryObject):
             return self.Hom(im_gens).natural_map()
-        if not isinstance(im_gens, (list,tuple)):
+        if not isinstance(im_gens, (list, tuple)):
             im_gens = [im_gens]
         if len(im_gens) != 1:
             raise ValueError("there must be exactly one generator")
@@ -833,8 +835,8 @@ class RationalFunctionField(FunctionField):
                 raise ValueError("names must be a tuple with a single string")
             name = name[0]
         if name == self.variable_name():
-            id = Hom(self,self).identity()
-            return self,id,id
+            id = Hom(self, self).identity()
+            return self, id, id
         else:
             from .constructor import FunctionField
             ret = FunctionField(self.constant_base_field(), name)

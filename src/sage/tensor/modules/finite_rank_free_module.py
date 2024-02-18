@@ -248,7 +248,8 @@ This is also revealed by the category of each module::
     Category of finite dimensional modules over Integer Ring
     sage: N.category()
     Category of finite dimensional modules with basis over
-     (euclidean domains and infinite enumerated sets and metric spaces)
+     (Dedekind domains and euclidean domains
+     and infinite enumerated sets and metric spaces)
 
 In other words, the module created by ``FreeModule`` is actually `\ZZ^3`,
 while, in the absence of any distinguished basis, no *canonical* isomorphism
@@ -1210,7 +1211,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         category = Modules(ring).FiniteDimensional().or_subcategory(category)
         if latex_name is None:
             latex_name = name
-        return super(FiniteRankFreeModule, cls).__classcall__(
+        return super().__classcall__(
             cls, ring, rank, name, latex_name, start_index, output_formatter, category, ambient)
 
     def __init__(

@@ -1070,25 +1070,25 @@ def is_polhill(int v, int k, int l, int mu):
     # We now define the P_{i,j}. see section 6.
 
     P = {}
-    P[0,1] = list(xrange((-1) + 1                  , 2**(s-2)+1))
-    P[1,1] = list(xrange((-1) + 2**(s-2)+2         , 2**(s-1)+1))
-    P[2,1] = list(xrange((-1) + 2**(s-1)+2         , 2**(s-1)+2**(s-2)+1))
-    P[3,1] = list(xrange((-1) + 2**(s-1)+2**(s-2)+2, 2**(s)+1))
+    P[0,1] = list(range((-1) + 1                  , 2**(s-2)+1))
+    P[1,1] = list(range((-1) + 2**(s-2)+2         , 2**(s-1)+1))
+    P[2,1] = list(range((-1) + 2**(s-1)+2         , 2**(s-1)+2**(s-2)+1))
+    P[3,1] = list(range((-1) + 2**(s-1)+2**(s-2)+2, 2**(s)+1))
 
-    P[0,2] = list(xrange((-1) + 2**(s-2)+2         , 2**(s-1)+2))
-    P[1,2] = list(xrange((-1) + 2**(s-1)+3         , 2**(s-1)+2**(s-2)+2))
-    P[2,2] = list(xrange((-1) + 2**(s-1)+2**(s-2)+3, 2**(s)+1)) + [0]
-    P[3,2] = list(xrange((-1) + 2                  , 2**(s-2)+1))
+    P[0,2] = list(range((-1) + 2**(s-2)+2         , 2**(s-1)+2))
+    P[1,2] = list(range((-1) + 2**(s-1)+3         , 2**(s-1)+2**(s-2)+2))
+    P[2,2] = list(range((-1) + 2**(s-1)+2**(s-2)+3, 2**(s)+1)) + [0]
+    P[3,2] = list(range((-1) + 2                  , 2**(s-2)+1))
 
-    P[0,3] = list(xrange((-1) + 2**(s-1)+3         , 2**(s-1)+2**(s-2)+3))
-    P[1,3] = list(xrange((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1)) + [0,1]
-    P[2,3] = list(xrange((-1) + 3                  , 2**(s-2)+2))
-    P[3,3] = list(xrange((-1) + 2**(s-2)+3         , 2**(s-1)+2))
+    P[0,3] = list(range((-1) + 2**(s-1)+3         , 2**(s-1)+2**(s-2)+3))
+    P[1,3] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1)) + [0,1]
+    P[2,3] = list(range((-1) + 3                  , 2**(s-2)+2))
+    P[3,3] = list(range((-1) + 2**(s-2)+3         , 2**(s-1)+2))
 
-    P[0,4] = list(xrange((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1))
-    P[1,4] = list(xrange((-1) + 3                  , 2**(s-2)+1)) + [2**(s-1)+1,2**(s-1)+2**(s-2)+2]
-    P[2,4] = list(xrange((-1) + 2**(s-2)+3         , 2**(s-1)+1)) + [2**(s-1)+2**(s-2)+1,1]
-    P[3,4] = list(xrange((-1) + 2**(s-1)+3         , 2**(s-1)+2**(s-2)+1)) + [2**(s-2)+1,0]
+    P[0,4] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1))
+    P[1,4] = list(range((-1) + 3                  , 2**(s-2)+1)) + [2**(s-1)+1,2**(s-1)+2**(s-2)+2]
+    P[2,4] = list(range((-1) + 2**(s-2)+3         , 2**(s-1)+1)) + [2**(s-1)+2**(s-2)+1,1]
+    P[3,4] = list(range((-1) + 2**(s-1)+3         , 2**(s-1)+2**(s-2)+1)) + [2**(s-2)+1,0]
 
     R = {x: copy(P[x]) for x in P}
 
@@ -1102,10 +1102,10 @@ def is_polhill(int v, int k, int l, int mu):
 
     # We now define the R_{i,j}. see *end* of section 6.
 
-    R[0,3] = list(xrange((-1) + 2**(s-1)+3         , 2**(s-1)+2**(s-2)+2))
-    R[1,3] = list(xrange((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1)) + [0,1,2**(s-1)+2**(s-2)+2]
-    R[0,4] = list(xrange((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1)) + [2**(s-1)+2**(s-2)+2]
-    R[1,4] = list(xrange((-1) + 3                  , 2**(s-2)+1)) + [2**(s-1)+1]
+    R[0,3] = list(range((-1) + 2**(s-1)+3         , 2**(s-1)+2**(s-2)+2))
+    R[1,3] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1)) + [0,1,2**(s-1)+2**(s-2)+2]
+    R[0,4] = list(range((-1) + 2**(s-1)+2**(s-2)+4, 2**(s)+1)) + [2**(s-1)+2**(s-2)+2]
+    R[1,4] = list(range((-1) + 3                  , 2**(s-2)+1)) + [2**(s-1)+1]
 
     for x in R:
         R[x] = [K[i] for i in R[x]]
@@ -1229,12 +1229,11 @@ def SRG_from_RSHCD(v, k, l, mu, existence=False, check=True):
     n = v
     a = (n-4*mu)//2
     e = 2*k - n + 1 + a
-    t = abs(a//2)
 
     if (e**2 == 1 and
             k == (n-1-a+e)/2 and
             l == (n-2*a)/4 - (1-e) and
-            mu== (n-2*a)/4 and
+            mu == (n-2*a)/4 and
             regular_symmetric_hadamard_matrix_with_constant_diagonal(n, sgn(a)*e, existence=True) is True):
         if existence:
             return True
@@ -1510,7 +1509,7 @@ def is_twograph_descendant_of_srg(int v, int k0, int l, int mu):
         sage: graphs.strongly_regular_graph(279, 150, 85, 75).is_strongly_regular(parameters=True)  # optional - gap_package_design internet
         (279, 150, 85, 75)
     """
-    cdef int b, k, s
+    cdef int b, k
     if k0 != 2*mu or not v % 2:
         return
     b = v+1+4*mu
@@ -1570,9 +1569,8 @@ def is_taylor_twograph_srg(int v, int k, int l, int mu):
 
         sage: is_taylor_twograph_srg(730, 369, 168, 205)                                # needs sage.libs.pari
         (<function TaylorTwographSRG at ...>, 9)
-
     """
-    r, s = eigenvalues(v, k, l, mu)
+    r, _ = eigenvalues(v, k, l, mu)
     if r is None:
         return
     p, t = is_prime_power(v-1, get_data=True)
@@ -1738,7 +1736,7 @@ def is_nowhere0_twoweight(int v, int k, int l, int mu):
         return (Nowhere0WordsTwoWeightCodeGraph, q)
 
 
-cdef eigenvalues(int v, int k, int l, int mu):
+cdef eigenvalues(int v, int k, int l, int mu) noexcept:
     r"""
     Return the eigenvalues of a (v,k,l,mu)-strongly regular graph.
 
@@ -1848,7 +1846,7 @@ def eigenmatrix(int v, int k, int l, int mu):
         return Matrix(ZZ, [[1, k, v-k-1], [1, r, -r-1], [1, s, -s-1]])
 
 
-cpdef latin_squares_graph_parameters(int v, int k, int l,int mu):
+cpdef latin_squares_graph_parameters(int v, int k, int l,int mu) noexcept:
     r"""
     Check whether (v,k,l,mu)-strongly regular graph has parameters of an `L_g(n)` s.r.g.
 
@@ -1922,8 +1920,8 @@ def SRG_100_44_18_20():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_100_44_18_20
-        sage: G = SRG_100_44_18_20()                    # long time
-        sage: G.is_strongly_regular(parameters=True)    # long time
+        sage: G = SRG_100_44_18_20()                    # long time                     # needs sage.groups
+        sage: G.is_strongly_regular(parameters=True)    # long time                     # needs sage.groups
         (100, 44, 18, 20)
     """
     L = ['100', '110', '130', '140', '200', '230', '240', '300', '310', '320',
@@ -1944,8 +1942,8 @@ def SRG_100_45_20_20():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_100_45_20_20
-        sage: G = SRG_100_45_20_20()                    # long time
-        sage: G.is_strongly_regular(parameters=True)    # long time
+        sage: G = SRG_100_45_20_20()                    # long time                     # needs sage.groups
+        sage: G.is_strongly_regular(parameters=True)    # long time                     # needs sage.groups
         (100, 45, 20, 20)
     """
     L = ['120', '140', '200', '210', '201', '401', '411', '321', '002', '012',
@@ -2174,7 +2172,7 @@ def SRG_243_110_37_60():
     from sage.coding.golay_code import GolayCode
     M = GolayCode(GF(3), False).generator_matrix()
     V = list(M.right_kernel())
-    g = Graph([list(xrange(len(V))), lambda x, y: (V[x] - V[y]).hamming_weight() == 9])
+    g = Graph([list(range(len(V))), lambda x, y: (V[x] - V[y]).hamming_weight() == 9])
     g.name('Ternary Golay code')
     return g
 
@@ -2391,8 +2389,8 @@ def strongly_regular_from_two_weight_code(L):
     if is_Matrix(L):
         L = LinearCode(L)
     V = [tuple(l) for l in L]
-    w1, w2 = sorted(set(sum(map(bool, x)) for x in V).difference([0]))
-    G = Graph([V, lambda u, v: sum(uu!=vv for uu, vv in zip(u, v)) == w1])
+    w1, _ = sorted(set(sum(map(bool, x)) for x in V).difference([0]))
+    G = Graph([V, lambda u, v: sum(uu != vv for uu, vv in zip(u, v)) == w1])
     G.relabel()
     G.name('two-weight code: '+str(L))
     return G
@@ -2417,7 +2415,7 @@ def SRG_416_100_36_20():
     """
     from sage.libs.gap.libgap import libgap
     libgap.load_package("AtlasRep")
-    g=libgap.AtlasGroup("G2(4)", libgap.NrMovedPoints, 416)
+    g = libgap.AtlasGroup("G2(4)", libgap.NrMovedPoints, 416)
     h = Graph()
     h.add_edges(g.Orbit([1, 5],libgap.OnSets))
     h.relabel()
@@ -2435,13 +2433,13 @@ def SRG_560_208_72_80():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_560_208_72_80
-        sage: g = SRG_560_208_72_80()                   # not tested (~2s)
-        sage: g.is_strongly_regular(parameters=True)    # not tested (~2s)
+        sage: g = SRG_560_208_72_80()                   # not tested (~2s)              # needs sage.libs.gap
+        sage: g.is_strongly_regular(parameters=True)    # not tested (~2s)              # needs sage.libs.gap
         (560, 208, 72, 80)
     """
     from sage.libs.gap.libgap import libgap
     libgap.load_package("AtlasRep")
-    g=libgap.AtlasGroup("Sz8", libgap.NrMovedPoints, 560)
+    g = libgap.AtlasGroup("Sz8", libgap.NrMovedPoints, 560)
 
     h = Graph()
     h.add_edges(g.Orbit([1, 2],libgap.OnSets))
@@ -2505,7 +2503,7 @@ def strongly_regular_from_two_intersection_set(M):
         for v in M:
             # u is adjacent with all vertices on a uv line.
             g.add_edges([[u, tuple([u[i] + qq*v[i] for i in range(k)])]
-                         for qq in K if not qq==K.zero()])
+                         for qq in K if not qq == K.zero()])
     g.relabel()
     e = QQ((1,k))
     qq = g.num_verts()**e
@@ -2616,8 +2614,8 @@ def SRG_630_85_20_10():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import SRG_630_85_20_10
-        sage: G = SRG_630_85_20_10()                    # long time
-        sage: G.is_strongly_regular(parameters=True)    # long time
+        sage: G = SRG_630_85_20_10()                    # long time                     # needs sage.groups
+        sage: G.is_strongly_regular(parameters=True)    # long time                     # needs sage.groups
         (630, 85, 20, 10)
     """
     from sage.graphs.generators.intersection import IntersectionGraph
@@ -2649,7 +2647,6 @@ def SRG_126_50_13_24():
         sage: G.is_strongly_regular(parameters=True)
         (126, 50, 13, 24)
     """
-    from sage.graphs.strongly_regular_db import SRG_175_72_20_36
     from sage.graphs.generators.smallgraphs import HoffmanSingletonGraph
     hs = HoffmanSingletonGraph()
     s = set(hs.vertices(sort=False)).difference(hs.neighbors(0) + [0])
@@ -2691,7 +2688,7 @@ def SRG_1288_792_476_504():
     return G
 
 
-cdef bint seems_feasible(int v, int k, int l, int mu):
+cdef bint seems_feasible(int v, int k, int l, int mu) noexcept:
     r"""
     Check if the set of parameters seems feasible.
 
@@ -2813,7 +2810,7 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
 
     Petersen's graph from its set of parameters::
 
-        sage: graphs.strongly_regular_graph(10,3,0,1,existence=True)
+        sage: graphs.strongly_regular_graph(10,3,0,1,existence=True)                    # needs sage.libs.pari
         True
         sage: graphs.strongly_regular_graph(10,3,0,1)
         complement(Johnson graph with parameters 5,2): Graph on 10 vertices
@@ -2832,7 +2829,7 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
         ...
         ValueError: There exists no (5, 5, 5, 5)-strongly regular graph
 
-    An set of parameters proved in a paper to be infeasible::
+    A set of parameters proved in a paper to be infeasible::
 
         sage: graphs.strongly_regular_graph(324,57,0,12,existence=True)                 # needs sage.combinat sage.modules
         False
@@ -3134,15 +3131,15 @@ def _build_small_srg_database():
         complement(two-intersection set in PG(8,2)): Graph on 256 vertices
         sage: graphs.strongly_regular_graph(512, 73, 12, 10)                    # not tested (too long), needs sage.rings.finite_rings
         two-weight code: [219, 9] linear code over GF(2): Graph on 512 vertices
-        sage: graphs.strongly_regular_graph(512, 219, 106, 84)                  # long time
+        sage: graphs.strongly_regular_graph(512, 219, 106, 84)                  # long time, needs sage.combinat
         two-intersection set in PG(9,2): Graph on 512 vertices
         sage: graphs.strongly_regular_graph(512, 315, 202, 180)                 # not tested (too long), needs sage.rings.finite_rings
         two-weight code: [70, 9] linear code over GF(2): Graph on 512 vertices
-        sage: graphs.strongly_regular_graph(625, 364, 213, 210)                 # long time
+        sage: graphs.strongly_regular_graph(625, 364, 213, 210)                 # long time, needs sage.libs.pari
         complement(two-intersection set in PG(4,5)): Graph on 625 vertices
-        sage: graphs.strongly_regular_graph(625, 416, 279, 272)                 # long time
+        sage: graphs.strongly_regular_graph(625, 416, 279, 272)                 # long time, needs sage.libs.pari
         complement(two-intersection set in PG(4,5)): Graph on 625 vertices
-        sage: graphs.strongly_regular_graph(625, 468, 353, 342)                 # long time
+        sage: graphs.strongly_regular_graph(625, 468, 353, 342)                 # long time, needs sage.libs.pari
         complement(two-intersection set in PG(4,5)): Graph on 625 vertices
         sage: graphs.strongly_regular_graph(729, 336, 153,156)                  # not tested (too long)
         two-intersection set in PG(6,3): Graph on 729 vertices
@@ -3259,7 +3256,7 @@ def _build_small_srg_database():
             _small_srg_database[N, K, l, m] = [strongly_regular_from_two_weight_code, code['M']]
 
 
-cdef load_brouwer_database():
+cdef load_brouwer_database() noexcept:
     r"""
     Loads Andries Brouwer's database into _brouwer_database.
     """
@@ -3267,8 +3264,9 @@ cdef load_brouwer_database():
     if _brouwer_database is not None:
         return
 
-    from sage.env import GRAPHS_DATA_DIR
-    filename = os.path.join(GRAPHS_DATA_DIR, 'brouwer_srg_database.json')
+    from sage.features.databases import DatabaseGraphs
+    data_dir = os.path.dirname(DatabaseGraphs().absolute_filename())
+    filename = os.path.join(data_dir, 'brouwer_srg_database.json')
     with open(filename) as fobj:
         database = json.load(fobj)
 
@@ -3287,7 +3285,7 @@ def _check_database():
     EXAMPLES::
 
         sage: from sage.graphs.strongly_regular_db import _check_database
-        sage: _check_database() # long time
+        sage: _check_database()                 # long time                             # needs sage.libs.pari
         Sage cannot build a (512  133  24   38  ) that exists. Comment ...
         ...
         In Andries Brouwer's database:

@@ -389,7 +389,7 @@ class PathTableau(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
         EXAMPLES::
 
             sage: s = path_tableaux.DyckPath([0,1,2,3,2,3,2,1,0])
-            sage: s.dual_equivalence_graph().adjacency_matrix()
+            sage: s.dual_equivalence_graph().adjacency_matrix()                         # needs sage.graphs sage.modules
             [0 1 1 1 0 1 0 1 1 0 0 0 0 0]
             [1 0 1 1 1 1 1 0 1 0 0 1 1 0]
             [1 1 0 1 1 1 0 1 0 1 1 1 0 0]
@@ -405,7 +405,7 @@ class PathTableau(ClonableArray, metaclass=InheritComparisonClasscallMetaclass):
             [0 1 0 1 1 1 0 1 1 1 1 1 0 1]
             [0 0 0 0 1 0 1 0 0 1 1 1 1 0]
             sage: s = path_tableaux.DyckPath([0,1,2,3,2,1,0])
-            sage: s.dual_equivalence_graph().edges(sort=True)
+            sage: s.dual_equivalence_graph().edges(sort=True)                           # needs sage.graphs
             [([0, 1, 0, 1, 0, 1, 0], [0, 1, 0, 1, 2, 1, 0], '4,7'),
              ([0, 1, 0, 1, 0, 1, 0], [0, 1, 2, 1, 0, 1, 0], '2,5'),
              ([0, 1, 0, 1, 0, 1, 0], [0, 1, 2, 1, 2, 1, 0], '2,7'),

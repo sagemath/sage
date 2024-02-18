@@ -149,13 +149,15 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ********************************************************************
+#       Copyright (C) 2005 William Stein <wstein@gmail.com>
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ********************************************************************
 
 # The Singular API is as follows:
 #
@@ -253,7 +255,7 @@ from sage.misc.sage_eval import sage_eval
 import sage.rings.polynomial.polynomial_singular_interface
 
 cimport cypari2.gen
-from . import polynomial_element
+from sage.rings.polynomial import polynomial_element
 
 permstore=[]
 cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
@@ -375,7 +377,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             ...
             NotImplementedError: polynomials in -1 variables are not supported in Singular
         """
-        self.__ngens = n
+        self._ngens = n
         self._ring = singular_ring_new(base_ring, n, names, order)
         self._zero_element = new_MP(self, NULL)
         cdef MPolynomial_libsingular one = new_MP(self, p_ISet(1, self._ring))
@@ -462,7 +464,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         memo[id(self)] = self
         return self
 
-    cpdef _coerce_map_from_(self, other):
+    cpdef _coerce_map_from_(self, other) noexcept:
         """
         Return ``True`` if and only if there exists a coercion map from
         ``other`` to ``self``.
@@ -1019,7 +1021,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             Multivariate Polynomial Ring in x, y over Rational Field
         """
         varstr = ", ".join(char_to_str(rRingVar(i,self._ring))
-                           for i in range(self.__ngens))
+                           for i in range(self._ngens))
         return "Multivariate Polynomial Ring in %s over %s" % (varstr, self.base_ring())
 
     def ngens(self):
@@ -1037,7 +1039,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             sage: P.ngens()                                                             # needs sage.rings.finite_rings
             1000
         """
-        return int(self.__ngens)
+        return int(self._ngens)
 
     def gen(self, int n=0):
         """
@@ -1065,7 +1067,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         cdef poly *_p
         cdef ring *_ring = self._ring
 
-        if n < 0 or n >= self.__ngens:
+        if n < 0 or n >= self._ngens:
             raise ValueError("Generator not defined.")
 
         rChangeCurrRing(_ring)
@@ -1494,7 +1496,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         return unpickle_MPolynomialRing_libsingular, \
             (self.base_ring(), self.variable_names(), self.term_order())
 
-    def __temporarily_change_names(self, names, latex_names):
+    def _temporarily_change_names(self, names, latex_names):
         """
         This is used by the variable names context manager.
 
@@ -1530,9 +1532,9 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         return old
 
-    ### The following methods are handy for implementing Groebner
-    ### basis algorithms. They do only superficial type/sanity checks
-    ### and should be called carefully.
+    # The following methods are handy for implementing Groebner
+    # basis algorithms. They do only superficial type/sanity checks
+    # and should be called carefully.
 
     def monomial_quotient(self, MPolynomial_libsingular f, MPolynomial_libsingular g, coeff=False):
         r"""
@@ -1676,7 +1678,6 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             return False
         else:
             return True
-
 
     def monomial_lcm(self, MPolynomial_libsingular f, MPolynomial_libsingular g):
         """
@@ -1974,7 +1975,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         memo[id(self)] = cpy
         return cpy
 
-    cpdef MPolynomial_libsingular _new_constant_poly(self, x, MPolynomialRing_libsingular P):
+    cpdef MPolynomial_libsingular _new_constant_poly(self, x, MPolynomialRing_libsingular P) noexcept:
         r"""
         Quickly create a new constant polynomial with value x in the parent P.
 
@@ -2136,7 +2137,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         """
         return self._hash_c()
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         Compare left and right.
 
@@ -2194,7 +2195,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         cdef ring *r = (<MPolynomial_libsingular>left)._parent_ring
         return rich_to_bool(op, singular_polynomial_cmp(p, q, r))
 
-    cpdef _add_(left, right):
+    cpdef _add_(left, right) noexcept:
         """
         Add left and right.
 
@@ -2210,7 +2211,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
                                  (<MPolynomial_libsingular>right)._poly, r)
         return new_MP((<MPolynomial_libsingular>left)._parent, _p)
 
-    cpdef _sub_(left, right):
+    cpdef _sub_(left, right) noexcept:
         """
         Subtract left and right.
 
@@ -2227,7 +2228,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
                                 _ring)
         return new_MP((<MPolynomial_libsingular>left)._parent, _p)
 
-    cpdef _lmul_(self, Element left):
+    cpdef _lmul_(self, Element left) noexcept:
         """
         Multiply self with a base ring element.
 
@@ -2251,7 +2252,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         singular_polynomial_rmul(&_p, self._poly, left, _ring)
         return new_MP((<MPolynomial_libsingular>self)._parent, _p)
 
-    cpdef _mul_(left, right):
+    cpdef _mul_(left, right) noexcept:
         """
         Multiply left and right.
 
@@ -2275,7 +2276,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
                                  (<MPolynomial_libsingular>left)._parent_ring)
         return new_MP((<MPolynomial_libsingular>left)._parent,_p)
 
-    cpdef _div_(left, right_ringelement):
+    cpdef _div_(left, right_ringelement) noexcept:
         r"""
         Divide left by right
 
@@ -2478,7 +2479,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         s = singular_polynomial_str(self._poly, _ring)
         return s
 
-    cpdef _repr_short_(self):
+    cpdef _repr_short_(self) noexcept:
         """
         This is a faster but less pretty way to print polynomials. If
         available it uses the short SINGULAR notation.
@@ -3029,7 +3030,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
                 yield (tuple(exp), si2sa(p_GetCoeff(p, r), r, base))
             p = pNext(p)
 
-    cpdef long number_of_terms(self):
+    cpdef long number_of_terms(self) noexcept:
         """
         Return the number of non-zero coefficients of this polynomial.
 
@@ -3197,7 +3198,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         INPUT:
 
         - ``as_ETuples`` -- (default: ``True``) if ``True`` returns the
-          result as an list of ETuples, otherwise returns a list of tuples
+          result as a list of ETuples, otherwise returns a list of tuples
 
         EXAMPLES::
 
@@ -3214,7 +3215,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         cdef list pl, ml
 
         pl = list()
-        ml = list(xrange(r.N))
+        ml = list(range(r.N))
         if as_ETuples:
             while p:
                 for v from 1 <= v <= r.N:
@@ -3281,7 +3282,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             rChangeCurrRing(_ring)
         return bool(p_IsHomogeneous(self._poly,_ring))
 
-    cpdef _homogenize(self, int var):
+    cpdef _homogenize(self, int var) noexcept:
         """
         Return ``self`` if ``self`` is homogeneous.  Otherwise return
         a homogenized polynomial constructed by modifying the degree
@@ -3913,7 +3914,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         """
         return len(self._variable_indices_(sort=False))
 
-    cpdef is_constant(self):
+    cpdef is_constant(self) noexcept:
         """
         Return ``True`` if this polynomial is constant.
 
@@ -4055,7 +4056,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         else:
             return False
 
-    cpdef _floordiv_(self, right):
+    cpdef _floordiv_(self, right) noexcept:
         """
         Perform division with remainder and return the quotient.
 
@@ -4490,8 +4491,25 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             Traceback (most recent call last):
             ...
             ValueError: polynomial is not in the ideal
+
+        Check that we can work over the integers::
+
+            sage: R.<x1,x2> = ZZ[]
+            sage: I = R.ideal(x2**2 + x1 - 2, x1**2 - 1)
+            sage: f = I.gen(0) + x2*I.gen(1)
             sage: f.lift(I)
             [1, x2]
+            sage: (f+1).lift(I)
+            Traceback (most recent call last):
+            ...
+            ValueError: polynomial is not in the ideal
+            sage: A.<x,y> = PolynomialRing(ZZ,2,order='degrevlex')
+            sage: I = A.ideal([x^10 + x^9*y^2, y^8 - x^2*y^7 ])
+            sage: f = x*y^13 + y^12
+            sage: M = f.lift(I)
+            sage: M
+            [y^7, x^7*y^2 + x^8 + x^5*y^3 + x^6*y + x^3*y^4 + x^4*y^2 + x*y^5 + x^2*y^3 + y^4]
+
 
         TESTS:
 
@@ -4509,8 +4527,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         """
         global errorreported
-        if not self._parent._base.is_field():
-            raise NotImplementedError("Lifting of multivariate polynomials over non-fields is not implemented.")
 
         cdef ideal *fI = idInit(1,1)
         cdef ideal *_I
@@ -5227,7 +5243,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             y += base_map(c)*mul([ im_gens[i]**m[i] for i in range(n) if m[i]])
         return y
 
-
     def _derivative(self, MPolynomial_libsingular var):
         """
         Differentiates this polynomial with respect to the provided
@@ -5679,7 +5694,6 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             i.append( new_MP(self._parent, pDiff(self._poly, k)))
         return i
 
-
     def numerator(self):
         """
         Return a numerator of self computed as self * self.denominator()
@@ -5757,6 +5771,83 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         else:
             return self * self.denominator()
 
+    def in_subalgebra(self, J, algorithm="algebra_containment"):
+        """
+        Return whether this polynomial is contained in the subalgebra
+        generated by ``J``
+
+        INPUT:
+
+        - ``J`` -- list of elements of the parent polynomial ring
+
+        - ``algorithm`` -- can be ``"algebra_containment"`` (the default),
+          ``"inSubring"``, or ``"groebner"``.
+
+          - ``"algebra_containment"``: use Singular's
+            ``algebra_containment`` function,
+            https://www.singular.uni-kl.de/Manual/4-2-1/sing_1247.htm#SEC1328. The
+            Singular documentation suggests that this is frequently
+            faster than the next option.
+
+          - ``"inSubring"``: use Singular's ``inSubring`` function,
+            https://www.singular.uni-kl.de/Manual/4-2-0/sing_1240.htm#SEC1321.
+
+          - ``"groebner"``: use the algorithm described in Singular's
+            documentation, but within Sage: if the subalgebra
+            generators are `y_1`, ..., `y_m`, then create a new
+            polynomial algebra with the old generators along with new
+            ones: `z_1`, ..., `z_m`. Create the ideal `(z_1 - y_1,
+            ..., z_m - y_m)`, and reduce the polynomial modulo this
+            ideal. The polynomial is contained in the subalgebra if
+            and only if the remainder involves only the new variables
+            `z_i`.
+
+        EXAMPLES::
+
+            sage: P.<x,y,z> = QQ[]
+            sage: J = [x^2 + y^2, x^2 + z^2]
+            sage: (y^2).in_subalgebra(J)
+            False
+            sage: a = (x^2 + y^2) * (x^2 + z^2)
+            sage: a.in_subalgebra(J, algorithm='inSubring')
+            True
+            sage: (a^2).in_subalgebra(J, algorithm='groebner')
+            True
+            sage: (a + a^2).in_subalgebra(J)
+            True
+        """
+        R = self.parent()
+        algorithm = algorithm.lower()
+        from sage.libs.singular.function import singular_function, lib as singular_lib
+        singular_lib('algebra.lib')
+        if algorithm == "algebra_containment":
+            execute = singular_function('execute')
+            try:
+                get_printlevel = singular_function('get_printlevel')
+            except NameError:
+                execute('proc get_printlevel {return (printlevel);}')
+                get_printlevel = singular_function('get_printlevel')
+            # It's fairly verbose unless printlevel is -1.
+            saved_printlevel = get_printlevel()
+            execute('printlevel=-1')
+            contains = singular_function('algebra_containment')(self, R.ideal(J)) == 1
+            execute('printlevel={}'.format(saved_printlevel))
+            return contains
+        elif algorithm == "insubring":
+            return singular_function('inSubring')(self, R.ideal(J))[0] == 1
+        elif algorithm == "groebner":
+            new_gens = [f"newgens{i}" for i in range(len(J))]
+            ngens = len(new_gens)
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            S = PolynomialRing(R.base_ring(), R.gens() + tuple(new_gens),
+                               order=f'degrevlex({len(R.gens())}),degrevlex({ngens})')
+            new_gens = S.gens()[-ngens:]
+            I = S.ideal([g - S(j) for (g,j) in zip(new_gens, J)])
+            z = S(self).reduce(I)
+            return set(z.variables()).issubset(new_gens)
+        else:
+            raise ValueError("unknown algorithm")
+
 
 def unpickle_MPolynomial_libsingular(MPolynomialRing_libsingular R, d):
     """
@@ -5808,7 +5899,7 @@ def unpickle_MPolynomial_libsingular(MPolynomialRing_libsingular R, d):
     return new_MP(R, p)
 
 
-cdef inline poly *addwithcarry(poly *tempvector, poly *maxvector, int pos, ring *_ring):
+cdef inline poly *addwithcarry(poly *tempvector, poly *maxvector, int pos, ring *_ring) noexcept:
     if p_GetExp(tempvector, pos, _ring) < p_GetExp(maxvector, pos, _ring):
         p_SetExp(tempvector, pos, p_GetExp(tempvector, pos, _ring)+1, _ring)
     else:
@@ -5818,7 +5909,7 @@ cdef inline poly *addwithcarry(poly *tempvector, poly *maxvector, int pos, ring 
     return tempvector
 
 
-cdef inline MPolynomial_libsingular new_MP(MPolynomialRing_libsingular parent, poly *juice):
+cdef inline MPolynomial_libsingular new_MP(MPolynomialRing_libsingular parent, poly *juice) noexcept:
     """
     Construct MPolynomial_libsingular from parent and SINGULAR poly.
 
@@ -5846,5 +5937,5 @@ cdef inline MPolynomial_libsingular new_MP(MPolynomialRing_libsingular parent, p
     return p
 
 
-cdef poly *MPolynomial_libsingular_get_element(object self):
+cdef poly *MPolynomial_libsingular_get_element(object self) noexcept:
     return (<MPolynomial_libsingular>self)._poly

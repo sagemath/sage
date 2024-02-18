@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 r"""
 Type spaces of newforms
 

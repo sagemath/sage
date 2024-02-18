@@ -1,1 +1,2 @@
-bzip2 bzip2-devel
+bzip2
+bzip2-devel

@@ -17,7 +17,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 import sage.libs.pari.all as pari
-import sage.rings.ring as ring
+from sage.rings.ring import Ring
 from sage.structure.element import RingElement
 from sage.structure.richcmp import richcmp
 from sage.misc.fast_methods import Singleton
@@ -123,7 +123,7 @@ class Pari(RingElement):
             sage: a^2
             9
         """
-        if not(other in PariRing()):
+        if not (other in PariRing()):
             other = Pari(other)
         return self.__class__(self.__x ** other.__x, parent=_inst)
 
@@ -158,7 +158,7 @@ class Pari(RingElement):
         return int(self.__x)
 
 
-class PariRing(Singleton, ring.Ring):
+class PariRing(Singleton, Ring):
     """
     EXAMPLES::
 
@@ -170,7 +170,7 @@ class PariRing(Singleton, ring.Ring):
     Element = Pari
 
     def __init__(self):
-        ring.Ring.__init__(self, self)
+        Ring.__init__(self, self)
 
     def __repr__(self):
         return 'Pseudoring of all PARI objects.'
@@ -229,5 +229,6 @@ class PariRing(Singleton, ring.Ring):
             -1
         """
         return self(-1)
+
 
 _inst = PariRing()

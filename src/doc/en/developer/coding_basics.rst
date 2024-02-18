@@ -945,7 +945,7 @@ written.
   for both examples.
 
 - **Preparsing:** As in Sage's console, `4/3` returns `4/3` and not
-  `1.3333333333333333` as in Python 3.8. Testing occurs with full Sage
+  `1.3333333333333333` as in Python. Testing occurs with full Sage
   preparsing of input within the standard Sage shell environment, as
   described in :ref:`section-preparsing`.
 
@@ -1038,17 +1038,6 @@ written.
     should be aligned so that they are visible without having to scroll horizontally.
     The :ref:`doctest fixer <section-fixdoctests-optional-needs>` uses
     tab stops at columns 48, 56, 64, ... for these tags.
-
-- **Python3 print:** Python3 syntax for print must be used in Sage
-  code and doctests. If you use an old-style print in doctests, it
-  will raise a SyntaxError::
-
-      sage: print "not like that"
-      Traceback (most recent call last):
-      ...
-      SyntaxError: ...
-      sage: print("but like this")
-      but like this
 
 - **Split long lines:** You may want to split long lines of code with a
   backslash. Note: this syntax is non-standard and may be removed in the
@@ -1192,7 +1181,7 @@ framework. Here is a comprehensive list:
   Use it for very long doctests that are only meant as documentation. It can
   also be used for todo notes of what will eventually be implemented::
 
-      sage: factor(x*y - x*z)    # todo: not implemented
+      sage: factor(x*y - x*z)    # not implemented
 
   It is also immediately clear to the user that the indicated example
   does not currently work.

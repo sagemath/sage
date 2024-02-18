@@ -565,6 +565,7 @@ def open_extrep_url(url):
     else:
         return f.read()
 
+
 pattern_integer = re.compile(r'\d+$')
 pattern_decimal = re.compile(r'-?\d+\.\d+$')
 pattern_rational = re.compile(r'-?\d+/\d+$')
@@ -600,7 +601,7 @@ def _encode_attribute(string):
     else:
         return string
 
-class XTree():
+class XTree:
     '''
     A lazy class to wrap a rooted tree representing an XML document.
     The tree's nodes are tuples of the structure:
@@ -773,7 +774,7 @@ class XTree():
 
         return len(self.xt_children)
 
-class XTreeProcessor():
+class XTreeProcessor:
     '''
     An incremental event-driven parser for ext-rep documents.
     The processing stages:

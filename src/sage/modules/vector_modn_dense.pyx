@@ -46,7 +46,7 @@ We make a large zero vector::
 We multiply a vector by a matrix::
 
     sage: a = (GF(97)^5)(range(5))
-    sage: m = matrix(GF(97),5,range(25))
+    sage: m = matrix(GF(97), 5, range(25))
     sage: a*m
     (53, 63, 73, 83, 93)
 
@@ -58,20 +58,20 @@ TESTS::
     sage: v = vector(Integers(389), [1,2,3,4,5])
     sage: loads(dumps(v)) == v
     True
-    sage: v = vector(Integers(next_prime(10^20)), [1,2,3,4,5])
+    sage: v = vector(Integers(next_prime(10^20)), [1,2,3,4,5])                          # needs sage.libs.pari
     sage: loads(dumps(v)) == v
     True
 
-    sage: K = GF(previous_prime(2^31))
-    sage: v = vector(K, [42]);  type(v[0])
+    sage: K = GF(previous_prime(2^31))                                                  # needs sage.rings.finite_rings
+    sage: v = vector(K, [42]);  type(v[0])                                              # needs sage.rings.finite_rings
     <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
-    sage: ~v[0]
+    sage: ~v[0]                                                                         # needs sage.rings.finite_rings
     2096353084
 
-    sage: K = GF(next_prime(2^31))
-    sage: v = vector(K, [42]);  type(v[0])
+    sage: K = GF(next_prime(2^31))                                                      # needs sage.rings.finite_rings
+    sage: v = vector(K, [42]);  type(v[0])                                              # needs sage.rings.finite_rings
     <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
-    sage: ~v[0]
+    sage: ~v[0]                                                                         # needs sage.rings.finite_rings
     1482786336
 
     sage: w = vector(GF(11), [-1,0,0,0])
@@ -81,6 +81,7 @@ TESTS::
 
 Test that :trac:`28042` is fixed::
 
+    sage: # needs sage.rings.finite_rings
     sage: p = 193379
     sage: K = GF(p)
     sage: a = K(1)
@@ -88,7 +89,7 @@ Test that :trac:`28042` is fixed::
     sage: c = K(109320)
     sage: d = K(167667)
     sage: e = 103937
-    sage: a*c+b*d-e
+    sage: a*c + b*d - e
     102041
     sage: vector([a,b]) * vector([c,d]) - e
     102041
@@ -134,16 +135,16 @@ cimport sage.modules.free_module_element as free_module_element
 
 
 cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
-    cdef _new_c(self):
+    cdef _new_c(self) noexcept:
         cdef Vector_modn_dense y
         y = Vector_modn_dense.__new__(Vector_modn_dense)
         y._init(self._degree, self._parent, self._p)
         return y
 
-    cdef bint is_dense_c(self):
+    cdef bint is_dense_c(self) noexcept:
         return 1
 
-    cdef bint is_sparse_c(self):
+    cdef bint is_sparse_c(self) noexcept:
         return 0
 
     def __copy__(self):
@@ -154,7 +155,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
             y._entries[i] = self._entries[i]
         return y
 
-    cdef _init(self, Py_ssize_t degree, parent, mod_int p):
+    cdef _init(self, Py_ssize_t degree, parent, mod_int p) noexcept:
         self._degree = degree
         self._parent = parent
         self._p = p
@@ -193,7 +194,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
     def __dealloc__(self):
         sig_free(self._entries)
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         EXAMPLES::
 
@@ -219,7 +220,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
                 return rich_to_bool(op, 1)
         return rich_to_bool(op, 0)
 
-    cdef get_unsafe(self, Py_ssize_t i):
+    cdef get_unsafe(self, Py_ssize_t i) noexcept:
         """
         EXAMPLES::
 
@@ -275,7 +276,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         return unpickle_v1, (self._parent, self.list(), self._degree,
                              self._p, not self._is_immutable)
 
-    cpdef _add_(self, right):
+    cpdef _add_(self, right) noexcept:
         cdef Vector_modn_dense z, r
         r = right
         z = self._new_c()
@@ -285,7 +286,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
         return z
 
 
-    cpdef _sub_(self, right):
+    cpdef _sub_(self, right) noexcept:
         cdef Vector_modn_dense z, r
         r = right
         z = self._new_c()
@@ -294,7 +295,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
             z._entries[i] = (self._p + self._entries[i] - r._entries[i]) % self._p
         return z
 
-    cpdef _dot_product_(self, Vector right):
+    cpdef _dot_product_(self, Vector right) noexcept:
         cdef size_t i
         cdef IntegerMod_int n
         cdef IntegerMod_int64 m
@@ -315,7 +316,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
                 m.ivalue = (m.ivalue + self._entries[i] * r._entries[i]) % self._p
             return m
 
-    cpdef _pairwise_product_(self, Vector right):
+    cpdef _pairwise_product_(self, Vector right) noexcept:
         """
         EXAMPLES::
 
@@ -333,7 +334,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
             z._entries[i] = (self._entries[i] * r._entries[i]) % self._p
         return z
 
-    cpdef _lmul_(self, Element left):
+    cpdef _lmul_(self, Element left) noexcept:
         cdef Vector_modn_dense z
 
         cdef mod_int a = ivalue(left)
@@ -344,7 +345,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
             z._entries[i] = (self._entries[i] * a) % self._p
         return z
 
-    cpdef _neg_(self):
+    cpdef _neg_(self) noexcept:
         cdef Vector_modn_dense z
         z = self._new_c()
         cdef Py_ssize_t i

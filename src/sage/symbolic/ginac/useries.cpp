@@ -467,10 +467,17 @@ void add::useries(flint_series_t& fp, int order) const
                 fmpq_poly_set_ui(fp.ft, 0);
         else if (oc.is_long())
                 fmpq_poly_set_si(fp.ft, oc.to_long());
-        else if (oc.is_mpz())
-                fmpq_poly_set_mpz(fp.ft, oc.as_mpz());
-        else
-                fmpq_poly_set_mpq(fp.ft, oc.as_mpq());
+        else if (oc.is_mpz()) {
+                fmpz_t tmpfz;
+                fmpz_init_set_readonly(tmpfz, oc.as_mpz());
+                fmpq_poly_set_fmpz(fp.ft, tmpfz);
+                fmpz_clear_readonly(tmpfz);
+        } else {
+                fmpq_t tmpfq;
+                fmpq_init_set_readonly(tmpfq, oc.as_mpq());
+                fmpq_poly_set_fmpq(fp.ft, tmpfq);
+                fmpq_clear_readonly(tmpfq);
+        }
 
         for (const auto & elem : seq) {
 		const ex& t = recombine_pair_to_ex(elem);
@@ -505,10 +512,17 @@ void mul::useries(flint_series_t& fp, int order) const
 
         if (oc.is_long())
                 fmpq_poly_scalar_mul_si(fp.ft, fp.ft, oc.to_long());
-        else if (oc.is_mpz())
-                fmpq_poly_scalar_mul_mpz(fp.ft, fp.ft, oc.as_mpz());
-        else
-                fmpq_poly_scalar_mul_mpq(fp.ft, fp.ft, oc.as_mpq());
+        else if (oc.is_mpz()) {
+                fmpz_t tmpfz;
+                fmpz_init_set_readonly(tmpfz, oc.as_mpz());
+                fmpq_poly_scalar_mul_fmpz(fp.ft, fp.ft, tmpfz);
+                fmpz_clear_readonly(tmpfz);
+        } else {
+                fmpq_t tmpfq;
+                fmpq_init_set_readonly(tmpfq, oc.as_mpq());
+                fmpq_poly_scalar_mul_fmpq(fp.ft, fp.ft, tmpfq);
+                fmpq_clear_readonly(tmpfq);
+        }
 }
 
 void power::useries(flint_series_t& fp, int order) const
@@ -563,7 +577,10 @@ void power::useries(flint_series_t& fp, int order) const
                 }
                 check_poly_ccoeff_one(fp1);
                 fmpq_poly_log_series(fp1.ft, fp1.ft, order);
-                fmpq_poly_scalar_mul_mpq(fp1.ft, fp1.ft, nexp.as_mpq());
+                fmpq_t tmp;
+                fmpq_init_set_readonly(tmp, nexp.as_mpq());
+                fmpq_poly_scalar_mul_fmpq(fp1.ft, fp1.ft, tmp);
+                fmpq_clear_readonly(tmp);
                 fmpq_poly_exp_series(fp.ft, fp1.ft, order);
                 return;
         }
@@ -608,10 +625,17 @@ void numeric::useries(flint_series_t& fp, int order) const
 {
         if (is_long())
                 fmpq_poly_set_si(fp.ft, to_long());
-        else if (is_mpz())
-                fmpq_poly_set_mpz(fp.ft, as_mpz());
-        else
-                fmpq_poly_set_mpq(fp.ft, as_mpq());
+        else if (is_mpz()) {
+                fmpz_t tmpfz;
+                fmpz_init_set_readonly(tmpfz, as_mpz());
+                fmpq_poly_set_fmpz(fp.ft, tmpfz);
+                fmpz_clear_readonly(tmpfz);
+        } else {
+                fmpq_t tmpfq;
+                fmpq_init_set_readonly(tmpfq, as_mpq());
+                fmpq_poly_set_fmpq(fp.ft, tmpfq);
+                fmpq_clear_readonly(tmpfq);
+        }
 }
 
 } // namespace GiNaC

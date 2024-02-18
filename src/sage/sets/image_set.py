@@ -73,6 +73,7 @@ class ImageSubobject(Parent):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: M = CombinatorialFreeModule(ZZ, [0,1,2,3])
             sage: R.<x,y> = QQ[]
             sage: H = Hom(M, R, category=Sets())
@@ -173,6 +174,7 @@ class ImageSubobject(Parent):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: M = CombinatorialFreeModule(QQ, [0, 1, 2, 3])
             sage: R.<x,y> = ZZ[]
             sage: H = Hom(M, R, category=Sets())
@@ -181,8 +183,8 @@ class ImageSubobject(Parent):
             sage: Im.ambient() is R
             True
 
-            sage: P = Partitions(3).map(attrcall('conjugate'))
-            sage: P.ambient() is None
+            sage: P = Partitions(3).map(attrcall('conjugate'))                          # needs sage.combinat
+            sage: P.ambient() is None                                                   # needs sage.combinat
             True
 
             sage: R = Permutations(10).map(attrcall('reduced_word'))
@@ -197,6 +199,7 @@ class ImageSubobject(Parent):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: M = CombinatorialFreeModule(QQ, [0, 1, 2, 3])
             sage: R.<x,y> = ZZ[]
             sage: H = Hom(M, R, category=Sets())
@@ -219,6 +222,7 @@ class ImageSubobject(Parent):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: M = CombinatorialFreeModule(QQ, [0, 1, 2, 3])
             sage: R.<x,y> = ZZ[]
             sage: H = Hom(M, R, category=Sets())
@@ -234,7 +238,7 @@ class ImageSubobject(Parent):
         r"""
         TESTS::
 
-            sage: Partitions(3).map(attrcall('conjugate'))
+            sage: Partitions(3).map(attrcall('conjugate'))                              # needs sage.combinat
             Image of Partitions of the integer 3 by
              The map *.conjugate() from Partitions of the integer 3
         """
@@ -276,7 +280,8 @@ class ImageSubobject(Parent):
             sage: Mod2.cardinality()
             Traceback (most recent call last):
             ...
-            NotImplementedError: cannot determine cardinality of a non-injective image of an infinite set
+            NotImplementedError: cannot determine cardinality of a
+            non-injective image of an infinite set
         """
         domain_cardinality = self._domain_subset.cardinality()
         if self._is_injective and self._is_injective != 'check':
@@ -294,6 +299,7 @@ class ImageSubobject(Parent):
 
         EXAMPLES::
 
+            sage: # needs sage.combinat
             sage: P = Partitions()
             sage: H = Hom(P, ZZ)
             sage: f = H(ZZ.sum)
@@ -322,8 +328,8 @@ class ImageSubobject(Parent):
 
         EXAMPLES::
 
-            sage: R = SymmetricGroup(10).map(attrcall('reduced_word'))
-            sage: R.an_element()
+            sage: R = SymmetricGroup(10).map(attrcall('reduced_word'))                  # needs sage.groups
+            sage: R.an_element()                                                        # needs sage.groups
             [9, 8, 7, 6, 5, 4, 3, 2]
         """
         domain_element = self._domain_subset.an_element()
@@ -336,9 +342,9 @@ class ImageSubobject(Parent):
         EXAMPLES::
 
             sage: from sage.sets.image_set import ImageSet
-            sage: S = ImageSet(sin, RealSet.open(0, pi/4)); S
+            sage: S = ImageSet(sin, RealSet.open(0, pi/4)); S                           # needs sage.symbolic
             Image of (0, 1/4*pi) by The map sin from (0, 1/4*pi)
-            sage: S._sympy_()
+            sage: S._sympy_()                                                           # needs sage.symbolic
             ImageSet(Lambda(x, sin(x)), Interval.open(0, pi/4))
         """
         from sympy import imageset
@@ -360,11 +366,12 @@ class ImageSet(ImageSubobject, Set_base, Set_add_sub_operators, Set_boolean_oper
 
     Symbolics::
 
-        sage: ImageSet(sin, RealSet.open(0, pi/4))
+        sage: ImageSet(sin, RealSet.open(0, pi/4))                                      # needs sage.symbolic
         Image of (0, 1/4*pi) by The map sin from (0, 1/4*pi)
-        sage: _.an_element()
+        sage: _.an_element()                                                            # needs sage.symbolic
         1/2*sqrt(-sqrt(2) + 2)
 
+        sage: # needs sage.symbolic
         sage: sos(x,y) = x^2 + y^2; sos
         (x, y) |--> x^2 + y^2
         sage: ImageSet(sos, ZZ^2)

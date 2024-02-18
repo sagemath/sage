@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.ring.padics
 r"""
 `p`-adic `L`-series attached to overconvergent eigensymbols
 

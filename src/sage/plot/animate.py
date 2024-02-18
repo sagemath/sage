@@ -327,7 +327,7 @@ class Animation(WithEqualityById, SageObject):
             num = len(self)
         except TypeError:
             num = "unknown number of"
-        return "Animation with %s frames"%num
+        return "Animation with %s frames" % num
 
     def __add__(self, other):
         """
@@ -453,7 +453,8 @@ class Animation(WithEqualityById, SageObject):
             ....:                         floor(G.ymin()), ceil(G.ymax()))
             ....:        G.save_image(filename, **kwds)
 
-            sage: B = MyAnimation([graphs.CompleteGraph(n) for n in range(7,11)], figsize=5)
+            sage: B = MyAnimation([graphs.CompleteGraph(n)
+            ....:                  for n in range(7,11)], figsize=5)
             sage: d = B.png()
             sage: v = os.listdir(d); v.sort(); v
             ['00000000.png', '00000001.png', '00000002.png', '00000003.png']
@@ -498,7 +499,7 @@ class Animation(WithEqualityById, SageObject):
             dir = tmp_dir()
         i = 0
         for frame in self._frames:
-            filename = '%s/%08d.png'%(dir,i)
+            filename = '%s/%08d.png' % (dir,i)
             try:
                 save_image = frame.save_image
             except AttributeError:

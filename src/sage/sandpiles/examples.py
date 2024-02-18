@@ -156,22 +156,22 @@ class SandpileExamples():
         EXAMPLES::
 
             sage: f = sandpiles.Fan(10)
-            sage: f.group_order() == fibonacci(18)
+            sage: f.group_order() == fibonacci(18)                                      # needs sage.libs.pari
             True
             sage: f = sandpiles.Fan(10,True)  # all nonsink vertices have deg 3
-            sage: f.group_order() == fibonacci(20)
+            sage: f.group_order() == fibonacci(20)                                      # needs sage.libs.pari
             True
         """
         f = graphs.WheelGraph(n)
-        if n>2:
+        if n > 2:
             f.delete_edge(1,n-1)
             if deg_three_verts:
                 f.allow_multiple_edges(True)
                 f.add_edges([(0,1),(0,n-1)])
             return Sandpile(f,0)
-        elif n==1:
+        elif n == 1:
             return Sandpile(f,0)
-        elif n==2:
+        elif n == 2:
             if deg_three_verts:
                 return Sandpile({0:{1:3}, 1:{0:3}})
             else:
@@ -245,5 +245,6 @@ class SandpileExamples():
             [1, 1, 1, 11, 11]
         """
         return Sandpile(graphs.WheelGraph(n),0)
+
 
 sandpiles = SandpileExamples()

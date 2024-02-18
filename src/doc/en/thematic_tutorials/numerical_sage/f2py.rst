@@ -204,7 +204,7 @@ you only care about its value before the function is called not
 afterwards. So in the above n tells us how many fiboncci numbers to
 compute we need to specify this as an input, however we don't need
 to get n back as it doesn't contain anything new. Similarly A is
-intent(out) so we don't need A to have an specific value
+intent(out) so we don't need A to have a specific value
 beforehand, we just care about the contents afterwards. F2py
 generates a Python function so you only pass those declared
 intent(in) and supplies empty workspaces for the remaining

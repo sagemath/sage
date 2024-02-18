@@ -71,18 +71,18 @@ Windows
 
   - **No development:**
 
-    - Enable Windows Subsystem for Linux (WSL) by following the
-      `official WSL setup guide
-      <https://docs.microsoft.com/en-us/windows/wsl/install-win10>`_. Be
-      sure to do the steps to install WSL2 and set it as default.
-      Make sure to allocate enough RAM to WSL: 5GB is known to be enough,
-      2GB might not allow you to build some packages.
-      Then go to the Microsoft Store and install Ubuntu (or another
-      Linux distribution). Start Ubuntu from the start menu.
+    Enable Windows Subsystem for Linux (WSL) by following the
+    `official WSL setup guide
+    <https://docs.microsoft.com/en-us/windows/wsl/install-win10>`_. Be
+    sure to do the steps to install WSL2 and set it as default.
+    Make sure to allocate enough RAM to WSL: 5GB is known to be enough,
+    2GB might not allow you to build some packages.
+    Then go to the Microsoft Store and install Ubuntu (or another
+    Linux distribution). Start Ubuntu from the start menu.
 
-      On the Linux running on WSL, you always have root access, so you
-      can use any of the installation methods described below for
-      Linux.
+    On the Linux running on WSL, you always have root access, so you
+    can use any of the installation methods described below for
+    Linux.
 
 Linux
 =====
@@ -106,8 +106,8 @@ Linux
   - No development: **Do you have root access (sudo)?**
 
     - **Yes, root access:** Then the easiest way to install SageMath is
-      through a Linux distribution that provides it as a package.  Most
-      major Linux distributions have up-to-date versions of SageMath,
+      through a Linux distribution that provides it as a package.  Some
+      Linux distributions have up-to-date versions of SageMath,
       see `repology.org: sagemath
       <https://repology.org/project/sagemath/versions>`_ for an
       overview.  See :ref:`sec-GNU-Linux` for additional information.
@@ -115,9 +115,9 @@ Linux
       If you are on an older version of your distribution and a recent
       version of SageMath is only available on a newer version of the
       distribution, consider upgrading your distribution.
-      In particular, do not install a version of Sage older than 9.2.
+      In particular, do not install a version of Sage older than 9.5.
 
-    - **No root access, or on an older distribution** Install SageMath from
+    - **No root access, or on an older distribution:** Install SageMath from
       the `conda-forge <https://conda-forge.org/>`_ project, as described in section
       :ref:`sec-installation-conda`.
 
@@ -127,16 +127,17 @@ Linux
 In the cloud
 ============
 
-- `CoCalc <https://cocalc.com/>`_: an online service that provides SageMath and
+- `Sage Binder repo <https://github.com/sagemath/sage-binder-env>`_ provides a
+  Binder badge to launch JupyterLab environment with Sage.
+
+- `Sage Cell Server <https://sagecell.sagemath.org/>`_ is a free online service for
+  quick computations with Sage.
+
+- `CoCalc <https://cocalc.com/>`_ is an online commercial service that provides Sage and
   many other tools.
 
-- On any system that allows you to bring your own Docker images to run
-  in a container: Use the `Docker image sagemathinc/cocalc
-  <https://hub.docker.com/r/sagemathinc/cocalc>`_ or :trac:`another Docker
-  image providing SageMath <wiki/Distribution#Dockerimages>`.
-
-- `Sage Cell Server <https://sagecell.sagemath.org/>`_: an online service for
-  elementary SageMath computations.
+- `Docker image sagemathinc/cocalc
+  <https://hub.docker.com/r/sagemathinc/cocalc>`_ can be used on any system with Docker to run CoCalc locally.
 
 
 More information:

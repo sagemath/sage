@@ -306,15 +306,13 @@ def greedy_is_comparability(g, no_certificate=False, equivalence_class=False):
             # added twice.
             return True, sorted(set(edges))
 
-        else:
-            return True
-    else:
-        if no_certificate:
-            certif.append(certif[0])
-            cycle = [v for v, _ in certif]
-            return False, cycle
-        else:
-            return False
+        return True
+
+    if no_certificate:
+        certif.append(certif[0])
+        cycle = [v for v, _ in certif]
+        return False, cycle
+    return False
 
 
 def greedy_is_comparability_with_certificate(g, certificate=False):
@@ -361,8 +359,7 @@ def greedy_is_comparability_with_certificate(g, certificate=False):
     if not isit:
         if certificate:
             return False, certif
-        else:
-            return False
+        return False
 
     elif not certificate:
         return True
@@ -552,8 +549,7 @@ def is_comparability(g, algorithm="greedy", certificate=False, check=True,
         if certificate:
             from sage.graphs.digraph import DiGraph
             return True, DiGraph(g)
-        else:
-            return True
+        return True
 
     if algorithm == "greedy":
         comparability_test = greedy_is_comparability_with_certificate(g, certificate=certificate)
@@ -677,46 +673,43 @@ def is_permutation(g, algorithm="greedy", certificate=False, check=True,
        ....:        break
 
     """
-    from sage.graphs.comparability import is_comparability
-    if certificate:
-
-        # First poset, we stop if it fails
-        isit, certif = is_comparability(g, algorithm=algorithm, certificate=True,
-                                        solver=solver, verbose=verbose)
-        if not isit:
-            return False, certif
-
-        # Second poset
-        isit, co_certif = is_comparability(g.complement(), algorithm=algorithm, certificate=True,
-                                           solver=solver, verbose=verbose)
-        if not isit:
-            return False, co_certif
-
-        # Building the two orderings
-        tmp = list(co_certif.edges(labels=False, sort=False))
-        for u, v in certif.edge_iterator(labels=False):
-            co_certif.add_edge(v, u)
-        certif.add_edges(tmp)
-
-        ordering = certif.topological_sort()
-        co_ordering = co_certif.topological_sort()
-
-        # Try to build the Permutation graph from the permutations, just to make
-        # sure nothing weird happened !
-        if check:
-            from sage.graphs.graph_generators import GraphGenerators
-            pg = GraphGenerators().PermutationGraph(ordering, co_ordering)
-            if not pg.is_isomorphic(g):
-                raise ValueError("There is a mistake somewhere ! It looks like "
-                                 "the Permutation Graph model computed does "
-                                 "not match the input graph !")
-
-        return True, (ordering, co_ordering)
-
-    # No certificate... A piece of cake
-    else:
+    if not certificate:
+        # No certificate... A piece of cake
         return (is_comparability(g, algorithm=algorithm, solver=solver, verbose=verbose) and
                 is_comparability(g.complement(), algorithm=algorithm, solver=solver, verbose=verbose))
+
+    # First poset, we stop if it fails
+    isit, certif = is_comparability(g, algorithm=algorithm, certificate=True,
+                                    solver=solver, verbose=verbose)
+    if not isit:
+        return False, certif
+
+    # Second poset
+    isit, co_certif = is_comparability(g.complement(), algorithm=algorithm, certificate=True,
+                                       solver=solver, verbose=verbose)
+    if not isit:
+        return False, co_certif
+
+    # Building the two orderings
+    tmp = list(co_certif.edges(labels=False, sort=False))
+    for u, v in certif.edge_iterator(labels=False):
+        co_certif.add_edge(v, u)
+    certif.add_edges(tmp)
+
+    ordering = certif.topological_sort()
+    co_ordering = co_certif.topological_sort()
+
+    # Try to build the Permutation graph from the permutations, just to make
+    # sure nothing weird happened !
+    if check:
+        from sage.graphs.graph_generators import GraphGenerators
+        pg = GraphGenerators().PermutationGraph(ordering, co_ordering)
+        if not pg.is_isomorphic(g):
+            raise ValueError("There is a mistake somewhere ! It looks like "
+                             "the Permutation Graph model computed does "
+                             "not match the input graph !")
+
+    return True, (ordering, co_ordering)
 
 
 def is_transitive(g, certificate=False):

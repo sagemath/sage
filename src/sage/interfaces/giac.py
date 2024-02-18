@@ -48,7 +48,7 @@ EXAMPLES::
 
 
 If the string "error" (case insensitive) occurs in the output of
-anything from Giac, a RuntimeError exception is raised.
+anything from Giac, a :class:`RuntimeError` exception is raised.
 
 Tutorial
 --------
@@ -559,7 +559,7 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
                 try:
                     self.__tab_completion = sage.misc.persist.load(COMMANDS_CACHE)
                     return self.__tab_completion
-                except IOError:
+                except OSError:
                     pass
             if verbose:
                 print("\nBuilding Giac command completion list (this takes")

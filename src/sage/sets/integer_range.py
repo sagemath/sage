@@ -217,7 +217,7 @@ class IntegerRange(UniqueRepresentation, Parent):
             ValueError: IntegerRange() step argument must not be zero
             sage: IntegerRange(2) is IntegerRange(0, 2)
             True
-            sage: IntegerRange(1.0)
+            sage: IntegerRange(1.0)                                                     # needs sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             TypeError: end must be Integer or Infinity, not <... 'sage.rings.real_mpfr.RealLiteral'>

@@ -1,0 +1,3 @@
+SAGE_SPKG_CONFIGURE([sphinx], [
+  SAGE_PYTHON_PACKAGE_CHECK([sphinx])
+])

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Various families of graphs
 
@@ -594,7 +593,7 @@ def BarbellGraph(n1, n2):
 
     OUTPUT:
 
-    A barbell graph of order ``2*n1 + n2``. A ``ValueError`` is
+    A barbell graph of order ``2*n1 + n2``. A :class:`ValueError` is
     returned if ``n1 < 2`` or ``n2 < 0``.
 
     PLOTTING:
@@ -614,7 +613,7 @@ def BarbellGraph(n1, n2):
 
         sage: g = graphs.BarbellGraph(9, 4); g
         Barbell graph: Graph on 22 vertices
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
 
     An ``n1 >= 2``, ``n2 >= 0`` barbell graph has order ``2*n1 + n2``. It
     has the complete graph on ``n1`` vertices as a subgraph. It also has
@@ -712,7 +711,7 @@ def LollipopGraph(n1, n2):
 
         sage: g = graphs.LollipopGraph(13,4); g
         Lollipop graph: Graph on 17 vertices
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
 
     TESTS::
 
@@ -785,7 +784,7 @@ def TadpoleGraph(n1, n2):
 
         sage: g = graphs.TadpoleGraph(13, 4); g
         Tadpole graph: Graph on 17 vertices
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
 
     TESTS::
 
@@ -877,7 +876,7 @@ def DipoleGraph(n):
 
         sage: g = graphs.DipoleGraph(13); g
         Dipole graph: Multi-graph on 2 vertices
-        sage: g.show()  # long time
+        sage: g.show()                          # long time                             # needs sage.plot
 
     TESTS::
 
@@ -929,13 +928,13 @@ def BubbleSortGraph(n):
     OUTPUT:
 
     The bubble sort graph `B(n)` on `n` symbols. If `n < 1`, a
-    ``ValueError`` is returned.
+    :class:`ValueError` is returned.
 
     EXAMPLES::
 
         sage: g = graphs.BubbleSortGraph(4); g
         Bubble sort: Graph on 24 vertices
-        sage: g.plot()  # long time
+        sage: g.plot()                          # long time                             # needs sage.plot
         Graphics object consisting of 61 graphics primitives
 
     The bubble sort graph on `n = 1` symbol is the trivial graph `K_1`::
@@ -1181,6 +1180,13 @@ def CubeGraph(n, embedding=1):
         vertices in each column represents rows in Pascal's triangle. See for
         instance the :wikipedia:`10-cube` for more details.
 
+      - ``3``: oblique projection of the `n`-cube. Oblique projection involves
+        aligning one face parallel to the viewer and projecting at a specified
+        angle, maintaining equal size for edges parallel to one axis while
+        applying fixed foreshortening to others. This method simplifies the
+        representation of a four-dimensional hypercube onto a two-dimensional
+        plane, offering a geometrically consistent visualization.
+
       - ``None`` or ``O``: no embedding is provided
 
     EXAMPLES:
@@ -1215,15 +1221,20 @@ def CubeGraph(n, embedding=1):
         sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)       # long time, needs sage.plot
         sage: g = graphs.CubeGraph(9, embedding=2)
         sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)       # long time, needs sage.plot
+        sage: g = graphs.CubeGraph(9, embedding=3)
+        sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)       # long time, needs sage.plot
 
     AUTHORS:
 
     - Robert Miller
     - David Coudert
     """
-    if embedding == 1:
+    if embedding == 1 or embedding == 3:
         # construct recursively the adjacency dict and the embedding
         theta = float(pi/n)
+        if embedding == 3 and n > 2:
+            theta = float(pi/(2*n-2))
+
         d = {'': []}
         dn = {}
         p = {'': (float(0), float(0))}
@@ -1313,9 +1324,9 @@ def GoethalsSeidelGraph(k, r):
 
     EXAMPLES::
 
-        sage: graphs.GoethalsSeidelGraph(3,3)                                           # needs sage.modules
+        sage: graphs.GoethalsSeidelGraph(3,3)                                           # needs sage.combinat sage.modules
         Graph on 28 vertices
-        sage: graphs.GoethalsSeidelGraph(3,3).is_strongly_regular(parameters=True)      # needs sage.modules
+        sage: graphs.GoethalsSeidelGraph(3,3).is_strongly_regular(parameters=True)      # needs sage.combinat sage.modules
         (28, 15, 6, 10)
     """
     from sage.combinat.designs.bibd import balanced_incomplete_block_design
@@ -2137,7 +2148,7 @@ def HyperStarGraph(n, k):
         sage: g = graphs.HyperStarGraph(6,3)
         sage: sorted(g.neighbors('011100'))
         ['101100', '110100', '111000']
-        sage: g.plot()  # long time
+        sage: g.plot()                          # long time                             # needs sage.plot
         Graphics object consisting of 51 graphics primitives
 
     TESTS::
@@ -2205,11 +2216,11 @@ def LCFGraph(n, shift_list, repeats):
     INPUT:
 
 
-    -  ``n`` - the number of nodes.
+    -  ``n`` -- the number of nodes.
 
-    -  ``shift_list`` - a list of integer shifts mod n.
+    -  ``shift_list`` -- a list of integer shifts mod `n`.
 
-    -  ``repeats`` - the number of times to repeat the
+    -  ``repeats`` -- the number of times to repeat the
        process.
 
 
@@ -2406,7 +2417,7 @@ def NKStarGraph(n, k):
     EXAMPLES::
 
         sage: g = graphs.NKStarGraph(4,2)
-        sage: g.plot()  # long time
+        sage: g.plot()                          # long time                             # needs sage.plot
         Graphics object consisting of 31 graphics primitives
 
     REFERENCES:
@@ -2465,7 +2476,7 @@ def NStarGraph(n):
     EXAMPLES::
 
         sage: g = graphs.NStarGraph(4)
-        sage: g.plot()  # long time
+        sage: g.plot()                          # long time                             # needs sage.plot
         Graphics object consisting of 61 graphics primitives
 
     REFERENCES:
@@ -2639,7 +2650,7 @@ def SquaredSkewHadamardMatrixGraph(n):
 
     EXAMPLES::
 
-        sage: # needs sage.modules
+        sage: # needs sage.combinat sage.modules
         sage: G = graphs.SquaredSkewHadamardMatrixGraph(4)
         sage: G.is_strongly_regular(parameters=True)
         (225, 112, 55, 56)
@@ -2693,14 +2704,15 @@ def SwitchedSquaredSkewHadamardMatrixGraph(n):
 
     EXAMPLES::
 
-        sage: g = graphs.SwitchedSquaredSkewHadamardMatrixGraph(4)                      # needs sage.modules
-        sage: g.is_strongly_regular(parameters=True)                                    # needs sage.modules
+        sage: # needs sage.combinat sage.modules
+        sage: g = graphs.SwitchedSquaredSkewHadamardMatrixGraph(4)
+        sage: g.is_strongly_regular(parameters=True)
         (226, 105, 48, 49)
         sage: from sage.combinat.designs.twographs import twograph_descendant
-        sage: twograph_descendant(g, 0).is_strongly_regular(parameters=True)            # needs sage.modules
+        sage: twograph_descendant(g, 0).is_strongly_regular(parameters=True)
         (225, 112, 55, 56)
-        sage: gc = g.complement()                                                       # needs sage.modules
-        sage: twograph_descendant(gc, 0).is_strongly_regular(parameters=True)           # needs sage.modules
+        sage: gc = g.complement()
+        sage: twograph_descendant(gc, 0).is_strongly_regular(parameters=True)
         (225, 112, 55, 56)
 
     TESTS::
@@ -2713,7 +2725,7 @@ def SwitchedSquaredSkewHadamardMatrixGraph(n):
     G = SquaredSkewHadamardMatrixGraph(n).complement()
     G.add_vertex((4 * n - 1)**2)
     G.seidel_switching(list(range((4 * n - 1) * (2 * n - 1))))
-    G.name("switch skewhad^2+*_" + str((n)))
+    G.name("switch skewhad^2+*_" + str(n))
     return G
 
 
@@ -3264,7 +3276,7 @@ def GeneralizedSierpinskiGraph(G, k, stretch=None):
 
     - ``stretch`` -- integer (default: ``None``); stretching factor used to
       determine the positions of the vertices of the output graph. By default
-      (``None``), this value is set to twice the maximum Euclidian distance
+      (``None``), this value is set to twice the maximum Euclidean distance
       between the vertices of `G`. This parameter is used only when the vertices
       of `G` have positions.
 
@@ -3840,22 +3852,26 @@ def MathonPseudocyclicMergingGraph(M, t):
 
         sage: from sage.graphs.generators.families import MathonPseudocyclicMergingGraph as mer
         sage: from sage.graphs.generators.smallgraphs import _EllipticLinesProjectivePlaneScheme as ES
-        sage: G = mer(ES(3), 0)  # long time
-        sage: G.is_strongly_regular(parameters=True)    # long time
+
+        sage: # long time, needs sage.libs.gap
+        sage: G = mer(ES(3), 0)
+        sage: G.is_strongly_regular(parameters=True)
         (784, 243, 82, 72)
-        sage: G = mer(ES(3), 1)  # long time
-        sage: G.is_strongly_regular(parameters=True)    # long time
+        sage: G = mer(ES(3), 1)
+        sage: G.is_strongly_regular(parameters=True)
         (784, 270, 98, 90)
-        sage: G = mer(ES(3), 2)  # long time
-        sage: G.is_strongly_regular(parameters=True)    # long time
+        sage: G = mer(ES(3), 2)
+        sage: G.is_strongly_regular(parameters=True)
         (784, 297, 116, 110)
-        sage: G = mer(ES(2), 2)                                                         # needs sage.libs.gap
+        sage: G = mer(ES(2), 2)
         Traceback (most recent call last):
         ...
         AssertionError...
-        sage: M = ES(3)                                                                 # needs sage.libs.gap
-        sage: M = [M[1],M[0],M[2],M[3]]                                                 # needs sage.libs.gap
-        sage: G = mer(M, 2)                                                             # needs sage.libs.gap
+
+        sage: # needs sage.libs.gap
+        sage: M = ES(3)
+        sage: M = [M[1],M[0],M[2],M[3]]
+        sage: G = mer(M, 2)
         Traceback (most recent call last):
         ...
         AssertionError...
@@ -3915,7 +3931,13 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
         sage: G.is_strongly_regular(parameters=True)                                    # needs sage.modules sage.rings.finite_rings
         (45, 22, 10, 11)
 
-    Supplying ``G`` and ``L`` (constructed from the automorphism group of ``G``). ::
+    Supplying ``G`` and ``L`` (constructed from the automorphism group
+    of ``G``). The entries of L can't be tested directly because
+    there's some unpredictability in the way that GAP chooses a
+    representative in ``NormalSubgroups()``, the function that
+    underlies our own
+    :meth:`~sage.groups.perm_gps.permgroup.PermutationGroup_generic.normal_subgroups`
+    method::
 
         sage: # needs sage.groups sage.libs.gap sage.rings.finite_rings
         sage: G = graphs.PaleyGraph(9)
@@ -3926,18 +3948,7 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
         ....:      for z in subg]
         sage: ff = list(map(lambda y: (y[0]-1,y[1]-1),
         ....:          Permutation(map(lambda x: 1+r.index(x^-1), r)).cycle_tuples()[1:]))
-        sage: L = sum(i*(r[a]-r[b]) for i,(a,b) in zip(range(1,len(ff)+1), ff)); L
-        [ 0  1 -1 -3 -2 -4  3  4  2]
-        [-1  0  1 -4 -3 -2  2  3  4]
-        [ 1 -1  0 -2 -4 -3  4  2  3]
-        [ 3  4  2  0  1 -1 -3 -2 -4]
-        [ 2  3  4 -1  0  1 -4 -3 -2]
-        [ 4  2  3  1 -1  0 -2 -4 -3]
-        [-3 -2 -4  3  4  2  0  1 -1]
-        [-4 -3 -2  2  3  4 -1  0  1]
-        [-2 -4 -3  4  2  3  1 -1  0]
-
-        sage: # needs sage.modules sage.rings.finite_rings sage.groups sage.libs.gap
+        sage: L = sum(i*(r[a]-r[b]) for i,(a,b) in zip(range(1,len(ff)+1), ff))
         sage: G.relabel(range(9))
         sage: G3x3 = graphs.MathonPseudocyclicStronglyRegularGraph(2, G=G, L=L)
         sage: G3x3.is_strongly_regular(parameters=True)
@@ -4113,27 +4124,27 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
 
     INPUT:
 
-    - ``n`` (integer)-- a prime power
+    - ``n`` (integer) -- a prime power
 
-    - ``d`` (integer)-- must be odd if `n` is odd
+    - ``d`` (integer) -- must be odd if `n` is odd
 
     - ``Phi`` is an optional parameter of the construction; it must be either
 
-        - 'fixed'-- this will generate fixed default `\Phi_i`, for `i \in M`, or
+      - ``'fixed'`` -- this will generate fixed default `\Phi_i`, for `i \in M`, or
 
-        - 'random'-- `\Phi_i` are generated at random, or
+      - ``'random'`` -- `\Phi_i` are generated at random, or
 
-        - A dictionary describing the functions `\Phi_i`; for `i \in M`,
-          Phi[(i, T)] in `M`, for each edge T of `L` on `i`.
-          Also, each `\Phi_i` must be injective.
+      - A dictionary describing the functions `\Phi_i`; for `i \in M`,
+        Phi[(i, T)] in `M`, for each edge T of `L` on `i`.
+        Also, each `\Phi_i` must be injective.
 
     - ``Sigma`` is an optional parameter of the construction; it must be either
 
-        - 'fixed'-- this will generate a fixed default `\Sigma`, or
+      - ``'fixed'`` -- this will generate a fixed default `\Sigma`, or
 
-        - 'random'-- `\Sigma` is generated at random.
+      - ``'random'`` -- `\Sigma` is generated at random.
 
-    - ``verbose`` (Boolean)-- default is False. If True, print progress information
+    - ``verbose`` (Boolean) -- default is ``False``. If ``True``, print progress information
 
     .. SEEALSO::
 
@@ -4146,12 +4157,12 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
 
     EXAMPLES::
 
-        sage: graphs.MuzychukS6Graph(3, 3).is_strongly_regular(parameters=True)         # needs sage.modules sage.rings.finite_rings
+        sage: # needs sage.combinat sage.modules sage.rings.finite_rings
+        sage: graphs.MuzychukS6Graph(3, 3).is_strongly_regular(parameters=True)
         (378, 116, 34, 36)
-        sage: phi = {(2,(0,2)):0, (1,(1,3)):1, (0,(0,3)):1, (2,(1,2)):1,                # needs sage.modules
+        sage: phi = {(2,(0,2)):0, (1,(1,3)):1, (0,(0,3)):1, (2,(1,2)):1,
         ....:        (1,(1,2)):0, (0,(0,2)):0, (3,(0,3)):0, (3,(1,3)):1}
-        sage: graphs.MuzychukS6Graph(2, 2,                                              # needs sage.modules sage.rings.finite_rings
-        ....:                        Phi=phi).is_strongly_regular(parameters=True)
+        sage: graphs.MuzychukS6Graph(2, 2, Phi=phi).is_strongly_regular(parameters=True)
         (16, 5, 0, 2)
 
     TESTS::
