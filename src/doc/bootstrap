@@ -106,11 +106,20 @@ for PKG_BASE in $(sage-package list --has-file SPKG.rst --has-file math :standar
 done >> "$OUTPUT_INDEX"
 cat >> "$OUTPUT_INDEX" <<EOF
 
-Other
-~~~~~
+Front-end and graphics
+~~~~~~~~~~~~~~~~~~~~~~
 
 EOF
-for PKG_BASE in $(sage-package list --has-file SPKG.rst --no-file math :standard: | grep -v '^sagemath_'); do
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --no-file math --has-file front-end :standard: | grep -v '^sagemath_'); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done >> "$OUTPUT_INDEX"
+cat >> "$OUTPUT_INDEX" <<EOF
+
+Other dependencies
+~~~~~~~~~~~~~~~~~~
+
+EOF
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --no-file math --no-file front-end :standard: | grep -v '^sagemath_'); do
     echo "* :ref:\`spkg_$PKG_BASE\`"
 done >> "$OUTPUT_INDEX"
 cat >> "$OUTPUT_INDEX" <<EOF
@@ -131,11 +140,20 @@ for PKG_BASE in $(sage-package list --has-file SPKG.rst --has-file math :optiona
 done >> "$OUTPUT_INDEX"
 cat >> "$OUTPUT_INDEX" <<EOF
 
-Other
-~~~~~
+Front-end, graphics, document preparation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 EOF
-for PKG_BASE in $(sage-package list --has-file SPKG.rst --no-file math :optional: | grep -v '^sagemath_'); do
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --no-file math --has-file front-end :optional: | grep -v '^sagemath_'); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done >> "$OUTPUT_INDEX"
+cat >> "$OUTPUT_INDEX" <<EOF
+
+Other dependencies
+~~~~~~~~~~~~~~~~~~
+
+EOF
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --no-file math --no-file front-end :optional: | grep -v '^sagemath_'); do
     echo "* :ref:\`spkg_$PKG_BASE\`"
 done >> "$OUTPUT_INDEX"
 cat >> "$OUTPUT_INDEX" <<EOF
@@ -206,8 +224,8 @@ done >> "$OUTPUT_INDEX"
 
 cat >> "$OUTPUT_INDEX" <<EOF
 
-Other
-~~~~~
+Front-end, graphics, document preparation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 EOF
 for PKG_BASE in $(sage-package list --has-file SPKG.rst --no-file math :experimental: | grep -v '^sagemath_'); do
