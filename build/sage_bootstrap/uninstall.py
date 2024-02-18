@@ -89,8 +89,8 @@ def uninstall(spkg_name, sage_local, keep_files=False,
             print("Old-style or corrupt stamp file {0}"
                   .format(stamp_file), file=sys.stderr)
         else:
-            print("Package '{0}' is currently not installed"
-                  .format(spkg_name), file=sys.stderr)
+            print("No stamp file for package '{0}' in {1}"
+                  .format(spkg_name, spkg_inst), file=sys.stderr)
 
         # Run legacy uninstaller even if there is no stamp file: the
         # package may be partially installed without a stamp file
