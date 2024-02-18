@@ -5,11 +5,7 @@ symmetrica = declare_dependency(
   ]
 )
 
-py.install_sources(
-    '__init__.py',
-    'all.py',
-    subdir: 'sage/libs/symmetrica',
-)
+py.install_sources('__init__.py', 'all.py', subdir : 'sage/libs/symmetrica')
 
 extension_data = {
     'symmetrica': files('symmetrica.pyx'),

@@ -1,18 +1,18 @@
 py.install_sources(
-    'all.py',
-    'implicit_plot3d.py',
-    'introduction.py',
-    'list_plot3d.py',
-    'parametric_plot3d.py',
-    'platonic.py',
-    'plot3d.py',
-    'plot_field3d.py',
-    'revolution_plot3d.py',
-    'shapes2.py',
-    'tachyon.py',
-    'texture.py',
-    'tri_plot.py',
-    subdir: 'sage/plot/plot3d',
+  'all.py',
+  'implicit_plot3d.py',
+  'introduction.py',
+  'list_plot3d.py',
+  'parametric_plot3d.py',
+  'platonic.py',
+  'plot3d.py',
+  'plot_field3d.py',
+  'revolution_plot3d.py',
+  'shapes2.py',
+  'tachyon.py',
+  'texture.py',
+  'tri_plot.py',
+  subdir : 'sage/plot/plot3d'
 )
 
 extension_data = {

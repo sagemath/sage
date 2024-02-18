@@ -1,7 +1,4 @@
-py.install_sources(
-    'all.py',
-    subdir: 'sage/groups/perm_gps/partn_ref',
-)
+py.install_sources('all.py', subdir : 'sage/groups/perm_gps/partn_ref')
 
 extension_data = {
     'automorphism_group_canonical_label': files('automorphism_group_canonical_label.pyx'),

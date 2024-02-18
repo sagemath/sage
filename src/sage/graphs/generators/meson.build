@@ -1,16 +1,16 @@
 py.install_sources(
-    'all.py',
-    'basic.py',
-    'chessboard.py',
-    'classical_geometries.py',
-    'degree_sequence.py',
-    'families.py',
-    'intersection.py',
-    'platonic_solids.py',
-    'random.py',
-    'smallgraphs.py',
-    'world_map.py',
-    subdir: 'sage/graphs/generators',
+  'all.py',
+  'basic.py',
+  'chessboard.py',
+  'classical_geometries.py',
+  'degree_sequence.py',
+  'families.py',
+  'intersection.py',
+  'platonic_solids.py',
+  'random.py',
+  'smallgraphs.py',
+  'world_map.py',
+  subdir : 'sage/graphs/generators'
 )
 
 extension_data = {

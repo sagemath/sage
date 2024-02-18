@@ -1,8 +1,4 @@
-py.install_sources(
-    'all.py',
-    'semimonomial_transformation_group.py',
-    subdir: 'sage/groups/semimonomial_transformations',
-)
+py.install_sources('all.py', 'semimonomial_transformation_group.py', subdir : 'sage/groups/semimonomial_transformations')
 
 extension_data = {
     'semimonomial_transformation': files('semimonomial_transformation.pyx'),

@@ -1,17 +1,17 @@
 py.install_sources(
-    'all.py',
-    'buzzard.py',
-    'congroup.py',
-    'congroup_element.py',
-    'cusps.py',
-    'cusps_nf.py',
-    'dims.py',
-    'dirichlet.py',
-    'etaproducts.py',
-    'hypergeometric_motive.py',
-    'multiple_zeta.py',
-    'multiple_zeta_F_algebra.py',
-    subdir: 'sage/modular',
+  'all.py',
+  'buzzard.py',
+  'congroup.py',
+  'congroup_element.py',
+  'cusps.py',
+  'cusps_nf.py',
+  'dims.py',
+  'dirichlet.py',
+  'etaproducts.py',
+  'hypergeometric_motive.py',
+  'multiple_zeta.py',
+  'multiple_zeta_F_algebra.py',
+  subdir : 'sage/modular'
 )
 
 extension_data = {

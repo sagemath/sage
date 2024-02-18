@@ -1,9 +1,4 @@
-py.install_sources(
-    '__init__.py',
-    'all.py',
-    'utils.pxd',
-    subdir: 'sage/libs/mpmath',
-)
+py.install_sources('__init__.py', 'all.py', 'utils.pxd', subdir : 'sage/libs/mpmath')
 
 extension_data = {
     'ext_impl': files('ext_impl.pyx'),

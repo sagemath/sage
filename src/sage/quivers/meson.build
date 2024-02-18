@@ -1,11 +1,12 @@
 py.install_sources(
-    'algebra.py',
-    'all.py',
-    'homspace.py',
-    'morphism.py',
-    'path_semigroup.py',
-    'representation.py',
-    subdir: 'sage/quivers',
+  'algebra.py',
+  'all.py',
+  'ar_quiver.py',
+  'homspace.py',
+  'morphism.py',
+  'path_semigroup.py',
+  'representation.py',
+  subdir : 'sage/quivers'
 )
 
 extension_data = {

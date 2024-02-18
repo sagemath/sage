@@ -1,9 +1,4 @@
-py.install_sources(
-    'all.py',
-    'basic_stats.py',
-    'r.py',
-    subdir: 'sage/stats',
-)
+py.install_sources('all.py', 'basic_stats.py', 'r.py', subdir : 'sage/stats')
 
 extension_data = {
     'intlist': files('intlist.pyx'),

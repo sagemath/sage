@@ -1,15 +1,15 @@
 py.install_sources(
-    'all.py',
-    'arithgroup_generic.py',
-    'arithgroup_perm.py',
-    'congroup_gamma.py',
-    'congroup_gamma0.py',
-    'congroup_gamma1.py',
-    'congroup_gammaH.py',
-    'congroup_generic.py',
-    'congroup_sl2z.py',
-    'tests.py',
-    subdir: 'sage/modular/arithgroup',
+  'all.py',
+  'arithgroup_generic.py',
+  'arithgroup_perm.py',
+  'congroup_gamma.py',
+  'congroup_gamma0.py',
+  'congroup_gamma1.py',
+  'congroup_gammaH.py',
+  'congroup_generic.py',
+  'congroup_sl2z.py',
+  'tests.py',
+  subdir : 'sage/modular/arithgroup'
 )
 
 extension_data = {

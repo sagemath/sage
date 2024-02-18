@@ -1,12 +1,12 @@
 py.install_sources(
-    '__init__.py',
-    'all.py',
-    'constructor.py',
-    'homspace.pxd',
-    'interface.py',
-    'mat.pxd',
-    'newforms.pxd',
-    subdir: 'sage/libs/eclib',
+  '__init__.py',
+  'all.py',
+  'constructor.py',
+  'homspace.pxd',
+  'interface.py',
+  'mat.pxd',
+  'newforms.pxd',
+  subdir : 'sage/libs/eclib'
 )
 
 extension_data_cpp = {

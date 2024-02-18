@@ -5,12 +5,7 @@ if not lcalc.found()
     lcalc = subproject('lcalc').get_variable('lcalc_dep')
 endif
 
-py.install_sources(
-    '__init__.py',
-    'lcalc_Lfunction.pxd',
-    'lcalc_sage.h',
-    subdir: 'sage/libs/lcalc',
-)
+py.install_sources('__init__.py', 'lcalc_Lfunction.pxd', 'lcalc_sage.h', subdir : 'sage/libs/lcalc')
 
 extension_data_cpp = {
     'lcalc_Lfunction': files('lcalc_Lfunction.pyx'),

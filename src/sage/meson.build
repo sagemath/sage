@@ -73,22 +73,22 @@ foreach package : no_processing
 endforeach
 
 py.install_sources(
-    '__init__.py',
-    'all.py',
-    'all__sagemath_bliss.py',
-    'all__sagemath_categories.py',
-    'all__sagemath_coxeter3.py',
-    'all__sagemath_environment.py',
-    'all__sagemath_mcqd.py',
-    'all__sagemath_meataxe.py',
-    'all__sagemath_objects.py',
-    'all__sagemath_repl.py',
-    'all__sagemath_sirocco.py',
-    'all__sagemath_tdlib.py',
-    'all_cmdline.py',
-    'env.py',
-    'version.py',
-    subdir: 'sage',
+  '__init__.py',
+  'all.py',
+  'all__sagemath_bliss.py',
+  'all__sagemath_categories.py',
+  'all__sagemath_coxeter3.py',
+  'all__sagemath_environment.py',
+  'all__sagemath_mcqd.py',
+  'all__sagemath_meataxe.py',
+  'all__sagemath_objects.py',
+  'all__sagemath_repl.py',
+  'all__sagemath_sirocco.py',
+  'all__sagemath_tdlib.py',
+  'all_cmdline.py',
+  'env.py',
+  'version.py',
+  subdir : 'sage'
 )
 
 subdir('cpython')

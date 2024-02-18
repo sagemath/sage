@@ -1,12 +1,12 @@
 py.install_sources(
-    'all.py',
-    'all__sagemath_polyhedra.py',
-    'interactive_simplex_method.py',
-    'knapsack.py',
-    'linear_tensor.py',
-    'linear_tensor_constraints.py',
-    'optimize.py',
-    subdir: 'sage/numerical',
+  'all.py',
+  'all__sagemath_polyhedra.py',
+  'interactive_simplex_method.py',
+  'knapsack.py',
+  'linear_tensor.py',
+  'linear_tensor_constraints.py',
+  'optimize.py',
+  subdir : 'sage/numerical'
 )
 
 extension_data = {

@@ -1,13 +1,13 @@
 py.install_sources(
-    'all.py',
-    'distributions.py',
-    'fund_domain.py',
-    'manin_map.py',
-    'modsym.py',
-    'padic_lseries.py',
-    'sigma0.py',
-    'space.py',
-    subdir: 'sage/modular/pollack_stevens',
+  'all.py',
+  'distributions.py',
+  'fund_domain.py',
+  'manin_map.py',
+  'modsym.py',
+  'padic_lseries.py',
+  'sigma0.py',
+  'space.py',
+  subdir : 'sage/modular/pollack_stevens'
 )
 
 extension_data = {

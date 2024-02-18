@@ -1,13 +1,13 @@
 py.install_sources(
-    'all.py',
-    'constructor.py',
-    'cubegroup.py',
-    'permgroup.py',
-    'permgroup_morphism.py',
-    'permgroup_named.py',
-    'permutation_groups_catalog.py',
-    'symgp_conjugacy_class.py',
-    subdir: 'sage/groups/perm_gps',
+  'all.py',
+  'constructor.py',
+  'cubegroup.py',
+  'permgroup.py',
+  'permgroup_morphism.py',
+  'permgroup_named.py',
+  'permutation_groups_catalog.py',
+  'symgp_conjugacy_class.py',
+  subdir : 'sage/groups/perm_gps'
 )
 
 extension_data = {

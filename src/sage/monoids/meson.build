@@ -1,17 +1,17 @@
 py.install_sources(
-    'all.py',
-    'automatic_semigroup.py',
-    'free_abelian_monoid.py',
-    'free_monoid.py',
-    'free_monoid_element.py',
-    'hecke_monoid.py',
-    'indexed_free_monoid.py',
-    'monoid.py',
-    'string_monoid.py',
-    'string_monoid_element.py',
-    'string_ops.py',
-    'trace_monoid.py',
-    subdir: 'sage/monoids',
+  'all.py',
+  'automatic_semigroup.py',
+  'free_abelian_monoid.py',
+  'free_monoid.py',
+  'free_monoid_element.py',
+  'hecke_monoid.py',
+  'indexed_free_monoid.py',
+  'monoid.py',
+  'string_monoid.py',
+  'string_monoid_element.py',
+  'string_ops.py',
+  'trace_monoid.py',
+  subdir : 'sage/monoids'
 )
 
 extension_data = {

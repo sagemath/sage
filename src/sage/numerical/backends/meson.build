@@ -1,16 +1,16 @@
 py.install_sources(
-    'all.py',
-    'all__sagemath_polyhedra.py',
-    'cvxopt_backend_test.py',
-    'cvxpy_backend_test.py',
-    'generic_backend_test.py',
-    'glpk_backend_test.py',
-    'glpk_exact_backend_test.py',
-    'interactivelp_backend_test.py',
-    'logging_backend.py',
-    'ppl_backend_test.py',
-    'scip_backend_test.py',
-    subdir: 'sage/numerical/backends',
+  'all.py',
+  'all__sagemath_polyhedra.py',
+  'cvxopt_backend_test.py',
+  'cvxpy_backend_test.py',
+  'generic_backend_test.py',
+  'glpk_backend_test.py',
+  'glpk_exact_backend_test.py',
+  'interactivelp_backend_test.py',
+  'logging_backend.py',
+  'ppl_backend_test.py',
+  'scip_backend_test.py',
+  subdir : 'sage/numerical/backends'
 )
 
 extension_data = {

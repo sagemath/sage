@@ -1,7 +1,4 @@
-py.install_sources(
-    'all.py',
-    subdir: 'sage/geometry/polyhedron/combinatorial_polyhedron',
-)
+py.install_sources('all.py', subdir : 'sage/geometry/polyhedron/combinatorial_polyhedron')
 
 extension_data = {
     'base': files('base.pyx'),

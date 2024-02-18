@@ -7,19 +7,19 @@ sirocco = declare_dependency(
 ecl = cc.find_library('ecl')
 
 py.install_sources(
-    'all.py',
-    'all__sagemath_coxeter3.py',
-    'all__sagemath_meataxe.py',
-    'all__sagemath_objects.py',
-    'all__sagemath_sirocco.py',
-    'ecl.pxd',
-    'eclsig.h',
-    'gmpxx.pxd',
-    'iml.pxd',
-    'm4ri.pxd',
-    'm4rie.pxd',
-    'meataxe.pxd',
-    subdir: 'sage/libs',
+  'all.py',
+  'all__sagemath_coxeter3.py',
+  'all__sagemath_meataxe.py',
+  'all__sagemath_objects.py',
+  'all__sagemath_sirocco.py',
+  'ecl.pxd',
+  'eclsig.h',
+  'gmpxx.pxd',
+  'iml.pxd',
+  'm4ri.pxd',
+  'm4rie.pxd',
+  'meataxe.pxd',
+  subdir : 'sage/libs'
 )
 
 extension_data = {
