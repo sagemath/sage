@@ -520,7 +520,7 @@ class EllipticCurveHom_scalar(EllipticCurveHom):
         Determine whether the isogeny is cyclic (separable with cyclic kernel).
 
         Since this class implements only scalar multiplication isogenies,
-        they are never cyclic, except the trivial [1].
+        they are never cyclic except for the trivial `[1]`.
 
         EXAMPLES::
 

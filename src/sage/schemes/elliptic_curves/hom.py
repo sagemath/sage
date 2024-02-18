@@ -936,14 +936,12 @@ class EllipticCurveHom(Morphism):
         ALGORITHM:
 
         Separable isogenies with squarefree degrees are cyclic.
-        For each $\ell \ne p$ such that its square divides the degree of the isogeny,
-        test if $E[\ell]$ is mapped to 0 by reducing the kernel polynomial
-        modulo the division polynomial. If for all $\ell$ it does not happen,
+        For each `\ell \ne p` such that its square divides the degree of the isogeny,
+        test if `E[\ell]` is mapped to `0` by reducing the kernel polynomial
+        modulo the division polynomial. If for all `\ell` it does not happen,
         then the result is cyclic.
 
-        EXAMPLES:
-
-        Here we include also special cases which do not use the general algorithm. ::
+        EXAMPLES::
 
             sage: E = EllipticCurve(GF(79), [7,7])
             sage: phi = E.scalar_multiplication(5)

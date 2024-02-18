@@ -1363,7 +1363,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         - ``max_l`` -- (default: 31) a bound on the primes to be tested.
           This is only used if ``l`` is None.
 
-        - ``cyclic_after`` -- (default: None) an isogeny with codomain equal to
+        - ``cyclic_after`` -- (default: ``None``) an isogeny with codomain equal to
           `self`. If set, then only isogenies that are cyclic continuations of
           the given isogeny are returned.
 
@@ -1533,8 +1533,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: E.isogenies_prime_degree(5)
             []
 
-        The optional argument `cyclic_after` can be used to easily construct cyclic
-        isogeny chains (i.e., avoid hitting dual isogenies):
+        The optional argument ``cyclic_after`` can be used to easily construct cyclic
+        isogeny chains (i.e., avoid hitting dual isogenies)::
 
             sage: E = EllipticCurve(GF(13^6), [2,8])
             sage: phi1 = choice(E.isogenies_prime_degree(3))
@@ -1627,7 +1627,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             ...
             ValueError: 4 is not prime.
 
-        Test for bug in PR#37388::
+        Test for bug in :issue:`37388`::
 
             sage: E0 = EllipticCurve(GF(19), [4, 0])
             sage: phi1 = E0.isogenies_prime_degree(5)[0]
@@ -1662,9 +1662,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         else:
             dom = cyclic_after.domain()
             if cyclic_after.codomain() != self:
-                raise ValueError("The codomain of `cyclic_after` must be the same curve")
+                raise ValueError("the codomain of `cyclic_after` must be the same curve")
             if not cyclic_after.is_separable():
-                raise ValueError("The `cyclic_after` isogeny must be separable")
+                raise ValueError("the `cyclic_after` isogeny must be separable")
             ret = []
             for d in L:
                 for phi in isogenies_prime_degree(self, d):
@@ -1672,7 +1672,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                     # but also do some overhead (construct composte map, check degrees
                     # are primes, etc.)
                     # So we check j-invariants here to make most cases pass fast
-                    if (cyclic_after.degree().is_prime() and phi.codomain().j_invariant() != dom.j_invariant()):
+                    if cyclic_after.degree().is_prime() and phi.codomain().j_invariant() != dom.j_invariant():
                         ret.append(phi)
                     elif (phi * cyclic_after).is_cyclic():
                         ret.append(phi)

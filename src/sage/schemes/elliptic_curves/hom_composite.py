@@ -903,26 +903,25 @@ class EllipticCurveHom_composite(EllipticCurveHom):
 
         ALGORITHM:
 
-        For each prime $\ell$ with $\ell^2$ dividing the isogeny degree,
-        test that $\ell$-torsion is not fully nullified. This is done by
+        For each prime `\ell` with `\ell^2` dividing the isogeny degree,
+        test that `\ell`-torsion is not fully nullified. This is done by
         evaluating the isogeny modulo the division polynomial of the domain curve,
         reducing the modulus on the way when parts of the torsion get nullified.
 
         For each $\ell$, only the smallest segment of isogenies is considered,
         such that it includes all isogenies whose degrees are divisible by $\ell$.
 
-        INPUT: The following optimization flags are intended only for debugging
-        and testing.
+        INPUT:
 
-        If `_check_j` is set, then the segment is further shrinked by eliminating
-        prefix/suffix chains of $\ell$-isogenies via j-invariant checks. In many
-        applications, the isogeny degrees would be ordered, so that only
-        j-invariant checks would be performed (unless there is a "backtracking"
-        j-invariant step, which is not necessarily the dual).
+        - ``_check_j`` -- (bool, default: ``True``); if set, the segment is further shrinked by eliminating
+          prefix/suffix chains of `\ell`-isogenies via j-invariant checks. In many
+          applications, the isogeny degrees would be ordered, so that only
+          j-invariant checks would be performed (unless there is a "backtracking"
+          j-invariant step, which is not necessarily the dual). For internal use only.
 
-        If `_reduce_kernel` is set, then, after the first step in the segment,
-        the modulus is replaced by the kernel polynomial of the dual isogeny,
-        which has degree (l-1)/2 instead of (l^2-1)/2.
+        - ``_reduce_kernel`` -- (bool, default: ``True``); if set, after the first step in the segment,
+          the modulus is replaced by the kernel polynomial of the dual isogeny,
+          which has degree `(\ell-1)/2` instead of `(\ell^2-1)/2`. For internal use only.
 
         EXAMPLES::
 
@@ -936,8 +935,8 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             sage: sorted((phi2 * phi1).is_cyclic() for phi2 in phi2_list)
             [False, True, True]
 
-        Works even if the cyclicity is broken across more than 2 isogenies:
-        (e.g., when commuting isogenies are swapped: degrees 2-2-5 <-> 2-5-2)
+        The method works even if the cyclicity is broken across more than 2 isogenies
+        such as when the order of commuting isogenies are swapped from 2-2-5 to 2-5-2::
 
             sage: phi2 = phi1.codomain().isogenies_prime_degree(5)[0]
             sage: phi3_list = phi2.codomain().isogenies_prime_degree(2)
@@ -969,7 +968,7 @@ class EllipticCurveHom_composite(EllipticCurveHom):
 
         This test involves multiple "backtracking" edges which are not duals. We have only 2 supersingular
         j-invariants, and so all supersingular isogenies have to be between them. In particular,
-        there are $7^2$-isogenies on j-invariants 7-7-7 which is cyclic.
+        there are `7^2`-isogenies on j-invariants 7-7-7 which is cyclic::
 
             sage: [j for j in GF(19**2) if EllipticCurve(j=j).is_supersingular()]
             [7, 18]
@@ -1085,11 +1084,11 @@ def _sieve_torsion_through_isogenies(phis, ell, use_second_curve=True):
 
     INPUT:
 
-    - phis (list of isogenies) -- list of isogenies to propagate the torsion through
+    - ``phis`` -- a list of isogenies to propagate the torsion through.
 
-    - ell -- an integer defining the torsion $E[\ell]$
+    - ``ell`` -- an integer defining the torsion `E[\ell]`.
 
-    - use_second_curve (optional, default: ``True``): whether to base
+    - ``use_second_curve`` (optional, default: ``True``): whether to base
       the remaining torsion representation to the second curve (which is faster
       because of lower degree).
 
@@ -1130,9 +1129,9 @@ def _sieve_torsion_through_isogenies(phis, ell, use_second_curve=True):
         - :meth:`sage.schemes.elliptic_curves.hom_composit.EllipticCurveHom_composite.is_cyclic`
     """
     if not phis:
-        raise ValueError("List of isogenies must be nonempty")
+        raise ValueError("list of isogenies must be nonempty")
     if any(phi.is_zero() or not phi.is_separable() for phi in phis):
-        return phis[0].domain().base_ring()['x'](1)
+        return phis[0].domain().base_ring()['x'].one()
 
     E0 = phis[0].domain()
     p = E0.base_ring().characteristic()

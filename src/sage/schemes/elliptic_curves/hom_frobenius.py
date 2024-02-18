@@ -525,7 +525,7 @@ class EllipticCurveHom_frobenius(EllipticCurveHom):
         Determine whether the isogeny is cyclic (separable with cyclic kernel).
 
         Since this class implements only purely inseparable isogenies,
-        they are only cyclic in the trivial case (degree = p^0 = 1).
+        they are only cyclic in the trivial case i.e. when degree is `1`.
 
         EXAMPLES::
 
