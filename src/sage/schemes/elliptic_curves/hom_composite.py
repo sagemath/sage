@@ -911,6 +911,19 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         For each $\ell$, only the smallest segment of isogenies is considered,
         such that it includes all isogenies whose degrees are divisible by $\ell$.
 
+        INPUT: The following optimization flags are intended only for debugging
+        and testing.
+
+        If `_check_j` is set, then the segment is further shrinked by eliminating
+        prefix/suffix chains of $\ell$-isogenies via j-invariant checks. In many
+        applications, the isogeny degrees would be ordered, so that only
+        j-invariant checks would be performed (unless there is a "backtracking"
+        j-invariant step, which is not necessarily the dual).
+
+        If `_reduce_kernel` is set, then, after the first step in the segment,
+        the modulus is replaced by the kernel polynomial of the dual isogeny,
+        which has degree (l-1)/2 instead of (l^2-1)/2.
+
         EXAMPLES::
 
             sage: E0 = EllipticCurve(GF((2**64+13)**2), [4, 0])
@@ -924,12 +937,22 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             [False, True, True]
 
         Works even if the cyclicity is broken across more than 2 isogenies:
-        (e.g., when commuting isogenies are swapped: degrees 2-2-3 <-> 2-3-2)
+        (e.g., when commuting isogenies are swapped: degrees 2-2-5 <-> 2-5-2)
 
             sage: phi2 = phi1.codomain().isogenies_prime_degree(5)[0]
             sage: phi3_list = phi2.codomain().isogenies_prime_degree(2)
             sage: sorted((phi3 * phi2 * phi1).is_cyclic() for phi3 in phi3_list)
             [False, True, True]
+
+        "Recursive" composite isogenies are not flattened, but should still
+        return correct results:
+
+            sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
+            sage: EllipticCurveHom_composite.from_factors([phi1.dual() * phi1]).is_cyclic()
+            False
+            sage: phi2 = choice([phi2 for phi2 in phi2_list if (phi2 * phi1).is_cyclic()])
+            sage: EllipticCurveHom_composite.from_factors([phi2 * phi1]).is_cyclic()
+            True
 
         .. SEEALSO::
 
