@@ -3081,7 +3081,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         sep = self._domain.isogeny(f, codomain=frob.codomain())
         return frob, sep
 
-
     def dual(self):
         r"""
         Return the isogeny dual to this isogeny.
