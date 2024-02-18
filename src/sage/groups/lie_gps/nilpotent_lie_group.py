@@ -310,7 +310,7 @@ class NilpotentLieGroup(Group, DifferentiableManifold):
         return R_a.differential(self.one()).matrix().subs(asubs)
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return a tuple of elements whose one-parameter subgroups generate
         the Lie group.
