@@ -363,6 +363,15 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                *      *       **
                *      *       *
                *
+
+        We can get the unicode art when there is no ``one_basis`` method
+        (and the basis keys do not compare with ``None``)::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: L = DC3.regular_representation(QQ, side='left')
+            sage: E2 = L.exterior_power(2)
+            sage: ascii_art(E2.an_element())
+            2*()/\(5,6,7) + 2*()/\(5,7,6) + 3*()/\(1,2)(3,4)
         """
         from sage.misc.repr import coeff_repr
         terms = self._sorted_items_for_printing()
@@ -395,7 +404,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                     elif coeff == "-1":
                         coeff = "-"
                     elif b._l > 0:
-                        if len(coeff) > 0 and monomial == one_basis and strip_one:
+                        if one_basis is not None and len(coeff) > 0 and monomial == one_basis and strip_one:
                             b = empty_ascii_art # ""
                         else:
                             b = AsciiArt([scalar_mult]) + b
@@ -437,6 +446,15 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
             sage: unicode_art([M.zero()])  # indirect doctest                           # needs sage.combinat
             [ 0 ]
+
+        We can get the unicode art when there is no ``one_basis`` method
+        (and the basis keys do not compare with ``None``)::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: L = DC3.regular_representation(QQ, side='left')
+            sage: E2 = L.exterior_power(2)
+            sage: unicode_art(E2.an_element())
+            2*()∧(5,6,7) + 2*()∧(5,7,6) + 3*()∧(1,2)(3,4)
         """
         from sage.misc.repr import coeff_repr
         terms = self._sorted_items_for_printing()
@@ -469,7 +487,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                     elif coeff == "-1":
                         coeff = "-"
                     elif b._l > 0:
-                        if len(coeff) > 0 and monomial == one_basis and strip_one:
+                        if one_basis is not None and len(coeff) > 0 and monomial == one_basis and strip_one:
                             b = empty_unicode_art  # ""
                         else:
                             b = UnicodeArt([scalar_mult]) + b
