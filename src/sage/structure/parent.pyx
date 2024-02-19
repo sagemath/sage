@@ -2687,14 +2687,17 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                     # This should always work because parent_is_integers(S) is True
                     connecting = R._internal_coerce_map_from(S)
 
-                    # Now we check if there's an element action from Integers
-                    action = detect_element_action(self, R, self_on_left, self_el, R_el)
-                    # When this is not None, we can do the Precomposed action
-                    if action is not None:
-                        if self_on_left:
-                            return PrecomposedAction(action, None, connecting)
-                        else:
-                            return PrecomposedAction(action, connecting, None)
+                    # TODO: is this ever not None?
+                    if connecting is not None:
+                        # Now we check if there's an element action from Integers
+                        action = detect_element_action(self, R, self_on_left, self_el, R_el)
+                        # When this is not None, we can do the Precomposed action
+                        if action is not None:
+                            if self_on_left:
+                                action = PrecomposedAction(action, None, connecting) 
+                            else:
+                                action = PrecomposedAction(action, connecting, None)
+                            return action
 
                     # Otherwise, we do the most basic IntegerMulAction
                     from sage.structure.coerce_actions import IntegerMulAction
