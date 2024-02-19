@@ -2678,6 +2678,25 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                     return action
 
                 if parent_is_integers(S) and not self.has_coerce_map_from(S):
+                    # Try the above again, but first coerce integer-like type to Integer
+                    # with a connecting coersion
+                    R_el = _Integer(S_el)   # Map integer-like to Integer
+                    R = parent(R_el)        # Is this the best way to get the Integer parent?
+
+                    # Compute the coercsion from whatever S is to the Integer class
+                    # This should always work because parent_is_integers(S) is True
+                    connecting = R._internal_coerce_map_from(S)
+
+                    # Now we check if there's an element action from Integers
+                    action = detect_element_action(self, R, self_on_left, self_el, R_el)
+                    # When this is not None, we can do the Precomposed action
+                    if action is not None:
+                        if self_on_left:
+                            return PrecomposedAction(action, None, connecting)
+                        else:
+                            return PrecomposedAction(action, connecting, None)
+
+                    # Otherwise, we do the most basic IntegerMulAction
                     from sage.structure.coerce_actions import IntegerMulAction
                     try:
                         return IntegerMulAction(S, self, not self_on_left, self_el)
