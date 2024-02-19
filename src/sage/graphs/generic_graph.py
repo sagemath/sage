@@ -22999,10 +22999,7 @@ class GenericGraph(GenericGraph_pyx):
         is relabeled to ``l[0]``, the second to ``l[1]``, ...
 
         If ``perm`` is a permutation, then each vertex ``v`` is
-        relabeled to ``perm(v)``. Caveat: this assumes that the
-        vertices are labelled `\{0,1,...,n-1\}`; since permutations
-        act by default on the set `\{1,2,...,n\}`, this is achieved by
-        identifying `n` and `0`.
+        relabeled to ``perm(v)``.
 
         If ``perm`` is ``None``, the graph is relabeled to be on the
         vertices `\{0,1,...,n-1\}`. This is *not* any kind of canonical
