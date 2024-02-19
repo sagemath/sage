@@ -258,11 +258,11 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
             True
         """
         return isinstance(other, GeneralizedReedSolomonCode) \
-                and self.base_field() == other.base_field() \
-                and self.length() == other.length() \
-                and self.dimension() == other.dimension() \
-                and self.evaluation_points() == other.evaluation_points() \
-                and self.column_multipliers() == other.column_multipliers()
+            and self.base_field() == other.base_field() \
+            and self.length() == other.length() \
+            and self.dimension() == other.dimension() \
+            and self.evaluation_points() == other.evaluation_points() \
+            and self.column_multipliers() == other.column_multipliers()
 
     def __hash__(self):
         """
@@ -298,9 +298,9 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
             [40, 12, 29] Generalized Reed-Solomon Code over GF(59)
         """
         return "[%s, %s, %s] %sReed-Solomon Code over GF(%s)"\
-                % (self.length(), self.dimension(), self.minimum_distance(),
-                   "Generalized " if self.is_generalized() else "",
-                   self.base_field().cardinality())
+            % (self.length(), self.dimension(), self.minimum_distance(),
+               "Generalized " if self.is_generalized() else "",
+               self.base_field().cardinality())
 
     def _latex_(self):
         r"""
@@ -319,9 +319,9 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
             [40, 12, 29] \textnormal{ Generalized Reed-Solomon Code over } \Bold{F}_{59}
         """
         return "[%s, %s, %s] \\textnormal{ %sReed-Solomon Code over } %s"\
-                % (self.length(), self.dimension(), self.minimum_distance(),
-                   "Generalized " if self.is_generalized() else "",
-                   self.base_field()._latex_())
+            % (self.length(), self.dimension(), self.minimum_distance(),
+               "Generalized " if self.is_generalized() else "",
+               self.base_field()._latex_())
 
     def minimum_distance(self):
         r"""
@@ -390,7 +390,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
             sage: C2.is_generalized()
             True
         """
-        return not all( beta.is_one() for beta in self.column_multipliers() )
+        return not all(beta.is_one() for beta in self.column_multipliers())
 
     @cached_method
     def multipliers_product(self):
@@ -538,7 +538,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
         q = self.base_ring().order()
         s = SR.var('s')
         wd = [1] + [0] * (d - 1)
-        for i in range(d, n+1):
+        for i in range(d, n + 1):
             tmp = binomial(n, i) * (q - 1)
             wd.append(tmp * symbolic_sum(binomial(i-1, s) * (-1)**s * q**(i - d - s), s, 0, i-d))
         return wd
@@ -647,9 +647,9 @@ def ReedSolomonCode(base_field, length, dimension, primitive_root=None):
     else:
         if primitive_root.multiplicative_order() != length:
             raise ValueError("Supplied primitive_root is not a primitive n'th root of unity")
-    return GeneralizedReedSolomonCode([ primitive_root**i for i in range(length) ], dimension)
+    return GeneralizedReedSolomonCode([primitive_root**i for i in range(length)], dimension)
 
-####################### encoders ###############################
+# ###################### encoders ###############################
 
 
 class GRSEvaluationVectorEncoder(Encoder):
@@ -723,7 +723,7 @@ class GRSEvaluationVectorEncoder(Encoder):
             False
         """
         return isinstance(other, GRSEvaluationVectorEncoder) \
-                and self.code() == other.code()
+            and self.code() == other.code()
 
     def _repr_(self):
         r"""
@@ -788,7 +788,7 @@ class GRSEvaluationVectorEncoder(Encoder):
         C = self.code()
         alphas = C.evaluation_points()
         col_mults = C.column_multipliers()
-        g = matrix(C.base_field(), C.dimension(), C.length(), lambda i,j: col_mults[j] * alphas[j]**i)
+        g = matrix(C.base_field(), C.dimension(), C.length(), lambda i, j: col_mults[j] * alphas[j]**i)
         g.set_immutable()
         return g
 
@@ -1086,7 +1086,7 @@ class GRSEvaluationPolynomialEncoder(Encoder):
     polynomial_ring = message_space
 
 
-####################### decoders ###############################
+# ###################### decoders ###############################
 
 
 class GRSBerlekampWelchDecoder(Decoder):
@@ -1184,7 +1184,7 @@ class GRSBerlekampWelchDecoder(Decoder):
              \textnormal{ Reed-Solomon Code over } \Bold{F}_{59}
         """
         return "\\textnormal{Berlekamp Welch decoder for }%s"\
-                % self.code()._latex_()
+            % self.code()._latex_()
 
     def _decode_to_code_and_message(self, r):
         r"""
@@ -1229,14 +1229,15 @@ class GRSBerlekampWelchDecoder(Decoder):
         col_mults = C.column_multipliers()
 
         r_list = copy(r)
-        r_list = [r[i]/col_mults[i] for i in range(0, C.length())]
+        r_list = [r[i] / col_mults[i] for i in range(C.length())]
 
-        t = (C.minimum_distance()-1) // 2
-        l0 = n-1-t
-        l1 = n-1-t-(k-1)
-        S = matrix(C.base_field(), n, l0+l1+2,
-                    lambda i, j: (C.evaluation_points()[i])**j if j < (l0+1)
-                    else r_list[i]*(C.evaluation_points()[i])**(j-(l0+1)))
+        t = (C.minimum_distance() - 1) // 2
+        l0 = n - 1 - t
+        l1 = n - t - k
+        pts = C.evaluation_points()
+        S = matrix(C.base_field(), n, l0 + l1 + 2,
+                   lambda i, j: (pts[i]**j if j < (l0 + 1)
+                                 else r_list[i] * pts[i]**(j - (l0 + 1))))
         S = S.right_kernel()
         S = S.basis_matrix().row(0)
         R = C.base_field()['x']
@@ -1574,7 +1575,7 @@ class GRSGaoDecoder(Decoder):
 
         r = b
         prev_r = a
-        while(r.degree() >= stop):
+        while r.degree() >= stop:
             q = prev_r.quo_rem(r)[0]
             (prev_r, r) = (r, prev_r - q * r)
             (prev_s, s) = (s, prev_s - q * s)
@@ -1858,9 +1859,9 @@ class GRSErrorErasureDecoder(Decoder):
             False
         """
         return isinstance(other, GRSErrorErasureDecoder) \
-                and self.code() == other.code()
+            and self.code() == other.code()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1890,7 +1891,7 @@ class GRSErrorErasureDecoder(Decoder):
              \textnormal{ Reed-Solomon Code over } \Bold{F}_{59}
         """
         return "\\textnormal{Error-Erasure decoder for }%s"\
-                % self.code()._latex_()
+            % self.code()._latex_()
 
     def decode_to_message(self, word_and_erasure_vector):
         r"""
@@ -2095,8 +2096,8 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
             False
         """
         return isinstance(other, GRSKeyEquationSyndromeDecoder) \
-                and self.code() == other.code()\
-                and self.input_space() == other.input_space()
+            and self.code() == other.code()\
+            and self.input_space() == other.input_space()
 
     def _repr_(self):
         r"""
@@ -2165,7 +2166,7 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
         prev_r = a
         r = b
 
-        while(r.degree() >= t.degree()):
+        while r.degree() >= t.degree():
             q = prev_r.quo_rem(r)[0]
             prev_r, r = r, prev_r - q * r
             prev_t, t = t, prev_t - q * t
@@ -2376,10 +2377,10 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
             sage: D.decoding_radius()
             14
         """
-        return (self.code().minimum_distance()-1) // 2
+        return (self.code().minimum_distance() - 1) // 2
 
 
-####################### registration ###############################
+# ###################### registration ###############################
 
 GeneralizedReedSolomonCode._registered_encoders["EvaluationVector"] = GRSEvaluationVectorEncoder
 GeneralizedReedSolomonCode._registered_encoders["EvaluationPolynomial"] = GRSEvaluationPolynomialEncoder

@@ -103,6 +103,13 @@ def nesting(la, nu):
         sage: nesting(set(mu).difference(nu), nu)
         1
 
+        sage: A = SetPartition([[1], [2,5], [3,4]])
+        sage: B = SetPartition([[1,3,4], [2,5]])
+        sage: nesting(A, B)
+        1
+        sage: nesting(B, A)
+        1
+        
     ::
 
         sage: lst = list(SetPartitions(4))
@@ -135,11 +142,13 @@ def nesting(la, nu):
     nst = 0
     for p in la:
         p = sorted(p)
-        for i in range(len(p)-1):
-            for a in arcs:
-                if a[0] >= p[i]:
+        for a in arcs:
+            if p[-1] < a[0]:
+                continue
+            for i in range(len(p)-1):
+                if a[1] <= p[i+1]:
                     break
-                if p[i+1] < a[1]:
+                if a[0] < p[i]:
                     nst += 1
     return nst
 
