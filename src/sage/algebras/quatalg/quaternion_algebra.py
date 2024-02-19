@@ -2258,14 +2258,13 @@ class QuaternionOrder(Parent):
 
     def _denominator_coprime(self, ell):
         r"""
-        Returns a conjugate order of self, and the element conjugating, such that
-        the output order has denominator coprime with ell.
+        Return a conjugate order of ``self`` and the conjugating element such that
+        the output order has denominator coprime with ``ell``.
 
-        Used as a subroutine in _P1_to_ideals
+        Used as a subroutine in :meth:`_P1_to_ideals`.
         """
 
         B = self.quaternion_algebra()
-        i, j, k = B.gens()
 
         if self.basis_matrix().denominator() % ell != 0:
             return self, B(1)
@@ -2286,18 +2285,19 @@ class QuaternionOrder(Parent):
 
     def _P1_to_ideals(self, ell):
         r"""
-        Returns a map representing the bijection from the projective line over
-        ZZ/ell to the left ideals of norm ell from
-        https://math.dartmouth.edu/~jvoight/articles/73446.pdf, lemma 7.2.
+        Return a map representing the bijection from the projective line over
+        `\ZZ / \ell` to the left ideals of norm `\ell`. This method is useful
+        for enumerating or generating ideals of a given norm.
 
-        Useful for enumerating / generating ideals of a given norm.
+        This method implements the bijection given by lemma 7.2 in [KV2010]_.
         """
 
         B = self.quaternion_algebra()
-        assert ell not in B.ramified_primes(), "Only works for split ell"
+        if ell in B.ramified_primes():
+            raise ValueError(f"ell(={ell}) is not split")
 
         if not self.quadratic_form().is_positive_definite():
-            raise TypeError(f'The quaternion algebra must be definite')
+            raise TypeError("the quaternion algebra must be definite")
 
         phi = B.modp_splitting_map(ell)
         F = GF(ell)
@@ -2328,11 +2328,10 @@ class QuaternionOrder(Parent):
 
     def _random_left_ideal_2q(self, N):
         r"""
-        Workaround to generate random left ideals of norm for which
-        the B.modp_splitting_map is not implemented.
+        Return random left ideals of norm ``N`` when :meth:`modp_splitting_map`
+        is not implemented.
 
-        Will be very slow if N is large
-        (though N should only be 2 or a prime dividing i^2)
+        This method is slow when ``N`` is large.
         """
         alpha = self.random_element()
         while gcd(alpha.reduced_norm(), N*N) != N:
@@ -2341,11 +2340,11 @@ class QuaternionOrder(Parent):
 
     def random_left_ideal_of_norm(self, N, primitive=True):
         r"""
-        Return a random left ideal of self of norm ``N``.
+        Return a random left ideal of ``self`` of norm ``N``.
 
         INPUT:
 
-        - ``N`` -- an integer, the norm of the ideal returned
+        - ``N`` -- (integer) the norm of the ideal returned
         - ``primitive`` -- (bool, default: ``True``) if set, the output ideal
           is guaranteed to be primitive
 
@@ -2367,7 +2366,7 @@ class QuaternionOrder(Parent):
         if self.base_ring() != ZZ:
             raise NotImplementedError("only implemented for quaternion algebras over QQ")
         if gcd(self.discriminant(), N) != 1:
-            raise TypeError(f'The norm must be coprime with the discriminant')
+            raise TypeError("the norm must be coprime with the discriminant")
 
         i, _, _ = self.quaternion_algebra().gens()
         I = self.unit_ideal()
@@ -2398,15 +2397,14 @@ class QuaternionOrder(Parent):
 
     def all_left_ideals_of_norm(self, ell):
         r"""
-        A generator generating all the left ideal of self of norm ell
+        Return the generator of all left ideals of this quaternion algebra with
+        norm `\ell`.
 
         INPUT:
 
-        - A prime ell with restrictions
+        - ``ell`` - a prime with restrictions
 
-        OUTPUT:
-
-        - left ideals of self of norm N
+        OUTPUT: a generator of left ideals of this quaternion algebra
 
         EXAMPLES::
 
@@ -2422,17 +2420,14 @@ class QuaternionOrder(Parent):
             Order of Quaternion Algebra (-1, -1125899906842679) with base ring Rational Field with basis (1, i, 1/5*j + 18/5*k, 5*k)
             Order of Quaternion Algebra (-1, -1125899906842679) with base ring Rational Field with basis (1, 1/5*i + 9/5*k, j, 5*k)
 
-            As a sanity check, there should be ell+1 left ideals of norm ell, all different
+        There should be ell + 1 distinct left ideals of norm ell::
 
             sage: B = QuaternionAlgebra(next_prime(2**50))
             sage: O0 = B.maximal_order()
             sage: O = O0.random_left_ideal_of_norm(next_prime(2**60)).right_order()
             sage: ell = next_prime(ZZ.random_element(10, 100))
-            sage: Ideals = []
-            sage: for I in O.all_left_ideals_of_norm(ell):
-            ....:     assert I not in Ideals
-            ....:     Ideals.append(I)
-            sage: assert len(Ideals) == ell+1
+            sage: ideals = list(O.all_left_ideals_of_norm(ell))
+            sage: assert len(set(ideals)) == len(ideals) == ell + 1
         """
 
         if self.base_ring() != ZZ:
@@ -2441,10 +2436,10 @@ class QuaternionOrder(Parent):
             raise NotImplementedError("only implemented for prime norm")
 
         B = self.quaternion_algebra()
-        i, j, k = B.gens()
+        i, _, _ = B.gens()
         q = -ZZ(i**2)
         if (2 * q) % ell == 0:
-            raise NotImplementedError("Only implemented for odd prime norm, not dividing 2i^2")
+            raise NotImplementedError("only implemented for odd prime norm not dividing 2i^2")
 
         mapping = self._P1_to_ideals(ell)
 
