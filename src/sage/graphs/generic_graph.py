@@ -23064,12 +23064,14 @@ class GenericGraph(GenericGraph_pyx):
             [0 0 1]
             [0 0 1]
             [1 1 0]
+
+            sage: # needs sage.groups
             sage: C5 = graphs.CycleGraph(5)
             sage: C5.relabel({u: str(u) for u in C5}, inplace=True)
-            sage: ar = C5.automorphism_group().random_element()                         # needs sage.groups
-            sage: R = C5.relabel(ar, inplace=False)                                     # needs sage.groups
-            sage: perm = C5.is_isomorphic(R, certificate=True)[1]                       # needs sage.groups
-            sage: perm == {u: ar(u) for u in C5}                                        # needs sage.groups
+            sage: ar = C5.automorphism_group().random_element()                         
+            sage: R = C5.relabel(ar, inplace=False)
+            sage: perm = C5.is_isomorphic(R, certificate=True)[1]
+            sage: perm == {u: ar(u) for u in C5}
             True
 
         A way to get a random relabeling::
