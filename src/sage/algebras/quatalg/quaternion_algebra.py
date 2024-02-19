@@ -2258,12 +2258,11 @@ class QuaternionOrder(Parent):
 
     def _denominator_coprime(self, ell):
         r"""
-        Returns a conjugate order of self, and the element conjugating, such that
-        the output order has denominator coprime with ell.
+        Return a conjugate order of ``self``, and the element conjugating, such that
+        the output order has denominator coprime with ``ell``.
 
         Used as a subroutine in _P1_to_ideals
         """
-
         B = self.quaternion_algebra()
         i, j, k = B.gens()
 
@@ -2286,18 +2285,17 @@ class QuaternionOrder(Parent):
 
     def _P1_to_ideals(self, ell):
         r"""
-        Returns a map representing the bijection from the projective line over
+        Return a map representing the bijection from the projective line over
         ZZ/ell to the left ideals of norm ell from
         https://math.dartmouth.edu/~jvoight/articles/73446.pdf, lemma 7.2.
 
         Useful for enumerating / generating ideals of a given norm.
         """
-
         B = self.quaternion_algebra()
         assert ell not in B.ramified_primes(), "Only works for split ell"
 
         if not self.quadratic_form().is_positive_definite():
-            raise TypeError(f'The quaternion algebra must be definite')
+            raise TypeError('the quaternion algebra must be definite')
 
         phi = B.modp_splitting_map(ell)
         F = GF(ell)
@@ -2341,23 +2339,21 @@ class QuaternionOrder(Parent):
 
     def random_left_ideal_of_norm(self, N, primitive=True):
         r"""
-        Return a random left ideal of self of norm N
+        Return a random left ideal of ``self`` of norm ``N``.
 
         INPUT:
 
-        INPUT:
-
-        - `N` -- an integer
+        - ``N`` -- an integer
         - ``primitive`` bool (optional) -- guarantees that the output ideal is primitive
 
         OUTPUT:
 
-        - a left ideal of self of chosen norm `N`
+        a left ideal of ``self`` of chosen norm ``N``
 
         .. WARNING::
 
-        The algorithm requires factoring N, so for large input the algorithm 
-        will be slow
+            The algorithm requires factoring ``N``, so for large input
+            the algorithm will be slow.
 
         EXAMPLES::
 
@@ -2368,9 +2364,9 @@ class QuaternionOrder(Parent):
             sage: assert I.norm() == N
         """
         if self.base_ring() != ZZ:
-            raise NotImplementedError("only implemented for quaternion algebras over QQ")
+            raise NotImplementedError("only implemented for quaternion algebras over ZZ")
         if gcd(self.discriminant(), N) != 1:
-            raise TypeError(f'The norm must be coprime with the discriminant')
+            raise TypeError('the norm must be coprime with the discriminant')
 
         i, _, _ = self.quaternion_algebra().gens()
         I = self.unit_ideal()
@@ -2401,15 +2397,15 @@ class QuaternionOrder(Parent):
 
     def all_left_ideals_of_norm(self, ell):
         r"""
-        A generator generating all the left ideal of self of norm ell
+        A generator generating all the left ideal of ``self`` of norm ``ell``.
 
         INPUT:
 
-        - A prime ell with restrictions
+        - A prime ``ell`` with restrictions
 
         OUTPUT:
 
-        - left ideals of self of norm N
+        left ideals of ``self`` of norm ``ell``
 
         EXAMPLES::
 
@@ -2437,7 +2433,6 @@ class QuaternionOrder(Parent):
             ....:     Ideals.append(I)
             sage: assert len(Ideals) == ell+1
         """
-
         if self.base_ring() != ZZ:
             raise NotImplementedError("only implemented for quaternion algebras over QQ")
         if not ell.is_prime():
@@ -2447,7 +2442,7 @@ class QuaternionOrder(Parent):
         i, j, k = B.gens()
         q = -ZZ(i**2)
         if (2 * q) % ell == 0:
-            raise NotImplementedError("Only implemented for odd prime norm, not dividing 2i^2")
+            raise NotImplementedError("only implemented for odd prime norm, not dividing 2i^2")
 
         mapping = self._P1_to_ideals(ell)
 
