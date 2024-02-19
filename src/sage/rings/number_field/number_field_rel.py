@@ -2478,13 +2478,13 @@ class NumberField_relative(NumberField_generic):
 
         The base ring of an order in a relative extension is still `\ZZ`.::
 
-            sage: R.base_ring()                                                         # needs sage.symbolic
+            sage: R.base_ring()                                                         # long time, needs sage.symbolic
             Integer Ring
 
         One must give enough generators to generate a ring of finite index
         in the maximal order::
 
-            sage: P.order([a, b])                                                       # needs sage.symbolic
+            sage: P.order([a, b])                                                       # long time, needs sage.symbolic
             Traceback (most recent call last):
             ...
             ValueError: the rank of the span of gens is wrong
