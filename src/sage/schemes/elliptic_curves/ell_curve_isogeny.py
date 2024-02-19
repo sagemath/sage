@@ -3207,8 +3207,12 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: phi.dual() * phi == E0.scalar_multiplication(7)
             True
 
-            sage: from sage.all import *
             sage: E0 = EllipticCurve(GF(5**2), [4, 0])
+            sage: phi = choice(E0.isogenies_prime_degree(2))
+            sage: phi.dual().dual() == phi
+            True
+            sage: phi.dual() * phi == E0.scalar_multiplication(2)
+            True
             sage: phi = choice(E0.isogenies_prime_degree(13))
             sage: phi.dual().dual() == phi
             True
@@ -3221,18 +3225,14 @@ class EllipticCurveIsogeny(EllipticCurveHom):
         if self.__dual is not None:
             return self.__dual
 
-        # trac 7096
-        E1, E2pr, _, _ = compute_intermediate_curves(self.codomain(), self.domain())
-
         F = self.__base_field
         d = self._degree
-
-        from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
 
         if F(d) == 0:   # inseparable dual!
             p = F.characteristic()
             k = d.valuation(p)
 
+            from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
             from sage.schemes.elliptic_curves.hom_frobenius import EllipticCurveHom_frobenius
             frob = EllipticCurveHom_frobenius(self._codomain, k)
 
@@ -3271,7 +3271,13 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             return self.__dual
 
         else:
-            pre_iso = self._codomain.isomorphism_to(E1)
+            # take care of the scaling factor
+            # compute post-isomorphism to self
+            # to be used as pre-isomorphism to the dual
+            sc = self.scaling_factor() / F(d)
+            sc_inv = 1/sc
+            pre_iso = WeierstrassIsomorphism(self.codomain(), (sc_inv,0,0,0))
+            E1 = pre_iso.codomain()
 
             # compute  the kernel polynomial of the dual
             # by computing the image of the division polynomial
@@ -3289,9 +3295,8 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
             # propagate the kernel through ~pre_iso
             # from self.codomain() to E1
-            iso_u, iso_r, _, _ = (F(c) for c in pre_iso.tuple())
             x = f.parent().gen()
-            f = f(x * iso_u**2 + iso_r)
+            f = f(x * sc_inv**2).monic()
 
             # compute the isogeny E1 -> E2' from the computed kernel
             # E2' is not necessarily the predicted one,
@@ -3305,6 +3310,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
             # trac 7096
             # this should take care of the case when the isogeny is not normalized.
+
             sc = self.scaling_factor() * pre_iso.scaling_factor() * post_iso.scaling_factor() / F(d)
             if not sc.is_one():
                 auts = self._codomain.automorphisms()
