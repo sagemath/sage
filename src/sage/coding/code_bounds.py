@@ -221,7 +221,7 @@ def _check_n_q_d(n, q, d, field_based=True):
         raise ValueError("The alphabet size must be an integer >1")
     if field_based and not is_prime_power(q):
         raise ValueError("The alphabet size does not make sense for a code over a field")
-    if not(0 < d <= n and n in ZZ and d in ZZ):
+    if not (0 < d <= n and n in ZZ and d in ZZ):
         raise ValueError("The length or minimum distance does not make sense")
     return True
 
