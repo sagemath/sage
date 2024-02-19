@@ -2694,7 +2694,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                         # When this is not None, we can do the Precomposed action
                         if action is not None:
                             if self_on_left:
-                                action = PrecomposedAction(action, None, connecting) 
+                                action = PrecomposedAction(action, None, connecting)
                             else:
                                 action = PrecomposedAction(action, connecting, None)
                             return action
