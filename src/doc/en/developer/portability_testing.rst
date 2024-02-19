@@ -26,7 +26,7 @@ Testing PRs with GitHub Actions
 and constantly testing GitHub PRs to identify errors early and ensure code
 quality. In particular, Build & Test workflows perform an incremental build of
 Sage and run doctests on a selection of major platforms including Ubuntu,
-MacOS, and Conda.
+macOS, and Conda.
 
 
 Sage buildbots
