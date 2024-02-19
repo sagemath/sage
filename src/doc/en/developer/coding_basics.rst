@@ -89,9 +89,9 @@ In particular,
 Files and directory structure
 =============================
 
-Roughly, the Sage directory tree is layout like this. Note that we use
-``SAGE_ROOT`` in the following as a shortcut for the (arbitrary) name
-of the directory containing the Sage sources:
+Roughly, the Sage directory tree is laid out like this. Note that we
+use ``SAGE_ROOT`` in the following as a shortcut for the name of the
+directory containing the Sage sources:
 
 .. CODE-BLOCK:: text
 
@@ -149,8 +149,8 @@ Adding new top-level packages below :mod:`sage` should be done
 sparingly.  It is often better to create subpackages of existing
 packages.
 
-Non-Python Sage source code and supporting files can be included in one
-of the following places:
+Non-Python Sage source code and small supporting files can be
+included in one of the following places:
 
 - In the directory of the Python code that uses that file.  When the
   Sage library is installed, the file will be installed in the same
@@ -160,16 +160,6 @@ of the following places:
   to it as ::
 
     os.path.join(os.path.dirname(__file__), 'sage-maxima.lisp')
-
-- Large data files should not be added to the Sage source tree.
-  Instead:
-
-  - Create a separate git repository for them
-  - Add metadata in your repository that make it a pip-installable
-    package (distribution package)
-  - Upload it to PyPI
-  - Create metadata in ``SAGE_ROOT/build/pkgs`` that make your new
-    pip-installable package known to Sage
 
 - In an appropriate subdirectory of ``SAGE_ROOT/src/sage/ext_data/``.
   (At runtime, it is then available in the directory indicated by
@@ -183,6 +173,29 @@ In both cases, the files must be listed (explicitly or via wildcards) in
 the section ``options.package_data`` of the file
 ``SAGE_ROOT/pkgs/sagemath-standard/setup.cfg.m4`` (or the corresponding
 file of another distribution).
+
+Large data files should not be added to the Sage source tree. Instead, it
+is proposed to do the following:
+
+- create a separate git repository and upload them there [2]_,
+
+- add metadata to the repository that make it a pip-installable
+  package (distribution package),
+
+- upload it to PyPI,
+
+- create metadata in ``SAGE_ROOT/build/pkgs`` that make your new
+  pip-installable package known to Sage.
+
+For guiding examples of external repositories that host large data
+files, see https://github.com/sagemath/conway-polynomials, and
+https://github.com/gmou3/matroid-database.
+
+.. [2]
+
+  It is also suggested that the files are compressed, e.g., through
+  the command ``xz -e``. They can then be read via a command such as
+  ``lzma.open(file, 'rt')``.
 
 
 Learn by copy/paste
