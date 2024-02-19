@@ -343,7 +343,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                             strip_one = True)
 
     def _ascii_art_(self):
-        """
+        r"""
         TESTS::
 
             sage: # needs sage.combinat
@@ -430,7 +430,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             return s
 
     def _unicode_art_(self):
-        """
+        r"""
         TESTS::
 
             sage: M = QuasiSymmetricFunctions(QQ).M()                                   # needs sage.combinat
