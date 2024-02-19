@@ -2104,16 +2104,19 @@ class QuaternionOrder(Parent):
 
         INPUT:
 
-        - An integer N
-        - Optional parameter primitive: Guarantees that the outputted
-        ideal is primitive
+        INPUT:
+
+        - `N` -- an integer
+        - ``primitive`` bool (optional) -- guarantees that the output ideal is primitive
 
         OUTPUT:
 
-        - left ideal of self of norm N
+        - a left ideal of self of chosen norm `N`
 
-        Note that the algorithm requires factoring N, so for large, compositve
-        N it will be slow.
+        .. WARNING::
+
+        The algorithm requires factoring N, so for large input the algorithm 
+        will be slow
 
         EXAMPLES::
 
