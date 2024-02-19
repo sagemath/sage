@@ -3113,15 +3113,6 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sage: (Xm, Ym) == E.multiplication_by_m(5)
             True
 
-        Duals of isogenies of large degree (compared to the characteristic)::
-
-            sage: E0 = EllipticCurve(GF(19**24), [10, 2])
-            sage: phi = choice(E0.isogenies_prime_degree(7))
-            sage: phi.dual().dual() == phi
-            True
-            sage: phi.dual() * phi == E0.scalar_multiplication(7)
-            True
-
         Inseparable duals should be computed correctly::
 
             sage: # needs sage.rings.finite_rings
@@ -3205,6 +3196,23 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             True
             sage: phi._EllipticCurveIsogeny__clear_cached_values()  # forget the dual
             sage: -phi.dual() == (-phi).dual()
+            True
+
+        Duals of isogenies of large degree (compared to the characteristic)::
+
+            sage: E0 = EllipticCurve(GF(19**24), [10, 2])
+            sage: phi = choice(E0.isogenies_prime_degree(7))
+            sage: phi.dual().dual() == phi
+            True
+            sage: phi.dual() * phi == E0.scalar_multiplication(7)
+            True
+
+            sage: from sage.all import *
+            sage: E0 = EllipticCurve(GF(5**2), [4, 0])
+            sage: phi = choice(E0.isogenies_prime_degree(13))
+            sage: phi.dual().dual() == phi
+            True
+            sage: phi.dual() * phi == E0.scalar_multiplication(13)
             True
         """
         if self.__base_field.characteristic() in (2, 3):
@@ -3300,7 +3308,7 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             sc = self.scaling_factor() * pre_iso.scaling_factor() * post_iso.scaling_factor() / F(d)
             if not sc.is_one():
                 auts = self._codomain.automorphisms()
-                aut = [a for a in auts if a.u == sc]
+                aut = [a for a in auts if (a.u * sc).is_one()]
                 assert len(aut) == 1, "bug in dual()"
                 pre_iso *= aut[0]
 
