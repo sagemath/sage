@@ -2341,23 +2341,20 @@ class QuaternionOrder(Parent):
 
     def random_left_ideal_of_norm(self, N, primitive=True):
         r"""
-        Return a random left ideal of self of norm N
+        Return a random left ideal of self of norm ``N``.
 
         INPUT:
 
-        INPUT:
+        - ``N`` -- an integer, the norm of the ideal returned
+        - ``primitive`` -- (bool, default: ``True``) if set, the output ideal
+          is guaranteed to be primitive
 
-        - `N` -- an integer
-        - ``primitive`` bool (optional) -- guarantees that the output ideal is primitive
-
-        OUTPUT:
-
-        - a left ideal of self of chosen norm `N`
+        OUTPUT: a left ideal of self of chosen norm ``N``
 
         .. WARNING::
 
-        The algorithm requires factoring N, so for large input the algorithm 
-        will be slow
+            The algorithm requires factoring ``N``, so for large input the algorithm
+            will be slow.
 
         EXAMPLES::
 
