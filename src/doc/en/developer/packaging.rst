@@ -1114,8 +1114,10 @@ obtains most of the necessary information by querying PyPI.
 
 The ``dependencies`` file may need editing (watch out for warnings regarding
 ``--no-deps`` that Sage issues during installation of the package!).
+
 Also you may want to set lower and upper bounds for acceptable package versions
-in the file ``install-requires.txt``.
+in the file ``install-requires.txt``. (Make sure that the version in
+``package-version.txt`` falls within this acceptable version range!)
 
 By default, when the package is available as a platform-independent
 wheel, the ``sage --package`` creates a wheel package. To create a normal package
@@ -1151,6 +1153,12 @@ For Python packages available from PyPI, there is another shortcut::
     Updating matplotlib: 3.3.0 -> 3.3.1
     Downloading tarball to ...matplotlib-3.3.1.tar.bz2
     [...............................................................]
+
+When preparing the update, check that any lower and upper bounds for
+acceptable package versions that may be declared in the file
+``install-requires.txt`` are still correct, and update them as needed.
+The version in ``package-version.txt`` always needs to fall within the
+version range!
 
 If you pass the switch ``--commit``, the script will run ``git commit``
 for you.
