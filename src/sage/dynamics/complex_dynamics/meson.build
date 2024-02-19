@@ -1,7 +1,7 @@
 py.install_sources('all.py', 'mandel_julia.py', subdir : 'sage/dynamics/complex_dynamics')
 
 extension_data = {
-    'mandel_julia_helper': files('mandel_julia_helper.pyx'),
+  'mandel_julia_helper' : files('mandel_julia_helper.pyx')
 }
 
 foreach name, pyx : extension_data

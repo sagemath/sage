@@ -12,10 +12,10 @@ py.install_sources(
 )
 
 extension_data = {
-    'fast_callable': files('fast_callable.pyx'),
-    'fast_eval': files('fast_eval.pyx'),
-    'memory': files('memory.pyx'),
-    'memory_allocator': files('memory_allocator.pyx'),
+  'fast_callable' : files('fast_callable.pyx'),
+  'fast_eval' : files('fast_eval.pyx'),
+  'memory' : files('memory.pyx'),
+  'memory_allocator' : files('memory_allocator.pyx')
 }
 
 foreach name, pyx : extension_data

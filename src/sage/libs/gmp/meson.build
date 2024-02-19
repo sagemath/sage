@@ -15,7 +15,7 @@ py.install_sources(
 )
 
 extension_data = {
-    'pylong': files('pylong.pyx'),
+  'pylong' : files('pylong.pyx')
 }
 
 foreach name, pyx : extension_data

@@ -1,7 +1,7 @@
 py.install_sources('all.py', 'non_negative_integer_semiring.py', subdir : 'sage/rings/semirings')
 
 extension_data = {
-    'tropical_semiring': files('tropical_semiring.pyx'),
+  'tropical_semiring' : files('tropical_semiring.pyx')
 }
 
 foreach name, pyx : extension_data

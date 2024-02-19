@@ -9,7 +9,7 @@ py.install_sources(
 )
 
 extension_data = {
-    'indexed_element': files('indexed_element.pyx'),
+  'indexed_element' : files('indexed_element.pyx')
 }
 
 foreach name, pyx : extension_data

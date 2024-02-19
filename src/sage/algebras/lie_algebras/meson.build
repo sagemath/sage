@@ -25,7 +25,7 @@ py.install_sources(
 )
 
 extension_data = {
-    'lie_algebra_element': files('lie_algebra_element.pyx'),
+  'lie_algebra_element' : files('lie_algebra_element.pyx')
 }
 
 foreach name, pyx : extension_data

@@ -33,7 +33,7 @@ py.install_sources(
 )
 
 extension_data = {
-    'complex_plot': files('complex_plot.pyx'),
+  'complex_plot' : files('complex_plot.pyx')
 }
 
 foreach name, pyx : extension_data

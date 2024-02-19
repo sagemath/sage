@@ -19,8 +19,8 @@ py.install_sources(
 )
 
 extension_data = {
-    'arb_version': files('arb_version.pyx'),
-    'arith': files('arith.pyx'),
+  'arb_version' : files('arb_version.pyx'),
+  'arith' : files('arith.pyx')
 }
 
 foreach name, pyx : extension_data

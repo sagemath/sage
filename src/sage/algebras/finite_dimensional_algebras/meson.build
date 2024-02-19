@@ -8,7 +8,7 @@ py.install_sources(
 )
 
 extension_data = {
-    'finite_dimensional_algebra_element': files('finite_dimensional_algebra_element.pyx'),
+  'finite_dimensional_algebra_element' : files('finite_dimensional_algebra_element.pyx')
 }
 
 foreach name, pyx : extension_data

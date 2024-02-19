@@ -1,8 +1,8 @@
 py.install_sources('__init__.py', 'lists.py', 'nn.py', subdir : 'sage/combinat/integer_lists')
 
 extension_data = {
-    'base': files('base.pyx'),
-    'invlex': files('invlex.pyx'),
+  'base' : files('base.pyx'),
+  'invlex' : files('invlex.pyx')
 }
 
 foreach name, pyx : extension_data

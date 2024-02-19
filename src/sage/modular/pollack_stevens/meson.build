@@ -11,7 +11,7 @@ py.install_sources(
 )
 
 extension_data = {
-    'dist': files('dist.pyx'),
+  'dist' : files('dist.pyx')
 }
 
 foreach name, pyx : extension_data

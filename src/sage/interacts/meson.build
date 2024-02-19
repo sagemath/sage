@@ -10,7 +10,7 @@ py.install_sources(
 )
 
 extension_data = {
-    'library_cython': files('library_cython.pyx'),
+  'library_cython' : files('library_cython.pyx')
 }
 
 foreach name, pyx : extension_data
