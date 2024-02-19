@@ -23067,6 +23067,14 @@ class GenericGraph(GenericGraph_pyx):
             [0 0 1]
             [0 0 1]
             [1 1 0]
+            sage: G = graphs.CycleGraph(5)
+            sage: G.relabel({u: str(u) for u in G}, inplace=True)
+            sage: ar = G.automorphism_group().random_element()                          # needs sage.groups
+            sage: H = G.relabel(ar, inplace=False)                                      # needs sage.groups
+            sage: G.is_isomorphic(H, certificate=True)[1]                               # needs sage.groups
+            {'0': '3', '1': '2', '2': '1', '3': '0', '4': '4'}
+            sage: {u: ar(u) for u in G}                                                 # needs sage.groups
+            {'0': '3', '1': '2', '2': '1', '3': '0', '4': '4'}
 
         A way to get a random relabeling::
 
@@ -23225,13 +23233,8 @@ class GenericGraph(GenericGraph_pyx):
             perm = dict(perm)
 
         elif isinstance(perm, PermutationGroupElement):
-            n = self.order()
-            ddict = {}
-            for i in range(1, n):
-                ddict[i] = perm(i) % n
-            if n > 0:
-                ddict[0] = perm(n) % n
-            perm = ddict
+            # Each vertex is relabeled according to the permutation group
+            perm = {u: perm(u) for u in self}
 
         else:
             # Check for generic iterable/callable
