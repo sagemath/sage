@@ -2990,7 +2990,7 @@ class QuotientFunctor(ConstructionFunctor):
                 R = I.ring()
             else:
                 R = pushout(R, I.ring().base_ring())
-                I = [R.one() * t for t in I.gens()] * R
+                I = R.ideal([R.one() * t for t in I.gens()], warn=False)
         try:
             Q = R.quo(I, names=self.names, **self.kwds)
         except IndexError:  # That may happen!
@@ -3797,7 +3797,7 @@ class PermutationGroupFunctor(ConstructionFunctor):
         return PermutationGroup([g for g in (R.gens() + self.gens()) if not g.is_one()],
                                 domain=self._domain)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         EXAMPLES::
 

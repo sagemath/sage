@@ -72,7 +72,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         sage: type(E)
         <class 'sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field_with_category'>
         sage: E.category()
-        Category of schemes over Ring of integers modulo 101
+        Category of abelian varieties over Ring of integers modulo 101
 
     Elliptic curves over `\ZZ/N\ZZ` with `N` composite are of type
     "generic elliptic curve"::
@@ -610,6 +610,24 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
     order = cardinality  # alias
 
+    @cached_method
+    def multiplication_by_p_isogeny(self):
+        r"""
+        Return the multiplication-by-`p` isogeny.
+
+        EXAMPLES::
+
+            sage: p = 23
+            sage: K.<a> = GF(p^3)
+            sage: E = EllipticCurve(j=K.random_element())
+            sage: phi = E.multiplication_by_p_isogeny()
+            sage: assert phi.degree() == p**2
+            sage: P = E.random_element()
+            sage: assert phi(P) == P * p
+        """
+        frob = self.frobenius_isogeny()
+        return frob.dual() * frob
+
     def frobenius_polynomial(self):
         r"""
         Return the characteristic polynomial of Frobenius.
@@ -1053,8 +1071,8 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
             S = n//nQ * P
             T = n2 * Q
-            S.set_order(nQ//n2, check=False)    # for .discrete_log()
-            x = S.discrete_log(T)
+            S.set_order(nQ//n2, check=False)    # for .log()
+            x = T.log(S)
             Q -= x * n1//nQ * P
 
             assert not n2 * Q                   # by construction
@@ -1773,13 +1791,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: p = next_prime(randrange(2,100))
             sage: e = randrange(1,10)
             sage: F.<t> = GF((p,e))
-            sage: while True:
-            ....:     try:
-            ....:         E = EllipticCurve([F.random_element() for _ in range(5)])
-            ....:     except ArithmeticError:
-            ....:         pass
-            ....:     else:
-            ....:         break
+            sage: E = EllipticCurve(j=F.random_element())
             sage: twists1 = E.twists()
             sage: {sum(E1.is_isomorphic(E2) for E2 in twists1) == 1 for E1 in twists1}
             {True}
@@ -1788,7 +1800,12 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: eq = 1728*4*A**3 - j * (4*A**3 + 27*B**2)
             sage: twists2 = []
             sage: for _ in range(10):
-            ....:     V = Ideal([eq, A + B - F.random_element()]).variety()
+            ....:     I = Ideal([eq, A + B - F.random_element()])
+            ....:     try:
+            ....:         V = I.variety()
+            ....:     except ValueError:
+            ....:         if I.dimension() == 0:
+            ....:              raise
             ....:     if not V:
             ....:         continue
             ....:     sol = choice(V)

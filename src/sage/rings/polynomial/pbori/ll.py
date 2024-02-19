@@ -140,7 +140,7 @@ def eliminate_ll_ranked(ll_system, to_reduce,
                         reduction_function=ll_red_nf_noredsb,
                         reduce_ll_system=False, prot=False):
 
-    assert(ll_system)
+    assert ll_system
     from_ring = ll_system[0].ring()
 
     ll_ranks = rank(ll_system)

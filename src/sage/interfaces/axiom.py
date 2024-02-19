@@ -350,7 +350,7 @@ class PanAxiom(ExtraTabCompletion, Expect):
                 try:
                     self.__tab_completion = sage.misc.persist.load(self._COMMANDS_CACHE)
                     return self.__tab_completion
-                except IOError:
+                except OSError:
                     pass
             if verbose:
                 print("\nBuilding %s command completion list (this takes" % self)
