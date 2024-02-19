@@ -22,7 +22,6 @@ from sage.misc.abstract_method import abstract_method
 from sage.structure.element import Element
 from sage.combinat.free_module import CombinatorialFreeModule, CombinatorialFreeModule_Tensor
 from sage.categories.modules import Modules
-from sage.algebras.clifford_algebra import CliffordAlgebraIndices
 from sage.matrix.constructor import matrix
 
 class Representation_abstract(CombinatorialFreeModule):
@@ -308,6 +307,24 @@ class Representation_abstract(CombinatorialFreeModule):
              Dicyclic group of order 12 as a permutation group over Rational Field
         """
         return Representation_Exterior(self, degree)
+
+    def symmetric_power(self, degree=None):
+        r"""
+        Return the symmetric power of ``self`` in degree ``degree``.
+
+        EXAMPLES::
+
+            sage: W = CoxeterGroup(['H', 3])
+            sage: R = W.reflection_representation()
+            sage: S3R = R.symmetric_power(3)
+            sage: S3R
+            Symmetric power representation of Reflection representation of
+            Finite Coxeter group over ... with Coxeter matrix:
+            [1 3 2]
+            [3 1 5]
+            [2 5 1] in degree 3
+        """
+        return Representation_Symmetric(self, degree)
 
     @abstract_method
     def _semigroup_action(self, g, vec, vec_on_left):
@@ -831,19 +848,25 @@ class Representation_Exterior(Representation_abstract):
             sage: L.exterior_power(-2)
             Traceback (most recent call last):
             ...
-            ValueError: the degree must be in [0, 48]
+            ValueError: the degree must be an integer in [0, 48]
             sage: L.exterior_power(120)
             Traceback (most recent call last):
             ...
-            ValueError: the degree must be in [0, 48]
+            ValueError: the degree must be an integer in [0, 48]
+            sage: L.exterior_power(5/6)
+            Traceback (most recent call last):
+            ...
+            ValueError: the degree must be an integer in [0, 48]
         """
         from sage.algebras.clifford_algebra import ExteriorAlgebra
+        from sage.algebras.clifford_algebra import CliffordAlgebraIndices
+        from sage.rings.integer_ring import ZZ
         self._degree = degree
         self._rep = rep
         R = rep.base_ring()
         dim = rep.dimension()
-        if degree is not None and (degree > dim or degree < 0):
-            raise ValueError(f"the degree must be in [0, {dim}]")
+        if degree is not None and (degree not in ZZ or degree > dim or degree < 0):
+            raise ValueError(f"the degree must be an integer in [0, {dim}]")
         self._extalg = ExteriorAlgebra(R, dim)
         self._basis_order = list(rep.basis().keys())
         self._inv_map = {b: i for i, b in enumerate(self._basis_order)}
@@ -984,7 +1007,7 @@ class Representation_Exterior(Representation_abstract):
             e0 + 2*e1 + 3*e2 + 4*e3 + 5*e4 + 6*e5
         """
         ind = self._indices
-        data = {ind([self._inv_map[k]]): c for k, c in elt.monomial_coefficients(copy=False).items()}
+        data = {ind([self._inv_map[k]]): c for k, c in elt._monomial_coefficients.items()}
         return self._extalg.element_class(self._extalg, data)
 
     def _semigroup_action(self, g, vec, vec_on_left):
@@ -1027,7 +1050,7 @@ class Representation_Exterior(Representation_abstract):
             sage: g * vec
             2*(2,3)*(1,3) + 2*(2,3)*(1,2) - 3*()*(2,3)
             sage: vec * g
-             2*(2,3)*(1,3) + 2*(2,3)*(1,2) - 3*()*(2,3)
+            2*(2,3)*(1,3) + 2*(2,3)*(1,2) - 3*()*(2,3)
             sage: supp = vec.leading_support(); supp
             11
             sage: E2._action_on_basis(g, supp, True)
@@ -1043,6 +1066,271 @@ class Representation_Exterior(Representation_abstract):
             temp = self._extalg.prod(self._from_repr_to_ext(g * B[self._basis_order[bk]])
                                      for bk in b)
         return self.element_class(self, temp._monomial_coefficients)
+
+
+class Representation_Symmetric(Representation_abstract):
+    r"""
+    The symmetric algebra representation in a fixed degree.
+    """
+    def __init__(self, rep, degree, **options):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: G = groups.matrix.GL(3, 2)
+            sage: R = G.regular_representation(side="right")
+            sage: S2 = R.symmetric_power(2)
+            sage: TestSuite(S2).run()
+            sage: S0 = R.symmetric_power(0)
+            sage: TestSuite(S2).run()
+
+            sage: R.symmetric_power(-2)
+            Traceback (most recent call last):
+            ...
+            ValueError: the degree must be a nonnegative integer
+            sage: R.symmetric_power(3/2)
+            Traceback (most recent call last):
+            ...
+            ValueError: the degree must be a nonnegative integer
+        """
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        from sage.combinat.integer_vector import IntegerVectors
+        from sage.rings.integer_ring import ZZ
+        self._degree = degree
+        self._rep = rep
+        R = rep.base_ring()
+        dim = rep.dimension()
+        if degree not in ZZ or degree < 0:
+            raise ValueError(f"the degree must be a nonnegative integer")
+        self._symalg = PolynomialRing(R, 'e', dim)
+        self._basis_order = list(rep.basis().keys())
+        G = self._symalg.gens()
+        self._inv_map = {b: G[i] for i, b in enumerate(self._basis_order)}
+        ind = IntegerVectors(degree, dim)
+        Representation_abstract.__init__(self, rep.semigroup(), rep.base_ring(), rep.side(),
+                                         ind, **options)
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: L = DC3.regular_representation(QQ, side='left')
+            sage: L.symmetric_power(7)
+            Symmetric power representation of Left Regular Representation of
+             Dicyclic group of order 12 as a permutation group over Rational Field
+             in degree 7
+        """
+        return "Symmetric power representation of {} in degree {}".format(repr(self._rep), self._degree)
+
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        EXAMPLES::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: L = DC3.regular_representation(QQ, side='left')
+            sage: latex(L.symmetric_power(4))
+            S^{4} ...
+        """
+        from sage.misc.latex import latex
+        return "S^{{{}}} {}".format(self._degree, latex(self._rep))
+
+    def _repr_term(self, m):
+        r"""
+        Return a string representation of the basis element indexed by
+        ``m``.
+
+        EXAMPLES::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: L = DC3.regular_representation(QQ, side='left')
+            sage: S2L = L.symmetric_power(2)
+            sage: S2L.an_element()
+            3*()*(5,7,6) + 2*()*(5,6,7) + 2*()^2
+            sage: S2L._repr_term(S2L.an_element().trailing_support())
+            '()*(5,7,6)'
+            sage: S2L._repr_term(S2L.an_element().leading_support())
+            '()^2'
+            sage: L.symmetric_power(0).an_element()
+            2
+        """
+        if not self._degree:
+            return '1'
+        B = self._rep.basis()
+        return '*'.join(repr(B[self._basis_order[i]]) if e == 1 else repr(B[self._basis_order[i]]) + f'^{e}'
+                        for i,e in enumerate(m) if e)
+
+    def _ascii_art_term(self, m):
+        r"""
+        Return ascii art for the basis element indexed by ``m``.
+
+        EXAMPLES::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: L = DC3.regular_representation(QQ, side='left')
+            sage: S2L = L.symmetric_power(2)
+            sage: S2L._ascii_art_term(S2L.an_element().leading_support())
+              2
+            ()
+            sage: ascii_art(S2L.an_element())
+                                              2
+            3*()*(5,7,6) + 2*()*(5,6,7) + 2*()
+            sage: ascii_art(L.symmetric_power(0).an_element())
+            2*1
+        """
+        from sage.typeset.ascii_art import ascii_art
+        if not self._degree:
+            return ascii_art('1')
+        B = self._rep.basis()
+        ret = ascii_art("")
+        for i, e in enumerate(m):
+            if not e:
+                continue
+            cur = ascii_art(B[self._basis_order[i]])
+            if e > 1:
+                cur += ascii_art(e, baseline=-cur.height())
+            if ret:
+                ret += ascii_art('*')
+            ret += cur
+        return ret
+
+    def _unicode_art_term(self, m):
+        r"""
+        Return unicode art for the basis element indexed by ``m``.
+
+        EXAMPLES::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: L = DC3.regular_representation(QQ, side='left')
+            sage: S2L = L.symmetric_power(2)
+            sage: S2L._unicode_art_term(S2L.an_element().leading_support())
+              2
+            ()
+            sage: unicode_art(S2L.an_element())
+                                              2
+            3*()*(5,7,6) + 2*()*(5,6,7) + 2*()
+            sage: unicode_art(L.symmetric_power(0).an_element())
+            2*1
+        """
+        from sage.typeset.unicode_art import unicode_art
+        if not self._degree:
+            return unicode_art('1')
+        B = self._rep.basis()
+        ret = unicode_art("")
+        for i, e in enumerate(m):
+            if not e:
+                continue
+            cur = unicode_art(B[self._basis_order[i]])
+            if e > 1:
+                cur += unicode_art(e, baseline=-cur.height())
+            if ret:
+                ret += unicode_art('*')
+            ret += cur
+        return ret
+
+    def _latex_term(self, m):
+        r"""
+        Return a `\LaTeX` representation of the basis element indexed
+        by ``m``.
+
+        EXAMPLES::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: L = DC3.regular_representation(QQ, side='left')
+            sage: S2L = L.symmetric_power(2)
+            sage: S2L._latex_term(S2L.an_element().leading_support())
+            '1 ^{2}'
+            sage: latex(S2L.an_element())
+            3 1 (5,7,6) + 2 1 (5,6,7) + 2 1 ^{2}
+            sage: latex(L.symmetric_power(0).an_element())
+            2
+        """
+        if not self._degree:
+            return '1'
+        from sage.misc.latex import latex
+        B = self._rep.basis()
+        return " ".join(latex(B[self._basis_order[i]]) if e == 1 else latex(B[self._basis_order[i]]) + f"^{{{e}}}"
+                        for i, e in enumerate(m) if e)
+
+    def _from_repr_to_sym(self, elt):
+        r"""
+        Return the element ``elt`` from the defining representation
+        to the corresponding exterior algebra.
+
+        EXAMPLES::
+
+            sage: G = groups.matrix.GL(2, 2)
+            sage: L = G.regular_representation(side="left")
+            sage: S3L = L.symmetric_power(3)
+            sage: S3L._from_repr_to_sym(sum(i*b for i,b in enumerate(L.basis(), start=1)))
+            e0 + 2*e1 + 3*e2 + 4*e3 + 5*e4 + 6*e5
+        """
+        return self._symalg.sum(c * self._inv_map[k]
+                                for k, c in elt._monomial_coefficients.items())
+
+    def _semigroup_action(self, g, vec, vec_on_left):
+        r"""
+        Return the action of the semigroup element ``g`` on the
+        vector ``vec`` of ``self``.
+
+        EXAMPLES::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: g = DC3.an_element(); g
+            (1,4,2,3)(5,6)
+            sage: R = DC3.regular_representation(side="right")
+            sage: S2L = R.symmetric_power(2)
+            sage: vec = S2L.an_element(); vec
+            3*()*(5,7,6) + 2*()*(5,6,7) + 2*()^2
+            sage: S2L._semigroup_action(g, vec, True)
+            3*(1,4,2,3)(5,6)*(1,4,2,3)(5,7) + 2*(1,4,2,3)(5,6)^2
+             + 2*(1,4,2,3)(6,7)*(1,4,2,3)(5,6)
+            sage: S2L._semigroup_action(g, vec, False)
+            3*(1,3,2,4)(5,6)*(1,3,2,4)(5,7) + 2*(1,3,2,4)(5,6)^2
+             + 2*(1,3,2,4)(6,7)*(1,3,2,4)(5,6)
+        """
+        return self.linear_combination(((self._action_on_basis(g, b, vec_on_left), c)
+                                        for b, c in vec._monomial_coefficients.items()), not vec_on_left)
+
+    def _action_on_basis(self, g, b, vec_on_left):
+        r"""
+        Return the action of ``g`` on the basis element indexed by ``b``.
+
+        EXAMPLES::
+
+            sage: S3 = SymmetricGroup(3)
+            sage: g = S3.an_element(); g
+            (2,3)
+            sage: L = S3.regular_representation(side="left")
+            sage: S2L = L.symmetric_power(2)
+            sage: vec = S2L.an_element(); vec
+            3*()*(1,2,3) + 2*()*(1,3,2) + 2*()^2
+            sage: g * vec
+            3*(2,3)*(1,2) + 2*(2,3)*(1,3) + 2*(2,3)^2
+            sage: vec * g
+            3*(2,3)*(1,2) + 2*(2,3)*(1,3) + 2*(2,3)^2
+            sage: supp = vec.leading_support(); supp
+            [2, 0, 0, 0, 0, 0]
+            sage: S2L._action_on_basis(g, supp, True)
+            (2,3)^2
+            sage: S2L._action_on_basis(g, supp, False)
+            (2,3)^2
+        """
+        B = self._rep.basis()
+        if vec_on_left:
+            temp = self._symalg.prod(self._from_repr_to_sym(B[self._basis_order[bk]] * g) ** e
+                                     for bk, e in enumerate(b))
+        else:
+            temp = self._symalg.prod(self._from_repr_to_sym(g * B[self._basis_order[bk]]) ** e
+                                     for bk, e in enumerate(b))
+        ind = self._indices
+        data = {ind(mon.exponents()[0]): c for c, mon in temp}
+        return self.element_class(self, data)
 
 
 class RegularRepresentation(Representation):
