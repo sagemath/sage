@@ -620,7 +620,7 @@ class TabloidModule(CombinatorialFreeModule, SymmetricGroupRepresentation):
         if len(v) < len(u):
             u, v = v, u
         R = self.base_ring()
-        return R.sum(c * v[T] for T,c in u)
+        return R.sum(c * v[T] for T, c in u)
 
     class Element(CombinatorialFreeModule.Element):
         def _acted_upon_(self, x, self_on_left):
