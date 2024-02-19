@@ -24,7 +24,7 @@ py.install_sources(
 )
 
 extension_data = {
-    'cython': files('cython.pyx'),
+  'cython' : files('cython.pyx')
 }
 
 foreach name, pyx : extension_data

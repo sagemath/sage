@@ -1,7 +1,7 @@
 py.install_sources('all.py', 'discrete_gaussian_lattice.py', 'discrete_gaussian_polynomial.py', subdir : 'sage/stats/distributions')
 
 extension_data = {
-    'discrete_gaussian_integer': files('discrete_gaussian_integer.pyx', 'dgs_gauss_mp.c', 'dgs_gauss_dp.c', 'dgs_bern.c'),
+  'discrete_gaussian_integer' : files('discrete_gaussian_integer.pyx', 'dgs_gauss_mp.c', 'dgs_gauss_dp.c', 'dgs_bern.c')
 }
 
 foreach name, pyx : extension_data

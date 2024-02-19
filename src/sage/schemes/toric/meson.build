@@ -17,7 +17,7 @@ py.install_sources(
 )
 
 extension_data = {
-    'divisor_class': files('divisor_class.pyx'),
+  'divisor_class' : files('divisor_class.pyx')
 }
 
 foreach name, pyx : extension_data

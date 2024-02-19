@@ -14,7 +14,7 @@ py.install_sources(
 )
 
 extension_data = {
-    'distance_regular': files('distance_regular.pyx'),
+  'distance_regular' : files('distance_regular.pyx')
 }
 
 foreach name, pyx : extension_data

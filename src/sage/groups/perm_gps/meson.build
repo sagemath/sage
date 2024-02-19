@@ -11,7 +11,7 @@ py.install_sources(
 )
 
 extension_data = {
-    'permgroup_element': files('permgroup_element.pyx'),
+  'permgroup_element' : files('permgroup_element.pyx')
 }
 
 foreach name, pyx : extension_data

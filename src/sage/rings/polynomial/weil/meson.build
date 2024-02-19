@@ -1,7 +1,7 @@
 py.install_sources('all.py', 'power_sums.h', subdir : 'sage/rings/polynomial/weil')
 
 extension_data = {
-    'weil_polynomials': files('weil_polynomials.pyx'),
+  'weil_polynomials' : files('weil_polynomials.pyx')
 }
 
 foreach name, pyx : extension_data

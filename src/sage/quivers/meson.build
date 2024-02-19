@@ -10,8 +10,8 @@ py.install_sources(
 )
 
 extension_data = {
-    'algebra_elements': files('algebra_elements.pyx'),
-    'paths': files('paths.pyx'),
+  'algebra_elements' : files('algebra_elements.pyx'),
+  'paths' : files('paths.pyx')
 }
 
 foreach name, pyx : extension_data

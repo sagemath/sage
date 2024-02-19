@@ -1,13 +1,13 @@
 py.install_sources('all.py', subdir : 'sage/geometry/polyhedron/combinatorial_polyhedron')
 
 extension_data = {
-    'base': files('base.pyx'),
-    'combinatorial_face': files('combinatorial_face.pyx'),
-    'conversions': files('conversions.pyx'),
-    'face_iterator': files('face_iterator.pyx'),
-    'face_list_data_structure': files('face_list_data_structure.pyx'),
-    'list_of_faces': files('list_of_faces.pyx'),
-    'polyhedron_face_lattice': files('polyhedron_face_lattice.pyx'),
+  'base' : files('base.pyx'),
+  'combinatorial_face' : files('combinatorial_face.pyx'),
+  'conversions' : files('conversions.pyx'),
+  'face_iterator' : files('face_iterator.pyx'),
+  'face_list_data_structure' : files('face_list_data_structure.pyx'),
+  'list_of_faces' : files('list_of_faces.pyx'),
+  'polyhedron_face_lattice' : files('polyhedron_face_lattice.pyx')
 }
 
 foreach name, pyx : extension_data

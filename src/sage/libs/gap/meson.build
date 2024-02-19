@@ -17,9 +17,9 @@ py.install_sources(
 )
 
 extension_data = {
-    'element': files('element.pyx'),
-    'libgap': files('libgap.pyx'),
-    'util': files('util.pyx'),
+  'element' : files('element.pyx'),
+  'libgap' : files('libgap.pyx'),
+  'util' : files('util.pyx')
 }
 
 foreach name, pyx : extension_data

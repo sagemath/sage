@@ -1,8 +1,8 @@
 py.install_sources('all.py', 'dft.py', 'dwt.pxd', 'fft.pxd', subdir : 'sage/calculus/transforms')
 
 extension_data = {
-    'dwt': files('dwt.pyx'),
-    'fft': files('fft.pyx'),
+  'dwt' : files('dwt.pyx'),
+  'fft' : files('fft.pyx')
 }
 
 foreach name, pyx : extension_data

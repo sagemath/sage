@@ -68,7 +68,7 @@ py.install_sources(
 )
 
 extension_data = {
-    'array': files('array.pyx'),
+  'array' : files('array.pyx')
 }
 
 foreach name, pyx : extension_data

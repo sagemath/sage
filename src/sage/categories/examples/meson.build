@@ -35,7 +35,7 @@ py.install_sources(
 )
 
 extension_data = {
-    'semigroups_cython': files('semigroups_cython.pyx'),
+  'semigroups_cython' : files('semigroups_cython.pyx')
 }
 
 foreach name, pyx : extension_data

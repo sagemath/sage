@@ -10,12 +10,12 @@ py.install_sources(
 )
 
 extension_data = {
-    'wrapper_cc': files('wrapper_cc.pyx'),
-    'wrapper_cdf': files('wrapper_cdf.pyx'),
-    'wrapper_el': files('wrapper_el.pyx'),
-    'wrapper_py': files('wrapper_py.pyx'),
-    'wrapper_rdf': files('wrapper_rdf.pyx'),
-    'wrapper_rr': files('wrapper_rr.pyx'),
+  'wrapper_cc' : files('wrapper_cc.pyx'),
+  'wrapper_cdf' : files('wrapper_cdf.pyx'),
+  'wrapper_el' : files('wrapper_el.pyx'),
+  'wrapper_py' : files('wrapper_py.pyx'),
+  'wrapper_rdf' : files('wrapper_rdf.pyx'),
+  'wrapper_rr' : files('wrapper_rr.pyx')
 }
 
 foreach name, pyx : extension_data

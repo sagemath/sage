@@ -18,13 +18,13 @@ py.install_sources(
 )
 
 extension_data = {
-    'bandwidth': files('bandwidth.pyx'),
-    'cutwidth': files('cutwidth.pyx'),
-    'fast_digraph': files('fast_digraph.pyx'),
-    'graph_products': files('graph_products.pyx'),
-    'rankwidth': files('rankwidth.pyx'),
-    'tree_decomposition': files('tree_decomposition.pyx'),
-    'vertex_separation': files('vertex_separation.pyx'),
+  'bandwidth' : files('bandwidth.pyx'),
+  'cutwidth' : files('cutwidth.pyx'),
+  'fast_digraph' : files('fast_digraph.pyx'),
+  'graph_products' : files('graph_products.pyx'),
+  'rankwidth' : files('rankwidth.pyx'),
+  'tree_decomposition' : files('tree_decomposition.pyx'),
+  'vertex_separation' : files('vertex_separation.pyx')
 }
 
 foreach name, pyx : extension_data

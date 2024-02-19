@@ -23,10 +23,9 @@ py.install_sources(
 )
 
 extension_data = {
-    'ecl': files('ecl.pyx'),
-    'homfly': files('homfly.pyx'),
-    'libecm': files('libecm.pyx'),
-    #'meataxe': files('meataxe.pyx'), # not yet on conda - need meataxe
+  'ecl' : files('ecl.pyx'),
+  'homfly' : files('homfly.pyx'),
+  'libecm' : files('libecm.pyx')
 }
 
 dependencies = [py_dep, braiding, cysignals, ecl, ecm, gc, gmp, homfly, mtx, sirocco]

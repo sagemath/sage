@@ -13,7 +13,7 @@ py.install_sources(
 )
 
 extension_data = {
-    'projective_ds_helper': files('projective_ds_helper.pyx'),
+  'projective_ds_helper' : files('projective_ds_helper.pyx')
 }
 
 foreach name, pyx : extension_data

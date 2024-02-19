@@ -17,16 +17,17 @@ py.install_sources(
 )
 
 extension_data = {
-    'basis_exchange_matroid': files('basis_exchange_matroid.pyx'),
-    'basis_matroid': files('basis_matroid.pyx'),
-    'circuit_closures_matroid': files('circuit_closures_matroid.pyx'),
-    'extension': files('extension.pyx'),
-    'lean_matrix': files('lean_matrix.pyx'),
-    'linear_matroid': files('linear_matroid.pyx'),
-    'matroid': files('matroid.pyx'),
-    'set_system': files('set_system.pyx'),
-    'union_matroid': files('union_matroid.pyx'),
-    'unpickling': files('unpickling.pyx'),
+  'basis_exchange_matroid' : files('basis_exchange_matroid.pyx'),
+  'basis_matroid' : files('basis_matroid.pyx'),
+  'circuit_closures_matroid' : files('circuit_closures_matroid.pyx'),
+  'circuits_matroid' : files('circuits_matroid.pyx'),
+  'extension' : files('extension.pyx'),
+  'lean_matrix' : files('lean_matrix.pyx'),
+  'linear_matroid' : files('linear_matroid.pyx'),
+  'matroid' : files('matroid.pyx'),
+  'set_system' : files('set_system.pyx'),
+  'union_matroid' : files('union_matroid.pyx'),
+  'unpickling' : files('unpickling.pyx')
 }
 
 foreach name, pyx : extension_data

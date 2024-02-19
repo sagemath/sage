@@ -23,7 +23,7 @@ py.install_sources(
 )
 
 extension_data = {
-    'prime_pi': files('prime_pi.pyx'),
+  'prime_pi' : files('prime_pi.pyx')
 }
 
 foreach name, pyx : extension_data

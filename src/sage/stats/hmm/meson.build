@@ -1,10 +1,10 @@
 py.install_sources('all.py', subdir : 'sage/stats/hmm')
 
 extension_data = {
-    'chmm': files('chmm.pyx'),
-    'distributions': files('distributions.pyx'),
-    'hmm': files('hmm.pyx'),
-    'util': files('util.pyx'),
+  'chmm' : files('chmm.pyx'),
+  'distributions' : files('distributions.pyx'),
+  'hmm' : files('hmm.pyx'),
+  'util' : files('util.pyx')
 }
 
 foreach name, pyx : extension_data

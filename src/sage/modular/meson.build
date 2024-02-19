@@ -15,7 +15,7 @@ py.install_sources(
 )
 
 extension_data = {
-    'hypergeometric_misc': files('hypergeometric_misc.pyx'),
+  'hypergeometric_misc' : files('hypergeometric_misc.pyx')
 }
 
 foreach name, pyx : extension_data

@@ -9,7 +9,7 @@ py.install_sources(
 )
 
 extension_data = {
-    'error': files('error.pyx'),
+  'error' : files('error.pyx')
 }
 
 foreach name, pyx : extension_data

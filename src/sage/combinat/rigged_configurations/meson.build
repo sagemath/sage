@@ -25,7 +25,7 @@ py.install_sources(
 )
 
 extension_data = {
-    'rigged_partition': files('rigged_partition.pyx'),
+  'rigged_partition' : files('rigged_partition.pyx')
 }
 
 foreach name, pyx : extension_data

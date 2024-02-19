@@ -1,7 +1,7 @@
 py.install_sources('all.py', 'semimonomial_transformation_group.py', subdir : 'sage/groups/semimonomial_transformations')
 
 extension_data = {
-    'semimonomial_transformation': files('semimonomial_transformation.pyx'),
+  'semimonomial_transformation' : files('semimonomial_transformation.pyx')
 }
 
 foreach name, pyx : extension_data

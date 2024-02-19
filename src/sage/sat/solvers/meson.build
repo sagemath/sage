@@ -8,7 +8,7 @@ py.install_sources(
 )
 
 extension_data = {
-    'satsolver': files('satsolver.pyx'),
+  'satsolver' : files('satsolver.pyx')
 }
 
 foreach name, pyx : extension_data

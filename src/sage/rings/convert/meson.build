@@ -1,7 +1,7 @@
 py.install_sources('all.py', 'mpfi.pxd', subdir : 'sage/rings/convert')
 
 extension_data = {
-    'mpfi': files('mpfi.pyx'),
+  'mpfi' : files('mpfi.pyx')
 }
 
 foreach name, pyx : extension_data

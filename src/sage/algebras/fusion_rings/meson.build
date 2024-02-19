@@ -11,7 +11,7 @@ py.install_sources(
 )
 
 extension_data = {
-    'fast_parallel_fusion_ring_braid_repn': files('fast_parallel_fusion_ring_braid_repn.pyx'),
+  'fast_parallel_fusion_ring_braid_repn' : files('fast_parallel_fusion_ring_braid_repn.pyx')
 }
 
 foreach name, pyx : extension_data

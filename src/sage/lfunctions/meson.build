@@ -8,7 +8,7 @@ py.install_sources(
 )
 
 extension_data = {
-    'zero_sums': files('zero_sums.pyx'),
+  'zero_sums' : files('zero_sums.pyx')
 }
 
 foreach name, pyx : extension_data
