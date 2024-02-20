@@ -2680,24 +2680,25 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                 if parent_is_integers(S) and not self.has_coerce_map_from(S):
                     # Try the above again, but first coerce integer-like type to Integer
                     # with a connecting coersion
-                    R_el = _Integer(S_el)   # Map integer-like to Integer
-                    R = parent(R_el)        # Is this the best way to get the Integer parent?
+                    # TODO: is this the best way to gain access to ZZ
+                    # before I used _Integer as defined above but sometimes this was None
+                    from sage.rings.integer_ring import ZZ
 
                     # Compute the coercsion from whatever S is to the Integer class
                     # This should always work because parent_is_integers(S) is True
-                    connecting = R._internal_coerce_map_from(S)
+                    connecting = ZZ._internal_coerce_map_from(S)
+                    ZZ_el = ZZ(S_el)
 
-                    # TODO: is this ever not None?
-                    if connecting is not None:
-                        # Now we check if there's an element action from Integers
-                        action = detect_element_action(self, R, self_on_left, self_el, R_el)
-                        # When this is not None, we can do the Precomposed action
-                        if action is not None:
-                            if self_on_left:
-                                action = PrecomposedAction(action, None, connecting)
-                            else:
-                                action = PrecomposedAction(action, connecting, None)
-                            return action
+                    # Now we check if there's an element action from Integers
+                    action = detect_element_action(self, ZZ, self_on_left, self_el, ZZ_el)
+
+                    # When this is not None, we can do the Precomposed action
+                    if action is not None:
+                        if self_on_left:
+                            action = PrecomposedAction(action, None, connecting)
+                        else:
+                            action = PrecomposedAction(action, connecting, None)
+                        return action
 
                     # Otherwise, we do the most basic IntegerMulAction
                     from sage.structure.coerce_actions import IntegerMulAction
