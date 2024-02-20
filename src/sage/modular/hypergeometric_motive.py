@@ -42,6 +42,8 @@ REFERENCES:
 
 - [Roberts2015]_
 
+- [RRV2022]_
+
 - [BeCoMe]_
 
 - [Watkins]_
@@ -60,27 +62,31 @@ REFERENCES:
 
 from collections import defaultdict
 from itertools import combinations
+
 from sage.arith.misc import divisors, gcd, euler_phi, moebius, is_prime
 from sage.arith.misc import gauss_sum, kronecker_symbol
 from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
 from sage.functions.generalized import sgn
 from sage.functions.log import log
 from sage.functions.other import floor, ceil, frac
+from sage.geometry.lattice_polytope import LatticePolytope
+from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.functional import cyclotomic_polynomial
 from sage.misc.misc_c import prod
 from sage.modular.hypergeometric_misc import hgm_coeffs
-from sage.rings.fraction_field import FractionField
+from sage.modules.free_module_element import vector
+from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.fraction_field import FractionField
 from sage.rings.integer_ring import ZZ
 from sage.rings.padics.padic_generic_element import gauss_table
 from sage.rings.polynomial.polynomial_ring import polygen, polygens
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
-from sage.schemes.generic.spec import Spec
-from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
+from sage.schemes.generic.spec import Spec
 
 
 def characteristic_polynomial_from_traces(traces, d, q, i, sign):
@@ -1130,6 +1136,44 @@ class HypergeometricData():
 
         ideal = ring.ideal([eq0, eq1, self.M_value() * eq2_neg - t * eq2_pos])
         return Spec(ring.quotient(ideal))
+
+    def polytope(self):
+        """
+        Return the associated lattice polytope.
+
+        This uses the matrix defined in section 3 of [RRV2022]_ and
+        section 3 of [RV2019]_.
+
+        EXAMPLES::
+
+            sage: from sage.modular.hypergeometric_motive import HypergeometricData as Hyp
+            sage: H = Hyp(gamma_list=[-5, -2, 3, 4])
+            sage: P = H.polytope(); P
+            2-d lattice polytope in 2-d lattice M
+            sage: P.polyhedron().f_vector()
+            (1, 4, 4, 1)
+            sage: len(P.points())
+            7
+
+        The Chebyshev example from [RV2019]_::
+
+            sage: H = Hyp(gamma_list=[-30, -1, 6, 10, 15])
+            sage: P = H.polytope(); P
+            3-d lattice polytope in 3-d lattice M
+            sage: len(P.points())
+            19
+            sage: P.polyhedron().f_vector()
+            (1, 5, 9, 6, 1)
+        """
+        l = len(self.gamma_list())
+        m = matrix(ZZ, l, 1, self.gamma_list())
+        ext_ker = m.kernel().basis_matrix().insert_row(0, vector(ZZ, [1] * l))
+        unique_relation = ext_ker.kernel().basis()[0]
+        removed = next(i for i, ci in enumerate(unique_relation)
+                       if i and abs(ci) == 1)
+        mat = matrix(ZZ, [v for i, v in enumerate(ext_ker)
+                          if i and i != removed])
+        return LatticePolytope(mat.transpose())
 
     # --- Operations on data ---
     def twist(self):
