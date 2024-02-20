@@ -44,7 +44,8 @@ class FpT(FractionField_1poly_field):
         """
         INPUT:
 
-        - ``R`` -- A dense polynomial ring over a finite field of prime order `p` with `2 < p < 2^16`
+        - ``R`` -- a dense polynomial ring over a finite field of prime order
+          `p` with `2 < p < 2^{16}`
 
         EXAMPLES::
 

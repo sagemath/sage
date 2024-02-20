@@ -2456,7 +2456,7 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
     @cached_method
     def fraction_field(self):
         """
-        Returns the fraction field of self.
+        Return the fraction field of ``self``.
 
         EXAMPLES::
 
@@ -2482,7 +2482,7 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
             sage: t(x)
             x
 
-        Issue :issue:`37374`:
+        Fixed :issue:`37374`::
 
             sage: x = PolynomialRing(GF(37), ['x'], sparse=True).fraction_field().gen()
             sage: type(x.numerator())
@@ -3565,7 +3565,7 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
     @cached_method
     def fraction_field(self):
         """
-        Returns the fraction field of self.
+        Return the fraction field of ``self``.
 
         EXAMPLES::
 

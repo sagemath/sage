@@ -864,7 +864,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
             sage: type(R(0)^0) == type(R(0))
             True
 
-        Negative powers work (over prime fields) but use a generic
+        Negative powers work (over prime fields) but use the generic
         implementation of fraction fields::
 
             sage: R.<x> = PolynomialRing(Integers(101), implementation='NTL')
