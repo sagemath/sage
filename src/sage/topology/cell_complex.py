@@ -165,7 +165,7 @@ class GenericCellComplex(SageObject):
             4
         """
         try:
-            return max([x.dimension() for x in self._facets], default=-2)
+            return max([x.dimension() for x in self._facets], default=-1)
         except AttributeError:
             if len(self.cells()) == 0:
                 # The empty cell complex has dimension -1.
@@ -270,8 +270,7 @@ class GenericCellComplex(SageObject):
             3
         """
         answer = {}
-        answer[-1] = 1
-        for n in range(self.dimension() + 1):
+        for n in range(-1, self.dimension() + 1):
             answer[n] = len(self.cells()[n])
         return answer
 
@@ -737,7 +736,7 @@ class GenericCellComplex(SageObject):
             sage: K = cubical_complexes.KleinBottle()
             sage: C = cubical_complexes.Cube(2)
             sage: P = K.product(C); P
-            Cubical complex with 168 vertices and 1512 cubes
+            Cubical complex with 168 vertices and 1513 cubes
             sage: P.euler_characteristic()
             0
             sage: P.is_acyclic()

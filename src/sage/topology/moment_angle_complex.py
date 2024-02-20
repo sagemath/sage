@@ -54,12 +54,12 @@ def _cubical_complex_union(c1, c2):
         ....: )
         sage: C1 = CubicalComplex([([0,0], [2,3]), ([0,1], [3,3]),
         ....:                      ([0,1], [2,2]), ([1,1], [2,3])]); C1
-        Cubical complex with 4 vertices and 8 cubes
+        Cubical complex with 4 vertices and 9 cubes
         sage: C2 = CubicalComplex([([0,0], [2,3]), ([0,1], [3,3]),
         ....:                      ([0,1], [2,2]), ([2,2], [2,3])]); C2
-        Cubical complex with 6 vertices and 10 cubes
-        sage: union(C1, C2)
         Cubical complex with 6 vertices and 11 cubes
+        sage: union(C1, C2)
+        Cubical complex with 6 vertices and 12 cubes
         sage: union(C1, C1) == C1
         True
     """
