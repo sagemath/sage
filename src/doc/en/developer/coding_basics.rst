@@ -176,8 +176,8 @@ included in one of the following places:
   - open a resource for binary reading: `fd = files(package).joinpath(resource).open('rb')`
   - read a resource as text: `text = files(package).joinpath(resource).read_text()`
   - read a resource as bytes: `bytes = files(package).joinpath(resource).read_bytes()`
-  - open a xz resource for text reading: `fd = lzma.open(files(package).joinpath(resource), 'rt')`
-  - open a xz resource for binary reading: `fd = lzma.open(files(package).joinpath(resource), 'rb')`
+  - open a xz resource for text reading: `fd = lzma.open(files(package).joinpath(resource).open('rb'), 'rt')`
+  - open a xz resource for binary reading: `fd = lzma.open(files(package).joinpath(resource).open('rb'), 'rb')`
 
   If the file needs to be used outside of Python, then the
   preferred way is using the context manager
