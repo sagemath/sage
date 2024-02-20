@@ -1364,7 +1364,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
           This is only used if ``l`` is None.
 
         - ``cyclic_after`` -- (default: ``None``) an isogeny with codomain equal to
-          `self`. If set, then only isogenies that are cyclic continuations of
+          ``self``. If set, then only isogenies that are cyclic continuations of
           the given isogeny are returned.
 
         OUTPUT:
