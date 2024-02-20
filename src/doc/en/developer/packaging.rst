@@ -603,15 +603,30 @@ For example, the ``scipy`` ``spkg-check.in`` file contains the line
 
     exec python3 spkg-check.py
 
+The install-requires.txt file
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 All normal Python packages and all wheel packages must have a file ``install-requires.txt``.
 If a Python package is available on PyPI, this file must contain the
-name of the package as it is known to PyPI.  Optionally,
+name of the package as it is known to PyPI.
+
+Optionally,
 ``install-requires.txt`` can encode version constraints (such as lower
 and upper bounds).  The constraints are in the format of the
 ``install_requires`` key of `setup.cfg
 <https://setuptools.readthedocs.io/en/latest/userguide/declarative_config.html>`_
 or `setup.py
 <https://packaging.python.org/discussions/install-requires-vs-requirements/#id5>`_.
+
+Sage uses these version constraints for two purposes:
+
+- As a source for generating the metadata of the Python
+  distribution packages in ``SAGE_ROOT/pkgs/``, see
+  :ref:`section_dependencies_distributions`.
+
+- When the experimental option ``configure --enable-system-site-packages`` is used,
+  then the ``configure`` script checks these constraints to determine whether
+  to accept an installation of this package in the system Python.
 
 It is strongly recommended to include comments (starting with ``#``)
 in the file that explain why a particular lower or upper bound is
