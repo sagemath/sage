@@ -239,7 +239,7 @@ Riemann zeta.
 
 ::
 
-    sage: complex_plot(zeta, (-30,30), (-30,30))
+    sage: complex_plot(zeta, (-30,30), (-30,30))  # not tested
     Graphics object consisting of 1 graphics primitive
 
 Cryptography

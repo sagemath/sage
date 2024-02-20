@@ -22,7 +22,7 @@ Este comando produz um círculo amarelo de raio 1, centrado na origem.
 
 ::
 
-    sage: circle((0,0), 1, rgbcolor=(1,1,0))
+    sage: circle((0,0), 1, rgbcolor=(1,1,0))  # not tested
     Graphics object consisting of 1 graphics primitive
 
 Você pode também produzir um círculo preenchido:

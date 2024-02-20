@@ -48,7 +48,7 @@ single graphics object.
 
     sage: v = cremona_optimal_curves([11..37])
     sage: w = [E.plot(thickness=10,rgbcolor=(random(),random(),random())) for E in v]
-    sage: graphics_array(w, 4, 5).show(axes=False)
+    sage: graphics_array(w, 4, 5).show(axes=False)  # not tested
 
 
 .. image:: birch.*

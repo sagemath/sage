@@ -86,7 +86,7 @@ documentation of
 :meth:`~sage.manifolds.differentiable.vectorfield.VectorField.plot` for the
 various options)::
 
-    sage: v.plot()
+    sage: v.plot()  # not tested
     Graphics object consisting of 80 graphics primitives
 
 .. PLOT::

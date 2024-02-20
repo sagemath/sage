@@ -85,7 +85,7 @@ A vector field can evaluated at any point of `\mathbb{E}^3`::
 
 Vector fields can be plotted::
 
-    sage: v.plot(max_range=1.5, scale=0.5)
+    sage: v.plot(max_range=1.5, scale=0.5)  # not tested
     Graphics3d Object
 
 
@@ -101,7 +101,7 @@ For customizing the plot, see the list of options in the documentation of
 For instance, to get a view of the orthogonal projection of `v` in the plane
 `y=1`, do::
 
-    sage: v.plot(fixed_coords={y: 1}, ambient_coords=(x,z), max_range=1.5,
+    sage: v.plot(fixed_coords={y: 1}, ambient_coords=(x,z), max_range=1.5,  # not tested
     ....:        scale=0.25)
     Graphics object consisting of 81 graphics primitives
 

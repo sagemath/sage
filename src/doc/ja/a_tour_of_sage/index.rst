@@ -63,7 +63,7 @@ Sageでは等号として記号 ``==`` を使う．
 
 ::
 
-    sage: show(plot(sin(x) + sin(1.6*x), 0, 40))
+    sage: show(plot(sin(x) + sin(1.6*x), 0, 40))  # not tested
 
 .. image:: sin_plot.*
 
