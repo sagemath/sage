@@ -1658,7 +1658,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         from .isogeny_small_degree import isogenies_prime_degree
         if cyclic_after is None:
-            return sum([isogenies_prime_degree(self, d) for d in L], [])
+            return [phi for d in L for phi in isogenies_prime_degree(self, d)]
 
         dom = cyclic_after.domain()
         if cyclic_after.codomain() != self:
