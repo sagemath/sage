@@ -23068,7 +23068,7 @@ class GenericGraph(GenericGraph_pyx):
             sage: # needs sage.groups
             sage: C5 = graphs.CycleGraph(5)
             sage: C5.relabel({u: str(u) for u in C5}, inplace=True)
-            sage: ar = C5.automorphism_group().random_element()                         
+            sage: ar = C5.automorphism_group().random_element()
             sage: R = C5.relabel(ar, inplace=False)
             sage: perm = C5.is_isomorphic(R, certificate=True)[1]
             sage: perm == {u: ar(u) for u in C5}
