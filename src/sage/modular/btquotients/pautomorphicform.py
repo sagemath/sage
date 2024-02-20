@@ -1910,10 +1910,8 @@ class pAdicAutomorphicFormElement(ModuleElement):
         R2 = PolynomialRing(f.base_ring(), 'x')
         x = R2.gen()
         value = 0
-        ii = 0
         if method == 'riemann_sum':
             for e in E:
-                ii += 1
                 exp = ((R1([e[1, 1], e[1, 0]])) ** (self.parent()._U.weight()) * e.determinant() ** (-(self.parent()._U.weight()) / 2)) * f(R1([e[0, 1], e[0, 0]]) / R1([e[1, 1], e[1, 0]]))
                 # exp = R2([tmp[jj] for jj in range(self.parent()._k-1)])
                 new = eval_dist_at_powseries(self.evaluate(e), exp.truncate(self.parent()._U.weight() + 1))
@@ -1921,7 +1919,6 @@ class pAdicAutomorphicFormElement(ModuleElement):
         elif method == 'moments':
             n = self.parent()._U.weight()
             for e in E:
-                ii += 1
                 a, b, c, d = e.list()
                 delta = e.determinant()
                 verbose('%s' % (R2([e[0, 1], e[0, 0]])
