@@ -61,7 +61,7 @@ from sage.structure.factorization import Factorization
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.arith.functions import lcm
 
-from sage.libs.arb.arb_fmpz_poly cimport arb_fmpz_poly_evaluate_arb, arb_fmpz_poly_evaluate_acb
+from sage.libs.flint.arb_fmpz_poly cimport arb_fmpz_poly_evaluate_arb, arb_fmpz_poly_evaluate_acb
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
 from sage.libs.flint.fmpz_poly_sage cimport *

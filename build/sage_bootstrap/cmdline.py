@@ -70,14 +70,11 @@ EXAMPLE:
 
     $ sage --package list
     4ti2
-    arb
-    autotools
     [...]
     zlib
 
     $ sage --package list :standard:
-    arb
-    backports_ssl_match_hostname
+    _prereq
     [...]
     zlib
 """
