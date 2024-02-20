@@ -941,16 +941,6 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             sage: sorted((phi3 * phi2 * phi1).is_cyclic() for phi3 in phi3_list)
             [False, True, True]
 
-        "Recursive" composite isogenies are not flattened, but should still
-        return correct results:
-
-            sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
-            sage: EllipticCurveHom_composite.from_factors([phi1.dual() * phi1]).is_cyclic()
-            False
-            sage: phi2 = choice([phi2 for phi2 in phi2_list if (phi2 * phi1).is_cyclic()])
-            sage: EllipticCurveHom_composite.from_factors([phi2 * phi1]).is_cyclic()
-            True
-
         TESTS::
 
             sage: from sage.schemes.elliptic_curves.hom_frobenius import EllipticCurveHom_frobenius
@@ -982,6 +972,16 @@ class EllipticCurveHom_composite(EllipticCurveHom):
             sage: n_cyclic = sum((phi2 * phi1).is_cyclic() for phi2 in phi2_list)
             sage: n_cyclic, len(phi2_list)
             (7, 8)
+
+        Nested composite isogenies are not flattened, but should still
+        return correct results:
+
+            sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
+            sage: EllipticCurveHom_composite.from_factors([phi1.dual() * phi1]).is_cyclic()
+            False
+            sage: phi2 = choice([phi2 for phi2 in phi2_list if (phi2 * phi1).is_cyclic()])
+            sage: EllipticCurveHom_composite.from_factors([phi2 * phi1]).is_cyclic()
+            True
 
         .. SEEALSO::
 
