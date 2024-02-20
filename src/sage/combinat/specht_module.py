@@ -29,6 +29,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.combinat.diagram import Diagram
 from sage.combinat.partition import _Partitions
 from sage.combinat.free_module import CombinatorialFreeModule
+from sage.modules.with_basis.representation import Representation_abstract
 from sage.sets.family import Family
 from sage.matrix.constructor import matrix
 from sage.rings.rational_field import QQ
@@ -50,7 +51,19 @@ class SymmetricGroupRepresentation:
             sage: TestSuite(SM).run()
         """
         self._semigroup = SGA.group()
-        self._SGA = SGA
+        self._semigroup_algebra = SGA
+
+    def side(self):
+        r"""
+        Return the side of the action defining ``self``.
+
+        EXAMPLES::
+
+            sage: SM = Partition([3,1,1]).specht_module(GF(3))
+            sage: SM.side()
+            'left'
+        """
+        return "left"
 
     @cached_method
     def frobenius_image(self):
@@ -153,7 +166,7 @@ class SymmetricGroupRepresentation:
 
     @cached_method
     def character(self):
-        """
+        r"""
         Return the character of ``self``.
 
         EXAMPLES::
@@ -204,7 +217,7 @@ class SymmetricGroupRepresentation:
 
     @cached_method
     def brauer_character(self):
-        """
+        r"""
         Return the Brauer character of ``self``.
 
         EXAMPLES::
@@ -229,15 +242,18 @@ class SymmetricGroupRepresentation:
             evals = self.representation_matrix(g).eigenvalues()
             K = evals[0].parent()
             val = 0
+            orders = {la: la.multiplicative_order() for la in evals if la != K.one()}
+            zetas = {o: CyclotomicField(o).gen() for o in orders.values()}
+            prims = {o: K.zeta(o) for o in orders.values()}
             for la in evals:
                 if la == K.one():
                     val += 1
                     continue
                 o = la.multiplicative_order()
-                zeta = CyclotomicField(o).gen()
-                prim = K.zeta(o)
+                zeta = zetas[o]
+                prim = prims[o]
                 for deg in range(o):
-                    if prim**deg == la:
+                    if prim ** deg == la:
                         val += zeta ** deg
                         break
             chi.append(val)
@@ -245,7 +261,7 @@ class SymmetricGroupRepresentation:
         return vector(chi, immutable=True)
 
 
-class SpechtModule(SubmoduleWithBasis, SymmetricGroupRepresentation):
+class SpechtModule(SubmoduleWithBasis, SymmetricGroupRepresentation, Representation_abstract):
     r"""
     A Specht module.
 
@@ -517,18 +533,37 @@ class SpechtModule(SubmoduleWithBasis, SymmetricGroupRepresentation):
                 return ret
             # Check if it is in the symmetric group algebra
             P = self.parent()
-            if x in P._SGA or x in P._SGA.group():
+            if x in P._semigroup_algebra or x in P._semigroup_algebra.group():
                 if self_on_left:  # it is only a left module
                     return None
                 else:
-                    return P.retract(P._SGA(x) * self.lift())
+                    return P.retract(P._semigroup_algebra(x) * self.lift())
             return None
 
 
-class TabloidModule(CombinatorialFreeModule, SymmetricGroupRepresentation):
+class TabloidModule(SymmetricGroupRepresentation, Representation_abstract):
     r"""
-    The vector space of all :class:`~sage.combinat.tabloid.Tabloids` of a
-    fixed shape with the natural symmetric group action.
+    The vector space of all tabloids of a fixed shape with the natural
+    symmetric group action.
+
+    A *tabloid* is an :class:`OrderedSetPartition` whose underlying set
+    is `\{1, \ldots, n\}`. The symmetric group acts by permuting the
+    entries of the set. Hence, this is a representation of the symmetric
+    group defined over any field.
+
+    EXAMPLES::
+
+        sage: SGA = SymmetricGroupAlgebra(GF(3), 5)
+        sage: TM = SGA.tabloid_module([2, 2, 1])
+        sage: TM.dimension()
+        30
+        sage: TM.brauer_character()
+        (30, 6, 2, 0, 0)
+        sage: IM = TM.invariant_module()
+        sage: IM.dimension()
+        1
+        sage: IM.basis()[0].lift() == sum(TM.basis())
+        True
     """
     @staticmethod
     def __classcall_private__(cls, SGA, shape):
@@ -566,12 +601,16 @@ class TabloidModule(CombinatorialFreeModule, SymmetricGroupRepresentation):
             sage: TM = SGA.tabloid_module([2,2,1])
             sage: TestSuite(TM).run()
         """
-        SymmetricGroupRepresentation.__init__(self, SGA)
-        from sage.combinat.tabloid import Tabloids
+        from sage.combinat.set_partition_ordered import OrderedSetPartitions
+        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
         self._shape = shape
+        n = sum(shape)
+        self._symgp = SymmetricGroup(n)
         cat = ModulesWithBasis(SGA.base_ring()).FiniteDimensional()
-        return CombinatorialFreeModule.__init__(self, SGA.base_ring(), Tabloids(shape),
-                                                category=cat, prefix='T', bracket='')
+        tabloids = OrderedSetPartitions(n, shape)
+        CombinatorialFreeModule.__init__(self, SGA.base_ring(), tabloids,
+                                         category=cat, prefix='T', bracket='')
+        SymmetricGroupRepresentation.__init__(self, SGA)
 
     def _repr_(self):
         r"""
@@ -584,6 +623,106 @@ class TabloidModule(CombinatorialFreeModule, SymmetricGroupRepresentation):
             Tabloid module of [2, 2, 1] over Rational Field
         """
         return f"Tabloid module of {self._shape} over {self.base_ring()}"
+
+    def _ascii_art_term(self, T):
+        r"""
+        Return an ascii art representation of the term indexed by ``T``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: TM = SGA.tabloid_module([2,2,1])
+            sage: ascii_art(TM.an_element())  # indirect doctest
+            2*T       + 2*T       + 3*T
+               {1, 2}      {1, 2}      {1, 2}
+               {3, 4}      {3, 5}      {4, 5}
+               {5}         {4}         {3}
+        """
+        # This is basically copied from CombinatorialFreeModule._ascii_art_term
+        from sage.typeset.ascii_art import AsciiArt, ascii_art
+        pref = AsciiArt([self.prefix()])
+        tab = "\n".join("{" + ", ".join(str(val) for val in sorted(row)) + "}" for row in T)
+        if not tab:
+            tab = '-'
+        r = pref * (AsciiArt([" " * len(pref)]) + ascii_art(tab))
+        r._baseline = r._h - 1
+        return r
+
+    def _unicode_art_term(self, T):
+        r"""
+        Return a unicode art representation of the term indexed by ``T``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: TM = SGA.tabloid_module([2,2,1])
+            sage: unicode_art(TM.an_element())  # indirect doctest
+            2*T       + 2*T       + 3*T
+               {1, 2}      {1, 2}      {1, 2}
+               {3, 4}      {3, 5}      {4, 5}
+               {5}         {4}         {3}
+        """
+        from sage.typeset.unicode_art import unicode_art
+        r = unicode_art(repr(self._ascii_art_term(T)))
+        r._baseline = r._h - 1
+        return r
+
+    def _latex_term(self, T):
+        r"""
+        Return a latex representation of the term indexed by ``T``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: TM = SGA.tabloid_module([2,2,1])
+            sage: latex(TM.an_element())  # indirect doctest
+            2 T_{{\def\lr#1{\multicolumn{1}{@{\hspace{.6ex}}c@{\hspace{.6ex}}}{\raisebox{-.3ex}{$#1$}}}
+            \raisebox{-.6ex}{$\begin{array}[b]{*{2}c}\cline{1-2}
+            \lr{1}&\lr{2}\\\cline{1-2}
+            \lr{3}&\lr{4}\\\cline{1-2}
+            \lr{5}\\\cline{1-1}
+            \end{array}$}
+            }} + 2 T_{{\def\lr#1{\multicolumn{1}{@{\hspace{.6ex}}c@{\hspace{.6ex}}}{\raisebox{-.3ex}{$#1$}}}
+            \raisebox{-.6ex}{$\begin{array}[b]{*{2}c}\cline{1-2}
+            \lr{1}&\lr{2}\\\cline{1-2}
+            \lr{3}&\lr{5}\\\cline{1-2}
+            \lr{4}\\\cline{1-1}
+            \end{array}$}
+            }} + 3 T_{{\def\lr#1{\multicolumn{1}{@{\hspace{.6ex}}c@{\hspace{.6ex}}}{\raisebox{-.3ex}{$#1$}}}
+            \raisebox{-.6ex}{$\begin{array}[b]{*{2}c}\cline{1-2}
+            \lr{1}&\lr{2}\\\cline{1-2}
+            \lr{4}&\lr{5}\\\cline{1-2}
+            \lr{3}\\\cline{1-1}
+            \end{array}$}
+            }}
+        """
+        if not T:
+            tab = "\\emptyset"
+        else:
+            from sage.combinat.output import tex_from_array
+            A = list(map(sorted, T))
+            tab = str(tex_from_array(A))
+            tab = tab.replace("|", "")
+        return f"{self.prefix()}_{{{tab}}}"
+
+    def _symmetric_group_action(self, osp, g):
+        r"""
+        Return the action of the symmetric group element ``g`` on the
+        ordered set partition ``osp``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: TM = SGA.tabloid_module([2,2,1])
+            sage: osp = TM._indices([[1,4],[3,5],[2]])
+            sage: g = SGA.group().an_element(); g
+            [5, 1, 2, 3, 4]
+            sage: TM._symmetric_group_action(osp, g)
+            [{3, 5}, {2, 4}, {1}]
+        """
+        P = self._indices
+        g = self._symgp(g)
+        return P.element_class(P, [[g(val) for val in row] for row in osp], check=False)
 
     def specht_module(self):
         r"""
@@ -658,10 +797,11 @@ class TabloidModule(CombinatorialFreeModule, SymmetricGroupRepresentation):
             if self_on_left:
                 return None
             P = self.parent()
-            if x in P._SGA:
+            if x in P._semigroup_algebra:
                 return P.sum(c * (perm * self) for perm, c in x.monomial_coefficients().items())
-            if x in P._SGA.indices():
-                return P.element_class(P, {T.symmetric_group_action(x): c for T, c in self._monomial_coefficients.items()})
+            if x in P._semigroup_algebra.indices():
+                return P.element_class(P, {P._symmetric_group_action(T, x): c
+                                           for T, c in self._monomial_coefficients.items()})
 
 
 class SpechtModuleTableauxBasis(SpechtModule):
@@ -690,15 +830,15 @@ class SpechtModuleTableauxBasis(SpechtModule):
             sage: TestSuite(SM).run()
         """
         self._diagram = ambient._shape
-        SymmetricGroupRepresentation.__init__(self, ambient._SGA)
+        SymmetricGroupRepresentation.__init__(self, ambient._semigroup_algebra)
 
         ambient_basis = ambient.basis()
         tabloids = ambient_basis.keys()
         support_order = list(tabloids)
 
         def elt(T):
-            tab = tabloids.from_tableau(T)
-            return ambient.sum_of_terms((tab.symmetric_group_action(sigma), sigma.sign())
+            tab = tabloids.element_class(tabloids, list(T), check=False)
+            return ambient.sum_of_terms((ambient._symmetric_group_action(tab, sigma), sigma.sign())
                                         for sigma in T.column_stabilizer())
 
         basis = Family({T: elt(T)
@@ -902,7 +1042,7 @@ class MaximalSpechtSubmodule(SubmoduleWithBasis, SymmetricGroupRepresentation):
             sage: U.dimension()
             0
         """
-        SymmetricGroupRepresentation.__init__(self, specht_module._SGA)
+        SymmetricGroupRepresentation.__init__(self, specht_module._semigroup_algebra)
 
         p = specht_module.base_ring().characteristic()
         if p == 0:
@@ -1010,7 +1150,7 @@ class SimpleModule(QuotientModuleWithBasis, SymmetricGroupRepresentation):
         p = specht_module.base_ring().characteristic()
         if not self._diagram.is_regular(p):
             raise ValueError(f"the partition must be {p}-regular")
-        SymmetricGroupRepresentation.__init__(self, specht_module._SGA)
+        SymmetricGroupRepresentation.__init__(self, specht_module._semigroup_algebra)
         cat = specht_module.category()
         QuotientModuleWithBasis.__init__(self, specht_module.maximal_submodule(), cat, prefix='D')
 
@@ -1218,7 +1358,8 @@ def tabloid_gram_matrix(la, base_ring):
             p1, p2 = p2, p1
         return sum(c1 * p2.get(T1, 0) for T1, c1 in p1.items() if c1)
 
-    gram_matrix = [[bilinear_form(polytabloid(T1), polytabloid(T2)) for T1 in ST] for T2 in ST]
+    PT = {T: polytabloid(T) for T in ST}
+    gram_matrix = [[bilinear_form(PT[T1], PT[T2]) for T1 in ST] for T2 in ST]
     return matrix(base_ring, gram_matrix)
 
 

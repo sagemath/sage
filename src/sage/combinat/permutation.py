@@ -7342,6 +7342,19 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         """
         return factorial(self.n)
 
+    @cached_method
+    def gens(self):
+        r"""
+        Return a set of generators for ``self`` as a group.
+
+        EXAMPLES::
+
+            sage: P4 = Permutations(4)
+            sage: P4.gens()
+            ([2, 1, 3, 4], [1, 3, 2, 4], [1, 2, 4, 3])
+        """
+        return tuple(self.group_generators())
+
     def degree(self):
         """
         Return the degree of ``self``.
