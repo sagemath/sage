@@ -13,10 +13,11 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.categories.covariant_functorial_construction import CovariantFunctorialConstruction, CovariantConstructionCategory
+from sage.categories.pushout import MultivariateConstructionFunctor
 from sage.typeset.unicode_characters import unicode_otimes
 
 
-class TensorProductFunctor(CovariantFunctorialConstruction):
+class TensorProductFunctor(CovariantFunctorialConstruction, MultivariateConstructionFunctor):
     """
     A singleton class for the tensor functor.
 
@@ -51,7 +52,24 @@ class TensorProductFunctor(CovariantFunctorialConstruction):
     _functor_category = "TensorProducts"
     symbol = " # "
     unicode_symbol = f" {unicode_otimes} "
+    def __init__(self, category=None):
+        r"""
+        Constructor. See :class:`TensorProductFunctor` for details.
 
+        TESTS::
+
+            sage: from sage.categories.tensor import TensorProductFunctor
+            sage: TensorProductFunctor()
+            The tensor functorial construction
+        """
+        CovariantFunctorialConstruction.__init__(self)
+        self._forced_category = category
+        from sage.categories.rings import Rings
+        if self._forced_category is not None:
+            codomain = self._forced_category
+        else:
+            codomain = Rings()
+        MultivariateConstructionFunctor.__init__(self, Rings(), codomain)
 
 tensor = TensorProductFunctor()
 
