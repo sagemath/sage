@@ -387,7 +387,7 @@ Installation steps
 #. Follow the procedure in the file `README.md <https://github.com/sagemath/sage/#readme>`_
    in ``SAGE_ROOT``.
 
-#. If you need wish to prepare for having to build Sage in an environment
+#. If you wish to prepare for having to build Sage in an environment
    without sufficient Internet connectivity:
 
    - After running ``configure``, you can use ``make download`` to force
@@ -402,13 +402,13 @@ Installation steps
      in the Release Assets, which contains a prepopulated subdirectory
      ``upstream``.
 
-     After downloading the source tarball ```sage-x.y.tar.gz``` into
-     a directory ```~/sage/```::
+     After downloading the source tarball ``sage-x.y.tar.gz`` into
+     a directory ``~/sage/``::
 
        $ cd ~/sage/
        $ tar xf sage-x.y.tar.gz  # adapt x.y; takes a while
 
-     This creates the subdirectory `````sage-x.y```. Now change into it::
+     This creates the subdirectory ``sage-x.y``. Now change into it::
 
        $ cd sage-x.y/  # adapt x.y
 
