@@ -2679,26 +2679,30 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
                 if parent_is_integers(S) and not self.has_coerce_map_from(S):
                     # Try the above again, but first coerce integer-like type to Integer
-                    # with a connecting coersion
-                    # TODO: is this the best way to gain access to ZZ
-                    # before I used _Integer as defined above but sometimes this was None
-                    from sage.rings.integer_ring import ZZ
-
-                    # Compute the coercsion from whatever S is to the Integer class
-                    # This should always work because parent_is_integers(S) is True
-                    connecting = ZZ._internal_coerce_map_from(S)
-                    ZZ_el = ZZ(S_el)
+                    # with a connecting coercion
+                    global _Integer
+                    if _Integer is None:
+                        from sage.rings.integer import Integer as _Integer
+                    ZZ_el = _Integer(S_el)
+                    ZZ = ZZ_el.parent()
 
                     # Now we check if there's an element action from Integers
                     action = detect_element_action(self, ZZ, self_on_left, self_el, ZZ_el)
 
                     # When this is not None, we can do the Precomposed action
                     if action is not None:
-                        if self_on_left:
-                            action = PrecomposedAction(action, None, connecting)
-                        else:
-                            action = PrecomposedAction(action, connecting, None)
-                        return action
+                        # Compute the coercion from whatever S is to the Integer class
+                        # This should always work because parent_is_integers(S) is True
+                        # but it fails when S is gmpy2.mpz.
+                        # TODO: should we also patch _internal_coerce_map_from so that
+                        # there's a map from gmpy2.mpz to ZZ?
+                        connecting = ZZ._internal_coerce_map_from(S)
+                        if connecting is not None:
+                            if self_on_left:
+                                action = PrecomposedAction(action, None, connecting)
+                            else:
+                                action = PrecomposedAction(action, connecting, None)
+                            return action
 
                     # Otherwise, we do the most basic IntegerMulAction
                     from sage.structure.coerce_actions import IntegerMulAction
