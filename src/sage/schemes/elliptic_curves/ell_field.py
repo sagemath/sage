@@ -1659,24 +1659,28 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         from .isogeny_small_degree import isogenies_prime_degree
         if cyclic_after is None:
             return sum([isogenies_prime_degree(self, d) for d in L], [])
-        else:
-            dom = cyclic_after.domain()
-            if cyclic_after.codomain() != self:
-                raise ValueError("the codomain of `cyclic_after` must be the same curve")
-            if not cyclic_after.is_separable():
-                raise ValueError("the `cyclic_after` isogeny must be separable")
-            ret = []
-            for d in L:
-                for phi in isogenies_prime_degree(self, d):
-                    # .is_cyclic() would only check j-invariants in most cases
-                    # but also do some overhead (construct composte map, check degrees
-                    # are primes, etc.)
-                    # So we check j-invariants here to make most cases pass fast
-                    if cyclic_after.degree().is_prime() and phi.codomain().j_invariant() != dom.j_invariant():
-                        ret.append(phi)
-                    elif (phi * cyclic_after).is_cyclic():
-                        ret.append(phi)
-            return ret
+
+        dom = cyclic_after.domain()
+        if cyclic_after.codomain() != self:
+            raise ValueError("the codomain of `cyclic_after` must be the same curve")
+        if not cyclic_after.is_separable():
+            raise ValueError("the `cyclic_after` isogeny must be separable")
+
+        prev_deg = cyclic_after.degree()
+        ret = []
+        for d in L:
+            for phi in isogenies_prime_degree(self, d):
+                # .is_cyclic() would only check j-invariants in most cases
+                # but also do some overhead (construct composte map, check degrees
+                # are primes, etc.)
+                # So we check j-invariants here to make most cases pass fast
+                # (also no need to check if degrees are coprime)
+                if prev_deg.is_prime() and \
+                   (prev_deg % d or phi.codomain().j_invariant() != dom.j_invariant()):
+                    ret.append(phi)
+                elif (phi * cyclic_after).is_cyclic():
+                    ret.append(phi)
+        return ret
 
     def is_isogenous(self, other, field=None):
         """
