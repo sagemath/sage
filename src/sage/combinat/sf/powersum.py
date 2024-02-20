@@ -24,6 +24,7 @@ from sage.arith.misc import divisors
 from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.misc.misc_c import prod
+from sage.misc.superseded import deprecated_function_alias
 
 
 class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_multiplicative):
@@ -400,12 +401,12 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                 return self
             return p._apply_module_morphism(self, self._derivative)
 
-        def frobenius(self, n):
+        def adams_operator(self, n):
             r"""
             Return the image of the symmetric function ``self`` under the
-            `n`-th Frobenius operator.
+            `n`-th Adams operator.
 
-            The `n`-th Frobenius operator `\mathbf{f}_n` is defined to be the
+            The `n`-th Adams operator `\mathbf{f}_n` is defined to be the
             map from the ring of symmetric functions to itself that sends
             every symmetric function `P(x_1, x_2, x_3, \ldots)` to
             `P(x_1^n, x_2^n, x_3^n, \ldots)`. This operator `\mathbf{f}_n`
@@ -421,15 +422,15 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
             `\mathbf{f}_n (p_r) = p_{nr}` for every positive integer `r` (where
             `p_k` denotes the `k`-th powersum symmetric function).
 
-            The `n`-th Frobenius operator is also called the `n`-th
+            The `n`-th Adams operator is also called the `n`-th
             Frobenius endomorphism. It is not related to the Frobenius map
             which connects the ring of symmetric functions with the
             representation theory of the symmetric group.
 
-            The `n`-th Frobenius operator is also the `n`-th Adams operator
+            The `n`-th Adams operator is the `n`-th Adams operator
             of the `\Lambda`-ring of symmetric functions over the integers.
 
-            The `n`-th Frobenius operator can also be described via plethysm:
+            The `n`-th Adams operator can also be described via plethysm:
             Every symmetric function `P` satisfies
             `\mathbf{f}_n(P) = p_n \circ P = P \circ p_n`,
             where `p_n` is the `n`-th powersum symmetric function, and `\circ`
@@ -441,22 +442,22 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
             OUTPUT:
 
-            The result of applying the `n`-th Frobenius operator (on the ring
+            The result of applying the `n`-th Adams operator (on the ring
             of symmetric functions) to ``self``.
 
             EXAMPLES::
 
                 sage: Sym = SymmetricFunctions(ZZ)
                 sage: p = Sym.p()
-                sage: p[3].frobenius(2)
+                sage: p[3].adams_operator(2)
                 p[6]
-                sage: p[4,2,1].frobenius(3)
+                sage: p[4,2,1].adams_operator(3)
                 p[12, 6, 3]
-                sage: p([]).frobenius(4)
+                sage: p([]).adams_operator(4)
                 p[]
-                sage: p[3].frobenius(1)
+                sage: p[3].adams_operator(1)
                 p[3]
-                sage: (p([3]) - p([2]) + p([])).frobenius(3)
+                sage: (p([3]) - p([2]) + p([])).adams_operator(3)
                 p[] - p[6] + p[9]
 
             TESTS:
@@ -467,10 +468,10 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
 
                 sage: Sym = SymmetricFunctions(QQ)
                 sage: p = Sym.p(); h = Sym.h()
-                sage: all( h(p(lam)).frobenius(3) == h(p(lam).frobenius(3))
+                sage: all( h(p(lam)).adams_operator(3) == h(p(lam).adams_operator(3))
                 ....:      for lam in Partitions(3) )
                 True
-                sage: all( p(h(lam)).frobenius(2) == p(h(lam).frobenius(2))
+                sage: all( p(h(lam)).adams_operator(2) == p(h(lam).adams_operator(2))
                 ....:      for lam in Partitions(4) )
                 True
 
@@ -482,7 +483,9 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                    for lam, coeff in self.monomial_coefficients().items()}
             return self.parent()._from_dict(dct)
 
-        adams_operation = frobenius
+        frobenius = deprecated_function_alias(36396, adams_operator)
+
+        adams_operation = deprecated_function_alias(36396, adams_operator)
 
         def verschiebung(self, n):
             r"""
@@ -516,7 +519,7 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
             (German for "shift") endomorphism of the Witt vectors.
 
             The `n`-th Verschiebung operator is adjoint to the `n`-th
-            Frobenius operator (see :meth:`frobenius` for its definition)
+            Adams operator (see :meth:`adams_operator` for its definition)
             with respect to the Hall scalar product (:meth:`scalar`).
 
             The action of the `n`-th Verschiebung operator on the Schur basis
@@ -572,14 +575,14 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
                 ....:      for lam in Partitions(4) )
                 True
 
-            Testing the adjointness between the Frobenius operators
+            Testing the adjointness between the Adams operators
             `\mathbf{f}_n` and the Verschiebung operators
             `\mathbf{V}_n`::
 
                 sage: Sym = SymmetricFunctions(QQ)
                 sage: p = Sym.p()
                 sage: all( all( p(lam).verschiebung(2).scalar(p(mu))
-                ....:           == p(lam).scalar(p(mu).frobenius(2))
+                ....:           == p(lam).scalar(p(mu).adams_operator(2))
                 ....:           for mu in Partitions(2) )
                 ....:      for lam in Partitions(4) )
                 True

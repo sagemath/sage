@@ -111,6 +111,7 @@ additional functionality (e.g. linear extensions).
     - :meth:`connectivity() <sage.matroids.matroid.Matroid.connectivity>`
     - :meth:`is_paving() <sage.matroids.matroid.Matroid.is_paving>`
     - :meth:`is_sparse_paving() <sage.matroids.matroid.Matroid.is_sparse_paving>`
+    - :meth:`girth() <sage.matroids.matroid.Matroid.girth>`
 
 - Representation
     - :meth:`binary_matroid() <sage.matroids.matroid.Matroid.binary_matroid>`
@@ -2955,9 +2956,12 @@ cdef class Matroid(SageObject):
 
         - ``ordering`` -- a total ordering of the groundset given as a list
 
+        OUTPUT: a list of frozensets
+
         EXAMPLES::
 
-            sage: M = Matroid(circuits=[[1,2,3], [3,4,5], [1,2,4,5]])
+            sage: from sage.matroids.basis_matroid import BasisMatroid
+            sage: M = BasisMatroid(Matroid(circuits=[[1,2,3], [3,4,5], [1,2,4,5]]))
             sage: SimplicialComplex(M.no_broken_circuits_sets())                        # needs sage.graphs
             Simplicial complex with vertex set (1, 2, 3, 4, 5)
              and facets {(1, 2, 4), (1, 2, 5), (1, 3, 4), (1, 3, 5)}
@@ -3120,9 +3124,9 @@ cdef class Matroid(SageObject):
             A 6-dimensional polyhedron in ZZ^7 defined as the convex hull
             of 29 vertices
 
-        REFERENCE:
+        REFERENCES:
 
-        - [DLHK2007]_
+        [DLHK2007]_
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
         from sage.modules.free_module import FreeModule
@@ -3163,7 +3167,7 @@ cdef class Matroid(SageObject):
             A 7-dimensional polyhedron in ZZ^7 defined as the convex hull
             of 58 vertices
 
-        REFERENCE:
+        REFERENCES:
 
         [DLHK2007]_
         """
@@ -5975,6 +5979,34 @@ cdef class Matroid(SageObject):
             if len(C1 ^ C2) <= 2:
                 return False
         return True
+
+    cpdef girth(self) noexcept:
+        r"""
+        Return the girth of the matroid.
+
+        The girth is the size of the smallest circuit. In case the matroid has
+        no circuits the girth is `\infty`.
+
+        EXAMPLES::
+
+            sage: matroids.Uniform(5, 5).girth()
+            +Infinity
+            sage: matroids.catalog.K4().girth()
+            3
+            sage: matroids.catalog.Vamos().girth()
+            4
+
+        REFERENCES:
+
+        [Oxl2011]_, p. 327.
+        """
+        for k in range(self.rank() + 2):
+            for X in combinations(self.groundset(), k):
+                X = frozenset(X)
+                if self._is_circuit(X):
+                    return k
+        from sage.rings.infinity import infinity
+        return infinity
 
     # representability
 
