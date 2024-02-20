@@ -2119,9 +2119,14 @@ cdef class FiniteField(Field):
 
     def from_bytes(self, input_bytes, byteorder="big"):
         """
+<<<<<<< HEAD
         Return the integer represented by the given array of bytes.
 
         Internally relies on the python ``int.from_bytes()`` method.
+=======
+        Return the integer represented by the given array of bytes. Internally relies
+        on the Python ``int.from_bytes()`` method.
+>>>>>>> 6d8b1dfaf02cbd4b09f692e7d2201379553b03c4
 
         INPUT:
 
@@ -2160,7 +2165,9 @@ cdef class FiniteField(Field):
             sage: for F in fields:
             ....:     for _ in range(1000):
             ....:         a = F.random_element()
-            ....:         assert F.from_bytes(a.to_bytes()) == a
+            ....:         order = choice(["little", "big"])
+            ....:         a_bytes = a.to_bytes(byteorder=order)
+            ....:         assert F.from_bytes(a_bytes, byteorder=order) == a
         """
         python_int = int.from_bytes(input_bytes, byteorder=byteorder)
         return self.from_integer(python_int)
