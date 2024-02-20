@@ -216,7 +216,7 @@ class Representation_abstract(CombinatorialFreeModule):
 
         return super().twisted_invariant_module(G, chi, side=side, **kwargs)
 
-    def matrix_representation(self, g, side=None, sparse=False):
+    def representation_matrix(self, g, side=None, sparse=False):
         r"""
         Return the matrix representation of ``g`` acting on ``self``.
 
@@ -227,14 +227,14 @@ class Representation_abstract(CombinatorialFreeModule):
             (2,3)
             sage: L = S3.regular_representation(side="left")
             sage: R = S3.regular_representation(side="right")
-            sage: R.matrix_representation(g)
+            sage: R.representation_matrix(g)
             [0 0 0 1 0 0]
             [0 0 0 0 0 1]
             [0 0 0 0 1 0]
             [1 0 0 0 0 0]
             [0 0 1 0 0 0]
             [0 1 0 0 0 0]
-            sage: L.matrix_representation(g)
+            sage: L.representation_matrix(g)
             [0 0 0 1 0 0]
             [0 0 0 0 1 0]
             [0 0 0 0 0 1]
@@ -242,7 +242,7 @@ class Representation_abstract(CombinatorialFreeModule):
             [0 1 0 0 0 0]
             [0 0 1 0 0 0]
             sage: A = S3.algebra(ZZ)
-            sage: R.matrix_representation(sum(A.basis()), side='right')
+            sage: R.representation_matrix(sum(A.basis()), side='right')
             [1 1 1 1 1 1]
             [1 1 1 1 1 1]
             [1 1 1 1 1 1]
@@ -254,9 +254,9 @@ class Representation_abstract(CombinatorialFreeModule):
 
             sage: T = tensor([L, R])
             sage: for g in S3:
-            ....:     gL = L.matrix_representation(g, side='left')
-            ....:     gR = R.matrix_representation(g, side='left')
-            ....:     gT = T.matrix_representation(g, side='left')
+            ....:     gL = L.representation_matrix(g, side='left')
+            ....:     gR = R.representation_matrix(g, side='left')
+            ....:     gT = T.representation_matrix(g, side='left')
             ....:     assert gL.tensor_product(gR) == gT
         """
         if self.dimension() == float('inf'):
@@ -1750,7 +1750,7 @@ class ReflectionRepresentation(Representation_abstract):
 
         sage: W = CoxeterGroup(['B', 4])
         sage: R = W.reflection_representation()
-        sage: all(g.matrix() == R.matrix_representation(g) for g in W)
+        sage: all(g.matrix() == R.representation_matrix(g) for g in W)
         True
     """
     @staticmethod
