@@ -806,7 +806,7 @@ def basis_complement(B):
     F = B.parent().base_ring()
     m = B.nrows()
     n = B.ncols()
-    C = MatrixSpace(F, n - m, n, sparse=True).zero()
+    C = MatrixSpace(F, n - m, n, sparse=True)(0)
     k = 0
     l = 0
     for i in range(m):
@@ -1023,7 +1023,7 @@ def split_odd(A):
         return A[0, 0], MatrixSpace(ZZ, 0, A.ncols())([])
     even, i = is_even_matrix(A)
     R = A.parent().base_ring()
-    C = MatrixSpace(R, n0 - 1, n0).zero()
+    C = MatrixSpace(R, n0 - 1, n0)(0)
     u = A[i, i]
     for j in range(n0-1):
         if j < i:
@@ -1035,7 +1035,7 @@ def split_odd(A):
         B = C*A*C.transpose()
     even, j = is_even_matrix(B)
     if even:
-        I = A.parent().one()
+        I = A.parent()(1)
         # TODO: we could manually (re)construct the kernel here...
         if i == 0:
             I[1, 0] = 1 - A[1, 0]*u
@@ -1045,7 +1045,7 @@ def split_odd(A):
             i = 0
         A = I*A*I.transpose()
         u = A[i, i]
-        C = MatrixSpace(R, n0-1, n0).zero()
+        C = MatrixSpace(R, n0-1, n0)(0)
         for j in range(n0-1):
             if j < i:
                 C[j, j] = 1
@@ -1835,15 +1835,15 @@ class Genus_Symbol_p_adic_ring:
         """
         n = self.dimension()
         p = self.prime()
-        s = (n + 1) // ZZ(2)
-        std = 2 * QQ.prod(1-p**(-2*k) for k in range(1, s))
-        if n % 2 == 0:
+        s = (n + 1) // 2
+        std = 2 * QQ.prod(1 - p**(-2 * k) for k in range(1, s))
+        if not n % 2:
             D = ZZ(-1)**s * self.determinant()
-            epsilon = (4*D).kronecker(p)
-            std *= (1 - epsilon*p**(-s))
+            epsilon = (4 * D).kronecker(p)
+            std *= (1 - epsilon * p**(-s))
         return QQ.one() / std
 
-    def _species_list(self):
+    def _species_list(self) -> list:
         r"""
         Return the species list.
 
