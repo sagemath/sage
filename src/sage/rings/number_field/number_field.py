@@ -100,7 +100,7 @@ from sage.rings.infinity import Infinity
 from sage.rings.finite_rings.integer_mod import mod
 from sage.categories.number_fields import NumberFields
 
-import sage.rings.ring
+from sage.rings.ring import Ring
 from sage.misc.latex import latex_variable_name
 
 from .unit_group import UnitGroup
@@ -3536,7 +3536,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         try:
             return self.fractional_ideal(*gens, **kwds)
         except ValueError:
-            return sage.rings.ring.Ring.ideal(self, gens, **kwds)
+            return Ring.ideal(self, gens, **kwds)
 
     def idealchinese(self, ideals, residues):
         r"""
