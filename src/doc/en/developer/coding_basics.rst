@@ -162,10 +162,12 @@ included in one of the following places:
   It should be imported as follows
   (see :ref:`section-python-language-standard`)::
 
-    try:
+    import sys
+
+    if sys.version_info < (3, 11):
         # Use backport package providing Python 3.11 features
         from importlib_resources import files
-    except ImportError:
+    else:
         from importlib.resources import files
 
   After this import, you can:
@@ -179,14 +181,8 @@ included in one of the following places:
 
   If the file needs to be used outside of Python, then the
   preferred way is using the context manager
-  :func:`importlib.resources.as_file`. It should be imported as
-  follows::
-
-    try:
-        # Use backport package providing Python 3.11 features
-        from importlib_resources import as_file
-    except ImportError:
-        from importlib.resources import as_file
+  :func:`importlib.resources.as_file`. It should be imported in the
+  same way as shown above.
 
   .. NOTE::
 
