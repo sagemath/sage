@@ -7,6 +7,7 @@ Coding in Python for Sage
 This chapter discusses some issues with, and advice for, coding in
 Sage.
 
+.. _section-python-language-standard:
 
 Python language standard
 ========================

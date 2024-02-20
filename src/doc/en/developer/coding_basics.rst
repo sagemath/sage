@@ -157,7 +157,13 @@ included in one of the following places:
   location as the Python code. This is referred to as "package data".
 
   The preferred way to access the data from Python is using the
-  function :func:`importlib.resources.files`.
+  function :func:`importlib.resources.files`. It should be imported
+  as follows (see :ref:`section-python-language-standard`)::
+
+    try:
+        from importlib_resources import files
+    except ImportError:
+        from importlib.resources import files
 
   .. NOTE::
 
