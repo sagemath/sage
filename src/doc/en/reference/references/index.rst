@@ -5471,7 +5471,7 @@ REFERENCES:
             Hecke algebras of type A*. J. Algebraic Combin.
             **6** (1997), 59-87.
 
-.. [[RRV2022] David P. Roberts and Fernando Rodriguez Villegas,
+.. [RRV2022] David P. Roberts and Fernando Rodriguez Villegas,
      *Hypergeometric motives*, Notices Amer. Math. Soc., **69** vol. 6 (2022).
      :doi:`10.1090/noti2491`.
 
