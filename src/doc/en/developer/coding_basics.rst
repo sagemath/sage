@@ -180,12 +180,13 @@ is proposed to do the following:
 - create a separate git repository and upload them there [2]_,
 
 - add metadata to the repository that make it a pip-installable
-  package (distribution package),
+  package (distribution package), as explained for example in the
+  `Python Packaging User Guide <https://packaging.python.org/en/latest/tutorials/packaging-projects/>`_,
 
-- upload it to PyPI,
+- `upload it to PyPI <https://packaging.python.org/en/latest/tutorials/packaging-projects/#uploading-the-distribution-archives>`_,
 
 - create metadata in ``SAGE_ROOT/build/pkgs`` that make your new
-  pip-installable package known to Sage.
+  pip-installable package known to Sage; see :ref:`chapter-packaging`.
 
 For guiding examples of external repositories that host large data
 files, see https://github.com/sagemath/conway-polynomials, and
