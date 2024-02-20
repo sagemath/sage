@@ -87,8 +87,6 @@ from sage.structure.richcmp import op_EQ
 from sage.misc.cachefunc import cached_method
 from sage.structure.sequence import Sequence
 
-from sage.rings.integer_ring import ZZ
-
 from sage.arith.misc import prod, is_prime
 from sage.structure.factorization import Factorization
 
@@ -996,10 +994,10 @@ class EllipticCurveHom_composite(EllipticCurveHom):
         # even without separate prime test
         # deg_fac = Factorization(())
         # for phi in self._phis:
-        #     deg_fac *= ZZ(phi.degree()).factor()
+        #     deg_fac *= phi.degree().factor()
         deg_fac = {}
         for phi in self._phis:
-            phi_deg = ZZ(phi.degree())
+            phi_deg = phi.degree()
             # note: prime degrees are a very typical case in HomComposite
             # so the optimization is worth it
             if phi_deg.is_prime():
@@ -1141,7 +1139,7 @@ def _sieve_torsion_through_isogenies(phis, ell, use_second_curve=True):
     # i.e. "working with full torsion" at the same time
     # gradually removing torsion factors that are being nullified
     mod = E0.division_polynomial(ell)
-    if ZZ(p).gcd(ell) != 1:
+    if p.gcd(ell) != 1:
         # if the order is not coprime with the characteristic,
         # we may get repeated roots
         mod = mod.radical()

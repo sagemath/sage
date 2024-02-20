@@ -1000,9 +1000,9 @@ class EllipticCurveHom(Morphism):
         if self.is_zero() or not self.is_separable():
             return False
 
-        deg_fac = ZZ(self.degree()).factor()
+        deg_fac = self.degree().factor()
         # squarefree => cyclic
-        if not deg_fac or max(e for ell, e in deg_fac) <= 1:
+        if all(e <= 1 for ell, e in deg_fac) <= 1:
             return True
 
         E0 = self.domain()
