@@ -7173,16 +7173,10 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         - ``length`` -- positive integer (default: ``1``); integer is represented in
           ``length`` bytes
-
         - ``byteorder`` -- str (default: ``"big"``); determines the byte order of
           the output; can only be ``"big"`` or ``"little"``
-
         - ``is_signed`` -- boolean (default: ``False``); determines whether to use two's
           compliment to represent the integer
-
-        OUTPUT:
-
-        - Bytes representing ``self``
 
         .. TODO::
 

@@ -2126,13 +2126,8 @@ cdef class FiniteField(Field):
         INPUT:
 
         - ``input_bytes`` -- a bytes-like object or iterable producing bytes
-
         - ``byteorder`` -- str (default: ``"big"``); determines the byte order of
           ``input_bytes``; can only be ``"big"`` or ``"little"``
-
-        OUTPUT:
-
-        - A field element represented by the ``input_bytes``
 
         EXAMPLES::
 

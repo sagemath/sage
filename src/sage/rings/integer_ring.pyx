@@ -1583,16 +1583,10 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         INPUT:
 
         - ``input_bytes`` -- a bytes-like object or iterable producing bytes
-
         - ``byteorder`` -- str (default: ``"big"``); determines the byte order of
           ``input_bytes``; can only be ``"big"`` or ``"little"``
-
         - ``is_signed`` -- boolean (default: ``False``); determines whether to use two's
           compliment to represent the integer
-
-        OUTPUT:
-
-        - An integer represented by the ``input_bytes``
 
         EXAMPLES::
 

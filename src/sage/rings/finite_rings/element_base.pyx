@@ -154,10 +154,6 @@ cdef class FiniteRingElement(CommutativeRingElement):
         - ``byteorder`` -- str (default: ``"big"``); determines the byte order of
           ``input_bytes``; can only be ``"big"`` or ``"little"``
 
-        OUTPUT:
-
-        - Bytes representing ``self``
-
         EXAMPLES::
 
             sage: F = GF(65537)
@@ -1121,10 +1117,6 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         - ``byteorder`` -- str (default: ``"big"``); determines the byte order of
           the output; can only be ``"big"`` or ``"little"``
-
-        OUTPUT:
-
-        - Bytes representing ``self``
 
         EXAMPLES::
 
