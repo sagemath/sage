@@ -709,7 +709,7 @@ def steiner_quadruple_system(n, check=False):
         ....:         sqs = designs.steiner_quadruple_system(n, check=True)
     """
     n = int(n)
-    if not ((n % 6) in [2, 4]):
+    if (n % 6) not in [2, 4]:
         raise ValueError("n mod 6 must be equal to 2 or 4")
     elif n == 4:
         sqs = IncidenceStructure(4, [[0,1,2,3]], copy=False, check=False)

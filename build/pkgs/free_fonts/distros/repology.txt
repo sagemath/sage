@@ -1,1 +1,4 @@
-gnu-freefont
+font-freefont
+fonts:gnu-freefont
+texlive:gnu-freefont
+# https://repology.org/project/freefonts/versions is something else.
