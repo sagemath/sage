@@ -501,7 +501,7 @@ def import_statements(*objects, **kwds):
         sage: import_statements('deprecated_RR')
         Traceback (most recent call last):
         ...
-        LookupError: object named 'deprecated_RR' is deprecated (see github issue 17458)
+        LookupError: object named 'deprecated_RR' is deprecated (see Issue #17458)
         sage: lazy_import('sage.all', 'RR', namespace=sage.__dict__, deprecation=17458)
         sage: import_statements('RR')
         from sage.rings.real_mpfr import RR
