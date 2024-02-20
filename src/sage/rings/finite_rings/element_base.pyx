@@ -1111,7 +1111,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
     integer_representation = deprecated_function_alias(33941, to_integer)
 
     def to_bytes(self, byteorder="big"):
-        """
+        r"""
         Return an array of bytes representing an integer.
 
         Internally relies on the python ``int.to_bytes()`` method.

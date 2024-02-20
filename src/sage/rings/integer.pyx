@@ -7164,7 +7164,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             raise ValueError("algorithm must be one of: 'pari' or 'gmp' (alias: 'mpir')")
 
     def to_bytes(self, length=1, byteorder="big", is_signed=False):
-        """
+        r"""
         Return an array of bytes representing an integer.
 
         Internally relies on the python ``int.to_bytes()`` method.
@@ -7172,8 +7172,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         INPUT:
 
         - ``length`` -- positive integer (default: ``1``); integer is represented in
-          ``length`` bytes. ``OverflowError`` is raised if the integer is not representable
-          with the given length.
+          ``length`` bytes
 
         - ``byteorder`` -- str (default: ``"big"``); determines the byte order of
           the output; can only be ``"big"`` or ``"little"``
@@ -7185,9 +7184,11 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         - Bytes representing ``self``
 
-        .. TODO:: It should be possible to convert straight from the gmp type in cython.
-        This could be significantly faster, but I am unsure of the fastest and cleanest
-        way to do this.
+        .. TODO::
+
+            It should be possible to convert straight from the gmp type in cython.
+            This could be significantly faster, but I am unsure of the fastest and cleanest
+            way to do this.
 
         EXAMPLES::
 
