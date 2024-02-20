@@ -1104,7 +1104,7 @@ def _sieve_torsion_through_isogenies(phis, ell, use_second_curve=True):
         sage: _sieve_torsion_through_isogenies([], 2)
         Traceback (most recent call last):
         ...
-        ValueError: List of isogenies must be nonempty
+        ValueError: list of isogenies must be nonempty
 
         sage: E0 = EllipticCurve(GF(37), [4, 0])
         sage: phi = E0.scalar_multiplication(0)
