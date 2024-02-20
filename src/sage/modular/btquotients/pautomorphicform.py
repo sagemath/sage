@@ -2089,8 +2089,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
 
     # So far we cannot break it into two integrals because of the pole
     # at infinity.
-    def coleman(self, t1, t2, E=None, method='moments', mult=False,
-                delta=-1):
+    def coleman(self, t1, t2, E=None, method='moments', mult=False):
         r"""
         If ``self`` is a `p`-adic automorphic form that
         corresponds to a rigid modular form, then this computes the
