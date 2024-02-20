@@ -2119,8 +2119,9 @@ cdef class FiniteField(Field):
 
     def from_bytes(self, input_bytes, byteorder="big"):
         """
-        Return the integer represented by the given array of bytes. Internally relies
-        on the python ``int.from_bytes()`` method.
+        Return the integer represented by the given array of bytes.
+
+        Internally relies on the python ``int.from_bytes()`` method.
 
         INPUT:
 

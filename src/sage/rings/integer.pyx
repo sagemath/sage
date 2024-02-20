@@ -7165,8 +7165,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
     def to_bytes(self, length=1, byteorder="big", is_signed=False):
         """
-        Return an array of bytes representing an integer. Internally relies
-        on the python ``int.to_bytes()`` method.
+        Return an array of bytes representing an integer.
+
+        Internally relies on the python ``int.to_bytes()`` method.
 
         INPUT:
 
@@ -7184,8 +7185,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         - Bytes representing ``self``
 
-        TODO: should we convert straight from the gmp type in cython? This is definitely
-        possible but I'm not sure the cleanest way to do this
+        .. TODO:: It should be possible to convert straight from the gmp type in cython.
+        This could be significantly faster, but I am unsure of the fastest and cleanest
+        way to do this.
 
         EXAMPLES::
 

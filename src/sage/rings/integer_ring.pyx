@@ -1576,8 +1576,9 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
     def from_bytes(self, input_bytes, byteorder="big", is_signed=False):
         """
-        Return the integer represented by the given array of bytes. Internally relies
-        on the python ``int.from_bytes()`` method.
+        Return the integer represented by the given array of bytes.
+
+        Internally relies on the python ``int.from_bytes()`` method.
 
         INPUT:
 
