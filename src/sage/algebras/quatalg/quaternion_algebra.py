@@ -2262,7 +2262,8 @@ class QuaternionOrder(Parent):
     def _denominator_coprime(self, ell):
         r"""
         Return a conjugate order of ``self`` and the conjugating element such that
-        the output order has denominator coprime with `\ell`.
+        the output order has denominator coprime with `\ell`. Requires `\ell
+        \nmid 2i^2j^2`.
 
         Used as a subroutine in :meth:`_P1_to_ideals`.
 
@@ -2286,24 +2287,23 @@ class QuaternionOrder(Parent):
             sage: O1.basis_matrix().denominator() % ell == 0
             False
         """
-        # assert ell % 2 != 0 and ell % self.gen(0)**2 != 0
+        # assert gcd(ell, 2 * self.gen(0)**2 * self.gen(1)**2) != 0
         B = self.quaternion_algebra()
 
         if self.basis_matrix().denominator() % ell != 0:
             return self, B.one()
 
-        O0 = B.maximal_order() # <- The order with denominator 2q
-        I_conn = O0*self
-        I_conn *= 1/I_conn.norm()
+        O0 = B.maximal_order()  # <- The order with denominator 2q
+        I_conn = O0 * self
+        I_conn *= 1 / I_conn.norm()
 
-        alpha = sum([ZZ.random_element(-100, 100)*beta for beta in I_conn.basis()])
-        while gcd(alpha.reduced_norm(), I_conn.norm()**2) != I_conn.norm():
+        while True:
             alpha = sum([ZZ.random_element(-100, 100)*beta for beta in I_conn.basis()])
+            if gcd(alpha.reduced_norm(), I_conn.norm()**2) == I_conn.norm():
+                break
 
-        alpha = alpha/I_conn.norm()
-
+        alpha /= I_conn.norm()
         O_new = B.quaternion_order([alpha * g * ~alpha for g in self.basis()])
-
         return O_new, alpha
 
     def _P1_to_ideals(self, ell):
@@ -2336,7 +2336,7 @@ class QuaternionOrder(Parent):
             raise ValueError(f"ell(={ell}) is not split")
 
         if not self.quadratic_form().is_positive_definite():
-            raise TypeError("the quaternion algebra must be definite")
+            raise TypeError("the quaternion algebra must be positive definite")
 
         phi = B.modp_splitting_map(ell)
         F = GF(ell)
@@ -2360,7 +2360,7 @@ class QuaternionOrder(Parent):
     def _random_left_ideal_2q(self, N):
         r"""
         Return random left ideals of norm `N` when :meth:`modp_splitting_map`
-        is not implemented, i.e. when `N \in \{2, i^2\}`.
+        is not implemented, i.e. when `N \mid 2i^2j^2`.
 
         This method is slow when `N` is large.
 
@@ -2371,6 +2371,8 @@ class QuaternionOrder(Parent):
             sage: O._random_left_ideal_2q(2).norm() == 2
             True
             sage: O._random_left_ideal_2q(7).norm() == 7
+            True
+            sage: O._random_left_ideal_2q(13).norm() == 13
             True
         """
         alpha = self.random_element()
@@ -2402,27 +2404,61 @@ class QuaternionOrder(Parent):
             sage: N = 2**10 * 3**10 * 5**10
             sage: assert O.random_left_ideal_of_norm(N).norm() == N
 
-        Verify that the method works when N is not coprime to `i^2`::
+        Verify that the method works when N is not coprime to `i^2` or `j^2`::
 
             sage: B = QuaternionAlgebra(-7, -13)
             sage: O = B.maximal_order()
             sage: N = 3**5 * 7**5
             sage: O.random_left_ideal_of_norm(N).norm() == N
             True
+
+        Verify that the method works when N is not coprime to `i^2` or `j^2`::
+
+            sage: B = QuaternionAlgebra(-7, -13)
+            sage: O = B.maximal_order()
+            sage: N = 3**5 * 7**5
+            sage: O.random_left_ideal_of_norm(N).norm() == N
+            True
+
+        TESTS::
+
+            sage: for _ in range(10):
+            ....:     p, q = [random_prime(100, lbound=10) for _ in range(2)]
+            ....:     ep, eq = [choice([-1, 1]) for _ in range(2)]
+            ....:     B = QuaternionAlgebra(ep * p, eq * q)
+            ....:     if not B.is_division_algebra():
+            ....:         continue
+            ....:     O = B.maximal_order()
+            ....:     N = random_prime(100)
+            ....:     try:
+            ....:         assert O.random_left_ideal_of_norm(N).norm() == N
+            ....:     except (NotImplementedError, ValueError, TypeError, ZeroDivisionError):
+            ....:         pass
         """
         if self.base_ring() != ZZ:
             raise NotImplementedError("only implemented for quaternion algebras over ZZ")
-        if gcd(self.discriminant(), N) != 1:
-            raise TypeError("the norm must be coprime with the discriminant")
 
-        i, _, _ = self.quaternion_algebra().gens()
+        # it seems this check is not strict, as the method still works sometimes
+        if gcd(self.discriminant(), N) != 1:
+            raise ValueError("the norm must be coprime with the discriminant")
+
+        B, (i, j, _) = self.quaternion_algebra().objgens()
+
+        # the method is not properly implemented when B is not a division algebra
+        # TODO: remove this warning
+        if not B.is_division_algebra():
+            import warnings
+            warnings.warn("B is not a division algebra. The method may run into an infinite loop.")
+
         I = self.unit_ideal()
         I_last = I
         O_i = self
 
         for (ell, e) in factor(N):
-            for _ in range(e):
-                if ell == 2 or ell == -ZZ(i**2):
+            cnt = 0
+            # repeat until `e` successful iterations
+            while cnt < e:
+                if gcd(ell, 2 * ZZ(i**2 * j**2)) != 1:
                     while True:
                         I_ab = O_i._random_left_ideal_2q(ell)
                         if not primitive or I_ab.conjugate() != I_last:
@@ -2437,9 +2473,13 @@ class QuaternionOrder(Parent):
                         if not primitive or I_ab.conjugate() != I_last:
                             break
 
-                I = I * I_ab
-                O_i = I_ab.right_order()
-                I_last = I_ab
+                try:
+                    O_i = I_ab.right_order()
+                    I = I * I_ab
+                    I_last = I_ab
+                    cnt += 1
+                except ZeroDivisionError:
+                    pass
 
         return I
 
