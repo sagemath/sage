@@ -1435,8 +1435,11 @@ class QuaternionOrder(Parent):
         """
         if check:
             # right data type
-            if not isinstance(basis, (list, tuple)):
-                raise TypeError("basis must be a list or tuple")
+            from sage.modules.free_module_element import is_FreeModuleElement
+            if is_FreeModuleElement(basis) and basis.is_vector():
+                pass
+            elif not isinstance(basis, (list, tuple)):
+                raise TypeError("basis must be a vector, a list or a tuple")
             # right length
             if len(basis) != 4:
                 raise ValueError("basis must have length 4")
@@ -2265,15 +2268,25 @@ class QuaternionOrder(Parent):
 
         EXAMPLES::
 
-            sage: B.<i, j, k> = QuaternionAlgebra(-7, -13)
-            sage: O = B.quaternion_order([1, i, j, k])
-            sage: O1, a = O._denominator_coprime(14)
-            (Order of Quaternion Algebra (-7, -13) with base ring Rational Field with basis (...),
-             31 - 9/7*i - 45/2*j + 627/14*k)
-            sage: O1 == B.quaternion_order([a * g * ~a for g in O.gens()])
+            sage: ell = 3
+            sage: B.<i, j, k> = QuaternionAlgebra(-5, -11)
+            sage: M = Matrix([[150, 0, 0, 0], [0, 106, 0, 32], [0, 53, 75, 16], [75, -14, 0, 17]])
+            sage: I = M * vector(B.basis()) / 150; I
+            doctest:warning ... UserWarning: ...
+            (1, 53/75*i + 16/75*k, 53/150*i + 1/2*j + 8/75*k, 1/2 - 7/75*i + 17/150*k)
+            sage: O = B.quaternion_order(I)
+            sage: O.basis_matrix().denominator() % ell == 0
             True
-            TODO: Check the property mentioned in the docstring, which I don't understand
+
+            sage: O1, a = O._denominator_coprime(ell)
+            sage: a  # random
+            -2/5 - 37/75*i + 66/5*j - 1499/75*k
+            sage: list(O1.basis()) == [a * g * ~a for g in O.basis()]
+            True
+            sage: O1.basis_matrix().denominator() % ell == 0
+            False
         """
+        # assert ell % 2 != 0 and ell % self.gen(0)**2 != 0
         B = self.quaternion_algebra()
 
         if self.basis_matrix().denominator() % ell != 0:
@@ -2306,7 +2319,7 @@ class QuaternionOrder(Parent):
             sage: B = QuaternionAlgebra(next_prime(2**50))
             sage: O = B.maximal_order()
             sage: ell = 13
-            sage: mp = O._p1_to_ideals(ell)
+            sage: mp = O._P1_to_ideals(ell)
             sage: mp(0, 1)
             Fractional ideal (1/2 + 1/2*j + 10*k, 1/2*i + 3*j + 1/2*k, 13*j, 13*k)
             sage: mp(1, 3)
@@ -2394,7 +2407,7 @@ class QuaternionOrder(Parent):
             sage: B = QuaternionAlgebra(-7, -13)
             sage: O = B.maximal_order()
             sage: N = 3**5 * 7**5
-            sage: assert O.random_left_ideal_of_norm(N).norm() == N
+            sage: O.random_left_ideal_of_norm(N).norm() == N
             True
         """
         if self.base_ring() != ZZ:
@@ -2419,7 +2432,7 @@ class QuaternionOrder(Parent):
                     while True:
                         # Random element of P1(GF(ell))
                         x = ZZ.random_element(ell + 1)
-                        a, b = (x, 1 - x // ell, x + 1)[1:]
+                        a, b = 1 - x // ell, x + 1
                         I_ab = mapping(a, b)
                         if not primitive or I_ab.conjugate() != I_last:
                             break
