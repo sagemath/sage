@@ -863,12 +863,12 @@ cdef class NCPolynomialRing_plural(Ring):
         EXAMPLES::
 
             sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
-            sage: P = A.g_algebra(relations={y*x:-x*y}, order = 'lex')
+            sage: P = A.g_algebra(relations={y*x:-x*y}, order='lex')
             sage: P.algebra_generators()
-            Family (x, y, z)
+            Finite family {'x': x, 'y': y, 'z': z}
         """
         from sage.sets.family import Family
-        return Family(self.gens())
+        return Family(self.gens_dict())
 
     def ideal(self, *gens, **kwds):
         """
