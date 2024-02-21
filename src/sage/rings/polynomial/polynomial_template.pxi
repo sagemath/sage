@@ -376,7 +376,9 @@ cdef class Polynomial_template(Polynomial):
         if celement_is_zero(&other.x, (<Polynomial_template>self)._cparent):
             return self
         if celement_equal(&self.x, &other.x, (<Polynomial_template>self)._cparent):
-            return self
+            # note: gcd(g, g) "canonicalizes" the generator i.e. make polynomials monic
+            # c.f. ring/ring.pyx:445
+            return self.monic()
 
         cdef type T = type(self)
         cdef Polynomial_template r = <Polynomial_template>T.__new__(T)
