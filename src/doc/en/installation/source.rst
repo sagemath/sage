@@ -1145,7 +1145,7 @@ Upgrading the system and upgrading Sage
 ---------------------------------------
 
 Caveats when upgrading system packages
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 When Sage has been installed from source, it will make use of various system
 packages; in particular, it will link to shared libraries provided by
@@ -1184,8 +1184,8 @@ After running the suggested commands, run::
   $ make build
 
 
-Upgrading Sage using a separate worktree
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Upgrading Sage using a separate git worktree
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 When you have a working installation of Sage built from source and wish to
 try out a new version, we strongly recommend to use a separate
