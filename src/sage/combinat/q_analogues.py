@@ -1031,20 +1031,38 @@ def number_of_irreducible_polynomials(n, q=None, m=1):
     n = ZZ(n)
     if n <= 0:
         raise ValueError('n must be positive')
+    if m <= 0:
+        raise ValueError('m must be positive')
+
     if q is None:
         from sage.rings.rational_field import QQ
-        q = QQ['q'].gen()  # for m > 1, we produce an integer-valued polynomial in q, but it does not necessarily have integer coefficients
-    R = parent(q)
+        q = QQ['q'].gen()  # we produce an integer-valued polynomial in q, but it does not necessarily have integer coefficients
+
     if m == 1:
         from sage.arith.misc import moebius
-        r = sum((moebius(n//d) * q**d for d in n.divisors()), R.zero())
+        r = sum((moebius(n//d) * q**d for d in n.divisors()), parent(q).zero())
         return r // n
-    elif m > 1:
-        from sage.functions.other import binomial
-        from sage.combinat.partition import Partitions
-        r = []
-        for d in range(n):
-            r.append( (q**binomial(d+m,m-1) - 1) // (q-1) * q**binomial(d+m,m) - sum(prod(binomial(r_+t-1,t) for r_,t in zip(r,p.to_exp(d))) for p in Partitions(d+1,max_part=d)) )
-        return r[-1]
-    else:
-        raise ValueError('m must be positive')
+
+    from sage.functions.other import binomial
+    from sage.combinat.partition import Partitions
+
+    def monic_reducible(irreducible, d):
+        """
+        Compute the number of monic reducible polynomials of degree `d`
+        given the numbers of irreducible polynomials up to degree `d-1`.
+        """
+        res = 0
+        for p in Partitions(d+1, max_part=d):
+            tmp = 1
+            for r, t in zip(irreducible, p.to_exp(d)):
+                tmp *= binomial(r+t-1, t)
+            res += tmp
+        return res
+
+    r = []
+    for d in range(n):
+        monic = (q**binomial(d + m, m - 1) - 1) * q**binomial(d + m, m) // (q - 1)
+        reducible = monic_reducible(r, d)
+        r.append(monic - reducible)
+
+    return r[-1]
