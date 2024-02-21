@@ -26,6 +26,7 @@ class LPProblem__max_cx__Ax_le_b__Family_b(LazyFamily):
         self._b_set = b_set
         self._c = c
         self._objective_constant_term = objective_constant_term
+        super().__init__(b_set, )
 
     # Aliases for the standard notation
     A = constraint_coefficients
@@ -33,3 +34,53 @@ class LPProblem__max_cx__Ax_le_b__Family_b(LazyFamily):
     c = objective_coefficients
     m = n_constraints
     n = n_variables
+
+
+    def restrict(self, smaller_b_set):
+        r"""
+        Return an :class:`LPProblem__max_cx__Ax_le_b__Family_b` for ..."""
+
+
+    def optimal_solution_function(self):
+        r"""
+
+        """
+        # Base case: value function is affine-linear in b
+
+
+    def value_function(self):
+        r"""
+        Return a map from b_set to extended reals
+
+        depend on ambient space of b_set
+
+        RR^n, RR^['x1','x2','x3'] etc.
+        """
+        # Base case: value function is affine-linear in b
+
+        # piecewise:
+        #  - construct subfamilies, one for each piece
+        #  - pick value_function of subfamily
+
+
+
+
+    def activity_set(self, basis):
+        r"""
+        Compute (intersection of b_set with) polyhedron of b where basis is an optimal basis (if basis is dual feasible) = parameter set of primal feasibility
+        """
+
+    def wolsey(self, ....)
+        r"""
+
+        """
+
+    def interactive_lp(self, b):
+        r"""
+        Specialize to b
+        """
+        return InteractiveLPProblem(....)
+
+
+    def mixed_integer_linear_program(self, b, *, solver=None):
+        return MixedIntegerLinearProgram()......
