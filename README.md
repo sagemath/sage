@@ -159,8 +159,9 @@ in the Installation Guide.
 
     - Clone the Sage git repository:
 
-            $ ORIG=https://github.com/sagemath/sage.git
-            $ git clone -c core.symlinks=true --origin upstream --branch develop --tags $ORIG
+            $ git clone -c core.symlinks=true --filter blob:none  \
+                        --origin upstream --branch develop --tags \
+                        https://github.com/sagemath/sage.git
 
       This will create the subdirectory `~/sage/sage`. (See the section
       [Setting up git](https://doc.sagemath.org/html/en/developer/git_setup.html)
