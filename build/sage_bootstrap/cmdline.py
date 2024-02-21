@@ -102,14 +102,19 @@ EXAMPLE:
 epilog_dependencies = \
 """
 Print the list of packages that are dependencies of given package.
-By default, list the build, order-only, and runtime dependencies.
+By default, list a summary of the build, order-only, and runtime
+dependencies.
 
 EXAMPLE:
 
+    $ sage --package dependencies maxima openblas
+    maxima:
+                    - ecl
+                    - info
+    openblas:
+                    - gfortran
     $ sage --package dependencies maxima --runtime
-    ecl
-    $ sage --package dependencies maxima --order-only
-    info
+                    - ecl
 """
 
 
@@ -323,7 +328,7 @@ def make_parser():
         help='list the check dependencies')
     parser_dependencies.add_argument(
         '--format', type=str, default='plain',
-        help='output format (one of plain and shell; default: plain)')
+        help='output format (one of plain, rst, and shell; default: plain)')
 
     parser_name = subparsers.add_parser(
         'name', epilog=epilog_name,

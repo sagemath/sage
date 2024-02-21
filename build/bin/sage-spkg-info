@@ -16,12 +16,14 @@ if [ -n "$OUTPUT_RST" ]; then
     issue () { echo ":issue:\`$1\`"; }
     code ()  { echo "\`\`$*\`\`"; }
     tab ()   { echo ".. tab:: $1"; }
+    FORMAT=rst
 else
     ref ()   { echo "$1"; }
     spkg ()  { echo "$1"; }
     issue () { echo "https://github.com/sagemath/sage/issues/$1"; }
     code ()  { echo "$1"; }
     tab ()   { echo "$1:"; }
+    FORMAT=plain
 fi
 if ! props=$(sage-package properties --format=shell $PKG_BASE 2> /dev/null); then
     echo >&2 "sage-spkg-info: unknown package $PKG_BASE"
@@ -49,24 +51,7 @@ echo
 echo "Dependencies"
 echo "------------"
 echo
-eval $(sage-package properties --format=shell :all:)
-for dep in $(sage-package dependencies $PKG_BASE); do
-    case "$dep" in
-                # Suppress dependencies on source files, e.g. of the form $(SAGE_ROOT)/..., $(SAGE_SRC)/...
-                */*) ;;
-                # Suppress FORCE
-                FORCE)      ;;
-                # Dependencies like $(BLAS)
-                \$\(*)      echo "- $dep";;
-                # Looks like a package
-                *)          if eval test -r "\$path_$dep/SPKG.rst"; then
-                                # This RST label is set in src/doc/bootstrap
-                                echo "- $(spkg $dep)"
-                            else
-                                echo "- $dep"
-                            fi;;
-    esac
-done
+${SAGE_PACKAGE-sage-package} dependencies --format=$FORMAT $PKG_BASE
 echo
 echo "Version Information"
 echo "-------------------"

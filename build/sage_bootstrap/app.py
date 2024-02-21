@@ -94,8 +94,9 @@ class Application(object):
         pc = PackageClass(*package_classes)
         for package_name in pc.names:
             package = Package(package_name)
-            if format == 'plain':
-                print("{0}:".format(package_name))
+            if len(pc.names) > 1:
+                if format == 'plain':
+                    print("{0}:".format(package_name))
             for p in props:
                 value = getattr(package, p)
                 if value is None:
@@ -112,36 +113,73 @@ class Application(object):
         """
         Find the dependencies given package names
 
-        $ sage --package dependencies maxima --runtime --order-only
-        ecl
-        info
+        $ sage --package dependencies maxima --runtime --order-only --format=shell
+        order_only_deps_maxima='info'
+        runtime_deps_maxima='ecl'
         """
         types = kwds.pop('types', None)
         format = kwds.pop('format', 'plain')
         log.debug('Looking up dependencies')
         pc = PackageClass(*package_classes)
-        if format == 'plain':
+        if format in ['plain', 'rst']:
             if types is None:
-                types = ['order_only', 'runtime']
-            deps = []
-            for package_name in pc.names:
-                package = Package(package_name)
-                for t in types:
-                    deps.extend(getattr(package, 'dependencies_' + t))
-            for dep in sorted(set(deps)):
-                print(dep)
+                typesets = [['order_only', 'runtime']]
+            else:
+                typesets = [[t] for t in types]
         elif format == 'shell':
             if types is None:
                 types = ['order_only', 'optional', 'runtime', 'check']
-            for package_name in pc.names:
-                package = Package(package_name)
-                for t in types:
+            typesets = [[t] for t in types]
+        else:
+            raise ValueError('format must be one of "plain", "rst", and "shell"')
+
+        if format == 'plain':
+            indent1 = "        "
+            indent2 = "                "
+        elif format == 'rst':
+            indent1 = ""
+            indent2 = "    "
+
+        for package_name in pc.names:
+            package = Package(package_name)
+            if len(pc.names) > 1:
+                if format == 'plain':
+                    print("{0}:".format(package_name))
+                elif format == 'rst':
+                    print("\n{0}\n{1}\n".format(package_name, "~" * len(package_name)))
+
+            for typeset in typesets:
+                if len(typesets) > 1:
+                    if format == 'plain':
+                        print(indent1 + "{0}: ".format('/'.join(typeset)))
+                    elif format == 'rst':
+                        print("\n" + indent1 + ".. tab:: {0}\n".format('/'.join(typeset)))
+
+                deps = []
+                for t in typeset:
+                    deps.extend(getattr(package, 'dependencies_' + t))
+                deps = sorted(set(deps))
+
+                if format in ['plain', 'rst']:
+                    for dep in deps:
+                        if '/' in dep:
+                            # Suppress dependencies on source files, e.g. of the form $(SAGE_ROOT)/..., $(SAGE_SRC)/...
+                            continue
+                        if dep == 'FORCE':
+                            # Suppress FORCE
+                            continue
+                        if dep.startswith('$('):
+                            # Dependencies like $(BLAS)
+                            print(indent2 + "- {0}".format(dep))
+                        elif format == 'rst' and Package(dep).has_file('SPKG.rst'):
+                            # This RST label is set in src/doc/bootstrap
+                            print(indent2 + "- :ref:`spkg_{0}`".format(dep))
+                        else:
+                            print(indent2 + "- {0}".format(dep))
+                elif format == 'shell':
                     # We single-quote the values because dependencies
                     # may contain Makefile variable substitutions
-                    deps = getattr(package, 'dependencies_' + t)
                     print("{0}_deps_{1}='{2}'".format(t, package_name, ' '.join(deps)))
-        else:
-            raise ValueError('format must be one of "plain" and "shell"')
 
     def name(self, tarball_filename):
         """
