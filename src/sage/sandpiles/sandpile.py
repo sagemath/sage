@@ -6451,7 +6451,7 @@ def admissible_partitions(S, k):
         sage: from sage.sandpiles.sandpile import admissible_partitions
         sage: from sage.sandpiles.sandpile import partition_sandpile
         sage: S = sandpiles.Cycle(4)
-        sage: P = [list(admissible_partitions(S, i)) for i in [2,3,4]]                        # needs sage.combinat
+        sage: P = [list(admissible_partitions(S, i)) for i in [2,3,4]]                  # needs sage.combinat
         sage: P                                                                         # needs sage.combinat
         [[{{0, 2, 3}, {1}},
           {{0, 3}, {1, 2}},
