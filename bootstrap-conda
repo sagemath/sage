@@ -10,7 +10,8 @@ STRIP_COMMENTS="sed s/#.*//;"
 
 shopt -s extglob
 
-DEVELOP_SPKG_PATTERN="@(_develop$(for a in $(sage-package dependencies _develop); do echo -n "|"$a; done))"
+eval $(sage-package dependencies --format=shell :all:)
+DEVELOP_SPKG_PATTERN="@(_develop${runtime_deps__develop// /|})"
 BOOTSTRAP_PACKAGES=_bootstrap
 PACKAGES=
 OPTIONAL_PACKAGES=
@@ -139,18 +140,22 @@ echo >&2 $0:$LINENO: generate conda environment files
             if [ ! -f $SYSTEM_PACKAGES_FILE ]; then
                 SYSTEM_PACKAGES_FILE=$PKG_SCRIPTS/version_requirements.txt
             fi
-            if grep -q SAGERUNTIME $PKG_SCRIPTS/dependencies $PKG_SCRIPTS/dependencies_order_only 2>/dev/null; then
-                : # cannot install packages that depend on the Sage library
-            else
-                case "$PKG_BASE:$PKG_TYPE" in
-                    $DEVELOP_SPKG_PATTERN:*) FD=4;;
-                    *:standard)              FD="4 5";;
-                    *)                       FD=5;;
-                esac
-                ${STRIP_COMMENTS} $SYSTEM_PACKAGES_FILE | while read -r line; do
-                    [ -n "$line" ] && for fd in $FD; do echo >&$fd "    - $line"; done
-                done
-            fi
+            eval DEPS=\"\$runtime_deps_$PKG_BASE\ \$build_deps_$PKG_BASE\ \$order_only_deps_$PKG_BASE\"
+            case "$DEPS" in
+                *SAGERUNTIME*)
+                    # cannot install packages that depend on the Sage library
+                    ;;
+                *)
+                    case "$PKG_BASE:$PKG_TYPE" in
+                        $DEVELOP_SPKG_PATTERN:*) FD=4;;
+                        *:standard)              FD="4 5";;
+                        *)                       FD=5;;
+                    esac
+                    ${STRIP_COMMENTS} $SYSTEM_PACKAGES_FILE | while read -r line; do
+                        [ -n "$line" ] && for fd in $FD; do echo >&$fd "    - $line"; done
+                    done
+                    ;;
+            esac
         done
     ) 4>> /dev/null 5>> src/environment-optional-template.yml
 
