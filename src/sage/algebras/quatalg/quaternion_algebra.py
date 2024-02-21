@@ -2398,7 +2398,7 @@ class QuaternionOrder(Parent):
             True
         """
         if self.base_ring() != ZZ:
-            raise NotImplementedError("only implemented for quaternion algebras over QQ")
+            raise NotImplementedError("only implemented for quaternion algebras over ZZ")
         if gcd(self.discriminant(), N) != 1:
             raise TypeError("the norm must be coprime with the discriminant")
 
