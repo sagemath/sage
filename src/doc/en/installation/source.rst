@@ -1277,5 +1277,5 @@ Now let's build Sage, starting with the step::
 
   [alice@localhost worktree-purple]$ make configure
 
-Refer to the file `README.md <https://github.com/sagemath/sage/#readme>`_.
+Refer to the file `README.md <https://github.com/sagemath/sage/#readme>`_
 for the following steps.
