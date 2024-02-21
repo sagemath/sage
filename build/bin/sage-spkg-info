@@ -51,7 +51,7 @@ echo
 echo "Dependencies"
 echo "------------"
 echo
-${SAGE_PACKAGE-sage-package} dependencies --format=$FORMAT $PKG_BASE
+sage-package dependencies --format=$FORMAT $PKG_BASE
 echo
 echo "Version Information"
 echo "-------------------"
