@@ -736,7 +736,7 @@ class GenericCellComplex(SageObject):
             sage: K = cubical_complexes.KleinBottle()
             sage: C = cubical_complexes.Cube(2)
             sage: P = K.product(C); P
-            Cubical complex with 168 vertices and 1513 cubes
+            Cubical complex with 168 vertices and 1512 nonempty cubes
             sage: P.euler_characteristic()
             0
             sage: P.is_acyclic()
@@ -1167,7 +1167,7 @@ class GenericCellComplex(SageObject):
             sage: delta_complexes.Sphere(0)._string_constants()
             ('Delta', 'simplex', 'simplices')
             sage: cubical_complexes.Sphere(0)._string_constants()
-            ('Cubical', 'cube', 'cubes')
+            ('Cubical', 'nonempty cube', 'nonempty cubes')
         """
         return ('Cell', 'cell', 'cells')
 
@@ -1192,7 +1192,8 @@ class GenericCellComplex(SageObject):
             vertex_string = "with 1 vertex"
         cells = 0
         for dim in self.cells():
-            cells += len(self.cells()[dim])
+            if not (Name == 'Cubical' and dim == -1):  # don't count empty cube
+                cells += len(self.cells()[dim])
         if cells != 1:
             cells_string = " and {} {}".format(cells, cells_name)
         else:

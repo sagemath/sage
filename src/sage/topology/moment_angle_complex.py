@@ -54,12 +54,12 @@ def _cubical_complex_union(c1, c2):
         ....: )
         sage: C1 = CubicalComplex([([0,0], [2,3]), ([0,1], [3,3]),
         ....:                      ([0,1], [2,2]), ([1,1], [2,3])]); C1
-        Cubical complex with 4 vertices and 9 cubes
+        Cubical complex with 4 vertices and 8 nonempty cubes
         sage: C2 = CubicalComplex([([0,0], [2,3]), ([0,1], [3,3]),
         ....:                      ([0,1], [2,2]), ([2,2], [2,3])]); C2
-        Cubical complex with 6 vertices and 11 cubes
+        Cubical complex with 6 vertices and 10 nonempty cubes
         sage: union(C1, C2)
-        Cubical complex with 6 vertices and 12 cubes
+        Cubical complex with 6 vertices and 11 nonempty cubes
         sage: union(C1, C1) == C1
         True
     """
@@ -242,12 +242,12 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
             Moment-angle complex of Simplicial complex with vertex set
             (0, 1, 2) and facets {(0,), (1,), (2,)}
             sage: Z._moment_angle_complex
-            Cubical complex with 64 vertices and 705 cubes
+            Cubical complex with 64 vertices and 704 nonempty cubes
 
         This is called by :meth:`cubical_complex()`::
 
             sage: Z.cubical_complex()
-            Cubical complex with 64 vertices and 705 cubes
+            Cubical complex with 64 vertices and 704 nonempty cubes
             sage: Z.cubical_complex() == Z._moment_angle_complex
             True
         """
@@ -307,7 +307,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
             Moment-angle complex of Simplicial complex with vertex set
             (0, 1, 2, 3) and facets {(1, 3), (0, 1, 2)}
             sage: Z.cubical_complex()
-            Cubical complex with 256 vertices and 6409 cubes
+            Cubical complex with 256 vertices and 6408 nonempty cubes
             sage: dim(Z.cubical_complex()) == dim(Z)
             True
             sage: Z = MomentAngleComplex([[0,1], [1,2], [2,0], [1,3]]); Z
@@ -582,7 +582,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
             Moment-angle complex of Simplicial complex with vertex set
             (0, 1, 2) and facets {(0, 1), (0, 2), (1, 2)}
             sage: Z.cubical_complex()
-            Cubical complex with 64 vertices and 729 cubes
+            Cubical complex with 64 vertices and 728 nonempty cubes
             sage: Z.cubical_complex().homology() == Z.homology()
             True
 

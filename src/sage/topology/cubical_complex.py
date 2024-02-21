@@ -28,7 +28,7 @@ done with the following command::
 
     sage: S1 = CubicalComplex([([0,0], [2,3]), ([0,1], [3,3]),
     ....:                      ([0,1], [2,2]), ([1,1], [2,3])]); S1
-    Cubical complex with 4 vertices and 9 cubes
+    Cubical complex with 4 vertices and 8 nonempty cubes
 
 The argument to ``CubicalComplex`` is a list of the maximal "cubes" in
 the complex.  Each "cube" can be an instance of the class ``Cube`` or
@@ -769,14 +769,14 @@ class CubicalComplex(GenericCellComplex):
     The empty complex, consisting of one cube, the empty cube::
 
         sage: CubicalComplex()
-        Cubical complex with 0 vertices and 1 cube
+        Cubical complex with 0 vertices and 0 nonempty cubes
 
     A "circle" (four edges connecting the vertices (0,2), (0,3),
     (1,2), and (1,3))::
 
         sage: S1 = CubicalComplex([([0,0], [2,3]), ([0,1], [3,3]),
         ....:                      ([0,1], [2,2]), ([1,1], [2,3])]); S1
-        Cubical complex with 4 vertices and 9 cubes
+        Cubical complex with 4 vertices and 8 nonempty cubes
         sage: S1.homology()                                                             # needs sage.modules
         {0: 0, 1: Z}
 
@@ -784,11 +784,11 @@ class CubicalComplex(GenericCellComplex):
 
         sage: pts = CubicalComplex([([0],), ([3],), ([6],), ([-12],), ([5],)])
         sage: pts
-        Cubical complex with 5 vertices and 6 cubes
+        Cubical complex with 5 vertices and 5 nonempty cubes
         sage: pts.homology()                                                            # needs sage.modules
         {0: Z x Z x Z x Z}
         sage: X = S1.product(pts); X
-        Cubical complex with 20 vertices and 41 cubes
+        Cubical complex with 20 vertices and 40 nonempty cubes
         sage: X.homology()                                                              # needs sage.modules
         {0: Z x Z x Z x Z, 1: Z^5}
 
@@ -832,7 +832,7 @@ class CubicalComplex(GenericCellComplex):
     Chain complexes, homology, and cohomology::
 
         sage: T = S1.product(S1); T
-        Cubical complex with 16 vertices and 65 cubes
+        Cubical complex with 16 vertices and 64 nonempty cubes
         sage: T.chain_complex()                                                         # needs sage.modules
         Chain complex with at most 3 nonzero terms over Integer Ring
         sage: T.homology(base_ring=QQ)                                                  # needs sage.modules
@@ -861,7 +861,7 @@ class CubicalComplex(GenericCellComplex):
         EXAMPLES::
 
             sage: X = CubicalComplex([([0,0], [2,3]), ([0,1], [3,3]), ([0,1], [2,2]), ([1,1], [2,3])]); X
-            Cubical complex with 4 vertices and 9 cubes
+            Cubical complex with 4 vertices and 8 nonempty cubes
             sage: X == loads(dumps(X))
             True
         """
@@ -928,7 +928,7 @@ class CubicalComplex(GenericCellComplex):
 
             sage: interval = cubical_complexes.Cube(1)
             sage: interval
-            Cubical complex with 2 vertices and 4 cubes
+            Cubical complex with 2 vertices and 3 nonempty cubes
             sage: interval.maximal_cells()
             {[0,1]}
             sage: interval.product(interval).maximal_cells()
@@ -1177,7 +1177,7 @@ class CubicalComplex(GenericCellComplex):
             sage: S2.chain_complex()
             Chain complex with at most 3 nonzero terms over Integer Ring
             sage: Prod = S2.product(S2); Prod
-            Cubical complex with 64 vertices and 677 cubes
+            Cubical complex with 64 vertices and 676 nonempty cubes
             sage: Prod.chain_complex()
             Chain complex with at most 5 nonzero terms over Integer Ring
             sage: Prod.chain_complex(base_ring=QQ)
@@ -1747,7 +1747,7 @@ class CubicalComplex(GenericCellComplex):
         EXAMPLES::
 
             sage: T = cubical_complexes.Torus(); T
-            Cubical complex with 16 vertices and 65 cubes
+            Cubical complex with 16 vertices and 64 nonempty cubes
             sage: len(T.maximal_cells())
             16
 
@@ -1785,11 +1785,11 @@ class CubicalComplex(GenericCellComplex):
 
             sage: S3 = cubical_complexes.Sphere(3)
             sage: S3._string_constants()
-            ('Cubical', 'cube', 'cubes')
+            ('Cubical', 'nonempty cube', 'nonempty cubes')
             sage: S3._repr_()  # indirect doctest
-            'Cubical complex with 16 vertices and 81 cubes'
+            'Cubical complex with 16 vertices and 80 nonempty cubes'
         """
-        return ('Cubical', 'cube', 'cubes')
+        return ('Cubical', 'nonempty cube', 'nonempty cubes')
 
 
 class CubicalComplexExamples:
@@ -1809,11 +1809,11 @@ class CubicalComplexExamples:
     EXAMPLES::
 
         sage: cubical_complexes.Torus()  # indirect doctest
-        Cubical complex with 16 vertices and 65 cubes
+        Cubical complex with 16 vertices and 64 nonempty cubes
         sage: cubical_complexes.Cube(7)
-        Cubical complex with 128 vertices and 2188 cubes
+        Cubical complex with 128 vertices and 2187 nonempty cubes
         sage: cubical_complexes.Sphere(7)
-        Cubical complex with 256 vertices and 6561 cubes
+        Cubical complex with 256 vertices and 6560 nonempty cubes
     """
 
     def Sphere(self, n):
@@ -1827,7 +1827,7 @@ class CubicalComplexExamples:
         EXAMPLES::
 
             sage: cubical_complexes.Sphere(7)
-            Cubical complex with 256 vertices and 6561 cubes
+            Cubical complex with 256 vertices and 6560 nonempty cubes
         """
         return CubicalComplex(Cube([[0, 1]]*(n+1)).faces())
 
@@ -1839,7 +1839,7 @@ class CubicalComplexExamples:
         EXAMPLES::
 
             sage: cubical_complexes.Torus()
-            Cubical complex with 16 vertices and 65 cubes
+            Cubical complex with 16 vertices and 64 nonempty cubes
         """
         S1 = cubical_complexes.Sphere(1)
         return S1.product(S1)
@@ -1853,7 +1853,7 @@ class CubicalComplexExamples:
         EXAMPLES::
 
             sage: cubical_complexes.RealProjectivePlane()
-            Cubical complex with 21 vertices and 82 cubes
+            Cubical complex with 21 vertices and 81 nonempty cubes
         """
         return CubicalComplex([
             ([0, 1], [0], [0], [0, 1], [0]),
@@ -1886,7 +1886,7 @@ class CubicalComplexExamples:
         EXAMPLES::
 
             sage: cubical_complexes.KleinBottle()
-            Cubical complex with 42 vertices and 169 cubes
+            Cubical complex with 42 vertices and 168 nonempty cubes
         """
         RP2 = cubical_complexes.RealProjectivePlane()
         return RP2.connected_sum(RP2)
@@ -1911,9 +1911,9 @@ class CubicalComplexExamples:
         EXAMPLES::
 
             sage: cubical_complexes.SurfaceOfGenus(2)
-            Cubical complex with 32 vertices and 135 cubes
+            Cubical complex with 32 vertices and 134 nonempty cubes
             sage: cubical_complexes.SurfaceOfGenus(1, orientable=False)
-            Cubical complex with 21 vertices and 82 cubes
+            Cubical complex with 21 vertices and 81 nonempty cubes
         """
         try:
             g = Integer(g)
@@ -1945,9 +1945,9 @@ class CubicalComplexExamples:
         EXAMPLES::
 
             sage: cubical_complexes.Cube(0)
-            Cubical complex with 1 vertex and 2 cubes
+            Cubical complex with 1 vertex and 1 nonempty cube
             sage: cubical_complexes.Cube(3)
-            Cubical complex with 8 vertices and 28 cubes
+            Cubical complex with 8 vertices and 27 nonempty cubes
         """
         if n == 0:
             return CubicalComplex([Cube([[0]])])

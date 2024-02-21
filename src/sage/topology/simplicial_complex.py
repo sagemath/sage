@@ -892,7 +892,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         sage: SimplicialComplex(S) == S
         True
         sage: Tc = cubical_complexes.Torus(); Tc
-        Cubical complex with 16 vertices and 65 cubes
+        Cubical complex with 16 vertices and 64 nonempty cubes
         sage: Ts = SimplicialComplex(Tc); Ts
         Simplicial complex with 16 vertices and 32 facets
         sage: Ts.homology()                                                             # needs sage.modules
@@ -4019,7 +4019,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             {0: 0, 1: Z x Z, 2: Z}
             sage: Tc = T._cubical_()
             sage: Tc
-            Cubical complex with 42 vertices and 169 cubes
+            Cubical complex with 42 vertices and 168 nonempty cubes
             sage: Tc.homology()                                                         # needs sage.modules
             {0: 0, 1: Z x Z, 2: Z}
         """
