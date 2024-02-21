@@ -6504,7 +6504,7 @@ def partition_sandpile(S, p):
 
         sage: from sage.sandpiles.sandpile import admissible_partitions, partition_sandpile
         sage: S = sandpiles.Cycle(4)
-        sage: P = [list(admissible_partitions(S, i)) for i in [2,3,4]]                        # needs sage.combinat
+        sage: P = [list(admissible_partitions(S, i)) for i in [2,3,4]]                  # needs sage.combinat
         sage: for p in P:                                                               # needs sage.combinat
         ....:  sum([partition_sandpile(S, i).betti(verbose=False)[-1] for i in p])
         6
