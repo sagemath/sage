@@ -750,12 +750,27 @@ class Representation_Tensor(CombinatorialFreeModule_Tensor, Representation_abstr
             True
             sage: tensor([L, tensor([S, R])]) == tensor([L, S, R])
             True
+
+        Check that the tensor product with more general modules
+        can be constructed::
+
+            sage: C = CombinatorialFreeModule(ZZ, ['a','b'])
+            sage: T = tensor([C, R])
+            sage: type(T)
+            <class 'sage.combinat.free_module.CombinatorialFreeModule_Tensor_with_category'>
+            sage: T = tensor([R, C])
+            sage: type(T)
+            <class 'sage.combinat.free_module.CombinatorialFreeModule_Tensor_with_category'>
         """
-        assert (len(reps) > 0)
-        R = reps[0].base_ring()
+        assert len(reps) > 0
+        assert isinstance(reps[0], Representation_abstract)
         S = reps[0].semigroup()
-        if not all(module in Modules(R).WithBasis() and module.semigroup() is S for module in reps):
-            raise ValueError("not all representations of the same semigroup over the same base ring")
+        if not all(isinstance(module, Representation_abstract)
+                   and module.semigroup() == S for module in reps):
+            return CombinatorialFreeModule_Tensor(reps, **options)
+        R = reps[0].base_ring()
+        if not all(module in Modules(R).WithBasis() for module in reps):
+            raise ValueError("not all representations over the same base ring")
         # flatten the list of modules so that tensor(A, tensor(B,C)) gets rewritten into tensor(A, B, C)
         reps = sum((module._sets if isinstance(module, Representation_Tensor) else (module,) for module in reps), ())
         if all('FiniteDimensional' in M.category().axioms() for M in reps):

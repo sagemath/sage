@@ -976,15 +976,24 @@ class CoxeterGroups(Category_singleton):
 
                 sage: W = CoxeterGroup(['D', 4])
                 sage: W.reflection_representation()
+                Reflection representation of Finite Coxeter group over
+                 Integer Ring with Coxeter matrix:
+                [1 3 2 2]
+                [3 1 3 3]
+                [2 3 1 2]
+                [2 3 2 1]
 
                 sage: W = CoxeterGroup(['I', 13])
                 sage: W.reflection_representation()
+                Reflection representation of Finite Coxeter group over
+                 Universal Cyclotomic Field with Coxeter matrix:
+                [ 1 13]
+                [13  1]
 
                 sage: W = WeylGroup(["B", 3, 1])
                 sage: W.reflection_representation(QQ)
-                Sign representation of
-                 Weyl Group of type ['A', 1, 1] (as a matrix group acting on the root space)
-                 over Integer Ring
+                Reflection representation of Weyl Group of type ['B', 3, 1]
+                 (as a matrix group acting on the root space)
             """
             from sage.modules.with_basis.representation import ReflectionRepresentation
             return ReflectionRepresentation(self, base_ring)
