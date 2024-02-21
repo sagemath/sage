@@ -31,6 +31,7 @@ from sage.misc.lazy_import import lazy_import
 from sage.modules.free_module_morphism import FreeModuleMorphism
 from sage.modules.free_module_homspace import FreeModuleHomspace, is_FreeModuleHomspace
 from sage.matrix.constructor import matrix
+from sage.matrix.matrix_space import MatrixSpace
 
 lazy_import('sage.rings.derivation', 'RingDerivation')
 
@@ -62,6 +63,8 @@ class FreeModulePseudoMorphism(Morphism):
         sage: f(V((1, 2)))
         (-4, 1)
 
+    ::
+
         sage: P.<x> = ZZ[]; deriv = P.derivation()
         sage: M = P^2
         sage: f = M.pseudohom([[1, 2*x], [x, 1]], deriv, side="right"); f
@@ -77,22 +80,31 @@ class FreeModulePseudoMorphism(Morphism):
         sage: f = M.pseudohom([[1, 2], [1, 1]], deriv)
         sage: f(e)
         (x^3 + 2*x^2 + 14*x + 8, x^3 + 7*x^2 + 13*x + 13)
+
+    ::
+
+        sage: Fq = GF(343); M = Fq^3; N = Fq^2; frob = Fq.frobenius_endomorphism(); z = Fq.gen()
+        sage: phi = M.pseudohom([[2, 3, 1], [1, 4, 6]], frob, N, side="right"); phi
+        Free module pseudomorphism defined as left-multiplication by the matrix
+        [2 3 1]
+        [1 4 6]
+        twisted by the morphism Frobenius endomorphism z3 |--> z3^7 on Finite Field in z3 of size 7^3
+        Domain: Vector space of dimension 3 over Finite Field in z3 of size 7^3
+        Codomain: Vector space of dimension 2 over Finite Field in z3 of size 7^3
+        sage: elem = (4*z^2 + 4*z + 3, 2, z + 5)
+        sage: phi(elem)
+        (2*z3 + 1, 6*z3^2 + 4*z3 + 5)
     """
-    def __init__(self, domain, base_morphism, twist=None, codomain=None, side="left"):
+    def __init__(self, pseudohomspace, base_morphism, side="left"):
         """
         Constructs a pseudomorphism of free modules.
 
         INPUT:
-            -  ``domain``   - the domain of the pseudomorphism; a free module
+            -  ``pseudohomspace`` - the parent space of pseudomorphisms,
+                                    containing
 
             -  ``base_morphism`` - either a morphism or a matrix defining a
                                    morphism
-
-            -  ``twist`` - a twisting morphism, this is either a morphism or
-                           a derivation (default: None)
-
-            -  ``codomain`` - the codomain of the pseudomorphism; a free
-                              module  (default: None)
 
             - side -- side of the vectors acted on by the matrix
                       (default: ``"left"``)
@@ -116,28 +128,22 @@ class FreeModulePseudoMorphism(Morphism):
             Domain: Vector space of dimension 2 over Finite Field in z3 of size 5^3
             Codomain: Vector space of dimension 2 over Finite Field in z3 of size 5^3
         """
-        from sage.structure.element import is_Matrix
-        Morphism.__init__(self, domain.PseudoHom(twist, codomain))
-        if is_Matrix(base_morphism):
-            self._base_matrix = base_morphism
-        elif isinstance(base_morphism, Morphism):
-            self._base_matrix = base_morphism.matrix()
+        Morphism.__init__(self, pseudohomspace)
+        dom = pseudohomspace.domain()
+        codom = pseudohomspace.codomain()
+        rows = dom.dimension()
+        cols = codom.dimension()
+        if side == "right":
+            rows = codom.dimension()
+            cols = dom.dimension()
+        matrix_space = MatrixSpace(dom.coordinate_ring(), rows, cols)
+        if isinstance(base_morphism, FreeModuleMorphism):
+            self._base_matrix = matrix_space(base_morphism.matrix())
         else:
-            self._base_matrix = matrix(domain.coordinate_ring(),
-                                        base_morphism)
-        self.derivation = None
-        self.twist_morphism = None
+            self._base_matrix = matrix_space(base_morphism)
+        self.derivation = pseudohomspace.derivation
+        self.twist_morphism = pseudohomspace.twist_morphism
         self.side = side
-        if isinstance(twist, Morphism):
-            self.twist_morphism = twist
-        elif isinstance(twist, RingDerivation):
-            self.twist_morphism = twist.parent().twisting_morphism()
-            if twist:
-                self.derivation = twist
-            else:
-                self.derivation = None
-        elif twist is not None:
-            raise TypeError("twist is not a ring morphism or derivation")
 
     def _call_(self, x):
         r"""

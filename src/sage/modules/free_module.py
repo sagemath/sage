@@ -3079,7 +3079,7 @@ class FreeModule_generic(Module_free_ambient):
 
         """
         from sage.modules.free_module_pseudohomspace import FreeModulePseudoHomspace
-        return FreeModulePseudoHomspace(self, codomain, twist=twist)
+        return FreeModulePseudoHomspace(self, codomain=codomain, twist=twist)
 
     def pseudohom(self, morphism, twist=None, codomain=None, **kwds):
         r"""
@@ -3098,7 +3098,8 @@ class FreeModule_generic(Module_free_ambient):
             Codomain: Vector space of dimension 2 over Finite Field in z2 of size 5^2
         """
         from sage.modules.free_module_pseudomorphism import FreeModulePseudoMorphism
-        return FreeModulePseudoMorphism(self, morphism, twist, codomain, **kwds)
+        side = kwds.get("side", "left")
+        return FreeModulePseudoMorphism(self.PseudoHom(twist=twist, codomain=codomain), morphism, side)
 
     def inner_product_matrix(self):
         """

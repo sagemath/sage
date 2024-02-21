@@ -159,40 +159,20 @@ class FreeModulePseudoHomspace(sage.categories.homset.HomsetWithBase):
             sage: morph = M.hom(matrix([[1, 2], [1, 1]]))
             sage: phi = PHS._element_constructor_(morph, side="right"); phi
             Free module pseudomorphism defined as left-multiplication by the matrix
+            [1 2]
             [1 1]
-            [2 1]
             twisted by the morphism Frobenius endomorphism z3 |--> z3^5 on Finite Field in z3 of size 5^3
             Domain: Vector space of dimension 2 over Finite Field in z3 of size 5^3
             Codomain: Vector space of dimension 2 over Finite Field in z3 of size 5^3
         """
-        from . import free_module_pseudomorphism
+        from . import free_module_pseudomorphism as pseudo
         side = kwds.get("side", "left")
-        if not is_Matrix(A):
-            C = self.codomain()
-            try:
-                if callable(A):
-                    v = [C(A(g)) for g in self.domain().gens()]
-                    A = matrix([C.coordinates(a) for a in v], ncols=C.rank())
-                    if side == "right":
-                        A = A.transpose()
-                else:
-                    v = [C(a) for a in A]
-                    if side == "right":
-                        A = matrix([C.coordinates(a) for a in v],
-                                    ncols=C.rank()).transpose()
-                    else:
-                        A = matrix([C.coordinates(a) for a in v],
-                                    ncols=C.rank())
-            except TypeError:
-                pass
         if not self.codomain().base_ring().has_coerce_map_from(
                 self.domain().base_ring()) and not A.is_zero():
             raise TypeError("nontrivial morphisms require a coercion map"
                     "from the base ring of the domain to the base ring of the"
                     "codomain")
-        return free_module_pseudomorphism.FreeModulePseudoMorphism(
-                                self.domain(), A, twist=self.twist,
-                                codomain=self.codomain(), side=side)
+        return pseudo.FreeModulePseudoMorphism(self, A, side=side)
 
     def _matrix_space(self):
         r"""
