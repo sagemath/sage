@@ -133,27 +133,28 @@ class Application(object):
         else:
             raise ValueError('format must be one of "plain", "rst", and "shell"')
 
-        if format == 'plain':
-            indent1 = "        "
-            indent2 = "                "
-        elif format == 'rst':
-            indent1 = ""
-            indent2 = "    "
-
         for package_name in pc.names:
             package = Package(package_name)
             if len(pc.names) > 1:
                 if format == 'plain':
                     print("{0}:".format(package_name))
+                    indent1 = "        "
                 elif format == 'rst':
                     print("\n{0}\n{1}\n".format(package_name, "~" * len(package_name)))
+                    indent1 = ""
+            else:
+                indent1 = ""
 
             for typeset in typesets:
                 if len(typesets) > 1:
                     if format == 'plain':
                         print(indent1 + "{0}: ".format('/'.join(typeset)))
+                        indent2 = indent1 + "        "
                     elif format == 'rst':
                         print("\n" + indent1 + ".. tab:: {0}\n".format('/'.join(typeset)))
+                        indent2 = indent1 + "    "
+                else:
+                    indent2 = indent1
 
                 deps = []
                 for t in typeset:

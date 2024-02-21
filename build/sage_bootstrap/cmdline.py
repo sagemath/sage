@@ -109,12 +109,23 @@ EXAMPLE:
 
     $ sage --package dependencies maxima openblas
     maxima:
-                    - ecl
-                    - info
+            - ecl
+            - info
     openblas:
-                    - gfortran
+            - gfortran
     $ sage --package dependencies maxima --runtime
+    - ecl
+
+    $ sage --package dependencies maxima openblas --runtime --order-only
+    maxima:
+            order_only:
+                    - info
+            runtime:
                     - ecl
+    openblas:
+            order_only:
+            runtime:
+                    - gfortran
 """
 
 
