@@ -75,6 +75,14 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
             3
             sage: idx._cardinality
             35
+
+            sage: idx = CliffordAlgebraIndices(7, 0)
+            sage: idx._nbits
+            7
+            sage: idx._degree
+            0
+            sage: idx._cardinality
+            1
         """
         self._nbits = Qdim
         if degree is None:
@@ -235,10 +243,17 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
             sage: idx = CliffordAlgebraIndices(5, 3)
             sage: list(idx)
             [111, 1101, 11001, 1011, 10101, 10011, 0111, 01101, 01011, 00111]
+
+            sage: idx = CliffordAlgebraIndices(7, 0)
+            sage: list(idx)
+            [0]
         """
         import itertools
         n = self._nbits
         if self._degree is not None:
+            if self._degree == 0:  # special corner case
+                yield FrozenBitset()
+                return
             for C in itertools.combinations(range(n), self._degree):
                 yield FrozenBitset(C)
             return
@@ -276,6 +291,16 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
             True
             sage: int(8) in idx
             False
+
+            sage: idx = CliffordAlgebraIndices(7, 0)
+            sage: FrozenBitset() in idx
+            True
+            sage: FrozenBitset('01') in idx
+            False
+            sage: int(0) in idx
+            True
+            sage: int(5) in idx
+            False
         """
         if isinstance(elt, int):
             if self._degree is not None and sum(ZZ(elt).bits()) != self._degree:
@@ -309,11 +334,16 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
             sage: idx = CliffordAlgebraIndices(5, 3)
             sage: idx._an_element_()
             111
+            sage: idx = CliffordAlgebraIndices(7, 0)
+            sage: idx._an_element_()
+            0
         """
         if not self._nbits:
             return FrozenBitset()
 
         if self._degree is not None:
+            if self._degree == 0:  # special corner case
+                return FrozenBitset()
             return FrozenBitset(range(self._degree))
 
         from sage.combinat.subset import SubsetsSorted
