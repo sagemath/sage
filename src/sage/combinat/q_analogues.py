@@ -1053,10 +1053,7 @@ def number_of_irreducible_polynomials(n, q=None, m=1):
         """
         res = 0
         for p in Partitions(d+1, max_part=d):
-            tmp = 1
-            for r, t in zip(irreducible, p.to_exp(d)):
-                tmp *= binomial(r+t-1, t)
-            res += tmp
+            res += prod(binomial(r+t-1, t) for r, t in zip(irreducible, p.to_exp(d)))
         return res
 
     r = []
