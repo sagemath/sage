@@ -2635,6 +2635,25 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
             sage: print(coercion_model.get_action(E, ZZ, operator.pow))                 # needs sage.schemes
             None
+
+        ::
+
+            With Pull Request #37369, registered multiplication actions by
+            `ZZ` are also discovered and used when a Python ``int`` is multiplied.
+            Previously, it was only discovering the generic Integer Multiplication
+            Action that all additive groups have. As a result, optimised
+            implementations, such as the use of Pari for scalar multiplication of points
+            on elliptic curves over Finite Fields, was not used if an ``int``
+            multiplied a point, resulting in a 10x slowdown for large characteristic::
+
+            sage: E = EllipticCurve(GF(17),[1,1])
+            sage: coercion_model.discover_action(ZZ, E, operator.mul)
+            Left action by Integer Ring on Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 17
+            sage: coercion_model.discover_action(int, E, operator.mul)
+            Left action by Integer Ring on Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 17
+            with precomposition on left by Native morphism:
+            From: Set of Python objects of class 'int'
+            To:   Integer Ring
         """
         # G acts on S, G -> G', R -> S => G' acts on R (?)
         # NO! ZZ[x,y] acts on Matrices(ZZ[x]) but ZZ[y] does not.
