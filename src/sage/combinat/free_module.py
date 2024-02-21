@@ -1262,8 +1262,8 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
             Category of tensor products of
              finite dimensional modules with basis over Integer Ring
 
-            sage: T.construction() # todo: not implemented
-            [tensor, ]
+            sage: T.construction()
+            (The tensor functorial construction, (F, G))
 
         T is a free module, with same base ring as F and G::
 
@@ -1350,7 +1350,8 @@ class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
             assert (all(module in ModulesWithBasis(R)) for module in modules)
             # should check the base ring
             # flatten the list of modules so that tensor(A, tensor(B,C)) gets rewritten into tensor(A, B, C)
-            modules = sum([module._sets if isinstance(module, CombinatorialFreeModule_Tensor) else (module,) for module in modules], ())
+            modules = sum([module._sets if isinstance(module, CombinatorialFreeModule_Tensor) else (module,)
+                           for module in modules], ())
             if all('FiniteDimensional' in M.category().axioms() for M in modules):
                 options['category'] = options['category'].FiniteDimensional()
             return super(CombinatorialFreeModule.Tensor, cls).__classcall__(cls, modules, **options)
