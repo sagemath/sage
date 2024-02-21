@@ -7,7 +7,7 @@ AUTHORS:
 
 """
 # ****************************************************************************
-#  Copyright (C) 2024 Yossef Musleh <jbobicus@gmail.com>
+#  Copyright (C) 2024 Yossef Musleh <specialholonomy@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -24,7 +24,6 @@ import sage.categories.homset
 from sage.structure.element import is_Matrix
 from sage.matrix.constructor import matrix, identity_matrix
 from sage.matrix.matrix_space import MatrixSpace
-from sage.misc.cachefunc import cached_method
 from sage.categories.morphism import Morphism
 from sage.misc.lazy_import import lazy_import
 
@@ -37,7 +36,7 @@ class FreeModulePseudoHomspace(sage.categories.homset.HomsetWithBase):
     For free modules, the elements of a pseudomorphism correspond to matrices
     which define the mapping on elements of a basis.
 
-    EXAMPLES::
+    TESTS::
 
         sage: F = GF(125); M = F^2; twist = F.frobenius_endomorphism()
         sage: PHS = M.PseudoHom(twist)
@@ -47,11 +46,30 @@ class FreeModulePseudoHomspace(sage.categories.homset.HomsetWithBase):
         (z3, 2*z3^2 + 3*z3 + 3)
 
     """
-    def __init__(self, X, Y, twist=None):
-        self._domain = X
-        self._codomain = X
-        if Y is not None:
-            self._codomain = Y
+    def __init__(self, domain, codomain=None, twist=None):
+        r"""
+        Constructs the space of pseudomorphisms with a given twist.
+
+        INPUT:
+            -  ``domain``   - the domain of the pseudomorphism; a free module
+
+            -  ``codomain`` - the codomain of the pseudomorphism; a free
+                             module  (default: None)
+
+            -  ``twist`` - a twisting morphism, this is either a morphism or
+                           a derivation (default: None)
+
+        EXAMPLES::
+
+            sage: F = GF(125); M = F^2; twist = F.frobenius_endomorphism()
+            sage: PHS = M.PseudoHom(twist); PHS
+            Set of Pseudomorphisms from Vector space of dimension 2 over Finite Field in z3 of size 5^3 to Vector space of dimension 2 over Finite Field in z3 of size 5^3
+            Twisted by the morphism Frobenius endomorphism z3 |--> z3^5 on Finite Field in z3 of size 5^3
+        """
+        self._domain = domain
+        self._codomain = domain
+        if codomain is not None:
+            self._codomain = codomain
         super().__init__(self._domain, self._codomain, category=None)
         self.base_homspace = self._domain.Hom(self._codomain)
         self.twist = twist
@@ -74,6 +92,10 @@ class FreeModulePseudoHomspace(sage.categories.homset.HomsetWithBase):
         r"""
         Coerce a matrix or free module homomorphism into a pseudomorphism.
 
+        INPUTS:
+            - ``A`` - either a matrix defining the morphism or a free module
+                      morphism
+
         EXAMPLES::
 
             sage: F = GF(125); M = F^2; twist = F.frobenius_endomorphism()
@@ -82,6 +104,63 @@ class FreeModulePseudoHomspace(sage.categories.homset.HomsetWithBase):
             Free module pseudomorphism defined by the matrix
             [1 2]
             [1 1]
+            twisted by the morphism Frobenius endomorphism z3 |--> z3^5 on Finite Field in z3 of size 5^3
+            Domain: Vector space of dimension 2 over Finite Field in z3 of size 5^3
+            Codomain: Vector space of dimension 2 over Finite Field in z3 of size 5^3
+        """
+        return self._element_constructor_(A, **kwds)
+
+    def __repr__(self):
+        r"""
+        Returns the string representation of the pseudomorphism space.
+
+        EXAMPLES::
+
+            sage: Fq = GF(343); M = Fq^2; frob = Fq.frobenius_endomorphism()
+            sage: PHS = M.PseudoHom(frob); PHS
+            Set of Pseudomorphisms from Vector space of dimension 2 over Finite Field in z3 of size 7^3 to Vector space of dimension 2 over Finite Field in z3 of size 7^3
+            Twisted by the morphism Frobenius endomorphism z3 |--> z3^7 on Finite Field in z3 of size 7^3
+        """
+        r = "Set of Pseudomorphisms from {} to {} {} {}"
+        morph = ""
+        if self.twist_morphism is not None:
+            morph = "\nTwisted by the morphism {}"
+            morph = morph.format(self.twist_morphism.__repr__())
+        deriv = ""
+        if self.derivation is not None:
+            deriv = "\nTwisted by the derivation {}"
+            deriv = deriv.format(self.derivation.__repr__())
+        return r.format(self.domain(), self.codomain(), morph, deriv)
+
+    def _element_constructor_(self, A, **kwds):
+        r"""
+        Coerce a matrix or free module homomorphism into a pseudomorphism.
+
+        INPUTS:
+            - ``A`` - either a matrix defining the morphism or a free module
+                      morphism
+
+        TESTS::
+
+            sage: F = GF(125); M = F^2; twist = F.frobenius_endomorphism()
+            sage: PHS = M.PseudoHom(twist)
+            sage: h = PHS._element_constructor_([[1, 2], [1, 1]]); h
+            Free module pseudomorphism defined by the matrix
+            [1 2]
+            [1 1]
+            twisted by the morphism Frobenius endomorphism z3 |--> z3^5 on Finite Field in z3 of size 5^3
+            Domain: Vector space of dimension 2 over Finite Field in z3 of size 5^3
+            Codomain: Vector space of dimension 2 over Finite Field in z3 of size 5^3
+
+        ::
+
+            sage: F = GF(125); M = F^2; twist = F.frobenius_endomorphism()
+            sage: PHS = M.PseudoHom(twist)
+            sage: morph = M.hom(matrix([[1, 2], [1, 1]]))
+            sage: phi = PHS._element_constructor_(morph, side="right"); phi
+            Free module pseudomorphism defined as left-multiplication by the matrix
+            [1 1]
+            [2 1]
             twisted by the morphism Frobenius endomorphism z3 |--> z3^5 on Finite Field in z3 of size 5^3
             Domain: Vector space of dimension 2 over Finite Field in z3 of size 5^3
             Codomain: Vector space of dimension 2 over Finite Field in z3 of size 5^3
@@ -113,47 +192,7 @@ class FreeModulePseudoHomspace(sage.categories.homset.HomsetWithBase):
                     "codomain")
         return free_module_pseudomorphism.FreeModulePseudoMorphism(
                                 self.domain(), A, twist=self.twist,
-                                codomain=self.codomain())
-
-    def __repr__(self):
-        r"""
-        Returns the string representation of the pseudomorphism space.
-
-        EXAMPLES::
-
-            sage: Fq = GF(343); M = Fq^2; frob = Fq.frobenius_endomorphism()
-            sage: PHS = M.PseudoHom(frob); PHS
-            Set of Pseudomorphisms from Vector space of dimension 2 over Finite Field in z3 of size 7^3 to Vector space of dimension 2 over Finite Field in z3 of size 7^3
-            Twisted by the morphism Frobenius endomorphism z3 |--> z3^7 on Finite Field in z3 of size 7^3
-        """
-        r = "Set of Pseudomorphisms from {} to {} {} {}"
-        morph = ""
-        if self.twist_morphism is not None:
-            morph = "\nTwisted by the morphism {}"
-            morph = morph.format(self.twist_morphism.__repr__())
-        deriv = ""
-        if self.derivation is not None:
-            deriv = "\nTwisted by the derivation {}"
-            deriv = deriv.format(self.derivation.__repr__())
-        return r.format(self.domain(), self.codomain(), morph, deriv)
-
-    def zero(self):
-        r"""
-        Return the zero pseudomorphism. This corresponds to the zero matrix.
-
-        EXAMPLES::
-
-            sage: F = GF(125); M = F^2; twist = F.frobenius_endomorphism()
-            sage: PHS = M.PseudoHom(twist)
-            sage: PHS.zero()
-            Free module pseudomorphism defined by the matrix
-            [0 0]
-            [0 0]
-            twisted by the morphism Frobenius endomorphism z3 |--> z3^5 on Finite Field in z3 of size 5^3
-            Domain: Vector space of dimension 2 over Finite Field in z3 of size 5^3
-            Codomain: Vector space of dimension 2 over Finite Field in z3 of size 5^3
-        """
-        return self(self.base_homspace.zero())
+                                codomain=self.codomain(), side=side)
 
     def _matrix_space(self):
         r"""
@@ -217,3 +256,21 @@ class FreeModulePseudoHomspace(sage.categories.homset.HomsetWithBase):
             Codomain: Vector space of dimension 2 over Finite Field in z3 of size 5^3
         """
         return self(self.base_homspace.identity())
+
+    def zero(self):
+        r"""
+        Return the zero pseudomorphism. This corresponds to the zero matrix.
+
+        EXAMPLES::
+
+            sage: F = GF(125); M = F^2; twist = F.frobenius_endomorphism()
+            sage: PHS = M.PseudoHom(twist)
+            sage: PHS.zero()
+            Free module pseudomorphism defined by the matrix
+            [0 0]
+            [0 0]
+            twisted by the morphism Frobenius endomorphism z3 |--> z3^5 on Finite Field in z3 of size 5^3
+            Domain: Vector space of dimension 2 over Finite Field in z3 of size 5^3
+            Codomain: Vector space of dimension 2 over Finite Field in z3 of size 5^3
+        """
+        return self(self.base_homspace.zero())

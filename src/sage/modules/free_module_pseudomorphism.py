@@ -37,10 +37,10 @@ lazy_import('sage.rings.derivation', 'RingDerivation')
 class FreeModulePseudoMorphism(Morphism):
     r"""
     Let `M, M'` be free modules over a ring `R`, `\theta: R \to R` a ring
-    homomorphism, and `\theta: R \to R` a derivation i.e. an additive
-    map such that
+    homomorphism, and `\delta: R \to R` a `\theta`-derivation, which is a map
+    such that:
 
-    `\delta(xy) = x\delta(y) + \delta(x)y`.
+    `\delta(xy) = \theta(x)\delta(y) + \delta(x)y`.
 
     Then a pseudomorphism `f : M to M` is a map such that
 
@@ -99,10 +99,22 @@ class FreeModulePseudoMorphism(Morphism):
 
         EXAMPLES::
 
-            sage: F = GF(25); V = F^3; twist = F.frobenius_endomorphism(5)
-            sage: phi = V.pseudohom(matrix(F,3,[1..9]), twist)
+            sage: F = GF(25); M = F^3; twist = F.frobenius_endomorphism(5)
+            sage: phi = M.pseudohom(matrix(F,3,[1..9]), twist)
             sage: type(phi)
             <class 'sage.modules.free_module_pseudomorphism.FreeModulePseudoMorphism'>
+
+        ::
+
+            sage: F = GF(125); M = F^2; twist = F.frobenius_endomorphism()
+            sage: morph = M.hom(matrix([[1,2],[0,1]]))
+            sage: phi = M.pseudohom(morph, twist, side="right"); phi
+            Free module pseudomorphism defined as left-multiplication by the matrix
+            [1 2]
+            [0 1]
+            twisted by the morphism Frobenius endomorphism z3 |--> z3^5 on Finite Field in z3 of size 5^3
+            Domain: Vector space of dimension 2 over Finite Field in z3 of size 5^3
+            Codomain: Vector space of dimension 2 over Finite Field in z3 of size 5^3
         """
         from sage.structure.element import is_Matrix
         Morphism.__init__(self, domain.PseudoHom(twist, codomain))
@@ -115,6 +127,7 @@ class FreeModulePseudoMorphism(Morphism):
                                         base_morphism)
         self.derivation = None
         self.twist_morphism = None
+        self.side = side
         if isinstance(twist, Morphism):
             self.twist_morphism = twist
         elif isinstance(twist, RingDerivation):
@@ -123,7 +136,8 @@ class FreeModulePseudoMorphism(Morphism):
                 self.derivation = twist
             else:
                 self.derivation = None
-        self.side = side
+        elif twist is not None:
+            raise TypeError("twist is not a ring morphism or derivation")
 
     def _call_(self, x):
         r"""
@@ -216,19 +230,6 @@ class FreeModulePseudoMorphism(Morphism):
         """
         return self._base_matrix
 
-    def twisting_morphism(self):
-        r"""
-        Return the twisting homomorphism of the pseudomorphism.
-
-        EXAMPLES::
-
-            sage: Fq = GF(343); M = Fq^3; frob = Fq.frobenius_endomorphism()
-            sage: ph = M.pseudohom([[1, 2, 3], [0, 1, 1], [2, 1, 1]], frob, side="right")
-            sage: ph.twisting_morphism()
-            Frobenius endomorphism z3 |--> z3^7 on Finite Field in z3 of size 7^3
-        """
-        return self.twist_morphism
-
     def twisting_derivation(self):
         r"""
         Return the twisting derivation of the pseudomorphism.
@@ -241,3 +242,16 @@ class FreeModulePseudoMorphism(Morphism):
             d/dx
         """
         return self.derivation
+
+    def twisting_morphism(self):
+        r"""
+        Return the twisting homomorphism of the pseudomorphism.
+
+        EXAMPLES::
+
+            sage: Fq = GF(343); M = Fq^3; frob = Fq.frobenius_endomorphism()
+            sage: ph = M.pseudohom([[1, 2, 3], [0, 1, 1], [2, 1, 1]], frob, side="right")
+            sage: ph.twisting_morphism()
+            Frobenius endomorphism z3 |--> z3^7 on Finite Field in z3 of size 7^3
+        """
+        return self.twist_morphism
