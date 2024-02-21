@@ -130,15 +130,15 @@ Check that :trac:`5562` has been fixed::
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 import sys
@@ -148,7 +148,7 @@ from sage.structure.element import Element
 import sage.categories as categories
 from sage.categories.morphism import IdentityMorphism
 
-from sage.rings.ring import (Algebra, CommutativeAlgebra, IntegralDomain,
+from sage.rings.ring import (Ring, IntegralDomain,
                              PrincipalIdealDomain, is_Ring)
 from sage.structure.element import is_RingElement
 import sage.rings.rational_field as rational_field
@@ -226,7 +226,7 @@ def is_PolynomialRing(x):
 
 #########################################################################################
 
-class PolynomialRing_general(Algebra):
+class PolynomialRing_general(Ring):
     """
     Univariate polynomial ring over a ring.
     """
@@ -303,7 +303,7 @@ class PolynomialRing_general(Algebra):
         self.Element = self._polynomial_class
         self.__cyclopoly_cache = {}
         self._has_singular = False
-        Algebra.__init__(self, base_ring, names=name, normalize=True, category=category)
+        Ring.__init__(self, base_ring, names=name, normalize=True, category=category)
         self._populate_coercion_lists_(convert_method_name='_polynomial_')
 
     def __reduce__(self):
@@ -1709,7 +1709,7 @@ class PolynomialRing_general(Algebra):
         raise ValueError("you should pass exactly one of of_degree and max_degree")
 
 
-class PolynomialRing_commutative(PolynomialRing_general, CommutativeAlgebra):
+class PolynomialRing_commutative(PolynomialRing_general):
     """
     Univariate polynomial ring over a commutative ring.
     """

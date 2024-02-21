@@ -686,24 +686,6 @@ cdef class Ring(ParentWithGens):
             return x
         return self._one_element
 
-    def is_commutative(self):
-        """
-        Return ``True`` if this ring is commutative.
-
-        EXAMPLES::
-
-            sage: QQ.is_commutative()
-            True
-            sage: QQ['x,y,z'].is_commutative()
-            True
-            sage: Q.<i,j,k> = QuaternionAlgebra(QQ, -1, -1)                             # needs sage.combinat sage.modules
-            sage: Q.is_commutative()                                                    # needs sage.combinat sage.modules
-            False
-        """
-        if self.is_zero():
-            return True
-        raise NotImplementedError
-
     def is_field(self, proof = True):
         """
         Return ``True`` if this ring is a field.
