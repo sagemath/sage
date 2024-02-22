@@ -3,11 +3,8 @@ mcqd = cc.find_library('mcqd', required: false)
 cliquer = cc.find_library('cliquer')
 
 # Cannot be found via pkg-config
-planarity = declare_dependency(
-  dependencies: [
-    cc.find_library('planarity'),
-  ]
-)
+planarity = cc.find_library('planarity')
+
 py.install_sources(
   'all.py',
   'all__sagemath_bliss.py',
