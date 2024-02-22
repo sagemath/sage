@@ -1,20 +1,14 @@
 # Cannot be found via pkg-config
-meataxe = declare_dependency(
-  dependencies: [
-    cc.find_library('meataxe', required: false),
-  ]
-)
-iml = declare_dependency(
-  dependencies: [
-    cc.find_library('iml'),
-  ]
-)
+meataxe = cc.find_library('meataxe', required: false, disabler : true)
+iml = cc.find_library('iml')
 
+if meataxe.found()
+  py.install_sources('all__sagemath_meataxe.py')
+endif
 
 py.install_sources(
   '__init__.py',
   'all.py',
-  'all__sagemath_meataxe.py',
   'benchmark.py',
   'berlekamp_massey.py',
   'compute_J_ideal.py',
@@ -66,12 +60,17 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
+    dependencies = [py_dep, blas, cypari2, cysignals, fflas, flint, gd, givaro, gmp, gmpxx, iml, linbox, m, m4ri, m4rie, mpfi, mpfr, mtx, ntl, pari, png, zlib]
+    if name == 'matrix_gfpn_dense'
+        dependencies += [meataxe]
+    endif
+
     py.extension_module(name,
         sources: pyx,
         subdir: 'sage/matrix',
         install: true,
         include_directories: [inc_arb, inc_cpython, inc_ext, inc_flint, inc_ntl, inc_numpy, inc_rings, inc_rings_finite],
-        dependencies: [py_dep, blas, cypari2, cysignals, fflas, flint, gd, givaro, gmp, gmpxx, iml, linbox, m, m4ri, m4rie, mpfi, mpfr, mtx, ntl, pari, png, zlib],
+        dependencies: dependencies,
     )
 endforeach
 
