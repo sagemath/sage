@@ -587,7 +587,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             -7
         """
         if S is int:
-            return sage.rings.integer.long_to_Z()
+            return sage.rings.integer.int_to_Z()
         elif S is bool:
             return True
         elif is_numpy_type(S):
