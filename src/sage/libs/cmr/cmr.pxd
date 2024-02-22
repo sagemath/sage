@@ -84,13 +84,17 @@ cdef extern from "cmr/matrix.h":
 cdef extern from "cmr/camion.h":
 
     ctypedef struct CMR_CAMION_STATISTICS:
+        uint32_t generalCount
+        double generalTime
+        uint32_t graphCount
+        double graphTime
         uint32_t totalCount
         double totalTime
 
-    CMR_ERROR CMRstatsCamionInit(CMR_CAMION_STATISTICS* stats)
+    CMR_ERROR CMRcamionStatsInit(CMR_CAMION_STATISTICS* stats)
     # CMR_ERROR CMRstatsCamionPrint(FILE* stream, CMR_CAMION_STATISTICS* stats, const char* prefix)
-    CMR_ERROR CMRtestCamionSigned(CMR* cmr, CMR_CHRMAT* matrix, bool* pisCamionSigned, CMR_SUBMAT** psubmatrix, CMR_CAMION_STATISTICS* stats, double timeLimit)
-    CMR_ERROR CMRcomputeCamionSigned(CMR* cmr, CMR_CHRMAT* matrix, bool* pwasCamionSigned, CMR_SUBMAT** psubmatrix, CMR_CAMION_STATISTICS* stats, double timeLimit)
+    CMR_ERROR CMRcamionTestSigns(CMR* cmr, CMR_CHRMAT* matrix, bool* pisCamionSigned, CMR_SUBMAT** psubmatrix, CMR_CAMION_STATISTICS* stats, double timeLimit)
+    CMR_ERROR CMRcamionComputeSigns(CMR* cmr, CMR_CHRMAT* matrix, bool* pwasCamionSigned, CMR_SUBMAT** psubmatrix, CMR_CAMION_STATISTICS* stats, double timeLimit)
 
 cdef extern from "cmr/matroid.h":
 
