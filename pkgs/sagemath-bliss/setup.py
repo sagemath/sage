@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-from distutils import log
 from setuptools import setup
 
 # Work around a Cython problem in Python 3.8.x on macOS
