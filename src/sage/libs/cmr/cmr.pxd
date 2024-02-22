@@ -284,7 +284,7 @@ cdef extern from "cmr/graph.h":
     CMR_GRAPH_ITER CMRgraphEdgesNext(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
     bint CMRgraphEdgesValid(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
     CMR_GRAPH_EDGE CMRgraphEdgesEdge(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
-    # CMR_ERROR CMRgraphPrint(FILE* stream, CMR_GRAPH* graph)
+    # CMR_ERROR CMRgraphPrint(CMR_GRAPH* graph, FILE* stream)
     CMR_ERROR CMRgraphMergeNodes(CMR* cmr, CMR_GRAPH* graph, CMR_GRAPH_NODE u, CMR_GRAPH_NODE v)
     # CMR_ERROR CMRgraphCreateFromEdgeList(CMR* cmr, CMR_GRAPH** pgraph, CMR_ELEMENT** pedgeElements, char*** pnodeLabels, FILE* stream)
 
@@ -300,12 +300,12 @@ cdef extern from "cmr/graphic.h":
         uint32_t transposeCount
         double transposeTime
 
-    CMR_ERROR CMRstatsGraphicInit(CMR_GRAPHIC_STATISTICS* stats)
-    # CMR_ERROR CMRstatsGraphicPrint(FILE* stream, CMR_GRAPHIC_STATISTICS* stats, const char* prefix)
-    CMR_ERROR CMRcomputeGraphicMatrix(CMR* cmr, CMR_GRAPH* graph, CMR_CHRMAT** pmatrix, CMR_CHRMAT** ptranspose, int numForestEdges, CMR_GRAPH_EDGE* forestEdges, int numCoforestEdges, CMR_GRAPH_EDGE* coforestEdges, bool* pisCorrectForest)
-    CMR_ERROR CMRtestGraphicMatrix(CMR* cmr, CMR_CHRMAT* matrix, bool* pisGraphic, CMR_GRAPH** pgraph, CMR_GRAPH_EDGE** pforestEdges, CMR_GRAPH_EDGE** pcoforestEdges, CMR_SUBMAT** psubmatrix, CMR_GRAPHIC_STATISTICS* stats, double timeLimit)
-    CMR_ERROR CMRtestCographicMatrix(CMR* cmr, CMR_CHRMAT* matrix, bool* pisCographic, CMR_GRAPH** pgraph, CMR_GRAPH_EDGE** pforestEdges, CMR_GRAPH_EDGE** pcoforestEdges, CMR_SUBMAT** psubmatrix, CMR_GRAPHIC_STATISTICS* stats, double timeLimit)
-    CMR_ERROR CMRtestGraphicColumnSubmatrixGreedy(CMR* cmr, CMR_CHRMAT* transpose, size_t* orderedColumns, CMR_SUBMAT** psubmatrix)
+    CMR_ERROR CMRgraphicStatsInit(CMR_GRAPHIC_STATISTICS* stats)
+    # CMR_ERROR CMRgraphicStatsPrint(FILE* stream, CMR_GRAPHIC_STATISTICS* stats, const char* prefix)
+    CMR_ERROR CMRgraphicComputeMatrix(CMR* cmr, CMR_GRAPH* graph, CMR_CHRMAT** pmatrix, CMR_CHRMAT** ptranspose, int numForestEdges, CMR_GRAPH_EDGE* forestEdges, int numCoforestEdges, CMR_GRAPH_EDGE* coforestEdges, bool* pisCorrectForest)
+    CMR_ERROR CMRgraphicTestMatrix(CMR* cmr, CMR_CHRMAT* matrix, bool* pisGraphic, CMR_GRAPH** pgraph, CMR_GRAPH_EDGE** pforestEdges, CMR_GRAPH_EDGE** pcoforestEdges, CMR_SUBMAT** psubmatrix, CMR_GRAPHIC_STATISTICS* stats, double timeLimit)
+    CMR_ERROR CMRgraphicTestTranspose(CMR* cmr, CMR_CHRMAT* matrix, bool* pisCographic, CMR_GRAPH** pgraph, CMR_GRAPH_EDGE** pforestEdges, CMR_GRAPH_EDGE** pcoforestEdges, CMR_SUBMAT** psubmatrix, CMR_GRAPHIC_STATISTICS* stats, double timeLimit)
+    CMR_ERROR CMRgraphicTestColumnSubmatrixGreedy(CMR* cmr, CMR_CHRMAT* transpose, size_t* orderedColumns, CMR_SUBMAT** psubmatrix)
 
 cdef extern from "cmr/series_parallel.h":
 

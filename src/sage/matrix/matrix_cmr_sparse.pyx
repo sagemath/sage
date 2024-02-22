@@ -1061,10 +1061,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         sig_on()
         try:
             if certificate:
-                CMR_CALL(CMRtestGraphicMatrix(cmr, self._mat, &result, &graph, &forest_edges,
+                CMR_CALL(CMRgraphicTestMatrix(cmr, self._mat, &result, &graph, &forest_edges,
                                               &coforest_edges, &submatrix, &stats, time_limit))
             else:
-                CMR_CALL(CMRtestGraphicMatrix(cmr, self._mat, &result, NULL, NULL,
+                CMR_CALL(CMRgraphicTestMatrix(cmr, self._mat, &result, NULL, NULL,
                                               NULL, NULL, &stats, time_limit))
         finally:
             sig_off()
@@ -1109,10 +1109,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         sig_on()
         try:
             if certificate:
-                CMR_CALL(CMRtestCographicMatrix(cmr, self._mat, &result, &graph, &forest_edges,
+                CMR_CALL(CMRgraphicTestTranspose(cmr, self._mat, &result, &graph, &forest_edges,
                                               &coforest_edges, &submatrix, &stats, time_limit))
             else:
-                CMR_CALL(CMRtestCographicMatrix(cmr, self._mat, &result, NULL, NULL,
+                CMR_CALL(CMRgraphicTestTranspose(cmr, self._mat, &result, NULL, NULL,
                                               NULL, NULL, &stats, time_limit))
         finally:
             sig_off()
