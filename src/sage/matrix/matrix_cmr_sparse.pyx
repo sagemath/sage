@@ -1324,7 +1324,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         _set_cmr_regular_parameters(&params, kwds)
         sig_on()
         try:
-            CMR_CALL(CMRtestBinaryRegular(cmr, self._mat, &result, pdec, pminor,
+            CMR_CALL(CMRregularTest(cmr, self._mat, &result, pdec, pminor,
                                           &params, &stats, time_limit))
         finally:
             sig_off()
@@ -1461,7 +1461,7 @@ cdef _cmr_dec_construct(param):
 
 
 cdef _set_cmr_regular_parameters(CMR_REGULAR_PARAMS *params, dict kwds):
-    CMR_CALL(CMRparamsRegularInit(params))
+    CMR_CALL(CMRregularParamsInit(params))
     params.directGraphicness = kwds['use_direct_graphicness_test']
     params.seriesParallel = kwds['series_parallel_ok']
     params.planarityCheck = kwds['check_graphic_minors_planar']

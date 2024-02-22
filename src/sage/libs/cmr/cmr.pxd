@@ -369,11 +369,11 @@ cdef extern from "cmr/regular.h":
         bint seriesParallel
         bint planarityCheck
         bint completeTree
-        CMR_DEC_CONSTRUCT matrices
-        CMR_DEC_CONSTRUCT transposes
+        bool threeSumPivotChildren
+        int threeSumStrategy
         CMR_DEC_CONSTRUCT graphs
 
-    CMR_ERROR CMRparamsRegularInit(CMR_REGULAR_PARAMS* params)
+    CMR_ERROR CMRregularParamsInit(CMR_REGULAR_PARAMS* params)
 
     ctypedef struct CMR_REGULAR_STATS:
         uint32_t totalCount
@@ -381,6 +381,7 @@ cdef extern from "cmr/regular.h":
         CMR_SP_STATISTICS seriesParallel
         CMR_GRAPHIC_STATISTICS graphic
         CMR_NETWORK_STATISTICS network
+        CMR_CAMION_STATISTICS camion
         uint32_t sequenceExtensionCount
         double sequenceExtensionTime
         uint32_t sequenceGraphicCount
@@ -389,9 +390,9 @@ cdef extern from "cmr/regular.h":
         double enumerationTime
         uint32_t enumerationCandidatesCount
 
-    CMR_ERROR CMRstatsRegularInit(CMR_REGULAR_STATS* stats)
+    CMR_ERROR CMRregularStatsInit(CMR_REGULAR_STATS* stats)
     # CMR_ERROR CMRstatsRegularPrint(FILE* stream, CMR_REGULAR_STATS* stats, const char* prefix)
-    CMR_ERROR CMRtestBinaryRegular(CMR* cmr, CMR_CHRMAT* matrix, bint *pisRegular, CMR_MATROID_DEC** pdec, CMR_MINOR** pminor, CMR_REGULAR_PARAMS* params, CMR_REGULAR_STATS* stats, double timeLimit)
+    CMR_ERROR CMRregularTest(CMR* cmr, CMR_CHRMAT* matrix, bint *pisRegular, CMR_MATROID_DEC** pdec, CMR_MINOR** pminor, CMR_REGULAR_PARAMS* params, CMR_REGULAR_STATS* stats, double timeLimit)
 
 
 cdef extern from "cmr/tu.h":
