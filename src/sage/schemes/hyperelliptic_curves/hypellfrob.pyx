@@ -71,18 +71,18 @@ cdef extern from "hypellfrob.h":
 
 def interval_products(M0, M1, target):
     r"""
-    Given a matrix `M` with coefficients linear polynomials over `\ZZ/N\ZZ` and
-    a list of integers `a_0 < b_0 \le a_1 < b_1 \le \cdots \le a_n < b_n`
-    compute the matrices `\prod_{t = a_i + 1}^{b_i} M(t)` for `i = 0` to `n`.
+    Given matrices `M(t)` with entries linear in `t` over `\ZZ/N\ZZ` and a list
+    of integers `a_0 < b_0 \le a_1 < b_1 \le \cdots \le a_n < b_n`, compute the
+    matrices `\prod_{t = a_i + 1}^{b_i} M(t)` for `i = 0` to `n`.
 
     INPUT:
 
-    - ``M0``, ``M1`` -- matrices over `\ZZ/N\ZZ`, so that `M = M0 + M1\times x`
-    - ``target`` -- a list of integers
+    - ``M0``, ``M1`` -- matrices over `\ZZ/N\ZZ`, so that `M(t) = M_0 + M_1t`
+    - ``target`` -- a list of integers `a_0, b_0, \dots, a_n, b_n`
 
     ALGORITHM:
 
-    Described in [Harv2007]_. Based on the work of Bostan-Gaudry-Schost
+    Described in [Harv2007]_, Theorem 10. Based on the work of Bostan-Gaudry-Schost
     [BGS2007]_.
 
     EXAMPLES::
@@ -167,12 +167,12 @@ def hypellfrob(p, N, Q):
     - ``N`` -- precision parameter; the output matrix will be correct modulo `p^N`
 
     The prime `p` should satisfy `p > (2g+1)(2N-1)`, where `g =
-    \frac{\deg(Q)-1}{2}` is the genus of the curve.
+    \left(\deg Q - 1\right) / 2` is the genus of the curve.
 
     ALGORITHM:
 
-    Described in [Harv2007]_. Running time is theoretically soft-`O(p^{1/2}
-    N^{5/2} g^3)`.
+    Described in [Harv2007]_, Section 7. Running time is theoretically
+    `\widetilde{O}(p^{1/2} N^{5/2} g^3)`.
 
     EXAMPLES::
 
