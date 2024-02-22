@@ -7637,10 +7637,10 @@ def gauss_on_polys(inp):
         sage: B.<a,b,c,d,e,f> = BooleanPolynomialRing()
         sage: from sage.rings.polynomial.pbori.pbori import *
         sage: l = [B.random_element() for _ in range(B.ngens())]
-        sage: A, v = Sequence(l, B).coefficient_matrix()
+        sage: A, v = Sequence(l, B).coefficients_monomials()
 
         sage: e = gauss_on_polys(l)
-        sage: E, v = Sequence(e, B).coefficient_matrix()
+        sage: E, v = Sequence(e, B).coefficients_monomials()
         sage: E == A.echelon_form()
         True
     """

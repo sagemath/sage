@@ -69,7 +69,7 @@ class KernelSubgroup(UniqueRepresentation, Parent):
         """
         return "Kernel subgroup defined by {}".format(self._morphism)
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self``.
 
