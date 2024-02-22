@@ -76,6 +76,12 @@ m4_include([m4/sage_spkg_configures.m4])
 dnl ==========================================================================
 AC_DEFUN([SAGE_SPKG_COLLECT_INIT], [
 dnl Intialize the collection variables.
+SPKGS="$1"
+dnl Obtain versions at configure time.
+AS_IF([eval $($SAGE_BOOTSTRAP_PYTHON build/bin/sage-package properties --format=shell $SPKGS)], [], [
+    AC_MSG_ERROR([Package directory missing. Re-run bootstrap.])dnl
+])
+
 # To deal with ABI incompatibilities when gcc is upgraded, every package
 # (except gcc) should depend on gcc if gcc is already installed.
 # See https://github.com/sagemath/sage/issues/24703
@@ -88,17 +94,6 @@ AC_SUBST([SAGE_GCC_DEP])
 
 AS_BOX([Build status for each package:                                         ]) >& AS_MESSAGE_FD
 AS_BOX([Build status for each package:                                         ]) >& AS_MESSAGE_LOG_FD
-
-# Usage: newest_version $pkg
-# Print version number of latest package $pkg
-newest_version() {
-    SPKG=$[1]
-    if test -f "$SAGE_ROOT/build/pkgs/$SPKG/package-version.txt" ; then
-        cat "$SAGE_ROOT/build/pkgs/$SPKG/package-version.txt"
-    else
-        echo none
-    fi
-}
 
 # Packages that are actually built/installed as opposed to packages that are
 # not required on this platform or that can be taken from the underlying system
@@ -157,12 +152,7 @@ AC_DEFUN([SAGE_SPKG_FINALIZE], [dnl
     dnl depending on the package type and other criteria (such as whether or not it
     dnl needs to be installed)
     dnl
-    DIR="$SAGE_ROOT"/build/pkgs/SPKG_NAME
-    AS_IF([test ! -d "$DIR"], [dnl
-        AC_MSG_ERROR([Directory $DIR is missing. Re-run bootstrap.])dnl
-    ])
-    dnl
-    SPKG_VERSION=$(newest_version SPKG_NAME)
+    SPKG_VERSION=$[version_with_patchlevel_]SPKG_NAME
     dnl
     dnl Determine package source
     dnl
