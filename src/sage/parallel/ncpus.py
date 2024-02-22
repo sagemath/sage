@@ -7,9 +7,9 @@ import os
 
 def ncpus():
     """
-    Detects the number of available CPUs in the system.
+    Return the number of available CPUs in the system.
 
-    ALGORITHM: :func:`os.cpu_count`
+    ALGORITHM: :func:`os.sched_getaffinity` or :func:`os.cpu_count`
 
     EXAMPLES::
 
