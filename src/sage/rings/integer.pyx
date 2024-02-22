@@ -7389,7 +7389,7 @@ def make_integer(s):
     return r
 
 
-cdef class long_to_Z(Morphism):
+cdef class int_to_Z(Morphism):
     """
     EXAMPLES::
 
