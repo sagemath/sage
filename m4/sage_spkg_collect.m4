@@ -75,10 +75,12 @@ m4_include([m4/sage_spkg_configures.m4])
 
 dnl ==========================================================================
 AC_DEFUN([SAGE_SPKG_COLLECT_INIT], [
+AS_BOX([Build status for each package:                                         ]) >& AS_MESSAGE_FD
+AS_BOX([Build status for each package:                                         ]) >& AS_MESSAGE_LOG_FD
 dnl Intialize the collection variables.
 SPKGS="$1"
 dnl Obtain versions at configure time.
-AS_IF([eval $($SAGE_BOOTSTRAP_PYTHON build/bin/sage-package properties --format=shell $SPKGS)], [], [
+AS_IF([properties=$($SAGE_BOOTSTRAP_PYTHON build/bin/sage-package properties --format=shell $SPKGS 2>& AS_MESSAGE_LOG_FD) && eval $properties], [], [
     AC_MSG_ERROR([Package directory missing. Re-run bootstrap.])dnl
 ])
 
@@ -91,9 +93,6 @@ else
     SAGE_GCC_DEP=''
 fi
 AC_SUBST([SAGE_GCC_DEP])
-
-AS_BOX([Build status for each package:                                         ]) >& AS_MESSAGE_FD
-AS_BOX([Build status for each package:                                         ]) >& AS_MESSAGE_LOG_FD
 
 # Packages that are actually built/installed as opposed to packages that are
 # not required on this platform or that can be taken from the underlying system
