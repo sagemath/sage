@@ -1391,8 +1391,8 @@ class PolynomialRing_general(Algebra):
             6
 
         If a tuple of two integers is given for the ``degree`` argument, a polynomial is chosen
-        among all polynomials with degree between them. If the base ring is uniform, then this is
-        also sampled uniformly::
+        among all polynomials with degree between them. If the base ring can be sampled uniformly,
+        then this method also samples uniformly::
 
             sage: R.random_element(degree=(0, 4)).degree() in range(0, 5)
             True
