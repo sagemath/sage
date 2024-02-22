@@ -175,6 +175,45 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
     _point = ell_point.EllipticCurvePoint
 
+    def assume_base_ring_is_field(self, flag=True):
+        r"""
+        Set a flag to pretend that this elliptic curve is defined over a
+        field while doing arithmetic, which is useful in some algorithms.
+
+        The flag affects all points created while the flag is set. Note
+        that elliptic curves are unique parents, hence setting this flag
+        may break seemingly unrelated parts of Sage.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(Zmod(35), [1,1])
+            sage: P = E(-5, 9)
+            sage: 4*P
+            (23 : 26 : 1)
+            sage: 9*P
+            (30 : 33 : 15)
+            sage: E.assume_base_ring_is_field()
+            sage: P = E(-5, 9)
+            sage: 4*P
+            (23 : 26 : 1)
+            sage: 9*P
+            (30 : 33 : 15)
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: Inverse of 30 does not exist (modulus = 35 = 5*7)
+
+        .. NOTE::
+
+            This method is a **hack** provided for educational purposes.
+        """
+        if flag:
+            if self.__base_ring.is_finite():
+                self._point = ell_point.EllipticCurvePoint_finite_field
+            else:
+                self._point = ell_point.EllipticCurvePoint_field
+        else:
+            self._point = ell_point.EllipticCurvePoint
+
     def _defining_params_(self):
         r"""
         Internal function. Return a tuple of the base ring of this
