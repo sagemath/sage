@@ -31,7 +31,6 @@ export PATH="$SAGE_ROOT/build/bin:$PATH"
 
 properties=$(sage-package properties --format=shell configure) || echo >&2 "Error: looking up version of 'configure' failed"
 eval $properties
-PKG=$path_configure
 MAKE="${MAKE:-make}"
 CONFVERSION=$version_with_patchlevel_configure
 
@@ -248,16 +247,8 @@ save () {
 	build/pkgs/setuptools/version_requirements.txt \
 	build/pkgs/wheel/version_requirements.txt
 
-    # Update version
-    echo "$NEWCONFVERSION" >$PKG/package-version.txt
-
-    # Compute checksum
-    if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
-	sage-package fix-checksum configure
-    else
-	# Hide the "Updating checksum..." message
-	sage-package fix-checksum configure > /dev/null
-    fi
+    # Update version; this re-computes the checksum
+    sage-package update configure "$NEWCONFVERSION"
 }
 
 
