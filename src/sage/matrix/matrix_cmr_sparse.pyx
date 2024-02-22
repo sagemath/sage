@@ -396,7 +396,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             try:
                 for j in range(len(arc_to_cmr_edge)):
                     cmr_arcs_reversed[j] = <bool> False
-                CMR_CALL(CMRcomputeNetworkMatrix(cmr, cmr_digraph, &cmr_matrix, NULL,
+                CMR_CALL(CMRnetworkComputeMatrix(cmr, cmr_digraph, &cmr_matrix, NULL,
                                                  cmr_arcs_reversed, num_forest_arcs, cmr_forest_arcs,
                                                  0, NULL, &is_correct_forest))
                 if not is_correct_forest:
@@ -1173,11 +1173,11 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         sig_on()
         try:
             if certificate:
-                CMR_CALL(CMRtestNetworkMatrix(cmr, self._mat, &result, &digraph, &forest_arcs,
+                CMR_CALL(CMRnetworkTestMatrix(cmr, self._mat, &result, &digraph, &forest_arcs,
                                               &coforest_arcs, &arcs_reversed, &submatrix, &stats,
                                               time_limit))
             else:
-                CMR_CALL(CMRtestNetworkMatrix(cmr, self._mat, &result, NULL, NULL,
+                CMR_CALL(CMRnetworkTestMatrix(cmr, self._mat, &result, NULL, NULL,
                                               NULL, NULL, NULL, &stats, time_limit))
         finally:
             sig_off()
