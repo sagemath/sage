@@ -594,11 +594,11 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
         sage: P
         (3 : a : 1)
         sage: P in E
-        True
+        False
         sage: P in E.base_extend(K)
         True
         sage: P in X.codomain()
-        True
+        False
         sage: P in X.extended_codomain()
         True
 
