@@ -1,8 +1,4 @@
-pthread = declare_dependency(
-  dependencies: [
-    cc.find_library('pthread'),
-  ]
-)
+pthread = cc.find_library('pthread')
 
 py.install_sources(
   '__init__.py',

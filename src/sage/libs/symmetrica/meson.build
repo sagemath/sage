@@ -1,9 +1,5 @@
 # Cannot be found by pkg-config
-symmetrica = declare_dependency(
-  dependencies: [
-    cc.find_library('symmetrica'),
-  ]
-)
+symmetrica = cc.find_library('symmetrica')
 
 py.install_sources('__init__.py', 'all.py', subdir : 'sage/libs/symmetrica')
 

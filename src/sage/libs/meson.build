@@ -1,8 +1,4 @@
-sirocco = declare_dependency(
-  dependencies: [
-    cc.find_library('sirocco', required: false),
-  ]
-)
+sirocco = cc.find_library('sirocco', required: false)
 # cannot be found via pkg-config
 ecl = cc.find_library('ecl')
 

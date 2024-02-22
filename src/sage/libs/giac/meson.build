@@ -1,8 +1,4 @@
-giac = declare_dependency(
-  dependencies: [
-    cc.find_library('giac', required: false),
-  ]
-)
+giac = cc.find_library('giac', required: false)
 
 py.install_sources('__init__.py', 'giac.pxd', 'misc.h', subdir : 'sage/libs/giac')
 

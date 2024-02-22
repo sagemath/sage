@@ -1,8 +1,4 @@
-brial = declare_dependency(
-  dependencies: [
-    cc.find_library('brial', required: false),
-  ]
-)
+brial = cc.find_library('brial', required: false)
 # Cannot be found via pkg-config
 brial_groebner = cc.find_library('brial_groebner')
 
