@@ -29,10 +29,11 @@ cd "$SAGE_ROOT"
 
 export PATH="$SAGE_ROOT/build/bin:$PATH"
 
-eval $(sage-package properties --format=shell configure)
+properties=$(sage-package properties --format=shell configure) || echo >&2 "Error: looking up version of 'configure' failed"
+eval $properties
 PKG=$path_configure
 MAKE="${MAKE:-make}"
-CONFVERSION=$version_configure
+CONFVERSION=$version_with_patchlevel_configure
 
 
 bootstrap () {
