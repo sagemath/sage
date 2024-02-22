@@ -2118,21 +2118,21 @@ class pAdicAutomorphicFormElement(ModuleElement):
             sage: p = 7
             sage: lev = 2
             sage: prec = 10
-            sage: X = BruhatTitsQuotient(p,lev, use_magma = True) # optional - magma
-            sage: k = 2 # optional - magma
-            sage: M = X.harmonic_cocycles(k,prec) # optional - magma
-            sage: B = M.basis() # optional - magma
-            sage: f = 3*B[0] # optional - magma
-            sage: MM = X.padic_automorphic_forms(k,prec,overconvergent = True) # optional - magma
-            sage: D = -11 # optional - magma
-            sage: X.is_admissible(D) # optional - magma
+            sage: X = BruhatTitsQuotient(p,lev)
+            sage: k = 2
+            sage: M = X.harmonic_cocycles(k,prec)
+            sage: B = M.basis()
+            sage: f = 3*B[0]
+            sage: MM = X.padic_automorphic_forms(k,prec,overconvergent = True)
+            sage: D = -11
+            sage: X.is_admissible(D)
             True
-            sage: K.<a> = QuadraticField(D) # optional - magma
-            sage: Kp.<g> = Qq(p**2,prec) # optional - magma
-            sage: P = Kp.gen() # optional - magma
-            sage: Q = 2+Kp.gen()+ p*(Kp.gen() +1) # optional - magma
-            sage: F = MM.lift(f) # long time, optional - magma
-            sage: J0 = F.coleman(P,Q,mult = True) # long time, optional - magma
+            sage: K.<a> = QuadraticField(D)
+            sage: Kp.<g> = Qq(p**2,prec)
+            sage: P = Kp.gen()
+            sage: Q = 2+Kp.gen()+ p*(Kp.gen() +1)
+            sage: F = MM.lift(f) # long time
+            sage: J0 = F.coleman(P,Q,mult = True) # long time
 
         AUTHORS:
 
