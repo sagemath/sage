@@ -459,15 +459,20 @@ cdef extern from "cmr/equimodular.h":
 
 cdef extern from "cmr/ctu.h":
 
-    ctypedef struct CMR_CTU_STATISTICS:
+    ctypedef struct CMR_CTU_PARAMS:
+        CMR_TU_PARAMS tu
+
+    CMR_ERROR CMRctuParamsInit(CMR_CTU_PARAMS* params)
+
+    ctypedef struct CMR_CTU_STATS:
         uint32_t totalCount
         double totalTime
         CMR_TU_STATS tu
 
-    CMR_ERROR CMRstatsComplementTotalUnimodularityInit(CMR_CTU_STATISTICS* stats)
-    # CMR_ERROR CMRstatsComplementTotalUnimodularityPrint(FILE* stream, CMR_CTU_STATISTICS* stats, const char* prefix)
+    CMR_ERROR CMRstatsComplementTotalUnimodularityInit(CMR_CTU_STATS* stats)
+    # CMR_ERROR CMRstatsComplementTotalUnimodularityPrint(FILE* stream, CMR_CTU_STATS* stats, const char* prefix)
     CMR_ERROR CMRcomplementRowColumn(CMR* cmr, CMR_CHRMAT* matrix, size_t complementRow, size_t complementColumn, CMR_CHRMAT** presult)
-    CMR_ERROR CMRtestComplementTotalUnimodularity(CMR* cmr, CMR_CHRMAT* matrix, bool* pisComplementTotallyUnimodular, size_t* pcomplementRow, size_t* pcomplementColumn, CMR_CTU_STATISTICS* stats, double timeLimit)
+    CMR_ERROR CMRctuTest(CMR* cmr, CMR_CHRMAT* matrix, bool* pisComplementTotallyUnimodular, size_t* pcomplementRow, size_t* pcomplementColumn, CMR_CTU_PARAMS* params, CMR_CTU_STATS* stats, double timeLimit)
 
 
 # Our global CMR environment
