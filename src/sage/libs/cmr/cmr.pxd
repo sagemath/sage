@@ -385,53 +385,53 @@ cdef extern from "cmr/tu.h":
 
     ctypedef int CMR_TU_ALGORITHM
 
-    ctypedef struct CMR_TU_PARAMETERS:
+    ctypedef struct CMR_TU_PARAMS:
         CMR_TU_ALGORITHM algorithm
         CMR_REGULAR_PARAMETERS regular
 
-    CMR_ERROR CMRparamsTotalUnimodularityInit(CMR_TU_PARAMETERS* params)
+    CMR_ERROR CMRparamsTotalUnimodularityInit(CMR_TU_PARAMS* params)
 
-    ctypedef struct CMR_TU_STATISTICS:
+    ctypedef struct CMR_TU_STATS:
         uint32_t totalCount
         double totalTime
         CMR_CAMION_STATISTICS camion
         CMR_REGULAR_STATISTICS regular
 
-    CMR_ERROR CMRstatsTotalUnimodularityInit(CMR_TU_STATISTICS* stats)
-    # CMR_ERROR CMRstatsTotalUnimodularityPrint(FILE* stream, CMR_TU_STATISTICS* stats, const char* prefix)
-    CMR_ERROR CMRtestTotalUnimodularity(CMR* cmr, CMR_CHRMAT* matrix, bool* pisTotallyUnimodular, CMR_DEC** pdec, CMR_SUBMAT** psubmatrix, CMR_TU_PARAMETERS* params, CMR_TU_STATISTICS* stats, double timeLimit)
+    CMR_ERROR CMRstatsTotalUnimodularityInit(CMR_TU_STATS* stats)
+    # CMR_ERROR CMRstatsTotalUnimodularityPrint(FILE* stream, CMR_TU_STATS* stats, const char* prefix)
+    CMR_ERROR CMRtestTotalUnimodularity(CMR* cmr, CMR_CHRMAT* matrix, bool* pisTotallyUnimodular, CMR_DEC** pdec, CMR_SUBMAT** psubmatrix, CMR_TU_PARAMS* params, CMR_TU_STATS* stats, double timeLimit)
 
 
 cdef extern from "cmr/equimodular.h":
 
-    ctypedef struct CMR_EQUIMODULAR_PARAMETERS:
-        CMR_TU_PARAMETERS tu
+    ctypedef struct CMR_EQUIMODULAR_PARAMS:
+        CMR_TU_PARAMS tu
 
-    CMR_ERROR CMRparamsEquimodularityInit(CMR_EQUIMODULAR_PARAMETERS* params)
+    CMR_ERROR CMRequimodularParamsInit(CMR_EQUIMODULAR_PARAMS* params)
 
-    ctypedef struct CMR_EQUIMODULAR_STATISTICS:
+    ctypedef struct CMR_EQUIMODULAR_STATS:
         uint32_t totalCount
         double totalTime
         double linalgTime
-        CMR_TU_STATISTICS tu
+        CMR_TU_STATS tu
 
-    CMR_ERROR CMRstatsEquimodularityInit(CMR_EQUIMODULAR_STATISTICS* stats)
+    CMR_ERROR CMRequimodularStatsInit(CMR_EQUIMODULAR_STATS* stats)
 
-    CMR_ERROR CMRtestEquimodularity(CMR* cmr, CMR_INTMAT* matrix,
+    CMR_ERROR CMRequimodularTest(CMR* cmr, CMR_INTMAT* matrix,
                                     bool* pisEquimodular, int64_t *pgcdDet,
-                                    CMR_EQUIMODULAR_PARAMETERS* params, CMR_EQUIMODULAR_STATISTICS* stats,
+                                    CMR_EQUIMODULAR_PARAMS* params, CMR_EQUIMODULAR_STATS* stats,
                                     double timeLimit)
-    CMR_ERROR CMRtestStrongEquimodularity(CMR* cmr, CMR_INTMAT* matrix,
+    CMR_ERROR CMRequimodularTestStrong(CMR* cmr, CMR_INTMAT* matrix,
                                           bool* pisStronglyEquimodular, int64_t *pgcdDet,
-                                          CMR_EQUIMODULAR_PARAMETERS* params, CMR_EQUIMODULAR_STATISTICS* stats,
+                                          CMR_EQUIMODULAR_PARAMS* params, CMR_EQUIMODULAR_STATS* stats,
                                           double timeLimit)
-    CMR_ERROR CMRtestUnimodularity(CMR* cmr, CMR_INTMAT* matrix,
+    CMR_ERROR CMRunimodularTest(CMR* cmr, CMR_INTMAT* matrix,
                                    bool* pisUnimodular,
-                                   CMR_EQUIMODULAR_PARAMETERS* params, CMR_EQUIMODULAR_STATISTICS* stats,
+                                   CMR_EQUIMODULAR_PARAMS* params, CMR_EQUIMODULAR_STATS* stats,
                                    double timeLimit)
-    CMR_ERROR CMRtestStrongUnimodularity(CMR* cmr, CMR_INTMAT* matrix,
+    CMR_ERROR CMRunimodularTestStrong(CMR* cmr, CMR_INTMAT* matrix,
                                          bool* pisStronglyUnimodular,
-                                         CMR_EQUIMODULAR_PARAMETERS* params, CMR_EQUIMODULAR_STATISTICS* stats,
+                                         CMR_EQUIMODULAR_PARAMS* params, CMR_EQUIMODULAR_STATS* stats,
                                          double timeLimit)
 
 
@@ -440,7 +440,7 @@ cdef extern from "cmr/ctu.h":
     ctypedef struct CMR_CTU_STATISTICS:
         uint32_t totalCount
         double totalTime
-        CMR_TU_STATISTICS tu
+        CMR_TU_STATS tu
 
     CMR_ERROR CMRstatsComplementTotalUnimodularityInit(CMR_CTU_STATISTICS* stats)
     # CMR_ERROR CMRstatsComplementTotalUnimodularityPrint(FILE* stream, CMR_CTU_STATISTICS* stats, const char* prefix)

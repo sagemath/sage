@@ -772,7 +772,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         sig_on()
         try:
             CMR_CALL(CMRchrmatToInt(cmr, self._mat, &int_mat))
-            CMR_CALL(CMRtestUnimodularity(cmr, int_mat, &result, NULL, NULL, time_limit))
+            CMR_CALL(CMRunimodularTest(cmr, int_mat, &result, NULL, NULL, time_limit))
         finally:
             CMR_CALL(CMRintmatFree(cmr, &int_mat))
             sig_off()
@@ -812,7 +812,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         sig_on()
         try:
             CMR_CALL(CMRchrmatToInt(cmr, self._mat, &int_mat))
-            CMR_CALL(CMRtestStrongUnimodularity(cmr, int_mat, &result, NULL, NULL, time_limit))
+            CMR_CALL(CMRunimodularTestStrong(cmr, int_mat, &result, NULL, NULL, time_limit))
         finally:
             CMR_CALL(CMRintmatFree(cmr, &int_mat))
             sig_off()
@@ -860,7 +860,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         sig_on()
         try:
             CMR_CALL(CMRchrmatToInt(cmr, self._mat, &int_mat))
-            CMR_CALL(CMRtestEquimodularity(cmr, int_mat, &result, &k, NULL, NULL, time_limit))
+            CMR_CALL(CMRequimodularTest(cmr, int_mat, &result, &k, NULL, NULL, time_limit))
         finally:
             CMR_CALL(CMRintmatFree(cmr, &int_mat))
             sig_off()
@@ -916,7 +916,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         sig_on()
         try:
             CMR_CALL(CMRchrmatToInt(cmr, self._mat, &int_mat))
-            CMR_CALL(CMRtestStrongEquimodularity(cmr, int_mat, &result, &k, NULL, NULL, time_limit))
+            CMR_CALL(CMRequimodularTestStrong(cmr, int_mat, &result, &k, NULL, NULL, time_limit))
         finally:
             CMR_CALL(CMRintmatFree(cmr, &int_mat))
             sig_off()
@@ -973,7 +973,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         sig_on()
         try:
             CMR_CALL(CMRchrmatToInt(cmr, self._mat, &int_mat))
-            CMR_CALL(CMRtestEquimodularity(cmr, int_mat, &result, &gcd_det, NULL, NULL, time_limit))
+            CMR_CALL(CMRequimodularTest(cmr, int_mat, &result, &gcd_det, NULL, NULL, time_limit))
         finally:
             CMR_CALL(CMRintmatFree(cmr, &int_mat))
             sig_off()
@@ -1014,7 +1014,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         sig_on()
         try:
             CMR_CALL(CMRchrmatToInt(cmr, self._mat, &int_mat))
-            CMR_CALL(CMRtestStrongEquimodularity(cmr, int_mat, &result, &gcd_det, NULL, NULL, time_limit))
+            CMR_CALL(CMRequimodularTestStrong(cmr, int_mat, &result, &gcd_det, NULL, NULL, time_limit))
         finally:
             CMR_CALL(CMRintmatFree(cmr, &int_mat))
             sig_off()
@@ -1401,8 +1401,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             2
         """
         cdef bool result
-        cdef CMR_TU_PARAMETERS params
-        cdef CMR_TU_STATISTICS stats
+        cdef CMR_TU_PARAMS params
+        cdef CMR_TU_STATS stats
         cdef CMR_DEC *dec = NULL
         cdef CMR_SUBMAT *submat = NULL
 
