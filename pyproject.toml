@@ -7,7 +7,7 @@ requires = [
     'cypari2 >=2.1.1',
     'cysignals >=1.10.2',
     'gmpy2 >=2.1.0',
-    'memory_allocator'
+    'memory-allocator'
 ]
 
 [project]
@@ -25,7 +25,7 @@ dependencies = [
     'importlib_resources >= 5.7',
     'jupyter_core >=4.6.3',
     'lrcalc ~=2.1',
-    'memory_allocator',
+    'memory-allocator',
     'numpy >=1.19',
     'pplpy >=0.8.6',
     'primecountpy',
