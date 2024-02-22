@@ -26,4 +26,9 @@ def ncpus():
     else:
         return int(n)
 
-    return os.cpu_count() or 1
+    n = None
+
+    if hasattr(os, 'sched_getaffinity'):
+        n = len(os.sched_getaffinity(0))
+
+    return n or os.cpu_count() or 1
