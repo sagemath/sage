@@ -31,7 +31,7 @@ cdef class DecompositionNode(SageObject):
     def __cinit__(self):
         self._dec = NULL
 
-    cdef _set_dec(self, CMR_DEC *dec, root):
+    cdef _set_dec(self, CMR_MATROID_DEC *dec, root):
         if self._root is None or self._root is self:
             if self._dec != NULL:
                 # We own it, so we have to free it.
@@ -557,7 +557,7 @@ cdef class SpecialLeafNode(DecompositionNode):
         cdef CMR_DEC_TYPE typ = CMRdecIsSpecialLeaf(self._dec, &representation_matrix)
         return Matrix_cmr_chr_sparse._from_data(representation_matrix, immutable=False)
 
-cdef _class(CMR_DEC *dec):
+cdef _class(CMR_MATROID_DEC *dec):
     k = CMRdecIsSum(dec, NULL, NULL)
     if k == 1:
         return OneSumNode
@@ -580,7 +580,7 @@ cdef _class(CMR_DEC *dec):
     return ThreeConnectedIrregularNode
 
 
-cdef create_DecompositionNode(CMR_DEC *dec, root=None):
+cdef create_DecompositionNode(CMR_MATROID_DEC *dec, root=None):
     r"""
     Create an instance of a subclass of :class:`DecompositionNode`.
 

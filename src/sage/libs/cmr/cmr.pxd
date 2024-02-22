@@ -98,6 +98,11 @@ cdef extern from "cmr/camion.h":
 
 cdef extern from "cmr/matroid.h":
 
+    CMR_ERROR CMRchrmatBinaryPivot(CMR* cmr, CMR_CHRMAT* matrix, size_t pivotRow, size_t pivotColumn, CMR_CHRMAT** presult)
+    CMR_ERROR CMRchrmatTernaryPivot(CMR* cmr, CMR_CHRMAT* matrix, size_t pivotRow, size_t pivotColumn, CMR_CHRMAT** presult)
+    CMR_ERROR CMRchrmatBinaryPivots(CMR* cmr, CMR_CHRMAT* matrix, size_t numPivots, size_t* pivotRows, size_t* pivotColumns, CMR_CHRMAT** presult)
+    CMR_ERROR CMRchrmatTernaryPivots(CMR* cmr, CMR_CHRMAT* matrix, size_t numPivots, size_t* pivotRows, size_t* pivotColumns, CMR_CHRMAT** presult)
+
     ctypedef struct CMR_MINOR:
         size_t numPivots
         size_t* pivotRows
@@ -106,6 +111,85 @@ cdef extern from "cmr/matroid.h":
 
     CMR_ERROR CMRminorCreate(CMR* cmr, CMR_MINOR** pminor, size_t numPivots, CMR_SUBMAT* submatrix)
     CMR_ERROR CMRminorFree(CMR* cmr, CMR_MINOR** pminor)
+
+    ctypedef struct CMR_MATROID_DEC
+
+    ctypedef int CMR_MATROID_DEC_TYPE
+
+    const int CMR_MATROID_DEC_TYPE_IRREGULAR
+    const int CMR_MATROID_DEC_TYPE_UNKNOWN
+    const int CMR_MATROID_DEC_TYPE_ONE_SUM
+    const int CMR_MATROID_DEC_TYPE_TWO_SUM
+    const int CMR_MATROID_DEC_TYPE_THREE_SUM
+    const int CMR_MATROID_DEC_TYPE_SERIES_PARALLEL
+    const int CMR_MATROID_DEC_TYPE_PIVOTS
+    const int CMR_MATROID_DEC_TYPE_SUBMATRIX
+    const int CMR_MATROID_DEC_TYPE_GRAPH
+    const int CMR_MATROID_DEC_TYPE_COGRAPH
+    const int CMR_MATROID_DEC_TYPE_PLANAR
+    const int CMR_MATROID_DEC_TYPE_R10
+    const int CMR_MATROID_DEC_TYPE_FANO
+    const int CMR_MATROID_DEC_TYPE_FANO_DUAL
+    const int CMR_MATROID_DEC_TYPE_K5
+    const int CMR_MATROID_DEC_TYPE_K5_DUAL
+    const int CMR_MATROID_DEC_TYPE_K33
+    const int CMR_MATROID_DEC_TYPE_K33_DUAL
+    const int CMR_MATROID_DEC_TYPE_DETERMINANT
+
+    ctypedef int CMR_MATROID_DEC_THREESUM_FLAG
+
+    const int CMR_MATROID_DEC_THREESUM_FLAG_NO_PIVOTS
+    const int CMR_MATROID_DEC_THREESUM_FLAG_DISTRIBUTED_RANKS
+    const int CMR_MATROID_DEC_THREESUM_FLAG_CONCENTRATED_RANK
+    const int CMR_MATROID_DEC_THREESUM_FLAG_FIRST_WIDE
+    const int CMR_MATROID_DEC_THREESUM_FLAG_FIRST_TALL
+    const int CMR_MATROID_DEC_THREESUM_FLAG_FIRST_MIXED
+    const int CMR_MATROID_DEC_THREESUM_FLAG_FIRST_ALLREPR
+    const int CMR_MATROID_DEC_THREESUM_FLAG_SECOND_WIDE
+    const int CMR_MATROID_DEC_THREESUM_FLAG_SECOND_TALL
+    const int CMR_MATROID_DEC_THREESUM_FLAG_SECOND_MIXED
+    const int CMR_MATROID_DEC_THREESUM_FLAG_SECOND_ALLREPR
+    const int CMR_MATROID_DEC_THREESUM_FLAG_SEYMOUR
+    const int CMR_MATROID_DEC_THREESUM_FLAG_TRUEMPER
+
+    bool CMRmatroiddecIsTernary(CMR_MATROID_DEC* dec)
+    bool CMRmatroiddecThreeSumDistributedRanks(CMR_MATROID_DEC* dec)
+    bool CMRmatroiddecThreeSumConcentratedRank(CMR_MATROID_DEC* dec)
+    bool CMRmatroiddecHasTranspose(CMR_MATROID_DEC* dec)
+    CMR_CHRMAT* CMRmatroiddecGetMatrix(CMR_MATROID_DEC* dec)
+    CMR_CHRMAT* CMRmatroiddecGetTranspose(CMR_MATROID_DEC* dec)
+    size_t CMRmatroiddecNumChildren(CMR_MATROID_DEC* dec)
+    CMR_MATROID_DEC* CMRmatroiddecChild(CMR_MATROID_DEC* dec, size_t childIndex)
+    CMR_MATROID_DEC_TYPE CMRmatroiddecType(CMR_MATROID_DEC* dec)
+    int8_t CMRmatroiddecGraphicness(CMR_MATROID_DEC* dec)
+    int8_t CMRmatroiddecCographicness(CMR_MATROID_DEC* dec)
+    int8_t CMRmatroiddecRegularity(CMR_MATROID_DEC* dec)
+    size_t CMRmatroiddecNumRows(CMR_MATROID_DEC* dec)
+    CMR_ELEMENT* CMRmatroiddecRowsRootElement(CMR_MATROID_DEC* dec)
+    size_t* CMRmatroiddecRowsParent(CMR_MATROID_DEC* dec)
+    size_t CMRmatroiddecNumColumns(CMR_MATROID_DEC* dec)
+    CMR_ELEMENT* CMRmatroiddecColumnsRootElement(CMR_MATROID_DEC* dec)
+    size_t* CMRmatroiddecColumnsParent(CMR_MATROID_DEC* dec)
+    CMR_GRAPH* CMRmatroiddecGraph(CMR_MATROID_DEC* dec)
+    CMR_GRAPH_EDGE* CMRmatroiddecGraphForest(CMR_MATROID_DEC* dec)
+    size_t CMRmatroiddecGraphSizeForest(CMR_MATROID_DEC* dec)
+    CMR_GRAPH_EDGE* CMRmatroiddecGraphCoforest(CMR_MATROID_DEC* dec)
+    size_t CMRmatroiddecGraphSizeCoforest(CMR_MATROID_DEC* dec)
+    bool* CMRmatroiddecGraphArcsReversed(CMR_MATROID_DEC* dec)
+    CMR_GRAPH* CMRmatroiddecCograph(CMR_MATROID_DEC* dec)
+    size_t CMRmatroiddecCographSizeForest(CMR_MATROID_DEC* dec)
+    CMR_GRAPH_EDGE* CMRmatroiddecCographForest(CMR_MATROID_DEC* dec)
+    size_t CMRmatroiddecCographSizeCoforest(CMR_MATROID_DEC* dec)
+    CMR_GRAPH_EDGE* CMRmatroiddecCographCoforest(CMR_MATROID_DEC* dec)
+    bool* CMRmatroiddecCographArcsReversed(CMR_MATROID_DEC* dec)
+    size_t CMRmatroiddecNumPivots(CMR_MATROID_DEC* dec)
+    size_t* CMRmatroiddecPivotRows(CMR_MATROID_DEC* dec)
+    size_t* CMRmatroiddecPivotColumns(CMR_MATROID_DEC* dec)
+    # CMR_ERROR CMRmatroiddecPrint(CMR* cmr, CMR_MATROID_DEC* dec, FILE* stream, size_t indent, bool printChildren, bool printParentRowsColumns, bool printMatrices, bool printGraphs, bool printReductions, bool printPivots)
+    CMR_ERROR CMRmatroiddecFree(CMR* cmr, CMR_MATROID_DEC** pdec)
+    CMR_ERROR CMRmatroiddecCreateMatrixRoot(CMR* cmr, CMR_MATROID_DEC** pdec, bool isTernary, CMR_CHRMAT* matrix)
+    CMR_ERROR CMRmatroiddecUpdateOneSum(CMR* cmr, CMR_MATROID_DEC* dec, size_t numChildren)
+
 
 cdef extern from "cmr/element.h":
 
@@ -271,74 +355,6 @@ cdef extern from "cmr/network.h":
     CMR_ERROR CMRtestNetworkMatrix(CMR* cmr, CMR_CHRMAT* matrix, bool* pisNetwork, CMR_GRAPH** pdigraph, CMR_GRAPH_EDGE** pforestArcs, CMR_GRAPH_EDGE** pcoforestArcs, bool** parcsReversed, CMR_SUBMAT** psubmatrix, CMR_NETWORK_STATISTICS* stats, double timeLimit)
     CMR_ERROR CMRtestConetworkMatrix(CMR* cmr, CMR_CHRMAT* matrix, bool* pisConetwork, CMR_GRAPH** pdigraph, CMR_GRAPH_EDGE** pforestArcs, CMR_GRAPH_EDGE** pcoforestArcs, bool** parcsReversed, CMR_SUBMAT** psubmatrix, CMR_NETWORK_STATISTICS* stats, double timeLimit)
 
-cdef extern from "cmr/dec.h":
-
-    ctypedef struct CMR_DEC
-
-    ctypedef int CMR_DEC_TYPE
-
-    const int CMR_DEC_IRREGULAR
-    const int CMR_DEC_UNKNOWN
-    const int CMR_DEC_ONE_SUM
-    const int CMR_DEC_TWO_SUM
-    const int CMR_DEC_THREE_SUM
-    const int CMR_DEC_GRAPHIC
-    const int CMR_DEC_COGRAPHIC
-    const int CMR_DEC_PLANAR
-    const int CMR_DEC_SERIES_PARALLEL
-    const int CMR_DEC_SPECIAL_R10
-    const int CMR_DEC_SPECIAL_FANO
-    const int CMR_DEC_SPECIAL_FANO_DUAL
-    const int CMR_DEC_SPECIAL_K_5
-    const int CMR_DEC_SPECIAL_K_5_DUAL
-    const int CMR_DEC_SPECIAL_K_3_3
-    const int CMR_DEC_SPECIAL_K_3_3_DUAL
-
-    ctypedef int CMR_DEC_FLAGS
-
-    const int CMR_DEC_MASK_REPRESENTATION
-    const int CMR_DEC_IS_GRAPHIC
-    const int CMR_DEC_IS_COGRAPHIC
-    const int CMR_DEC_IS_REGULAR
-    const int CMR_DEC_HAS_LOWER_LEFT_NONZEROS
-    const int CMR_DEC_HAS_UPPER_RIGHT_NONZEROS
-
-    CMR_ERROR CMRdecFree(CMR* cmr, CMR_DEC** pdec)
-    bint CMRdecHasMatrix(CMR_DEC* dec)
-    bint CMRdecHasTranspose(CMR_DEC* dec)
-    CMR_CHRMAT* CMRdecGetMatrix(CMR_DEC* dec)
-    CMR_CHRMAT* CMRdecGetTranspose(CMR_DEC* dec)
-    size_t CMRdecNumChildren(CMR_DEC* dec)
-    CMR_DEC* CMRdecChild(CMR_DEC* dec, size_t childIndex)
-    int CMRdecIsSum(CMR_DEC* dec, bool* plowerLeftNonzeros, bool* pupperRightNonzeros)
-    CMR_DEC_TYPE CMRdecIsSpecialLeaf(CMR_DEC* dec, int* prepresentationMatrix)
-    bint CMRdecIsGraphicLeaf(CMR_DEC* dec)
-    bint CMRdecIsCographicLeaf(CMR_DEC* dec)
-    bint CMRdecIsGraphic(CMR_DEC* dec)
-    bint CMRdecIsCographic(CMR_DEC* dec)
-    bint CMRdecIsRegular(CMR_DEC* dec)
-    bint CMRdecIsSeriesParallelReduction(CMR_DEC* dec)
-    bint CMRdecIsUnknown(CMR_DEC* dec)
-    size_t CMRdecNumRows(CMR_DEC* dec)
-    CMR_ELEMENT* CMRdecRowElements(CMR_DEC* dec)
-    size_t* CMRdecRowsParent(CMR_DEC* dec)
-    size_t CMRdecNumColumns(CMR_DEC* dec)
-    CMR_ELEMENT* CMRdecColumnElements(CMR_DEC* dec)
-    size_t* CMRdecColumnsParent(CMR_DEC* dec)
-    # CMR_ERROR CMRdecPrint(CMR* cmr, CMR_DEC* dec, FILE* stream, size_t indent, bint printMatrices, bint printGraphs, bint printReductions)
-    char* CMRdecConsistency(CMR_DEC* dec, bint recurse)
-    CMR_GRAPH* CMRdecGraph(CMR_DEC* dec)
-    CMR_GRAPH_EDGE* CMRdecGraphForest(CMR_DEC* dec)
-    size_t CMRdecGraphSizeForest(CMR_DEC* dec)
-    CMR_GRAPH_EDGE* CMRdecGraphCoforest(CMR_DEC* dec)
-    size_t CMRdecGraphSizeCoforest(CMR_DEC* dec)
-    bool* CMRdecGraphArcsReversed(CMR_DEC* dec)
-    CMR_GRAPH* CMRdecCograph(CMR_DEC* dec)
-    CMR_GRAPH_EDGE* CMRdecCographForest(CMR_DEC* dec)
-    CMR_GRAPH_EDGE* CMRdecCographCoforest(CMR_DEC* dec)
-    bool* CMRdecCographArcsReversed(CMR_DEC* dec)
-
-
 cdef extern from "cmr/regular.h":
 
     ctypedef int CMR_DEC_CONSTRUCT
@@ -347,7 +363,7 @@ cdef extern from "cmr/regular.h":
     const int CMR_DEC_CONSTRUCT_LEAVES
     const int CMR_DEC_CONSTRUCT_ALL
 
-    ctypedef struct CMR_REGULAR_PARAMETERS:
+    ctypedef struct CMR_REGULAR_PARAMS:
         bint directGraphicness
         bint seriesParallel
         bint planarityCheck
@@ -356,9 +372,9 @@ cdef extern from "cmr/regular.h":
         CMR_DEC_CONSTRUCT transposes
         CMR_DEC_CONSTRUCT graphs
 
-    CMR_ERROR CMRparamsRegularInit(CMR_REGULAR_PARAMETERS* params)
+    CMR_ERROR CMRparamsRegularInit(CMR_REGULAR_PARAMS* params)
 
-    ctypedef struct CMR_REGULAR_STATISTICS:
+    ctypedef struct CMR_REGULAR_STATS:
         uint32_t totalCount
         double totalTime
         CMR_SP_STATISTICS seriesParallel
@@ -372,34 +388,40 @@ cdef extern from "cmr/regular.h":
         double enumerationTime
         uint32_t enumerationCandidatesCount
 
-    CMR_ERROR CMRstatsRegularInit(CMR_REGULAR_STATISTICS* stats)
-    # CMR_ERROR CMRstatsRegularPrint(FILE* stream, CMR_REGULAR_STATISTICS* stats, const char* prefix)
-    CMR_ERROR CMRtestBinaryRegular(CMR* cmr, CMR_CHRMAT* matrix, bint *pisRegular, CMR_DEC** pdec, CMR_MINOR** pminor, CMR_REGULAR_PARAMETERS* params, CMR_REGULAR_STATISTICS* stats, double timeLimit)
+    CMR_ERROR CMRstatsRegularInit(CMR_REGULAR_STATS* stats)
+    # CMR_ERROR CMRstatsRegularPrint(FILE* stream, CMR_REGULAR_STATS* stats, const char* prefix)
+    CMR_ERROR CMRtestBinaryRegular(CMR* cmr, CMR_CHRMAT* matrix, bint *pisRegular, CMR_MATROID_DEC** pdec, CMR_MINOR** pminor, CMR_REGULAR_PARAMS* params, CMR_REGULAR_STATS* stats, double timeLimit)
 
 
 cdef extern from "cmr/tu.h":
 
     const int CMR_TU_ALGORITHM_DECOMPOSITION
-    const int CMR_TU_ALGORITHM_SUBMATRIX
+    const int CMR_TU_ALGORITHM_EULERIAN
     const int CMR_TU_ALGORITHM_PARTITION
 
     ctypedef int CMR_TU_ALGORITHM
 
     ctypedef struct CMR_TU_PARAMS:
         CMR_TU_ALGORITHM algorithm
-        CMR_REGULAR_PARAMETERS regular
+        bool directCamion
+        CMR_REGULAR_PARAMS regular
 
-    CMR_ERROR CMRparamsTotalUnimodularityInit(CMR_TU_PARAMS* params)
+    CMR_ERROR CMRtuParamsInit(CMR_TU_PARAMS* params)
 
     ctypedef struct CMR_TU_STATS:
-        uint32_t totalCount
-        double totalTime
-        CMR_CAMION_STATISTICS camion
-        CMR_REGULAR_STATISTICS regular
+        CMR_REGULAR_STATS decomposition
 
-    CMR_ERROR CMRstatsTotalUnimodularityInit(CMR_TU_STATS* stats)
-    # CMR_ERROR CMRstatsTotalUnimodularityPrint(FILE* stream, CMR_TU_STATS* stats, const char* prefix)
-    CMR_ERROR CMRtestTotalUnimodularity(CMR* cmr, CMR_CHRMAT* matrix, bool* pisTotallyUnimodular, CMR_DEC** pdec, CMR_SUBMAT** psubmatrix, CMR_TU_PARAMS* params, CMR_TU_STATS* stats, double timeLimit)
+        uint32_t enumerationRowSubsets
+        uint32_t enumerationColumnSubsets
+        double enumerationTime
+
+        uint32_t partitionRowSubsets
+        uint32_t partitionColumnSubsets
+        double partitionTime
+
+    CMR_ERROR CMRtuStatsInit(CMR_TU_STATS* stats)
+    # CMR_ERROR CMRtuStatsPrint(FILE* stream, CMR_TU_STATS* stats, const char* prefix)
+    CMR_ERROR CMRtuTest(CMR* cmr, CMR_CHRMAT* matrix, bool* pisTotallyUnimodular, CMR_MATROID_DEC** pdec, CMR_SUBMAT** psubmatrix, CMR_TU_PARAMS* params, CMR_TU_STATS* stats, double timeLimit)
 
 
 cdef extern from "cmr/equimodular.h":

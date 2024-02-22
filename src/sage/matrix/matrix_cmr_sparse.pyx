@@ -1305,12 +1305,12 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                               GraphicNode (4×4)
         """
         cdef bool result
-        cdef CMR_REGULAR_PARAMETERS params
-        cdef CMR_REGULAR_STATISTICS stats
-        cdef CMR_DEC *dec = NULL
+        cdef CMR_REGULAR_PARAMS params
+        cdef CMR_REGULAR_STATS stats
+        cdef CMR_MATROID_DEC *dec = NULL
         cdef CMR_MINOR *minor = NULL
 
-        cdef CMR_DEC **pdec = &dec
+        cdef CMR_MATROID_DEC **pdec = &dec
         cdef CMR_MINOR **pminor = &minor
 
         cdef dict kwds = dict(use_direct_graphicness_test=use_direct_graphicness_test,
@@ -1403,10 +1403,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         cdef bool result
         cdef CMR_TU_PARAMS params
         cdef CMR_TU_STATS stats
-        cdef CMR_DEC *dec = NULL
+        cdef CMR_MATROID_DEC *dec = NULL
         cdef CMR_SUBMAT *submat = NULL
 
-        cdef CMR_DEC **pdec = &dec
+        cdef CMR_MATROID_DEC **pdec = &dec
         cdef CMR_SUBMAT **psubmat = &submat
 
         cdef dict kwds = dict(use_direct_graphicness_test=use_direct_graphicness_test,
@@ -1421,7 +1421,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         _set_cmr_regular_parameters(&params.regular, kwds)
         sig_on()
         try:
-            CMR_CALL(CMRtestTotalUnimodularity(cmr, self._mat, &result, pdec, psubmat,
+            CMR_CALL(CMRtuTest(cmr, self._mat, &result, pdec, psubmat,
                                                &params, &stats, time_limit))
         finally:
             sig_off()
@@ -1460,7 +1460,7 @@ cdef _cmr_dec_construct(param):
     return CMR_DEC_CONSTRUCT_ALL
 
 
-cdef _set_cmr_regular_parameters(CMR_REGULAR_PARAMETERS *params, dict kwds):
+cdef _set_cmr_regular_parameters(CMR_REGULAR_PARAMS *params, dict kwds):
     CMR_CALL(CMRparamsRegularInit(params))
     params.directGraphicness = kwds['use_direct_graphicness_test']
     params.seriesParallel = kwds['series_parallel_ok']
