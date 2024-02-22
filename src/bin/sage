@@ -287,7 +287,7 @@ sage_setup() {
         echo >&2 '************************************************************************'
         echo >&2 'It seems that you are attempting to run Sage from an unpacked source'
         echo >&2 'tarball, but you have not compiled it yet (or maybe the build has not'
-        echo >&2 'finished). You should run `make` in the Sage root directory first.'
+        echo >&2 'finished). You should run `make` in the SAGE_ROOT directory first.'
         echo >&2 'If you did not intend to build Sage from source, you should download'
         echo >&2 'a binary tarball instead. Read README.txt for more information.'
         echo >&2 '************************************************************************'
@@ -869,7 +869,7 @@ fi
 # build/bin/sage-site. See #29111.
 
 build_sage() {
-    ( cd "$SAGE_ROOT/build/make" && ./install sagelib-no-deps ) || exit $?
+    ( cd "$SAGE_ROOT" && make sagelib-no-deps ) || exit $?
 }
 
 if [[ "$1" =~ ^--notebook=.* || "$1" =~ ^-n=.* || "$1" =~ ^-notebook=.* ]] ; then
@@ -924,13 +924,13 @@ if [ "$1" = '-ba-force' -o "$1" = '--ba-force' ]; then
     echo
     echo "WARNING: 'sage --ba-force' is deprecated; use 'sage -ba' instead."
     echo
-    ( cd "$SAGE_ROOT/build/make" && make sagelib-clean )
+    ( cd "$SAGE_ROOT" && make sagelib-clean )
     build_sage
     exit $?
 fi
 
 if [ "$1" = '-ba' ]; then
-    ( cd "$SAGE_ROOT/build/make" && make sagelib-clean )
+    ( cd "$SAGE_ROOT" && make sagelib-clean )
     build_sage
     exit $?
 fi
