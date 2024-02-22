@@ -29,10 +29,7 @@ cd "$SAGE_ROOT"
 
 export PATH="$SAGE_ROOT/build/bin:$PATH"
 
-properties=$(sage-package properties --format=shell configure) || echo >&2 "Error: looking up version of 'configure' failed"
-eval $properties
 MAKE="${MAKE:-make}"
-CONFVERSION=$version_with_patchlevel_configure
 
 
 bootstrap () {
@@ -188,8 +185,8 @@ SAGE_SPKG_FINALIZE([$pkgname], [$pkgtype], [$SPKG_SOURCE], [$SPKG_TREE_VAR])"
 bootstrap_download () {
     SAGE_DL_LOGLEVEL=""
     [ "${BOOTSTRAP_QUIET}" = "yes" ] && SAGE_DL_LOGLEVEL="--log=WARNING"
-    sage-download-file ${SAGE_DL_LOGLEVEL} configure-$CONFVERSION.tar.gz
 
+    CONFBALL=$(sage-package download $SAGE_DL_LOGLEVEL configure)
     if [ $? -ne 0 ]; then
         echo >&2 "Error: downloading configure-$CONFVERSION.tar.gz failed"
         exit 1
@@ -288,7 +285,6 @@ do
 done
 shift $(($OPTIND - 1))
 export BOOTSTRAP_QUIET
-CONFBALL="upstream/configure-$CONFVERSION.tar.gz"
 
 if [ $DOWNLOAD$SAVE = yesyes ]; then
     echo >&2 "$0: refusing to download and save."
