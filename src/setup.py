@@ -15,7 +15,7 @@ from setuptools import setup, find_namespace_packages
 from setuptools.dist import Distribution
 import multiprocessing.pool
 
-logging.basicConfig(format='%(levelname)-8s%(relativeCreated)6dms: %(message)s [%(pathname)s:%(lineno)d]', level=logging.DEBUG)
+logging.basicConfig(format='%(levelname)-8s%(relativeCreated)6dms: %(message)s [%(pathname)s:%(lineno)d]', level=logging.INFO)
 log = logging.getLogger(__name__)
 log.info('setup.py started')
 
