@@ -124,7 +124,7 @@ else:
                 aliases=cython_aliases(),
                 create_extension=create_extension,
                 gdb_debug=gdb_debug,
-                nthreads=4)
+                nthreads=sage_build_ext_minimal.get_default_number_build_jobs())
     except Exception as exception:
         log.warn(f"Exception while cythonizing source files: {repr(exception)}")
         raise
