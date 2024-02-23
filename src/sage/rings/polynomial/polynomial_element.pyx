@@ -2564,7 +2564,7 @@ cdef class Polynomial(CommutativePolynomial):
         if ring is not None:
             # If the new ring is not a finite field, attempt to coerce the polynomial
             # and call the function to use naive factoring
-            if not ring in FiniteFields():
+            if ring not in FiniteFields():
                 try:
                     f = self.change_ring(ring)
                 except ValueError:
@@ -2605,18 +2605,17 @@ cdef class Polynomial(CommutativePolynomial):
                     #       should be fine. As a result, we simply coerce straight to the user supplied
                     #       ring and find a root here.
                     # TODO: Additionally, if the above was solved, it would be faster to extend the base
-                    #       ring with the irreducible factor however, if the base ring is an extension 
+                    #       ring with the irreducible factor however, if the base ring is an extension
                     #       then the type of self.base_ring().extension(f) is a Univariate Quotient Polynomial Ring
                     #       and not a finite field. So we do the slower option here to ensure the type is
                     #       maintained.
                     if not d.is_one():
                         f = f.change_ring(ring)
-                    
+
                     # Now we find the root of this irreducible polynomial over this extension
                     root = f.any_root()
                     return ring(root)
 
-                
                 # If the loop ends and we returned nothing, then no root exists
                 raise ValueError(f"no root of polynomial {self} can be computed over the ring {ring}")
 
