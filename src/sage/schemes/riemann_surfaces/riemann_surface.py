@@ -2230,7 +2230,7 @@ class RiemannSurface():
                 rho_z = min(distances)
                 rho_t = rho_z / (z1_minus_z0).abs()
 
-                if rho_t <= rt:
+                if rho_t <= rt + E_global:
                     ball_stack.append((ncts[0], nrt, 0))
                     ball_stack.append((ncts[1], nrt, 0))
                     continue
