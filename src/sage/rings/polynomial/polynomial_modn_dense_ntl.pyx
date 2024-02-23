@@ -1785,7 +1785,7 @@ cdef class Polynomial_dense_mod_p(Polynomial_dense_mod_n):
 
     def __pow__(self, n, modulus):
         """
-        Exponentiation of polynomials over extension fields.
+        Exponentiation of polynomials.
 
         If ``modulus`` is not ``None``, the exponentiation is performed
         modulo the polynomial ``modulus``.
@@ -1840,7 +1840,7 @@ cdef class Polynomial_dense_mod_p(Polynomial_dense_mod_n):
             sage: _ = pow(x + 1, 3, xx^3 + xx + 1)
             Traceback (most recent call last):
             ...
-            TypeError: no canonical coercion from Univariate Polynomial Ring in x over Finite Field of size 97 to Univariate Polynomial Ring in x over Finite Field of size 101
+            TypeError: no common canonical parent for objects with parents: ...
         """
         n = Integer(n)
         parent = (<Element>self)._parent
