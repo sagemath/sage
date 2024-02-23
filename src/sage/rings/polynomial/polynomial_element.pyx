@@ -2200,7 +2200,7 @@ cdef class Polynomial(CommutativePolynomial):
         # If you are reaching this error, chances are there's a bug in the code.
         raise AssertionError(f"no splitting of degree {degree} found for {self}")
 
-    def _any_irreducible_factor_squarefree(self, degree=None):
+    def _any_irreducible_factor_squarefree(self, degree=None, ext_degree=None):
         """
         Helper function for any_irreducible_factor which computes
         an irreducible factor from self, assuming the input is
@@ -2210,9 +2210,12 @@ cdef class Polynomial(CommutativePolynomial):
         of self and then finds a factor with Cantor-Zassenhaus
         splitting.
 
-        If degree is not None, then only irreducible factors of degree
-        `degree` are searched for, otherwise the smallest degree factor
+        If degree is not ``None``, then only irreducible factors of degree
+        ``degree`` are searched for, otherwise the smallest degree factor
         is found.
+
+        If ext_degree is not ``None``, then only irreducible factors whose
+        degree divides ``ext_degree`` are returned.
 
         EXAMPLES::
 
@@ -2262,10 +2265,13 @@ cdef class Polynomial(CommutativePolynomial):
 
         # Otherwise we use the smallest possible d value
         for (poly, d) in self._distinct_degree_factorisation_squarefree():
-            return poly._cantor_zassenhaus_split_to_irreducible(d)
+            if ext_degree is None:
+                return poly._cantor_zassenhaus_split_to_irreducible(d)
+            elif ZZ(d).divides(ext_degree):
+                return poly._cantor_zassenhaus_split_to_irreducible(d)
         raise ValueError(f"no irreducible factor could be computed from {self}")
 
-    def any_irreducible_factor(self, degree=None, assume_squarefree=False, assume_distinct_deg=False):
+    def any_irreducible_factor(self, degree=None, assume_squarefree=False, assume_distinct_deg=False, ext_degree=None):
         """
         Return an irreducible factor of this polynomial.
 
@@ -2285,6 +2291,11 @@ cdef class Polynomial(CommutativePolynomial):
           Used for polynomials over finite fields.  If ``True``,
           this polynomial is assumed to be the product of irreducible
           polynomials of degree equal to ``degree``.
+
+        - ``ext_degree`` (None or positive integer) -- (default: ``None``).
+          Used for polynomials over finite fields. If not ``None`` only returns
+          irreducible factors of ``self`` whose degree divides ``ext_degree``.
+          Assumes that ``degree`` is ``None``.
 
         EXAMPLES::
 
@@ -2399,7 +2410,7 @@ cdef class Polynomial(CommutativePolynomial):
         if assume_squarefree:
             if assume_distinct_deg:
                 return self._cantor_zassenhaus_split_to_irreducible(degree)
-            return self._any_irreducible_factor_squarefree(degree)
+            return self._any_irreducible_factor_squarefree(degree, ext_degree)
 
         # Otherwise we compute the squarefree decomposition and check each
         # polynomial for a root. If no poly has a root, we raise an error.
@@ -2407,7 +2418,7 @@ cdef class Polynomial(CommutativePolynomial):
         SFD.sort()
         for poly, _ in SFD:
             try:
-                return poly._any_irreducible_factor_squarefree(degree)
+                return poly._any_irreducible_factor_squarefree(degree, ext_degree)
             except ValueError:
                 pass
 
@@ -2586,38 +2597,34 @@ cdef class Polynomial(CommutativePolynomial):
                 except ValueError:
                     raise ValueError(f"no root of polynomial {self} can be computed")
                 return - f[0] / f[1]
+
             # When we have a ring, then we can find an irreducible factor of degree `d` providing
             # that d divides the degree of the extension from the base ring to the given ring
-            else:
-                allowed_extension_degree = ring.degree() // self.base_ring().degree()
-                for d in allowed_extension_degree.divisors():
-                    try:
-                        f = self.any_irreducible_factor(degree=d, assume_squarefree=assume_squarefree)
-                    except ValueError:
-                        continue
-                    # When d != 1 we then find the smallest extension
-                    # TODO: This is really annoying. What we should do here is compute some minimal
-                    #       extension F_ext = self.base_ring().extension(d, names="a") and find a
-                    #       root here and then coerce this root into the parent ring. This means we
-                    #       would work with the smallest possible extension.
-                    #       However, if we have some element of GF(p^k) and we try and coerce this to
-                    #       some element GF(p^(k*n)) this can fail, even though mathematically it
-                    #       should be fine. As a result, we simply coerce straight to the user supplied
-                    #       ring and find a root here.
-                    # TODO: Additionally, if the above was solved, it would be faster to extend the base
-                    #       ring with the irreducible factor however, if the base ring is an extension
-                    #       then the type of self.base_ring().extension(f) is a Univariate Quotient Polynomial Ring
-                    #       and not a finite field. So we do the slower option here to ensure the type is
-                    #       maintained.
-                    if not d.is_one():
-                        f = f.change_ring(ring)
-
-                    # Now we find the root of this irreducible polynomial over this extension
-                    root = f.any_root()
-                    return ring(root)
-
-                # If the loop ends and we returned nothing, then no root exists
+            allowed_extension_degree = ring.degree() // self.base_ring().degree()
+            try:
+                f = self.any_irreducible_factor(assume_squarefree=assume_squarefree, ext_degree=allowed_extension_degree)
+            except ValueError:
                 raise ValueError(f"no root of polynomial {self} can be computed over the ring {ring}")
+            # When d != 1 we then find the smallest extension
+            # TODO: This is really annoying. What we should do here is compute some minimal
+            #       extension F_ext = self.base_ring().extension(d, names="a") and find a
+            #       root here and then coerce this root into the parent ring. This means we
+            #       would work with the smallest possible extension.
+            #       However, if we have some element of GF(p^k) and we try and coerce this to
+            #       some element GF(p^(k*n)) this can fail, even though mathematically it
+            #       should be fine. As a result, we simply coerce straight to the user supplied
+            #       ring and find a root here.
+            # TODO: Additionally, if the above was solved, it would be faster to extend the base
+            #       ring with the irreducible factor however, if the base ring is an extension
+            #       then the type of self.base_ring().extension(f) is a Univariate Quotient Polynomial Ring
+            #       and not a finite field. So we do the slower option here to ensure the type is
+            #       maintained.
+            if not f.degree().is_one():
+                f = f.change_ring(ring)
+
+            # Now we find the root of this irreducible polynomial over this extension
+            root = f.any_root()
+            return ring(root)
 
         # The old version of `any_root()` allowed degree < 0 to indicate that the input polynomial
         # had a distinct degree factorisation, we pass this to any_irreducible_factor as a bool and
