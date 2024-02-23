@@ -520,6 +520,7 @@ cdef class SpecialLeafNode(DecompositionNode):
         r"""
 
         """
+        pass
         cdef int representation_matrix
         cdef CMR_MATROID_DEC_TYPE typ = CMRdecIsSpecialLeaf(self._dec, &representation_matrix)
         import sage.matroids.matroids_catalog as matroids
@@ -558,6 +559,7 @@ cdef class SpecialLeafNode(DecompositionNode):
         return Matrix_cmr_chr_sparse._from_data(representation_matrix, immutable=False)
 
 cdef _class(CMR_MATROID_DEC *dec):
+    pass
     k = CMRdecIsSum(dec, NULL, NULL)
     if k == 1:
         return OneSumNode
