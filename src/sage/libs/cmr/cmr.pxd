@@ -331,9 +331,9 @@ cdef extern from "cmr/series_parallel.h":
         uint32_t nonbinaryCount
         double nonbinaryTime
 
-    CMR_ERROR CMRstatsSeriesParallelInit(CMR_SP_STATISTICS* stats)
+    CMR_ERROR CMRspStatsInit(CMR_SP_STATISTICS* stats)
 
-    # CMR_ERROR CMRstatsSeriesParallelPrint(FILE* stream, CMR_SP_STATISTICS* stats, const char* prefix)
+    # CMR_ERROR CMRspStatsPrint(FILE* stream, CMR_SP_STATISTICS* stats, const char* prefix)
 
     ctypedef struct CMR_SP_REDUCTION:
         CMR_ELEMENT element
@@ -486,6 +486,33 @@ cdef extern from "cmr/ctu.h":
     # CMR_ERROR CMRstatsComplementTotalUnimodularityPrint(FILE* stream, CMR_CTU_STATS* stats, const char* prefix)
     CMR_ERROR CMRcomplementRowColumn(CMR* cmr, CMR_CHRMAT* matrix, size_t complementRow, size_t complementColumn, CMR_CHRMAT** presult)
     CMR_ERROR CMRctuTest(CMR* cmr, CMR_CHRMAT* matrix, bool* pisComplementTotallyUnimodular, size_t* pcomplementRow, size_t* pcomplementColumn, CMR_CTU_PARAMS* params, CMR_CTU_STATS* stats, double timeLimit)
+
+
+cdef extern from "balanced.h":
+    ctypedef int CMR_BALANCED_ALGORITHM
+
+    const int CMR_BALANCED_ALGORITHM_AUTO
+    const int CMR_BALANCED_ALGORITHM_SUBMATRIX
+    const int CMR_BALANCED_ALGORITHM_GRAPH
+
+    ctypedef struct CMR_BALANCED_PARAMS:
+        CMR_BALANCED_ALGORITHM algorithm
+        bool seriesParallel
+
+    ctypedef struct CMR_BALANCED_STATS:
+        uint32_t totalCount
+        double totalTime
+        CMR_SP_STATISTICS seriesParallel
+        size_t enumeratedRowSubsets
+        size_t enumeratedColumnSubsets
+
+    CMR_ERROR CMRbalancedParamsInit(CMR_BALANCED_PARAMS* params)
+
+    CMR_ERROR CMRbalancedStatsInit(CMR_BALANCED_STATS* stats)
+
+    # CMR_ERROR CMRbalancedStatsPrint(FILE* stream, CMR_BALANCED_STATS* stats, const char* prefix)
+
+    CMR_ERROR CMRbalancedTest(CMR* cmr, CMR_CHRMAT* matrix, bool* pisBalanced, CMR_SUBMAT** psubmatrix, CMR_BALANCED_PARAMS* params, CMR_BALANCED_STATS* stats, double timeLimit)
 
 
 # Our global CMR environment
