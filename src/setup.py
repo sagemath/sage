@@ -18,8 +18,6 @@ import multiprocessing.pool
 # PEP 517 builds do not have . in sys.path
 sys.path.insert(0, os.path.dirname(__file__))
 
-import sage.misc.lazy_import_cache
-
 from sage.misc.package import is_package_installed_and_updated
 from sage_setup.command.sage_build_ext_minimal import sage_build_ext_minimal
 from sage_setup.command.sage_install import sage_develop, sage_install
@@ -64,15 +62,6 @@ if len(sys.argv) > 1 and (sys.argv[1] in ["sdist", "egg_info", "dist_info"]):
     sdist = True
 else:
     sdist = False
-
-# ########################################################
-# ## Testing related stuff
-# ########################################################
-
-# Remove (potentially invalid) star import caches
-if os.path.exists(sage.misc.lazy_import_cache.get_cache_file()):
-    os.unlink(sage.misc.lazy_import_cache.get_cache_file())
-
 
 # ########################################################
 # ## Discovering Sources
