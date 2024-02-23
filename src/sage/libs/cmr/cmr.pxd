@@ -515,6 +515,42 @@ cdef extern from "balanced.h":
     CMR_ERROR CMRbalancedTest(CMR* cmr, CMR_CHRMAT* matrix, bool* pisBalanced, CMR_SUBMAT** psubmatrix, CMR_BALANCED_PARAMS* params, CMR_BALANCED_STATS* stats, double timeLimit)
 
 
+cdef extern from "block_decomposition.h":
+
+    ctypedef struct CMR_BLOCK:
+        CMR_MATRIX* matrix
+        CMR_MATRIX* transpose
+        size_t* rowsToOriginal
+        size_t* columnsToOriginal
+
+    CMR_ERROR CMRdecomposeBlocks(
+        CMR* cmr,
+        CMR_MATRIX* matrix,
+        size_t matrixType,
+        size_t targetType,
+        size_t* pnumBlocks,
+        CMR_BLOCK** pblocks,
+        size_t* rowsToBlock,
+        size_t* columnsToBlock,
+        size_t* rowsToBlockRows,
+        size_t* columnsToBlockColumns
+    )
+
+
+cdef extern from "matrix_internal.h":
+    ctypedef struct CMR_MATRIX:
+        size_t numRows
+        size_t numColumns
+        size_t numNonzeros
+        size_t* rowSlice
+        size_t* entryColumns
+        void* entryValues
+
+    CMR_ERROR CMRsortSubmatrix(CMR* cmr, CMR_SUBMAT* submatrix)
+
+    CMR_ERROR CMRchrmatFilter(CMR* cmr, CMR_CHRMAT* matrix, size_t numRows, size_t* rows, size_t numColumns, size_t* columns, CMR_CHRMAT** presult)
+
+
 # Our global CMR environment
 cdef CMR *cmr
 

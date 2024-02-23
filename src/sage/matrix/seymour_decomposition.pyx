@@ -35,7 +35,7 @@ cdef class DecompositionNode(SageObject):
         if self._root is None or self._root is self:
             if self._dec != NULL:
                 # We own it, so we have to free it.
-                CMR_CALL(CMRdecFree(cmr, &self._dec))
+                CMR_CALL(CMRmatroiddecFree(cmr, &self._dec))
         self._dec = dec
         self._root = root
 
@@ -46,10 +46,10 @@ cdef class DecompositionNode(SageObject):
         return <int>self._dec
 
     def nrows(self):
-        return CMRdecNumRows(self._dec)
+        return CMRmatroiddecNumRows(self._dec)
 
     def ncols(self):
-        return CMRdecNumColumns(self._dec)
+        return CMRmatroiddecNumColumns(self._dec)
 
     def dimensions(self):
         return self.nrows(), self.ncols()
@@ -81,7 +81,7 @@ cdef class DecompositionNode(SageObject):
             [ 0  1]
         """
         cdef Matrix_cmr_chr_sparse result
-        cdef CMR_CHRMAT *mat = CMRdecGetMatrix(self._dec)
+        cdef CMR_CHRMAT *mat = CMRmatroiddecGetMatrix(self._dec)
         if mat == NULL:
             return None
         ms = MatrixSpace(ZZ, mat.numRows, mat.numColumns, sparse=True)
@@ -126,16 +126,16 @@ cdef class DecompositionNode(SageObject):
             sage: C[1].parent_rows_and_columns()
             ((3, 4, 5), (2, 3))
         """
-        cdef size_t *parent_rows = CMRdecRowsParent(self._dec)
-        cdef size_t *parent_columns = CMRdecColumnsParent(self._dec)
+        cdef size_t *parent_rows = CMRmatroiddecRowsParent(self._dec)
+        cdef size_t *parent_columns = CMRmatroiddecColumnsParent(self._dec)
         if parent_rows == NULL:
             parent_rows_tuple = None
         else:
-            parent_rows_tuple = tuple(parent_rows[i] for i in range(CMRdecNumRows(self._dec)))
+            parent_rows_tuple = tuple(parent_rows[i] for i in range(CMRmatroiddecNumRows(self._dec)))
         if parent_columns == NULL:
             parent_columns_tuple = None
         else:
-            parent_columns_tuple = tuple(parent_columns[i] for i in range(CMRdecNumColumns(self._dec)))
+            parent_columns_tuple = tuple(parent_columns[i] for i in range(CMRmatroiddecNumColumns(self._dec)))
 
         return parent_rows_tuple, parent_columns_tuple
 
@@ -223,9 +223,9 @@ cdef class DecompositionNode(SageObject):
             sage: certificate._children()
             ()
         """
-        return tuple(sorted((create_DecompositionNode(CMRdecChild(self._dec, index),
+        return tuple(sorted((create_DecompositionNode(CMRmatroiddecChild(self._dec, index),
                                                 self._root or self)
-                             for index in range(CMRdecNumChildren(self._dec))),
+                             for index in range(CMRmatroiddecNumChildren(self._dec))),
                             key=lambda node: node.parent_rows_and_columns()))
 
     def _repr_(self):
@@ -432,7 +432,7 @@ cdef class BaseGraphicNode(DecompositionNode):
             sage: G.edges(sort=True)
             [(1, 2, None), (1, 7, None), (1, 12, None), (2, 7, None), (7, 12, None)]
         """
-        return _sage_graph(CMRdecGraph(self._dec))
+        return _sage_graph(CMRmatroiddecGraph(self._dec))
 
     @cached_method
     def forest_edges(self):
@@ -451,16 +451,16 @@ cdef class BaseGraphicNode(DecompositionNode):
             sage: certificate.forest_edges()
             ((1, 2), (7, 1))
         """
-        cdef CMR_GRAPH *graph = CMRdecGraph(self._dec)
-        cdef size_t num_edges = CMRdecGraphSizeForest(self._dec)
-        cdef CMR_GRAPH_EDGE *edges = CMRdecGraphForest(self._dec)
+        cdef CMR_GRAPH *graph = CMRmatroiddecGraph(self._dec)
+        cdef size_t num_edges = CMRmatroiddecGraphSizeForest(self._dec)
+        cdef CMR_GRAPH_EDGE *edges = CMRmatroiddecGraphForest(self._dec)
         return tuple(_sage_edge(graph, edges[i]) for i in range(num_edges))
 
     @cached_method
     def coforest_edges(self):
-        cdef CMR_GRAPH *graph = CMRdecGraph(self._dec)
-        cdef size_t num_edges = CMRdecGraphSizeCoforest(self._dec)
-        cdef CMR_GRAPH_EDGE *edges = CMRdecGraphCoforest(self._dec)
+        cdef CMR_GRAPH *graph = CMRmatroiddecGraph(self._dec)
+        cdef size_t num_edges = CMRmatroiddecGraphSizeCoforest(self._dec)
+        cdef CMR_GRAPH_EDGE *edges = CMRmatroiddecGraphCoforest(self._dec)
         return tuple(_sage_edge(graph, edges[i]) for i in range(num_edges))
 
 
@@ -475,13 +475,13 @@ cdef class CographicNode(BaseGraphicNode):
         r"""
         Actually the cograph of matrix, in the case where it is not graphic.
         """
-        return _sage_graph(CMRdecCograph(self._dec))
+        return _sage_graph(CMRmatroiddecCograph(self._dec))
 
 
 cdef class PlanarNode(BaseGraphicNode):
     @cached_method
     def cograph(self):
-        return _sage_graph(CMRdecCograph(self._dec))
+        return _sage_graph(CMRmatroiddecCograph(self._dec))
 
 
 cdef class SeriesParallelReductionNode(DecompositionNode):
@@ -521,26 +521,26 @@ cdef class SpecialLeafNode(DecompositionNode):
 
         """
         cdef int representation_matrix
-        cdef CMR_DEC_TYPE typ = CMRdecIsSpecialLeaf(self._dec, &representation_matrix)
+        cdef CMR_MATROID_DEC_TYPE typ = CMRdecIsSpecialLeaf(self._dec, &representation_matrix)
         import sage.matroids.matroids_catalog as matroids
         from sage.graphs.graph_generators import graphs
         from sage.matroids.matroid import Matroid
 
-        if typ == CMR_DEC_SPECIAL_R10:
+        if typ == CMR_MATROID_DEC_TYPE_R10:
             return matroids.named_matroids.R10()
-        if typ == CMR_DEC_SPECIAL_FANO:
+        if typ == CMR_MATROID_DEC_TYPE_FANO:
             return matroids.named_matroids.Fano()
-        if typ == CMR_DEC_SPECIAL_FANO_DUAL:
+        if typ == CMR_MATROID_DEC_TYPE_FANO_DUAL:
             return matroids.named_matroids.Fano().dual()
-        if typ == CMR_DEC_SPECIAL_K_5:
+        if typ == CMR_MATROID_DEC_TYPE_K5:
             return matroids.CompleteGraphic(5)
-        if typ == CMR_DEC_SPECIAL_K_5_DUAL:
+        if typ == CMR_MATROID_DEC_TYPE_K5_DUAL:
             return matroids.CompleteGraphic(5).dual()
-        if typ == CMR_DEC_SPECIAL_K_3_3:
+        if typ == CMR_MATROID_DEC_TYPE_K33:
             E = 'abcdefghi'
             G = graphs.CompleteBipartiteGraph(3, 3)
             return Matroid(groundset=E, graph=G, regular=True)
-        if typ == CMR_DEC_SPECIAL_K_3_3_DUAL:
+        if typ == CMR_MATROID_DEC_TYPE_K33_DUAL:
             return matroids.named_matroids.K33dual()
         assert False, 'special leaf node with unknown type'
 
@@ -554,7 +554,7 @@ cdef class SpecialLeafNode(DecompositionNode):
         assert NotImplementedError
 
         cdef int representation_matrix
-        cdef CMR_DEC_TYPE typ = CMRdecIsSpecialLeaf(self._dec, &representation_matrix)
+        cdef CMR_MATROID_DEC_TYPE typ = CMRdecIsSpecialLeaf(self._dec, &representation_matrix)
         return Matrix_cmr_chr_sparse._from_data(representation_matrix, immutable=False)
 
 cdef _class(CMR_MATROID_DEC *dec):
@@ -586,7 +586,7 @@ cdef create_DecompositionNode(CMR_MATROID_DEC *dec, root=None):
 
     INPUT:
 
-    - ``dec`` -- a ``CMR_DEC``
+    - ``dec`` -- a ``CMR_MATROID_DEC``
     - ``root`` -- a :class:`DecompositionNode` or ``None``.
       If ``None``, ``dec`` will be owned by the returned instance.
       If non-``None``, ``dec`` is owned by that instance.
