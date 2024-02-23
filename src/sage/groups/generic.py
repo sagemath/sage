@@ -1431,6 +1431,8 @@ def has_order(P, n, operation='+'):
         True
         sage: has_order(P, factor(57))
         True
+        sage: has_order(P, int(57))
+        True
         sage: has_order(P, 19)
         False
         sage: has_order(3*P, 19)
@@ -1481,12 +1483,18 @@ def has_order(P, n, operation='+'):
         In some cases, order *testing* can be much faster than
         *computing* the order using :func:`order_from_multiple`.
     """
+    from sage.arith.misc import factor
+
     if isinstance(n, sage.rings.integer.Integer):
         if n <= 0:
             return False
         n = n.factor()
+    elif isinstance(n, int):
+        if n <= 0:
+            return False
+        from sage.structure.coerce import py_scalar_to_element
+        n = py_scalar_to_element(n).factor()
 
-    G = P.parent()
     if operation in addition_names:
         isid = lambda el: not el
         mult = lambda el, n: multiple(el, n, operation='+')
