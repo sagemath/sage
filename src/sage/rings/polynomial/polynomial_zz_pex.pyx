@@ -678,7 +678,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             if exp > 0 and exp.bit_length() >= 32:
                 return (<Polynomial_ZZ_pEX>self)._powmod_bigexp(Integer(exp), modulus)
         return Polynomial_template.__pow__(self, exp, modulus)
-     
+
     cdef _powmod_bigexp(Polynomial_ZZ_pEX self, Integer exp, Polynomial_ZZ_pEX modulus):
         """
         Modular exponentiation for large exponents.

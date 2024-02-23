@@ -9,4 +9,3 @@ include "polynomial_template_header.pxi"
 
 cdef class Polynomial_ZZ_pEX(Polynomial_template):
     cdef _powmod_bigexp(Polynomial_ZZ_pEX self, Integer exp, Polynomial_ZZ_pEX modulus)
-
