@@ -603,8 +603,8 @@ For example, the ``scipy`` ``spkg-check.in`` file contains the line
 
     exec python3 spkg-check.py
 
-The install-requires.txt file
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Abstract requirements: The install-requires.txt file
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All normal Python packages and all wheel packages must have a file ``install-requires.txt``.
 If a Python package is available on PyPI, this file must contain the
@@ -658,6 +658,21 @@ update is made in order to pick up a critical bug fix from a newer
 version, then the lower bound should be adjusted.
 Setting upper bounds to guard against incompatible future changes is
 a complex topic; see :trac:`33520`.
+
+
+Concrete (pinned) requirements: The package-version.txt file
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Like normal non-Python packages, all normal Python packages and all wheel packages
+must have a file ``package-version.txt``.
+
+Sage uses this version for two purposes:
+
+- This is the version that the Sage distribution ships.
+
+- As a source for generating the ``requirements.txt`` files of
+  the Python distribution packages in ``SAGE_ROOT/pkgs/``, see
+  :ref:`section_dependencies_distributions`.
 
 
 .. _section-spkg-SPKG-txt:
