@@ -208,26 +208,37 @@ cdef extern from "cmr/element.h":
 
 cdef extern from "cmr/separation.h":
 
+    ctypedef int CMR_SEPA_FLAGS
+
+    const int CMR_SEPA_FIRST
+    const int CMR_SEPA_SECOND
+    const int CMR_SEPA_FLAG_RANK1
+    const int CMR_SEPA_FLAG_RANK2
+    const int CMR_SEPA_MASK_CHILD
+    const int CMR_SEPA_MASK_EXTRA
+
+    ctypedef int CMR_SEPA_TYPE
+
+    const int CMR_SEPA_TYPE_TWO
+    const int CMR_SEPA_TYPE_THREE_DISTRIBUTED_RANKS
+    const int CMR_SEPA_TYPE_THREE_CONCENTRATED_RANK
+
     ctypedef struct CMR_SEPA:
-        unsigned char* rowsToPart
-        unsigned char* columnsToPart
-        size_t numRows[2]
-        size_t numColumns[2]
-        size_t* rows[2]
-        size_t* columns[2]
-        size_t extraRows[2][2]
-        size_t extraColumns[2][2]
-        unsigned char* indicatorMemory
-        size_t* elementMemory
+        size_t numRows
+        size_t numColumns
+        CMR_SEPA_FLAGS* rowsFlags
+        CMR_SEPA_FLAGS* columnsFlags
+        CMR_SEPA_TYPE type
 
     CMR_ERROR CMRsepaCreate(CMR* cmr, size_t numRows, size_t numColumns, CMR_SEPA** psepa)
-    CMR_ERROR CMRsepaInitialize(CMR* cmr, CMR_SEPA* separation, size_t firstExtraRow0, size_t firstExtraColumn1, size_t firstExtraRow1, size_t firstExtraColumn0, size_t secondExtraRow0, size_t secondExtraColumn1, size_t secondExtraRow1, size_t secondExtraColumn0)
-    CMR_ERROR CMRsepaInitializeMatrix(CMR* cmr, CMR_SEPA* separation, CMR_CHRMAT* matrix, unsigned char totalRank)
     CMR_ERROR CMRsepaFree(CMR* cmr, CMR_SEPA** psepa)
-    unsigned char CMRsepaRankBottomLeft(CMR_SEPA* sepa)
-    unsigned char CMRsepaRankTopRight(CMR_SEPA* sepa)
-    unsigned char CMRsepaRank(CMR_SEPA* sepa)
-    CMR_ERROR CMRsepaCheckTernary(CMR* cmr, CMR_SEPA* sepa, CMR_CHRMAT* matrix, CMR_SUBMAT* submatrix, bool* pisTernary, CMR_SUBMAT** psubmatrix)
+    CMR_ERROR CMRsepaComputeSizes(CMR_SEPA* sepa, size_t* pnumRowsTopLeft, size_t* pnumColumnsTopLeft, size_t* pnumRowsBottomRight, size_t* pnumColumnsBottomRight)
+    CMR_ERROR CMRsepaFindBinaryRepresentatives(CMR* cmr, CMR_SEPA* sepa, CMR_CHRMAT* matrix, CMR_CHRMAT* transpose, bool* pswapped, CMR_SUBMAT** pviolator)
+    CMR_ERROR CMRsepaFindBinaryRepresentativesSubmatrix(CMR* cmr, CMR_SEPA* sepa, CMR_CHRMAT* matrix, CMR_CHRMAT* transpose, CMR_SUBMAT* submatrix, bool* pswapped, CMR_SUBMAT** pviolator)
+    CMR_ERROR CMRsepaGetRepresentatives(CMR* cmr, CMR_SEPA* sepa, size_t reprRows[2][3], size_t reprColumns[2][3])
+    CMR_ERROR CMRsepaGetProjection(CMR_SEPA* sepa, size_t part, size_t* rowsToPart, size_t* columnsToPart, size_t* pnumPartRows, size_t* pnumPartColumns)
+    CMR_ERROR CMRsepaCheckTernary(CMR* cmr, CMR_SEPA* sepa, CMR_CHRMAT* matrix, bool* pisTernary, CMR_SUBMAT** pviolator)
+    CMR_ERROR CMRsepaCheckTernarySubmatrix(CMR* cmr, CMR_SEPA* sepa, CMR_CHRMAT* matrix, CMR_SUBMAT* submatrix, bool* pisTernary, CMR_SUBMAT** pviolator)
     CMR_ERROR CMRoneSum(CMR* cmr, CMR_CHRMAT* first, CMR_CHRMAT* second, CMR_CHRMAT** presult)
     CMR_ERROR CMRtwoSum(CMR* cmr, CMR_CHRMAT* first, CMR_CHRMAT* second, CMR_ELEMENT firstMarker, CMR_ELEMENT secondMarker, int8_t characteristic, CMR_CHRMAT** presult)
     CMR_ERROR CMRthreeSum(CMR* cmr, CMR_CHRMAT* first, CMR_CHRMAT* second, CMR_ELEMENT firstMarker1, CMR_ELEMENT secondMarker1, CMR_ELEMENT firstMarker2, CMR_ELEMENT secondMarker2, int8_t characteristic, CMR_CHRMAT** presult)
