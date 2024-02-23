@@ -2612,19 +2612,28 @@ cdef class Polynomial(CommutativePolynomial):
             #       would work with the smallest possible extension.
             #       However, if we have some element of GF(p^k) and we try and coerce this to
             #       some element GF(p^(k*n)) this can fail, even though mathematically it
-            #       should be fine. As a result, we simply coerce straight to the user supplied
-            #       ring and find a root here.
+            #       should be fine.
             # TODO: Additionally, if the above was solved, it would be faster to extend the base
             #       ring with the irreducible factor however, if the base ring is an extension
             #       then the type of self.base_ring().extension(f) is a Univariate Quotient Polynomial Ring
-            #       and not a finite field. So we do the slower option here to ensure the type is
-            #       maintained.
-            if not f.degree().is_one():
-                f = f.change_ring(ring)
+            #       and not a finite field.
 
-            # Now we find the root of this irreducible polynomial over this extension
-            root = f.any_root()
-            return ring(root)
+            # When f has degree one we simply return the roots
+            # TODO: should we write something fast for degree two using
+            #       the quadratic formula?
+            if f.degree().is_one():
+                root = - f[0] / f[1]
+                return ring(root)
+
+            # TODO: The proper thing to do here would be to call
+            #       return f.change_ring(ring).any_root()
+            #       but as we cannot work in the minimal extension (see above) working
+            #       in the extension for f.change_ring(ring).any_root() is almost always
+            #       much much much slower than using the call for roots() which uses
+            #       C library bindings for all finite fields.
+            #       Until the coercion system for finite fields works better,
+            #       this will be the most performant
+            return f.roots(ring, multiplicities=False)[0]
 
         # The old version of `any_root()` allowed degree < 0 to indicate that the input polynomial
         # had a distinct degree factorisation, we pass this to any_irreducible_factor as a bool and
@@ -2668,11 +2677,15 @@ cdef class Polynomial(CommutativePolynomial):
             #       over explicitly a FiniteField type.
             ring = self.base_ring().extension(degree, names="a")
 
-        # Now we look for a linear root of this irreducible polynomial of degree `degree`
-        # over the user supplied ring or the extension we just computed. If the user sent
-        # a bad ring here of course there may be no root found.
-        f = f.change_ring(ring)
-        return f.any_root()
+        # TODO: The proper thing to do here would be to call
+        #       return f.change_ring(ring).any_root()
+        #       but as we cannot work in the minimal extension (see above) working
+        #       in the extension for f.change_ring(ring).any_root() is almost always
+        #       much much much slower than using the call for roots() which uses
+        #       C library bindings for all finite fields.
+        #       Until the coercion system for finite fields works better,
+        #       this will be the most performant
+        return f.roots(ring, multiplicities=False)[0]
 
     def __truediv__(left, right):
         r"""
