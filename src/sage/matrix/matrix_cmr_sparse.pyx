@@ -1460,14 +1460,14 @@ cdef _cmr_dec_construct(param):
     return CMR_DEC_CONSTRUCT_ALL
 
 
-cdef _set_cmr_regular_parameters(CMR_REGULAR_PARAMS* params, dict kwds):
+cdef _set_cmr_regular_parameters(CMR_REGULAR_PARAMS *params, dict kwds):
     CMR_CALL(CMRregularParamsInit(params))
     params.directGraphicness = kwds['use_direct_graphicness_test']
     params.seriesParallel = kwds['series_parallel_ok']
     params.planarityCheck = kwds['check_graphic_minors_planar']
     params.completeTree = kwds['complete_tree'] is True
-    params.matrices = _cmr_dec_construct(kwds['construct_matrices'])
-    params.transposes = _cmr_dec_construct(kwds['construct_transposes'])
+    # params.threeSumPivotChildren = _cmr_dec_construct(kwds['construct_matrices'])
+    # params.threeSumStrategy = _cmr_dec_construct(kwds['construct_transposes'])
     params.graphs = _cmr_dec_construct(kwds['construct_graphs'])
 
 

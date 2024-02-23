@@ -451,17 +451,19 @@ cdef class BaseGraphicNode(DecompositionNode):
             sage: certificate.forest_edges()
             ((1, 2), (7, 1))
         """
-        cdef CMR_GRAPH *graph = CMRmatroiddecGraph(self._dec)
-        cdef size_t num_edges = CMRmatroiddecGraphSizeForest(self._dec)
-        cdef CMR_GRAPH_EDGE *edges = CMRmatroiddecGraphForest(self._dec)
-        return tuple(_sage_edge(graph, edges[i]) for i in range(num_edges))
+        pass
+        # cdef CMR_GRAPH *graph = CMRmatroiddecGraph(self._dec)
+        # cdef size_t num_edges = CMRmatroiddecGraphSizeForest(self._dec)
+        # cdef CMR_GRAPH_EDGE *edges = CMRmatroiddecGraphForest(self._dec)
+        # return tuple(_sage_edge(graph, edges[i]) for i in range(num_edges))
 
     @cached_method
     def coforest_edges(self):
-        cdef CMR_GRAPH *graph = CMRmatroiddecGraph(self._dec)
-        cdef size_t num_edges = CMRmatroiddecGraphSizeCoforest(self._dec)
-        cdef CMR_GRAPH_EDGE *edges = CMRmatroiddecGraphCoforest(self._dec)
-        return tuple(_sage_edge(graph, edges[i]) for i in range(num_edges))
+        pass
+        # cdef CMR_GRAPH *graph = CMRmatroiddecGraph(self._dec)
+        # cdef size_t num_edges = CMRmatroiddecGraphSizeCoforest(self._dec)
+        # cdef CMR_GRAPH_EDGE *edges = CMRmatroiddecGraphCoforest(self._dec)
+        # return tuple(_sage_edge(graph, edges[i]) for i in range(num_edges))
 
 
 cdef class GraphicNode(BaseGraphicNode):
