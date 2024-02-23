@@ -60,10 +60,28 @@ pari = cc.find_library('pari')
 
 mpfr = cc.find_library('mpfr')
 
-# Cannot be found by pkg-config
-flint = cc.find_library('flint')
+# Once https://github.com/mesonbuild/meson/pull/12616 is released, we can simply do the following:
+# flint = dependency('flint', version : '>=3.0.0')
+flint = dependency('flint', version : '>=3.0.0', required: false, allow_fallback: false)
+if not flint.found()
+    flint = subproject('flint').get_variable('flint_dep')
+else
+    # Currently the flint pkg-config file is broken, so we manually use find_library
+    # Can be removed once we require a version of flint that ships https://github.com/flintlib/flint/pull/1647
+    flint = cc.find_library('flint')
+endif
 
-cblas = dependency('cblas')
+blas_order = []
+if host_machine.system() == 'darwin'
+blas_order += 'accelerate'
+endif
+if host_machine.cpu_family() == 'x86_64'
+blas_order += 'mkl'
+endif
+# pkg-config uses a lower-case name while CMake uses a capitalized name, so try
+# that too to make the fallback detection with CMake work
+blas_order += ['cblas', 'openblas', 'OpenBLAS', 'flexiblas', 'blis', 'blas']
+blas = dependency(blas_order)
 gsl = dependency('gsl', fallback: ['gsl', 'gsl_dep'], version : '>=2.5', required: true)
 gd = cc.find_library('gd')
 iml = cc.find_library('iml')
@@ -83,10 +101,13 @@ glpk = cc.find_library('glpk')
 ppl = cc.find_library('ppl')
 gmpxx = cc.find_library('gmpxx')
 readline = cc.find_library('readline')
-lfunction = cc.find_library('Lfunction', required: false)
-fflas = cc.find_library('fflas')
+fflas = dependency(['fflas-ffpack'])
+fplll = dependency('fplll')
 givaro = cc.find_library('givaro')
-linbox = cc.find_library('linbox')
+linbox = dependency('linbox', required: false)
+if not linbox.found()
+    linbox = cc.find_library('linbox')
+endif
 braiding = cc.find_library('braiding')
 gc = cc.find_library('gc')
 homfly = cc.find_library('homfly')
