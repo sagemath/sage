@@ -784,7 +784,8 @@ $(1)-sdist: FORCE python_build sage_setup cython
 $(1)-tox-%: FORCE
 	$(AM_V_at)cd '$$(SAGE_ROOT)/build/pkgs/$(1)/src' && \
 		export PATH="$$(SAGE_ORIG_PATH)" && \
-		SAGE_SPKG_WHEELS=$$(SAGE_LOCAL)/var/lib/sage/wheels \
+		SAGE_VENV=$$(SAGE_VENV) \
+		SAGE_SPKG_WHEELS=$$(SAGE_VENV)/var/lib/sage/wheels \
 		tox -v -v -v -e $$*
 
 .PHONY: $(1) $(1)-uninstall $(1)-clean $(1)-build-deps $(1)-no-deps $(1)-clean
