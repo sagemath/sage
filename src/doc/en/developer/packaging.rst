@@ -674,6 +674,9 @@ Sage uses this version for two purposes:
   the Python distribution packages in ``SAGE_ROOT/pkgs/``, see
   :ref:`section_dependencies_distributions`.
 
+  For the use of the generated ``requirements.txt`` files, see
+  the `pip User Guide <https://pip.pypa.io/en/stable/user_guide/#requirements-files>`_.
+
 
 .. _section-spkg-SPKG-txt:
 
