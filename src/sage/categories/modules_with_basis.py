@@ -2066,7 +2066,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: a.map_coefficients(lambda x: x * 2)                               # needs sage.combinat sage.modules
                 2*s[2, 1] + 4*s[3, 2]
             """
-            return self.parent().sum_of_terms( (m, f(c)) for m,c in self )
+            return self.parent().sum_of_terms( (m, f(c)) for m,c in self.monomial_coefficients(copy=False).items() )
 
         def map_support(self, f):
             """
@@ -2108,7 +2108,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: y.parent() is B                                                   # needs sage.modules
                 True
             """
-            return self.parent().sum_of_terms( (f(m), c) for m,c in self )
+            return self.parent().sum_of_terms( (f(m), c) for m,c in self.monomial_coefficients(copy=False).items() )
 
         def map_support_skip_none(self, f):
             """
@@ -2142,7 +2142,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: y.parent() is B                                                   # needs sage.modules
                 True
             """
-            return self.parent().sum_of_terms( (fm,c) for (fm,c) in ((f(m), c) for m,c in self) if fm is not None)
+            return self.parent().sum_of_terms( (fm,c) for (fm,c) in ((f(m), c) for m,c in self.monomial_coefficients(copy=False).items()) if fm is not None)
 
         def map_item(self, f):
             """
@@ -2176,7 +2176,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: a.map_item(f)                                                     # needs sage.combinat sage.modules
                 2*s[2, 1] + 2*s[3]
             """
-            return self.parent().sum_of_terms( f(m,c) for m,c in self )
+            return self.parent().sum_of_terms( f(m,c) for m,c in self.monomial_coefficients(copy=False).items() )
 
         def tensor(*elements):
             """
