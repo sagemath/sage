@@ -60,23 +60,12 @@ extension_data = {
 }
 
 foreach name, pyx : extension_data
-    if name == 'element'
-      # Compile this with -Os because it works around a bug with
-      # GCC-4.7.3 + Cython 0.19 on Itanium, see Issue #14452. Moreover, it
-      # actually results in faster code than -O3.
-      # It's also needed to generate proper OverflowError (see Issue 2956)
-      extra_cflags = ['-Os']
-    else
-      extra_cflags = []
-    endif
-
     py.extension_module(name,
         sources: pyx,
         subdir: 'sage/structure',
         install: true,
         include_directories: [inc_cpython, inc_ext, inc_rings],
         dependencies: [py_dep, cysignals, gmp, gmpy2, mpc, mpfr],
-        c_args: extra_cflags,
     )
 endforeach
 
