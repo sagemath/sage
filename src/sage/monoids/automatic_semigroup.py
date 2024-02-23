@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Automatic Semigroups
 
@@ -418,7 +417,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
         else:
             of = ""
 
-        return "%s%s with %s generators" % (typ, of, len(self._generators))
+        return f"{typ}{of} with {len(self._generators)} generators"
 
     def repr_element_method(self, style="ambient"):
         """
@@ -514,7 +513,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             if element not in self._elements_set:
                 cache = self._retract.cache
                 del cache[((ambient_element,), ())]
-                raise ValueError("%s not in %s" % (ambient_element, self))
+                raise ValueError(f"{ambient_element} not in {self}")
         return element
 
     @cached_method
