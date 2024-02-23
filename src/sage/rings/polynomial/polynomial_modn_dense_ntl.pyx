@@ -878,7 +878,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
             sage: (x-1)^(-5)
             Traceback (most recent call last):
             ...
-            TypeError: self must be an integral domain.
+            TypeError: ...
         """
         cdef bint recip = 0, do_sig
         cdef long e = ee
