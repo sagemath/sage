@@ -2560,22 +2560,65 @@ cdef class Polynomial(CommutativePolynomial):
                 return rs[0]
             raise ValueError(f"polynomial {self} has no roots")
 
-        # When the degree is none, we only look for a linear factor
-        if degree is None:
-            # if a ring is given try and coerce the polynomial into this ring
-            if ring is not None:
+        # Ensure that a provided ring is appropriate for the function
+        if ring is not None:
+            # If the new ring is not a finite field, attempt to coerce the polynomial
+            # and call the function to use naive factoring
+            if not ring in FiniteFields():
                 try:
-                    self = self.change_ring(ring)
+                    f = self.change_ring(ring)
                 except ValueError:
                     raise(f"cannot coerce polynomial {self} to the new ring: {ring}")
+                return f.any_root()
 
-            # try and find a linear irreducible polynomial from f to compute a root
-            try:
-                f = self.any_irreducible_factor(degree=1, assume_squarefree=assume_squarefree)
-            except ValueError:
-                raise ValueError(f"no root of polynomial {self} can be computed")
+            # If the ring is a finite field, ensure it's an extension of the base ring
+            if self.base_ring().characteristic() != ring.characteristic():
+                raise ValueError("ring must have the same characteristic as the base ring")
+            if not self.base_ring().degree().divides(ring.degree()):
+                raise ValueError("ring must be an extension of the base ring")
 
-            return - f[0] / f[1]
+        # When the degree is none, we only look for a linear factor
+        if degree is None:
+            # When ring is None, we attempt to find a linear factor of self
+            if ring is None:
+                try:
+                    f = self.any_irreducible_factor(degree=1, assume_squarefree=assume_squarefree)
+                except ValueError:
+                    raise ValueError(f"no root of polynomial {self} can be computed")
+                return - f[0] / f[1]
+            # When we have a ring, then we can find an irreducible factor of degree `d` providing
+            # that d divides the degree of the extension from the base ring to the given ring
+            else:
+                allowed_extension_degree = ring.degree() // self.base_ring().degree()
+                for d in allowed_extension_degree.divisors():
+                    try:
+                        f = self.any_irreducible_factor(degree=d, assume_squarefree=assume_squarefree)
+                    except ValueError:
+                        continue
+                    # When d != 1 we then find the smallest extension
+                    # TODO: This is really annoying. What we should do here is compute some minimal
+                    #       extension F_ext = self.base_ring().extension(d, names="a") and find a
+                    #       root here and then coerce this root into the parent ring. This means we
+                    #       would work with the smallest possible extension.
+                    #       However, if we have some element of GF(p^k) and we try and coerce this to
+                    #       some element GF(p^(k*n)) this can fail, even though mathematically it
+                    #       should be fine. As a result, we simply coerce straight to the user supplied
+                    #       ring and find a root here.
+                    # TODO: Additionally, if the above was solved, it would be faster to extend the base
+                    #       ring with the irreducible factor however, if the base ring is an extension 
+                    #       then the type of self.base_ring().extension(f) is a Univariate Quotient Polynomial Ring
+                    #       and not a finite field. So we do the slower option here to ensure the type is
+                    #       maintained.
+                    if not d.is_one():
+                        f = f.change_ring(ring)
+                    
+                    # Now we find the root of this irreducible polynomial over this extension
+                    root = f.any_root()
+                    return ring(root)
+
+                
+                # If the loop ends and we returned nothing, then no root exists
+                raise ValueError(f"no root of polynomial {self} can be computed over the ring {ring}")
 
         # The old version of `any_root()` allowed degree < 0 to indicate that the input polynomial
         # had a distinct degree factorisation, we pass this to any_irreducible_factor as a bool and
@@ -2617,11 +2660,8 @@ cdef class Polynomial(CommutativePolynomial):
             #       FiniteField type if the base field is a non-prime field,
             #       so this slower option is chosen to ensure the root is
             #       over explicitly a FiniteField type.
-            ring = self.base_ring().extension(f.degree(), names="a")
+            ring = self.base_ring().extension(degree, names="a")
 
-        # Now we look for a linear root of this irreducible polynomial of degree `degree`
-        # over the user supplied ring or the extension we just computed. If the user sent
-        # a bad ring here of course there may be no root found.
         f = f.change_ring(ring)
         return f.any_root()
 
