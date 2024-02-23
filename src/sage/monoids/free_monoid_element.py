@@ -128,7 +128,7 @@ class FreeMonoidElement(MonoidElement):
             s = "1"
         return s
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return latex representation of self.
 
@@ -278,7 +278,7 @@ class FreeMonoidElement(MonoidElement):
         """
         raise NotImplementedError
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the degree of the monoid element ``self``, where each
         generator of the free monoid is given degree `1`.
@@ -296,12 +296,9 @@ class FreeMonoidElement(MonoidElement):
             sage: len(a[0]**2 * a[1])
             3
         """
-        s = 0
-        for x in self._element_list:
-            s += x[1]
-        return s
+        return sum(x[1] for x in self._element_list)
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Compare two free monoid elements with the same parents.
 
@@ -374,9 +371,9 @@ class FreeMonoidElement(MonoidElement):
             alph = gens
         alph = [str(c) for c in alph]
         W = Words(alph, infinite=False)
-        return W(sum([[alph[gens.index(i[0])]] * i[1] for i in iter(self)], []))
+        return W(sum([[alph[gens.index(i[0])]] * i[1] for i in self], []))
 
-    def to_list(self, indices=False):
+    def to_list(self, indices=False) -> list:
         r"""
         Return ``self`` as a list of generators.
 

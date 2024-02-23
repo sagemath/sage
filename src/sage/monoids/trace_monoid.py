@@ -88,7 +88,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         sage: x.foata_normal_form()
         (b, a*d, a, b*c)
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Textual representation of ``self``.
 
@@ -819,7 +819,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
             True
         """
         return Graph({frozenset((e1, e2)) if e1 != e2 else (e1, e2)
-                         for e1, e2 in self.dependence()}, loops=True,
+                      for e1, e2 in self.dependence()}, loops=True,
                      format="list_of_edges",
                      immutable=True)
 
@@ -963,9 +963,9 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
             [[a, c]]
         """
         return sorted(sorted(x_y)
-                      for x_y in sorted(self.independence()))
+                      for x_y in self.independence())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Textual representation of trace monoids.
 

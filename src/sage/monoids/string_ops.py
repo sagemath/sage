@@ -12,24 +12,27 @@ from sage.rings.real_mpfr import RealField
 from .string_monoid_element import StringMonoidElement
 
 
-def strip_encoding(S):
+def strip_encoding(S) -> str:
     """
-    The upper case string of S stripped of all non-alphabetic characters.
+    Return the upper case string of S stripped of all non-alphabetic characters.
 
     EXAMPLES::
 
         sage: S = "The cat in the hat."
         sage: strip_encoding(S)
         'THECATINTHEHAT'
+
+    TESTS::
+
+        sage: S = "The cat in the hat."
+        sage: strip_encoding(44)
+        Traceback (most recent call last):
+        ...
+        TypeError: argument S (= 44) must be a string
     """
     if not isinstance(S, str):
-        raise TypeError("Argument S (= %s) must be a string.")
-    X = ''
-    for i in range(len(S)):
-        C = S[i]
-        if C.isalpha():
-            X += S[i].upper()
-    return X
+        raise TypeError(f"argument S (= {S}) must be a string")
+    return ''.join(letter.upper() for letter in S if letter.isalpha())
 
 
 def frequency_distribution(S, n=1, field=None):
@@ -59,7 +62,7 @@ def frequency_distribution(S, n=1, field=None):
 
 def coincidence_index(S, n=1):
     """
-    The coincidence index of the string S.
+    Return the coincidence index of the string ``S``.
 
     EXAMPLES::
 
@@ -87,9 +90,14 @@ def coincidence_index(S, n=1):
 
 def coincidence_discriminant(S, n=2):
     """
-    Input: A tuple of strings, e.g. produced as decimation of transposition
+    INPUT:
+
+    A tuple of strings, e.g. produced as decimation of transposition
     ciphertext, or a sample plaintext.
-    Output: A measure of the difference of probability of association of
+
+    OUTPUT:
+
+    A measure of the difference of probability of association of
     character pairs, relative to their independent one-character probabilities.
 
     EXAMPLES::
@@ -102,11 +110,9 @@ def coincidence_discriminant(S, n=2):
         raise TypeError("Argument S (= %s) must be a list or tuple" % S)
     if n != 2:
         raise ValueError("Argument n (= %s) is only implemented for n = 2" % n)
-    truth = all(isinstance(c, (str, StringMonoidElement)) for c in S)
-    if not truth:
+    if not all(isinstance(c, (str, StringMonoidElement)) for c in S):
         raise TypeError("Argument S (= %s) must be a list of strings.")
-    truth = all(len(c) == n for c in S)
-    if not truth:
+    if not all(len(c) == n for c in S):
         raise ValueError("Argument S (= %s) must be a list of strings of length 2" % S)
     X1 = [frequency_distribution([s[i] for s in S]) for i in range(2)]
     XX = frequency_distribution(S)
