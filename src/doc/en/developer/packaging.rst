@@ -688,8 +688,10 @@ The ``SPKG.rst`` file should follow this pattern:
 with ``PACKAGE_NAME`` replaced by the SPKG name (= the directory name in
 ``build/pkgs``).
 
-Legacy ``SPKG.txt`` files have an additional changelog section, but this
-information is now kept in the git repository.
+Do not include changelogs in the ``SPKG.rst`` file. We keep track of
+this information in the commit messages and the pull request
+discussions on GitHub only.
+
 
 .. _section-dependencies:
 
@@ -1293,11 +1295,10 @@ above.
 License information
 -------------------
 
-If you are patching a standard Sage spkg, then you should make sure that
-the license information for that package is up-to-date, both in its
-``SPKG.rst`` or ``SPKG.txt`` file and in the file ``SAGE_ROOT/COPYING.txt``.  For
-example, if you are producing an spkg which upgrades the vanilla source
-to a new version, check whether the license changed between versions.
+License information for a package needs to be put both in its
+``SPKG.rst`` file and in the file ``SAGE_ROOT/COPYING.txt``.
+Whenever upgrading a package, check whether the license changed between
+versions.
 
 If an upstream tarball of a package cannot be redistributed for license
 reasons, rename it to include the string ``do-not-distribute``.  This
