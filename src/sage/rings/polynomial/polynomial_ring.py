@@ -1390,9 +1390,10 @@ class PolynomialRing_general(Algebra):
             sage: R.random_element(6).degree()
             6
 
-        If a tuple of two integers is given for the ``degree`` argument, a polynomial is chosen
-        among all polynomials with degree between them. If the base ring can be sampled uniformly,
-        then this method also samples uniformly::
+        If a tuple of two integers is given for the ``degree`` argument, a
+        polynomial is chosen among all polynomials with degree between them. If
+        the base ring can be sampled uniformly, then this method also samples
+        uniformly::
 
             sage: R.random_element(degree=(0, 4)).degree() in range(0, 5)
             True
@@ -1406,8 +1407,8 @@ class PolynomialRing_general(Algebra):
             sage: while R.random_element(degree=(-1,2), x=-1, y=1) != R.zero():
             ....:     pass
 
-        Monic polynomials are chosen among all monic polynomials with degree between the given
-        ``degree`` argument::
+        Monic polynomials are chosen among all monic polynomials with degree
+        between the given ``degree`` argument::
 
             sage: all(R.random_element(degree=(-1, 1), monic=True).is_monic() for _ in range(10^3))
             True
@@ -2477,8 +2478,8 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
 #                 P += (F[i] * prod)
 #             return P
 
-# using Neville's method for recursively generating the
-# Lagrange interpolation polynomial
+        # using Neville's method for recursively generating the
+        # Lagrange interpolation polynomial
         elif algorithm == "neville":
             if previous_row is None:
                 previous_row = []
