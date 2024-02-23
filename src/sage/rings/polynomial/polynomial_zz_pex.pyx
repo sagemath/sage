@@ -22,8 +22,7 @@ from sage.libs.ntl.ZZ_pX cimport ZZ_pX_deg, ZZ_pX_coeff
 from sage.libs.ntl.ZZ_p cimport ZZ_p_rep
 from sage.libs.ntl.convert cimport ZZ_to_mpz, mpz_to_ZZ
 
-from sage.structure.element import have_same_parent
-from sage.structure.element import canonical_coercion
+from sage.structure.element import have_same_parent, canonical_coercion
 
 # We need to define this stuff before including the templating stuff
 # to make sure the function get_cparent is found since it is used in
@@ -623,6 +622,9 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
     def __pow__(self, exp, modulus):
         r"""
         Exponentiation of polynomials over extension fields.
+
+        If ``modulus`` is not ``None``, the exponentiation is performed
+        modulo the polynomial ``modulus``.
 
         EXAMPLES::
 
