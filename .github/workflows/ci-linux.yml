@@ -101,8 +101,7 @@ jobs:
       from_docker_repository: ghcr.io/${{ github.repository }}/
       from_docker_target: "with-targets-pre"
       docker_targets: "with-targets"
-      # FIXME: duplicated from env.TARGETS
-      targets: python3 sagelib-tox-sagepython-constraints_pkgs-norequirements
+      targets: python3-ensure sagelib-tox-sagepython-constraints_pkgs-norequirements
       tox_packages_factors: >-
           ["standard"]
       max_parallel: 15
