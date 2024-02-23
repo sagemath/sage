@@ -2662,6 +2662,9 @@ cdef class Polynomial(CommutativePolynomial):
             #       over explicitly a FiniteField type.
             ring = self.base_ring().extension(degree, names="a")
 
+        # Now we look for a linear root of this irreducible polynomial of degree `degree`
+        # over the user supplied ring or the extension we just computed. If the user sent
+        # a bad ring here of course there may be no root found.
         f = f.change_ring(ring)
         return f.any_root()
 
