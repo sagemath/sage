@@ -2151,6 +2151,18 @@ cdef class Polynomial(CommutativePolynomial):
             True
             sage: f % factor == 0
             True
+
+        TESTS:
+
+        Ensure that :issue:`37445` is fixed::
+
+            sage: R.<x> = GF(13)[]
+            sage: def irr(d, R): return f.monic() if (f := R.random_element(d)).is_irreducible() else irr(d, R)
+            sage: f = prod(irr(6, R) for _ in range(10))
+            sage: irr = f._cantor_zassenhaus_split_to_irreducible(6)
+            sage: assert irr.degree() == 6
+            sage: assert f % irr == 0
+            sage: assert irr.is_irreducible()
         """
         R = self.parent()
         q = self.base_ring().order()
@@ -2174,7 +2186,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             # Need to handle odd and even characteristic separately
             if q % 2:
-                h = self.gcd(pow(T, (q-1)//2, self) - 1)
+                h = self.gcd(pow(T, (q**degree-1)//2, self) - 1)
             else:
                 # Compute the trace of T with field of order 2^k
                 # sum T^(2^i) for i in range (degree * k)
