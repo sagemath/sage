@@ -26,7 +26,13 @@ from . import classical
 
 
 class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical):
-    def __init__(self, dual_basis, scalar, scalar_name="", basis_name=None, prefix=None):
+    @staticmethod
+    def __classcall__(cls, dual_basis, scalar, scalar_name="", basis_name=None, prefix=None):
+        if prefix is None:
+            prefix = 'd_'+dual_basis.prefix()
+        return super().__classcall__(cls, dual_basis, scalar, scalar_name, basis_name, prefix)
+
+    def __init__(self, dual_basis, scalar, scalar_name, basis_name, prefix):
         r"""
         Generic dual basis of a basis of symmetric functions.
 
@@ -72,9 +78,9 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
         EXAMPLES::
 
             sage: e = SymmetricFunctions(QQ).e()
-            sage: f = e.dual_basis(prefix = "m", basis_name="Forgotten symmetric functions"); f
+            sage: f = e.dual_basis(prefix="m", basis_name="Forgotten symmetric functions"); f
             Symmetric Functions over Rational Field in the Forgotten symmetric functions basis
-            sage: TestSuite(f).run(skip='_test_construction', elements = [f[1,1]+2*f[2], f[1]+3*f[1,1]])
+            sage: TestSuite(f).run(elements=[f[1,1]+2*f[2], f[1]+3*f[1,1]])
             sage: TestSuite(f).run() # long time (11s on sage.math, 2011)
 
         This class defines canonical coercions between ``self`` and
@@ -123,6 +129,9 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
         self._dual_basis = dual_basis
         self._scalar = scalar
         self._scalar_name = scalar_name
+        if self._scalar == sage.combinat.sf.sfa.zee:
+            self._descriptor = (self._dual_basis._descriptor
+                                + (("dual_basis", {"prefix": prefix, "basis_name": basis_name}),))
 
         # Set up the cache
 
@@ -145,9 +154,6 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
         self._sym = sage.combinat.sf.sf.SymmetricFunctions(scalar_target)
         self._p = self._sym.power()
 
-        if prefix is None:
-            prefix = 'd_'+dual_basis.prefix()
-
         classical.SymmetricFunctionAlgebra_classical.__init__(self, self._sym,
                                                               basis_name=basis_name,
                                                               prefix=prefix)
@@ -156,9 +162,6 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
         category = sage.categories.all.ModulesWithBasis(self.base_ring())
         self.register_coercion(SetMorphism(Hom(self._dual_basis, self, category), self._dual_to_self))
         self._dual_basis.register_coercion(SetMorphism(Hom(self, self._dual_basis, category), self._self_to_dual))
-
-    def construction(self):
-        raise NotImplementedError
 
     def _dual_to_self(self, x):
         """

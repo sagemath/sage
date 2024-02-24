@@ -91,8 +91,11 @@ class LLT_class(UniqueRepresentation):
         sage: HS3x(HC3t2[3,1])
         2*HSp3[3, 1] + (-2*x+1)*HSp3[4]
     """
+    @staticmethod
+    def __classcall__(cls, Sym, k, t='t'):
+        return super().__classcall__(cls, Sym, k, Sym.base_ring()(t))
 
-    def __init__(self, Sym, k, t='t'):
+    def __init__(self, Sym, k, t):
         r"""
         Class of LLT symmetric function bases
 
@@ -129,7 +132,7 @@ class LLT_class(UniqueRepresentation):
         self._k = k
         self._sym = Sym
         self._name = "level %s LLT polynomials" % self._k
-        self.t = Sym.base_ring()(t)
+        self.t = t
         self._name_suffix = ""
         if str(t) != 't':
             self._name_suffix += " with t=%s" % self.t
@@ -645,6 +648,7 @@ class LLT_spin(LLT_generic):
         self._m_to_self_cache = m_to_hsp_cache[level]
 
         LLT_generic.__init__(self, llt, prefix="HSp%s" % level)
+        self._descriptor = (("llt", {"k": self.level(), "t": self.t}), ("hspin",))
 
     def _to_m(self, part):
         r"""
@@ -713,6 +717,7 @@ class LLT_cospin(LLT_generic):
         self._self_to_m_cache = hcosp_to_m_cache[level]
         self._m_to_self_cache = m_to_hcosp_cache[level]
         LLT_generic.__init__(self, llt, prefix="HCosp%s" % level)
+        self._descriptor = (("llt", {"k": self.level(), "t": self.t}), ("hcospin",))
 
     def _to_m(self, part):
         r"""
