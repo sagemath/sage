@@ -4,25 +4,31 @@ Introduction to Drinfeld modular forms
 
 This tutorial outlines the definitions, the notations, and the
 implementation of Drinfeld modular forms in SageMath. We assume that the
-reader has basic knowledge of classical modular forms, as we
-will often make analogies to this setting. We also assume little
-knowledge of Drinfeld modules. The interested reader can consult the
-Sage reference manual about this topic :ref:`Drinfeld modules`.
+reader has basic knowledge of classical modular forms, as we will often
+make analogies to this setting. We also assume little knowledge of
+Drinfeld modules; for this topic, the interested reader can consult the
+SageMath reference manual: :ref:`Drinfeld modules`.
 
 .. RUBRIC:: Preliminary notations
 
 Let `q` be a prime power and let `A` be the ring of functions of
 `\mathbb{P}^1/\mathbb{F}_q` which are regular outside a closed point
 `\infty`. This ring is the polynomial ring `\mathbb{F}_q[T]`. We denote
-by `K := \mathbb{F}_q(T)` its fraction field. We endow `K` with the
+by `K := \mathbb{F}_q(T)` rational function field. We endow `K` with the
 `1/T`-adic valuation and let `K_{\infty} := \mathbb{F}_q((1/T))` be the
-completion of `K`. Next, we define `\mathbb{C}_{\infty}` to
-be the completion of an algebraic closure of `K_{\infty}`. Lastly, We
-denote by `\tau : x\mapsto x^q` the `q`-Frobenius.
+completion of `K`. Next, we define `\mathbb{C}_{\infty}` to be the
+completion of an algebraic closure of `K_{\infty}`. Lastly, We denote
+by `\tau : x\mapsto x^q` the `q`-Frobenius.
+
+.. note::
+
+    The above construction of `\mathbb{C}_{\infty}` is the same as the
+    construction of `\mathbb{C}_p` in the case of `p`-adic numbers
+    (see :wikipedia:`P-adic_number#Algebraic_closure`)
 
 In SageMath, we create the rational function field by first creating a
-univariate polynomial ring over `\mathbb{F}_q` and then constructing its
-field of fractions::
+univariate polynomial ring over `\mathbb{F}_q` and, following this, by
+constructing its field of fractions::
 
     sage: A = GF(3)['T']
     sage: K.<T> = Frac(A)
@@ -31,7 +37,7 @@ field of fractions::
     sage: K.base()  # returns A
     Univariate Polynomial Ring in T over Finite Field of size 3
 
-.. RUBRIC:: Drinfeld period domain
+.. RUBRIC:: Drinfeld period domain and action of `\mathrm{GL}_r(K_{\infty})`
 
 In the classical setting, the domain of any modular forms is the complex
 upper half plane `\mathcal{H}:=\{w\in \mathbb{C} : \mathrm{im}(w)>0\}`.
@@ -44,11 +50,14 @@ The analogue of this plane in the function field setting is the
     \mathbb{P}^{r-1}(\mathbb{C}_{\infty})
     \setminus \{K_{\infty}\text{-rational hyperplanes}\}.
 
-This space is a rigid analytic space and we identify its elements
-with the set of column vectors
+This space is a rigid analytic space and, after fixing an arbitrary
+nonzero constant `\xi` in `\mathbb{C}_{\infty}`, we identify its
+elements with the set of column vectors
 `(w_1,\ldots, w_{r-1}, w_{r})^{\mathrm{T}}` in `\mathbb{C}_{\infty}^r`
 such that the `w_i` are `K_{\infty}`-linearly independant and
-`w_r = \xi`, a nonzero constant in `\mathbb{C}_{\infty}`.
+`w_r = \xi`. Note that `\xi` is unspecified, but the reader can assume
+that `\xi = 1` without any loss of significant information. Its value
+can be interesting simply for normalization purposes.
 
 We define a left action of `\mathrm{GL}_r(K_{\infty})` on
 `\Omega^r(\mathbb{C}_{\infty})` by setting
@@ -63,7 +72,7 @@ where `j(\gamma, w) := \xi^{-1} \cdot (\text{last entry of }\gamma w)`.
 
 For any `w = (w_1, \ldots, w_{r-1}, \xi)` in
 `\Omega^r(\mathbb{C}_{\infty})` we have a corresponding discrete
-`A`-module which is free of rank `r`:
+`A`-module `\Lambda^w` which is free of rank `r`:
 
 .. MATH::
 
