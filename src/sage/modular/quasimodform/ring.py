@@ -817,9 +817,11 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         basis = []
         E2 = self.weight_2_eisenstein_series()
         M = self.__modular_forms_subring
+        E2_pow = self.one()
         for j in range(weight//2):
-            basis += [f*E2**j for f
+            basis += [f*E2_pow for f
                       in M.modular_forms_of_weight(weight - 2*j).basis()]
+            E2_pow *= E2
         if not weight%2:
-            basis.append(E2**(Integer(weight/2)))
+            basis.append(E2_pow)
         return basis
