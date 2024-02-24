@@ -301,7 +301,7 @@ class QuasiModularFormsElement(ModuleElement):
 
     def depth(self):
         r"""
-        Return the depth of the given quasimodular form.
+        Return the depth of this quasimodular form.
 
         Note that the quasimodular form must be homogeneous of weight
         `k`. Recall that the *depth* is the integer `p` such that
