@@ -51,8 +51,8 @@ class DrinfeldModularFormsElement(ModuleElement):
         sage: g2.parent()
         Ring of Drinfeld modular forms of rank 2 over Fraction Field of Univariate Polynomial Ring in T over Finite Field of size 3
 
-    Next, via algebraic combination of the generator, we create a
-    nonhomogeneous element::
+    Next, via algebraic combination of the generator, we may create any
+    element of the ring::
 
         sage: F = g1*g2 + g2
         sage: F
@@ -223,9 +223,14 @@ class DrinfeldModularFormsElement(ModuleElement):
             True
             sage: M.0 == M.0
             True
+            sage: M.0 < M.1
+            Traceback (most recent call last):
+            ...
+            TypeError: invalid comparison between Drinfeld modular forms ring elements
         """
         if op != op_EQ and op != op_NE:
-            raise TypeError('invalid comparison between modular forms ring elements')
+            raise TypeError('invalid comparison between Drinfeld'
+                            ' modular forms ring elements')
         return richcmp(self._polynomial, other._polynomial, op)
 
     def rank(self):
