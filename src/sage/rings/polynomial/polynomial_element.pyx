@@ -2585,7 +2585,11 @@ cdef class Polynomial(CommutativePolynomial):
             if ring not in FiniteFields():
                 rs = self.roots(ring=ring, multiplicities=False)
                 if rs:
-                    return choice(rs)
+                    # TODO: this has been deterministic and changing this to be random
+                    # breaks many doctests. For now we leave it deterministic but you
+                    # could change it to choice(rs). This mainly breaks examples over
+                    # of elliptic curve stuff over number fields
+                    return rs[0]
                 raise ValueError(f"polynomial {self} has no roots")
 
         # Ensure that a provided ring is appropriate for the function. From the
