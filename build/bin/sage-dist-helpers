@@ -318,15 +318,15 @@ sdh_store_wheel() {
     mkdir -p "${SAGE_DESTDIR}${SAGE_SPKG_WHEELS}" && \
         $sudo mv "$wheel" "${SAGE_DESTDIR}${SAGE_SPKG_WHEELS}/" || \
         sdh_die "Error storing $wheel"
-    wheel="${SAGE_SPKG_WHEELS}/${wheel##*/}"
+    unstaged_wheel="${SAGE_SPKG_WHEELS}/${wheel##*/}"
     if [ -n "${SAGE_SPKG_SCRIPTS}" -a -n "${PKG_BASE}" ]; then
-        wheel_basename="${wheel##*/}"
+        wheel_basename="${unstaged_wheel##*/}"
         distname="${wheel_basename%%-*}"
         # Record name and wheel file location
         mkdir -p ${SAGE_DESTDIR}${SAGE_SPKG_SCRIPTS}/${PKG_BASE}
-        echo "${distname} @ file://${wheel}" >> ${SAGE_DESTDIR}${SAGE_SPKG_SCRIPTS}/${PKG_BASE}/spkg-requirements.txt
+        echo "${distname} @ file://${unstaged_wheel}" >> ${SAGE_DESTDIR}${SAGE_SPKG_SCRIPTS}/${PKG_BASE}/spkg-constraints.txt
     fi
-    wheel="${SAGE_DESTDIR}${wheel}"
+    wheel="${SAGE_DESTDIR}${unstaged_wheel}"
 }
 
 sdh_store_and_pip_install_wheel() {
@@ -346,6 +346,9 @@ sdh_store_and_pip_install_wheel() {
         shift
     done
     sdh_store_wheel "$@"
+    if [ -n "${SAGE_SPKG_SCRIPTS}" -a -n "${PKG_BASE}" ]; then
+        echo "${distname} @ file://${unstaged_wheel}" >> ${SAGE_DESTDIR}${SAGE_SPKG_SCRIPTS}/${PKG_BASE}/spkg-requirements.txt
+    fi
 
     wheel_basename="${wheel##*/}"
     distname="${wheel_basename%%-*}"
