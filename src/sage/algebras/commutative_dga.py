@@ -1572,7 +1572,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             INPUT:
 
             - ``values`` -- (optional) either the values in which the variables
-              will be evaluated or a dictionary.
+              will be evaluated or a dictionary
 
             OUTPUT:
 
