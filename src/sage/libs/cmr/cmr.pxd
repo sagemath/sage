@@ -257,7 +257,7 @@ cdef extern from "cmr/matroid.h":
     size_t CMRmatroiddecNumPivots(CMR_MATROID_DEC* dec)
     size_t* CMRmatroiddecPivotRows(CMR_MATROID_DEC* dec)
     size_t* CMRmatroiddecPivotColumns(CMR_MATROID_DEC* dec)
-    CMR_ERROR CMRmatroiddecPrint(CMR* cmr, CMR_MATROID_DEC* dec, FILE* stream, size_t indent, bool printChildren, bool printParentRowsColumns, bool printMatrices, bool printGraphs, bool printReductions, bool printPivots)
+    # CMR_ERROR CMRmatroiddecPrint(CMR* cmr, CMR_MATROID_DEC* dec, FILE* stream, size_t indent, bool printChildren, bool printParentRowsColumns, bool printMatrices, bool printGraphs, bool printReductions, bool printPivots)
     CMR_ERROR CMRmatroiddecFree(CMR* cmr, CMR_MATROID_DEC** pdec)
     CMR_ERROR CMRmatroiddecCreateMatrixRoot(CMR* cmr, CMR_MATROID_DEC** pdec, bool isTernary, CMR_CHRMAT* matrix)
     CMR_ERROR CMRmatroiddecUpdateOneSum(CMR* cmr, CMR_MATROID_DEC* dec, size_t numChildren)
