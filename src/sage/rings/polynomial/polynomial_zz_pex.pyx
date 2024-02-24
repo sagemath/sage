@@ -635,7 +635,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             sage: pow(x + 3, 5)
             x^5 + 15*x^4 + 90*x^3 + 68*x^2 + x + 41
 
-        If modulus is not None, performs modular exponentiation::
+        If modulus is not ``None``, performs modular exponentiation::
 
             sage: K.<a> = GF(101^2, 'a', modulus=[1,1,1])
             sage: R.<x> = PolynomialRing(K, implementation="NTL")
@@ -651,7 +651,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             sage: pow(x^4, 25, x^2 + x + a)
             (19*a + 64)*x + 30*a + 2
 
-        TESTS::
+        TESTS:
 
         Canonical coercion should apply::
 

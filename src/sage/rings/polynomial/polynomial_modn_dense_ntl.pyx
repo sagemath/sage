@@ -1785,7 +1785,7 @@ cdef class Polynomial_dense_mod_p(Polynomial_dense_mod_n):
 
     def __pow__(self, n, modulus):
         """
-        Exponentiation of polynomials.
+        Exponentiation of ``self``.
 
         If ``modulus`` is not ``None``, the exponentiation is performed
         modulo the polynomial ``modulus``.
@@ -1798,7 +1798,7 @@ cdef class Polynomial_dense_mod_p(Polynomial_dense_mod_n):
             sage: pow(x-1, 15, x^3+x+1)
             55*x^2 + 6*x + 46
 
-        TESTS::
+        TESTS:
 
         Negative powers will not work::
 
@@ -1808,7 +1808,7 @@ cdef class Polynomial_dense_mod_p(Polynomial_dense_mod_n):
             ...
             NotImplementedError: Fraction fields not implemented for this type.
 
-        We define ``0^0`` to be unity, :trac:`13895`::
+        We define ``0^0`` to be unity, :issue:`13895`::
 
             sage: R.<x> = PolynomialRing(Integers(101), implementation='NTL')
             sage: R(0)^0

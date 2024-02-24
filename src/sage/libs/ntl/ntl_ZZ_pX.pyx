@@ -530,9 +530,9 @@ cdef class ntl_ZZ_pX():
         else:
             return self._powmod(Integer(n), modulus)
 
-    cpdef ntl_ZZ_pX _pow(ntl_ZZ_pX self, n):
+    cdef ntl_ZZ_pX _pow(ntl_ZZ_pX self, long n):
         """
-        Compute the n-th power of self.
+        Compute the ``n``-th power of `self``.
         """
         if n < 0:
             raise NotImplementedError
@@ -547,9 +547,9 @@ cdef class ntl_ZZ_pX():
             sig_off()
         return r
 
-    cpdef ntl_ZZ_pX _powmod(ntl_ZZ_pX self, Integer n, ntl_ZZ_pX modulus):
+    cdef ntl_ZZ_pX _powmod(ntl_ZZ_pX self, Integer n, ntl_ZZ_pX modulus):
         r"""
-        Compute the n-th power of self modulo a polynomial.
+        Compute the ``n``-th power of ``self`` modulo a polynomial.
         """
         cdef ntl_ZZ_pX r = self._new()
         cdef ZZ_c n_ZZ

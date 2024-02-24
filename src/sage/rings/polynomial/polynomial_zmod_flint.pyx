@@ -485,7 +485,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
     def __pow__(self, exp, modulus):
         r"""
-        Exponentiation of polynomials.
+        Exponentiation of ``self``.
 
         If ``modulus`` is not ``None``, the exponentiation is performed
         modulo the polynomial ``modulus``.
@@ -506,7 +506,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             sage: pow(x^4, 6, x^2 + x + 1)
             1
 
-        TESTS::
+        TESTS:
 
         Canonical coercion applies::
 
