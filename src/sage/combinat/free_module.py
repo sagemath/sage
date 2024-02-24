@@ -503,10 +503,13 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             return self
         construction = self.construction()
         if construction is not None:
-            functor, _ = construction
+            functor, args = construction
             from sage.categories.pushout import VectorFunctor
             if isinstance(functor, VectorFunctor):
                 return functor(R)
+            from sage.categories.tensor import TensorProductFunctor
+            if isinstance(functor, TensorProductFunctor):
+                return functor([f.change_ring(R) for f in args])
         raise NotImplementedError('the method change_ring() has not yet been implemented')
 
     # For backwards compatibility
