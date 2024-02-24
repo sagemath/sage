@@ -37,7 +37,7 @@ cdef class Group(sage.structure.parent.Parent):
             sage: G = Group()
             doctest:warning...:
             DeprecationWarning: do not use the old Group class
-            See https://github.com/sagemath/sage/issues/34567 for details.
+            See https://github.com/sagemath/sage/issues/37449 for details.
             sage: G.category()
             Category of groups
             sage: G = Group(category = Groups()) # todo: do the same test with some subcategory of Groups when there will exist one
@@ -57,7 +57,7 @@ cdef class Group(sage.structure.parent.Parent):
             sage: h == hash(G)
             True
         """
-        deprecation(34567, 'do not use the old Group class')
+        deprecation(37449, 'do not use the old Group class')
         from sage.categories.basic import Groups
         if category is None:
             category = Groups()
