@@ -10,8 +10,8 @@ to `\exp(-|x - c|_2^2 / (2\sigma^2))`. More precisely lattice vectors in `x \in
 
 .. MATH::
 
-    `\frac{\exp(-|x - c|_2^2 / (2\sigma^2))}{\sum_{v \in \Lambda} \exp(-|v|_2^2 /
-    (2\sigma^2))}`
+    \frac{\exp(-|x - c|_2^2 / (2\sigma^2))}{\sum_{v \in \Lambda} \exp(-|v|_2^2 /
+    (2\sigma^2))}.
 
 AUTHORS:
 
@@ -352,7 +352,7 @@ class DiscreteGaussianDistributionLatticeSampler(SageObject):
     @cached_method
     def _maximal_r(self):
         r"""
-        This function computes the largest value `r > 0` such that `\Sigma - r^2BB^@`
+        This function computes the largest value `r > 0` such that `\Sigma - r^2BB^T`
         is positive definite.
 
         This is equivalent to finding `\lambda_1(\Sigma / Q) = 1 / \lambda_n(Q
