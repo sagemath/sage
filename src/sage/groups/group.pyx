@@ -21,7 +21,7 @@ from sage.structure.parent cimport Parent
 from sage.rings.infinity import infinity
 
 
-def is_Group(x):
+def is_Group(x) -> bool:
     """
     Return whether ``x`` is a group object.
 
@@ -42,8 +42,7 @@ def is_Group(x):
         sage: is_Group("a string")
         False
     """
-    from sage.groups.old import Group as OldGroup
-    return isinstance(x, (Group, OldGroup))
+    return isinstance(x, Group)
 
 
 cdef class Group(Parent):
