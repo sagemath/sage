@@ -44,14 +44,12 @@ negative crossing which would be opposite to the convention in Sage (see definit
 :arxiv:`Gittings, T., "Minimum Braids: A Complete Invariant of Knots and Links" <math/0401051>`).
 
 Furthermore, note that not all columns available in the database are visible on the web
-pages (see also the related note under :meth:`KnotInfoBase.khovanov_polynomial`).
-It is planned to remove non-visible columns from the database in the future (see
+pages. It is planned to remove non-visible columns from the database in the future (see
 the `Python Wrapper <https://github.com/soehms/database_knotinfo#readme>`__ for
 updated information).
 
 EXAMPLES::
 
-    sage: from sage.knots.knotinfo import KnotInfo
     sage: L = KnotInfo.L4a1_0
     sage: L.pd_notation()
     [[6, 1, 7, 2], [8, 3, 5, 4], [2, 5, 3, 6], [4, 7, 1, 8]]
@@ -103,7 +101,7 @@ too::
     sage: # optional - snappy
     sage: L6 = KnotInfo.L6a1_0
     sage: l6s = L6.link(snappy=True); l6s
-    Plink failed to import tkinter.
+    ...
     <Link: 2 comp; 6 cross>
     sage: type(l6s)
     <class 'spherogram.links.invariants.Link'>
@@ -260,13 +258,21 @@ def eval_knotinfo(string, locals={}, to_tuple=True):
 
     EXAMPLES::
 
-        sage: from sage.knots.knotinfo import KnotInfo, eval_knotinfo
+        sage: from sage.knots.knotinfo import eval_knotinfo
         sage: L = KnotInfo.L4a1_0
         sage: L.braid_notation(original=True)
         '{3, {-2, -2, -1, 2, -1}}'
         sage: eval_knotinfo(_)
         (3, (-2, -2, -1, 2, -1))
+        sage: KnotInfo.K13a_1.kauffman_polynomial()  # optional - database_knotinfo # indirect doctest
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: this value is not provided by the database
     """
+    if not string:
+        # An empty string in the database Excel spreadsheet indicates that
+        # the property is not provided for that particular knot or link.
+        raise NotImplementedError('this value is not provided by the database')
     if to_tuple:
         new_string = string.replace('{', '(')
         new_string = new_string.replace('}', ')')
@@ -275,6 +281,31 @@ def eval_knotinfo(string, locals={}, to_tuple=True):
         new_string = new_string.replace('}', ']')
     new_string = new_string.replace(';', ',')
     return sage_eval(new_string, locals=locals)
+
+def knotinfo_int(string):
+    r"""
+    Preparse a string from the KnotInfo database representing an integer.
+
+    INPUT:
+
+    - ``string`` -- string that gives a value of some database entry
+
+    EXAMPLES::
+
+        sage: from sage.knots.knotinfo import knotinfo_int
+        sage: knotinfo_int('7')
+        7
+        sage: KnotInfo.K13a_1.braid_index() # optional - database_knotinfo # indirect doctest
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: this integer is not provided by the database
+    """
+    if not string:
+        # an empty string in the Excel sheet of the database indicates that
+        # the property is not provided for this special knot or link.
+        raise NotImplementedError('this integer is not provided by the database')
+    else:
+        return int(string)
 
 def knotinfo_bool(string):
     r"""
@@ -289,13 +320,20 @@ def knotinfo_bool(string):
         sage: from sage.knots.knotinfo import knotinfo_bool
         sage: knotinfo_bool('Y')
         True
+        sage: KnotInfo.K13a_1.is_almost_alternating() # optional - database_knotinfo # indirect doctest
+        Traceback (most recent call last):
+        ...
+        NotImplementedError: this boolean is not provided by the database
     """
+    if not string:
+        # an empty string in the Excel sheet of the database indicates that
+        # the property is not provided for this special knot or link.
+        raise NotImplementedError('this boolean is not provided by the database')
     if string == 'Y':
         return True
     elif string == 'N':
         return False
     raise ValueError('%s is not a KnotInfo boolean')
-
 
 # ---------------------------------------------------------------------------------
 # KnotInfoBase
@@ -307,7 +345,6 @@ class KnotInfoBase(Enum):
 
     EXAMPLES::
 
-        sage: from sage.knots.knotinfo import KnotInfo
         sage: [knot.name for knot in KnotInfo if knot.crossing_number() < 5]
         ['K0_1', 'K3_1', 'K4_1', 'L2a1_0', 'L2a1_1', 'L4a1_0', 'L4a1_1']
 
@@ -330,7 +367,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.L4a1_0 < KnotInfo.L4a1_1 # indirect doctest
             True
             sage: KnotInfo.L2a1_0 < KnotInfo.K3_1   # indirect doctest
@@ -351,7 +387,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: L = KnotInfo.L4a1_0
             sage: it = L.items
             sage: [i.name for i in it if i.name.startswith('braid')]
@@ -378,7 +413,6 @@ class KnotInfoBase(Enum):
         r"""
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: L = KnotInfo.L4a1_0
             sage: L[L.items.alternating]
             'Y'
@@ -389,14 +423,14 @@ class KnotInfoBase(Enum):
             sage: L[0]
             Traceback (most recent call last):
             ...
-            KeyError: "Item must be an instance of <enum 'KnotInfoColumns'>"
+            KeyError: "item must be an instance of <enum 'KnotInfoColumns'>"
         """
         if not isinstance(item, KnotInfoColumns):
-            raise KeyError('Item must be an instance of %s' % (KnotInfoColumns))
+            raise KeyError('item must be an instance of %s' % (KnotInfoColumns))
         if item.column_type() == item.types.OnlyLinks and self.is_knot():
-            raise KeyError('Item not available for knots' % (KnotInfoColumns))
+            raise KeyError('item not available for knots' % (KnotInfoColumns))
         if item.column_type() == item.types.OnlyKnots and not self.is_knot():
-            raise KeyError('Item not available for links' % (KnotInfoColumns))
+            raise KeyError('item not available for links' % (KnotInfoColumns))
 
         l = db.read(item)
         ind = db.read_row_dict()[self.name][0]
@@ -416,10 +450,9 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: L = KnotInfo.L4a1_0
             sage: L._offset_knots()          # optional - database_knotinfo
-            2978
+            12966
         """
         return db.read_num_knots()
 
@@ -431,12 +464,16 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: L = KnotInfo.L4a1_0
             sage: L._braid_group()
             Braid group on 3 strands
         """
-        n = self.braid_index()
+        try:
+            n = self.braid_index()
+        except NotImplementedError:
+            bn = self.braid_notation()
+            n = max(abs(i) for i in bn) + 1
+
         if n == 1:
             return BraidGroup(2)
         else:
@@ -450,7 +487,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: L = KnotInfo.L4a1_1
             sage: L._homfly_pol_ring('u', 'v')
             Multivariate Laurent Polynomial Ring in u, v over Integer Ring
@@ -477,7 +513,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: L = KnotInfo.L4a1_0
             sage: L.pd_notation()
             [[6, 1, 7, 2], [8, 3, 5, 4], [2, 5, 3, 6], [4, 7, 1, 8]]
@@ -520,7 +555,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: L = KnotInfo.L4a1_0
             sage: L.dt_notation()
             [[6, 8], [2, 4]]
@@ -563,7 +597,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: L = KnotInfo.L4a1_0
             sage: L.gauss_notation()
             [[1, -3, 2, -4], [3, -1, 4, -2]]
@@ -606,7 +639,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: L = KnotInfo.L4a1_0
             sage: L.braid_notation()
             (-2, -2, -1, 2, -1)
@@ -661,17 +693,23 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: L = KnotInfo.L4a1_0
             sage: L.braid_index()
             3
+            sage: KnotInfo.K13a_1.inject()    # optional - database_knotinfo
+            Defining K13a_1
+            sage: K13a_1.braid_index()        # optional - database_knotinfo
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: this integer is not provided by the database
+
         """
         if self.is_knot():
-            return int(self[self.items.braid_index])
+            return knotinfo_int(self[self.items.braid_index])
         else:
             braid_notation = self[self.items.braid_notation]
             braid_notation = eval_knotinfo(braid_notation)
-            return int(braid_notation[0])
+            return knotinfo_int(braid_notation[0])
 
     @cached_method
     def braid_length(self):
@@ -686,12 +724,11 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: K = KnotInfo.K3_1
             sage: K.braid_length()
             3
         """
-        return int(self[self.items.braid_length])
+        return knotinfo_int(self[self.items.braid_length])
 
     @cached_method
     def braid(self):
@@ -700,12 +737,13 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: K = KnotInfo.K3_1
             sage: K.braid()
             s^3
             sage: K.braid_notation()
             (1, 1, 1)
+            sage: KnotInfo.K13n_1448.braid()    # optional - database_knotinfo
+            s0^-1*s1*s2*s3*s4*s3^2*s2^-1*s1^-1*s0*s2^-1*s1*(s3*s2)^2*s4^-1*s3*s2*s1^-1*s3*s2^-1*s3
         """
         return self._braid_group()(self.braid_notation())
 
@@ -716,7 +754,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.L6a1_0.num_components()
             2
         """
@@ -737,7 +774,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.L4a1_0.crossing_number()
             4
             sage: KnotInfo.K3_1.crossing_number()
@@ -745,7 +781,7 @@ class KnotInfoBase(Enum):
             sage: Link(KnotInfo.L4a1_0.braid())
             Link with 2 components represented by 5 crossings
         """
-        return int(self[self.items.crossing_number])
+        return knotinfo_int(self[self.items.crossing_number])
 
     @cached_method
     def determinant(self):
@@ -769,7 +805,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.L4a1_0.determinant()
             4
             sage: KnotInfo.K3_1.determinant()
@@ -780,7 +815,7 @@ class KnotInfoBase(Enum):
         if self.crossing_number() == 0:
             # see note above
             return 1
-        return int(self[self.items.determinant])
+        return knotinfo_int(self[self.items.determinant])
 
     @cached_method
     def three_genus(self):
@@ -797,7 +832,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.K5_2.three_genus()     # optional - databsase_knotinfo
             1
 
@@ -808,7 +842,7 @@ class KnotInfoBase(Enum):
             sage: KnotInfo.K5_2.link().genus()
             3
         """
-        return int(self[self.items.three_genus])
+        return knotinfo_int(self[self.items.three_genus])
 
     @cached_method
     def signature(self):
@@ -826,11 +860,10 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.K5_2.signature()       # optional - databsase_knotinfo
             1
         """
-        return int(self[self.items.signature])
+        return knotinfo_int(self[self.items.signature])
 
     @cached_method
     def is_knot(self):
@@ -839,7 +872,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.L7a1_0.is_knot()      # optional - database_knotinfo
             False
             sage: KnotInfo.K6_3.is_knot()
@@ -855,7 +887,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.L10a122_1_0.name_unoriented()  # optional - database_knotinfo
             'L10a122'
         """
@@ -890,7 +921,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.K6_1.series().inject()
             Defining K6
             sage: [(K.name, K.symmetry_type()) for K in K6]
@@ -899,7 +929,7 @@ class KnotInfoBase(Enum):
              ('K6_3', 'fully amphicheiral')]
         """
         if not self.is_knot():
-            raise NotImplementedError('This is only available for knots')
+            raise NotImplementedError('this is only available for knots')
 
         symmetry_type = self[self.items.symmetry_type].strip() # for example K10_88 is a case with trailing whitespaces
         if not symmetry_type and self.crossing_number() == 0:
@@ -913,7 +943,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.K6_3.is_reversible()
             True
         """
@@ -952,26 +981,24 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
-            sage: Kp = KnotInfo.K12a_427             # optional - database_knotinfo
-            sage: Kp.is_amphicheiral()               # optional - database_knotinfo
+            sage: # optional - database_knotinfo
+            sage: Kp = KnotInfo.K12a_427
+            sage: Kp.is_amphicheiral()
             False
-            sage: Kp.is_amphicheiral(positive=True)  # optional - database_knotinfo
+            sage: Kp.is_amphicheiral(positive=True)
             True
-
-            sage: Kn = KnotInfo.K10_88               # optional - database_knotinfo
-            sage: Kn.is_amphicheiral()               # optional - database_knotinfo
+            sage: Kn = KnotInfo.K10_88
+            sage: Kn.is_amphicheiral()
             True
-            sage: Kn.is_amphicheiral(positive=True)  # optional - database_knotinfo
+            sage: Kn.is_amphicheiral(positive=True)
             False
-
             sage: KnotInfo.L4a1_0.is_amphicheiral()
             False
-            sage: KnotInfo.L10n59_1.is_amphicheiral() # optional - database_knotinfo
+            sage: KnotInfo.L10n59_1.is_amphicheiral()
             True
-            sage: KnotInfo.L10n36_0.inject()          # optional - database_knotinfo
+            sage: KnotInfo.L10n36_0.inject()
             Defining L10n36_0
-            sage: L10n36_0.is_amphicheiral() is None  # optional - database_knotinfo
+            sage: L10n36_0.is_amphicheiral() is None
             True
         """
         if self.is_knot():
@@ -1023,7 +1050,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.K5_2.is_alternating()
             True
         """
@@ -1036,7 +1062,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.K5_2.is_almost_alternating() # optional - database_knotinfo
             False
         """
@@ -1050,7 +1075,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.K5_2.is_quasi_alternating() # optional - database_knotinfo
             True
         """
@@ -1064,7 +1088,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.K5_2.is_adequate()         # optional - database_knotinfo
             True
         """
@@ -1078,7 +1101,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.K5_2.is_positive()
             True
         """
@@ -1091,7 +1113,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.K5_2.is_quasipositive()     # optional - database_knotinfo
             True
         """
@@ -1105,7 +1126,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.K5_2.is_strongly_quasipositive() # optional - database_knotinfo
             True
         """
@@ -1119,7 +1139,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.K5_2.is_positive_braid()         # optional - database_knotinfo
             False
         """
@@ -1133,7 +1152,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.K6_3.is_fibered()
             True
         """
@@ -1146,7 +1164,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.L6a2_1.is_oriented()
             True
         """
@@ -1191,12 +1208,11 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: K3_1 = KnotInfo.K3_1
             sage: PK3_1 = K3_1.homfly_polynomial(); PK3_1
             -v^4 + v^2*z^2 + 2*v^2
             sage: K3_1.homfly_polynomial(original=True)
-            '(2*v^2-v^4)+(v^2)*z^2'
+            '(2*v^2-v^4)+v^2*z^2'
             sage: PK3_1 == K3_1.link().homfly_polynomial(normalization='vz')
             True
 
@@ -1289,7 +1305,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: L = KnotInfo.L2a1_1
             sage: L.kauffman_polynomial()
             a^-1*z - a^-1*z^-1 + a^-2 + a^-3*z - a^-3*z^-1
@@ -1396,7 +1411,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: K = KnotInfo.K4_1
             sage: Kj = K.jones_polynomial(); Kj
             t^2 - t - 1/t + 1/t^2 + 1
@@ -1574,7 +1588,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: K = KnotInfo.K4_1
             sage: Ka = K.alexander_polynomial(); Ka
             t^2 - 3*t + 1
@@ -1650,7 +1663,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: K = KnotInfo.K4_1
             sage: Kc = K.conway_polynomial(); Kc
             -t^2 + 1
@@ -1704,10 +1716,8 @@ class KnotInfoBase(Enum):
           the reduced version of the homology is used
         - ``odd`` -- boolean (default: ``False``); if set to ``True``
           the odd version of the homology is used
-        - ``KhoHo`` -- boolean (default: ``False`` for knots and ``True``
-          for multi-component links); if set to ``True`` the data calculated
-          using `KhoHo <https://github.com/AShumakovitch/KhoHo>`__ is used
-          (see the note below)
+        - ``KhoHo`` -- boolean (deprecated). The corresponding values have
+          disappeared from the database since January 2024
 
         OUTPUT:
 
@@ -1718,28 +1728,14 @@ class KnotInfoBase(Enum):
         .. NOTE ::
 
             The data used for multi-component links were calculated with the program
-            `KhoHo <https://github.com/AShumakovitch/KhoHo>`__. These can still be
-            used for knots by setting the optional argument ``KhoHo`` to ``True``,
-            even though they will no longer be visible on the Knot website as of
-            October 30, 2022. Otherwise, for knots data calculated with
+            `KhoHo <https://github.com/AShumakovitch/KhoHo>`__.which uses the ``DT``
+            notation. For knots data calculated with
             `KnotJob <https://www.maths.dur.ac.uk/users/dirk.schuetz/knotjob.html>`__
             are used. The latter program is more accurate in terms of orientation
             and reflection as it is based on ``PD`` code.
 
-            Note that in the future columns that are not visible on the web page may
-            also be removed in the database (see the
-            `Python wrapper <https://github.com/soehms/database_knotinfo#readme>`__
-            for updated information). Therefore, the ``KhoHo`` option cannot be
-            guaranteed to work after upgrading the ``database_knotinfo``-SPKG.
-
-            Furthermore, since the results of ``KhoHo`` were computed using the ``DT``
-            notation, the Khovanov polynomial returned by this option belongs to the
-            mirror image of the given knot for a `list of 140 exceptions
-            <https://raw.githubusercontent.com/soehms/database_knotinfo/main/hints/list_of_mirrored_khovanov_polynonmial.txt>`__.
-
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: K = KnotInfo.K6_3
             sage: Kk = K.khovanov_polynomial(); Kk
             q^7*t^3 + q^5*t^2 + q^3*t^2 + q^3*t + q*t + 2*q + 2*q^-1 + q^-1*t^-1
@@ -1802,11 +1798,11 @@ class KnotInfoBase(Enum):
             sage: K0_1.khovanov_polynomial(base_ring=GF(3), reduced=True)
             Traceback (most recent call last):
             ...
-            ValueError: Characteristic 3 of base ring is not valid
+            ValueError: characteristic 3 of base ring is not valid
             sage: K0_1.khovanov_polynomial(base_ring=GF(3), odd=True)
             Traceback (most recent call last):
             ...
-            ValueError: Characteristic 3 of base ring is not valid
+            ValueError: characteristic 3 of base ring is not valid
             sage: L.khovanov_polynomial(base_ring=GF(2))
             Traceback (most recent call last):
             ...
@@ -1822,11 +1818,13 @@ class KnotInfoBase(Enum):
         integral = ch == 0 and base_ring.is_field()
         if not self.is_knot():
             # KnotJob calculated results only available for knots
-            KhoHo = True
-        if KhoHo:
-            # use the old results obtained by the KhoHo software
             khovanov_polynomial = self[self.items.khovanov_polynomial]
+            KhoHo = True
         else:
+            if KhoHo:
+                KhoHo = False
+                from sage.misc.superseded import deprecation
+                deprecation(37014, "the KhoHo option is deprecated and ignored.")
             if reduced:
                 if integral:
                     khovanov_polynomial = self[self.items.khovanov_reduced_integral_polynomial]
@@ -1835,7 +1833,7 @@ class KnotInfoBase(Enum):
                 elif ch == 2:
                     khovanov_polynomial = self[self.items.khovanov_reduced_mod2_polynomial]
                 else:
-                    raise ValueError('Characteristic %s of base ring is not valid' % ch)
+                    raise ValueError('characteristic %s of base ring is not valid' % ch)
             elif odd:
                 if integral:
                     khovanov_polynomial = self[self.items.khovanov_odd_integral_polynomial]
@@ -1844,7 +1842,7 @@ class KnotInfoBase(Enum):
                 elif ch == 2:
                     khovanov_polynomial = self[self.items.khovanov_odd_mod2_polynomial]
                 else:
-                    raise ValueError('Characteristic %s of base ring is not valid' % ch)
+                    raise ValueError('characteristic %s of base ring is not valid' % ch)
             else:
                 khovanov_polynomial = self[self.items.khovanov_unreduced_integral_polynomial]
 
@@ -1932,7 +1930,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: K = KnotInfo.K3_1
             sage: K.link()
             Knot represented by 3 crossings
@@ -1955,7 +1952,7 @@ class KnotInfoBase(Enum):
             sage: L.link(use_item=L.items.dt_notation)
             Traceback (most recent call last):
             ...
-            ValueError: Link construction using Columns.dt_notation not possible
+            ValueError: link construction using Columns.dt_notation not possible
 
         using ``snappy``::
 
@@ -2015,7 +2012,7 @@ class KnotInfoBase(Enum):
             try:
                 from snappy import Link
             except ImportError:
-                raise ImportError('This option demands snappy to be installed')
+                raise ImportError('this option demands snappy to be installed')
         elif self.is_knot():
             from sage.knots.knot import Knot as Link
         else:
@@ -2037,7 +2034,7 @@ class KnotInfoBase(Enum):
             elif use_item == self.items.gauss_notation:
                 return Knots().from_gauss_code(self.gauss_notation())
 
-        raise ValueError('Link construction using %s not possible' % use_item)
+        raise ValueError('link construction using %s not possible' % use_item)
 
     @cached_method
     def is_unique(self):
@@ -2050,7 +2047,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.L4a1_0.is_unique()
             True
             sage: KnotInfo.L5a1_0.is_unique()
@@ -2104,7 +2100,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.L4a1_0.inject()
             Defining L4a1_0
             sage: L4a1_0.is_recoverable()
@@ -2170,7 +2165,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.K5_2.inject()
             Defining K5_2
             sage: K5_2.is_alternating()
@@ -2197,7 +2191,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: K5 = KnotInfo.K5_2.series()
             sage: K5(1)
             <KnotInfo.K5_1: '5_1'>
@@ -2232,7 +2225,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: K = KnotInfo.K3_1
             sage: K.diagram()            # not tested
             True
@@ -2262,7 +2254,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: K = KnotInfo.K3_1
             sage: K.knot_atlas_webpage()        # not tested
             True
@@ -2282,7 +2273,6 @@ class KnotInfoBase(Enum):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: K = KnotInfo.K3_1
             sage: K.knotilus_webpage(new=1)   # not tested
             True
@@ -2516,11 +2506,11 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
         """
         from sage.rings.integer import Integer
         if not type(item) in (int, Integer):
-            raise ValueError('Item must be an integer')
+            raise ValueError('item must be an integer')
         l = self.list()
         max_item = len(l)
         if item < 0 or item > max_item:
-            raise ValueError('Item must be non negative and smaller than %s' % (max_item))
+            raise ValueError('item must be non negative and smaller than %s' % (max_item))
 
         return l[item]
 
@@ -2539,16 +2529,16 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
             sage: K6(2)                         # indirect doctest
             <KnotInfo.K6_2: '6_2'>
 
-            sage: from sage.knots.knotinfo import KnotInfo
-            sage: KnotInfo.L8a21_0_1_0.inject()  # optional - database_knotinfo
+            sage: # optional - database_knotinfo
+            sage: KnotInfo.L8a21_0_1_0.inject()
             Defining L8a21_0_1_0
-            sage: L8a21_0_1_0.series().inject()  # optional - database_knotinfo
+            sage: L8a21_0_1_0.series().inject()
             Defining L8a
-            sage: L8a(1)                         # optional - database_knotinfo
+            sage: L8a(1)
             Series of links L8a1
-            sage: L8a(21)(2)     == L8a21_0_1_0  # optional - database_knotinfo
+            sage: L8a(21)(2)     == L8a21_0_1_0
             True
-            sage: L8a(21)('010') == L8a21_0_1_0  # optional - database_knotinfo
+            sage: L8a(21)('010') == L8a21_0_1_0
             True
         """
         if self._name_unoriented:
@@ -2559,11 +2549,11 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         from sage.rings.integer import Integer
         if not type(item) in (int, Integer):
-            raise ValueError('Item must be an integer')
+            raise ValueError('item must be an integer')
         l = self.list()
         max_item = len(l) + 1
         if item < 1 or item > max_item:
-            raise ValueError('Item must be positive and smaller than %s' % (max_item))
+            raise ValueError('item must be positive and smaller than %s' % (max_item))
 
         return l[item-1]
 
@@ -2615,7 +2605,6 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.L4a1_0.series().inject()
             Defining L4a
             sage: L4a.is_recoverable()
@@ -2644,7 +2633,6 @@ class KnotInfoSeries(UniqueRepresentation, SageObject):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: TestSuite(KnotInfo.L5a1_0.series()).run(verbose=True)  # indirec doctest
             running ._test_category() . . . pass
             running ._test_new() . . . pass

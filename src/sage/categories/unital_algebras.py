@@ -107,20 +107,7 @@ class UnitalAlgebras(CategoryWithAxiom_over_base_ring):
                 0
                 sage: F(3)
                 3*B[0]
-
-                sage: class Bar(Parent):
-                ....:     _no_generic_basering_coercion = True
-                sage: Bar(category=Algebras(QQ))
-                doctest:warning...:
-                DeprecationWarning: the attribute _no_generic_basering_coercion is deprecated, implement _coerce_map_from_base_ring() instead
-                See https://github.com/sagemath/sage/issues/19225 for details.
-                <__main__.Bar_with_category object at 0x...>
             """
-            if getattr(self, '_no_generic_basering_coercion', False):
-                from sage.misc.superseded import deprecation
-                deprecation(19225, "the attribute _no_generic_basering_coercion is deprecated, implement _coerce_map_from_base_ring() instead")
-                return
-
             base_ring = self.base_ring()
             if base_ring is self:
                 # There are rings that are their own base rings. No need to register that.

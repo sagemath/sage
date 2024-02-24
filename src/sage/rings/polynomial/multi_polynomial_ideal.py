@@ -405,7 +405,7 @@ class MPolynomialIdeal_magma_repr:
             sage: len(gb)
             5
         """
-        R   = self.ring()
+        R = self.ring()
         if not deg_bound:
             mself = magma(self)
         else:
@@ -3615,7 +3615,7 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         ALGORITHM: Uses Singular's ``std`` command
         """
-        if self.side()  == 'twosided':
+        if self.side() == 'twosided':
             return self.twostd()
         return self.ring().ideal( self.__call_singular('std'), side=self.side())
 #        return self.__call_singular('std')
@@ -5333,7 +5333,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         2. We linearize and compute the echelon form::
 
-               sage: A, v = F.coefficient_matrix()
+               sage: A, v = F.coefficients_monomials()
                sage: A.echelonize()
 
         3. The result is the desired Gröbner basis::
