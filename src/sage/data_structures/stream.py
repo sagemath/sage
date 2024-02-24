@@ -3514,12 +3514,12 @@ class Stream_dirichlet_invert(Stream_unary):
         EXAMPLES::
 
             sage: from sage.data_structures.stream import Stream_function, Stream_dirichlet_invert
-            sage: f = Stream_function(lambda n: n, True, 1)
+            sage: f = Stream_function(lambda n: QQ(n), True, 1)
             sage: h = Stream_dirichlet_invert(f, True)
             sage: h._approximate_order
             1
             sage: [h[i] for i in range(5)]
-            [0, -2, -8, -12, -48]
+            [0, 1, -2, -3, 0]
         """
         # this is the true order, but we want to check first
         if self._series._approximate_order > 1:

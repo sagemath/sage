@@ -927,8 +927,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             x + x*y + (x^2*y+1/2*x*y^2) + (1/2*x^3*y+2*x^2*y^2+1/6*x*y^3)
             + (1/6*x^4*y+3*x^3*y^2+2*x^2*y^3+1/24*x*y^4)
             + (1/24*x^5*y+8/3*x^4*y^2+27/4*x^3*y^3+4/3*x^2*y^4+1/120*x*y^5)
-            + (1/120*x^6*y+5/3*x^5*y^2+12*x^4*y^3+9*x^3*y^4+2/3*x^2*y^5+1/720*x*y^6)
-            + O(x,y)^8
+            + O(x,y)^7
 
             sage: h = SymmetricFunctions(QQ).h()
             sage: S = LazySymmetricFunctions(h)
@@ -3134,7 +3133,6 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             [s[3], s[2, 1], s[1, 1, 1]]
             sage: m[0].parent()
             Symmetric Functions over Univariate Polynomial Ring in x over Rational Field in the Schur basis
-
             sage: L = LazySymmetricFunctions(tensor([s, s]))
             sage: m = L._terms_of_degree(3, QQ["x"]); m
             [s[3] # s[],
