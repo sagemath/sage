@@ -106,7 +106,6 @@ from sage.arith.functions import lcm
 from sage.arith.misc import gcd
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.rings.complex_mpfr import ComplexField
 from sage.rings.infinity import infinity
 from sage.rings.laurent_series_ring_element cimport LaurentSeries
 from sage.structure.element cimport (Element, AlgebraElement)
@@ -308,6 +307,7 @@ cdef class PuiseuxSeries(AlgebraElement):
         if isinstance(x, int):
             x = ZZ(x)
         elif isinstance(x, float):
+            from sage.rings.complex_mpfr import ComplexField
             x = ComplexField()(x)
         t = x.nth_root(self._e)
         p = self._l.__u.polynomial()

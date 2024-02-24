@@ -1067,7 +1067,7 @@ class ParametrizedSurface3D(SageObject):
              (2, 2, 2): 0}
             sage: sphere.lie_bracket(EE_int[1],EE_int[2]) - CC[(1,2,1)]*EE_int[1] - CC[(1,2,2)]*EE_int[2]
             (0, 0)
-            """
+        """
         e1 = vector(SR, e1)
         e2 = vector(SR, e2)
 

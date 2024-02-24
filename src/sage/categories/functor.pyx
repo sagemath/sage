@@ -74,9 +74,9 @@ cdef class Functor(SageObject):
       default call method:
 
       - ``_coerce_into_domain(self, x)``: Return an object of ``self``'s
-        domain, corresponding to ``x``, or raise a ``TypeError``.
+        domain, corresponding to ``x``, or raise a :class:`TypeError`.
 
-        - Default: Raise ``TypeError`` if ``x`` is not in ``self``'s domain.
+        - Default: Raise :class:`TypeError` if ``x`` is not in ``self``'s domain.
 
       - ``_apply_functor(self, x)``: Apply ``self`` to an object ``x`` of
         ``self``'s domain.
@@ -282,11 +282,12 @@ cdef class Functor(SageObject):
         NOTE:
 
         A subclass of :class:`Functor` may overload this method. It should
-        return an object of self's domain, and should raise a ``TypeError``
-        if this is impossible.
+        return an object of self's domain, and should raise a
+        :class:`TypeError` if this is impossible.
 
-        By default, the argument will not be changed, but a ``TypeError``
-        will be raised if the argument does not belong to the domain.
+        By default, the argument will not be changed, but a
+        :class:`TypeError` will be raised if the argument does not
+        belong to the domain.
 
         TESTS::
 

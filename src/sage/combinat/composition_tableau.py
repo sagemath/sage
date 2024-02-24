@@ -120,7 +120,7 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
 
         CombinatorialElement.__init__(self, parent, t)
 
-    def _repr_diagram(self):
+    def _repr_diagram(self) -> str:
         r"""
         Return a string representation of ``self`` as an array.
 
@@ -132,8 +132,8 @@ class CompositionTableau(CombinatorialElement, metaclass=ClasscallMetaclass):
               3  2
               4  4
         """
-        return '\n'.join(("".join(("%3s" % str(x) for x in row))
-                          for row in self))
+        return '\n'.join("".join("%3s" % str(x) for x in row)
+                         for row in self)
 
     def __call__(self, *cell):
         r"""

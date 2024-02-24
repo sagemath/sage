@@ -194,7 +194,7 @@ class Submodule_free_ambient(Module_free_ambient):
         """
         return self._ambient.relations()
 
-    def gens(self):
+    def gens(self) -> list:
         """
         Return the generators of this submodule.
 

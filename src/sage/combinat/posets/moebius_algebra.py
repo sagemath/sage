@@ -96,7 +96,7 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
        European Journal of Combinatorics, **19**, 1998.
        :doi:`10.1006/eujc.1998.0227`.
     """
-    def __init__(self, R, L):
+    def __init__(self, R, L) -> None:
         """
         Initialize ``self``.
 
@@ -123,7 +123,7 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
             sage: L.moebius_algebra(QQ)
             Moebius algebra of Finite lattice containing 16 elements over Rational Field
         """
-        return "Moebius algebra of {} over {}".format(self._lattice, self.base_ring())
+        return f"Moebius algebra of {self._lattice} over {self.base_ring()}"
 
     def a_realization(self):
         r"""
@@ -161,7 +161,7 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
         Let `E_x` and `E_y` be basis elements of `M_L` for some lattice `L`.
         Multiplication is given by `E_x E_y = E_{x \vee y}`.
         """
-        def __init__(self, M, prefix='E'):
+        def __init__(self, M, prefix='E') -> None:
             """
             Initialize ``self``.
 
@@ -242,7 +242,7 @@ class MoebiusAlgebra(Parent, UniqueRepresentation):
         Multiplication is given by `I_x I_y = \delta_{xy} I_x` where
         `\delta_{xy}` is the Kronecker delta.
         """
-        def __init__(self, M, prefix='I'):
+        def __init__(self, M, prefix='I') -> None:
             """
             Initialize ``self``.
 
@@ -381,7 +381,7 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
     \operatorname{rank} L - \operatorname{rank}` a). At `q = 1`, this
     reduces to the multiplication formula originally given by Solomon.
     """
-    def __init__(self, L, q=None):
+    def __init__(self, L, q=None) -> None:
         """
         Initialize ``self``.
 
@@ -471,7 +471,7 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
         is the corank function (i.e., `\operatorname{crk} a =
         \operatorname{rank} L - \operatorname{rank}` a).
         """
-        def __init__(self, M, prefix='E'):
+        def __init__(self, M, prefix='E') -> None:
             """
             Initialize ``self``.
 
@@ -547,7 +547,7 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
         filter of `x` and `P(F^x; q)` is the characteristic polynomial
         of the (sub)poset `F^x`.
         """
-        def __init__(self, M, prefix='C'):
+        def __init__(self, M, prefix='C') -> None:
             """
             Initialize ``self``.
 
@@ -626,7 +626,7 @@ class QuantumMoebiusAlgebra(Parent, UniqueRepresentation):
             sage: KL[4] * KL[10]
             (q+3*q^2+3*q^3+q^4)*KL[14] + (1+4*q+6*q^2+4*q^3+q^4)*KL[15]
         """
-        def __init__(self, M, prefix='KL'):
+        def __init__(self, M, prefix='KL') -> None:
             """
             Initialize ``self``.
 
@@ -705,7 +705,7 @@ class MoebiusAlgebraBases(Category_realization_of_parent):
             Category of bases of Moebius algebra of Finite lattice
              containing 16 elements over Rational Field
         """
-        return "Category of bases of {}".format(self.base())
+        return f"Category of bases of {self.base()}"
 
     def super_categories(self):
         r"""
@@ -738,7 +738,7 @@ class MoebiusAlgebraBases(Category_realization_of_parent):
                 Moebius algebra of Finite lattice containing 16 elements
                  over Rational Field in the idempotent basis
             """
-            return "{} in the {} basis".format(self.realization_of(), self._basis_name)
+            return f"{self.realization_of()} in the {self._basis_name} basis"
 
         def product_on_basis(self, x, y):
             """

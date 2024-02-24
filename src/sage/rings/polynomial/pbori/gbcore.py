@@ -488,14 +488,14 @@ def eliminate_identical_variables_pre(I, prot):
 
         def my_sort_key(l):
             return l.navigation().value()
+
         for (t, leads) in rules.items():
             if len(leads) > 1:
                 changed = True
                 leads = sorted(leads, key=my_sort_key, reverse=True)
                 chosen = leads[0]
-                for v in leads[1:]:
-                    ll_system.append(chosen + v)
-    if len(ll_system) > 0:
+                ll_system.extend(chosen + v for v in leads[1:])
+    if ll_system:
         ll_encoded = ll_encode(ll_system, reduce=True)
         I = set(ll_red_nf_redsb(p, ll_encoded) for p in I)
     return (I, ll_system)
@@ -592,7 +592,7 @@ def groebner_basis(I, heuristic=True, unique_ideal_generator=False,
 
     if clean_and_restart_algorithm:
         for max_generators in [1000, 10000, 50000, 100000, 200000, 300000,
-                400000, None]:
+                               400000, None]:
             try:
                 return call_algorithm(I, max_generators=max_generators)
             except GeneratorLimitExceeded as e:
@@ -600,7 +600,7 @@ def groebner_basis(I, heuristic=True, unique_ideal_generator=False,
                 del e.strat
                 if prot:
                     print("generator limit exceeded:", max_generators,
-                        "restarting algorithm")
+                          "restarting algorithm")
     else:
         return call_algorithm(I)
 

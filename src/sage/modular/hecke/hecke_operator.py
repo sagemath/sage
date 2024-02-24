@@ -133,7 +133,7 @@ class HeckeAlgebraElement(AlgebraElement):
             [ 0  0  0  0  0  0  0  0  0  1  0 -1  2  0 -1]
             Domain: Modular Symbols space of dimension 15 for Gamma_1(13) of weight ...
             Codomain: Modular Symbols space of dimension 15 for Gamma_1(13) of weight ...
-            """
+        """
         try:
             return self.__hecke_module_morphism
         except AttributeError:

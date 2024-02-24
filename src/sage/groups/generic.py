@@ -117,10 +117,12 @@ Some examples in the group of points of an elliptic curve over a finite field:
 
 from copy import copy
 
+from sage.arith.misc import integer_ceil, integer_floor, xlcm
+from sage.arith.srange import xsrange
+from sage.misc.functional import log
 from sage.misc.misc_c import prod
 import sage.rings.integer_ring as integer_ring
 import sage.rings.integer
-from sage.arith.srange import xsrange
 
 #
 # Lists of names (as strings) which the user may use to identify one
@@ -550,10 +552,10 @@ def discrete_log_rho(a, base, ord=None, operation='*', identity=None, inverse=No
 
     It also works with matrices::
 
-        sage: A = matrix(GF(50021), [[10577, 23999, 28893],                             # needs sage.rings.finite_rings
+        sage: A = matrix(GF(50021), [[10577, 23999, 28893],                             # needs sage.modules sage.rings.finite_rings
         ....:                        [14601, 41019, 30188],
         ....:                        [3081, 736, 27092]])
-        sage: discrete_log_rho(A^1234567, A)                                            # needs sage.rings.finite_rings
+        sage: discrete_log_rho(A^1234567, A)                                            # needs sage.modules sage.rings.finite_rings
         1234567
 
     Beware, the order must be prime::
@@ -1179,6 +1181,8 @@ def linear_relation(P, Q, operation='+', identity=None, inverse=None, op=None):
 # 2. order_from_bounds: finds the order given an interval containing a
 # multiple of the order
 #
+# 3. has_order: check if the order is exactly equal to a given integer
+#
 ################################################################
 
 
@@ -1234,7 +1238,7 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
         sage: order_from_multiple(w, 230, operation='*')
         23
 
-        sage: # needs sage.rings.finite_rings
+        sage: # needs sage.modules sage.rings.finite_rings
         sage: F = GF(2^1279,'a')
         sage: n = F.cardinality() - 1  # Mersenne prime
         sage: order_from_multiple(F.random_element(), n,
@@ -1396,8 +1400,7 @@ def order_from_bounds(P, bounds, d=None, operation='+',
     if d > 1:
         Q = multiple(P, d, operation=operation)
         lb, ub = bounds
-        bounds = (sage.arith.all.integer_ceil(lb / d),
-                  sage.arith.all.integer_floor(ub / d))
+        bounds = (integer_ceil(lb / d), integer_floor(ub / d))
 
     # Use generic bsgs to find  n=d*m with lb<=n<=ub and n*P=0
 
@@ -1406,6 +1409,113 @@ def order_from_bounds(P, bounds, d=None, operation='+',
     # Now use the order_from_multiple() function to finish the job:
 
     return order_from_multiple(P, m, operation=operation, check=False)
+
+def has_order(P, n, operation='+'):
+    r"""
+    Generic function to test if a group element `P` has order
+    exactly equal to a given positive integer `n`.
+
+    INPUT:
+
+    - ``P`` -- group element with respect to the specified ``operation``
+    - ``n`` -- positive integer, or its :class:`~sage.structure.factorization.Factorization`
+    - ``operation`` -- string, either ``'+'`` (default) or ``'*'``
+
+    EXAMPLES::
+
+        sage: from sage.groups.generic import has_order
+        sage: E.<P> = EllipticCurve(GF(71), [5,5])
+        sage: P.order()
+        57
+        sage: has_order(P, 57)
+        True
+        sage: has_order(P, factor(57))
+        True
+        sage: has_order(P, 19)
+        False
+        sage: has_order(3*P, 19)
+        True
+        sage: has_order(3*P, 57)
+        False
+
+    ::
+
+        sage: R = Zmod(14981)
+        sage: g = R(321)
+        sage: g.multiplicative_order()
+        42
+        sage: has_order(g, 42, operation='*')
+        True
+        sage: has_order(g, factor(42), operation='*')
+        True
+        sage: has_order(g, 70, operation='*')
+        False
+
+    TESTS::
+
+        sage: ns = [randrange(1,10**5) for _ in range(randrange(1,5))]
+        sage: A = AdditiveAbelianGroup(ns)
+        sage: from sage.groups.generic import has_order
+        sage: el = A.random_element()
+        sage: o = el.order()
+        sage: has_order(el, o)
+        True
+        sage: has_order(el, o.factor())
+        True
+        sage: not_o = ZZ(randrange(100*o))
+        sage: not_o += (not_o == o)
+        sage: has_order(el, not_o)
+        False
+
+    Check for :issue:`37102`::
+
+        sage: from sage.groups.generic import has_order
+        sage: x = Mod(9, 24)
+        sage: has_order(x, 0)
+        False
+        sage: has_order(x, -8)
+        False
+
+    .. NOTE::
+
+        In some cases, order *testing* can be much faster than
+        *computing* the order using :func:`order_from_multiple`.
+    """
+    if isinstance(n, sage.rings.integer.Integer):
+        if n <= 0:
+            return False
+        n = n.factor()
+
+    G = P.parent()
+    if operation in addition_names:
+        isid = lambda el: not el
+        mult = lambda el, n: multiple(el, n, operation='+')
+    elif operation in multiplication_names:
+        isid = lambda el: el.is_one()
+        mult = multiple
+    else:
+        raise ValueError('unknown group operation')
+
+    def _rec(Q, fn):
+        if not fn:
+            return isid(Q)
+
+        if len(fn) == 1:
+            p, k = fn[0]
+            for _ in range(k):
+                if isid(Q):
+                    return False
+                Q = mult(Q, p)
+            return isid(Q)
+
+        fl = fn[::2]
+        fr = fn[1::2]
+        l = prod(p**k for p,k in fl)
+        r = prod(p**k for p,k in fr)
+        L, R = mult(Q, r), mult(Q, l)
+        return _rec(L, fl) and _rec(R, fr)
+
+    return _rec(P, n)
 
 
 def merge_points(P1, P2, operation='+',
@@ -1486,7 +1596,7 @@ def merge_points(P1, P2, operation='+',
     if n2.divides(n1):
         return (g1, n1)
 
-    m, k1, k2 = sage.arith.all.xlcm(n1, n2)
+    m, k1, k2 = xlcm(n1, n2)
     m1 = n1 // k1
     m2 = n2 // k2
     g1 = multiple(g1, m1, operation=operation)

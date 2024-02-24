@@ -1024,7 +1024,7 @@ class RESetMapReduce():
             sage: S = RESetMapReduce(map_function = lambda x: 3*x + 5)
             sage: S.map_function(7)
             26
-         """
+        """
         return 1
 
     def reduce_function(self, a, b):
@@ -1786,7 +1786,7 @@ class RESetMapReduceWorker(mp.Process):
         r"""
         Send results to the MapReduce process.
 
-        Send the result stored in ``self._res`` to the master an reinitialize it to
+        Send the result stored in ``self._res`` to the master and reinitialize it to
         ``master.reduce_init``.
 
         EXAMPLES::
