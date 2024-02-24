@@ -1,5 +1,5 @@
 """
-Deprecated Base class for groups
+Deprecated base class for groups
 """
 
 # ****************************************************************************
@@ -18,7 +18,7 @@ Deprecated Base class for groups
 # ****************************************************************************
 
 doc = """
-Deprecated Base class for all groups
+Deprecated base class for all groups
 """
 import sage.rings.integer_ring
 from sage.misc.superseded import deprecation

@@ -6,11 +6,10 @@ module derive from those in the module :mod:`sage.modules.fg_pid`. The only
 major differences are in the way elements are printed.
 """
 
-from sage.structure.parent import Parent
-from sage.modules.fg_pid.fgp_module import FGP_Module_class
-from sage.modules.fg_pid.fgp_element import FGP_Element
-from sage.rings.integer_ring import ZZ
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
+from sage.modules.fg_pid.fgp_element import FGP_Element
+from sage.modules.fg_pid.fgp_module import FGP_Module_class
+from sage.rings.integer_ring import ZZ
 
 
 def AdditiveAbelianGroup(invs, remember_generators=True):
@@ -202,7 +201,7 @@ class AdditiveAbelianGroupElement(FGP_Element):
 # since we want to inherit things like __hash__ from there rather than the
 # hyper-generic implementation for abstract abelian groups.
 
-class AdditiveAbelianGroup_class(FGP_Module_class, Parent):
+class AdditiveAbelianGroup_class(FGP_Module_class):
     r"""
     An additive abelian group, implemented using the `\ZZ`-module machinery.
 
@@ -224,9 +223,12 @@ class AdditiveAbelianGroup_class(FGP_Module_class, Parent):
             Additive abelian group isomorphic to Z
             sage: G == loads(dumps(G))
             True
+            sage: G.category()
+            Category of modules over Integer Ring
+            sage: G in CommutativeAdditiveGroups()
+            True
         """
         FGP_Module_class.__init__(self, cover, relations)
-        Parent.__init__(self, category=CommutativeAdditiveGroups())
 
     def _repr_(self):
         r"""

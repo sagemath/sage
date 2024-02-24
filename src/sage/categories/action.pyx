@@ -381,10 +381,10 @@ cdef class InverseAction(Action):
     def __init__(self, Action action):
         G = action.G
         try:
-            from sage.groups.group import is_Group
+            from sage.groups.group import Group
             # We must be in the case that parent(~a) == parent(a)
             # so we can invert in _call_ code below.
-            if (is_Group(G) and G.is_multiplicative()) or G.is_field():
+            if (isinstance(G, Group) and G.is_multiplicative()) or G.is_field():
                 Action.__init__(self, G, action.underlying_set(), action._is_left)
                 self._action = action
                 return
