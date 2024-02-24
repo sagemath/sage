@@ -97,6 +97,20 @@ cdef extern from "cmr/camion.h":
     CMR_ERROR CMRcamionTestSigns(CMR* cmr, CMR_CHRMAT* matrix, bool* pisCamionSigned, CMR_SUBMAT** psubmatrix, CMR_CAMION_STATISTICS* stats, double timeLimit)
     CMR_ERROR CMRcamionComputeSigns(CMR* cmr, CMR_CHRMAT* matrix, bool* pwasCamionSigned, CMR_SUBMAT** psubmatrix, CMR_CAMION_STATISTICS* stats, double timeLimit)
 
+cdef extern from "cmr/element.h":
+
+    ctypedef int CMR_ELEMENT
+
+    const char* CMRelementString(CMR_ELEMENT element, char* buffer)
+    bint CMRelementIsValid(CMR_ELEMENT element)
+    CMR_ELEMENT CMRrowToElement(size_t row)
+    CMR_ELEMENT CMRcolumnToElement(size_t column)
+    bint CMRelementIsRow(CMR_ELEMENT element)
+    size_t CMRelementToRowIndex(CMR_ELEMENT element)
+    bint CMRelementIsColumn(CMR_ELEMENT element)
+    size_t CMRelementToColumnIndex(CMR_ELEMENT element)
+    CMR_ELEMENT CMRelementTranspose(CMR_ELEMENT element)
+
 cdef extern from "cmr/matroid.h":
 
     CMR_ERROR CMRchrmatBinaryPivot(CMR* cmr, CMR_CHRMAT* matrix, size_t pivotRow, size_t pivotColumn, CMR_CHRMAT** presult)
@@ -166,45 +180,30 @@ cdef extern from "cmr/matroid.h":
     int8_t CMRmatroiddecCographicness(CMR_MATROID_DEC* dec)
     int8_t CMRmatroiddecRegularity(CMR_MATROID_DEC* dec)
     size_t CMRmatroiddecNumRows(CMR_MATROID_DEC* dec)
-    # CMR_ELEMENT* CMRmatroiddecRowsRootElement(CMR_MATROID_DEC* dec)
+    CMR_ELEMENT* CMRmatroiddecRowsRootElement(CMR_MATROID_DEC* dec)
     size_t* CMRmatroiddecRowsParent(CMR_MATROID_DEC* dec)
     size_t CMRmatroiddecNumColumns(CMR_MATROID_DEC* dec)
-    # CMR_ELEMENT* CMRmatroiddecColumnsRootElement(CMR_MATROID_DEC* dec)
+    CMR_ELEMENT* CMRmatroiddecColumnsRootElement(CMR_MATROID_DEC* dec)
     size_t* CMRmatroiddecColumnsParent(CMR_MATROID_DEC* dec)
     CMR_GRAPH* CMRmatroiddecGraph(CMR_MATROID_DEC* dec)
-    # CMR_GRAPH_EDGE* CMRmatroiddecGraphForest(CMR_MATROID_DEC* dec)
+    CMR_GRAPH_EDGE* CMRmatroiddecGraphForest(CMR_MATROID_DEC* dec)
     size_t CMRmatroiddecGraphSizeForest(CMR_MATROID_DEC* dec)
-    # CMR_GRAPH_EDGE* CMRmatroiddecGraphCoforest(CMR_MATROID_DEC* dec)
+    CMR_GRAPH_EDGE* CMRmatroiddecGraphCoforest(CMR_MATROID_DEC* dec)
     size_t CMRmatroiddecGraphSizeCoforest(CMR_MATROID_DEC* dec)
     bool* CMRmatroiddecGraphArcsReversed(CMR_MATROID_DEC* dec)
     CMR_GRAPH* CMRmatroiddecCograph(CMR_MATROID_DEC* dec)
     size_t CMRmatroiddecCographSizeForest(CMR_MATROID_DEC* dec)
-    # CMR_GRAPH_EDGE* CMRmatroiddecCographForest(CMR_MATROID_DEC* dec)
+    CMR_GRAPH_EDGE* CMRmatroiddecCographForest(CMR_MATROID_DEC* dec)
     size_t CMRmatroiddecCographSizeCoforest(CMR_MATROID_DEC* dec)
-    # CMR_GRAPH_EDGE* CMRmatroiddecCographCoforest(CMR_MATROID_DEC* dec)
+    CMR_GRAPH_EDGE* CMRmatroiddecCographCoforest(CMR_MATROID_DEC* dec)
     bool* CMRmatroiddecCographArcsReversed(CMR_MATROID_DEC* dec)
     size_t CMRmatroiddecNumPivots(CMR_MATROID_DEC* dec)
     size_t* CMRmatroiddecPivotRows(CMR_MATROID_DEC* dec)
     size_t* CMRmatroiddecPivotColumns(CMR_MATROID_DEC* dec)
-    # CMR_ERROR CMRmatroiddecPrint(CMR* cmr, CMR_MATROID_DEC* dec, FILE* stream, size_t indent, bool printChildren, bool printParentRowsColumns, bool printMatrices, bool printGraphs, bool printReductions, bool printPivots)
+    CMR_ERROR CMRmatroiddecPrint(CMR* cmr, CMR_MATROID_DEC* dec, FILE* stream, size_t indent, bool printChildren, bool printParentRowsColumns, bool printMatrices, bool printGraphs, bool printReductions, bool printPivots)
     CMR_ERROR CMRmatroiddecFree(CMR* cmr, CMR_MATROID_DEC** pdec)
     CMR_ERROR CMRmatroiddecCreateMatrixRoot(CMR* cmr, CMR_MATROID_DEC** pdec, bool isTernary, CMR_CHRMAT* matrix)
     CMR_ERROR CMRmatroiddecUpdateOneSum(CMR* cmr, CMR_MATROID_DEC* dec, size_t numChildren)
-
-
-cdef extern from "cmr/element.h":
-
-    ctypedef int CMR_ELEMENT
-
-    const char* CMRelementString(CMR_ELEMENT element, char* buffer)
-    bint CMRelementIsValid(CMR_ELEMENT element)
-    CMR_ELEMENT CMRrowToElement(size_t row)
-    CMR_ELEMENT CMRcolumnToElement(size_t column)
-    bint CMRelementIsRow(CMR_ELEMENT element)
-    size_t CMRelementToRowIndex(CMR_ELEMENT element)
-    bint CMRelementIsColumn(CMR_ELEMENT element)
-    size_t CMRelementToColumnIndex(CMR_ELEMENT element)
-    CMR_ELEMENT CMRelementTranspose(CMR_ELEMENT element)
 
 cdef extern from "cmr/separation.h":
 
