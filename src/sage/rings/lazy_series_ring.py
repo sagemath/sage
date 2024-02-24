@@ -939,8 +939,8 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: A = T.undefined()
             sage: B = T.undefined()
             sage: T.define_implicitly([A, B], [A - X*E(B), B - Y*E(A)])
-            sage: A[1]  # known bug, not tested
-
+            sage: A[:3]
+            [h[1] # h[], h[1] # h[1]]
         """
         s = [a[0]._coeff_stream if isinstance(a, (tuple, list))
              else a._coeff_stream
@@ -2438,13 +2438,16 @@ class LazyPowerSeriesRing(LazySeriesRing):
 
         EXAMPLES::
 
-            sage: L.<x> = LazyPowerSeriesRing(QQ)
-            sage: L._terms_of_degree(3, QQ)
+            sage: L.<x> = LazyPowerSeriesRing(ZZ)
+            sage: m = L._terms_of_degree(3, QQ["z"]); m
             [1]
-            sage: L.<x, y> = LazyPowerSeriesRing(QQ)
-            sage: L._terms_of_degree(3, QQ)
+            sage: m[0].parent()
+            Univariate Polynomial Ring in z over Rational Field
+            sage: L.<x, y> = LazyPowerSeriesRing(ZZ)
+            sage: m = L._terms_of_degree(3, QQ["z"]); m
             [y^3, x*y^2, x^2*y, x^3]
-
+            sage: m[0].parent()
+            Multivariate Polynomial Ring in x, y over Univariate Polynomial Ring in z over Rational Field
         """
         if self._arity == 1:
             return [R.one()]
@@ -3127,11 +3130,13 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             sage: # needs sage.modules
             sage: s = SymmetricFunctions(ZZ).s()
             sage: L = LazySymmetricFunctions(s)
-            sage: L._terms_of_degree(3, ZZ)
+            sage: m = L._terms_of_degree(3, QQ["x"]); m
             [s[3], s[2, 1], s[1, 1, 1]]
+            sage: m[0].parent()
+            Symmetric Functions over Univariate Polynomial Ring in x over Rational Field in the Schur basis
 
             sage: L = LazySymmetricFunctions(tensor([s, s]))
-            sage: L._terms_of_degree(3, ZZ)
+            sage: m = L._terms_of_degree(3, QQ["x"]); m
             [s[3] # s[],
              s[2, 1] # s[],
              s[1, 1, 1] # s[],
@@ -3142,11 +3147,14 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
              s[] # s[3],
              s[] # s[2, 1],
              s[] # s[1, 1, 1]]
+            sage: m[0].parent()
+            Symmetric Functions over Univariate Polynomial Ring in x over Rational Field in the Schur basis # Symmetric Functions over Univariate Polynomial Ring in x over Rational Field in the Schur basis
         """
         from sage.combinat.integer_vector import IntegerVectors
         from sage.misc.mrange import cartesian_product_iterator
         from sage.categories.tensor import tensor
         B = self._internal_poly_ring.base_ring()
+        B = B.change_ring(R)
         if self._arity == 1:
             return list(B.homogeneous_component_basis(n))
         l = []
