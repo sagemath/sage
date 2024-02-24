@@ -1631,7 +1631,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                 images = list(gens)
                 for (i, g) in enumerate(gens):
                     gstr = str(g)
-                    if gstr in kwargs.keys():
+                    if gstr in kwargs:
                         images[i] = kwargs[gstr]
             res = 0
             for (m, c) in self.dict().items():
