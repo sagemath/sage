@@ -1612,7 +1612,6 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                 sage: f = x*y - 5*y*z + 7*x*y^2*z^3*t
                 sage: f({x:1}, t=x,y=z)
                 7*y^2*z^3*t - 5*y*z + y
-
             """
             gens = self.parent().gens()
             images = list(gens)
