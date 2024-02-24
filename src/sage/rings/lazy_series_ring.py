@@ -3162,7 +3162,6 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
                 l.append(tensor(m))
         return l
 
-
     def _element_constructor_(self, x=None, valuation=None, degree=None, constant=None, check=True):
         r"""
         Construct a lazy element in ``self`` from ``x``.
