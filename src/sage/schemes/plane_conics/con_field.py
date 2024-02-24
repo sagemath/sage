@@ -1050,7 +1050,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
         r"""
         Return a point on ``self`` defined over the base field.
 
-        Raises ``ValueError`` if no rational point exists.
+        This raises a :class:`ValueError` if no rational point exists.
 
         See ``self.has_rational_point`` for the algorithm used
         and for the use of the parameters ``algorithm`` and ``read_cache``.
@@ -1202,7 +1202,8 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             sage: Conic(GF(2), [1,1,1,1,1,1]).singular_point()
             (1 : 1 : 1)
 
-        ``ValueError`` is raised if the conic has no rational singular point
+        :class:`ValueError` is raised if the conic has no rational
+        singular point
 
         ::
 

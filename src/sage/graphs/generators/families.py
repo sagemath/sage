@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Various families of graphs
 
@@ -594,7 +593,7 @@ def BarbellGraph(n1, n2):
 
     OUTPUT:
 
-    A barbell graph of order ``2*n1 + n2``. A ``ValueError`` is
+    A barbell graph of order ``2*n1 + n2``. A :class:`ValueError` is
     returned if ``n1 < 2`` or ``n2 < 0``.
 
     PLOTTING:
@@ -929,7 +928,7 @@ def BubbleSortGraph(n):
     OUTPUT:
 
     The bubble sort graph `B(n)` on `n` symbols. If `n < 1`, a
-    ``ValueError`` is returned.
+    :class:`ValueError` is returned.
 
     EXAMPLES::
 
@@ -1181,6 +1180,13 @@ def CubeGraph(n, embedding=1):
         vertices in each column represents rows in Pascal's triangle. See for
         instance the :wikipedia:`10-cube` for more details.
 
+      - ``3``: oblique projection of the `n`-cube. Oblique projection involves
+        aligning one face parallel to the viewer and projecting at a specified
+        angle, maintaining equal size for edges parallel to one axis while
+        applying fixed foreshortening to others. This method simplifies the
+        representation of a four-dimensional hypercube onto a two-dimensional
+        plane, offering a geometrically consistent visualization.
+
       - ``None`` or ``O``: no embedding is provided
 
     EXAMPLES:
@@ -1215,15 +1221,20 @@ def CubeGraph(n, embedding=1):
         sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)       # long time, needs sage.plot
         sage: g = graphs.CubeGraph(9, embedding=2)
         sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)       # long time, needs sage.plot
+        sage: g = graphs.CubeGraph(9, embedding=3)
+        sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)       # long time, needs sage.plot
 
     AUTHORS:
 
     - Robert Miller
     - David Coudert
     """
-    if embedding == 1:
+    if embedding == 1 or embedding == 3:
         # construct recursively the adjacency dict and the embedding
         theta = float(pi/n)
+        if embedding == 3 and n > 2:
+            theta = float(pi/(2*n-2))
+
         d = {'': []}
         dn = {}
         p = {'': (float(0), float(0))}
@@ -2714,7 +2725,7 @@ def SwitchedSquaredSkewHadamardMatrixGraph(n):
     G = SquaredSkewHadamardMatrixGraph(n).complement()
     G.add_vertex((4 * n - 1)**2)
     G.seidel_switching(list(range((4 * n - 1) * (2 * n - 1))))
-    G.name("switch skewhad^2+*_" + str((n)))
+    G.name("switch skewhad^2+*_" + str(n))
     return G
 
 
@@ -3265,7 +3276,7 @@ def GeneralizedSierpinskiGraph(G, k, stretch=None):
 
     - ``stretch`` -- integer (default: ``None``); stretching factor used to
       determine the positions of the vertices of the output graph. By default
-      (``None``), this value is set to twice the maximum Euclidian distance
+      (``None``), this value is set to twice the maximum Euclidean distance
       between the vertices of `G`. This parameter is used only when the vertices
       of `G` have positions.
 
@@ -3920,7 +3931,13 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
         sage: G.is_strongly_regular(parameters=True)                                    # needs sage.modules sage.rings.finite_rings
         (45, 22, 10, 11)
 
-    Supplying ``G`` and ``L`` (constructed from the automorphism group of ``G``). ::
+    Supplying ``G`` and ``L`` (constructed from the automorphism group
+    of ``G``). The entries of L can't be tested directly because
+    there's some unpredictability in the way that GAP chooses a
+    representative in ``NormalSubgroups()``, the function that
+    underlies our own
+    :meth:`~sage.groups.perm_gps.permgroup.PermutationGroup_generic.normal_subgroups`
+    method::
 
         sage: # needs sage.groups sage.libs.gap sage.rings.finite_rings
         sage: G = graphs.PaleyGraph(9)
@@ -3931,18 +3948,7 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
         ....:      for z in subg]
         sage: ff = list(map(lambda y: (y[0]-1,y[1]-1),
         ....:          Permutation(map(lambda x: 1+r.index(x^-1), r)).cycle_tuples()[1:]))
-        sage: L = sum(i*(r[a]-r[b]) for i,(a,b) in zip(range(1,len(ff)+1), ff)); L
-        [ 0  1 -1 -3 -2 -4  3  4  2]
-        [-1  0  1 -4 -3 -2  2  3  4]
-        [ 1 -1  0 -2 -4 -3  4  2  3]
-        [ 3  4  2  0  1 -1 -3 -2 -4]
-        [ 2  3  4 -1  0  1 -4 -3 -2]
-        [ 4  2  3  1 -1  0 -2 -4 -3]
-        [-3 -2 -4  3  4  2  0  1 -1]
-        [-4 -3 -2  2  3  4 -1  0  1]
-        [-2 -4 -3  4  2  3  1 -1  0]
-
-        sage: # needs sage.groups sage.libs.gap sage.modules sage.rings.finite_rings
+        sage: L = sum(i*(r[a]-r[b]) for i,(a,b) in zip(range(1,len(ff)+1), ff))
         sage: G.relabel(range(9))
         sage: G3x3 = graphs.MathonPseudocyclicStronglyRegularGraph(2, G=G, L=L)
         sage: G3x3.is_strongly_regular(parameters=True)

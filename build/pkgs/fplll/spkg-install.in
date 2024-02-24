@@ -22,7 +22,3 @@ export CXX="$CXX"
 sdh_configure $CONFIGUREFLAGS
 sdh_make
 sdh_make_install
-
-# Pretend that the "libfplll" package is not installed. This is needed to
-# support renaming libfplll -> fplll done on Trac #24042
-rm -f "$SAGE_SPKG_INST/"libfplll-*

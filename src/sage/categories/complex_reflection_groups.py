@@ -21,7 +21,7 @@ class ComplexReflectionGroups(Category_singleton):
     The category of complex reflection groups.
 
     Let `V` be a complex vector space. A *complex reflection* is an
-    element of `\operatorname{GL}(V)` fixing an hyperplane pointwise
+    element of `\operatorname{GL}(V)` fixing a hyperplane pointwise
     and acting by multiplication by a root of unity on a complementary
     line.
 

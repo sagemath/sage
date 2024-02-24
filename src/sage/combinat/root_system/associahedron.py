@@ -129,7 +129,7 @@ def Associahedron(cartan_type, backend='ppl'):
     return parent(cartan_type)
 
 
-class Associahedron_class_base():
+class Associahedron_class_base:
     r"""
     The base class of the Python class of an associahedron
 
@@ -321,7 +321,7 @@ def Associahedra(base_ring, ambient_dim, backend='ppl'):
         raise ValueError("unknown backend")
 
 
-class Associahedra_base():
+class Associahedra_base:
     """
     Base class of parent of Associahedra of specified dimension
 

@@ -166,7 +166,7 @@ class FockSpace(Parent, UniqueRepresentation):
 
     To go between the canonical basis and the natural basis, for level 1
     Fock space, we follow the LLT algorithm [LLT1996]_. Indeed, we first
-    construct an basis `\{ A(\nu) \}` that is an approximation to the
+    construct a basis `\{ A(\nu) \}` that is an approximation to the
     lower global crystal basis, in the sense that it is bar-invariant,
     and then use Gaussian elimination to construct the lower global
     crystal basis. For higher level Fock space, we follow [Fayers2010]_,
@@ -754,8 +754,8 @@ class FockSpace(Parent, UniqueRepresentation):
 
             def e(self, *data):
                 r"""
-                Apply the action of the divided difference operator
-                `e_i^{(p)}` on ``self``.
+                Apply the action of the divided power operator
+                `e_i^{(p)} = e_i^{p} / [p]_q` on ``self``.
 
                 INPUT:
 
@@ -850,8 +850,8 @@ class FockSpace(Parent, UniqueRepresentation):
 
             def f(self, *data):
                 r"""
-                Apply the action of the divided difference operator
-                `f_i^{(p)}` on ``self``.
+                Apply the action of the divided power operator
+                `f_i^{(p)} = f_i^{p} / [p]_q` on ``self``.
 
                 INPUT:
 

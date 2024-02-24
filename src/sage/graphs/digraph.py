@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Directed graphs
 
@@ -71,6 +70,7 @@ graphs. Here is what they can do
     :delim: |
 
     :meth:`~DiGraph.path_semigroup` | Return the (partial) semigroup formed by the paths of the digraph.
+    :meth:`~DiGraph.auslander_reiten_quiver` | Return the Auslander-Reiten quiver of ``self``.
 
 **Connectivity:**
 
@@ -1195,7 +1195,7 @@ class DiGraph(GenericGraph):
         """
         Return an iterator over the in-neighbors of ``vertex``.
 
-        An vertex `u` is an in-neighbor of a vertex `v` if `uv` in an edge.
+        A vertex `u` is an in-neighbor of a vertex `v` if `uv` in an edge.
 
         EXAMPLES::
 
@@ -1672,7 +1672,7 @@ class DiGraph(GenericGraph):
             p = MixedIntegerLinearProgram(constraint_generation=True,
                                           maximization=False, solver=solver)
 
-            # An variable for each edge
+            # A variable for each edge
             b = p.new_variable(binary=True)
 
             # Variables are binary, and their coefficient in the objective is
@@ -3001,7 +3001,7 @@ class DiGraph(GenericGraph):
             try:
                 cycle = next(vi)
                 cycles.append((len(cycle), cycle))
-            except(StopIteration):
+            except StopIteration:
                 pass
         # Since we always extract a shortest path, using a heap
         # can speed up the algorithm
@@ -3016,7 +3016,7 @@ class DiGraph(GenericGraph):
             try:
                 cycle = next(vertex_iterators[shortest_cycle[0]])
                 heappush(cycles, (len(cycle), cycle))
-            except(StopIteration):
+            except StopIteration:
                 pass
 
     def all_simple_cycles(self, starting_vertices=None, rooted=False,
@@ -3181,15 +3181,32 @@ class DiGraph(GenericGraph):
         from sage.quivers.path_semigroup import PathSemigroup
         return PathSemigroup(self)
 
+    def auslander_reiten_quiver(self):
+        r"""
+        Return the Auslander-Reiten quiver of ``self``.
+
+        .. SEEALSO::
+
+            :class:`~sage.quivers.ar_quiver.AuslanderReitenQuiver`
+
+        EXAMPLES::
+
+            sage: D = DiGraph([[1,2,'a'], [1,2,'b']], multiedges=True)
+            sage: D.auslander_reiten_quiver()
+            Auslander-Reiten quiver of Multi-digraph on 2 vertices
+        """
+        from sage.quivers.ar_quiver import AuslanderReitenQuiver
+        return AuslanderReitenQuiver(self)
+
     # Directed Acyclic Graphs (DAGs)
 
     def topological_sort(self, implementation="default"):
         """
         Return a topological sort of the digraph if it is acyclic.
 
-        If the digraph contains a directed cycle, a ``TypeError`` is raised. As
-        topological sorts are not necessarily unique, different implementations
-        may yield different results.
+        If the digraph contains a directed cycle, a :class:`TypeError`
+        is raised. As topological sorts are not necessarily unique,
+        different implementations may yield different results.
 
         A topological sort is an ordering of the vertices of the digraph such
         that each vertex comes before all of its successors. That is, if `u`
@@ -3269,7 +3286,8 @@ class DiGraph(GenericGraph):
         Return an iterator over all topological sorts of the digraph if
         it is acyclic.
 
-        If the digraph contains a directed cycle, a ``TypeError`` is raised.
+        If the digraph contains a directed cycle, a :class:`TypeError`
+        is raised.
 
         A topological sort is an ordering of the vertices of the digraph such
         that each vertex comes before all of its successors. That is, if u comes

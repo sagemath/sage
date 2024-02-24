@@ -426,7 +426,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
 
     def _inner_pp(self, pelt1, pelt2):
         """
-        Symmetric form between an two elements of the weight lattice
+        Symmetric form between two elements of the weight lattice
         associated to ``self``.
 
         EXAMPLES::
@@ -860,21 +860,22 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: L = RootSystem("B3~").weight_lattice(extended=True)
             sage: Lambda = L.fundamental_weights()
             sage: delta = L.null_root()
             sage: W = L.weyl_group(prefix="s")
             sage: [s0,s1,s2,s3] = W.simple_reflections()
             sage: V = IntegrableRepresentation(Lambda[0])
-            sage: V.mult(Lambda[2]-2*delta)
+            sage: V.mult(Lambda[2] - 2*delta)
             3
-            sage: V.mult(Lambda[2]-Lambda[1])
+            sage: V.mult(Lambda[2] - Lambda[1])
             0
-            sage: weights = [w.action(Lambda[1]-4*delta) for w in [s1,s2,s0*s1*s2*s3]]
+            sage: weights = [w.action(Lambda[1] - 4*delta) for w in [s1,s2,s0*s1*s2*s3]]
             sage: weights
             [-Lambda[1] + Lambda[2] - 4*delta,
-            Lambda[1] - 4*delta,
-            -Lambda[1] + Lambda[2] - 4*delta]
+             Lambda[1] - 4*delta,
+             -Lambda[1] + Lambda[2] - 4*delta]
             sage: [V.mult(mu) for mu in weights]
             [35, 35, 35]
 
@@ -1093,7 +1094,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
 
             sage: Lambda = RootSystem(['A',2,1]).weight_lattice(extended=true).fundamental_weights()
             sage: V = IntegrableRepresentation(2*Lambda[0])
-            sage: b = V.branch(); b
+            sage: b = V.branch(); b                                                     # needs sage.libs.gap
             [A2(0,0),
              A2(1,1),
              A2(0,0) + 2*A2(1,1) + A2(2,2),
@@ -1104,7 +1105,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         If the parameter ``weyl_character_ring`` is omitted, the ring may be recovered
         as the parent of one of the branched coefficients::
 
-            sage: A2 = b[0].parent(); A2
+            sage: A2 = b[0].parent(); A2                                                # needs sage.libs.gap
             The Weyl Character Ring of Type A2 with Integer Ring coefficients
 
         If `i` is not zero then you should specify the :class:`WeylCharacterRing` that you
@@ -1125,8 +1126,8 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         Thus we have a branching to
         `\mathfrak{sl}(2) \times \mathfrak{sl}(2) \times \mathfrak{sl}(2)`::
 
-            sage: A1xA1xA1 = WeylCharacterRing("A1xA1xA1",style="coroots")
-            sage: V.branch(i=2,weyl_character_ring=A1xA1xA1)
+            sage: A1xA1xA1 = WeylCharacterRing("A1xA1xA1",style="coroots")              # needs sage.libs.gap
+            sage: V.branch(i=2,weyl_character_ring=A1xA1xA1)                            # needs sage.libs.gap
             [A1xA1xA1(1,0,0),
              A1xA1xA1(0,1,2),
              A1xA1xA1(1,0,0) + A1xA1xA1(1,2,0) + A1xA1xA1(1,0,2),
@@ -1159,7 +1160,7 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         The nodes `0, 2, 3, 4` of ``F4~`` correspond to ``1, 4, 3, 2``
         of ``A1xC3`` and so we encode this in a dictionary::
 
-            sage: V.branch(i=1,weyl_character_ring=A1xC3,sequence={0:1,2:4,3:3,4:2}) # long time
+            sage: V.branch(i=1, weyl_character_ring=A1xC3, sequence={0:1,2:4,3:3,4:2})  # long time
             [A1xC3(1,0,0,0),
              A1xC3(0,0,0,1),
              A1xC3(1,0,0,0) + A1xC3(1,2,0,0),

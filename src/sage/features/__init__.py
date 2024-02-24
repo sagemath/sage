@@ -236,7 +236,7 @@ class Feature(TrivialUniqueRepresentation):
             Traceback (most recent call last):
             ...
             FeatureNotPresentError: gap_package_ve1EeThu is not available.
-            `TestPackageAvailability("ve1EeThu")` evaluated to `fail` in GAP.
+            `LoadPackage("ve1EeThu")` evaluated to `fail` in GAP.
         """
         presence = self.is_present()
         if not presence:
@@ -393,25 +393,29 @@ class Feature(TrivialUniqueRepresentation):
 
         EXAMPLES:
 
-        Polycyclic is a standard GAP package since 4.10 (see :trac:`26856`). The
-        following test just fails if it is hidden. Thus, in the second
-        invocation no optional tag is needed::
+        PolyCyclic is an optional GAP package. The following test
+        fails if it is hidden, regardless of whether it is installed
+        or not::
 
             sage: from sage.features.gap import GapPackage
             sage: Polycyclic = GapPackage("polycyclic", spkg="gap_packages")
             sage: Polycyclic.hide()
-            sage: libgap(AbelianGroup(3, [0,3,4], names="abc"))                         # needs sage.libs.gap
+            sage: libgap(AbelianGroup(3, [0,3,4], names="abc"))                         # needs sage.libs.gap  # optional - gap_packages_polycyclic
             Traceback (most recent call last):
             ...
             FeatureNotPresentError: gap_package_polycyclic is not available.
             Feature `gap_package_polycyclic` is hidden.
             Use method `unhide` to make it available again.
 
+        After unhiding the feature, the test should pass again if PolyCyclic
+        is installed and loaded::
+
             sage: Polycyclic.unhide()
-            sage: libgap(AbelianGroup(3, [0,3,4], names="abc"))                         # needs sage.libs.gap
+            sage: libgap(AbelianGroup(3, [0,3,4], names="abc"))                         # needs sage.libs.gap  # optional - gap_packages_polycyclic
             Pcp-group with orders [ 0, 3, 4 ]
         """
         self._hidden = False
+
 
 class FeatureNotPresentError(RuntimeError):
     r"""
@@ -451,7 +455,7 @@ class FeatureNotPresentError(RuntimeError):
             Traceback (most recent call last):
             ...
             FeatureNotPresentError: gap_package_gapZuHoh8Uu is not available.
-            `TestPackageAvailability("gapZuHoh8Uu")` evaluated to `fail` in GAP.
+            `LoadPackage("gapZuHoh8Uu")` evaluated to `fail` in GAP.
         """
         lines = ["{feature} is not available.".format(feature=self.feature.name)]
         if self.reason:
@@ -481,7 +485,7 @@ class FeatureTestResult():
     ``resolution``::
 
         sage: presence.reason                                                           # needs sage.libs.gap
-        '`TestPackageAvailability("NOT_A_PACKAGE")` evaluated to `fail` in GAP.'
+        '`LoadPackage("NOT_A_PACKAGE")` evaluated to `fail` in GAP.'
         sage: bool(presence.resolution)
         False
 
@@ -788,7 +792,9 @@ class StaticFile(FileFeature):
     EXAMPLES::
 
         sage: from sage.features import StaticFile
-        sage: StaticFile(name="no_such_file", filename="KaT1aihu", search_path=("/",), spkg="some_spkg", url="http://rand.om").require()  # optional - sage_spkg
+        sage: StaticFile(name="no_such_file", filename="KaT1aihu",              # optional - sage_spkg
+        ....:            search_path="/", spkg="some_spkg",
+        ....:            url="http://rand.om").require()
         Traceback (most recent call last):
         ...
         FeatureNotPresentError: no_such_file is not available.
@@ -796,18 +802,27 @@ class StaticFile(FileFeature):
         To install no_such_file...you can try to run...sage -i some_spkg...
         Further installation instructions might be available at http://rand.om.
     """
-    def __init__(self, name, filename, search_path=None, **kwds):
+    def __init__(self, name, filename, *, search_path=None, **kwds):
         r"""
         TESTS::
 
             sage: from sage.features import StaticFile
-            sage: StaticFile(name="null", filename="null", search_path=("/dev",))
+            sage: StaticFile(name="null", filename="null", search_path="/dev")
             Feature('null')
+            sage: sh = StaticFile(name="shell", filename="sh",
+            ....:                 search_path=("/dev", "/bin", "/usr"))
+            sage: sh
+            Feature('shell')
+            sage: sh.absolute_filename()
+            '/bin/sh'
+
         """
         Feature.__init__(self, name, **kwds)
         self.filename = filename
         if search_path is None:
             self.search_path = [SAGE_SHARE]
+        elif isinstance(search_path, str):
+            self.search_path = [search_path]
         else:
             self.search_path = list(search_path)
 

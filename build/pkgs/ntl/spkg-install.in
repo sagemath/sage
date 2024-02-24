@@ -113,11 +113,6 @@ ntl_build()
 ntl_install()
 {
     echo
-    echo "Removing old NTL files."
-    rm -rf "$SAGE_LOCAL"/lib/libntl*
-    rm -rf "$SAGE_LOCAL"/include/NTL
-
-    echo
     echo "Installing NTL."
 
     cd "$SRC"
