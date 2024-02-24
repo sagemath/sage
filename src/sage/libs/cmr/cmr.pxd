@@ -111,6 +111,63 @@ cdef extern from "cmr/element.h":
     size_t CMRelementToColumnIndex(CMR_ELEMENT element)
     CMR_ELEMENT CMRelementTranspose(CMR_ELEMENT element)
 
+cdef extern from "cmr/graph.h":
+
+    ctypedef int CMR_GRAPH_NODE
+    ctypedef int CMR_GRAPH_EDGE
+    ctypedef int CMR_GRAPH_ITER
+
+    ctypedef struct CMR_GRAPH_NODE_DATA:
+        int prev
+        int next
+        int firstOut
+
+    ctypedef struct CMR_GRAPH_ARC_DATA:
+        int target
+        int prev
+        int next
+
+    ctypedef struct CMR_GRAPH:
+        size_t numNodes
+        size_t memNodes
+        CMR_GRAPH_NODE_DATA* nodes
+        int firstNode
+        int freeNode
+        size_t numEdges
+        size_t memEdges
+        CMR_GRAPH_ARC_DATA* arcs
+        int freeEdge
+
+    size_t CMRgraphMemNodes(CMR_GRAPH* graph)
+    size_t CMRgraphNumNodes(CMR_GRAPH* graph)
+    size_t CMRgraphMemEdges(CMR_GRAPH* graph)
+    size_t CMRgraphNumEdges(CMR_GRAPH* graph)
+    CMR_GRAPH_NODE CMRgraphEdgeU(CMR_GRAPH* graph, CMR_GRAPH_EDGE e)
+    CMR_GRAPH_NODE CMRgraphEdgeV(CMR_GRAPH* graph, CMR_GRAPH_EDGE e)
+    CMR_ERROR CMRgraphCreateEmpty(CMR* cmr, CMR_GRAPH** pgraph, int memNodes, int memEdges)
+    CMR_ERROR CMRgraphFree(CMR* cmr, CMR_GRAPH** pgraph)
+    CMR_ERROR CMRgraphClear(CMR* cmr, CMR_GRAPH* graph)
+    CMR_ERROR CMRgraphAddNode(CMR* cmr, CMR_GRAPH* graph, CMR_GRAPH_NODE* pnode)
+    CMR_ERROR CMRgraphAddEdge(CMR* cmr, CMR_GRAPH* graph, CMR_GRAPH_NODE u, CMR_GRAPH_NODE v, CMR_GRAPH_EDGE* pedge)
+    CMR_ERROR CMRgraphDeleteNode(CMR* cmr, CMR_GRAPH* graph, CMR_GRAPH_NODE v)
+    CMR_ERROR CMRgraphDeleteEdge(CMR* cmr, CMR_GRAPH* graph, CMR_GRAPH_EDGE e)
+    CMR_GRAPH_NODE CMRgraphNodesFirst(CMR_GRAPH* graph)
+    bint CMRgraphNodesValid(CMR_GRAPH* graph, CMR_GRAPH_NODE v)
+    CMR_GRAPH_NODE CMRgraphNodesNext(CMR_GRAPH* graph, CMR_GRAPH_NODE v)
+    CMR_GRAPH_ITER CMRgraphIncFirst(CMR_GRAPH* graph, CMR_GRAPH_NODE v)
+    bint CMRgraphIncValid(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
+    CMR_GRAPH_ITER CMRgraphIncNext(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
+    CMR_GRAPH_EDGE CMRgraphIncEdge(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
+    CMR_GRAPH_NODE CMRgraphIncSource(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
+    CMR_GRAPH_NODE CMRgraphIncTarget(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
+    CMR_GRAPH_ITER CMRgraphEdgesFirst(CMR_GRAPH* graph)
+    CMR_GRAPH_ITER CMRgraphEdgesNext(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
+    bint CMRgraphEdgesValid(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
+    CMR_GRAPH_EDGE CMRgraphEdgesEdge(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
+    # CMR_ERROR CMRgraphPrint(CMR_GRAPH* graph, FILE* stream)
+    CMR_ERROR CMRgraphMergeNodes(CMR* cmr, CMR_GRAPH* graph, CMR_GRAPH_NODE u, CMR_GRAPH_NODE v)
+    # CMR_ERROR CMRgraphCreateFromEdgeList(CMR* cmr, CMR_GRAPH** pgraph, CMR_ELEMENT** pedgeElements, char*** pnodeLabels, FILE* stream)
+
 cdef extern from "cmr/matroid.h":
 
     CMR_ERROR CMRchrmatBinaryPivot(CMR* cmr, CMR_CHRMAT* matrix, size_t pivotRow, size_t pivotColumn, CMR_CHRMAT** presult)
@@ -241,63 +298,6 @@ cdef extern from "cmr/separation.h":
     CMR_ERROR CMRoneSum(CMR* cmr, CMR_CHRMAT* first, CMR_CHRMAT* second, CMR_CHRMAT** presult)
     CMR_ERROR CMRtwoSum(CMR* cmr, CMR_CHRMAT* first, CMR_CHRMAT* second, CMR_ELEMENT firstMarker, CMR_ELEMENT secondMarker, int8_t characteristic, CMR_CHRMAT** presult)
     CMR_ERROR CMRthreeSum(CMR* cmr, CMR_CHRMAT* first, CMR_CHRMAT* second, CMR_ELEMENT firstMarker1, CMR_ELEMENT secondMarker1, CMR_ELEMENT firstMarker2, CMR_ELEMENT secondMarker2, int8_t characteristic, CMR_CHRMAT** presult)
-
-cdef extern from "cmr/graph.h":
-
-    ctypedef int CMR_GRAPH_NODE
-    ctypedef int CMR_GRAPH_EDGE
-    ctypedef int CMR_GRAPH_ITER
-
-    ctypedef struct CMR_GRAPH_NODE_DATA:
-        int prev
-        int next
-        int firstOut
-
-    ctypedef struct CMR_GRAPH_ARC_DATA:
-        int target
-        int prev
-        int next
-
-    ctypedef struct CMR_GRAPH:
-        size_t numNodes
-        size_t memNodes
-        CMR_GRAPH_NODE_DATA* nodes
-        int firstNode
-        int freeNode
-        size_t numEdges
-        size_t memEdges
-        CMR_GRAPH_ARC_DATA* arcs
-        int freeEdge
-
-    size_t CMRgraphMemNodes(CMR_GRAPH* graph)
-    size_t CMRgraphNumNodes(CMR_GRAPH* graph)
-    size_t CMRgraphMemEdges(CMR_GRAPH* graph)
-    size_t CMRgraphNumEdges(CMR_GRAPH* graph)
-    CMR_GRAPH_NODE CMRgraphEdgeU(CMR_GRAPH* graph, CMR_GRAPH_EDGE e)
-    CMR_GRAPH_NODE CMRgraphEdgeV(CMR_GRAPH* graph, CMR_GRAPH_EDGE e)
-    CMR_ERROR CMRgraphCreateEmpty(CMR* cmr, CMR_GRAPH** pgraph, int memNodes, int memEdges)
-    CMR_ERROR CMRgraphFree(CMR* cmr, CMR_GRAPH** pgraph)
-    CMR_ERROR CMRgraphClear(CMR* cmr, CMR_GRAPH* graph)
-    CMR_ERROR CMRgraphAddNode(CMR* cmr, CMR_GRAPH* graph, CMR_GRAPH_NODE* pnode)
-    CMR_ERROR CMRgraphAddEdge(CMR* cmr, CMR_GRAPH* graph, CMR_GRAPH_NODE u, CMR_GRAPH_NODE v, CMR_GRAPH_EDGE* pedge)
-    CMR_ERROR CMRgraphDeleteNode(CMR* cmr, CMR_GRAPH* graph, CMR_GRAPH_NODE v)
-    CMR_ERROR CMRgraphDeleteEdge(CMR* cmr, CMR_GRAPH* graph, CMR_GRAPH_EDGE e)
-    CMR_GRAPH_NODE CMRgraphNodesFirst(CMR_GRAPH* graph)
-    bint CMRgraphNodesValid(CMR_GRAPH* graph, CMR_GRAPH_NODE v)
-    CMR_GRAPH_NODE CMRgraphNodesNext(CMR_GRAPH* graph, CMR_GRAPH_NODE v)
-    CMR_GRAPH_ITER CMRgraphIncFirst(CMR_GRAPH* graph, CMR_GRAPH_NODE v)
-    bint CMRgraphIncValid(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
-    CMR_GRAPH_ITER CMRgraphIncNext(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
-    CMR_GRAPH_EDGE CMRgraphIncEdge(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
-    CMR_GRAPH_NODE CMRgraphIncSource(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
-    CMR_GRAPH_NODE CMRgraphIncTarget(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
-    CMR_GRAPH_ITER CMRgraphEdgesFirst(CMR_GRAPH* graph)
-    CMR_GRAPH_ITER CMRgraphEdgesNext(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
-    bint CMRgraphEdgesValid(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
-    CMR_GRAPH_EDGE CMRgraphEdgesEdge(CMR_GRAPH* graph, CMR_GRAPH_ITER i)
-    # CMR_ERROR CMRgraphPrint(CMR_GRAPH* graph, FILE* stream)
-    CMR_ERROR CMRgraphMergeNodes(CMR* cmr, CMR_GRAPH* graph, CMR_GRAPH_NODE u, CMR_GRAPH_NODE v)
-    # CMR_ERROR CMRgraphCreateFromEdgeList(CMR* cmr, CMR_GRAPH** pgraph, CMR_ELEMENT** pedgeElements, char*** pnodeLabels, FILE* stream)
 
 cdef extern from "cmr/graphic.h":
 
