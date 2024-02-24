@@ -2214,7 +2214,7 @@ cdef class Polynomial(CommutativePolynomial):
 
     def _any_irreducible_factor_squarefree(self, degree=None, ext_degree=None):
         """
-        Helper function for ``any_irreducible_factor()`` which computes
+        Helper function for :meth:`any_irreducible_factor` which computes
         an irreducible factor from self, assuming the input is
         squarefree.
 
