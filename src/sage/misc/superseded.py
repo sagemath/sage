@@ -132,7 +132,7 @@ def deprecation_cython(issue_number, message, stacklevel=3):
         True
         sage: w2[0].filename == w3[0].filename
         False
-     """
+    """
     warning(issue_number, message, DeprecationWarning, stacklevel)
 
 def warning(issue_number, message, warning_class=Warning, stacklevel=3):

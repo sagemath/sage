@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Hyperbolic Geodesics
 
@@ -622,7 +621,7 @@ class HyperbolicGeodesic(SageObject):
     def ideal_endpoints(self):
         r"""
         Return the ideal endpoints in bounded models.  Raise a
-        ``NotImplementedError`` in models that are not bounded.
+        :class:`NotImplementedError` in models that are not bounded.
 
         EXAMPLES::
 
@@ -660,7 +659,7 @@ class HyperbolicGeodesic(SageObject):
     def complete(self):
         r"""
         Return the geodesic with ideal endpoints in bounded models.  Raise a
-        ``NotImplementedError`` in models that are not bounded.
+        :class:`NotImplementedError` in models that are not bounded.
         In the following examples we represent complete geodesics by a dashed
         line.
 
@@ -817,7 +816,7 @@ class HyperbolicGeodesic(SageObject):
         r"""
         Return the unique hyperbolic geodesic perpendicular to two given
         geodesics, if such a geodesic exists.  If none exists, raise a
-        ``ValueError``.
+        :class:`ValueError`.
 
         INPUT:
 
@@ -1278,7 +1277,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
         r"""
         Return the unique hyperbolic geodesic perpendicular to ``self``
         and ``other``, if such a geodesic exists; otherwise raise a
-        ``ValueError``.
+        :class:`ValueError`.
 
         INPUT:
 
@@ -2008,7 +2007,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             sage: type(B)
             <class 'sage.matrix.matrix_complex_double_dense.Matrix_complex_double_dense'>
 
-      ::
+        ::
 
             sage: B = g._get_B(SR(1));  B
             [ 1  0]
@@ -2016,7 +2015,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             sage: type(B)
             <class 'sage.matrix.matrix_symbolic_dense.Matrix_symbolic_dense'>
 
-      ::
+        ::
 
             sage: B = g._get_B(complex(1));  B
             [   1.0    0.0]
@@ -2024,7 +2023,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             sage: type(B)
             <class 'sage.matrix.matrix_complex_double_dense.Matrix_complex_double_dense'>
 
-      ::
+        ::
 
             sage: B = g._get_B(QQbar(1+I));  B
             [ 1  0]

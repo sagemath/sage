@@ -152,7 +152,6 @@ from sage.rings.infinity import infinity
 from sage.rings.polynomial.multi_polynomial_ring_base import is_MPolynomialRing
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.rings.power_series_pari import PowerSeries_pari
 from sage.structure.category_object import normalize_names
 from sage.structure.element import Expression, parent
 from sage.structure.nonexact import Nonexact
@@ -167,6 +166,13 @@ import sage.categories.fields as fields
 _Fields = fields.Fields()
 
 from sage.categories.complete_discrete_valuation import CompleteDiscreteValuationRings
+
+try:
+    from .laurent_series_ring import LaurentSeriesRing
+    from .laurent_series_ring_element import LaurentSeries
+except ImportError:
+    LaurentSeriesRing = ()
+    LaurentSeries = ()
 
 
 def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
@@ -537,11 +543,11 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             ValueError: default_prec (= -5) must be non-negative
 
         """
-        from sage.rings.finite_rings.finite_field_pari_ffelt import (
-            FiniteField_pari_ffelt,
-        )
-
         if implementation is None:
+            try:
+                from sage.rings.finite_rings.finite_field_pari_ffelt import FiniteField_pari_ffelt
+            except ImportError:
+                FiniteField_pari_ffelt = ()
             if isinstance(base_ring, FiniteField_pari_ffelt):
                 implementation = 'pari'
             else:
@@ -571,6 +577,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             assert is_MPolynomialRing(self.__mpoly_ring)
             self.Element = power_series_mpoly.PowerSeries_mpoly
         elif implementation == 'pari':
+            from .power_series_pari import PowerSeries_pari
             self.Element = PowerSeries_pari
         else:
             raise ValueError('unknown power series implementation: %r' % implementation)
@@ -579,7 +586,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
                                       category=getattr(self, '_default_category',
                                                        _CommutativeRings))
         Nonexact.__init__(self, default_prec)
-        if self.Element is PowerSeries_pari:
+        if implementation == 'pari':
             self.__generator = self.element_class(self, R.gen().__pari__())
         else:
             self.__generator = self.element_class(self, R.gen(), is_gen=True)
@@ -805,7 +812,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             if prec >= f.prec():
                 return f
             f = f.truncate(prec)
-        elif isinstance(f, laurent_series_ring_element.LaurentSeries) and f.parent().power_series_ring() is self:
+        elif isinstance(f, LaurentSeries) and f.parent().power_series_ring() is self:
             return self(f.power_series(), prec, check=check)
         elif isinstance(f, MagmaElement) and str(f.Type()) == 'RngSerPowElt':
             v = sage_eval(f.Eltseq())
@@ -953,9 +960,8 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             return True   # this is allowed.
         if base_map is None and not codomain.has_coerce_map_from(self.base_ring()):
             return False
-        from .laurent_series_ring import is_LaurentSeriesRing
         v = im_gens[0]
-        if is_PowerSeriesRing(codomain) or is_LaurentSeriesRing(codomain):
+        if is_PowerSeriesRing(codomain) or isinstance(codomain, LaurentSeriesRing):
             try:
                 return v.valuation() > 0 or v.is_nilpotent()
             except NotImplementedError:
@@ -1270,8 +1276,10 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         try:
             return self.__laurent_series_ring
         except AttributeError:
-            self.__laurent_series_ring = laurent_series_ring.LaurentSeriesRing(
-                                                 self.base_ring(), self.variable_name(), default_prec=self.default_prec(), sparse=self.is_sparse())
+            from .laurent_series_ring import LaurentSeriesRing
+
+            self.__laurent_series_ring = LaurentSeriesRing(
+                self.base_ring(), self.variable_name(), default_prec=self.default_prec(), sparse=self.is_sparse())
             return self.__laurent_series_ring
 
 

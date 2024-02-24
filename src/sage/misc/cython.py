@@ -370,7 +370,7 @@ def cython(filename, verbose=0, compile_message=False,
                 try:
                     with open(name + ".lis") as f:
                         cython_messages = f.read()
-                except IOError:
+                except OSError:
                     cython_messages = "Error compiling Cython file"
     except CompileError:
         raise RuntimeError(cython_messages.strip())
@@ -638,7 +638,8 @@ def compile_and_load(code, **kwds):
         sage: code = '''
         ....: from sage.rings.rational cimport Rational
         ....: from sage.rings.polynomial.polynomial_rational_flint cimport Polynomial_rational_flint
-        ....: from sage.libs.flint.fmpq_poly cimport fmpq_poly_length, fmpq_poly_get_coeff_mpq, fmpq_poly_set_coeff_mpq
+        ....: from sage.libs.flint.fmpq_poly cimport fmpq_poly_length
+        ....: from sage.libs.flint.fmpq_poly_sage cimport fmpq_poly_get_coeff_mpq, fmpq_poly_set_coeff_mpq
         ....:
         ....: def evaluate_at_power_of_gen(Polynomial_rational_flint f, unsigned long n):
         ....:     assert n >= 1

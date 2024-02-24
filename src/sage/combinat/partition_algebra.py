@@ -36,7 +36,7 @@ def _int_or_half_int(k):
 
     OUTPUT:
 
-    If ``k`` is not in `1/2 \ZZ`, then this raises a ``ValueError``.
+    If ``k`` is not in `1/2 \ZZ`, then this raises a :class:`ValueError`.
     Otherwise, we return the pair:
 
     - boolean; ``True`` if ``k`` is an integer and ``False`` if a half integer
@@ -1931,7 +1931,7 @@ def to_set_partition(l, k=None):
         if not l:
             return Set([])
         else:
-            k = max((max(map(abs, x)) for x in l))
+            k = max(max(map(abs, x)) for x in l)
 
     to_be_added = Set(list(range(1, k + 1)) + [-x for x in range(1, k + 1)])
 

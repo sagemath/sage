@@ -1195,7 +1195,7 @@ class GenericCellComplex(SageObject):
         for dim in self.cells():
             cells += len(self.cells()[dim])
         if cells != 1:
-            cells_string = " and %s %s" % (cells, cells_name)
+            cells_string = " and {} {}".format(cells, cells_name)
         else:
             cells_string = " and 1 %s" % cell_name
         return Name + " complex " + vertex_string + cells_string

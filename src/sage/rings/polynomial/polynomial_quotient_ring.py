@@ -41,6 +41,7 @@ TESTS::
 from . import polynomial_element
 import sage.rings.rational_field
 
+from sage.arith.misc import crt
 from sage.rings.ring import Field, IntegralDomain, CommutativeRing
 
 from sage.misc.cachefunc import cached_method
@@ -1275,7 +1276,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
+            sage: # needs sage.modules sage.rings.finite_rings
             sage: F1.<a> = GF(2^7)
             sage: P1.<x> = F1[]
             sage: F2 = F1.extension(x^2 + x + 1, 'u')
@@ -1361,11 +1362,12 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             if not seen_before:
                 S_abs = []
                 for p in S:
-                    abs_gens = []
-                    for g in D.ideal(p.gens()).gens(): # this line looks a bit silly, due to inconsistency over QQ - see # 7596
-                        abs_gens.append(D_abs.structure()[1](g))
-                    S_abs += [pp for pp,_ in D_abs.ideal(abs_gens).factor()]
-                iso_classes.append((D_abs,S_abs))
+                    # next line looks a bit silly,
+                    # due to inconsistency over QQ - see # 7596
+                    abs_gens = [D_abs.structure()[1](g)
+                                for g in D.ideal(p.gens()).gens()]
+                    S_abs += [pp for pp, _ in D_abs.ideal(abs_gens).factor()]
+                iso_classes.append((D_abs, S_abs))
             isos.append((D_abs.embeddings(D_abs)[0], j))
         return fields, isos, iso_classes
 
@@ -1539,7 +1541,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
                 for ideal_gen in clgp_gen.gens():
                     rel_ideal_gen = back_to_rel(phi(ideal_gen))
                     prod_ideal_gen = [0]*i + [rel_ideal_gen.lift()] + [0]*(n - i - 1)
-                    poly_ideal_gen = self(sage.arith.all.crt(prod_ideal_gen, moduli))
+                    poly_ideal_gen = self(crt(prod_ideal_gen, moduli))
                     ideal_gens.append(poly_ideal_gen)
                 clgp_gens.append((tuple(ideal_gens), gen_order))
 
@@ -1755,7 +1757,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
                 mul_order = unit.multiplicative_order()
                 rel_unit = back_to_rel(phi(unit))
                 prod_unit = [1]*i + [rel_unit.lift()] + [1]*(n - i - 1)
-                poly_unit = self(sage.arith.all.crt(prod_unit, moduli))
+                poly_unit = self(crt(prod_unit, moduli))
                 units.append((poly_unit, mul_order))
 
         return units
@@ -1897,7 +1899,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             for gen in component_selmer_groups[isos[i][1]]:
                 rel_gen = back_to_rel(phi(gen))
                 prod_gen = [1]*i + [rel_gen.lift()] + [1]*(n - i - 1)
-                poly_gen = self(sage.arith.all.crt(prod_gen, moduli))
+                poly_gen = self(crt(prod_gen, moduli))
                 gens.append(poly_gen)
 
         return gens
@@ -2087,7 +2089,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             base_image = self.base_ring().modulus().change_ring(isomorphic_ring).any_root()
             base_to_isomorphic_ring = self.base_ring().hom([isomorphic_ring(base_image)])
             modulus = self.modulus().map_coefficients(base_to_isomorphic_ring)
-            gen = modulus.any_root(assume_squarefree=True, degree=-1)
+            gen = modulus.any_root(assume_squarefree=True, degree=1, assume_distinct_deg=True)
 
             homspace = Hom(self, isomorphic_ring)
             to_isomorphic_ring = homspace.__make_element_class__(SetMorphism)(homspace,

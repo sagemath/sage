@@ -128,7 +128,7 @@ def _explain_constructor(cl):
         var = "It accepts unspecified arguments as well.\n"
     else:
         var = ""
-    return("{}\n{}\n{}See the documentation of {}.{} for more details."
+    return ("{}\n{}\n{}See the documentation of {}.{} for more details."
             .format(reqs, opts, var, cl.__module__, cl.__name__))
 
 
@@ -512,7 +512,7 @@ class AbstractCode(Parent):
             (1, 0, 1, 0, 1, 0, 1)
             True
         """
-        return [x for x in self]
+        return list(self)
 
     def length(self):
         r"""

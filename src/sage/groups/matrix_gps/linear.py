@@ -16,6 +16,8 @@ EXAMPLES::
     Special Linear Group of degree 2 over Integer Ring
     sage: G = SL(2, GF(3)); G
     Special Linear Group of degree 2 over Finite Field of size 3
+
+    sage: # needs sage.libs.gap
     sage: G.is_finite()
     True
     sage: G.conjugacy_classes_representatives()
@@ -64,6 +66,8 @@ from sage.categories.groups import Groups
 from sage.groups.matrix_gps.named_group import (
     normalize_args_vectorspace, NamedMatrixGroup_generic)
 from sage.misc.latex import latex
+from sage.misc.misc_c import prod
+from sage.rings.infinity import Infinity
 
 
 ###############################################################################
@@ -94,32 +98,38 @@ def GL(n, R, var='a'):
     EXAMPLES::
 
         sage: G = GL(6, GF(5))
-        sage: G.order()
-        11064475422000000000000000
         sage: G.base_ring()
         Finite Field of size 5
         sage: G.category()
         Category of finite groups
+
+        sage: # needs sage.libs.gap
+        sage: G.order()
+        11064475422000000000000000
         sage: TestSuite(G).run()
 
         sage: G = GL(6, QQ)
         sage: G.category()
         Category of infinite groups
+
+        sage: # needs sage.libs.gap
         sage: TestSuite(G).run()
 
     Here is the Cayley graph of (relatively small) finite General Linear Group::
 
+        sage: # needs sage.graphs sage.libs.gap
         sage: g = GL(2,3)
-        sage: d = g.cayley_graph(); d                                                   # needs sage.graphs
+        sage: d = g.cayley_graph(); d
         Digraph on 48 vertices
-        sage: d.plot(color_by_label=True, vertex_size=0.03,     # long time             # needs sage.graphs sage.plot
+        sage: d.plot(color_by_label=True, vertex_size=0.03,     # long time             # needs sage.plot
         ....:        vertex_labels=False)
         Graphics object consisting of 144 graphics primitives
-        sage: d.plot3d(color_by_label=True)                     # long time             # needs sage.graphs sage.plot
+        sage: d.plot3d(color_by_label=True)                     # long time             # needs sage.plot
         Graphics3d Object
 
     ::
 
+        sage: # needs sage.libs.gap
         sage: F = GF(3); MS = MatrixSpace(F, 2, 2)
         sage: gens = [MS([[2,0], [0,1]]), MS([[2,1], [2,0]])]
         sage: G = MatrixGroup(gens)
@@ -213,10 +223,13 @@ def SL(n, R, var='a'):
         Special Linear Group of degree 15 over Finite Field of size 7
         sage: G.category()
         Category of finite groups
+
+        sage: # needs sage.libs.gap
         sage: G.order()
         1956712595698146962015219062429586341124018007182049478916067369638713066737882363393519966343657677430907011270206265834819092046250232049187967718149558134226774650845658791865745408000000
         sage: len(G.gens())
         2
+
         sage: G = SL(2, ZZ); G
         Special Linear Group of degree 2 over Integer Ring
         sage: G.category()
@@ -231,6 +244,8 @@ def SL(n, R, var='a'):
 
         sage: G = SL(3, ZZ); G
         Special Linear Group of degree 3 over Integer Ring
+
+        sage: # needs sage.libs.gap
         sage: G.gens()
         (
         [0 1 0]  [ 0  1  0]  [1 1 0]
@@ -294,3 +309,49 @@ class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
         else:
             if x.determinant() == 0:
                 raise TypeError('matrix must non-zero determinant')
+
+    def order(self):
+        """
+        Return the order of ``self``.
+
+        EXAMPLES::
+
+            sage: G = SL(3, GF(5))
+            sage: G.order()
+            372000
+
+        TESTS:
+
+        Check if :trac:`36876` is fixed::
+
+            sage: SL(1, QQ).order()
+            1
+            sage: SL(2, ZZ).cardinality()
+            +Infinity
+
+        Check if :trac:`35490` is fixed::
+
+            sage: q = 7
+            sage: FqT.<T> = GF(q)[]
+            sage: N = T^2+1
+            sage: FqTN = QuotientRing(FqT, N*FqT)
+            sage: S = SL(2, FqTN)
+            sage: S.is_finite()
+            True
+            sage: S.order()
+            117600
+        """
+        n = self.degree()
+
+        if self.base_ring().is_finite():
+            q = self.base_ring().order()
+            ord = prod(q**n - q**i for i in range(n))
+            if self._special:
+                return ord / (q-1)
+            return ord
+
+        if self._special and n == 1:
+            return 1
+        return Infinity
+
+    cardinality = order

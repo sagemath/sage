@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Elliptic curves over the rational numbers
 
@@ -1559,10 +1558,11 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             return self.analytic_rank_upper_bound()
         elif algorithm == 'all':
             if leading_coefficient:
-                S = set([self.analytic_rank('pari', True)])
+                S = {self.analytic_rank('pari', True)}
             else:
-                S = set([self.analytic_rank('pari'),
-                    self.analytic_rank('rubinstein'), self.analytic_rank('sympow')])
+                S = {self.analytic_rank('pari'),
+                     self.analytic_rank('rubinstein'),
+                     self.analytic_rank('sympow')}
             if len(S) != 1:
                 raise RuntimeError("Bug in analytic_rank; algorithms don't agree! (E=%s)" % self)
             return list(S)[0]
@@ -4316,12 +4316,12 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
              Elliptic Curve defined by y^2 = x^3 - 1386747*x + 368636886 over
              Rational Field
             sage: E.torsion_points()
-            [(-1293 : 0 : 1),
+            [(0 : 1 : 0),
+             (-1293 : 0 : 1),
              (-933 : -29160 : 1),
              (-933 : 29160 : 1),
              (-285 : -27216 : 1),
              (-285 : 27216 : 1),
-             (0 : 1 : 0),
              (147 : -12960 : 1),
              (147 : 12960 : 1),
              (282 : 0 : 1),
@@ -4333,10 +4333,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
              (8787 : -816480 : 1),
              (8787 : 816480 : 1)]
             sage: EllipticCurve('210b5').torsion_points()
-            [(-41/4 : 37/8 : 1),
+            [(0 : 1 : 0),
+             (-41/4 : 37/8 : 1),
              (-5 : -103 : 1),
              (-5 : 107 : 1),
-             (0 : 1 : 0),
              (10 : -208 : 1),
              (10 : 197 : 1),
              (37 : -397 : 1),
@@ -4346,12 +4346,12 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
              (415 : -8713 : 1),
              (415 : 8297 : 1)]
             sage: EllipticCurve('210e2').torsion_points()
-            [(-36 : 18 : 1),
+            [(0 : 1 : 0),
+             (-36 : 18 : 1),
              (-26 : -122 : 1),
              (-26 : 148 : 1),
              (-8 : -122 : 1),
              (-8 : 130 : 1),
-             (0 : 1 : 0),
              (4 : -62 : 1),
              (4 : 58 : 1),
              (31/4 : -31/8 : 1),
@@ -5347,10 +5347,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         # Take logs here since shortest path minimizes the *sum* of the weights -- not the product.
         M = M.parent()([a.log() if a else 0 for a in M.list()])
         G = Graph(M, format='weighted_adjacency_matrix')
-        G.set_vertices(dict([(v,isocls[v]) for v in G.vertices(sort=False)]))
+        G.set_vertices({v: isocls[v] for v in G.vertices(sort=False)})
         v = G.shortest_path_lengths(0, by_weight=True)
         # Now exponentiate and round to get degrees of isogenies
-        v = dict([(i, j.exp().round() if j else 0) for i,j in v.items()])
+        v = {i: j.exp().round() if j else 0 for i,j in v.items()}
         return isocls.curves, v
 
     def _multiple_of_degree_of_isogeny_to_optimal_curve(self):
@@ -6179,7 +6179,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             subgroup of index 2.
             """
             r = len(free)
-            newfree = [Q for Q in free] # copy
+            newfree = list(free)  # copy
             tor_egg = [T for T in tor if not T.is_on_identity_component()]
             free_id = [P.is_on_identity_component() for P in free]
             if any(tor_egg):
@@ -6207,7 +6207,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             int_points = [P for P in tors_points if not P.is_zero()]
             int_points = [P for P in int_points if P[0].is_integral()]
             if not both_signs:
-                xlist = set([P[0] for P in int_points])
+                xlist = {P[0] for P in int_points}
                 int_points = [self.lift_x(x) for x in xlist]
             int_points.sort()
             if verbose:
@@ -6800,8 +6800,8 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             alpha = [(log_ab/R(log(p,e))).floor() for p in S]
             if all(alpha_i <= 1 for alpha_i in alpha): # so alpha_i must be 0 to satisfy that denominator is a square
                 int_abs_bound = abs_bound.floor()
-                return set(x for x in range(-int_abs_bound, int_abs_bound)
-                           if E.is_x_coord(x))
+                return {x for x in range(-int_abs_bound, int_abs_bound)
+                        if E.is_x_coord(x)}
             else:
                 xs = []
                 alpha_max_even = [y - y % 2 for y in alpha]
@@ -6849,7 +6849,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             int_points = [P for P in tors_points if not P.is_zero()]
             int_points = [P for P in int_points if P[0].is_S_integral(S)]
             if not both_signs:
-                xlist = set([P[0] for P in int_points])
+                xlist = {P[0] for P in int_points}
                 int_points = [E.lift_x(x) for x in xlist]
             int_points.sort()
             if verbose:
