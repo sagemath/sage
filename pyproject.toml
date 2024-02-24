@@ -1,0 +1,128 @@
+[build-system]
+# Minimum requirements for the build system to execute.
+requires = [
+    # 68.1.0 Promote pyproject.toml's [tool.setuptools] out of beta.
+    # 68.1.1 Fix editable install finder handling of nested packages
+    'setuptools >= 68.1.1', # TODO: Remove this one once me migrate to meson
+    'cypari2 >=2.1.1',
+    'cysignals >=1.10.2',
+    # Exclude 3.0.3 because of https://github.com/cython/cython/issues/5748
+    'cython >=3.0, != 3.0.3',
+    'gmpy2 ~=2.1.b999',
+    'memory-allocator',
+    'numpy >=1.19',
+    'jinja2 >=3.0',
+    'pkgconfig', # TODO: Remove this one once me migrate to meson
+]
+build-backend = "setuptools.build_meta"
+
+[tool.conda-lock]
+platforms = [
+    'osx-64', 'linux-64', 'linux-aarch64', 'osx-arm64'
+]
+
+[project]
+name = 'sagemath-standard'
+dynamic = ["version"]
+description = "Sage: Open Source Mathematics Software"
+dependencies = [
+    'six >=1.15.0',
+    'conway-polynomials >=0.8',
+    'cypari2 >=2.1.1',
+    'cysignals >=1.10.2',
+    'cython >=3.0, != 3.0.3',
+    'gmpy2 >=2.1.0',
+    'importlib_metadata >=4.13',
+    'importlib_resources >= 5.7',
+    'jupyter_core >=4.6.3',
+    'lrcalc ~=2.1',
+    'memory-allocator',
+    'numpy >=1.19',
+    'pplpy >=0.8.6',
+    'primecountpy',
+    'requests >=2.13.0',
+    'typing_extensions >= 4.4.0',
+    'ipython >=7.13.0',
+    'pexpect >=4.8.0',
+    'networkx >=2.4, <3.3',
+    'scipy >=1.5, <1.12',
+    'sympy >=1.6, <2.0',
+    'matplotlib >=3.5.1',
+    'pillow >=7.2.0',
+    'mpmath >=1.1.0',
+    'ipykernel >=5.2.1',
+    'jupyter-client',
+    'ipywidgets >=7.5.1',
+    'fpylll >=0.5.9',
+    'ptyprocess > 0.5',
+    'sphinx >=5.2', # TODO: Remove this one the part of sage.misc using sphinx is moved to docbuild
+]
+
+[external]
+build-requires = [
+  "virtual:compiler/c",
+  "virtual:compiler/cpp",
+  "pkg:generic/pkg-config"
+]
+
+host-requires = [
+  "virtual:interface/blas",
+  "pkg:generic/boost",
+  "pkg:generic/brial",
+  "pkg:generic/cddlib",
+  "pkg:generic/cliquer",
+  "pkg:generic/ecl",
+  "pkg:generic/eclib",
+  "pkg:generic/ecm",
+  "pkg:generic/fflas-ffpack",
+  "pkg:generic/fplll",
+  "pkg:generic/flint",
+  "pkg:generic/libgd",
+  "pkg:generic/gap",
+  "pkg:generic/gfan",
+  "pkg:generic/giac",
+  "pkg:generic/givaro",
+  "pkg:generic/glpk",
+  "pkg:generic/gmp",
+  "pkg:generic/gsl",
+  "pkg:generic/iml",
+  "pkg:generic/lcalc",
+  "pkg:generic/libbraiding",
+  "pkg:generic/libhomfly",
+  "pkg:generic/linbox",
+  "pkg:generic/lrcalc",
+  "pkg:generic/m4ri",
+  "pkg:generic/m4rie",
+  "pkg:generic/maxima",
+  "pkg:generic/mpc",
+  "pkg:generic/mpfi",
+  "pkg:generic/mpfr",
+  "pkg:generic/nauty",
+  "pkg:generic/ntl",
+  "pkg:generic/palp",
+  "pkg:generic/pari",
+  "pkg:generic/pari-elldata",
+  "pkg:generic/pari-galdata",
+  "pkg:generic/pari-seadata",
+  "pkg:generic/planarity",
+  "pkg:generic/ppl",
+  "pkg:generic/primesieve",
+  "pkg:generic/primecount",
+  "pkg:generic/qhull",
+  "pkg:generic/rw",
+  "pkg:generic/singular",
+  "pkg:generic/symmetrica",
+  "pkg:generic/sympow",
+]
+
+[dependency-groups]
+test = [
+  "pytest",
+  "pytest-xdist",
+  "coverage",
+]
+docs = [
+  "sphinx", 
+  "sphinx-inline-tabs", 
+  "furo",
+]
