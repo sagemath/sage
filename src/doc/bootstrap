@@ -225,8 +225,8 @@ done >> "$OUTPUT_INDEX"
 
 cat >> "$OUTPUT_INDEX" <<EOF
 
-Front-end, graphics, document preparation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Other dependencies
+~~~~~~~~~~~~~~~~~~
 
 EOF
 for PKG_BASE in $(sage-package list --has-file SPKG.rst --no-file math :experimental: | grep -v '^sagemath_'); do
