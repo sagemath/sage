@@ -37,7 +37,14 @@ jobs:
       id: deps
       run: pip install tox
 
-    - name: Code style check with pycodestyle
+    - name: Code style check with ruff-minimal
+      if: (success() || failure()) && steps.deps.outcome == 'success'
+      run: tox -e ruff-minimal
+      env:
+        # https://github.com/ChartBoost/ruff-action/issues/7#issuecomment-1887780308
+        RUFF_OUTPUT_FORMAT: github
+
+    - name: Code style check with pycodestyle-minimal
       if: (success() || failure()) && steps.deps.outcome == 'success'
       run: tox -e pycodestyle-minimal
 
