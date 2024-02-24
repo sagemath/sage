@@ -1,0 +1,25 @@
+From eb6a7800c65f85151b4df86e5ce52f84326ff264 Mon Sep 17 00:00:00 2001
+From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date: Fri, 23 Feb 2024 17:47:52 -0800
+Subject: [PATCH] src/cmr/regularity_internal.h: Add missing header
+
+---
+ src/cmr/regularity_internal.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/cmr/regularity_internal.h b/src/cmr/regularity_internal.h
+index 119fd08..833c936 100644
+--- a/src/cmr/regularity_internal.h
++++ b/src/cmr/regularity_internal.h
+@@ -1,6 +1,8 @@
+ #ifndef CMR_REGULAR_INTERNAL_H
+ #define CMR_REGULAR_INTERNAL_H
+ 
++#include <time.h>
++
+ #include <cmr/regular.h>
+ 
+ #include "matroid_internal.h"
+-- 
+2.42.0
+
