@@ -1,4 +1,5 @@
-[tool.ruff]
+# https://docs.astral.sh/ruff/configuration/#config-file-discovery
+
 # Assume Python 3.9
 target-version = "py39"
 
