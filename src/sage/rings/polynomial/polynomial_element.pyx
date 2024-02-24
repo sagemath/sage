@@ -133,7 +133,7 @@ from sage.categories.morphism cimport Morphism
 
 from sage.misc.superseded import deprecation_cython as deprecation, deprecated_function_alias
 from sage.misc.cachefunc import cached_method
-
+from sage.misc.prandom import choice
 
 cpdef is_Polynomial(f) noexcept:
     """
@@ -2214,7 +2214,7 @@ cdef class Polynomial(CommutativePolynomial):
 
     def _any_irreducible_factor_squarefree(self, degree=None, ext_degree=None):
         """
-        Helper function for any_irreducible_factor which computes
+        Helper function for ``any_irreducible_factor()`` which computes
         an irreducible factor from self, assuming the input is
         squarefree.
 
@@ -2222,11 +2222,11 @@ cdef class Polynomial(CommutativePolynomial):
         of self and then finds a factor with Cantor-Zassenhaus
         splitting.
 
-        If degree is not ``None``, then only irreducible factors of degree
+        If ``degree`` is not ``None``, then only irreducible factors of degree
         ``degree`` are searched for, otherwise the smallest degree factor
         is found.
 
-        If ext_degree is not ``None``, then only irreducible factors whose
+        If ``ext_degree`` is not ``None``, then only irreducible factors whose
         degree divides ``ext_degree`` are returned.
 
         EXAMPLES::
@@ -2304,10 +2304,9 @@ cdef class Polynomial(CommutativePolynomial):
           this polynomial is assumed to be the product of irreducible
           polynomials of degree equal to ``degree``.
 
-        - ``ext_degree`` (None or positive integer) -- (default: ``None``).
-          Used for polynomials over finite fields. If not ``None`` only returns
+        - ``ext_degree`` -- positive integer or ``None`` (default);
+          used for polynomials over finite fields. If not ``None`` only returns
           irreducible factors of ``self`` whose degree divides ``ext_degree``.
-          Assumes that ``degree`` is ``None``.
 
         EXAMPLES::
 
@@ -2577,28 +2576,19 @@ cdef class Polynomial(CommutativePolynomial):
         # When not working over a finite field, do the simple thing of factoring for
         # roots and picking the first root. If none are available, raise an error.
         from sage.categories.finite_fields import FiniteFields
-        if not self.base_ring() in FiniteFields():
-            rs = self.roots(ring=ring, multiplicities=False)
-            if rs:
-                return rs[0]
-            raise ValueError(f"polynomial {self} has no roots")
-
-        # Ensure that a provided ring is appropriate for the function
-        if ring is not None:
-            # If the new ring is not a finite field, attempt to coerce the polynomial
-            # and call the function to use naive factoring
+        if self.base_ring() not in FiniteFields():
             if ring not in FiniteFields():
-                try:
-                    f = self.change_ring(ring)
-                except ValueError:
-                    raise(f"cannot coerce polynomial {self} to the new ring: {ring}")
-                return f.any_root()
+                rs = self.roots(ring=ring, multiplicities=False)
+                if rs:
+                    return choice(rs)
+                raise ValueError(f"polynomial {self} has no roots")
 
-            # If the ring is a finite field, ensure it's an extension of the base ring
-            if self.base_ring().characteristic() != ring.characteristic():
-                raise ValueError("ring must have the same characteristic as the base ring")
-            if not self.base_ring().degree().divides(ring.degree()):
-                raise ValueError("ring must be an extension of the base ring")
+        # Ensure that a provided ring is appropriate for the function. From the
+        # above we know it is either None or a finite field. When it's a finite
+        # field we ensure there's a coercion from the base ring to ring.
+        if ring is not None:
+            if ring.coerce_map_from(self.base_ring()) is None:
+                raise ValueError(f"no coercion map can be computed from {self.base_ring()} to {ring}")
 
         # When the degree is none, we only look for a linear factor
         if degree is None:
@@ -2645,7 +2635,8 @@ cdef class Polynomial(CommutativePolynomial):
             #       C library bindings for all finite fields.
             #       Until the coercion system for finite fields works better,
             #       this will be the most performant
-            return f.roots(ring, multiplicities=False)[0]
+            roots = f.roots(ring, multiplicities=False)
+            return choice(roots)
 
         # The old version of `any_root()` allowed degree < 0 to indicate that the input polynomial
         # had a distinct degree factorisation, we pass this to any_irreducible_factor as a bool and
@@ -2697,7 +2688,8 @@ cdef class Polynomial(CommutativePolynomial):
         #       C library bindings for all finite fields.
         #       Until the coercion system for finite fields works better,
         #       this will be the most performant
-        return f.roots(ring, multiplicities=False)[0]
+        roots = f.roots(ring, multiplicities=False)
+        return choice(roots)
 
     def __truediv__(left, right):
         r"""
