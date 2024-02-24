@@ -534,11 +534,11 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
                 modulus = m
             self = self % modulus
             if exp > 0 and exp.bit_length() >= 32:
-                return self._powmod_bigexp(exp, modulus)
+                return (<Polynomial_zmod_flint>self)._powmod_bigexp(exp, modulus)
 
         return Polynomial_template.__pow__(self, exp, modulus)
 
-    cpdef Polynomial _powmod_bigexp(Polynomial_zmod_flint self, Integer exp, Polynomial_zmod_flint m):
+    cdef Polynomial _powmod_bigexp(Polynomial_zmod_flint self, Integer exp, Polynomial_zmod_flint m):
         r"""
         Modular exponentiation with a large integer exponent.
 
@@ -548,9 +548,9 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
             sage: R.<x> = PolynomialRing(GF(5), implementation="FLINT")
             sage: f = x+1
-            sage: f._powmod_bigexp(5**50, x^5 + 4*x + 3)
+            sage: pow(f, 5**50, x^5 + 4*x + 3) # indirect doctest
             x + 1
-            sage: x._powmod_bigexp(5**64, x^5 + 4*x + 3)
+            sage: pow(x, 5**64, x^5 + 4*x + 3) # indirect doctest
             x + 3
         """
         cdef Polynomial_zmod_flint ans = self._new()
