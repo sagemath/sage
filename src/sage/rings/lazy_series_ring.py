@@ -940,6 +940,21 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: T.define_implicitly([A, B], [A - X*E(B), B - Y*E(A)])
             sage: A[:3]
             [h[1] # h[], h[1] # h[1]]
+
+
+        Permutations with two kinds of labels such that each cycle
+        contains at least one element of each kind (defined
+        implicitely to have a test)::
+
+            sage: p = SymmetricFunctions(QQ).p()
+            sage: S = LazySymmetricFunctions(p)
+            sage: P = S(lambda n: sum(p[la] for la in Partitions(n)))
+            sage: T = LazySymmetricFunctions(tensor([p, p]))
+            sage: X = tensor([p[1],p[[]]])
+            sage: Y = tensor([p[[]],p[1]])
+            sage: A = T.undefined()
+            sage: T.define_implicitly([A], [P(X)*P(Y)*A - P(X+Y)])
+            sage: A[:3]
         """
         s = [a[0]._coeff_stream if isinstance(a, (tuple, list))
              else a._coeff_stream
@@ -3278,7 +3293,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
 
                 coeff_stream = Stream_exact(p_list,
                                             order=v,
-                                            constant=0,
+                                            constant=self.base_ring().zero(),
                                             degree=degree)
             return self.element_class(self, coeff_stream)
 
@@ -3322,7 +3337,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
                 check_homogeneous_of_degree(e, i)
             coeff_stream = Stream_exact(p,
                                         order=valuation,
-                                        constant=0,
+                                        constant=self.base_ring().zero(),
                                         degree=degree)
             return self.element_class(self, coeff_stream)
         if callable(x):
@@ -3332,7 +3347,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
                     check_homogeneous_of_degree(e, i)
                 coeff_stream = Stream_exact(p,
                                             order=valuation,
-                                            constant=0,
+                                            constant=self.base_ring().zero(),
                                             degree=degree)
                 return self.element_class(self, coeff_stream)
             if check:
