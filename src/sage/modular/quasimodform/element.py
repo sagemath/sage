@@ -31,15 +31,19 @@ from sage.rings.integer_ring import ZZ
 
 class QuasiModularFormsElement(ModuleElement):
     r"""
-    A quasimodular forms ring element. Such an element is describbed by SageMath
-    as a polynomial
+    A quasimodular forms ring element. Such an element is describbed by
+    SageMath as a polynomial
 
     .. MATH::
 
-        f_0 + f_1 E_2 + f_2 E_2^2 + \cdots + f_m E_2^m
+        F = f_0 + f_1 E_2 + f_2 E_2^2 + \cdots + f_m E_2^m
 
     where each `f_i` a graded modular form element
     (see :class:`~sage.modular.modform.element.GradedModularFormElement`)
+
+    For an integer `k`, we say that `F` is homogeneous of weight `k` if
+    it lies in an homogeneous component of degree `k` of the graded ring
+    of quasimodular forms.
 
     EXAMPLES::
 
