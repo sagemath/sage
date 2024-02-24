@@ -2172,8 +2172,8 @@ cdef class Polynomial(CommutativePolynomial):
             return self
 
         # We expect to succeed with greater than 1/2 probability,
-        # so if we try 1000 times and fail, there's a bug somewhere.
-        for _ in range(1000):
+        # so if we try 100 times and fail, there's a bug somewhere.
+        for _ in range(100):
             # Sample a polynomial "uniformly" from R
             # TODO: once #37118 has been merged, this can be made cleaner,
             #       as we will actually have access to uniform sampling.
@@ -2281,7 +2281,9 @@ cdef class Polynomial(CommutativePolynomial):
                 return poly._cantor_zassenhaus_split_to_irreducible(d)
             elif ZZ(d).divides(ext_degree):
                 return poly._cantor_zassenhaus_split_to_irreducible(d)
-        raise ValueError(f"no irreducible factor could be computed from {self}")
+            if d > ext_degree:
+                raise ValueError(f"no irreducible factor of degree {degree} dividing {ext_degree} could be computed from {self}")
+        raise AssertionError(f"no irreducible factor could be computed from {self}")
 
     def any_irreducible_factor(self, degree=None, assume_squarefree=False, assume_distinct_deg=False, ext_degree=None):
         """
@@ -2436,6 +2438,9 @@ cdef class Polynomial(CommutativePolynomial):
         # If degree has been set, there could just be no factor of the desired degree
         if degree:
             raise ValueError(f"polynomial {self} has no irreducible factor of degree {degree}")
+        # If ext_degree has been set, then there may be no irreducible factor of degree dividing ext_degree
+        if ext_degree:
+            raise ValueError(f"polynomial {self} has no irreducible factor of degree dividing {ext_degree}")
         # But if any degree is allowed then there should certainly be a factor if self has degree > 0
         raise AssertionError(f"no irreducible factor was computed for {self}. Bug.")
 
