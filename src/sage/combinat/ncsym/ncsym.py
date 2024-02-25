@@ -109,7 +109,7 @@ def nesting(la, nu):
         1
         sage: nesting(B, A)
         1
-        
+
     ::
 
         sage: lst = list(SetPartitions(4))
