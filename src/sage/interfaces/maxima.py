@@ -479,7 +479,7 @@ Test that the output is parseable (:trac:`31796`)::
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -491,8 +491,8 @@ Test that the output is parseable (:trac:`31796`)::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import re
@@ -556,7 +556,7 @@ class Maxima(MaximaAbstract, Expect):
         if not os.path.exists(STARTUP):
             raise RuntimeError('You must get the file sage-maxima.lisp')
 
-        #self.__init_code = init_code
+        # self.__init_code = init_code
         if init_code is None:
             # display2d -- no ascii art output
             # keepfloat -- don't automatically convert floats to rationals
@@ -570,7 +570,7 @@ class Maxima(MaximaAbstract, Expect):
         # See trac # 6818.
         init_code.append('nolabels : true')
 
-        MaximaAbstract.__init__(self,"maxima")
+        MaximaAbstract.__init__(self, "maxima")
         Expect.__init__(self,
                         name='maxima',
                         prompt=r'\(\%i[0-9]+\) ',
@@ -649,7 +649,7 @@ class Maxima(MaximaAbstract, Expect):
             sage: maxima.__reduce__()
             (<function reduce_load_Maxima at 0x...>, ())
         """
-        return reduce_load_Maxima, tuple([]) #(self.__init_code,)
+        return reduce_load_Maxima, tuple()  # (self.__init_code,)
 
     def _sendline(self, string):
         """
@@ -728,8 +728,8 @@ class Maxima(MaximaAbstract, Expect):
             if i > 0:
                 v = self._before()
 
-                #We check to see if there is a "serious" error in Maxima.
-                #Note that this depends on the order of self._prompt_wait
+                # We check to see if there is a "serious" error in Maxima.
+                # Note that this depends on the order of self._prompt_wait
                 if expr is self._prompt_wait and i > len(self._ask):
                     self.quit()
                     raise ValueError(
@@ -887,10 +887,9 @@ class Maxima(MaximaAbstract, Expect):
             sage: maxima._batch('10003;',batchload=False)
             '...batch...10003...'
         """
-        filename = '%s-%s' % (self._local_tmpfile(),randrange(2147483647))
-        F = open(filename, 'w')
-        F.write(s)
-        F.close()
+        filename = '%s-%s' % (self._local_tmpfile(), randrange(2147483647))
+        with open(filename, 'w') as F:
+            F.write(s)
         if self.is_remote():
             self._send_tmpfile_to_server(local_file=filename)
             tmp_to_use = self._remote_tmpfile()
@@ -903,7 +902,7 @@ class Maxima(MaximaAbstract, Expect):
 
         r = randrange(2147483647)
         s = str(r+1)
-        cmd = "%s1+%s;\n" % (cmd,r)
+        cmd = "%s1+%s;\n" % (cmd, r)
 
         self._sendline(cmd)
         self._expect_expr(s)
@@ -969,7 +968,7 @@ class Maxima(MaximaAbstract, Expect):
             Maxima ERROR:
                 Principal Value
         """
-        raise TypeError("Error executing code in Maxima\nCODE:\n\t%s\nMaxima ERROR:\n\t%s" % (cmd, out.replace('-- an error.  To debug this try debugmode(true);','')))
+        raise TypeError("Error executing code in Maxima\nCODE:\n\t%s\nMaxima ERROR:\n\t%s" % (cmd, out.replace('-- an error.  To debug this try debugmode(true);', '')))
 
     ###########################################
     # Direct access to underlying lisp interpreter.
@@ -1004,9 +1003,9 @@ class Maxima(MaximaAbstract, Expect):
 
         INPUT:
 
-        - ``var`` - string
+        - ``var`` -- string
 
-        - ``value`` - string
+        - ``value`` -- string
 
         EXAMPLES::
 
@@ -1021,10 +1020,10 @@ class Maxima(MaximaAbstract, Expect):
             self._batch(cmd, batchload=True)
         else:
             self._eval_line(cmd)
-            #self._sendline(cmd)
-            #self._expect_expr()
-            #out = self._before()
-            #self._error_check(cmd, out)
+            # self._sendline(cmd)
+            # self._expect_expr()
+            # out = self._before()
+            # self._error_check(cmd, out)
 
     def clear(self, var):
         """
@@ -1100,30 +1099,30 @@ class Maxima(MaximaAbstract, Expect):
         """
         return MaximaElementFunction
 
-    ## some old helper functions to wrap the calculus use
-    ## of the Maxima interface. these routines expect arguments
-    ## living in the symbolic ring and return something
-    ## that is hopefully coercible into the symbolic ring again.
-##
-##    def sr_integral(self,*args):
-##        return args[0]._maxima_().integrate(*args[1:])
-##
-##    def sr_sum(self,expression,v,a,b):
-##        sum  = "'sum(%s, %s, %s, %s)" % tuple([repr(expr._maxima_()) for expr in (expression, v, a, b)])
-##        result = self.simplify_sum(sum)
-##        result = result.ratsimp()
-##        return expression.parent()(result)
-##
-##    def sr_limit(self,ex,*args):
-##        return ex._maxima_().limit(*args)
-##
-##    def sr_tlimit(self,ex,*args):
-##        return ex._maxima_().tlimit(*args)
-##
+    # some old helper functions to wrap the calculus use
+    # of the Maxima interface. these routines expect arguments
+    # living in the symbolic ring and return something
+    # that is hopefully coercible into the symbolic ring again.
+
+#    def sr_integral(self,*args):
+#        return args[0]._maxima_().integrate(*args[1:])
+
+#    def sr_sum(self,expression,v,a,b):
+#        sum  = "'sum(%s, %s, %s, %s)" % tuple([repr(expr._maxima_()) for expr in (expression, v, a, b)])
+#        result = self.simplify_sum(sum)
+#        result = result.ratsimp()
+#        return expression.parent()(result)
+
+#    def sr_limit(self,ex,*args):
+#        return ex._maxima_().limit(*args)
+
+#    def sr_tlimit(self,ex,*args):
+#        return ex._maxima_().tlimit(*args)
+
 
 def is_MaximaElement(x):
     """
-    Returns True if ``x`` is of type :class:`MaximaElement`.
+    Return True if ``x`` is of type :class:`MaximaElement`.
 
     EXAMPLES::
 
@@ -1261,7 +1260,7 @@ maxima = Maxima(init_code=['display2d : false',
                 script_subdirectory=None)
 
 
-def reduce_load_Maxima(): #(init_code=None):
+def reduce_load_Maxima():  # (init_code=None):
     """
     Unpickle a Maxima Pexpect interface.
 
@@ -1271,7 +1270,8 @@ def reduce_load_Maxima(): #(init_code=None):
         sage: reduce_load_Maxima()
         Maxima
     """
-    return maxima #Maxima(init_code=init_code)
+    return maxima  # Maxima(init_code=init_code)
+
 
 # This is defined for compatibility with the old Maxima interface.
 def reduce_load_Maxima_function(parent, defn, args, latex):
@@ -1288,6 +1288,7 @@ def reduce_load_Maxima_function(parent, defn, args, latex):
         True
     """
     return parent.function(args, defn, defn, latex)
+
 
 def __doctest_cleanup():
     """
