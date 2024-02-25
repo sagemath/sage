@@ -132,3 +132,8 @@ docs = [
   "sphinx-inline-tabs", 
   "furo",
 ]
+lint = [
+  "relint",
+  "pycodestyle",
+  "flake8-rst-docstrings",
+]
