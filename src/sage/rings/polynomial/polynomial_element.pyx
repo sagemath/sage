@@ -2284,7 +2284,7 @@ cdef class Polynomial(CommutativePolynomial):
                 raise ValueError(f"no irreducible factor of degree {degree} dividing {ext_degree} could be computed from {self}")
         raise AssertionError(f"no irreducible factor could be computed from {self}")
 
-    def any_irreducible_factor(self, degree=None, assume_squarefree=False, assume_distinct_deg=False, ext_degree=None):
+    def any_irreducible_factor(self, degree=None, assume_squarefree=False, assume_equal_deg=False, ext_degree=None):
         """
         Return an irreducible factor of this polynomial.
 
@@ -2300,7 +2300,7 @@ cdef class Polynomial(CommutativePolynomial):
           Used for polynomials over finite fields.  If ``True``,
           this polynomial is assumed to be squarefree.
 
-        - ``assume_distinct_deg`` (boolean) -- (default: ``False``).
+        - ``assume_equal_deg`` (boolean) -- (default: ``False``).
           Used for polynomials over finite fields.  If ``True``,
           this polynomial is assumed to be the product of irreducible
           polynomials of degree equal to ``degree``.
@@ -2360,9 +2360,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: F = GF(163)
             sage: R.<x> = F[]
             sage: h = (x + 57) * (x + 98) * (x + 117) * (x + 145)
-            sage: h.any_irreducible_factor(degree=1, assume_distinct_deg=True)   # random
+            sage: h.any_irreducible_factor(degree=1, assume_equal_deg=True)   # random
             x + 98
-            sage: h.any_irreducible_factor(assume_distinct_deg=True)
+            sage: h.any_irreducible_factor(assume_equal_deg=True)
             Traceback (most recent call last):
             ...
             ValueError: degree must be known if distinct degree factorisation is assumed
@@ -2391,7 +2391,7 @@ cdef class Polynomial(CommutativePolynomial):
             if degree < 1:
                 raise ValueError(f"{degree = } must be positive")
 
-        if assume_distinct_deg and degree is None:
+        if assume_equal_deg and degree is None:
             raise ValueError("degree must be known if distinct degree factorisation is assumed")
 
         # When not working over a finite field, do the simple thing of factoring.
@@ -2429,7 +2429,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         # If we know the polynomial is square-free, we can start here
         if assume_squarefree:
-            if assume_distinct_deg:
+            if assume_equal_deg:
                 return self._cantor_zassenhaus_split_to_irreducible(degree)
             return self._any_irreducible_factor_squarefree(degree, ext_degree)
 
@@ -2452,7 +2452,7 @@ cdef class Polynomial(CommutativePolynomial):
         # But if any degree is allowed then there should certainly be a factor if self has degree > 0
         raise AssertionError(f"no irreducible factor was computed for {self}. Bug.")
 
-    def any_root(self, ring=None, degree=None, assume_squarefree=False, assume_distinct_deg=False):
+    def any_root(self, ring=None, degree=None, assume_squarefree=False, assume_equal_deg=False):
         """
         Return a root of this polynomial in the given ring.
 
@@ -2472,14 +2472,14 @@ cdef class Polynomial(CommutativePolynomial):
           finite fields.  If ``True``, this polynomial is assumed to be
           squarefree.
 
-        - ``assume_distinct_deg`` (bool) -- Used for polynomials over
+        - ``assume_equal_deg`` (bool) -- Used for polynomials over
           finite fields.  If ``True``, all factors of this polynomial
           are assumed to have degree ``degree``.
 
         .. WARNING::
 
             Negative degree input will be deprecated. Instead use
-            ``assume_distinct_deg``.
+            ``assume_equal_deg``.
 
         EXAMPLES::
 
@@ -2656,9 +2656,9 @@ cdef class Polynomial(CommutativePolynomial):
         degree = ZZ(degree)
         if degree < 0:
             from sage.misc.superseded import deprecation
-            deprecation(37170, "negative ``degree`` will be disallowed. Instead use the bool `assume_distinct_deg`.")
+            deprecation(37170, "negative ``degree`` will be disallowed. Instead use the bool `assume_equal_deg`.")
             degree = -degree
-            assume_distinct_deg = True
+            assume_equal_deg = True
 
         # If a certain degree is requested, then we find an irreducible factor of degree `degree`
         # use this to compute a field extension and return the generator as root of this polynomial
@@ -2667,7 +2667,7 @@ cdef class Polynomial(CommutativePolynomial):
         try:
             f = self.any_irreducible_factor(degree=degree,
                                             assume_squarefree=assume_squarefree,
-                                            assume_distinct_deg=assume_distinct_deg)
+                                            assume_equal_deg=assume_equal_deg)
         except ValueError:
             raise ValueError(f"no irreducible factor of degree {degree} can be computed from {self}")
 
