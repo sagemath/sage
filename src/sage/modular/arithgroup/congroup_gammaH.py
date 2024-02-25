@@ -1045,7 +1045,7 @@ class GammaH_class(CongruenceSubgroup):
             # difficult case
             t = other._list_of_elements_in_H()
             for x in self._generators_for_H():
-                if not (x in t):
+                if x not in t:
                     return False
             return True
 
@@ -1402,7 +1402,7 @@ def _list_subgroup(N, gens):
             raise ValueError("gen (=%s) is not in (Z/%sZ)^*" % (g, N))
         gk = int(g) % N
         sbgrp = [gk]
-        while not (gk in H):
+        while gk not in H:
             gk = (gk * g) % N
             sbgrp.append(gk)
         H = {(x * h) % N for x in sbgrp for h in H}
