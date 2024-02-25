@@ -81,8 +81,8 @@ The zero endomorphism `[0]` is supported::
     sage: zero(E.random_point())
     (0 : 1 : 0)
 
-    Retrieving multiplication-by-`m` maps when `m` is divisible by the
-    characteristic also works (since :issue:`37096`)::
+Retrieving multiplication-by-`m` maps when `m` is divisible by the
+characteristic also works (since :issue:`37096`)::
 
     sage: E = EllipticCurve(GF(7), [1,0])
     sage: phi = E.scalar_multiplication(7); phi
