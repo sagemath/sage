@@ -2647,10 +2647,8 @@ class FractionWithFactoredDenominator(RingElement):
 
         # Test 4: Is p convenient?
         M = matrix(self.log_grads(p))
-        convenient_coordinates = []
-        for j in range(d):
-            if 0 not in M.columns()[j]:
-                convenient_coordinates.append(j)
+        convenient_coordinates = [j for j in range(d)
+                                  if 0 not in M.columns()[j]]
         if not convenient_coordinates:
             return (False, 'multiple point but not convenient')
 
@@ -2746,10 +2744,8 @@ class FractionWithFactoredDenominator(RingElement):
         d = self.dimension()
 
         # Expand K by the variables of alpha if there are any.
-        indets = []
-        for a in alpha:
-            if a not in K and a in SR:
-                indets.append(a)
+        indets = [a for a in alpha if a not in K and a in SR]
+
         indets = sorted(set(indets), key=str)   # Delete duplicates in indets.
         if indets:
             L = PolynomialRing(K, indets).fraction_field()
@@ -2845,9 +2841,7 @@ class FractionWithFactoredDenominator(RingElement):
             return coeffs
 
         # Create biggest multi-index needed.
-        alpha = []
-        for i in range(d):
-            alpha.append(max(nu[i] for nu in multi_indices))
+        alpha = [max(nu[i] for nu in multi_indices) for i in range(d)]
 
         # Compute Maclaurin expansion of self up to index alpha.
         # Use iterated univariate expansions.
