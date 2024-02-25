@@ -955,6 +955,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: A = T.undefined()
             sage: T.define_implicitly([A], [P(X)*P(Y)*A - P(X+Y)])
             sage: A[:3]
+            [p[] # p[], 0, p[1] # p[1], p[1] # p[1, 1] + p[1, 1] # p[1]]
         """
         s = [a[0]._coeff_stream if isinstance(a, (tuple, list))
              else a._coeff_stream
