@@ -42,6 +42,3 @@ cdef inline Integer _Integer_from_mpz(mpz_t e) noexcept:
     cdef Integer z = Integer.__new__(Integer)
     mpz_set(z.value, e)
     return z
-
-cdef class int_to_Z(Morphism):
-    pass
