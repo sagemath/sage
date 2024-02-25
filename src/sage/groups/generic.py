@@ -1483,8 +1483,6 @@ def has_order(P, n, operation='+'):
         In some cases, order *testing* can be much faster than
         *computing* the order using :func:`order_from_multiple`.
     """
-    from sage.arith.misc import factor
-
     if isinstance(n, sage.rings.integer.Integer):
         if n <= 0:
             return False

@@ -213,7 +213,8 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
         ...
         TypeError: unable to convert a to an element of Integer Ring
 
-    This used to construct ``[]`` since the iterator is consumed twice::
+    The iterator used to be consumed twice during the construction when
+    there is no coercion (see :issue:`37358`)::
 
         sage: Sequence(a for a in [1, factor(1)])
         [1, 1]
@@ -233,7 +234,10 @@ def Sequence(x, universe=None, check=True, immutable=False, cr=False, cr_str=Non
                     x = x.gens()
 
     if universe is None:
-        orig_x = list(x)
+        if not isinstance(x, (list, tuple)):
+            orig_x = list(x)
+        else:
+            orig_x = x
         x = list(orig_x)  # make a copy even if x is a list, we're going to change it
 
         if len(x) == 0:

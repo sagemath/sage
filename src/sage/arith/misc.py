@@ -1790,7 +1790,7 @@ def gcd(a, b=None, **kwargs):
         sage: type(gcd([]))
         <class 'sage.rings.integer.Integer'>
 
-    It is possible to compute gcd of :class:`Factorization`::
+    It is possible to compute the gcd of a :class:`Factorization`::
 
         sage: gcd(factor(12), factor(18))
         2 * 3
@@ -1869,22 +1869,20 @@ def gcd(a, b=None, **kwargs):
         b = py_scalar_to_element(b)
         return a.gcd(b, **kwargs)
 
-    from sage.categories.objects import Objects
     from sage.structure.sequence import Sequence
     seq = Sequence(py_scalar_to_element(el) for el in a)
     U = seq.universe()
 
-    if len(seq) == 0:
-        return U(Integer(0))
-
-    if U is Objects():
-        raise ValueError("gcd arguments must share a common parent")
+    if not seq:
+        return U(ZZ.zero())
 
     if U is ZZ:
         return GCD_list(seq)
 
-    from functools import reduce
-    return reduce(gcd, map(U, seq))
+    g = seq[0]
+    for vi in seq[1:]:
+        g = vi.gcd(U(g), **kwargs)
+    return g
 
 
 GCD = gcd
