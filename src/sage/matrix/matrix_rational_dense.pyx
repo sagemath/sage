@@ -72,6 +72,7 @@ Test hashing::
 
 from libc.string cimport strcpy, strlen
 
+from sage.categories.rings import Rings
 from sage.cpython.string cimport char_to_str, str_to_bytes
 
 from sage.modules.vector_rational_dense cimport Vector_rational_dense
@@ -109,7 +110,6 @@ from sage.matrix.args cimport SparseEntry, MatrixArgs_init
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense, _lift_crt
 from sage.structure.element cimport Element, Vector
 from sage.rings.integer cimport Integer
-from sage.rings.ring import is_Ring
 from sage.rings.integer_ring import ZZ, is_IntegerRing
 import sage.rings.abc
 from sage.rings.rational_field import QQ
@@ -1459,7 +1459,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             [-+---]
             [0|1 2]
         """
-        if not is_Ring(R):
+        if R not in Rings():
             raise TypeError("R must be a ring")
         if R == self._base_ring:
             if self._is_immutable:

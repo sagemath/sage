@@ -147,9 +147,9 @@ from sage.structure.element import Element
 
 import sage.categories as categories
 from sage.categories.morphism import IdentityMorphism
+from sage.categories.rings import Rings
 
-from sage.rings.ring import (Ring, IntegralDomain,
-                             PrincipalIdealDomain, is_Ring)
+from sage.rings.ring import (Ring, IntegralDomain, PrincipalIdealDomain)
 from sage.structure.element import is_RingElement
 import sage.rings.rational_field as rational_field
 from sage.rings.rational_field import QQ
@@ -3596,7 +3596,7 @@ def polygen(ring_or_element, name="x"):
     """
     if is_RingElement(ring_or_element):
         base_ring = ring_or_element.parent()
-    elif is_Ring(ring_or_element):
+    elif ring_or_element in Rings():
         base_ring = ring_or_element
     else:
         raise TypeError("input must be a ring or ring element")
@@ -3606,6 +3606,7 @@ def polygen(ring_or_element, name="x"):
     if t.ngens() > 1:
         return t.gens()
     return t.gen()
+
 
 def polygens(base_ring, names="x", *args):
     """
