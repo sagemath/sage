@@ -418,10 +418,11 @@ class FunctionField_polymod(FunctionField):
                 raise ValueError("names must contain at most 2 entries")
 
         if self.base_field() is not self.rational_function_field():
-            L,from_L,to_L = self.simple_model()
-            ret,ret_to_L,L_to_ret = L.monic_integral_model(names)
-            from_ret = ret.hom( [from_L(ret_to_L(ret.gen())), from_L(ret_to_L(ret.base_field().gen()))] )
-            to_ret = self.hom( [L_to_ret(to_L(k.gen())) for k in self._intermediate_fields(self.rational_function_field())] )
+            L, from_L, to_L = self.simple_model()
+            ret, ret_to_L, L_to_ret = L.monic_integral_model(names)
+            from_ret = ret.hom([from_L(ret_to_L(ret.gen())),
+                                from_L(ret_to_L(ret.base_field().gen()))])
+            to_ret = self.hom([L_to_ret(to_L(k.gen())) for k in self._intermediate_fields(self.rational_function_field())])
             return ret, from_ret, to_ret
         else:
             if self.polynomial().is_monic() and all(c.denominator().is_one() for c in self.polynomial()):
@@ -431,12 +432,12 @@ class FunctionField_polymod(FunctionField):
                 return self.change_variable_name(names)
             else:
                 if not names:
-                    names = (self.variable_name()+"_",)
+                    names = (self.variable_name() + "_",)
                 if len(names) == 1:
                     names = (names[0], self.rational_function_field().variable_name())
 
                 g, d = self._make_monic_integral(self.polynomial())
-                K,from_K,to_K = self.base_field().change_variable_name(names[1])
+                K, from_K, to_K = self.base_field().change_variable_name(names[1])
                 g = g.map_coefficients(to_K)
                 ret = K.extension(g, names=names[0])
                 from_ret = ret.hom([self.gen() * d, self.base_field().gen()])
@@ -791,7 +792,7 @@ class FunctionField_polymod(FunctionField):
         if not map:
             return V
         from_V = MapVectorSpaceToFunctionField(V, self)
-        to_V   = MapFunctionFieldToVectorSpace(self, V)
+        to_V = MapFunctionFieldToVectorSpace(self, V)
         return (V, from_V, to_V)
 
     def maximal_order(self):
@@ -982,7 +983,7 @@ class FunctionField_polymod(FunctionField):
                     yy |--> y
 
         """
-        if not isinstance(im_gens, (list,tuple)):
+        if not isinstance(im_gens, (list, tuple)):
             im_gens = [im_gens]
         if len(im_gens) == 0:
             raise ValueError("no images specified")
@@ -1025,11 +1026,11 @@ class FunctionField_polymod(FunctionField):
             # making the auxiliary ring which only has polynomials
             # with integral coefficients.
             tmpAuxRing = PolynomialRing(self._base_field.constant_field(),
-                            str(self._base_field.gen())+','+str(self._ring.gen()))
+                            str(self._base_field.gen()) + ',' + str(self._ring.gen()))
             intMinPoly, d = self._make_monic_integral(self._polynomial)
             curveIdeal = tmpAuxRing.ideal(intMinPoly)
 
-            singular.lib('normal.lib') #loading genus method in Singular
+            singular.lib('normal.lib')  # loading genus method in Singular
             return int(curveIdeal._singular_().genus())
 
         else:
@@ -1170,7 +1171,7 @@ class FunctionField_polymod(FunctionField):
         B = MS(B)
         M_b = V_to_N(B.solve_left(M_to_V(b)))
         M_a = V_to_N(B.solve_left(M_to_V(a)))
-        M_to_N = M.hom([M_a,M_b])
+        M_to_N = M.hom([M_a, M_b])
 
         return N, N_to_M, M_to_N
 
@@ -1285,7 +1286,7 @@ class FunctionField_polymod(FunctionField):
         if isinstance(self.base_field(), RationalFunctionField):
             # the extension is simple already
             if name == self.variable_name():
-                id = Hom(self,self).identity()
+                id = Hom(self, self).identity()
                 return self, id, id
             else:
                 ret = self.base_field().extension(self.polynomial(), names=(name,))
@@ -1299,8 +1300,8 @@ class FunctionField_polymod(FunctionField):
             self_ = base_.extension(self.polynomial().map_coefficients(to_base_), names=(name,))
             gens_in_base_ = [to_base_(k.gen())
                              for k in base._intermediate_fields(base.rational_function_field())]
-            to_self_ = self.hom([self_.gen()]+gens_in_base_)
-            from_self_ = self_.hom([self.gen(),from_base_(base_.gen())])
+            to_self_ = self.hom([self_.gen()] + gens_in_base_)
+            from_self_ = self_.hom([self.gen(), from_base_(base_.gen())])
 
             # now collapse self_/base_/K(x)
             ret, ret_to_self_, self__to_ret = self_._simple_model(name)
@@ -1549,8 +1550,8 @@ class FunctionField_polymod(FunctionField):
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             R = PolynomialRing(self.constant_base_field(), names=names)
             S = R.remove_var(names[1])
-            f = R( L.polynomial().change_variable_name(names[1]).map_coefficients(
-                     lambda c:c.numerator().change_variable_name(names[0]), S))
+            f = R(L.polynomial().change_variable_name(names[1]).map_coefficients(
+                lambda c: c.numerator().change_variable_name(names[0]), S))
             f = f.polynomial(R.gen(0)).change_ring(K)
             f /= f.leading_coefficient()
             # f must be separable in the other variable (otherwise it would factor)
@@ -1558,11 +1559,11 @@ class FunctionField_polymod(FunctionField):
 
             ret = K.extension(f, names=(names[0],))
             # isomorphisms between L and ret are given by swapping generators
-            ret_to_L = ret.hom( [L(L.base_field().gen()), L.gen()] )
-            L_to_ret = L.hom( [ret(K.gen()), ret.gen()] )
+            ret_to_L = ret.hom([L(L.base_field().gen()), L.gen()])
+            L_to_ret = L.hom([ret(K.gen()), ret.gen()])
             # compose with from_L and to_L to get the desired isomorphisms between self and ret
-            f = ret.hom( [from_L(ret_to_L(ret.gen())), from_L(ret_to_L(ret.base_field().gen()))] )
-            t = self.hom( [L_to_ret(to_L(self.gen())), L_to_ret(to_L(self.base_field().gen()))] )
+            f = ret.hom([from_L(ret_to_L(ret.gen())), from_L(ret_to_L(ret.base_field().gen()))])
+            t = self.hom([L_to_ret(to_L(self.gen())), L_to_ret(to_L(self.base_field().gen()))])
             return ret, f, t
 
     def change_variable_name(self, name):
@@ -1637,13 +1638,13 @@ class FunctionField_polymod(FunctionField):
             raise ValueError("name must contain at least one string")
         elif len(name) == 1:
             base = self.base_field()
-            from_base = to_base = Hom(base,base).identity()
+            from_base = to_base = Hom(base, base).identity()
         else:
             base, from_base, to_base = self.base_field().change_variable_name(name[1:])
 
         ret = base.extension(self.polynomial().map_coefficients(to_base), names=(name[0],))
-        f = ret.hom( [k.gen() for k in self._intermediate_fields(self.rational_function_field())] )
-        t = self.hom( [k.gen() for k in ret._intermediate_fields(ret.rational_function_field())] )
+        f = ret.hom([k.gen() for k in self._intermediate_fields(self.rational_function_field())])
+        t = self.hom([k.gen() for k in ret._intermediate_fields(ret.rational_function_field())])
         return ret, f, t
 
 
@@ -1701,7 +1702,7 @@ class FunctionField_simple(FunctionField_polymod):
                              x |--> x)
         """
         K = self.base_field()
-        R = PolynomialRing(K,'T')
+        R = PolynomialRing(K, 'T')
         x = K.gen()
         xinv = 1/x
 
@@ -1709,8 +1710,8 @@ class FunctionField_simple(FunctionField_polymod):
         F_poly = R([h(c) for c in self.polynomial().list()])
         F = K.extension(F_poly)
 
-        self2F = self.hom([F.gen(),xinv])
-        F2self = F.hom([self.gen(),xinv])
+        self2F = self.hom([F.gen(), xinv])
+        F2self = F.hom([self.gen(), xinv])
 
         M, M2F, F2M = F.monic_integral_model('s')
 
@@ -1844,7 +1845,7 @@ class FunctionField_simple(FunctionField_polymod):
         The genus is computed by the Hurwitz genus formula.
         """
         k, _ = self.exact_constant_field()
-        different_degree = self.different().degree() # must be even
+        different_degree = self.different().degree()  # must be even
         return Integer(different_degree // 2 - self.degree() / k.degree()) + 1
 
     def residue_field(self, place, name=None):
@@ -2123,7 +2124,7 @@ class FunctionField_global(FunctionField_simple):
 
         for d in degree.divisors():
             for p in K._places_finite(degree=d):
-                for prime,_,_ in O.decomposition(p.prime_ideal()):
+                for prime, _, _ in O.decomposition(p.prime_ideal()):
                     place = prime.place()
                     if place.degree() == degree:
                         yield place
@@ -2167,7 +2168,7 @@ class FunctionField_global(FunctionField_simple):
             <generator object ...>
         """
         Oinf = self.maximal_order_infinite()
-        for prime,_,_ in Oinf.decomposition():
+        for prime, _, _ in Oinf.decomposition():
             place = prime.place()
             if place.degree() == degree:
                 yield place
@@ -2312,7 +2313,7 @@ class FunctionField_global(FunctionField_simple):
         L = self.L_polynomial()
         Lp = L.derivative()
 
-        R = IntegerRing()[[L.parent().gen()]] # power series ring
+        R = IntegerRing()[[L.parent().gen()]]  # power series ring
 
         f = R(Lp / L, prec=r)
         n = f[r-1] + q**r + 1
@@ -2408,13 +2409,13 @@ class FunctionField_integral(FunctionField_simple):
         from .hermite_form_polynomial import reversed_hermite_form
 
         k = self.constant_base_field()
-        K = self.base_field() # rational function field
+        K = self.base_field()  # rational function field
         n = self.degree()
 
         # Construct the defining polynomial of the function field as a
         # two-variate polynomial g in the ring k[y,x] where k is the constant
         # base field.
-        S,(y,x) = PolynomialRing(k, names='y,x', order='lex').objgens()
+        S, (y, x) = PolynomialRing(k, names='y,x', order='lex').objgens()
         v = self.polynomial().list()
         g = sum([v[i].numerator().subs(x) * y**i for i in range(len(v))])
 
@@ -2431,7 +2432,7 @@ class FunctionField_integral(FunctionField_simple):
             gflat = R.zero()
             for m in g.monomials():
                 c = g.monomial_coefficient(m).polynomial('zz')
-                gflat += R(c) * R(m) # R(m) is a monomial in yy and xx
+                gflat += R(c) * R(m)  # R(m) is a monomial in yy and xx
 
             k_poly = R(k.polynomial('zz'))
 
@@ -2439,7 +2440,7 @@ class FunctionField_integral(FunctionField_simple):
             pols_in_R = normalize(R.ideal([k_poly, gflat]))
 
             # reconstruct polynomials in S
-            h = R.hom([y,x,k.gen()],S)
+            h = R.hom([y, x, k.gen()], S)
             pols_in_S = [h(f) for f in pols_in_R]
         else:
             # Call Singular. Singular's "normal" function returns a basis
