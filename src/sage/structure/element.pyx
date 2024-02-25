@@ -2655,11 +2655,11 @@ cdef class RingElement(ModuleElement):
 
     cpdef _pow_int(self, n) noexcept:
         """
-        Return the (integral) power of self.
+        Return the (integral) power of ``self``.
 
         EXAMPLES::
 
-            sage: a = Integers(389)['x']['y'](37)
+            sage: a = GF(389)['x']['y'](37)
             sage: p = sage.structure.element.RingElement.__pow__
             sage: p(a,2)
             202
