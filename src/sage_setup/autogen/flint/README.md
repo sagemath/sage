@@ -12,9 +12,8 @@ autogeneration
    version can be found in `$SAGE_ROOT/build/pkgs/flint/package-version.txt`
 
 3. Possibly edit the docs at `$FLINT_ROOT/doc/source/*.rst` to match the
-   exposed API, and note the COMMIT used in `flint-commit.txt`. For example,
-   the docs of release `v3.0.1` was incorrect, so the commit
-   `3e2c3a3e091106a25ca9c6fba28e02f2cbcd654a` was used instead
+   exposed API.txt`. For example, the docs of release `v3.0.1` was incorrect,
+   so the commit `3e2c3a3e091106a25ca9c6fba28e02f2cbcd654a` was used instead
 
 4. Possibly adjust the content of `types.pxd.template` (which will be used to
    generate types.pxd)
