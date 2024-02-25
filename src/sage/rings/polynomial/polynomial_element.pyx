@@ -133,7 +133,6 @@ from sage.categories.morphism cimport Morphism
 
 from sage.misc.superseded import deprecation_cython as deprecation, deprecated_function_alias
 from sage.misc.cachefunc import cached_method
-from sage.misc.prandom import choice
 
 cpdef is_Polynomial(f) noexcept:
     """
@@ -2585,10 +2584,6 @@ cdef class Polynomial(CommutativePolynomial):
             if ring not in FiniteFields():
                 rs = self.roots(ring=ring, multiplicities=False)
                 if rs:
-                    # TODO: this has been deterministic and changing this to be random
-                    # breaks many doctests. For now we leave it deterministic but you
-                    # could change it to choice(rs). This mainly breaks examples over
-                    # of elliptic curve stuff over number fields
                     return rs[0]
                 raise ValueError(f"polynomial {self} has no roots")
 
@@ -2617,7 +2612,7 @@ cdef class Polynomial(CommutativePolynomial):
             except ValueError:
                 raise ValueError(f"no root of polynomial {self} can be computed over the ring {ring}")
             # When d != 1 we then find the smallest extension
-            # TODO: This is really annoying. What we should do here is compute some minimal
+            # TODO: What we should do here is compute some minimal
             #       extension F_ext = self.base_ring().extension(d, names="a") and find a
             #       root here and then coerce this root into the parent ring. This means we
             #       would work with the smallest possible extension.
@@ -2644,8 +2639,7 @@ cdef class Polynomial(CommutativePolynomial):
             #       C library bindings for all finite fields.
             #       Until the coercion system for finite fields works better,
             #       this will be the most performant
-            roots = f.roots(ring, multiplicities=False)
-            return choice(roots)
+            return f.roots(ring, multiplicities=False)[0]
 
         # The old version of `any_root()` allowed degree < 0 to indicate that the input polynomial
         # had a distinct degree factorisation, we pass this to any_irreducible_factor as a bool and
@@ -2697,8 +2691,7 @@ cdef class Polynomial(CommutativePolynomial):
         #       C library bindings for all finite fields.
         #       Until the coercion system for finite fields works better,
         #       this will be the most performant
-        roots = f.roots(ring, multiplicities=False)
-        return choice(roots)
+        return f.roots(ring, multiplicities=False)[0]
 
     def __truediv__(left, right):
         r"""
