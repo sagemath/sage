@@ -206,7 +206,7 @@ class MatrixGroup_gap(GroupMixinLibGAP, MatrixGroup_generic, ParentLibGAP):
 
         OUTPUT:
 
-        A ``TypeError`` must be raised if ``x`` is invalid.
+        A :class:`TypeError` must be raised if ``x`` is invalid.
 
         EXAMPLES::
 

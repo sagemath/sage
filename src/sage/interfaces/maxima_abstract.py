@@ -34,7 +34,7 @@ This is an abstract class implementing the functions shared between the Pexpect
 and library interfaces to Maxima.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -46,8 +46,8 @@ and library interfaces to Maxima.
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import re
@@ -112,7 +112,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             sage: loads(dumps(MaximaAbstract)) == MaximaAbstract
             True
         """
-        Interface.__init__(self,name)
+        Interface.__init__(self, name)
 
     ###########################################
     # System -- change directory, etc
@@ -292,7 +292,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         # name-impl to show up in $APROPOS.  We remove it.
         # https://sourceforge.net/p/maxima/bugs/3643/
         cmd_list = self._eval_line('apropos("%s")' % s, error_check=False)
-        cmd_list = cmd_list.replace(' ', '').replace('\n', '').replace('\\ - ','-').replace('\\-','-')
+        cmd_list = cmd_list.replace(' ', '').replace('\n', '').replace('\\ - ', '-').replace('\\-', '-')
         cmd_list = [x for x in cmd_list[1:-1].split(',') if x[0] != '?' and not x.endswith('-impl')]
         return [x for x in cmd_list if x.find(s) == 0]
 
@@ -382,8 +382,8 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         EXAMPLES::
 
             sage: maxima.console()             # not tested (since we can't)
-            Maxima 5.34.1 http://maxima.sourceforge.net
-            Using Lisp ECL 13.5.1
+            Maxima 5.46.0 https://maxima.sourceforge.io
+            using Lisp ECL 21.2.1
             Distributed under the GNU Public License. See the file COPYING.
             Dedicated to the memory of William Schelter.
             This is a development version of Maxima. The function bug_report()
@@ -661,29 +661,29 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         f = self._object_function_class()(self, name, rep, args, latex)
         return f
 
-##     def display2d(self, flag=True):
-##         """
-##         Set the flag that determines whether Maxima objects are
-##         printed using their 2-d ASCII art representation.  When the
-##         maxima interface starts the default is that objects are not
-##         represented in 2-d.
+#     def display2d(self, flag=True):
+#         """
+#         Set the flag that determines whether Maxima objects are
+#         printed using their 2-d ASCII art representation.  When the
+#         maxima interface starts the default is that objects are not
+#         represented in 2-d.
 
-##         INPUT:
+#         INPUT:
 
-##         flag -- bool (default: True)
+#         flag -- bool (default: True)
 
-##         EXAMPLES::
+#         EXAMPLES::
 
-##             sage: maxima('1/2')
-##             1/2
-##             sage: maxima.display2d(True)
-##             sage: maxima('1/2')
-##                                            1
-##                                            -
-##                                            2
-##             sage: maxima.display2d(False)
-##         """
-##         self._display2d = bool(flag)
+#             sage: maxima('1/2')
+#             1/2
+#             sage: maxima.display2d(True)
+#             sage: maxima('1/2')
+#                                            1
+#                                            -
+#                                            2
+#             sage: maxima.display2d(False)
+#         """
+#         self._display2d = bool(flag)
 
     def plot2d(self, *args):
         r"""
@@ -869,11 +869,12 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         a = 'ode2(%s, %s)' % (m.name(), str_vars)
         if ics is not None:
             if len(ics) == 3:
-                cmd = "ic2("+a+",%s=%s,%s=%s,diff(%s,%s)=%s);" % (vars[0],ics[0], vars[1],ics[1], vars[1], vars[0], ics[2])
+                cmd = "ic2("+a+",%s=%s,%s=%s,diff(%s,%s)=%s);" % (vars[0], ics[0], vars[1], ics[1], vars[1], vars[0], ics[2])
                 return self(cmd)
             if len(ics) == 2:
-                return self("ic1("+a+",%s=%s,%s=%s);" % (vars[0],ics[0], vars[1],ics[1]))
-        return self(a+";")
+                return self("ic1("+a+",%s=%s,%s=%s);" % (vars[0], ics[0],
+                                                         vars[1], ics[1]))
+        return self(a + ";")
 
     def de_solve_laplace(self, de, vars, ics=None):
         """
@@ -926,7 +927,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
                 self.eval(ic)
         return self('desolve(%s, %s(%s))' % (de, vars[1], vars[0]))
 
-    def solve_linear(self, eqns,vars):
+    def solve_linear(self, eqns, vars):
         """
         Wraps maxima's linsolve.
 
@@ -1782,12 +1783,12 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         i = s.find('$$')
         j = s.rfind('$$')
         s = s[i+2:j]
-        s = multiple_replace({'\r\n':' ',
-                              '\\%':'',
-                              '\\arcsin ':'\\sin^{-1} ',
-                              '\\arccos ':'\\cos^{-1} ',
-                              '\\arctan ':'\\tan^{-1} ',
-                              '\\_SAGE\\_VAR\\_':''}, s)
+        s = multiple_replace({'\r\n': ' ',
+                              '\\%': '',
+                              '\\arcsin ': '\\sin^{-1} ',
+                              '\\arccos ': '\\cos^{-1} ',
+                              '\\arctan ': '\\tan^{-1} ',
+                              '\\_SAGE\\_VAR\\_': ''}, s)
 
         # Fix a maxima bug, which gives a latex representation of multiplying
         # two numbers as a single space. This was really bad when 2*17^(1/3)
@@ -1796,9 +1797,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         # This regex matches a string of spaces preceded by either a '}', a
         # decimal digit, or a ')', and followed by a decimal digit. The spaces
         # get replaced by a '\cdot'.
-        s = re.sub(r'(?<=[})\d]) +(?=\d)', r'\\cdot', s)
-
-        return s
+        return re.sub(r'(?<=[})\d]) +(?=\d)', r'\\cdot', s)
 
     def _tab_completion(self, verbose=False):
         """
@@ -1861,8 +1860,8 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             return MatrixSpace(R, 0, 0)(0)
         ncols = int(P.eval('length(%s[1])' % self.name()))
         M = MatrixSpace(R, nrows, ncols)
-        s = self.str().replace('matrix','').replace(',',"','").\
-            replace("]','[","','").replace('([',"['").replace('])',"']")
+        s = self.str().replace('matrix', '').replace(',', "','").\
+            replace("]','[", "','").replace('([', "['").replace('])', "']")
         s = eval(s)
         return M([R(x) for x in s])
 
@@ -2206,6 +2205,7 @@ def reduce_load_MaximaAbstract_function(parent, defn, args, latex):
     """
     return parent.function(args, defn, defn, latex)
 
+
 def maxima_version():
     """
     Return Maxima version.
@@ -2230,7 +2230,7 @@ def maxima_console():
 
         sage: from sage.interfaces.maxima_abstract import maxima_console
         sage: maxima_console()                    # not tested
-        Maxima 5.34.1 http://maxima.sourceforge.net
+        Maxima 5.46.0 https://maxima.sourceforge.io
         ...
     """
     from sage.repl.rich_output.display_manager import get_display_manager

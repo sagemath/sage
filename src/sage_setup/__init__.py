@@ -58,6 +58,11 @@ def sage_setup(distributions, *,
     # We just remove all handling of "setuptools.finalize_distribution_options" entry points.
     Distribution._removed = staticmethod(lambda ep: True)
 
+    # Different workaround: disable `walk_revctrl` in setuptools
+    # This is needed for setuptools_scm >= 8, should work for any version
+    import setuptools.command.egg_info
+    setuptools.command.egg_info.walk_revctrl = lambda: ()
+
     import sys
 
     from sage_setup.excepthook import excepthook

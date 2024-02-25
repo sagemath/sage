@@ -36,11 +36,7 @@ echo " "
 # End of pretty general spkg-install file.
 # Now do the specific things needed for this package (rubiks)
 
-if [ $UNAME = "SunOS" ]; then
-    INSTALL=cp; export INSTALL
-else
-    INSTALL=install; export INSTALL
-fi
+INSTALL=install; export INSTALL
 
 if [ $UNAME = "Darwin" ]; then
     # #34293: Work around compiler hang

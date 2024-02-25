@@ -521,7 +521,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
             G[i, i] = gens[i].q().lift()
         return G
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return generators of ``self``.
 

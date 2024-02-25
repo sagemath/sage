@@ -483,10 +483,12 @@ class MatrixSpace(UniqueRepresentation, Parent):
         Full MatrixSpace of 10 by 5 dense matrices over Integer Ring
         sage: MatrixSpace(ZZ,10,5).category()
         Category of infinite enumerated finite dimensional modules with basis over
-         (euclidean domains and infinite enumerated sets and metric spaces)
+         (Dedekind domains and euclidean domains
+          and infinite enumerated sets and metric spaces)
         sage: MatrixSpace(ZZ,10,10).category()
         Category of infinite enumerated finite dimensional algebras with basis over
-         (euclidean domains and infinite enumerated sets and metric spaces)
+         (Dedekind domains and euclidean domains
+          and infinite enumerated sets and metric spaces)
         sage: MatrixSpace(QQ,10).category()
         Category of infinite finite dimensional algebras with basis over
          (number fields and quotient fields and metric spaces)
@@ -650,10 +652,12 @@ class MatrixSpace(UniqueRepresentation, Parent):
             Full MatrixSpace of 10 by 5 dense matrices over Integer Ring
             sage: MatrixSpace(ZZ,10,5).category()
             Category of infinite enumerated finite dimensional modules with basis over
-             (euclidean domains and infinite enumerated sets and metric spaces)
+             (Dedekind domains and euclidean domains
+              and infinite enumerated sets and metric spaces)
             sage: MatrixSpace(ZZ,10,10).category()
             Category of infinite enumerated finite dimensional algebras with basis over
-             (euclidean domains and infinite enumerated sets and metric spaces)
+             (Dedekind domains and euclidean domains
+              and infinite enumerated sets and metric spaces)
             sage: MatrixSpace(QQ,10).category()
             Category of infinite finite dimensional algebras with basis over
              (number fields and quotient fields and metric spaces)

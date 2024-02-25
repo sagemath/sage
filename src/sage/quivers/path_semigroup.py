@@ -469,7 +469,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         return self.gens()[i]
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the tuple of generators.
 
@@ -488,7 +488,7 @@ class PathSemigroup(UniqueRepresentation, Parent):
         """
         return self.idempotents() + self.arrows()
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         This partial semigroup is finite if and only if the underlying
         quiver is acyclic.

@@ -120,7 +120,7 @@ Sage example in ./polynomes.tex, line 666::
   sage: (t^2+t)/t
   Traceback (most recent call last):
   ...
-  TypeError: self must be an integral domain.
+  TypeError: unsupported operand parent(s) for /: 'Univariate Polynomial Ring in t over Ring of integers modulo 42' and 'Univariate Polynomial Ring in t over Ring of integers modulo 42'
 
 Sage example in ./polynomes.tex, line 685::
 

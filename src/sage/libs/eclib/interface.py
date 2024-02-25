@@ -570,7 +570,7 @@ class mwrank_EllipticCurve(SageObject):
             self.__two_descent_data().saturate(bound, lower)
             self.__saturate = bound
 
-    def gens(self):
+    def gens(self) -> list:
         """
         Return a list of the generators for the Mordell-Weil group.
 

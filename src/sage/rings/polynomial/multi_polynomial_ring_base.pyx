@@ -33,7 +33,7 @@ def is_MPolynomialRing(x):
     return isinstance(x, MPolynomialRing_base)
 
 
-cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
+cdef class MPolynomialRing_base(CommutativeRing):
     def __init__(self, base_ring, n, names, order):
         """
         Create a polynomial ring in several variables over a commutative ring.
@@ -94,7 +94,7 @@ cdef class MPolynomialRing_base(sage.rings.ring.CommutativeRing):
             category = categories.rings.Rings().Finite()
         else:
             category = polynomial_default_category(base_ring.category(), n)
-        sage.rings.ring.Ring.__init__(self, base_ring, names, category=category)
+        Ring.__init__(self, base_ring, names, category=category)
 
     def is_integral_domain(self, proof=True):
         """

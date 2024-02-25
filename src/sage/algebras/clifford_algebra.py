@@ -417,7 +417,8 @@ class CliffordAlgebra(CombinatorialFreeModule):
             sage: Cl = CliffordAlgebra(Q)
             sage: Cl.category()
             Category of finite dimensional super algebras with basis over
-             (euclidean domains and infinite enumerated sets and metric spaces)
+             (Dedekind domains and euclidean domains
+              and infinite enumerated sets and metric spaces)
             sage: TestSuite(Cl).run()
 
         TESTS:
@@ -995,7 +996,8 @@ class CliffordAlgebra(CombinatorialFreeModule):
             sage: phi = Cl.lift_module_morphism(m, 'abc')
             sage: phi.category_for()
             Category of finite dimensional super algebras with basis over
-             (euclidean domains and infinite enumerated sets and metric spaces)
+             (Dedekind domains and euclidean domains
+              and infinite enumerated sets and metric spaces)
             sage: phi.matrix()
             [  1   0   0   0   7  -3  -7   0]
             [  0   1  -1  -1   0   0   0 -17]
@@ -1078,7 +1080,8 @@ class CliffordAlgebra(CombinatorialFreeModule):
             sage: phi = Cl.lift_isometry(m, 'abc')
             sage: phi.category_for()
             Category of finite dimensional super algebras with basis over
-             (euclidean domains and infinite enumerated sets and metric spaces)
+             (Dedekind domains and euclidean domains
+              and infinite enumerated sets and metric spaces)
             sage: phi.matrix()
             [ 1  0  0  0  1  2  5  0]
             [ 0  1  1  2  0  0  0  5]

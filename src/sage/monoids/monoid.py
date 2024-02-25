@@ -48,9 +48,9 @@ class Monoid_class(Parent):
         Parent.__init__(self, base=self, names=names, category=category)
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
-        Returns the generators for ``self``.
+        Return the generators for ``self``.
 
         EXAMPLES::
 
@@ -62,7 +62,7 @@ class Monoid_class(Parent):
 
     def monoid_generators(self):
         r"""
-        Returns the generators for ``self``.
+        Return the generators for ``self``.
 
         EXAMPLES::
 

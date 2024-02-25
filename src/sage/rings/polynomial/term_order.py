@@ -803,7 +803,7 @@ class TermOrder(SageObject):
                     singular_str = []
                     macaulay2_str = []
 
-                    length_pattern  = re.compile(r"\(([0-9]+)\)$") # match with parenthesized block length at end
+                    length_pattern = re.compile(r"\(([0-9]+)\)$") # match with parenthesized block length at end
                     for block in block_names:
                         try:
                             block_name, block_length, _ = re.split(length_pattern,block.strip())
@@ -1313,7 +1313,7 @@ class TermOrder(SageObject):
         """
         sf = sum(f.nonzero_values(sort=False))
         sg = sum(g.nonzero_values(sort=False))
-        return ( sf > sg or ( sf == sg and f  > g )) and f or g
+        return ( sf > sg or ( sf == sg and f > g )) and f or g
 
     def greater_tuple_degrevlex(self,f,g):
         """
@@ -1397,7 +1397,7 @@ class TermOrder(SageObject):
         """
         sf = sum(f.nonzero_values(sort=False))
         sg = sum(g.nonzero_values(sort=False))
-        return ( sf < sg or ( sf == sg and f  > g )) and f or g
+        return ( sf < sg or ( sf == sg and f > g )) and f or g
 
     def greater_tuple_degneglex(self,f,g):
         """
@@ -1475,7 +1475,7 @@ class TermOrder(SageObject):
         """
         sf = sum(l*r for (l,r) in zip(f,self._weights))
         sg = sum(l*r for (l,r) in zip(g,self._weights))
-        return (sf > sg or ( sf == sg and f  > g )) and f or g
+        return (sf > sg or ( sf == sg and f > g )) and f or g
 
     def greater_tuple_wdegrevlex(self,f,g):
         """
@@ -1532,7 +1532,7 @@ class TermOrder(SageObject):
         """
         sf = sum(l*r for (l,r) in zip(f,self._weights))
         sg = sum(l*r for (l,r) in zip(g,self._weights))
-        return (sf < sg or ( sf == sg and f  > g )) and f or g
+        return (sf < sg or ( sf == sg and f > g )) and f or g
 
     def greater_tuple_negwdegrevlex(self,f,g):
         """
