@@ -23,7 +23,6 @@ import builtins
 import math
 
 from sage.misc.lazy_import import lazy_import
-from sage.misc.superseded import deprecation
 
 lazy_import('sage.rings.complex_double', 'CDF')
 lazy_import('sage.rings.real_double', ['RDF', 'RealDoubleElement'])
@@ -589,11 +588,10 @@ def symbolic_sum(expression, *args, **kwds):
     """
     if hasattr(expression, 'sum'):
         return expression.sum(*args, **kwds)
-    elif max(len(args),len(kwds)) <= 1:
+    if max(len(args), len(kwds)) <= 1:
         return sum(expression, *args, **kwds)
-    else:
-        from sage.symbolic.ring import SR
-        return SR(expression).sum(*args, **kwds)
+    from sage.symbolic.ring import SR
+    return SR(expression).sum(*args, **kwds)
 
 
 def symbolic_prod(expression, *args, **kwds):
@@ -848,22 +846,6 @@ def xinterval(a, b):
     return range(a, b + 1)
 
 
-def is_commutative(x):
-    """
-    Return whether or not ``x`` is commutative.
-
-    EXAMPLES::
-
-        sage: R = PolynomialRing(QQ, 'x')
-        sage: is_commutative(R)
-        doctest:...DeprecationWarning: use X.is_commutative() or X in Rings().Commutative()
-        See https://github.com/sagemath/sage/issues/32347 for details.
-        True
-    """
-    deprecation(32347, "use X.is_commutative() or X in Rings().Commutative()")
-    return x.is_commutative()
-
-
 def is_even(x):
     """
     Return whether or not an integer ``x`` is even, e.g., divisible by 2.
@@ -881,45 +863,6 @@ def is_even(x):
         return x.is_even()
     except AttributeError:
         return x % 2 == 0
-
-
-def is_integrally_closed(x):
-    """
-    Return whether ``x`` is integrally closed.
-
-    EXAMPLES::
-
-        sage: is_integrally_closed(QQ)
-        doctest:...DeprecationWarning: use X.is_integrally_closed()
-        See https://github.com/sagemath/sage/issues/32347 for details.
-        True
-        sage: x = polygen(ZZ, 'x')
-        sage: K.<a> = NumberField(x^2 + 189*x + 394)                                    # needs sage.rings.number_field
-        sage: R = K.order(2*a)                                                          # needs sage.rings.number_field
-        sage: is_integrally_closed(R)                                                   # needs sage.rings.number_field
-        False
-    """
-    deprecation(32347, "use X.is_integrally_closed()")
-    return x.is_integrally_closed()
-
-
-def is_field(x, proof=True):
-    """
-    Return whether or not ``x`` is a field.
-
-    Alternatively, one can use ``x in Fields()``.
-
-    EXAMPLES::
-
-        sage: R = PolynomialRing(QQ, 'x')
-        sage: F = FractionField(R)
-        sage: is_field(F)
-        doctest:...DeprecationWarning: use X.is_field() or X in Fields()
-        See https://github.com/sagemath/sage/issues/32347 for details.
-        True
-    """
-    deprecation(32347, "use X.is_field() or X in Fields()")
-    return x.is_field(proof=proof)
 
 
 def is_odd(x):

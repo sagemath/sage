@@ -2,7 +2,7 @@ r"""
 Support for (lib)GAP workspace files
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2017 Jeroen Demeyer <J.Demeyer@UGent.be>
 #                     2019 Vincent Delecroix <vincent.delecroix@u-bordeaux.fr>
 #
@@ -10,8 +10,8 @@ Support for (lib)GAP workspace files
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import time
