@@ -322,6 +322,23 @@ class Rings(CategoryWithAxiom):
             """
             return True
 
+        def is_commutative(self) -> bool:
+            """
+            Return whether the ring is commutative.
+
+            The answer is ``True`` only if the category is a sub-category of
+            ``CommutativeRings``.
+
+            It is recommended to use instead ``R in Rings().Commutative()``.
+
+            EXAMPLES::
+
+                sage: Q.<i,j,k> = QuaternionAlgebra(QQ, -1, -1)                             # needs sage.combinat sage.modules
+                sage: Q.is_commutative()                                                    # needs sage.combinat sage.modules
+                False
+            """
+            return False
+
         def is_zero(self) -> bool:
             """
             Return ``True`` if this is the zero ring.
