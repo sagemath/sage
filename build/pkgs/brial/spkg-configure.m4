@@ -1,5 +1,5 @@
 SAGE_SPKG_CONFIGURE([brial], [
-  dnl Trac #31624: Avoid C++ ABI issues
+  dnl Issue #31624: Avoid C++ ABI issues
   SAGE_SPKG_DEPCHECK([gcc boost_cropped m4ri], [
     # If we're using the system m4ri and boost, ensure that we can
     # compile and run an executable linked against both libbrial and

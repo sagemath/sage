@@ -80,6 +80,16 @@ class PackageCreator(object):
             if upstream_contact:
                 f.write('{0}\n\n'.format(upstream_contact))
 
+    def _remove_files(self, files):
+        """
+        Remove ``files`` from the package directory if they exist.
+        """
+        for file in files:
+            try:
+                os.remove(os.path.join(self.path, file))
+            except OSError:
+                pass
+
     def set_python_data_and_scripts(self, pypi_package_name=None, source='normal'):
         """
         Write the file ``dependencies`` and other files for Python packages.
@@ -90,6 +100,8 @@ class PackageCreator(object):
         If ``source`` is ``"wheel"``, write the file ``install-requires.txt``.
 
         If ``source`` is ``"pip"``, write the file ``requirements.txt``.
+
+        Remove existing files that belong to other source types.
         """
         if pypi_package_name is None:
             pypi_package_name = self.package_name
@@ -101,13 +113,23 @@ class PackageCreator(object):
                 f.write('cd src\nsdh_pip_install .\n')
             with open(os.path.join(self.path, 'install-requires.txt'), 'w+') as f:
                 f.write('{0}\n'.format(pypi_package_name))
+            # Remove this file, which would mark the package as a pip package.
+            self._remove_files(['requirements.txt'])
         elif source == 'wheel':
             with open(os.path.join(self.path, 'install-requires.txt'), 'w+') as f:
                 f.write('{0}\n'.format(pypi_package_name))
+            # Remove this file, which would mark the package as a pip package.
+            self._remove_files(['requirements.txt'])
+            if pypi_package_name != 'pip':
+                # 'pip' should be the only wheel package that has a custom spkg-install.in script.
+                # Remove the script for all other wheel packages, to avoid errors when
+                # switching from normal to wheel packages.
+                self._remove_files(['spkg-build.in', 'spkg-install.in', 'spkg-install'])
         elif source == 'pip':
             with open(os.path.join(self.path, 'requirements.txt'), 'w+') as f:
                 f.write('{0}\n'.format(pypi_package_name))
+            self._remove_files(['checksums.ini', 'spkg-build.in', 'spkg-install.in', 'spkg-install', 'install-requires.txt'])
         elif source == 'script':
-            pass
+            self._remove_files(['checksums.ini', 'requirements.txt'])
         else:
             raise ValueError('package source must be one of normal, script, pip, or wheel')
