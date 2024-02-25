@@ -37,10 +37,10 @@ Pickling test::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from operator import itemgetter
 
 from sage.arith.misc import (hilbert_conductor_inverse,
                              hilbert_symbol,
-                             factor,
                              gcd,
                              kronecker as kronecker_symbol,
                              prime_divisors,
@@ -50,8 +50,6 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational import Rational
 from sage.rings.finite_rings.finite_field_constructor import GF
-
-from sage.rings.ring import Algebra
 from sage.rings.ideal import Ideal_fractional
 from sage.rings.rational_field import is_RationalField, QQ
 from sage.rings.infinity import infinity
@@ -68,7 +66,6 @@ from sage.modules.free_module import FreeModule
 from sage.modules.free_module_element import vector
 from sage.quadratic_forms.quadratic_form import QuadraticForm
 
-from operator import itemgetter
 
 from .quaternion_algebra_element import (
     QuaternionAlgebraElement_abstract,
@@ -314,7 +311,7 @@ def is_QuaternionAlgebra(A):
     return isinstance(A, QuaternionAlgebra_abstract)
 
 
-class QuaternionAlgebra_abstract(Algebra):
+class QuaternionAlgebra_abstract(Parent):
     def _repr_(self):
         """
         EXAMPLES::
@@ -669,7 +666,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             ValueError: 2 is not invertible in Integer Ring
         """
         cat = Algebras(base_ring).Division().FiniteDimensional()
-        Algebra.__init__(self, base_ring, names, category=cat)
+        Parent.__init__(self, base=base_ring, names=names, category=cat)
         self._a = a
         self._b = b
         if is_RationalField(base_ring) and a.denominator() == 1 == b.denominator():
@@ -987,6 +984,19 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             (ii, jj, kk)
         """
         return self._gens[i]
+
+    def gens(self) -> tuple:
+        """
+        Return the generators of ``self``.
+
+        EXAMPLES::
+
+            sage: Q.<ii,jj,kk> = QuaternionAlgebra(QQ,-1,-2); Q
+            Quaternion Algebra (-1, -2) with base ring Rational Field
+            sage: Q.gens()
+            (ii, jj, kk)
+        """
+        return self._gens
 
     def _repr_(self):
         """
