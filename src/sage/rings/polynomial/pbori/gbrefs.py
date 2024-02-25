@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-brial
 import gzip
 from io import StringIO
 import base64 as uu

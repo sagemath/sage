@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 from libc.stdio cimport FILE
 
 cdef extern from "gmp.h":

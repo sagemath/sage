@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-groups
 r"""
 Orthogonal Groups of Torsion Quadratic Forms
 

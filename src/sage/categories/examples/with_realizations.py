@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 Examples of parents endowed with multiple realizations

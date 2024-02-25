@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-lcalc
 cdef extern from "lcalc_sage.h":
     ctypedef struct doublevec "std::vector<double>":
         int (*size)()

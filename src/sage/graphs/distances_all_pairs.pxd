@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 from libc.stdint cimport uint32_t
 
 cdef unsigned short * c_shortest_path_all_pairs(G, vertex_list=*) except NULL

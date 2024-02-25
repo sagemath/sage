@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 r"""
 Tests for the Sage <-> PARI interface
 

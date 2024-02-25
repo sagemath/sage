@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 from sage.structure.element cimport MonoidElement
 from sage.libs.gmp.types cimport mpz_t
 from sage.structure.parent cimport Parent

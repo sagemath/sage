@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Ensure that certain modules are not loaded on startup.
 

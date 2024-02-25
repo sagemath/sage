@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Precision management for non-exact objects
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Evaluating a String in Sage
 """

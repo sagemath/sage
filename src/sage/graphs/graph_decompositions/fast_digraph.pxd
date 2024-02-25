@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 from libc.stdint cimport uint8_t
 
 cdef class FastDigraph:

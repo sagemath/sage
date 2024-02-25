@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # sage.doctest: needs sage.groups sage.libs.gap sage.libs.ntl sage.libs.pari
 r"""
 Random Number States

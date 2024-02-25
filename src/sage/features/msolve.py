@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-environment
 r"""
 Feature for testing the presence of msolve
 
