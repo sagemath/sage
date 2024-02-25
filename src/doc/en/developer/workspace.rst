@@ -3,7 +3,7 @@
 .. _chapter-workspace-setup:
 
 =========================
-Setting up your workspace
+Setting up Your Workspace
 =========================
 
 .. _section-ide:
