@@ -2201,7 +2201,7 @@ class Polytopes:
         It is possible to use the backend ``'normaliz'`` to get an exact
         representation::
 
-            sage: polytopes.truncated_six_hundred_cell(exact=True,backend='normaliz')   # not tested - long time (16s)
+            sage: polytopes.truncated_six_hundred_cell(exact=True,backend='normaliz')  # not tested, long time (16s)
             A 4-dimensional polyhedron in AA^4 defined as the convex hull of 1440 vertices
         """
         return self.generalized_permutahedron(['H', 4], point=[1, 1, 0, 0], exact=exact, backend=backend, regular=True)
