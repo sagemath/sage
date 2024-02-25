@@ -1,9 +1,9 @@
 # sage_setup: distribution = sagemath-modules
 from sage.categories.map cimport Map
-from sage.rings.ring cimport CommutativeRing, CommutativeAlgebra
+from sage.rings.ring cimport CommutativeRing
 
 
-cdef class RingExtension_generic(CommutativeAlgebra):
+cdef class RingExtension_generic(CommutativeRing):
     cdef _type
     cdef _backend
     cdef _defining_morphism

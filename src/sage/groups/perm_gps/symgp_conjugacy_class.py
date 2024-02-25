@@ -16,7 +16,7 @@ from sage.sets.set import Set
 import itertools
 
 
-class SymmetricGroupConjugacyClassMixin():
+class SymmetricGroupConjugacyClassMixin:
     r"""
     Mixin class which contains methods for conjugacy classes of
     the symmetric group.

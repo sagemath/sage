@@ -1687,7 +1687,7 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
             sage: mut_type.irreducible_components()
             (['A', 3],)
         """
-        return tuple([self])
+        return (self,)
 
     @cached_method
     def class_size(self):

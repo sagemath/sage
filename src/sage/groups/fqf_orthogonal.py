@@ -489,6 +489,7 @@ class ActionOnFqf(Action):
             P = a.parent()
             return P.linear_combination_of_smith_form_gens(v)
 
+
 def _isom_fqf(A, B=None):
     r"""
     Return isometries from `A` to `B`.
@@ -501,8 +502,9 @@ def _isom_fqf(A, B=None):
     OUTPUT:
 
     A list of generators of the orthogonal group of A.
-    If ``B`` is given returns instead a single isometry of `A` and `B` or
-    raises an ``ValueError`` if `A` and `B` are not isometric.
+
+    If ``B`` is given, this returns instead a single isometry of `A` and `B`
+    or raises a :class:`ValueError` if `A` and `B` are not isometric.
 
     EXAMPLES::
 

@@ -498,7 +498,7 @@ AC_CONFIG_COMMANDS(mkdirs,
 
         if test -d "$SAGE_LOCAL/lib64"; then
             if test ! -L "$SAGE_LOCAL/lib64"; then
-                AC_MSG_NOTICE([[$SAGE_LOCAL/lib64 is not a symlink, see Trac #19782]])
+                AC_MSG_NOTICE([[$SAGE_LOCAL/lib64 is not a symlink, see Issue #19782]])
                 AC_MSG_ERROR([[Cannot perform incremental update, run "make distclean && make"]])
             fi
         else
