@@ -28,6 +28,8 @@ to be a forest, symmetric, or graded. However, it may have other
 structure, such as not containing an oriented cycle, that does not
 help with the enumeration.
 
+EXAMPLES:
+
 In this example, the seed is 0 and the successor function is either ``+2``
 or ``+3``. This is the set of non negative linear combinations of 2 and 3::
 
@@ -53,7 +55,9 @@ Symmetric structure
 
 The origin ``(0, 0)`` as seed and the upper, lower, left and right lattice
 point as successor function. This function is symmetric since `p` is a
-successor of `q` if and only if `q` is a successor or `p`::
+successor of `q` if and only if `q` is a successor or `p`:
+
+EXAMPLES::
 
     sage: succ = lambda a: [(a[0]-1,a[1]), (a[0],a[1]-1), (a[0]+1,a[1]), (a[0],a[1]+1)]
     sage: seeds = [(0,0)]
@@ -88,7 +92,9 @@ Graded structure
 ----------------
 
 Identity permutation as seed and ``permutohedron_succ`` as successor
-function::
+function:
+
+EXAMPLES::
 
     sage: succ = attrcall("permutohedron_succ")
     sage: seed = [Permutation([1..5])]
@@ -138,6 +144,8 @@ Graded components (set of elements of the same depth)::
 Forest structure
 ----------------
 
+EXAMPLES:
+
 The set of words over the alphabet `\{a,b\}` can be generated from the
 empty word by appending the letter `a` or `b` as a successor function. This set
 has a forest structure::
@@ -160,10 +168,7 @@ Breadth first search iterator::
     sage: [next(it) for _ in range(6)]
     ['', 'a', 'b', 'aa', 'ab', 'ba']
 
-Example: Forest structure
--------------------------
-
-This example was provided by Florent Hivert.
+The following example of Forest structure was provided by Florent Hivert.
 
 How to define a set using those classes?
 
@@ -229,10 +234,7 @@ or::
     sage: S.list()
     ['', 'a', 'aa', 'ab', 'ac', 'b', 'ba', 'bb', 'bc', 'c', 'ca', 'cb', 'cc']
 
-Example: Forest structure 2
----------------------------
-
-This example was provided by Florent Hivert.
+The following example of Forest structure was provided by Florent Hivert.
 
 Here is a little more involved example. We want to iterate through all
 permutations of a given set `S`. One solution is to take elements of `S` one
@@ -386,7 +388,7 @@ def RecursivelyEnumeratedSet(seeds, successors, structure=None,
 
     .. WARNING::
 
-        If you do not set a valid structure, you might obtain bad results,
+        If you do not set a good structure, you might obtain bad results,
         like elements generated twice::
 
             sage: f = lambda a: [a-1,a+1]
@@ -1554,9 +1556,9 @@ def search_forest_iterator(roots, children, algorithm='depth'):
          [0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]]
     """
     # Little trick: the same implementation handles both depth and
-    # breadth first search. Setting position to -1 initiates a depth search
+    # breadth first search. Setting position to -1 results in a depth search
     # (you ask the children for the last node you met). Setting
-    # position on 0 initiates a breadth search (enumerate all the
+    # position on 0 results in a breadth search (enumerate all the
     # descendants of a node before going on to the next father)
     if algorithm == 'depth':
         position = -1
@@ -1690,6 +1692,8 @@ class RecursivelyEnumeratedSet_forest(Parent):
     recover the corresponding integers, and discard tuples finishing
     by zero.
 
+    EXAMPLES:
+    
     A first approach is to pass the ``roots`` and ``children``
     functions as arguments to :meth:`RecursivelyEnumeratedSet_forest.__init__`::
 
