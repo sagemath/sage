@@ -92,6 +92,10 @@ the following source types:
 
    - its version number is defined by the required file ``package-version.txt``;
 
+   - no build and install scripts are needed
+     (with one exception: the package :ref:`spkg_pip` installs itself from
+     its wheel using a custom install script);
+
    - Sage records the version number of the package installed using a file in
      ``$SAGE_LOCAL/var/lib/sage/installed/`` and will rerun the installation
      if ``package-version.txt`` changes.
