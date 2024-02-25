@@ -281,7 +281,7 @@ It is possible to study fibers of the last two morphisms or their composition::
 We see that codomain fan of this morphism is a projective plane, which can be
 verified by ::
 
-    sage: phi_d.codomain().fan().is_isomorphic(toric_varieties.P2().fan()) # known bug
+    sage: phi_d.codomain().fan().is_isomorphic(toric_varieties.P2().fan())  # known bug
     True
 
 (Unfortunately it cannot be verified correctly until :trac:`16012` is fixed.)

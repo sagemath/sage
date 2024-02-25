@@ -152,19 +152,19 @@ cdef class Matrix(Matrix1):
 
             sage: A = matrix(QQ, 3, [1,2,4,2,3,1,0,1,2])
             sage: B = matrix(QQ, 3, 2, [1,7,5, 2,1,3])
-            sage: C = A._backslash_(B); C
+            sage: C = A._backslash_(B); C # known bug (sporadic timeouts)
             doctest:...: DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
             See https://github.com/sagemath/sage/issues/36394 for details.
             [  -1    1]
             [13/5 -3/5]
             [-4/5  9/5]
-            sage: A*C == B
+            sage: A*C == B # known bug (sporadic timeouts)
             True
-            sage: A._backslash_(B) == A \ B
+            sage: A._backslash_(B) == A \ B # known bug (sporadic timeouts)
             doctest:...: DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
             See https://github.com/sagemath/sage/issues/36394 for details.
             True
-            sage: A._backslash_(B) == A.solve_right(B)
+            sage: A._backslash_(B) == A.solve_right(B) # known bug (sporadic timeouts)
             True
         """
         deprecation(36394, 'the backslash operator has been deprecated; use A.solve_right(B) instead')

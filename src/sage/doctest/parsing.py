@@ -871,14 +871,12 @@ class SageDocTestParser(doctest.DocTestParser):
     A version of the standard doctest parser which handles Sage's
     custom options and tolerances in floating point arithmetic.
     """
-
     long: bool
     file_optional_tags: set[str]
     optional_tags: Union[bool, set[str]]
     optional_only: bool
     optionals: dict[str, int]
     probed_tags: set[str]
-
     def __init__(self, optional_tags=(), long=False, *, probed_tags=(), file_optional_tags=()):
         r"""
         INPUT:

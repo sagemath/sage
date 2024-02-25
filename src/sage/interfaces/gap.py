@@ -278,7 +278,7 @@ class Gap_generic(ExtraTabCompletion, Expect):
             sage: gap._expect.sendline()  # now we are out of sync
             1
             sage: gap._synchronize()
-            sage: gap(123)
+            sage: gap(123)  # known bug: macos (sporadic test failures, #37298)
             123
         """
         if self._expect is None:

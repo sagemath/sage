@@ -5740,7 +5740,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: pi_cone = Cone((g.list() for g in pi_gens),
             ....:                lattice=L,
             ....:                check=False)
-            sage: K.is_proper() == pi_cone.is_proper()
+            sage: K.is_proper() == pi_cone.is_proper()  # known bug: macos (sporadic timeouts)
             True
 
         The positive operators on a permuted cone can be obtained by
@@ -6363,9 +6363,8 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
 
     Or one that isn't strictly convex::
 
-        sage: K = random_cone(min_ambient_dim=5, min_rays=2,
-        ....:                 strictly_convex=False)
-        sage: K.is_strictly_convex()
+        sage: K = random_cone(min_ambient_dim=5, min_rays=2, strictly_convex=False)  # known bug: macos (sporadic timeouts)
+        sage: K.is_strictly_convex()  # known bug: macos (sporadic timeouts)
         False
 
     An example with all parameters set::

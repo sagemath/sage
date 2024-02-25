@@ -5435,7 +5435,7 @@ cdef class Expression(Expression_abc):
             {$0: a + b + d + f + g}
             sage: (a+b+c+d+f+g).match(c+g+w0)
             {$0: a + b + d + f}
-            sage: (a+b).match(a+b+w0) # known bug
+            sage: (a+b).match(a+b+w0)  # known bug
             {$0: 0}
             sage: print((a*b^2).match(a^w0*b^w1))
             None

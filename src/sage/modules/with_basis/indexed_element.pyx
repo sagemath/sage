@@ -45,7 +45,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         True
         sage: isinstance(f, collections.abc.Iterable)
         True
-        sage: isinstance(f, collections.abc.Collection)  # known bug - will be fixed by removing __contains__
+        sage: isinstance(f, collections.abc.Collection)  # known bug (will be fixed by removing __contains__)
         False
     """
     def __init__(self, M, x):
