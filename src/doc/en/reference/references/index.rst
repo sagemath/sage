@@ -508,6 +508,11 @@ REFERENCES:
             Springer, 2012,
             http://homepages.cwi.nl/~aeb/math/ipm/ipm.pdf
 
+.. [BMFPR2011] \M. Bousquet-Melou, É. Fusy, L.-F. Préville-Ratelle,
+                *The number of intervals in the m-Tamari lattices*.
+                Electronic Journal of Combinatorics 18(2), 2011.
+                :doi:`10.37236/2027`
+
 .. [BPPSST2017] Banik, Pandey, Peyrin, Sasaki, Sim, and Todo,
                 GIFT : A Small Present Towards Reaching the Limit of Lightweight
                 Encryption. *Cryptographic Hardware and Embedded Systems - CHES 2017*,
@@ -1425,6 +1430,9 @@ REFERENCES:
 .. [CC2013] Mahir Bilen Can and Yonah Cherniavsky.
             *Omitting parentheses from the cyclic notation*. (2013).
             :arxiv:`1308.0936v2`.
+
+.. [CC2023] \C. Ceballos and C. Chenevière.
+                *On linear intervals in the alt `\nu`-Tamari lattices* :arxiv:`2305.02250`
 
 .. [CCL2015] \N. Cohen, D. Coudert, and A. Lancin. *On computing the Gromov
              hyperbolicity*. ACM Journal of Experimental Algorithmics,
@@ -3708,6 +3716,10 @@ REFERENCES:
 .. [Kir2016] \M. Kirschmer, *Definite quadratic and hermitian forms with small
              class number*, Habilitationsschrift, RWTH Aachen University, 2016.
              http://www.math.rwth-aachen.de/~Markus.Kirschmer/papers/herm.pdf
+
+.. [KV2010] \M. Kirschmer, J. Voight: *Algorithmic enumeration of ideal classes
+            for quaternion orders*. SIAM J. Comput. 39(5): 1714-1747 (2010)
+            https://math.dartmouth.edu/~jvoight/articles/73446.pdf
 
 .. [KB1983] \W. Kühnel and T. F. Banchoff, "The 9-vertex complex
             projective plane", Math. Intelligencer 5 (1983), no. 3,
@@ -6658,6 +6670,10 @@ REFERENCES:
 .. [ZJRRS2019] \M. R. Z'aba, N. Jamil, M. S. Rohmad, H. A. Rani, S. Shamsuddin
            *The CiliPadi Family of Lightweight Authenticated Encryption*
            https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/cilipadi-spec.pdf
+
+.. [ZL2014] Wei Zhou and George Labahn. "Unimodular completion of polynomial
+            matrices".  In Proceedings ISSAC 2014, pages 413-420. ACM, 2014.
+            :doi:`10.1145/2608628.2608640`
 
 .. [ZZ2005] Hechun Zhang and R. B. Zhang.
             *Dual canonical bases for the quantum special linear group

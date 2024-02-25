@@ -1,4 +1,4 @@
-# Trac #27109: Don't append $(gcc -print-multi-os-directory) to the install
+# Issue #27109: Don't append $(gcc -print-multi-os-directory) to the install
 # path for libraries
 LIBFFI_CONFIGURE="--disable-multi-os-directory $LIBFFI_CONFIGURE"
 

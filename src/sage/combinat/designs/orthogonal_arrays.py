@@ -190,7 +190,7 @@ def transversal_design(k, n, resolvable=False, check=True, existence=False):
         Unknown
 
     If you ask for a transversal design that Sage is not able to build then an
-    ``EmptySetError`` or a ``NotImplementedError`` is raised::
+    ``EmptySetError`` or a :class:`NotImplementedError` is raised::
 
         sage: designs.transversal_design(47, 100)
         Traceback (most recent call last):
@@ -1359,7 +1359,7 @@ def incomplete_orthogonal_array(k,n,holes,resolvable=False, existence=False):
             return True
         independent_set = OA_find_disjoint_blocks(OA,k,n,number_of_holes)
 
-    elif max_hole == 1 and not orthogonal_array(k,n,existence=True) is True:
+    elif max_hole == 1 and orthogonal_array(k,n,existence=True) is not True:
         return orthogonal_array(k,n,existence=existence)
 
     # From a quasi-difference matrix
@@ -2117,8 +2117,8 @@ class OAMainFunctions:
         6
 
     If you ask for an orthogonal array that does not exist, then you will
-    either obtain an ``EmptySetError`` (if it knows that such an orthogonal array
-    does not exist) or a ``NotImplementedError``::
+    either obtain an ``EmptySetError`` (if it knows that such an orthogonal
+    array does not exist) or a :class:`NotImplementedError`::
 
         sage: designs.orthogonal_arrays.build(4,2)
         Traceback (most recent call last):

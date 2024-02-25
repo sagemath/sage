@@ -65,7 +65,7 @@ import sage.misc.prandom as random
 from sage.arith.misc import factor
 from sage.arith.misc import primitive_root
 from sage.arith.misc import CRT_basis
-import sage.rings.ring as ring
+from sage.rings.ring import Field, CommutativeRing
 import sage.rings.abc
 from sage.rings.finite_rings import integer_mod
 import sage.rings.integer as integer
@@ -84,6 +84,7 @@ from sage.structure.factory import UniqueFactory
 from sage.structure.richcmp import richcmp, richcmp_method
 
 from sage.interfaces.abc import GapElement
+
 
 class IntegerModFactory(UniqueFactory):
     r"""
@@ -616,14 +617,14 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
         EXAMPLES::
 
-            sage: # needs sage.groups
-            sage: Integers(5).multiplicative_subgroups()  # optional - gap_package_polycyclic
+            sage: # optional - gap_package_polycyclic, needs sage.groups
+            sage: Integers(5).multiplicative_subgroups()
             ((2,), (4,), ())
-            sage: Integers(15).multiplicative_subgroups()  # optional - gap_package_polycyclic
+            sage: Integers(15).multiplicative_subgroups()
             ((11, 7), (11, 4), (2,), (11,), (14,), (7,), (4,), ())
-            sage: Integers(2).multiplicative_subgroups()  # optional - gap_package_polycyclic
+            sage: Integers(2).multiplicative_subgroups()
             ((),)
-            sage: len(Integers(341).multiplicative_subgroups())  # optional - gap_package_polycyclic
+            sage: len(Integers(341).multiplicative_subgroups())
             80
 
         TESTS::
@@ -632,7 +633,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             ((),)
             sage: IntegerModRing(2).multiplicative_subgroups()                          # needs sage.groups
             ((),)
-            sage: IntegerModRing(3).multiplicative_subgroups()                          # needs sage.groups  # optional - gap_package_polycyclic
+            sage: IntegerModRing(3).multiplicative_subgroups()  # optional - gap_package_polycyclic, needs sage.groups
             ((2,), ())
         """
         return tuple(tuple(g.value() for g in H.gens())
@@ -1261,7 +1262,7 @@ In the latter case, please inform the developers.""".format(self.order()))
         elif S is integer_ring.ZZ:
             return integer_mod.Integer_to_IntegerMod(self)
         elif isinstance(S, IntegerModRing_generic):
-            if isinstance(S, ring.Field):
+            if isinstance(S, Field):
                 return None
             try:
                 return integer_mod.IntegerMod_to_IntegerMod(S, self)
@@ -1554,7 +1555,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             True
         """
         if bound is not None:
-            return ring.CommutativeRing.random_element(self, bound)
+            return CommutativeRing.random_element(self, bound)
         a = random.randint(0, self.order() - 1)
         return self(a)
 

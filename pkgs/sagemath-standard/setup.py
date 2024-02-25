@@ -24,6 +24,11 @@ try:
 except ImportError:
     pass
 
+# Different workaround: disable `walk_revctrl` in setuptools
+# This is needed for setuptools_scm >= 8, should work for any version
+import setuptools.command.egg_info
+setuptools.command.egg_info.walk_revctrl = lambda: ()
+
 #########################################################
 ### Set source directory
 #########################################################

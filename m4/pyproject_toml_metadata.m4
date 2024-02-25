@@ -17,4 +17,4 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
 urls = {Homepage = "https://www.sagemath.org"}
-requires-python = ">=3.9, <3.12"
+requires-python = ">=3.9, <3.13"

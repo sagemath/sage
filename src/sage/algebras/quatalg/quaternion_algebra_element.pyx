@@ -684,6 +684,30 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
         """
         return (self.conjugate() * right).reduced_trace()
 
+    def _im_gens_(self, codomain, im_gens, base_map):
+        r"""
+        Return the image of this quaternion under the morphism
+        defined by ``im_gens`` in ``codomain``, where elements
+        of the base ring are mapped by ``base_map``.
+
+        EXAMPLES::
+
+            sage: Quat.<i,j,k> = QuaternionAlgebra(-1, -19)
+            sage: b = 5 + 6*i + 7*j + 8*k
+            sage: ims = [~b * g * b for g in Quat.gens()]
+            sage: Quat(1)._im_gens_(Quat, ims, None) == 1
+            True
+            sage: i._im_gens_(Quat, ims, None) == ims[0]
+            True
+            sage: j._im_gens_(Quat, ims, None) == ims[1]
+            True
+            sage: k._im_gens_(Quat, ims, None) == ims[2]
+            True
+        """
+        if base_map is None:
+            base_map = lambda v: v
+        return sum(base_map(c)*g for c,g in zip(self, [1] + list(im_gens)))
+
 
 cdef class QuaternionAlgebraElement_generic(QuaternionAlgebraElement_abstract):
     """

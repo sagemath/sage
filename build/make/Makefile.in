@@ -205,7 +205,7 @@ else
 AM_V_at =
 endif
 
-# Trac #33125: Handle make options -n, -t, -q
+# Issue #33125: Handle make options -n, -t, -q
 ifeq ($(strip $(foreach flag,n t q,$(findstring $(flag),$(filter-out --%,$(MAKEFLAGS))))),)
 PLUS = +
 else
@@ -326,7 +326,7 @@ all-toolchain: base-toolchain
 # typical Python packages from source. Wheel packages only need pip.
 PYTHON_TOOLCHAIN = setuptools pip setuptools_scm wheel flit_core hatchling
 
-# Trac #32056: Avoid installed setuptools leaking into the build of python3 by uninstalling it.
+# Issue #32056: Avoid installed setuptools leaking into the build of python3 by uninstalling it.
 # It will have to be reinstalled anyway because of its dependency on $(PYTHON).
 python3-SAGE_LOCAL-no-deps: setuptools-clean
 python3-SAGE_VENV-no-deps: setuptools-clean
@@ -582,7 +582,7 @@ pkg_deps = \
 # For packages listed in $(TOOLCHAIN_DEPS) we also pass --keep-existing to
 # sage-spkg, and --keep-files to sage-spkg-uninstall since those packages can
 # have a recursive self-dependency, and should not be deleted while upgrading.
-# See Trac #25857
+# See Issue #25857
 
 # Positional arguments:
 #     $(1): package name

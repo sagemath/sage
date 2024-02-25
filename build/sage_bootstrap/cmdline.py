@@ -99,6 +99,36 @@ EXAMPLE:
 """
 
 
+epilog_dependencies = \
+"""
+Print the list of packages that are dependencies of given package.
+By default, list a summary of the build, order-only, and runtime
+dependencies.
+
+EXAMPLE:
+
+    $ sage --package dependencies maxima openblas
+    maxima:
+            - ecl
+            - info
+    openblas:
+            - gfortran
+    $ sage --package dependencies maxima --runtime
+    - ecl
+
+    $ sage --package dependencies maxima openblas --runtime --order-only
+    maxima:
+            order_only:
+                    - info
+            runtime:
+                    - ecl
+    openblas:
+            order_only:
+            runtime:
+                    - gfortran
+"""
+
+
 epilog_name = \
 """
 Find the package name given a tarball filename
@@ -286,6 +316,31 @@ def make_parser():
         '--format', type=str, default='plain',
         help='output format (one of plain and shell; default: plain)')
 
+    parser_dependencies = subparsers.add_parser(
+        'dependencies', epilog=epilog_dependencies,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='Print the list of packages that are dependencies of given packages')
+    parser_dependencies.add_argument(
+        'package_class', metavar='[package_name|:package_type:]',
+        type=str, nargs='+',
+        help=('package name or designator for all packages of a given type '
+              '(one of :all:, :standard:, :optional:, and :experimental:)'))
+    parser_dependencies.add_argument(
+        '--order-only', action='store_true',
+        help='list the order-only build dependencies')
+    parser_dependencies.add_argument(
+        '--optional', action='store_true',
+        help='list the optional build dependencies')
+    parser_dependencies.add_argument(
+        '--runtime', action='store_true',
+        help='list the runtime dependencies')
+    parser_dependencies.add_argument(
+        '--check', action='store_true',
+        help='list the check dependencies')
+    parser_dependencies.add_argument(
+        '--format', type=str, default='plain',
+        help='output format (one of plain, rst, and shell; default: plain)')
+
     parser_name = subparsers.add_parser(
         'name', epilog=epilog_name,
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -435,6 +490,19 @@ def run():
                      exclude_dependencies=args.exclude_dependencies)
     elif args.subcommand == 'properties':
         app.properties(*args.package_class, format=args.format)
+    elif args.subcommand == 'dependencies':
+        types = []
+        if args.order_only:
+            types.append('order_only')
+        if args.optional:
+            types.append('optional')
+        if args.runtime:
+            types.append('runtime')
+        if args.check:
+            types.append('check')
+        if not types:
+            types = None
+        app.dependencies(*args.package_class, types=types, format=args.format)
     elif args.subcommand == 'name':
         app.name(args.tarball_filename)
     elif args.subcommand == 'tarball':

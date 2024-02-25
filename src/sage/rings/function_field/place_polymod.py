@@ -463,7 +463,7 @@ class FunctionFieldPlace_polymod(FunctionFieldPlace):
         prime = self.prime_ideal()  # Let P be this prime ideal
 
         if self.is_infinite_place():
-            _F, from_F, to_F  = F._inversion_isomorphism()
+            _F, from_F, to_F = F._inversion_isomorphism()
             _prime = prime._ideal
             _place = _prime.place()
 

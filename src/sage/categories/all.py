@@ -81,7 +81,7 @@ from sage.categories.modules import Modules
 RingModules = Modules
 from sage.categories.vector_spaces import VectorSpaces
 
-# (hopf) algebra structures
+# (Hopf) algebra structures
 from sage.categories.algebras import Algebras
 from sage.categories.commutative_algebras import CommutativeAlgebras
 from sage.categories.coalgebras import Coalgebras

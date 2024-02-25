@@ -336,7 +336,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             VarStr = 'y'
         else:
             VarStr = 'x'
-        VarNames = '(' + ','.join((VarStr+str(i) for i in range(1, n+1)))+')'
+        VarNames = '(' + ','.join(VarStr+str(i) for i in range(1, n+1))+')'
         # The function call and affectation below have side-effects. Do not remove!
         # (even if pyflakes say so)
         R = singular.ring(FieldStr, VarNames, 'dp')
@@ -344,7 +344,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             # we have to define minpoly
             singular.eval('minpoly = '+str(F.polynomial()).replace('x',str(F.gen())))
         A = [singular.matrix(n,n,str((x.matrix()).list())) for x in gens]
-        Lgens = ','.join((x.name() for x in A))
+        Lgens = ','.join(x.name() for x in A)
         PR = PolynomialRing(F, n, [VarStr+str(i) for i in range(1,n+1)])
 
         if q == 0 or (q > 0 and self.cardinality() % q):

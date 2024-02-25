@@ -257,7 +257,7 @@ def MPComplexField(prec=53, rnd="RNDNN", names=None):
     return C
 
 
-cdef class MPComplexField_class(sage.rings.ring.Field):
+cdef class MPComplexField_class(Field):
     def __init__(self, int prec=53, rnd="RNDNN"):
         """
         Initialize ``self``.

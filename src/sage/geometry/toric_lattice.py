@@ -1511,7 +1511,7 @@ class ToricLattice_quotient(FGP_Module_class):
             raise ValueError('You may not specify both positive_point and positive_dual_point.')
         self._flip_sign_of_generator = (scalar_product < 0)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of the quotient.
 

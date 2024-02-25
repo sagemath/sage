@@ -24,7 +24,7 @@ AUTHORS:
 - Simon King (2015): Improve pickling for InterfaceElement
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -37,7 +37,7 @@ AUTHORS:
 #  The full text of the GPL is available at:
 #
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 import operator
 
@@ -282,14 +282,14 @@ class Interface(WithEqualityById, ParentWithBase):
         """
         cls = self._object_class()
 
-        #Handle the case when x is an object
-        #in some interface.
+        # Handle the case when x is an object
+        # in some interface.
         if isinstance(x, InterfaceElement):
             if x.parent() is self:
                 return x
 
-            #We convert x into an object in this
-            #interface by first going through Sage.
+            # We convert x into an object in this
+            # interface by first going through Sage.
             try:
                 return self(x._sage_())
             except (NotImplementedError, TypeError):
@@ -471,7 +471,7 @@ class Interface(WithEqualityById, ParentWithBase):
         """
         Set the variable var to the given value.
         """
-        cmd = '%s%s%s;' % (var,self._assign_symbol(), value)
+        cmd = '%s%s%s;' % (var, self._assign_symbol(), value)
         self.eval(cmd)
 
     def get(self, var):
@@ -613,7 +613,7 @@ class Interface(WithEqualityById, ParentWithBase):
         self._check_valid_function_name(function)
         s = self._function_call_string(function,
                                        [s.name() for s in args],
-                                       ['%s=%s' % (key,value.name()) for key, value in kwds.items()])
+                                       ['%s=%s' % (key, value.name()) for key, value in kwds.items()])
         return self.new(s)
 
     def _function_call_string(self, function, args, kwds):
@@ -1016,7 +1016,7 @@ class InterfaceElement(Element):
             self._check_valid()
         except ValueError:
             return
-        if hasattr(self,'_name'):
+        if hasattr(self, '_name'):
             P = self.parent()
             if P is not None:
                 P.clear(self._name)
@@ -1053,9 +1053,9 @@ class InterfaceElement(Element):
 
         - Felix Lawrence (2009-08-21)
         """
-        #TO DO: this could use file transfers when self.is_remote()
+        # TO DO: this could use file transfers when self.is_remote()
 
-        string = repr(self).replace('\n',' ').replace('\r', '')
+        string = repr(self).replace('\n', ' ').replace('\r', '')
         # Translate the external program's function notation to Sage's
         lfd = self.parent()._left_func_delim()
         if '(' != lfd:

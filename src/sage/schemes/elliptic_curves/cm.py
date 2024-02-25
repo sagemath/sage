@@ -271,7 +271,7 @@ def is_HCP(f, check_monic_irreducible=True):
             continue
         if d < h and d not in h2list:
             return zero
-        jp = fp.any_root(degree=-1, assume_squarefree=True)
+        jp = fp.any_root(degree=1, assume_squarefree=True, assume_distinct_deg=True)
         E = EllipticCurve(j=jp)
         if E.is_supersingular():
             continue

@@ -3797,7 +3797,7 @@ class PermutationGroupFunctor(ConstructionFunctor):
         return PermutationGroup([g for g in (R.gens() + self.gens()) if not g.is_one()],
                                 domain=self._domain)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         EXAMPLES::
 

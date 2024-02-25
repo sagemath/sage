@@ -26,18 +26,17 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.data_structures.bitset_base cimport *
-import sage.matroids.matroid
-import sage.matroids.basis_exchange_matroid
-from sage.matroids.minor_matroid import MinorMatroid
-from sage.matroids.dual_matroid import DualMatroid
-from sage.matroids.circuit_closures_matroid cimport CircuitClosuresMatroid
-from sage.matroids.basis_matroid cimport BasisMatroid
-from sage.matroids.linear_matroid cimport LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
-from sage.matroids.lean_matrix cimport GenericMatrix, BinaryMatrix, TernaryMatrix, QuaternaryMatrix, PlusMinusOneMatrix, RationalMatrix
-from sage.matroids.graphic_matroid import GraphicMatroid
-
-from sage.rings.rational cimport Rational
 from sage.libs.gmp.mpq cimport mpq_set
+from sage.rings.rational cimport Rational
+
+from sage.matroids.basis_matroid cimport BasisMatroid
+from sage.matroids.circuits_matroid cimport CircuitsMatroid
+from sage.matroids.circuit_closures_matroid cimport CircuitClosuresMatroid
+from sage.matroids.dual_matroid import DualMatroid
+from sage.matroids.graphic_matroid import GraphicMatroid
+from sage.matroids.lean_matrix cimport GenericMatrix, BinaryMatrix, TernaryMatrix, QuaternaryMatrix, PlusMinusOneMatrix, RationalMatrix
+from sage.matroids.linear_matroid cimport LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
+from sage.matroids.minor_matroid import MinorMatroid
 
 
 #############################################################################
@@ -85,6 +84,49 @@ def unpickle_basis_matroid(version, data):
     M.reset_current_basis()
     if name is not None:
         M.rename(name)
+    return M
+
+
+#############################################################################
+# CircuitsMatroid
+#############################################################################
+
+def unpickle_circuits_matroid(version, data):
+    """
+    Unpickle a CircuitsMatroid.
+
+    *Pickling* is Python's term for the loading and saving of objects.
+    Functions like these serve to reconstruct a saved object. This all happens
+    transparently through the ``load`` and ``save`` commands, and you should
+    never have to call this function directly.
+
+    INPUT:
+
+    - ``version`` -- an integer, expected to be 0
+    - ``data`` -- a tuple ``(E, C, name)`` in which ``E`` is the groundset
+      of the matroid, ``C`` is the list of circuits , and ``name`` is a custom
+      name.
+
+    OUTPUT:
+
+    A matroid.
+
+    .. WARNING::
+
+        Users should never call this function directly.
+
+    EXAMPLES::
+
+        sage: M = matroids.Theta(5)
+        sage: M == loads(dumps(M))  # indirect doctest
+        True
+    """
+    cdef CircuitsMatroid M
+    if version != 0:
+        raise TypeError("object was created with newer version of Sage. Please upgrade.")
+    M = CircuitsMatroid(groundset=data[0], circuits=data[1])
+    if data[2] is not None:
+        M.rename(data[2])
     return M
 
 
@@ -358,10 +400,10 @@ def unpickle_rational_matrix(version, data):
         mpq_set(A._entries[i], (<Rational?> data[2][i]).value)
     return A
 
+
 #############################################################################
 # LinearMatroid and subclasses
 #############################################################################
-
 
 def unpickle_linear_matroid(version, data):
     """
@@ -643,10 +685,10 @@ def unpickle_minor_matroid(version, data):
         M.rename(data[3])
     return M
 
+
 #############################################################################
 # Graphic Matroids
 #############################################################################
-
 
 def unpickle_graphic_matroid(version, data):
     """

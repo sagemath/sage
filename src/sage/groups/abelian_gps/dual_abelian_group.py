@@ -267,7 +267,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             x[i] = 1
         return self.element_class(self, x)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators for the group.
 

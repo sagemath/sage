@@ -176,10 +176,10 @@ TESTS::
 
 AUTHORS:
 
-   -- Ronan Paixao (2008-11-26), based on the MATLAB tutorial by
-      William Stein (2006-10-11)
+- Ronan Paixao (2008-11-26), based on the MATLAB tutorial by
+  William Stein (2006-10-11)
 """
-##############################################################################
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #       Copyright (C) 2008 Ronan Paixao <ronanpaixao@yahoo.com.br>
 #
@@ -192,8 +192,8 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-##############################################################################
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 

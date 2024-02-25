@@ -3503,10 +3503,10 @@ def quotient_char_p(I, p):
     if not I.is_integral():
         raise ValueError("I must be an integral ideal.")
 
-    K    = I.number_field()
-    OK   = K.maximal_order()  # will in the long run only really need a p-maximal order.
+    K = I.number_field()
+    OK = K.maximal_order()  # will in the long run only really need a p-maximal order.
     M_OK = OK.free_module()
-    M_I  = I.free_module()
+    M_I = I.free_module()
 
     # Now we have to quite explicitly find a way to compute
     # with OK / I viewed as a quotient of two F_p vector spaces,

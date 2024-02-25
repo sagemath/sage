@@ -1,6 +1,6 @@
 cd src/
 
-# Use newer version of config.guess and config.sub (see Trac #19724)
+# Use newer version of config.guess and config.sub (see Issue #19724)
 cp "$SAGE_ROOT"/config/config.* .
 
 ###############################################################################

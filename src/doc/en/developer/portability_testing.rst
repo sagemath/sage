@@ -10,7 +10,7 @@ Testing on Multiple Platforms
 
 Sage is intended to build and run on a variety of platforms,
 including all major Linux distributions, as well as macOS, and
-Windows (with WSL).
+Windows with WSL (Windows Subsystem for Linux).
 
 There is considerable variation among these platforms.
 To ensure that Sage continues to build correctly on users'
@@ -18,32 +18,36 @@ machines, it is crucial to test changes to Sage, in particular
 when external packages are added or upgraded, on a wide
 spectrum of platforms.
 
-GitHub actions
-==============
 
-The `GitHub Actions
-<https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions>`_
-will automatically test your GitHub PR by attempting an incremental build of
-Sage and running doctests.
+Testing PRs with GitHub Actions
+===============================
+
+`GitHub Actions <https://github.com/sagemath/sage/actions>`_ are automatically
+and constantly testing GitHub PRs to identify errors early and ensure code
+quality. In particular, Build & Test workflows perform an incremental build of
+Sage and run doctests on a selection of major platforms including Ubuntu,
+macOS, and Conda.
+
 
 Sage buildbots
 ==============
 
-The `Sage Release buildbot <https://wiki.sagemath.org/buildbot>`_
-builds entire tarballs (e.g., all the development releases) on a
-variety of machines.
+Before a new release, the release manager runs a fleet of `buildbots
+<http://build.sagemath.org>`_ to make it sure that Sage builds correctly on all
+of our supported platforms.
 
-Developers' and users' tests on sage-release
-============================================
 
-Sage developers and users are encouraged to contribute to testing
-releases that are announced on `Sage Release
-<https://groups.google.com/forum/#!forum/sage-release>`_ on their
-machines and to report test results (success and failures) by
-responding to the announcements.
+Test reports on sage-release
+============================
 
-Testing Sage on a different platform using Docker
-=================================================
+Sage developers and users are encouraged to test releases that are announced on
+`Sage Release <https://groups.google.com/forum/#!forum/sage-release>`_ on their
+machines and to report the results (successes and failures) by responding to the
+announcements.
+
+
+Testing on multiple platforms using Docker
+==========================================
 
 `Docker <https://www.docker.com>`_ is a popular virtualization
 software, running Linux operating system images ("Docker images") in
@@ -282,22 +286,32 @@ Let us install a subset of these packages::
 Committing a container to disk
 ------------------------------
 
-After terminating the container, we can create a new image
-corresponding to its current state::
+After terminating the container, the following command shows the status
+of the container you just exited::
 
   root@39d693b2a75d:/sage# ^D
   [mkoeppe@sage worktree-ubuntu-latest]$ docker ps -a | head -n3
   CONTAINER ID   IMAGE           COMMAND       CREATED         STATUS
   39d693b2a75d   ubuntu:latest   "/bin/bash"   8 minutes ago   Exited (0) 6 seconds ago
   9f3398da43c2   ubuntu:latest   "/bin/bash"   8 minutes ago   Exited (0) 8 minutes ago
+
+We can go back to the container with the command::
+
+  [mkoeppe@sage worktree-ubuntu-latest]$ docker start -a -i 39d693b2a75d
+  root@9f3398da43c2:/#
+
+Here, ``39d693b2a75d`` is the container id, which appeared in the
+shell prompts and in the output of ``docker ps``.
+
+We can create a new image corresponding to its current state::
+
+  root@39d693b2a75d:/# ^D
   [mkoeppe@sage worktree-ubuntu-latest]$ docker commit 39d693b2a75d ubuntu-latest-minimal-17
   sha256:4151c5ca4476660f6181cdb13923da8fe44082222b984c377fb4fd6cc05415c1
 
-Here, ``39d693b2a75d`` was the container id (which appeared in the
-shell prompts and in the output of ``docker ps``), and
-``ubuntu-latest-minimal-17`` is an arbitrary symbolic name for the new
-image.  The output of the command is the id of the new image.  We can
-use either the symbolic name or the id to refer to the new image.
+where ``ubuntu-latest-minimal-17`` is an arbitrary symbolic name for the new
+image. The output of the command is the id of the new image. We can use either
+the symbolic name or the id to refer to the new image.
 
 We can run the image and get a new container with the same state as
 the one that we terminated.  Again we want to mount our worktree into
@@ -1179,58 +1193,6 @@ are available:
 
    .. include:: portability_platform_table.rst
 
-
-Testing GitHub Actions locally
-==============================
-
-`act <https://github.com/nektos/act>`_ is a tool, written in Go, and using Docker,
-to run GitHub Actions locally; in particular, it speeds up developing Actions.
-We recommend using ``gh extension`` facility to install ``act``. ::
-
-    [alice@localhost sage]$ gh extension install https://github.com/nektos/gh-act
-
-Extra steps needed for configuration of Docker to run Actions locally can be found on
-`act's GitHub <https://github.com/nektos/act>`_
-
-Here we give a very short sampling of ``act``'s capabilities. If you installed standalone
-``act``, it should be invoked as ``act``, not as ``gh act``.
-After the set up, one can e.g. list all the available linting actions::
-
-    [alice@localhost sage]$ gh act -l | grep lint
-    0      lint-pycodestyle        Code style check with pycodestyle                          Lint                                               lint.yml                push,pull_request
-    0      lint-relint             Code style check with relint                               Lint                                               lint.yml                push,pull_request
-    0      lint-rst                Validate docstring markup as RST                           Lint                                               lint.yml                push,pull_request
-    [alice@localhost sage]$
-
-run a particular action ``lint-rst`` ::
-
-    [alice@localhost sage]$ gh act -j lint-rst
-    ...
-
-and so on.
-
-By default, ``act`` pulls all the data needed from the next, but it can also cache it,
-speeding up repeated runs quite a lot. The following repeats running of ``lint-rst`` using cached data::
-
-    [alice@localhost sage]$ gh act -p false -r -j lint-rst
-    [Lint/Validate docstring markup as RST]   Start image=catthehacker/ubuntu:act-latest
-    ...
-    | rst: commands[0] /home/alice/work/software/sage/src> flake8 --select=RST
-    |   rst: OK (472.60=setup[0.09]+cmd[472.51] seconds)
-    |   congratulations :) (474.10 seconds)
-    ...
-    [Lint/Validate docstring markup as RST]     Success - Main Lint using tox -e rst
-    [Lint/Validate docstring markup as RST]  Run Post Set up Python
-    [Lint/Validate docstring markup as RST]     docker exec cmd=[node /var/run/act/actions/actions-setup-python@v4/dist/cache-save/index.js] user= workdir=
-    [Lint/Validate docstring markup as RST]     Success - Post Set up Python
-    [Lint/Validate docstring markup as RST]   Job succeeded
-
-Here ``-p false`` means using already pulled Docker images, and ``-r`` means do not remove Docker images
-after a successful run which used them. This, and many more details, can be found by running ``gh act -h``, as well
-as reading ``act``'s documentation.
-
-.. This sectuion is a stub. 
-   More Sage-specfic details for using ``act`` should be added. PRs welcome!
 
 Using our pre-built Docker images for development in VS Code
 ============================================================

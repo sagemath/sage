@@ -118,9 +118,9 @@ class Fields(CategoryWithAxiom):
             0
 
         """
-        import sage.rings.ring
+        from sage.rings.ring import _is_Field
         try:
-            return self._contains_helper(x) or sage.rings.ring._is_Field(x)
+            return self._contains_helper(x) or _is_Field(x)
         except Exception:
             return False
 

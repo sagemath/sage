@@ -3017,7 +3017,7 @@ class Partition(CombinatorialElement):
 
         OUTPUT:
 
-        An integer or a ``ValueError``
+        An integer or a :class:`ValueError`
 
         EXAMPLES::
 
@@ -3111,7 +3111,7 @@ class Partition(CombinatorialElement):
 
         OUTPUT:
 
-        An integer or a ``ValueError``
+        An integer or a :class:`ValueError`
 
         EXAMPLES::
 
@@ -6201,8 +6201,9 @@ class Partitions(UniqueRepresentation, Parent):
 
     def subset(self, *args, **kwargs):
         r"""
-        Return ``self`` if no arguments are given, otherwise raises a
-        ``ValueError``.
+        Return ``self`` if no arguments are given.
+
+        Otherwise, it raises a :class:`ValueError`.
 
         EXAMPLES::
 
@@ -9017,7 +9018,7 @@ def number_of_partitions(n, algorithm='default'):
         sage: len(v)
         7
 
-    The input must be a nonnegative integer or a ``ValueError`` is raised.
+    The input must be a nonnegative integer or a :class:`ValueError` is raised.
 
     ::
 

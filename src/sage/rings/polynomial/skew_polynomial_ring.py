@@ -46,7 +46,7 @@ AUTHOR:
 from sage.structure.richcmp import op_EQ, op_NE
 from sage.structure.category_object import normalize_names
 
-from sage.rings.ring import Field
+from sage.categories.fields import Fields
 from sage.matrix.matrix_space import MatrixSpace
 
 from sage.rings.morphism import RingHomomorphism
@@ -85,17 +85,14 @@ def _base_ring_to_fraction_field(S):
         Ore Polynomial Ring in x over Fraction Field of Univariate Polynomial Ring in t over Integer Ring twisted by t |-->  t + 1
     """
     R = S.base_ring()
-    if isinstance(R, Field):
+    if R in Fields():
         return S
-    else:
-        Q = R.fraction_field()
-        gens = R.gens()
-        sigmaS = S.twisting_morphism()
-        # try:
-        sigmaQ = Q.hom([Q(sigmaS(g)) for g in gens])
-        return Q[S.variable_name(), sigmaQ]
-        # except Exception, e:
-        #     raise ValueError("unable to lift the twisting morphism to a twisting morphism over %s (error was: %s)" % (Q, e))
+
+    Q = R.fraction_field()
+    gens = R.gens()
+    sigmaS = S.twisting_morphism()
+    sigmaQ = Q.hom([Q(sigmaS(g)) for g in gens])
+    return Q[S.variable_name(), sigmaQ]
 
 
 def _minimal_vanishing_polynomial(R, eval_pts):

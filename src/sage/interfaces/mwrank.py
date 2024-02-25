@@ -22,6 +22,8 @@ import weakref
 from .expect import Expect
 
 instances = {}
+
+
 def Mwrank(options="", server=None, server_tmpdir=None):
     """
     Create and return an mwrank interpreter, with given options.
@@ -63,7 +65,7 @@ def Mwrank(options="", server=None, server_tmpdir=None):
             return X
     except KeyError:
         pass
-    X = Mwrank_class(options, server=server,server_tmpdir=server_tmpdir)
+    X = Mwrank_class(options, server=server, server_tmpdir=server_tmpdir)
     instances[options] = weakref.ref(X)
     return X
 
@@ -124,33 +126,33 @@ def validate_mwrank_input(s):
         ValueError: 0 -1 1 -7  is not valid input to mwrank
 
     """
-    if isinstance(s,(list,tuple)):
+    if isinstance(s, (list, tuple)):
         from sage.rings.integer_ring import ZZ
         if len(s) != 5:
             raise ValueError("%s is not valid input to mwrank (should have 5 entries)" % s)
         try:
             ai = [ZZ(a) for a in s]
             return str(ai)
-        except (TypeError,ValueError):
+        except (TypeError, ValueError):
             raise ValueError("%s is not valid input to mwrank (entries should be integers)" % s)
 
-    if isinstance(s,str):
+    if isinstance(s, str):
         if AINVS_PLAIN_RE.match(s):
             ai = s.split()
-            return "["+",".join(ai)+"]"
-        ss = s.replace(' ','').replace('\n','').replace('\t','')
+            return "[" + ",".join(ai) + "]"
+        ss = s.replace(' ', '').replace('\n', '').replace('\t', '')
         if AINVS_LIST_RE.match(ss):
             return ss
     raise ValueError("%s is not valid input to mwrank" % s)
+
 
 class Mwrank_class(Expect):
     """
     Interface to the Mwrank interpreter.
     """
-    def __init__(self, options="", server=None,server_tmpdir=None):
+    def __init__(self, options="", server=None, server_tmpdir=None):
         """
         INPUT:
-
 
         -  ``options`` - string; passed when starting mwrank.
            The format is::
@@ -337,6 +339,7 @@ class Mwrank_class(Expect):
 
 # An instance
 mwrank = Mwrank()
+
 
 def _reduce_load_mwrank():
     """

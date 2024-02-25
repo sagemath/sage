@@ -1045,7 +1045,7 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
         # if one edge appearing in exactly two oriented triangles, test that it is not a double-edge and then
         # test that either the third or fourth vertices (from the oriented triangles) is of degree 2.
         # Then initializes the long_cycle as this triangle including the degree 2 vertex, as long as no other long_cycles.
-        elif count == 1 and not dg.has_multiple_edges() and not multiple_trian_edges[0] in dg.multiple_edges():
+        elif count == 1 and not dg.has_multiple_edges() and multiple_trian_edges[0] not in dg.multiple_edges():
             multiple_trian_edge = multiple_trian_edges[0]
             neighbors = list(set(dg.neighbors( multiple_trian_edge[0] )).intersection(dg.neighbors( multiple_trian_edge[1] )))
             if dg.degree( neighbors[0] ) == 2:

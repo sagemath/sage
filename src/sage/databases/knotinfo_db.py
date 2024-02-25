@@ -43,6 +43,8 @@ from sage.misc.persist import save, load
 from sage.misc.verbose import verbose
 from sage.misc.cachefunc import cached_method
 
+columns_white_list = ['knot_atlas_anon', 'knotilus_page_anon']
+columns_black_list = ['homfly_polynomial_old']
 
 class KnotInfoColumnTypes(Enum):
     r"""
@@ -92,6 +94,7 @@ class KnotInfoColumns(Enum):
          'Quasipositive Braid',
          'Multivariable Alexander Polynomial',
          'HOMFLYPT Polynomial',
+         'Khovanov Polynomial',
          'Unoriented',
          'Arc Notation',
          'Linking Matrix',
@@ -536,7 +539,11 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         for col in knot_column_names:
 
             name = knot_column_names[col]
-            if not name and col not in ['knot_atlas_anon', 'knotilus_page_anon']:
+            if not name and col not in columns_white_list:
+                # not of interest
+                continue
+
+            if col in columns_black_list:
                 # not of interest
                 continue
 
@@ -551,7 +558,11 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
         for col in link_column_names:
 
             name = link_column_names[col]
-            if not name and col not in ['knot_atlas_anon', 'knotilus_page_anon']:
+            if not name and col not in columns_white_list:
+                # not of interest
+                continue
+
+            if col in columns_black_list:
                 # not of interest
                 continue
 
@@ -629,7 +640,7 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
     @cached_method
     def columns(self):
         r"""
-        Return the columns ot the databese table as instances of enum class
+        Return the columns ot the database table as instances of enum class
         :class:`KnotInfoColumns`.
 
         EXAMPLES::
@@ -737,7 +748,7 @@ class KnotInfoDataBase(SageObject, UniqueRepresentation):
             sage: from sage.databases.knotinfo_db import KnotInfoDataBase
             sage: ki_db = KnotInfoDataBase()
             sage: ki_db.read_num_knots()              # optional - database_knotinfo
-            2978
+            12966
         """
         if not self._num_knots:
             self.demo_version()
@@ -823,8 +834,7 @@ column_demo_sample = {
     'homfly_polynomial':    ['HOMFLY',               KnotInfoColumnTypes.OnlyKnots],
     'homflypt_polynomial':  ['HOMFLYPT Polynomial',  KnotInfoColumnTypes.OnlyLinks],
     'kauffman_polynomial':  ['Kauffman',             KnotInfoColumnTypes.KnotsAndLinks],
-    'khovanov_polynomial':  ['Khovanov',             KnotInfoColumnTypes.KnotsAndLinks],
-    'khovanov_torsion_polynomial': ['Khovanov Torsion', KnotInfoColumnTypes.OnlyKnots],
+    'khovanov_polynomial':  ['Khovanov',             KnotInfoColumnTypes.OnlyLinks],
     'khovanov_unreduced_integral_polynomial': ['KH Unred Z Poly', KnotInfoColumnTypes.OnlyKnots],
     'khovanov_reduced_integral_polynomial': ['KH Red Z Poly', KnotInfoColumnTypes.OnlyKnots],
     'khovanov_reduced_rational_polynomial': ['KH Red Q Poly', KnotInfoColumnTypes.OnlyKnots],
@@ -1020,15 +1030,15 @@ data_demo_sample = {
         ],
     dc.homfly_polynomial: [
         '',
-        '(2*v^2-v^4)+(v^2)*z^2',
-        '(v^(-2)-1+ v^2)+ (-1)*z^2',
-        '(3*v^4-2*v^6)+ (4*v^4-v^6)*z^2+ (v^4)*z^4',
-        '(v^2+ v^4-v^6)+ (v^2+ v^4)*z^2',
-        '(v^(-2)-v^2+ v^4)+ (-1-v^2)*z^2',
-        '(2-2*v^2+ v^4)+ (1-3*v^2+ v^4)*z^2+ (-v^2)*z^4',
-        '(-v^(-2)+ 3-v^2)+ (-v^(-2)+ 3-v^2)*z^2+ (1)*z^4',
-        '(4*v^6-3*v^8)+ (10*v^6-4*v^8)*z^2+ (6*v^6-v^8)*z^4+ (v^6)*z^6',
-        '(v^2+ v^6-v^8)+ (v^2+ v^4+ v^6)*z^2'
+        '(2*v^2-v^4)+v^2*z^2',
+        '(v^(-2)-1+v^2)-z^2',
+        '(3*v^4-2*v^6)+(4*v^4-v^6)*z^2+v^4*z^4',
+        '(v^2+v^4-v^6)+(v^2+v^4)*z^2',
+        '(v^(-2)-v^2+v^4)+(-1-v^2)*z^2',
+        '(2-2*v^2+v^4)+(1-3*v^2+v^4)*z^2-v^2*z^4',
+        '(-v^(-2)+3-v^2)+(-v^(-2)+3-v^2)*z^2+z^4',
+        '(4*v^6-3*v^8)+(10*v^6-4*v^8)*z^2+(6*v^6-v^8)*z^4+v^6*z^6',
+        '(v^2+v^6-v^8)+(v^2+v^4+v^6)*z^2'
         ],
     dc.homflypt_polynomial: [
         '1/(v^3*z)-1/(v*z)-z/v',
@@ -1123,16 +1133,6 @@ data_demo_sample = {
         '3*z + 2*z^3',
         '-3*z-4*z^3-z^5'],
     dc.khovanov_polynomial: [
-        '',
-        'q^(-9)t^(-3)+q^(-5)t^(-2)+q^(-3)+q^(-1)',
-        'q^(-5)t^(-2)+q^(-1)t^(-1)+q+q^(-1)+qt+q^5t^2',
-        'q^(-15)t^(-5)+q^(-11)t^(-4)+q^(-11)t^(-3)+q^(-7)t^(-2)+q^(-5)+q^(-3)',
-        'q^(-13)t^(-5)+q^(-9)t^(-4)+q^(-9)t^(-3)+(q^(-7)+q^(-5))t^(-2)+q^(-3)t^(-1)+q^(-3)+q^(-1)',
-        'q^(-9)t^(-4)+q^(-5)t^(-3)+q^(-5)t^(-2)+(q^(-3)+q^(-1))t^(-1)+2q+q^(-1)+qt+q^5t^2',
-        'q^(-11)t^(-4)+(q^(-9)+q^(-7))t^(-3)+(q^(-7)+q^(-5))t^(-2)+(q^(-5)+q^(-3))t^(-1)+q^(-3)+2q^(-1)+tq^(-1)+q^3t^2',
-        'q^(-7)t^(-3)+(q^(-5)+q^(-3))t^(-2)+(q^(-3)+q^(-1))t^(-1)+2q+2q^(-1)+t(q+q^3)+(q^3+q^5)t^2+q^7t^3',
-        'q^(-21)t^(-7)+q^(-17)t^(-6)+q^(-17)t^(-5)+q^(-13)t^(-4)+q^(-13)t^(-3)+q^(-9)t^(-2)+q^(-7)+q^(-5)',
-        'q^(-17)t^(-7)+q^(-13)t^(-6)+q^(-13)t^(-5)+(q^(-11)+q^(-9))t^(-4)+(q^(-9)+q^(-7))t^(-3)+(q^(-7)+q^(-5))t^(-2)+q^(-3)t^(-1)+q^(-3)+q^(-1)',
         '1 + q^(-2) + 1/(q^6*t^2) + 1/(q^4*t^2)',
         '1 + q^2 + q^4*t^2 + q^6*t^2',
         '1 + q^(-2) + 1/(q^10*t^4) + 1/(q^8*t^4) + 1/(q^6*t^2) + 1/(q^2*t)',
@@ -1144,17 +1144,6 @@ data_demo_sample = {
         'q^(-4) + q^(-2) + 1/(q^16*t^6) + 1/(q^14*t^6) + 1/(q^14*t^5) + 1/(q^12*t^4) + 1/(q^10*t^4) + 1/(q^10*t^3) + 1/(q^8*t^3) + 1/(q^8*t^2) + 1/(q^6*t^2) + 1/(q^4*t)',
         'q^2 + q^4 + q^4*t + q^6*t^2 + q^8*t^2 + q^8*t^3 + q^10*t^3 + q^10*t^4 + q^12*t^4 + q^14*t^5 + q^14*t^6 + q^16*t^6',
         'q^(-6) + q^(-4) + 1/(q^18*t^6) + 1/(q^16*t^6) + 1/(q^16*t^5) + 1/(q^12*t^4) + 1/(q^12*t^3) + 1/(q^8*t^2)'],
-    dc.khovanov_torsion_polynomial: [
-        '',
-        'Q^(-7)t^(-2)',
-        'Q^(-3)t^(-1)+Q^3t^2',
-        'Q^(-13)t^(-4)+Q^(-9)t^(-2)',
-        'Q^(-11)t^(-4)+Q^(-7)t^(-2)+Q^(-5)t^(-1)',
-        'Q^(-7)t^(-3)+Q^(-3)t^(-1)+Q^(-1)+Q^3t^2',
-        'Q^(-9)t^(-3)+Q^(-7)t^(-2)+Q^(-5)t^(-1)+Q^(-3)+Qt^2',
-        'Q^(-5)t^(-2)+Q^(-3)t^(-1)+Q^(-1)+Qt+Q^3t^2+Q^5t^3',
-        'Q^(-19)t^(-6)+Q^(-15)t^(-4)+Q^(-11)t^(-2)',
-        'Q^(-15)t^(-6)+Q^(-11)t^(-4)+Q^(-9)t^(-3)+Q^(-7)t^(-2)+Q^(-5)t^(-1)'],
     dc.khovanov_unreduced_integral_polynomial: [
         '',
         'q + q^(3) + t^(2) q^(5) + t^(3) q^(9) + t^(3) q^(7) T^(2)',

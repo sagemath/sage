@@ -416,7 +416,7 @@ class AdditiveAbelianGroup_fixed_gens(AdditiveAbelianGroup_class):
         AdditiveAbelianGroup_class.__init__(self, cover, rels)
         self._orig_gens = tuple(self(x) for x in gens)
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the specified generators for self (as a tuple). Compare
         ``self.smithform_gens()``.

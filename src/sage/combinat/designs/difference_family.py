@@ -3138,8 +3138,9 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
 
     See also :wikipedia:`Difference_set`.
 
-    If there is no such difference family, an ``EmptySetError`` is raised and if
-    there is no construction at the moment ``NotImplementedError`` is raised.
+    If there is no such difference family, an ``EmptySetError`` is raised and
+    if there is no construction at the moment :class:`NotImplementedError`
+    is raised.
 
     INPUT:
 
