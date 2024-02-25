@@ -1260,12 +1260,18 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
     cover_ring = polynomial_ring
 
-    def random_element(self, *args, **kwds):
+    def random_element(self, degree=None, *args, **kwds):
         """
         Return a random element of this quotient ring.
 
         INPUT:
 
+        - ``degree`` - Optional argument: either an integer for fixing the
+          degree, or a tuple of the minimum and maximum degree. By default the
+          degree is n - 1 with n the degree of the polynomial ring. Note that
+          the degree of the polynomial is fixed before the modulo calculation.
+          So when `degree` is bigger than the degree of the polynomial ring, the
+          degree of the returned polynomial would be lower than `degree`.
         - ``*args``, ``**kwds`` - Arguments for randomization that are passed
           on to the ``random_element`` method of the polynomial ring, and from
           there to the base ring
@@ -1283,8 +1289,11 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: F2.random_element().parent() is F2
             True
         """
+        if degree is None:
+            degree = self.degree() - 1
+
         return self(self.polynomial_ring().random_element(
-            degree=self.degree() - 1, *args, **kwds))
+            degree=degree, *args, **kwds))
 
     @cached_method
     def _S_decomposition(self, S):
