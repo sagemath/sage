@@ -2311,11 +2311,12 @@ cdef class Polynomial(CommutativePolynomial):
 
         .. NOTE::
 
-            Any root is non-deterministic when finding linear roots of a polynomial
-            over the base ring. However, if ``degree`` is greater than one, or `ring`
-            is an extension of the base ring, then eventually the root is found by
-            returning a single root after factorisation. Roots found in this way are
-            deterministic. This may change in the future.
+            Any root is non-deterministic when finding linear roots of a
+            polynomial over the base ring. However, if ``degree`` is greater
+            than one, or ``ring`` is an extension of the base ring, then
+            eventually the root is found by returning a single root after
+            factorisation. Roots found in this way are deterministic.
+            This may change in the future.
 
         EXAMPLES::
 
