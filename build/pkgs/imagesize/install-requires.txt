@@ -1,1 +1,1 @@
-imagesize >=1.1.0
+imagesize
