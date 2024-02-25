@@ -1354,6 +1354,30 @@ class QuotientRing_nc(ring.Ring, sage.structure.parent_gens.ParentWithGens):
         """
         return self.__R.term_order()
 
+    def random_element(self):
+        r"""
+        Return a random element of this quotient ring obtained by
+        sampling a random element of the cover ring and reducing
+        it modulo the defining ideal.
+
+        EXAMPLES::
+
+            sage: R.<x,y> = QQ[]
+            sage: S = R.quotient([x^3, y^2])
+            sage: S.random_element()  # random
+            -8/5*xbar^2 + 3/2*xbar*ybar + 2*xbar - 4/23
+
+        TESTS:
+
+        Make sure we are not just getting images of integers in this
+        ring (which would be the case if the default implementation
+        of this method was inherited from generic rings)::
+
+            sage: any(S.random_element() not in ZZ for _ in range(999))
+            True
+        """
+        return self.retract(self.cover_ring().random_element())
+
 
 class QuotientRing_generic(QuotientRing_nc, ring.CommutativeRing):
     r"""
