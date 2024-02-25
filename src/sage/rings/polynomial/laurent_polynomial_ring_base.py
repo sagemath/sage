@@ -497,7 +497,8 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             ...
             NotImplementedError
         """
-        raise NotImplementedError
+        # TODO: Implement this properly!
+        return self.zero()
 
     def is_exact(self):
         """
