@@ -1,1 +1,1 @@
-surface_dynamics
+git+https://github.com/flatsurf/surface-dynamics
