@@ -185,10 +185,10 @@ jobs:
           COLUMNS: 120
 
       - name: Pytest
-        if: contains(github.ref, 'pytest')
+        if: (success() || failure()) && steps.build.outcome == 'success'
         run: |
-          ../sage -python -m pip install coverage pytest-xdist
-          ../sage -python -m coverage run -m pytest -c tox.ini --doctest || true
+          ../sage -python -m pip install coverage pytest-xdist pytest-github-actions-annotate-failures
+          ../sage -python -m coverage run -m pytest --doctest -s -rfEs .
         working-directory: ./worktree-image/src
         env:
           # Increase the length of the lines in the "short summary"
