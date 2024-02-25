@@ -4038,9 +4038,17 @@ class HalfTemperleyLiebDiagrams(UniqueRepresentation, Parent):
                 sage: ascii_art(d)
                  .-. | .-. | |
                  o o o o o o o
+                sage: htld = da.HalfTemperleyLiebDiagrams(8, 0)
+                sage: d = htld([[1, 6], [2, 3], [4, 5], [7, 8]])
+                sage: ascii_art(d)
+                 .---------.
+                 | .-. .-. | .-.
+                 o o o o o o o o
             """
             defects = self.defects()
             temp = [[-b, -a] for (a, b) in self] + [[-d, d] for d in defects]
+            rank = self.parent()._order
+            temp.append([rank, rank])
             temp.sort()
             ret = TL_diagram_ascii_art(temp)
             from sage.typeset.ascii_art import AsciiArt
@@ -4058,9 +4066,17 @@ class HalfTemperleyLiebDiagrams(UniqueRepresentation, Parent):
                 sage: unicode_art(d)
                  ╭─╮ │ ╭─╮ │ │
                  ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬
+                sage: htld = da.HalfTemperleyLiebDiagrams(8, 0)
+                sage: d = htld([[1, 6], [2, 3], [4, 5], [7, 8]])
+                sage: unicode_art(d)
+                 ╭─────────╮
+                 │ ╭─╮ ╭─╮ │ ╭─╮
+                 ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬
             """
             defects = self.defects()
             temp = [[-b, -a] for (a, b) in self] + [[-d, d] for d in defects]
+            rank = self.parent()._order
+            temp.append([rank, rank])
             temp.sort()
             ret = TL_diagram_ascii_art(temp, use_unicode=True)
             from sage.typeset.unicode_art import UnicodeArt
