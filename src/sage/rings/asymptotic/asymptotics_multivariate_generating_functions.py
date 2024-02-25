@@ -540,7 +540,7 @@ class FractionWithFactoredDenominator(RingElement):
         """
         return self.numerator() / self.denominator()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -2647,8 +2647,8 @@ class FractionWithFactoredDenominator(RingElement):
 
         # Test 4: Is p convenient?
         M = matrix(self.log_grads(p))
-        convenient_coordinates = [j for j in range(d)
-                                  if 0 not in M.columns()[j]]
+        cols = M.columns()
+        convenient_coordinates = [j for j in range(d) if 0 not in cols[j]]
         if not convenient_coordinates:
             return (False, 'multiple point but not convenient')
 
@@ -3079,7 +3079,7 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Parent):
         self._denominator_ring = denominator_ring
         Parent.__init__(self, denominator_ring, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a representation.
 
@@ -3333,7 +3333,7 @@ class FractionWithFactoredDenominatorSum(list):
     - Daniel Krenn (2014-12-01)
     """
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -3353,7 +3353,7 @@ class FractionWithFactoredDenominatorSum(list):
         """
         return ' + '.join(repr(r) for r in self)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Return ``True`` if ``self`` is equal to ``other``.
 
@@ -3379,7 +3379,7 @@ class FractionWithFactoredDenominatorSum(list):
         return (sorted(self, key=methodcaller('_total_order_key_')) ==
                 sorted(other, key=methodcaller('_total_order_key_')))
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Return ``True`` if ``self`` is not equal to ``other``.
 
