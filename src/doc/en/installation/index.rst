@@ -71,18 +71,18 @@ Windows
 
   - **No development:**
 
-    - Enable Windows Subsystem for Linux (WSL) by following the
-      `official WSL setup guide
-      <https://docs.microsoft.com/en-us/windows/wsl/install-win10>`_. Be
-      sure to do the steps to install WSL2 and set it as default.
-      Make sure to allocate enough RAM to WSL: 5GB is known to be enough,
-      2GB might not allow you to build some packages.
-      Then go to the Microsoft Store and install Ubuntu (or another
-      Linux distribution). Start Ubuntu from the start menu.
+    Enable Windows Subsystem for Linux (WSL) by following the
+    `official WSL setup guide
+    <https://docs.microsoft.com/en-us/windows/wsl/install-win10>`_. Be
+    sure to do the steps to install WSL2 and set it as default.
+    Make sure to allocate enough RAM to WSL: 5GB is known to be enough,
+    2GB might not allow you to build some packages.
+    Then go to the Microsoft Store and install Ubuntu (or another
+    Linux distribution). Start Ubuntu from the start menu.
 
-      On the Linux running on WSL, you always have root access, so you
-      can use any of the installation methods described below for
-      Linux.
+    On the Linux running on WSL, you always have root access, so you
+    can use any of the installation methods described below for
+    Linux.
 
 Linux
 =====
