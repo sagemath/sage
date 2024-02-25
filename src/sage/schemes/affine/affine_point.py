@@ -26,6 +26,8 @@ from sage.rings.integer_ring import ZZ
 from sage.schemes.generic.morphism import SchemeMorphism_point, SchemeMorphism, is_SchemeMorphism
 from sage.structure.sequence import Sequence
 
+_NumberFields = NumberFields()
+
 
 # --------------------------------------------------------------------
 # Rational points on schemes, which we view as morphisms determined by
@@ -201,7 +203,7 @@ class SchemeMorphism_point_affine(SchemeMorphism_point):
                 R = RealField(prec)
             H = max([self[i].abs() for i in range(self.codomain().ambient_space().dimension_relative())])
             return R(max(H,1)).log()
-        if self.domain().base_ring() in NumberFields() or isinstance(self.domain().base_ring(), sage.rings.abc.Order):
+        if self.domain().base_ring() in _NumberFields or isinstance(self.domain().base_ring(), sage.rings.abc.Order):
             return max([self[i].global_height(prec) for i in range(self.codomain().ambient_space().dimension_relative())])
         else:
             raise NotImplementedError("must be over a number field or a number field Order")
@@ -421,8 +423,6 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
         g = A.gens()
         v = self._coords
         n = len(v)
-        if n != len(g):
-            raise ValueError('not a point of the ambient space')
         return A.subscheme([g[i] - v[i] for i in range(n)])
 
 

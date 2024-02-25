@@ -28,6 +28,7 @@ AUTHORS:
 
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.number_fields import NumberFields
+_NumberFields = NumberFields()
 from sage.rings.fraction_field import FractionField
 from sage.rings.number_field.order import is_NumberFieldOrder, Order as NumberFieldOrder
 from sage.rings.qqbar import number_field_elements_from_algebraics
@@ -747,7 +748,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         if prec is None:
             prec = 53
         K = self.codomain().base_ring()
-        if K in NumberFields() or is_NumberFieldOrder(K):
+        if K in _NumberFields or is_NumberFieldOrder(K):
             P = self
         else:
             try:
@@ -802,7 +803,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             0.693147180559945
         """
         K = FractionField(self.domain().base_ring())
-        if K not in NumberFields():
+        if K not in _NumberFields:
             raise TypeError("must be over a number field or a number field order")
         return max([K(c).local_height(v, prec=prec) for c in self])
 
@@ -837,7 +838,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             3.401197381662155375413236691607
         """
         K = FractionField(self.domain().base_ring())
-        if K not in NumberFields():
+        if K not in _NumberFields:
             raise TypeError("must be over a number field or a number field order")
         if K == QQ:
             return max(K(c).local_height_arch(prec=prec) for c in self)
@@ -1418,13 +1419,9 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
         g = P.gens()
         v = self._coords
         n = len(v)
-        if n != len(g):
-            raise ValueError('not a point of the ambient space')
         for i in range(n - 1, -1, -1):
             if v[i]:
                 break
-        else:
-            raise ValueError('invalid homogeneous coordinates')
         a = v[i]
         x = g[i]
         return P.subscheme([a*g[j] - v[j]*x for j in range(n) if j != i])
