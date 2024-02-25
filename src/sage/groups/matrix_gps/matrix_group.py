@@ -133,7 +133,7 @@ class MatrixGroup_base(Group):
 
         OUTPUT:
 
-        A ``TypeError`` must be raised if ``x`` is invalid.
+        A :class:`TypeError` must be raised if ``x`` is invalid.
 
         EXAMPLES::
 

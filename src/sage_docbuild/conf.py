@@ -869,7 +869,7 @@ def setup(app):
 
     # When building the standard docs, app.srcdir is set to SAGE_DOC_SRC +
     # 'LANGUAGE/DOCNAME'.
-    if app.srcdir.startswith(SAGE_DOC_SRC):
+    if app.srcdir.is_relative_to(SAGE_DOC_SRC):
         app.add_config_value('intersphinx_mapping', {}, False)
         app.add_config_value('intersphinx_cache_limit', 5, False)
         app.add_config_value('intersphinx_disabled_reftypes', [], False)
