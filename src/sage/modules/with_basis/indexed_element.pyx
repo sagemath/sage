@@ -364,7 +364,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                *      *       *
                *
 
-        We can get the unicode art when there is no ``one_basis`` method
+        We can get the ascii art when there is no ``one_basis`` method
         (and the basis keys do not compare with ``None``)::
 
             sage: DC3 = groups.permutation.DiCyclic(3)
@@ -372,6 +372,16 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: E2 = L.exterior_power(2)
             sage: ascii_art(E2.an_element())
             2*()/\(5,6,7) + 2*()/\(5,7,6) + 3*()/\(1,2)(3,4)
+
+        We can also get the ascii art when ``one_basis``
+        is ``NotImplemented``::
+
+            sage: TL = TemperleyLiebAlgebra(8, -1, QQ)
+            sage: C = TL.cellular_basis()
+            sage: ascii_art(list(C.basis())[0])
+            C
+             (     .-. .-. .-. .-.   .-. .-. .-. .-. )
+             ( 0,  o o o o o o o o,  o o o o o o o o )
         """
         from sage.misc.repr import coeff_repr
         terms = self._sorted_items_for_printing()
@@ -388,10 +398,12 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         if scalar_mult is None:
             scalar_mult = "*"
 
-        try:
-            one_basis = self.parent().one_basis()
-        except AttributeError:
-            one_basis = None
+        one_basis = None
+        if self._parent.one_basis is not NotImplemented:
+            try:
+                one_basis = self._parent.one_basis()
+            except AttributeError:
+                pass
 
         for monomial, c in terms:
             b = repr_monomial(monomial) # PCR
@@ -455,6 +467,16 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: E2 = L.exterior_power(2)
             sage: unicode_art(E2.an_element())
             2*()∧(5,6,7) + 2*()∧(5,7,6) + 3*()∧(1,2)(3,4)
+
+        We can also get the unicode art when ``one_basis``
+        is ``NotImplemented``::
+
+            sage: TL = TemperleyLiebAlgebra(8, -1, QQ)
+            sage: C = TL.cellular_basis()
+            sage: unicode_art(list(C.basis())[0])
+            C
+             ⎛     ╭─╮ ╭─╮ ╭─╮ ╭─╮   ╭─╮ ╭─╮ ╭─╮ ╭─╮ ⎞
+             ⎝ 0,  ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬,  ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⎠
         """
         from sage.misc.repr import coeff_repr
         terms = self._sorted_items_for_printing()
@@ -471,10 +493,12 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         if scalar_mult is None:
             scalar_mult = "*"
 
-        try:
-            one_basis = self.parent().one_basis()
-        except AttributeError:
-            one_basis = None
+        one_basis = None
+        if self._parent.one_basis is not NotImplemented:
+            try:
+                one_basis = self._parent.one_basis()
+            except AttributeError:
+                pass
 
         for (monomial, c) in terms:
             b = repr_monomial(monomial)  # PCR
