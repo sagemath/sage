@@ -210,9 +210,11 @@ cdef class CategoryObject(SageObject):
         EXAMPLES::
 
             sage: ZZ.categories()
-            [Join of Category of euclidean domains
+            [Join of Category of Dedekind domains
+                 and Category of euclidean domains
                  and Category of infinite enumerated sets
                  and Category of metric spaces,
+             Category of Dedekind domains,
              Category of euclidean domains,
              Category of principal ideal domains,
              Category of unique factorization domains,
@@ -365,7 +367,12 @@ cdef class CategoryObject(SageObject):
             sage: z.minpoly()                                                           # needs sage.rings.number_field
             x^2 + 3
         """
-        return self._defining_names()[:n]
+        names = self._defining_names()
+        if isinstance(names, (list, tuple)):
+            return names[:n]
+        # case of Family
+        it = iter(names)
+        return tuple(next(it) for i in range(n))
 
     @cached_method
     def _defining_names(self):
