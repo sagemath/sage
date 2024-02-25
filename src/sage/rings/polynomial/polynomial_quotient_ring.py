@@ -2009,7 +2009,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             Univariate Quotient Polynomial Ring in b
              over Finite Field in a of size 2^2 with modulus b^2 + b + a
             sage: from_M, to_M, M = L._isomorphic_ring(); M
-            Finite Field in z4 of size 2^4
+            Finite Field in zn of size 2^4
             sage: R.<c> = L[]
             sage: M.<c> = L.extension(c^2 + b*c + b); M
             Univariate Quotient Polynomial Ring in c
@@ -2017,7 +2017,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
               over Finite Field in a of size 2^2 with modulus b^2 + b + a
               with modulus c^2 + b*c + b
             sage: from_N, to_N, N = M._isomorphic_ring(); N
-            Finite Field in z8 of size 2^8
+            Finite Field in zn of size 2^8
 
             sage: R.<x> = QQ[]
             sage: K = R.quo(x^2 + 1)
@@ -2092,7 +2092,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             # the underlying prime field
             N = self.cardinality()
             from sage.rings.finite_rings.finite_field_constructor import GF
-            isomorphic_ring = GF(N, names="a")
+            isomorphic_ring = GF(N, names="zn")
 
             # the map to GF(N) maps our generator to a root of our modulus in the isomorphic_ring
             base_image = self.base_ring().modulus().change_ring(isomorphic_ring).any_root()
