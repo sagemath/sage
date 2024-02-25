@@ -67,11 +67,12 @@ AUTHORS:
 # ****************************************************************************
 import weakref
 
-import sage.matrix.matrix_space
-import sage.misc.latex as latex
-from sage.rings.ring import Field, IntegralDomain
+from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.modules import free_module
+from sage.rings.ring import Field, IntegralDomain
+import sage.matrix.matrix_space
+import sage.misc.latex as latex
 
 # #############################################################################
 #
@@ -157,7 +158,7 @@ def FreeQuadraticModule(base_ring, rank, inner_product_matrix,
         if M is not None:
             return M
 
-    if not base_ring.is_commutative():
+    if base_ring not in CommutativeRings():
         raise TypeError("base_ring must be a commutative ring")
 
     # elif not sparse and isinstance(base_ring,sage.rings.real_double.RealDoubleField_class):

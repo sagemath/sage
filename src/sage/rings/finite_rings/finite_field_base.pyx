@@ -2117,6 +2117,50 @@ cdef class FiniteField(Field):
         return [sum(x * y for x, y in zip(col, basis))
                 for col in B.columns()]
 
+    def from_bytes(self, input_bytes, byteorder="big"):
+        """
+        Return the integer represented by the given array of bytes.
+
+        Internally relies on the python ``int.from_bytes()`` method.
+
+        INPUT:
+
+        - ``input_bytes`` -- a bytes-like object or iterable producing bytes
+        - ``byteorder`` -- str (default: ``"big"``); determines the byte order of
+          ``input_bytes``; can only be ``"big"`` or ``"little"``
+
+        EXAMPLES::
+
+            sage: input_bytes = b"some_bytes"
+            sage: F = GF(2**127 - 1)
+            sage: F.from_bytes(input_bytes)
+            545127616933790290830707
+            sage: a = F.from_bytes(input_bytes, byteorder="little"); a
+            544943659528996309004147
+            sage: type(a)
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
+
+        ::
+
+            sage: input_bytes = b"some_bytes"
+            sage: F_ext = GF(65537**5)
+            sage: F_ext.from_bytes(input_bytes)
+            29549*z5^4 + 40876*z5^3 + 52171*z5^2 + 13604*z5 + 20843
+            sage: F_ext.from_bytes(input_bytes, byteorder="little")
+            29539*z5^4 + 42728*z5^3 + 47440*z5^2 + 12423*z5 + 27473
+
+        TESTS::
+
+            sage: fields = [GF(2), GF(3), GF(65537), GF(2^10), GF(163^5)]
+            sage: for F in fields:
+            ....:     for _ in range(1000):
+            ....:         a = F.random_element()
+            ....:         order = choice(["little", "big"])
+            ....:         a_bytes = a.to_bytes(byteorder=order)
+            ....:         assert F.from_bytes(a_bytes, byteorder=order) == a
+        """
+        python_int = int.from_bytes(input_bytes, byteorder=byteorder)
+        return self.from_integer(python_int)
 
 def unpickle_FiniteField_ext(_type, order, variable_name, modulus, kwargs):
     r"""

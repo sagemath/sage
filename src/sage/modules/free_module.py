@@ -186,7 +186,8 @@ import sage.rings.infinity
 import sage.rings.integer
 import sage.rings.integer_ring
 import sage.rings.rational_field
-from sage.rings.ring import IntegralDomain, is_Ring
+from sage.rings.ring import IntegralDomain
+from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.fields import Fields
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.integral_domains import IntegralDomains
@@ -266,16 +267,16 @@ class FreeModuleFactory(UniqueFactory):
             from sage.modules.free_quadratic_module import FreeQuadraticModule
             return FreeQuadraticModule(base_ring, rank, inner_product_matrix=inner_product_matrix, sparse=sparse)
 
-        if not isinstance(sparse,bool):
+        if not isinstance(sparse, bool):
             raise TypeError("Argument sparse (= %s) must be True or False" % sparse)
 
-        if not (hasattr(base_ring,'is_commutative') and base_ring.is_commutative()):
+        if base_ring not in CommutativeRings():
             warn("You are constructing a free module\n"
                  "over a noncommutative ring. Sage does not have a concept\n"
                  "of left/right and both sided modules, so be careful.\n"
                  "It's also not guaranteed that all multiplications are\n"
                  "done from the right side.")
-            #raise TypeError, "The base_ring must be a commutative ring."
+            # raise TypeError("The base_ring must be a commutative ring.")
 
         if not sparse and isinstance(base_ring, sage.rings.abc.RealDoubleField):
             return RealDoubleVectorSpace_class(rank)
@@ -727,7 +728,7 @@ def span(gens, base_ring=None, check=True, already_echelonized=False):
         TypeError: generators must be lists of ring elements
         or free module elements!
     """
-    if is_Ring(gens):
+    if gens in CommutativeRings():
         # we allow the old input format with first input the base_ring.
         # Do we want to deprecate it?..
         base_ring, gens = gens, base_ring
@@ -1966,7 +1967,7 @@ class FreeModule_generic(Module_free_ambient):
             <class 'sage.modules.free_module_element.FreeModuleElement_generic_sparse'>
 
         """
-        if not base_ring.is_commutative():
+        if base_ring not in CommutativeRings():
             warn("You are constructing a free module\n"
                  "over a noncommutative ring. Sage does not have a concept\n"
                  "of left/right and both sided modules, so be careful.\n"

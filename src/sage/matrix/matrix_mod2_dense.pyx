@@ -595,14 +595,27 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             sage: v = vector(GF(2), 0)
             sage: m * v
             (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+        Add a test involving a nonsquare matrix::
+
+            sage: A = random_matrix(GF(2),10^4,10^3)
+            sage: v0 = random_matrix(GF(2),10^3,1)
+            sage: v1 = v0.column(0)
+            sage: r0 = A*v0
+            sage: r1 = A*v1
+            sage: r0.column(0) == r1
+            True
         """
         cdef mzd_t *tmp
-        global VectorSpace
-        if VectorSpace is None:
-            from sage.modules.free_module import VectorSpace
-        VS = VectorSpace(self._base_ring, self._nrows)
-        if not isinstance(v, Vector_mod2_dense):
-            v = VS(v)
+        if self._nrows == self._ncols and isinstance(v, Vector_mod2_dense):
+            VS = v.parent()
+        else:
+            global VectorSpace
+            if VectorSpace is None:
+                from sage.modules.free_module import VectorSpace
+            VS = VectorSpace(self._base_ring, self._nrows)
+            if not isinstance(v, Vector_mod2_dense):
+                v = VS(v)
         if self.ncols() != v.degree():
             raise ArithmeticError("number of columns of matrix must equal degree of vector")
 

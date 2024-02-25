@@ -361,6 +361,8 @@ __append_to_doc(
      "RandomHolmeKim",
      "RandomChordalGraph",
      "RandomIntervalGraph",
+     "RandomKTree",
+     "RandomPartialKTree",
      "RandomLobster",
      "RandomNewmanWattsStrogatz",
      "RandomRegular",
@@ -2755,6 +2757,8 @@ class GraphGenerators:
     RandomNewmanWattsStrogatz = staticmethod(random.RandomNewmanWattsStrogatz)
     RandomRegular = staticmethod(random.RandomRegular)
     RandomShell = staticmethod(random.RandomShell)
+    RandomKTree = staticmethod(random.RandomKTree)
+    RandomPartialKTree = staticmethod(random.RandomPartialKTree)
     RandomToleranceGraph = staticmethod(random.RandomToleranceGraph)
     RandomTreePowerlaw = staticmethod(random.RandomTreePowerlaw)
     RandomTree = staticmethod(random.RandomTree)

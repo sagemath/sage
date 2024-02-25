@@ -43,6 +43,7 @@ EXAMPLES::
 # ****************************************************************************
 import itertools
 from copy import copy
+
 from sage.combinat.combination import Combinations
 from sage.combinat.permutation import Permutation
 from sage.functions.generalized import sign
@@ -165,7 +166,7 @@ def braid_from_piecewise(strands):
     return B(braid)
 
 
-def discrim(pols):
+def discrim(pols) -> tuple:
     r"""
     Return the points in the discriminant of the product of the polynomials
     of a list or tuple ``pols``.
@@ -195,9 +196,8 @@ def discrim(pols):
         0.2613789792873551? - 0.4527216721561923?*I,
         0.2613789792873551? + 0.4527216721561923?*I)
     """
-    flist = tuple(pols)
-    x, y = flist[0].parent().gens()
-    field = flist[0].base_ring()
+    x, y = pols[0].parent().gens()
+    field = pols[0].base_ring()
     pol_ring = PolynomialRing(field, (x,))
 
     @parallel
@@ -206,7 +206,7 @@ def discrim(pols):
             return pol_ring(f.discriminant(y))
         return pol_ring(f.resultant(g, y))
 
-    pairs = [(f, None) for f in flist] + [(f, g) for f, g in Combinations(flist, 2)]
+    pairs = [(f, None) for f in pols] + [tuple(t) for t in Combinations(pols, 2)]
     fdiscrim = discrim_pairs(pairs)
     rts = ()
     poly = 1
@@ -464,7 +464,7 @@ def voronoi_cells(V):
     return (G, E, p, EC, DG)
 
 
-def followstrand(f, factors, x0, x1, y0a, prec=53):
+def followstrand(f, factors, x0, x1, y0a, prec=53) -> list:
     r"""
     Return a piecewise linear approximation of the homotopy continuation
     of the root ``y0a`` from ``x0`` to ``x1``.
@@ -715,7 +715,7 @@ def roots_interval(f, x0):
             envelop = IF(diam) * IF((-1, 1), (-1, 1))
         qapr = QQ(CF(r).real()) + QQbar.gen() * QQ(CF(r).imag())
         if qapr not in r + envelop:
-            raise ValueError("Could not approximate roots with exact values")
+            raise ValueError("could not approximate roots with exact values")
         result[qapr] = r + envelop
     return result
 
@@ -847,7 +847,7 @@ def braid_in_segment(glist, x0, x1, precision={}):
         sage: B = braid_in_segment(glist, p1b, p2b); B              # optional - sirocco
         s5*s3^-1
     """
-    precision1 = {_: precision[_] for _ in precision.keys()}
+    precision1 = precision.copy()
     g = prod(glist)
     F1 = g.base_ring()
     x, y = g.parent().gens()
@@ -908,7 +908,7 @@ def braid_in_segment(glist, x0, x1, precision={}):
     return initialbraid * centralbraid * finalbraid
 
 
-def geometric_basis(G, E, EC0, p, dual_graph):
+def geometric_basis(G, E, EC0, p, dual_graph) -> list:
     r"""
     Return a geometric basis, based on a vertex.
 
@@ -982,19 +982,20 @@ def geometric_basis(G, E, EC0, p, dual_graph):
     if G.size() == E.size():
         if E.is_cycle():
             return [EC]
-    InternalEdges = [_ for _ in G.edges(sort=True) if _ not in E.edges(sort=True)]
+    edges_E = E.edges(sort=True)
+    InternalEdges = [e for e in G.edges(sort=True) if e not in edges_E]
     InternalVertices = [v for e in InternalEdges for v in e[:2]]
     Internal = G.subgraph(vertices=InternalVertices, edges=InternalEdges)
     for i, ECi in enumerate(EC):  # q and r are the points we will cut through
         if ECi in Internal:
             EI = [v for v in E if v in Internal.connected_component_containing_vertex(ECi, sort=True) and v != ECi]
-            if len(EI) > 0:
+            if EI:
                 q = ECi
                 connecting_path = list(EC[:i])
                 break
         if EC[-i] in Internal:
             EI = [v for v in E if v in Internal.connected_component_containing_vertex(EC[-i], sort=True) and v != EC[-i]]
-            if len(EI) > 0:
+            if EI:
                 q = EC[-i]
                 connecting_path = list(reversed(EC[-i:]))
                 break
@@ -1125,7 +1126,7 @@ def strand_components(f, flist, p1):
         h0 = h.subs({x: p1})
         h1 = F[y](h0)
         rt = h1.roots(QQbar, multiplicities=False)
-        roots_base += [(_, i) for _ in rt]
+        roots_base += [(r, i) for r in rt]
     roots_base.sort()
     strands = {i: par[1] for i, par in enumerate(roots_base)}  # quitar +1 despues de revision
     return (roots_base, strands)
@@ -1206,7 +1207,7 @@ def braid_monodromy(f, arrangement=()):
         disc = discrim(glist)
     else:
         disc = []
-    if len(disc) == 0:
+    if not disc:
         result = []
         p1 = F(0)
         roots_base, strands = strand_components(g, arrangement1, p1)
@@ -1303,8 +1304,8 @@ def conjugate_positive_form(braid):
     cuts = [j for j in range(d + 1) if j not in gns]
     blocks = []
     for i in range(len(cuts) - 1):
-        block = [j for j in L1 if j > cuts[i] and j < cuts[i + 1]]
-        if len(block) > 0:
+        block = [j for j in L1 if cuts[i] < j < cuts[i + 1]]
+        if block:
             blocks.append(block)
     shorts = []
     for a in blocks:
@@ -1315,7 +1316,7 @@ def conjugate_positive_form(braid):
             A1 = rightnormalform(sg)
             par = A1[-1][0] % 2
             A1 = [B(a) for a in A1[:-1]]
-            if len(A1) == 0:
+            if not A1:
                 b = B.one()
             else:
                 b = prod(A1)
@@ -1378,8 +1379,8 @@ def braid2rels(L):
     br1 = B0.delta()**r * B0(prod(B0(_) for _ in br0_left[1:]))
     cox = prod(F0.gens())
     U0 = [cox**q * (f0 * br1) / cox**q / f0 for f0 in F0.gens()[:-1]]
-    U = [tuple(sign(k1)*(abs(k1) + k) for k1 in _.Tietze()) for _ in U0]
-    pasos = [B.one()] + [_ for _ in reversed(L1)]
+    U = [tuple(sign(k1) * (abs(k1) + k) for k1 in _.Tietze()) for _ in U0]
+    pasos = [B.one()] + list(reversed(L1))
     for C in pasos:
         U = [(F(a) * C.inverse()).Tietze() for a in U]
         ga = F / U
@@ -1465,7 +1466,7 @@ def fundamental_group_from_braid_mon(bm, degree=None, simplified=True, projectiv
     """
     vertical0 = sorted(vertical)
     v = len(vertical0)
-    if bm == []:
+    if not bm:
         d = degree
     else:
         d = bm[0].parent().strands()
@@ -1605,7 +1606,7 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=False):
         while g.degree(y) < g.degree():
             g = g.subs({x: x + y})
     bm = braid_monodromy(g)[0]
-    if bm == []:
+    if not bm:
         d = g.degree(y)
     else:
         d = bm[0].parent().strands()
@@ -1691,7 +1692,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         arrangements, even for hyperplane arrangements defined over a number
         subfield of ``QQbar`` after applying a generic line section.
     """
-    if len(flist) > 0:
+    if flist:
         f = prod(flist)
         R = f.parent()
     else:
@@ -1699,7 +1700,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         f = R(1)
     x, y = R.gens()
     F = R.base_ring()
-    flist1 = [_ for _ in flist]
+    flist1 = list(flist)
     d = f.degree(y)
     while not f.coefficient(y**d) in F:
         flist1 = [g.subs({x: x + y}) for g in flist1]
@@ -1709,7 +1710,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
         while f.degree(y) < f.degree():
             flist1 = [g.subs({x: x + y}) for g in flist]
             f = prod(flist1)
-    if len(flist1) == 0:
+    if not flist1:
         bm = []
         dic = {}
     else:
@@ -1720,7 +1721,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False, puis
     else:
         hom = g.hom(codomain=g, im_gens=list(g.gens()), check=False)
     g1 = hom.codomain()
-    if len(flist) == 0:
+    if not flist:
         return (g1, {})
     dic1 = {}
     for i in range(len(flist1)):

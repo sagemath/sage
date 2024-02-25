@@ -57,8 +57,6 @@ graphs. Here is what they can do
     :widths: 30, 70
     :delim: |
 
-    :meth:`~DiGraph.all_paths_iterator` | Return an iterator over the paths of ``self``.
-    :meth:`~DiGraph.all_simple_paths` | Return a list of all the simple paths of ``self`` starting with one of the given vertices.
     :meth:`~DiGraph.all_cycles_iterator` | Return an iterator over all the cycles of ``self`` starting with one of the given vertices.
     :meth:`~DiGraph.all_simple_cycles` | Return a list of all simple cycles of ``self``.
 
@@ -4379,6 +4377,3 @@ class DiGraph(GenericGraph):
     from sage.graphs.connectivity import strongly_connected_components_subgraphs
     from sage.graphs.connectivity import strongly_connected_component_containing_vertex
     from sage.graphs.connectivity import strong_articulation_points
-    from sage.graphs.path_enumeration import _all_paths_iterator
-    from sage.graphs.path_enumeration import all_paths_iterator
-    from sage.graphs.path_enumeration import all_simple_paths

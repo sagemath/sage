@@ -221,6 +221,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.combinat.partition import _Partitions, Partitions, Partitions_n, Partition
+from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.hopf_algebras import HopfAlgebras
 from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
@@ -428,7 +429,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             """
             return False
 
-        def is_commutative(self):
+        def is_commutative(self) -> bool:
             """
             Return whether this symmetric function algebra is commutative.
 
@@ -442,7 +443,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 sage: s.is_commutative()
                 True
             """
-            return self.base_ring().is_commutative()
+            return self.base_ring() in CommutativeRings()
 
         def _repr_(self):
             """
@@ -1050,7 +1051,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             corresponding_result = corresponding_parent_over_QQ.gessel_reutenauer(lam)
             comp_base_ring = comp_parent.base_ring()
             result = comp_parent.sum_of_terms((nu, comp_base_ring(c))
-                                               for nu, c in corresponding_result)
+                                              for nu, c in corresponding_result)
             return self(result)    # just in case comp_parent != self.
 
         higher_lie_character = gessel_reutenauer
@@ -1187,8 +1188,8 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
 
                 def component(i, g): # == h_g[L_i] or e_g[L_i]
                     L_i = p.sum_of_terms(((_Partitions([d] * (i//d)), R(mu(d)))
-                                           for d in squarefree_divisors(i)),
-                                          distinct=True) / i
+                                          for d in squarefree_divisors(i)),
+                                         distinct=True) / i
                     if not i % 2:
                         return p(e[g]).plethysm(L_i.omega())
                     else:
@@ -1221,7 +1222,7 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             corresponding_result = corresponding_parent_over_QQ.lehrer_solomon(lam)
             comp_base_ring = comp_parent.base_ring()
             result = comp_parent.sum_of_terms((nu, comp_base_ring(c))
-                                               for nu, c in corresponding_result)
+                                              for nu, c in corresponding_result)
             return self(result)    # just in case comp_parent != self.
 
         whitney_homology_character = lehrer_solomon
@@ -1765,11 +1766,11 @@ class GradedSymmetricFunctionsBases(Category_realization_of_parent):
             return len(m) <= 1 and self.coefficient([]).is_unit()
 
 
-#SymmetricFunctionsBases.Filtered = FilteredSymmetricFunctionsBases
-#SymmetricFunctionsBases.Graded = GradedSymmetricFunctionsBases
+# SymmetricFunctionsBases.Filtered = FilteredSymmetricFunctionsBases
+# SymmetricFunctionsBases.Graded = GradedSymmetricFunctionsBases
 
 #####################################################################
-## ABC for bases of the symmetric functions
+#  ABC for bases of the symmetric functions
 
 class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
     r"""
@@ -5885,7 +5886,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         elif isinstance(nu, list) and all(isinstance(a, (int,Integer)) for a in nu):
             return P(s.sum(t**la.size() * c * d * s(la) *
                      s._repeated_bernstein_creation_operator_on_basis(ga, nu)
-                     for ((la,mu),c) in s(self).coproduct()
+                     for ((la, mu), c) in s(self).coproduct()
                      for (ga, d) in s(mu).plethysm((1-t)*s[1]) ))
         else:
             raise ValueError("nu must be a list of integers")

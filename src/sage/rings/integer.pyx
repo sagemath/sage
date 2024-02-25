@@ -7163,6 +7163,40 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         else:
             raise ValueError("algorithm must be one of: 'pari' or 'gmp' (alias: 'mpir')")
 
+    def to_bytes(self, length=1, byteorder="big", is_signed=False):
+        r"""
+        Return an array of bytes representing an integer.
+
+        Internally relies on the python ``int.to_bytes()`` method.
+
+        INPUT:
+
+        - ``length`` -- positive integer (default: ``1``); integer is represented in
+          ``length`` bytes
+        - ``byteorder`` -- str (default: ``"big"``); determines the byte order of
+          the output; can only be ``"big"`` or ``"little"``
+        - ``is_signed`` -- boolean (default: ``False``); determines whether to use two's
+          compliment to represent the integer
+
+        .. TODO::
+
+            It should be possible to convert straight from the gmp type in cython.
+            This could be significantly faster, but I am unsure of the fastest and cleanest
+            way to do this.
+
+        EXAMPLES::
+
+            sage: (1024).to_bytes(2, byteorder='big')
+            b'\x04\x00'
+            sage: (1024).to_bytes(10, byteorder='big')
+            b'\x00\x00\x00\x00\x00\x00\x00\x00\x04\x00'
+            sage: (-1024).to_bytes(10, byteorder='big', is_signed=True)
+            b'\xff\xff\xff\xff\xff\xff\xff\xff\xfc\x00'
+            sage: x = 1000
+            sage: x.to_bytes((x.bit_length() + 7) // 8, byteorder='little')
+            b'\xe8\x03'
+        """
+        return int(self).to_bytes(length=length, byteorder=byteorder, signed=is_signed)
 
 cdef int mpz_set_str_python(mpz_ptr z, char* s, int base) except -1:
     """

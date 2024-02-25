@@ -2658,7 +2658,8 @@ class BraidGroup_class(FiniteTypeArtinGroup):
 
         OUTPUT:
 
-        Raises a ``ValueError`` error since braid groups are infinite.
+        This raises a :class:`ValueError` error since braid groups
+        are infinite.
 
         TESTS::
 

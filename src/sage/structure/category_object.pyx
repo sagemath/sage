@@ -367,7 +367,12 @@ cdef class CategoryObject(SageObject):
             sage: z.minpoly()                                                           # needs sage.rings.number_field
             x^2 + 3
         """
-        return self._defining_names()[:n]
+        names = self._defining_names()
+        if isinstance(names, (list, tuple)):
+            return names[:n]
+        # case of Family
+        it = iter(names)
+        return tuple(next(it) for i in range(n))
 
     @cached_method
     def _defining_names(self):
