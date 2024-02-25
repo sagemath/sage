@@ -2092,7 +2092,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             # the underlying prime field
             N = self.cardinality()
             from sage.rings.finite_rings.finite_field_constructor import GF
-            isomorphic_ring = GF(N)
+            isomorphic_ring = GF(N, names="a")
 
             # the map to GF(N) maps our generator to a root of our modulus in the isomorphic_ring
             base_image = self.base_ring().modulus().change_ring(isomorphic_ring).any_root()
