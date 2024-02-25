@@ -1,4 +1,4 @@
-Trac #27109: Patch based on the upstream fix at
+Issue #27109: Patch based on the upstream fix at
 https://github.com/libffi/libffi/commit/877ea9bf9ac2c98cb858c12f5a6aeeec13cf978f#diff-67e997bcfdac55191033d57a16d1408a
 
 Ensure that libraries are installed to $SAGE_LOCAL/lib and not
