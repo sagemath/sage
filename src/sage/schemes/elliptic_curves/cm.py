@@ -236,9 +236,9 @@ def is_HCP(f, check_monic_irreducible=True):
 
     Ensure that :issue:`37471` is fixed::
 
-        from sage.schemes.elliptic_curves.cm import is_HCP
-        set_random_seed(297388353221545796156853787333338705098)
-        is_HCP(hilbert_class_polynomial(-55))
+        sage: from sage.schemes.elliptic_curves.cm import is_HCP
+        sage: set_random_seed(297388353221545796156853787333338705098)
+        sage: is_HCP(hilbert_class_polynomial(-55))
         -55
     """
     zero = ZZ(0)
