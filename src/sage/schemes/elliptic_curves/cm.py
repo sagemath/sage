@@ -264,14 +264,15 @@ def is_HCP(f, check_monic_irreducible=True):
         # Compute X^p-X mod fp
         z = fp.parent().gen()
         r = pow(z, p, fp) - z
-        d = r.gcd(fp).degree()  # number of roots mod p
+        r = r.gcd(fp)
+        d = r.degree()  # number of roots mod p
         if d == 0:
             continue
-        if not fp.is_squarefree():
+        if not r.is_squarefree():
             continue
         if d < h and d not in h2list:
             return zero
-        jp = fp.any_root(degree=1, assume_squarefree=True, assume_distinct_deg=True)
+        jp = r.any_root(degree=1, assume_squarefree=True, assume_distinct_deg=True)
         E = EllipticCurve(j=jp)
         if E.is_supersingular():
             continue
