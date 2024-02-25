@@ -2309,6 +2309,14 @@ cdef class Polynomial(CommutativePolynomial):
           used for polynomials over finite fields. If not ``None`` only returns
           irreducible factors of ``self`` whose degree divides ``ext_degree``.
 
+        .. NOTE::
+
+            Any root is non-deterministic when finding linear roots of a polynomial
+            over the base ring. However, if ``degree`` is greater than one, or `ring`
+            is an extension of the base ring, then eventually the root is found by
+            returning a single root after factorisation. Roots found in this way are
+            deterministic. This may change in the future.
+
         EXAMPLES::
 
             sage: # needs sage.rings.finite_rings
