@@ -1080,6 +1080,7 @@ def minimum_generating_set(group, gap_based=False) -> list:
             return g + [n[0]]
         return [converter(ele) for ele in g] + [converter(n[0])]
 
+    # A function to generate some combinations of the generators of the group according to the algorithm.
     def gen_combinations(g, N, t):
         if t > len(g):
             t = len(g)
@@ -1087,8 +1088,10 @@ def minimum_generating_set(group, gap_based=False) -> list:
             yield g
         for go in gen_combinations(g,N,t-1):
             for j in range(len(N)):
-                gm = go[:t-1] + [go[t-1]*N[j]] + go[t:]
-                yield gm
+                temp = go[t-1]
+                go[t-1] = go[t-1]*N[j]
+                yield go
+                go[t-1] = temp
 
     # Here, the value of t is different from the one in the research paper mentioned 
     # in the REFRENCE section becuase in the paper the value of t was calculated using
