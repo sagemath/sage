@@ -43,6 +43,7 @@ EXAMPLES::
 # ****************************************************************************
 import itertools
 from copy import copy
+
 from sage.combinat.combination import Combinations
 from sage.combinat.permutation import Permutation
 from sage.functions.generalized import sign
