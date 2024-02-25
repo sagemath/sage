@@ -487,10 +487,8 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: E(0).order() == 1
             True
         """
-        try:
+        if hasattr(self, "_order"):
             return self._order
-        except AttributeError:
-            pass
         if self.is_zero():
             self._order = Integer(1)
             return self._order
