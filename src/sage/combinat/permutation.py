@@ -7096,9 +7096,9 @@ class StandardPermutations_n_abstract(Permutations):
         Ensure that :issue:`37284` is fixed::
 
             sage: PG = PermutationGroup([[(1,2,3),(5,6)],[(7,8)]])
-            sage: P5 = Permutations(8)
+            sage: P8 = Permutations(8)
             sage: p = PG.an_element()
-            sage: P5(p).parent()
+            sage: P8(p).parent()
             Standard permutations of 8
         """
         if isinstance(x, PermutationGroupElement):
