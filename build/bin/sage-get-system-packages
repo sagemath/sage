@@ -51,7 +51,7 @@ case "$SYSTEM" in
 esac
 
 case "$SPKGS" in
-    *pypi:*)
+    *pkg:pypi/*)
         PATH="${SAGE_ROOT}/build/bin:$PATH" SPKGS=$(sage-package list $SPKGS)
         ;;
 esac

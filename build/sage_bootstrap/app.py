@@ -395,9 +395,9 @@ class Application(object):
 
         $ sage --package create jupyterlab_markup --pypi --source wheel --type optional
         """
-        if package_name.startswith('pypi:'):
+        if package_name.startswith('pkg:pypi/'):
             pypi = True
-            package_name = package_name[len('pypi:'):].lower().replace('-', '_')
+            package_name = package_name[len('pkg:pypi/'):].lower().replace('-', '_')
         elif '-' in package_name:
             raise ValueError('package names must not contain dashes, use underscore instead')
         if pypi:
