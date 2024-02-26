@@ -63,6 +63,7 @@ class GluedScheme(scheme.Scheme):
 
         EXAMPLES::
 
+            sage: R.<x, y> = QQ[]
             sage: S.<xbar, ybar> = R.quotient(x * y - 1)
             sage: Rx = QQ["x"]
             sage: Ry = QQ["y"]
