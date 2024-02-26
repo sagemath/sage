@@ -263,14 +263,13 @@ class LieAlgebras(Category_over_base_ring):
                 By default, this method runs the tests only on the
                 elements returned by ``self.some_elements()``::
 
-                    sage: L = LieAlgebras(QQ).Super().example()
+                    sage: L.<x,y,z> = SuperLieAlgebra(QQ, {('x','y'): {'z':1}}, (1,1,2))
                     sage: L._test_jacobi_identity()
 
                 However, the elements tested can be customized with the
                 ``elements`` keyword argument::
 
-                    sage: L = LieAlgebras(QQ).Super().example()
-                    sage: x,y = L.lie_algebra_generators()
+                    sage: x, y, z = L.super_lie_algebra_generators()
                     sage: L._test_jacobi_identity(elements=[x + y, x, 2*y, x.bracket(y)])
 
                 See the documentation for :class:`TestSuite` for more information.
@@ -301,14 +300,14 @@ class LieAlgebras(Category_over_base_ring):
                 By default, this method runs the tests only on the
                 elements returned by ``self.some_elements()``::
 
-                    sage: L = LieAlgebras(QQ).Super().example()
+                    sage: L.<x,y,z> = SuperLieAlgebra(QQ, {('x','y'): {'z':1}}, (1,1,2))
                     sage: L._test_antisymmetry()
 
                 However, the elements tested can be customized with the
                 ``elements`` keyword argument::
 
-                    sage: L = LieAlgebras(QQ).Super().example()
-                    sage: x,y = L.lie_algebra_generators()
+                    sage: L.<x,y,z> = SuperLieAlgebra(QQ, {('x','y'): {'z':1}}, (1,1,2))
+                    sage: x, y, z = L.super_lie_algebra_generators()
                     sage: L._test_antisymmetry(elements=[x + y, x, 2*y, x.bracket(y)])
 
                 See the documentation for :class:`TestSuite` for more information.
@@ -324,10 +323,14 @@ class LieAlgebras(Category_over_base_ring):
         class ElementMethods:
             @coerce_binop
             def bracket(self, rhs):
-                """
+                r"""
                 Return the Lie bracket ``[self, rhs]``.
 
                 EXAMPLES::
+
+                    sage: L.<x,y,z> = SuperLieAlgebra(QQ, {('x','y'): {'z':1}}, (1,1,2))
+                    sage: x.bracket(0)
+                    0
                 """
                 return self._bracket_(rhs)
 
@@ -340,6 +343,10 @@ class LieAlgebras(Category_over_base_ring):
                 element of the same super Lie algebra as ``self``.
 
                 EXAMPLES::
+
+                    sage: L.<x,y,z> = SuperLieAlgebra(QQ, {('x','y'): {'z':1}}, (1,1,2))
+                    sage: y._bracket_(x)
+                    z
                 """
 
     class ParentMethods:

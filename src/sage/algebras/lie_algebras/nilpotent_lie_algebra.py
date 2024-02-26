@@ -16,9 +16,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.algebras.lie_algebras.structure_coefficients import LieAlgebraWithStructureCoefficients
+from sage.algebras.lie_algebras.structure_coefficients import LieAlgebraWithStructureCoefficients, _standardize_s_coeff
 from sage.categories.lie_algebras import LieAlgebras
-from sage.structure.indexed_generators import standardize_names_index_set
 from sage.rings.integer_ring import ZZ
 
 
@@ -123,8 +122,7 @@ class NilpotentLieAlgebra_dense(LieAlgebraWithStructureCoefficients):
 
         from sage.structure.indexed_generators import standardize_names_index_set
         names, index_set = standardize_names_index_set(names, index_set)
-        s_coeff = LieAlgebraWithStructureCoefficients._standardize_s_coeff(
-            s_coeff, index_set)
+        s_coeff = _standardize_s_coeff(s_coeff, index_set, (0,)*len(index_set))
 
         cat = LieAlgebras(R).FiniteDimensional().WithBasis().Nilpotent()
         category = cat.or_subcategory(category)
@@ -414,9 +412,9 @@ class FreeNilpotentLieAlgebra(NilpotentLieAlgebra_dense):
                                 s_coeff[(X_ind, Y_ind)] = {W_ind: Z[W.leading_support()]
                                                            for W_ind, W in basis_by_deg[dx + dy]}
 
+        from sage.structure.indexed_generators import standardize_names_index_set
         names, index_set = standardize_names_index_set(names, index_set)
-        s_coeff = LieAlgebraWithStructureCoefficients._standardize_s_coeff(
-            s_coeff, index_set)
+        s_coeff = _standardize_s_coeff(s_coeff, index_set, (0,)*len(index_set))
 
         NilpotentLieAlgebra_dense.__init__(self, R, s_coeff, names,
                                            index_set, s,

@@ -31,7 +31,258 @@ from sage.algebras.lie_algebras.lie_algebra import FinitelyGeneratedLieAlgebra
 from sage.modules.free_module import FreeModule
 from sage.sets.family import Family
 
-class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGenerators):
+
+class WithStructureCoefficients_abstract(IndexedGenerators):
+    r"""
+    Abstract base class for the :class:`Parent` subclass modeling
+    a Lie (super)algebra defined by structure coefficients.
+    """
+    def __init__(self, R, s_coeff, names, index_set, prefix=None, bracket=None,
+                 latex_bracket=None, string_quotes=None, **kwds):
+        """
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: L = LieAlgebra(QQ, 'x,y', {('x','y'): {'x':1}})
+            sage: TestSuite(L).run()
+        """
+        default = (names != tuple(index_set))
+        if prefix is None:
+            if default:
+                prefix = 'L'
+            else:
+                prefix = ''
+        if bracket is None:
+            bracket = default
+        if latex_bracket is None:
+            latex_bracket = default
+        if string_quotes is None:
+            string_quotes = default
+
+        #self._pos_to_index = dict(enumerate(index_set))
+        self._index_to_pos = {k: i for i,k in enumerate(index_set)}
+        if "sorting_key" not in kwds:
+            kwds["sorting_key"] = self._index_to_pos.__getitem__
+
+        IndexedGenerators.__init__(self, index_set, prefix=prefix,
+                                   bracket=bracket, latex_bracket=latex_bracket,
+                                   string_quotes=string_quotes, **kwds)
+
+        self._M = FreeModule(R, len(index_set))
+
+        # Transform the values in the structure coefficients to elements
+        def to_vector(tuples):
+            vec = [R.zero()]*len(index_set)
+            for k, c in tuples:
+                vec[self._index_to_pos[k]] = c
+            vec = self._M(vec)
+            vec.set_immutable()
+            return vec
+        self._s_coeff = {(self._index_to_pos[k[0]], self._index_to_pos[k[1]]):
+                         to_vector(s_coeff[k])
+                         for k in s_coeff.keys()}
+
+    # For compatibility with CombinatorialFreeModuleElement
+    _repr_term = IndexedGenerators._repr_generator
+    _latex_term = IndexedGenerators._latex_generator
+
+    def structure_coefficients(self, include_zeros=False):
+        """
+        Return the dictionary of structure coefficients of ``self``.
+
+        EXAMPLES::
+
+            sage: L = LieAlgebra(QQ, 'x,y,z', {('x','y'): {'x':1}})
+            sage: L.structure_coefficients()
+            Finite family {('x', 'y'): x}
+            sage: S = L.structure_coefficients(True); S
+            Finite family {('x', 'y'): x, ('x', 'z'): 0, ('y', 'z'): 0}
+            sage: S['x','z'].parent() is L
+            True
+
+        TESTS:
+
+        Check that :trac:`23373` is fixed::
+
+            sage: L = lie_algebras.sl(QQ, 2)
+            sage: sorted(L.structure_coefficients(True), key=str)
+            [-2*E[-alpha[1]], -2*E[alpha[1]], h1]
+        """
+        if not include_zeros:
+            pos_to_index = dict(enumerate(self._indices))
+            return Family({(pos_to_index[k[0]], pos_to_index[k[1]]):
+                           self.element_class(self, self._s_coeff[k])
+                           for k in self._s_coeff})
+        ret = {}
+        zero = self._M.zero()
+        for i,x in enumerate(self._indices):
+            for j, y in enumerate(self._indices[i+1:]):
+                if (i, j+i+1) in self._s_coeff:
+                    elt = self._s_coeff[i, j+i+1]
+                elif (j+i+1, i) in self._s_coeff:
+                    elt = -self._s_coeff[j+i+1, i]
+                else:
+                    elt = zero
+                ret[x,y] = self.element_class(self, elt) # +i+1 for offset
+        return Family(ret)
+
+    def dimension(self):
+        r"""
+        Return the dimension of ``self``.
+
+        EXAMPLES::
+
+            sage: L = LieAlgebra(QQ, 'x,y', {('x','y'):{'x':1}})
+            sage: L.dimension()
+            2
+        """
+        return self.basis().cardinality()
+
+    def module(self, sparse=True):
+        r"""
+        Return ``self`` as a free module.
+
+        EXAMPLES::
+
+            sage: L.<x,y,z> = LieAlgebra(QQ, {('x','y'): {'z':1}})
+            sage: L.module()
+            Sparse vector space of dimension 3 over Rational Field
+        """
+        if not sparse:
+            return self._M
+        return FreeModule(self.base_ring(), self.dimension(), sparse=sparse)
+
+    @cached_method
+    def zero(self):
+        """
+        Return the element `0` in ``self``.
+
+        EXAMPLES::
+
+            sage: L.<x,y,z> = LieAlgebra(QQ, {('x','y'): {'z':1}})
+            sage: L.zero()
+            0
+        """
+        return self.element_class(self, self._M.zero())
+
+    def monomial(self, k):
+        """
+        Return the monomial indexed by ``k``.
+
+        EXAMPLES::
+
+            sage: L.<x,y,z> = LieAlgebra(QQ, {('x','y'): {'z':1}})
+            sage: L.monomial('x')
+            x
+        """
+        return self.element_class(self, self._M.basis()[self._index_to_pos[k]])
+
+    def term(self, k, c=None):
+        """
+        Return the term indexed by ``i`` with coefficient ``c``.
+
+        EXAMPLES::
+
+            sage: L.<x,y,z> = LieAlgebra(QQ, {('x','y'): {'z':1}})
+            sage: L.term('x', 4)
+            4*x
+        """
+        if c is None:
+            c = self.base_ring().one()
+        else:
+            c = self.base_ring()(c)
+        return self.element_class(self, c * self._M.basis()[self._index_to_pos[k]])
+
+    def from_vector(self, v, order=None, coerce=True):
+        """
+        Return an element of ``self`` from the vector ``v``.
+
+        EXAMPLES::
+
+            sage: L.<x,y,z> = LieAlgebra(QQ, {('x','y'): {'z':1}})
+            sage: L.from_vector([1, 2, -2])
+            x + 2*y - 2*z
+        """
+        if coerce:
+            v = self._M(v)
+        return self.element_class(self, v)
+
+    def _from_dict(self, d, coerce=False, remove_zeros=False):
+        r"""
+        Construct an element of ``self`` from an ``{index: coefficient}``
+        dictionary.
+
+        INPUT:
+
+        - ``d`` -- a dictionary ``{index: coeff}`` where each ``index`` is the
+          index of a basis element and each ``coeff`` belongs to the
+          coefficient ring ``self.base_ring()``
+        - ``coerce`` -- ignored
+        - ``remove_zeros`` -- ignored
+
+        EXAMPLES::
+
+            sage: L.<x,y,z> = LieAlgebra(QQ, {('x','y'): {'z':1}})
+            sage: L._from_dict({'x': -3, 'z': 2, 'y': 0})
+            -3*x + 2*z
+        """
+        zero = self._M.base_ring().zero()
+        ret = [zero] * self._M.rank()
+        for k, c in d.items():
+            ret[self._index_to_pos[k]] = c
+        return self.element_class(self, self._M(ret))
+
+    def some_elements(self):
+        """
+        Return some elements of ``self``.
+
+        EXAMPLES::
+
+            sage: L = lie_algebras.three_dimensional(QQ, 4, 1, -1, 2)
+            sage: L.some_elements()
+            [X, Y, Z, X + Y + Z]
+        """
+        return list(self.basis()) + [self.sum(self.basis())]
+
+    class Element:
+        def _sorted_items_for_printing(self):
+            """
+            Return a list of pairs ``(k, c)`` used in printing.
+
+            .. WARNING::
+
+                The internal representation order is fixed, whereas this
+                depends on ``"sorting_key"`` print option as it is used
+                only for printing.
+
+            EXAMPLES::
+
+                sage: L.<x,y,z> = LieAlgebra(QQ, {('x','y'): {'z':1}})
+                sage: elt = x + y/2 - z; elt
+                x + 1/2*y - z
+                sage: elt._sorted_items_for_printing()
+                [('x', 1), ('y', 1/2), ('z', -1)]
+                sage: key = {'x': 2, 'y': 1, 'z': 0}
+                sage: L.print_options(sorting_key=key.__getitem__)
+                sage: elt._sorted_items_for_printing()
+                [('z', -1), ('y', 1/2), ('x', 1)]
+                sage: elt
+                -z + 1/2*y + x
+            """
+            print_options = self.parent().print_options()
+            pos_to_index = dict(enumerate(self.parent()._indices))
+            v = [(pos_to_index[k], c) for k, c in self.value.items()]
+            try:
+                v.sort(key=lambda monomial_coeff:
+                            print_options['sorting_key'](monomial_coeff[0]),
+                       reverse=print_options['sorting_reverse'])
+            except Exception: # Sorting the output is a plus, but if we can't, no big deal
+                pass
+            return v
+
+
+class LieAlgebraWithStructureCoefficients(WithStructureCoefficients_abstract, FinitelyGeneratedLieAlgebra):
     r"""
     A Lie algebra with a set of specified structure coefficients.
 
@@ -140,9 +391,7 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
 
         return super().__classcall__(cls, R, s_coeff, names, index_set, **kwds)
 
-
-    def __init__(self, R, s_coeff, names, index_set, category=None, prefix=None,
-                 bracket=None, latex_bracket=None, string_quotes=None, **kwds):
+    def __init__(self, R, s_coeff, names, index_set, category=None, **kwds):
         """
         Initialize ``self``.
 
@@ -151,24 +400,7 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
             sage: L = LieAlgebra(QQ, 'x,y', {('x','y'): {'x':1}})
             sage: TestSuite(L).run()
         """
-        default = (names != tuple(index_set))
-        if prefix is None:
-            if default:
-                prefix = 'L'
-            else:
-                prefix = ''
-        if bracket is None:
-            bracket = default
-        if latex_bracket is None:
-            latex_bracket = default
-        if string_quotes is None:
-            string_quotes = default
-
-        #self._pos_to_index = dict(enumerate(index_set))
-        self._index_to_pos = {k: i for i,k in enumerate(index_set)}
-        if "sorting_key" not in kwds:
-            kwds["sorting_key"] = self._index_to_pos.__getitem__
-
+        WithStructureCoefficients_abstract.__init__(self, R, s_coeff, names, index_set, **kwds)
         cat = LieAlgebras(R).WithBasis().FiniteDimensional().or_subcategory(category)
         FinitelyGeneratedLieAlgebra.__init__(self, R, names, index_set, cat)
         IndexedGenerators.__init__(self, self._indices, prefix=prefix,
@@ -373,38 +605,71 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
             R, self.structure_coefficients(),
             names=self.variable_names(), index_set=self.indices())
 
-    class Element(StructureCoefficientsElement):
-        def _sorted_items_for_printing(self):
-            """
-            Return a list of pairs ``(k, c)`` used in printing.
+    class Element(StructureCoefficientsElement, WithStructureCoefficients_abstract.Element):
+        pass
 
-            .. WARNING::
 
-                The internal representation order is fixed, whereas this
-                depends on ``"sorting_key"`` print option as it is used
-                only for printing.
+def _standardize_s_coeff(s_coeff, index_set, degrees):
+    """
+    Helper function to standardize ``s_coeff`` into the appropriate form
+    (dictionary indexed by pairs, whose values are dictionaries).
 
-            EXAMPLES::
+    Strips items with coefficients of 0 and duplicate entries.
+    This does not check the (super) Jacobi relation (nor antisymmetry
+    if the cardinality is infinite).
 
-                sage: L.<x,y,z> = LieAlgebra(QQ, {('x','y'): {'z':1}})
-                sage: elt = x + y/2 - z; elt
-                x + 1/2*y - z
-                sage: elt._sorted_items_for_printing()
-                [('x', 1), ('y', 1/2), ('z', -1)]
-                sage: key = {'x': 2, 'y': 1, 'z': 0}
-                sage: L.print_options(sorting_key=key.__getitem__)
-                sage: elt._sorted_items_for_printing()
-                [('z', -1), ('y', 1/2), ('x', 1)]
-                sage: elt
-                -z + 1/2*y + x
-            """
-            print_options = self.parent().print_options()
-            pos_to_index = dict(enumerate(self.parent()._indices))
-            v = [(pos_to_index[k], c) for k, c in self.value.items()]
-            try:
-                v.sort(key=lambda monomial_coeff:
-                            print_options['sorting_key'](monomial_coeff[0]),
-                       reverse=print_options['sorting_reverse'])
-            except Exception: # Sorting the output is a plus, but if we can't, no big deal
-                pass
-            return v
+    INPUT:
+
+    - ``s_coeff`` -- ``dict`` whose keys are pairs of indices with corresponding
+      value being a ``dict`` representing the bracket
+    - ``index_set`` -- tuple of the indices
+    - ``degrees`` -- tuple of degrees of the corresponding basis elements
+
+    EXAMPLES::
+
+        sage: from sage.algebras.lie_algebras.structure_coefficients import LieAlgebraWithStructureCoefficients
+        sage: d = {('y', 'x'): {'x': -1}}
+        sage: LieAlgebraWithStructureCoefficients._standardize_s_coeff(d, ('x', 'y'), (0, 0))
+        Finite family {('x', 'y'): (('x', 1),)}
+        sage: LieAlgebraWithStructureCoefficients._standardize_s_coeff(d, ('x', 'y'), (1, 0))
+        Finite family {('x', 'y'): (('x', 1),)}
+        sage: LieAlgebraWithStructureCoefficients._standardize_s_coeff(d, ('x', 'y'), (0, 1))
+        Finite family {('x', 'y'): (('x', 1),)}
+        sage: LieAlgebraWithStructureCoefficients._standardize_s_coeff(d, ('x', 'y'), (1, 1))
+        Finite family {('x', 'y'): (('x', -1),)}
+    """
+    # Try to handle infinite basis (once/if supported)
+    #if isinstance(s_coeff, AbstractFamily) and s_coeff.cardinality() == infinity:
+    #    return s_coeff
+
+    index_to_pos = {k: i for i, k in enumerate(index_set)}
+
+    sc = {}
+    # Make sure the first gen is smaller than the second in each key
+    for k in s_coeff.keys():
+        v = s_coeff[k]
+        if isinstance(v, dict):
+            v = v.items()
+        i0 = index_to_pos[k[0]]
+        i1 = index_to_pos[k[1]]
+        d0 = degrees[i0]
+        d1 = degrees[i1]
+
+        if i0 > i1:
+            key = (k[1], k[0])
+            vals = tuple((g, (-1)**(d0*d1+1) * val) for g, val in v if val)
+        else:
+            if not i0 < i1:
+                if k[0] == k[1] and d0 * d1 % 2 == 0:
+                    if any(val for g, val in v):
+                        raise ValueError("elements {} are equal but their bracket is not set to 0".format(k))
+                    continue
+            key = tuple(k)
+            vals = tuple((g, val) for g, val in v if val)
+
+        if key in sc.keys() and sorted(sc[key]) != sorted(vals):
+            raise ValueError("two distinct values given for one and the same bracket")
+
+        if vals:
+            sc[key] = vals
+    return Family(sc)
