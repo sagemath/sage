@@ -2224,7 +2224,12 @@ class RiemannSurface():
             ncts = [ct - rt / 2, ct + rt / 2]
             nrt = rt / 2
 
-            if not lN:
+            # lN == 0 is a placeholder value used to indicate that a value of 
+            # N corresponding to a segment has not yet been computed. 
+            # Because the output of local_N is always >= 3, we have no worries
+            # about 0 being the output misleadingly. 
+            # As pointed out, 0 Should perhaps be replaced as a sentinel value 
+            if lN == 0:
                 cz = (1 - ct) * z0 + ct * z1
                 distances = [(cz - b).abs() for b in self.branch_locus]
                 rho_z = min(distances)
