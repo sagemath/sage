@@ -2648,7 +2648,7 @@ class FractionWithFactoredDenominator(RingElement):
         # Test 4: Is p convenient?
         M = matrix(self.log_grads(p))
         cols = M.columns()
-        convenient_coordinates = [j for j in range(d) if 0 not in cols[j]]
+        convenient_coordinates = [j for j, c in enumerate(cols) if 0 not in c]
         if not convenient_coordinates:
             return (False, 'multiple point but not convenient')
 
