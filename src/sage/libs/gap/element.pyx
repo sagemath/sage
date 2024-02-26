@@ -1396,6 +1396,19 @@ cdef class GapElement(RingElement):
 
         raise NotImplementedError('cannot construct equivalent Sage object')
 
+    def minimum_generating_set(self):
+        r"""
+        Return a minimum generating set of the group.
+
+        EXAMPLES::
+
+            sage: G = libgap.DihedralGroup(4)
+            sage: G.minimum_generating_set()
+            {f1, f2}
+        """
+        from sage.groups.libgap_mixin import minimum_generating_set
+        return minimum_generating_set(self, gap_based=True)
+
 
 ############################################################################
 ### GapElement_Integer #####################################################
