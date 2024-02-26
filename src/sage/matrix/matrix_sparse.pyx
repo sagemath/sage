@@ -62,7 +62,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             [2.00000000000000*x  -2.00000000000000]
             [-------------------------------------]
         """
-        if R not in Rings():
+        if ring not in Rings():
             raise TypeError("input must be a ring")
         if ring is self._base_ring:
             if self._is_immutable:
