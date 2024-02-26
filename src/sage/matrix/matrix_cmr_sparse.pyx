@@ -1163,6 +1163,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             Graphics object consisting of 21 graphics primitives
         """
         cdef bool result
+        cdef bool support_result
         cdef CMR_GRAPH *digraph = NULL
         cdef CMR_GRAPH_EDGE* forest_arcs = NULL
         cdef CMR_GRAPH_EDGE* coforest_arcs = NULL
@@ -1173,11 +1174,11 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         sig_on()
         try:
             if certificate:
-                CMR_CALL(CMRnetworkTestMatrix(cmr, self._mat, &result, &digraph, &forest_arcs,
+                CMR_CALL(CMRnetworkTestMatrix(cmr, self._mat, &result, &support_result, &digraph, &forest_arcs,
                                               &coforest_arcs, &arcs_reversed, &submatrix, &stats,
                                               time_limit))
             else:
-                CMR_CALL(CMRnetworkTestMatrix(cmr, self._mat, &result, NULL, NULL,
+                CMR_CALL(CMRnetworkTestMatrix(cmr, self._mat, &result, &support_result, NULL, NULL,
                                               NULL, NULL, NULL, &stats, time_limit))
         finally:
             sig_off()
@@ -1203,8 +1204,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                                           series_parallel_ok=True,
                                           check_graphic_minors_planar=False,
                                           complete_tree='if_regular',
-                                          construct_matrices=False,
-                                          construct_transposes=False,
+                                          three_sum_pivot_children=False,
+                                          three_sum_strategy=None,
                                           construct_graphs=False):
         r"""
         Return whether the linear matroid of ``self`` over `\GF{2}` is regular.
@@ -1317,8 +1318,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                               series_parallel_ok=series_parallel_ok,
                               check_graphic_minors_planar=check_graphic_minors_planar,
                               complete_tree=complete_tree,
-                              construct_matrices=construct_matrices,
-                              construct_transposes=construct_transposes,
+                              three_sum_pivot_children=three_sum_pivot_children,
+                              three_sum_strategy=three_sum_strategy,
                               construct_graphs=construct_graphs)
 
         _set_cmr_regular_parameters(&params, kwds)
@@ -1343,8 +1344,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                               series_parallel_ok=True,
                               check_graphic_minors_planar=False,
                               complete_tree='if_regular',
-                              construct_matrices=False,
-                              construct_transposes=False,
+                              three_sum_pivot_children=False,
+                              three_sum_strategy=None,
                               construct_graphs=False):
         r"""
         Return whether ``self`` is a totally unimodular matrix.
@@ -1386,11 +1387,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             Full MatrixSpace of 6 by 14 sparse matrices over Integer Ring
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: MFR2cmr = Matrix_cmr_chr_sparse(MS2, MFR2)
-            sage: MFR2cmr.is_totally_unimodular(certificate=True, construct_matrices=True)
+            sage: MFR2cmr.is_totally_unimodular(certificate=True)
             (False, (None, ((0, 1, 2), (3, 4, 5))))
             sage: result, certificate = MFR2cmr.is_totally_unimodular(certificate=True,
-            ....:                                                     complete_tree=True,
-            ....:                                                     construct_matrices=True)
+            ....:                                                     complete_tree=True)
             sage: result, certificate
             (False, (None, ((0, 1, 2), (3, 4, 5))))
             sage: submatrix = MFR2.matrix_from_rows_and_columns(*certificate[1]); submatrix
@@ -1413,8 +1413,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                               series_parallel_ok=series_parallel_ok,
                               check_graphic_minors_planar=check_graphic_minors_planar,
                               complete_tree=complete_tree,
-                              construct_matrices=construct_matrices,
-                              construct_transposes=construct_transposes,
+                              three_sum_pivot_children=three_sum_pivot_children,
+                              three_sum_strategy=three_sum_strategy,
                               construct_graphs=construct_graphs)
 
         params.algorithm = CMR_TU_ALGORITHM_DECOMPOSITION
@@ -1466,8 +1466,9 @@ cdef _set_cmr_regular_parameters(CMR_REGULAR_PARAMS *params, dict kwds):
     params.seriesParallel = kwds['series_parallel_ok']
     params.planarityCheck = kwds['check_graphic_minors_planar']
     params.completeTree = kwds['complete_tree'] is True
-    # params.threeSumPivotChildren = _cmr_dec_construct(kwds['construct_matrices'])
-    # params.threeSumStrategy = _cmr_dec_construct(kwds['construct_transposes'])
+    params.threeSumPivotChildren = kwds['three_sum_pivot_children']
+    if kwds['three_sum_strategy'] is not None:
+        params.threeSumStrategy = kwds['three_sum_strategy']
     params.graphs = _cmr_dec_construct(kwds['construct_graphs'])
 
 
