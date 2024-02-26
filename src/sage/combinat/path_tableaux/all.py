@@ -10,3 +10,4 @@ Path tableaux
 # install the docstring of this module to the containing package
 from sage.misc.namespace_package import install_doc
 install_doc(__package__, __doc__)
+del install_doc
