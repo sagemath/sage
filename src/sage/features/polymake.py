@@ -35,7 +35,7 @@ class JuPyMake(JoinFeature):
             True
         """
         JoinFeature.__init__(self, "jupymake",
-                             [PythonModule("JuPyMake", spkg="pypi:jupymake")])
+                             [PythonModule("JuPyMake", spkg="pkg:pypi/jupymake")])
 
 
 def all_features():

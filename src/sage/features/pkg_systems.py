@@ -163,7 +163,7 @@ class SagePackageSystem(PackageSystem):
         return '\n'.join(lines)
 
     def _system_packages(self, spkgs):
-        if 'pypi:' not in spkgs:
+        if 'pkg:pypi/' not in spkgs:
             return spkgs
         from subprocess import run, CalledProcessError
         proc = run(f'sage-package list {spkgs}',
@@ -247,10 +247,10 @@ class PipPackageSystem(PackageSystem):
 
     def _system_packages(self, spkgs):
         all_packages = spkgs.split()
-        pypi_packages = [package[len('pypi:'):] for package in all_packages
-                         if package.startswith('pypi:')]
+        pypi_packages = [package[len('pkg:pypi/'):] for package in all_packages
+                         if package.startswith('pkg:pypi/')]
         other_packages = [package for package in all_packages
-                          if not package.startswith('pypi:')]
+                          if not package.startswith('pkg:pypi/')]
         if other_packages:
             from subprocess import run, CalledProcessError
             system = self.name

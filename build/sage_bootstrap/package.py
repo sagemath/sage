@@ -26,11 +26,11 @@ log = logging.getLogger()
 class Package(object):
 
     def __new__(cls, package_name):
-        if package_name.startswith("pypi:"):
+        if package_name.startswith("pkg:pypi/"):
             def normalize(name):
                 return name.lower().replace('_', '-')
 
-            pypi_name = normalize(package_name[len("pypi:"):])
+            pypi_name = normalize(package_name[len("pkg:pypi/"):])
             for pkg in cls.all():
                 distribution = pkg.distribution_name
                 if distribution and normalize(distribution) == pypi_name:
@@ -56,7 +56,7 @@ class Package(object):
         -- ``package_name`` -- string. Name of the package. The Sage
            convention is that all package names are lower case.
         """
-        if package_name.startswith("pypi:"):
+        if package_name.startswith("pkg:pypi/"):
             # Already initialized
             return
         if package_name != package_name.lower():

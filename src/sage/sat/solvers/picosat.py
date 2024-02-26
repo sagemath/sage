@@ -23,7 +23,7 @@ from .satsolver import SatSolver
 from sage.misc.lazy_import import lazy_import
 from sage.features import PythonModule
 lazy_import('pycosat', ['solve'],
-            feature=PythonModule('pycosat', spkg='pypi:pycosat'))
+            feature=PythonModule('pycosat', spkg='pkg:pypi/pycosat'))
 
 
 class PicoSAT(SatSolver):
