@@ -451,19 +451,17 @@ cdef class BaseGraphicNode(DecompositionNode):
             sage: certificate.forest_edges()
             ((1, 2), (7, 1))
         """
-        pass
-        # cdef CMR_GRAPH *graph = CMRmatroiddecGraph(self._dec)
-        # cdef size_t num_edges = CMRmatroiddecGraphSizeForest(self._dec)
-        # cdef CMR_GRAPH_EDGE *edges = CMRmatroiddecGraphForest(self._dec)
-        # return tuple(_sage_edge(graph, edges[i]) for i in range(num_edges))
+        cdef CMR_GRAPH *graph = CMRmatroiddecGraph(self._dec)
+        cdef size_t num_edges = CMRmatroiddecGraphSizeForest(self._dec)
+        cdef CMR_GRAPH_EDGE *edges = CMRmatroiddecGraphForest(self._dec)
+        return tuple(_sage_edge(graph, edges[i]) for i in range(num_edges))
 
     @cached_method
     def coforest_edges(self):
-        pass
-        # cdef CMR_GRAPH *graph = CMRmatroiddecGraph(self._dec)
-        # cdef size_t num_edges = CMRmatroiddecGraphSizeCoforest(self._dec)
-        # cdef CMR_GRAPH_EDGE *edges = CMRmatroiddecGraphCoforest(self._dec)
-        # return tuple(_sage_edge(graph, edges[i]) for i in range(num_edges))
+        cdef CMR_GRAPH *graph = CMRmatroiddecGraph(self._dec)
+        cdef size_t num_edges = CMRmatroiddecGraphSizeCoforest(self._dec)
+        cdef CMR_GRAPH_EDGE *edges = CMRmatroiddecGraphCoforest(self._dec)
+        return tuple(_sage_edge(graph, edges[i]) for i in range(num_edges))
 
 
 cdef class GraphicNode(BaseGraphicNode):
@@ -522,7 +520,28 @@ cdef class SpecialLeafNode(DecompositionNode):
         r"""
 
         """
-        pass
+        cdef CMR_MATROID_DEC_TYPE typ = CMRmatroiddecType(self._dec)
+        import sage.matroids.matroids_catalog as matroids
+        from sage.graphs.graph_generators import graphs
+        from sage.matroids.matroid import Matroid
+
+        if typ == CMR_MATROID_DEC_TYPE_R10:
+            return matroids.named_matroids.R10()
+        if typ == CMR_MATROID_DEC_TYPE_FANO:
+            return matroids.named_matroids.Fano()
+        if typ == CMR_MATROID_DEC_TYPE_FANO_DUAL:
+            return matroids.named_matroids.Fano().dual()
+        if typ == CMR_MATROID_DEC_TYPE_K5:
+            return matroids.CompleteGraphic(5)
+        if typ == CMR_MATROID_DEC_TYPE_K5_DUAL:
+            return matroids.CompleteGraphic(5).dual()
+        if typ == CMR_MATROID_DEC_TYPE_K33:
+            E = 'abcdefghi'
+            G = graphs.CompleteBipartiteGraph(3, 3)
+            return Matroid(groundset=E, graph=G, regular=True)
+        if typ == CMR_MATROID_DEC_TYPE_K33_DUAL:
+            return matroids.named_matroids.K33dual()
+        assert False, 'special leaf node with unknown type'
         # cdef int representation_matrix
         # cdef CMR_MATROID_DEC_TYPE typ = CMRdecIsSpecialLeaf(self._dec, &representation_matrix)
         # import sage.matroids.matroids_catalog as matroids
@@ -561,27 +580,27 @@ cdef class SpecialLeafNode(DecompositionNode):
         # return Matrix_cmr_chr_sparse._from_data(representation_matrix, immutable=False)
 
 cdef _class(CMR_MATROID_DEC *dec):
-    pass
-    # k = CMRdecIsSum(dec, NULL, NULL)
-    # if k == 1:
-    #     return OneSumNode
-    # if k == 2:
-    #     return TwoSumNode
-    # if k == 3:
-    #     return ThreeSumNode
-    # if CMRdecIsGraphicLeaf(dec):
-    #     if CMRdecIsCographicLeaf(dec):
-    #         return PlanarNode
-    #     return GraphicNode
-    # if CMRdecIsCographicLeaf(dec):
-    #     return CographicNode
-    # if CMRdecIsSpecialLeaf(dec, NULL):
-    #     return SpecialLeafNode
-    # if CMRdecIsSeriesParallelReduction(dec):
-    #     return SeriesParallelReductionNode
-    # if CMRdecIsUnknown(dec):
-    #     return UnknownNode
-    # return ThreeConnectedIrregularNode
+    cdef CMR_MATROID_DEC_TYPE typ = CMRmatroiddecType(dec)
+
+    if typ == CMR_MATROID_DEC_TYPE_ONE_SUM:
+        return OneSumNode
+    if typ == CMR_MATROID_DEC_TYPE_TWO_SUM:
+        return TwoSumNode
+    if typ == CMR_MATROID_DEC_TYPE_THREE_SUM:
+        return ThreeSumNode
+    if typ == CMR_MATROID_DEC_TYPE_GRAPH:
+        if typ == CMR_MATROID_DEC_TYPE_COGRAPH:
+            return PlanarNode
+        return GraphicNode
+    if typ == CMR_MATROID_DEC_TYPE_COGRAPH:
+        return CographicNode
+    if typ < -1:
+        return SpecialLeafNode
+    if typ == CMR_MATROID_DEC_TYPE_SERIES_PARALLEL:
+        return SeriesParallelReductionNode
+    if typ == CMR_MATROID_DEC_TYPE_UNKNOWN:
+        return UnknownNode
+    return ThreeConnectedIrregularNode
 
 
 cdef create_DecompositionNode(CMR_MATROID_DEC *dec, root=None):
