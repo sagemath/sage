@@ -1808,7 +1808,7 @@ def gcd(a, b=None, **kwargs):
         sage: gcd(lst)
         Traceback (most recent call last):
         ...
-        ValueError: gcd arguments must share a common parent
+        AttributeError: 'IntegerFactorization' object has no attribute 'sage'
         sage: gcd([a.value() if isinstance(a, Factorization) else a for a in lst])
         6
         sage: gcd(map(factor, lst))
