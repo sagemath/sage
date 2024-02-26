@@ -7098,7 +7098,9 @@ class StandardPermutations_n_abstract(Permutations):
             sage: PG = PermutationGroup([[(1,2,3),(5,6)],[(7,8)]])
             sage: P8 = Permutations(8)
             sage: p = PG.an_element()
-            sage: P8(p).parent()
+            sage: q = P8(p); q
+            [2, 3, 1, 4, 6, 5, 8, 7]
+            sage: q.parent()
             Standard permutations of 8
         """
         if isinstance(x, PermutationGroupElement):
