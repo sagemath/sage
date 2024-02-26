@@ -184,18 +184,13 @@ included in one of the following places:
   :func:`importlib.resources.as_file`. It should be imported in the
   same way as shown above.
 
-  .. NOTE::
+- Older code in the Sage library accesses
+  the package data in more direct ways. For example,
+  ``SAGE_ROOT/src/sage/interfaces/maxima.py`` uses the file
+  ``SAGE_ROOT/src/sage/interfaces/maxima.lisp`` at runtime, so it
+  refers to it as::
 
-     You may notice that some older code in the Sage library accesses
-     the package data in more direct ways. For example,
-     ``SAGE_ROOT/src/sage/interfaces/maxima.py`` uses the file
-     ``SAGE_ROOT/src/sage/interfaces/maxima.lisp`` at runtime, so it
-     refers to it as::
-
-       os.path.join(os.path.dirname(__file__), 'sage-maxima.lisp')
-
-     This is no longer recommended, and PRs that update such uses
-     are welcome.
+    os.path.join(os.path.dirname(__file__), 'sage-maxima.lisp')
 
 - In an appropriate subdirectory of ``SAGE_ROOT/src/sage/ext_data/``.
   (At runtime, it is then available in the directory indicated by
