@@ -2208,10 +2208,9 @@ class RiemannSurface():
                 )
                 cg = g(cz, cw)
                 cdgdz = dgdz(cz, cg)
-                Delta = delta_z * cdgdz.abs() + (delta_z**2) * M_tilde / (
+                M = delta_z * cdgdz.abs() + (delta_z**2) * M_tilde / (
                     rho_z * (rho_z - delta_z)
                 )
-                M = Delta
                 N_required = (
                     (M * (self._RR.pi() + 64 / (15 * (expr**2 - 1))) / E_global).log()
                     / (2 * expr.log())
