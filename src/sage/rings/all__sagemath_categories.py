@@ -1,6 +1,8 @@
 # Ring base classes
 from sage.rings.ring import (Ring, Field, CommutativeRing, IntegralDomain,
-                             DedekindDomain, PrincipalIdealDomain)
+                             PrincipalIdealDomain)
+
+lazy_import("sage.rings.ring", "DedekindDomain")
 
 # Ring element base classes
 from sage.structure.element import (CommutativeAlgebraElement,

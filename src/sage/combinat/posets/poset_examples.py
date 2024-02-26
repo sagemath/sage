@@ -426,7 +426,7 @@ class Posets(metaclass=ClasscallMetaclass):
         """
         n = check_int(n, 3)
         c = [[n - 1] for x in range(n)]
-        c[0] = [x for x in range(1, n - 1)]
+        c[0] = list(range(1, n - 1))
         c[n - 1] = []
         D = DiGraph({v: c[v] for v in range(n)}, format='dict_of_lists')
         return FiniteLatticePoset(hasse_diagram=D,
@@ -719,9 +719,9 @@ class Posets(metaclass=ClasscallMetaclass):
         try:
             l = [Integer(x) for x in chain_lengths]
         except TypeError:
-            raise TypeError("parameter chain_lengths must be a list of integers, not {0}".format(chain_lengths))
+            raise TypeError("parameter chain_lengths must be a list of integers, not {}".format(chain_lengths))
         if any(x < 0 for x in l):
-            raise TypeError("parameter chain_lengths must be a list of nonnegative integers, not {0}".format(l))
+            raise TypeError("parameter chain_lengths must be a list of nonnegative integers, not {}".format(l))
 
         # given the empty list, we expect the empty poset.
         if not chain_lengths:
@@ -781,9 +781,9 @@ class Posets(metaclass=ClasscallMetaclass):
         try:
             p = float(p)
         except (TypeError, ValueError):
-            raise TypeError("probability must be a real number, not {0}".format(p))
+            raise TypeError(f"probability must be a real number, not {p}")
         if p < 0 or p > 1:
-            raise ValueError("probability must be between 0 and 1, not {0}".format(p))
+            raise ValueError(f"probability must be between 0 and 1, not {p}")
 
         D = DiGraph(loops=False, multiedges=False)
         D.add_vertices(range(n))
@@ -867,9 +867,9 @@ class Posets(metaclass=ClasscallMetaclass):
         try:
             p = float(p)
         except Exception:
-            raise TypeError("probability must be a real number, not {0}".format(p))
+            raise TypeError(f"probability must be a real number, not {p}")
         if p < 0 or p >= 1:
-            raise ValueError("probability must be a positive real number and below 1, not {0}".format(p))
+            raise ValueError("probability must be a positive real number and below 1, not {}".format(p))
 
         if properties is None:
             # Basic case, no special properties for lattice asked.
@@ -882,11 +882,11 @@ class Posets(metaclass=ClasscallMetaclass):
             return LatticePoset(D, cover_relations=True)
 
         if isinstance(properties, str):
-            properties = set([properties])
+            properties = {properties}
         else:
             properties = set(properties)
 
-        known_properties = set(['planar', 'dismantlable', 'distributive', 'stone'])
+        known_properties = {'planar', 'dismantlable', 'distributive', 'stone'}
         errors = properties.difference(known_properties)
         if errors:
             raise ValueError("unknown value %s for 'properties'" % errors.pop())
@@ -907,22 +907,22 @@ class Posets(metaclass=ClasscallMetaclass):
         if 'stone' in properties and len(properties) > 1:
             raise NotImplementedError("combining 'stone' with other properties is not implemented")
 
-        if properties == set(['planar']):
+        if properties == {'planar'}:
             D = _random_planar_lattice(n)
             D.relabel([i - 1 for i in Permutations(n).random_element()])
             return LatticePoset(D)
 
-        if properties == set(['dismantlable']):
+        if properties == {'dismantlable'}:
             D = _random_dismantlable_lattice(n)
             D.relabel([i - 1 for i in Permutations(n).random_element()])
             return LatticePoset(D)
 
-        if properties == set(['stone']):
+        if properties == {'stone'}:
             D = _random_stone_lattice(n)
             D.relabel([i - 1 for i in Permutations(n).random_element()])
             return LatticePoset(D)
 
-        if properties == set(['distributive']):
+        if properties == {'distributive'}:
             tmp = Poset(_random_distributive_lattice(n)).order_ideals_lattice(as_ideals=False)
             D = copy(tmp._hasse_diagram)
             D.relabel([i - 1 for i in Permutations(n).random_element()])
@@ -1106,18 +1106,17 @@ class Posets(metaclass=ClasscallMetaclass):
         start = Permutation(start)
         end = Permutation(end)
         if len(start) != len(end):
-            raise TypeError("start (%s) and end (%s) must have same length" % (start, end))
+            raise TypeError(f"start ({start}) and end ({end}) must have same length")
         if not start.bruhat_lequal(end):
-            raise TypeError("must have start (%s) <= end (%s) in Bruhat order" % (start, end))
+            raise TypeError(f"must have start ({start}) <= end ({end}) in Bruhat order")
         unseen = [start]
         nodes = {}
         while unseen:
             perm = unseen.pop(0)
             nodes[perm] = [succ_perm for succ_perm in perm.bruhat_succ()
                            if succ_perm.bruhat_lequal(end)]
-            for succ_perm in nodes[perm]:
-                if succ_perm not in nodes:
-                    unseen.append(succ_perm)
+            unseen.extend(succ_perm for succ_perm in nodes[perm]
+                          if succ_perm not in nodes)
         return Poset(nodes)
 
     @staticmethod
@@ -1393,9 +1392,9 @@ class Posets(metaclass=ClasscallMetaclass):
         try:
             m = Integer(m)
         except TypeError:
-            raise TypeError("parameter m must be an integer, not {0}".format(m))
+            raise TypeError(f"parameter m must be an integer, not {m}")
         if m < 1:
-            raise ValueError("parameter m must be positive, not {0}".format(m))
+            raise ValueError(f"parameter m must be positive, not {m}")
 
         covers = [[i, i + 1] if (i + 1) % (m + 1) else [i + 1, i]
                   for i in range(n - 1)]
@@ -1551,7 +1550,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         covers = []
         current_level = ['']
-        for i in range(1, n + 1):
+        for _ in range(1, n + 1):
             new_level = set()
             for low in current_level:
                 ind = low.find('1')
@@ -1681,7 +1680,7 @@ class Posets(metaclass=ClasscallMetaclass):
         top = P(top)
         bottom = P(bottom)
         if not top.has_pattern(bottom):
-            raise ValueError("{} doesn't contain {} as a pattern".format(top, bottom))
+            raise ValueError(f"{top} doesn't contain {bottom} as a pattern")
         # Make a list of lists of elements in the interval divided by rank.
         # List will be flattened at the end
         elem = [[top]]
@@ -1833,19 +1832,17 @@ class Posets(metaclass=ClasscallMetaclass):
         elements.extend(ribbon._elements)
 
         if anchor:
-            for cr in anchor[2].cover_relations():
-                cover_relations.append(((anchor[0], cr[0]), (anchor[0], cr[1])))
+            cover_relations.extend(((anchor[0], cr[0]), (anchor[0], cr[1]))
+                                   for cr in anchor[2].cover_relations())
             cover_relations.append((anchor[0], (anchor[0], anchor[1])))
 
-            for elmt in anchor[2]._elements:
-                elements.append((anchor[0], elmt))
+            elements.extend((anchor[0], elmt) for elmt in anchor[2]._elements)
 
         for r, hangs in hangers.items():
             for i, h in enumerate(hangs):
-                for v in h._elements:
-                    elements.append((r, i, v))
-                for cr in h.cover_relations():
-                    cover_relations.append(((r, i, cr[0]), (r, i, cr[1])))
+                elements.extend((r, i, v) for v in h._elements)
+                cover_relations.extend(((r, i, cr[0]), (r, i, cr[1]))
+                                       for cr in h.cover_relations())
                 cover_relations.append(((r, i, h.top()), r))
 
         return Mobile(DiGraph([elements, cover_relations]))
@@ -1896,7 +1893,7 @@ def _random_lattice(n, p):
     n = n - 1
     meets = [[None] * n for _ in range(n)]
     meets[0][0] = 0
-    maxs = set([0])
+    maxs = {0}
     lc_all = [[]]  # No lower covers for the bottom element.
 
     for i in range(1, n):

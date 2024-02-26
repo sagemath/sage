@@ -242,7 +242,7 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
 
     lie_algebra_generators = basis
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 

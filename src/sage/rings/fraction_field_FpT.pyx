@@ -268,7 +268,7 @@ cdef class FpTElement(FieldElement):
         """
         return self.numer()(*args, **kwds) / self.denom()(*args, **kwds)
 
-    def subs(self, *args, **kwds):
+    def subs(self, in_dict=None, *args, **kwds):
         """
         EXAMPLES::
 
@@ -280,7 +280,7 @@ cdef class FpTElement(FieldElement):
             sage: f.subs(X=2)
             (t + 1)/(t + 10)
         """
-        return self.numer().subs(*args, **kwds) / self.denom().subs(*args, **kwds)
+        return self.numer().subs(in_dict, *args, **kwds) / self.denom().subs(in_dict, *args, **kwds)
 
     def valuation(self, v):
         """
