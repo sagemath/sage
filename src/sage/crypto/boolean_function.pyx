@@ -865,7 +865,8 @@ cdef class BooleanFunction(SageObject):
             for i in range(1, len(W)):
                 sig_check()
                 if W[i]:
-                    c = min(c, hamming_weight(i))
+                    c = hamming_weight(i)
+                    break
             self._correlation_immunity = ZZ(c-1)
         return self._correlation_immunity
 
