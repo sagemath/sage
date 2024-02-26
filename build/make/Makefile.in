@@ -801,11 +801,13 @@ $(1)-uninstall: $(1)-$(4)-uninstall
 
 $(1)-clean: $(1)-uninstall
 
-$(1)-sdist: FORCE python_build sage_setup cython
+$(1)-sdist: FORCE python_build sage_setup cython meson_python
 	$(AM_V_at) cd '$$(SAGE_ROOT)' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-src-env-config' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-env-config' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-env' && \
+		export CXXFLAGS="$$$$CXXFLAGS $$$$(echo "$$$$CXX" | sed -En "s/.*(-std=[a-z0-9+]*).*/\1/p")" && \
+		export CXX=$$$$(echo "$$$$CXX" | sed 's/-std=[a-z0-9+]*//g') && \
 		'$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-src'
 
 # Recursive tox invocation (note - we do not set the environment here).
