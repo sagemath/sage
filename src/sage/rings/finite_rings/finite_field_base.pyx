@@ -1871,6 +1871,12 @@ cdef class FiniteField(Field):
             sage: F.gen(3)
             z3
 
+        For finite fields, the algebraic closure is always (isomorphic
+        to) the algebraic closure of the prime field:
+
+            sage: GF(5^2).algebraic_closure() == F
+            True
+
         The default name is 'z' but you can change it through the option
         ``name``::
 
@@ -1890,13 +1896,18 @@ cdef class FiniteField(Field):
 
         .. NOTE::
 
-            This is currently only implemented for prime fields.
+            For non-prime finite fields, this method currently simply
+            returns the algebraic closure of the prime field. This may
+            or may not change in the future when extension towers are
+            supported properly.
 
         TESTS::
 
             sage: GF(5).algebraic_closure() is GF(5).algebraic_closure()
             True
         """
+        if not self.is_prime_field():
+            return self.prime_subfield().algebraic_closure()
         from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField
         return AlgebraicClosureFiniteField(self, name, **kwds)
 
@@ -1919,6 +1930,73 @@ cdef class FiniteField(Field):
         n = self.degree()
         return (exists_conway_polynomial(p, n)
                 and self.polynomial() == self.polynomial_ring()(conway_polynomial(p, n)))
+
+    def embeddings(self, K):
+        r"""
+        Return a list of all embeddings of this field in another field `K`.
+
+        EXAMPLES::
+
+            sage: GF(2).embeddings(GF(4))
+            [Ring morphism:
+               From: Finite Field of size 2
+               To:   Finite Field in z2 of size 2^2
+               Defn: 1 |--> 1]
+            sage: GF(4).embeddings(GF(2).algebraic_closure())
+            [Ring morphism:
+               From: Finite Field in z2 of size 2^2
+               To:   Algebraic closure of Finite Field of size 2
+               Defn: z2 |--> z2,
+             Ring morphism:
+               From: Finite Field in z2 of size 2^2
+               To:   Algebraic closure of Finite Field of size 2
+               Defn: z2 |--> z2 + 1]
+
+        ::
+
+            sage: CyclotomicField(5).embeddings(QQbar)
+            [
+            Ring morphism:
+              From: Cyclotomic Field of order 5 and degree 4
+              To:   Algebraic Field
+              Defn: zeta5 |--> 0.3090169943749474? + 0.9510565162951536?*I,
+            Ring morphism:
+              From: Cyclotomic Field of order 5 and degree 4
+              To:   Algebraic Field
+              Defn: zeta5 |--> -0.8090169943749474? + 0.5877852522924731?*I,
+            Ring morphism:
+              From: Cyclotomic Field of order 5 and degree 4
+              To:   Algebraic Field
+              Defn: zeta5 |--> -0.8090169943749474? - 0.5877852522924731?*I,
+            Ring morphism:
+              From: Cyclotomic Field of order 5 and degree 4
+              To:   Algebraic Field
+              Defn: zeta5 |--> 0.3090169943749474? - 0.9510565162951536?*I
+            ]
+            sage: CyclotomicField(3).embeddings(CyclotomicField(7))
+            [ ]
+            sage: CyclotomicField(3).embeddings(CyclotomicField(6))
+            [
+            Ring morphism:
+              From: Cyclotomic Field of order 3 and degree 2
+              To:   Cyclotomic Field of order 6 and degree 2
+              Defn: zeta3 |--> zeta6 - 1,
+            Ring morphism:
+              From: Cyclotomic Field of order 3 and degree 2
+              To:   Cyclotomic Field of order 6 and degree 2
+              Defn: zeta3 |--> -zeta6
+            ]
+        """
+        if K not in FiniteFields():
+            from sage.rings.algebraic_closure_finite_field import AlgebraicClosureFiniteField_generic
+            if not isinstance(K, AlgebraicClosureFiniteField_generic):
+                raise NotImplementedError('computing embeddings into this ring not implemented')
+        g = self.gen()
+        rs = []
+        if (emb := K.coerce_map_from(self)) is not None:
+            rs.append(emb(g))
+        rs += [r for r,_ in g.minpoly().roots(ring=K) if r not in rs]
+        return [self.hom([r]) for r in rs]
 
     def frobenius_endomorphism(self, n=1):
         """
