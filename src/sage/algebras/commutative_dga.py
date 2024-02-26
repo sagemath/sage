@@ -1572,7 +1572,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
             INPUT:
 
             - ``values`` -- (optional) either the values in which the variables
-              will be evaluated or a dictionary.
+              will be evaluated or a dictionary
 
             OUTPUT:
 
@@ -1612,7 +1612,6 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                 sage: f = x*y - 5*y*z + 7*x*y^2*z^3*t
                 sage: f({x:1}, t=x,y=z)
                 7*y^2*z^3*t - 5*y*z + y
-
             """
             gens = self.parent().gens()
             images = list(gens)
@@ -1632,7 +1631,7 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                 images = list(gens)
                 for (i, g) in enumerate(gens):
                     gstr = str(g)
-                    if gstr in kwargs.keys():
+                    if gstr in kwargs:
                         images[i] = kwargs[gstr]
             res = 0
             for (m, c) in self.dict().items():
