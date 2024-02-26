@@ -2225,8 +2225,10 @@ class RiemannSurface():
                 N_required = (
                     (M * (self._RR.pi() + 64 / (15 * (expr**2 - 1))) / E_global).log()
                     / (2 * expr.log())
-                ).ceil()
-                Ni = max(Ni, N_required)
+                )
+                if N_required == Infinity:
+                    return 2**(self._prec)
+                Ni = max(Ni, N_required.ceil())
             return Ni
 
         while ball_stack:
@@ -2238,14 +2240,14 @@ class RiemannSurface():
             # N corresponding to a segment has not yet been computed. 
             # Because the output of local_N is always >= 3, we have no worries
             # about 0 being the output misleadingly. 
-            # As pointed out, 0 Should perhaps be replaced as a sentinel value 
+            # As pointed out, 0 Should perhaps be replaced as a sentinel value
             if lN == 0:
                 cz = (1 - ct) * z0 + ct * z1
                 distances = [(cz - b).abs() for b in self.branch_locus]
                 rho_z = min(distances)
                 rho_t = rho_z / (z1_minus_z0).abs()
 
-                if rho_t <= rt + E_global:
+                if rho_t <= rt:
                     ball_stack.append((ncts[0], nrt, 0))
                     ball_stack.append((ncts[1], nrt, 0))
                     continue
