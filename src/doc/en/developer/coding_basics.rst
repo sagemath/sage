@@ -200,7 +200,9 @@ included in one of the following places:
     from sage.env import SAGE_EXTCODE
     file = os.path.join(SAGE_EXTCODE, 'directory', 'file')
 
-In both cases, the files must be listed (explicitly or via wildcards) in
+  This practice is deprecated, see :issue:`33037`.
+
+In all cases, the files must be listed (explicitly or via wildcards) in
 the section ``options.package_data`` of the file
 ``SAGE_ROOT/pkgs/sagemath-standard/setup.cfg.m4`` (or the corresponding
 file of another distribution).
