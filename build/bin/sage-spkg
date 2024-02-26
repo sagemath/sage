@@ -61,7 +61,7 @@
 #*****************************************************************************
 
 # Avoid surprises with character ranges [a-z] in regular expressions
-# See Trac #15791; some locales can produce different results for
+# See Issue #15791; some locales can produce different results for
 # character ranges; using C.UTF-8 to ensure UTF-8 default encoding in Python
 # introduces extra complications, see #30053, so we don't do it, but
 # assume we are on Python3.x,  for x at least 7.
@@ -162,7 +162,7 @@ write_to_tty()
 }
 
 # Handle -n, -t, -q options for recursive make
-# See Trac #12016.
+# See Issue #12016.
 if echo "$MAKE $MAKEFLAGS -$MAKEFLAGS" |grep '[ ]-[A-Za-z]*[qnt]' >/dev/null; then
     if echo "$MAKE $MAKEFLAGS -$MAKEFLAGS" |grep '[ ]-[A-Za-z]*q' >/dev/null; then
         # Pretend the target is *not* up-to-date
@@ -436,7 +436,7 @@ for dir in "$SAGE_SPKG_INST" "$SAGE_SPKG_SCRIPTS" "$SAGE_BUILD_DIR"; do
     fi
 done
 
-# Trac #5852: check write permissions
+# Issue #5852: check write permissions
 if [ ! -w "$SAGE_BUILD_DIR" ]; then
     error_msg "Error: no write access to build directory $SAGE_BUILD_DIR"
     exit 1
