@@ -31,7 +31,7 @@ from sage.rings.integer_ring import ZZ
 
 class QuasiModularFormsElement(ModuleElement):
     r"""
-    A quasimodular forms ring element. Such an element is describbed by
+    A quasimodular forms ring element. Such an element is described by
     SageMath as a polynomial
 
     .. MATH::
