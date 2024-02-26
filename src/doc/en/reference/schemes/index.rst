@@ -46,6 +46,15 @@ Projective Schemes
    sage/schemes/projective/projective_rational_point
    sage/schemes/projective/projective_homset
 
+Coherent Sheaves
+----------------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/schemes/sheaves/sheaf
+   sage/schemes/sheaves/cohomology
+
 Products of Projective Spaces
 -----------------------------
 
@@ -61,6 +70,7 @@ Products of Projective Spaces
 
 Toric Varieties
 ---------------
+
 .. toctree::
    :maxdepth: 1
 
@@ -85,6 +95,7 @@ Toric Varieties
 
 Cyclic Covers
 ---------------
+
 .. toctree::
    :maxdepth: 1
 
@@ -95,6 +106,7 @@ Cyclic Covers
 
 Berkovich Analytic Space
 ------------------------
+
 .. toctree::
    :maxdepth: 1
 

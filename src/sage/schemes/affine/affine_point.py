@@ -1,27 +1,19 @@
 r"""
 Points on affine varieties
 
-Scheme morphism for points on affine varieties.
-
+This module implements scheme morphism for points on affine varieties.
 
 AUTHORS:
 
-- David Kohel, William Stein
-
-- Volker Braun (2011-08-08): Renamed classes, more documentation, misc
-  cleanups.
-
-- Ben Hutz (2013)
+- David Kohel, William Stein (2006): initial version
+- Volker Braun (2011-08-08): renamed classes, more documentation, misc cleanups
+- Ben Hutz (2013): many improvements
 """
 
-# Historical note: in trac #11599, V.B. renamed
-# * _point_morphism_class -> _morphism
-# * _homset_class -> _point_homset
-
 # ****************************************************************************
-#       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
 #       Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu.au>
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
+#       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -37,10 +29,10 @@ from sage.structure.sequence import Sequence
 _NumberFields = NumberFields()
 
 
-############################################################################
-# Rational points on schemes, which we view as morphisms determined
-# by coordinates.
-############################################################################
+# --------------------------------------------------------------------
+# Rational points on schemes, which we view as morphisms determined by
+# coordinates.
+# --------------------------------------------------------------------
 
 class SchemeMorphism_point_affine(SchemeMorphism_point):
     """
@@ -409,6 +401,29 @@ class SchemeMorphism_point_affine_field(SchemeMorphism_point_affine):
         if is_AffineSpace(self.codomain()):
             raise TypeError("this point must be a point on an affine subscheme")
         return self.codomain().multiplicity(self)
+
+    def as_subscheme(self):
+        r"""
+        Return the subscheme associated with this rational point.
+
+        EXAMPLES::
+
+            sage: A2.<x,y> = AffineSpace(QQ, 2)
+            sage: p1 = A2.point([0,0]).as_subscheme(); p1
+            Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+              x, y
+            sage: p2 = A2.point([1,1]).as_subscheme(); p2
+            Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+              x - 1, y - 1
+            sage: p1 + p2
+            Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+              x - y, y^2 - y
+        """
+        A = self.codomain().ambient_space()
+        g = A.gens()
+        v = self._coords
+        n = len(v)
+        return A.subscheme([g[i] - v[i] for i in range(n)])
 
 
 class SchemeMorphism_point_affine_finite_field(SchemeMorphism_point_affine_field):
