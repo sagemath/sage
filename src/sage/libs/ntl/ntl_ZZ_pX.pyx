@@ -492,7 +492,7 @@ cdef class ntl_ZZ_pX():
 
     def __pow__(self, n, modulus):
         """
-        Return the n-th nonnegative power of self.
+        Return the ``n``-th nonnegative power of ``self``.
 
         If ``modulus`` is not ``None``, the exponentiation is performed
         modulo the polynomial ``modulus``.
@@ -532,7 +532,7 @@ cdef class ntl_ZZ_pX():
 
     cdef ntl_ZZ_pX _pow(ntl_ZZ_pX self, long n):
         """
-        Compute the ``n``-th power of `self``.
+        Compute the ``n``-th power of ``self``.
         """
         if n < 0:
             raise NotImplementedError

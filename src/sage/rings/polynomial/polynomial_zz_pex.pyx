@@ -621,7 +621,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
 
     def __pow__(self, exp, modulus):
         r"""
-        Exponentiation of polynomials.
+        Exponentiation of ``self``.
 
         If ``modulus`` is not ``None``, the exponentiation is performed
         modulo the polynomial ``modulus``.
