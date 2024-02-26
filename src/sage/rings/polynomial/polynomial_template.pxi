@@ -360,7 +360,9 @@ cdef class Polynomial_template(Polynomial):
             sage: R.<x> = Zmod(4)[]
             sage: f = R(2 * x)
             sage: f.gcd(f)
-            2*x
+            Traceback (most recent call last):
+            ...
+            ValueError: leading coefficient must be invertible
 
         ::
 
