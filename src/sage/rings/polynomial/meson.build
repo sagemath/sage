@@ -96,7 +96,7 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/rings/polynomial',
         install: true,
-        include_directories: [inc_arb, inc_cpython, inc_ext, inc_flint, inc_ntl, inc_numpy, inc_rings, inc_rings_finite],
+        include_directories: [inc_cpython, inc_ext, inc_flint, inc_ntl, inc_numpy, inc_rings, inc_rings_finite],
         dependencies: [py_dep, cypari2, cysignals, flint, givaro, gmp, mpfi, mpfr, ntl, pari],
     )
 endforeach
@@ -121,7 +121,7 @@ foreach name, pyx : extension_data_cpp
         subdir: 'sage/rings/polynomial',
         install: true,
         override_options : ['cython_language=cpp'],
-        include_directories: [inc_arb, inc_cpython, inc_ext, inc_flint, inc_ntl, inc_numpy, inc_rings, inc_rings_finite],
+        include_directories: [inc_cpython, inc_ext, inc_flint, inc_ntl, inc_numpy, inc_rings, inc_rings_finite],
         dependencies: [py_dep, cypari2, cysignals, flint, givaro, gmp, mpfi, mpfr, ntl, pari, singular],
     )
 endforeach
