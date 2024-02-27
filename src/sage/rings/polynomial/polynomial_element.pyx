@@ -2474,7 +2474,8 @@ cdef class Polynomial(CommutativePolynomial):
 
         - ``assume_equal_deg`` (bool) -- Used for polynomials over
           finite fields.  If ``True``, all factors of this polynomial
-          are assumed to have degree ``degree``.
+          are assumed to have degree ``degree``. Note that ``degree``
+          must be set.
 
         .. WARNING::
 
