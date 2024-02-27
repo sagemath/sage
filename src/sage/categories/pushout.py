@@ -1191,23 +1191,6 @@ class MultiPolynomialFunctor(ConstructionFunctor):
         return "MPoly[%s]" % ','.join(self.vars)
 
 
-class UndeterminedCoefficientsFunctor(ConstructionFunctor):
-    rank = 0
-
-    def __init__(self):
-        from .rings import Rings
-        Functor.__init__(self, Rings(), Rings())
-
-    def _apply_functor(self, R):
-        from sage.data_structures.stream import UndeterminedCoefficientsRing
-        return UndeterminedCoefficientsRing(R)
-
-    __hash__ = ConstructionFunctor.__hash__
-
-    def _repr_(self):
-        return "UndeterminedCoefficients"
-
-
 class InfinitePolynomialFunctor(ConstructionFunctor):
     r"""
     A Construction Functor for Infinite Polynomial Rings (see :mod:`~sage.rings.polynomial.infinite_polynomial_ring`).

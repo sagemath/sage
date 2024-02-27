@@ -102,9 +102,10 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import
 from sage.combinat.integer_vector_weighted import iterator_fast as wt_int_vec_iter
 from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
+from sage.categories.rings import Rings
 from sage.misc.cachefunc import cached_method
-from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial_dense
-from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
+from sage.categories.functor import Functor
+from sage.categories.pushout import ConstructionFunctor
 from collections import defaultdict
 lazy_import('sage.combinat.sf.sfa', ['_variables_recursive', '_raise_variables'])
 
@@ -1328,6 +1329,10 @@ class UndeterminedCoefficientsRingElement(Element):
     def rational_function(self):
         return self._p
 
+    def is_constant(self):
+        return (self._p.numerator().is_constant()
+                and self._p.denominator().is_constant())
+
     def subs(self, in_dict=None, *args, **kwds):
         """
         EXAMPLES::
@@ -1360,7 +1365,20 @@ class UndeterminedCoefficientsRingElement(Element):
         return P.element_class(P, P._PF(num / den))
 
 
-from sage.categories.pushout import UndeterminedCoefficientsFunctor
+class UndeterminedCoefficientsFunctor(ConstructionFunctor):
+    rank = 0
+
+    def __init__(self):
+        Functor.__init__(self, Rings(), Rings())
+
+    def _apply_functor(self, R):
+        return UndeterminedCoefficientsRing(R)
+
+    __hash__ = ConstructionFunctor.__hash__
+
+    def _repr_(self):
+        return "UndeterminedCoefficients"
+
 
 class UndeterminedCoefficientsRing(UniqueRepresentation, Parent):
     """
@@ -1531,7 +1549,7 @@ class Stream_uninitialized(Stream):
             - ``equations`` -- a list of equations defining the series
             - ``initial_values`` -- a list specifying ``self[0], self[1], ...``
             - ``base_ring`` -- the base ring
-            - ``coefficient_ring`` -- the ring containing the coefficients (after substitution)
+            - ``coefficient_ring`` -- the ring containing the elements of the stream (after substitution)
             - ``terms_of_degree`` -- a function returning the list of terms of a given degree
 
         """
@@ -1550,7 +1568,8 @@ class Stream_uninitialized(Stream):
         self._coefficient_ring = coefficient_ring
         self._base_ring = base_ring
         self._P = UndeterminedCoefficientsRing(self._base_ring)
-        # elements of the stream have self._P as base ring
+        if self._coefficient_ring != self._base_ring:
+            self._U = self._coefficient_ring.change_ring(self._P)
         self._uncomputed = True
         self._eqs = equations
         self._series = series
@@ -1684,28 +1703,23 @@ class Stream_uninitialized(Stream):
             # substitute variable and determine last good element
             good = m
             for i0, i in enumerate(indices):
-                # the following looks dangerous - could there be a
-                # ring that contains the UndeterminedCoefficientRing?
-                # it is not enough to look at the parent of
-                # s._cache[i]
                 c = s._cache[i]
-                if c not in self._coefficient_ring:
-                    if self._base_ring == self._coefficient_ring:
+                if self._base_ring == self._coefficient_ring:
+                    if c.parent() == self._P:
                         c = c.subs({var: val})
-                        f = c.rational_function()
-                        if f in self._coefficient_ring:
-                            c = self._coefficient_ring(f)
-                    else:
+                        if c.is_constant():
+                            c = self._base_ring(c.rational_function())
+                        else:
+                            good = m - i0 - 1
+                else:
+                    if c.parent() == self._U:
                         c = c.map_coefficients(lambda e: e.subs({var: val}))
                         try:
-                            c = c.map_coefficients(lambda e: (e if e in self._base_ring
-                                                              else self._base_ring(e.rational_function())),
+                            c = c.map_coefficients(lambda e: self._base_ring(e.rational_function()),
                                                    self._base_ring)
                         except TypeError:
-                            pass
-                    s._cache[i] = c
-                if c not in self._coefficient_ring:
-                    good = m - i0 - 1
+                            good = m - i0 - 1
+                s._cache[i] = c
             self._good_cache[j] += good
             # fix approximate_order and true_order
             ao = s._approximate_order

@@ -941,7 +941,6 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: A[:3]
             [h[1] # h[], h[1] # h[1]]
 
-
         Permutations with two kinds of labels such that each cycle
         contains at least one element of each kind (defined
         implicitely to have a test)::
@@ -954,7 +953,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: Y = tensor([p[[]],p[1]])
             sage: A = T.undefined()
             sage: T.define_implicitly([A], [P(X)*P(Y)*A - P(X+Y)])
-            sage: A[:3]
+            sage: A[:4]
             [p[] # p[], 0, p[1] # p[1], p[1] # p[1, 1] + p[1, 1] # p[1]]
         """
         s = [a[0]._coeff_stream if isinstance(a, (tuple, list))
@@ -2495,7 +2494,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
         if len(self.variable_names()) == 1:
             coeff_stream = Stream_exact([BR.one()], constant=BR.zero(), order=1)
         else:
-            coeff_stream = Stream_exact([R.gen(n)], constant=BR.zero(), order=1)
+            coeff_stream = Stream_exact([R.gen(n)], constant=R.zero(), order=1)
         return self.element_class(self, coeff_stream)
 
     def ngens(self):
@@ -3338,7 +3337,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
                 check_homogeneous_of_degree(e, i)
             coeff_stream = Stream_exact(p,
                                         order=valuation,
-                                        constant=self.base_ring().zero(),
+                                        constant=self._laurent_poly_ring.zero(),
                                         degree=degree)
             return self.element_class(self, coeff_stream)
         if callable(x):
@@ -3348,7 +3347,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
                     check_homogeneous_of_degree(e, i)
                 coeff_stream = Stream_exact(p,
                                             order=valuation,
-                                            constant=self.base_ring().zero(),
+                                            constant=self._laurent_poly_ring.zero(),
                                             degree=degree)
                 return self.element_class(self, coeff_stream)
             if check:
