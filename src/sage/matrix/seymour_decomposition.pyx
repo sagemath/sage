@@ -14,6 +14,8 @@ Seymour's decomposition of totally unimodular matrices and regular matroids
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from libc.stdint cimport SIZE_MAX
+
 from sage.libs.cmr.cmr cimport *
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
@@ -120,11 +122,11 @@ cdef class DecompositionNode(SageObject):
         """
         cdef size_t *parent_rows = CMRmatroiddecRowsParent(self._dec)
         cdef size_t *parent_columns = CMRmatroiddecColumnsParent(self._dec)
-        if parent_rows == NULL:
+        if parent_rows == NULL or parent_rows[0] == SIZE_MAX:
             parent_rows_tuple = None
         else:
             parent_rows_tuple = tuple(parent_rows[i] for i in range(CMRmatroiddecNumRows(self._dec)))
-        if parent_columns == NULL:
+        if parent_columns == NULL or parent_columns[0] == SIZE_MAX:
             parent_columns_tuple = None
         else:
             parent_columns_tuple = tuple(parent_columns[i] for i in range(CMRmatroiddecNumColumns(self._dec)))
