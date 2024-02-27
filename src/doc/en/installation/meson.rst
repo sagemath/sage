@@ -27,12 +27,6 @@ Alternatively, install all build requirements as described in section
     ``rm src/**/*.so`` or ``for f in src/**/*.so ; do mv "$f" "$f.old"; done``.
     Also uninstall the 'old' sage packages with ``pip uninstall sage-conf sage-setup sagemath-standard``.
 
-Generate a few files that are needed for the build process::
-
-    ```bash
-    python -m sage_setup.autogen.interpreters src/sage/ext/interpreters
-    ```
-
 To compile and install the project in editable install, just use::
     
     ```bash
