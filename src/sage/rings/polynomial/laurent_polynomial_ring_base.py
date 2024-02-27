@@ -488,7 +488,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         """
         raise NotImplementedError
 
-    def random_element(self, low_degree=-2, high_degree=2, terms=5, choose_degree=False,*args, **kwds):
+    def random_element(self, low_degree=-2, high_degree=2, terms=5, choose_degree=False, *args, **kwds):
         """
         EXAMPLES::
 
@@ -497,6 +497,20 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             ...
             NotImplementedError
         """
+        # Univariate case we sample a random polynomial of degree
+        # (high_degree + low_degree) in a polynomial ring over the
+        # base field, then we shift this polynomial by low_degree.
+        if self._n == 1:
+            abs_deg = (high_degree + abs(low_degree))
+            f_rand = self._R.random_element(degree=abs_deg, terms=terms)
+            
+            # Coerce back to ``self`` and then shift down
+            f = self(f_rand)
+            x = self.gen()
+            f *= x**low_degree
+
+            return f
+
         raise NotImplementedError
 
     def is_exact(self):
