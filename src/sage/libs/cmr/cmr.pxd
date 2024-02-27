@@ -259,8 +259,7 @@ cdef extern from "cmr/matroid.h":
     size_t* CMRmatroiddecPivotColumns(CMR_MATROID_DEC* dec)
     # CMR_ERROR CMRmatroiddecPrint(CMR* cmr, CMR_MATROID_DEC* dec, FILE* stream, size_t indent, bool printChildren, bool printParentRowsColumns, bool printMatrices, bool printGraphs, bool printReductions, bool printPivots)
     CMR_ERROR CMRmatroiddecFree(CMR* cmr, CMR_MATROID_DEC** pdec)
-    CMR_ERROR CMRmatroiddecCreateMatrixRoot(CMR* cmr, CMR_MATROID_DEC** pdec, bool isTernary, CMR_CHRMAT* matrix)
-    CMR_ERROR CMRmatroiddecUpdateOneSum(CMR* cmr, CMR_MATROID_DEC* dec, size_t numChildren)
+    CMR_ERROR CMRmatroiddecFreeNode(CMR* cmr, CMR_MATROID_DEC** pdec)
 
 cdef extern from "cmr/separation.h":
 
@@ -403,6 +402,7 @@ cdef extern from "cmr/regular.h":
     CMR_ERROR CMRregularStatsInit(CMR_REGULAR_STATS* stats)
     # CMR_ERROR CMRstatsRegularPrint(FILE* stream, CMR_REGULAR_STATS* stats, const char* prefix)
     CMR_ERROR CMRregularTest(CMR* cmr, CMR_CHRMAT* matrix, bint *pisRegular, CMR_MATROID_DEC** pdec, CMR_MINOR** pminor, CMR_REGULAR_PARAMS* params, CMR_REGULAR_STATS* stats, double timeLimit)
+    CMR_ERROR CMRregularCompleteDecomposition(CMR* cmr, CMR_MATROID_DEC* dec, CMR_REGULAR_PARAMS* params, CMR_REGULAR_STATS* stats, double timeLimit)
 
 
 cdef extern from "cmr/tu.h":
@@ -434,6 +434,7 @@ cdef extern from "cmr/tu.h":
     CMR_ERROR CMRtuStatsInit(CMR_TU_STATS* stats)
     # CMR_ERROR CMRtuStatsPrint(FILE* stream, CMR_TU_STATS* stats, const char* prefix)
     CMR_ERROR CMRtuTest(CMR* cmr, CMR_CHRMAT* matrix, bool* pisTotallyUnimodular, CMR_MATROID_DEC** pdec, CMR_SUBMAT** psubmatrix, CMR_TU_PARAMS* params, CMR_TU_STATS* stats, double timeLimit)
+    CMR_ERROR CMRtuCompleteDecomposition(CMR* cmr, CMR_MATROID_DEC* dec, CMR_REGULAR_PARAMS* params, CMR_REGULAR_STATS* stats, double timeLimit)
 
 
 cdef extern from "cmr/equimodular.h":
