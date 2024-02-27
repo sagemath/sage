@@ -124,20 +124,6 @@ maxima = find_program('maxima', required: true)
 # Cannot be found via pkg-config
 ntl = cc.find_library('ntl', required: true)
 
-# It's strange but cython cannot find its own include files
-# so we find them ourselves, and add them to the include path
-inc_cython = run_command(py,
-    [
-    '-c',
-    '''
-import Cython
-print(Cython.__file__.replace('__init__.py', ''))
-    '''.strip()
-    ],
-    check: true
-   ).stdout().strip()
-add_project_arguments('-I', inc_cython + 'Includes', language : 'cython')
-
 # Meson currently ignores include_directories for Cython modules, so we
 # have to add them manually.
 # https://github.com/mesonbuild/meson/issues/9562
