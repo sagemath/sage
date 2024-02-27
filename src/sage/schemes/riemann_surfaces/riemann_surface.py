@@ -2152,7 +2152,10 @@ class RiemannSurface():
         z1 = zwt(1)[0]
 
         # list of (centre, radius) pairs that still need to be processed
-        ball_stack = [(self._RR(1 / 2), self._RR(1 / 2), 0)]
+        # None is a sentinel value to indicate that the minimum number of
+        # nodes required to integrate on the corresponding segment within
+        # the required error tolerance is not yet known.
+        ball_stack = [(self._RR(1 / 2), self._RR(1 / 2), None)]
         alpha = self._RR(912 / 1000)
         # alpha set manually for scaling purposes. Basic benchmarking shows
         # that ~0.9 is a sensible value.
@@ -2236,20 +2239,15 @@ class RiemannSurface():
             ncts = [ct - rt / 2, ct + rt / 2]
             nrt = rt / 2
 
-            # lN == 0 is a placeholder value used to indicate that a value of
-            # N corresponding to a segment has not yet been computed.
-            # Because the output of local_N is always >= 3, we have no worries
-            # about 0 being the output misleadingly.
-            # As pointed out, 0 Should perhaps be replaced as a sentinel value
-            if lN == 0:
+            if lN is None:
                 cz = (1 - ct) * z0 + ct * z1
                 distances = [(cz - b).abs() for b in self.branch_locus]
                 rho_z = min(distances)
                 rho_t = rho_z / (z1_minus_z0).abs()
 
                 if rho_t <= rt:
-                    ball_stack.append((ncts[0], nrt, 0))
-                    ball_stack.append((ncts[1], nrt, 0))
+                    ball_stack.append((ncts[0], nrt, None))
+                    ball_stack.append((ncts[1], nrt, None))
                     continue
 
                 lN = local_N(ct, rt)
