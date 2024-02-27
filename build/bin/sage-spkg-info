@@ -16,14 +16,21 @@ if [ -n "$OUTPUT_RST" ]; then
     issue () { echo ":issue:\`$1\`"; }
     code ()  { echo "\`\`$*\`\`"; }
     tab ()   { echo ".. tab:: $1"; }
+    FORMAT=rst
 else
     ref ()   { echo "$1"; }
     spkg ()  { echo "$1"; }
     issue () { echo "https://github.com/sagemath/sage/issues/$1"; }
     code ()  { echo "$1"; }
     tab ()   { echo "$1:"; }
+    FORMAT=plain
 fi
-PKG_SCRIPTS="$SAGE_ROOT/build/pkgs/$PKG_BASE"
+if ! props=$(sage-package properties --format=shell $PKG_BASE 2> /dev/null); then
+    echo >&2 "sage-spkg-info: unknown package $PKG_BASE"
+    exit 1
+fi
+eval "$props"
+eval PKG_SCRIPTS=\$path_$PKG_BASE
 for ext in rst txt; do
     SPKG_FILE="$PKG_SCRIPTS/SPKG.$ext"
     if [ -f "$SPKG_FILE" ]; then
@@ -44,30 +51,7 @@ echo
 echo "Dependencies"
 echo "------------"
 echo
-dep=
-for dep_file in dependencies dependencies_order_only; do
-    if [ -r "$PKG_SCRIPTS/$dep_file" ] ; then
-        for dep in $(sed 's/^ *//; s/ *#.*//; q' "$PKG_SCRIPTS/$dep_file"); do
-            case "$dep" in
-                # Do not use order-only syntax, too much information
-                \|)         ;;
-                # Suppress dependencies on source file of the form $(SAGE_ROOT)/..., $(SAGE_SRC)/...
-                \$\(SAGE_*) ;;
-                # Suppress FORCE
-                FORCE)      ;;
-                # Dependencies like $(BLAS)
-                \$\(*)      echo "- $dep";;
-                # Looks like a package
-                *)          if [ -r "$SAGE_ROOT/build/pkgs/$dep/SPKG.rst" ]; then
-                                # This RST label is set in src/doc/bootstrap
-                                echo "- $(spkg $dep)"
-                            else
-                                echo "- $dep"
-                            fi;;
-            esac
-        done
-    fi
-done
+sage-package dependencies --format=$FORMAT $PKG_BASE
 echo
 echo "Version Information"
 echo "-------------------"
@@ -155,9 +139,17 @@ else
             echo "If the system package is installed, $(code ./configure) will check if it can be used."
         fi
     else
-        echo "However, these system packages will not be used for building Sage"
-        echo "because $(code spkg-configure.m4) has not been written for this package;"
-        echo "see $(issue 27330)"
+        case $PKG_BASE in
+            _*)
+                # Suppress the message, as it makes no sense for these special packages
+                # (_bootstrap, _sagemath)
+                ;;
+            *)
+                echo "However, these system packages will not be used for building Sage"
+                echo "because $(code spkg-configure.m4) has not been written for this package;"
+                echo "see $(issue 27330) for more information."
+                ;;
+        esac
     fi
 fi
 echo

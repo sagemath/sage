@@ -973,6 +973,105 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
         """
         return Integer(1)
 
+    def is_identity(self):
+        r"""
+        Check if this Weierstrass isomorphism is the identity.
+
+        EXAMPLES::
+
+            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
+            sage: p = 97
+            sage: Fp = GF(p)
+            sage: E = EllipticCurve(Fp, [1, 28])
+            sage: ws = WeierstrassIsomorphism(E, None, E)
+            sage: ws.is_identity()
+            False
+
+        ::
+
+            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
+            sage: p = 97
+            sage: Fp = GF(p)
+            sage: E = EllipticCurve(Fp, [1, 28])
+            sage: ws = WeierstrassIsomorphism(E, (1, 0, 0, 0), None)
+            sage: ws.is_identity()
+            True
+        """
+        return self.tuple() == (1, 0, 0, 0)
+
+    def order(self):
+        r"""
+        Compute the order of this Weierstrass isomorphism if it is an automorphism.
+
+        A :class:`ValueError` is raised if the domain is not equal to the codomain.
+
+        A :class:`NotImplementedError` is raised if the order of the automorphism is not 1, 2, 3, 4 or 6.
+
+        EXAMPLES::
+
+            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import *
+            sage: p = 97
+            sage: Fp = GF(p)
+            sage: E = EllipticCurve(Fp, [1, 28])
+            sage: ws = WeierstrassIsomorphism(E, None, E)
+            sage: ws.order()
+            2
+
+        TESTS::
+
+            sage: from sage.schemes.elliptic_curves.weierstrass_morphism import *
+            sage: p = 97
+            sage: Fp = GF(p)
+            sage: E = EllipticCurve(Fp, [1, 28])
+            sage: ws = WeierstrassIsomorphism(E, None, E)
+            sage: ws.order()
+            2
+            sage: E1 = EllipticCurve(Fp, [1, 69])
+            sage: ws = E.isomorphism_to(E1)
+            sage: ws.order()
+            Traceback (most recent call last):
+            ...
+            ValueError: the domain is different from the codomain
+
+        ::
+
+            sage: E = EllipticCurve_from_j(Fp(0))
+            sage: ws = WeierstrassIsomorphism(E, (Fp(36), 0, 0, 0), None)
+            sage: ws.order()
+            6
+            sage: ws2 = ws*ws
+            sage: ws2.order()
+            3
+            sage: F2_bar = GF(2).algebraic_closure()
+            sage: E = EllipticCurve_from_j(F2_bar(0))
+            sage: ws = WeierstrassIsomorphism(E, None, E)
+            sage: ws.order()
+            3
+        """
+        # Check if it is an actual endomorphism
+        if self._domain != self._codomain:
+            raise ValueError("the domain is different from the codomain")
+
+        if self.is_identity():
+            return Integer(1)
+
+        ws2 = WeierstrassIsomorphism._composition_impl(self, self)
+        if ws2.is_identity():
+            return Integer(2)
+
+        ws3 = WeierstrassIsomorphism._composition_impl(self, ws2)
+        if ws3.is_identity():
+            return Integer(3)
+
+        ws4 = WeierstrassIsomorphism._composition_impl(ws2, ws2)
+        if ws4.is_identity():
+            return Integer(4)
+
+        ws6 = WeierstrassIsomorphism._composition_impl(ws2, ws4)
+        if ws6.is_identity():
+            return Integer(6)
+
+        raise NotImplementedError("the order of the endomorphism is not 1, 2, 3, 4 or 6")
 
 def identity_morphism(E):
     r"""
