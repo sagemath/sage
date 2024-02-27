@@ -34,9 +34,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
-      - name: Create conda environment files
-        run: ./bootstrap-conda
-
       - name: Cache conda packages
         uses: actions/cache@v3
         with:
@@ -58,7 +55,7 @@ jobs:
           channels: conda-forge
           channel-priority: true
           activate-environment: sage
-          environment-file: src/environment-${{ matrix.python }}.yml
+          environment-file: src/environment-${{ matrix.python }}-${{ startsWith(matrix.os, 'macos') && 'macos' || 'linux' }}.yml
 
       - name: Print Conda environment
         shell: bash -l {0}
