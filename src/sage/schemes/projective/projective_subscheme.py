@@ -1571,8 +1571,8 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
 
         EXAMPLES:
 
-        This is an example of a curve whose arithmetic genus is smaller than
-        geometric genus due to a singular point::
+        This is an example of a curve whose geometric genus is smaller than
+        arithmetic genus due to a singular point::
 
             sage: A2.<x,y> = AffineSpace(QQ,2)
             sage: C = Curve(x^4 - 5*x^2 - y^2 + 4, A2)
