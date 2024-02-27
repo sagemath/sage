@@ -4792,18 +4792,14 @@ cdef class ComplexBall(RingElement):
 
             sage: n = CBF(1,1)
             sage: m = CBF(-2/3, 3/5)
-            sage: n.elliptic_pi_inc(CBF.pi()/2, m) # arb216
-            [0.8934793755173 +/- ...e-14] + [0.95707868710750 +/- ...e-15]*I
-            sage: n.elliptic_pi_inc(CBF.pi()/2, m) # arb218 - this is a regression, see :trac:28623
+            sage: n.elliptic_pi_inc(CBF.pi()/2, m) # this is a regression, see :trac:28623
             nan + nan*I
             sage: n.elliptic_pi(m)
             [0.8934793755173...] + [0.957078687107...]*I
 
             sage: n = CBF(2, 3/7)
             sage: m = CBF(-1/3, 2/9)
-            sage: n.elliptic_pi_inc(CBF.pi()/2, m) # arb216
-            [0.2969588746419 +/- ...e-14] + [1.3188795332738 +/- ...e-14]*I
-            sage: n.elliptic_pi_inc(CBF.pi()/2, m) # arb218 -  this is a regression, see :trac:28623
+            sage: n.elliptic_pi_inc(CBF.pi()/2, m) # this is a regression, see :trac:28623
             nan + nan*I
             sage: n.elliptic_pi(m)
             [0.296958874641...] + [1.318879533273...]*I
