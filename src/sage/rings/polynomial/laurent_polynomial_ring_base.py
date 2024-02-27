@@ -536,7 +536,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
         ::
 
-            sage: R = LaurentPolynomialRing(ZZ, 3, 'x')p
+            sage: R = LaurentPolynomialRing(ZZ, 3, 'x')
             sage: x = R.gen()
             sage: f = R.random_element(-5, 5)
             sage: f = R.random_element(-5, 10)
