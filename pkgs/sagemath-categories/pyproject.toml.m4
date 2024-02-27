@@ -42,3 +42,20 @@ version = {file = ["VERSION.txt"]}
 
 [tool.setuptools.package-data]
 "sage.rings.finite_rings" = ["integer_mod_limits.h"]
+
+[external]
+# External dependencies in the format proposed by https://peps.python.org/pep-0725
+build-requires = [
+  "virtual:compiler/c",
+  "virtual:compiler/cpp",
+  "pkg:generic/pkg-config",
+]
+
+host-requires = [
+  "pkg:generic/gmp",
+  "pkg:generic/mpc",
+  "pkg:generic/mpfr",
+]
+
+dependencies = [
+]
