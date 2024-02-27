@@ -28,6 +28,7 @@ from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.ring import CommutativeRing
 from sage.structure.parent import Parent
+from sage.misc.misc_c import prod
 
 
 class LaurentPolynomialRing_generic(CommutativeRing, Parent):
@@ -490,28 +491,95 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
     def random_element(self, low_degree=-2, high_degree=2, terms=5, choose_degree=False, *args, **kwds):
         """
+        Return a random polynomial of degree at most ``high_degree`` with
+        lowest degree at most ``low_degree``.
+
+        Internally uses the random sampling from
+        :meth:`sage.rings.polynomial.multi_polynomial_ring_base.MPolynomialRing_base.random_element`
+        then shifts this polynomial down to compute the correct degrees.
+
+        INPUT:
+
+        - ``low_degree`` -- non-positive integer (default: -2).
+          The smallest valuation of monomial in the polynomial
+
+        - ``high_degree`` -- non-negative integer (default: 2).
+          The maximal valuation of monomial in the polynomial
+
+        - ``terms`` -- number of terms requested (default: 5). If more
+          terms are requested than exist, then this parameter is
+          silently reduced to the maximum number of available terms.
+
+        - ``choose_degree`` -- choose degrees of monomials randomly first
+          rather than monomials uniformly random.
+
+        - ``**kwargs`` -- passed to the random element generator of the base
+          ring
+
         EXAMPLES::
 
-            sage: LaurentPolynomialRing(QQ, 2, 'x').random_element()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
+            sage: R = LaurentPolynomialRing(QQ, 1, 'x')
+            sage: f = R.random_element()
+            sage: f.degree() <= 2
+            True
+            sage: f.monomials()[-1].degree() >= -2
+            True
+
+        ::
+
+            sage: R = LaurentPolynomialRing(QQ, 1, 'x')
+            sage: f = R.random_element(-10, 20)
+            sage: f.degree() <= 20
+            True
+            sage: f.monomials()[-1].degree() >= -10
+            True
+
+        ::
+
+            sage: R = LaurentPolynomialRing(ZZ, 3, 'x')p
+            sage: x = R.gen()
+            sage: f = R.random_element(-5, 5)
+            sage: f = R.random_element(-5, 10)
+            sage: f.degree(x) <= 10
+            True
+            sage: f.degree(x) >= -5
+            True
+
+        TESTS::
+
+            sage: rings = [QQ, ZZ, GF(13), GF(7^3)]
+            sage: for ring in rings:
+            ....:     R = LaurentPolynomialRing(ring, 3, 'x')
+            ....:     for _ in range(100):
+            ....:         f = R.random_element(-3, 7)
+            ....:         for x in R.gens():
+            ....:             assert f.degree(x) <= 7
+            ....:             assert f.degree(x) >= -3
         """
-        # Univariate case we sample a random polynomial of degree
-        # (high_degree + low_degree) in a polynomial ring over the
-        # base field, then we shift this polynomial by low_degree.
-        if self._n == 1:
-            abs_deg = (high_degree + abs(low_degree))
-            f_rand = self._R.random_element(degree=abs_deg, terms=terms)
-            
-            # Coerce back to ``self`` and then shift down
-            f = self(f_rand)
-            x = self.gen()
-            f *= x**low_degree
+        # Ensure the low_degree is non-positive
+        if low_degree > 0:
+            raise ValueError("`low_degree` is expected to be a non-positive integer")
 
-            return f
+        # Ensure the high_degree is non-negative
+        if high_degree < 0:
+            raise ValueError("`low_degree` is expected to be a non-negative integer")
 
-        raise NotImplementedError
+        # First sample a polynomial from the associated polynomial
+        # ring of `self` of degree `(high_degree + abs(low_degree))`
+        abs_deg = (high_degree + abs(low_degree))
+        f_rand = self._R.random_element(degree=abs_deg, terms=terms, choose_degree=choose_degree, *args, **kwds)
+
+        # Coerce back to ``self``. We now have a polynomial of only
+        # positive valuation monomials
+        f = self(f_rand)
+
+        # Finally, shift the entire polynomial down by low_degree
+        # which will result in a polynomial with highest degree
+        # high_degree and lowest degree low_degree
+        monomial = prod(self.gens())
+        f *= monomial**low_degree
+
+        return f
 
     def is_exact(self):
         """
