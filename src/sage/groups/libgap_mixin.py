@@ -982,7 +982,7 @@ def minimum_generating_set(group, gap_based=False) -> set:
 
     REFERENCE:
 
-    For more information about the algorithm, see https://arxiv.org/abs/2306.07633 or 
+    For more information about the algorithm, see https://arxiv.org/abs/2306.07633 or
     https://www.sciencedirect.com/science/article/pii/S0021869323005720?via%3Dihub.
 
     EXAMPLES::
@@ -1110,7 +1110,7 @@ def minimum_generating_set(group, gap_based=False) -> set:
                 yield go
                 go[t-1] = temp
 
-    # Here, the value of t is different from the one in the research paper mentioned 
+    # Here, the value of t is different from the one in the research paper mentioned
     # in the REFRENCE section becuase in the paper the value of t was calculated using
     # cheif series of the group but currently sage does not have cheif series implemented.
     t = ceil((13/5 + log(group.Size().sage(), 2) / log(N.Size().sage(), 2)))
@@ -1118,7 +1118,7 @@ def minimum_generating_set(group, gap_based=False) -> set:
 
     for nl in N_list:
         for raw_gens in gen_combinations(g, N_list, t):
-            if nl==N_list[0]:   # considering N_list[0] is the identity element
+            if nl == N_list[0]:   # considering N_list[0] is the identity element
                 gens = raw_gens
             else:
                 gens = raw_gens+[nl]
