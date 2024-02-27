@@ -1362,7 +1362,7 @@ class UndeterminedCoefficientsRingElement(Element):
         d_den = {P._P(v): c for v, c in in_dict.items()
                  if v in V_den}
         den = p_den.subs(d_den)
-        return P.element_class(P, P._PF(num / den))
+        return P.element_class(P, P._PF(num, den))
 
 
 class UndeterminedCoefficientsFunctor(ConstructionFunctor):
