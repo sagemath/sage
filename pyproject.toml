@@ -119,6 +119,7 @@ dependencies = [
   "pkg:generic/tachyon",
   "pkg:generic/sagemath-polytopes-db",
   "pkg:generic/sagemath-elliptic-curves",
+  "pkg:generic/sagemath-graphs",
 ]
 
 [dependency-groups]
