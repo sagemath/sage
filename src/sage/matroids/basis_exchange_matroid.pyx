@@ -1237,8 +1237,8 @@ cdef class BasisExchangeMatroid(Matroid):
         Return the Whitney numbers of the second kind of the matroid.
 
         The Whitney numbers of the second kind are here encoded as a vector
-        `(W_0, ..., W_r)`, where `W_i` is the number of flats of rank `i`, and
-        `r` is the rank of the matroid.
+        `(W_0, \ldots, W_r)`, where `W_i` is the number of flats of rank `i`,
+        and `r` is the rank of the matroid.
 
         OUTPUT: a list of integers
 
@@ -1949,6 +1949,7 @@ cdef class BasisExchangeMatroid(Matroid):
             sage: M._weak_invariant() == N._weak_invariant()
             False
         """
+        from sage.matroids.utilities import cmp_elements_key
         if self._weak_invariant_var is None:
             if self.full_rank() == 0 or self.full_corank() == 0:
                 self._weak_invariant_var = 0
@@ -1956,8 +1957,8 @@ cdef class BasisExchangeMatroid(Matroid):
             else:
                 k = min(self.full_rank() - 1, 2)
                 fie, f_vec = self._flat_element_inv(k)
-                self._weak_invariant_var = hash(tuple([tuple([(f, len(fie[f])) for f in sorted(fie, key=str)]), f_vec]))
-                self._weak_partition_var = SetSystem(self._E, [fie[f] for f in sorted(fie, key=str)])
+                self._weak_invariant_var = hash(tuple([tuple([(f, len(fie[f])) for f in sorted(fie, key=cmp_elements_key)]), f_vec]))
+                self._weak_partition_var = SetSystem(self._E, [fie[f] for f in sorted(fie, key=cmp_elements_key)])
         return self._weak_invariant_var
 
     cpdef _weak_partition(self) noexcept:

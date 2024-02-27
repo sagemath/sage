@@ -220,7 +220,7 @@ cdef class Matroid(SageObject):
     cpdef _internal(self, B) noexcept
     cpdef _external(self, B) noexcept
     cpdef tutte_polynomial(self, x=*, y=*) noexcept
-    cpdef characteristic_polynomial(self, l=*) noexcept
+    cpdef characteristic_polynomial(self, la=*) noexcept
     cpdef flat_cover(self, solver=*, verbose=*, integrality_tolerance=*) noexcept
 
     # misc

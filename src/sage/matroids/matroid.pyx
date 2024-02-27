@@ -179,7 +179,7 @@ a rule leave the regular method alone.
 
 These underscored methods are not documented in the reference manual. To see
 them, within Sage you can create a matroid ``M`` and type ``M._`` followed by
-:kbd:`Tab`. Then ``M._rank?`` followed by :kbd:`Tab` will bring up the
+:kbd:`Tab`. Then ``M._rank?`` followed by :kbd:`Enter` will bring up the
 documentation string of the ``_rank()`` method.
 
 Creating new Matroid subclasses
@@ -355,7 +355,7 @@ MixedIntegerLinearProgram = LazyImport('sage.numerical.mip', 'MixedIntegerLinear
 
 from sage.matroids.lean_matrix cimport BinaryMatrix, TernaryMatrix
 from sage.matroids.set_system cimport SetSystem
-from sage.matroids.utilities import newlabel, sanitize_contractions_deletions, spanning_forest, spanning_stars
+from sage.matroids.utilities import newlabel, sanitize_contractions_deletions, spanning_forest, spanning_stars, cmp_elements_key
 
 
 # On some systems, macros "minor()" and "major()" are defined in system header
@@ -1079,10 +1079,11 @@ cdef class Matroid(SageObject):
 
         INPUT:
 
-        - ``N`` -- An instance of a ``Matroid`` object,
-        - ``certificate`` -- boolean (Default: ``False``) If ``True``, returns
-          ``True, (X, Y, dic) where ``N`` is isomorphic to ``self.minor(X, Y)``,
-          and ``dic`` is an isomorphism between ``N`` and ``self.minor(X, Y)``.
+        - ``N`` -- an instance of a :class:`Matroid` object
+        - ``certificate`` -- boolean (default: ``False``); if ``True``, returns
+          ``True, (X, Y, dic)`` where ``N`` is isomorphic to
+          ``self.minor(X, Y)``, and ``dic`` is an isomorphism between ``N`` and
+          ``self.minor(X, Y)``
 
         OUTPUT: boolean or tuple
 
@@ -2304,7 +2305,7 @@ cdef class Matroid(SageObject):
 
         .. SEEALSO::
 
-            :meth:`M.circuit() <sage.matroids.matroid.Matroid.circuit>`
+            :meth:`~sage.matroids.matroid.Matroid.circuit`
 
         EXAMPLES::
 
@@ -2538,6 +2539,10 @@ cdef class Matroid(SageObject):
 
             :meth:`M.basis() <sage.matroids.matroid.Matroid.basis>`
 
+        ALGORITHM:
+
+        Test all subsets of the groundset of cardinality ``self.full_rank()``.
+
         EXAMPLES::
 
             sage: M = matroids.Uniform(2, 4)
@@ -2545,10 +2550,6 @@ cdef class Matroid(SageObject):
             []
             sage: [sorted(X) for X in matroids.catalog.P6().nonbases_iterator()]
             [['a', 'b', 'c']]
-
-        ALGORITHM:
-
-        Test all subsets of the groundset of cardinality ``self.full_rank()``
         """
         for X in combinations(self.groundset(), self.full_rank()):
             if self._rank(X) < len(X):
@@ -2560,7 +2561,7 @@ cdef class Matroid(SageObject):
 
         INPUT:
 
-        - ``r`` -- a nonnegative integer.
+        - ``r`` -- a nonnegative integer
 
         EXAMPLES::
 
@@ -2589,7 +2590,11 @@ cdef class Matroid(SageObject):
 
         INPUT:
 
-        - ``r`` -- a nonnegative integer.
+        - ``r`` -- a nonnegative integer
+
+        ALGORITHM:
+
+        Test all subsets of the groundset of cardinality ``r``.
 
         EXAMPLES::
 
@@ -2600,10 +2605,6 @@ cdef class Matroid(SageObject):
             ....: matroids.catalog.Vamos().dependent_r_sets_iterator(4)])
             [['a', 'b', 'c', 'd'], ['a', 'b', 'e', 'f'], ['a', 'b', 'g', 'h'],
             ['c', 'd', 'e', 'f'], ['e', 'f', 'g', 'h']]
-
-        ALGORITHM:
-
-        Test all subsets of the groundset of cardinality ``r``
         """
         for X in combinations(self.groundset(), r):
             X = frozenset(X)
@@ -2645,15 +2646,15 @@ cdef class Matroid(SageObject):
 
         A *basis* is a maximal independent set.
 
+        ALGORITHM:
+
+        Test all subsets of the groundset of cardinality ``self.full_rank()``.
+
         EXAMPLES::
 
             sage: M = matroids.Uniform(2, 4)
             sage: sorted([sorted(X) for X in M.bases_iterator()])
             [[0, 1], [0, 2], [0, 3], [1, 2], [1, 3], [2, 3]]
-
-        ALGORITHM:
-
-        Test all subsets of the groundset of cardinality ``self.full_rank()``
 
         .. SEEALSO::
 
@@ -2746,7 +2747,11 @@ cdef class Matroid(SageObject):
 
         INPUT:
 
-        - ``r`` -- a nonnegative integer.
+        - ``r`` -- a nonnegative integer
+
+        ALGORITHM:
+
+        Test all subsets of the groundset of cardinality ``r``.
 
         EXAMPLES::
 
@@ -2758,10 +2763,6 @@ cdef class Matroid(SageObject):
             75
             sage: frozenset({'a', 'c', 'e'}) in S
             True
-
-        ALGORITHM:
-
-        Test all subsets of the groundset of cardinality ``r``
 
         .. SEEALSO::
 
@@ -2782,7 +2783,7 @@ cdef class Matroid(SageObject):
 
         INPUT:
 
-        - ``r`` -- a nonnegative integer.
+        - ``r`` -- a nonnegative integer
 
         EXAMPLES::
 
@@ -2907,7 +2908,7 @@ cdef class Matroid(SageObject):
 
         INPUT:
 
-        - ``r`` -- a nonnegative integer.
+        - ``r`` -- a nonnegative integer
 
         OUTPUT: a SetSystem
 
@@ -3072,7 +3073,7 @@ cdef class Matroid(SageObject):
             [[1, 2], [1, 4], [2, 3, 4]]
         """
         if ordering is None:
-            ordering = sorted(self.groundset(), key=str)
+            ordering = sorted(self.groundset(), key=cmp_elements_key)
         else:
             orderset = frozenset(ordering)
             if len(orderset) != len(self.groundset()) or orderset != self.groundset():
@@ -3131,12 +3132,12 @@ cdef class Matroid(SageObject):
             minimal-removal convention, while the implementation is not
             modified from the published algorithm.
         """
-        if len(self.loops()) > 0:
+        if self.loops():
             return []
 
         cdef list rev_order
         if ordering is None:
-            rev_order = sorted(self.groundset(), key=str, reverse=True)
+            rev_order = sorted(self.groundset(), key=cmp_elements_key, reverse=True)
         else:
             if frozenset(ordering) != self.groundset():
                 raise ValueError("not an ordering of the groundset")
@@ -3202,10 +3203,10 @@ cdef class Matroid(SageObject):
             Simplicial complex with vertex set (1, 2, 3, 4, 5)
              and facets {(1, 3, 5), (2, 3, 5), (2, 4, 5), (3, 4, 5)}
         """
-        if len(self.loops()) == 0:
+        if not self.loops():
 
             if ordering is None:
-                rev_order = sorted(self.groundset(), key=str, reverse=True)
+                rev_order = sorted(self.groundset(), key=cmp_elements_key, reverse=True)
             else:
                 if frozenset(ordering) != self.groundset():
                     raise ValueError("not an ordering of the groundset")
@@ -3244,12 +3245,12 @@ cdef class Matroid(SageObject):
 
         - ``R`` -- the base ring
         - ``ordering`` -- (optional) an ordering of the groundset
-        - ``invariant`` -- (optional, default: None) either a semigroup ``G``
-          whose ``__call__`` acts on the groundset, or pair ``(G, action)``
-          where ``G`` is a semigroup and ``action`` is a function
-          ``action(g,e)`` which takes a pair of a group element and a grounset
-          element and returns the groundset element which is the result of
-          ``e`` acted upon by ``g``
+        - ``invariant`` -- (optional) either a semigroup ``G`` whose
+          ``__call__`` acts on the groundset, or pair ``(G, action)`` where
+          ``G`` is a semigroup and ``action`` is a function ``action(g,e)``
+          which takes a pair of a group element and a grounset element and
+          returns the groundset element which is the result of ``e`` acted upon
+          by ``g``
 
         .. SEEALSO::
 
@@ -3339,10 +3340,10 @@ cdef class Matroid(SageObject):
         convert = {ind: i for i, ind in enumerate(self.groundset())}
         vertices = []
         for B in self.bases_iterator():
-            sum = 0
+            total = 0
             for i in B:
-                sum += vector_e[convert[i]]
-            vertices += [sum]
+                total += vector_e[convert[i]]
+            vertices += [total]
         return Polyhedron(vertices)
 
     cpdef independence_matroid_polytope(self) noexcept:
@@ -3385,12 +3386,12 @@ cdef class Matroid(SageObject):
         ambient = FreeModule(ZZ, n)
         vector_e = ambient.basis()
         convert = {ind: i for i, ind in enumerate(self.groundset())}
-        vertices = []
+        cdef list lst, vertices = []
         for IS in self.independent_sets_iterator():
             lst = []
             for i in IS:
-                lst += [vector_e[convert[i]]]
-            vertices += [ambient.sum(lst)]
+                lst.append(vector_e[convert[i]])
+            vertices.append(ambient.sum(lst))
         return Polyhedron(vertices)
 
     # isomorphism and equality
@@ -3405,7 +3406,7 @@ cdef class Matroid(SageObject):
 
         INPUT:
 
-        - ``other`` -- a matroid,
+        - ``other`` -- a matroid
         - ``certificate`` -- boolean (default: ``False``)
 
         OUTPUT: boolean, and, if ``certificate = True``, a dictionary or
@@ -3445,8 +3446,8 @@ cdef class Matroid(SageObject):
 
         INPUT:
 
-        - ``other`` -- A matroid,
-        - ``certificate`` -- boolean (default: ``False``).
+        - ``other`` -- a matroid
+        - ``certificate`` -- boolean (default: ``False``)
 
         OUTPUT: boolean, and, if ``certificate=True``, a dictionary giving the
         isomorphism or ``None``
@@ -4216,10 +4217,11 @@ cdef class Matroid(SageObject):
 
         INPUT:
 
-        - ``N`` -- An instance of a ``Matroid`` object,
-        - ``certificate`` -- boolean (Default: ``False``) If ``True``, returns
-          ``True, (X, Y, dic) where ``N`` is isomorphic to ``self.minor(X, Y)``,
-          and ``dic`` is an isomorphism between ``N`` and ``self.minor(X, Y)``.
+        - ``N`` -- an instance of a :class:`Matroid` object
+        - ``certificate`` -- boolean (default: ``False``); if ``True``, returns
+          ``True, (X, Y, dic)`` where ``N`` is isomorphic to
+          ``self.minor(X, Y)``, and ``dic`` is an isomorphism between ``N`` and
+          ``self.minor(X, Y)``
 
         OUTPUT: boolean or tuple
 
@@ -6313,9 +6315,9 @@ cdef class Matroid(SageObject):
 
         if basis is None:
             basis = self.basis()
-        basis = sorted(basis, key=str)
+        basis = sorted(basis, key=cmp_elements_key)
         bdx = {basis[i]: i for i in range(len(basis))}
-        E = sorted(self.groundset(), key=str)
+        E = sorted(self.groundset(), key=cmp_elements_key)
         idx = {Ei: i for i, Ei in enumerate(E)}
         A = TernaryMatrix(len(basis), len(E))
         for e in basis:
@@ -7399,8 +7401,7 @@ cdef class Matroid(SageObject):
         INPUT:
 
         - ``other`` -- a matroid with the same groundset as ``self``
-        - ``Y`` -- an common independent set of ``self`` and ``other`` of size
-          `k`
+        - ``Y`` -- an common independent set of ``self`` and ``other`` of size `k`
 
         OUTPUT:
 
@@ -7626,7 +7627,7 @@ cdef class Matroid(SageObject):
         N = self.groundset() - B
         A = set()
         for e in B:
-            if min(self._cocircuit(N | set([e])), key=str) == e:
+            if min(self._cocircuit(N | set([e])), key=cmp_elements_key) == e:
                 A.add(e)
         return A
 
@@ -7663,7 +7664,7 @@ cdef class Matroid(SageObject):
         N = self.groundset() - B
         A = set()
         for e in N:
-            if min(self._circuit(B | set([e])), key=str) == e:
+            if min(self._circuit(B | set([e])), key=cmp_elements_key) == e:
                 A.add(e)
         return A
 
@@ -7728,7 +7729,7 @@ cdef class Matroid(SageObject):
             T = T(a, b)
         return T
 
-    cpdef characteristic_polynomial(self, l=None) noexcept:
+    cpdef characteristic_polynomial(self, la=None) noexcept:
         r"""
         Return the characteristic polynomial of the matroid.
 
@@ -7745,10 +7746,10 @@ cdef class Matroid(SageObject):
 
         INPUT:
 
-        - ``l`` -- a variable or numerical argument (optional)
+        - ``la`` -- a variable or numerical argument (optional)
 
         OUTPUT: the characteristic polynomial, `\chi_M(\lambda)`, where
-        `\lambda` is substituted with any value provided as input.
+        `\lambda` is substituted with any value provided as input
 
         EXAMPLES::
 
@@ -7762,18 +7763,14 @@ cdef class Matroid(SageObject):
 
         .. SEEALSO::
 
-            :meth:`whitney_numbers() <sage.matroids.matroid.Matroid.whitney_numbers>`
+            :meth:`~sage.matroids.matroid.Matroid.whitney_numbers`
         """
-        val = l
         R = ZZ['l']
-        l = R._first_ngens(1)[0]
-        chi = R(0)
-        cdef int r = self.rank()
         cdef list w = self.whitney_numbers()
-        for i in range(len(w)):
-            chi += w[i] * l**(r-i)
-        if val is not None:
-            return chi(val)
+        w.reverse()
+        chi = R(w)
+        if la is not None:
+            return chi(la)
         return chi
 
     cpdef flat_cover(self, solver=None, verbose=0, integrality_tolerance=1e-3) noexcept:
@@ -7919,7 +7916,7 @@ cdef class Matroid(SageObject):
         # Create the ambient polynomial ring
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         try:
-            names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=str))) for F in flats]
+            names = ['A{}'.format(''.join(str(x) for x in sorted(F, key=cmp_elements_key))) for F in flats]
             P = PolynomialRing(R, names)
         except ValueError: # variables are not proper names
             P = PolynomialRing(R, 'A', len(flats))
@@ -8119,7 +8116,7 @@ cdef class Matroid(SageObject):
         cdef list facets = []
         for S in self.no_broken_circuits_sets_iterator(ordering):
             if len(S) == r:
-                facets += [S]
+                facets.append(S)
         return SimplicialComplex(facets, maximality_check=False)
 
     cpdef automorphism_group(self) noexcept:
@@ -8273,7 +8270,7 @@ cdef class Matroid(SageObject):
 
                         # add the facet
                         DM.add_face([f'L{i}' for i in I] +
-                                    [f'R{sorted(F, key=str)}' for F in c])
+                                    [f'R{sorted(F)}' for F in c])
         return DM
 
     def union(self, matroids):
