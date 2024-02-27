@@ -39,3 +39,21 @@ include-package-data = false
 
 [tool.setuptools.dynamic]
 version = {file = ["VERSION.txt"]}
+
+[external]
+# External dependencies in the format proposed by https://peps.python.org/pep-0725
+build-requires = [
+  "virtual:compiler/c",
+  "virtual:compiler/cpp",
+  "pkg:generic/pkg-config",
+]
+
+host-requires = [
+  "pkg:generic/gmp",
+  "pkg:generic/lcalc",
+  "pkg:generic/mpc",
+  "pkg:generic/mpfr",
+]
+
+dependencies = [
+]
