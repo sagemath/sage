@@ -175,7 +175,7 @@ The release process
 ===================
 
 It is good for developers and reviewers to be aware of the procedure that the
-Sage Release Manager uses to make releases. Here it is as of 2023:
+Sage Release Manager uses to make releases. Here it is as of 2024:
 
 **Beta Release Stage**: For preparing a new beta release or the first release
 candidate, all positively reviewed PRs with the forthcoming release
@@ -224,3 +224,5 @@ that determines what is appropriate for "blocker" status,
 the Release Manager turns it to the final release. It is tagged with the
 release milestone, and announced on ``sage-release``.
 
+Release management scripts are maintained in the repository
+`sagemath/sage-release-management <https://github.com/sagemath/sage-release-management>`_.
