@@ -714,7 +714,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             sage: (u + 1).minpoly()                                                     # needs sage.modules
             x^6 + 425*x^5 + 19*x^4 + 125*x^3 + 189*x^2 + 239*x + 302
             sage: ext = F6.over(F2)                                                     # needs sage.modules
-            sage: ext(u + 1).minpoly()  # indirect doctest                              # needs sage.modules
+            sage: ext(u + 1).minpoly()  # indirect doctest                              # needs sage.modules # random
             x^3 + (396*i + 428)*x^2 + (80*i + 39)*x + 9*i + 178
 
         TESTS:

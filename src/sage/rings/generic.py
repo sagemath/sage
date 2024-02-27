@@ -36,7 +36,7 @@ class ProductTree:
     Similarly, the :meth:`interpolation` method can be used to implement
     the inverse Fast Fourier Transform::
 
-        sage: tree.interpolation(zs).padded_list(len(ys)) == ys
+        sage: tree.interpolation(zs).padded_list(len(ys)) == ys                         # needs sage.rings.finite_rings
         True
 
     This class encodes the tree as *layers*: Layer `0` is just a tuple

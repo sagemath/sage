@@ -90,7 +90,7 @@ class Polyhedron_field(Polyhedron_base):
             sage: p = Polyhedron([(sqrt(3),sqrt(2))], base_ring=AA)                     # needs sage.rings.number_field sage.symbolic
             sage: p._is_zero(0)                                                         # needs sage.rings.number_field sage.symbolic
             True
-            sage: p._is_zero(1/100000)                                                  # needs sage.rings.number_field
+            sage: p._is_zero(1/100000)                                                  # needs sage.rings.number_field sage.symbolic
             False
         """
         return x == 0

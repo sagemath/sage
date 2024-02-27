@@ -201,7 +201,7 @@ micro_release:
 
 # Leaves everything that is needed to make the next "make" fast but removes
 # all the cheap build artifacts that can be quickly regenerated.
-# Trac #30960: We no longer uninstall sagelib.
+# Issue #30960: We no longer uninstall sagelib.
 fast-rebuild-clean: misc-clean
 	rm -rf upstream/
 	rm -rf build/pkgs/sagelib/src/build/temp.*

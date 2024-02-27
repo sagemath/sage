@@ -106,10 +106,11 @@ This tests the bugs reported in :trac:`20932`::
 
 import weakref
 
+from sage.categories.commutative_rings import CommutativeRings
+from sage.categories.fields import Fields
 import sage.modular.arithgroup.all as arithgroup
 import sage.modular.dirichlet as dirichlet
 from sage.rings.integer import Integer
-from sage.rings.ring import CommutativeRing
 from sage.rings.rational_field import RationalField
 
 
@@ -153,10 +154,10 @@ def canonical_parameters(group, weight, sign, base_ring):
     if base_ring is None:
         base_ring = RationalField()
 
-    if not isinstance(base_ring, CommutativeRing):
+    elif base_ring not in CommutativeRings():
         raise TypeError(f"base_ring (={base_ring}) must be a commutative ring")
 
-    if not base_ring.is_field():
+    elif base_ring not in Fields():
         raise TypeError(f"(currently) base_ring (={base_ring}) must be a field")
 
     return group, weight, sign, base_ring

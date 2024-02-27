@@ -57,8 +57,6 @@ graphs. Here is what they can do
     :widths: 30, 70
     :delim: |
 
-    :meth:`~DiGraph.all_paths_iterator` | Return an iterator over the paths of ``self``.
-    :meth:`~DiGraph.all_simple_paths` | Return a list of all the simple paths of ``self`` starting with one of the given vertices.
     :meth:`~DiGraph.all_cycles_iterator` | Return an iterator over all the cycles of ``self`` starting with one of the given vertices.
     :meth:`~DiGraph.all_simple_cycles` | Return a list of all simple cycles of ``self``.
 
@@ -70,6 +68,7 @@ graphs. Here is what they can do
     :delim: |
 
     :meth:`~DiGraph.path_semigroup` | Return the (partial) semigroup formed by the paths of the digraph.
+    :meth:`~DiGraph.auslander_reiten_quiver` | Return the Auslander-Reiten quiver of ``self``.
 
 **Connectivity:**
 
@@ -3180,6 +3179,23 @@ class DiGraph(GenericGraph):
         from sage.quivers.path_semigroup import PathSemigroup
         return PathSemigroup(self)
 
+    def auslander_reiten_quiver(self):
+        r"""
+        Return the Auslander-Reiten quiver of ``self``.
+
+        .. SEEALSO::
+
+            :class:`~sage.quivers.ar_quiver.AuslanderReitenQuiver`
+
+        EXAMPLES::
+
+            sage: D = DiGraph([[1,2,'a'], [1,2,'b']], multiedges=True)
+            sage: D.auslander_reiten_quiver()
+            Auslander-Reiten quiver of Multi-digraph on 2 vertices
+        """
+        from sage.quivers.ar_quiver import AuslanderReitenQuiver
+        return AuslanderReitenQuiver(self)
+
     # Directed Acyclic Graphs (DAGs)
 
     def topological_sort(self, implementation="default"):
@@ -4361,6 +4377,3 @@ class DiGraph(GenericGraph):
     from sage.graphs.connectivity import strongly_connected_components_subgraphs
     from sage.graphs.connectivity import strongly_connected_component_containing_vertex
     from sage.graphs.connectivity import strong_articulation_points
-    from sage.graphs.path_enumeration import _all_paths_iterator
-    from sage.graphs.path_enumeration import all_paths_iterator
-    from sage.graphs.path_enumeration import all_simple_paths

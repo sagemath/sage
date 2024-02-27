@@ -95,7 +95,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         module.HeckeModule_free_module.__init__(self, ambient.base_ring(),
                                                 ambient.level(),
                                                 ambient.weight())
-        if not (dual_free_module is None):
+        if dual_free_module is not None:
             if not is_FreeModule(dual_free_module):
                 raise TypeError("dual_free_module must be a free module")
             if dual_free_module.rank() != submodule.rank():
@@ -960,7 +960,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
         # so fast, and their are asymptotically fast algorithms.
         A = M_V * M_E
         V = A.row_space()
-        if not (Vdual is None):
+        if Vdual is not None:
             E = self.dual_free_module()
             M_Vdual = Vdual.matrix()
             M_E = E.matrix()

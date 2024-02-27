@@ -39,9 +39,9 @@ from sage.misc.misc_c cimport normalize_index
 
 from sage.categories.fields import Fields
 from sage.categories.integral_domains import IntegralDomains
+from sage.categories.commutative_rings import CommutativeRings
+from sage.categories.rings import Rings
 
-from sage.rings.ring cimport CommutativeRing
-from sage.rings.ring import is_Ring
 import sage.rings.abc
 from sage.rings.integer_ring import is_IntegerRing
 
@@ -1660,7 +1660,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [---]
             [2 4]
         """
-        if not is_Ring(ring):
+        if ring not in Rings():
             raise TypeError("ring must be a ring")
 
         if ring is self._base_ring:
@@ -5323,7 +5323,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [     -x*y*x*y x*y*x + x*y^2 x*y*x - x*y^2]
         """
         # derived classes over a commutative base *just* overload _lmul_ (!!)
-        if isinstance(self._base_ring, CommutativeRing):
+        if self._base_ring in CommutativeRings():
             return self._lmul_(left)
         cdef Py_ssize_t r,c
         x = self._base_ring(left)

@@ -135,6 +135,35 @@ from .constructor import EllipticCurve
 from .ell_finite_field import EllipticCurve_finite_field
 from .hom import EllipticCurveHom, compare_via_evaluation
 
+class _VeluBoundObj:
+    """
+    Helper object to define the point in which isogeny
+    computation should start using square-roor Velu formulae
+    instead of Velu.
+
+    EXAMPLES ::
+
+        sage: from sage.schemes.elliptic_curves.hom_velusqrt import _velu_sqrt_bound
+        sage: _velu_sqrt_bound.get()
+        1000
+        sage: _velu_sqrt_bound.set(50)
+        sage: _velu_sqrt_bound.get()
+        50
+    """
+    def __init__(self):
+        self.bound = Integer(1000)
+
+    def set(self, b):
+        self.bound = b
+
+    def get(self):
+        return self.bound
+
+    def __repr__(self):
+        return f"VeluSqrtBound Object with bound = {self.bound}"
+
+
+_velu_sqrt_bound = _VeluBoundObj()
 
 def _choose_IJK(n):
     r"""

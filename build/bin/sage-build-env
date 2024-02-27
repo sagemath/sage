@@ -177,9 +177,9 @@ if [ "x$SAGE_BUILD_ENV_SOURCED" = "x" ]; then
     fi
 fi
 
-# Trac #31335: Avoid include paths leaking in from homebrew python3's distutils.cfg
+# Issue #31335: Avoid include paths leaking in from homebrew python3's distutils.cfg
 # by using setuptools' own copy of distutils instead of relying on stdlib distutils
-# Trac #32944: Only do this on homebrew.
+# Issue #32944: Only do this on homebrew.
 if [ -n "$HOMEBREW" ]; then
     export SETUPTOOLS_USE_DISTUTILS=local
 fi

@@ -314,7 +314,7 @@ class BQFClassGroup(Parent, UniqueRepresentation):
         gens = [BinaryQF(g) for g in gens]
         return AdditiveAbelianGroupWrapper(self, gens, ords)
 
-    def gens(self):
+    def gens(self) -> list:
         r"""
         Return a generating set of this form class group.
 
@@ -727,9 +727,6 @@ class BQFClassGroupQuotientMorphism(Morphism):
     this class represents the natural projection morphism `G \to H` which
     is defined by finding a class representative `[a,b,c]` satisfying
     `f^2 \mid a` and `f \mid b` and substituting `x \mapsto x/f`.
-
-    Alternatively, one may pass the discriminants `f^2 D` and `D` instead
-    of the :class:`BQFClassGroup` objects `G` and `H`.
 
     This map is a well-defined group homomorphism.
 

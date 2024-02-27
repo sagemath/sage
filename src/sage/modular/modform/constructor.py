@@ -37,7 +37,7 @@ import sage.modular.arithgroup.all as arithgroup
 import sage.modular.dirichlet as dirichlet
 from sage.rings.integer import Integer
 from sage.rings.rational_field import Q as QQ
-from sage.rings.ring import CommutativeRing
+from sage.categories.commutative_rings import CommutativeRings
 
 from .ambient_eps import ModularFormsAmbient_eps
 from .ambient_g0 import ModularFormsAmbient_g0_Q
@@ -122,11 +122,11 @@ def canonical_parameters(group, level, weight, base_ring):
         except TypeError:
             raise TypeError("group of unknown type.")
         level = Integer(level)
-        if ( m != level ):
+        if m != level:
             raise ValueError("group and level do not match.")
         group = arithgroup.Gamma0(m)
 
-    if not isinstance(base_ring, CommutativeRing):
+    if base_ring not in CommutativeRings():
         raise TypeError("base_ring (=%s) must be a commutative ring" % base_ring)
 
     # it is *very* important to include the level as part of the data
@@ -330,7 +330,7 @@ def ModularForms(group=1,
 
     if use_cache and key in _cache:
         M = _cache[key]()
-        if not (M is None):
+        if M is not None:
             M.set_precision(prec)
             return M
 

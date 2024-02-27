@@ -986,6 +986,37 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             cat = constructor.category_from_parents(parents)
             return parents[0].__class__.Tensor(parents, category=cat)
 
+        def intersection(self, other):
+            r"""
+            Return the intersection of ``self`` with ``other``.
+
+            EXAMPLES::
+
+                sage: X = CombinatorialFreeModule(QQ, range(4)); x = X.basis()
+                sage: U = X.submodule([x[0]-x[1], x[1]-x[2], x[2]-x[3]])
+                sage: F = CombinatorialFreeModule(QQ, ['a','b','c','d'])
+                sage: G = F.submodule([F.basis()['a']])
+                sage: X.intersection(X) is X
+                True
+                sage: X.intersection(U) is U
+                True
+                sage: X.intersection(F)
+                Traceback (most recent call last):
+                ...
+                TypeError: other must be a submodule
+                sage: X.intersection(G)
+                Traceback (most recent call last):
+                ...
+                ArithmeticError: this module must be the ambient
+            """
+            if other is self:
+                return self
+            if other not in self.category().Subobjects():
+                raise TypeError("other must be a submodule")
+            if other.ambient() != self:
+                raise ArithmeticError("this module must be the ambient")
+            return other
+
         def cardinality(self):
             """
             Return the cardinality of ``self``.

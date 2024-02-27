@@ -12,14 +12,14 @@ expression of the differential equation.
 
 ::
 
-    ##########################################################################
+    # ************************************************************************
     #  Copyright (C) 2014 Miguel Marco <mmarco@unizar.es>, Marcos Rodriguez
     #   <marcos@uunizar.es>
     #
     #  Distributed under the terms of the GNU General Public License (GPL):
     #
-    #                  http://www.gnu.org/licenses/
-    ##########################################################################
+    #                  https://www.gnu.org/licenses/
+    # ************************************************************************
 
 AUTHORS:
 
@@ -472,7 +472,7 @@ def genfiles_mintides(integrator, driver, f, ics, initial, final, delta,
     remove_repeated(l1, l2)
     remove_constants(l1, l2)
     l0 = [str(l) for l in l1]
-    #generate the corresponding c lines
+    # generate the corresponding c lines
 
     l3 = []
     var = f[0].arguments()

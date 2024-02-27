@@ -906,7 +906,7 @@ class Semigroups(CategoryWithAxiom):
             # gens / monoid/group/*_generators, these methods could possibly
             # be removed in favor of aliases gens -> xxx_generators in
             # the Algebras.FinitelyGenerated hierarchy
-            def gens(self):
+            def gens(self) -> tuple:
                 r"""
                 Return the generators of ``self``.
 

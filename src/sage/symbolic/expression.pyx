@@ -5574,7 +5574,7 @@ cdef class Expression(Expression_abc):
         cdef Expression p = self.coerce_in(pattern)
         return self._gobj.has(p._gobj)
 
-    def substitute(self, *args, **kwds):
+    def subs(self, *args, **kwds):
         """
         Substitute the given subexpressions in this expression.
 
@@ -5898,8 +5898,6 @@ cdef class Expression(Expression_abc):
                                   (<Expression>self.coerce_in(v))._gobj))
         res = self._gobj.subs_map(smap, 0)
         return new_Expression_from_GEx(self._parent, res)
-
-    subs = substitute
 
     cpdef Expression _subs_expr(self, expr) noexcept:
         """

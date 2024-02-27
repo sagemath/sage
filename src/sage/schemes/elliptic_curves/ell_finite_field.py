@@ -610,6 +610,24 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
     order = cardinality  # alias
 
+    @cached_method
+    def multiplication_by_p_isogeny(self):
+        r"""
+        Return the multiplication-by-`p` isogeny.
+
+        EXAMPLES::
+
+            sage: p = 23
+            sage: K.<a> = GF(p^3)
+            sage: E = EllipticCurve(j=K.random_element())
+            sage: phi = E.multiplication_by_p_isogeny()
+            sage: assert phi.degree() == p**2
+            sage: P = E.random_element()
+            sage: assert phi(P) == P * p
+        """
+        frob = self.frobenius_isogeny()
+        return frob.dual() * frob
+
     def frobenius_polynomial(self):
         r"""
         Return the characteristic polynomial of Frobenius.
@@ -1773,13 +1791,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: p = next_prime(randrange(2,100))
             sage: e = randrange(1,10)
             sage: F.<t> = GF((p,e))
-            sage: while True:
-            ....:     try:
-            ....:         E = EllipticCurve([F.random_element() for _ in range(5)])
-            ....:     except ArithmeticError:
-            ....:         pass
-            ....:     else:
-            ....:         break
+            sage: E = EllipticCurve(j=F.random_element())
             sage: twists1 = E.twists()
             sage: {sum(E1.is_isomorphic(E2) for E2 in twists1) == 1 for E1 in twists1}
             {True}

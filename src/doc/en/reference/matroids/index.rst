@@ -27,6 +27,7 @@ Concrete implementations
    :maxdepth: 1
 
    sage/matroids/basis_matroid
+   sage/matroids/circuits_matroid
    sage/matroids/circuit_closures_matroid
    sage/matroids/linear_matroid
    sage/matroids/rank_matroid

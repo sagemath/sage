@@ -738,7 +738,7 @@ def PBD_4_7_from_Y(gdd,check=True):
                          "but there are other: {}".format(txt))
 
     for gs in group_sizes:
-        if not PBD_4_7(3*gs+1,existence=True) is True:
+        if PBD_4_7(3*gs+1,existence=True) is not True:
             raise RuntimeError("A group has size {} but I do not know how to "
                                "build a ({},[4,7])-PBD".format(gs,3*gs+1))
 

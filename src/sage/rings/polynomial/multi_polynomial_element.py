@@ -178,8 +178,8 @@ class MPolynomial_element(MPolynomial):
         except AttributeError:
             K = self.parent().base_ring()
         y = K(0)
-        for (m,c) in self.element().dict().items():
-            y += c*prod([ x[i]**m[i] for i in range(n) if m[i] != 0])
+        for m, c in self.element().dict().items():
+            y += c * prod(v ** e for v, e in zip(x, m) if e)
         return y
 
     def _richcmp_(self, right, op):
@@ -1388,7 +1388,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         """
         return len(self.element()) == 1
 
-    def subs(self, fixed=None, **kw):
+    def subs(self, fixed=None, **kwds):
         """
         Fix some given variables in a given multivariate polynomial and
         return the changed multivariate polynomials. The polynomial itself
@@ -1400,10 +1400,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-
         -  ``fixed`` - (optional) dictionary of inputs
 
-        -  ``**kw`` - named parameters
+        -  ``**kwds`` - named parameters
 
 
         OUTPUT: new :class:`MPolynomial`
@@ -1419,11 +1418,14 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             25*y^2 + y + 30
         """
         variables = list(self.parent().gens())
-        for i in range(0,len(variables)):
-            if str(variables[i]) in kw:
-                variables[i] = kw[str(variables[i])]
-            elif fixed and variables[i] in fixed:
-                variables[i] = fixed[variables[i]]
+        for i in range(len(variables)):
+            if str(variables[i]) in kwds:
+                variables[i] = kwds[str(variables[i])]
+            elif fixed:
+                if variables[i] in fixed:
+                    variables[i] = fixed[variables[i]]
+                elif i in fixed:
+                    variables[i] = fixed[i]
         return self(tuple(variables))
 
     def monomials(self):

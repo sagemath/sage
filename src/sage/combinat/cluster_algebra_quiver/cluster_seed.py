@@ -370,7 +370,7 @@ class ClusterSeed(SageObject):
             self._init_exch = dict(islice(self._init_vars.items(), self._n))
             self._U = PolynomialRing(QQ, [f'y{i}' for i in range(self._n)])
             self._F = {i: self._U(1) for i in self._init_exch.values()}
-            self._R = PolynomialRing(QQ, [val for val in self._init_vars.values()])
+            self._R = PolynomialRing(QQ, list(self._init_vars.values()))
             self._y = {self._U.gen(j): prod([self._R.gen(i)**self._M[i, j] for i in range(self._n, self._n + self._m)])
                        for j in range(self._n)}
             self._yhat = {self._U.gen(j): prod([self._R.gen(i)**self._M[i, j] for i in range(self._n + self._m)])
@@ -695,7 +695,7 @@ class ClusterSeed(SageObject):
                     self._init_exch = dict(islice(self._init_vars.items(), self._n))
                     self._U = PolynomialRing(QQ, [f'y{i}' for i in range(self._n)])
                     self._F = {i: self._U(1) for i in self._init_exch.values()}
-                    self._R = PolynomialRing(QQ, [val for val in self._init_vars.values()])
+                    self._R = PolynomialRing(QQ, list(self._init_vars.values()))
                     self._y = {self._U.gen(j): prod([self._R.gen(i)**self._M[i, j] for i in range(self._n, self._n + self._m)])
                                for j in range(self._n)}
                     self._yhat = {self._U.gen(j): prod([self._R.gen(i)**self._M[i, j] for i in range(self._n + self._m)])
@@ -3556,7 +3556,7 @@ class ClusterSeed(SageObject):
             dc += ' ' * (5 - len(dc))
             nr = str(len(clusters))
             nr += ' ' * (10 - len(nr))
-            print("Depth: %s found: %s Time: %.2f s" % (dc, nr, timer2 - timer))
+            print(f"Depth: {dc} found: {nr} Time: {timer2 - timer:.2f} s")
 
         # Each time we get bigger and we haven't hit the full depth
         while gets_bigger and depth_counter < depth:
@@ -3592,11 +3592,11 @@ class ClusterSeed(SageObject):
                             if only_sink_source:
                                 orbits = list(range(n))
                             else:
-                                orbits = [index for index in range(n) if index > i or sd2._M[index,i] != 0]
+                                orbits = [index for index in range(n) if index > i or sd2._M[index, i] != 0]
 
                             clusters[cl2] = [sd2, orbits, clusters[key][2]+[i]]
                             if return_paths:
-                                yield (sd2,clusters[cl2][2])
+                                yield (sd2, clusters[cl2][2])
                             else:
                                 yield sd2
             depth_counter += 1
@@ -3606,7 +3606,7 @@ class ClusterSeed(SageObject):
                 dc += ' ' * (5-len(dc))
                 nr = str(len(clusters))
                 nr += ' ' * (10-len(nr))
-                print("Depth: %s found: %s Time: %.2f s" % (dc,nr,timer2-timer))
+                print(f"Depth: {dc} found: {nr} Time: {timer2-timer:.2f} s")
 
     def mutation_class(self, depth=infinity, show_depth=False, return_paths=False,
                        up_to_equivalence=True, only_sink_source=False):
@@ -3773,7 +3773,7 @@ class ClusterSeed(SageObject):
         if depth is infinity and not self.is_finite():
             raise ValueError('The variable class can - for infinite types - only be computed up to a given depth')
 
-        return [c for c in self.cluster_class_iter(depth=depth, show_depth=show_depth, up_to_equivalence=up_to_equivalence)]
+        return list(self.cluster_class_iter(depth=depth, show_depth=show_depth, up_to_equivalence=up_to_equivalence))
 
     def b_matrix_class_iter(self, depth=infinity, up_to_equivalence=True):
         r"""
@@ -3989,7 +3989,7 @@ class ClusterSeed(SageObject):
             (x0^8 + 4*x0^6 + 3*x0^4*x1^2 + 2*x0^2*x1^4 + x1^6 + 6*x0^4 + 6*x0^2*x1^2 + 3*x1^4 + 4*x0^2 + 3*x1^2 + 1)/(x0^3*x1^4)
             (x0^6 + 3*x0^4 + 2*x0^2*x1^2 + x1^4 + 3*x0^2 + 2*x1^2 + 1)/(x0^2*x1^3)
         """
-        mut_iter = self.mutation_class_iter(depth=depth,show_depth=False)
+        mut_iter = self.mutation_class_iter(depth=depth, show_depth=False)
         var_class = set()
 
         for seed in mut_iter:
@@ -3997,7 +3997,7 @@ class ClusterSeed(SageObject):
                 seed = ClusterSeed(seed)
             if not ignore_bipartite_belt and seed.is_bipartite():
                 bipartition = seed.is_bipartite(return_bipartition=True)
-                bipartition = (list(bipartition[0]),list(bipartition[1]))
+                bipartition = (list(bipartition[0]), list(bipartition[1]))
                 if depth is not infinity:
                     print("Found a bipartite seed - restarting the depth counter at zero and constructing the variable class using its bipartite belt.")
                 depth_counter = 0
@@ -4005,7 +4005,7 @@ class ClusterSeed(SageObject):
                 seed2 = ClusterSeed(seed)
                 for c in seed.cluster():
                     if c not in var_class:
-                        yield ClusterVariable(FractionField(seed._R), c.numerator(), c.denominator(), mutation_type=self._mutation_type, variable_type='cluster variable',xdim=seed._n)
+                        yield ClusterVariable(FractionField(seed._R), c.numerator(), c.denominator(), mutation_type=self._mutation_type, variable_type='cluster variable', xdim=seed._n)
                 var_class = var_class.union(seed.cluster())
 
                 init_cluster = set(seed.cluster())
@@ -4013,27 +4013,27 @@ class ClusterSeed(SageObject):
                     depth_counter += 1
                     seed.mutate(bipartition[0])
                     seed.mutate(bipartition[1])
-                    if set(seed.cluster()) in [set(seed2.cluster()),init_cluster]:
+                    if set(seed.cluster()) in [set(seed2.cluster()), init_cluster]:
                         end = True
                     if not end:
                         for c in seed.cluster():
                             if c not in var_class:
-                                yield ClusterVariable(FractionField(seed._R), c.numerator(), c.denominator(), mutation_type=self._mutation_type, variable_type='cluster variable',xdim=seed._n)
+                                yield ClusterVariable(FractionField(seed._R), c.numerator(), c.denominator(), mutation_type=self._mutation_type, variable_type='cluster variable', xdim=seed._n)
                         var_class = var_class.union(seed.cluster())
                         seed2.mutate(bipartition[1])
                         seed2.mutate(bipartition[0])
-                        if set(seed2.cluster()) in [set(seed.cluster()),init_cluster]:
+                        if set(seed2.cluster()) in [set(seed.cluster()), init_cluster]:
                             end = True
                         if not end:
                             for c in seed2.cluster():
                                 if c not in var_class:
-                                    yield ClusterVariable(FractionField(seed._R), c.numerator(), c.denominator(), mutation_type=self._mutation_type, variable_type='cluster variable',xdim=seed._n)
+                                    yield ClusterVariable(FractionField(seed._R), c.numerator(), c.denominator(), mutation_type=self._mutation_type, variable_type='cluster variable', xdim=seed._n)
                             var_class = var_class.union(seed2.cluster())
                 return
             else:
                 for c in seed.cluster():
                     if c not in var_class:
-                        yield ClusterVariable(FractionField(seed._R), c.numerator(), c.denominator(), mutation_type=self._mutation_type, variable_type='cluster variable',xdim=seed._n)
+                        yield ClusterVariable(FractionField(seed._R), c.numerator(), c.denominator(), mutation_type=self._mutation_type, variable_type='cluster variable', xdim=seed._n)
                 var_class = var_class.union(seed.cluster())
 
     def variable_class(self, depth=infinity, ignore_bipartite_belt=False):
@@ -4120,7 +4120,7 @@ class ClusterSeed(SageObject):
             sage: S.is_mutation_finite()
             False
         """
-        is_finite, path = is_mutation_finite(copy(self._M),nr_of_checks=nr_of_checks)
+        is_finite, path = is_mutation_finite(copy(self._M), nr_of_checks=nr_of_checks)
         if return_path:
             return is_finite, path
         else:
@@ -4403,8 +4403,8 @@ class ClusterSeed(SageObject):
         """
         rank = self.n()
 
-        xvars = ['x{}'.format(t) for t in range(rank)]
-        xpvars = ['x{}p'.format(t) for t in range(rank)]
+        xvars = [f'x{t}' for t in range(rank)]
+        xpvars = [f'x{t}p' for t in range(rank)]
         gens = xvars + xpvars
         initial_product = '*'.join(g for g in xvars)
 
@@ -4418,8 +4418,7 @@ class ClusterSeed(SageObject):
                                         for s in range(rank))
             deep_gens += [neighbor_product]
 
-        rels = ["-{}*{}+{}".format(gens[t], gens[t + rank],
-                                   lower_var[t + rank].numerator())
+        rels = [f"-{gens[t]}*{gens[t + rank]}+{lower_var[t + rank].numerator()}"
                 for t in range(rank)]
 
         while True:
@@ -4509,9 +4508,9 @@ class ClusterSeed(SageObject):
         if len(a) != B.ncols():
             raise ValueError('The length of the input vector must be the same as the number of columns of B.')
         # Runs helper functions.
-        v = _vector_decomposition(a,B.nrows())
+        v = _vector_decomposition(a, B.nrows())
         c = self._compute_compatible_vectors(v)
-        return self._produce_upper_cluster_algebra_element(v,c)
+        return self._produce_upper_cluster_algebra_element(v, c)
 
     def LLM_gen_set(self, size_limit=-1):
         r"""
@@ -4793,7 +4792,7 @@ def PathSubset(n, m):
         sage: PathSubset(4,4)
         {0, 1, 2, 3, 4, 5, 6, 7}
     """
-    S = set(2 * i + 1 for i in range(n))
+    S = {2 * i + 1 for i in range(n)}
     if m > 0:
         for j in range(n):
             if ((j+1)*m) // n - (j*m) // n == 1:
@@ -4831,7 +4830,7 @@ def SetToPath(T):
     return ans
 
 
-def is_LeeLiZel_allowable(T,n,m,b,c):
+def is_LeeLiZel_allowable(T, n, m, b, c):
     """
     Check if the subset `T` contributes to the computation of the greedy element `x[m,n]` in the rank two `(b,c)`-cluster algebra.
 

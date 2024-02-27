@@ -49,7 +49,7 @@
 #        download additional source files, and the "dummy" source type.
 
 dnl ==========================================================================
-dnl define PKG_CHECK_VAR for old pkg-config < 0.28; see Trac #29001
+dnl define PKG_CHECK_VAR for old pkg-config < 0.28; see Issue #29001
 m4_ifndef([PKG_CHECK_VAR], [
 AC_DEFUN([PKG_CHECK_VAR],
 [AC_REQUIRE([PKG_PROG_PKG_CONFIG])dnl
@@ -278,7 +278,7 @@ AC_DEFUN([SAGE_SPKG_FINALIZE], [dnl
         m4_define([in_sdist], [no])
         uninstall_message=", use \"$srcdir/configure --disable-SPKG_NAME\" to uninstall"
     ])
-    dnl Trac #29629: Temporary solution for Sage 9.1: Do not advertise installing pip packages
+    dnl Issue #29629: Temporary solution for Sage 9.1: Do not advertise installing pip packages
     dnl using ./configure --enable-SPKG
     m4_case(SPKG_SOURCE,
       [pip], [dnl
@@ -302,7 +302,7 @@ AC_DEFUN([SAGE_SPKG_FINALIZE], [dnl
             AS_VAR_IF([sage_require], [yes], [ message="using system package"
             ],                               [ message="not required on your platform"
             ])
-            dnl Trac #31163: Only talk about the SPKG if there is an SPKG
+            dnl Issue #31163: Only talk about the SPKG if there is an SPKG
             m4_case(SPKG_SOURCE, [none], [], [dnl
                 message="$message; SPKG will not be installed"
             ])
@@ -324,7 +324,7 @@ AC_DEFUN([SAGE_SPKG_FINALIZE], [dnl
             ])
         ])
 
-    dnl Trac #29124: Do not talk about underscore club
+    dnl Issue #29124: Do not talk about underscore club
     m4_bmatch(SPKG_NAME, [^_], [], [dnl
         formatted_message=$(printf '%-32s%s' "SPKG_NAME:" "$message")
         AC_MSG_RESULT([$formatted_message])

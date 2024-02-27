@@ -884,7 +884,8 @@ class Modules(Category_module):
                       Ambient free module of rank 3 over the principal ideal domain Integer Ring)
                     sage: M.category()                                                  # needs sage.modules
                     Category of Cartesian products of modules with basis
-                     over (euclidean domains and infinite enumerated sets and metric spaces)
+                     over (Dedekind domains and euclidean domains
+                     and infinite enumerated sets and metric spaces)
                     sage: M.base_ring()                                                 # needs sage.modules
                     Integer Ring
 

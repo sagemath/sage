@@ -571,7 +571,7 @@ class ArithmeticSubgroup(Group):
 
         w = self.gens()
         for g in w:
-            if not (g in right):
+            if g not in right:
                 return False
         return True
 
@@ -1028,7 +1028,7 @@ class ArithmeticSubgroup(Group):
         else:
             raise ValueError("Unknown algorithm '%s' (should be either 'farey' or 'todd-coxeter')" % algorithm)
 
-    def gens(self, *args, **kwds):
+    def gens(self, *args, **kwds) -> tuple:
         r"""
         Return a tuple of generators for this congruence subgroup.
 

@@ -129,7 +129,7 @@ def _coords_in_C_p(I, C, p):
     """
     cyclic_orders = C.gens_orders()
     non_p_indices = [i for i,n in enumerate(cyclic_orders) if not p.divides(n)]
-    p_indices     = [(i, n // p) for i,n in enumerate(cyclic_orders) if p.divides(n)]
+    p_indices = [(i, n // p) for i,n in enumerate(cyclic_orders) if p.divides(n)]
 
     coords = C(I).exponents()
     if all(coords[i] == 0 for i in non_p_indices) and all(coords[i] % n == 0 for i, n in p_indices):
@@ -227,7 +227,7 @@ def _root_ideal(I, C, p):
 
     """
     cyclic_orders = C.gens_orders()
-    cyclic_gens   = C.gens_ideals()
+    cyclic_gens = C.gens_ideals()
     coords = C(I).exponents()
 
     # In the next line, e=(ci/p)%n should satisfy p*e=ci (mod n): we
@@ -651,7 +651,7 @@ def pSelmerGroup(K, S, p, proof=None, debug=False):
         if debug:
             assert all(v % p == 0 for v in vals)
         one = K(1) if K == QQ else K.ideal(1)
-        aa  = a.abs() if K == QQ else K.ideal(a)
+        aa = a.abs() if K == QQ else K.ideal(a)
         B = prod((P ** (v // p) for P, v in zip(supp,vals)), one)
         if debug:
             assert B ** p == aa

@@ -178,8 +178,9 @@ cdef class Morphism(Map):
             sage: f = R.hom([t**2])
             sage: f.category()
             Category of endsets of unital magmas and right modules over
-             (euclidean domains and infinite enumerated sets and metric spaces)
-             and left modules over (euclidean domains
+             (Dedekind domains and euclidean domains
+              and infinite enumerated sets and metric spaces)
+             and left modules over (Dedekind domains and euclidean domains
              and infinite enumerated sets and metric spaces)
 
             sage: # needs sage.rings.number_field
