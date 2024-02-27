@@ -500,14 +500,22 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
         INPUT:
 
-        - ``low_degree`` -- non-positive integer (default: -2).
+        - ``low_degree`` -- integer (default: ``-2``).
           The smallest valuation of monomial in the polynomial
 
-        - ``high_degree`` -- non-negative integer (default: 2).
+        - ``high_degree`` -- integer (default: ``2``).
           The maximal valuation of monomial in the polynomial
 
-        - ``*args, **kwds`` -- passed to the random element generator of the base
-          ring
+        - ``terms`` -- number of terms requested (default: ``5``).
+          If more terms are requested than exist, then this parameter is
+          silently reduced to the maximum number of available terms.
+
+        - ``choose_degree`` -- bool(default: ``False``)
+          choose degrees of monomials randomly first rather than monomials
+          uniformly random.
+
+        - ``*args, **kwds`` -- passed to the random element generator
+          of the underlying polynomial ring and respective base ring
 
         EXAMPLES::
 
@@ -515,27 +523,37 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: f = R.random_element()
             sage: f.degree() <= 2
             True
-            sage: f.monomials()[-1].degree() >= -2
+            sage: f.degree() >= -2
+            True
+            sage: f.parent() is R
             True
 
         ::
 
-            sage: R = LaurentPolynomialRing(QQ, 1, 'x')
+            sage: R = LaurentPolynomialRing(ZZ, 2, 'x')
             sage: f = R.random_element(-10, 20)
             sage: f.degree() <= 20
             True
-            sage: f.monomials()[-1].degree() >= -10
-            True
+            sage: tuple(f.degree(x) >= -10 for x in R.gens())
+            (True, True)
 
         ::
 
-            sage: R = LaurentPolynomialRing(ZZ, 3, 'x')
-            sage: x = R.gen()
+            sage: R = LaurentPolynomialRing(GF(13), 3, 'x')
             sage: f = R.random_element(-5, 5)
             sage: f = R.random_element(-5, 10)
-            sage: f.degree(x) <= 10
+            sage: tuple(f.degree(x) <= 10 for x in R.gens())
+            (True, True, True)
+            sage: tuple(f.degree(x) >= -5 for x in R.gens())
+            (True, True, True)
+
+        ::
+
+            sage: R = LaurentPolynomialRing(QQ, 5, 'x')
+            sage: f = R.random_element(-3, 5, terms=6, choose_degree=True)
+            sage: f.parent() is R
             True
-            sage: f.degree(x) >= -5
+            sage: len(list(f)) <= 6
             True
 
         TESTS::
@@ -545,19 +563,18 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             ....:     d = randint(1, 5)
             ....:     R = LaurentPolynomialRing(ring, d, 'x')
             ....:     for _ in range(100):
-            ....:         n, m = randint(0, 10), randint(0, 10)
-            ....:         f = R.random_element(-n, m)
+            ....:         n, m = randint(-10, -1), randint(1, 10)
+            ....:         if m < n:
+            ....:             m, n = n, m
+            ....:         f = R.random_element(n, m)
+            ....:         if f.is_zero(): continue # the zero polynomial is defined to have degree -1
             ....:         for x in R.gens():
             ....:             assert f.degree(x) <= m
-            ....:             assert f.degree(x) >= -n
+            ....:             assert f.degree(x) >= n
         """
-        # Ensure the low_degree is non-positive
-        if low_degree > 0:
-            raise ValueError("`low_degree` is expected to be a non-positive integer")
-
-        # Ensure the high_degree is non-negative
-        if high_degree < 0:
-            raise ValueError("`low_degree` is expected to be a non-negative integer")
+        # Ensure the degree parameters are sensible
+        if high_degree < low_degree:
+            raise ValueError("`high_degree` must be greater than or equal to `low_degree`")
 
         # First sample a polynomial from the associated polynomial
         # ring of `self` of degree `(high_degree + abs(low_degree))`
