@@ -549,12 +549,14 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
             sage: rings = [QQ, ZZ, GF(13), GF(7^3)]
             sage: for ring in rings:
-            ....:     R = LaurentPolynomialRing(ring, 3, 'x')
+            ....:     d = randint(1, 5)
+            ....:     R = LaurentPolynomialRing(ring, d, 'x')
             ....:     for _ in range(100):
-            ....:         f = R.random_element(-3, 7)
+            ....:         n, m = randint(0, 10), randint(0, 10)
+            ....:         f = R.random_element(-n, m)
             ....:         for x in R.gens():
-            ....:             assert f.degree(x) <= 7
-            ....:             assert f.degree(x) >= -3
+            ....:             assert f.degree(x) <= m
+            ....:             assert f.degree(x) >= -n
         """
         # Ensure the low_degree is non-positive
         if low_degree > 0:
