@@ -563,7 +563,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             ....:     d = randint(1, 5)
             ....:     R = LaurentPolynomialRing(ring, d, 'x')
             ....:     for _ in range(100):
-            ....:         n, m = randint(-10, -1), randint(1, 10)
+            ....:         n, m = randint(-10, 10), randint(1, 10)
             ....:         if m < n:
             ....:             m, n = n, m
             ....:         f = R.random_element(n, m)
