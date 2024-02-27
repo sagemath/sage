@@ -510,7 +510,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
           If more terms are requested than exist, then this parameter is
           silently reduced to the maximum number of available terms.
 
-        - ``choose_degree`` -- bool(default: ``False``)
+        - ``choose_degree`` -- bool (default: ``False``)
           choose degrees of monomials randomly first rather than monomials
           uniformly random.
 
