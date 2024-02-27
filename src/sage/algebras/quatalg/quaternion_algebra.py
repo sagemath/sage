@@ -2165,7 +2165,7 @@ class QuaternionOrder(Parent):
             ....:         break
             sage: O1 = (b * O0).left_order()
             sage: iso = O0.isomorphism_to(O1); iso
-            Ring morphism: ...
+            Ring ...
             sage: iso.domain() == O0
             True
             sage: iso.codomain() == O1
