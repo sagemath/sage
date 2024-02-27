@@ -179,10 +179,9 @@ Sage Release Manager uses to make releases. Here it is as of 2024:
 
 **Beta Release Stage**: For preparing a new beta release or the first release
 candidate, all positively reviewed PRs with the forthcoming release
-milestone are considered. PRs that have dependencies not merged yet are ignored.
-The Release Manager merges PRs in batches of 10 to 20 PRs, without taking the
-PR priority into account. If a merge conflict of a PR to the Release
-Manager's branch occurs, the PR is set back to "needs work" status by the
+milestone are considered. The Release Manager merges PRs in batches of
+10 to 20 PRs. If a merge conflict of a PR to the Release Manager's
+branch occurs, the PR is set back to "needs work" status by the
 Release Manager. (The author of the PR can try to guess which other
 PRs may be causing the conflict, make merge commits and declare them as
 dependencies, before setting back to "positive review" status.
