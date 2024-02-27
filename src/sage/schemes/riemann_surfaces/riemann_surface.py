@@ -2188,18 +2188,18 @@ class RiemannSurface():
             rho_t = alpha * rho_t + (1 - alpha) * rt  # sqrt(rho_t*rt) could also work
             rho_z = rho_t * (z1_minus_z0).abs()
             delta_z = (alpha * rho_t + (1 - alpha) * rt) * (z1_minus_z0).abs()
-            # delta_z and delta_z^2 / (rho_z * (rho_z - delta_z)) are the two 
-            # prefactors that occur in the computation of the magnitude bound 
+            # delta_z and delta_z^2 / (rho_z * (rho_z - delta_z)) are the two
+            # prefactors that occur in the computation of the magnitude bound
             # M. delta_z should never be infinite, but the second factor could
-            # be if rho_z - delta_z is 0. Mathematically it would never be 0 
+            # be if rho_z - delta_z is 0. Mathematically it would never be 0
             # as we ensure rho_t > rt before running local_N, but the
-            # floating point operations can ruin this. 
-            # The second prefactor is actually homogeneous in 
-            # z1_minus_z0.abs(), so we shall compute this factor without those 
+            # floating point operations can ruin this.
+            # The second prefactor is actually homogeneous in
+            # z1_minus_z0.abs(), so we shall compute this factor without those
             # multiplications as a function of rho_t / rt which should thus be
             # more resistance to floating-point errors.
             pf2 = (alpha + (1 - alpha) * (rt / rho_t))**2 / (
-                  (1 - alpha) * (1 - rt / rho_t) 
+                  (1 - alpha) * (1 - rt / rho_t)
             )
             expr = (
                 rho_t / rt + ((rho_t / rt)**2 - 1).sqrt()
@@ -2227,7 +2227,7 @@ class RiemannSurface():
                     / (2 * expr.log())
                 )
                 if N_required == Infinity:
-                    return 2**(self._prec)
+                    return 2**max(60, self._prec)
                 Ni = max(Ni, N_required.ceil())
             return Ni
 
@@ -2236,10 +2236,10 @@ class RiemannSurface():
             ncts = [ct - rt / 2, ct + rt / 2]
             nrt = rt / 2
 
-            # lN == 0 is a placeholder value used to indicate that a value of 
-            # N corresponding to a segment has not yet been computed. 
+            # lN == 0 is a placeholder value used to indicate that a value of
+            # N corresponding to a segment has not yet been computed.
             # Because the output of local_N is always >= 3, we have no worries
-            # about 0 being the output misleadingly. 
+            # about 0 being the output misleadingly.
             # As pointed out, 0 Should perhaps be replaced as a sentinel value
             if lN == 0:
                 cz = (1 - ct) * z0 + ct * z1
