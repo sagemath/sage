@@ -491,8 +491,8 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
     def random_element(self, low_degree=-2, high_degree=2, terms=5, choose_degree=False, *args, **kwds):
         """
-        Return a random polynomial of degree at most ``high_degree`` with
-        lowest degree at most ``low_degree``.
+        Return a random polynomial of degree at most ``high_degree`` and
+        lowest degree at least ``low_degree``.
 
         Internally uses the random sampling from
         :meth:`sage.rings.polynomial.multi_polynomial_ring_base.MPolynomialRing_base.random_element`
@@ -506,14 +506,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         - ``high_degree`` -- non-negative integer (default: 2).
           The maximal valuation of monomial in the polynomial
 
-        - ``terms`` -- number of terms requested (default: 5). If more
-          terms are requested than exist, then this parameter is
-          silently reduced to the maximum number of available terms.
-
-        - ``choose_degree`` -- choose degrees of monomials randomly first
-          rather than monomials uniformly random.
-
-        - ``**kwargs`` -- passed to the random element generator of the base
+        - ``*args, **kwds`` -- passed to the random element generator of the base
           ring
 
         EXAMPLES::
@@ -568,7 +561,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
         # First sample a polynomial from the associated polynomial
         # ring of `self` of degree `(high_degree + abs(low_degree))`
-        abs_deg = (high_degree + abs(low_degree))
+        abs_deg = (high_degree - low_degree)
         f_rand = self._R.random_element(degree=abs_deg, terms=terms, choose_degree=choose_degree, *args, **kwds)
 
         # Coerce back to ``self``. We now have a polynomial of only
