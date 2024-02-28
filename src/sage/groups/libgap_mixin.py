@@ -1010,6 +1010,7 @@ def minimum_generating_set(group, gap_based=False) -> set:
 
         sage: H = groups.matrix.Heisenberg(1,3); H
         Heisenberg group of degree 1 over Ring of integers modulo 3
+        sage: from sage.groups.libgap_mixin import minimum_generating_set
         sage: minimum_generating_set(H)
         {[1 0 0]
          [0 1 1]
