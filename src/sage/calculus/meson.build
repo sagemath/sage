@@ -28,7 +28,7 @@ foreach name, pyx : extension_data
         subdir: 'sage/calculus',
         install: true,
         include_directories: [inc_ext, inc_numpy],
-        dependencies: [py_dep, cysignals, gmp, gsl],
+        dependencies: [py_dep, cysignals, gmp, gsl, interpreters_dep],
     )
 endforeach
 
