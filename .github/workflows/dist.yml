@@ -116,7 +116,9 @@ jobs:
           - os: ubuntu-latest
             arch: i686
           - os: macos-latest
-            arch: auto
+            arch: x86_64
+          - os: macos-14
+            arch: arm64
     env:
       # SPKGs to install as system packages
       SPKGS: _bootstrap _prereq
