@@ -16,7 +16,7 @@ from sage.structure.factorization import Factorization
 from sage.misc.derivative import multi_derivative
 from sage.rings.polynomial.polydict cimport monomial_exponent
 from sage.matrix.matrix0 cimport Matrix
-
+from sage.rings.infinity import Infinity
 
 cdef class LaurentPolynomial_mpair(LaurentPolynomial):
     """
@@ -1182,6 +1182,45 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         if no_generator_found:
             raise TypeError("x must be a generator of parent")
         return self._poly.degree(self._parent._R.gens()[i]) + self._mon[i]
+
+    def valuation(self, x=None):
+        """
+        Return the valuation of ``x`` in ``self``.
+
+        If ``x`` is ``None``, return the minimal valuation of ``self``.
+
+        EXAMPLES::
+
+            sage: R.<x,y> = LaurentPolynomialRing(ZZ)
+            sage: f = 2*x^2*y^-3 - 13*x^-1*y^-3 + 2*x^2*y^-5 - 2*x^-3*y^2
+            sage: f.valuation()
+            -4
+            sage: f.valuation(x)
+            -3
+            sage: f.valuation(y)
+            -5
+        """
+        # Valuation of zero polynomial is defined to be +Infinity
+        if self.is_zero():
+            return Infinity
+
+        # TODO: is there a faster cython-way to do this?
+        if x is None:
+            return min(sum(e) for e in self.exponents())
+
+        # Get the index of the gen
+        cdef tuple g = <tuple > self._parent.gens()
+        cdef Py_ssize_t i
+        cdef bint no_generator_found = True
+        for i in range(len(g)):
+            if g[i] is x:
+                no_generator_found = False
+                break
+        if no_generator_found:
+            raise TypeError("x must be a generator of parent")
+
+        # TODO: is there a faster cython-way to do this?
+        return min(e[i] for e in self.exponents())
 
     def has_inverse_of(self, i):
         """

@@ -526,7 +526,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: f = L.random_element(-10, 20)
             sage: f.degree() <= 20
             True
-            sage: tuple(f.degree(x) >= -10 for x in L.gens())
+            sage: tuple(f.valuation(x) >= -10 for x in L.gens())
             (True, True)
 
         ::
@@ -536,7 +536,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: f = L.random_element(-5, 10)
             sage: tuple(f.degree(x) <= 10 for x in L.gens())
             (True, True, True)
-            sage: tuple(f.degree(x) >= -5 for x in L.gens())
+            sage: tuple(f.valuation(x) >= -5 for x in L.gens())
             (True, True, True)
 
         ::
@@ -546,7 +546,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: f = L.random_element()
             sage: tuple(f.degree(x) <= 2 for x in L.gens())
             (True, True)
-            sage: tuple(f.degree(x) >= -2 for x in L.gens())
+            sage: tuple(f.valuation(x) >= -2 for x in L.gens())
             (True, True)
 
         ::
@@ -556,7 +556,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: f = L.random_element(-1, 1)
             sage: tuple(f.degree(x) <= 1 for x in L.gens())
             (True, True, True, True, True)
-            sage: tuple(f.degree(x) >= -1 for x in L.gens())
+            sage: tuple(f.valuation(x) >= -1 for x in L.gens())
             (True, True, True, True, True)
 
         TESTS::
@@ -573,7 +573,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             ....:         if f.is_zero(): continue # the zero polynomial is defined to have degree -1
             ....:         for x in L.gens():
             ....:             assert f.degree(x) <= m
-            ....:             assert f.degree(x) >= n
+            ....:             assert f.valuation(x) >= n
         """
         # Ensure the degree parameters are sensible
         if high_degree < min_valuation:
