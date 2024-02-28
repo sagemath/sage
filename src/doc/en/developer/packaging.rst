@@ -579,7 +579,7 @@ and most Python-based packages will also have ``$(PYTHON_TOOLCHAIN)`` as
 an order-only dependency, which will ensure that fundamental packages such
 as ``pip`` and ``setuptools`` are available at the time of building the package.
 
-The best way to install a Python-based package is to use ``pip``, in which
+The best way to install a ``normal`` Python-based package is to use ``pip``, in which
 case the ``spkg-install.in`` script template might just consist of
 
 .. CODE-BLOCK:: bash
@@ -603,12 +603,15 @@ For example, the ``scipy`` ``spkg-check.in`` file contains the line
 
     exec python3 spkg-check.py
 
-Abstract requirements: The install-requires.txt file
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Abstract requirements: The ``install-requires.txt`` file
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-All normal Python packages and all wheel packages must have a file ``install-requires.txt``.
-If a Python package is available on PyPI, this file must contain the
-name of the package as it is known to PyPI.
+All ``normal`` Python packages and all ``wheel`` packages must have a file
+``install-requires.txt``. For ``pip`` packages, the file is optional; if
+it is missing, the ``requirements.txt`` file is used instead.
+
+If a Python package is available on PyPI, the ``install-requires.txt`` file must
+contain the name of the package as it is known to PyPI.
 
 Optionally,
 ``install-requires.txt`` can encode version constraints (such as lower
@@ -660,11 +663,11 @@ Setting upper bounds to guard against incompatible future changes is
 a complex topic; see :trac:`33520`.
 
 
-Concrete (pinned) requirements: The package-version.txt file
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Concrete (pinned) requirements of ``normal``, ``wheel``, ``script`` packages: The ``package-version.txt`` file
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Like normal non-Python packages, all normal Python packages and all wheel packages
-must have a file ``package-version.txt``.
+Like ``normal`` non-Python packages, all ``normal`` Python packages and all ``wheel`` packages
+must have a file ``package-version.txt``. For ``script`` Python packages, the file is optional.
 
 Sage uses this version for two purposes:
 
@@ -676,6 +679,69 @@ Sage uses this version for two purposes:
 
   For the use of the generated ``requirements.txt`` files, see
   the `pip User Guide <https://pip.pypa.io/en/stable/user_guide/#requirements-files>`_.
+
+
+Concrete requirements of ``pip`` packages: The ``requirements.txt`` file
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In contrast to ``normal``, ``wheel``, and ``script`` packages, the
+``pip`` packages do not use a ``package-version.txt`` file.
+
+Instead, the concrete requirements are set in a ``requirements.txt``
+file, which is passed directly to ``pip`` at installation time.
+
+The ``requirements.txt`` file uses a very flexible format, defined
+in the `pip User Guide
+<https://pip.pypa.io/en/stable/user_guide/#requirements-files>`_.
+Through this format, the concrete requirements can either be
+pinned to a specific version, or set acceptable version ranges, or be
+entirely unconstrained.  The format is even flexible enough to install
+several distribution packages at the same time, and to conditionalize
+on the operating system or Python version.
+
+Pinning a version has the potential benefit of stability, as it can
+avoid retroactive breakage of the Sage distribution by new,
+incompatible versions, and can also help achieve reproducibility
+of computations.
+
+The cost is that updating the version requires
+work by at least two Sage developers: One who prepares a PR and one
+who reviews it.  Moreover, when the package does not get the attention of
+developers who upgrade it, there is the potential risk of missing out
+on bugfixes made in newer versions, or missing out on features in
+major new versions.
+
+Not pinning the version has the obvious potential benefit of always
+being up to date, as ``pip`` contacts the index server (PyPI) to
+obtain and install the package. (Note that ``normal`` and ``wheel``
+packages are always pinned and do not even have access to the index
+server at the time of building and installing the package.)
+
+But this dynamism also brings a risk
+of instability, either by the package itself being affected by bugs in
+a new version, or by breaking compatibility with Sage.
+
+What policy is best for a package depends on various factors,
+including the development velocity and quality control that the
+upstream project uses, the interest by Sage developers in the package,
+the depth of integration in Sage, whether it affects the mathematics,
+etc.
+
+
+Note about dependencies of ``pip`` packages
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Dependencies of a ``pip`` package do not need to be available as packages
+in the Sage distribution, as the package can pull some of its build-time and
+run-time dependencies directly from PyPI. That's a mild convenience for developers,
+and can be important if one wants to leave the version range wide open.
+
+However, if a dependency is also a package of the Sage distribution,
+then we must declare this dependency.  Otherwise, various errors
+can occur when building or upgrading. When new versions of ``pip``
+packages add dependencies that happen to be Sage packages, there is a
+separate source of instability.
+
 
 
 .. _section-spkg-SPKG-txt:
@@ -1143,7 +1209,9 @@ For Python packages available from PyPI, you can use::
                                              --type optional
 
 This automatically downloads the most recent version from PyPI and also
-obtains most of the necessary information by querying PyPI.
+obtains most of the necessary information by querying PyPI. In particular,
+the ``SPKG.rst`` file is created as a copy of the package's README file.
+
 
 The ``dependencies`` file may need editing (watch out for warnings regarding
 ``--no-deps`` that Sage issues during installation of the package!).
