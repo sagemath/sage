@@ -551,7 +551,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
         ::
 
-            sage: L = LaurentPolynomialRing(RR, 5, 'x')
+            sage: L = LaurentPolynomialRing(QQbar, 5, 'x')
             sage: f = L.random_element(-1, 1)
             sage: f = L.random_element(-1, 1)
             sage: tuple(f.degree(x) <= 1 for x in L.gens())
