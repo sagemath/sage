@@ -41,7 +41,7 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/rings/number_field',
         install: true,
-        include_directories: [inc_arb, inc_cpython, inc_ext, inc_flint, inc_ntl, inc_rings],
+        include_directories: [inc_cpython, inc_ext, inc_flint, inc_ntl, inc_rings],
         dependencies: [py_dep, cypari2, cysignals, flint, gmp, mpfi, mpfr, ntl],
     )
 endforeach
@@ -57,7 +57,7 @@ foreach name, pyx : extension_data_cpp
         subdir: 'sage/rings/number_field',
         install: true,
         override_options : ['cython_language=cpp'],
-        include_directories: [inc_arb, inc_cpython, inc_ext, inc_flint, inc_ntl, inc_rings],
+        include_directories: [inc_cpython, inc_ext, inc_flint, inc_ntl, inc_rings],
         dependencies: [py_dep, cypari2, cysignals, flint, gmp, mpfi, mpfr, ntl],
     )
 endforeach

@@ -109,19 +109,17 @@ compatibility.
 # that will have to be changed.
 #####################################################################
 
-from __future__ import print_function, absolute_import
+from __future__ import absolute_import, print_function
 
 import os
-
 from os.path import getmtime
 
-from .generator import InterpreterGenerator, AUTOGEN_WARN
+from .generator import AUTOGEN_WARN, InterpreterGenerator
 from .instructions import *
 from .memory import *
 from .specs.base import *
 from .storage import *
 from .utils import *
-
 
 # Tuple of (filename_root, extension, method) where filename_root is the
 # root of the filename to be joined with "_<interpreter_name>".ext and
@@ -197,7 +195,7 @@ def rebuild(dirname, force=False, interpreters=None, distribution=None):
         sage: testdir = tmp_dir()
         sage: rebuild(testdir, interpreters=['Element', 'Python'],
         ....:         distribution='sagemath-categories')
-        Building interpreters for fast_callable
+        Generating interpreters for fast_callable in ...
         -> First build of interpreters
         sage: with open(testdir + '/all__sagemath_categories.py') as f:
         ....:     f.readline()
@@ -205,7 +203,7 @@ def rebuild(dirname, force=False, interpreters=None, distribution=None):
     """
     # This line will show up in "sage -b" (once per upgrade, not every time
     # you run it).
-    print("Building interpreters for fast_callable")
+    print(f"Generating interpreters for fast_callable in {dirname}")
 
     if interpreters is None:
         interpreters = ['CDF', 'Element', 'Python', 'RDF', 'RR', 'CC']

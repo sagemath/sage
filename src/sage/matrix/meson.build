@@ -69,7 +69,7 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/matrix',
         install: true,
-        include_directories: [inc_arb, inc_cpython, inc_ext, inc_flint, inc_ntl, inc_numpy, inc_rings, inc_rings_finite],
+        include_directories: [inc_cpython, inc_ext, inc_flint, inc_ntl, inc_numpy, inc_rings, inc_rings_finite],
         dependencies: dependencies,
     )
 endforeach
@@ -93,7 +93,7 @@ foreach name, pyx : extension_data_cpp
         subdir: 'sage/matrix',
         install: true,
         override_options : ['cython_language=cpp'],
-        include_directories: [inc_arb, inc_cpython, inc_ext, inc_flint, inc_ntl, inc_numpy, inc_rings, inc_rings_finite],
+        include_directories: [inc_cpython, inc_ext, inc_flint, inc_ntl, inc_numpy, inc_rings, inc_rings_finite],
         dependencies: [py_dep, blas, cypari2, cysignals, fflas, flint, gd, givaro, gmp, gmpxx, iml, linbox, m, m4ri, m4rie, mpfi, mpfr, mtx, ntl, pari, png, singular, zlib],
     )
 endforeach

@@ -361,10 +361,11 @@ dependencies:
   - libxkbcommon=1.6.0=h5d7e998_0
   - matplotlib-inline=0.1.6=pyhd8ed1ab_0
   - memory-allocator=0.1.3=py39hd1e30aa_0
-  - overrides=7.4.0=pyhd8ed1ab_0
-  - pexpect=4.8.0=pyh1a96a4e_2
-  - pillow=10.1.0=py39had0adad_0
-  - pip=23.3.2=pyhd8ed1ab_0
+  - meson=1.3.2=pyhd8ed1ab_0
+  - overrides=7.7.0=pyhd8ed1ab_0
+  - pexpect=4.9.0=pyhd8ed1ab_0
+  - pillow=10.2.0=py39had0adad_0
+  - pip=24.0=pyhd8ed1ab_0
   - pplpy=0.8.9=py39hba3e9e5_0
   - primecountpy=0.1.0=py39h7633fee_4
   - prompt-toolkit=3.0.42=pyha770c72_0
@@ -400,7 +401,8 @@ dependencies:
   - jsonschema-specifications=2023.11.2=pyhd8ed1ab_0
   - jupyter_server_terminals=0.5.0=pyhd8ed1ab_0
   - liblapacke=3.9.0=20_linux64_openblas
-  - numpy=1.26.2=py39h474f0d3_0
+  - meson-python=0.15.0=pyh0c530f3_0
+  - numpy=1.26.4=py39h474f0d3_0
   - prompt_toolkit=3.0.42=hd8ed1ab_0
   - pyqt5-sip=12.12.2=py39h3d6467e_5
   - requests=2.31.0=pyhd8ed1ab_0
