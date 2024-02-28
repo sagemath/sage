@@ -95,7 +95,7 @@ def RIFtol(*args):
 ansi_escape_sequence = re.compile(r"(\x1b[@-Z\\-~]|\x1b\[.*?[@-~]|\x9b.*?[@-~])")
 
 special_optional_regex = (
-    "arb216|arb218|py2|long time|not implemented|not tested|optional|needs|known bug"
+    "py2|long time|not implemented|not tested|optional|needs|known bug"
 )
 tag_with_explanation_regex = r"((?:\w|[.])*)\s*(?:\((?P<cmd_explanation>.*?)\))?"
 optional_regex = re.compile(
@@ -136,8 +136,6 @@ def parse_optional_tags(
     - ``'not tested'``
     - ``'known bug'`` (possible values are ``None``, ``linux`` and ``macos``)
     - ``'py2'``
-    - ``'arb216'``
-    - ``'arb218'``
     - ``'optional - FEATURE...'`` or ``'needs FEATURE...'`` --
       the dictionary will just have the key ``'FEATURE'``
 
