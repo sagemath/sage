@@ -128,6 +128,7 @@ ntl = cc.find_library('ntl', required: true)
 # have to add them manually.
 # https://github.com/mesonbuild/meson/issues/9562
 add_project_arguments('-I', meson.current_source_dir(), language : 'cython')
+add_project_arguments('-I', meson.current_build_dir(), language : 'cython')
 
 # Add global compiler flags
 add_project_arguments('-X auto_pickle=False', language : 'cython')
