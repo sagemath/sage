@@ -494,25 +494,26 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         Return a random polynomial of degree at most ``high_degree`` and
         lowest degree at least ``low_degree``.
 
-        Internally uses the random sampling from
-        :meth:`sage.rings.polynomial.multi_polynomial_ring_base.MPolynomialRing_base.random_element`
-        then shifts this polynomial down to compute the correct degrees.
+        Internally uses the random sampling from the corresponding
+        polynomial ring then shifts this polynomial down to compute
+        the correct degrees.
 
         INPUT:
 
-        - ``low_degree`` -- integer (default: ``-2``).
-          The smallest valuation of monomial in the polynomial
+        - ``min_valuation`` -- integer (default: ``-2``); the
+          minimal allowed valuation of the polynomial
 
-        - ``high_degree`` -- integer (default: ``2``).
-          The maximal valuation of monomial in the polynomial
+        - ``max_degree`` -- integer (default: ``2``); the
+          maximal allowed degree of the polynomial
 
-        - ``terms`` -- number of terms requested (default: ``5``).
-          If more terms are requested than exist, then this parameter is
-          silently reduced to the maximum number of available terms.
+        - ``terms`` -- (default: ``5``) number of terms requested;
+          if more terms are requested than exist (from specifying
+          the valuation and degree), then this parameter is silently
+          reduced to the maximum number of available terms
 
-        - ``choose_degree`` -- bool (default: ``False``)
-          choose degrees of monomials randomly first rather than monomials
-          uniformly random.
+        - ``choose_degree`` -- bool (default: ``False``) choose
+          degrees of monomials randomly first rather than monomials
+          uniformly random
 
         - ``*args, **kwds`` -- passed to the random element generator
           of the underlying polynomial ring and respective base ring
