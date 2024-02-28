@@ -152,7 +152,6 @@ inc_ntl = include_directories('sage/libs/ntl')
 inc_arb = include_directories('sage/libs/arb')
 inc_data_structures = include_directories('sage/data_structures')
 inc_ext = include_directories('sage/ext')
-inc_interpreters = include_directories('sage/ext/interpreters')
 inc_partn_ref2 = include_directories('sage/groups/perm_gps/partn_ref2')
 inc_src = include_directories('.')
 

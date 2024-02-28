@@ -108,7 +108,7 @@ foreach name, pyx : extension_data
         sources: pyx,
         subdir: 'sage/ext/interpreters',
         install: true,
-        include_directories: [inc_cpython, inc_ext, inc_interpreters, inc_rings, inc_src],
+        include_directories: [inc_cpython, inc_ext, inc_rings, inc_src],
         dependencies: [py_dep, cypari2, cysignals, gmp, gsl, mpc, mpfr, pari, interpreters_dep],
     )
 endforeach
