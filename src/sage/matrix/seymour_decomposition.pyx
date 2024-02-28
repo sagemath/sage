@@ -180,7 +180,7 @@ cdef class DecompositionNode(SageObject):
         r"""
         Returns true iff the decomposition is over `\mathbb{F}_3`.
         """
-        return CMRmatroiddecIsTernary(self._dec)
+        return <bint> CMRmatroiddecIsTernary(self._dec)
 
     @cached_method
     def _children(self):
@@ -402,10 +402,10 @@ cdef class TwoSumNode(SumNode):
 cdef class ThreeSumNode(SumNode):
 
     def is_distributed_ranks(self):
-        return CMRmatroiddecThreeSumDistributedRanks(self._dec)
+        return <bint> CMRmatroiddecThreeSumDistributedRanks(self._dec)
 
     def is_concentrated_rank(self):
-        return CMRmatroiddecThreeSumConcentratedRank(self._dec)
+        return <bint> CMRmatroiddecThreeSumConcentratedRank(self._dec)
 
     def block_matrix_form(self):
         M1, M2 = self.summand_matrices()
