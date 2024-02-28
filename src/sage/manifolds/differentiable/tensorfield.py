@@ -476,8 +476,9 @@ class TensorField(ModuleElementWithMutability):
         self._vmodule = vector_field_module
         self._tensor_type = tuple(tensor_type)
         self._tensor_rank = self._tensor_type[0] + self._tensor_type[1]
-        self._is_zero = False # a priori, may be changed below or via
-                              # method __bool__()
+        self._is_zero = False
+        # a priori, may be changed below or via  method __bool__()
+
         self._name = name
         if latex_name is None:
             self._latex_name = self._name
@@ -503,7 +504,7 @@ class TensorField(ModuleElementWithMutability):
         # Initialization of derived quantities:
         self._init_derived()
 
-    ####### Required methods for ModuleElement (beside arithmetic) #######
+    # ###### Required methods for ModuleElement (beside arithmetic) #######
 
     def __bool__(self):
         r"""
@@ -547,7 +548,7 @@ class TensorField(ModuleElementWithMutability):
         self._is_zero = True
         return False
 
-    ##### End of required methods for ModuleElement (beside arithmetic) #####
+    # #### End of required methods for ModuleElement (beside arithmetic) #####
 
     def _repr_(self):
         r"""
@@ -3742,7 +3743,7 @@ class TensorField(ModuleElementWithMutability):
         self,
         non_degenerate_form: Union[PseudoRiemannianMetric, SymplecticForm, PoissonTensorField],
         pos: Optional[int] = None,
-    ) -> "TensorField":
+    ) -> TensorField:
         r"""
         Compute a dual of the tensor field by raising some index with the
         given tensor field (usually, a pseudo-Riemannian metric, a symplectic form or a Poisson tensor).

@@ -405,7 +405,7 @@ class MPolynomialIdeal_magma_repr:
             sage: len(gb)
             5
         """
-        R   = self.ring()
+        R = self.ring()
         if not deg_bound:
             mself = magma(self)
         else:
@@ -2594,7 +2594,7 @@ class MPolynomialIdeal_singular_repr(
              {y: 0.3611030805286474?, x: 2.769292354238632?},
              {y: 1, x: 1}]
 
-        We can also use the `optional package msolve <../../../../spkg/msolve.html>`_
+        We can also use the :ref:`optional package msolve <spkg_msolve>`
         to compute the variety.
         See :mod:`~sage.rings.polynomial.msolve` for more information. ::
 
@@ -2676,7 +2676,7 @@ class MPolynomialIdeal_singular_repr(
           on a toy implementation otherwise.
 
         - With ``algorithm`` = ``"msolve"``, uses the
-          `optional package msolve <../../../../spkg/msolve.html>`_.
+          :ref:`optional package msolve <spkg_msolve>`.
           Note that msolve uses heuristics and therefore
           requires setting the ``proof`` flag to ``False``. See
           :mod:`~sage.rings.polynomial.msolve` for more information.
@@ -3615,7 +3615,7 @@ class NCPolynomialIdeal(MPolynomialIdeal_singular_repr, Ideal_nc):
 
         ALGORITHM: Uses Singular's ``std`` command
         """
-        if self.side()  == 'twosided':
+        if self.side() == 'twosided':
             return self.twostd()
         return self.ring().ideal( self.__call_singular('std'), side=self.side())
 #        return self.__call_singular('std')
@@ -4287,7 +4287,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             Macaulay2's ``GroebnerBasis`` command with the strategy "MGB" (if available)
 
         ``'msolve'``
-            `optional package msolve <../../../../spkg/msolve.html>`_ (degrevlex order)
+            :ref:`optional package msolve <spkg_msolve>` (degrevlex order)
 
         ``'magma:GroebnerBasis'``
             Magma's ``Groebnerbasis`` command (if available)
@@ -4415,7 +4415,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
              b*c - 19*c^2 + 10*b + 40*c, a + 2*b + 2*c - 1]
 
         Over prime fields of small characteristic, we can also use the
-        `optional package msolve <../../../../spkg/msolve.html>`_::
+        :ref:`optional package msolve <spkg_msolve>`::
 
             sage: R.<a,b,c> = PolynomialRing(GF(101), 3)
             sage: I = sage.rings.ideal.Katsura(R,3)  # regenerate to prevent caching
@@ -5333,7 +5333,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         2. We linearize and compute the echelon form::
 
-               sage: A, v = F.coefficient_matrix()
+               sage: A, v = F.coefficients_monomials()
                sage: A.echelonize()
 
         3. The result is the desired Gröbner basis::

@@ -547,7 +547,7 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
             + 6*x/(x^4 + 4*x^3 + 3*x^2 + 6*x + 4)) of Maximal order of Function field
             in y defined by y^4 + x*y + 4*x + 1
         """
-        T  = self._codifferent_matrix()
+        T = self._codifferent_matrix()
         return self._ideal_from_vectors(T.inverse().columns())
 
     @cached_method
@@ -686,7 +686,7 @@ class FunctionFieldMaximalOrder_polymod(FunctionFieldMaximalOrder):
                 m = []
                 for g in q.basis_matrix():
                     m.extend(matrix([g * mr for mr in matrices_reduced]).columns())
-                beta  = [c.lift() for c in matrix(m).right_kernel().basis()[0]]
+                beta = [c.lift() for c in matrix(m).right_kernel().basis()[0]]
 
                 r = q
                 index = 1
@@ -1291,7 +1291,7 @@ class FunctionFieldMaximalOrder_global(FunctionFieldMaximalOrder_polymod):
                 m = []
                 for i in range(n):
                     m.append(sum(qgenb[j] * mtable[i][j] for j in range(n)))
-                beta  = [fr(coeff) for coeff in matrix(m).left_kernel().basis()[0]]
+                beta = [fr(coeff) for coeff in matrix(m).left_kernel().basis()[0]]
 
                 prime.is_prime.set_cache(True)
                 prime._prime_below = ideal
