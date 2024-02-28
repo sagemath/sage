@@ -4138,3 +4138,62 @@ def generate_plot_points(f, xrange, plot_points=5, adaptive_tolerance=0.01,
     if excluded:
         return data, excluded_points
     return data
+
+def CustomScalarFormatter(replace_values=([],[])):
+    r"""
+    This matplotlib formatter selectively replaces the given tick labels.
+    Takes a tuple or list of two lists as argument. First list labels will be replaced by second list labels.
+    Note that the first label entries are cumpulsorily int or float values. No strings.
+    No such restrictions for the second list. Because they will be anyway converted to strings in the end.
+
+    Authored by Niranjana K. M.
+
+    EXAMPLES:
+
+    ::
+
+        sage: from sage.plot.plot import CustomScalarFormatter
+        sage: import matplotlib.pyplot as plt
+        sage: import numpy as np
+        sage: z = np.linspace(0, 5000, 100)
+        sage: fig, ax = plt.subplots()
+        sage: xmajorformatter = CustomScalarFormatter(replace_values=([2000,0],['$x_0$','']))
+        sage: ymajorformatter = CustomScalarFormatter(replace_values=([1E7,0],['$y_0$','']))
+        sage: ax.xaxis.set_major_formatter(xmajorformatter)
+        sage: ax.yaxis.set_major_formatter(ymajorformatter)
+        sage: ax.plot(z,z**2)
+        sage: plt.show()
+
+    ::
+
+        sage: from sage.plot.plot import CustomScalarFormatter
+        sage: from matplotlib import font_manager
+        sage: plot(x^2, (x,100,5000), tick_formatter = [ CustomScalarFormatter(replace_values=[[2000,0],['$x_0$','']]), CustomScalarFormatter(replace_values=[[1E7,0],['$y_0$','']]) ])
+
+    """
+
+    from matplotlib.ticker import ScalarFormatter
+
+    class _CustomScalarFormatter(ScalarFormatter):
+        def __init__(self, useOffset=None, useMathText=None, useLocale=None, replace_values=([],[])):
+            super().__init__(useOffset=None, useMathText=None, useLocale=None)
+            self.replace_values = replace_values
+
+        def __call__(self, x, pos=None):
+            """
+            Return the format for tick value *x* at position *pos*.
+            """
+            if len(self.locs) == 0:
+                return ''
+            #elif x == 0:
+            #    return ''
+            elif x in self.replace_values[0]:
+                idx = self.replace_values[0].index(x)
+                return str(self.replace_values[1][idx])
+            else:
+                xp = (x - self.offset) / (10. ** self.orderOfMagnitude)
+                if abs(xp) < 1e-8:
+                    xp = 0
+                return self._format_maybe_minus_and_locale(self.format, xp)
+
+    return _CustomScalarFormatter(replace_values=replace_values)
