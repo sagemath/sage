@@ -71,6 +71,7 @@ wrapper_rr_header = custom_target(
 
 interpreters_dep = declare_dependency(
     sources: [wrapper_el_header, wrapper_cc_header, wrapper_cdf_header, wrapper_rr_header],
+    include_directories : include_directories('.')
 )
 
 
