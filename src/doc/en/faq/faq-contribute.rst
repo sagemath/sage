@@ -120,43 +120,17 @@ project idea.
 Where can I find resources on Python or Cython?
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Here is an incomplete list of resources on Python and Cython. Further
-resources can be found by a web search.
+If you are new to Python, you can start with the `Official Python Tutorial <https://docs.python.org/3/tutorial/>`_ or one of numerous
+free tutorials and courses out on the web.
 
-**General resources**
+To learn about Cython, start with the `Basic Cython Tutorial <https://cython.readthedocs.io/en/latest/src/tutorial/cython_tutorial.html>`_.
 
-* `Cython <https://cython.org>`_
-* `pep8 <https://pypi.org/project/pep8>`_
-* `pydeps <https://pypi.org/project/pydeps>`_
-* `pycallgraph <https://pycallgraph.readthedocs.io>`_
-* `PyChecker <http://pychecker.sourceforge.net>`_
-* `PyFlakes <https://pypi.org/project/pyflakes>`_
-* `Pylint <https://www.logilab.org/project/pylint>`_
-* `Python <https://www.python.org>`_ home page and the
-  `Python standard documentation <https://docs.python.org>`_
-* `Snakefood <http://furius.ca/snakefood>`_
-* `Sphinx <https://www.sphinx-doc.org>`_
-* `XDot <https://github.com/jrfonseca/xdot.py>`_
-
-**Tutorials and books**
-
-* `Cython Tutorial <http://conference.scipy.org/proceedings/SciPy2009/paper_1/>`_
-  by Stefan Behnel, Robert W. Bradshaw, and Dag Sverre Seljebotn
-* `Dive Into Python 3 <http://www.diveintopython3.net>`_ by Mark Pilgrim
-* `Fast Numerical Computations with Cython <http://conference.scipy.org/proceedings/SciPy2009/paper_2/>`_
-  by Dag Sverre Seljebotn
-* `Official Python Tutorial <https://docs.python.org/3/tutorial/>`_
-
-**Articles and HOWTOs**
-
-* `decorator <https://pypi.org/project/decorator>`_
-* `Functional Programming HOWTO <https://docs.python.org/3/howto/functional.html>`_
-  by A. M. Kuchling
-* `Python Functional Programming for Mathematicians <https://wiki.sagemath.org/devel/FunctionalProgramming>`_
-  by Minh Van Nguyen
-* `Regular Expression HOWTO <https://docs.python.org/3/howto/regex.html>`_
-  by A. M. Kuchling
-* `reStructuredText <https://docutils.sourceforge.io/rst.html>`_
+It is a good idea to learn about good developer tools
+alongside with learning about programming in these languages.
+Our developer guide explains how to :ref:`write testable examples
+<section-doctest-writing>` and has information on the
+:ref:`development and testing tools <chapter-tools>` that
+are in use in Sage development.
 
 
 Are there any coding conventions I need to follow?
