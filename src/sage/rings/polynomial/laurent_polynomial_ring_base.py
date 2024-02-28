@@ -489,10 +489,10 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         """
         raise NotImplementedError
 
-    def random_element(self, low_degree=-2, high_degree=2, terms=5, choose_degree=False, *args, **kwds):
+    def random_element(self, min_valuation=-2, high_degree=2, *args, **kwds):
         """
         Return a random polynomial of degree at most ``high_degree`` and
-        lowest degree at least ``low_degree``.
+        lowest valuation at least ``min_valuation``.
 
         Internally uses the random sampling from the corresponding
         polynomial ring then shifts this polynomial down to compute
@@ -506,91 +506,93 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         - ``max_degree`` -- integer (default: ``2``); the
           maximal allowed degree of the polynomial
 
-        - ``terms`` -- (default: ``5``) number of terms requested;
-          if more terms are requested than exist (from specifying
-          the valuation and degree), then this parameter is silently
-          reduced to the maximum number of available terms
-
-        - ``choose_degree`` -- bool (default: ``False``) choose
-          degrees of monomials randomly first rather than monomials
-          uniformly random
-
         - ``*args, **kwds`` -- passed to the random element generator
           of the underlying polynomial ring and respective base ring
 
         EXAMPLES::
 
-            sage: R = LaurentPolynomialRing(QQ, 1, 'x')
-            sage: f = R.random_element()
+            sage: L.<x> = LaurentPolynomialRing(QQ)
+            sage: f = L.random_element()
             sage: f.degree() <= 2
             True
             sage: f.degree() >= -2
             True
-            sage: f.parent() is R
+            sage: f.parent() is L
             True
 
         ::
 
-            sage: R = LaurentPolynomialRing(ZZ, 2, 'x')
-            sage: f = R.random_element(-10, 20)
+            sage: L = LaurentPolynomialRing(ZZ, 2, 'x')
+            sage: f = L.random_element(-10, 20)
             sage: f.degree() <= 20
             True
-            sage: tuple(f.degree(x) >= -10 for x in R.gens())
+            sage: tuple(f.degree(x) >= -10 for x in L.gens())
             (True, True)
 
         ::
 
-            sage: R = LaurentPolynomialRing(GF(13), 3, 'x')
-            sage: f = R.random_element(-5, 5)
-            sage: f = R.random_element(-5, 10)
-            sage: tuple(f.degree(x) <= 10 for x in R.gens())
+            sage: L = LaurentPolynomialRing(GF(13), 3, 'x')
+            sage: f = L.random_element(-5, 5)
+            sage: f = L.random_element(-5, 10)
+            sage: tuple(f.degree(x) <= 10 for x in L.gens())
             (True, True, True)
-            sage: tuple(f.degree(x) >= -5 for x in R.gens())
+            sage: tuple(f.degree(x) >= -5 for x in L.gens())
             (True, True, True)
 
         ::
 
-            sage: R = LaurentPolynomialRing(QQ, 5, 'x')
-            sage: f = R.random_element(-3, 5, terms=6, choose_degree=True)
-            sage: f.parent() is R
-            True
-            sage: len(list(f)) <= 6
-            True
+            sage: L = LaurentPolynomialRing(RR, 2, 'x')
+            sage: f = L.random_element()
+            sage: f = L.random_element()
+            sage: tuple(f.degree(x) <= 2 for x in L.gens())
+            (True, True)
+            sage: tuple(f.degree(x) >= -2 for x in L.gens())
+            (True, True)
+
+        ::
+
+            sage: L = LaurentPolynomialRing(RR, 5, 'x')
+            sage: f = L.random_element(-1, 1)
+            sage: f = L.random_element(-1, 1)
+            sage: tuple(f.degree(x) <= 1 for x in L.gens())
+            (True, True, True, True, True)
+            sage: tuple(f.degree(x) >= -1 for x in L.gens())
+            (True, True, True, True, True)
 
         TESTS::
 
-            sage: rings = [QQ, ZZ, GF(13), GF(7^3)]
+            sage: rings = [RR, QQ, ZZ, GF(13), GF(7^3)]
             sage: for ring in rings:
             ....:     d = randint(1, 5)
-            ....:     R = LaurentPolynomialRing(ring, d, 'x')
+            ....:     L = LaurentPolynomialRing(ring, d, 'x')
             ....:     for _ in range(100):
             ....:         n, m = randint(-10, 10), randint(1, 10)
             ....:         if m < n:
             ....:             m, n = n, m
-            ....:         f = R.random_element(n, m)
+            ....:         f = L.random_element(n, m)
             ....:         if f.is_zero(): continue # the zero polynomial is defined to have degree -1
-            ....:         for x in R.gens():
+            ....:         for x in L.gens():
             ....:             assert f.degree(x) <= m
             ....:             assert f.degree(x) >= n
         """
         # Ensure the degree parameters are sensible
-        if high_degree < low_degree:
-            raise ValueError("`high_degree` must be greater than or equal to `low_degree`")
+        if high_degree < min_valuation:
+            raise ValueError("`high_degree` must be greater than or equal to `min_valuation`")
 
         # First sample a polynomial from the associated polynomial
-        # ring of `self` of degree `(high_degree + abs(low_degree))`
-        abs_deg = (high_degree - low_degree)
-        f_rand = self._R.random_element(degree=abs_deg, terms=terms, choose_degree=choose_degree, *args, **kwds)
+        # ring of `self` of degree `(high_degree - min_valuation)`
+        abs_deg = (high_degree - min_valuation)
+        f_rand = self._R.random_element(degree=abs_deg, *args, **kwds)
 
-        # Coerce back to ``self``. We now have a polynomial of only
+        # Coerce back to `self`. We now have a polynomial of only
         # positive valuation monomials
         f = self(f_rand)
 
-        # Finally, shift the entire polynomial down by low_degree
+        # Finally, shift the entire polynomial down by min_valuation
         # which will result in a polynomial with highest degree
-        # high_degree and lowest degree low_degree
+        # high_degree and lowest valuation min_valuation
         monomial = prod(self.gens())
-        f *= monomial**low_degree
+        f *= monomial**min_valuation
 
         return f
 
