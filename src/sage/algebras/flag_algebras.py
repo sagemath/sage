@@ -113,8 +113,7 @@ edges `e` in `k3` free graphs we can write ::
     
     sage: x = GraphTheory.optimize_problem(e, 3)
     ...
-    Success: SDP solved
-    ...
+    Optimal solution found.
     sage: abs(x-0.5)<1e-6
     True
     
@@ -548,13 +547,11 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     
     def optimize_problem(self, target_element, target_size, ftypes=None, 
                          maximize=True, certificate=False):
-        #needs csdpy
         r"""
         Try to maximize or minimize the value of `target_element`
         
         The algorithm calculates the multiplication tables and 
-        sends the SDP problem to csdpy, which is a python 
-        wrapper for the fast csdp solver.
+        sends the SDP problem to cvxopt.
         
         INPUT:
 
@@ -573,7 +570,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
 
         OUTPUT: A bound for the optimization problem. If 
             certificate is requested then returns the entire
-            output of the csdpy
+            output of the solver as the second argument.
 
         EXAMPLES:
         
@@ -585,8 +582,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             sage: GraphTheory.exclude(GraphTheory(3, edges=[[0, 1], [0, 2], [1, 2]]))
             sage: x = GraphTheory.optimize_problem(GraphTheory(2, edges=[[0, 1]]), 3)
             ...
-            Success: SDP solved
-            ...
+            Optimal solution found.
             sage: abs(x-0.5)<1e-6
             True
         
@@ -597,8 +593,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             sage: GraphTheory.exclude(GraphTheory(5))
             sage: x = GraphTheory.optimize_problem(GraphTheory(3), 5) # long time (5 second)
             ...
-            Success: SDP solved
-            ...
+            Optimal solution found.
         
         
         Generalized Turan problem for hypergraphs, maximum density of K^3_4
@@ -608,8 +603,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             sage: ThreeGraphTheory.exclude(ThreeGraphTheory(5))
             sage: ThreeGraphTheory.optimize_problem(ThreeGraphTheory(4), 6) # todo: not implemented
             ...
-            Success: SDP solved
-            ...
+            Optimal solution found.
         
         
         The minimum number of transitive tournaments is attained at 
@@ -619,8 +613,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             ....: TournamentTheory(3, edges=[[0, 1], [0, 2], [1, 2]]), \
             ....: 3, maximize=False)
             ...
-            Success: SDP solved
-            ...
+            Optimal solution found.
         
         
         Ramsey's theorem, the K_5 is the largest 2-colorable complete
@@ -629,8 +622,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             sage: RamseyGraphTheory.exclude(RamseyGraphTheory(3, edges=[[0, 1], [0, 2], [1, 2]]))
             sage: x = RamseyGraphTheory.optimize_problem(RamseyGraphTheory(2), 4, maximize=False)
             ...
-            Success: SDP solved
-            ...
+            Optimal solution found.
             sage: abs(x-0.2)<1e-6
             True
         
@@ -648,7 +640,7 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
             -OVGraphTheory: 5
             -OEGraphTheory: 4
         """
-        from csdpy import solve_sdp
+        from cvxopt import matrix, spmatrix, solvers
         if ftypes is None:
             flags = [flag for kk in range(2-target_size%2, target_size-1, 2) 
                       for flag in self.generate_flags(kk)]
@@ -659,44 +651,43 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
         constraints = len(self.generate_flags(target_size))
         block_sizes.append(-constraints-2)
         block_num = len(block_sizes)
-        
+
         if maximize:
             avals = (target_element*(-1)<<(target_size - \
                                            target_element.size())).values()
         else:
             avals = (target_element<<(target_size - \
                                       target_element.size())).values()
-        
-        mat_inds = [0, block_num, 1, 1, 0, block_num, 2, 2] #C values
-        mat_vals = [-1, 1]
-        print("Calculating values for {} ftypes and {} structures".format(\
-               len(ftypes), constraints))
+        c = matrix([float(xx) for xx in avals])
+        Gs = []
+        hs = []
         for ii, ftype in enumerate(ftypes):
             ns = (target_size + ftype.size())//2
             fls = self.generate_flags(ns, ftype)
             table = self.mul_project_table(ns, ns, ftype, [])
-            for gg, mm in enumerate(table):
-                dd = mm._dict()
-                if len(dd)>0:
-                    inds, values = zip(*mm._dict().items())
-                    iinds, jinds = zip(*inds)
-                    for cc in range(len(iinds)):
-                        if iinds[cc]>=jinds[cc]:
-                            mat_inds.extend([gg+1, ii+1, iinds[cc]+1, 
-                                             jinds[cc]+1])
-                            mat_vals.append(values[cc])
-            print("Done with {}".format(ftype))
-        for gg in range(constraints):
-            mat_inds.extend([gg+1, block_num, gg+3, gg+3, 
-                             gg+1, block_num, 1, 1, 
-                             gg+1, block_num, 2, 2])
-            mat_vals.extend([1, -1, 1])
-        sdp_result = solve_sdp(block_sizes, list(avals), 
-                               mat_inds, mat_vals)
+            x = []; I = []; J = []
+            dim = block_sizes[ii]
+            d1 = dim**2
+            d2 = len(table)
+            for jj, mat in enumerate(table):
+                dd = mat._dict()
+                x += [float(-xx) for xx in dd.values()]
+                I += [iii*dim + jjj for iii, jjj in dd.keys()]
+                J += [jj]*len(dd)
+            Gs.append(spmatrix(x, I, J, (d1, d2)))
+            hs.append(matrix([float(0)]*d1, (dim, dim)))
+        for ii in range(constraints):
+            Gs.append(spmatrix([float(-1)], [int(0)], [int(ii)], (1, constraints)))
+            hs.append(matrix(float(0)))
+        Gs.append(spmatrix([float(1)]*constraints, [int(0)]*constraints, range(constraints), (1, constraints)))
+        hs.append(matrix([float(1)], (1, 1)))
+        Gs.append(spmatrix([float(-1)]*constraints, [int(0)]*constraints, range(constraints), (1, constraints)))
+        hs.append(matrix([float(-1)], (1, 1)))
+        sdp_result = solvers.sdp(c, Gs=Gs, hs=hs)
         if maximize:
-            ret = -sdp_result['primal']
+            ret = -sdp_result['primal objective']
         else:
-            ret = sdp_result['dual']
+            ret = sdp_result['dual objective']
         if certificate:
             ret = (ret, sdp_result)
         return ret
