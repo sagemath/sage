@@ -2229,7 +2229,7 @@ class RiemannSurface():
                     (M * (self._RR.pi() + 64 / (15 * (expr**2 - 1))) / E_global).log()
                     / (2 * expr.log())
                 )
-                if N_required == Infinity:
+                if N_required.is_positive_infinity():
                     return 2**max(60, self._prec)
                 Ni = max(Ni, N_required.ceil())
             return Ni
