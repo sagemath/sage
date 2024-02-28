@@ -533,6 +533,8 @@ cdef class SpecialLeafNode(DecompositionNode):
             return Matroid(groundset=E, graph=G, regular=True)
         if typ == CMR_MATROID_DEC_TYPE_K33_DUAL:
             return matroids.named_matroids.K33dual()
+        if typ == CMR_MATROID_DEC_TYPE_DETERMINANT:
+            return '|det| = 2 submatrix'
         assert False, 'special leaf node with unknown type'
         # cdef int representation_matrix
         # cdef CMR_MATROID_DEC_TYPE typ = CMRdecIsSpecialLeaf(self._dec, &representation_matrix)
@@ -571,6 +573,24 @@ cdef class SpecialLeafNode(DecompositionNode):
         # cdef CMR_MATROID_DEC_TYPE typ = CMRdecIsSpecialLeaf(self._dec, &representation_matrix)
         # return Matrix_cmr_chr_sparse._from_data(representation_matrix, immutable=False)
 
+
+cdef class PivotsNode(DecompositionNode):
+    def npivots(self):
+        return CMRmatroiddecNumPivots(self._dec)
+
+    @cached_method
+    def pivot_rows_and_columns(self):
+        r"""
+        """
+        cdef size_t *pivot_rows = CMRmatroiddecPivotRows(self._dec)
+        cdef size_t *pivot_columns = CMRmatroiddecPivotColumns(self._dec)
+
+        return tuple((pivot_rows[i], pivot_columns[i]) for i in range(self.npivots()))
+
+
+cdef class SubmatrixNode(DecompositionNode):
+    pass
+
 cdef _class(CMR_MATROID_DEC *dec):
     cdef CMR_MATROID_DEC_TYPE typ = CMRmatroiddecType(dec)
 
@@ -590,9 +610,15 @@ cdef _class(CMR_MATROID_DEC *dec):
         return SpecialLeafNode
     if typ == CMR_MATROID_DEC_TYPE_SERIES_PARALLEL:
         return SeriesParallelReductionNode
+    if typ == CMR_MATROID_DEC_TYPE_PIVOTS:
+        return PivotsNode
+    if typ == CMR_MATROID_DEC_TYPE_SUBMATRIX:
+        return SubmatrixNode
+    if typ == CMR_MATROID_DEC_TYPE_IRREGULAR:
+        return ThreeConnectedIrregularNode
     if typ == CMR_MATROID_DEC_TYPE_UNKNOWN:
         return UnknownNode
-    return ThreeConnectedIrregularNode
+    assert NotImplementedError
 
 
 cdef create_DecompositionNode(CMR_MATROID_DEC *dec, root=None):
