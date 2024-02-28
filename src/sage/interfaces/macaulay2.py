@@ -1241,7 +1241,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
         deprecation(27848, 'The function `structure_sheaf` is deprecated. Use `self.sheaf()` instead.')
         return self.parent()('OO_%s' % self.name())
 
-    def substitute(self, *args, **kwds):
+    def subs(self, *args, **kwds):
         """
         Note that we have to override the substitute method so that we get
         the default one from Macaulay2 instead of the one provided by Element.
@@ -1259,8 +1259,6 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
 
         """
         return self.__getattr__("substitute")(*args, **kwds)
-
-    subs = substitute
 
     def _tab_completion(self):
         """

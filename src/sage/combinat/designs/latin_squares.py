@@ -299,7 +299,7 @@ def mutually_orthogonal_latin_squares(k, n, partitions=False, check=True):
         Unknown
 
     If you ask for such a MOLS then you will respectively get an informative
-    ``EmptySetError`` or ``NotImplementedError``::
+    ``EmptySetError`` or :class:`NotImplementedError`::
 
         sage: designs.mutually_orthogonal_latin_squares(5, 5)
         Traceback (most recent call last):
