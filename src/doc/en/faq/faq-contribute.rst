@@ -140,35 +140,31 @@ See the Sage Developer's Guide, especially the chapter
 :ref:`chapter-code-basics`.
 
 
-I submitted a bug fix to the GitHub Sage repo several weeks ago. Why are you ignoring my PR?
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+I submitted a bug fix to the GitHub Sage repo several weeks ago. Why is it being ignored?
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-We are not trying to ignore your Pull Request. Most people who work on Sage do so
-in their free time. With hundreds of open PRs of varying degrees of
-impacts on the whole Sage community, people who work on PRs need
-to prioritize their time and work on those PRs that interest
-them. Sometimes you may be the only person who understands your
-changes. In that case, you are encouraged to take extra care to make it
-as easy as possible for anyone to review. Here are some
-tips on making your PR easy to review:
+There are several possible reasons why a pull request might not get attention:
 
-* Have you clearly described the problem your PR is trying to
-  solve?
-* Have you provided any background information relevant to the problem
-  your PR is trying to solve? Such information include links to
+Most people who work on Sage do so in their free time.
+There are many open pull requests that keep contributors busy.
+Understanding the changes requires knowledge that only very few people have.
+
+It is thus important to make the job for potential reviewers as easy as possible.
+Here are some tips on making your PR easy to review:
+
+* Clearly describe the problem your PR is trying to
+  solve.
+* Provide background information relevant to the problem
+  that your PR is solving. Such information can include links to
   online resources and any relevant papers, books and reference
   materials.
-* Have you clearly described how your PR solves the problem under
-  consideration?
-* Have you clearly described how to test the changes in your PR?
-* Have you listed any Issues or Pull Requests that your PR depends on?
-* Is your PR based on a recent (preferably, the latest) Sage beta version?
-* Does your code follow the :ref:`relevant coding conventions <chapter-code-basics>
-  as documented in the Developer Guide?
-
-If your PR stands no chance of being merged in the Sage source
-tree, we will not ignore your PR but rather close it with an explanation
-why we cannot include your changes.
+* Clearly describe how your PR solves the problem under
+  consideration.
+* Clearly describe how to test the changes in your PR.
+* List any Issues or Pull Requests that your PR depends on.
+* Make sure your PR is based on a recent (preferably, the latest) Sage beta version.
+* Follow the :ref:`relevant coding conventions <chapter-code-basics>
+  as documented in the Developer Guide.
 
 
 When and how might I remind the Sage community of a PR I care about?
