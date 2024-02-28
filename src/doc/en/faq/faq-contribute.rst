@@ -21,8 +21,8 @@ I want to contribute code to Sage. How do I get started?
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 Take a look at the
-`official development guide <https://doc.sagemath.org/html/en/developer>`_
-for Sage. At a minimum, the first chapter in that guide is required
+`Sage Developer Guide <https://doc.sagemath.org/html/en/developer>`_.
+At a minimum, the first chapter in that guide is required
 reading for any Sage developer. Also pay special attention to the
 `GitHub guidelines <https://doc.sagemath.org/html/en/developer/github.html>`_.
 You can also join the
@@ -162,53 +162,52 @@ resources can be found by a web search.
 Are there any coding conventions I need to follow?
 """"""""""""""""""""""""""""""""""""""""""""""""""
 
-You should follow the standard Python conventions as documented at
-:pep:`8` and :pep:`257`.
-Also consult the Sage Developer's Guide, especially the chapter
-`Conventions for Coding in Sage <https://doc.sagemath.org/html/en/developer/#sage-coding-details>`_.
+See the Sage Developer's Guide, especially the chapter
+:ref:`chapter-code-basics`.
 
 
-I submitted a bug fix to the GitHub Sage repo several weeks ago. Why are you ignoring my branch?
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+I submitted a bug fix to the GitHub Sage repo several weeks ago. Why are you ignoring my PR?
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-We are not trying to ignore your branch. Most people who work on Sage do so
+We are not trying to ignore your Pull Request. Most people who work on Sage do so
 in their free time. With hundreds of open PRs of varying degrees of
 impacts on the whole Sage community, people who work on PRs need
 to prioritize their time and work on those PRs that interest
 them. Sometimes you may be the only person who understands your
-branch. In that case, you are encouraged to take extra care to make it
+changes. In that case, you are encouraged to take extra care to make it
 as easy as possible for anyone to review. Here are some
-tips on making your branch easy to review:
+tips on making your PR easy to review:
 
-* Have you clearly described the problem your branch is trying to
+* Have you clearly described the problem your PR is trying to
   solve?
 * Have you provided any background information relevant to the problem
-  your patch is trying to solve? Such information include links to
+  your PR is trying to solve? Such information include links to
   online resources and any relevant papers, books and reference
   materials.
-* Have you clearly described how your branch solves the problem under
+* Have you clearly described how your PR solves the problem under
   consideration?
-* Have you clearly described how to test the changes in your branch?
-* Have you listed any issues/PRs that your branch depends on?
-* Is your branch based on a recent (preferably, the latest) Sage beta version?
-* Does your branch
-  `follow relevant conventions <https://doc.sagemath.org/html/en/developer/#writing-code-for-sage>`_
-  as documented in the Developer's Guide?
+* Have you clearly described how to test the changes in your PR?
+* Have you listed any Issues or Pull Requests that your PR depends on?
+* Is your PR based on a recent (preferably, the latest) Sage beta version?
+* Does your code follow the :ref:`relevant coding conventions <chapter-code-basics>
+  as documented in the Developer Guide?
 
-If your branch stands no chance of being merged in the Sage source
-tree, we will not ignore your branch but simply close the relevant
-PR with an explanation why we cannot include your changes.
+If your PR stands no chance of being merged in the Sage source
+tree, we will not ignore your PR but rather close it with an explanation
+why we cannot include your changes.
 
 
-When and how might I remind the Sage community of a branch I care about?
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+When and how might I remind the Sage community of a PR I care about?
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-You are encouraged to take extra care in how you remind the Sage
-community of a branch/patch you want to get merged into the Sage source
-tree. There might be an upcoming bug squash sprint or an upcoming Sage
-Days workshop that relates to your patch. Monitor the relevant Sage
-mailing lists and respond politely to any relevant email threads, with
-clear explanation on why your patch is relevant.
+It is appropriate to join the
+`sage-devel <https://groups.google.com/group/sage-devel>`_
+mailing list and to post there about the PRs that you care about.
+Although it may at times feel intimidating to post there, many
+developers are eager to join the discusssion and help.
+
+You can also try to find developers interested in reviewing your PRs
+in our `SageMath Zulip chat channel <https://sagemath.zulipchat.com/>`_.
 
 
 I wrote some Sage code and I want it to be integrated into Sage. However, after renaming my file ``a.sage`` to ``a.py``, I got syntax errors. Do I have to rewrite all my code in Python instead of Sage?
