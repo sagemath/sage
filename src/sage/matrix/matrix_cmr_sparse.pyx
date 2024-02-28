@@ -1465,6 +1465,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         cdef CMR_MATROID_DEC **pdec = &dec
         cdef CMR_SUBMAT **psubmat = &submat
 
+        if three_sum_pivot_children:
+            raise NotImplementedError
         cdef dict kwds = dict(use_direct_graphicness_test=use_direct_graphicness_test,
                               series_parallel_ok=series_parallel_ok,
                               check_graphic_minors_planar=check_graphic_minors_planar,
