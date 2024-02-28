@@ -58,6 +58,16 @@ Sometimes even conduct that is intended to be helpful can be offensive to others
   of a variety of expertise, motivations, and priorities.
 
 
+## Policies and procedures of the project's pertinent platforms ##
+
+[GitHub Community Guidelines](https://docs.github.com/en/site-policy/github-terms/github-community-guidelines) apply
+- [Report abuse to GitHub](https://github.com/contact/report-abuse),
+  [Block a user from your personal account](https://docs.github.com/en/communities/maintaining-your-safety-on-github/blocking-a-user-from-your-personal-account)
+- [Manage disruptive comments](https://docs.github.com/en/communities/moderating-comments-and-conversations/managing-disruptive-comments),
+  [Lock conversations](https://docs.github.com/en/communities/moderating-comments-and-conversations/locking-conversations)
+  (requires Maintainer role or [Organization Moderator role](https://docs.github.com/en/organizations/managing-peoples-access-to-your-organization-with-roles/managing-moderators-in-your-organization))
+
+
 ## The sage-abuse committee ##
 
 The sage-abuse committee was established in 2014 with the adoption of the
