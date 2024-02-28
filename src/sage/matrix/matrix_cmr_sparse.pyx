@@ -731,6 +731,62 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             row_list.append(x)
         return Matrix_cmr_chr_sparse._from_data(row_list, immutable=False)
 
+    def binary_pivot(self, row, column):
+        cdef Matrix_cmr_chr_sparse result
+        cdef size_t pivot_row = row
+        cdef size_t pivot_column = column
+        cdef CMR_CHRMAT *result_mat
+
+        CMR_CALL(CMRchrmatBinaryPivot(cmr, self._mat, pivot_row, pivot_column, &result_mat))
+        result = Matrix_cmr_chr_sparse._from_cmr(result_mat)
+        return result
+
+    def binary_pivots(self, rows, columns):
+        cdef Matrix_cmr_chr_sparse result
+        cdef size_t* pivot_rows
+        cdef size_t* pivot_columns
+        cdef CMR_CHRMAT *result_mat
+
+        npivots = len(rows)
+        if len(columns) != npivots:
+            raise ValueError("The pivot rows and columns must have the same length")
+
+        for i in range(npivots):
+            pivot_rows[i] = rows[i]
+            pivot_columns[i] = columns[i]
+
+        CMR_CALL(CMRchrmatBinaryPivots(cmr, self._mat, npivots, pivot_rows, pivot_columns, &result_mat))
+        result = Matrix_cmr_chr_sparse._from_cmr(result_mat)
+        return result
+
+    def ternary_pivot(self, row, column):
+        cdef Matrix_cmr_chr_sparse result
+        cdef size_t pivot_row = row
+        cdef size_t pivot_column = column
+        cdef CMR_CHRMAT *result_mat
+
+        CMR_CALL(CMRchrmatTernaryPivot(cmr, self._mat, pivot_row, pivot_column, &result_mat))
+        result = Matrix_cmr_chr_sparse._from_cmr(result_mat)
+        return result
+
+    def ternary_pivots(self, rows, columns):
+        cdef Matrix_cmr_chr_sparse result
+        cdef size_t* pivot_rows
+        cdef size_t* pivot_columns
+        cdef CMR_CHRMAT *result_mat
+
+        cdef size_t npivots = len(rows)
+        if len(columns) != npivots:
+            raise ValueError("The pivot rows and columns must have the same length")
+
+        for i in range(npivots):
+            pivot_rows[i] = rows[i]
+            pivot_columns[i] = columns[i]
+
+        CMR_CALL(CMRchrmatTernaryPivots(cmr, self._mat, npivots, pivot_rows, pivot_columns, &result_mat))
+        result = Matrix_cmr_chr_sparse._from_cmr(result_mat)
+        return result
+
     def is_unimodular(self, time_limit=60.0):
         r"""
         Return whether ``self`` is a unimodular matrix.
