@@ -1199,6 +1199,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             -3
             sage: f.valuation(y)
             -5
+            sage: R.zero().valuation()
+            +Infinity
         """
         # Valuation of zero polynomial is defined to be +Infinity
         if self.is_zero():
