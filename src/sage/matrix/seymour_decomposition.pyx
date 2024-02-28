@@ -176,6 +176,12 @@ cdef class DecompositionNode(SageObject):
         """
         return self.as_ordered_tree().plot(**kwds)
 
+    def is_ternary(self):
+        r"""
+        Returns true iff the decomposition is over `\mathbb{F}_3`.
+        """
+        return CMRmatroiddecIsTernary(self._dec)
+
     @cached_method
     def _children(self):
         r"""
@@ -394,6 +400,12 @@ cdef class TwoSumNode(SumNode):
         return Matrix_cmr_chr_sparse.two_sum(M1, M2, x - 1, y - 1)
 
 cdef class ThreeSumNode(SumNode):
+
+    def is_distributed_ranks(self):
+        return CMRmatroiddecThreeSumDistributedRanks(self._dec)
+
+    def is_concentrated_rank(self):
+        return CMRmatroiddecThreeSumConcentratedRank(self._dec)
 
     def block_matrix_form(self):
         M1, M2 = self.summand_matrices()
