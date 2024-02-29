@@ -593,6 +593,22 @@ cdef class PivotsNode(DecompositionNode):
     @cached_method
     def pivot_rows_and_columns(self):
         r"""
+        sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+        sage: R12 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 12, sparse=True),
+        ....: [[1, -1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
+        ....: [0, 0, 0, 1, -1, 0, 0, 0, 1 , 1, 1, 1],
+        ....: [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+        ....: [ 1,  0,  1,  0,  0,  0,  0,  0,  1,  1,  0,  0],
+        ....: [ 0,  1,  1,  0,  0,  0,  0,  0,  0,  0, -1, -1],
+        ....: [ 0,  0,  0,  1,  0,  1,  0,  0,  1,  1,  0,  0],
+        ....: [ 0,  0,  0,  0,  1,  1,  0,  0,  0,  0, -1, -1],
+        ....: [ 0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1,  0],
+        ....: [ 0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1]])
+        sage: result, certificate = R12.is_totally_unimodular(certificate=True)
+        sage: certificate
+        PivotsNode (9×12)
+        sage: certificate.pivot_rows_and_columns()
+        ((1, 8),)
         """
         cdef size_t *pivot_rows = CMRmatroiddecPivotRows(self._dec)
         cdef size_t *pivot_columns = CMRmatroiddecPivotColumns(self._dec)
