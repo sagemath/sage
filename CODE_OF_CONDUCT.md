@@ -130,15 +130,15 @@ then you can also contact individual committee members.
 This section summarizes the most important points; more details can be
 found in the Code of Conduct enforcement guide.
 
-We will investigate and respond to all complaints. The Sage Code of
-Conduct Committee will protect the identity of the reporter, and treat
-the content of complaints as confidential (unless the reporter agrees
-otherwise).
+The Sage Code of Conduct Committee will investigate and respond to all
+complaints. The committee will protect the identity of the reporter,
+and treat the content of complaints as confidential (unless the
+reporter agrees otherwise).
 
 In case of severe and obvious breaches, e.g., personal threat or
-violent, sexist or racist language, we will immediately disconnect the
-originator from Sage communication channels; please see the manual
-for details.
+violent, sexist or racist language, the committee will immediately
+disconnect the originator from Sage communication channels; please see
+the manual for details.
 
 In cases not involving clear severe and obvious breaches of this Code
 of Conduct, the process for acting on any received Code of Conduct
@@ -149,14 +149,14 @@ violation report will be:
 - discussion with and/or feedback provided to the reportee
 - mediation (if feedback didn’t help, and only if both reporter and
   reportee agree to this)
-- enforcement via transparent decision by the sasge-abuse committee
+- enforcement via transparent decision by the Sage Code of Conduct Committee
 
 The committee will respond to any report as soon as possible, and our
 goal will be to respond within 72 hours.
 
 Potential consequences for violating the Sage Code of Conduct include:
 
-- Nothing (if we determine that no violation occurred)
+- Nothing (if the committee determines that no violation occurred)
 - Private feedback or reprimand to the individual(s) involved
 - Warning the person to cease their behavior and that any further
   reports will result in sanctions
@@ -176,14 +176,18 @@ Potential consequences for violating the Sage Code of Conduct include:
 - Any other response that the Sage Code of Conduct Committee deems necessary and
   appropriate to the situation
 
-## Policies and procedures of the project's pertinent platforms ##
+## Policies and procedures of common project platforms ##
 
-[GitHub Community Guidelines](https://docs.github.com/en/site-policy/github-terms/github-community-guidelines) apply
+[GitHub Community Guidelines](https://docs.github.com/en/site-policy/github-terms/github-community-guidelines) apply:
 - [Report abuse to GitHub](https://github.com/contact/report-abuse),
   [Block a user from your personal account](https://docs.github.com/en/communities/maintaining-your-safety-on-github/blocking-a-user-from-your-personal-account)
 - [Manage disruptive comments](https://docs.github.com/en/communities/moderating-comments-and-conversations/managing-disruptive-comments),
-  [Lock conversations](https://docs.github.com/en/communities/moderating-comments-and-conversations/locking-conversations)
-  (requires Maintainer role or [Organization Moderator role](https://docs.github.com/en/organizations/managing-peoples-access-to-your-organization-with-roles/managing-moderators-in-your-organization))
+- [Lock conversations](https://docs.github.com/en/communities/moderating-comments-and-conversations/locking-conversations)
+(requires Maintainer role or [Organization Moderator role](https://docs.github.com/en/organizations/managing-peoples-access-to-your-organization-with-roles/managing-moderators-in-your-organization))
+
+Google groups:
+- [Content policy](https://support.google.com/groups/answer/4561696)
+- [Reporting procedures](https://support.google.com/groups/answer/81275)
 
 ## Amending this document ##
 
