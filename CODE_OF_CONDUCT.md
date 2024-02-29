@@ -49,7 +49,7 @@ Sage can more effectively collaborate with others if they follow this Code.
     3. Posting sexually explicit or violent material.
     4. Posting (or threatening to post) other people’s personally identifying information (“doxing”).
     5. Personal insults, especially those using racist or sexist terms.
-    6. Unwelcome sexual attention or comments
+    6. Unwelcome sexual attention or comments.
     7. Excessive profanity. Please avoid swear words; people differ greatly in their sensitivity to swearing.
     8. Repeated harassment of others. In general, if someone asks you to stop, then stop.
     9. Advocating for, or encouraging, any of the above behavior.
