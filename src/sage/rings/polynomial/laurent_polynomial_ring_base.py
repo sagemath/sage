@@ -596,7 +596,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
             sage: rings = [RR, QQ, ZZ, GF(13), GF(7^3)]
             sage: for ring in rings:
-            ....:     d = randint(2, 6)
+            ....:     d = randint(1, 6)
             ....:     t = randint(5, 20)
             ....:     L = LaurentPolynomialRing(ring, d, 'x')
             ....:     for _ in range(100):
