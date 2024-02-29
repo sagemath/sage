@@ -624,6 +624,29 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             ....:         for x in L.gens():
             ....:             assert f.degree() <= m
             ....:             assert f.valuation() >= n
+
+        The ``max_degree`` must be greater than or equal to ``min_valuation``::
+
+            sage: L.<x> = LaurentPolynomialRing(QQ)
+            sage: f = L.random_element(1, -1)
+            Traceback (most recent call last):
+            ...
+            ValueError: `max_degree` must be greater than or equal to `min_valuation`
+
+        When terms is set to zero, we only expect the zero polynomial::
+
+            sage: L.<x, y> = LaurentPolynomialRing(QQ)
+            sage: f = L.random_element(-10, 20, terms=0)
+            sage: f.is_zero()
+            True
+
+        Terms must always be negative::
+
+            sage: L.<x, y> = LaurentPolynomialRing(QQ)
+            sage: f = L.random_element(-10, 20, terms=-1)
+            Traceback (most recent call last):
+            ...
+            TypeError: cannot compute polynomial with a negative number of terms
         """
         # Ensure the degree parameters are sensible
         if max_degree < min_valuation:
@@ -643,9 +666,9 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
         # Ensure terms is set correctly
         if terms < 0:
-            raise TypeError("cannot compute polynomial with a negative number of terms.")
+            raise TypeError("cannot compute polynomial with a negative number of terms")
         elif terms == 0:
-            return self._zero_element
+            return self.zero()
 
         # We now sample `terms`` terms with exponents picked randomly
         # with degree at most `max_degree` and valuation greater or

@@ -1201,27 +1201,39 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             -5
             sage: R.zero().valuation()
             +Infinity
+
+        TESTS:
+
+        If supplied, ``x`` must be a generator::
+
+            sage: R.<x,y> = LaurentPolynomialRing(ZZ)
+            sage: f = 1 + x + x^2*y^-1
+            sage: f.valuation(1)
+            Traceback (most recent call last):
+            ...
+            TypeError: x must be a generator of parent
         """
         # Valuation of zero polynomial is defined to be +Infinity
         if self.is_zero():
             return Infinity
 
-        # TODO: is there a faster cython-way to do this?
+        # When x is None find the minimal valuation by checking all terms
         if x is None:
-            return min(sum(e) for e in self.exponents())
+            val = min(e.unweighted_degree() for e in self.exponents())
+            return Integer(val)
 
         # Get the index of the gen
         cdef tuple g = <tuple > self._parent.gens()
         cdef Py_ssize_t i
         cdef bint no_generator_found = True
         for i in range(len(g)):
-            if g[i] is x:
+            if g[i] == x:
                 no_generator_found = False
                 break
         if no_generator_found:
             raise TypeError("x must be a generator of parent")
 
-        # TODO: is there a faster cython-way to do this?
+        # Find the minimal valuation of x by checking each term
         return min(e[i] for e in self.exponents())
 
     def has_inverse_of(self, i):
