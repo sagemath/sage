@@ -1253,11 +1253,21 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
             sage: S.<y> = PolynomialRing(Integers(5), implementation='NTL')
             sage: f(y)
             y^3 + 2
+
+        TESTS::
+
+            sage: R.<x> = PolynomialRing(Integers(100), implementation='NTL')
+            sage: f = x^3 + 7
             sage: f(1).parent() == R.base_ring()
             True
             sage: f(int(1)).parent() == R.base_ring()
             True
             sage: f(x + 1).parent() == f.parent()
+            True
+
+            sage: R.<x> = PolynomialRing(Zmod(12), 'x', implementation='NTL')
+            sage: u = Zmod(4)(3)
+            sage: x(u).parent() == u.parent()
             True
         """
         if len(args) != 1 or len(kwds) != 0:
@@ -1814,11 +1824,24 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
             sage: S.<y> = PolynomialRing(Integers(5), implementation='NTL')
             sage: f(y)
             y^3 + 2
+
+        TESTS::
+
+            sage: R.<x> = PolynomialRing(Integers(10^30), implementation='NTL')
+            sage: f = x^3 + 7
             sage: f(1).parent() == R.base_ring()
             True
             sage: f(int(1)).parent() == R.base_ring()
             True
             sage: f(x + 1).parent() == f.parent()
+            True
+
+            sage: R.<x> = PolynomialRing(Zmod(10^30), 'x', implementation='NTL')
+            sage: u = Zmod(10^29)(3)
+            sage: x(u).parent() == u.parent()
+            True
+            sage: v = Zmod(10)(3)
+            sage: x(v).parent() == v.parent()
             True
         """
         if len(args) != 1 or len(kwds) != 0:
