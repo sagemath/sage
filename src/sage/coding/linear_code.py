@@ -277,11 +277,11 @@ def _dump_code_in_leon_format(C):
     from sage.misc.temporary_file import tmp_filename
     F = C.base_ring()
     p = F.order()  # must be prime and <11
-    s = "LIBRARY code;\n"+"code=seq(%s,%s,%s,seq(\n" % (p,C.dimension(),C.length())
-    Gr = [str(r)[1:-1].replace(" ","") for r in C.generator_matrix().rows()]
+    s = "LIBRARY code;\n" + "code=seq(%s,%s,%s,seq(\n" % (p, C.dimension(), C.length())
+    Gr = [str(r)[1:-1].replace(" ", "") for r in C.generator_matrix().rows()]
     s += ",\n".join(Gr) + "\n));\nFINISH;"
     file_loc = tmp_filename()
-    f = open(file_loc,"w")
+    f = open(file_loc, "w")
     f.write(s)
     f.close()
 
@@ -523,7 +523,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         """
         aut_group_can_label = self._canonize(equivalence)
         return aut_group_can_label.get_autom_gens(), \
-               aut_group_can_label.get_autom_order()
+            aut_group_can_label.get_autom_order()
 
     def assmus_mattson_designs(self, t, mode=None):
         r"""
@@ -605,29 +605,29 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         n = len(G.columns())
         Cp = C.dual_code()
         wts = C.weight_distribution()
-        d = min([i for i in range(1,len(wts)) if wts[i] != 0])
+        d = min([i for i in range(1, len(wts)) if wts[i] != 0])
         if t >= d:
             return 0
-        nonzerowts = [i for i in range(len(wts)) if wts[i] != 0 and i <= n and i >= d]
+        nonzerowts = [i for i in range(len(wts)) if wts[i] != 0 and d <= i <= n]
         if mode == "verbose":
             for w in nonzerowts:
                 print("The weight w={} codewords of C* form a t-(v,k,lambda) design, where\n \
-                        t={}, v={}, k={}, lambda={}. \nThere are {} block of this design.".format(
-                            w,t,n,w,wts[w]*binomial(w,t)//binomial(n,t),wts[w]))
+                t={}, v={}, k={}, lambda={}. \nThere are {} block of this design.".format(
+                    w, t, n, w, wts[w] * binomial(w, t) // binomial(n, t), wts[w]))
         wtsp = Cp.weight_distribution()
-        dp = min([i for i in range(1,len(wtsp)) if wtsp[i] != 0])
+        dp = min([i for i in range(1, len(wtsp)) if wtsp[i] != 0])
         nonzerowtsp = [i for i in range(len(wtsp)) if wtsp[i] != 0 and i <= n-t and i >= dp]
-        s = len([i for i in range(1,n) if wtsp[i] != 0 and i <= n-t and i > 0])
+        s = len([i for i in range(1, n) if wtsp[i] != 0 and 0 < i <= n-t])
         if mode == "verbose":
             for w in nonzerowtsp:
                 print("The weight w={} codewords of C* form a t-(v,k,lambda) design, where\n \
-                        t={}, v={}, k={}, lambda={}. \nThere are {} block of this design.".format(
-                            w,t,n,w,wts[w]*binomial(w,t)//binomial(n,t),wts[w]))
+                t={}, v={}, k={}, lambda={}. \nThere are {} block of this design.".format(
+                    w, t, n, w, wts[w] * binomial(w, t) // binomial(n, t), wts[w]))
         if s <= d-t:
-            des = [[t,(n,w,wts[w]*binomial(w,t)//binomial(n,t))] for w in nonzerowts]
-            ans = ans + ["weights from C: ",nonzerowts,"designs from C: ",des]
-            desp = [[t,(n,w,wtsp[w]*binomial(w,t)//binomial(n,t))] for w in nonzerowtsp]
-            ans = ans + ["weights from C*: ",nonzerowtsp,"designs from C*: ",desp]
+            des = [[t, (n, w, wts[w] * binomial(w, t) // binomial(n, t))] for w in nonzerowts]
+            ans = ans + ["weights from C: ", nonzerowts, "designs from C: ", des]
+            desp = [[t, (n, w, wtsp[w] * binomial(w, t) // binomial(n, t))] for w in nonzerowtsp]
+            ans = ans + ["weights from C*: ", nonzerowtsp, "designs from C*: ", desp]
             return ans
         return 0
 
@@ -669,15 +669,15 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         d = self.minimum_distance()
         F = self.base_ring()
         q = F.order()
-        J = range(1,n+1)
+        J = range(1, n+1)
         Cp = self.dual_code()
         dp = Cp.minimum_distance()
         if i < d:
             return 0
-        if i > n-dp and i <= n:
-            return binomial(n,i)*(q**(i+k-n) - 1)//(q-1)
+        if n - dp < i <= n:
+            return binomial(n, i)*(q**(i+k-n) - 1)//(q-1)
         from sage.combinat.set_partition import SetPartitions
-        P = SetPartitions(J,2).list()
+        P = SetPartitions(J, 2).list()
         b = QQ(0)
         for p in P:
             p = list(p)
@@ -794,7 +794,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         """
         aut_group_can_label = self._canonize(equivalence)
         return aut_group_can_label.get_canonical_form(), \
-               aut_group_can_label.get_transporter()
+            aut_group_can_label.get_transporter()
 
     def characteristic(self):
         r"""
@@ -877,7 +877,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             P = RT(C.zeta_polynomial())*T**(d - dperp)
             if is_even(n):
                 Pd = q**(k-n/2)*RT(Cd.zeta_polynomial())
-            if not(is_even(n)):
+            if not is_even(n):
                 Pd = s*q**(k-(n+1)/2)*RT(Cd.zeta_polynomial())
             CP = P+Pd
             f = CP/CP(1,s)
@@ -886,7 +886,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             P = RT(C.zeta_polynomial())
             if is_even(n):
                 Pd = q**(k-n/2)*RT(Cd.zeta_polynomial())
-            if not(is_even(n)):
+            if not is_even(n):
                 Pd = s*q**(k-(n+1)/2)*RT(Cd.zeta_polynomial())
             CP = P+Pd
             f = CP/CP(1,s)
@@ -1660,13 +1660,13 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
                 matCwt = [c.VectorCodeword() for c in Cwt]            # for each i until stop = 1)
                 if len(matCwt) > 0:
                     A = libgap(matCwt).MatrixAutomorphisms()
-                    Gp = A.Intersection2(Gp)  #  bottleneck 3
+                    Gp = A.Intersection2(Gp)  # bottleneck 3
                     if Gp.Size() == 1:
                         return PermutationGroup([()])
                     gens = Gp.GeneratorsOfGroup()
                     stop = 1                    # get ready to stop
                     for x in gens:              # if one of these gens is not an auto then don't stop
-                        if not(self.is_permutation_automorphism(Sn_sage(x))):
+                        if not self.is_permutation_automorphism(Sn_sage(x)):
                             stop = 0
                             break
             G = PermutationGroup(list(map(Sn_sage, gens)))
@@ -1877,7 +1877,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
             from sage.coding.binary_code import weight_dist
             return weight_dist(self.generator_matrix())
         elif algorithm == "leon":
-            if not(F.order() in [2,3,5,7]):
+            if F.order() not in [2, 3, 5, 7]:
                 raise NotImplementedError("The algorithm 'leon' is only implemented for q = 2,3,5,7.")
             # The GAP command DirectoriesPackageLibrary tells the location of the latest
             # version of the Guava libraries, so gives us the location of the Guava binaries too.
@@ -2030,16 +2030,16 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         if d == 1 or dperp == 1:
             print("\n WARNING: There is no guarantee this function works when the minimum distance")
             print("            of the code or of the dual code equals 1.\n")
-        RT = PolynomialRing(QQ,"%s" % name)
-        R = PolynomialRing(QQ,3,"xy%s" % name)
-        x,y,T = R.gens()
+        RT = PolynomialRing(QQ, "%s" % name)
+        R = PolynomialRing(QQ, 3, "xy%s" % name)
+        x, y, T = R.gens()
         we = self.weight_enumerator()
         A = R(we)
-        #B = A(x+y,y,T)-(x+y)**n
-        B = A(x,x+y,T)-(x+y)**n
+        # B = A(x+y,y,T)-(x+y)**n
+        B = A(x, x+y, T)-(x+y)**n
         Bs = B.coefficients()
         Bs.reverse()
-        b = [Bs[i]/binomial(n,i+d) for i in range(len(Bs))]
+        b = [Bs[i]/binomial(n, i+d) for i in range(len(Bs))]
         r = n-d-dperp+2
         P_coeffs = []
         for i in range(len(b)):
@@ -2397,7 +2397,7 @@ class LinearCode(AbstractLinearCode):
             [7, 4]\textnormal{ Linear code over }\Bold{F}_{2}
         """
         return "[%s, %s]\\textnormal{ Linear code over }%s"\
-                % (self.length(), self.dimension(), self.base_ring()._latex_())
+            % (self.length(), self.dimension(), self.base_ring()._latex_())
 
     def generator_matrix(self, encoder_name=None, **kwargs):
         r"""
@@ -2428,7 +2428,7 @@ class LinearCode(AbstractLinearCode):
         return g
 
 
-####################### encoders ###############################
+# ###################### encoders ###############################
 
 class LinearCodeGeneratorMatrixEncoder(Encoder):
     r"""
@@ -2467,7 +2467,7 @@ class LinearCodeGeneratorMatrixEncoder(Encoder):
             True
         """
         return isinstance(other, LinearCodeGeneratorMatrixEncoder)\
-                and self.code() == other.code()
+            and self.code() == other.code()
 
     def _repr_(self):
         r"""
@@ -2519,7 +2519,7 @@ class LinearCodeGeneratorMatrixEncoder(Encoder):
         return g
 
 
-####################### decoders ###############################
+# ###################### decoders ###############################
 
 class LinearCodeSyndromeDecoder(Decoder):
     r"""
@@ -2812,18 +2812,18 @@ class LinearCodeSyndromeDecoder(Decoder):
         F = C.base_ring()
         l = list(F)
         zero = F.zero()
-        #Builds a list of generators of all error positions for all
-        #possible error weights
+        # Builds a list of generators of all error positions for all
+        # possible error weights
         if zero in l:
             l.remove(zero)
         # Remember to include the no-error-vector to handle codes of minimum
         # distance 1 gracefully
-        zero_syndrome = vector(F,[F.zero()]*(n-k))
+        zero_syndrome = vector(F, [F.zero()]*(n-k))
         zero_syndrome.set_immutable()
-        lookup = {zero_syndrome: vector(F,[F.zero()]*n)}
+        lookup = {zero_syndrome: vector(F, [F.zero()]*n)}
         error_position_tables = [cartesian_product([l]*i) for i in range(1, t+1)]
         first_collision = True
-        #Filling the lookup table
+        # Filling the lookup table
         for i in range(1, t+1):
             stop = True
             patterns = Subsets(range(n), i)
@@ -2839,16 +2839,16 @@ class LinearCodeSyndromeDecoder(Decoder):
                     s.set_immutable()
                     try:
                         e_cur = lookup[s]
-                        #if this is the first time we see a collision
-                        #we learn the minimum distance of the code
+                        # if this is the first time we see a collision
+                        # we learn the minimum distance of the code
                         if first_collision:
                             self._code_minimum_distance = e.hamming_weight() + e_cur.hamming_weight()
                             first_collision = False
                     except KeyError:
                         stop = False
                         lookup[s] = copy(e)
-            #if we reached the early termination condition
-            #we learn the covering radius of the code
+            # if we reached the early termination condition
+            # we learn the covering radius of the code
             if stop:
                 self._code_covering_radius = i - 1
                 self._maximum_error_weight = self._code_covering_radius
@@ -3001,9 +3001,9 @@ class LinearCodeNearestNeighborDecoder(Decoder):
             True
         """
         return isinstance(other, LinearCodeNearestNeighborDecoder)\
-                and self.code() == other.code()
+            and self.code() == other.code()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -3079,7 +3079,7 @@ class LinearCodeNearestNeighborDecoder(Decoder):
         return (self.code().minimum_distance()-1) // 2
 
 
-####################### registration ###############################
+# ###################### registration ###############################
 
 LinearCode._registered_encoders["GeneratorMatrix"] = LinearCodeGeneratorMatrixEncoder
 

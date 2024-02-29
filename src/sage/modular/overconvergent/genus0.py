@@ -261,7 +261,7 @@ def OverconvergentModularForms(prime, weight, radius, base_ring=QQ, prec=20, cha
     if key in __ocmfdict:
         w = __ocmfdict[key]
         M = w()
-        if not (M is None):
+        if M is not None:
             return M
     M = OverconvergentModularFormsSpace(*key)
     __ocmfdict[key] = weakref.ref(M)
