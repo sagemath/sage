@@ -603,7 +603,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             ....:         n, m = randint(-10, 10), randint(1, 10)
             ....:         if m < n:
             ....:             m, n = n, m
-            ....:         f = L.random_element(n, m)
+            ....:         f = L.random_element(n, m, terms=t)
             ....:         if f.is_zero(): continue # the zero polynomial is defined to have degree -1
             ....:         assert len(list(f)) <= t
             ....:         for x in L.gens():
