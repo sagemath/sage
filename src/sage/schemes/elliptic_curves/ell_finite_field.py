@@ -1129,6 +1129,24 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
              + 55*z11^5 + 23*z11^4 + 17*z11^3 + 90*z11^2 + 91*z11 + 68
              : 1)
 
+        The division polynomial allows quick computation of the torsion basis
+         when the order of E is hard to factor but n is small::
+
+            sage: p = 4 * next_prime(2**128) * next_prime(2**129) * 12 * 27 - 1 # p is prime
+            sage: j = supersingular_j(GF(p^2, 'a'))
+            sage: E = EllipticCurve_from_j(j)
+            sage: P, Q = E.torsion_basis(12, 'division_polynomial')
+            sage: P.weil_pairing(Q, 12)**6 == -1
+            True
+            
+        TESTS::
+
+            sage: E = EllipticCurve(GF(5), [1,0])
+            sage: E.torsion_basis(3, algorithm="a")
+            Traceback (most recent call last):
+            ...
+            ValueError: unknown algorithm
+            
         .. SEEALSO::
 
             Use :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.division_field`
@@ -1149,10 +1167,10 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             if T.invariants() != (n, n):
                 raise ValueError(f'curve does not have full rational {n}-torsion')
             return tuple(P.element() for P in T.gens())
-        
+
         elif algorithm == "division_polynomial":
             # reduction: n composite -> n prime power -> n prime
-                
+    
             Ptot,Qtot = self(0), self(0)
 
             for l,k in n.factor():
@@ -1160,26 +1178,27 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
                 ltorsion = self(0).division_points(l)
                 if len(ltorsion) < l**2:
                     raise ValueError(f'curve does not have full rational {l}-torsion')
-                
+
                 # the first element of 0.division_points(l) is 0 itself, the others have order l
                 P = ltorsion[1]
+                assert P != self(0)
                 for Q in ltorsion[2:]:
                     if P.weil_pairing(Q, l) != 1:
                         break
                 else:
-                    assert False # shouldn't happen
+                    assert False, "bug: this code should never be reached"
 
                 # lift P,Q to a basis of (l**k)-torsion points
                 for i in range(k-1):
                     Ps = P.division_points(l) ## TODO: just get one point. Use any_root with the division polynomial
                     if not Ps:
                         raise ValueError(f'curve does not have full rational {l**(i+2)}-torsion')
-                    
+
                     Qs = Q.division_points(l)
                     if not Qs:
                         raise ValueError(f'curve does not have full rational {l**(i+2)}-torsion')
-                    
-                    P = Ps[0] 
+
+                    P = Ps[0]
                     Q = Qs[0]
 
                 # gradually recombine (l**k)-torsion into n-torsion
@@ -1187,6 +1206,9 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
                 Qtot += Q
 
             return (Ptot,Qtot)
+
+        else:
+            raise ValueError('unknown algorithm')
 
     def is_isogenous(self, other, field=None, proof=True):
         """
