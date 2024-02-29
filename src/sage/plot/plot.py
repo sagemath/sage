@@ -156,12 +156,12 @@ large, scientific notation (the `e` notation for powers of ten) is used::
 
 ::
 
-    sage: plot(x^2, (x,300,500))  # scientific notation on y-axis
+    sage: plot(x^4, (x,300,500))  # scientific notation on y-axis
     Graphics object consisting of 1 graphics primitive
 
 .. PLOT::
 
-    g = plot(x**2, (x,300,500))
+    g = plot(x**4, (x,300,500))
     sphinx_plot(g)
 
 But you can fix your own tick labels, if you know what to expect and
@@ -4150,6 +4150,17 @@ def CustomScalarFormatter(replace_values=([],[])):
 
     EXAMPLES:
 
+    check that :issue:`34233` is fixed::
+
+        sage: plot(90000*p/(100-p), (p,0,100), ymin=0, ymax=1000000)
+
+    .. PLOT::
+
+        from sage.symbolic.ring import var
+        p = var('p')
+        g = plot(90000*p/(100-p), (p,0,100), ymin=0, ymax=1000000)
+        sphinx_plot(g)
+
     ::
 
         sage: from sage.plot.plot import CustomScalarFormatter
@@ -4164,11 +4175,32 @@ def CustomScalarFormatter(replace_values=([],[])):
         sage: ax.plot(z,z**2)
         sage: plt.show()
 
+    .. PLOT::
+
+        from sage.plot.plot import CustomScalarFormatter
+        import matplotlib.pyplot as plt
+        import numpy as np
+        z = np.linspace(0, 5000, 100)
+        fig, ax = plt.subplots()
+        xmajorformatter = CustomScalarFormatter(replace_values=([2000,0],['$x_0$','']))
+        ymajorformatter = CustomScalarFormatter(replace_values=([1E7,0],['$y_0$','']))
+        ax.xaxis.set_major_formatter(xmajorformatter)
+        ax.yaxis.set_major_formatter(ymajorformatter)
+        ax.plot(z,z**2)
+        plt.show() # This example messes up sphinx_plot(), so we don't put it in the manual
+
     ::
 
         sage: from sage.plot.plot import CustomScalarFormatter
         sage: from matplotlib import font_manager
-        sage: plot(x^2, (x,100,5000), tick_formatter = [ CustomScalarFormatter(replace_values=[[2000,0],['$x_0$','']]), CustomScalarFormatter(replace_values=[[1E7,0],['$y_0$','']]) ])
+        sage: plot(x**2, (x,100,5000), tick_formatter = [ CustomScalarFormatter(replace_values=[[2000,0],['$x_0$','']]), CustomScalarFormatter(replace_values=[[1E7,0],['$y_0$','']]) ])
+
+    .. PLOT::
+
+        from sage.plot.plot import CustomScalarFormatter
+        from matplotlib import font_manager
+        p = plot(x**2, (x,100,5000), tick_formatter = [ CustomScalarFormatter(replace_values=[[2000,0],['$x_0$','']]), CustomScalarFormatter(replace_values=[[1E7,0],['$y_0$','']]) ])
+        sphinx_plot(p)
 
     """
 
