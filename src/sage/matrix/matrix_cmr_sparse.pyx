@@ -581,6 +581,72 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         sum.set_immutable()
         return sum
 
+    def three_sum_cmr(first_mat, second_mat,
+                  first_index1, first_index2, second_index1, second_index2,
+                  three_sum_strategy="distributed_ranks"):
+        r"""
+
+
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M1 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 3, sparse=True),
+            ....:                            [[1, 2, 3], [4, 5, 6]]); M1
+            [1 2 3]
+            [4 5 6]
+            sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 2, 3, sparse=True),
+            ....:                            [[7, 8, 9], [-1, -2, -3]]); M2
+            [ 7  8  9]
+            [-1 -2 -3]
+        """
+        cdef Matrix_cmr_chr_sparse sum, first, second
+        cdef CMR_CHRMAT *sum_mat
+        first = Matrix_cmr_chr_sparse._from_data(first_mat, immutable=False)
+        second = Matrix_cmr_chr_sparse._from_data(second_mat, immutable=False)
+
+        if three_sum_strategy not in ["distributed_ranks", "concentrated_rank"]:
+            raise ValueError("Unknown three sum mode", three_sum_strategy)
+
+        if three_sum_strategy == "distributed_ranks":
+            row1 = first_index1
+            column2 = first_index2
+            column1 = second_index1
+            row2 = second_index2
+            if row1 < 0 or row1 >= first._mat.numRows:
+                raise ValueError("First marker 1 should be a row index of the first matrix")
+            if column2 < 0 or column2 >= first._mat.numColumns:
+                raise ValueError("First marker 2 should be a column index of the first matrix")
+            if column1 < 0 or column1 >= second._mat.numColumns:
+                raise ValueError("Second marker 1 should be a column index of the second matrix")
+            if row2 < 0 or row2 >= second._mat.numRows:
+                raise ValueError("Second marker 2 should be a row index of the second matrix")
+            first_marker1 = CMRrowToElement(row1)
+            first_marker2 = CMRcolumnToElement(column2)
+            second_marker1 = CMRcolumnToElement(column1)
+            second_marker2 = CMRrowToElement(row2)
+        else:
+            row1 = first_index1
+            row2 = first_index2
+            column1 = second_index1
+            column2 = second_index2
+            if row1 < 0 or row1 >= first._mat.numRows:
+                raise ValueError("First marker 1 should be a Row index of the first matrix")
+            if row2 < 0 or row2 >= first._mat.numRows:
+                raise ValueError("First marker 2 should be a Row index of the first matrix")
+            if column1 < 0 or column1 >= second._mat.numColumns:
+                raise ValueError("Second marker 1 should be a column index of the second matrix")
+            if column2 < 0 or column2 >= second._mat.numColumns:
+                raise ValueError("Second marker 2 should be a column index of the second matrix")
+            first_marker1 = CMRrowToElement(row1)
+            first_marker2 = CMRrowToElement(row2)
+            second_marker1 = CMRcolumnToElement(column1)
+            second_marker2 = CMRcolumnToElement(column2)
+
+        cdef int8_t characteristic = 0
+        CMR_CALL(CMRthreeSum(cmr, first._mat, second._mat, first_marker1, second_marker1, first_marker2, second_marker2, characteristic, &sum_mat))
+        sum = Matrix_cmr_chr_sparse._from_cmr(sum_mat)
+        return sum
+
     def three_sum(first_mat, second_mat, first_col_index1, first_col_index2, second_col_index1, second_col_index2):
         r"""
         Return the 3-sum matrix constructed from the given matrices ``first_mat`` and
