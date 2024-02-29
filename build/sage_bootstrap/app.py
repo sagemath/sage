@@ -88,7 +88,7 @@ class Application(object):
         source_maxima='normal'
         trees_maxima='SAGE_LOCAL'
         """
-        props = kwds.pop('props', ['path', 'version_with_patchlevel', 'type', 'source', 'trees'])
+        props = kwds.pop('props', ['path', 'version_with_patchlevel', 'type', 'source', 'trees', 'purl'])
         format = kwds.pop('format', 'plain')
         log.debug('Looking up properties')
         pc = PackageClass(*package_classes)
