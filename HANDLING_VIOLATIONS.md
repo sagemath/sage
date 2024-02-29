@@ -210,7 +210,7 @@ Possible responses may include:
   the committee may issue a “mandatory cooling off period”.
 
 - A permanent or temporary ban from some or all Sage spaces (mailing
-  lists, github, etc.). The group will maintain records of all such
+  lists, GitHub, etc.). The group will maintain records of all such
   bans so that they may be reviewed in the future or otherwise
   maintained.
 

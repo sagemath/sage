@@ -11,7 +11,7 @@ The Sage community is comprised of an international mixture of mathematicians,
 computer scientists, engineers, researchers, teachers, amateurs, and others
 with varied backgrounds. This diversity is one of our strengths, but it can
 also lead to communication problems and unhappiness. People who love working on
-Sage can more effectively collaborate with others if they follow this code.
+Sage can more effectively collaborate with others if they follow this Code.
 
 ## Guidelines ##
 
@@ -85,7 +85,7 @@ explicitly honor diversity in: age, culture, ethnicity, genotype,
 gender identity or expression, language, national origin, neurotype,
 phenotype, political beliefs, profession, race, religion, sexual
 orientation, socioeconomic status, subculture, and technical ability,
-to the extent that these do not conflict with this code of conduct.
+to the extent that these do not conflict with this Code of Conduct.
 
 Though we welcome people fluent in all languages, Sage development is
 conducted in English.
@@ -140,8 +140,8 @@ violent, sexist or racist language, we will immediately disconnect the
 originator from Sage communication channels; please see the manual
 for details.
 
-In cases not involving clear severe and obvious breaches of this code
-of conduct, the process for acting on any received code of conduct
+In cases not involving clear severe and obvious breaches of this Code
+of Conduct, the process for acting on any received Code of Conduct
 violation report will be:
 
 - acknowledgement that the report has been received
@@ -154,7 +154,7 @@ violation report will be:
 The committee will respond to any report as soon as possible, and our
 goal will be to respond within 72 hours.
 
-Potential consequences for violating the Sage code of conduct include:
+Potential consequences for violating the Sage Code of Conduct include:
 
 - Nothing (if we determine that no violation occurred)
 - Private feedback or reprimand to the individual(s) involved
