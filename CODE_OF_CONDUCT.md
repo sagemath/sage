@@ -1,6 +1,6 @@
 # Code of Conduct #
 
-This code was approved by the Sage community by a vote which ended on
+This Code was approved by the Sage community by a vote which ended on
 November 24, 2014.
 
 **The date needs to be updated if these changes are approved.**
