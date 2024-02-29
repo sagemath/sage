@@ -17,7 +17,26 @@ other pre-implemented members, and how to solve problems inside them
 using flag algebras, see the documentation of 
 :mod:`sage.algebras.flag_algebras`. This file is about flags mainly.
 
-The examples will use GraphTheory
+Formally, for a given theory $T$, and two models $M, N$,
+with model embedding of $M$ in $N$, $\Theta: M \rightarrow N$, the pair 
+$F = (N, \Theta)$ is a flag, with type $M$. The size of the model is 
+the number of elements in it. Here, the elements of each model form
+initial segments of the naturals, therefore a model on 3 elements must
+have elements `range(3)`. The relations in the theory are
+list of lists from the elements. For example in the theory of graphs,
+there is only one relational symbol, the edge. This allows to specify 
+a triangle with the edge list `[[0, 1], [0, 2], [1, 2]]`. As combinatorial
+theories are closed under sub-models, any subset of ${0, 1, 2}$ induces a
+sub-model. For example, the subset $1$ induces the empty graph with $1$ 
+vertex. The embedding of this empty graph into the triangle therefore forms
+a flag. Notice that the collection of flags $(N, \emptyset)$ is isomorphic
+to the models of $T$. In this code they are identified, so elements of $T$
+are simply flags with empty type. Furthermore, to distinguish types from 
+models (and to simplify calculations), the types are identified with flags 
+using the identity embedding $(M, id)$.
+
+
+The examples will use `GraphTheory`
 
     sage: from sage.algebras.flag_algebras import GraphTheory
 
@@ -25,8 +44,8 @@ To create flags from a theory we can call for example ::
     
     sage: g = GraphTheory(3, edges=[[0, 1]])
 
-This creates a graph on `3` vertices. They are called `[0, 1, 2]` for 
-simplicity, and it defines the single edge `[0, 1]`. The result is a Flag
+This creates a graph on `3` vertices (equal to `[0, 1, 2]`), 
+and it defines the single edge `[0, 1]`. The result is a Flag
 `g`. The ftype is a collection of marked vertices (a constant in the theory). 
 For example, we can define the same graph but mark one vertex ::
     
@@ -156,6 +175,11 @@ from sage.structure.element cimport Element
 cpdef _subblock_helper(list points, list block):
     r"""
     Helper to find induced substructures
+    
+    TESTS::
+
+        sage: _subblock_helped([0, 2], [[0, 1, 2], [2, 4], [1, 1, 2]])
+        [[0, 1, 2]]
     """
     cdef bint gd = 0
     ret = []

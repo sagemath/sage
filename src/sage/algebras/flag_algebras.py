@@ -236,6 +236,10 @@ class CombinatorialTheory(Parent, UniqueRepresentation):
     def __init__(self, name, generator, identifier, **signature):
         r"""
         Initialize a Combinatorial Theory
+        
+        A combinatorial theory is any theory with universal axioms only, 
+        (therefore the elements satisfy a heredetary property).
+        See the file docstring for more information.
 
         INPUT:
 
