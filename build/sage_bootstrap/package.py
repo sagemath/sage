@@ -26,16 +26,27 @@ log = logging.getLogger()
 class Package(object):
 
     def __new__(cls, package_name):
-        if package_name.startswith("pkg:pypi/"):
-            def normalize(name):
-                return name.lower().replace('_', '-')
-
-            pypi_name = normalize(package_name[len("pkg:pypi/"):])
+        if package_name.startswith("pypi/") or package_name.startswith("generic/"):
+            package_name = "pkg:" + package_name
+        if package_name.startswith("pkg:"):
+            if package_name.startswith("pkg:generic/"):  # fast path
+                try:
+                    pkg = cls(package_name[len("pkg:generic/"):].replace('-', '_'))
+                    if pkg.purl == package_name:
+                        return pkg  # assume unique
+                except Exception:
+                    pass
+            elif package_name.startswith("pkg:pypi/"):  # fast path
+                try:
+                    pkg = cls(package_name[len("pkg:pypi/"):].replace('-', '_'))
+                    if pkg.purl == package_name:
+                        return pkg  # assume unique
+                except Exception:
+                    pass
             for pkg in cls.all():
-                distribution = pkg.distribution_name
-                if distribution and normalize(distribution) == pypi_name:
+                if pkg.purl == package_name:
                     return pkg  # assume unique
-            raise ValueError('no package for distribution {0}'.format(pypi_name))
+            raise ValueError('no package for PURL {0}'.format(package_name))
         self = object.__new__(cls)
         self.__init__(package_name)
         return self
@@ -56,7 +67,8 @@ class Package(object):
         -- ``package_name`` -- string. Name of the package. The Sage
            convention is that all package names are lower case.
         """
-        if package_name.startswith("pkg:pypi/"):
+        if any(package_name.startswith(prefix)
+               for prefix in ["pkg:", "pypi/", "generic"]):
             # Already initialized
             return
         if package_name != package_name.lower():
@@ -373,6 +385,23 @@ class Package(object):
         if self.__requirements is not None:
             return 'SAGE_VENV'
         return 'SAGE_LOCAL'
+
+    @property
+    def purl(self):
+        """
+        Return a PURL (Package URL) for the package
+
+        OUTPUT:
+
+        A string in the format ``SCHEME:TYPE/NAMESPACE/NAME``,
+        i.e., without components for version, qualifiers, and subpath.
+        See https://github.com/package-url/purl-spec/blob/master/PURL-SPECIFICATION.rst#package-url-specification-v10x
+        for details
+        """
+        dist = self.distribution_name
+        if dist:
+            return 'pkg:pypi/' + dist.lower().replace('_', '-')
+        return 'pkg:generic/' + self.name.replace('_', '-')
 
     @property
     def distribution_name(self):
