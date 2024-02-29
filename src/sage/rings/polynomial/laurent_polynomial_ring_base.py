@@ -640,7 +640,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: f.is_zero()
             True
 
-        Terms must always be negative::
+        Terms must always be non-negative::
 
             sage: L.<x, y> = LaurentPolynomialRing(QQ)
             sage: f = L.random_element(-10, 20, terms=-1)
