@@ -12,8 +12,10 @@ Finite dimensional modules with basis
 import operator
 from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.fields import Fields
+from sage.categories.homsets import HomsetsCategory
 from sage.categories.tensor import TensorProductsCategory
 from sage.misc.cachefunc import cached_method
+
 
 class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
     """
@@ -570,6 +572,17 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             return dense_free_module.element_class(dense_free_module,
                                                    self.dense_coefficient_list(order),
                                                    coerce=True, copy=False)
+
+    class Homsets(HomsetsCategory):
+
+        def extra_super_categories(self):
+            """
+            EXAMPLES::
+
+                sage: Modules(ZZ).WithBasis().FiniteDimensional().Homsets().extra_super_categories()
+                [Category of finite dimensional modules with basis over Integer Ring]
+            """
+            return [FiniteDimensionalModulesWithBasis(self.base_category().base_ring())]
 
     class MorphismMethods:
         def matrix(self, base_ring=None, side="left"):
