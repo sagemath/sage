@@ -230,7 +230,7 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
 
             sage: F = CombinatorialSpecies()
             sage: F.generating_series()
-            Uninitialized Lazy Laurent Series
+            Uninitialized Lazy Series
         """
         if base_ring not in self._generating_series:
             self._generating_series[base_ring] = series_ring.undefined(valuation=(0 if self._min is None else self._min))
@@ -247,7 +247,7 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
 
             sage: F = CombinatorialSpecies()
             sage: F.isotype_generating_series()
-            Uninitialized Lazy Laurent Series
+            Uninitialized Lazy Series
         """
         if base_ring not in self._isotype_generating_series:
             self._isotype_generating_series[base_ring] = series_ring.undefined(valuation=(0 if self._min is None else self._min))
@@ -263,8 +263,8 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
         EXAMPLES::
 
             sage: F = CombinatorialSpecies()
-            sage: F.cycle_index_series()
-            Uninitialized Lazy Laurent Series
+            sage: F.cycle_index_series()                                                # needs sage.modules
+            Uninitialized Lazy Series
         """
         if base_ring not in self._cycle_index_series:
             self._cycle_index_series[base_ring] = series_ring.undefined(valuation=(0 if self._min is None else self._min))
@@ -401,6 +401,15 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
             [1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
             sage: F.isotype_generating_series()[0:10]
             [1, 2, 3, 5, 8, 13, 21, 34, 55, 89]
+
+        Check that :issue:`35071` is fixed::
+
+            sage: X = species.SingletonSpecies()
+            sage: E = species.SetSpecies(max=3)
+            sage: B = species.CombinatorialSpecies(min=1)
+            sage: B.define(X*E(B))
+            sage: B.generating_series()
+            z + z^2 + 3/2*z^3 + 5/2*z^4 + 9/2*z^5 + 17/2*z^6 + 133/8*z^7 + O(z^8)
         """
         if not isinstance(x, GenericCombinatorialSpecies):
             raise TypeError("x must be a combinatorial species")
@@ -420,17 +429,17 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
 
         EXAMPLES::
 
-            sage: d = DiGraph(multiedges=True)
+            sage: d = DiGraph(multiedges=True)                                          # needs sage.graphs
             sage: X = species.SingletonSpecies()
             sage: B = species.CombinatorialSpecies()
             sage: B.define(X+B*B)
-            sage: B._add_to_digraph(d); d
+            sage: B._add_to_digraph(d); d                                               # needs sage.graphs
             Multi-digraph on 4 vertices
 
         TESTS::
 
             sage: C = species.CombinatorialSpecies()
-            sage: C._add_to_digraph(d)
+            sage: C._add_to_digraph(d)                                                  # needs sage.graphs
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -452,7 +461,7 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
         EXAMPLES::
 
             sage: C = species.CombinatorialSpecies()
-            sage: C.algebraic_equation_system()
+            sage: C.algebraic_equation_system()                                         # needs sage.graphs
             Traceback (most recent call last):
             ...
             NotImplementedError
@@ -460,7 +469,7 @@ class CombinatorialSpecies(GenericCombinatorialSpecies):
         ::
 
             sage: B = species.BinaryTreeSpecies()
-            sage: B.algebraic_equation_system()
+            sage: B.algebraic_equation_system()                                         # needs sage.graphs
             [-node3^2 + node1, -node1 + node3 + (-z)]
         """
         try:

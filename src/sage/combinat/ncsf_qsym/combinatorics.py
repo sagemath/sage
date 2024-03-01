@@ -255,7 +255,7 @@ def number_of_fCT(content_comp, shape_comp):
             return 1
         else:
             return 0
-    C = Compositions(content_comp.size()-content_comp[-1], outer = list(shape_comp))
+    C = Compositions(content_comp.size()-content_comp[-1], outer=list(shape_comp))
     s = 0
     for x in C:
         if len(x) >= len(shape_comp)-1:

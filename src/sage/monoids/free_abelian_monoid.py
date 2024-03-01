@@ -103,8 +103,10 @@ class FreeAbelianMonoidFactory(UniqueFactory):
         n = int(n)
         names = normalize_names(n, names)
         return (n, names)
+
     def create_object(self, version, key):
         return FreeAbelianMonoid_class(*key)
+
 
 FreeAbelianMonoid_factory = FreeAbelianMonoidFactory("sage.monoids.free_abelian_monoid.FreeAbelianMonoid_factory")
 
@@ -202,7 +204,7 @@ class FreeAbelianMonoid_class(Parent):
 
     def __repr__(self):
         n = self.__ngens
-        return "Free abelian monoid on %s generators %s"%(n,self.gens())
+        return "Free abelian monoid on %s generators %s" % (n,self.gens())
 
     def __call__(self, x):
         """
@@ -219,7 +221,6 @@ class FreeAbelianMonoid_class(Parent):
         if isinstance(x, FreeAbelianMonoidElement) and x.parent() == self:
             return x
         return self.element_class(self, x)
-
 
     def __contains__(self, x):
         """
@@ -264,12 +265,12 @@ class FreeAbelianMonoid_class(Parent):
         n = self.__ngens
         if i < 0 or not i < n:
             raise IndexError(f"argument i (= {i}) must be between 0 and {n-1}")
-        x = [ 0 for j in range(n) ]
+        x = [0 for j in range(n)]
         x[int(i)] = 1
         return self.element_class(self, x)
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 
@@ -279,7 +280,7 @@ class FreeAbelianMonoid_class(Parent):
             sage: F.gens()
             (a0, a1, a2, a3, a4)
         """
-        return tuple([self.gen(i) for i in range(self.__ngens)])
+        return tuple(self.gen(i) for i in range(self.__ngens))
 
     def ngens(self):
         """

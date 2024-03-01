@@ -17,9 +17,8 @@ AUTHOR:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.groups.perm_gps.all import CyclicPermutationGroup
+from sage.groups.perm_gps.permgroup_named import CyclicPermutationGroup
 from sage.libs.singular.function import lib, singular_function
-from sage.misc.repr import repr_lincomb
 from sage.rings.polynomial.multi_polynomial_ideal import MPolynomialIdeal
 from cpython.object cimport PyObject_RichCompare
 
@@ -165,7 +164,6 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         """
         cdef list L = []
         cdef FreeAlgebra_letterplace P = self._parent
-        cdef int ngens = P.__ngens
         if P._base._repr_option('element_is_atomic'):
             for E, c in zip(self._poly.exponents(), self._poly.coefficients()):
                 monstr = P.exponents_to_string(E)
@@ -240,7 +238,6 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         """
         cdef list L = []
         cdef FreeAlgebra_letterplace P = self._parent
-        cdef int ngens = P.__ngens
         from sage.misc.latex import latex
         if P._base._repr_option('element_is_atomic'):
             for E, c in zip(self._poly.exponents(), self._poly.coefficients()):
@@ -444,7 +441,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
                 return True
         return False
 
-    cpdef _richcmp_(self, other, int op):
+    cpdef _richcmp_(self, other, int op) noexcept:
         """
         Implement comparisons, using the Cython richcmp convention.
 
@@ -461,7 +458,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
 
     ################################
     # Arithmetic
-    cpdef _neg_(self):
+    cpdef _neg_(self) noexcept:
         """
         TESTS::
 
@@ -477,7 +474,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
         return FreeAlgebraElement_letterplace(self._parent, -self._poly,
                                               check=False)
 
-    cpdef _add_(self, other):
+    cpdef _add_(self, other) noexcept:
         """
         Addition, under the side condition that either one summand
         is zero, or both summands have the same degree.
@@ -511,7 +508,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
                                               self._poly + right._poly,
                                               check=False)
 
-    cpdef _sub_(self, other):
+    cpdef _sub_(self, other) noexcept:
         """
         Difference, under the side condition that either one summand
         is zero or both have the same weighted degree.
@@ -551,7 +548,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
                                               self._poly - right._poly,
                                               check=False)
 
-    cpdef _lmul_(self, Element right):
+    cpdef _lmul_(self, Element right) noexcept:
         """
         Multiplication from the right with an element of the base ring.
 
@@ -566,7 +563,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
                                               self._poly._lmul_(right),
                                               check=False)
 
-    cpdef _rmul_(self, Element left):
+    cpdef _rmul_(self, Element left) noexcept:
         """
         Multiplication from the left with an element of the base ring.
 
@@ -581,7 +578,7 @@ cdef class FreeAlgebraElement_letterplace(AlgebraElement):
                                               self._poly._rmul_(left),
                                               check=False)
 
-    cpdef _mul_(self, other):
+    cpdef _mul_(self, other) noexcept:
         """
         Product of two free algebra elements in letterplace implementation.
 

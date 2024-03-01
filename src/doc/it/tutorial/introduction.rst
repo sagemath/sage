@@ -66,7 +66,7 @@ Qui vengono fatti solamente due commenti.
 #. Il file di download di Sage arrive con le "batterie incluse".
    In altre parole, nonostante Sage usi Python, IPython, PARI, GAP, 
    Singular, Maxima, NTL, GMP e così via, non è necessario installarli
-   separatemente siccome sono incluse con la distribuzione di Sage.
+   separatamente siccome sono incluse con la distribuzione di Sage.
    Comunque, per usare certe feature di \sage, ad es. Macaulay o KASH, 
    bisogna installare il pacchetto opzionale Sage che interessa o almeno
    avere i programmi in questioni gia installati sul proprio computer.
@@ -76,7 +76,7 @@ Qui vengono fatti solamente due commenti.
 
 #. Le versioni binarie precompilate di Sage (che si trovano sul sito web di 
    Sage) possono essere più facili e più veloci da installare invece che la 
-   versione da codice sorgente. Basta solo spachettare il file e eseguire "sage".
+   versione da codice sorgente. Basta solo spacchettare il file e eseguire "sage".
 
 Modi di usare Sage
 ==================
@@ -100,7 +100,7 @@ Obiettivi di lungo periodo per Sage
 ===================================
 
 -  **Utile**: il pubblico per Sage il quale sage è stato pensato sono gli 
-   studentu di matematica (dalla scuola superiore all'università), gli insegnanti
+   studenti di matematica (dalla scuola superiore all'università), gli insegnanti
    e i ricercatori in matematica. Lo scopo è di fornire software che possa essere
    usato per esplorare e sperimentare le costruzioni matematiche in algebra,
    geometria, teoria dei numeri, calcolo, calcolo numerico, ecc. Sage aiuta a
@@ -111,11 +111,11 @@ Obiettivi di lungo periodo per Sage
    operazioni.
 
 -  **Libero e open source:** il codice sorgente deve essere liberamente disponibile
-   e leggibile, così che gli utenti posssano capire cosa stia facendo veramente il 
+   e leggibile, così che gli utenti possano capire cosa stia facendo veramente il 
    sistema e possano estenderlo più facilmente. Così come i matematici acquisiscono
-   una comprensione più profonda di un teorema leggendo attentamete o almeno scorrendo
+   una comprensione più profonda di un teorema leggendo attentamente o almeno scorrendo
    velocemente la dimostrazione, le persone che fanno calcoli dovrebbero essere capaci
-   di capire come funzionano i calcoli leggengo il codice sorgente documentato. Se
+   di capire come funzionano i calcoli leggendo il codice sorgente documentato. Se
    si usa Sage per fare calcoli in un articolo che si pubblica, si può essere rassicurati
    dal fatto che i lettori avranno sempre libero accesso a Sage e a tutto il suo codice
    sorgente ed è persino concesso di archiviare la versione di Sage che si è utilizzata.

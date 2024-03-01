@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.symbolic
 """
 C Function Profiler Using Google Perftools
 
@@ -45,7 +46,6 @@ from sage.cpython.string import bytes_to_str
 
 libc = None
 libprofiler = None
-
 
 
 class Profiler(SageObject):

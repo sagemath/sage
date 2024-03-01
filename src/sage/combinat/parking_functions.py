@@ -222,11 +222,17 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
             <class 'sage.combinat.parking_functions.ParkingFunctions_n_with_category.element_class'>
             sage: type(b)
             <class 'sage.combinat.parking_functions.ParkingFunctions_n_with_category.element_class'>
+
+        Some checks for more general inputs::
+
+            sage: PF = ParkingFunction((1, 1, 2, 2, 5, 6))
+            sage: PF = ParkingFunction(Permutation([4,2,3,1]))
         """
-        if isinstance(lst, ParkingFunction):
-            lst = list(lst)
         if not isinstance(lst, list):
-            raise TypeError('input must be a list')
+            try:
+                lst = list(lst)
+            except TypeError:
+                raise TypeError('input must be convertible to a list')
         if parent is None:
             parent = ParkingFunctions_n(len(lst))
         ClonableArray.__init__(self, parent, lst)
@@ -1016,23 +1022,26 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: R = QQ['q','t'].fraction_field()
             sage: (q,t) = R.gens()
-            sage: cqf = sum(t**PF.area()*PF.characteristic_quasisymmetric_function() for PF in ParkingFunctions(3)); cqf
-            (q^3+q^2*t+q*t^2+t^3+q*t)*F[1, 1, 1] + (q^2+q*t+t^2+q+t)*F[1, 2] + (q^2+q*t+t^2+q+t)*F[2, 1] + F[3]
+            sage: cqf = sum(t**PF.area() * PF.characteristic_quasisymmetric_function()
+            ....:           for PF in ParkingFunctions(3)); cqf
+            (q^3+q^2*t+q*t^2+t^3+q*t)*F[1, 1, 1] + (q^2+q*t+t^2+q+t)*F[1, 2]
+             + (q^2+q*t+t^2+q+t)*F[2, 1] + F[3]
             sage: s = SymmetricFunctions(R).s()
             sage: s(cqf.to_symmetric_function())
             (q^3+q^2*t+q*t^2+t^3+q*t)*s[1, 1, 1] + (q^2+q*t+t^2+q+t)*s[2, 1] + s[3]
-            sage: s(cqf.to_symmetric_function()).nabla(power = -1)
+            sage: s(cqf.to_symmetric_function()).nabla(power=-1)
             s[1, 1, 1]
 
         ::
 
             sage: p = ParkingFunction([3, 1, 2])
-            sage: p.characteristic_quasisymmetric_function()
+            sage: p.characteristic_quasisymmetric_function()                            # needs sage.modules
             q*F[2, 1]
             sage: pf = ParkingFunction([1,2,7,2,1,2,3,2,1])
-            sage: pf.characteristic_quasisymmetric_function()
+            sage: pf.characteristic_quasisymmetric_function()                           # needs sage.modules
             q^2*F[1, 1, 1, 2, 1, 3]
         """
         from sage.combinat.ncsf_qsym.qsym import QuasiSymmetricFunctions

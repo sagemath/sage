@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.rings.finite_rings sage.schemes
 """
 AG codes
 
@@ -331,7 +332,7 @@ class EvaluationAGCode(AGCode):
         """
         Return the designed distance of the AG code.
 
-        If the code is of dimension zero, then a ``ValueError`` is raised.
+        If the code is of dimension zero, then a :class:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -538,7 +539,8 @@ class DifferentialAGCode(AGCode):
             sage: Q, = C.places_at_infinity()
             sage: pls.remove(Q)
             sage: code = codes.DifferentialAGCode(pls, 3*Q)
-            sage: matrix([[w.residue(p) for p in pls] for w in code.basis_differentials()])
+            sage: matrix([[w.residue(p) for p in pls]
+            ....:         for w in code.basis_differentials()])
             [    1     0     0     0     0 a + 1 a + 1     1]
             [    0     1     0     0     0 a + 1     a     0]
             [    0     0     1     0     0     a     1     a]
@@ -574,7 +576,7 @@ class DifferentialAGCode(AGCode):
         """
         Return the designed distance of the differential AG code.
 
-        If the code is of dimension zero, then a ``ValueError`` is raised.
+        If the code is of dimension zero, then a :class:`ValueError` is raised.
 
         EXAMPLES::
 

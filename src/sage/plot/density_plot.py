@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.symbolic
 """
 Density plots
 """
@@ -126,7 +127,7 @@ class DensityPlot(GraphicPrimitive):
             sage: d = D[0]; d
             DensityPlot defined by a 25 x 25 data grid
         """
-        return "DensityPlot defined by a %s x %s data grid"%(self.xy_array_row, self.xy_array_col)
+        return "DensityPlot defined by a %s x %s data grid" % (self.xy_array_row, self.xy_array_col)
 
     def _render_on_subplot(self, subplot):
         """
@@ -306,7 +307,7 @@ def density_plot(f, xrange, yrange, **options):
     from sage.rings.real_double import RDF
     g, ranges = setup_for_eval_on_grid([f], [xrange, yrange], options['plot_points'])
     g = g[0]
-    xrange, yrange = [r[:2] for r in ranges]
+    xrange, yrange = (r[:2] for r in ranges)
 
     xy_data_array = [[RDF(g(x,y)) for x in xsrange(*ranges[0], include_endpoint=True)]
                             for y in xsrange(*ranges[1], include_endpoint=True)]

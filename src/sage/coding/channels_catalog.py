@@ -9,11 +9,9 @@ The ``channels`` object may be used to access the codes that Sage can build.
 - :class:`channel.QarySymmetricChannel <sage.coding.channel.QarySymmetricChannel>`
 - :class:`channel.StaticErrorRateChannel <sage.coding.channel.StaticErrorRateChannel>`
 
-.. NOTE::
+To import these names into the global namespace, use::
 
-    To import these names into the global namespace, use:
-
-        sage: from sage.coding.channels_catalog import *
+    sage: from sage.coding.channels_catalog import *
 
 """
 #*****************************************************************************

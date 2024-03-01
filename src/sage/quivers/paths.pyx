@@ -109,7 +109,7 @@ cdef class QuiverPath(MonoidElement):
         """
         biseq_dealloc(self._path)
 
-    cdef QuiverPath _new_(self, int start, int end):
+    cdef QuiverPath _new_(self, int start, int end) noexcept:
         """
         TESTS::
 
@@ -260,7 +260,7 @@ cdef class QuiverPath(MonoidElement):
         """
         return self._path.length != 0
 
-    cpdef _richcmp_(left, right, int op):
+    cpdef _richcmp_(left, right, int op) noexcept:
         """
         Comparison for :class:`QuiverPaths`.
 
@@ -409,7 +409,6 @@ cdef class QuiverPath(MonoidElement):
         cdef tuple E
         cdef Py_ssize_t start, stop, step, slicelength
         cdef int init, end
-        cdef size_t i,ind
         cdef QuiverPath OUT
         if isinstance(index, slice):
             PySlice_GetIndicesEx(index, self._path.length,
@@ -466,7 +465,7 @@ cdef class QuiverPath(MonoidElement):
         for i in range(self._path.length):
             yield E[biseq_getitem(self._path, i)]
 
-    cpdef _mul_(self, other):
+    cpdef _mul_(self, other) noexcept:
         """
         Compose two paths.
 
@@ -504,7 +503,7 @@ cdef class QuiverPath(MonoidElement):
         biseq_init_concat(OUT._path, self._path,right._path)
         return OUT
 
-    cpdef _mod_(self, other):
+    cpdef _mod_(self, other) noexcept:
         """
         Return what remains of this path after removing the initial segment ``other``.
 
@@ -599,7 +598,7 @@ cdef class QuiverPath(MonoidElement):
         """
         if self._parent is not P._parent:
             return (None, None, None)
-        cdef size_t i, start
+        cdef size_t i
         sig_on()
         i = biseq_startswith_tail(P._path, self._path, 0)
         sig_off()
@@ -607,7 +606,7 @@ cdef class QuiverPath(MonoidElement):
             return (None, None, None)
         return (self[:i], self[i:], P[self._path.length-i:])
 
-    cpdef tuple complement(self, QuiverPath subpath):
+    cpdef tuple complement(self, QuiverPath subpath) noexcept:
         """
         Return a pair ``(a,b)`` of paths s.t. ``self = a*subpath*b``,
         or ``(None, None)`` if ``subpath`` is not a subpath of this path.
@@ -665,8 +664,6 @@ cdef class QuiverPath(MonoidElement):
             raise ValueError("the two paths belong to different quivers")
         if subpath._path.length == 0:
             raise ValueError("we only consider sub-paths of positive length")
-        cdef size_t i
-        cdef size_t max_i, bitsize
         if self._path.length < subpath._path.length:
             return 0
         if biseq_contains(self._path, subpath._path, 0) == -1:

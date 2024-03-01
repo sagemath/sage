@@ -1,1 +1,1 @@
-python3-Send2Trash
+python3${PYTHON_MINOR}-Send2Trash

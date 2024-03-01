@@ -24,15 +24,3 @@ Upstream Contact
 
 -  https://www.r-project.org
 -  R mailing list, #R in IRC
-
-Dependencies
-------------
-
--  GNU patch
--  iconv
--  Readline
--  BLAS/LAPACK
--  xz
--  pcre
--  curl
--  https-capable SSL

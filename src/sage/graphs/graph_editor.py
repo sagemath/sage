@@ -64,10 +64,10 @@ def graph_editor(graph=None, **display_options):
 
     Using different display options::
 
-        sage: e = graph_editor(graphs.PetersenGraph(), width=300, height=300,  # optional - phitigra
-        ....: default_radius=12, default_vertex_color='orange',                # optional - phitigra
-        ....: default_edge_color='#666', show_vertex_labels=False)             # optional - phitigra
-        sage: e.show()                                                         # not tested
+        sage: e = graph_editor(graphs.PetersenGraph(), width=300, height=300,       # optional - phitigra
+        ....:                  default_radius=12, default_vertex_color='orange',
+        ....:                  default_edge_color='#666', show_vertex_labels=False)
+        sage: e.show()                                                              # not tested
 
     .. NOTE::
 

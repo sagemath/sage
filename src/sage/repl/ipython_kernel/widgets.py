@@ -173,7 +173,7 @@ class EvalWidget(TransformWidget):
         sage: w = EvalToggleButtons(options=["pi", "e"], transform=lambda x: x+x)
         sage: w
         EvalToggleButtons(options=('pi', 'e'), value='pi')
-        sage: w.get_interact_value()
+        sage: w.get_interact_value()                                                    # needs sage.symbolic
         2*pi
     """
     def get_value(self):
@@ -225,7 +225,7 @@ class TransformFloatSlider(TransformWidget, FloatSlider):
         sage: w = TransformFloatSlider(min=0, max=100, value=7, transform=lambda x: sqrt(x))
         sage: w
         TransformFloatSlider(value=7.0)
-        sage: w.get_interact_value()
+        sage: w.get_interact_value()                                                    # needs sage.symbolic
         2.6457513110645907
     """
     pass
@@ -310,7 +310,7 @@ class EvalText(EvalWidget, Text):
         sage: w = EvalText(value="pi", transform=lambda x: x^2)
         sage: w
         EvalText(value='pi')
-        sage: w.get_interact_value()
+        sage: w.get_interact_value()                                                    # needs sage.symbolic
         pi^2
     """
     pass
@@ -327,7 +327,7 @@ class EvalTextarea(EvalWidget, Textarea):
         sage: w = EvalTextarea(value="pi", transform=lambda x: x^2)
         sage: w
         EvalTextarea(value='pi')
-        sage: w.get_interact_value()
+        sage: w.get_interact_value()                                                    # needs sage.symbolic
         pi^2
     """
     pass
@@ -351,7 +351,7 @@ class SageColorPicker(ColorPicker):
         EXAMPLES::
 
             sage: from sage.repl.ipython_kernel.widgets import SageColorPicker
-            sage: SageColorPicker().get_interact_value()
+            sage: SageColorPicker().get_interact_value()                                # needs sage.plot
             RGB color (0.0, 0.0, 0.0)
         """
         return Color(self.value)
@@ -395,11 +395,13 @@ class Grid(TransformWidget, HBox, ValueWidget):
         EXAMPLES::
 
             sage: from sage.repl.ipython_kernel.widgets import Grid, EvalText
-            sage: w = Grid(2, 2, lambda i,j: EvalText(str(j+4*i)),
-            ....:         description="2x2 matrix", transform=matrix)
-            sage: w
-            Grid(value=[[0, 1], [4, 5]], children=(Label(value='2x2 matrix'), VBox(children=(EvalText(value='0'), EvalText(value='4'))), VBox(children=(EvalText(value='1'), EvalText(value='5')))))
-            sage: w.get_interact_value()
+            sage: w = Grid(2, 2, lambda i,j: EvalText(str(j+4*i)),                                  # needs sage.modules
+            ....:         description="2x2 matrix", transform=matrix); w
+            Grid(value=[[0, 1], [4, 5]],
+                        children=(Label(value='2x2 matrix'),
+                                  VBox(children=(EvalText(value='0'), EvalText(value='4'))),
+                                  VBox(children=(EvalText(value='1'), EvalText(value='5')))))
+            sage: w.get_interact_value()                                                            # needs sage.modules
             [0 1]
             [4 5]
 

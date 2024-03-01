@@ -3,13 +3,10 @@ description: Suggest an idea
 title: "<title>"
 labels: "t: enhancement"
 body:
-  - type: checkboxes
+  - type: markdown
     attributes:
-      label: Is there an existing issue for this?
-      description: Please search to see if an issue already exists for the bug you encountered.
-      options:
-      - label: I have searched the existing issues for a bug report that matches the one I want to file, without success.
-        required: true
+      value: |
+        * Please search to see if an issue already exists for the bug you encountered.
   - type: textarea
     attributes:
       label: Problem Description
@@ -34,3 +31,9 @@ body:
       description: Add any other context about the problem here.
     validations:
       required: false
+  - type: checkboxes
+    attributes:
+      label: Is there an existing issue for this?
+      options:
+      - label: I have searched the existing issues for a bug report that matches the one I want to file, without success.
+        required: true

@@ -1,3 +1,4 @@
+# sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Reed-Solomon codes and Generalized Reed-Solomon codes
 
@@ -7,9 +8,9 @@ finite field `F`, the corresponding Reed-Solomon code (RS code) of dimension
 
 .. MATH::
 
-    \{ f(\alpha_1), \ldots, f(\alpha_n)  \mid  f \in F[x], \deg f < k \}
+    \{ (f(\alpha_1), \ldots, f(\alpha_n))  \mid  f \in F[x], \deg f < k \}
 
-An RS code is often called "classical" if `alpha_i = \alpha^{i-1}` and `\alpha`
+An RS code is often called "classical" if `\alpha_i = \alpha^{i-1}` and `\alpha`
 is a primitive `n`'th root of unity.
 
 More generally, given also `n` "column multipliers" `\beta_1, \dots, \beta_n`,
@@ -18,7 +19,7 @@ the set:
 
 .. MATH::
 
-    \{ (\beta_1 f(\alpha_1), \ldots, \beta_n f(\alpha_n)
+    \{ (\beta_1 f(\alpha_1), \ldots, \beta_n f(\alpha_n))
     \mid f \in F[x], \deg f < k \}
 
 Here is a list of all content related to GRS codes:
@@ -63,9 +64,6 @@ from sage.modules.free_module import VectorSpace
 from sage.misc.cachefunc import cached_method
 from sage.misc.functional import symbolic_sum
 from sage.misc.misc_c import prod
-
-from sage.functions.other import binomial
-from sage.symbolic.ring import SR
 
 from .linear_code import AbstractLinearCode
 from .encoder import Encoder
@@ -260,11 +258,11 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
             True
         """
         return isinstance(other, GeneralizedReedSolomonCode) \
-                and self.base_field() == other.base_field() \
-                and self.length() == other.length() \
-                and self.dimension() == other.dimension() \
-                and self.evaluation_points() == other.evaluation_points() \
-                and self.column_multipliers() == other.column_multipliers()
+            and self.base_field() == other.base_field() \
+            and self.length() == other.length() \
+            and self.dimension() == other.dimension() \
+            and self.evaluation_points() == other.evaluation_points() \
+            and self.column_multipliers() == other.column_multipliers()
 
     def __hash__(self):
         """
@@ -300,9 +298,9 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
             [40, 12, 29] Generalized Reed-Solomon Code over GF(59)
         """
         return "[%s, %s, %s] %sReed-Solomon Code over GF(%s)"\
-                % (self.length(), self.dimension(), self.minimum_distance(),
-                   "Generalized " if self.is_generalized() else "",
-                   self.base_field().cardinality())
+            % (self.length(), self.dimension(), self.minimum_distance(),
+               "Generalized " if self.is_generalized() else "",
+               self.base_field().cardinality())
 
     def _latex_(self):
         r"""
@@ -321,9 +319,9 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
             [40, 12, 29] \textnormal{ Generalized Reed-Solomon Code over } \Bold{F}_{59}
         """
         return "[%s, %s, %s] \\textnormal{ %sReed-Solomon Code over } %s"\
-                % (self.length(), self.dimension(), self.minimum_distance(),
-                   "Generalized " if self.is_generalized() else "",
-                   self.base_field()._latex_())
+            % (self.length(), self.dimension(), self.minimum_distance(),
+               "Generalized " if self.is_generalized() else "",
+               self.base_field()._latex_())
 
     def minimum_distance(self):
         r"""
@@ -392,7 +390,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
             sage: C2.is_generalized()
             True
         """
-        return not all( beta.is_one() for beta in self.column_multipliers() )
+        return not all(beta.is_one() for beta in self.column_multipliers())
 
     @cached_method
     def multipliers_product(self):
@@ -516,7 +514,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
             sage: F = GF(11)
             sage: n, k = 10, 5
             sage: C = codes.GeneralizedReedSolomonCode(F.list()[:n], k)
-            sage: C.weight_distribution()
+            sage: C.weight_distribution()                                               # optional - sage.symbolic
             [1, 0, 0, 0, 0, 0, 2100, 6000, 29250, 61500, 62200]
 
         TESTS:
@@ -525,19 +523,22 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
 
             sage: F = GF(7)
             sage: C = codes.GeneralizedReedSolomonCode(F.list(), 3)
-            sage: C.weight_distribution() == super(codes.GeneralizedReedSolomonCode, C).weight_distribution() # long time
+            sage: C.weight_distribution() == super(codes.GeneralizedReedSolomonCode, C).weight_distribution() # long time   # optional - sage.symbolic
             True
             sage: F = GF(8)
             sage: C = codes.GeneralizedReedSolomonCode(F.list(), 3)
-            sage: C.weight_distribution() == super(codes.GeneralizedReedSolomonCode, C).weight_distribution() # long time
+            sage: C.weight_distribution() == super(codes.GeneralizedReedSolomonCode, C).weight_distribution() # long time   # optional - sage.symbolic
             True
         """
+        from sage.symbolic.ring import SR
+        from sage.functions.other import binomial
+
         d = self.minimum_distance()
         n = self.length()
         q = self.base_ring().order()
         s = SR.var('s')
         wd = [1] + [0] * (d - 1)
-        for i in range(d, n+1):
+        for i in range(d, n + 1):
             tmp = binomial(n, i) * (q - 1)
             wd.append(tmp * symbolic_sum(binomial(i-1, s) * (-1)**s * q**(i - d - s), s, 0, i-d))
         return wd
@@ -576,7 +577,7 @@ def ReedSolomonCode(base_field, length, dimension, primitive_root=None):
     r"""
     Construct a classical Reed-Solomon code.
 
-    A classical `[n,k]` Reed-Solomon code over `GF(q)` with `1 \le k \le n` and
+    A classical `[n,k]` Reed-Solomon code over `\GF{q}` with `1 \le k \le n` and
     `n | (q-1)` is a Reed-Solomon code whose evaluation points are the
     consecutive powers of a primitive `n`'th root of unity `\alpha`, i.e.
     `\alpha_i = \alpha^{i-1}`, where `\alpha_1, \ldots, \alpha_n` are the
@@ -646,9 +647,9 @@ def ReedSolomonCode(base_field, length, dimension, primitive_root=None):
     else:
         if primitive_root.multiplicative_order() != length:
             raise ValueError("Supplied primitive_root is not a primitive n'th root of unity")
-    return GeneralizedReedSolomonCode([ primitive_root**i for i in range(length) ], dimension)
+    return GeneralizedReedSolomonCode([primitive_root**i for i in range(length)], dimension)
 
-####################### encoders ###############################
+# ###################### encoders ###############################
 
 
 class GRSEvaluationVectorEncoder(Encoder):
@@ -664,13 +665,13 @@ class GRSEvaluationVectorEncoder(Encoder):
 
     .. MATH::
 
-        p = \Sigma_{i=1}^{m} m_i \times x^i.
+        p = \Sigma_{i=1}^{m} m_i  x^i.
 
     The encoding of `m` will be the following codeword:
 
     .. MATH::
 
-        (\beta_1 \times p(\alpha_1), \dots, \beta_n \times p(\alpha_n)).
+        (\beta_1  p(\alpha_1), \dots, \beta_n  p(\alpha_n)).
 
     INPUT:
 
@@ -722,7 +723,7 @@ class GRSEvaluationVectorEncoder(Encoder):
             False
         """
         return isinstance(other, GRSEvaluationVectorEncoder) \
-                and self.code() == other.code()
+            and self.code() == other.code()
 
     def _repr_(self):
         r"""
@@ -767,7 +768,7 @@ class GRSEvaluationVectorEncoder(Encoder):
 
         .. MATH::
 
-            G = [g_{i,j}], g_{i,j} = \beta_j \times \alpha_{j}^{i}.
+            G = [g_{i,j}], g_{i,j} = \beta_j \alpha_{j}^{i}.
 
         This matrix is a Vandermonde matrix.
 
@@ -787,7 +788,7 @@ class GRSEvaluationVectorEncoder(Encoder):
         C = self.code()
         alphas = C.evaluation_points()
         col_mults = C.column_multipliers()
-        g = matrix(C.base_field(), C.dimension(), C.length(), lambda i,j: col_mults[j] * alphas[j]**i)
+        g = matrix(C.base_field(), C.dimension(), C.length(), lambda i, j: col_mults[j] * alphas[j]**i)
         g.set_immutable()
         return g
 
@@ -806,7 +807,7 @@ class GRSEvaluationPolynomialEncoder(Encoder):
 
     .. MATH::
 
-        (\beta_1 \times p(\alpha_1), \dots, \beta_n \times p(\alpha_n)).
+        (\beta_1 p(\alpha_1), \dots, \beta_n p(\alpha_n)).
 
     INPUT:
 
@@ -987,7 +988,8 @@ class GRSEvaluationPolynomialEncoder(Encoder):
             sage: E.encode(p)
             Traceback (most recent call last):
             ...
-            ValueError: The value to encode must be in Univariate Polynomial Ring in x over Finite Field of size 11
+            ValueError: The value to encode must be in
+            Univariate Polynomial Ring in x over Finite Field of size 11
 
         TESTS:
 
@@ -1009,7 +1011,7 @@ class GRSEvaluationPolynomialEncoder(Encoder):
         C = self.code()
         if p.degree() >= C.dimension():
             raise ValueError("The polynomial to encode must have degree at most %s" % (C.dimension() - 1))
-        alphas    = C.evaluation_points()
+        alphas = C.evaluation_points()
         col_mults = C.column_multipliers()
         c = vector(C.base_ring(), [col_mults[i]*p(alphas[i]) for i in range(C.length())])
         return c
@@ -1057,7 +1059,7 @@ class GRSEvaluationPolynomialEncoder(Encoder):
 
         """
         C = self.code()
-        alphas    = C.evaluation_points()
+        alphas = C.evaluation_points()
         col_mults = C.column_multipliers()
 
         c = [c[i]/col_mults[i] for i in range(C.length())]
@@ -1084,7 +1086,7 @@ class GRSEvaluationPolynomialEncoder(Encoder):
     polynomial_ring = message_space
 
 
-####################### decoders ###############################
+# ###################### decoders ###############################
 
 
 class GRSBerlekampWelchDecoder(Decoder):
@@ -1182,7 +1184,7 @@ class GRSBerlekampWelchDecoder(Decoder):
              \textnormal{ Reed-Solomon Code over } \Bold{F}_{59}
         """
         return "\\textnormal{Berlekamp Welch decoder for }%s"\
-                % self.code()._latex_()
+            % self.code()._latex_()
 
     def _decode_to_code_and_message(self, r):
         r"""
@@ -1227,16 +1229,17 @@ class GRSBerlekampWelchDecoder(Decoder):
         col_mults = C.column_multipliers()
 
         r_list = copy(r)
-        r_list = [r[i]/col_mults[i] for i in range(0, C.length())]
+        r_list = [r[i] / col_mults[i] for i in range(C.length())]
 
-        t  = (C.minimum_distance()-1) // 2
-        l0 = n-1-t
-        l1 = n-1-t-(k-1)
-        S  = matrix(C.base_field(), n, l0+l1+2,
-                    lambda i, j: (C.evaluation_points()[i])**j if j<(l0+1)
-                    else r_list[i]*(C.evaluation_points()[i])**(j-(l0+1)))
-        S  = S.right_kernel()
-        S  = S.basis_matrix().row(0)
+        t = (C.minimum_distance() - 1) // 2
+        l0 = n - 1 - t
+        l1 = n - t - k
+        pts = C.evaluation_points()
+        S = matrix(C.base_field(), n, l0 + l1 + 2,
+                   lambda i, j: (pts[i]**j if j < (l0 + 1)
+                                 else r_list[i] * pts[i]**(j - (l0 + 1))))
+        S = S.right_kernel()
+        S = S.basis_matrix().row(0)
         R = C.base_field()['x']
 
         Q0 = R(S.list_from_positions(range(l0 + 1)))
@@ -1277,7 +1280,8 @@ class GRSBerlekampWelchDecoder(Decoder):
             sage: C = codes.GeneralizedReedSolomonCode(F.list()[:n], k)
             sage: D = codes.decoders.GRSBerlekampWelchDecoder(C)
             sage: c = C.random_element()
-            sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(), D.decoding_radius())
+            sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(),
+            ....:                                        D.decoding_radius())
             sage: y = Chan(c)
             sage: D.connected_encoder().unencode(c) == D.decode_to_message(y)
             True
@@ -1338,7 +1342,8 @@ class GRSBerlekampWelchDecoder(Decoder):
             sage: C = codes.GeneralizedReedSolomonCode(F.list()[:n], k)
             sage: D = codes.decoders.GRSBerlekampWelchDecoder(C)
             sage: c = C.random_element()
-            sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(), D.decoding_radius())
+            sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(),
+            ....:                                        D.decoding_radius())
             sage: y = Chan(c)
             sage: c == D.decode_to_code(y)
             True
@@ -1539,7 +1544,7 @@ class GRSGaoDecoder(Decoder):
         Performs an Euclidean algorithm on ``a`` and ``b`` until a remainder
         has degree less than `\frac{n+k}{2}`, `n` being the dimension of the
         code, `k` its dimension, and returns `(r, s)` such that in the step
-        just before termination, `r = a\times s + b\times t`.
+        just before termination, `r = a s + b t`.
 
         INPUT:
 
@@ -1570,7 +1575,7 @@ class GRSGaoDecoder(Decoder):
 
         r = b
         prev_r = a
-        while(r.degree() >= stop):
+        while r.degree() >= stop:
             q = prev_r.quo_rem(r)[0]
             (prev_r, r) = (r, prev_r - q * r)
             (prev_s, s) = (s, prev_s - q * s)
@@ -1660,7 +1665,8 @@ class GRSGaoDecoder(Decoder):
             sage: C = codes.GeneralizedReedSolomonCode(F.list()[:n], k)
             sage: D = codes.decoders.GRSGaoDecoder(C)
             sage: c = C.random_element()
-            sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(), D.decoding_radius())
+            sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(),
+            ....:                                        D.decoding_radius())
             sage: y = Chan(c)
             sage: D.connected_encoder().unencode(c) == D.decode_to_message(y)
             True
@@ -1721,7 +1727,8 @@ class GRSGaoDecoder(Decoder):
             sage: C = codes.GeneralizedReedSolomonCode(F.list()[:n], k)
             sage: D = codes.decoders.GRSGaoDecoder(C)
             sage: c = C.random_element()
-            sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(), D.decoding_radius())
+            sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(),
+            ....:                                        D.decoding_radius())
             sage: y = Chan(c)
             sage: c == D.decode_to_code(y)
             True
@@ -1852,9 +1859,9 @@ class GRSErrorErasureDecoder(Decoder):
             False
         """
         return isinstance(other, GRSErrorErasureDecoder) \
-                and self.code() == other.code()
+            and self.code() == other.code()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1884,7 +1891,7 @@ class GRSErrorErasureDecoder(Decoder):
              \textnormal{ Reed-Solomon Code over } \Bold{F}_{59}
         """
         return "\\textnormal{Error-Erasure decoder for }%s"\
-                % self.code()._latex_()
+            % self.code()._latex_()
 
     def decode_to_message(self, word_and_erasure_vector):
         r"""
@@ -1893,11 +1900,11 @@ class GRSErrorErasureDecoder(Decoder):
 
         INPUT:
 
-        - word_and_erasure_vector -- a tuple whose:
+        - ``word_and_erasure_vector`` -- a tuple whose:
 
           * first element is an element of the ambient space of the code
           * second element is a vector over `\GF{2}` whose length is the
-            same as the code's
+            same as the code's, containing erasure positions
 
         .. NOTE::
 
@@ -1908,12 +1915,6 @@ class GRSErrorErasureDecoder(Decoder):
             ``r`` will be returned as is.
             In either case, if ``r`` is not a codeword,
             the output is unspecified.
-
-        INPUT:
-
-        - ``word_and_erasure_vector`` -- a pair of vectors, where
-          first element is a codeword of ``self`` and second element
-          is a vector of GF(2) containing erasure positions
 
         OUTPUT:
 
@@ -1927,7 +1928,8 @@ class GRSErrorErasureDecoder(Decoder):
             sage: D = codes.decoders.GRSErrorErasureDecoder(C)
             sage: c = C.random_element()
             sage: n_era = randint(0, C.minimum_distance() - 2)
-            sage: Chan = channels.ErrorErasureChannel(C.ambient_space(), D.decoding_radius(n_era), n_era)
+            sage: Chan = channels.ErrorErasureChannel(C.ambient_space(),
+            ....:                                     D.decoding_radius(n_era), n_era)
             sage: y = Chan(c)
             sage: D.connected_encoder().unencode(c) == D.decode_to_message(y)
             True
@@ -1977,9 +1979,9 @@ class GRSErrorErasureDecoder(Decoder):
         if C1_length == k:
             return self.connected_encoder().unencode_nocheck(word)
         C1_evaluation_points = [self.code().evaluation_points()[i] for i in
-                range(n) if erasure_vector[i]!=1]
+                range(n) if erasure_vector[i] != 1]
         C1_column_multipliers = [self.code().column_multipliers()[i] for i in
-                range(n) if erasure_vector[i]!=1]
+                range(n) if erasure_vector[i] != 1]
         C1 = GeneralizedReedSolomonCode(C1_evaluation_points, k,
                 C1_column_multipliers)
         return C1.decode_to_message(punctured_word)
@@ -2094,8 +2096,8 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
             False
         """
         return isinstance(other, GRSKeyEquationSyndromeDecoder) \
-                and self.code() == other.code()\
-                and self.input_space() == other.input_space()
+            and self.code() == other.code()\
+            and self.input_space() == other.input_space()
 
     def _repr_(self):
         r"""
@@ -2133,7 +2135,7 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
         Performs an Euclidean algorithm on ``a`` and ``b`` until a remainder
         has degree less than `\frac{n+k}{2}`, `n` being the dimension of the
         code, `k` its dimension, and returns `(r, t)` such that in the step
-        just before termination, `r = a\times s + b\times t`.
+        just before termination, `r = a s + b t`.
 
         INPUT:
 
@@ -2164,7 +2166,7 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
         prev_r = a
         r = b
 
-        while(r.degree() >= t.degree()):
+        while r.degree() >= t.degree():
             q = prev_r.quo_rem(r)[0]
             prev_r, r = r, prev_r - q * r
             prev_t, t = t, prev_t - q * t
@@ -2272,7 +2274,8 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
             sage: C = codes.GeneralizedReedSolomonCode(F.list()[1:n+1], k)
             sage: D = codes.decoders.GRSKeyEquationSyndromeDecoder(C)
             sage: c = C.random_element()
-            sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(), D.decoding_radius())
+            sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(),
+            ....:                                        D.decoding_radius())
             sage: y = Chan(c)
             sage: c == D.decode_to_code(y)
             True
@@ -2346,7 +2349,8 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
             sage: C = codes.GeneralizedReedSolomonCode(F.list()[1:n+1], k)
             sage: D = codes.decoders.GRSKeyEquationSyndromeDecoder(C)
             sage: c = C.random_element()
-            sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(), D.decoding_radius())
+            sage: Chan = channels.StaticErrorRateChannel(C.ambient_space(),
+            ....:                                        D.decoding_radius())
             sage: y = Chan(c)
             sage: D.connected_encoder().unencode(c) == D.decode_to_message(y)
             True
@@ -2373,10 +2377,10 @@ class GRSKeyEquationSyndromeDecoder(Decoder):
             sage: D.decoding_radius()
             14
         """
-        return (self.code().minimum_distance()-1) // 2
+        return (self.code().minimum_distance() - 1) // 2
 
 
-####################### registration ###############################
+# ###################### registration ###############################
 
 GeneralizedReedSolomonCode._registered_encoders["EvaluationVector"] = GRSEvaluationVectorEncoder
 GeneralizedReedSolomonCode._registered_encoders["EvaluationPolynomial"] = GRSEvaluationPolynomialEncoder

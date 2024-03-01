@@ -1,15 +1,16 @@
 """
 Positive Integers
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2010 Nicolas Borie <nicolas.borie@math.u-psud.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.sets.integer_range import IntegerRangeInfinite
 from sage.rings.integer import Integer
+
 
 class PositiveIntegers(IntegerRangeInfinite):
     r"""
@@ -82,7 +83,7 @@ class PositiveIntegers(IntegerRangeInfinite):
 
         EXAMPLES::
 
-            sage: PositiveIntegers()._sympy_()
+            sage: PositiveIntegers()._sympy_()                                          # needs sympy
             Naturals
         """
         from sympy import Naturals

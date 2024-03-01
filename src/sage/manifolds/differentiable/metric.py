@@ -384,15 +384,15 @@ class PseudoRiemannianMetric(TensorField):
                 raise TypeError("the metric signature must be an integer")
             if (signature < - ndim) or (signature > ndim):
                 raise ValueError("metric signature out of range")
-            if (signature+ndim)%2 == 1:
-                if ndim%2 == 0:
+            if (signature+ndim) % 2 == 1:
+                if ndim % 2 == 0:
                     raise ValueError("the metric signature must be even")
                 else:
                     raise ValueError("the metric signature must be odd")
         self._signature = signature
         # the pair (n_+, n_-):
         self._signature_pm = ((ndim+signature)//2, (ndim-signature)//2)
-        self._indic_signat = 1 - 2*(self._signature_pm[1]%2)  # (-1)^n_-
+        self._indic_signat = 1 - 2*(self._signature_pm[1] % 2)  # (-1)^n_-
         # Initialization of derived quantities:
         PseudoRiemannianMetric._init_derived(self)
 
@@ -447,7 +447,7 @@ class PseudoRiemannianMetric(TensorField):
         """
         return type(self)(self._vmodule, 'unnamed metric',
                           signature=self._signature,
-                          latex_name=r'\mbox{unnamed metric}')
+                          latex_name=r'\text{unnamed metric}')
 
     def _init_derived(self):
         r"""
@@ -661,7 +661,6 @@ class PseudoRiemannianMetric(TensorField):
             for dom, symbiform_rst in symbiform._restrictions.items():
                 rst = self.restrict(dom)
                 rst.set(symbiform_rst)
-
 
     def inverse(self, expansion_symbol=None, order=1):
         r"""
@@ -879,7 +878,6 @@ class PseudoRiemannianMetric(TensorField):
             frame = chart._frame
         return self.connection().coef(frame)
 
-
     def christoffel_symbols_display(self, chart=None, symbol=None,
                 latex_symbol=None, index_labels=None, index_latex_labels=None,
                 coordinate_labels=True, only_nonzero=True,
@@ -1069,7 +1067,6 @@ class PseudoRiemannianMetric(TensorField):
         """
         return self.connection().riemann(name, latex_name)
 
-
     def ricci(self, name=None, latex_name=None):
         r"""
         Return the Ricci tensor associated with the metric.
@@ -1232,8 +1229,8 @@ class PseudoRiemannianMetric(TensorField):
             rscal = self.ricci_scalar()
             # First index of the Ricci tensor raised with the metric
             ricup = ric.up(self, 0)
-            aux = self*ricup + ric*delta - rscal/(n-1)* self*delta
-            self._weyl = riem + 2/(n-2)* aux.antisymmetrize(2,3)
+            aux = self*ricup + ric*delta - rscal/(n-1) * self*delta
+            self._weyl = riem + 2/(n-2) * aux.antisymmetrize(2,3)
             if name is None:
                 name = "C(" + self._name + ")"
             if latex_name is None:
@@ -2137,15 +2134,15 @@ class PseudoRiemannianMetricParal(PseudoRiemannianMetric, TensorFieldParal):
                 raise TypeError("the metric signature must be an integer")
             if (signature < - ndim) or (signature > ndim):
                 raise ValueError("metric signature out of range")
-            if (signature+ndim)%2 == 1:
-                if ndim%2 == 0:
+            if (signature+ndim) % 2 == 1:
+                if ndim % 2 == 0:
                     raise ValueError("the metric signature must be even")
                 else:
                     raise ValueError("the metric signature must be odd")
         self._signature = signature
         # the pair (n_+, n_-):
         self._signature_pm = ((ndim+signature)//2, (ndim-signature)//2)
-        self._indic_signat = 1 - 2*(self._signature_pm[1]%2)  # (-1)^n_-
+        self._indic_signat = 1 - 2*(self._signature_pm[1] % 2)  # (-1)^n_-
         # Initialization of derived quantities:
         PseudoRiemannianMetricParal._init_derived(self)
 
@@ -2270,7 +2267,6 @@ class PseudoRiemannianMetricParal(PseudoRiemannianMetric, TensorFieldParal):
             # The restriction is ready:
             self._restrictions[subdomain] = resu
         return self._restrictions[subdomain]
-
 
     def set(self, symbiform):
         r"""
@@ -2658,12 +2654,12 @@ class DegenerateMetric(TensorField):
         else:
             try:
                 for elt in signature:
-                    if (elt<0) or (not isinstance(elt, (int, Integer))):
+                    if (elt < 0) or (not isinstance(elt, (int, Integer))):
                         raise ValueError("{} must be a positive integer".format(elt))
                     if elt > ndim:
                         raise ValueError("{} must be less than {}".format(elt,ndim))
                     sign = signature[0]+signature[1]+signature[2]
-                    if sign!=ndim:
+                    if sign != ndim:
                         raise ValueError("{} is different from {}".format(sign, ndim))
             except TypeError:
                 raise TypeError("signature must be an iterable")
@@ -2706,7 +2702,7 @@ class DegenerateMetric(TensorField):
         """
         return type(self)(self._vmodule, 'unnamed metric',
                           signature=self._signature,
-                          latex_name=r'\mbox{unnamed metric}')
+                          latex_name=r'\text{unnamed metric}')
 
     def signature(self):
         r"""
@@ -2975,10 +2971,10 @@ class DegenerateMetricParal(DegenerateMetric, TensorFieldParal):
         else:
             try:
                 for elt in signature:
-                    if (elt<0) or (not isinstance(elt, (int, Integer))):
+                    if (elt < 0) or (not isinstance(elt, (int, Integer))):
                         raise ValueError("{} must be a positive integer".format(elt))
                     sign = signature[0]+signature[1]+signature[2]
-                    if sign!=ndim:
+                    if sign != ndim:
                         raise ValueError("{} is different from {}".format(sign, ndim))
             except TypeError:
                 raise TypeError("signature must be an iterable")

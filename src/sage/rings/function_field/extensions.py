@@ -11,22 +11,23 @@ EXAMPLES:
 Constant field extension of the rational function field over rational numbers::
 
     sage: K.<x> = FunctionField(QQ)
-    sage: N.<a> = QuadraticField(2)
-    sage: L = K.extension_constant_field(N)
-    sage: L
+    sage: N.<a> = QuadraticField(2)                                                     # needs sage.rings.number_field
+    sage: L = K.extension_constant_field(N)                                             # needs sage.rings.number_field
+    sage: L                                                                             # needs sage.rings.number_field
     Rational function field in x over Number Field in a with defining
     polynomial x^2 - 2 with a = 1.4142... over its base
-    sage: d = (x^2 - 2).divisor()
-    sage: d
+    sage: d = (x^2 - 2).divisor()                                                       # needs sage.libs.pari sage.modules
+    sage: d                                                                             # needs sage.libs.pari sage.modules
     -2*Place (1/x)
      + Place (x^2 - 2)
-    sage: L.conorm_divisor(d)
+    sage: L.conorm_divisor(d)                                                           # needs sage.libs.pari sage.modules sage.rings.number_field
     -2*Place (1/x)
      + Place (x - a)
      + Place (x + a)
 
 Constant field extension of a function field over a finite field::
 
+    sage: # needs sage.rings.finite_rings sage.rings.function_field
     sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]
     sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
     sage: E = F.extension_constant_field(GF(2^3))
@@ -51,6 +52,15 @@ AUTHORS:
 - Kwankyu Lee (2021-12-24): added constant field extension
 
 """
+
+# ****************************************************************************
+#       Copyright (C) 2021-2022 Kwankyu Lee
+#
+#  Distributed under the terms of the GNU General Public License (GPL)
+#  as published by the Free Software Foundation; either version 2 of
+#  the License, or (at your option) any later version.
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.rings.ring_extension import RingExtension_generic
 
@@ -81,6 +91,7 @@ class ConstantFieldExtension(FunctionFieldExtension):
 
         TESTS::
 
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]
             sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
             sage: E = F.extension_constant_field(GF(2^3))
@@ -120,6 +131,7 @@ class ConstantFieldExtension(FunctionFieldExtension):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]
             sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
             sage: E = F.extension_constant_field(GF(2^3))
@@ -136,6 +148,7 @@ class ConstantFieldExtension(FunctionFieldExtension):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]
             sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
             sage: E = F.extension_constant_field(GF(2^3))
@@ -161,6 +174,7 @@ class ConstantFieldExtension(FunctionFieldExtension):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]
             sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
             sage: E = F.extension_constant_field(GF(2^3))
@@ -197,12 +211,13 @@ class ConstantFieldExtension(FunctionFieldExtension):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: K.<x> = FunctionField(GF(2)); R.<Y> = K[]
             sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
             sage: E = F.extension_constant_field(GF(2^3))
             sage: p1 = F.get_place(3)
             sage: p2 = F.get_place(2)
-            sage: c = E.conorm_divisor(2*p1+ 3*p2)
+            sage: c = E.conorm_divisor(2*p1 + 3*p2)
             sage: c1 = E.conorm_place(p1)
             sage: c2 = E.conorm_place(p2)
             sage: c == 2*c1 + 3*c2

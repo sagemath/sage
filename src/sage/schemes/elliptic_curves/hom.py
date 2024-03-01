@@ -10,6 +10,7 @@ Current implementations of elliptic-curve morphisms (child classes):
 - :class:`~sage.schemes.elliptic_curves.ell_curve_isogeny.EllipticCurveIsogeny`
 - :class:`~sage.schemes.elliptic_curves.weierstrass_morphism.WeierstrassIsomorphism`
 - :class:`~sage.schemes.elliptic_curves.hom_composite.EllipticCurveHom_composite`
+- :class:`~sage.schemes.elliptic_curves.hom_composite.EllipticCurveHom_sum`
 - :class:`~sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar`
 - :class:`~sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius`
 - :class:`~sage.schemes.elliptic_curves.hom_velusqrt.EllipticCurveHom_velusqrt`
@@ -21,6 +22,10 @@ AUTHORS:
 
 - Lorenz Panny (2021): Refactor isogenies and isomorphisms into
   the common :class:`EllipticCurveHom` interface.
+
+- Lorenz Panny (2022): :meth:`~EllipticCurveHom.matrix_on_subgroup`
+
+- Lorenz Panny (2023): :meth:`~EllipticCurveHom.trace`, :meth:`~EllipticCurveHom.characteristic_polynomial`
 """
 from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp import richcmp_not_equal, richcmp, op_EQ, op_NE
@@ -29,6 +34,7 @@ from sage.categories.morphism import Morphism
 
 from sage.arith.misc import integer_floor
 
+from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings import finite_field_base
 from sage.rings.number_field import number_field_base
 
@@ -50,11 +56,11 @@ class EllipticCurveHom(Morphism):
             sage: E.isogeny(P)                        # indirect doctest
             Isogeny of degree 127 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 257^2 to Elliptic Curve defined by y^2 = x^3 + 151*x + 22 over Finite Field in z2 of size 257^2
             sage: E.isogeny(P, algorithm='factored')  # indirect doctest
-            Composite morphism of degree 127 = 127:
+            Composite morphism of degree 127:
               From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 257^2
               To:   Elliptic Curve defined by y^2 = x^3 + 151*x + 22 over Finite Field in z2 of size 257^2
             sage: E.isogeny(P, algorithm='velusqrt')  # indirect doctest
-            Elliptic-curve isogeny (using √élu) of degree 127:
+            Elliptic-curve isogeny (using square-root Vélu) of degree 127:
               From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 257^2
               To:   Elliptic Curve defined by y^2 = x^3 + 119*x + 231 over Finite Field in z2 of size 257^2
             sage: E.montgomery_model(morphism=True)   # indirect doctest
@@ -73,7 +79,7 @@ class EllipticCurveHom(Morphism):
             self._domain._fetch_cached_order(self._codomain)
 
     def _repr_type(self):
-        """
+        r"""
         Return a textual representation of what kind of morphism
         this is. Used by :meth:`Morphism._repr_`.
 
@@ -87,7 +93,7 @@ class EllipticCurveHom(Morphism):
 
     @staticmethod
     def _composition_impl(left, right):
-        """
+        r"""
         Called by :meth:`_composition_`.
 
         TESTS::
@@ -99,7 +105,7 @@ class EllipticCurveHom(Morphism):
         return NotImplemented
 
     def _composition_(self, other, homset):
-        """
+        r"""
         Return the composition of this elliptic-curve morphism
         with another elliptic-curve morphism.
 
@@ -129,9 +135,57 @@ class EllipticCurveHom(Morphism):
         from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
         return EllipticCurveHom_composite.from_factors([other, self])
 
+    def _add_(self, other):
+        r"""
+        Add two :class:`EllipticCurveHom` objects by constructing a
+        formal :class:`EllipticCurveHom_sum`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [5,5])
+            sage: phi = E.isogenies_prime_degree(7)[0]
+            sage: phi + phi  # indirect doctest
+            Sum morphism:
+              From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101
+              To:   Elliptic Curve defined by y^2 = x^3 + 12*x + 98 over Finite Field of size 101
+              Via:  (Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101 to Elliptic Curve defined by y^2 = x^3 + 12*x + 98 over Finite Field of size 101, Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101 to Elliptic Curve defined by y^2 = x^3 + 12*x + 98 over Finite Field of size 101)
+        """
+        from sage.schemes.elliptic_curves.hom_sum import EllipticCurveHom_sum
+        phis = []
+        if isinstance(self, EllipticCurveHom_sum):
+            phis += self.summands()
+        else:
+            phis.append(self)
+        if isinstance(other, EllipticCurveHom_sum):
+            phis += other.summands()
+        else:
+            phis.append(other)
+
+        #TODO should probably try to simplify some more?
+
+        assert other.domain() == self.domain() and other.codomain() == self.codomain()
+        return EllipticCurveHom_sum(phis, domain=self.domain(), codomain=self.codomain())
+
+    def _sub_(self, other):
+        r"""
+        Subtract two :class:`EllipticCurveHom` objects by negating
+        and constructing a formal :class:`EllipticCurveHom_sum`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [5,5])
+            sage: phi = E.isogenies_prime_degree(7)[0]
+            sage: phi - phi  # indirect doctest
+            Sum morphism:
+              From: Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101
+              To:   Elliptic Curve defined by y^2 = x^3 + 12*x + 98 over Finite Field of size 101
+              Via:  (Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101 to Elliptic Curve defined by y^2 = x^3 + 12*x + 98 over Finite Field of size 101, Isogeny of degree 7 from Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field of size 101 to Elliptic Curve defined by y^2 = x^3 + 12*x + 98 over Finite Field of size 101)
+        """
+        return self + (-other)
+
     @staticmethod
     def _comparison_impl(left, right, op):
-        """
+        r"""
         Called by :meth:`_richcmp_`.
 
         TESTS::
@@ -281,6 +335,95 @@ class EllipticCurveHom(Morphism):
         except AttributeError:
             raise NotImplementedError('children must implement')
 
+    @cached_method
+    def trace(self):
+        r"""
+        Return the trace of this elliptic-curve morphism, which must
+        be an endomorphism.
+
+        ALGORITHM: :func:`compute_trace_generic`
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(QQ, [42, 42])
+            sage: m5 = E.scalar_multiplication(5)
+            sage: m5.trace()
+            10
+
+        ::
+
+            sage: E = EllipticCurve(GF(71^2), [45, 45])
+            sage: P = E.lift_x(27)
+            sage: P.order()
+            71
+            sage: tau = E.isogeny(P, codomain=E)
+            sage: tau.trace()
+            -1
+
+        TESTS:
+
+        Make sure the cached value of the trace is not accidentally
+        copied on composition with automorphisms::
+
+            sage: aut = E.automorphisms()[1]  # [-1]
+            sage: (aut * tau).trace()
+            1
+
+        It also works for more complicated :class:`EllipticCurveHom`
+        children::
+
+            sage: tau = E.isogeny(P, codomain=E, algorithm='velusqrt')
+            sage: tau.trace()
+            -1
+
+        Check that negation commutes with taking the trace::
+
+            sage: (-tau).trace()
+            1
+        """
+        F = self.domain().base_field()
+        if F.characteristic().is_zero():
+            d = self.degree()
+            s = self.scaling_factor()
+            return ZZ(s + d/s)
+        return compute_trace_generic(self)
+
+    def characteristic_polynomial(self):
+        r"""
+        Return the characteristic polynomial of this elliptic-curve
+        morphism, which must be an endomorphism.
+
+        .. SEEALSO::
+
+            - :meth:`degree`
+            - :meth:`trace`
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(QQ, [42, 42])
+            sage: m5 = E.scalar_multiplication(5)
+            sage: m5.characteristic_polynomial()
+            x^2 - 10*x + 25
+
+        ::
+
+            sage: E = EllipticCurve(GF(71), [42, 42])
+            sage: pi = E.frobenius_endomorphism()
+            sage: pi.characteristic_polynomial()
+            x^2 - 8*x + 71
+            sage: E.frobenius().charpoly()
+            x^2 - 8*x + 71
+
+        TESTS::
+
+            sage: m5.characteristic_polynomial().parent()
+            Univariate Polynomial Ring in x over Integer Ring
+            sage: pi.characteristic_polynomial().parent()
+            Univariate Polynomial Ring in x over Integer Ring
+        """
+        R = ZZ['x']
+        return R([self.degree(), -self.trace(), 1])
+
     def kernel_polynomial(self):
         r"""
         Return the kernel polynomial of this elliptic-curve morphism.
@@ -290,6 +433,7 @@ class EllipticCurveHom(Morphism):
         - :meth:`EllipticCurveIsogeny.kernel_polynomial`
         - :meth:`sage.schemes.elliptic_curves.weierstrass_morphism.WeierstrassIsomorphism.kernel_polynomial`
         - :meth:`sage.schemes.elliptic_curves.hom_composite.EllipticCurveHom_composite.kernel_polynomial`
+        - :meth:`sage.schemes.elliptic_curves.hom_sum.EllipticCurveHom_sum.kernel_polynomial`
         - :meth:`sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar.kernel_polynomial`
         - :meth:`sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius.kernel_polynomial`
 
@@ -312,6 +456,7 @@ class EllipticCurveHom(Morphism):
         - :meth:`EllipticCurveIsogeny.dual`
         - :meth:`sage.schemes.elliptic_curves.weierstrass_morphism.WeierstrassIsomorphism.dual`
         - :meth:`sage.schemes.elliptic_curves.hom_composite.EllipticCurveHom_composite.dual`
+        - :meth:`sage.schemes.elliptic_curves.hom_sum.EllipticCurveHom_sum.dual`
         - :meth:`sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar.dual`
         - :meth:`sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius.dual`
 
@@ -336,6 +481,7 @@ class EllipticCurveHom(Morphism):
         - :meth:`EllipticCurveIsogeny.rational_maps`
         - :meth:`sage.schemes.elliptic_curves.weierstrass_morphism.WeierstrassIsomorphism.rational_maps`
         - :meth:`sage.schemes.elliptic_curves.hom_composite.EllipticCurveHom_composite.rational_maps`
+        - :meth:`sage.schemes.elliptic_curves.hom_sum.EllipticCurveHom_sum.rational_maps`
         - :meth:`sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar.rational_maps`
         - :meth:`sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius.rational_maps`
 
@@ -359,6 +505,7 @@ class EllipticCurveHom(Morphism):
         - :meth:`EllipticCurveIsogeny.x_rational_map`
         - :meth:`sage.schemes.elliptic_curves.weierstrass_morphism.WeierstrassIsomorphism.x_rational_map`
         - :meth:`sage.schemes.elliptic_curves.hom_composite.EllipticCurveHom_composite.x_rational_map`
+        - :meth:`sage.schemes.elliptic_curves.hom_sum.EllipticCurveHom_sum.x_rational_map`
         - :meth:`sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar.x_rational_map`
         - :meth:`sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius.x_rational_map`
 
@@ -390,6 +537,7 @@ class EllipticCurveHom(Morphism):
         - :meth:`EllipticCurveIsogeny.scaling_factor`
         - :meth:`sage.schemes.elliptic_curves.weierstrass_morphism.WeierstrassIsomorphism.scaling_factor`
         - :meth:`sage.schemes.elliptic_curves.hom_composite.EllipticCurveHom_composite.scaling_factor`
+        - :meth:`sage.schemes.elliptic_curves.hom_sum.EllipticCurveHom_sum.scaling_factor`
         - :meth:`sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar.scaling_factor`
 
         TESTS::
@@ -529,40 +677,135 @@ class EllipticCurveHom(Morphism):
 
         ALGORITHM: We check if :meth:`scaling_factor` returns `1`.
         """
-        return self.scaling_factor() == 1
+        return self.scaling_factor().is_one()
 
-    def is_separable(self):
+    def inseparable_degree(self):
         r"""
-        Determine whether or not this morphism is separable.
+        Return the inseparable degree of this isogeny.
 
         Implemented by child classes. For examples, see:
 
-        - :meth:`EllipticCurveIsogeny.is_separable`
-        - :meth:`sage.schemes.elliptic_curves.weierstrass_morphism.WeierstrassIsomorphism.is_separable`
-        - :meth:`sage.schemes.elliptic_curves.hom_composite.EllipticCurveHom_composite.is_separable`
-        - :meth:`sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar.is_separable`
-        - :meth:`sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius.is_separable`
+        - :meth:`EllipticCurveIsogeny.inseparable_degree`
+        - :meth:`sage.schemes.elliptic_curves.weierstrass_morphism.WeierstrassIsomorphism.inseparable_degree`
+        - :meth:`sage.schemes.elliptic_curves.hom_composite.EllipticCurveHom_composite.inseparable_degree`
+        - :meth:`sage.schemes.elliptic_curves.hom_sum.EllipticCurveHom_sum.inseparable_degree`
+        - :meth:`sage.schemes.elliptic_curves.hom_scalar.EllipticCurveHom_scalar.inseparable_degree`
+        - :meth:`sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius.inseparable_degree`
 
         TESTS::
 
             sage: from sage.schemes.elliptic_curves.hom import EllipticCurveHom
-            sage: EllipticCurveHom.is_separable(None)
+            sage: EllipticCurveHom.inseparable_degree(None)
             Traceback (most recent call last):
             ...
             NotImplementedError: ...
         """
         raise NotImplementedError('children must implement')
 
+    def separable_degree(self):
+        r"""
+        Return the separable degree of this isogeny.
+
+        The separable degree is the result of dividing the :meth:`degree`
+        by the :meth:`inseparable_degree`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(11), [5,5])
+            sage: E.is_supersingular()
+            False
+            sage: E.scalar_multiplication(-77).separable_degree()
+            539
+            sage: E = EllipticCurve(GF(11), [5,0])
+            sage: E.is_supersingular()
+            True
+            sage: E.scalar_multiplication(-77).separable_degree()
+            49
+        """
+        return self.degree() // self.inseparable_degree()
+
+    def is_separable(self):
+        r"""
+        Determine whether or not this morphism is a separable isogeny.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(17), [0,0,0,3,0])
+            sage: phi = EllipticCurveIsogeny(E,  E((0,0)))
+            sage: phi.is_separable()
+            True
+
+        ::
+
+            sage: E = EllipticCurve('11a1')
+            sage: phi = EllipticCurveIsogeny(E, E.torsion_points())
+            sage: phi.is_separable()
+            True
+
+        ::
+
+            sage: E = EllipticCurve(GF(31337), [0,1])                                   # needs sage.rings.finite_rings
+            sage: {f.is_separable() for f in E.automorphisms()}                         # needs sage.rings.finite_rings
+            {True}
+
+        ::
+
+            sage: # needs sage.rings.finite_rings
+            sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
+            sage: E = EllipticCurve(GF(7^2), [3,2])
+            sage: P = E.lift_x(1)
+            sage: phi = EllipticCurveHom_composite(E, P); phi
+            Composite morphism of degree 7:
+              From: Elliptic Curve defined by y^2 = x^3 + 3*x + 2 over Finite Field in z2 of size 7^2
+              To:   Elliptic Curve defined by y^2 = x^3 + 3*x + 2 over Finite Field in z2 of size 7^2
+            sage: phi.is_separable()
+            True
+
+        ::
+
+            sage: E = EllipticCurve(GF(11), [4,4])
+            sage: E.scalar_multiplication(11).is_separable()
+            False
+            sage: E.scalar_multiplication(-11).is_separable()
+            False
+            sage: E.scalar_multiplication(777).is_separable()
+            True
+            sage: E.scalar_multiplication(-1).is_separable()
+            True
+            sage: E.scalar_multiplication(77).is_separable()
+            False
+            sage: E.scalar_multiplication(121).is_separable()
+            False
+
+        ::
+
+            sage: from sage.schemes.elliptic_curves.hom_frobenius import EllipticCurveHom_frobenius
+            sage: E = EllipticCurve(GF(11), [1,1])
+            sage: pi = EllipticCurveHom_frobenius(E)
+            sage: pi.degree()
+            11
+            sage: pi.is_separable()
+            False
+            sage: pi = EllipticCurveHom_frobenius(E, 0)
+            sage: pi.degree()
+            1
+            sage: pi.is_separable()
+            True
+
+        ::
+
+            sage: E = EllipticCurve(GF(17), [0,0,0,3,0])
+            sage: phi = E.isogeny(E((1,2)), algorithm='velusqrt')
+            sage: phi.is_separable()
+            True
+        """
+        if self.is_zero():
+            raise ValueError('constant zero map is not an isogeny')
+        return self.inseparable_degree().is_one()
+
     def is_surjective(self):
         r"""
         Determine whether or not this morphism is surjective.
-
-        .. NOTE::
-
-            This method currently always returns ``True``, since a
-            non-constant map of algebraic curves must be surjective,
-            and Sage does not yet implement the constant zero map.
-            This will probably change in the future.
 
         EXAMPLES::
 
@@ -595,6 +838,9 @@ class EllipticCurveHom(Morphism):
         r"""
         Determine whether or not this morphism has trivial kernel.
 
+        The kernel is trivial if and only if this morphism is a
+        purely inseparable isogeny.
+
         EXAMPLES::
 
             sage: E = EllipticCurve('11a1')
@@ -617,21 +863,58 @@ class EllipticCurveHom(Morphism):
             sage: phi = EllipticCurveIsogeny(E, E(0))
             sage: phi.is_injective()
             True
+
+        ::
+
+            sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
+            sage: E = EllipticCurve([1,0])
+            sage: phi = EllipticCurveHom_composite(E, E(0,0))
+            sage: phi.is_injective()
+            False
+            sage: E = EllipticCurve_from_j(GF(3).algebraic_closure()(0))
+            sage: nu = EllipticCurveHom_composite.from_factors(E.automorphisms())
+            sage: nu
+            Composite morphism of degree 1 = 1^12:
+              From: Elliptic Curve defined by y^2 = x^3 + x
+                    over Algebraic closure of Finite Field of size 3
+              To:   Elliptic Curve defined by y^2 = x^3 + x
+                    over Algebraic closure of Finite Field of size 3
+            sage: nu.is_injective()
+            True
+
+        ::
+
+            sage: E = EllipticCurve(GF(23), [1,0])
+            sage: E.scalar_multiplication(4).is_injective()
+            False
+            sage: E.scalar_multiplication(5).is_injective()
+            False
+            sage: E.scalar_multiplication(1).is_injective()
+            True
+            sage: E.scalar_multiplication(-1).is_injective()
+            True
+            sage: E.scalar_multiplication(23).is_injective()
+            True
+            sage: E.scalar_multiplication(-23).is_injective()
+            True
+            sage: E.scalar_multiplication(0).is_injective()
+            False
+
+        ::
+
+            sage: from sage.schemes.elliptic_curves.hom_frobenius import EllipticCurveHom_frobenius
+            sage: E = EllipticCurve(GF(11), [1,1])
+            sage: pi = EllipticCurveHom_frobenius(E, 5)
+            sage: pi.is_injective()
+            True
         """
-        if not self.is_separable():
-            # TODO: should implement .separable_degree() or similar
-            raise NotImplementedError
-        return self.degree() == 1
+        if self.is_zero():
+            return False
+        return self.separable_degree().is_one()
 
     def is_zero(self):
-        """
+        r"""
         Check whether this elliptic-curve morphism is the zero map.
-
-        .. NOTE::
-
-            This function currently always returns ``True`` as Sage
-            does not yet implement the constant zero morphism. This
-            will probably change in the future.
 
         EXAMPLES::
 
@@ -662,7 +945,7 @@ class EllipticCurveHom(Morphism):
 
     @cached_method
     def __hash__(self):
-        """
+        r"""
         Return a hash value for this elliptic-curve morphism.
 
         ALGORITHM:
@@ -690,7 +973,7 @@ class EllipticCurveHom(Morphism):
             sage: EllipticCurveIsogeny(E,X^3-13*X^2-58*X+503,check=False)
             Isogeny of degree 7 from Elliptic Curve defined by y^2 + x*y = x^3 - x^2 - 107*x + 552 over Rational Field to Elliptic Curve defined by y^2 + x*y = x^3 - x^2 - 5252*x - 178837 over Rational Field
         """
-        return hash((self.domain(), self.codomain(), self.kernel_polynomial()))
+        return hash((self.domain(), self.codomain(), self.kernel_polynomial(), self.scaling_factor()))
 
     def as_morphism(self):
         r"""
@@ -721,6 +1004,128 @@ class EllipticCurveHom(Morphism):
         X_affine = Curve(self.domain()).affine_patch(2)
         Y_affine = Curve(self.codomain()).affine_patch(2)
         return X_affine.hom(self.rational_maps(), Y_affine).homogenize(2)
+
+    def matrix_on_subgroup(self, domain_gens, codomain_gens=None):
+        r"""
+        Return the matrix by which this isogeny acts on the
+        `n`-torsion subgroup with respect to the given bases.
+
+        INPUT:
+
+        - ``domain_gens`` -- basis `(P,Q)` of some `n`-torsion
+          subgroup on the domain of this elliptic-curve morphism
+
+        - ``codomain_gens`` -- basis `(R,S)` of the `n`-torsion
+          on the codomain of this morphism, or (default) ``None``
+          if ``self`` is an endomorphism
+
+        OUTPUT:
+
+        A `2\times 2` matrix `M` over `\ZZ/n`, such that the
+        image of any point `[a]P + [b]Q` under this morphism
+        equals `[c]R + [d]S` where `(c\ d)^T = (a\ b) M`.
+
+        EXAMPLES::
+
+            sage: F.<i> = GF(419^2, modulus=[1,0,1])
+            sage: E = EllipticCurve(F, [1,0])
+            sage: P = E(3, 176*i)
+            sage: Q = E(i+7, 67*i+48)
+            sage: P.weil_pairing(Q, 420).multiplicative_order()
+            420
+            sage: iota = E.automorphisms()[2]; iota
+            Elliptic-curve endomorphism of Elliptic Curve defined by y^2 = x^3 + x over Finite Field in i of size 419^2
+              Via:  (u,r,s,t) = (i, 0, 0, 0)
+            sage: iota^2 == E.scalar_multiplication(-1)
+            True
+            sage: mat = iota.matrix_on_subgroup((P,Q)); mat
+            [301 386]
+            [ 83 119]
+            sage: mat.parent()
+            Full MatrixSpace of 2 by 2 dense matrices over Ring of integers modulo 420
+            sage: iota(P) == 301*P + 386*Q
+            True
+            sage: iota(Q) == 83*P + 119*Q
+            True
+            sage: a,b = 123, 456
+            sage: c,d = vector((a,b)) * mat; (c,d)
+            (111, 102)
+            sage: iota(a*P + b*Q) == c*P + d*Q
+            True
+
+        One important application of this is to compute generators of
+        the kernel subgroup of an isogeny, when the `n`-torsion subgroup
+        containing the kernel is accessible::
+
+            sage: K = E(83*i-16, 9*i-147)
+            sage: K.order()
+            7
+            sage: phi = E.isogeny(K)
+            sage: R,S = phi.codomain().gens()
+            sage: mat = phi.matrix_on_subgroup((P,Q), (R,S))
+            sage: mat  # random -- depends on R,S
+            [124 263]
+            [115 141]
+            sage: kermat = mat.left_kernel_matrix(); kermat
+            [300  60]
+            sage: ker = [ZZ(v[0])*P + ZZ(v[1])*Q for v in kermat]
+            sage: {phi(T) for T in ker}
+            {(0 : 1 : 0)}
+            sage: phi == E.isogeny(ker)
+            True
+
+        We can also compute the matrix of a Frobenius endomorphism
+        (:class:`~sage.schemes.elliptic_curves.hom_frobenius.EllipticCurveHom_frobenius`)
+        on a large enough subgroup to verify point-counting results::
+
+            sage: F.<a> = GF((101, 36))
+            sage: E = EllipticCurve(GF(101), [1,1])
+            sage: EE = E.change_ring(F)
+            sage: P,Q = EE.torsion_basis(37)
+            sage: pi = EE.frobenius_isogeny()
+            sage: M = pi.matrix_on_subgroup((P,Q))
+            sage: M.parent()
+            Full MatrixSpace of 2 by 2 dense matrices over Ring of integers modulo 37
+            sage: M.trace()
+            34
+            sage: E.trace_of_frobenius()
+            -3
+
+        .. SEEALSO::
+
+            To compute a basis of the `n`-torsion, you may use
+            :meth:`~sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field.torsion_basis`.
+        """
+        if codomain_gens is None:
+            if not self.is_endomorphism():
+                raise ValueError('basis of codomain subgroup is required for non-endomorphisms')
+            codomain_gens = domain_gens
+
+        P,Q = domain_gens
+        R,S = codomain_gens
+
+        ords = {P.order() for P in (P,Q,R,S)}
+        if len(ords) != 1:
+            #TODO: Is there some meaningful way to lift this restriction?
+            raise ValueError('generator points must all have the same order')
+        n, = ords
+
+        if P.weil_pairing(Q, n).multiplicative_order() != n:
+            raise ValueError('generator points on domain are not independent')
+        if R.weil_pairing(S, n).multiplicative_order() != n:
+            raise ValueError('generator points on codomain are not independent')
+
+        imP = self._eval(P)
+        imQ = self._eval(Q)
+
+        from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
+        H = AdditiveAbelianGroupWrapper(R.parent(), [R,S], [n,n])
+        vecP = H.discrete_log(imP)
+        vecQ = H.discrete_log(imQ)
+
+        from sage.matrix.constructor import matrix
+        from sage.rings.finite_rings.integer_mod_ring import Zmod
+        return matrix(Zmod(n), [vecP, vecQ])
 
 
 def compare_via_evaluation(left, right):
@@ -775,7 +1180,7 @@ def compare_via_evaluation(left, right):
         d = left.degree()
         e = integer_floor(1 + 2 * (2*d.sqrt() + 1).log(q))  # from Hasse bound
         e = next(i for i, n in enumerate(E.count_points(e+1), 1) if n > 4*d)
-        EE = E.base_extend(F.extension(e))
+        EE = E.base_extend(F.extension(e, 'U'))  # named extension is faster
         Ps = EE.gens()
         return all(left._eval(P) == right._eval(P) for P in Ps)
     elif isinstance(F, number_field_base.NumberField):
@@ -821,6 +1226,7 @@ def find_post_isomorphism(phi, psi):
 
         sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
         sage: from sage.schemes.elliptic_curves.hom_composite import EllipticCurveHom_composite
+        sage: x = polygen(ZZ, 'x')
         sage: F.<i> = GF(883^2, modulus=x^2+1)
         sage: E = EllipticCurve(F, [1,0])
         sage: P = E.lift_x(117)
@@ -845,8 +1251,6 @@ def find_post_isomorphism(phi, psi):
         raise ValueError('codomains not isomorphic')
 
     F = E.base_ring()
-    from sage.rings.finite_rings import finite_field_base
-    from sage.rings.number_field import number_field_base
 
     if isinstance(F, finite_field_base.FiniteField):
         while len(isos) > 1:
@@ -857,7 +1261,7 @@ def find_post_isomorphism(phi, psi):
                 if len(isos) <= 1:
                     break
             else:
-                E = E.base_extend(E.base_field().extension(2))
+                E = E.base_extend(E.base_field().extension(2, 'U'))  # named extension is faster
 
     elif isinstance(F, number_field_base.NumberField):
         for _ in range(100):
@@ -881,3 +1285,109 @@ def find_post_isomorphism(phi, psi):
 
     # found no suitable isomorphism -- either doesn't exist or a bug
     raise ValueError('isogenies not equal up to post-isomorphism')
+
+
+def compute_trace_generic(phi):
+    r"""
+    Compute the trace of the given elliptic-curve endomorphism.
+
+    ALGORITHM: Simple variant of Schoof's algorithm.
+    For enough small primes `\ell`, we find an order-`\ell` point `P`
+    on `E` and use a discrete-logarithm calculation to find the unique
+    scalar `t_\ell \in \{0,...,\ell-1\}` such that
+    `\varphi^2(P)+[\deg(\varphi)]P = [t_\ell]\varphi(P)`.
+    Then `t_\ell` equals the trace of `\varphi` modulo `\ell`, which
+    can therefore be recovered using the Chinese remainder theorem.
+
+    EXAMPLES:
+
+    It works over finite fields::
+
+        sage: from sage.schemes.elliptic_curves.hom import compute_trace_generic
+        sage: E = EllipticCurve(GF(31337), [1,1])
+        sage: compute_trace_generic(E.frobenius_endomorphism())
+        314
+
+    It works over `\QQ`::
+
+        sage: from sage.schemes.elliptic_curves.hom import compute_trace_generic
+        sage: E = EllipticCurve(QQ, [1,2,3,4,5])
+        sage: dbl = E.scalar_multiplication(2)
+        sage: compute_trace_generic(dbl)
+        4
+
+    It works over number fields (for a CM curve)::
+
+        sage: from sage.schemes.elliptic_curves.hom import compute_trace_generic
+        sage: x = polygen(QQ)
+        sage: K.<t> = NumberField(5*x^2 - 2*x + 1)
+        sage: E = EllipticCurve(K, [1,0])
+        sage: phi = E.isogeny([t,0,1], codomain=E)  # phi = 2 + i
+        sage: compute_trace_generic(phi)
+        4
+
+    TESTS:
+
+    Check on random elliptic curves over finite fields that
+    the result for Frobenius matches
+    :meth:`~sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field.trace_of_frobenius`::
+
+        sage: from sage.schemes.elliptic_curves.hom import compute_trace_generic
+        sage: p = random_prime(10^3)
+        sage: e = randrange(1, ceil(log(10^5,p)))
+        sage: F.<t> = GF((p, e))
+        sage: E = choice(EllipticCurve(j=F.random_element()).twists())
+        sage: pi = E.frobenius_endomorphism()
+        sage: compute_trace_generic(pi) == E.trace_of_frobenius()
+        True
+
+    Check that the nonexistence of `p`-torsion for supersingular curves
+    does not cause trouble::
+
+        sage: from sage.schemes.elliptic_curves.hom import compute_trace_generic
+        sage: E = EllipticCurve(GF(5), [0,1])
+        sage: E.division_polynomial(5)
+        4
+        sage: m7 = E.scalar_multiplication(7)
+        sage: compute_trace_generic(-m7)
+        -14
+    """
+    from sage.rings.finite_rings.integer_mod import Mod
+    from sage.groups.generic import discrete_log
+    from sage.sets.primes import Primes
+    from sage.schemes.elliptic_curves.ell_field import point_of_order
+
+    E = phi.domain()
+    if phi.codomain() != E:
+        raise ValueError('trace only makes sense for endomorphisms')
+
+    d = phi.degree()
+
+    M = 4 * d.isqrt() + 1  # |trace| <= 2 sqrt(deg)
+    tr = Mod(0,1)
+
+    F = E.base_field()
+    p = F.characteristic()
+    if p:
+        s = phi.scaling_factor()
+        if s:
+            tr = Mod(ZZ(s + d/s), p)
+
+    for l in Primes():
+        if tr.modulus() >= M:
+            break
+        try:
+            P = point_of_order(E, l)
+        except ValueError:
+            continue   # supersingular and l == p
+
+        Q = phi._eval(P)
+        if not Q:  # we learn nothing when P lies in the kernel
+            continue
+        R = phi._eval(Q)
+        t = discrete_log(R + d*P, Q, ord=l, operation='+')
+#        assert not R - t*Q + d*P
+
+        tr = tr.crt(Mod(t, l))
+
+    return tr.lift_centered()

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.gap sage.libs.pari sage.libs.singular sage.symbolic
 """
 Common Interface Functionality through Pexpect
 
@@ -28,7 +28,6 @@ AUTHORS:
 - François Bissey, Bill Page, Jeroen Demeyer (2015-12-09): Upgrade to
   pexpect 4.0.1 + patches, see :trac:`10295`.
 """
-
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -38,10 +37,10 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 import io
 import os
 import re
+import shlex
 import signal
 import sys
 import weakref
@@ -139,11 +138,10 @@ class Expect(Interface):
             server = os.getenv(env_name.format('SERVER'))
         if server_tmpdir is None:
             server_tmpdir = os.getenv(env_name.format('TMPDIR'))
-        if command is None:
-            command = os.getenv(env_name.format('COMMAND'))
         if script_subdirectory is None:
             script_subdirectory = os.getenv(env_name.format('SCRIPT_SUBDIRECTORY'))
         self.__is_remote = False
+        self.__remote_ulimit = None
         self.__remote_cleaner = remote_cleaner
         self._expect = None
         self._eval_using_file_cutoff = eval_using_file_cutoff
@@ -160,7 +158,7 @@ class Expect(Interface):
         else:
             self.__path = os.path.join(SAGE_EXTCODE, name, script_subdirectory)
         if not os.path.isdir(self.__path):
-            raise EnvironmentError("path %r does not exist" % self.__path)
+            raise OSError("path %r does not exist" % self.__path)
         self.__initialized = False
         self.__seq = -1
         self._session_number = 0
@@ -181,32 +179,38 @@ class Expect(Interface):
     def set_server_and_command(self, server=None, command=None, server_tmpdir=None, ulimit=None):
         """
         Changes the server and the command to use for this interface.
-        This raises a Runtime error if the interface is already started.
+
+        This raises a :class:`RuntimeError` if the interface is already started.
+
+        INPUT:
+
+        - ``server`` -- string or ``None`` (default); name of a remote host to connect to using ``ssh``.
+
+        - ``command`` -- one of:
+
+          - a string; command line passed to the shell
+
+          - a sequence of an :class:`~sage.features.Executable` and strings, arguments to
+            pass to the executable.
 
         EXAMPLES::
 
-            sage: magma.set_server_and_command(server = 'remote', command = 'mymagma') # indirect doctest
+            sage: magma.set_server_and_command(server='remote', command='mymagma')  # indirect doctest
             No remote temporary directory (option server_tmpdir) specified, using /tmp/ on remote
             sage: magma.server()
             'remote'
             sage: magma.command()
-            "ssh -t remote 'mymagma'"
+            'ssh -t remote mymagma'
         """
         if self._expect:
             raise RuntimeError("interface has already started")
-        if command is None:
-            command = self.name()
         self._server = server
+        self.__remote_ulimit = ulimit
         if server is not None:
-            if ulimit:
-                command = "ssh -t %s 'ulimit %s; %s'" % (server, ulimit, command)
-            else:
-                command = "ssh -t %s '%s'" % (server, command)
             self.__is_remote = True
             self._eval_using_file_cutoff = 0  # don't allow this!
             if self.__verbose_start:
                 print("Using remote server")
-                print(command)
             if server_tmpdir is None:
                 # TO DO: Why default to /tmp/? Might be better to use the expect process itself to get a tmp folder
                 print("No remote temporary directory (option server_tmpdir) specified, using /tmp/ on " + server)
@@ -219,11 +223,11 @@ class Expect(Interface):
 
     def server(self):
         """
-        Returns the server used in this interface.
+        Return the server used in this interface.
 
         EXAMPLES::
 
-            sage: magma.set_server_and_command(server = 'remote')
+            sage: magma.set_server_and_command(server='remote')
             No remote temporary directory (option server_tmpdir) specified, using /tmp/ on remote
             sage: magma.server() # indirect doctest
             'remote'
@@ -232,15 +236,33 @@ class Expect(Interface):
 
     def command(self):
         """
-        Returns the command used in this interface.
+        Return the command used in this interface as a string.
 
         EXAMPLES::
 
-            sage: magma.set_server_and_command(command = 'magma-2.19')
-            sage: magma.command() # indirect doctest
+            sage: magma.set_server_and_command(command='magma-2.19')
+            sage: magma.command()  # indirect doctest
             'magma-2.19'
         """
-        return self.__command
+        command = self.__command
+        server = self.server()
+        if command is None:
+            env_name = 'SAGE_%s_{}' % self.name().upper()  # same as in __init__
+            command = os.getenv(env_name.format('COMMAND'), self.name())
+        elif not isinstance(command, str):
+            executable = command[0]
+            if server:
+                executable = executable.name
+            else:
+                executable = executable.absolute_filename()
+            command = ' '.join([shlex.quote(executable)]
+                               + [shlex.quote(arg) for arg in command[1:]])
+        if server:
+            if self.__remote_ulimit:
+                command = f"ulimit {self.__remote_ulimit}; {command}"
+            command = f"ssh -t {shlex.quote(server)} {shlex.quote(command)}"
+
+        return command
 
     def _get(self, wait=0.1, alternate_prompt=None):
         if self._expect is None:
@@ -462,7 +484,7 @@ If this all works, you can then make calls like:
             if self.__logfilename is not None:
                 self.__logfile = open(self.__logfilename, 'wb')
 
-        cmd = self.__command
+        cmd = self.command()
 
         if self.__verbose_start:
             print(cmd)
@@ -563,7 +585,7 @@ If this all works, you can then make calls like:
         try:
             if self._expect is not None:
                 self._expect.close(force=force)
-        except ExceptionPexpect:
+        except (ExceptionPexpect, OSError):
             self._expect.ptyproc.fd = -1
             self._expect.ptyproc.closed = True
             self._expect.child_fd = -1
@@ -622,7 +644,7 @@ If this all works, you can then make calls like:
 
             sage: a = maxima('y')
             sage: maxima.quit(verbose=True)
-            Exiting Maxima with PID ... running .../bin/maxima...
+            Exiting Maxima with PID ... running ...maxima...
             sage: a._check_valid()
             Traceback (most recent call last):
             ...
@@ -780,7 +802,7 @@ If this all works, you can then make calls like:
         os.system(cmd)
 
     def _remove_tmpfile_from_server(self):
-        if not (self.__remote_tmpfile is None):
+        if self.__remote_tmpfile is not None:
             raise NotImplementedError
 
     def _eval_line_using_file(self, line, restart_if_needed=True):
@@ -802,7 +824,7 @@ If this all works, you can then make calls like:
         - ``restart_if_needed`` - (optional bool, default ``True``) --
           If it is ``True``, the command evaluation is evaluated
           a second time after restarting the interface, if an
-          ``EOFError`` occurred.
+          :class:`EOFError` occurred.
 
         TESTS::
 
@@ -904,7 +926,7 @@ If this all works, you can then make calls like:
         - ``restart_if_needed`` (optional bool, default ``True``) --
           If it is ``True``, the command evaluation is evaluated
           a second time after restarting the interface, if an
-          ``EOFError`` occurred.
+          :class:`EOFError` occurred.
 
         TESTS::
 
@@ -1082,11 +1104,11 @@ If this all works, you can then make calls like:
     # BEGIN Synchronization code.
     ###########################################################################
 
-    def _before(self, encoding=None, errors=None):
+    def _before(self, encoding=None, errors=None) -> str:
         r"""
         Return the previous string that was sent through the interface.
 
-        Returns ``str`` objects on both Python 2 and Python 3.
+        This returns a ``str`` object.
 
         The ``encoding`` and ``errors`` arguments are passed to
         :func:`sage.misc.cpython.bytes_to_str`.
@@ -1126,7 +1148,7 @@ If this all works, you can then make calls like:
 
         return after
 
-    def _readline(self, size=-1, encoding=None, errors=None):
+    def _readline(self, size=-1, encoding=None, errors=None) -> str:
         r"""
         Wraps ``spawn.readline`` to pass the return values through
         ``bytes_to_str``, like `Expect._before` and `Expect._after`.
@@ -1139,7 +1161,6 @@ If this all works, you can then make calls like:
             sage: singular._readline()
             '2\r\n'
         """
-
         return bytes_to_str(self._expect.readline(size=size), encoding, errors)
 
     def _interrupt(self):
@@ -1166,12 +1187,10 @@ If this all works, you can then make calls like:
 
         INPUT:
 
-
-        -  ``expr`` - None or a string or list of strings
+        -  ``expr`` -- None or a string or list of strings
            (default: None)
 
-        -  ``timeout`` - None or a number (default: None)
-
+        -  ``timeout`` -- None or a number (default: None)
 
         EXAMPLES:
 
@@ -1181,15 +1200,13 @@ If this all works, you can then make calls like:
             sage: singular._sendstr('def abc = 10 + 15;\n')
 
         Then we tell singular to print 10, which is an arbitrary number
-        different from the expected result 35.
+        different from the expected result 35::
 
             sage: singular._sendstr('10;\n')
 
         Here an exception is raised because 25 hasn't appeared yet in the
         output stream. The key thing is that this doesn't lock, but instead
-        quickly raises an exception.
-
-        ::
+        quickly raises an exception::
 
             sage: t = walltime()
             sage: try:
@@ -1203,21 +1220,15 @@ If this all works, you can then make calls like:
             sage: w = walltime(t); 0.3 < w < 10
             True
 
-        We tell Singular to print abc, which equals 25.
-
-        ::
+        We tell Singular to print abc, which equals 25::
 
             sage: singular._sendstr('abc;\n')
 
-        Now 25 is in the output stream, so we can wait for it.
-
-        ::
+        Now 25 is in the output stream, so we can wait for it::
 
             sage: singular._expect_expr('25')
 
-        This gives us everything before the 25, including the 10 we printed earlier.
-
-        ::
+        This gives us everything before the 25, including the 10 we printed earlier::
 
             sage: singular._expect.before.decode('ascii')
             '...10\r\n> '
@@ -1353,7 +1364,6 @@ If this all works, you can then make calls like:
         """
         INPUT:
 
-
         -  ``code``       -- text to evaluate
 
         -  ``strip``      -- bool; whether to strip output prompts,
@@ -1401,8 +1411,8 @@ If this all works, you can then make calls like:
                         self._eval_using_file_cutoff and len(code) > self._eval_using_file_cutoff):
                     return self._eval_line_using_file(code)
                 elif split_lines:
-                    return '\n'.join([self._eval_line(L, allow_use_file=allow_use_file, **kwds)
-                                      for L in code.split('\n') if L != ''])
+                    return '\n'.join(self._eval_line(L, allow_use_file=allow_use_file, **kwds)
+                                     for L in code.split('\n') if L)
                 else:
                     return self._eval_line(code, allow_use_file=allow_use_file, **kwds)
         # DO NOT CATCH KeyboardInterrupt, as it is being caught
@@ -1520,7 +1530,9 @@ class ExpectElement(InterfaceElement, sage.interfaces.abc.ExpectElement):
 
     def __hash__(self):
         """
-        Returns the hash of self. This is a default implementation of hash
+        Return the hash of self.
+
+        This is a default implementation of hash
         which just takes the hash of the string of self.
         """
         return hash('%s%s' % (self, self._session_number))
@@ -1552,7 +1564,7 @@ class ExpectElement(InterfaceElement, sage.interfaces.abc.ExpectElement):
                 if P is not None:
                     P.clear(self._name)
 
-        except (RuntimeError, ExceptionPexpect):    # needed to avoid infinite loops in some rare cases
+        except (RuntimeError, ExceptionPexpect):  # needed to avoid infinite loops in some rare cases
             pass
 
 #    def _sage_repr(self):
@@ -1571,11 +1583,11 @@ class StdOutContext:
 
         INPUT:
 
-        - ``interface`` - the interface whose communication shall be dumped.
+        - ``interface`` -- the interface whose communication shall be dumped.
 
-        - ``silent`` - if ``True`` this context does nothing
+        - ``silent`` -- if ``True`` this context does nothing
 
-        - ``stdout`` - optional parameter for alternative stdout device (default: ``None``)
+        - ``stdout`` -- optional parameter for alternative stdout device (default: ``None``)
 
         EXAMPLES::
 
@@ -1629,7 +1641,3 @@ class StdOutContext:
         self.interface._expect.logfile.flush()
         self.stdout.write("\n")
         self.interface._expect.logfile = self._logfile_backup
-
-
-def console(cmd):
-    os.system(cmd)

@@ -1,29 +1,26 @@
-<!-- ^^^^^
-Please provide a concise, informative and self-explanatory title.
-Don't put issue numbers in there, do this in the PR body below.
-For example, instead of "Fixes #1234" use "Introduce new method to calculate 1+1"
--->
-### 📚 Description
+<!-- ^ Please provide a concise and informative title. -->
+<!-- ^ Don't put issue numbers in the title, do this in the PR description below. -->
+<!-- ^ For example, instead of "Fixes #12345" use "Introduce new method to calculate 1 + 2". -->
+<!-- v Describe your changes below in detail. -->
+<!-- v Why is this change required? What problem does it solve? -->
+<!-- v If this PR resolves an open issue, please link to it here. For example, "Fixes #12345". -->
 
-<!-- Describe your changes here in detail -->
-<!-- Why is this change required? What problem does it solve? -->
-<!-- If it resolves an open issue, please link to the issue here. For example "Closes #1337" -->
 
-### 📝 Checklist
+
+### :memo: Checklist
 
 <!-- Put an `x` in all the boxes that apply. -->
-<!-- If your change requires a documentation PR, please link it appropriately -->
-<!-- If you're unsure about any of these, don't hesitate to ask. We're here to help! -->
 
-- [ ] I have made sure that the title is self-explanatory and the description concisely explains the PR.
-- [ ] I have linked an issue or discussion.
+- [ ] The title is concise and informative.
+- [ ] The description explains in detail what this PR is about.
+- [ ] I have linked a relevant issue or discussion.
 - [ ] I have created tests covering the changes.
 - [ ] I have updated the documentation accordingly.
 
-### ⌛ Dependencies
-<!-- List all open pull requests that this PR logically depends on -->
-<!--
-- #xyz: short description why this is a dependency
-- #abc: ...
--->
+### :hourglass: Dependencies
+
+<!-- List all open PRs that this PR logically depends on. For example, -->
+<!-- - #12345: short description why this is a dependency -->
+<!-- - #34567: ... -->
+
 

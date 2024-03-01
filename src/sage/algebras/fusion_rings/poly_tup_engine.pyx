@@ -9,10 +9,10 @@ Arithmetic Engine for Polynomials as Tuples
 # ****************************************************************************
 
 ###########
-### API ###
+#   API   #
 ###########
 
-cpdef inline tuple poly_to_tup(MPolynomial_libsingular poly):
+cpdef inline tuple poly_to_tup(MPolynomial_libsingular poly) noexcept:
     r"""
     Convert a polynomial object into the internal representation as tuple of
     ``(ETuple exp, NumberFieldElement coeff)`` pairs.
@@ -28,7 +28,7 @@ cpdef inline tuple poly_to_tup(MPolynomial_libsingular poly):
     """
     return tuple(poly.dict().items())
 
-cpdef inline MPolynomial_libsingular _tup_to_poly(tuple eq_tup, MPolynomialRing_libsingular parent):
+cpdef inline MPolynomial_libsingular _tup_to_poly(tuple eq_tup, MPolynomialRing_libsingular parent) noexcept:
     r"""
     Return a polynomial object from its tuple of pairs representation.
 
@@ -74,7 +74,7 @@ cpdef inline MPolynomial_libsingular _tup_to_poly(tuple eq_tup, MPolynomialRing_
     """
     return parent._element_constructor_(dict(eq_tup), check=False)
 
-cdef inline tuple _flatten_coeffs(tuple eq_tup):
+cdef inline tuple _flatten_coeffs(tuple eq_tup) noexcept:
     r"""
     Flatten cyclotomic coefficients to a representation as a tuple of rational
     coefficients.
@@ -88,7 +88,7 @@ cdef inline tuple _flatten_coeffs(tuple eq_tup):
         flat.append((exp, tuple(cyc_coeff._coefficients())))
     return tuple(flat)
 
-cpdef tuple _unflatten_coeffs(field, tuple eq_tup):
+cpdef tuple _unflatten_coeffs(field, tuple eq_tup) noexcept:
     r"""
     Restore cyclotomic coefficient object from its tuple of rational
     coefficients representation.
@@ -115,10 +115,10 @@ cpdef tuple _unflatten_coeffs(field, tuple eq_tup):
     return tuple(unflat)
 
 #################################
-### Useful private predicates ###
+#   Useful private predicates   #
 #################################
 
-cdef inline int has_appropriate_linear_term(tuple eq_tup):
+cdef inline int has_appropriate_linear_term(tuple eq_tup) noexcept:
     r"""
     Determine whether the given tuple of pairs (of length 2) contains
     an *appropriate* linear term.
@@ -146,10 +146,10 @@ cdef inline int has_appropriate_linear_term(tuple eq_tup):
     return -1
 
 ######################
-### "Change rings" ###
+#   "Change rings"   #
 ######################
 
-cpdef inline tup_to_univ_poly(tuple eq_tup, univ_poly_ring):
+cpdef inline tup_to_univ_poly(tuple eq_tup, univ_poly_ring) noexcept:
     r"""
     Given a tuple of pairs representing a univariate polynomial and a univariate
     polynomial ring, return a univariate polynomial object.
@@ -177,7 +177,7 @@ cpdef inline tup_to_univ_poly(tuple eq_tup, univ_poly_ring):
     cdef NumberFieldElement_absolute c
     return univ_poly_ring({exp._data[1] if exp._nonzero else 0: c for exp, c in eq_tup})
 
-cpdef inline tuple resize(tuple eq_tup, dict idx_map, int nvars):
+cpdef inline tuple resize(tuple eq_tup, dict idx_map, int nvars) noexcept:
     r"""
     Return a tuple representing a polynomial in a ring with
     ``len(sorted_vars)`` generators.
@@ -215,24 +215,24 @@ cpdef inline tuple resize(tuple eq_tup, dict idx_map, int nvars):
     return tuple(resized)
 
 ###########################
-### Convenience methods ###
+#   Convenience methods   #
 ###########################
 
-cdef inline ETuple degrees(tuple poly_tup):
+cdef inline ETuple degrees(tuple poly_tup) noexcept:
     r"""
     Return the maximal degree of each variable in the polynomial.
     """
     # Deal with the empty tuple, representing the zero polynomial
     if not poly_tup:
         return ETuple()
-    cdef ETuple max_degs, exp
+    cdef ETuple max_degs
     cdef int i
     max_degs = <ETuple> (<tuple> poly_tup[0])[0]
     for i in range(1, len(poly_tup)):
         max_degs = max_degs.emax(<ETuple> (<tuple> poly_tup[i])[0])
     return max_degs
 
-cpdef list get_variables_degrees(list eqns, int nvars):
+cpdef list get_variables_degrees(list eqns, int nvars) noexcept:
     r"""
     Find maximum degrees for each variable in equations.
 
@@ -251,13 +251,13 @@ cpdef list get_variables_degrees(list eqns, int nvars):
     cdef int i
     max_deg = degrees(eqns[0])
     for i in range(1, len(eqns)):
-        max_deg = max_deg.emax(degrees( <tuple>(eqns[i]) ))
+        max_deg = max_deg.emax(degrees(<tuple>(eqns[i])))
     cdef list dense = [0] * len(max_deg)
     for i in range(max_deg._nonzero):
         dense[max_deg._data[2*i]] = max_deg._data[2*i+1]
     return dense
 
-cpdef list variables(tuple eq_tup):
+cpdef list variables(tuple eq_tup) noexcept:
     """
     Return indices of all variables appearing in eq_tup
 
@@ -277,7 +277,7 @@ cpdef list variables(tuple eq_tup):
     """
     return degrees(eq_tup).nonzero_positions()
 
-cpdef constant_coeff(tuple eq_tup, field):
+cpdef constant_coeff(tuple eq_tup, field) noexcept:
     r"""
     Return the constant coefficient of the polynomial represented by
     given tuple.
@@ -300,7 +300,7 @@ cpdef constant_coeff(tuple eq_tup, field):
             return coeff
     return field.zero()
 
-cpdef tuple apply_coeff_map(tuple eq_tup, coeff_map):
+cpdef tuple apply_coeff_map(tuple eq_tup, coeff_map) noexcept:
     """
     Apply ``coeff_map`` to coefficients.
 
@@ -320,7 +320,7 @@ cpdef tuple apply_coeff_map(tuple eq_tup, coeff_map):
     return tuple(new_tup)
 
 # cpdef inline bint tup_fixes_sq(tuple eq_tup):
-cdef inline bint tup_fixes_sq(tuple eq_tup):
+cdef inline bint tup_fixes_sq(tuple eq_tup) noexcept:
     r"""
     Determine if given equation fixes the square of a variable.
 
@@ -339,10 +339,10 @@ cdef inline bint tup_fixes_sq(tuple eq_tup):
     return True
 
 ######################
-### Simplification ###
+#   Simplification   #
 ######################
 
-cdef dict subs_squares(dict eq_dict, KSHandler known_sq):
+cdef dict subs_squares(dict eq_dict, KSHandler known_sq) noexcept:
     r"""
     Substitute for known squares into a given polynomial.
 
@@ -358,7 +358,7 @@ cdef dict subs_squares(dict eq_dict, KSHandler known_sq):
     A dictionary of ``(ETuple, coeff)`` pairs.
     """
     cdef dict subbed, new_e
-    cdef ETuple exp, lm
+    cdef ETuple exp
     cdef int idx, power
     subbed = dict()
     for exp, coeff in eq_dict.items():
@@ -379,7 +379,7 @@ cdef dict subs_squares(dict eq_dict, KSHandler known_sq):
             subbed[exp] = coeff
     return subbed
 
-cdef dict remove_gcf(dict eq_dict, ETuple nonz):
+cdef dict remove_gcf(dict eq_dict, ETuple nonz) noexcept:
     r"""
     Return a dictionary of ``(ETuple, coeff)`` pairs describing the
     polynomial ``eq / GCF(eq)``.
@@ -399,7 +399,7 @@ cdef dict remove_gcf(dict eq_dict, ETuple nonz):
         ret[exp.esub(common_powers)] = c
     return ret
 
-cdef tuple to_monic(dict eq_dict, one):
+cdef tuple to_monic(dict eq_dict, one) noexcept:
     """
     Return tuple of pairs ``(ETuple, coeff)`` describing the monic polynomial
     associated to ``eq_dict``.
@@ -422,7 +422,7 @@ cdef tuple to_monic(dict eq_dict, one):
         ret.append((ord_monoms[n-2-i], inv_lc * eq_dict[ord_monoms[n-2-i]]))
     return tuple(ret)
 
-cdef tuple reduce_poly_dict(dict eq_dict, ETuple nonz, KSHandler known_sq, NumberFieldElement_absolute one):
+cdef tuple reduce_poly_dict(dict eq_dict, ETuple nonz, KSHandler known_sq, NumberFieldElement_absolute one) noexcept:
     """
     Return a tuple describing a monic polynomial with no known nonzero
     gcf and no known squares.
@@ -434,10 +434,10 @@ cdef tuple reduce_poly_dict(dict eq_dict, ETuple nonz, KSHandler known_sq, Numbe
     return to_monic(gcf_rmvd, one)
 
 ####################
-### Substitution ###
+#   Substitution   #
 ####################
 
-cpdef dict compute_known_powers(max_degs, dict val_dict, one):
+cpdef dict compute_known_powers(max_degs, dict val_dict, one) noexcept:
     """
     Pre-compute powers of known values for efficiency when preparing to
     substitute into a list of polynomials.
@@ -482,7 +482,7 @@ cpdef dict compute_known_powers(max_degs, dict val_dict, one):
             known_powers[var_idx][power+1] = tup_mul(known_powers[var_idx][power], val_dict[var_idx])
     return known_powers
 
-cdef dict subs(tuple poly_tup, dict known_powers, one):
+cdef dict subs(tuple poly_tup, dict known_powers, one) noexcept:
     """
     Substitute given variables into a polynomial tuple.
     """
@@ -505,7 +505,7 @@ cdef dict subs(tuple poly_tup, dict known_powers, one):
                 subbed[shifted_exp] = coeff * c
     return subbed
 
-cdef tuple tup_mul(tuple p1, tuple p2):
+cdef tuple tup_mul(tuple p1, tuple p2) noexcept:
     r"""
     Multiplication of two polynomial tuples using schoolbook multiplication.
     """
@@ -521,10 +521,10 @@ cdef tuple tup_mul(tuple p1, tuple p2):
     return tuple(prod.items())
 
 ###############
-### Sorting ###
+#   Sorting   #
 ###############
 
-cdef tuple monom_sortkey(ETuple exp):
+cdef tuple monom_sortkey(ETuple exp) noexcept:
     r"""
     Produce a sortkey for a monomial exponent with respect to degree
     reversed lexicographic ordering.
@@ -535,7 +535,7 @@ cdef tuple monom_sortkey(ETuple exp):
     cdef ETuple rev = exp.reversed().emul(-1)
     return (deg, rev)
 
-cpdef tuple poly_tup_sortkey(tuple eq_tup):
+cpdef tuple poly_tup_sortkey(tuple eq_tup) noexcept:
     r"""
     Return the sortkey of a polynomial represented as a tuple of
     ``(ETuple, coeff)`` pairs with respect to the degree
@@ -564,7 +564,7 @@ cpdef tuple poly_tup_sortkey(tuple eq_tup):
         (2, 0, 2, 2, 0, 1, -2, 1, 2, -2, 2, 1, 0, 1, 1, -1, 1)
     """
     cdef ETuple exp
-    cdef int i, l, nnz
+    cdef int i
     cdef list key = []
     for exp, c in eq_tup:
         # Compare by term degree
@@ -576,4 +576,3 @@ cpdef tuple poly_tup_sortkey(tuple eq_tup):
             key.append(-exp._data[2*i])
             key.append(exp._data[2*i+1])
     return tuple(key)
-

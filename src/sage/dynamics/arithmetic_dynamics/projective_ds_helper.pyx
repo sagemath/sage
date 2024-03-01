@@ -9,22 +9,22 @@ AUTHORS:
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2014 William Stein <wstein@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.arith.functions cimport LCM_list
 from sage.rings.finite_rings.finite_field_constructor import GF
-from sage.sets.all import Set
-from sage.misc.misc import subsets
+from sage.combinat.subset import subsets
 
-cpdef _fast_possible_periods(self, return_points=False):
+
+cpdef _fast_possible_periods(self, return_points=False) noexcept:
     r"""
     Return the list of possible minimal periods of a periodic point
     over `\QQ` and (optionally) a point in each cycle.
@@ -89,7 +89,7 @@ cpdef _fast_possible_periods(self, return_points=False):
     p = PS.base_ring().order()
     N = int(PS.dimension_relative())
 
-    point_table = [[0,0] for i in xrange(p**(N + 1))]
+    point_table = [[0,0] for i in range(p**(N + 1))]
     index = 1
     periods = set()
     points_periods = []
@@ -173,11 +173,11 @@ def _enum_points(int prime, int dimension):
     highest_range = prime**dimension
 
     while current_range <= highest_range:
-        for value in xrange(current_range, 2*current_range):
+        for value in range(current_range, 2*current_range):
             yield _get_point_from_hash(value, prime, dimension)
         current_range = current_range * prime
 
-cpdef int _hash(list Point, int prime):
+cpdef int _hash(list Point, int prime) noexcept:
     """
     Hash point given as list to unique number.
 
@@ -198,7 +198,7 @@ cpdef int _hash(list Point, int prime):
 
     return hash_q
 
-cpdef list _get_point_from_hash(int value, int prime, int dimension):
+cpdef list _get_point_from_hash(int value, int prime, int dimension) noexcept:
     """
     Hash unique number to point as a list.
 
@@ -211,13 +211,13 @@ cpdef list _get_point_from_hash(int value, int prime, int dimension):
     cdef list P = []
     cdef int i
 
-    for i in xrange(dimension + 1):
+    for i in range(dimension + 1):
         P.append(value % prime)
         value /= prime
 
     return P
 
-cdef inline int _mod_inv(int num, int prime):
+cdef inline int _mod_inv(int num, int prime) noexcept:
     """
     Find the inverse of the number modulo the given prime.
     """
@@ -240,7 +240,7 @@ cdef inline int _mod_inv(int num, int prime):
     else:
         return y
 
-cpdef _normalize_coordinates(list point, int prime, int len_points):
+cpdef _normalize_coordinates(list point, int prime, int len_points) noexcept:
     """
     Normalize the coordinates of the point for the given prime.
 
@@ -258,7 +258,7 @@ cpdef _normalize_coordinates(list point, int prime, int len_points):
     """
     cdef int last_coefficient, coefficient, mod_inverse, val
 
-    for coefficient in xrange(len_points):
+    for coefficient in range(len_points):
         val = ((<int> point[coefficient]) + prime) % prime
         point[coefficient] = val
         if val != 0:
@@ -266,10 +266,10 @@ cpdef _normalize_coordinates(list point, int prime, int len_points):
 
     mod_inverse = _mod_inv(last_coefficient, prime)
 
-    for coefficient in xrange(len_points):
+    for coefficient in range(len_points):
         point[coefficient] = (point[coefficient] * mod_inverse) % prime
 
-cpdef _all_periodic_points(self):
+cpdef _all_periodic_points(self) noexcept:
     """
     Find all periodic points over a finite field.
 

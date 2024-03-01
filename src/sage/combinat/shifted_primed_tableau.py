@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 """
 Shifted primed tableaux
 
@@ -553,7 +553,7 @@ class ShiftedPrimedTableau(ClonableArray,
                 else:
                     l1 += uh + h*width
                 if unicode:
-                    l2 += u"{}{:^{width}}".format(v, e, width=width)
+                    l2 += "{}{:^{width}}".format(v, e, width=width)
                 else:
                     l2 += "{}{:^{width}}".format(v, e, width=width)
             if i <= n:
@@ -2673,8 +2673,8 @@ def _add_strip(sub_tab, full_tab, length):
 
         sage: list(ShiftedPrimedTableaux([3,1], weight=(2,2)))  # indirect doctest
         [[(1, 1, 2), (2,)], [(1, 1, 2'), (2,)]]
-        sage: list(ShiftedPrimedTableaux([3,1], weight=(2,2),
-        ....:                            primed_diagonal=True))  # indirect doctest
+        sage: list(ShiftedPrimedTableaux([3,1], weight=(2,2),   # indirect doctest
+        ....:                            primed_diagonal=True))
         [[(1, 1, 2), (2,)],
          [(1, 1, 2), (2',)],
          [(1, 1, 2'), (2,)],

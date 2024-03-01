@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 Construct sheaves on toric varieties
 
@@ -39,7 +40,7 @@ def TangentBundle(X):
         raise ValueError('not a toric variety')
 
     fan = X.fan()
-    filtrations = dict()
+    filtrations = {}
     from sage.modules.filtered_vector_space import FilteredVectorSpace
     for i, ray in enumerate(fan.rays()):
         F = FilteredVectorSpace(fan.rays(), {0: range(fan.nrays()), 1: [i]})
@@ -272,9 +273,9 @@ class SheafLibrary():
         EXAMPLES::
 
             sage: P1 = toric_varieties.P1()
-            sage: v1, v2, v3 = [(1,0,0),(0,1,0),(0,0,1)]
-            sage: F1 = FilteredVectorSpace({1:[v1, v2, v3], 3:[v1]})
-            sage: F2 = FilteredVectorSpace({0:[v1, v2, v3], 2:[v2, v3]})
+            sage: v1, v2, v3 = [(1,0,0), (0,1,0), (0,0,1)]
+            sage: F1 = FilteredVectorSpace({1: [v1, v2, v3], 3: [v1]})
+            sage: F2 = FilteredVectorSpace({0: [v1, v2, v3], 2: [v2, v3]})
             sage: P1 = toric_varieties.P1()
             sage: r1, r2 = P1.fan().rays()
             sage: F = MultiFilteredVectorSpace({r1:F1, r2:F2});  F

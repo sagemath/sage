@@ -444,7 +444,7 @@ class MultivectorModule(UniqueRepresentation, Parent):
 
         """
         if self._latex_name is None:
-            return r'\mbox{' + str(self) + r'}'
+            return r'\text{' + str(self) + r'}'
         else:
             return self._latex_name
 

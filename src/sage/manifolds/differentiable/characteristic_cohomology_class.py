@@ -260,10 +260,11 @@ Now the representative of the Euler class with respect to the connection
 
 Let us check whether this form represents the Euler class correctly::
 
-    sage: expr = e_class_form[2][[1,2]].expr() # long time
-    sage: expr = integrate(expr, x, -infinity, infinity) # long time
-    sage: expr = expr.simplify_full() # long time
-    sage: integrate(expr, y, -infinity, infinity) # long time
+    sage: # long time
+    sage: expr = e_class_form[2][[1,2]].expr()
+    sage: expr = integrate(expr, x, -infinity, infinity)
+    sage: expr = expr.simplify_full()
+    sage: integrate(expr, y, -infinity, infinity)
     2
 
 As we can see, the integral coincides with the Euler characteristic of `S^2` so
@@ -290,7 +291,7 @@ from .affine_connection import AffineConnection
 from .bundle_connection import BundleConnection
 from .levi_civita_connection import LeviCivitaConnection
 from sage.symbolic.expression import Expression
-from sage.rings.polynomial.polynomial_element import is_Polynomial
+from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
 
@@ -795,7 +796,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
             Characteristic cohomology class pontr(TM) of the Tangent bundle
              TM over the 8-dimensional differentiable manifold M
         """
-        if isinstance(x, (str, Expression)) or is_Polynomial(x):
+        if isinstance(x, (str, Expression)) or isinstance(x, Polynomial):
             return self._build_element(x, **kwargs)
 
         R = self.base_ring()
@@ -983,7 +984,7 @@ class CharacteristicCohomologyClassRing(FiniteGCAlgebra):
             val = P(val.taylor(x, 0, pow_range))
 
         # turn polynomial into a characteristic cohomology class via sequences
-        if is_Polynomial(val):
+        if isinstance(val, Polynomial):
             if class_type is None:
                 raise TypeError(f'class_type must be stated if {val} '
                                 f'is a polynomial')
@@ -1301,9 +1302,9 @@ class Algorithm_generic(SageObject):
             sage: g = M.metric()
             sage: nab = g.connection()
             sage: e = M.frames()[0]  # select standard frame
-            sage: cmat = [ [nab.curvature_form(i, j, e) # long time
-            ....:           for j in TM.irange()]       # long time
-            ....:         for i in TM.irange()]         # long time
+            sage: cmat = [ [nab.curvature_form(i, j, e)  # long time
+            ....:           for j in TM.irange()]
+            ....:         for i in TM.irange()]
 
         Import the algorithm::
 
@@ -1500,8 +1501,8 @@ class PontryaginAlgorithm(Singleton, Algorithm_generic):
             sage: nab = g.connection()
             sage: e = M.frames()[0]  # select standard frame
             sage: cmat = [ [nab.curvature_form(i, j, e) # long time
-            ....:           for j in TM.irange()]       # long time
-            ....:         for i in TM.irange()]         # long time
+            ....:           for j in TM.irange()]
+            ....:         for i in TM.irange()]
 
         Import the algorithm::
 
@@ -1797,9 +1798,9 @@ class PontryaginEulerAlgorithm(Singleton, Algorithm_generic):
             sage: g = M.metric()
             sage: nab = g.connection()
             sage: e = M.frames()[0]  # select the standard frame
-            sage: cmat = [ [nab.curvature_form(i, j, e) # long time
-            ....:           for j in TM.irange()]       # long time
-            ....:         for i in TM.irange()]         # long time
+            sage: cmat = [ [nab.curvature_form(i, j, e)  # long time
+            ....:           for j in TM.irange()]
+            ....:         for i in TM.irange() ]
 
         Import the algorithm::
 

@@ -22,7 +22,10 @@ from operator import index as PyNumber_Index
 from cypari2.gen import Gen
 from sage.libs.pari import pari
 from sage.structure.sage_object import SageObject
-from sage.rings.all import (ZZ, RealField, ComplexField, PowerSeriesRing)
+from sage.rings.integer_ring import ZZ
+from sage.rings.real_mpfr import RealField
+from sage.rings.complex_mpfr import ComplexField
+from sage.rings.power_series_ring import PowerSeriesRing
 
 
 class lfun_generic():
@@ -138,8 +141,8 @@ class lfun_generic():
             sage: L(14)
             0.998583063162746
             sage: a = delta_qexp(1000)
-            sage: sum(a[n]/float(n)^14 for n in range(1,1000))
-            0.9985830631627459
+            sage: sum(a[n]/float(n)^14 for n in reversed(range(1,1000)))
+            0.9985830631627461
 
         Illustrate that one can give a list of complex numbers for v
         (see :trac:`10937`)::
@@ -251,6 +254,28 @@ def lfun_character(chi):
         chi = chi.primitive_character()
     G, v = chi._pari_init_()
     return pari.lfuncreate([G, v])
+
+
+def lfun_hgm(motif, t):
+    """
+    Create the L-function of an hypergeometric motive.
+
+    OUTPUT:
+
+    one :pari:`lfun` object
+
+    EXAMPLES::
+
+        sage: from sage.lfunctions.pari import lfun_hgm, LFunction
+        sage: from sage.modular.hypergeometric_motive import HypergeometricData as Hyp
+        sage: H = Hyp(gamma_list=([3,-1,-1,-1]))
+        sage: L = LFunction(lfun_hgm(H, 1/5))
+        sage: L(3)
+        0.901925346034773
+    """
+    H = pari.hgminit(*motif.alpha_beta())
+    lf = pari.lfunhgm(H, t)
+    return pari.lfuncreate(lf)
 
 
 def lfun_elliptic_curve(E):

@@ -16,6 +16,3 @@ Upstream Contact
 ----------------
 
 https://github.com/algebraic-solving/msolve
-
-Upstream does not make source tarballs.
-We make tarballs from the fork https://github.com/mkoeppe/msolve (branch 0.4.4+sage)

@@ -4,7 +4,7 @@ from .sage0 import sage0, sage0_version, Sage
 from .gap import gap, gap_reset_workspace, Gap
 from .gp import gp, gp_version, Gp
 # import problems
-#from maxima_lib import maxima_lib
+# from maxima_lib import maxima_lib
 from .maxima import maxima, Maxima
 from .singular import singular, singular_version, Singular
 
@@ -38,7 +38,6 @@ lazy_import('sage.interfaces.octave', ['octave', 'Octave'])
 lazy_import('sage.interfaces.povray', 'povray')
 lazy_import('sage.interfaces.psage', 'PSage')
 lazy_import('sage.interfaces.qepcad', ['qepcad', 'qepcad_version', 'qepcad_formula'])
-lazy_import('sage.interfaces.qsieve', 'qsieve')
 lazy_import('sage.interfaces.r', ['r', 'R', 'r_version'])
 lazy_import('sage.interfaces.read_data', 'read_data')
 lazy_import('sage.interfaces.scilab', 'scilab')

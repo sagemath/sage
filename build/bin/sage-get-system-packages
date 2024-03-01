@@ -1,4 +1,5 @@
 #!/bin/sh
+
 SYSTEM=$1
 if [ -z "$SYSTEM" ]; then
    echo >&2 "usage: $0 {auto|debian|arch|conda|pip|...} SPKGS..."
@@ -10,18 +11,19 @@ SPKGS="$*"
 if [ -z "$SAGE_ROOT" ]; then
     SAGE_ROOT=`pwd`
 fi
+
 case "$SYSTEM" in
     install-requires)
-        # Collect install-requires.txt and output it in the format
+        # Collect install-requires.txt (falling back to requirements.txt) and output it in the format
         # needed by setup.cfg [options] install_requires=
-        SYSTEM_PACKAGES_FILE_NAMES="install-requires.txt"
+        SYSTEM_PACKAGES_FILE_NAMES="install-requires.txt requirements.txt"
         STRIP_COMMENTS="sed s/#.*//;/^[[:space:]]*$/d;"
         COLLECT=
         ;;
     install-requires-toml)
-        # Collect install-requires.txt and output it in the format
+        # Collect install-requires.txt (falling back to requirements.txt) and output it in the format
         # needed by pyproject.toml [build-system] requires=
-        SYSTEM_PACKAGES_FILE_NAMES="install-requires.txt"
+        SYSTEM_PACKAGES_FILE_NAMES="install-requires.txt requirements.txt"
         STRIP_COMMENTS="sed s/#.*//;/^[[:space:]]*$/d;s/^/'/;s/$/',/;"
         COLLECT=
         ;;
@@ -39,11 +41,35 @@ case "$SYSTEM" in
             fi
         fi
         SYSTEM_PACKAGES_FILE_NAMES="distros/$SYSTEM.txt"
-        STRIP_COMMENTS="sed s/#.*//;"
+        STRIP_COMMENTS="sed s/#.*//;s/\${PYTHON_MINOR}/${PYTHON_MINOR}/g"
         COLLECT=echo
         ;;
 esac
 for PKG_BASE in $SPKGS; do
+
+    case "$SYSTEM:$ENABLE_SYSTEM_SITE_PACKAGES" in
+        install-requires*|pip*)
+            # This is output for installation of packages into a Python environment.
+            # So it's OK to use any Python packages.
+            ;;
+        *:)
+            # --enable-system-site-packages was NOT passed to configure
+            # (or script was run outside of the sage-build-env).
+            #
+            # Skip this package if it uses the SAGE_PYTHON_PACKAGE_CHECK macro.
+            #
+            SPKG_CONFIGURE="${SAGE_ROOT}/build/pkgs/${PKG_BASE}/spkg-configure.m4"
+            if grep -q SAGE_PYTHON_PACKAGE_CHECK "${SPKG_CONFIGURE}" 2>/dev/null;
+            then
+                continue
+            fi
+            ;;
+        *)
+            # --enable-system-site-packages was passed to configure.
+            # So any package (Python, non-Python) is fine.
+            ;;
+    esac
+
     for NAME in $SYSTEM_PACKAGES_FILE_NAMES; do
         SYSTEM_PACKAGES_FILE="$SAGE_ROOT"/build/pkgs/$PKG_BASE/$NAME
         if [ -f $SYSTEM_PACKAGES_FILE ]; then

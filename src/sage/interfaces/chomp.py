@@ -19,6 +19,8 @@ import re
 from sage.misc.superseded import deprecation
 
 _have_chomp = {}
+
+
 def have_chomp(program='homsimpl'):
     """
     Return True if this computer has ``program`` installed.
@@ -151,7 +153,8 @@ class CHomP:
         from subprocess import Popen, PIPE
         from sage.rings.integer_ring import ZZ
         from sage.rings.rational_field import QQ
-        from sage.modules.all import VectorSpace, vector
+        from sage.modules.free_module import VectorSpace
+        from sage.modules.free_module_element import free_module_element as vector
         from sage.combinat.free_module import CombinatorialFreeModule
 
         deprecation(33777, "the CHomP interface is deprecated")
@@ -393,7 +396,7 @@ class CHomP:
             for dim in d:
                 if complex._degree_of_differential == -1:  # chain complex
                     new_dim = bottom + dim
-                else: # cochain complex
+                else:  # cochain complex
                     new_dim = top - dim
                 if isinstance(d[dim], tuple):
                     # generators included.
@@ -510,6 +513,7 @@ def homsimpl(complex=None, subcomplex=None, **kwds):
         return CHomP()('homsimpl', complex, subcomplex=subcomplex, **kwds)
     else:
         raise TypeError("Complex and/or subcomplex are not simplicial complexes.")
+
 
 def homcubes(complex=None, subcomplex=None, **kwds):
     r"""
@@ -742,6 +746,7 @@ def process_generators_cubical(gen_string, dim):
     else:
         return None
 
+
 def process_generators_simplicial(gen_string, dim, complex):
     r"""
     Process CHomP generator information for simplicial complexes.
@@ -827,6 +832,7 @@ def process_generators_simplicial(gen_string, dim, complex):
         return output
     else:
         return None
+
 
 def process_generators_chain(gen_string, dim, base_ring=None):
     r"""

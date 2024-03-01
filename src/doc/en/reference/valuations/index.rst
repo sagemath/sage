@@ -201,7 +201,7 @@ More Details
    sage/rings/valuation/mapped_valuation
    sage/rings/valuation/scaled_valuation
 
-   sage/rings/function_field/function_field_valuation
+   sage/rings/function_field/valuation
    sage/rings/padics/padic_valuation
 
 .. include:: ../footer.txt

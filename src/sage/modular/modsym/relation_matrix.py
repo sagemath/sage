@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint
 """
 Relation matrices for ambient modular symbols spaces
 
@@ -27,7 +28,7 @@ from sage.misc.search import search
 from sage.misc.verbose import verbose
 from sage.modular.modsym.manin_symbol_list import ManinSymbolList
 from sage.rings.rational_field import is_RationalField
-from sage.rings.ring import Ring
+from sage.categories.rings import Rings
 
 
 SPARSE = True
@@ -319,7 +320,7 @@ def gens_to_basis_matrix(syms, relation_matrix, mod, field, sparse):
     basis_set = set(A.nonpivots())
     pivots = A.pivots()
 
-    basis_mod2 = set([j for j, c in mod if c != 0])
+    basis_mod2 = {j for j, c in mod if c != 0}
 
     basis_set = basis_set.intersection(basis_mod2)
     basis = sorted(basis_set)
@@ -332,7 +333,7 @@ def gens_to_basis_matrix(syms, relation_matrix, mod, field, sparse):
     M = MatrixSpace(field, len(syms), len(basis), sparse=sparse)
 
     B = M(0)
-    cols_index = dict([(basis[i], i) for i in range(len(basis))])
+    cols_index = {basis[i]: i for i in range(len(basis))}
 
     for i in basis_mod2:
         t, l = search(basis, i)
@@ -550,8 +551,8 @@ def sparse_2term_quotient(rels, n, F):
         [(3, -1/3), (3, -1), (3, -1), (3, 1), (5, 1), (5, 1)]
     """
     n = int(n)
-    if not isinstance(F, Ring):
-        raise TypeError("F must be a ring.")
+    if F not in Rings():
+        raise TypeError("F must be a ring")
 
     tm = verbose("Starting sparse 2-term quotient...")
     free = list(range(n))

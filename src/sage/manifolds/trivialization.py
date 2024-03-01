@@ -693,7 +693,6 @@ class TransitionMap(SageObject):
         """
         return self._automorphism.matrix(self._frame1)
 
-
     def __eq__(self, other):
         r"""
         Equality operator.

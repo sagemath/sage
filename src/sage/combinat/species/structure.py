@@ -12,11 +12,12 @@ BB = o + o\*BB + o\*|\*BB
 
 Here we define this species using the default structures::
 
-    sage: ball = species.SingletonSpecies(); o = var('o')
+    sage: ball = species.SingletonSpecies()
     sage: bar = species.EmptySetSpecies()
     sage: BB = CombinatorialSpecies()
     sage: BB.define(ball + ball*BB + ball*bar*BB)
-    sage: BB.isotypes([o]*3).list()
+    sage: o = var('o')                                                                  # needs sage.symbolic
+    sage: BB.isotypes([o]*3).list()                                                     # needs sage.symbolic
     [o*(o*o), o*((o*{})*o), (o*{})*(o*o), (o*{})*((o*{})*o)]
 
 If we ignore the parentheses, we can read off that the integer
@@ -276,9 +277,9 @@ class SpeciesStructureWrapper(GenericSpeciesStructure):
         EXAMPLES::
 
             sage: P = species.PartitionSpecies()
-            sage: s = (P+P).structures([1,2,3])[1]; s
+            sage: s = (P+P).structures([1,2,3])[1]; s                                   # needs sage.libs.flint
             {{1, 3}, {2}}
-            sage: s.transport(PermutationGroupElement((2,3)))
+            sage: s.transport(PermutationGroupElement((2,3)))                           # needs sage.groups sage.libs.flint
             {{1, 2}, {3}}
         """
         return self.__class__(self._parent, self._s.transport(perm), **self._options)
@@ -288,9 +289,9 @@ class SpeciesStructureWrapper(GenericSpeciesStructure):
         EXAMPLES::
 
             sage: P = species.PartitionSpecies()
-            sage: s = (P+P).structures([1,2,3])[1]; s
+            sage: s = (P+P).structures([1,2,3])[1]; s                                   # needs sage.libs.flint
             {{1, 3}, {2}}
-            sage: s.canonical_label()
+            sage: s.canonical_label()                                                   # needs sage.libs.flint
             {{1, 2}, {3}}
         """
         return self.__class__(self._parent, self._s.canonical_label(), **self._options)

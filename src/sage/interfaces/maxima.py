@@ -35,7 +35,7 @@ This is the interface used by the maxima object::
     <class 'sage.interfaces.maxima.Maxima'>
 
 If the string "error" (case insensitive) occurs in the output of
-anything from Maxima, a RuntimeError exception is raised.
+anything from Maxima, a :class:`RuntimeError` exception is raised.
 
 EXAMPLES: We evaluate a very simple expression in Maxima.
 
@@ -49,9 +49,14 @@ The first way yields a Maxima object.
 
 ::
 
+    sage: x,y = SR.var('x,y')
     sage: F = maxima.factor('x^5 - y^5')
-    sage: F
-    -(y-x)*(y^4+x*y^3+x^2*y^2+x^3*y+x^4)
+    sage: F # not tested - depends on maxima version
+    -((y-x)*(y^4+x*y^3+x^2*y^2+x^3*y+x^4))
+    sage: actual = F.sage()
+    sage: expected = -(y-x)*(y^4+x*y^3+x^2*y^2+x^3*y+x^4)
+    sage: bool(actual == expected)
+    True
     sage: type(F)
     <class 'sage.interfaces.maxima.MaximaElement'>
 
@@ -71,18 +76,19 @@ data to other systems.
 
 ::
 
+    sage: F = maxima('x * y')
     sage: repr(F)
-    '-(y-x)*(y^4+x*y^3+x^2*y^2+x^3*y+x^4)'
+    'x*y'
     sage: F.str()
-    '-(y-x)*(y^4+x*y^3+x^2*y^2+x^3*y+x^4)'
+    'x*y'
 
 The ``maxima.eval`` command evaluates an expression in
 maxima and returns the result as a *string* not a maxima object.
 
 ::
 
-    sage: print(maxima.eval('factor(x^5 - y^5)'))
-    -(y-x)*(y^4+x*y^3+x^2*y^2+x^3*y+x^4)
+    sage: print(maxima.eval('factor(x^5 - 1)'))
+    (x-1)*(x^4+x^3+x^2+x+1)
 
 We can create the polynomial `f` as a Maxima polynomial,
 then call the factor method on it. Notice that the notation
@@ -91,11 +97,11 @@ works.
 
 ::
 
-    sage: f = maxima('x^5 - y^5')
+    sage: f = maxima('x^5 + y^5')
     sage: f^2
-    (x^5-y^5)^2
+    (y^5+x^5)^2
     sage: f.factor()
-    -(y-x)*(y^4+x*y^3+x^2*y^2+x^3*y+x^4)
+    (y+x)*(y^4-x*y^3+x^2*y^2-x^3*y+x^4)
 
 Control-C interruption works well with the maxima interface,
 because of the excellent implementation of maxima. For example, try
@@ -161,20 +167,20 @@ http://maxima.sourceforge.net/docs/intromax/intromax.html.
 
     sage: eqn = maxima(['a+b*c=1', 'b-a*c=0', 'a+b=5'])
     sage: s = eqn.solve('[a,b,c]'); s
-    [[a = -(sqrt(79)*%i-11)/4,b = (sqrt(79)*%i+9)/4, c = (sqrt(79)*%i+1)/10], [a = (sqrt(79)*%i+11)/4,b = -(sqrt(79)*%i-9)/4, c = -(sqrt(79)*%i-1)/10]]
+    [[a = -...(sqrt(79)*%i-11)/4...,b = (sqrt(79)*%i+9)/4, c = (sqrt(79)*%i+1)/10], [a = (sqrt(79)*%i+11)/4,b = -...(sqrt(79)*%i-9)/4..., c = -...(sqrt(79)*%i-1)/10...]]
 
 Here is an example of solving an algebraic equation::
 
     sage: maxima('x^2+y^2=1').solve('y')
     [y = -sqrt(1-x^2),y = sqrt(1-x^2)]
     sage: maxima('x^2 + y^2 = (x^2 - y^2)/sqrt(x^2 + y^2)').solve('y')
-    [y = -sqrt(((-y^2)-x^2)*sqrt(y^2+x^2)+x^2), y = sqrt(((-y^2)-x^2)*sqrt(y^2+x^2)+x^2)]
+    [y = -sqrt((...-y^2...-x^2)*sqrt(y^2+x^2)+x^2), y = sqrt((...-y^2...-x^2)*sqrt(y^2+x^2)+x^2)]
 
 
 You can even nicely typeset the solution in latex::
 
     sage: latex(s)
-    \left[ \left[ a=-{{\sqrt{79}\,i-11}\over{4}} , b={{\sqrt{79}\,i+9  }\over{4}} , c={{\sqrt{79}\,i+1}\over{10}} \right]  , \left[ a={{  \sqrt{79}\,i+11}\over{4}} , b=-{{\sqrt{79}\,i-9}\over{4}} , c=-{{  \sqrt{79}\,i-1}\over{10}} \right]  \right]
+    \left[ \left[ a=-...{{\sqrt{79}\,i-11}\over{4}}... , b={{...\sqrt{79}\,i+9...}\over{4}} , c={{\sqrt{79}\,i+1}\over{10}} \right]  , \left[ a={{...\sqrt{79}\,i+11}\over{4}} , b=-...{{\sqrt{79}\,i-9...}\over{4}}... , c=-...{{...\sqrt{79}\,i-1}\over{10}}... \right]  \right]
 
 To have the above appear onscreen via ``xdvi``, type
 ``view(s)``. (TODO: For OS X should create pdf output
@@ -200,7 +206,7 @@ and use preview instead?)
     sage: f.diff('x')
     k*x^3*%e^(k*x)*sin(w*x)+3*x^2*%e^(k*x)*sin(w*x)+w*x^3*%e^(k*x) *cos(w*x)
     sage: f.integrate('x')
-    (((k*w^6+3*k^3*w^4+3*k^5*w^2+k^7)*x^3 +(3*w^6+3*k^2*w^4-3*k^4*w^2-3*k^6)*x^2+((-18*k*w^4)-12*k^3*w^2+6*k^5)*x-6*w^4 +36*k^2*w^2-6*k^4) *%e^(k*x)*sin(w*x) +(((-w^7)-3*k^2*w^5-3*k^4*w^3-k^6*w)*x^3 +(6*k*w^5+12*k^3*w^3+6*k^5*w)*x^2+(6*w^5-12*k^2*w^3-18*k^4*w)*x-24*k*w^3 +24*k^3*w) *%e^(k*x)*cos(w*x)) /(w^8+4*k^2*w^6+6*k^4*w^4+4*k^6*w^2+k^8)
+    (((k*w^6+3*k^3*w^4+3*k^5*w^2+k^7)*x^3 +(3*w^6+3*k^2*w^4-3*k^4*w^2-3*k^6)*x^2+(...-...18*k*w^4)-12*k^3*w^2+6*k^5)*x-6*w^4 +36*k^2*w^2-6*k^4) *%e^(k*x)*sin(w*x) +((...-w^7...-3*k^2*w^5-3*k^4*w^3-k^6*w)*x^3...+(6*k*w^5+12*k^3*w^3+6*k^5*w)*x^2...+(6*w^5-12*k^2*w^3-18*k^4*w)*x-24*k*w^3 +24*k^3*w) *%e^(k*x)*cos(w*x)) /(w^8+4*k^2*w^6+6*k^4*w^4+4*k^6*w^2+k^8)
 
 ::
 
@@ -234,7 +240,7 @@ is `i/j`, for `i,j=1,\ldots,4`.
     sage: A.eigenvalues()
     [[0,4],[3,1]]
     sage: A.eigenvectors()
-    [[[0,4],[3,1]],[[[1,0,0,-4],[0,1,0,-2],[0,0,1,-4/3]],[[1,2,3,4]]]]
+    [[[0,4],[3,1]],[[[1,0,0,-4],[0,1,0,-2],[0,0,1,-...4/3...]],[[1,2,3,4]]]]
 
 We can also compute the echelon form in Sage::
 
@@ -287,12 +293,12 @@ We illustrate Laplace transforms::
 ::
 
     sage: maxima("laplace(diff(x(t),t,2),t,s)")
-    (-%at('diff(x(t),t,1),t = 0))+s^2*'laplace(x(t),t,s)-x(0)*s
+    ...-...%at('diff(x(t),t,1),t = 0))+s^2*'laplace(x(t),t,s)-x(0)*s
 
 It is difficult to read some of these without the 2d
 representation::
 
-    sage: print(maxima("laplace(diff(x(t),t,2),t,s)"))
+    sage: print(maxima("laplace(diff(x(t),t,2),t,s)")) # not tested - depends on maxima version
                              !
                     d        !          2
                  (- -- (x(t))!     ) + s  laplace(x(t), t, s) - x(0) s
@@ -396,7 +402,7 @@ Here's another example::
 
     sage: g = maxima('exp(3*%i*x)/(6*%i) + exp(%i*x)/(2*%i) + c')
     sage: latex(g)
-    -{{i\,e^{3\,i\,x}}\over{6}}-{{i\,e^{i\,x}}\over{2}}+c
+    -...{{i\,e^{3\,i\,x}}\over{6}}...-{{i\,e^{i\,x}}\over{2}}+c
 
 Long Input
 ----------
@@ -473,7 +479,7 @@ Test that the output is parseable (:trac:`31796`)::
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -485,8 +491,8 @@ Test that the output is parseable (:trac:`31796`)::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import re
@@ -550,7 +556,7 @@ class Maxima(MaximaAbstract, Expect):
         if not os.path.exists(STARTUP):
             raise RuntimeError('You must get the file sage-maxima.lisp')
 
-        #self.__init_code = init_code
+        # self.__init_code = init_code
         if init_code is None:
             # display2d -- no ascii art output
             # keepfloat -- don't automatically convert floats to rationals
@@ -564,7 +570,7 @@ class Maxima(MaximaAbstract, Expect):
         # See trac # 6818.
         init_code.append('nolabels : true')
 
-        MaximaAbstract.__init__(self,"maxima")
+        MaximaAbstract.__init__(self, "maxima")
         Expect.__init__(self,
                         name='maxima',
                         prompt=r'\(\%i[0-9]+\) ',
@@ -622,11 +628,6 @@ class Maxima(MaximaAbstract, Expect):
             sage: m.is_running()
             True
 
-        Test that we can use more than 256MB RAM (see :trac:`6772`)::
-
-            sage: a = maxima(10)^(10^5)
-            sage: b = a^600              # long time -- about 10-15 seconds
-
         """
         Expect._start(self)
         self._sendline(r":lisp (defun tex-derivative (x l r) (tex (if $derivabbrev (tex-dabbrev x) (tex-d x '\\partial)) l r lop rop ))")
@@ -634,9 +635,6 @@ class Maxima(MaximaAbstract, Expect):
         # Don't use ! for factorials (#11539)
         self._sendline(":lisp (remprop 'mfactorial 'grind)")
 
-        # Remove limit on the max heapsize (since otherwise it defaults
-        # to 256MB with ECL).
-        self._sendline(":lisp (ext:set-limit 'ext:heap-size 0)")
         self._eval_line('0;')
 
         # set random seed
@@ -651,7 +649,7 @@ class Maxima(MaximaAbstract, Expect):
             sage: maxima.__reduce__()
             (<function reduce_load_Maxima at 0x...>, ())
         """
-        return reduce_load_Maxima, tuple([]) #(self.__init_code,)
+        return reduce_load_Maxima, tuple()  # (self.__init_code,)
 
     def _sendline(self, string):
         """
@@ -692,7 +690,7 @@ class Maxima(MaximaAbstract, Expect):
             sage: maxima.assume('a>0')
             [a > 0]
             sage: maxima('integrate(1/(x^3*(a+b*x)^(1/3)),x)')
-            (-(b^2*log((b*x+a)^(2/3)+a^(1/3)*(b*x+a)^(1/3)+a^(2/3)))/(9*a^(7/3))) +(2*b^2*atan((2*(b*x+a)^(1/3)+a^(1/3))/(sqrt(3)*a^(1/3))))/(3^(3/2)*a^(7/3)) +(2*b^2*log((b*x+a)^(1/3)-a^(1/3)))/(9*a^(7/3)) +(4*b^2*(b*x+a)^(5/3)-7*a*b^2*(b*x+a)^(2/3)) /(6*a^2*(b*x+a)^2-12*a^3*(b*x+a)+6*a^4)
+            ...-...(b^2*log((b*x+a)^(2/3)+a^(1/3)*(b*x+a)^(1/3)+a^(2/3)))/(9*a^(7/3))) +(2*b^2*atan((2*(b*x+a)^(1/3)+a^(1/3))/(sqrt(3)*a^(1/3))))/(3^(3/2)*a^(7/3)) +(2*b^2*log((b*x+a)^(1/3)-a^(1/3)))/(9*a^(7/3)) +(4*b^2*(b*x+a)^(5/3)-7*a*b^2*(b*x+a)^(2/3)) /(6*a^2*(b*x+a)^2-12*a^3*(b*x+a)+6*a^4)
             sage: maxima('integrate(x^n,x)')
             Traceback (most recent call last):
             ...
@@ -730,8 +728,8 @@ class Maxima(MaximaAbstract, Expect):
             if i > 0:
                 v = self._before()
 
-                #We check to see if there is a "serious" error in Maxima.
-                #Note that this depends on the order of self._prompt_wait
+                # We check to see if there is a "serious" error in Maxima.
+                # Note that this depends on the order of self._prompt_wait
                 if expr is self._prompt_wait and i > len(self._ask):
                     self.quit()
                     raise ValueError(
@@ -889,23 +887,22 @@ class Maxima(MaximaAbstract, Expect):
             sage: maxima._batch('10003;',batchload=False)
             '...batch...10003...'
         """
-        filename = '%s-%s'%(self._local_tmpfile(),randrange(2147483647))
-        F = open(filename, 'w')
-        F.write(s)
-        F.close()
+        filename = '%s-%s' % (self._local_tmpfile(), randrange(2147483647))
+        with open(filename, 'w') as F:
+            F.write(s)
         if self.is_remote():
             self._send_tmpfile_to_server(local_file=filename)
             tmp_to_use = self._remote_tmpfile()
         tmp_to_use = filename
 
         if batchload:
-            cmd = 'batchload("%s");'%tmp_to_use
+            cmd = 'batchload("%s");' % tmp_to_use
         else:
-            cmd = 'batch("%s");'%tmp_to_use
+            cmd = 'batch("%s");' % tmp_to_use
 
         r = randrange(2147483647)
         s = str(r+1)
-        cmd = "%s1+%s;\n"%(cmd,r)
+        cmd = "%s1+%s;\n" % (cmd, r)
 
         self._sendline(cmd)
         self._expect_expr(s)
@@ -971,7 +968,7 @@ class Maxima(MaximaAbstract, Expect):
             Maxima ERROR:
                 Principal Value
         """
-        raise TypeError("Error executing code in Maxima\nCODE:\n\t%s\nMaxima ERROR:\n\t%s"%(cmd, out.replace('-- an error.  To debug this try debugmode(true);','')))
+        raise TypeError("Error executing code in Maxima\nCODE:\n\t%s\nMaxima ERROR:\n\t%s" % (cmd, out.replace('-- an error.  To debug this try debugmode(true);', '')))
 
     ###########################################
     # Direct access to underlying lisp interpreter.
@@ -991,7 +988,7 @@ class Maxima(MaximaAbstract, Expect):
             19
             (
         """
-        self._eval_line(':lisp %s\n""'%cmd, allow_use_file=False,
+        self._eval_line(':lisp %s\n""' % cmd, allow_use_file=False,
                wait_for_prompt=False, reformat=False, error_check=False)
         self._expect_expr('(%i)')
         return self._before()
@@ -1006,9 +1003,9 @@ class Maxima(MaximaAbstract, Expect):
 
         INPUT:
 
-        - ``var`` - string
+        - ``var`` -- string
 
-        - ``value`` - string
+        - ``value`` -- string
 
         EXAMPLES::
 
@@ -1018,15 +1015,15 @@ class Maxima(MaximaAbstract, Expect):
         """
         if not isinstance(value, str):
             raise TypeError
-        cmd = '%s : %s$'%(var, value.rstrip(';'))
+        cmd = '%s : %s$' % (var, value.rstrip(';'))
         if len(cmd) > self.__eval_using_file_cutoff:
             self._batch(cmd, batchload=True)
         else:
             self._eval_line(cmd)
-            #self._sendline(cmd)
-            #self._expect_expr()
-            #out = self._before()
-            #self._error_check(cmd, out)
+            # self._sendline(cmd)
+            # self._expect_expr()
+            # out = self._before()
+            # self._error_check(cmd, out)
 
     def clear(self, var):
         """
@@ -1102,30 +1099,30 @@ class Maxima(MaximaAbstract, Expect):
         """
         return MaximaElementFunction
 
-    ## some old helper functions to wrap the calculus use
-    ## of the Maxima interface. these routines expect arguments
-    ## living in the symbolic ring and return something
-    ## that is hopefully coercible into the symbolic ring again.
-##
-##    def sr_integral(self,*args):
-##        return args[0]._maxima_().integrate(*args[1:])
-##
-##    def sr_sum(self,expression,v,a,b):
-##        sum  = "'sum(%s, %s, %s, %s)" % tuple([repr(expr._maxima_()) for expr in (expression, v, a, b)])
-##        result = self.simplify_sum(sum)
-##        result = result.ratsimp()
-##        return expression.parent()(result)
-##
-##    def sr_limit(self,ex,*args):
-##        return ex._maxima_().limit(*args)
-##
-##    def sr_tlimit(self,ex,*args):
-##        return ex._maxima_().tlimit(*args)
-##
+    # some old helper functions to wrap the calculus use
+    # of the Maxima interface. these routines expect arguments
+    # living in the symbolic ring and return something
+    # that is hopefully coercible into the symbolic ring again.
+
+#    def sr_integral(self,*args):
+#        return args[0]._maxima_().integrate(*args[1:])
+
+#    def sr_sum(self,expression,v,a,b):
+#        sum  = "'sum(%s, %s, %s, %s)" % tuple([repr(expr._maxima_()) for expr in (expression, v, a, b)])
+#        result = self.simplify_sum(sum)
+#        result = result.ratsimp()
+#        return expression.parent()(result)
+
+#    def sr_limit(self,ex,*args):
+#        return ex._maxima_().limit(*args)
+
+#    def sr_tlimit(self,ex,*args):
+#        return ex._maxima_().tlimit(*args)
+
 
 def is_MaximaElement(x):
     """
-    Returns True if ``x`` is of type :class:`MaximaElement`.
+    Return True if ``x`` is of type :class:`MaximaElement`.
 
     EXAMPLES::
 
@@ -1198,7 +1195,7 @@ class MaximaElement(MaximaAbstractElement, ExpectElement):
         P = self.parent()
         with gc_disabled():
             P._eval_line('display2d : true$')
-            s = P._eval_line('disp(%s)$'%self.name(), reformat=False)
+            s = P._eval_line('disp(%s)$' % self.name(), reformat=False)
             P._eval_line('display2d : false$')
         s = s.strip('\r\n')
 
@@ -1263,7 +1260,7 @@ maxima = Maxima(init_code=['display2d : false',
                 script_subdirectory=None)
 
 
-def reduce_load_Maxima(): #(init_code=None):
+def reduce_load_Maxima():  # (init_code=None):
     """
     Unpickle a Maxima Pexpect interface.
 
@@ -1273,7 +1270,8 @@ def reduce_load_Maxima(): #(init_code=None):
         sage: reduce_load_Maxima()
         Maxima
     """
-    return maxima #Maxima(init_code=init_code)
+    return maxima  # Maxima(init_code=init_code)
+
 
 # This is defined for compatibility with the old Maxima interface.
 def reduce_load_Maxima_function(parent, defn, args, latex):
@@ -1290,6 +1288,7 @@ def reduce_load_Maxima_function(parent, defn, args, latex):
         True
     """
     return parent.function(args, defn, defn, latex)
+
 
 def __doctest_cleanup():
     """
