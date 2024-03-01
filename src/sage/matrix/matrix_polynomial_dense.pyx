@@ -27,9 +27,14 @@ AUTHORS:
 
 - Vincent Neiger (2021-08-07): added inverse_series_trunc(),
   solve_{left/right}_series_trunc(), {left/right}_quo_rem(), reduce().
+
+- Vincent Neiger (2024-02-13): added basis_completion(), _is_basis_completion(),
+  _basis_completion_via_reversed_approx().
 """
 # ****************************************************************************
 #       Copyright (C) 2016 Kwankyu Lee <ekwankyu@gmail.com>
+#       Copyright (C) 2017 Johan Rosenkilde
+#       Copyright (C) 2018,2020,2021,2024 Vincent Neiger
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -259,7 +264,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
     def is_constant(self):
         r"""
-        Return ``True`` if and only if this polynomial matrix is constant,
+        Return whether this polynomial matrix is constant,
         that is, all its entries are constant.
 
         OUTPUT: a boolean.
@@ -2180,7 +2185,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             for c in range(n):
                 d = M.get_unsafe(i,c).degree()
 
-                if shifts and d >= 0 :
+                if shifts and d >= 0:
                     d += shifts[c]
 
                 if d >= best:
@@ -3256,7 +3261,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             row_wise=True,
             normal_form=False):
         r"""
-        Return ``True`` if and only if this matrix is an approximant basis in
+        Return whether this matrix is an approximant basis in
         ``shifts``-ordered weak Popov form for the polynomial matrix ``pmat``
         at order ``order``.
 
@@ -3779,7 +3784,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             row_wise=True,
             normal_form=False):
         r"""
-        Return ``True`` if and only if this matrix is a left kernel basis in
+        Return whether this matrix is a left kernel basis in
         ``shifts``-ordered weak Popov form for the polynomial matrix ``pmat``.
 
         If ``normal_form`` is ``True``, then the kernel basis must furthermore
@@ -4079,3 +4084,564 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
                 if P[j, j].degree() + shifts[j] <= degree_bound:
                     column_indices.append(j)
             return P[:,column_indices]
+
+    def _basis_completion_via_reversed_approx(self):
+        r"""
+        Return a Smith form-preserving nonsingular completion of a row basis of
+        this matrix. For a more detailed description, see
+        :meth:`basis_completion`, in the row-wise case.
+
+        EXAMPLES:
+
+        Three polynomials whose GCD is `1` can be completed into a unimodular
+        matrix::
+
+            sage: ring.<x> = GF(7)[]
+            sage: mat = matrix([[x*(x-1)*(x-2), (x-2)*(x-3)*(x-4), (x-4)*(x-5)*(x-6)]])
+            sage: mat
+            [      x^3 + 4*x^2 + 2*x   x^3 + 5*x^2 + 5*x + 4   x^3 + 6*x^2 + 4*x + 6]
+            sage: rcomp = mat._basis_completion_via_reversed_approx(); rcomp
+            [        5*x^2 + 4*x + 1             5*x^2 + 2*x                   5*x^2]
+            [          2*x^3 + 4*x^2 2*x^3 + 6*x^2 + 2*x + 1       2*x^3 + x^2 + 3*x]
+            sage: basis = mat.stack(rcomp); basis
+            [      x^3 + 4*x^2 + 2*x   x^3 + 5*x^2 + 5*x + 4   x^3 + 6*x^2 + 4*x + 6]
+            [        5*x^2 + 4*x + 1             5*x^2 + 2*x                   5*x^2]
+            [          2*x^3 + 4*x^2 2*x^3 + 6*x^2 + 2*x + 1       2*x^3 + x^2 + 3*x]
+            sage: basis.determinant()
+            6
+
+        The following matrix has rank `2` and trivial Smith form. It can be
+        completed row-wise into a `3 \times 3` unimodular matrix::
+
+            sage: mat = matrix(ring, 2, 3, \
+                    [[x^2 + 5*x + 5,   3*x^2 + x + 3, 4*x^2 + 5*x + 4], \
+                     [5*x^2 + 4*x,   3*x^2 + 4*x + 5, 5*x^2 + 5*x + 3]])
+            sage: rcomp = mat._basis_completion_via_reversed_approx(); rcomp
+            [  2*x^2 + 1 4*x^2 + 3*x 2*x^2 + 3*x]
+            sage: mat.stack(rcomp).determinant()
+            3
+
+        The following matrix has rank 1 and its nonzero Smith factor is `x+3`.
+        A row-wise completion has a single nonzero row, whereas a column-wise
+        completion has two columns; in both cases, the Smith form is preserved::
+
+            sage: mat = matrix(ring, 3, 2, \
+                    [[    x^3 + x^2 + 5*x + 5,         2*x^3 + 2*x + 4], \
+                     [  3*x^3 + 2*x^2 + x + 3,   6*x^3 + 5*x^2 + x + 1], \
+                     [2*x^3 + 5*x^2 + 3*x + 4, 4*x^3 + 6*x^2 + 5*x + 6]])
+            sage: mat.smith_form(transformation=False)
+            [x + 3     0]
+            [    0     0]
+            [    0     0]
+            sage: rcomp = mat._basis_completion_via_reversed_approx(); rcomp
+            [x + 1   2*x]
+            sage: ccomp = mat.transpose()._basis_completion_via_reversed_approx().transpose(); ccomp
+            [3*x + 1 4*x + 4]
+            [    2*x 5*x + 1]
+            [    6*x       x]
+            sage: rcomp.stack(mat).smith_form(transformation=False)
+            [    1     0]
+            [    0 x + 3]
+            [    0     0]
+            [    0     0]
+            sage: ccomp.augment(mat).smith_form(transformation=False)
+            [    1     0     0     0]
+            [    0     1     0     0]
+            [    0     0 x + 3     0]
+
+        TESTS:
+
+        Corner cases are handled correctly::
+
+            sage: matrix(ring, 0, 0)._basis_completion_via_reversed_approx()
+            []
+            sage: matrix(ring, 0, 2)._basis_completion_via_reversed_approx()
+            [1 0]
+            [0 1]
+            sage: matrix(ring, 2, 0)._basis_completion_via_reversed_approx()
+            []
+        """
+        from sage.matrix.constructor import matrix  # for identity
+
+        ring = self.base_ring()
+        m = self.nrows()
+        n = self.ncols()
+
+        # corner cases: after this, m>0 and n>0
+        if m == 0:
+            return matrix.identity(ring, n)
+        if n == 0:
+            return matrix(ring, 0, 0)
+
+        # find column degrees (zero columns have degree -1)
+        cdeg = self.column_degrees()
+
+        # list zero and nonzero columns
+        zcols = []
+        nonzcols = []
+        for j in range(n):
+            if cdeg[j] < 0:
+                zcols.append(j)
+            else:
+                nonzcols.append(j)
+
+        if len(nonzcols) == 0:
+            return matrix.identity(ring, n)
+
+        # restrict to nonzero columns, and reverse entries column-wise
+        mat = self.matrix_from_columns(nonzcols)
+        cdeg = [cdeg[j] for j in nonzcols]  # cdeg >= 0 entrywise
+        mat_rev = mat.reverse(row_wise=False, degree=cdeg)
+
+        # compute shifted-minimal right kernel basis
+        kernel_basis = mat_rev.minimal_kernel_basis(row_wise=False, shifts=cdeg)
+        # if kernel_basis has zero columns, then mat is full column rank, there is
+        # nothing to complete, just return the trivial completion
+        if kernel_basis.ncols() == 0:
+            return matrix.identity(ring, n).matrix_from_rows(zcols)
+
+        # compute shifted-minimal left approximant basis
+        # with shifts -cdeg and approximation orders cdeg(kernel_basis)+1
+        mcdeg = [-c for c in cdeg]
+        orders = [d+1 for d in kernel_basis.column_degrees(shifts=cdeg)]
+        approx_basis = kernel_basis.minimal_approximant_basis(order=orders, shifts=mcdeg)
+
+        # idea: by choice of parameters (shifts and orders), this approximant
+        # basis has a subset of rows which form a saturated basis of the
+        # rational vector space generated by mat_rev; this is precisely all
+        # rows `row` of approx_basis that satisfy row * kernel_basis == 0
+        # --> we can actually detect them without computing the product,
+        # these rows are those which have "small" -cdeg-shifted row degree
+
+        # select the appropriate rows from approx basis
+        rdeg = approx_basis.row_degrees(shifts=mcdeg)
+        completion_indices = [i for i in range(len(rdeg)) if rdeg[i] > 0]
+        completion_rev = approx_basis.matrix_from_rows(completion_indices)
+        rdeg = [rdeg[i] for i in completion_indices]
+
+        # now we know the completion len(completion_indices) rows,
+        # plus the trivial rows related to zero columns we have discarded
+        completion = matrix(ring, len(zcols)+len(completion_indices), n)
+
+        # fill trivial part of result matrix:
+        # to each zero column of input mat corresponds an identity row
+        # -> the following loop has the same effect as the next commented line:
+        #   completion[0:len(zcols),:] = matrix.identity(ring, n).matrix_from_rows(zcols)
+        for k in range(len(zcols)):
+            completion[k,zcols[k]] = 1
+
+        # fill nontrivial part of result matrix: this is
+        # diag(x**rdeg) * completion_rev(1/x) * diag(x**cdeg)
+        #
+        # warning: cannot use reverse w.r.t rdeg or cdeg here,
+        # deg(completion_rev) may a priori be greater than max(cdeg) and
+        # max(rdeg), so there would be negative degree coefficients that would
+        # be discarded
+        # -> the following code has the same effect as the next 3 commented lines:
+        # left_diag = matrix.diagonal([ring.monomial(d) for d in rdeg])
+        # right_diag = matrix.diagonal([ring.monomial(d) for d in cdeg])
+        # completion[len(zcols):,nonzcols] = left_diag * completion_rev(var**(-1)) * right_diag
+        # where var = ring.gen()
+        for i in range(len(completion_indices)):
+            for j in range(len(nonzcols)):
+                completion[i + len(zcols), nonzcols[j]] = completion_rev[i,j].reverse(rdeg[i]+cdeg[j])
+
+        return completion
+
+    def basis_completion(self, row_wise=True, algorithm="approximant"):
+        r"""
+        Return a Smith form-preserving nonsingular completion of a basis of
+        this matrix: row-wise completing a row basis if ``row_wise`` is True;
+        column-wise completing a column basis if it is False.
+
+        For a more detailed description, consider the row-wise case (the
+        column-wise case is the same up to matrix transposition). Let `A` be
+        the input matrix, `m \times n` over univariate polynomials
+        `\Bold{K}[x]`, for some field `\Bold{K}`, and let `r` be the rank of
+        `A`, which is unknown a priori. This computes a matrix `C` of
+        dimensions `(n-r) \times n` such that stacking both matrices one above
+        the other, say `[[A],[C]]`, gives a matrix of maximal rank `n` and with
+        the same nontrivial Smith factors as `A`. In particular, `C` has full
+        row rank, and the rank of the input matrix may be recovered from the
+        number of rows of `C`.
+
+        As a consequence, if `B` is a basis of the module generated by the rows
+        of `A` (for example `B = A` if `A` has full row rank), then `[[B],[C]]`
+        is nonsingular, and its determinant is the product of the nonzero Smith
+        factors of `A` up to multiplication by a nonzero element of `\Bold{K}`.
+
+        In particular, for `A` with full row rank: if the rows `A` can be
+        completed into a basis of `\Bold{K}[x]^{n}` (or equivalently, `A` has
+        unimodular column bases, or also, if the rows of `A` generate all
+        polynomial vectors in the rational row space of `A`), then `C` provides
+        such a completion. In this case, `[[A],[C]]` is unimodular: it is
+        invertible over `\Bold{K}[x]`, and `det([[A],[C]])` is a nonzero
+        element of the base field `\Bold{K}`.
+
+        INPUT:
+
+        - ``row_wise`` -- (optional, default: ``True``) boolean, if ``True`` then
+          compute a row-wise completion, else compute a column-wise completion.
+
+        - ``algorithm`` -- (optional, default: ``"approximant"``) selects the
+          approach for computing the completion; currently supported:
+          ``"approximant"`` and ``"smith"``.
+
+        OUTPUT: a matrix over the same base ring as the input matrix, which forms a
+        completion as defined above.
+
+        ALGORITHM:
+
+        - ``approximant``: the approximant-based algorithm follows the ideas in
+          [ZL2014]_ , based on polynomial reversals combined with the
+          computation of a minimal kernel basis and a minimal approximant
+          basis.
+
+        - ``smith``: the Smith form-based algorithm computes the Smith form of
+          this matrix along with corresponding unimodular transformations, from
+          which a completion is readily obtained.
+
+        EXAMPLES:
+
+        Three polynomials whose GCD is `1` can be completed into a unimodular
+        matrix::
+
+            sage: ring.<x> = GF(7)[]
+            sage: mat = matrix([[x*(x-1)*(x-2), (x-2)*(x-3)*(x-4), (x-4)*(x-5)*(x-6)]])
+            sage: mat
+            [      x^3 + 4*x^2 + 2*x   x^3 + 5*x^2 + 5*x + 4   x^3 + 6*x^2 + 4*x + 6]
+            sage: rcomp = mat.basis_completion(); rcomp
+            [        5*x^2 + 4*x + 1             5*x^2 + 2*x                   5*x^2]
+            [          2*x^3 + 4*x^2 2*x^3 + 6*x^2 + 2*x + 1       2*x^3 + x^2 + 3*x]
+            sage: basis = mat.stack(rcomp); basis
+            [      x^3 + 4*x^2 + 2*x   x^3 + 5*x^2 + 5*x + 4   x^3 + 6*x^2 + 4*x + 6]
+            [        5*x^2 + 4*x + 1             5*x^2 + 2*x                   5*x^2]
+            [          2*x^3 + 4*x^2 2*x^3 + 6*x^2 + 2*x + 1       2*x^3 + x^2 + 3*x]
+            sage: basis.determinant()
+            6
+
+        The following matrix has rank `2` and trivial Smith form. It can be
+        completed row-wise into a `3 \times 3` unimodular matrix (column-wise,
+        there is nothing to complete)::
+
+            sage: mat = matrix(ring, 2, 3, \
+                    [[x^2 + 5*x + 5,   3*x^2 + x + 3, 4*x^2 + 5*x + 4], \
+                     [5*x^2 + 4*x,   3*x^2 + 4*x + 5, 5*x^2 + 5*x + 3]])
+            sage: rcomp = mat.basis_completion(); rcomp
+            [  2*x^2 + 1 4*x^2 + 3*x 2*x^2 + 3*x]
+            sage: mat.stack(rcomp).determinant()
+            3
+            sage: mat.basis_completion(row_wise=False)
+            []
+
+        The following matrix has rank 1 and its nonzero Smith factor is `x+3`.
+        A row-wise completion has a single nonzero row, whereas a column-wise
+        completion has two columns; in both cases, the Smith form is preserved::
+
+            sage: mat = matrix(ring, 3, 2, \
+                    [[    x^3 + x^2 + 5*x + 5,         2*x^3 + 2*x + 4], \
+                     [  3*x^3 + 2*x^2 + x + 3,   6*x^3 + 5*x^2 + x + 1], \
+                     [2*x^3 + 5*x^2 + 3*x + 4, 4*x^3 + 6*x^2 + 5*x + 6]])
+            sage: mat.smith_form(transformation=False)
+            [x + 3     0]
+            [    0     0]
+            [    0     0]
+            sage: rcomp = mat.basis_completion(); rcomp
+            [x + 1   2*x]
+            sage: ccomp = mat.basis_completion(row_wise=False); ccomp
+            [3*x + 1 4*x + 4]
+            [    2*x 5*x + 1]
+            [    6*x       x]
+            sage: rcomp.stack(mat).smith_form(transformation=False)
+            [    1     0]
+            [    0 x + 3]
+            [    0     0]
+            [    0     0]
+            sage: ccomp.augment(mat).smith_form(transformation=False)
+            [    1     0     0     0]
+            [    0     1     0     0]
+            [    0     0 x + 3     0]
+
+        Here are a few more examples, similar to the above but over fields
+        other than ``GF(7)``::
+
+            sage: ring.<x> = QQ[]
+            sage: mat = matrix([[x*(x-1)*(x-2), (x-2)*(x-3)*(x-4), (x-4)*(x-5)*(x-6)]])
+            sage: mat
+            [        x^3 - 3*x^2 + 2*x   x^3 - 9*x^2 + 26*x - 24 x^3 - 15*x^2 + 74*x - 120]
+            sage: rcomp = mat.basis_completion(algorithm="smith"); rcomp
+            [        -1/12*x - 1/12         -1/12*x + 5/12                      0]
+            [                  1/12                   1/12 1/24*x^2 - 13/24*x + 2]
+            sage: mat.stack(rcomp).determinant()
+            1
+
+            sage: mat = matrix([[x*(x-1), x*(x-2)], \
+                                [x*(x-2), x*(x-3)], \
+                                [(x-1)*(x-2), (x-1)*(x-3)]])
+            sage: mat.smith_form(transformation=False)
+            [1 0]
+            [0 x]
+            [0 0]
+            sage: ccomp = mat.basis_completion(row_wise=False, algorithm="smith")
+            sage: ccomp
+            [1/2*x - 1/2]
+            [  1/2*x - 1]
+            [1/2*x - 3/2]
+            sage: ccomp.augment(mat).smith_form(transformation=False)
+            [    1     0     0]
+            [    0     1     0]
+            [    0     0 1/2*x]
+
+            sage: field.<a> = NumberField(x**2 - 2)
+            sage: ring.<y> = field[]
+            sage: mat = matrix([[3*a*y - 1, (-8*a - 1)*y - 2*a + 1]])
+            sage: rcomp = mat.basis_completion(algorithm="smith"); rcomp
+            [ 39/119*a - 30/119 -99/119*a + 67/119]
+            sage: mat.stack(rcomp).determinant()
+            1
+
+        TESTS:
+
+        Corner cases are handled correctly::
+
+            sage: matrix(ring, 0, 0).basis_completion()
+            []
+            sage: matrix(ring, 0, 0).basis_completion(row_wise=False)
+            []
+            sage: matrix(ring, 0, 0).basis_completion(algorithm="smith")
+            []
+            sage: matrix(ring, 0, 0).basis_completion(row_wise=False,algorithm="smith")
+            []
+            sage: matrix(ring, 0, 2).basis_completion()
+            [1 0]
+            [0 1]
+            sage: matrix(ring, 0, 2).basis_completion(row_wise=False)
+            []
+            sage: matrix(ring, 0, 2).basis_completion(algorithm="smith")
+            [1 0]
+            [0 1]
+            sage: matrix(ring, 0, 2).basis_completion(row_wise=False,algorithm="smith")
+            []
+            sage: matrix(ring, 2, 0).basis_completion()
+            []
+            sage: matrix(ring, 2, 0).basis_completion(row_wise=False)
+            [1 0]
+            [0 1]
+            sage: matrix(ring, 2, 0).basis_completion(algorithm="smith")
+            []
+            sage: matrix(ring, 2, 0).basis_completion(row_wise=False,algorithm="smith")
+            [1 0]
+            [0 1]
+        """
+        if algorithm == "approximant":
+            if row_wise:
+                return self._basis_completion_via_reversed_approx()
+            else:
+                Ctrsp = self.transpose()._basis_completion_via_reversed_approx()
+                return Ctrsp.transpose()
+
+        elif algorithm == "smith":
+            ring = self.base_ring()
+            m = self.nrows()
+            n = self.ncols()
+
+            # Smith form, S == U * self * V
+            S, U, V = self.smith_form(transformation=True)
+
+            # S is m x n with rk = rank(self) first diagonal entries nonzero, find rk
+            rk = 0
+            while rk < min(m, n) and not S[rk,rk].is_zero():
+                rk += 1
+
+            # case: matrix is zero (including if m == 0 || n == 0)
+            from sage.matrix.constructor import matrix
+            if rk == 0:
+                if row_wise:
+                    return matrix.identity(ring, n)
+                else:
+                    return matrix.identity(ring, m)
+
+            # now, matrix is nonzero (and nonempty)
+            if row_wise:
+                C = matrix.identity(ring, n)[rk:,:]
+                VV = V.inverse_of_unit()
+                return C * VV
+            else:
+                C = matrix.identity(ring, m)[:,rk:]
+                UU = U.inverse_of_unit()
+                return UU * C
+
+        else:
+            raise ValueError("algorithm must be one of \"approximant\" or \"smith\".")
+
+    def _is_basis_completion(self, mat, row_wise=True):
+        r"""
+        Return whether this matrix is a basis completion for ``mat``. For the
+        definition of basis completion, including its orientation row-wise or
+        column-wise, see the documentation of :meth:`basis_completion`.
+
+        INPUT:
+
+        - ``row_wise`` -- (optional, default: ``True``) boolean, if ``True`` then
+          check for row-wise completion, else check for column-wise completion.
+
+        OUTPUT: a boolean indicating whether this matrix is a completion of
+        ``mat``.
+
+        EXAMPLES:
+
+        Using the same examples as :meth:`basis_completion`::
+
+            sage: ring.<x> = GF(7)[]
+            sage: mat1 = matrix([[x*(x-1)*(x-2), (x-2)*(x-3)*(x-4), (x-4)*(x-5)*(x-6)]])
+            sage: rcomp1 = matrix(ring, 2, 3, \
+                    [[5*x^2 + 4*x + 1, 5*x^2 + 2*x, 5*x^2], \
+                     [2*x^3 + 4*x^2, 2*x^3 + 6*x^2 + 2*x + 1, 2*x^3 + x^2 + 3*x]])
+            sage: rcomp1._is_basis_completion(mat1)
+            True
+
+            sage: mat2 = matrix(ring, 2, 3, \
+                    [[x^2 + 5*x + 5,   3*x^2 + x + 3, 4*x^2 + 5*x + 4], \
+                     [5*x^2 + 4*x,   3*x^2 + 4*x + 5, 5*x^2 + 5*x + 3]])
+            sage: rcomp2 = matrix(ring, 1, 3, [[2*x^2 + 1, 4*x^2 + 3*x, 2*x^2 + 3*x]])
+            sage: rcomp2._is_basis_completion(mat2)
+            True
+            sage: ccomp2 = matrix(ring, 2, 0)
+            sage: ccomp2._is_basis_completion(mat2, row_wise=False)
+            True
+
+            sage: mat3 = matrix(ring, 3, 2, \
+                    [[    x^3 + x^2 + 5*x + 5,         2*x^3 + 2*x + 4], \
+                     [  3*x^3 + 2*x^2 + x + 3,   6*x^3 + 5*x^2 + x + 1], \
+                     [2*x^3 + 5*x^2 + 3*x + 4, 4*x^3 + 6*x^2 + 5*x + 6]])
+            sage: rcomp3 = matrix(ring, 1, 2, [[x + 1, 2*x]])
+            sage: rcomp3._is_basis_completion(mat3)
+            True
+            sage: ccomp3 = matrix(ring, 3, 2, \
+                                    [[3*x + 1, 4*x + 4], \
+                                     [    2*x, 5*x + 1], \
+                                     [    6*x,       x]])
+            sage: ccomp3._is_basis_completion(mat3, row_wise=False)
+            True
+
+        A row-wise completion is generally not a column-wise completion (most
+        often, matrix dimensions are not even compatible), one exception being
+        the completions of square zero matrices::
+
+            sage: rcomp2._is_basis_completion(mat2, row_wise=False)
+            Traceback (most recent call last):
+            ...
+            TypeError: number of rows must be the same, 2 != 1
+            sage: ccomp2._is_basis_completion(mat2, row_wise=True)
+            Traceback (most recent call last):
+            ...
+            TypeError: number of columns must be the same, not 3 and 0
+            sage: rcomp3._is_basis_completion(mat3, row_wise=False)
+            Traceback (most recent call last):
+            ...
+            TypeError: number of rows must be the same, 3 != 1
+            sage: ccomp3._is_basis_completion(mat3, row_wise=True)
+            False
+
+            sage: zero_mat = matrix(ring, 2, 2)
+            sage: comp = zero_mat.basis_completion(); comp
+            [1 0]
+            [0 1]
+            sage: comp._is_basis_completion(zero_mat, row_wise=True)
+            True
+            sage: comp._is_basis_completion(zero_mat, row_wise=False)
+            True
+
+        Completions that do not preserve the Smith factors are not valid,
+        even when the sought rank is reached::
+
+            sage: (x * rcomp2)._is_basis_completion(mat2)
+            False
+            sage: ((x+2) * rcomp3)._is_basis_completion(mat3)
+            False
+            sage: (ccomp3 * matrix.diagonal([x,1]))._is_basis_completion(mat3, row_wise=False)
+            False
+
+        Preserving Smith factors without reaching full rank is not a valid
+        completion::
+
+            sage: mat = matrix(ring, [[1,0,0]])
+            sage: matrix(ring, [[0,1,0]])._is_basis_completion(mat)
+            False
+            sage: matrix(ring, [[0,1,0], [0,0,1]])._is_basis_completion(mat)
+            True
+
+        TESTS:
+
+        Corner cases are handled correctly::
+
+            sage: empty_mat = matrix(ring, 0, 0)
+            sage: empty_rows = matrix(ring, 2, 0)
+            sage: empty_columns = matrix(ring, 0, 2)
+            sage: id22 = matrix.identity(ring, 2)
+
+            sage: empty_mat._is_basis_completion(empty_mat)
+            True
+            sage: empty_mat._is_basis_completion(empty_mat, row_wise=False)
+            True
+            sage: empty_mat._is_basis_completion(empty_rows)
+            True
+            sage: empty_mat._is_basis_completion(empty_columns, row_wise=False)
+            True
+            sage: empty_mat._is_basis_completion(empty_columns)
+            Traceback (most recent call last):
+            ...
+            TypeError: number of columns must be the same, not 2 and 0
+
+            sage: empty_columns._is_basis_completion(id22)
+            True
+            sage: empty_columns._is_basis_completion(id22, row_wise=False)
+            Traceback (most recent call last):
+            ...
+            TypeError: number of rows must be the same, 2 != 0
+            sage: empty_columns._is_basis_completion(empty_columns)
+            False
+            sage: empty_rows._is_basis_completion(id22, row_wise=False)
+            True
+            sage: empty_rows._is_basis_completion(empty_rows, row_wise=True)
+            False
+        """
+
+        # compute completed matrix
+        if row_wise:
+            cmat = mat.stack(self)
+        else:
+            cmat = mat.augment(self)
+
+        # compute (nonzero) invariant factors for mat, from largest to nonzero smallest
+        snf_mat = mat.smith_form(transformation=False)
+        mat_factors = [snf_mat[i,i] for i in range(min(mat.nrows(),mat.ncols())-1, -1, -1)
+                                            if not snf_mat[i,i].is_zero()]
+        rk = len(mat_factors)
+
+        # check completion has right completing dimension
+        if row_wise and self.nrows() != (mat.ncols() - rk):
+            return False
+        if (not row_wise) and self.ncols() != (mat.nrows() - rk):
+            return False
+
+        # compute invariant factors for completed matrix, from largest to smallest
+        snf_cmat = cmat.smith_form(transformation=False)
+        cmat_factors = [snf_cmat[i,i] for i in range(min(cmat.nrows(),cmat.ncols())-1, -1, -1)]
+
+        # check first rk = rank(mat) factors match
+        # note: largest factors may not be monic, compare their monic counterparts
+        if rk > 0 and mat_factors[0].monic() != cmat_factors[0].monic():
+            return False
+        # other factors are monic
+        if mat_factors[1:] != cmat_factors[1:rk]:
+            return False
+
+        # check remaining factors for cmat are 1
+        # this guarantees Smith-form preserving property, and also
+        # the fact that cmat has the required rank
+        # (this rank being mat.ncols() if row-wise; mat.nrows() if column-wise)
+        if not all(f.is_one() for f in cmat_factors[rk:]):
+            return False
+
+        return True

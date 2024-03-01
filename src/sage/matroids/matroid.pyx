@@ -3987,12 +3987,7 @@ cdef class Matroid(SageObject):
             sage: N.rank()
             6
             sage: N
-            Dual of 'Pappus: Matroid of rank 3 on 9 elements with
-            circuit-closures
-            {2: {{'a', 'b', 'c'}, {'a', 'e', 'i'}, {'a', 'f', 'h'},
-                 {'b', 'd', 'i'}, {'b', 'f', 'g'}, {'c', 'd', 'h'},
-                 {'c', 'e', 'g'}, {'d', 'e', 'f'}, {'g', 'h', 'i'}},
-             3: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'}}}'
+            Dual of 'Pappus: Matroid of rank 3 on 9 elements with 9 nonspanning circuits'
         """
         from sage.matroids import dual_matroid
         return dual_matroid.DualMatroid(self)
@@ -8189,11 +8184,7 @@ cdef class Matroid(SageObject):
             sage: N = matroids.catalog.Fano().direct_sum(M); N
             Matroid of rank 6 on 16 elements as matroid sum of
             Binary matroid of rank 3 on 7 elements, type (3, 0)
-            Matroid of rank 3 on 9 elements with circuit-closures
-            {2: {{'a', 'b', 'c'}, {'a', 'e', 'i'}, {'a', 'f', 'h'},
-                 {'b', 'd', 'i'}, {'b', 'f', 'g'}, {'c', 'd', 'h'},
-                 {'c', 'e', 'g'}, {'d', 'e', 'f'}, {'g', 'h', 'i'}},
-             3: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'}}}
+            Matroid of rank 3 on 9 elements with 9 nonspanning circuits
             sage: len(N.independent_sets())
             6897
             sage: len(N.bases())
