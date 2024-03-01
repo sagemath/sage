@@ -667,6 +667,9 @@ You are strongly encouraged to:
 
 - Use LaTeX typesetting (see :ref:`section-latex-typeset`).
 
+- Use raw strings (``r"""..."""``), regardless of whether the docstring
+  currently contains any backslashes or not.
+
 - Liberally describe what the examples do.
 
   .. NOTE::
@@ -778,9 +781,9 @@ In Sage's documentation LaTeX code is allowed and is marked with **backticks**:
 
     ```x^2 + y^2 = 1``` yields `x^2 + y^2 = 1`.
 
-**Backslashes:** For LaTeX commands containing backslashes, either use double
-backslashes or begin the docstring with a ``r"""`` instead of ``"""``. Both of
-the following are valid::
+**Backslashes:** For LaTeX commands containing backslashes, it is equivalent to
+use either double backslashes or begin the docstring with a ``r"""`` instead
+of ``"""``, but we strongly suggest to use the latter::
 
     def cos(x):
         """
