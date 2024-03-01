@@ -1157,12 +1157,15 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
     def degree(self, x=None):
         r"""
-        Return the degree of ``x`` in ``self``.
+        Return the degree of ``x`` in ``self``. If ``x`` is ``None``
+        then insteads returns the degree of the highest degree term.
 
         EXAMPLES::
 
             sage: R.<x,y,z> = LaurentPolynomialRing(QQ)
             sage: f = 4*x^7*z^-1 + 3*x^3*y + 2*x^4*z^-2 + x^6*y^-7
+            sage: f.degree()
+            6
             sage: f.degree(x)
             7
             sage: f.degree(y)
@@ -1172,15 +1175,28 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         The zero polynomial is defined to have degree `-\infty`::
 
-            sage: R.<x> = LaurentPolynomialRing(ZZ)
+            sage: R.<x, y, z> = LaurentPolynomialRing(ZZ)
             sage: R.zero().degree()
             -Infinity
+            sage: R.zero().degree(x)
+            -Infinity
+            sage: R.zero().degree(x) == R.zero().degree(y) == R.zero().degree(z)
+            True
+
+        TESTS::
+
+            sage: R.<x, y, z> = LaurentPolynomialRing(ZZ)
+            sage: f = x + y + z
+            sage: f.degree(1)
+            Traceback (most recent call last):
+            ...
+            TypeError: x must be a generator of parent
         """
         # The zero polynomial is defined to have degree -Infinity
         if self.is_zero():
             return minus_infinity
 
-        if not x:
+        if x is None:
             return self._poly.total_degree() + sum(self._mon)
 
         cdef tuple g = <tuple > self._parent.gens()
