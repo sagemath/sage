@@ -16,6 +16,7 @@ from sage.structure.factorization import Factorization
 from sage.misc.derivative import multi_derivative
 from sage.rings.polynomial.polydict cimport monomial_exponent
 from sage.matrix.matrix0 cimport Matrix
+from sage.rings.infinity import minus_infinity
 
 
 cdef class LaurentPolynomial_mpair(LaurentPolynomial):
@@ -1155,7 +1156,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         return [a.eadd(self._mon) for a in self._poly.exponents()]
 
     def degree(self, x=None):
-        """
+        r"""
         Return the degree of ``x`` in ``self``.
 
         EXAMPLES::
@@ -1168,7 +1169,17 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             1
             sage: f.degree(z)
             0
+
+        The zero polynomial is defined to have degree `-\infty`::
+
+            sage: R.<x> = LaurentPolynomialRing(ZZ)
+            sage: R.zero().degree()
+            -Infinity
         """
+        # The zero polynomial is defined to have degree -Infinity
+        if self.is_zero():
+            return minus_infinity
+
         if not x:
             return self._poly.total_degree() + sum(self._mon)
 

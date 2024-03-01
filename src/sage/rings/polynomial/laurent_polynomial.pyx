@@ -15,6 +15,7 @@ from sage.misc.derivative import multi_derivative
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
 from sage.structure.richcmp cimport richcmp, rich_to_bool
+from sage.rings.infinity import minus_infinity
 
 
 cdef class LaurentPolynomial(CommutativeAlgebraElement):
@@ -1018,7 +1019,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         return ret
 
     def degree(self):
-        """
+        r"""
         Return the degree of ``self``.
 
         EXAMPLES::
@@ -1030,7 +1031,16 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: g = -10/x^5 + x^2 - x^7
             sage: g.degree()
             7
+
+        The zero polynomial is defined to have degree `-\infty`::
+
+            sage: R.<x> = LaurentPolynomialRing(ZZ)
+            sage: R.zero().degree()
+            -Infinity
         """
+        # The zero polynomial is defined to have degree -Infinity
+        if self.is_zero():
+            return minus_infinity
         return self.__u.degree() + self.__n
 
     def __neg__(self):
