@@ -103,8 +103,8 @@ class DiscreteDynamicalSystem(SageObject, metaclass=ClasscallMetaclass):
     the inverse map `\phi^{-1}` (when it exists) is called the
     *inverse evolution* of the DDS.
 
-    The DDS is said to be *finite* if `X` is finite.
-    The DDS is said to be *invertible* if the map `\phi` is
+    The DDS is called *finite* if `X` is finite.
+    The DDS is called *invertible* if the map `\phi` is
     invertible.
     
     Given a DDS `(X, \phi)`, we can study
