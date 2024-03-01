@@ -62,14 +62,19 @@ def matrix(*args, **kwds):
       determine this from the given entries, falling back to ``ZZ`` if
       no entries are given.
 
-    - ``nrows`` -- the number of rows in the matrix.
+    - ``nrows`` or ``row_keys`` -- the number of rows in the matrix,
+      or a finite or enumerated family of arbitrary objects
+      that index the rows of the matrix
 
-    - ``ncols`` -- the number of columns in the matrix.
+    - ``ncols`` or ``column_keys`` -- the number of columns in the
+      matrix, or a finite or enumerated family of arbitrary objects
+      that index the columns of the matrix
 
     - ``entries`` -- see examples below.
 
-    If either ``nrows`` or ``ncols`` is given as keyword argument, then
-    no positional arguments ``nrows`` and ``ncols`` may be given.
+    If any of ``nrows``, ``ncols``, ``row_keys``, ``column_keys`` is
+    given as keyword argument, then none of these may be given as
+    positional arguments.
 
     Keyword-only arguments:
 
@@ -78,16 +83,15 @@ def matrix(*args, **kwds):
       defaults to ``False``.
 
     - ``space`` -- matrix space which will be the parent of the output
-      matrix. This determines ``ring``, ``nrows``, ``ncols`` and
-      ``sparse``.
+      matrix. This determines ``ring``, ``nrows``, ``row_keys``,
+      ``ncols``, ``column_keys``, and ``sparse``.
 
     - ``immutable`` -- (boolean) make the matrix immutable. By default,
       the output matrix is mutable.
 
 
-    OUTPUT:
-
-    a matrix
+    OUTPUT: a matrix or, more generally, a homomorphism between free
+    modules.
 
     EXAMPLES::
 
@@ -240,6 +244,13 @@ def matrix(*args, **kwds):
         ...
         ValueError: matrix is immutable; please change a copy instead
         (i.e., use copy(M) to change a copy of M).
+
+    Using ``row_keys`` and ``column_keys``::
+
+        sage: M = matrix([[1,2,3], [4,5,6]],
+        ....:            column_keys=['a','b','c'], row_keys=['u','v']); M
+        [1 2 3]
+        [4 5 6]
 
     TESTS:
 

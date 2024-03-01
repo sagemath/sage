@@ -311,7 +311,8 @@ cdef class MatrixArgs:
         self.sparse = -1
         self.kwds = {}
 
-    def __init__(self, *args, ring=None, nrows=None, ncols=None, entries=None, sparse=None, space=None, **kwds):
+    def __init__(self, *args, ring=None, nrows=None, ncols=None, entries=None,
+                 sparse=None, row_keys=None, column_keys=None, space=None, **kwds):
         """
         Parse arguments for creating a new matrix.
 
@@ -354,6 +355,10 @@ cdef class MatrixArgs:
         self.entries = entries
         if sparse is not None:
             self.sparse = sparse
+        if row_keys is not None:
+            self.set_row_keys(row_keys)
+        if column_keys is not None:
+            self.set_column_keys(column_keys)
         if space is not None:
             self.set_space(space)
         self.kwds.update(kwds)
@@ -380,7 +385,7 @@ cdef class MatrixArgs:
         # check nrows and ncols argument
         cdef int k
         cdef long v
-        if self.nrows == -1 and self.ncols == -1:
+        if self.nrows == -1 and self.ncols == -1 and self.row_keys is None and self.column_keys is None:
             for k in range(2):
                 arg = args[argi]
                 if is_numpy_type(type(arg)):
@@ -828,6 +833,33 @@ cdef class MatrixArgs:
             if x:
                 D[se.i, se.j] = x
         return D
+
+    cpdef int set_column_keys(self, column_keys) except -1:
+        """
+        Set the column keys with consistency checking: if the
+        value was previously set, it must remain the same.
+        """
+        if self.column_keys is not None and self.column_keys != column_keys:
+            raise ValueError(f"inconsistent column keys: should be {self.column_keys} "
+                             f"but got {column_keys}")
+        cdef long p = self.ncols
+        if p != -1 and p != len(column_keys):
+            raise ValueError(f"inconsistent column keys: should be of cardinality {self.ncols} "
+                             f"but got {column_keys}")
+        self.column_keys = column_keys
+
+    cpdef int set_row_keys(self, row_keys) except -1:
+        """
+        Set the row keys with consistency checking: if the
+        value was previously set, it must remain the same.
+        """
+        if self.row_keys is not None and self.row_keys != row_keys:
+            raise ValueError(f"inconsistent row keys: should be {self.row_keys} "
+                             f"but got {row_keys}")
+        if self.nrows != -1 and self.nrows != len(row_keys):
+            raise ValueError(f"inconsistent row keys: should be of cardinality {self.nrows} "
+                             f"but got {row_keys}")
+        self.row_keys = row_keys
 
     cpdef int set_space(self, space) except -1:
         """
