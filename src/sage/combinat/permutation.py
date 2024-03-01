@@ -7343,7 +7343,7 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
         return factorial(self.n)
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return a set of generators for ``self`` as a group.
 

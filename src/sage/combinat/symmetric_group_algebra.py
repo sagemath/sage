@@ -1573,14 +1573,13 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             sage: SM = SGA.specht_module(Partition([3,1,1]))
             sage: SM
             Specht module of [3, 1, 1] over Rational Field
-            sage: s = SymmetricFunctions(QQ).s()
-            sage: s(SM.frobenius_image())
+            sage: SM.frobenius_image()
             s[3, 1, 1]
 
             sage: SM = SGA.specht_module([(1,1),(1,3),(2,2),(3,1),(3,2)])
             sage: SM
             Specht module of [(1, 1), (1, 3), (2, 2), (3, 1), (3, 2)] over Rational Field
-            sage: s(SM.frobenius_image())
+            sage: SM.frobenius_image()
             s[2, 2, 1] + s[3, 1, 1] + s[3, 2]
         """
         from sage.combinat.specht_module import SpechtModule

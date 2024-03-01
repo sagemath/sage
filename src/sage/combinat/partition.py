@@ -5496,7 +5496,6 @@ class Partition(CombinatorialElement):
 
             sage: SM = Partition([2,2,1]).specht_module(QQ); SM
             Specht module of [2, 2, 1] over Rational Field
-            sage: s = SymmetricFunctions(QQ).s()
             sage: SM.frobenius_image()                                               # needs sage.modules
             s[2, 2, 1]
         """

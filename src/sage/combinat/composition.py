@@ -1755,6 +1755,8 @@ class Compositions(UniqueRepresentation, Parent):
             sage: P = Compositions()
             sage: P([3,3,1]) # indirect doctest
             [3, 3, 1]
+            sage: P(Partition([5,2,1]))
+            [5, 2, 1]
         """
         if isinstance(lst, (Composition, Partition)):
             lst = list(lst)
