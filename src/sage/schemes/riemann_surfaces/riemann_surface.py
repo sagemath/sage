@@ -2152,7 +2152,10 @@ class RiemannSurface():
         z1 = zwt(1)[0]
 
         # list of (centre, radius) pairs that still need to be processed
-        ball_stack = [(self._RR(1 / 2), self._RR(1 / 2), 0)]
+        # None is a sentinel value to indicate that the minimum number of
+        # nodes required to integrate on the corresponding segment within
+        # the required error tolerance is not yet known.
+        ball_stack = [(self._RR(1 / 2), self._RR(1 / 2), None)]
         alpha = self._RR(912 / 1000)
         # alpha set manually for scaling purposes. Basic benchmarking shows
         # that ~0.9 is a sensible value.
@@ -2186,8 +2189,21 @@ class RiemannSurface():
             rho_z = min(distances)
             rho_t = rho_z / (z1_minus_z0).abs()
             rho_t = alpha * rho_t + (1 - alpha) * rt  # sqrt(rho_t*rt) could also work
-            rho_z = rho_t * (z1 - z0).abs()
+            rho_z = rho_t * (z1_minus_z0).abs()
             delta_z = (alpha * rho_t + (1 - alpha) * rt) * (z1_minus_z0).abs()
+            # delta_z and delta_z^2 / (rho_z * (rho_z - delta_z)) are the two
+            # prefactors that occur in the computation of the magnitude bound
+            # M. delta_z should never be infinite, but the second factor could
+            # be if rho_z - delta_z is 0. Mathematically it would never be 0
+            # as we ensure rho_t > rt before running local_N, but the
+            # floating point operations can ruin this.
+            # The second prefactor is actually homogeneous in
+            # z1_minus_z0.abs(), so we shall compute this factor without those
+            # multiplications as a function of rho_t / rt which should thus be
+            # more resistance to floating-point errors.
+            pf2 = (alpha + (1 - alpha) * (rt / rho_t))**2 / (
+                  (1 - alpha) * (1 - rt / rho_t)
+            )
             expr = (
                 rho_t / rt + ((rho_t / rt)**2 - 1).sqrt()
             )  # Note this is really exp(arcosh(rho_t/rt))
@@ -2208,15 +2224,14 @@ class RiemannSurface():
                 )
                 cg = g(cz, cw)
                 cdgdz = dgdz(cz, cg)
-                Delta = delta_z * cdgdz.abs() + (delta_z**2) * M_tilde / (
-                    rho_z * (rho_z - delta_z)
-                )
-                M = Delta
+                M = delta_z * cdgdz.abs() + pf2 * M_tilde
                 N_required = (
                     (M * (self._RR.pi() + 64 / (15 * (expr**2 - 1))) / E_global).log()
                     / (2 * expr.log())
-                ).ceil()
-                Ni = max(Ni, N_required)
+                )
+                if N_required.is_positive_infinity():
+                    return 2**max(60, self._prec)
+                Ni = max(Ni, N_required.ceil())
             return Ni
 
         while ball_stack:
@@ -2224,15 +2239,15 @@ class RiemannSurface():
             ncts = [ct - rt / 2, ct + rt / 2]
             nrt = rt / 2
 
-            if not lN:
+            if lN is None:
                 cz = (1 - ct) * z0 + ct * z1
                 distances = [(cz - b).abs() for b in self.branch_locus]
                 rho_z = min(distances)
                 rho_t = rho_z / (z1_minus_z0).abs()
 
                 if rho_t <= rt:
-                    ball_stack.append((ncts[0], nrt, 0))
-                    ball_stack.append((ncts[1], nrt, 0))
+                    ball_stack.append((ncts[0], nrt, None))
+                    ball_stack.append((ncts[1], nrt, None))
                     continue
 
                 lN = local_N(ct, rt)
