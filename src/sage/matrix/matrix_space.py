@@ -440,15 +440,12 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
     - ``base_ring`` -- a ring
 
-    - ``nrows`` -- (nonnegative integer) the number of rows
+    - ``nrows`` or ``row_keys`` -- (nonnegative integer) the number of rows, or
+      a finite or enumerated family of arbitrary objects that index the rows
+      of the matrix
 
-    - ``row_keys`` -- a finite or enumerated family of arbitrary objects
-      that index the rows of the matrix
-
-    - ``ncols`` -- (nonnegative integer, default ``nrows``) the number of
-       columns
-
-    - ``column_keys`` -- a finite or enumerated family of arbitrary objects
+    - ``ncols`` or ``column_keys`` -- (nonnegative integer, default ``nrows``)
+      the number of columns, or a finite or enumerated family of arbitrary objects
       that index the columns of the matrix
 
     - ``sparse`` -- (boolean, default ``False``) whether or not matrices
