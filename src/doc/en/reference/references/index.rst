@@ -607,6 +607,10 @@ REFERENCES:
               Smith: Faster computation of isogenies of large prime degree.
               ANTS XIV, Open Book Series Vol. 4, No. 1, 2020.
               :arxiv:`2003.10118`
+              
+.. [BDLS2022] Alexander E. Black and Jesús A. De Loera and Niklas Lütjeharms
+              and Raman Sanyal. *The Polyhedral Geometry of Pivot Rules and
+              Monotone Paths* :arxiv: `2201.05134`
 
 .. [BD1989] \R. J. Bradford and J. H. Davenport, *Effective tests for
             cyclotomic polynomials*, Symbolic and Algebraic
