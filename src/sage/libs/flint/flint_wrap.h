@@ -1,3 +1,7 @@
+/* WARNING: src/sage/libs/flint/flint_wrap.h is generated from
+ * src/sage_setup/autogen/flint/templates/flint_wrap.h.template
+ * please make sure that you are modifying the correct file! */
+
 #ifndef SAGE_FLINT_WRAP_H
 #define SAGE_FLINT_WRAP_H
 /* Using flint headers together in the same module as headers from
@@ -132,8 +136,6 @@
 #include <flint/hypgeom.h>
 #include <flint/long_extras.h>
 #include <flint/mag.h>
-#include <flint/mpf_mat.h>
-#include <flint/mpf_vec.h>
 #include <flint/mpfr_mat.h>
 #include <flint/mpfr_vec.h>
 #include <flint/mpn_extras.h>

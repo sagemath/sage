@@ -422,7 +422,7 @@ class QuotientRingElement(RingElement):
 
         # We are computing L/R modulo the ideal.
         (L, R) = (self.__rep, right.__rep)
-        P  = self.parent()
+        P = self.parent()
         I = P.defining_ideal()
 
         if not hasattr(I, 'groebner_basis'):
