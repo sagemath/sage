@@ -163,6 +163,12 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         Traceback (most recent call last):
         ...
         TypeError: base ring must be a fraction field of a polynomial ring
+        sage: k.<x, y> = GF(5)[]
+        sage: K = k.quotient(x+y).fraction_field()
+        sage: DrinfeldModularForms(K)
+        Traceback (most recent call last):
+        ...
+        TypeError: the base of the base ring must be a polynomial ring
         sage: DrinfeldModularForms(Frac(ZZ['T']))
         Traceback (most recent call last):
         ...
@@ -201,7 +207,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         if not isinstance(base_ring, FractionField_generic):
             raise TypeError("base ring must be a fraction field of a "
                             "polynomial ring")
-        if not isinstance(base_ring.base(), PolynomialRing_general):  # not sure if this test is relevant
+        if not isinstance(base_ring.base(), PolynomialRing_general):
             raise TypeError("the base of the base ring must be a "
                             "polynomial ring")
         if not base_ring.characteristic():
