@@ -623,6 +623,38 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 return Family(cartesian_product([codomain_basis.keys(), domain_basis.keys()]),
                               basis_element)
 
+        class ElementMethods:
+            def monomial_coefficients(self, copy=True):
+                # This overrides the abstract method ModulesWithBasis.ElementMethods.monomial_coefficients;
+                # which is why we have to put it in ...Homsets.ElementMethods, not ...MorphismMethods.
+                r"""
+                Return a dictionary whose keys are indices of basis elements
+                in the support of ``self`` and whose values are the
+                corresponding coefficients.
+
+                INPUT:
+
+                - ``copy`` -- (default: ``True``) ignored
+
+                EXAMPLES::
+
+                    sage: # needs sage.modules
+                    sage: X = CombinatorialFreeModule(ZZ, [1,2]); x = X.basis()
+                    sage: Y = CombinatorialFreeModule(ZZ, [3,4]); y = Y.basis()
+                    sage: phi = X.module_morphism(on_basis={1: y[3] + 3*y[4],
+                    ....:                                   2: 2*y[3] + 5*y[4]}.__getitem__,
+                    ....:                         codomain=Y)
+                    sage: phi.category_for()
+                    Category of finite dimensional modules with basis over Integer Ring
+                    sage: phi.monomial_coefficients()
+                    {(3, 1): 1, (3, 2): 2, (4, 1): 3, (4, 2): 5}
+                """
+                on_basis = self.on_basis()
+                domain_keys = self.domain().basis().keys()
+                return {(codomain_key, domain_key): coefficient
+                        for domain_key in self.domain().basis().keys()
+                        for codomain_key, coefficient in on_basis(domain_key).monomial_coefficients().items()}
+
     class MorphismMethods:
         def matrix(self, base_ring=None, side="left"):
             r"""
