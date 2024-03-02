@@ -75,8 +75,8 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
     - ``base_ring`` -- The fraction field of a univariate polynomial
       ring over `\mathbb{F}_q`.
     - ``rank`` (integer, default: 2) -- the rank of the ring
-    - ``group`` (NoneType) -- the group of self. The current
-      implementation only supports the full group
+    - ``group`` (NoneType) -- the group of the ring. The current
+      implementation only supports the full modular group
       `\mathrm{GL}_r(A)`.
     - ``has_type`` (bool, default: ``False``) -- if set to ``True``,
       returns the graded ring of arbitrary type.
@@ -483,7 +483,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
     def gen(self, n):
         r"""
-        Return the `n`-th generator of the ring.
+        Return the `n`-th generator of this ring.
 
         EXAMPLES::
 
@@ -498,7 +498,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
     def gens(self):
         r"""
-        Return a list of generators for this ring.
+        Return a list of generators of this ring.
 
         EXAMPLES::
 
@@ -511,7 +511,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
     def ngens(self):
         r"""
-        Return the number of generators of the ring.
+        Return the number of generators of this ring.
 
         Note that the number of generators is equal to the rank.
 
@@ -541,7 +541,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
     def rank(self):
         r"""
-        Return the rank of the ring of Drinfeld modular forms.
+        Return the rank of this ring of Drinfeld modular forms.
 
         EXAMPLES::
 
@@ -557,7 +557,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
     def one(self):
         r"""
-        Return the multiplicative identity of the ring.
+        Return the multiplicative unit.
 
         EXAMPLES::
 
@@ -574,7 +574,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
     def zero(self):
         r"""
-        Return the additive identity of the ring.
+        Return the additive identity.
 
         EXAMPLES::
 
@@ -624,7 +624,8 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
     def polynomial_ring(self):
         r"""
         Return the multivariate polynomial ring over the base ring where
-        each variable corresponds to a generator of a ring.
+        each variable corresponds to a generator of this Drinfeld
+        modular forms ring.
 
         EXAMPLES::
 
