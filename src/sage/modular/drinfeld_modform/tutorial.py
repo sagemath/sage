@@ -143,9 +143,8 @@ The second condition is similar to the classical case. Furthermore, in
 the rank two situation, the expansion of `f` is simply given by
 `f = \sum_{n\geq 0} a_n(f) u^n` where `a_n(f)\in \mathbb{C}_{\infty}`.
 
-The reader is refered to
-part I of [BRP2018]_ for more information about the analytic theory of
-Drinfeld modular form of arbitrary rank.
+Note that all the above theory is covered in much greater details in
+part I of [BRP2018]_.
 
 .. RUBRIC:: Ring of Drinfeld modular forms
 
@@ -181,8 +180,8 @@ which is a `(q-1)`-root of `g_r`.
 
 .. RUBRIC:: SageMath implementation
 
-In SageMath, we model the ring of type 0 Drinfeld modular forms as a
-finitely generated ring in the coefficients forms `g_i`:
+In SageMath, we model the ring of type 0 Drinfeld modular forms over `K`
+as a finitely generated ring in the coefficients forms `g_i`:
 
 .. MATH::
 
@@ -221,10 +220,9 @@ one should consult the documentation of the main classes:
 - Element class:
   :class:`~drinfeld_modular_forms.element.DrinfeldModularFormsElement`
 
-
 .. RUBRIC:: References
 
-A good introduction of Drinfeld modular forms of rank 2, see Gekeler's
+A good introduction to Drinfeld modular forms of rank 2, see Gekeler's
 paper [Gek1988]_. See also [BRP2018]_ for a detailed exposition of the
 arbitrary rank theory.
 """
