@@ -1,3 +1,10 @@
+import warnings
+
+# custom_warning function which displays warning as warning_category : warning_message
+def custom_warning(message, category, filename, lineno, file=None, line=None):
+    return f"{category.__name__}: {message}\n"
+warnings.formatwarning = custom_warning
+
 r"""
 Free modules
 
@@ -2938,6 +2945,11 @@ class FreeModule_generic(Module_free_ambient):
             sage: L.span([]).coordinate_ring()
             Univariate Polynomial Ring in x over Rational Field
         """
+        warnings.warn("coordinate_ring is deprecated; use ambient_base_ring instead", DeprecationWarning)
+        return self.ambient_base_ring()
+    
+    def ambient_base_ring(self):
+        
         return self.__coordinate_ring
 
     def free_module(self):
