@@ -1,7 +1,7 @@
 r"""
 This module defines a class named :class:`DrinfeldModularForms`.
 
-Currently, the implementation only supports the full group modular group
+Currently, the implementation only supports the full modular group
 `\mathrm{GL}_r(A)` where `A = \mathbb{F}_q[T]`.
 
 The implementation is based on the following identification:
@@ -74,7 +74,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
     - ``base_ring`` -- The fraction field of a univariate polynomial
       ring over `\mathbb{F}_q`.
-    - ``rank`` (integer, default: 2) -- the rank of the ring
+    - ``rank`` (integer, default: ``2``) -- the rank of the ring
     - ``group`` (NoneType) -- the group of the ring. The current
       implementation only supports the full modular group
       `\mathrm{GL}_r(A)`.
