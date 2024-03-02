@@ -656,10 +656,7 @@ def matrix(*args, **kwds):
       :class:`MatrixArgs`, see :issue:`24742`
     """
     immutable = kwds.pop('immutable', False)
-    M = MatrixArgs(*args, **kwds).matrix()
-    if immutable:
-        M.set_immutable()
-    return M
+    return MatrixArgs(*args, **kwds).element(immutable=immutable)
 
 
 Matrix = matrix

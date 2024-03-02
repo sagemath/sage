@@ -732,6 +732,15 @@ cdef class MatrixArgs:
         self.typ = MA_ENTRIES_MATRIX
         return M
 
+    cpdef element(self, bint convert=True, bint immutable=False) noexcept:
+        r"""
+        Return the element.
+        """
+        cdef Matrix M = self.matrix(convert)
+        if immutable:
+            M.set_immutable()
+        return M
+
     cpdef list list(self, bint convert=True) noexcept:
         """
         Return the entries of the matrix as a flat list of scalars.
