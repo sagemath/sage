@@ -95,7 +95,7 @@ def RIFtol(*args):
 ansi_escape_sequence = re.compile(r"(\x1b[@-Z\\-~]|\x1b\[.*?[@-~]|\x9b.*?[@-~])")
 
 special_optional_regex = (
-    "arb216|arb218|py2|long time|not implemented|not tested|optional|needs|known bug"
+    "py2|long time|not implemented|not tested|optional|needs|known bug"
 )
 tag_with_explanation_regex = r"((?:\w|[.])*)\s*(?:\((?P<cmd_explanation>.*?)\))?"
 optional_regex = re.compile(
@@ -136,8 +136,6 @@ def parse_optional_tags(
     - ``'not tested'``
     - ``'known bug'`` (possible values are ``None``, ``linux`` and ``macos``)
     - ``'py2'``
-    - ``'arb216'``
-    - ``'arb218'``
     - ``'optional - FEATURE...'`` or ``'needs FEATURE...'`` --
       the dictionary will just have the key ``'FEATURE'``
 
@@ -877,7 +875,7 @@ class SageDocTestParser(doctest.DocTestParser):
     optional_tags: Union[bool, set[str]]
     optional_only: bool
     optionals: dict[str, int]
-    probed_tags: set[str]
+    probed_tags: Union[bool, set[str]]
 
     def __init__(self, optional_tags=(), long=False, *, probed_tags=(), file_optional_tags=()):
         r"""
@@ -916,7 +914,10 @@ class SageDocTestParser(doctest.DocTestParser):
                 self.optional_tags.remove('sage')
             else:
                 self.optional_only = True
-        self.probed_tags = set(probed_tags)
+        if probed_tags is True:
+            self.probed_tags = True
+        else:
+            self.probed_tags = set(probed_tags)
         self.file_optional_tags = set(file_optional_tags)
 
     def __eq__(self, other):
