@@ -147,6 +147,10 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         sage: TestSuite(DrinfeldModularForms(K)).run()
         sage: TestSuite(DrinfeldModularForms(K, 3)).run()
         sage: TestSuite(DrinfeldModularForms(K, 4)).run()
+        sage: K = Frac(GF(2^3)['T'])
+        sage: TestSuite(DrinfeldModularForms(K)).run()
+        sage: TestSuite(DrinfeldModularForms(K, 3)).run()
+        sage: TestSuite(DrinfeldModularForms(K, 4)).run()
 
     ::
 
