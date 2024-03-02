@@ -223,10 +223,8 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             names = f"g1, "
             for i in range(2, rank, 1):
                 names += f"g{i}, "
-            if has_type:
-                names += f"h{rank}"
-            else:
-                names += f"g{rank}"
+            last = f"h{rank}" if has_type else f"g{rank}"
+            names += last
         elif isinstance(names, str):
             nb_names = len(names.split())
             if nb_names != rank:
@@ -243,7 +241,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         q = base_ring.base_ring().cardinality()
         if has_type:
             degs = [q**i - 1 for i in range(1, rank, 1)]
-            degs.append((q**rank - 1)/(q - 1))
+            degs.append((q**rank - 1) / (q - 1))
         else:
             degs = [q**i - 1 for i in range(1, rank + 1, 1)]
         self._poly_ring = PolynomialRing(base_ring, rank, names=names,
