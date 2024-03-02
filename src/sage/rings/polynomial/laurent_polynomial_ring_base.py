@@ -584,7 +584,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         """
         Return a random polynomial with degree at most ``max_degree`` and
         lowest valuation at least ``min_valuation``, for both the total degree
-         and valuation as well as for each generator of ``self``.
+        and valuation as well as for each generator of ``self``.
 
         For the univariate case, uses the random sampling from the
         polynomial ring then shifts this polynomial down to ensure
@@ -607,7 +607,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
           terms are requested than exist, then this parameter is
           silently reduced to the maximum number of available terms.
 
-        - ``**kwargs`` -- passed to the random element generator of the base
+        - ``**kwds`` -- passed to the random element generator of the base
           ring
 
         EXAMPLES::
@@ -710,9 +710,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             ....:     t = randint(5, 20)
             ....:     L = LaurentPolynomialRing(ring, d, 'x')
             ....:     for _ in range(100):
-            ....:         n, m = randint(-10, 10), randint(1, 10)
-            ....:         if m < n:
-            ....:             m, n = n, m
+            ....:         n, m = randint(-10, 0), randint(0, 10)
             ....:         f = L.random_element(n, m, terms=t)
             ....:         if f.is_zero(): continue # the zero polynomial is defined to have degree -1
             ....:         assert len(list(f)) <= t
@@ -728,9 +726,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: for ring in rings:
             ....:     L.<x> = LaurentPolynomialRing(ring)
             ....:     for _ in range(100):
-            ....:         n, m = randint(-10, 10), randint(1, 10)
-            ....:         if m < n:
-            ....:             m, n = n, m
+            ....:         n, m = randint(-10, 0), randint(0, 10)
             ....:         f = L.random_element(n, m)
             ....:         if f.is_zero(): continue # the zero polynomial is defined to have degree -1
             ....:         for x in L.gens():

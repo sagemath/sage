@@ -1235,12 +1235,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             raise TypeError("x must be a generator of parent")
 
         # Find the minimal valuation of x by checking each term
-        # if the polynomial has no terms containing the generator
-        # `min` will throw a value error and we return +Infinity
-        try:
-            return min(e[i] for e in self.exponents() if e[i] != 0)
-        except ValueError:
-            return Infinity
+        return min(e[i] for e in self.exponents())
+
 
     def has_inverse_of(self, i):
         """
