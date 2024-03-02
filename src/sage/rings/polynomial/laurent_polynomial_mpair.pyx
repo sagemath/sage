@@ -1217,10 +1217,11 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         if self.is_zero():
             return Infinity
 
-        # When x is None find the minimal valuation by checking all terms
+        # When x is None find the minimal valuation by finding the minimal
+        # valuation of the sum of exponents
         if x is None:
-            val = min(e.unweighted_degree() for e in self.exponents())
-            return Integer(val)
+            val = min(sum(e) for e in self.exponents())
+            return val
 
         # Get the index of the gen
         cdef tuple g = <tuple > self._parent.gens()
@@ -1234,7 +1235,12 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             raise TypeError("x must be a generator of parent")
 
         # Find the minimal valuation of x by checking each term
-        return min(e[i] for e in self.exponents())
+        # if the polynomial has no terms containing the generator
+        # `min` will throw a value error and we return +Infinity
+        try:
+            return min(e[i] for e in self.exponents() if e[i] != 0)
+        except ValueError:
+            return Infinity
 
     def has_inverse_of(self, i):
         """

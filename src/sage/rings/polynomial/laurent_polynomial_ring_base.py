@@ -28,7 +28,7 @@ from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.ring import CommutativeRing
 from sage.structure.parent import Parent
-from sage.misc.prandom import randint
+from sage.misc.prandom import randint, shuffle
 
 class LaurentPolynomialRing_generic(CommutativeRing, Parent):
     """
@@ -488,11 +488,103 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         """
         raise NotImplementedError
 
+    def _random_bounded_monomial(self, min_valuation=-2, max_degree=2):
+        """
+        Helper function for ``random_element`` which computes a
+        random monomial which has total degree at most ``max_degree``,
+        total valuation at least ``min_valuation`` and also has degree
+        and valuation within these bounds for each generator of the
+        polynomial ring.
+
+        Assumes that min_valuation <= max_degree, which is handled by
+        ``random_element()``.
+
+        EXAMPLES::
+
+            sage: R.<x, y, z> = LaurentPolynomialRing(ZZ)
+            sage: f = R._random_bounded_monomial(-5, 5)
+            sage: f.degree() <= 5
+            True
+            sage: f.valuation() >= -5
+            True
+
+        ::
+
+            sage: R.<x, y, z> = LaurentPolynomialRing(ZZ)
+            sage: f = R._random_bounded_monomial(7, 10)
+            sage: f.degree() <= 10
+            True
+            sage: f.valuation() >= 7
+            True
+
+        ::
+
+            sage: R.<x, y, z> = LaurentPolynomialRing(ZZ)
+            sage: f = R._random_bounded_monomial(-10, -8)
+            sage: f.degree() <= -8
+            True
+            sage: f.valuation() >= -10
+            True
+
+        TESTS::
+
+            sage: R.<x, y, z> = LaurentPolynomialRing(ZZ)
+            sage: for _ in range(10):
+            ....:     high = randint(-10, 10)
+            ....:     low = randint(-10, 10)
+            ....:     if high < low:
+            ....:         high, low = low, high
+            ....:     for _ in range(100):
+            ....:         f = R._random_bounded_monomial(low, high)
+            ....:         assert f.degree() <= high
+            ....:         assert f.valuation() >= low
+        """
+        exponents = []
+        for _ in range(self._n):
+            # To ensure the total degree/valuation bound is satisfied, we
+            # need to know the sum of exponents
+            s = sum(exponents)
+
+            # When both bounds are positive, we only need to worry about
+            # the degree getting too large
+            if min_valuation >= 0:
+                upper_bound = min(max_degree, max_degree - s)
+                if min_valuation <= upper_bound:
+                    r = randint(min_valuation, upper_bound)
+                else:
+                    r = 0
+
+            # When both bounds are negative we only need to worry about
+            # the valuation becoming too negative
+            elif max_degree <= 0:
+                lower_bound = max(min_valuation, min_valuation - s)
+                if max_degree >= lower_bound:
+                    r = randint(lower_bound, max_degree)
+                else:
+                    r = 0
+
+            # We assume max_degree > min_valuation so no we are in the
+            # position with positive max_degree and negative min_valuation
+            # we must ensure both upper and lower bounds are respected
+            else:
+                upper_bound = min(max_degree, max_degree - s)
+                lower_bound = max(min_valuation, min_valuation - s)
+                if upper_bound >= lower_bound:
+                    r = randint(lower_bound, upper_bound)
+                else:
+                    r = 0
+
+            exponents.append(r)
+
+        # Shuffle the order of the exponents and create a monomial
+        shuffle(exponents)
+        return self.monomial(*exponents)
+
     def random_element(self, min_valuation=-2, max_degree=2, terms=5, **kwds):
         """
         Return a random polynomial with degree at most ``max_degree`` and
-        lowest valuation at least ``min_valuation`` for each generator of
-        ``self``.
+        lowest valuation at least ``min_valuation``, for both the total degree
+         and valuation as well as for each generator of ``self``.
 
         For the univariate case, uses the random sampling from the
         polynomial ring then shifts this polynomial down to ensure
@@ -544,6 +636,10 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
             sage: L = LaurentPolynomialRing(ZZ, 2, 'x')
             sage: f = L.random_element(-10, 20)
+            sage: f.degree() <= 20
+            True
+            sage: f.valuation() >= -10
+            True
             sage: tuple(f.degree(x) <= 20 for x in L.gens())
             (True, True)
             sage: tuple(f.valuation(x) >= -10 for x in L.gens())
@@ -555,6 +651,10 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
             sage: L = LaurentPolynomialRing(ZZ, 2, 'x')
             sage: f = L.random_element(-10, 20, terms=20)
+            sage: f.degree() <= 20
+            True
+            sage: f.valuation() >= -10
+            True
             sage: tuple(f.degree(x) <= 20 for x in L.gens())
             (True, True)
             sage: tuple(f.valuation(x) >= -10 for x in L.gens())
@@ -565,8 +665,11 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         ::
 
             sage: L = LaurentPolynomialRing(GF(13), 3, 'x')
-            sage: f = L.random_element(-5, 5)
             sage: f = L.random_element(-5, 10)
+            sage: f.degree() <= 10
+            True
+            sage: f.valuation() >= -5
+            True
             sage: tuple(f.degree(x) <= 10 for x in L.gens())
             (True, True, True)
             sage: tuple(f.valuation(x) >= -5 for x in L.gens())
@@ -576,7 +679,10 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
             sage: L = LaurentPolynomialRing(RR, 2, 'x')
             sage: f = L.random_element()
-            sage: f = L.random_element()
+            sage: f.degree() <= 2
+            True
+            sage: f.valuation() >= -2
+            True
             sage: tuple(f.degree(x) <= 2 for x in L.gens())
             (True, True)
             sage: tuple(f.valuation(x) >= -2 for x in L.gens())
@@ -587,6 +693,10 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: L = LaurentPolynomialRing(QQbar, 5, 'x')
             sage: f = L.random_element(-1, 1)
             sage: f = L.random_element(-1, 1)
+            sage: f.degree() <= 1
+            True
+            sage: f.valuation() >= -1
+            True
             sage: tuple(f.degree(x) <= 1 for x in L.gens())
             (True, True, True, True, True)
             sage: tuple(f.valuation(x) >= -1 for x in L.gens())
@@ -606,9 +716,11 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             ....:         f = L.random_element(n, m, terms=t)
             ....:         if f.is_zero(): continue # the zero polynomial is defined to have degree -1
             ....:         assert len(list(f)) <= t
+            ....:         assert f.degree() <= m
+            ....:         assert f.valuation() >= n
             ....:         for x in L.gens():
-            ....:             assert f.degree(x) <= m
-            ....:             assert f.valuation(x) >= n
+            ....:             assert f.degree(x) <= m, f"{f = }, {x = }, {m = }, {f.degree(x) = }"
+            ....:             assert f.valuation(x) >= n, f"{f = }, {x = }, {n = }, {f.valuation(x) = }"
 
         Test for constructions which use univariate polynomial rings::
 
@@ -674,12 +786,10 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         # with degree at most `max_degree` and valuation greater or
         # equal to min_valuation scaled by an element of the base ring
         k = self.base_ring()
-        n = self._n
         res = self.zero()
         for _ in range(terms):
             s = k.random_element(**kwds)
-            ele = [randint(min_valuation, max_degree) for _ in range(n)]
-            res += s * self.monomial(*ele)
+            res += s * self._random_bounded_monomial(min_valuation, max_degree)
         return res
 
     def is_exact(self):
