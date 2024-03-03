@@ -16,6 +16,8 @@ SageMath release.
 
 **Where would you like to run SageMath?** Pick one of the following sections.
 
+.. _installation-guide-macos:
+
 macOS
 =====
 
@@ -51,6 +53,8 @@ macOS
     - Alternatively, build SageMath from source as described in section
       :ref:`sec-installation-from-sources`.
 
+.. _installation-guide-windows:
+
 Windows
 =======
 
@@ -61,6 +65,10 @@ Windows
     Enable `Windows Subsystem for Linux (WSL)
     <https://learn.microsoft.com/en-us/windows/wsl/>` and install
     Ubuntu as follows.
+
+    - Make sure that hardware-assisted virtualization is enabled in
+      the EFI or BIOS of your system. If in doubt, refer to your
+      system's documentation for instructions on how to do this.
 
     - `Run the command ``wsl --install`` as administrator.
       <https://learn.microsoft.com/en-us/windows/wsl/setup/environment#get-started>`_
@@ -90,6 +98,10 @@ Windows
     Enable `Windows Subsystem for Linux (WSL)
     <https://learn.microsoft.com/en-us/windows/wsl/>` and install
     Ubuntu as follows.
+
+    - Make sure that hardware-assisted virtualization is enabled in
+      the EFI or BIOS of your system. If in doubt, refer to your
+      system's documentation for instructions on how to do this.
 
     - `Run the command ``wsl --install`` as administrator.
       <https://learn.microsoft.com/en-us/windows/wsl/setup/environment#get-started>`_
@@ -130,6 +142,8 @@ Windows
 
        $ conda activate sage
        $ sage
+
+.. _installation-guide-linux:
 
 Linux
 =====
