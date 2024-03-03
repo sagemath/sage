@@ -58,30 +58,61 @@ Windows
 
   - **Yes, development:**
 
-    Enable Windows Subsystem for Linux (WSL) by following the
-    `official WSL setup guide
-    <https://learn.microsoft.com/en-us/windows/wsl/install>`_. Be
-    sure to do the steps to install WSL2 and set it as default.
-    Make sure to allocate enough RAM to WSL: 5GB is known to be enough,
-    2GB might not allow you to build some packages.
-    Then go to the Microsoft Store and install Ubuntu (or another
-    Linux distribution). Start Ubuntu from the start menu.
+    Enable `Windows Subsystem for Linux (WSL)
+    <https://learn.microsoft.com/en-us/windows/wsl/>` and install
+    Ubuntu as follows.
 
-    Then follow the instructions for development on Linux below.
+    - `Run the command ``wsl --install`` as administrator.
+      <https://learn.microsoft.com/en-us/windows/wsl/setup/environment#get-started>`_
+      This will install Ubuntu Linux.
+
+      Note that the basic instructions in the linked article apply to
+      up-to-date installations of Windows 10 and 11, but there are
+      also links to the procedures for older builds of Windows 10.
+
+    - If you had installed WSL previously or installed it using
+      different instructions, `verify that you are running WSL 2
+      <https://learn.microsoft.com/en-us/windows/wsl/install#check-which-version-of-wsl-you-are-running>`_.
+
+    - `Set up your Linux username and password.
+      <https://learn.microsoft.com/en-us/windows/wsl/setup/environment#set-up-your-linux-username-and-password>`_.
+      Do not include any spaces in your username.
+
+    - If your computer has less than 10GB of RAM, `change the WSL settings
+      <https://learn.microsoft.com/en-us/windows/wsl/wsl-config#main-wsl-settings>`_
+      to make at least 5GB of RAM available to WSL.
+
+    Start Ubuntu from the Start menu. Then follow the instructions for
+    development on Linux below.
 
   - **No development:**
 
-    Enable Windows Subsystem for Linux (WSL) by following the
-    `official WSL setup guide
-    <https://learn.microsoft.com/en-us/windows/wsl/install>`_. Be
-    sure to do the steps to install WSL2 and set it as default.
-    Make sure to allocate enough RAM to WSL: 5GB is known to be enough,
-    2GB might not allow you to build some packages.
-    Then go to the Microsoft Store and install Ubuntu (or another
-    Linux distribution). Start Ubuntu from the start menu.
+    Enable `Windows Subsystem for Linux (WSL)
+    <https://learn.microsoft.com/en-us/windows/wsl/>` and install
+    Ubuntu as follows.
 
-    Type the following commands to install
-    Sage from conda-forge.
+    - `Run the command ``wsl --install`` as administrator.
+      <https://learn.microsoft.com/en-us/windows/wsl/setup/environment#get-started>`_
+      This will install Ubuntu Linux.
+
+      Note that the basic instructions in the linked article apply to
+      up-to-date installations of Windows 10 and 11, but there are
+      also links to the procedures for older builds of Windows 10.
+
+    - If you had installed WSL previously or installed it using
+      different instructions, `verify that you are running WSL 2
+      <https://learn.microsoft.com/en-us/windows/wsl/install#check-which-version-of-wsl-you-are-running>`_.
+
+    - `Set up your Linux username and password.
+      <https://learn.microsoft.com/en-us/windows/wsl/setup/environment#set-up-your-linux-username-and-password>`_.
+      Do not include any spaces in your username.
+
+    - If your computer has less than 8GB of RAM, `change the WSL settings
+      <https://learn.microsoft.com/en-us/windows/wsl/wsl-config#main-wsl-settings>`_
+      to make at least 4GB of RAM available to WSL.
+
+    Start Ubuntu from the Start menu, and type the following commands
+    to install Sage from conda-forge.
 
     .. code-block:: shell
 
