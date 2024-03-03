@@ -28,7 +28,6 @@ from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.ring import CommutativeRing
 from sage.structure.parent import Parent
-from sage.misc.prandom import randint, shuffle
 
 class LaurentPolynomialRing_generic(CommutativeRing, Parent):
     """
@@ -487,78 +486,6 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             NotImplementedError
         """
         raise NotImplementedError
-
-    def _random_bounded_monomial(self, min_valuation=-2, max_degree=2):
-        """
-        Helper function for ``random_element`` which computes a
-        random monomial which has total degree at most ``max_degree``,
-        total valuation at least ``min_valuation`` and also has degree
-        and valuation within these bounds for each generator of the
-        polynomial ring.
-
-        Assumes that min_valuation <= max_degree, which is handled by
-        ``random_element()``.
-
-        EXAMPLES::
-
-            sage: R.<x, y, z> = LaurentPolynomialRing(ZZ)
-            sage: f = R._random_bounded_monomial(-5, 5)
-            sage: f.degree() <= 5
-            True
-            sage: f.valuation() >= -5
-            True
-
-        ::
-
-            sage: R.<x, y, z> = LaurentPolynomialRing(ZZ)
-            sage: f = R._random_bounded_monomial(7, 10)
-            sage: f.degree() <= 10
-            True
-            sage: f.valuation() >= 7
-            True
-
-        ::
-
-            sage: R.<x, y, z> = LaurentPolynomialRing(ZZ)
-            sage: f = R._random_bounded_monomial(-10, -8)
-            sage: f.degree() <= -8
-            True
-            sage: f.valuation() >= -10
-            True
-
-        TESTS::
-
-            sage: R.<x, y, z> = LaurentPolynomialRing(ZZ)
-            sage: for _ in range(10):
-            ....:     high = randint(-10, 10)
-            ....:     low = randint(-10, 10)
-            ....:     if high < low:
-            ....:         high, low = low, high
-            ....:     for _ in range(100):
-            ....:         f = R._random_bounded_monomial(low, high)
-            ....:         assert f.degree() <= high
-            ....:         assert f.valuation() >= low
-        """
-        exponents = []
-        for _ in range(self._n):
-            # To ensure the total degree/valuation bound is satisfied, we
-            # need to know the sum of exponents
-            s = sum(exponents)
-            lower_bound = max(min_valuation, min_valuation - s)
-            upper_bound = min(max_degree, max_degree - s)
-
-            # As long as the bounds are sensible pick a random exponent
-            # otherwise pick 0
-            if upper_bound >= lower_bound:
-                r = randint(lower_bound, upper_bound)
-            else:
-                r = 0
-
-            exponents.append(r)
-
-        # Shuffle the order of the exponents and create a monomial
-        shuffle(exponents)
-        return self.monomial(*exponents)
 
     def random_element(self, min_valuation=-2, max_degree=2, terms=5, **kwds):
         """
