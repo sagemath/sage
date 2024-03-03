@@ -154,7 +154,7 @@ class DownUpAlgebra(CombinatorialFreeModule):
         sage: for la in PartitionsInBox(5, 5):
         ....:     b = YL.basis()[la]
         ....:     assert (D*D*U)(b) == 0*(D*U*D)(b) + 1*(U*D*D)(b) + 2*D(b)
-        ....:     assert (D*U*U)(b) == (0*(U*D*U)).monomial(la) + 1*(U*U*D)(b) + 2*U(b)
+        ....:     assert (D*U*U)(b) == 0*(U*D*U)(YL.monomial(la)) + 1*(U*U*D)(b) + 2*U(b)
         ....:     assert (D*U)(b) == (U*D)(b) + b  # the Weyl algebra relation
 
     .. TODO::
