@@ -131,6 +131,10 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         MPolynomialRing_base.__init__(self, base_ring, n, names, order)
         self._has_singular = can_convert_to_singular(self)
 
+        # speed-up workaround (introduced in #27364)
+        # (as this is still using old coercion model; see #25558)
+        self._intcache = {}
+
     def _monomial_order_function(self):
         return self.__monomial_order_function
 
@@ -417,11 +421,30 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
             # A Constant multi-polynomial
             return self({self._zero_tuple: x})
 
-        try:
-            y = self.base_ring().coerce(x)
-            return MPolynomial_polydict(self, {self._zero_tuple: y})
-        except TypeError:
-            pass
+        # speed-up workaround (introduced in #27364)
+        # (as this is still using old coercion model; see #25558)
+        if isinstance(x, int):
+            try:
+                return self._intcache[x]
+            except KeyError:
+                pass
+
+        if not (isinstance(x, dict) or
+                isinstance(x, MPolynomial_polydict) and x.parent() == self):
+            #from sage.structure.element import parent
+            #print(self, '__call__')
+            #print('    ', x, parent(x))
+            try:
+                y = self.base_ring()._coerce_(x)
+                result = MPolynomial_polydict(self, {self._zero_tuple: y})
+
+                # speed-up workaround (introduced in #27364)
+                # (as this is still using old coercion model; see #25558)
+                if isinstance(x, int) and x in (0, 1):
+                    self._intcache[x] = result
+                return result
+            except TypeError:
+                pass
 
         from .multi_polynomial import MPolynomial_libsingular
 
