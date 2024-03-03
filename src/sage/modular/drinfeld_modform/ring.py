@@ -201,9 +201,8 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
     Element = DrinfeldModularFormsElement
 
     @staticmethod
-    def __classcall_private__(cls, base_ring, rank=2, group=None,
+    def __classcall_private__(cls, base_ring, rank=None, group=None,
                               has_type=False, names=None):
-        rank = ZZ(rank)  # check the type of rank
         if not isinstance(base_ring, FractionField_generic):
             raise TypeError("base ring must be a fraction field of a "
                             "polynomial ring")
@@ -220,19 +219,28 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             raise NotImplementedError("Drinfeld modular forms are currently "
                                       "only implemented for the full group")
         if names is None: # default names
-            names = f"g1, "
-            for i in range(2, rank, 1):
-                names += f"g{i}, "
+            if rank is None:
+                raise TypeError("rank or names must be specified")
+            rank = ZZ(rank)  # check the type of rank
+            names = [f'g{i}' for i in range(1, rank, 1)]
             last = f"h{rank}" if has_type else f"g{rank}"
-            names += last
-        elif isinstance(names, str):
-            nb_names = len(names.split())
-            if nb_names != rank:
-                raise ValueError("the number of generators "
-                                 f"must be equal to the rank (={rank})")
+            names.append(last)
+        elif isinstance(names, (str, list, tuple)):
+            if isinstance(names, str):
+                names = names.split(',')
+            nb_names = len(names)
+            if rank is None:
+                rank = nb_names
+            else:
+                rank = ZZ(rank)
+                if nb_names != rank:
+                    raise ValueError("the number of generators "
+                                     f"must be equal to the rank (={rank})")
         else:
-            raise TypeError("names must be None or a comma seperated string")
-        return cls.__classcall__(cls, base_ring, rank, group, has_type, names)
+            raise TypeError("names must be None, a comma seperated string"
+                            "or a list of string")
+        return cls.__classcall__(cls, base_ring, rank, group, has_type,
+                                 tuple(names))
 
     def __init__(self, base_ring, rank, group, has_type, names):
         self._has_type = has_type
