@@ -22,8 +22,7 @@ AUTHORS:
 
 EXAMPLES:
 
-No hypothesis on the structure
-------------------------------
+.. RUBRIC:: No hypothesis on the structure
 
 What we mean by "no hypothesis" is that the set is not known
 to be a forest, symmetric, or graded. However, it may have other
@@ -50,8 +49,7 @@ Depth first search::
     sage: [next(it) for _ in range(10)]
     [0, 3, 6, 9, 12, 15, 18, 21, 24, 27]
 
-Symmetric structure
--------------------
+.. RUBRIC:: Symmetric structure
 
 The origin ``(0, 0)`` as seed and the upper, lower, left and right lattice
 point as successor function. This function is symmetric since `p` is a
@@ -86,8 +84,7 @@ Levels (elements of given depth)::
     sage: sorted(C.graded_component(2))
     [(-2, 0), (-1, -1), (-1, 1), (0, -2), (0, 2), (1, -1), (1, 1), (2, 0)]
 
-Graded structure
-----------------
+.. RUBRIC:: Graded structure
 
 Identity permutation as seed and ``permutohedron_succ`` as successor
 function::
@@ -137,10 +134,7 @@ Graded components (set of elements of the same depth)::
     sage: sorted(R.graded_component(10))
     [[5, 4, 3, 2, 1]]
 
-Forest structure
-----------------
-
-.. RUBRIC:: Forest structure [Ex 1]
+.. RUBRIC:: Forest structure (Example 1)
 
 The set of words over the alphabet `\{a,b\}` can be generated from the
 empty word by appending the letter `a` or `b` as a successor function. This set
@@ -175,20 +169,20 @@ classes being very similar):
 .. MATH::
 
     \begin{array}{ccc}
-                      & ``\," \\
+                      & \emptyset \\
         \hfil\swarrow & \downarrow & \searrow\hfil\\
-                 ``a" & ``b" & ``c" \\
+                    a & b & c \\
         \begin{array}{ccc}
              \swarrow & \downarrow & \searrow \\
-                ``aa" & ``ab" & ``ac" \\
+                   aa & ab & ac \\
         \end{array}   &
         \begin{array}{ccc}
              \swarrow & \downarrow & \searrow \\
-                ``ba" & ``bb" & ``bc" \\
+                   ba & bb & bc \\
         \end{array}   &
         \begin{array}{ccc}
              \swarrow & \downarrow & \searrow \\
-                ``ca" & ``cb" & ``cc" \\
+                   ca & cb & cc \\
         \end{array}
     \end{array}
 
@@ -230,7 +224,7 @@ or::
     sage: S.list()
     ['', 'a', 'aa', 'ab', 'ac', 'b', 'ba', 'bb', 'bc', 'c', 'ca', 'cb', 'cc']
 
-.. RUBRIC:: Forest structure [Ex 2]
+.. RUBRIC:: Forest structure (Example 2)
 
 This example was provided by Florent Hivert.
 
