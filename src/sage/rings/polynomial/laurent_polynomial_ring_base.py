@@ -517,6 +517,18 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         - ``**kwds`` -- passed to the random element generator of the base
           ring
 
+        .. NOTE::
+
+            For the multivariate case, it's possible to randomly sample
+            terms such that the resulting polynomial ``f`` does not contain
+            one or more of the generators ``x`` of the ring. When this is
+            the case, both ``f.degree(x)`` and ``f.valuation(x)`` will be
+            zero. If both ``min_valuation`` and ``max_degree`` are negative
+            (resp. positive) then  we will have ``f.degree(x) > max_degree``
+            (resp. ``f.valuation(x) < min_valuation``) and the bound assumptions
+            for this generator no longer hold. However, the total degree and
+            valuations always hold regardless of the signs of the bounds.
+
         EXAMPLES::
 
             sage: L.<x> = LaurentPolynomialRing(QQ)
