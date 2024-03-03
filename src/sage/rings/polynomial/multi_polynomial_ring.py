@@ -432,7 +432,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
         if not (isinstance(x, dict) or
                 isinstance(x, MPolynomial_polydict) and x.parent() == self):
             try:
-                y = self.base_ring()._coerce_(x)
+                y = self.base_ring().coerce(x)
                 result = MPolynomial_polydict(self, {self._zero_tuple: y})
 
                 # speed-up workaround (introduced in #27364)
