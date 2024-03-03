@@ -3955,8 +3955,8 @@ class Link(SageObject):
         # set the limits for the KnotInfoSeries
         if cr > 11 and co > 1:
             cr = 11
-        if cr > 12:
-            cr = 12
+        if cr > 13:
+            cr = 13
 
         Hp = self.homfly_polynomial(normalization='vz')
 
@@ -3995,8 +3995,9 @@ class Link(SageObject):
             if L.pd_notation() == pd_code:
                 return [L], True  # pd_notation is unique in the KnotInfo database
 
-            if L.braid_index() <= br_ind:
-                if self._markov_move_cmp(L.braid()):
+            Lbraid = L.braid()
+            if Lbraid.strands() <= br_ind:
+                if self._markov_move_cmp(Lbraid):
                     res.append(L)
 
         if res:
@@ -4058,27 +4059,29 @@ class Link(SageObject):
 
         EXAMPLES::
 
+            sage: # optional - database_knotinfo
             sage: from sage.knots.knotinfo import KnotInfo
             sage: L = Link([[4,1,5,2], [10,4,11,3], [5,17,6,16], [7,13,8,12],
             ....:           [18,10,19,9], [2,12,3,11], [13,21,14,20], [15,7,16,6],
             ....:           [22,17,1,18], [8,20,9,19], [21,15,22,14]])
-            sage: L.get_knotinfo()           # optional - database_knotinfo
+            sage: L.get_knotinfo()
             (<KnotInfo.K11n_121: '11n_121'>, True)
-
-            sage: K = KnotInfo.K10_25        # optional - database_knotinfo
-            sage: l = K.link()               # optional - database_knotinfo
-            sage: l.get_knotinfo()           # optional - database_knotinfo
+            sage: K = KnotInfo.K10_25
+            sage: l = K.link()
+            sage: l.get_knotinfo()
             (<KnotInfo.K10_25: '10_25'>, False)
 
-        Knots with more than 12 and proper links having more than 11 crossings
+        Knots with more than 13 and proper links having more than 11 crossings
         cannot be identified. In addition non prime links or even links whose
         HOMFLY-PT polynomial is not irreducible cannot be identified::
 
             sage: b, = BraidGroup(2).gens()
-            sage: Link(b**13).get_knotinfo()
+            sage: Link(b**13).get_knotinfo()    # optional - database_knotinfo
+            (<KnotInfo.K13a_4878: '13a_4878'>, False)
+            sage: Link(b**14).get_knotinfo()
             Traceback (most recent call last):
             ...
-            NotImplementedError: this knot having more than 12 crossings cannot be determined
+            NotImplementedError: this link having more than 11 crossings cannot be determined
 
             sage: Link([[1, 4, 2, 5], [3, 8, 4, 1], [5, 2, 6, 3], [6, 10, 7, 9], [10, 8, 9, 7]])
             Link with 2 components represented by 5 crossings
@@ -4102,17 +4105,15 @@ class Link(SageObject):
 
         Usage of option ``unique``::
 
-            sage: l = K.link(K.items.gauss_notation)  # optional - database_knotinfo
-            sage: l.get_knotinfo()                    # optional - database_knotinfo
+            sage: # optional - database_knotinfo
+            sage: l = K.link(K.items.gauss_notation)
+            sage: l.get_knotinfo()
             Traceback (most recent call last):
             ...
             NotImplementedError: this link cannot be uniquely determined
             use keyword argument `unique` to obtain more details
-
-            sage: l.get_knotinfo(unique=False)        # optional - database_knotinfo
+            sage: l.get_knotinfo(unique=False)
             [(<KnotInfo.K10_25: '10_25'>, False), (<KnotInfo.K10_56: '10_56'>, False)]
-
-            sage: # optional - database_knotinfo
             sage: k11  = KnotInfo.K11n_82.link()
             sage: k11m = k11.mirror_image()
             sage: k11mr = k11m.reverse()
@@ -4121,31 +4122,26 @@ class Link(SageObject):
             ...
             NotImplementedError: mirror type of this link cannot be uniquely determined
             use keyword argument `unique` to obtain more details
-
-            sage: k11mr.get_knotinfo(unique=False)    # optional - database_knotinfo
+            sage: k11mr.get_knotinfo(unique=False)
             [(<KnotInfo.K11n_82: '11n_82'>, '?')]
-
             sage: t = (1, -2, 1, 1, -2, 1, -2, -2)
             sage: l8 = Link(BraidGroup(3)(t))
-            sage: l8.get_knotinfo()                   # optional - database_knotinfo
+            sage: l8.get_knotinfo()
             Traceback (most recent call last):
             ...
             NotImplementedError: this link cannot be uniquely determined
             use keyword argument `unique` to obtain more details
-
-            sage: l8.get_knotinfo(unique=False)       # optional - database_knotinfo
+            sage: l8.get_knotinfo(unique=False)
             [(<KnotInfo.L8a19_0_0: 'L8a19{0,0}'>, None),
              (<KnotInfo.L8a19_1_1: 'L8a19{1,1}'>, None)]
-
             sage: t = (2, -3, -3, -2, 3, 3, -2, 3, 1, -2, -2, 1)
             sage: l12 = Link(BraidGroup(5)(t))
-            sage: l12.get_knotinfo()                  # optional - database_knotinfo
+            sage: l12.get_knotinfo()
             Traceback (most recent call last):
             ...
             NotImplementedError: this link having more than 11 crossings cannot be uniquely determined
             use keyword argument `unique` to obtain more details
-
-            sage: l12.get_knotinfo(unique=False)      # optional - database_knotinfo
+            sage: l12.get_knotinfo(unique=False)
             [(<KnotInfo.L10n36_0: 'L10n36{0}'>, '?'),
              (<KnotInfo.L10n36_1: 'L10n36{1}'>, None),
              (<KnotInfo.L10n59_0: 'L10n59{0}'>, None),
@@ -4189,14 +4185,15 @@ class Link(SageObject):
         <https://snappy.math.uic.edu/index.html>`__::
 
             sage: import snappy                    # optional - snappy
-            Plink failed to import tkinter.
+            ...
 
+            sage: # optional - database_knotinfo snappy
             sage: from sage.knots.knotinfo import KnotInfoSeries
-            sage: KnotInfoSeries(10, True, True)   # optional - database_knotinfo
+            sage: KnotInfoSeries(10, True, True)
             Series of knots K10
-            sage: _.inject()                       # optional - database_knotinfo
+            sage: _.inject()
             Defining K10
-            sage: for i in range(160, 166):        # optional - database_knotinfo snappy
+            sage: for i in range(160, 166):
             ....:     K = K10(i)
             ....:     k = K.link(K.items.name, snappy=True)
             ....:     print(k, '--->', k.sage_link().get_knotinfo())
@@ -4206,16 +4203,15 @@ class Link(SageObject):
             <Link 10_163: 1 comp; 10 cross> ---> (<KnotInfo.K10_162: '10_162'>, False)
             <Link 10_164: 1 comp; 10 cross> ---> (<KnotInfo.K10_163: '10_163'>, False)
             <Link 10_165: 1 comp; 10 cross> ---> (<KnotInfo.K10_164: '10_164'>, False)
-
-            sage: snappy.Link('10_166')            # optional - snappy
+            sage: snappy.Link('10_166')
             <Link 10_166: 1 comp; 10 cross>
-            sage: _.sage_link().get_knotinfo()     # optional - database_knotinfo snappy
+            sage: _.sage_link().get_knotinfo()
             (<KnotInfo.K10_165: '10_165'>, True)
 
         Another pair of confusion (see the corresponding `Warning
         <http://katlas.math.toronto.edu/wiki/10_86>`__)::
 
-           sage: # optional - snappy
+           sage: # optional - database_knotinfo snappy
            sage: Ks10_86 = snappy.Link('10_86')
            sage: Ks10_83 = snappy.Link('10_83')
            sage: Ks10_86.sage_link().get_knotinfo()
@@ -4344,9 +4340,9 @@ class Link(SageObject):
             uniq_txt = (' uniquely', non_unique_hint)
 
         cr = len(self.pd_code())
-        if self.is_knot() and cr > 12:
+        if self.is_knot() and cr > 13:
             # we cannot not be sure if this link is recorded in the KnotInfo database
-            raise NotImplementedError('this knot having more than 12 crossings cannot be%s determined%s' % uniq_txt)
+            raise NotImplementedError('this knot having more than 13 crossings cannot be%s determined%s' % uniq_txt)
 
         if not self.is_knot() and cr > 11:
             # we cannot not be sure if this link is recorded in the KnotInfo database
@@ -4389,20 +4385,21 @@ class Link(SageObject):
             sage: l1.is_isotopic(l3)
             False
 
+            sage: # optional - database_knotinfo
             sage: from sage.knots.knotinfo import KnotInfo
-            sage: L = KnotInfo.L7a7_0_0             # optional - database_knotinfo
-            sage: L.series(oriented=True).inject()  # optional - database_knotinfo
+            sage: L = KnotInfo.L7a7_0_0
+            sage: L.series(oriented=True).inject()
             Defining L7a7
-            sage: L == L7a7(0)                      # optional - database_knotinfo
+            sage: L == L7a7(0)
             True
-            sage: l = L.link()                      # optional - database_knotinfo
-            sage: l.is_isotopic(L7a7(1).link())     # optional - database_knotinfo
+            sage: l = L.link()
+            sage: l.is_isotopic(L7a7(1).link())
             Traceback (most recent call last):
             ...
             NotImplementedError: comparison not possible!
-            sage: l.is_isotopic(L7a7(2).link())     # optional - database_knotinfo
+            sage: l.is_isotopic(L7a7(2).link())
             True
-            sage: l.is_isotopic(L7a7(3).link())     # optional - database_knotinfo
+            sage: l.is_isotopic(L7a7(3).link())
             False
         """
         from sage.misc.verbose import verbose
