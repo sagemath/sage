@@ -480,10 +480,9 @@ SageMath Docker images
 
 SageMath is available on Docker Hub and can be downloaded by:
 ``` bash
-docker pull sagemath/sagemath
+docker pull sagemath/sagemath          # for the latest stable release
+docker pull sagemath/sagemath:develop  # for the development version
 ```
-
-Currently, only stable versions are kept up to date.
 
 The [Sage Installation Guide](https://doc.sagemath.org/html/en/installation/)
 provides a list of other options.
