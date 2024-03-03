@@ -3050,9 +3050,9 @@ class Graphics(WithEqualityById, SageObject):
             if (xmiddle and ymiddle and xscale == 'linear' == yscale):
                 ## get the ticks, which are the numeric location of the ticks, and eliminate 0 from them
                 if type(ticks[0]) is not list:
-                    subplot.set_xticks([i for i in subplot.get_xticks() if i!=0][1:-1])
+                    subplot.set_xticks([i for i in subplot.get_xticks() if i != 0][1:-1])
                 if type(ticks[1]) is not list:
-                    subplot.set_yticks([i for i in subplot.get_yticks() if i!=0][1:-1])
+                    subplot.set_yticks([i for i in subplot.get_yticks() if i != 0][1:-1])
         else:
             for spine in subplot.spines.values():
                 spine.set_visible(False)
