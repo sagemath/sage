@@ -274,7 +274,7 @@ cdef class Group(Parent):
 
             sage: G = PermutationGroup([(1,2,3), (2,3), (4,5)])
             sage: G.minimum_generating_set()
-            {(2,3), (1,3,2)(4,5)}
+            [(2,3), (1,3,2)(4,5)]
         """
         from sage.groups.libgap_mixin import minimum_generating_set
         return minimum_generating_set(self, gap_based=gap_based)

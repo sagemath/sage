@@ -969,16 +969,16 @@ class GroupMixinLibGAP():
 @cached_method
 def minimum_generating_set(group, gap_based=False) -> set:
     """
-    Return a set containing minimum generating set of the ``group``.
+    Return a list containing minimum generating set of the ``group``.
 
     INPUT:
 
     - ``group`` -- a group object.
-    - ``gap_based`` -- boolean (default: False). If True, elements of the resulting set are GAP objects.
+    - ``gap_based`` -- boolean (default: False). If True, elements of the resulting list are GAP objects.
 
     OUTPUT:
 
-    A set of elements that generate the group.
+    A list of elements that generate the group.
 
     REFERENCE:
 
@@ -989,35 +989,34 @@ def minimum_generating_set(group, gap_based=False) -> set:
 
         sage: G = GL(2,GF(3))
         sage: s = G.minimum_generating_set();s
-        {[1 1]
-         [2 0],
-         [2 0]
-         [0 1]}
+        [
+        [1 2]  [1 2]
+        [1 1], [0 1]
+        ]
 
         sage: G = SymmetricGroup(3)
         sage: s = G.minimum_generating_set(); s
-        {(2,3), (1,2,3)}
+        [(2,3), (1,2,3)]
         sage: list(s)[0].parent()
         Symmetric group of order 3! as a permutation group
+        sage: from sage.groups.libgap_mixin import minimum_generating_set
         sage: s2 = minimum_generating_set(G, gap_based=True); s2
-        {(2,3), (1,2,3)}
+        [(2,3), (1,2,3)]
         sage: list(s2)[0].parent()
         C library interface to GAP
 
         sage: A5 = AlternatingGroup(5)
         sage: A5.minimum_generating_set()
-        {(3,4,5), (1,2,3)}
+        [(3,4,5), (1,2,3)]
 
         sage: H = groups.matrix.Heisenberg(1,3); H
         Heisenberg group of degree 1 over Ring of integers modulo 3
-        sage: from sage.groups.libgap_mixin import minimum_generating_set
         sage: minimum_generating_set(H)
-        {[1 0 0]
-         [0 1 1]
-         [0 0 1],
-         [1 1 0]
-         [0 1 0]
-         [0 0 1]}
+        [
+        [1 0 0]  [1 1 0]
+        [0 1 1]  [0 1 0]
+        [0 0 1], [0 0 1]
+        ]
 
     TESTS::
 
@@ -1025,7 +1024,7 @@ def minimum_generating_set(group, gap_based=False) -> set:
 
             sage: p = libgap.eval("DirectProduct(AlternatingGroup(5),AlternatingGroup(5))")
             sage: s = minimum_generating_set(p,gap_based=True); s
-            {(3,4,5)(8,9,10), (1,2,3,4,5)(6,7,8)}
+            [(3,4,5)(8,9,10), (1,2,3,4,5)(6,7,8)]
             sage: set(p.AsList()) == set(libgap.GroupByGenerators(list(s)).AsList())
             True
     """
@@ -1053,8 +1052,8 @@ def minimum_generating_set(group, gap_based=False) -> set:
         for ele in group_elements:
             if is_groupbygens(group, [ele]):
                 if gap_based:
-                    return {ele}
-                return {converter(ele)}
+                    return [ele]
+                return [converter(ele)]
 
     if group.IsSimple().sage():
         n = len(group_elements)
@@ -1062,8 +1061,8 @@ def minimum_generating_set(group, gap_based=False) -> set:
             for j in range(i+1, n):
                 if is_groupbygens(group, [group_elements[i], group_elements[j]]):
                     if gap_based:
-                        return {group_elements[i], group_elements[j]}
-                    return {converter(group_elements[i]), converter(group_elements[j])}
+                        return [group_elements[i], group_elements[j]]
+                    return [converter(group_elements[i]), converter(group_elements[j])]
 
     # The MinimalNormalSubgroups method returns a list of all minimal normal subgroups
     # but for this algorithm we need only one minimal normal subgroup (which is not trivial).
@@ -1081,8 +1080,8 @@ def minimum_generating_set(group, gap_based=False) -> set:
     if N.IsAbelian().sage():
         if is_groupbygens(group, g):
             if gap_based:
-                return set(g)
-            return {converter(ele) for ele in g}
+                return g
+            return [converter(ele) for ele in g]
 
         for i in range(l):
             for j in range(len(n)):
@@ -1090,13 +1089,13 @@ def minimum_generating_set(group, gap_based=False) -> set:
                 g[i] = g[i]*n[j]
                 if is_groupbygens(group, g):
                     if gap_based:
-                        return set(g)
-                    return {converter(ele) for ele in g}
+                        return g
+                    return [converter(ele) for ele in g]
                 g[i] = temp
 
         if gap_based:
-            return set(g).union({n[0]})
-        return {converter(ele) for ele in g}.union({converter(n[0])})
+            return g + [n[0]]
+        return [converter(ele) for ele in g] + [converter(n[0])]
 
     # A function to generate some combinations of the generators of the group according to the algorithm.
     def gen_combinations(g, N, t):
@@ -1123,7 +1122,8 @@ def minimum_generating_set(group, gap_based=False) -> set:
                 gens = raw_gens
             else:
                 gens = raw_gens+[nl]
+
             if is_groupbygens(group, gens):
                 if gap_based:
-                    return set(gens)
-                return {converter(ele) for ele in gens}
+                    return gens
+                return [converter(ele) for ele in gens]
