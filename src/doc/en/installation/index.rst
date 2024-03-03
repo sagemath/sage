@@ -58,7 +58,7 @@ macOS
 Windows
 =======
 
-- **Recommended: Use Visual Studio Code with SageMath dev containers**
+- **Recommended approach 1: Use Visual Studio Code with SageMath dev containers**
 
   - Make sure that hardware-assisted virtualization is enabled in
     the EFI or BIOS of your system. If in doubt, refer to your
@@ -124,7 +124,7 @@ Windows
   cannot run WSL 2 (because of hardware constraints or policy set by system
   administrators) but can run Docker.
 
-- **Alternative: Manual installation using Windows Subsystem for Linux**
+- **Recommended approach 2: Manual installation using Windows Subsystem for Linux**
 
   Enable `Windows Subsystem for Linux (WSL)
   <https://learn.microsoft.com/en-us/windows/wsl/>`_ and install
