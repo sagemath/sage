@@ -544,35 +544,15 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             # To ensure the total degree/valuation bound is satisfied, we
             # need to know the sum of exponents
             s = sum(exponents)
+            lower_bound = max(min_valuation, min_valuation - s)
+            upper_bound = min(max_degree, max_degree - s)
 
-            # When both bounds are positive, we only need to worry about
-            # the degree getting too large
-            if min_valuation >= 0:
-                upper_bound = min(max_degree, max_degree - s)
-                if min_valuation <= upper_bound:
-                    r = randint(min_valuation, upper_bound)
-                else:
-                    r = 0
-
-            # When both bounds are negative we only need to worry about
-            # the valuation becoming too negative
-            elif max_degree <= 0:
-                lower_bound = max(min_valuation, min_valuation - s)
-                if max_degree >= lower_bound:
-                    r = randint(lower_bound, max_degree)
-                else:
-                    r = 0
-
-            # We assume max_degree > min_valuation so no we are in the
-            # position with positive max_degree and negative min_valuation
-            # we must ensure both upper and lower bounds are respected
+            # As long as the bounds are sensible pick a random exponent
+            # otherwise pick 0
+            if upper_bound >= lower_bound:
+                r = randint(lower_bound, upper_bound)
             else:
-                upper_bound = min(max_degree, max_degree - s)
-                lower_bound = max(min_valuation, min_valuation - s)
-                if upper_bound >= lower_bound:
-                    r = randint(lower_bound, upper_bound)
-                else:
-                    r = 0
+                r = 0
 
             exponents.append(r)
 
