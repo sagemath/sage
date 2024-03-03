@@ -60,7 +60,7 @@ Windows
 
     Enable Windows Subsystem for Linux (WSL) by following the
     `official WSL setup guide
-    <https://docs.microsoft.com/en-us/windows/wsl/install-win10>`_. Be
+    <https://learn.microsoft.com/en-us/windows/wsl/install>`_. Be
     sure to do the steps to install WSL2 and set it as default.
     Make sure to allocate enough RAM to WSL: 5GB is known to be enough,
     2GB might not allow you to build some packages.
@@ -73,7 +73,7 @@ Windows
 
     Enable Windows Subsystem for Linux (WSL) by following the
     `official WSL setup guide
-    <https://docs.microsoft.com/en-us/windows/wsl/install-win10>`_. Be
+    <https://learn.microsoft.com/en-us/windows/wsl/install>`_. Be
     sure to do the steps to install WSL2 and set it as default.
     Make sure to allocate enough RAM to WSL: 5GB is known to be enough,
     2GB might not allow you to build some packages.
