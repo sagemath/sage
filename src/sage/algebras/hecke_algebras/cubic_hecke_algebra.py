@@ -2734,12 +2734,12 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
               over Integer Ring localized at (s, w, v, u)
         """
         M = self._markov_trace_module()
-        Mbas = M.basis().keys()
         db = self._database
         sec = db.section.markov_tr_cfs
         cfs = db.read(sec, variables=M.base_ring().gens(), nstrands=self._nstrands)
         d = self.dimension()
-        return [sum(cfs[bas_ele][i]*M(bas_ele) for bas_ele in Mbas) for i in range(d)]
+        return [M.sum_of_terms((bas_key, cfs[bas_key][i]) for bas_key in M.basis().keys())
+                for i in range(d)]
 
     ############################################################################
     # --------------------------------------------------------------------------
