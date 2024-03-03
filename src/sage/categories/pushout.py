@@ -1163,6 +1163,10 @@ class MultiPolynomialFunctor(ConstructionFunctor):
             'Multivariate Polynomial Ring in y, s over Rational Field'
             sage: R = PolynomialRing(ZZ, 'x', 50)
             sage: S = PolynomialRing(GF(5), 'x', 20)
+            sage: R.gen(0) + S.gen(0)  # not tested (see #27364)
+            2*x0
+            sage: R = PolynomialRing(ZZ, 'x', 15)
+            sage: S = PolynomialRing(GF(5), 'x', 10)
             sage: R.gen(0) + S.gen(0)
             2*x0
         """
