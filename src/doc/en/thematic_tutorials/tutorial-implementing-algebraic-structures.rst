@@ -451,7 +451,7 @@ mixed arithmetic with these elements::
 
     sage: Y(x[Partition([3,2])])
     y[[3, 2]] + y[[4, 1]] + y[[5]]
-    sage: Y([2,2,1]) + x[Partition([2,2,1])]
+    sage: Y.monomial(Partition([2,2,1])) + x[Partition([2,2,1])]
     2*y[[2, 2, 1]] + y[[3, 1, 1]] + y[[3, 2]] + y[[4, 1]] + y[[5]]
 
 
