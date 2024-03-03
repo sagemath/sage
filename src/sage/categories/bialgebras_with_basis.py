@@ -96,13 +96,13 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: # needs sage.combinat sage.modules
                 sage: R = NonCommutativeSymmetricFunctions(QQ).ribbon()
                 sage: T = R.convolution_product([Id, Id])
-                sage: [T(R(comp)) for comp in Compositions(3)]
+                sage: [T(R.monomial(comp)) for comp in Compositions(3)]
                 [4*R[1, 1, 1] + R[1, 2] + R[2, 1],
                  2*R[1, 1, 1] + 4*R[1, 2] + 2*R[2, 1] + 2*R[3],
                  2*R[1, 1, 1] + 2*R[1, 2] + 4*R[2, 1] + 2*R[3],
                  R[1, 2] + R[2, 1] + 4*R[3]]
                 sage: T = R.convolution_product(Proj2, Id)
-                sage: [T(R([i])) for i in range(1, 5)]
+                sage: [T(R.monomial([i])) for i in range(1, 5)]
                 [0, R[2], R[2, 1] + R[3], R[2, 2] + R[4]]
 
             Compute the convolution product of no maps on the Hopf algebra of
@@ -111,7 +111,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: m = SymmetricFunctionsNonCommutingVariables(QQ).m()               # needs sage.combinat sage.modules
                 sage: T = m.convolution_product()                                       # needs sage.combinat sage.modules
-                sage: [T(m(lam))                                                        # needs sage.combinat sage.modules
+                sage: [T(m.monomial(lam))                                               # needs sage.combinat sage.modules
                 ....:  for lam in SetPartitions(0).list() + SetPartitions(2).list()]
                 [m{}, 0, 0]
 
@@ -120,7 +120,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             non-commuting variables::
 
                 sage: T = m.convolution_product(Proj2, Id)                              # needs sage.combinat sage.modules
-                sage: [T(m(lam)) for lam in SetPartitions(3)]                           # needs sage.combinat sage.modules
+                sage: [T(m.monomial(lam)) for lam in SetPartitions(3)]                  # needs sage.combinat sage.modules
                 [0,
                  m{{1, 2}, {3}} + m{{1, 2, 3}},
                  m{{1, 2}, {3}} + m{{1, 2, 3}},
