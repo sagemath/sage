@@ -124,6 +124,8 @@ Linux
     - Alternatively, build SageMath from source as described in section
       :ref:`sec-installation-from-sources`.
 
+.. _installation-guide-container:
+
 In a container
 ==============
 
@@ -162,6 +164,8 @@ Several Docker images are available that provide SageMath out of the box.
   can be used to run `CoCalc <https://cocalc.com/>`_ locally.
 
 
+.. _installation-guide-cloud:
+
 In the cloud
 ============
 
@@ -175,7 +179,8 @@ In the cloud
   many other tools.
 
 
-More information:
+More information
+================
 
 .. toctree::
    :maxdepth: 2
