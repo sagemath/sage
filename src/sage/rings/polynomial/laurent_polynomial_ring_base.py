@@ -28,6 +28,7 @@ from sage.rings.infinity import infinity
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.ring import CommutativeRing
 from sage.structure.parent import Parent
+from sage.combinat.integer_vector import IntegerVectors
 
 class LaurentPolynomialRing_generic(CommutativeRing, Parent):
     """
@@ -487,19 +488,13 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         """
         raise NotImplementedError
 
-    def random_element(self, min_valuation=-2, max_degree=2, terms=5, **kwds):
+    def random_element(self, min_valuation=-2, max_degree=2, terms=5, *args, **kwds):
         """
         Return a random polynomial with degree at most ``max_degree`` and
-        lowest valuation at least ``min_valuation``, for both the total degree
-        and valuation as well as for each generator of ``self``.
+        lowest valuation at least ``min_valuation``.
 
-        For the univariate case, uses the random sampling from the
-        polynomial ring then shifts this polynomial down to ensure
-        correct ``max_degree`` and ``min_valuation``.
-
-        For the multivariate case, samples ``terms`` elements which
-        respectively have degree at most ``max_degree`` and valuation
-        at least ``min_valuation`` and returns their sum.
+        Uses the random sampling from the base polynomial ring then divides out
+        by a monomial to ensure correct ``max_degree`` and ``min_valuation``.
 
         INPUT:
 
@@ -509,25 +504,8 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         - ``max_degree`` -- integer (default: ``2``); the
           maximal allowed degree of the polynomial
 
-        - ``terms`` -- number of terms requested (default: 5).
-          Only used for multivariate polynomial rings. If more
-          terms are requested than exist, then this parameter is
-          silently reduced to the maximum number of available terms.
-
-        - ``**kwds`` -- passed to the random element generator of the base
-          ring
-
-        .. NOTE::
-
-            For the multivariate case, it's possible to randomly sample
-            terms such that the resulting polynomial ``f`` does not contain
-            one or more of the generators ``x`` of the ring. When this is
-            the case, both ``f.degree(x)`` and ``f.valuation(x)`` will be
-            zero. If both ``min_valuation`` and ``max_degree`` are negative
-            (resp. positive) then  we will have ``f.degree(x) > max_degree``
-            (resp. ``f.valuation(x) < min_valuation``) and the bound assumptions
-            for this generator no longer hold. However, the total degree and
-            valuations always hold regardless of the signs of the bounds.
+        - ``*args, **kwds`` -- passed to the random element generator of the 
+          base polynomial ring and base ring itself
 
         EXAMPLES::
 
@@ -542,7 +520,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
         ::
 
-            sage: L.<x> = LaurentPolynomialRing(QQ)
+            sage: L = LaurentPolynomialRing(ZZ, 2, 'x')
             sage: f = L.random_element(-10, 20)
             sage: f.degree() <= 20
             True
@@ -553,59 +531,25 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
         ::
 
-            sage: L = LaurentPolynomialRing(ZZ, 2, 'x')
-            sage: f = L.random_element(-10, 20)
-            sage: f.degree() <= 20
-            True
-            sage: f.valuation() >= -10
-            True
-            sage: tuple(f.degree(x) <= 20 for x in L.gens())
-            (True, True)
-            sage: tuple(f.valuation(x) >= -10 for x in L.gens())
-            (True, True)
-            sage: len(list(f)) <= 5
-            True
-
-        ::
-
-            sage: L = LaurentPolynomialRing(ZZ, 2, 'x')
-            sage: f = L.random_element(-10, 20, terms=20)
-            sage: f.degree() <= 20
-            True
-            sage: f.valuation() >= -10
-            True
-            sage: tuple(f.degree(x) <= 20 for x in L.gens())
-            (True, True)
-            sage: tuple(f.valuation(x) >= -10 for x in L.gens())
-            (True, True)
-            sage: len(list(f)) <= 20
-            True
-
-        ::
-
             sage: L = LaurentPolynomialRing(GF(13), 3, 'x')
             sage: f = L.random_element(-5, 10)
             sage: f.degree() <= 10
             True
             sage: f.valuation() >= -5
             True
-            sage: tuple(f.degree(x) <= 10 for x in L.gens())
-            (True, True, True)
-            sage: tuple(f.valuation(x) >= -5 for x in L.gens())
-            (True, True, True)
+            sage: f.parent() is L
+            True
 
         ::
 
-            sage: L = LaurentPolynomialRing(RR, 2, 'x')
+            sage: L.<x, y> = LaurentPolynomialRing(RR)
             sage: f = L.random_element()
             sage: f.degree() <= 2
             True
             sage: f.valuation() >= -2
             True
-            sage: tuple(f.degree(x) <= 2 for x in L.gens())
-            (True, True)
-            sage: tuple(f.valuation(x) >= -2 for x in L.gens())
-            (True, True)
+            sage: f.parent() is L
+            True
 
         ::
 
@@ -616,10 +560,8 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             True
             sage: f.valuation() >= -1
             True
-            sage: tuple(f.degree(x) <= 1 for x in L.gens())
-            (True, True, True, True, True)
-            sage: tuple(f.valuation(x) >= -1 for x in L.gens())
-            (True, True, True, True, True)
+            sage: f.parent() is L
+            True
 
         TESTS::
 
@@ -629,15 +571,14 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             ....:     t = randint(5, 20)
             ....:     L = LaurentPolynomialRing(ring, d, 'x')
             ....:     for _ in range(100):
-            ....:         n, m = randint(-10, 0), randint(0, 10)
+            ....:         n, m = randint(-10, 10), randint(-10, 10)
+            ....:         if n > m:
+            ....:             n, m = m, n
             ....:         f = L.random_element(n, m, terms=t)
             ....:         if f.is_zero(): continue # the zero polynomial is defined to have degree -1
             ....:         assert len(list(f)) <= t
             ....:         assert f.degree() <= m
             ....:         assert f.valuation() >= n
-            ....:         for x in L.gens():
-            ....:             assert f.degree(x) <= m, f"{f = }, {x = }, {m = }, {f.degree(x) = }"
-            ....:             assert f.valuation(x) >= n, f"{f = }, {x = }, {n = }, {f.valuation(x) = }"
 
         Test for constructions which use univariate polynomial rings::
 
@@ -645,7 +586,9 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: for ring in rings:
             ....:     L.<x> = LaurentPolynomialRing(ring)
             ....:     for _ in range(100):
-            ....:         n, m = randint(-10, 0), randint(0, 10)
+            ....:         n, m = randint(-10, 10), randint(-10, 10)
+            ....:         if n > m:
+            ....:             n, m = m, n
             ....:         f = L.random_element(n, m)
             ....:         if f.is_zero(): continue # the zero polynomial is defined to have degree -1
             ....:         for x in L.gens():
@@ -659,53 +602,31 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             Traceback (most recent call last):
             ...
             ValueError: `max_degree` must be greater than or equal to `min_valuation`
-
-        When terms is set to zero, we only expect the zero polynomial::
-
-            sage: L.<x, y> = LaurentPolynomialRing(QQ)
-            sage: f = L.random_element(-10, 20, terms=0)
-            sage: f.is_zero()
-            True
-
-        Terms must always be non-negative::
-
-            sage: L.<x, y> = LaurentPolynomialRing(QQ)
-            sage: f = L.random_element(-10, 20, terms=-1)
-            Traceback (most recent call last):
-            ...
-            TypeError: cannot compute polynomial with a negative number of terms
         """
         # Ensure the degree parameters are sensible
         if max_degree < min_valuation:
             raise ValueError("`max_degree` must be greater than or equal to `min_valuation`")
 
-        # Handle univariate case
+        # Sample a polynomial in the base ring of degree `max_degree - min_valuation`
+        abs_deg = (max_degree - min_valuation)
+        f_rand = self._R.random_element(degree=abs_deg, *args, **kwds)
+        
+        # Case this polynomial back the `self``
+        f = self(f_rand)
+
+        # For the univariate case we simply shift by x**min_valuation
         if self._n == 1:
-            # First sample a polynomial from the associated polynomial
-            # ring of `self` of degree `(max_degree - min_valuation)`
-            abs_deg = (max_degree - min_valuation)
-            f_rand = self._R.random_element(degree=abs_deg, **kwds)
-
-            # Case the polynomial base to self and scale to ensure
-            # that min_valuation is satisfied
             s = self.gen() ** min_valuation
-            return self(f_rand) * s
+            return f * s
 
-        # Ensure terms is set correctly
-        if terms < 0:
-            raise TypeError("cannot compute polynomial with a negative number of terms")
-        elif terms == 0:
-            return self.zero()
-
-        # We now sample `terms`` terms with exponents picked randomly
-        # with degree at most `max_degree` and valuation greater or
-        # equal to min_valuation scaled by an element of the base ring
-        k = self.base_ring()
-        res = self.zero()
-        for _ in range(terms):
-            s = k.random_element(**kwds)
-            res += s * self._random_bounded_monomial(min_valuation, max_degree)
-        return res
+        # For the multivariate case, we sample a single monomial of degree
+        # exactly min_valuation and then use this to shift the polynomial
+        # into the correct bounds
+        s = self.monomial(*IntegerVectors(abs(min_valuation), self._n).random_element())
+        s = self(s)
+        if min_valuation < 0:
+            s = ~s
+        return f * s
 
     def is_exact(self):
         """
