@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 r"""
-Recursively enumerated set
+Recursively Enumerated Sets
 
 A set `S` is called recursively enumerable if there is an algorithm that
 enumerates the members of `S`. We consider here the recursively enumerated
