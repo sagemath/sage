@@ -1704,6 +1704,15 @@ cdef class GapElement_IntegerMod(GapElement):
             ring = ZZ.quotient_ring(characteristic)
         return self.lift().sage(ring=ring)
 
+    def _integer_(self, R):
+        r"""
+        TESTS::
+
+            sage: n = libgap.eval('One(ZmodnZ(123)) * 13')
+            sage: ZZ(n)
+            13
+        """
+        return self.lift()._integer_(R)
 
 ############################################################################
 ### GapElement_FiniteField #####################################################
@@ -2942,7 +2951,7 @@ cdef class GapElement_List(GapElement):
         if ring is None:
             ring = entries.DefaultRing().sage()
         MS = MatrixSpace(ring, n, m)
-        return MS([x.sage(ring=ring) for x in entries])
+        return MS([ring(x) for x in entries])
 
     _matrix_ = matrix
 
