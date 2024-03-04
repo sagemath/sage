@@ -47,7 +47,6 @@ from sage.rings.polynomial.laurent_polynomial import LaurentPolynomial, LaurentP
 from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.structure.element import parent
-from sage.misc.prandom import randint, shuffle
 
 
 def is_LaurentPolynomialRing(R):

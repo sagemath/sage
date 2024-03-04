@@ -488,7 +488,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         """
         raise NotImplementedError
 
-    def random_element(self, min_valuation=-2, max_degree=2, terms=5, *args, **kwds):
+    def random_element(self, min_valuation=-2, max_degree=2, *args, **kwds):
         """
         Return a random polynomial with degree at most ``max_degree`` and
         lowest valuation at least ``min_valuation``.
@@ -611,19 +611,24 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         abs_deg = (max_degree - min_valuation)
         f_rand = self._R.random_element(degree=abs_deg, *args, **kwds)
 
-        # Case this polynomial back the `self``
+        # Cast this polynomial back the `self``
         f = self(f_rand)
 
         # For the univariate case we simply shift by x**min_valuation
         if self._n == 1:
-            s = self.gen() ** min_valuation
-            return f * s
+            # When there is one generator we either have a univariate class
+            # and can shift by min_valuation
+            try:
+                return f.shift(min_valuation)
+            # Or we have a multivariate class with one variable, which does not
+            # have the shift method
+            except AttributeError:
+                return f * self.gen() ** min_valuation
 
         # For the multivariate case, we sample a single monomial of degree
         # exactly min_valuation and then use this to shift the polynomial
         # into the correct bounds
         s = self.monomial(*IntegerVectors(abs(min_valuation), self._n).random_element())
-        s = self(s)
         if min_valuation < 0:
             s = ~s
         return f * s

@@ -1185,9 +1185,11 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
     def valuation(self, x=None):
         """
-        Return the valuation of ``x`` in ``self``.
+        Return the valuation of ``self``.
 
-        If ``x`` is ``None``, return the minimal valuation of ``self``.
+        INPUT:
+
+        - ``x`` -- (optional) a generator; if given, return the valuation with respect to this generator
 
         EXAMPLES::
 
@@ -1220,19 +1222,15 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         # When x is None find the minimal valuation by finding the minimal
         # valuation of the sum of exponents
         if x is None:
-            val = min(sum(e) for e in self.exponents())
-            return val
+            return ZZ(min(sum(e) for e in self.exponents()))
 
-        # Get the index of the gen
+        # Get the index of the generator or error
         cdef tuple g = <tuple > self._parent.gens()
         cdef Py_ssize_t i
-        cdef bint no_generator_found = True
-        for i in range(len(g)):
-            if g[i] == x:
-                no_generator_found = False
-                break
-        if no_generator_found:
-            raise TypeError("x must be a generator of parent")
+        try:
+            i = g.index(x)
+        except ValueError:  # not in the tuple
+            raise TypeError(f"{x} is not a generator of parent")
 
         # Find the minimal valuation of x by checking each term
         return min(e[i] for e in self.exponents())
