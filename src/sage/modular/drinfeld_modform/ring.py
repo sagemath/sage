@@ -140,15 +140,15 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
     TESTS::
 
         sage: K = Frac(GF(3)['T'])
-        sage: TestSuite(DrinfeldModularForms(K)).run()
+        sage: TestSuite(DrinfeldModularForms(K, 2)).run()
         sage: TestSuite(DrinfeldModularForms(K, 3)).run()
         sage: TestSuite(DrinfeldModularForms(K, 4)).run()
         sage: K = Frac(GF(7)['T'])
-        sage: TestSuite(DrinfeldModularForms(K)).run()
+        sage: TestSuite(DrinfeldModularForms(K, 2)).run()
         sage: TestSuite(DrinfeldModularForms(K, 3)).run()
         sage: TestSuite(DrinfeldModularForms(K, 4)).run()
         sage: K = Frac(GF(2^3)['T'])
-        sage: TestSuite(DrinfeldModularForms(K)).run()
+        sage: TestSuite(DrinfeldModularForms(K, 2)).run()
         sage: TestSuite(DrinfeldModularForms(K, 3)).run()
         sage: TestSuite(DrinfeldModularForms(K, 4)).run()
 
@@ -167,7 +167,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
         sage: k.<x, y> = GF(5)[]
         sage: K = k.quotient(x+y).fraction_field()
-        sage: DrinfeldModularForms(K)
+        sage: DrinfeldModularForms(K, 2)
         Traceback (most recent call last):
         ...
         TypeError: the base of the base ring must be a polynomial ring
@@ -179,13 +179,13 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
         sage: R = GF(2)['u']
         sage: K = Frac(R['T'])
-        sage: DrinfeldModularForms(K)
+        sage: DrinfeldModularForms(K, 2)
         Traceback (most recent call last):
         ...
         ValueError: the ring of constants must be a field
 
         sage: K = Frac(Frac(R)['T'])
-        sage: DrinfeldModularForms(K)
+        sage: DrinfeldModularForms(K, 2)
         Traceback (most recent call last):
         ...
         ValueError: the ring of constants must be finite
@@ -198,7 +198,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         sage: DrinfeldModularForms(Frac(GF(2)['T']), names=1)
         Traceback (most recent call last):
         ...
-        TypeError: names must be None or a comma seperated string
+        TypeError: names must be None, a comma seperated string or a list of string
 
         sage: DrinfeldModularForms(Frac(GF(2)['T']), rank=3, names='f1, f2, f3, f4')
         Traceback (most recent call last):
@@ -260,7 +260,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
                     raise ValueError("the number of generators "
                                      f"must be equal to the rank (={rank})")
         else:
-            raise TypeError("names must be None, a comma seperated string"
+            raise TypeError("names must be None, a comma seperated string "
                             "or a list of string")
         return cls.__classcall__(cls, base_ring, rank, group, has_type,
                                  tuple(names))
@@ -290,7 +290,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             sage: q = 3
             sage: A = GF(q)['T']
             sage: K.<T> = Frac(A)
-            sage: M = DrinfeldModularForms(K)
+            sage: M = DrinfeldModularForms(K, 2)
             sage: M.an_element()
             g1
         """
