@@ -1481,7 +1481,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             ``self.some_elements()``::
 
                 sage: A = AlgebrasWithBasis(QQ).example(); A
-                An example of an algebra with basis: the free algebra on the generators ('a', 'b', 'c') over Rational Field
+                An example of an algebra with basis:
+                 the free algebra on the generators ('a', 'b', 'c') over Rational Field
                 sage: A.an_element()._test_monomial_coefficients()
 
             See the documentation for :class:`TestSuite` for more information.
