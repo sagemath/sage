@@ -1157,9 +1157,17 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
     def degree(self, x=None):
         r"""
-        If ``x`` is ``None``, return the total degreee of ``self``.
-        Otherwise, if ``x`` is generator of the ring, returns the
-        degree of ``x`` in ``self``.
+        Return the degree of ``self``.
+
+        INPUT:
+
+        - ``x`` -- (default: ``None``) a generator of the parent ring
+
+        OUTPUT:
+
+        If ``x`` is ``None``, return the maximum degree of the monomials of
+        ``self``.  If ``x`` is given and it is a generator of the parent
+        ring, the output is the maximum degree in ``x`` of ``self``.
 
         EXAMPLES::
 
