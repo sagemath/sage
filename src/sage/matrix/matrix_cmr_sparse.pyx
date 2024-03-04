@@ -573,7 +573,11 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             first_marker = CMRrowToElement(row)
             second_marker = CMRcolumnToElement(column)
 
-        cdef int8_t characteristic = 0
+        cdef int8_t characteristic = first_mat.parent().characteristic()
+
+        if second_mat.parent().characteristic() != characteristic:
+            raise ValueError("The characteristic of two matrices are different")
+
         CMR_CALL(CMRtwoSum(cmr, first._mat, second._mat, first_marker, second_marker, characteristic, &sum_mat))
         sum = Matrix_cmr_chr_sparse._from_cmr(sum_mat, immutable=False)
         if row_subdivision or column_subdivision:
@@ -642,7 +646,11 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             second_marker1 = CMRcolumnToElement(column1)
             second_marker2 = CMRcolumnToElement(column2)
 
-        cdef int8_t characteristic = 0
+        cdef int8_t characteristic = first_mat.parent().characteristic()
+
+        if second_mat.parent().characteristic() != characteristic:
+            raise ValueError("The characteristic of two matrices are different")
+
         CMR_CALL(CMRthreeSum(cmr, first._mat, second._mat, first_marker1, second_marker1, first_marker2, second_marker2, characteristic, &sum_mat))
         sum = Matrix_cmr_chr_sparse._from_cmr(sum_mat)
         return sum
