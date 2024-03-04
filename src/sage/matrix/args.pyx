@@ -732,7 +732,7 @@ cdef class MatrixArgs:
         self.typ = MA_ENTRIES_MATRIX
         return M
 
-    cpdef element(self, bint convert=True, bint immutable=False) noexcept:
+    cpdef Matrix element(self, bint immutable=False, bint convert=True) noexcept:
         r"""
         Return the element.
         """
