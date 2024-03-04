@@ -1172,15 +1172,13 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         if not x:
             return self._poly.total_degree() + sum(self._mon)
 
+        # Get the index of the generator or error
         cdef tuple g = <tuple > self._parent.gens()
         cdef Py_ssize_t i
-        cdef bint no_generator_found = True
-        for i in range(len(g)):
-            if g[i] is x:
-                no_generator_found = False
-                break
-        if no_generator_found:
-            raise TypeError("x must be a generator of parent")
+        try:
+            i = g.index(x)
+        except ValueError:  # not in the tuple
+            raise TypeError(f"{x} is not a generator of parent")
         return self._poly.degree(self._parent._R.gens()[i]) + self._mon[i]
 
     def valuation(self, x=None):
@@ -1213,7 +1211,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: f.valuation(1)
             Traceback (most recent call last):
             ...
-            TypeError: x must be a generator of parent
+            TypeError: 1 is not a generator of parent
         """
         # Valuation of zero polynomial is defined to be +Infinity
         if self.is_zero():
@@ -1222,7 +1220,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         # When x is None find the minimal valuation by finding the minimal
         # valuation of the sum of exponents
         if x is None:
-            return ZZ(min(sum(e) for e in self.exponents()))
+            return Integer(min(sum(e) for e in self.exponents()))
 
         # Get the index of the generator or error
         cdef tuple g = <tuple > self._parent.gens()

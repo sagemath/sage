@@ -521,10 +521,10 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         ::
 
             sage: L = LaurentPolynomialRing(ZZ, 2, 'x')
-            sage: f = L.random_element(-10, 20)
+            sage: f = L.random_element(10, 20)
             sage: f.degree() <= 20
             True
-            sage: f.valuation() >= -10
+            sage: f.valuation() >= 10
             True
             sage: f.parent() is L
             True
@@ -532,10 +532,10 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         ::
 
             sage: L = LaurentPolynomialRing(GF(13), 3, 'x')
-            sage: f = L.random_element(-5, 10)
-            sage: f.degree() <= 10
+            sage: f = L.random_element(-10, -1)
+            sage: f.degree() <= -1
             True
-            sage: f.valuation() >= -5
+            sage: f.valuation() >= -10
             True
             sage: f.parent() is L
             True
