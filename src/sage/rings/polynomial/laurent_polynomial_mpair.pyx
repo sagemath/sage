@@ -1187,7 +1187,8 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         INPUT:
 
-        - ``x`` -- (optional) a generator; if given, return the valuation with respect to this generator
+        - ``x`` -- (optional) a generator; if given, return the valuation
+          with respect to this generator
 
         EXAMPLES::
 
@@ -1231,8 +1232,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             raise TypeError(f"{x} is not a generator of parent")
 
         # Find the minimal valuation of x by checking each term
-        return min(e[i] for e in self.exponents())
-
+        return Integer(min(e[i] for e in self.exponents()))
 
     def has_inverse_of(self, i):
         """
