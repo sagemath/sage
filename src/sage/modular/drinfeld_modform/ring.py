@@ -72,17 +72,29 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
     INPUT:
 
-    - ``base_ring`` -- The fraction field of a univariate polynomial
+    - ``base_ring`` -- the fraction field of a univariate polynomial
       ring over `\mathbb{F}_q`.
-    - ``rank`` (integer, default: ``2``) -- the rank of the ring
-    - ``group`` (NoneType) -- the group of the ring. The current
-      implementation only supports the full modular group
-      `\mathrm{GL}_r(A)`.
-    - ``has_type`` (bool, default: ``False``) -- if set to ``True``,
+
+    - ``rank`` integer (default: ``None``) -- the rank of the ring. If
+      the rank is ``None``, then the names of the generators must be
+      specified.
+
+    - ``group`` (not implemented, default: ``None``) -- the group of the
+      ring. The current implementation only supports the full modular
+      group `\mathrm{GL}_r(A)`.
+
+    - ``has_type`` boolean (default: ``False``) -- if set to ``True``,
       returns the graded ring of arbitrary type.
-    - ``names`` (string, default: ``'g'``) -- a single character or a
-      comma seperated string of character representing the names of the
-      generators.
+
+    - ``names`` string, tuple or list (default: ``None``) -- a single
+      character, a tuple or list of character, or comma seperated string
+      of character representing the names of the generators. If this
+      parameter is set to ``None`` and the rank is specified, then the
+      default names for the generators will be:
+
+      * ``g1, g2, ..., gr`` for the type zero forms
+
+      * ``g1, g2, ..., hr`` for the arbitrary type forms.
 
     EXAMPLES::
 
@@ -99,6 +111,14 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         [g1, g2, g3]
         sage: M.inject_variables()
         Defining g1, g2, g3
+
+    One can also assign and name the generator when creating the ring::
+
+        sage: M.<g1, g2> = DrinfeldModularForms(K)
+        sage: M
+        Ring of Drinfeld modular forms of rank 2 over Fraction Field of Univariate Polynomial Ring in T over Finite Field of size 3
+        sage: (T*g2*g1).parent() == M
+        True
 
     Set the keyword parameter `has_type` to `True` in order to create
     the ring of Drinfeld modular forms of arbitrary type::
