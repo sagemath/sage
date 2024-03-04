@@ -504,7 +504,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         - ``max_degree`` -- integer (default: ``2``); the
           maximal allowed degree of the polynomial
 
-        - ``*args, **kwds`` -- passed to the random element generator of the 
+        - ``*args, **kwds`` -- passed to the random element generator of the
           base polynomial ring and base ring itself
 
         EXAMPLES::
@@ -610,7 +610,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         # Sample a polynomial in the base ring of degree `max_degree - min_valuation`
         abs_deg = (max_degree - min_valuation)
         f_rand = self._R.random_element(degree=abs_deg, *args, **kwds)
-        
+
         # Case this polynomial back the `self``
         f = self(f_rand)
 
