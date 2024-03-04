@@ -1157,8 +1157,9 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
     def degree(self, x=None):
         r"""
-        Return the degree of ``x`` in ``self``. If ``x`` is ``None``
-        then insteads returns the degree of the highest degree term.
+        If ``x`` is ``None``, return the total degreee of ``self``.
+        Otherwise, if ``x`` is generator of the ring, returns the
+        degree of ``x`` in ``self``.
 
         EXAMPLES::
 
