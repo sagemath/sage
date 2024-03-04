@@ -120,8 +120,8 @@ cdef class DecompositionNode(SageObject):
             sage: C[1].parent_rows_and_columns()
             ((3, 4, 5), (2, 3))
         """
-        cdef size_t *parent_rows = CMRmatroiddecRowsParent(self._dec)
-        cdef size_t *parent_columns = CMRmatroiddecColumnsParent(self._dec)
+        cdef CMR_ELEMENT *parent_rows = CMRmatroiddecRowsParent(self._dec)
+        cdef CMR_ELEMENT *parent_columns = CMRmatroiddecColumnsParent(self._dec)
         if parent_rows == NULL or parent_rows[0] == SIZE_MAX:
             parent_rows_tuple = None
         else:
