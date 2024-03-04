@@ -1334,7 +1334,7 @@ cdef class SBox(SageObject):
             b = list(b)
             if len(b) > n:
                 raise ValueError("input (%s) is too long and would be truncated" % (b,))
-            b = self.from_bits(b)
+            b = self.from_bits(b, n)
         except TypeError:
             try:
                 b = ZZ(b)
