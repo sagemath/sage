@@ -1260,12 +1260,18 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
     cover_ring = polynomial_ring
 
-    def random_element(self, *args, **kwds):
+    def random_element(self, degree=None, *args, **kwds):
         """
         Return a random element of this quotient ring.
 
         INPUT:
 
+        - ``degree`` - Optional argument: either an integer for fixing the
+          degree, or a tuple of the minimum and maximum degree. By default the
+          degree is n - 1 with n the degree of the polynomial ring. Note that
+          the degree of the polynomial is fixed before the modulo calculation.
+          So when `degree` is bigger than the degree of the polynomial ring, the
+          degree of the returned polynomial would be lower than `degree`.
         - ``*args``, ``**kwds`` - Arguments for randomization that are passed
           on to the ``random_element`` method of the polynomial ring, and from
           there to the base ring
@@ -1283,8 +1289,11 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: F2.random_element().parent() is F2
             True
         """
+        if degree is None:
+            degree = self.degree() - 1
+
         return self(self.polynomial_ring().random_element(
-            degree=self.degree() - 1, *args, **kwds))
+            degree=degree, *args, **kwds))
 
     @cached_method
     def _S_decomposition(self, S):
@@ -1362,11 +1371,12 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             if not seen_before:
                 S_abs = []
                 for p in S:
-                    abs_gens = []
-                    for g in D.ideal(p.gens()).gens(): # this line looks a bit silly, due to inconsistency over QQ - see # 7596
-                        abs_gens.append(D_abs.structure()[1](g))
-                    S_abs += [pp for pp,_ in D_abs.ideal(abs_gens).factor()]
-                iso_classes.append((D_abs,S_abs))
+                    # next line looks a bit silly,
+                    # due to inconsistency over QQ - see # 7596
+                    abs_gens = [D_abs.structure()[1](g)
+                                for g in D.ideal(p.gens()).gens()]
+                    S_abs += [pp for pp, _ in D_abs.ideal(abs_gens).factor()]
+                iso_classes.append((D_abs, S_abs))
             isos.append((D_abs.embeddings(D_abs)[0], j))
         return fields, isos, iso_classes
 
@@ -2088,7 +2098,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             base_image = self.base_ring().modulus().change_ring(isomorphic_ring).any_root()
             base_to_isomorphic_ring = self.base_ring().hom([isomorphic_ring(base_image)])
             modulus = self.modulus().map_coefficients(base_to_isomorphic_ring)
-            gen = modulus.any_root(assume_squarefree=True, degree=-1)
+            gen = modulus.any_root(assume_squarefree=True, degree=1, assume_equal_deg=True)
 
             homspace = Hom(self, isomorphic_ring)
             to_isomorphic_ring = homspace.__make_element_class__(SetMorphism)(homspace,

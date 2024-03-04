@@ -986,6 +986,37 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             cat = constructor.category_from_parents(parents)
             return parents[0].__class__.Tensor(parents, category=cat)
 
+        def intersection(self, other):
+            r"""
+            Return the intersection of ``self`` with ``other``.
+
+            EXAMPLES::
+
+                sage: X = CombinatorialFreeModule(QQ, range(4)); x = X.basis()
+                sage: U = X.submodule([x[0]-x[1], x[1]-x[2], x[2]-x[3]])
+                sage: F = CombinatorialFreeModule(QQ, ['a','b','c','d'])
+                sage: G = F.submodule([F.basis()['a']])
+                sage: X.intersection(X) is X
+                True
+                sage: X.intersection(U) is U
+                True
+                sage: X.intersection(F)
+                Traceback (most recent call last):
+                ...
+                TypeError: other must be a submodule
+                sage: X.intersection(G)
+                Traceback (most recent call last):
+                ...
+                ArithmeticError: this module must be the ambient
+            """
+            if other is self:
+                return self
+            if other not in self.category().Subobjects():
+                raise TypeError("other must be a submodule")
+            if other.ambient() != self:
+                raise ArithmeticError("this module must be the ambient")
+            return other
+
         def cardinality(self):
             """
             Return the cardinality of ``self``.
@@ -996,10 +1027,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: S = SymmetricGroupAlgebra(QQ, 4)
                 sage: S.cardinality()
                 +Infinity
-                sage: S = SymmetricGroupAlgebra(GF(2), 4)       # not tested
-                sage: S.cardinality()                           # not tested
+                sage: S = SymmetricGroupAlgebra(GF(2), 4)
+                sage: S.cardinality()
                 16777216
-                sage: S.cardinality().factor()                  # not tested
+                sage: S.cardinality().factor()
                 2^24
 
                 sage: # needs sage.modules
@@ -1013,10 +1044,19 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: s = SymmetricFunctions(GF(2)).s()                                 # needs sage.combinat sage.modules
                 sage: s.cardinality()                                                   # needs sage.combinat sage.modules
                 +Infinity
+
+                sage: M = CombinatorialFreeModule(QQ, [])
+                sage: M.dimension()
+                0
+                sage: M.cardinality()
+                1
             """
             from sage.rings.infinity import Infinity
             if self.dimension() == Infinity:
                 return Infinity
+            if self.dimension() == 0:
+                from sage.rings.integer_ring import ZZ
+                return ZZ.one()
             return self.base_ring().cardinality() ** self.dimension()
 
         def is_finite(self):
@@ -2247,7 +2287,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     sage: phi(x[1] + x[3])                                              # needs sage.modules
                     0
 
-               We check that the homset category is properly set up::
+                We check that the homset category is properly set up::
 
                     sage: # needs sage.modules
                     sage: X = CombinatorialFreeModule(QQ, [1,2,3]);   X.rename("X")

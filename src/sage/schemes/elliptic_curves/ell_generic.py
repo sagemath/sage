@@ -53,6 +53,7 @@ AUTHORS:
 # ****************************************************************************
 
 import math
+from sage.arith.misc import valuation
 
 import sage.rings.abc
 from sage.rings.finite_rings.integer_mod import mod
@@ -66,8 +67,6 @@ import sage.groups.generic as generic
 
 from sage.arith.functions import lcm
 from sage.rings.integer import Integer
-from sage.rings.big_oh import O
-from sage.rings.infinity import Infinity as oo
 from sage.rings.rational import Rational
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.rational_field import RationalField
@@ -121,7 +120,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         sage: -5*P
         (179051/80089 : -91814227/22665187 : 1)
     """
-    def __init__(self, K, ainvs):
+    def __init__(self, K, ainvs, category=None):
         r"""
         Construct an elliptic curve from Weierstrass `a`-coefficients.
 
@@ -167,7 +166,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         a1, a2, a3, a4, a6 = ainvs
         f = y**2*z + (a1*x + a3*z)*y*z \
             - (x**3 + a2*x**2*z + a4*x*z**2 + a6*z**3)
-        plane_curve.ProjectivePlaneCurve.__init__(self, PP, f)
+        plane_curve.ProjectivePlaneCurve.__init__(self, PP, f, category=category)
 
         self.__divpolys = ({}, {}, {})
 
@@ -619,7 +618,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
 
             sage: E = EllipticCurve([1,-1,0,94,9])
             sage: R = E([0,3]) + 5*E([8,31])
-            sage: factor(R.xy()[0].denominator())
+            sage: factor(R.x().denominator())
             2^2 * 11^2 * 1457253032371^2
 
         Since 11 is a factor of the denominator, this point corresponds to the
@@ -963,6 +962,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         else:
             ys = [y1, y2]
         ys.sort()  # ensure deterministic behavior
+        x = M(x)
         one = M.one()
         if all:
             return [EM.point([x, y, one], check=False) for y in ys]
@@ -1554,6 +1554,94 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         if isinstance(u, int):
             u = self.base_ring()(u)     # because otherwise 1/u would round!
         return self.change_weierstrass_model(1/u, 0, 0, 0)
+
+    def isomorphism(self, u, r=0, s=0, t=0, *, is_codomain=False):
+        r"""
+        Given four values `u,r,s,t` in the base ring of this curve, return
+        the :class:`WeierstrassIsomorphism` defined by `u,r,s,t` with this
+        curve as its codomain.
+        (The value `u` must be a unit; the values `r,s,t` default to zero.)
+
+        Optionally, if the keyword argument ``is_codomain`` is set to ``True``,
+        return the isomorphism defined by `u,r,s,t` with this curve as its
+        **co**\domain.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve([1, 2, 3, 4, 5])
+            sage: iso = E.isomorphism(6); iso
+            Elliptic-curve morphism:
+              From: Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Rational Field
+              To:   Elliptic Curve defined by y^2 + 1/6*x*y + 1/72*y = x^3 + 1/18*x^2 + 1/324*x + 5/46656 over Rational Field
+              Via:  (u,r,s,t) = (6, 0, 0, 0)
+            sage: iso.domain() == E
+            True
+            sage: iso.codomain() == E.scale_curve(1 / 6)
+            True
+
+            sage: iso = E.isomorphism(1, 7, 8, 9); iso
+            Elliptic-curve morphism:
+              From: Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Rational Field
+              To:   Elliptic Curve defined by y^2 + 17*x*y + 28*y = x^3 - 49*x^2 - 54*x + 303 over Rational Field
+              Via:  (u,r,s,t) = (1, 7, 8, 9)
+            sage: iso.domain() == E
+            True
+            sage: iso.codomain() == E.rst_transform(7, 8, 9)
+            True
+
+            sage: iso = E.isomorphism(6, 7, 8, 9); iso
+            Elliptic-curve morphism:
+              From: Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Rational Field
+              To:   Elliptic Curve defined by y^2 + 17/6*x*y + 7/54*y = x^3 - 49/36*x^2 - 1/24*x + 101/15552 over Rational Field
+              Via:  (u,r,s,t) = (6, 7, 8, 9)
+            sage: iso.domain() == E
+            True
+            sage: iso.codomain() == E.rst_transform(7, 8, 9).scale_curve(1 / 6)
+            True
+
+        The ``is_codomain`` argument reverses the role of domain and codomain::
+
+            sage: E = EllipticCurve([1, 2, 3, 4, 5])
+            sage: iso = E.isomorphism(6, is_codomain=True); iso
+            Elliptic-curve morphism:
+              From: Elliptic Curve defined by y^2 + 6*x*y + 648*y = x^3 + 72*x^2 + 5184*x + 233280 over Rational Field
+              To:   Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Rational Field
+              Via:  (u,r,s,t) = (6, 0, 0, 0)
+            sage: iso.domain() == E.scale_curve(6)
+            True
+            sage: iso.codomain() == E
+            True
+
+            sage: iso = E.isomorphism(1, 7, 8, 9, is_codomain=True); iso
+            Elliptic-curve morphism:
+              From: Elliptic Curve defined by y^2 - 15*x*y + 90*y = x^3 - 75*x^2 + 796*x - 2289 over Rational Field
+              To:   Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Rational Field
+              Via:  (u,r,s,t) = (1, 7, 8, 9)
+            sage: iso.domain().rst_transform(7, 8, 9) == E
+            True
+            sage: iso.codomain() == E
+            True
+
+            sage: iso = E.isomorphism(6, 7, 8, 9, is_codomain=True); iso
+            Elliptic-curve morphism:
+              From: Elliptic Curve defined by y^2 - 10*x*y + 700*y = x^3 + 35*x^2 + 9641*x + 169486 over Rational Field
+              To:   Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Rational Field
+              Via:  (u,r,s,t) = (6, 7, 8, 9)
+            sage: iso.domain().rst_transform(7, 8, 9) == E.scale_curve(6)
+            True
+            sage: iso.codomain() == E
+            True
+
+        .. SEEALSO::
+
+            - :class:`~sage.schemes.elliptic_curves.weierstrass_morphism.WeierstrassIsomorphism`
+            - :meth:`rst_transform`
+            - :meth:`scale_curve`
+        """
+        from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
+        if is_codomain:
+            return WeierstrassIsomorphism(None, (u,r,s,t), self)
+        return WeierstrassIsomorphism(self, (u,r,s,t))
 
 # ###########################################################
 #
@@ -2333,15 +2421,53 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: my_eval = lambda f,P: [fi(P[0],P[1]) for fi in f]
             sage: f = E.multiplication_by_m(2)
             sage: assert(E(eval(f,P)) == 2*P)
+
+        The following test shows that :trac:`6413` is fixed for elliptic curves over finite fields::
+            sage: p = 7
+            sage: K.<a> = GF(p^2)
+            sage: E = EllipticCurve(K, [a + 3, 5 - a])
+            sage: k = p^2 * 3
+            sage: f, g = E.multiplication_by_m(k)
+            sage: for _ in range(100):
+            ....:     P = E.random_point()
+            ....:     if P * k == 0:
+            ....:         continue
+            ....:     Qx = f.subs(x=P[0])
+            ....:     Qy = g.subs(x=P[0], y=P[1])
+            ....:     assert (P * k).xy() == (Qx, Qy)
+
+        However, it still fails for elliptic curves over positive-characteristic fields::
+
+            sage: F.<a> = FunctionField(GF(7))
+            sage: E = EllipticCurve(F, [a, 1 / a])
+            sage: E.multiplication_by_m(7)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: multiplication by integer not coprime to p is only implemented for curves over finite fields
+
+        ::
+
+            sage: p = 7
+            sage: K.<a> = GF(p^2)
+            sage: E = EllipticCurve(j=K.random_element())
+            sage: E.multiplication_by_m(p * 2)[0] == E.multiplication_by_m(p * 2, x_only=True)
+            True
         """
         # Coerce the input m to be an integer
         m = Integer(m)
+        p = self.base_ring().characteristic()
+
         if m == 0:
             raise ValueError("m must be a non-zero integer")
 
         if x_only:
             x = polygen(self.base_ring(), 'x')
         else:
+            from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
+            if p != 0 and m % p == 0 and not isinstance(self.base_ring(), FiniteField_generic):
+                # TODO: Implement the correct formula?
+                raise NotImplementedError("multiplication by integer not coprime to p "
+                                          "is only implemented for curves over finite fields")
             x, y = polygens(self.base_ring(), 'x,y')
 
         # Special case of multiplication by 1 is easy.
@@ -2352,7 +2478,7 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
                 return x
 
         # Grab curve invariants
-        a1, a2, a3, a4, a6 = self.a_invariants()
+        a1, _, a3, _, _ = self.a_invariants()
 
         if m == -1:
             if not x_only:
@@ -2360,21 +2486,32 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             else:
                 return x
 
-        # the x-coordinate does not depend on the sign of m.  The work
+        # If we only require the x coordinate, it is faster to use the recursive formula
+        # since substituting polynomials is quite slow.
+        v_p = 0 if p == 0 else valuation(m, p)
+        if not x_only:
+            m //= p**v_p
+
+        # the x-coordinate does not depend on the sign of m. The work
         # here is done by functions defined earlier:
 
         mx = (x.parent()(self._multiple_x_numerator(m.abs(), x))
               / x.parent()(self._multiple_x_denominator(m.abs(), x)))
 
         if x_only:
-            # Return it if the optional parameter x_only is set.
             return mx
 
-        #  Consideration of the invariant differential
-        #  w=dx/(2*y+a1*x+a3) shows that m*w = d(mx)/(2*my+a1*mx+a3)
-        #  and hence 2*my+a1*mx+a3 = (1/m)*(2*y+a1*x+a3)*d(mx)/dx
-
+        # Consideration of the invariant differential
+        # w=dx/(2*y+a1*x+a3) shows that m*w = d(mx)/(2*my+a1*mx+a3)
+        # and hence 2*my+a1*mx+a3 = (1/m)*(2*y+a1*x+a3)*d(mx)/dx
         my = ((2*y+a1*x+a3)*mx.derivative(x)/m - a1*mx-a3)/2
+
+        if v_p > 0:
+            isog = self.multiplication_by_p_isogeny()**v_p
+            fx, fy = isog.rational_maps()
+            # slow...
+            mx = mx.subs(x=fx)
+            my = my.subs(x=fx, y=fy)
 
         return mx, my
 
@@ -2532,6 +2669,23 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             raise ValueError('Frobenius isogeny only exists in positive characteristic')
         from sage.schemes.elliptic_curves.hom_frobenius import EllipticCurveHom_frobenius
         return EllipticCurveHom_frobenius(self, n)
+
+    def identity_morphism(self):
+        r"""
+        Return the identity endomorphism of this elliptic curve
+        as an :class:`EllipticCurveHom` object.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(j=42)
+            sage: E.identity_morphism()
+            Elliptic-curve endomorphism of Elliptic Curve defined by y^2 = x^3 + 5901*x + 1105454 over Rational Field
+              Via:  (u,r,s,t) = (1, 0, 0, 0)
+            sage: E.identity_morphism() == E.scalar_multiplication(1)
+            True
+        """
+        from sage.schemes.elliptic_curves.weierstrass_morphism import identity_morphism
+        return identity_morphism(self)
 
     def isomorphism_to(self, other):
         """

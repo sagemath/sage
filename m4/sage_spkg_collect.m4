@@ -49,7 +49,7 @@
 #        download additional source files, and the "dummy" source type.
 
 dnl ==========================================================================
-dnl define PKG_CHECK_VAR for old pkg-config < 0.28; see Trac #29001
+dnl define PKG_CHECK_VAR for old pkg-config < 0.28; see Issue #29001
 m4_ifndef([PKG_CHECK_VAR], [
 AC_DEFUN([PKG_CHECK_VAR],
 [AC_REQUIRE([PKG_PROG_PKG_CONFIG])dnl
@@ -278,7 +278,7 @@ AC_DEFUN([SAGE_SPKG_FINALIZE], [dnl
         m4_define([in_sdist], [no])
         uninstall_message=", use \"$srcdir/configure --disable-SPKG_NAME\" to uninstall"
     ])
-    dnl Trac #29629: Temporary solution for Sage 9.1: Do not advertise installing pip packages
+    dnl Issue #29629: Temporary solution for Sage 9.1: Do not advertise installing pip packages
     dnl using ./configure --enable-SPKG
     m4_case(SPKG_SOURCE,
       [pip], [dnl
@@ -302,7 +302,7 @@ AC_DEFUN([SAGE_SPKG_FINALIZE], [dnl
             AS_VAR_IF([sage_require], [yes], [ message="using system package"
             ],                               [ message="not required on your platform"
             ])
-            dnl Trac #31163: Only talk about the SPKG if there is an SPKG
+            dnl Issue #31163: Only talk about the SPKG if there is an SPKG
             m4_case(SPKG_SOURCE, [none], [], [dnl
                 message="$message; SPKG will not be installed"
             ])
@@ -324,7 +324,7 @@ AC_DEFUN([SAGE_SPKG_FINALIZE], [dnl
             ])
         ])
 
-    dnl Trac #29124: Do not talk about underscore club
+    dnl Issue #29124: Do not talk about underscore club
     m4_bmatch(SPKG_NAME, [^_], [], [dnl
         formatted_message=$(printf '%-32s%s' "SPKG_NAME:" "$message")
         AC_MSG_RESULT([$formatted_message])
@@ -401,10 +401,12 @@ AC_DEFUN([SAGE_SYSTEM_PACKAGE_NOTICE], [
         SYSTEM=$(build/bin/sage-guess-package-system 2>& AS_MESSAGE_FD)
         AC_MSG_RESULT([$SYSTEM])
         AS_IF([test $SYSTEM != unknown], [
+            print_sys () {
+                build/bin/sage-print-system-package-command $SYSTEM --verbose="    " --prompt="      $ " --sudo "$[@]"
+            }
             SYSTEM_PACKAGES=$(build/bin/sage-get-system-packages $SYSTEM $SAGE_NEED_SYSTEM_PACKAGES)
             AS_IF([test -n "$SYSTEM_PACKAGES"], [
-                PRINT_SYS="build/bin/sage-print-system-package-command $SYSTEM --verbose=\"    \" --prompt=\"      \$ \" --sudo"
-                COMMAND=$(eval "$PRINT_SYS" update && eval "$PRINT_SYS" install $SYSTEM_PACKAGES && SAGE_ROOT="$SAGE_ROOT" eval "$PRINT_SYS" setup-build-env )
+                COMMAND=$(print_sys update && print_sys install $SYSTEM_PACKAGES && SAGE_ROOT="$SAGE_ROOT" print_sys setup-build-env)
                 AC_MSG_NOTICE([
 
     hint: installing the following system packages, if not
@@ -417,8 +419,7 @@ $COMMAND
             ])
             SYSTEM_PACKAGES=$(build/bin/sage-get-system-packages $SYSTEM $SAGE_NEED_SYSTEM_PACKAGES_OPTIONAL)
             AS_IF([test -n "$SYSTEM_PACKAGES"], [
-                PRINT_SYS="build/bin/sage-print-system-package-command $SYSTEM --verbose=\"    \" --prompt=\"      \$ \" --sudo"
-                COMMAND=$(eval "$PRINT_SYS" update && eval "$PRINT_SYS" install $SYSTEM_PACKAGES && SAGE_ROOT="$SAGE_ROOT" eval "$PRINT_SYS" setup-build-env )
+                COMMAND=$(print_sys update && print_sys install $SYSTEM_PACKAGES && SAGE_ROOT="$SAGE_ROOT" print_sys setup-build-env)
                 AC_MSG_NOTICE([
 
     hint: installing the following system packages, if not
@@ -434,7 +435,7 @@ $COMMAND
 
     hint: After installation, re-run configure using:
 
-      \$ ./config.status --recheck && ./config.status
+      \$ make reconfigure
                 ])
             ], [
                 AC_MSG_NOTICE([No equivalent system packages for $SYSTEM are known to Sage])

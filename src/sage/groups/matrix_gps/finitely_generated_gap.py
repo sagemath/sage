@@ -336,7 +336,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             VarStr = 'y'
         else:
             VarStr = 'x'
-        VarNames = '(' + ','.join((VarStr+str(i) for i in range(1, n+1)))+')'
+        VarNames = '(' + ','.join(VarStr+str(i) for i in range(1, n+1))+')'
         # The function call and affectation below have side-effects. Do not remove!
         # (even if pyflakes say so)
         R = singular.ring(FieldStr, VarNames, 'dp')
@@ -344,7 +344,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
             # we have to define minpoly
             singular.eval('minpoly = '+str(F.polynomial()).replace('x',str(F.gen())))
         A = [singular.matrix(n,n,str((x.matrix()).list())) for x in gens]
-        Lgens = ','.join((x.name() for x in A))
+        Lgens = ','.join(x.name() for x in A)
         PR = PolynomialRing(F, n, [VarStr+str(i) for i in range(1,n+1)])
 
         if q == 0 or (q > 0 and self.cardinality() % q):
@@ -936,11 +936,11 @@ def _new_invariant_is_linearly_independent(F, invariants):
         sage: gens = [matrix(QQ, [[-1,1],[-1,0]]), matrix(QQ, [[0,1],[1,0]])]
         sage: G = MatrixGroup(gens)
         sage: s = Sequence(G.invariants_of_degree(14))                                  # needs sage.rings.number_field
-        sage: s.coefficient_matrix()[0].rank()                                          # needs sage.rings.number_field
+        sage: s.coefficients_monomials()[0].rank()                                      # needs sage.rings.number_field
         3
         sage: len(s)                                                                    # needs sage.rings.number_field
         3
     """
     if len(invariants) == 0:
         return True
-    return PolynomialSequence(invariants).coefficient_matrix()[0].rank() != PolynomialSequence(list(invariants)+[F]).coefficient_matrix()[0].rank()
+    return PolynomialSequence(invariants).coefficients_monomials()[0].rank() != PolynomialSequence(list(invariants)+[F]).coefficients_monomials()[0].rank()

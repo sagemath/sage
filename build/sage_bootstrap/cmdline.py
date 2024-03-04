@@ -83,6 +83,52 @@ EXAMPLE:
 """
 
 
+epilog_properties = \
+"""
+Print properties of given package.
+
+EXAMPLE:
+
+    $ sage --package properties maxima
+    maxima:
+            path:                        /.../build/pkgs/maxima
+            version_with_patchlevel:     5.46.0
+            type:                        standard
+            source:                      normal
+            trees:                       SAGE_LOCAL
+"""
+
+
+epilog_dependencies = \
+"""
+Print the list of packages that are dependencies of given package.
+By default, list a summary of the build, order-only, and runtime
+dependencies.
+
+EXAMPLE:
+
+    $ sage --package dependencies maxima openblas
+    maxima:
+            - ecl
+            - info
+    openblas:
+            - gfortran
+    $ sage --package dependencies maxima --runtime
+    - ecl
+
+    $ sage --package dependencies maxima openblas --runtime --order-only
+    maxima:
+            order_only:
+                    - info
+            runtime:
+                    - ecl
+    openblas:
+            order_only:
+            runtime:
+                    - gfortran
+"""
+
+
 epilog_name = \
 """
 Find the package name given a tarball filename
@@ -189,6 +235,27 @@ EXAMPLE:
     42 files were removed from the .../upstream directory
 """
 
+epilog_metrics = \
+"""
+Print metrics of given package.
+
+EXAMPLE:
+
+    $ sage --package metrics :standard:
+    has_file_distros_arch_txt=131
+    ...
+    has_file_distros_void_txt=184
+    has_file_patches=35
+    has_file_spkg_check=59
+    has_file_spkg_configure_m4=222
+    has_file_spkg_install=198
+    has_tarball_upstream_url=231
+    line_count_file_patches=22561
+    ...
+    packages=272
+    type_standard=272
+"""
+
 
 def make_parser():
     """
@@ -235,6 +302,44 @@ def make_parser():
     parser_list.add_argument(
         '--exclude-dependencies', action='store_true',
         help='exclude (ordinary) dependencies of the packages recursively')
+
+    parser_properties = subparsers.add_parser(
+        'properties', epilog=epilog_properties,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='Print properties of given packages')
+    parser_properties.add_argument(
+        'package_class', metavar='[package_name|:package_type:]',
+        type=str, nargs='+',
+        help=('package name or designator for all packages of a given type '
+              '(one of :all:, :standard:, :optional:, and :experimental:)'))
+    parser_properties.add_argument(
+        '--format', type=str, default='plain',
+        help='output format (one of plain and shell; default: plain)')
+
+    parser_dependencies = subparsers.add_parser(
+        'dependencies', epilog=epilog_dependencies,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='Print the list of packages that are dependencies of given packages')
+    parser_dependencies.add_argument(
+        'package_class', metavar='[package_name|:package_type:]',
+        type=str, nargs='+',
+        help=('package name or designator for all packages of a given type '
+              '(one of :all:, :standard:, :optional:, and :experimental:)'))
+    parser_dependencies.add_argument(
+        '--order-only', action='store_true',
+        help='list the order-only build dependencies')
+    parser_dependencies.add_argument(
+        '--optional', action='store_true',
+        help='list the optional build dependencies')
+    parser_dependencies.add_argument(
+        '--runtime', action='store_true',
+        help='list the runtime dependencies')
+    parser_dependencies.add_argument(
+        '--check', action='store_true',
+        help='list the check dependencies')
+    parser_dependencies.add_argument(
+        '--format', type=str, default='plain',
+        help='output format (one of plain, rst, and shell; default: plain)')
 
     parser_name = subparsers.add_parser(
         'name', epilog=epilog_name,
@@ -292,7 +397,7 @@ def make_parser():
     parser_download.add_argument(
         '--on-error', choices=['stop', 'warn'], default='stop',
         help='What to do if the tarball cannot be downloaded')
-    parser.add_argument(
+    parser_download.add_argument(
         '--no-check-certificate', action='store_true',
         help='Do not check SSL certificates for https connections')
 
@@ -346,6 +451,16 @@ def make_parser():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         help='Remove outdated source tarballs from the upstream/ directory')
 
+    parser_metrics = subparsers.add_parser(
+        'metrics', epilog=epilog_metrics,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='Print metrics of given packages')
+    parser_metrics.add_argument(
+        'package_class', metavar='[package_name|:package_type:]',
+        type=str, nargs='*', default=[':all:'],
+        help=('package name or designator for all packages of a given type '
+              '(one of :all:, :standard:, :optional:, and :experimental:; default: :all:)'))
+
     return parser
 
 
@@ -373,6 +488,21 @@ def run():
                      exclude=args.exclude,
                      include_dependencies=args.include_dependencies,
                      exclude_dependencies=args.exclude_dependencies)
+    elif args.subcommand == 'properties':
+        app.properties(*args.package_class, format=args.format)
+    elif args.subcommand == 'dependencies':
+        types = []
+        if args.order_only:
+            types.append('order_only')
+        if args.optional:
+            types.append('optional')
+        if args.runtime:
+            types.append('runtime')
+        if args.check:
+            types.append('check')
+        if not types:
+            types = None
+        app.dependencies(*args.package_class, types=types, format=args.format)
     elif args.subcommand == 'name':
         app.name(args.tarball_filename)
     elif args.subcommand == 'tarball':
@@ -403,6 +533,8 @@ def run():
         app.fix_checksum_cls(*args.package_class)
     elif args.subcommand == 'clean':
         app.clean()
+    elif args.subcommand == 'metrics':
+        app.metrics_cls(*args.package_class)
     else:
         raise RuntimeError('unknown subcommand: {0}'.format(args))
 

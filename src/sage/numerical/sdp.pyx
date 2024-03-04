@@ -916,8 +916,7 @@ cdef class SemidefiniteProgram(SageObject):
         else:
             raise ValueError('argument must be a linear function or constraint, got '+str(linear_function))
 
-
-    def solve(self,  objective_only=False):
+    def solve(self, objective_only=False):
         r"""
         Solve the :class:`SemidefiniteProgram`.
 

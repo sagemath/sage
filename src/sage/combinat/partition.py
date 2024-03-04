@@ -284,7 +284,7 @@ from itertools import accumulate
 
 from sage.arith.misc import binomial, factorial, gcd, multinomial
 from sage.libs.pari.all import pari
-from sage.libs.flint.arith import number_of_partitions as flint_number_of_partitions
+from sage.libs.flint.arith_sage import number_of_partitions as flint_number_of_partitions
 from sage.structure.global_options import GlobalOptions
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -3017,7 +3017,7 @@ class Partition(CombinatorialElement):
 
         OUTPUT:
 
-        An integer or a ``ValueError``
+        An integer or a :class:`ValueError`
 
         EXAMPLES::
 
@@ -3111,7 +3111,7 @@ class Partition(CombinatorialElement):
 
         OUTPUT:
 
-        An integer or a ``ValueError``
+        An integer or a :class:`ValueError`
 
         EXAMPLES::
 
@@ -6201,8 +6201,9 @@ class Partitions(UniqueRepresentation, Parent):
 
     def subset(self, *args, **kwargs):
         r"""
-        Return ``self`` if no arguments are given, otherwise raises a
-        ``ValueError``.
+        Return ``self`` if no arguments are given.
+
+        Otherwise, it raises a :class:`ValueError`.
 
         EXAMPLES::
 
@@ -9017,7 +9018,7 @@ def number_of_partitions(n, algorithm='default'):
         sage: len(v)
         7
 
-    The input must be a nonnegative integer or a ``ValueError`` is raised.
+    The input must be a nonnegative integer or a :class:`ValueError` is raised.
 
     ::
 

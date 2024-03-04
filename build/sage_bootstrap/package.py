@@ -48,6 +48,7 @@ class Package(object):
         self._init_type()
         self._init_install_requires()
         self._init_dependencies()
+        self._init_trees()
 
     def __repr__(self):
         return 'Package {0}'.format(self.name)
@@ -294,11 +295,60 @@ class Package(object):
         return self.__patchlevel
 
     @property
+    def version_with_patchlevel(self):
+        """
+        Return the version, including the Sage-specific patchlevel
+
+        OUTPUT:
+
+        String.
+        """
+        v = self.version
+        if v is None:
+            return v
+        p = self.patchlevel
+        if p < 0:
+            return v
+        return "{0}.p{1}".format(v, p)
+
+    @property
     def type(self):
         """
         Return the package type
         """
         return self.__type
+
+    @property
+    def source(self):
+        """
+        Return the package source type
+        """
+        if self.has_file('requirements.txt'):
+            return 'pip'
+        if self.tarball_filename:
+            if self.tarball_filename.endswith('.whl'):
+                return 'wheel'
+            return 'normal'
+        if self.has_file('spkg-install') or self.has_file('spkg-install.in'):
+            return 'script'
+        return 'none'
+
+    @property
+    def trees(self):
+        """
+        Return the installation trees for the package
+
+        OUTPUT:
+
+        A white-space-separated string of environment variable names
+        """
+        if self.__trees is not None:
+            return self.__trees
+        if self.__install_requires is not None:
+            return 'SAGE_VENV'
+        if self.has_file('requirements.txt'):
+            return 'SAGE_VENV'
+        return 'SAGE_LOCAL'
 
     @property
     def distribution_name(self):
@@ -329,6 +379,23 @@ class Package(object):
         Return a list of strings, the package names of the order-only dependencies
         """
         return self.__dependencies.partition('|')[2].strip().split() + self.__dependencies_order_only.strip().split()
+
+    @property
+    def dependencies_optional(self):
+        """
+        Return a list of strings, the package names of the optional build dependencies
+        """
+        return self.__dependencies_optional.strip().split()
+
+    @property
+    def dependencies_runtime(self):
+        """
+        Return a list of strings, the package names of the runtime dependencies
+        """
+        # after a '|', we have order-only build dependencies
+        return self.__dependencies.partition('|')[0].strip().split()
+
+    dependencies = dependencies_runtime
 
     @property
     def dependencies_check(self):
@@ -369,6 +436,28 @@ class Package(object):
         Return whether the file exists in the package directory
         """
         return os.path.exists(os.path.join(self.path, filename))
+
+    def line_count_file(self, filename):
+        """
+        Return the number of lines of the file
+
+        Directories are traversed recursively.
+
+        OUTPUT:
+
+        integer; 0 if the file cannot be read, 1 if it is a symlink
+        """
+        path = os.path.join(self.path, filename)
+        if os.path.islink(path):
+            return 1
+        if os.path.isdir(path):
+            return sum(self.line_count_file(os.path.join(filename, entry))
+                       for entry in os.listdir(path))
+        try:
+            with open(path, "rb") as f:
+                return len(list(f))
+        except OSError:
+            return 0
 
     def _init_checksum(self):
         """
@@ -431,16 +520,28 @@ class Package(object):
     def _init_dependencies(self):
         try:
             with open(os.path.join(self.path, 'dependencies')) as f:
-                self.__dependencies = f.readline().strip()
+                self.__dependencies = f.readline().partition('#')[0].strip()
         except IOError:
             self.__dependencies = ''
         try:
             with open(os.path.join(self.path, 'dependencies_check')) as f:
-                self.__dependencies_check = f.readline().strip()
+                self.__dependencies_check = f.readline().partition('#')[0].strip()
         except IOError:
             self.__dependencies_check = ''
         try:
+            with open(os.path.join(self.path, 'dependencies_optional')) as f:
+                self.__dependencies_optional = f.readline().partition('#')[0].strip()
+        except IOError:
+            self.__dependencies_optional = ''
+        try:
             with open(os.path.join(self.path, 'dependencies_order_only')) as f:
-                self.__dependencies_order_only = f.readline()
+                self.__dependencies_order_only = f.readline().partition('#')[0].strip()
         except IOError:
             self.__dependencies_order_only = ''
+
+    def _init_trees(self):
+        try:
+            with open(os.path.join(self.path, 'trees.txt')) as f:
+                self.__trees = f.readline().partition('#')[0].strip()
+        except IOError:
+            self.__trees = None

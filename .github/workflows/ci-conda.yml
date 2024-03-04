@@ -18,15 +18,30 @@ concurrency:
 jobs:
   test:
     name: Conda
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}-latest
 
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        python: ['3.9', '3.10', '3.11']
+        # On pushes to tags or branches, test the whole matrix.
+        os: >-
+          ${{ github.event_name == 'pull_request'
+                && fromJson('["ubuntu"]')
+                || fromJson('["ubuntu", "macos"]') }}
+        python: >-
+          ${{ github.event_name == 'pull_request'
+                && fromJson('["3.9"]')
+                || fromJson('["3.9", "3.10", "3.11"]') }}
         # Optional environment is disabled for now as its not yet working
         # environment: [environment, environment-optional]
         conda-env: [environment]
+        # On pull requests, only test two jobs:
+        # Ubuntu with Python 3.9, macOS with Python 3.10.
+        # Build & Test currently uses Python 3.11 (on ubuntu-focal).
+        # Together, they cover the supported minor Python versions.
+        include: >-
+          ${{ github.event_name == 'pull_request'
+                && fromJson('[{"os": "macos", "python": "3.10", "conda-env": "environment"}]')
+                || fromJson('[]') }}
 
     steps:
       - uses: actions/checkout@v4
@@ -37,9 +52,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
-
-      - name: Create conda environment files
-        run: ./bootstrap-conda
 
       - name: Cache conda packages
         uses: actions/cache@v3
@@ -57,7 +69,7 @@ jobs:
           channels: conda-forge
           channel-priority: true
           activate-environment: sage
-          environment-file: src/${{ matrix.conda-env }}-${{ matrix.python }}.yml
+          environment-file: src/${{ matrix.conda-env }}-${{ matrix.python }}-${{ startsWith(matrix.os, 'macos') && 'macos' || 'linux' }}.yml
 
       - name: Print Conda environment
         shell: bash -l {0}

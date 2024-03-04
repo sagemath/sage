@@ -3996,7 +3996,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             global n_factor_to_list
             if n_factor_to_list is None:
                 try:
-                    from sage.libs.flint.ulong_extras import n_factor_to_list
+                    from sage.libs.flint.ulong_extras_sage import n_factor_to_list
                 except ImportError:
                     pass
             if n_factor_to_list is not None:
@@ -4042,7 +4042,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             message = "the factorization returned by qsieve may be incomplete (the factors may not be prime) or even wrong; see qsieve? for details"
             from warnings import warn
             warn(message, RuntimeWarning, stacklevel=5)
-            from sage.libs.flint.qsieve import qsieve
+            from sage.libs.flint.qsieve_sage import qsieve
             F = qsieve(n)
             F.sort()
             return IntegerFactorization(F, unit=unit, unsafe=True,
@@ -6414,7 +6414,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
            :class:`ValueError` if the square is not in the base ring. Ignored if ``prec``
            is not ``None``.
 
-        -  ``all`` - bool (default: ``False``); if ``True``, return all
+        -  ``all`` -- bool (default: ``False``); if ``True``, return all
            square roots of ``self`` (a list of length 0, 1, or 2).
 
         EXAMPLES::
@@ -7163,6 +7163,40 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         else:
             raise ValueError("algorithm must be one of: 'pari' or 'gmp' (alias: 'mpir')")
 
+    def to_bytes(self, length=1, byteorder="big", is_signed=False):
+        r"""
+        Return an array of bytes representing an integer.
+
+        Internally relies on the python ``int.to_bytes()`` method.
+
+        INPUT:
+
+        - ``length`` -- positive integer (default: ``1``); integer is represented in
+          ``length`` bytes
+        - ``byteorder`` -- str (default: ``"big"``); determines the byte order of
+          the output; can only be ``"big"`` or ``"little"``
+        - ``is_signed`` -- boolean (default: ``False``); determines whether to use two's
+          compliment to represent the integer
+
+        .. TODO::
+
+            It should be possible to convert straight from the gmp type in cython.
+            This could be significantly faster, but I am unsure of the fastest and cleanest
+            way to do this.
+
+        EXAMPLES::
+
+            sage: (1024).to_bytes(2, byteorder='big')
+            b'\x04\x00'
+            sage: (1024).to_bytes(10, byteorder='big')
+            b'\x00\x00\x00\x00\x00\x00\x00\x00\x04\x00'
+            sage: (-1024).to_bytes(10, byteorder='big', is_signed=True)
+            b'\xff\xff\xff\xff\xff\xff\xff\xff\xfc\x00'
+            sage: x = 1000
+            sage: x.to_bytes((x.bit_length() + 7) // 8, byteorder='little')
+            b'\xe8\x03'
+        """
+        return int(self).to_bytes(length=length, byteorder=byteorder, signed=is_signed)
 
 cdef int mpz_set_str_python(mpz_ptr z, char* s, int base) except -1:
     """

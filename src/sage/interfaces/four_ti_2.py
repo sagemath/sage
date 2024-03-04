@@ -104,7 +104,7 @@ class FourTi2():
         n = 0
         while True:
             project = "project_%s" % n
-            touch_file = os.path.join(self.directory(),project) + '.touch'
+            touch_file = os.path.join(self.directory(), project) + '.touch'
             if not os.path.exists(touch_file):
                 break
             n += 1
@@ -208,7 +208,7 @@ class FourTi2():
             f = open(os.path.join(self.directory(), filename))
             lines = f.readlines()
             f.close()
-        except IOError:
+        except OSError:
             return matrix(ZZ, 0, 0)
 
         nrows, ncols = map(ZZ, lines.pop(0).strip().split())

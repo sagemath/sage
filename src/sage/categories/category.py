@@ -119,7 +119,7 @@ from sage.categories.category_cy_helper import category_sort_key, _sort_uniq, _f
 _join_cache = WeakValueDictionary()
 
 
-HALL_OF_FAME = ['Coxeter', 'Hopf', 'Weyl', 'Lie', 'Hecke']
+HALL_OF_FAME = ['Coxeter', 'Hopf', 'Weyl', 'Lie', 'Hecke', 'Dedekind']
 
 
 class Category(UniqueRepresentation, SageObject):
@@ -2592,12 +2592,14 @@ def category_sample():
         sage: from sage.categories.category import category_sample
         sage: sorted(category_sample(), key=str)                                        # needs sage.groups
         [Category of Coxeter groups,
+         Category of Dedekind domains,
          Category of G-sets for Symmetric group of order 8! as a permutation group,
          Category of Hecke modules over Rational Field,
          Category of Hopf algebras over Rational Field,
          Category of Hopf algebras with basis over Rational Field,
          Category of Lie algebras over Rational Field,
          Category of Weyl groups,
+         Category of abelian varieties over Rational Field,
          Category of additive magmas, ...,
          Category of fields, ...,
          Category of graded Hopf algebras with basis over Rational Field, ...,
@@ -2835,7 +2837,8 @@ class CategoryWithParameters(Category):
         The parent class of an algebra depends only on the category of the base ring::
 
             sage: Algebras(ZZ)._make_named_class_key("parent_class")
-            Join of Category of euclidean domains
+            Join of Category of Dedekind domains
+                 and Category of euclidean domains
                  and Category of infinite enumerated sets
                  and Category of metric spaces
 
@@ -2846,7 +2849,8 @@ class CategoryWithParameters(Category):
             (Join of Category of number fields
                  and Category of quotient fields
                  and Category of metric spaces,
-             Join of Category of euclidean domains
+             Join of Category of Dedekind domains
+                 and Category of euclidean domains
                  and Category of infinite enumerated sets
                  and Category of metric spaces)
 
@@ -2972,7 +2976,8 @@ class JoinCategory(CategoryWithParameters):
         EXAMPLES::
 
             sage: Modules(ZZ)._make_named_class_key('element_class')
-            Join of Category of euclidean domains
+            Join of Category of Dedekind domains
+                 and Category of euclidean domains
                  and Category of infinite enumerated sets
                  and Category of metric spaces
             sage: Modules(QQ)._make_named_class_key('parent_class')

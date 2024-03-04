@@ -1,3 +1,4 @@
+# sage.doctest: needs sphinx
 """
 Documentation builders
 
@@ -170,12 +171,10 @@ def builder_helper(type):
             if build_options.ABORT_ON_ERROR:
                 raise Exception("Non-exception during docbuild: %s" % (e,), e)
 
-        if "/latex" in output_dir:
-            logger.warning("LaTeX file written to {}".format(output_dir))
-        else:
-            logger.warning(
-                "Build finished. The built documents can be found in {}".
-                format(output_dir))
+        if type == 'latex':
+            logger.warning(f"LaTeX files can be found in {output_dir}.")
+        elif type != 'inventory':
+            logger.warning(f"Build finished. The built documents can be found in {output_dir}.")
 
     f.is_output_format = True
     return f
@@ -297,7 +296,7 @@ class DocBuilder():
 
         if subprocess.call(make_target % (tex_dir, command, pdf_dir), close_fds=False, shell=True):
             raise RuntimeError(error_message % (command, tex_dir))
-        logger.warning("Build finished.  The built documents can be found in %s", pdf_dir)
+        logger.warning(f"Build finished. The built documents can be found in {pdf_dir}.")
 
     def clean(self, *args):
         shutil.rmtree(self._doctrees_dir())
@@ -884,7 +883,7 @@ class ReferenceSubBuilder(DocBuilder):
                 env.config.values = env.app.config.values
                 logger.debug("Opened Sphinx environment: %s", env_pickle)
                 return env
-        except (IOError, EOFError) as err:
+        except (OSError, EOFError) as err:
             logger.debug(
                 f"Failed to open Sphinx environment '{env_pickle}'", exc_info=True)
 
