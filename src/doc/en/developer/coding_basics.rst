@@ -781,9 +781,8 @@ In Sage's documentation LaTeX code is allowed and is marked with **backticks**:
 
     ```x^2 + y^2 = 1``` yields `x^2 + y^2 = 1`.
 
-**Backslashes:** For LaTeX commands containing backslashes, it is equivalent to
-use either double backslashes or begin the docstring with a ``r"""`` instead
-of ``"""``, but we strongly suggest to use the latter::
+**Backslashes:** For LaTeX commands containing backslashes, either use double
+backslashes or begin the docstring with a ``r"""`` instead of ``"""``::
 
     def cos(x):
         """
@@ -794,6 +793,8 @@ of ``"""``, but we strongly suggest to use the latter::
         r"""
         Return `\sin(x)`.
         """
+
+We strongly suggest to use the latter.
 
 **MATH block:** This is similar to the LaTeX syntax ``\[<math expression>\]``
 (or ``$$<math expression>$$``). For instance:
