@@ -563,7 +563,21 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: f.parent() is L
             True
 
-        TESTS::
+        TESTS:
+
+        Ensure everything works for the multivariate case with only
+        one generator::
+
+            sage: L = LaurentPolynomialRing(ZZ, 1, 'x')
+            sage: f = L.random_element(10, 20)
+            sage: f.degree() <= 20
+            True
+            sage: f.valuation() >= 10
+            True
+            sage: f.parent() is L
+            True
+
+        Test for constructions which use multivariate polynomial rings::
 
             sage: rings = [RR, QQ, ZZ, GF(13), GF(7^3)]
             sage: for ring in rings:
