@@ -159,43 +159,66 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
         Traceback (most recent call last):
         ...
         TypeError: unable to convert x to an integer
+
         sage: DrinfeldModularForms(GF(2)['T'])
         Traceback (most recent call last):
         ...
         TypeError: base ring must be a fraction field of a polynomial ring
+
         sage: k.<x, y> = GF(5)[]
         sage: K = k.quotient(x+y).fraction_field()
         sage: DrinfeldModularForms(K)
         Traceback (most recent call last):
         ...
         TypeError: the base of the base ring must be a polynomial ring
+
         sage: DrinfeldModularForms(Frac(ZZ['T']))
         Traceback (most recent call last):
         ...
         ValueError: base ring characteristic must be finite
+
         sage: R = GF(2)['u']
         sage: K = Frac(R['T'])
         sage: DrinfeldModularForms(K)
         Traceback (most recent call last):
         ...
         ValueError: the ring of constants must be a field
+
         sage: K = Frac(Frac(R)['T'])
         sage: DrinfeldModularForms(K)
         Traceback (most recent call last):
         ...
         ValueError: the ring of constants must be finite
+
         sage: DrinfeldModularForms(Frac(GF(2)['T']), group=2)
         Traceback (most recent call last):
         ...
         NotImplementedError: Drinfeld modular forms are currently only implemented for the full group
+
         sage: DrinfeldModularForms(Frac(GF(2)['T']), names=1)
         Traceback (most recent call last):
         ...
         TypeError: names must be None or a comma seperated string
+
         sage: DrinfeldModularForms(Frac(GF(2)['T']), rank=3, names='f1, f2, f3, f4')
         Traceback (most recent call last):
         ...
         ValueError: the number of generators must be equal to the rank (=3)
+
+        sage: DrinfeldModularForms(Frac(GF(2)['T']), rank=3, names=['f1', 'f2', 'f3', 'f4'])
+        Traceback (most recent call last):
+        ...
+        ValueError: the number of generators must be equal to the rank (=3)
+
+        sage: DrinfeldModularForms(Frac(GF(2)['T']), rank=3, names=('f1', 'f2', 'f3', 'f4'))
+        Traceback (most recent call last):
+        ...
+        ValueError: the number of generators must be equal to the rank (=3)
+
+        sage: DrinfeldModularForms(Frac(GF(2)['T']))
+        Traceback (most recent call last):
+        ...
+        TypeError: rank or names must be specified
     """
 
     Element = DrinfeldModularFormsElement
