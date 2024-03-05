@@ -58,73 +58,108 @@ macOS
 Windows
 =======
 
-- **Do you want to do SageMath development?**
+- **Recommended: Use Visual Studio Code with SageMath dev containers**
+
+  - Make sure that hardware-assisted virtualization is enabled in
+    the EFI or BIOS of your system. If in doubt, refer to your
+    system's documentation for instructions on how to do this.
+
+  - Install `VS Code <https://code.visualstudio.com/>`_
+
+  - In VS Code, if the `Visual Studio Code Remote - Containers
+    <https://code.visualstudio.com/docs/remote/containers>`_ extension
+    is not already installed, click the "Extension" icon on the left
+    (or press :kbd:`Ctrl` + :kbd:`Shift` + :kbd:`X`) to open a list of
+    extensions. Search for "Remote - Containers" and install it.
+
+    The extension will walk you through the installation of Docker
+    Desktop and activating Windows Subsystem for Linux (WSL 2).
+
+  **Do you want to do SageMath development?**
 
   - **Yes, development:**
 
-    Enable `Windows Subsystem for Linux (WSL)
-    <https://learn.microsoft.com/en-us/windows/wsl/>`_ and install
-    Ubuntu as follows.
+    - In VS Code, `clone
+      <https://code.visualstudio.com/docs/editor/versioncontrol#_cloning-a-repository>`_
+      the `SageMath git repository
+      <https://github.com/sagemath/sage>`_. For example, use the VS Code
+      Command Palette (:kbd:`Ctrl` + :kbd:`Shift` + :kbd:`P`), enter the
+      command "Git: Clone", hit :kbd:`Enter`, paste the URL https://github.com/sagemath/sage
+      and hit :kbd:`Enter` again.
 
-    - Make sure that hardware-assisted virtualization is enabled in
-      the EFI or BIOS of your system. If in doubt, refer to your
-      system's documentation for instructions on how to do this.
+    - Use the command palette (:kbd:`Ctrl` + :kbd:`Shift` + :kbd:`P`),
+      enter the command "Dev Containers: Reopen Folder in Container" , and hit :kbd:`Enter`.
 
-    - `Run the WSL install command as administrator.
-      <https://learn.microsoft.com/en-us/windows/wsl/setup/environment#get-started>`_
-      This will install Ubuntu Linux.
+      By clicking on "show log", you can see what it does; it will take a while.
 
-      Note that the basic instructions in the linked article apply to
-      up-to-date installations of Windows 10 and 11, but there are
-      also links to the procedures for older builds of Windows 10.
-
-    - If you had installed WSL previously or installed it using
-      different instructions, `verify that you are running WSL 2
-      <https://learn.microsoft.com/en-us/windows/wsl/install#check-which-version-of-wsl-you-are-running>`_.
-
-    - `Set up your Linux username and password.
-      <https://learn.microsoft.com/en-us/windows/wsl/setup/environment#set-up-your-linux-username-and-password>`_
-      Do not include any spaces in your username.
-
-    - If your computer has less than 10GB of RAM, `change the WSL settings
-      <https://learn.microsoft.com/en-us/windows/wsl/wsl-config#main-wsl-settings>`_
-      to make at least 5GB of RAM available to WSL.
-
-    Start Ubuntu from the Start menu. Then follow the instructions for
-    development on Linux below.
+    - To use Sage in a terminal, `open a new terminal in VS Code
+      <https://code.visualstudio.com/docs/terminal/basics>`_ and type ``./sage``.
 
   - **No development:**
 
-    Enable `Windows Subsystem for Linux (WSL)
-    <https://learn.microsoft.com/en-us/windows/wsl/>`_ and install
-    Ubuntu as follows.
+    - Open the folder of a project where you would like to use Sage in VS Code.
 
-    - Make sure that hardware-assisted virtualization is enabled in
-      the EFI or BIOS of your system. If in doubt, refer to your
-      system's documentation for instructions on how to do this.
+    - Create a subfolder named ``.devcontainer``. Download these files from the
+      SageMath GitHub repository and place them in this subfolder:
+      - https://github.com/sagemath/sage/blob/develop/.devcontainer/devcontainer.json
+      - https://github.com/sagemath/sage/blob/develop/.devcontainer/onCreate-conda.sh
 
-    - `Run the WSL install command as administrator.
-      <https://learn.microsoft.com/en-us/windows/wsl/setup/environment#get-started>`_
-      This will install Ubuntu Linux.
+    - Use the command palette (:kbd:`Ctrl` + :kbd:`Shift` + :kbd:`P`),
+      enter the command "Dev Containers: Reopen Folder in Container" , and hit :kbd:`Enter`.
 
-      Note that the basic instructions in the linked article apply to
-      up-to-date installations of Windows 10 and 11, but there are
-      also links to the procedures for older builds of Windows 10.
+      By clicking on "show log", you can see what it does; it will take a while.
 
-    - If you had installed WSL previously or installed it using
-      different instructions, `verify that you are running WSL 2
-      <https://learn.microsoft.com/en-us/windows/wsl/install#check-which-version-of-wsl-you-are-running>`_.
+    - To use Sage in a terminal, `open a new terminal in VS Code
+      <https://code.visualstudio.com/docs/terminal/basics>`_ and type ``sage``.
 
-    - `Set up your Linux username and password.
-      <https://learn.microsoft.com/en-us/windows/wsl/setup/environment#set-up-your-linux-username-and-password>`_
-      Do not include any spaces in your username.
+  To use Sage in a Jupyter notebook, click the "Extension" icon on the left (or press
+  :kbd:`Ctrl` + :kbd:`Shift` + :kbd:`X`) to open a list of
+  extensions. Install the "Jupyter" extension. In the command
+  palette, enter "Create: New Jupyter Notebook", and hit
+  :kbd:`Enter`. Click "Select Kernel" on the right (or press :kbd:`Ctrl` +
+  :kbd:`Alt` + :kbd:`Enter`), select SageMath, and hit :kbd:`Enter`.
 
-    - If your computer has less than 8GB of RAM, `change the WSL settings
-      <https://learn.microsoft.com/en-us/windows/wsl/wsl-config#main-wsl-settings>`_
-      to make at least 4GB of RAM available to WSL.
+- **Alternative: Manual installation using Windows Subsystem for Linux**
 
-    Start Ubuntu from the Start menu, and type the following commands
-    to install Sage from conda-forge.
+  Enable `Windows Subsystem for Linux (WSL)
+  <https://learn.microsoft.com/en-us/windows/wsl/>`_ and install
+  Ubuntu as follows.
+
+  - Make sure that hardware-assisted virtualization is enabled in
+    the EFI or BIOS of your system. If in doubt, refer to your
+    system's documentation for instructions on how to do this.
+
+  - `Run the WSL install command as administrator.
+    <https://learn.microsoft.com/en-us/windows/wsl/setup/environment#get-started>`_
+    This will install Ubuntu Linux.
+
+    Note that the basic instructions in the linked article apply to
+    up-to-date installations of Windows 10 and 11, but there are
+    also links to the procedures for older builds of Windows 10.
+
+  - If you had installed WSL previously or installed it using
+    different instructions, `verify that you are running WSL 2
+    <https://learn.microsoft.com/en-us/windows/wsl/install#check-which-version-of-wsl-you-are-running>`_.
+
+  - `Set up your Linux username and password.
+    <https://learn.microsoft.com/en-us/windows/wsl/setup/environment#set-up-your-linux-username-and-password>`_
+    Do not include any spaces in your username.
+
+  - If your computer has less than 10GB of RAM, `change the WSL settings
+    <https://learn.microsoft.com/en-us/windows/wsl/wsl-config#main-wsl-settings>`_
+    to make at least 5GB of RAM available to WSL.
+
+  Start Ubuntu from the Start menu.
+
+  **Do you want to do SageMath development?**
+
+  - **Yes, development:**
+
+    Then follow the instructions for development on Linux below.
+
+  - **No development:**
+
+    Type the following commands to install Sage from conda-forge.
 
     .. code-block:: shell
 
@@ -201,7 +236,8 @@ In the cloud
   <https://hub.docker.com/r/sagemathinc/cocalc>`_ can be used on any system with Docker to run CoCalc locally.
 
 
-More information:
+More information
+================
 
 .. toctree::
    :maxdepth: 2
