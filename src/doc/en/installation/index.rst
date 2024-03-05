@@ -119,11 +119,10 @@ as `VSCodium <https://vscodium.com/>`_.
     - Open the folder of a project where you would like to use Sage in VS Code, or
       just create a new folder for your work with Sage.
 
-    - Create a subfolder named ``.devcontainer``. Download these files from the
-      SageMath GitHub repository and place them in this subfolder:
+    - Create a subfolder named ``.devcontainer``. Download this file from the
+      SageMath GitHub repository and place it in this subfolder:
 
-      - https://github.com/sagemath/sage/blob/develop/.devcontainer/devcontainer.json
-      - https://github.com/sagemath/sage/blob/develop/.devcontainer/onCreate-conda.sh
+      - https://github.com/sagemath/sage/blob/develop/.devcontainer/downstream-conda-forge-latest/devcontainer.json
 
     - Use the command palette (:kbd:`Ctrl` + :kbd:`Shift` + :kbd:`P`),
       enter the command "Dev Containers: Reopen Folder in Container" , and hit :kbd:`Enter`.
