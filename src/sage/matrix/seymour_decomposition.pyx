@@ -122,14 +122,16 @@ cdef class DecompositionNode(SageObject):
         """
         cdef CMR_ELEMENT *parent_rows = CMRmatroiddecRowsParent(self._dec)
         cdef CMR_ELEMENT *parent_columns = CMRmatroiddecColumnsParent(self._dec)
-        if parent_rows == NULL or parent_rows[0] == SIZE_MAX:
+        if parent_rows == NULL or parent_rows[0] == 0:
             parent_rows_tuple = None
         else:
-            parent_rows_tuple = tuple(parent_rows[i] for i in range(CMRmatroiddecNumRows(self._dec)))
-        if parent_columns == NULL or parent_columns[0] == SIZE_MAX:
+            parent_rows_tuple = tuple(CMRelementToRowIndex(parent_rows[i])
+                                      for i in range(self.nrows()))
+        if parent_columns == NULL or parent_columns[0] == 0:
             parent_columns_tuple = None
         else:
-            parent_columns_tuple = tuple(parent_columns[i] for i in range(CMRmatroiddecNumColumns(self._dec)))
+            parent_columns_tuple = tuple(CMRelementToColumnIndex(parent_columns[i])
+                                         for i in range(self.ncols()))
 
         return parent_rows_tuple, parent_columns_tuple
 
@@ -182,6 +184,12 @@ cdef class DecompositionNode(SageObject):
         """
         return <bint> CMRmatroiddecIsTernary(self._dec)
 
+    def nchildren(self):
+        r"""
+        Returns the number of children of the node.
+        """
+        return CMRmatroiddecNumChildren(self._dec)
+
     @cached_method
     def _children(self):
         r"""
@@ -221,10 +229,8 @@ cdef class DecompositionNode(SageObject):
             sage: certificate._children()
             ()
         """
-        return tuple(sorted((create_DecompositionNode(CMRmatroiddecChild(self._dec, index),
-                                                self._root or self)
-                             for index in range(CMRmatroiddecNumChildren(self._dec))),
-                            key=lambda node: node.parent_rows_and_columns()))
+        return tuple(create_DecompositionNode(CMRmatroiddecChild(self._dec, index), self)
+                     for index in range(self.nchildren()))
 
     def _repr_(self):
         nrows, ncols = self.dimensions()
