@@ -39,7 +39,6 @@ Methods
 
 from copy import copy
 from sage.graphs.digraph import DiGraph
-from sage.graphs.graph import Graph
 
 
 def acyclic_orientations(G):
@@ -250,6 +249,7 @@ def acyclic_orientations(G):
     vertex_labels = reorder_vertices(G)
 
     # Create a new graph with updated vertex labels using SageMath
+    from sage.graphs.graph import Graph
     new_G = Graph()
     for u, v in G.edges(labels=False):  # Assuming the graph edges are unlabelled
         new_G.add_edge(vertex_labels[u], vertex_labels[v])
