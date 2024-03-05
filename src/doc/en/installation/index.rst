@@ -63,14 +63,14 @@ Windows
   - **Yes, development:**
 
     Enable `Windows Subsystem for Linux (WSL)
-    <https://learn.microsoft.com/en-us/windows/wsl/>` and install
+    <https://learn.microsoft.com/en-us/windows/wsl/>`_ and install
     Ubuntu as follows.
 
     - Make sure that hardware-assisted virtualization is enabled in
       the EFI or BIOS of your system. If in doubt, refer to your
       system's documentation for instructions on how to do this.
 
-    - `Run the command ``wsl --install`` as administrator.
+    - `Run the WSL install command as administrator.
       <https://learn.microsoft.com/en-us/windows/wsl/setup/environment#get-started>`_
       This will install Ubuntu Linux.
 
@@ -83,7 +83,7 @@ Windows
       <https://learn.microsoft.com/en-us/windows/wsl/install#check-which-version-of-wsl-you-are-running>`_.
 
     - `Set up your Linux username and password.
-      <https://learn.microsoft.com/en-us/windows/wsl/setup/environment#set-up-your-linux-username-and-password>`_.
+      <https://learn.microsoft.com/en-us/windows/wsl/setup/environment#set-up-your-linux-username-and-password>`_
       Do not include any spaces in your username.
 
     - If your computer has less than 10GB of RAM, `change the WSL settings
@@ -96,14 +96,14 @@ Windows
   - **No development:**
 
     Enable `Windows Subsystem for Linux (WSL)
-    <https://learn.microsoft.com/en-us/windows/wsl/>` and install
+    <https://learn.microsoft.com/en-us/windows/wsl/>`_ and install
     Ubuntu as follows.
 
     - Make sure that hardware-assisted virtualization is enabled in
       the EFI or BIOS of your system. If in doubt, refer to your
       system's documentation for instructions on how to do this.
 
-    - `Run the command ``wsl --install`` as administrator.
+    - `Run the WSL install command as administrator.
       <https://learn.microsoft.com/en-us/windows/wsl/setup/environment#get-started>`_
       This will install Ubuntu Linux.
 
@@ -116,7 +116,7 @@ Windows
       <https://learn.microsoft.com/en-us/windows/wsl/install#check-which-version-of-wsl-you-are-running>`_.
 
     - `Set up your Linux username and password.
-      <https://learn.microsoft.com/en-us/windows/wsl/setup/environment#set-up-your-linux-username-and-password>`_.
+      <https://learn.microsoft.com/en-us/windows/wsl/setup/environment#set-up-your-linux-username-and-password>`_
       Do not include any spaces in your username.
 
     - If your computer has less than 8GB of RAM, `change the WSL settings
