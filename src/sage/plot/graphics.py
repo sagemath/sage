@@ -2691,6 +2691,18 @@ class Graphics(WithEqualityById, SageObject):
             sage: figure = p.matplotlib()                                               # needs sage.symbolic
             sage: axes = figure.axes[0]                                                 # needs sage.symbolic
 
+        Scientific notation is automatically used for large enough function values, cf. :issue:`34233` ::
+
+            sage: var('p')                                                              # needs sage.symbolic
+            sage: plot(90000*p/(100-p), (p,0,100), ymin=0, ymax=1000000)                # needs sage.symbolic
+
+        .. PLOT::
+
+            from sage.symbolic.ring import var
+            p = var('p')
+            g = plot(90000*p/(100-p), (p,0,100), ymin=0, ymax=1000000)
+            sphinx_plot(g)    
+
         TESTS:
 
         We verify that :issue:`10291` is fixed::
@@ -2747,18 +2759,6 @@ class Graphics(WithEqualityById, SageObject):
             sage: ymin, ymax = sub.get_ylim()
             sage: xmin > xmax, ymin > ymax
             (True, True)
-
-        check that :issue:`34233` is fixed::
-
-            sage: var('p')
-            sage: plot(90000*p/(100-p), (p,0,100), ymin=0, ymax=1000000)
-
-        .. PLOT::
-
-            from sage.symbolic.ring import var
-            p = var('p')
-            g = plot(90000*p/(100-p), (p,0,100), ymin=0, ymax=1000000)
-            sphinx_plot(g)
         """
         if not isinstance(ticks, (list, tuple)):
             ticks = (ticks, None)
