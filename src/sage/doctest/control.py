@@ -58,14 +58,6 @@ from .parsing import parse_optional_tags, parse_file_optional_tags, unparse_opti
 
 auto_optional_tags = set()
 
-try:
-    from sage.libs.arb.arb_version import version as arb_vers
-    arb_tag = 'arb2' + arb_vers().split('.')[1]
-    auto_optional_tags.add(arb_tag)
-except ImportError:
-    pass
-
-
 class DocTestDefaults(SageObject):
     """
     This class is used for doctesting the Sage doctest module.
