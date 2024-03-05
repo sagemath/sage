@@ -1023,17 +1023,17 @@ def _connected_mutation_type_AAtildeD(dg, ret_conn_vert=False):
         multiple_trian_edges = list(set(multiple_trian_edges))
 
         # test that there at most three edges appearing in exactly two oriented triangles
-        count = len( multiple_trian_edges )
+        count = len(multiple_trian_edges)
         if count >= 4:
             return _false_return(321)
         # if two edges appearing in exactly two oriented triangles, test that the two edges together
         # determine a unique triangle
         elif count > 1:
-            test_triangles = []
-            for edge in multiple_trian_edges:
-                test_triangles.append([ tuple(trian) for trian in oriented_trians if edge in trian ])
+            test_triangles = [[tuple(trian) for trian in oriented_trians
+                               if edge in trian]
+                              for edge in multiple_trian_edges]
             unique_triangle = set(test_triangles[0]).intersection( *test_triangles[1:] )
-            if len( unique_triangle ) != 1:
+            if len(unique_triangle) != 1:
                 return _false_return(19)
             else:
                 # if a long_cycle had previously been found, this unique oriented triangle is a second long_cycle, a contradiction.

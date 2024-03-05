@@ -4419,7 +4419,7 @@ def TL_diagram_ascii_art(diagram, use_unicode=False, blobs=[]):
     else:
         from sage.typeset.ascii_art import AsciiArt
         d = [".", ".", "`", "`", "-", "|"]
-        #db = [".", ".", "`", "`", "=", "|"]
+        # db = [".", ".", "`", "`", "=", "|"]
         blob = '0'
         ret = [" o" * n]
         char_art = AsciiArt
@@ -4489,12 +4489,12 @@ def diagram_latex(diagram, fill=False, edge_options=None, edge_additions=None):
         if x < 0:
             return -1
         return 0
+
     l1 = []  # list of blocks
     l2 = []  # list of nodes
     for i in list(diagram):
         l1.append(list(i))
-        for j in list(i):
-            l2.append(j)
+        l2.extend(list(i))
     output = "\\begin{tikzpicture}[scale = 0.5,thick, baseline={(0,-1ex/2)}] \n\\tikzstyle{vertex} = [shape = circle, minimum size = 7pt, inner sep = 1pt] \n" #setup beginning of picture
     for i in l2: #add nodes
         output = output + "\\node[vertex] (G-{}) at ({}, {}) [shape = circle, draw{}] {{}}; \n".format(i, (abs(i)-1)*1.5, sgn(i), filled_str)

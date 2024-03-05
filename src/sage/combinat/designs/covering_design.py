@@ -144,21 +144,14 @@ def trivial_covering_design(v, k, t):
 
     """
     if t == 0:  # single block [0, ..., k-1]
-        blk = []
-        for i in range(k):
-            blk.append(i)
+        blk = list(range(k))
         return CoveringDesign(v, k, t, 1, range(v), [blk], 1, "Trivial")
     if t == 1:  # blocks [0, ..., k-1], [k, ..., 2k-1], ...
         size = Rational((v, k)).ceil()
-        blocks = []
-        for i in range(size - 1):
-            blk = []
-            for j in range(i * k, (i + 1) * k):
-                blk.append(j)
-            blocks.append(blk)
-        blk = []  # last block: if k does not divide v, wrap around
-        for j in range((size - 1) * k, v):
-            blk.append(j)
+        blocks = [list(range(i * k, (i + 1) * k))
+                  for i in range(size - 1)]
+        # last block: if k does not divide v, wrap around
+        blk = list(range((size - 1) * k, v))
         for j in range(k - len(blk)):
             blk.append(j)
         blk.sort()

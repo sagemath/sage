@@ -324,12 +324,10 @@ class PlanePartition(ClonableArray,
             sage: PP.cells()
             [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [1, 0, 0], [1, 0, 1]]
         """
-        L = []
-        for r in range(len(self)):
-            for c in range(len(self[r])):
-                for h in range(self[r][c]):
-                    L.append([r, c, h])
-        return L
+        return [[r, c, h]
+                for r in range(len(self))
+                for c in range(len(self[r]))
+                for h in range(self[r][c])]
 
     def number_of_boxes(self) -> Integer:
         r"""
