@@ -39,6 +39,7 @@ Methods
 
 from copy import copy
 from sage.graphs.digraph import DiGraph
+from sage.graphs.graph import Graph
 
 
 def acyclic_orientations(G):
@@ -106,8 +107,6 @@ def acyclic_orientations(G):
         42
     """
     from sage.rings.infinity import Infinity
-    from sage.graphs.graph import Graph
-    from sage.graphs.graph import DiGraph
     from sage.combinat.subset import Subsets
 
     def reorder_vertices(G):
