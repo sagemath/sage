@@ -143,6 +143,10 @@ palette, enter "Create: New Jupyter Notebook", and hit
 Approach 2: Manual installation using Windows Subsystem for Linux
 -----------------------------------------------------------------
 
+We recommend this installation method in particular to users who are already
+familiar with Linux or Windows Subsystem for Linux. It is also a good choice if
+you want to have a persistent Sage installation for use in several projects.
+
 Enable `Windows Subsystem for Linux (WSL)
 <https://learn.microsoft.com/en-us/windows/wsl/>`_ and install
 Ubuntu as follows.
@@ -204,10 +208,6 @@ Start Ubuntu from the Start menu.
 
   - To use Sage in a Jupyter notebook, it is convenient to use Visual Studio Code.
     See :ref:`sec-launching-vscode-wsl`.
-
-  We recommend this installation method in particular to users who are already
-  familiar with Linux or Windows Subsystem for Linux. It is also a good choice if
-  you want to have a persistent Sage installation for use in several projects.
 
 
 Linux
