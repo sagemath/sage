@@ -61,24 +61,37 @@ Windows
 Approach 1: Use Visual Studio Code with SageMath dev containers
 ---------------------------------------------------------------
 
+`Visual Studio Code <https://code.visualstudio.com/>`_ is a popular
+and powerful code editor developed by Microsoft and made available
+free of charge. We recommmend it because of a key feature, the `Visual
+Studio Code Dev Containers extension
+<https://code.visualstudio.com/docs/devcontainers/containers>`_, which
+provides a very convenient way to install and use SageMath running in
+a Linux container.
+
+Note that although the source code of VS Code is open source (MIT
+License), the Dev Containers extension is only known to work with the
+Visual Studio Code product, but not with fully open source builds such
+as `VSCodium <https://vscodium.com/>`_.
+
 - Make sure that hardware-assisted virtualization is enabled in
   the EFI or BIOS of your system. If in doubt, refer to your
   system's documentation for instructions on how to do this.
 
-- Install `VS Code <https://code.visualstudio.com/>`_
+- `Download and install VS Code <https://code.visualstudio.com/>`_.
 
-- In VS Code, if the `Visual Studio Code Remote - Containers
-  <https://code.visualstudio.com/docs/remote/containers>`_ extension
+- In VS Code, if the `Visual Studio Code Dev Containers
+  <https://code.visualstudio.com/docs/devcontainers/containers>`_ extension
   is not already installed, click the "Extension" icon on the left
   (or press :kbd:`Ctrl` + :kbd:`Shift` + :kbd:`X`) to open a list of
-  extensions. Search for "Remote - Containers" and install it.
+  extensions. Search for "Dev Containers" and install it.
 
   The extension will walk you through the installation of Docker
   Desktop and activating Windows Subsystem for Linux (WSL 2).
 
-- **Do you want to do SageMath development?**
+**Do you want to do SageMath development?**
 
-  - **Yes, development:**
+- **Yes, development:**
 
     - In VS Code, `clone
       <https://code.visualstudio.com/docs/editor/versioncontrol#_cloning-a-repository>`_
@@ -96,12 +109,13 @@ Approach 1: Use Visual Studio Code with SageMath dev containers
     - To use Sage in a terminal, `open a new terminal in VS Code
       <https://code.visualstudio.com/docs/terminal/basics>`_ and type ``./sage``.
 
-  - **No development:**
+- **No development:**
 
     - Open the folder of a project where you would like to use Sage in VS Code.
 
     - Create a subfolder named ``.devcontainer``. Download these files from the
       SageMath GitHub repository and place them in this subfolder:
+
       - https://github.com/sagemath/sage/blob/develop/.devcontainer/devcontainer.json
       - https://github.com/sagemath/sage/blob/develop/.devcontainer/onCreate-conda.sh
 
@@ -158,7 +172,7 @@ Ubuntu as follows.
 
 Start Ubuntu from the Start menu.
 
-- **Do you want to do SageMath development?**
+**Do you want to do SageMath development?**
 
   - **Yes, development:**
 
