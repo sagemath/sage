@@ -1,4 +1,4 @@
-$(PYTHON) scip | $(PYTHON_TOOLCHAIN) cython
+ scip | $(PYTHON_TOOLCHAIN) cython $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

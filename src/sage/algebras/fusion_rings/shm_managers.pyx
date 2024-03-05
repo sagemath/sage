@@ -55,8 +55,7 @@ cdef class KSHandler:
     - ``n_slots`` -- the total number of F-symbols
     - ``field`` -- F-matrix's base cyclotomic field
     - ``use_mp`` -- a boolean indicating whether to construct a shared
-      memory block to back ``self``. Requires Python 3.8+, since we
-      must import the ``multiprocessing.shared_memory`` module.
+      memory block to back ``self``.
     - ``init_data`` -- a dictionary or :class:`KSHandler` object containing
       known squares for initialization, e.g., from a solver checkpoint
     - ``name`` -- the name of a shared memory object (used by child processes
@@ -145,7 +144,7 @@ cdef class KSHandler:
     @cython.nonecheck(False)
     @cython.wraparound(False)
     @cython.boundscheck(False)
-    cdef NumberFieldElement_absolute get(self, int idx):
+    cdef NumberFieldElement_absolute get(self, int idx) noexcept:
         r"""
         Retrieve the known square corresponding to the given index,
         if it exists.
@@ -176,7 +175,7 @@ cdef class KSHandler:
         self.obj_cache[idx] = cyc_coeff
         return cyc_coeff
 
-    cpdef update(self, list eqns):
+    cpdef update(self, list eqns) noexcept:
         r"""
         Update ```self``'s ``shared_memory``-backed dictionary of known
         squares. Keys are variable indices and corresponding values
@@ -243,7 +242,7 @@ cdef class KSHandler:
     @cython.nonecheck(False)
     @cython.wraparound(False)
     @cython.infer_types(False)
-    cdef setitem(self, int idx, rhs):
+    cdef setitem(self, int idx, rhs) noexcept:
         """
         Create an entry corresponding to the given index.
 
@@ -270,7 +269,7 @@ cdef class KSHandler:
             nums[i] = num
             denoms[i] = denom
 
-    cdef bint contains(self, int idx):
+    cdef bint contains(self, int idx) noexcept:
         r"""
         Determine whether ``self`` contains entry corresponding to given
         ``idx``.
@@ -391,9 +390,6 @@ cdef class FvarsHandler:
     ``name`` attribute. Children processes use the ``name`` attribute,
     accessed via ``self.shm.name`` to attach to the shared memory block.
 
-    Multiprocessing requires Python 3.8+, since we must import the
-    ``multiprocessing.shared_memory`` module.
-
     INPUT:
 
     - ``n_slots`` -- number of generators of the underlying polynomial ring
@@ -422,7 +418,7 @@ cdef class FvarsHandler:
 
     .. NOTE::
 
-        If you ever encounter an ``OverflowError`` when running the
+        If you ever encounter an :class:`OverflowError` when running the
         :meth:`FMatrix.find_orthogonal_solution` solver, consider
         increasing the parameter ``n_bytes``.
 

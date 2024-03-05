@@ -28,7 +28,8 @@ We create `\mathrm{Hom}(\ZZ^3, \ZZ^2)` and compute a basis. ::
      to Ambient free module of rank 2
      over the principal ideal domain Integer Ring
      in Category of finite dimensional modules with basis over
-     (euclidean domains and infinite enumerated sets and metric spaces)
+     (Dedekind domains and euclidean domains
+      and infinite enumerated sets and metric spaces)
     sage: B = H.basis()
     sage: len(B)
     6
@@ -54,7 +55,7 @@ See :trac:`5886`::
 
 See :trac:`13321`::
 
-    sage: (GF(7)^2).hom([[20,0],[0,21]],ZZ^2)
+    sage: (GF(7)^2).hom([[20, 0], [0, 21]], ZZ^2)
     Traceback (most recent call last):
     ...
     TypeError: nontrivial morphisms require a coercion map from the base ring

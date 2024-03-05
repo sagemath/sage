@@ -175,19 +175,23 @@ class FusionDouble(CombinatorialFreeModule):
         self._names = {}
         self._elt = {}
         self._chi = {}
+        self._unit_index = None  # index of the unit element
         count = ZZ.zero()
         for g in G.conjugacy_classes_representatives():
             for chi in G.centralizer(g).irreducible_characters():
+                # NOTE: the trivial char is not necessarily the first one
                 self._names[count] = "%s%s" % (prefix, count)
                 self._elt[count] = g
                 self._chi[count] = chi
+                if self._unit_index is None and all(v == 1 for v in chi):
+                    self._unit_index = count
                 count += ZZ.one()
         self._cyclotomic_order = G.exponent()
         self._basecoer = None
         self._fusion_labels = None
         self._field = None
         cat = AlgebrasWithBasis(ZZ)
-        CombinatorialFreeModule.__init__(self, ZZ, [k for k in self._names],
+        CombinatorialFreeModule.__init__(self, ZZ, list(self._names),
                                          prefix=prefix, bracket=False, category=cat)
 
     def _repr_(self):
@@ -198,7 +202,7 @@ class FusionDouble(CombinatorialFreeModule):
             The Fusion Ring of the Drinfeld Double of Symmetric group of
                 order 3! as a permutation group
         """
-        return "The Fusion Ring of the Drinfeld Double of %s"%self._G
+        return "The Fusion Ring of the Drinfeld Double of %s" % self._G
 
     def inject_variables(self):
         """
@@ -433,7 +437,7 @@ class FusionDouble(CombinatorialFreeModule):
         G = self._G
         I = G.conjugacy_class(i.g())
         J = G.conjugacy_class(j.g())
-        IJ = set(I_elem * J_elem for I_elem in I for J_elem in J)
+        IJ = {I_elem * J_elem for I_elem in I for J_elem in J}
         if k.g() not in IJ:
             return ZZ.zero()
 
@@ -650,9 +654,9 @@ class FusionDouble(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: FusionDouble(CyclicPermutationGroup(2), prefix="h").one()
-            h0
+            h1
         """
-        return ZZ.zero()
+        return self._unit_index
 
     @cached_method
     def dual(self, i):

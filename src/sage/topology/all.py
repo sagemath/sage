@@ -13,6 +13,7 @@ lazy_import('sage.topology.filtered_simplicial_complex', 'FilteredSimplicialComp
 lazy_import('sage.topology', 'simplicial_complex_catalog', 'simplicial_complexes')
 lazy_import('sage.topology', 'simplicial_set_catalog', 'simplicial_sets')
 
+lazy_import('sage.topology.moment_angle_complex', 'MomentAngleComplex')
 
 # # For taking care of old pickles
 # from sage.misc.persist import register_unpickle_override

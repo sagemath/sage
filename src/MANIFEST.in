@@ -1,6 +1,6 @@
 include VERSION.txt
 
-global-include *.pxi *.pxd *.h *.hpp
+recursive-include sage *.pxi *.pxd *.h *.hpp
 
 prune sage/ext/interpreters   # In particular, __init__.py must not be present in the distribution; or sage_setup.autogen.interpreters.rebuild will not generate the code
 prune sage_setup
@@ -49,6 +49,7 @@ prune sage/graphs/bliss_cpp
 prune sage/libs/coxeter3
 exclude sage/graphs/mcqd.p*
 exclude sage/libs/meataxe.p*
+exclude sage/libs/sirocco.p*
 exclude sage/matrix/matrix_gfpn_dense.p*
 exclude sage/graphs/graph_decomposition/tdlib.p*
 

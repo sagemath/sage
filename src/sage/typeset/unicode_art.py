@@ -44,8 +44,8 @@ class UnicodeArt(CharacterArt):
 
     EXAMPLES::
 
-        sage: i = var('i')
-        sage: unicode_art(sum(pi^i/factorial(i)*x^i, i, 0, oo))
+        sage: i = var('i')                                                              # needs sage.symbolic
+        sage: unicode_art(sum(pi^i/factorial(i)*x^i, i, 0, oo))                         # needs sage.symbolic
          π⋅x
         ℯ
     """
@@ -88,9 +88,9 @@ def unicode_art(*obj, **kwds):
 
     EXAMPLES::
 
-        sage: result = unicode_art(integral(exp(sqrt(x))/(x+pi), x))
+        sage: result = unicode_art(integral(exp(sqrt(x))/(x+pi), x))                    # needs sage.symbolic
         ...
-        sage: result
+        sage: result                                                                    # needs sage.symbolic
             ⌠
             ⎮   √x
             ⎮  ℯ
@@ -117,14 +117,14 @@ def unicode_art(*obj, **kwds):
 
     TESTS::
 
-        sage: n = var('n')
-        sage: unicode_art(sum(binomial(2 * n, n + 1) * x^n, n, 0, oo))
+        sage: n = var('n')                                                              # needs sage.symbolic
+        sage: unicode_art(sum(binomial(2 * n, n + 1) * x^n, n, 0, oo))                  # needs sage.symbolic
          ⎛        _________    ⎞
         -⎝2⋅x + ╲╱ 1 - 4⋅x  - 1⎠
         ─────────────────────────
                    _________
              2⋅x⋅╲╱ 1 - 4⋅x
-        sage: unicode_art(list(DyckWords(3)))
+        sage: unicode_art(list(DyckWords(3)))                                           # needs sage.combinat
         ⎡                                   ╱╲   ⎤
         ⎢            ╱╲    ╱╲      ╱╲╱╲    ╱  ╲  ⎥
         ⎣ ╱╲╱╲╱╲, ╱╲╱  ╲, ╱  ╲╱╲, ╱    ╲, ╱    ╲ ⎦

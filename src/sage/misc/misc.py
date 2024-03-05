@@ -45,7 +45,7 @@ import pdb
 import sys
 import warnings
 
-from .lazy_string import lazy_string
+from sage.misc.lazy_string import lazy_string
 from sage.env import DOT_SAGE, HOSTNAME
 from sage.misc.lazy_import import lazy_import
 
@@ -456,19 +456,19 @@ def compose(f, g):
 
         sage: def g(x): return 3*x
         sage: def f(x): return x + 1
-        sage: h1 = compose(f,g)
-        sage: h2 = compose(g,f)
-        sage: _ = var ('x')
-        sage: h1(x)
+        sage: h1 = compose(f, g)
+        sage: h2 = compose(g, f)
+        sage: _ = var('x')                                                              # needs sage.symbolic
+        sage: h1(x)                                                                     # needs sage.symbolic
         3*x + 1
-        sage: h2(x)
+        sage: h2(x)                                                                     # needs sage.symbolic
         3*x + 3
 
     ::
 
-        sage: _ = function('f g')
-        sage: _ = var ('x')
-        sage: compose(f,g)(x)
+        sage: _ = function('f g')                                                       # needs sage.symbolic
+        sage: _ = var('x')                                                              # needs sage.symbolic
+        sage: compose(f, g)(x)                                                          # needs sage.symbolic
         f(g(x))
 
     """
@@ -492,22 +492,22 @@ def nest(f, n, x):
     EXAMPLES::
 
         sage: def f(x): return x^2 + 1
-        sage: x = var('x')
-        sage: nest(f, 3, x)
+        sage: x = var('x')                                                              # needs sage.symbolic
+        sage: nest(f, 3, x)                                                             # needs sage.symbolic
         ((x^2 + 1)^2 + 1)^2 + 1
 
     ::
 
-        sage: _ = function('f')
-        sage: _ = var('x')
-        sage: nest(f, 10, x)
+        sage: _ = function('f')                                                         # needs sage.symbolic
+        sage: _ = var('x')                                                              # needs sage.symbolic
+        sage: nest(f, 10, x)                                                            # needs sage.symbolic
         f(f(f(f(f(f(f(f(f(f(x))))))))))
 
     ::
 
-        sage: _ = function('f')
-        sage: _ = var('x')
-        sage: nest(f, 0, x)
+        sage: _ = function('f')                                                         # needs sage.symbolic
+        sage: _ = var('x')                                                              # needs sage.symbolic
+        sage: nest(f, 0, x)                                                             # needs sage.symbolic
         x
 
     """
@@ -554,17 +554,26 @@ class BackslashOperator:
         """
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: A = random_matrix(ZZ, 4)
             sage: while A.rank() != 4:
             ....:     A = random_matrix(ZZ, 4)
             sage: B = random_matrix(ZZ, 4)
             sage: temp = A * BackslashOperator()
+            doctest:...:
+            DeprecationWarning: the backslash operator has been deprecated
+            See https://github.com/sagemath/sage/issues/36394 for details.
             sage: temp.left is A
             True
             sage: X = temp * B
+            doctest:...:
+            DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
+            See https://github.com/sagemath/sage/issues/36394 for details.
             sage: A * X == B
             True
         """
+        from sage.misc.superseded import deprecation
+        deprecation(36394, 'the backslash operator has been deprecated')
         self.left = left
         return self
 
@@ -572,18 +581,30 @@ class BackslashOperator:
         r"""
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: A = matrix(RDF, 5, 5, 2)
             sage: b = vector(RDF, 5, range(5))
             sage: v = A \ b
+            doctest:...:
+            DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
+            See https://github.com/sagemath/sage/issues/36394 for details.
             sage: v.zero_at(1e-19)  # On at least one platform, we get a "negative zero"
             (0.0, 0.5, 1.0, 1.5, 2.0)
             sage: v = A._backslash_(b)
+            doctest:...:
+            DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
+            See https://github.com/sagemath/sage/issues/36394 for details.
             sage: v.zero_at(1e-19)
             (0.0, 0.5, 1.0, 1.5, 2.0)
             sage: v = A * BackslashOperator() * b
+            doctest:...:
+            DeprecationWarning: the backslash operator has been deprecated; use A.solve_right(B) instead
+            See https://github.com/sagemath/sage/issues/36394 for details.
             sage: v.zero_at(1e-19)
             (0.0, 0.5, 1.0, 1.5, 2.0)
         """
+        from sage.misc.superseded import deprecation
+        deprecation(36394, 'the backslash operator has been deprecated')
         return self.left._backslash_(right)
 
 
@@ -626,10 +647,10 @@ def is_iterator(it) -> bool:
         sage: list(x)
         [4, 3, 2, 1]
 
-        sage: P = Partitions(3)
-        sage: is_iterator(P)
+        sage: P = Partitions(3)                                                         # needs sage.combinat
+        sage: is_iterator(P)                                                            # needs sage.combinat
         False
-        sage: is_iterator(iter(P))
+        sage: is_iterator(iter(P))                                                      # needs sage.combinat
         True
     """
     # see trac #7398 for a discussion

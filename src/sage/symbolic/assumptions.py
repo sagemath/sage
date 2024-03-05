@@ -372,7 +372,7 @@ class GenericDeclaration(UniqueRepresentation):
             True
             sage: GenericDeclaration(x, 'rational').contradicts({z: pi, y: pi})
             False
-       """
+        """
         if isinstance(soln, dict):
             value = soln.get(self._var)
             if value is None:
@@ -636,7 +636,7 @@ def assume(*args):
         Traceback (most recent call last):
         ...
         AttributeError: 'sage.rings.integer.Integer' object has no
-        attribute 'assume'
+        attribute 'assume'...
 
     Ensure that we can combine the two types of assumptions, as documented::
 

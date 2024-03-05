@@ -36,8 +36,8 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
 from copy import copy
+from itertools import product
 
 from sage.structure.sage_object import SageObject
 from sage.rings.integer_ring import ZZ
@@ -46,7 +46,6 @@ from sage.graphs.digraph import DiGraph
 from sage.graphs.graph import Graph
 from sage.graphs.views import EdgesView
 from sage.arith.misc import gcd
-from sage.categories.cartesian_product import cartesian_product
 from sage.misc.misc_c import prod
 from sage.misc.lazy_import import lazy_import
 from sage.rings.rational_field import QQ
@@ -229,8 +228,8 @@ class ClusterQuiver(SageObject):
             user_labels = [tuple(x) if isinstance(x, list) else x for x in user_labels]
         elif isinstance(user_labels, dict):
             values = [tuple(user_labels[x]) if isinstance(user_labels[x], list) else user_labels[x] for x in user_labels]
-            user_labels = {key: val for key, val in zip(user_labels.keys(),
-                                                        values)}
+            user_labels = dict(zip(user_labels.keys(),
+                                   values))
 
         # constructs a quiver from a mutation type
         if type( data ) in [QuiverMutationType_Irreducible,QuiverMutationType_Reducible]:
@@ -366,7 +365,7 @@ class ClusterQuiver(SageObject):
             elif n+m == 1:
                 self._description = 'Quiver on 1 vertex'
             else:
-                self._description = 'Quiver on %d vertices' %(n+m)
+                self._description = 'Quiver on %d vertices' % (n+m)
 
         # constructs a quiver from a digraph
         elif isinstance(data, DiGraph):
@@ -636,10 +635,10 @@ class ClusterQuiver(SageObject):
                              'lightgreen': partition[2]}
 
         options = {
-            'graph_border' : True,
+            'graph_border': True,
             'edge_colors': color_dict,
             'vertex_colors': vertex_color_dict,
-            'edge_labels' : True,
+            'edge_labels': True,
             'vertex_labels': True,
         }
         if circular:
@@ -1512,7 +1511,7 @@ class ClusterQuiver(SageObject):
             raise ValueError('The quiver can only be mutated at a vertex or at a sequence of vertices')
         if any(v not in V for v in sequence):
             v = next(v for v in sequence if v not in V)
-            raise ValueError('The quiver can only be mutated at the vertex %s'%v )
+            raise ValueError('The quiver can only be mutated at the vertex %s' % v )
 
         quiver = copy( self )
         quiver_sequence = []
@@ -1855,11 +1854,11 @@ class ClusterQuiver(SageObject):
         if depth is infinity and not self.is_mutation_finite():
             raise ValueError('the mutation class can - for infinite mutation'
                              ' types - only be computed up to a given depth')
-        return [Q for Q in self.mutation_class_iter(depth=depth, show_depth=show_depth,
-                                                    return_paths=return_paths,
-                                                    data_type=data_type,
-                                                    up_to_equivalence=up_to_equivalence,
-                                                    sink_source=sink_source)]
+        return list(self.mutation_class_iter(depth=depth, show_depth=show_depth,
+                                             return_paths=return_paths,
+                                             data_type=data_type,
+                                             up_to_equivalence=up_to_equivalence,
+                                             sink_source=sink_source))
 
     def is_finite(self):
         """
@@ -2109,8 +2108,8 @@ class ClusterQuiver(SageObject):
         mu_d = theta.dot_product(d) / sum(d)
 
         Li = [0 * d]
-        it = (vector(e) for e in cartesian_product([range(d_i + 1)
-                                                    for d_i in d]))
+        it = (vector(e) for e in product(*[range(d_i + 1)
+                                           for d_i in d]))
         Li += [e for e in it if e.dot_product(theta) > mu_d * sum(e)]
         Li.append(d)
         N = len(Li) - 1
@@ -2151,18 +2150,17 @@ class ClusterQuiver(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.geometry.polyhedron sage.libs.singular
             sage: Fd = ClusterQuiver([[1,2]]).d_vector_fan(); Fd
             Rational polyhedral fan in 2-d lattice N
             sage: Fd.ngenerating_cones()
             5
-
             sage: Fd = ClusterQuiver([[1,2],[2,3]]).d_vector_fan(); Fd
             Rational polyhedral fan in 3-d lattice N
             sage: Fd.ngenerating_cones()
             14
             sage: Fd.is_smooth()
             True
-
             sage: Fd = ClusterQuiver([[1,2],[2,3],[3,1]]).d_vector_fan(); Fd
             Rational polyhedral fan in 3-d lattice N
             sage: Fd.ngenerating_cones()
@@ -2177,12 +2175,13 @@ class ClusterQuiver(SageObject):
             ...
             ValueError: only makes sense for quivers of finite type
         """
+        if not self.is_finite():
+            raise ValueError('only makes sense for quivers of finite type')
+
         from .cluster_seed import ClusterSeed
         from sage.geometry.fan import Fan
         from sage.geometry.cone import Cone
 
-        if not(self.is_finite()):
-            raise ValueError('only makes sense for quivers of finite type')
         seed = ClusterSeed(self)
         return Fan([Cone(s.d_matrix().columns())
                     for s in seed.mutation_class()])
@@ -2229,7 +2228,7 @@ class ClusterQuiver(SageObject):
         from sage.geometry.fan import Fan
         from sage.geometry.cone import Cone
 
-        if not(self.is_finite()):
+        if not (self.is_finite()):
             raise ValueError('only supported for quivers of finite type')
         seed = ClusterSeed(self).principal_extension()
         return Fan([Cone(s.g_matrix().columns())

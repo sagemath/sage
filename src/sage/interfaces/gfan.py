@@ -37,7 +37,7 @@ TODO -- much functionality of gfan-0.3 is still not exposed::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
 from subprocess import Popen, PIPE
@@ -45,6 +45,7 @@ from subprocess import Popen, PIPE
 from sage.features.gfan import GfanExecutable
 
 from sage.misc.decorators import rename_keyword
+
 
 class Gfan():
     """
@@ -63,7 +64,7 @@ class Gfan():
 
         EXAMPLES::
 
-            sage: print(gfan('Q[x,y]{x^2-y-1,y^2-xy-2/3}', cmd='bases')) # optional - gfan
+            sage: print(gfan('Q[x,y]{x^2-y-1,y^2-xy-2/3}', cmd='bases'))                # needs gfan
             Q[x,y]
             {{
             y^4+4/9-7/3*y^2-y^3,
@@ -85,7 +86,7 @@ class Gfan():
 
         TESTS::
 
-            sage: _ = gfan(I='Q[x,y]{x^2-y-1,y^2-xy-2/3}', cmd='bases') # optional - gfan
+            sage: _ = gfan(I='Q[x,y]{x^2-y-1,y^2-xy-2/3}', cmd='bases')                 # needs gfan
             doctest:...:
             DeprecationWarning: use the option 'input' instead of 'I'
             See https://github.com/sagemath/sage/issues/33468 for details.

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari       (for charpoly, minimal_polynomial in __init__)
 r"""
 `J`-ideals of matrices
 
@@ -333,7 +334,7 @@ class ComputeMinimalPolynomials(SageObject):
         """
         from sage.rings.polynomial.polynomial_ring import polygen
 
-        super(ComputeMinimalPolynomials, self).__init__()
+        super().__init__()
         if not B.is_square():
             raise TypeError("square matrix required")
 
@@ -896,9 +897,9 @@ class ComputeMinimalPolynomials(SageObject):
         """
         from sage.arith.misc import factor
 
-        F, T = self._B.frobenius(2)
+        _, T = self._B.frobenius_form(2)
 
-        return [p for (p, t) in factor(T.det())]
+        return [p for p, _ in factor(T.det())]
 
     def integer_valued_polynomials_generators(self):
         r"""

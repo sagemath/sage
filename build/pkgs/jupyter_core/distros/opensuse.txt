@@ -1,1 +1,1 @@
-python3-jupyter-core
+python3${PYTHON_MINOR}-jupyter-core

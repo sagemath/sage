@@ -152,8 +152,8 @@ class FunctionFieldDifferential(ModuleElement):
             sage: # needs sage.rings.finite_rings
             sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
             sage: L.<y> = K.extension(Y^3 + x + x^3*Y)                                  # needs sage.rings.function_field
-            sage: w = y.differential()
-            sage: latex(w)
+            sage: w = y.differential()                                                  # needs sage.rings.function_field
+            sage: latex(w)                                                              # needs sage.rings.function_field
             \left( x y^{2} + \frac{1}{x} y \right)\, dx
         """
         if self._f.is_zero(): # zero differential

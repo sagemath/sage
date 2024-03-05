@@ -19,13 +19,13 @@ the other direction.
     sage: s = GF(7)
     sage: r.has_coerce_map_from(s)
     False
-    sage: s.has_coerce_map_from(r)                                                      # needs sage.rings.finite_rings
+    sage: s.has_coerce_map_from(r)
     True
-    sage: s(1) + r(1)                                                                   # needs sage.rings.finite_rings
+    sage: s(1) + r(1)
     2
-    sage: parent(s(1) + r(1))                                                           # needs sage.rings.finite_rings
+    sage: parent(s(1) + r(1))
     Finite Field of size 7
-    sage: parent(r(1) + s(1))                                                           # needs sage.rings.finite_rings
+    sage: parent(r(1) + s(1))
     Finite Field of size 7
 
 We list the elements of `\ZZ/3\ZZ`::
@@ -65,9 +65,9 @@ import sage.misc.prandom as random
 from sage.arith.misc import factor
 from sage.arith.misc import primitive_root
 from sage.arith.misc import CRT_basis
-import sage.rings.ring as ring
+from sage.rings.ring import Field, CommutativeRing
 import sage.rings.abc
-from . import integer_mod
+from sage.rings.finite_rings import integer_mod
 import sage.rings.integer as integer
 import sage.rings.integer_ring as integer_ring
 import sage.rings.quotient_ring as quotient_ring
@@ -84,6 +84,7 @@ from sage.structure.factory import UniqueFactory
 from sage.structure.richcmp import richcmp, richcmp_method
 
 from sage.interfaces.abc import GapElement
+
 
 class IntegerModFactory(UniqueFactory):
     r"""
@@ -244,38 +245,6 @@ class IntegerModFactory(UniqueFactory):
 
 
 Zmod = Integers = IntegerModRing = IntegerModFactory("IntegerModRing")
-
-
-def is_IntegerModRing(x):
-    """
-    Return ``True`` if ``x`` is an integer modulo ring.
-
-    This function is deprecated.  Use :func:`isinstance` with
-    :class:`sage.rings.abc.IntegerModRing` instead.
-
-    EXAMPLES::
-
-        sage: from sage.rings.finite_rings.integer_mod_ring import is_IntegerModRing
-        sage: R = IntegerModRing(17)
-        sage: is_IntegerModRing(R)
-        doctest:warning...
-        DeprecationWarning: the function is_IntegerModRing is deprecated.
-        Use isinstance(..., sage.rings.abc.IntegerModRing) instead.
-        See https://github.com/sagemath/sage/issues/32606 for details.
-        True
-        sage: is_IntegerModRing(GF(13))
-        True
-        sage: is_IntegerModRing(GF(4, 'a'))                                             # needs sage.rings.finite_rings
-        False
-        sage: is_IntegerModRing(10)
-        False
-        sage: is_IntegerModRing(ZZ)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32606, "the function is_IntegerModRing is deprecated. "
-                "Use isinstance(..., sage.rings.abc.IntegerModRing) instead.")
-    return isinstance(x, IntegerModRing_generic)
 
 
 from sage.categories.commutative_rings import CommutativeRings
@@ -648,7 +617,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
         EXAMPLES::
 
-            sage: # needs sage.groups
+            sage: # optional - gap_package_polycyclic, needs sage.groups
             sage: Integers(5).multiplicative_subgroups()
             ((2,), (4,), ())
             sage: Integers(15).multiplicative_subgroups()
@@ -664,7 +633,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             ((),)
             sage: IntegerModRing(2).multiplicative_subgroups()                          # needs sage.groups
             ((),)
-            sage: IntegerModRing(3).multiplicative_subgroups()                          # needs sage.groups
+            sage: IntegerModRing(3).multiplicative_subgroups()  # optional - gap_package_polycyclic, needs sage.groups
             ((2,), ())
         """
         return tuple(tuple(g.value() for g in H.gens())
@@ -1293,7 +1262,7 @@ In the latter case, please inform the developers.""".format(self.order()))
         elif S is integer_ring.ZZ:
             return integer_mod.Integer_to_IntegerMod(self)
         elif isinstance(S, IntegerModRing_generic):
-            if isinstance(S, ring.Field):
+            if isinstance(S, Field):
                 return None
             try:
                 return integer_mod.IntegerMod_to_IntegerMod(S, self)
@@ -1586,7 +1555,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             True
         """
         if bound is not None:
-            return ring.CommutativeRing.random_element(self, bound)
+            return CommutativeRing.random_element(self, bound)
         a = random.randint(0, self.order() - 1)
         return self(a)
 
@@ -1600,7 +1569,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: R = Integers(12345678900)
             sage: R
             Ring of integers modulo 12345678900
-            sage: gap(R) # indirect doctest                                             # needs sage.libs.gap
+            sage: gap(R)  # indirect doctest                                            # needs sage.libs.gap
             (Integers mod 12345678900)
         """
         return 'ZmodnZ({})'.format(self.order())

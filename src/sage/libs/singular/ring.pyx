@@ -618,7 +618,7 @@ cdef class ring_wrapper_Py():
         return (self._ring == r._ring) == (op == Py_EQ)
 
 
-cdef wrap_ring(ring* R):
+cdef wrap_ring(ring* R) noexcept:
     """
     Wrap a C ring pointer into a Python object.
 
@@ -690,7 +690,7 @@ cdef ring *singular_ring_reference(ring *existing_ring) except NULL:
 
 
 #############################################################################
-cdef void singular_ring_delete(ring *doomed):
+cdef void singular_ring_delete(ring *doomed) noexcept:
     """
     Carefully deallocate the ring, without changing "currRing" (since
     this method can be called at unpredictable times due to garbage
@@ -745,7 +745,7 @@ cdef void singular_ring_delete(ring *doomed):
 #############################################################################
 # helpers for debugging
 
-cpdef poison_currRing(frame, event, arg):
+cpdef poison_currRing(frame, event, arg) noexcept:
     """
     Poison the ``currRing`` pointer.
 
@@ -778,7 +778,7 @@ cpdef poison_currRing(frame, event, arg):
     return poison_currRing
 
 
-cpdef print_currRing():
+cpdef print_currRing() noexcept:
     """
     Print the ``currRing`` pointer.
 

@@ -245,11 +245,11 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: CoxeterType(['A', 3]).coxeter_matrix()
+            sage: CoxeterType(['A', 3]).coxeter_matrix()                                # needs sage.graphs
             [1 3 2]
             [3 1 3]
             [2 3 1]
-            sage: CoxeterType(['A', 3, 1]).coxeter_matrix()
+            sage: CoxeterType(['A', 3, 1]).coxeter_matrix()                             # needs sage.graphs
             [1 3 2 3]
             [3 1 3 2]
             [2 3 1 3]
@@ -263,9 +263,9 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
-            sage: CoxeterType(['A', 3]).coxeter_graph()
+            sage: CoxeterType(['A', 3]).coxeter_graph()                                 # needs sage.graphs
             Graph on 3 vertices
-            sage: CoxeterType(['A', 3, 1]).coxeter_graph()
+            sage: CoxeterType(['A', 3, 1]).coxeter_graph()                              # needs sage.graphs
             Graph on 4 vertices
         """
 
@@ -357,6 +357,7 @@ class CoxeterType(SageObject, metaclass=ClasscallMetaclass):
 
         EXAMPLES::
 
+            sage: # needs sage.graphs sage.libs.gap
             sage: CoxeterType(['A', 2, 1]).bilinear_form()
             [   1 -1/2 -1/2]
             [-1/2    1 -1/2]
@@ -479,7 +480,7 @@ class CoxeterTypeFromCartanType(UniqueRepresentation, CoxeterType):
         EXAMPLES::
 
             sage: C = CoxeterType(['H',3])
-            sage: C.coxeter_matrix()
+            sage: C.coxeter_matrix()                                                    # needs sage.graphs
             [1 3 2]
             [3 1 5]
             [2 5 1]
@@ -493,7 +494,7 @@ class CoxeterTypeFromCartanType(UniqueRepresentation, CoxeterType):
         EXAMPLES::
 
             sage: C = CoxeterType(['H',3])
-            sage: C.coxeter_graph().edges(sort=True)
+            sage: C.coxeter_graph().edges(sort=True)                                    # needs sage.graphs
             [(1, 2, 3), (2, 3, 5)]
         """
         return self._cartan_type.coxeter_diagram()

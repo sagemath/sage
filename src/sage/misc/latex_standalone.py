@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Standalone LaTeX Document class and TikzPicture
 
@@ -174,7 +173,7 @@ Instead, you may save a pdf of the tikzpicture into a file of your choice
 
 Opening the image in a viewer can be turned off::
 
-    sage: _ = t1.pdf(view=False)                # long time (2s), optional - latex      # needs sage.geometry.polyhedron sage.plot
+    sage: _ = t1.pdf(view=False)                # long time (2s), optional - latex, needs sage.geometry.polyhedron sage.plot
 
 The same can be done with png format (translated from pdf with convert
 command which needs the installation of imagemagick)::

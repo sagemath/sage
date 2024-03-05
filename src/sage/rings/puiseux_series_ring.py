@@ -111,7 +111,7 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
 
         EXAMPLES::
 
-            sage: PuiseuxSeriesRing(AA, 'y')
+            sage: PuiseuxSeriesRing(AA, 'y')                                            # needs sage.rings.number_field
             Puiseux Series Ring in y over Algebraic Real Field
         """
         s = "Puiseux Series Ring in {} over {}".format(self.variable_name(),
@@ -302,8 +302,8 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: P(z) + y**(1/2)
             3 + y^(1/2) + 2*y + y^2 + 2*y^3 + O(y^5)
 
-            sage: from sage.modular.etaproducts import qexp_eta
-            sage: y^(1/24)*qexp_eta(P, prec=30)
+            sage: from sage.modular.etaproducts import qexp_eta                         # needs sage.modular
+            sage: y^(1/24)*qexp_eta(P, prec=30)                                         # needs sage.modular
             y^(1/24) - y^(25/24) - y^(49/24) + y^(121/24) + y^(169/24) - y^(289/24) - y^(361/24) + y^(529/24) + y^(625/24) + O(y^(721/24))
         """
         P = parent(x)
@@ -395,8 +395,8 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
 
         EXAMPLES::
 
-            sage: A = PuiseuxSeriesRing(AA, 'z')
-            sage: A.gen()
+            sage: A = PuiseuxSeriesRing(AA, 'z')                                        # needs sage.rings.number_field
+            sage: A.gen()                                                               # needs sage.rings.number_field
             z
         """
         if n != 0:
@@ -409,8 +409,8 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
 
         EXAMPLES::
 
-            sage: A = PuiseuxSeriesRing(AA, 'z')
-            sage: A.ngens()
+            sage: A = PuiseuxSeriesRing(AA, 'z')                                        # needs sage.rings.number_field
+            sage: A.ngens()                                                             # needs sage.rings.number_field
             1
         """
         return 1
@@ -421,8 +421,8 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
 
         EXAMPLES::
 
-            sage: A = PuiseuxSeriesRing(AA, 'z')
-            sage: A.laurent_series_ring()
+            sage: A = PuiseuxSeriesRing(AA, 'z')                                        # needs sage.rings.number_field
+            sage: A.laurent_series_ring()                                               # needs sage.rings.number_field
             Laurent Series Ring in z over Algebraic Real Field
         """
         return self._laurent_series_ring
@@ -433,8 +433,8 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
 
         EXAMPLES::
 
-            sage: A = PuiseuxSeriesRing(AA, 'z')
-            sage: A.default_prec()
+            sage: A = PuiseuxSeriesRing(AA, 'z')                                        # needs sage.rings.number_field
+            sage: A.default_prec()                                                      # needs sage.rings.number_field
             20
         """
         return self.laurent_series_ring().default_prec()

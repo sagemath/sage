@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Tate's parametrisation of `p`-adic curves with multiplicative reduction
 
@@ -156,7 +155,7 @@ class TateCurve(SageObject):
              over Rational Field
             sage: eq.prime()
             5
-       """
+        """
         return self._p
 
     def parameter(self, prec=20):

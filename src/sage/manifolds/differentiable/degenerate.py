@@ -479,7 +479,7 @@ class TangentTensor(TensorFieldParal):
         self.display(frame)
         for i in self._domain._ambient.index_generator(tensor.tensor_rank()):
             for j in range(len(i)):
-                if i[j]==self._domain._ambient._dim-self._domain._sindex-1:
+                if i[j] == self._domain._ambient._dim-self._domain._sindex-1:
                     self[frame, i] = 0
 
     def __call__(self, *args):
@@ -517,7 +517,7 @@ class TangentTensor(TensorFieldParal):
             except ValueError:
                 pass
             if not self._domain.is_tangent(vector):
-                raise ValueError("The provided vector field is not "+
+                raise ValueError("The provided vector field is not " +
                         "tangent to {}".format(self._domain._name))
         try:
             return TensorField.__call__(self._tensor.along(self._embedding), *args)

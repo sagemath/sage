@@ -57,8 +57,8 @@ class SetSpeciesStructure(GenericSpeciesStructure):
             sage: F = species.SetSpecies()
             sage: a = F.structures(["a", "b", "c"]).random_element(); a
             {'a', 'b', 'c'}
-            sage: p = PermutationGroupElement((1,2))
-            sage: a.transport(p)
+            sage: p = PermutationGroupElement((1,2))                                    # needs sage.groups
+            sage: a.transport(p)                                                        # needs sage.groups
             {'a', 'b', 'c'}
         """
         return self
@@ -74,7 +74,7 @@ class SetSpeciesStructure(GenericSpeciesStructure):
             sage: F = species.SetSpecies()
             sage: a = F.structures(["a", "b", "c"]).random_element(); a
             {'a', 'b', 'c'}
-            sage: a.automorphism_group()
+            sage: a.automorphism_group()                                                # needs sage.groups
             Symmetric group of order 3! as a permutation group
         """
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -91,7 +91,7 @@ class SetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
             sage: E = species.SetSpecies(); E
             Set species
         """
-        return super(SetSpecies, cls).__classcall__(cls, *args, **kwds)
+        return super().__classcall__(cls, *args, **kwds)
 
     def __init__(self, min=None, max=None, weight=None):
         """
@@ -170,8 +170,8 @@ class SetSpecies(GenericCombinatorialSpecies, UniqueRepresentation):
         EXAMPLES::
 
             sage: S = species.SetSpecies()
-            sage: g = S.cycle_index_series()
-            sage: g[0:5]
+            sage: g = S.cycle_index_series()                                            # needs sage.modules
+            sage: g[0:5]                                                                # needs sage.modules
             [p[],
              p[1],
              1/2*p[1, 1] + 1/2*p[2],

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Crystals of Kac modules of the general-linear Lie superalgebra
 """

@@ -258,7 +258,7 @@ AUTHORS:
 - Emmanuel Charpentier (2015-12-12, RPy2 interface)
 """
 
-##########################################################################
+# ************************************************************************
 #
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #                     2007 Mike Hansen   <mhansen@gmail.com>
@@ -266,9 +266,10 @@ AUTHORS:
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
-##########################################################################
+# ************************************************************************
+import os
 
 from .interface import Interface, InterfaceElement, InterfaceFunction, InterfaceFunctionElement
 from sage.env import DOT_SAGE
@@ -287,15 +288,16 @@ lazy_import("rpy2.robjects.conversion", "localconverter")
 lazy_import("rpy2.robjects.help", "Package")
 lazy_import("rpy2", "rinterface")
 
-COMMANDS_CACHE = '%s/r_commandlist.sobj'%DOT_SAGE
+COMMANDS_CACHE = '%s/r_commandlist.sobj' % DOT_SAGE
 
-#there is a mirror network, but lets take #1 for now
+# there is a mirror network, but lets take #1 for now
 RRepositoryURL = "http://cran.r-project.org/"
 RFilteredPackages = ['.GlobalEnv']
 
 # crosscheck with https://svn.r-project.org/R/trunk/src/main/names.c
 # but package:base should cover this. i think.
 RBaseCommands = ['c', "NULL", "NA", "True", "False", "Inf", "NaN"]
+
 
 def _setup_r_to_sage_converter():
     """
@@ -402,7 +404,7 @@ def _setup_r_to_sage_converter():
         attrs = vec.list_attrs()
         # Recursive calls have to be made explicitly
         # https://bitbucket.org/rpy2/rpy2/issues/363/custom-converters-are-not-applied
-        data = list_to_singleton_if_possible([ rpy2py(val) for val in vec ])
+        data = list_to_singleton_if_possible([rpy2py(val) for val in vec])
         rclass = list(vec.do_slot('class')) if 'class' in attrs else vec.rclass
 
         if 'names' in attrs:
@@ -440,7 +442,7 @@ def _setup_r_to_sage_converter():
         # we have a R list (vector of arbitrary elements)
         attrs = vec.list_attrs()
         names = vec.do_slot('names')
-        values = [ rpy2py(val) for val in vec ]
+        values = [rpy2py(val) for val in vec]
         rclass = list(vec.do_slot('class')) if 'class' in attrs else vec.rclass
         data = zip(names, values)
         return {
@@ -452,6 +454,7 @@ def _setup_r_to_sage_converter():
     rpy2py.register(ListSexpVector, _list_vector)
 
     return cv
+
 
 class R(ExtraTabCompletion, Interface):
     def __init__(self,
@@ -483,8 +486,8 @@ class R(ExtraTabCompletion, Interface):
             True
         """
         Interface.__init__(
-                self,
-                name='r', # The capitalized version of this is used for printing.
+            self,
+            name='r',  # The capitalized version of this is used for printing.
         )
         self._seed = seed
         self._initialized = False  # done lazily
@@ -560,7 +563,7 @@ class R(ExtraTabCompletion, Interface):
         # cannot be used as input
         if isinstance(x, bool):
             return self('TRUE' if x else 'FALSE')
-        return super(R, self)._coerce_impl(x, use_special=use_special)
+        return super()._coerce_impl(x, use_special=use_special)
 
     def set_seed(self, seed=None):
         """
@@ -596,8 +599,8 @@ class R(ExtraTabCompletion, Interface):
         # pager needed to replace help view from less to printout
         # option device= is for plotting, is set to x11, NULL would be better?
         self.eval('options(pager="cat",device="png")')
-        self.eval('options(repos="%s")'%RRepositoryURL)
-        self.eval('options(CRAN="%s")'%RRepositoryURL)
+        self.eval('options(repos="%s")' % RRepositoryURL)
+        self.eval('options(CRAN="%s")' % RRepositoryURL)
 
         # don't abort on errors, just raise them!
         # necessary for non-interactive execution
@@ -639,7 +642,7 @@ class R(ExtraTabCompletion, Interface):
             sage: "TRUE" in s+t                      # optional -- rgraphics  # optional - rpy2
             True
         """
-        #Check to see if R has PNG support
+        # Check to see if R has PNG support
         s = self.eval('capabilities("png")')
         t = self.eval('capabilities("aqua")')
         if "TRUE" not in s + t:
@@ -683,8 +686,8 @@ class R(ExtraTabCompletion, Interface):
             ...
             Please restart Sage in order to use 'aaMI'.
         """
-        cmd = """options(repos="%s"); install.packages("%s")"""%(RRepositoryURL, package_name)
-        os.system("time echo '%s' | R --vanilla"%cmd)
+        cmd = """options(repos="%s"); install.packages("%s")""" % (RRepositoryURL, package_name)
+        os.system("time echo '%s' | R --vanilla" % cmd)
         print("Please restart Sage in order to use '%s'." % package_name)
 
     def _repr_(self):
@@ -744,7 +747,7 @@ class R(ExtraTabCompletion, Interface):
             sage: r._read_in_file_command('file.txt')  # optional - rpy2
             'file=file("file.txt",open="r")\nsource(file)'
         """
-        return 'file=file("%s",open="r")\nsource(file)'%filename
+        return 'file=file("%s",open="r")\nsource(file)' % filename
 
     def read(self, filename):
         r"""
@@ -762,7 +765,7 @@ class R(ExtraTabCompletion, Interface):
             sage: r.get('a')
             '[1] 4'
         """
-        self.eval( self._read_in_file_command(filename) )
+        self.eval(self._read_in_file_command(filename))
 
     def _install_hints(self):
         """
@@ -788,7 +791,7 @@ class R(ExtraTabCompletion, Interface):
         """
         if s[-2:] == "()":
             s = s[-2:]
-        return self.eval('%s'%s)
+        return self.eval('%s' % s)
 
     def source(self, s):
         """
@@ -830,11 +833,11 @@ class R(ExtraTabCompletion, Interface):
 
         s = self.eval('version')
 
-        major = int( major_re.findall(s)[0].strip() )
-        minor = tuple(int(i) for i in minor_re.findall(s)[0].strip().split(".") )
+        major = int(major_re.findall(s)[0].strip())
+        minor = tuple(int(i) for i in minor_re.findall(s)[0].strip().split("."))
         version_string = version_string_re.findall(s)[0].strip()
 
-        return ( (major,) + minor, version_string )
+        return ((major,) + minor, version_string)
 
     def library(self, library_name):
         """
@@ -870,7 +873,7 @@ class R(ExtraTabCompletion, Interface):
             pass
         self._tab_completion(verbose=False, use_disk_cache=False)
 
-    require = library #overwrites require
+    require = library  # overwrites require
 
     def available_packages(self):
         """
@@ -891,15 +894,15 @@ class R(ExtraTabCompletion, Interface):
             sage: len(ap) > 20                  # optional - internet  # optional - rpy2
             True
         """
-        p = self.new('available.packages("%s/src/contrib")'%RRepositoryURL)
+        p = self.new('available.packages("%s/src/contrib")' % RRepositoryURL)
         s = str(p).splitlines()[1:]
         v = [x.split()[0].strip("'") for x in s]
         return v
-        #The following was more structural, but breaks on my machine.  (stein)
-        #p = p._sage_()
-        #s = p['_Dim'][0]
-        #l = [[p['DATA'][i],p['DATA'][s+1+i]] for i in range(0,s)]
-        #return l
+        # The following was more structural, but breaks on my machine.  (stein)
+        # p = p._sage_()
+        # s = p['_Dim'][0]
+        # l = [[p['DATA'][i],p['DATA'][s+1+i]] for i in range(0,s)]
+        # return l
 
     def _object_class(self):
         """
@@ -1071,8 +1074,8 @@ class R(ExtraTabCompletion, Interface):
         """
         args, kwds = self._convert_args_kwds(args, kwds)
         self._check_valid_function_name(function)
-        return self.new("%s(%s)"%(function, ",".join([s.name() for s in args] +
-                                                     [self._sage_to_r_name(key)+'='+kwds[key].name() for key in kwds ] )))
+        return self.new("%s(%s)" % (function, ",".join([s.name() for s in args] +
+                                                       [self._sage_to_r_name(key) + '=' + kwds[key].name() for key in kwds])))
 
     def call(self, function_name, *args, **kwds):
         r"""
@@ -1085,7 +1088,7 @@ class R(ExtraTabCompletion, Interface):
         """
         return self.function_call(function_name, args=args, kwds=kwds)
 
-    def _an_element_impl(self):
+    def _an_element_(self):
         """
         Returns an element belonging to the R interpreter.  This is used
         behind the scenes when doing things like comparisons, etc.
@@ -1094,7 +1097,7 @@ class R(ExtraTabCompletion, Interface):
 
         EXAMPLES::
 
-            sage: r._an_element_impl()  # optional - rpy2
+            sage: r._an_element_()  # optional - rpy2
             [1] 0
             sage: type(_)  # optional - rpy2
             <class 'sage.interfaces.r.RElement'>
@@ -1115,10 +1118,8 @@ class R(ExtraTabCompletion, Interface):
             sage: r.set('a', '2 + 3')  # optional - rpy2
             sage: r.get('a')  # optional - rpy2
             '[1] 5'
-
         """
-        cmd = '%s <- %s'%(var,value)
-        out = self.eval(cmd)
+        _ = self.eval(f'{var} <- {value}')
 
     def get(self, var):
         """
@@ -1136,7 +1137,7 @@ class R(ExtraTabCompletion, Interface):
             sage: r.get('a')  # optional - rpy2
             '[1] 2'
         """
-        return self.eval('%s'%var)
+        return self.eval('%s' % var)
 
     def na(self):
         """
@@ -1186,26 +1187,27 @@ class R(ExtraTabCompletion, Interface):
         """
         v = RBaseCommands
 
-        ll = self('search()')._sage_() # loaded libs
+        ll = self('search()')._sage_()  # loaded libs
 
         for lib in ll:
             if lib in RFilteredPackages:
                 continue
 
             if lib.find("package:") != 0:
-                continue #only packages
+                continue  # only packages
 
-            raw = self('objects("%s")'%lib)._sage_()
+            raw = self('objects("%s")' % lib)._sage_()
 
-            #TODO are there others? many of them are shortcuts or
-            #should be done on another level, like selections in lists
-            #instead of calling obj.[[( fun-args) or other crazy stuff like that
+            # TODO are there others? many of them are shortcuts or
+            # should be done on another level, like selections in lists
+            # instead of calling obj.[[( fun-args) or
+            # other crazy stuff like that
 
-            #TODO further filtering, check if strings are now
-            #really functions, in R: exists(s, mode = "function"))
+            # TODO further filtering, check if strings are now
+            # really functions, in R: exists(s, mode = "function"))
             # (apply to vector with sapply(vec,func))
 
-            #filter only python compatible identifiers
+            # filter only python compatible identifiers
             valid = re.compile('[^a-zA-Z0-9_]+')
             raw = [x for x in raw if valid.search(x) is None]
             v += raw
@@ -1239,7 +1241,7 @@ class R(ExtraTabCompletion, Interface):
                 try:
                     self.__tab_completion = sage.misc.persist.load(COMMANDS_CACHE)
                     return self.__tab_completion
-                except IOError:
+                except OSError:
                     pass
             if verbose and use_disk_cache:
                 print("\nBuilding R command completion list (this takes")
@@ -1508,7 +1510,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
             sage: len(x)  # optional - rpy2
             5
         """
-        return self.parent()('length(%s)'%self.name()).sage()
+        return self.parent()('length(%s)' % self.name()).sage()
 
     def __getattr__(self, attrname):
         """
@@ -1589,11 +1591,11 @@ class RElement(ExtraTabCompletion, InterfaceElement):
         P = self._check_valid()
         if isinstance(n, str):
             n = n.replace('self', self._name)
-            return P.new('%s[%s]'%(self._name, n))
+            return P.new('%s[%s]' % (self._name, n))
         elif parent(n) is P:  # the key is RElement itself
-            return P.new('%s[%s]'%(self._name, n.name()))
-        elif not isinstance(n,tuple):
-            return P.new('%s[%s]'%(self._name, n))
+            return P.new('%s[%s]' % (self._name, n.name()))
+        elif not isinstance(n, tuple):
+            return P.new('%s[%s]' % (self._name, n))
         else:
             L = []
             for i in range(len(n)):
@@ -1601,7 +1603,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
                     L.append(n[i].name())
                 else:
                     L.append(str(n[i]))
-            return P.new('%s[%s]'%(self._name, ','.join(L)))
+            return P.new('%s[%s]' % (self._name, ','.join(L)))
 
     def __bool__(self):
         """
@@ -1646,7 +1648,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
         """
         P = self.parent()
         other = P(other)
-        return P('%s %s %s'%(self.name(), symbol, other.name()))
+        return P('%s %s %s' % (self.name(), symbol, other.name()))
 
     def __eq__(self, other):
         """
@@ -1791,7 +1793,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
         P = self._check_valid()
         Q = P(other)
         # the R operator is %*% for matrix multiplication
-        return P('%s %%*%% %s'%(self.name(), Q.name()))
+        return P('%s %%*%% %s' % (self.name(), Q.name()))
 
     def _sage_(self):
         r"""
@@ -1818,8 +1820,7 @@ class RElement(ExtraTabCompletion, InterfaceElement):
         P = self.parent()
 
         with localconverter(P._r_to_sage_converter) as cv:
-            parsed = robjects.r(self.name())
-            return parsed
+            return robjects.r(self.name())
 
     def _latex_(self):
         r"""
@@ -2005,6 +2006,7 @@ class RFunction(InterfaceFunction):
         """
         return self._parent.function_call(self._name, args=list(args), kwds=kwds)
 
+
 def is_RElement(x):
     """
     Return True if x is an element in an R interface.
@@ -2030,8 +2032,10 @@ def is_RElement(x):
 
     return isinstance(x, RElement)
 
+
 # An instance of R
 r = R()
+
 
 def reduce_load_R():
     """
@@ -2045,7 +2049,7 @@ def reduce_load_R():
     """
     return r
 
-import os
+
 def r_console():
     """
     Spawn a new R command-line session.
@@ -2063,6 +2067,7 @@ def r_console():
         raise RuntimeError('Can use the console only in the terminal. Try %%r magics instead.')
     # This will only spawn local processes
     os.system('R --vanilla')
+
 
 def r_version():
     """

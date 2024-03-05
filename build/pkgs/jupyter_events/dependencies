@@ -1,0 +1,4 @@
+jsonschema python_json_logger pyyaml referencing rfc3339_validator rfc3986_validator | $(PYTHON_TOOLCHAIN) $(PYTHON)
+
+----------
+All lines of this file are ignored except the first.

@@ -294,6 +294,7 @@ class AbstractSimplex_class(SageObject):
     Users should not call this directly, but instead use
     :func:`AbstractSimplex`. See that function for more documentation.
     """
+
     def __init__(self, dim, degeneracies=(), underlying=None, name=None,
                  latex_name=None):
         """
@@ -570,13 +571,12 @@ class AbstractSimplex_class(SageObject):
             return True
         if self.degeneracies() and other.degeneracies() and self.degeneracies() != other.degeneracies():
             return self.degeneracies() < other.degeneracies()
-        if hasattr(self.nondegenerate(), '__custom_name'):
-            if hasattr(other.nondegenerate(), '__custom_name'):
-                return str(self) < str(other)
+        if self.nondegenerate().get_custom_name() is not None:
+            if other.nondegenerate().get_custom_name() is not None:
+                return self.nondegenerate().get_custom_name() < other.nondegenerate().get_custom_name()
             return True
 
-        if (hasattr(other, '__custom_name')
-                or hasattr(other.nondegenerate(), '__custom_name')):
+        if other.nondegenerate().get_custom_name() is not None:
             return False
         return id(self) < id(other)
 
@@ -793,8 +793,8 @@ class AbstractSimplex_class(SageObject):
         # dimension, the degeneracies, and the name (with a prime
         # added).
         sigma = AbstractSimplex(self._dim, degeneracies=self.degeneracies())
-        if hasattr(self, '__custom_name'):
-            sigma.rename(str(self) + "'")
+        if self.get_custom_name() is not None:
+            sigma.rename(self.get_custom_name() + "'")
         return sigma
 
     def __deepcopy__(self, memo):
@@ -839,8 +839,8 @@ class AbstractSimplex_class(SageObject):
             return memo[underlying].apply_degeneracies(*degens)
         except KeyError:
             sigma = AbstractSimplex(underlying._dim)
-            if hasattr(underlying, '__custom_name'):
-                sigma.rename(str(self) + "'")
+            if underlying.get_custom_name() is not None:
+                sigma.rename(underlying.get_custom_name() + "'")
             memo[underlying] = sigma
             return sigma.apply_degeneracies(*degens)
 
@@ -896,12 +896,12 @@ class AbstractSimplex_class(SageObject):
         """
         if self._latex_name is not None:
             return self._latex_name
-        if hasattr(self, '__custom_name'):
-            return str(self)
+        if self.get_custom_name() is not None:
+            return self.get_custom_name()
         if self.nondegenerate()._latex_name is not None:
             simplex = self.nondegenerate()._latex_name
-        elif hasattr(self.nondegenerate(), '__custom_name'):
-            simplex = str(self.nondegenerate())
+        elif self.nondegenerate().get_custom_name() is not None:
+            simplex = self.nondegenerate().get_custom_name()
         else:
             simplex = "\\Delta^{{{}}}".format(self._dim)
         if self.degeneracies():
@@ -1376,11 +1376,11 @@ class SimplicialSet_arbitrary(Parent):
         if self.is_finite():
             if max_dim is None:
                 return list(self._simplices)
-            return list(sigma for sigma in self._simplices if sigma.dimension() <= max_dim)
+            return [sigma for sigma in self._simplices if sigma.dimension() <= max_dim]
         if max_dim is None:
             raise NotImplementedError('this simplicial set may be '
                                       'infinite, so specify max_dim')
-        return list(sigma for sigma in self.n_skeleton(max_dim)._simplices)
+        return list(self.n_skeleton(max_dim)._simplices)
 
     def cells(self, subcomplex=None, max_dim=None):
         """
@@ -1547,8 +1547,8 @@ class SimplicialSet_arbitrary(Parent):
              f^2 * f,
              f^2 * f^2, s_0 f, s_0 f^2, s_1 f, s_1 f^2, s_1 s_0 1]
         """
-        non_degen = [_ for _ in self.nondegenerate_simplices(max_dim=n)]
-        ans = set([_ for _ in non_degen if _.dimension() == n])
+        non_degen = list(self.nondegenerate_simplices(max_dim=n))
+        ans = {_ for _ in non_degen if _.dimension() == n}
         for sigma in non_degen:
             d = sigma.dimension()
             ans.update([sigma.apply_degeneracies(*_)
@@ -1844,7 +1844,7 @@ class SimplicialSet_arbitrary(Parent):
                 d = f.dimension()
                 found = False
                 for x in self.n_cells(d):
-                    if str(x) == str(tuple(sorted(tuple(f), key=str))):
+                    if str(x) == str(tuple(sorted(f, key=str))):
                         new.append(x)
                         found = True
                         break
@@ -2382,7 +2382,6 @@ class SimplicialSet_arbitrary(Parent):
             sage: Y = S2.unset_base_point()
             sage: Z = K.unset_base_point()
 
-            sage:
             sage: S2.coproduct(K).is_pointed()
             True
             sage: S2.coproduct(K)
@@ -3203,6 +3202,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
         sage: X
         Y
     """
+
     def __init__(self, data, base_point=None, name=None, check=True,
                  category=None, latex_name=None):
         r"""
@@ -3287,7 +3287,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
                     faces = {}
                     for idx, sigma in enumerate(data.n_cells(d)):
                         new_sigma = AbstractSimplex(d)
-                        new_sigma.rename(str(tuple(sorted(tuple(sigma), key=str))))
+                        new_sigma.rename(str(tuple(sorted(sigma, key=str))))
                         if d > 0:
                             simplices[new_sigma] = [old_faces[_] for _ in sigma.faces()]
                         else:
@@ -3360,7 +3360,7 @@ class SimplicialSet_finite(SimplicialSet_arbitrary, GenericCellComplex):
         # simplicial set.
         self._data = tuple(data.items())
         # self._simplices: a sorted tuple of non-degenerate simplices.
-        self._simplices = sorted(tuple(simplices))
+        self._simplices = sorted(simplices)
         # self._basepoint: the base point, or None.
         if base_point is not None:
             if base_point not in simplices:
@@ -3941,13 +3941,13 @@ def all_degeneracies(n, l=1):
         {(2, 1, 0), (3, 1, 0), (3, 2, 0), (3, 2, 1)}
     """
     if l == 0:
-        return set(())
+        return set()
     if l == 1:
-        return set([tuple([_]) for _ in range(n+1)])
+        return {(_,) for _ in range(n+1)}
     ans = set()
     for i in range(n+l):
-        ans.update(set([tuple(standardize_degeneracies(*([i] + list(_))))
-                        for _ in all_degeneracies(n, l-1)]))
+        ans.update({tuple(standardize_degeneracies(*([i] + list(_))))
+                        for _ in all_degeneracies(n, l-1)})
     return ans
 
 

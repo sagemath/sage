@@ -153,13 +153,13 @@ def LatticePolytope_PPL(*args):
         TypeError: polyhedron has non-integral generators
     """
     polytope_class = LatticePolytope_PPL_class
-    if len(args)==1 and isinstance(args[0], C_Polyhedron):
+    if len(args) == 1 and isinstance(args[0], C_Polyhedron):
         polyhedron = args[0]
         polytope_class = _class_for_LatticePolytope(polyhedron.space_dimension())
         if not all(p.is_point() and p.divisor() == 1 for p in polyhedron.generators()):
             raise TypeError('polyhedron has non-integral generators')
         return polytope_class(polyhedron)
-    if len(args)==1 \
+    if len(args) == 1 \
             and isinstance(args[0], (list, tuple)) \
             and isinstance(args[0][0], (list,tuple)):
         vertices = args[0]
@@ -278,7 +278,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             sage: LatticePolytope_PPL((0,0,0), (1,0,0), (0,1,0)).is_simplex()
             True
         """
-        return self.affine_dimension()+1==self.n_vertices()
+        return self.affine_dimension()+1 == self.n_vertices()
 
     @cached_method
     def bounding_box(self):
@@ -467,7 +467,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             ((-1, -1), (-1, 1), (0, 0), (1, -1), (1, 1))
         """
         n = 1 + self.space_dimension() - self.affine_dimension()
-        return tuple(p[0] for p in self._integral_points_saturating() if len(p[1])!=n)
+        return tuple(p[0] for p in self._integral_points_saturating() if len(p[1]) != n)
 
     @cached_method
     def vertices(self):
@@ -586,7 +586,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
         # "points" are the potential vertices of the fiber. They are
         # in the $codim$-skeleton of the polytope, which is contained
         # in the points that saturate at least $dim$ equations.
-        points = [ p for p in self._integral_points_saturating() if len(p[1])>=dim ]
+        points = [ p for p in self._integral_points_saturating() if len(p[1]) >= dim ]
         points = sorted(points, key=lambda x:len(x[1]))
 
         # iterate over point combinations subject to all points being on one facet.
@@ -597,7 +597,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
                     saturated_ieqs = ieqs
                 else:
                     saturated_ieqs = saturated.intersection(ieqs)
-                if len(saturated_ieqs)==0:
+                if len(saturated_ieqs) == 0:
                     continue
                 if n == 1:
                     yield [i]

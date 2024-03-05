@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.all
 r"""
 Interface to Sage
 
@@ -5,15 +6,15 @@ This is an expect interface to *another* copy of the Sage
 interpreter.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import pickle
@@ -506,9 +507,9 @@ class SageElement(ExpectElement):
 
         EXAMPLES::
 
-            sage: sr = mq.SR(allow_zero_inversions=True)
-            sage: F,s = sr.polynomial_system()
-            sage: F == sage0(F)._sage_()
+            sage: sr = mq.SR(allow_zero_inversions=True)                                # needs sage.modules sage.rings.finite_rings
+            sage: F,s = sr.polynomial_system()                                          # needs sage.modules sage.rings.finite_rings
+            sage: F == sage0(F)._sage_()                                                # needs sage.modules sage.rings.finite_rings
             True
         """
         P = self.parent()

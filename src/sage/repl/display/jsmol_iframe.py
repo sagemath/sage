@@ -112,7 +112,7 @@ class JSMolHtml(SageObject):
         EXAMPLES::
 
             sage: from sage.repl.display.jsmol_iframe import JSMolHtml
-            sage: JSMolHtml(sphere(), width=500, height=300)
+            sage: JSMolHtml(sphere(), width=500, height=300)                            # needs sage.plot
             JSmol Window 500x300
         """
         from sage.repl.rich_output.output_graphics3d import OutputSceneJmol

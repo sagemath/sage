@@ -36,6 +36,7 @@ AUTHORS:
 # ****************************************************************************
 
 import os
+from numbers import Integral
 from collections.abc import Iterable
 from math import isnan
 import sage.misc.verbose
@@ -63,7 +64,7 @@ def is_Graphics(x):
         sage: from sage.plot.graphics import is_Graphics
         sage: is_Graphics(1)
         False
-        sage: is_Graphics(disk((0.0, 0.0), 1, (0, pi/2)))
+        sage: is_Graphics(disk((0.0, 0.0), 1, (0, pi/2)))                               # needs sage.symbolic
         True
     """
     return isinstance(x, Graphics)
@@ -1104,8 +1105,8 @@ class Graphics(WithEqualityById, SageObject):
         Compute and return other + this graphics object.
 
         This only works when other is a Python int equal to 0. In all other
-        cases a TypeError is raised. The main reason for this function is
-        to make summing a list of graphics objects easier.
+        cases a :class:`TypeError` is raised. The main reason for this
+        function is to make summing a list of graphics objects easier.
 
         EXAMPLES::
 
@@ -1358,6 +1359,7 @@ class Graphics(WithEqualityById, SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: p = plot(x, 1, 10)
             sage: fig = p.matplotlib()
             sage: ax = fig.get_axes()[0]
@@ -1372,6 +1374,7 @@ class Graphics(WithEqualityById, SageObject):
 
         TESTS::
 
+            sage: # needs sage.symbolic
             sage: p._set_scale(ax, 'log')
             Traceback (most recent call last):
             ...
@@ -1796,7 +1799,7 @@ class Graphics(WithEqualityById, SageObject):
 
         ::
 
-            sage: G.show(scale='semilogy', base=(3,2)) # base ignored for x-axis        # needs sage.symbolic
+            sage: G.show(scale='semilogy', base=(3,2))  # base ignored for x-axis       # needs sage.symbolic
 
         The scale can be also given as a 2-tuple or a 3-tuple.::
 
@@ -1815,7 +1818,7 @@ class Graphics(WithEqualityById, SageObject):
         some examples.::
 
             sage: G = list_plot([10**i for i in range(10)])                         # long time, needs sage.symbolic
-            sage: G.show(scale='semilogy')                                          # long time
+            sage: G.show(scale='semilogy')                                          # long time, needs sage.symbolic
 
         ::
 
@@ -2874,6 +2877,11 @@ class Graphics(WithEqualityById, SageObject):
                 weight=lopts.pop('font_weight', 'medium'),
                 variant=lopts.pop('font_variant', 'normal'))
             color = lopts.pop('back_color', 'white')
+            if 'loc' in lopts:
+                loc = lopts['loc']
+                if isinstance(loc, Integral):
+                    # matplotlib 3.8 doesn't support sage integers
+                    lopts['loc'] = int(loc)
             leg = subplot.legend(prop=prop, **lopts)
             if leg is None:
                 from warnings import warn
