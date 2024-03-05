@@ -27,7 +27,7 @@ def maxima_integrator(expression, v, a=None, b=None):
 
     TESTS:
 
-    Check that :trac:`25817` is fixed::
+    Check that :issue:`25817` is fixed::
 
         sage: maxima_integrator(log(e^x*log(x)*sin(x))/x^2, x)
         1/2*(x*(Ei(-log(x)) + conjugate(Ei(-log(x))))
@@ -86,7 +86,7 @@ def mma_free_integrator(expression, v, a=None, b=None):
 
     TESTS:
 
-    Check that :trac:`18212` is resolved::
+    Check that :issue:`18212` is resolved::
 
         sage: var('y')   # optional - internet
         y
@@ -94,7 +94,7 @@ def mma_free_integrator(expression, v, a=None, b=None):
         sage: result.simplify_trig()               # optional - internet
         -1/2*cos(y)*sin(y) + 1/2*y
 
-    Check that :trac:`14764` is resolved::
+    Check that :issue:`14764` is resolved::
 
         sage: integrate(x^2, x, 0, 1, algorithm="mathematica_free") # optional - internet
         1/3
@@ -149,7 +149,7 @@ def fricas_integrator(expression, v, a=None, b=None, noPole=True):
 
     TESTS:
 
-    Check that :trac:`25220` is fixed::
+    Check that :issue:`25220` is fixed::
 
         sage: integral(sqrt(1-cos(x)), x, 0, 2*pi, algorithm="fricas")          # optional - fricas
         4*sqrt(2)
@@ -162,7 +162,7 @@ def fricas_integrator(expression, v, a=None, b=None, noPole=True):
         sage: integral(cos(ln(cos(x))), x, algorithm='fricas')                  # optional - fricas
         integral(cos(log(cos(x))), x)
 
-    Check that :trac:`28641` is fixed::
+    Check that :issue:`28641` is fixed::
 
         sage: integrate(sqrt(2)*x^2 + 2*x, x, algorithm="fricas")               # optional - fricas
         1/3*sqrt(2)*x^3 + x^2
@@ -173,13 +173,13 @@ def fricas_integrator(expression, v, a=None, b=None, noPole=True):
         sage: integrate(1, x, algorithm="fricas")                               # optional - fricas
         x
 
-    Check that :trac:`28630` is fixed::
+    Check that :issue:`28630` is fixed::
 
         sage: f = polylog(3, x)
         sage: f.integral(x, algorithm='fricas')                                 # optional - fricas
         -x*dilog(x) - (x - 1)*log(-x + 1) + x*polylog(3, x) + x
 
-    Check that :trac:`29043` is fixed::
+    Check that :issue:`29043` is fixed::
 
         sage: var("a c d"); f = (I*a*tan(d*x + c) + a)*sec(d*x + c)^10
         (a, c, d)
@@ -233,7 +233,7 @@ def giac_integrator(expression, v, a=None, b=None):
         sage: giac_integrator(e^(-x^2)*log(x), x)
         integrate(e^(-x^2)*log(x), x)
 
-    Check that :trac:`30133` is fixed::
+    Check that :issue:`30133` is fixed::
 
         sage: ee = SR.var('e')
         sage: giac_integrator(ee^x, x)
@@ -242,7 +242,7 @@ def giac_integrator(expression, v, a=None, b=None):
         sage: giac_integrator(cos(y), y)
         sin(π)
 
-    Check that :trac:`29966` is fixed::
+    Check that :issue:`29966` is fixed::
 
         sage: giac_integrator(sqrt(x + sqrt(x)), x)
         1/12*(2*sqrt(x)*(4*sqrt(x) + 1) - 3)*sqrt(x + sqrt(x))...
@@ -278,7 +278,7 @@ def libgiac_integrator(expression, v, a=None, b=None):
         integrate(e^(-x^2)*log(x), x)
 
     The following integral fails with the Giac Pexpect interface, but works
-    with libgiac (:trac:`31873`)::
+    with libgiac (:issue:`31873`)::
 
         sage: a, x = var('a,x')
         sage: f = sec(2*a*x)

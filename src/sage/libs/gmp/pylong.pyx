@@ -8,10 +8,10 @@ AUTHORS:
 - Gonzalo Tornaria (2006): initial version
 
 - David Harvey (2007-08-18): added ``mpz_get_pyintlong`` function
-  (:trac:`440`)
+  (:issue:`440`)
 
 - Jeroen Demeyer (2015-02-24): moved from c_lib, rewritten using
-  ``mpz_export`` and ``mpz_import`` (:trac:`17853`)
+  ``mpz_export`` and ``mpz_import`` (:issue:`17853`)
 """
 
 #*****************************************************************************

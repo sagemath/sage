@@ -425,7 +425,7 @@ class QuasiModularFormsElement(ModuleElement):
             sage: (1/2 + QM.0 + 2*QM.1^2 + QM.0*QM.2).polynomial()
             E2*E6 + 2*E4^2 + E2 + 1/2
 
-        Check that :trac:`34569` is fixed::
+        Check that :issue:`34569` is fixed::
 
             sage: QM = QuasiModularForms(Gamma1(3))
             sage: QM.ngens()
@@ -655,7 +655,7 @@ class QuasiModularFormsElement(ModuleElement):
             sage: F.serre_derivative().weight()
             8
 
-        Check that :trac:`34569` is fixed::
+        Check that :issue:`34569` is fixed::
 
             sage: QM = QuasiModularForms(Gamma1(3))
             sage: E2 = QM.weight_2_eisenstein_series()

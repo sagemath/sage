@@ -163,7 +163,7 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
              + PBW[alphacheck[1]]^2
              - 2*PBW[alphacheck[1]]
 
-        Check that :trac:`23266` is fixed::
+        Check that :issue:`23266` is fixed::
 
             sage: sl2 = lie_algebras.sl(QQ, 2, 'matrix')
             sage: sl2.indices()
@@ -305,7 +305,7 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
 
         TESTS:
 
-        Check that we can take the preimage (:trac:`23375`)::
+        Check that we can take the preimage (:issue:`23375`)::
 
             sage: L = lie_algebras.cross_product(QQ)
             sage: pbw = L.pbw_basis()
@@ -444,7 +444,7 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
 
         TESTS:
 
-        Check that :trac:`23268` is fixed::
+        Check that :issue:`23268` is fixed::
 
             sage: MS = MatrixSpace(QQ, 2,2)
             sage: gl = LieAlgebra(associative=MS)

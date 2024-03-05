@@ -373,7 +373,7 @@ class EllipticCurveSaturator(SageObject):
 
         TESTS:
 
-        See :trac:`27387`::
+        See :issue:`27387`::
 
             sage: K.<a> = NumberField(x^2 - x - 26)
             sage: E = EllipticCurve([a, 1 - a, 0, 93 - 16*a, 3150 - 560*a])

@@ -212,7 +212,7 @@ class TotallyOrderedFiniteSet(FiniteEnumeratedSet):
         sage: A('a') == 'a'
         False
 
-    Since :trac:`16280`, totally ordered sets support elements that do
+    Since :issue:`16280`, totally ordered sets support elements that do
     not inherit from :class:`sage.structure.element.Element`, whether
     they are facade or not::
 

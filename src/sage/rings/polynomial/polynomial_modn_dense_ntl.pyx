@@ -308,7 +308,7 @@ cdef class Polynomial_dense_mod_n(Polynomial):
 
         TESTS:
 
-        Check output type (see :trac:`25182`)::
+        Check output type (see :issue:`25182`)::
 
             sage: R.<x> = PolynomialRing(Integers(3), implementation='NTL')
             sage: isinstance(x.degree(), Integer)
@@ -860,7 +860,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
             ...
             NotImplementedError: Fraction fields not implemented for this type.
 
-        We define ``0^0`` to be unity, :trac:`13895`::
+        We define ``0^0`` to be unity, :issue:`13895`::
 
             sage: R.<x> = PolynomialRing(Integers(100), implementation='NTL')
             sage: R(0)^0
@@ -1419,7 +1419,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
             sage: (x+1)^5
             x^5 + 5*x^4 + 10*x^3 + 10*x^2 + 5*x + 1
 
-        We define ``0^0`` to be unity, :trac:`13895`::
+        We define ``0^0`` to be unity, :issue:`13895`::
 
             sage: R.<x> = PolynomialRing(Integers(10^30), implementation='NTL')
             sage: R(0)^0

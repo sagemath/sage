@@ -13,7 +13,7 @@ AUTHORS:
 
 - Sébastien Labbé (2008) - Initial version.
 - Sébastien Labbé (2009-11-24) - Pickling support
-- Sébastien Labbé (2010-01) - Inclusion into sage (:trac:`6775`).
+- Sébastien Labbé (2010-01) - Inclusion into sage (:issue:`6775`).
 
 EXAMPLES:
 
