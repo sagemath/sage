@@ -69,6 +69,11 @@ Studio Code Dev Containers extension
 provides a very convenient way to install and use SageMath running in
 a Linux container.
 
+We recommend this installation method in particular to users who are not already
+familiar with Windows Subsystem for Linux. It is also suitable for machines that
+cannot run WSL 2 (because of hardware constraints or policy set by system
+administrators) but can run Docker.
+
 Note that although the source code of VS Code is open source (MIT
 License), the Dev Containers extension is only known to work with the
 Visual Studio Code product, but not with fully open source builds such
@@ -111,7 +116,8 @@ as `VSCodium <https://vscodium.com/>`_.
 
 - **No development:**
 
-    - Open the folder of a project where you would like to use Sage in VS Code.
+    - Open the folder of a project where you would like to use Sage in VS Code, or
+      just create a new folder for your work with Sage.
 
     - Create a subfolder named ``.devcontainer``. Download these files from the
       SageMath GitHub repository and place them in this subfolder:
@@ -134,10 +140,6 @@ palette, enter "Create: New Jupyter Notebook", and hit
 :kbd:`Enter`. Click "Select Kernel" on the right (or press :kbd:`Ctrl` +
 :kbd:`Alt` + :kbd:`Enter`), select SageMath, and hit :kbd:`Enter`.
 
-We recommend this installation method in particular to users who are not already
-familiar with Windows Subsystem for Linux. It is also suitable for machines that
-cannot run WSL 2 (because of hardware constraints or policy set by system
-administrators) but can run Docker.
 
 Approach 2: Manual installation using Windows Subsystem for Linux
 -----------------------------------------------------------------
