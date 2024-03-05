@@ -1182,8 +1182,18 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         return self._poly.degree(self._parent._R.gens()[i]) + self._mon[i]
 
     def valuation(self, x=None):
-        """
+        r"""
         Return the valuation of ``self``.
+
+        If ``x`` is ``None``, the returned valuation is the minimal total degree
+        of the monomials occurring in ``self``. Geometrically, this is the order
+        of vanishing of ``self`` at the generic point of the blow-up of the
+        point `(0,0,\ldots,0)`.
+
+        If ``x`` is not ``None``, then it must be a generator. In that case, the
+        minimum degree of that generator occurring in ``self`` is returned.
+        Geometrically, this is the order of vanishing of ``self`` at the generic
+        point of the curve `x = 0`.
 
         INPUT:
 
