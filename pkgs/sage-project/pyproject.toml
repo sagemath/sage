@@ -22,6 +22,9 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
 urls = {Homepage = "https://www.sagemath.org"}
+dependencies = [
+    "cookiecutter",
+]
 dynamic = ["version"]
 
 [project.readme]
