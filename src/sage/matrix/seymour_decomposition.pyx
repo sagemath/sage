@@ -229,7 +229,7 @@ cdef class DecompositionNode(SageObject):
             sage: certificate._children()
             ()
         """
-        return tuple(create_DecompositionNode(CMRmatroiddecChild(self._dec, index), self)
+        return tuple(create_DecompositionNode(CMRmatroiddecChild(self._dec, index), self._root or self)
                      for index in range(self.nchildren()))
 
     def _repr_(self):
