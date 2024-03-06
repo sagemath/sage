@@ -205,7 +205,7 @@ class PuiseuxSeriesRing(UniqueRepresentation, Parent):
 
         If the base ring is a field, then Puiseux series are already a field.
         If the base ring is a domain, then the Puiseux series over its fraction
-        field is returned. Otherwise, raise a ``ValueError``.
+        field is returned. Otherwise, raise a :class:`ValueError`.
 
         EXAMPLES::
 
@@ -224,10 +224,9 @@ class PuiseuxSeriesRing(UniqueRepresentation, Parent):
         from sage.categories.fields import Fields
         if self in Fields():
             return self
-        elif self in IntegralDomains():
+        if self in IntegralDomains():
             return PuiseuxSeriesRing(self._laurent_series_ring.fraction_field())
-        else:
-            raise ValueError('must be an integral domain')
+        raise ValueError('must be an integral domain')
 
     def residue_field(self):
         r"""
@@ -415,13 +414,13 @@ class PuiseuxSeriesRing(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: A = PuiseuxSeriesRing(AA, 'z')                                        # needs sage.rings.number_field
-            sage: A.gens()                                                               # needs sage.rings.number_field
-            (z,)        
+            sage: A = PuiseuxSeriesRing(QQ, 'z')
+            sage: A.gens()
+            (z,)
         """
         return (self.gen(),)
 
-    def ngens(self):
+    def ngens(self) -> int:
         r"""
         Return the number of generators of ``self``, namely 1.
 
