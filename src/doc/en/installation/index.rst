@@ -21,9 +21,9 @@ SageMath release.
 macOS
 =====
 
-- **Do you want to do SageMath development?**
+**Do you want to do SageMath development?**
 
-  - **Yes, development:**
+-   **Yes, development:**
 
     Obtain the SageMath sources via ``git`` as described in `The Sage
     Developer's Guide
@@ -37,7 +37,7 @@ macOS
       these describe an experimental method that gets all required
       packages, including Python packages, from conda-forge.
 
-  - **No development:**
+-   **No development:**
 
     - Install the `binary build of SageMath <https://github.com/3-manifolds/Sage_macOS/releases>`_
       from the 3-manifolds project.  It is a signed and notarized app, which
@@ -96,7 +96,7 @@ as `VSCodium <https://vscodium.com/>`_.
 
 **Do you want to do SageMath development?**
 
-- **Yes, development:**
+-   **Yes, development:**
 
     - In VS Code, `clone
       <https://code.visualstudio.com/docs/editor/versioncontrol#_cloning-a-repository>`_
@@ -114,7 +114,7 @@ as `VSCodium <https://vscodium.com/>`_.
     - To use Sage in a terminal, `open a new terminal in VS Code
       <https://code.visualstudio.com/docs/terminal/basics>`_ and type ``./sage``.
 
-- **No development:**
+-   **No development:**
 
     - Open the folder of a project where you would like to use Sage in VS Code, or
       just create a new folder for your work with Sage.
@@ -179,11 +179,11 @@ Start Ubuntu from the Start menu.
 
 **Do you want to do SageMath development?**
 
-  - **Yes, development:**
+-   **Yes, development:**
 
     Then follow the instructions for development on Linux below.
 
-  - **No development:**
+-   **No development:**
 
     Type the following commands to install Sage from conda-forge.
 
@@ -204,18 +204,18 @@ Start Ubuntu from the Start menu.
        $ conda activate sage
        $ sage
 
+To use Sage in a Jupyter notebook, it is convenient to use Visual Studio Code.
+See :ref:`sec-launching-vscode-wsl`.
+
+
 .. _installation-guide-linux:
-
-  - To use Sage in a Jupyter notebook, it is convenient to use Visual Studio Code.
-    See :ref:`sec-launching-vscode-wsl`.
-
 
 Linux
 =====
 
-- **Do you want to do SageMath development?**
+**Do you want to do SageMath development?**
 
-  - **Yes, development:**
+-   **Yes, development:**
 
     Obtain the SageMath sources via ``git`` as described in `The Sage
     Developer's Guide
@@ -229,7 +229,7 @@ Linux
       these describe an experimental method that gets all required
       packages, including Python packages, from conda-forge.
 
-  - No development: **Do you have root access (sudo)?**
+-   No development: **Do you have root access (sudo)?**
 
     - **Yes, root access:** Then the easiest way to install SageMath is
       through a Linux distribution that provides it as a package.  Some
