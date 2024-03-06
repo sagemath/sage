@@ -51,7 +51,7 @@ order to build a **html** version of this document, type::
 
     sage --docbuild tutorial html
 
-You can now open :sage_root:`local/share/doc/sage/html/en/tutorial/index.html` in
+You can now open :file:`SAGE_ROOT/local/share/doc/sage/html/en/tutorial/index.html` in
 your web browser.
 
 - Do you want to **add a new file** to the documentation? :ref:`Click here
