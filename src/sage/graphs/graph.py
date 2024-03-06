@@ -3987,29 +3987,29 @@ class Graph(GenericGraph):
         sizes = {v: 1 for v in self.vertices()}
 
         def find(dsf, v):
-            # Find root of tree in disjoint-set forest
+            # Find root of tree in disjoint-set forest.
             return v if dsf[v] is None else find(dsf, dsf[v])
 
-        def summand(queue, dsf, sizes):
+        def summand(stack, dsf, sizes):
             # Compute powersum terms obtained by adding each subset of
-            # edges in queue to current subgraph.
-            if not queue:
+            # edges in stack to current subgraph.
+            if not stack:
                 root_sizes = [s for v, s in sizes.items() if dsf[v] is None]
                 return p.monomial(Par(sorted(root_sizes, reverse=True)))
             else:
                 ret = p.zero()
-                e = queue.pop()
+                e = stack.pop()
                 u = find(dsf, e[0])
                 v = find(dsf, e[1])
                 # Terms cancel if edge creates a cycle.
                 if u is not v:
-                    ret = summand(queue, dsf, sizes)
+                    ret = summand(stack, dsf, sizes)
                     dsf[v] = u
                     sizes[u] += sizes[v]
-                    ret -= summand(queue, dsf, sizes)
+                    ret -= summand(stack, dsf, sizes)
                     dsf[v] = None
                     sizes[u] -= sizes[v]
-                queue.append(e)
+                stack.append(e)
                 return ret
 
         return summand(list(self.edges(labels=False)), dsf, sizes)
