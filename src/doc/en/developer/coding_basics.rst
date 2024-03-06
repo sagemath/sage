@@ -387,7 +387,7 @@ information. You can use the existing functions of Sage as templates.
 
    The bibliographical reference should go in Sage's master
    bibliography file,
-   :file:`SAGE_ROOT/src/doc/en/reference/references/index.rst`:
+   :sage_root:`src/doc/en/reference/references/index.rst`:
 
    .. CODE-BLOCK:: rest
 
@@ -560,7 +560,7 @@ Sage's master **BIBLIOGRAPHY** file
 
 All bibliographical references should be stored in the master
 bibliography file,
-:file:`SAGE_ROOT/src/doc/en/reference/references/index.rst`, in the
+:sage_root:`src/doc/en/reference/references/index.rst`, in the
 format
 
 .. CODE-BLOCK:: rest

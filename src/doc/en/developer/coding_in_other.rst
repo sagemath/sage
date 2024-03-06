@@ -43,7 +43,7 @@ polynomial or matrix, will have our new method. So you can do
 ``PariError`` in this case.
 
 The ``gen`` class is defined in
-:file:`SAGE_ROOT/src/sage/libs/cypari2/gen.pyx`, and this is where we
+:sage_root:`src/sage/libs/cypari2/gen.pyx`, and this is where we
 add the method ``matfrobenius``:
 
 .. CODE-BLOCK:: cython
@@ -194,7 +194,7 @@ Note the ``'"G"'`` which is evaluated in GAP as the string ``"G"``.
 The purpose of this section is to use this example to show how one
 might write a Python/Sage program whose input is, say, ``('G',2)`` and
 whose output is the matrix above (but as a Sage Matrix---see the code
-in the directory :file:`SAGE_ROOT/src/sage/matrix/` and the
+in the directory :sage_root:`src/sage/matrix/` and the
 corresponding parts of the Sage reference manual).
 
 First, the input must be converted into strings consisting of legal
