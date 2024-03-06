@@ -3977,6 +3977,7 @@ class Graph(GenericGraph):
         if R is None:
             R = ZZ
         p = SymmetricFunctions(R).p()
+        Par = p.basis().keys()
 
         # Dict to store parent of each vertex in disjoint-set forest
         # representing components of current induced subgraph.
@@ -3993,8 +3994,8 @@ class Graph(GenericGraph):
             # Compute powersum terms obtained by adding each subset of
             # edges in queue to current subgraph.
             if not queue:
-                return p(sorted([sizes[v] for v in sizes if dsf[v] is None],
-                        reverse=True))
+                root_sizes = [s for v, s in sizes.items() if dsf[v] is None]
+                return p.monomial(Par(sorted(root_sizes, reverse=True)))
             else:
                 ret = p.zero()
                 e = queue.pop()
@@ -4011,7 +4012,7 @@ class Graph(GenericGraph):
                 queue.append(e)
                 return ret
 
-        return summand(list(self.edges()), dsf, sizes)
+        return summand(list(self.edges(labels=False)), dsf, sizes)
 
     @doc_index("Coloring")
     def chromatic_quasisymmetric_function(self, t=None, R=None):
