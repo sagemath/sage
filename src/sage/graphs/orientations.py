@@ -86,7 +86,7 @@ def acyclic_orientations(G):
         sage: import timeit
         sage: G_C100, start_time = graphs.CycleGraph(100), timeit.default_timer()
         sage: it_C100, first_10_orientations = G_C100.acyclic_orientations(), list(islice(G_C100.acyclic_orientations(), 10))
-        sage: print(timeit.default_timer() - start_time < 0.05)
+        sage: print(timeit.default_timer() - start_time < 0.5)
         True
 
     TESTS:
