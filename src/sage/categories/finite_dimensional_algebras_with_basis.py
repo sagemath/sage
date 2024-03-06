@@ -1573,7 +1573,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                     sage: # needs sage.groups sage.modules
                     sage: S = SymmetricGroupAlgebra(QQ, 4)
-                    sage: elt = S.monomial(Partition([3,1,2,4]))
+                    sage: elt = S.monomial(Permutation([3,1,2,4]))
                     sage: ci = elt.cellular_involution(); ci
                     7/48*[1, 3, 2, 4] + 49/48*[2, 3, 1, 4]
                      - 1/48*[3, 1, 2, 4] - 7/48*[3, 2, 1, 4]
