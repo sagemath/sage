@@ -1204,9 +1204,9 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         # At this point F needs to be a number field
         # Note: Support for global function fields will be added in a future update
-        if not F is in NumberFields():
-            raise NotImplementedError("base field must be rational numbers or a number field")
-        
+        if F not in NumberFields():
+            raise ValueError("base field must be rational numbers or a number field")
+
         # Over the number field F, first compute the finite ramified places
         ram_fin = [p for p in set(F.primes_above(2)).union(F.primes_above(self._a),
                     F.primes_above(self._b)) if F.hilbert_symbol(self._a, self._b, p) == -1]
@@ -1216,7 +1216,6 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         # At this point the infinite ramified places also need to be computed
         return ram_fin, [e for e in F.real_embeddings() if F.hilbert_symbol(self._a, self._b, e) == -1]
-            
 
     @cached_method
     def ramified_primes(self):
@@ -1300,10 +1299,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         if is_RationalField(F):
             return ZZ.prod(self.ramified_places(inf=False))
 
-        try:
-            return F.ideal(F.prod(self.ramified_places(inf=False)))
-        except NotImplementedError:
-            raise ValueError("base field must be rational numbers or a number field")
+        return F.ideal(F.prod(self.ramified_places(inf=False)))
 
     def is_isomorphic(self, A) -> bool:
         """
