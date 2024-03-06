@@ -177,8 +177,12 @@ by Sage, you can link toward it without specifying its full path:
    :header-rows: 0
 
    * - GitHub issue
-     - ``issue:`17596```
+     - ``:issue:`17596```
      - :issue:`17596`
+
+   * - Sage repository file or directory
+     - ``:sage_root:`src/doc/en```
+     - :sage_root:`src/doc/en`
 
    * - Wikipedia
      - ``:wikipedia:`Sage_(mathematics_software)```
