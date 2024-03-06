@@ -528,14 +528,14 @@ Installation steps
    There are different possibilities to make using Sage a little easier:
 
    - Make a symbolic link from :file:`/usr/local/bin/sage` (or another
-     directory in your :envvar:`PATH`) to :file:`$SAGE_ROOT/sage`::
+     directory in your :envvar:`PATH`) to :sage_root:`sage`::
 
          $ ln -s /path/to/sage_root/sage /usr/local/bin/sage
 
      Now simply typing ``sage`` from any directory should be sufficient to run
      Sage.
 
-   - Copy :file:`$SAGE_ROOT/sage` to a location in your :envvar:`PATH`.
+   - Copy :sage_root:`sage` to a location in your :envvar:`PATH`.
      If you do this, make sure you edit the line:
 
      .. CODE-BLOCK:: bash
@@ -573,7 +573,7 @@ Installation steps
      right clicking the mouse on the icon).
 
    - On Linux and macOS systems, you can make an alias to
-     :file:`$SAGE_ROOT/sage`.
+     :sage_root:`sage`.
      For example, put something similar to the following line in your
      :file:`.bashrc` file:
 
@@ -777,7 +777,7 @@ Sage-specific environment variables controlling the build process
   the nearest mirrors.
 
   This sequence of operations is defined by the files in the directory
-  :file:`$SAGE_ROOT/.upstream.d`.
+  :sage_root:`.upstream.d`.
 
 .. envvar:: SAGE_NUM_THREADS
 

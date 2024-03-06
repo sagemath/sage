@@ -168,8 +168,8 @@ Third-party packages in Sage consist of two parts:
    instead.
 
 #. The build scripts and associated files are in a subdirectory
-   :sage_root:`build/pkgs/<package>`, where you replace ``<package>``
-   with a lower-case version of the upstream project name. If the
+   of :sage_root:`build/pkgs/` whose name is the lower-case version of
+   the upstream project name. If the
    project name contains characters which are not alphanumeric
    and are not an underscore, those characters should be removed
    or replaced by an underscore. For example, the project
@@ -177,7 +177,7 @@ Third-party packages in Sage consist of two parts:
 
 As an example, let us consider a hypothetical FoO project. They
 (upstream) distribute a tarball ``FoO-1.3.tar.gz`` (that will be
-automatically placed in :sage_root:`upstream` during the installation
+automatically placed in :file:`SAGE_ROOT/upstream` during the installation
 process). To package it in Sage, we create a subdirectory containing as
 a minimum the following files:
 
@@ -394,7 +394,7 @@ Helper functions
 
 In the ``spkg-build``, ``spkg-install``, and ``spkg-check`` scripts,
 the following functions are available. They are defined in the file
-``$SAGE_ROOT/build/bin/sage-dist-helpers``, if you want to look at the
+:sage_root:`build/bin/sage-dist-helpers`, if you want to look at the
 source code.  They should be used to make sure that appropriate
 variables are set and to avoid code duplication. These function names
 begin with ``sdh_``, which stands for "Sage-distribution helper".
