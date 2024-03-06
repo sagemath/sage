@@ -3963,18 +3963,55 @@ class Graph(GenericGraph):
             sage: XG3 = G3.chromatic_symmetric_function()
             sage: XG == XG1 + XG2 - XG3
             True
+
+        TESTS::
+
+            sage: Graph([]).chromatic_symmetric_function() == 1
+            True
+
+            sage: e = SymmetricFunctions(ZZ).e()
+            sage: e(graphs.CompleteGraph(5).chromatic_symmetric_function())
+            120*e[5]
         """
         from sage.combinat.sf.sf import SymmetricFunctions
-        from sage.combinat.partition import _Partitions
-        from sage.combinat.subset import powerset
         if R is None:
             R = ZZ
         p = SymmetricFunctions(R).p()
-        ret = p.zero()
-        for F in powerset(self.edges(sort=True)):
-            la = _Partitions(self.subgraph(edges=F).connected_components_sizes())
-            ret += (-1)**len(F) * p[la]
-        return ret
+
+        # Dict to store parent of each vertex in disjoint-set forest
+        # representing components of current induced subgraph.
+        dsf = {v: None for v in self.vertices()}
+
+        # Dict to store size of tree rooted at each vertex.
+        sizes = {v: 1 for v in self.vertices()}
+
+        def find(dsf, v):
+            # Find root of tree in disjoint-set forest
+            return v if dsf[v] is None else find(dsf, dsf[v])
+
+        def summand(queue, dsf, sizes):
+            # Compute powersum terms obtained by adding each subset of
+            # edges in queue to current subgraph.
+            if not queue:
+                return p(sorted([sizes[v] for v in sizes if dsf[v] is None],
+                        reverse=True))
+            else:
+                ret = p.zero()
+                e = queue.pop()
+                u = find(dsf, e[0])
+                v = find(dsf, e[1])
+                # Terms cancel if edge creates a cycle.
+                if u is not v:
+                    ret = summand(queue, dsf, sizes)
+                    dsf[v] = u
+                    sizes[u] += sizes[v]
+                    ret -= summand(queue, dsf, sizes)
+                    dsf[v] = None
+                    sizes[u] -= sizes[v]
+                queue.append(e)
+                return ret
+
+        return summand(list(self.edges()), dsf, sizes)
 
     @doc_index("Coloring")
     def chromatic_quasisymmetric_function(self, t=None, R=None):
