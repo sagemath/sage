@@ -1202,18 +1202,21 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
             return ram_fin, []
 
-        try:
-            # Over the number field F, first compute the finite ramified places
-            ram_fin = [p for p in set(F.primes_above(2)).union(F.primes_above(self._a),
-                        F.primes_above(self._b)) if F.hilbert_symbol(self._a, self._b, p) == -1]
+        # At this point F needs to be a number field
+        # Note: Support for global function fields will be added in a future update
+        if not F is in NumberFields():
+            raise NotImplementedError("base field must be rational numbers or a number field")
+        
+        # Over the number field F, first compute the finite ramified places
+        ram_fin = [p for p in set(F.primes_above(2)).union(F.primes_above(self._a),
+                    F.primes_above(self._b)) if F.hilbert_symbol(self._a, self._b, p) == -1]
 
-            if not inf:
-                return ram_fin
+        if not inf:
+            return ram_fin
 
-            # At this point the infinite ramified places also need to be computed
-            return ram_fin, [e for e in F.real_embeddings() if F.hilbert_symbol(self._a, self._b, e) == -1]
-        except (AttributeError, NotImplementedError):
-            raise ValueError("base field must be rational numbers or a number field")
+        # At this point the infinite ramified places also need to be computed
+        return ram_fin, [e for e in F.real_embeddings() if F.hilbert_symbol(self._a, self._b, e) == -1]
+            
 
     @cached_method
     def ramified_primes(self):
@@ -2035,8 +2038,7 @@ class QuaternionOrder(Parent):
         r"""
         Check whether the order of ``self`` is maximal in the ambient quaternion algebra.
 
-        Only implemented for quaternion algebras over number fields; for reference,
-        see Theorem 15.5.5 in [Voi2021]_.
+        Only works in quaternion algebras over number fields
 
         OUTPUT: Boolean
 
@@ -3502,12 +3504,12 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
     def is_integral(self):
         r"""
-        Checks whether a quaternion fractional ideal is integral. An ideal in a quaternion algebra
-        is integral if and only if it is contained in its left order. If the left order is already
-        defined this method just checks this definition, otherwise it uses one of the alternative
-        definitions from Lemma 16.2.8 of [Voi2021]_.
+        Check if a quaternion fractional ideal is integral. An ideal in a quaternion algebra is
+        said integral if it is contained in its left order. If the left order is already defined it just
+        check the definition, otherwise it uses one of the alternative definition of Lemma 16.2.8 of
+        [Voi2021]_.
 
-        OUTPUT: A boolean.
+        OUTPUT: a boolean.
 
         EXAMPLES::
 
