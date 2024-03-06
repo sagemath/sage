@@ -16,6 +16,7 @@ from sage.categories.algebras import Algebras
 from sage.categories.realizations import Category_realization_of_parent
 from sage.categories.rings import Rings
 from sage.combinat.free_module import CombinatorialFreeModule
+from sage.data_structures.blas_dict import linear_combination
 from sage.matrix.constructor import matrix
 from sage.misc.bindable_class import BindableClass
 from sage.misc.cachefunc import cached_method
@@ -786,10 +787,9 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                     return {A._indices(j): binomial(k + n - 1 - j, n - j)
                             for j in range(n + 1)}
 
-                from sage.data_structures.blas_dict import linear_combination
                 mc = self._monomial_coefficients
                 ret = linear_combination((on_basis(index), coeff)
-                                         for (index, coeff) in mc.items())
+                                         for index, coeff in mc.items())
                 return A.element_class(A, ret)
 
             def derivative_at_minus_one(self):
@@ -1221,10 +1221,9 @@ class IntegerValuedPolynomialRing(UniqueRepresentation, Parent):
                     return {A._indices(j): binomial(k, n - j)
                             for j in range(n + 1)}
 
-                from sage.data_structures.blas_dict import linear_combination
                 mc = self._monomial_coefficients
                 ret = linear_combination((on_basis(index), coeff)
-                                         for (index, coeff) in mc.items())
+                                         for index, coeff in mc.items())
                 return A.element_class(A, ret)
 
     B = Binomial
