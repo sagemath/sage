@@ -10,6 +10,10 @@ Committee.
 
 # Code of Conduct #
 
+This document has two parts: the current one --- the Code of Conduct
+itself --- and a second part describing the role of and procedures for
+the Sage Code of Conduct Committee.
+
 This Code was approved by the Sage community by a vote which ended on
 November 24, 2014.
 
