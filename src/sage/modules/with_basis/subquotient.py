@@ -394,21 +394,19 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
             sage: H.is_submodule(G)
             False
 
-        TESTS::
+        Different ambient spaces::
 
             sage: X = CombinatorialFreeModule(QQ, range(4)); x = X.basis()
             sage: F = X.submodule([x[0]-x[1], x[1]-x[2], x[2]-x[3]])
             sage: Y = CombinatorialFreeModule(QQ, range(6)); y = Y.basis()
             sage: G = Y.submodule([y[0]-y[1], y[1]-y[2], y[2]-y[3]])
             sage: F.is_submodule(G)
-            Traceback (most recent call last):
-            ...
-            ValueError: other (=...) should be a submodule of the same ambient space
+            False
         """
         if other is self._ambient:
             return True
         if not (isinstance(self, SubmoduleWithBasis) and self.ambient() is other.ambient()):
-            raise ValueError("other (=%s) should be a submodule of the same ambient space" % other)
+            return False  # different ambient spaces
         if self not in ModulesWithBasis.FiniteDimensional:
             raise NotImplementedError("only implemented for finite dimensional submodules")
         if self.dimension() > other.dimension():  # quick dimension check

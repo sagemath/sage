@@ -84,7 +84,6 @@ class SymmetricGroupRepresentation:
 
         EXAMPLES::
 
-            sage: s = SymmetricFunctions(QQ).s()
             sage: SM = Partition([2,2,1]).specht_module(QQ)
             sage: SM.frobenius_image()
             s[2, 2, 1]
@@ -99,6 +98,7 @@ class SymmetricGroupRepresentation:
             sage: F = D.specht_module(QQ).frobenius_image(); F
             s[1, 1, 1, 1, 1] + 4*s[2, 1, 1, 1] + 5*s[2, 2, 1]
              + 6*s[3, 1, 1] + 5*s[3, 2] + 4*s[4, 1] + s[5]
+            sage: s = SymmetricFunctions(QQ).s()
             sage: F == sum(StandardTableaux(la).cardinality() * s[la]
             ....:          for la in Partitions(5))
             True
