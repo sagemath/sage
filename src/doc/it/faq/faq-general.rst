@@ -292,7 +292,7 @@ Per scaricare la documentazione standard di Sage in formato HTML o PDF, visita
 Ogni release di Sage dispone della documentazione completa che costituisce la
 documentazione standard di Sage. Se hai scaricato un rilascio di Sage in formato
 binario, la versione HTML della sua documentazione si trova già disponibile nella
-cartella ``SAGE_ROOT/src/doc/output/html/``. Nel corso della compilazione da
+cartella :sage_root:`src/doc/output/html/`. Nel corso della compilazione da
 sorgente viene preparata anche la documentazione HTML.
 Per construire la versione HTML della documentazione, lancia il seguente comando
 dopo essersi posizionati in ``SAGE_ROOT``::
