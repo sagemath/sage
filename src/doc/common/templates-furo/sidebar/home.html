@@ -1,7 +1,38 @@
-<div class="sidebar-home">
-  <div class="sidebar-tree">
-    <ul><li class="toctree-l1">
-      <a class="reference internal" href="{{ pathto(master_doc) }}">Home - {{ shorttitle }}</a>
-    </li></ul>
+<div class="rst-versions-container text-center my-4">
+  <div class="version-bar" id="versionBar">
+    <span class="mr-2 current-version">
+      Version: {{ current_version }}
+    </span>
+    <div class="version-dropdown" id="versionDropdown">
+      <ul>
+        {% for the_version, url in versions %}
+          <li><a href="{{ url }}/index.html">{{ the_version }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
   </div>
 </div>
+
+<script>
+  // Toggle version dropdown on version bar click
+  document.getElementById('versionBar').addEventListener('click', function() {
+    document.getElementById('versionDropdown').classList.toggle('show');
+  });
+
+  // Handle clicks outside the version bar to close the dropdown
+  document.addEventListener('click', function(event) {
+    const versionBar = document.getElementById('versionBar');
+    const versionDropdown = document.getElementById('versionDropdown');
+
+    if (!versionBar.contains(event.target) && versionDropdown.classList.contains('show')) {
+      versionDropdown.classList.remove('show');
+    }
+  });
+
+  // Change the page on version selection
+  document.getElementById('versionDropdown').addEventListener('change', function() {
+    window.location = this.value;
+  });
+</script>
+
+<a class="reference internal" href="{{ pathto(master_doc) }}">Home - {{ shorttitle }}</a>

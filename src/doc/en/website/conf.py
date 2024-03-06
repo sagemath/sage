@@ -43,3 +43,11 @@ latex_documents = [
 html_additional_pages = {
     'index': 'index_furo.html' if html_theme == 'furo' else 'index.html',
 }
+
+html_context = {
+    'current_version': "10.2",
+    'versions': [
+        ["stable", "https://doc.sagemath.org/html/en"],
+        ["dev", "https://deploy-livedoc--sagemath.netlify.app/html/en"],
+    ],
+}
