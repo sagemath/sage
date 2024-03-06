@@ -1177,7 +1177,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: # needs sage.groups sage.modules
                 sage: QS3 = SymmetricGroupAlgebra(QQ, 3)
-                sage: a = QS3.monomial(Partition([2,1,3]))
+                sage: a = QS3.monomial(Permutation([2,1,3]))
                 sage: a.to_matrix(side='left')
                 [0 0 1 0 0 0]
                 [0 0 0 0 1 0]
