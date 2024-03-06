@@ -687,7 +687,7 @@ command::
 
 This command does not make any changes to the normal installation of
 Sage. The virtual environment is created in a subdirectory of
-:sage_root:`pkgs/sagemath-standard/.tox/`. After the command
+:file:`SAGE_ROOT/pkgs/sagemath-standard/.tox/`. After the command
 finishes, we can start the separate installation of the Sage library
 in its virtual environment::
 

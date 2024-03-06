@@ -128,8 +128,7 @@ support the command ``latex``.
    illustrates LaTeX generation for your object.
 
 #. You can use any macros included in ``amsmath``, ``amssymb``, or
-   ``amsfonts``, or the ones defined in
-   :sage_root:`doc/commontex/macros.tex`.
+   ``amsfonts``, or the ones defined in :mod:`sage.misc.latex_macros`.
 
 An example template for a ``_latex_`` method follows. Note that the
 ``.. skip`` line should not be included in your code; it is here to
@@ -162,7 +161,7 @@ Print representation
 ====================
 
 The standard Python printing method is ``__repr__(self)``. In Sage,
-that is for objects that derive from ``SageObject`` (which is
+that is for objects that derive from :class:`SageObject` (which is
 everything in Sage), instead define ``_repr_(self)``. This is
 preferable because if you only define ``_repr_(self)`` and not
 ``__repr__(self)``, then users can rename your object to print however
@@ -647,17 +646,17 @@ When importing from other Python libraries that do not provide sufficient typing
 information, it is possible to augment the library's typing information for
 the purposes of typechecking the Sage library:
 
-- Create typestub files and place them in the directory :sage_root:`src/typings`.
+- Create typestub files and place them in the directory :file:`SAGE_ROOT/src/typings`.
   For example, the distribution **pplpy** provides the top-level package :mod:`ppl`,
   which publishes no typing information. We can create a typestub file
-  :sage_root:`src/typings/ppl.pyi` or :sage_root:`src/typings/ppl/__init__.pyi`.
+  :file:`SAGE_ROOT/src/typings/ppl.pyi` or :file:`SAGE_ROOT/src/typings/ppl/__init__.pyi`.
 
 - When these typestub files are working well, it is preferable from the viewpoint
   of the Sage project that they are "upstreamed", i.e., contributed to the
   project that maintains the library. If a new version of the upstream library
   becomes available that provides the necessary typing information, we can
   update the package in the Sage distribution and remove the typestub files again
-  from :sage_root:`src/typings`.
+  from :file:`SAGE_ROOT/src/typings`.
 
 - As a fallback, when neither adding typing annotations to source files
   nor adding typestub files is welcomed by the upstream project, it is possible
