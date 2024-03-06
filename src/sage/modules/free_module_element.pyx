@@ -1143,7 +1143,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     def __hash__(self):
         """
-        Return hash of this vector.  Only mutable vectors are hashable.
+        Return hash of this vector.  Only immutable vectors are hashable.
 
         EXAMPLES::
 
