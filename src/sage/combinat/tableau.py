@@ -2618,7 +2618,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         l = len(self[0])
         st = [(None,) * l + row for row in other]
-        st.extend(row for row in self)
+        st.extend(self)
 
         from sage.combinat.skew_tableau import SkewTableau
         return SkewTableau(st).rectify()
