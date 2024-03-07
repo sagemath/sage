@@ -40,7 +40,8 @@ from sage_bootstrap.expand_class import PackageClass
 from sage_bootstrap.env import SAGE_DISTFILES
 
 
-dep_re = re.compile('([^<>=]*)')
+# Approximation of https://peps.python.org/pep-0508/#names dependency specification
+dep_re = re.compile('^ *([-A-Z0-9._]+)', re.IGNORECASE)
 
 
 class Application(object):
