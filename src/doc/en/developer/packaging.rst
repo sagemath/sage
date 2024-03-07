@@ -1118,20 +1118,26 @@ An equivalent command uses the SPKG name of the new package::
 Either of these two commands automatically downloads the most recent version
 from PyPI and also obtains most of the necessary information by querying PyPI.
 
-The ``dependencies`` file may need editing (watch out for warnings regarding
-``--no-deps`` that Sage issues during installation of the package!).
+By default, when the package is available as a platform-independent
+wheel, the ``sage --package`` creates a ``wheel`` package. In this case,
+the ``dependencies`` file is automatically generated from the information
+on PyPI, but may still need some manual editing.
+
+For ``normal`` and ``pip`` packages, the ``dependencies`` file is initialized
+to the bare minimum and will need manual editing. (Watch out for warnings
+regarding ``--no-deps`` that Sage issues during installation of the package!).
+
 Also you may want to set lower and upper bounds for acceptable package versions
 in the file ``install-requires.txt``.
 
-By default, when the package is available as a platform-independent
-wheel, the ``sage --package`` creates a wheel package. To create a normal package
-instead (for example, when the package requires patching), you can use::
+To create a ``normal`` package instead of a ``wheel`` package (for example, when the
+package requires patching), you can use::
 
     [alice@localhost sage]$ ./sage --package create pkg:pypi/scikit-spatial \
                                                --source normal              \
                                                --type optional
 
-To create a pip package rather than a normal or wheel package, you can use::
+To create a ``pip`` package rather than a ``normal`` or ``wheel`` package, you can use::
 
     [alice@localhost sage]$ ./sage --package create pkg:pypi/scikit-spatial \
                                                --source pip                 \
