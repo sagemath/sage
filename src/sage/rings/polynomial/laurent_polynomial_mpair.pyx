@@ -1165,9 +1165,9 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         OUTPUT:
 
-        If ``x`` is ``None``, return the maximum degree of the monomials of
-        ``self``.  If ``x`` is given and it is a generator of the parent
-        ring, the output is the maximum degree in ``x`` of ``self``.
+        If ``x`` is ``None``, return the total degree of ``self``.
+        If ``x`` is a given generator of the parent ring,
+        the output is the maximum degree of ``x`` in ``self``.
 
         EXAMPLES::
 
