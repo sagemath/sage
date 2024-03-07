@@ -438,16 +438,21 @@ class Application(object):
                     version = pypi_version.version
                 if dependencies is None:
                     requires_dist = pypi_version.requires_dist
-                    print(requires_dist)
                     if requires_dist:
                         dependencies = []
                         for item in requires_dist:
                             if "extra ==" in item:
                                 continue
                             try:
-                                dep = dep_re.match(item).groups()[0]
+                                dep = dep_re.match(item).groups()[0].strip()
                             except Exception:
                                 continue
+                            dep = 'pkg:pypi/' + dep
+                            try:
+                                dep = Package(dep).name
+                            except ValueError:
+                                self.create(dep, pkg_type=pkg_type)
+                                dep = Package(dep).name
                             dependencies.append(dep)
                 upstream_url = 'https://pypi.io/packages/{2}/{0:1.1}/{0}/{1}'.format(package_name, tarball, pypi_version.python_version)
             if not description:
