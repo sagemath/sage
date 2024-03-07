@@ -16,11 +16,16 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.categories.algebras import Algebras
+from sage.categories.modules import Modules
+from sage.categories.algebras import Algebras
+from sage.combinat.free_module import CombinatorialFreeModule
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.homology.homology_group import HomologyGroup
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
+from sage.sets.family import Family
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 from .cubical_complex import CubicalComplex, cubical_complexes
@@ -811,3 +816,712 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         ]
 
         return not any(one_skeleton.subgraph_search(g) is not None for g in obstruction_graphs)
+
+    def cohomology_ring(self, base_ring=QQ):
+        r"""
+        Return the unreduced cohomology of ``self`` with coefficients in
+        ``base_ring``.
+
+        This offers additional information about the cohomology,
+        and is intended to be used only when in need of specific
+        cohomology operations, such as the cup product, which
+        this does offer.
+
+        INPUT:
+
+        - ``base_ring`` -- commutative ring (default: ``QQ``); must be
+          ``ZZ`` or a field
+
+        The basis elements in dimension ``dim`` are named ``'h^{dim,i}'``
+        where `i` ranges between 0 and `r-1`, where `r` is the rank of
+        the cohomology group.
+
+        .. SEEALSO::
+
+            For more information on what this offers, see
+            :class:`.moment_angle_complex.CohomologyRing`.
+
+        EXAMPLES::
+
+            sage: Z = MomentAngleComplex([[1,2], [2,3], [3,4], [4,5], [5,1]])
+            sage: H = Z.cohomology_ring()
+            sage: sorted(H.basis())
+            [h^{0,0},
+             h^{3,0},
+             h^{3,1},
+             h^{3,2},
+             h^{3,3},
+             h^{3,4},
+             h^{4,0},
+             h^{4,1},
+             h^{4,2},
+             h^{4,3},
+             h^{4,4},
+             h^{7,0}]
+
+        Notice (by looking at the dimension) that this does
+        indeed coincide with the reduced cohomology::
+
+            sage: Z.cohomology(reduced=False, base_ring=QQ)
+            {0: Vector space of dimension 1 over Rational Field,
+             1: Vector space of dimension 0 over Rational Field,
+             2: Vector space of dimension 0 over Rational Field,
+             3: Vector space of dimension 5 over Rational Field,
+             4: Vector space of dimension 5 over Rational Field,
+             5: Vector space of dimension 0 over Rational Field,
+             6: Vector space of dimension 0 over Rational Field,
+             7: Vector space of dimension 1 over Rational Field}
+            sage: a = H.basis()[3, 0]; a
+            h^{3,0}
+            sage: b = H.basis()[4, 4]; b
+            h^{4,4}
+            sage: a.cup_product(b)
+            -h^{7,0}
+            sage: a * b  # alternative notation
+            -h^{7,0}
+            sage: a * a
+            0
+
+        We can lift cohomology classes to their cocycle
+        represetnatives and also acquire their originating
+        subcomplexes::
+
+            sage: a.to_cycle()
+            \chi_(1,)
+            sage: a.get_simplicial_complex()
+            Simplicial complex with vertex set (1, 3) and facets {(1,), (3,)}
+        """
+
+        return CohomologyRing(base_ring=base_ring, moment_angle_complex=self)
+
+
+class CohomologyRing(CombinatorialFreeModule):
+    r"""
+    Cohomology ring of a moment-angle complex.
+
+    Here we don't explicitly compute the cohomology ring
+    of a moment-angle complex as a topological space, but
+    we use the following result to compute its cohomology
+    ring (Theorem 4.5.8 of [BP2014]_):
+
+    .. MATH::
+
+        H^*(\mathcal{Z}_\mathcal{K}) \cong \bigoplus_{J \subseteq [m]}
+        \widetilde{H}^*(\mathcal{K}_J),
+
+    where `\widetilde{H}^{-1}(\mathcal{K}_\emptyset)` is the
+    base ring over which we compute all of the cohomologies.
+
+    .. NOTE::
+
+        The given isomorphism does not rely on the default
+        ring structure given by the direct sum of cohomologies,
+        but rather it is a vector space isomorphism, where the ring
+        structure (multiplication on the right-hand side) is defined
+        in a certain way. See
+        :meth:`.moment_angle_complex.CohomologyRing.Element.cup_product`
+        for more information.
+
+    .. NOTE::
+
+        This is not intended to be created directly by the user, but instead
+        via the :meth:`.moment_angle_complex.MomentAngleComplex.cohomology_ring`
+        method.
+
+    INPUT:
+
+    - ``base_ring`` -- the base_ring over which we compute the cohomology
+    - ``moment_angle_complex`` -- the moment-angle complex whose homology
+      we are computing
+
+    EXAMPLES::
+
+        sage: Z = MomentAngleComplex([[1,2,3], [1,2,4], [3,5], [4,5]])
+        sage: H = Z.cohomology_ring(); H
+        Cohomology module of Moment-angle complex of Simplicial complex with
+        vertex set (1, 2, 3, 4, 5) and facets {(3, 5), (4, 5), (1, 2, 3),
+        (1, 2, 4)} over Rational Field
+        sage: a = H.an_element(); a
+        2*h^{0,0} + 2*h^{3,0} + 3*h^{3,1}
+        sage: b = H.basis()[3,2]
+
+    We can compute the cup product::
+
+        sage: a.cup_product(b)
+        2*h^{3,2} - 5*h^{6,0}
+        sage: a * a
+        4*h^{0,0} + 8*h^{3,0} + 12*h^{3,1}
+
+        sage: RP2 = simplicial_complexes.RealProjectivePlane()
+        sage: Z = MomentAngleComplex(RP2)
+        sage: H = Z.cohomology_ring(GF(2))
+        sage: x = H.basis(5)[5, 0]
+        sage: y = H.basis(5)[5, 1]
+        sage: x * y
+        0
+    """
+    def __init__(self, base_ring, moment_angle_complex):
+        """
+        Initialize ``self``.
+
+        TESTS::
+
+            sage: S2 = simplicial_complexes.Sphere(2)
+            sage: Z = MomentAngleComplex(S2)
+            sage: H = Z.cohomology_ring(GF(5))
+            sage: TestSuite(H).run()
+            sage: H = Z.cohomology_ring(ZZ)
+            sage: TestSuite(H).run()
+        """
+        self._complex = moment_angle_complex
+        self._base_ring = base_ring
+
+        vertices = moment_angle_complex._simplicial_complex.vertices()
+        n = len(vertices)
+        self._graded_indices = {}
+
+        # Will be used for storing information about the subcomplexes
+        # from which we compute the cohomology
+        self._gens = {}
+        indices = []
+        for deg in range(moment_angle_complex.dimension() + 1):
+            num_of_gens = 0
+            self._gens[deg] = []
+            for i in range(n+1):
+                for x in combinations(vertices, i):
+                    S = moment_angle_complex._simplicial_complex.generated_subcomplex(x, is_mutable=False)
+                    # Because of the empty combination
+                    if len(S.vertices()) > 0 and isinstance(S.cohomology(deg-i-1, base_ring, generators=True), list):
+                        chmlgy = S.cohomology(deg-i-1, base_ring, generators=True)
+                        for y in chmlgy:
+                            self._gens[deg].append((set(x), deg-i-1, y))
+                        num_of_gens += len(chmlgy)
+                    elif len(S.vertices()) == 0 and deg == 0:
+                        num_of_gens = 1
+
+            indices.extend([(deg, k) for k in range(num_of_gens)])
+            self._graded_indices[deg] = range(num_of_gens)
+
+        cat = Algebras(base_ring).WithBasis().Graded().FiniteDimensional()
+        CombinatorialFreeModule.__init__(self, base_ring, indices, category=cat)
+
+    def basis(self, d=None):
+        """
+        Return (the degree ``d`` homogeneous component of) the basis
+        of ``self``.
+
+        INPUT:
+
+        - ``d`` -- (optional) the degree
+
+        EXAMPLES::
+
+            sage: S2 = simplicial_complexes.Sphere(2)
+            sage: Z = MomentAngleComplex(S2)
+            sage: H = Z.cohomology_ring()
+            sage: H.basis()
+            Finite family {(0, 0): h^{0,0}, (7, 0): h^{7,0}}
+            sage: H.basis(5)
+            Finite family {}
+            sage: H.basis(7)
+            Finite family {(7, 0): h^{7,0}}
+            sage: H.basis()[7, 0]
+            h^{7,0}
+            sage: H.basis(8)
+            Finite family {}
+        """
+        if d is None:
+            return Family(self._indices, self.monomial)
+        else:
+            indices = [(d, i) for i in self._graded_indices.get(d, [])]
+            return Family(indices, self.monomial)
+
+    def degree_on_basis(self, i):
+        """
+        Return the degree of the basis element indexed by ``i``.
+
+        EXAMPLES::
+
+            sage: Z = MomentAngleComplex([[1,2], [3,4,5], [1,5], [2,3]])
+            sage: H = Z.cohomology_ring(GF(5))
+            sage: H.degree_on_basis((4, 0))
+            4
+        """
+        return i[0]
+
+    def _repr_(self):
+        """
+        Return a string representation of ``self``.
+
+        TESTS::
+
+            sage: MomentAngleComplex([[1,2,3], [3,4]]).cohomology_ring()
+            Cohomology module of Moment-angle complex of Simplicial complex
+            with vertex set (1, 2, 3, 4) and facets {(3, 4), (1, 2, 3)}
+            over Rational Field
+        """
+        return "Cohomology module of {} over {}".format(self._complex, self.base_ring())
+
+    def _repr_term(self, i):
+        """
+        Return ``'h^{i[0],i[1]}'``, for the basis element indexed by ``i``.
+
+        EXAMPLES::
+
+            sage: Z = MomentAngleComplex([[1,2], [3,4,5], [1,5], [2,3]])
+            sage: Z = MomentAngleComplex([[1,2], [3,4,5], [1,4], [2,3,5]])
+            sage: H = Z.cohomology_ring(GF(7))
+            sage: H.basis()[3, 2]
+            h^{3,2}
+        """
+        return 'h^{{{},{}}}'.format(i[0], i[1])
+
+    _latex_term = _repr_term
+
+    def one(self):
+        """
+        Return the multiplicative identity element.
+
+        EXAMPLES::
+
+            sage: Z = MomentAngleComplex([[1,2], [3,4], [2,3,5], [1,5], [4,5]])
+            sage: H = Z.cohomology_ring()
+            sage: H.one()
+            h^{0,0}
+            sage: all(H.one() * x == x == x * H.one() for x in H.basis())
+            True
+        """
+        one = self._base_ring.one()
+        d = {(0, i): one for i in self._graded_indices[0]}
+        return self._from_dict(d, remove_zeros=False)
+
+    def complex(self):
+        """
+        Return the moment-angle complex associated with ``self``.
+
+        EXAMPLES::
+
+            sage: S2 = simplicial_complexes.Sphere(2)
+            sage: H = MomentAngleComplex(S2).cohomology_ring()
+            sage: H.complex()
+            Moment-angle complex of Simplicial complex with vertex set
+            (0, 1, 2, 3) and facets {(0, 1, 2), (0, 1, 3), (0, 2, 3), (1, 2, 3)}
+        """
+        return self._complex
+
+    @cached_method
+    def _to_cycle_on_basis(self, i):
+        r"""
+        Return the cocycle representative of the basis element
+        indexed by ``i``.
+
+        .. SEEALSO::
+
+            :meth:`Element.to_cycle`, :meth:`Element.get_simplicial_complex`.
+
+        EXAMPLES::
+
+            sage: Z = MomentAngleComplex([[1,2], [3,4,5], [1,5], [2,3]])
+            sage: H = Z.cohomology_ring()
+            sage: H._to_cycle_on_basis((3, 2))
+            \chi_(2,)
+            sage: H._to_cycle_on_basis((4, 2))
+            \chi_(2,) + \chi_(4,)
+        """
+        # The multiplicative identity must be special-cased here
+        if i == (0, 0):
+            subcomplex = self._complex.simplicial_complex().generated_subcomplex(set(), is_mutable=False)
+            cochains = subcomplex.n_chains(-1, base_ring=self._base_ring, cochains=True)
+            return cochains.basis().first()
+
+        subcomplex = self._complex.simplicial_complex().generated_subcomplex(self._gens[i[0]][i[1]][0], is_mutable=False)
+        cochains = subcomplex.n_chains(self._gens[i[0]][i[1]][1], base_ring=self._base_ring, cochains=True)
+        cochain = self._gens[i[0]][i[1]][2][1]
+        return cochains.from_vector(cochain.to_vector())
+
+    @cached_method
+    def product_on_basis(self, li, ri):
+        """
+        Return the cup product of the basis elements indexed by
+        ``li`` and ``ri`` in ``self``.
+
+        INPUT:
+
+        - ``li``, ``ri`` -- index of a cohomology class
+
+        .. SEEALSO::
+
+            See :meth:`CohomologyRing.Element.cup_product`
+            documentation, which describes the algorithm.
+
+        EXAMPLES::
+
+            sage: Z = MomentAngleComplex([[0,1], [1,2], [2,3], [3,0]])
+            sage: H = Z.cohomology_ring()
+            sage: a, b = H.basis(3)
+            sage: b.cup_product(a)
+            h^{6,0}
+            sage: a.cup_product(b)
+            -h^{6,0}
+
+            sage: Z = MomentAngleComplex([[1,2], [1,4], [2,3],
+            ....:                         [3,5], [5,6], [4,5], [1,6]])
+            sage: H = Z.cohomology_ring(GF(2))
+            sage: one = H.one()
+            sage: a = H.basis()[4, 3]
+            sage: b = H.basis()[4, 6]
+            sage: a.cup_product(b)
+            h^{8,1}
+            sage: b.cup_product(a)
+            h^{8,1}
+            sage: one.cup_product(a) == a.cup_product(one)
+            True
+        """
+        # First we check whether either one of the elements
+        # represents a unit of this cohomology ring;
+        # This is necessary because the multiplicative identity
+        # is the only element whose corresponding cochain has degree -1
+        if li == (0, 0):
+            return self.basis()[ri]
+        elif ri == (0, 0):
+            return self.basis()[li]
+
+        from sage.topology.simplicial_complex import Simplex
+        from sage.homology.chain_homotopy import ChainContraction
+
+        left = self._gens[li[0]][li[1]]
+        right = self._gens[ri[0]][ri[1]]
+
+        # Sets of vertices of subcomplexes from which
+        # these cohomology classes originate
+        set_left = left[0]
+        set_right = right[0]
+        # Because of the definition of multiplication
+        if not set_left.isdisjoint(set_right):
+            return self.zero()
+
+        # We extract the cocycle monomials in
+        # order to loop over them
+        left_cocycles = left[2][1].monomials()
+        right_cocycles = right[2][1].monomials()
+        res = self.zero()
+        for left_cocycle in left_cocycles:
+            for right_cocycle in right_cocycles:
+                # We acquire the set of vertices of cocyles,
+                # because of the union
+                left_cocycle_vertices = left_cocycle.leading_support().set()
+                right_cocycle_vertices = right_cocycle.leading_support().set()
+                union = set_left.union(set_right)
+                res_union = left_cocycle_vertices.union(right_cocycle_vertices)
+                subcomplex_union = self._complex._simplicial_complex.generated_subcomplex(union, is_mutable=False)
+
+                # Because we special-cased the multiplicative identity
+                # at the beginning of the method, we know that both
+                # left[1] and right[1] are at least 0 (they represent
+                # the degree of the corresponding cochains). Therefore,
+                # deg is at least 1.
+                deg = left[1] + right[1] + 1
+                cochains_basis = subcomplex_union.n_chains(deg, cochains=True).basis()
+                # If the resulting cochain exists, then we
+                # add it to the result; otherwise, we add 0
+                if cochains_basis.has_key(Simplex(res_union)):
+                    res_part = self.zero()
+                    res_cochain = cochains_basis[Simplex(res_union)]
+                    # The algebraic_topological_model() works with unreduced cohomology,
+                    # but we require reduced cohomology here. This only causes problems
+                    # in dimension 0, but because of excluding the unit element at
+                    # the beginning of the method, we know that deg is at least 1
+                    # See comments at the beginning of the method and when defining deg
+                    phi, _ = subcomplex_union.algebraic_topological_model(self._base_ring)
+                    coeff_vec = phi.dual().pi().in_degree(deg) * res_cochain.to_vector()
+                    # We compute the sign of the result
+                    for i in range(len(coeff_vec)):
+                        res_part += coeff_vec[i] * self.basis()[li[0]+ri[0], i]
+                    zeta = 1
+                    for k in set_left.difference(left_cocycle_vertices):
+                        zeta *= eps({k}, set_right.union({k}).difference(right_cocycle_vertices))
+                    epsilon = (eps(left_cocycle_vertices, set_left)
+                               * eps(right_cocycle_vertices, set_right)
+                               * eps(res_union, union)
+                               * zeta)
+                    if epsilon == -1:
+                        res_part = -res_part
+                    res += res_part
+
+        return res
+
+    def cup_length(self):
+        """
+        Return the cup length of ``self``.
+
+        The cup length of a cohomology ring is defined as the maximal
+        number of elements whose product is non-trivial.
+
+        EXAMPLES::
+
+            sage: Z = MomentAngleComplex([[0], [1], [2]])
+            sage: H = Z.cohomology_ring(GF(2))
+            sage: H.cup_length()
+            1
+            sage: Z = MomentAngleComplex([[1,2], [2,3], [3,4], [4,5], [5,1]])
+            sage: H = Z.cohomology_ring()
+            sage: H.cup_length()
+            2
+        """
+        # It suffices to check this for base elements
+        elements = set(self.basis())
+        elements.remove(self.one())
+        # We create a dictionary, in which the keys are
+        # base elements, and values are lists, which
+        # represent the elements whose product with
+        # the key gives us zero
+        memo = {}
+        for base_element in elements:
+            memo[base_element] = set()
+            for x in elements:
+                if base_element * x == self.zero():
+                    memo[base_element].add(x)
+
+        max_length = 1
+        # The multiplication is commutative up to a sign,
+        # so we will not worry about the order in which
+        # we multiply the elements
+        for base_element in elements:
+            prod = base_element
+            length = 1
+            # We will avoid the elements which give us zero
+            avoid = memo[base_element]
+            for x in elements:
+                if x not in avoid and prod * x != self.zero():
+                    prod = prod * x
+                    length = length + 1
+                    # We further restrict the possible elements
+                    avoid = avoid.union(memo[x])
+
+            if length > max_length:
+                max_length = length
+
+        return max_length
+
+    class Element(CombinatorialFreeModule.Element):
+        def to_cycle(self):
+            r"""
+            Return the cocycle representative of ``self``.
+
+            The cohomology class gets lifted to its cococyle
+            representative in the cochain complex of the
+            corresponding simplicial complex given in the main
+            isomorphism.
+
+            .. NOTE::
+
+                The cocycle is practically useless without
+                knowing from which subcomplex it origintes.
+                We can use the :meth:`get_simplicial_complex`
+                method to retrieve that information.
+
+            EXAMPLES::
+
+                sage: Z = MomentAngleComplex([[0,1], [1,2], [2,0],
+                ....:                         [1,3], [3,4], [4,1]])
+                sage: H = Z.cohomology_ring()
+                sage: a = H.basis()[5, 1]
+                sage: a.to_cycle()
+                \chi_(3, 4)
+                sage: b = H.basis()[6, 3]
+                sage: b.to_cycle()
+                \chi_(3, 4)
+                sage: H.one().to_cycle()
+                \chi_()
+
+            We can obtain the originating simplicial complex
+            by using :meth:`get_simplicial_complex`::
+
+                sage: a.get_simplicial_complex()
+                Simplicial complex with vertex set (1, 3, 4) and
+                facets {(1, 3), (1, 4), (3, 4)}
+                sage: H.one().get_simplicial_complex()
+                Simplicial complex with vertex set () and facets {()}
+            """
+            if not self.is_homogeneous():
+                raise ValueError("only defined for homogeneous elements")
+            return sum(c * self.parent()._to_cycle_on_basis(i) for i, c in self)
+
+        def get_simplicial_complex(self, is_mutable=True):
+            r"""
+            Return the simplicial complex from which ``self`` originates.
+
+            EXAMPLES::
+
+                sage: Z = MomentAngleComplex([[0,1], [1,2], [2,0], [1,3,4]])
+                sage: H = Z.cohomology_ring()
+                sage: a = H.basis()[3, 3]
+                sage: a.get_simplicial_complex()
+                Simplicial complex with vertex set (2, 4) and facets {(2,), (4,)}
+                sage: b = H.basis()[7, 0]
+                sage: b.get_simplicial_complex(is_mutable=False).is_mutable()
+                False
+
+            Because `\widetilde{H}^{-1}(\mathcal{K}_\emptyset)` is
+            isomorphic to the base ring, the multiplicative identity
+            in the cohomology of a moment-angle complex originates from
+            here, and its simplicial complex is the empty subcomplex
+            of `\mathcal{K}`::
+
+                sage: H.one().get_simplicial_complex()
+                Simplicial complex with vertex set () and facets {()}
+            """
+            if not self.is_homogeneous():
+                raise ValueError("only defined for homogeneous elements")
+            if self.is_one():
+                return self.parent()._complex.simplicial_complex().generated_subcomplex(set(), is_mutable=is_mutable)
+            vertex_set = self.parent()._gens[self.leading_support()[0]][self.leading_support()[1]][0]
+            return self.parent()._complex.simplicial_complex().generated_subcomplex(vertex_set, is_mutable=is_mutable)
+
+        def cup_product(self, other):
+            r"""
+            Return the cup product of ``self`` and ``other``.
+
+            We define the cup product on cochains in cochain complexes
+            of full subcomplexes of the simplicial complex associated
+            with the moment-angle complex of ``self`` (this is
+            possible because of the main cohomology ring isomorphism).
+            Given two cochains, `\chi_L` and `\chi_M`, from cochain
+            complexes of full subcomplexes `\mathcal{K}_I` and `\mathcal{K}_J`,
+            respectively, we define
+
+            .. MATH::
+
+                \chi_L \otimes \chi_M =
+                \begin{cases}
+                    c_{L \cup M} \chi_{L \cup M}, &\text{if } I\cap J =
+                    \emptyset,\\
+                    0, &\text{otherwise}
+                \end{cases}
+
+            where
+
+            .. MATH::
+
+                c_{L \cup M} = \epsilon(L, I) \epsilon(M, J) \zeta
+                \epsilon(L\cup M, I\cup J)
+
+            and
+
+            .. MATH::
+
+                \zeta = \prod_{k \in I \setminus L} \epsilon(k, k \cup J
+                \setminus M).
+
+            ALGORITHM:
+
+            This algorithm is adopted from [Lin2019]_, p. 16.
+
+            First we lift the cohomology classes to their cocycle
+            representatives (which are generators of cohomology groups of all
+            full subcomplexes of the simplicial complex associated with the
+            moment-angle complex; these are stored during initialization),
+            as well as acquire their corresponding simplicial complexes.
+            We then multiply them, as described above and extract the
+            cohomology class using chain contractions of the appropriate
+            simplicial complex.
+
+            .. SEEALSO::
+
+                For more information on the `\epsilon` function,
+                see :meth:`sage.topology.moment_angle_complex.eps`.
+
+            EXAMPLES::
+
+                sage: Z = MomentAngleComplex([[1,2], [2,3], [3,4], [4,1]])
+                sage: H = Z.cohomology_ring()
+                sage: a, b = H.basis(3)
+                sage: a.get_simplicial_complex()
+                Simplicial complex with vertex set (1, 3) and facets {(1,), (3,)}
+                sage: b.get_simplicial_complex()
+                Simplicial complex with vertex set (2, 4) and facets {(2,), (4,)}
+
+            We see that the vertex sets are indeed disjoint, so
+            we can expect that the product of ``a`` and ``b`` is
+            indeed non-trivial in this case::
+
+                sage: c = a.cup_product(b); c
+                -h^{6,0}
+                sage: b * a
+                h^{6,0}
+                sage: c.get_simplicial_complex()
+                Simplicial complex with vertex set (1, 2, 3, 4) and
+                facets {(1, 2), (1, 4), (2, 3), (3, 4)}
+
+                sage: Z = MomentAngleComplex([[1, 2], [1, 4], [2, 3], [3, 5],
+                ....:                         [5, 6], [3, 4], [2, 6], [4, 6]])
+                sage: H = Z.cohomology_ring(GF(2))
+                sage: a = H.basis()[4, 0]; a.get_simplicial_complex()
+                Simplicial complex with vertex set (1, 2, 5) and facets {(5,), (1, 2)}
+                sage: b = H.basis()[4, 1]; b.get_simplicial_complex()
+                Simplicial complex with vertex set (1, 3, 5) and facets {(1,), (3, 5)}
+
+            Here the vertex sets are not disjoint, so the
+            cup product is trivial. Because of this definition,
+            multiplying any cohomology class with itself yields 0::
+
+                sage: a * b
+                0
+                sage: all(a ** n == H.zero() for n in range(2, dim(Z)))
+                True
+            """
+            return self * other
+
+
+# Used for computing coeffeicients when multiplying in cohomology
+def eps(subcomplex, simplicial_complex):
+    r"""
+    Return the coefficient `\epsilon`, used when computing
+    the cup product of cohomology classes.
+
+    By definition `\epsilon(j, J) = (-1)^{r-1}`, where `j`
+    is the `r`-th element of `J`. For a subset `L\subset J`
+    we define
+
+    .. MATH::
+
+        \epsilon(L, J) := \prod_{j \in L} \epsilon(j, J).
+
+    INPUT:
+
+    - ``subcomplex`` -- a set or a simplicial complex,
+      represents `L` given above
+    - ``simplicial_complex`` -- a set or a simplicial
+      complex, represents `J` given above
+
+    REFERENCES:
+
+        Fore more information, see [Lin2019]_, p. 13.
+
+    EXAMPLES::
+
+        sage: from sage.topology.moment_angle_complex import eps
+        sage: eps({1,2}, {1,2,3,4})
+        -1
+        sage: eps({1,3}, {1,2,3,4})
+        1
+        sage: eps({2}, SimplicialComplex([[1,2], [2,3,4], [4,1]]))
+        -1
+    """
+    def _eps(element, simplicial_complex):
+        if element not in simplicial_complex._vertex_to_index:
+            raise ValueError("{} is not a vertex of this simplicial complex".format(element))
+        return (-1) ** simplicial_complex._vertex_to_index[element]
+
+    if not isinstance(subcomplex, SimplicialComplex):
+        # This may completely change the structure,
+        # but the ordering of the vertices will
+        # remain the same, and that's the only things
+        # that matters
+        subcomplex = SimplicialComplex([subcomplex])
+    if not isinstance(simplicial_complex, SimplicialComplex):
+        simplicial_complex = SimplicialComplex([simplicial_complex])
+    res = 1
+    for element in subcomplex.vertices():
+        res *= _eps(element, simplicial_complex)
+    return res
