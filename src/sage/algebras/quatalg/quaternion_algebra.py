@@ -3278,10 +3278,12 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
     def is_integral(self) -> bool:
         r"""
-        Check whether a quaternion fractional ideal is integral. An ideal in a quaternion algebra
-        is integral if and only if it is contained in its left order. If the left order is already
-        defined this method just checks this definition, otherwise it uses one of the alternative
-        definitions from Lemma 16.2.8 of [Voi2021]_.
+        Check whether the quaternion fractional ideal ``self`` is integral.
+
+        An ideal in a quaternion algebra is integral if and only if it is
+        contained in its left order. If the left order is already defined
+        this method just checks this definition, otherwise it uses one
+        of the alternative definitions from Lemma 16.2.8 of [Voi2021]_.
 
         EXAMPLES::
 
@@ -3362,9 +3364,11 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
     def is_primitive(self) -> bool:
         r"""
-        Check if the quaternion fractional ideal is primitive. An integral left
-        `\mathcal{O}`-ideal for some order `\mathcal{O}` is called primitive if
-        for all integers `n > 1` it is not contained in `n\mathcal{O}`
+        Check whether the quaternion fractional ideal ``self`` is primitive.
+
+        An integral left `\mathcal{O}`-ideal for some order `\mathcal{O}`
+        is called primitive if for all integers `n > 1` it is not
+        contained in `n\mathcal{O}`.
 
         EXAMPLES::
 
