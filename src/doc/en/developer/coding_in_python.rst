@@ -64,7 +64,7 @@ scratch. Try to figure out how your code should fit in with other Sage
 code, and design it accordingly.
 
 
-Special sage functions
+Special Sage functions
 ======================
 
 Functions with leading and trailing double underscores ``__XXX__`` are
@@ -103,8 +103,8 @@ You should implement the ``_latex_`` and ``_repr_`` method for every
 object. The other methods depend on the nature of the object.
 
 
-LaTeX Representation
---------------------
+LaTeX representation
+====================
 
 Every object ``x`` in Sage should support the command ``latex(x)``, so
 that any Sage object can be easily and accurately displayed via
@@ -158,7 +158,7 @@ typeset version of this.
 
 
 Print representation
---------------------
+====================
 
 The standard Python printing method is ``__repr__(self)``. In Sage,
 that is for objects that derive from ``SageObject`` (which is
@@ -194,7 +194,7 @@ Here is an example of the ``_latex_`` and ``_repr_`` functions for the
 
 
 Matrix or vector from object
-----------------------------
+============================
 
 Provide a ``_matrix_`` method for an object that can be coerced to a
 matrix over a ring `R`. Then the Sage function ``matrix`` will work
@@ -472,6 +472,34 @@ example:
 
 Note that the syntax in ``except`` is to list all the exceptions that
 are caught as a tuple, followed by an error message.
+
+A method or a function accepts input described in the ``INPUT`` block of
+:ref:`the docstring <section-docstring-function>`. If the input cannot be
+handled by the code, then it may raise an exception. The following aims to
+guide you in choosing from the most relevant exceptions to Sage. Raise
+
+- :class:`TypeError`: if the input belongs to a class of objects that is not
+  supported by the method. For example, a method works only with monic
+  polynomials over a finite field, but a polynomial over rationals was given.
+
+- :class:`ValueError`: if the input has a value not supported by the method.
+  For example, the above method was given a non-monic polynomial.
+
+- :class:`ArithmeticError`: if the method performs an arithmetic operation
+  (sum, product, quotient, and the like) but the input is not appropriate.
+
+- :class:`ZeroDivisionError`: if the method performs division but the input is
+  zero. Note that for non-invertible input values, :class:`ArithmeticError` is
+  more appropriate. As derived from :class:`ArithmeticError`,
+  :class:`ZeroDivisionError` can be caught as :class:`ArithmeticError`.
+
+- :class:`NotImplementedError`: if the input is for a feature not yet
+  implemented by the method. Note that this exception is derived from
+  :class:`RuntimeError`.
+
+If no specific error seems to apply for your situation, :class:`RuntimeError`
+can be used. In all cases, the string associated with the exception should
+describe the details of what went wrong.
 
 
 Integer return values
