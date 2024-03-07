@@ -12,7 +12,9 @@ AUTHORS:
 """
 
 # ****************************************************************************
-#       Copyright (C) 2016 Volker Braun <vbraun.name@gmail.com>
+#       Copyright (C) 2015-2016 Volker Braun <vbraun.name@gmail.com>
+#                     2020-2024 Matthias Koeppe
+#                     2022      Thierry Monteil
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
