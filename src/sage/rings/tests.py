@@ -482,8 +482,9 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
         if verbose:
             print("  ({})*({})".format(f, g))
         if ref_mul(f, g) - f._mul_karatsuba(g, threshold) != 0:
-            msg = "Multiplication failed for elements defined by:\n"
-            msg += f"f = {sage_input(f)}\n"
-            msg += f"g = {sage_input(g)}"
+            msg = "Multiplication failed for elements defined by\n"
+            msg += f"{sage_input(f)}\n"
+            msg += "and\n"
+            msg += f"{sage_input(g)}"
             raise ValueError(msg)
     return
