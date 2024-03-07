@@ -106,6 +106,13 @@ class PyPiVersion(object):
         """
         return self.json['info']['summary']
 
+    @property
+    def requires_dist(self):
+        """
+        Return the dependencies
+        """
+        return self.json['info']['requires_dist']
+
     def update(self, package=None):
         if package is None:
             package = Package(self.name)
