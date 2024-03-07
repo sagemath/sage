@@ -727,7 +727,7 @@ class Sha(SageObject):
 
         - `e` -- a non-negative integer such that `p^e` is the
           order of the `p`-primary order if the conditions are satisfied
-          and raises a ``ValueError`` otherwise.
+          and raises a :class:`ValueError` otherwise.
 
         EXAMPLES::
 
@@ -1140,9 +1140,8 @@ class Sha(SageObject):
         Compute a provably correct bound on the order of the Tate-Shafarevich
         group of this curve.
 
-        The bound is either ``False`` (no bound) or a
-        list ``B`` of primes such that any prime divisor of the order of `Sha`
-        is in this list.
+        The bound is either ``False`` (no bound) or a list ``B`` of primes
+        such that any prime divisor of the order of `Sha` is in this list.
 
         EXAMPLES::
 
