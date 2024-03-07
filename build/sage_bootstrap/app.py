@@ -403,6 +403,8 @@ class Application(object):
 
         $ sage --package create jupyterlab_markup --pypi --source wheel --type optional
         """
+        if package_name.startswith('pypi/'):
+            package_name = 'pkg:' + package_name
         if package_name.startswith('pkg:pypi/'):
             pypi = True
             package_name = package_name[len('pkg:pypi/'):].lower().replace('-', '_')
