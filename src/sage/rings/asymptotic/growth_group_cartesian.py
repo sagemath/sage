@@ -468,7 +468,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             sage: G(n).value
             (1, n, 1)
         """
-        from sage.sets.cartesian_product import CartesianProduct
+        from sage.sets.cartesian_product import CartesianProduct_unique
         from sage.symbolic.ring import SR
 
         def convert_factors(data, raw_data):
@@ -509,7 +509,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             return super()._element_constructor_(data)
         except (TypeError, ValueError):
             pass
-        if isinstance(data, (tuple, list, CartesianProduct.Element)):
+        if isinstance(data, (tuple, list, CartesianProduct_unique.Element)):
             return convert_factors(tuple(data), data)
 
         return convert_factors((data,), data)
@@ -1412,7 +1412,8 @@ class UnivariateProduct(GenericProduct):
             sage: type(GrowthGroup('x^ZZ * log(x)^ZZ'))  # indirect doctest
             <class 'sage.rings.asymptotic.growth_group_cartesian.UnivariateProduct_with_category'>
         """
-        super().__init__(sets, category, order='lex', **kwargs)
+        GenericProduct.__init__(self,
+            sets, category, order='lex', **kwargs)
 
     CartesianProduct = CartesianProductGrowthGroups
 
@@ -1443,6 +1444,7 @@ class MultivariateProduct(GenericProduct):
             sage: type(GrowthGroup('x^ZZ * y^ZZ'))  # indirect doctest
             <class 'sage.rings.asymptotic.growth_group_cartesian.MultivariateProduct_with_category'>
         """
-        super().__init__(sets, category, order='product', **kwargs)
+        GenericProduct.__init__(self,
+            sets, category, order='product', **kwargs)
 
     CartesianProduct = CartesianProductGrowthGroups
