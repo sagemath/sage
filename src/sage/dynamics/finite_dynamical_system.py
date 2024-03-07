@@ -106,7 +106,7 @@ class DiscreteDynamicalSystem(SageObject, metaclass=ClasscallMetaclass):
     The DDS is called *finite* if `X` is finite.
     The DDS is called *invertible* if the map `\phi` is
     invertible.
-    
+
     Given a DDS `(X, \phi)`, we can study
 
     * its orbits (i.e., the lists
