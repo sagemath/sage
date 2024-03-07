@@ -220,6 +220,9 @@ AUTHORS:
 
 - Brent Baccala (2019-12-20): added function fields over number fields and QQbar
 
+- Sebastian A. Spindler (2024-03-06): implemented Hilbert symbols for global
+  function fields
+
 """
 
 # *****************************************************************************
@@ -247,6 +250,7 @@ AUTHORS:
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
+from sage.rings.integer_ring import ZZ
 from sage.rings.ring import Field
 from sage.categories.homset import Hom
 from sage.categories.function_fields import FunctionFields
@@ -1227,9 +1231,9 @@ class FunctionField(Field):
     def hilbert_symbol(self, a, b, P):
         """
         Return the Hilbert symbol `(a,b)_{F_P}` (where `F_P` is the
-        completion of ``self`` at the place ``P``), i.e. the value 1 if
+        completion of ``self`` at the place ``P``), i.e. the value `1` if
         the quaternion algebra defined by `(a,b)` over `F_P` is split,
-        and -1 if it is division.
+        and `-1` if it is division.
 
         We use the completion at the place `P` to compute the valuations `v(a)`
         and `v(b)` as well as elements `a0` and `b0` such that, for a uniformizer
@@ -1265,44 +1269,44 @@ class FunctionField(Field):
             1
 
             sage: K.<x> = FunctionField(GF(5)); R.<T> = PolynomialRing(K)
-            sage: f = ((x^2 + 2*x + 2)*T^5 + (4*x^2 + 2*x + 3)*T^4 + 3*T^3 + 4*T^2
-                      + (2/(x^2 + 4*x + 1))*T + 3*x^2 + 2*x + 4)
+            sage: f = (x^2 + 2*x + 2)*T^5 + (4*x^2 + 2*x + 3)*T^4 + 3*T^3 + 4*T^2
+            ....:     + (2/(x^2 + 4*x + 1))*T + 3*x^2 + 2*x + 4
             sage: L.<y> = K.extension(f)
             sage: P = L.places_above(K.places()[0])[1]
-            sage: a = (((3*x^3 + 2*x^2 + x + 1)/(x + 2))*y^4 + (4/(x + 4))*y^3
-                      + ((3*x + 4)/(x + 4))*y^2
-                      + ((x^4 + 2*x^3 + 3*x^2 + x + 2)/(x^4 + x^3 + x^2 + 2))*y
-                      + (x^4 + x^2 + 2*x + 4)/(x^2 + 2*x + 2))
-            sage: b = (((x + 1)/(x + 4))*y^4
-                      + ((2*x^4 + 3*x^3 + 3*x^2 + 3)/(x^2 + 2*x + 2))*y^3 + (2/(x + 4))*y^2
-                      + ((4*x^4 + 4*x^3 + 4*x^2 + 2)/(x^4 + x^3 + x^2 + 2))*y
-                      + (x^3 + x)/(x^3 + x^2 + x + 2))
+            sage: a = ((3*x^3 + 2*x^2 + x + 1)/(x + 2))*y^4 + (4/(x + 4))*y^3
+            ....:     + ((3*x + 4)/(x + 4))*y^2
+            ....:     + ((x^4 + 2*x^3 + 3*x^2 + x + 2)/(x^4 + x^3 + x^2 + 2))*y
+            ....:     + (x^4 + x^2 + 2*x + 4)/(x^2 + 2*x + 2)
+            sage: b = ((x + 1)/(x + 4))*y^4
+            ....:     + ((2*x^4 + 3*x^3 + 3*x^2 + 3)/(x^2 + 2*x + 2))*y^3 + (2/(x + 4))*y^2
+            ....:     + ((4*x^4 + 4*x^3 + 4*x^2 + 2)/(x^4 + x^3 + x^2 + 2))*y
+            ....:     + (x^3 + x)/(x^3 + x^2 + x + 2)
             sage: L.hilbert_symbol(a, b, P)
             1
             sage: Q = L.places_above(K.places()[1])[0]
-            sage: c = (((3*x^3 + 3*x^2 + 3*x + 3)/(x^3 + 3*x^2 + x))*y^4
-                      + ((3*x^4 + 2*x^3 + 2*x^2 + 4*x + 3)/(x^3 + 3*x^2 + x))*y^3
-                      + ((3*x + 4)/(x^3 + 3*x^2 + x))*y^2
-                      + ((4*x + 2)/(x^5 + 2*x^4 + 4*x^3 + 2*x^2 + x))*y
-                      + (x^3 + 2*x^2 + 4)/(x^3 + 3*x^2 + x))
-            sage: d = (((2*x^4 + x^2 + 2*x + 3)/(x^2 + 2*x + 2))*y^4
-                      + ((4*x^2 + 2)/(x^2 + 2*x + 2))*y^3 + ((3*x^2 + 3*x + 3)/(x^2 + 1))*y^2
-                      + ((x^6 + 4*x^5 + 4*x^4 + 3*x^3 + 3*x^2 + x + 3)/(x^4 + x^3 + x^2 + 2))*y
-                      + (4*x^3 + 4*x^2 + 2*x + 2)/(x + 4))
+            sage: c = ((3*x^3 + 3*x^2 + 3*x + 3)/(x^3 + 3*x^2 + x))*y^4
+            ....:     + ((3*x^4 + 2*x^3 + 2*x^2 + 4*x + 3)/(x^3 + 3*x^2 + x))*y^3
+            ....:     + ((3*x + 4)/(x^3 + 3*x^2 + x))*y^2
+            ....:     + ((4*x + 2)/(x^5 + 2*x^4 + 4*x^3 + 2*x^2 + x))*y
+            ....:     + (x^3 + 2*x^2 + 4)/(x^3 + 3*x^2 + x)
+            sage: d = ((2*x^4 + x^2 + 2*x + 3)/(x^2 + 2*x + 2))*y^4
+            ....:     + ((4*x^2 + 2)/(x^2 + 2*x + 2))*y^3 + ((3*x^2 + 3*x + 3)/(x^2 + 1))*y^2
+            ....:     + ((x^6 + 4*x^5 + 4*x^4 + 3*x^3 + 3*x^2 + x + 3)/(x^4 + x^3 + x^2 + 2))*y
+            ....:     + (4*x^3 + 4*x^2 + 2*x + 2)/(x + 4)
             sage: L.hilbert_symbol(c, d, Q)
             -1
 
             sage: K.<x> = FunctionField(GF(3)); R.<T> = PolynomialRing(K)
-            sage: g = (((2*x + 1)/x)*T^5 + ((2*x + 1)/(x + 1))*T^4 + ((x^2 + 1)/x)*T^3
-                      + (2*x/(x^2 + 2*x + 2))*T^2 + 2*T + (2*x + 2)/(x + 2))
+            sage: g = ((2*x + 1)/x)*T^5 + ((2*x + 1)/(x + 1))*T^4 + ((x^2 + 1)/x)*T^3
+            ....:     + (2*x/(x^2 + 2*x + 2))*T^2 + 2*T + (2*x + 2)/(x + 2)
             sage: L = K.extension(g)
             sage: P = L.places_above(K.places()[1])[1]
-            sage: a = (((x + 2)/(x + 1))*y^4 + ((x^4 + 2*x^2 + 1)/(x^2 + 2*x))*y^3
-                      + ((x^5 + x^2 + 2*x + 1)/(x^4 + 2*x^3 + x^2 + x + 1))*y^2
-                      + ((2*x + 2)/(x + 2))*y + (2*x^4 + x^3 + x^2 + 2*x + 2)/(x^2 + x + 1))
-            sage: b = (((x^2 + x + 1)/(x^2 + 2*x + 1))*y^4 + ((2*x^2 + x + 1)/(x + 1))*y^3
-                      + ((x^5 + x^4 + 2*x^3 + x^2 + 2*x + 2)/(x^3 + x + 2))*y^2
-                      + (2*x/(x^2 + 2))*y + 2*x^2 + 2*x + 1)
+            sage: a = ((x + 2)/(x + 1))*y^4 + ((x^4 + 2*x^2 + 1)/(x^2 + 2*x))*y^3
+            ....:     + ((x^5 + x^2 + 2*x + 1)/(x^4 + 2*x^3 + x^2 + x + 1))*y^2
+            ....:     + ((2*x + 2)/(x + 2))*y + (2*x^4 + x^3 + x^2 + 2*x + 2)/(x^2 + x + 1)
+            sage: b = ((x^2 + x + 1)/(x^2 + 2*x + 1))*y^4 + ((2*x^2 + x + 1)/(x + 1))*y^3
+            ....:     + ((x^5 + x^4 + 2*x^3 + x^2 + 2*x + 2)/(x^3 + x + 2))*y^2
+            ....:     + (2*x/(x^2 + 2))*y + 2*x^2 + 2*x + 1
             sage: L.hilbert_symbol(a, b, P)
             -1
         """
