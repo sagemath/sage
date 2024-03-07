@@ -462,6 +462,28 @@ cdef class TwoSumNode(SumNode):
 cdef class ThreeSumNode(SumNode):
 
     def is_distributed_ranks(self):
+        r"""
+            EXAMPLES::
+
+                sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+                sage: R12 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 12, sparse=True),
+                ....: [[1, -1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
+                ....: [0, 0, 0, 1, -1, 0, 0, 0, 1 , 1, 1, 1],
+                ....: [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+                ....: [ 1,  0,  1,  0,  0,  0,  0,  0,  1,  1,  0,  0],
+                ....: [ 0,  1,  1,  0,  0,  0,  0,  0,  0,  0, -1, -1],
+                ....: [ 0,  0,  0,  1,  0,  1,  0,  0,  1,  1,  0,  0],
+                ....: [ 0,  0,  0,  0,  1,  1,  0,  0,  0,  0, -1, -1],
+                ....: [ 0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1,  0],
+                ....: [ 0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1]])
+                sage: result, certificate = R12.is_totally_unimodular(certificate=True)
+                sage: C = certificate._children()[0]; C
+                ThreeSumNode (9×12) with 2 children
+                sage: C.is_distributed_ranks()
+                True
+                sage: C.is_concentrated_rank()
+                False
+        """
         return <bint> CMRmatroiddecThreeSumDistributedRanks(self._dec)
 
     def is_concentrated_rank(self):
