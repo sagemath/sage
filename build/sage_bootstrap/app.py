@@ -21,6 +21,7 @@ AUTHORS:
 
 
 import os
+import re
 import logging
 log = logging.getLogger()
 
@@ -34,6 +35,9 @@ from sage_bootstrap.pypi import PyPiVersion, PyPiNotFound, PyPiError
 from sage_bootstrap.fileserver import FileServer
 from sage_bootstrap.expand_class import PackageClass
 from sage_bootstrap.env import SAGE_DISTFILES
+
+
+dep_re = re.compile('([^<>=]*)')
 
 
 class Application(object):
@@ -383,7 +387,8 @@ class Application(object):
             update.fix_checksum()
 
     def create(self, package_name, version=None, tarball=None, pkg_type=None, upstream_url=None,
-               description=None, license=None, upstream_contact=None, pypi=False, source=None):
+               description=None, license=None, upstream_contact=None, pypi=False, source=None,
+               dependencies=None):
         """
         Create a package
 
@@ -426,6 +431,19 @@ class Application(object):
                     raise ValueError('Only platform-independent wheels can be used for wheel packages, got {0}'.format(tarball))
                 if not version:
                     version = pypi_version.version
+                if dependencies is None:
+                    requires_dist = pypi_version.requires_dist
+                    print(requires_dist)
+                    if requires_dist:
+                        dependencies = []
+                        for item in requires_dist:
+                            if "extra ==" in item:
+                                continue
+                            try:
+                                dep = dep_re.match(item).groups()[0]
+                            except Exception:
+                                continue
+                            dependencies.append(dep)
                 upstream_url = 'https://pypi.io/packages/{2}/{0:1.1}/{0}/{1}'.format(package_name, tarball, pypi_version.python_version)
             if not description:
                 description = pypi_version.summary
