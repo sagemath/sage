@@ -407,7 +407,7 @@ class Application(object):
             package_name = 'pkg:' + package_name
         if package_name.startswith('pkg:pypi/'):
             pypi = True
-            package_name = package_name[len('pkg:pypi/'):].lower().replace('-', '_')
+            package_name = package_name[len('pkg:pypi/'):].lower().replace('-', '_').replace('.', '_')
         elif '-' in package_name:
             raise ValueError('package names must not contain dashes, use underscore instead')
         if pypi:
