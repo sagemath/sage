@@ -441,12 +441,11 @@ class MatrixSpace(UniqueRepresentation, Parent):
     - ``base_ring`` -- a ring
 
     - ``nrows`` or ``row_keys`` -- (nonnegative integer) the number of rows, or
-      a finite or enumerated family of arbitrary objects that index the rows
-      of the matrix
+      a finite family of arbitrary objects that index the rows of the matrix
 
     - ``ncols`` or ``column_keys`` -- (nonnegative integer, default ``nrows``)
-      the number of columns, or a finite or enumerated family of arbitrary objects
-      that index the columns of the matrix
+      the number of columns, or a finite family of arbitrary objects that index
+      the columns of the matrix
 
     - ``sparse`` -- (boolean, default ``False``) whether or not matrices
        are given a sparse representation
@@ -475,11 +474,10 @@ class MatrixSpace(UniqueRepresentation, Parent):
     depending on the input.  Not all combinations of options are
     implemented.
 
-    - If the parameters ``row_keys`` or ``column_keys`` are provided,
-      they must be finite or enumerated families of objects. In this
-      case, instances of :class:`CombinatorialFreeModule` are created
-      via the factory function :func:`FreeModule`. Then the homspace
-      between these modules is returned.
+    - If the parameters ``row_keys`` or ``column_keys`` are provided, they
+      must be finite families of objects. In this case, instances of
+      :class:`CombinatorialFreeModule` are created via the factory function
+      :func:`FreeModule`. Then the homspace between these modules is returned.
 
     EXAMPLES::
 
