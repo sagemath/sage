@@ -427,7 +427,9 @@ cdef class OneSumNode(SumNode):
 
 
 cdef class TwoSumNode(SumNode):
-    r"""
+
+    def block_matrix_form(self):
+        r"""
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -453,11 +455,90 @@ cdef class TwoSumNode(SumNode):
             [0 0 0 0|1 1 0 0 1]
             sage: result, certificate = M3.is_totally_unimodular(certificate=True); certificate
             TwoSumNode (9×9) with 2 children
-    """
-    def block_matrix_form(self):
+
+            sage: K33 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 4, sparse=True),
+            ....:                            [[1, 1, 0, 0], [1, 1, 1, 0],
+            ....:                             [1, 0, 0,-1], [0, 1, 1, 1],
+            ....:                             [0, 0, 1, 1]]); K33
+            [ 1  1  0  0]
+            [ 1  1  1  0]
+            [ 1  0  0 -1]
+            [ 0  1  1  1]
+            [ 0  0  1  1]
+            sage: K33_dual = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 4, 5, sparse=True),
+            ....:                            [[1, 1, 1, 0, 0], [1, 1, 0, 1, 0],
+            ....:                             [0, 1, 0, 1, 1], [0, 0,-1, 1, 1]]); K33_dual
+            [ 1  1  1  0  0]
+            [ 1  1  0  1  0]
+            [ 0  1  0  1  1]
+            [ 0  0 -1  1  1]
+            sage: M = Matrix_cmr_chr_sparse.two_sum(K33, K33_dual, 0, 0,
+            ....:                                   nonzero_block="bottom_left"); M
+            [ 1  1  1  0| 0  0  0  0]
+            [ 1  0  0 -1| 0  0  0  0]
+            [ 0  1  1  1| 0  0  0  0]
+            [ 0  0  1  1| 0  0  0  0]
+            [-----------+-----------]
+            [ 1  1  0  0| 1  1  0  0]
+            [ 1  1  0  0| 1  0  1  0]
+            [ 0  0  0  0| 1  0  1  1]
+            [ 0  0  0  0| 0 -1  1  1]
+            sage: result1, certificate1 = M.is_totally_unimodular(certificate=True); certificate1
+            TwoSumNode (8×8) with 2 children
+            sage: certificate1.summand_matrices()
+            (
+            [ 1  1  1  0]
+            [ 1  0  0 -1]  [ 1  1  1  0  0]
+            [ 0  1  1  1]  [ 1  1  0  1  0]
+            [ 0  0  1  1]  [ 0  1  0  1  1]
+            [ 1  1  0  0], [ 0  0 -1  1  1]
+            )
+            sage: certificate1.block_matrix_form()
+            [ 1  1  1  0| 0  0  0  0]
+            [ 1  0  0 -1| 0  0  0  0]
+            [ 0  1  1  1| 0  0  0  0]
+            [ 0  0  1  1| 0  0  0  0]
+            [-----------+-----------]
+            [ 1  1  0  0| 1  1  0  0]
+            [ 1  1  0  0| 1  0  1  0]
+            [ 0  0  0  0| 1  0  1  1]
+            [ 0  0  0  0| 0 -1  1  1]
+            sage: [M.parent_rows_and_columns() for M in certificate1._children()]
+            [((0, 1, 2, 3, 4), (0, 1, 2, 3)), ((4, 5, 6, 7), (0, 4, 5, 6, 7))]
+            sage: M_perm = M.matrix_from_rows_and_columns([4, 6, 5, 7, 0, 1, 2, 3], range(M.ncols()))
+            sage: M_perm
+            [ 1  1  0  0  1  1  0  0]
+            [ 0  0  0  0  1  0  1  1]
+            [ 1  1  0  0  1  0  1  0]
+            [ 0  0  0  0  0 -1  1  1]
+            [ 1  1  1  0  0  0  0  0]
+            [ 1  0  0 -1  0  0  0  0]
+            [ 0  1  1  1  0  0  0  0]
+            [ 0  0  1  1  0  0  0  0]
+            sage: result2, certificate2 = M_perm.is_totally_unimodular(certificate=True)
+            sage: certificate2.summand_matrices()
+            (
+            [ 1  1  1  0]
+            [ 1  0  0 -1]  [ 1  1  1  0  0]
+            [ 0  1  1  1]  [ 0  1  0  1  1]
+            [ 0  0  1  1]  [ 1  1  0  1  0]
+            [ 1  1  0  0], [ 0  0 -1  1  1]
+            )
+            sage: certificate2.block_matrix_form()
+            [ 1  1  1  0| 0  0  0  0]
+            [ 1  0  0 -1| 0  0  0  0]
+            [ 0  1  1  1| 0  0  0  0]
+            [ 0  0  1  1| 0  0  0  0]
+            [-----------+-----------]
+            [ 1  1  0  0| 1  1  0  0]
+            [ 0  0  0  0| 1  0  1  1]
+            [ 1  1  0  0| 1  0  1  0]
+            [ 0  0  0  0| 0 -1  1  1]
+            sage: [M.parent_rows_and_columns() for M in certificate2._children()]
+            [((4, 5, 6, 7, 0), (0, 1, 2, 3)), ((0, 1, 2, 3), (0, 4, 5, 6, 7))]
+        """
         M1, M2 = self.summand_matrices()
-        x, y= len(M1.columns()), len(M2.rows())
-        return Matrix_cmr_chr_sparse.two_sum(M1, M2, x - 1, y - 1)
+        return Matrix_cmr_chr_sparse.two_sum(M1, M2, M1.nrows() - 1, 0, "bottom_left")
 
 cdef class ThreeSumNode(SumNode):
 
@@ -612,11 +693,11 @@ cdef class SpecialLeafNode(DecompositionNode):
         from sage.matroids.matroid import Matroid
 
         if typ == CMR_MATROID_DEC_TYPE_R10:
-            return matroids.named_matroids.R10()
+            return matroids.catalog.R10()
         if typ == CMR_MATROID_DEC_TYPE_FANO:
-            return matroids.named_matroids.Fano()
+            return matroids.catalog.Fano()
         if typ == CMR_MATROID_DEC_TYPE_FANO_DUAL:
-            return matroids.named_matroids.Fano().dual()
+            return matroids.catalog.Fano().dual()
         if typ == CMR_MATROID_DEC_TYPE_K5:
             return matroids.CompleteGraphic(5)
         if typ == CMR_MATROID_DEC_TYPE_K5_DUAL:
@@ -626,33 +707,10 @@ cdef class SpecialLeafNode(DecompositionNode):
             G = graphs.CompleteBipartiteGraph(3, 3)
             return Matroid(groundset=E, graph=G, regular=True)
         if typ == CMR_MATROID_DEC_TYPE_K33_DUAL:
-            return matroids.named_matroids.K33dual()
+            return matroids.catalog.K33dual()
         if typ == CMR_MATROID_DEC_TYPE_DETERMINANT:
             return '|det| = 2 submatrix'
         assert False, 'special leaf node with unknown type'
-        # cdef int representation_matrix
-        # cdef CMR_MATROID_DEC_TYPE typ = CMRdecIsSpecialLeaf(self._dec, &representation_matrix)
-        # import sage.matroids.matroids_catalog as matroids
-        # from sage.graphs.graph_generators import graphs
-        # from sage.matroids.matroid import Matroid
-
-        # if typ == CMR_MATROID_DEC_TYPE_R10:
-        #     return matroids.named_matroids.R10()
-        # if typ == CMR_MATROID_DEC_TYPE_FANO:
-        #     return matroids.named_matroids.Fano()
-        # if typ == CMR_MATROID_DEC_TYPE_FANO_DUAL:
-        #     return matroids.named_matroids.Fano().dual()
-        # if typ == CMR_MATROID_DEC_TYPE_K5:
-        #     return matroids.CompleteGraphic(5)
-        # if typ == CMR_MATROID_DEC_TYPE_K5_DUAL:
-        #     return matroids.CompleteGraphic(5).dual()
-        # if typ == CMR_MATROID_DEC_TYPE_K33:
-        #     E = 'abcdefghi'
-        #     G = graphs.CompleteBipartiteGraph(3, 3)
-        #     return Matroid(groundset=E, graph=G, regular=True)
-        # if typ == CMR_MATROID_DEC_TYPE_K33_DUAL:
-        #     return matroids.named_matroids.K33dual()
-        # assert False, 'special leaf node with unknown type'
 
     def _repr_(self):
         return f'Isomorphic to a minor of {self._matroid()}'
