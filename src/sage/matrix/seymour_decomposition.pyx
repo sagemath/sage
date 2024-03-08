@@ -646,6 +646,20 @@ cdef class ThreeSumNode(SumNode):
             sage: result, certificate = R12.is_totally_unimodular(certificate=True)
             sage: C = certificate._children()[0]; C
             ThreeSumNode (6×6) with 2 children
+            sage: C.matrix()
+            [ 1  0  0  1 -1  0]
+            [ 0  1  1  1  0  0]
+            [ 1  0  0  0  0  1]
+            [ 0 -1  0 -1  1  1]
+            [-1  0  1  0  1  0]
+            [ 0 -1  0 -1  0  1]
+            sage: C.summand_matrices()
+            (
+            [ 0  0  1 -1 -1]  [ 1  0  1 -1  0]
+            [ 1  1  1  0  0]  [ 0  0  1  0  1]
+            [ 0  1  0  1  1]  [-1 -1  0  1  1]
+            [-1  0 -1  0  1], [-1 -1  0  0  1]
+            )
             sage: C.block_matrix_form()
             [ 0  0  1 -1  1  0]
             [ 1  1  1  0  0  0]

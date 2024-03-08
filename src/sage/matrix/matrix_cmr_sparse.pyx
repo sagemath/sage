@@ -717,7 +717,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         # m2 = second_mat.nrows()
         # n2 = second_mat.ncols()
         # first_subcol = first_mat.matrix_from_rows_and_columns(range(m1 - 1), [n1 - 1])
-        # second_subcol = first_mat.delete_rows([second_row_index]).columns()[second_col_index1]
+        # second_subcol = second_mat.matrix_from_rows_and_columns(range(1, m2), [0])
+
         # first_submat = first_mat.delete_columns([first_col_index1, first_col_index2])
         # second_submat = second_mat.delete_columns([second_col_index1, second_col_index2])
         # first_row = first_submat.rows()[first_row_index]
