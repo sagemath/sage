@@ -93,7 +93,7 @@ class PackageCreator(object):
 
     def set_python_data_and_scripts(self, pypi_package_name=None, source='normal', dependencies=None):
         """
-        Write the file ``dependencies`` and other files for Python packages.
+        Write the files ``dependencies``, ``dependencies_build``, and other files for Python packages.
 
         If ``source`` is ``"normal"``, write the files ``spkg-install.in`` and
         ``install-requires.txt``.
@@ -106,16 +106,18 @@ class PackageCreator(object):
         """
         if pypi_package_name is None:
             pypi_package_name = self.package_name
+        with open(os.path.join(self.path, 'dependencies_build'), 'w+') as f:
+            if source == 'wheel':
+                f.write(' | pip $(PYTHON)\n\n')
+            else:
+                f.write(' | $(PYTHON_TOOLCHAIN) $(PYTHON)\n\n')
+            f.write('----------\nAll lines of this file are ignored except the first.\n')
         with open(os.path.join(self.path, 'dependencies'), 'w+') as f:
             if dependencies:
                 dependencies = ' '.join(dependencies)
             else:
                 dependencies = ''
-            if source == 'wheel':
-                dependencies_order_only = 'pip $(PYTHON)'
-            else:
-                dependencies_order_only = '$(PYTHON_TOOLCHAIN) $(PYTHON)'
-            f.write(dependencies + ' | ' + dependencies_order_only + '\n\n')
+            f.write(dependencies + '\n\n')
             f.write('----------\nAll lines of this file are ignored except the first.\n')
         if source == 'normal':
             with open(os.path.join(self.path, 'spkg-install.in'), 'w+') as f:
