@@ -1110,11 +1110,11 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         if is_RationalField(F):
             return self.is_definite()
 
-        try:
-            E = F.real_embeddings()
-            return [e for e in E if F.hilbert_symbol(self._a, self._b, e) == -1] == E
-        except (AttributeError, NotImplementedError):
+        if F not in NumberFields():
             raise ValueError("base field must be rational numbers or a number field")
+
+        E = F.real_embeddings()
+        return [e for e in E if F.hilbert_symbol(self._a, self._b, e) == -1] == E
 
     @cached_method
     def ramified_places(self, inf=True):
