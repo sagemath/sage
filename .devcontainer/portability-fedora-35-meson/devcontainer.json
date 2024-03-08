@@ -1,0 +1,9 @@
+// See https://aka.ms/devcontainer.json for format details.
+{
+    "name": "fedora-35-meson",
+    "image": "fedora:35",
+    "onCreateCommand": ".devcontainer/onCreate-meson.sh",
+    "extensions": [
+        "ms-python.python"
+    ]
+}
