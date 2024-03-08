@@ -763,13 +763,8 @@ class HyperplaneArrangementElement(Element):
         hyperplanes.append([0, 1] + [0] * self.dimension())
         P = self.parent()
         names = (variable,) + P._names
-        from sage.geometry.hyperplane_arrangement.ordered_arrangement import OrderedHyperplaneArrangements
-        if isinstance(P, OrderedHyperplaneArrangements):
-            H = OrderedHyperplaneArrangements(self.parent().base_ring(), names=names)
-        else:
-            H = HyperplaneArrangements(self.parent().base_ring(), names=names)
-        result = H(*hyperplanes, backend=self._backend)
-        return result
+        H = type(P).__base__(P.base_ring(), names=names)
+        return H(*hyperplanes, backend=self._backend)
 
     @cached_method
     def intersection_poset(self, element_label="int"):
@@ -1241,10 +1236,6 @@ class HyperplaneArrangementElement(Element):
 
         The restriction `\mathcal{A}_H` of the
         hyperplane arrangement `\mathcal{A}` to the given ``hyperplane`` `H`.
-
-        REMARK:
-
-        It applies also to ordered arrangements.
 
         EXAMPLES::
 
@@ -1781,8 +1772,7 @@ class HyperplaneArrangementElement(Element):
         names = tuple(name for i, name in enumerate(parent._names) if i not in echelon_pivots)
         # Construct the result
         restricted_parent = HyperplaneArrangements(R, names=names)
-        result = restricted_parent(*restricted, signed=False, backend=self._backend)
-        return result
+        return restricted_parent(*restricted, signed=False, backend=self._backend)
 
     def sign_vector(self, p):
         r"""

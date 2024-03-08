@@ -1910,7 +1910,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
             sage: T.<t> = QQ[]
             sage: K.<a> = NumberField(t^3 + 2, 'a')
             sage: A.<x, y> = AffineSpace(K, 2)
-            sage: Curve(y^2 + a * x).braid_monodromy()                  # needs sirocco
+            sage: Curve(y^2 + a * x).braid_monodromy()
             Traceback (most recent call last):
             ...
             NotImplementedError: the base field must have an embedding to the algebraic field

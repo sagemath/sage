@@ -619,9 +619,9 @@ class AffinePlaneCurveArrangementsElement(Element):
 
         INPUT:
 
-        - ``vertical`` -- boolean (default: True). If it is ``True``, there
+        - ``vertical`` -- boolean (default: ``True``); if it is ``True``, there
           are no vertical asymptotes, and there are vertical lines, then a
-          simplified braid_monodromy is computed.
+          simplified :func:`braid_monodromy` is computed.
 
         OUTPUT:
 
@@ -979,21 +979,22 @@ class AffinePlaneCurveArrangements(UniqueRepresentation, Parent):
 
     @staticmethod
     def __classcall__(cls, base, names=()):
-        names = normalize_names(len(names), names)
-        return super().__classcall__(cls, base, names)
-
-    def __init__(self, base_ring, names=tuple()):
         """
-        Initialize ``self``.
-
+        Normalize names
         TESTS::
 
             sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
             sage: K = AffinePlaneCurveArrangements(QQ, names=('x', 'y'))
             sage: H is K
             True
-            sage: type(K)
-            <class 'sage.schemes.curves.plane_curve_arrangement.AffinePlaneCurveArrangements_with_category'>
+            sage: TestSuite(K).run()
+        """
+        names = normalize_names(len(names), names)
+        return super().__classcall__(cls, base, names)
+
+    def __init__(self, base_ring, names=tuple()):
+        """
+        Initialize ``self``.
 
         TESTS::
 
