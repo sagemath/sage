@@ -59,6 +59,11 @@ cdef class DecompositionNode(SageObject):
     @cached_method
     def matrix(self):
         r"""
+        Return a :class:`Matrix`.
+
+        Use :meth:`ancestor_rows_and_columns` for the embedding of it
+        into the matrix of ...
+
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -85,6 +90,26 @@ cdef class DecompositionNode(SageObject):
         result._root = self._root or self
         return result
 
+    def row_keys(self):
+        r"""
+        OUTPUT: a tuple or ``None``
+        """
+        return self._row_keys
+
+    def column_keys(self):
+        r"""
+        OUTPUT: a tuple or ``None``
+        """
+        return self._column_keys
+
+    @cached_method
+    def morphism(self):
+        r"""
+
+        """
+        return matrix(self.matrix(), row_keys=self.row_keys(), column_keys=self.column_keys())
+
+
     @cached_method
     def _parent_rows_and_columns(self):
         cdef CMR_ELEMENT *parent_rows = CMRmatroiddecRowsParent(self._dec)
@@ -102,6 +127,22 @@ cdef class DecompositionNode(SageObject):
                                          for i in range(self.ncols()))
 
         return parent_rows_cmr_tuple, parent_columns_cmr_tuple
+
+    def ancestor_rows_and_columns(self, ancestor, use_keys=False):
+        r"""
+
+        INPUT:
+
+        - ``use_keys`` -- if ``True``, return the answer
+
+        OUTPUT: tuple ``(row_keys, column_keys)``
+
+
+
+        """
+        if ancestor is self:
+
+
 
     @cached_method
     def parent_rows_and_columns(self, indices_label=False):
@@ -244,6 +285,22 @@ cdef class DecompositionNode(SageObject):
         """
         return CMRmatroiddecNumChildren(self._dec)
 
+    def _create_child_node(self, index):
+
+        row_keys = self.row_keys()
+        column_keys = self.column_keys()
+        if row_keys is not None and column_keys is not None:
+            cdef CMR_MATROID_DEC *child = CMRmatroiddecChild(self._dec, index)
+            cdef CMR_ELEMENT *parent_rows = CMRmatroiddecRowsParent(child)
+            cdef CMR_ELEMENT *parent_columns = CMRmatroiddecColumnsParent(child)
+            child_row_keys = tuple(row_keys[parent_rows[.....]])
+
+        return create_DecompositionNode(,
+                                        self._root or self,
+
+)
+
+
     @cached_method
     def _children(self):
         r"""
@@ -283,7 +340,7 @@ cdef class DecompositionNode(SageObject):
             sage: certificate._children()
             ()
         """
-        return tuple(create_DecompositionNode(CMRmatroiddecChild(self._dec, index), self._root or self)
+        return tuple(self._create_child_node(index)
                      for index in range(self.nchildren()))
 
     def _repr_(self):
@@ -817,7 +874,7 @@ cdef _class(CMR_MATROID_DEC *dec):
     assert NotImplementedError
 
 
-cdef create_DecompositionNode(CMR_MATROID_DEC *dec, root=None):
+cdef create_DecompositionNode(CMR_MATROID_DEC *dec, root=None, row_keys=None, column_keys=None):
     r"""
     Create an instance of a subclass of :class:`DecompositionNode`.
 
@@ -832,6 +889,8 @@ cdef create_DecompositionNode(CMR_MATROID_DEC *dec, root=None):
         return None
     cdef DecompositionNode result = <DecompositionNode> _class(dec)()
     result._set_dec(dec, root)
+    result._row_keys = row_keys
+    result._column_keys = column_keys
     return result
 
 
