@@ -1259,16 +1259,16 @@ class DocTestController(SageObject):
 
     def _assemble_cmd(self):
         """
-        Assembles a shell command used in running tests under gdb, lldb, or valgrind.
+        Assemble a shell command used in running tests under gdb, lldb, or valgrind.
 
         EXAMPLES::
 
             sage: from sage.doctest.control import DocTestDefaults, DocTestController
             sage: DC = DocTestController(DocTestDefaults(timeout=123), ["hello_world.py"])
             sage: print(DC._assemble_cmd())
-            sage-runtests --serial --timeout=123 hello_world.py
+            ...python... -m sage.doctest --serial --timeout=123 hello_world.py
         """
-        cmd = "sage-runtests --serial "
+        cmd = f"{shlex.quote(sys.executable)} -m sage.doctest --serial "
         opt = dict_difference(self.options.__dict__, DocTestDefaults().__dict__)
         if "all" in opt:
             raise ValueError("You cannot run gdb/lldb/valgrind on the whole sage library")
@@ -1301,7 +1301,7 @@ class DocTestController(SageObject):
             sage: DD = DocTestDefaults(gdb=True)
             sage: DC = DocTestController(DD, ["hello_world.py"])
             sage: DC.run_val_gdb(testing=True)
-            exec gdb --eval-command="run" --args ...python... sage-runtests --serial --timeout=0 hello_world.py
+            exec gdb --eval-command="run" --args ...python... -m sage.doctest --serial --timeout=0 hello_world.py
 
         ::
 
@@ -1318,13 +1318,12 @@ class DocTestController(SageObject):
         opt = self.options
 
         if opt.gdb:
-            cmd = f'''exec gdb --eval-command="run" --args {shlex.quote(sys.executable)} '''
+            cmd = f'''exec gdb --eval-command="run" --args '''
             flags = ""
             if opt.logfile:
                 sage_cmd += f" --logfile {shlex.quote(opt.logfile)}"
         elif opt.lldb:
-            sage_cmd = sage_cmd.replace('sage-runtests', '$(command -v sage-runtests)')
-            cmd = f'''exec lldb --one-line "process launch" --one-line "cont" -- {sys.executable} '''
+            cmd = f'''exec lldb --one-line "process launch" --one-line "cont" -- '''
             flags = ""
         else:
             if opt.logfile is None:
