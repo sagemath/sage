@@ -56,7 +56,7 @@ def Jacobian(C):
     """
     try:
         return C.jacobian()
-    except AttributeError:
+    except (AttributeError, TypeError):
         return Jacobian_generic(C)
 
 
