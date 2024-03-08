@@ -4,7 +4,8 @@ Package Creator
 """
 
 # ****************************************************************************
-#       Copyright (C) 2016 Volker Braun <vbraun.name@gmail.com>
+#       Copyright (C) 2015-2016 Volker Braun <vbraun.name@gmail.com>
+#                     2020-2024 Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -90,9 +91,9 @@ class PackageCreator(object):
             except OSError:
                 pass
 
-    def set_python_data_and_scripts(self, pypi_package_name=None, source='normal'):
+    def set_python_data_and_scripts(self, pypi_package_name=None, source='normal', dependencies=None):
         """
-        Write the file ``dependencies`` and other files for Python packages.
+        Write the files ``dependencies``, ``dependencies_build``, and other files for Python packages.
 
         If ``source`` is ``"normal"``, write the files ``spkg-install.in`` and
         ``install-requires.txt``.
@@ -105,8 +106,18 @@ class PackageCreator(object):
         """
         if pypi_package_name is None:
             pypi_package_name = self.package_name
+        with open(os.path.join(self.path, 'dependencies_build'), 'w+') as f:
+            if source == 'wheel':
+                f.write(' | pip $(PYTHON)\n\n')
+            else:
+                f.write(' | $(PYTHON_TOOLCHAIN) $(PYTHON)\n\n')
+            f.write('----------\nAll lines of this file are ignored except the first.\n')
         with open(os.path.join(self.path, 'dependencies'), 'w+') as f:
-            f.write(' | $(PYTHON_TOOLCHAIN) $(PYTHON)\n\n')
+            if dependencies:
+                dependencies = ' '.join(dependencies)
+            else:
+                dependencies = ''
+            f.write(dependencies + '\n\n')
             f.write('----------\nAll lines of this file are ignored except the first.\n')
         if source == 'normal':
             with open(os.path.join(self.path, 'spkg-install.in'), 'w+') as f:
