@@ -1270,27 +1270,27 @@ class FunctionField(Field):
             1
 
             sage: K.<x> = FunctionField(GF(5)); R.<T> = PolynomialRing(K)
-            sage: (f = (x^2 + 2*x + 2)*T^5 + (4*x^2 + 2*x + 3)*T^4 + 3*T^3 + 4*T^2
+            sage: f = ((x^2 + 2*x + 2)*T^5 + (4*x^2 + 2*x + 3)*T^4 + 3*T^3 + 4*T^2
             ....:     + (2/(x^2 + 4*x + 1))*T + 3*x^2 + 2*x + 4)
             sage: L.<y> = K.extension(f)
             sage: P = L.places_above(K.places()[0])[1]
-            sage: (a = ((3*x^3 + 2*x^2 + x + 1)/(x + 2))*y^4 + (4/(x + 4))*y^3
+            sage: a = (((3*x^3 + 2*x^2 + x + 1)/(x + 2))*y^4 + (4/(x + 4))*y^3
             ....:     + ((3*x + 4)/(x + 4))*y^2
             ....:     + ((x^4 + 2*x^3 + 3*x^2 + x + 2)/(x^4 + x^3 + x^2 + 2))*y
             ....:     + (x^4 + x^2 + 2*x + 4)/(x^2 + 2*x + 2))
-            sage: (b = ((x + 1)/(x + 4))*y^4
+            sage: b = (((x + 1)/(x + 4))*y^4
             ....:     + ((2*x^4 + 3*x^3 + 3*x^2 + 3)/(x^2 + 2*x + 2))*y^3 + (2/(x + 4))*y^2
             ....:     + ((4*x^4 + 4*x^3 + 4*x^2 + 2)/(x^4 + x^3 + x^2 + 2))*y
             ....:     + (x^3 + x)/(x^3 + x^2 + x + 2))
             sage: L.hilbert_symbol(a, b, P)
             1
             sage: Q = L.places_above(K.places()[1])[0]
-            sage: (c = ((3*x^3 + 3*x^2 + 3*x + 3)/(x^3 + 3*x^2 + x))*y^4
+            sage: c = (((3*x^3 + 3*x^2 + 3*x + 3)/(x^3 + 3*x^2 + x))*y^4
             ....:     + ((3*x^4 + 2*x^3 + 2*x^2 + 4*x + 3)/(x^3 + 3*x^2 + x))*y^3
             ....:     + ((3*x + 4)/(x^3 + 3*x^2 + x))*y^2
             ....:     + ((4*x + 2)/(x^5 + 2*x^4 + 4*x^3 + 2*x^2 + x))*y
             ....:     + (x^3 + 2*x^2 + 4)/(x^3 + 3*x^2 + x))
-            sage: (d = ((2*x^4 + x^2 + 2*x + 3)/(x^2 + 2*x + 2))*y^4
+            sage: d = (((2*x^4 + x^2 + 2*x + 3)/(x^2 + 2*x + 2))*y^4
             ....:     + ((4*x^2 + 2)/(x^2 + 2*x + 2))*y^3 + ((3*x^2 + 3*x + 3)/(x^2 + 1))*y^2
             ....:     + ((x^6 + 4*x^5 + 4*x^4 + 3*x^3 + 3*x^2 + x + 3)/(x^4 + x^3 + x^2 + 2))*y
             ....:     + (4*x^3 + 4*x^2 + 2*x + 2)/(x + 4))
@@ -1298,14 +1298,14 @@ class FunctionField(Field):
             -1
 
             sage: K.<x> = FunctionField(GF(3)); R.<T> = PolynomialRing(K)
-            sage: (g = ((2*x + 1)/x)*T^5 + ((2*x + 1)/(x + 1))*T^4 + ((x^2 + 1)/x)*T^3
+            sage: g = (((2*x + 1)/x)*T^5 + ((2*x + 1)/(x + 1))*T^4 + ((x^2 + 1)/x)*T^3
             ....:     + (2*x/(x^2 + 2*x + 2))*T^2 + 2*T + (2*x + 2)/(x + 2))
             sage: L = K.extension(g)
             sage: P = L.places_above(K.places()[1])[1]
-            sage: (a = ((x + 2)/(x + 1))*y^4 + ((x^4 + 2*x^2 + 1)/(x^2 + 2*x))*y^3
+            sage: a = (((x + 2)/(x + 1))*y^4 + ((x^4 + 2*x^2 + 1)/(x^2 + 2*x))*y^3
             ....:     + ((x^5 + x^2 + 2*x + 1)/(x^4 + 2*x^3 + x^2 + x + 1))*y^2
             ....:     + ((2*x + 2)/(x + 2))*y + (2*x^4 + x^3 + x^2 + 2*x + 2)/(x^2 + x + 1))
-            sage: (b = ((x^2 + x + 1)/(x^2 + 2*x + 1))*y^4 + ((2*x^2 + x + 1)/(x + 1))*y^3
+            sage: b = (((x^2 + x + 1)/(x^2 + 2*x + 1))*y^4 + ((2*x^2 + x + 1)/(x + 1))*y^3
             ....:     + ((x^5 + x^4 + 2*x^3 + x^2 + 2*x + 2)/(x^3 + x + 2))*y^2
             ....:     + (2*x/(x^2 + 2))*y + 2*x^2 + 2*x + 1)
             sage: L.hilbert_symbol(a, b, P)
@@ -1348,7 +1348,7 @@ class FunctionField(Field):
         a_rd_pw = tau(a0)**(v_b * e)
         b_rd_pw = tau(b0)**(v_a * e)
 
-        # Finally, put the result together and transform it into the correct output 
+        # Finally, put the result together and transform it into the correct output
         res = k(-1)**(v_a * v_b * e) * a_rd_pw * b_rd_pw
         return (res.is_one() << 1) - 1
 
