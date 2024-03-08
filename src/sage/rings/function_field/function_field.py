@@ -1248,9 +1248,9 @@ class FunctionField(Field):
 
         INPUT:
 
-        - ``a`` and ``b``: Units in the function field ``self``
+        - ``a`` and ``b``: Elements of ``self``
 
-        - ``P``: A place of the function field ``self``
+        - ``P``: A place of ``self``
 
         EXAMPLES::
 
@@ -1300,7 +1300,7 @@ class FunctionField(Field):
             sage: K.<x> = FunctionField(GF(3)); R.<T> = PolynomialRing(K)
             sage: g = (((2*x + 1)/x)*T^5 + ((2*x + 1)/(x + 1))*T^4 + ((x^2 + 1)/x)*T^3
             ....:     + (2*x/(x^2 + 2*x + 2))*T^2 + 2*T + (2*x + 2)/(x + 2))
-            sage: L = K.extension(g)
+            sage: L.<y> = K.extension(g)
             sage: P = L.places_above(K.places()[1])[1]
             sage: a = (((x + 2)/(x + 1))*y^4 + ((x^4 + 2*x^2 + 1)/(x^2 + 2*x))*y^3
             ....:     + ((x^5 + x^2 + 2*x + 1)/(x^4 + 2*x^3 + x^2 + x + 1))*y^2
