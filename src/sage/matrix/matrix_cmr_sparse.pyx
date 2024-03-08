@@ -796,8 +796,6 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [0 0 0 0 1 1]
             [1 1 0 0 0 1]
         """
-        print(first_mat)
-        print(second_mat)
         fc = len(first_mat.columns())
         sc = len(second_mat.columns())
         fr = len(first_mat.rows())
@@ -838,12 +836,6 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                     break
         if not (valid1 and valid2):
             raise ValueError('indicated columns of Matrices are not of appropriate form for 3-sum')
-        print(first_row_index)
-        print(second_row_index)
-        print(first_mat)
-        test1 = first_mat.delete_rows([first_row_index])
-        print(test1)
-        print(test1.columns())
         first_subcol = first_mat.delete_rows([first_row_index]).columns()[first_col_index1]
         second_subcol = second_mat.delete_rows([second_row_index]).columns()[second_col_index1]
         first_submat = first_mat.delete_columns([first_col_index1, first_col_index2])
@@ -854,14 +846,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         second_submat = second_submat.delete_rows([second_row_index])
         first_subrows = first_submat.rows()
         second_subrows = second_submat.rows()
-        print(first_subcol)
-        print(second_subcol)
-        print(second_row)
-        print(first_row)
         upper_right_rows = first_subcol.tensor_product(second_row).rows()
         lower_left_rows = second_subcol.tensor_product(first_row).rows()
-        print(upper_right_rows)
-        print(lower_left_rows)
         n1 = len(first_submat.rows())
         n2 = len(second_submat.rows())
         row_list = []
