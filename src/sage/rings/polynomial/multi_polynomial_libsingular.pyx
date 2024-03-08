@@ -2543,12 +2543,11 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         OUTPUT:
 
-        If ``x`` is not given, return the maximum degree of the monomials of
-        the polynomial. Note that the degree of a monomial is affected by the
-        gradings given to the generators of the parent ring. If ``x`` is given,
-        it is (or coercible to) a generator of the parent ring and the output
-        is the maximum degree in ``x``. This is not affected by the gradings of
-        the generators.
+        If ``x`` is ``None``, return the total degree of ``self``. Note that
+        this result is affected by the weighting given to the generators of the
+        parent ring. Otherwise, if ``x`` is (or is coercible to) a generator of
+        the parent ring, the output is the maximum degree of ``x`` in ``self``.
+        This is not affected by the weighting of the generators.
 
         EXAMPLES::
 
@@ -2562,6 +2561,19 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             3
             sage: (y^10*x - 7*x^2*y^5 + 5*x^3).degree(y)
             10
+
+        When the generators have a grading (weighting) then the total degree
+        respects this, but the degree for a given generator is unaffected::
+
+            sage: T = TermOrder("wdegrevlex", (2, 3))
+            sage: R.<x, y> = PolynomialRing(QQ, order=T)
+            sage: f = x^2 * y + y^4
+            sage: f.degree()
+            12
+            sage: f.degree(x)
+            2
+            sage: f.degree(y)
+            4
 
         The term ordering of the parent ring determines the grading of the
         generators. ::
