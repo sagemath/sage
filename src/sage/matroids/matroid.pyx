@@ -7764,6 +7764,19 @@ cdef class Matroid(SageObject):
         .. SEEALSO::
 
             :meth:`~sage.matroids.matroid.Matroid.whitney_numbers`
+
+
+        TESTS::
+
+            sage: M = Matroid(groundset=[0,1,2], circuits=[[0]])
+            sage: M.characteristic_polynomial()
+            0
+            sage: l = -1
+            sage: for M in matroids.AllMatroids(6):  # optional - matroid_database
+            ....:     r = M.rank()
+            ....:     assert M.characteristic_polynomial(l) == (-1)**r * M.tutte_polynomial(1-l, 0)
+            ....:     if not M.loops():
+            ....:         assert (-1)**r * M.characteristic_polynomial(l) == sum(M.broken_circuit_complex().f_vector())
         """
         R = ZZ['l']
         cdef list w = self.whitney_numbers()
@@ -8110,6 +8123,16 @@ cdef class Matroid(SageObject):
             sage: M.broken_circuit_complex([5,4,3,2,1])                                 # needs sage.graphs
             Simplicial complex with vertex set (1, 2, 3, 4, 5)
              and facets {(1, 3, 5), (1, 4, 5), (2, 3, 5), (2, 4, 5)}
+
+        TESTS::
+
+            sage: for M in matroids.AllMatroids(5):  # optional - matroid_database
+            ....:     r = M.rank()
+            ....:     if r > 0 and not M.dual().loops():
+            ....:         C = SimplicialComplex(M.bases(), maximality_check=False)
+            ....:         betti = C.betti()
+            ....:         betti[0] -= 1  # reduced homology
+            ....:         assert betti[r-1] == len(M.dual().broken_circuit_complex().facets())
         """
         from sage.topology.simplicial_complex import SimplicialComplex
         cdef int r = self.rank()
