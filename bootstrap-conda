@@ -11,7 +11,7 @@ STRIP_COMMENTS="sed s/#.*//;"
 shopt -s extglob
 
 eval $(sage-package dependencies --format=shell :all:)
-DEVELOP_SPKG_PATTERN="@(_develop${runtime_deps__develop// /|})"
+DEVELOP_SPKG_PATTERN="@(_develop|${runtime_deps__develop// /|})"
 BOOTSTRAP_PACKAGES=_bootstrap
 PACKAGES=
 OPTIONAL_PACKAGES=
