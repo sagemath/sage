@@ -238,17 +238,17 @@ class Curve_generic(AlgebraicScheme_subscheme):
             sage: C.geometric_genus()
             3
 
-        Note that the geometric genus is only defined for `geometrically
-        irreducible curve <https://stacks.math.columbia.edu/tag/0BYE>`_. This
-        method does not check the condition. Be warned that you may get a
-        nonsensical result if the curve is not geometrically irreducible.
+        .. WARNING::
 
-        A curve that is not geometrically irreducible::
+            Geometric genus is only defined for `geometrically irreducible curve
+            <https://stacks.math.columbia.edu/tag/0BYE>`_. This method does not
+            check the condition. You may get a nonsensical result if the curve is
+            not geometrically irreducible::
 
-            sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
-            sage: C = Curve(x^2 + y^2, P2)
-            sage: C.geometric_genus()  # nonsense!
-            -1
+                sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
+                sage: C = Curve(x^2 + y^2, P2)
+                sage: C.geometric_genus()  # nonsense!
+                -1
         """
         try:
             return self._genus

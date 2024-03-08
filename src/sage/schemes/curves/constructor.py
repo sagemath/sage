@@ -72,9 +72,6 @@ from .affine_curve import (AffineCurve,
                            IntegralAffinePlaneCurve,
                            IntegralAffinePlaneCurve_finite_field)
 
-_Fields = Fields()
-_NumberFields = NumberFields()
-
 
 def _is_irreducible_and_reduced(F) -> bool:
     """
@@ -312,7 +309,7 @@ def Curve(F, A=None):
             if A.coordinate_ring().ideal(F).is_zero():
                 if isinstance(k, FiniteField):
                     return IntegralAffineCurve_finite_field(A, F)
-                if k in _Fields:
+                if k in Fields():
                     return IntegralAffineCurve(A, F)
                 return AffineCurve(A, F)
             raise TypeError(f"{F} does not define a curve in one-dimensional affine space")
@@ -320,8 +317,8 @@ def Curve(F, A=None):
             if isinstance(k, FiniteField):
                 if A.coordinate_ring().ideal(F).is_prime():
                     return IntegralAffineCurve_finite_field(A, F)
-            if k in _Fields:
-                if (k == QQ or k in _NumberFields) and A.coordinate_ring().ideal(F).is_prime():
+            if k in Fields():
+                if (k == QQ or k in NumberFields()) and A.coordinate_ring().ideal(F).is_prime():
                     return IntegralAffineCurve(A, F)
                 return AffineCurve_field(A, F)
             return AffineCurve(A, F)
@@ -334,8 +331,8 @@ def Curve(F, A=None):
             if _is_irreducible_and_reduced(F):
                 return IntegralAffinePlaneCurve_finite_field(A, F)
             return AffinePlaneCurve_finite_field(A, F)
-        if k in _Fields:
-            if (k == QQ or k in _NumberFields) and _is_irreducible_and_reduced(F):
+        if k in Fields():
+            if (k == QQ or k in NumberFields()) and _is_irreducible_and_reduced(F):
                 return IntegralAffinePlaneCurve(A, F)
             return AffinePlaneCurve_field(A, F)
         return AffinePlaneCurve(A, F)
@@ -345,7 +342,7 @@ def Curve(F, A=None):
             if A.coordinate_ring().ideal(F).is_zero():
                 if isinstance(k, FiniteField):
                     return IntegralProjectiveCurve_finite_field(A, F)
-                if k in _Fields:
+                if k in Fields():
                     return IntegralProjectiveCurve(A, F)
                 return ProjectiveCurve(A, F)
             raise TypeError(f"{F} does not define a curve in one-dimensional projective space")
@@ -355,8 +352,8 @@ def Curve(F, A=None):
             if isinstance(k, FiniteField):
                 if A.coordinate_ring().ideal(F).is_prime():
                     return IntegralProjectiveCurve_finite_field(A, F)
-            if k in _Fields:
-                if (k == QQ or k in _NumberFields) and A.coordinate_ring().ideal(F).is_prime():
+            if k in Fields():
+                if (k == QQ or k in NumberFields()) and A.coordinate_ring().ideal(F).is_prime():
                     return IntegralProjectiveCurve(A, F)
                 return ProjectiveCurve_field(A, F)
             return ProjectiveCurve(A, F)
@@ -374,8 +371,8 @@ def Curve(F, A=None):
             if _is_irreducible_and_reduced(F):
                 return IntegralProjectivePlaneCurve_finite_field(A, F)
             return ProjectivePlaneCurve_finite_field(A, F)
-        if k in _Fields:
-            if (k == QQ or k in _NumberFields) and _is_irreducible_and_reduced(F):
+        if k in Fields():
+            if (k == QQ or k in NumberFields()) and _is_irreducible_and_reduced(F):
                 return IntegralProjectivePlaneCurve(A, F)
             return ProjectivePlaneCurve_field(A, F)
         return ProjectivePlaneCurve(A, F)

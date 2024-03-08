@@ -2068,6 +2068,7 @@ class IntegralAffineCurve(AffineCurve_field):
 
         TESTS::
 
+            sage: # needs sage.rings.number_field
             sage: R.<T> = QQ[]
             sage: N.<a> = NumberField(T^2 + 1)
             sage: A2.<x,y> = AffineSpace(N, 2)

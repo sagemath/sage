@@ -41,9 +41,6 @@ from .element_polymod import FunctionFieldElement_polymod
 from .function_field import FunctionField
 from .function_field_rational import RationalFunctionField
 
-_FunctionFields = FunctionFields()
-_NumberFields = NumberFields()
-
 
 class FunctionField_polymod(FunctionField):
     """
@@ -164,7 +161,7 @@ class FunctionField_polymod(FunctionField):
         self._polynomial = polynomial
 
         FunctionField.__init__(self, base_field, names=names,
-                               category=_FunctionFields.or_subcategory(category))
+                               category=FunctionFields().or_subcategory(category))
 
         from .place_polymod import FunctionFieldPlace_polymod
         self._place_class = FunctionFieldPlace_polymod
@@ -1861,7 +1858,7 @@ class FunctionField_simple(FunctionField_polymod):
         The genus is computed by the Hurwitz genus formula.
         """
         k, _ = self.exact_constant_field()
-        if k in _NumberFields:
+        if k in NumberFields():
             k_degree = k.relative_degree()
         else:
             k_degree = k.degree()
