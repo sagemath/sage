@@ -10,7 +10,7 @@ STRIP_COMMENTS="sed s/#.*//;"
 
 shopt -s extglob
 
-DEVELOP_SPKG_PATTERN="@(_develop$(for a in $(head -n 1 build/pkgs/_develop/dependencies); do echo -n "|"$a; done))"
+DEVELOP_SPKG_PATTERN="@(_develop$(for a in $(sage-package dependencies _develop); do echo -n "|"$a; done))"
 BOOTSTRAP_PACKAGES=_bootstrap
 PACKAGES=
 OPTIONAL_PACKAGES=
