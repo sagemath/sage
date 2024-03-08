@@ -403,8 +403,8 @@ class QuaternionAlgebra_abstract(Parent):
 
     def is_division_algebra(self) -> bool:
         """
-        Checks whether the quaternion algebra ``self`` is a division algebra, i.e. whether
-        every nonzero element in ``self`` is invertible.
+        Check whether the quaternion algebra ``self`` is a division algebra,
+        i.e. whether every nonzero element in ``self`` is invertible.
 
         EXAMPLES::
 
@@ -432,8 +432,8 @@ class QuaternionAlgebra_abstract(Parent):
 
     def is_matrix_ring(self) -> bool:
         """
-        Checks whether the quaternion algebra ``self`` is isomorphic to the 2x2 matrix
-        ring over the base field.
+        Check whether the quaternion algebra ``self`` is isomorphic to the
+        2x2 matrix ring over the base field.
 
         EXAMPLES::
 
@@ -1057,9 +1057,11 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
     def is_definite(self):
         """
-        Checks whether the quaternion algebra ``self`` is definite, i.e. whether it ramifies at the
-        unique Archimedean place of its base field QQ. This is the case if and only if both
-        invariants of ``self`` are negative; see Exercise 2.4(c) in [Voi2021]_.
+        Check whether the quaternion algebra ``self`` is definite, i.e. whether
+        it ramifies at the unique Archimedean place of its base field `QQ`.
+
+        A quaternion algebra over `QQ` is definite if and only if both of
+        its invariants are negative (see Exercise 2.4(c) in [Voi2021]_).
 
         EXAMPLES::
 
@@ -1080,8 +1082,8 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
     def is_totally_definite(self):
         """
-        Checks whether the quaternion algebra ``self`` is totally definite, i.e. whether it ramifies
-        at all real Archimedean places of its base number field.
+        Check whether the quaternion algebra ``self`` is totally definite, i.e.
+        whether it ramifies at all real Archimedean places of its base number field.
 
         EXAMPLES::
 
@@ -1119,11 +1121,13 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
     @cached_method
     def ramified_places(self, inf=True):
         """
-        Return the places of the base number field at which the quaternion algebra ``self`` ramifies.
+        Return the places of the base number field at which the quaternion
+        algebra``self`` ramifies.
 
-        Note: The initial choice of primes (in the case F = QQ) respectively of prime ideals (in the
-        number field case) to check ramification for is motivated by 12.4.12(a) in [Voi2021]_. The
-        restriction to real Archimedean embeddings is due to 14.5.8 in [Voi2021]_.
+        Note: The initial choice of primes (in the case F = QQ) respectively
+        of prime ideals (in the number field case) to check ramification for
+        is motivated by 12.4.12(a) in [Voi2021]_. The restriction to real
+        Archimedean embeddings is due to 14.5.8 in [Voi2021]_.
 
         INPUT:
 
@@ -1131,11 +1135,12 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         OUTPUT:
 
-        The non-Archimedean (AKA finite) places at which ``self`` ramifies (given as elements of ZZ,
-        sorted small to large, if ``self`` is defined over the rational field QQ, respectively as
-        fractional ideals of the number field's ring of integers, otherwise) and, if ``inf`` is set
-        to ``True``, also the Archimedean (AKA infinite) places at which ``self`` ramifies (given
-        by real embeddings of the base field).
+        The non-Archimedean (AKA finite) places at which ``self`` ramifies (given
+        as elements of ZZ, sorted small to large, if ``self`` is defined over the
+        rational field QQ, respectively as fractional ideals of the number field's
+        ring of integers, otherwise) and, if ``inf`` is set to ``True``, also the
+        Archimedean (AKA infinite) places at which ``self`` ramifies (given by
+        real embeddings of the base field).
 
         EXAMPLES::
 
@@ -1185,18 +1190,22 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             raise ValueError("inf must be a truth value")
 
         F = self.base_ring()
+        a = self._a
+        b = self._b
 
-        # For efficiency (and to not convert QQ into a number field manually), we handle F = QQ first
+        # For efficiency (and to not convert QQ into a number field manually),
+        # we handle the case F = QQ first
         if is_RationalField(F):
-            ram_fin = sorted([p for p in set([2]).union(prime_divisors(self._a.numerator()),
-                    prime_divisors(self._a.denominator()), prime_divisors(self._b.numerator()),
-                    prime_divisors(self._b.denominator())) if hilbert_symbol(self._a, self._b, p) == -1])
+            ram_fin = sorted([p for p in set([2]).union(
+                    prime_divisors(a.numerator()), prime_divisors(a.denominator()),
+                    prime_divisors(b.numerator()), prime_divisors(b.denominator()))
+                    if hilbert_symbol(a, b, p) == -1])
 
             if not inf:
                 return ram_fin
 
-            # The given quaternion algebra ramifies at the unique infinite place of QQ, by definition,
-            # if and only if it is definite
+            # The given quaternion algebra ramifies at the unique infinite place
+            # of QQ, by definition, if and only if it is definite
             if self.is_definite():
                 return ram_fin, QQ.places()
 
@@ -1208,14 +1217,14 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             raise ValueError("base field must be rational numbers or a number field")
 
         # Over the number field F, first compute the finite ramified places
-        ram_fin = [p for p in set(F.primes_above(2)).union(F.primes_above(self._a),
-                    F.primes_above(self._b)) if F.hilbert_symbol(self._a, self._b, p) == -1]
+        ram_fin = [p for p in set(F.primes_above(2)).union(F.primes_above(a),
+                    F.primes_above(b)) if F.hilbert_symbol(a, b, p) == -1]
 
         if not inf:
             return ram_fin
 
         # At this point the infinite ramified places also need to be computed
-        return ram_fin, [e for e in F.real_embeddings() if F.hilbert_symbol(self._a, self._b, e) == -1]
+        return ram_fin, [e for e in F.real_embeddings() if F.hilbert_symbol(a, b, e) == -1]
 
     @cached_method
     def ramified_primes(self):
@@ -1303,10 +1312,10 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
     def is_isomorphic(self, A) -> bool:
         """
-        Checks whether ``self`` and ``A`` are isomorphic quaternion algebras.
+        Check whether ``self`` and ``A`` are isomorphic quaternion algebras.
 
-        Currently only implemented over a number field; motivated by Main Theorem 14.6.1
-        in [Voi2021]_, noting that QQ has a unique infinite place.
+        Currently only implemented over a number field; motivated by Main
+        Theorem 14.6.1 in [Voi2021]_, noting that QQ has a unique infinite place.
 
         INPUT:
 
@@ -1334,7 +1343,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         F = self.base_ring()
         if F != A.base_ring():
-            raise ValueError("both quaternion algebras must be defined over the same base ring")
+            raise ValueError("both quaternion algebras must be defined over the same ring")
 
         if is_RationalField(F):
             return self.ramified_places(inf=False) == A.ramified_places(inf=False)
