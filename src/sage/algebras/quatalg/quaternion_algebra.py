@@ -2551,8 +2551,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
             sage: B.<i,j,k> = QuaternionAlgebra(211)
             sage: I = B.ideal([1, 1/4*j, 20*(i+k), 2/3*i])
-            sage: x = I.random_element()  # random
-            sage: x in I
+            sage: I.random_element() in I
             True
         """
         return sum(ZZ.random_element(*args, **kwds) * g for g in self.gens())
