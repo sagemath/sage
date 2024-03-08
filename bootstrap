@@ -188,7 +188,7 @@ bootstrap_download () {
 
     CONFBALL=$(sage-package download $SAGE_DL_LOGLEVEL configure)
     if [ $? -ne 0 ]; then
-        echo >&2 "Error: downloading configure-$CONFVERSION.tar.gz failed"
+        echo >&2 "Error: downloading configure tarball failed"
         exit 1
     fi
 
