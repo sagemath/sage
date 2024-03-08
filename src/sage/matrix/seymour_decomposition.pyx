@@ -544,26 +544,26 @@ cdef class ThreeSumNode(SumNode):
 
     def is_distributed_ranks(self):
         r"""
-            EXAMPLES::
+        EXAMPLES::
 
-                sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
-                sage: R12 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 12, sparse=True),
-                ....: [[1, -1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
-                ....: [0, 0, 0, 1, -1, 0, 0, 0, 1 , 1, 1, 1],
-                ....: [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
-                ....: [ 1,  0,  1,  0,  0,  0,  0,  0,  1,  1,  0,  0],
-                ....: [ 0,  1,  1,  0,  0,  0,  0,  0,  0,  0, -1, -1],
-                ....: [ 0,  0,  0,  1,  0,  1,  0,  0,  1,  1,  0,  0],
-                ....: [ 0,  0,  0,  0,  1,  1,  0,  0,  0,  0, -1, -1],
-                ....: [ 0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1,  0],
-                ....: [ 0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1]])
-                sage: result, certificate = R12.is_totally_unimodular(certificate=True)
-                sage: C = certificate._children()[0]; C
-                ThreeSumNode (9×12) with 2 children
-                sage: C.is_distributed_ranks()
-                True
-                sage: C.is_concentrated_rank()
-                False
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: R12_large = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 12, sparse=True),
+            ....: [[1, -1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
+            ....: [0, 0, 0, 1, -1, 0, 0, 0, 1 , 1, 1, 1],
+            ....: [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+            ....: [ 1,  0,  1,  0,  0,  0,  0,  0,  1,  1,  0,  0],
+            ....: [ 0,  1,  1,  0,  0,  0,  0,  0,  0,  0, -1, -1],
+            ....: [ 0,  0,  0,  1,  0,  1,  0,  0,  1,  1,  0,  0],
+            ....: [ 0,  0,  0,  0,  1,  1,  0,  0,  0,  0, -1, -1],
+            ....: [ 0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1,  0],
+            ....: [ 0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1]])
+            sage: result, certificate = R12_large.is_totally_unimodular(certificate=True)
+            sage: C = certificate._children()[0]; C
+            ThreeSumNode (9×12) with 2 children
+            sage: C.is_distributed_ranks()
+            True
+            sage: C.is_concentrated_rank()
+            False
         """
         return <bint> CMRmatroiddecThreeSumDistributedRanks(self._dec)
 
@@ -571,9 +571,34 @@ cdef class ThreeSumNode(SumNode):
         return <bint> CMRmatroiddecThreeSumConcentratedRank(self._dec)
 
     def block_matrix_form(self):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: R12 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 6, 6, sparse=True),
+            ....: [[1,0,1,1,0,0],[0,1,1,1,0,0],[1,0,1,0,1,1],
+            ....: [0,-1,0,-1,1,1],[1,0,1,0,1,0],[0,-1,0,-1,0,1]])
+            sage: R12
+            [ 1  0  1  1  0  0]
+            [ 0  1  1  1  0  0]
+            [ 1  0  1  0  1  1]
+            [ 0 -1  0 -1  1  1]
+            [ 1  0  1  0  1  0]
+            [ 0 -1  0 -1  0  1]
+            sage: result, certificate = R12.is_totally_unimodular(certificate=True)
+            sage: C = certificate._children()[0]; C
+            ThreeSumNode (6×6) with 2 children
+            sage: C.block_matrix_form()
+            [ 0  0  1 -1  1  0]
+            [ 1  1  1  0  0  0]
+            [ 0  1  0  1 -1  0]
+            [ 0  0  0  1  0  1]
+            [ 1  0  1  0  1  1]
+            [ 1  0  1  0  0  1]
+        """
         M1, M2 = self.summand_matrices()
-        x, y= len(M1.columns()), len(M2.columns())
-        return Matrix_cmr_chr_sparse.two_sum(M1, M2, x - 1, x-2, y - 1, y - 2)
+        x = M1.ncols()
+        return Matrix_cmr_chr_sparse.three_sum(M1, M2, x - 2, x - 1, 0, 1)
 
 
 cdef class BaseGraphicNode(DecompositionNode):

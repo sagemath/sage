@@ -586,8 +586,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         """
         cdef Matrix_cmr_chr_sparse sum, first, second
         cdef CMR_CHRMAT *sum_mat
-        first = Matrix_cmr_chr_sparse._from_data(first_mat, immutable=False)
-        second = Matrix_cmr_chr_sparse._from_data(second_mat, immutable=False)
+        first = Matrix_cmr_chr_sparse._from_data(first_mat)
+        second = Matrix_cmr_chr_sparse._from_data(second_mat)
 
         if nonzero_block not in ["top_right", "bottom_left"]:
             raise ValueError("Unknown two sum mode", nonzero_block)
@@ -701,6 +701,48 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         sum = Matrix_cmr_chr_sparse._from_cmr(sum_mat)
         return sum
 
+    def three_sum_wide_wide(first_mat, second_mat):
+        r"""
+        Return the 3-sum matrix constructed from the given matrices ``first_mat`` and
+        ``second_mat``.
+
+        The first matrix is `M_1=\begin{bmatrix} A & a & a \\ c^T & 0 & \pm 1\end{bmatrix}`
+        and the second matrix is `M_2=\begin{bmatrix} \pm 1 & 0 & b^T \\ d & d & B\end{bmatrix}`. Then
+        the three sum is defined in [Sch1986]_, Ch. 19.4.:=
+        `M_1 \oplus_3 M_2 =\begin{bmatrix}A & ab^T\\ dc^T & B\end{bmatrix}`.
+        """
+        pass
+        # m1 = first_mat.nrows()
+        # n1 = first_mat.ncols()
+        # m2 = second_mat.nrows()
+        # n2 = second_mat.ncols()
+        # first_subcol = first_mat.matrix_from_rows_and_columns(range(m1 - 1), [n1 - 1])
+        # second_subcol = first_mat.delete_rows([second_row_index]).columns()[second_col_index1]
+        # first_submat = first_mat.delete_columns([first_col_index1, first_col_index2])
+        # second_submat = second_mat.delete_columns([second_col_index1, second_col_index2])
+        # first_row = first_submat.rows()[first_row_index]
+        # second_row = second_submat.rows()[second_row_index]
+        # first_submat = first_submat.delete_rows([first_row_index])
+        # second_submat = second_submat.delete_rows([second_row_index])
+        # first_subrows = first_submat.rows()
+        # second_subrows = second_submat.rows()
+        # upper_right_rows = first_subcol.tensor_product(second_row).rows()
+        # lower_left_rows = second_subcol.tensor_product(first_row).rows()
+        # n1 = len(first_submat.rows())
+        # n2 = len(second_submat.rows())
+        # row_list = []
+        # for i in range(n1):
+        #     r = list(first_subrows[i])
+        #     u = list(upper_right_rows[i])
+        #     r.extend(u)
+        #     row_list.append(r)
+        # for i in range(n2):
+        #     r = list(lower_left_rows[i])
+        #     u = list(second_subrows[i])
+        #     r.extend(u)
+        #     row_list.append(r)
+        # return Matrix_cmr_chr_sparse._from_data(row_list, immutable=False)
+
     def three_sum(first_mat, second_mat, first_col_index1, first_col_index2, second_col_index1, second_col_index2):
         r"""
         Return the 3-sum matrix constructed from the given matrices ``first_mat`` and
@@ -754,6 +796,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [0 0 0 0 1 1]
             [1 1 0 0 0 1]
         """
+        print(first_mat)
+        print(second_mat)
         fc = len(first_mat.columns())
         sc = len(second_mat.columns())
         fr = len(first_mat.rows())
@@ -794,8 +838,14 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                     break
         if not (valid1 and valid2):
             raise ValueError('indicated columns of Matrices are not of appropriate form for 3-sum')
+        print(first_row_index)
+        print(second_row_index)
+        print(first_mat)
+        test1 = first_mat.delete_rows([first_row_index])
+        print(test1)
+        print(test1.columns())
         first_subcol = first_mat.delete_rows([first_row_index]).columns()[first_col_index1]
-        second_subcol = first_mat.delete_rows([second_row_index]).columns()[second_col_index1]
+        second_subcol = second_mat.delete_rows([second_row_index]).columns()[second_col_index1]
         first_submat = first_mat.delete_columns([first_col_index1, first_col_index2])
         second_submat = second_mat.delete_columns([second_col_index1, second_col_index2])
         first_row = first_submat.rows()[first_row_index]
@@ -804,8 +854,14 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         second_submat = second_submat.delete_rows([second_row_index])
         first_subrows = first_submat.rows()
         second_subrows = second_submat.rows()
+        print(first_subcol)
+        print(second_subcol)
+        print(second_row)
+        print(first_row)
         upper_right_rows = first_subcol.tensor_product(second_row).rows()
         lower_left_rows = second_subcol.tensor_product(first_row).rows()
+        print(upper_right_rows)
+        print(lower_left_rows)
         n1 = len(first_submat.rows())
         n2 = len(second_submat.rows())
         row_list = []
@@ -823,22 +879,13 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
     def delete_rows(self, indices):
         rows = self.rows()
-        row_list = []
         n = len(rows)
-        for i in indices:
-            if i >= n:
-                raise ValueError('Found index greater than matrix size')
-            rows.pop(i)
-        for r in rows:
-            x = []
-            for i in range(len(r)):
-                x.append(r[i])
-            row_list.append(x)
+        row_list = [rows[i] for i in range(n) if i not in indices]
         return Matrix_cmr_chr_sparse._from_data(row_list, immutable=False)
 
     def delete_columns(self, indices):
         rows = self.rows()
-        n = len(rows)
+        n = self.ncols()
         row_list = []
         for i in indices:
             if i >= n:
