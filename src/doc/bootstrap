@@ -99,8 +99,31 @@ equivalent system packages.
 
 EOF
 for PKG_BASE in $(sage-package list --has-file SPKG.rst :standard: | grep -v '^sagemath_'); do
-    echo "* :ref:\`spkg_$PKG_BASE\`"
+    PKG_SCRIPTS=build/pkgs/$PKG_BASE
+    case $(cat $PKG_SCRIPTS/trees.txt 2>/dev/null) in
+        JUPYTER_VENV) ;;
+        *)            echo "* :ref:\`spkg_$PKG_BASE\`";;
+    esac
 done >> "$OUTPUT_INDEX"
+cat >> "$OUTPUT_INDEX" <<EOF
+
+Standard Packages (Jupyter Frontend)
+------------------------------------
+
+The Sage distribution includes the Jupyter Notebook and JupyterLab.
+It installs them automatically if it does not find
+equivalent system packages, unless ``./configure --disable-notebook``
+is used.
+
+EOF
+
+for PKG_BASE in $(sage-package list --has-file SPKG.rst :standard: | grep -v '^sagemath_'); do
+    PKG_SCRIPTS=build/pkgs/$PKG_BASE
+    case $(cat $PKG_SCRIPTS/trees.txt 2>/dev/null) in
+        JUPYTER_VENV) echo "* :ref:\`spkg_$PKG_BASE\`";;
+    esac
+done >> "$OUTPUT_INDEX"
+
 cat >> "$OUTPUT_INDEX" <<EOF
 
 Optional Packages

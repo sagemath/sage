@@ -60,6 +60,7 @@ SAGE_DOCS_DISABLED_MESSAGE = This Sage build is configured with "configure --dis
 # Where the Sage distribution installs Python packages.
 # This can be overridden by 'make SAGE_VENV=/some/venv'.
 SAGE_VENV = @SAGE_VENV@
+JUPYTER_VENV = @JUPYTER_VENV@
 
 # Generate/install sage-specific .pc files.
 # see build/pkgs/gsl/spkg-configure.m4
@@ -184,7 +185,7 @@ $(SAGE_LOCAL)/$(SPKG_INST_RELDIR)/.dummy:
 
 
 # Filtered by installation tree
-$(foreach tree,SAGE_LOCAL SAGE_VENV SAGE_DOCS, \
+$(foreach tree,SAGE_LOCAL SAGE_VENV JUPYTER_VENV SAGE_DOCS, \
     $(eval $(tree)_INSTALLED_PACKAGE_INSTS = \
                $(foreach pkgname,$(INSTALLED_PACKAGES), \
                          $(if $(findstring $(tree),$(trees_$(pkgname))), \
@@ -252,6 +253,8 @@ $(inst_python3_venv): | $(SAGE_VENV)/$(SPKG_INST_RELDIR)
 	touch "$@"
 endif
 
+
+
 # Build everything and start Sage.
 # Note that we put the "doc" target first in the rule below because
 # the doc build takes the most time and should be started as soon as
@@ -273,7 +276,8 @@ base-toolchain: _clean-broken-gcc base
 # All targets except for the base packages and except the documentation
 all-sage: \
 		$(SAGE_LOCAL_INSTALLED_PACKAGE_INSTS) $(SAGE_LOCAL_UNINSTALLED_PACKAGES_UNINSTALLS) \
-		$(SAGE_VENV_INSTALLED_PACKAGE_INSTS)  $(SAGE_VENV_UNINSTALLED_PACKAGES_UNINSTALLS)
+		$(SAGE_VENV_INSTALLED_PACKAGE_INSTS)  $(SAGE_VENV_UNINSTALLED_PACKAGES_UNINSTALLS) \
+		$(JUPYTER_VENV_INSTALLED_PACKAGE_INSTS) $(JUPYTER_VENV_UNINSTALLED_PACKAGES_UNINSTALLS)
 
 # Same but filtered by installation trees:
 all-build-local: toolchain-deps
@@ -285,6 +289,11 @@ all-build-venv: toolchain-deps
 	+$(MAKE_REC) all-sage-venv
 
 all-sage-venv:  $(SAGE_VENV_INSTALLED_PACKAGE_INSTS)  $(SAGE_VENV_UNINSTALLED_PACKAGES_UNINSTALLS)
+
+all-build-jupyter: toolchain-deps
+	+$(MAKE_REC) all-jupyter-venv
+
+all-jupyter-venv: $(JUPYTER_VENV_INSTALLED_PACKAGE_INSTS)  $(JUPYTER_VENV_UNINSTALLED_PACKAGES_UNINSTALLS)
 
 all-build-docs: toolchain-deps
 	+$(MAKE_REC) all-sage-docs
