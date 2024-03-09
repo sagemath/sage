@@ -258,8 +258,7 @@ def showwarning_with_traceback(message, category, filename, lineno, file=None, l
 
         sage: from sage.doctest.forker import showwarning_with_traceback
         sage: showwarning_with_traceback("bad stuff", UserWarning, "myfile.py", 0)
-        doctest:warning
-          ...
+        doctest:warning...
           File "<doctest sage.doctest.forker.showwarning_with_traceback[1]>", line 1, in <module>
             showwarning_with_traceback("bad stuff", UserWarning, "myfile.py", Integer(0))
         :
