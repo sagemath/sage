@@ -8301,7 +8301,15 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: ps = [[16,12,14,-13],[[12,14],[14,-13],[12,16],[16,-13]]]
             sage: G, e = Poset(ps).frank_network()
             sage: G.edges(sort=True)
-            [((-1, 0), (0, -13), None), ((-1, 0), (0, 12), None), ((-1, 0), (0, 14), None), ((-1, 0), (0, 16), None), ((0, -13), (1, -13), None), ((0, -13), (1, 12), None), ((0, -13), (1, 14), None), ((0, -13), (1, 16), None), ((0, 12), (1, 12), None), ((0, 14), (1, 12), None), ((0, 14), (1, 14), None), ((0, 16), (1, 12), None), ((0, 16), (1, 16), None), ((1, -13), (2, 0), None), ((1, 12), (2, 0), None), ((1, 14), (2, 0), None), ((1, 16), (2, 0), None)]
+            [((-1, 0), (0, -13), None), ((-1, 0), (0, 12), None),
+             ((-1, 0), (0, 14), None), ((-1, 0), (0, 16), None),
+             ((0, -13), (1, -13), None), ((0, -13), (1, 12), None),
+             ((0, -13), (1, 14), None), ((0, -13), (1, 16), None),
+             ((0, 12), (1, 12), None), ((0, 14), (1, 12), None),
+             ((0, 14), (1, 14), None), ((0, 16), (1, 12), None),
+             ((0, 16), (1, 16), None), ((1, -13), (2, 0), None),
+             ((1, 12), (2, 0), None), ((1, 14), (2, 0), None),
+             ((1, 16), (2, 0), None)]
             sage: e
             {((-1, 0), (0, -13)): 0,
              ((-1, 0), (0, 12)): 0,
@@ -9069,14 +9077,16 @@ def _ford_fulkerson_chronicle(G, s, t, a):
     EXAMPLES::
 
         sage: from sage.combinat.posets.posets import _ford_fulkerson_chronicle
-        sage: G = DiGraph({1: [3,6,7], 2: [4], 3: [7], 4: [], 6: [7,8], 7: [9], 8: [9,12], 9: [], 10: [], 12: []})
+        sage: G = DiGraph({1: [3, 6, 7], 2: [4], 3: [7], 4: [], 6: [7, 8],
+        ....:              7: [9], 8: [9, 12], 9: [], 10: [], 12: []})
         sage: s = 1
         sage: t = 9
         sage: (1, 6, None) in G.edges(sort=False)
         True
         sage: (1, 6) in G.edges(sort=False)
         False
-        sage: a = {(1, 6): 4, (2, 4): 0, (1, 3): 4, (1, 7): 1, (3, 7): 6, (7, 9): 1, (6, 7): 3, (6, 8): 1, (8, 9): 0, (8, 12): 2}
+        sage: a = {(1, 6): 4, (2, 4): 0, (1, 3): 4, (1, 7): 1, (3, 7): 6,
+        ....:      (7, 9): 1, (6, 7): 3, (6, 8): 1, (8, 9): 0, (8, 12): 2}
         sage: ffc = _ford_fulkerson_chronicle(G, s, t, a)
         sage: next(ffc)
         (1, 0)
@@ -9114,10 +9124,10 @@ def _ford_fulkerson_chronicle(G, s, t, a):
     G = G.relabel(perm=vertex_to_index, inplace=False)
     s = vertex_to_index[s]
     t = vertex_to_index[t]
-    # Associate each edge to an integer
+    # Associate each edge to an integer, its index
     index_to_edge = list(G.edge_iterator(labels=False))
     edge_to_index = {e: i for i, e in enumerate(index_to_edge)}
-    # Change the cost function to a vector indexed by edge labels
+    # Change the cost function to a vector indexed by edge indices
     a = [a[index_to_vertex[u], index_to_vertex[v]] for u, v in index_to_edge]
 
     # pi: potential function as a vector indexed by vertices.
@@ -9125,14 +9135,14 @@ def _ford_fulkerson_chronicle(G, s, t, a):
     # p: value of the potential pi.
     p = 0
 
-    # f: flow function as a vector indexed by edge labels
+    # f: flow function as a vector indexed by edge indices
     f = [0 for _ in range(m)]
     # val: value of the flow f. (Cannot call it v due to Python's asinine
     # handling of for loops.)
     val = 0
 
-    # capacity: capacity function as a vector indexed by edge labels. Here, just
-    # the indicator function of the set of arcs of G.
+    # capacity: capacity function as a vector indexed by edge indices. Here,
+    # just the indicator function of the set of arcs of G.
     capacity = [1 for _ in range(m)]
 
     while True:
@@ -9155,14 +9165,14 @@ def _ford_fulkerson_chronicle(G, s, t, a):
             shortest_path = Gprime.shortest_path(s, t, by_weight=False)
             shortest_path_in_edges = zip(shortest_path[:-1], shortest_path[1:])
             for u, v in shortest_path_in_edges:
-                if G.has_edge(u, v):
+                if (u, v) in edge_to_index:
                     f[edge_to_index[u, v]] += 1
                 else:
                     f[edge_to_index[v, u]] -= 1
             val += 1
         else:
             # Step MC2b in Britz-Fomin, Algorithm 7.2.
-            for v in G:
+            for v in range(n):
                 if v not in X:
                     pi[v] += 1
             p += 1
