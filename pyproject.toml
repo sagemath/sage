@@ -44,7 +44,8 @@ dependencies = [
     'jupyter-client',
     'ipywidgets >=7.5.1',
     'fpylll >=0.5.9',
-    'ptyprocess > 0.5'
+    'ptyprocess > 0.5',
+    'traitlets >=4.3.3',
 ]
 
 [tool.meson-python.args]
