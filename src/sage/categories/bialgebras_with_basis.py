@@ -103,7 +103,7 @@ class BialgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                  2*R[1, 1, 1] + 2*R[1, 2] + 4*R[2, 1] + 2*R[3],
                  R[1, 2] + R[2, 1] + 4*R[3]]
                 sage: T = R.convolution_product(Proj2, Id)
-                sage: [T(R.monomial([i])) for i in range(1, 5)]
+                sage: [T(R.monomial(Composition([i]))) for i in range(1, 5)]
                 [0, R[2], R[2, 1] + R[3], R[2, 2] + R[4]]
 
             Compute the convolution product of no maps on the Hopf algebra of
