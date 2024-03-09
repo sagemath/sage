@@ -1467,7 +1467,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
         def _test_monomial_coefficients(self, **options):
             r"""
-            Test that :meth:`monomial_coefficients` works.
+            Test that :meth:`monomial_coefficients` works correctly if it is implemented.
 
             INPUT:
 
@@ -1488,7 +1488,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             tester = self._tester(**options)
             base_ring = self.parent().base_ring()
             basis = self.parent().basis()
-            d = self.monomial_coefficients()
+            try:
+                d = self.monomial_coefficients()
+            except NotImplementedError:
+                return
             tester.assertTrue(all(value.parent() is base_ring
                                   for value in d.values()))
             tester.assertEqual(self, self.parent().linear_combination(
