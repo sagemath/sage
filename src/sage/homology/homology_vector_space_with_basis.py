@@ -1198,8 +1198,8 @@ class CohomologyRing_mod2(CohomologyRing):
                                  and left.is_nondegenerate()
                                  and right.is_nondegenerate())
                                     or not hasattr(left, 'is_nondegenerate')):
-                                left = n_chains(left)
-                                right = n_chains(right)
+                                left = n_chains.monomial(left)
+                                right = n_chains.monomial(right)
                                 gamma_coeff += coeff * cycle.eval(left) * cycle.eval(right)
                     if gamma_coeff != base_ring.zero():
                         result[(m, gamma_index)] = gamma_coeff
