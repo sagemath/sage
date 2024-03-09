@@ -121,9 +121,6 @@ class PathAlgebra(CombinatorialFreeModule):
     TESTS::
 
         sage: TestSuite(A).run()
-        Traceback (most recent call last):
-        ...
-        The following tests failed: _test_elements
     """
 
     Element = PathAlgebraElement
