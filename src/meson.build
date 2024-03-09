@@ -66,8 +66,13 @@ flint = dependency('flint', version : '>=3.0.0', required: false, allow_fallback
 if not flint.found()
     flint = subproject('flint').get_variable('flint_dep')
     # Also build linbox from source since it would otherwise pull in a old version of flint
-    linbox = disabler()
-    #linbox = subproject('linbox').get_variable('linbox_dep')
+    # Since meson doesn't support dependencies in external_project, we have to manually decide which linbox version to install
+    linbox_fflasffpack = dependency('fflas-ffpack', version : '>= 2.5.0', required: false, allow_fallback: false)
+    if not linbox_fflasffpack.found()
+        linbox = subproject('linbox-1.6.3').get_variable('linbox_dep')
+    else
+        linbox = subproject('linbox-1.7.0').get_variable('linbox_dep')
+    endif
 else
     # Currently the flint pkg-config file is broken, so we manually use find_library
     # Can be removed once we require a version of flint that ships https://github.com/flintlib/flint/pull/1647
@@ -108,7 +113,7 @@ glpk = cc.find_library('glpk')
 ppl = cc.find_library('ppl')
 gmpxx = cc.find_library('gmpxx')
 readline = cc.find_library('readline')
-fflas = dependency(['fflas-ffpack'])
+fflas = dependency('fflas-ffpack')
 fplll = dependency('fplll')
 givaro = cc.find_library('givaro')
 braiding = cc.find_library('braiding')
