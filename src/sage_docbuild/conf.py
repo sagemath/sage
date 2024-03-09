@@ -289,7 +289,7 @@ def set_intersphinx_mappings(app, config):
     if PPLPY_DOCS and os.path.exists(os.path.join(PPLPY_DOCS, 'objects.inv')):
         app.config.intersphinx_mapping['pplpy'] = (PPLPY_DOCS, None)
     else:
-        app.config.intersphinx_mapping['pplpy'] = ('https://www.labri.fr/perso/vdelecro/pplpy/latest/',
+        app.config.intersphinx_mapping['pplpy'] = ('https://www.sagemath.org/pplpy/',
                                                    (None, dummy_inventory_file))
 
     # Add master intersphinx mapping
