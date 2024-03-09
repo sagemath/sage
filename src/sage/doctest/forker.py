@@ -271,6 +271,10 @@ def showwarning_with_traceback(message, category, filename, lineno, file=None, l
     # Get traceback to display in warning
     tb = traceback.extract_stack()
     tb = tb[:-1]  # Drop this stack frame for showwarning_with_traceback()
+    for i, frame_summary in enumerate(tb):
+        if frame_summary.filename.endswith('sage/doctest/forker.py') and frame_summary.name == 'compile_and_execute':
+            tb = tb[i + 1:]
+            break
 
     # Format warning
     lines = ["doctest:warning\n"]  # Match historical warning messages in doctests
