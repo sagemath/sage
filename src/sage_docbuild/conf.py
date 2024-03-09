@@ -273,8 +273,8 @@ def set_intersphinx_mappings(app, config):
         app.config.intersphinx_mapping = {}
         return
 
-    python_inventory_file = os.path.join(SAGE_DOC_SRC, "common",
-                                         "python{}.inv".format(python_version))
+    inventories_dir = os.path.join(SAGE_DOC_SRC, "common", "_vendor")
+    python_inventory_file = os.path.join(inventories_dir, "python.inv")
     # If connected to the internet, the inventory file will be downloaded for
     # projects that have `None` as first argument to the second inventory tuple
     # item. To avoid docbuild failures when building Sage without internet

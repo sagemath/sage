@@ -6,16 +6,19 @@
 #
 # To be able to compile Sage without accessing the net, we use a local copy of
 # this database. Here is how to update it by downloading the file
-# for the latest stable Python version:
+# for the latest stable Python version.
+
+set -x
 
 if command -v wget > /dev/null 2>&1 ; then
-    rm -f python.inv python2.inv python3.inv
-    wget https://docs.python.org/3/objects.inv -O - > python3.inv
+    DOWNLOAD="wget -O -"
 elif command -v curl > /dev/null 2>&1 ; then
     # On OS X, curl is installed by default, but not wget.
-    rm -f python.inv python2.inv python3.inv
-    curl https://docs.python.org/3/objects.inv > python3.inv
+    DOWNLOAD=curl
 else
     echo "Error: neither wget nor curl is installed."
     return 1
 fi
+
+rm -f python.inv python2.inv python3.inv
+$DOWNLOAD https://docs.python.org/3/objects.inv > _vendor/python.inv
