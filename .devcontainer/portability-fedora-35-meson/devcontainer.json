@@ -2,7 +2,11 @@
 {
     "name": "fedora-35-meson",
     "image": "fedora:35",
-    "onCreateCommand": ".devcontainer/onCreate-meson.sh",
+    "onCreateCommand": ".devcontainer/onCreate-meson.sh || true",
+    "features": {
+        "ghcr.io/devcontainers/features/git": {},
+        "ghcr.io/devcontainers/features/python:1": {}
+    },
     "extensions": [
         "ms-python.python"
     ]
