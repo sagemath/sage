@@ -31,9 +31,4 @@ wget https://github.com/fplll/fplll/releases/download/${FPLLL_VERSION}/fplll-${F
     && cd .. \
     && rm -fr fplll-${FPLLL_VERSION} fplll-${FPLLL_VERSION}.tar.gz
 
-# Cannot yet use build isolation due to https://github.com/sagemath/cypari2/issues/143
-pip3 install 'meson>=1.3.1' 'meson-python' 'cython>=3.0.0,!=3.0.3' 'numpy>=1.19' 'cysignals>=1.10.2' 'gmpy2>=2.1.0' 'memory_allocator' 'jinja2 >=3.0'
-# dependencies of cypari2
-pip3 install wheel setuptools 
-pip3 install --no-build-isolation git+https://github.com/sagemath/cypari2.git -v
 pip3 install --no-build-isolation --config-settings=builddir=builddir --editable . -v

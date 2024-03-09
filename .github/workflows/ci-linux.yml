@@ -89,7 +89,7 @@ jobs:
           echo PATH=$PATH >> $GITHUB_ENV # Make it so venv is inherited for other steps
           pip3 install --upgrade pip
 
-          # Needed to download and install cypari2, fplll and lrcalc below
+          # Needed to download and install fplll and lrcalc below
           eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install git wget)
 
           # Needed for primecountpy
@@ -126,11 +126,6 @@ jobs:
 
       - name: Build
         run: |
-          # Cannot yet use build isolation due to https://github.com/sagemath/cypari2/issues/143
-          pip3 install 'meson>=1.3.1' 'meson-python' 'cython>=3.0.0,!=3.0.3' 'numpy>=1.19' 'cysignals>=1.10.2' 'gmpy2>=2.1.0' 'memory_allocator' 'jinja2 >=3.0'
-          # dependencies of cypari2
-          pip3 install wheel setuptools 
-          pip3 install --no-build-isolation git+https://github.com/sagemath/cypari2.git
           pip3 install --no-build-isolation --editable . -v
 
       - name: Test
