@@ -126,7 +126,7 @@ jobs:
 
       - name: Build
         run: |
-          pip3 install --no-build-isolation --editable . -v
+          pip3 install --editable . -v
 
       - name: Test
         run: |
