@@ -7,7 +7,8 @@ requires = [
     'cypari2 >=2.1.1',
     'cysignals >=1.10.2',
     'gmpy2 >=2.1.0',
-    'memory-allocator'
+    'memory-allocator',
+    'jinja2 >=3.0',
 ]
 
 [project]
