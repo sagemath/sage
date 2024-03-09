@@ -65,10 +65,17 @@ mpfr = cc.find_library('mpfr')
 flint = dependency('flint', version : '>=3.0.0', required: false, allow_fallback: false)
 if not flint.found()
     flint = subproject('flint').get_variable('flint_dep')
+    # Also build linbox from source since it would otherwise pull in a old version of flint
+    linbox = disabler()
+    #linbox = subproject('linbox').get_variable('linbox_dep')
 else
     # Currently the flint pkg-config file is broken, so we manually use find_library
     # Can be removed once we require a version of flint that ships https://github.com/flintlib/flint/pull/1647
     flint = cc.find_library('flint')
+    linbox = dependency('linbox', required: false)
+    if not linbox.found()
+        linbox = cc.find_library('linbox')
+    endif
 endif
 
 blas_order = []
@@ -104,10 +111,6 @@ readline = cc.find_library('readline')
 fflas = dependency(['fflas-ffpack'])
 fplll = dependency('fplll')
 givaro = cc.find_library('givaro')
-linbox = dependency('linbox', required: false)
-if not linbox.found()
-    linbox = cc.find_library('linbox')
-endif
 braiding = cc.find_library('braiding')
 gc = cc.find_library('gc')
 homfly = cc.find_library('homfly')
@@ -117,7 +120,7 @@ mpc = cc.find_library('mpc')
 # Cannot be found via pkg-config
 gap = cc.find_library('gap')
 
-singular = dependency('Singular')
+singular = dependency('Singular', required: false, disabler: true)
 
 maxima = find_program('maxima', required: true)
 
