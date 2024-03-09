@@ -131,7 +131,7 @@ jobs:
           # dependencies of cypari2
           pip3 install wheel setuptools 
           pip3 install --no-build-isolation git+https://github.com/sagemath/cypari2.git
-          pip3 install --no-build-isolation . -v
+          pip3 install --no-build-isolation --editable . -v
 
       - name: Test
         run: |
