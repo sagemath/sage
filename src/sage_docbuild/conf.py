@@ -273,12 +273,18 @@ def set_intersphinx_mappings(app, config):
         app.config.intersphinx_mapping = {}
         return
 
+    python_inventory_file = os.path.join(SAGE_DOC_SRC, "common",
+                                         "python{}.inv".format(python_version))
+    # If connected to the internet, the inventory file will be downloaded for
+    # projects that have `None` as first argument to the second inventory tuple
+    # item. To avoid docbuild failures when building Sage without internet
+    # connection, we use the local python inventory file as a fallback for other
+    # projects. Cross-references will not be resolved in that case, but the
+    # docbuild will still succeed.
+    dummy_inventory_file = python_inventory_file
     app.config.intersphinx_mapping = {
-        'python': ('https://docs.python.org/',
-                   os.path.join(SAGE_DOC_SRC, "common",
-                                "python{}.inv".format(python_version))),
-        'scipy': ('https://docs.scipy.org/doc/scipy/reference/',
-                  None),
+        'python': ('https://docs.python.org/', python_inventory_file),
+        'scipy': ('https://docs.scipy.org/doc/scipy/reference/', (None, dummy_inventory_file)),
     }
     if PPLPY_DOCS and os.path.exists(os.path.join(PPLPY_DOCS, 'objects.inv')):
         app.config.intersphinx_mapping['pplpy'] = (PPLPY_DOCS, None)
