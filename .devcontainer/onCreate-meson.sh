@@ -36,4 +36,4 @@ pip3 install 'meson>=1.3.1' 'meson-python' 'cython>=3.0.0,!=3.0.3' 'numpy>=1.19'
 # dependencies of cypari2
 pip3 install wheel setuptools 
 pip3 install --no-build-isolation git+https://github.com/sagemath/cypari2.git -v
-#pip3 install --no-build-isolation --config-settings=builddir=builddir --editable . -v
+pip3 install --no-build-isolation --config-settings=builddir=builddir --editable . -v
