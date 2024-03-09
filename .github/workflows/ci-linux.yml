@@ -89,9 +89,6 @@ jobs:
           echo PATH=$PATH >> $GITHUB_ENV # Make it so venv is inherited for other steps
           pip3 install --upgrade pip
 
-          # Needed for bootstrap
-          pip3 install jinja2
-
           # Needed to download and install cypari2, fplll and lrcalc below
           eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install git wget)
 
@@ -127,16 +124,10 @@ jobs:
         env:
           PARI_VERSION: pari-2.15.4
 
-      - name: Bootstrap
-        run: |
-          python3 -m sage_setup.autogen.interpreters src/sage/ext/interpreters
-        env:
-          PYTHONPATH: src   
-
       - name: Build
         run: |
           # Cannot yet use build isolation due to https://github.com/sagemath/cypari2/issues/143
-          pip3 install 'meson>=1.3.1' 'meson-python' 'cython>=3.0.0,!=3.0.3' 'numpy>=1.19' 'cysignals>=1.10.2' 'gmpy2>=2.1.0' 'memory_allocator'
+          pip3 install 'meson>=1.3.1' 'meson-python' 'cython>=3.0.0,!=3.0.3' 'numpy>=1.19' 'cysignals>=1.10.2' 'gmpy2>=2.1.0' 'memory_allocator' 'jinja2 >=3.0'
           # dependencies of cypari2
           pip3 install wheel setuptools 
           pip3 install --no-build-isolation git+https://github.com/sagemath/cypari2.git
