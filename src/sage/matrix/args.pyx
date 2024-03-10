@@ -854,7 +854,7 @@ cdef class MatrixArgs:
             ...
             TypeError: nonzero scalar matrix must be square
 
-        Check :trac:`19134`::
+        Check :issue:`19134`::
 
             sage: matrix(2, 3, [])
             Traceback (most recent call last):
@@ -1241,7 +1241,7 @@ cdef class MatrixArgs:
 
         TESTS:
 
-        Check that :trac:`26655` is fixed::
+        Check that :issue:`26655` is fixed::
 
             sage: # needs sage.rings.finite_rings
             sage: F.<a> = GF(9)

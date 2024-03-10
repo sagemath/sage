@@ -540,7 +540,7 @@ class CartanTypeFactory(SageObject):
             sage: CartanType(fct)
             ['C', 4, 1]
 
-        Check that :trac:`13774` is fixed::
+        Check that :issue:`13774` is fixed::
 
             sage: CT = CartanType([['A',2]])
             sage: CT.is_irreducible()
@@ -564,14 +564,14 @@ class CartanTypeFactory(SageObject):
             sage: CartanType([CT])
             ['A', 2] relabelled by {1: -1, 2: -2}
 
-        Check the errors from :trac:`20973`::
+        Check the errors from :issue:`20973`::
 
             sage: CartanType(['A',-1])
             Traceback (most recent call last):
             ...
             ValueError: ['A', -1] is not a valid Cartan type
 
-        Check that unicode is handled properly (:trac:`23323`)::
+        Check that unicode is handled properly (:issue:`23323`)::
 
             sage: CartanType(u"A3")
             ['A', 3]

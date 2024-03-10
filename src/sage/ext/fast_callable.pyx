@@ -1949,7 +1949,7 @@ cpdef generate_code(Expression expr, InstructionStream stream) noexcept:
         1.00000095367477
 
     Make sure we do not overflow the stack with highly nested expressions
-    (:trac:`11766`)::
+    (:issue:`11766`)::
 
         sage: # needs sage.rings.real_mpfr
         sage: R.<x> = CC[]

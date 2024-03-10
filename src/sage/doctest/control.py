@@ -58,14 +58,6 @@ from .parsing import parse_optional_tags, parse_file_optional_tags, unparse_opti
 
 auto_optional_tags = set()
 
-try:
-    from sage.libs.arb.arb_version import version as arb_vers
-    arb_tag = 'arb2' + arb_vers().split('.')[1]
-    auto_optional_tags.add(arb_tag)
-except ImportError:
-    pass
-
-
 class DocTestDefaults(SageObject):
     """
     This class is used for doctesting the Sage doctest module.
@@ -814,7 +806,7 @@ class DocTestController(SageObject):
             ....:     print(f.read())
             hello world
 
-        Check that no duplicate logs appear, even when forking (:trac:`15244`)::
+        Check that no duplicate logs appear, even when forking (:issue:`15244`)::
 
             sage: DD = DocTestDefaults(logfile=tmp_filename())
             sage: DC = DocTestController(DD, [])
@@ -1430,7 +1422,7 @@ class DocTestController(SageObject):
             Features detected...
             0
 
-        We check that :trac:`25378` is fixed (testing external packages
+        We check that :issue:`25378` is fixed (testing external packages
         while providing a logfile does not raise a ValueError: I/O
         operation on closed file)::
 
@@ -1454,7 +1446,7 @@ class DocTestController(SageObject):
             Features detected...
             0
 
-        We test the ``--hide`` option (:trac:`34185`)::
+        We test the ``--hide`` option (:issue:`34185`)::
 
             sage: from sage.doctest.control import test_hide
             sage: filename = tmp_filename(ext='.py')

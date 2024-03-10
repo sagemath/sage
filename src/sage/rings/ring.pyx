@@ -101,7 +101,7 @@ cdef class Ring(ParentWithGens):
 
     TESTS:
 
-    This is to test against the bug fixed in :trac:`9138`::
+    This is to test against the bug fixed in :issue:`9138`::
 
         sage: R.<x> = QQ[]
         sage: R.sum([x,x])
@@ -149,7 +149,7 @@ cdef class Ring(ParentWithGens):
         sage: TestSuite(ZZ['x','y']).run(skip='_test_elements')                         # needs sage.libs.singular
         sage: TestSuite(ZZ['x','y']['t']).run()
 
-    Test against another bug fixed in :trac:`9944`::
+    Test against another bug fixed in :issue:`9944`::
 
         sage: QQ['x'].category()
         Join of Category of euclidean domains and Category of commutative algebras over
@@ -390,7 +390,7 @@ cdef class Ring(ParentWithGens):
 
         TESTS:
 
-        Make sure that :trac:`11139` is fixed::
+        Make sure that :issue:`11139` is fixed::
 
             sage: R.<x> = QQ[]
             sage: R.ideal([])
@@ -472,7 +472,7 @@ cdef class Ring(ParentWithGens):
             Ideal (x + y, y^3 + z) of Multivariate Polynomial Ring in x, y, z
              over Finite Field of size 7
 
-        The following was implemented in :trac:`7797`::
+        The following was implemented in :issue:`7797`::
 
             sage: # needs sage.combinat sage.modules
             sage: A = SteenrodAlgebra(2)
@@ -552,7 +552,7 @@ cdef class Ring(ParentWithGens):
             sage: T._ideal_class_(1)                                                    # needs sage.libs.singular
             <class 'sage.rings.ideal.Ideal_principal'>
 
-        Since :trac:`7797`, non-commutative rings have ideals as well::
+        Since :issue:`7797`, non-commutative rings have ideals as well::
 
             sage: A = SteenrodAlgebra(2)                                                # needs sage.combinat sage.modules
             sage: A._ideal_class_()                                                     # needs sage.combinat sage.modules
@@ -622,7 +622,7 @@ cdef class Ring(ParentWithGens):
 
         TESTS:
 
-        Make sure that :trac:`13644` is fixed::
+        Make sure that :issue:`13644` is fixed::
 
             sage: # needs sage.rings.padics
             sage: K = Qp(3)
@@ -685,24 +685,6 @@ cdef class Ring(ParentWithGens):
             self._one_element = x
             return x
         return self._one_element
-
-    def is_commutative(self):
-        """
-        Return ``True`` if this ring is commutative.
-
-        EXAMPLES::
-
-            sage: QQ.is_commutative()
-            True
-            sage: QQ['x,y,z'].is_commutative()
-            True
-            sage: Q.<i,j,k> = QuaternionAlgebra(QQ, -1, -1)                             # needs sage.combinat sage.modules
-            sage: Q.is_commutative()                                                    # needs sage.combinat sage.modules
-            False
-        """
-        if self.is_zero():
-            return True
-        raise NotImplementedError
 
     def is_field(self, proof = True):
         """
@@ -800,7 +782,7 @@ cdef class Ring(ParentWithGens):
             sage: QQ.is_subring(ZZ)
             False
 
-        Every ring is a subring of itself, :trac:`17287`::
+        Every ring is a subring of itself, :issue:`17287`::
 
             sage: QQbar.is_subring(QQbar)                                               # needs sage.rings.number_field
             True
@@ -893,7 +875,7 @@ cdef class Ring(ParentWithGens):
 
         TESTS:
 
-        Make sure :trac:`10481` is fixed::
+        Make sure :issue:`10481` is fixed::
 
             sage: x = polygen(ZZ, 'x')
             sage: R.<a> = ZZ['x'].quo(x^2)                                              # needs sage.libs.pari
@@ -904,7 +886,7 @@ cdef class Ring(ParentWithGens):
             sage: R.is_integral_domain()                                                # needs sage.libs.pari
             False
 
-        Forward the proof flag to ``is_field``, see :trac:`22910`::
+        Forward the proof flag to ``is_field``, see :issue:`22910`::
 
             sage: # needs sage.libs.singular
             sage: R1.<x> = GF(5)[]
@@ -1831,7 +1813,7 @@ cdef class PrincipalIdealDomain(IntegralDomain):
 
         In a field, any nonzero element is a GCD of any nonempty set
         of nonzero elements. In previous versions, Sage used to return
-        1 in the case of the rational field. However, since :trac:`10771`,
+        1 in the case of the rational field. However, since :issue:`10771`,
         the rational field is considered as the
         *fraction field* of the integer ring. For the fraction field
         of an integral domain that provides both GCD and LCM, it is
@@ -2166,86 +2148,6 @@ cdef class Algebra(Ring):
         Ring.__init__(self,base_ring, names=names, normalize=normalize,
                       category=category)
 
-    def characteristic(self):
-        r"""
-        Return the characteristic of this algebra, which is the same
-        as the characteristic of its base ring.
-
-        See objects with the ``base_ring`` attribute for additional examples.
-        Here are some examples that explicitly use the :class:`Algebra` class.
-
-        EXAMPLES::
-
-            sage: # needs sage.modules
-            sage: A = Algebra(ZZ); A
-            <sage.rings.ring.Algebra object at ...>
-            sage: A.characteristic()
-            0
-            sage: A = Algebra(GF(7^3, 'a'))                                             # needs sage.rings.finite_rings
-            sage: A.characteristic()                                                    # needs sage.rings.finite_rings
-            7
-        """
-        return self.base_ring().characteristic()
-
-    def has_standard_involution(self):
-        r"""
-        Return ``True`` if the algebra has a standard involution and ``False`` otherwise.
-        This algorithm follows Algorithm 2.10 from John Voight's *Identifying the Matrix Ring*.
-        Currently the only type of algebra this will work for is a quaternion algebra.
-        Though this function seems redundant, once algebras have more functionality, in particular
-        have a method to construct a basis, this algorithm will have more general purpose.
-
-        EXAMPLES::
-
-            sage: # needs sage.combinat sage.modules
-            sage: B = QuaternionAlgebra(2)
-            sage: B.has_standard_involution()
-            True
-            sage: R.<x> = PolynomialRing(QQ)
-            sage: K.<u> = NumberField(x**2 - 2)                                         # needs sage.rings.number_field
-            sage: A = QuaternionAlgebra(K, -2, 5)                                       # needs sage.rings.number_field
-            sage: A.has_standard_involution()                                           # needs sage.rings.number_field
-            True
-            sage: L.<a,b> = FreeAlgebra(QQ, 2)
-            sage: L.has_standard_involution()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: has_standard_involution is not implemented for this algebra
-            """
-        field = self.base_ring()
-        try:
-            basis = self.basis()
-        except AttributeError:
-            raise AttributeError("Basis is not yet implemented for this algebra.")
-        try:
-            # TODO: The following code is specific to the quaternion algebra
-            #   and should belong there
-            #step 1
-            for i in range(1,4):
-                ei = basis[i]
-                a = ei**2
-                coef = a.coefficient_tuple()
-                ti = coef[i]
-                ni = a - ti*ei
-                if ni not in field:
-                    return False
-            #step 2
-            for i in range(1,4):
-                for j in range(2,4):
-                    ei = basis[i]
-                    ej = basis[j]
-                    a = ei**2
-                    coef = a.coefficient_tuple()
-                    ti = coef[i]
-                    b = ej**2
-                    coef = b.coefficient_tuple()
-                    tj = coef[j]
-                    nij = (ei + ej)**2 - (ti + tj)*(ei + ej)
-                    if nij not in field:
-                        return False
-        except AttributeError:
-            raise NotImplementedError("has_standard_involution is not implemented for this algebra")
-        return True
 
 cdef class CommutativeAlgebra(CommutativeRing):
     """

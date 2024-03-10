@@ -571,7 +571,7 @@ class FreeModule_ambient_field_quotient(FreeModule_ambient_field):
                                    Basis matrix:
                                    [1 2]
 
-        Make sure :trac:`10513` is fixed (no coercion from an abstract
+        Make sure :issue:`10513` is fixed (no coercion from an abstract
         vector space to an isomorphic quotient vector space)::
 
             sage: V = QQ^3 / [[1,2,3]]

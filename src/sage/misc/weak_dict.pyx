@@ -104,7 +104,7 @@ Note that Sage's weak value dictionary is actually an instance of
     sage: issubclass(sage.misc.weak_dict.WeakValueDictionary, dict)
     True
 
-See :trac:`13394` for a discussion of some of the design considerations.
+See :issue:`13394` for a discussion of some of the design considerations.
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Simon King <simon.king@uni-jena.de>
@@ -267,7 +267,7 @@ cdef class WeakValueDictionary(dict):
     TESTS:
 
     The following reflects the behaviour of the callback on weak dict values,
-    as discussed on :trac:`13394`.  ::
+    as discussed on :issue:`13394`.  ::
 
         sage: from sage.misc.weak_dict import WeakValueDictionary
         sage: V = [set(range(n)) for n in range(5)]
@@ -460,7 +460,7 @@ cdef class WeakValueDictionary(dict):
 
         TESTS:
 
-        Check that :trac:`15956` has been fixed, i.e., a ``TypeError`` is
+        Check that :issue:`15956` has been fixed, i.e., a ``TypeError`` is
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
@@ -535,7 +535,7 @@ cdef class WeakValueDictionary(dict):
             sage: list(D.items())
             [(2, Integer Ring)]
 
-        Check that :trac:`15956` has been fixed, i.e., a ``TypeError`` is
+        Check that :issue:`15956` has been fixed, i.e., a ``TypeError`` is
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
@@ -581,7 +581,7 @@ cdef class WeakValueDictionary(dict):
 
         TESTS:
 
-        Check that :trac:`15956` has been fixed, i.e., a ``TypeError`` is
+        Check that :issue:`15956` has been fixed, i.e., a ``TypeError`` is
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
@@ -659,7 +659,7 @@ cdef class WeakValueDictionary(dict):
 
         TESTS:
 
-        Check that :trac:`15956` has been fixed, i.e., a ``TypeError`` is
+        Check that :issue:`15956` has been fixed, i.e., a ``TypeError`` is
         raised for unhashable objects::
 
             sage: # needs sage.libs.pari
@@ -700,7 +700,7 @@ cdef class WeakValueDictionary(dict):
             sage: D[int(10)]
             Integer Ring
 
-        Check that :trac:`15956` has been fixed, i.e., a ``TypeError`` is
+        Check that :issue:`15956` has been fixed, i.e., a ``TypeError`` is
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()
@@ -744,7 +744,7 @@ cdef class WeakValueDictionary(dict):
             sage: 3 in D
             False
 
-        Check that :trac:`15956` has been fixed, i.e., a ``TypeError`` is
+        Check that :issue:`15956` has been fixed, i.e., a ``TypeError`` is
         raised for unhashable objects::
 
             sage: D = sage.misc.weak_dict.WeakValueDictionary()

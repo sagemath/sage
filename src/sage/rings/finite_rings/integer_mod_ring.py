@@ -348,7 +348,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         sage: TestSuite(F19).run()
         sage: TestSuite(F23).run()
 
-    By :trac:`15229`, there is a unique instance of the
+    By :issue:`15229`, there is a unique instance of the
     integral quotient ring of a given order. Using the
     :func:`IntegerModRing` factory twice, and using
     ``is_field=True`` the second time, will update the
@@ -652,7 +652,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
         TESTS:
 
-        Check that :trac:`17453` is fixed::
+        Check that :issue:`17453` is fixed::
 
             sage: R = Zmod(5)
             sage: R in IntegralDomains()
@@ -700,7 +700,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             sage: FF.is_field()
             True
 
-        By :trac:`15229`, the category of the ring is refined,
+        By :issue:`15229`, the category of the ring is refined,
         if it is found that the ring is in fact a field::
 
             sage: R = IntegerModRing(127)
@@ -836,7 +836,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: Integers(25*3).multiplicative_group_is_cyclic()                       # needs sage.libs.pari
             False
 
-        We test that :trac:`5250` is fixed::
+        We test that :issue:`5250` is fixed::
 
             sage: Integers(162).multiplicative_group_is_cyclic()                        # needs sage.libs.pari
             True
@@ -1138,7 +1138,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: K8(K2(1))
             1
 
-        The following test refers to :trac:`6468`::
+        The following test refers to :issue:`6468`::
 
             sage: class foo_parent(Parent):
             ....:     pass
@@ -1152,13 +1152,13 @@ In the latter case, please inform the developers.""".format(self.order()))
             ...
             TypeError: error coercing to finite field
 
-        The following test refers to :trac:`8970`::
+        The following test refers to :issue:`8970`::
 
             sage: R = Zmod(13); a = R(2)
             sage: a == R(gap(a))                                                        # needs sage.libs.gap
             True
 
-        libgap interface (:trac:`23714`)::
+        libgap interface (:issue:`23714`)::
 
             sage: a = libgap.eval("Z(13)^2")                                            # needs sage.libs.gap
             sage: a.sage()                                                              # needs sage.libs.gap
@@ -1308,7 +1308,7 @@ In the latter case, please inform the developers.""".format(self.order()))
             sage: Z11 == F
             False
 
-        In :trac:`15229`, the following was implemented::
+        In :issue:`15229`, the following was implemented::
 
             sage: R1 = IntegerModRing(5)
             sage: R2 = IntegerModRing(5, is_field=True)

@@ -26,7 +26,7 @@ AUTHORS:
   synchronisation of the GAP interface.
 
 - François Bissey, Bill Page, Jeroen Demeyer (2015-12-09): Upgrade to
-  pexpect 4.0.1 + patches, see :trac:`10295`.
+  pexpect 4.0.1 + patches, see :issue:`10295`.
 """
 # ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
@@ -732,7 +732,7 @@ If this all works, you can then make calls like:
             sage: gap._local_tmpfile() is gap._local_tmpfile()
             True
 
-        The following two problems were fixed in :trac:`10004`.
+        The following two problems were fixed in :issue:`10004`.
 
         1. Different interfaces have different temp-files::
 
@@ -1234,8 +1234,8 @@ If this all works, you can then make calls like:
             '...10\r\n> '
 
         We test interrupting ``_expect_expr`` using the GP interface,
-        see :trac:`6661`.  Unfortunately, this test doesn't work reliably using
-        Singular, see :trac:`9163` and the follow-up :trac:`10476`.
+        see :issue:`6661`.  Unfortunately, this test doesn't work reliably using
+        Singular, see :issue:`9163` and the follow-up :issue:`10476`.
         The ``gp.eval('0')`` in this test makes sure that ``gp`` is
         running, so a timeout of 1 second should be sufficient. ::
 

@@ -294,11 +294,7 @@ cdef int arb_to_mpfi(mpfi_t target, arb_t source, const long precision) except -
 
     EXAMPLES::
 
-        sage: RIF(RBF(2)**(2**100)) # arb216 # indirect doctest
-        Traceback (most recent call last):
-        ...
-        ArithmeticError: Error converting arb to mpfi. Overflow?
-        sage: RIF(RBF(2)**(2**100)) # arb218 # indirect doctest
+        sage: RIF(RBF(2)**(2**100))
         [5.8756537891115869e1388255822130839282 .. +infinity] # 64-bit
         [2.098... .. +infinity]                               # 32-bit
 
@@ -1729,11 +1725,7 @@ cdef class RealBall(RingElement):
         ::
 
             sage: b = RBF(2)^(2^1000)
-            sage: b.mid() # arb216
-            Traceback (most recent call last):
-            ...
-            RuntimeError: unable to convert to MPFR (exponent out of range?)
-            sage: b.mid() # arb218
+            sage: b.mid()
             +infinity
 
         .. SEEALSO:: :meth:`rad`, :meth:`squash`
@@ -3715,8 +3707,8 @@ cdef class RealBall(RingElement):
         .. TODO::
 
             At the moment RBF(beta(a,b)) does not work, one needs
-            RBF(a).beta(b) for this to work. See :trac:`32851`
-            and :trac:`24641`.
+            RBF(a).beta(b) for this to work. See :issue:`32851`
+            and :issue:`24641`.
         """
         cdef RealBall a_ball, z_ball
         cdef RealBall res = self._new()

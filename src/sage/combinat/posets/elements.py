@@ -118,7 +118,7 @@ class PosetElement(Element):
             sage: PosetElement(P,1,"c") == PosetElement(P,0,"c")
             True
 
-        Test that :trac:`12351` is fixed::
+        Test that :issue:`12351` is fixed::
 
             sage: P(0) == int(0)
             False
