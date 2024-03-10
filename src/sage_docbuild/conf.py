@@ -266,16 +266,23 @@ SAGE_DOC_REMOTE_INVENTORIES = os.environ.get('SAGE_DOC_REMOTE_INVENTORIES', 'no'
 _vendored_inventories_dir = os.path.join(SAGE_DOC_SRC, "common", "_vendor")
 
 
+# Run "sage -python -m sage_docbuild.vendor" to update src/doc/common/_vendor/*.inv
 _intersphinx_targets = {
+    'cvxopt':     ['https://cvxopt.org/userguide/'],
+    'cvxpy':      ['https://www.cvxpy.org/'],
     'cypari2':    ['https://cypari2.readthedocs.io/en/latest/'],
     'cysignals':  ['https://cysignals.readthedocs.io/en/latest/'],
     'flint':      ['https://flintlib.org/doc/'],
     'fpylll':     ['https://fpylll.readthedocs.io/en/latest/'],
+    'gmpy2':      ['https://gmpy2.readthedocs.io/en/latest/'],
+    'ipywidgets': ['https://ipywidgets.readthedocs.io/en/stable/'],
     'matplotlib': ['https://matplotlib.org/stable/'],
     'mpmath':     ['https://mpmath.org/doc/current/'],
+    'networkx':   ['https://networkx.org/documentation/stable/'],
     'numpy':      ['https://numpy.org/doc/stable/'],
     'pplpy':      [PPLPY_DOCS, 'https://www.sagemath.org/pplpy/'],
     'python':     ['https://docs.python.org/'],
+    'rpy2':       ['https://rpy2.github.io/doc/latest/html/'],
     'scipy':      ['https://docs.scipy.org/doc/scipy/'],
     'sympy':      ['https://docs.sympy.org/latest/'],
 }

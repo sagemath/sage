@@ -1,3 +1,5 @@
+# "sage -python -m sage_docbuild.vendor" updates src/doc/common/_vendor/*.inv
+#
 import os
 import sys
 
