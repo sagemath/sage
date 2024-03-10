@@ -267,10 +267,17 @@ _vendored_inventories_dir = os.path.join(SAGE_DOC_SRC, "common", "_vendor")
 
 
 _intersphinx_targets = {
-    'python': ['https://docs.python.org/'],
-    'pplpy':  [PPLPY_DOCS, 'https://www.sagemath.org/pplpy/'],
-    'scipy':  ['https://docs.scipy.org/doc/scipy/'],
-    'flint':  ['https://flintlib.org/doc/'],
+    'cypari2':    ['https://cypari2.readthedocs.io/en/latest/'],
+    'cysignals':  ['https://cysignals.readthedocs.io/en/latest/'],
+    'flint':      ['https://flintlib.org/doc/'],
+    'fpylll':     ['https://fpylll.readthedocs.io/en/latest/'],
+    'matplotlib': ['https://matplotlib.org/stable/'],
+    'mpmath':     ['https://mpmath.org/doc/current/'],
+    'numpy':      ['https://numpy.org/doc/stable/'],
+    'pplpy':      [PPLPY_DOCS, 'https://www.sagemath.org/pplpy/'],
+    'python':     ['https://docs.python.org/'],
+    'scipy':      ['https://docs.scipy.org/doc/scipy/'],
+    'sympy':      ['https://docs.sympy.org/latest/'],
 }
 
 
