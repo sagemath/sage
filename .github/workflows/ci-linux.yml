@@ -102,7 +102,7 @@ jobs:
           fi
 
           # Needed for lrcalc
-          pip3 install --upgrade setuptools
+          pip3 install --upgrade setuptools wheel
           if [ ${{ matrix.container }} = "ubuntu:jammy" ] || [ ${{ matrix.container }} = "ubuntu:lunar" ] || [ ${{ matrix.container }} = "ubuntu:mantic" ] || [ ${{ matrix.container }} = "debian:bookworm" ] || [ ${{ matrix.container }} = "debian:sid" ] || [ ${{ matrix.container }} = "debian:experimental" ] || [ ${{ matrix.container }} = "linuxmintd/mint21-amd64" ] || [ ${{ matrix.container }} = "linuxmintd/mint21.1-amd64" ] || [ ${{ matrix.container }} = "linuxmintd/mint21.2-amd64" ] || [ ${{ matrix.container }} = "fedora:34" ] || [ ${{ matrix.container }} = "fedora:35" ] || [ ${{ matrix.container }} = "fedora:38" ]; then
             wget math.rutgers.edu/~asbuch/lrcalc/lrcalc-2.1.tar.gz \
             && tar zxvf lrcalc-2.1.tar.gz \
