@@ -2701,7 +2701,7 @@ class Graphics(WithEqualityById, SageObject):
             from sage.symbolic.ring import var
             p = var('p')
             g = plot(90000*p/(100-p), (p,0,100), ymin=0, ymax=1000000)
-            sphinx_plot(g)    
+            sphinx_plot(g)
 
         TESTS:
 
