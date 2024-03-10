@@ -126,7 +126,8 @@ jobs:
 
       - name: Build
         run: |
-          pip3 install --editable . -v
+        # Disable build isolation following the advice of https://mesonbuild.com/meson-python/how-to-guides/editable-installs.html#build-dependencies
+          pip3 install --no-build-isolation --editable . -v
 
       - name: Test
         run: |

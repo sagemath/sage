@@ -31,4 +31,5 @@ wget https://github.com/fplll/fplll/releases/download/${FPLLL_VERSION}/fplll-${F
     && cd .. \
     && rm -fr fplll-${FPLLL_VERSION} fplll-${FPLLL_VERSION}.tar.gz
 
-pip3 install --config-settings=builddir=builddir --editable . -v
+# Disable build isolation following the advice of https://mesonbuild.com/meson-python/how-to-guides/editable-installs.html#build-dependencies
+pip3 install --no-build-isolation --config-settings=builddir=builddir --editable . -v
