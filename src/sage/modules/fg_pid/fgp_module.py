@@ -319,7 +319,7 @@ class FGP_Module_class(Module):
 
     TESTS:
 
-    Make sure that the problems in :trac:`7516` are fixed::
+    Make sure that the problems in :issue:`7516` are fixed::
 
         sage: V = FreeModule(QQ, 2)
         sage: W = V.submodule([V([1,1])])
@@ -541,11 +541,11 @@ class FGP_Module_class(Module):
         True, it may be the case that ``M != N`` may also return True.
         In particular, for derived classes whose ``__init__`` methods just
         call the ``__init__`` method for this class need this.  See
-        :trac:`9940` for illustrations.
+        :issue:`9940` for illustrations.
 
         EXAMPLES:
 
-        Make sure that the problems in :trac:`9940` are fixed::
+        Make sure that the problems in :issue:`9940` are fixed::
 
             sage: G = AdditiveAbelianGroup([0,0])
             sage: H = AdditiveAbelianGroup([0,0])
@@ -1724,7 +1724,7 @@ class FGP_Module_class(Module):
             Category of modules over Integer Ring
 
         The category is correctly adjusted when constructing Hom sets
-        with more general codomains (see :trac:`16402`)::
+        with more general codomains (see :issue:`16402`)::
 
             sage: V = ZZ^2
             sage: W = V.quotient(V.span([[1, 1]]))
@@ -1824,7 +1824,7 @@ class FGP_Module_class(Module):
             sage: len(z)
             24
 
-        We test that the trivial module is handled correctly (:trac:`6561`)::
+        We test that the trivial module is handled correctly (:issue:`6561`)::
 
             sage: A = (ZZ**1)/(ZZ**1); list(A) == [A(0)]
             True
@@ -1914,7 +1914,7 @@ class FGP_Module_class(Module):
             sage: Q.annihilator()
             Principal ideal (0) of Integer Ring
 
-        We check that :trac:`22720` is resolved::
+        We check that :issue:`22720` is resolved::
 
             sage: H = AdditiveAbelianGroup([])
             sage: H.annihilator()

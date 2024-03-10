@@ -541,7 +541,7 @@ class pAdicRingFixedMod(pAdicRingBaseGeneric, pAdicFixedModRingGeneric):
             ....:                  max_runs=2^6, skip='_test_log')
             sage: R._test_log(max_runs=2, elements=[R.random_element() for i in range(4)])
 
-        Fraction fields work after :trac:`23510`::
+        Fraction fields work after :issue:`23510`::
 
             sage: R = ZpFM(5)
             sage: K = R.fraction_field(); K
@@ -1082,7 +1082,7 @@ class pAdicFieldLattice(pAdicLatticeGeneric, pAdicFieldBaseGeneric):
         EXAMPLES::
 
             sage: K = QpLC(2)
-            sage: K.random_element()   # not tested, known bug (see :trac:`32126`)
+            sage: K.random_element()   # not tested, known bug (see :issue:`32126`)
             2^-8 + 2^-7 + 2^-6 + 2^-5 + 2^-3 + 1 + 2^2 + 2^3 + 2^5 + O(2^12)
             sage: K.random_element(integral=True)    # random
             2^3 + 2^4 + 2^5 + 2^6 + 2^7 + 2^10 + 2^11 + 2^14 + 2^15 + 2^16

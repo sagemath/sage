@@ -6,7 +6,7 @@ Actions used by the coercion model for matrix and vector multiplications
     The class :class:`MatrixMulAction` and its descendants extends the class
     :class:`Action`. As a consequence objects from these classes only keep weak
     references to the underlying sets which are acted upon. This decision was
-    made in :trac:`715` in order to allow garbage collection within the coercion
+    made in :issue:`715` in order to allow garbage collection within the coercion
     framework, where actions are mainly used, and avoid memory leaks.
 
     To ensure that the underlying set of such an object does not get garbage
@@ -36,7 +36,7 @@ Actions used by the coercion model for matrix and vector multiplications
 EXAMPLES:
 
 An action requires a common parent for the base rings, so the following
-doesn't work (see :trac:`17859`)::
+doesn't work (see :issue:`17859`)::
 
     sage: vector(QQ, [1]) * matrix(Zmod(2), [[1]])
     Traceback (most recent call last):
@@ -120,7 +120,7 @@ cdef class MatrixMatrixAction(MatrixMulAction):
 
     EXAMPLES:
 
-    By :trac:`715`, there only is a weak reference on the underlying set,
+    By :issue:`715`, there only is a weak reference on the underlying set,
     so that it can be garbage collected if only the action itself is
     explicitly referred to. Hence, we first assign the involved matrix
     spaces to a variable::
@@ -173,7 +173,7 @@ cdef class MatrixMatrixAction(MatrixMulAction):
         """
         EXAMPLES:
 
-        By :trac:`715`, there only is a weak reference on the underlying set,
+        By :issue:`715`, there only is a weak reference on the underlying set,
         so that it can be garbage collected if only the action itself is
         explicitly referred to. Hence, we first assign the involved matrix
         spaces to a variable::

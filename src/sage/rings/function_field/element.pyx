@@ -137,7 +137,7 @@ cdef class FunctionFieldElement(FieldElement):
 
         TESTS:
 
-        Check that :trac:`16369` has been resolved::
+        Check that :issue:`16369` has been resolved::
 
             sage: K.<a> = FunctionField(QQ)
             sage: R.<b> = K[]
@@ -401,7 +401,7 @@ cdef class FunctionFieldElement(FieldElement):
 
         TESTS:
 
-        Verify that :trac:`27712` is resolved::
+        Verify that :issue:`27712` is resolved::
 
             sage: K.<x> = FunctionField(GF(31))
             sage: R.<y> = K[]

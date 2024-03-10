@@ -252,7 +252,7 @@ def complex_roots(p, skip_squarefree=False, retval='interval', min_prec=0):
 
     TESTS:
 
-    Verify that :trac:`12026` is fixed::
+    Verify that :issue:`12026` is fixed::
 
         sage: f = matrix(QQ, 8, lambda i, j: 1/(i + j + 1)).charpoly()
         sage: from sage.rings.polynomial.complex_roots import complex_roots

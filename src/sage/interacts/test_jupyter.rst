@@ -283,7 +283,7 @@ Test all interacts from the Sage interact library::
       n: IntSlider(value=1000, description='Number of Tosses', max=10000, min=2, step=100)
       interval: FloatRangeSlider(value=(0.45, 0.55), description='Plotting range (y)', max=1.0)
 
-Test matrix control (see :trac:`27735`)::
+Test matrix control (see :issue:`27735`)::
 
     sage: @library_interact(A=lambda: matrix(QQ, 2, 2, range(4)))
     ....: def matrix_test(A):
