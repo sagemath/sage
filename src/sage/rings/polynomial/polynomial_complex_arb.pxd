@@ -1,4 +1,4 @@
-from sage.libs.arb.acb_poly cimport *
+from sage.libs.flint.acb_poly cimport *
 from sage.rings.polynomial.polynomial_element cimport Polynomial
 
 cdef class Polynomial_complex_arb(Polynomial):
