@@ -7,6 +7,8 @@
 # To be able to compile Sage without accessing the net, we use a local copy of
 # this database. Here is how to update it by downloading the file
 # for the latest stable Python version.
+#
+# Likewise for other intersphinx targets.
 
 set -x
 
@@ -22,3 +24,5 @@ fi
 
 rm -f python.inv python2.inv python3.inv
 $DOWNLOAD https://docs.python.org/3/objects.inv > _vendor/python.inv
+$DOWNLOAD https://docs.scipy.org/doc/scipy/reference/objects.inv > _vendor/scipy.inv
+$DOWNLOAD https://flintlib.org/doc/objects.inv > _vendor/flint.inv
