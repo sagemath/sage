@@ -15,6 +15,7 @@ interpreters = custom_target(
       'wrapper_py.pyx', 
       'wrapper_rdf.pyx',
       'wrapper_rr.pyx',
+      '__init__.py',
     ],
     input: '../../../sage_setup/autogen/interpreters/__init__.py',
     command: [py, '-m', 'sage_setup.autogen.interpreters','@OUTDIR@'],
