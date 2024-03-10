@@ -257,3 +257,6 @@ def rebuild(dirname, force=False, interpreters=None, distribution=None):
 
     with open(os.path.join(dirname, all_py), 'w') as f:
         f.write("# " + AUTOGEN_WARN)
+
+    with open(os.path.join(dirname, '__init__.py'), 'w') as f:
+        f.write("# " + AUTOGEN_WARN)
