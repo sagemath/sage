@@ -1,28 +1,29 @@
-# -*- coding: utf-8 -*-
 """
 Access the List of Sage Download Mirrors
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import contextlib
 import logging
-log = logging.getLogger()
 
 from sage_bootstrap.compat import urllib, urlparse
 from sage_bootstrap.env import SAGE_DISTFILES, SAGE_ROOT
 
 from fcntl import flock, LOCK_SH, LOCK_EX
 from errno import ENOLCK
+
+
+log = logging.getLogger()
 
 
 def try_lock(fd, operation):
@@ -32,16 +33,16 @@ def try_lock(fd, operation):
     """
     try:
         flock(fd, operation)
-    except IOError as e:
+    except OSError as e:
         if e.errno != ENOLCK:
             raise
 
-        
+
 class MirrorListException(RuntimeError):
     pass
-        
 
-class MirrorList(object):
+
+class MirrorList:
 
     def __init__(self):
         self.sources = []
@@ -51,7 +52,7 @@ class MirrorList(object):
                 # Ignore auto-save and backup files
                 continue
             try:
-                with open(os.path.join(upstream_d, fname), 'r') as f:
+                with open(os.path.join(upstream_d, fname)) as f:
                     for line in f:
                         line = line.strip()
                         if line.startswith('#'):
@@ -70,7 +71,7 @@ class MirrorList(object):
                             self.sources.append(MirrorList_from_url(line, cache_filename))
                         else:
                             self.sources.append([line])
-            except IOError:
+            except OSError:
                 # Silently ignore files that do not exist
                 pass
 
@@ -84,13 +85,12 @@ class MirrorList(object):
         but also urls for packages that are currently being tested.
         """
         for source in self.sources:
-            for mirror in source:
-                yield mirror
+            yield from source
 
 
-class MirrorList_from_url(object):
-    
-    MAXAGE = 24*60*60   # seconds
+class MirrorList_from_url:
+
+    MAXAGE = 24 * 60 * 60   # seconds
 
     def __init__(self, url, filename):
         self.url = url
@@ -104,7 +104,7 @@ class MirrorList_from_url(object):
 
         try:
             self.mirrorfile = open(self.filename, 'r+t')
-        except IOError:
+        except OSError:
             self.mirrorfile = open(self.filename, 'w+t')
 
         with self.mirrorfile:
@@ -130,7 +130,7 @@ class MirrorList_from_url(object):
             try:
                 self.mirrorfile.seek(0)
                 mirror_list = self.mirrorfile.read()
-            except IOError:
+            except OSError:
                 log.critical('Failed to load the cached mirror list')
                 return []
         if mirror_list == '':
@@ -139,7 +139,7 @@ class MirrorList_from_url(object):
         try:
             return ast.literal_eval(mirror_list)
         except SyntaxError:
-            log.critical('Downloaded mirror list has syntax error: {0}'.format(mirror_list))
+            log.critical(f'Downloaded mirror list has syntax error: {mirror_list}')
             return []
 
     def _save(self):
@@ -168,7 +168,8 @@ class MirrorList_from_url(object):
         This method is used by the YUM fastestmirror plugin
         """
         timed_mirrors = []
-        import time, socket
+        import time
+        import socket
         log.info('Searching fastest mirror')
         timeout = 1
         for mirror in self.mirrors:
@@ -181,7 +182,7 @@ class MirrorList_from_url(object):
             try:
                 sock = socket.create_connection((mirror_hostname, port), timeout)
                 sock.close()
-            except (IOError, socket.error, socket.timeout) as err:
+            except (OSError, socket.timeout) as err:
                 log.warning(str(err).strip() + ': ' + mirror)
                 continue
             result = time.time() - time_before
@@ -193,7 +194,7 @@ class MirrorList_from_url(object):
                 # We don't need more than 5 decent mirrors
                 break
 
-        if len(timed_mirrors) == 0:
+        if not timed_mirrors:
             # We cannot reach any mirror directly, most likely firewall issue
             if 'http_proxy' not in os.environ:
                 log.error('Could not reach any mirror directly and no proxy set')
@@ -231,7 +232,7 @@ class MirrorList_from_url(object):
         try:
             with contextlib.closing(urllib.urlopen(self.url)) as f:
                 mirror_list = f.read().decode("ascii")
-        except IOError:
+        except OSError:
             log.critical('Downloading the mirror list failed, using cached version')
         else:
             self._mirrors = self._load(mirror_list)
