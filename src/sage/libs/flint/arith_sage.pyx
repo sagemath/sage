@@ -33,7 +33,7 @@ def bell_number(unsigned long n):
 
     ALGORITHM:
 
-    Uses :c:function:`arith_bell_number`.
+    Uses :c:func:`arith_bell_number`.
 
     EXAMPLES::
 
