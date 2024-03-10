@@ -38,7 +38,7 @@ The parent is
 AUTHORS:
 
 - Thomas Feulner (2012-11-15): initial version
-- Thomas Feulner (2013-12-27): :trac:`15576` dissolve dependency on
+- Thomas Feulner (2013-12-27): :issue:`15576` dissolve dependency on
     Permutations.options.mul
 
 EXAMPLES::

@@ -329,7 +329,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             sage: Pn._convert_to_pynormaliz([[1, 2], (3, 4)])
             [[1, 2], [3, 4]]
 
-        Check that :trac:`29836` is fixed::
+        Check that :issue:`29836` is fixed::
 
             sage: P = polytopes.simplex(backend='normaliz')
             sage: K.<sqrt2> = QuadraticField(2)                                         # needs sage.rings.number_field
@@ -593,7 +593,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             sage: p & p == p                                                            # needs sage.rings.number_field
             True
 
-        Check that :trac:`30248` is fixed, that maps as input works::
+        Check that :issue:`30248` is fixed, that maps as input works::
 
             sage: # needs sage.rings.number_field
             sage: q = Polyhedron(backend='normaliz', base_ring=AA,
@@ -766,7 +766,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             ...
             ValueError: the specification of this method has changed; please specify the lines as well
 
-        Check that :trac:`30891` is fixed::
+        Check that :issue:`30891` is fixed::
 
             sage: p = Polyhedron(vertices=[(-3,-3), (3,0), (3,3), (0,3)],
             ....:                backend='normaliz')
@@ -1270,7 +1270,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
             sage: P == P2
             True
 
-        Test that :trac:`31820` is fixed::
+        Test that :issue:`31820` is fixed::
 
             sage: P = polytopes.cube(backend='normaliz')
             sage: v = P.Vrepresentation()[0]
@@ -1375,7 +1375,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         TESTS:
 
-        Check that :trac:`33847` is fixed::
+        Check that :issue:`33847` is fixed::
 
             sage: L = [[1, 0, 0, 0, 0, 0], [1, 1, 0, 0, 0, 0], [1, 0, 1, 0, 0, 0],
             ....:      [1, 0, 0, 1, 0, 0], [1, 0, 0, 0, 1, 0], [1, 0, 0, 1, 2, 3]]
@@ -1443,7 +1443,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         TESTS:
 
-        Check that :trac:`28872` is fixed::
+        Check that :issue:`28872` is fixed::
 
             sage: P = polytopes.dodecahedron(backend='normaliz')                        # needs sage.rings.number_field
             sage: P.volume(measure='induced_lattice')                                   # needs sage.rings.number_field
@@ -1537,7 +1537,7 @@ class Polyhedron_normaliz(Polyhedron_base_number_field):
 
         TESTS:
 
-        Check that :trac:`30531` is fixed::
+        Check that :issue:`30531` is fixed::
 
             sage: P = polytopes.cube(backend='normaliz')*AA(2).sqrt()
             sage: P._triangulate_normaliz()
@@ -1974,7 +1974,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
 
         TESTS:
 
-        Test some trivial cases (see :trac:`17937`):
+        Test some trivial cases (see :issue:`17937`):
 
         Empty polyhedron in 1 dimension::
 
@@ -2006,7 +2006,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
             sage: P.integral_points()
             ((),)
 
-        A polytope with no integral points (:trac:`22938`)::
+        A polytope with no integral points (:issue:`22938`)::
 
             sage: ieqs = [[1, 2, -1, 0], [0, -1, 2, -1], [0, 0, -1, 2],
             ....:         [0, -1, 0, 0], [0, 0, -1, 0],  [0, 0, 0, -1],
@@ -2020,7 +2020,7 @@ class Polyhedron_QQ_normaliz(Polyhedron_normaliz, Polyhedron_QQ):
             sage: P.integral_points()
             ()
 
-        Check the polytopes from :trac:`22984`::
+        Check the polytopes from :issue:`22984`::
 
             sage: base = [[0, 2, 0, -1, 0, 0, 0, 0, 0],
             ....:         [0, 0, 2, 0, -1, 0, 0, 0, 0],

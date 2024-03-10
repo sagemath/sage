@@ -605,7 +605,7 @@ class EnumeratedSets(CategoryWithAxiom):
             TESTS:
 
             Trying to list an infinite vector space raises an error
-            instead of running forever (see :trac:`10470`)::
+            instead of running forever (see :issue:`10470`)::
 
                 sage: (QQ^2).list()  # indirect test                                    # needs sage.modules
                 Traceback (most recent call last):
@@ -615,7 +615,7 @@ class EnumeratedSets(CategoryWithAxiom):
             Here we test that for an object that does not know whether it
             is finite or not.  Calling ``x.list()`` simply tries to create
             the list (but here it fails, since the object is not
-            iterable). This was fixed :trac:`11350` ::
+            iterable). This was fixed :issue:`11350` ::
 
                 sage: R.<t,p> = QQ[]
                 sage: Q = R.quotient(t^2-t+1)

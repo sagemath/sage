@@ -116,7 +116,7 @@ class FDerivativeOperator():
         TESTS:
 
         We should be able to operate on functions evaluated at a
-        point, not just a symbolic variable, :trac:`12796`::
+        point, not just a symbolic variable, :issue:`12796`::
 
            sage: from sage.symbolic.operators import FDerivativeOperator
            sage: f = function('f')

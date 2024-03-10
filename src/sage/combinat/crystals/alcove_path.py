@@ -175,7 +175,7 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
         sage: C([1,3]).is_admissible() #check if a valid vertex
         False
 
-    Alcove path crystals now works in affine type (:trac:`14143`)::
+    Alcove path crystals now works in affine type (:issue:`14143`)::
 
         sage: C = crystals.AlcovePaths(['A',2,1],[1,0,0]) ; C
         Highest weight crystal of alcove paths of type ['A', 2, 1] and weight Lambda[0]
@@ -295,7 +295,7 @@ class CrystalOfAlcovePaths(UniqueRepresentation, Parent):
             sage: C = crystals.AlcovePaths(['A',2,1],[1,0],False)
             sage: TestSuite(C).run(skip="_test_stembridge_local_axioms") #long time
 
-        Check that :trac:`20292` is fixed::
+        Check that :issue:`20292` is fixed::
 
             sage: A = crystals.AlcovePaths(['A',2], [1,0])
             sage: A.category()
@@ -656,7 +656,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
 
         TESTS:
 
-        Check that crystal morphisms work (:trac:`19481`)::
+        Check that crystal morphisms work (:issue:`19481`)::
 
             sage: C1 = crystals.AlcovePaths(['A',2],[1,0])
             sage: C2 = crystals.AlcovePaths(['A',2],[2,0])
@@ -665,7 +665,7 @@ class CrystalOfAlcovePathsElement(ElementWrapper):
             [(), ((alpha[1], 0),), ((alpha[1], 0), (alpha[1] + alpha[2], 0))]
 
         Check that all weights are of level 0 in the KR crystal setting
-        (:trac:`20292`)::
+        (:issue:`20292`)::
 
             sage: A = crystals.AlcovePaths(['A',2,1], [1,0], highest_weight_crystal=False)
             sage: all(x.weight().level() == 0 for x in A)

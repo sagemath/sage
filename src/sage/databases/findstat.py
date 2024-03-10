@@ -3974,7 +3974,7 @@ def _plane_partitions_by_size(n):
 
     .. TODO::
 
-        This can be replaced when :trac:`28244` is merged.
+        This can be replaced when :issue:`28244` is merged.
 
     INPUT:
 
