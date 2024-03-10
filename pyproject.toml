@@ -2,6 +2,7 @@
 # Assume Python 3.9
 target-version = "py39"
 
+[tool.ruff.lint]
 select = [
     "E", # pycodestyle errors - https://docs.astral.sh/ruff/rules/#error-e
     "F", # pyflakes - https://docs.astral.sh/ruff/rules/#pyflakes-f
