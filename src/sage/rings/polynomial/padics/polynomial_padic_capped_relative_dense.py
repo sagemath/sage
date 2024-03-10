@@ -48,13 +48,13 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: R(t + 2)
             (1 + O(13^7))*t + 2 + O(13^7)
 
-        Check that :trac:`13620` has been fixed::
+        Check that :issue:`13620` has been fixed::
 
             sage: f = R.zero()
             sage: R(f.dict())
             0
 
-        Check that :trac:`29829` has been fixed::
+        Check that :issue:`29829` has been fixed::
 
             sage: R.<x> = PolynomialRing(ZZ)
             sage: f = x + 5
@@ -376,7 +376,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
             sage: a[:2]
             (13^2 + O(13^4))*t + 12*13^4 + 12*13^5 + 12*13^6 + 12*13^7 + 12*13^8 + 12*13^9 + 12*13^10 + O(13^11)
 
-        Any other kind of slicing is an error, see :trac:`18940`::
+        Any other kind of slicing is an error, see :issue:`18940`::
 
             sage: a[1:3]
             Traceback (most recent call last):
@@ -1056,7 +1056,7 @@ class Polynomial_padic_capped_relative_dense(Polynomial_generic_cdv, Polynomial_
 
         TESTS:
 
-        Verify that :trac:`15188` has been resolved::
+        Verify that :issue:`15188` has been resolved::
 
             sage: R.<x> = Qp(3)[]
             sage: x.quo_rem(x)

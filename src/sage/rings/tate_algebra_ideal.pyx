@@ -853,7 +853,7 @@ def groebner_basis_pote(I, prec, verbose=0):
          ...0000000001*x^2*y + ...1210121020 + O(3^10 * <x, y>),
          ...000000001*y^2 + ...210121020*x + O(3^9 * <x, y>)]
 
-    We check that :trac:`30101` is fixed::
+    We check that :issue:`30101` is fixed::
 
         sage: I.groebner_basis(algorithm="PoTe", prec=100)  # indirect doctest
         [...0000000001*x^3 + ...2222222222*y + ...000000000*x^2*y^2 + O(3^99 * <x, y>),
@@ -1099,7 +1099,7 @@ def groebner_basis_vapote(I, prec, verbose=0, interrupt_red_with_val=False, inte
          ...0000000001*x^2*y + ...1210121020 + O(3^10 * <x, y>),
          ...000000001*y^2 + ...210121020*x + O(3^9 * <x, y>)]
 
-    We check that :trac:`30101` is fixed::
+    We check that :issue:`30101` is fixed::
 
         sage: I.groebner_basis(algorithm="VaPoTe", prec=100)  # indirect doctest
         [...0000000001*x^3 + ...2222222222*y + ...000000000*x^2*y^2 + O(3^99 * <x, y>),

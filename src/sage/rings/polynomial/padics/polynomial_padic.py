@@ -196,7 +196,7 @@ class Polynomial_padic(Polynomial):
             PrecisionError: p-adic factorization not well-defined since
             the discriminant is zero up to the requestion p-adic precision
 
-        An example of factoring a constant polynomial (see :trac:`26669`)::
+        An example of factoring a constant polynomial (see :issue:`26669`)::
 
             sage: R.<x> = Qp(5)[]                                                       # needs sage.libs.ntl
             sage: R(2).factor()                                                         # needs sage.libs.ntl
@@ -211,7 +211,7 @@ class Polynomial_padic(Polynomial):
             * ((1 + O(5^6))*w^4 + (12501 + O(5^6))*w^3 + (9376 + O(5^6))*w^2
                  + (6251 + O(5^6))*w + 3126 + O(5^6))
 
-        See :trac:`4038`::
+        See :issue:`4038`::
 
             sage: # needs sage.libs.ntl sage.schemes
             sage: E = EllipticCurve('37a1')
@@ -230,14 +230,14 @@ class Polynomial_padic(Polynomial):
 
         TESTS:
 
-        Check that :trac:`13293` is fixed::
+        Check that :issue:`13293` is fixed::
 
             sage: R.<T> = Qp(3)[]                                                       # needs sage.libs.ntl
             sage: f = 1926*T^2 + 312*T + 387                                            # needs sage.libs.ntl
             sage: f.factor()                                                            # needs sage.libs.ntl
             (3^2 + 2*3^3 + 2*3^4 + 3^5 + 2*3^6 + O(3^22)) * ((1 + O(3^19))*T + 2*3^-1 + 3 + 3^2 + 2*3^5 + 2*3^6 + 2*3^7 + 3^8 + 3^9 + 2*3^11 + 3^15 + 3^17 + O(3^19)) * ((1 + O(3^20))*T + 2*3 + 3^2 + 3^3 + 3^5 + 2*3^6 + 2*3^7 + 3^8 + 3^10 + 3^11 + 2*3^12 + 2*3^14 + 2*3^15 + 2*3^17 + 2*3^18 + O(3^20))
 
-        Check that :trac:`24065` is fixed::
+        Check that :issue:`24065` is fixed::
 
             sage: R = Zp(2, type='fixed-mod', prec=3)
             sage: P.<x> = R[]

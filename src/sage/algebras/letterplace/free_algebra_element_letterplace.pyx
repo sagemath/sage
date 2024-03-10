@@ -3,7 +3,7 @@ Weighted homogeneous elements of free algebras, in letterplace implementation
 
 AUTHOR:
 
-- Simon King (2011-03-23): Github issue :trac:`7797`
+- Simon King (2011-03-23): Github issue :issue:`7797`
 
 """
 

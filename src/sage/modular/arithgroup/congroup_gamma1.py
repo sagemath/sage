@@ -368,7 +368,7 @@ class Gamma1_class(GammaH_class):
 
         TESTS:
 
-        Check that :trac:`18436` is fixed::
+        Check that :issue:`18436` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')

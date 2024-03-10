@@ -327,7 +327,7 @@ cdef class LazyImport():
 
         TESTS:
 
-        Check that :trac:`19475` is fixed::
+        Check that :issue:`19475` is fixed::
 
             sage: 'A subset of the real line' in RealSet.__doc__
             True

@@ -293,7 +293,7 @@ cdef GapElement make_any_gap_element(parent, Obj obj) noexcept:
         sage: t.sage()
         ['aa', 'ab', 'ac', 'bb', 'bc', 'cc']
 
-    Check that :trac:`18158` is fixed::
+    Check that :issue:`18158` is fixed::
 
         sage: S = SymmetricGroup(5)
         sage: irr = libgap.Irr(S)[3]
@@ -901,7 +901,7 @@ cdef class GapElement(RingElement):
             sage: F1 < F2 or F1 > F2
             True
 
-        Check that :trac:`26388` is fixed::
+        Check that :issue:`26388` is fixed::
 
             sage: 1 > libgap(1)
             False
@@ -1343,7 +1343,7 @@ cdef class GapElement(RingElement):
 
         TESTS:
 
-        Check :trac:`30496`::
+        Check :issue:`30496`::
 
             sage: x = libgap.Integers.Indeterminate("x")
 
@@ -1542,7 +1542,7 @@ cdef class GapElement_Integer(GapElement):
         r"""
         TESTS:
 
-        Check that gap integers can be used as indices (:trac:`23878`)::
+        Check that gap integers can be used as indices (:issue:`23878`)::
 
             sage: s = 'abcd'
             sage: s[libgap(1)]
@@ -1827,7 +1827,7 @@ cdef class GapElement_FiniteField(GapElement):
             sage: n.sage(ring=GF(2^8, 'a'))
             a^7 + a^6 + a^4 + a^2 + a + 1
 
-        Check that :trac:`23153` is fixed::
+        Check that :issue:`23153` is fixed::
 
             sage: n = libgap.eval('Z(2^4)^2 + Z(2^4)^1 + Z(2^4)^0')
             sage: n.sage(ring=GF(2^4, 'a'))
@@ -1937,7 +1937,7 @@ cdef class GapElement_Cyclotomic(GapElement):
 
         TESTS:
 
-        Check that :trac:`15204` is fixed::
+        Check that :issue:`15204` is fixed::
 
             sage: libgap.E(3).sage(ring=UniversalCyclotomicField())
             E(3)

@@ -1270,7 +1270,7 @@ class HeckeModule_free_module(HeckeModule_generic):
 
         TESTS:
 
-        This checks that :trac:`15201` is fixed::
+        This checks that :issue:`15201` is fixed::
 
             sage: M = ModularSymbols(5, 6, sign=1)
             sage: f = M.decomposition()[0]

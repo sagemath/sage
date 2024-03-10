@@ -191,7 +191,7 @@ Nevertheless, the tail is preserved under invertible integer homographies::
 AUTHORS:
 
 - Vincent Delecroix (2014): cleaning, refactorisation, documentation from the
-  old implementation in ``contfrac`` (:trac:`14567`).
+  old implementation in ``contfrac`` (:issue:`14567`).
 """
 # ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
@@ -662,15 +662,15 @@ class ContinuedFraction_base(SageObject):
             sage: for prec in [17, 24, 53, 128, 256]:                                   # needs sage.rings.real_mpfr
             ....:     for rnd in ['RNDN', 'RNDD', 'RNDU', 'RNDZ', 'RNDA']:
             ....:         fields.append(RealField(prec=prec, rnd=rnd))
-            sage: for n in range(3000):  # long time, not tested, known bug (see :trac:`29957`)
+            sage: for n in range(3000):  # long time, not tested, known bug (see :issue:`29957`)
             ....:     a = QQ.random_element(num_bound=2^(n%100))
-            ....:     if a.denominator() % 8 == 0:  # not precices enough  # :trac:`29957`
+            ....:     if a.denominator() % 8 == 0:  # not precices enough  # :issue:`29957`
             ....:         continue
             ....:     cf = continued_fraction(a)
             ....:     for R in fields:
             ....:         try:
             ....:             assert R(cf) == R(a)
-            ....:         except ZeroDivisionError:  # :trac:`29957`
+            ....:         except ZeroDivisionError:  # :issue:`29957`
             ....:             pass
         """
         # 1. integer case
@@ -1204,7 +1204,7 @@ class ContinuedFraction_base(SageObject):
             sage: CF = [continued_fraction(x) for x in [sqrt(2), AA(3).sqrt(),          # needs sage.rings.number_field sage.symbolic
             ....:       AA(3)**(1/3), QuadraticField(37).gen(), pi, 113/27,
             ....:       [3,1,2,2], words.FibonacciWord([1,3])]]
-            sage: for _ in range(100):  # not tested, known bug (see :trac:`32086`)
+            sage: for _ in range(100):  # not tested, known bug (see :issue:`32086`)
             ....:     cf = choice(CF)
             ....:     forward_value = choice([True, False])
             ....:     a = ZZ.random_element(-30, 30)
@@ -2450,7 +2450,7 @@ def continued_fraction_list(x, type="std", partial_convergents=False,
         sage: continued_fraction_list(1 + 10^-20 - e^-100, nterms=5)                    # needs sage.symbolic
         [1, 100000000000000000000, 2688, 8, 1]
 
-    Fixed :trac:`18901`::
+    Fixed :issue:`18901`::
 
         sage: a = 1.575709393346379
         sage: type(a)                                                                   # needs sage.rings.real_mpfr
@@ -2458,7 +2458,7 @@ def continued_fraction_list(x, type="std", partial_convergents=False,
         sage: continued_fraction_list(a)
         [1, 1, 1, 2, 1, 4, 18, 1, 5, 2, 25037802, 7, 1, 3, 1, 28, 1, 8, 2]
 
-    Check that this works for arb elements (:trac:`20069`)::
+    Check that this works for arb elements (:issue:`20069`)::
 
         sage: continued_fraction(RBF(e))                                                # needs sage.symbolic
         [2; 1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8, 1, 1, 10, 1, 1, 12]
@@ -2650,7 +2650,7 @@ def continued_fraction(x, value=None):
 
     TESTS:
 
-    Fixed :trac:`18901`. For RealLiteral, continued_fraction calls
+    Fixed :issue:`18901`. For RealLiteral, continued_fraction calls
     continued_fraction_list::
 
         sage: continued_fraction(1.575709393346379)

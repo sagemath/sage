@@ -322,7 +322,7 @@ class LyndonWords_evaluation(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Check that :trac:`12997` is fixed::
+        Check that :issue:`12997` is fixed::
 
             sage: LyndonWords([0,1]).list()
             [word: 2]
@@ -413,7 +413,7 @@ class LyndonWords_nk(UniqueRepresentation, Parent):
             ...
             ValueError: length is not k=3
 
-        Make sure that the correct length is checked (:trac:`30186`)::
+        Make sure that the correct length is checked (:issue:`30186`)::
 
             sage: L = LyndonWords(2, 4)
             sage: _ = L(L.random_element())                                             # needs sage.libs.pari

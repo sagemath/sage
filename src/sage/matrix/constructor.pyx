@@ -573,12 +573,12 @@ def matrix(*args, **kwds):
         sage: matrix(vector(RR,[1,2,3])).parent()
         Full MatrixSpace of 1 by 3 dense matrices over Real Field with 53 bits of precision
 
-    Check :trac:`10158`::
+    Check :issue:`10158`::
 
         sage: matrix(ZZ, [[0] for i in range(10^5)]).is_zero()
         True
 
-    Check :trac:`24459`::
+    Check :issue:`24459`::
 
         sage: # needs sage.libs.linbox
         sage: Matrix(ZZ, sys.maxsize, sys.maxsize)
@@ -638,11 +638,11 @@ def matrix(*args, **kwds):
     - Jason Grout (2008-03): almost a complete rewrite, with bits and
       pieces from the original implementation
 
-    - Jeroen Demeyer (2016-02-05): major clean up, see :trac:`20015`
-      and :trac:`20016`
+    - Jeroen Demeyer (2016-02-05): major clean up, see :issue:`20015`
+      and :issue:`20016`
 
     - Jeroen Demeyer (2018-02-20): completely rewritten using
-      :class:`MatrixArgs`, see :trac:`24742`
+      :class:`MatrixArgs`, see :issue:`24742`
     """
     immutable = kwds.pop('immutable', False)
     M = MatrixArgs(*args, **kwds).matrix()

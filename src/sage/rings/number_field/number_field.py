@@ -53,7 +53,7 @@ AUTHORS:
 - William Stein (2007-09-04): major rewrite and documentation
 - Robert Bradshaw (2008-10): specified embeddings into ambient fields
 - Simon King (2010-05): improved coercion from GAP
-- Jeroen Demeyer (2010-07, 2011-04): upgraded PARI (:trac:`9343`, :trac:`10430`, :trac:`11130`)
+- Jeroen Demeyer (2010-07, 2011-04): upgraded PARI (:issue:`9343`, :issue:`10430`, :issue:`11130`)
 - Robert Harron (2012-08): added is_CM(), complex_conjugation(), and
   maximal_totally_real_subfield()
 - Christian Stump (2012-11): added conversion to universal cyclotomic field
@@ -405,7 +405,7 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
 
     Comparison depends on the (real) embedding specified (or the one selected by default).
     Note that the codomain of the embedding must be ``QQbar`` or ``AA`` for this to work
-    (see :trac:`20184`)::
+    (see :issue:`20184`)::
 
         sage: N.<g> = NumberField(x^3 + 2, embedding=1)
         sage: 1 < g
@@ -488,7 +488,7 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
         sage: W.<a> = NumberField(x^2 + 1); W
         Number Field in a with defining polynomial x^2 + 1 over its base field
 
-    The following has been fixed in :trac:`8800`::
+    The following has been fixed in :issue:`8800`::
 
         sage: P.<x> = QQ[]
         sage: K.<a> = NumberField(x^3 - 5, embedding=0)
@@ -497,7 +497,7 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
         sage: F(R) == L    # indirect doctest
         True
 
-    Check that :trac:`11670` has been fixed::
+    Check that :issue:`11670` has been fixed::
 
         sage: K.<a> = NumberField(x^2 - x - 1)
         sage: loads(dumps(K)) is K
@@ -509,7 +509,7 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
         sage: loads(dumps(K)) is K
         True
 
-    Another problem that was found while working on :trac:`11670`,
+    Another problem that was found while working on :issue:`11670`,
     ``maximize_at_primes`` and ``assume_disc_small`` were lost when pickling::
 
         sage: # needs sage.symbolic
@@ -529,7 +529,7 @@ def NumberField(polynomial, name=None, check=True, names=None, embedding=None,
         ...
         TypeError: You must specify the name of the generator.
 
-    Check that we can construct morphisms to matrix space (:trac:`23418`)::
+    Check that we can construct morphisms to matrix space (:issue:`23418`)::
 
         sage: t = polygen(QQ)
         sage: K = NumberField(t^4 - 2, 'a')
@@ -934,7 +934,7 @@ def QuadraticField(D, name='a', check=True, embedding=True, latex_name='sqrt', *
         sage: latex(QuadraticField(-1, 'a', latex_name=None).gen())
         a
 
-    The name of the generator does not interfere with Sage preparser, see :trac:`1135`::
+    The name of the generator does not interfere with Sage preparser, see :issue:`1135`::
 
         sage: K1 = QuadraticField(5, 'x')
         sage: K2.<x> = QuadraticField(5)
@@ -962,12 +962,12 @@ def QuadraticField(D, name='a', check=True, embedding=True, latex_name='sqrt', *
         sage: QuadraticField(-11, 'a') is QuadraticField(-11, 'a', latex_name=None)
         False
 
-    Check that :trac:`23459` is fixed::
+    Check that :issue:`23459` is fixed::
 
         sage: QuadraticField(4**1000+1)
         Number Field ...
 
-    Check quadratic fields without embedding (:trac:`28932`)::
+    Check quadratic fields without embedding (:issue:`28932`)::
 
         sage: QuadraticField(3, embedding=False)
         Number Field in a with defining polynomial x^2 - 3
@@ -1275,7 +1275,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
     Two relative number fields which are isomorphic as absolute
     fields, but which are not presented the same way, are not
-    considered equal (see :trac:`18942`)::
+    considered equal (see :issue:`18942`)::
 
         sage: F.<omega> = NumberField(x^2 + x + 1)
         sage: y = polygen(F)
@@ -1288,7 +1288,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         sage: hash(K) == hash(L)
         False
 
-    This example illustrates the issue resolved in :trac:`18942`::
+    This example illustrates the issue resolved in :issue:`18942`::
 
         sage: F.<omega> = NumberField(x^2 + x + 1)
         sage: xx = polygen(F)
@@ -1304,7 +1304,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         [(alpha, 1), ((-omega - 1)*alpha, 1), (omega*alpha, 1)]
         [(alpha, 1), (omega*alpha, 1), ((-omega - 1)*alpha, 1)]
 
-    This example was suggested on sage-nt; see :trac:`18942`::
+    This example was suggested on sage-nt; see :issue:`18942`::
 
         sage: G = DirichletGroup(80)                                                    # needs sage.modular
         sage: for chi in G:                     # long time                             # needs sage.modular
@@ -1684,14 +1684,14 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: L(gap(tau)^3)     # indirect doctest                                  # needs sage.libs.gap
             2
 
-        Check that :trac:`22202` and :trac:`27765` are fixed::
+        Check that :issue:`22202` and :issue:`27765` are fixed::
 
             sage: y = QQ['y'].gen()
             sage: R = QQ.extension(y^2 - 1/2, 'a')['x']
             sage: R("a*x").factor()
             (a) * x
 
-        Check that :trac:`30961` is fixed::
+        Check that :issue:`30961` is fixed::
 
             sage: # needs sage.symbolic
             sage: QQi = i.parent()
@@ -1707,7 +1707,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: QQi(vector((RR(1), RR(2))))
             2*I + 1
 
-        Check that :trac:`34059` is fixed::
+        Check that :issue:`34059` is fixed::
 
             sage: K.<a> = NumberField(x)
             sage: K([1]).parent()
@@ -1975,7 +1975,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         TESTS:
 
-        Verify that :trac:`22001` has been resolved::
+        Verify that :issue:`22001` has been resolved::
 
             sage: R.<x> = QQ[]
             sage: K.<a> = QQ.extension(x^2 + 1)
@@ -2202,7 +2202,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
               Defn: b |--> a^2
 
         A relative example. Note that the result returned is the subfield generated
-        by `\alpha` over ``self.base_field()``, not over `\QQ` (see :trac:`5392`)::
+        by `\alpha` over ``self.base_field()``, not over `\QQ` (see :issue:`5392`)::
 
             sage: L.<a> = NumberField(x^2 - 3)
             sage: M.<b> = L.extension(x^4 + 1)
@@ -2673,7 +2673,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         TESTS:
 
-        See :trac:`26239`::
+        See :issue:`26239`::
 
             sage: k.<a> = NumberField(x)
             sage: k.is_isomorphic(k)
@@ -3526,7 +3526,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         TESTS:
 
-        Check that :trac:`25934` is fixed::
+        Check that :issue:`25934` is fixed::
 
             sage: x = polygen(QQ)
             sage: K.<a> = NumberField(x^6 - x^5 - 5*x^4 + 4*x^3 + 6*x^2 - 3*x - 1)
@@ -4746,7 +4746,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: K.S_units([])[0].multiplicative_order()
             6
 
-        An example in a relative extension (see :trac:`8722`)::
+        An example in a relative extension (see :issue:`8722`)::
 
             sage: x = polygen(QQ, 'x')
             sage: L.<a,b> = NumberField([x^2 + 1, x^2 - 5])
@@ -4754,7 +4754,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: W = L.S_units([p]); [x.norm() for x in W]
             [9, 1, 1]
 
-        Our generators should have the correct parent (:trac:`9367`)::
+        Our generators should have the correct parent (:issue:`9367`)::
 
             sage: _.<x> = QQ[]
             sage: L.<alpha> = NumberField(x^3 + x + 1)
@@ -4764,7 +4764,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         TESTS:
 
-        This checks that the multiple entries issue at :trac:`9341` is fixed::
+        This checks that the multiple entries issue at :issue:`9341` is fixed::
 
             sage: _.<t> = QQ[]
             sage: K.<T> = NumberField(t - 1)
@@ -4830,7 +4830,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             True
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(2*x^2 - 1/3)
             sage: K._S_class_group_and_units(tuple(K.primes_above(2) + K.primes_above(3)))
@@ -4870,7 +4870,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         TESTS:
 
-        Verify that :trac:`29364` is fixed::
+        Verify that :issue:`29364` is fixed::
 
             sage: R.<x> = QQ[]
             sage: L.<t> = NumberField(x^2 - 6058)
@@ -4999,7 +4999,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: S in ([2, a + 1, a], [2, a + 1, -a], [2, -a - 1, a], [2, -a - 1, -a]) or S
             True
 
-        Verify that :trac:`14489` is fixed;
+        Verify that :issue:`14489` is fixed;
         the representation depends on the PARI version::
 
             sage: x = polygen(QQ, 'x')
@@ -5020,7 +5020,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: gens[7] in (2/13*a^2 + 40/13*a - 27/13, -2/13*a^2 - 40/13*a + 27/13)
             True
 
-        Verify that :trac:`16708` is fixed::
+        Verify that :issue:`16708` is fixed::
 
             sage: K.<a> = QuadraticField(-5)
             sage: p = K.primes_above(2)[0]
@@ -5386,7 +5386,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
               None)]
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(x^2 + 1/2)
             sage: L.<b> = NumberField(3*x^2 - 1)
@@ -5407,8 +5407,8 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: M.gen() == g(b) + k*f(a)
             True
 
-        This also fixes the bugs reported at :trac:`14164` and
-        :trac:`18243`::
+        This also fixes the bugs reported at :issue:`14164` and
+        :issue:`18243`::
 
             sage: R.<x> = QQ[]
             sage: f = 6*x^5 + x^4 + x^2 + 5*x + 7
@@ -5430,7 +5430,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: F.gen() == map2(F2.gen()) + k*map1(F1.gen())
             True
 
-        Check that the bugs reported at :trac:`24357` are fixed::
+        Check that the bugs reported at :issue:`24357` are fixed::
 
             sage: A.<a> = NumberField(x^9 - 7)
             sage: B.<b> = NumberField(x^3 - 7, embedding=a^3)
@@ -5787,7 +5787,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         TESTS:
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`);
+        polynomials are supported (:issue:`252`);
         the representation depends on the PARI version::
 
             sage: K.<a> = NumberField(7/9*x^3 + 7/3*x^2 - 56*x + 123)
@@ -5835,7 +5835,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             Number Field in b with defining polynomial z^3 + a0 + 3 over its base field
 
         Extension fields with given defining data are unique
-        (:trac:`20791`)::
+        (:issue:`20791`)::
 
             sage: K.<a> = NumberField(x^2 + 1)
             sage: K.extension(x^2 - 2, 'b') is K.extension(x^2 - 2, 'b')
@@ -6043,7 +6043,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             sage: M.decomposition_type(Q1)
             [(2, 5, 1)]
 
-        Check that :trac:`34514` is fixed::
+        Check that :issue:`34514` is fixed::
 
             sage: K.<a> = NumberField(x^4 + 18*x^2 - 1)
             sage: R.<y> = K[]
@@ -6208,7 +6208,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         INPUT:
 
         - ``type`` -- Deprecated; the different versions of Galois groups have been
-          merged in :trac:`28782`.
+          merged in :issue:`28782`.
 
         - ``algorithm`` -- ``'pari'``, ``'gap'``, ``'kash'``, ``'magma'``. (default: ``'pari'``;
            for degrees between 12 and 15 default is ``'gap'``, and
@@ -6301,7 +6301,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         TESTS:
 
-        We check that the changes in :trac:`28782` won't break code that used v1 Galois groups::
+        We check that the changes in :issue:`28782` won't break code that used v1 Galois groups::
 
             sage: # needs sage.groups
             sage: G = NumberField(x^3 - 2, 'a').galois_group(type="pari")
@@ -6527,7 +6527,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         TESTS:
 
-        Check that the bug reported at :trac:`10017` is fixed::
+        Check that the bug reported at :issue:`10017` is fixed::
 
             sage: x = polygen(QQ)
             sage: k.<a> = NumberField(x^6 + 2218926655879913714112*x^4 - 32507675650290949030789018433536*x^3 + 4923635504174417014460581055002374467948544*x^2 - 36066074010564497464129951249279114076897746988630016*x + 264187244046129768986806800244258952598300346857154900812365824)
@@ -7149,7 +7149,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         TESTS:
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(1/2*x^2 - 1/6)
             sage: K.units()
@@ -7518,7 +7518,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             []
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(1/2*x^2 + 1/6)
             sage: K.zeta(3)
@@ -7589,7 +7589,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         TESTS:
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(1/2*x^2 + 1/6)
             sage: K.zeta_order()
@@ -7661,7 +7661,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
 
         TESTS:
 
-        Check for :trac:`15027`. We use a new variable name::
+        Check for :issue:`15027`. We use a new variable name::
 
             sage: K.<f> = NumberField(x^2 + x + 1)
             sage: K.primitive_root_of_unity()
@@ -7671,7 +7671,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
             f + 1
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(3*x^2 + 1)
             sage: K.primitive_root_of_unity()
@@ -8050,13 +8050,13 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         TESTS:
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(3*x^2 + 1)
             sage: K.maximal_order().basis()
             [3/2*a + 1/2, 3*a]
 
-        The following was previously "ridiculously slow"; see :trac:`4738`::
+        The following was previously "ridiculously slow"; see :issue:`4738`::
 
             sage: K.<a, b> = NumberField([x^4 + 1, x^4 - 3])
             sage: K.maximal_order()
@@ -8236,7 +8236,7 @@ class NumberField_absolute(NumberField_generic):
 
         TESTS:
 
-        The following was fixed in :trac:`8800`::
+        The following was fixed in :issue:`8800`::
 
             sage: P.<x> = QQ[]
             sage: K.<a> = NumberField(x^3 - 5, embedding=0)
@@ -8247,7 +8247,7 @@ class NumberField_absolute(NumberField_generic):
 
         AUTHORS:
 
-        - Jeroen Demeyer (2011-09-30): :trac:`11869`
+        - Jeroen Demeyer (2011-09-30): :issue:`11869`
 
         """
         # Special case for x in QQ.  This is common, so should be fast.
@@ -8394,7 +8394,7 @@ class NumberField_absolute(NumberField_generic):
               Defn: zeta3 -> 1/2*a - 1/2
 
         Two embedded number fields with mutual coercions (testing against a
-        bug that was fixed in :trac:`8800`)::
+        bug that was fixed in :issue:`8800`)::
 
             sage: K.<r4> = NumberField(x^4 - 2)
             sage: L1.<r2_1> = NumberField(x^2 - 2, embedding=r4**2)
@@ -8407,7 +8407,7 @@ class NumberField_absolute(NumberField_generic):
             True
 
         Coercion of an order (testing against a bug that was fixed in
-        :trac:`8800`)::
+        :issue:`8800`)::
 
             sage: K.has_coerce_map_from(L1)
             True
@@ -8552,7 +8552,7 @@ class NumberField_absolute(NumberField_generic):
             True
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(7/9*x^3 + 7/3*x^2 - 56*x + 123)
             sage: K.optimized_representation()  # representation varies, not tested
@@ -8674,7 +8674,7 @@ class NumberField_absolute(NumberField_generic):
         TESTS:
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(2*x^4 + 6*x^2 + 1/2)
             sage: K.optimized_subfields()
@@ -8786,7 +8786,7 @@ class NumberField_absolute(NumberField_generic):
         TESTS:
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(2*x^4 + 6*x^2 + 1/2)
             sage: K.subfields()
@@ -8850,7 +8850,7 @@ class NumberField_absolute(NumberField_generic):
             (Number Field in a0 with defining polynomial x^2 - 23 with a0 = -4.795831523312720?,
              -4.795831523312719)
 
-        Test for :trac:`7695`::
+        Test for :issue:`7695`::
 
             sage: F = CyclotomicField(7)
             sage: K = F.subfields(3)[0][0]
@@ -8979,7 +8979,7 @@ class NumberField_absolute(NumberField_generic):
 
         TESTS:
 
-        We verify that :trac:`2480` is fixed::
+        We verify that :issue:`2480` is fixed::
 
             sage: K.<a> = NumberField(x^4 + 4*x^2 + 2)
             sage: B = K.integral_basis()
@@ -9021,7 +9021,7 @@ class NumberField_absolute(NumberField_generic):
             True
 
         Even if the order lives in a different field, caching works (currently,
-        however, ``allow_subfield`` is incorrect :trac:`16046`)::
+        however, ``allow_subfield`` is incorrect :issue:`16046`)::
 
             sage: K.<a> = NumberField(x**4 + 3)
             sage: o = K.order([a**2], allow_subfield=True)
@@ -9277,7 +9277,7 @@ class NumberField_absolute(NumberField_generic):
             24
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: R.<x> = QQ[]
             sage: f = 7/9*x^3 + 7/3*x^2 - 56*x + 123
@@ -9363,7 +9363,7 @@ class NumberField_absolute(NumberField_generic):
               Defn: a |--> 1.25992104989487
             ]
 
-        Test that :trac:`15053` is fixed::
+        Test that :issue:`15053` is fixed::
 
             sage: K = NumberField(x^3 - 2, 'a')
             sage: K.embeddings(GF(3))
@@ -9710,7 +9710,7 @@ class NumberField_absolute(NumberField_generic):
             sage: K.abs_val(v_fin, xi^2)
             0.111111111111111
 
-        Check that :trac:`28345` is fixed::
+        Check that :issue:`28345` is fixed::
 
             sage: K.abs_val(v_fin, K.zero())
             0.000000000000000
@@ -9909,7 +9909,7 @@ class NumberField_absolute(NumberField_generic):
               To:   Number Field in t0 with defining polynomial x^9 - t1 over its base field
               Defn: a |--> t0)
 
-        Only one name is required when a morphism is given (fixing :trac:`12005`)::
+        Only one name is required when a morphism is given (fixing :issue:`12005`)::
 
             sage: R.<x> = PolynomialRing(QQ)
             sage: K.<i> = NumberField(x^2 + 1)
@@ -9921,7 +9921,7 @@ class NumberField_absolute(NumberField_generic):
             sage: M.base_field()
             Number Field in i with defining polynomial x^2 + 1
 
-        See :trac:`27469`::
+        See :issue:`27469`::
 
             sage: L.<z24> = CyclotomicField(24)
             sage: K.<z8> = L.subfield(z24^3)[0]
@@ -10285,7 +10285,7 @@ class NumberField_absolute(NumberField_generic):
             sage: K.hilbert_symbol(2, -2, K.primes_above(2)[0])
             1
 
-        Check that the bug reported at :trac:`16043` has been fixed::
+        Check that the bug reported at :issue:`16043` has been fixed::
 
             sage: K.<a> = NumberField(x^2 + 5)
             sage: p = K.primes_above(2)[0]; p
@@ -10799,7 +10799,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
         TESTS:
 
         The ``gcd`` and ``xgcd`` methods do not agree on this field, see
-        :trac:`23274`::
+        :issue:`23274`::
 
             sage: TestSuite(k).run()
             Failure in _test_gcd_vs_xgcd:
@@ -10972,7 +10972,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
 
         The following was the motivating example to introduce
         a genuine representation of cyclotomic fields in the
-        GAP interface -- see :trac:`5618`. ::
+        GAP interface -- see :issue:`5618`. ::
 
             sage: # needs sage.groups
             sage: H = AlternatingGroup(4)
@@ -11061,7 +11061,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
 
         TESTS:
 
-        We check that the bug reported on :trac:`8938` is fixed::
+        We check that the bug reported on :issue:`8938` is fixed::
 
             sage: C5.<z> = CyclotomicField(5)
             sage: P.<s, t> = C5[]
@@ -11133,7 +11133,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
               To:   Cyclotomic Field of order 15 and degree 8
               Defn: zeta6 -> zeta15^5 + 1
 
-        Check that :trac:`12632` is fixed::
+        Check that :issue:`12632` is fixed::
 
             sage: K1 = CyclotomicField(1); K2 = CyclotomicField(2)
             sage: K1.coerce_map_from(K2)
@@ -11142,7 +11142,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
               To:   Cyclotomic Field of order 1 and degree 1
               Defn: zeta2 -> -1
 
-        Check that custom embeddings are respected (:trac:`13765`)::
+        Check that custom embeddings are respected (:issue:`13765`)::
 
             sage: # needs sage.symbolic
             sage: z105 = CDF(exp(2*pi*I/105))
@@ -11176,7 +11176,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
               To:   Cyclotomic Field of order 15 and degree 8
               Defn: zeta6 -> -zeta15^5
 
-        Check transitivity of coercion embeddings (:trac:`20513`)::
+        Check transitivity of coercion embeddings (:issue:`20513`)::
 
             sage: K60.<zeta60> = CyclotomicField(60)
             sage: K30.<zeta30> = CyclotomicField(30, embedding=zeta60**14)
@@ -11550,7 +11550,7 @@ class NumberField_cyclotomic(NumberField_absolute, sage.rings.abc.NumberField_cy
             sage: CyclotomicField(10).is_isomorphic(NumberField(x^4 - x^3 + x^2 - x + 1, 'b'))
             True
 
-        Check :trac:`14300`::
+        Check :issue:`14300`::
 
             sage: K = CyclotomicField(4)
             sage: N = K.extension(x^2 - 5, 'z')
@@ -12053,7 +12053,7 @@ class NumberField_quadratic(NumberField_absolute, sage.rings.abc.NumberField_qua
 
             sage: TestSuite(k).run()
 
-        Check that :trac:`23008` is fixed::
+        Check that :issue:`23008` is fixed::
 
             sage: z = polygen(ZZ, 'z')
             sage: K.<phi> = NumberField(z^2 - z - 1, embedding=QQbar(golden_ratio))     # needs sage.symbolic
@@ -12625,7 +12625,7 @@ def refine_embedding(e, prec=None):
 
     When the old embedding is into the real lazy field,
     then only real embeddings should be considered.
-    See :trac:`17495`::
+    See :issue:`17495`::
 
         sage: R.<x> = QQ[]
         sage: K.<a> = NumberField(x^3 + x - 1, embedding=0.68)

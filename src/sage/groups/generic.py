@@ -750,7 +750,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         ...
         ValueError: no discrete log of 2 found to base 1
 
-    See :trac:`2356`::
+    See :issue:`2356`::
 
         sage: F.<w> = GF(121)                                                           # needs sage.rings.finite_rings
         sage: v = w^120                                                                 # needs sage.rings.finite_rings
@@ -1656,14 +1656,14 @@ def structure_description(G, latex=False):
         sage: D4.structure_description()                                                # needs sage.groups
         'D4'
 
-    Works for finitely presented groups (:trac:`17573`)::
+    Works for finitely presented groups (:issue:`17573`)::
 
         sage: F.<x, y> = FreeGroup()                                                    # needs sage.groups
         sage: G = F / [x^2*y^-1, x^3*y^2, x*y*x^-1*y^-1]                                # needs sage.groups
         sage: G.structure_description()                                                 # needs sage.groups
         'C7'
 
-    And matrix groups (:trac:`17573`)::
+    And matrix groups (:issue:`17573`)::
 
         sage: groups.matrix.GL(4,2).structure_description()                             # needs sage.libs.gap sage.modules
         'A8'

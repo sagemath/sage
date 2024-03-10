@@ -288,7 +288,7 @@ class CuspidalSubmodule_modsym_qexp(CuspidalSubmodule):
             y^13 + 5*y^12 - 4*y^11 - 52*y^10 - 34*y^9 + 174*y^8 + 212*y^7
              - 196*y^6 - 375*y^5 - 11*y^4 + 200*y^3 + 80*y^2
 
-        Check that :trac:`21546` is fixed (this example used to take about 5 hours)::
+        Check that :issue:`21546` is fixed (this example used to take about 5 hours)::
 
             sage: CuspForms(1728, 2).hecke_polynomial(2) # long time (20 sec)
             x^253 + x^251 - 2*x^249

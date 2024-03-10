@@ -133,7 +133,7 @@ class EnumeratedSetFromIterator(Parent):
         3
 
     The following warning is due to ``E`` being a facade parent. For more,
-    see the discussion on :trac:`16239`::
+    see the discussion on :issue:`16239`::
 
         sage: TestSuite(E).run()
         doctest:...: UserWarning: Testing equality of infinite sets which will not end in case of equality

@@ -225,7 +225,7 @@ class CrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Check that :trac:`17054` is fixed::
+        Check that :issue:`17054` is fixed::
 
             sage: La = RootSystem(['A', 2]).weight_lattice().fundamental_weights()
             sage: RC = crystals.RiggedConfigurations(4*La[1] + 4*La[2])

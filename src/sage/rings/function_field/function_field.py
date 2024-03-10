@@ -684,7 +684,7 @@ class FunctionField(Field):
             sage: M.has_coerce_map_from(L)                                              # needs sage.rings.function_field sage.rings.number_field
             True
 
-        Check that :trac:`31072` is fixed::
+        Check that :issue:`31072` is fixed::
 
             sage: L.<t> = FunctionField(QQ)
             sage: L(Sequence([1, 2]))
@@ -976,7 +976,7 @@ class FunctionField(Field):
             sage: R.<w> = K[]
             sage: L.<w> = K.extension(w^3 - t)
             sage: N.<x> = FunctionField(L)
-            sage: w = v.extension(N)  # missing factorization, :trac:`16572`
+            sage: w = v.extension(N)  # missing factorization, :issue:`16572`
             Traceback (most recent call last):
             ...
             NotImplementedError

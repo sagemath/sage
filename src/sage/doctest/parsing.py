@@ -9,7 +9,7 @@ AUTHORS:
 - David Roe (2012-03-27) -- initial version, based on Robert Bradshaw's code.
 
 - Jeroen Demeyer(2014-08-28) -- much improved handling of tolerances
-  using interval arithmetic (:trac:`16889`).
+  using interval arithmetic (:issue:`16889`).
 """
 
 # ****************************************************************************
@@ -1046,7 +1046,7 @@ class SageDocTestParser(doctest.DocTestParser):
             ...
             ValueError: the order of a finite field must be a prime power
 
-        Test that :trac:`26575` is resolved::
+        Test that :issue:`26575` is resolved::
 
             sage: example3 = 'sage: Zp(5,4,print_mode="digits")(5)\n...00010'
             sage: parsed3 = DTP.parse(example3)
@@ -1539,7 +1539,7 @@ class SageOutputChecker(doctest.OutputChecker):
             sage: c = 'you'; c
             'you'
 
-        This illustrates that :trac:`33588` is fixed::
+        This illustrates that :issue:`33588` is fixed::
 
             sage: from sage.doctest.parsing import SageOutputChecker, SageDocTestParser
             sage: import doctest
@@ -1660,19 +1660,19 @@ class SageOutputChecker(doctest.OutputChecker):
             # Version 4.65 of glpk prints the warning "Long-step dual
             # simplex will be used" frequently. When Sage uses a system
             # installation of glpk which has not been patched, we need to
-            # ignore that message. See :trac:`29317`.
+            # ignore that message. See :issue:`29317`.
             glpk_simplex_warning_regex = re.compile(r'(Long-step dual simplex will be used)')
             got = glpk_simplex_warning_regex.sub('', got)
             did_fixup = True
 
         if "chained fixups" in got:
-            # :trac:`34533` -- suppress warning on OS X 12.6 about chained fixups
+            # :issue:`34533` -- suppress warning on OS X 12.6 about chained fixups
             chained_fixup_warning_regex = re.compile(r'ld: warning: -undefined dynamic_lookup may not work with chained fixups')
             got = chained_fixup_warning_regex.sub('', got)
             did_fixup = True
 
         if "newer macOS version" in got:
-            # :trac:`34741` -- suppress warning arising after
+            # :issue:`34741` -- suppress warning arising after
             # upgrading from macOS 12.X to 13.X.
             newer_macOS_version_regex = re.compile(r'.*dylib \(.*\) was built for newer macOS version \(.*\) than being linked \(.*\)')
             got = newer_macOS_version_regex.sub('', got)
@@ -1684,14 +1684,14 @@ class SageOutputChecker(doctest.OutputChecker):
             did_fixup = True
 
         if "dylib" in got:
-            # :trac:`31204` -- suppress warning about ld and OS version for
+            # :issue:`31204` -- suppress warning about ld and OS version for
             # dylib files.
             ld_warning_regex = re.compile(r'^.*dylib.*was built for newer macOS version.*than being linked.*')
             got = ld_warning_regex.sub('', got)
             did_fixup = True
 
         if "pie being ignored" in got:
-            # :trac:`30845` -- suppress warning on conda about ld
+            # :issue:`30845` -- suppress warning on conda about ld
             ld_pie_warning_regex = re.compile(r'ld: warning: -pie being ignored. It is only used when linking a main executable')
             got = ld_pie_warning_regex.sub('', got)
             did_fixup = True

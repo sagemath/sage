@@ -265,7 +265,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
         TESTS:
 
         Make sure that we can take the log of small numbers accurately
-        and the fix doesn't break preexisting values (:trac:`12557`)::
+        and the fix doesn't break preexisting values (:issue:`12557`)::
 
             sage: R = RealField(128)
             sage: def check_error(x):

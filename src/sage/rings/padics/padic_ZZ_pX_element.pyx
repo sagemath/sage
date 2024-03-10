@@ -400,7 +400,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
            sage: ((1+2*w)).norm()^5                                                     # needs sage.geometry.polyhedron
            1 + 5^2
 
-        Check that :trac:`11586` has been resolved::
+        Check that :issue:`11586` has been resolved::
 
             sage: R.<x> = QQ[]
             sage: f = x^2 + 3*x + 1
@@ -487,7 +487,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
 
         TESTS:
 
-        We check that :trac:`32072` is resolved::
+        We check that :issue:`32072` is resolved::
 
             sage: F = Qp(2)
             sage: S.<x> = F[]
@@ -550,7 +550,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
 
         TESTS:
 
-        Check that :trac:`13647` has been fixed::
+        Check that :issue:`13647` has been fixed::
 
             sage: # needs sage.libs.flint
             sage: K = ZpCA(3)

@@ -890,7 +890,7 @@ class GroupMixinLibGAP:
             sage: all(g in G for g in G.list())
             True
 
-        An example over a ring (see :trac:`5241`)::
+        An example over a ring (see :issue:`5241`)::
 
             sage: M1 = matrix(ZZ,2,[[-1,0],[0,1]])
             sage: M2 = matrix(ZZ,2,[[1,0],[0,-1]])
@@ -910,7 +910,7 @@ class GroupMixinLibGAP:
             [ 0  1], [ 0 -1], [ 0 -1]
             )
 
-        An example over a field (see :trac:`10515`)::
+        An example over a field (see :issue:`10515`)::
 
             sage: gens = [matrix(QQ,2,[1,0,0,1])]
             sage: MatrixGroup(gens).list()
@@ -919,7 +919,7 @@ class GroupMixinLibGAP:
             [0 1]
             )
 
-        Another example over a ring (see :trac:`9437`)::
+        Another example over a ring (see :issue:`9437`)::
 
             sage: len(SL(2, Zmod(4)).list())
             48

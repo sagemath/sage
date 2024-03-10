@@ -54,7 +54,7 @@ class QuotientModuleWithBasis(CombinatorialFreeModule):
       elements of the ambient space.
 
     There is room for sharing more code between those two
-    implementations and generalizing them. See :trac:`18204`.
+    implementations and generalizing them. See :issue:`18204`.
 
     .. SEEALSO::
 

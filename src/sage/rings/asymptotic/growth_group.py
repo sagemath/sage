@@ -338,7 +338,7 @@ class Variable(CachedRepresentation, SageObject):
             ...
             ValueError: ':-' is not a valid name for a variable.
 
-        Check :trac:`26452`::
+        Check :issue:`26452`::
 
             sage: Variable(('w',),
             ....:          repr='w^(Number Field in i with defining polynomial x^2 + 1) * log(w)^ZZ')
@@ -4283,7 +4283,7 @@ class ExponentialGrowthElement(GenericGrowthElement):
             True
             sage: forget()
 
-        Check that :trac:`19999` is fixed::
+        Check that :issue:`19999` is fixed::
 
             sage: P_ZZ_UU = GrowthGroup('ZZ^x * UU^x')
             sage: P_ZZ_UU((-2)^x) <= P_ZZ_UU(2^x) or P_ZZ_UU(2^x) <= P_ZZ_UU((-2)^x)

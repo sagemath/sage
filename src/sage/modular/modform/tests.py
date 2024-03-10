@@ -55,7 +55,7 @@ Another similar consistency check::
     24 True
     25 True
 
-We check that bug :trac:`8541` (traced to a linear algebra problem) is fixed::
+We check that bug :issue:`8541` (traced to a linear algebra problem) is fixed::
 
     sage: f = CuspForms(DirichletGroup(5).0,5).0
     sage: f[15]

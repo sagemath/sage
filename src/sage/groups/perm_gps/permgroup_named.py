@@ -2390,7 +2390,7 @@ class PrimitiveGroupsAll(DisjointUnionEnumeratedSets):
 
     TESTS:
 
-    The following test is broken, see :trac:`22576`::
+    The following test is broken, see :issue:`22576`::
 
         sage: TestSuite(PrimitiveGroups()).run()  # known bug, long time
     """
@@ -2586,7 +2586,7 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
             sage: type(PrimitiveGroups(0).cardinality())
             <class 'sage.rings.integer.Integer'>
 
-        Check for :trac:`31774`::
+        Check for :issue:`31774`::
 
             sage: PrimitiveGroups(2500).cardinality()
             34
@@ -2742,7 +2742,7 @@ class PSL(PermutationGroup_plg):
             sage: groups.permutation.PSL(2, 3)
             Permutation Group with generators [(2,3,4), (1,2)(3,4)]
 
-        Check that :trac:`7424` is handled::
+        Check that :issue:`7424` is handled::
 
             sage: PSL(2, GF(7,'x'))
             Permutation Group with generators [(3,7,5)(4,8,6), (1,2,6)(3,4,8)]

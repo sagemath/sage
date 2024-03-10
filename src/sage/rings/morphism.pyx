@@ -464,7 +464,7 @@ cdef class RingMap_lift(RingMap):
         sage: S.lift() == 0                                                             # needs sage.libs.singular
         False
 
-    Since :trac:`11068`, it is possible to create
+    Since :issue:`11068`, it is possible to create
     quotient rings of non-commutative rings by two-sided
     ideals. It was needed to modify :class:`RingMap_lift`
     so that rings can be accepted that are no instances
@@ -566,7 +566,7 @@ cdef class RingMap_lift(RingMap):
             sage: f == g
             False
 
-        Verify that :trac:`5758` has been fixed::
+        Verify that :issue:`5758` has been fixed::
 
             sage: Zmod(8).lift() == 1
             False
@@ -1023,7 +1023,7 @@ cdef class RingHomomorphism(RingMap):
 
         TESTS:
 
-        Check that :trac:`31367` is fixed::
+        Check that :issue:`31367` is fixed::
 
             sage: A.<t> = QQ[]
             sage: B.<x,y> = QQ['x,y'].quotient('y')                                     # needs sage.libs.singular
@@ -1084,7 +1084,7 @@ cdef class RingHomomorphism(RingMap):
             (0, 0)
 
         Check cases involving quotient rings in which a generator is constant
-        (:trac:`31178`)::
+        (:issue:`31178`)::
 
             sage: # needs sage.libs.singular
             sage: R.<x,y> = QQ[]
@@ -1103,7 +1103,7 @@ cdef class RingHomomorphism(RingMap):
             sage: h.inverse_image(d^2)
             a
 
-        Check that quotient rings are handled correctly (:trac:`33217`)::
+        Check that quotient rings are handled correctly (:issue:`33217`)::
 
             sage: # needs sage.libs.singular
             sage: A.<x,y,z> = QQ['X,Y,Z'].quotient('X^2+Y^2+Z^2-1')
@@ -1280,7 +1280,7 @@ cdef class RingHomomorphism(RingMap):
             ...
             NotImplementedError: base map must be trivial
 
-        Non-commutative rings are not supported (:trac:`32824`)::
+        Non-commutative rings are not supported (:issue:`32824`)::
 
             sage: A = GradedCommutativeAlgebra(QQ, 'x,y,z')                             # needs sage.combinat sage.modules
             sage: A.hom(A.gens(), A).kernel()                                           # needs sage.combinat sage.modules
@@ -1907,7 +1907,7 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
             sage: loads(dumps(f2)) == f2                                                # needs sage.libs.pari
             True
 
-        This was fixed in :trac:`24277`::
+        This was fixed in :issue:`24277`::
 
             sage: H = End(QQ)
             sage: H(1) == H.identity()

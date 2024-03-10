@@ -67,7 +67,7 @@ inequalities as less or equal::
 
 TESTS:
 
-This was fixed in :trac:`24423`::
+This was fixed in :issue:`24423`::
 
     sage: p.<x> = MixedIntegerLinearProgram()
     sage: from sage.numerical.linear_functions import LinearFunctionsParent
@@ -75,7 +75,7 @@ This was fixed in :trac:`24423`::
     sage: 3 <= x[0] <= LF(4)
     3 <= x_0 <= 4
 
-See :trac:`12091`::
+See :issue:`12091`::
 
     sage: p = MixedIntegerLinearProgram()
     sage: b = p.new_variable()
@@ -336,7 +336,7 @@ cdef class LinearFunctionOrConstraint(ModuleElement):
             sage: 1 >= x[0]
             x_0 <= 1
 
-        This works with non-Sage types too, see :trac:`14540`::
+        This works with non-Sage types too, see :issue:`14540`::
 
             sage: p.<b> = MixedIntegerLinearProgram()
             sage: int(1) <= b[0] <= int(2)

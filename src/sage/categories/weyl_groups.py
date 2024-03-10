@@ -554,7 +554,7 @@ class WeylGroups(Category_singleton):
                 + 2*m[3, 3, 1, 1] + m[3, 3, 2] + 3*m[4, 1, 1, 1, 1]
                 + 2*m[4, 2, 1, 1] + m[4, 2, 2] + m[4, 3, 1]
 
-            One more example (:trac:`14095`)::
+            One more example (:issue:`14095`)::
 
                 sage: G = SymmetricGroup(4)
                 sage: w = G.from_reduced_word([3,2,3,1])

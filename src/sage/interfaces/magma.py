@@ -533,7 +533,7 @@ class Magma(ExtraTabCompletion, Expect):
             sage: magma.eval("a := %s;"%(10^10000))    # optional - magma
             ''
 
-        Verify that :trac:`9705` is fixed::
+        Verify that :issue:`9705` is fixed::
 
             sage: nl=chr(10) # newline character
             sage: magma.eval(  # optional - magma
@@ -544,7 +544,7 @@ class Magma(ExtraTabCompletion, Expect):
             ....: "print \"success\";")
             'success'
 
-        Verify that :trac:`11401` is fixed::
+        Verify that :issue:`11401` is fixed::
 
             sage: nl=chr(10) # newline character
             sage: magma.eval("a:=3;"+nl+"b:=5;") == nl  # optional - magma
@@ -2081,7 +2081,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
         TESTS:
 
-        Tests for :trac:`30341`::
+        Tests for :issue:`30341`::
 
             sage: P.<t> = PolynomialRing(QQ)
             sage: l = [-27563611963/4251528, -48034411/104976, -257/54, 1]
@@ -2660,7 +2660,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
         TESTS:
 
-        Verify that :trac:`32602` is fixed::
+        Verify that :issue:`32602` is fixed::
 
             sage: magma("1 eq 0").bool()                  # optional - magma
             False

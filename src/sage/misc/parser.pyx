@@ -168,7 +168,7 @@ cdef class Tokenizer:
 
         TESTS:
 
-        Check support for unicode characters (:trac:`29280`)::
+        Check support for unicode characters (:issue:`29280`)::
 
             sage: Tokenizer("λ+α_β0 Γ^ω").test()
             ['NAME(λ)', '+', 'NAME(α_β0)', 'NAME(Γ)', '^', 'NAME(ω)']

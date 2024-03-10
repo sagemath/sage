@@ -70,7 +70,7 @@ upper half plane::
     sage: L.normalised_basis()
     (-1.37588604166076 - 2.58560946624443*I, -2.10339907847356 + 0.428378776460622*I)
 
-We test that bug :trac:`8415` (caused by a PARI bug fixed in v2.3.5) is OK::
+We test that bug :issue:`8415` (caused by a PARI bug fixed in v2.3.5) is OK::
 
     sage: # needs sage.rings.number_field
     sage: E = EllipticCurve('37a')
@@ -426,7 +426,7 @@ class PeriodLattice_ell(PeriodLattice):
             sage: E.period_lattice().basis()
             (2.99345864623196, 2.45138938198679*I)
 
-        This shows that the issue reported at :trac:`3954` is fixed::
+        This shows that the issue reported at :issue:`3954` is fixed::
 
             sage: E = EllipticCurve('37a')
             sage: b1 = E.period_lattice().basis(prec=30)
@@ -434,7 +434,7 @@ class PeriodLattice_ell(PeriodLattice):
             sage: b1 == b2
             True
 
-        This shows that the issue reported at :trac:`4064` is fixed::
+        This shows that the issue reported at :issue:`4064` is fixed::
 
             sage: E = EllipticCurve('37a')
             sage: E.period_lattice().basis(prec=30)[0].parent()
@@ -950,7 +950,7 @@ class PeriodLattice_ell(PeriodLattice):
         A complex example (taken from J.E.Cremona and E.Whitley,
         *Periods of cusp forms and elliptic curves over imaginary
         quadratic fields*, Mathematics of Computation 62 No. 205
-        (1994), 407-429).  See :trac:`29645` and :trac:`29782`::
+        (1994), 407-429).  See :issue:`29645` and :issue:`29782`::
 
             sage: # needs sage.rings.number_field
             sage: K.<i> = QuadraticField(-1)
@@ -1008,7 +1008,7 @@ class PeriodLattice_ell(PeriodLattice):
             [ 3.81452977217854509 0.000000000000000000]
             [ 1.90726488608927255  1.34047785962440202]
 
-        See :trac:`4388`::
+        See :issue:`4388`::
 
             sage: L = EllipticCurve('11a1').period_lattice()
             sage: L.basis_matrix()
@@ -1680,7 +1680,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         TESTS:
 
-        See :trac:`10026` and :trac:`11767`::
+        See :issue:`10026` and :issue:`11767`::
 
             sage: # needs sage.rings.number_field
             sage: K.<w> = QuadraticField(2)
@@ -1817,7 +1817,7 @@ class PeriodLattice_ell(PeriodLattice):
             sage: [embs[2](c) for c in Q]
             [0.259921049894873, -0.587401051968200, 1.00000000000000]
 
-        Test to show that :trac:`8820` is fixed::
+        Test to show that :issue:`8820` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: E = EllipticCurve('37a')
@@ -1852,7 +1852,7 @@ class PeriodLattice_ell(PeriodLattice):
              y^2 + 1.00000000000000*y = x^3 + (-1.00000000000000)*x
              over Complex Field with 53 bits of precision
 
-        Very small `z` are handled properly (see :trac:`8820`)::
+        Very small `z` are handled properly (see :issue:`8820`)::
 
             sage: # needs sage.rings.number_field
             sage: K.<a> = QuadraticField(-1)

@@ -424,7 +424,7 @@ class Groups(CategoryWithAxiom):
                 Arrange an ordering of elements into cosets of a normal
                 subgroup close to size `\sqrt{n}`.  Then the quotient
                 group structure is often apparent in the table.  See
-                comments on :trac:`7555`.
+                comments on :issue:`7555`.
 
             AUTHOR:
 
@@ -589,7 +589,7 @@ class Groups(CategoryWithAxiom):
                             ((), (), (1,2)),
                             ((), (), (2,3)))
 
-                We check the other portion of :trac:`16718` is fixed::
+                We check the other portion of :issue:`16718` is fixed::
 
                     sage: len(C.j_classes())                                            # needs sage.groups
                     1

@@ -328,7 +328,7 @@ cdef class IndexFaceSet(PrimitiveObject):
          [(1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 7.0)]]
         sage: S.show()
 
-    A simple example of colored IndexFaceSet (:trac:`12212`)::
+    A simple example of colored IndexFaceSet (:issue:`12212`)::
 
         sage: from sage.plot.plot3d.index_face_set import IndexFaceSet
         sage: from sage.plot.plot3d.texture import Texture
@@ -1084,7 +1084,7 @@ cdef class IndexFaceSet(PrimitiveObject):
 
         TESTS:
 
-        One test for preservation of transparency :trac:`28783`::
+        One test for preservation of transparency :issue:`28783`::
 
             sage: # needs sage.symbolic
             sage: x,y,z = var('x,y,z')

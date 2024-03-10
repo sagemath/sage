@@ -212,7 +212,7 @@ def list_plot3d(v, interpolation_type='default', point_list=None, **kwds):
         sphinx_plot(L)
 
 
-    Check that no NaNs are produced (see :trac:`13135`)::
+    Check that no NaNs are produced (see :issue:`13135`)::
 
         sage: any(math.isnan(c) for v in L.vertices() for c in v)
         False

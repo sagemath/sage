@@ -93,11 +93,11 @@ AUTHORS:
 
 - Jason Bandlow and Florent Hivert (2010): Triangular Morphisms
 
-- Christian Stump (2010): :trac:`9648` module_morphism's to a wider class
+- Christian Stump (2010): :issue:`9648` module_morphism's to a wider class
   of codomains
 
-Before :trac:`8678`, this hierarchy of classes used to be in
-sage.categories.modules_with_basis; see :trac:`8678` for the complete log.
+Before :issue:`8678`, this hierarchy of classes used to be in
+sage.categories.modules_with_basis; see :issue:`8678` for the complete log.
 """
 
 # ****************************************************************************
@@ -652,7 +652,7 @@ class TriangularModuleMorphism(ModuleMorphism):
             ....:                         inverse_on_support="compute")
             sage: TestSuite(phi).run(skip=["_test_pickling"])
 
-        Pickling works in Python3 (:trac:`17957`)::
+        Pickling works in Python3 (:issue:`17957`)::
 
             sage: phi = X.module_morphism(lt, triangular="lower", codomain=X,
             ....:                         inverse_on_support="compute")
@@ -1046,7 +1046,7 @@ class TriangularModuleMorphism(ModuleMorphism):
             ...
             NotImplementedError: coreduce for a triangular but not unitriangular morphism over a ring
 
-        .. NOTE:: Before :trac:`8678` this method used to be called co_reduced.
+        .. NOTE:: Before :issue:`8678` this method used to be called co_reduced.
         """
         G = self.codomain()
         if G.base_ring() not in Fields() and not self._unitriangular:
@@ -1313,7 +1313,7 @@ class ModuleMorphismFromMatrix(ModuleMorphismByLinearity):
             True
             sage: TestSuite(phi).run(skip=["_test_pickling"])
 
-        Pickling works (:trac:`17957`) in Python 3::
+        Pickling works (:issue:`17957`) in Python 3::
 
             sage: phi._on_basis
             <built-in method __getitem__ of dict object at ...>

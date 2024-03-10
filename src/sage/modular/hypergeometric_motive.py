@@ -1308,7 +1308,7 @@ class HypergeometricData():
 
         TESTS:
 
-        Check issue from :trac:`28404`::
+        Check issue from :issue:`28404`::
 
             sage: H1 = Hyp(cyclotomic=([1,1,1],[6,2]))
             sage: H2 = Hyp(cyclotomic=([6,2],[1,1,1]))
@@ -1323,7 +1323,7 @@ class HypergeometricData():
             sage: H.padic_H_value(101, 2, 2)
             -1560629
 
-        Check issue from :trac:`29778`::
+        Check issue from :issue:`29778`::
 
             sage: H = Hyp(alpha_beta=([1/5,2/5,3/5,4/5,1/5,2/5,3/5,4/5], [1/4,3/4,1/7,2/7,3/7,4/7,5/7,6/7]))
             sage: try:
@@ -1452,7 +1452,7 @@ class HypergeometricData():
             sage: [H.H_value(5,i,-1, ComplexField(60)) for i in range(1,3)]
             [-4, 276]
 
-        Check issue from :trac:`28404`::
+        Check issue from :issue:`28404`::
 
             sage: H1 = Hyp(cyclotomic=([1,1,1],[6,2]))
             sage: H2 = Hyp(cyclotomic=([6,2],[1,1,1]))
@@ -1463,7 +1463,7 @@ class HypergeometricData():
 
         TESTS:
 
-        Check issue from :trac:`29778`::
+        Check issue from :issue:`29778`::
 
             sage: H = Hyp(alpha_beta=([1/5,2/5,3/5,4/5,1/5,2/5,3/5,4/5], [1/4,3/4,1/7,2/7,3/7,4/7,5/7,6/7]))
             sage: try:
@@ -1559,7 +1559,7 @@ class HypergeometricData():
             sage: [H.sign(1/t,p) for p in [11,13,17,19,23,29]]
             [-1, -1, -1, 1, 1, 1]
 
-        We check that :trac:`28404` is fixed::
+        We check that :issue:`28404` is fixed::
 
             sage: H = Hyp(cyclotomic=([1,1,1],[6,2]))
             sage: [H.sign(4,p) for p in [5,7,11,13,17,19]]
@@ -1671,7 +1671,7 @@ class HypergeometricData():
             sage: H.euler_factor(2, 11, cache_p=True)
             -T^4 + T^3 - T + 1
 
-        Check issue from :trac:`29778`::
+        Check issue from :issue:`29778`::
 
             sage: H = Hyp(alpha_beta=([1/5,2/5,3/5,4/5,1/5,2/5,3/5,4/5], [1/4,3/4,1/7,2/7,3/7,4/7,5/7,6/7]))
             sage: try:

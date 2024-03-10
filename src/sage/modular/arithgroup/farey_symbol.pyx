@@ -418,13 +418,13 @@ cdef class Farey:
             sage: g == g1
             True
 
-        Check that it works for GammaH as well (:trac:`19660`)::
+        Check that it works for GammaH as well (:issue:`19660`)::
 
             sage: G = GammaH(147, [8])
             sage: G.farey_symbol().word_problem(G([1,1,0,1]))
             (1,)
 
-        Check that :trac:`20347` is solved::
+        Check that :issue:`20347` is solved::
 
             sage: from sage.misc.misc_c import prod
             sage: G = ArithmeticSubgroup_Permutation(S2="(1,2)(3,4)",S3="(1,2,3)")

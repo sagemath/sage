@@ -109,7 +109,7 @@ class SkewTableau(ClonableList,
             sage: st = SkewTableau([[None,1,1],[None,2],[4]])
             sage: TestSuite(st).run()
 
-        A skew tableau is immutable, see :trac:`15862`::
+        A skew tableau is immutable, see :issue:`15862`::
 
             sage: T = SkewTableau([[None,2],[2]])
             sage: t0 = T[0]
@@ -204,7 +204,7 @@ class SkewTableau(ClonableList,
 
         EXAMPLES:
 
-        Check that :trac:`35137` is fixed::
+        Check that :issue:`35137` is fixed::
 
             sage: t = SkewTableau([[None,1,2]])
             sage: hash(t) == hash(tuple(t))

@@ -3346,7 +3346,7 @@ def RSK_inverse(p, q, output='array', insertion=InsertionRules.RSK):
         ...
         ValueError: p(=[[1, 2, 3]]) and q(=[[1, 2]]) must have the same shape
 
-    Check that :trac:`20430` is fixed::
+    Check that :issue:`20430` is fixed::
 
         sage: RSK([1,1,1,1,1,1,1,2,2,2,3], [1,1,1,1,1,1,3,2,2,2,1])
         [[[1, 1, 1, 1, 1, 1, 1, 2, 2], [2], [3]],

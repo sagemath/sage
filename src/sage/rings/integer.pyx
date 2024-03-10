@@ -113,7 +113,7 @@ AUTHORS:
 
 - David Roe (2012-03): deprecate :meth:`~sage.rings.integer.Integer.is_power`
   in favour of :meth:`~sage.rings.integer.Integer.is_perfect_power` (see
-  :trac:`12116`)
+  :issue:`12116`)
 
 - Vincent Delecroix (2017-05-03): faster integer-rational comparisons
 
@@ -121,7 +121,7 @@ AUTHORS:
 
 - Vincent Klein (2017-05-22): Integer constructor support gmpy2.mpz parameter
 
-- Samuel Lelièvre (2018-08-02): document that divisors are sorted (:trac:`25983`)
+- Samuel Lelièvre (2018-08-02): document that divisors are sorted (:issue:`25983`)
 """
 # ****************************************************************************
 #       Copyright (C) 2004, 2006 William Stein <wstein@gmail.com>
@@ -379,7 +379,7 @@ cdef class IntegerWrapper(Integer):
             sage: n.parent()
             Set of all prime numbers: 2, 3, 5, 7, ...
 
-        Pickling seems to work now (as of :trac:`10314`)::
+        Pickling seems to work now (as of :issue:`10314`)::
 
             sage: nn = loads(dumps(n))
             sage: nn
@@ -532,7 +532,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: Integer('0X2AEEF')
             175855
 
-        Test conversion from PARI (:trac:`11685`)::
+        Test conversion from PARI (:issue:`11685`)::
 
             sage: # needs sage.libs.pari
             sage: ZZ(pari(-3))
@@ -582,7 +582,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: a == ZZ(L, base=2^64)
             True
 
-        Test comparisons with numpy types (see :trac:`13386` and :trac:`18076`)::
+        Test comparisons with numpy types (see :issue:`13386` and :issue:`18076`)::
 
             sage: import numpy                                                          # needs numpy
             sage: numpy.int8('12') == 12                                                # needs numpy
@@ -746,7 +746,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: v[Integer(2):Integer(4)]
             [3, 4]
 
-        See :trac:`20750`::
+        See :issue:`20750`::
 
             sage: import re
             sage: p = re.compile('(a)b')
@@ -871,7 +871,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: all((a > b) == (RR(a) > RR(b)) for (a, b) in zip(Ilist, flist))
             True
 
-        Verify that :trac:`12149` was fixed (and the fix is consistent
+        Verify that :issue:`12149` was fixed (and the fix is consistent
         with Python ints)::
 
             sage: a = int(1); b = 1; n = float('nan')
@@ -2175,7 +2175,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             TypeError: no canonical coercion from Univariate Polynomial
             Ring in t over Rational Field to Rational Field
 
-        Test for :trac:`34143`::
+        Test for :issue:`34143`::
 
             sage: pow(5,7,13).parent()
             Integer Ring
@@ -2820,12 +2820,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: log(0)                                                                # needs sage.symbolic
             -Infinity
 
-        Some rational bases yield integer logarithms (:trac:`21517`)::
+        Some rational bases yield integer logarithms (:issue:`21517`)::
 
             sage: ZZ(8).log(1/2)
             -3
 
-        Check that Python ints are accepted (:trac:`21518`)::
+        Check that Python ints are accepted (:issue:`21518`)::
 
             sage: ZZ(8).log(int(2))
             3
@@ -3344,7 +3344,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: [int(a) % b for a,b in signs] == control
             True
 
-        This example caused trouble in :trac:`6083`::
+        This example caused trouble in :issue:`6083`::
 
             sage: a = next_prime(2**31)                                                 # needs sage.libs.pari
             sage: b = Integers(a)(100)                                                  # needs sage.libs.pari
@@ -3433,14 +3433,14 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         TESTS:
 
         The divisor can be rational as well, although the remainder
-        will always be zero (:trac:`7965`)::
+        will always be zero (:issue:`7965`)::
 
             sage: 5.quo_rem(QQ(2))
             (5/2, 0)
             sage: 5.quo_rem(2/3)
             (15/2, 0)
 
-        Check that :trac:`29009` is fixed:
+        Check that :issue:`29009` is fixed:
 
             sage: divmod(1, sys.maxsize+1r)  # should not raise OverflowError: Python int too large to convert to C long
             (0, 1)
@@ -3546,7 +3546,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         TESTS:
 
-        Check that :trac:`9345` is fixed::
+        Check that :issue:`9345` is fixed::
 
             sage: 0.rational_reconstruction(0)
             Traceback (most recent call last):
@@ -3668,7 +3668,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: hash(1-n) == hash(int(1-n))
             True
 
-        These tests come from :trac:`4957`::
+        These tests come from :issue:`4957`::
 
             sage: n = 2^31 + 2^13
             sage: hash(n)             # random
@@ -4711,7 +4711,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         EXAMPLES:
 
-        This example addresses :trac:`23502`::
+        This example addresses :issue:`23502`::
 
             sage: n = 6
             sage: n.round()
@@ -5220,7 +5220,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             True
             sage: proof.arithmetic(True)
 
-        We check that :trac:`4777` is fixed::
+        We check that :issue:`4777` is fixed::
 
             sage: n = 150607571^14
             sage: n.is_prime_power()                                                    # needs sage.libs.pari
@@ -5543,7 +5543,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         TESTS:
 
         This is a test to make sure we work around a bug in GMP, see
-        :trac:`4612`.
+        :issue:`4612`.
 
         ::
 
@@ -6461,7 +6461,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: type(0.sqrt(prec=53))                                                 # needs sage.rings.real_mpfr
             <class 'sage.rings.real_mpfr.RealNumber'>
 
-        Check that :trac:`9466` and :trac:`26509` are fixed::
+        Check that :issue:`9466` and :issue:`26509` are fixed::
 
             sage: 3.sqrt(extend=False, all=True)
             []
@@ -6525,7 +6525,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             There is no guarantee that the cofactors will be minimal. If you
             need the cofactors to be minimal use :meth:`_xgcd`. Also, using
             :meth:`_xgcd` directly might be faster in some cases, see
-            :trac:`13628`.
+            :issue:`13628`.
 
         EXAMPLES::
 
@@ -6939,12 +6939,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             ...
             ZeroDivisionError: inverse of Mod(..., ...) does not exist
 
-        We check that :trac:`10625` is fixed::
+        We check that :issue:`10625` is fixed::
 
             sage: ZZ(2).inverse_mod(ZZ.ideal(3))
             2
 
-        We check that :trac:`9955` is fixed::
+        We check that :issue:`9955` is fixed::
 
             sage: Rational(3) % Rational(-1)
             0
@@ -7109,7 +7109,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sage: 13.binomial(2r)
             78
 
-        Check that it can be interrupted (:trac:`17852`)::
+        Check that it can be interrupted (:issue:`17852`)::
 
             sage: alarm(0.5); (2^100).binomial(2^22, algorithm='mpir')
             Traceback (most recent call last):
@@ -7117,7 +7117,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             AlarmInterrupt
 
         For PARI, we try 10 interrupts with increasing intervals to
-        check for reliable interrupting, see :trac:`18919`::
+        check for reliable interrupting, see :issue:`18919`::
 
             sage: from cysignals import AlarmInterrupt
             sage: for i in [1..10]:             # long time (5s)                        # needs sage.libs.pari
@@ -7358,7 +7358,7 @@ def GCD_list(v):
         sage: type(w)
         <class 'sage.rings.integer.Integer'>
 
-    Check that the bug reported in :trac:`3118` has been fixed::
+    Check that the bug reported in :issue:`3118` has been fixed::
 
         sage: sage.rings.integer.GCD_list([2,2,3])
         1
@@ -7372,7 +7372,7 @@ def GCD_list(v):
         sage: type(w)
         <class 'sage.rings.integer.Integer'>
 
-    Check that the GCD of the empty list is zero (:trac:`17257`)::
+    Check that the GCD of the empty list is zero (:issue:`17257`)::
 
         sage: GCD_list([])
         0
@@ -7546,7 +7546,7 @@ cdef int sizeof_Integer
 # from. DO NOT INITIALIZE IT AGAIN and DO NOT REFERENCE IT!
 cdef Integer global_dummy_Integer
 global_dummy_Integer = Integer()
-# Reallocate to one limb to fix :trac:`31340` and :trac:`33081`
+# Reallocate to one limb to fix :issue:`31340` and :issue:`33081`
 _mpz_realloc(global_dummy_Integer.value, 1)
 
 
@@ -7561,7 +7561,7 @@ def _check_global_dummy_Integer():
         True
     """
     # Check that it has exactly one limb allocated
-    # This is assumed later in fast_tp_new() :trac:`33081`
+    # This is assumed later in fast_tp_new() :issue:`33081`
     cdef mpz_ptr dummy = global_dummy_Integer.value
     if dummy._mp_alloc == 1 and dummy._mp_size == 0:
         return True
@@ -7827,7 +7827,7 @@ cdef double mpz_get_d_nearest(mpz_t x) except? -648555075988944.5:
 
     AUTHORS:
 
-    - Jeroen Demeyer (:trac:`16385`, based on :trac:`14416`)
+    - Jeroen Demeyer (:issue:`16385`, based on :issue:`14416`)
     """
     cdef mp_bitcnt_t sx = mpz_sizeinbase(x, 2)
 

@@ -227,7 +227,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
         TESTS:
 
-        The following test from :trac:`12173` used to be horribly slow::
+        The following test from :issue:`12173` used to be horribly slow::
 
             sage: a = ZZ['x'](range(100000))
             sage: R = Integers(3)['x']
@@ -346,7 +346,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             sage: r.parent() is GF(19)
             True
 
-        The following example shows that :trac:`11782` has been fixed::
+        The following example shows that :issue:`11782` has been fixed::
 
             sage: R.<x> = ZZ.quo(9)['x']
             sage: f = 2*x^3 + x^2 + x;  g = 6*x^2 + 2*x + 1
@@ -658,7 +658,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
             ...
             NotImplementedError: square free factorization of polynomials over rings with composite characteristic is not implemented
 
-        :trac:`20003`::
+        :issue:`20003`::
 
             sage: P.<x> = GF(7)[]
             sage: (6*x+3).squarefree_decomposition()
