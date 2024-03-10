@@ -307,6 +307,8 @@ def set_intersphinx_mappings(app, config):
                 # projects. Cross-references will not be resolved in that case, but the
                 # docbuild will still succeed.
                 inventories.append(python_inventory_file)
+        assert link_target
+        app.config.intersphinx_mapping[key] = (link_target, tuple(inventories))
 
     # Add master intersphinx mapping
     dst = os.path.join(invpath, 'objects.inv')
