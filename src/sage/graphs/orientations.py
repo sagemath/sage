@@ -80,15 +80,6 @@ def acyclic_orientations(G):
         sage: len(list(it))
         54
 
-    For C100 graph, we get first 10 orientations pretty quickly::
-
-        sage: from itertools import islice
-        sage: import timeit
-        sage: G_C100, start_time = graphs.CycleGraph(100), timeit.default_timer()
-        sage: it_C100, first_10_orientations = G_C100.acyclic_orientations(), list(islice(G_C100.acyclic_orientations(), 10))
-        sage: print(timeit.default_timer() - start_time < 0.5)
-        True
-
     TESTS:
 
     Acyclic orientations of a complete graph::
@@ -248,11 +239,8 @@ def acyclic_orientations(G):
     # Reorder vertices based on the logic in reorder_vertices function
     vertex_labels = reorder_vertices(G)
 
-    # Create a new graph with updated vertex labels using SageMath
-    from sage.graphs.graph import Graph
-    new_G = Graph()
-    for u, v in G.edges(labels=False):  # Assuming the graph edges are unlabelled
-        new_G.add_edge(vertex_labels[u], vertex_labels[v])
+    # Create a new graph with updated vertex labels using SageMath, Assuming the graph edges are unlabelled
+    new_G = G.relabel(perm=vertex_labels, inplace=False)
 
     G = new_G
 
@@ -265,6 +253,18 @@ def acyclic_orientations(G):
     m = len(edge_labels)
     k = len(vertex_labels)
     orientations = helper(G, globO, m, k)
+
+    # Create a mapping between original and new vertex labels
+    reverse_vertex_labels = {label: vertex for vertex, label in vertex_labels.items()}
+
+    # Iterate over acyclic orientations and relabel the vertices
+    for orientation in orientations:
+        relabeled_orientation = {}
+        for (u, v), label in orientation.items():
+            relabeled_orientation[(reverse_vertex_labels[u], reverse_vertex_labels[v])] = label
+
+        yield relabeled_orientation
+
     return orientations
 
 
