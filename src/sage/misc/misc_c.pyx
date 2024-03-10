@@ -735,7 +735,7 @@ def cyflush():
     Starting with Python 3, some output from external libraries (like
     FLINT) is not flushed, and so if a doctest produces such output,
     the output may not appear until a later doctest. See
-    :trac:`28649`.
+    :issue:`28649`.
 
     Use this function after a doctest which produces potentially
     unflushed output to force it to be flushed.

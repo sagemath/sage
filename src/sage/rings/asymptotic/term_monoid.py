@@ -3861,7 +3861,7 @@ class ExactTerm(TermWithCoefficient):
             sage: ET(x^0, coefficient=42)
             42
 
-        Check that :trac:`19576` is fixed::
+        Check that :issue:`19576` is fixed::
 
             sage: C.<c> = AsymptoticRing('c^ZZ', SR)
             sage: (1+pi)*c

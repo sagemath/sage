@@ -241,7 +241,7 @@ class Gamma_class(CongruenceSubgroup):
             sage: all(c == G.reduce_cusp(c) for c in G.cusps())
             True
 
-        We test that :trac:`36163` is fixed::
+        We test that :issue:`36163` is fixed::
 
             sage: Gamma(7).reduce_cusp(Cusp(6,7))
             Infinity

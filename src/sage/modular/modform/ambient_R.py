@@ -93,7 +93,7 @@ class ModularFormsAmbient_R(ambient.ModularFormsAmbient):
 
         TESTS:
 
-        This checks that :trac:`13445` is fixed::
+        This checks that :issue:`13445` is fixed::
 
             sage: M = ModularForms(Gamma0(11), base_ring=GF(11))
             sage: S = M.cuspidal_subspace()

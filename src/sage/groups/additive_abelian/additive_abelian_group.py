@@ -311,7 +311,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class, AbelianGroup):
 
         TESTS:
 
-        Check that :trac:`21027` is fixed::
+        Check that :issue:`21027` is fixed::
 
             sage: G = AdditiveAbelianGroup([2,2,2])
             sage: phi = G.hom([G.0, G.0, G.0])
@@ -455,7 +455,7 @@ class AdditiveAbelianGroup_fixed_gens(AdditiveAbelianGroup_class):
 
         TESTS:
 
-        Check that :trac:`25692` is fixed::
+        Check that :issue:`25692` is fixed::
 
             sage: G = AdditiveAbelianGroup([0])
             sage: G.permutation_group()
