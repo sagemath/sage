@@ -83,12 +83,12 @@ def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
 
     TESTS:
 
-    Test that :trac:`5102` is fixed::
+    Test that :issue:`5102` is fixed::
 
         sage: eisenstein_series_qexp(10, 30, GF(17))
         15 + q + 3*q^2 + 15*q^3 + 7*q^4 + 13*q^5 + 11*q^6 + 11*q^7 + 15*q^8 + 7*q^9 + 5*q^10 + 7*q^11 + 3*q^12 + 14*q^13 + 16*q^14 + 8*q^15 + 14*q^16 + q^17 + 4*q^18 + 3*q^19 + 6*q^20 + 12*q^21 + 4*q^22 + 12*q^23 + 4*q^24 + 4*q^25 + 8*q^26 + 14*q^27 + 9*q^28 + 6*q^29 + O(q^30)
 
-    This shows that the bug reported at :trac:`8291` is fixed::
+    This shows that the bug reported at :issue:`8291` is fixed::
 
         sage: eisenstein_series_qexp(26, 10, GF(13))
         7 + q + 3*q^2 + 4*q^3 + 7*q^4 + 6*q^5 + 12*q^6 + 8*q^7 + 2*q^8 + O(q^10)
@@ -124,7 +124,7 @@ def eisenstein_series_qexp(k, prec=10, K=QQ, var='q', normalization='linear'):
     - David Loeffler (2010-04-07): work around an integer overflow when `k` is large
 
     - David Loeffler (2012-03-15): add options for alternative normalizations
-      (motivated by :trac:`12043`)
+      (motivated by :issue:`12043`)
     """
     # we use this to prevent computation if it would fail anyway.
     if k <= 0 or k % 2 == 1:

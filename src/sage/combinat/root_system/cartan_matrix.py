@@ -256,7 +256,7 @@ class CartanMatrix(Base, CartanType_abstract,
 
         TESTS:
 
-        Check that :trac:`15740` is fixed::
+        Check that :issue:`15740` is fixed::
 
             sage: # needs sage.graphs
             sage: d = DynkinDiagram()

@@ -22,7 +22,7 @@ Author:
 
 - David Coudert (10-2018), use maximal cliques iterator in :meth:`root_graph`,
   and use :meth:`root_graph` instead of forbidden subgraph search in
-  :meth:`is_line_graph` (:trac:`26444`).
+  :meth:`is_line_graph` (:issue:`26444`).
 
 Definition
 -----------
@@ -206,7 +206,7 @@ def is_line_graph(g, certificate=False):
         sage: g.line_graph().is_isomorphic(gl)                                          # needs sage.modules
         True
 
-    Verify that :trac:`29740` is fixed::
+    Verify that :issue:`29740` is fixed::
 
         sage: g = Graph('O{e[{}^~z`MDZBZBkXzE^')
         sage: g.is_line_graph()
@@ -340,7 +340,7 @@ def line_graph(g, labels=True):
 
     TESTS:
 
-    :trac:`13787`::
+    :issue:`13787`::
 
         sage: g = graphs.KneserGraph(7,1)
         sage: C = graphs.CompleteGraph(7)

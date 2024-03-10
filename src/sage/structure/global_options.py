@@ -648,7 +648,7 @@ class Option():
 
         TESTS:
 
-        Check that values can be set to ``None`` (:trac:`30763`)::
+        Check that values can be set to ``None`` (:issue:`30763`)::
 
             sage: from sage.structure.global_options import GlobalOptions
             sage: class config(GlobalOptions):

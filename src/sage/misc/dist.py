@@ -65,7 +65,7 @@ def install_scripts(directory=None, ignore_existing=False):
 
     - Arthur Gaer: design
 
-    - John Palmieri: revision, 2011-07 (:trac:`11602`)
+    - John Palmieri: revision, 2011-07 (:issue:`11602`)
 
     EXAMPLES::
 

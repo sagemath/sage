@@ -282,7 +282,7 @@ def density_plot(f, xrange, yrange, **options):
 
     TESTS:
 
-    Check that :trac:`15315` is fixed, i.e., density_plot respects the
+    Check that :issue:`15315` is fixed, i.e., density_plot respects the
     ``aspect_ratio`` parameter. Without the fix, it looks like a thin line
     of width a few mm. With the fix it should look like a nice fat layered
     image::
@@ -295,7 +295,7 @@ def density_plot(f, xrange, yrange, **options):
         sage: density_plot((x*y)^(1/2), (x,0,3), (y,0,500))
         Graphics object consisting of 1 graphics primitive
 
-    Check that :trac:`17684` is fixed, i.e., symbolic values can be plotted::
+    Check that :issue:`17684` is fixed, i.e., symbolic values can be plotted::
 
         sage: def f(x,y):
         ....:     return SR(x)

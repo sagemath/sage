@@ -802,7 +802,7 @@ class DiffFormFreeModule(ExtPowerDualFreeModule):
             sage: A(0) is A.zero()
             True
 
-        Check that :trac:`27658` is fixed::
+        Check that :issue:`27658` is fixed::
 
             sage: f = M.scalar_field(x)
             sage: f in A
