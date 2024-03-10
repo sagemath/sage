@@ -21,7 +21,7 @@ rings but rather quotients of them (see module
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.structure.category_object import normalize_names
-import sage.rings.ring as ring
+from sage.rings.ring import is_Ring, IntegralDomain
 
 try:
     import sage.rings.padics.padic_base_leaves as padic_base_leaves
@@ -621,7 +621,7 @@ def PolynomialRing(base_ring, *args, **kwds):
         sage: R.<x,y> = PolynomialRing(RIF,2)
         sage: TestSuite(R).run(skip=['_test_elements', '_test_elements_eq_transitive'])
     """
-    if not ring.is_Ring(base_ring):
+    if not is_Ring(base_ring):
         raise TypeError("base_ring {!r} must be a ring".format(base_ring))
 
     n = -1  # Unknown number of variables
@@ -860,7 +860,7 @@ def _multi_variate(base_ring, names, sparse=None, order="degrevlex", implementat
 
     if R is None and implementation == "generic":
         from . import multi_polynomial_ring
-        if isinstance(base_ring, ring.IntegralDomain):
+        if isinstance(base_ring, IntegralDomain):
             constructor = multi_polynomial_ring.MPolynomialRing_polydict_domain
         else:
             constructor = multi_polynomial_ring.MPolynomialRing_polydict

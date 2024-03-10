@@ -37,7 +37,7 @@ TODO -- much functionality of gfan-0.3 is still not exposed::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
 from subprocess import Popen, PIPE
@@ -45,6 +45,7 @@ from subprocess import Popen, PIPE
 from sage.features.gfan import GfanExecutable
 
 from sage.misc.decorators import rename_keyword
+
 
 class Gfan():
     """

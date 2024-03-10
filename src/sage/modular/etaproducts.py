@@ -183,7 +183,7 @@ class EtaGroupElement(Element):
         P = self.parent()
         return P.element_class(P, newdict)
 
-    def is_one(self):
+    def is_one(self) -> bool:
         r"""
         Return whether ``self`` is the one of the monoid.
 
@@ -323,7 +323,7 @@ class EtaGroupElement(Element):
         """
         return self.q_expansion(n)
 
-    def order_at_cusp(self, cusp: 'CuspFamily') -> Integer:
+    def order_at_cusp(self, cusp: CuspFamily) -> Integer:
         r"""
         Return the order of vanishing of ``self`` at the given cusp.
 
@@ -492,7 +492,7 @@ class EtaGroup_class(UniqueRepresentation, Parent):
         """
         return self._N
 
-    def basis(self, reduce=True):
+    def basis(self, reduce=True) -> list:
         r"""
         Produce a basis for the free abelian group of eta-products of level
         N (under multiplication), attempting to find basis vectors of the
@@ -570,7 +570,7 @@ class EtaGroup_class(UniqueRepresentation, Parent):
         else:
             return [self(d) for d in dicts]
 
-    def reduce_basis(self, long_etas):
+    def reduce_basis(self, long_etas) -> list:
         r"""
         Produce a more manageable basis via LLL-reduction.
 
@@ -693,7 +693,7 @@ def num_cusps_of_width(N, d) -> Integer:
     return euler_phi(d.gcd(N // d))
 
 
-def AllCusps(N):
+def AllCusps(N) -> list:
     r"""
     Return a list of CuspFamily objects corresponding to the cusps of
     `X_0(N)`.

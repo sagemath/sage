@@ -560,7 +560,6 @@ import operator
 
 import sage.rings.abc
 import sage.rings.number_field.number_field_base
-import sage.rings.ring
 from sage.arith.misc import factor
 from sage.categories.action import Action
 from sage.misc.cachefunc import cached_method

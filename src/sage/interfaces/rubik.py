@@ -170,18 +170,18 @@ class OptimalSolver:
 
 
 move_map = {
-    "LD":"L'",
-    "LU":"L",
-    "RD":"R",
-    "RU":"R'",
-    "FA":"F",
-    "FC":"F'",
-    "BA":"B'",
-    "BC":"B",
-    "UR":"U",
-    "UL":"U'",
-    "DR":"D'",
-    "DL":"D"
+    "LD": "L'",
+    "LU": "L",
+    "RD": "R",
+    "RU": "R'",
+    "FA": "F",
+    "FC": "F'",
+    "BA": "B'",
+    "BC": "B",
+    "UR": "U",
+    "UL": "U'",
+    "DR": "D'",
+    "DL": "D"
 }
 
 
@@ -231,7 +231,7 @@ class CubexSolver:
         facet_colors = [0] * 54
         for i in range(48):
             f = facets[i]-1
-            f += (f+4) // 8 # to compensate for the centers
+            f += (f + 4) // 8  # to compensate for the centers
             facet_colors[f] = colors[i]
         for i in range(6):
             facet_colors[i*9+4] = i+1
@@ -272,7 +272,7 @@ class DikSolver:
         # on OS X.  The Dik C program itself will need to be fixed.
         # See trac #1683. (TODO)      -- willem jp, wstein, mabshoff
         child.send(chr(4))
-        #child.sendeof()
+        # child.sendeof()
 
         ix = child.expect(['Solution[^\n]*:', pexpect.EOF, pexpect.TIMEOUT], timeout=timeout)
         if ix == 0:
@@ -300,7 +300,7 @@ class DikSolver:
             raise RuntimeError("timeout")
 
     def format_cube(self, facets):
-        colors = sum([[i]*8 for i in range(1,7)], [])
+        colors = sum([[i] * 8 for i in range(1, 7)], [])
         facet_colors = [0] * 54
         for i in range(48):
             f = self.facet_map.index(facets[i])
@@ -308,8 +308,8 @@ class DikSolver:
         # now do the centers
         facet_colors[4] = 1
         facet_colors[49] = 6
-        for i in range(2,6):
-            facet_colors[16+i*3] = i
+        for i in range(2, 6):
+            facet_colors[16 + i * 3] = i
         return "".join(str(c) for c in facet_colors)
 
     facet_map = [      1,  2,  3,
@@ -325,7 +325,6 @@ class DikSolver:
 
     # to compensate for different face naming
     rot_map = dict(zip("BLURDF", "ULFRBD"))
-
 
 #    facet_map = [
 #                      1,  2,  3,

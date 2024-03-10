@@ -2003,7 +2003,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                                 return (B, [self._vertex_to_element(e) for e in A])
                             else:
                                 return B
-        assert False, "BUG: breadth() in lattices.py have an error."
+        raise RuntimeError("BUG: breadth() in lattices.py have an error")
 
     def complements(self, element=None):
         r"""
@@ -3089,11 +3089,10 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
                 self._hasse_diagram.vertical_decomposition(return_list=True) +
                 [self.cardinality() - 1])
         n = len(elms)
-        result = []
-        for i in range(n - 1):
-            result.append(LatticePoset(
-                self.subposet([self[e] for e in range(elms[i], elms[i + 1] + 1)])))
-        return result
+        return [LatticePoset(self.subposet([self[e]
+                                            for e in range(elms[i],
+                                                           elms[i + 1] + 1)]))
+                for i in range(n - 1)]
 
     def is_vertically_decomposable(self, certificate=False):
         r"""
@@ -3461,8 +3460,8 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: sorted(L.frattini_sublattice().list())
             [1, 2, 4, 10, 19, 22, 33]
         """
-        return LatticePoset(self.subposet([self[x] for x in
-                self._hasse_diagram.frattini_sublattice()]))
+        return LatticePoset(self.subposet([self[x]
+                for x in self._hasse_diagram.frattini_sublattice()]))
 
     def moebius_algebra(self, R):
         """
@@ -3634,9 +3633,9 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
         if not isinstance(other, FiniteLatticePoset):
             raise ValueError("other is not a finite lattice")
         if not self.is_greater_than(b, a):
-            raise ValueError("element %s is not greater than %s in the lattice" % (b, a))
+            raise ValueError(f"element {b} is not greater than {a} in the lattice")
         if self.covers(a, b):
-            raise ValueError("element %s covers element %s in the lattice" % (b, a))
+            raise ValueError(f"element {b} covers element {a} in the lattice")
 
         if other.cardinality() == 0:
             return self.relabel(lambda e: (0, e))

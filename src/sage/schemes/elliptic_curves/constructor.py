@@ -921,7 +921,7 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
         sage: f([1,-1,1])
         Traceback (most recent call last):
         ...
-        ValueError: [0, 0, 0] does not define a valid point since all entries are 0
+        ValueError: [0, 0, 0] does not define a valid projective point since all entries are zero
 
     Using the group law on the codomain elliptic curve, which has rank
     1 and full 2-torsion, and the inverse morphism, we can find many
@@ -950,10 +950,10 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
     The elliptic curve also has torsion, which we can map back::
 
         sage: E.torsion_points()
-        [(-144000000/17689 : 3533760000000/2352637 : 1),
-        (-92160000/17689 : 2162073600000/2352637 : 1),
-        (-5760000/17689 : -124070400000/2352637 : 1),
-        (0 : 1 : 0)]
+        [(0 : 1 : 0),
+         (-144000000/17689 : 3533760000000/2352637 : 1),
+         (-92160000/17689 : 2162073600000/2352637 : 1),
+         (-5760000/17689 : -124070400000/2352637 : 1)]
         sage: [finv(Q) for Q in E.torsion_points() if Q]
         [(9 : -9/4 : 1), (-9 : 0 : 1), (0 : 1 : 0)]
 

@@ -365,7 +365,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             sage: CuspForms(DirichletGroup(11).0,3).has_character()
             True
         """
-        return not self.character() is None
+        return self.character() is not None
 
     def is_ambient(self):
         """
@@ -1929,6 +1929,6 @@ def contains_each(V, B):
         False
     """
     for b in B:
-        if not (b in V):
+        if b not in V:
             return False
     return True

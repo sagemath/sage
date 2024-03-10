@@ -6,6 +6,7 @@ Quivers
 
    sage/quivers/algebra
    sage/quivers/algebra_elements
+   sage/quivers/ar_quiver
    sage/quivers/homspace
    sage/quivers/morphism
    sage/quivers/path_semigroup

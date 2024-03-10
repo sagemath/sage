@@ -534,8 +534,8 @@ class ArtinGroup(FinitelyPresentedGroup):
         """
         Return an isomorphic permutation group.
 
-        Raises a ``ValueError`` error since Artin groups are infinite
-        and have no corresponding permutation group.
+        This raises a :class:`ValueError` error since Artin groups are
+        infinite and have no corresponding permutation group.
 
         EXAMPLES::
 

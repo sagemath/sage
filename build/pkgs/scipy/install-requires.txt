@@ -4,4 +4,4 @@
 # deprecations cannot be introduced in micro releases.
 # SciPy devs wait "at least 6 months", "in practice two (minor) releases"
 # from deprecation to removal of a feature.
-scipy >=1.5, <1.12
+scipy >=1.5

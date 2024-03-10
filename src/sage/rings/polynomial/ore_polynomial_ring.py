@@ -27,9 +27,9 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import Infinity
 from sage.structure.category_object import normalize_names
+from sage.structure.parent import Parent
 
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.ring import Algebra
 from sage.rings.integer import Integer
 from sage.structure.element import Element
 
@@ -50,7 +50,7 @@ WORKING_CENTER_MAX_TRIES = 1000
 # Generic implementation of Ore polynomial rings
 #################################################
 
-class OrePolynomialRing(UniqueRepresentation, Algebra):
+class OrePolynomialRing(UniqueRepresentation, Parent):
     r"""
     Construct and return the globally unique Ore polynomial ring with the
     given properties and variable names.
@@ -423,7 +423,8 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
         self._derivation = derivation
         self._fraction_field = None
         category = Algebras(base_ring).or_subcategory(category)
-        Algebra.__init__(self, base_ring, names=name, normalize=True, category=category)
+        Parent.__init__(self, base_ring, names=name,
+                        normalize=True, category=category)
 
     def __reduce__(self):
         r"""
@@ -830,8 +831,6 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
             x
             sage: y == x
             True
-            sage: y is x
-            True
             sage: S.gen(0)
             x
 
@@ -848,12 +847,28 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
             IndexError: generator 1 not defined
         """
         if n != 0:
-            raise IndexError("generator %s not defined" % n)
+            raise IndexError(f"generator {n} not defined")
         return self.Element(self, [0, 1])
 
     parameter = gen
 
-    def gens_dict(self):
+    def gens(self) -> tuple:
+        """
+        Return the tuple of generators of ``self``.
+
+        EXAMPLES::
+
+            sage: R.<t> = QQ[]
+            sage: sigma = R.hom([t+1])
+            sage: S.<x> = R['x',sigma]; S
+            Ore Polynomial Ring in x over Univariate Polynomial Ring in t
+             over Rational Field twisted by t |--> t + 1
+            sage: S.gens()
+            (x,)
+        """
+        return (self.Element(self, [0, 1]),)
+
+    def gens_dict(self) -> dict:
         r"""
         Return a {name: variable} dictionary of the generators of
         this Ore polynomial ring.
@@ -868,7 +883,7 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
         """
         return dict(zip(self.variable_names(), self.gens()))
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         r"""
         Return ``False`` since Ore polynomial rings are not finite
         (unless the base ring is `0`).
@@ -887,9 +902,10 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
         R = self.base_ring()
         return R.is_finite() and R.order() == 1
 
-    def is_exact(self):
+    def is_exact(self) -> bool:
         r"""
         Return ``True`` if elements of this Ore polynomial ring are exact.
+
         This happens if and only if elements of the base ring are exact.
 
         EXAMPLES::
@@ -912,7 +928,7 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
         """
         return self.base_ring().is_exact()
 
-    def is_sparse(self):
+    def is_sparse(self) -> bool:
         r"""
         Return ``True`` if the elements of this Ore polynomial ring are
         sparsely represented.
@@ -932,10 +948,11 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
         """
         return self.__is_sparse
 
-    def ngens(self):
+    def ngens(self) -> int:
         r"""
-        Return the number of generators of this Ore polynomial ring,
-        which is `1`.
+        Return the number of generators of this Ore polynomial ring.
+
+        This is `1`.
 
         EXAMPLES::
 
@@ -998,7 +1015,7 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
         TESTS:
 
         If the first tuple element is greater than the second, a
-        ``ValueError`` is raised::
+        :class:`ValueError` is raised::
 
             sage: S.random_element(degree=(5,4))                                        # needs sage.rings.finite_rings
             Traceback (most recent call last):
@@ -1081,8 +1098,10 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
 
     def is_commutative(self) -> bool:
         r"""
-        Return ``True`` if this Ore polynomial ring is commutative, i.e. if the
-        twisting morphism is the identity and the twisting derivation vanishes.
+        Return ``True`` if this Ore polynomial ring is commutative.
+
+        This holds if the twisting morphism is the identity and the
+        twisting derivation vanishes.
 
         EXAMPLES::
 
@@ -1109,8 +1128,7 @@ class OrePolynomialRing(UniqueRepresentation, Algebra):
 
     def is_field(self, proof=False) -> bool:
         r"""
-        Return always ``False`` since Ore polynomial rings are never
-        fields.
+        Return always ``False`` since Ore polynomial rings are never fields.
 
         EXAMPLES::
 

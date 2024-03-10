@@ -879,7 +879,7 @@ def BIBD_from_PBD(PBD, v, k, check=True, base_cases=None):
     for X in PBD:
         n = len(X)
         N = (k-1)*n+1
-        if not (n,k) in base_cases:
+        if (n,k) not in base_cases:
             base_cases[n,k] = _relabel_bibd(balanced_incomplete_block_design(N,k), N)
 
         for XX in base_cases[n,k]:

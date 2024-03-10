@@ -105,7 +105,7 @@ resolvelinks() {
 # This uses "resolvelinks" to support the use case of symlinking this script
 # into a directory that is in PATH, which was longstanding recommended practice.
 #
-# (The updated README.md and installation manual from Trac #33787 recommend to
+# (The updated README.md and installation manual from Issue #33787 recommend to
 #  symlink the installed version of the src/bin/sage script instead.)
 
 # Get the path to $0 (this shell script) with all symbolic links resolved

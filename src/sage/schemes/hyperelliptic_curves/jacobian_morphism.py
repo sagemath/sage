@@ -187,11 +187,11 @@ def cantor_reduction(a, b, f, h, genus):
     The next point is not 2-torsion::
 
         sage: P = J(H.lift_x(-1)); P
-        (x + 1, y - 1)
+        (x + 1, y)
         sage: 2 * J(H.lift_x(-1)) # indirect doctest
-        (x^2 + 2*x + 1, y - 3*x - 4)
+        (x^2 + 2*x + 1, y + 4*x + 4)
         sage: 3 * J(H.lift_x(-1)) # indirect doctest
-        (x^2 - 487*x - 324, y - 10754*x - 7146)
+        (x^2 - 487*x - 324, y + 10755*x + 7146)
     """
     assert a.degree() < 2*genus+1
     assert b.degree() < a.degree()
@@ -239,15 +239,15 @@ def cantor_composition_simple(D1,D2,f,genus):
 
         sage: # needs sage.rings.number_field
         sage: P = J(H.lift_x(F(1))); P
-        (x - 1, y - a)
+        (x - 1, y + a)
         sage: Q = J(H.lift_x(F(0))); Q
         (x, y)
         sage: 2*P + 2*Q # indirect doctest
-        (x^2 - 2*x + 1, y - 3/2*a*x + 1/2*a)
+        (x^2 - 2*x + 1, y + 3/2*a*x - 1/2*a)
         sage: 2*(P + Q) # indirect doctest
-        (x^2 - 2*x + 1, y - 3/2*a*x + 1/2*a)
+        (x^2 - 2*x + 1, y + 3/2*a*x - 1/2*a)
         sage: 3*P # indirect doctest
-        (x^2 - 25/32*x + 49/32, y - 45/256*a*x - 315/256*a)
+        (x^2 - 25/32*x + 49/32, y + 45/256*a*x + 315/256*a)
     """
     a1, b1 = D1
     a2, b2 = D2
@@ -286,17 +286,16 @@ def cantor_composition(D1,D2,f,h,genus):
     ::
 
         sage: Q = J(H.lift_x(F(1))); Q                                                  # needs sage.rings.finite_rings
-        (x + 6, y + 2*a + 2)
+        (x + 6, y + 5*a)
         sage: 10*Q  # indirect doctest                                                  # needs sage.rings.finite_rings
-        (x^3 + (3*a + 1)*x^2 + (2*a + 5)*x + a + 5,
-         y + (4*a + 5)*x^2 + (a + 1)*x + 6*a + 3)
+        (x^3 + (3*a + 1)*x^2 + (2*a + 5)*x + a + 5, y + (3*a + 2)*x^2 + (6*a + 1)*x + a + 4)
         sage: 7*8297*Q                                                                  # needs sage.rings.finite_rings
         (1)
 
     ::
 
         sage: Q = J(H.lift_x(F(a+1))); Q                                                # needs sage.rings.finite_rings
-        (x + 6*a + 6, y + 2*a)
+        (x + 6*a + 6, y + 2)
         sage: 7*8297*Q  # indirect doctest                                              # needs sage.rings.finite_rings
         (1)
 
@@ -421,7 +420,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
         ::
 
             sage: Q = J(H.lift_x(F(1))); Q  # indirect doctest                          # needs sage.rings.finite_rings
-            (x + 6, y + 2*a + 2)
+            (x + 6, y + 5*a)
         """
         a, b = self.__polys
         P = self.parent()._printing_ring
@@ -447,9 +446,9 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             sage: Q = J(0); Q  # indirect doctest                                       # needs sage.rings.finite_rings
             (1)
             sage: Q = J(H.lift_x(F(1))); Q  # indirect doctest                          # needs sage.rings.finite_rings
-            (x + 6, y + 2*a + 2)
+            (x + 6, y + 5*a)
             sage: Q + Q  # indirect doctest                                             # needs sage.rings.finite_rings
-            (x^2 + 5*x + 1, y + 3*a*x + 6*a + 2)
+            (x^2 + 5*x + 1, y + (4*a + 2)*x + a + 5)
         """
         if self.is_zero():
             return "(1)"
@@ -474,12 +473,12 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             sage: Q = J(0); print(latex(Q))  # indirect doctest                         # needs sage.rings.finite_rings
             \left(1\right)
             sage: Q = J(H.lift_x(F(1))); print(latex(Q))  # indirect doctest            # needs sage.rings.finite_rings
-            \left(x + 6, y + 2 \alpha + 2\right)
+            \left(x + 6, y + 5 \alpha\right)
 
         ::
 
             sage: print(latex(Q + Q))                                                   # needs sage.rings.finite_rings
-            \left(x^{2} + 5 x + 1, y + 3 \alpha x + 6 \alpha + 2\right)
+            \left(x^{2} + 5 x + 1, y + \left(4 \alpha + 2\right) x + \alpha + 5\right)
         """
         if self.is_zero():
             return "\\left(1\\right)"
@@ -537,7 +536,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
             sage: P = J(H.lift_x(F(1)))                                                 # needs sage.rings.number_field
             sage: list(P)  # indirect doctest                                           # needs sage.rings.number_field
-            [x - 1, a]
+            [x - 1, -a]
         """
         return list(self.__polys)
 
@@ -561,7 +560,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
             sage: P = J(H.lift_x(F(1)))                                                 # needs sage.rings.number_field
             sage: tuple(P)  # indirect doctest                                          # needs sage.rings.number_field
-            (x - 1, a)
+            (x - 1, -a)
         """
         return tuple(self.__polys)
 
@@ -588,9 +587,9 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             sage: P[0] # indirect doctest
             x - 1
             sage: P[1] # indirect doctest
-            a
+            -a
             sage: P[-1] # indirect doctest
-            a
+            -a
             sage: P[:1] # indirect doctest
             [x - 1]
         """
@@ -696,9 +695,9 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             sage: H2 = HyperellipticCurve(x^5 + 12*x^4 + 13*x^3 + 15*x^2 + 33*x, x)
             sage: J2 = H2.jacobian()(GF(37))
             sage: P2 = J2(H2.lift_x(2)); P2
-            (x + 35, y + 15)
-            sage: - P2  # indirect doctest
             (x + 35, y + 24)
+            sage: - P2  # indirect doctest
+            (x + 35, y + 15)
             sage: P2 + (-P2)  # indirect doctest
             (1)
 

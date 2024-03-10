@@ -122,7 +122,6 @@ This base class provides a lot more methods than a general parent::
      '_list',
      '_one_element',
      '_pseudo_fraction_field',
-     '_random_nonzero_element',
      '_unit_ideal',
      '_zero_element',
      '_zero_ideal',

@@ -79,7 +79,6 @@ cdef extern from "<complex.h>":
     double cabs(double complex)
 
 import sage.rings.abc
-cimport sage.rings.ring
 cimport sage.rings.integer
 
 from sage.structure.element cimport Element, FieldElement

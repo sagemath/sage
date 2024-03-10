@@ -2,7 +2,7 @@ r"""
 Interface to the Gnuplot interpreter
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,12 +14,13 @@ Interface to the Gnuplot interpreter
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 import os
 import time
 from sage.structure.sage_object import SageObject
+
 
 class Gnuplot(SageObject):
     """
@@ -84,7 +85,7 @@ class Gnuplot(SageObject):
         if reset:
             self('reset')
         self('set terminal x11')
-        cmd = cmd.replace('^','**')
+        cmd = cmd.replace('^', '**')
         self(cmd)
         if file is not None:
             if file[-4:] == '.png':
@@ -93,7 +94,7 @@ class Gnuplot(SageObject):
                 if file[-4:] != '.eps':
                     file += '.eps'
                 self('set terminal postscript eps enhanced')
-            #self("set output '%s'"%file)
+            # self("set output '%s'"%file)
             tmp = 'gnuplot_tmp%s' % file[-4:]
             self("set output '%s'" % tmp)
             print("Saving plot to %s" % file)
@@ -109,7 +110,7 @@ class Gnuplot(SageObject):
                interact=True):
         if title is None:
             title = str(f)
-        f = f.replace('^','**')
+        f = f.replace('^', '**')
         cmd = """
         set xlabel "%s"
         set ylabel "%s"
@@ -126,7 +127,7 @@ class Gnuplot(SageObject):
         #show palette
         splot %s
         """ % (xlabel, ylabel,
-             xmin, xmax, ymin, ymax, #zmin, zmax,
+             xmin, xmax, ymin, ymax,  # zmin, zmax,
              samples, isosamples,
              title, f)
         if interact:
@@ -172,7 +173,7 @@ class Gnuplot(SageObject):
         set pm3d; set palette; set parametric
         splot %s %s %s
         """ % (samples, title, range1, range2, f)
-        cmd = cmd.replace('^','**')
+        cmd = cmd.replace('^', '**')
         if interact:
             self.interact(cmd)
         else:

@@ -295,7 +295,7 @@ cdef int is_subhypergraph_admissible(hypergraph h1,hypergraph * h2_trace,int n,h
 
     return 1
 
-cdef int cmp_128_bits(void * a, void * b) noexcept nogil:
+cdef int cmp_128_bits(const void * a, const void * b) noexcept nogil:
     r"""
     Lexicographic order on 128-bits words
     """

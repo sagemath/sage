@@ -207,21 +207,22 @@ We check that :trac:`17990` is fixed::
     sage: m.rows()                                                                      # needs sage.modules
     [(+Infinity)]
 """
-#*****************************************************************************
+# ****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sys import maxsize
 
 import sage.rings.abc
 
+from sage.categories.rings import Rings
 from sage.misc.fast_methods import Singleton
 from sage.misc.lazy_import import lazy_import
-from sage.rings.ring import Ring
+from sage.rings.ring import CommutativeRing
 from sage.structure.element import RingElement, InfinityElement
 from sage.structure.richcmp import rich_to_bool, richcmp
 
@@ -229,6 +230,8 @@ lazy_import('sage.rings.integer', 'Integer')
 
 
 _obj = {}
+
+
 class _uniq():
     def __new__(cls, *args):
         """
@@ -266,7 +269,7 @@ class AnInfinity():
         True
     """
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -277,7 +280,7 @@ class AnInfinity():
         """
         return self._sign_char + "Infinity"
 
-    def _giac_init_(self):
+    def _giac_init_(self) -> str:
         """
         TESTS::
 
@@ -286,7 +289,7 @@ class AnInfinity():
         """
         return self._sign_char + "infinity"
 
-    def _maxima_init_(self):
+    def _maxima_init_(self) -> str:
         """
         TESTS::
 
@@ -300,7 +303,7 @@ class AnInfinity():
         else:
             return 'inf'
 
-    def _fricas_init_(self):
+    def _fricas_init_(self) -> str:
         """
         TESTS::
 
@@ -335,7 +338,7 @@ class AnInfinity():
         else:
             return pari('-oo')
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a latex representation of ``self``.
 
@@ -481,8 +484,9 @@ class AnInfinity():
 
     def __float__(self):
         r"""
-        Generate a floating-point infinity.  The printing of
-        floating-point infinity varies across platforms.
+        Generate a floating-point infinity.
+
+        The printing of floating-point infinity varies across platforms.
 
         EXAMPLES::
 
@@ -555,7 +559,8 @@ class AnInfinity():
         else:
             return -sib.name('oo')
 
-class UnsignedInfinityRing_class(Singleton, Ring):
+
+class UnsignedInfinityRing_class(Singleton, CommutativeRing):
 
     def __init__(self):
         """
@@ -579,9 +584,9 @@ class UnsignedInfinityRing_class(Singleton, Ring):
             sage: UnsignedInfinityRing(3) == UnsignedInfinityRing(-19.5)
             True
         """
-        Ring.__init__(self, self, names=('oo',), normalize=False)
+        CommutativeRing.__init__(self, self, names=('oo',), normalize=False)
 
-    def ngens(self):
+    def ngens(self) -> int:
         """
         The unsigned infinity ring has one "generator."
 
@@ -629,16 +634,16 @@ class UnsignedInfinityRing_class(Singleton, Ring):
         else:
             raise IndexError("UnsignedInfinityRing only has one generator")
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         The "generator" of ``self`` is the infinity object.
 
         EXAMPLES::
 
             sage: UnsignedInfinityRing.gens()
-            [Infinity]
+            (Infinity,)
         """
-        return [self.gen()]
+        return (self.gen(),)
 
     def less_than_infinity(self):
         """
@@ -657,7 +662,7 @@ class UnsignedInfinityRing_class(Singleton, Ring):
             self._less_than_infinity = LessThanInfinity(self)
             return self._less_than_infinity
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -740,7 +745,7 @@ class UnsignedInfinityRing_class(Singleton, Ring):
         # If we got here then x is not infinite
         return self.less_than_infinity()
 
-    def _coerce_map_from_(self, R):
+    def _coerce_map_from_(self, R) -> bool:
         """
         EXAMPLES::
 
@@ -755,7 +760,7 @@ class UnsignedInfinityRing_class(Singleton, Ring):
             sage: UnsignedInfinityRing.has_coerce_map_from(SymmetricGroup(13))          # needs sage.groups
             False
         """
-        return isinstance(R, Ring) or R in (int, float, complex)
+        return R in Rings().Commutative() or R in (int, float, complex)
 
 
 UnsignedInfinityRing = UnsignedInfinityRing_class()
@@ -773,7 +778,7 @@ class LessThanInfinity(_uniq, RingElement):
         """
         RingElement.__init__(self, parent)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -784,7 +789,7 @@ class LessThanInfinity(_uniq, RingElement):
         """
         return "A number less than infinity"
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         """
         Return a latex representation of ``self``.
 
@@ -852,10 +857,10 @@ class LessThanInfinity(_uniq, RingElement):
             0
         """
         if isinstance(other, UnsignedInfinity):
-            return Integer(0)
+            return Integer(0)  # noqa: F821
         raise ValueError("quotient of number < oo by number < oo not defined")
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Compare ``self`` to ``other``.
 
@@ -870,7 +875,7 @@ class LessThanInfinity(_uniq, RingElement):
 
     def sign(self):
         """
-        Raise an error because the sign of self is not well defined.
+        Raise an error because the sign of ``self`` is not well defined.
 
         EXAMPLES::
 
@@ -914,7 +919,7 @@ class UnsignedInfinity(_uniq, AnInfinity, InfinityElement):
             9223372036854775806 # 64-bit
             2147483646          # 32-bit
         """
-        return maxsize-1
+        return maxsize - 1
 
     def _mul_(self, other):
         """
@@ -955,7 +960,7 @@ class UnsignedInfinity(_uniq, AnInfinity, InfinityElement):
         import sympy
         return sympy.zoo
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Compare ``self`` to ``other``.
 
@@ -994,13 +999,15 @@ def is_Infinite(x) -> bool:
     """
     return isinstance(x, InfinityElement)
 
+
 class SignError(ArithmeticError):
     """
     Sign error exception.
     """
     pass
 
-class InfinityRing_class(Singleton, Ring):
+
+class InfinityRing_class(Singleton, CommutativeRing):
     def __init__(self):
         """
         Initialize ``self``.
@@ -1017,7 +1024,7 @@ class InfinityRing_class(Singleton, Ring):
             sage: InfinityRing == UnsignedInfinityRing
             False
         """
-        Ring.__init__(self, self, names=('oo',), normalize=False)
+        CommutativeRing.__init__(self, self, names=('oo',), normalize=False)
 
     def fraction_field(self):
         """
@@ -1032,7 +1039,7 @@ class InfinityRing_class(Singleton, Ring):
         """
         raise TypeError("infinity 'ring' has no fraction field")
 
-    def ngens(self):
+    def ngens(self) -> int:
         """
         The two generators are plus and minus infinity.
 
@@ -1075,16 +1082,16 @@ class InfinityRing_class(Singleton, Ring):
                 self._gen1 = MinusInfinity()
                 return self._gen1
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         The two generators are plus and minus infinity.
 
         EXAMPLES::
 
             sage: InfinityRing.gens()
-            [+Infinity, -Infinity]
+            (+Infinity, -Infinity)
         """
-        return [self.gen(0), self.gen(1)]
+        return (self.gen(0), self.gen(1))
 
     def is_zero(self) -> bool:
         """
@@ -1108,7 +1115,7 @@ class InfinityRing_class(Singleton, Ring):
         """
         return True
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1216,7 +1223,7 @@ class InfinityRing_class(Singleton, Ring):
         c = int(bool(x > 0)) - int(bool(x < 0))
         return FiniteNumber(self, c)
 
-    def _coerce_map_from_(self, R):
+    def _coerce_map_from_(self, R) -> bool:
         r"""
         There is a coercion from anything that has a coercion into the reals.
 
@@ -1275,7 +1282,8 @@ class InfinityRing_class(Singleton, Ring):
         from sage.structure.coerce import parent_is_real_numerical
         if parent_is_real_numerical(R):
             return True
-        if isinstance(R, (sage.rings.abc.RealIntervalField, sage.rings.abc.RealBallField)):
+        if isinstance(R, (sage.rings.abc.RealIntervalField,
+                          sage.rings.abc.RealBallField)):
             return True
         return False
 
@@ -1309,7 +1317,7 @@ class FiniteNumber(RingElement):
         RingElement.__init__(self, parent)
         self.value = x
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Compare ``self`` and ``other``.
 
@@ -1396,7 +1404,7 @@ class FiniteNumber(RingElement):
         if other.is_zero():
             if isinstance(self, InfinityElement):
                 raise SignError("cannot multiply infinity by zero")
-            return Integer(0)
+            return Integer(0)  # noqa: F821
         if self.value < 0:
             if isinstance(other, InfinityElement):
                 return -other
@@ -1408,7 +1416,7 @@ class FiniteNumber(RingElement):
         if self.value == 0:
             if isinstance(other, InfinityElement):
                 raise SignError("cannot multiply infinity by zero")
-            return Integer(0)
+            return Integer(0)  # noqa: F821
 
     def _div_(self, other):
         """
@@ -1459,7 +1467,7 @@ class FiniteNumber(RingElement):
         """
         return FiniteNumber(self.parent(), -self.value)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -1478,7 +1486,7 @@ class FiniteNumber(RingElement):
             return "A positive finite number"
         return "Zero"
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         """
         Return a latex representation of ``self``.
 
@@ -1510,7 +1518,7 @@ class FiniteNumber(RingElement):
 
     def sign(self):
         """
-        Return the sign of self.
+        Return the sign of ``self``.
 
         EXAMPLES::
 
@@ -1580,7 +1588,7 @@ class MinusInfinity(_uniq, AnInfinity, InfinityElement):
         """
         return ~maxsize
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Compare ``self`` and ``other``.
 
@@ -1640,7 +1648,7 @@ class MinusInfinity(_uniq, AnInfinity, InfinityElement):
         import sympy
         return -sympy.oo
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         r"""
         Conversion to gap and libgap.
 
@@ -1680,7 +1688,7 @@ class PlusInfinity(_uniq, AnInfinity, InfinityElement):
         """
         return maxsize
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Compare ``self`` and ``other``.
 
@@ -1738,7 +1746,7 @@ class PlusInfinity(_uniq, AnInfinity, InfinityElement):
         import sympy
         return sympy.oo
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         r"""
         Conversion to gap and libgap.
 
@@ -1805,7 +1813,7 @@ def test_comparison(ring):
     from sage.symbolic.ring import SR
     from sage.rings.rational_field import QQ
     elements = [-1e3, 99.9999, -SR(2).sqrt(), 0, 1,
-                3 ** (-QQ.one()/3), SR.pi(), 100000]
+                3 ** (-QQ.one() / 3), SR.pi(), 100000]
     elements.append(ring.an_element())
     elements.extend(ring.some_elements())
     for z in elements:

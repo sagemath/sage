@@ -2469,7 +2469,7 @@ for ((n,k,lmbda,mu,u),f) in [((19,6,1,1,1), QDM_19_6_1_1_1),
                              ((45,7,1,1,9), QDM_45_7_1_1_9),
                              ((54,7,1,1,8), QDM_54_7_1_1_8),
                              ((57,9,1,1,8), QDM_57_9_1_1_8)]:
-    if not (n+u,lmbda) in QDM:
+    if (n+u,lmbda) not in QDM:
         QDM[n+u,lmbda] = {}
     QDM[n+u,lmbda][n,lmbda,mu,u] = (k,f)
 
@@ -2701,7 +2701,7 @@ Vmt_vectors = {
 # Translate all V(m,t) into (mt+1,m+2;1,0;t)-QDM constructors
 for (m,t),(vec,source) in Vmt_vectors.items():
     n,k,lmbda,mu,u = (m*t+1,m+2,1,0,t)
-    if not (n+u,lmbda) in QDM:
+    if (n+u,lmbda) not in QDM:
         QDM[n+u,lmbda] = {}
     QDM[n+u,lmbda][n,lmbda,mu,u] = (k,lambda m=m,t=t,vec=vec:QDM_from_Vmt(m,t,vec))
 

@@ -258,9 +258,9 @@ class QAryReedMullerCode(AbstractLinearCode):
         # input sanitization
         if base_field not in FiniteFields():
             raise ValueError("the input `base_field` must be a FiniteField")
-        if not(isinstance(order, (Integer, int))):
+        if not isinstance(order, (Integer, int)):
             raise ValueError("The order of the code must be an integer")
-        if not(isinstance(num_of_var, (Integer, int))):
+        if not isinstance(num_of_var, (Integer, int)):
             raise ValueError("The number of variables must be an integer")
         q = base_field.cardinality()
         if order >= q:
@@ -425,9 +425,9 @@ class BinaryReedMullerCode(AbstractLinearCode):
             ValueError: The order of the code must be an integer
         """
         # input sanitization
-        if not(isinstance(order, (Integer, int))):
+        if not isinstance(order, (Integer, int)):
             raise ValueError("The order of the code must be an integer")
-        if not(isinstance(num_of_var, (Integer, int))):
+        if not isinstance(num_of_var, (Integer, int)):
             raise ValueError("The number of variables must be an integer")
         if (num_of_var < order):
             raise ValueError(
@@ -836,7 +836,7 @@ class ReedMullerPolynomialEncoder(Encoder):
             False
         """
         return isinstance(other, ReedMullerPolynomialEncoder) \
-               and self.code() == other.code()
+            and self.code() == other.code()
 
     def encode(self, p):
         r"""
@@ -984,7 +984,7 @@ class ReedMullerPolynomialEncoder(Encoder):
         return ((code.base_field())**code.number_of_variables()).list()
 
 
-####################### registration ###############################
+# --------------- registration --------------
 
 QAryReedMullerCode._registered_encoders["EvaluationVector"] = ReedMullerVectorEncoder
 QAryReedMullerCode._registered_encoders["EvaluationPolynomial"] = ReedMullerPolynomialEncoder

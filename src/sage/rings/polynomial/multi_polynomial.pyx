@@ -2,13 +2,15 @@ r"""
 Base class for elements of multivariate polynomial rings
 """
 
-#*****************************************************************************
+# ********************************************************************
+#       Copyright (C) 2005 William Stein <wstein@gmail.com>
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ********************************************************************
 
 from sage.rings.integer cimport Integer
 from sage.rings.integer_ring import ZZ
@@ -33,9 +35,9 @@ from sage.rings.polynomial.polynomial_element cimport Polynomial
 
 cdef class MPolynomial(CommutativePolynomial):
 
-    ####################
+    # -------------------------
     # Some standard conversions
-    ####################
+    # -------------------------
     def _scalar_conversion(self, R):
         r"""
         TESTS::
@@ -359,7 +361,6 @@ cdef class MPolynomial(CommutativePolynomial):
             True
         """
         return multi_derivative(self, args)
-
 
     def polynomial(self, var):
         r"""
@@ -840,12 +841,14 @@ cdef class MPolynomial(CommutativePolynomial):
 
     def change_ring(self, R):
         r"""
-        Return a copy of this polynomial but with coefficients in ``R``,
-        if at all possible.
+        Return this polynomial with coefficients converted to ``R``.
 
         INPUT:
 
-        - ``R`` -- a ring or morphism.
+        - ``R`` -- a ring or morphism; if a morphism, the coefficients
+          are mapped to the codomain of ``R``
+
+        OUTPUT: a new polynomial with the base ring changed to ``R``.
 
         EXAMPLES::
 
@@ -853,12 +856,27 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: f = x^3 + 3/5*y + 1
             sage: f.change_ring(GF(7))
             x^3 + 2*y + 1
+            sage: g = x^2 + 5*y
+            sage: g.change_ring(GF(5))
+            x^2
 
         ::
 
-            sage: R.<x,y> = GF(9,'a')[]                                                 # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<x,y> = GF(9,'a')[]
             sage: (x+2*y).change_ring(GF(3))
             x - y
+
+        ::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(7^2)
+            sage: R.<x,y> = F[]
+            sage: f = x^2 + a^2*y^2 + a*x + a^3*y
+            sage: g = f.change_ring(F.frobenius_endomorphism()); g
+            x^2 + (-a - 2)*y^2 + (-a + 1)*x + (2*a + 2)*y
+            sage: g.change_ring(F.frobenius_endomorphism()) == f
+            True
 
         ::
 
@@ -869,21 +887,35 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: f.change_ring(K.embeddings(CC)[1])
             x^2 + (-0.500000000000000 - 0.866025403784438*I)*y
 
+        ::
+
+            sage: # needs sage.rings.number_field
+            sage: K.<w> = CyclotomicField(5)
+            sage: R.<x,y> = K[]
+            sage: f = x^2 + w*y
+            sage: f.change_ring(K.embeddings(QQbar)[1])
+            x^2 + (-0.8090169943749474? + 0.5877852522924731?*I)*y
+
         TESTS:
 
-        Check that :trac:`25022` is fixed::
+        Check that :issue:`25022` is fixed::
 
+            sage: # needs sage.rings.number_field sage.symbolic
             sage: K.<x,y> = ZZ[]
-            sage: (x*y).change_ring(SR).monomials()                                     # needs sage.rings.number_field sage.symbolic
+            sage: (x*y).change_ring(SR).monomials()
             [x*y]
+
+        Check that :issue:`36832` is fixed::
+
+            sage: F = GF(11)
+            sage: phi = Hom(F,F).an_element()
+            sage: R.<x,y> = F[]
+            sage: x.change_ring(phi)
+            x
         """
         if isinstance(R, Map):
-        #if we're given a hom of the base ring extend to a poly hom
-            if R.domain() == self.base_ring():
-                R = self.parent().hom(R, self.parent().change_ring(R.codomain()))
-            return R(self)
-        else:
-            return self.parent().change_ring(R)(self.dict())
+            return self.map_coefficients(R)
+        return self.parent().change_ring(R)(self.dict())
 
     def is_symmetric(self, group=None):
         r"""

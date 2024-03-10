@@ -867,7 +867,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         # set cutoff as RDF element
         if eps == 'auto':
             if scipy is None: import scipy
-            eps = 2*max(self._nrows, self._ncols)*scipy.finfo(float).eps*sv[0]
+            eps = 2*max(self._nrows, self._ncols)*numpy.finfo(float).eps*sv[0]
         eps = RDF(eps)
         # locate non-zero entries
         rank = 0

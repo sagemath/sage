@@ -106,7 +106,7 @@ If the second argument is negative, truthtable defaults to the end::
     For statements that contain a variable list that when printed is longer
     than the latex page, the columns of the table will run off the screen.
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
 #       Copyright (C) 2006 Chris Gorecki <chris.k.gorecki@gmail.com>
 #       Copyright (C) 2013 Paul Scurek <scurek86@gmail.com>
@@ -114,12 +114,13 @@ If the second argument is negative, truthtable defaults to the end::
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 # Global variables
 __table = []
 __vars_order = []
+
 
 class Truthtable:
     """
@@ -244,10 +245,7 @@ class Truthtable:
             line = s = ""
             i = 0
             for e in row:
-                if e:
-                    j = 2
-                else:
-                    j = 1
+                j = 2 if e else 1
                 s = str(e) + ' ' * j
                 if i < len(vars_len):
                     while len(s) <= vars_len[i]:

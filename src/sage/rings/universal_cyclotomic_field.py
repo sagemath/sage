@@ -170,10 +170,10 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.richcmp import rich_to_bool
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element import FieldElement, parent
+from sage.structure.parent import Parent
 
 from sage.structure.coerce import py_scalar_to_element
 from sage.categories.morphism import Morphism
-from sage.rings.ring import Field
 
 from sage.rings.integer import Integer
 from sage.rings.rational import Rational
@@ -326,7 +326,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
         self._obj = obj
         FieldElement.__init__(self, parent)
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
         TESTS::
 
@@ -358,7 +358,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
         """
         return self.parent(), (str(self),)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Equality test.
 
@@ -401,7 +401,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
             return self == other
         return self._obj == other._obj
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Difference test.
 
@@ -470,7 +470,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
     imag_part = imag
 
-    def is_real(self):
+    def is_real(self) -> bool:
         r"""
         Test whether this element is real.
 
@@ -489,7 +489,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
         """
         return self._obj.RealPart() == self._obj
 
-    def is_integral(self):
+    def is_integral(self) -> bool:
         """
         Return whether ``self`` is an algebraic integer.
 
@@ -648,7 +648,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
         """
         return R(QQbar(self))
 
-    def __float__(self):
+    def __float__(self) -> float:
         r"""
         TESTS::
 
@@ -749,7 +749,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
     _mpfr_ = _eval_real_
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         r"""
         Comparison (using the complex embedding).
 
@@ -846,7 +846,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
         """
         return Infinity if self else ZZ.zero()
 
-    def is_rational(self):
+    def is_rational(self) -> bool:
         r"""
         Test whether this element is a rational number.
 
@@ -886,7 +886,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
             raise TypeError("Unable to coerce to a rational")
         return Rational(self._obj.sage())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -1011,7 +1011,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
         raise NotImplementedError("no powering implemented for non-rational exponents")
 
-    def is_square(self):
+    def is_square(self) -> bool:
         r"""
         EXAMPLES::
 
@@ -1110,7 +1110,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
                 return UCF_sqrt_int(D, UCF)
             else:
                 return UCF_sqrt_int(D.numerator(), UCF) / \
-                       UCF_sqrt_int(D.denominator(), UCF)
+                    UCF_sqrt_int(D.denominator(), UCF)
 
         # root of unity
         k = self._obj.Conductor()
@@ -1139,7 +1139,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
         P = self.parent()
         return P.element_class(P, self._obj.ComplexConjugate())
 
-    def galois_conjugates(self, n=None):
+    def galois_conjugates(self, n=None) -> list:
         r"""
         Return the Galois conjugates of ``self``.
 
@@ -1321,7 +1321,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
             False
         """
         from sage.categories.fields import Fields
-        Field.__init__(self, base_ring=QQ, category=Fields().Infinite())
+        Parent.__init__(self, base=QQ, category=Fields().Infinite())
         self._populate_coercion_lists_(embedding=UCFtoQQbar(self))
         late_import()
 
@@ -1349,7 +1349,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
         """
         return self.gen(5, 1) - self(3) * self.gen(5, 2)
 
-    def some_elements(self):
+    def some_elements(self) -> tuple:
         r"""
         Return a tuple of some elements in the universal cyclotomic field.
 
@@ -1364,7 +1364,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
                 self.gen(3, 1),
                 self.gen(7, 1) - self(2) / self(3) * self.gen(7, 2))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         TESTS::
 
@@ -1373,7 +1373,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
         """
         return "Universal Cyclotomic Field"
 
-    def is_exact(self):
+    def is_exact(self) -> bool:
         r"""
         Return ``True`` as this is an exact ring (i.e. not numerical).
 
@@ -1685,8 +1685,8 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
                 m = p.is_cyclotomic(certificate=True)
                 if not m:
                     raise NotImplementedError('no known factorization for this polynomial')
-                for i in m.coprime_integers(m):
-                    factors.append((x - UCF.zeta(m, i), e))
+                factors.extend((x - UCF.zeta(m, i), e)
+                               for i in m.coprime_integers(m))
 
         return Factorization(factors, unit)
 
@@ -1702,7 +1702,7 @@ class UniversalCyclotomicField(UniqueRepresentation, sage.rings.abc.UniversalCyc
         """
         return Infinity
 
-    def _gap_init_(self):
+    def _gap_init_(self) -> str:
         r"""
         Return gap string representation of ``self``.
 

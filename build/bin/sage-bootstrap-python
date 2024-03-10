@@ -27,23 +27,23 @@ SAGE_ORIG_PATH=${NEW_PATH%%':'}
 # So it needs to find a python that has the urllib module.
 # For example, on Debian buster, the python3-minimal package does NOT provide it.
 #
-# Also, Trac #20023 removed the vendored argparse library from sage_bootstrap,
+# Also, Issue #20023 removed the vendored argparse library from sage_bootstrap,
 # so we test that python is new enough (>= 2.7) to run it.
 #
 # See https://github.com/sagemath/sage/issues/29090
 
-# Trac #29890: Our first choice is "python", not "python3". This is to avoid
+# Issue #29890: Our first choice is "python", not "python3". This is to avoid
 # a defect of sage_bootstrap on macOS regarding SSL URLs.
 
-# Trac #30177: Also check for hashlib.sha1 to guard against broken python2
+# Issue #30177: Also check for hashlib.sha1 to guard against broken python2
 # from old homebrew installations.  Also check whether the current directory
 # is accessible by this python; this is to guard on WSL against Pythons
 # installed somewhere else in Windows.
 
-# Trac #29285: Do not accept pythons that manipulate PATH, such as
+# Issue #29285: Do not accept pythons that manipulate PATH, such as
 # the shims provided by pyenv.
 
-# Trac #30008: Make it work even if the environment tries to sabotage UTF-8
+# Issue #30008: Make it work even if the environment tries to sabotage UTF-8
 # operation in Python 3.0.x-3.6.x by setting LC_ALL=C or similar.
 
 if [ "$LC_ALL" = "C" -o "$LANG" = "C" -o "$LC_CTYPE" = "C" ]; then
@@ -54,7 +54,7 @@ if [ "$LC_ALL" = "C" -o "$LANG" = "C" -o "$LC_CTYPE" = "C" ]; then
 fi
 
 PYTHONS="python python3 python3.12 python3.11 python3.10 python3.9 python3.8 python3.7 python2.7 python3.6 python2"
-# Trac #32405: Prefer a Python that provides ssl with SNI, which allows developers
+# Issue #32405: Prefer a Python that provides ssl with SNI, which allows developers
 # to download from upstream URLs (configure --enable-download-from-upstream-url),
 # in particular from PyPI, which requires SNI.
 for PY in $PYTHONS; do

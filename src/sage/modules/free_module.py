@@ -186,7 +186,9 @@ import sage.rings.infinity
 import sage.rings.integer
 import sage.rings.integer_ring
 import sage.rings.rational_field
-import sage.rings.ring as ring
+from sage.rings.ring import IntegralDomain
+from sage.categories.commutative_rings import CommutativeRings
+from sage.categories.fields import Fields
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
@@ -212,6 +214,7 @@ from sage.structure.richcmp import (
     richcmp_not_equal,
 )
 from sage.structure.sequence import Sequence
+
 
 ###############################################################################
 #
@@ -264,16 +267,16 @@ class FreeModuleFactory(UniqueFactory):
             from sage.modules.free_quadratic_module import FreeQuadraticModule
             return FreeQuadraticModule(base_ring, rank, inner_product_matrix=inner_product_matrix, sparse=sparse)
 
-        if not isinstance(sparse,bool):
+        if not isinstance(sparse, bool):
             raise TypeError("Argument sparse (= %s) must be True or False" % sparse)
 
-        if not (hasattr(base_ring,'is_commutative') and base_ring.is_commutative()):
+        if base_ring not in CommutativeRings():
             warn("You are constructing a free module\n"
                  "over a noncommutative ring. Sage does not have a concept\n"
                  "of left/right and both sided modules, so be careful.\n"
                  "It's also not guaranteed that all multiplications are\n"
                  "done from the right side.")
-            #raise TypeError, "The base_ring must be a commutative ring."
+            # raise TypeError("The base_ring must be a commutative ring.")
 
         if not sparse and isinstance(base_ring, sage.rings.abc.RealDoubleField):
             return RealDoubleVectorSpace_class(rank)
@@ -294,7 +297,7 @@ class FreeModuleFactory(UniqueFactory):
             and base_ring.is_maximal() and base_ring.class_number() == 1):
             return FreeModule_ambient_pid(base_ring, rank, sparse=sparse)
 
-        if isinstance(base_ring, ring.IntegralDomain) or base_ring in IntegralDomains():
+        if isinstance(base_ring, IntegralDomain) or base_ring in IntegralDomains():
             return FreeModule_ambient_domain(base_ring, rank, sparse=sparse)
 
         return FreeModule_ambient(base_ring, rank, sparse=sparse)
@@ -725,7 +728,7 @@ def span(gens, base_ring=None, check=True, already_echelonized=False):
         TypeError: generators must be lists of ring elements
         or free module elements!
     """
-    if ring.is_Ring(gens):
+    if gens in CommutativeRings():
         # we allow the old input format with first input the base_ring.
         # Do we want to deprecate it?..
         base_ring, gens = gens, base_ring
@@ -1926,7 +1929,7 @@ class FreeModule_generic(Module_free_ambient):
          (finite enumerated fields and subquotients of monoids and quotients of semigroups)
         sage: FreeModule(ZZ,3).category()
         Category of finite dimensional modules with basis over
-         (euclidean domains and infinite enumerated sets
+         (Dedekind domains and euclidean domains and infinite enumerated sets
           and metric spaces)
         sage: (QQ^0).category()
         Category of finite enumerated finite dimensional vector spaces with basis
@@ -1964,7 +1967,7 @@ class FreeModule_generic(Module_free_ambient):
             <class 'sage.modules.free_module_element.FreeModuleElement_generic_sparse'>
 
         """
-        if not base_ring.is_commutative():
+        if base_ring not in CommutativeRings():
             warn("You are constructing a free module\n"
                  "over a noncommutative ring. Sage does not have a concept\n"
                  "of left/right and both sided modules, so be careful.\n"
@@ -2513,7 +2516,7 @@ class FreeModule_generic(Module_free_ambient):
             return sage.rings.integer.Integer(1)
         return self.base_ring().cardinality() ** self.rank()
 
-    __len__ = cardinality # for backward compatibility
+    __len__ = cardinality  # for backward compatibility
 
     def basis(self):
         """
@@ -2530,7 +2533,7 @@ class FreeModule_generic(Module_free_ambient):
         """
         raise NotImplementedError
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return a tuple of basis elements of ``self``.
 
@@ -4346,7 +4349,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             sage: FreeModule_generic_field(QQ, 5, 5)
             <repr(<sage.modules.free_module.FreeModule_generic_field_with_category at 0x...>) failed: NotImplementedError>
         """
-        if not isinstance(base_field, ring.Field):
+        if base_field not in Fields():
             raise TypeError("The base_field (=%s) must be a field" % base_field)
         super().__init__(base_field, dimension, degree, sparse=sparse, category=category)
 

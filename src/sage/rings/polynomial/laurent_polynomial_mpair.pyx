@@ -1345,14 +1345,20 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
             sage: x.subs({x: 2}, x=1)
             1
+
+            sage: f.subs({1: 2}, x=1)
+            3*z + 5
         """
         cdef list variables = list(self._parent.gens())
         cdef Py_ssize_t i
         for i in range(len(variables)):
             if str(variables[i]) in kwds:
                 variables[i] = kwds[str(variables[i])]
-            elif in_dict and variables[i] in in_dict:
-                variables[i] = in_dict[variables[i]]
+            elif in_dict:
+                if variables[i] in in_dict:
+                    variables[i] = in_dict[variables[i]]
+                elif i in in_dict:
+                    variables[i] = in_dict[i]
         return self(tuple(variables))
 
     def is_constant(self):

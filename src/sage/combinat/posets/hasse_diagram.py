@@ -40,7 +40,7 @@ class LatticeError(ValueError):
     a and b" instead of "No meet for 1 and 2".
     """
 
-    def __init__(self, fail, x, y):
+    def __init__(self, fail, x, y) -> None:
         """
         Initialize the exception.
 
@@ -56,7 +56,7 @@ class LatticeError(ValueError):
         self.x = x
         self.y = y
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Return string representation of the exception.
 
@@ -67,7 +67,7 @@ class LatticeError(ValueError):
             sage: error.__str__()
             'no meet for 15 and 18'
         """
-        return "no {} for {} and {}".format(self.fail, self.x, self.y)
+        return f"no {self.fail} for {self.x} and {self.y}"
 
 
 class HasseDiagram(DiGraph):
@@ -792,8 +792,8 @@ class HasseDiagram(DiGraph):
         while not_found:
             y = not_found.pop()
             rank[y] = 0  # We set some vertex to have rank 0
-            component = set([y])
-            queue = set([y])
+            component = {y}
+            queue = {y}
             while queue:
                 # look at the neighbors of y and set the ranks;
                 # then look at the neighbors of the neighbors ...
@@ -1109,11 +1109,11 @@ class HasseDiagram(DiGraph):
                             m[(i, k)] = -ZZ.sum(m[(j, k)]
                                                 for j in available
                                                 if k in greater_than[j])
-                M = matrix(ZZ, n, n, m, sparse=True)
+                M = matrix(ZZ, n, n, m, sparse=True)  # noqa: F821
             elif algorithm == "matrix":
                 M = self.lequal_matrix().inverse_of_unit()
             elif algorithm == "cython":
-                M = moebius_matrix_fast(self._leq_storage)
+                M = moebius_matrix_fast(self._leq_storage)  # noqa: F821
             else:
                 raise ValueError("unknown algorithm")
             self._moebius_function_matrix = M
@@ -1187,7 +1187,7 @@ class HasseDiagram(DiGraph):
         if algorithm == 'matrix':
             return - self.lequal_matrix() * self.moebius_function_matrix().transpose()
         elif algorithm == 'cython':
-            return coxeter_matrix_fast(self._leq_storage)
+            return coxeter_matrix_fast(self._leq_storage)  # noqa: F821
         else:
             raise ValueError("unknown algorithm")
 
@@ -1286,7 +1286,7 @@ class HasseDiagram(DiGraph):
             [{0, 1, 2, 3, 4, 5, 6}, {1, 6}, {2, 6}, {3, 6}, {4, 6}, {5, 6}, {6}]
         """
         n = self.order()
-        greater_than = [set([i]) for i in range(n)]
+        greater_than = [{i} for i in range(n)]
         for i in range(n - 1, -1, -1):
             gt = greater_than[i]
             for j in self.neighbor_out_iterator(i):
@@ -1324,11 +1324,11 @@ class HasseDiagram(DiGraph):
             Finite Field of size 2
         """
         n = self.order()
-        R = GF(2)
+        R = GF(2)  # noqa: F821
         one = R.one()
         greater_than = self._leq_storage
         D = {(i, j): one for i in range(n) for j in greater_than[i]}
-        M = matrix(R, n, n, D, sparse=True)
+        M = matrix(R, n, n, D, sparse=True)  # noqa: F821
         M.set_immutable()
         return M
 
@@ -1359,7 +1359,7 @@ class HasseDiagram(DiGraph):
         n = self.order()
         greater_than = self._leq_storage
         D = {(i, j): 1 for i in range(n) for j in greater_than[i]}
-        return matrix(ZZ, n, n, D, sparse=True, immutable=True)
+        return matrix(ZZ, n, n, D, sparse=True, immutable=True)  # noqa: F821
 
     def lequal_matrix(self, boolean=False):
         r"""
@@ -1544,7 +1544,7 @@ class HasseDiagram(DiGraph):
         self._meet_semilattice_failure = ()
         n = self.cardinality()
         if n == 0:
-            return matrix(0)
+            return matrix(0)  # noqa: F821
         meet = [[-1 for x in range(n)] for x in range(n)]
         lc = [self.neighbors_in(x) for x in range(n)]  # Lc = lower covers
 
@@ -1564,7 +1564,7 @@ class HasseDiagram(DiGraph):
                 meet[y][x] = q
                 if q == -1:
                     self._meet_semilattice_failure += ((x, y),)
-        return matrix(ZZ, meet)
+        return matrix(ZZ, meet)  # noqa: F821
 
     def meet_matrix(self):
         r"""
@@ -1708,7 +1708,7 @@ class HasseDiagram(DiGraph):
         self._join_semilattice_failure = ()
         n = self.cardinality()
         if n == 0:
-            return matrix(0)
+            return matrix(0)  # noqa: F821
         join = [[-1 for x in range(n)] for x in range(n)]
         uc = [self.neighbors_out(x) for x in range(n)]  # uc = upper covers
 
@@ -1729,7 +1729,7 @@ class HasseDiagram(DiGraph):
                 if q == -1:
                     self._join_semilattice_failure += ((x, y),)
 
-        return matrix(ZZ, join)
+        return matrix(ZZ, join)  # noqa: F821
 
     def join_matrix(self):
         r"""
@@ -1857,9 +1857,8 @@ class HasseDiagram(DiGraph):
             for x in range(n):
                 u = M1[e, x]
                 for y in range(x):
-                    if u == M1[e, y]:
-                        if u != M1[e, M2[x, y]]:
-                            return (u, e, x, y)
+                    if u == M1[e, y] and u != M1[e, M2[x, y]]:
+                        return (u, e, x, y)
 
         return None
 
@@ -2151,9 +2150,8 @@ class HasseDiagram(DiGraph):
                 # Every element might have one possible orthocomplement,
                 # but so that they don't fit together. Must check that.
                 for lc in self.lower_covers_iterator(e):
-                    if start[lc] is not None:
-                        if not self.has_edge(e_, start[lc]):
-                            return
+                    if not (start[lc] is None or self.has_edge(e_, start[lc])):
+                        return
                 if start[e_] is None:
                     start[e] = e_
                     start[e_] = e
@@ -2191,10 +2189,7 @@ class HasseDiagram(DiGraph):
             sage: H_.find_nonsemimodular_pair(upper=False) is None
             True
         """
-        if upper:
-            neighbors = self.neighbors_out
-        else:
-            neighbors = self.neighbors_in
+        neighbors = self.neighbors_out if upper else self.neighbors_in
 
         n = self.order()
         for e in range(n):
@@ -2481,7 +2476,7 @@ class HasseDiagram(DiGraph):
             return True
         return False
 
-    def diamonds(self):
+    def diamonds(self) -> tuple:
         r"""
         Return the list of diamonds of ``self``.
 
@@ -2525,8 +2520,7 @@ class HasseDiagram(DiGraph):
                     zs = self.common_upper_covers([x, y])
                     if len(zs) != 1:
                         all_diamonds_completed = False
-                    for z in zs:
-                        diamonds.append((w, x, y, z))
+                    diamonds.extend((w, x, y, z) for z in zs)
         return (diamonds, all_diamonds_completed)
 
     def common_upper_covers(self, vertices):
@@ -2651,7 +2645,7 @@ class HasseDiagram(DiGraph):
             if e in elms:
                 continue
             current_set = set(elms)
-            gens = set([e])
+            gens = {e}
             while gens:
                 g = gens.pop()
                 if g < e and g not in elms:
@@ -2684,7 +2678,7 @@ class HasseDiagram(DiGraph):
             Helper function to get sublattice generated by list
             of elements.
             """
-            gens_remaining = set([e])
+            gens_remaining = {e}
             current_set = set(elms)
 
             while gens_remaining:
@@ -2700,7 +2694,7 @@ class HasseDiagram(DiGraph):
 
         N = self.cardinality()
         elms = [0]
-        sublats = [set([0])]
+        sublats = [{0}]
         result = []
         skip = -1
 
@@ -2981,7 +2975,7 @@ class HasseDiagram(DiGraph):
             return set(range(n))
 
         todo = set(range(1, n - 1))
-        neutrals = set([0, n - 1])
+        neutrals = {0, n - 1}
         notneutrals = set()
         all_elements = set(range(n))
 
@@ -3144,7 +3138,7 @@ class HasseDiagram(DiGraph):
 
         return min_congruences
 
-    def congruence(self, parts, start=None, stop_pairs=[]):
+    def congruence(self, parts, start=None, stop_pairs=None):
         """
         Return the congruence ``start`` "extended" by ``parts``.
 
@@ -3208,6 +3202,9 @@ class HasseDiagram(DiGraph):
         from sage.sets.disjoint_set import DisjointSet
         from copy import copy
 
+        if stop_pairs is None:
+            stop_pairs = []
+
         n = self.order()
         mt = self.meet_matrix()
         jn = self.join_matrix()
@@ -3242,7 +3239,7 @@ class HasseDiagram(DiGraph):
                 for v in fill_to_interval(c):
                     cong.union(r, v)
 
-        todo = set(cong.find(e) for part in parts for e in part)
+        todo = {cong.find(e) for part in parts for e in part}
 
         while todo:
 
@@ -3307,7 +3304,7 @@ class HasseDiagram(DiGraph):
                         d = jn[d, m]
 
             # This removes duplicates from todo.
-            todo = set(cong.find(x) for x in todo)
+            todo = {cong.find(x) for x in todo}
 
         return cong
 

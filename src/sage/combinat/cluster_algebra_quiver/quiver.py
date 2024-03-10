@@ -228,8 +228,8 @@ class ClusterQuiver(SageObject):
             user_labels = [tuple(x) if isinstance(x, list) else x for x in user_labels]
         elif isinstance(user_labels, dict):
             values = [tuple(user_labels[x]) if isinstance(user_labels[x], list) else user_labels[x] for x in user_labels]
-            user_labels = {key: val for key, val in zip(user_labels.keys(),
-                                                        values)}
+            user_labels = dict(zip(user_labels.keys(),
+                                   values))
 
         # constructs a quiver from a mutation type
         if type( data ) in [QuiverMutationType_Irreducible,QuiverMutationType_Reducible]:
@@ -635,10 +635,10 @@ class ClusterQuiver(SageObject):
                              'lightgreen': partition[2]}
 
         options = {
-            'graph_border' : True,
+            'graph_border': True,
             'edge_colors': color_dict,
             'vertex_colors': vertex_color_dict,
-            'edge_labels' : True,
+            'edge_labels': True,
             'vertex_labels': True,
         }
         if circular:
@@ -1854,11 +1854,11 @@ class ClusterQuiver(SageObject):
         if depth is infinity and not self.is_mutation_finite():
             raise ValueError('the mutation class can - for infinite mutation'
                              ' types - only be computed up to a given depth')
-        return [Q for Q in self.mutation_class_iter(depth=depth, show_depth=show_depth,
-                                                    return_paths=return_paths,
-                                                    data_type=data_type,
-                                                    up_to_equivalence=up_to_equivalence,
-                                                    sink_source=sink_source)]
+        return list(self.mutation_class_iter(depth=depth, show_depth=show_depth,
+                                             return_paths=return_paths,
+                                             data_type=data_type,
+                                             up_to_equivalence=up_to_equivalence,
+                                             sink_source=sink_source))
 
     def is_finite(self):
         """

@@ -81,16 +81,31 @@ The zero endomorphism `[0]` is supported::
     sage: zero(E.random_point())
     (0 : 1 : 0)
 
-Due to a bug (:trac:`6413`), retrieving multiplication-by-`m` maps
-when `m` is divisible by the characteristic currently fails::
+Retrieving multiplication-by-`m` maps when `m` is divisible by the
+characteristic also works (since :issue:`37096`)::
 
     sage: E = EllipticCurve(GF(7), [1,0])
     sage: phi = E.scalar_multiplication(7); phi
     Scalar-multiplication endomorphism [7] of Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 7
-    sage: phi.rational_maps()   # known bug -- #6413
-    (x^49, y^49)
+    sage: phi.rational_maps()
+    (x^49, -y^49)
     sage: phi.x_rational_map()
     x^49
+    sage: psi = E.scalar_multiplication(-2); psi
+    Scalar-multiplication endomorphism [-2] of Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 7
+    sage: chi = E.scalar_multiplication(-14); chi
+    Scalar-multiplication endomorphism [-14] of Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 7
+    sage: chi == psi * phi
+    True
+    sage: chi.rational_maps()
+    ((x^196 - 2*x^98 + 1)/(-3*x^147 - 3*x^49),
+     (-x^294*y^49 + 2*x^196*y^49 - 2*x^98*y^49 + y^49)/(-x^294 - 2*x^196 - x^98))
+    sage: chi.x_rational_map()
+    (2*x^196 + 3*x^98 + 2)/(x^147 + x^49)
+    sage: chi.rational_maps() == tuple(f(*phi.rational_maps()) for f in psi.rational_maps())
+    True
+    sage: chi.x_rational_map() == psi.x_rational_map()(phi.x_rational_map())
+    True
 
 ::
 

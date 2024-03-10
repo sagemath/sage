@@ -1,6 +1,6 @@
 "Interface to the free online MAGMA calculator"
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -12,8 +12,8 @@
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 class MagmaExpr(str):
@@ -41,9 +41,9 @@ def magma_free_eval(code, strip=True, columns=0):
     server = "magma.maths.usyd.edu.au"
     processPath = "/xml/calculator.xml"
     refererPath = "/calc/"
-    refererUrl = "http://%s%s" % ( server, refererPath)
+    refererUrl = "http://%s%s" % (server, refererPath)
     code = "SetColumns(%s);\n" % columns + code
-    params = urlencode({'input':code})
+    params = urlencode({'input': code})
     headers = {"Content-type": "application/x-www-form-urlencoded",
                "Accept": "Accept: text/html, application/xml, application/xhtml+xml", "Referer": refererUrl}
     conn = httplib.HTTPConnection(server)

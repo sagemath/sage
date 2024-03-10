@@ -385,7 +385,7 @@ class AlgebraicScheme(scheme.Scheme):
               To:   Affine Space of dimension 2 over Rational Field
               Defn: Defined on coordinates by sending (x, y) to (x, y)
 
-            sage: # needs sage.graphs sage.geometry.polyhedron sage.libs.singular
+            sage: # needs sage.geometry.polyhedron sage.graphs sage.libs.singular
             sage: P1xP1.<x,y,u,v> = toric_varieties.P1xP1()
             sage: P1 = P1xP1.subscheme(x - y)
             sage: P1.embedding_morphism()
@@ -1791,8 +1791,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
             sage: Etilde = E.base_extend(GF(3))                                         # needs sage.schemes
             sage: Etilde.rational_points()                                              # needs sage.schemes
-            [(0 : 0 : 1), (0 : 1 : 0), (0 : 2 : 1), (1 : 0 : 1),
-             (1 : 2 : 1), (2 : 0 : 1), (2 : 2 : 1)]
+            [(0 : 1 : 0), (0 : 0 : 1), (0 : 2 : 1), (1 : 0 : 1), (1 : 2 : 1), (2 : 0 : 1), (2 : 2 : 1)]
 
         The class of hyperelliptic curves does not (yet) support
         desingularization of the places at infinity into two points::

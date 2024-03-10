@@ -3,7 +3,7 @@ r"""
 Generalized Tamari lattices
 
 These lattices depend on three parameters `a`, `b` and `m`, where `a`
-and `b` are coprime positive integers and `m` is a nonnegative
+and `b` are positive integers and `m` is a nonnegative
 integer.
 
 The elements are :func:`Dyck paths<sage.combinat.dyck_word.DyckWord>`
@@ -48,8 +48,6 @@ are also available directly using the catalogue of posets, as follows::
 # ****************************************************************************
 from __future__ import annotations
 from sage.combinat.posets.lattices import LatticePoset, MeetSemilattice
-from sage.arith.misc import gcd
-
 
 def paths_in_triangle(i, j, a, b) -> list[tuple[int, ...]]:
     r"""
@@ -63,10 +61,10 @@ def paths_in_triangle(i, j, a, b) -> list[tuple[int, ...]]:
 
     INPUT:
 
-    - `a` and `b` -- coprime integers with `a \geq b`
+    - `a` and `b` -- integers with `a \geq b`
 
     - `i` and `j` -- nonnegative integers with `1 \geq \frac{j}{b} \geq
-      \frac{bi}{a} \geq 0`
+      \frac{i}{a} \geq 0`
 
     OUTPUT:
 
@@ -103,7 +101,7 @@ def paths_in_triangle(i, j, a, b) -> list[tuple[int, ...]]:
 
 def swap(p, i, m=1) -> tuple[int, ...]:
     r"""
-    Perform a covering move in the `(a,b)`-Tamari lattice of parameter `m`.
+    Perform a covering move in the `(a,b)`-Tamari lattice of slope parameter `m`.
 
     The letter at position `i` in `p` must be a `0`, followed by at
     least one `1`.
@@ -125,6 +123,11 @@ def swap(p, i, m=1) -> tuple[int, ...]:
         (1, 1, 0, 0, 0)
         sage: swap((1,1,0,0,1,1,0,0,0),3)
         (1, 1, 0, 1, 1, 0, 0, 0, 0)
+        sage: swap((1,0,1,0,1,0,0,0), 1, 1)
+        (1, 1, 0, 0, 1, 0, 0, 0)
+        sage: swap((1,0,1,0,1,0,0,0), 1, 5/3)
+        (1, 1, 0, 1, 0, 0, 0, 0)
+
 
     TESTS::
 
@@ -151,7 +154,7 @@ def swap(p, i, m=1) -> tuple[int, ...]:
             height += m
         else:
             height -= 1
-        if height == 0:
+        if height <= 0:
             found = True
     q = [k for k in p]
     for k in range(i, j):
@@ -160,19 +163,19 @@ def swap(p, i, m=1) -> tuple[int, ...]:
     return tuple(q)
 
 
-def GeneralizedTamariLattice(a, b, m=1, check=True):
+def GeneralizedTamariLattice(a, b, m=1):
     r"""
     Return the `(a,b)`-Tamari lattice of parameter `m`.
 
     INPUT:
 
-    - `a` and `b` -- coprime integers with `a \geq b`
+    - `a` and `b` -- integers with `a \geq b`
 
-    - `m` -- a nonnegative integer such that `a \geq b m`
+    - `m` -- a nonnegative rational number such that `a \geq b m`
 
     OUTPUT:
 
-    - a finite lattice (the lattice property is only conjectural in general)
+    - a finite lattice (special case of the alt `\nu`-Tamari lattices in [CC2023]_)
 
     The elements of the lattice are
     :func:`Dyck paths<sage.combinat.dyck_word.DyckWord>` in the
@@ -185,7 +188,8 @@ def GeneralizedTamariLattice(a, b, m=1, check=True):
     The usual :wikipedia:`Tamari lattice<Tamari_lattice>` of index `b`
     is the special case `a=b+1` and `m=1`.
 
-    Other special cases give the `m`-Tamari lattices studied in [BMFPR]_.
+    Other special cases give the `m`-Tamari lattices studied in [BMFPR2011]_,
+    or the rational Tamari lattices when a and b are coprime and m = a/b (see [PRV2017]_).
 
     EXAMPLES::
 
@@ -194,16 +198,15 @@ def GeneralizedTamariLattice(a, b, m=1, check=True):
         Finite lattice containing 2 elements
         sage: GeneralizedTamariLattice(4,3)
         Finite lattice containing 5 elements
-        sage: GeneralizedTamariLattice(4,4)
-        Traceback (most recent call last):
-        ...
-        ValueError: the numbers a and b must be coprime with a>=b
         sage: GeneralizedTamariLattice(7,5,2)
         Traceback (most recent call last):
         ...
         ValueError: the condition a>=b*m does not hold
-        sage: P = GeneralizedTamariLattice(5,3);P
+        sage: P = GeneralizedTamariLattice(5,3); P
         Finite lattice containing 7 elements
+        sage: P = GeneralizedTamariLattice(5, 3, m=5/3); P
+        Finite lattice containing 7 elements
+
 
     TESTS::
 
@@ -212,11 +215,12 @@ def GeneralizedTamariLattice(a, b, m=1, check=True):
 
     REFERENCES:
 
-    .. [BMFPR] \M. Bousquet-Melou, E. Fusy, L.-F. Preville Ratelle.
-       *The number of intervals in the m-Tamari lattices*. :arxiv:`1106.1498`
+    - [BMFPR2011]_
+
+    - [PRV2017]_
+
+    - [CC2023]_
     """
-    if not (gcd(a, b) == 1 and a >= b):
-        raise ValueError("the numbers a and b must be coprime with a>=b")
     if a < b * m:
         raise ValueError("the condition a>=b*m does not hold")
 
@@ -224,7 +228,7 @@ def GeneralizedTamariLattice(a, b, m=1, check=True):
         return [swap(p, i, m) for i in range(len(p) - 1)
                 if not p[i] and p[i + 1]]
     return LatticePoset({p: covers(p)
-                         for p in paths_in_triangle(a, b, a, b)}, check=check)
+                         for p in paths_in_triangle(a, b, a, b)}, check=False)
 
 
 def TamariLattice(n, m=1):
@@ -261,9 +265,9 @@ def TamariLattice(n, m=1):
 
     REFERENCES:
 
-    - [BMFPR]_
+    - [BMFPR2011]_
     """
-    return GeneralizedTamariLattice(m * n + 1, n, m, check=False)
+    return GeneralizedTamariLattice(m * n + 1, n, m)
 
 
 # a variation : the Dexter meet-semilattices
