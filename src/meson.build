@@ -128,7 +128,11 @@ endif
 
 singular = dependency('Singular', required: false, disabler: true)
 
-maxima = find_program('maxima', required: true)
+# On Debian, maxima-sage comes with the ecl integration
+maxima = find_program('maxima-sage', required: false)
+if not maxima.found()
+    maxima = find_program('maxima', required: true)
+endif
 
 # Cannot be found via pkg-config
 ntl = cc.find_library('ntl', required: true)
