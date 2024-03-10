@@ -47,6 +47,3 @@ dependencies = [
     'ptyprocess > 0.5',
     'traitlets >=4.3.3',
 ]
-
-[tool.meson-python.args]
-install = ['--skip-subprojects']
