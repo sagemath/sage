@@ -875,7 +875,7 @@ class SageDocTestParser(doctest.DocTestParser):
     optional_tags: Union[bool, set[str]]
     optional_only: bool
     optionals: dict[str, int]
-    probed_tags: set[str]
+    probed_tags: Union[bool, set[str]]
 
     def __init__(self, optional_tags=(), long=False, *, probed_tags=(), file_optional_tags=()):
         r"""
@@ -914,7 +914,10 @@ class SageDocTestParser(doctest.DocTestParser):
                 self.optional_tags.remove('sage')
             else:
                 self.optional_only = True
-        self.probed_tags = set(probed_tags)
+        if probed_tags is True:
+            self.probed_tags = True
+        else:
+            self.probed_tags = set(probed_tags)
         self.file_optional_tags = set(file_optional_tags)
 
     def __eq__(self, other):
