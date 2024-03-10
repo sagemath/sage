@@ -205,7 +205,7 @@ class GaloisRepresentation(SageObject):
 
         TESTS:
 
-        An example which failed until fixed at :trac:`19229`::
+        An example which failed until fixed at :issue:`19229`::
 
             sage: K.<a> = NumberField(x^2-x+1)
             sage: E = EllipticCurve([a+1,1,1,0,0])
@@ -330,7 +330,7 @@ class GaloisRepresentation(SageObject):
 
         An example (an elliptic curve with everywhere good reduction
         over an imaginary quadratic field with quite large
-        discriminant), which failed until fixed at :trac:`21776`::
+        discriminant), which failed until fixed at :issue:`21776`::
 
             sage: K.<a> = NumberField(x^2 - x + 112941801)
             sage: E = EllipticCurve([a+1,a-1,a,-23163076*a + 266044005933275,57560769602038*a - 836483958630700313803])
@@ -844,7 +844,7 @@ def _semistable_reducible_primes(E, verbose=False):
         True
 
     This example, over a quintic field with Galois group `S_5`, took a
-    very long time before :trac:`22343`::
+    very long time before :issue:`22343`::
 
         sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^5 - 6*x^3 + 8*x - 1)
@@ -1544,7 +1544,7 @@ def reducible_primes_Billerey(E, num_l=None, max_l=None, verbose=False):
 
     TESTS:
 
-    Test that this function works with non-integral models (see :trac:`34174`)::
+    Test that this function works with non-integral models (see :issue:`34174`)::
 
         sage: K.<a> = QuadraticField(4569)
         sage: j = 46969655/32768

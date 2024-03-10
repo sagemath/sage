@@ -36,7 +36,7 @@ AUTHORS:
 - Sebastian Oehms (2018-8) add  ``_UG``,
   :meth:`~sage.groups.matrix_gps.unitary.UnitaryMatrixGroup_generic.invariant_form`,
   option for user defined invariant bilinear form, and bug-fix in
-  ``_check_matrix`` (see :trac:`26028`)
+  ``_check_matrix`` (see :issue:`26028`)
 """
 
 # ****************************************************************************

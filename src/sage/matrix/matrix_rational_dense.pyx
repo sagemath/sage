@@ -1005,7 +1005,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         TESTS:
 
         The cached polynomial should be independent of the ``var``
-        argument (:trac:`12292`). We check (indirectly) that the
+        argument (:issue:`12292`). We check (indirectly) that the
         second call uses the cached value by noting that its result is
         not cached::
 
@@ -1548,7 +1548,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
         TESTS:
 
         Echelonizing a matrix in place throws away the cache of
-        the old matrix (:trac:`14506`)::
+        the old matrix (:issue:`14506`)::
 
             sage: for algo in ["flint", "padic", "multimodular", "classical"]:
             ....:      a = Matrix(QQ, [[1,2],[3,4]])
@@ -1617,7 +1617,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             [      0       0       0       0]
 
         The result is an immutable matrix, so if you want to modify the result
-        then you need to make a copy.  This checks that :trac:`10543` is
+        then you need to make a copy.  This checks that :issue:`10543` is
         fixed.::
 
             sage: A = matrix(QQ, 2, range(6))
@@ -2329,7 +2329,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
 
         TESTS:
 
-        Check that the option ``nonzero`` is meaningful (:trac:`22970`)::
+        Check that the option ``nonzero`` is meaningful (:issue:`22970`)::
 
             sage: a = matrix(QQ, 10, 10, 1)
             sage: b = a.__copy__()
@@ -2339,7 +2339,7 @@ cdef class Matrix_rational_dense(Matrix_dense):
             sage: any(b[i,j].is_zero() for i in range(10) for j in range(10))
             False
 
-        Check that :trac:`34103` is fixed::
+        Check that :issue:`34103` is fixed::
 
             sage: a = matrix(QQ, 10, 10, 1)
             sage: a.randomize(nonzero=True, distribution='1/n')

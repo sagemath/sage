@@ -324,7 +324,7 @@ class KleberTreeNode(Element):
 
         TESTS:
 
-        We check that :trac:`16057` is fixed::
+        We check that :issue:`16057` is fixed::
 
             sage: RC = RiggedConfigurations(['D',4,1], [[1,3],[3,3],[4,3]])
             sage: sum(x.multiplicity() for x in RC.kleber_tree()) == len(RC.module_generators)
@@ -569,7 +569,7 @@ class KleberTree(UniqueRepresentation, Parent):
         sage: KT.cardinality()  # long time
         12
 
-    We check that relabelled types work (:trac:`16876`)::
+    We check that relabelled types work (:issue:`16876`)::
 
         sage: ct = CartanType(['A',3,1]).relabel(lambda x: x+2)
         sage: kt = KleberTree(ct, [[3,1],[5,1]])

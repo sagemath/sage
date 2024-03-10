@@ -117,7 +117,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
             TypeError: ..._init_Hrepresentation() takes 3 positional arguments but 9 were given
 
         The empty polyhedron is detected when the Vrepresentation is given with generator;
-        see :trac:`29899`::
+        see :issue:`29899`::
 
             sage: from sage.geometry.polyhedron.backend_cdd import Polyhedron_QQ_cdd
             sage: from sage.geometry.polyhedron.parent import Polyhedra_QQ_cdd
@@ -359,7 +359,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
 
         TESTS:
 
-        Test that :trac:`22575` is fixed::
+        Test that :issue:`22575` is fixed::
 
             sage: Q = P.base_extend(ZZ, backend='field')
             sage: Q.backend()
@@ -1142,7 +1142,7 @@ class Polyhedron_base0(Element, sage.geometry.abc.Polyhedron):
 
         TESTS:
 
-        Check that :trac:`28828` is fixed::
+        Check that :issue:`28828` is fixed::
 
                 sage: P.vertices_matrix().is_immutable()
                 True

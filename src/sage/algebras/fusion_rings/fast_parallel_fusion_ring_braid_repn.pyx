@@ -311,7 +311,7 @@ cpdef _unflatten_entries(fusion_ring, list entries) noexcept:
     coefficients representation.
 
     Used to circumvent pickling issue introduced by PARI settigs
-    in :trac:`30537`.
+    in :issue:`30537`.
 
     EXAMPLES::
 
