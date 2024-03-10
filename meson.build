@@ -11,11 +11,6 @@ py_module = import('python')
 py = py_module.find_installation(pure: false)
 py_dep = py.dependency()
 
-# Compilers
-cc = meson.get_compiler('c')
-cpp = meson.get_compiler('cpp')
-cython = meson.get_compiler('cython')
-
 # Additional targets
 py_with_pytest = py_module.find_installation(required: false, modules: ['pytest'])
 if py_with_pytest.found()

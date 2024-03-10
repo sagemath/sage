@@ -1,5 +1,9 @@
-# Setup dependencies that are needed by many modules
+# Compilers
+cc = meson.get_compiler('c')
+cpp = meson.get_compiler('cpp')
+cython = meson.get_compiler('cython')
 
+# Setup dependencies that are needed by many modules
 inc_numpy = run_command(py,
     [
     '-c',
