@@ -1,1 +1,1 @@
-webcolors
+webcolors ==1.13

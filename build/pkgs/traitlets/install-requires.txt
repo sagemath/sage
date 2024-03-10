@@ -1,1 +1,1 @@
-traitlets >=4.3.3
+traitlets ==5.14.1

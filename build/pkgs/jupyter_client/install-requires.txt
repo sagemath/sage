@@ -1,1 +1,1 @@
-jupyter-client
+jupyter_client ==8.6.0

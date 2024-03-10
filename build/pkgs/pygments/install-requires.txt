@@ -1,1 +1,1 @@
-pygments >=2.12
+Pygments ==2.17.2

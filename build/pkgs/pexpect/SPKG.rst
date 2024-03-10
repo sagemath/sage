@@ -1,22 +1,22 @@
-pexpect: Python module for controlling and automating other programs
-====================================================================
+pexpect: Pexpect allows easy control of interactive console applications.
+=========================================================================
 
 Description
 -----------
 
-Pexpect is a pure Python module for spawning child applications;
-controlling them; and responding to expected patterns in their output.
+This spkg is installed from a wheel downloaded from
+PyPI.
+
+For a detailed description of the package, please visit its
+`PyPI page <https://pypi.org/project/pexpect/>`_.
 
 License
 -------
 
-ISC license: http://opensource.org/licenses/isc-license.txt This license
-is approved by the OSI and FSF as GPL-compatible.
-
+ISC license
 
 Upstream Contact
 ----------------
 
-- http://pexpect.readthedocs.org/en/stable/
-- https://github.com/pexpect/pexpect
+`https://pexpect.readthedocs.io/ <https://pexpect.readthedocs.io/>`_
 

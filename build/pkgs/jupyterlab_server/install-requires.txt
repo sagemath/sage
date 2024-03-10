@@ -1,1 +1,1 @@
-jupyterlab-server
+jupyterlab_server ==2.25.3

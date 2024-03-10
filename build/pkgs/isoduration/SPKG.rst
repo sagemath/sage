@@ -4,13 +4,19 @@ isoduration: Operations with ISO 8601 durations
 Description
 -----------
 
-Operations with ISO 8601 durations
+This spkg is installed from a wheel downloaded from
+PyPI.
+
+For a detailed description of the package, please visit its
+`PyPI page <https://pypi.org/project/isoduration/>`_.
 
 License
 -------
 
+
+
 Upstream Contact
 ----------------
 
-https://pypi.org/project/isoduration/
+`https://github.com/bolsote/isoduration <https://github.com/bolsote/isoduration>`_
 

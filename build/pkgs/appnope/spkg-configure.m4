@@ -1,3 +1,0 @@
-SAGE_SPKG_CONFIGURE([appnope], [
-  SAGE_PYTHON_PACKAGE_CHECK([appnope])
-])

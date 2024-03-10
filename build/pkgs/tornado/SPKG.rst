@@ -1,23 +1,22 @@
-tornado: Python web framework and asynchronous networking library
-=================================================================
+tornado: Tornado is a Python web framework and asynchronous networking library, originally developed at FriendFeed.
+===================================================================================================================
 
 Description
 -----------
 
-Python web framework and asynchronous networking library
+This spkg is installed from an sdist downloaded from
+PyPI.
+
+For a detailed description of the package, please visit its
+`PyPI page <https://pypi.org/project/tornado/>`_.
 
 License
 -------
 
-Apache License
-
+Apache-2.0
 
 Upstream Contact
 ----------------
 
-Home page: http://www.tornadoweb.org
+`http://www.tornadoweb.org/ <http://www.tornadoweb.org/>`_
 
-Dependencies
-------------
-
-Python

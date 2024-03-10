@@ -1,1 +1,1 @@
-matplotlib-inline
+matplotlib_inline ==0.1.6

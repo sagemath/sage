@@ -1,1 +1,1 @@
-notebook-shim
+notebook_shim ==0.2.4

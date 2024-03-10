@@ -1,1 +1,1 @@
-jupyterlab-pygments
+jupyterlab_pygments ==0.3.0

@@ -1,1 +1,1 @@
-rfc3986-validator
+rfc3986_validator ==0.1.1

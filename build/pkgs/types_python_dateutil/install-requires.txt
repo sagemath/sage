@@ -1,1 +1,1 @@
-types-python-dateutil
+types_python_dateutil ==2.8.19.20240106

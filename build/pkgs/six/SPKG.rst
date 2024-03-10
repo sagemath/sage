@@ -4,21 +4,19 @@ six: Python 2 and 3 compatibility utilities
 Description
 -----------
 
-Python 2 and 3 compatibility utilities
+This spkg is installed from a wheel downloaded from
+PyPI.
+
+For a detailed description of the package, please visit its
+`PyPI page <https://pypi.org/project/six/>`_.
 
 License
 -------
 
-MIT License
-
+MIT
 
 Upstream Contact
 ----------------
 
-- Author: Benjamin Peterson
-- Home page: http://pypi.python.org/pypi/six/
+`https://github.com/benjaminp/six <https://github.com/benjaminp/six>`_
 
-Dependencies
-------------
-
-Python

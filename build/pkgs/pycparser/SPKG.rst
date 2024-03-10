@@ -1,12 +1,14 @@
-pycparser: Parser of the C language in Python
-=============================================
+pycparser: C parser in Python
+=============================
 
 Description
 -----------
 
-development website: https://github.com/eliben/pycparser
+This spkg is installed from a wheel downloaded from
+PyPI.
 
-PyPI page: https://pypi.org/project/pycparser/
+For a detailed description of the package, please visit its
+`PyPI page <https://pypi.org/project/pycparser/>`_.
 
 License
 -------
@@ -16,4 +18,5 @@ BSD
 Upstream Contact
 ----------------
 
-https://github.com/eliben/pycparser
+`https://github.com/eliben/pycparser <https://github.com/eliben/pycparser>`_
+

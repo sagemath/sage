@@ -1,23 +1,22 @@
-pyzmq: Python bindings for the zeromq networking library
-========================================================
+pyzmq: Python bindings for 0MQ
+==============================
 
 Description
 -----------
 
-Python bindings for the zeromq networking library.
+This spkg is installed from an sdist downloaded from
+PyPI.
+
+For a detailed description of the package, please visit its
+`PyPI page <https://pypi.org/project/pyzmq/>`_.
 
 License
 -------
 
-LGPLv3+
-
+LGPL+BSD
 
 Upstream Contact
 ----------------
 
-http://www.zeromq.org
+`https://pyzmq.readthedocs.org <https://pyzmq.readthedocs.org>`_
 
-Special Update/Build Instructions
----------------------------------
-
-None.

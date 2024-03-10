@@ -1,18 +1,22 @@
-bleach: An HTML-sanitizing tool
-===============================
+bleach: An easy safelist-based HTML-sanitizing tool.
+====================================================
 
 Description
 -----------
 
-An easy safelist-based HTML-sanitizing tool.
+This spkg is installed from a wheel downloaded from
+PyPI.
+
+For a detailed description of the package, please visit its
+`PyPI page <https://pypi.org/project/bleach/>`_.
 
 License
 -------
 
-Apache License v2
-
+Apache Software License
 
 Upstream Contact
 ----------------
 
-Home Page: https://github.com/mozilla/bleach
+`https://github.com/mozilla/bleach <https://github.com/mozilla/bleach>`_
+

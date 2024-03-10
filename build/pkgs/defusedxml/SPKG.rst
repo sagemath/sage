@@ -1,25 +1,22 @@
-defusedxml: Addresses vulnerabilities of XML parsers and XML libraries
-======================================================================
+defusedxml: XML bomb protection for Python stdlib modules
+=========================================================
 
 Description
 -----------
 
-defusedxml addresses vulnerabilities of XML parsers and XML libraries.
+This spkg is installed from a wheel downloaded from
+PyPI.
 
-It became a dependency of nbconvert starting with nbconvert 5.4.
+For a detailed description of the package, please visit its
+`PyPI page <https://pypi.org/project/defusedxml/>`_.
 
 License
 -------
 
-Python Software Foundation License (PSFL)
-
+PSFL
 
 Upstream Contact
 ----------------
 
-https://pypi.org/project/defusedxml/
+`https://github.com/tiran/defusedxml <https://github.com/tiran/defusedxml>`_
 
-Special Update/Build Instructions
----------------------------------
-
-None.

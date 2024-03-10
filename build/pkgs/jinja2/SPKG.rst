@@ -1,16 +1,14 @@
-jinja2: General purpose template engine for Python
-==================================================
+Jinja2: A very fast and expressive template engine.
+===================================================
 
 Description
 -----------
 
-Jinja2 is a library for Python 2.4 and onwards that is designed to be
-flexible, fast and secure.
+This spkg is installed from a wheel downloaded from
+PyPI.
 
-If you have any exposure to other text-based template languages, such as
-Smarty or Django, you should feel right at home with Jinja2. It's both
-designer and developer friendly by sticking to Python's principles and
-adding functionality useful for templating environments.
+For a detailed description of the package, please visit its
+`PyPI page <https://pypi.org/project/Jinja2/>`_.
 
 License
 -------
@@ -20,5 +18,5 @@ BSD-3-Clause
 Upstream Contact
 ----------------
 
-https://pypi.org/project/Jinja2/
+`https://palletsprojects.com/p/jinja/ <https://palletsprojects.com/p/jinja/>`_
 

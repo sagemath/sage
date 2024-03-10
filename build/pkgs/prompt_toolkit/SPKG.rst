@@ -1,9 +1,22 @@
-prompt_toolkit: Interactive command lines for Python
-====================================================
+prompt_toolkit: Library for building powerful interactive command lines in Python
+=================================================================================
 
 Description
 -----------
 
-Library for building powerful interactive command lines in Python
+This spkg is installed from a wheel downloaded from
+PyPI.
 
-https://pypi.python.org/pypi/prompt_toolkit
+For a detailed description of the package, please visit its
+`PyPI page <https://pypi.org/project/prompt-toolkit/>`_.
+
+License
+-------
+
+
+
+Upstream Contact
+----------------
+
+`https://github.com/prompt-toolkit/python-prompt-toolkit <https://github.com/prompt-toolkit/python-prompt-toolkit>`_
+

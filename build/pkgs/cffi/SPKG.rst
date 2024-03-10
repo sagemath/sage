@@ -1,14 +1,14 @@
-cffi: Foreign Function Interface for Python calling C code
-==========================================================
+cffi: Foreign Function Interface for Python calling C code.
+===========================================================
 
 Description
 -----------
 
-development website: https://foss.heptapod.net/pypy/cffi
+This spkg is installed from an sdist downloaded from
+PyPI.
 
-documentation website: https://cffi.readthedocs.io/en/latest/
-
-PyPI page: https://pypi.org/project/cffi/
+For a detailed description of the package, please visit its
+`PyPI page <https://pypi.org/project/cffi/>`_.
 
 License
 -------
@@ -18,4 +18,5 @@ MIT
 Upstream Contact
 ----------------
 
-https://foss.heptapod.net/pypy/cffi
+`http://cffi.readthedocs.org <http://cffi.readthedocs.org>`_
+

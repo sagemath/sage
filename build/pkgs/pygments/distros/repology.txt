@@ -1,2 +1,0 @@
-pygments
-python:pygments

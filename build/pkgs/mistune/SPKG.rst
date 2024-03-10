@@ -1,19 +1,22 @@
-mistune: A markdown parser in pure Python
-=========================================
+mistune: A sane and fast Markdown parser with useful plugins and renderers
+==========================================================================
 
 Description
 -----------
 
-The fastest markdown parser in pure Python
+This spkg is installed from a wheel downloaded from
+PyPI.
+
+For a detailed description of the package, please visit its
+`PyPI page <https://pypi.org/project/mistune/>`_.
 
 License
 -------
 
-BSD License
-
+BSD-3-Clause
 
 Upstream Contact
 ----------------
 
-Home Page: https://github.com/lepture/mistune
+`https://pypi.org/project/mistune/ <https://pypi.org/project/mistune/>`_
 

@@ -1,1 +1,0 @@
-py-jupyter_core

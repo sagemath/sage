@@ -1,1 +1,1 @@
-argon2-cffi-bindings
+argon2_cffi_bindings ==21.2.0

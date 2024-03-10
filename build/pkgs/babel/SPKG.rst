@@ -1,10 +1,14 @@
-babel: Internationalization utilities
+Babel: Internationalization utilities
 =====================================
 
 Description
 -----------
 
-Internationalization utilities
+This spkg is installed from a wheel downloaded from
+PyPI.
+
+For a detailed description of the package, please visit its
+`PyPI page <https://pypi.org/project/Babel/>`_.
 
 License
 -------
@@ -14,5 +18,5 @@ BSD-3-Clause
 Upstream Contact
 ----------------
 
-https://pypi.org/project/Babel/
+`https://babel.pocoo.org/ <https://babel.pocoo.org/>`_
 

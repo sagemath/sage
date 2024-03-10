@@ -1,1 +1,1 @@
-charset-normalizer
+charset_normalizer ==3.3.2

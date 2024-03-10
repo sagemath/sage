@@ -1,18 +1,22 @@
-argon2_cffi: The secure Argon2 password hashing algorithm
-=========================================================
+argon2_cffi: Argon2 for Python
+==============================
 
 Description
 -----------
 
-The secure Argon2 password hashing algorithm.
+This spkg is installed from a wheel downloaded from
+PyPI.
+
+For a detailed description of the package, please visit its
+`PyPI page <https://pypi.org/project/argon2-cffi/>`_.
 
 License
 -------
 
-MIT
+
 
 Upstream Contact
 ----------------
 
-https://pypi.org/project/argon2-cffi/
+`https://pypi.org/project/argon2-cffi/ <https://pypi.org/project/argon2-cffi/>`_
 

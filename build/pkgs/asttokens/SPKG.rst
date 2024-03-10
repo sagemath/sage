@@ -4,7 +4,11 @@ asttokens: Annotate AST trees with source code positions
 Description
 -----------
 
-Annotate AST trees with source code positions
+This spkg is installed from a wheel downloaded from
+PyPI.
+
+For a detailed description of the package, please visit its
+`PyPI page <https://pypi.org/project/asttokens/>`_.
 
 License
 -------
@@ -14,5 +18,5 @@ Apache 2.0
 Upstream Contact
 ----------------
 
-https://pypi.org/project/asttokens/
+`https://github.com/gristlabs/asttokens <https://github.com/gristlabs/asttokens>`_
 

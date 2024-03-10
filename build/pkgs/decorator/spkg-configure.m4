@@ -1,1 +1,0 @@
-SAGE_SPKG_CONFIGURE([decorator], [SAGE_PYTHON_PACKAGE_CHECK([decorator])])

@@ -1,1 +1,1 @@
-uri-template
+uri_template ==1.3.0

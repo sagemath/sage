@@ -1,2 +1,1 @@
-jinja2 >=3.0
-# for sphinx
+Jinja2 ==3.1.3

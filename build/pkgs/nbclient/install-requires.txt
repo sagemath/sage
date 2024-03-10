@@ -1,1 +1,1 @@
-nbclient
+nbclient ==0.9.0

@@ -1,1 +1,1 @@
-anyio
+anyio ==4.3.0

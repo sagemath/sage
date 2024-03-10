@@ -1,1 +1,1 @@
-bleach >= 5
+bleach ==6.1.0

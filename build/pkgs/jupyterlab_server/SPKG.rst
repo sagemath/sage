@@ -4,7 +4,11 @@ jupyterlab_server: A set of server components for JupyterLab and JupyterLab like
 Description
 -----------
 
-A set of server components for JupyterLab and JupyterLab like applications.
+This spkg is installed from a wheel downloaded from
+PyPI.
+
+For a detailed description of the package, please visit its
+`PyPI page <https://pypi.org/project/jupyterlab-server/>`_.
 
 License
 -------
@@ -14,5 +18,5 @@ Copyright (c) 2015-2017, Project Jupyter Contributors All rights reserved.  Redi
 Upstream Contact
 ----------------
 
-https://pypi.org/project/jupyterlab-server/
+`https://jupyterlab-server.readthedocs.io <https://jupyterlab-server.readthedocs.io>`_
 

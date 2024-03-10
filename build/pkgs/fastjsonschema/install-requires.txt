@@ -1,1 +1,1 @@
-fastjsonschema
+fastjsonschema ==2.19.1

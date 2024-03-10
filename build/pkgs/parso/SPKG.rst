@@ -1,9 +1,22 @@
-parso: A Python parser
+parso: A Python Parser
 ======================
 
 Description
 -----------
 
-Parso is a Python parser that supports error recovery and round-trip
-parsing for different Python versions (in multiple Python versions).
-Parso is also able to list multiple syntax errors in your python file.
+This spkg is installed from a wheel downloaded from
+PyPI.
+
+For a detailed description of the package, please visit its
+`PyPI page <https://pypi.org/project/parso/>`_.
+
+License
+-------
+
+MIT
+
+Upstream Contact
+----------------
+
+`https://github.com/davidhalter/parso <https://github.com/davidhalter/parso>`_
+

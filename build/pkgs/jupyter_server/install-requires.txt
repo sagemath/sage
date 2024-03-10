@@ -1,1 +1,1 @@
-jupyter-server
+jupyter_server ==2.12.5

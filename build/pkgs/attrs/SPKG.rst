@@ -1,20 +1,22 @@
-attrs: Decorator for Python classes with attributes
-===================================================
+attrs: Classes Without Boilerplate
+==================================
 
 Description
 -----------
 
-attrs is the Python package that will bring back the joy of writing classes
-by relieving you from the drudgery of implementing object protocols
-(aka dunder methods).
+This spkg is installed from a wheel downloaded from
+PyPI.
+
+For a detailed description of the package, please visit its
+`PyPI page <https://pypi.org/project/attrs/>`_.
 
 License
 -------
 
-MIT License
 
 
 Upstream Contact
 ----------------
 
-Home page: https://www.attrs.org
+`https://pypi.org/project/attrs/ <https://pypi.org/project/attrs/>`_
+

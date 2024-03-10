@@ -1,1 +1,1 @@
-jupyter-events
+jupyter_events ==0.9.0

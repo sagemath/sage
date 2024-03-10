@@ -1,24 +1,22 @@
-pandocfilters: A Python module for writing pandoc filters
-=========================================================
+pandocfilters: Utilities for writing pandoc filters in python
+=============================================================
 
 Description
 -----------
 
-A python module for writing pandoc filters.
+This spkg is installed from a wheel downloaded from
+PyPI.
+
+For a detailed description of the package, please visit its
+`PyPI page <https://pypi.org/project/pandocfilters/>`_.
 
 License
 -------
 
-BSD 3-Clause License
-
+BSD-3-Clause
 
 Upstream Contact
 ----------------
 
-Author: John MacFarlane Home page: https://github.com/jgm/pandocfilters
+`http://github.com/jgm/pandocfilters <http://github.com/jgm/pandocfilters>`_
 
-Special Update/Build Instructions
----------------------------------
-
-Download the last release from
-https://pypi.python.org/pypi/pandocfilters

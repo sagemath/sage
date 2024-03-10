@@ -1,1 +1,1 @@
-jupyter-lsp
+jupyter_lsp ==2.2.3

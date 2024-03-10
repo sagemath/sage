@@ -1,1 +1,1 @@
-python-json-logger
+python_json_logger ==2.0.7

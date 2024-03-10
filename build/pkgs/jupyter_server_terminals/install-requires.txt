@@ -1,1 +1,1 @@
-jupyter-server-terminals
+jupyter_server_terminals ==0.5.2
