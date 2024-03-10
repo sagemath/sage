@@ -141,6 +141,84 @@ class Algebras(CategoryWithAxiom_over_base_ring):
     Semisimple = LazyImport('sage.categories.semisimple_algebras',
                             'SemisimpleAlgebras')
 
+    class ParentMethods:
+        def characteristic(self):
+            r"""
+            Return the characteristic of this algebra, which is the same
+            as the characteristic of its base ring.
+
+            EXAMPLES::
+
+                sage: # needs sage.modules
+                sage: ZZ.characteristic()
+                0
+                sage: A = GF(7^3, 'a')                                                      # needs sage.rings.finite_rings
+                sage: A.characteristic()                                                    # needs sage.rings.finite_rings
+                7
+            """
+            return self.base_ring().characteristic()
+
+        def has_standard_involution(self):
+            r"""
+            Return ``True`` if the algebra has a standard involution and ``False`` otherwise.
+
+            This algorithm follows Algorithm 2.10 from John Voight's *Identifying the Matrix Ring*.
+            Currently the only type of algebra this will work for is a quaternion algebra.
+            Though this function seems redundant, once algebras have more functionality, in particular
+            have a method to construct a basis, this algorithm will have more general purpose.
+
+            EXAMPLES::
+
+                sage: # needs sage.combinat sage.modules
+                sage: B = QuaternionAlgebra(2)
+                sage: B.has_standard_involution()
+                True
+                sage: R.<x> = PolynomialRing(QQ)
+                sage: K.<u> = NumberField(x**2 - 2)                                         # needs sage.rings.number_field
+                sage: A = QuaternionAlgebra(K, -2, 5)                                       # needs sage.rings.number_field
+                sage: A.has_standard_involution()                                           # needs sage.rings.number_field
+                True
+                sage: L.<a,b> = FreeAlgebra(QQ, 2)
+                sage: L.has_standard_involution()
+                Traceback (most recent call last):
+                ...
+                NotImplementedError: has_standard_involution is not implemented for this algebra
+                """
+            field = self.base_ring()
+            try:
+                basis = self.basis()
+            except AttributeError:
+                raise AttributeError("basis is not yet implemented for this algebra")
+            try:
+                # TODO: The following code is specific to the quaternion algebra
+                #   and should belong there
+                # step 1
+                for i in range(1, 4):
+                    ei = basis[i]
+                    a = ei**2
+                    coef = a.coefficient_tuple()
+                    ti = coef[i]
+                    ni = a - ti * ei
+                    if ni not in field:
+                        return False
+                # step 2
+                for i in range(1, 4):
+                    for j in range(2, 4):
+                        ei = basis[i]
+                        ej = basis[j]
+                        a = ei**2
+                        coef = a.coefficient_tuple()
+                        ti = coef[i]
+                        b = ej**2
+                        coef = b.coefficient_tuple()
+                        tj = coef[j]
+                        nij = (ei + ej)**2 - (ti + tj) * (ei + ej)
+                        if nij not in field:
+                            return False
+            except AttributeError:
+                raise NotImplementedError("has_standard_involution is not implemented for this algebra")
+            return True
+
     class ElementMethods:
         # TODO: move the content of AlgebraElement here or higher in the category hierarchy
         def _div_(self, y):
