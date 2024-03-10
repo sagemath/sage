@@ -184,7 +184,7 @@ def rebuild(dirname, force=False, interpreters=None, distribution=None):
         sage: from sage_setup.autogen.interpreters import *
         sage: testdir = tmp_dir()
         sage: rebuild(testdir)
-        Building interpreters for fast_callable
+        Generating interpreters for fast_callable in ...
         -> First build of interpreters
         sage: with open(testdir + '/wrapper_el.pyx') as f:
         ....:     f.readline()
