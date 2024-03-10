@@ -22,6 +22,8 @@ from sage.libs.gap.gap_includes cimport *
 from sage.libs.gap.libgap import libgap
 from sage.libs.gap.util cimport *
 from sage.libs.gap.util import GAPError
+from sage.libs.gmp.mpz cimport *
+from sage.libs.gmp.pylong cimport mpz_get_pylong
 from sage.cpython.string cimport str_to_bytes, char_to_str
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -1478,7 +1480,7 @@ cdef class GapElement_Integer(GapElement):
         Return the Sage equivalent of the :class:`GapElement_Integer`
 
         - ``ring`` -- Integer ring or ``None`` (default). If not
-          specified, a the default Sage integer ring is used.
+          specified, the default Sage integer ring is used.
 
         OUTPUT:
 
@@ -1508,17 +1510,22 @@ cdef class GapElement_Integer(GapElement):
             sage: huge.sage().ndigits()
             10000
         """
+        cdef UInt* x
+        cdef Int size
+        cdef int c_sign
+        cdef int c_size
+        cdef mpz_t output
         if ring is None:
             ring = ZZ
         if self.is_C_int():
             return ring(GAP_ValueInt(self.value))
         else:
-            # TODO: waste of time!
-            # gap integers are stored as a mp_limb_t and we have a much more direct
-            # conversion implemented in mpz_get_pylong(mpz_srcptr z)
-            # (see sage.libs.gmp.pylong)
-            string = self.String().sage()
-            return ring(string)
+            # gap integers are stored as a mp_limb_t
+            size = GAP_SizeInt(self.value) # count limbs and extract sign
+            c_sign = 1 if size > 0 else -1
+            x = GAP_AddrInt(self.value) # pointer to limbs
+            mpz_roinit_n(output, <mp_limb_t *>x, abs(c_size))
+            return ring(c_sign*mpz_get_pylong(output))
 
     _integer_ = sage
 
