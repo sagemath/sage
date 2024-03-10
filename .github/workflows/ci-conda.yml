@@ -92,7 +92,7 @@ jobs:
         run: |
           # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda.
           pip install --no-build-isolation --no-deps -v -v -e ./pkgs/sage-conf ./pkgs/sage-setup
-          pip install --no-build-isolation --no-deps -v -v -e ./src
+          pip install --no-build-isolation --no-deps --config-settings editable_mode=compat -v -v -e ./src
         env:
           SAGE_NUM_THREADS: 2
         
