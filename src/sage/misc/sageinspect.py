@@ -102,7 +102,7 @@ generic argspec::
     sage: sage_getdef(str.find, 'find')
     'find(*args, **kwds)'
 
-By :trac:`9976` and :trac:`14017`, introspection also works for interactively
+By :issue:`9976` and :issue:`14017`, introspection also works for interactively
 defined Cython code, and with rather tricky argument lines::
 
     sage: # needs sage.misc.cython
@@ -260,7 +260,7 @@ def _extract_embedded_position(docstring):
 
     TESTS:
 
-    The following has been fixed in :trac:`13916`::
+    The following has been fixed in :issue:`13916`::
 
         sage: cython('''cpdef test_funct(x,y): return''')                               # needs sage.misc.cython
         sage: func_doc = inspect.getdoc(test_funct)                                     # needs sage.misc.cython
@@ -271,7 +271,7 @@ def _extract_embedded_position(docstring):
     Ensure that the embedded filename of the compiled function is
     correct.  In particular it should be relative to ``spyx_tmp()`` in
     order for certain documentation functions to work properly.  See
-    :trac:`24097`::
+    :issue:`24097`::
 
         sage: from sage.env import DOT_SAGE
         sage: from sage.misc.sage_ostools import restore_cwd
@@ -330,7 +330,7 @@ def _extract_embedded_signature(docstring, name):
     If docstring starts with the embedded of a method called ``name``, return
     a tuple (original_docstring, argspec).  If not, return (docstring, None).
 
-    See :trac:`17814`.
+    See :issue:`17814`.
 
     INPUT: ``docstring`` (string)
 
@@ -1003,7 +1003,7 @@ def _split_syntactical_unit(s):
 
     TESTS:
 
-    The following was fixed in :trac:`16309`::
+    The following was fixed in :issue:`16309`::
 
         sage: _split_syntactical_unit('()): pass')
         ('()', '): pass')
@@ -1364,19 +1364,19 @@ def sage_getfile(obj):
         sage: sage_getfile(x)                                                           # needs sage.symbolic
         '...sage/symbolic/expression.pyx'
 
-    The following tests against some bugs fixed in :trac:`9976`::
+    The following tests against some bugs fixed in :issue:`9976`::
 
         sage: obj = sage.combinat.partition_algebra.SetPartitionsAk                     # needs sage.combinat sage.modules
         sage: sage_getfile(obj)                                                         # needs sage.combinat sage.modules
         '...sage/combinat/partition_algebra.py'
 
-    And here is another bug, fixed in :trac:`11298`::
+    And here is another bug, fixed in :issue:`11298`::
 
         sage: P.<x,y> = QQ[]
         sage: sage_getfile(P)                                                           # needs sage.libs.singular
         '...sage/rings/polynomial/multi_polynomial_libsingular...'
 
-    A problem fixed in :trac:`16309`::
+    A problem fixed in :issue:`16309`::
 
         sage: cython(                                                                   # needs sage.misc.cython
         ....: '''
@@ -1388,7 +1388,7 @@ def sage_getfile(obj):
         sage: sage_getfile(Foo)                                                         # needs sage.misc.cython
         '...pyx'
 
-    By :trac:`18249`, we return an empty string for Python builtins. In that
+    By :issue:`18249`, we return an empty string for Python builtins. In that
     way, there is no error when the user types, for example, ``range?``::
 
         sage: sage_getfile(range)
@@ -1526,7 +1526,7 @@ def sage_getargspec(obj):
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     The following tests against various bugs that were fixed in
-    :trac:`9976`::
+    :issue:`9976`::
 
         sage: from sage.rings.polynomial.real_roots import bernstein_polynomial_factory_ratlist     # needs sage.modules
         sage: sage_getargspec(bernstein_polynomial_factory_ratlist.coeffs_bitsize)                  # needs sage.modules
@@ -1559,7 +1559,7 @@ def sage_getargspec(obj):
 
     TESTS:
 
-    By :trac:`9976`, rather complicated cases work. In the
+    By :issue:`9976`, rather complicated cases work. In the
     following example, we dynamically create an extension class
     that returns some source code, and the example shows that
     the source code is taken for granted, i.e., the argspec of
@@ -1603,14 +1603,14 @@ def sage_getargspec(obj):
                     defaults=('\')"', {False: 'bar'}),
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
 
-    The following produced a syntax error before the patch at :trac:`11913`,
-    see also :trac:`26906`::
+    The following produced a syntax error before the patch at :issue:`11913`,
+    see also :issue:`26906`::
 
         sage: sage.misc.sageinspect.sage_getargspec(r.lm)       # optional - rpy2
         FullArgSpec(args=['self'], varargs='args', varkw='kwds', defaults=None,
                     kwonlyargs=[], kwonlydefaults=None, annotations={})
 
-    The following was fixed in :trac:`16309`::
+    The following was fixed in :issue:`16309`::
 
         sage: # needs sage.misc.cython
         sage: cython(
@@ -1630,20 +1630,20 @@ def sage_getargspec(obj):
         sage: sage_getargspec(Bar.meet)
         FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None, defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
 
-    Test that :trac:`17009` is fixed::
+    Test that :issue:`17009` is fixed::
 
         sage: sage_getargspec(gap)                                                      # needs sage.libs.gap
         FullArgSpec(args=['self', 'x', 'name'], varargs=None, varkw=None,
                     defaults=(None,), kwonlyargs=[], kwonlydefaults=None, annotations={})
 
-    By :trac:`17814`, the following gives the correct answer (previously, the
+    By :issue:`17814`, the following gives the correct answer (previously, the
     defaults would have been found ``None``)::
 
         sage: from sage.misc.nested_class import MainClass
         sage: sage_getargspec(MainClass.NestedClass.NestedSubClass.dummy)
         FullArgSpec(args=['self', 'x', 'r'], varargs='args', varkw='kwds', defaults=((1, 2, 3.4),), kwonlyargs=[], kwonlydefaults=None, annotations={})
 
-    In :trac:`18249` was decided to return a generic signature for Python
+    In :issue:`18249` was decided to return a generic signature for Python
     builtin functions, rather than to raise an error (which is what Python's
     inspect module does)::
 
@@ -1651,7 +1651,7 @@ def sage_getargspec(obj):
         sage: sage_getargspec(range)
         FullArgSpec(args=[], varargs='args', varkw='kwds', defaults=None, kwonlyargs=[], kwonlydefaults=None, annotations={})
 
-    Test that :trac:`28524` is fixed::
+    Test that :issue:`28524` is fixed::
 
         sage: from sage.repl.interpreter import get_test_shell
         sage: shell = get_test_shell()
@@ -1906,7 +1906,7 @@ def sage_getdef(obj, obj_name=''):
         sage: sage_getdef(identity_matrix, 'identity_matrix')                           # needs sage.modules
         'identity_matrix(ring, n=0, sparse=False)'
 
-    Check that :trac:`6848` has been fixed::
+    Check that :issue:`6848` has been fixed::
 
         sage: sage_getdef(RDF.random_element)
         '(min=-1, max=1)'
@@ -1961,7 +1961,7 @@ def _sage_getdoc_unformatted(obj):
 
     TESTS:
 
-    Test that we suppress useless built-in output (:trac:`3342`)::
+    Test that we suppress useless built-in output (:issue:`3342`)::
 
         sage: from sage.misc.sageinspect import _sage_getdoc_unformatted
         sage: _sage_getdoc_unformatted(isinstance.__class__)
@@ -1969,7 +1969,7 @@ def _sage_getdoc_unformatted(obj):
 
     Construct an object raising an exception when accessing the
     ``__doc__`` attribute. This should not give an error in
-    ``_sage_getdoc_unformatted``, see :trac:`19671`::
+    ``_sage_getdoc_unformatted``, see :issue:`19671`::
 
         sage: class NoSageDoc():
         ....:     @property
@@ -2036,7 +2036,7 @@ def sage_getdoc_original(obj):
 
     If the class does not have a docstring, the docstring of the
     ``__init__`` method is used, but not the ``__init__`` method
-    of the base class (this was fixed in :trac:`24936`)::
+    of the base class (this was fixed in :issue:`24936`)::
 
         sage: from sage.categories.category import Category
         sage: class A(Category):
@@ -2209,7 +2209,7 @@ def _sage_getsourcelines_name_with_dot(obj):
 
     TESTS:
 
-    The following was fixed in :trac:`16309`::
+    The following was fixed in :issue:`16309`::
 
         sage: # needs sage.misc.cython
         sage: cython(
@@ -2367,7 +2367,7 @@ def sage_getsourcelines(obj):
         (['cpdef test_funct(x,y): return\n'], 1)
 
     The following tests that an instance of ``functools.partial`` is correctly
-    dealt with (see :trac:`9976`)::
+    dealt with (see :issue:`9976`)::
 
         sage: from sage.tests.functools_partial_src import test_func
         sage: sage_getsourcelines(test_func)
@@ -2375,7 +2375,7 @@ def sage_getsourcelines(obj):
         ...
         '    return x\n'], 7)
 
-    Here are some cases that were covered in :trac:`11298`;
+    Here are some cases that were covered in :issue:`11298`;
     note that line numbers may easily change, and therefore we do
     not test them::
 
@@ -2399,7 +2399,7 @@ def sage_getsourcelines(obj):
         sage: lines[-1]    # last line                                                  # needs sage.symbolic
         '        return S\n'
 
-    We show some enhancements provided by :trac:`11768`. First, we
+    We show some enhancements provided by :issue:`11768`. First, we
     use a dummy parent class that has defined an element class by a
     nested class definition::
 
@@ -2429,7 +2429,7 @@ def sage_getsourcelines(obj):
         sage: sage_getsourcelines(HC)
         (['    class Homsets(HomsetsCategory):\n', ...], ...)
 
-    Testing against a bug that has occurred during work on :trac:`11768`::
+    Testing against a bug that has occurred during work on :issue:`11768`::
 
         sage: P.<x,y> = QQ[]
         sage: I = P*[x,y]
@@ -2648,7 +2648,7 @@ def __internal_tests():
         sage: sage_getdef(sage.rings.integer.Integer.factor, obj_name='factor')
         "factor(algorithm='pari', proof=None, limit=None, int_=False, verbose=0)"
 
-    This used to be problematic, but was fixed in :trac:`10094`::
+    This used to be problematic, but was fixed in :issue:`10094`::
 
         sage: sage_getsource(sage.rings.integer.Integer.__init__)
         '    def __init__(self, x=None, base=0):\n...'

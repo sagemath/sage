@@ -884,7 +884,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
 
             TESTS:
 
-            We check that :trac:`19631` is fixed::
+            We check that :issue:`19631` is fixed::
 
                 sage: R = IntegerModRing(101)
                 sage: M = AutomaticSemigroup(Family({1: R(3), 2: R(5)}), one=R.one())

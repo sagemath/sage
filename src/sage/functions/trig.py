@@ -111,14 +111,14 @@ class Function_sin(GinacFunction):
             ....:                 1/8, 3/8, 1/16, 3/16, 5/16, 7/16, 1/24, 5/24, 7/24, 11/24])
             True
 
-        Check that :trac:`20456` is fixed::
+        Check that :issue:`20456` is fixed::
 
             sage: assume(x > 0)                                                         # needs sage.symbolic
             sage: sin(pi*x)                                                             # needs sage.symbolic
             sin(pi*x)
             sage: forget()                                                              # needs sage.symbolic
 
-        Check that :trac:`20752` is fixed::
+        Check that :issue:`20752` is fixed::
 
             sage: sin(3*pi + 41/42*pi)                                                  # needs sage.symbolic
             -sin(1/42*pi)
@@ -186,7 +186,7 @@ class Function_cos(GinacFunction):
             sage: cos(complex(1,1))     # rel tol 1e-15
             (0.8337300251311491-0.9888977057628651j)
 
-        Check that :trac:`20752` is fixed::
+        Check that :issue:`20752` is fixed::
 
             sage: cos(3*pi + 41/42*pi)                                                  # needs sage.symbolic
             cos(1/42*pi)
@@ -255,7 +255,7 @@ class Function_tan(GinacFunction):
             sage: tan(complex(1,1))     # rel tol 1e-15
             (0.2717525853195118+1.0839233273386946j)
 
-        Check that :trac:`19791` is fixed::
+        Check that :issue:`19791` is fixed::
 
             sage: tan(2+I).imag().n()                                                   # needs sage.symbolic
             1.16673625724092
@@ -701,7 +701,7 @@ class Function_arctan(GinacFunction):
             sage: atan(complex(1,1))                                                    # needs sage.rings.complex_double
             (1.0172219678978514+0.4023594781085251j)
 
-        Check that :trac:`19918` is fixed::
+        Check that :issue:`19918` is fixed::
 
             sage: arctan(-x).subs(x=oo)                                                 # needs sage.symbolic
             -1/2*pi
@@ -991,22 +991,22 @@ class Function_arctan2(GinacFunction):
             sage: arctan2(y, x).operator()                                              # needs sage.symbolic
             arctan2
 
-        Check if :trac:`8565` is fixed::
+        Check if :issue:`8565` is fixed::
 
             sage: atan2(-pi, 0)                                                         # needs sage.symbolic
             -1/2*pi
 
-        Check if :trac:`8564` is fixed::
+        Check if :issue:`8564` is fixed::
 
             sage: arctan2(x,x)._sympy_()                                                # needs sympy sage.symbolic
             atan2(x, x)
 
-        Check if numerical evaluation works :trac:`9913`::
+        Check if numerical evaluation works :issue:`9913`::
 
             sage: arctan2(0, -log(2)).n()                                               # needs sage.symbolic
             3.14159265358979
 
-        Check that atan2(0,0) returns NaN :trac:`21614`::
+        Check that atan2(0,0) returns NaN :issue:`21614`::
 
             sage: # needs sage.symbolic
             sage: atan2(0, 0)
@@ -1020,7 +1020,7 @@ class Function_arctan2(GinacFunction):
             ...
             RuntimeError: atan2(): division by zero
 
-        Check if :trac:`10062` is fixed, this was caused by
+        Check if :issue:`10062` is fixed, this was caused by
         ``(I*I).is_positive()`` returning ``True``::
 
             sage: arctan2(0, I*I)                                                       # needs sage.symbolic

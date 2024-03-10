@@ -570,7 +570,7 @@ cdef class Matrix_mpolynomial_dense(Matrix_generic_dense):
             sage: m.det()
             0
 
-        Check :trac:`23535` is fixed::
+        Check :issue:`23535` is fixed::
 
             sage: x = polygen(QQ)
             sage: K.<a,b> = NumberField([x^2 - 2, x^2 - 5])

@@ -59,7 +59,7 @@ AUTHORS:
 - Ben Hutz (June 2012): added support for projective ring
 
 - Simon King (2013-10): copy the changes of :class:`~sage.categories.morphism.Morphism`
-  that have been introduced in :trac:`14711`.
+  that have been introduced in :issue:`14711`.
 """
 
 # ****************************************************************************
@@ -129,7 +129,7 @@ class SchemeMorphism(Element):
 
         For historical reasons, :class:`SchemeMorphism` copies code from
         :class:`~sage.categories.map.Map` rather than inheriting from it.
-        Proper inheritance should be used instead. See :trac:`14711`.
+        Proper inheritance should be used instead. See :issue:`14711`.
 
     EXAMPLES::
 
@@ -504,7 +504,7 @@ class SchemeMorphism(Element):
             sage: f.base_ring()
             Multivariate Polynomial Ring in t over Integer Ring
 
-        Points have correct base rings too (:trac:`34336`)::
+        Points have correct base rings too (:issue:`34336`)::
 
             sage: x = P(t, 5); x
             (t : 5)
@@ -1402,7 +1402,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
               Defn: Defined on coordinates by sending (x : y) to (x : y)
 
 
-        Check that :trac:`16834` is fixed::
+        Check that :issue:`16834` is fixed::
 
             sage: # needs sage.rings.real_mpfr
             sage: A.<x,y,z> = AffineSpace(RR, 3)
