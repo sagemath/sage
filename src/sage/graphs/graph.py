@@ -3985,10 +3985,10 @@ class Graph(GenericGraph):
             120*e[5]
         """
         from sage.combinat.sf.sf import SymmetricFunctions
+        from sage.combinat.partition import _Partitions
         if R is None:
             R = ZZ
         p = SymmetricFunctions(R).p()
-        Par = p.basis().keys()
 
         # Dict to store parent of each vertex in disjoint-set forest
         # representing components of current induced subgraph.
@@ -4005,23 +4005,23 @@ class Graph(GenericGraph):
             # Compute powersum terms obtained by adding each subset of
             # edges in stack to current subgraph.
             if not stack:
-                root_sizes = [s for v, s in sizes.items() if dsf[v] is None]
-                return p.monomial(Par(sorted(root_sizes, reverse=True)))
-            else:
-                ret = p.zero()
-                e = stack.pop()
-                u = find(dsf, e[0])
-                v = find(dsf, e[1])
-                # Terms cancel if edge creates a cycle.
-                if u is not v:
-                    ret = summand(stack, dsf, sizes)
-                    dsf[v] = u
-                    sizes[u] += sizes[v]
-                    ret -= summand(stack, dsf, sizes)
-                    dsf[v] = None
-                    sizes[u] -= sizes[v]
-                stack.append(e)
-                return ret
+                return p.monomial(_Partitions(sorted(
+                            [s for v, s in sizes.items() if dsf[v] is None],
+                            reverse=True)))
+            ret = p.zero()
+            e = stack.pop()
+            u = find(dsf, e[0])
+            v = find(dsf, e[1])
+            # Terms cancel if edge creates a cycle.
+            if u is not v:
+                ret = summand(stack, dsf, sizes)
+                dsf[v] = u
+                sizes[u] += sizes[v]
+                ret -= summand(stack, dsf, sizes)
+                dsf[v] = None
+                sizes[u] -= sizes[v]
+            stack.append(e)
+            return ret
 
         return summand(list(self.edges(labels=False)), dsf, sizes)
 
