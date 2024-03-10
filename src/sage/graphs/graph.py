@@ -3928,6 +3928,17 @@ class Graph(GenericGraph):
         - ``R`` -- (optional) the base ring for the symmetric functions;
           this uses `\ZZ` by default
 
+        ALGORITHM:
+
+            We traverse a binary tree whose leaves correspond to
+            subsets of edges, and whose internal vertices at depth `d`
+            correspond to a choice of whether to include the `d`-th
+            edge in a given subset. The components of the induced
+            subgraph are incrementally updated with a disjoint-set
+            forest. If the next edge would introduce a cycle to the
+            subset, we prune the branch as the terms produced by the
+            two subtrees cancel in this case.
+
         EXAMPLES::
 
             sage: s = SymmetricFunctions(ZZ).s()                                        # needs sage.combinat sage.modules
