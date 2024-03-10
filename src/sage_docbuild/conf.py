@@ -265,12 +265,49 @@ SAGE_DOC_REMOTE_INVENTORIES = os.environ.get('SAGE_DOC_REMOTE_INVENTORIES', 'no'
 
 _vendored_inventories_dir = os.path.join(SAGE_DOC_SRC, "common", "_vendor")
 
+
 _intersphinx_targets = {
     'python': ['https://docs.python.org/'],
     'pplpy':  [PPLPY_DOCS, 'https://www.sagemath.org/pplpy/'],
-    'scipy':  ['https://docs.scipy.org/doc/scipy/reference/'],
+    'scipy':  ['https://docs.scipy.org/doc/scipy/'],
     'flint':  ['https://flintlib.org/doc/'],
 }
+
+
+def _intersphinx_mapping(key):
+    inventories = []
+    link_target = None
+    for target in _intersphinx_targets[key]:
+        if not target:
+            pass
+        elif target.startswith('http'):
+            if not link_target:
+                link_target = target
+                if SAGE_DOC_REMOTE_INVENTORIES:
+                    inventories.append(None)  # Try downloading inventory from link_target
+        elif os.path.exists(target):
+            if not link_target:
+                link_target = target
+            inventory = os.path.join(target, 'objects.inv')
+            if os.path.exists(inventory):
+                inventories.append(inventory)
+                break
+    else:
+        vendored_inventory = os.path.join(_vendored_inventories_dir, key + '.inv')
+        if os.path.exists(vendored_inventory):
+            inventories.append(vendored_inventory)
+        else:
+            # To avoid docbuild failures when building Sage without internet
+            # connection, we use the local python inventory file as a fallback for other
+            # projects. Cross-references will not be resolved in that case, but the
+            # docbuild will still succeed.
+            python_inventory_file = os.path.join(_vendored_inventories_dir, "python.inv")
+            inventories.append(python_inventory_file)
+    assert link_target
+    if len(inventories) == 1:
+        return link_target, inventories[0]
+    return link_target, tuple(inventories)
+
 
 def set_intersphinx_mappings(app, config):
     """
@@ -284,31 +321,8 @@ def set_intersphinx_mappings(app, config):
             not (os.path.exists(refpath) and os.path.exists(invpath)):
         return
 
-    python_inventory_file = os.path.join(_vendored_inventories_dir, "python.inv")
-    for key, targets in _intersphinx_targets.items():
-        inventories = []
-        link_target = None
-        for target in targets:
-            if target and not target.startswith('http') and os.path.exists(target):
-                if not link_target:
-                    link_target = target
-                if os.path.exists(os.path.join(target, 'objects.inv')):
-                    inventories.append(target)
-                    break
-        else:
-            if SAGE_DOC_REMOTE_INVENTORIES:
-                inventories.append(None)  # Try downloading from link_target
-            vendored_inventory = os.path.join(_vendored_inventories_dir, key + '.inv')
-            if os.path.exists(vendored_inventory):
-                inventories.append(vendored_inventory)
-            else:
-                # To avoid docbuild failures when building Sage without internet
-                # connection, we use the local python inventory file as a fallback for other
-                # projects. Cross-references will not be resolved in that case, but the
-                # docbuild will still succeed.
-                inventories.append(python_inventory_file)
-        assert link_target
-        app.config.intersphinx_mapping[key] = (link_target, tuple(inventories))
+    app.config.intersphinx_mapping = {key: _intersphinx_mapping(key)
+                                      for key in _intersphinx_targets}
 
     # Add master intersphinx mapping
     dst = os.path.join(invpath, 'objects.inv')
