@@ -134,7 +134,6 @@ from sage.categories.morphism cimport Morphism
 from sage.misc.superseded import deprecation_cython as deprecation, deprecated_function_alias
 from sage.misc.cachefunc import cached_method
 
-
 cpdef is_Polynomial(f) noexcept:
     """
     Return ``True`` if ``f`` is of type univariate polynomial.
@@ -2151,6 +2150,18 @@ cdef class Polynomial(CommutativePolynomial):
             True
             sage: f % factor == 0
             True
+
+        TESTS:
+
+        Ensure that :issue:`37445` is fixed::
+
+            sage: R.<x> = GF(13)[]
+            sage: def irr(d, R): return f.monic() if (f := R.random_element(d)).is_irreducible() else irr(d, R)
+            sage: f = prod(irr(6, R) for _ in range(10))
+            sage: irr = f._cantor_zassenhaus_split_to_irreducible(6)
+            sage: assert irr.degree() == 6
+            sage: assert f % irr == 0
+            sage: assert irr.is_irreducible()
         """
         R = self.parent()
         q = self.base_ring().order()
@@ -2160,8 +2171,8 @@ cdef class Polynomial(CommutativePolynomial):
             return self
 
         # We expect to succeed with greater than 1/2 probability,
-        # so if we try 1000 times and fail, there's a bug somewhere.
-        for _ in range(1000):
+        # so if we try 100 times and fail, there's a bug somewhere.
+        for _ in range(100):
             # Sample a polynomial "uniformly" from R
             # TODO: once #37118 has been merged, this can be made cleaner,
             #       as we will actually have access to uniform sampling.
@@ -2174,7 +2185,7 @@ cdef class Polynomial(CommutativePolynomial):
 
             # Need to handle odd and even characteristic separately
             if q % 2:
-                h = self.gcd(pow(T, (q-1)//2, self) - 1)
+                h = self.gcd(pow(T, (q**degree-1)//2, self) - 1)
             else:
                 # Compute the trace of T with field of order 2^k
                 # sum T^(2^i) for i in range (degree * k)
@@ -2200,9 +2211,9 @@ cdef class Polynomial(CommutativePolynomial):
         # If you are reaching this error, chances are there's a bug in the code.
         raise AssertionError(f"no splitting of degree {degree} found for {self}")
 
-    def _any_irreducible_factor_squarefree(self, degree=None):
+    def _any_irreducible_factor_squarefree(self, degree=None, ext_degree=None):
         """
-        Helper function for any_irreducible_factor which computes
+        Helper function for :meth:`any_irreducible_factor` which computes
         an irreducible factor from self, assuming the input is
         squarefree.
 
@@ -2210,9 +2221,12 @@ cdef class Polynomial(CommutativePolynomial):
         of self and then finds a factor with Cantor-Zassenhaus
         splitting.
 
-        If degree is not None, then only irreducible factors of degree
-        `degree` are searched for, otherwise the smallest degree factor
+        If ``degree`` is not ``None``, then only irreducible factors of degree
+        ``degree`` are searched for, otherwise the smallest degree factor
         is found.
+
+        If ``ext_degree`` is not ``None``, then only irreducible factors whose
+        degree divides ``ext_degree`` are returned.
 
         EXAMPLES::
 
@@ -2262,10 +2276,15 @@ cdef class Polynomial(CommutativePolynomial):
 
         # Otherwise we use the smallest possible d value
         for (poly, d) in self._distinct_degree_factorisation_squarefree():
-            return poly._cantor_zassenhaus_split_to_irreducible(d)
-        raise ValueError(f"no irreducible factor could be computed from {self}")
+            if ext_degree is None:
+                return poly._cantor_zassenhaus_split_to_irreducible(d)
+            elif ZZ(d).divides(ext_degree):
+                return poly._cantor_zassenhaus_split_to_irreducible(d)
+            if d > ext_degree:
+                raise ValueError(f"no irreducible factor of degree {degree} dividing {ext_degree} could be computed from {self}")
+        raise AssertionError(f"no irreducible factor could be computed from {self}")
 
-    def any_irreducible_factor(self, degree=None, assume_squarefree=False, assume_distinct_deg=False):
+    def any_irreducible_factor(self, degree=None, assume_squarefree=False, assume_equal_deg=False, ext_degree=None):
         """
         Return an irreducible factor of this polynomial.
 
@@ -2281,10 +2300,14 @@ cdef class Polynomial(CommutativePolynomial):
           Used for polynomials over finite fields.  If ``True``,
           this polynomial is assumed to be squarefree.
 
-        - ``assume_distinct_deg`` (boolean) -- (default: ``False``).
+        - ``assume_equal_deg`` (boolean) -- (default: ``False``).
           Used for polynomials over finite fields.  If ``True``,
           this polynomial is assumed to be the product of irreducible
           polynomials of degree equal to ``degree``.
+
+        - ``ext_degree`` -- positive integer or ``None`` (default);
+          used for polynomials over finite fields. If not ``None`` only returns
+          irreducible factors of ``self`` whose degree divides ``ext_degree``.
 
         EXAMPLES::
 
@@ -2328,9 +2351,9 @@ cdef class Polynomial(CommutativePolynomial):
             sage: F = GF(163)
             sage: R.<x> = F[]
             sage: h = (x + 57) * (x + 98) * (x + 117) * (x + 145)
-            sage: h.any_irreducible_factor(degree=1, assume_distinct_deg=True)   # random
+            sage: h.any_irreducible_factor(degree=1, assume_equal_deg=True)   # random
             x + 98
-            sage: h.any_irreducible_factor(assume_distinct_deg=True)
+            sage: h.any_irreducible_factor(assume_equal_deg=True)
             Traceback (most recent call last):
             ...
             ValueError: degree must be known if distinct degree factorisation is assumed
@@ -2359,7 +2382,7 @@ cdef class Polynomial(CommutativePolynomial):
             if degree < 1:
                 raise ValueError(f"{degree = } must be positive")
 
-        if assume_distinct_deg and degree is None:
+        if assume_equal_deg and degree is None:
             raise ValueError("degree must be known if distinct degree factorisation is assumed")
 
         # When not working over a finite field, do the simple thing of factoring.
@@ -2397,9 +2420,9 @@ cdef class Polynomial(CommutativePolynomial):
 
         # If we know the polynomial is square-free, we can start here
         if assume_squarefree:
-            if assume_distinct_deg:
+            if assume_equal_deg:
                 return self._cantor_zassenhaus_split_to_irreducible(degree)
-            return self._any_irreducible_factor_squarefree(degree)
+            return self._any_irreducible_factor_squarefree(degree, ext_degree)
 
         # Otherwise we compute the squarefree decomposition and check each
         # polynomial for a root. If no poly has a root, we raise an error.
@@ -2407,17 +2430,20 @@ cdef class Polynomial(CommutativePolynomial):
         SFD.sort()
         for poly, _ in SFD:
             try:
-                return poly._any_irreducible_factor_squarefree(degree)
+                return poly._any_irreducible_factor_squarefree(degree, ext_degree)
             except ValueError:
                 pass
 
         # If degree has been set, there could just be no factor of the desired degree
         if degree:
             raise ValueError(f"polynomial {self} has no irreducible factor of degree {degree}")
+        # If ext_degree has been set, then there may be no irreducible factor of degree dividing ext_degree
+        if ext_degree:
+            raise ValueError(f"polynomial {self} has no irreducible factor of degree dividing {ext_degree}")
         # But if any degree is allowed then there should certainly be a factor if self has degree > 0
         raise AssertionError(f"no irreducible factor was computed for {self}. Bug.")
 
-    def any_root(self, ring=None, degree=None, assume_squarefree=False, assume_distinct_deg=False):
+    def any_root(self, ring=None, degree=None, assume_squarefree=False, assume_equal_deg=False):
         """
         Return a root of this polynomial in the given ring.
 
@@ -2437,14 +2463,26 @@ cdef class Polynomial(CommutativePolynomial):
           finite fields.  If ``True``, this polynomial is assumed to be
           squarefree.
 
-        - ``assume_distinct_deg`` (bool) -- Used for polynomials over
+        - ``assume_equal_deg`` (bool) -- Used for polynomials over
           finite fields.  If ``True``, all factors of this polynomial
-          are assumed to have degree ``degree``.
+          are assumed to have degree ``degree``. Note that ``degree``
+          must be set.
 
         .. WARNING::
 
             Negative degree input will be deprecated. Instead use
-            ``assume_distinct_deg``.
+            ``assume_equal_deg``.
+
+        .. NOTE::
+
+            For finite fields, ``any_root()`` is non-deterministic when
+            finding linear roots of a polynomial over the base ring.
+            However, if ``degree`` is greater than one, or ``ring`` is an
+            extension of the base ring, then the root computed is found
+            by attempting to return a root after factorisation. Roots found
+            in this way are deterministic. This may change in the future.
+            For all other rings or fields, roots are found by first
+            fully-factoring ``self`` and the output is deterministic.
 
         EXAMPLES::
 
@@ -2554,28 +2592,66 @@ cdef class Polynomial(CommutativePolynomial):
         # When not working over a finite field, do the simple thing of factoring for
         # roots and picking the first root. If none are available, raise an error.
         from sage.categories.finite_fields import FiniteFields
-        if not self.base_ring() in FiniteFields():
-            rs = self.roots(ring=ring, multiplicities=False)
-            if rs:
-                return rs[0]
-            raise ValueError(f"polynomial {self} has no roots")
+        if self.base_ring() not in FiniteFields():
+            if ring not in FiniteFields():
+                rs = self.roots(ring=ring, multiplicities=False)
+                if rs:
+                    return rs[0]
+                raise ValueError(f"polynomial {self} has no roots")
+
+        # Ensure that a provided ring is appropriate for the function. From the
+        # above we know it is either None or a finite field. When it's a finite
+        # field we ensure there's a coercion from the base ring to ring.
+        if ring is not None:
+            if ring.coerce_map_from(self.base_ring()) is None:
+                raise ValueError(f"no coercion map can be computed from {self.base_ring()} to {ring}")
 
         # When the degree is none, we only look for a linear factor
         if degree is None:
-            # if a ring is given try and coerce the polynomial into this ring
-            if ring is not None:
+            # When ring is None, we attempt to find a linear factor of self
+            if ring is None:
                 try:
-                    self = self.change_ring(ring)
+                    f = self.any_irreducible_factor(degree=1, assume_squarefree=assume_squarefree)
                 except ValueError:
-                    raise(f"cannot coerce polynomial {self} to the new ring: {ring}")
+                    raise ValueError(f"no root of polynomial {self} can be computed")
+                return - f[0] / f[1]
 
-            # try and find a linear irreducible polynomial from f to compute a root
+            # When we have a ring, then we can find an irreducible factor of degree `d` providing
+            # that d divides the degree of the extension from the base ring to the given ring
+            allowed_extension_degree = ring.degree() // self.base_ring().degree()
             try:
-                f = self.any_irreducible_factor(degree=1, assume_squarefree=assume_squarefree)
+                f = self.any_irreducible_factor(assume_squarefree=assume_squarefree, ext_degree=allowed_extension_degree)
             except ValueError:
-                raise ValueError(f"no root of polynomial {self} can be computed")
+                raise ValueError(f"no root of polynomial {self} can be computed over the ring {ring}")
+            # When d != 1 we then find the smallest extension
+            # TODO: What we should do here is compute some minimal
+            #       extension F_ext = self.base_ring().extension(d, names="a") and find a
+            #       root here and then coerce this root into the parent ring. This means we
+            #       would work with the smallest possible extension.
+            #       However, if we have some element of GF(p^k) and we try and coerce this to
+            #       some element GF(p^(k*n)) this can fail, even though mathematically it
+            #       should be fine.
+            # TODO: Additionally, if the above was solved, it would be faster to extend the base
+            #       ring with the irreducible factor however, if the base ring is an extension
+            #       then the type of self.base_ring().extension(f) is a Univariate Quotient Polynomial Ring
+            #       and not a finite field.
 
-            return - f[0] / f[1]
+            # When f has degree one we simply return the roots
+            # TODO: should we write something fast for degree two using
+            #       the quadratic formula?
+            if f.degree().is_one():
+                root = - f[0] / f[1]
+                return ring(root)
+
+            # TODO: The proper thing to do here would be to call
+            #       return f.change_ring(ring).any_root()
+            #       but as we cannot work in the minimal extension (see above) working
+            #       in the extension for f.change_ring(ring).any_root() is almost always
+            #       much much much slower than using the call for roots() which uses
+            #       C library bindings for all finite fields.
+            #       Until the coercion system for finite fields works better,
+            #       this will be the most performant
+            return f.roots(ring, multiplicities=False)[0]
 
         # The old version of `any_root()` allowed degree < 0 to indicate that the input polynomial
         # had a distinct degree factorisation, we pass this to any_irreducible_factor as a bool and
@@ -2583,9 +2659,9 @@ cdef class Polynomial(CommutativePolynomial):
         degree = ZZ(degree)
         if degree < 0:
             from sage.misc.superseded import deprecation
-            deprecation(37170, "negative ``degree`` will be disallowed. Instead use the bool `assume_distinct_deg`.")
+            deprecation(37170, "negative ``degree`` will be disallowed. Instead use the bool `assume_equal_deg`.")
             degree = -degree
-            assume_distinct_deg = True
+            assume_equal_deg = True
 
         # If a certain degree is requested, then we find an irreducible factor of degree `degree`
         # use this to compute a field extension and return the generator as root of this polynomial
@@ -2594,7 +2670,7 @@ cdef class Polynomial(CommutativePolynomial):
         try:
             f = self.any_irreducible_factor(degree=degree,
                                             assume_squarefree=assume_squarefree,
-                                            assume_distinct_deg=assume_distinct_deg)
+                                            assume_equal_deg=assume_equal_deg)
         except ValueError:
             raise ValueError(f"no irreducible factor of degree {degree} can be computed from {self}")
 
@@ -2617,13 +2693,17 @@ cdef class Polynomial(CommutativePolynomial):
             #       FiniteField type if the base field is a non-prime field,
             #       so this slower option is chosen to ensure the root is
             #       over explicitly a FiniteField type.
-            ring = self.base_ring().extension(f.degree(), names="a")
+            ring = self.base_ring().extension(degree, names="a")
 
-        # Now we look for a linear root of this irreducible polynomial of degree `degree`
-        # over the user supplied ring or the extension we just computed. If the user sent
-        # a bad ring here of course there may be no root found.
-        f = f.change_ring(ring)
-        return f.any_root()
+        # TODO: The proper thing to do here would be to call
+        #       return f.change_ring(ring).any_root()
+        #       but as we cannot work in the minimal extension (see above) working
+        #       in the extension for f.change_ring(ring).any_root() is almost always
+        #       much much much slower than using the call for roots() which uses
+        #       C library bindings for all finite fields.
+        #       Until the coercion system for finite fields works better,
+        #       this will be the most performant
+        return f.roots(ring, multiplicities=False)[0]
 
     def __truediv__(left, right):
         r"""

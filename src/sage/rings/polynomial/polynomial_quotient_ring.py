@@ -2098,7 +2098,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             base_image = self.base_ring().modulus().change_ring(isomorphic_ring).any_root()
             base_to_isomorphic_ring = self.base_ring().hom([isomorphic_ring(base_image)])
             modulus = self.modulus().map_coefficients(base_to_isomorphic_ring)
-            gen = modulus.any_root(assume_squarefree=True, degree=1, assume_distinct_deg=True)
+            gen = modulus.any_root(assume_squarefree=True, degree=1, assume_equal_deg=True)
 
             homspace = Hom(self, isomorphic_ring)
             to_isomorphic_ring = homspace.__make_element_class__(SetMorphism)(homspace,
