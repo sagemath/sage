@@ -94,6 +94,19 @@ used as the link name, instead of its full path.
 absolute. If you are documenting ``method_one``, you can write
 ``:meth:`method_two```.
 
+**Intersphinx references:** you can refer to the modules, classes, methods, functions
+of the Python standard library and of the Python packages :mod:`cvxopt`, :mod:`cvxpy`,
+:mod:`cypari2`, :mod:`cysignals`, :mod:`fpylll`, :mod:`ipywidgets`, :mod:`gmpy2`,
+:mod:`matplotlib`, :mod:`mpmath`, :mod:`networkx`, :mod:`numpy`, :mod:`pplpy`,
+:mod:`rpy2`, :mod:`scipy`, :mod:`sympy` in the same way. See the `Intersphinx
+documentation <https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html>`_
+for details.
+
+Likewise, you can refer to the C functions of the :ref:`FLINT <spkg_flint>` library,
+for example using ``:c:func:`arith_bell_number```; see `Sphinx' documentation on
+the C domain <https://www.sphinx-doc.org/en/master/usage/domains/c.html#the-c-domain>`_
+for more information.
+
 **Global namespace:** if an object (e.g. ``integral``) is automatically imported
 by Sage, you can link toward it without specifying its full path:
 
