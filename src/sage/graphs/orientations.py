@@ -263,9 +263,6 @@ def acyclic_orientations(G):
         relabeled_graph = Graph([(reverse_vertex_labels[u], reverse_vertex_labels[v], label) for (u, v), label in orientation.items()])
         yield relabeled_graph
 
-    # output the orientations
-    return orientations
-
 
 def strong_orientations_iterator(G):
     r"""
