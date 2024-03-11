@@ -152,8 +152,9 @@ class JoinFeature(Feature):
 
     def unhide(self):
         r"""
-        Revert what :meth:`hide` does. It returns the number of events
-        a present feature has been hidden.
+        Revert what :meth:`hide` did.
+        
+        OUTPUT: The number of events a present feature has been hidden.
 
         EXAMPLES::
 
