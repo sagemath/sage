@@ -403,7 +403,7 @@ class Feature(TrivialUniqueRepresentation):
     def unhide(self):
         r"""
         Revert what :meth:`hide` did.
-        
+
         OUTPUT: The number of events a present feature has been hidden.
 
         EXAMPLES:
@@ -421,7 +421,6 @@ class Feature(TrivialUniqueRepresentation):
         self._num_hidings.value = 0
         self._hidden = False
         return int(num_hidings)
-
 
 
 class FeatureNotPresentError(RuntimeError):
