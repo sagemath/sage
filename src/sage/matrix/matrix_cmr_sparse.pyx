@@ -466,11 +466,21 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         sum_mat = sum._mat
         row_subdivision = []
         column_subdivision = []
-        for s in summands:
-            row_subdivision.append(sum_mat.numRows)
-            column_subdivision.append(sum_mat.numColumns)
-            summand = Matrix_cmr_chr_sparse._from_data(s)
-            CMR_CALL(CMRoneSum(cmr, sum_mat, summand._mat, &sum_mat))
+
+        cdef CMR_CHRMAT *tmp_sum_mat = NULL
+        sig_on()
+        try:
+            for s in summands:
+                row_subdivision.append(sum_mat.numRows)
+                column_subdivision.append(sum_mat.numColumns)
+                summand = Matrix_cmr_chr_sparse._from_data(s)
+                CMR_CALL(CMRoneSum(cmr, sum_mat, summand._mat, &tmp_sum_mat))
+                sum_mat = tmp_sum_mat
+                tmp_sum_mat = NULL
+
+        finally:
+            sig_off()
+
         if sum_mat != sum._mat:
             sum = Matrix_cmr_chr_sparse._from_cmr(sum_mat, immutable=False)
         if row_subdivision or column_subdivision:
@@ -585,7 +595,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [ 0  0  0  0| 0  1  0  0  1]
         """
         cdef Matrix_cmr_chr_sparse sum, first, second
-        cdef CMR_CHRMAT *sum_mat
+        cdef CMR_CHRMAT *sum_mat = NULL
         first = Matrix_cmr_chr_sparse._from_data(first_mat)
         second = Matrix_cmr_chr_sparse._from_data(second_mat)
 
@@ -624,7 +634,12 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         if second_mat.parent().characteristic() != characteristic:
             raise ValueError("The characteristic of two matrices are different")
 
-        CMR_CALL(CMRtwoSum(cmr, first._mat, second._mat, first_marker, second_marker, characteristic, &sum_mat))
+        sig_on()
+        try:
+            CMR_CALL(CMRtwoSum(cmr, first._mat, second._mat, first_marker, second_marker, characteristic, &sum_mat))
+        finally:
+            sig_off()
+
         sum = Matrix_cmr_chr_sparse._from_cmr(sum_mat, immutable=False)
         if row_subdivision or column_subdivision:
             sum.subdivide(row_subdivision, column_subdivision)
