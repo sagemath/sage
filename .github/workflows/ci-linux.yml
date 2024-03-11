@@ -143,4 +143,9 @@ jobs:
         run: |
           . ../venv/bin/activate
           ./sage -t --all -p4 || true
+
+      - name: Meson Log
+        if: ${{ failure()  }}
+        run: |
+          cat builddir/meson-logs/meson-log.txt
         
