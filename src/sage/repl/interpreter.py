@@ -100,7 +100,7 @@ Test prompt transformer::
     sage: spt(["....: 2+2"])
     ['2+2']
 
-This should strip multiple prompts: see :trac:`16297`::
+This should strip multiple prompts: see :issue:`16297`::
 
     sage: spt(["sage:   sage: 2+2"])
     ['2+2']
@@ -122,7 +122,7 @@ line::
     sage: shell.run_cell('sage: a = [\n... 123]')      # old-style multi-line
     sage: shell.run_cell('sage: a = [\n....: 123]')    # new-style multi-line
 
-We test that :trac:`16196` is resolved::
+We test that :issue:`16196` is resolved::
 
     sage: shell.run_cell('    sage: 1+1')
     2
@@ -434,7 +434,7 @@ def SagePreparseTransformer(lines):
     TESTS:
 
     Check that syntax errors in the preparser do not crash IPython,
-    see :trac:`14961`. ::
+    see :issue:`14961`. ::
 
         sage: preparser(True)
         sage: bad_syntax = "R.<t> = QQ{]"
@@ -451,7 +451,7 @@ def SagePreparseTransformer(lines):
         sage: shell.quit()
 
     Make sure the quote state is carried over across subsequent lines in order
-    to avoid interfering with multi-line strings, see :trac:`30417`. ::
+    to avoid interfering with multi-line strings, see :issue:`30417`. ::
 
         sage: SagePreparseTransformer(["'''\n", 'abc-1-2\n', "'''\n"])
         ["'''\n", 'abc-1-2\n', "'''\n"]
@@ -575,7 +575,7 @@ class InterfaceShellTransformer(PrefilterTransformer):
             sage: ift.preparse_imports_from_sage('2 + gap(a)')
             '2 + gap(a)'
 
-        Since :trac:`28439`, this also works with more complicated expressions
+        Since :issue:`28439`, this also works with more complicated expressions
         containing nested parentheses::
 
             sage: # needs sage.libs.gap sage.symbolic
@@ -637,7 +637,7 @@ class InterfaceShellTransformer(PrefilterTransformer):
         TESTS:
 
         Check that whitespace is not stripped and that special characters are
-        escaped (:trac:`28439`)::
+        escaped (:issue:`28439`)::
 
             sage: shell = interface_shell_embed(gap)                                    # needs sage.libs.gap sage.symbolic
             sage: ift = InterfaceShellTransformer(shell=shell, config=shell.config,     # needs sage.libs.gap sage.symbolic
@@ -725,7 +725,7 @@ def get_test_shell():
 
     TESTS:
 
-    Check that :trac:`14070` has been resolved::
+    Check that :issue:`14070` has been resolved::
 
         sage: from sage.tests.cmdline import test_executable
         sage: cmd = 'from sage.repl.interpreter import get_test_shell; shell = get_test_shell()'
@@ -799,7 +799,7 @@ class SageTerminalApp(TerminalIPythonApp):
 
         TESTS:
 
-        Test that :trac:`15972` has been fixed::
+        Test that :issue:`15972` has been fixed::
 
             sage: import tempfile
             sage: from sage.repl.interpreter import SageTerminalApp

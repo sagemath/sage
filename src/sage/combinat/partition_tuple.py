@@ -1811,7 +1811,7 @@ class PartitionTuples(UniqueRepresentation, Parent):
         sage: PartitionTuples(level=1, size=3, regular=(0,))
         Partitions of the integer 3
 
-    Check that :trac:`14145` has been fixed::
+    Check that :issue:`14145` has been fixed::
 
         sage: 1 in PartitionTuples()
         False
@@ -1969,7 +1969,7 @@ class PartitionTuples(UniqueRepresentation, Parent):
             sage: PT(la)
             ([3, 3, 1])
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in PartitionTuples()
             False
@@ -2189,7 +2189,7 @@ class PartitionTuples_level(PartitionTuples):
             sage: all(mu in PartitionTuples(3) for mu in PartitionTuples(3,8))          # needs sage.libs.flint
             True
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in PartitionTuples(level=2)
             False
@@ -2295,7 +2295,7 @@ class PartitionTuples_size(PartitionTuples):
             sage: [3, 2, 1] in PartitionTuples(size=7)
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in PartitionTuples(size=7)
             False
@@ -2398,7 +2398,7 @@ class PartitionTuples_level_size(PartitionTuples):
             sage: all(mu in PartitionTuples(3,8) for mu in PartitionTuples(3,8))        # needs sage.libs.flint
             True
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in PartitionTuples(5,7)
             False
@@ -2472,7 +2472,7 @@ class PartitionTuples_level_size(PartitionTuples):
 
         TESTS:
 
-        The following calls used to fail (:trac:`11476`)::
+        The following calls used to fail (:issue:`11476`)::
 
             sage: # needs sage.libs.pari
             sage: PartitionTuples(17,2).cardinality()

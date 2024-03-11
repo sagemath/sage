@@ -194,7 +194,7 @@ class HallAlgebra(CombinatorialFreeModule):
 
     The coefficients are actually Laurent polynomials in general, so we don't
     have to work over the fraction field of `\ZZ[q]`. This didn't work before
-    :trac:`15345`::
+    :issue:`15345`::
 
         sage: R.<q> = LaurentPolynomialRing(ZZ)
         sage: H = HallAlgebra(R, q)

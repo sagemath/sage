@@ -366,7 +366,7 @@ def cutwidth(G, algorithm="exponential", cut_off=0, solver=None, verbose=False,
         ...
         ValueError: the specified cut off parameter must be an integer
 
-    Cutwidth of a graph with one edge (:trac:`32131`)::
+    Cutwidth of a graph with one edge (:issue:`32131`)::
 
         sage: from sage.graphs.graph_decompositions.cutwidth import cutwidth
         sage: G = Graph([(0, 1)])

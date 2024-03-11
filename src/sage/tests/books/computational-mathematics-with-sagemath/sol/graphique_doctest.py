@@ -42,7 +42,7 @@ Sage example in ./sol/graphique.tex, line 78::
   sage: g = plot([c*e^(-1/x) for c in srange(-8, 8, 0.4)], (x, -3, 3))
   sage: y = var('y')
   sage: g += plot_vector_field((x^2, y), (x,-3,3), (y,-5,5))
-  sage: g.show()  # not tested, known bug, see :trac:`32657`
+  sage: g.show()  # not tested, known bug, see :issue:`32657`
 
 Sage example in ./sol/graphique.tex, line 124::
 

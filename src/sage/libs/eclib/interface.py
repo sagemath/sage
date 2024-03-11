@@ -295,7 +295,7 @@ class mwrank_EllipticCurve(SageObject):
 
         TESTS:
 
-        See :trac:`7992`::
+        See :issue:`7992`::
 
             sage: EllipticCurve([0, prod(prime_range(10))]).mwrank_curve().two_descent()
             Basic pair: I=0, J=-5670
@@ -331,7 +331,7 @@ class mwrank_EllipticCurve(SageObject):
             RuntimeError: A 2-descent did not complete successfully.
 
         Calling this method twice does not cause a segmentation fault
-        (see :trac:`10665`)::
+        (see :issue:`10665`)::
 
             sage: E = EllipticCurve([1, 1, 0, 0, 528])
             sage: E.two_descent(verbose=False)
@@ -556,7 +556,7 @@ class mwrank_EllipticCurve(SageObject):
             sage: E.gens()
             [[-1001107, -4004428, 1]]
 
-        Check that :trac:`18031` is fixed::
+        Check that :issue:`18031` is fixed::
 
             sage: E = EllipticCurve([0,-1,1,-266,968])
             sage: Q1 = E([-1995,3674,125])

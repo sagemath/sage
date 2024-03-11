@@ -321,7 +321,7 @@ class Function_Bessel_J(BuiltinFunction):
         Numerical evaluation is handled by the mpmath library. Symbolics are
         handled by a combination of Maxima and Sage (Ginac/Pynac).
 
-    Check whether the return value is real whenever the argument is real (:trac:`10251`)::
+    Check whether the return value is real whenever the argument is real (:issue:`10251`)::
 
         sage: bessel_J(5, 1.5) in RR                                                    # needs mpmath
         True
@@ -397,7 +397,7 @@ class Function_Bessel_J(BuiltinFunction):
             sage: bessel_J(0.5, 1.5)                                                    # needs mpmath
             0.649838074753747
 
-        Check for correct rounding (:trac:`17122`)::
+        Check for correct rounding (:issue:`17122`)::
 
             sage: # needs sage.rings.real_mpfr
             sage: R = RealField(113)
@@ -509,7 +509,7 @@ class Function_Bessel_Y(BuiltinFunction):
         sage: f.diff(x)
         -1/2*bessel_Y(3, x) + 1/2*bessel_Y(1, x)
 
-    High precision and complex valued inputs (see :trac:`4230`)::
+    High precision and complex valued inputs (see :issue:`4230`)::
 
         sage: bessel_Y(0, 1).n(128)                                                     # needs sage.symbolic
         0.088256964215676957982926766023515162828
@@ -533,12 +533,12 @@ class Function_Bessel_Y(BuiltinFunction):
 
     TESTS:
 
-    Check whether the return value is real whenever the argument is real (:trac:`10251`)::
+    Check whether the return value is real whenever the argument is real (:issue:`10251`)::
 
         sage: bessel_Y(5, 1.5) in RR                                                    # needs mpmath
         True
 
-    Coercion works correctly (see :trac:`17130`)::
+    Coercion works correctly (see :issue:`17130`)::
 
         sage: # needs sage.rings.real_mpfr
         sage: r = bessel_Y(RealField(200)(1), 1.0); r
@@ -617,7 +617,7 @@ class Function_Bessel_Y(BuiltinFunction):
             sage: bessel_Y(0, 1).n(256)                                                 # needs mpmath sage.symbolic
             0.08825696421567695798292676602351516282781752309067554671104384761199978932351
 
-        Check for correct rounding (:trac:`17122`)::
+        Check for correct rounding (:issue:`17122`)::
 
             sage: # needs mpmath sage.rings.real_mpfr
             sage: R = RealField(113)
@@ -758,7 +758,7 @@ class Function_Bessel_I(BuiltinFunction):
         sage: N(bessel_I(1,1),500)                                                      # needs sage.symbolic
         0.565159103992485027207696027609863307328899621621092009480294489479255640964371134092664997766814410064677886055526302676857637684917179812041131208121
 
-    Check whether the return value is real whenever the argument is real (:trac:`10251`)::
+    Check whether the return value is real whenever the argument is real (:issue:`10251`)::
 
         sage: bessel_I(5, 1.5) in RR                                                    # needs mpmath
         True
@@ -944,7 +944,7 @@ class Function_Bessel_K(BuiltinFunction):
 
     TESTS:
 
-    Verify that :trac:`3426` is fixed:
+    Verify that :issue:`3426` is fixed:
 
     The Bessel K function can be evaluated numerically at complex orders::
 
@@ -961,7 +961,7 @@ class Function_Bessel_K(BuiltinFunction):
         4.11189776828337e-45 - 1.01494840019482e-80*I
         1.15159692553603e-88 - 6.75787862113718e-125*I
 
-    Check whether the return value is real whenever the argument is real (:trac:`10251`)::
+    Check whether the return value is real whenever the argument is real (:issue:`10251`)::
 
         sage: bessel_K(5, 1.5) in RR                                                    # needs mpmath
         True
@@ -2076,7 +2076,7 @@ def spherical_bessel_f(F, n, z):
 
     TESTS:
 
-    Check that :trac:`28474` is fixed::
+    Check that :issue:`28474` is fixed::
 
         sage: from sage.functions.bessel import spherical_bessel_f
         sage: spherical_bessel_f('besselj', 3, -4)                                      # needs mpmath

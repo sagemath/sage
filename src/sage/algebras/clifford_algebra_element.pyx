@@ -90,7 +90,7 @@ cdef class CliffordAlgebraElement(IndexedFreeModuleElement):
             sage: 0*x
             0
 
-        :trac:`34707`::
+        :issue:`34707`::
 
             sage: Q = QuadraticForm(QQ, 2, [0,5,0])
             sage: C.<p,q> = CliffordAlgebra(Q)

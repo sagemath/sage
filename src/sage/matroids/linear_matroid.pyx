@@ -4014,7 +4014,7 @@ cdef class BinaryMatroid(LinearMatroid):
 
         TESTS:
 
-        Check that :trac:`23437` is fixed::
+        Check that :issue:`23437` is fixed::
 
             sage: M = matroids.catalog.Fano().dual()
             sage: B = list(M.bases())
@@ -4905,7 +4905,7 @@ cdef class TernaryMatroid(LinearMatroid):
 
         TESTS:
 
-        Check that :trac:`23437` is fixed::
+        Check that :issue:`23437` is fixed::
 
             sage: from sage.matroids.advanced import *
             sage: X_bin = matroids.catalog.Fano().representation()
@@ -5630,7 +5630,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         TESTS:
 
-        Check that :trac:`23437` is fixed::
+        Check that :issue:`23437` is fixed::
 
             sage: from sage.matroids.advanced import QuaternaryMatroid
             sage: X_bin = matroids.catalog.Fano().representation()
@@ -6110,7 +6110,7 @@ cdef class RegularMatroid(LinearMatroid):
             sage: M1._is_isomorphic(M2.delete('a'), certificate=True)
             (True, {0: 'g', 1: 'b', 2: 'c', 3: 'e', 4: 'd', 5: 'f'})
 
-        Check that :trac:`17316` was fixed::
+        Check that :issue:`17316` was fixed::
 
             sage: from sage.matroids.advanced import *
             sage: Mnew = RegularMatroid(groundset=range(12), matrix=Matrix(ZZ,
@@ -6195,7 +6195,7 @@ cdef class RegularMatroid(LinearMatroid):
 
         TESTS:
 
-        Check that :trac:`22263` was fixed::
+        Check that :issue:`22263` was fixed::
 
             sage: m1 = Matroid(graph='H?ABC~}')                                         # needs sage.graphs
             sage: m2 = Matroid(graph='H?ACNr}')                                         # needs sage.graphs

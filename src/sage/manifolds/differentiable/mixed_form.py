@@ -305,7 +305,7 @@ class MixedForm(AlgebraElement, ModuleElementWithMutability):
             'Mixed differential form F on the 3-dimensional differentiable
              manifold M'
 
-        Check whether :trac:`31784` is fixed::
+        Check whether :issue:`31784` is fixed::
 
             sage: E3 = EuclideanSpace(3)
             sage: S2 = E3.sphere()

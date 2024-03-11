@@ -235,12 +235,12 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         TESTS:
 
-        Check that :trac:`31234` is fixed::
+        Check that :issue:`31234` is fixed::
 
             sage: matrix.identity(QQ, 4) * matrix(RDF, 4, 0)
             []
 
-        Check that an empty matrix is initialized correctly; see :trac:`27366`:
+        Check that an empty matrix is initialized correctly; see :issue:`27366`:
 
             sage: A = matrix(RDF, 3, 0)
             sage: A*A.transpose()
@@ -927,7 +927,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             The computation of this matrix inverse can be accomplished
             quickly with just a transpose as the matrix is orthogonal/unitary.
 
-            For details see :trac:`18365`.
+            For details see :issue:`18365`.
 
         EXAMPLES::
 
@@ -946,7 +946,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             sage: (P*m - L*U).norm() < 1e-14
             False
 
-        :trac:`10839` made this routine available for rectangular matrices.  ::
+        :issue:`10839` made this routine available for rectangular matrices.  ::
 
             sage: A = matrix(RDF, 5, 6, range(30)); A
             [ 0.0  1.0  2.0  3.0  4.0  5.0]
@@ -1498,7 +1498,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         TESTS:
 
-        The following example shows that :trac:`20439` has been resolved::
+        The following example shows that :issue:`20439` has been resolved::
 
             sage: A = matrix(CDF, [[-2.53634347567,  2.04801738686, -0.0, -62.166145304],
             ....:                  [ 0.7, -0.6, 0.0, 0.0],
@@ -1509,7 +1509,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             ....:     for i in range(A.nrows()))
             True
 
-        The following example shows that the fix for :trac:`20439` (conjugating
+        The following example shows that the fix for :issue:`20439` (conjugating
         eigenvectors rather than eigenvalues) is the correct one::
 
             sage: A = Matrix(CDF,[[I,0],[0,1]])
@@ -1656,7 +1656,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         TESTS:
 
-        The following example shows that :trac:`20439` has been resolved::
+        The following example shows that :issue:`20439` has been resolved::
 
             sage: A = matrix(CDF, [[-2.53634347567,  2.04801738686, -0.0, -62.166145304],
             ....:                  [ 0.7, -0.6, 0.0, 0.0],
@@ -1667,7 +1667,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             ....:     for i in range(A.nrows()))
             True
 
-        The following example shows that the fix for :trac:`20439` (conjugating
+        The following example shows that the fix for :issue:`20439` (conjugating
         eigenvectors rather than eigenvalues) is the correct one::
 
             sage: A = Matrix(CDF,[[I,0],[0,1]])
@@ -2163,7 +2163,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         Trivial cases return trivial results of the correct size,
         and we check ``Q`` itself in one case, verifying a fix for
-        :trac:`10795`.  ::
+        :issue:`10795`.  ::
 
             sage: A = zero_matrix(RDF, 0, 10)
             sage: Q, R = A.QR()

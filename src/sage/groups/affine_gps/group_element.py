@@ -393,7 +393,7 @@ class AffineGroupElement(MultiplicativeGroupElement):
             sage: h(z+1)
             3*z + 2
 
-        The action on a polyhedron is defined (see :trac:`30327`)::
+        The action on a polyhedron is defined (see :issue:`30327`)::
 
             sage: F = AffineGroup(3, QQ)
             sage: M = matrix(3, [-1, -2, 0, 0, 0, 1, -2, 1, -1])

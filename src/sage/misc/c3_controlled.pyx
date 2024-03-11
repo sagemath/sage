@@ -415,7 +415,7 @@ cdef class CmpKey:
     is a facade set. The second bit is set if ``self`` is finite.
     And so on. The choice of the flags is adhoc and was primarily
     crafted so that the order between categories would not change
-    too much upon integration of :trac:`13589` and would be
+    too much upon integration of :issue:`13589` and would be
     reasonably session independent. The number ``i`` is there
     to resolve ambiguities; it is session dependent, and is
     assigned increasingly when new categories are created.

@@ -49,7 +49,7 @@ test.spyx
 
 AUTHORS:
 
-- Jeroen Demeyer (2010-11-20): initial version (:trac:`10300`)
+- Jeroen Demeyer (2010-11-20): initial version (:issue:`10300`)
 
 """
 from subprocess import Popen, PIPE
@@ -390,10 +390,10 @@ def test_executable(args, input="", timeout=100.0, pydebug_ignore_warnings=False
         1
 
     Now run a test for the fixdoctests script and, in particular, check that the
-    issues raised in :trac:`10589` are fixed. We have to go to slightly silly
+    issues raised in :issue:`10589` are fixed. We have to go to slightly silly
     lengths to doctest the output.::
 
-        sage: test='r\"\"\"Add a doc-test for the fixdoctest command line option and, in particular, check that\n:trac:`10589` is fixed.\n\nEXAMPLES::\n\n    sage: 1+1              # incorrect output\n    3\n    sage: m=matrix(ZZ,3)   # output when none is expected\n    [0 0 0]\n    [0 0 0]\n    [1 0 0]\n    sage: (2/3)*m          # no output when it is expected\n    sage: mu=PartitionTuple([[4,4],[3,3,2,1],[1,1]])   # output when none is expected\n    [4, 4, 3, 3, 2, 1, 1]\n    sage: mu.pp()          # uneven indentation\n    ****\n    ****\n    sage: PartitionTuples.options(convention="French")\n    sage: mu.pp()         # fix doctest with uneven indentation\n    sage: PartitionTuples.options._reset()\n\"\"\"\n'
+        sage: test='r\"\"\"Add a doc-test for the fixdoctest command line option and, in particular, check that\n:issue:`10589` is fixed.\n\nEXAMPLES::\n\n    sage: 1+1              # incorrect output\n    3\n    sage: m=matrix(ZZ,3)   # output when none is expected\n    [0 0 0]\n    [0 0 0]\n    [1 0 0]\n    sage: (2/3)*m          # no output when it is expected\n    sage: mu=PartitionTuple([[4,4],[3,3,2,1],[1,1]])   # output when none is expected\n    [4, 4, 3, 3, 2, 1, 1]\n    sage: mu.pp()          # uneven indentation\n    ****\n    ****\n    sage: PartitionTuples.options(convention="French")\n    sage: mu.pp()         # fix doctest with uneven indentation\n    sage: PartitionTuples.options._reset()\n\"\"\"\n'
         sage: test_file = os.path.join(tmp_dir(), 'test_file.py')
         sage: F = open(test_file, 'w')
         sage: _ = F.write(test)

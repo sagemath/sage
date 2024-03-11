@@ -3,8 +3,8 @@ Dense univariate polynomials over `\RR`, implemented using MPFR
 
 TESTS:
 
-Check that operations with numpy elements work well (see :trac:`18076` and
-:trac:`8426`)::
+Check that operations with numpy elements work well (see :issue:`18076` and
+:issue:`8426`)::
 
     sage: # needs numpy
     sage: import numpy
@@ -84,7 +84,7 @@ cdef class PolynomialRealDense(Polynomial):
 
         TESTS:
 
-        Check that errors and interrupts are handled properly (see :trac:`10100`)::
+        Check that errors and interrupts are handled properly (see :issue:`10100`)::
 
             sage: a = var('a')                                                          # needs sage.symbolic
             sage: PolynomialRealDense(RR['x'], [1,a])                                   # needs sage.symbolic
@@ -99,7 +99,7 @@ cdef class PolynomialRealDense(Polynomial):
             sage: sig_on_count()
             0
 
-        Test that we don't clean up uninitialized coefficients (:trac:`9826`)::
+        Test that we don't clean up uninitialized coefficients (:issue:`9826`)::
 
             sage: k.<a> = GF(7^3)                                                       # needs sage.rings.finite_rings
             sage: P.<x> = PolynomialRing(k)                                             # needs sage.rings.finite_rings
@@ -108,7 +108,7 @@ cdef class PolynomialRealDense(Polynomial):
             ...
             TypeError: unable to convert 'a' to a real number
 
-        Check that :trac:`17190` is fixed::
+        Check that :issue:`17190` is fixed::
 
             sage: RR['x']({})
             0
@@ -634,7 +634,7 @@ cdef class PolynomialRealDense(Polynomial):
 
         TESTS:
 
-        Check that :trac:`18467` is fixed::
+        Check that :issue:`18467` is fixed::
 
             sage: S.<x> = RR[]
             sage: z = S.zero()

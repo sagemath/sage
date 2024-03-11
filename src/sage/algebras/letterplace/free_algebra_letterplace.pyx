@@ -12,7 +12,7 @@ Free associative unital algebras, implemented via Singular's letterplace rings
 
 AUTHOR:
 
-- Simon King (2011-03-21): :trac:`7797`
+- Simon King (2011-03-21): :issue:`7797`
 
 With this implementation, Groebner bases out to a degree bound and
 normal forms can be computed for twosided weighted homogeneous ideals

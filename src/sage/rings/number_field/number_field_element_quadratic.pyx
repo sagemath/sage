@@ -22,7 +22,7 @@ AUTHORS:
 - David Harvey (2007-10): fixed up a few bugs, polish around the edges
 - David Loeffler (2009-05): added more documentation and tests
 - Vincent Delecroix (2012-07): added comparisons for quadratic number fields
-  (:trac:`13213`), abs, floor and ceil functions (:trac:`13256`)
+  (:issue:`13213`), abs, floor and ceil functions (:issue:`13256`)
 
 """
 # ****************************************************************************
@@ -90,7 +90,7 @@ def __make_NumberFieldElement_quadratic1(parent, cls, a, b, denom):
         sage: loads(dumps(a)) == a # indirect doctest
         True
 
-    We test that :trac:`6462` is fixed::
+    We test that :issue:`6462` is fixed::
 
         sage: L = QuadraticField(-11,'a'); OL = L.maximal_order(); w = OL.0
         sage: loads(dumps(w)) == w # indirect doctest
@@ -326,7 +326,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
         TESTS:
 
-        Test that :trac:`28377` is fixed::
+        Test that :issue:`28377` is fixed::
 
             sage: x = polygen(QQ, 'x')
             sage: K = NumberField(x^2 - x -1, 'a', embedding=(1-AA(5).sqrt())/2)
@@ -651,7 +651,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: RIF(K3(2))
             2
 
-        Check that :trac:`21979` is fixed::
+        Check that :issue:`21979` is fixed::
 
             sage: a = QuadraticField(5).gen()
             sage: u = -573147844013817084101/2*a + 1281597540372340914251/2
@@ -660,7 +660,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: RealIntervalField(128)(u).is_zero()
             False
 
-        This was fixed in :trac:`24371`::
+        This was fixed in :issue:`24371`::
 
             sage: RIF.convert_map_from(QuadraticField(5))
             Conversion via _real_mpfi_ method map:
@@ -710,7 +710,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: CIF(a)
             -1.414213562373095?*I
 
-        This was fixed in :trac:`24371`::
+        This was fixed in :issue:`24371`::
 
             sage: CIF.convert_map_from(QuadraticField(-5))
             Conversion via _complex_mpfi_ method map:
@@ -1082,7 +1082,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
         The following is tested because of the implementation of
         :func:`Q_to_quadratic_field_element` which was the cause of
-        some problems with :trac:`13213`::
+        some problems with :issue:`13213`::
 
             sage: K.<sqrt2> = QuadraticField(2)
             sage: 1/2 + sqrt2 > 0
@@ -1471,7 +1471,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
 
         TESTS:
 
-        Test that :trac:`30360` is fixed::
+        Test that :issue:`30360` is fixed::
 
             sage: K.<sqrt5> = QuadraticField(5, embedding=AA(5).sqrt())
             sage: sqrt5*vector([1,2])
@@ -1567,7 +1567,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: (3*a-2)/7 * b
             1
 
-        This fixes issue :trac:`9357`::
+        This fixes issue :issue:`9357`::
 
             sage: K.<a> = NumberField(x^2+1)
             sage: d = K(0)
@@ -1880,7 +1880,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: parent(a.imag())
             Rational Field
 
-        Check that :trac:`22095` is fixed::
+        Check that :issue:`22095` is fixed::
 
             sage: K.<a> = NumberField(x^2 + 2*x + 14, embedding=CC(-1,+3))
             sage: K13.<sqrt13> = QuadraticField(13)
@@ -2128,7 +2128,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             sage: ((a+1)/3).is_integral()
             False
 
-        This works for order elements too, see :trac:`24077`::
+        This works for order elements too, see :issue:`24077`::
 
             sage: O.<w> = EisensteinIntegers()
             sage: w.is_integral()
@@ -2574,7 +2574,7 @@ cdef class NumberFieldElement_gaussian(NumberFieldElement_quadratic_sqrt):
 
         TESTS:
 
-        Check that :trac:`31808` is fixed::
+        Check that :issue:`31808` is fixed::
 
             sage: C.<I> = QuadraticField(-1)
             sage: AA(C.one())
@@ -2832,7 +2832,7 @@ cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
     def __invert__(self):
         r"""
         Implement inversion, checking that the return value has the right parent.
-        See :trac:`4190`.
+        See :issue:`4190`.
 
         EXAMPLES::
 

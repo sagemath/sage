@@ -395,7 +395,7 @@ cdef class UniqueFactory(SageObject):
 
         TESTS:
 
-        Check that :trac:`16317` has been fixed, i.e., caching works for
+        Check that :issue:`16317` has been fixed, i.e., caching works for
         unhashable objects::
 
             sage: K.<u> = Qq(4)                                                         # needs sage.rings.padics
@@ -518,7 +518,7 @@ cdef class UniqueFactory(SageObject):
         EXAMPLES:
 
         The ``GF`` factory used to have a custom :meth:`other_keys`
-        method, but this was removed in :trac:`16934`::
+        method, but this was removed in :issue:`16934`::
 
             sage: # needs sage.libs.linbox sage.ring.finite_rings
             sage: key, _ = GF.create_key_and_extra_args(27, 'k'); key
@@ -653,7 +653,7 @@ def generic_factory_unpickle(factory, *args):
 
     TESTS:
 
-    The following was enabled in :trac:`16349`. Suppose we have defined
+    The following was enabled in :issue:`16349`. Suppose we have defined
     (somewhere in the library of an old Sage version) a unique factory; in our
     example below, it returns polynomial rings. Now suppose that we want to
     replace the factory by something else, say, a class that provides the

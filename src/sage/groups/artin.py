@@ -715,7 +715,7 @@ class FiniteTypeArtinGroup(ArtinGroup):
         Artin group of type ['E', 7]
 
     Since the word problem for finite-type Artin groups is solvable, their
-    Cayley graph can be locally obtained as follows (see :trac:`16059`)::
+    Cayley graph can be locally obtained as follows (see :issue:`16059`)::
 
         sage: def ball(group, radius):
         ....:     ret = set()

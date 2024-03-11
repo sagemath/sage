@@ -281,7 +281,7 @@ class TensorProductOfCrystals(CrystalOfWords):
         ([2, 1, 1], [1, 2, 1])
 
     Examples with non-regular and infinite crystals (these did not work
-    before :trac:`14402`)::
+    before :issue:`14402`)::
 
         sage: B = crystals.infinity.Tableaux(['D',10])
         sage: T = crystals.TensorProduct(B,B)
@@ -352,7 +352,7 @@ class TensorProductOfCrystals(CrystalOfWords):
             Category of infinite tensor products of highest weight crystals
 
         Check that we get a tensor product of super crystals when given
-        a super Cartan type (:trac:`33518`)::
+        a super Cartan type (:issue:`33518`)::
 
             sage: L = crystals.Letters(['A',[1,2]])
             sage: type(crystals.TensorProduct(L, L))

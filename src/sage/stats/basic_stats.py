@@ -335,7 +335,7 @@ def variance(v, bias=False):
 
     TESTS:
 
-    The performance issue from :trac:`10019` is solved::
+    The performance issue from :issue:`10019` is solved::
 
         sage: variance([1] * 2^18)
         0

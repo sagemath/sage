@@ -1150,7 +1150,7 @@ class CyclicCover_finite_field(cycliccover_generic.CyclicCover_generic):
             x^8 + 532*x^7 - 2877542*x^6 - 242628176*x^5 + 4390163797795*x^4 - 247015136050256*x^3
              - 2982540407204025062*x^2 + 561382189105547134612*x + 1074309286591662654798721
 
-        A non-monic example checking that :trac:`29015` is fixed::
+        A non-monic example checking that :issue:`29015` is fixed::
 
             sage: a = 3
             sage: K.<s> = GF(83^3);

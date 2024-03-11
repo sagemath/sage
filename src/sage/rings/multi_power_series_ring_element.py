@@ -145,7 +145,7 @@ Multiplicative inversion of power series::
 AUTHORS:
 
 - Niles Johnson (07/2010): initial code
-- Simon King (08/2012): Use category and coercion framework, :trac:`13412`
+- Simon King (08/2012): Use category and coercion framework, :issue:`13412`
 
 """
 # ****************************************************************************
@@ -449,14 +449,14 @@ class MPowerSeries(PowerSeries):
             sage: f.truncate()(t,2)
             2*t + 3*t^2 + 7*t^3 + 3*t^4
 
-        Checking that :trac:`15059` is fixed::
+        Checking that :issue:`15059` is fixed::
 
             sage: M.<u,v> = PowerSeriesRing(GF(5))
             sage: s = M.hom([u, u+v])
             sage: s(M.one())
             1
 
-        Since :trac:`26105` you can specify a map on the base ring::
+        Since :issue:`26105` you can specify a map on the base ring::
 
             sage: # needs sage.rings.number_field
             sage: Zx.<x> = ZZ[]
@@ -619,7 +619,7 @@ class MPowerSeries(PowerSeries):
 
         TESTS:
 
-        Check that :trac:`25156` is fixed::
+        Check that :issue:`25156` is fixed::
 
             sage: R.<x1,y1> = PowerSeriesRing(QQ, ('x', 'y'))
             sage: element = 1 + y1^10 + x1^5

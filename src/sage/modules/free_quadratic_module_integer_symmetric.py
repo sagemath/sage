@@ -811,7 +811,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             Gram matrix of the quadratic form with values in Q/2Z:
             []
 
-        Test that the memory leak in :trac:`31625` is fixed::
+        Test that the memory leak in :issue:`31625` is fixed::
 
             sage: import gc
             sage: gc.freeze()

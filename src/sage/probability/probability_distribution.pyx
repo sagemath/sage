@@ -205,7 +205,7 @@ cdef class SphericalDistribution(ProbabilityDistribution):
     TESTS:
 
     Make sure that repeated initializations are randomly seeded
-    (:trac:`9770`)::
+    (:issue:`9770`)::
 
         sage: Xs = [tuple(SphericalDistribution(2).get_random_element()) for _ in range(1000)]
         sage: len(set(Xs)) > 2^^32
@@ -228,7 +228,7 @@ cdef class SphericalDistribution(ProbabilityDistribution):
 
         TESTS:
 
-        Until :trac:`15089` a value of the ``seed`` keyword
+        Until :issue:`15089` a value of the ``seed`` keyword
         besides ``None`` was ignored. We check here that setting
         a seed is effective. ::
 
@@ -561,7 +561,7 @@ cdef class RealDistribution(ProbabilityDistribution):
     TESTS:
 
     Make sure that repeated initializations are randomly seeded
-    (:trac:`9770`)::
+    (:issue:`9770`)::
 
         sage: Xs = [RealDistribution('gaussian', 1).get_random_element() for _ in range(1000)]
         sage: len(set(Xs)) > 2^^32
@@ -589,7 +589,7 @@ cdef class RealDistribution(ProbabilityDistribution):
 
         TESTS:
 
-        Until :trac:`15089` a value of the ``seed`` keyword
+        Until :issue:`15089` a value of the ``seed`` keyword
         besides ``None`` was ignored. We check here that setting
         a seed is effective. ::
 
@@ -1083,7 +1083,7 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
     TESTS:
 
     Make sure that repeated initializations are randomly seeded
-    (:trac:`9770`)::
+    (:issue:`9770`)::
 
         sage: P = [0.001] * 1000
         sage: Xs = [GeneralDiscreteDistribution(P).get_random_element() for _ in range(1000)]
@@ -1115,7 +1115,7 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
 
         TESTS:
 
-        Until :trac:`15089` a value of the ``seed`` keyword
+        Until :issue:`15089` a value of the ``seed`` keyword
         besides ``None`` was ignored. We check here that setting
         a seed is effective. ::
 
@@ -1131,7 +1131,7 @@ cdef class GeneralDiscreteDistribution(ProbabilityDistribution):
             sage: one == three
             False
 
-        Testing that :trac:`24416` is fixed for when entries are larger
+        Testing that :issue:`24416` is fixed for when entries are larger
         than `2^{1024}`::
 
             sage: from collections import Counter

@@ -14,7 +14,7 @@ EXAMPLES::
 AUTHORS:
 
 - Simon Brandhorst (2018-02-08): initial version
-- Sebastian Oehms  (2018-11-15): have this functionality work for permutation groups (:trac:`26750`)
+- Sebastian Oehms  (2018-11-15): have this functionality work for permutation groups (:issue:`26750`)
   and implement :meth:`section` and :meth:`natural_map`
 """
 
@@ -114,7 +114,7 @@ class GroupMorphism_libgap(Morphism):
         sage: a = G.gens()[0]^2
         sage: phi = G.hom([a])
 
-    Check that :trac:`19406` is fixed::
+    Check that :issue:`19406` is fixed::
 
         sage: G = GL(2, GF(3))
         sage: H = GL(3, GF(2))
@@ -172,7 +172,7 @@ class GroupMorphism_libgap(Morphism):
         [0 1]
         )
 
-    The following tests against :trac:`10659`::
+    The following tests against :issue:`10659`::
 
         sage: phi(H)   # indirect doctest
         Subgroup with 1 generators (
@@ -204,7 +204,7 @@ class GroupMorphism_libgap(Morphism):
         [1 1]
         [0 1]
 
-    We check that :trac:`19780` is fixed::
+    We check that :issue:`19780` is fixed::
 
         sage: G = groups.matrix.SO(3, 3)
         sage: H = groups.matrix.GL(3, 3)
@@ -245,7 +245,7 @@ class GroupMorphism_libgap(Morphism):
         From: General Orthogonal Group of degree 2 and form parameter 1 over Finite Field of size 2
         To:   Abelian group with gap, generator orders (2,)
 
-    Check that :trac:`19407` is fixed::
+    Check that :issue:`19407` is fixed::
 
         sage: G = GL(2, GF(2))
         sage: H = GL(3, ZZ)
@@ -445,7 +445,7 @@ class GroupMorphism_libgap(Morphism):
 
         TESTS:
 
-        The following tests we do fall back behind :trac:`10659`::
+        The following tests we do fall back behind :issue:`10659`::
 
             sage: O = WeylGroup(['D',6])
             sage: r = prod(O.gens())

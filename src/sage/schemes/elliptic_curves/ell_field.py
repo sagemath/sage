@@ -716,7 +716,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         TESTS:
 
-        Check that :trac:`16456` is fixed::
+        Check that :issue:`16456` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: K.<a> = NumberField(x^3 - 2)
@@ -1057,7 +1057,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
         AUTHORS:
 
-        - Jeroen Demeyer (2014-01-06): :trac:`11905`, use
+        - Jeroen Demeyer (2014-01-06): :issue:`11905`, use
           ``splitting_field`` method, moved from ``gal_reps.py``, make
           it work over number fields.
         - Lorenz Panny (2022): extend to finite fields
@@ -1328,7 +1328,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
               To:   Elliptic Curve defined by y^2 = x^3 + 272790262*x + 1903695400
                      over Finite Field of size 4294967291
 
-        Not all polynomials define a finite subgroup (:trac:`6384`)::
+        Not all polynomials define a finite subgroup (:issue:`6384`)::
 
             sage: E = EllipticCurve(GF(31), [1,0,0,1,2])
             sage: phi = E.isogeny([14,27,4,1])
@@ -1403,8 +1403,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         TESTS:
 
         Until the checking of kernel polynomials was implemented in
-        :trac:`23222`, the following raised no error but returned an
-        invalid morphism.  See also :trac:`11578`::
+        :issue:`23222`, the following raised no error but returned an
+        invalid morphism.  See also :issue:`11578`::
 
             sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]

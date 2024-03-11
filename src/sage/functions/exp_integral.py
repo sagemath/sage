@@ -180,7 +180,7 @@ class Function_exp_integral_e(BuiltinFunction):
 
         TESTS:
 
-        Check that Python ints work (:trac:`14766`)::
+        Check that Python ints work (:issue:`14766`)::
 
             sage: exp_integral_e(int(3), 0)                                             # needs mpmath
             1/2
@@ -443,7 +443,7 @@ class Function_log_integral(BuiltinFunction):
 
         TESTS:
 
-        Verify that :trac:`28917` is fixed::
+        Verify that :issue:`28917` is fixed::
 
             sage: latex(log_integral(x))                                                # needs sage.symbolic
             \operatorname{log\_integral}\left(x\right)
@@ -639,7 +639,7 @@ class Function_log_integral_offset(BuiltinFunction):
 
         TESTS:
 
-        Verify that the problem described in :trac:`28917` no longer appears here::
+        Verify that the problem described in :issue:`28917` no longer appears here::
 
             sage: latex(log_integral_offset)
             \operatorname{log\_integral\_offset}
@@ -1375,7 +1375,7 @@ class Function_exp_integral(BuiltinFunction):
 
     TESTS:
 
-    Show that the evaluation and limit issue in :trac:`13271` is fixed::
+    Show that the evaluation and limit issue in :issue:`13271` is fixed::
 
         sage: # needs sage.symbolic
         sage: var('Z')

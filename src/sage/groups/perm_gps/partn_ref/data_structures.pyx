@@ -1280,7 +1280,7 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         ....:     test_stab_chain_fns_4(n, 2, 1, 0)
         ....:     test_stab_chain_fns_4(n, 2, 1, 0)
         ....:     test_stab_chain_fns_4(n, 3, 1, 0)
-        sage: for n in range(4,9):              # known bug (see :trac:`32187`), not tested
+        sage: for n in range(4,9):              # known bug (see :issue:`32187`), not tested
         ....:     test_stab_chain_fns_4(n, 1, 0, 1)
         ....:     for j in range(6):
         ....:         test_stab_chain_fns_4(n, 2, 0, 1)

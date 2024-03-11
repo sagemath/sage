@@ -196,7 +196,7 @@ floating point rings::
     sage: ComplexField(230)(a)
     13.271347940197249310098819199575813940871106820003074817832971189555
 
-Check that :trac:`8237` is fixed::
+Check that :issue:`8237` is fixed::
 
     sage: maxima('infinity').sage()
     Infinity

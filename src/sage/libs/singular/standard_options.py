@@ -111,7 +111,7 @@ def libsingular_gb_standard_options(func):
         sage: "basis.reduced" in sage_getsource(J.interreduced_basis)
         True
 
-    The following tests against a bug that was fixed in :trac:`11298`::
+    The following tests against a bug that was fixed in :issue:`11298`::
 
         sage: from sage.misc.sageinspect import sage_getsourcelines, sage_getargspec
         sage: P.<x,y> = QQ[]

@@ -101,7 +101,7 @@ cdef class Ring(ParentWithGens):
 
     TESTS:
 
-    This is to test against the bug fixed in :trac:`9138`::
+    This is to test against the bug fixed in :issue:`9138`::
 
         sage: R.<x> = QQ[]
         sage: R.sum([x,x])
@@ -149,7 +149,7 @@ cdef class Ring(ParentWithGens):
         sage: TestSuite(ZZ['x','y']).run(skip='_test_elements')                         # needs sage.libs.singular
         sage: TestSuite(ZZ['x','y']['t']).run()
 
-    Test against another bug fixed in :trac:`9944`::
+    Test against another bug fixed in :issue:`9944`::
 
         sage: QQ['x'].category()
         Join of Category of euclidean domains and Category of commutative algebras over
@@ -390,7 +390,7 @@ cdef class Ring(ParentWithGens):
 
         TESTS:
 
-        Make sure that :trac:`11139` is fixed::
+        Make sure that :issue:`11139` is fixed::
 
             sage: R.<x> = QQ[]
             sage: R.ideal([])
@@ -472,7 +472,7 @@ cdef class Ring(ParentWithGens):
             Ideal (x + y, y^3 + z) of Multivariate Polynomial Ring in x, y, z
              over Finite Field of size 7
 
-        The following was implemented in :trac:`7797`::
+        The following was implemented in :issue:`7797`::
 
             sage: # needs sage.combinat sage.modules
             sage: A = SteenrodAlgebra(2)
@@ -552,7 +552,7 @@ cdef class Ring(ParentWithGens):
             sage: T._ideal_class_(1)                                                    # needs sage.libs.singular
             <class 'sage.rings.ideal.Ideal_principal'>
 
-        Since :trac:`7797`, non-commutative rings have ideals as well::
+        Since :issue:`7797`, non-commutative rings have ideals as well::
 
             sage: A = SteenrodAlgebra(2)                                                # needs sage.combinat sage.modules
             sage: A._ideal_class_()                                                     # needs sage.combinat sage.modules
@@ -622,7 +622,7 @@ cdef class Ring(ParentWithGens):
 
         TESTS:
 
-        Make sure that :trac:`13644` is fixed::
+        Make sure that :issue:`13644` is fixed::
 
             sage: # needs sage.rings.padics
             sage: K = Qp(3)
@@ -782,7 +782,7 @@ cdef class Ring(ParentWithGens):
             sage: QQ.is_subring(ZZ)
             False
 
-        Every ring is a subring of itself, :trac:`17287`::
+        Every ring is a subring of itself, :issue:`17287`::
 
             sage: QQbar.is_subring(QQbar)                                               # needs sage.rings.number_field
             True
@@ -875,7 +875,7 @@ cdef class Ring(ParentWithGens):
 
         TESTS:
 
-        Make sure :trac:`10481` is fixed::
+        Make sure :issue:`10481` is fixed::
 
             sage: x = polygen(ZZ, 'x')
             sage: R.<a> = ZZ['x'].quo(x^2)                                              # needs sage.libs.pari
@@ -886,7 +886,7 @@ cdef class Ring(ParentWithGens):
             sage: R.is_integral_domain()                                                # needs sage.libs.pari
             False
 
-        Forward the proof flag to ``is_field``, see :trac:`22910`::
+        Forward the proof flag to ``is_field``, see :issue:`22910`::
 
             sage: # needs sage.libs.singular
             sage: R1.<x> = GF(5)[]
@@ -1813,7 +1813,7 @@ cdef class PrincipalIdealDomain(IntegralDomain):
 
         In a field, any nonzero element is a GCD of any nonempty set
         of nonzero elements. In previous versions, Sage used to return
-        1 in the case of the rational field. However, since :trac:`10771`,
+        1 in the case of the rational field. However, since :issue:`10771`,
         the rational field is considered as the
         *fraction field* of the integer ring. For the fraction field
         of an integral domain that provides both GCD and LCM, it is

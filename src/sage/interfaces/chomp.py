@@ -1,7 +1,7 @@
 r"""
 Interface to CHomP
 
-This module is deprecated: see :trac:`33777`.
+This module is deprecated: see :issue:`33777`.
 
 CHomP stands for "Computation Homology Program", and is good at
 computing homology of simplicial complexes, cubical complexes, and
@@ -133,7 +133,7 @@ class CHomP:
         Call a CHomP program to compute the homology of a chain
         complex, simplicial complex, or cubical complex.
 
-        Deprecated: see :trac:`33777`.
+        Deprecated: see :issue:`33777`.
 
         See :class:`CHomP` for full documentation.
 
@@ -447,7 +447,7 @@ def homsimpl(complex=None, subcomplex=None, **kwds):
     program ``homsimpl``.  If the argument ``subcomplex`` is present,
     compute homology of ``complex`` relative to ``subcomplex``.
 
-    This function is deprecated: see :trac:`33777`.
+    This function is deprecated: see :issue:`33777`.
 
     :param complex: a simplicial complex
     :param subcomplex: a subcomplex of ``complex`` or None (the default)
@@ -521,7 +521,7 @@ def homcubes(complex=None, subcomplex=None, **kwds):
     ``homcubes``.  If the argument ``subcomplex`` is present, compute
     homology of ``complex`` relative to ``subcomplex``.
 
-    This function is deprecated: see :trac:`33777`.
+    This function is deprecated: see :issue:`33777`.
 
     :param complex: a cubical complex
     :param subcomplex: a subcomplex of ``complex`` or None (the default)
@@ -577,7 +577,7 @@ def homchain(complex=None, **kwds):
     Compute the homology of a chain complex using the CHomP program
     ``homchain``.
 
-    This function is deprecated: see :trac:`33777`.
+    This function is deprecated: see :issue:`33777`.
 
     :param complex: a chain complex
     :param generators: if True, also return list of generators
@@ -636,7 +636,7 @@ def process_generators_cubical(gen_string, dim):
     r"""
     Process CHomP generator information for cubical complexes.
 
-    This function is deprecated: see :trac:`33777`.
+    This function is deprecated: see :issue:`33777`.
 
     :param gen_string: generator output from CHomP
     :type gen_string: string
@@ -751,7 +751,7 @@ def process_generators_simplicial(gen_string, dim, complex):
     r"""
     Process CHomP generator information for simplicial complexes.
 
-    This function is deprecated: see :trac:`33777`
+    This function is deprecated: see :issue:`33777`
 
     :param gen_string: generator output from CHomP
     :type gen_string: string
@@ -838,7 +838,7 @@ def process_generators_chain(gen_string, dim, base_ring=None):
     r"""
     Process CHomP generator information for simplicial complexes.
 
-    This function is deprecated: see :trac:`33777`.
+    This function is deprecated: see :issue:`33777`.
 
     :param gen_string: generator output from CHomP
     :type gen_string: string

@@ -217,7 +217,7 @@ REFERENCES:
 AUTHORS:
 
 - Sebastian Oehms August 2020: initial version
-- Sebastian Oehms June   2022: add :meth:`conway_polynomial` and :meth:`khovanov_polynomial` (:trac:`33969`)
+- Sebastian Oehms June   2022: add :meth:`conway_polynomial` and :meth:`khovanov_polynomial` (:issue:`33969`)
 
 Thanks to Chuck Livingston and Allison Moore for their support. For further acknowledgments see the correspondig hompages.
 """
@@ -649,7 +649,7 @@ class KnotInfoBase(Enum):
 
         TESTS:
 
-        Check that :trac:`33966` is fixed::
+        Check that :issue:`33966` is fixed::
 
             sage: KnotInfo.K0_1.braid_notation()
             (1,)

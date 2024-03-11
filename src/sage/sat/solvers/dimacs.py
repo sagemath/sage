@@ -491,7 +491,7 @@ class DIMACS(SatSolver):
 
             sage: from sage.sat.boolean_polynomials import solve as solve_sat
             sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)                       # needs sage.rings.finite_rings sage.rings.polynomial.pbori
-            sage: while True:  # workaround (see :trac:`31891`)                         # needs sage.rings.finite_rings sage.rings.polynomial.pbori
+            sage: while True:  # workaround (see :issue:`31891`)                         # needs sage.rings.finite_rings sage.rings.polynomial.pbori
             ....:     try:
             ....:         F, s = sr.polynomial_system()
             ....:         break

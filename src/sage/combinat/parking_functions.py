@@ -697,7 +697,7 @@ class ParkingFunction(ClonableArray, metaclass=InheritComparisonClasscallMetacla
 
             Here we use the standard convention that descent labels
             start at `1`. This behaviour has been changed in
-            :trac:`20555`.
+            :issue:`20555`.
 
         For example, ``ides(PF) = [2, 3, 4, 6]`` means that descents are at
         the 2nd, 3rd, 4th and 6th positions in the inverse of the
@@ -1460,7 +1460,7 @@ class ParkingFunctions_n(ParkingFunctions):
 
     TESTS:
 
-    Check that :trac:`15216` is fixed::
+    Check that :issue:`15216` is fixed::
 
         sage: PF = ParkingFunctions()
         sage: PF3 = ParkingFunctions(3)

@@ -66,7 +66,7 @@ class Monoids(CategoryWithAxiom):
         sage: x^0, x^1, x^2, x^3, x^4, x^5
         ('', 'aa', 'aaaa', 'aaaaaa', 'aaaaaaaa', 'aaaaaaaaaa')
 
-    Check for :trac:`31212`::
+    Check for :issue:`31212`::
 
         sage: R = IntegerModRing(15)
         sage: R.submonoid([R.one()]).list()                                             # needs sage.combinat

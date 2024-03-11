@@ -295,7 +295,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             sage: phi(Y) == Z
             True
 
-        We test that :trac:`24590` is resolved::
+        We test that :issue:`24590` is resolved::
 
             sage: A = FreeQuadraticModule(ZZ,1,matrix([2]))
             sage: f = A.Hom(A).an_element()

@@ -111,7 +111,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
 
         TESTS:
 
-        Regression test for :trac:`12489`. This issue improving
+        Regression test for :issue:`12489`. This issue improving
         equality test revealed that the conversion back from the dual
         basis did not strip cancelled terms from the dictionary::
 

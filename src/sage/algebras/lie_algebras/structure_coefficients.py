@@ -255,7 +255,7 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
 
         TESTS:
 
-        Check that :trac:`23373` is fixed::
+        Check that :issue:`23373` is fixed::
 
             sage: L = lie_algebras.sl(QQ, 2)
             sage: sorted(L.structure_coefficients(True), key=str)

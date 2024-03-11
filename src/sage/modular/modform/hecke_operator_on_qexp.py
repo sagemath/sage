@@ -142,7 +142,7 @@ def _hecke_operator_on_basis(B, V, n, k, eps):
         [       0 14348908]
 
     The following used to cause a segfault due to accidentally
-    transposed second and third argument (:trac:`2107`)::
+    transposed second and third argument (:issue:`2107`)::
 
         sage: B = victor_miller_basis(100,30)
         sage: t2 = hecke_operator_on_basis(B, 100, 2)
@@ -202,14 +202,14 @@ def hecke_operator_on_basis(B, n, k, eps=None, already_echelonized=False):
 
     TESTS:
 
-    This shows that the problem with finite fields reported at :trac:`8281` is solved::
+    This shows that the problem with finite fields reported at :issue:`8281` is solved::
 
         sage: bas_mod5 = [f.change_ring(GF(5)) for f in victor_miller_basis(12, 20)]
         sage: hecke_operator_on_basis(bas_mod5, 2, 12)
         [4 0]
         [0 1]
 
-    This shows that empty input is handled sensibly (:trac:`12202`)::
+    This shows that empty input is handled sensibly (:issue:`12202`)::
 
         sage: # needs sage.rings.number_field
         sage: x = hecke_operator_on_basis([], 3, 12); x

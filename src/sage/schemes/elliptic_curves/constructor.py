@@ -182,14 +182,14 @@ class EllipticCurveFactory(UniqueFactory):
         Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 5
         2
 
-    See :trac:`6657` ::
+    See :issue:`6657` ::
 
         sage: EllipticCurve(GF(144169), j=1728)                                         # needs sage.rings.finite_rings
         Elliptic Curve defined by y^2 = x^3 + x over Finite Field of size 144169
 
     Elliptic curves over the same ring with the same Weierstrass
     coefficients are identical, even when they are constructed in
-    different ways (see :trac:`11474`)::
+    different ways (see :issue:`11474`)::
 
         sage: EllipticCurve('11a3') is EllipticCurve(QQ, [0, -1, 1, 0, 0])
         True
@@ -216,7 +216,7 @@ class EllipticCurveFactory(UniqueFactory):
 
     Without this option, constructing the curve could take a long time
     since both `j` and `j-1728` have to be factored to compute the
-    minimal twist (see :trac:`13100`)::
+    minimal twist (see :issue:`13100`)::
 
        sage: E = EllipticCurve_from_j(2^256+1, minimal_twist=False)
        sage: E.j_invariant() == 2^256+1
@@ -229,7 +229,7 @@ class EllipticCurveFactory(UniqueFactory):
         Elliptic Curve defined by y^2 = x^3 + x + 1 over Multivariate Polynomial Ring in u, v
         over Integer Ring
 
-    We create a curve and a point over ``QQbar`` (see :trac:`6879`)::
+    We create a curve and a point over ``QQbar`` (see :issue:`6879`)::
 
         sage: E = EllipticCurve(QQbar, [0,1])                                           # needs sage.rings.number_field
         sage: E(0)                                                                      # needs sage.rings.number_field
@@ -249,7 +249,7 @@ class EllipticCurveFactory(UniqueFactory):
         Elliptic Curve defined by y^2 = x^3 + 5*x + 6 over Algebraic Field
         Algebraic Field
 
-    See :trac:`6657` ::
+    See :issue:`6657` ::
 
         sage: EllipticCurve(3, j=1728)
         Traceback (most recent call last):
@@ -263,7 +263,7 @@ class EllipticCurveFactory(UniqueFactory):
 
     If the universe of the coefficients is a general field, the object
     constructed has type :class:`EllipticCurve_field`.  Otherwise it is
-    :class:`EllipticCurve_generic`.  See :trac:`9816` ::
+    :class:`EllipticCurve_generic`.  See :issue:`9816` ::
 
         sage: E = EllipticCurve([QQbar(1), 3]); E                                       # needs sage.rings.number_field
         Elliptic Curve defined by y^2 = x^3 + x + 3 over Algebraic Field
@@ -297,13 +297,13 @@ class EllipticCurveFactory(UniqueFactory):
         Category of abelian varieties over
          Fraction Field of Univariate Polynomial Ring in t over Rational Field
 
-    See :trac:`12517`::
+    See :issue:`12517`::
 
         sage: E = EllipticCurve([1..5])
         sage: EllipticCurve(E.a_invariants())
         Elliptic Curve defined by y^2 + x*y + 3*y = x^3 + 2*x^2 + 4*x + 5 over Rational Field
 
-    See :trac:`11773`::
+    See :issue:`11773`::
 
         sage: E = EllipticCurve()
         Traceback (most recent call last):
@@ -1077,7 +1077,7 @@ def EllipticCurve_from_cubic(F, P=None, morphism=True):
 
     TESTS:
 
-    Here is a test for :trac:`21092`::
+    Here is a test for :issue:`21092`::
 
         sage: R.<x,y,z> = QQ[]
         sage: cubic = -3*x^2*y + 3*x*y^2 + 4*x^2*z + 4*y^2*z - 3*x*z^2 + 3*y*z^2 - 8*z^3
@@ -1324,7 +1324,7 @@ def chord_and_tangent(F, P):
          <... 'sage.rings.rational.Rational'>,
          <... 'sage.rings.rational.Rational'>]
 
-    See :trac:`16068`::
+    See :issue:`16068`::
 
         sage: F = x**3 - 4*x**2*y - 65*x*y**2 + 3*x*y*z - 76*y*z**2
         sage: chord_and_tangent(F, [0, 1, 0])

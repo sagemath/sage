@@ -30,7 +30,7 @@ AUTHORS:
 - Miguel Marco (2010-06-19): modified eigenvalues and eigenvectors functions to
   allow the option ``extend=False``
 
-- Thierry Monteil (2010-10-05): bugfix for :trac:`10063`, so that the
+- Thierry Monteil (2010-10-05): bugfix for :issue:`10063`, so that the
   determinant is computed even for rings for which the ``is_field`` method is not
   implemented.
 
@@ -41,7 +41,7 @@ AUTHORS:
   ``_gram_schmidt_noscale``, ``is_similar`` methods
 
 - Moritz Minzlaff (2011-03-17): corrected ``_echelon_form_PID`` method for
-  matrices of one row, fixed in :trac:`9053`
+  matrices of one row, fixed in :issue:`9053`
 
 - Rob Beezer (2011-06-09): added ``is_normal``, ``is_diagonalizable``, ``LU``,
   ``cyclic_subspace``, ``zigzag_form``, ``rational_form`` methods
@@ -56,7 +56,7 @@ AUTHORS:
 - Rob Beezer (2015-05-25): modified ``is_similar`` method
 
 - Samuel Lelièvre (2020-09-18): improved method ``LLL_gram`` based on a patch
-  by William Stein posted at :trac:`5178`, moving the method from its initial
+  by William Stein posted at :issue:`5178`, moving the method from its initial
   location in ``sage.matrix.integer_matrix_dense``
 
 - Michael Jung (2020-10-02): added Bär-Faddeev-LeVerrier algorithm for the
@@ -130,7 +130,7 @@ cdef class Matrix(Matrix1):
 
     Check that a pair consisting of a matrix and its echelon form is
     pickled correctly (this used to give a wrong answer due to a Python
-    bug, see :trac:`17527`)::
+    bug, see :issue:`17527`)::
 
         sage: K.<x> = FractionField(QQ['x'])
         sage: m = Matrix([[1], [x]])
@@ -195,7 +195,7 @@ cdef class Matrix(Matrix1):
 
         The parent of the newly created matrix might be different from the
         initial one. It depends on what the method ``.subs`` does on
-        coefficients (see :trac:`19045`)::
+        coefficients (see :issue:`19045`)::
 
             sage: x = polygen(ZZ)
             sage: m = matrix([[x]])
@@ -416,7 +416,7 @@ cdef class Matrix(Matrix1):
             ...
             TypeError: no common canonical parent for objects with parents: ...
 
-        Check that coercions work correctly (:trac:`17405`)::
+        Check that coercions work correctly (:issue:`17405`)::
 
             sage: # needs sage.rings.complex_double sage.symbolic
             sage: A = matrix(RDF, 2, range(4))
@@ -429,7 +429,7 @@ cdef class Matrix(Matrix1):
         Over the inexact ring ``SR``, we can still verify the solution
         if all of the elements involved were exact to begin with; if
         any are inexact, however, the ``check`` is still skipped
-        (:trac:`29729` and :trac:`33159`)::
+        (:issue:`29729` and :issue:`33159`)::
 
             sage: A = matrix(SR, [[1, 1]])                                              # needs sage.symbolic
             sage: b = vector(SR, [2, 3])                                                # needs sage.symbolic
@@ -740,7 +740,7 @@ cdef class Matrix(Matrix1):
         TESTS:
 
         Check that the arguments are coerced to a suitable parent
-        (:trac:`12406`)::
+        (:issue:`12406`)::
 
             sage: A = matrix(QQ, 2, [1, 2, 3, 4])
             sage: b = vector(RDF, [pi, e])                                              # needs sage.symbolic
@@ -764,7 +764,7 @@ cdef class Matrix(Matrix1):
             True
 
         Check that the coercion mechanism gives consistent results
-        (:trac:`12406`)::
+        (:issue:`12406`)::
 
             sage: A = matrix(ZZ, [[1, 2, 3], [2, 0, 2], [3, 2, 5]])
             sage: b = vector(RDF, [1, 1, 1])
@@ -808,7 +808,7 @@ cdef class Matrix(Matrix1):
             ...
             TypeError: no common canonical parent for objects with parents: ...
 
-        Check that coercions work correctly (:trac:`17405`)::
+        Check that coercions work correctly (:issue:`17405`)::
 
             sage: # needs sage.rings.complex_double sage.symbolic
             sage: A = matrix(RDF, 2, range(4))
@@ -827,7 +827,7 @@ cdef class Matrix(Matrix1):
             TypeError: the second argument must be a vector or a matrix
 
         Over inexact rings, the ``check`` parameter is ignored as the result is
-        only an approximate solution (:trac:`13932`)::
+        only an approximate solution (:issue:`13932`)::
 
             sage: RF = RealField(52)
             sage: B = matrix(RF, 2, 2, 1)
@@ -838,7 +838,7 @@ cdef class Matrix(Matrix1):
         Over the inexact ring ``SR``, we can still verify the solution
         if all of the elements involved were exact to begin with; if
         any are inexact, however, the ``check`` is still skipped
-        (:trac:`29729` and :trac:`33159`)::
+        (:issue:`29729` and :issue:`33159`)::
 
             sage: m = matrix(SR, [0])                                                   # needs sage.symbolic
             sage: b = vector(SR, [1])                                                   # needs sage.symbolic
@@ -1953,7 +1953,7 @@ cdef class Matrix(Matrix1):
              5*x0*x1^2 + x0*x1*x2 - x1*x2,
              5*x0*x1 + x0*x2 - x1*x2 - 16*x1]
 
-        This test addresses an issue raised at :trac:`20512`::
+        This test addresses an issue raised at :issue:`20512`::
 
             sage: A.minors(0)[0].parent() == P
             True
@@ -2051,20 +2051,20 @@ cdef class Matrix(Matrix1):
             sage: A.det() - B.det()                                                     # needs sage.libs.pari
             0
 
-        We verify that :trac:`5569` is resolved (otherwise the following
+        We verify that :issue:`5569` is resolved (otherwise the following
         would hang for hours)::
 
             sage: d = random_matrix(GF(next_prime(10^20)), 50).det()                    # needs sage.rings.finite_rings
             sage: d = random_matrix(Integers(10^50), 50).det()                          # needs sage.rings.finite_rings
 
-        We verify that :trac:`7704` is resolved::
+        We verify that :issue:`7704` is resolved::
 
             sage: matrix(ZZ, {(0,0):1,(1,1):2,(2,2):3,(3,3):4}).det()
             24
             sage: matrix(QQ, {(0,0):1,(1,1):2,(2,2):3,(3,3):4}).det()
             24
 
-        We verify that :trac:`10063` is resolved::
+        We verify that :issue:`10063` is resolved::
 
             sage: # needs sage.libs.singular
             sage: A = GF(2)['x,y,z']
@@ -2762,7 +2762,7 @@ cdef class Matrix(Matrix1):
             sage: m.apply_map(lambda x: x*x, sparse=True).parent()
             Full MatrixSpace of 0 by 0 sparse matrices over Integer Ring
 
-        Check that :trac:`19920` is fixed::
+        Check that :issue:`19920` is fixed::
 
             sage: matrix.ones(2).apply_map(lambda x: int(-3))
             [-3 -3]
@@ -3041,7 +3041,7 @@ cdef class Matrix(Matrix1):
             sage: u.charpoly('x')
             x^3 - c*x^2 - b*x - a
 
-        A test case from :trac:`6442`. Prior to :trac:`12292`, the
+        A test case from :issue:`6442`. Prior to :issue:`12292`, the
         call to ``A.det()`` would attempt to use the cached charpoly,
         and crash if an empty dictionary was cached. We don't cache
         dictionaries anymore, but this test should still pass::
@@ -3059,7 +3059,7 @@ cdef class Matrix(Matrix1):
             3 + O(5)
 
         The cached polynomial should be independent of the ``var``
-        argument (:trac:`12292`). We check (indirectly) that the
+        argument (:issue:`12292`). We check (indirectly) that the
         second call uses the cached value by noting that its result is
         not cached::
 
@@ -3162,7 +3162,7 @@ cdef class Matrix(Matrix1):
             sage: A._charpoly_df()
             x - 23
 
-        Test that :trac:`27937` is fixed::
+        Test that :issue:`27937` is fixed::
 
             sage: R = FreeAbelianMonoid('u,v').algebra(QQ)                              # needs sage.combinat
             sage: matrix(4, 4, lambda i, j: R.an_element())._charpoly_df()              # needs sage.combinat
@@ -5236,7 +5236,7 @@ cdef class Matrix(Matrix1):
             sage: ker.0 * k
             (0, 0, 0, 0)
 
-        Test that :trac:`9425` is fixed.
+        Test that :issue:`9425` is fixed.
 
         ::
 
@@ -6399,7 +6399,7 @@ cdef class Matrix(Matrix1):
 
         TESTS:
 
-        We make sure that :trac:`13308` is fixed. ::
+        We make sure that :issue:`13308` is fixed. ::
 
             sage: M = ModularSymbols(Gamma1(23), sign=1)                                # needs sage.modular
             sage: m = M.cuspidal_subspace().hecke_matrix(2)                             # needs sage.modular
@@ -6916,7 +6916,7 @@ cdef class Matrix(Matrix1):
             See https://github.com/sagemath/sage/issues/29243 for details.
             []
 
-        Check :trac:`30518`::
+        Check :issue:`30518`::
 
             sage: # needs sage.rings.number_field
             sage: K.<i> = QuadraticField(-1)
@@ -7182,7 +7182,7 @@ cdef class Matrix(Matrix1):
             [ 0.8978787322617111 0.27843403682172374 -0.3410106586182631]
             [ 0.4082482904638625 -0.8164965809277263 0.40824829046386324]
 
-        The following example shows that :trac:`20439` has been resolved::
+        The following example shows that :issue:`20439` has been resolved::
 
             sage: # needs sage.rings.complex_double sage.symbolic
             sage: A = matrix(CDF, [[-2.53634347567,  2.04801738686, -0.0, -62.166145304],
@@ -7193,7 +7193,7 @@ cdef class Matrix(Matrix1):
             sage: (P*A - D*P).norm() < 10^(-2)
             True
 
-        The following example shows that the fix for :trac:`20439` (conjugating
+        The following example shows that the fix for :issue:`20439` (conjugating
         eigenvectors rather than eigenvalues) is the correct one::
 
             sage: # needs sage.rings.complex_double sage.symbolic
@@ -7205,7 +7205,7 @@ cdef class Matrix(Matrix1):
         For some symbolic matrices, the Maxima backend fails to correctly
         compute some eigenvectors, returning either none or more vectors than
         the algebraic multiplicity. The following examples show that these
-        cases are detected (:trac:`27842`)::
+        cases are detected (:issue:`27842`)::
 
             sage: # needs sage.symbolic
             sage: A = matrix(SR, [(225/548, 0, -175/274*sqrt(193/1446)),
@@ -7226,7 +7226,7 @@ cdef class Matrix(Matrix1):
             RuntimeError: failed to compute eigenvectors for eigenvalue ...,
             check eigenvectors_left() for partial results
 
-        The following example shows that :trac:`12595` has been resolved::
+        The following example shows that :issue:`12595` has been resolved::
 
             sage: # needs sage.rings.complex_double
             sage: m = Matrix(CDF, 8, [[-1, -1, -1, -1, 1, -3, -1, -1],
@@ -7410,7 +7410,7 @@ cdef class Matrix(Matrix1):
             [ 0.5057744759005657 0.10420578771917821 -0.8164965809277261]
             [ 0.8467851345188293 -0.5912880876735089  0.4082482904638632]
 
-        The following example shows that :trac:`20439` has been resolved::
+        The following example shows that :issue:`20439` has been resolved::
 
             sage: # needs scipy sage.rings.complex_double
             sage: A = matrix(CDF, [[-2.53634347567,  2.04801738686, -0.0, -62.166145304],
@@ -7421,7 +7421,7 @@ cdef class Matrix(Matrix1):
             sage: (A*P - P*D).norm() < 10^(-2)
             True
 
-        The following example shows that the fix for :trac:`20439` (conjugating
+        The following example shows that the fix for :issue:`20439` (conjugating
         eigenvectors rather than eigenvalues) is the correct one::
 
             sage: # needs scipy sage.rings.complex_double sage.symbolic
@@ -7623,7 +7623,7 @@ cdef class Matrix(Matrix1):
 
         TESTS:
 
-        Check that :trac:`11558` is fixed::
+        Check that :issue:`11558` is fixed::
 
             sage: matrix(ZZ, [[1,2],[4,6]], sparse=False).echelon_form(transformation=True)
             (
@@ -7769,7 +7769,7 @@ cdef class Matrix(Matrix1):
             [  0   0]
 
         We check that the echelon form works for matrices over p-adics.
-        See :trac:`17272`::
+        See :issue:`17272`::
 
             sage: # needs sage.rings.padics
             sage: R = ZpCA(5,5,print_mode='val-unit')
@@ -7816,7 +7816,7 @@ cdef class Matrix(Matrix1):
 
         TESTS::
 
-        Check that :trac:`34724` is fixed (indirect doctest)::
+        Check that :issue:`34724` is fixed (indirect doctest)::
 
             sage: a = 6.12323399573677e-17
             sage: m = matrix(RR,[[-a, -1.72508242466029], [ 0.579682446302195, a]])
@@ -8490,7 +8490,7 @@ cdef class Matrix(Matrix1):
             sage: all(M.with_permuted_rows_and_columns(*i) == M for i in A)             # needs sage.graphs sage.groups
             True
 
-        Check that :trac:`25426` is fixed::
+        Check that :issue:`25426` is fixed::
 
             sage: j = matrix([(3, 2, 1, 0, 0),
             ....:             (2, 2, 0, 1, 0),
@@ -9031,7 +9031,7 @@ cdef class Matrix(Matrix1):
             sage: M.subdivision(2,4)
             [37 41 43 47]
 
-        Indices do not need to be in the right order (:trac:`14064`)::
+        Indices do not need to be in the right order (:issue:`14064`)::
 
             sage: M.subdivide([4, 2], [3, 1]); M                                        # needs sage.libs.pari
             [ 2| 3  5| 7 11]
@@ -9380,7 +9380,7 @@ cdef class Matrix(Matrix1):
         TESTS:
 
         Check that `m \times 0` and `0 \times m` matrices work
-        (:trac:`22769`)::
+        (:issue:`22769`)::
 
             sage: m1 = matrix(QQ, 1, 0, [])
             sage: m2 = matrix(QQ, 2, 2, [1, 2, 3, 4])
@@ -9994,7 +9994,7 @@ cdef class Matrix(Matrix1):
 
         TESTS:
 
-        Test :trac:`17341`::
+        Test :issue:`17341`::
 
             sage: random_matrix(GF(2), 8, 586, sparse=True).visualize_structure()       # needs pillow
             512x6px 24-bit RGB image
@@ -10118,7 +10118,7 @@ cdef class Matrix(Matrix1):
             sage: matrix().inverse()
             []
 
-        Test :trac:`27473`::
+        Test :issue:`27473`::
 
             sage: F.<t> = LaurentSeriesRing(GF(2))
             sage: M = Matrix([[t,1], [0,t]])
@@ -10274,7 +10274,7 @@ cdef class Matrix(Matrix1):
 
         Ensure proper computation of the adjugate matrix even in the
         presence of non-integral powers of the variable `x`
-        (:trac:`14403`)::
+        (:issue:`14403`)::
 
             sage: x = var('x')                                                          # needs sage.symbolic
             sage: Matrix([[sqrt(x),x], [1,0]]).adjugate()                               # needs sage.symbolic
@@ -10654,7 +10654,7 @@ cdef class Matrix(Matrix1):
         columns but rank 3, so the orthogonal set has just 3 vectors
         as well.  Orthogonality comes from the Hermitian inner product
         so we need to check with the conjugate-transpose.  This
-        example verifies that the bug on :trac:`10791` is fixed.  ::
+        example verifies that the bug on :issue:`10791` is fixed.  ::
 
             sage: # needs sage.rings.number_field
             sage: F.<a> = QuadraticField(-5)
@@ -10906,7 +10906,7 @@ cdef class Matrix(Matrix1):
             sage: G.row_space() == A.row_space()
             True
 
-        After :trac:`14047`, the matrix can also be over the algebraic reals
+        After :issue:`14047`, the matrix can also be over the algebraic reals
         ``AA``::
 
             sage: # needs sage.rings.number_field
@@ -11176,7 +11176,7 @@ cdef class Matrix(Matrix1):
             ValueError: Jordan normal form not implemented over inexact rings.
 
         Here we need to specify a field, since the eigenvalues are not defined
-        in the smallest ring containing the matrix entries (:trac:`14508`)::
+        in the smallest ring containing the matrix entries (:issue:`14508`)::
 
             sage: c = matrix([[0,1,0], [0,0,1], [1,0,0]])
             sage: c.jordan_form(CyclotomicField(3))                                     # needs sage.combinat sage.rings.number_field
@@ -11247,7 +11247,7 @@ cdef class Matrix(Matrix1):
             sage: jf == ~P*m*P
             True
 
-        We verify that the bug from :trac:`6942` is fixed::
+        We verify that the bug from :issue:`6942` is fixed::
 
             sage: # needs sage.combinat sage.libs.pari
             sage: M = Matrix(GF(2), [[1,0,1,0,0,0,1], [1,0,0,1,1,1,0], [1,1,0,1,1,1,1],
@@ -11272,7 +11272,7 @@ cdef class Matrix(Matrix1):
             sage: M.rank()
             7
 
-        We verify that the bug from :trac:`6932` is fixed::
+        We verify that the bug from :issue:`6932` is fixed::
 
             sage: M = Matrix(1, 1, [1])
             sage: M.jordan_form(transformation=True)                                    # needs sage.combinat
@@ -11379,7 +11379,7 @@ cdef class Matrix(Matrix1):
             sage: T.rank()
             10
 
-        Verify that we smoothly move to QQ from ZZ (:trac:`12693`), i.e.
+        Verify that we smoothly move to QQ from ZZ (:issue:`12693`), i.e.
         we work in the vector space over the field::
 
             sage: # needs sage.combinat sage.libs.pari
@@ -11436,7 +11436,7 @@ cdef class Matrix(Matrix1):
             ...
             ValueError: Matrix entries must be from a field, not Ring of integers modulo 6
 
-        Test for :trac:`10563`::
+        Test for :issue:`10563`::
 
             sage: R = FractionField(PolynomialRing(RationalField(), 'a'))
             sage: a = R.gen()
@@ -12908,7 +12908,7 @@ cdef class Matrix(Matrix1):
 
         TESTS:
 
-        This verifies that :trac:`11274` is resolved::
+        This verifies that :issue:`11274` is resolved::
 
             sage: E = matrix(QQ, [[2, 1], [1, 1]])
             sage: E.is_symmetric()
@@ -12922,7 +12922,7 @@ cdef class Matrix(Matrix1):
             [0.7071067811865475? 0.7071067811865475?]
 
         We check that if the input is a real matrix then the output is real as
-        well (:trac:`18381`)::
+        well (:issue:`18381`)::
 
             sage: E = matrix(QQ, [[4, 2], [2, 10/9]])
             sage: E.cholesky().base_ring()
@@ -12933,7 +12933,7 @@ cdef class Matrix(Matrix1):
             Algebraic Real Field
 
         Check that sparse floating-point matrices can be factored
-        using a toy example reported as part of :trac:`13674`::
+        using a toy example reported as part of :issue:`13674`::
 
             sage: A = matrix(RDF, [[1, 1], [1, 2]], sparse=True)
             sage: A.cholesky()
@@ -12944,7 +12944,7 @@ cdef class Matrix(Matrix1):
             [   1.0    0.0]
             [-1.0*I    1.0]
 
-        Try the trivial case (:trac:`33107`)::
+        Try the trivial case (:issue:`33107`)::
 
             sage: all( matrix(R,[]).cholesky() == matrix(R,[])                          # needs sage.rings.number_field
             ....:      for R in (RR,CC,RDF,CDF,ZZ,QQ,AA,QQbar) )
@@ -13524,7 +13524,7 @@ cdef class Matrix(Matrix1):
             True
 
         Partial pivoting is based on the absolute values of entries
-        of a column. :trac:`12208` shows that the return value of the
+        of a column. :issue:`12208` shows that the return value of the
         absolute value must be handled carefully.  This tests that
         situation in the case of cyclotomic fields.  ::
 
@@ -13536,7 +13536,7 @@ cdef class Matrix(Matrix1):
             sage: C == P*L*U
             True
 
-        Check that :trac:`32736` is solved::
+        Check that :issue:`32736` is solved::
 
             sage: M = Matrix(FiniteField(11), [[2,3],[4,5]])
             sage: P, L, U = M.LU()
@@ -13812,7 +13812,7 @@ cdef class Matrix(Matrix1):
             sage: isinstance(ds, tuple), isinstance(dh, tuple)
             (True, True)
 
-        We check that :trac:`16633` is fixed::
+        We check that :issue:`16633` is fixed::
 
             sage: A = matrix(QQ, [[ 4, -2,  4,  2],
             ....:                 [-2, 10, -2, -7],
@@ -15428,7 +15428,7 @@ cdef class Matrix(Matrix1):
 
         TESTS:
 
-        Check that a sparse zero matrix is handled (:trac:`29214`)::
+        Check that a sparse zero matrix is handled (:issue:`29214`)::
 
             sage: matrix(CDF, 2, 2, sparse=True).norm(1)
             0.0
@@ -15525,7 +15525,7 @@ cdef class Matrix(Matrix1):
             [0.857142857142857 0.875000000000000 0.888888888888889]
             [0.900000000000000 0.909090909090909 0.916666666666667]
 
-        We check that :trac:`29700` is fixed::
+        We check that :issue:`29700` is fixed::
 
             sage: M = matrix(3, [1,1,1,1,0,0,0,1,0])
             sage: A, B = M.diagonalization(QQbar)                                       # needs sage.rings.number_field
@@ -15654,8 +15654,8 @@ cdef class Matrix(Matrix1):
 
         TESTS:
 
-        Sparse matrices are handled correctly (:trac:`28935`), but may
-        require a patched version of maxima (:trac:`32898`) for now::
+        Sparse matrices are handled correctly (:issue:`28935`), but may
+        require a patched version of maxima (:issue:`32898`) for now::
 
             sage: matrix.diagonal([0], sparse=True).exp()       # not tested            # needs sage.symbolic
             [1]
@@ -15664,7 +15664,7 @@ cdef class Matrix(Matrix1):
             [                0 1.000000000000000]
         """
         if self.is_sparse():
-            # exp is only implemented for dense matrices (:trac:`28935`)
+            # exp is only implemented for dense matrices (:issue:`28935`)
             return self.dense_matrix().exp().sparse_matrix()
         from sage.symbolic.ring import SR
         return self.change_ring(SR).exp()
@@ -16339,7 +16339,7 @@ cdef class Matrix(Matrix1):
             sage: r * m == s and r.det() == 1
             True
 
-        We verify that :trac:`9053` is resolved::
+        We verify that :issue:`9053` is resolved::
 
             sage: R.<x> = GF(7)[]
             sage: A = R^3
@@ -18596,7 +18596,7 @@ def _matrix_power_symbolic(A, n):
         [ 1/2*2^(2*n + 1) + 1/2*kronecker_delta(0, 2*n + 1) -1/2*2^(2*n + 1) + 1/2*kronecker_delta(0, 2*n + 1)]
         [-1/2*2^(2*n + 1) + 1/2*kronecker_delta(0, 2*n + 1)  1/2*2^(2*n + 1) + 1/2*kronecker_delta(0, 2*n + 1)]
 
-    Check if :trac:`23215` is fixed::
+    Check if :issue:`23215` is fixed::
 
         sage: a, b, k = var('a, b, k')                                                  # needs sage.symbolic
         sage: (matrix(2, [a, b, -b, a])^k).list()                                       # needs sage.symbolic
@@ -18605,7 +18605,7 @@ def _matrix_power_symbolic(A, n):
          1/2*I*(a + I*b)^k - 1/2*I*(a - I*b)^k,
          1/2*(a + I*b)^k + 1/2*(a - I*b)^k]
 
-    Check if :trac:`36838` is fixed:Checking symbolic power of
+    Check if :issue:`36838` is fixed:Checking symbolic power of
     nilpotent matrix::
 
         sage: A = matrix([[0,1],[0,0]]); A

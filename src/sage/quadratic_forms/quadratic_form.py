@@ -110,7 +110,7 @@ def quadratic_form_from_invariants(F, rk, det, P, sminus):
 
     TESTS:
 
-    This shows that :trac:`28955` is fixed::
+    This shows that :issue:`28955` is fixed::
 
         sage: quadratic_form_from_invariants(QQ,3,2,[2],2)                              # needs sage.rings.padics
         Quadratic form in 3 variables over Rational Field with coefficients:

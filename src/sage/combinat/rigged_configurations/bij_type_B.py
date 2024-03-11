@@ -84,7 +84,7 @@ class KRTToRCBijectionTypeB(KRTToRCBijectionTypeC):
 
         TESTS:
 
-        Check that :trac:`19384` is fixed::
+        Check that :issue:`19384` is fixed::
 
             sage: RC = RiggedConfigurations(['B',3,1], [[3,1],[3,1]])
             sage: RC._test_bijection()

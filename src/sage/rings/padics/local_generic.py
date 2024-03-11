@@ -40,7 +40,7 @@ class LocalGeneric(CommutativeRing):
             sage: R.precision_cap()
             20
 
-        In :trac:`14084`, the category framework has been implemented for p-adic rings::
+        In :issue:`14084`, the category framework has been implemented for p-adic rings::
 
             sage: TestSuite(R).run()                                                    # needs sage.geometry.polyhedron
             sage: K = Qp(7)

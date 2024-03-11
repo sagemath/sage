@@ -55,7 +55,7 @@ def reset(vars=None, attached=False):
 
     TESTS:
 
-    Confirm that assumptions don't survive a reset (:trac:`10855`)::
+    Confirm that assumptions don't survive a reset (:issue:`10855`)::
 
         sage: # needs sage.symbolic
         sage: assume(x > 3)

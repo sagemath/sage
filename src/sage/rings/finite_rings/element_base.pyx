@@ -5,7 +5,7 @@ Base class for finite field elements
 AUTHORS:
 
 - David Roe (2010-01-14): factored out of sage.structure.element
-- Sebastian Oehms (2018-07-19): added :meth:`conjugate` (see :trac:`26761`)
+- Sebastian Oehms (2018-07-19): added :meth:`conjugate` (see :issue:`26761`)
 """
 
 # ****************************************************************************
@@ -558,7 +558,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS:
 
-        The following tests against a bug fixed in :trac:`11530`::
+        The following tests against a bug fixed in :issue:`11530`::
 
             sage: F.<d> = GF(3^4)
             sage: F.modulus()
@@ -1025,7 +1025,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS:
 
-        Check that :trac:`26761` is fixed::
+        Check that :issue:`26761` is fixed::
 
             sage: # needs sage.libs.gap
             sage: G32 = GU(3,2)

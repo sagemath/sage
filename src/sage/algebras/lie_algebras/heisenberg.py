@@ -397,7 +397,7 @@ class HeisenbergAlgebra(HeisenbergAlgebra_fd, HeisenbergAlgebra_abstract,
 
             sage: L = lie_algebras.Heisenberg(QQ, 2)
             sage: TestSuite(L).run()
-            sage: L = lie_algebras.Heisenberg(QQ, 0)  # not tested -- :trac:`18224`
+            sage: L = lie_algebras.Heisenberg(QQ, 0)  # not tested -- :issue:`18224`
             sage: TestSuite(L).run()
         """
         HeisenbergAlgebra_fd.__init__(self, n)
