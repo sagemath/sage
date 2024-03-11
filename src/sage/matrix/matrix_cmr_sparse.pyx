@@ -665,7 +665,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [-1 -2 -3]
         """
         cdef Matrix_cmr_chr_sparse sum, first, second
-        cdef CMR_CHRMAT *sum_mat
+        cdef CMR_CHRMAT *sum_mat = NULL
         first = Matrix_cmr_chr_sparse._from_data(first_mat, immutable=False)
         second = Matrix_cmr_chr_sparse._from_data(second_mat, immutable=False)
 
@@ -712,7 +712,12 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         if second_mat.parent().characteristic() != characteristic:
             raise ValueError("The characteristic of two matrices are different")
 
-        CMR_CALL(CMRthreeSum(cmr, first._mat, second._mat, first_marker1, second_marker1, first_marker2, second_marker2, characteristic, &sum_mat))
+        sig_on()
+        try:
+            CMR_CALL(CMRthreeSum(cmr, first._mat, second._mat, first_marker1, second_marker1, first_marker2, second_marker2, characteristic, &sum_mat))
+        finally:
+            sig_off()
+
         sum = Matrix_cmr_chr_sparse._from_cmr(sum_mat)
         return sum
 
