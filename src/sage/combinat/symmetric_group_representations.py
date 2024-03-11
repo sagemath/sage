@@ -327,7 +327,7 @@ class SymmetricGroupRepresentation_generic_class(Element):
 
         TESTS:
 
-        The following tests against some bug that was fixed in :trac:`8611`::
+        The following tests against some bug that was fixed in :issue:`8611`::
 
             sage: spc = SymmetricGroupRepresentation([3])
             sage: spc.important_info = 'Sage rules'

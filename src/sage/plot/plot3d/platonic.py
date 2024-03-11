@@ -139,7 +139,7 @@ def prep(G, center, size, kwds):
     TESTS:
 
     Verify that scaling and moving the center work together properly,
-    and that keywords are passed (see :trac:`10796`)::
+    and that keywords are passed (see :issue:`10796`)::
 
         sage: octahedron(center=(2,0,0),size=2,color='red')
         Graphics3d Object
@@ -385,7 +385,7 @@ def cube(center=(0, 0, 0), size=1, color=None, frame_thickness=0,
 
         sage: c.show(viewer='tachyon')
 
-    This shows :trac:`11272` has been fixed::
+    This shows :issue:`11272` has been fixed::
 
         sage: cube(center=(10, 10, 10), size=0.5).bounding_box()
         ((9.75, 9.75, 9.75), (10.25, 10.25, 10.25))

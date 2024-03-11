@@ -212,7 +212,7 @@ cdef class Polynomial_template(Polynomial):
         TESTS:
 
         The following has been a problem in a preliminary version of
-        :trac:`12313`::
+        :issue:`12313`::
 
             sage: # needs sage.rings.finite_rings
             sage: K.<z> = GF(4)
@@ -454,7 +454,7 @@ cdef class Polynomial_template(Polynomial):
 
         TESTS:
 
-        We test that :trac:`10578` is fixed::
+        We test that :issue:`10578` is fixed::
 
             sage: P.<x> = GF(2)[]
             sage: x % 1r

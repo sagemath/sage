@@ -50,7 +50,7 @@ def frobenius_unram(self, arithmetic=True):
 
     TESTS:
 
-    We check that :trac:`23575` is resolved::
+    We check that :issue:`23575` is resolved::
 
         sage: x = R.random_element()
         sage: x.frobenius(arithmetic=false).frobenius() == x
@@ -131,7 +131,7 @@ def norm_unram(self, base = None):
 
     TESTS:
 
-    Check that :trac:`11586` has been resolved::
+    Check that :issue:`11586` has been resolved::
 
         sage: R.<x> = QQ[]
         sage: f = x^2 + 3*x + 1
@@ -144,7 +144,7 @@ def norm_unram(self, base = None):
         sage: b*b.frobenius()
         4*7^2 + 7^3 + O(7^22)
 
-    Check that :trac:`31845` is fixed::
+    Check that :issue:`31845` is fixed::
 
         sage: R.<a> = Zq(4)
         sage: (a - a).norm()
@@ -223,7 +223,7 @@ def trace_unram(self, base = None):
         sage: (a+b).trace()
         4*5 + 5^2 + 5^3 + 2*5^4
 
-    Check that :trac:`31845` is fixed::
+    Check that :issue:`31845` is fixed::
 
         sage: R.<a> = Zq(4)
         sage: (a - a).trace()

@@ -61,7 +61,7 @@ class EllipticCurve_padic_field(EllipticCurve_field, HyperellipticCurve_padic_fi
             sage: E.frobenius(point)
             (0 : 1 + O(13^20) : 1 + O(13^20))
 
-        Check that :trac:`29709` is fixed::
+        Check that :issue:`29709` is fixed::
 
             sage: Qp = pAdicField(13)
             sage: E = EllipticCurve(Qp,[0,0,1,0,1])

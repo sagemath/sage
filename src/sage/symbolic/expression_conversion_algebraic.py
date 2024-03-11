@@ -83,7 +83,7 @@ class AlgebraicConverter(Converter):
             ...
             TypeError: unable to convert pi^6 to Algebraic Field
 
-        Test that :trac:`14602` is fixed::
+        Test that :issue:`14602` is fixed::
 
             sage: K = QuadraticField(3)
             sage: K(sqrt(3)).parent() is K
@@ -157,7 +157,7 @@ class AlgebraicConverter(Converter):
             ...
             TypeError: unable to convert zeta(7) to Algebraic Field
 
-        Test :trac:`22571`::
+        Test :issue:`22571`::
 
             sage: a.composition(exp(0, hold=True), exp)
             1
@@ -176,7 +176,7 @@ class AlgebraicConverter(Converter):
             sage: bool(sin(pi*RR("0.7000000000000002")) > 0)
             True
 
-        Check that :trac:`24440` is fixed::
+        Check that :issue:`24440` is fixed::
 
             sage: QQbar(tanh(pi + 0.1))
             Traceback (most recent call last):

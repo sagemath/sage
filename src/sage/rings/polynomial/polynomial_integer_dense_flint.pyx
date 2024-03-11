@@ -17,7 +17,7 @@ AUTHORS:
 
 TESTS:
 
-We check that the buggy gcd is fixed (see :trac:`17816`)::
+We check that the buggy gcd is fixed (see :issue:`17816`)::
 
     sage: R.<q> = ZZ[]
     sage: X = 3*q^12 - 8*q^11 - 24*q^10 - 48*q^9 - 84*q^8 - 92*q^7 - 92*q^6 - 70*q^5 - 50*q^4 - 27*q^3 - 13*q^2 - 4*q - 1
@@ -500,7 +500,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             sage: (123456789123456789123456789123456789123456789*t).content()
             123456789123456789123456789123456789123456789
 
-        Verify that :trac:`13053` has been resolved::
+        Verify that :issue:`13053` has been resolved::
 
             sage: R(-1).content()
             -1
@@ -732,7 +732,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             sage: z.quo_rem(2*x)
             (0, 0)
 
-        :trac:`383`, make sure things get coerced correctly::
+        :issue:`383`, make sure things get coerced correctly::
 
             sage: f = x+1; parent(f)
             Univariate Polynomial Ring in x over Integer Ring
@@ -855,7 +855,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
         TESTS:
 
-        Check that :trac:`32033` has been fixed::
+        Check that :issue:`32033` has been fixed::
 
             sage: R.<t> = ZZ[]
             sage: lcm(R(0), R(0))
@@ -916,7 +916,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
         TESTS:
 
-        Check that :trac:`17675` is fixed::
+        Check that :issue:`17675` is fixed::
 
             sage: R.<x> = ZZ['x']
             sage: R(2).xgcd(R(2))
@@ -1071,7 +1071,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             ...
             ZeroDivisionError: negative exponent in power of zero
 
-        Check that :trac:`18278` is fixed::
+        Check that :issue:`18278` is fixed::
 
             sage: R.<x> = ZZ[]
             sage: x^(1/2)
@@ -1084,7 +1084,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             ...
             OverflowError: Sage Integer too large to convert to C long
 
-        Test fractional powers (:trac:`20086`)::
+        Test fractional powers (:issue:`20086`)::
 
             sage: P.<R> = ZZ[]
             sage: (R^3 + 6*R^2 + 12*R + 8)^(1/3)
@@ -1454,7 +1454,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
         TESTS:
 
-        Confirm that :trac:`17603` has been applied::
+        Confirm that :issue:`17603` has been applied::
 
             sage: f.disc()
             -339
@@ -1509,7 +1509,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
         TESTS:
 
-        Verify that :trac:`13053` has been resolved::
+        Verify that :issue:`13053` has been resolved::
 
             sage: R.<x> = PolynomialRing(ZZ, implementation='FLINT')
             sage: f=-x^2
