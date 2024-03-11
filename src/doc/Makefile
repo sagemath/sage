@@ -69,7 +69,7 @@ doc-html: doc-html-reference doc-html-other
 
 # Matches doc-pdf--developer, doc-pdf--reference-manifolds etc.
 doc-pdf--%:
-	sage --docbuild $(subst -,/,$(subst doc-pdf--,,$@)) pdf $(SAGE_DOCBUILD_OPTS)
+	LATEXOPTS="--file-line-error --interaction=batchmode" sage --docbuild $(subst -,/,$(subst doc-pdf--,,$@)) pdf $(SAGE_DOCBUILD_OPTS)
 
 # reference manual, pdf
 doc-pdf-reference: doc-inventory-reference
