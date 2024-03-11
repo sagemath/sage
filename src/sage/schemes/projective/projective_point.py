@@ -608,7 +608,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             return
         R = self.codomain().base_ring()
         if isinstance(R, QuotientRing_generic):
-            index = self.codomain().ambient_space().dimension_relative()
+            index = len(self._coords) - 1
             while not self._coords[index]:
                 index -= 1
             last = self._coords[index].lift()
@@ -1162,23 +1162,19 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
             if len(v) == d-1:     # very common special case
                 v.append(R.one())
 
-            n = len(v)
-            all_zero = True
-            for i in range(n):
-                last = n-1-i
-                if v[last]:
-                    all_zero = False
-                    c = v[last]
-                    if c == R.one():
-                        break
+            for last in reversed(range(len(v))):
+                c = v[last]
+                if c.is_one():
+                    break
+                if c:
                     for j in range(last):
                         v[j] /= c
                     v[last] = R.one()
-                    self._normalized = True
                     break
-            if all_zero:
+            else:
                 raise ValueError(f"{v} does not define a valid projective "
                                  "point since all entries are zero")
+            self._normalized = True
 
             X.extended_codomain()._check_satisfies_equations(v)
 
@@ -1225,16 +1221,19 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
         """
         if self._normalized:
             return
-        index = self.codomain().ambient_space().dimension_relative()
-        while not self._coords[index]:
-            index -= 1
-        inv = self._coords[index].inverse()
-        new_coords = []
-        for i in range(index):
-            new_coords.append(self._coords[i] * inv)
-        new_coords.append(self.base_ring().one())
-        new_coords.extend(self._coords[index+1:])
-        self._coords = tuple(new_coords)
+        for index in reversed(range(len(self._coords))):
+            c = self._coords[index]
+            if c.is_one():
+                break
+            if c:
+                inv = c.inverse()
+                new_coords = [d * inv for d in self._coords[:index]]
+                new_coords.append(self.base_ring().one())
+                new_coords.extend(self._coords[index+1:])
+                self._coords = tuple(new_coords)
+                break
+        else:
+            assert False, 'bug: invalid projective point'
         self._normalized = True
 
     def _number_field_from_algebraics(self):
