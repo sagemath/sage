@@ -68,18 +68,18 @@ from sage.structure.richcmp import richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 
 
-class AffinePlaneCurveArrangementsElement(Element):
+class PlaneCurveArrangementElement(Element):
     """
-    An ordered affine plane curve arrangement.
+    An ordered plane curve arrangement.
     """
 
     def __init__(self, parent, curves, check=True):
         """
-        Construct an ordered affine plane curve arrangement.
+        Construct a plane curve arrangement.
 
         INPUT:
 
-        - ``parent`` -- the parent :class:`AffinePlaneCurveArrangements`
+        - ``parent`` -- the parent :class:`PlaneCurveArrangements`
 
         - ``curves`` -- a tuple of curves
 
@@ -95,24 +95,13 @@ class AffinePlaneCurveArrangementsElement(Element):
         if check:
             if not isinstance(curves, tuple):
                 raise ValueError("the curves must be given as a tuple")
-            if not all(isinstance(h, AffinePlaneCurve) for h in curves):
+            affine = all(isinstance(h, AffinePlaneCurve) for h in curves)
+            projective = all(isinstance(h, ProjectivePlaneCurve) for h in curves)
+            if not (affine or projective):
                 raise ValueError("not all elements are curves")
             if not all(h.ambient_space() is self.parent().ambient_space()
                        for h in curves):
                 raise ValueError("not all curves are in the same ambient space")
-        self._braid_monodromy_non_vertical = None
-        self._braid_monodromy_vertical = None
-        self._strands_nonvertical = None
-        self._strands_vertical = None
-        self._fundamental_group_nonsimpl_nonvertical = None
-        self._fundamental_group_nonsimpl_vertical = None
-        self._fundamental_group_simpl_nonvertical = None
-        self._fundamental_group_simpl_vertical = None
-        self._meridians_nonsimpl_nonvertical = None
-        self._meridians_nonsimpl_vertical = None
-        self._meridians_simpl_nonvertical = None
-        self._meridians_simpl_vertical = None
-        self._vertical_lines_in_braid_mon = None
 
     def __getitem__(self, i):
         """
@@ -445,6 +434,53 @@ class AffinePlaneCurveArrangementsElement(Element):
                 L.append(g)
         return P(*L)
 
+
+class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
+    """
+    An ordered affine plane curve arrangement.
+    """
+
+    def __init__(self, parent, curves, check=True):
+        """
+        Construct an ordered affine plane curve arrangement.
+
+        INPUT:
+
+        - ``parent`` -- the parent :class:`AffinePlaneCurveArrangements`
+
+        - ``curves`` -- a tuple of curves
+
+        EXAMPLES::
+
+            sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
+            sage: elt = H(x, y); elt
+            Arrangement (x, y) in Affine Space of dimension 2 over Rational Field
+            sage: TestSuite(elt).run()
+        """
+        Element.__init__(self, parent)
+        self._curves = curves
+        if check:
+            if not isinstance(curves, tuple):
+                raise ValueError("the curves must be given as a tuple")
+            if not all(isinstance(h, AffinePlaneCurve) for h in curves):
+                raise ValueError("not all elements are curves")
+            if not all(h.ambient_space() is self.parent().ambient_space()
+                       for h in curves):
+                raise ValueError("not all curves are in the same ambient space")
+        self._braid_monodromy_non_vertical = None
+        self._braid_monodromy_vertical = None
+        self._strands_nonvertical = None
+        self._strands_vertical = None
+        self._fundamental_group_nonsimpl_nonvertical = None
+        self._fundamental_group_nonsimpl_vertical = None
+        self._fundamental_group_simpl_nonvertical = None
+        self._fundamental_group_simpl_vertical = None
+        self._meridians_nonsimpl_nonvertical = None
+        self._meridians_nonsimpl_vertical = None
+        self._meridians_simpl_nonvertical = None
+        self._meridians_simpl_vertical = None
+        self._vertical_lines_in_braid_mon = None
+
     def fundamental_group(self, simplified=True, vertical=True,
                           projective=False):
         r"""
@@ -751,7 +787,7 @@ class AffinePlaneCurveArrangementsElement(Element):
         return self._vertical_lines_in_braid_mon
 
 
-class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElement):
+class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
     """
     An ordered projective plane curve arrangement.
     """
@@ -958,9 +994,9 @@ class ProjectivePlaneCurveArrangementsElement(AffinePlaneCurveArrangementsElemen
             return self._meridians_nonsimpl
 
 
-class AffinePlaneCurveArrangements(UniqueRepresentation, Parent):
+class PlaneCurveArrangements(UniqueRepresentation, Parent):
     """
-    Affine curve arrangements.
+    Plane curve arrangements.
 
     INPUT:
 
@@ -970,12 +1006,12 @@ class AffinePlaneCurveArrangements(UniqueRepresentation, Parent):
 
     EXAMPLES::
 
-        sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
+        sage: H.<x, y> = PlaneCurveArrangements(QQ)
         sage: H(x, y^2, x-1, y-1)
         Arrangement (x, y^2, x - 1, y - 1) in Affine Space
         of dimension 2 over Rational Field
     """
-    Element = AffinePlaneCurveArrangementsElement
+    Element = PlaneCurveArrangementElement
 
     @staticmethod
     def __classcall__(cls, base, names=()):
@@ -1036,7 +1072,7 @@ class AffinePlaneCurveArrangements(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: L.<x, y> = AffinePlaneCurveArrangements(QQ)
+            sage: L.<x, y> = PlaneCurveArrangements(QQ)
             sage: L.gen(0)
             x
             sage: L.change_ring(RR).base_ring()
@@ -1047,7 +1083,7 @@ class AffinePlaneCurveArrangements(UniqueRepresentation, Parent):
             sage: L.change_ring(QQ) is L
             True
         """
-        return AffinePlaneCurveArrangements(base_ring, names=self.variable_names())
+        return PlaneCurveArrangements(base_ring, names=self.variable_names())
 
     @cached_method
     def ambient_space(self):
@@ -1059,8 +1095,15 @@ class AffinePlaneCurveArrangements(UniqueRepresentation, Parent):
             sage: L.<x, y> = AffinePlaneCurveArrangements(QQ)
             sage: L.ambient_space()
             Affine Space of dimension 2 over Rational Field
+            sage: L.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
+            sage: L.ambient_space()
+            Projective Space of dimension 2 over Rational Field
         """
-        return AffineSpace(self.base_ring(), 2, self.variable_names())
+        n = len(self._names)
+        if n == 2:
+            return AffineSpace(self.base_ring(), 2, self._names)
+        if n == 3:
+            return ProjectiveSpace(self.base_ring(), 2, self._names)
 
     def _repr_(self):
         """
@@ -1202,7 +1245,40 @@ class AffinePlaneCurveArrangements(UniqueRepresentation, Parent):
         return self.gens()[i]
 
 
-class ProjectivePlaneCurveArrangements(AffinePlaneCurveArrangements):
+class AffinePlaneCurveArrangements(PlaneCurveArrangements):
+    """
+    Affine curve arrangements.
+
+    INPUT:
+
+    - ``base_ring`` -- ring; the base ring
+
+    - ``names`` -- tuple of strings; the variable names
+
+    EXAMPLES::
+
+        sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
+        sage: H(x, y^2, x-1, y-1)
+        Arrangement (x, y^2, x - 1, y - 1) in Affine Space
+        of dimension 2 over Rational Field
+    """
+    Element = AffinePlaneCurveArrangementElement
+
+    def __init__(self, base_ring, names=tuple()):
+        """
+        Initialize ``self``.
+
+        TESTS::
+
+            sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
+            sage: TestSuite(H).run()
+        """
+        if base_ring not in _Fields:
+            raise ValueError('base ring must be a field')
+        super().__init__(base_ring, names=names)
+
+
+class ProjectivePlaneCurveArrangements(PlaneCurveArrangements):
     """
     Projective curve arrangements.
 
@@ -1219,7 +1295,7 @@ class ProjectivePlaneCurveArrangements(AffinePlaneCurveArrangements):
         Arrangement (x, y^2, x - z, y - z) in Projective Space
         of dimension 2 over Rational Field
     """
-    Element = ProjectivePlaneCurveArrangementsElement
+    Element = ProjectivePlaneCurveArrangementElement
 
     def __init__(self, base_ring, names=tuple()):
         """
@@ -1241,20 +1317,4 @@ class ProjectivePlaneCurveArrangements(AffinePlaneCurveArrangements):
         """
         if base_ring not in _Fields:
             raise ValueError('base ring must be a field')
-        # super().__init__(base_ring, names=names)
-        # self._base_ring = base_ring
-        # self._names = names
         super().__init__(base_ring, names=names)
-
-    @cached_method
-    def ambient_space(self):
-        """
-        Return the ambient space.
-
-        EXAMPLES::
-
-            sage: L.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-            sage: L.ambient_space()
-            Projective Space of dimension 2 over Rational Field
-        """
-        return ProjectiveSpace(self.base_ring(), 2, self._names)

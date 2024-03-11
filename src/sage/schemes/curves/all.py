@@ -25,6 +25,8 @@ from .constructor import Curve
 
 from .projective_curve import Hasse_bounds
 
+lazy_import('sage.schemes.curves.plane_curve_arrangement', 'PlaneCurveArrangements')
+
 lazy_import('sage.schemes.curves.plane_curve_arrangement', 'AffinePlaneCurveArrangements')
 
 lazy_import('sage.schemes.curves.plane_curve_arrangement', 'ProjectivePlaneCurveArrangements')
