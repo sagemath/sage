@@ -722,7 +722,7 @@ cdef class SetSystem:
             sage: S._equivalence(lambda self, other, morph:True, T)
             {1: 'c', 2: 'd', 3: 'b', 4: 'a'}
 
-        Check that :trac:`15189` is fixed::
+        Check that :issue:`15189` is fixed::
 
             sage: M = Matroid(ring=GF(5), reduced_matrix=[[1,0,3],[0,1,1],[1,1,0]])
             sage: N = Matroid(ring=GF(5), reduced_matrix=[[1,0,1],[0,1,1],[1,1,0]])

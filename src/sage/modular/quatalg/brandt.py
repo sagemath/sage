@@ -590,7 +590,7 @@ class BrandtModuleElement(HeckeModuleElement):
 
         TESTS:
 
-        One check for :trac:`12866`::
+        One check for :issue:`12866`::
 
             sage: Br = BrandtModule(2,7)
             sage: g1, g2 = Br.basis()

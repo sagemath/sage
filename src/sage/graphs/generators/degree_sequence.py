@@ -107,7 +107,7 @@ def DegreeSequenceBipartite(s1, s2):
 
     TESTS:
 
-    :trac:`12155`::
+    :issue:`12155`::
 
         sage: graphs.DegreeSequenceBipartite([2,2,2,2,2],[5,5]).complement()            # needs sage.combinat sage.modules
         Graph on 7 vertices

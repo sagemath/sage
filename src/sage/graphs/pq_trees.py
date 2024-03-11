@@ -296,7 +296,7 @@ class PQ:
             sage: from sage.graphs.pq_trees import P, Q
             sage: p = Q([[1,2], [2,3], P([[2,4], [2,8], [2,9]])])
 
-        :trac:`17787`::
+        :issue:`17787`::
 
             sage: Graph('GvGNp?').is_interval()
             False

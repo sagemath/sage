@@ -827,7 +827,7 @@ class GRSGuruswamiSudanDecoder(Decoder):
 
         TESTS:
 
-        Check that :trac:`21347` is fixed::
+        Check that :issue:`21347` is fixed::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(13).list()[:10], 3)
             sage: D = GSD(C, tau=4)

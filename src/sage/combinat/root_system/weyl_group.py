@@ -363,7 +363,7 @@ class WeylGroup_gens(UniqueRepresentation,
 
         .. NOTE::
 
-            Prior to :trac:`20027`, the reflections were the keys
+            Prior to :issue:`20027`, the reflections were the keys
             of the family and the values were the positive roots.
 
         EXAMPLES::

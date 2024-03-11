@@ -1799,7 +1799,7 @@ def diameter(G, algorithm=None, source=None):
 
     TESTS:
 
-    This was causing a segfault. Fixed in :trac:`17873` ::
+    This was causing a segfault. Fixed in :issue:`17873` ::
 
         sage: G = graphs.PathGraph(1)
         sage: diameter(G, algorithm='iFUB')
@@ -2305,7 +2305,7 @@ def szeged_index(G, algorithm=None):
 
     TESTS:
 
-    Not defined when the graph is not connected (:trac:`26803`)::
+    Not defined when the graph is not connected (:issue:`26803`)::
 
         sage: szeged_index(Graph({0: [1], 2: []}))
         Traceback (most recent call last):

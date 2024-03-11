@@ -1456,7 +1456,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         TESTS:
 
-        Ensure that :trac:`8395` is fixed. ::
+        Ensure that :issue:`8395` is fixed. ::
 
             sage: G = Graph({1:[1]}); G
             Looped graph on 1 vertex
@@ -1574,7 +1574,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         TESTS:
 
-        We check that the bug described in :trac:`8406` is gone::
+        We check that the bug described in :issue:`8406` is gone::
 
             sage: # needs sage.rings.finite_rings
             sage: G = Graph()
@@ -1585,7 +1585,7 @@ cdef class CGraphBackend(GenericGraphBackend):
             sage: G.vertices(sort=True)
             [a^2, x]
 
-        And that the bug described in :trac:`9610` is gone::
+        And that the bug described in :issue:`9610` is gone::
 
             sage: n = 20
             sage: k = 3
@@ -1596,7 +1596,7 @@ cdef class CGraphBackend(GenericGraphBackend):
             sage: g.strongly_connected_components()
             [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]]
 
-        The bug in :trac:`14967` and :trac:`14853` is fixed::
+        The bug in :issue:`14967` and :issue:`14853` is fixed::
 
             sage: DiGraph({0: {}, 1/2: {}})
             Digraph on 2 vertices
@@ -2011,7 +2011,7 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         TESTS:
 
-        Ensure that issue :trac:`8395` is fixed. ::
+        Ensure that issue :issue:`8395` is fixed. ::
 
             sage: def my_add_edges(G, m, n):
             ....:     for i in range(m):
@@ -2106,7 +2106,7 @@ cdef class CGraphBackend(GenericGraphBackend):
             sage: G.degree(1)
             3
 
-        Ensure that :trac:`13664` is fixed ::
+        Ensure that :issue:`13664` is fixed ::
 
             sage: W = WeylGroup(["A",1])                                                # needs sage.combinat sage.groups
             sage: G = W.cayley_graph()                                                  # needs sage.combinat sage.groups
@@ -2396,7 +2396,7 @@ cdef class CGraphBackend(GenericGraphBackend):
             sage: D.edges(sort=True)
             [(0, 1, 3)]
 
-        Check :trac:`22991` for sparse backend::
+        Check :issue:`22991` for sparse backend::
 
             sage: G = Graph(3, sparse=True)
             sage: G.add_edge(0,0)
@@ -2407,7 +2407,7 @@ cdef class CGraphBackend(GenericGraphBackend):
             sage: G.add_edge(0,0); G.edges(sort=True)
             [(0, 0, None)]
 
-        Check :trac:`22991` for dense backend::
+        Check :issue:`22991` for dense backend::
 
             sage: G = Graph(3, sparse=False)
             sage: G.add_edge(0,0)
@@ -2418,7 +2418,7 @@ cdef class CGraphBackend(GenericGraphBackend):
             sage: G.add_edge(0, 0); G.edges(sort=True)
             [(0, 0, None)]
 
-        Remove edges correctly when multiedges are not allowed (:trac:`28077`)::
+        Remove edges correctly when multiedges are not allowed (:issue:`28077`)::
 
             sage: D = DiGraph(multiedges=False)
             sage: D.add_edge(1, 2, 'A')
@@ -2559,7 +2559,7 @@ cdef class CGraphBackend(GenericGraphBackend):
             sage: G.edges(sort=True)
             [(0, 1, 2)]
 
-        Do we remove loops correctly? (:trac:`12135`)::
+        Do we remove loops correctly? (:issue:`12135`)::
 
             sage: g=Graph({0:[0,0,0]}, sparse=True)
             sage: g.edges(sort=True, labels=False)
@@ -3946,19 +3946,19 @@ cdef class CGraphBackend(GenericGraphBackend):
 
         TESTS:
 
-        Bugfix from :trac:`7673` ::
+        Bugfix from :issue:`7673` ::
 
             sage: G = Graph([(0, 1, 9), (0, 2, 8), (1, 2, 7)])
             sage: G.shortest_path_length(0, 1, by_weight=True)
             9
 
-        Bugfix from :trac:`28221` ::
+        Bugfix from :issue:`28221` ::
 
             sage: G = Graph([(0, 1, 9.2), (0, 2, 4.5), (1, 2, 4.6)])
             sage: G.shortest_path_length(0, 1, by_weight=True)
             9.1
 
-        Bugfix from :trac:`27464` ::
+        Bugfix from :issue:`27464` ::
 
             sage: G = DiGraph({0: [1, 2], 1: [4], 2: [3, 4], 4: [5], 5: [6]}, multiedges=True)
             sage: for u, v in list(G.edges(labels=None, sort=False)):
@@ -4818,7 +4818,7 @@ cdef class Search_iterator:
             ...
             LookupError: vertex ('') is not a vertex of the graph
 
-        Immutable graphs (see :trac:`16019`)::
+        Immutable graphs (see :issue:`16019`)::
 
             sage: DiGraph([(1, 2)], immutable=True).connected_components(sort=True)
             [[1, 2]]

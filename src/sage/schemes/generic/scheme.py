@@ -90,7 +90,7 @@ class Scheme(Parent):
 
         TESTS:
 
-        The full test suite works since :trac:`7946`::
+        The full test suite works since :issue:`7946`::
 
             sage: R.<x, y> = QQ[]
             sage: I = (x^2 - y^2)*R
@@ -162,7 +162,7 @@ class Scheme(Parent):
 
         TESTS:
 
-        This shows that issue at :trac:`7389` is solved::
+        This shows that issue at :issue:`7389` is solved::
 
             sage: S = Spec(ZZ)
             sage: f = S.identity_morphism()
@@ -243,7 +243,7 @@ class Scheme(Parent):
             sage: A(1, 0)
             (1, 0)
 
-        Check that :trac:`16832` is fixed::
+        Check that :issue:`16832` is fixed::
 
             sage: P.<x,y,z> = ProjectiveSpace(ZZ, 2)
             sage: X = P.subscheme(x^2 - y^2)
@@ -743,7 +743,7 @@ class Scheme(Parent):
         provide the required approximation.
         Otherwise this function depends on ``count_points``, which is only
         defined for prime order fields for general schemes.
-        Nonetheless, since :trac:`15108` and :trac:`15148`, it supports
+        Nonetheless, since :issue:`15108` and :issue:`15148`, it supports
         hyperelliptic curves over non-prime fields::
 
             sage: C.base_extend(GF(9, 'a')).zeta_series(4, t)                           # needs sage.rings.finite_rings sage.schemes
@@ -961,7 +961,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
              in x, y, z over Rational Field defined by the Ideal (x, y, z)
               of Multivariate Polynomial Ring in x, y, z over Rational Field
 
-        This indicates the fix of :trac:`12734`::
+        This indicates the fix of :issue:`12734`::
 
             sage: S = Spec(ZZ)
             sage: S(ZZ)
@@ -1198,7 +1198,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
 
         TESTS:
 
-        We can construct a morphism to an affine curve (:trac:`7956`)::
+        We can construct a morphism to an affine curve (:issue:`7956`)::
 
             sage: S.<p,q> = QQ[]
             sage: A1.<r> = AffineSpace(QQ, 1)

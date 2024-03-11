@@ -46,7 +46,7 @@ can also be constructed with::
     Algebra of Dihedral group of order 6 as a permutation group
             over Rational Field
 
-Since :trac:`18700`, both constructions are strictly equivalent::
+Since :issue:`18700`, both constructions are strictly equivalent::
 
     sage: GroupAlgebra(G, R) is G.algebra(R)
     True
@@ -440,13 +440,13 @@ AUTHORS:
 
 - David Loeffler (2008-08-24): initial version
 - Martin Raum (2009-08): update to use new coercion model -- see
-  :trac:`6670`.
+  :issue:`6670`.
 - John Palmieri (2011-07): more updates to coercion, categories, etc.,
   group algebras constructed using CombinatorialFreeModule -- see
-  :trac:`6670`.
+  :issue:`6670`.
 - Nicolas M. Thiéry (2010-2017), Travis Scrimshaw (2017):
   generalization to a covariant functorial construction for
-  monoid algebras, and beyond -- see e.g. :trac:`18700`.
+  monoid algebras, and beyond -- see e.g. :issue:`18700`.
 """
 # ****************************************************************************
 #  Copyright (C) 2010-2017 Nicolas M. Thiéry <nthiery at users.sf.net>

@@ -152,7 +152,7 @@ cpdef modify_for_nested_pickle(cls, str name_prefix, module, first_run=True) noe
     TESTS:
 
     The following is a real life example, that was enabled by the internal
-    use of the``first_run`` in :trac:`9107`::
+    use of the``first_run`` in :issue:`9107`::
 
         sage: cython_code = [
         ....:  "from sage.structure.unique_representation import UniqueRepresentation",
@@ -164,7 +164,7 @@ cpdef modify_for_nested_pickle(cls, str name_prefix, module, first_run=True) noe
         sage: import os
         sage: cython(os.linesep.join(cython_code))                                      # needs sage.misc.cython
 
-    Before :trac:`9107`, the name of ``A1.B1.C1`` would have been wrong::
+    Before :issue:`9107`, the name of ``A1.B1.C1`` would have been wrong::
 
         sage: # needs sage.misc.cython
         sage: A1.B1.C1.__name__
