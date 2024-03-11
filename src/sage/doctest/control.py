@@ -1273,7 +1273,7 @@ class DocTestController(SageObject):
         opt = dict_difference(self.options.__dict__, DocTestDefaults().__dict__)
         if "all" in opt:
             raise ValueError("You cannot run gdb/lldb/valgrind on the whole sage library")
-        for o in ("all", "long", "force_lib", "verbose", "failed", "new"):
+        for o in ("all", "installed", "long", "force_lib", "verbose", "failed", "new"):
             if o in opt:
                 cmd += "--%s " % o
         for o in ("timeout", "randorder", "stats_path"):
