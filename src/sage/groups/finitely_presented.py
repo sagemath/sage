@@ -142,7 +142,7 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.rings.rational_field import QQ
 from sage.sets.set import Set
-# from sage.structure.richcmp import richcmp
+from sage.structure.richcmp import richcmp, richcmp_method
 from sage.structure.unique_representation import CachedRepresentation
 
 
@@ -694,7 +694,7 @@ class RewritingSystem():
             raise ValueError('could not make the system confluent')
 
 
-# @richcmp_method
+@richcmp_method
 class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, ParentLibGAP):
     """
     A class that wraps GAP's Finitely Presented Groups.
@@ -761,25 +761,14 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
         assert isinstance(relations, tuple)
         self._free_group = free_group
         self._relations = relations
-        self._assign_names(free_group.variable_names())
+        try:
+            self._assign_names(free_group.variable_names())
+        except ValueError:
+            pass
         if libgap_fpgroup is None:
             libgap_fpgroup = free_group.gap() / libgap([rel.gap() for rel in relations])
         ParentLibGAP.__init__(self, libgap_fpgroup)
         Group.__init__(self, category=category)
-
-    def __reduce__(self):
-        """
-        Implement pickling.
-
-        TESTS::
-
-            sage: G = FreeGroup(2) / [(1, 2, 2, 1)]
-            sage: G.__reduce__()[1]
-            (<class 'sage.groups.finitely_presented.FinitelyPresentedGroup'>,
-             (Free Group on generators {x0, x1}, (x0*x1^2*x0,)), {})
-        """
-        from sage.structure.unique_representation import unreduce
-        return (unreduce, (self.__class__.__base__, (self._free_group, self._relations), {}))
 
     def __hash__(self):
         """
@@ -788,10 +777,23 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
         EXAMPLES::
 
             sage: G = FreeGroup(2) / [(1, 2, 2, 1)]
-            sage: G.__hash__()   # random output
-            -468022353355363043
+            sage: G.__hash__() == hash((G.free_group(), G.relations()))
+            True
         """
-        return hash((self._free_group, self._relations, self._names))
+        return hash((self._free_group, self._relations))
+
+    def __richcmp__(self, other, op):
+        """
+        Rich comparison of ``self`` and ``other``.
+
+        EXAMPLES::
+        """
+        if not isinstance(other, self.__class__):
+            from sage.structure.richcmp import op_NE
+            return (op == op_NE)
+        self_data = (self._free_group, self._relations)
+        other_data = (other._free_group, other._relations)
+        return richcmp(self_data, other_data, op)
 
     def _repr_(self):
         """
@@ -810,7 +812,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
             sage: H._repr_()
             'Finitely presented group < a, b | a, b^3 >'
         """
-        gens = ', '.join(self.variable_names())
+        gens = ', '.join(self._free_group._gen_names)
         rels = ', '.join([str(r) for r in self.relations()])
         return 'Finitely presented group ' + '< ' + gens + ' | ' + rels + ' >'
 

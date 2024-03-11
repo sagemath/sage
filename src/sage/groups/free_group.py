@@ -72,7 +72,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.structure.sequence import Sequence
 from sage.structure.element import coercion_model, parent
-# from sage.structure.richcmp import richcmp, richcmp_method
+from sage.structure.richcmp import richcmp, richcmp_method
 
 
 def is_FreeGroup(x):
@@ -682,10 +682,10 @@ def FreeGroup(n=None, names='x', index_set=None, abelian=False, **kwds):
 
         from sage.groups.indexed_free_group import IndexedFreeGroup
         return IndexedFreeGroup(index_set, names=names, **kwds)
-    return FreeGroup_class(names)
+    return FreeGroup_class(names, **kwds)
 
 
-# @richcmp_method
+@richcmp_method
 class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
     """
     A class that wraps GAP's FreeGroup
@@ -701,7 +701,7 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
     """
     Element = FreeGroupElement
 
-    def __init__(self, generator_names, libgap_free_group=None):
+    def __init__(self, generator_names, gap_group=None):
         """
         Python constructor.
 
@@ -722,15 +722,19 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
             sage: G.variable_names()
             ('a', 'b')
         """
-        self._assign_names(generator_names)
-        if libgap_free_group is None:
-            libgap_free_group = libgap.FreeGroup(generator_names)
-        ParentLibGAP.__init__(self, libgap_free_group)
+        if gap_group is None:
+            gap_group = libgap.FreeGroup(generator_names)
+        ParentLibGAP.__init__(self, gap_group)
         if not generator_names:
             cat = Groups().Finite()
         else:
             cat = Groups().Infinite()
         Group.__init__(self, category=cat)
+        self._gen_names = generator_names
+        try:
+            self._assign_names(generator_names)
+        except ValueError:
+            pass
 
     def __hash__(self):
         """
@@ -739,26 +743,34 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
         EXAMPLES::
 
             sage: F = FreeGroup(3)
-            sage: F.__hash__()   # random output
-            -2230941415428039205
+            sage: F.__hash__() == hash(F._gen_names)
+            True
         """
+        return hash(self._gen_names)
 
-        return hash((self.__class__, self._names))
-
-    def __reduce__(self):
+    def __richcmp__(self, other, op):
         """
-        Implement pickling.
+        Rich comparison of ``self`` and ``other``.
 
-        TESTS::
+        EXAMPLES::
 
-            sage: F.<a,b> = FreeGroup()
-            sage: F.__reduce__()[1]
-            (<class 'sage.groups.free_group.FreeGroup_class'>,
-             (('a', 'b'),), {})
+            sage: G1 = FreeGroup('a, b')
+            sage: gg = libgap.FreeGroup('x', 'y')
+            sage: G2 = FreeGroup('a, b', gap_group=gg)
+            sage: G1 == G2
+            True
+            sage: G1 is G2
+            False
+            sage: G3 = FreeGroup('x, y')
+            sage: G1 == G3
+            False
+            sage: G2 == G3
+            False
         """
-
-        from sage.structure.unique_representation import unreduce
-        return (unreduce, (self.__class__.__base__, (self._names, ), {}))
+        if not isinstance(other, self.__class__):
+            from sage.structure.richcmp import op_NE
+            return (op == op_NE)
+        return richcmp(self._gen_names, other._gen_names, op)
 
     def _repr_(self):
         """
@@ -770,7 +782,7 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
             sage: G._repr_()
             'Free Group on generators {a, b}'
         """
-        return 'Free Group on generators {' + ', '.join(self.variable_names()) + '}'
+        return 'Free Group on generators {' + ', '.join(self._gen_names) + '}'
 
     def rank(self):
         """
@@ -806,7 +818,7 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
             sage: G._gap_init_()
             'FreeGroup(["x0", "x1", "x2"])'
         """
-        gap_names = [ '"' + s + '"' for s in self.variable_names() ]
+        gap_names = ['"' + s + '"' for s in self._gen_names]
         gen_str = ', '.join(gap_names)
         return 'FreeGroup(['+gen_str+'])'
 
@@ -862,9 +874,9 @@ class FreeGroup_class(CachedRepresentation, Group, ParentLibGAP):
         except AttributeError:
             return self.element_class(self, x, **kwds)
         if isinstance(P, FreeGroup_class):
-            names = {P._names[abs(i)-1] for i in x.Tietze()}
-            if names.issubset(self._names):
-                return self([i.sign()*(self._names.index(P._names[abs(i)-1])+1)
+            names = {P._gen_names[abs(i)-1] for i in x.Tietze()}
+            if names.issubset(self._gen_names):
+                return self([i.sign()*(self._gen_names.index(P._gen_names[abs(i)-1])+1)
                              for i in x.Tietze()])
             else:
                 raise ValueError('generators of %s not in the group' % x)

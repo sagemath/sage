@@ -1349,7 +1349,7 @@ cdef class GapElement(RingElement):
 
             sage: F0 = libgap.FreeGroup(2)
             sage: F = F0.sage()
-            sage: F.gap() is F
+            sage: F.gap() is F0
             True
 
         TESTS:
@@ -1406,16 +1406,14 @@ cdef class GapElement(RingElement):
 
         elif self.IsFreeGroup():
             from sage.groups.free_group import FreeGroup_class
-            self._set_compare_by_id()
             names = tuple(str(g) for g in self.GeneratorsOfGroup())
-            return FreeGroup_class(names, libgap_free_group=self)
+            return FreeGroup_class(names, gap_group=self)
 
         elif self.IsFpGroup():
             from sage.groups.free_group import FreeGroup
             from sage.groups.finitely_presented import FinitelyPresentedGroup
-            self._set_compare_by_id()
-            names = tuple(str(g) for g in self.FreeGroupOfFpGroup().GeneratorsOfGroup())
-            F = FreeGroup(names)
+            # names = tuple(str(g).replace(".", "_") for g in self.FreeGroupOfFpGroup().GeneratorsOfGroup())
+            F = self.FreeGroupOfFpGroup().sage()
             relations = tuple(F(rel.LetterRepAssocWord().sage())
                               for rel in self.RelatorsOfFpGroup())
             return FinitelyPresentedGroup(F, relations, libgap_fpgroup=self)

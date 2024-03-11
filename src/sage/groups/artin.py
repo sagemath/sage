@@ -28,7 +28,7 @@ from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
 from sage.combinat.root_system.coxeter_group import CoxeterGroup
 from sage.rings.infinity import Infinity
 from sage.structure.richcmp import richcmp, rich_to_bool
-from sage.structure.unique_representation import CachedRepresentation
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class ArtinGroupElement(FinitelyPresentedGroupElement):
@@ -332,7 +332,7 @@ class FiniteTypeArtinGroupElement(ArtinGroupElement):
         return tuple([-delta] + form)
 
 
-class ArtinGroup(FinitelyPresentedGroup):
+class ArtinGroup(UniqueRepresentation, FinitelyPresentedGroup):
     r"""
     An Artin group.
 
@@ -488,26 +488,6 @@ class ArtinGroup(FinitelyPresentedGroup):
                     elt[ind] = -elt[ind]
                 rels.append(free_group(elt))
         FinitelyPresentedGroup.__init__(self, free_group, tuple(rels))
-
-    __reduce__ = CachedRepresentation.__reduce__
-
-    # def __reduce__(self):
-    #     """
-    #     Implement pickling.
-    #
-    #     TESTS::
-    #
-    #         sage: A = ArtinGroup(['B',3], ['x','y','z'])
-    #         sage: A.__reduce__()[1]
-    #         (<class 'sage.groups.artin.FiniteTypeArtinGroup'>,
-    #          (
-    #         [1 3 2]
-    #         [3 1 4]
-    #         [2 4 1], ('x', 'y', 'z')
-    #         ), {})
-    #     """
-    #     from sage.structure.unique_representation import unreduce
-    #     return (unreduce, (self.__class__.__base__, (self._coxeter_matrix, self._names), {}))
 
     def _repr_(self):
         """
