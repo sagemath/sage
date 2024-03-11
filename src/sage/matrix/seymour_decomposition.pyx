@@ -670,7 +670,8 @@ cdef class ThreeSumNode(SumNode):
         """
         M1, M2 = self.summand_matrices()
         x = M1.ncols()
-        return Matrix_cmr_chr_sparse.three_sum(M1, M2, x - 2, x - 1, 0, 1)
+        # return Matrix_cmr_chr_sparse.three_sum(M1, M2, x - 2, x - 1, 0, 1)
+        return Matrix_cmr_chr_sparse.three_sum_wide_wide(M1, M2)
 
 
 cdef class BaseGraphicNode(DecompositionNode):

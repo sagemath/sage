@@ -731,38 +731,36 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         the three sum is defined in [Sch1986]_, Ch. 19.4.:=
         `M_1 \oplus_3 M_2 =\begin{bmatrix}A & ab^T\\ dc^T & B\end{bmatrix}`.
         """
-        pass
-        # m1 = first_mat.nrows()
-        # n1 = first_mat.ncols()
-        # m2 = second_mat.nrows()
-        # n2 = second_mat.ncols()
-        # first_subcol = first_mat.matrix_from_rows_and_columns(range(m1 - 1), [n1 - 1])
-        # second_subcol = second_mat.matrix_from_rows_and_columns(range(1, m2), [0])
+        m1 = first_mat.nrows()
+        n1 = first_mat.ncols()
+        m2 = second_mat.nrows()
+        n2 = second_mat.ncols()
+        first_subcol = first_mat.matrix_from_rows_and_columns(range(m1 - 1), [n1 - 1])
+        second_subcol = second_mat.matrix_from_rows_and_columns(range(1, m2), [0])
 
-        # first_submat = first_mat.delete_columns([first_col_index1, first_col_index2])
-        # second_submat = second_mat.delete_columns([second_col_index1, second_col_index2])
-        # first_row = first_submat.rows()[first_row_index]
-        # second_row = second_submat.rows()[second_row_index]
-        # first_submat = first_submat.delete_rows([first_row_index])
-        # second_submat = second_submat.delete_rows([second_row_index])
-        # first_subrows = first_submat.rows()
-        # second_subrows = second_submat.rows()
-        # upper_right_rows = first_subcol.tensor_product(second_row).rows()
-        # lower_left_rows = second_subcol.tensor_product(first_row).rows()
-        # n1 = len(first_submat.rows())
-        # n2 = len(second_submat.rows())
-        # row_list = []
-        # for i in range(n1):
-        #     r = list(first_subrows[i])
-        #     u = list(upper_right_rows[i])
-        #     r.extend(u)
-        #     row_list.append(r)
-        # for i in range(n2):
-        #     r = list(lower_left_rows[i])
-        #     u = list(second_subrows[i])
-        #     r.extend(u)
-        #     row_list.append(r)
-        # return Matrix_cmr_chr_sparse._from_data(row_list, immutable=False)
+        first_row = first_mat.matrix_from_rows_and_columns([m1 - 1], range(n1 - 2))
+        second_row = second_mat.matrix_from_rows_and_columns([0], range(2, n2))
+
+        first_submat = first_mat.matrix_from_rows_and_columns(range(m1 - 1), range(n1 - 2))
+        second_submat = second_mat.matrix_from_rows_and_columns(range(1, m2), range(2, n2))
+
+        first_subrows = first_submat.rows()
+        second_subrows = second_submat.rows()
+        upper_right_rows = first_subcol.tensor_product(second_row).rows()
+        lower_left_rows = second_subcol.tensor_product(first_row).rows()
+
+        row_list = []
+        for i in range(m1 - 1):
+            r = list(first_subrows[i])
+            u = list(upper_right_rows[i])
+            r.extend(u)
+            row_list.append(r)
+        for i in range(m2 - 1):
+            r = list(lower_left_rows[i])
+            u = list(second_subrows[i])
+            r.extend(u)
+            row_list.append(r)
+        return Matrix_cmr_chr_sparse._from_data(row_list, immutable=False)
 
     def three_sum(first_mat, second_mat, first_col_index1, first_col_index2, second_col_index1, second_col_index2):
         r"""
