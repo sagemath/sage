@@ -787,6 +787,11 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
         Rich comparison of ``self`` and ``other``.
 
         EXAMPLES::
+
+            sage: G1 = FreeGroup(2) / [(1, 2, 2, 1, 2, 1)]
+            sage: G2 = FreeGroup(2) / [(1, 2, 2, 1, 2, 1)]
+            sage: G1 == G2
+            True
         """
         if not isinstance(other, self.__class__):
             from sage.structure.richcmp import op_NE
