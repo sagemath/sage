@@ -49,7 +49,7 @@ class Rings(CategoryWithAxiom):
 
     .. TODO::
 
-        (see :trac:`sage_trac/wiki/CategoriesRoadMap`)
+        (see :issue:`sage_trac/wiki/CategoriesRoadMap`)
 
         - Make Rings() into a subcategory or alias of Algebras(ZZ);
 
@@ -448,7 +448,7 @@ class Rings(CategoryWithAxiom):
                 parents that belong to the category of rings also
                 inherits from the base class of rings. Therefore, we
                 implemented a ``__mul__`` method for parents, that
-                calls a ``_mul_`` method implemented here. See :trac:`7797`.
+                calls a ``_mul_`` method implemented here. See :issue:`7797`.
 
             INPUT:
 
@@ -553,7 +553,7 @@ class Rings(CategoryWithAxiom):
                 The code is copied from the base class of rings.
                 This is since there are rings that do not inherit
                 from that class, such as matrix algebras.  See
-                :trac:`7797`.
+                :issue:`7797`.
 
             EXAMPLES::
 
@@ -632,7 +632,7 @@ class Rings(CategoryWithAxiom):
                 :class:`~sage.rings.ring.Ring`. This is
                 because there are rings that do not inherit
                 from that class, such as matrix algebras.
-                See :trac:`7797`.
+                See :issue:`7797`.
 
             INPUT:
 

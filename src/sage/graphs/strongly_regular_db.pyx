@@ -2698,7 +2698,7 @@ cdef bint seems_feasible(int v, int k, int l, int mu) noexcept:
 
     TESTS:
 
-    :trac:`32306` is fixed::
+    :issue:`32306` is fixed::
 
         sage: from sage.graphs.strongly_regular_db import strongly_regular_graph
         sage: strongly_regular_graph(16384, 8256, 4160, 4160, existence=True)           # needs sage.combinat sage.modules
@@ -2868,7 +2868,7 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
 
     TESTS:
 
-    Check that :trac:`26513` is fixed::
+    Check that :issue:`26513` is fixed::
 
         sage: graphs.strongly_regular_graph(539, 288, 162, 144)                         # needs sage.combinat
         descendant of (540, 264, 138, 120)-strongly regular graph at ... 539 vertices
@@ -2890,7 +2890,7 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
         ....:             if 'Brouwer' not in str(e):
         ....:                 raise
 
-    `\mu=0` behaves correctly (:trac:`19712`)::
+    `\mu=0` behaves correctly (:issue:`19712`)::
 
         sage: graphs.strongly_regular_graph(10,2,1)
         Traceback (most recent call last):

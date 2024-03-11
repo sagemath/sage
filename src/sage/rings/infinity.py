@@ -201,7 +201,7 @@ testing whether something is infinity), so make sure it is satisfied::
     sage: loads(dumps(infinity)) is infinity
     True
 
-We check that :trac:`17990` is fixed::
+We check that :issue:`17990` is fixed::
 
     sage: m = Matrix([Infinity])                                                        # needs sage.modules
     sage: m.rows()                                                                      # needs sage.modules
@@ -469,7 +469,7 @@ class AnInfinity():
             ...
             SignError: cannot multiply infinity by zero
 
-        Check that :trac:`14857` is fixed::
+        Check that :issue:`14857` is fixed::
 
             sage: infinity / unsigned_infinity
             Traceback (most recent call last):
@@ -571,7 +571,7 @@ class UnsignedInfinityRing_class(Singleton, CommutativeRing):
             sage: sage.rings.infinity.UnsignedInfinityRing_class() is sage.rings.infinity.UnsignedInfinityRing_class() is UnsignedInfinityRing
             True
 
-        Sage can understand SymPy's complex infinity (:trac:`17493`)::
+        Sage can understand SymPy's complex infinity (:issue:`17493`)::
 
             sage: import sympy                                                          # needs sympy
             sage: SR(sympy.zoo)                                                         # needs sympy
@@ -1367,7 +1367,7 @@ class FiniteNumber(RingElement):
 
         TESTS:
 
-        Check that :trac:`34231` is fixed::
+        Check that :issue:`34231` is fixed::
 
             sage: R = InfinityRing
             sage: all(R(0) + x == x + R(0) == x for x in [-oo, R(-1), R(0), R(1), oo])
@@ -1838,7 +1838,7 @@ def test_signed_infinity(pos_inf):
 
     There are different possible representations of infinity in
     Sage. These are all consistent with the infinity ring, that is,
-    compare with infinity in the expected way. See also :trac:`14045`
+    compare with infinity in the expected way. See also :issue:`14045`
 
     INPUT:
 
@@ -1849,7 +1849,7 @@ def test_signed_infinity(pos_inf):
     An assertion error is raised if the representation is not
     consistent with the infinity ring.
 
-    Check that :trac:`14045` is fixed::
+    Check that :issue:`14045` is fixed::
 
         sage: InfinityRing(float('+inf'))
         +Infinity
