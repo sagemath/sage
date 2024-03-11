@@ -35,6 +35,7 @@ AUTHORS:
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.number_fields import NumberFields
 _NumberFields = NumberFields()
+from sage.rings.integer_ring import ZZ
 from sage.rings.fraction_field import FractionField
 from sage.rings.number_field.order import is_NumberFieldOrder, Order as NumberFieldOrder
 from sage.rings.qqbar import number_field_elements_from_algebraics
@@ -183,7 +184,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             R = X.value_ring()
             v = Sequence(v, R)
             if len(v) == d-1:     # very common special case
-                v.append(R(1))
+                v.append(R.one())
 
             if R in IntegralDomains():
                 # Over integral domains, any tuple with at least one
@@ -524,7 +525,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: Q.scale_by(1/2);Q
             (1 : 1 : 1)
         """
-        if t == 0:  #what if R(t) == 0 ?
+        if t.is_zero():  #what if R(t) == 0 ?
             raise ValueError("Cannot scale by 0")
         R = self.codomain().base_ring()
         if isinstance(R, QuotientRing_generic):
@@ -620,14 +621,14 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             GCD = R(gcd(self._coords[0], self._coords[1]))
             index = 2
             neg = self._coords[0] <= 0 and self._coords[1] <= 0
-            while GCD != 1 and index < len(self._coords):
+            while not GCD.is_one() and index < len(self._coords):
                 neg = self._coords[index] <= 0
                 GCD = R(gcd(GCD, self._coords[index]))
                 index += 1
-            if GCD != 1:
+            if not GCD.is_one():
                 self.scale_by(~GCD)
             if neg:
-                self.scale_by(-1)
+                self.scale_by(-ZZ.one())
         self._normalized = True
 
     def dehomogenize(self,n):
@@ -676,7 +677,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             ...
             ValueError: can...t dehomogenize at 0 coordinate
         """
-        if self[n] == 0:
+        if self[n].is_zero():
             raise ValueError("can't dehomogenize at 0 coordinate")
         PS = self.codomain()
         A = PS.affine_patch(n)
@@ -1159,7 +1160,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
             R = X.value_ring()
             v = Sequence(v, R)
             if len(v) == d-1:     # very common special case
-                v.append(R(1))
+                v.append(R.one())
 
             n = len(v)
             all_zero = True
