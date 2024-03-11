@@ -868,7 +868,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         If we're given lists as arguments, we should throw an
         appropriate error when those lists do not contain valid
-        indices (:trac:`6569`)::
+        indices (:issue:`6569`)::
 
             sage: A = matrix(4, range(1,17))
             sage: A[[1.5], [1]]
@@ -884,7 +884,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             ...
             IndexError: row indices must be integers
 
-        Before :trac:`6569` was fixed, sparse/dense matrices behaved
+        Before :issue:`6569` was fixed, sparse/dense matrices behaved
         differently due to implementation details. Given invalid
         indices, they should fail in the same manner. These tests
         just repeat the previous set with a sparse matrix::
@@ -1706,7 +1706,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: A._matrix_(QQ[['t']]).parent()
             Full MatrixSpace of 2 by 2 dense matrices over Power Series Ring in t over Rational Field
 
-        Check that :trac:`14314` is fixed::
+        Check that :issue:`14314` is fixed::
 
             sage: m = Matrix({(1,2):2})
             sage: matrix(m) == m
@@ -1922,7 +1922,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         TESTS:
 
-        Prior to :trac:`11544` this could take a full minute to run (2011). ::
+        Prior to :issue:`11544` this could take a full minute to run (2011). ::
 
             sage: # needs sage.rings.number_field
             sage: A = matrix(QQ, 4, 4, [1, 2, -2, 2, 1, 0, -1, -1, 0, -1, 1, 1, -1, 2, 1/2, 0])
@@ -4619,7 +4619,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         OUTPUT: a tuple of Python integers: the position of the
         first nonzero entry in each row of the echelon form.
 
-        This returns a tuple so it is immutable; see :trac:`10752`.
+        This returns a tuple so it is immutable; see :issue:`10752`.
 
         EXAMPLES::
 
@@ -4660,7 +4660,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         TESTS:
 
         We should be able to compute the rank of a matrix whose
-        entries are polynomials over a finite field (:trac:`5014`)::
+        entries are polynomials over a finite field (:issue:`5014`)::
 
             sage: P.<x> = PolynomialRing(GF(17))
             sage: m = matrix(P, [[ 6*x^2 + 8*x + 12, 10*x^2 + 4*x + 11],
@@ -5077,7 +5077,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         TESTS:
 
-        Check that :trac:`8198` is fixed::
+        Check that :issue:`8198` is fixed::
 
             sage: # needs sage.rings.padics
             sage: R = Qp(5, 5)
@@ -5112,7 +5112,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         TESTS:
 
-        Check that :trac:`8198` is fixed::
+        Check that :issue:`8198` is fixed::
 
             sage: # needs sage.rings.padics
             sage: R = Qp(5, 5)
@@ -5642,7 +5642,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: parent(~1)
             Rational Field
 
-        A matrix with 0 rows and 0 columns is invertible (see :trac:`3734`)::
+        A matrix with 0 rows and 0 columns is invertible (see :issue:`3734`)::
 
             sage: M = MatrixSpace(RR,0,0)(0); M
             []
@@ -5671,7 +5671,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [                              1  422550200076076467165567735125]
             [1267650600228229401496703205375  422550200076076467165567735126]
 
-        Matrices over p-adics. See :trac:`17272` ::
+        Matrices over p-adics. See :issue:`17272` ::
 
             sage: # needs sage.rings.padics
             sage: R = ZpCA(5, 5, print_mode='val-unit')
@@ -5693,14 +5693,14 @@ cdef class Matrix(sage.structure.element.Matrix):
             ...
             ZeroDivisionError: input matrix must be nonsingular
 
-        Check to make sure that :trac:`2256` is still fixed::
+        Check to make sure that :issue:`2256` is still fixed::
 
             sage: M = MatrixSpace(CC, 2)(-1.10220440881763)
             sage: N = ~M
             sage: (N*M).norm()
             0.9999999999999999
 
-        Check that :trac:`28402` is fixed::
+        Check that :issue:`28402` is fixed::
 
             sage: B = matrix(RR, [[1/6, -1/24, -1/30, 1/120,1/12, 0, 0, 0, 0],
             ....:                 [-1/24,1/60,1/60, 1/420, -1/24, 0, 0, 0, 0],
@@ -5825,7 +5825,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [(1, 1) (0, 0)]
             [(0, 0) (1, 1)]
 
-        Tests for :trac:`28570`::
+        Tests for :issue:`28570`::
 
             sage: P = posets.TamariLattice(7)                                           # needs sage.graphs
             sage: M = P._hasse_diagram._leq_matrix                                      # needs sage.graphs

@@ -184,12 +184,12 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
         TESTS:
 
-        Check that :trac:`3865` is fixed::
+        Check that :issue:`3865` is fixed::
 
             sage: W(gp('2 + O(5^2)'))
             2
 
-        Check that :trac:`13612` has been fixed::
+        Check that :issue:`13612` has been fixed::
 
             sage: # needs sage.libs.flint
             sage: R = ZpFM(3)
@@ -705,7 +705,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
         TESTS:
 
-        We define ``0^0`` to be unity, :trac:`13786`::
+        We define ``0^0`` to be unity, :issue:`13786`::
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
@@ -839,7 +839,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             ...
             ValueError: cannot invert non-unit
 
-        We check that :trac:`11403` has been resolved::
+        We check that :issue:`11403` has been resolved::
 
             sage: R.<t> = Zq(8,2,'fixed-mod')
             sage: 1/(t+t^2)
@@ -1345,7 +1345,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: list(A(0,4).expansion())
             []
 
-        Check that :trac:`25879` has been resolved::
+        Check that :issue:`25879` has been resolved::
 
             sage: K = ZpCA(3,5)
             sage: R.<a> = K[]

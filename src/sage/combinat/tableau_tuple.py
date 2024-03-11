@@ -485,7 +485,7 @@ class TableauTuple(CombinatorialElement):
 
         TESTS:
 
-        Check that :trac:`20768` is fixed::
+        Check that :issue:`20768` is fixed::
 
             sage: T = TableauTuple([[[1,2,1],[1],[12345]], [], [[1523,1,2],[1,12341,-2]]])
             sage: T.pp()
@@ -2159,7 +2159,7 @@ class TableauTuples(UniqueRepresentation, Parent):
         sage: TestSuite( TableauTuples(level=6, size=1) ).run()
         sage: TestSuite( TableauTuples(level=6, size=10) ).run()
 
-    Check that :trac:`14145` has been fixed::
+    Check that :issue:`14145` has been fixed::
 
         sage: 1 in TableauTuples()
         False
@@ -2295,7 +2295,7 @@ class TableauTuples(UniqueRepresentation, Parent):
             sage: ([[1,2],[4]],[[2,3],[1],[1]]) in T
             True
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in TableauTuples()
             False
@@ -2456,7 +2456,7 @@ class TableauTuples_level(TableauTuples):
             sage: [[1],[2],[3]] in T
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in TableauTuples(3)
             False
@@ -2537,7 +2537,7 @@ class TableauTuples_size(TableauTuples):
             sage: [[1],[2],[3],[4]] in T
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in TableauTuples(size=3)
             False
@@ -2620,7 +2620,7 @@ class TableauTuples_level_size(TableauTuples):
             sage: [[2,4],[1,3]] in T
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in TableauTuples(3,3)
             False
@@ -2942,7 +2942,7 @@ class RowStandardTableauTuples(TableauTuples):
             sage: [[1,1],[5]] in T
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in RowStandardTableauTuples()
             False
@@ -3100,7 +3100,7 @@ class RowStandardTableauTuples_level(RowStandardTableauTuples, DisjointUnionEnum
             sage: [] in T
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in RowStandardTableauTuples(3)
             False
@@ -3310,7 +3310,7 @@ class RowStandardTableauTuples_level_size(RowStandardTableauTuples, DisjointUnio
             sage: RowStandardTableauTuple([[[2, 3]], [[1]]]) in tabs
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in RowStandardTableauTuples(level=4, size=3)                        # needs sage.libs.flint
             False
@@ -3391,7 +3391,7 @@ class RowStandardTableauTuples_shape(RowStandardTableauTuples):
             sage: ([[1, 4],[3]], [[2]]) in STT
             True
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in RowStandardTableauTuples([[2,1],[1]])
             False
@@ -4233,7 +4233,7 @@ class StandardTableauTuples(RowStandardTableauTuples):
             sage: [[1,1],[5]] in T
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in StandardTableauTuples()
             False
@@ -4405,7 +4405,7 @@ class StandardTableauTuples_level(StandardTableauTuples, DisjointUnionEnumerated
             sage: [] in T
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in StandardTableauTuples(3)
             False
@@ -4517,7 +4517,7 @@ class StandardTableauTuples_size(StandardTableauTuples, DisjointUnionEnumeratedS
             sage: Tableau([[1]]) in T
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in StandardTableauTuples(size=3)
             False
@@ -4651,7 +4651,7 @@ class StandardTableauTuples_level_size(StandardTableauTuples, DisjointUnionEnume
             sage: Tableau([[1]]) in tabs
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in StandardTableauTuples(level=4, size=3)                           # needs sage.libs.flint
             False
@@ -4775,7 +4775,7 @@ class StandardTableauTuples_shape(StandardTableauTuples):
             sage: ([[1, 4],[3]], [[2]]) in STT
             True
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in StandardTableauTuples([[2,1],[1]])
             False

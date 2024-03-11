@@ -584,7 +584,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         TESTS:
 
-        Check that :trac:`26038` is fixed::
+        Check that :issue:`26038` is fixed::
 
             sage: a = 1
             ....: b = 2

@@ -978,7 +978,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         See also the extensive tests in the class documentation.
 
-        We check that :trac:`17059` is fixed::
+        We check that :issue:`17059` is fixed::
 
             sage: p = Poset()
             sage: p is Poset(p, category=p.category())
@@ -1848,7 +1848,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Check that :trac:`15313` is fixed::
+        Check that :issue:`15313` is fixed::
 
             sage: P = Poset((divisors(12), attrcall("divides")), facade=True, linear_extension=True)
             sage: P.is_linear_extension([1,2,4,3,6,12,1337])
@@ -1998,7 +1998,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: get_plot_labels(P2.plot(element_labels=element_labels))
             ['a', 'b', 'c', 'd', 'e']
 
-        The following checks that :trac:`18936` has been fixed and labels still work::
+        The following checks that :issue:`18936` has been fixed and labels still work::
 
             sage: # needs sage.plot
             sage: P = Poset({0: [1,2], 1:[3]})
@@ -2009,7 +2009,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.plot(element_labels=elem_labels, heights=heights)
             Graphics object consisting of 8 graphics primitives
 
-        The following checks that equal labels are allowed (:trac:`15206`)::
+        The following checks that equal labels are allowed (:issue:`15206`)::
 
             sage: # needs sage.plot
             sage: P = Poset({1: [2,3]})
@@ -2018,7 +2018,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.plot(element_labels=labs)
             Graphics object consisting of 6 graphics primitives
 
-        The following checks that non-hashable labels are allowed (:trac:`15206`)::
+        The following checks that non-hashable labels are allowed (:issue:`15206`)::
 
             sage: # needs sage.plot
             sage: P = Poset({1: [2,3]})
@@ -3365,7 +3365,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.is_antichain_of_poset([1, 2, 1])
             True
 
-        Check :trac:`19078`::
+        Check :issue:`19078`::
 
             sage: P.is_antichain_of_poset([0, 1, 'junk'])
             Traceback (most recent call last):
@@ -3548,7 +3548,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
             Prior to version 8.3 this returned only realizer with
             ``certificate=True``. Now it returns a pair having a realizer as
-            the second element. See :trac:`25588` for details.
+            the second element. See :issue:`25588` for details.
 
         ALGORITHM:
 
@@ -3610,7 +3610,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: Poset().dimension(certificate=True)
             (0, [])
 
-        Chain and certificate, :trac:`26861`::
+        Chain and certificate, :issue:`26861`::
 
             sage: Poset({'a': ['b']}).dimension(certificate=True)[1]
             [['a', 'b']]
@@ -4625,7 +4625,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Since :trac:`25576`, one can ask for the isomorphism::
+        Since :issue:`25576`, one can ask for the isomorphism::
 
             sage: P.is_isomorphic(Q, certificate=True)
             (True, {1: 4, 2: 5, 3: 6})
@@ -5166,7 +5166,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: Poset().product(Poset())  # Product of two empty poset
             Finite poset containing 0 elements
 
-        We check that :trac:`19113` is fixed::
+        We check that :issue:`19113` is fixed::
 
             sage: L = LatticePoset({1: []})
             sage: type(L) == type(L.product(L))
@@ -6154,7 +6154,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: Q('c') < Q('d')
             False
 
-        The following checks that :trac:`14019` has been fixed::
+        The following checks that :issue:`14019` has been fixed::
 
             sage: d = DiGraph({2:[1],3:[1]})
             sage: p1 = Poset(d)
@@ -8018,7 +8018,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: Poset().is_slender()  # Test empty poset
             True
 
-        Correct certificate (:trac:`22373`)::
+        Correct certificate (:issue:`22373`)::
 
             sage: P = Poset({0:[1,2,3],1:[4],2:[4],3:[4,5]})
             sage: P.is_slender(True)

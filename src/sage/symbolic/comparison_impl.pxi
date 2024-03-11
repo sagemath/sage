@@ -73,7 +73,7 @@ cpdef int print_order(lhs, rhs) except -2:
         sage: print_order(1, sqrt(2))
         1
 
-    Check that :trac:`12967` is fixed::
+    Check that :issue:`12967` is fixed::
 
         sage: print_order(SR(oo), sqrt(2))
         1
@@ -201,7 +201,7 @@ class _math_key():
             sage: _math_key(1) < _math_key(sqrt(2))
             True
 
-        Check that :trac:`12967` is fixed::
+        Check that :issue:`12967` is fixed::
 
             sage: _math_key(1) < _math_key(oo)
             True
@@ -273,12 +273,12 @@ cpdef int mixed_order(lhs, rhs) except -2:
         sage: mixed_order(x + x^2, x*(x+1))
         -1
 
-    Check that :trac:`12967` is fixed::
+    Check that :issue:`12967` is fixed::
 
         sage: mixed_order(SR(oo), sqrt(2))
         1
 
-    Ensure that :trac:`32185` is fixed::
+    Ensure that :issue:`32185` is fixed::
 
         sage: mixed_order(pi, 0)
         1
@@ -353,7 +353,7 @@ class _mixed_key():
             sage: _mixed_key(1) < _mixed_key(sqrt(2))
             True
 
-        Check that :trac:`12967` is fixed::
+        Check that :issue:`12967` is fixed::
 
             sage: _mixed_key(1) < _mixed_key(oo)
             True

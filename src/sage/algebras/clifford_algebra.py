@@ -988,7 +988,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
         TESTS:
 
         Check that the resulting morphism knows it is for
-        finite-dimensional algebras (:trac:`25339`)::
+        finite-dimensional algebras (:issue:`25339`)::
 
             sage: Q = QuadraticForm(ZZ, 3, [1,2,3,4,5,6])
             sage: Cl.<x,y,z> = CliffordAlgebra(Q)
@@ -1072,7 +1072,7 @@ class CliffordAlgebra(CombinatorialFreeModule):
         TESTS:
 
         Check that the resulting morphism knows it is for
-        finite-dimensional algebras (:trac:`25339`)::
+        finite-dimensional algebras (:issue:`25339`)::
 
             sage: Q = QuadraticForm(ZZ, 3, [1,2,3,4,5,6])
             sage: Cl.<x,y,z> = CliffordAlgebra(Q)
@@ -1554,7 +1554,7 @@ class ExteriorAlgebra(CliffordAlgebra):
         TESTS:
 
         Check that the resulting morphism knows it is for
-        finite-dimensional algebras (:trac:`25339`)::
+        finite-dimensional algebras (:issue:`25339`)::
 
             sage: E = ExteriorAlgebra(ZZ, 'e', 3)
             sage: T = jordan_block(0, 2).block_sum(jordan_block(0, 1))
@@ -1773,7 +1773,7 @@ class ExteriorAlgebra(CliffordAlgebra):
             sage: E.interior_product_on_basis(k[7], k[5])
             -y
 
-        Check :trac:`34694`::
+        Check :issue:`34694`::
 
             sage: # needs sage.symbolic
             sage: E = ExteriorAlgebra(SR,'e',3)
@@ -2043,7 +2043,7 @@ class ExteriorAlgebraDifferential(ModuleMorphismByLinearity,
             sage: TestSuite(par).run(skip="_test_pickling")
 
         Check that it knows it is a finite-dimensional algebra
-        morphism (:trac:`25339`):;
+        morphism (:issue:`25339`):;
 
             sage: par.category_for()
             Category of finite dimensional algebras with basis over Rational Field

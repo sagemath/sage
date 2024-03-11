@@ -527,7 +527,7 @@ def is_prime(n) -> bool:
 
     TESTS:
 
-    Make sure the warning from :trac:`25046` works as intended::
+    Make sure the warning from :issue:`25046` works as intended::
 
         sage: is_prime(7/1)
         doctest:warning
@@ -543,7 +543,7 @@ def is_prime(n) -> bool:
         False
 
     However, number fields redefine ``.is_prime()`` in an incompatible fashion
-    (cf. :trac:`32340`) and we should not warn::
+    (cf. :issue:`32340`) and we should not warn::
 
         sage: x = polygen(ZZ, 'x')
         sage: K.<i> = NumberField(x^2 + 1)                                              # needs sage.rings.number_field
@@ -863,7 +863,7 @@ def prime_powers(start, stop=None):
 
     TESTS:
 
-    Check that output are always Sage integers (:trac:`922`)::
+    Check that output are always Sage integers (:issue:`922`)::
 
         sage: v = prime_powers(10)                                                      # needs sage.libs.pari
         sage: type(v[0])                                                                # needs sage.libs.pari
@@ -886,7 +886,7 @@ def prime_powers(start, stop=None):
         ...
         TypeError: unable to convert 'bar' to an integer
 
-    Check that long input are accepted (:trac:`17852`)::
+    Check that long input are accepted (:issue:`17852`)::
 
         sage: prime_powers(6l)                                                          # needs sage.libs.pari
         [2, 3, 4, 5]
@@ -1766,7 +1766,7 @@ def gcd(a, b=None, **kwargs):
 
     Note that to take the gcd of `n` elements for `n \not= 2` you must
     put the elements into a list by enclosing them in ``[..]``.  Before
-    :trac:`4988` the following wrongly returned 3 since the third parameter
+    :issue:`4988` the following wrongly returned 3 since the third parameter
     was just ignored::
 
         sage: gcd(3, 6, 2)
@@ -1793,7 +1793,7 @@ def gcd(a, b=None, **kwargs):
     TESTS:
 
     The following shows that indeed coercion takes place before computing
-    the gcd. This behaviour was introduced in :trac:`10771`::
+    the gcd. This behaviour was introduced in :issue:`10771`::
 
         sage: R.<x> = QQ[]
         sage: S.<x> = ZZ[]
@@ -1804,7 +1804,7 @@ def gcd(a, b=None, **kwargs):
         sage: parent(gcd([1/p, q]))
         Fraction Field of Univariate Polynomial Ring in x over Rational Field
 
-    Make sure we try QQ and not merely ZZ (:trac:`13014`)::
+    Make sure we try QQ and not merely ZZ (:issue:`13014`)::
 
         sage: bool(gcd(2/5, 3/7) == gcd(SR(2/5), SR(3/7)))                              # needs sage.symbolic
         True
@@ -2035,7 +2035,7 @@ def xgcd(a, b):
 
     TESTS:
 
-    We check that :trac:`3330` has been fixed::
+    We check that :issue:`3330` has been fixed::
 
         sage: # needs sage.rings.number_field
         sage: R.<a,b> = NumberField(x^2 - 3, 'g').extension(x^2 - 7, 'h')[]
@@ -3293,7 +3293,7 @@ def carmichael_lambda(n):
         ...
         ValueError: Input n must be a positive integer.
 
-    Bug reported in :trac:`8283`::
+    Bug reported in :issue:`8283`::
 
         sage: from sage.arith.misc import carmichael_lambda
         sage: type(carmichael_lambda(16))
@@ -3729,11 +3729,11 @@ def binomial(x, m, **kwds):
     TESTS:
 
     We test that certain binomials are very fast (this should be
-    instant) -- see :trac:`3309`::
+    instant) -- see :issue:`3309`::
 
         sage: a = binomial(RR(1140000.78), 23310000)
 
-    We test conversion of arguments to Integers -- see :trac:`6870`::
+    We test conversion of arguments to Integers -- see :issue:`6870`::
 
         sage: binomial(1/2, 1/1)                                                        # needs sage.libs.pari
         1/2
@@ -3744,8 +3744,8 @@ def binomial(x, m, **kwds):
         sage: binomial(3/2, SR(1/1))                                                    # needs sage.symbolic
         3/2
 
-    Some floating point cases -- see :trac:`7562`, :trac:`9633`, and
-    :trac:`12448`::
+    Some floating point cases -- see :issue:`7562`, :issue:`9633`, and
+    :issue:`12448`::
 
         sage: binomial(1., 3)
         0.000000000000000
@@ -3803,7 +3803,7 @@ def binomial(x, m, **kwds):
         sage: binomial(Qp(3)(-1/2),4) # p-adic number with valuation >= 0
         1 + 3 + 2*3^2 + 3^3 + 2*3^4 + 3^6 + 3^7 + 3^8 + 3^11 + 2*3^14 + 2*3^16 + 2*3^17 + 2*3^19 + O(3^20)
 
-    Check that :trac:`35811` is fixed::
+    Check that :issue:`35811` is fixed::
 
         sage: binomial(Qp(3)(1/3),4) # p-adic number with negative valuation
         2*3^-5 + 2*3^-4 + 3^-3 + 2*3^-2 + 2*3^-1 + 2 + 2*3 + 2*3^2 + 2*3^3 + 2*3^4 + 2*3^5 +
@@ -4381,7 +4381,7 @@ def primitive_root(n, check=True):
         3
 
     We test that various numbers without primitive roots give
-    an error - see :trac:`10836`::
+    an error - see :issue:`10836`::
 
         sage: # needs sage.libs.pari
         sage: primitive_root(15)
@@ -5134,18 +5134,18 @@ def falling_factorial(x, a):
 
     TESTS:
 
-    Check that :trac:`14858` is fixed::
+    Check that :issue:`14858` is fixed::
 
         sage: falling_factorial(-4, SR(2))                                              # needs sage.symbolic
         20
 
-    Check that :trac:`16770` is fixed::
+    Check that :issue:`16770` is fixed::
 
         sage: d = var('d')                                                              # needs sage.symbolic
         sage: parent(falling_factorial(d, 0))                                           # needs sage.symbolic
         Symbolic Ring
 
-    Check that :trac:`20075` is fixed::
+    Check that :issue:`20075` is fixed::
 
         sage: bool(falling_factorial(int(4), int(2)) == falling_factorial(4,2))
         True
@@ -5224,20 +5224,20 @@ def rising_factorial(x, a):
 
     TESTS:
 
-    Check that :trac:`14858` is fixed::
+    Check that :issue:`14858` is fixed::
 
         sage: bool(rising_factorial(-4, 2) ==                                           # needs sage.symbolic
         ....:      rising_factorial(-4, SR(2)) ==
         ....:      rising_factorial(SR(-4), SR(2)))
         True
 
-    Check that :trac:`16770` is fixed::
+    Check that :issue:`16770` is fixed::
 
         sage: d = var('d')                                                              # needs sage.symbolic
         sage: parent(rising_factorial(d, 0))                                            # needs sage.symbolic
         Symbolic Ring
 
-    Check that :trac:`20075` is fixed::
+    Check that :issue:`20075` is fixed::
 
         sage: bool(rising_factorial(int(4), int(2)) == rising_factorial(4,2))
         True
@@ -6106,7 +6106,7 @@ def squarefree_divisors(x):
     TESTS:
 
     Check that the first divisor (i.e. `1`) is a Sage integer (see
-    :trac:`17852`)::
+    :issue:`17852`)::
 
         sage: a = next(squarefree_divisors(14))
         sage: a

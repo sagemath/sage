@@ -95,7 +95,7 @@ cimported in Cython modules:
 
 AUTHORS:
 
-- Simon King, Jeroen Demeyer (2014-10): initial version (:trac:`15820`)
+- Simon King, Jeroen Demeyer (2014-10): initial version (:issue:`15820`)
 
 """
 # ****************************************************************************
@@ -737,7 +737,7 @@ cdef class BoundedIntegerSequence:
 
         TESTS:
 
-        The discussion at :trac:`15820` explains why the following is a good test::
+        The discussion at :issue:`15820` explains why the following is a good test::
 
             sage: X = BoundedIntegerSequence(21, [4,1,6,2,7,2,3])
             sage: S = BoundedIntegerSequence(21, [0,0,0,0,0,0,0])
@@ -838,7 +838,7 @@ cdef class BoundedIntegerSequence:
             sage: list(BoundedIntegerSequence(1, []))
             []
 
-        The discussion at :trac:`15820` explains why this is a good test::
+        The discussion at :issue:`15820` explains why this is a good test::
 
             sage: S = BoundedIntegerSequence(21, [0,0,0,0,0,0,0])
             sage: X = BoundedIntegerSequence(21, [4,1,6,2,7,2,3])
@@ -996,7 +996,7 @@ cdef class BoundedIntegerSequence:
 
         TESTS:
 
-        The discussion at :trac:`15820` explains why the following are good tests::
+        The discussion at :issue:`15820` explains why the following are good tests::
 
             sage: X = BoundedIntegerSequence(21, [4,1,6,2,7,2,3])
             sage: S = BoundedIntegerSequence(21, [0,0,0,0,0,0,0])
@@ -1059,7 +1059,7 @@ cdef class BoundedIntegerSequence:
             sage: S.list() == list(S) == L
             True
 
-        The discussion at :trac:`15820` explains why the following is a good test::
+        The discussion at :issue:`15820` explains why the following is a good test::
 
             sage: (BoundedIntegerSequence(21, [0,0]) + BoundedIntegerSequence(21, [0,0])).list()
             [0, 0, 0, 0]
@@ -1216,7 +1216,7 @@ cdef class BoundedIntegerSequence:
 
         TESTS:
 
-        The discussion at :trac:`15820` explains why the following are good tests::
+        The discussion at :issue:`15820` explains why the following are good tests::
 
             sage: BoundedIntegerSequence(21, [0,0]) + BoundedIntegerSequence(21, [0,0])
             <0, 0, 0, 0>

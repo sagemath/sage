@@ -58,12 +58,12 @@ def q_int(n, q=None):
 
     TESTS:
 
-    We check that :trac:`15805` is fixed::
+    We check that :issue:`15805` is fixed::
 
         sage: q_int(0).parent()
         Univariate Polynomial Ring in q over Integer Ring
 
-    We check that :trac:`25715` is fixed::
+    We check that :issue:`25715` is fixed::
 
         sage: q_int(0, 3r)
         0
@@ -105,7 +105,7 @@ def q_factorial(n, q=None):
         p^3 + 2*p^2 + 2*p + 1
 
     The `q`-analogue of `n!` is only defined for `n` a non-negative
-    integer (:trac:`11411`)::
+    integer (:issue:`11411`)::
 
         sage: q_factorial(-2)
         Traceback (most recent call last):
@@ -256,7 +256,7 @@ def q_binomial(n, k, q=None, algorithm='auto'):
         sage: q_binomial(10, 4, QQbar(I))                                               # needs sage.rings.number_field
         2
 
-    Note that the symbolic computation works (see :trac:`14982`)::
+    Note that the symbolic computation works (see :issue:`14982`)::
 
         sage: q_binomial(10, 4, I)                                                      # needs sage.rings.number_field
         2
@@ -483,7 +483,7 @@ def q_catalan_number(n, q=None, m=1):
     TESTS:
 
     The `q`-Catalan number of index `n` is only defined for `n` a
-    nonnegative integer (:trac:`11411`)::
+    nonnegative integer (:issue:`11411`)::
 
         sage: q_catalan_number(-2)
         Traceback (most recent call last):
@@ -523,7 +523,7 @@ def qt_catalan_number(n):
         q^6 + q^5*t + q^4*t^2 + q^3*t^3 + q^2*t^4 + q*t^5 + t^6 + q^4*t + q^3*t^2 + q^2*t^3 + q*t^4 + q^3*t + q^2*t^2 + q*t^3
 
     The `q,t`-Catalan number of index `n` is only defined for `n` a
-    nonnegative integer (:trac:`11411`)::
+    nonnegative integer (:issue:`11411`)::
 
         sage: qt_catalan_number(-2)
         Traceback (most recent call last):
@@ -592,7 +592,7 @@ def q_pochhammer(n, a, q=None):
         sage: q_pochhammer(0, var('a'))                                                 # needs sage.symbolic
         1
 
-    We check that :trac:`25715` is fixed::
+    We check that :issue:`25715` is fixed::
 
         sage: q_pochhammer(0, 3r)
         1
@@ -795,7 +795,7 @@ def q_subgroups_of_abelian_group(la, mu, q=None, algorithm='birkhoff'):
         sage: q_subgroups_of_abelian_group([2], [1,1], algorithm='delsarte')
         0
 
-    Check that :trac:`25715` is fixed::
+    Check that :issue:`25715` is fixed::
 
         sage: parent(q_subgroups_of_abelian_group([2], [1], algorithm='delsarte'))
         Univariate Polynomial Ring in q over Integer Ring
@@ -892,7 +892,7 @@ def q_stirling_number1(n, k, q=None):
         ...
         ValueError: q-Stirling numbers are not defined for n < 0
 
-    We check that :trac:`25715` is fixed::
+    We check that :issue:`25715` is fixed::
 
         sage: q_stirling_number1(2,1,1r)
         1
@@ -954,7 +954,7 @@ def q_stirling_number2(n, k, q=None):
         ...
         ValueError: q-Stirling numbers are not defined for n < 0
 
-    We check that :trac:`25715` is fixed::
+    We check that :issue:`25715` is fixed::
 
         sage: q_stirling_number2(1,0).parent()
         Univariate Polynomial Ring in q over Integer Ring

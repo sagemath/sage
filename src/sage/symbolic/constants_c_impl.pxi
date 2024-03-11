@@ -116,7 +116,7 @@ cdef class E(Expression):
             sage: SR(1).exp()
             e
 
-        Testing that it works with matrices (see :trac:`4735`)::
+        Testing that it works with matrices (see :issue:`4735`)::
 
             sage: m = matrix(QQ, 2, 2, [1,0,0,1])
             sage: e^m
@@ -153,7 +153,7 @@ cdef class E(Expression):
             sage: u.operands()
             [a]
 
-        It also works with matrices (see :trac:`4735`)::
+        It also works with matrices (see :issue:`4735`)::
 
             sage: m = matrix(QQ, 2, 2, [1,0,0,1])
             sage: e^m

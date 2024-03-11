@@ -140,7 +140,7 @@ cdef class dancing_linksWrapper:
         TESTS:
 
         The following example would crash in Sage's debug version
-        from :trac:`13864` prior to the fix from :trac:`13882`::
+        from :issue:`13864` prior to the fix from :issue:`13882`::
 
             sage: from sage.combinat.matrices.dancing_links import dlx_solver
             sage: x = dlx_solver([])
@@ -379,7 +379,7 @@ cdef class dancing_linksWrapper:
 
         TESTS:
 
-        Test that :trac:`11814` is fixed::
+        Test that :issue:`11814` is fixed::
 
             sage: dlx_solver([]).search()
             0
@@ -531,7 +531,7 @@ cdef class dancing_linksWrapper:
             ValueError: column(=6) must be in range(ncols) where ncols=6
 
         This use to take a lot of time and memory. Not anymore since
-        :trac:`24315`::
+        :issue:`24315`::
 
             sage: S = Subsets(range(11))
             sage: rows = map(list, S)
@@ -563,7 +563,7 @@ cdef class dancing_linksWrapper:
         TESTS:
 
         The algorithm is automatically reinitialized if needed, for example
-        when iterating the solutions a second time (:trac:`25125`)::
+        when iterating the solutions a second time (:issue:`25125`)::
 
             sage: sorted(map(sorted, d.solutions_iterator()))
             [[0, 1], [2, 3], [4, 5]]
@@ -846,7 +846,7 @@ cdef class dancing_linksWrapper:
         TESTS:
 
         The algorithm is automatically reinitialized if needed, for example
-        when counting the number of solutions a second time (:trac:`25125`)::
+        when counting the number of solutions a second time (:issue:`25125`)::
 
             sage: rows = [[0,1,2], [3,4,5], [0,1], [2,3,4,5], [0], [1,2,3,4,5]]
             sage: x = dlx_solver(rows)

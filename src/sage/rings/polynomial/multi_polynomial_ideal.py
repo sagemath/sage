@@ -521,7 +521,7 @@ class MPolynomialIdeal_singular_base_repr:
 
         TESTS:
 
-        We check that :trac:`17676` is fixed::
+        We check that :issue:`17676` is fixed::
 
             sage: R.<x,y,z> = PolynomialRing(ZZ, 3, order='lex')
             sage: I = Ideal(13*x*y*z+6*x*y+78*x*z+36*x-11*y^2*z-66*y*z,
@@ -812,7 +812,7 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS:
 
-        Check that :trac:`15745` is fixed::
+        Check that :issue:`15745` is fixed::
 
             sage: R.<x,y>= QQ[]
             sage: I = Ideal(R(1))
@@ -1004,7 +1004,7 @@ class MPolynomialIdeal_singular_repr(
             sage: (I * J).is_prime()
             False
 
-        The following is :trac:`5982`.  Note that the quotient ring
+        The following is :issue:`5982`.  Note that the quotient ring
         is not recognized as being a field at this time, so the
         fraction field is not the quotient ring itself::
 
@@ -1110,7 +1110,7 @@ class MPolynomialIdeal_singular_repr(
             sage: J.triangular_decomposition()
             [Ideal (y^2 - 1, x^2 - 1) of Multivariate Polynomial Ring in x, y over Rational Field]
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
             sage: R.<x,y> = QQbar[]                                                     # needs sage.rings.number_field
             sage: J = Ideal(x^2 + y^2 - 2, y^2 - 1)                                     # needs sage.rings.number_field
@@ -1210,7 +1210,7 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS:
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
             sage: P.<x,y,z> = QQbar[]                                                   # needs sage.rings.number_field
             sage: I = ideal(x^2-y, x^3-QQbar(-1))                                       # needs sage.rings.number_field
@@ -1311,7 +1311,7 @@ class MPolynomialIdeal_singular_repr(
             sage: I.vector_space_dimension()
             +Infinity
 
-        Due to integer overflow, the result is correct only modulo ``2^32``, see :trac:`8586`::
+        Due to integer overflow, the result is correct only modulo ``2^32``, see :issue:`8586`::
 
             sage: P.<x,y,z> = PolynomialRing(GF(32003), 3)                              # needs sage.rings.finite_rings
             sage: sage.rings.ideal.FieldIdeal(P).vector_space_dimension()       # known bug, needs sage.rings.finite_rings
@@ -1319,7 +1319,7 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS:
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
             sage: # needs sage.rings.number_field
             sage: P.<x,y,z> = QQbar[]
@@ -1610,7 +1610,7 @@ class MPolynomialIdeal_singular_repr(
             sage: TJ.genus()
             -1
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
             sage: P.<x,y> = QQbar[]                                                     # needs sage.rings.number_field
             sage: I = ideal(y^3*z + x^3*y + x*z^3)                                      # needs sage.rings.number_field
@@ -1671,7 +1671,7 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS:
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
             sage: # needs sage.rings.number_field
             sage: R.<x,y> = QQbar[]
@@ -1846,7 +1846,7 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS:
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
             sage: # needs sage.rings.number_field
             sage: R.<x,y> = QQbar[]
@@ -2003,7 +2003,7 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS:
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
             sage: R.<x,y,z> = QQbar[]                                                   # needs sage.rings.number_field
             sage: I = Ideal([z*x + y^3, z + y^3, z + x*y])                              # needs sage.rings.number_field
@@ -2108,7 +2108,7 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS:
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
             sage: # needs sage.rings.number_field
             sage: R.<a,b,c,d,e,f,g,h,i,j> = QQbar[]
@@ -2218,7 +2218,7 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS:
 
-        Check that this method works over QQbar (:trac:`25351`).  We are not currently
+        Check that this method works over QQbar (:issue:`25351`).  We are not currently
         able to specify other_ring, due to the limitations of @handle_AA_and_QQbar::
 
             sage: # needs sage.rings.number_field
@@ -2312,7 +2312,7 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS:
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
             sage: # needs sage.rings.number_field
             sage: R.<x,y,t,s,z> = QQbar[]
@@ -2325,7 +2325,7 @@ class MPolynomialIdeal_singular_repr(
             True
 
         Check that the passed variables are actually variables of the ring
-        (:trac:`31414`)::
+        (:issue:`31414`)::
 
             sage: R.<x,y,z> = QQ[]
             sage: I = R.ideal(x-y, z)
@@ -2404,7 +2404,7 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS:
 
-        This example checks :trac:`16301`::
+        This example checks :issue:`16301`::
 
             sage: R.<x,y,z> = ZZ[]
             sage: I = Ideal(R(2), x*y, x*z + x)
@@ -2412,7 +2412,7 @@ class MPolynomialIdeal_singular_repr(
             sage: I.quotient(eD).gens()
             [2, x*z + x, x*y]
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
             sage: # needs sage.rings.number_field
             sage: R.<x,y,z> = QQbar[]
@@ -2421,7 +2421,7 @@ class MPolynomialIdeal_singular_repr(
             sage: I.quotient(J)
             Ideal (z, x) of Multivariate Polynomial Ring in x, y, z over Algebraic Field
 
-        Check that :trac:`12803` is fixed::
+        Check that :issue:`12803` is fixed::
 
             sage: R.<xe,xv> = ZZ[]
             sage: J = ideal(4*xv^3 + 3*xv^2, 3*xe*xv^2 + xe - 2*xv)
@@ -2467,7 +2467,7 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS:
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
             sage: # needs sage.rings.number_field
             sage: R.<x, y, z> = QQbar[]
@@ -2749,7 +2749,7 @@ class MPolynomialIdeal_singular_repr(
              '101110100110000110001000100110',
              '101110100110000110001000101110']
 
-        Check that the issue at :trac:`7425` is fixed::
+        Check that the issue at :issue:`7425` is fixed::
 
             sage: R.<x, y, z> = QQ[]
             sage: I = R.ideal([x^2-y^3*z, x+y*z])
@@ -2760,7 +2760,7 @@ class MPolynomialIdeal_singular_repr(
             ...
             ValueError: The dimension of the ideal is 1, but it should be 0
 
-        Check that the issue at :trac:`7425` is fixed::
+        Check that the issue at :issue:`7425` is fixed::
 
             sage: S.<t> = PolynomialRing(QQ)
             sage: F.<q> = QQ.extension(t^4 + 1)
@@ -2769,21 +2769,21 @@ class MPolynomialIdeal_singular_repr(
             sage: I.variety()
             [...{y: -q^3, x: 0}...]
 
-        Check that computing the variety of the ``[1]`` ideal is allowed (:trac:`13977`)::
+        Check that computing the variety of the ``[1]`` ideal is allowed (:issue:`13977`)::
 
             sage: R.<x,y> = QQ[]
             sage: I = R.ideal(1)
             sage: I.variety()
             []
 
-        Check that the issue at :trac:`16485` is fixed::
+        Check that the issue at :issue:`16485` is fixed::
 
             sage: R.<a,b,c> = PolynomialRing(QQ, order='lex')
             sage: I = R.ideal(c^2 - 2, b - c, a)
             sage: I.variety(QQbar)                                                      # needs sage.rings.number_field
             [...a: 0...]
 
-        An early version of :trac:`25351` broke this method by adding the
+        An early version of :issue:`25351` broke this method by adding the
         @handle_AA_and_QQbar decorator to it.  To check for this bug, verify
         that this circle and this hyperbola have two real intersections and
         two more complex ones::
@@ -2914,7 +2914,7 @@ class MPolynomialIdeal_singular_repr(
 
         Because Singular uses 32-bit integers, the above example would fail
         with Singular. We don't test it here, as it has a side-effect on
-        other tests that is not understood yet (see :trac:`26300`)::
+        other tests that is not understood yet (see :issue:`26300`)::
 
             sage: Minors.hilbert_polynomial(algorithm='singular')       # not tested
             Traceback (most recent call last):
@@ -2935,7 +2935,7 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS:
 
-        Check that :trac:`27483` and :trac:`28110` are fixed::
+        Check that :issue:`27483` and :issue:`28110` are fixed::
 
             sage: P.<x,y,z> = PolynomialRing(QQ)
             sage: I = Ideal([x^3, x*y^2, y^4, x^2*y*z, y^3*z, x^2*z^2, x*y*z^2, x*z^3])
@@ -2944,14 +2944,14 @@ class MPolynomialIdeal_singular_repr(
             sage: I.hilbert_polynomial()                                                # needs sage.libs.flint
             3
 
-        Check that this method works over ``QQbar`` (:trac:`25351`)::
+        Check that this method works over ``QQbar`` (:issue:`25351`)::
 
             sage: P.<x,y,z> = QQbar[]                                                   # needs sage.rings.number_field
             sage: I = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5])                    # needs sage.rings.number_field
             sage: I.hilbert_polynomial()                                                # needs sage.rings.number_field
             5*t - 5
 
-        Check for :trac:`33597`::
+        Check for :issue:`33597`::
 
             sage: R.<X, Y, Z> = QQ[]
             sage: I = R.ideal([X^2*Y^3, X*Z])
@@ -3056,7 +3056,7 @@ class MPolynomialIdeal_singular_repr(
             ...
             TypeError: grading must be a list or a tuple of integers
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
             sage: P.<x,y,z> = QQbar[]                                                                                   # needs sage.rings.number_field
             sage: I = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5])                                                    # needs sage.rings.number_field
@@ -3136,7 +3136,7 @@ class MPolynomialIdeal_singular_repr(
             sage: J.hilbert_numerator(grading=(10,3)) == J.hilbert_numerator(grading=(10,3), algorithm='singular')      # needs sage.libs.flint
             True
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
             sage: P.<x,y,z> = QQbar[]                                                   # needs sage.rings.number_field
             sage: I = Ideal([x^3*y^2 + 3*x^2*y^2*z + y^3*z^2 + z^5])                    # needs sage.rings.number_field
@@ -3155,7 +3155,7 @@ class MPolynomialIdeal_singular_repr(
             overflow at t^22
 
         Our two algorithms should always agree; not tested until
-        :trac:`33178` is fixed::
+        :issue:`33178` is fixed::
 
             sage: # not tested
             sage: m = ZZ.random_element(2,8)
@@ -3241,7 +3241,7 @@ class MPolynomialIdeal_singular_repr(
             sage: I._normal_basis_libsingular(5)
             []
 
-        Check what happens with weights but no degree (:trac:`34789`)::
+        Check what happens with weights but no degree (:issue:`34789`)::
 
             sage: TO = TermOrder('wdegrevlex', (2,))
             sage: R = PolynomialRing(QQ, 1, ['k'], order=TO)
@@ -3322,7 +3322,7 @@ class MPolynomialIdeal_singular_repr(
 
         TESTS:
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
             sage: # needs sage.rings.number_field
             sage: R.<x,y,z> = QQbar[]
@@ -4044,7 +4044,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
               'gens': Pickle of the cached method "gens",
               'groebner_basis': Pickle of the cached method "groebner_basis"})
 
-        This example checks :trac:`12802`::
+        This example checks :issue:`12802`::
 
             sage: R.<x,y> = ZZ[]
             sage: I = R * [ x^2 + y, 2*y ]
@@ -4052,7 +4052,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: I == J
             True
 
-        Another good test from the discussion in :trac:`12802`::
+        Another good test from the discussion in :issue:`12802`::
 
             sage: Rx = PolynomialRing(QQ, 2, "x")
             sage: Ix = Rx.ideal(Rx.0)
@@ -4356,7 +4356,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         Although Giac does support lexicographical ordering, we use degree
         reverse lexicographical ordering here, in order to test against
-        :trac:`21884`::
+        :issue:`21884`::
 
             sage: I = sage.rings.ideal.Katsura(P,3)  # regenerate to prevent caching
             sage: J = I.change_ring(P.change_ring(order='degrevlex'))
@@ -4551,7 +4551,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             True
 
         In cases where a characteristic cannot be determined, we use a toy implementation of Buchberger's algorithm
-        (see :trac:`6581`)::
+        (see :issue:`6581`)::
 
             sage: R.<a,b> = QQ[]; I = R.ideal(a^2+b^2-1)
             sage: Q = QuotientRing(R,I); K = Frac(Q)
@@ -4567,7 +4567,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
 
         TESTS:
 
-        Check :trac:`27445`::
+        Check :issue:`27445`::
 
             sage: P = PolynomialRing(QQ, 't', 0)
             sage: P.ideal([P(2)]).groebner_basis()
@@ -4599,7 +4599,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
             sage: P.ideal([P(3)]).groebner_basis()
             [1]
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
             sage: # needs sage.rings.number_field
             sage: P.<a,b,c> = PolynomialRing(QQbar, 3, order='lex')
@@ -5650,7 +5650,7 @@ class MPolynomialIdeal_quotient(MPolynomialIdeal):
         gb = self.groebner_basis()
         # In quotient rings, gb is not a Gröbner basis of self, but gb0 is
         # a (possibly non-reduced) Gröbner basis of the preimage of self in
-        # the cover ring (see :trac:`33217`). We only use Gröbner bases of
+        # the cover ring (see :issue:`33217`). We only use Gröbner bases of
         # pre-existing ideals to potentially take advantage of caching.
         gb0 = Q.defining_ideal().groebner_basis() + [g.lift() for g in gb]
         f0 = f.lift().reduce(gb0)

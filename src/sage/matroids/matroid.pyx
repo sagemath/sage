@@ -7602,7 +7602,7 @@ cdef class Matroid(SageObject):
         .. TODO::
 
             Make implementation more efficient, e.g. generalizing the
-            approach from :trac:`1314` from graphs to matroids.
+            approach from :issue:`1314` from graphs to matroids.
 
         EXAMPLES::
 

@@ -46,7 +46,7 @@ TESTS::
     sage: loads(dumps(H)) == H
     True
 
-See :trac:`5886`::
+See :issue:`5886`::
 
     sage: V = (ZZ^2).span_of_basis([[1,2],[3,4]])
     sage: V.hom([V.0, V.1])
@@ -54,7 +54,7 @@ See :trac:`5886`::
     [1 0]
     [0 1]...
 
-See :trac:`13321`::
+See :issue:`13321`::
 
     sage: (GF(7)^2).hom([[20, 0], [0, 21]], ZZ^2)
     Traceback (most recent call last):
@@ -159,7 +159,7 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
             True
 
         The following tests against a bug that was fixed in
-        :trac:`9944`. The method ``zero()`` calls this hom space with
+        :issue:`9944`. The method ``zero()`` calls this hom space with
         a function, not with a matrix, and that case had previously
         not been taken care of::
 
@@ -174,7 +174,7 @@ class FreeModuleHomspace(sage.categories.homset.HomsetWithBase):
             Codomain: Free module of degree 3 and rank 3 over Integer Ring
             Echelon ...
 
-        The following tests the bug fixed in :trac:`31818`. If there is no
+        The following tests the bug fixed in :issue:`31818`. If there is no
         coercion between base rings, one can only define the zero morphism,
         as morphism of additive groups. Before one could for example use an
         integer matrix to define a morphism from the rational numbers to the

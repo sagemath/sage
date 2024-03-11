@@ -146,7 +146,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         .. TODO::
 
             It would be desirable to make the hash value depend on the
-            hash value of the parent. See :trac:`15959`.
+            hash value of the parent. See :issue:`15959`.
         """
         if not self._hash_set:
             self._hash = hash(frozenset(self._monomial_coefficients.items()))
@@ -169,7 +169,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         r"""
         For unpickling old ``CombinatorialFreeModuleElement`` classes.
 
-        See :trac:`22632` and ``register_unpickle_override`` below.
+        See :issue:`22632` and ``register_unpickle_override`` below.
 
         EXAMPLES::
 
@@ -433,7 +433,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                ├┤      └┘       └┘       └┴┘
                └┘
 
-        The following test failed before :trac:`26850`::
+        The following test failed before :issue:`26850`::
 
             sage: unicode_art([M.zero()])  # indirect doctest                           # needs sage.combinat
             [ 0 ]
@@ -619,7 +619,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         Equality testing can be a bit tricky when the order of terms
         can vary because their indices are incomparable with
-        ``cmp``. The following test did fail before :trac:`12489` ::
+        ``cmp``. The following test did fail before :issue:`12489` ::
 
             sage: # needs sage.combinat
             sage: F = CombinatorialFreeModule(QQ, Subsets([1,2,3]))
@@ -798,7 +798,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         .. NOTE::
 
-            :trac:`13406`: the current implementation has been optimized, at
+            :issue:`13406`: the current implementation has been optimized, at
             the price of breaking the encapsulation for FreeModule
             elements creation, with the following use case as metric,
             on a 2008' Macbook Pro::
@@ -868,7 +868,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             None
 
         This also works when a coercion of the coefficient is needed, for
-        example with polynomials or fraction fields (:trac:`8832`)::
+        example with polynomials or fraction fields (:issue:`8832`)::
 
             sage: P.<q> = QQ['q']
             sage: V = CombinatorialFreeModule(P, Permutations())
