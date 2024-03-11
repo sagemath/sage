@@ -1800,16 +1800,10 @@ class QuaternionOrder(Parent):
             sage: type(S.discriminant())
             <... 'sage.rings.rational.Rational'>
         """
-        L = []
-        for d in self.basis():
-            MM = []
-            for e in self.basis():
-                MM.append(d.pair(e))
-            L.append(MM)
-
+        L = [[d.pair(e) for e in self.basis()] for d in self.basis()]
         return (MatrixSpace(QQ, 4, 4)(L)).determinant().sqrt()
 
-    def is_maximal(self):
+    def is_maximal(self) -> bool:
         r"""
         Check whether the order of ``self`` is maximal in the ambient quaternion algebra.
 
@@ -2761,8 +2755,8 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         if not qf.is_positive_definite():
             raise ValueError('quaternion algebra must be definite')
         pariqf = qf.__pari__()
-        _,v = pariqf.qfminim(None, None, 1)
-        return sum(ZZ(c)*g for c,g in zip(v, self.basis()))
+        _, v = pariqf.qfminim(None, None, 1)
+        return sum(ZZ(c) * g for c, g in zip(v, self.basis()))
 
     def theta_series(self, B, var='q'):
         r"""
@@ -3380,7 +3374,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             False
 
         """
-        _,g = self.primitive_decomposition()
+        _, g = self.primitive_decomposition()
         return g.is_one()
 
 #######################################################################
