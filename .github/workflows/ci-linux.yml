@@ -129,7 +129,7 @@ jobs:
         run: |
           # Disable build isolation following the advice of https://mesonbuild.com/meson-python/how-to-guides/editable-installs.html#build-dependencies
           pip3 install 'meson>=1.3.1' 'meson-python' 'cython>=3.0.0,!=3.0.3' 'numpy>=1.19' 'cypari2 >=2.1.1' 'cysignals>=1.10.2' 'gmpy2>=2.1.0' 'memory_allocator' 'jinja2 >=3.0'
-          pip3 install --no-build-isolation --editable . -v
+          pip3 install --no-build-isolation . -v
 
       - name: Test
         run: |
