@@ -112,10 +112,19 @@ class EllipticCurve_finite_field(EllipticCurve_field):
         return points([P[0:2] for P in self.points() if not P.is_zero()], *args, **kwds)
 
     def _points_via_group_structure(self):
-        """
-        Return a list of all the points on the curve, for prime fields only.
+        r"""
+        Return a list of all the points on the curve using the group structure.
+        
+        For cyclic groups with generator `G` of order `n`, the set of points
+        is computed from `[x]G` for `x \in [0, n - 1]` requiring `n - 2`
+        additions on the curve.
 
-        See points() for the general case.
+        For non-cyclic groups, first two cyclic subgroups `H_i` are computed as
+        above from `[x]G_i` for `x \in [0, n_i]` requiring `n_1 + n_2 - 4`
+        additions. The set of all points is returned as the cartesian product
+        of these two cyclic groups.
+
+        When the group is trivial, only the point at infinity is returned.
 
         EXAMPLES::
 
