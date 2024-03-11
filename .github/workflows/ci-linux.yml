@@ -86,7 +86,7 @@ jobs:
           python3 -m venv ../venv --system-site-packages
           . ../venv/bin/activate
           echo PATH=$PATH >> $GITHUB_ENV # Make it so venv is inherited for other steps
-          pip3 install --upgrade pip
+          python3 -m pip install --upgrade pip
 
           # Needed to download and install fplll and lrcalc below
           eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install git wget)
@@ -101,7 +101,7 @@ jobs:
           fi
 
           # Needed for lrcalc
-          pip3 install --upgrade setuptools wheel
+          python3 -m pip install --upgrade setuptools wheel
           if [ ${{ matrix.container }} = "ubuntu:jammy" ] || [ ${{ matrix.container }} = "ubuntu:lunar" ] || [ ${{ matrix.container }} = "ubuntu:mantic" ] || [ ${{ matrix.container }} = "debian:bookworm" ] || [ ${{ matrix.container }} = "debian:sid" ] || [ ${{ matrix.container }} = "debian:experimental" ] || [ ${{ matrix.container }} = "linuxmintd/mint21-amd64" ] || [ ${{ matrix.container }} = "linuxmintd/mint21.1-amd64" ] || [ ${{ matrix.container }} = "linuxmintd/mint21.2-amd64" ] || [ ${{ matrix.container }} = "fedora:34" ] || [ ${{ matrix.container }} = "fedora:35" ] || [ ${{ matrix.container }} = "fedora:38" ]; then
             wget math.rutgers.edu/~asbuch/lrcalc/lrcalc-2.1.tar.gz \
             && tar zxvf lrcalc-2.1.tar.gz \
@@ -128,12 +128,12 @@ jobs:
         run: |
           . ../venv/bin/activate
           # Disable build isolation following the advice of https://mesonbuild.com/meson-python/how-to-guides/editable-installs.html#build-dependencies
-          pip3 install 'meson>=1.3.1' 'meson-python' 'cython>=3.0.0,!=3.0.3' 'numpy>=1.19' 'cypari2 >=2.1.1' 'cysignals>=1.10.2' 'gmpy2>=2.1.0' 'memory_allocator' 'jinja2 >=3.0'
+          python3 -m pip install 'meson>=1.3.1' 'meson-python' 'cython>=3.0.0,!=3.0.3' 'numpy>=1.19' 'cypari2 >=2.1.1' 'cysignals>=1.10.2' 'gmpy2>=2.1.0' 'memory_allocator' 'jinja2 >=3.0'
           # Build manually using plain meson instead of using pip because of issues with subprojects
           # https://github.com/mesonbuild/meson-python/issues/598
-          # pip3 install --no-build-isolation . -v
-          pip3 install -r requirements/requirements.txt
-          pip3 install -r requirements/test-requirements.txt
+          # python3 -m pip install --no-build-isolation . -v
+          python3 -m pip install -r requirements/requirements.txt
+          python3 -m pip install -r requirements/test-requirements.txt
           meson setup builddir
           meson compile -C builddir --verbose
           meson install -C builddir --no-rebuild 
