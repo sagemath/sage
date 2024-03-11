@@ -640,8 +640,8 @@ class PathAlgebra(CombinatorialFreeModule):
 
         .. WARNING::
 
-             Backward incompatible change: since :trac:`12630` and
-             until :trac:`8678`, this feature was implemented under
+             Backward incompatible change: since :issue:`12630` and
+             until :issue:`8678`, this feature was implemented under
              the syntax ``list(A)`` by means of ``A.__iter__``. This
              was incorrect since ``A.__iter__``, when defined for a
              parent, should iterate through the elements of `A`.

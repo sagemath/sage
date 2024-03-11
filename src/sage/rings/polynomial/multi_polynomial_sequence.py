@@ -31,7 +31,7 @@ We can construct a polynomial sequence for a random plaintext-ciphertext
 pair and study it::
 
     sage: set_random_seed(1)
-    sage: while True:  # workaround (see :trac:`31891`)                                 # needs sage.rings.polynomial.pbori
+    sage: while True:  # workaround (see :issue:`31891`)                                 # needs sage.rings.polynomial.pbori
     ....:     try:
     ....:         F, s = sr.polynomial_system()
     ....:         break
@@ -122,7 +122,7 @@ Using these building blocks we can implement a simple XL algorithm
 easily::
 
     sage: sr = mq.SR(1,1,1,4, gf2=True, polybori=True, order='lex')                     # needs sage.rings.polynomial.pbori
-    sage: while True:  # workaround (see :trac:`31891`)                                 # needs sage.rings.polynomial.pbori
+    sage: while True:  # workaround (see :issue:`31891`)                                 # needs sage.rings.polynomial.pbori
     ....:     try:
     ....:         F, s = sr.polynomial_system()
     ....:         break
@@ -272,7 +272,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
     TESTS:
 
     A PolynomialSequence can exist with elements in an infinite field of
-    characteristic 2 (see :trac:`19452`)::
+    characteristic 2 (see :issue:`19452`)::
 
         sage: from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
         sage: F = GF(2)
@@ -281,7 +281,7 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
         sage: PolynomialSequence([0], R)
         [0]
 
-    A PolynomialSequence can be created from an iterator (see :trac:`25989`)::
+    A PolynomialSequence can be created from an iterator (see :issue:`25989`)::
 
         sage: R.<x,y,z> = QQ[]
         sage: PolynomialSequence(iter(R.gens()))
@@ -543,7 +543,7 @@ class PolynomialSequence_generic(Sequence_generic):
         TESTS:
 
         Check that this method also works for boolean polynomials
-        (:trac:`10680`)::
+        (:issue:`10680`)::
 
             sage: # needs sage.rings.polynomial.pbori
             sage: B.<a,b,c,d> = BooleanPolynomialRing()
@@ -1029,7 +1029,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
             sage: # needs sage.rings.polynomial.pbori
             sage: sr = mq.SR(2, 4, 4, 8, gf2=True, polybori=True)
-            sage: while True:  # workaround (see :trac:`31891`)
+            sage: while True:  # workaround (see :issue:`31891`)
             ....:     try:
             ....:         F, s = sr.polynomial_system()
             ....:         break
@@ -1044,7 +1044,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         TESTS:
 
-        Check the order of the output (:trac:`35518`)::
+        Check the order of the output (:issue:`35518`)::
 
             sage: R.<x,y,z> = PolynomialRing(ZZ)
             sage: Sequence([x,z,y]).connected_components()
@@ -1121,7 +1121,7 @@ class PolynomialSequence_generic(Sequence_generic):
             sage: loads(dumps(F)) == F
             True
 
-        We check that :trac:`26354` is fixed::
+        We check that :issue:`26354` is fixed::
 
             sage: f = P.hom([y,z,x])
             sage: hash(f) == hash(loads(dumps(f)))
@@ -1193,7 +1193,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         TESTS:
 
-        Check that :trac:`26952` is fixed::
+        Check that :issue:`26952` is fixed::
 
             sage: Qp = pAdicField(2)
             sage: R.<x,y,z> = PolynomialRing(Qp, implementation="generic")              # needs sage.rings.padics
@@ -1349,7 +1349,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
         TESTS:
 
-        The function should really dispose of linear equations (:trac:`13968`)::
+        The function should really dispose of linear equations (:issue:`13968`)::
 
             sage: R.<x,y,z> = BooleanPolynomialRing()                                   # needs sage.rings.polynomial.pbori
             sage: S = Sequence([x + y + z + 1, y + z])                                  # needs sage.rings.polynomial.pbori
@@ -1662,7 +1662,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
 
             sage: # needs sage.rings.polynomial.pbori
             sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)
-            sage: while True:  # workaround (see :trac:`31891`)
+            sage: while True:  # workaround (see :issue:`31891`)
             ....:     try:
             ....:         F, s = sr.polynomial_system()
             ....:         break
@@ -1779,7 +1779,7 @@ class PolynomialSequence_gf2e(PolynomialSequence_generic):
 
             sage: # needs sage.rings.polynomial.pbori
             sage: sr = mq.SR(1, 1, 1, 4, gf2=False)
-            sage: while True:  # workaround (see :trac:`31891`)
+            sage: while True:  # workaround (see :issue:`31891`)
             ....:     try:
             ....:         F, s = sr.polynomial_system()
             ....:         break

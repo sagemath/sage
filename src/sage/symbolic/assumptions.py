@@ -595,7 +595,7 @@ def assume(*args):
     TESTS:
 
     Test that you can do two non-relational
-    declarations at once (fixing :trac:`7084`)::
+    declarations at once (fixing :issue:`7084`)::
 
         sage: var('m,n')
         (m, n)
@@ -610,7 +610,7 @@ def assume(*args):
         sage: sin(m*pi).simplify()
         sin(pi*m)
 
-    Check that positive integers can be created (:trac:`20132`)
+    Check that positive integers can be created (:issue:`20132`)
 
         sage: x = SR.var('x', domain='positive')
         sage: assume(x, 'integer')
@@ -662,7 +662,7 @@ def assume(*args):
         [0 < x]
         sage: forget()
 
-    Check that :trac:`28538` is fixed::
+    Check that :issue:`28538` is fixed::
 
         sage: x, y = SR.var('x, y')
         sage: assume(x > 0)
@@ -815,7 +815,7 @@ def _forget_all():
 
     TESTS:
 
-    Check that :trac:`7315` is fixed::
+    Check that :issue:`7315` is fixed::
 
         sage: var('m,n')
         (m, n)

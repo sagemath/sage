@@ -22,16 +22,14 @@ AUTHORS:
 import builtins
 import os
 import re
-import sys
 import shutil
+import sys
 
-from sage.env import (SAGE_LOCAL, cython_aliases,
-                      sage_include_directories)
+from sage.env import SAGE_LOCAL, cython_aliases, sage_include_directories
+from sage.misc.cachefunc import cached_function
+from sage.misc.sage_ostools import redirection, restore_cwd
 from sage.misc.temporary_file import spyx_tmp, tmp_filename
 from sage.repl.user_globals import get_globals
-from sage.misc.sage_ostools import restore_cwd, redirection
-from sage.cpython.string import str_to_bytes
-from sage.misc.cachefunc import cached_function
 
 
 @cached_function
@@ -122,10 +120,10 @@ def cython(filename, verbose=0, compile_message=False,
 
     TESTS:
 
-    Before :trac:`12975`, it would have been needed to write ``#clang c++``,
+    Before :issue:`12975`, it would have been needed to write ``#clang c++``,
     but upper case ``C++`` has resulted in an error.
     Using pkgconfig to find the libraries, headers and macros. This is a
-    work around while waiting for :trac:`22461` which will offer a better
+    work around while waiting for :issue:`22461` which will offer a better
     solution::
 
         sage: code = [
@@ -151,7 +149,7 @@ def cython(filename, verbose=0, compile_message=False,
         ....:        "cdef vector[int] * v = new vector[int](4)\n")
 
     Check that compiling C++ code works when creating a local C file,
-    first moving to a tempdir to avoid clutter.  Before :trac:`22113`,
+    first moving to a tempdir to avoid clutter.  Before :issue:`22113`,
     the create_local_c_file argument was not tested for C++ code::
 
         sage: orig_cwd = os.getcwd()
@@ -210,7 +208,7 @@ def cython(filename, verbose=0, compile_message=False,
         ...
         RuntimeError: ...
 
-    As of :trac:`29139` the default is ``cdivision=True``::
+    As of :issue:`29139` the default is ``cdivision=True``::
 
         sage: cython('''
         ....: cdef size_t foo = 3/2
@@ -227,7 +225,7 @@ def cython(filename, verbose=0, compile_message=False,
         ....: ''')
 
     In Cython 0.29.33 using `from PACKAGE cimport MODULE` is broken
-    when `PACKAGE` is a namespace package, see :trac:`35322`
+    when `PACKAGE` is a namespace package, see :issue:`35322`
     (but as of now sage.misc is not a namespace package, so this passes)::
 
         sage: cython('''
@@ -315,9 +313,9 @@ def cython(filename, verbose=0, compile_message=False,
     includes = [os.getcwd()] + standard_includes
 
     # Now do the actual build, directly calling Cython and distutils
+    import Cython.Compiler.Options
     from Cython.Build import cythonize
     from Cython.Compiler.Errors import CompileError
-    import Cython.Compiler.Options
 
     try:
         from setuptools.dist import Distribution
@@ -325,8 +323,8 @@ def cython(filename, verbose=0, compile_message=False,
     except ImportError:
         # Fall back to distutils (stdlib); note that it is deprecated
         # in Python 3.10, 3.11; https://www.python.org/dev/peps/pep-0632/
-        from distutils.dist import Distribution
         from distutils.core import Extension
+        from distutils.dist import Distribution
 
     from distutils.log import set_verbosity
     set_verbosity(verbose)
@@ -463,7 +461,7 @@ def cython_lambda(vars, expr, verbose=0, **kwds):
 
     .. warning::
 
-        Accessing ``globals()`` doesn't actually work, see :trac:`12446`.
+        Accessing ``globals()`` doesn't actually work, see :issue:`12446`.
 
     EXAMPLES:
 

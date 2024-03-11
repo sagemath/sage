@@ -145,7 +145,7 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
             <class 'sage.rings.polynomial.multi_polynomial_libsingular.MPolynomial_libsingular'>
 
         Now we check for correct handling of the empty
-        permutation (:trac:`23443`)::
+        permutation (:issue:`23443`)::
 
             sage: X([1]).expand() * X([2,1]).expand()
             x0
@@ -250,7 +250,7 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
 
         TESTS:
 
-        Check that :trac:`23403` is fixed::
+        Check that :issue:`23403` is fixed::
 
             sage: X = SchubertPolynomialRing(ZZ)
             sage: a = X([3,2,4,1])
@@ -431,7 +431,7 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
 
         TESTS:
 
-        We check that :trac:`12924` is fixed::
+        We check that :issue:`12924` is fixed::
 
             sage: X = SchubertPolynomialRing(QQ)
             sage: X._element_constructor_([1,2,1])
@@ -440,7 +440,7 @@ class SchubertPolynomialRing_xbasis(CombinatorialFreeModule):
             ValueError: the input [1, 2, 1] is not a valid permutation
 
         Now we check for correct handling of the empty
-        permutation (:trac:`23443`)::
+        permutation (:issue:`23443`)::
 
             sage: X([])
             X[1]

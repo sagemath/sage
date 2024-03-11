@@ -450,7 +450,7 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
         sage: 0 in g_[0]                                                    # optional - bliss
         True
 
-    Check that parameter ``use_edge_labels`` can be used (:trac:`27571`)::
+    Check that parameter ``use_edge_labels`` can be used (:issue:`27571`)::
 
         sage: g = Graph({1: {2: 'a'}})
         sage: canonical_form(g, use_edge_labels=True)                       # optional - bliss
@@ -458,7 +458,7 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
         sage: canonical_form(g, use_edge_labels=False)                      # optional - bliss
         [(1, 0, None)]
 
-    Check that :trac:`28531` is fixed::
+    Check that :issue:`28531` is fixed::
 
         sage: from itertools import product, permutations
         sage: edges_list = [[(0,1), (1,2)],
@@ -484,7 +484,7 @@ cpdef canonical_form(G, partition=None, return_graph=False, use_edge_labels=True
         sage: g1can == g2can                                                # optional - bliss
         True
 
-    Check that :trac:`32395` is fixed::
+    Check that :issue:`32395` is fixed::
 
         sage: g = Graph([[0, 2]])  # 1 is not a vertex!
         sage: g.canonical_label(partition=[[0], [1], [2]], algorithm="bliss")  # optional - bliss
