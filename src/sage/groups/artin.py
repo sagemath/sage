@@ -21,11 +21,11 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.groups.free_group import FreeGroup
-from sage.groups.finitely_presented import FinitelyPresentedGroup, FinitelyPresentedGroupElement
 from sage.combinat.root_system.coxeter_matrix import CoxeterMatrix
 from sage.combinat.root_system.coxeter_group import CoxeterGroup
+from sage.groups.free_group import FreeGroup
+from sage.groups.finitely_presented import FinitelyPresentedGroup, FinitelyPresentedGroupElement
+from sage.misc.cachefunc import cached_method
 from sage.rings.infinity import Infinity
 from sage.structure.richcmp import richcmp, rich_to_bool
 from sage.structure.unique_representation import UniqueRepresentation

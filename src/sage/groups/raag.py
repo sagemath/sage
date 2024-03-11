@@ -205,8 +205,6 @@ class RightAngledArtinGroup(ArtinGroup):
         FinitelyPresentedGroup.__init__(self, F, rels,
                                         category=Groups().Infinite())
 
-    __reduce__ = CachedRepresentation.__reduce__
-
     def _repr_(self) -> str:
         """
         Return a string representation of ``self``.

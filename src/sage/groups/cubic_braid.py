@@ -91,7 +91,8 @@ from sage.groups.finitely_presented import FinitelyPresentedGroup, FinitelyPrese
 from sage.groups.braid import BraidGroup
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
-from sage.structure.unique_representation import CachedRepresentation
+from sage.structure.unique_representation import UniqueRepresentation
+
 
 try:
     from sage.libs.gap.element import GapElement
@@ -566,7 +567,7 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
 #                  Class CubicBraidGroup
 #
 ##############################################################################
-class CubicBraidGroup(FinitelyPresentedGroup):
+class CubicBraidGroup(UniqueRepresentation, FinitelyPresentedGroup):
     r"""
     Factor groups of the Artin braid group mapping their generators to elements
     of order 3.
@@ -803,8 +804,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         self._centralizing_matrix = None   # for Assion groups: element in classical base group commuting with self
         self._centralizing_element = None   # image under nat. map of the former one in the proj. classical group
         return
-
-    __reduce__ = CachedRepresentation.__reduce__
 
     def _repr_(self):
         r"""
