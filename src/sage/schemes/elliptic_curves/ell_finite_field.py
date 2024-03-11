@@ -114,7 +114,7 @@ class EllipticCurve_finite_field(EllipticCurve_field):
     def _points_via_group_structure(self):
         r"""
         Return a list of all the points on the curve using the group structure.
-        
+
         For cyclic groups with generator `G` of order `n`, the set of points
         is computed from `[x]G` for `x \in [0, n - 1]` requiring `n - 2`
         additions on the curve.
