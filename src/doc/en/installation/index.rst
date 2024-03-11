@@ -128,9 +128,9 @@ Windows
 
     .. code-block:: shell
 
-       $ curl -L -O https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-$(uname)-$(uname -m).sh
-       $ sh Mambaforge-$(uname)-$(uname -m).sh
-       $ mamba create -n sage sage python=3.11
+       $ curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+       $ bash Miniforge3-$(uname)-$(uname -m).sh
+       $ conda create -n sage sage python=3.11
 
     (If there are any installation failures, please report them to
     the conda-forge maintainers by opening a `GitHub Issue for
