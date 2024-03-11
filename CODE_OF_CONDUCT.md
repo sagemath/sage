@@ -58,20 +58,20 @@ roles and procedures for the Sage Code of Conduct Committee.
     8. Repeated harassment of others. In general, if someone asks you to stop, then stop.
     9. Advocating for, or encouraging, any of the above behavior.
 
-This code of conduct applies to all spaces managed by the Sage
+This Code of Conduct applies to all spaces managed by the Sage
 project, including all public and private mailing lists, issue
 trackers, wikis, and any other communication channel used by our
 community. It also applies to Sage Days and any other in-person or
 virtual events.
 
-This code of conduct should be honored by everyone who participates in
+This Code of Conduct should be honored by everyone who participates in
 the Sage community formally or informally, or claims any affiliation
 with the project, in any project-related activities, and, especially,
 when representing the project, in any role.
 
-This code is neither exhaustive nor complete. It serves to distill our
+This Code is neither exhaustive nor complete. It serves to distill our
 common understanding of a collaborative, shared environment and
-goals. Please try to follow this code in spirit as much as in letter,
+goals. Please try to follow this Code in spirit as much as in letter,
 to create a friendly and productive environment that enriches the
 surrounding community.
 
