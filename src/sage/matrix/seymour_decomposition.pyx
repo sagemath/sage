@@ -41,34 +41,32 @@ cdef class DecompositionNode(SageObject):
                 CMR_CALL(CMRmatroiddecFree(cmr, &self._dec))
         self._dec = dec
         self._root = root
-        # self._row_keys = None
-        # self._column_keys = None
 
-    # cdef _set_row_keys(self, row_keys):
-        # """
-        # Set the row keys with consistency checking: if the
-        # value was previously set, it must remain the same.
-        # """
-        # if self._row_keys is not None and self._row_keys != row_keys:
-        #     raise ValueError(f"inconsistent row keys: should be {self._row_keys} "
-        #                      f"but got {row_keys}")
-        # if row_keys is not None and self.nrows() != len(row_keys):
-        #     raise ValueError(f"inconsistent row keys: should be of cardinality {self.nrows()} "
-        #                      f"but got {row_keys}")
-        # self._row_keys = row_keys
+    cdef _set_row_keys(self, row_keys):
+        """
+        Set the row keys with consistency checking: if the
+        value was previously set, it must remain the same.
+        """
+        if self._row_keys is not None and self._row_keys != row_keys:
+            raise ValueError(f"inconsistent row keys: should be {self._row_keys} "
+                             f"but got {row_keys}")
+        if row_keys is not None and self.nrows() != len(row_keys):
+            raise ValueError(f"inconsistent row keys: should be of cardinality {self.nrows()} "
+                             f"but got {row_keys}")
+        self._row_keys = row_keys
 
-    # def _set_column_keys(self, column_keys):
-    #     """
-    #     Set the column keys with consistency checking: if the
-    #     value was previously set, it must remain the same.
-    #     """
-        # if self._column_keys is not None and self._column_keys != column_keys:
-            # raise ValueError(f"inconsistent column keys: should be {self._column_keys} "
-                            #  f"but got {column_keys}")
-        # if column_keys is not None and self.ncols() != len(column_keys):
-        #     raise ValueError(f"inconsistent column keys: should be of cardinality {self.ncols()} "
-        #                      f"but got {column_keys}")
-        # self._column_keys = column_keys
+    cdef _set_column_keys(self, column_keys):
+        """
+        Set the column keys with consistency checking: if the
+        value was previously set, it must remain the same.
+        """
+        if self._column_keys is not None and self._column_keys != column_keys:
+            raise ValueError(f"inconsistent column keys: should be {self._column_keys} "
+                             f"but got {column_keys}")
+        if column_keys is not None and self.ncols() != len(column_keys):
+            raise ValueError(f"inconsistent column keys: should be of cardinality {self.ncols()} "
+                             f"but got {column_keys}")
+        self._column_keys = column_keys
 
     def __dealloc__(self):
         self._set_dec(NULL, None)
@@ -951,9 +949,8 @@ cdef create_DecompositionNode(CMR_MATROID_DEC *dec, root=None, row_keys=None, co
         return None
     cdef DecompositionNode result = <DecompositionNode> _class(dec)()
     result._set_dec(dec, root)
-    # result._set_row_keys(row_keys)
-    # result.row_keys = row_keys
-    # result._set_column_keys(column_keys)
+    result._set_row_keys(row_keys)
+    result._set_column_keys(column_keys)
     return result
 
 

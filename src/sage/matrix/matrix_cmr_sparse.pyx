@@ -17,6 +17,7 @@ Sparse Matrices with CMR
 
 from libc.stdint cimport SIZE_MAX
 
+from cysignals.memory cimport sig_malloc, sig_free
 from cysignals.signals cimport sig_on, sig_off
 
 from sage.libs.cmr.cmr cimport *
@@ -914,50 +915,52 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         return result
 
     def binary_pivots(self, rows, columns):
-        cdef Matrix_cmr_chr_sparse result
-        cdef size_t* pivot_rows
-        cdef size_t* pivot_columns
-        cdef CMR_CHRMAT *result_mat
-
         npivots = len(rows)
         if len(columns) != npivots:
             raise ValueError("The pivot rows and columns must have the same length")
+
+        cdef size_t* pivot_rows = <size_t *>sig_malloc(sizeof(size_t)*npivots)
+        cdef size_t* pivot_columns = <size_t *>sig_malloc(sizeof(size_t)*npivots)
+        cdef CMR_CHRMAT *result_mat
 
         for i in range(npivots):
             pivot_rows[i] = rows[i]
             pivot_columns[i] = columns[i]
 
-        CMR_CALL(CMRchrmatBinaryPivots(cmr, self._mat, npivots, pivot_rows, pivot_columns, &result_mat))
-        result = Matrix_cmr_chr_sparse._from_cmr(result_mat)
-        return result
+        try:
+            CMR_CALL(CMRchrmatBinaryPivots(cmr, self._mat, npivots, pivot_rows, pivot_columns, &result_mat))
+            return Matrix_cmr_chr_sparse._from_cmr(result_mat)
+        finally:
+            sig_free(pivot_rows)
+            sig_free(pivot_columns)
 
     def ternary_pivot(self, row, column):
-        cdef Matrix_cmr_chr_sparse result
         cdef size_t pivot_row = row
         cdef size_t pivot_column = column
         cdef CMR_CHRMAT *result_mat
 
         CMR_CALL(CMRchrmatTernaryPivot(cmr, self._mat, pivot_row, pivot_column, &result_mat))
-        result = Matrix_cmr_chr_sparse._from_cmr(result_mat)
-        return result
+        return Matrix_cmr_chr_sparse._from_cmr(result_mat)
 
     def ternary_pivots(self, rows, columns):
-        cdef Matrix_cmr_chr_sparse result
-        cdef size_t* pivot_rows
-        cdef size_t* pivot_columns
-        cdef CMR_CHRMAT *result_mat
-
         cdef size_t npivots = len(rows)
         if len(columns) != npivots:
             raise ValueError("The pivot rows and columns must have the same length")
+
+        cdef size_t* pivot_rows = <size_t *>sig_malloc(sizeof(size_t)*npivots)
+        cdef size_t* pivot_columns = <size_t *>sig_malloc(sizeof(size_t)*npivots)
+        cdef CMR_CHRMAT *result_mat
 
         for i in range(npivots):
             pivot_rows[i] = rows[i]
             pivot_columns[i] = columns[i]
 
-        CMR_CALL(CMRchrmatTernaryPivots(cmr, self._mat, npivots, pivot_rows, pivot_columns, &result_mat))
-        result = Matrix_cmr_chr_sparse._from_cmr(result_mat)
-        return result
+        try:
+            CMR_CALL(CMRchrmatTernaryPivots(cmr, self._mat, npivots, pivot_rows, pivot_columns, &result_mat))
+            return Matrix_cmr_chr_sparse._from_cmr(result_mat)
+        finally:
+            sig_free(pivot_rows)
+            sig_free(pivot_columns)
 
     def is_unimodular(self, time_limit=60.0):
         r"""
