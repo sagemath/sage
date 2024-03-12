@@ -23,6 +23,7 @@ from sage.structure.sage_object cimport SageObject
 
 from .matrix_cmr_sparse cimport Matrix_cmr_chr_sparse, _sage_edge, _sage_graph
 from .matrix_space import MatrixSpace
+from .args cimport MatrixArgs
 
 
 cdef class DecompositionNode(SageObject):
@@ -40,6 +41,34 @@ cdef class DecompositionNode(SageObject):
                 CMR_CALL(CMRmatroiddecFree(cmr, &self._dec))
         self._dec = dec
         self._root = root
+        self._row_keys = None
+        self._column_keys = None
+
+    cdef _set_row_keys(self, row_keys):
+        # """
+        # Set the row keys with consistency checking: if the
+        # value was previously set, it must remain the same.
+        # """
+        # if self._row_keys is not None and self._row_keys != row_keys:
+        #     raise ValueError(f"inconsistent row keys: should be {self._row_keys} "
+        #                      f"but got {row_keys}")
+        # if row_keys is not None and self.nrows() != len(row_keys):
+        #     raise ValueError(f"inconsistent row keys: should be of cardinality {self.nrows()} "
+        #                      f"but got {row_keys}")
+        self._row_keys = row_keys
+
+    # def _set_column_keys(self, column_keys):
+    #     """
+    #     Set the column keys with consistency checking: if the
+    #     value was previously set, it must remain the same.
+    #     """
+        # if self._column_keys is not None and self._column_keys != column_keys:
+            # raise ValueError(f"inconsistent column keys: should be {self._column_keys} "
+                            #  f"but got {column_keys}")
+        # if column_keys is not None and self.ncols() != len(column_keys):
+        #     raise ValueError(f"inconsistent column keys: should be of cardinality {self.ncols()} "
+        #                      f"but got {column_keys}")
+        # self._column_keys = column_keys
 
     def __dealloc__(self):
         self._set_dec(NULL, None)
@@ -90,24 +119,24 @@ cdef class DecompositionNode(SageObject):
         result._root = self._root or self
         return result
 
-    # def row_keys(self):
-    #     r"""
-    #     OUTPUT: a tuple or ``None``
-    #     """
-    #     return self._row_keys
+    def row_keys(self):
+        r"""
+        OUTPUT: a tuple or ``None``
+        """
+        return self._row_keys
 
-    # def column_keys(self):
-    #     r"""
-    #     OUTPUT: a tuple or ``None``
-    #     """
-    #     return self._column_keys
+    def column_keys(self):
+        r"""
+        OUTPUT: a tuple or ``None``
+        """
+        return self._column_keys
 
-    # @cached_method
-    # def morphism(self):
-    #     r"""
+    @cached_method
+    def morphism(self):
+        r"""
 
-    #     """
-    #     return matrix(self.matrix(), row_keys=self.row_keys(), column_keys=self.column_keys())
+        """
+        return MatrixArgs(self.matrix(), MatrixSpace(ZZ, self.row_keys(), self.column_keys()))
 
 
     @cached_method
@@ -284,22 +313,33 @@ cdef class DecompositionNode(SageObject):
         """
         return CMRmatroiddecNumChildren(self._dec)
 
+    # cdef _CMRelement_to_key(self, CMR_ELEMENT element):
+    #     if not CMRelementIsValid(element):
+    #         raise ValueError('CMRelement index not valid')
+    #     if CMRelementIsRow(element):
+    #         return self.row_keys[CMRelementToRowIndex(element)]
+    #     else:
+    #         return self.column_keys[CMRelementToColumnIndex(element)]
+
     def _create_child_node(self, index):
+        return create_DecompositionNode(CMRmatroiddecChild(self._dec, index), root = self._root or self)
+        # row_keys = self.row_keys()
+        # column_keys = self.column_keys()
+        # cdef CMR_MATROID_DEC *child_dec = CMRmatroiddecChild(self._dec, index)
+        # cdef CMR_ELEMENT *parent_rows = CMRmatroiddecRowsParent(child_dec)
+        # cdef CMR_ELEMENT *parent_columns = CMRmatroiddecColumnsParent(child_dec)
 
-        return create_DecompositionNode(CMRmatroiddecChild(self._dec, index),
-                                        self._root or self)
-#         row_keys = self.row_keys()
-#         column_keys = self.column_keys()
-#         if row_keys is not None and column_keys is not None:
-#             cdef CMR_MATROID_DEC *child = CMRmatroiddecChild(self._dec, index)
-#             cdef CMR_ELEMENT *parent_rows = CMRmatroiddecRowsParent(child)
-#             cdef CMR_ELEMENT *parent_columns = CMRmatroiddecColumnsParent(child)
-#             child_row_keys = tuple(row_keys[parent_rows[.....]])
+        # child = create_DecompositionNode(child_dec, root = self._root or self)
 
-#         return create_DecompositionNode(,
-#                                         self._root or self,
+        # if row_keys is None or column_keys is None:
+        #     child_row_keys = tuple(self._CMRelement_to_key(parent_rows[i])
+        #                            for i in range(child.nrows()))
+        #     child_column_keys = tuple(self._CMRelement_to_key(parent_columns[i])
+        #                               for i in range(child.ncols()))
+        #     child._set_row_keys(child_row_keys)
+        #     child._set_column_keys(child_column_keys)
 
-# )
+        # return child
 
 
     @cached_method
@@ -600,6 +640,11 @@ cdef class TwoSumNode(SumNode):
 
 cdef class ThreeSumNode(SumNode):
 
+    @cached_method
+    def _children(self):
+        return tuple(self._create_child_node(index)
+                     for index in range(self.nchildren()))
+
     def is_distributed_ranks(self):
         r"""
         EXAMPLES::
@@ -825,6 +870,7 @@ cdef class SpecialLeafNode(DecompositionNode):
 
 
 cdef class PivotsNode(DecompositionNode):
+
     def npivots(self):
         return CMRmatroiddecNumPivots(self._dec)
 
@@ -905,8 +951,8 @@ cdef create_DecompositionNode(CMR_MATROID_DEC *dec, root=None, row_keys=None, co
         return None
     cdef DecompositionNode result = <DecompositionNode> _class(dec)()
     result._set_dec(dec, root)
-    # result._row_keys = row_keys
-    # result._column_keys = column_keys
+    result._set_row_keys(row_keys)
+    # result._set_column_keys(column_keys)
     return result
 
 
