@@ -131,6 +131,30 @@ by Sage, you can link toward it without specifying its full path:
      - ``:mathscinet:`MR0100971```
      - :mathscinet:`MR0100971`
 
+   * - :ref:`Giac <spkg_giac>`
+     - ``:giac_cascmd:`gbasis <node280>```
+     - :giac_cascmd:`gbasis <node280>`
+
+   * -
+     - ``:giac_us:`Unary-functions```
+     - :giac_us:`Unary-functions`
+
+   * - :ref:`Maxima <spkg_maxima>`
+     - ``:maxima:`struve_h <index-struve_005fh>```
+     - :maxima:`struve_h <index-struve_005fh>`
+
+   * - :ref:`Pari <spkg_pari>`
+     - ``:pari:`lfungenus2```
+     - :pari:`lfungenus2`
+
+   * - :ref:`PPL <spkg_ppl>`
+     - ``:ppl:`Linear_Expression <classParma__Polyhedra__Library_1_1Linear__Expression>```
+     - :ppl:`Linear_Expression <classParma__Polyhedra__Library_1_1Linear__Expression>`
+
+   * - :ref:`Singular <spkg_singular>`
+     - ``:singular:`stdfglm <sing_358>```
+     - :singular:`stdfglm <sing_358>`
+
 **http links:** copy/pasting a http link in the documentation works. If you want
 a specific link name, use ```link name <http://www.example.com>`_``
 
