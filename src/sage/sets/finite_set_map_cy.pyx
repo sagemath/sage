@@ -362,7 +362,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
             self._parent.check_element(self)
 
     cpdef FiniteSetMap_MN _compose_internal_(self, FiniteSetMap_MN other,
-                                             Parent resParent) noexcept:
+                                             Parent resParent):
         """
         TESTS::
 

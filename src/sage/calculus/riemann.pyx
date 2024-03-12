@@ -1090,7 +1090,7 @@ cdef comp_pt(clist, loop=True):
     return list2
 
 cpdef get_derivatives(np.ndarray[COMPLEX_T, ndim=2] z_values, FLOAT_T xstep,
-    FLOAT_T ystep) noexcept:
+    FLOAT_T ystep):
     """
     Computes the r*e^(I*theta) form of derivatives from the grid of points. The
     derivatives are computed using quick-and-dirty taylor expansion and
@@ -1146,7 +1146,7 @@ cpdef get_derivatives(np.ndarray[COMPLEX_T, ndim=2] z_values, FLOAT_T xstep,
 
 cpdef complex_to_spiderweb(np.ndarray[COMPLEX_T, ndim = 2] z_values,
     np.ndarray[FLOAT_T, ndim = 2] dr, np.ndarray[FLOAT_T, ndim = 2] dtheta,
-    spokes, circles, rgbcolor, thickness, withcolor, min_mag) noexcept:
+    spokes, circles, rgbcolor, thickness, withcolor, min_mag):
     """
     Converts a grid of complex numbers into a matrix containing rgb data
     for the Riemann spiderweb plot.

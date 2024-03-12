@@ -3,7 +3,7 @@ cpdef call_registered_function(unsigned serial,
                                list args,
                                bint hold,
                                bint allow_numeric_result,
-                               result_parent) noexcept:
+                               result_parent):
     r"""
     Call a function registered with Pynac (GiNaC).
 

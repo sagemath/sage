@@ -1747,7 +1747,7 @@ cdef inline int swap(int* alpha, int* alpha_inv, int u, int new_pos_u) noexcept:
 
 
 cdef maximum_cardinality_search_M_short_digraph(short_digraph sd, int initial_vertex,
-                                                int* alpha, int* alpha_inv, list F, bint* X) noexcept:
+                                                int* alpha, int* alpha_inv, list F, bint* X):
     r"""
     Compute the ordering and the edges of the triangulation produced by MCS-M.
 

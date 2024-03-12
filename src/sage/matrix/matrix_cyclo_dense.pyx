@@ -977,7 +977,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         return ht
 
     cdef _randomize_rational_column_unsafe(Matrix_cyclo_dense self,
-        Py_ssize_t col, mpz_t nump1, mpz_t denp1, distribution=None) noexcept:
+        Py_ssize_t col, mpz_t nump1, mpz_t denp1, distribution=None):
         """
         Randomizes all entries in column ``col``.  This is a helper method
         used in the implementation of dense matrices over cyclotomic fields.

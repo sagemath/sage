@@ -2837,7 +2837,7 @@ cdef class NCPolynomial_plural(RingElement):
 #####################################################################
 
 cdef inline NCPolynomial_plural new_NCP(NCPolynomialRing_plural parent,
-                                        poly *juice) noexcept:
+                                        poly *juice):
     """
     Construct NCPolynomial_plural from parent and SINGULAR poly.
 

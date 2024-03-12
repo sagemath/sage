@@ -659,7 +659,7 @@ cdef class MarchingCubesTriangles(MarchingCubes):
                       double center,
                       double lx, double ux,
                       double ly, double uy,
-                      double lz, double uz) noexcept:
+                      double lz, double uz):
         # What a mess!  It would be much nicer-looking code to pass slices
         # in here and do the subscripting in here.  Unfortunately,
         # that would also be much slower, because we'd have to re-initialize

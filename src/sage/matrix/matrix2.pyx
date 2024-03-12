@@ -8894,7 +8894,7 @@ cdef class Matrix(Matrix1):
 
     cpdef matrix_window(self, Py_ssize_t row=0, Py_ssize_t col=0,
                         Py_ssize_t nrows=-1, Py_ssize_t ncols=-1,
-                        bint check=1) noexcept:
+                        bint check=1):
         """
         Return the requested matrix window.
 

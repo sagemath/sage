@@ -50,7 +50,7 @@ def strassen_window_multiply(C, A,B, cutoff):
 
 
 cdef strassen_window_multiply_c(MatrixWindow C, MatrixWindow A,
-                                MatrixWindow B, Py_ssize_t cutoff) noexcept:
+                                MatrixWindow B, Py_ssize_t cutoff):
     # todo -- I'm not sure how to interpret "cutoff". Should it be...
     # (a) the minimum side length of the matrices (currently implemented below)
     # (b) the maximum side length of the matrices

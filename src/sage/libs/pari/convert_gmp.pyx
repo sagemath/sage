@@ -121,7 +121,7 @@ cdef inline GEN _new_GEN_from_mpq_t(mpq_t value) noexcept:
 
 
 cdef Gen new_gen_from_padic(long ordp, long relprec,
-                            mpz_t prime, mpz_t p_pow, mpz_t unit) noexcept:
+                            mpz_t prime, mpz_t p_pow, mpz_t unit):
     """
     Create a new PARI Gen of type ``t_PADIC`` from the given input data
     as GMP integers.

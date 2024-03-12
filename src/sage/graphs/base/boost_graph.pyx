@@ -98,7 +98,7 @@ cdef boost_weighted_graph_from_sage_graph(BoostWeightedGraph *g,
                                           g_sage,
                                           vertex_to_int,
                                           weight_function=None,
-                                          reverse=False) noexcept:
+                                          reverse=False):
     r"""
     Initialize the Boost weighted graph ``g`` to be equal to ``g_sage``.
 
@@ -621,7 +621,7 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
 
 cpdef min_spanning_tree(g,
                         weight_function=None,
-                        algorithm='Kruskal') noexcept:
+                        algorithm='Kruskal'):
     r"""
     Use Boost to compute the minimum spanning tree of the input graph.
 
@@ -2129,7 +2129,7 @@ cpdef diameter_DHV(g, weight_function=None, check_weight=True):
 cdef tuple diameter_lower_bound_2Dsweep(BoostVecWeightedDiGraphU g_boost,
                                         BoostVecWeightedDiGraphU rev_g_boost,
                                         v_index source,
-                                        str algorithm) noexcept:
+                                        str algorithm):
     r"""
     Return a lower bound on the diameter of `G`.
 
@@ -2490,7 +2490,7 @@ cdef double diameter_DiFUB(BoostVecWeightedDiGraphU g_boost,
     return LB
 
 cpdef diameter(G, algorithm=None, source=None,
-               weight_function=None, check_weight=True) noexcept:
+               weight_function=None, check_weight=True):
     r"""
     Return the diameter of `G`.
 
@@ -2626,7 +2626,7 @@ cpdef diameter(G, algorithm=None, source=None,
         return LB
 
 cpdef shortest_paths_from_vertices(g, vertex_list=None, order=None,
-                                   weight_function=None, algorithm=None) noexcept:
+                                   weight_function=None, algorithm=None):
     r"""
     Compute the shortest paths to all vertices from each vertex in
     ``vertex_list``.

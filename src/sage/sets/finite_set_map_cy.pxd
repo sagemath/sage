@@ -21,7 +21,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
     cpdef fibers(self)
     cpdef items(self)
     cpdef FiniteSetMap_MN _compose_internal_(self, FiniteSetMap_MN other,
-                                             Parent resParent) noexcept
+                                             Parent resParent)
     cpdef check(self)
 
 cdef class FiniteSetMap_Set(FiniteSetMap_MN): pass

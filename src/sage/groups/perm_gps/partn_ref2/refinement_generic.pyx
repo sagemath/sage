@@ -191,7 +191,7 @@ from sage.data_structures.bitset_base cimport *
 
 cdef tuple PS_refinement(PartitionStack * part, long *refine_vals, long *best,
                          int begin, int end,
-                         bint * cand_initialized, bint *changed_partition) noexcept:
+                         bint * cand_initialized, bint *changed_partition):
     """
     Refine the partition stack by the values given by ``refine_vals``.
     We also compare our actual refinement result with the vector ``best`` in the

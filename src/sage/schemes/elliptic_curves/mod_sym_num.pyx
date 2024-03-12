@@ -2014,7 +2014,7 @@ cdef class ModularSymbolNumerical:
                                      Integer epsQ, Integer epsQQ,
                                     llong* wQ, llong* wQQ,
                                     int T, int prec, double eps,
-                                    int use_partials=2) noexcept:
+                                    int use_partials=2):
         r"""
         This is just a helper function for _from_r_to_rr_approx. In case
         the integral is evaluated directly this function is called.

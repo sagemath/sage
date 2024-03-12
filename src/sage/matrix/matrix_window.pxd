@@ -27,10 +27,10 @@ cdef class MatrixWindow:
 
     # NO BENEFIT TO OVERRIDING THESE:
     cpdef MatrixWindow matrix_window(MatrixWindow self, Py_ssize_t row, Py_ssize_t col,
-                                     Py_ssize_t n_rows, Py_ssize_t n_cols) noexcept
+                                     Py_ssize_t n_rows, Py_ssize_t n_cols)
     cpdef MatrixWindow new_matrix_window(MatrixWindow self, Matrix matrix,
                                         Py_ssize_t row, Py_ssize_t col,
-                                         Py_ssize_t n_rows, Py_ssize_t n_cols) noexcept
+                                         Py_ssize_t n_rows, Py_ssize_t n_cols)
     cpdef matrix(MatrixWindow self)
     cpdef swap_rows(MatrixWindow self, Py_ssize_t a, Py_ssize_t b)
     cdef object _zero(self)
