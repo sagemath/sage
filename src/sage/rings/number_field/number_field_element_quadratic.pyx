@@ -43,8 +43,8 @@ from cysignals.signals cimport sig_on, sig_off
 from sage.libs.gmp.mpz cimport *
 from sage.libs.gmp.mpq cimport *
 from sage.libs.flint.fmpz cimport *
-from sage.libs.arb.arb cimport *
-from sage.libs.arb.acb cimport *
+from sage.libs.flint.arb cimport *
+from sage.libs.flint.acb cimport *
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
 from sage.libs.mpfi cimport *
@@ -782,7 +782,6 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             arb_set_fmpz(x, tmpz)
 
         fmpz_set_mpz(tmpz, self.denom)
-        arb_div_fmpz(x, x, tmpz, prec)
         fmpz_clear(tmpz)
         return 0
 
@@ -803,7 +802,6 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             else:
                 arb_submul_fmpz(x, rootD, tmpz, prec)
             fmpz_set_mpz(tmpz, self.denom)
-            arb_div_fmpz(x, x, tmpz, prec)
 
             fmpz_clear(tmpz)
             arb_clear(rootD)

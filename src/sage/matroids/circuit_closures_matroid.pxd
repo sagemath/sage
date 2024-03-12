@@ -1,6 +1,5 @@
 from sage.matroids.matroid cimport Matroid
 
-
 cdef class CircuitClosuresMatroid(Matroid):
     cdef frozenset _groundset  # _E
     cdef dict _circuit_closures  # _CC
