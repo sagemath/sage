@@ -245,14 +245,14 @@ cdef class Function(SageObject):
                 self._register_function()
             register_symbol(self, self._conversions)
 
-    cdef _is_registered(self) noexcept:
+    cdef _is_registered(self):
         """
         Check if this function is already registered. If it is, set
         `self._serial` to the right value.
         """
         raise NotImplementedError("this is an abstract base class, it shouldn't be initialized directly")
 
-    cdef _register_function(self) noexcept:
+    cdef _register_function(self):
         """
 
         TESTS:
@@ -850,14 +850,14 @@ cdef class GinacFunction(BuiltinFunction):
                 evalf_params_first=evalf_params_first,
                 preserved_arg=preserved_arg, alt_name=alt_name)
 
-    cdef _is_registered(self) noexcept:
+    cdef _is_registered(self):
         # Since this is function is defined in C++, it is already in
         # ginac's function registry
         fname = self._ginac_name if self._ginac_name is not None else self._name
         self._serial = find_registered_function(fname, self._nargs)
         return bool(get_sfunction_from_serial(self._serial))
 
-    cdef _register_function(self) noexcept:
+    cdef _register_function(self):
         # We don't need to add anything to GiNaC's function registry
         # However, if any custom methods were provided in the python class,
         # we should set the properties of the function_options object
@@ -1086,7 +1086,7 @@ cdef class BuiltinFunction(Function):
         else:
             return res
 
-    cdef _is_registered(self) noexcept:
+    cdef _is_registered(self):
         """
         TESTS:
 
@@ -1204,7 +1204,7 @@ cdef class SymbolicFunction(Function):
         Function.__init__(self, name, nargs, latex_name, conversions,
                 evalf_params_first)
 
-    cdef _is_registered(SymbolicFunction self) noexcept:
+    cdef _is_registered(SymbolicFunction self):
         # see if there is already a SymbolicFunction with the same state
         cdef long myhash = self._hash_()
         cdef SymbolicFunction sfunc = get_sfunction_from_hash(myhash)

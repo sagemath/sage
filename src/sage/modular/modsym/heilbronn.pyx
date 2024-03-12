@@ -170,7 +170,7 @@ cdef class Heilbronn:
                       self.list.v[4*i+2], self.list.v[4*i+3]])
         return L
 
-    cdef apply_only(self, int u, int v, int N, int* a, int* b) noexcept:
+    cdef apply_only(self, int u, int v, int N, int* a, int* b):
         """
         INPUT:
 
@@ -210,7 +210,7 @@ cdef class Heilbronn:
                 b[i] = llong_prod_mod(u,self.list.v[4*i+1],N) + llong_prod_mod(v,self.list.v[4*i+3], N)
         sig_off()
 
-    cdef apply_to_polypart(self, fmpz_poly_t* ans, int i, int k) noexcept:
+    cdef apply_to_polypart(self, fmpz_poly_t* ans, int i, int k):
         r"""
         INPUT:
 

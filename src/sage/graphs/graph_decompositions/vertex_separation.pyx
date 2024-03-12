@@ -1052,7 +1052,7 @@ cdef inline int exists(FastDigraph g, uint8_t* neighborhoods, int current, int c
     return neighborhoods[current]
 
 
-cdef list find_order(FastDigraph g, uint8_t* neighborhoods, int cost) noexcept:
+cdef list find_order(FastDigraph g, uint8_t* neighborhoods, int cost):
     """
     Return the ordering once we are sure it exists
     """
@@ -1741,7 +1741,7 @@ def vertex_separation_BAB(G,
     return (width if width < upper_bound else -1), order
 
 
-cdef inline _my_invert_positions(int *prefix, int *positions, int pos_a, int pos_b) noexcept:
+cdef inline _my_invert_positions(int *prefix, int *positions, int pos_a, int pos_b):
     """
     Permute vertices at positions ``pos_a`` and ``pos_b`` in array ``prefix``,
     and record the new positions in array ``positions``.

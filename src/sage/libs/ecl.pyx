@@ -289,7 +289,7 @@ def init_ecl():
     ecl_has_booted = 1
 
 
-cdef ecl_string_to_python(cl_object s) noexcept:
+cdef ecl_string_to_python(cl_object s):
     if bint_base_string_p(s):
         return char_to_str(ecl_base_string_pointer_safe(s))
     else:
@@ -492,7 +492,7 @@ cdef cl_object python_to_ecl(pyobj, bint read_strings) except NULL:
         raise TypeError("Unimplemented type for python_to_ecl")
 
 
-cdef ecl_to_python(cl_object o) noexcept:
+cdef ecl_to_python(cl_object o):
     cdef cl_object s
     cdef Integer N
     # conversions from an ecl object to a python object.
@@ -1348,13 +1348,13 @@ cdef class EclListIterator:
         return r
 
 # input: a cl-object. Output: EclObject wrapping that.
-cdef EclObject ecl_wrap(cl_object o) noexcept:
+cdef EclObject ecl_wrap(cl_object o):
     cdef EclObject obj = EclObject.__new__(EclObject)
     obj.set_obj(o)
     return obj
 
 # convenience routine to more easily evaluate strings
-cpdef EclObject ecl_eval(str s) noexcept:
+cpdef EclObject ecl_eval(str s):
     r"""
     Read and evaluate string in Lisp and return the result
 
