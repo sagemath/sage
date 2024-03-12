@@ -9,16 +9,14 @@ r"""
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-
-from sage.misc.cachefunc import cached_function
-from sage.misc.misc_c import prod
-from sage.structure.element import parent
-from sage.rings.integer_ring import ZZ
 from sage.combinat.dyck_word import DyckWords
 from sage.combinat.partition import _Partitions
+from sage.misc.cachefunc import cached_function
+from sage.misc.misc_c import prod
+from sage.rings.integer_ring import ZZ
+from sage.structure.element import parent
 
 
 def q_int(n, q=None):
@@ -69,10 +67,9 @@ def q_int(n, q=None):
     """
     if n not in ZZ:
         raise ValueError(f'{n} must be an integer')
-
     if q is None:
         q = ZZ['q'].gen()
-    if n == 0:  # Special case
+    if n == 0:
         return parent(q)(0)
     if n > 0:
         return sum(q**i for i in range(n))
@@ -186,12 +183,19 @@ def q_binomial(n, k, q=None, algorithm='auto'):
         sage: g.parent()
         Univariate Polynomial Ring in q over Integer Ring
 
-    The `q`-binomial coefficient vanishes unless `0 \leq k \leq n`::
+    For `n \geq 0`, the `q`-binomial coefficient vanishes unless `0 \leq k \leq n`::
 
         sage: q_binomial(4,5)
         0
         sage: q_binomial(5,-1)
         0
+
+    For `k \geq 0`, the `q`-binomial coefficient is extended as a polynomial in `n`::
+
+        sage: q_binomial(-4,1)
+        (-q^3 - q^2 - q - 1)/q^4
+        sage: q_binomial(-2,3)
+        (-q^3 - q^2 - q - 1)/q^9
 
     Other variables can be used, given as third parameter::
 
@@ -237,12 +241,12 @@ def q_binomial(n, k, q=None, algorithm='auto'):
         ...
         TypeError: no conversion of this rational to integer
 
-    One checks that `n` is nonnegative::
+    One checks that either `k` or `n` is nonnegative::
 
-        sage: q_binomial(-4,1)
+        sage: q_binomial(-4,-1)
         Traceback (most recent call last):
         ...
-        ValueError: n must be nonnegative
+        ValueError: either k or n must be nonnegative
 
     This also works for variables in the symbolic ring::
 
@@ -314,10 +318,8 @@ def q_binomial(n, k, q=None, algorithm='auto'):
     # sanity checks
     n = ZZ(n)
     k = ZZ(k)
-    if n < 0:
-        raise ValueError('n must be nonnegative')
-
-    k = min(n - k, k)  # Pick the smallest k
+    if k < 0 and n < 0:
+        raise ValueError('either k or n must be nonnegative')
 
     # polynomiality test
     if q is None:
@@ -327,6 +329,11 @@ def q_binomial(n, k, q=None, algorithm='auto'):
     else:
         from sage.rings.polynomial.polynomial_element import Polynomial
         is_polynomial = isinstance(q, Polynomial)
+
+    if n >= 0:
+        k = min(n - k, k)  # Pick the smallest k
+    else:
+        return (-1)**k * q**(k * n - (k * k - k) // 2) * q_binomial(-n + k - 1, k, q=q)
 
     # We support non-Sage Elements too, where parent(q) is really
     # type(q). The calls R(0) and R(1) should work in all cases to
