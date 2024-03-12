@@ -330,10 +330,10 @@ def q_binomial(n, k, q=None, algorithm='auto'):
         from sage.rings.polynomial.polynomial_element import Polynomial
         is_polynomial = isinstance(q, Polynomial)
 
-    if n >= 0:
-        k = min(n - k, k)  # Pick the smallest k
-    else:
+    if n < 0:
         return (-1)**k * q**(k * n - (k * k - k) // 2) * q_binomial(-n + k - 1, k, q=q)
+
+    k = min(n - k, k)  # Pick the smallest k        
 
     # We support non-Sage Elements too, where parent(q) is really
     # type(q). The calls R(0) and R(1) should work in all cases to
