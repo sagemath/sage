@@ -747,7 +747,7 @@ cdef class MatrixArgs:
             M.set_immutable()
         if isinstance(self.space, MatrixSpace):
             return M
-        return self.space(M)
+        return self.space(M, side='right')
 
     cpdef list list(self, bint convert=True) noexcept:
         """
