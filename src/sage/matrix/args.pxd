@@ -55,7 +55,7 @@ cdef class MatrixArgs:
     cdef bint is_finalized
 
     cpdef Matrix matrix(self, bint convert=?) noexcept
-    cpdef Matrix element(self, bint immutable=?, bint convert=?) noexcept
+    cpdef element(self, bint immutable=?, bint convert=?) noexcept
     cpdef list list(self, bint convert=?) noexcept
     cpdef dict dict(self, bint convert=?) noexcept
 

@@ -374,13 +374,15 @@ cdef class MatrixArgs:
         if self.entries is None and isinstance(arg, (list, tuple, dict)):
             self.entries = arg
             argc -= 1
-            if argi == argc: return
+            if argi == argc:
+                return
 
         # check for base ring argument
         if self.base is None and isinstance(args[argi], Parent):
             self.base = args[argi]
             argi += 1
-            if argi == argc: return
+            if argi == argc:
+                return
 
         # check nrows and ncols argument
         cdef int k
@@ -725,21 +727,27 @@ cdef class MatrixArgs:
                         M = M.__copy__()
                     break
         else:
-            M = self.space(self, coerce=convert)
+            space = self.space
+            if not isinstance(space, MatrixSpace):
+                space = space.zero().matrix(side='right').parent()
+            M = space(self, coerce=convert)
 
         # Also store the matrix to support multiple calls of matrix()
         self.entries = M
         self.typ = MA_ENTRIES_MATRIX
         return M
 
-    cpdef Matrix element(self, bint immutable=False, bint convert=True) noexcept:
+    cpdef element(self, bint immutable=False, bint convert=True) noexcept:
         r"""
         Return the element.
         """
+        self.finalize()
         cdef Matrix M = self.matrix(convert)
         if immutable:
             M.set_immutable()
-        return M
+        if isinstance(self.space, MatrixSpace):
+            return M
+        return self.space(M)
 
     cpdef list list(self, bint convert=True) noexcept:
         """
@@ -912,6 +920,8 @@ cdef class MatrixArgs:
                in Category of finite dimensional modules with basis over Integer Ring;
              typ=ZERO; entries=None>
         """
+        if self.space is not None:
+            return 0  # TODO: ??????
         self.space = <Parent?>space
         try:
             self.set_nrows(space.nrows())
@@ -1003,6 +1013,7 @@ cdef class MatrixArgs:
 
         # Can we assume a square matrix?
         if self.typ & MA_FLAG_ASSUME_SQUARE:
+            # TODO: Handle column_keys/row_keys
             if self.ncols == -1:
                 if self.nrows != -1:
                     self.ncols = self.nrows
@@ -1035,7 +1046,7 @@ cdef class MatrixArgs:
 
         # Error if size is required
         if self.typ & MA_FLAG_DIM_REQUIRED:
-            if self.nrows == -1 or self.ncols == -1:
+            if (self.nrows == -1 and self.row_keys is None) or (self.ncols == -1 and self.column_keys is None):
                 raise TypeError("the dimensions of the matrix must be specified")
 
         # Determine base in easy cases
@@ -1051,7 +1062,9 @@ cdef class MatrixArgs:
             if self.base is None:
                 raise TypeError(f"unable to determine base of {self.entries!r}")
 
-        if self.nrows == -1 or self.ncols == -1 or self.base is None:
+        if ((self.nrows == -1 and self.row_keys is None)
+                or (self.ncols == -1 and self.column_keys is None)
+                or self.base is None):
             # Determine dimensions or base in the cases where we
             # really need to look at the entries.
             if self.typ == MA_ENTRIES_SEQ_SEQ:
@@ -1071,9 +1084,9 @@ cdef class MatrixArgs:
                     self.typ = MA_ENTRIES_ZERO
             except Exception:
                 # "not self.entries" has failed, self.entries cannot be determined to be zero
-                if self.nrows != self.ncols:
+                if self.nrows != self.ncols or self.row_keys != self.column_keys:
                     raise TypeError("scalar matrix must be square if the value cannot be determined to be zero")
-            if self.typ == MA_ENTRIES_SCALAR and self.nrows != self.ncols:
+            if self.typ == MA_ENTRIES_SCALAR and (self.nrows != self.ncols or self.row_keys != self.column_keys):
                 # self.typ is still SCALAR -> "not self.entries" has successfully evaluated, to False
                 raise TypeError("nonzero scalar matrix must be square")
 
@@ -1084,8 +1097,17 @@ cdef class MatrixArgs:
             global MatrixSpace
             if MatrixSpace is None:
                 from sage.matrix.matrix_space import MatrixSpace
-            self.space = MatrixSpace(self.base, self.nrows, self.ncols,
-                    sparse=self.sparse, **self.kwds)
+            nrows = self.nrows
+            if nrows == -1:
+                nrows = None
+            ncols = self.ncols
+            if ncols == -1:
+                ncols = None
+            self.space = MatrixSpace(self.base, nrows, ncols,
+                                     sparse=self.sparse,
+                                     row_keys=self.row_keys,
+                                     column_keys=self.column_keys,
+                                     **self.kwds)
 
         self.is_finalized = True
 
