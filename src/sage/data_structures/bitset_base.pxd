@@ -911,12 +911,12 @@ cdef int bitset_from_char(bitset_t bits, char* s, char zero=*, char one=*) excep
 
 cdef int bitset_from_str(bitset_t bits, object s, char zero=*, char one=*) except -1
 
-cdef bitset_string(fused_bitset_t bits) noexcept
+cdef bitset_string(fused_bitset_t bits)
 
-cdef bitset_bytes(fused_bitset_t bits) noexcept
+cdef bitset_bytes(fused_bitset_t bits)
 
-cdef list bitset_list(fused_bitset_t bits) noexcept
+cdef list bitset_list(fused_bitset_t bits)
 
-cdef bitset_pickle(bitset_t bs) noexcept
+cdef bitset_pickle(bitset_t bs)
 
-cdef bitset_unpickle(bitset_t bs, tuple input) noexcept
+cdef bitset_unpickle(bitset_t bs, tuple input)

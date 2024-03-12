@@ -51,7 +51,7 @@ except ImportError:
 # walsh_hadamard transform, reed_muller transform, and a lot
 # more, see 'Matters computational' available on www.jjj.de.
 
-cdef walsh_hadamard(long *f, int ldn) noexcept:
+cdef walsh_hadamard(long *f, int ldn):
     r"""
     The Walsh Hadamard transform is an orthogonal transform equivalent
     to a multidimensional discrete Fourier transform of size 2x2x...x2.
@@ -109,7 +109,7 @@ cdef long yellow_code(unsigned long a) noexcept:
         m ^= (m<<s)
     return r
 
-cdef reed_muller(mp_limb_t* f, int ldn) noexcept:
+cdef reed_muller(mp_limb_t* f, int ldn):
     r"""
     The Reed Muller transform (also known as binary Möbius transform)
     is an orthogonal transform. For a function `f` defined by
@@ -695,7 +695,7 @@ cdef class BooleanFunction(SageObject):
         """
         return self._walsh_hadamard_transform
 
-    cpdef tuple walsh_hadamard_transform(self) noexcept:
+    cpdef tuple walsh_hadamard_transform(self):
         r"""
         Compute the Walsh Hadamard transform `W` of the function `f`.
 

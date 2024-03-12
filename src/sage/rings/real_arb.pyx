@@ -1549,7 +1549,7 @@ cdef class RealBall(RingElement):
 
     # Conversions
 
-    cpdef RealIntervalFieldElement _real_mpfi_(self, RealIntervalField_class parent) noexcept:
+    cpdef RealIntervalFieldElement _real_mpfi_(self, RealIntervalField_class parent):
         """
         Return a :mod:`real interval <sage.rings.real_mpfi>` containing this ball.
 
@@ -2247,7 +2247,7 @@ cdef class RealBall(RingElement):
         """
         return arb_is_exact(self.value)
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Compare ``left`` and ``right``.
 
@@ -2789,7 +2789,7 @@ cdef class RealBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return res
 
-    cpdef _add_(self, other) noexcept:
+    cpdef _add_(self, other):
         """
         Return the sum of two balls, rounded to the ambient field's precision.
 
@@ -2807,7 +2807,7 @@ cdef class RealBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return res
 
-    cpdef _sub_(self, other) noexcept:
+    cpdef _sub_(self, other):
         """
         Return the difference of two balls, rounded to the ambient field's
         precision.
@@ -2826,7 +2826,7 @@ cdef class RealBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return res
 
-    cpdef _mul_(self, other) noexcept:
+    cpdef _mul_(self, other):
         """
         Return the product of two balls, rounded to the ambient field's
         precision.
@@ -2845,7 +2845,7 @@ cdef class RealBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return res
 
-    cpdef _div_(self, other) noexcept:
+    cpdef _div_(self, other):
         """
         Return the quotient of two balls, rounded to the ambient field's
         precision.
@@ -3842,7 +3842,7 @@ cdef class RealBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return result
 
-    cpdef RealBall psi(self) noexcept:
+    cpdef RealBall psi(self):
         """
         Compute the digamma function with argument self.
 

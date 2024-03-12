@@ -107,7 +107,7 @@ def _is_valid_lex_BFS_order(G, L):
     return True
 
 
-cdef lex_BFS_fast_short_digraph(short_digraph sd, uint32_t *sigma, uint32_t *pred) noexcept:
+cdef lex_BFS_fast_short_digraph(short_digraph sd, uint32_t *sigma, uint32_t *pred):
     r"""
     Perform a lexicographic breadth first search (LexBFS) on the graph.
 

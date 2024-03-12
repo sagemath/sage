@@ -63,7 +63,7 @@ cdef late_import():
 
 cdef _QQx = None
 
-cdef QQx() noexcept:
+cdef QQx():
     global _QQx
     if _QQx is None:
         _QQx = QQ['x']
@@ -134,7 +134,7 @@ cdef class LazyField(Field):
         else:
             raise AttributeError(name)
 
-    cpdef _coerce_map_from_(self, R) noexcept:
+    cpdef _coerce_map_from_(self, R):
         r"""
         The only things that coerce into this ring are exact rings that
         embed into `\RR` or `\CC` (depending on whether this field
@@ -206,7 +206,7 @@ cdef class LazyField(Field):
         """
         return CLF
 
-    cpdef interval_field(self, prec=None) noexcept:
+    cpdef interval_field(self, prec=None):
         """
         Abstract method to create the corresponding interval field.
 
@@ -541,7 +541,7 @@ cdef int get_new_prec(R, int depth) except -1:
 
 cdef class LazyFieldElement(FieldElement):
 
-    cpdef _add_(left, right) noexcept:
+    cpdef _add_(left, right):
         """
         Add ``left`` with ``right``.
 
@@ -557,7 +557,7 @@ cdef class LazyFieldElement(FieldElement):
                 pass
         return left._new_binop(left, right, add)
 
-    cpdef _sub_(left, right) noexcept:
+    cpdef _sub_(left, right):
         """
         Subtract ``right`` from ``left``.
 
@@ -573,7 +573,7 @@ cdef class LazyFieldElement(FieldElement):
                 pass
         return left._new_binop(left, right, sub)
 
-    cpdef _mul_(left, right) noexcept:
+    cpdef _mul_(left, right):
         """
         Multiply ``left`` with ``right``.
 
@@ -589,7 +589,7 @@ cdef class LazyFieldElement(FieldElement):
                 pass
         return left._new_binop(left, right, mul)
 
-    cpdef _div_(left, right) noexcept:
+    cpdef _div_(left, right):
         """
         Divide ``left`` by ``right``.
 
@@ -653,7 +653,7 @@ cdef class LazyFieldElement(FieldElement):
         """
         return self._new_unop(self, inv)
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         """
         If things are being wrapped, tries to compare values. That failing, it
         tries to compare intervals, which may return a false negative.
@@ -707,13 +707,13 @@ cdef class LazyFieldElement(FieldElement):
         """
         return hash(complex(self))
 
-    cdef LazyFieldElement _new_wrapper(self, value) noexcept:
+    cdef LazyFieldElement _new_wrapper(self, value):
         cdef LazyWrapper e = <LazyWrapper>LazyWrapper.__new__(LazyWrapper)
         e._parent = self._parent
         e._value = value
         return e
 
-    cdef LazyFieldElement _new_binop(self, LazyFieldElement left, LazyFieldElement right, op) noexcept:
+    cdef LazyFieldElement _new_binop(self, LazyFieldElement left, LazyFieldElement right, op):
         cdef LazyBinop e = <LazyBinop>LazyBinop.__new__(LazyBinop)
         e._parent = self._parent
         e._left = left
@@ -721,7 +721,7 @@ cdef class LazyFieldElement(FieldElement):
         e._op = op
         return e
 
-    cdef LazyFieldElement _new_unop(self, LazyFieldElement arg, op) noexcept:
+    cdef LazyFieldElement _new_unop(self, LazyFieldElement arg, op):
         cdef LazyUnop e = <LazyUnop>LazyUnop.__new__(LazyUnop)
         e._parent = self._parent
         e._op = op
@@ -824,7 +824,7 @@ cdef class LazyFieldElement(FieldElement):
         except Exception:
             return complex(self.eval(ComplexField(53)))
 
-    cpdef eval(self, R) noexcept:
+    cpdef eval(self, R):
         """
         Abstract method for converting ``self`` into an element of ``R``.
 
@@ -1012,7 +1012,7 @@ cdef class LazyWrapper(LazyFieldElement):
         """
         return hash(self._value)
 
-    cpdef eval(self, R) noexcept:
+    cpdef eval(self, R):
         """
         Convert ``self`` into an element of ``R``.
 
@@ -1110,7 +1110,7 @@ cdef class LazyBinop(LazyFieldElement):
         cdef int right = self._right.depth()
         return 1 + (left if left > right else right)
 
-    cpdef eval(self, R) noexcept:
+    cpdef eval(self, R):
         """
         Convert the operands to elements of ``R``, then perform the operation
         on them.
@@ -1246,7 +1246,7 @@ cdef class LazyUnop(LazyFieldElement):
         """
         return 1 + self._arg.depth()
 
-    cpdef eval(self, R) noexcept:
+    cpdef eval(self, R):
         """
         Convert ``self`` into an element of ``R``.
 
@@ -1325,7 +1325,7 @@ cdef class LazyNamedUnop(LazyUnop):
             raise TypeError("extra args must be a tuple")
         self._extra_args = extra_args
 
-    cpdef eval(self, R) noexcept:
+    cpdef eval(self, R):
         """
         Convert ``self`` into an element of ``R``.
 
@@ -1468,7 +1468,7 @@ cdef class LazyConstant(LazyFieldElement):
         self._name = name
         self._extra_args = extra_args
 
-    cpdef eval(self, R) noexcept:
+    cpdef eval(self, R):
         """
         Convert ``self`` into an element of ``R``.
 
@@ -1626,7 +1626,7 @@ cdef class LazyAlgebraic(LazyFieldElement):
             approx = (CC if prec == 0 else ComplexField(prec))(approx)
         self._root_approx = approx
 
-    cpdef eval(self, R) noexcept:
+    cpdef eval(self, R):
         """
         Convert ``self`` into an element of ``R``.
 
@@ -1733,7 +1733,7 @@ cdef class LazyWrapperMorphism(Morphism):
         from sage.categories.homset import Hom
         Morphism.__init__(self, Hom(domain, codomain))
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         EXAMPLES::
 

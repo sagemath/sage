@@ -426,7 +426,7 @@ cdef int singular_polynomial_neg(poly **ret, poly *p, ring *r) noexcept:
     ret[0] = p_Neg(p_Copy(p,r),r)
     return 0
 
-cdef object singular_polynomial_str(poly *p, ring *r) noexcept:
+cdef object singular_polynomial_str(poly *p, ring *r):
     """
     Return the string representation of ``p``.
 
@@ -451,7 +451,7 @@ cdef object singular_polynomial_str(poly *p, ring *r) noexcept:
     s = parenthvar_pattern.sub("\\1", s)
     return s
 
-cdef object singular_polynomial_latex(poly *p, ring *r, object base, object latex_gens) noexcept:
+cdef object singular_polynomial_latex(poly *p, ring *r, object base, object latex_gens):
     r"""
     Return the LaTeX string representation of ``p``.
 
@@ -533,7 +533,7 @@ cdef object singular_polynomial_latex(poly *p, ring *r, object base, object late
         return "0"
     return poly
 
-cdef object singular_polynomial_str_with_changed_varnames(poly *p, ring *r, object varnames) noexcept:
+cdef object singular_polynomial_str_with_changed_varnames(poly *p, ring *r, object varnames):
     cdef char **_names
     cdef char **_orig_names
     cdef int i

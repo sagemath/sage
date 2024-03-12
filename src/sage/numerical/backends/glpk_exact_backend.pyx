@@ -156,7 +156,7 @@ cdef class GLPKExactBackend(GLPKBackend):
         return GLPKBackend.add_variables(self, number, lower_bound, upper_bound, binary, continuous,
                                         integer, obj, names)
 
-    cpdef set_variable_type(self, int variable, int vtype) noexcept:
+    cpdef set_variable_type(self, int variable, int vtype):
         """
         Set the type of a variable.
 

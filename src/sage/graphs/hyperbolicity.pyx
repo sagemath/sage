@@ -1465,7 +1465,7 @@ def hyperbolicity(G,
 # Distribution of the hyperbolicity of 4-tuples
 ######################################################################
 
-cdef dict __hyperbolicity_distribution__(int N, unsigned short** distances) noexcept:
+cdef dict __hyperbolicity_distribution__(int N, unsigned short** distances):
     """
     Return the distribution of the hyperbolicity of the 4-tuples of the graph.
 
@@ -1526,7 +1526,7 @@ cdef extern from "stdlib.h":
     void c_libc_srandom "srandom"(unsigned int seed)
 
 
-cdef dict __hyperbolicity_sampling__(int N, unsigned short** distances, uint64_t sampling_size) noexcept:
+cdef dict __hyperbolicity_sampling__(int N, unsigned short** distances, uint64_t sampling_size):
     """
     Return a sampling of the hyperbolicity distribution of the graph.
 

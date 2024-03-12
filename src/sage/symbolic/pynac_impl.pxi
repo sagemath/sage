@@ -61,7 +61,7 @@ from sage.symbolic.function cimport Function
 # Symbolic function helpers
 #################################################################
 
-cdef ex_to_pyExpression(GEx juice) noexcept:
+cdef ex_to_pyExpression(GEx juice):
     """
     Convert given GiNaC::ex object to a python Expression instance.
 
@@ -74,7 +74,7 @@ cdef ex_to_pyExpression(GEx juice) noexcept:
     nex._parent = SR
     return nex
 
-cdef exprseq_to_PyTuple(GEx seq) noexcept:
+cdef exprseq_to_PyTuple(GEx seq):
     """
     Convert an exprseq to a Python tuple.
 
@@ -134,7 +134,7 @@ def unpack_operands(Expression ex):
     return exprseq_to_PyTuple(ex._gobj)
 
 
-cdef exvector_to_PyTuple(GExVector seq) noexcept:
+cdef exvector_to_PyTuple(GExVector seq):
     """
     Converts arguments list given to a function to a PyTuple.
 
@@ -196,7 +196,7 @@ cdef GEx pyExpression_to_ex(res) except *:
         raise TypeError("function did not return a symbolic expression or an element that can be coerced into a symbolic expression")
     return (<Expression>t)._gobj
 
-cdef paramset_to_PyTuple(const_paramset_ref s) noexcept:
+cdef paramset_to_PyTuple(const_paramset_ref s):
     """
     Converts a std::multiset<unsigned> to a PyTuple.
 
@@ -226,7 +226,7 @@ def paramset_from_Expression(Expression e):
 
 cdef int GINAC_FN_SERIAL = 0
 
-cdef set_ginac_fn_serial() noexcept:
+cdef set_ginac_fn_serial():
     """
     Initialize the GINAC_FN_SERIAL variable to the number of functions
     defined by GiNaC. This allows us to prevent collisions with C++ level
@@ -262,7 +262,7 @@ def get_ginac_serial():
     return py_get_ginac_serial()
 
 
-cdef get_fn_serial_c() noexcept:
+cdef get_fn_serial_c():
     """
     Return overall size of Pynac function registry.
     """
@@ -288,7 +288,7 @@ def get_fn_serial():
     return get_fn_serial_c()
 
 
-cdef subs_args_to_PyTuple(const GExMap& map, unsigned options, const GExVector& seq) noexcept:
+cdef subs_args_to_PyTuple(const GExMap& map, unsigned options, const GExVector& seq):
     """
     Convert arguments from ``GiNaC::subs()`` to a PyTuple.
 
@@ -789,12 +789,12 @@ cdef stdstring* py_dumps(o) noexcept:
     s = base64.b64encode(s)
     return string_from_pystr(s)
 
-cdef py_loads(s) noexcept:
+cdef py_loads(s):
     import base64
     s = base64.b64decode(s)
     return loads(s)
 
-cdef py_get_sfunction_from_serial(unsigned s) noexcept:
+cdef py_get_sfunction_from_serial(unsigned s):
     """
     Return the Python object associated with a serial.
     """
@@ -869,7 +869,7 @@ cdef int py_get_parent_char(o) except -1:
 # power helpers
 #################################################################
 
-cdef py_rational_power_parts(base, exp) noexcept:
+cdef py_rational_power_parts(base, exp):
     if type(base) is not Rational:
         base = Rational(base)
     if type(exp) is not Rational:
@@ -882,7 +882,7 @@ cdef py_rational_power_parts(base, exp) noexcept:
 #################################################################
 
 
-cdef py_binomial_int(int n, unsigned int k) noexcept:
+cdef py_binomial_int(int n, unsigned int k):
     cdef bint sign
     if n < 0:
         n = -n + (k-1)
@@ -898,7 +898,7 @@ cdef py_binomial_int(int n, unsigned int k) noexcept:
     else:
         return ans
 
-cdef py_binomial(n, k) noexcept:
+cdef py_binomial(n, k):
     # Keep track of the sign we should use.
     cdef bint sign
     if n < 0:
@@ -949,7 +949,7 @@ def test_binomial(n, k):
 #################################################################
 # GCD
 #################################################################
-cdef py_gcd(n, k) noexcept:
+cdef py_gcd(n, k):
     if isinstance(n, Integer) and isinstance(k, Integer):
         if mpz_cmp_si((<Integer>n).value, 1) == 0:
             return n
@@ -969,7 +969,7 @@ cdef py_gcd(n, k) noexcept:
 #################################################################
 # LCM
 #################################################################
-cdef py_lcm(n, k) noexcept:
+cdef py_lcm(n, k):
     if isinstance(n, Integer) and isinstance(k, Integer):
         if mpz_cmp_si((<Integer>n).value, 1) == 0:
             return k
@@ -987,7 +987,7 @@ cdef py_lcm(n, k) noexcept:
 #################################################################
 # Real Part
 #################################################################
-cdef py_real(x) noexcept:
+cdef py_real(x):
     """
     Returns the real part of x.
 
@@ -1046,7 +1046,7 @@ def py_real_for_doctests(x):
 #################################################################
 # Imaginary Part
 #################################################################
-cdef py_imag(x) noexcept:
+cdef py_imag(x):
     """
     Return the imaginary part of x.
 
@@ -1103,7 +1103,7 @@ def py_imag_for_doctests(x):
 #################################################################
 # Conjugate
 #################################################################
-cdef py_conjugate(x) noexcept:
+cdef py_conjugate(x):
     try:
         return x.conjugate()
     except AttributeError:
@@ -1250,7 +1250,7 @@ cdef bint py_is_exact(x) noexcept:
     return isinstance(P, SymbolicRing) or P.is_exact()
 
 
-cdef py_numer(n) noexcept:
+cdef py_numer(n):
     """
     Return the numerator of the given object. This is called for
     typesetting coefficients.
@@ -1298,7 +1298,7 @@ def py_numer_for_doctests(n):
     """
     return py_numer(n)
 
-cdef py_denom(n) noexcept:
+cdef py_denom(n):
     """
     Return the denominator of the given object. This is called for
     typesetting coefficients.
@@ -1357,7 +1357,7 @@ def py_is_cinteger_for_doctest(x):
     """
     return py_is_cinteger(x)
 
-cdef py_float(n, PyObject* kwds) noexcept:
+cdef py_float(n, PyObject* kwds):
     """
     Evaluate pynac numeric objects numerically.
 
@@ -1416,7 +1416,7 @@ def py_float_for_doctests(n, kwds):
     return py_float(n, <PyObject*>kwds)
 
 
-cdef py_RDF_from_double(double x) noexcept:
+cdef py_RDF_from_double(double x):
     cdef RealDoubleElement r = RealDoubleElement.__new__(RealDoubleElement)
     r._value = x
     return r
@@ -1424,7 +1424,7 @@ cdef py_RDF_from_double(double x) noexcept:
 #################################################################
 # SPECIAL FUNCTIONS
 #################################################################
-cdef py_tgamma(x) noexcept:
+cdef py_tgamma(x):
     """
     The gamma function exported to pynac.
 
@@ -1469,7 +1469,7 @@ def py_tgamma_for_doctests(x):
     """
     return py_tgamma(x)
 
-cdef py_factorial(x) noexcept:
+cdef py_factorial(x):
     """
     The factorial function exported to pynac.
 
@@ -1510,7 +1510,7 @@ def py_factorial_py(x):
     """
     return py_factorial(x)
 
-cdef py_doublefactorial(x) noexcept:
+cdef py_doublefactorial(x):
     n = Integer(x)
     if n < -1:
         raise ValueError("argument must be >= -1")
@@ -1546,10 +1546,10 @@ def doublefactorial(n):
     return py_doublefactorial(n)
 
 
-cdef py_fibonacci(n) noexcept:
+cdef py_fibonacci(n):
     return Integer(pari(n).fibonacci())
 
-cdef py_step(n) noexcept:
+cdef py_step(n):
     """
     Return step function of n.
     """
@@ -1560,10 +1560,10 @@ cdef py_step(n) noexcept:
         return SR(1)
     return SR(Rational((1,2)))
 
-cdef py_bernoulli(x) noexcept:
+cdef py_bernoulli(x):
     return bernoulli(x)
 
-cdef py_sin(x) noexcept:
+cdef py_sin(x):
     """
     TESTS::
 
@@ -1585,7 +1585,7 @@ cdef py_sin(x) noexcept:
     except (TypeError, ValueError):
         return CC(x).sin()
 
-cdef py_cos(x) noexcept:
+cdef py_cos(x):
     """
     TESTS::
 
@@ -1607,7 +1607,7 @@ cdef py_cos(x) noexcept:
     except (TypeError, ValueError):
         return CC(x).cos()
 
-cdef py_stieltjes(x) noexcept:
+cdef py_stieltjes(x):
     """
     Return the Stieltjes constant of the given index.
 
@@ -1649,7 +1649,7 @@ def py_stieltjes_for_doctests(x):
     """
     return py_stieltjes(x)
 
-cdef py_zeta(x) noexcept:
+cdef py_zeta(x):
     """
     Return the value of the zeta function at the given value.
 
@@ -1683,7 +1683,7 @@ def py_zeta_for_doctests(x):
     """
     return py_zeta(x)
 
-cdef py_exp(x) noexcept:
+cdef py_exp(x):
     """
     Return the value of the exp function at the given value.
 
@@ -1724,7 +1724,7 @@ def py_exp_for_doctests(x):
     """
     return py_exp(x)
 
-cdef py_log(x) noexcept:
+cdef py_log(x):
     """
     Return the value of the log function at the given value.
 
@@ -1793,7 +1793,7 @@ def py_log_for_doctests(x):
     """
     return py_log(x)
 
-cdef py_tan(x) noexcept:
+cdef py_tan(x):
     try:
         return x.tan()
     except AttributeError:
@@ -1803,28 +1803,28 @@ cdef py_tan(x) noexcept:
     except TypeError:
         return CC(x).tan()
 
-cdef py_asin(x) noexcept:
+cdef py_asin(x):
     try:
         return x.arcsin()
     except AttributeError:
         return RR(x).arcsin()
 
 
-cdef py_acos(x) noexcept:
+cdef py_acos(x):
     try:
         return x.arccos()
     except AttributeError:
         return RR(x).arccos()
 
 
-cdef py_atan(x) noexcept:
+cdef py_atan(x):
     try:
         return x.arctan()
     except AttributeError:
         return RR(x).arctan()
 
 
-cdef py_atan2(x, y) noexcept:
+cdef py_atan2(x, y):
     """
     Return the value of the two argument arctan function at the given values.
 
@@ -1909,14 +1909,14 @@ def py_atan2_for_doctests(x, y):
     return py_atan2(x, y)
 
 
-cdef py_sinh(x) noexcept:
+cdef py_sinh(x):
     try:
         return x.sinh()
     except AttributeError:
         return RR(x).sinh()
 
 
-cdef py_cosh(x) noexcept:
+cdef py_cosh(x):
     if type(x) is float:
         return math.cosh(PyFloat_AS_DOUBLE(x))
     try:
@@ -1925,14 +1925,14 @@ cdef py_cosh(x) noexcept:
         return RR(x).cosh()
 
 
-cdef py_tanh(x) noexcept:
+cdef py_tanh(x):
     try:
         return x.tanh()
     except AttributeError:
         return RR(x).tanh()
 
 
-cdef py_asinh(x) noexcept:
+cdef py_asinh(x):
     try:
         return x.arcsinh()
     except AttributeError:
@@ -1943,7 +1943,7 @@ cdef py_asinh(x) noexcept:
         return CC(x).arcsinh()
 
 
-cdef py_acosh(x) noexcept:
+cdef py_acosh(x):
     try:
         return x.arccosh()
     except AttributeError:
@@ -1954,7 +1954,7 @@ cdef py_acosh(x) noexcept:
         return CC(x).arccosh()
 
 
-cdef py_atanh(x) noexcept:
+cdef py_atanh(x):
     try:
         return x.arctanh()
     except AttributeError:
@@ -1965,7 +1965,7 @@ cdef py_atanh(x) noexcept:
         return CC(x).arctanh()
 
 
-cdef py_lgamma(x) noexcept:
+cdef py_lgamma(x):
     """
     Return the value of the principal branch of the log gamma function at the
     given value.
@@ -2012,11 +2012,11 @@ def py_lgamma_for_doctests(x):
     return py_lgamma(x)
 
 
-cdef py_isqrt(x) noexcept:
+cdef py_isqrt(x):
     return Integer(x).isqrt()
 
 
-cdef py_sqrt(x) noexcept:
+cdef py_sqrt(x):
     try:
         # WORRY: What if Integer's sqrt calls symbolic one and we go in circle?
         return x.sqrt()
@@ -2024,11 +2024,11 @@ cdef py_sqrt(x) noexcept:
         return math.sqrt(float(x))
 
 
-cdef py_abs(x) noexcept:
+cdef py_abs(x):
     return abs(x)
 
 
-cdef py_mod(x, n) noexcept:
+cdef py_mod(x, n):
     """
     Return x mod n. Both x and n are assumed to be integers.
 
@@ -2076,7 +2076,7 @@ def py_mod_for_doctests(x, n):
     return py_mod(x, n)
 
 
-cdef py_smod(a, b) noexcept:
+cdef py_smod(a, b):
     # Modulus (in symmetric representation).
     # Equivalent to Maple's mods.
     # returns a mod b in the range [-iquo(abs(b)-1,2), iquo(abs(b),2)]
@@ -2089,15 +2089,15 @@ cdef py_smod(a, b) noexcept:
     return c
 
 
-cdef py_irem(x, n) noexcept:
+cdef py_irem(x, n):
     return Integer(x) % Integer(n)
 
 
-cdef py_iquo(x, n) noexcept:
+cdef py_iquo(x, n):
     return Integer(x)//Integer(n)
 
 
-cdef py_iquo2(x, n) noexcept:
+cdef py_iquo2(x, n):
     x = Integer(x)
     n = Integer(n)
     try:
@@ -2115,7 +2115,7 @@ cdef int py_int_length(x) except -1:
     return Integer(x).nbits()
 
 
-cdef py_li(x, n, parent) noexcept:
+cdef py_li(x, n, parent):
     """
     Returns a numerical approximation of polylog(n, x) with precision given
     by the ``parent`` argument.
@@ -2152,7 +2152,7 @@ def py_li_for_doctests(x, n, parent):
     return py_li(x, n, parent)
 
 
-cdef py_psi(x) noexcept:
+cdef py_psi(x):
     """
     EXAMPLES::
 
@@ -2187,7 +2187,7 @@ def py_psi_for_doctests(x):
     """
     return py_psi(x)
 
-cdef py_psi2(n, x) noexcept:
+cdef py_psi2(n, x):
     """
     EXAMPLES::
 
@@ -2215,7 +2215,7 @@ def py_psi2_for_doctests(n, x):
     """
     return py_psi2(n, x)
 
-cdef py_li2(x) noexcept:
+cdef py_li2(x):
     """
     EXAMPLES::
 
@@ -2264,12 +2264,12 @@ cdef GConstant py_get_constant(const char* name) noexcept:
         pc = c._pynac
         return pc.pointer[0]
 
-cdef py_eval_constant(unsigned serial, kwds) noexcept:
+cdef py_eval_constant(unsigned serial, kwds):
     from sage.symbolic.constants import constants_table
     constant = constants_table[serial]
     return kwds['parent'](constant)
 
-cdef py_eval_unsigned_infinity() noexcept:
+cdef py_eval_unsigned_infinity():
     """
     Returns unsigned_infinity.
     """
@@ -2288,7 +2288,7 @@ def py_eval_unsigned_infinity_for_doctests():
     """
     return py_eval_unsigned_infinity()
 
-cdef py_eval_infinity() noexcept:
+cdef py_eval_infinity():
     """
     Returns positive infinity, i.e., oo.
     """
@@ -2307,7 +2307,7 @@ def py_eval_infinity_for_doctests():
     """
     return py_eval_infinity()
 
-cdef py_eval_neg_infinity() noexcept:
+cdef py_eval_neg_infinity():
     """
     Returns minus_infinity.
     """
@@ -2330,18 +2330,18 @@ def py_eval_neg_infinity_for_doctests():
 # Constructors
 ##################################################################
 
-cdef py_integer_from_long(long x) noexcept:
+cdef py_integer_from_long(long x):
     return smallInteger(x)
 
-cdef py_integer_from_python_obj(x) noexcept:
+cdef py_integer_from_python_obj(x):
     return Integer(x)
 
-cdef py_integer_from_mpz(mpz_t bigint) noexcept:
+cdef py_integer_from_mpz(mpz_t bigint):
     cdef Integer z = PY_NEW(Integer)
     mpz_set(z.value, bigint)
     return z
 
-cdef py_rational_from_mpq(mpq_t bigrat) noexcept:
+cdef py_rational_from_mpq(mpq_t bigrat):
     cdef Rational rat = Rational.__new__(Rational)
     mpq_set(rat.value, bigrat)
     mpq_canonicalize(rat.value)

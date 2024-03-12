@@ -68,7 +68,7 @@ cdef class Vector_numpy_dense(FreeModuleElement):
         self._degree = parent.degree()
         self._parent = parent
 
-    cdef Vector_numpy_dense _new(self, numpy.ndarray vector_numpy) noexcept:
+    cdef Vector_numpy_dense _new(self, numpy.ndarray vector_numpy):
         """
         Return a new vector with same parent as self.
         """
@@ -231,7 +231,7 @@ cdef class Vector_numpy_dense(FreeModuleElement):
                         self._python_dtype(value))
         # TODO: Throw an error if status == -1
 
-    cdef get_unsafe(self, Py_ssize_t i) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i):
         """
         EXAMPLES::
 
@@ -248,7 +248,7 @@ cdef class Vector_numpy_dense(FreeModuleElement):
         return self._sage_dtype(numpy.PyArray_GETITEM(self._vector_numpy,
                                                 numpy.PyArray_GETPTR1(self._vector_numpy, i)))
 
-    cdef _replace_self_with_numpy(self, numpy.ndarray numpy_array) noexcept:
+    cdef _replace_self_with_numpy(self, numpy.ndarray numpy_array):
         """
         Replace the underlying numpy array with numpy_array.
         """

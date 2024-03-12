@@ -118,12 +118,12 @@ cdef class ntl_mat_GF2():
                     mat_GF2_setitem(&self.x, i, j, &(<ntl_GF2>elem).x)
             sig_off()
 
-    cdef ntl_GF2 _new_element(self) noexcept:
+    cdef ntl_GF2 _new_element(self):
         cdef ntl_GF2 r
         r = ntl_GF2.__new__(ntl_GF2)
         return r
 
-    cdef ntl_mat_GF2 _new(self) noexcept:
+    cdef ntl_mat_GF2 _new(self):
         cdef ntl_mat_GF2 r
         r = ntl_mat_GF2.__new__(ntl_mat_GF2)
         r.x.SetDims(self.x.NumRows(),self.x.NumCols())

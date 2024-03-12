@@ -184,7 +184,7 @@ cdef class PolynomialRealDense(Polynomial):
         """
         return make_PolynomialRealDense, (self._parent, self.list())
 
-    cdef _normalize(self) noexcept:
+    cdef _normalize(self):
         """
         Remove all leading 0's.
         """
@@ -197,7 +197,7 @@ cdef class PolynomialRealDense(Polynomial):
             self._coeffs = <mpfr_t*>check_reallocarray(self._coeffs, i+1, sizeof(mpfr_t))
             self._degree = i
 
-    cdef get_unsafe(self, Py_ssize_t i) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i):
         """
         Return the `i`-th coefficient of ``self``.
 
@@ -225,7 +225,7 @@ cdef class PolynomialRealDense(Polynomial):
         mpfr_set(r.value, self._coeffs[i], self._base_ring.rnd)
         return r
 
-    cdef PolynomialRealDense _new(self, Py_ssize_t degree) noexcept:
+    cdef PolynomialRealDense _new(self, Py_ssize_t degree):
         cdef Py_ssize_t i
         cdef int prec = self._base_ring._prec
         cdef PolynomialRealDense f = <PolynomialRealDense>PolynomialRealDense.__new__(PolynomialRealDense)
@@ -257,7 +257,7 @@ cdef class PolynomialRealDense(Polynomial):
         """
         return smallInteger(self._degree)
 
-    cpdef Polynomial truncate(self, long n) noexcept:
+    cpdef Polynomial truncate(self, long n):
         r"""
         Returns the polynomial of degree `< n` which is equivalent to self
         modulo `x^n`.
@@ -310,7 +310,7 @@ cdef class PolynomialRealDense(Polynomial):
                 return self.truncate(i+1)
         return self._new(-1)
 
-    cpdef shift(self, Py_ssize_t n) noexcept:
+    cpdef shift(self, Py_ssize_t n):
         r"""
         Returns this polynomial multiplied by the power `x^n`. If `n`
         is negative, terms below `x^n` will be discarded. Does not
@@ -351,7 +351,7 @@ cdef class PolynomialRealDense(Polynomial):
                 mpfr_set(f._coeffs[i], self._coeffs[i-n], self._base_ring.rnd)
         return f
 
-    cpdef list list(self, bint copy=True) noexcept:
+    cpdef list list(self, bint copy=True):
         """
         EXAMPLES::
 
@@ -386,7 +386,7 @@ cdef class PolynomialRealDense(Polynomial):
             mpfr_neg(f._coeffs[i], self._coeffs[i], rnd)
         return f
 
-    cpdef _add_(left, _right) noexcept:
+    cpdef _add_(left, _right):
         """
         EXAMPLES::
 
@@ -419,7 +419,7 @@ cdef class PolynomialRealDense(Polynomial):
         f._normalize()
         return f
 
-    cpdef _sub_(left, _right) noexcept:
+    cpdef _sub_(left, _right):
         """
         EXAMPLES::
 
@@ -450,7 +450,7 @@ cdef class PolynomialRealDense(Polynomial):
         f._normalize()
         return f
 
-    cpdef _lmul_(self, Element c) noexcept:
+    cpdef _lmul_(self, Element c):
         """
         EXAMPLES::
 
@@ -472,7 +472,7 @@ cdef class PolynomialRealDense(Polynomial):
             mpfr_mul(f._coeffs[i], self._coeffs[i], a.value, rnd)
         return f
 
-    cpdef _mul_(left, _right) noexcept:
+    cpdef _mul_(left, _right):
         """
         Here we use the naive `O(n^2)` algorithm, as asymptotically faster algorithms such
         as Karatsuba can have very inaccurate results due to intermediate rounding errors.

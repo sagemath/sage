@@ -147,7 +147,7 @@ def prod(x, z=None, Py_ssize_t recursion_cutoff=5):
     return prod
 
 
-cdef balanced_list_prod(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutoff) noexcept:
+cdef balanced_list_prod(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutoff):
     """
     INPUT:
 
@@ -182,7 +182,7 @@ cdef balanced_list_prod(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutof
         return balanced_list_prod(L, offset, k, cutoff) * balanced_list_prod(L, offset + k, count - k, cutoff)
 
 
-cpdef iterator_prod(L, z=None) noexcept:
+cpdef iterator_prod(L, z=None):
     """
     Attempt to do a balanced product of an arbitrary and unknown length
     sequence (such as a generator). Intermediate multiplications are always
@@ -397,7 +397,7 @@ def balanced_sum(x, z=None, Py_ssize_t recursion_cutoff=5):
 
     return sum
 
-cdef balanced_list_sum(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutoff) noexcept:
+cdef balanced_list_sum(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutoff):
     """
     INPUT:
 
@@ -432,7 +432,7 @@ cdef balanced_list_sum(L, Py_ssize_t offset, Py_ssize_t count, Py_ssize_t cutoff
         return balanced_list_sum(L, offset, k, cutoff) + balanced_list_sum(L, offset + k, count - k, cutoff)
 
 
-cpdef list normalize_index(object key, int size) noexcept:
+cpdef list normalize_index(object key, int size):
     """
     Normalize an index key and return a valid index or list of indices
     within the range(0, size).
