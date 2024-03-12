@@ -109,7 +109,7 @@ cdef class Matrix(Matrix0):
             True
 
         Particularly difficult is the case of matrices over cyclotomic
-        fields and general number fields. See :trac:`5618` and :trac:`8909`::
+        fields and general number fields. See :issue:`5618` and :issue:`8909`::
 
             sage: # needs sage.libs.gap sage.rings.number_field
             sage: K.<zeta> = CyclotomicField(8)
@@ -455,7 +455,7 @@ cdef class Matrix(Matrix0):
 
         TESTS:
 
-        Entries of the matrix get promoted to the base ring (:trac:`28566`)::
+        Entries of the matrix get promoted to the base ring (:issue:`28566`)::
 
             sage: R.<x,y> = QQ[]
             sage: m = macaulay2(matrix(R, [[1, 2], [3, 4]]))    # optional - macaulay2
@@ -463,7 +463,7 @@ cdef class Matrix(Matrix0):
             True
 
         Check that degenerate matrix dimensions are handled correctly
-        (:trac:`28591`)::
+        (:issue:`28591`)::
 
             sage: macaulay2(matrix(QQ, 2, 0)).numrows()         # optional - macaulay2
             2
@@ -1117,7 +1117,7 @@ cdef class Matrix(Matrix0):
 
         TESTS:
 
-        Check that the returned rows are immutable as per :trac:`14874`::
+        Check that the returned rows are immutable as per :issue:`14874`::
 
             sage: m = Mat(ZZ,3,3)(range(9))
             sage: v = m.dense_columns()
@@ -1171,7 +1171,7 @@ cdef class Matrix(Matrix0):
 
         TESTS:
 
-        Check that the returned rows are immutable as per :trac:`14874`::
+        Check that the returned rows are immutable as per :issue:`14874`::
 
             sage: m = Mat(ZZ,3,3)(range(9))
             sage: v = m.dense_rows()
@@ -1219,7 +1219,7 @@ cdef class Matrix(Matrix0):
 
         TESTS:
 
-        Columns of sparse matrices having no columns were fixed on :trac:`10714`::
+        Columns of sparse matrices having no columns were fixed on :issue:`10714`::
 
             sage: m = matrix(10, 0, sparse=True)
             sage: m.ncols()
@@ -1227,7 +1227,7 @@ cdef class Matrix(Matrix0):
             sage: m.columns()
             []
 
-        Check that the returned columns are immutable as per :trac:`14874`::
+        Check that the returned columns are immutable as per :issue:`14874`::
 
             sage: m = Mat(ZZ,3,3,sparse=True)(range(9))
             sage: v = m.sparse_columns()
@@ -1301,7 +1301,7 @@ cdef class Matrix(Matrix0):
 
         TESTS:
 
-        Rows of sparse matrices having no rows were fixed on :trac:`10714`::
+        Rows of sparse matrices having no rows were fixed on :issue:`10714`::
 
             sage: m = matrix(0, 10, sparse=True)
             sage: m.nrows()
@@ -1309,7 +1309,7 @@ cdef class Matrix(Matrix0):
             sage: m.rows()
             []
 
-        Check that the returned rows are immutable as per :trac:`14874`::
+        Check that the returned rows are immutable as per :issue:`14874`::
 
             sage: m = Mat(ZZ,3,3,sparse=True)(range(9))
             sage: v = m.sparse_rows()
@@ -1672,7 +1672,7 @@ cdef class Matrix(Matrix0):
             sage: P.is_sparse()
             True
 
-        One can stack matrices over different rings (:trac:`16399`). ::
+        One can stack matrices over different rings (:issue:`16399`). ::
 
             sage: M = Matrix(ZZ, 2, 3, range(6))
             sage: N = Matrix(QQ, 1, 3, [10,11,12])
@@ -1707,7 +1707,7 @@ cdef class Matrix(Matrix0):
 
         - Rob Beezer (2011-03-19): rewritten to mirror code for :meth:`augment`
 
-        - Jeroen Demeyer (2015-01-06): refactor, see :trac:`16399`.
+        - Jeroen Demeyer (2015-01-06): refactor, see :issue:`16399`.
           Put all boilerplate in one place (here) and put the actual
           type-dependent implementation in ``_stack_impl``.
         """
@@ -2596,7 +2596,7 @@ cdef class Matrix(Matrix0):
             ([1, 2], [2])
 
         Ensure we can compute the correct dense matrix even if the
-        dict items are ETuples (see :trac:`17658`)::
+        dict items are ETuples (see :issue:`17658`)::
 
             sage: from sage.rings.polynomial.polydict import ETuple
             sage: matrix(GF(5^2, "z"), {ETuple((1, 1)): 2}).dense_matrix()              # needs sage.rings.finite_rings

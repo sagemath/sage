@@ -880,7 +880,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
               Defn: Defined on coordinates by sending (x : y) to ...
             sage: h[0]/h[1]
             x/y
-            sage: h.is_one()                    # known bug (see :trac:`31892`)
+            sage: h.is_one()                    # known bug (see :issue:`31892`)
             True
             sage: (x,y,z) = c.gens()
             sage: x.parent()
@@ -893,7 +893,7 @@ class ProjectiveConic_field(ProjectivePlaneCurve_field):
             0
 
         The morphisms are mathematically defined in all points,
-        but don't work completely in SageMath (see :trac:`31892`) ::
+        but don't work completely in SageMath (see :issue:`31892`) ::
 
             sage: # needs sage.libs.pari
             sage: f, g = c.parametrization([0,0,1])

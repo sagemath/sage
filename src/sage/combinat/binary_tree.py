@@ -166,9 +166,9 @@ class BinaryTree(AbstractClonableTree, ClonableArray,
 
         `\QQ` (or any number field) has a ``list()`` method that
         returns itself as a `\QQ`-vector represented as a list.
-        Before :trac:`23961`, this would cause an infinite recursion
+        Before :issue:`23961`, this would cause an infinite recursion
         because `\QQ` elements give a list of length 1. For more
-        details, see :trac:`23961`. We test that constructing
+        details, see :issue:`23961`. We test that constructing
         binary trees from elements from `\QQ` terminates with
         an appropriate error::
 
@@ -4697,7 +4697,7 @@ class LabelledBinaryTree(AbstractLabelledClonableTree, BinaryTree):
         sage: t1 == t1c
         False
 
-    We check for :trac:`16314`::
+    We check for :issue:`16314`::
 
         sage: t1 = LBT([ LBT([LBT([], label=2),
         ....:                 LBT([], label=5)], label=6),
