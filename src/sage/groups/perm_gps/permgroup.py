@@ -490,6 +490,14 @@ class PermutationGroup_generic(FiniteGroup):
             ((1,2,3,4,5), (4,5,6))
             sage: P.gap().GeneratorsOfGroup()
             [ (1,2,3,4,5), (4,5,6) ]
+
+            sage: gg = gap.eval("Group((1,2,3,4,5),(4,5,6))")
+            sage: P = PermutationGroup(gap_group=gg)
+            sage: P.gens()
+            ((1,2,3,4,5), (4,5,6))
+            sage: h = P.hom(codomain=P, im_gens=P.gens())
+            sage: h
+            Group endomorphism of Permutation Group with generators [(1,2,3,4,5), (4,5,6)]
         """
         if (gens is None and gap_group is None):
             raise ValueError("you must specify gens or gap_group")
