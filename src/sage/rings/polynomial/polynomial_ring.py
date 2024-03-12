@@ -36,7 +36,7 @@ Saving and loading of polynomial rings works::
     Sparse Univariate Polynomial Ring in y over Integer Ring
 
 Rings with different variable names are not equal; in fact,
-by :trac:`9944`, polynomial rings are equal if and only
+by :issue:`9944`, polynomial rings are equal if and only
 if they are identical (which should be the  case for all parent
 structures in Sage)::
 
@@ -61,7 +61,7 @@ We create a polynomial ring over a quaternion algebra::
     sage: g * f
     w^2 + (i + j)*w - k
 
-:trac:`9944` introduced some changes related with
+:issue:`9944` introduced some changes related with
 coercion. Previously, a dense and a sparse polynomial ring with the
 same variable name over the same base ring evaluated equal, but of
 course they were not identical. Coercion maps are cached - but if a
@@ -120,7 +120,7 @@ TESTS::
     sage: x+z
     z + x
 
-Check that :trac:`5562` has been fixed::
+Check that :issue:`5562` has been fixed::
 
     sage: R.<u> = PolynomialRing(RDF, 1)
     sage: v1 = vector([u])                                                              # needs sage.modules
@@ -255,7 +255,7 @@ class PolynomialRing_general(Ring):
 
         TESTS:
 
-        Verify that :trac:`15232` has been resolved::
+        Verify that :issue:`15232` has been resolved::
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
@@ -268,7 +268,7 @@ class PolynomialRing_general(Ring):
             (finite commutative rings and subquotients of monoids and
             quotients of semigroups and finite enumerated sets)
 
-        Check `is_finite` inherited from category (:trac:`24432`)::
+        Check `is_finite` inherited from category (:issue:`24432`)::
 
             sage: Zmod(1)['x'].is_finite()
             True
@@ -381,7 +381,7 @@ class PolynomialRing_general(Ring):
             sage: R(range(4))
             3*x^3 + 2*x^2 + x
 
-        This shows that the issue at :trac:`4106` is fixed::
+        This shows that the issue at :issue:`4106` is fixed::
 
             sage: # needs sage.symbolic
             sage: x = var('x')
@@ -391,14 +391,14 @@ class PolynomialRing_general(Ring):
             x
 
         Throw a :class:`TypeError` if any of the coefficients cannot be coerced
-        into the base ring (:trac:`6777`)::
+        into the base ring (:issue:`6777`)::
 
             sage: RealField(300)['x']( [ 1, ComplexField(300).gen(), 0 ])               # needs sage.rings.real_mpfr
             Traceback (most recent call last):
             ...
             TypeError: unable to convert '1.00...00*I' to a real number
 
-        Check that the bug in :trac:`11239` is fixed::
+        Check that the bug in :issue:`11239` is fixed::
 
             sage: # needs sage.rings.finite_rings
             sage: K.<a> = GF(5^2, prefix='z')
@@ -407,13 +407,13 @@ class PolynomialRing_general(Ring):
             sage: L['x'](f)
             x + b^3 + b^2 + b + 3
 
-        A test from :trac:`14485` ::
+        A test from :issue:`14485` ::
 
             sage: x = SR.var('x')                                                       # needs sage.symbolic
             sage: QQbar[x](x^6 + x^5 + x^4 - x^3 + x^2 - x + 2/5)                       # needs sage.rings.number_field sage.symbolic
             x^6 + x^5 + x^4 - x^3 + x^2 - x + 2/5
 
-        Check support for unicode characters (:trac:`29280`)::
+        Check support for unicode characters (:issue:`29280`)::
 
             sage: QQ['λ']('λ^2')
             λ^2
@@ -723,11 +723,11 @@ class PolynomialRing_general(Ring):
         - a multivariate polynomial ring P such that self's variable name
           is among the variable names of P, and the ring obtained by
           removing that variable is different from the base ring of self,
-          but coerces into it. (see :trac:`813` for a discussion of this)
+          but coerces into it. (see :issue:`813` for a discussion of this)
 
         Caveat: There is no coercion from a dense into a sparse
         polynomial ring. So, when adding a dense and a sparse
-        polynomial, the result will be dense. See :trac:`9944`.
+        polynomial, the result will be dense. See :issue:`9944`.
 
         EXAMPLES::
 
@@ -738,7 +738,7 @@ class PolynomialRing_general(Ring):
             False
 
         Here we test against the change in the coercions introduced
-        in :trac:`9944`::
+        in :issue:`9944`::
 
             sage: R.<x> = PolynomialRing(QQ, sparse=True)
             sage: S.<x> = QQ[]
@@ -747,7 +747,7 @@ class PolynomialRing_general(Ring):
             sage: (S.0 + R.0).parent()
             Univariate Polynomial Ring in x over Rational Field
 
-        Here we test a feature that was implemented in :trac:`813`::
+        Here we test a feature that was implemented in :issue:`813`::
 
             sage: P = QQ['x','y']
             sage: Q = Frac(QQ['x'])['y']
@@ -965,7 +965,7 @@ class PolynomialRing_general(Ring):
 
         TESTS:
 
-        Check that results are cached (:trac:`28074`)::
+        Check that results are cached (:issue:`28074`)::
 
             sage: R = ZZ['t']
             sage: macaulay2(R) is macaulay2(R)  # optional - macaulay2
@@ -1415,7 +1415,7 @@ class PolynomialRing_general(Ring):
             ...
             ValueError: minimum degree must be less or equal than maximum degree
 
-        Check that :trac:`16682` is fixed::
+        Check that :issue:`16682` is fixed::
 
             sage: R = PolynomialRing(GF(2), 'z')
             sage: for _ in range(100):
@@ -1756,7 +1756,7 @@ class PolynomialRing_commutative(PolynomialRing_general):
 
         TESTS:
 
-        Quotienting by the zero ideal returns ``self`` (:trac:`5978`)::
+        Quotienting by the zero ideal returns ``self`` (:issue:`5978`)::
 
             sage: R = QQ['x']
             sage: R.quotient_by_principal_ideal(R.zero_ideal()) is R
@@ -1814,7 +1814,7 @@ class PolynomialRing_commutative(PolynomialRing_general):
 
         TESTS:
 
-        Check that :trac:`23639` is fixed::
+        Check that :issue:`23639` is fixed::
 
             sage: foo = QQ['x']['y'].one()
             sage: foo.roots(QQ)
@@ -2080,7 +2080,7 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
             sage: type(R.gen())
             <class 'sage.rings.polynomial.polynomial_ring.PolynomialRing_field_with_category.element_class'>
 
-        Demonstrate that :trac:`8762` is fixed::
+        Demonstrate that :issue:`8762` is fixed::
 
             sage: R.<x> = PolynomialRing(GF(next_prime(10^20)), sparse=True)            # needs sage.rings.finite_rings
             sage: x^(10^20)  # this should be fast                                      # needs sage.rings.finite_rings
@@ -2351,7 +2351,7 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
             ...
             ValueError: algorithm must be one of 'divided_difference' or 'neville'
 
-        Make sure that :trac:`10304` is fixed.  The return value
+        Make sure that :issue:`10304` is fixed.  The return value
         should always be an element of ``self`` in the case of
         ``divided_difference``, or a list of elements of ``self`` in
         the case of ``neville``::
@@ -2369,7 +2369,7 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
             True
 
         Check that base fields of positive characteristic are treated
-        correctly (see :trac:`9787`)::
+        correctly (see :issue:`9787`)::
 
             sage: R.<x> = GF(101)[]
             sage: R.lagrange_polynomial([[1, 0], [2, 0]])
@@ -2467,7 +2467,7 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
 
         TESTS:
 
-        Check that :trac:`25449` has been resolved::
+        Check that :issue:`25449` has been resolved::
 
             sage: # needs sage.rings.finite_rings
             sage: k = GF(25453)
@@ -2893,7 +2893,7 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
 
         TESTS:
 
-        Check that :trac:`23639` is fixed::
+        Check that :issue:`23639` is fixed::
 
             sage: R = GF(3)['x']['y']
             sage: R.one().roots(multiplicities=False)
@@ -3337,7 +3337,7 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
             sage: type(P.gen())                                                         # needs sage.libs.ntl sage.rings.finite_rings
             <class 'sage.rings.polynomial.polynomial_modn_dense_ntl.Polynomial_dense_mod_p'>
 
-        This caching bug was fixed in :trac:`24264`::
+        This caching bug was fixed in :issue:`24264`::
 
             sage: # needs sage.rings.finite_rings
             sage: p = 2^64 + 13
@@ -3506,7 +3506,7 @@ class PolynomialRing_dense_mod_p(PolynomialRing_dense_finite_field,
         - Peter Bruin (June 2013)
 
         - Jeroen Demeyer (September 2014): add "ffprimroot" algorithm,
-          see :trac:`8373`.
+          see :issue:`8373`.
         """
         from sage.libs.pari.all import pari
         from sage.rings.finite_rings.conway_polynomials import (conway_polynomial,

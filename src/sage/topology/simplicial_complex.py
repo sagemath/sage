@@ -112,7 +112,7 @@ simplicial complex::
     sage: X.is_pure()
     True
 
-Mutability (see :trac:`12587`)::
+Mutability (see :issue:`12587`)::
 
     sage: S = SimplicialComplex([[1,4], [2,4]])
     sage: S.add_face([1,3])
@@ -140,7 +140,7 @@ Mutability (see :trac:`12587`)::
     True
 
 We can also make mutable copies of an immutable simplicial complex
-(see :trac:`14142`)::
+(see :issue:`14142`)::
 
     sage: S = SimplicialComplex([[1,4], [2,4]])
     sage: S.set_immutable()
@@ -924,7 +924,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     TESTS:
 
-    Check that we can make mutable copies (see :trac:`14142`)::
+    Check that we can make mutable copies (see :issue:`14142`)::
 
         sage: S = SimplicialComplex([[0,2], [0,3]], is_mutable=False)
         sage: S.is_mutable()
@@ -976,8 +976,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: S == S3
             True
 
-        Test that we have fixed a problem revealed in :trac:`20718`;
-        see also :trac:`20720`::
+        Test that we have fixed a problem revealed in :issue:`20718`;
+        see also :issue:`20720`::
 
             sage: SimplicialComplex([2])
             Simplicial complex with vertex set (0, 1, 2) and facets {(0, 1, 2)}
@@ -2584,7 +2584,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         TESTS:
 
-        Check that the bug reported at :trac:`14354` has been fixed::
+        Check that the bug reported at :issue:`14354` has been fixed::
 
             sage: T = SimplicialComplex([range(1,5)]).n_skeleton(1)
             sage: T.homology()                                                          # needs sage.modules
@@ -2594,7 +2594,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             {0: 0, 1: Z x Z, 2: 0}
 
         Check that the ``_faces`` cache is treated correctly
-        (:trac:`20758`)::
+        (:issue:`20758`)::
 
             sage: T = SimplicialComplex([range(1,5)]).n_skeleton(1)
             sage: _ = T.faces()       # populate the _faces attribute
@@ -2604,7 +2604,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             True
 
         Check that the ``__enlarged`` cache is treated correctly
-        (:trac:`20758`)::
+        (:issue:`20758`)::
 
             sage: T = SimplicialComplex([range(1,5)]).n_skeleton(1)
             sage: T.homology()  # to populate the __enlarged attribute                  # needs sage.modules
@@ -2613,7 +2613,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: len(T._SimplicialComplex__enlarged) > 0                               # needs sage.modules
             True
 
-        Check we've fixed the bug reported at :trac:`14578`::
+        Check we've fixed the bug reported at :issue:`14578`::
 
             sage: t0 = SimplicialComplex()
             sage: t0.add_face(('a', 'b'))
@@ -2622,7 +2622,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: t0.homology()                                                         # needs sage.modules
             {0: Z, 1: 0, 2: 0}
 
-        Check that we've fixed the bug reported at :trac:`22880`::
+        Check that we've fixed the bug reported at :issue:`22880`::
 
             sage: X = SimplicialComplex([[0], [1]])
             sage: temp = X.faces(SimplicialComplex(()))
@@ -2730,7 +2730,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         TESTS:
 
         Check that the ``_faces`` cache is treated properly: see
-        :trac:`20758`::
+        :issue:`20758`::
 
             sage: T = SimplicialComplex([range(1,5)]).n_skeleton(1)
             sage: _ = T.faces()     # populate the _faces attribute
@@ -3462,7 +3462,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: SC = SimplicialComplex([(0,1,2),(0,2,3),(2,3,4),(1,2,4), \
                                           (1,4,5),(0,3,6),(3,6,7),(4,5,7)])
 
-        This was taking a long time before :trac:`20078`::
+        This was taking a long time before :issue:`20078`::
 
             sage: sorted(SC.minimal_nonfaces())
             [(0, 4),
@@ -4231,7 +4231,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: Z3.is_isomorphic(Z2)
             False
 
-        We check that :trac:`20751` is fixed::
+        We check that :issue:`20751` is fixed::
 
             sage: C1 = SimplicialComplex([[1,2,3], [2,4], [3,5], [5,6]])
             sage: C2 = SimplicialComplex([['a','b','c'], ['b','d'], ['c','e'], ['e','f']])
@@ -4284,7 +4284,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         .. WARNING::
 
-            Since :trac:`14319` the domain of the automorphism group is equal to
+            Since :issue:`14319` the domain of the automorphism group is equal to
             the graph's vertex set, and the ``translation`` argument has become
             useless.
 
@@ -4305,7 +4305,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: sorted(group.domain())                                                # needs sage.groups
             ['1', '2', '3', 'a']
 
-        Check that :trac:`17032` is fixed::
+        Check that :issue:`17032` is fixed::
 
             sage: s = SimplicialComplex([[(0,1),(2,3)]])
             sage: s.automorphism_group().cardinality()                                  # needs sage.groups

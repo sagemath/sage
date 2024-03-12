@@ -173,7 +173,7 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
 
     TESTS:
 
-    Check that `f` can be a constant (see :trac:`15516`)::
+    Check that `f` can be a constant (see :issue:`15516`)::
 
         sage: R.<u> = PolynomialRing(Rationals())
         sage: HyperellipticCurve(-12, u^4 + 7)

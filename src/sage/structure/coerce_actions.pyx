@@ -54,7 +54,7 @@ cdef class GenericAction(Action):
         Note that coerce actions should only be used inside of the coercion
         model. For this test, we need to strongly reference the domains,
         for otherwise they could be garbage collected, giving rise to
-        random errors (see :trac:`18157`). ::
+        random errors (see :issue:`18157`). ::
 
             sage: from sage.structure.coerce_actions import ActedUponAction, GenericAction
             sage: M = MatrixSpace(ZZ, 2)                                                # needs sage.modules
@@ -93,7 +93,7 @@ cdef class GenericAction(Action):
         Note that coerce actions should only be used inside of the coercion
         model. For this test, we need to strongly reference the domains, for
         otherwise they could be garbage collected, giving rise to random
-        errors (see :trac:`18157`). ::
+        errors (see :issue:`18157`). ::
 
 
             sage: M = MatrixSpace(ZZ, 2)                                                # needs sage.modules
@@ -167,7 +167,7 @@ def detect_element_action(Parent X, Y, bint X_on_left, X_el=None, Y_el=None):
     Note that coerce actions should only be used inside of the coercion
     model. For this test, we need to strongly reference the domains,
     for otherwise they could be garbage collected, giving rise to
-    random errors (see :trac:`18157`). ::
+    random errors (see :issue:`18157`). ::
 
         sage: from sage.structure.coerce_actions import detect_element_action
         sage: ZZx = ZZ['x']
@@ -188,7 +188,7 @@ def detect_element_action(Parent X, Y, bint X_on_left, X_el=None, Y_el=None):
 
     TESTS:
 
-    This test checks that the issue in :trac:`7718` has been fixed::
+    This test checks that the issue in :issue:`7718` has been fixed::
 
         sage: class MyParent(Parent):
         ....:     def an_element(self):
@@ -266,7 +266,7 @@ cdef class ModuleAction(Action):
     :meth:`~sage.structure.parent.Parent.an_element`, which relies on the
     implementation of an ``_an_element_()`` method. This is not always
     available. But usually, the action is only needed when one already
-    *has* two elements. Hence, by :trac:`14249`, the coercion model will
+    *has* two elements. Hence, by :issue:`14249`, the coercion model will
     pass these two elements to the :class:`ModuleAction` constructor.
 
     The actual action is implemented by the ``_rmul_`` or ``_lmul_``
@@ -288,7 +288,7 @@ cdef class ModuleAction(Action):
         Note that coerce actions should only be used inside of the coercion
         model. For this test, we need to strongly reference the domains,
         for otherwise they could be garbage collected, giving rise to
-        random errors (see :trac:`18157`). ::
+        random errors (see :issue:`18157`). ::
 
 
             sage: from sage.structure.coerce_actions import LeftModuleAction
@@ -307,7 +307,7 @@ cdef class ModuleAction(Action):
              on Univariate Polynomial Ring in y over Univariate Polynomial Ring in x over Integer Ring
 
         The following tests against a problem that was relevant during work on
-        :trac:`9944`::
+        :issue:`9944`::
 
             sage: R.<x> = PolynomialRing(ZZ)
             sage: S.<x> = PolynomialRing(ZZ, sparse=True)
@@ -380,7 +380,7 @@ cdef class ModuleAction(Action):
 
         TESTS:
 
-        Check that this action can be pickled (:trac:`29031`)::
+        Check that this action can be pickled (:issue:`29031`)::
 
             sage: A = ZZ['x'].get_action(QQ, self_on_left=False, op=operator.mul)
             sage: loads(dumps(A)) is not None
@@ -397,7 +397,7 @@ cdef class ModuleAction(Action):
         Note that coerce actions should only be used inside of the
         coercion model. For this test, we need to strongly reference the
         domains, for otherwise they could be garbage collected, giving rise to
-        random errors (see :trac:`18157`). ::
+        random errors (see :issue:`18157`). ::
 
             sage: from sage.structure.coerce_actions import LeftModuleAction, RightModuleAction
             sage: ZZx = ZZ['x']
@@ -425,7 +425,7 @@ cdef class ModuleAction(Action):
         Note that coerce actions should only be used inside of the coercion
         model. For this test, we need to strongly reference the domains,
         for otherwise they could be garbage collected, giving rise to
-        random errors (see :trac:`18157`). ::
+        random errors (see :issue:`18157`). ::
 
             sage: from sage.structure.coerce_actions import LeftModuleAction
             sage: ZZxyz = ZZ['x,y,z']
@@ -446,7 +446,7 @@ cdef class ModuleAction(Action):
         Note that coerce actions should only be used inside of the coercion
         model. For this test, we need to strongly reference the domains,
         for otherwise they could be garbage collected, giving rise to
-        random errors (see :trac:`18157`). ::
+        random errors (see :issue:`18157`). ::
 
             sage: from sage.structure.coerce_actions import LeftModuleAction
             sage: ZZxyz = ZZ['x,y,z']
@@ -463,7 +463,7 @@ cdef class ModuleAction(Action):
         Note that coerce actions should only be used inside of the coercion
         model. For this test, we need to strongly reference the domains, for
         otherwise they could be garbage collected, giving rise to random
-        errors (see :trac:`18157`). ::
+        errors (see :issue:`18157`). ::
 
             sage: from sage.structure.coerce_actions import RightModuleAction
 
@@ -527,7 +527,7 @@ cdef class ModuleAction(Action):
 
         TESTS:
 
-        See :trac:`19521`::
+        See :issue:`19521`::
 
             sage: # needs sage.symbolic
             sage: Q.<y> = SR.subring(no_variables=True)[[]]
@@ -602,7 +602,7 @@ cdef class LeftModuleAction(ModuleAction):
         Note that coerce actions should only be used inside of the coercion
         model. For this test, we need to strongly reference the domains,
         for otherwise they could be garbage collected, giving rise to
-        random errors (see :trac:`18157`). ::
+        random errors (see :issue:`18157`). ::
 
             sage: from sage.structure.coerce_actions import LeftModuleAction
             sage: R.<x> = QQ['x']
@@ -639,7 +639,7 @@ cdef class RightModuleAction(ModuleAction):
         Note that coerce actions should only be used inside of the coercion
         model. For this test, we need to strongly reference the domains,
         for otherwise they could be garbage collected, giving rise to
-        random errors (see :trac:`18157`). ::
+        random errors (see :issue:`18157`). ::
 
             sage: from sage.structure.coerce_actions import RightModuleAction
             sage: R.<x> = QQ['x']
@@ -690,7 +690,7 @@ cdef class IntegerAction(Action):
 
         TESTS:
 
-        Check that this action can be pickled (:trac:`29031`)::
+        Check that this action can be pickled (:issue:`29031`)::
 
             sage: from sage.structure.coerce_actions import IntegerMulAction
             sage: act = IntegerMulAction(ZZ, CDF)                                       # needs sage.rings.complex_double
@@ -755,7 +755,7 @@ cdef class IntegerMulAction(IntegerAction):
         Note that coerce actions should only be used inside of the coercion
         model. For this test, we need to strongly reference the field
         ``GF(101)``, for otherwise it could be garbage collected, giving rise
-        random errors (see :trac:`18157`). ::
+        random errors (see :issue:`18157`). ::
 
             sage: from sage.structure.coerce_actions import IntegerMulAction
             sage: GF101 = GF(101)
@@ -776,7 +776,7 @@ cdef class IntegerMulAction(IntegerAction):
             sage: act(49, 1/49) == 49*RR(1/49)
             False
 
-        This used to hang before :trac:`17844`::
+        This used to hang before :issue:`17844`::
 
             sage: E = EllipticCurve(GF(5), [4,0])                                       # needs sage.schemes
             sage: P = E.random_element()                                                # needs sage.schemes
@@ -815,7 +815,7 @@ cdef class IntegerMulAction(IntegerAction):
         Note that coerce actions should only be used inside of the coercion
         model. For this test, we need to strongly reference the field
         ``GF(5)``, for otherwise it could be garbage collected, giving rise
-        random errors (see :trac:`18157`). ::
+        random errors (see :issue:`18157`). ::
 
             sage: from sage.structure.coerce_actions import IntegerMulAction
             sage: GF5 = GF(5)

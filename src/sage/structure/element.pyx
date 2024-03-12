@@ -27,7 +27,7 @@ AUTHORS:
 - Maarten Derickx (2010-07): added architecture for is_square and sqrt
 
 - Jeroen Demeyer (2016-08): moved all coercion to the base class
-  :class:`Element`, see :trac:`20767`
+  :class:`Element`, see :issue:`20767`
 
 The Abstract Element Class Hierarchy
 ====================================
@@ -525,7 +525,7 @@ cdef class Element(SageObject):
 
         TESTS:
 
-        Check that morphism classes are handled correctly (:trac:`29776`)::
+        Check that morphism classes are handled correctly (:issue:`29776`)::
 
             sage: R.<x,y> = QQ[]
             sage: f = R.hom([x, y+1], R)
@@ -881,7 +881,7 @@ cdef class Element(SageObject):
 
         TESTS:
 
-        Check that :trac:`14778` is fixed::
+        Check that :issue:`14778` is fixed::
 
             sage: (0).n(algorithm='foo')                                                # needs sage.rings.real_mpfr
             0.000000000000000
@@ -1016,7 +1016,7 @@ cdef class Element(SageObject):
 
         TESTS:
 
-        Verify that :trac:`5185` is fixed::
+        Verify that :issue:`5185` is fixed::
 
             sage: # needs sage.modules
             sage: v = vector({1: 1, 3: -1})
@@ -2156,7 +2156,7 @@ cdef class ElementWithCachedMethod(Element):
 
     The :class:`~sage.misc.cachefunc.cached_method` decorator provides
     a convenient way to automatically cache the result of a computation.
-    Since :trac:`11115`, the cached method decorator applied to a
+    Since :issue:`11115`, the cached method decorator applied to a
     method without optional arguments is faster than a hand-written cache
     in Python, and a cached method without any arguments (except ``self``)
     is actually faster than a Python method that does nothing more but
@@ -2698,7 +2698,7 @@ cdef class RingElement(ModuleElement):
             sage: 2r^(1/2)                                                              # needs sage.symbolic
             sqrt(2)
 
-        Exponent overflow should throw an :class:`OverflowError` (:trac:`2956`)::
+        Exponent overflow should throw an :class:`OverflowError` (:issue:`2956`)::
 
             sage: K.<x,y> = AA[]                                                        # needs sage.rings.number_field
             sage: x^(2^64 + 12345)                                                      # needs sage.rings.number_field
@@ -2706,7 +2706,7 @@ cdef class RingElement(ModuleElement):
             ...
             OverflowError: exponent overflow (2147483648)
 
-        Another example from :trac:`2956` which always overflows
+        Another example from :issue:`2956` which always overflows
         with Singular 4::
 
             sage: K.<x,y> = ZZ[]
@@ -3033,7 +3033,7 @@ cdef class CommutativeRingElement(RingElement):
             sage: (x^2 + 2).divides(x)
             False
 
-        :trac:`5347` has been fixed::
+        :issue:`5347` has been fixed::
 
             sage: K = GF(7)
             sage: K(3).divides(1)
@@ -3059,7 +3059,7 @@ cdef class CommutativeRingElement(RingElement):
 
         If ``x`` has different parent than ``self``, they are first coerced to a
         common parent if possible. If this coercion fails, it returns a
-        TypeError. This fixes :trac:`5759`. ::
+        TypeError. This fixes :issue:`5759`. ::
 
             sage: Zmod(2)(0).divides(Zmod(2)(0))
             True
@@ -3851,7 +3851,7 @@ cdef class Matrix(ModuleElement):
              'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and
              'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
 
-        We test that the bug reported in :trac:`27352` has been fixed::
+        We test that the bug reported in :issue:`27352` has been fixed::
 
             sage: A = matrix(QQ, [[1, 2], [-1, 0], [1, 1]])                                                             # needs sage.modules
             sage: B = matrix(QQ, [[0, 4], [1, -1], [1, 2]])                                                             # needs sage.modules
@@ -4192,7 +4192,7 @@ cdef class PrincipalIdealDomainElement(DedekindDomainElement):
 
         TESTS:
 
-        :trac:`30849`::
+        :issue:`30849`::
 
             sage: 2.gcd(pari(3))                                                        # needs sage.libs.pari
             1
@@ -4231,7 +4231,7 @@ cdef class PrincipalIdealDomainElement(DedekindDomainElement):
 
         TESTS:
 
-        :trac:`30849`::
+        :issue:`30849`::
 
             sage: 2.lcm(pari(3))                                                        # needs sage.libs.pari
             6
@@ -4404,7 +4404,7 @@ cdef class FieldElement(CommutativeRingElement):
 
         TESTS:
 
-        Test if :trac:`8671` is fixed::
+        Test if :issue:`8671` is fixed::
 
             sage: # needs sage.libs.pari sage.libs.singular
             sage: R.<x,y> = QQ[]
@@ -4668,7 +4668,7 @@ def coerce_binop(method):
     TESTS:
 
     Test that additional arguments given to the method do not override
-    the ``self`` argument, see :trac:`21322`::
+    the ``self`` argument, see :issue:`21322`::
 
         sage: f.gcd(g, 1)
         Traceback (most recent call last):

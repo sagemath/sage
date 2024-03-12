@@ -1126,7 +1126,7 @@ class RESetMapReduce():
         self._active_tasks = ActiveTaskCounter(self._nprocess)
         self._done = mp.Lock()
         # We use lock=False here, as a compromise, to avoid deadlocking when a
-        # subprocess holding a lock is terminated. (:trac:`33236`)
+        # subprocess holding a lock is terminated. (:issue:`33236`)
         self._aborted = mp.Value(ctypes.c_bool, False, lock=False)
         sys.stdout.flush()
         sys.stderr.flush()

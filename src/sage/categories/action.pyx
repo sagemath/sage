@@ -10,7 +10,7 @@ A group action `G \times S \rightarrow S` is a functor from `G` to Sets.
 .. WARNING::
 
     An :class:`Action` object only keeps a weak reference to the underlying set
-    which is acted upon. This decision was made in :trac:`715` in order to
+    which is acted upon. This decision was made in :issue:`715` in order to
     allow garbage collection within the coercion framework (this is where
     actions are mainly used) and avoid memory leaks.
 
@@ -113,7 +113,7 @@ cdef class Action(Functor):
 
         TESTS:
 
-        Check that this action can be pickled (:trac:`29031`)::
+        Check that this action can be pickled (:issue:`29031`)::
 
             sage: P = QQ['x']
             sage: R = (ZZ['x'])['y']
@@ -283,7 +283,7 @@ cdef class Action(Functor):
             sage: A.left_domain() is R
             True
 
-        By :trac:`715`, there is only a weak reference to the underlying set.
+        By :issue:`715`, there is only a weak reference to the underlying set.
         Hence, the underlying set may be garbage collected, even when the
         action is still alive. This may result in a runtime error, as follows::
 
@@ -399,7 +399,7 @@ cdef class InverseAction(Action):
 
         TESTS:
 
-        Check that this action can be pickled (:trac:`29031`)::
+        Check that this action can be pickled (:issue:`29031`)::
 
             sage: # needs sage.modules
             sage: V = QQ^3
@@ -433,7 +433,7 @@ cdef class PrecomposedAction(Action):
 
     EXAMPLES:
 
-    We demonstrate that an example discussed on :trac:`14711` did not become a
+    We demonstrate that an example discussed on :issue:`14711` did not become a
     problem::
 
         sage: # needs sage.libs.flint sage.modular
@@ -486,7 +486,7 @@ cdef class PrecomposedAction(Action):
 
         TESTS:
 
-        Check that this action can be pickled (:trac:`29031`)::
+        Check that this action can be pickled (:issue:`29031`)::
 
             sage: # needs sage.libs.flint sage.modular
             sage: E = ModularSymbols(11).2

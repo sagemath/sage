@@ -280,12 +280,12 @@ We test an automatic coercion::
     <class 'sage.interfaces.singular.SingularElement'>
 
 Create a ring over GF(9) to check that ``gftables`` has been installed,
-see :trac:`11645`::
+see :issue:`11645`::
 
     sage: singular.eval("ring testgf9 = (9,x),(a,b,c,d,e,f),(M((1,2,3,0)),wp(2,3),lp);")
     ''
 
-Verify that :trac:`17720` is fixed::
+Verify that :issue:`17720` is fixed::
 
     sage: R.<p> = QQ[]
     sage: K.<p> = QQ.extension(p^2 - p - 1)
@@ -1751,7 +1751,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             sage: singular('z^4')
             (-z3-z2-z-1)
 
-        Test that :trac:`25297` is fixed::
+        Test that :issue:`25297` is fixed::
 
             sage: R.<x,y> = QQ[]
             sage: SE.<xbar,ybar> = R.quotient(x^2 + y^2 - 1)
@@ -1760,7 +1760,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             sage: P2.0.lift().parent()
             Multivariate Polynomial Ring in x, y over Rational Field
 
-        Test that :trac:`29396` is fixed::
+        Test that :issue:`29396` is fixed::
 
             sage: Rxz.<x,z> = RR[]
             sage: f = x**3 + x*z + 1
@@ -2018,7 +2018,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             sage: singular('x^2+y').sage().parent()
             Quotient of Multivariate Polynomial Ring in x, y, z over Finite Field in a of size 3^2 by the ideal (y^4 - y^2*z^3 + z^6, x + y^2 + z^3)
 
-        Test that :trac:`18848` is fixed::
+        Test that :issue:`18848` is fixed::
 
             sage: singular(5).sage()
             5
@@ -2776,7 +2776,7 @@ def singular_gb_standard_options(func):
         sage: "basis" in sage_getsource(J.interreduced_basis) #indirect doctest
         True
 
-    The following tests against a bug that was fixed in :trac:`11298`::
+    The following tests against a bug that was fixed in :issue:`11298`::
 
         sage: from sage.misc.sageinspect import sage_getsourcelines, sage_getargspec
         sage: P.<x,y> = QQ[]

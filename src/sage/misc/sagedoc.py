@@ -17,7 +17,7 @@ AUTHORS:
 TESTS:
 
 Check that argspecs of extension function/methods appear correctly,
-see :trac:`12849`::
+see :issue:`12849`::
 
     sage: from sage.env import SAGE_DOC
     sage: docfilename = os.path.join(SAGE_DOC, 'html', 'en', 'reference', 'calculus', 'sage', 'symbolic', 'expression.html')
@@ -339,7 +339,7 @@ def skip_TESTS_block(docstring):
         sage: skip_TESTS_block(start + test + another_fake).rstrip() == start.rstrip()
         True
 
-    Double colons ``::`` are also not considered as headers (:trac:`27896`)::
+    Double colons ``::`` are also not considered as headers (:issue:`27896`)::
 
         sage: colons = ' ::\n\n     sage: 2+2\n     4\n\n'
         sage: skip_TESTS_block(start + test2 + colons).rstrip() == start.rstrip()
@@ -503,11 +503,11 @@ def process_dollars(s):
     return s
 
 
-# Sage github issue shortcuts. For example, :trac:`7549` .
+# Sage github issue shortcuts. For example, :issue:`7549` .
 pythonversion = sys.version.split(' ')[0]
 extlinks = {
     'python': (f'https://docs.python.org/release/{pythonversion}/%s', None),
-    'trac': ('https://github.com/sagemath/sage/issues/%s', 'github issue #%s'), # support :trac: for backward compatibility
+    'trac': ('https://github.com/sagemath/sage/issues/%s', 'github issue #%s'), # support :issue: for backward compatibility
     'issue': ('https://github.com/sagemath/sage/issues/%s', 'github issue #%s'),
     'wikipedia': ('https://en.wikipedia.org/wiki/%s', 'Wikipedia article %s'),
     'arxiv': ('https://arxiv.org/abs/%s', 'arXiv %s'),
@@ -542,7 +542,7 @@ def process_extlinks(s, embedded=False):
     EXAMPLES::
 
         sage: from sage.misc.sagedoc import process_extlinks
-        sage: process_extlinks('See :trac:`1234`, :wikipedia:`Wikipedia <Sage_(mathematics_software)>`, and :trac:`4321` ...')
+        sage: process_extlinks('See :issue:`1234`, :wikipedia:`Wikipedia <Sage_(mathematics_software)>`, and :issue:`4321` ...')
         'See https://github.com/sagemath/sage/issues/1234, https://en.wikipedia.org/wiki/Sage_(mathematics_software), and https://github.com/sagemath/sage/issues/4321 ...'
         sage: process_extlinks('See :issue:`1234` for more information.', embedded=True)
         'See :issue:`1234` for more information.'
@@ -685,7 +685,7 @@ def format(s, embedded=False):
         "   Returns ...  Todo: add tests as in combinat::rankers\n"
 
     In the following use case, the ``nodetex`` directive would have been ignored prior
-    to :trac:`11815`::
+    to :issue:`11815`::
 
         sage: cython_code = ["def testfunc(x):",
         ....: "    '''",
@@ -705,7 +705,7 @@ def format(s, embedded=False):
         <BLANKLINE>
 
     We check that the ``noreplace`` directive works, even combined with
-    ``nodetex`` (see :trac:`11817`)::
+    ``nodetex`` (see :issue:`11817`)::
 
         sage: print(format('''nodetex, noreplace\n<<<identity_matrix>>>`\\not= 0`'''))
         <<<identity_matrix>>>`\not= 0`
@@ -723,7 +723,7 @@ def format(s, embedded=False):
            Return the n x n identity matrix over the given ring.
         ...
 
-    Check that backslashes are preserved in code blocks (:trac:`29140`)::
+    Check that backslashes are preserved in code blocks (:issue:`29140`)::
 
         sage: format('::\n'                                                             # needs sphinx
         ....:        '\n'

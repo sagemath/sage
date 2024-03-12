@@ -581,7 +581,7 @@ cdef class RecursivelyEnumeratedSet_generic(Parent):
 
     def __len__(self):
         """
-        Disable ``__len__()`` from :class:`Parent` :trac:`12955`.
+        Disable ``__len__()`` from :class:`Parent` :issue:`12955`.
 
         Because Python assumes ``__len__()`` is fast and we cannot
         have a fast default implementation.
@@ -1089,7 +1089,7 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
 
         TESTS:
 
-        Check that :trac:`28674` is fixed::
+        Check that :issue:`28674` is fixed::
 
             sage: D = RecursivelyEnumeratedSet([(0,0)], f)
             sage: s == list(D.breadth_first_search_iterator(max_depth=2))
@@ -1234,7 +1234,7 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
 
         TESTS:
 
-        We make sure that :trac:`21312` is fixed::
+        We make sure that :issue:`21312` is fixed::
 
             sage: def f(a):
             ....:    sleep(0.1r)
@@ -1407,7 +1407,7 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
 
         TESTS:
 
-        Make sure that :trac:`20225` is fixed::
+        Make sure that :issue:`20225` is fixed::
 
             sage: child = lambda k:[2*k,2*k+1] if k<8 else []
             sage: root = [0]
@@ -1462,7 +1462,7 @@ cdef class RecursivelyEnumeratedSet_graded(RecursivelyEnumeratedSet_generic):
 
         TESTS:
 
-        We make sure that :trac:`21312` is fixed::
+        We make sure that :issue:`21312` is fixed::
 
             sage: # needs sage.symbolic
             sage: def f(a):

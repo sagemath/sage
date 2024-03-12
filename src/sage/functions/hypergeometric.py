@@ -13,7 +13,7 @@ AUTHORS:
 
 EXAMPLES:
 
-Examples from :trac:`9908`::
+Examples from :issue:`9908`::
 
     sage: # needs sage.symbolic
     sage: maxima('integrate(bessel_j(2, x), x)').sage()

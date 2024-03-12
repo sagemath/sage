@@ -41,7 +41,7 @@ AUTHORS:
 - Sebastian Oehms (October 2020, add :meth:`get_knotinfo` and :meth:`is_isotopic`)
 - Sebastian Oehms (May 2022): add :meth:`links_gould_polynomial`
 - Sebastian Oehms (May 2023): change the convention about the ``pd_code`` from
-  clockwise to anti-clockwise (see :trac:`35665`).
+  clockwise to anti-clockwise (see :issue:`35665`).
 """
 
 # ****************************************************************************
@@ -333,7 +333,7 @@ class Link(SageObject):
             ...
             ValueError: invalid input: data must be either a list or a braid
 
-        Verify that :trac:`29692` is fixed::
+        Verify that :issue:`29692` is fixed::
 
             sage: # needs sage.groups
             sage: B = BraidGroup(5)
@@ -673,7 +673,7 @@ class Link(SageObject):
             sage: L.braid()
             1
 
-        Check that :trac:`25050` is solved::
+        Check that :issue:`25050` is solved::
 
             sage: # needs sage.groups
             sage: A = Link([[[1, 2, -2, -1, -3, -4, 4, 3]], [1, 1, 1, 1]])
@@ -1275,7 +1275,7 @@ class Link(SageObject):
 
         TESTS:
 
-        Check that :trac:`31001` is fixed::
+        Check that :issue:`31001` is fixed::
 
             sage: # needs sage.modules
             sage: L = Link([])
@@ -2239,7 +2239,7 @@ class Link(SageObject):
 
         TESTS:
 
-        Check that :trac:`31001` is fixed::
+        Check that :issue:`31001` is fixed::
 
             sage: L = Knot([])
             sage: L.is_alternating()
@@ -2326,7 +2326,7 @@ class Link(SageObject):
 
         TESTS:
 
-        Check that :trac:`25050` is solved::
+        Check that :issue:`25050` is solved::
 
             sage: A = Link([[[1, 2, -2, -1, -3, -4, 4, 3]], [1, 1, 1, 1]])
             sage: A.seifert_circles()
@@ -2570,7 +2570,7 @@ class Link(SageObject):
 
         TESTS:
 
-        check that :trac:`30997` is fixed::
+        check that :issue:`30997` is fixed::
 
             sage: L = Link([[6, 2, 7, 1], [5, 13, 6, 12], [8, 3, 9, 4],
             ....:           [2, 13, 3, 14], [14, 8, 15, 7], [11, 17, 12, 16],
@@ -2850,7 +2850,7 @@ class Link(SageObject):
             ...
             ValueError: bad value of algorithm
 
-        Check that :trac:`31001` is fixed::
+        Check that :issue:`31001` is fixed::
 
             sage: L.jones_polynomial()                                                  # needs sage.groups
             1
@@ -3107,7 +3107,7 @@ class Link(SageObject):
             sage: L2.homfly_polynomial('ν', 'ζ', 'vz')
             -ν*ζ^-1 + ν^-1*ζ^-1
 
-        Check that :trac:`30346` is fixed::
+        Check that :issue:`30346` is fixed::
 
             sage: L = Link([])
             sage: L.homfly_polynomial()                                                 # needs sage.libs.homfly
@@ -3631,7 +3631,7 @@ class Link(SageObject):
 
         TESTS:
 
-        Check that :trac:`20315` is fixed::
+        Check that :issue:`20315` is fixed::
 
             sage: L = Link([[2,1,4,5], [5,6,7,3], [6,4,1,9], [9,2,3,7]])
             sage: L.plot(solver='GLPK')                                                 # needs sage.plot

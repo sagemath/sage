@@ -650,7 +650,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             TESTS:
 
-            Check that :trac:`23216` is fixed::
+            Check that :issue:`23216` is fixed::
 
                 sage: # needs sage.modules
                 sage: X = CombinatorialFreeModule(QQ, [])

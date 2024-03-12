@@ -759,7 +759,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             [4|1]
 
         When applying a map to a sparse zero matrix, the codomain is determined
-        from the image of zero (:trac:`29214`)::
+        from the image of zero (:issue:`29214`)::
 
             sage: matrix(RR, 2, 2, sparse=True).apply_map(floor).base_ring() is ZZ
             True
@@ -1012,7 +1012,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         TESTS:
 
-        One can stack matrices over different rings (:trac:`16399`). ::
+        One can stack matrices over different rings (:issue:`16399`). ::
 
             sage: M = Matrix(ZZ, 2, 3, range(6), sparse=True)
             sage: N = Matrix(QQ, 1, 3, [10,11,12], sparse=True)
@@ -1089,7 +1089,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         TESTS:
 
-        Verify that :trac:`12689` is fixed::
+        Verify that :issue:`12689` is fixed::
 
             sage: A = identity_matrix(QQ, 2, sparse=True)
             sage: B = identity_matrix(ZZ, 2, sparse=True)
@@ -1178,7 +1178,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             sage: (m * v).parent() is m.column(0).parent()
             True
 
-        Check that the bug in :trac:`13854` has been fixed::
+        Check that the bug in :issue:`13854` has been fixed::
 
             sage: # needs sage.combinat sage.libs.singular
             sage: A.<x,y> = FreeAlgebra(QQ, 2)

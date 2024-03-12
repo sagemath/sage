@@ -1971,7 +1971,7 @@ cdef class RingExtension_generic(CommutativeRing):
 
         TESTS:
 
-            Ensure issue :trac:`34692` is fixed::
+            Ensure issue :issue:`34692` is fixed::
 
             sage: # needs sage.rings.finite_rings
             sage: Fq = GF(11)

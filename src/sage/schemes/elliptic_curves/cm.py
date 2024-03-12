@@ -233,6 +233,13 @@ def is_HCP(f, check_monic_irreducible=True):
         sage: all(not is_HCP(hilbert_class_polynomial(D) + 1)
         ....:     for D in srange(-4,-100,-1) if D.is_discriminant())
         True
+
+    Ensure that :issue:`37471` is fixed::
+
+        sage: from sage.schemes.elliptic_curves.cm import is_HCP
+        sage: set_random_seed(297388353221545796156853787333338705098)
+        sage: is_HCP(hilbert_class_polynomial(-55))
+        -55
     """
     zero = ZZ(0)
     # optional check that input is monic and irreducible
@@ -264,14 +271,15 @@ def is_HCP(f, check_monic_irreducible=True):
         # Compute X^p-X mod fp
         z = fp.parent().gen()
         r = pow(z, p, fp) - z
-        d = r.gcd(fp).degree()  # number of roots mod p
+        r = r.gcd(fp)
+        d = r.degree()  # number of roots mod p
         if d == 0:
             continue
-        if not fp.is_squarefree():
+        if not r.is_squarefree():
             continue
         if d < h and d not in h2list:
             return zero
-        jp = fp.any_root(degree=1, assume_squarefree=True, assume_distinct_deg=True)
+        jp = r.any_root(degree=1, assume_squarefree=True, assume_equal_deg=True)
         E = EllipticCurve(j=jp)
         if E.is_supersingular():
             continue

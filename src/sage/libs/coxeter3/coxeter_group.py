@@ -436,7 +436,7 @@ class CoxeterGroup(UniqueRepresentation, Parent):
                 sage: W([2,1,2])
                 [1, 2, 1]
 
-            Check that :trac:`32266` is fixed::
+            Check that :issue:`32266` is fixed::
 
 <<<<<<< HEAD
                 sage: # optional - coxeter3

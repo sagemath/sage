@@ -233,7 +233,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sage: s is t # identical tableaux are distinct objects
             False
 
-        A tableau is shallowly immutable. See :trac:`15862`. The entries
+        A tableau is shallowly immutable. See :issue:`15862`. The entries
         themselves may be mutable objects, though in that case the
         resulting Tableau should be unhashable. ::
 
@@ -403,7 +403,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
 
         TESTS:
 
-        Check that :trac:`20768` is fixed::
+        Check that :issue:`20768` is fixed::
 
             sage: T = Tableau([[1523, 1, 2],[1,12341, -2]])
             sage: T.pp()
@@ -533,7 +533,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         r"""
         TESTS:
 
-        We check that :trac:`16487` is fixed::
+        We check that :issue:`16487` is fixed::
 
             sage: t = Tableau([[1,2,3],[4,5]])
             sage: print(t._ascii_art_table())
@@ -667,7 +667,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         r"""
         TESTS:
 
-        We check that :trac:`16487` is fixed::
+        We check that :issue:`16487` is fixed::
 
             sage: t = Tableau([[1,2,3],[4,5]])
             sage: print(t._ascii_art_compact())
@@ -1620,7 +1620,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sage: StandardTableau([[1,2],[3,4]]).reading_word_permutation()
             [3, 4, 1, 2]
 
-        Check that :trac:`14724` is fixed::
+        Check that :issue:`14724` is fixed::
 
             sage: SemistandardTableau([[1,1]]).reading_word_permutation()
             [1, 2]
@@ -2806,7 +2806,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sage: all( bk_promotion_inverse7(st) == st.promotion_inverse(6) for st in ST ) # long time
             True
 
-        A test for :trac:`13203`::
+        A test for :issue:`13203`::
 
             sage: T = Tableau([[1]])
             sage: type(T.promotion_inverse(2)[0][0])
@@ -5538,7 +5538,7 @@ class Tableaux(UniqueRepresentation, Parent):
         sage: [] in Tableaux(0)
         True
 
-    Check that :trac:`14145` has been fixed::
+    Check that :issue:`14145` has been fixed::
 
         sage: 1 in Tableaux()
         False
@@ -5725,7 +5725,7 @@ class Tableaux(UniqueRepresentation, Parent):
             sage: [[1],[1,2]] in T
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in sage.combinat.tableau.Tableaux()
             False
@@ -5811,7 +5811,7 @@ class Tableaux_size(Tableaux):
             sage: [[2,4],[1,3]] in T
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in sage.combinat.tableau.Tableaux_size(3)
             False
@@ -6267,7 +6267,7 @@ class SemistandardTableaux(Tableaux):
             sage: [[1,3,2]] in T
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in sage.combinat.tableau.SemistandardTableaux()
             False
@@ -6401,7 +6401,7 @@ class SemistandardTableaux_size_inf(SemistandardTableaux):
             sage: Tableau([[1]]) in T
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in SemistandardTableaux(3, max_entry=oo)
             False
@@ -6488,7 +6488,7 @@ class SemistandardTableaux_shape_inf(SemistandardTableaux):
             sage: [[13, 67], [1467]] in SST
             False
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: SST = SemistandardTableaux([3,1], max_entry=oo)
             sage: 1 in SST
@@ -6600,7 +6600,7 @@ class SemistandardTableaux_size(SemistandardTableaux):
             sage: all(sst in SST for sst in SST)                                        # needs sage.modules
             True
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: SST = SemistandardTableaux(4)
             sage: 1 in SST
@@ -7309,7 +7309,7 @@ class RowStandardTableaux(Tableaux):
             True
 
         Check that integers are not contained in ``self``
-        (see :trac:`14145`)::
+        (see :issue:`14145`)::
 
             sage: 1 in RowStandardTableaux()
             False
@@ -7434,7 +7434,7 @@ class RowStandardTableaux_size(RowStandardTableaux, DisjointUnionEnumeratedSets)
             sage: [x for x in ST4 if x in ST3]                                          # needs sage.graphs
             []
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in RowStandardTableaux(4)
             False
@@ -7709,7 +7709,7 @@ class StandardTableaux(SemistandardTableaux):
             sage: [] in StandardTableaux()
             True
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in StandardTableaux()
             False
@@ -7825,7 +7825,7 @@ class StandardTableaux_size(StandardTableaux, DisjointUnionEnumeratedSets):
             sage: [x for x in ST4 if x in ST3]
             []
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in StandardTableaux(4)
             False
@@ -7862,7 +7862,7 @@ class StandardTableaux_size(StandardTableaux, DisjointUnionEnumeratedSets):
             True
 
         The cardinality can be computed without constructing all elements in
-        this set, so this computation is fast (see also :trac:`28273`)::
+        this set, so this computation is fast (see also :issue:`28273`)::
 
             sage: StandardTableaux(500).cardinality()
             423107565308608549951551753690...221285999236657443927937253376
@@ -7998,7 +7998,7 @@ class StandardTableaux_shape(StandardTableaux):
             sage: ST.cardinality()
             3
 
-        Check that :trac:`14145` is fixed::
+        Check that :issue:`14145` is fixed::
 
             sage: 1 in StandardTableaux([2,1,1])
             False
