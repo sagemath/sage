@@ -263,7 +263,7 @@ cdef inline int __hyp__(unsigned short** distances, int a, int b, int c, int d) 
 
 cdef tuple hyperbolicity_basic_algorithm(int N,
                                          unsigned short** distances,
-                                         verbose) noexcept:
+                                         verbose):
     """
     Return **twice** the hyperbolicity of a graph, and a certificate.
 
@@ -368,7 +368,7 @@ def _greedy_dominating_set(H, verbose=False):
 cdef inline distances_and_far_apart_pairs(gg,
                                           unsigned short* distances,
                                           unsigned short* far_apart_pairs,
-                                          list int_to_vertex) noexcept:
+                                          list int_to_vertex):
     """
     Compute both distances between all pairs and far-apart pairs.
 
@@ -583,7 +583,7 @@ cdef tuple hyperbolicity_BCCM(int N,
                               int h_LB,
                               float approximation_factor,
                               float additive_gap,
-                              verbose=False) noexcept:
+                              verbose=False):
     """
     Return the hyperbolicity of a graph.
 
@@ -841,7 +841,7 @@ cdef tuple hyperbolicity_CCL(int N,
                              int h_LB,
                              float approximation_factor,
                              float additive_gap,
-                             verbose=False) noexcept:
+                             verbose=False):
     """
     Return the hyperbolicity of a graph.
 

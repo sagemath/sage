@@ -63,4 +63,4 @@ cdef MPF_cos_sin(MPF *c, MPF *s, MPF *x, MPopts opts)
 cdef int MPF_pow(MPF *z, MPF *x, MPF *y, MPopts opts) except -1
 cdef MPF_complex_pow(MPF *zre, MPF *zim, MPF *xre, MPF *xim, MPF *yre, MPF *yim, MPopts opts)
 cdef MPF_hypsum(MPF *a, MPF *b, int p, int q, param_types, str ztype, coeffs, \
-    z, long prec, long wp, long epsshift, dict magnitude_check, kwargs) noexcept
+    z, long prec, long wp, long epsshift, dict magnitude_check, kwargs)

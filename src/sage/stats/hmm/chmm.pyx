@@ -1292,7 +1292,7 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
         return G.prob(observation)
 
     cdef TimeSeries _baum_welch_mixed_gamma(self, TimeSeries alpha, TimeSeries beta,
-                                            TimeSeries obs, int j) noexcept:
+                                            TimeSeries obs, int j):
         r"""
         Let gamma_t(j,m) be the m-component (in the mixture) of the
         probability of being in state j at time t, given the

@@ -1263,7 +1263,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             mzd_row_clear_offset(self._entries, row, start_col)
 
     cdef add_multiple_of_row_c(self, Py_ssize_t row_to, Py_ssize_t row_from, multiple,
-                               Py_ssize_t start_col) noexcept:
+                               Py_ssize_t start_col):
         """
         EXAMPLES::
 

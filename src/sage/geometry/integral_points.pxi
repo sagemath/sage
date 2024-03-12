@@ -179,7 +179,7 @@ cpdef tuple ray_matrix_normal_form(R):
 # The optimized version avoids constructing new matrices, vectors, and lattice points
 cpdef tuple loop_over_parallelotope_points(e, d, MatrixClass VDinv,
                                            MatrixClass R, lattice,
-                                           A=None, b=None) noexcept:
+                                           A=None, b=None):
     r"""
     The inner loop of :func:`parallelotope_points`.
 
@@ -348,7 +348,7 @@ cdef translate_points(v_list, VectorClass delta):
 
 cpdef rectangular_box_points(list box_min, list box_max,
                              polyhedron=None, count_only=False,
-                             return_saturated=False) noexcept:
+                             return_saturated=False):
     r"""
     Return the integral points in the lattice bounding box that are
     also contained in the given polyhedron.
@@ -592,7 +592,7 @@ cdef list perm_action(list p, list lst):
 
 cdef loop_over_rectangular_box_points(list box_min, list box_max,
                                       InequalityCollection inequalities,
-                                      int d, bint count_only) noexcept:
+                                      int d, bint count_only):
     """
     The inner loop of :func:`rectangular_box_points`.
 
@@ -666,7 +666,7 @@ cdef loop_over_rectangular_box_points(list box_min, list box_max,
 
 cdef loop_over_rectangular_box_points_saturated(list box_min, list box_max,
                                                 InequalityCollection inequalities,
-                                                int d) noexcept:
+                                                int d):
     """
     The analog of :func:`rectangular_box_points` except that it keeps
     track of which inequalities are saturated.
@@ -1124,7 +1124,7 @@ cdef class InequalityCollection:
                 raise TypeError('Cannot extract Hrepresentation data from polyhedron.')
 
     cdef _cinit_from_PPL(self, list max_abs_coordinates, list permutation,
-                         polyhedron) noexcept:
+                         polyhedron):
         """
         Initialize the inequalities from a PPL C_Polyhedron
 
@@ -1173,7 +1173,7 @@ cdef class InequalityCollection:
                     self.ineqs_generic.append(H)
 
     cdef _cinit_from_Polyhedron(self, list max_abs_coordinates,
-                                list permutation, polyhedron) noexcept:
+                                list permutation, polyhedron):
         """
         Initialize the inequalities from a Sage Polyhedron
 

@@ -460,7 +460,7 @@ cdef int first_descent_in_parabolic(PermutationGroupElement w, list parabolic,
 
 
 cpdef PermutationGroupElement reduce_in_coset(PermutationGroupElement w, tuple S,
-                                              list parabolic, int N, bint right) noexcept:
+                                              list parabolic, int N, bint right):
     r"""
     Return the minimal length coset representative of ``w`` of the parabolic
     subgroup indexed by ``parabolic`` (with indices `\{0, \ldots, n\}`).
@@ -504,7 +504,7 @@ cpdef PermutationGroupElement reduce_in_coset(PermutationGroupElement w, tuple S
             w = _new_mul_(w, si)
 
 cdef list reduced_coset_representatives(W, list parabolic_big, list parabolic_small,
-                                        bint right) noexcept:
+                                        bint right):
     cdef tuple S = tuple(W.simple_reflections())
     cdef int N = W.number_of_reflections()
     cdef set totest = set([W.one()])

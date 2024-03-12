@@ -145,7 +145,7 @@ from sage.graphs.base.static_sparse_graph cimport (short_digraph,
 cdef inline c_all_pairs_shortest_path_BFS(short_digraph sd,
                                           unsigned short* predecessors,
                                           unsigned short* distances,
-                                          uint32_t* eccentricity) noexcept:
+                                          uint32_t* eccentricity):
     r"""
     See the module's documentation.
     """
@@ -269,7 +269,7 @@ cdef inline all_pairs_shortest_path_BFS(gg,
                                         unsigned short* predecessors,
                                         unsigned short* distances,
                                         uint32_t* eccentricity,
-                                        vertex_list=None) noexcept:
+                                        vertex_list=None):
     r"""
     See the module's documentation.
 
@@ -1141,7 +1141,7 @@ cdef uint32_t diameter_lower_bound_2sweep(short_digraph g,
 
 cdef tuple diameter_lower_bound_2Dsweep(short_digraph g,
                                         short_digraph rev_g,
-                                        uint32_t source) noexcept:
+                                        uint32_t source):
     r"""
     Lower bound on the diameter of digraph using directed version of 2-sweep.
 
@@ -1255,7 +1255,7 @@ cdef tuple diameter_lower_bound_2Dsweep(short_digraph g,
 
 
 cdef tuple diameter_lower_bound_multi_sweep(short_digraph g,
-                                            uint32_t source) noexcept:
+                                            uint32_t source):
     """
     Lower bound on the diameter using multi-sweep.
 

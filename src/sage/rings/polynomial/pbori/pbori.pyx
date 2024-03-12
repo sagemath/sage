@@ -2813,13 +2813,13 @@ cdef inline BooleanMonomial new_BM(parent, BooleanPolynomialRing ring):
     return m
 
 cdef inline BooleanMonomial new_BM_from_PBMonom(parent,
-        BooleanPolynomialRing ring, PBMonom juice) noexcept:
+        BooleanPolynomialRing ring, PBMonom juice):
     cdef BooleanMonomial m = new_BM(parent, ring)
     m._pbmonom = juice
     return m
 
 cdef inline BooleanMonomial new_BM_from_PBVar(parent,
-        BooleanPolynomialRing ring, PBVar juice) noexcept:
+        BooleanPolynomialRing ring, PBVar juice):
     cdef BooleanMonomial m = new_BM(parent, ring)
     m._pbmonom = PBMonom(juice)
     return m
@@ -2861,7 +2861,7 @@ cdef class BooleanMonomialVariableIterator:
         return new_BM_from_PBVar(self.parent, self._ring, value)
 
 cdef inline BooleanMonomialVariableIterator new_BMVI_from_BooleanMonomial(
-                            BooleanMonomial monom) noexcept:
+                            BooleanMonomial monom):
     """
     Construct a new iterator over the variable indices of a boolean
     monomial.
@@ -6136,7 +6136,7 @@ cdef class BooleanPolynomialVector:
         self._vec.push_back(<PBBoolePolynomial>p)
 
 cdef inline BooleanPolynomialVector new_BPV_from_PBPolyVector(
-        BooleanPolynomialRing parent, PBPolyVector juice) noexcept:
+        BooleanPolynomialRing parent, PBPolyVector juice):
     cdef BooleanPolynomialVector m
     m = <BooleanPolynomialVector>BooleanPolynomialVector.__new__(BooleanPolynomialVector)
     m._vec = juice
@@ -6158,7 +6158,7 @@ cdef class BooleanPolynomialVectorIterator:
 
 
 cdef inline BooleanPolynomialVectorIterator new_BPVI_from_PBPolyVectorIter(
-        BooleanPolynomialVector vec) noexcept:
+        BooleanPolynomialVector vec):
     """
     Construct a new BooleanPolynomialVectorIterator
     """
@@ -7025,7 +7025,7 @@ cdef class BooleanMulAction(Action):
 
 
 cdef inline CCuddNavigator new_CN_from_PBNavigator(PBNavigator juice,
-                                                   Py_ssize_t* pbind) noexcept:
+                                                   Py_ssize_t* pbind):
     """
     Construct a new CCuddNavigator
     """

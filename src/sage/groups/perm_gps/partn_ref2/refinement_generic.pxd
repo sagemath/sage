@@ -23,7 +23,7 @@ cdef extern from *:
 
 cdef tuple PS_refinement(PartitionStack * part, long *refine_vals, long *best, 
                          int begin, int end,
-                         bint * cand_initialized, bint *changed_partition) noexcept
+                         bint * cand_initialized, bint *changed_partition)
 
 cdef class _BestValStore:
     cdef int default_data_length

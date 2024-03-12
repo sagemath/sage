@@ -1159,7 +1159,7 @@ def _test_vectors_equal_inferior():
 
 
 cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
-                             long backtrack_bound=1000, find_path=False) noexcept:
+                             long backtrack_bound=1000, find_path=False):
     r"""
     Randomized backtracking for finding Hamiltonian cycles and paths.
 
