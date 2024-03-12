@@ -22,7 +22,7 @@ cdef class MatrixWindow:
 
     cpdef MatrixWindow new_matrix_window(MatrixWindow self, Matrix matrix,
                                          Py_ssize_t row, Py_ssize_t col,
-                                        Py_ssize_t n_rows, Py_ssize_t n_cols) noexcept:
+                                        Py_ssize_t n_rows, Py_ssize_t n_cols):
         """
         This method is here only to provide a fast cdef way of
         constructing new matrix windows. The only implicit assumption
@@ -53,7 +53,7 @@ cdef class MatrixWindow:
         return self._cached_zero
 
     cpdef MatrixWindow matrix_window(MatrixWindow self, Py_ssize_t row, Py_ssize_t col,
-                                    Py_ssize_t n_rows, Py_ssize_t n_cols) noexcept:
+                                    Py_ssize_t n_rows, Py_ssize_t n_cols):
         """
         Returns a matrix window relative to this window of the
         underlying matrix.

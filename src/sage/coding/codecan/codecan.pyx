@@ -249,7 +249,7 @@ cdef class InnerGroup:
         return d, v
 
     cdef minimize_matrix_col(self, object m, int pos, list fixed_minimized_cols,
-                             bint *group_changed) noexcept:
+                             bint *group_changed):
         r"""
         Minimize the column at position ``pos`` of the matrix ``m`` by the
         action of ``self``. ``m`` should have no zero column. ``self`` is set to

@@ -22,7 +22,7 @@ cdef class InnerGroup:
     cdef bint has_semilinear_action(self) noexcept
     cdef minimize_by_row_mult(self, FreeModuleElement v)
     cdef minimize_matrix_col(self, object m, int pos, list fixed_minimized_cols,
-                             bint *group_changed) noexcept
+                             bint *group_changed)
     cdef void gaussian_elimination(self, object m, int pos, int pivot, list nz_pos) noexcept
     cdef void minimize_by_frobenius(self, object v, int *applied_frob, int *stab_pow) noexcept
 

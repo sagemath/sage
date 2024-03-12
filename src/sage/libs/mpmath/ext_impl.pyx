@@ -1978,7 +1978,7 @@ cdef mpz_t BCIM[MAX_PARAMS]
 
 
 cdef MPF_hypsum(MPF *a, MPF *b, int p, int q, param_types, str ztype, coeffs, z,
-    long prec, long wp, long epsshift, dict magnitude_check, kwargs) noexcept:
+    long prec, long wp, long epsshift, dict magnitude_check, kwargs):
     """
     Evaluates a+bi = pFq(..., z) by summing the hypergeometric
     series in fixed-point arithmetic.
