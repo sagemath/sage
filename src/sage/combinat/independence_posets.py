@@ -198,7 +198,7 @@ def poset_of_mops(G):
 
 
 def complete_mop(G, S):
-    """
+    r"""
     INPUT:
 
     - ``G`` -- an acyclic directed graph
@@ -208,7 +208,7 @@ def complete_mop(G, S):
     OUTPUT:
 
     a set containing the maximal elements in a poset
-    of orthogonal pairs `(X, Y)` such that `X \\subset S`
+    of orthogonal pairs `(X, Y)` such that `X \subset S`
 
     EXAMPLES:
 
@@ -236,7 +236,7 @@ def complete_mop(G, S):
 # code for left modular lattices
 ##############################################################
 def is_left_modular(L, H=None, verbose=False) -> bool:
-    """
+    r"""
     INPUT:
 
     ``L`` -- left-modular lattice
@@ -251,14 +251,14 @@ def is_left_modular(L, H=None, verbose=False) -> bool:
     if ``verbose == True``, outputs a list of tuples
     `(y, x, z)` which fail left-modularity.
     if ``verbose == False``, outputs ``False``
-    if any one `x \\in H` fails to be left-modular and ``True`` otherwise.
+    if any one `x \in H` fails to be left-modular and ``True`` otherwise.
 
     ALGORITHM:
 
     Given a lattice `L` and a subset of elements `H`,
-    an element `x \\in H` is left-modular
-    if for every `y,z \\in L, y \\leq z`
-    the equality `(y \\vee x) \\wedge z = y \\vee (x \\wedge z)`.
+    an element `x \in H` is left-modular
+    if for every `y,z \in L, y \leq z`
+    the equality `(y \vee x) \wedge z = y \vee (x \wedge z)`.
 
     EXAMPLES:
 
@@ -292,7 +292,7 @@ def is_left_modular(L, H=None, verbose=False) -> bool:
 
 
 def join_irr_label(L, c, j):
-    """
+    r"""
     INPUT:
 
     ``L`` -- a left-modular lattice
@@ -304,7 +304,7 @@ def join_irr_label(L, c, j):
     OUTPUT:
 
     returns the label of the join-irreducible element ``j``,
-    defined as the minimum index `i` such that `j < x_i`, where `x_i \\in c`
+    defined as the minimum index `i` such that `j < x_i`, where `x_i \in c`
 
     EXAMPLES ::
 
@@ -321,7 +321,7 @@ def join_irr_label(L, c, j):
 
 
 def meet_irr_label(L, c, m):
-    """
+    r"""
     INPUT:
 
     ``L`` -- a left-modular lattice
@@ -333,7 +333,7 @@ def meet_irr_label(L, c, m):
     OUTPUT:
 
     returns the label of the meet-irreducible element ``m``, defined
-    as the maximum index `i` such that `m > x_{i-1}`, where `x_{i-1} \\in c`
+    as the maximum index `i` such that `m > x_{i-1}`, where `x_{i-1} \in c`
 
     EXAMPLES ::
 
@@ -350,7 +350,7 @@ def meet_irr_label(L, c, m):
 
 
 def downward_labels(L, c, z):
-    """
+    r"""
     INPUT:
 
     ``L`` -- a trim lattice L
@@ -362,10 +362,10 @@ def downward_labels(L, c, z):
     OUTPUT:
 
     the list of downward labels for z, defined as
-    `\\min\\{\\beta_J(j) | j \\in J, y \\vee j = z\\}` where
+    `\min\{\beta_J(j) | j \in J, y \vee j = z\}` where
     `J` is the set of all join-irreducibles in `L` and
-    `\\beta_J(j)` is the join-irreducible label of `j`
-    for all `y \\in L, y \\leq z`
+    `\beta_J(j)` is the join-irreducible label of `j`
+    for all `y \in L, y \leq z`
 
     EXAMPLES ::
 
@@ -388,7 +388,7 @@ def downward_labels(L, c, z):
 
 
 def upward_labels(L, c, z):
-    """
+    r"""
     INPUT:
 
     ``L`` -- a trim lattice L
@@ -400,9 +400,9 @@ def upward_labels(L, c, z):
     OUTPUT:
 
     the list of upward labels for ``z``, defined as
-    `\\max\\{\\beta_M(m) | m \\in M, z \\wedge m = y\\}` where `M` is
- the set of all meet-irreducibles in `L` and `\\beta_M(m)` is the
-    meet-irreducible label of `m` for all `y \\in L, y \\geq z`
+    `\max\{\beta_M(m) | m \in M, z \wedge m = y\}` where `M` is
+    the set of all meet-irreducibles in `L` and `\beta_M(m)` is the
+    meet-irreducible label of `m` for all `y \in L, y \geq z`
 
     EXAMPLES ::
 
@@ -425,14 +425,14 @@ def upward_labels(L, c, z):
 
 
 def cover_label(L, c, edge):
-    """
+    r"""
     INPUT:
 
     ``L`` -- a trim lattice L
 
     ``c`` -- a left-modular chain c
 
-    ``edge`` -- a covering relation ``[x,y]`` where `x \\leq y`
+    ``edge`` -- a covering relation ``[x,y]`` where `x \leq y`
 
     OUTPUT:
 
@@ -646,7 +646,7 @@ def minimal_top(G):
 
 
 def flip(G, du, j):
-    """
+    r"""
     INPUT:
 
     - ``G`` -- a finite acyclic directed graph
@@ -657,7 +657,7 @@ def flip(G, du, j):
 
     OUTPUT:
 
-    Performs a flip if `j \\in U` or `j \\in D`.
+    Performs a flip if `j \in U` or `j \in D`.
     Returns a new top ``(d, u)`` after the flip.
 
     EXAMPLES:
@@ -717,7 +717,7 @@ def flip(G, du, j):
 
 
 def flip_up(G, du, j):
-    """
+    r"""
     INPUT:
 
     - ``G`` -- a finite acyclic directed graph
@@ -728,7 +728,7 @@ def flip_up(G, du, j):
 
     OUTPUT:
 
-    conducts a flip only if `j \\in U`.
+    conducts a flip only if `j \in U`.
     Returns a new top ``(d, u)`` after the flip
 
     EXAMPLES:
@@ -767,7 +767,7 @@ def flip_up(G, du, j):
 
 
 def flips(G, du, s):
-    """
+    r"""
     INPUT:
 
     - ``G`` -- a directed acyclic graph
@@ -779,7 +779,7 @@ def flips(G, du, s):
     OUTPUT:
 
     returns a new top ``(d, u)`` after flipping on each element in ``s``
-    (i.e `\\displaystyle{ \\left( \\prod_{j \\in s} \\text{flip}_j \\right)(D, U) }`)
+    (i.e `\displaystyle{ \left( \prod_{j \in s} \text{flip}_j \right)(D, U) }`)
 
     EXAMPLES ::
 
