@@ -4,7 +4,7 @@ Low-level memory allocation functions
 TESTS:
 
 Check that an error is raised if we try to allocate a
-ridiculously large integer, see :trac:`15363`::
+ridiculously large integer, see :issue:`15363`::
 
     sage: try:
     ....:     2^(2^63-3)
@@ -14,11 +14,11 @@ ridiculously large integer, see :trac:`15363`::
 
 AUTHORS:
 
-- Jeroen Demeyer (2011-01-13): initial version (:trac:`10258`)
+- Jeroen Demeyer (2011-01-13): initial version (:issue:`10258`)
 
-- Jeroen Demeyer (2014-12-14): add more functions (:trac:`10257`)
+- Jeroen Demeyer (2014-12-14): add more functions (:issue:`10257`)
 
-- Jeroen Demeyer (2015-03-02): move from ``c_lib`` to Cython (:trac:`17881`)
+- Jeroen Demeyer (2015-03-02): move from ``c_lib`` to Cython (:issue:`17881`)
 """
 
 #*****************************************************************************

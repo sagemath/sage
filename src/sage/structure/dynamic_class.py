@@ -212,7 +212,7 @@ def dynamic_class(name, bases, cls=None, reduction=None, doccls=None,
     If all the base classes have a zero ``__dictoffset__``, the dynamic
     class also has a zero ``__dictoffset__``. This means that the
     instances of the class don't have a ``__dict__``
-    (see :trac:`23435`)::
+    (see :issue:`23435`)::
 
         sage: dyn = dynamic_class("dyn", (Integer,))
         sage: dyn.__dictoffset__
@@ -381,7 +381,7 @@ def dynamic_class_internal(name, bases, cls=None, reduction=None, doccls=None, p
         sage: sage_getsourcelines(Foo3().bla)
         (['    def bla():...'], ...)
 
-    We check that :trac:`21895` has been resolved::
+    We check that :issue:`21895` has been resolved::
 
         sage: C1 = sage.structure.dynamic_class.dynamic_class_internal("C1", (Morphism, UniqueRepresentation))
         sage: type(C1)
@@ -390,7 +390,7 @@ def dynamic_class_internal(name, bases, cls=None, reduction=None, doccls=None, p
         sage: type(C2)
         <class 'sage.structure.dynamic_class.DynamicInheritComparisonClasscallMetaclass'>
 
-    We check that :trac:`28392` has been resolved::
+    We check that :issue:`28392` has been resolved::
 
         sage: class A:
         ....:     pass

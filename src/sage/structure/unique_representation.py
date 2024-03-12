@@ -601,7 +601,7 @@ class CachedRepresentation(metaclass=ClasscallMetaclass):
         ....:         return self.value == other.value
 
     Two coexisting instances of ``MyClass`` created with the same argument data
-    are guaranteed to share the same identity. Since :trac:`12215`, this is
+    are guaranteed to share the same identity. Since :issue:`12215`, this is
     only the case if there is some strong reference to the returned instance,
     since otherwise it may be garbage collected::
 
@@ -1252,7 +1252,7 @@ class UniqueRepresentation(CachedRepresentation, WithEqualityById):
         ....:         self.value = value
 
     Two coexisting instances of ``MyClass`` created with the same argument
-    data are guaranteed to share the same identity. Since :trac:`12215`, this
+    data are guaranteed to share the same identity. Since :issue:`12215`, this
     is only the case if there is some strong reference to the returned
     instance, since otherwise it may be garbage collected::
 

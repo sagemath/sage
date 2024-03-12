@@ -59,7 +59,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     .. TODO::
 
         Many of these tests should use non-abelian Lie algebras and need to
-        be added after :trac:`16820`.
+        be added after :issue:`16820`.
     """
     _base_category_class_and_axiom = (LieAlgebras.FiniteDimensional, "WithBasis")
 
@@ -222,7 +222,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                  - 4*PBW[-alpha[1]]*PBW[alpha[1]] + PBW[alphacheck[1]]^2
                  - 2*PBW[alphacheck[1]]
 
-            Check that :trac:`23266` is fixed::
+            Check that :issue:`23266` is fixed::
 
                 sage: # needs sage.groups sage.modules
                 sage: sl2 = lie_algebras.sl(QQ, 2, 'matrix')
@@ -1985,7 +1985,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             TESTS:
 
             Check that the error raised agrees with the one
-            from ``monomial_coefficients()`` (see :trac:`25007`)::
+            from ``monomial_coefficients()`` (see :issue:`25007`)::
 
                 sage: # needs sage.combinat sage.modules
                 sage: L = lie_algebras.sp(QQ, 4, representation='matrix')

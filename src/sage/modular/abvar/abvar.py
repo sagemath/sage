@@ -944,7 +944,7 @@ class ModularAbelianVariety_abstract(Parent):
 
         When the intersection is infinite, the output is ``(G, A)``, where
         ``G`` surjects onto the component group. This choice of ``G`` is not
-        canonical (see :trac:`26189`). In this following example, ``B`` is a
+        canonical (see :issue:`26189`). In this following example, ``B`` is a
         subvariety of ``J``::
 
             sage: d1 = J0(11).degeneracy_map(22, 1)
@@ -1074,7 +1074,7 @@ class ModularAbelianVariety_abstract(Parent):
 
         TESTS:
 
-        This exposed a bug in HNF (see :trac:`4527`)::
+        This exposed a bug in HNF (see :issue:`4527`)::
 
             sage: A = J0(206).new_subvariety().decomposition()[3] ; A # long time
             Simple abelian subvariety 206d(1,206) of dimension 4 of J0(206)
@@ -1410,7 +1410,7 @@ class ModularAbelianVariety_abstract(Parent):
             True
 
         Quotienting by the identity should return the original variety and the
-        identity morphism. :trac:`6392` ::
+        identity morphism. :issue:`6392` ::
 
             sage: J = J0(22)
             sage: G = J.zero_subgroup()
@@ -3106,7 +3106,7 @@ class ModularAbelianVariety_abstract(Parent):
             Finite subgroup with invariants [5] over QQ of Abelian variety J0(33) of dimension 3
 
         This method gives a way of changing the ambient abelian variety of a
-        finite subgroup. This caused an issue in :trac:`6392` but should be
+        finite subgroup. This caused an issue in :issue:`6392` but should be
         fixed now. ::
 
             sage: A, B = J0(43)
@@ -5146,7 +5146,7 @@ def simple_factorization_of_modsym_space(M, simple=True):
 
     TESTS:
 
-    Check that :trac:`21799` is fixed::
+    Check that :issue:`21799` is fixed::
 
         sage: JH(28, [15]).decomposition()
         [

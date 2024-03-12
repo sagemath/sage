@@ -23,9 +23,9 @@ REFERENCES:
 
 AUTHORS:
 
-- Quentin Honoré (2015): construction of Hughes plane :trac:`18527`
+- Quentin Honoré (2015): construction of Hughes plane :issue:`18527`
 
-- Vincent Delecroix (2014): rewrite the part on projective planes :trac:`16281`
+- Vincent Delecroix (2014): rewrite the part on projective planes :issue:`16281`
 
 - Peter Dobcsanyi and David Joyner (2007-2008)
 

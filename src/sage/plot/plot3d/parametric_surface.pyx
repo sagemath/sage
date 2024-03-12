@@ -357,7 +357,7 @@ cdef class ParametricSurface(IndexFaceSet):
             sage: print(s[0][:100])
             {"vertices":[{"x":-2,"y":-2,"z":0},{"x":-2,"y":-1.89744,"z":0.399737},{"x":-1.89744,"y":-1.89744,"z"
 
-        One test for :trac:`22688`::
+        One test for :issue:`22688`::
 
             sage: P = spherical_plot3d(sqrt(x-pi/2),(x,0,pi),(y,0,2*pi))
             sage: s = P.json_repr(P.default_render_params())
@@ -778,7 +778,7 @@ cdef class ParametricSurface(IndexFaceSet):
         """
         Draw a 3D plot of this graphics object, which just returns this
         object since this is already a 3D graphics object.
-        Needed to support PLOT in doctrings, see :trac:`17498`
+        Needed to support PLOT in doctrings, see :issue:`17498`
 
         EXAMPLES::
 

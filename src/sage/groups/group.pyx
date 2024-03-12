@@ -94,7 +94,7 @@ cdef class Group(Parent):
             sage: G._repr_option('element_is_atomic')
             False
 
-        Check for :trac:`8119`::
+        Check for :issue:`8119`::
 
             sage: # needs sage.groups
             sage: G = SymmetricGroup(2)

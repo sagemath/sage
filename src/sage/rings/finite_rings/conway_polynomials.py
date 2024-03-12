@@ -239,7 +239,7 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
         # TODO: something like the following
         # gcds = [n.gcd(d) for d in self.nodes.keys()]
         # xi = { m: (...) for m in gcds }
-        xi = {q: self.polynomial(n//q).any_root(K, n//q, assume_squarefree=True, assume_distinct_deg=True)
+        xi = {q: self.polynomial(n//q).any_root(K, n//q, assume_squarefree=True, assume_equal_deg=True)
               for q in n.prime_divisors()}
 
         # The following is needed to ensure that in the concrete instantiation
