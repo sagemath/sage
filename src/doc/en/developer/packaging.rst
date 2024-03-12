@@ -603,15 +603,30 @@ For example, the ``scipy`` ``spkg-check.in`` file contains the line
 
     exec python3 spkg-check.py
 
-All normal Python packages and all wheel packages must have a file ``install-requires.txt``.
+Abstract requirements: The install-requires.txt file
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+All normal Python packages and all wheel packages must have a file ``version_requirements.txt``.
 If a Python package is available on PyPI, this file must contain the
-name of the package as it is known to PyPI.  Optionally,
-``install-requires.txt`` can encode version constraints (such as lower
+name of the package as it is known to PyPI.
+
+Optionally,
+``version_requirements.txt`` can encode version constraints (such as lower
 and upper bounds).  The constraints are in the format of the
 ``install_requires`` key of `setup.cfg
 <https://setuptools.readthedocs.io/en/latest/userguide/declarative_config.html>`_
 or `setup.py
 <https://packaging.python.org/discussions/install-requires-vs-requirements/#id5>`_.
+
+Sage uses these version constraints for two purposes:
+
+- As a source for generating the metadata of the Python
+  distribution packages in ``SAGE_ROOT/pkgs/``, see
+  :ref:`section_dependencies_distributions`.
+
+- When the experimental option ``configure --enable-system-site-packages`` is used,
+  then the ``configure`` script checks these constraints to determine whether
+  to accept an installation of this package in the system Python.
 
 It is strongly recommended to include comments (starting with ``#``)
 in the file that explain why a particular lower or upper bound is
@@ -623,7 +638,7 @@ For example:
 
     $ cat build/pkgs/sphinx/package-version.txt
     3.1.2.p0
-    $ cat build/pkgs/sphinx/install-requires.txt
+    $ cat build/pkgs/sphinx/version_requirements.txt
     # gentoo uses 3.2.1
     sphinx >=3, <3.3
 
@@ -631,7 +646,7 @@ The comments may include links to GitHub Issues/PRs, as in the following example
 
 .. CODE-BLOCK:: bash
 
-    $ cat build/pkgs/packaging/install-requires.txt
+    $ cat build/pkgs/packaging/version_requirements.txt
     packaging >=18.0
     # Issue #30975: packaging 20.5 is known to work
     # but we have to silence "DeprecationWarning: Creating a LegacyVersion"
@@ -643,6 +658,24 @@ update is made in order to pick up a critical bug fix from a newer
 version, then the lower bound should be adjusted.
 Setting upper bounds to guard against incompatible future changes is
 a complex topic; see :trac:`33520`.
+
+
+Concrete (pinned) requirements: The package-version.txt file
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Like normal non-Python packages, all normal Python packages and all wheel packages
+must have a file ``package-version.txt``.
+
+Sage uses this version for two purposes:
+
+- This is the version that the Sage distribution ships.
+
+- As a source for generating the ``requirements.txt`` files of
+  the Python distribution packages in ``SAGE_ROOT/pkgs/``, see
+  :ref:`section_dependencies_distributions`.
+
+  For the use of the generated ``requirements.txt`` files, see
+  the `pip User Guide <https://pip.pypa.io/en/stable/user_guide/#requirements-files>`_.
 
 
 .. _section-spkg-SPKG-txt:
@@ -799,7 +832,7 @@ Where packages are installed
 The Sage distribution has the notion of several installation trees.
 
 - ``$SAGE_VENV`` is the default installation tree for all Python packages, i.e.,
-  normal packages with an ``install-requires.txt``, wheel packages, and pip packages
+  normal packages with an ``version_requirements.txt``, wheel packages, and pip packages
   with a ``requirements.txt``.
 
 - ``$SAGE_LOCAL`` is the default installation tree for all non-Python packages.
@@ -1114,8 +1147,10 @@ obtains most of the necessary information by querying PyPI.
 
 The ``dependencies`` file may need editing (watch out for warnings regarding
 ``--no-deps`` that Sage issues during installation of the package!).
+
 Also you may want to set lower and upper bounds for acceptable package versions
-in the file ``install-requires.txt``.
+in the file ``version_requirements.txt``. (Make sure that the version in
+``package-version.txt`` falls within this acceptable version range!)
 
 By default, when the package is available as a platform-independent
 wheel, the ``sage --package`` creates a wheel package. To create a normal package
@@ -1151,6 +1186,12 @@ For Python packages available from PyPI, there is another shortcut::
     Updating matplotlib: 3.3.0 -> 3.3.1
     Downloading tarball to ...matplotlib-3.3.1.tar.bz2
     [...............................................................]
+
+When preparing the update, check that any lower and upper bounds for
+acceptable package versions that may be declared in the file
+``install-requires.txt`` are still correct, and update them as needed.
+The version in ``package-version.txt`` always needs to fall within the
+version range!
 
 If you pass the switch ``--commit``, the script will run ``git commit``
 for you.

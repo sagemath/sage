@@ -324,7 +324,7 @@ ptestoptionallong-nodoc:
 
 ###############################################################################
 
-configure: bootstrap src/doc/bootstrap configure.ac src/bin/sage-version.sh m4/*.m4 build/pkgs/*/spkg-configure.m4 build/pkgs/*/type build/pkgs/*/install-requires.txt build/pkgs/*/package-version.txt build/pkgs/*/distros/*.txt
+configure: bootstrap src/doc/bootstrap configure.ac src/bin/sage-version.sh m4/*.m4 build/pkgs/*/spkg-configure.m4 build/pkgs/*/type build/pkgs/*/version_requirements.txt build/pkgs/*/package-version.txt build/pkgs/*/distros/*.txt
 	./bootstrap -d
 
 install: all
