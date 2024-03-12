@@ -101,7 +101,7 @@ cdef class MultiModularBasis_base():
         mpz_init(self.product)
         mpz_init(self.half_product)
 
-    cdef _realloc_to_new_count(self, new_count) noexcept:
+    cdef _realloc_to_new_count(self, new_count):
         self.moduli = <mod_int*>check_reallocarray(self.moduli, new_count, sizeof(mod_int))
         self.partial_products = <mpz_t*>check_reallocarray(self.partial_products, new_count, sizeof(mpz_t))
         self.C = <mod_int*>check_reallocarray(self.C, new_count, sizeof(mod_int))

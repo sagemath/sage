@@ -28,9 +28,9 @@ cdef int singular_polynomial_div_coeff (poly **ret, poly *p, poly *q, ring *r) e
 cdef int singular_polynomial_pow (poly **ret, poly *p, unsigned long exp, ring *r) except -1
 cdef int singular_polynomial_neg(poly **ret, poly *p, ring *r) noexcept
 
-cdef object singular_polynomial_latex(poly *p, ring *r, object base, object latex_gens) noexcept
-cdef object singular_polynomial_str(poly *p, ring *r) noexcept
-cdef object singular_polynomial_str_with_changed_varnames(poly *p, ring *r, object varnames) noexcept
+cdef object singular_polynomial_latex(poly *p, ring *r, object base, object latex_gens)
+cdef object singular_polynomial_str(poly *p, ring *r)
+cdef object singular_polynomial_str_with_changed_varnames(poly *p, ring *r, object varnames)
 cdef long singular_polynomial_deg(poly *p, poly *x, ring *r) noexcept
 
 cdef int singular_polynomial_length_bounded(poly *p, int bound) noexcept

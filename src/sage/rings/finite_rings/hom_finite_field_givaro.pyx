@@ -100,7 +100,7 @@ cdef class SectionFiniteFieldHomomorphism_givaro(SectionFiniteFieldHomomorphism_
         self._codomain_cache = (<FiniteField_givaroElement>(self._codomain.gen()))._cache
 
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         TESTS::
 
@@ -182,7 +182,7 @@ cdef class FiniteFieldHomomorphism_givaro(FiniteFieldHomomorphism_generic):
         self._order_codomain = codomain.cardinality() - 1
 
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         TESTS::
 
@@ -273,7 +273,7 @@ cdef class FrobeniusEndomorphism_givaro(FrobeniusEndomorphism_finite_field):
 
 
 # copied from element_givaro.pyx
-cdef inline FiniteField_givaroElement make_FiniteField_givaroElement(Cache_givaro cache, int x) noexcept:
+cdef inline FiniteField_givaroElement make_FiniteField_givaroElement(Cache_givaro cache, int x):
     cdef FiniteField_givaroElement y
 
     if cache._has_array:

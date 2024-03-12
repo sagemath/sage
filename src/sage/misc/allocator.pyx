@@ -1,6 +1,6 @@
 from cpython.ref cimport Py_INCREF
 
-cdef _hook_tp_functions_type(PyTypeObject *t, newfunc tp_new, destructor tp_dealloc, bint useGC) noexcept:
+cdef _hook_tp_functions_type(PyTypeObject *t, newfunc tp_new, destructor tp_dealloc, bint useGC):
     """
     Initialize the fast integer creation functions.
     """
@@ -25,12 +25,12 @@ cdef _hook_tp_functions_type(PyTypeObject *t, newfunc tp_new, destructor tp_deal
     t.tp_dealloc = tp_dealloc
 
 
-cdef hook_tp_functions_type(object tp, newfunc tp_new, destructor tp_dealloc, bint useGC) noexcept:
+cdef hook_tp_functions_type(object tp, newfunc tp_new, destructor tp_dealloc, bint useGC):
     cdef PyTypeObject *t = <PyTypeObject *>tp
     _hook_tp_functions_type(t, tp_new, tp_dealloc, useGC)
 
 
-cdef hook_tp_functions(object global_dummy, newfunc tp_new, destructor tp_dealloc, bint useGC) noexcept:
+cdef hook_tp_functions(object global_dummy, newfunc tp_new, destructor tp_dealloc, bint useGC):
     """
     Initialize the fast integer creation functions.
     """

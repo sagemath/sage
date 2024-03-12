@@ -404,7 +404,7 @@ cdef class FrozenBitset:
             for n in iter:
                 bitset_add(self._bitset, n)
 
-    cdef FrozenBitset _new(self, long int capacity) noexcept:
+    cdef FrozenBitset _new(self, long int capacity):
         r"""
         Return an object of the same type as ``self``, initialized with a
         bitset of capacity ``capacity``.
@@ -471,7 +471,7 @@ cdef class FrozenBitset:
         """
         return reversed(bitset_list(self._bitset))
 
-    cpdef FrozenBitset _larger_capacity_(self, long capacity) noexcept:
+    cpdef FrozenBitset _larger_capacity_(self, long capacity):
         """
         Return a copy of ``self`` where the bitset has the maximum of the
         current capacity and the capacity passed.  If no resizing is needed,
@@ -872,7 +872,7 @@ cdef class FrozenBitset:
         """
         return str(self)
 
-    cpdef _union(self, FrozenBitset other) noexcept:
+    cpdef _union(self, FrozenBitset other):
         """
         Return the union of ``self`` and ``other``.
 
@@ -971,7 +971,7 @@ cdef class FrozenBitset:
         """
         return self._union(other)
 
-    cpdef intersection(self, FrozenBitset other) noexcept:
+    cpdef intersection(self, FrozenBitset other):
         """
         Return the intersection of ``self`` and ``other``.
 
@@ -1041,7 +1041,7 @@ cdef class FrozenBitset:
         """
         return self.intersection(other)
 
-    cpdef difference(self, FrozenBitset other) noexcept:
+    cpdef difference(self, FrozenBitset other):
         """
         Return the difference of ``self`` and ``other``.
 
@@ -1110,7 +1110,7 @@ cdef class FrozenBitset:
         """
         return self.difference(other)
 
-    cpdef symmetric_difference(self, FrozenBitset other) noexcept:
+    cpdef symmetric_difference(self, FrozenBitset other):
         """
         Return the symmetric difference of ``self`` and ``other``.
 
@@ -1183,7 +1183,7 @@ cdef class FrozenBitset:
         """
         return self.symmetric_difference(other)
 
-    cpdef complement(self) noexcept:
+    cpdef complement(self):
         """
         Return the complement of self.
 
@@ -1229,7 +1229,7 @@ cdef class FrozenBitset:
         """
         return self.complement()
 
-    cpdef  __copy__(self) noexcept:
+    cpdef  __copy__(self):
         """
         Return ``self`` (since ``self`` is immutable).
 
@@ -1287,7 +1287,7 @@ cdef class Bitset(FrozenBitset):
         True
     """
 
-    cpdef __copy__(self) noexcept:
+    cpdef __copy__(self):
         """
         Return a copy of ``self``.
 
@@ -1427,7 +1427,7 @@ cdef class Bitset(FrozenBitset):
         elif op == Py_GE:
             return bitset_issuperset(left._bitset, right._bitset)
 
-    cdef FrozenBitset _new(self, long int capacity) noexcept:
+    cdef FrozenBitset _new(self, long int capacity):
         """
         Return an object of the same type as ``self``, initialized with a
         bitset of capacity ``capacity``.
@@ -1436,7 +1436,7 @@ cdef class Bitset(FrozenBitset):
         b = Bitset.__new__(Bitset, None, capacity)
         return b
 
-    cpdef update(self, FrozenBitset other) noexcept:
+    cpdef update(self, FrozenBitset other):
         """
         Update the bitset to include items in ``other``.
 
@@ -1508,7 +1508,7 @@ cdef class Bitset(FrozenBitset):
         self.update(other)
         return self
 
-    cpdef intersection_update(self, FrozenBitset other) noexcept:
+    cpdef intersection_update(self, FrozenBitset other):
         """
         Update the bitset to the intersection of ``self`` and ``other``.
 
@@ -1577,7 +1577,7 @@ cdef class Bitset(FrozenBitset):
         self.intersection_update(other)
         return self
 
-    cpdef difference_update(self, FrozenBitset other) noexcept:
+    cpdef difference_update(self, FrozenBitset other):
         """
         Update the bitset to the difference of ``self`` and ``other``.
 
@@ -1674,7 +1674,7 @@ cdef class Bitset(FrozenBitset):
         self.difference_update(other)
         return self
 
-    cpdef symmetric_difference_update(self, FrozenBitset other) noexcept:
+    cpdef symmetric_difference_update(self, FrozenBitset other):
         """
         Update the bitset to the symmetric difference of ``self`` and
         ``other``.
@@ -1767,7 +1767,7 @@ cdef class Bitset(FrozenBitset):
         self.symmetric_difference_update(other)
         return self
 
-    cpdef add(self, unsigned long n) noexcept:
+    cpdef add(self, unsigned long n):
         """
         Update the bitset by adding ``n``.
 
@@ -1796,7 +1796,7 @@ cdef class Bitset(FrozenBitset):
             bitset_realloc(self._bitset, n + 1)
         bitset_add(self._bitset, n)
 
-    cpdef remove(self, unsigned long n) noexcept:
+    cpdef remove(self, unsigned long n):
         """
         Update the bitset by removing ``n``.  Raises ``KeyError`` if ``n`` is
         not contained in the bitset.
@@ -1836,7 +1836,7 @@ cdef class Bitset(FrozenBitset):
         else:
             bitset_remove(self._bitset, n)
 
-    cpdef discard(self, unsigned long n) noexcept:
+    cpdef discard(self, unsigned long n):
         """
         Update the bitset by removing ``n``.
 
@@ -1869,7 +1869,7 @@ cdef class Bitset(FrozenBitset):
         if n < self._bitset.size:
             bitset_discard(self._bitset, n)
 
-    cpdef pop(self) noexcept:
+    cpdef pop(self):
         """
         Remove and return an arbitrary element from the set. Raises
         ``KeyError`` if the set is empty.
@@ -1897,7 +1897,7 @@ cdef class Bitset(FrozenBitset):
         """
         return bitset_pop(self._bitset)
 
-    cpdef clear(self) noexcept:
+    cpdef clear(self):
         """
         Removes all elements from the bitset.
 

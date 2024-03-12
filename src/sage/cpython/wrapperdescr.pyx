@@ -87,7 +87,7 @@ def wrapperdescr_call(slotwrapper, self, *args, **kwds):
     return wrapperdescr_fastcall(slotwrapper, self, args, kwds)
 
 
-cdef wrapperdescr_fastcall(wrapper_descriptor slotwrapper, self, args, kwds) noexcept:
+cdef wrapperdescr_fastcall(wrapper_descriptor slotwrapper, self, args, kwds):
     # Cython implementation of wrapperdescr_call
     cdef wrapperbase* slotdef = slotwrapper.d_base
 

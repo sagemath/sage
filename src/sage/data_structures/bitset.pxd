@@ -12,29 +12,29 @@ from sage.data_structures.bitset_base cimport bitset_t
 # Python layer over bitset_t
 cdef class FrozenBitset:
     cdef bitset_t _bitset
-    cdef FrozenBitset _new(self,long int capacity) noexcept
-    cpdef FrozenBitset _larger_capacity_(self, long size) noexcept
+    cdef FrozenBitset _new(self,long int capacity)
+    cpdef FrozenBitset _larger_capacity_(self, long size)
     cpdef long capacity(self) noexcept
     cpdef bint isempty(self) noexcept
     cpdef bint issubset(self, FrozenBitset other) except -1
     cpdef bint issuperset(self, FrozenBitset other) except -1
     cpdef bint isdisjoint(self, FrozenBitset other) except -1
-    cpdef _union(self, FrozenBitset other) noexcept
-    cpdef intersection(self, FrozenBitset other) noexcept
-    cpdef difference(self, FrozenBitset other) noexcept
-    cpdef symmetric_difference(self, FrozenBitset other) noexcept
-    cpdef complement(self) noexcept
-    cpdef __copy__(self) noexcept
+    cpdef _union(self, FrozenBitset other)
+    cpdef intersection(self, FrozenBitset other)
+    cpdef difference(self, FrozenBitset other)
+    cpdef symmetric_difference(self, FrozenBitset other)
+    cpdef complement(self)
+    cpdef __copy__(self)
 
 cdef class Bitset(FrozenBitset):
-    cpdef __copy__(self) noexcept
-    cpdef update(self, FrozenBitset other) noexcept
-    cpdef intersection_update(self, FrozenBitset other) noexcept
-    cpdef difference_update(self, FrozenBitset other) noexcept
-    cpdef symmetric_difference_update(self, FrozenBitset other) noexcept
-    cpdef add(self, unsigned long n) noexcept
-    cpdef remove(self, unsigned long n) noexcept
-    cpdef discard(self, unsigned long n) noexcept
-    cpdef pop(self) noexcept
-    cpdef clear(self) noexcept
+    cpdef __copy__(self)
+    cpdef update(self, FrozenBitset other)
+    cpdef intersection_update(self, FrozenBitset other)
+    cpdef difference_update(self, FrozenBitset other)
+    cpdef symmetric_difference_update(self, FrozenBitset other)
+    cpdef add(self, unsigned long n)
+    cpdef remove(self, unsigned long n)
+    cpdef discard(self, unsigned long n)
+    cpdef pop(self)
+    cpdef clear(self)
 

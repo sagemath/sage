@@ -173,10 +173,10 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
             if z:
                 set_entry(&self.rows[se.i], se.j, z)
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value) noexcept:
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value):
         set_entry(&self.rows[i], j, (<IntegerMod_int> value).ivalue)
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         cdef IntegerMod_int n
         n =  IntegerMod_int.__new__(IntegerMod_int)
         IntegerMod_abstract.__init__(n, self._base_ring)
@@ -255,7 +255,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         else:
             raise ValueError("unknown matrix format")
 
-    cdef Matrix _matrix_times_matrix_(self, Matrix _right) noexcept:
+    cdef Matrix _matrix_times_matrix_(self, Matrix _right):
         """
         This code is implicitly called for multiplying self by another
         sparse matrix.
@@ -392,7 +392,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         self.check_bounds_and_mutability(r2,0)
         self.swap_rows_c(r1, r2)
 
-    cdef swap_rows_c(self, Py_ssize_t n1, Py_ssize_t n2) noexcept:
+    cdef swap_rows_c(self, Py_ssize_t n1, Py_ssize_t n2):
         """
         Swap the rows in positions n1 and n2. No bounds checking.
         """
@@ -401,7 +401,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
         self.rows[n1] = self.rows[n2]
         self.rows[n2] = tmp
 
-    cpdef _echelon_in_place(self, str algorithm) noexcept:
+    cpdef _echelon_in_place(self, str algorithm):
         """
         Replace self by its reduction to reduced row echelon form.
 

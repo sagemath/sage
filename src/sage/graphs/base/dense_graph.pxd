@@ -21,5 +21,5 @@ cdef int copy_dense_graph(DenseGraph dest, DenseGraph src) except -1
 
 cdef class DenseGraphBackend(CGraphBackend):
     cdef DenseGraph _cg
-    cdef inline CGraph cg(self) noexcept:
+    cdef inline CGraph cg(self):
         return <CGraph> self._cg

@@ -143,7 +143,7 @@ cpdef int iaxpy(a, dict X, dict Y, bint remove_zeros=True, bint factor_on_left=T
             del Y[key]
     return 0
 
-cpdef dict axpy(a, dict X, dict Y, bint factor_on_left=True) noexcept:
+cpdef dict axpy(a, dict X, dict Y, bint factor_on_left=True):
     """
     Return `a X + Y`.
 
@@ -203,7 +203,7 @@ cpdef dict axpy(a, dict X, dict Y, bint factor_on_left=True) noexcept:
         iaxpy(a, X, Y, True, factor_on_left)
     return Y
 
-cpdef dict negate(dict D) noexcept:
+cpdef dict negate(dict D):
     r"""
     Return a dictionary representing the vector `-X`.
 
@@ -220,7 +220,7 @@ cpdef dict negate(dict D) noexcept:
     """
     return { key: -value for key, value in D.iteritems() }
 
-cpdef dict scal(a, dict D, bint factor_on_left=True) noexcept:
+cpdef dict scal(a, dict D, bint factor_on_left=True):
     r"""
     Return a dictionary representing the vector `a*X`.
 
@@ -242,7 +242,7 @@ cpdef dict scal(a, dict D, bint factor_on_left=True) noexcept:
     # So for now we just delegate to axpy.
     return axpy(a, D, {}, factor_on_left=factor_on_left)
 
-cpdef dict add(dict D, dict D2) noexcept:
+cpdef dict add(dict D, dict D2):
     r"""
     Return the pointwise addition of dictionaries ``D`` and ``D2``.
 
@@ -269,7 +269,7 @@ cpdef dict add(dict D, dict D2) noexcept:
         D, D2 = D2, D
     return axpy(1, D2, D)
 
-cpdef dict sum(dict_iter) noexcept:
+cpdef dict sum(dict_iter):
     r"""
     Return the pointwise addition of dictionaries with coefficients.
 
@@ -310,7 +310,7 @@ cpdef dict sum(dict_iter) noexcept:
 
     return remove_zeros(result)
 
-cpdef dict linear_combination(dict_factor_iter, bint factor_on_left=True) noexcept:
+cpdef dict linear_combination(dict_factor_iter, bint factor_on_left=True):
     r"""
     Return the pointwise addition of dictionaries with coefficients.
 
@@ -355,7 +355,7 @@ cpdef dict linear_combination(dict_factor_iter, bint factor_on_left=True) noexce
 
     return remove_zeros(result)
 
-cpdef dict sum_of_monomials(monomials, scalar) noexcept:
+cpdef dict sum_of_monomials(monomials, scalar):
     r"""
     Return the pointwise addition of ``monomials``.
 
@@ -383,7 +383,7 @@ cpdef dict sum_of_monomials(monomials, scalar) noexcept:
             result[m] = scalar
     return remove_zeros(result)
 
-cpdef dict sum_of_terms(index_coeff_pairs) noexcept:
+cpdef dict sum_of_terms(index_coeff_pairs):
     r"""
     Return the linear combination of a monomial scaled by a coefficient.
 
@@ -411,7 +411,7 @@ cpdef dict sum_of_terms(index_coeff_pairs) noexcept:
             result[index] = coeff
     return remove_zeros(result)
 
-cdef dict remove_zeros(dict D) noexcept:
+cdef dict remove_zeros(dict D):
     """
     Remove all keys whose value is zero from ``D``.
     """
@@ -422,7 +422,7 @@ cdef dict remove_zeros(dict D) noexcept:
         del D[index]
     return D
 
-cpdef dict convert_remove_zeroes(dict D, R) noexcept:
+cpdef dict convert_remove_zeroes(dict D, R):
     """
     Remove all keys whose value is zero from ``D``
     after coercing into the ring ``R``.

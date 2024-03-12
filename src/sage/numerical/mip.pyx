@@ -2883,7 +2883,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         else:
             self._backend.solver_parameter(name, value)
 
-    cpdef sum(self, L) noexcept:
+    cpdef sum(self, L):
         r"""
         Efficiently computes the sum of a sequence of
         :class:`~sage.numerical.linear_functions.LinearFunction` elements
@@ -3664,7 +3664,7 @@ cdef class MIPVariable(FiniteFamily):
                 return NotImplemented
             return (<MIPVariable> right)._matrix_lmul_impl(left)
 
-    cdef _matrix_rmul_impl(self, m) noexcept:
+    cdef _matrix_rmul_impl(self, m):
         """
         Implement the action of a matrix multiplying from the right.
         """
@@ -3678,7 +3678,7 @@ cdef class MIPVariable(FiniteFamily):
         T = self._p.linear_functions_parent().tensor(V)
         return T(result)
 
-    cdef _matrix_lmul_impl(self, m) noexcept:
+    cdef _matrix_lmul_impl(self, m):
         """
         Implement the action of a matrix multiplying from the left.
         """

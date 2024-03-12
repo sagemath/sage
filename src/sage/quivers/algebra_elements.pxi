@@ -88,7 +88,7 @@ cdef inline void mon_free(path_mon_t M) noexcept:
     biseq_dealloc(M.path)
 
 # Linearisation
-cdef inline tuple mon_pickle(path_mon_t M) noexcept:
+cdef inline tuple mon_pickle(path_mon_t M):
     return (bitset_pickle(M.path.data) if M.path.length>0 else (),
             M.path.itembitsize, M.path.length, M.pos, M.l_len, M.s_len)
 
@@ -419,7 +419,7 @@ cdef inline mp_size_t term_total_degree(path_term_t *T) noexcept:
     return T.mon.path.length-T.mon.s_len
 
 # Linearisation
-cdef inline tuple term_pickle(path_term_t *T) noexcept:
+cdef inline tuple term_pickle(path_term_t *T):
     return (<object>T.coef, mon_pickle(T.mon))
 
 # De-linearisation
@@ -689,7 +689,7 @@ cdef bint poly_icopy_scale(path_poly_t *out, path_poly_t *P, object coef) except
     return True
 
 # Linearisation of a path polynomials
-cdef list poly_pickle(path_poly_t *P) noexcept:
+cdef list poly_pickle(path_poly_t *P):
     cdef list L = []
     cdef path_term_t *T = P.lead
     while T != NULL:
@@ -1232,7 +1232,7 @@ cdef path_homog_poly_t *homog_poly_copy(path_homog_poly_t *H) except NULL:
     return out
 
 # Linearisation
-cdef list homog_poly_pickle(path_homog_poly_t *H) noexcept:
+cdef list homog_poly_pickle(path_homog_poly_t *H):
     cdef list L = []
     while H != NULL:
         L.append((H.start, H.end, poly_pickle(H.poly)))

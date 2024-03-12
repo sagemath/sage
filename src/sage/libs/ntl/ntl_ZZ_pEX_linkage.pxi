@@ -80,7 +80,7 @@ cdef int celement_gen(ZZ_pEX_c *e, long i, cparent parent) except -2:
         parent[0].zzpec[0].restore()
     ZZ_pEX_SetX(e[0])
 
-cdef object celement_repr(ZZ_pEX_c *e, cparent parent) noexcept:
+cdef object celement_repr(ZZ_pEX_c *e, cparent parent):
     """
     We ignore NTL's printing.
 

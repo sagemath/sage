@@ -464,7 +464,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
         memo[id(self)] = self
         return self
 
-    cpdef _coerce_map_from_(self, other) noexcept:
+    cpdef _coerce_map_from_(self, other):
         """
         Return ``True`` if and only if there exists a coercion map from
         ``other`` to ``self``.
@@ -1975,7 +1975,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         memo[id(self)] = cpy
         return cpy
 
-    cpdef MPolynomial_libsingular _new_constant_poly(self, x, MPolynomialRing_libsingular P) noexcept:
+    cpdef MPolynomial_libsingular _new_constant_poly(self, x, MPolynomialRing_libsingular P):
         r"""
         Quickly create a new constant polynomial with value x in the parent P.
 
@@ -2137,7 +2137,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         """
         return self._hash_c()
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Compare left and right.
 
@@ -2195,7 +2195,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         cdef ring *r = (<MPolynomial_libsingular>left)._parent_ring
         return rich_to_bool(op, singular_polynomial_cmp(p, q, r))
 
-    cpdef _add_(left, right) noexcept:
+    cpdef _add_(left, right):
         """
         Add left and right.
 
@@ -2211,7 +2211,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
                                  (<MPolynomial_libsingular>right)._poly, r)
         return new_MP((<MPolynomial_libsingular>left)._parent, _p)
 
-    cpdef _sub_(left, right) noexcept:
+    cpdef _sub_(left, right):
         """
         Subtract left and right.
 
@@ -2228,7 +2228,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
                                 _ring)
         return new_MP((<MPolynomial_libsingular>left)._parent, _p)
 
-    cpdef _lmul_(self, Element left) noexcept:
+    cpdef _lmul_(self, Element left):
         """
         Multiply self with a base ring element.
 
@@ -2252,7 +2252,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         singular_polynomial_rmul(&_p, self._poly, left, _ring)
         return new_MP((<MPolynomial_libsingular>self)._parent, _p)
 
-    cpdef _mul_(left, right) noexcept:
+    cpdef _mul_(left, right):
         """
         Multiply left and right.
 
@@ -2276,7 +2276,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
                                  (<MPolynomial_libsingular>left)._parent_ring)
         return new_MP((<MPolynomial_libsingular>left)._parent,_p)
 
-    cpdef _div_(left, right_ringelement) noexcept:
+    cpdef _div_(left, right_ringelement):
         r"""
         Divide left by right
 
@@ -2479,7 +2479,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         s = singular_polynomial_str(self._poly, _ring)
         return s
 
-    cpdef _repr_short_(self) noexcept:
+    cpdef _repr_short_(self):
         """
         This is a faster but less pretty way to print polynomials. If
         available it uses the short SINGULAR notation.
@@ -3325,7 +3325,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             rChangeCurrRing(_ring)
         return bool(p_IsHomogeneous(self._poly,_ring))
 
-    cpdef _homogenize(self, int var) noexcept:
+    cpdef _homogenize(self, int var):
         """
         Return ``self`` if ``self`` is homogeneous.  Otherwise return
         a homogenized polynomial constructed by modifying the degree
@@ -3957,7 +3957,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         """
         return len(self._variable_indices_(sort=False))
 
-    cpdef is_constant(self) noexcept:
+    cpdef is_constant(self):
         """
         Return ``True`` if this polynomial is constant.
 
@@ -4099,7 +4099,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         else:
             return False
 
-    cpdef _floordiv_(self, right) noexcept:
+    cpdef _floordiv_(self, right):
         """
         Perform division with remainder and return the quotient.
 
@@ -5952,7 +5952,7 @@ cdef inline poly *addwithcarry(poly *tempvector, poly *maxvector, int pos, ring 
     return tempvector
 
 
-cdef inline MPolynomial_libsingular new_MP(MPolynomialRing_libsingular parent, poly *juice) noexcept:
+cdef inline MPolynomial_libsingular new_MP(MPolynomialRing_libsingular parent, poly *juice):
     """
     Construct MPolynomial_libsingular from parent and SINGULAR poly.
 

@@ -293,7 +293,7 @@ cdef class ElementWrapper(Element):
             return left._richcmp_(right, op)
         return coercion_model.richcmp(left, right, op)
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Return ``True`` if ``left`` compares with ``right`` based on ``op``.
 

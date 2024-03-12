@@ -93,10 +93,10 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
             if z:
                 mpq_vector_set_entry(&self._matrix[se.i], se.j, z.value)
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, x) noexcept:
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, x):
         mpq_vector_set_entry(&self._matrix[i], j, (<Rational> x).value)
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         cdef Rational x
         x = Rational()
         mpq_vector_get_entry(x.value, &self._matrix[i], j)
@@ -168,7 +168,7 @@ cdef class Matrix_rational_sparse(Matrix_sparse):
     #   * _list -- list of underlying elements (need not be a copy)
     #   * x _dict -- sparse dictionary of underlying elements (need not be a copy)
 
-    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix _right) noexcept:
+    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix _right):
         cdef Matrix_rational_sparse right, ans
         right = _right
 

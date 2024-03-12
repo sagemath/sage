@@ -57,7 +57,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
         else:
             return self ** (float(1)/n)
 
-    cdef __pow_double(self, double exponent, double sign) noexcept:
+    cdef __pow_double(self, double exponent, double sign):
         """
         If ``sign == 1`` or ``self >= 0``, return ``self ^ exponent``.
         If ``sign == -1`` and ``self < 0``, return ``- abs(self) ^ exponent``.
@@ -84,7 +84,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
             v = -v
         return self._new_c(sign * gsl_sf_exp(gsl_sf_log(v) * exponent))
 
-    cpdef _pow_(self, other) noexcept:
+    cpdef _pow_(self, other):
         """
         Return ``self`` raised to the real double power ``other``.
 
@@ -117,7 +117,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
         """
         return self.__pow_double((<RealDoubleElement>other)._value, 1)
 
-    cpdef _pow_int(self, n) noexcept:
+    cpdef _pow_int(self, n):
         """
         Return ``self`` raised to the integer power ``n``.
 
@@ -174,7 +174,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
         """
         return self.__pow_double(n, -1.0 if (n & 1) else 1.0)
 
-    cdef _pow_long(self, long n) noexcept:
+    cdef _pow_long(self, long n):
         """
         Compute ``self`` raised to the power ``n``.
 
@@ -214,7 +214,7 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
         # of n to double might change an odd number to an even number.
         return self.__pow_double(<double>n, -1.0 if (n & 1) else 1.0)
 
-    cdef _log_base(self, double log_of_base) noexcept:
+    cdef _log_base(self, double log_of_base):
         if self._value == 0:
             from sage.rings.real_double import RDF
             return RDF(-1)/RDF(0)

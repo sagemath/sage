@@ -188,7 +188,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         """
         raise NotImplementedError
 
-    cdef pAdicTemplateElement _new_with_value(self, celement value, long absprec) noexcept:
+    cdef pAdicTemplateElement _new_with_value(self, celement value, long absprec):
         """
         Creates a new element with a given value and absolute precision.
 
@@ -264,7 +264,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         check_ordp(s)
         return self._lshift_c(s)
 
-    cdef pAdicTemplateElement _lshift_c(self, long shift) noexcept:
+    cdef pAdicTemplateElement _lshift_c(self, long shift):
         raise NotImplementedError
 
     def __rshift__(pAdicTemplateElement self, shift):
@@ -312,7 +312,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         check_ordp(s)
         return self._rshift_c(s)
 
-    cdef pAdicTemplateElement _rshift_c(self, long shift) noexcept:
+    cdef pAdicTemplateElement _rshift_c(self, long shift):
         """
         Divides by ``p^shift`` and truncates (if the parent is not a field).
         """
@@ -380,7 +380,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         ans.check_preccap()
         return ans
 
-    cdef pAdicTemplateElement lift_to_precision_c(self, long absprec) noexcept:
+    cdef pAdicTemplateElement lift_to_precision_c(self, long absprec):
         """
         Lift this element to another with precision at least ``absprec``.
         """
@@ -626,7 +626,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         else:
             return trim_zeros(list(self.unit_part().expansion(lift_mode='smallest')))
 
-    cpdef pAdicTemplateElement unit_part(self) noexcept:
+    cpdef pAdicTemplateElement unit_part(self):
         r"""
         Returns the unit part of this element.
 
@@ -761,7 +761,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
         else:
             raise NotImplementedError("reduction modulo p^n with n>1")
 
-cdef Integer exact_pow_helper(long *ansrelprec, long relprec, _right, PowComputer_ prime_pow) noexcept:
+cdef Integer exact_pow_helper(long *ansrelprec, long relprec, _right, PowComputer_ prime_pow):
     """
     This function is used by exponentiation in both ``CR_template.pxi``
     and ``CA_template.pxi`` to determine the extra precision gained from
@@ -875,7 +875,7 @@ cdef long padic_pow_helper(celement result, celement base, long base_val, long b
     cpow(result, prime_pow.powhelper_oneunit, right.value, bloga_aprec, prime_pow)
     return bloga_aprec
 
-cdef _zero(expansion_mode mode, teich_ring) noexcept:
+cdef _zero(expansion_mode mode, teich_ring):
     """
     Return an appropriate zero for a given expansion mode.
 

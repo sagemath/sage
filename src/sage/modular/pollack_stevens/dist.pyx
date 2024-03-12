@@ -138,7 +138,7 @@ cdef class Dist(ModuleElement):
         """
         return self.parent().prime() ** (self.ordp) * self._moments
 
-    cpdef normalize(self, include_zeroth_moment=True) noexcept:
+    cpdef normalize(self, include_zeroth_moment=True):
         r"""
         Normalize so that the precision of the `i`-th moment is `n-i`,
         where `n` is the number of moments.
@@ -161,7 +161,7 @@ cdef class Dist(ModuleElement):
     cdef long _relprec(self) noexcept:
         raise NotImplementedError
 
-    cdef _unscaled_moment(self, long i) noexcept:
+    cdef _unscaled_moment(self, long i):
         raise NotImplementedError
 
     cpdef long _ord_p(self) noexcept:
@@ -481,7 +481,7 @@ cdef class Dist(ModuleElement):
                 pass
         return alpha
 
-    cpdef _richcmp_(_left, _right, int op) noexcept:
+    cpdef _richcmp_(_left, _right, int op):
         r"""
         Comparison.
 
@@ -800,7 +800,7 @@ cdef class Dist_vector(Dist):
         """
         return (self.__class__, (self._moments, self.parent(), self.ordp, False))
 
-    cdef Dist_vector _new_c(self) noexcept:
+    cdef Dist_vector _new_c(self):
         r"""
         Creates an empty distribution.
 
@@ -880,7 +880,7 @@ cdef class Dist_vector(Dist):
         """
         return len(self._moments)
 
-    cdef _unscaled_moment(self, long n) noexcept:
+    cdef _unscaled_moment(self, long n):
         r"""
         Return the `n`-th moment, unscaled by the overall power of `p`
         stored in ``self.ordp``.
@@ -894,7 +894,7 @@ cdef class Dist_vector(Dist):
         """
         return self._moments[n]
 
-    cdef Dist_vector _addsub(self, Dist_vector right, bint negate) noexcept:
+    cdef Dist_vector _addsub(self, Dist_vector right, bint negate):
         r"""
         Common code for the sum and the difference of two distributions
 
@@ -934,7 +934,7 @@ cdef class Dist_vector(Dist):
         ans._moments = smoments + rmoments
         return ans
 
-    cpdef _add_(self, _right) noexcept:
+    cpdef _add_(self, _right):
         r"""
         Sum of two distributions.
 
@@ -947,7 +947,7 @@ cdef class Dist_vector(Dist):
         """
         return self._addsub(<Dist_vector>_right, False)
 
-    cpdef _sub_(self, _right) noexcept:
+    cpdef _sub_(self, _right):
         r"""
         Difference of two distributions.
 
@@ -960,7 +960,7 @@ cdef class Dist_vector(Dist):
         """
         return self._addsub(<Dist_vector>_right, True)
 
-    cpdef _lmul_(self, Element right) noexcept:
+    cpdef _lmul_(self, Element right):
         r"""
         Scalar product of a distribution with a ring element that coerces into the base ring.
 
@@ -1044,7 +1044,7 @@ cdef class Dist_vector(Dist):
         """
         return Integer(len(self._moments) + self.ordp)
 
-    cpdef normalize(self, include_zeroth_moment=True) noexcept:
+    cpdef normalize(self, include_zeroth_moment=True):
         r"""
         Normalize by reducing modulo `Fil^N`, where `N` is the number of moments.
 
@@ -1270,7 +1270,7 @@ cdef class WeightKAction(Action):
         self._actmat = {}
         self._maxprecs = {}
 
-    cpdef acting_matrix(self, g, M) noexcept:
+    cpdef acting_matrix(self, g, M):
         r"""
         The matrix defining the action of ``g`` at precision ``M``.
 
@@ -1328,7 +1328,7 @@ cdef class WeightKAction(Action):
             mats[M] = A
             return A
 
-    cpdef _compute_acting_matrix(self, g, M) noexcept:
+    cpdef _compute_acting_matrix(self, g, M):
         r"""
         Compute the matrix defining the action of ``g`` at precision ``M``.
 
@@ -1357,7 +1357,7 @@ cdef class WeightKAction(Action):
 
 
 cdef class WeightKAction_vector(WeightKAction):
-    cpdef _compute_acting_matrix(self, g, M) noexcept:
+    cpdef _compute_acting_matrix(self, g, M):
         r"""
         Compute the matrix defining the action of ``g`` at precision ``M``.
 
@@ -1419,7 +1419,7 @@ cdef class WeightKAction_vector(WeightKAction):
             B *= (a * d - b * c) ** (self._dettwist)
         return B
 
-    cpdef _act_(self, g, _v) noexcept:
+    cpdef _act_(self, g, _v):
         r"""
         The right action of ``g`` on a distribution.
 

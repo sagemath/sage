@@ -189,7 +189,7 @@ cdef void newton_in_intervals(int *f, int *df, int n, double *beta,
     for i from 0 <= i < n:
         rts[i] = newton(f, df, n, (beta[i]+beta[i+1])/2, eps)
 
-cpdef lagrange_degree_3(int n, int an1, int an2, int an3) noexcept:
+cpdef lagrange_degree_3(int n, int an1, int an2, int an3):
     r"""
     Private function.  Solves the equations which arise in the Lagrange multiplier
     for degree 3: for each `1 \leq r \leq n-2`, we solve

@@ -499,7 +499,7 @@ cdef inline int ccopy(celement out, celement a, PowComputer_ prime_pow) except -
     """
     fmpz_poly_set(out, a)
 
-cdef inline cpickle(celement a, PowComputer_ prime_pow) noexcept:
+cdef inline cpickle(celement a, PowComputer_ prime_pow):
     """
     Serialization into objects that Sage knows how to pickle.
 
@@ -546,7 +546,7 @@ cdef inline long chash(celement a, long ordp, long prec, PowComputer_ prime_pow)
     fmpz_poly_get_coeff_mpz(h.value, a, 0)
     return hash(h)
 
-cdef inline cmodp_rep(fmpz_poly_t rep, fmpz_poly_t value, expansion_mode mode, bint return_list, PowComputer_ prime_pow) noexcept:
+cdef inline cmodp_rep(fmpz_poly_t rep, fmpz_poly_t value, expansion_mode mode, bint return_list, PowComputer_ prime_pow):
     """
     Compute a polynomial that is reduced modulo p and equivalent to the given value.
 
@@ -579,7 +579,7 @@ cdef inline cmodp_rep(fmpz_poly_t rep, fmpz_poly_t value, expansion_mode mode, b
             return L
 
 # the expansion_mode enum is defined in padic_template_element_header.pxi
-cdef inline cexpansion_next(fmpz_poly_t value, expansion_mode mode, long curpower, PowComputer_ prime_pow) noexcept:
+cdef inline cexpansion_next(fmpz_poly_t value, expansion_mode mode, long curpower, PowComputer_ prime_pow):
     """
     Return the next digit in a `p`-adic expansion of ``value``.
 
@@ -609,7 +609,7 @@ cdef inline cexpansion_next(fmpz_poly_t value, expansion_mode mode, long curpowe
     _fmpz_poly_normalise(value)
     return trim_zeros(ans) # defined in sage.rings.padics.misc and imported in padic_template_element
 
-cdef inline cexpansion_getitem(fmpz_poly_t value, long m, PowComputer_ prime_pow) noexcept:
+cdef inline cexpansion_getitem(fmpz_poly_t value, long m, PowComputer_ prime_pow):
     """
     Return the `m`th `p`-adic digit in the ``simple_mode`` expansion.
 
@@ -639,7 +639,7 @@ cdef inline cexpansion_getitem(fmpz_poly_t value, long m, PowComputer_ prime_pow
 # The element is filled in for zero in the p-adic expansion if necessary.
 _expansion_zero = []
 
-cdef list ccoefficients(celement x, long valshift, long prec, PowComputer_ prime_pow) noexcept:
+cdef list ccoefficients(celement x, long valshift, long prec, PowComputer_ prime_pow):
     """
     Return a list of coefficients, as elements that can be converted into the base ring.
 
@@ -849,7 +849,7 @@ cdef inline int cconv_mpz_t_out(mpz_t out, celement x, long valshift, long prec,
 
 ## Extra functions ##
 
-cdef cmatrix_mod_pn(celement a, long aprec, long valshift, PowComputer_ prime_pow) noexcept:
+cdef cmatrix_mod_pn(celement a, long aprec, long valshift, PowComputer_ prime_pow):
     r"""
     Returns the matrix of right multiplication by the element on
     the power basis `1, x, x^2, \ldots, x^{d-1}` for this

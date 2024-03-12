@@ -87,7 +87,7 @@ cdef class CutNode:
         bitset_free(self._l0)
         bitset_free(self._l1)
 
-    cdef CutNode copy(self) noexcept:
+    cdef CutNode copy(self):
         return CutNode(self._MC, self)
 
     cdef bint insert_plane(self, long p0) noexcept:
@@ -153,7 +153,7 @@ cdef class CutNode:
                         return False
         return True
 
-    cdef select_plane(self) noexcept:
+    cdef select_plane(self):
         """
         Choose a hyperplane from the linear subclass.
         """
@@ -169,7 +169,7 @@ cdef class CutNode:
 
         return bitset_first(self._p_free)
 
-    cdef list planes(self) noexcept:
+    cdef list planes(self):
         """
         Return all hyperplanes from the linear subclass.
         """

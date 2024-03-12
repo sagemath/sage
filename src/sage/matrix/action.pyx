@@ -215,7 +215,7 @@ cdef class MatrixMatrixAction(MatrixMulAction):
         return MatrixSpace(base, self.G.nrows(), self.underlying_set().ncols(),
                            sparse = self.G.is_sparse() and self.underlying_set().is_sparse())
 
-    cpdef _act_(self, g, s) noexcept:
+    cpdef _act_(self, g, s):
         """
         EXAMPLES:
 
@@ -326,7 +326,7 @@ cdef class MatrixVectorAction(MatrixMulAction):
                                                                  self.underlying_set().degree()))
         return FreeModule(base, self.G.nrows(), sparse = self.G.is_sparse())
 
-    cpdef _act_(self, g, s) noexcept:
+    cpdef _act_(self, g, s):
         cdef Matrix A = <Matrix>g
         cdef Vector v = <Vector>s
         if A._parent._base is not self._codomain._base:
@@ -378,7 +378,7 @@ cdef class VectorMatrixAction(MatrixMulAction):
                                                                  self.underlying_set().degree()))
         return FreeModule(base, self.G.ncols(), sparse = self.G.is_sparse())
 
-    cpdef _act_(self, g, s) noexcept:
+    cpdef _act_(self, g, s):
         cdef Matrix A = <Matrix>g
         cdef Vector v = <Vector>s
         if A._parent._base is not self._codomain._base:
@@ -437,7 +437,7 @@ cdef class MatrixPolymapAction(MatrixMulAction):
             return End(self.underlying_set().domain().change_ring(base))
         return Hom(self.underlying_set().domain().change_ring(base), self.underlying_set().codomain().change_ring(base))
 
-    cpdef _act_(self, mat, f) noexcept:
+    cpdef _act_(self, mat, f):
         """
         Call the action
 
@@ -510,7 +510,7 @@ cdef class PolymapMatrixAction(MatrixMulAction):
             return End(self.underlying_set().domain().change_ring(base))
         return Hom(self.underlying_set().domain().change_ring(base), self.underlying_set().codomain().change_ring(base))
 
-    cpdef _act_(self, mat, f) noexcept:
+    cpdef _act_(self, mat, f):
         """
         Call the action.
 
@@ -578,7 +578,7 @@ cdef class MatrixSchemePointAction(MatrixMulAction):
         amb = self.underlying_set().codomain()
         return amb.change_ring(base)(base)
 
-    cpdef _act_(self, mat, P) noexcept:
+    cpdef _act_(self, mat, P):
         """
         Action of matrices on scheme points.
 

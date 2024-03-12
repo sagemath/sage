@@ -232,7 +232,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
             se = <SparseEntry>t
             mzed_write_elem(self._entries, se.i, se.j, poly_to_word(se.entry))
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value) noexcept:
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value):
         """
         A[i,j] = value without bound checks
 
@@ -259,7 +259,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         """
         mzed_write_elem(self._entries, i, j, poly_to_word(value))
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         """
         Get A[i,j] without bound checks.
 
@@ -298,7 +298,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         """
         return mzed_read_elem(self._entries, i, j) == self._zero_word
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         Return A+B
 
@@ -324,7 +324,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         return A
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         EXAMPLES::
 
@@ -385,7 +385,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         sig_off()
         return ans
 
-    cdef _matrix_times_matrix_(self, Matrix right) noexcept:
+    cdef _matrix_times_matrix_(self, Matrix right):
         """
         Return A*B
 
@@ -428,7 +428,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         sig_off()
         return ans
 
-    cpdef Matrix_gf2e_dense _multiply_newton_john(Matrix_gf2e_dense self, Matrix_gf2e_dense right) noexcept:
+    cpdef Matrix_gf2e_dense _multiply_newton_john(Matrix_gf2e_dense self, Matrix_gf2e_dense right):
         """
         Return A*B using Newton-John tables.
 
@@ -490,7 +490,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         sig_off()
         return ans
 
-    cpdef Matrix_gf2e_dense _multiply_karatsuba(Matrix_gf2e_dense self, Matrix_gf2e_dense right) noexcept:
+    cpdef Matrix_gf2e_dense _multiply_karatsuba(Matrix_gf2e_dense self, Matrix_gf2e_dense right):
         r"""
         Matrix multiplication using Karatsuba over polynomials with
         matrix coefficients over GF(2).
@@ -538,7 +538,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         sig_off()
         return ans
 
-    cpdef Matrix_gf2e_dense _multiply_strassen(Matrix_gf2e_dense self, Matrix_gf2e_dense right, cutoff=0) noexcept:
+    cpdef Matrix_gf2e_dense _multiply_strassen(Matrix_gf2e_dense self, Matrix_gf2e_dense right, cutoff=0):
         """
         Winograd-Strassen matrix multiplication with Newton-John
         multiplication as base case.
@@ -592,7 +592,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         sig_off()
         return ans
 
-    cpdef _lmul_(self, Element right) noexcept:
+    cpdef _lmul_(self, Element right):
         """
         Return ``a*B`` for ``a`` an element of the base field.
 
@@ -625,7 +625,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         """
         return self.__copy__()
 
-    cpdef _richcmp_(self, right, int op) noexcept:
+    cpdef _richcmp_(self, right, int op):
         """
         EXAMPLES::
 
@@ -993,7 +993,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
 
         return A
 
-    cdef rescale_row_c(self, Py_ssize_t row, multiple, Py_ssize_t start_col) noexcept:
+    cdef rescale_row_c(self, Py_ssize_t row, multiple, Py_ssize_t start_col):
         """
         Return ``multiple * self[row][start_col:]``
 
@@ -1033,7 +1033,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         cdef m4ri_word x = poly_to_word(multiple)
         mzed_rescale_row(self._entries, row, start_col, x)
 
-    cdef add_multiple_of_row_c(self, Py_ssize_t row_to, Py_ssize_t row_from, multiple, Py_ssize_t start_col) noexcept:
+    cdef add_multiple_of_row_c(self, Py_ssize_t row_to, Py_ssize_t row_from, multiple, Py_ssize_t start_col):
         """
         Compute ``self[row_to][start_col:] += multiple * self[row_from][start_col:]``.
 
@@ -1067,7 +1067,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         mzed_add_multiple_of_row(self._entries, row_to, self._entries, row_from, x, start_col)
 
 
-    cdef swap_rows_c(self, Py_ssize_t row1, Py_ssize_t row2) noexcept:
+    cdef swap_rows_c(self, Py_ssize_t row1, Py_ssize_t row2):
         """
         Swap rows ``row1`` and ``row2``.
 
@@ -1091,7 +1091,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         """
         mzed_row_swap(self._entries, row1, row2)
 
-    cdef swap_columns_c(self, Py_ssize_t col1, Py_ssize_t col2) noexcept:
+    cdef swap_columns_c(self, Py_ssize_t col1, Py_ssize_t col2):
         """
         Swap columns ``col1`` and ``col2``.
 
@@ -1188,7 +1188,7 @@ cdef class Matrix_gf2e_dense(matrix_dense.Matrix_dense):
         A._entries = mzed_concat(A._entries, self._entries, right._entries)
         return A
 
-    cdef _stack_impl(self, bottom) noexcept:
+    cdef _stack_impl(self, bottom):
         r"""
         Stack ``self`` on top of ``bottom``.
 

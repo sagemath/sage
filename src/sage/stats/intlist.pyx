@@ -544,7 +544,7 @@ cdef class IntList:
         return self.time_series().plot_histogram(*args, **kwds)
 
 
-cdef IntList new_int_list(Py_ssize_t length) noexcept:
+cdef IntList new_int_list(Py_ssize_t length):
     """
     Function that is used internally to quickly create a new intlist
     without initializing any of the allocated memory.

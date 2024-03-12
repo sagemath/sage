@@ -29,7 +29,7 @@ from sage.rings.ring_extension_conversion cimport backend_parent, backend_elemen
 
 
 # I don't trust the operator ==
-cdef are_equal_morphisms(f, g) noexcept:
+cdef are_equal_morphisms(f, g):
     r"""
     Return ``True`` if ``f`` and ``g`` coincide on the
     generators of the domain, ``False`` otherwise.
@@ -227,7 +227,7 @@ cdef class RingExtensionHomomorphism(RingMap):
         """
         return "Ring"
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         r"""
         Return the image of ``x`` under this morphism.
 
@@ -318,7 +318,7 @@ cdef class RingExtensionHomomorphism(RingMap):
             base_map = base_map.extend_codomain(self.codomain())
         return base_map
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         r"""
         Compare this element with ``other`` according to
         the rich comparison operator ``op``.
@@ -494,7 +494,7 @@ cdef class RingExtensionHomomorphism(RingMap):
         else:
             return backend
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         Helper function for copying and pickling.
 
@@ -512,7 +512,7 @@ cdef class RingExtensionHomomorphism(RingMap):
         self._backend = _slots['_backend']
         RingMap._update_slots(self, _slots)
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Helper function for copying and pickling.
 
@@ -598,7 +598,7 @@ cdef class RingExtensionBackendIsomorphism(RingExtensionHomomorphism):
         """
         return ""
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         r"""
         Return the image of ``x`` under this morphism.
 
@@ -688,7 +688,7 @@ cdef class RingExtensionBackendReverseIsomorphism(RingExtensionHomomorphism):
         """
         return ""
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         r"""
         Return the image of ``x`` under this morphism.
 
@@ -771,7 +771,7 @@ cdef class MapFreeModuleToRelativeRing(Map):
         """
         return True
 
-    cpdef Element _call_(self, v) noexcept:
+    cpdef Element _call_(self, v):
         r"""
         Return the image of ``x`` under this morphism.
 
@@ -880,7 +880,7 @@ cdef class MapRelativeRingToFreeModule(Map):
         """
         return True
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         r"""
         Return the image of ``x`` under this morphism.
 
@@ -898,7 +898,7 @@ cdef class MapRelativeRingToFreeModule(Map):
         coeffs = self.backend_coefficients(x)
         return self.codomain()(coeffs)
 
-    cdef list backend_coefficients(self, RingExtensionElement x) noexcept:
+    cdef list backend_coefficients(self, RingExtensionElement x):
         r"""
         Return the coordinates of the image of ``x``
         as elements of the backend ring.

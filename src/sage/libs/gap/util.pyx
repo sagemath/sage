@@ -103,7 +103,7 @@ cdef class ObjWrapper():
         return <Py_hash_t>(self.value)
 
 
-cdef ObjWrapper wrap_obj(Obj obj) noexcept:
+cdef ObjWrapper wrap_obj(Obj obj):
     """
     Constructor function for :class:`ObjWrapper`
     """
@@ -120,7 +120,7 @@ cdef dict owned_objects_refcount = dict()
 #
 # used in Sage's libgap.Gap.count_GAP_objects
 #
-cpdef get_owned_objects() noexcept:
+cpdef get_owned_objects():
     """
     Helper to access the refcount dictionary from Python code
     """
@@ -184,7 +184,7 @@ MakeImmutable(libgap_errout);
 """
 
 
-cdef initialize() noexcept:
+cdef initialize():
     """
     Initialize the GAP library, if it hasn't already been
     initialized.  It is safe to call this multiple times. One can set
@@ -405,7 +405,7 @@ class GAPError(ValueError):  # ValueError for historical reasons
     """
 
 
-cdef str extract_libgap_errout() noexcept:
+cdef str extract_libgap_errout():
     """
     Reads the global variable libgap_errout and returns a Python string
     containing the error message (with some boilerplate removed).

@@ -21,11 +21,11 @@ cdef class PowComputer_ext(PowComputer_class):
     cdef void cleanup_ext(self) noexcept
 
 cdef class PowComputer_ZZ_pX(PowComputer_ext):
-    cdef ntl_ZZ_pContext_class get_context(self, long n) noexcept
-    cdef ntl_ZZ_pContext_class get_context_capdiv(self, long n) noexcept
-    cdef ntl_ZZ_pContext_class get_top_context(self) noexcept
-    cdef restore_context(self, long n) noexcept
-    cdef restore_context_capdiv(self, long n) noexcept
+    cdef ntl_ZZ_pContext_class get_context(self, long n)
+    cdef ntl_ZZ_pContext_class get_context_capdiv(self, long n)
+    cdef ntl_ZZ_pContext_class get_top_context(self)
+    cdef restore_context(self, long n)
+    cdef restore_context_capdiv(self, long n)
     cdef void restore_top_context(self) noexcept
     cdef ZZ_pX_Modulus_c* get_modulus(self, long n) noexcept
     cdef ZZ_pX_Modulus_c* get_modulus_capdiv(self, long n) noexcept

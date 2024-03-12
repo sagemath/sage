@@ -22,7 +22,7 @@ from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.integer_ring import ZZ
 
 
-cpdef Matrix_integer_dense moebius_matrix_fast(list positions) noexcept:
+cpdef Matrix_integer_dense moebius_matrix_fast(list positions):
     """
     Compute the Möbius matrix of a poset by a specific triangular inversion.
 
@@ -81,7 +81,7 @@ cpdef Matrix_integer_dense moebius_matrix_fast(list positions) noexcept:
     return A
 
 
-cpdef Matrix_integer_dense coxeter_matrix_fast(list positions) noexcept:
+cpdef Matrix_integer_dense coxeter_matrix_fast(list positions):
     """
     Compute the Coxeter matrix of a poset by a specific algorithm.
 

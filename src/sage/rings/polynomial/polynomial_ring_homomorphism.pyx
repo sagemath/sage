@@ -36,7 +36,7 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
                   To:   Rational Field
 
     """
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         Evaluate the homomorphism ``self`` at ``x``.
 
@@ -65,7 +65,7 @@ cdef class PolynomialRingHomomorphism_from_base(RingHomomorphism_from_base):
         else:
             return P([f(b) for b in x])
 
-    cpdef Element _call_with_args(self, x, args=(), kwds={}) noexcept:
+    cpdef Element _call_with_args(self, x, args=(), kwds={}):
         """
         Evaluate ``self`` at ``x`` with additional (keyword) arguments.
 

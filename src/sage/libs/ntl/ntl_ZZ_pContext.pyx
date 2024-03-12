@@ -162,7 +162,7 @@ cdef class ntl_ZZ_pContext_factory():
     def __init__(self):
         self.context_dict = {}
 
-    cdef ntl_ZZ_pContext_class make_c(self, ntl_ZZ v) noexcept:
+    cdef ntl_ZZ_pContext_class make_c(self, ntl_ZZ v):
         """
         Creates a new ZZ_pContext.
 

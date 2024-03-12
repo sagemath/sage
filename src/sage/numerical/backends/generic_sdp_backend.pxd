@@ -10,28 +10,28 @@
 cdef class GenericSDPBackend:
     cpdef int add_variable(self, obj=*, name=*) except -1
     cpdef int add_variables(self, int, names=*) except -1
-    cpdef set_sense(self, int sense) noexcept
-    cpdef objective_coefficient(self, int variable, coeff=*) noexcept
-    cpdef set_objective(self, list coeff, d=*) noexcept
-    cpdef add_linear_constraint(self, constraints, name=*) noexcept
-    cpdef add_linear_constraints(self, int number, names=*) noexcept
+    cpdef set_sense(self, int sense)
+    cpdef objective_coefficient(self, int variable, coeff=*)
+    cpdef set_objective(self, list coeff, d=*)
+    cpdef add_linear_constraint(self, constraints, name=*)
+    cpdef add_linear_constraints(self, int number, names=*)
     cpdef int solve(self) except -1
-    cpdef get_objective_value(self) noexcept
-    cpdef get_variable_value(self, int variable) noexcept
-    cpdef dual_variable(self, int variable, sparse=*) noexcept
-    cpdef slack(self, int variable, sparse=*) noexcept
+    cpdef get_objective_value(self)
+    cpdef get_variable_value(self, int variable)
+    cpdef dual_variable(self, int variable, sparse=*)
+    cpdef slack(self, int variable, sparse=*)
     cpdef bint is_maximization(self) noexcept
-    cpdef row(self, int i) noexcept
+    cpdef row(self, int i)
     cpdef int ncols(self) noexcept
     cpdef int nrows(self) noexcept
-    cpdef problem_name(self, name=*) noexcept
-    cpdef row_name(self, int index) noexcept
-    cpdef col_name(self, int index) noexcept
-    cpdef solver_parameter(self, name, value=*) noexcept
-    cpdef zero(self) noexcept
-    cpdef base_ring(self) noexcept
+    cpdef problem_name(self, name=*)
+    cpdef row_name(self, int index)
+    cpdef col_name(self, int index)
+    cpdef solver_parameter(self, name, value=*)
+    cpdef zero(self)
+    cpdef base_ring(self)
 
     cdef obj_constant_term
     cdef dict matrices_dim
 
-cpdef GenericSDPBackend get_solver(solver=?, base_ring=?) noexcept
+cpdef GenericSDPBackend get_solver(solver=?, base_ring=?)

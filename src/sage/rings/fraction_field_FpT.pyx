@@ -171,7 +171,7 @@ cdef class FpTElement(FieldElement):
         return (unpickle_FpT_element,
                 (self._parent, self.numer(), self.denom()))
 
-    cdef FpTElement _new_c(self) noexcept:
+    cdef FpTElement _new_c(self):
         """
         Creates a new FpTElement in the same field, leaving the value to be initialized.
         """
@@ -183,7 +183,7 @@ cdef class FpTElement(FieldElement):
         x.initialized = True
         return x
 
-    cdef FpTElement _copy_c(self) noexcept:
+    cdef FpTElement _copy_c(self):
         """
         Creates a new FpTElement in the same field, with the same value as self.
         """
@@ -210,7 +210,7 @@ cdef class FpTElement(FieldElement):
         """
         return self.numerator()
 
-    cpdef numerator(self) noexcept:
+    cpdef numerator(self):
         """
         Return the numerator of this element, as an element of the polynomial ring.
 
@@ -241,7 +241,7 @@ cdef class FpTElement(FieldElement):
         """
         return self.denominator()
 
-    cpdef denominator(self) noexcept:
+    cpdef denominator(self):
         """
         Return the denominator of this element, as an element of the polynomial ring.
 
@@ -369,7 +369,7 @@ cdef class FpTElement(FieldElement):
         else:
             return "\\frac{%s}{%s}" % (self.numer()._latex_(), self.denom()._latex_())
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         """
         Compare this with another element.
 
@@ -474,7 +474,7 @@ cdef class FpTElement(FieldElement):
         nmod_poly_swap(x._numer, x._denom)
         return x
 
-    cpdef _add_(self, _other) noexcept:
+    cpdef _add_(self, _other):
         """
         Return the sum of this fraction field element and another.
 
@@ -502,7 +502,7 @@ cdef class FpTElement(FieldElement):
         normalize(x._numer, x._denom, self.p)
         return x
 
-    cpdef _sub_(self, _other) noexcept:
+    cpdef _sub_(self, _other):
         """
         Return the difference of this fraction field element and another.
 
@@ -524,7 +524,7 @@ cdef class FpTElement(FieldElement):
         normalize(x._numer, x._denom, self.p)
         return x
 
-    cpdef _mul_(self, _other) noexcept:
+    cpdef _mul_(self, _other):
         """
         Return the product of this fraction field element and another.
 
@@ -544,7 +544,7 @@ cdef class FpTElement(FieldElement):
         normalize(x._numer, x._denom, self.p)
         return x
 
-    cpdef _div_(self, _other) noexcept:
+    cpdef _div_(self, _other):
         """
         Return the quotient of this fraction field element and another.
 
@@ -568,7 +568,7 @@ cdef class FpTElement(FieldElement):
         normalize(x._numer, x._denom, self.p)
         return x
 
-    cpdef FpTElement next(self) noexcept:
+    cpdef FpTElement next(self):
         """
         Iterate through all polynomials, returning the "next" polynomial after this one.
 
@@ -674,7 +674,7 @@ cdef class FpTElement(FieldElement):
                     nmod_poly_clear(g)
         return next
 
-    cpdef _sqrt_or_None(self) noexcept:
+    cpdef _sqrt_or_None(self):
         """
         Return the square root of ``self``, or ``None``.
 
@@ -1063,7 +1063,7 @@ cdef class Polyring_FpT_coerce(RingHomomorphism):
         RingHomomorphism.__init__(self, R.ring_of_integers().Hom(R))
         self.p = R.base_ring().characteristic()
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -1079,7 +1079,7 @@ cdef class Polyring_FpT_coerce(RingHomomorphism):
         slots['p'] = self.p
         return slots
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         Helper for copying and pickling.
 
@@ -1094,7 +1094,7 @@ cdef class Polyring_FpT_coerce(RingHomomorphism):
         self.p = _slots['p']
         RingHomomorphism._update_slots(self, _slots)
 
-    cpdef Element _call_(self, _x) noexcept:
+    cpdef Element _call_(self, _x):
         """
         Applies the coercion.
 
@@ -1117,7 +1117,7 @@ cdef class Polyring_FpT_coerce(RingHomomorphism):
         ans.initialized = True
         return ans
 
-    cpdef Element _call_with_args(self, _x, args=(), kwds={}) noexcept:
+    cpdef Element _call_with_args(self, _x, args=(), kwds={}):
         """
         This function allows the map to take multiple arguments,
         usually used to specify both numerator and denominator.
@@ -1266,7 +1266,7 @@ cdef class FpT_Polyring_section(Section):
         self.p = f.p
         Section.__init__(self, f)
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -1288,7 +1288,7 @@ cdef class FpT_Polyring_section(Section):
         slots['p'] = self.p
         return slots
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         Helper for copying and pickling.
 
@@ -1309,7 +1309,7 @@ cdef class FpT_Polyring_section(Section):
         self.p = _slots['p']
         Section._update_slots(self, _slots)
 
-    cpdef Element _call_(self, _x) noexcept:
+    cpdef Element _call_(self, _x):
         """
         Applies the section.
 
@@ -1381,7 +1381,7 @@ cdef class Fp_FpT_coerce(RingHomomorphism):
         RingHomomorphism.__init__(self, R.base_ring().Hom(R))
         self.p = R.base_ring().characteristic()
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -1400,7 +1400,7 @@ cdef class Fp_FpT_coerce(RingHomomorphism):
         slots['p'] = self.p
         return slots
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         Helper for copying and pickling.
 
@@ -1418,7 +1418,7 @@ cdef class Fp_FpT_coerce(RingHomomorphism):
         self.p = _slots['p']
         RingHomomorphism._update_slots(self, _slots)
 
-    cpdef Element _call_(self, _x) noexcept:
+    cpdef Element _call_(self, _x):
         """
         Applies the coercion.
 
@@ -1441,7 +1441,7 @@ cdef class Fp_FpT_coerce(RingHomomorphism):
         ans.initialized = True
         return ans
 
-    cpdef Element _call_with_args(self, _x, args=(), kwds={}) noexcept:
+    cpdef Element _call_with_args(self, _x, args=(), kwds={}):
         """
         This function allows the map to take multiple arguments, usually used to specify both numerator and denominator.
 
@@ -1569,7 +1569,7 @@ cdef class FpT_Fp_section(Section):
         self.p = f.p
         Section.__init__(self, f)
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -1597,7 +1597,7 @@ cdef class FpT_Fp_section(Section):
         slots['p'] = self.p
         return slots
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         Helper for copying and pickling.
 
@@ -1624,7 +1624,7 @@ cdef class FpT_Fp_section(Section):
         self.p = _slots['p']
         Section._update_slots(self, _slots)
 
-    cpdef Element _call_(self, _x) noexcept:
+    cpdef Element _call_(self, _x):
         """
         Applies the section.
 
@@ -1703,7 +1703,7 @@ cdef class ZZ_FpT_coerce(RingHomomorphism):
         RingHomomorphism.__init__(self, ZZ.Hom(R))
         self.p = R.base_ring().characteristic()
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -1724,7 +1724,7 @@ cdef class ZZ_FpT_coerce(RingHomomorphism):
         slots['p'] = self.p
         return slots
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         Helper for copying and pickling.
 
@@ -1744,7 +1744,7 @@ cdef class ZZ_FpT_coerce(RingHomomorphism):
         self.p = _slots['p']
         RingHomomorphism._update_slots(self, _slots)
 
-    cpdef Element _call_(self, _x) noexcept:
+    cpdef Element _call_(self, _x):
         """
         Applies the coercion.
 
@@ -1767,7 +1767,7 @@ cdef class ZZ_FpT_coerce(RingHomomorphism):
         ans.initialized = True
         return ans
 
-    cpdef Element _call_with_args(self, _x, args=(), kwds={}) noexcept:
+    cpdef Element _call_with_args(self, _x, args=(), kwds={}):
         """
         This function allows the map to take multiple arguments, usually used to specify both numerator and denominator.
 

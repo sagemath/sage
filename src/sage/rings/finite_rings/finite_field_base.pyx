@@ -1318,7 +1318,7 @@ cdef class FiniteField(Field):
 
         return V, phi, psi
 
-    cpdef _coerce_map_from_(self, R) noexcept:
+    cpdef _coerce_map_from_(self, R):
         r"""
         Canonical coercion to ``self``.
 
@@ -1389,7 +1389,7 @@ cdef class FiniteField(Field):
                       and hasattr(self, '_prefix') and hasattr(R, '_prefix')):
                     return R.hom((self.gen() ** ((self.order() - 1)//(R.order() - 1)),))
 
-    cpdef _convert_map_from_(self, R) noexcept:
+    cpdef _convert_map_from_(self, R):
         """
         Conversion from p-adic fields.
 

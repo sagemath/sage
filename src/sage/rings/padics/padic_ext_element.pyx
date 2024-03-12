@@ -263,10 +263,10 @@ cdef class pAdicExtElement(pAdicGenericElement):
     cdef long _check_ZZ_pEContext(self, ntl_ZZ_pEContext_class ctx) except -1:
         raise NotImplementedError
 
-    cdef ext_p_list(self, bint pos) noexcept:
+    cdef ext_p_list(self, bint pos):
         raise NotImplementedError
 
-    cdef ext_p_list_precs(self, bint pos, long prec) noexcept:
+    cdef ext_p_list_precs(self, bint pos, long prec):
         raise NotImplementedError
 
     def _const_term_test(self):

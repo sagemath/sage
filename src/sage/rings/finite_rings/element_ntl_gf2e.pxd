@@ -13,9 +13,9 @@ cdef class Cache_ntl_gf2e(Cache_base):
     cdef public FiniteField_ntl_gf2eElement _gen
     cdef Integer _order
     cdef Integer _degree
-    cdef FiniteField_ntl_gf2eElement _new(self) noexcept
+    cdef FiniteField_ntl_gf2eElement _new(self)
 
 cdef class FiniteField_ntl_gf2eElement(FinitePolyExtElement):
     cdef GF2E_c x
     cdef Cache_ntl_gf2e _cache
-    cdef FiniteField_ntl_gf2eElement _new(FiniteField_ntl_gf2eElement self) noexcept
+    cdef FiniteField_ntl_gf2eElement _new(FiniteField_ntl_gf2eElement self)

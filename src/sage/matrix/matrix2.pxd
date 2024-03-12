@@ -15,10 +15,10 @@ Generic matrices
 from sage.matrix.matrix1 cimport Matrix as Matrix1
 
 cdef class Matrix(Matrix1):
-    cdef _det_by_minors(self, Py_ssize_t level) noexcept
-    cdef _pf_bfl(self) noexcept
+    cdef _det_by_minors(self, Py_ssize_t level)
+    cdef _pf_bfl(self)
     cdef bint _is_positive_definite_or_semidefinite(self, bint semi) except -1
-    cdef tuple _block_ldlt(self, bint classical) noexcept
-    cpdef _echelon(self, str algorithm) noexcept
-    cpdef _echelon_in_place(self, str algorithm) noexcept
-    cpdef matrix_window(self, Py_ssize_t row=*, Py_ssize_t col=*, Py_ssize_t nrows=*, Py_ssize_t ncols=*, bint check=*) noexcept
+    cdef tuple _block_ldlt(self, bint classical)
+    cpdef _echelon(self, str algorithm)
+    cpdef _echelon_in_place(self, str algorithm)
+    cpdef matrix_window(self, Py_ssize_t row=*, Py_ssize_t col=*, Py_ssize_t nrows=*, Py_ssize_t ncols=*, bint check=*)

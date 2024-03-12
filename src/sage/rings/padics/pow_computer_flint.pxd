@@ -23,7 +23,7 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
     cdef fmpz_poly_t* _moduli
     cdef fmpz_poly_t* get_modulus(self, unsigned long n) noexcept
     cdef fmpz_poly_t* get_modulus_capdiv(self, unsigned long n) noexcept
-    cdef _new_fmpz_poly(self, fmpz_poly_t value, var=*) noexcept
+    cdef _new_fmpz_poly(self, fmpz_poly_t value, var=*)
 
 cdef class PowComputer_flint_unram(PowComputer_flint_1step):
     # WARNING:

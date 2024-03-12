@@ -69,7 +69,7 @@ cpdef int gen_index(PolyDict x) noexcept:
     return e._data[0]
 
 
-cpdef ETuple monomial_exponent(PolyDict p) noexcept:
+cpdef ETuple monomial_exponent(PolyDict p):
     r"""
     Return the unique exponent of ``p`` if it is a monomial or raise a ``ValueError``.
 
@@ -189,12 +189,12 @@ cdef class PolyDict:
             if remove_zero:
                 self.remove_zeros()
 
-    cdef PolyDict _new(self, dict pdict) noexcept:
+    cdef PolyDict _new(self, dict pdict):
         cdef PolyDict ans = PolyDict.__new__(PolyDict)
         ans.__repn = pdict
         return ans
 
-    cpdef remove_zeros(self, zero_test=None) noexcept:
+    cpdef remove_zeros(self, zero_test=None):
         r"""
         Remove the entries with zero coefficients.
 
@@ -1430,7 +1430,7 @@ cdef class ETuple:
     question (although, there is no question that this is much faster
     than the prior use of python dicts).
     """
-    cdef ETuple _new(self) noexcept:
+    cdef ETuple _new(self):
         """
         Quickly creates a new initialized ETuple with the
         same length as self.
@@ -1989,7 +1989,7 @@ cdef class ETuple:
             ind1 += 2
         return deg
 
-    cpdef ETuple eadd(self, ETuple other) noexcept:
+    cpdef ETuple eadd(self, ETuple other):
         """
         Return the vector addition of ``self`` with ``other``.
 
@@ -2039,7 +2039,7 @@ cdef class ETuple:
                 result._nonzero += 1
         return result
 
-    cpdef ETuple eadd_p(self, int other, size_t pos) noexcept:
+    cpdef ETuple eadd_p(self, int other, size_t pos):
         """
         Add ``other`` to ``self`` at position ``pos``.
 
@@ -2127,7 +2127,7 @@ cdef class ETuple:
 
         return result
 
-    cpdef ETuple eadd_scaled(self, ETuple other, int scalar) noexcept:
+    cpdef ETuple eadd_scaled(self, ETuple other, int scalar):
         """
         Vector addition of ``self`` with ``scalar * other``.
 
@@ -2166,7 +2166,7 @@ cdef class ETuple:
                 result._nonzero += 1
         return result
 
-    cpdef ETuple esub(self, ETuple other) noexcept:
+    cpdef ETuple esub(self, ETuple other):
         """
         Vector subtraction of ``self`` with ``other``.
 
@@ -2204,7 +2204,7 @@ cdef class ETuple:
                 result._nonzero += 1
         return result
 
-    cpdef ETuple emul(self, int factor) noexcept:
+    cpdef ETuple emul(self, int factor):
         """
         Scalar Vector multiplication of ``self``.
 
@@ -2228,7 +2228,7 @@ cdef class ETuple:
                 result._data[2 * ind + 1] = self._data[2 * ind + 1] * factor
         return result
 
-    cpdef ETuple emax(self, ETuple other) noexcept:
+    cpdef ETuple emax(self, ETuple other):
         """
         Vector of maximum of components of ``self`` and ``other``.
 
@@ -2275,7 +2275,7 @@ cdef class ETuple:
                 result._nonzero += 1
         return result
 
-    cpdef ETuple emin(self, ETuple other) noexcept:
+    cpdef ETuple emin(self, ETuple other):
         """
         Vector of minimum of components of ``self`` and ``other``.
 
@@ -2345,7 +2345,7 @@ cdef class ETuple:
             result += exp1 * exp2
         return result
 
-    cpdef ETuple escalar_div(self, int n) noexcept:
+    cpdef ETuple escalar_div(self, int n):
         r"""
         Divide each exponent by ``n``.
 
@@ -2386,7 +2386,7 @@ cdef class ETuple:
                 result._nonzero += 1
         return result
 
-    cpdef ETuple divide_by_gcd(self, ETuple other) noexcept:
+    cpdef ETuple divide_by_gcd(self, ETuple other):
         """
         Return ``self / gcd(self, other)``.
 
@@ -2429,7 +2429,7 @@ cdef class ETuple:
             ind1 += 2
         return result
 
-    cpdef ETuple divide_by_var(self, size_t pos) noexcept:
+    cpdef ETuple divide_by_var(self, size_t pos):
         """
         Return division of ``self`` by the variable with index ``pos``.
 
@@ -2556,7 +2556,7 @@ cdef class ETuple:
                 return False
         return True
 
-    cpdef list nonzero_positions(self, bint sort=False) noexcept:
+    cpdef list nonzero_positions(self, bint sort=False):
         """
         Return the positions of non-zero exponents in the tuple.
 
@@ -2575,7 +2575,7 @@ cdef class ETuple:
         cdef size_t ind
         return [self._data[2 * ind] for ind in range(self._nonzero)]
 
-    cpdef common_nonzero_positions(self, ETuple other, bint sort=False) noexcept:
+    cpdef common_nonzero_positions(self, ETuple other, bint sort=False):
         """
         Returns an optionally sorted list of non zero positions either
         in self or other, i.e. the only positions that need to be
@@ -2598,7 +2598,7 @@ cdef class ETuple:
         else:
             return res
 
-    cpdef list nonzero_values(self, bint sort=True) noexcept:
+    cpdef list nonzero_values(self, bint sort=True):
         """
         Return the non-zero values of the tuple.
 
@@ -2620,7 +2620,7 @@ cdef class ETuple:
         cdef size_t ind
         return [self._data[2 * ind + 1] for ind in range(self._nonzero)]
 
-    cpdef ETuple reversed(self) noexcept:
+    cpdef ETuple reversed(self):
         """
         Return the reversed ETuple of ``self``.
 

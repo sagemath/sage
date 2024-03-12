@@ -961,7 +961,7 @@ cdef class SemidefiniteProgram(SageObject):
         return self._backend.get_objective_value()
 
 
-    cpdef dual_variable(self, int i, sparse=False) noexcept:
+    cpdef dual_variable(self, int i, sparse=False):
         """
         The `i`-th dual variable.
 
@@ -1013,7 +1013,7 @@ cdef class SemidefiniteProgram(SageObject):
         """
         return self._backend.dual_variable(i, sparse=sparse)
 
-    cpdef slack(self, int i, sparse=False) noexcept:
+    cpdef slack(self, int i, sparse=False):
         """
         Slack of the `i`-th constraint
 
@@ -1109,7 +1109,7 @@ cdef class SemidefiniteProgram(SageObject):
         else:
             self._backend.solver_parameter(name, value)
 
-    cpdef sum(self, L) noexcept:
+    cpdef sum(self, L):
         r"""
         Efficiently computes the sum of a sequence of
         :class:`~sage.numerical.linear_functions.LinearFunction` elements.
@@ -1332,7 +1332,7 @@ cdef class SDPVariable(Element):
         """
         return self._dict.values()
 
-    cdef _matrix_rmul_impl(self, m) noexcept:
+    cdef _matrix_rmul_impl(self, m):
         """
         Implement the action of a matrix multiplying from the right.
         """
@@ -1346,7 +1346,7 @@ cdef class SDPVariable(Element):
         T = self._p.linear_functions_parent().tensor(V)
         return T(result)
 
-    cdef _matrix_lmul_impl(self, m) noexcept:
+    cdef _matrix_lmul_impl(self, m):
         """
         Implement the action of a matrix multiplying from the left.
         """
@@ -1360,7 +1360,7 @@ cdef class SDPVariable(Element):
         T = self._p.linear_functions_parent().tensor(V)
         return T(result)
 
-    cpdef _acted_upon_(self, mat, bint self_on_left) noexcept:
+    cpdef _acted_upon_(self, mat, bint self_on_left):
         """
         Act with matrices on SDPVariables.
 

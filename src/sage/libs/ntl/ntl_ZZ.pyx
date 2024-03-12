@@ -32,7 +32,7 @@ from sage.misc.randstate cimport current_randstate
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 
 
-cdef make_ZZ(ZZ_c* x) noexcept:
+cdef make_ZZ(ZZ_c* x):
     cdef ntl_ZZ y
     y = ntl_ZZ()
     y.x = x[0]

@@ -555,7 +555,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
         else:
             return self._generic_coerce_map(self.base_ring())
 
-    cdef _coerce_c_impl(self, x) noexcept:
+    cdef _coerce_c_impl(self, x):
         """
         Return the canonical coercion of x to this multivariate
         polynomial ring, if one is defined, or raise a TypeError.

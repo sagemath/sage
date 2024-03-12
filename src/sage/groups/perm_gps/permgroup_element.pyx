@@ -513,7 +513,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             if p not in P:
                 raise ValueError('permutation %s not in %s' % (g, parent))
 
-    cpdef _set_identity(self) noexcept:
+    cpdef _set_identity(self):
         r"""
         TESTS::
 
@@ -532,7 +532,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         for i in range(self.n):
             self.perm[i] = i
 
-    cpdef _set_list_images(self, v, bint convert) noexcept:
+    cpdef _set_list_images(self, v, bint convert):
         r"""
         TESTS::
 
@@ -566,7 +566,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         for i in range(vn, self.n):
             self.perm[i] = i
 
-    cpdef _set_libgap(self, GapElement p) noexcept:
+    cpdef _set_libgap(self, GapElement p):
         r"""
         TESTS::
 
@@ -615,7 +615,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         self._libgap = p
 
-    cpdef _set_permutation_group_element(self, PermutationGroupElement p, bint convert) noexcept:
+    cpdef _set_permutation_group_element(self, PermutationGroupElement p, bint convert):
         r"""
         TESTS::
 
@@ -669,7 +669,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
                 for i in range(p.n, self.n):
                     self.perm[i] = i
 
-    cpdef _set_list_cycles(self, c, bint convert) noexcept:
+    cpdef _set_list_cycles(self, c, bint convert):
         r"""
         TESTS::
 
@@ -716,7 +716,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
                     raise ValueError("invalid list of cycles to initialize a permutation")
                 self.perm[j] = t[0] - 1
 
-    cpdef _set_string(self, str s) noexcept:
+    cpdef _set_string(self, str s):
         r"""
         TESTS::
 
@@ -807,7 +807,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         """
         return make_permgroup_element_v2, (self._parent, self.domain(), self._parent.domain())
 
-    cdef _alloc(self, int n) noexcept:
+    cdef _alloc(self, int n):
         if n < 16 and self.perm == NULL:
             self.perm = self.perm_buf
         elif self.perm == NULL:
@@ -817,7 +817,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         self.n = n
 
-    cdef PermutationGroupElement _new_c(self) noexcept:
+    cdef PermutationGroupElement _new_c(self):
         cdef type t = type(self)
         cdef PermutationGroupElement other = t.__new__(t)
         if HAS_DICTIONARY(self):
@@ -980,7 +980,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         """
         return self.cycles()[i]
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         r"""
         Compare group elements ``self`` and ``other``.
 
@@ -1089,7 +1089,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             else:
                 return from_gap[i]
 
-    cpdef list _act_on_list_on_position(self, list x) noexcept:
+    cpdef list _act_on_list_on_position(self, list x):
         r"""
         Returns the right action of ``self`` on the list ``x``. This is the
         action on positions.
@@ -1117,7 +1117,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         assert len(x) == self.n, '%s and %s should have the same length'%(self, x)
         return [ x[self.perm[i]] for i in range(self.n) ]
 
-    cpdef ClonableIntArray _act_on_array_on_position(self, ClonableIntArray x) noexcept:
+    cpdef ClonableIntArray _act_on_array_on_position(self, ClonableIntArray x):
         r"""
         Returns the right action of ``self`` on the ClonableIntArray
         ``x``. This is the action on positions.
@@ -1141,7 +1141,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         y.set_immutable()
         return y
 
-    cpdef ETuple _act_on_etuple_on_position(self, ETuple x) noexcept:
+    cpdef ETuple _act_on_etuple_on_position(self, ETuple x):
         r"""
         Return the right action of this permutation on the ETuple ``x``.
 
@@ -1181,7 +1181,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         qsort(result._data, result._nonzero, 2 * sizeof(int), etuple_index_cmp)
         return result
 
-    cpdef _act_on_(self, x, bint self_on_left) noexcept:
+    cpdef _act_on_(self, x, bint self_on_left):
         r"""
         Return the result of the action of ``self`` on ``x``.
 
@@ -1301,7 +1301,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         return coercion_model.bin_op(left, right, operator.mul)
 
-    cpdef PermutationGroupElement _transpose_left(self, j, k) noexcept:
+    cpdef PermutationGroupElement _transpose_left(self, j, k):
         r"""
         Return the product of the transposition `(j, k)` with ``self``.
 
@@ -1334,7 +1334,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         prod.perm[j - 1], prod.perm[k - 1] = self.perm[k - 1], self.perm[j - 1]
         return prod
 
-    cpdef _mul_(left, _right) noexcept:
+    cpdef _mul_(left, _right):
         r"""
         EXAMPLES::
 
@@ -1351,7 +1351,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             prod.perm[i] = right.perm[left.perm[i]]
         return prod
 
-    cpdef PermutationGroupElement _generate_new(self, list v) noexcept:
+    cpdef PermutationGroupElement _generate_new(self, list v):
         r"""
         Generate a new permutation group element with the same parent
         as ``self`` from ``v``.
@@ -1369,7 +1369,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         new._set_list_images(v, False)
         return new
 
-    cpdef PermutationGroupElement _generate_new_GAP(self, lst_in) noexcept:
+    cpdef PermutationGroupElement _generate_new_GAP(self, lst_in):
         r"""
         Generate a new permutation group element with the same parent
         as ``self`` from the GAP list ``lst_in``.
@@ -1420,7 +1420,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             inv.perm[self.perm[i]] = i
         return inv
 
-    cpdef _gap_list(self) noexcept:
+    cpdef _gap_list(self):
         r"""
         Returns this permutation in list notation compatible with the
         GAP numbering.
@@ -1468,7 +1468,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
         from sage.combinat.permutation import Permutation
         return Permutation(self._gap_list()).cycle_string()
 
-    cpdef domain(self) noexcept:
+    cpdef domain(self):
         r"""
         Return the domain of ``self``.
 

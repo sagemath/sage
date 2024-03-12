@@ -954,7 +954,7 @@ _OA_cache[0].max_true = -1
 _OA_cache[1].max_true = -1
 _OA_cache_size = 2
 
-cpdef _OA_cache_set(int k,int n,truth_value) noexcept:
+cpdef _OA_cache_set(int k,int n,truth_value):
     r"""
     Sets a value in the OA cache of existence results
 
@@ -989,7 +989,7 @@ cpdef _OA_cache_set(int k,int n,truth_value) noexcept:
     else:
         _OA_cache[n].min_false   = k if k<_OA_cache[n].min_false   else _OA_cache[n].min_false
 
-cpdef _OA_cache_get(int k,int n) noexcept:
+cpdef _OA_cache_get(int k,int n):
     r"""
     Gets a value from the OA cache of existence results
 
@@ -1008,7 +1008,7 @@ cpdef _OA_cache_get(int k,int n) noexcept:
 
     return None
 
-cpdef _OA_cache_construction_available(int k,int n) noexcept:
+cpdef _OA_cache_construction_available(int k,int n):
     r"""
     Tests if a construction is implemented using the cache's information
 

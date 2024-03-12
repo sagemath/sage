@@ -167,7 +167,7 @@ cdef inline DenseVector_integer * new_linbox_vector_integer_dense(ZRing &ZZ, Vec
 
     return V
 
-cdef inline Vector_integer_dense new_sage_vector_integer_dense(P, DenseVector_integer &v) noexcept:
+cdef inline Vector_integer_dense new_sage_vector_integer_dense(P, DenseVector_integer &v):
     r"""
     Return a new Sage vector from a LinBox one.
 

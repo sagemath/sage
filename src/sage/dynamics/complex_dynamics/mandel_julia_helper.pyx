@@ -334,7 +334,7 @@ cpdef convert_to_pixels(point_list, double x_0, double y_0, double width,
         pixel_list.append((x_pixel, y_pixel))
     return pixel_list
 
-cpdef get_line(start, end) noexcept:
+cpdef get_line(start, end):
     r"""
     Produces a list of pixel coordinates approximating a line from a starting
     point to an ending point using the Bresenham's Line Algorithm.

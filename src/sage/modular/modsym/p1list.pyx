@@ -991,7 +991,7 @@ cdef class P1List():
         _, j = search(self.__list, (uu,vv))
         return j
 
-    cpdef index(self, int u, int v) noexcept:
+    cpdef index(self, int u, int v):
         r"""
         Return the index of the class of `(u,v)` in the fixed list
         of representatives of
@@ -1034,7 +1034,7 @@ cdef class P1List():
         except KeyError:
             return -1
 
-    cdef index_and_scalar(self, int u, int v, int* i, int* s) noexcept:
+    cdef index_and_scalar(self, int u, int v, int* i, int* s):
         r"""
         Compute the index of the class of `(u,v)` in the fixed list
         of representatives of `\mathbb{P}^1(\ZZ/N\ZZ)` and scalar s

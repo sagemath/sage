@@ -327,7 +327,7 @@ def all_graph_colorings(G, n, count_only=False, hex_colors=False,
         raise RuntimeError("too much recursion, Graph coloring failed")
 
 
-cpdef first_coloring(G, n=0, hex_colors=False) noexcept:
+cpdef first_coloring(G, n=0, hex_colors=False):
     r"""
     Return the first vertex coloring found.
 
@@ -365,7 +365,7 @@ cpdef first_coloring(G, n=0, hex_colors=False) noexcept:
             return C
 
 
-cpdef number_of_n_colorings(G, n) noexcept:
+cpdef number_of_n_colorings(G, n):
     r"""
     Compute the number of `n`-colorings of a graph
 
@@ -397,7 +397,7 @@ cpdef number_of_n_colorings(G, n) noexcept:
     return m
 
 
-cpdef numbers_of_colorings(G) noexcept:
+cpdef numbers_of_colorings(G):
     r"""
     Compute the number of colorings of a graph.
 
@@ -416,7 +416,7 @@ cpdef numbers_of_colorings(G) noexcept:
     return answer
 
 
-cpdef chromatic_number(G) noexcept:
+cpdef chromatic_number(G):
     r"""
     Return the chromatic number of the graph.
 

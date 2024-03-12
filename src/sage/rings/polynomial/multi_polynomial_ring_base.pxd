@@ -8,7 +8,7 @@ cdef class MPolynomialRing_base(CommutativeRing):
     cdef public object _magma_gens
     cdef public dict _magma_cache
 
-    cdef _coerce_c_impl(self, x) noexcept
+    cdef _coerce_c_impl(self, x)
 
 
 cdef class BooleanPolynomialRing_base(MPolynomialRing_base):

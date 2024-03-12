@@ -44,7 +44,7 @@ DEFAULT_LOGARITHMIC_CONTOUR_BASE = 2
 DEFAULT_LINEAR_CONTOUR_BASE = 10
 
 
-cdef inline ComplexDoubleElement new_CDF_element(double x, double y) noexcept:
+cdef inline ComplexDoubleElement new_CDF_element(double x, double y):
     z = <ComplexDoubleElement>ComplexDoubleElement.__new__(ComplexDoubleElement)
     GSL_SET_COMPLEX(&z._complex, x, y)
     return z

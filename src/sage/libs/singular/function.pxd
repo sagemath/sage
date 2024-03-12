@@ -19,7 +19,7 @@ from sage.libs.singular.decl cimport leftv, idhdl, syStrategy, matrix, poly, ide
 from sage.libs.singular.decl cimport ring as singular_ring
 from sage.rings.polynomial.multi_polynomial_libsingular cimport MPolynomialRing_libsingular, MPolynomial_libsingular
 
-cdef new_sage_polynomial(ring,  poly *p) noexcept
+cdef new_sage_polynomial(ring,  poly *p)
 cdef poly* access_singular_poly(p) except <poly*> -1
 cdef singular_ring* access_singular_ring(r) except <singular_ring*> -1
 
@@ -50,11 +50,11 @@ cdef class Converter(SageObject):
     cdef leftv * append_matrix(self, a) except NULL
     cdef leftv * append_ring(self, r) except NULL
     cdef leftv * append_module(self, m) except NULL
-    cdef to_sage_integer_matrix(self, intvec *mat) noexcept
-    cdef object to_sage_module_element_sequence_destructive(self, ideal *i) noexcept
-    cdef to_sage_vector_destructive(self, poly *p, free_module = ?) noexcept
-    cdef to_sage_matrix(self, matrix* mat) noexcept
-    cdef to_python(self, leftv* to_convert) noexcept
+    cdef to_sage_integer_matrix(self, intvec *mat)
+    cdef object to_sage_module_element_sequence_destructive(self, ideal *i)
+    cdef to_sage_vector_destructive(self, poly *p, free_module = ?)
+    cdef to_sage_matrix(self, matrix* mat)
+    cdef to_python(self, leftv* to_convert)
 
 cdef class BaseCallHandler:
     cdef leftv* handle_call(self, Converter argument_list, singular_ring *_ring=?) noexcept
@@ -72,9 +72,9 @@ cdef class SingularFunction(SageObject):
     cdef MPolynomialRing_libsingular _ring
     cdef BaseCallHandler call_handler
 
-    cdef BaseCallHandler get_call_handler(self) noexcept
+    cdef BaseCallHandler get_call_handler(self)
     cdef bint function_exists(self) noexcept
-    cdef common_ring(self, tuple args, ring=?) noexcept
+    cdef common_ring(self, tuple args, ring=?)
 
 cdef class SingularLibraryFunction(SingularFunction):
     pass
@@ -83,4 +83,4 @@ cdef class SingularKernelFunction(SingularFunction):
     pass
 
 # the most direct function call interface
-cdef call_function(SingularFunction self, tuple args, object R, bint signal_handler=?, object attributes=?) noexcept
+cdef call_function(SingularFunction self, tuple args, object R, bint signal_handler=?, object attributes=?)

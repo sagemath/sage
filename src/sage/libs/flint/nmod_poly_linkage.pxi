@@ -68,7 +68,7 @@ cdef inline int celement_gen(nmod_poly_t e, long i, unsigned long n) except -2:
     nmod_poly_zero(e)
     nmod_poly_set_coeff_ui(e, 1, 1)
 
-cdef object celement_repr(nmod_poly_t e, unsigned long n) noexcept:
+cdef object celement_repr(nmod_poly_t e, unsigned long n):
     raise NotImplementedError
 
 cdef inline int celement_set(nmod_poly_t res, nmod_poly_t a, unsigned long n) except -2:
@@ -621,7 +621,7 @@ cdef inline int celement_xgcd(nmod_poly_t res, nmod_poly_t s, nmod_poly_t t, nmo
     nmod_poly_xgcd(res, s, t, a, b)
 
 
-cdef factor_helper(Polynomial_zmod_flint poly, bint squarefree=False) noexcept:
+cdef factor_helper(Polynomial_zmod_flint poly, bint squarefree=False):
     """
     EXAMPLES::
 

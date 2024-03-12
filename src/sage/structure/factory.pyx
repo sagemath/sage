@@ -372,7 +372,7 @@ cdef class UniqueFactory(SageObject):
         version = self.get_version(sage_version)
         return self.get_object(version, key, kwds)
 
-    cpdef get_object(self, version, key, extra_args) noexcept:
+    cpdef get_object(self, version, key, extra_args):
         """
         Returns the object corresponding to ``key``, creating it with
         ``extra_args`` if necessary (for example, it isn't in the cache
@@ -436,7 +436,7 @@ cdef class UniqueFactory(SageObject):
             pass
         return obj
 
-    cpdef get_version(self, sage_version) noexcept:
+    cpdef get_version(self, sage_version):
         """
         This is provided to allow more or less granular control over
         pickle versioning. Objects pickled in the same version of Sage
@@ -507,7 +507,7 @@ cdef class UniqueFactory(SageObject):
         """
         raise NotImplementedError
 
-    cpdef other_keys(self, key, obj) noexcept:
+    cpdef other_keys(self, key, obj):
         """
         Sometimes during object creation, certain defaults are chosen which
         may result in a new (more specific) key. This allows the more specific
@@ -534,7 +534,7 @@ cdef class UniqueFactory(SageObject):
         """
         return []
 
-    cpdef reduce_data(self, obj) noexcept:
+    cpdef reduce_data(self, obj):
         """
         The results of this function can be returned from
         :meth:`__reduce__`. This is here so the factory internals can

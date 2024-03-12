@@ -8,13 +8,13 @@ cdef class MPolynomialRing_libsingular
 cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
     cdef poly *_poly
     cdef ring *_parent_ring
-    cpdef _add_(self, other) noexcept
-    cpdef _mul_(self, other) noexcept
-    cpdef _floordiv_(self, right) noexcept
-    cpdef _repr_short_(self) noexcept
-    cpdef is_constant(self) noexcept
-    cpdef _homogenize(self, int var) noexcept
-    cpdef MPolynomial_libsingular _new_constant_poly(self, x, MPolynomialRing_libsingular P) noexcept
+    cpdef _add_(self, other)
+    cpdef _mul_(self, other)
+    cpdef _floordiv_(self, right)
+    cpdef _repr_short_(self)
+    cpdef is_constant(self)
+    cpdef _homogenize(self, int var)
+    cpdef MPolynomial_libsingular _new_constant_poly(self, x, MPolynomialRing_libsingular P)
     cpdef long number_of_terms(self) noexcept
 
 cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
@@ -26,4 +26,4 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
     cdef ring *_ring
 
 # new polynomials
-cdef MPolynomial_libsingular new_MP(MPolynomialRing_libsingular parent, poly *p) noexcept
+cdef MPolynomial_libsingular new_MP(MPolynomialRing_libsingular parent, poly *p)
