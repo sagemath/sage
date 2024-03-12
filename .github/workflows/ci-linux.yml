@@ -134,7 +134,7 @@ jobs:
           # python3 -m pip install --no-build-isolation . -v
           python3 -m pip install -r requirements/requirements.txt
           python3 -m pip install -r requirements/test-requirements.txt
-          meson setup builddir
+          meson setup builddir -Dpython.install_env=auto
           meson compile -C builddir --verbose
           meson install -C builddir --no-rebuild 
 
