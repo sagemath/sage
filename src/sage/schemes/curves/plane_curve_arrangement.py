@@ -85,9 +85,13 @@ class PlaneCurveArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
+            sage: H.<x, y> = PlaneCurveArrangements(QQ)
             sage: elt = H(x, y); elt
             Arrangement (x, y) in Affine Space of dimension 2 over Rational Field
+            sage: TestSuite(elt).run()
+            sage: H.<x, y, z> = PlaneCurveArrangements(QQ)
+            sage: elt = H(x, y); elt
+            Arrangement (x, y) in Projective Space of dimension 2 over Rational Field
             sage: TestSuite(elt).run()
         """
         super().__init__(parent)
@@ -102,6 +106,10 @@ class PlaneCurveArrangementElement(Element):
             if not all(h.ambient_space() is self.parent().ambient_space()
                        for h in curves):
                 raise ValueError("not all curves are in the same ambient space")
+            if projective:
+                homogeneous = all(h.defining_polynomial().is_homogeneous() for h in curves)
+                if not homogeneous:
+                    raise ValueError("the defining polynomials of plane projective curves must be homogeneous")
 
     def __getitem__(self, i):
         """
@@ -117,8 +125,8 @@ class PlaneCurveArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
-            sage: h = H(y^2 - x, y^3 + 2 * x^2, x^4 + y^4 + 1); h
+            sage: H.<x, y> = PlaneCurveArrangements(QQ)
+            sage: H(y^2 - x, y^3 + 2 * x^2, x^4 + y^4 + 1)
             Arrangement (y^2 - x, y^3 + 2*x^2, x^4 + y^4 + 1)
             in Affine Space of dimension 2 over Rational Field
         """
@@ -128,9 +136,9 @@ class PlaneCurveArrangementElement(Element):
         r"""
         TESTS::
 
-            sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
-            sage: h = H((x * y, x + y +1))
-            sage: len_dict = {h: len(h)}
+            sage: H.<x, y> = PlaneCurveArrangements(QQ)
+            sage: H((x * y, x + y +1)).__hash__()   # random
+            -4938643871296220686
         """
         return hash(self.curves())
 
@@ -144,8 +152,8 @@ class PlaneCurveArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
-            sage: h = H((x * y, x + y +1))
+            sage: H.<x, y, z> = PlaneCurveArrangements(QQ)
+            sage: h = H((x * y, x + y + z))
             sage: h.n_curves()
             2
             sage: len(h)    # equivalent
@@ -165,7 +173,7 @@ class PlaneCurveArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
+            sage: H.<x, y> = PlaneCurveArrangements(QQ)
             sage: h = H((x * y, x + y + 1))
             sage: h.curves()
             (Affine Plane Curve over Rational Field defined by x*y,
@@ -188,12 +196,17 @@ class PlaneCurveArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
+            sage: H.<x, y> = PlaneCurveArrangements(QQ)
             sage: h = H([x * y, x + y + 1, x^3 - y^5, x^2 * y^2 + x^5 + y^5, (x^2 + y^2)^3 + (x^3 + y^3 - 1)^2])
             sage: h
             Arrangement of 5 curves in Affine Space of dimension 2 over Rational Field
             sage: H(())
             Empty curve arrangement in Affine Space of dimension 2 over Rational Field
+            sage: H.<x, y, z> = PlaneCurveArrangements(QQ)
+            sage: h = H([x * y, x + y + z, x^3 * z^2 - y^5, x^2 * y^2 * z + x^5 + y^5, (x^2 + y^2)^3 + (x^3 + y^3 - z^3)^2])
+            sage: h
+            Arrangement of 5 curves in Projective Space of dimension 2 over Rational Field
+
         """
         if len(self) == 0:
             return 'Empty curve arrangement in {0}'.format(self.parent().ambient_space())
@@ -211,7 +224,7 @@ class PlaneCurveArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
+            sage: H.<x, y> = PlaneCurveArrangements(QQ)
             sage: H(x) == H(y)
             False
             sage: H(x) == H(2 * x)
@@ -239,7 +252,7 @@ class PlaneCurveArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
+            sage: H.<x, y> = PlaneCurveArrangements(QQ)
             sage: h = H([x * y, x + y + 1, x^3 - y^5, x^2 * y^2 + x^5 + y^5, (x^2 + y^2)^3 + (x^3 + y^3 - 1)^2])
             sage: C = Curve(x^8 - y^8 -x^4 * y^4)
             sage: h1 = h.union(C); h1
@@ -279,7 +292,7 @@ class PlaneCurveArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
+            sage: H.<x, y> = PlaneCurveArrangements(QQ)
             sage: h = H([x * y, x + y + 1, x^3 - y^5, x^2 * y^2 + x^5 + y^5, (x^2 + y^2)^3 + (x^3 + y^3 - 1)^2])
             sage: C = h[-1]
             sage: h.deletion(C)
@@ -317,7 +330,7 @@ class PlaneCurveArrangementElement(Element):
         EXAMPLES::
 
             sage: # needs sage.rings.number_field
-            sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
+            sage: H.<x, y> = PlaneCurveArrangements(QQ)
             sage: A = H(y^2 - x^3, x, y, y^2 + x * y + x^2)
             sage: K.<a> = CyclotomicField(3)
             sage: A.change_ring(K)
@@ -338,10 +351,14 @@ class PlaneCurveArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: L.<x, y> = AffinePlaneCurveArrangements(QQ)
+            sage: L.<x, y> = PlaneCurveArrangements(QQ)
             sage: C = L(x, y)
             sage: C.coordinate_ring()
             Multivariate Polynomial Ring in x, y over Rational Field
+            sage: P.<x, y, z> = PlaneCurveArrangements(QQ)
+            sage: C = P(x, y)
+            sage: C.coordinate_ring()
+            Multivariate Polynomial Ring in x, y, z over Rational Field
         """
         return self.curves()[0].defining_polynomial().parent()
 
@@ -351,7 +368,7 @@ class PlaneCurveArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
+            sage: H.<x, y> = PlaneCurveArrangements(QQ)
             sage: A = H(y^2 - x^3, x, y, y^2 + x * y + x^2)
             sage: A.defining_polynomials()
             (-x^3 + y^2, x, y, x^2 + x*y + y^2)
@@ -364,7 +381,7 @@ class PlaneCurveArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
+            sage: H.<x, y> = PlaneCurveArrangements(QQ)
             sage: A = H(y ** 2 + x ** 2, x, y)
             sage: prod(A.defining_polynomials()) == A.defining_polynomial()
             True
@@ -404,7 +421,7 @@ class PlaneCurveArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
+            sage: H.<x, y> = PlaneCurveArrangements(QQ)
             sage: A = H(y^2, (x + y)^3 * (x^2 + x * y + y^2))
             sage: A.reduce()
             Arrangement (y, x^3 + 2*x^2*y + 2*x*y^2 + y^3) in Affine Space
@@ -1040,6 +1057,11 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
         if base_ring not in _Fields:
             raise ValueError('base ring must be a field')
         super().__init__(base_ring, names=names, category=Sets())
+        self._embedded = None
+        if len(names) == 2:
+            self._embedded = 'affine'
+        elif len(names) == 3:
+            self._embedded = 'projective'
 
     def coordinate_ring(self):
         """
@@ -1156,13 +1178,13 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
                 if ambient == ambient_space:
                     curves += (h, )
                 else:
-                    return None
+                    raise TypeError('the curves do not have the same ambient space')
             except AttributeError:
                 try:
                     h = R(h)
                     curves += (Curve(h), )
                 except TypeError:
-                    return None
+                    raise TypeError('elements are not curves')
         return self.element_class(self, curves)
 
     def _an_element_(self):
