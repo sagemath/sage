@@ -83,7 +83,7 @@ jobs:
           eval $(build/bin/sage-print-system-package-command $SYSTEM --yes --ignore-missing install $(build/bin/sage-get-system-packages $SYSTEM $(build/bin/sage-package list :standard:)))
                     
           # Create a virtual environment (some systems do not allow to install packages globally)
-          python3 -m venv ../venv --system-site-packages
+          python3 -m venv ../venv
           . ../venv/bin/activate
           echo PATH=$PATH >> $GITHUB_ENV # Make it so venv is inherited for other steps
           python3 -m pip install --upgrade pip
