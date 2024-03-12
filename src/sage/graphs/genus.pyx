@@ -477,7 +477,7 @@ cdef class simple_connected_genus_backtracker:
     cdef int genus_backtrack(self,
                              int cutoff,
                              bint record_embedding,
-                             (int (*)(simple_connected_genus_backtracker, int, bint, int))check_embedding) noexcept:
+                             (int (*)(simple_connected_genus_backtracker, int, bint, int) noexcept) check_embedding) noexcept:
         """
         Here's the main backtracking routine.
 

@@ -132,7 +132,8 @@ cdef int singular_polynomial_rmul(poly **ret, poly *p, RingElement n, ring *r) n
     n_Delete(&_n, r.cf)
     return 0
 
-cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args, poly *(*get_element)(object)) noexcept:
+cdef int singular_polynomial_call(poly **ret, poly *p, ring *r, list args,
+                                  poly *(*get_element)(object) noexcept) noexcept:
     """
     ``ret[0] = p(*args)`` where each entry in arg  is a polynomial and ``p`` in ``r``.
 

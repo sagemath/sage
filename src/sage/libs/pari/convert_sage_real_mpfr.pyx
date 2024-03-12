@@ -56,7 +56,7 @@ cpdef Gen new_gen_from_real_mpfr_element(RealNumber self):
     return new_gen(pari_float)
 
 
-cpdef bint set_real_mpfr_element_from_gen(RealNumber self, Gen x):
+cpdef bint set_real_mpfr_element_from_gen(RealNumber self, Gen x) noexcept:
     r"""
     EXAMPLES::
 
