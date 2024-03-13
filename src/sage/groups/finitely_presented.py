@@ -771,7 +771,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
             Finitely presented group < x0, x1 | (x0*x1*x0^-1*x1^-1)^2 >
             sage: G.__reduce__()[1]
             (<class 'sage.groups.finitely_presented.FinitelyPresentedGroup'>,
-             (Free Group on generators {x0, x1}, ((x0*x1*x0^-1*x1^-1)^2,)),{})
+            (Free Group on generators {x0, x1}, ((x0*x1*x0^-1*x1^-1)^2,)),{})
 
             sage: TestSuite(H).run()
             sage: TestSuite(J).run()
