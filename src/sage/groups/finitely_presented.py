@@ -753,6 +753,26 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
             sage: J is H
             True
 
+            sage: A5 = libgap(AlternatingGroup(5))
+            sage: A5gapfp = A5.IsomorphismFpGroup().Range()
+            sage: A5gapfp
+            <fp group of size 60 on the generators [ A_5.1, A_5.2 ]>
+            sage: A5sage = A5gapfp.sage(); A5sage;
+            Finitely presented group < A_5.1, A_5.2 | A_5.1^5*A_5.2^-5, A_5.1^5*(A_5.2^-1*A_5.1^-1)^2, (A_5.1^-2*A_5.2^2)^2 >
+            sage: A5sage.inject_variables()
+            Traceback (most recent call last):
+            ...
+            ValueError: variable names have not yet been set using self._assign_names(...)
+
+        Check that pickling works
+
+            sage: G = FreeGroup(2) / [2 * (1, 2, -1, -2)]
+            sage: loads(dumps(G))
+            Finitely presented group < x0, x1 | (x0*x1*x0^-1*x1^-1)^2 >
+            sage: G.__reduce__()[1]
+            (<class 'sage.groups.finitely_presented.FinitelyPresentedGroup'>,
+             (Free Group on generators {x0, x1}, ((x0*x1*x0^-1*x1^-1)^2,)),{})
+
             sage: TestSuite(H).run()
             sage: TestSuite(J).run()
         """
