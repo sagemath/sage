@@ -80,7 +80,29 @@ def acyclic_orientations(G):
         sage: len(list(it))
         54
 
+    Test for arbitary vertex labels::
+
+        sage: g_str = Graph([('abc', 'def'), ('ghi', 'def'), ('xyz', 'abc'), ('xyz', 'uvw'), ('uvw', 'abc'), ('uvw', 'ghi')])
+        sage: it = g_str.acyclic_orientations()
+        sage: len(list(it))
+        42
+
     TESTS:
+
+    To count the number of acyclic orientations for a graph with 0 vertices::
+
+        sage: list(Graph().acyclic_orientations())
+        [Graph on 0 vertices]
+
+    To count the number of acyclic orientations for a graph with 1 vertex::
+
+        sage: list(Graph(1).acyclic_orientations())
+        [Graph on 0 vertices]
+
+    To count the number of acyclic orientations for a graph with 2 vertices::
+
+        sage: list(Graph(2).acyclic_orientations())
+        [Graph on 0 vertices]
 
     Acyclic orientations of a complete graph::
 
@@ -89,12 +111,21 @@ def acyclic_orientations(G):
         sage: len(list(it))
         120
 
-    Test for arbitary vertex labels::
+    Graph with one edge::
 
-        sage: g_str = Graph([('abc', 'def'), ('ghi', 'def'), ('xyz', 'abc'), ('xyz', 'uvw'), ('uvw', 'abc'), ('uvw', 'ghi')])
-        sage: it = g_str.acyclic_orientations()
-        sage: len(list(it))
-        42
+        sage: list(Graph([(0, 1)]).acyclic_orientations())
+        [Graph on 2 vertices, Graph on 2 vertices]
+
+    Graph with two edges::
+
+        sage: len(list(Graph([(0, 1), (1, 2)]).acyclic_orientations()))
+        4
+
+    Cycle graph::
+
+        sage: len(list(Graph([(0, 1), (1, 2), (2, 0)]).acyclic_orientations()))
+        6
+
     """
     from sage.rings.infinity import Infinity
     from sage.combinat.subset import Subsets
