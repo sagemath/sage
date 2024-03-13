@@ -1931,11 +1931,11 @@ cdef class Matrix(sage.structure.element.Matrix):
             ....:             bottom_border=['*', '', ''],
             ....:             left_border=[1, 10, 100],
             ....:             right_border=['', ' <', '']))
-                   ab cde   f
-               ab⎛  1   2│  3⎞
-              cde⎜  4   5│  6⎟ <
-                f⎝  7   8│  9⎠
-                    *
+                        ab cde   f
+                     1⎛  1   2│  3⎞
+                    10⎜  4   5│  6⎟ <
+                   100⎝  7   8│  9⎠
+                         *
 
         TESTS:
 
@@ -2121,7 +2121,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                     rows.extend([hline] * n)
                     right.extend([""] * n)
             if top_border is not None and 0 <= r < nr:
-                left.append(str(top_border[r]))
+                left.append(str(left_border[r]))
             else:
                 left.append("")
             s = ""
