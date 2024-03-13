@@ -1627,17 +1627,21 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: MFR2cmr = Matrix_cmr_chr_sparse(MS2, MFR2)
             sage: MFR2cmr.is_totally_unimodular(certificate=True)
-            (False, (None, ((0, 1, 2), (3, 4, 5))))
+            (False, (OneSumNode (6×14) with 2 children, ((2, 1, 0), (5, 4, 3))))
             sage: result, certificate = MFR2cmr.is_totally_unimodular(certificate=True,
             ....:                                                     complete_tree=True)
             sage: result, certificate
-            (False, (None, ((0, 1, 2), (3, 4, 5))))
+            (False, (OneSumNode (6×14) with 2 children, ((2, 1, 0), (5, 4, 3))))
             sage: submatrix = MFR2.matrix_from_rows_and_columns(*certificate[1]); submatrix
             [0 1 1]
             [1 0 1]
             [1 1 0]
             sage: submatrix.determinant()
             2
+            sage: submatrix = MFR2cmr.matrix_from_rows_and_columns(*certificate[1]); submatrix
+            [0 1 1]
+            [1 0 1]
+            [1 1 0]
         """
         cdef bool result
         cdef CMR_TU_PARAMS params
