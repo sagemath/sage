@@ -2659,13 +2659,25 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             1
             sage: poly.degree(S.1)
             2
+
+        Ensure that :issue:`37603` is fixed::
+
+            sage: R.<x, y> = QQ[]
+            sage: f = x + y + 1
+            sage: type(f.degree())
+            <class 'sage.rings.integer.Integer'>
+            sage: type(f.degree(x))
+            <class 'sage.rings.integer.Integer'>
+            sage: type(f.degree(y))
+            <class 'sage.rings.integer.Integer'>
+
         """
         cdef ring *r = self._parent_ring
         cdef poly *p = self._poly
         if not x:
             if std_grading:
-                return self.total_degree(std_grading=True)
-            return singular_polynomial_deg(p, NULL, r)
+                return Integer(self.total_degree(std_grading=True))
+            return Integer(singular_polynomial_deg(p, NULL, r))
 
         if not x.parent() is self.parent():
             try:
@@ -2675,7 +2687,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         if not x.is_generator():
             raise TypeError("argument is not a generator")
 
-        return singular_polynomial_deg(p, x._poly, r)
+        return Integer(singular_polynomial_deg(p, x._poly, r))
 
     def total_degree(self, int std_grading=False):
         """
