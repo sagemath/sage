@@ -746,7 +746,7 @@ cdef class MatrixArgs:
         else:
             space = self.space
             if not isinstance(space, MatrixSpace):
-                space = space.zero().matrix(side='right').parent()
+                space = space.zero().matrix(side='left').parent()
             M = space(self, coerce=convert)
 
         # Also store the matrix to support multiple calls of matrix()
@@ -764,7 +764,7 @@ cdef class MatrixArgs:
             M.set_immutable()
         if isinstance(self.space, MatrixSpace):
             return M
-        return self.space(matrix=M, side='right')
+        return self.space(matrix=M, side='left')
 
     cpdef list list(self, bint convert=True) noexcept:
         """
