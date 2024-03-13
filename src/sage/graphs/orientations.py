@@ -92,17 +92,17 @@ def acyclic_orientations(G):
     To count the number of acyclic orientations for a graph with 0 vertices::
 
         sage: list(Graph().acyclic_orientations())
-        [Graph on 0 vertices]
+        []
 
     To count the number of acyclic orientations for a graph with 1 vertex::
 
         sage: list(Graph(1).acyclic_orientations())
-        [Graph on 0 vertices]
+        []
 
     To count the number of acyclic orientations for a graph with 2 vertices::
 
         sage: list(Graph(2).acyclic_orientations())
-        [Graph on 0 vertices]
+        []
 
     Acyclic orientations of a complete graph::
 
@@ -127,6 +127,10 @@ def acyclic_orientations(G):
         6
 
     """
+    if not G.size():
+        # A graph without edge cannot be oriented
+        return
+
     from sage.rings.infinity import Infinity
     from sage.combinat.subset import Subsets
 
