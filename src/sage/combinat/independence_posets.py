@@ -870,9 +870,8 @@ def rowmotion(L, x):
         sage: rowmotion(L, x)
         ({1, 3}, {4})
     """
-    lower = {elt: elt[0] for elt in L}
-    upper = {elt[1]: elt for elt in L}
-    return upper[lower[x]]
+    lower_x = x[0]
+    return next(elt for elt in L if elt[1] == lower_x)
 
 
 def toggle(G, x):
