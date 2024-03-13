@@ -403,9 +403,11 @@ def FreeModule(base_ring, rank_or_basis_keys=None, sparse=False, inner_product_m
         sage: FreeModule(Integers(7),10)
         Vector space of dimension 10 over Ring of integers modulo 7
         sage: FreeModule(PolynomialRing(QQ,'x'),5)
-        Ambient free module of rank 5 over the principal ideal domain Univariate Polynomial Ring in x over Rational Field
+        Ambient free module of rank 5 over the principal ideal domain
+         Univariate Polynomial Ring in x over Rational Field
         sage: FreeModule(PolynomialRing(ZZ,'x'),5)
-        Ambient free module of rank 5 over the integral domain Univariate Polynomial Ring in x over Integer Ring
+        Ambient free module of rank 5 over the integral domain
+         Univariate Polynomial Ring in x over Integer Ring
 
     Of course we can make rank 0 free modules::
 
@@ -507,11 +509,18 @@ def FreeModule(base_ring, rank_or_basis_keys=None, sparse=False, inner_product_m
         sage: FreeModule(QQ, ['a', 2, 3, 4], with_basis=None)
         Traceback (most recent call last):
         ...
-        NotImplementedError: FiniteRankFreeModule only supports integer ranges as basis_keys, got ['a', 2, 3, 4]
+        NotImplementedError: FiniteRankFreeModule only supports integer ranges
+        as basis_keys, got ['a', 2, 3, 4]
         sage: FreeModule(QQ, [1, 3, 5], with_basis=None)
         Traceback (most recent call last):
         ...
-        NotImplementedError: FiniteRankFreeModule only supports integer ranges as basis_keys, got [1, 3, 5]
+        NotImplementedError: FiniteRankFreeModule only supports integer ranges
+        as basis_keys, got [1, 3, 5]
+
+        sage: FreeModule(ZZ, rank=3, basis_keys=['c','d'])
+        Traceback (most recent call last):
+        ...
+        ValueError: inconsistent basis keys: should be of cardinality 3, got ['c', 'd']
     """
     if rank_or_basis_keys is not None:
         try:
@@ -537,12 +546,15 @@ def FreeModule(base_ring, rank_or_basis_keys=None, sparse=False, inner_product_m
             return FiniteRankFreeModule(base_ring, rank, start_index=start_index, **args)
         return FiniteRankFreeModule(base_ring, rank, **args)
     elif with_basis == 'standard':
-        if rank is not None:
+        if rank is not None and basis_keys is None:
             return FreeModuleFactory_with_standard_basis(base_ring, rank, sparse,
                                                          inner_product_matrix, **args)
         else:
             if inner_product_matrix is not None:
                 raise NotImplementedError
+            if rank is not None and rank != len(basis_keys):
+                raise ValueError(f'inconsistent basis_keys: should be of cardinality {rank}, '
+                                 f'got {basis_keys}')
             from sage.combinat.free_module import CombinatorialFreeModule
             return CombinatorialFreeModule(base_ring, basis_keys, **args)
     else:
