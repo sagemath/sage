@@ -473,6 +473,12 @@ cdef class MatrixArgs:
         """
         return self.iter()
 
+    def _ensure_nrows_ncols(self):
+        if self.nrows == -1:
+            self.nrows = len(self.row_keys)
+        if self.ncols == -1:
+            self.ncols = len(self.column_keys)
+
     def iter(self, bint convert=True, bint sparse=False):
         """
         Iteration over the entries in the matrix
@@ -551,12 +557,14 @@ cdef class MatrixArgs:
             if sparse:
                 pass
             else:
+                self._ensure_nrows_ncols()
                 zero = self.base.zero()
                 for i in range(self.nrows):
                     for j in range(self.ncols):
                         sig_check()
                         yield zero
         elif self.typ == MA_ENTRIES_SCALAR:
+            self._ensure_nrows_ncols()
             diag = self.entries
             if convert and self.need_to_convert(diag):
                 diag = self.base(diag)
@@ -571,6 +579,7 @@ cdef class MatrixArgs:
                         sig_check()
                         yield diag if (i == j) else zero
         elif self.typ == MA_ENTRIES_SEQ_SEQ:
+            self._ensure_nrows_ncols()
             row_iter = sized_iter(self.entries, self.nrows)
             for i in range(self.nrows):
                 row = sized_iter(next(row_iter), self.ncols)
@@ -584,6 +593,7 @@ cdef class MatrixArgs:
                     else:
                         yield x
         elif self.typ == MA_ENTRIES_SEQ_FLAT:
+            self._ensure_nrows_ncols()
             it = sized_iter(self.entries, self.nrows * self.ncols)
             for i in range(self.nrows):
                 for j in range(self.ncols):
@@ -607,8 +617,14 @@ cdef class MatrixArgs:
                 raise TypeError("dense iteration is not supported for sparse input")
         elif self.typ == MA_ENTRIES_CALLABLE:
             f = self.entries
-            for i in range(self.nrows):
-                for j in range(self.ncols):
+            row_keys = self.row_keys
+            if row_keys is None:
+                row_keys = range(self.nrows)
+            column_keys = self.column_keys
+            if column_keys is None:
+                column_keys = range(self.ncols)
+            for i in row_keys:
+                for j in column_keys:
                     sig_check()
                     x = f(i, j)
                     if convert and self.need_to_convert(x):
@@ -641,6 +657,7 @@ cdef class MatrixArgs:
             42
         """
         self.finalize()
+        self._ensure_nrows_ncols()
         return self.nrows * self.ncols
 
     cpdef Matrix matrix(self, bint convert=True) noexcept:
@@ -747,7 +764,7 @@ cdef class MatrixArgs:
             M.set_immutable()
         if isinstance(self.space, MatrixSpace):
             return M
-        return self.space(M, side='right')
+        return self.space(matrix=M, side='right')
 
     cpdef list list(self, bint convert=True) noexcept:
         """
@@ -1277,10 +1294,11 @@ cdef class MatrixArgs:
         e = PySequence_Fast(self.entries, "not a sequence")
         self.set_nrows(len(e))
         if self.nrows == 0:
-            if self.ncols == -1: self.ncols = 0
+            if self.ncols == -1 and self.column_keys is not None:
+                self.set_ncols(0)
             self.setdefault_base(ZZ)
             return 0
-        elif self.ncols != -1 and self.base is not None:
+        elif (self.ncols != -1 or self.column_keys is not None) and self.base is not None:
             # Everything known => OK
             return 0
 
@@ -1326,14 +1344,20 @@ cdef class MatrixArgs:
                 self.nrows = 0
             if self.ncols == -1:
                 self.ncols = 0
-        elif self.ncols == -1:
+        elif self.ncols == -1 and self.column_keys is None:
             if self.nrows == -1:
-                # Assume row matrix
-                self.nrows = 1
-                self.ncols = N
+                if self.row_keys is None:
+                    # Assume row matrix
+                    self.nrows = 1
+                    self.ncols = N
+                else:
+                    self.nrows = len(self.row_keys)
+                    self.ncols = N // self.nrows
             else:
                 self.ncols = N // self.nrows
-        elif self.nrows == -1:
+        elif self.nrows == -1 and self.row_keys is None:
+            if self.ncols == -1:
+                self.ncols = len(self.column_keys)
             self.nrows = N // self.ncols
 
         self.set_seq_flat(entries)
@@ -1463,7 +1487,7 @@ cdef class MatrixArgs:
             return MA_ENTRIES_SEQ_SEQ
         if type(x) is SparseEntry:
             return MA_ENTRIES_SEQ_SPARSE
-        if self.nrows != -1 and self.ncols != -1 and self.ncols != 1:
+        if self.nrows != -1 and self.ncols != -1:
             # Determine type from the number of entries. Unfortunately,
             # this only works if the number of columns is not 1.
             if len(self.entries) == self.nrows:
