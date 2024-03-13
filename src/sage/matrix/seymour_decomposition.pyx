@@ -137,40 +137,7 @@ cdef class DecompositionNode(SageObject):
         return MatrixArgs(self.matrix(), MatrixSpace(ZZ, self.row_keys(), self.column_keys())).element()
 
     @cached_method
-    def _parent_rows_and_columns(self):
-        cdef CMR_ELEMENT *parent_rows = CMRmatroiddecRowsParent(self._dec)
-        cdef CMR_ELEMENT *parent_columns = CMRmatroiddecColumnsParent(self._dec)
-
-        if parent_rows == NULL or parent_rows[0] == 0:
-            parent_rows_cmr_tuple = None
-        else:
-            parent_rows_cmr_tuple = tuple(parent_rows[i]
-                                      for i in range(self.nrows()))
-        if parent_columns == NULL or parent_columns[0] == 0:
-            parent_columns_cmr_tuple = None
-        else:
-            parent_columns_cmr_tuple = tuple(parent_columns[i]
-                                         for i in range(self.ncols()))
-
-        return parent_rows_cmr_tuple, parent_columns_cmr_tuple
-
-    # def ancestor_rows_and_columns(self, ancestor, use_keys=False):
-    #     r"""
-
-    #     INPUT:
-
-    #     - ``use_keys`` -- if ``True``, return the answer
-
-    #     OUTPUT: tuple ``(row_keys, column_keys)``
-
-
-
-    #     """
-    #     if ancestor is self:
-    #         pass
-
-    @cached_method
-    def parent_rows_and_columns(self, indices_label=False):
+    def parent_rows_and_columns(self):
         r"""
         EXAMPLES::
 
@@ -215,43 +182,35 @@ cdef class DecompositionNode(SageObject):
             ....: [ 0,  0,  0,  0,  1,  1,  0,  0,  0,  0, -1, -1],
             ....: [ 0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1,  0],
             ....: [ 0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1]])
-            sage: result, certificate = R12.is_totally_unimodular(certificate=True)
+            sage: result, certificate = R12.is_totally_unimodular(certificate=True,
+            ....:                           row_keys=['r1', 'r2', 'r3', 'r4', 'r5',
+            ....:                                     'r6', 'r7', 'r8', 'r9'],
+            ....:                           column_keys=['a','b','c','d','e','f',
+            ....:                                        'g','h','i','j','k','l'])
             sage: C = certificate._children()[0]; C
             ThreeSumNode (9×12) with 2 children
-            sage: C.parent_rows_and_columns(indices_label=True)
-            ((('r', 0),
-              ('c', 8),
-              ('r', 2),
-              ('r', 3),
-              ('r', 4),
-              ('r', 5),
-              ('r', 6),
-              ('r', 7),
-              ('r', 8)),
-             (('c', 0),
-              ('c', 1),
-              ('c', 2),
-              ('c', 3),
-              ('c', 4),
-              ('c', 5),
-              ('c', 6),
-              ('c', 7),
-              ('r', 1),
-              ('c', 9),
-              ('c', 10),
-              ('c', 11)))
+            sage: C.parent_rows_and_columns()
+            (('r1', 'i', 'r3', 'r4', 'r5', 'r6', 'r7', 'r8', 'r9'),
+             ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'r2', 'j', 'k', 'l'))
         """
-        parent_rows, parent_columns = self._parent_rows_and_columns()
-        if parent_rows is None:
+        cdef CMR_ELEMENT *parent_rows = CMRmatroiddecRowsParent(self._dec)
+        cdef CMR_ELEMENT *parent_columns = CMRmatroiddecColumnsParent(self._dec)
+        if parent_rows == NULL or parent_rows[0] == 0:
             parent_rows_tuple = None
         else:
-            parent_rows_tuple = tuple(CMRelement_to_label(parent_rows[i], indices_label)
-                                        for i in range(self.nrows()))
-        if parent_columns is None:
+            if self.row_keys() is not None:
+                parent_rows_tuple = tuple(self.row_keys())
+            else:
+                parent_rows_tuple = tuple(CMRelementToRowIndex(parent_rows[i])
+                                          for i in range(self.nrows()))
+        if parent_columns == NULL or parent_columns[0] == 0:
             parent_columns_tuple = None
         else:
-            parent_columns_tuple = tuple(CMRelement_to_label(parent_columns[i], indices_label)
-                                         for i in range(self.ncols()))
+            if self.column_keys() is not None:
+                parent_columns_tuple = tuple(self.column_keys())
+            else:
+                parent_columns_tuple = tuple(CMRelementToColumnIndex(parent_columns[i])
+                                             for i in range(self.ncols()))
 
         return parent_rows_tuple, parent_columns_tuple
 
@@ -313,6 +272,8 @@ cdef class DecompositionNode(SageObject):
     cdef _CMRelement_to_key(self, CMR_ELEMENT element):
         if not CMRelementIsValid(element):
             raise ValueError('CMRelement index not valid')
+        if self.row_keys() is None or self.column_keys() is None:
+            raise ValueError('row_keys and column_keys are required')
         if CMRelementIsRow(element):
             return self.row_keys()[CMRelementToRowIndex(element)]
         else:
@@ -325,16 +286,16 @@ cdef class DecompositionNode(SageObject):
         cdef CMR_ELEMENT *parent_rows = CMRmatroiddecRowsParent(child_dec)
         cdef CMR_ELEMENT *parent_columns = CMRmatroiddecColumnsParent(child_dec)
 
-        child = create_DecompositionNode(child_dec, root=self._root or self)
-
         if row_keys is not None and column_keys is not None:
             child_row_keys = tuple(self._CMRelement_to_key(parent_rows[i])
-                                   for i in range(child.nrows()))
+                                   for i in range(CMRmatroiddecNumRows(child_dec)))
             child_column_keys = tuple(self._CMRelement_to_key(parent_columns[i])
-                                      for i in range(child.ncols()))
-            child._set_row_keys(child_row_keys)
-            child._set_column_keys(child_column_keys)
-
+                                      for i in range(CMRmatroiddecNumColumns(child_dec)))
+            child = create_DecompositionNode(child_dec, root=self._root or self,
+                                             row_keys=child_row_keys,
+                                             column_keys=child_column_keys)
+        else:
+            child = create_DecompositionNode(child_dec, root=self._root or self)
         return child
 
     @cached_method
@@ -952,20 +913,3 @@ cdef create_DecompositionNode(CMR_MATROID_DEC *dec, root=None, row_keys=None, co
     if column_keys is not None:
         result._set_column_keys(column_keys)
     return result
-
-
-cdef CMRelement_to_label(CMR_ELEMENT element, indices_label=False):
-    r"""
-    """
-    if not CMRelementIsValid(element):
-        raise ValueError('CMRelement index not valid')
-    if CMRelementIsRow(element):
-        if indices_label:
-            return ('r',CMRelementToRowIndex(element))
-        else:
-            return CMRelementToRowIndex(element)
-    else:
-        if indices_label:
-            return ('c', CMRelementToColumnIndex(element))
-        else:
-            return CMRelementToColumnIndex(element)
