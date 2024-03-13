@@ -98,9 +98,10 @@ def orthogonal_pairs(G):
          ({0, 2}, {}), ({1, 2}, {}), ({1, 2}, {0}), ({0, 1, 2}, {})]
 
     """
-    edges = G.edges(labels=False)
-    for s in Subsets(G):
-        for t in Subsets(Set(G).difference(s)):
+    edges = set(G.edges(labels=False))
+    vertices = Set(G)
+    for s in Subsets(vertices):
+        for t in Subsets(vertices.difference(s)):
             if not any((i, j) in edges for i in s for j in t):
                 yield (s, t)
 
@@ -223,9 +224,9 @@ def complete_mop(G, S):
 
         This is a slow, brute force implementation.
     """
-    edges = G.edges(labels=False)
-    sets = [(S, t)
-            for t in Subsets(Set(G).difference(S))
+    edges = set(G.edges(labels=False))
+    vertices = Set(G)
+    sets = [(S, t) for t in Subsets(vertices.difference(S))
             if not any((i, j) in edges for i in S for j in t)]
     return [u for u in sets
             if not any(_inc(u, v) for v in sets if v != u)]
