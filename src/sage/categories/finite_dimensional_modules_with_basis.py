@@ -918,7 +918,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             try:
                 matrix = self._matrix_cmr()
-            except ImportError:
+            except (ImportError, TypeError):
                 matrix = self.matrix()
             try:
                 return matrix.is_unimodular
@@ -948,7 +948,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             try:
                 matrix = self._matrix_cmr()
-            except ImportError:
+            except (ImportError, TypeError):
                 matrix = self.matrix()
             try:
                 return matrix.is_strongly_unimodular
@@ -962,7 +962,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             try:
                 matrix = self._matrix_cmr()
-            except ImportError:
+            except (ImportError, TypeError):
                 matrix = self.matrix()
             try:
                 return matrix.equimodulus
@@ -976,7 +976,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             try:
                 matrix = self._matrix_cmr()
-            except ImportError:
+            except (ImportError, TypeError):
                 matrix = self.matrix()
             try:
                 return matrix.strong_equimodulus
@@ -1006,7 +1006,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             try:
                 matrix = self._matrix_cmr()
-            except ImportError:
+            except (ImportError, TypeError):
                 matrix = self.matrix()
             try:
                 return matrix.is_k_equimodular
@@ -1042,7 +1042,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             try:
                 matrix = self._matrix_cmr()
-            except ImportError:
+            except (ImportError, TypeError):
                 matrix = self.matrix()
             try:
                 return matrix.is_strongly_k_equimodular
@@ -1091,7 +1091,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             try:
                 matrix = self._matrix_cmr()
-            except ImportError:
+            except (ImportError, TypeError):
                 matrix = self.matrix()
             try:
                 return self._wrapped_method_with_certificate(matrix.is_graphic)
@@ -1120,7 +1120,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             try:
                 matrix = self._matrix_cmr()
-            except ImportError:
+            except (ImportError, TypeError):
                 matrix = self.matrix()
             try:
                 return self._wrapped_method_with_certificate(matrix.is_cographic)
@@ -1173,7 +1173,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             try:
                 matrix = self._matrix_cmr()
-            except ImportError:
+            except (ImportError, TypeError):
                 matrix = self.matrix()
             try:
                 return self._wrapped_method_with_certificate(matrix.is_network_matrix)
@@ -1206,7 +1206,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             try:
                 matrix = self._matrix_cmr()
-            except ImportError:
+            except (ImportError, TypeError):
                 matrix = self.matrix()
             try:
                 return self._wrapped_method_with_certificate(matrix.is_totally_unimodular)
@@ -1219,7 +1219,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             try:
                 matrix = self._matrix_cmr()
-            except ImportError:
+            except (ImportError, TypeError):
                 matrix = self.matrix()
             try:
                 return self._wrapped_method_with_certificate(matrix.is_complement_totally_unimodular)
