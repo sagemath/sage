@@ -380,7 +380,7 @@ class sage__libs__cmr(JoinFeature):
         """
         JoinFeature.__init__(self, 'sage.libs.cmr',
                              [PythonModule('sage.matrix.matrix_cmr_sparse')],
-                             spkg='sagemath_cmr')
+                             spkg='sagemath_cmr', type='optional')
 
 
 class sage__libs__ecl(PythonModule):
