@@ -2739,6 +2739,14 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             -1
             sage: R(1).total_degree()
             0
+
+        Ensure that :issue:`37603` is fixed::
+            sage: R.<x,y,z> = QQ[]
+            sage: f = x^4 + y + z
+            sage: f.total_degree()
+            4
+            sage: type(f.total_degree())
+            <class 'sage.rings.integer.Integer'>
         """
         cdef int i, result
         cdef poly *p = self._poly
@@ -2749,8 +2757,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             while p:
                 result = max(result, sum([p_GetExp(p,i,r) for i in range(1,r.N+1)]))
                 p = pNext(p)
-            return result
-        return singular_polynomial_deg(p, NULL, r)
+            return Integer(result)
+        return Integer(singular_polynomial_deg(p, NULL, r))
 
     def degrees(self):
         """
@@ -2767,6 +2775,17 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             (1, 2, 1)
             sage: (q + y0^5).degrees()
             (5, 2, 1)
+
+        TESTS:
+
+        Ensure that :issue:`37603` is fixed::
+
+            sage: R.<x,y,z> = QQ[]
+            sage: f = x^4 + y + z
+            sage: f.degrees()
+            (4, 1, 1)
+            sage: type(f.degrees()[0])
+            <class 'sage.rings.integer.Integer'>
         """
         cdef poly *p = self._poly
         cdef ring *r = self._parent_ring
@@ -2776,7 +2795,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             for i from 0 <= i < r.N:
                 d[i] = max(d[i],p_GetExp(p, i+1, r))
             p = pNext(p)
-        return tuple(d)
+        return tuple(map(Integer, d))
 
     def coefficient(self, degrees):
         """
