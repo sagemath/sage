@@ -1716,7 +1716,12 @@ cdef _set_cmr_regular_parameters(CMR_REGULAR_PARAMS *params, dict kwds):
     params.completeTree = kwds['complete_tree'] is True
     params.threeSumPivotChildren = kwds['three_sum_pivot_children']
     if kwds['three_sum_strategy'] is not None:
-        params.threeSumStrategy = kwds['three_sum_strategy']
+        if kwds['three_sum_strategy'] == 'Mixed_Mixed':
+            params.threeSumStrategy = CMR_MATROID_DEC_THREESUM_FLAG_CONCENTRATED_RANK |                                        CMR_MATROID_DEC_THREESUM_FLAG_FIRST_MIXED |                                        CMR_MATROID_DEC_THREESUM_FLAG_SECOND_MIXED
+        elif kwds['three_sum_strategy'] == 'Wide_Wide':
+            params.threeSumStrategy = CMR_MATROID_DEC_THREESUM_FLAG_DISTRIBUTED_RANKS | CMR_MATROID_DEC_THREESUM_FLAG_FIRST_WIDE | CMR_MATROID_DEC_THREESUM_FLAG_SECOND_WIDE
+        else:
+            params.threeSumStrategy = kwds['three_sum_strategy']
     params.graphs = _cmr_dec_construct(kwds['construct_graphs'])
 
 
