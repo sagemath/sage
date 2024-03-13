@@ -1252,7 +1252,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         return True if result else False
 
-    def is_graphic(self, *, time_limit=60.0, certificate=False):
+    def is_graphic(self, *, time_limit=60.0, certificate=False,
+                   row_keys=None, column_keys=None):
         r"""
         EXAMPLES::
 
@@ -1313,7 +1314,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         return False, NotImplemented  # submatrix TBD
 
-    def is_cographic(self, *, time_limit=60.0, certificate=False):
+    def is_cographic(self, *, time_limit=60.0, certificate=False,
+                     row_keys=None, column_keys=None):
         r"""
         EXAMPLES::
 
@@ -1361,7 +1363,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         return False, NotImplemented  # submatrix TBD
 
-    def is_network_matrix(self, *, time_limit=60.0, certificate=False):
+    def is_network_matrix(self, *, time_limit=60.0, certificate=False,
+                          row_keys=None, column_keys=None):
         r"""
         EXAMPLES:
 
@@ -1427,7 +1430,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         return False, NotImplemented  # submatrix TBD
 
-    def is_dual_network_matrix(self, *, time_limit=60.0, certificate=False):
+    def is_dual_network_matrix(self, *, time_limit=60.0, certificate=False,
+                               row_keys=None, column_keys=None):
         raise NotImplementedError
 
     def _is_binary_linear_matroid_regular(self, *, time_limit=60.0, certificate=False,
