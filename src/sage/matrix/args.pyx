@@ -1294,7 +1294,7 @@ cdef class MatrixArgs:
         e = PySequence_Fast(self.entries, "not a sequence")
         self.set_nrows(len(e))
         if self.nrows == 0:
-            if self.ncols == -1 and self.column_keys is not None:
+            if self.ncols == -1 and self.column_keys is None:
                 self.set_ncols(0)
             self.setdefault_base(ZZ)
             return 0
@@ -1487,7 +1487,7 @@ cdef class MatrixArgs:
             return MA_ENTRIES_SEQ_SEQ
         if type(x) is SparseEntry:
             return MA_ENTRIES_SEQ_SPARSE
-        if self.nrows != -1 and self.ncols != -1:
+        if self.nrows != -1 and self.ncols != -1 and self.ncols != 1:
             # Determine type from the number of entries. Unfortunately,
             # this only works if the number of columns is not 1.
             if len(self.entries) == self.nrows:
