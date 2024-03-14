@@ -82,7 +82,7 @@ field.
 
 Matrix vector multiply::
 
-    sage: MS = MatrixSpace(QQ,3)
+    sage: MS = MatrixSpace(QQ, 3)
     sage: A = MS([0,1,0,1,0,0,0,0,1])
     sage: V = QQ^3
     sage: v = V([1,2,3])
@@ -1033,36 +1033,36 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
             sage: F = FreeModule(ZZ, 2, inner_product_matrix=matrix(ZZ, 2, 2, [1, 0, 0, -1]))
             sage: v = F([1, 2])
-            sage: M = magma(v); M # optional - magma
+            sage: M = magma(v); M                       # optional - magma
             (1 2)
-            sage: M.Type() # optional - magma
+            sage: M.Type()                              # optional - magma
             ModTupRngElt
-            sage: M.Parent() # optional - magma
+            sage: M.Parent()                            # optional - magma
             Full RSpace of degree 2 over Integer Ring
             Inner Product Matrix:
             [ 1  0]
             [ 0 -1]
-            sage: M.sage() # optional - magma
+            sage: M.sage()                              # optional - magma
             (1, 2)
-            sage: M.sage() == v # optional - magma
+            sage: M.sage() == v                         # optional - magma
             True
-            sage: M.sage().parent() is v.parent() # optional - magma
+            sage: M.sage().parent() is v.parent()       # optional - magma
             True
 
         ::
 
             sage: v = vector(QQ, [1, 2, 5/6])
-            sage: M = magma(v); M # optional - magma
+            sage: M = magma(v); M                       # optional - magma
             (  1   2 5/6)
-            sage: M.Type() # optional - magma
+            sage: M.Type()                              # optional - magma
             ModTupFldElt
-            sage: M.Parent() # optional - magma
+            sage: M.Parent()                            # optional - magma
             Full Vector space of degree 3 over Rational Field
-            sage: M.sage() # optional - magma
+            sage: M.sage()                              # optional - magma
             (1, 2, 5/6)
-            sage: M.sage() == v # optional - magma
+            sage: M.sage() == v                         # optional - magma
             True
-            sage: M.sage().parent() is v.parent() # optional - magma
+            sage: M.sage().parent() is v.parent()       # optional - magma
             True
         """
         # Get a reference to Magma version of parent.
@@ -2332,7 +2332,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         Three-dimensional examples::
 
             sage: v = vector(RDF, (1,2,1))
-            sage: plot(v) # defaults to an arrow plot                                   # needs sage.plot
+            sage: plot(v)  # defaults to an arrow plot                                  # needs sage.plot
             Graphics3d Object
 
         ::
@@ -2348,7 +2348,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         ::
 
-            sage: plot(v, plot_type='step') # calls v.plot_step()                       # needs sage.plot
+            sage: plot(v, plot_type='step')  # calls v.plot_step()                      # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         ::
@@ -2377,7 +2377,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         TESTS::
 
             sage: u = vector([1,1]); v = vector([2,2,2]); z=(3,3,3)
-            sage: plot(u) #test when start=None                                         # needs sage.plot
+            sage: plot(u)  #test when start=None                                        # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         ::
