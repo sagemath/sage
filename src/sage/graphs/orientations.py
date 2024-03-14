@@ -293,9 +293,8 @@ def acyclic_orientations(G):
     reverse_vertex_labels = {label: vertex for vertex, label in vertex_labels.items()}
 
     # Iterate over acyclic orientations and create relabeled graphs
-    from sage.graphs.graph import Graph
     for orientation in orientations:
-        relabeled_graph = Graph([(reverse_vertex_labels[u], reverse_vertex_labels[v], label) for (u, v), label in orientation.items()])
+        relabeled_graph = DiGraph([(reverse_vertex_labels[u], reverse_vertex_labels[v], label) for (u, v), label in orientation.items()])
         yield relabeled_graph
 
 
