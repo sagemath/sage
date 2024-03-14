@@ -1,3 +1,5 @@
+from sage.misc.lazy_import import lazy_import
+
 # Ring base classes
 from sage.rings.ring import (Ring, Field, CommutativeRing, IntegralDomain,
                              PrincipalIdealDomain)
@@ -21,3 +23,5 @@ ideal = Ideal
 # from sage.rings.number_field.all__sagemath_categories import *
 # from sage.rings.padics.all__sagemath_categories import *
 # from sage.rings.polynomial.all__sagemath_categories import *
+
+del lazy_import
