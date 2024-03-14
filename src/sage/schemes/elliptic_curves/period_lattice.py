@@ -527,7 +527,7 @@ class PeriodLattice_ell(PeriodLattice):
           precision if ``None``).
 
         - ``algorithm`` (string, default ``'sage'``) -- choice of
-          implementation (for real embeddings only) between 'sage'
+          implementation (for real embeddings only) between ``'sage'``
           (native Sage implementation) or ``'pari'`` (use the PARI
           library: only available for real embeddings).
 
@@ -710,10 +710,10 @@ class PeriodLattice_ell(PeriodLattice):
 
         INPUT:
 
-        - `prec` (int or ``None`` (default)) -- floating point precision (in bits); if None,
+        - ``prec`` (integer or ``None`` (default)) -- floating point precision (in bits); if ``None``,
           use the default precision.
 
-        - `normalise` (bool, default ``True``) -- whether to normalise the
+        - ``normalise`` (bool, default ``True``) -- whether to normalise the
           basis after computation.
 
         OUTPUT:
@@ -854,7 +854,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         INPUT:
 
-        - ``prec`` (int or ``None`` (default)) -- real precision in
+        - ``prec`` (integer or ``None`` (default)) -- real precision in
           bits (default real precision if ``None``)
 
         - ``algorithm`` (string, default ``'sage'``) -- choice of
@@ -1863,7 +1863,7 @@ class PeriodLattice_ell(PeriodLattice):
             sage: L.elliptic_exponential(1e-100)
             (0.000000000000000 : 1.00000000000000 : 0.000000000000000)
 
-        The elliptic exponential of `z` is returned as (0 : 1 : 0) if
+        The elliptic exponential of `z` is returned as `(0 : 1 : 0)` if
         the coordinates of `z` with respect to the period lattice are
         approximately integral::
 
