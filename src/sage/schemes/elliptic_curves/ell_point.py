@@ -3281,7 +3281,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
           computation. If ``None``, the height is returned symbolically.
 
         - ``weighted`` -- boolean. If ``False`` (default), the height is
-          normalised to be invariant under extension of `K`. If True,
+          normalised to be invariant under extension of `K`. If ``True``,
           return this normalised height multiplied by the local degree
           if `v` is a single place, or by the degree of `K` if `v` is
           None.
