@@ -205,7 +205,7 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
     # rather than f and h, one of which might be constant.
     F = h**2 + 4 * f
     if not isinstance(F, Polynomial):
-        raise TypeError(f"Arguments {f = } and {h = } must be polynomials")
+        raise TypeError(f"arguments {f = } and {h = } must be polynomials")
     P = F.parent()
     f = P(f)
     h = P(h)
