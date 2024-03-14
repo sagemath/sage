@@ -969,9 +969,9 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``s`` - shape of the tableaux
+        - ``s`` -- shape of the tableaux
 
-        - ``f`` - maximum fill number.  This is an optional
+        - ``f`` -- maximum fill number.  This is an optional
           argument.  If no maximal number is given, it will use
           the number of cells in the shape.
 
@@ -1199,7 +1199,8 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: posets.TetrahedralPoset(4,'green','red','yellow','silver','blue','orange')
             Finite poset containing 10 elements
 
-            sage: posets.TetrahedralPoset(4,'green','red','yellow','silver','blue','orange', labels='integers')
+            sage: posets.TetrahedralPoset(4,'green','red','yellow','silver','blue','orange',
+            ....:                         labels='integers')
             Finite poset containing 10 elements
 
             sage: A = AlternatingSignMatrices(3)
@@ -1819,9 +1820,9 @@ class Posets(metaclass=ClasscallMetaclass):
             7
 
             sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),
-            ....: {1: [posets.YoungDiagramPoset([3, 2], dual=True)],
-            ....: 3: [posets.DoubleTailedDiamond(6)]},
-            ....: anchor=(4, 2, posets.ChainPoset(6)))
+            ....:         {1: [posets.YoungDiagramPoset([3, 2], dual=True)],
+            ....:          3: [posets.DoubleTailedDiamond(6)]},
+            ....:         anchor=(4, 2, posets.ChainPoset(6)))
             sage: len(P.cover_relations())
             33
         """

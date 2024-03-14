@@ -87,7 +87,8 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
         sage: F = algebras.FreeDendriform(ZZ, 'xyz')
         sage: x,y,z = F.gens()
         sage: (x * y) * z
-        B[x[., y[., z[., .]]]] + B[x[., z[y[., .], .]]] + B[y[x[., .], z[., .]]] + B[z[x[., y[., .]], .]] + B[z[y[x[., .], .], .]]
+        B[x[., y[., z[., .]]]] + B[x[., z[y[., .], .]]] + B[y[x[., .], z[., .]]]
+         + B[z[x[., y[., .]], .]] + B[z[y[x[., .], .], .]]
 
     The free dendriform algebra is associative::
 
@@ -114,7 +115,8 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
         sage: w = F1.gen(0); w
         B[[., .]]
         sage: w * w * w
-        B[[., [., [., .]]]] + B[[., [[., .], .]]] + B[[[., .], [., .]]] + B[[[., [., .]], .]] + B[[[[., .], .], .]]
+        B[[., [., [., .]]]] + B[[., [[., .], .]]] + B[[[., .], [., .]]]
+         + B[[[., [., .]], .]] + B[[[[., .], .], .]]
 
     The set `E` can be infinite::
 
