@@ -336,19 +336,13 @@ def linkcode_resolve(domain, info):
                 for attr in fullname.split('.'):
                     obj = getattr(obj, attr)
                 lineno = sage_getsourcelines(obj)[-1]
-            except:
+            except (AttributeError, TypeError, OSError):
                 return None
             anchor = f'#L{lineno}'
         else:
             anchor = ''
         return f"{source_repository}blob/{version}/src/{filename}{anchor}"
     return None
-
-
-class EDIT_LINK(str):
-    def format(self, filename):
-        link =  os.path.join(source_repository, f'blob/{version}/src/doc/en/reference/{filename}.py')
-        return link
 
 
 # -----------------------
@@ -634,6 +628,7 @@ def add_page_context(app, pagename, templatename, context, doctree):
             suffix = '.py' if importlib.import_module(pagename.replace('/','.')).__file__.endswith('.py') else '.pyx'
             context['page_source_suffix'] = suffix
             context['theme_source_edit_link'] = os.path.join(source_repository, f'blob/develop/src', '{filename}')
+
 
 dangling_debug = False
 
