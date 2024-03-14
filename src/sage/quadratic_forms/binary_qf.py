@@ -1608,7 +1608,8 @@ class BinaryQF(SageObject):
 
         - ``algorithm`` -- ``"general"`` (default) or ``"cornacchia"``
 
-        - ``_flag`` -- ``1``, ``2`` (default) or ``3``
+        - ``_flag`` -- ``1``, ``2`` (default) or ``3``; passed onto the pari
+          function``qfbsolve``. For internal use only.
 
         To use the Cornacchia algorithm, the quadratic form must have
         `a=1` and `b=0` and `c>0`, and ``n`` must be a prime or four

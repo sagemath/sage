@@ -1845,14 +1845,13 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             while not D or D.trace() == 0:
                 D = K.random_element()
         else:
-            # find a nonsquare D. note that computing a multiplicative generator is expensive
+            # find a nonsquare D.
+            D = K.gen()
             q2 = (K.cardinality() - 1) // 2
-            while True:
+            while not D or D**q2 == 1:
                 D = K.random_element()
-                if D and D**q2 != 1:
-                    break
             # assert D and D**q2 != 1
-            # assert not D.is_square9)
+            # assert not D.is_square()
 
         return [self, self.quadratic_twist(D)]
 
@@ -1870,6 +1869,7 @@ def curves_with_j_0(K):
 
     For `K=\GF{q}` where `q\equiv1\mod{6}` there are six curves, the sextic twists of `y^2=x^3+1`::
 
+        sage: # needs sage.rings.finite_rings
         sage: from sage.schemes.elliptic_curves.ell_finite_field import curves_with_j_0
         sage: sorted(curves_with_j_0(GF(7)), key = lambda E: E.a_invariants())
         [Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7,
@@ -1878,7 +1878,11 @@ def curves_with_j_0(K):
          Elliptic Curve defined by y^2 = x^3 + 4 over Finite Field of size 7,
          Elliptic Curve defined by y^2 = x^3 + 5 over Finite Field of size 7,
          Elliptic Curve defined by y^2 = x^3 + 6 over Finite Field of size 7]
-        sage: set(E.j_invariant() for E in curves_with_j_0(GF(25)))                     # needs sage.rings.finite_rings
+        sage: curves = curves_with_j_0(GF(25)); len(curves)
+        6
+        sage: all(not curves[i].is_isomorphic(curves[j]) for i in range(6) for j in range(i + 1, 6))
+        True
+        sage: set(E.j_invariant() for E in curves)
         {0}
 
     For `K=\GF{q}` where `q\equiv5\mod{6}` there are two curves,
@@ -1907,13 +1911,12 @@ def curves_with_j_0(K):
     # Now we have genuine sextic twists, find D generating K* mod 6th powers
     q2 = (q - 1) // 2
     q3 = (q - 1) // 3
-    # Note that computing multiplicative generator is expensive
-    D = K.random_element()
+    D = K.gen()
     while not D or D**q2 == 1 or D**q3 == 1:
         D = K.random_element()
 
     curves = [EllipticCurve(K, [0, D**i]) for i in range(6)]
-    # TODO (grhkm): issue 37110, Precompute orders of sextic twists + docs
+    # TODO: issue 37110, Precompute orders of sextic twists + docs
     # The idea should be to evaluate the character (D / q) or something
     # Probably reference [RS2010]_ and [Connell1999]_
     # Also a necessary change is `curves_with_j_0` should take in an optional "starting curve"
@@ -1980,7 +1983,7 @@ def curves_with_j_1728(K):
     while not D or D**q2 == 1:
         D = K.random_element()
     curves = [EllipticCurve(K, [D**i, 0]) for i in range(4)]
-    # TODO (grhkm): issue 37110, Precompute orders of quartic twists + docs
+    # TODO: issue 37110, Precompute orders of quartic twists + docs
     # The idea should be to evaluate the character (D / q) or something
     # Probably reference [Connell1999]_
     # Also a necessary change is `curves_with_j_1728` should take in an optional "starting curve"
@@ -2210,7 +2213,7 @@ def curves_with_j_0_char3(K):
 
         curves[0].set_order(base)
         curves[1].set_order(base)
-        # TODO (grhkm): issue 37110
+        # TODO: issue 37110
         # try:
         #     curves[2].set_order(base + delta)
         #     curves[3].set_order(base - delta)
