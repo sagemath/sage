@@ -32,10 +32,10 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.graphs.digraph import DiGraph
 from sage.combinat.posets.posets import Poset
-from sage.sets.set import Set
 from sage.combinat.subset import Subsets
+from sage.graphs.digraph import DiGraph
+from sage.sets.set import Set
 
 
 ##############################################################
@@ -286,13 +286,14 @@ def is_left_modular(L, H=None, verbose=False) -> bool:
                 if (L.join(y, mxz) != L.meet(L.join(y, x), z)):
                     if verbose is False:
                         return False
-                    else:
-                        out += [(y, x, z)]
+                    out += [(y, x, z)]
     return True if verbose is False else out
 
 
 def join_irr_label(L, c, j):
     r"""
+    Return the label of the join-irreducible element ``j``.
+
     INPUT:
 
     ``L`` -- a left-modular lattice
@@ -303,8 +304,7 @@ def join_irr_label(L, c, j):
 
     OUTPUT:
 
-    returns the label of the join-irreducible element ``j``,
-    defined as the minimum index `i` such that `j < x_i`, where `x_i \in c`
+    The label is the minimum index `i` such that `j < x_i`, where `x_i \in c`.
 
     EXAMPLES ::
 
@@ -322,6 +322,8 @@ def join_irr_label(L, c, j):
 
 def meet_irr_label(L, c, m):
     r"""
+    Return the label of the meet-irreducible element ``m``.
+
     INPUT:
 
     ``L`` -- a left-modular lattice
@@ -332,8 +334,7 @@ def meet_irr_label(L, c, m):
 
     OUTPUT:
 
-    returns the label of the meet-irreducible element ``m``, defined
-    as the maximum index `i` such that `m > x_{i-1}`, where `x_{i-1} \in c`
+    The label is the maximum index `i` such that `m > x_{i-1}`, where `x_{i-1} \in c`.
 
     EXAMPLES ::
 
@@ -695,7 +696,7 @@ def flip(G, du, j):
     b = du[1]
     if j not in b and j not in a:
         return du
-    elif j in b:
+    if j in b:
         a2 = Set([k for k in a if not (P.ge(k, j))] + [j])
         b2 = Set([k for k in b if not (P.le(k, j))])
     elif j in a:
@@ -795,10 +796,7 @@ def flips(G, du, s):
         sage: flips(G, du, [4, 2, 3])
         ({2, 6, 7}, {3})
     """
-    if not isinstance(s, list):
-        s_iter = [s]
-    else:
-        s_iter = s
+    s_iter = s if isinstance(s, list) else [s]
     dv = tuple(du)
     for i in s_iter:
         dv = flip(G, dv, i)
@@ -943,10 +941,7 @@ def toggles(G, s):
         sage: P_1 == P_2
         True
     """
-    if not isinstance(s, list):
-        s_iter = [s]
-    else:
-        s_iter = s
+    s_iter = s if isinstance(s, list) else [s]
     H = DiGraph(G)
     for i in s_iter:
         H = DiGraph(toggle(H, i))
