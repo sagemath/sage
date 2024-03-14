@@ -724,7 +724,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: f.total_degree()
             10
 
-        TESTS::
+        TESTS:
 
         Ensure that :issue:`37603` is fixed::
              sage: R.<x,y,z> = QQbar[]
