@@ -43,7 +43,7 @@ Python classes::
     sage: sage_getfile(BlockFinder)
     '.../sage/misc/sageinspect.py'
     sage: sage_getdoc(BlockFinder).lstrip()[:50]
-    'Provide a tokeneater() method to detect the...'
+    'Provide a "tokeneater()" method to detect the end '
     sage: sage_getsource(BlockFinder)
     'class BlockFinder:...'
 
@@ -103,7 +103,7 @@ AUTHORS:
 - Simon King: in :func:`sage_getsourcelines`, get source lines for dynamic classes
 - Simon King: in :func:`_sage_getargspec_cython`, return an ``ArgSpec``, fix some bugs
 - Simon King (2011-09): added :func:`_sage_getsourcelines_name_with_dot`
-- Simon King (2013-02): in :func:`_sage_getargspec_cython()`, recognise varargs and
+- Simon King (2013-02): in :func:`_sage_getargspec_cython`, recognise varargs and
   default values in cython code, and return an ``ArgSpec``
 """
 
@@ -2264,8 +2264,9 @@ def sage_getsourcelines(obj):
 
     EXAMPLES::
 
-        sage: # needs sage.modules
         sage: from sage.misc.sageinspect import sage_getsourcelines
+
+        sage: # needs sage.modules
         sage: sage_getsourcelines(matrix)[1]
         21
         sage: sage_getsourcelines(matrix)[0][0]
@@ -2363,6 +2364,7 @@ def sage_getsourcelines(obj):
           '                       Ideal_generic):\n',
           '    def __init__(self, ring, gens, coerce=True):\n',
           ...)
+
     """
     # First try the method _sage_src_lines_(), which is meant to give
     # the source lines of an object (not of its type!).

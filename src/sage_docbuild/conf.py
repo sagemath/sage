@@ -336,7 +336,7 @@ def linkcode_resolve(domain, info):
                 for attr in fullname.split('.'):
                     obj = getattr(obj, attr)
                 lineno = sage_getsourcelines(obj)[-1]
-            except (AttributeError, TypeError, OSError):
+            except Exception:  # catch all
                 return None
             anchor = f'#L{lineno}'
         else:
