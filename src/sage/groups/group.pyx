@@ -19,7 +19,6 @@ Base class for groups
 
 from sage.structure.parent cimport Parent
 from sage.rings.infinity import infinity
-from sage.misc.cachefunc import cached_method
 
 
 def is_Group(x):
@@ -267,51 +266,6 @@ cdef class Group(Parent):
         """
         raise NotImplementedError
 
-    @cached_method
-    def minimum_generating_set(self):
-        """
-        Return a list of the minimum generating set of this group.
-
-        EXAMPLES::
-
-            sage: G = GL(2,GF(3))
-            sage: G.minimum_generating_set()
-            [
-            [1 2]  [1 2]
-            [1 1], [0 1]
-            ]
-
-            sage: G = SymmetricGroup(3)
-            sage: s = G.minimum_generating_set(); s
-            [(2,3), (1,2,3)]
-            sage: s[0].parent()
-            Symmetric group of order 3! as a permutation group
-
-            sage: A5 = AlternatingGroup(5)
-            sage: A5.minimum_generating_set()
-            [(3,4,5), (1,2,3)]
-
-            sage: H = groups.matrix.Heisenberg(1,3); H
-            Heisenberg group of degree 1 over Ring of integers modulo 3
-            sage: H.minimum_generating_set()
-            [
-            [1 0 0]  [1 1 0]
-            [0 1 1]  [0 1 0]
-            [0 0 1], [0 0 1]
-            ]
-
-        TESTS:
-
-            Test that function gives an error for infinite groups::
-
-                sage: G = GL(2, ZZ)
-                sage: G.minimum_generating_set()
-                Traceback (most recent call last):
-                ...
-                NotImplementedError: only implemented for finite groups
-        """
-        from sage.groups.libgap_mixin import minimum_generating_set
-        return [self._element_constructor(x) for x in minimum_generating_set(self)]
 
 cdef class AbelianGroup(Group):
     """
