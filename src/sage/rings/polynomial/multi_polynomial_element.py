@@ -683,7 +683,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         if x is None:
             if std_grading or not self.parent().term_order().is_weighted_degree_order():
                 return Integer(self.element().degree(None))
-            return Integer(self.weighted_degree(self.parent().term_order().weights()))
+            return self.weighted_degree(self.parent().term_order().weights())
         if isinstance(x, MPolynomial):
             if not x.parent() is self.parent():
                 try:
