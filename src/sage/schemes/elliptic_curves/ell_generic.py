@@ -546,11 +546,11 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             sage: T = E.torsion_subgroup()
             sage: [E(t) for t in T]
             [(0 : 1 : 0),
-            (9 : 23 : 1),
-            (2 : 2 : 1),
-            (1 : -1 : 1),
-            (2 : -5 : 1),
-            (9 : -33 : 1)]
+             (9 : 23 : 1),
+             (2 : 2 : 1),
+             (1 : -1 : 1),
+             (2 : -5 : 1),
+             (9 : -33 : 1)]
 
         ::
 
