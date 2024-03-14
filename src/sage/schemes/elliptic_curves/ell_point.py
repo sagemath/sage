@@ -3274,7 +3274,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         - ``v`` -- a non-archimedean place of `K`, or None (default).
           If `v` is a non-archimedean place, return the local height
-          of self at `v`. If `v` is None, return the total
+          of self at `v`. If `v` is ``None``, return the total
           non-archimedean contribution to the global height.
 
         - ``prec`` -- integer, or ``None`` (default). The precision of the
