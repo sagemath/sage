@@ -17,7 +17,29 @@ def _get_optional_defaults():
     return ','.join(optional)
 
 
-def main():
+def _make_parser():
+    r"""
+    Return the :class:`argparse.ArgumentParser`.
+
+    TESTS:
+
+    Test that the defaults are the consistent::
+
+        sage: from sage.doctest.control import DocTestDefaults
+        sage: from sage.doctest.__main__ import _make_parser
+        sage: parser = _make_parser()
+        sage: args = parser.parse_args([])
+        sage: DD = DocTestDefaults(runtest_default=True); DD
+        DocTestDefaults(abspath=False, file_iterations=0, global_iterations=0,
+                        optional='sage,optional', random_seed=None,
+                        stats_path='.../timings2.json')
+        sage: D = copy(args.__dict__)
+        sage: del D['filenames']
+        sage: DA = DocTestDefaults(runtest_default=True, **D); DA
+        DocTestDefaults(abspath=False, file_iterations=0, global_iterations=0,
+                        optional='sage,optional', random_seed=None,
+                        stats_path='.../timings2.json')
+    """
     parser = argparse.ArgumentParser(usage="sage -t [options] filenames",
                                      description="Run all tests in a file or a list of files whose extensions "
                                                  "are one of the following: "
@@ -127,7 +149,11 @@ def main():
     parser.add_argument("--die_timeout", type=int, default=-1, help=argparse.SUPPRESS)
 
     parser.add_argument("filenames", help="file names", nargs='*')
+    return parser
 
+
+def main():
+    parser = _make_parser()
     # custom treatment to separate properly
     # one or several file names at the end
     new_arguments = []
