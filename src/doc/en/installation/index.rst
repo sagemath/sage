@@ -124,7 +124,10 @@ Windows
       to make at least 4GB of RAM available to WSL.
 
     Start Ubuntu from the Start menu, and type the following commands
-    to install Sage from conda-forge.
+    to install Sage from conda-forge. (The ``$`` represents the command
+    line prompt, don't type it!) The second step will ask a few questions,
+    and you may need to hit :kbd:`Enter` to confirm or type ``yes``
+    and then hit :kbd:`Enter`.
 
     .. code-block:: shell
 
