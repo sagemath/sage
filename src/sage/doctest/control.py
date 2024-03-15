@@ -91,6 +91,8 @@ class DocTestDefaults(SageObject):
     The defaults for ``sage-runtests``::
 
         sage: D = DocTestDefaults(runtest_default=True); D
+        DocTestDefaults(abspath=False, file_iterations=0, global_iterations=0,
+                        stats_path='.../timings2.json')
     """
     def __init__(self, runtest_default=False, **kwds):
         """
