@@ -1285,7 +1285,7 @@ class DocTestController(SageObject):
             ...python... -m sage.doctest --serial --timeout=123 hello_world.py
         """
         cmd = f"{shlex.quote(sys.executable)} -m sage.doctest --serial "
-        opt = dict_difference(self.options.__dict__, DocTestDefaults().__dict__)
+        opt = dict_difference(self.options.__dict__, DocTestDefaults(runtest_default=True).__dict__)
         # Options with no argument
         for o in ("all", "installed", "long", "initial", "exitfirst",
                   "force_lib", "if_installed", "abspath", "verbose",
