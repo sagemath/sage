@@ -146,6 +146,11 @@ Windows
        $ conda activate sage
        $ sage
 
+    This way of starting Sage gives you the most basic way of using
+    Sage in the terminal. See :ref:`sec-launching` for recommended next steps,
+    in particular for setting up the Jupyter notebook, which is required if
+    you want to use graphics.
+
 .. _installation-guide-linux:
 
 Linux
