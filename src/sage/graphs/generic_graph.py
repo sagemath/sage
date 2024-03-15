@@ -1338,7 +1338,7 @@ class GenericGraph(GenericGraph_pyx):
           explicitly. If set to ``None`` (default), the format is set to be the
           file extension of ``filename``. Admissible formats are: ``'adjlist'``,
           ``'dot'``, ``'edgelist'``, ``'gexf'``, ``'gml'``, ``'graphml'``,
-          ``'multiline_adjlist'``, ``'pajek'``, ``'yaml'``.
+          ``'multiline_adjlist'``, ``'pajek'``.
 
         - All other arguments are forwarded to the subfunction. For more
           information, see their respective documentation:
@@ -1356,7 +1356,6 @@ class GenericGraph(GenericGraph_pyx):
               ``'graphml'``           | :func:`networkx.readwrite.graphml.write_graphml`
               ``'multiline_adjlist'`` | :func:`networkx.readwrite.multiline_adjlist.write_multiline_adjlist`
               ``'pajek'``             | :func:`networkx.readwrite.pajek.write_pajek`
-              ``'yaml'``              | :func:`networkx.readwrite.nx_yaml.write_yaml`
 
         .. SEEALSO::
 
