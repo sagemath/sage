@@ -1280,12 +1280,22 @@ class DocTestController(SageObject):
         """
         cmd = f"{shlex.quote(sys.executable)} -m sage.doctest --serial "
         opt = dict_difference(self.options.__dict__, DocTestDefaults().__dict__)
-        for o in ("all", "installed", "long", "force_lib", "verbose", "failed", "new"):
+        # Options with no argument
+        for o in ("all", "installed", "long", "initial", "exitfirst",
+                  "force_lib", "if_installed", "abspath", "verbose",
+                  "debug", "only_errors", "failed", "new",
+                  "show_skipped"):
             if o in opt:
                 cmd += "--%s " % o
-        for o in ("timeout", "randorder", "stats_path"):
+        # Options with one argument
+        for o in ("timeout", "die_timeout", "logfile", "warn_long", "randorder",
+                  "random_seed", "global_iterations", "file_iterations",
+                  "environment", "baseline_stats_path", "stats_path"):
             if o in opt:
                 cmd += "--%s=%s " % (o, opt[o])
+        # One with a different dest
+        if "target_walltime" in opt:
+            cmd += "--%s=%s " % ("short", opt[o])
         if "optional" in opt:
             cmd += "--optional={} ".format(self._optional_tags_string())
         return cmd + " ".join(self.files)
