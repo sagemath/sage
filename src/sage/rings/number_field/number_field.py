@@ -4152,10 +4152,10 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         This checks that extra primes in the polynomial discriminant are not a factor::
 
             sage: K.<a> = NumberField(x^2-13*9*49)
-            sage: K.completely_split_primes(20)
-            [3, 17]
+            sage: K.completely_split_primes(80)
+            [3, 17, 23, 29, 43, 53, 61, 79]
 
-        This checks that we're still OK in the case of fields of non-prime degree::
+        This checks that the method works in the case of fields of non-prime degree::
 
             sage: L.<a> = NumberField(x^6 + 108) # splitting field of x^3-2
             sage: L.completely_split_primes(80)
@@ -4180,24 +4180,23 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         for p in prime_range(B):
             if field_disc % p == 0:
                 continue
-            else:
-                Fp = GF(p)
-                FpT = PolynomialRing(Fp, 'T')
-                g = FpT(def_poly)
-                num_factors = sum(f[1] for f in factor(g))
-                if num_factors == field_degree:
+            Fp = GF(p)
+            FpT = PolynomialRing(Fp, 'T')
+            g = FpT(def_poly)
+            num_factors = sum(f[1] for f in factor(g))
+            if num_factors == field_degree:
 
-                    # Sometimes this happens even when the prime is not compeltely split
-                    # for example, if we're working in a quadratic field with discriminant
-                    # 1 mod 4. Then 2 could be a problem.
-                    # So we're just going to brute force now, and factor the ideal.
-                    # It is faster to factor a polylnomial over a finite field than
-                    # it is to factor an ideal in a number field.
-                    if poly_disc % p == 0:
-                        if len(self.ideal(p).factor()) != field_degree:
-                            continue
+                # Sometimes this happens even when the prime is not compeltely split
+                # for example, if we're working in a quadratic field with discriminant
+                # 1 mod 4. Then 2 could be a problem.
+                # So we're just going to brute force now, and factor the ideal.
+                # It is faster to factor a polylnomial over a finite field than
+                # it is to factor an ideal in a number field.
+                if poly_disc % p == 0:
+                    if len(self.ideal(p).factor()) != field_degree:
+                        continue
 
-                    split_primes.append(p)
+                split_primes.append(p)
         return split_primes
 
     def _is_valid_homomorphism_(self, codomain, im_gens, base_map=None):
