@@ -2693,8 +2693,7 @@ class Graphics(WithEqualityById, SageObject):
 
         Scientific notation is automatically used for large enough function values, cf. :issue:`34233` ::
 
-            sage: var('p');                                                              # needs sage.symbolic
-            sage: plot(90000*p/(100-p), (p,0,100), ymin=0, ymax=1000000)                # needs sage.symbolic
+            sage: plot(90000*x/(100-x), (x,0,100), ymin=0, ymax=1000000)                # needs sage.symbolic
             ...
 
         .. PLOT::
