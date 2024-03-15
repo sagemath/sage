@@ -63,28 +63,36 @@ class DocTestDefaults(SageObject):
     """
     This class is used for doctesting the Sage doctest module.
 
-    It fills in attributes to be the same as the defaults defined in
-    ``sage-runtests``, expect for a few places,
-    which is mostly to make doctesting more predictable.
+    INPUT:
+
+    - ``runtest_default`` -- (boolean, default ``False``); if ``True``,
+      fills in attribute to be the same as the defaults defined in
+      ``sage-runtests``. If ``False``, change defaults in a few places
+      for use in doctests of the doctester, which is mostly to make
+      doctesting more predictable.
+
+    - ``**kwds`` -- attributes to override defaults
 
     EXAMPLES::
 
         sage: from sage.doctest.control import DocTestDefaults
-        sage: D = DocTestDefaults()
-        sage: D
+        sage: D = DocTestDefaults(); D
         DocTestDefaults()
         sage: D.timeout
         -1
 
     Keyword arguments become attributes::
 
-        sage: D = DocTestDefaults(timeout=100)
-        sage: D
+        sage: D = DocTestDefaults(timeout=100); D
         DocTestDefaults(timeout=100)
         sage: D.timeout
         100
+
+    The defaults for ``sage-runtests``::
+
+        sage: D = DocTestDefaults(runtest_default=True); D
     """
-    def __init__(self, **kwds):
+    def __init__(self, runtest_default=False, **kwds):
         """
         Edit these parameters after creating an instance.
 
@@ -110,14 +118,14 @@ class DocTestDefaults(SageObject):
         self.warn_long = -1.0
         self.randorder = None
         self.random_seed = 0
-        self.global_iterations = 1  # sage-runtests default is 0
-        self.file_iterations = 1    # sage-runtests default is 0
+        self.global_iterations = 0 if runtest_default else 1
+        self.file_iterations = 0 if runtest_default else 1
         self.environment = "sage.repl.ipython_kernel.all_jupyter"
         self.initial = False
         self.exitfirst = False
         self.force_lib = False
         self.if_installed = False
-        self.abspath = True         # sage-runtests default is False
+        self.abspath = not runtest_default
         self.verbose = False
         self.debug = False
         self.only_errors = False
@@ -149,7 +157,8 @@ class DocTestDefaults(SageObject):
 
         # We don't want to use the real stats file by default so that
         # we don't overwrite timings for the actual running doctests.
-        self.stats_path = os.path.join(DOT_SAGE, "timings_dt_test.json")
+        self.stats_path = os.path.join(
+            DOT_SAGE, "timings2.json" if runtest_default else "timings_dt_test.json")
         self.__dict__.update(kwds)
 
     def _repr_(self):
