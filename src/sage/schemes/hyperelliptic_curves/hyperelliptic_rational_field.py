@@ -23,8 +23,8 @@ class HyperellipticCurve_rational_field(hyperelliptic_generic.HyperellipticCurve
         """
         Compute the matrix of Frobenius on Monsky-Washnitzer cohomology using
         the `p`-adic field with precision ``prec``.
-        
-        This function is essentially a wrapper function of 
+
+        This function is essentially a wrapper function of
         :meth:`sage.schemes.hyperelliptic_curves.monsky_washnitzer.matrix_of_frobenius_hyperelliptic`.
 
         INPUT:
@@ -46,10 +46,10 @@ class HyperellipticCurve_rational_field(hyperelliptic_generic.HyperellipticCurve
             [      3*5 + 5^2 + O(5^3)             3*5 + O(5^3)             4*5 + O(5^3)         2 + 5^2 + O(5^3)]
             [    4*5 + 4*5^2 + O(5^3)     3*5 + 2*5^2 + O(5^3)       5 + 3*5^2 + O(5^3)     2*5 + 2*5^2 + O(5^3)]
             [            5^2 + O(5^3)       5 + 4*5^2 + O(5^3)     4*5 + 3*5^2 + O(5^3)             2*5 + O(5^3)]
-        
+
         You can also pass directly a prime `p` with to construct a pAdic field with precision
-        ``prec``:: 
-            
+        ``prec``::
+
             sage: H.matrix_of_frobenius(3, prec=2)
             [        O(3^2)     3 + O(3^2)         O(3^2)         O(3^2)]
             [    3 + O(3^2)         O(3^2)         O(3^2) 2 + 3 + O(3^2)]
