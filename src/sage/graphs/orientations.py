@@ -114,7 +114,7 @@ def acyclic_orientations(G):
     Graph with one edge::
 
         sage: list(Graph([(0, 1)]).acyclic_orientations())
-        [DiGraph on 2 vertices, DiGraph on 2 vertices]
+        [Digraph on 2 vertices, Digraph on 2 vertices]
 
     Graph with two edges::
 
