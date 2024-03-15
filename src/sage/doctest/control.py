@@ -92,6 +92,7 @@ class DocTestDefaults(SageObject):
 
         sage: D = DocTestDefaults(runtest_default=True); D
         DocTestDefaults(abspath=False, file_iterations=0, global_iterations=0,
+                        optional='sage,optional', random_seed=None,
                         stats_path='.../timings2.json')
     """
     def __init__(self, runtest_default=False, **kwds):
@@ -119,7 +120,7 @@ class DocTestDefaults(SageObject):
         self.long = False
         self.warn_long = -1.0
         self.randorder = None
-        self.random_seed = 0
+        self.random_seed = None if runtest_default else 0
         self.global_iterations = 0 if runtest_default else 1
         self.file_iterations = 0 if runtest_default else 1
         self.environment = "sage.repl.ipython_kernel.all_jupyter"
@@ -149,7 +150,10 @@ class DocTestDefaults(SageObject):
         # automatically anyway. However, this default is still used for
         # displaying user-defined optional tags and we don't want to see
         # the auto_optional_tags there.
-        self.optional = {'sage'} | auto_optional_tags
+        if runtest_default:
+            self.optional = ','.join(['sage', 'optional'])
+        else:
+            self.optional = {'sage'} | auto_optional_tags
         self.hide = ''
         self.probe = ''
 
