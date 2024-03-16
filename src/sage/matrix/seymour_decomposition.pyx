@@ -276,9 +276,9 @@ cdef class DecompositionNode(SageObject):
         if self.row_keys() is None or self.column_keys() is None:
             raise ValueError('row_keys and column_keys are required')
         if CMRelementIsRow(element):
-            return self.row_keys()[CMRelementToRowIndex(element)]
+            return DecompositionNodeIndexKey(self.row_keys()[CMRelementToRowIndex(element)])
         else:
-            return self.column_keys()[CMRelementToColumnIndex(element)]
+            return DecompositionNodeIndexKey(self.column_keys()[CMRelementToColumnIndex(element)])
 
     def _create_child_node(self, index):
         row_keys = self.row_keys()
@@ -692,13 +692,7 @@ cdef class ThreeSumNode(SumNode):
                 else:
                     epsilon2 = Integer(mat1.entryValues[index2])
 
-                if epsilon1 * epsilon2 == 1:
-                    label = '+'
-                else:
-                    label = '-'
-
-                child1_column_keys += ((row_keys[child1_nrows-2], label,
-                                        row_keys[child1_nrows-1]),)
+                child1_column_keys += (DecompositionNodeIndexKey((epsilon1, row_keys[child1_nrows-2], epsilon2, row_keys[child1_nrows-1]), composition=True),)
             else: # Wide_Wide
                 child1_row_keys = tuple(self._CMRelement_to_key(parent_rows1[i])
                                         for i in range(child1_nrows))
@@ -711,13 +705,8 @@ cdef class ThreeSumNode(SumNode):
                 else:
                     epsilon1 = Integer(mat1.entryValues[index1])
 
-                if epsilon1 == 1:
-                    label = '+'
-                else:
-                    label = '-'
-
-                child1_column_keys += ((column_keys[child1_ncols-1], label,
-                                        row_keys[child1_nrows-1]),)
+                child1_column_keys += (DecompositionNodeIndexKey((1, column_keys[child1_ncols-1], epsilon1,
+                                        row_keys[child1_nrows-1]), composition=True),)
 
             child1 = create_DecompositionNode(child1_dec, root=self._root or self,
                                               row_keys=child1_row_keys,
@@ -742,12 +731,7 @@ cdef class ThreeSumNode(SumNode):
                 else:
                     epsilon2 = Integer(mat1.entryValues[index2])
 
-                if epsilon1 * epsilon2 == 1:
-                    label = '+'
-                else:
-                    label = '-'
-
-                child2_row_keys = ((column_keys[0], label, column_keys[1]), ) + child2_row_keys
+                child2_row_keys = (DecompositionNodeIndexKey((epsilon1, column_keys[0], epsilon2, column_keys[1]), composition=True), ) + child2_row_keys
                 child2_column_keys = tuple(self._CMRelement_to_key(parent_columns2[i])
                                            for i in range(child2_ncols))
             else: # Wide_Wide
@@ -760,14 +744,9 @@ cdef class ThreeSumNode(SumNode):
                 else:
                     epsilon1 = Integer(mat1.entryValues[index1])
 
-                if epsilon1 == 1:
-                    label = '+'
-                else:
-                    label = '-'
-
                 child2_column_keys = tuple(self._CMRelement_to_key(parent_columns2[i])
                                            for i in range(1, child2_ncols))
-                child2_column_keys = ((column_keys[1], label, row_keys[0]), ) + child2_column_keys
+                child2_column_keys = (DecompositionNodeIndexKey((1, column_keys[1], epsilon1, row_keys[0]), composition=True),) + child2_column_keys
 
             child2 = create_DecompositionNode(child2_dec, root=self._root or self,
                                               row_keys=child2_row_keys,
@@ -1036,6 +1015,44 @@ cdef class PivotsNode(DecompositionNode):
 
 cdef class SubmatrixNode(DecompositionNode):
     pass
+
+
+cdef class DecompositionNodeIndexKey:
+
+    cdef frozenset _core
+    cdef bint _composition
+
+    def __init__(self, keys, composition=False):
+        """
+        Return the index key.
+
+        frozenset((1,'a'), (-1,'7'))
+        """
+        if composition:
+            sign1, key1, sign2, key2 = keys
+            self._core = frozenset([(sign1, key1), (sign2, key2)])
+            self._composition = True
+        else:
+            self._core = frozenset((keys,))
+            self._composition = False
+
+    @property
+    def key(self):
+        return self._core
+
+    def __hash__(self):
+        return hash(self._core)
+
+    def __eq__(self, other):
+        if isinstance(other, DecompositionNodeIndexKey):
+            return self._core == other._core
+        return False
+
+    def __repr__(self):
+        if self._composition:
+            return "".join(['+'+str(a[1]) if a[0] == 1 else '-'+str(a[1]) for a in self._core])
+        else:
+            return "".join([str(a) for a in self._core])
 
 
 cdef _class(CMR_MATROID_DEC *dec):
