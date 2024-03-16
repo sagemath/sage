@@ -40,8 +40,9 @@ using one of two mechanisms:
     (to be used in place of ``importlib.metadata`` when Python older
     than 3.11 is in use),
   - `importlib_resources <../reference/spkg/importlib_resources>`_:
-    Use it in place of ``importlib.resources`` when Python older
-    than 3.11 is in use::
+    If necessary, you can use it in place of ``importlib.resources``
+    when Python older than 3.11 is in use if you need a newer
+    feature::
 
         import sys
 
