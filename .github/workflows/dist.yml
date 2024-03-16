@@ -167,7 +167,7 @@ jobs:
           mkdir -p unpacked
           for pkg in sagemath-objects sagemath-categories; do
               (cd unpacked && tar xfz - ) < dist/$pkg*.tar.gz
-              "${{ steps.python.outputs.python-path }}" -m pipx run cibuildwheel==2.16.5 unpacked/$pkg*
+              "${{ steps.python.outputs.python-path }}" -m pipx run cibuildwheel==2.17.0 unpacked/$pkg*
           done
 
       - uses: actions/upload-artifact@v3
