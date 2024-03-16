@@ -41,6 +41,16 @@ SAGE_SPKG_WHEELS)`` to list them and ``pip install $(sage-config
 SAGE_SPKG_WHEELS)/*.whl`` to install them.  After this, you can install the Sage
 library, for example, using ``pip install sagemath-standard``.
 
+To skip creation of a build tree and bring your own configuration instead,
+use the environment variables ``SAGE_CONF_FILE`` or ``SAGE_CONF_ENV_FILE``
+at the build time of the package. The files named by these variables
+are copied as ``_sage_conf.py`` and ``sage-env-config``.
+
+For example, to skip creation of a build tree and set no configuration
+variables at all, you can use::
+
+  export SAGE_CONF_FILE=/dev/null
+
 
 sage_conf wheels
 ----------------
