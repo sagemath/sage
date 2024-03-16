@@ -131,6 +131,14 @@ by Sage, you can link toward it without specifying its full path:
      - ``:mathscinet:`MR0100971```
      - :mathscinet:`MR0100971`
 
+   * - :ref:`GAP <spkg_gap>`
+     - ``:gap:`Groups <chap39>```
+     - :gap:`Groups <chap39>`
+
+   * -
+     - ``:gap_package:`guava```
+     - :gap_package:`guava`
+
    * - :ref:`Giac <spkg_giac>`
      - ``:giac_cascmd:`gbasis <node280>```
      - :giac_cascmd:`gbasis <node280>`
