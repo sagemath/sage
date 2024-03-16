@@ -159,25 +159,14 @@ included in one of the following places:
   The preferred way to access the data from Python is using the
   `importlib.resources API <https://importlib-resources.readthedocs.io/en/latest/using.html>`,
   in particular the function :func:`importlib.resources.files`.
-  It should be imported as follows
-  (see :ref:`section-python-language-standard`)::
+  Using it, you can:
 
-    import sys
-
-    if sys.version_info < (3, 11):
-        # Use backport package providing Python 3.11 features
-        from importlib_resources import files
-    else:
-        from importlib.resources import files
-
-  After this import, you can:
-
-  - open a resource for text reading: `fd = files(package).joinpath(resource).open('rt')`
-  - open a resource for binary reading: `fd = files(package).joinpath(resource).open('rb')`
-  - read a resource as text: `text = files(package).joinpath(resource).read_text()`
-  - read a resource as bytes: `bytes = files(package).joinpath(resource).read_bytes()`
-  - open a xz resource for text reading: `fd = lzma.open(files(package).joinpath(resource).open('rb'), 'rt')`
-  - open a xz resource for binary reading: `fd = lzma.open(files(package).joinpath(resource).open('rb'), 'rb')`
+  - open a resource for text reading: ``fd = files(package).joinpath(resource).open('rt')``
+  - open a resource for binary reading: ``fd = files(package).joinpath(resource).open('rb')``
+  - read a resource as text: ``text = files(package).joinpath(resource).read_text()``
+  - read a resource as bytes: ``bytes = files(package).joinpath(resource).read_bytes()``
+  - open an xz-compressed resource for text reading: ``fd = lzma.open(files(package).joinpath(resource).open('rb'), 'rt')``
+  - open an xz-compressed resource for binary reading: ``fd = lzma.open(files(package).joinpath(resource).open('rb'), 'rb')``
 
   If the file needs to be used outside of Python, then the
   preferred way is using the context manager
