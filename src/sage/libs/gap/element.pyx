@@ -1522,9 +1522,16 @@ cdef class GapElement_Integer(GapElement):
         else:
             # gap integers are stored as a mp_limb_t
             size = GAP_SizeInt(self.value) # count limbs and extract sign
-            c_sign = 1 if size > 0 else -1
+            if size > 0:
+                c_sign = 1
+                c_size = size
+            elif size < 0:
+                c_sign = -1
+                c_size = -size
+            else: # Something is wrong, fall back to string representation
+                return ring(self.String().sage())
             x = GAP_AddrInt(self.value) # pointer to limbs
-            mpz_roinit_n(output, <mp_limb_t *>x, abs(c_size))
+            mpz_roinit_n(output, <mp_limb_t *>x, c_size)
             return ring(c_sign*mpz_get_pylong(output))
 
     _integer_ = sage
