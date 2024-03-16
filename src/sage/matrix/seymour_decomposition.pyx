@@ -191,8 +191,7 @@ cdef class DecompositionNode(SageObject):
             sage: C = certificate._children()[0]; C
             ThreeSumNode (9×12) with 2 children
             sage: C.parent_rows_and_columns()
-            (('r1', 'i', 'r3', 'r4', 'r5', 'r6', 'r7', 'r8', 'r9'),
-             ('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'r2', 'j', 'k', 'l'))
+            ((r1, i, r3, r4, r5, r6, r7, r8, r9), (a, b, c, d, e, f, g, h, r2, j, k, l))
         """
         cdef CMR_ELEMENT *parent_rows = CMRmatroiddecRowsParent(self._dec)
         cdef CMR_ELEMENT *parent_columns = CMRmatroiddecColumnsParent(self._dec)
@@ -614,7 +613,7 @@ cdef class ThreeSumNode(SumNode):
             ....:                           column_keys='abcdef')
             sage: C = certificate._children()[0]
             sage: C.parent_rows_and_columns()
-            ((0, 1, 2, 3, 'a', 5), (4, 'b', 'c', 'd', 'e', 'f'))
+            ((0, 1, 2, 3, a, 5), (4, b, c, d, e, f))
             sage: C1, C2 = C._children()
             sage: C1.matrix()
             [ 0  0  1 -1 -1]
@@ -627,9 +626,9 @@ cdef class ThreeSumNode(SumNode):
             [-1 -1  0  1  1]
             [-1 -1  0  0  1]
             sage: C1.parent_rows_and_columns()
-            ((0, 1, 'a', 3), ('b', 'c', 'd', 'e', ('e', '+', 3)))
+            ((0, 1, a, 3), (b, c, d, e, +3+e))
             sage: C2.parent_rows_and_columns()
-            ((0, 2, 3, 5), (('b', '+', 0), 'd', 4, 'e', 'f'))
+            ((0, 2, 3, 5), (+b+0, d, 4, e, f))
 
             sage: result, certificate = R12.is_totally_unimodular(certificate=True,
             ....:                           three_sum_strategy="Mixed_Mixed",
@@ -648,9 +647,9 @@ cdef class ThreeSumNode(SumNode):
             [ 1  0  1  0]
             [ 0 -1  0  1]
             sage: C1.parent_rows_and_columns()
-            ((0, 1, 2, 3), ('a', 'b', 'c', 'd', (2, '+', 3)))
+            ((0, 1, 2, 3), (a, b, c, d, +2+3))
             sage: C2.parent_rows_and_columns()
-            ((('a', '+', 'b'), 2, 3, 4, 5), ('a', 'd', 'e', 'f'))
+            ((+a+b, 2, 3, 4, 5), (a, d, e, f))
         """
         if self.nchildren() != 2:
             raise ValueError("ThreeSumNode has exactly two children")
