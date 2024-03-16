@@ -1697,7 +1697,7 @@ cdef class GapElement_IntegerMod(GapElement):
         INPUT:
 
         - ``ring`` -- Sage integer mod ring or ``None`` (default). If
-          not specified, a suitable integer mod ringa is used
+          not specified, a suitable integer mod ring is used
           automatically.
 
         OUTPUT:
@@ -1716,7 +1716,7 @@ cdef class GapElement_IntegerMod(GapElement):
             # ring = self.DefaultRing().sage()
             characteristic = self.Characteristic().sage()
             ring = ZZ.quotient_ring(characteristic)
-        return self.lift().sage(ring=ring)
+        return ring(self.lift())
 
     def _integer_(self, R):
         r"""
