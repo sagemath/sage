@@ -623,7 +623,47 @@ cdef class ThreeSumNode(SumNode):
             sage: C1.parent_rows_and_columns()
             ((0, 1, a, 3), (b, c, d, e, +3+e))
             sage: C2.parent_rows_and_columns()
-            ((0, 2, 3, 5), (+b+0, d, 4, e, f))
+            ((0, 2, 3, 5), (+d+0, d, 4, e, f))
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: R12_large = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 12, sparse=True),
+            ....: [[1, -1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
+            ....: [0, 0, 0, 1, -1, 0, 0, 0, 1 , 1, 1, 1],
+            ....: [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+            ....: [ 1,  0,  1,  0,  0,  0,  0,  0,  1,  1,  0,  0],
+            ....: [ 0,  1,  1,  0,  0,  0,  0,  0,  0,  0, -1, -1],
+            ....: [ 0,  0,  0,  1,  0,  1,  0,  0,  1,  1,  0,  0],
+            ....: [ 0,  0,  0,  0,  1,  1,  0,  0,  0,  0, -1, -1],
+            ....: [ 0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1,  0],
+            ....: [ 0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1]])
+            sage: result, certificate = R12_large.is_totally_unimodular(certificate=True,
+            ....:                                 three_sum_strategy="Wide_Wide",
+            ....:                                 row_keys=range(9),
+            ....:                                 column_keys='abcdefghijkl')
+            sage: C = certificate._children()[0]; C
+            ThreeSumNode (9×12) with 2 children
+            sage: C1, C2 = C._children()
+            sage: C1.matrix()
+            [ 0  0  1  1  1  1  1]
+            [ 1  1  0  0  0 -1 -1]
+            [ 1  0 -1  0 -1 -1 -1]
+            [ 0  1  1  0  1  0  0]
+            [ 0  0  0 -1 -1  0 -1]
+            sage: C2.matrix()
+            [ 1  0  0  0  0  1 -1  0 -1]
+            [ 0  0  1 -1  0 -1  1  0  1]
+            [-1 -1  1  0  1 -1  1  0  1]
+            [-1 -1  0  1  1  0  0  0  0]
+            [-1 -1  0  0  0  0  1  1  1]
+            [-1 -1  0  0  0  0  1  1  0]
+            sage: C.row_keys()
+            (0, i, 2, 3, 4, 5, 6, 7, 8)
+            sage: C.column_keys()
+            (a, b, c, d, e, f, g, h, 1, j, k, l)
+            sage: C1.parent_rows_and_columns()
+            ((i, 2, 7, 8, 3), (g, h, j, k, l, d, -3+d))
+            sage: C2.parent_rows_and_columns()
+            ((i, 0, 3, 4, 5, 6), (+i+k, k, a, b, c, d, e, f, 1))
 
             sage: result, certificate = R12.is_totally_unimodular(certificate=True,
             ....:                           three_sum_strategy="Mixed_Mixed",
@@ -642,9 +682,9 @@ cdef class ThreeSumNode(SumNode):
             [ 1  0  1  0]
             [ 0 -1  0  1]
             sage: C1.parent_rows_and_columns()
-            ((0, 1, 2, 3), (a, b, c, d, +2+3))
+            ((0, 1, 2, 3), (a, b, c, d, +3+2))
             sage: C2.parent_rows_and_columns()
-            ((+a+b, 2, 3, 4, 5), (a, d, e, f))
+            ((+a+d, 2, 3, 4, 5), (a, d, e, f))
         """
         if self.nchildren() != 2:
             raise ValueError("ThreeSumNode has exactly two children")
@@ -686,7 +726,7 @@ cdef class ThreeSumNode(SumNode):
                 else:
                     epsilon2 = Integer(mat1.entryValues[index2])
 
-                child1_column_keys += (ElementKey((epsilon1, row_keys[child1_nrows-2], epsilon2, row_keys[child1_nrows-1]), composition=True),)
+                child1_column_keys += (ElementKey((epsilon1, child1_row_keys[child1_nrows-2], epsilon2, child1_row_keys[child1_nrows-1]), composition=True),)
             else: # Wide_Wide
                 child1_row_keys = tuple(self._CMRelement_to_key(parent_rows1[i])
                                         for i in range(child1_nrows))
@@ -699,8 +739,8 @@ cdef class ThreeSumNode(SumNode):
                 else:
                     epsilon1 = Integer(mat1.entryValues[index1])
 
-                child1_column_keys += (ElementKey((1, column_keys[child1_ncols-1], epsilon1,
-                                        row_keys[child1_nrows-1]), composition=True),)
+                child1_column_keys += (ElementKey((1, child1_column_keys[child1_ncols-2], epsilon1,
+                                        child1_row_keys[child1_nrows-1]), composition=True),)
 
             child1 = create_DecompositionNode(child1_dec, root=self._root or self,
                                               row_keys=child1_row_keys,
@@ -712,6 +752,8 @@ cdef class ThreeSumNode(SumNode):
             if self.is_concentrated_rank(): # Mixed_Mixed
                 child2_row_keys = tuple(self._CMRelement_to_key(parent_rows2[i])
                                         for i in range(1, child2_nrows))
+                child2_column_keys = tuple(self._CMRelement_to_key(parent_columns2[i])
+                                           for i in range(child2_ncols))
 
                 CMR_CALL(CMRchrmatFindEntry(mat2, 0, 0, &index1))
                 if index1 == SIZE_MAX:
@@ -725,9 +767,7 @@ cdef class ThreeSumNode(SumNode):
                 else:
                     epsilon2 = Integer(mat1.entryValues[index2])
 
-                child2_row_keys = (ElementKey((epsilon1, column_keys[0], epsilon2, column_keys[1]), composition=True), ) + child2_row_keys
-                child2_column_keys = tuple(self._CMRelement_to_key(parent_columns2[i])
-                                           for i in range(child2_ncols))
+                child2_row_keys = (ElementKey((epsilon1, child2_column_keys[0], epsilon2, child2_column_keys[1]), composition=True), ) + child2_row_keys
             else: # Wide_Wide
                 child2_row_keys = tuple(self._CMRelement_to_key(parent_rows2[i])
                                         for i in range(child2_nrows))
@@ -740,7 +780,7 @@ cdef class ThreeSumNode(SumNode):
 
                 child2_column_keys = tuple(self._CMRelement_to_key(parent_columns2[i])
                                            for i in range(1, child2_ncols))
-                child2_column_keys = (ElementKey((1, column_keys[1], epsilon1, row_keys[0]), composition=True),) + child2_column_keys
+                child2_column_keys = (ElementKey((1, child2_column_keys[0], epsilon1, child2_row_keys[0]), composition=True),) + child2_column_keys
 
             child2 = create_DecompositionNode(child2_dec, root=self._root or self,
                                               row_keys=child2_row_keys,
