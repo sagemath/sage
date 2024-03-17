@@ -730,7 +730,7 @@ class DualPBWBasis(CombinatorialFreeModule):
         """
         if isinstance(x, (str, FiniteWord_class)):
             W = self.basis().keys()
-            x = W(x)
+            return self.monomial(W(x))
         elif isinstance(x.parent(), ShuffleAlgebra):
             return self._alg.to_dual_pbw_element(self._alg(x))
         return super()._element_constructor_(x)
