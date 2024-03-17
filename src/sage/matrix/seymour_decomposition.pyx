@@ -279,12 +279,12 @@ cdef class DecompositionNode(SageObject):
                                              column_keys=child_column_keys)
         else:
             if parent_rows == NULL or all(parent_rows[i] == 0 for i in range(child_nrows)):
-                parent_rows_tuple = None
+                raise ValueError(f"Child {index} does not have parents rows")
             else:
                 parent_rows_tuple = tuple(CMRelementToRowIndex(parent_rows[i])
                                           for i in range(child_nrows))
             if parent_columns == NULL or all(parent_columns[i] == 0 for i in range(child_ncols)):
-                parent_columns_tuple = None
+                raise ValueError(f"Child {index} does not have parents columns")
             else:
                 parent_columns_tuple = tuple(CMRelementToColumnIndex(parent_columns[i])
                                              for i in range(child_ncols))
@@ -298,7 +298,8 @@ cdef class DecompositionNode(SageObject):
         r"""
         Return a tuple of the children.
 
-        The children are sorted by their :meth:`parent_rows_and_columns`.
+        The children are sorted by the inherited ordering from cmr, which
+        is their appreance in the parent.
 
         In the case of :class:`SumNode`, this is the same as :meth:`~SumNode.summands`.
 
@@ -623,7 +624,7 @@ cdef class ThreeSumNode(SumNode):
             sage: C1.parent_rows_and_columns()
             ((0, 1, a, 3), (b, c, d, e, +3+e))
             sage: C2.parent_rows_and_columns()
-            ((0, 2, 3, 5), (+d+0, d, 4, e, f))
+            ((0, 2, 3, 5), (+0+d, d, 4, e, f))
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: R12_large = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 12, sparse=True),
@@ -682,12 +683,12 @@ cdef class ThreeSumNode(SumNode):
             [ 1  0  1  0]
             [ 0 -1  0  1]
             sage: C1.parent_rows_and_columns()
-            ((0, 1, 2, 3), (a, b, c, d, +3+2))
+            ((0, 1, 2, 3), (a, b, c, d, +2+3))
             sage: C2.parent_rows_and_columns()
             ((+a+d, 2, 3, 4, 5), (a, d, e, f))
         """
         if self.nchildren() != 2:
-            raise ValueError("ThreeSumNode has exactly two children")
+            raise ValueError(f"ThreeSumNode has exactly two children not {self.nchildren()}!")
 
         cdef CMR_MATROID_DEC *child1_dec = CMRmatroiddecChild(self._dec, 0)
         cdef CMR_ELEMENT *parent_rows1 = CMRmatroiddecChildRowsToParent(self._dec, 0)
@@ -714,33 +715,57 @@ cdef class ThreeSumNode(SumNode):
                 child1_column_keys = tuple(self._CMRelement_to_key(parent_columns1[i])
                                         for i in range(child1_ncols - 1))
 
-                CMR_CALL(CMRchrmatFindEntry(mat1, child1_nrows-2, child1_ncols-1, &index1))
+                row1_index = child1_nrows - 2
+                CMR_CALL(CMRchrmatFindEntry(mat1, row1_index, child1_ncols-1, &index1))
                 if index1 == SIZE_MAX:
-                    epsilon1 = Integer(0)
+                    eps1 = Integer(0)
                 else:
-                    epsilon1 = Integer(mat1.entryValues[index1])
+                    eps1 = Integer(mat1.entryValues[index1])
+                if eps1 != 1:
+                    raise ValueError(f"First child in the Mixed_Mixed Three Sum "
+                                     f"has 1 in the entry  "
+                                     f"row {row1_index} and column {child1_ncols-1} "
+                                     f"but got {eps1}")
 
-                CMR_CALL(CMRchrmatFindEntry(mat1, child1_nrows-1, child1_ncols-1, &index2))
+                row2_index = child1_nrows - 1
+                CMR_CALL(CMRchrmatFindEntry(mat1, row2_index, child1_ncols-1, &index2))
                 if index2 == SIZE_MAX:
-                    epsilon2 = Integer(0)
+                    eps2 = Integer(0)
                 else:
-                    epsilon2 = Integer(mat1.entryValues[index2])
+                    eps2 = Integer(mat1.entryValues[index2])
+                if eps2 != 1 and eps2 != -1:
+                    raise ValueError(f"First child in the Mixed_Mixed Three Sum "
+                                     f"has 1 or -1 in the entry  "
+                                     f"row {row2_index} and column {child1_ncols-1} "
+                                     f"but got {eps2}")
 
-                child1_column_keys += (ElementKey((epsilon1, child1_row_keys[child1_nrows-2], epsilon2, child1_row_keys[child1_nrows-1]), composition=True),)
+                extra_key = ElementKey((eps1, child1_row_keys[row1_index],
+                                        eps2, child1_row_keys[row2_index]),
+                                       composition=True)
+                child1_column_keys += (extra_key,)
             else: # Wide_Wide
                 child1_row_keys = tuple(self._CMRelement_to_key(parent_rows1[i])
                                         for i in range(child1_nrows))
                 child1_column_keys = tuple(self._CMRelement_to_key(parent_columns1[i])
                                         for i in range(child1_ncols - 1))
 
-                CMR_CALL(CMRchrmatFindEntry(mat1, child1_nrows-1, child1_ncols-1, &index1))
+                row_index = child1_nrows - 1
+                column_index = child1_ncols - 2
+                CMR_CALL(CMRchrmatFindEntry(mat1, row_index, child1_ncols-1, &index1))
                 if index1 == SIZE_MAX:
-                    epsilon1 = Integer(0)
+                    eps1 = Integer(0)
                 else:
-                    epsilon1 = Integer(mat1.entryValues[index1])
+                    eps1 = Integer(mat1.entryValues[index1])
+                if eps1 != 1 and eps1 != -1:
+                    raise ValueError(f"First child in the Wide_Wide Three Sum "
+                                     f"has 1 or -1 in the entry  "
+                                     f"row {row_index} and column {child1_ncols-1} "
+                                     f"but got {eps1}")
 
-                child1_column_keys += (ElementKey((1, child1_column_keys[child1_ncols-2], epsilon1,
-                                        child1_row_keys[child1_nrows-1]), composition=True),)
+                extra_key = ElementKey((1, child1_column_keys[column_index],
+                                        eps1, child1_row_keys[row_index]),
+                                       composition=True)
+                child1_column_keys += (extra_key,)
 
             child1 = create_DecompositionNode(child1_dec, root=self._root or self,
                                               row_keys=child1_row_keys,
@@ -757,30 +782,52 @@ cdef class ThreeSumNode(SumNode):
 
                 CMR_CALL(CMRchrmatFindEntry(mat2, 0, 0, &index1))
                 if index1 == SIZE_MAX:
-                    epsilon1 = Integer(0)
+                    eps1 = Integer(0)
                 else:
-                    epsilon1 = Integer(mat1.entryValues[index1])
+                    eps1 = Integer(mat1.entryValues[index1])
+                if eps1 != 1 and eps1 != -1:
+                    raise ValueError(f"Second child in the Mixed_Mixed Three Sum "
+                                     f"has 1 or -1 in the entry  "
+                                     f"row {0} and column {0} "
+                                     f"but got {eps1}")
 
                 CMR_CALL(CMRchrmatFindEntry(mat2, 0, 1, &index2))
                 if index2 == SIZE_MAX:
-                    epsilon2 = Integer(0)
+                    eps2 = Integer(0)
                 else:
-                    epsilon2 = Integer(mat1.entryValues[index2])
+                    eps2 = Integer(mat1.entryValues[index2])
+                if eps2 != 1:
+                    raise ValueError(f"Second child in the Mixed_Mixed Three Sum "
+                                     f"has 1 in the entry  "
+                                     f"row {0} and column {1} "
+                                     f"but got {eps2}")
 
-                child2_row_keys = (ElementKey((epsilon1, child2_column_keys[0], epsilon2, child2_column_keys[1]), composition=True), ) + child2_row_keys
+                extra_key = ElementKey((eps1, child2_column_keys[0],
+                                        eps2, child2_column_keys[1]),
+                                       composition=True)
+                child2_row_keys = (extra_key,) + child2_row_keys
             else: # Wide_Wide
                 child2_row_keys = tuple(self._CMRelement_to_key(parent_rows2[i])
                                         for i in range(child2_nrows))
 
                 CMR_CALL(CMRchrmatFindEntry(mat2, 0, 0, &index1))
                 if index1 == SIZE_MAX:
-                    epsilon1 = Integer(0)
+                    eps1 = Integer(0)
                 else:
-                    epsilon1 = Integer(mat1.entryValues[index1])
+                    eps1 = Integer(mat1.entryValues[index1])
+
+                if eps1 != 1 and eps1 != -1:
+                    raise ValueError(f"Second child in the Wide_Wide Three Sum "
+                                     f"has 1 or -1 in the entry  "
+                                     f"row {0} and column {0} "
+                                     f"but got {eps1}")
 
                 child2_column_keys = tuple(self._CMRelement_to_key(parent_columns2[i])
                                            for i in range(1, child2_ncols))
-                child2_column_keys = (ElementKey((1, child2_column_keys[0], epsilon1, child2_row_keys[0]), composition=True),) + child2_column_keys
+                extra_key = ElementKey((1, child2_column_keys[0],
+                                        eps1, child2_row_keys[0]),
+                                       composition=True)
+                child2_column_keys = (extra_key,) + child2_column_keys
 
             child2 = create_DecompositionNode(child2_dec, root=self._root or self,
                                               row_keys=child2_row_keys,
@@ -1058,9 +1105,19 @@ cdef class ElementKey:
 
     def __init__(self, keys, composition=False):
         """
-        Return the index key.
+        Create the element key for a row or column index
+        of :class:`DecompositionNode`.
 
-        frozenset((1,'a'), (-1,'7'))
+        INPUT:
+
+        - ``keys`` -- a row/column key or a tuple
+        (`\pm 1`, row/column key, `\pm 1`, row/column key).
+        - ``composition`` -- ``True`` or ``False`` (default).
+        whether the key is a composition key or not.
+        If ``False``, ``self._key`` is a frozenset with a row/column key.
+        If ``True``, ``self._key`` is a frozenset with two tuples,
+        where each tuple has a sign value and a row/column key.
+        For example, ``frozenset((1,'a'), (-1,'7'))``.
         """
         if composition:
             sign1, key1, sign2, key2 = keys
@@ -1083,8 +1140,12 @@ cdef class ElementKey:
         return False
 
     def __repr__(self):
+        """
+        The composition key is sorted by the string of keys.
+        """
         if self._composition:
-            return "".join(['+'+str(a[1]) if a[0] == 1 else '-'+str(a[1]) for a in self._key])
+            sorted_key = sorted(self._key, key=lambda x: (str(x[1]), x[0]))
+            return "".join(['+'+str(a[1]) if a[0] == 1 else '-'+str(a[1]) for a in sorted_key])
         else:
             return "".join([str(a) for a in self._key])
 
