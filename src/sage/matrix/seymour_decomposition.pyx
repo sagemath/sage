@@ -39,7 +39,7 @@ cdef class DecompositionNode(SageObject):
         if self._root is None or self._root is self:
             if self._dec != NULL:
                 # We own it, so we have to free it.
-                CMR_CALL(CMRmatroiddecFree(cmr, &self._dec))
+                CMR_CALL(CMRmatroiddecRelease(cmr, &self._dec))
         self._dec = dec
         self._root = root
 
@@ -193,26 +193,7 @@ cdef class DecompositionNode(SageObject):
             sage: C.parent_rows_and_columns()
             ((r1, i, r3, r4, r5, r6, r7, r8, r9), (a, b, c, d, e, f, g, h, r2, j, k, l))
         """
-        cdef CMR_ELEMENT *parent_rows = CMRmatroiddecRowsParent(self._dec)
-        cdef CMR_ELEMENT *parent_columns = CMRmatroiddecColumnsParent(self._dec)
-        if parent_rows == NULL or all(parent_rows[i] == 0 for i in range(self.nrows())):
-            parent_rows_tuple = None
-        else:
-            if self.row_keys() is not None:
-                parent_rows_tuple = tuple(self.row_keys())
-            else:
-                parent_rows_tuple = tuple(CMRelementToRowIndex(parent_rows[i])
-                                          for i in range(self.nrows()))
-        if parent_columns == NULL or all(parent_columns[i] == 0 for i in range(self.ncols())):
-            parent_columns_tuple = None
-        else:
-            if self.column_keys() is not None:
-                parent_columns_tuple = tuple(self.column_keys())
-            else:
-                parent_columns_tuple = tuple(CMRelementToColumnIndex(parent_columns[i])
-                                             for i in range(self.ncols()))
-
-        return parent_rows_tuple, parent_columns_tuple
+        return self.row_keys(), self.column_keys()
 
     def as_ordered_tree(self):
         r"""
@@ -283,19 +264,33 @@ cdef class DecompositionNode(SageObject):
         row_keys = self.row_keys()
         column_keys = self.column_keys()
         cdef CMR_MATROID_DEC *child_dec = CMRmatroiddecChild(self._dec, index)
-        cdef CMR_ELEMENT *parent_rows = CMRmatroiddecRowsParent(child_dec)
-        cdef CMR_ELEMENT *parent_columns = CMRmatroiddecColumnsParent(child_dec)
+        cdef CMR_ELEMENT *parent_rows = CMRmatroiddecChildRowsToParent(self._dec, index)
+        cdef CMR_ELEMENT *parent_columns = CMRmatroiddecChildColumnsToParent(self._dec, index)
+        child_nrows = CMRmatroiddecNumRows(child_dec)
+        child_ncols = CMRmatroiddecNumColumns(child_dec)
 
         if row_keys is not None and column_keys is not None:
             child_row_keys = tuple(self._CMRelement_to_key(parent_rows[i])
-                                   for i in range(CMRmatroiddecNumRows(child_dec)))
+                                   for i in range(child_nrows))
             child_column_keys = tuple(self._CMRelement_to_key(parent_columns[i])
-                                      for i in range(CMRmatroiddecNumColumns(child_dec)))
+                                      for i in range(child_ncols))
             child = create_DecompositionNode(child_dec, root=self._root or self,
                                              row_keys=child_row_keys,
                                              column_keys=child_column_keys)
         else:
-            child = create_DecompositionNode(child_dec, root=self._root or self)
+            if parent_rows == NULL or all(parent_rows[i] == 0 for i in range(child_nrows)):
+                parent_rows_tuple = None
+            else:
+                parent_rows_tuple = tuple(CMRelementToRowIndex(parent_rows[i])
+                                          for i in range(child_nrows))
+            if parent_columns == NULL or all(parent_columns[i] == 0 for i in range(child_ncols)):
+                parent_columns_tuple = None
+            else:
+                parent_columns_tuple = tuple(CMRelementToColumnIndex(parent_columns[i])
+                                             for i in range(child_ncols))
+            child = create_DecompositionNode(child_dec, root=self._root or self,
+                                             row_keys=parent_rows_tuple,
+                                             column_keys=parent_columns_tuple)
         return child
 
     @cached_method
@@ -655,13 +650,13 @@ cdef class ThreeSumNode(SumNode):
             raise ValueError("ThreeSumNode has exactly two children")
 
         cdef CMR_MATROID_DEC *child1_dec = CMRmatroiddecChild(self._dec, 0)
-        cdef CMR_ELEMENT *parent_rows1 = CMRmatroiddecRowsParent(child1_dec)
-        cdef CMR_ELEMENT *parent_columns1 = CMRmatroiddecColumnsParent(child1_dec)
+        cdef CMR_ELEMENT *parent_rows1 = CMRmatroiddecChildRowsToParent(self._dec, 0)
+        cdef CMR_ELEMENT *parent_columns1 = CMRmatroiddecChildColumnsToParent(self._dec, 0)
         cdef CMR_CHRMAT *mat1 = CMRmatroiddecGetMatrix(child1_dec)
 
         cdef CMR_MATROID_DEC *child2_dec = CMRmatroiddecChild(self._dec, 1)
-        cdef CMR_ELEMENT *parent_rows2 = CMRmatroiddecRowsParent(child2_dec)
-        cdef CMR_ELEMENT *parent_columns2 = CMRmatroiddecColumnsParent(child2_dec)
+        cdef CMR_ELEMENT *parent_rows2 = CMRmatroiddecChildRowsToParent(self._dec, 1)
+        cdef CMR_ELEMENT *parent_columns2 = CMRmatroiddecChildColumnsToParent(self._dec, 1)
         cdef CMR_CHRMAT *mat2 = CMRmatroiddecGetMatrix(child2_dec)
 
         cdef size_t index1, index2

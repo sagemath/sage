@@ -237,9 +237,9 @@ cdef extern from "cmr/matroid.h":
     int8_t CMRmatroiddecCographicness(CMR_MATROID_DEC* dec)
     int8_t CMRmatroiddecRegularity(CMR_MATROID_DEC* dec)
     size_t CMRmatroiddecNumRows(CMR_MATROID_DEC* dec)
-    CMR_ELEMENT* CMRmatroiddecRowsParent(CMR_MATROID_DEC* dec)
     size_t CMRmatroiddecNumColumns(CMR_MATROID_DEC* dec)
-    CMR_ELEMENT* CMRmatroiddecColumnsParent(CMR_MATROID_DEC* dec)
+    CMR_ELEMENT* CMRmatroiddecChildRowsToParent(CMR_MATROID_DEC* dec, size_t childIndex)
+    CMR_ELEMENT* CMRmatroiddecChildColumnsToParent(CMR_MATROID_DEC* dec, size_t childIndex)
     CMR_GRAPH* CMRmatroiddecGraph(CMR_MATROID_DEC* dec)
     CMR_GRAPH_EDGE* CMRmatroiddecGraphForest(CMR_MATROID_DEC* dec)
     size_t CMRmatroiddecGraphSizeForest(CMR_MATROID_DEC* dec)
@@ -255,9 +255,9 @@ cdef extern from "cmr/matroid.h":
     size_t CMRmatroiddecNumPivots(CMR_MATROID_DEC* dec)
     size_t* CMRmatroiddecPivotRows(CMR_MATROID_DEC* dec)
     size_t* CMRmatroiddecPivotColumns(CMR_MATROID_DEC* dec)
-    # CMR_ERROR CMRmatroiddecPrint(CMR* cmr, CMR_MATROID_DEC* dec, FILE* stream, size_t indent, bool printChildren, bool printParentElements, bool printMatrices, bool printGraphs, bool printReductions, bool printPivots)
-    CMR_ERROR CMRmatroiddecFree(CMR* cmr, CMR_MATROID_DEC** pdec)
-    CMR_ERROR CMRmatroiddecFreeNode(CMR* cmr, CMR_MATROID_DEC** pdec)
+    # CMR_ERROR CMRmatroiddecPrint(CMR* cmr, CMR_MATROID_DEC* dec, FILE* stream, bool printChildren, bool printParentElements, bool printMatrices, bool printGraphs, bool printReductions, bool printPivots)
+    CMR_ERROR CMRmatroiddecCapture(CMR* cmr, CMR_MATROID_DEC* dec)
+    CMR_ERROR CMRmatroiddecRelease(CMR* cmr, CMR_MATROID_DEC** pdec)
 
 cdef extern from "cmr/separation.h":
 
