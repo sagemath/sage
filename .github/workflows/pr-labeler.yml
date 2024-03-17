@@ -1,3 +1,5 @@
+# This action automatically labels Pull-Requests
+# based on files edited and no of lines changed.
 name: Size Labeler/Checker
 on:
   pull_request_target:
@@ -18,26 +20,22 @@ jobs:
 
       - name: Add labels based on size
         run: |
-          if [[ -z "${{ vars.SMALL_THRESHOLD }}" || -z "${{ vars.MODERATE_THRESHOLD }}" || -z "${{ vars.LARGE_THRESHOLD }}"]]; then
-              echo "One or more environment variables are not set."
-              exit 1
-            fi
           git fetch origin ${{ github.base_ref }}
-          CHANGES=$(git diff --ignore-all-space ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})
 
-          CHANGES=$(echo "$CHANGES" | grep -E '^[+\-]' | grep -vE '^\+\+\+|^\-\-\-')
+          # get all the changes made and changed files
+          CHANGES=$(git diff --ignore-all-space ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | awk -F'src/sage/' '{print $2}' | cut -d'/' -f1 | sed 's/\([^ ]\+\)/c: \1/g')
 
           # ignore blank lines
           CHANGES=$(echo "$CHANGES" | grep -vE '^[\+\-]\s*$')
+
+          # ignore non necessary lines from git diff
+          CHANGES=$(echo "$CHANGES" | grep -E '^[+\-]' | grep -vE '^\+\+\+|^\-\-\-')
 
           # count total no of lines
           CHANGES=$(echo "$CHANGES" | wc -l)
 
           echo "CHANGES MADE: $CHANGES"
-
-          SMALL_THRESHOLD=${{vars.SMALL_THRESHOLD}}
-          MODERATE_THRESHOLD=${{vars.MODERATE_THRESHOLD}}
-          LARGE_THRESHOLD=${{vars.LARGE_THRESHOLD}}
 
           PR_NUMBER="${{ github.event.number }}"
           API_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels"
@@ -46,24 +44,29 @@ jobs:
           DELETE_LABELS=("v: minimal" "v: small" "v: moderate" "v: large")
 
           if [ "$CHANGES" -gt "$SMALL_THRESHOLD" ]; then
-            LABEL="v: small"
+            SIZE_LABEL="v: small"
           elif [ "$CHANGES" -gt "$MODERATE_THRESHOLD" ]; then
-            LABEL="v: moderate"
+            SIZE_LABEL="v: moderate"
           elif [ "$CHANGES" -gt "$LARGE_THRESHOLD" ]; then
-            LABEL="v: large"
+            SIZE_LABEL="v: large"
           else
-            LABEL="v: minimal"
+            SIZE_LABEL="v: minimal"
           fi
 
-          DELETE_LABELS=("${DELETE_LABELS[@]//${LABEL}}")
+          DELETE_LABELS=("${DELETE_LABELS[@]//${SIZE_LABEL}}")
 
-          echo "Adding label: $LABEL"
-          curl -X POST \
-            -H "$AUTH_HEADER" \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            -d "{\"labels\":[\"$LABEL\"]}" \
-            "$API_URL" >/dev/null
+          readarray -t LABELS <<< "$CHANGED_FILES"
+          LABELS+=("$SIZE_LABEL")
+
+          echo "Adding label: ${LABELS[@]}"
+          for LABEL in "${LABELS[@]}"; do
+              curl -X POST \
+                -H "$AUTH_HEADER" \
+                -H "Accept: application/vnd.github+json" \
+                -H "X-GitHub-Api-Version: 2022-11-28" \
+                -d "{\"labels\":[\"$LABEL\"]}" \
+                "$API_URL" >/dev/null
+          done
 
           echo "Deleting Labels:"
 
@@ -77,3 +80,6 @@ jobs:
           done
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SMALL_THRESHOLD: ${{ vars.SMALL_THRESHOLD }}
+          MODERATE_THRESHOLD: ${{ vars.MODERATE_THRESHOLD }}
+          LARGE_THRESHOLD: ${{ vars.LARGE_THRESHOLD }}
