@@ -131,6 +131,14 @@ by Sage, you can link toward it without specifying its full path:
      - ``:mathscinet:`MR0100971```
      - :mathscinet:`MR0100971`
 
+   * - :ref:`ECL <spkg_ecl>`
+     - ``:ecl:`Manipulating-Lisp-objects```
+     - :ecl:`Manipulating-Lisp-objects`
+
+   * -
+     - ``:common_lisp:`RENAME-PACKAGE <f_rn_pkg>```
+     - :common_lisp:`RENAME-PACKAGE <f_rn_pkg>`
+
    * - :ref:`GAP <spkg_gap>`
      - ``:gap:`Groups <chap39>```
      - :gap:`Groups <chap39>`
@@ -158,6 +166,10 @@ by Sage, you can link toward it without specifying its full path:
    * - :ref:`PPL <spkg_ppl>`
      - ``:ppl:`Linear_Expression <classParma__Polyhedra__Library_1_1Linear__Expression>```
      - :ppl:`Linear_Expression <classParma__Polyhedra__Library_1_1Linear__Expression>`
+
+   * - :ref:`QEPCAD <spkg_qepcad>`
+     - ``:qepcad:`QEPCAD: Entering formulas <user/EnterForm>```
+     - :qepcad:`QEPCAD: Entering formulas <user/EnterForm>`
 
    * - :ref:`Singular <spkg_singular>`
      - ``:singular:`stdfglm <sing_358>```
