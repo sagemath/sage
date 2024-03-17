@@ -121,6 +121,7 @@ jobs:
           make doc-clean doc-uninstall
           mkdir -p $DOC_DIR/ && mv /sage/.git-doc $DOC_DIR/.git
           export SAGE_USE_CDNS=yes
+          export SAGE_DOCBUILD_OPTS="--warn-links"
           ./config.status && make sagemath_doc_html-no-deps
         working-directory: ./worktree-image
         env:
