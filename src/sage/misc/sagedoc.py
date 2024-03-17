@@ -520,11 +520,14 @@ extlinks = {
     'gap_package': ('https://www.gap-system.org/Packages/%s.html', 'GAP package %s'),
     'giac_cascmd': ('https://www-fourier.ujf-grenoble.fr/~parisse/giac/doc/en/cascmd_en/%s.html', 'Giac: %s'),
     'giac_us': ('https://www-fourier.ujf-grenoble.fr/~parisse/giac_us.html#%s', 'Giac API: %s'),
-    'maxima': ('https://maxima.sourceforge.io/docs/manual/maxima_singlepage.html#%s', 'Maxima: '),
+    'maxima': ('https://maxima.sourceforge.io/docs/manual/maxima_singlepage.html#%s', 'Maxima: %s'),
+    'meson': ('https://mesonbuild.com/%s', 'Meson: %s'),
+    'polymake': ('https://polymake.org/doku.php/documentation/latest/%s', 'polymake: %s'),
     'ppl': ('https://www.bugseng.com/products/ppl/documentation/user/ppl-user-1.2-html/%s.html', 'PPL: %s'),
     'qepcad': ('https://www.usna.edu/CS/qepcadweb/B/%s.html', 'QEPCAD: %s'),
+    'scip': ('https://scipopt.org/doc/html/%s.php', 'SCIP: %s'),
     'singular': ('https://www.singular.uni-kl.de/Manual/4-3-2/%s.htm', 'Singular: %s'),
-
+    'soplex': ('https://soplex.zib.de/doc/html/%s.php', 'SoPlex: %s'),
 }
 
 

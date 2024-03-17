@@ -159,21 +159,37 @@ by Sage, you can link toward it without specifying its full path:
      - ``:maxima:`struve_h <index-struve_005fh>```
      - :maxima:`struve_h <index-struve_005fh>`
 
+   * - :ref:`Meson <spkg_meson>`
+     - ``:meson:`install_subdir <Reference-manual_functions.html#install_subdir>```
+     - :meson:`install_subdir <Reference-manual_functions.html#install_subdir>`
+
    * - :ref:`Pari <spkg_pari>`
      - ``:pari:`lfungenus2```
      - :pari:`lfungenus2`
 
+   * - :ref:`polymake <spkg_polymake>`
+     - ``:polymake:`matroid```
+     - :polymake:`matroid`
+
    * - :ref:`PPL <spkg_ppl>`
-     - ``:ppl:`Linear_Expression <classParma__Polyhedra__Library_1_1Linear__Expression>```
+     - ``:ppl:`Linear_Expression <classParma__Polyhedra__Library_1_1 Linear__Expression>```
      - :ppl:`Linear_Expression <classParma__Polyhedra__Library_1_1Linear__Expression>`
 
    * - :ref:`QEPCAD <spkg_qepcad>`
      - ``:qepcad:`QEPCAD: Entering formulas <user/EnterForm>```
      - :qepcad:`QEPCAD: Entering formulas <user/EnterForm>`
 
+   * - :ref:`SCIP <spkg_scip>`
+     - ``:scip:`SCIPsolve <group__PublicSolveMethods>```
+     - :scip:`SCIPsolve <group__PublicSolveMethods>`
+
    * - :ref:`Singular <spkg_singular>`
      - ``:singular:`stdfglm <sing_358>```
      - :singular:`stdfglm <sing_358>`
+
+   * - :ref:`SoPlex <spkg_soplex>`
+     - ``:soplex:`soplex::LinSolverRational <classsoplex_1_1SLinSolverRational>```
+     - :soplex:`soplex::LinSolverRational <classsoplex_1_1SLinSolverRational>`
 
 **http links:** copy/pasting a http link in the documentation works. If you want
 a specific link name, use ```link name <http://www.example.com>`_``
