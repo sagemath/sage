@@ -43,7 +43,7 @@ cdef class DecompositionNode(SageObject):
         self._dec = dec
         self._root = root
 
-    cdef _set_row_keys(self, row_keys):
+    def _set_row_keys(self, row_keys):
         """
         Set the row keys with consistency checking: if the
         value was previously set, it must remain the same.
@@ -56,7 +56,7 @@ cdef class DecompositionNode(SageObject):
                              f"but got {row_keys}")
         self._row_keys = row_keys
 
-    cdef _set_column_keys(self, column_keys):
+    def _set_column_keys(self, column_keys):
         """
         Set the column keys with consistency checking: if the
         value was previously set, it must remain the same.
