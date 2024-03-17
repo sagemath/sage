@@ -1536,7 +1536,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: # needs sage.combinat sage.modules
                 sage: s = CombinatorialFreeModule(QQ, Partitions())
-                sage: z = s([4]) - 2*s([2,1]) + s([1,1,1]) + s([1])
+                sage: z = (s.monomial(Partition([4])) - 2*s.monomial(Partition([2,1]))
+                ....:       + s.monomial(Partition([1,1,1])) + s.monomial(Partition([1])))
                 sage: z.coefficient([4])
                 1
                 sage: z.coefficient([2,1])
