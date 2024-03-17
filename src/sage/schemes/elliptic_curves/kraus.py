@@ -113,8 +113,8 @@ def c4c6_model(c4, c6, assume_nonsingular=False):
 
     OUTPUT:
 
-    The elliptic curve with a-invariants [0,0,0,-c4/48,-c6/864], whose
-    c-invariants are the given c4, c6.  If the supplied invariants are
+    The elliptic curve with a-invariants `[0,0,0,-c_4/48,-c_6/864]`, whose
+    c-invariants are the given `c_4`, `c_6`.  If the supplied invariants are
     singular, returns ``None`` when ``assume_nonsingular`` is ``False`` and
     raises an :class:`ArithmeticError` otherwise.
 
