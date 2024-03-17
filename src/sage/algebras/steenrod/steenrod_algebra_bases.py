@@ -399,6 +399,10 @@ def restricted_partitions(n, l, no_repeats=False):
     is ignored, so it does not work.  (At the moment, the
     ``no_repeats=True`` case is the only one used in the code.)
 
+    .. TODO::
+
+        This should be re-implemented in a non-recursive way.
+
     EXAMPLES::
 
         sage: from sage.algebras.steenrod.steenrod_algebra_bases import restricted_partitions

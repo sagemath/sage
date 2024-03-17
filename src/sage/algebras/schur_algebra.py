@@ -663,13 +663,11 @@ def GL_irreducible_character(n, mu, KK):
     # The kernel of this pairing is the part of this graded piece which is
     # not in the irreducible module for \mu.
 
-    length = len(carter_lusztig)
-
     phi = mbasis.zero()
     for aa, c_aa in enumerate(contents):
-        mat = [[graded_basis[aa][kk].inner_product(carter_lusztig[j])
-                for j in range(length)]
-               for kk in range(len(JJ[aa]))]
+        mat = [[elt_basis_aa.inner_product(elt_carter_lusztig)
+                for elt_carter_lusztig in carter_lusztig]
+               for elt_basis_aa in graded_basis[aa]]
         angle = Matrix(mat)
         phi += (len(JJ[aa]) - angle.nullity()) * mbasis(c_aa)
     return phi
