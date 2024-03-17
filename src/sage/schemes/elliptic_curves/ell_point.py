@@ -3272,7 +3272,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         - ``self`` -- a point on an elliptic curve over a number field
           `K`.
 
-        - ``v`` -- a non-archimedean place of `K`, or None (default).
+        - ``v`` -- a non-archimedean place of `K`, or ``None`` (default).
           If `v` is a non-archimedean place, return the local height
           of self at `v`. If `v` is ``None``, return the total
           non-archimedean contribution to the global height.
