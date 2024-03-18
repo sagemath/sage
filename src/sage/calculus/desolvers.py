@@ -491,7 +491,7 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
 
     TESTS:
 
-    :trac:`9961` fixed (allow assumptions on the dependent variable in desolve)::
+    :issue:`9961` fixed (allow assumptions on the dependent variable in desolve)::
 
         sage: y=function('y')(x); assume(x>0); assume(y>0)
         sage: sage.calculus.calculus.maxima('domain:real')  # needed since Maxima 5.26.0 to get the answer as below
@@ -499,7 +499,7 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
         sage: desolve(x*diff(y,x)-x*sqrt(y^2+x^2)-y == 0, y, contrib_ode=True)
         [x - arcsinh(y(x)/x) == _C]
 
-    :trac:`10682` updated Maxima to 5.26, and it started to show a different
+    :issue:`10682` updated Maxima to 5.26, and it started to show a different
     solution in the complex domain for the ODE above::
 
         sage: forget()
@@ -510,7 +510,7 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
         sage: desolve(x*diff(y,x)-x*sqrt(y^2+x^2)-y == 0, y, contrib_ode=True)
         [x - arcsinh(y(x)^2/(x*sqrt(y(x)^2))) - arcsinh(y(x)/x) + 1/2*log(4*(x^2 + 2*y(x)^2 + 2*sqrt(x^2*y(x)^2 + y(x)^4))/x^2) == _C]
 
-    :trac:`6479` fixed::
+    :issue:`6479` fixed::
 
         sage: x = var('x')
         sage: y = function('y')(x)
@@ -522,7 +522,7 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
         sage: desolve( diff(y,x,x) == 0, y, [0,1,1])
         x + 1
 
-    :trac:`9835` fixed::
+    :issue:`9835` fixed::
 
         sage: x = var('x')
         sage: y = function('y')(x)
@@ -531,13 +531,13 @@ def desolve(de, dvar, ics=None, ivar=None, show_method=False, contrib_ode=False,
         ...
         NotImplementedError: Unable to use initial condition for this equation (freeofx).
 
-    :trac:`8931` fixed::
+    :issue:`8931` fixed::
 
         sage: x=var('x'); f=function('f')(x); k=var('k'); assume(k>0)
         sage: desolve(diff(f,x,2)/f==k,f,ivar=x)
         _K1*e^(sqrt(k)*x) + _K2*e^(-sqrt(k)*x)
 
-    :trac:`15775` fixed::
+    :issue:`15775` fixed::
 
         sage: forget()
         sage: y = function('y')(x)
@@ -721,7 +721,7 @@ def desolve_laplace(de, dvar, ics=None, ivar=None):
 
     TESTS:
 
-    Check that :trac:`4839` is fixed::
+    Check that :issue:`4839` is fixed::
 
         sage: t = var('t')
         sage: x = function('x')(t)
@@ -845,7 +845,7 @@ def desolve_system(des, vars, ics=None, ivar=None, algorithm="maxima"):
 
     TESTS:
 
-    Check that :trac:`9823` is fixed::
+    Check that :issue:`9823` is fixed::
 
         sage: t = var('t')
         sage: x = function('x')(t)
@@ -853,7 +853,7 @@ def desolve_system(des, vars, ics=None, ivar=None, algorithm="maxima"):
         sage: desolve_system([de1], [x])
         -t + x(0)
 
-    Check that :trac:`16568` is fixed::
+    Check that :issue:`16568` is fixed::
 
         sage: t = var('t')
         sage: x = function('x')(t)
@@ -879,7 +879,7 @@ def desolve_system(des, vars, ics=None, ivar=None, algorithm="maxima"):
 
     Now type ``show(P1)``, ``show(P2)`` to view these plots.
 
-    Check that :trac:`9824` is fixed::
+    Check that :issue:`9824` is fixed::
 
         sage: t = var('t')
         sage: epsilon = var('epsilon')
@@ -895,7 +895,7 @@ def desolve_system(des, vars, ics=None, ivar=None, algorithm="maxima"):
         ValueError: Initial conditions aren't complete: number of vars is different
         from number of dependent variables. Got ics = [1, 1], vars = [x1(t), x2(t)]
 
-    Check that :trac:`9825` is fixed::
+    Check that :issue:`9825` is fixed::
 
         sage: t = var('t')
         sage: x1, x2=function("x1, x2")

@@ -2842,7 +2842,7 @@ def random_subspaces_matrix(parent, rank=None):
         sage: all(x in ZZ for x in B_expanded.list())
         True
 
-    Check that we fixed :trac:`10543` (echelon forms should be immutable)::
+    Check that we fixed :issue:`10543` (echelon forms should be immutable)::
 
         sage: B_expanded.is_immutable()
         True

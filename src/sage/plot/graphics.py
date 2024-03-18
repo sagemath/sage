@@ -8,14 +8,14 @@ Usually, you don't call the constructor of this class directly
 
 AUTHORS:
 
-- Jeroen Demeyer (2012-04-19): split off this file from plot.py (:trac:`12857`)
+- Jeroen Demeyer (2012-04-19): split off this file from plot.py (:issue:`12857`)
 
-- Punarbasu Purkayastha (2012-05-20): Add logarithmic scale (:trac:`4529`)
+- Punarbasu Purkayastha (2012-05-20): Add logarithmic scale (:issue:`4529`)
 
 - Emily Chen (2013-01-05): Add documentation for
-  :meth:`~sage.plot.graphics.Graphics.show` figsize parameter (:trac:`5956`)
+  :meth:`~sage.plot.graphics.Graphics.show` figsize parameter (:issue:`5956`)
 
-- Eric Gourgoulhon (2015-03-19): Add parameter axes_labels_size (:trac:`18004`)
+- Eric Gourgoulhon (2015-03-19): Add parameter axes_labels_size (:issue:`18004`)
 
 - Eric Gourgoulhon (2019-05-24): :class:`~sage.plot.multigraphics.GraphicsArray`
   moved to new module :mod:`~sage.plot.multigraphics`; various improvements and
@@ -151,7 +151,7 @@ class Graphics(WithEqualityById, SageObject):
 
     TESTS:
 
-    From :trac:`4604`, ensure Graphics can handle 3d objects::
+    From :issue:`4604`, ensure Graphics can handle 3d objects::
 
         sage: g = Graphics()
         sage: g += sphere((1, 1, 1), 2)
@@ -780,7 +780,7 @@ class Graphics(WithEqualityById, SageObject):
 
         TESTS:
 
-        Unicode strings are acceptable; see :trac:`13161`. Note that
+        Unicode strings are acceptable; see :issue:`13161`. Note that
         this does not guarantee that matplotlib will handle the strings
         properly, although it should.
 
@@ -1164,7 +1164,7 @@ class Graphics(WithEqualityById, SageObject):
             sage: (g1+g2).aspect_ratio()
             3.0
 
-        As are legend options, :trac:`12936`::
+        As are legend options, :issue:`12936`::
 
             sage: # needs sage.symbolic
             sage: p1 = plot(x, x, 0, 1)
@@ -1260,7 +1260,7 @@ class Graphics(WithEqualityById, SageObject):
             sage: S.plot() is S
             True
 
-        It does not accept any argument (:trac:`19539`)::
+        It does not accept any argument (:issue:`19539`)::
 
             sage: S.plot(1)
             Traceback (most recent call last):
@@ -1776,7 +1776,7 @@ class Graphics(WithEqualityById, SageObject):
             sage: plot(sin(x), (x, -4, 4), transparent=True)                            # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
-        Prior to :trac:`19485`, legends by default had a shadowless gray
+        Prior to :issue:`19485`, legends by default had a shadowless gray
         background. This behavior can be recovered by passing in certain
         ``legend_options``::
 
@@ -2693,7 +2693,7 @@ class Graphics(WithEqualityById, SageObject):
 
         TESTS:
 
-        We verify that :trac:`10291` is fixed::
+        We verify that :issue:`10291` is fixed::
 
             sage: # needs sage.symbolic
             sage: p = plot(sin(x), (x, -2*pi, 2*pi))
@@ -2704,7 +2704,7 @@ class Graphics(WithEqualityById, SageObject):
             sage: axes_range == axes_range2
             True
 
-        We verify that legend options are properly handled (:trac:`12960`).
+        We verify that legend options are properly handled (:issue:`12960`).
         First, we test with no options, and next with an incomplete set of
         options.::
 
@@ -2715,7 +2715,7 @@ class Graphics(WithEqualityById, SageObject):
             sage: pm = p.matplotlib(legend_options={'font_size': 'small'})
 
         The title should not overlap with the axes labels nor the frame in
-        the following plot (see :trac:`10512`)::
+        the following plot (see :issue:`10512`)::
 
             sage: plot(sin(x^2), (x, -3, 3), title='Plot of sin(x^2)',                  # needs sage.symbolic
             ....:      axes_labels=['x','y'], frame=True)
@@ -2729,7 +2729,7 @@ class Graphics(WithEqualityById, SageObject):
             'latex', or 'type1'; got 'garbage'.
             Graphics object consisting of 1 graphics primitive
 
-        We verify that numerical options are changed to float before saving (:trac:`14741`).
+        We verify that numerical options are changed to float before saving (:issue:`14741`).
         By default, Sage 5.10 changes float objects to the `RealLiteral` type.
         The patch changes them to float before creating `matplotlib` objects.::
 
@@ -3311,7 +3311,7 @@ class Graphics(WithEqualityById, SageObject):
             sage: plot(x^2 - 5, (x, 0, 5), ymin=0)                                      # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
 
-        (This test verifies that :trac:`8632` is fixed.)
+        (This test verifies that :issue:`8632` is fixed.)
 
         TESTS:
 
@@ -3325,8 +3325,8 @@ class Graphics(WithEqualityById, SageObject):
             sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:
             ....:     P.save(f.name)
 
-        This plot should save with the frame shown, showing :trac:`7524`
-        is fixed (same issue as :trac:`7981` and :trac:`8632`)::
+        This plot should save with the frame shown, showing :issue:`7524`
+        is fixed (same issue as :issue:`7981` and :issue:`8632`)::
 
             sage: var('x,y')                                                            # needs sage.symbolic
             (x, y)
@@ -3335,7 +3335,7 @@ class Graphics(WithEqualityById, SageObject):
             sage: with tempfile.NamedTemporaryFile(suffix=".png") as f:                 # needs sage.symbolic
             ....:     a.save(f.name)
 
-        The following plot should show the axes; fixes :trac:`14782` ::
+        The following plot should show the axes; fixes :issue:`14782` ::
 
             sage: plot(x^2, (x, 1, 2), ticks=[[], []])                                  # needs sage.symbolic
             Graphics object consisting of 1 graphics primitive
@@ -3560,7 +3560,7 @@ class Graphics(WithEqualityById, SageObject):
 # Deprecation notice for GraphicsArray import
 def GraphicsArray(*args, **kwargs):
     r"""
-    This is deprecated (see :trac:`28675`).
+    This is deprecated (see :issue:`28675`).
     Use :class:`sage.plot.multigraphics.GraphicsArray` instead.
 
     TESTS::

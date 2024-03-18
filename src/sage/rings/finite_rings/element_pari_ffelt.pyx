@@ -48,7 +48,7 @@ cdef GEN _INT_to_FFELT(GEN g, GEN x) except NULL:
     TESTS:
 
     Converting large integers to finite field elements does not lead
-    to overflow errors (see :trac:`16807`)::
+    to overflow errors (see :issue:`16807`)::
 
         sage: p = previous_prime(2^64)
         sage: F.<x> = GF(p^2)
@@ -240,7 +240,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         sage: k(v)
         2*a + 1
 
-    We create elements using a list and verify that :trac:`10486` has
+    We create elements using a list and verify that :issue:`10486` has
     been fixed::
 
         sage: k = FiniteField(3^11, 't', impl='pari_ffelt')
@@ -263,7 +263,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         2*t
 
     When initializing from a list, the elements are first coerced
-    to the prime field (:trac:`11685`)::
+    to the prime field (:issue:`11685`)::
 
         sage: k = FiniteField(3^11, 't', impl='pari_ffelt')
         sage: k([ 0, 1/2 ])
@@ -282,7 +282,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         sage: k([ R(-1), R(0), 0 ])
         2
 
-    Check that zeros are created correctly (:trac:`11685`)::
+    Check that zeros are created correctly (:issue:`11685`)::
 
         sage: K = FiniteField(3^11, 't', impl='pari_ffelt'); a = K.0
         sage: v = 0; pari(K(v))
@@ -372,7 +372,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         TESTS:
 
         Conversion of elements of the underlying vector space works in
-        large characteristic (see :trac:`21186`)::
+        large characteristic (see :issue:`21186`)::
 
             sage: p = 13189065031705623239
             sage: Fq = FiniteField(p^3, "a")
@@ -835,7 +835,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
             sage: a^(e % (5^10 - 1))
             2*a^9 + a^5 + 4*a^4 + 4*a^3 + a^2 + 3*a
 
-        The exponent is converted to an integer (see :trac:`16540`)::
+        The exponent is converted to an integer (see :issue:`16540`)::
 
             sage: q = 11^23
             sage: F.<a> = FiniteField(q)

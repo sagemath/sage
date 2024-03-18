@@ -91,7 +91,7 @@ We mix Singular variables with symbolic variables::
 
 TESTS:
 
-Test Jacobian on Pynac expressions. (:trac:`5546`) ::
+Test Jacobian on Pynac expressions. (:issue:`5546`) ::
 
     sage: var('x,y')
     (x, y)
@@ -99,7 +99,7 @@ Test Jacobian on Pynac expressions. (:trac:`5546`) ::
     sage: jacobian(f, [x,y])
     [1 1]
 
-Test if matrices work (:trac:`5546`) ::
+Test if matrices work (:issue:`5546`) ::
 
     sage: var('x,y,z')
     (x, y, z)
@@ -110,7 +110,7 @@ Test if matrices work (:trac:`5546`) ::
     sage: v*M
     (x^2 + y*z, 2*x*y)
 
-Test if comparison bugs from :trac:`6256` are fixed::
+Test if comparison bugs from :issue:`6256` are fixed::
 
     sage: t = exp(sqrt(x)); u = 1/t
     sage: t*u
@@ -120,7 +120,7 @@ Test if comparison bugs from :trac:`6256` are fixed::
     sage: t
     e^sqrt(x)
 
-Test if :trac:`9947` is fixed::
+Test if :issue:`9947` is fixed::
 
     sage: r = real_part(1+2*(sqrt(2)+1)*(sqrt(2)-1)); r
     2*(sqrt(2) + 1)*(sqrt(2) - 1) + 1
@@ -132,7 +132,7 @@ Test if :trac:`9947` is fixed::
     sage: a.imag_part()
     2*sqrt(10)/(sqrt(3) + 5)
 
-Check the fix for :trac:`25251` and :trac:`25252`::
+Check the fix for :issue:`25251` and :issue:`25252`::
 
     sage: e1 = sqrt(2)*I - sqrt(2) - 2
     sage: e2 = sqrt(2)
@@ -141,14 +141,14 @@ Check the fix for :trac:`25251` and :trac:`25252`::
     sage: (1 + exp(I*pi/4)) * exp(I*pi/4)
     -(1/4*I + 1/4)*sqrt(2)*(-(I + 1)*sqrt(2) - 2)
 
-Test if :trac:`24883` is fixed::
+Test if :issue:`24883` is fixed::
 
     sage: a = exp(I*pi/4) + 1
     sage: b = 1 - exp(I*pi/4)
     sage: a*b
     1/4*((I + 1)*sqrt(2) - 2)*(-(I + 1)*sqrt(2) - 2)
 
-Test that :trac:`20784` is fixed (equations should stay unevaluated)::
+Test that :issue:`20784` is fixed (equations should stay unevaluated)::
 
     sage: limit(1/x, x=0) == unsigned_infinity
     Infinity == Infinity
@@ -188,7 +188,7 @@ you do not want to get a formal inequality::
     sage: float(sin(SR(1)))
     0.8414709848078965
 
-Check that :trac:`9880` is fixed::
+Check that :issue:`9880` is fixed::
 
     sage: b = [var('b_%s'%i) for i in range(4)]
     sage: precomp = (2^b_2 + 2)*(2^b_1 + 2^(-b_1) + 2^b_1*2^b_0 - \
@@ -254,7 +254,7 @@ Check that :trac:`9880` is fixed::
     sage: (-x+t)^3
     (t - x)^3
 
-This example is from :trac:`10833`::
+This example is from :issue:`10833`::
 
     sage: R.<x,c> = PolynomialRing(QQ,2)
     sage: phi(x) = x^2 + c
@@ -268,7 +268,7 @@ This example is from :trac:`10833`::
     sage: g.nops()
     480
 
-Check if :trac:`10849` is fixed::
+Check if :issue:`10849` is fixed::
 
     sage: t = I.parent()(-1/2)
     sage: t > 0
@@ -278,7 +278,7 @@ Check if :trac:`10849` is fixed::
     sage: t.subs(x=I*x).subs(x=0).is_positive()
     False
 
-Check if :trac:`16397` is fixed:
+Check if :issue:`16397` is fixed:
 
     sage: mixed_order(1, sqrt(2))
     -1
@@ -881,7 +881,7 @@ cdef class Expression(Expression_abc):
                 1 (numeric) ...
                 =====
 
-        Check that user-defined functions get the same treatment (:trac:`19194`)::
+        Check that user-defined functions get the same treatment (:issue:`19194`)::
 
             sage: f = function('f')(x)
             sage: f._dbgprinttree()
@@ -1045,14 +1045,14 @@ cdef class Expression(Expression_abc):
             sage: (-x)^(1/4)
             (-x)^(1/4)
 
-        Check if :trac:`7876` is fixed::
+        Check if :issue:`7876` is fixed::
 
             sage: (1/2-1/2*I)*sqrt(2)
             -(1/2*I - 1/2)*sqrt(2)
             sage: latex((1/2-1/2*I)*sqrt(2))
             -\left(\frac{1}{2} i - \frac{1}{2}\right) \, \sqrt{2}
 
-        Check if :trac:`9632` is fixed::
+        Check if :issue:`9632` is fixed::
 
             sage: zeta(x) + cos(x)
             cos(x) + zeta(x)
@@ -1147,7 +1147,7 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        Check that :trac:`28891` is fixed::
+        Check that :issue:`28891` is fixed::
 
             sage: unicode_art(exp(x).series(x, 4))                                      # needs sympy
                      2    3
@@ -1160,7 +1160,7 @@ cdef class Expression(Expression_abc):
             ℯ + ℯ⋅(x - 1) + ────────── + O⎝(x - 1) ; x → 1⎠
                                 2
 
-        Check that complex numbers are handled correctly (:trac:`28903`)::
+        Check that complex numbers are handled correctly (:issue:`28903`)::
 
             sage: # needs sympy
             sage: unicode_art(SR(I))
@@ -1215,7 +1215,7 @@ cdef class Expression(Expression_abc):
         TESTS:
 
         We test that unicode characters are handled correctly
-        :trac:`30122`::
+        :issue:`30122`::
 
             sage: var('ξ')._maxima_()
             _SAGE_VAR_ξ
@@ -1252,7 +1252,7 @@ cdef class Expression(Expression_abc):
         TESTS:
 
         Check if complex numbers are converted to Maxima correctly
-        :trac:`7557`::
+        :issue:`7557`::
 
             sage: SR(1.5*I)._maxima_init_()
             '1.5000000000000000*%i'
@@ -1333,8 +1333,8 @@ cdef class Expression(Expression_abc):
             sage: latex(x*(1/(x^2)+sqrt(x^7)))
             x {\left(\sqrt{x^{7}} + \frac{1}{x^{2}}\right)}
 
-        Check spacing of coefficients of mul expressions (:trac:`3202` and
-        :trac:`13356`)::
+        Check spacing of coefficients of mul expressions (:issue:`3202` and
+        :issue:`13356`)::
 
             sage: latex(2*3^x)
             2 \cdot 3^{x}
@@ -1364,7 +1364,7 @@ cdef class Expression(Expression_abc):
             sage: latex((-x)^(1/4))
             \left(-x\right)^{\frac{1}{4}}
 
-        More powers (:trac:`7406`)::
+        More powers (:issue:`7406`)::
 
             sage: latex((x^pi)^e)
             {\left(x^{\pi}\right)}^{e}
@@ -1376,7 +1376,7 @@ cdef class Expression(Expression_abc):
             sage: latex((a^b)^c)
             {\left(a^{b}\right)}^{c}
 
-        Separate coefficients to numerator and denominator (:trac:`7363`)::
+        Separate coefficients to numerator and denominator (:issue:`7363`)::
 
             sage: latex(2/(x+1))
             \frac{2}{x + 1}
@@ -1384,12 +1384,12 @@ cdef class Expression(Expression_abc):
             \frac{1}{2 \, {\left(x + 1\right)}}
 
         Check if rational function coefficients without a ``numerator()`` method
-        are printed correctly. :trac:`8491`::
+        are printed correctly. :issue:`8491`::
 
             sage: latex(6.5/x)
             \frac{6.50000000000000}{x}
 
-        Check if we avoid extra parenthesis in rational functions (:trac:`8688`)::
+        Check if we avoid extra parenthesis in rational functions (:issue:`8688`)::
 
             sage: latex((x+2)/(x^3+1))
             \frac{x + 2}{x^{3} + 1}
@@ -1398,14 +1398,14 @@ cdef class Expression(Expression_abc):
             sage: latex((x+2)/(x^3+1)/(x+1))
             \frac{x + 2}{{\left(x^{3} + 1\right)} {\left(x + 1\right)}}
 
-        Check that the sign is correct (:trac:`9086`)::
+        Check that the sign is correct (:issue:`9086`)::
 
             sage: latex(-1/x)
             -\frac{1}{x}
             sage: latex(1/-x)
             -\frac{1}{x}
 
-        More tests for the sign (:trac:`9314`)::
+        More tests for the sign (:issue:`9314`)::
 
             sage: latex(-2/x)
             -\frac{2}{x}
@@ -1416,7 +1416,7 @@ cdef class Expression(Expression_abc):
             sage: latex(-x/z/y)
             -\frac{x}{y z}
 
-        Check if :trac:`9394` is fixed::
+        Check if :issue:`9394` is fixed::
 
             sage: var('n')
             n
@@ -1430,7 +1430,7 @@ cdef class Expression(Expression_abc):
             x - \left(2 i - 1\right) \, y
 
         Check if complex coefficients with denominators are displayed
-        correctly (:trac:`10769`)::
+        correctly (:issue:`10769`)::
 
             sage: var('a x')
             (a, x)
@@ -1440,12 +1440,12 @@ cdef class Expression(Expression_abc):
             sage: latex(ratio)
             \frac{i \, x^{2}}{2 \, a}
 
-        Parenthesis in powers (:trac:`13262`)::
+        Parenthesis in powers (:issue:`13262`)::
 
             sage: latex(1+x^(2/3)+x^(-2/3))
             x^{\frac{2}{3}} + \frac{1}{x^{\frac{2}{3}}} + 1
 
-        Check that pynac understands rational powers (:trac:`30446`)::
+        Check that pynac understands rational powers (:issue:`30446`)::
 
             sage: QQ((24*sqrt(3))^(100/50))==1728
             True
@@ -2098,7 +2098,7 @@ cdef class Expression(Expression_abc):
         TESTS:
 
         Test if hashes for fderivatives with different parameters collide.
-        :trac:`6243`::
+        :issue:`6243`::
 
             sage: f = function('f'); t = f(x,y)
             sage: u = t.derivative(x); v = t.derivative(y)
@@ -2107,7 +2107,7 @@ cdef class Expression(Expression_abc):
             sage: d = {u: 3, v: 5}; sorted(d.values())
             [3, 5]
 
-        More checks for fderivative hashes :trac:`6851` ::
+        More checks for fderivative hashes :issue:`6851` ::
 
             sage: hash(f(x).derivative(x)) == hash(f(x).derivative(x,2))
             False
@@ -2117,7 +2117,7 @@ cdef class Expression(Expression_abc):
 
         We create a function with 10 arguments and test if there are
         hash collisions between any of its derivatives of order at
-        most 7. :trac:`7508` ::
+        most 7. :issue:`7508` ::
 
             sage: num_vars = 10; max_order=7
             sage: X = var(' '.join('x' + str(i) for i in range(num_vars)))
@@ -2132,7 +2132,7 @@ cdef class Expression(Expression_abc):
             ....:         else:
             ....:             hashes.add(n)
 
-        Check whether `oo` keeps its hash in `SR` (:trac:`19928`)::
+        Check whether `oo` keeps its hash in `SR` (:issue:`19928`)::
 
             sage: hash(oo) == hash(SR(oo))
             True
@@ -2145,7 +2145,7 @@ cdef class Expression(Expression_abc):
             sage: hash(unsigned_infinity) == hash(SR(unsigned_infinity))
             True
 
-        Check a corner case for rational numbers (:trac:`28219`)::
+        Check a corner case for rational numbers (:issue:`28219`)::
 
             sage: hash(-1/3) == hash(SR(-1/3))
             True
@@ -2197,7 +2197,7 @@ cdef class Expression(Expression_abc):
             sage: x^2 > x
             x^2 > x
 
-        Testing :trac:`11309` which changes the behavior of comparison of
+        Testing :issue:`11309` which changes the behavior of comparison of
         comparisons::
 
             sage: (-x + y < 0) in [x - y < 0]
@@ -2397,7 +2397,7 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        Check if :trac:`7507` is fixed::
+        Check if :issue:`7507` is fixed::
 
             sage: forget()
             sage: n = var('n')
@@ -2649,7 +2649,7 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        Check that :trac:`23093` is fixed::
+        Check that :issue:`23093` is fixed::
 
             sage: sqrt(-2).is_real()
             False
@@ -2693,7 +2693,7 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        Check if :trac:`18630` is fixed::
+        Check if :issue:`18630` is fixed::
 
             sage: (log(1/2)).is_negative()
             True
@@ -2794,7 +2794,7 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        Check that integer variables are recognized (:trac:`18921`)::
+        Check that integer variables are recognized (:issue:`18921`)::
 
             sage: _ = var('n', domain='integer')
             sage: n.is_integer()
@@ -2973,19 +2973,19 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        Check if we can handle derivatives. :trac:`6523`::
+        Check if we can handle derivatives. :issue:`6523`::
 
             sage: f(x) = function('f')(x)
             sage: f(x).diff(x).is_zero()
             False
 
-        Check if :trac:`11352` is fixed::
+        Check if :issue:`11352` is fixed::
 
             sage: el = -1/2*(2*x^2 - sqrt(2*x - 1)*sqrt(2*x + 1) - 1)
             sage: el.is_polynomial(x)
             False
 
-        Check that negative exponents are handled (:trac:`15304`)::
+        Check that negative exponents are handled (:issue:`15304`)::
 
             sage: y = var('y')
             sage: (y/x).is_polynomial(x)
@@ -3394,7 +3394,7 @@ cdef class Expression(Expression_abc):
             sage: assert( sqrt(2)*oo != I*oo )
 
         The expression may be zero with integers but is not
-        when in the complex domain (:trac:`15571`)::
+        when in the complex domain (:issue:`15571`)::
 
             sage: a,x = var('a,x')
             sage: assume(a, 'integer')
@@ -3409,11 +3409,11 @@ cdef class Expression(Expression_abc):
             False
             sage: forget()
 
-        Check that :trac:`13326` is fixed::
+        Check that :issue:`13326` is fixed::
 
             sage: assert(log(2)*Infinity == Infinity)
 
-        More checks for comparisons with infinity (see :trac:`12967`)::
+        More checks for comparisons with infinity (see :issue:`12967`)::
 
             sage: assert(SR(oo) > 5)
             sage: assert(5 < SR(oo))
@@ -3435,30 +3435,30 @@ cdef class Expression(Expression_abc):
             sage: assert(SR(-oo) < sqrt(2))
             sage: assert(sqrt(2) > SR(-oo))
 
-        Check that :trac:`18360` is fixed::
+        Check that :issue:`18360` is fixed::
 
             sage: f(x) = matrix()
             sage: bool(f(x) - f(x) == 0)
             True
 
-        Check that :trac:`22857` is fixed::
+        Check that :issue:`22857` is fixed::
 
             sage: a, b = var('a b', domain='positive')
             sage: bool((a-b)*b == 0)
             False
 
-        Check that :trac:`24658` is fixed::
+        Check that :issue:`24658` is fixed::
 
             sage: val = pi - 2286635172367940241408/1029347477390786609545*sqrt(2)
             sage: bool(val>0)
             False
 
-        Check that :trac:`34341` is fixed::
+        Check that :issue:`34341` is fixed::
 
             sage: bool(x^2 + 2*x + 1 != (x + 1)^2)
             False
 
-        Check that :trac:`16031` is fixed::
+        Check that :issue:`16031` is fixed::
 
             sage: expr = reduce(lambda u, v: 1/u -v, [1/pi] + list(continued_fraction(pi)[:20]))
             sage: expr.is_zero()
@@ -3603,7 +3603,7 @@ cdef class Expression(Expression_abc):
             sage: (cot(-x) == -cot(x)).test_relation()
             NotImplemented
 
-        Check that :trac:`18896` is fixed::
+        Check that :issue:`18896` is fixed::
 
             sage: m = 540579833922455191419978421211010409605356811833049025*sqrt(1/2)
             sage: m1 = 382247666339265723780973363167714496025733124557617743
@@ -3612,7 +3612,7 @@ cdef class Expression(Expression_abc):
             sage: (m == m1).test_relation()
             False
 
-        Try the examples from :trac:`31424` and :trac:`31665`::
+        Try the examples from :issue:`31424` and :issue:`31665`::
 
             sage: k = 26
             sage: bool(2/(2*pi)^(2*k) <= abs(bernoulli(2*k)/factorial(2*k)))
@@ -3996,7 +3996,7 @@ cdef class Expression(Expression_abc):
             sage: (y-1)*(y-2)
             (y - 1)*(y - 2)
 
-        Check if Pynac can compute inverses of Python longs (:trac:`13107`)::
+        Check if Pynac can compute inverses of Python longs (:issue:`13107`)::
 
             sage: SR(4L)*SR(2L)^(-1)
             2
@@ -4048,8 +4048,8 @@ cdef class Expression(Expression_abc):
             Infinity
 
         Check if we are returning informative error messages in case of
-        nonsensical arithmetic (:trac:`10960`:, :trac:`13739` and
-        :trac:`24072`)::
+        nonsensical arithmetic (:issue:`10960`:, :issue:`13739` and
+        :issue:`24072`)::
 
             sage: GF(5)(3) * SR.var('x')
             Traceback (most recent call last):
@@ -4062,14 +4062,14 @@ cdef class Expression(Expression_abc):
             ...
             TypeError: positive characteristic not allowed in symbolic computations
 
-        Check that :trac:`18360` is fixed::
+        Check that :issue:`18360` is fixed::
 
             sage: f(x) = matrix()
             sage: f(x)*1
             []
 
         Check that floating point numbers +/- 1.0 are treated
-        differently from integers +/- 1 (:trac:`12257`)::
+        differently from integers +/- 1 (:issue:`12257`)::
 
             sage: (1*x).operator()
             sage: (1.0*x).operator()
@@ -4087,7 +4087,7 @@ cdef class Expression(Expression_abc):
             sage: sin(1.0*pi)
             sin(1.00000000000000*pi)
 
-        Check that infinities multiply correctly (:trac:`23427`)::
+        Check that infinities multiply correctly (:issue:`23427`)::
 
             sage: SR(-oo) * SR(-oo)
             +Infinity
@@ -4193,7 +4193,7 @@ cdef class Expression(Expression_abc):
             ...
             ZeroDivisionError: symbolic division by zero
 
-        Check if Pynac can compute divisions of Python longs (:trac:`13107`)::
+        Check if Pynac can compute divisions of Python longs (:issue:`13107`)::
 
             sage: SR(1L)/SR(2L)
             1/2
@@ -4424,7 +4424,7 @@ cdef class Expression(Expression_abc):
             sage: (2*symI)^(1/2)
             sqrt(2*I)
 
-        Test if we can take powers of elements of `\QQ(i)` (:trac:`8659`)::
+        Test if we can take powers of elements of `\QQ(i)` (:issue:`8659`)::
 
             sage: t = QuadraticField(-1, 'I')(8)
             sage: t^(1/2)
@@ -4432,12 +4432,12 @@ cdef class Expression(Expression_abc):
             sage: (t^2)^(1/4)
             2*4^(1/4)
 
-        Test if we can compute inverses of Python longs (:trac:`13107`)::
+        Test if we can compute inverses of Python longs (:issue:`13107`)::
 
             sage: SR(2L)^(-1)
             1/2
 
-        Symbolic powers with ``None`` shouldn't crash (:trac:`17523`)::
+        Symbolic powers with ``None`` shouldn't crash (:issue:`17523`)::
 
             sage: None^pi
             Traceback (most recent call last):
@@ -4448,13 +4448,13 @@ cdef class Expression(Expression_abc):
             ...
             TypeError: unsupported operand type(s) for ** or pow(): 'sage.symbolic.expression.Expression' and 'NoneType'
 
-        Check that :trac:`18088` is fixed::
+        Check that :issue:`18088` is fixed::
 
             sage: SR(0)^SR(0)
             1
 
         Check that floating point numbers +/- 1.0 are treated
-        differently from integers +/- 1 (:trac:`12257`)::
+        differently from integers +/- 1 (:issue:`12257`)::
 
             sage: (x^1).operator()
             sage: (x^1.0).operator()
@@ -4468,7 +4468,7 @@ cdef class Expression(Expression_abc):
             sage: exp(x)^1.0
             e^(1.00000000000000*x)
 
-        Check that :trac:`23921` is resolved::
+        Check that :issue:`23921` is resolved::
 
             sage: assume(SR.an_element() > 0)
             sage: A.<n> = AsymptoticRing('(SR_+)^n * n^SR', SR)
@@ -4476,8 +4476,8 @@ cdef class Expression(Expression_abc):
             sage: (elem, elem.parent())
             (2^n, Asymptotic Ring <SR^n * n^SR> over Symbolic Ring)
 
-        Check that pynac understands rational powers (:trac:`30446`,
-        :trac:`28620`, :trac:`30304`, and :trac:`30786`)::
+        Check that pynac understands rational powers (:issue:`30446`,
+        :issue:`28620`, :issue:`30304`, and :issue:`30786`)::
 
             sage: QQ((24*sqrt(3))^(100/50))==1728
             True
@@ -4491,7 +4491,7 @@ cdef class Expression(Expression_abc):
             sage: exp(-3*ln(-9*x)/3)
             -1/9/x
 
-        Check that :trac:`31137` is also fixed::
+        Check that :issue:`31137` is also fixed::
 
             sage: _ = var('A, L, G, R, f, k, n, q, u, beta, gamma', domain="positive")
             sage: a = I*R^2*f^3*k*q*A*u
@@ -4691,7 +4691,7 @@ cdef class Expression(Expression_abc):
             ...
             ValueError: No differentiation variable specified.
 
-        Check if :trac:`6524` is fixed::
+        Check if :issue:`6524` is fixed::
 
             sage: f = function('f')
             sage: f(x)*f(x).derivative(x)*f(x).derivative(x,2)
@@ -4870,7 +4870,7 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        Check if :trac:`8943` is fixed::
+        Check if :issue:`8943` is fixed::
 
             sage: ((1+arctan(x))**(1/x)).series(x==0, 3)
             (e) + (-1/2*e)*x + (1/8*e)*x^2 + Order(x^3)
@@ -4887,17 +4887,17 @@ cdef class Expression(Expression_abc):
             1 + 2*x + 4*x^2 + Order(x^3)
             sage: set_series_precision(20)
 
-        Check that :trac:`31645` is fixed::
+        Check that :issue:`31645` is fixed::
 
             sage: (x^(-1) + 1).series(x,1)
             1*x^(-1) + 1 + Order(x)
 
-        Check that :trac:`32115` is fixed::
+        Check that :issue:`32115` is fixed::
 
             sage: exp(log(1+x)*(1/x)).series(x)
             (e) + (-1/2*e)*x + (11/24*e)*x^2 + (-7/16*e)*x^3 + (2447/5760*e)*x^4 + ...
 
-        Check that :trac:`32640` is fixed::
+        Check that :issue:`32640` is fixed::
 
             sage: ((1 - x)^-x).series(x, 8)
             1 + 1*x^2 + 1/2*x^3 + 5/6*x^4 + 3/4*x^5 + 33/40*x^6 + 5/6*x^7 + Order(x^8)
@@ -4980,12 +4980,12 @@ cdef class Expression(Expression_abc):
             sage: (exp(x)/sin(x)^4).residue(x == 0)
             5/6
 
-        Check that :trac:`18372` is resolved::
+        Check that :issue:`18372` is resolved::
 
             sage: (1/(x^2 - x - 1)).residue(x == 1/2*sqrt(5) + 1/2)
             1/5*sqrt(5)
 
-        Check that :trac:`20084` is fixed::
+        Check that :issue:`20084` is fixed::
 
             sage: (1/(1 - 2^-x)).residue(x == 2*pi*I/log(2))
             1/log(2)
@@ -5054,7 +5054,7 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        Check that issue :trac:`7472` is fixed (Taylor polynomial in
+        Check that issue :issue:`7472` is fixed (Taylor polynomial in
         more variables)::
 
             sage: x,y = var('x y'); taylor(x*y^3,(x,1),(y,1),4)
@@ -5173,12 +5173,12 @@ cdef class Expression(Expression_abc):
             (a^3*b^3*x^3*y^3)^(1/2*c)*p^(3*c)
             sage: x,y,p,q = var('x,y,p,q', domain='complex')
 
-        Check that :trac:`18568` is fixed::
+        Check that :issue:`18568` is fixed::
 
             sage: ((x+sqrt(2)*x)^2).expand()
             2*sqrt(2)*x^2 + 3*x^2
 
-        Check that :trac:`21360` is fixed::
+        Check that :issue:`21360` is fixed::
 
             sage: ((x^(x/2) + 1)^2).expand()
             2*x^(1/2*x) + x^x + 1
@@ -5194,14 +5194,14 @@ cdef class Expression(Expression_abc):
             sage: ((x+1.001)^3).expand()
             x^3 + 3.00300000000000*x^2 + 3.00600300000000*x + 1.00300300100000
 
-        Check that :trac:`21302` is fixed::
+        Check that :issue:`21302` is fixed::
 
             sage: ((x+1)^-2).expand()
             1/(x^2 + 2*x + 1)
             sage: (((x-1)/(x+1))^2).expand()
             x^2/(x^2 + 2*x + 1) - 2*x/(x^2 + 2*x + 1) + 1/(x^2 + 2*x + 1)
 
-        Check that :trac:`30688` is fixed::
+        Check that :issue:`30688` is fixed::
 
             sage: assume(x < 0)
             sage: sqrt(-x).expand()
@@ -5210,13 +5210,13 @@ cdef class Expression(Expression_abc):
             (-x)^(3/4)
             sage: forget()
 
-        Check that :trac:`31077` and :trac:`31585` are fixed (also see :trac:`31679`)::
+        Check that :issue:`31077` and :issue:`31585` are fixed (also see :issue:`31679`)::
 
             sage: a,b,c,d = var("a b c d")
             sage: ((a + b + c)^30 * (3*b + d - 5/d)^3).expand().subs(a=0,b=2,c=-1)
             d^3 + 18*d^2 + 93*d - 465/d + 450/d^2 - 125/d^3 + 36
 
-        Check that :trac:`31411` is fixed::
+        Check that :issue:`31411` is fixed::
 
             sage: q, j = var("q, j")
             sage: A = q^(2/3) + q^(2/5)
@@ -5651,7 +5651,7 @@ cdef class Expression(Expression_abc):
              (x + y)^3 + b^2 + c^2
 
         Substitutions are done term by term, in other words Sage is not
-        able to identify partial sums in a substitution (see :trac:`18396`)::
+        able to identify partial sums in a substitution (see :issue:`18396`)::
 
             sage: f = x + x^2 + x^4
             sage: f.subs(x = y)
@@ -5773,7 +5773,7 @@ cdef class Expression(Expression_abc):
             0
 
         Verify that this operation does not modify the passed
-        dictionary (:trac:`6622`)::
+        dictionary (:issue:`6622`)::
 
             sage: var('v t')
             (v, t)
@@ -5784,12 +5784,12 @@ cdef class Expression(Expression_abc):
             sage: D
             {v: 2}
 
-        Check if :trac:`9891` is fixed::
+        Check if :issue:`9891` is fixed::
 
             sage: exp(x).subs(x=log(x))
             x
 
-        Check if :trac:`13587` is fixed::
+        Check if :issue:`13587` is fixed::
 
             sage: t = tan(x)^2 - tan(x)
             sage: t.subs(x=pi/2)
@@ -5827,7 +5827,7 @@ cdef class Expression(Expression_abc):
             sage: (sqrt(x) + 1/sqrt(x)).subs({x: 1/x})
             sqrt(x) + 1/sqrt(x)
 
-        Check that :trac:`30378` is fixed::
+        Check that :issue:`30378` is fixed::
 
             sage: (x^2).subs({x: sqrt(x)})
             x
@@ -5839,20 +5839,20 @@ cdef class Expression(Expression_abc):
             sage: integrate(f(x), x, 0, a).subs(a=cos(a))
             integrate(f(x), x, 0, cos(a))
 
-        Check that :trac:`31554` is fixed::
+        Check that :issue:`31554` is fixed::
 
             sage: a,b,c,d,x,y = var("a b c d x y")
             sage: with hold:
             ....:     print((2*x^0*a + b*y^1).subs({x:c, y:c*d}))
             b*c*d + 2*a
 
-        Check that :trac:`31530` is fixed::
+        Check that :issue:`31530` is fixed::
 
             sage: a, b = var("a b")
             sage: (a + b*x).series(x, 2).subs(a=a, b=b)
             (a) + (b)*x + Order(x^2)
 
-        Check that :trac:`31585` is fixed::
+        Check that :issue:`31585` is fixed::
 
             sage: m = -2^31
             sage: (-x).subs(x=m)
@@ -6019,7 +6019,7 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        Make sure :trac:`17849` is fixed::
+        Make sure :issue:`17849` is fixed::
 
             sage: ex = sin(x) + atan2(0,0,hold=True)
             sage: ex.substitute_function(sin,cos)
@@ -6625,13 +6625,13 @@ cdef class Expression(Expression_abc):
             TypeError: cannot evaluate symbolic expression numerically
 
         Make sure we've rounded up log(10,2) enough to guarantee
-        sufficient precision (:trac:`10164`)::
+        sufficient precision (:issue:`10164`)::
 
             sage: ks = 4*10**5, 10**6
             sage: all(len(str(e.n(digits=k)))-1 >= k for k in ks)
             True
 
-        Symbolic sums with definite endpoints are expanded (:trac:`9424`)::
+        Symbolic sums with definite endpoints are expanded (:issue:`9424`)::
 
             sage: (k,n) = var('k,n')
             sage: f(n) = sum(abs(-k*k+n),k,1,n)
@@ -6642,7 +6642,7 @@ cdef class Expression(Expression_abc):
             sage: (ex+1).n()
             163.000000000000
 
-        Check if :trac:`24418` is fixed::
+        Check if :issue:`24418` is fixed::
 
             sage: numerical_approx(2^(450232897/4888643760))
             1.06591892580915
@@ -6953,7 +6953,7 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        Check if :trac:`9505` is fixed::
+        Check if :issue:`9505` is fixed::
 
             sage: var('x,y,z')
             (x, y, z)
@@ -6965,7 +6965,7 @@ cdef class Expression(Expression_abc):
             ...
             TypeError: n != 1 only allowed for s being a variable
 
-        Check that :trac:`19996` is fixed::
+        Check that :issue:`19996` is fixed::
 
             sage: (x^(1/2)).coefficient(x, QQ(1)/3)
             0
@@ -7047,7 +7047,7 @@ cdef class Expression(Expression_abc):
             ...
             ValueError: cannot return dense coefficient list with noninteger exponents
 
-        Series coefficients are now handled correctly (:trac:`17399`)::
+        Series coefficients are now handled correctly (:issue:`17399`)::
 
 
             sage: s = (1/(1-x)).series(x,6); s
@@ -7062,7 +7062,7 @@ cdef class Expression(Expression_abc):
             sage: s.coefficients(x, sparse=False)
             [1, y + 1, (y + 1)^2]
 
-        We can find coefficients of symbolic functions, :trac:`12255`::
+        We can find coefficients of symbolic functions, :issue:`12255`::
 
             sage: g = function('g')(var('t'))
             sage: f = 3*g + g**2 + t
@@ -7076,7 +7076,7 @@ cdef class Expression(Expression_abc):
             sage: (sin(1+x)*sin(1+x^2)*x).coefficients(x)
             [[sin(x^2 + 1)*sin(x + 1), 1]]
 
-        Check that :trac:`23545` is fixed::
+        Check that :issue:`23545` is fixed::
 
             sage: (x^2/(1+x)).coefficients()
             [[x^2/(x + 1), 0]]
@@ -7675,7 +7675,7 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        This shows that the issue at :trac:`5755` is fixed (attempting to
+        This shows that the issue at :issue:`5755` is fixed (attempting to
         coerce a symbolic expression to a non-symbolic polynomial ring
         caused an error::
 
@@ -7689,7 +7689,7 @@ cdef class Expression(Expression_abc):
             sage: RR['xx'](2.0*xx)
             2.00000000000000*xx
 
-        This shows that the issue at :trac:`4246` is fixed (attempting to
+        This shows that the issue at :issue:`4246` is fixed (attempting to
         coerce an expression containing at least one variable that's not in
         `R` raises an error)::
 
@@ -7743,7 +7743,7 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        Check that :trac:`17736` is fixed::
+        Check that :issue:`17736` is fixed::
 
             sage: a,b,c = var('a,b,c')
             sage: fr = (1/a).fraction(QQ); fr
@@ -7838,7 +7838,7 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        Check if :trac:`10284` is fixed::
+        Check if :issue:`10284` is fixed::
 
             sage: u = var('u')
             sage: v = var('v')
@@ -7863,12 +7863,12 @@ cdef class Expression(Expression_abc):
             sage: gcd(d,e) / (u^4*z^2) in QQ
             True
 
-        Check that :trac:`23793` is fixed::
+        Check that :issue:`23793` is fixed::
 
             sage: gcd(I + I*x, x^2 - 1)
             x + 1
 
-        Check that arguments are expanded before GCD (:trac:`23845`)::
+        Check that arguments are expanded before GCD (:issue:`23845`)::
 
             sage: P = (x+1)^2 + 1
             sage: gcd(P, P.expand())
@@ -8198,7 +8198,7 @@ cdef class Expression(Expression_abc):
             sage: bool(str(f) == str(g))
             True
 
-        Check if :trac:`9046` is fixed::
+        Check if :issue:`9046` is fixed::
 
             sage: var('a b x y z')
             (a, b, x, y, z)
@@ -8354,7 +8354,7 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        Check if :trac:`11155` is fixed::
+        Check if :issue:`11155` is fixed::
 
             sage: abs(pi+i)
             abs(pi + I)
@@ -8391,7 +8391,7 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        From :trac:`7557`::
+        From :issue:`7557`::
 
             sage: var('y', domain='real')
             y
@@ -8616,12 +8616,12 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        Check that :trac:`12807` is fixed::
+        Check that :issue:`12807` is fixed::
 
             sage: (6*exp(i*pi/3)-6*exp(i*2*pi/3)).real_part()
             6
 
-        Check that :trac:`28357` is fixed::
+        Check that :issue:`28357` is fixed::
 
             sage: m = var('m')
             sage: assume(m, 'integer')
@@ -8631,7 +8631,7 @@ cdef class Expression(Expression_abc):
             sin(1/2*pi*m)
             sage: forget()
 
-        Check that :trac:`29400` is fixed::
+        Check that :issue:`29400` is fixed::
 
             sage: cot(1 + i).imag().n() - (1/tan(1 + i)).imag().n()  # abs tol 10^-12
             0.00000000000000
@@ -9567,7 +9567,7 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        Test if :trac:`6377` is fixed::
+        Test if :issue:`6377` is fixed::
 
             sage: SR(oo).exp()
             +Infinity
@@ -9768,7 +9768,7 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        Check if we handle zero correctly (:trac:`8561`)::
+        Check if we handle zero correctly (:issue:`8561`)::
 
             sage: x.binomial(0)
             1
@@ -10009,7 +10009,7 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        Check that :trac:`19775` is fixed::
+        Check that :issue:`19775` is fixed::
 
             sage: a,b,c,d,e,y = var('a,b,c,d,e,y')
             sage: ((x - 2*y)^4/(x^2 - 4*y^2)^2).normalize()
@@ -10022,7 +10022,7 @@ cdef class Expression(Expression_abc):
             sage: (e + c/a - b*c^2/(a^2*(b*c/a-d)) + c*d/(a*(b*c/a-d))).normalize()
             e
 
-        Check that :trac:`23861` is fixed::
+        Check that :issue:`23861` is fixed::
 
             sage: (x^(2*pi) + x^(-2*pi) - 2).normalize()
             (x^(4*pi) - 2*x^(2*pi) + 1)/x^(2*pi)
@@ -10534,7 +10534,7 @@ cdef class Expression(Expression_abc):
         - ``self`` -- an expression with held operations
         - ``exclude`` -- (default: None) a list of operators to exclude from
           evaluation. Excluding arithmetic operators does not yet work (see
-          :trac:`10169`).
+          :issue:`10169`).
 
         OUTPUT:
 
@@ -10632,7 +10632,7 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        Check that :trac:`14637` is fixed::
+        Check that :issue:`14637` is fixed::
 
             sage: assume(x > 0, x < pi/2)
             sage: acos(cos(x)).simplify()
@@ -10686,14 +10686,14 @@ cdef class Expression(Expression_abc):
         TESTS:
 
         There are two square roots of `(x + 1)^2`, so this should
-        not be simplified to `x + 1`, see :trac:`12737`::
+        not be simplified to `x + 1`, see :issue:`12737`::
 
             sage: f = sqrt((x + 1)^2)
             sage: f.simplify_full()
             sqrt(x^2 + 2*x + 1)
 
         The imaginary part of an expression should not change under
-        simplification; :trac:`11934`::
+        simplification; :issue:`11934`::
 
             sage: f = sqrt(-8*(4*sqrt(2) - 7)*x^4 + 16*(3*sqrt(2) - 5)*x^3)
             sage: original = f.imag_part()
@@ -10701,8 +10701,8 @@ cdef class Expression(Expression_abc):
             sage: original - simplified
             0
 
-        The invalid simplification from :trac:`12322` should not occur
-        after :trac:`12737`::
+        The invalid simplification from :issue:`12322` should not occur
+        after :issue:`12737`::
 
             sage: t = var('t')
             sage: assume(t, 'complex')
@@ -10713,7 +10713,7 @@ cdef class Expression(Expression_abc):
             1/2*log(2*t) - 1/2*log(t)
             sage: forget()
 
-        Complex logs are not contracted, :trac:`17556`::
+        Complex logs are not contracted, :issue:`17556`::
 
             sage: x,y = SR.var('x,y')
             sage: assume(y, 'complex')
@@ -10723,13 +10723,13 @@ cdef class Expression(Expression_abc):
             sage: forget()
 
         The simplifications from :meth:`simplify_rectform` are
-        performed, :trac:`17556`::
+        performed, :issue:`17556`::
 
             sage: f = ( e^(I*x) - e^(-I*x) ) / ( I*e^(I*x) + I*e^(-I*x) )
             sage: f.simplify_full()
             sin(x)/cos(x)
 
-        Check that :trac:`20846` is fixed::
+        Check that :issue:`20846` is fixed::
 
             sage: ((1/6*pi^2).series(x)).simplify_full()
             1/6*pi^2
@@ -11203,7 +11203,7 @@ cdef class Expression(Expression_abc):
         TESTS:
 
         Check that the problem with applying ``full_simplify()`` to gamma
-        functions (:trac:`9240`) has been fixed::
+        functions (:issue:`9240`) has been fixed::
 
             sage: gamma(1/3)
             gamma(1/3)
@@ -11258,7 +11258,7 @@ cdef class Expression(Expression_abc):
             sage: (gamma(n+2)*gamma(m-1)/gamma(n)/gamma(m+1)).gamma_normalize()
             (n + 1)*n/((m - 1)*m)
 
-        Check that :trac:`22826` is fixed::
+        Check that :issue:`22826` is fixed::
 
             sage: _ = var('n')
             sage: (n-1).gcd(n+1)
@@ -11312,7 +11312,7 @@ cdef class Expression(Expression_abc):
             sage: f(8).expand_sum().n()
             31.7752256945384
 
-        See :trac:`9424` for making the following no longer raise
+        See :issue:`9424` for making the following no longer raise
         an error::
 
             sage: f(8).n()
@@ -11452,7 +11452,7 @@ cdef class Expression(Expression_abc):
             sage: (e1-e2).canonicalize_radical()
             0
 
-        The issue reported in :trac:`3520` is a case where
+        The issue reported in :issue:`3520` is a case where
         ``canonicalize_radical()`` causes a numerical integral to be
         calculated incorrectly::
 
@@ -11465,7 +11465,7 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        This tests that :trac:`11668` has been fixed (by :trac:`12780`)::
+        This tests that :issue:`11668` has been fixed (by :issue:`12780`)::
 
             sage: a,b = var('a b', domain='real')
             sage: A = abs((a+I*b))^2
@@ -11595,7 +11595,7 @@ cdef class Expression(Expression_abc):
             sage: f.simplify_log()
             log(x*y^2) + 1/2*log(t)
 
-        This shows that the issue at :trac:`7334` is fixed. Maxima
+        This shows that the issue at :issue:`7334` is fixed. Maxima
         intentionally keeps the expression inside the log factored::
 
             sage: log_expr = (log(sqrt(2)-1)+log(sqrt(2)+1))
@@ -11605,7 +11605,7 @@ cdef class Expression(Expression_abc):
             0
 
         We should use the current simplification domain rather than
-        set it to 'real' explicitly (:trac:`12780`)::
+        set it to 'real' explicitly (:issue:`12780`)::
 
             sage: f = sqrt(x^2)
             sage: f.simplify_log()
@@ -11726,7 +11726,7 @@ cdef class Expression(Expression_abc):
         reals. So, we should set the Maxima ``domain`` variable to
         'real' before we call out to Maxima. When we return, however, we
         should set the ``domain`` back to what it was, rather than
-        assuming that it was 'complex'. See :trac:`12780`::
+        assuming that it was 'complex'. See :issue:`12780`::
 
             sage: from sage.calculus.calculus import maxima
             sage: maxima('domain: real;')
@@ -11915,13 +11915,13 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        Check that :trac:`21529` is fixed::
+        Check that :issue:`21529` is fixed::
 
             sage: f(x) = function('f')(x)
             sage: (f(x).diff(x)^2-1).factor()
             (diff(f(x), x) + 1)*(diff(f(x), x) - 1)
 
-        Check that :trac:`27304` is fixed::
+        Check that :issue:`27304` is fixed::
 
             sage: factor(2*exp(x) + exp(-x))
             (2*e^(2*x) + 1)*e^(-x)
@@ -11932,7 +11932,7 @@ cdef class Expression(Expression_abc):
             sage: factor((x + sqrt(x))/(x - sqrt(x)))
             (x + sqrt(x))/(x - sqrt(x))
 
-        Check that :trac:`33640` is fixed::
+        Check that :issue:`33640` is fixed::
 
             sage: ((x + 1)^2 - 2*x - 1).factor()
             x^2
@@ -12286,7 +12286,7 @@ cdef class Expression(Expression_abc):
             ...
             TypeError: unable to convert sqrt(3) to a rational
 
-        Check if :trac:`9538` is fixed::
+        Check if :issue:`9538` is fixed::
 
             sage: var('f6,f5,f4,x')
             (f6, f5, f4, x)
@@ -12363,7 +12363,7 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        Check that :trac:`20755` is indeed fixed::
+        Check that :issue:`20755` is indeed fixed::
 
             sage: w = x^4 - (1+3*i)*x^3 - (2-4*i)*x^2 + (6-2*i)*x - 4 - 4*i
             sage: w.solve(x,multiplicities=True)
@@ -12563,7 +12563,7 @@ cdef class Expression(Expression_abc):
             sage: sin(x).find_root(-1,1)                                                # needs scipy
             0.0
 
-        This example was fixed along with :trac:`4942` -
+        This example was fixed along with :issue:`4942` -
         there was an error in the example
         pi is a root for tan(x), but an asymptote to 1/tan(x)
         added an example to show handling of both cases::
@@ -12625,7 +12625,7 @@ cdef class Expression(Expression_abc):
         TESTS:
 
         Test the special case that failed for the first attempt to fix
-        :trac:`3980`::
+        :issue:`3980`::
 
             sage: t = var('t')
             sage: find_root(1/t - x,0,2)
@@ -12635,7 +12635,7 @@ cdef class Expression(Expression_abc):
             in 1 dimension.
 
         Ensure that complex expressions do not cause a problem if they
-        appear only as intermediate results as in :trac:`24536`::
+        appear only as intermediate results as in :issue:`24536`::
 
             sage: x = SR.symbol('x', domain='real')
             sage: f = (sqrt(x) - I).abs()
@@ -12746,7 +12746,7 @@ cdef class Expression(Expression_abc):
         TESTS:
 
         Ensure that complex expressions do not cause a problem if they
-        appear only as intermediate results as in :trac:`24536`::
+        appear only as intermediate results as in :issue:`24536`::
 
             sage: x = SR.symbol('x', domain='real')
             sage: f = (x + I).abs()
@@ -12960,7 +12960,7 @@ cdef class Expression(Expression_abc):
             sage: plot(s)                                                               # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
-        Check that :trac:`15030` is fixed::
+        Check that :issue:`15030` is fixed::
 
             sage: abs(log(x))._plot_fast_callable(x)(-0.2) # abs tol 1e-10
             3.52985761682672
@@ -13107,12 +13107,12 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        Check that the sum in :trac:`10682` is done right::
+        Check that the sum in :issue:`10682` is done right::
 
             sage: sum(binomial(n,k)*k^2, k, 2, n)
             1/4*(n^2 + n)*2^n - n
 
-        This sum used to give a wrong result (:trac:`9635`) but
+        This sum used to give a wrong result (:issue:`9635`) but
         now gives correct results with all relevant assumptions::
 
             sage: (n,k,j)=var('n,k,j')
@@ -13135,13 +13135,13 @@ cdef class Expression(Expression_abc):
             -(-1)^j*sum((-1)^k*binomial(k - 1, j)*binomial(n, k), k, j + 1, n)
             sage: forget()
 
-        Check that :trac:`16176` is fixed::
+        Check that :issue:`16176` is fixed::
 
             sage: n = var('n')
             sage: sum(log(1-1/n^2),n,2,oo)
             -log(2)
 
-        Check that :trac:`21801` is fixed::
+        Check that :issue:`21801` is fixed::
 
             sage: n = SR.var('n')
             sage: sum(1/((n+1)*(2*n-1)), n, 0, oo)
@@ -13217,7 +13217,7 @@ cdef class Expression(Expression_abc):
 
         TESTS:
 
-        We check that :trac:`12438` is resolved::
+        We check that :issue:`12438` is resolved::
 
             sage: f(x) = x; f
             x |--> x
@@ -13242,7 +13242,7 @@ cdef class Expression(Expression_abc):
             sage: integral(f, z)
             (x, y) |--> (x + y)*z
 
-        We check that :trac:`13097` is resolved::
+        We check that :issue:`13097` is resolved::
 
             sage: integrate(ln(1+4/5*sin(x)), x, -3.1415, 3.1415)  # tol 10e-6
             -1.40205228301000

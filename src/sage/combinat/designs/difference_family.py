@@ -3368,7 +3368,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         19 False
         20 Unknown
 
-    Check a failing construction (:trac:`17528`)::
+    Check a failing construction (:issue:`17528`)::
 
         sage: designs.difference_family(9,3)
         Traceback (most recent call last):
@@ -3376,7 +3376,7 @@ def difference_family(v, k, l=1, existence=False, explain_construction=False, ch
         NotImplementedError: No construction available for (9,3,1)-difference family
 
     Check that when ``existence=True`` we always obtain ``True``, ``False`` or ``Unknown``,
-    and when ``explain_construction=True``, it is a string (see :trac:`24513`)::
+    and when ``explain_construction=True``, it is a string (see :issue:`24513`)::
 
         sage: designs.difference_family(3, 2, 1, existence=True)
         True

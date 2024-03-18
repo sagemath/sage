@@ -711,7 +711,7 @@ class Projection(SageObject):
             sage: pp.arrows
             [[0, 1], [0, 2], [0, 3], [0, 4]]
 
-        We check that :trac:`31802` is fixed::
+        We check that :issue:`31802` is fixed::
 
             sage: x = Polyhedron(lines=[(1, 0, 0), (0, 1, 0)], rays=[(0, 0, 1)])
             sage: y = x.projection()
@@ -1202,7 +1202,7 @@ class Projection(SageObject):
             sage: Polyhedron(vertices=[[1,1,1]]).plot()      # point in R^3
             Graphics3d Object
 
-        The origin is not included, if it is not in the polyhedron (:trac:`23555`)::
+        The origin is not included, if it is not in the polyhedron (:issue:`23555`)::
 
             sage: Q = Polyhedron([[100],[101]])
             sage: P = Q*Q*Q; P
@@ -1507,7 +1507,7 @@ class Projection(SageObject):
             sage: with open('polytope-tikz2.tex', 'w') as f:  # not tested
             ....:     _ = f.write(Image)
 
-        Scientific notation is not used in the output (:trac:`16519`)::
+        Scientific notation is not used in the output (:issue:`16519`)::
 
             sage: P = Polyhedron([[2*10^-10,0], [0,1], [1,0]], base_ring=QQ)
             sage: tikz = P.projection().tikz(output_type='TikzPicture')

@@ -55,7 +55,7 @@ A simple example of registering coercions::
 When implementing an element of a ring, one would typically provide the
 element class with ``_rmul_`` and/or ``_lmul_`` methods for the action of a
 base ring, and with ``_mul_`` for the ring multiplication. However, prior to
-:trac:`14249`, it would have been necessary to additionally define a method
+:issue:`14249`, it would have been necessary to additionally define a method
 ``_an_element_()`` for the parent. But now, the following example works::
 
     sage: from sage.structure.element import RingElement
@@ -185,7 +185,7 @@ cdef inline bint good_as_coerce_domain(S) noexcept:
 
     If an instance `S` is not suitable as domain of a map, then
     the non-existence of a coercion or conversion map from `S`
-    to some other parent is not cached, by :trac:`13378`::
+    to some other parent is not cached, by :issue:`13378`::
 
         sage: P.<x,y> = QQ[]
         sage: P._is_coercion_cached(x)
@@ -248,7 +248,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         - ``self._element_init_pass_parent == guess_pass_parent(self,
           self._element_constructor)`` Ensures that :meth:`__call__`
           passes down the parent properly to
-          :meth:`_element_constructor`.  See :trac:`5979`.
+          :meth:`_element_constructor`.  See :issue:`5979`.
 
         .. TODO::
 
@@ -380,7 +380,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         TESTS:
 
-        Here is a test against :trac:`14471`. Refining the category will issue
+        Here is a test against :issue:`14471`. Refining the category will issue
         a warning, if this change affects the hash value (note that this will
         only be seen in doctest mode)::
 
@@ -560,7 +560,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         So for backwards compatibility, we only use dynamic classes by
         default if the class has a non-zero ``__dictoffset__``. But it
         works regardless: just pass ``inherit=True`` to
-        ``__make_element_class__``. See also :trac:`24715`.
+        ``__make_element_class__``. See also :issue:`24715`.
 
         When we do not use a dynamic element class, the ``__getattr__``
         implementation from :class:`Element` provides fake
@@ -859,7 +859,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
             self._element_init_pass_parent == guess_pass_parent(self, self._element_constructor)
 
-        is preserved (see :trac:`5979`)::
+        is preserved (see :issue:`5979`)::
 
             sage: class MyParent(Parent):
             ....:     def _element_constructor_(self, x):
@@ -911,7 +911,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         is because ``__mul__`` cannot be implemented via inheritance
         from the parent methods of the category, but ``_mul_`` can
         be inherited. This is, e.g., used when creating twosided
-        ideals of matrix algebras. See :trac:`7797`.
+        ideals of matrix algebras. See :issue:`7797`.
 
         EXAMPLES::
 
@@ -1137,7 +1137,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         TESTS:
 
-        Check that :trac:`13824` is fixed::
+        Check that :issue:`13824` is fixed::
 
             sage: 4/3 in GF(3)
             False
@@ -1148,7 +1148,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             sage: 15/36 in Integers(6)
             False
 
-        Check that :trac:`32078` is fixed::
+        Check that :issue:`32078` is fixed::
 
             sage: P = Frac(ZZ['x,y'])
             sage: P(1) in ZZ
@@ -1156,7 +1156,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             sage: P(1/2) in ZZ
             False
 
-        Check that :trac:`24209` is fixed::
+        Check that :issue:`24209` is fixed::
 
             sage: I in QQbar                                                            # needs sage.rings.number_field
             True
@@ -1257,7 +1257,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         TESTS:
 
-        We test the workaround described in :trac:`12956` to let categories
+        We test the workaround described in :issue:`12956` to let categories
         override this default implementation::
 
             sage: class As(Category):
@@ -1638,7 +1638,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         TESTS:
 
-        We check that :trac:`29517` has been fixed::
+        We check that :issue:`29517` has been fixed::
 
             sage: A.<x> = ZZ[]
             sage: B.<y> = ZZ[]
@@ -1799,7 +1799,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             sage: S3._unset_coercions_used()
             sage: S3.register_embedding(phi)
 
-        By :trac:`14711`, coerce maps should be copied when using outside of
+        By :issue:`14711`, coerce maps should be copied when using outside of
         the coercion system::
 
             sage: phi = copy(S3.coerce_embedding()); phi                                # needs sage.groups
@@ -1812,7 +1812,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             [0 1 0]
 
         This does not work since matrix groups are still old-style
-        parents (see :trac:`14014`)::
+        parents (see :issue:`14014`)::
 
             sage: G(p)                          # not implemented                       # needs sage.groups
 
@@ -1918,7 +1918,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         TESTS:
 
-        We check that :trac:`23184` has been resolved::
+        We check that :issue:`23184` has been resolved::
 
             sage: QQ['x', 'y']._generic_coerce_map(QQ).category_for()
             Category of infinite unique factorization domains
@@ -1960,7 +1960,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         TESTS:
 
-        We check that :trac:`23184` has been resolved::
+        We check that :issue:`23184` has been resolved::
 
             sage: QQ[['x']].coerce_map_from(QQ).category_for()
             Category of euclidean domains
@@ -2024,7 +2024,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         EXAMPLES:
 
-        By :trac:`14711`, coerce maps should be copied for usage outside
+        By :issue:`14711`, coerce maps should be copied for usage outside
         of the coercion system::
 
             sage: copy(CDF._coerce_map_via([ZZ, RR, CC], int))                          # needs sage.rings.complex_double
@@ -2114,7 +2114,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         EXAMPLES:
 
-        By :trac:`12313`, a special kind of weak key dictionary is used to
+        By :issue:`12313`, a special kind of weak key dictionary is used to
         store coercion and conversion maps, namely
         :class:`~sage.structure.coerce_dict.MonoDict`. In that way, a memory
         leak was fixed that would occur in the following test::
@@ -2132,7 +2132,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         TESTS:
 
-        The following was fixed in :trac:`12969`::
+        The following was fixed in :issue:`12969`::
 
             sage: # needs sage.combinat sage.modules
             sage: R = QQ['q,t'].fraction_field()
@@ -2153,7 +2153,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         EXAMPLES:
 
-        By :trac:`14711`, coerce maps should be copied when using them
+        By :issue:`14711`, coerce maps should be copied when using them
         outside of the coercion system, because they may become defunct
         by garbage collection::
 
@@ -2197,7 +2197,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                       From: Symmetric Functions over Fraction Field of Multivariate Polynomial Ring in q, t over Rational Field in the Schur basis
                       To:   Symmetric Functions over Fraction Field of Multivariate Polynomial Ring in q, t over Rational Field in the Macdonald Ht basis
 
-        The following was fixed in :trac:`4740`::
+        The following was fixed in :issue:`4740`::
 
             sage: F = GF(13)
             sage: F._internal_coerce_map_from(F) is F._internal_coerce_map_from(F)
@@ -2291,7 +2291,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         TESTS:
 
-        Regression test for :trac:`12919` (probably not 100% robust)::
+        Regression test for :issue:`12919` (probably not 100% robust)::
 
             sage: class P(Parent):
             ....:     def __init__(self):
@@ -2328,7 +2328,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
               From: Rational Field
               To:   Number Field in a with defining polynomial x^2 - 2 over its base field
 
-        Test that :trac:`17981` is fixed::
+        Test that :issue:`17981` is fixed::
 
             sage: class P(Parent):
             ....:     def __init__(self):
@@ -2342,7 +2342,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             sage: X.has_coerce_map_from(ZZ)
             True
 
-        Check that :trac:`14982` is fixed, and more generally that we discover
+        Check that :issue:`14982` is fixed, and more generally that we discover
         sensible coercion paths in the presence of embeddings::
 
             sage: # needs sage.rings.number_field
@@ -2994,7 +2994,7 @@ cdef class EltPair:
 
         TESTS:
 
-        Verify that :trac:`16341` has been resolved::
+        Verify that :issue:`16341` has been resolved::
 
             sage: K.<a> = Qq(9)                                                         # needs sage.rings.padics
             sage: E = EllipticCurve_from_j(0).base_extend(K)                            # needs sage.rings.padics

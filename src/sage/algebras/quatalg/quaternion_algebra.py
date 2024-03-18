@@ -138,7 +138,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
     ``QuaternionAlgebra(a, b)`` constructor, as may all pairs of
     nonzero elements of a domain not of characteristic 2.
 
-    The following tests address the issues raised in :trac:`10601`::
+    The following tests address the issues raised in :issue:`10601`::
 
         sage: QuaternionAlgebra(1r,1)
         Quaternion Algebra (1, 1) with base ring Rational Field
@@ -213,7 +213,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
 
     TESTS:
 
-    Verify that bug found when working on :trac:`12006` involving coercing
+    Verify that bug found when working on :issue:`12006` involving coercing
     invariants into the base field is fixed::
 
         sage: Q = QuaternionAlgebra(-1,-1); Q
@@ -1521,7 +1521,7 @@ class QuaternionOrder(Parent):
 
         TESTS:
 
-        Test for :trac:`32364`::
+        Test for :issue:`32364`::
 
             sage: 1/5 in O
             False
@@ -1607,7 +1607,7 @@ class QuaternionOrder(Parent):
             sage: Q.<i,j,k> = QuaternionAlgebra(-1,-19)
 
         Orders can be equal even if they are defined by different
-        bases (see :trac:`32245`)::
+        bases (see :issue:`32245`)::
 
             sage: Q.quaternion_order([1,-i,k,j+i*7]) == Q.quaternion_order([1,i,j,k])
             True
@@ -2302,7 +2302,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: QuaternionAlgebra(-11,-1).maximal_order().unit_ideal().gens()
             (1/2 + 1/2*i, 1/2*j - 1/2*k, i, -k)
 
-        Check that :trac:`31582` is fixed::
+        Check that :issue:`31582` is fixed::
 
             sage: BrandtModule(23).right_ideals()[0].parent()
             Monoid of ideals of Quaternion Algebra (-1, -23) with base ring Rational Field
@@ -2354,12 +2354,12 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
         TESTS:
 
-        Scaling by `1` should not change anything (see :trac:`32245`)::
+        Scaling by `1` should not change anything (see :issue:`32245`)::
 
             sage: I.scale(1) == I
             True
 
-        Check that :trac:`32726` is fixed::
+        Check that :issue:`32726` is fixed::
 
             sage: Q.<i,j,k> = QuaternionAlgebra(-1,-19)
             sage: I = Q.ideal([1,i,j,k])
@@ -2588,7 +2588,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             False
 
         Ideals can be equal even if they are defined by different
-        bases (see :trac:`32245`)::
+        bases (see :issue:`32245`)::
 
             sage: I == I.scale(-1)
             True
@@ -3007,7 +3007,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: X[0].free_module() / I.free_module()
             Finitely generated module V/W over Integer Ring with invariants (4, 4)
 
-        This shows that the issue at :trac:`6760` is fixed::
+        This shows that the issue at :issue:`6760` is fixed::
 
             sage: R.<i,j,k> = QuaternionAlgebra(-1, -13)
             sage: I = R.ideal([2+i, 3*i, 5*j, j+k]); I

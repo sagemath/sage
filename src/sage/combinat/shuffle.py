@@ -634,7 +634,7 @@ class ShuffleProduct_overlapping_r(ShuffleProduct_abstract):
         TESTS:
 
         We need to be explicitly more generic about the resulting parent
-        when shuffling two compositions `I` and `J` (:trac:`15131`)::
+        when shuffling two compositions `I` and `J` (:issue:`15131`)::
 
             sage: I, J = Compositions(4)([2, 2]), Composition([1, 1])
             sage: S = ShuffleProduct_overlapping_r(I, J, 1, Compositions())

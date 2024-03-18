@@ -1184,7 +1184,7 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
         TESTS:
 
         Check that trying to invert zero raises an error
-        (see :trac:`12217`)::
+        (see :issue:`12217`)::
 
             sage: F = GF(25, 'a')
             sage: z = F(0)
@@ -1218,14 +1218,14 @@ cdef class FiniteField_givaroElement(FinitePolyExtElement):
 
         TESTS:
 
-        The following checks that :trac:`7923` is resolved::
+        The following checks that :issue:`7923` is resolved::
 
             sage: K.<a> = GF(3^10)
             sage: b = a^9 + a^7 + 2*a^6 + a^4 + a^3 + 2*a^2 + a + 2
             sage: b^(71*7381) == (b^71)^7381
             True
 
-        We define ``0^0`` to be unity, :trac:`13897`::
+        We define ``0^0`` to be unity, :issue:`13897`::
 
             sage: K.<a> = GF(3^10)
             sage: K(0)^0

@@ -660,7 +660,7 @@ cdef class CRElement(pAdicTemplateElement):
 
         TESTS:
 
-        Check that :trac:`31875` is fixed::
+        Check that :issue:`31875` is fixed::
 
             sage: R(1)^R(0)
             1 + O(19^5)
@@ -1529,7 +1529,7 @@ cdef class CRElement(pAdicTemplateElement):
 
         .. WARNING::
 
-            Hashing of `p`-adic elements will likely be deprecated soon.  See :trac:`11895`.
+            Hashing of `p`-adic elements will likely be deprecated soon.  See :issue:`11895`.
 
         EXAMPLES::
 

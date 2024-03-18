@@ -283,7 +283,7 @@ sage: factor(n)
 sage: e = 22601762315966221465875845336488389513
 sage: d = 31940292321834506197902778067109010093
 sage: n = 268494924039590992469444675130990465673
-sage: p = crack_given_decrypt(n, e*d - 1)  # not tested, known bug (see :trac:`32097`)
+sage: p = crack_given_decrypt(n, e*d - 1)  # not tested, known bug (see :issue:`32097`)
 sage: p   # random output (could be other prime divisor)  # not tested
 13432418150982799907
 sage: n % p  # not tested

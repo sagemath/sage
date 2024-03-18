@@ -820,7 +820,7 @@ class PiecewiseFunction(BuiltinFunction):
 
             TESTS:
 
-            Verify that piecewise integrals of zero work (:trac:`10841`)::
+            Verify that piecewise integrals of zero work (:issue:`10841`)::
 
                 sage: f0(x) = 0
                 sage: f = piecewise([[[0,1],f0]])
@@ -908,7 +908,7 @@ class PiecewiseFunction(BuiltinFunction):
 
             TESTS:
 
-            Use variables other than x (:trac:`13836`)::
+            Use variables other than x (:issue:`13836`)::
 
                 sage: R.<y> = QQ[]
                 sage: f1 = y^0
@@ -972,7 +972,7 @@ class PiecewiseFunction(BuiltinFunction):
                           x|-->-x + 6 on (3, 4],
                           x|-->-2*x + 10 on (4, 5]; x)
 
-            Check that the bugs raised in :trac:`12123` are fixed::
+            Check that the bugs raised in :issue:`12123` are fixed::
 
                 sage: f = piecewise([[(-2, 2), 2]])
                 sage: g = piecewise([[(0, 2), 3/4]])
@@ -1052,7 +1052,7 @@ class PiecewiseFunction(BuiltinFunction):
 
             TESTS:
 
-            Use variables or rings other than x (:trac:`13836`)::
+            Use variables or rings other than x (:issue:`13836`)::
 
                 sage: R.<y> = QQ[]
                 sage: f1 = y^2

@@ -488,14 +488,14 @@ def import_statements(*objects, **kwds):
         ...
         ValueError: no import statement found for '5'.
 
-    We test that it behaves well with lazy imported objects (:trac:`14767`)::
+    We test that it behaves well with lazy imported objects (:issue:`14767`)::
 
         sage: import_statements(NN)
         from sage.rings.semirings.non_negative_integer_semiring import NN
         sage: import_statements('NN')
         from sage.rings.semirings.non_negative_integer_semiring import NN
 
-    Deprecated lazy imports are ignored (see :trac:`17458`)::
+    Deprecated lazy imports are ignored (see :issue:`17458`)::
 
         sage: lazy_import('sage.all', 'RR', 'deprecated_RR', namespace=sage.__dict__, deprecation=17458)
         sage: import_statements('deprecated_RR')
@@ -506,7 +506,7 @@ def import_statements(*objects, **kwds):
         sage: import_statements('RR')
         from sage.rings.real_mpfr import RR
 
-    The following were fixed with :trac:`15351`::
+    The following were fixed with :issue:`15351`::
 
         sage: import_statements('Rationals')
         from sage.rings.rational_field import RationalField as Rationals
@@ -524,7 +524,7 @@ def import_statements(*objects, **kwds):
         import sage.graphs.graph_decompositions
 
     Check that a name from the global namespace is properly found (see
-    :trac:`23779`)::
+    :issue:`23779`)::
 
         sage: import_statements('log')
         from sage.misc.functional import log

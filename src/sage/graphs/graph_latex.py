@@ -1321,7 +1321,7 @@ class GraphLatex(SageObject):
             %
             \end{tikzpicture}
 
-        We check that :trac:`22070` is fixed::
+        We check that :issue:`22070` is fixed::
 
             sage: edges = [(i,(i+1)%3,a) for i,a in enumerate('abc')]
             sage: G_with_labels = DiGraph(edges)
@@ -1382,7 +1382,7 @@ class GraphLatex(SageObject):
             %
             \end{tikzpicture}
 
-        We make sure :trac:`13624` is fixed::
+        We make sure :issue:`13624` is fixed::
 
             sage: G = DiGraph()
             sage: G.add_edge(3333, 88, 'my_label')
@@ -1399,7 +1399,7 @@ class GraphLatex(SageObject):
             %
             \end{tikzpicture}
 
-        Check that :trac:`25120` is fixed::
+        Check that :issue:`25120` is fixed::
 
             sage: G = Graph([(0,1)])
             sage: G.set_latex_options(edge_colors = {(0,1): 'red'})

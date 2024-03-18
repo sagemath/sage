@@ -101,7 +101,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
 
         TESTS:
 
-        Check implicitly that :trac:`10257` works::
+        Check implicitly that :issue:`10257` works::
 
             sage: from sage.modules.vector_rational_dense import Vector_rational_dense
             sage: Vector_rational_dense(QQ^(sys.maxsize))

@@ -378,7 +378,7 @@ def bell_number(n, algorithm='flint', **options) -> Integer:
     - Robert Gerbicz
 
     - Jeroen Demeyer: improved implementation of Dobinski formula with
-      more accurate error estimates (:trac:`17157`)
+      more accurate error estimates (:issue:`17157`)
 
     REFERENCES:
 
@@ -1175,7 +1175,7 @@ class CombinatorialObject(SageObject):
 
         TESTS:
 
-        Test indirectly that we copy the input (see :trac:`18184`)::
+        Test indirectly that we copy the input (see :issue:`18184`)::
 
             sage: # needs sage.combinat
             sage: L = IntegerListsLex(element_class=Partition)
@@ -1263,7 +1263,7 @@ class CombinatorialObject(SageObject):
             sage: c < c
             False
 
-        Check that :trac:`14065` is fixed::
+        Check that :issue:`14065` is fixed::
 
             sage: from sage.structure.element import Element
             sage: class Foo(CombinatorialObject, Element): pass
@@ -1401,7 +1401,7 @@ class CombinatorialObject(SageObject):
             sage: not c
             True
 
-        Check that :trac:`14065` is fixed::
+        Check that :issue:`14065` is fixed::
 
             sage: from sage.structure.element import Element
             sage: class Foo(CombinatorialObject, Element): pass
@@ -2423,7 +2423,7 @@ class UnionCombinatorialClass(CombinatorialClass):
 class Permutations_CC(CombinatorialClass):
     """
     A testing class for :class:`CombinatorialClass` since :class:`Permutations`
-    no longer inherits from :class:`CombinatorialClass` in :trac:`14772`.
+    no longer inherits from :class:`CombinatorialClass` in :issue:`14772`.
     """
 
     def __init__(self, n):
@@ -2950,7 +2950,7 @@ def bell_polynomial(n: Integer, k: Integer):
 
     TESTS:
 
-    Check that :trac:`18338` is fixed::
+    Check that :issue:`18338` is fixed::
 
         sage: bell_polynomial(0,0).parent()                                             # needs sage.combinat
         Multivariate Polynomial Ring in x over Integer Ring

@@ -26,7 +26,7 @@ AUTHORS:
 - Eric Gourgoulhon, Michal Bejger (2013-2015): initial version
 - Travis Scrimshaw (2016): review tweaks
 - Eric Gourgoulhon (2018): some refactoring and more functionalities in the
-  choice of symbols for vector frame elements (:trac:`24792`)
+  choice of symbols for vector frame elements (:issue:`24792`)
 
 REFERENCES:
 

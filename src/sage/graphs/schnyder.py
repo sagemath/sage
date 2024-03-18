@@ -66,7 +66,7 @@ def _triangulate(g, comb_emb):
 
     TESTS:
 
-    :trac:`29522` is fixed::
+    :issue:`29522` is fixed::
 
         sage: g = Graph(2)
         sage: _triangulate(g, {})

@@ -599,7 +599,7 @@ class AlgebraicForm(FormsBase):
             sage: quartic._check_covariant('EisensteinE', invariant=True)
             sage: quartic._check_covariant('h_covariant')
 
-            sage: quartic._check_covariant('h_covariant', invariant=True)  # not tested, known bug (see :trac:`32118`)
+            sage: quartic._check_covariant('h_covariant', invariant=True)  # not tested, known bug (see :issue:`32118`)
             Traceback (most recent call last):
             ...
             AssertionError: not invariant
@@ -804,7 +804,7 @@ class AlgebraicForm(FormsBase):
 
         TESTS:
 
-        Check for :trac:`30035`::
+        Check for :issue:`30035`::
 
             sage: R.<a,b,c> = QQ[]
             sage: f = 3*a**3 + b**3 + a*b*c
@@ -4375,7 +4375,7 @@ class InvariantTheoryFactory():
             True
 
         For binary forms of other degrees, no reconstruction has been
-        implemented yet. For forms of degree 6, see :trac:`26462`::
+        implemented yet. For forms of degree 6, see :issue:`26462`::
 
             sage: invariant_theory.binary_form_from_invariants(6, invariants)
             Traceback (most recent call last):

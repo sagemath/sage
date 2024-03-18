@@ -254,7 +254,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     TESTS:
 
-    Checking that :trac:`27987` is fixed::
+    Checking that :issue:`27987` is fixed::
 
         sage: P1 = Polyhedron(vertices=[[0,1],[1,0]], rays=[[1,1]])
         sage: P2 = Polyhedron(vertices=[[0,1],[1,0],[1,1]])
@@ -308,7 +308,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         ...
         ValueError: not all vertices are intersections of facets
 
-    Check that :trac:`28678` is fixed::
+    Check that :issue:`28678` is fixed::
 
         sage: CombinatorialPolyhedron([])
         A -1-dimensional combinatorial polyhedron with 0 facets
@@ -1123,7 +1123,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         TESTS:
 
-        Check that :trac:`29455` is fixed::
+        Check that :issue:`29455` is fixed::
 
             sage: C = Polyhedron([[0]]).combinatorial_polyhedron()
             sage: C.incidence_matrix.clear_cache()
@@ -1134,7 +1134,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: C.incidence_matrix()
             []
 
-        Check that the base ring is ``ZZ``, see :trac:`29840`::
+        Check that the base ring is ``ZZ``, see :issue:`29840`::
 
             sage: C = CombinatorialPolyhedron([[0,1,2], [0,1,3], [0,2,3], [1,2,3]])
             sage: C.incidence_matrix().base_ring()
@@ -1575,7 +1575,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: CombinatorialPolyhedron(P).facet_graph()                              # needs sage.graphs
             Graph on 2 vertices
 
-        Checking that :trac:`28604` is fixed::
+        Checking that :issue:`28604` is fixed::
 
             sage: C = CombinatorialPolyhedron(polytopes.cube()); C
             A 3-dimensional combinatorial polyhedron with 6 facets
@@ -1662,7 +1662,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         TESTS:
 
-        Test that :trac:`29898` is fixed::
+        Test that :issue:`29898` is fixed::
 
             sage: Polyhedron().vertex_facet_graph()                                     # needs sage.graphs
             Digraph on 0 vertices
@@ -2411,7 +2411,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: CombinatorialPolyhedron(0).is_pyramid(True)
             (True, 0)
 
-        Check that :trac:`30292` is fixed::
+        Check that :issue:`30292` is fixed::
 
             sage: Polyhedron([[0, -1, -1], [0, -1, 1], [0, 1, -1], [0, 1, 1], [1, 0, 0]]).is_pyramid(certificate=True)
             (True, A vertex at (1, 0, 0))
@@ -2503,7 +2503,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: C.is_bipyramid(True)
             (True, [A vertex at (1), A vertex at (-1)])
 
-        Check that bug analog to :trac:`30292` is avoided::
+        Check that bug analog to :issue:`30292` is avoided::
 
             sage: Polyhedron([[0, 1, 0], [0, 0, 1], [0, -1, -1], [1, 0, 0], [-1, 0, 0]]).is_bipyramid(certificate=True)
             (True, [A vertex at (1, 0, 0), A vertex at (-1, 0, 0)])

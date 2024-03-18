@@ -75,7 +75,7 @@ class CharacterArt(SageObject):
             *****
 
         If there are nested breakpoints, line breaks are avoided inside the
-        nested elements (:trac:`29204`)::
+        nested elements (:issue:`29204`)::
 
             sage: s = ascii_art([[1..5], [1..17], [1..25]])
             sage: s._breakpoints
@@ -210,7 +210,7 @@ class CharacterArt(SageObject):
         This method is deprecated, as its output is an implementation detail.
         The mere breakpoints of a character art element do not reflect the best
         way to split it if nested structures are involved. For details, see
-        :trac:`29204`.
+        :issue:`29204`.
 
         For example the expression::
 
@@ -383,7 +383,7 @@ class CharacterArt(SageObject):
             sage: ascii_art(['a' * k for k in (1..10)])._split_repr_(20)
             '[ a, aa, aaa, aaaa,\n\n aaaaa, aaaaaa,\n\n aaaaaaa, aaaaaaaa,\n\n aaaaaaaaa,\n\n aaaaaaaaaa ]'
 
-        Check that wrapping happens exactly at the given size (:trac:`28527`)::
+        Check that wrapping happens exactly at the given size (:issue:`28527`)::
 
             sage: len(ascii_art(*(['']*90), sep=',')._split_repr_(80).split('\n')[0])
             80
@@ -632,7 +632,7 @@ class CharacterArt(SageObject):
              / \ [7 8 9]
             o   o
 
-        Since :trac:`28527`, the baseline must always be a number.
+        Since :issue:`28527`, the baseline must always be a number.
 
         TESTS::
 

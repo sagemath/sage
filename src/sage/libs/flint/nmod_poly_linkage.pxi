@@ -533,7 +533,7 @@ cdef inline int celement_pow(nmod_poly_t res, nmod_poly_t x, long e, nmod_poly_t
         sage: f^5 % g
         7231*x + 17274
 
-    Make sure that exponentiation can be interrupted, see :trac:`17470`::
+    Make sure that exponentiation can be interrupted, see :issue:`17470`::
 
         sage: n = 2^23
         sage: alarm(0.2); x^n; cancel_alarm()

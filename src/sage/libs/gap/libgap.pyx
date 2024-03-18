@@ -360,7 +360,7 @@ class Gap(Parent):
 
         TESTS:
 
-        We gracefully handle the case that the conversion fails (:trac:`18039`)::
+        We gracefully handle the case that the conversion fails (:issue:`18039`)::
 
             sage: F.<a> = GF(9, modulus="first_lexicographic")                          # needs sage.rings.finite_rings
             sage: libgap(Matrix(F, [[a]]))                                              # needs sage.rings.finite_rings

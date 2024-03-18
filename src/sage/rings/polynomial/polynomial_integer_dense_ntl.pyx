@@ -607,7 +607,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
         TESTS:
 
-        Check that :trac:`32033` has been fixed::
+        Check that :issue:`32033` has been fixed::
 
             sage: R.<x> = PolynomialRing(ZZ, implementation='NTL')
             sage: R(0).lcm(R(0))
@@ -887,7 +887,7 @@ cdef class Polynomial_integer_dense_ntl(Polynomial):
 
         TESTS:
 
-        Verify that :trac:`13053` has been resolved::
+        Verify that :issue:`13053` has been resolved::
 
             sage: R.<x> = PolynomialRing(ZZ, implementation='NTL')
             sage: f = -x^2

@@ -26,7 +26,7 @@ cpdef hgm_coeffs(long long p, int f, int prec, gamma, m, int D,
         sage: hgm_coeffs(7, 1, 2, gamma, [0]*6, D, gtable, prec, False)
         [7, 2*7, 6*7, 7, 6, 4*7]
 
-    Check issue from :trac:`28404`::
+    Check issue from :issue:`28404`::
 
         sage: H = Hyp(cyclotomic=[[10,2],[1,1,1,1,1]])
         sage: u = H.euler_factor(2,79) # indirect doctest

@@ -180,7 +180,7 @@ class FinitePermutationGroups(CategoryWithAxiom):
                 p[1, 1, 1, 1, 1] + 10*p[2, 1, 1, 1] + 15*p[2, 2, 1] + 20*p[3, 1, 1] + 20*p[3, 2] + 30*p[4, 1] + 24*p[5]
 
             Permutation groups with arbitrary domains are supported
-            (see :trac:`22765`)::
+            (see :issue:`22765`)::
 
                 sage: G = PermutationGroup([['b','c','a']], domain=['a','b','c'])
                 sage: G.cycle_index()

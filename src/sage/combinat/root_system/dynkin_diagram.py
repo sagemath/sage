@@ -160,7 +160,7 @@ def DynkinDiagram(*args, **kwds):
 
     TESTS:
 
-    Check that :trac:`15277` is fixed by not having edges from 0's::
+    Check that :issue:`15277` is fixed by not having edges from 0's::
 
         sage: CM = CartanMatrix([[2,-1,0,0],[-3,2,-2,-2],[0,-1,2,-1],[0,-1,-1,2]])
         sage: CM
@@ -240,7 +240,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
         sage: type(copy(d))
         <class 'sage.combinat.root_system.dynkin_diagram.DynkinDiagram_class'>
 
-    We check that :trac:`14655` is fixed::
+    We check that :issue:`14655` is fixed::
 
         sage: cd = copy(d)
         sage: cd.add_vertex(4)
@@ -302,7 +302,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
         Rich Output Magic Method
 
         Override rich output because :meth:`_repr_` outputs ascii
-        art. The proper fix will be in :trac:`18328`.
+        art. The proper fix will be in :issue:`18328`.
 
         See :mod:`sage.repl.rich_output` for details.
 
@@ -717,7 +717,7 @@ class DynkinDiagram_class(DiGraph, CartanType_abstract):
 
         TESTS:
 
-        We check that :trac:`15740` is fixed::
+        We check that :issue:`15740` is fixed::
 
             sage: d = DynkinDiagram()
             sage: d.add_edge(1,2,3)

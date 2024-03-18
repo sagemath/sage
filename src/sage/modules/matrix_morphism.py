@@ -1050,7 +1050,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         EXAMPLES:
 
         Check that this works with the :func:`matrix` function
-        (:trac:`16844`)::
+        (:issue:`16844`)::
 
             sage: H = Hom(ZZ^2, ZZ^3)
             sage: x = H.an_element()
@@ -1756,7 +1756,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
             sage: H.is_surjective()
             True
 
-        This tests if :trac:`11552` is fixed. ::
+        This tests if :issue:`11552` is fixed. ::
 
             sage: V = ZZ^2
             sage: m = matrix(ZZ, [[1,2],[0,2]])

@@ -331,7 +331,7 @@ class WordDatatype_morphic(WordDatatype_callable):
             ...
             TypeError: self (=a->ac, b->aac) is not self-composable
 
-        We check that :trac:`8595` is fixed::
+        We check that :issue:`8595` is fixed::
 
             sage: s = WordMorphism({('a', 1):[('a', 1), ('a', 2)], ('a', 2):[('a', 1)]})
             sage: w = s.fixed_point(('a', 1))
@@ -339,7 +339,7 @@ class WordDatatype_morphic(WordDatatype_callable):
             sage: next(it)
             ('a', 1)
 
-        This shows that issue :trac:`13668` has been resolved::
+        This shows that issue :issue:`13668` has been resolved::
 
             sage: s = WordMorphism({1:[1,2],2:[2,3],3:[4],4:[5],5:[6],6:[7],7:[8],8:[9],9:[10],10:[1]})
             sage: (s^7).fixed_points()

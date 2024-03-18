@@ -306,7 +306,7 @@ cdef class Matrix_numpy_dense(Matrix_dense):
 
         TESTS:
 
-        Complex entries are supported (:trac:`27831`).  ::
+        Complex entries are supported (:issue:`27831`).  ::
 
             sage: a = matrix(CDF, [(21, 0.6 + 18.5*i), (0.6 - 18.5*i, 21)])             # needs sage.symbolic
             sage: a.is_symmetric()                                                      # needs sage.symbolic

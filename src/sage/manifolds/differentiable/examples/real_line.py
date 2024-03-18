@@ -306,7 +306,7 @@ class OpenInterval(DifferentiableManifold):
 
         TESTS:
 
-        Check whether :trac:`30830` is fixed::
+        Check whether :issue:`30830` is fixed::
 
             sage: I = manifolds.OpenInterval(0,2)
             sage: J = manifolds.OpenInterval(0,1, ambient_interval=I, coordinate='t')

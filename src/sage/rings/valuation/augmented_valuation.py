@@ -1091,7 +1091,7 @@ class FinalAugmentedValuation(AugmentedValuation_base, FinalInductiveValuation):
 
         TESTS:
 
-        Verify that :trac:`30305` has been resolved::
+        Verify that :issue:`30305` has been resolved::
 
             sage: # needs sage.rings.number_field
             sage: R.<T> = QQ[]
@@ -1782,7 +1782,7 @@ class FiniteAugmentedValuation(AugmentedValuation_base, FiniteInductiveValuation
             sage: w.simplify(x^10/2 + 1, force=True)
             (u + 1)*2^-1 + O(2^4)
 
-        Check that :trac:`25607` has been resolved, i.e., the coefficients
+        Check that :issue:`25607` has been resolved, i.e., the coefficients
         in the following example are small::
 
             sage: # needs sage.libs.ntl sage.rings.number_field

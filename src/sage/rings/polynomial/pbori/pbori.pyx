@@ -451,7 +451,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
         A boolean polynomial ring is the quotient of a polynomial ring,
         in a special implementation.
 
-        Before :trac:`15223`, the boolean polynomial rings returned the
+        Before :issue:`15223`, the boolean polynomial rings returned the
         construction of a polynomial ring, which was of course wrong.
 
         Now, a :class:`~sage.categories.pushout.QuotientFunctor` is returned
@@ -615,7 +615,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
         names, and any polynomial ring with compatible variable
         names and base ring.
 
-        Before :trac:`9138`, boolean polynomial rings had
+        Before :issue:`9138`, boolean polynomial rings had
         a custom containment test, but that is not needed now
         since it now uses Sage's new coercion model. So, we
         move the tests from the old ``__contains__`` to here.
@@ -648,7 +648,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
             sage: 7 in GF(2)
             True
 
-        We test that :trac:`10173` is fixed::
+        We test that :issue:`10173` is fixed::
 
             sage: R = BooleanPolynomialRing(256,'x')
             sage: S = PolynomialRing(GF(2),256,'y')
@@ -665,7 +665,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
             sage: ZZ['a'].gen() + c
             a + c
 
-        Check that :trac:`13284` is fixed::
+        Check that :issue:`13284` is fixed::
 
             sage: from sage.rings.ideal import Cyclic
             sage: R = BooleanPolynomialRing(10, 'x')
@@ -800,7 +800,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
             sage: P(x)
             x
 
-        Test that :trac:`10797` is really fixed::
+        Test that :issue:`10797` is really fixed::
 
             sage: B.<a,b,c,d,e,f> = BooleanPolynomialRing()
             sage: I = ideal(a*b + a + b*e + c*e + 1, a + b + c*d + c + 1, a*c + c + d*f + d + 1, a*c + c*f + c + d*f + 1, c*f + c + d + e + 1, a + b*c + b*d + e*f + 1)
@@ -927,7 +927,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
             TypeError: cannot convert polynomial z*x^2 + 5*y^3 to Boolean PolynomialRing in x, y: name z not defined
 
         We test that univariate polynomials convert into the
-        boolean polynomial ring (:trac:`9138`)::
+        boolean polynomial ring (:issue:`9138`)::
 
             sage: R.<x> = ZZ[]
             sage: p = x^3+2*x^2+x+1
@@ -1206,7 +1206,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
             sage: all(t in [x, y, x*y, P(1)] for t in f.terms())
             True
 
-        We test that :trac:`13845` is fixed::
+        We test that :issue:`13845` is fixed::
 
             sage: n = 10
             sage: B = BooleanPolynomialRing(n, 'x')
@@ -1873,7 +1873,7 @@ class BooleanMonomialMonoid(UniqueRepresentation, Monoid_class):
         sage: type(M.gen(0))
         <class 'sage.rings.polynomial.pbori.pbori.BooleanMonomial'>
 
-    Since :trac:`9138`, boolean monomial monoids are
+    Since :issue:`9138`, boolean monomial monoids are
     unique parents and are fit into the category framework::
 
         sage: loads(dumps(M)) is M
@@ -2429,7 +2429,7 @@ cdef class BooleanMonomial(MonoidElement):
 
         TESTS:
 
-        Check that :trac:`13133` is resolved::
+        Check that :issue:`13133` is resolved::
 
             sage: B(1).lm().index()
             Traceback (most recent call last):
@@ -4837,7 +4837,7 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
 
         TESTS:
 
-        Check that :trac:`13155` is solved::
+        Check that :issue:`13155` is solved::
 
             sage: R = BooleanPolynomialRing(11, 'x')
             sage: R2 = PolynomialRing(GF(2), 11, 'x')
@@ -4916,20 +4916,20 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
         Another somewhat bigger example::
 
             sage: sr = mq.SR(2,1,1,4,gf2=True, polybori=True)
-            sage: while True:  # workaround (see :trac:`31891`)
+            sage: while True:  # workaround (see :issue:`31891`)
             ....:     try:
             ....:         F, s = sr.polynomial_system()
             ....:         break
             ....:     except ZeroDivisionError:
             ....:         pass
             sage: I = F.ideal()
-            sage: I.groebner_basis()  # not tested, known bug, unstable (see :trac:`32083`)
+            sage: I.groebner_basis()  # not tested, known bug, unstable (see :issue:`32083`)
             Polynomial Sequence with 36 Polynomials in 36 Variables
 
         We compute the same example with Magma::
 
             sage: sr = mq.SR(2,1,1,4,gf2=True, polybori=True)
-            sage: while True:  # workaround (see :trac:`31891`)
+            sage: while True:  # workaround (see :issue:`31891`)
             ....:     try:
             ....:         F, s = sr.polynomial_system()
             ....:         break
@@ -4968,7 +4968,7 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
             sage: I.groebner_basis()
             [x, y, z]
 
-        Check that this no longer crash (:trac:`12792`)::
+        Check that this no longer crash (:issue:`12792`)::
 
             sage: names = [ "s{0}s{1}".format(i,j) for i in range(4) for j in range(8)]
             sage: R = BooleanPolynomialRing(32, names)
@@ -5074,7 +5074,7 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
             [{x1: 0, x2: 0, x3: 0, x4: 0, x5: 0, x6: 0}, {x1: 1, x2: 1, x3: 1, x4: 0, x5: 0, x6: 1}]
 
 
-        Check that :trac:`13976` is fixed::
+        Check that :issue:`13976` is fixed::
 
             sage: R.<x,y,z> = BooleanPolynomialRing()
             sage: I = ideal( [ x*y*z + x*z + y + 1, x+y+z+1 ] )
@@ -5083,7 +5083,7 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
             1
 
         Make sure the result is a key converting dict, as discussed in
-        :trac:`9788` and consistent with
+        :issue:`9788` and consistent with
         :meth:`sage.rings.polynomial.multi_polynomial_ideal.MPolynomialIdeal_singular_repr.variety`::
 
             sage: sols[0]["y"]
@@ -5142,7 +5142,7 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
         EXAMPLES::
 
             sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)
-            sage: while True:  # workaround (see :trac:`31891`)
+            sage: while True:  # workaround (see :issue:`31891`)
             ....:     try:
             ....:         F, s = sr.polynomial_system()
             ....:         break
@@ -5167,7 +5167,7 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
         EXAMPLES::
 
             sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)
-            sage: while True:  # workaround (see :trac:`31891`)
+            sage: while True:  # workaround (see :issue:`31891`)
             ....:     try:
             ....:         F, s = sr.polynomial_system()
             ....:         break
@@ -5193,7 +5193,7 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
         EXAMPLES::
 
             sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)
-            sage: while True:  # workaround (see :trac:`31891`)
+            sage: while True:  # workaround (see :issue:`31891`)
             ....:     try:
             ....:         F, s = sr.polynomial_system()
             ....:         break
@@ -6206,7 +6206,7 @@ cdef class ReductionStrategy:
 
         TESTS:
 
-        Check if :trac:`8966` is fixed::
+        Check if :issue:`8966` is fixed::
 
             sage: red = ReductionStrategy(B)
             sage: red.add_generator(None)
@@ -6474,7 +6474,7 @@ cdef class FGLMStrategy:
             sage: FGLMStrategy(old_ring, new_ring, ideal)
             <sage.rings.polynomial.pbori.pbori.FGLMStrategy object at 0x...>
 
-        Check that :trac:`13883` is fixed::
+        Check that :issue:`13883` is fixed::
 
             sage: nonreduced = BooleanPolynomialVector([x+z, x+y])
             sage: FGLMStrategy(old_ring, new_ring, nonreduced) # optional - debug

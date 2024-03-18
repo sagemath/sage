@@ -760,7 +760,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         TESTS:
 
-        Check that the example from :trac:`29866` works::
+        Check that the example from :issue:`29866` works::
 
             sage: from sage.modules.free_module_integer import IntegerLattice
             sage: M = matrix(ZZ, [[20957228, -4966110], [9411844, 19625639]])
@@ -769,7 +769,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: L.closest_vector(u) in L
             True
 
-        Check that the example, of non-maximal rank, from :trac:`32486` works::
+        Check that the example, of non-maximal rank, from :issue:`32486` works::
 
             from sage.modules.free_module_integer import IntegerLattice
             L = IntegerLattice([[-1,  0,  1],[1,0,2]])
