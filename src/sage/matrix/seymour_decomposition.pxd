@@ -11,6 +11,8 @@ cdef class DecompositionNode(SageObject):
     cdef public object _parent_indices
     cdef DecompositionNode _root   # my CMR_MATROID_DEC is owned by this
     cdef object _child_nodes
+    cdef object _child_row_keys
+    cdef object _child_column_keys
 
     cdef _set_dec(self, CMR_MATROID_DEC *dec, root)
 

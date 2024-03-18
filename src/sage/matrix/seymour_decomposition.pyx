@@ -392,9 +392,15 @@ cdef class DecompositionNode(SageObject):
     def _ascii_art_(self):
         return self.as_ordered_tree()._ascii_art_()
 
-    def one_sum(*summands, summand_ids=None, row_keys=None, column_keys=None):
+    def one_sum(*summands, **kwds):
         r"""
         """
+        summand_ids = kwds.pop('summand_ids', None)
+        row_keys = kwds.pop('row_keys', None)
+        column_keys = kwds.pop('column_keys', None)
+        if kwds:
+            raise ValueError(f'unknown keywords: {sorted(kwds)}')
+
         result = OneSumNode()
         summands = tuple(summands)
         if summand_ids is not None:
