@@ -1,12 +1,12 @@
 """
 Formal sums
 
-FUNCTIONS:
+This module provides the following functions:
 
-- ``FormalSums(ring)`` -- create the module of formal finite sums with
+- ``FormalSums(ring)`` creates the module of formal finite sums with
   coefficients in the given ring.
 
-- ``FormalSum(list of pairs (coeff, number))`` -- create a formal sum.
+- ``FormalSum(list of pairs (coeff, number))`` creates a formal sum.
 
 EXAMPLES::
 
