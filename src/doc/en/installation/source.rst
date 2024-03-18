@@ -52,10 +52,10 @@ the Sage installation process.
 However, there are minimal prerequisites for building Sage that
 already must be installed on your system:
 
-- `Fundamental system packages required for installing from source
-  <../reference/spkg/_prereq.html>`_
+- :ref:`Fundamental system packages required for installing from source
+  <spkg__prereq>`_
 
-- `C/C++ compilers <../reference/spkg/gcc.html>`_
+- :ref:`C/C++ compilers <spkg_gcc>`_
 
 If you have sufficient privileges (for example, on Linux you can
 use ``sudo`` to become the ``root`` user), then you can install these packages
@@ -66,12 +66,12 @@ do this for you.
 In addition to these minimal prerequisites, we strongly recommend to use system
 installations of the following:
 
-- `Fortran compiler <../reference/spkg/gfortran.html>`_
+- :ref:`Fortran compiler <spkg_gfortran>`_
 
-- `Python <../reference/spkg/python3.html>`_
+- :ref:`Python <spkg_python3>`_
 
-Sage developers will also need the `system packages required for
-bootstrapping <../reference/spkg/_bootstrap.html>`_; they cannot be
+Sage developers will also need the :ref:`system packages required for
+bootstrapping <spkg__bootstrap>`_; they cannot be
 installed by Sage.
 
 When the ``./configure`` script runs, it will check for the presence of many
@@ -816,7 +816,7 @@ Sage-specific environment variables controlling the build process
   Because of this, it is necessary to have an Internet connection while
   building ccache for Sage, so that Sage can pull down the necessary
   sources.
-
+.. _sage_debug:
 .. envvar:: SAGE_DEBUG
 
   Controls debugging support. There are three different possible values:
@@ -906,7 +906,7 @@ Sage-specific environment variables controlling the build process
       building Sage from scratch or when installing individual spkgs.
       So you can set this variable to ``yes`` instead of using the ``-s`` flag
       for ``sage -i`` and ``sage -f``.
-
+.. _sage_fat_binary:
 .. envvar:: SAGE_FAT_BINARY
 
   To build binaries that will run on the

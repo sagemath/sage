@@ -42,8 +42,8 @@ computation can be done.   Then, carry out the calculation there, where it
 is a finite problem and can be reduced to linear algebra over a finite
 prime field.
 
-For examples, see the `Steenrod algebra modules
-<../../../../../../thematic_tutorials/steenrod_algebra_modules.html>`_
+For examples, see the :ref:`Steenrod algebra modules
+<steenrod_algebra_modules>`_
 thematic tutorial.
 
 TESTS::
@@ -295,8 +295,8 @@ class SteenrodFPModule(FPModule, SteenrodModuleMixin):
 
     .. SEEALSO::
 
-        The thematic tutorial on `Steenrod algebra modules
-        <../../../../../../thematic_tutorials/steenrod_algebra_modules.html>`_.
+        The thematic tutorial on :ref:`Steenrod algebra modules
+        <steenrod_algebra_modules>`_.
 
     INPUT:
 

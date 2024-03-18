@@ -1,3 +1,4 @@
+.. _startup:
 Sage startup scripts
 ====================
 

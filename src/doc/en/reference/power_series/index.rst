@@ -1,3 +1,5 @@
+.. _power_series:
+
 Power Series Rings and Laurent Series Rings
 ===========================================
 

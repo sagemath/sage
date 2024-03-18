@@ -19,7 +19,7 @@ Introductory material
 - :class:`RootSystem`                             -- An introduction to root systems
 - :ref:`sage.combinat.root_system.plot`           -- A root system visualization tutorial
 
-- The `Lie Methods and Related Combinatorics <../../../../../thematic_tutorials/lie.html>`_ thematic tutorial
+- The :ref:`Lie Methods and Related Combinatorics <lie>`_ thematic tutorial
 
 
 Related material

@@ -4,9 +4,9 @@ Algebraic combinatorics
 Thematic tutorials
 ------------------
 
-- `Algebraic Combinatorics in Sage <../../../../thematic_tutorials/algebraic_combinatorics.html>`_
-- `Lie Methods and Related Combinatorics in Sage <../../../../thematic_tutorials/lie.html>`_
-- `Linear Programming (Mixed Integer) <../../../../thematic_tutorials/linear_programming.html>`_
+- :ref:`Algebraic Combinatorics in Sage <algebraic_combinatorics>`_
+- :ref:`Lie Methods and Related Combinatorics in Sage <lie>`_
+- :ref:`Linear Programming (Mixed Integer) <linear_programming>`_
 
 Enumerated sets of combinatorial objects
 ----------------------------------------

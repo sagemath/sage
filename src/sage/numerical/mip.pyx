@@ -247,16 +247,16 @@ cdef class MixedIntegerLinearProgram(SageObject):
     constraints on these variables, and an objective function which is to be
     maximised or minimised under these constraints.
 
-    See the thematic tutorial on `Linear Programming (Mixed Integer)
-    <../../../../thematic_tutorials/linear_programming.html>`_
+    See the thematic tutorial on :ref:`Linear Programming (Mixed Integer)
+    <linear_programming>`_
     or :wikipedia:`Linear_programming` for further information on linear
     programming, and the :mod:`MILP module <sage.numerical.mip>` for its use in
     Sage.
 
     INPUT:
 
-    - ``solver`` -- selects a solver; see `Solvers (backends)
-      <../../../../thematic_tutorials/linear_programming.html#solvers-backends>`_
+    - ``solver`` -- selects a solver; see :ref:`Solvers (backends)
+      <solvers_backends>`_
       for more information and installation instructions for optional
       solvers.
 
