@@ -26,6 +26,7 @@ from sage.categories.cartesian_product import cartesian_product
 from sage.sets.family import Family
 from sage.sets.non_negative_integers import NonNegativeIntegers
 
+
 class QuantumOscillatorAlgebra(CombinatorialFreeModule):
     r"""
     The quantum oscillator algebra.
@@ -159,7 +160,7 @@ class QuantumOscillatorAlgebra(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, R, indices, category=cat)
         self._assign_names(('ap', 'am', 'k', 'ki'))
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -217,7 +218,7 @@ class QuantumOscillatorAlgebra(CombinatorialFreeModule):
         return Family(d)
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self``.
 
@@ -230,7 +231,7 @@ class QuantumOscillatorAlgebra(CombinatorialFreeModule):
         return tuple(self.algebra_generators())
 
     @cached_method
-    def one_basis(self):
+    def one_basis(self) -> tuple:
         r"""
         Return the index of the basis element of `1`.
 
@@ -242,7 +243,7 @@ class QuantumOscillatorAlgebra(CombinatorialFreeModule):
         """
         return (ZZ.zero(), ZZ.zero())
 
-    def some_elements(self):
+    def some_elements(self) -> tuple:
         r"""
         Return some elements of ``self``.
 
@@ -275,7 +276,7 @@ class QuantumOscillatorAlgebra(CombinatorialFreeModule):
         """
         return FockSpaceRepresentation(self)
 
-    def _repr_term(self, m):
+    def _repr_term(self, m) -> str:
         r"""
         Return a string representation of the basis element indexed by ``m``.
 
@@ -438,7 +439,7 @@ class QuantumOscillatorAlgebra(CombinatorialFreeModule):
         return self.element_class(self, {(a, kl+kr+i): c * coeff for i, c in enumerate(kp) if c})
 
     class Element(CombinatorialFreeModule.Element):
-        def inverse(self):
+        def __invert__(self):
             r"""
             Return the inverse if ``self`` is a basis element.
 
@@ -474,16 +475,14 @@ class QuantumOscillatorAlgebra(CombinatorialFreeModule):
             O = self.parent()
             return O.element_class(O, {(a, -k): coeff.inverse_of_unit()})
 
-        __invert__ = inverse
-
 
 class FockSpaceRepresentation(CombinatorialFreeModule):
-    """
+    r"""
     The unique Fock space representation of the
     :class:`~sage.algebras.quantum_oscillator.QuantumOscillatorAlgebra`.
     """
     def __init__(self, O):
-        """
+        r"""
         Initialize ``self``.
 
         EXAMPLES::
@@ -498,7 +497,7 @@ class FockSpaceRepresentation(CombinatorialFreeModule):
                                          latex_bracket=[r'\lvert', r'\rangle'])
 
     def _test_representation(self, **options):
-        """
+        r"""
         Test that ``self`` is a representation of the quantum
         oscillator algebra.
 
@@ -519,8 +518,8 @@ class FockSpaceRepresentation(CombinatorialFreeModule):
                     return
                 tester.assertEqual((a*b)*elt, a*(b*elt))
 
-    def _repr_(self):
-        """
+    def _repr_(self) -> str:
+        r"""
         Return a string representation of ``self``.
 
         EXAMPLES::
@@ -559,7 +558,7 @@ class FockSpaceRepresentation(CombinatorialFreeModule):
         return self.basis()[0]
 
     def some_elements(self):
-        """
+        r"""
         Return some elements of ``self``.
 
         EXAMPLES::
@@ -574,7 +573,7 @@ class FockSpaceRepresentation(CombinatorialFreeModule):
 
     class Element(CombinatorialFreeModule.Element):
         def _acted_upon_(self, scalar, self_on_left=True):
-            """
+            r"""
             Return the action of ``scalar`` on ``self``.
 
             EXAMPLES::
