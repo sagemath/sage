@@ -1725,6 +1725,10 @@ cdef class GapElement_IntegerMod(GapElement):
             sage: n = libgap.eval('One(ZmodnZ(123)) * 13')
             sage: ZZ(n)
             13
+            sage: ZZ(-n)
+            110
+            sage: ZZ(0*n)
+            0
         """
         return self.lift()._integer_(R)
 
