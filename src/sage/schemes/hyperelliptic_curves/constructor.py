@@ -250,8 +250,7 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
                 )
         if not smooth:
             raise ValueError(
-                "not a hyperelliptic curve: "
-                "singularity in the provided affine patch"
+                "not a hyperelliptic curve: singularity in the provided affine patch"
             )
     R = P.base_ring()
     PP = ProjectiveSpace(2, R)
@@ -266,9 +265,9 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
     genus_classes = {2: HyperellipticCurve_g2}
     if g in genus_classes:
         bases.append(genus_classes[g])
-        cls_name.append("g%s" % g)
+        cls_name.append(f"g{g}")
 
-    # For certain base fields, we specialise to child classes
+    # For certain base fields, we specialise to subclasses
     # with special case methods
     def is_FiniteField(x):
         return isinstance(x, FiniteField)
