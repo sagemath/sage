@@ -48,6 +48,8 @@ cdef class DecompositionNode(SageObject):
         Set the row keys with consistency checking: if the
         value was previously set, it must remain the same.
         """
+        if row_keys is not None:
+            row_keys = tuple(row_keys)
         if self._row_keys is not None and self._row_keys != row_keys:
             raise ValueError(f"inconsistent row keys: should be {self._row_keys} "
                              f"but got {row_keys}")
@@ -61,6 +63,8 @@ cdef class DecompositionNode(SageObject):
         Set the column keys with consistency checking: if the
         value was previously set, it must remain the same.
         """
+        if column_keys is not None:
+            column_keys = tuple(column_keys)
         if self._column_keys is not None and self._column_keys != column_keys:
             raise ValueError(f"inconsistent column keys: should be {self._column_keys} "
                              f"but got {column_keys}")
@@ -76,9 +80,13 @@ cdef class DecompositionNode(SageObject):
         return <int>self._dec
 
     def nrows(self):
+        if self._row_keys is not None:
+            return len(self._row_keys)
         return CMRmatroiddecNumRows(self._dec)
 
     def ncols(self):
+        if self._column_keys is not None:
+            return len(self._column_keys)
         return CMRmatroiddecNumColumns(self._dec)
 
     def dimensions(self):
@@ -329,7 +337,6 @@ cdef class DecompositionNode(SageObject):
             child._parent_indices = child_row_keys, child_column_keys
         return child
 
-    @cached_method
     def _children(self):
         r"""
         Return a tuple of the children.
@@ -369,8 +376,11 @@ cdef class DecompositionNode(SageObject):
             sage: certificate._children()
             ()
         """
-        return tuple(self._create_child_node(index)
-                     for index in range(self.nchildren()))
+        if self._child_nodes is not None:
+            return self._child_nodes
+        self._child_nodes = tuple(self._create_child_node(index)
+                                  for index in range(self.nchildren()))
+        return self._child_nodes
 
     def _repr_(self):
         nrows, ncols = self.dimensions()
@@ -381,6 +391,62 @@ cdef class DecompositionNode(SageObject):
 
     def _ascii_art_(self):
         return self.as_ordered_tree()._ascii_art_()
+
+    def one_sum(*summands, summand_ids=None, row_keys=None, column_keys=None):
+        r"""
+        """
+        result = OneSumNode()
+        summands = tuple(summands)
+        if summand_ids is not None:
+            summand_ids = tuple(summand_ids)
+        else:
+            summand_ids = tuple(None for summand in summands)
+        # TODO: Make summands DecompositionNodes if not already
+        # Check row_keys, column_keys of summands are disjoint. Otherwise error
+        summands_row_keys = []
+        summands_column_keys = []
+        row_key_list = []
+        column_key_list = []
+        key_set = set()
+        for summand, id in zip(summands, summand_ids):
+            summand_row_keys = summand.row_keys()
+            summand_column_keys = summand.column_keys()
+            if id is not None:
+                summand_row_keys = tuple((id, key) for key in summand_row_keys)
+                summand_column_keys = tuple((id, key) for key in summand_column_keys)
+
+            old_num_keys = len(key_set)
+            row_key_list.extend(summand_row_keys)
+            column_key_list.extend(summand_column_keys)
+            key_set.update(summand_row_keys)
+            key_set.update(summand_column_keys)
+            if old_num_keys + len(summand_row_keys) + len(summand_column_keys) != len(key_set):
+                raise ValueError(f'keys must be disjoint, '
+                                 f'got {summand_row_keys=}, {summand_column_keys=}')
+            summands_row_keys.append(summand_row_keys)
+            summands_column_keys.append(summand_column_keys)
+
+        if row_keys is not None:
+            row_keys = tuple(row_keys)
+            if set(row_keys) != set(row_key_list) or len(row_keys) != len(row_key_list):
+                raise ValueError(f'inconsistent row_keys, '
+                                 f'got {row_keys=}, should be a permutation of {row_key_list}')
+        else:
+            row_keys = tuple(row_key_list)
+        if column_keys is not None:
+            column_keys = tuple(column_keys)
+            if set(column_keys) != set(column_key_list) or len(column_keys) != len(column_key_list):
+                raise ValueError(f'inconsistent column_keys, '
+                                 f'got {column_keys=}, should be a permutation of {column_key_list}')
+        else:
+            column_keys = tuple(column_key_list)
+
+        result._child_nodes = summands
+        result._child_row_keys = tuple(summands_row_keys)
+        result._child_column_keys = tuple(summands_column_keys)
+        result._row_keys = row_keys
+        result._column_keys = column_keys
+        return result
 
 
 cdef class ThreeConnectedIrregularNode(DecompositionNode):
@@ -394,7 +460,7 @@ cdef class UnknownNode(DecompositionNode):
 
 cdef class SumNode(DecompositionNode):
     r"""
-    Base class for 1-sum, 2-sum, and 3-sum nodes in Seympur's decomposition
+    Base class for 1-sum, 2-sum, and 3-sum nodes in Seymour's decomposition
     """
 
     def _repr_(self):
@@ -628,7 +694,6 @@ cdef class TwoSumNode(SumNode):
 
 cdef class ThreeSumNode(SumNode):
 
-    @cached_method
     def _children(self):
         r"""
         TESTS:
@@ -746,6 +811,9 @@ cdef class ThreeSumNode(SumNode):
             sage: C2.parent_rows_and_columns()
             ((+a+d, 2, 3, 4, 5), (a, d, e, f))
         """
+        if self._child_nodes is not None:
+            return self._child_nodes
+
         if self.nchildren() != 2:
             raise ValueError(f"ThreeSumNode has exactly two children not {self.nchildren()}!")
 
@@ -901,7 +969,9 @@ cdef class ThreeSumNode(SumNode):
         parent_column2_indices = tuple(CMRelementToColumnIndex(parent_columns2[i])
                                       for i in range(child2_ncols))
         child2._parent_indices = parent_row2_indices, parent_column2_indices
-        return (child1, child2)
+
+        self._child_nodes = (child1, child2)
+        return self._child_nodes
 
     def is_distributed_ranks(self):
         r"""
@@ -1159,18 +1229,51 @@ cdef class PivotsNode(DecompositionNode):
 
         return tuple((pivot_rows[i], pivot_columns[i]) for i in range(self.npivots()))
 
-    @cached_method
     def _children(self):
         r"""
         """
+        if self._child_nodes is not None:
+            return self._child_nodes
+
         self.set_default_keys()
 
-        return tuple(self._create_child_node(index)
-                     for index in range(self.nchildren()))
+        self._child_nodes = tuple(self._create_child_node(index)
+                                  for index in range(self.nchildren()))
+        return self._child_nodes
 
 
 cdef class SubmatrixNode(DecompositionNode):
     pass
+
+
+cdef class SymbolicNode(DecompositionNode):
+
+    def __init__(self, symbol, *, row_keys=None, column_keys=None):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.matrix.seymour_decomposition import SymbolicNode
+            sage: X = SymbolicNode('X', row_keys='abc', column_keys=range(6)); X
+            sage: XX = X.one_sum(X)  # error - not disjoint
+            sage: XX = X.one_sum(X, summands_ids=(0, 1))
+            sage: XX = X.one_sum(X, summands_ids=(None, 'other'))
+            sage: T = XX.as_ordered_tree(); T
+            sage: unicode_art(T)
+        """
+        self._symbol = symbol
+        self._set_row_keys(row_keys)
+        self._set_column_keys(column_keys)
+
+    def _repr_(self):
+        nrows, ncols = self.dimensions()
+        symbol = self.symbol()
+        return f'{self.__class__.__name__} {symbol} ({nrows}×{ncols})'
+
+    def matrix(self):
+        raise ValueError('symbolic nodes are not backed by CMR matrices')
+
+    def symbol(self):
+        return self._symbol
 
 
 cdef class ElementKey:
