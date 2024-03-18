@@ -1489,7 +1489,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         .. MATH::
 
             j_{k_1, \ldots, k_n}^{d_1, \ldots, d_n, d_r}(\phi)
-            := \frac{1}{g_r^{d_q}}\prod_{i = 1}^n g_{k_i}^{d_i}
+            := \frac{1}{g_r^{d_r}}\prod_{i = 1}^n g_{k_i}^{d_i}
 
         where `1\leqslant k_1 < k_2 < \ldots < k_n \leqslant r - 1` and
         the integers `d_i` satisfy the *weight-0 condition*:
