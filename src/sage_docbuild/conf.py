@@ -983,7 +983,7 @@ class DocstringTransform(SphinxTransform):
                         index = parent.index(node)
                         parent.remove(node)
                         abbr_node = nodes.abbreviation()
-                        abbr_node += nodes.Text(section)
+                        abbr_node += nodes.Text(f'{section}:')
                         para = nodes.paragraph()
                         para += abbr_node
                         para += nodes.Text(text[len(f'{section}:'):])
