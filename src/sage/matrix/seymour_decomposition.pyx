@@ -458,6 +458,26 @@ cdef class DecompositionNode(SageObject):
         result._column_keys = column_keys
         return result
 
+    def as_node_with_graphicness(self):
+        r"""
+
+        """
+
+        cdef int8_t graphicness = CMRmatroiddecGraphicness(self._dec)
+        if graphicness:
+            return self, graphicness == +1
+
+        # compute it... wait for CMR functions
+        raise NotImplementedError
+
+    def as_node_with_graph(self):
+        r"""
+        OUTPUT:
+
+        a pair (DecompositionNode, Graph|None)
+        """
+        raise NotImplementedError
+
 
 cdef class ThreeConnectedIrregularNode(DecompositionNode):
 
@@ -1292,7 +1312,7 @@ cdef class ElementKey:
     cdef bint _composition
 
     def __init__(self, keys, composition=False):
-        """
+        r"""
         Create the element key for a row or column index
         of :class:`DecompositionNode`.
 
