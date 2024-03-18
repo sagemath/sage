@@ -7,7 +7,7 @@ AUTHORS:
 - Risan (2012-02): initial implementation
 
 - Jeroen Demeyer (2014-08-04) allow rational coefficients for
-  constraints and objective function (:trac:`16755`)
+  constraints and objective function (:issue:`16755`)
 """
 
 # ****************************************************************************

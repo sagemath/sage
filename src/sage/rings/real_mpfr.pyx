@@ -25,7 +25,7 @@ AUTHORS:
 - Robert Bradshaw (2009-09): decimal literals, optimizations
 
 - Jeroen Demeyer (2012-05-27): set the MPFR exponent range to the
-  maximal possible value (:trac:`13033`)
+  maximal possible value (:issue:`13033`)
 
 - Travis Scrimshaw (2012-11-02): Added doctests for full coverage
 
@@ -1620,7 +1620,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         """
         TESTS:
 
-        Check that :trac:`28814` is fixed::
+        Check that :issue:`28814` is fixed::
 
             sage: mathematica(3.5e-15)           # optional - mathematica
             3.5*^-15
@@ -2481,13 +2481,13 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         TESTS:
 
-        An indirect doctest to check this (see :trac:`14915`)::
+        An indirect doctest to check this (see :issue:`14915`)::
 
             sage: x,y = var('x, y')                                                     # needs sage.symbolic
             sage: integrate(y, y, 0.5, 8*log(x), algorithm='sympy')                     # needs sympy sage.symbolic
             32*log(x)^2 - 0.125000000000000
 
-        Check that :trac:`28903` is fixed::
+        Check that :issue:`28903` is fixed::
 
             sage: (10.0^400)._sympy_()                                                  # needs sympy
             1.00000000000000e+400
@@ -3376,7 +3376,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: sign*mantissa*(2**exponent) == a
             True
 
-        The mantissa is always a nonnegative number (see :trac:`14448`)::
+        The mantissa is always a nonnegative number (see :issue:`14448`)::
 
             sage: RR(-1).sign_mantissa_exponent()
             (-1, 4503599627370496, -52)
@@ -4050,7 +4050,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         TESTS:
 
-        Check that :trac:`20502` is fixed::
+        Check that :issue:`20502` is fixed::
 
             sage: bool(RR('nan'))
             True
@@ -4286,7 +4286,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         TESTS:
 
-        We see that :trac:`10736` is fixed::
+        We see that :issue:`10736` is fixed::
 
             sage: 16^0.5
             4.00000000000000
@@ -5450,7 +5450,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
              1.2840254166877414840734205680624364583362808652814630892176,
              1.2840254166877414840734205680624364583362808652814630892175]
 
-        Check that :trac:`12105` is fixed::
+        Check that :issue:`12105` is fixed::
 
             sage: RealField(53)(0.05).nth_root(7 * 10^8)
             0.999999995720382
@@ -5785,7 +5785,7 @@ def create_RealNumber(s, int base=10, int pad=0, rnd="RNDN", int min_prec=53):
         60
 
     Make sure we've rounded up ``log(10,2)`` enough to guarantee
-    sufficient precision (:trac:`10164`)::
+    sufficient precision (:issue:`10164`)::
 
         sage: ks = 5*10**5, 10**6
         sage: all(RealNumber("1." + "0"*k +"1")-1 > 0 for k in ks)

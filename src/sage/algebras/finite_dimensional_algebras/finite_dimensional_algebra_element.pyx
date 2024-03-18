@@ -222,7 +222,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             sage: B(5).vector()
             (5, 0, 5)
         """
-        # By :trac:`23707`, ``self._vector`` now is a single row matrix,
+        # By :issue:`23707`, ``self._vector`` now is a single row matrix,
         # not a vector, which results in a speed-up.
         # For backwards compatibility, this method still returns a vector.
         return self._vector[0]
@@ -384,7 +384,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             sage: B(1) != 0
             True
 
-        By :trac:`23707`, an ordering is defined on finite-dimensional algebras, corresponding
+        By :issue:`23707`, an ordering is defined on finite-dimensional algebras, corresponding
         to the ordering of the defining vectors; this may be handy if the vector space basis of
         the algebra corresponds to the standard monomials of the relation ideal, when
         the algebra is considered as a quotient of a path algebra. ::

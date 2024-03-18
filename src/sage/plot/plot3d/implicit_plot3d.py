@@ -631,7 +631,7 @@ def implicit_plot3d(f, xrange, yrange, zrange, **kwds):
 
     TESTS:
 
-    Check for :trac:`10599`::
+    Check for :issue:`10599`::
 
         sage: var('x,y,z')
         (x, y, z)

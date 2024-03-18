@@ -824,7 +824,7 @@ def contour_plot(f, xrange, yrange, **options):
         sphinx_plot(g)
 
     If you are plotting a sole contour and if all of your data lie on
-    one side of it, then (as part of :trac:`21042`) a heuristic may be
+    one side of it, then (as part of :issue:`21042`) a heuristic may be
     used to improve the result; in that case, a warning is emitted::
 
         sage: contour_plot(lambda x,y: abs(x^2-y^2), (-1,1), (-1,1),
@@ -845,7 +845,7 @@ def contour_plot(f, xrange, yrange, **options):
         sphinx_plot(g)
 
     Constant functions (with a single contour) can be plotted as well;
-    this was not possible before :trac:`21042`::
+    this was not possible before :issue:`21042`::
 
         sage: contour_plot(lambda x,y: 0, (-1,1), (-1,1),
         ....:              contours=[0], fill=False, cmap=['blue'])
@@ -862,7 +862,7 @@ def contour_plot(f, xrange, yrange, **options):
 
     TESTS:
 
-    To check that :trac:`5221` is fixed, note that this has three curves, not
+    To check that :issue:`5221` is fixed, note that this has three curves, not
     two::
 
         sage: x,y = var('x,y')
@@ -870,12 +870,12 @@ def contour_plot(f, xrange, yrange, **options):
         ....:              contours=[-4,-2,0], fill=False)
         Graphics object consisting of 1 graphics primitive
 
-    Check that :trac:`18074` is fixed::
+    Check that :issue:`18074` is fixed::
 
         sage: contour_plot(0, (0,1), (0,1))
         ...Graphics object consisting of 1 graphics primitive
 
-    Domain points in :trac:`11648` with complex output are now skipped::
+    Domain points in :issue:`11648` with complex output are now skipped::
 
         sage: x,y = SR.var('x,y', domain='real')
         sage: contour_plot(log(x) + log(y), (-1, 5), (-1, 5))
@@ -1339,7 +1339,7 @@ def implicit_plot(f, xrange, yrange, **options):
         ...
         ValueError: fill=5 is not supported
 
-    To check that :trac:`9654` is fixed::
+    To check that :issue:`9654` is fixed::
 
         sage: f(x,y) = x^2 + y^2 - 2
         sage: implicit_plot(f, (-3,3), (-3,3), rgbcolor=(1,0,0))
@@ -1636,7 +1636,7 @@ def region_plot(f, xrange, yrange, **options):
 
     TESTS:
 
-    To check that :trac:`16907` is fixed::
+    To check that :issue:`16907` is fixed::
 
         sage: x, y = var('x, y')
         sage: disc1 = region_plot(x^2 + y^2 < 1, (x,-1,1), (y,-1,1), alpha=0.5)
@@ -1644,7 +1644,7 @@ def region_plot(f, xrange, yrange, **options):
         sage: disc1 + disc2
         Graphics object consisting of 2 graphics primitives
 
-    To check that :trac:`18286` is fixed::
+    To check that :issue:`18286` is fixed::
 
         sage: x, y = var('x, y')
         sage: region_plot([x == 0], (x,-1,1), (y,-1,1))

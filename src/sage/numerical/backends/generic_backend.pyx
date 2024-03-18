@@ -180,7 +180,7 @@ cdef class GenericBackend:
             ...
             NotImplementedError
 
-        Flush any stray output -- see :trac:`28622`::
+        Flush any stray output -- see :issue:`28622`::
 
             sage: sys.stdout.flush()
             ...
@@ -667,7 +667,7 @@ cdef class GenericBackend:
             ...
             NotImplementedError...
 
-        Flush any stray output -- see :trac:`28622`::
+        Flush any stray output -- see :issue:`28622`::
 
             sage: sys.stdout.flush()
             ...
@@ -1555,7 +1555,7 @@ cdef class GenericBackend:
     @classmethod
     def _test_solve_trac_18572(cls, tester=None, **options):
         """
-        Run tests regarding :trac:`18572`::
+        Run tests regarding :issue:`18572`::
 
         TESTS::
 
@@ -1808,7 +1808,7 @@ cpdef GenericBackend get_solver(constraint_generation=False, solver=None, base_r
 
     TESTS:
 
-    Test that it works when the default solver is a callable, see :trac:`28914`::
+    Test that it works when the default solver is a callable, see :issue:`28914`::
 
         sage: old_default = default_mip_solver()
         sage: from sage.numerical.backends.glpk_backend import GLPKBackend

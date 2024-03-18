@@ -784,7 +784,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             2021), it would be highly beneficial to use conversions and rely on
             polynomials with matrix coefficients when the matrix size is
             "large" and the degree "small", see
-            :trac:`31472#comment:5`.
+            :issue:`31472#comment:5`.
         """
         if d <= 0:
             raise ValueError("the precision must be positive")

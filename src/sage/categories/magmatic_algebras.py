@@ -32,7 +32,7 @@ class MagmaticAlgebras(Category_over_base_ring):
         :class:`MagmaticAlgebras` will eventually replace the current
         :class:`Algebras` for consistency with
         e.g. :wikipedia:`Algebras` which assumes neither associativity
-        nor the existence of a unit (see :trac:`15043`).
+        nor the existence of a unit (see :issue:`15043`).
 
     EXAMPLES::
 

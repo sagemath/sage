@@ -519,7 +519,7 @@ class HasseDiagram(DiGraph):
 
         TESTS:
 
-        Check :trac:`15330`::
+        Check :issue:`15330`::
 
             sage: p = Poset(DiGraph({0:[1],2:[1]}))
             sage: p.is_chain()
@@ -747,7 +747,7 @@ class HasseDiagram(DiGraph):
             sage: Q.rank_function() is None
             True
 
-        test for issue :trac:`14006`::
+        test for issue :issue:`14006`::
 
             sage: H = Poset()._hasse_diagram
             sage: s = dumps(H)
@@ -920,8 +920,8 @@ class HasseDiagram(DiGraph):
 
         For a time, this function was named ``size()``, which
         would override the same-named method of the underlying
-        digraph. :trac:`8735` renamed this method to ``cardinality()``
-        with a deprecation warning. :trac:`11214` removed the warning
+        digraph. :issue:`8735` renamed this method to ``cardinality()``
+        with a deprecation warning. :issue:`11214` removed the warning
         since code for graphs was raising the warning inadvertently.
         This tests that ``size()`` for a Hasse diagram returns the
         number of edges in the digraph. ::
@@ -3188,7 +3188,7 @@ class HasseDiagram(DiGraph):
             sage: H.congruence([[0, 1]]).number_of_subsets()                            # optional - sage.modules
             1
 
-        Check :trac:`21861`::
+        Check :issue:`21861`::
 
             sage: H = HasseDiagram({0: [1, 2], 1: [3], 2: [4], 3: [4]})
             sage: tmp = H.congruence([[1, 3]])                                          # optional - sage.modules

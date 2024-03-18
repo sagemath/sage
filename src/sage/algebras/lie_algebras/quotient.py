@@ -154,7 +154,7 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         True
 
     Verify a quotient construction when the basis ordering and indices ordering
-    are different, see :trac:`26352`::
+    are different, see :issue:`26352`::
 
         sage: L.<c,b,a> = LieAlgebra(QQ, abelian=True)
         sage: I2 = L.ideal([a+b, a+c], order=sorted)

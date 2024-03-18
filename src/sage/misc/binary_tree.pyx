@@ -190,7 +190,7 @@ cdef class BinaryTree:
         """
         TESTS:
 
-        We test that :trac:`18897` is fixed::
+        We test that :issue:`18897` is fixed::
 
             sage: def test():
             ....:     from sage.rings.polynomial.polynomial_compiled import CompiledPolynomialFunction

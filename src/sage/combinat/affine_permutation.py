@@ -66,7 +66,7 @@ class AffinePermutation(ClonableArray):
 
         TESTS:
 
-        Check that :trac:`26436` is fixed::
+        Check that :issue:`26436` is fixed::
 
             sage: A = AffinePermutationGroup(['A',3,1])
             sage: p = A([-3/1,2/1,3/1,8/1])

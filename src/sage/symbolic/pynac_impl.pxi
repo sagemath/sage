@@ -836,7 +836,7 @@ cdef int py_get_parent_char(o) except -1:
     """
     TESTS:
 
-    :trac:`24072` fixes the workaround provided in :trac:`21187`::
+    :issue:`24072` fixes the workaround provided in :issue:`21187`::
 
         sage: p = next_prime(2^100)
         sage: R.<y> = FiniteField(p)[]
@@ -1848,26 +1848,26 @@ cdef py_atan2(x, y) noexcept:
         sage: py_atan2(RR100(0), RR100(1))
         1.5707963267948966192313216916
 
-    Check that :trac:`21428` is fixed::
+    Check that :issue:`21428` is fixed::
 
         sage: plot(real(sqrt(x - 1.*I)), (x,0,1))
         Graphics object consisting of 1 graphics primitive
 
-    Check that :trac:`22553` is fixed::
+    Check that :issue:`22553` is fixed::
 
         sage: arctan2(1.5, -1.300000000000001)
         2.284887025407...
         sage: atan2(2.1000000000000000000000000000000000000, -1.20000000000000000000000000000000)
         2.089942441041419571002776071...
 
-    Check that :trac:`22877` is fixed::
+    Check that :issue:`22877` is fixed::
 
         sage: atan2(CC(I), CC(I+1))
         0.553574358897045 + 0.402359478108525*I
         sage: atan2(CBF(I), CBF(I+1))
         [0.55357435889705 +/- ...] + [0.402359478108525 +/- ...]*I
 
-    Check that :trac:`23776` is fixed and RDF input gives real output::
+    Check that :issue:`23776` is fixed and RDF input gives real output::
 
         sage: atan2(RDF(-3), RDF(-1))
         -1.8925468811915387
@@ -2446,7 +2446,7 @@ def init_pynac_I():
         sage: type(I.pyobject())
         <class 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_gaussian'>
 
-    Check that :trac:`10064` is fixed::
+    Check that :issue:`10064` is fixed::
 
         sage: y = symbolic_I*symbolic_I*x / x  # so y is the expression -1
         sage: y.is_positive()
@@ -2457,7 +2457,7 @@ def init_pynac_I():
         sage: bool(z == y)
         True
 
-    Check that :trac:`31869` is fixed::
+    Check that :issue:`31869` is fixed::
 
         sage: x * ((3*I + 4)*x - 5)
         ((3*I + 4)*x - 5)*x

@@ -123,7 +123,7 @@ def FreeQuadraticModule(base_ring, rank, inner_product_matrix,
 
     TESTS:
 
-    Check for :trac:`10577`::
+    Check for :issue:`10577`::
 
         sage: m = matrix.diagonal(GF(2), [1,1])
         sage: V2 = VectorSpace(GF(2), 2, inner_product_matrix=m)
@@ -296,7 +296,7 @@ class FreeQuadraticModule_generic(free_module.FreeModule_generic):
         sage: Q3zero == Q3
         False
 
-    We test that :trac:`23915` is fixed::
+    We test that :issue:`23915` is fixed::
 
         sage: M1 = FreeQuadraticModule(ZZ,1,matrix.identity(1))
         sage: M2 = FreeQuadraticModule(ZZ,1,matrix.identity(1)*2)
@@ -1139,7 +1139,7 @@ class FreeQuadraticModule_ambient_field(free_module.FreeModule_ambient_field,
 
         TESTS:
 
-        Check for :trac:`10606`::
+        Check for :issue:`10606`::
 
             sage: D = matrix.diagonal(ZZ, [1,1])
             sage: V = VectorSpace(GF(46349), 2, inner_product_matrix=D)                 # needs sage.rings.finite_rings
@@ -1265,7 +1265,7 @@ class FreeQuadraticModule_submodule_with_basis_pid(free_module.FreeModule_submod
 
         TESTS:
 
-        We test that :trac:`23703` is fixed::
+        We test that :issue:`23703` is fixed::
 
             sage: A = FreeQuadraticModule(ZZ, 1, matrix.identity(1))
             sage: B = A.span([[1/2]])

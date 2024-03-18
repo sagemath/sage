@@ -90,13 +90,13 @@ number fields, such as calculations with matrices of cyclotomics.
 .. NOTE::
 
     There used to be a native Sage version of the universal cyclotomic field
-    written by Christian Stump (see :trac:`8327`). It was slower on most
+    written by Christian Stump (see :issue:`8327`). It was slower on most
     operations and it was decided to use a version based on GAP instead (see
-    :trac:`18152`). One main difference in the design choices is that GAP stores
+    :issue:`18152`). One main difference in the design choices is that GAP stores
     dense vectors whereas the native ones used Python dictionaries (storing only
     nonzero coefficients). Most operations are faster with GAP except some
     operation on very sparse elements. All details can be found in
-    :trac:`18152`.
+    :issue:`18152`.
 
 REFERENCES:
 
@@ -115,7 +115,7 @@ TESTS::
     sage: UCF.zero().is_zero()
     True
 
-Check that :trac:`14240` is fixed::
+Check that :issue:`14240` is fixed::
 
     sage: K.<rho> = CyclotomicField(245)
     sage: h = K.random_element()
@@ -124,21 +124,21 @@ Check that :trac:`14240` is fixed::
     sage: h_ucf**2  # random
     -169539876343/589714020*E(245) + 27815735177/20058300*E(245)^2  + ... + + 7828432097501/842448600*E(245)^244
 
-Check that :trac:`16130` is fixed::
+Check that :issue:`16130` is fixed::
 
     sage: mat = matrix(UCF, 2, [-4, 2*E(7)^6, -5*E(13)^3 + 5*E(13)^8 - 4*E(13)^9, 0])
     sage: mat._echelon_classical()
     [1 0]
     [0 1]
 
-Check that :trac:`16631` is fixed::
+Check that :issue:`16631` is fixed::
 
     sage: UCF.one() / 2
     1/2
     sage: UCF.one() / 2r
     1/2
 
-Check that :trac:`17117` is fixed::
+Check that :issue:`17117` is fixed::
 
     sage: e3 = UCF.gen(3)
     sage: N(e3)
@@ -148,7 +148,7 @@ Check that :trac:`17117` is fixed::
     sage: imag(e3)
     -1/2*E(12)^7 + 1/2*E(12)^11
 
-Check that :trac:`25686` is fixed::
+Check that :issue:`25686` is fixed::
 
     sage: UCF = UniversalCyclotomicField()
     sage: UCF.is_finite()
@@ -156,10 +156,10 @@ Check that :trac:`25686` is fixed::
 
 AUTHORS:
 
-- Christian Stump (2013): initial Sage version (see :trac:`8327`)
-- Vincent Delecroix (2015): completed rewriting using libgap (see :trac:`18152`)
-- Sebastian Oehms (2018): deleted the method is_finite since it returned the wrong result (see :trac:`25686`)
-- Sebastian Oehms (2019): added :meth:`_factor_univariate_polynomial` (see :trac:`28631`)
+- Christian Stump (2013): initial Sage version (see :issue:`8327`)
+- Vincent Delecroix (2015): completed rewriting using libgap (see :issue:`18152`)
+- Sebastian Oehms (2018): deleted the method is_finite since it returned the wrong result (see :issue:`25686`)
+- Sebastian Oehms (2019): added :meth:`_factor_univariate_polynomial` (see :issue:`28631`)
 
 """
 
@@ -292,7 +292,7 @@ class UCFtoQQbar(Morphism):
             sage: UCFtoQQbar(UCF.gen(3))  # indirect doctest
             -0.500000000000000? + 0.866025403784439?*I
 
-        Test that the bug reported in :trac:`19912` has been fixed::
+        Test that the bug reported in :issue:`19912` has been fixed::
 
             sage: UCFtoQQbar(UCF.gen(4)+1)
             I + 1
@@ -528,7 +528,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
             sage: SR(E(5) + 2*E(5,2) + 3*E(5,3))                                        # needs sage.symbolic
             -sqrt(5) + 1/4*I*sqrt(2*sqrt(5) + 10) - 1/4*I*sqrt(-2*sqrt(5) + 10) - 3/2
 
-        Test that the bug reported in :trac:`19912` has been fixed::
+        Test that the bug reported in :issue:`19912` has been fixed::
 
             sage: SR(1+E(4))                                                            # needs sage.symbolic
             I + 1
@@ -590,7 +590,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
             sage: CC(CF(x))
             0.309016994374947 + 0.951056516295154*I
 
-        Test that the bug reported in :trac:`19912` has been fixed::
+        Test that the bug reported in :issue:`19912` has been fixed::
 
             sage: a = 1+E(4); a
             1 + E(4)
@@ -621,7 +621,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
 
         TESTS:
 
-        See :trac:`19514`::
+        See :issue:`19514`::
 
             sage: hash(UCF.one())
             1
@@ -677,7 +677,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
             sage: CC(E(3))
             -0.500000000000000 + 0.866025403784439*I
 
-        Check that :trac:`19825` is fixed::
+        Check that :issue:`19825` is fixed::
 
             sage: CIF(E(3))
             -0.500000000000000? + 0.866025403784439?*I
@@ -693,7 +693,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
             sage: _.imag().is_zero()
             True
 
-        Check that units are evaluated correctly (:trac:`23775`)::
+        Check that units are evaluated correctly (:issue:`23775`)::
 
             sage: CIF(1 + E(8) - E(8,3))
             2.41421356237310?
@@ -727,7 +727,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
             sage: 2*cos(2*pi/7).n()                                                     # needs sage.symbolic
             1.24697960371747
 
-        Check that units are evaluated correctly (:trac:`23775`)::
+        Check that units are evaluated correctly (:issue:`23775`)::
 
             sage: RIF(1 + E(8) - E(8,3))
             2.414213562373095?
@@ -1277,7 +1277,7 @@ class UniversalCyclotomicFieldElement(FieldElement):
         .. TODO::
 
             Polynomials with libgap currently does not implement a ``.sage()`` method
-            (see :trac:`18266`). It would be faster/safer to not use string to
+            (see :issue:`18266`). It would be faster/safer to not use string to
             construct the polynomial.
         """
         gap_p = libgap.MinimalPolynomial(libgap.eval("Rationals"), self._obj)

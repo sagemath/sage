@@ -501,7 +501,7 @@ class CoxeterGroups(Category_singleton):
             TESTS:
 
             We iterate over each level (i.e., breadth-first-search in the
-            search forest), see :trac:`19926`::
+            search forest), see :issue:`19926`::
 
                 sage: W = CoxeterGroup(['A',2])                                         # needs sage.groups sage.rings.number_field
                 sage: [x.length() for x in W]                                           # needs sage.groups sage.rings.number_field
@@ -1121,7 +1121,7 @@ class CoxeterGroups(Category_singleton):
                 Digraph on 10 vertices
 
             Check that the graph has the correct number of edges
-            (see :trac:`17744`)::
+            (see :issue:`17744`)::
 
                 sage: len(G.edges(sort=False))                                          # needs sage.combinat sage.graphs sage.groups
                 16
@@ -2138,7 +2138,7 @@ class CoxeterGroups(Category_singleton):
 
             TESTS:
 
-            Check that this is independent of the implementation of the group, see :trac:`34799`::
+            Check that this is independent of the implementation of the group, see :issue:`34799`::
 
                 sage: # needs sage.combinat sage.groups
                 sage: W1 = WeylGroup(['A', 2])
@@ -2364,7 +2364,7 @@ class CoxeterGroups(Category_singleton):
                 sage: w0.binary_factorizations().category()                             # needs sage.combinat sage.groups
                 Category of finite enumerated sets
 
-            Check that this is independent of the implementation of the group, see :trac:`34799`::
+            Check that this is independent of the implementation of the group, see :issue:`34799`::
 
                 sage: # needs sage.combinat sage.groups
                 sage: W1 = WeylGroup(['A', 3])
@@ -2511,7 +2511,7 @@ class CoxeterGroups(Category_singleton):
 
             TESTS:
 
-            Check bug discovered in :trac:`32669` is fixed::
+            Check bug discovered in :issue:`32669` is fixed::
 
                 sage: W = CoxeterGroup(['A', 3], implementation='permutation')          # needs sage.combinat sage.groups
                 sage: W.w0.bruhat_lower_covers_reflections()                            # needs sage.combinat sage.groups

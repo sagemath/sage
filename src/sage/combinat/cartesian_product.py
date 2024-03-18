@@ -29,7 +29,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
     r"""
     Cartesian product of finite sets.
 
-    This class will soon be deprecated (see :trac:`18411` and :trac:`19195`).
+    This class will soon be deprecated (see :issue:`18411` and :issue:`19195`).
     One should instead use the functorial construction
     :class:`cartesian_product <sage.categories.cartesian_product.CartesianProductFunctor>`.
     The main differences in behavior are:
@@ -86,7 +86,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
             True
             sage: TestSuite(cp).run(skip='_test_an_element')
 
-        Check that :trac:`24558` is fixed::
+        Check that :issue:`24558` is fixed::
 
             sage: from sage.combinat.cartesian_product import CartesianProduct_iters
             sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator
@@ -298,7 +298,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
             sage: C[238792368]
             [238, 792, 368]
 
-        Check for :trac:`15919`::
+        Check for :issue:`15919`::
 
             sage: FF = IntegerModRing(29)
             sage: C = CartesianProduct_iters(FF, FF, FF)

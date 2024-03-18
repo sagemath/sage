@@ -184,7 +184,7 @@ def relative_number_field(n=2, maxdeg=2):
 
     TESTS:
 
-    Check that :trac:`32117` is fixed::
+    Check that :issue:`32117` is fixed::
 
         sage: set_random_seed(3030)
         sage: from sage.rings.tests import relative_number_field

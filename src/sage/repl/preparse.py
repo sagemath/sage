@@ -52,7 +52,7 @@ Raw and hex work correctly::
     sage: type(0Xa1R)
     <class 'int'>
 
-The preparser can handle PEP 515 (see :trac:`28490`)::
+The preparser can handle PEP 515 (see :issue:`28490`)::
 
     sage: 1_000_000 + 3_000
     1003000
@@ -1039,7 +1039,7 @@ def parse_ellipsis(code, preparse_step=True):
 
     TESTS:
 
-    Check that nested ellipsis is processed correctly (:trac:`17378`)::
+    Check that nested ellipsis is processed correctly (:issue:`17378`)::
 
         sage: preparse('[1,..,2,..,len([1..3])]')
         '(ellipsis_range(Integer(1),Ellipsis,Integer(2),Ellipsis,len((ellipsis_range(Integer(1),Ellipsis,Integer(3))))))'
@@ -1429,7 +1429,7 @@ def preparse_calculus(code):
 
     TESTS:
 
-    The arguments in the definition must be symbolic variables (:trac:`10747`)::
+    The arguments in the definition must be symbolic variables (:issue:`10747`)::
 
         sage: preparse_calculus(";f(_sage_const_)=x;")
         Traceback (most recent call last):
@@ -1454,12 +1454,12 @@ def preparse_calculus(code):
         ...
         ValueError: argument names should be valid python identifiers
 
-    Check support for unicode characters (:trac:`29278`)::
+    Check support for unicode characters (:issue:`29278`)::
 
         sage: preparse("μ(x) = x^2")
         '__tmp__=var("x"); μ = symbolic_expression(x**Integer(2)).function(x)'
 
-    Check that the parameter list can span multiple lines (:trac:`30928`)::
+    Check that the parameter list can span multiple lines (:issue:`30928`)::
 
         sage: preparse('''
         ....: f(a,
@@ -1469,7 +1469,7 @@ def preparse_calculus(code):
         ....: ''')
         '\n__tmp__=var("a,b,c,d"); f = symbolic_expression(a + b*Integer(2) + c*Integer(3) + d*Integer(4)).function(a,b,c,d)\n'
 
-    Check that :trac:`30953` is fixed::
+    Check that :issue:`30953` is fixed::
 
         sage: preparse('''
         ....: f(x) = (x + (x*x) +  # some comment with matching )
@@ -1619,17 +1619,17 @@ def preparse_generators(code):
         sage: preparse_generators(";  R.<x>=ZZ[];")
         ";  R = ZZ['x']; (x,) = R._first_ngens(1);"
 
-    See :trac:`16731`::
+    See :issue:`16731`::
 
         sage: preparse_generators('R.<x> = ')
         'R.<x> = '
 
-    Check support for unicode characters (:trac:`29278`)::
+    Check support for unicode characters (:issue:`29278`)::
 
         sage: preparse('Ω.<λ,μ> = QQ[]')
         "Ω = QQ['λ, μ']; (λ, μ,) = Ω._first_ngens(2)"
 
-    Check that :trac:`30953` is fixed::
+    Check that :issue:`30953` is fixed::
 
         sage: preparse('''
         ....: K.<a> = QuadraticField(2 +
@@ -1746,18 +1746,18 @@ def preparse(line, reset=True, do_time=False, ignore_prompts=False,
 
     TESTS:
 
-    Check support for unicode characters (:trac:`29278`)::
+    Check support for unicode characters (:issue:`29278`)::
 
         sage: preparse("Ω.0")
         'Ω.gen(0)'
 
-    Check support for backslash line continuation (:trac:`30928`)::
+    Check support for backslash line continuation (:issue:`30928`)::
 
         sage: preparse("f(x) = x \\\n+ 1")
         '__tmp__=var("x"); f = symbolic_expression(x + Integer(1)).function(x)'
 
     Check that multi-line strings starting with a comment are still preparsed
-    (:trac:`31043`)::
+    (:issue:`31043`)::
 
         sage: print(preparse('''# some comment
         ....: f(x) = x + 1'''))
@@ -1907,7 +1907,7 @@ def preparse_file(contents, globals=None, numeric_literals=True):
         _sage_const_100 = Integer(100)
         type(100 ), type(_sage_const_100 )
 
-    Check that :trac:`4545` is fixed::
+    Check that :issue:`4545` is fixed::
 
         sage: file_contents = '''
         ....: @parallel(8)
@@ -1995,26 +1995,26 @@ def implicit_mul(code, level=5):
 
     TESTS:
 
-    Check handling of Python 3 keywords (:trac:`29391`)::
+    Check handling of Python 3 keywords (:issue:`29391`)::
 
         sage: implicit_mul('nonlocal a')
         'nonlocal a'
 
     Although these are not keywords in Python 3, we explicitly avoid implicit
     multiplication in these cases because the error message will be more
-    helpful (:trac:`29391`)::
+    helpful (:issue:`29391`)::
 
         sage: implicit_mul('print 2')
         'print 2'
         sage: implicit_mul('exec s')
         'exec s'
 
-    Check support for unicode characters (:trac:`29278`)::
+    Check support for unicode characters (:issue:`29278`)::
 
         sage: implicit_mul('3λ')
         '3*λ'
 
-    Check support for complex literals (:trac:`30477`)::
+    Check support for complex literals (:issue:`30477`)::
 
         sage: implicit_mul('2r-1JR')
         '2r-1JR'
@@ -2185,7 +2185,7 @@ def handle_encoding_declaration(contents, out):
     AUTHORS:
 
     - Lars Fischer
-    - Dan Drake (2010-12-08, rewrite for :trac:`10440`)
+    - Dan Drake (2010-12-08, rewrite for :issue:`10440`)
     """
     lines = contents.splitlines()
     for num, line in enumerate(lines[:2]):

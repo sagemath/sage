@@ -409,7 +409,7 @@ class StaticErrorRateChannel(Channel):
             sage: Chan.transmit_unsafe(msg)
             (4, 8, 4, 16, 23, 53)
 
-        This checks that :trac:`19863` is fixed::
+        This checks that :issue:`19863` is fixed::
 
             sage: V = VectorSpace(GF(2), 1000)
             sage: Chan = channels.StaticErrorRateChannel(V, 367)

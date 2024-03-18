@@ -159,7 +159,7 @@ class Disk(GraphicPrimitive):
             sage: D = disk((2,-1), 2, (0, pi), color='black', thickness=3, fill=False); D
             Graphics object consisting of 1 graphics primitive
 
-        Save alpha information in pdf (see :trac:`13732`)::
+        Save alpha information in pdf (see :issue:`13732`)::
 
             sage: f = tmp_filename(ext='.pdf')
             sage: p = disk((0,0), 5, (0, pi/4), alpha=0.5)

@@ -172,7 +172,7 @@ def normalize_args_invariant_form(R, d, invariant_form):
 
     AUTHORS:
 
-    - Sebastian Oehms (2018-8) (see :trac:`26028`)
+    - Sebastian Oehms (2018-8) (see :issue:`26028`)
     """
     if invariant_form is None:
         return invariant_form

@@ -98,7 +98,7 @@ def Ideal(*args, **kwds):
         sage: ideal(1/2,t,t^2)
         Principal ideal (1) of Univariate Polynomial Ring in t over Rational Field
 
-    This shows that the issues at :trac:`1104` are resolved::
+    This shows that the issues at :issue:`1104` are resolved::
 
         sage: Ideal(3, 5)
         Principal ideal (1) of Integer Ring
@@ -156,7 +156,7 @@ def Ideal(*args, **kwds):
         sage: I == loads(dumps(I))
         True
 
-    This shows that the issue at :trac:`5477` is fixed::
+    This shows that the issue at :issue:`5477` is fixed::
 
         sage: R.<x> = QQ[]
         sage: I = R.ideal([x + x^2])
@@ -973,7 +973,7 @@ class Ideal_generic(MonoidElement):
             sage: I.is_trivial()                                                        # needs sage.rings.real_mpfr
             True
 
-        This test addresses issue :trac:`20514`::
+        This test addresses issue :issue:`20514`::
 
             sage: R = QQ['x', 'y']
             sage: I = R.ideal(R.gens())
@@ -1201,7 +1201,7 @@ class Ideal_generic(MonoidElement):
 
         TESTS:
 
-        Check that a cached base ring is used (:trac:`28074`)::
+        Check that a cached base ring is used (:issue:`28074`)::
 
             sage: R.<x,y> = QQ[]
             sage: R1 = macaulay2(R)                        # optional - macaulay2

@@ -607,7 +607,7 @@ def line2d(points, **options):
 
     TESTS:
 
-    Check that :trac:`13690` is fixed. The legend label should have circles
+    Check that :issue:`13690` is fixed. The legend label should have circles
     as markers.::
 
         sage: line(enumerate(range(2)), marker='o', legend_label='circle')

@@ -358,7 +358,7 @@ class EllipticCurveLocalData(SageObject):
             sage: E.local_data(ZZ.ideal(2), algorithm="pari").minimal_model()
             Elliptic Curve defined by y^2 = x^3 - x^2 - 3*x + 2 over Rational Field
 
-        :trac:`14476`::
+        :issue:`14476`::
 
             sage: # needs sage.rings.number_field
             sage: t = QQ['t'].0
@@ -705,7 +705,7 @@ class EllipticCurveLocalData(SageObject):
         - ``KS`` (string) is the Kodaira symbol
         - ``cp`` (int) is the Tamagawa number
 
-        EXAMPLES (this raised a type error in sage prior to 4.4.4, see :trac:`7930`) ::
+        EXAMPLES (this raised a type error in sage prior to 4.4.4, see :issue:`7930`) ::
 
             sage: # needs sage.rings.number_field
             sage: E = EllipticCurve('99d1')
@@ -720,7 +720,7 @@ class EllipticCurveLocalData(SageObject):
 
         EXAMPLES:
 
-        The following example shows that the bug at :trac:`9324` is fixed::
+        The following example shows that the bug at :issue:`9324` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
@@ -729,7 +729,7 @@ class EllipticCurveLocalData(SageObject):
             sage: E.conductor() # indirect doctest
             Fractional ideal (18, 6*a)
 
-        The following example shows that the bug at :trac:`9417` is fixed::
+        The following example shows that the bug at :issue:`9417` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: K.<a> = NumberField(x^2 + 18*x + 1)
@@ -737,7 +737,7 @@ class EllipticCurveLocalData(SageObject):
             sage: E.tamagawa_number(K.ideal(2))
             4
 
-        This is to show that the bug :trac:`11630` is fixed. (The computation of the class group would produce a warning)::
+        This is to show that the bug :issue:`11630` is fixed. (The computation of the class group would produce a warning)::
 
             sage: # needs sage.rings.number_field
             sage: K.<t> = NumberField(x^7 - 2*x + 177)

@@ -77,7 +77,7 @@ class LieAlgebras(Category_over_base_ring):
     .. TODO::
 
         Many of these tests should use Lie algebras that are not the minimal
-        example and need to be added after :trac:`16820` (and :trac:`16823`).
+        example and need to be added after :issue:`16820` (and :issue:`16823`).
     """
     @cached_method
     def super_categories(self):

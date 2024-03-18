@@ -51,7 +51,7 @@ AUTHORS:
 
 - Travis Scrimshaw (2012-10-18): Added doctests to get full coverage
 
-- Jeroen Demeyer (2013-02-27): fixed all PARI calls (:trac:`14082`)
+- Jeroen Demeyer (2013-02-27): fixed all PARI calls (:issue:`14082`)
 
 - Vincent Klein (2017-11-15) : add __mpc__() to class ComplexDoubleElement.
   ComplexDoubleElement constructor support and gmpy2.mpc parameter.
@@ -327,7 +327,7 @@ cdef class ComplexDoubleField_class(sage.rings.abc.ComplexDoubleField):
 
         TESTS:
 
-        Check that :trac:`31836` is fixed::
+        Check that :issue:`31836` is fixed::
 
             sage: a = CDF(); a
             0.0
@@ -974,7 +974,7 @@ cdef class ComplexDoubleElement(FieldElement):
         """
         TESTS:
 
-        Check that :trac:`28814` is fixed::
+        Check that :issue:`28814` is fixed::
 
             sage: mathematica(CDF(1e-25, 1e25))  # optional - mathematica
             1.*^-25 + 1.*^25*I

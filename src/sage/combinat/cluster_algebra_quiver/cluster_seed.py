@@ -3495,7 +3495,7 @@ class ClusterSeed(SageObject):
             sage: mutation_class[0]
             (A seed for a cluster algebra of rank 2 of type ['A', 2], [])
 
-        Check that :trac:`14638` is fixed::
+        Check that :issue:`14638` is fixed::
 
             sage: S = ClusterSeed(['E',6])
             sage: MC = S.mutation_class(depth=7); len(MC)  # long time
@@ -4228,7 +4228,7 @@ class ClusterSeed(SageObject):
 
         TESTS:
 
-        We check that :trac:`23688` has been resolved::
+        We check that :issue:`23688` has been resolved::
 
             sage: S = ClusterSeed(Matrix([[0,1],[-4,0]])); S
             A seed for a cluster algebra of rank 2

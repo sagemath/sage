@@ -1134,7 +1134,7 @@ def spanning_trees(g, labels=False):
          Graph on 6 vertices,
          Graph on 6 vertices]
 
-    Edges of the spanning trees can be labeled or unlabeled (:trac:`27557`)::
+    Edges of the spanning trees can be labeled or unlabeled (:issue:`27557`)::
 
         sage: g = Graph([(1,2,2),(1,2,1),(1,2,4),(1,4,5)],multiedges=True)
         sage: l = list(g.spanning_trees(labels=True))

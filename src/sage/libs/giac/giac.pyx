@@ -1057,7 +1057,7 @@ cdef class Pygen(GiacMethods_base):
             sage: [ i for i in l ] == list(range(10^6))
             True
 
-        Check for :trac:`18841`::
+        Check for :issue:`18841`::
 
             sage: L = libgiac(range(10))
             sage: next(iter(L))
@@ -1545,7 +1545,7 @@ cdef class Pygen(GiacMethods_base):
 
         TESTS:
 
-        Check that variables and constants are not mixed up (:trac:`30133`)::
+        Check that variables and constants are not mixed up (:issue:`30133`)::
 
             sage: ee, ii, pp = SR.var('e,i,pi')
             sage: libgiac(ee * ii * pp).sage().variables()

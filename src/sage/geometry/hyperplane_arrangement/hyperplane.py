@@ -551,7 +551,7 @@ class Hyperplane(LinearExpression):
 
         TESTS:
 
-        Check that :trac:`30078` is fixed::
+        Check that :issue:`30078` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: R.<sqrt2> = QuadraticField(2)
@@ -560,7 +560,7 @@ class Hyperplane(LinearExpression):
             sage: B
             Arrangement <x + 1>
 
-        Check that :trac:`30749` is fixed::
+        Check that :issue:`30749` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: tau = (1+AA(5).sqrt()) / 2

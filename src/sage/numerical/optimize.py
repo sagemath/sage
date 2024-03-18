@@ -76,13 +76,13 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
         sage: plot(f,2,2.01)
         Graphics object consisting of 1 graphics primitive
 
-    The following example was added due to :trac:`4942` and demonstrates that
+    The following example was added due to :issue:`4942` and demonstrates that
     the function need not be defined at the endpoints::
 
         sage: find_root(x^2*log(x,2)-1,0, 2)  # abs tol 1e-6
         1.41421356237
 
-    The following is an example, again from :trac:`4942` where Brent's method
+    The following is an example, again from :issue:`4942` where Brent's method
     fails. Currently no other method is implemented, but at least we
     acknowledge the fact that the algorithm fails::
 
@@ -140,7 +140,7 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
             raise RuntimeError("f appears to have no zero on the interval")
         a = s
 
-    # Fixing :trac:`4942` - if the answer on any of the endpoints is NaN,
+    # Fixing :issue:`4942` - if the answer on any of the endpoints is NaN,
     # we restrict to looking between minimum and maximum values in the segment
     # Note - this could be used in all cases, but it requires some more
     # computation
@@ -158,7 +158,7 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
     g = lambda x: float(f(x))
     brentqRes = scipy.optimize.brentq(g, a, b,
                                  full_output=full_output, xtol=xtol, rtol=rtol, maxiter=maxiter)
-    # A check following :trac:`4942`, to ensure we actually found a root
+    # A check following :issue:`4942`, to ensure we actually found a root
     # Maybe should use a different tolerance here?
     # The idea is to take roughly the derivative and multiply by estimated
     # value of the root
@@ -246,7 +246,7 @@ def find_local_minimum(f, a, b, tol=1.48e-08, maxfun=500):
         (-9.4772942594..., 9.5293344109...)
 
     Only local minima are found; if you enlarge the interval, the
-    returned minimum may be *larger*! See :trac:`2607`.
+    returned minimum may be *larger*! See :issue:`2607`.
 
     ::
 
@@ -506,7 +506,7 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
 
     TESTS:
 
-    Check if :trac:`6592` is fixed::
+    Check if :issue:`6592` is fixed::
 
         sage: # needs sage.symbolic
         sage: x, y = var('x y')
@@ -518,7 +518,7 @@ def minimize_constrained(func,cons,x0,gradient=None,algorithm='default', **args)
         (805.985..., 1005.985...)
 
     If ``func`` is symbolic, its minimizer should be in the same order
-    as its arguments (:trac:`32511`)::
+    as its arguments (:issue:`32511`)::
 
         sage: # needs sage.symbolic
         sage: x,y = SR.var('x,y')

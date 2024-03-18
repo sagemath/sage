@@ -193,13 +193,13 @@ def gen_html_code(G,
         sage: from sage.graphs.graph_plot_js import gen_html_code
         sage: filename = gen_html_code(graphs.PetersenGraph())
 
-    :trac:`17370`::
+    :issue:`17370`::
 
         sage: filename = gen_html_code(graphs.CompleteBipartiteGraph(4, 5))
 
     In the generated html code, the source (resp. target) of a link is the index
     of the node in the list defining the names of the nodes. We check that the
-    order is correct (:trac:`27460`)::
+    order is correct (:issue:`27460`)::
 
         sage: filename = gen_html_code(DiGraph({1: [10]}))
         sage: with open(filename, 'r') as f:

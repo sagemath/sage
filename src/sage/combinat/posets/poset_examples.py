@@ -305,7 +305,7 @@ class Posets(metaclass=ClasscallMetaclass):
             ....:         if C.covers(C(i),C(j)) and j != i+1:
             ....:             print("TEST FAILED")
 
-        Check that :trac:`8422` is solved::
+        Check that :issue:`8422` is solved::
 
             sage: posets.ChainPoset(0)
             Finite lattice containing 0 elements
@@ -353,7 +353,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
         TESTS:
 
-        Check that :trac:`8422` is solved::
+        Check that :issue:`8422` is solved::
 
             sage: posets.AntichainPoset(0)
             Finite poset containing 0 elements

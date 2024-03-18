@@ -39,7 +39,7 @@ class Algebras(CategoryWithAxiom_over_base_ring):
         :class:`.magmatic_algebras.MagmaticAlgebras`
         for consistency with e.g. :wikipedia:`Algebras` which assumes
         neither associativity nor the existence of a unit (see
-        :trac:`15043`).
+        :issue:`15043`).
 
     .. TODO:: Should `R` be a commutative ring?
 
@@ -342,7 +342,7 @@ class Algebras(CategoryWithAxiom_over_base_ring):
             .. WARNING::
 
                 This is only correct in certain cases (finite dimension, ...).
-                See :trac:`15647`.
+                See :issue:`15647`.
             """
             from sage.categories.coalgebras import Coalgebras
             return [Coalgebras(self.base_category().base_ring())]

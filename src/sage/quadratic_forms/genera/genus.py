@@ -644,7 +644,7 @@ def canonical_2_adic_trains(genus_symbol_quintuple_list, compartments=None):
         sage: canonical_2_adic_trains(symbol)
         [[0, 1, 2, 3, 4, 5], [6], [7, 8, 9]]
 
-    Check that :trac:`24818` is fixed::
+    Check that :issue:`24818` is fixed::
 
         sage: symbol = [[0, 1,  1, 1, 1], [1, 3, 1, 1, 1]]
         sage: canonical_2_adic_trains(symbol)
@@ -1311,7 +1311,7 @@ class Genus_Symbol_p_adic_ring:
 
         TESTS:
 
-        Check that :trac:`25776` is fixed::
+        Check that :issue:`25776` is fixed::
 
             sage: G = Genus(matrix.diagonal([2,2,64]))
             sage: G

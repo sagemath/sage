@@ -646,7 +646,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
               Exact Term Monoid x^QQ with coefficients in Integer Ring.
             >> *previous* TypeError: no conversion of this rational to integer
 
-        Check :trac:`19921`::
+        Check :issue:`19921`::
 
             sage: CR.<Z> = QQ['Z']
             sage: CR_mod = CR.quotient((Z^2 - 1)*CR)
@@ -656,7 +656,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             sage: R_mod(e)
             1
 
-        Check that :trac:`19999` is resolved::
+        Check that :issue:`19999` is resolved::
 
             sage: A.<x> = AsymptoticRing('(QQ_+)^x * x^QQ * UU^x', QQ)
             sage: 1 + (-1)^x + 2^x + (-2)^x
@@ -1292,7 +1292,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         TESTS:
 
-        See :trac:`19521`::
+        See :issue:`19521`::
 
             sage: A.<n> = AsymptoticRing('n^ZZ', SR.subring(no_variables=True))
             sage: (A.one() / 1).parent()
@@ -1566,7 +1566,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
 
         TESTS:
 
-        See :trac:`19110`::
+        See :issue:`19110`::
 
             sage: O(x)^(-1)
             Traceback (most recent call last):
@@ -1604,13 +1604,13 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             > *previous* ValueError: Cannot determine main term of s + t
             since there are several maximal elements s, t.
 
-        Check that :trac:`19945` is fixed::
+        Check that :issue:`19945` is fixed::
 
             sage: A.<n> = AsymptoticRing('QQ^n * n^QQ', ZZ)
             sage: (1/2)^n
             (1/2)^n
 
-        Check that :trac:`19946` is fixed::
+        Check that :issue:`19946` is fixed::
 
             sage: assume(SR.an_element() > 0)
             sage: A.<n> = AsymptoticRing('QQ^n * n^QQ', SR)
@@ -1624,7 +1624,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             Asymptotic Ring <QQ^n * n^QQ * Signs^n> over Symbolic Ring
             sage: forget()
 
-        :trac:`22120`::
+        :issue:`22120`::
 
             sage: A.<w> = AsymptoticRing('w^QQbar', QQ)
             sage: w^QQbar(sqrt(2))
@@ -2169,7 +2169,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
               'Growth Group x^ZZ' and 'Growth Group SR^x'
             sage: forget()
 
-        Check that :trac:`19946` is fixed::
+        Check that :issue:`19946` is fixed::
 
             sage: A.<n> = AsymptoticRing('(QQ_+)^n * n^QQ', SR)
             sage: n.rpow(2)
@@ -2445,7 +2445,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
             sage: exp(x+1)
             e*e^x
 
-        See :trac:`19521`::
+        See :issue:`19521`::
 
             sage: A.<n> = AsymptoticRing('n^ZZ', SR.subring(no_variables=True))
             sage: exp(O(n^(-3))).parent()
@@ -3274,7 +3274,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
         .. WARNING::
 
             Once singular expansions around points other than infinity
-            are implemented (:trac:`20050`), this method will be
+            are implemented (:issue:`20050`), this method will be
             renamed to ``singularity_analysis``, the parameter
             ``zeta`` will be dropped (as it will be part of the
             singular expansion) and expansions around infinity will no
@@ -4418,7 +4418,7 @@ class AsymptoticRing(Algebra, UniqueRepresentation, WithLocals):
         .. WARNING::
 
             Once singular expansions around points other than infinity
-            are implemented (:trac:`20050`), the output in the case
+            are implemented (:issue:`20050`), the output in the case
             ``return_singular_expansions`` will change to return singular
             expansions around the singularities.
 
@@ -4617,7 +4617,7 @@ class AsymptoticRing(Algebra, UniqueRepresentation, WithLocals):
 
         TESTS:
 
-        :trac:`22392`::
+        :issue:`22392`::
 
             sage: from sage.rings.asymptotic.asymptotic_ring import AsymptoticRing
             sage: class MyAsymptoticRing(AsymptoticRing):
@@ -4748,7 +4748,7 @@ class AsymptoticRingFunctor(ConstructionFunctor):
             sage: AsymptoticRing(growth_group='x^ZZ', coefficient_ring=QQ).construction()[0]  # indirect doctest
             AsymptoticRing<x^ZZ>
 
-        :trac:`22392`::
+        :issue:`22392`::
 
             sage: from sage.rings.asymptotic.asymptotic_ring import AsymptoticRing
             sage: class MyAsymptoticRing(AsymptoticRing):
@@ -4781,7 +4781,7 @@ class AsymptoticRingFunctor(ConstructionFunctor):
 
         TESTS:
 
-        :trac:`22392`::
+        :issue:`22392`::
 
             sage: from sage.rings.asymptotic.asymptotic_ring import AsymptoticRing
             sage: class MyAsymptoticRing(AsymptoticRing):
@@ -4796,7 +4796,7 @@ class AsymptoticRingFunctor(ConstructionFunctor):
             sage: type(P(2) * A.gen())
             <class '...MyAsymptoticRing_with_category.element_class'>
 
-        :trac:`22396`::
+        :issue:`22396`::
 
             sage: A.<n> = AsymptoticRing('ZZ^n * n^ZZ', ZZ, default_prec=3)
             sage: 1/(QQ(1)+n)
@@ -4837,7 +4837,7 @@ class AsymptoticRingFunctor(ConstructionFunctor):
 
         TESTS:
 
-        :trac:`22396`::
+        :issue:`22396`::
 
             sage: AN = AsymptoticRing(growth_group='y^ZZ', coefficient_ring=QQ)
             sage: F_AN = AN.construction()[0]; F_AN._default_prec_ = None

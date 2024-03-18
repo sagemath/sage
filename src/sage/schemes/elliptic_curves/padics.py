@@ -295,7 +295,7 @@ def padic_regulator(self, p, prec=20, height=None, check_hypotheses=True):
         ....:     assert E.padic_regulator(5, prec) == full
 
     A case where the generator belongs to the formal group already
-    (:trac:`3632`)::
+    (:issue:`3632`)::
 
         sage: E = EllipticCurve([37,0])
         sage: E.padic_regulator(5,10)
@@ -481,7 +481,7 @@ def _multiply_point(E, R, P, m):
         sage: -67387681.sqrt() % 625     # sign is flipped here too
         541
 
-    Trivial cases (:trac:`3632`)::
+    Trivial cases (:issue:`3632`)::
 
         sage: _multiply_point(E, R, P, 1)
         (0, 624, 1)
@@ -595,7 +595,7 @@ def _multiple_to_make_good_reduction(E):
 
     - a positive integer ``n2``
 
-    EXAMPLE (:trac:`34790`)::
+    EXAMPLE (:issue:`34790`)::
 
         sage: from sage.schemes.elliptic_curves.padics import _multiple_to_make_good_reduction
         sage: E = EllipticCurve([-1728,-100656])
@@ -775,7 +775,7 @@ def padic_height(self, p, prec=20, sigma=None, check_hypotheses=True):
 
     TESTS:
 
-    Check that issue :trac:`20798` is solved::
+    Check that issue :issue:`20798` is solved::
 
         sage: E = EllipticCurve("91b")
         sage: h = E.padic_height(7,10)

@@ -1303,7 +1303,7 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
              covered by 4 affine patches defined by:
               a0*s^2*x^2 + a3*t^2*x^2 + a6*s*t*x*y + a1*s^2*y^2 + a2*t^2*y^2
 
-        Check that finite fields are handled correctly :trac:`14899`::
+        Check that finite fields are handled correctly :issue:`14899`::
 
             sage: F = GF(5^2, "a")                                                      # needs sage.rings.finite_rings
             sage: X = P1xP1.change_ring(F)                                              # needs sage.rings.finite_rings

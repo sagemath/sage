@@ -859,7 +859,7 @@ class Sequence_generic(sage.structure.sage_object.SageObject, list):
             sage: S.universe()
             'foobar'
 
-        We test that :trac:`13998` is fixed::
+        We test that :issue:`13998` is fixed::
 
             sage: S = Sequence([])
             sage: S.set_immutable()

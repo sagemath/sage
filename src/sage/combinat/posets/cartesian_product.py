@@ -193,7 +193,7 @@ class CartesianProductPoset(CartesianProduct):
 
         TESTS:
 
-        Check that :trac:`19999` is resolved::
+        Check that :issue:`19999` is resolved::
 
             sage: P = Poset((srange(2), lambda left, right: left <= right))
             sage: Q = cartesian_product((P, P), order='product')
@@ -360,7 +360,7 @@ class CartesianProductPoset(CartesianProduct):
                 This method uses the coercion framework to find a
                 suitable common parent.
 
-                This method can be deleted once :trac:`10130` is fixed and
+                This method can be deleted once :issue:`10130` is fixed and
                 provides these methods automatically.
 
             TESTS::
@@ -377,7 +377,7 @@ class CartesianProductPoset(CartesianProduct):
                 True
 
             The following example tests that the coercion gets involved in
-            comparisons; it can be simplified once :trac:`18182` is merged.
+            comparisons; it can be simplified once :issue:`18182` is merged.
             ::
 
                 sage: class MyCP(CartesianProductPoset):
@@ -423,7 +423,7 @@ class CartesianProductPoset(CartesianProduct):
                 This method uses the coercion framework to find a
                 suitable common parent.
 
-                This method can be deleted once :trac:`10130` is fixed and
+                This method can be deleted once :issue:`10130` is fixed and
                 provides these methods automatically.
 
             TESTS::
@@ -458,7 +458,7 @@ class CartesianProductPoset(CartesianProduct):
                 This method uses the coercion framework to find a
                 suitable common parent.
 
-                This method can be deleted once :trac:`10130` is fixed and
+                This method can be deleted once :issue:`10130` is fixed and
                 provides these methods automatically.
 
             TESTS::
@@ -493,7 +493,7 @@ class CartesianProductPoset(CartesianProduct):
                 This method uses the coercion framework to find a
                 suitable common parent.
 
-                This method can be deleted once :trac:`10130` is fixed and
+                This method can be deleted once :issue:`10130` is fixed and
                 provides these methods automatically.
 
             TESTS::

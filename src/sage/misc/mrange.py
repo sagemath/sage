@@ -114,7 +114,7 @@ def _xmrange_iter(iter_list, typ=list):
         sage: l1 is l2  # eeek, this is freaky!
         True
 
-    We check that :trac:`14285` has been resolved::
+    We check that :issue:`14285` has been resolved::
 
         sage: iter = sage.misc.mrange._xmrange_iter([ZZ,[]])
         sage: next(iter)
@@ -122,7 +122,7 @@ def _xmrange_iter(iter_list, typ=list):
         ...
         StopIteration
 
-    We check that :trac:`28521` is fixed::
+    We check that :issue:`28521` is fixed::
 
         sage: next(sage.misc.mrange._xmrange_iter([[], [1]]))
         Traceback (most recent call last):
@@ -209,7 +209,7 @@ def mrange_iter(iter_list, typ=list):
         sage: mrange_iter([range(5), range(3), range(-2)])
         []
 
-    This example is not empty, and should not be. See :trac:`6561`.
+    This example is not empty, and should not be. See :issue:`6561`.
 
     ::
 
@@ -292,7 +292,7 @@ class xmrange_iter:
         sage: list(xmrange_iter([range(5),range(3),range(0)]))
         []
 
-    This example is not empty, and should not be. See :trac:`6561`.
+    This example is not empty, and should not be. See :issue:`6561`.
 
     ::
 
@@ -460,7 +460,7 @@ def mrange(sizes, typ=list):
         sage: mrange([5,3,0])
         []
 
-    This example is not empty, and should not be. See :trac:`6561`.
+    This example is not empty, and should not be. See :issue:`6561`.
 
     ::
 
@@ -545,7 +545,7 @@ class xmrange:
         sage: list(xmrange([5,3,0]))
         []
 
-    This example is not empty, and should not be. See :trac:`6561`.
+    This example is not empty, and should not be. See :issue:`6561`.
 
     ::
 
@@ -617,7 +617,7 @@ def cartesian_product_iterator(X):
 
     TESTS:
 
-    Check that :trac:`28521` is fixed::
+    Check that :issue:`28521` is fixed::
 
         sage: list(cartesian_product_iterator([[], [1]]))
         []
@@ -708,7 +708,7 @@ def cantor_product(*args, **kwds):
         [(0, 1), (0, 2), (1, 2), (0, 3), (1, 3),
          (0, 4), (2, 3), (1, 4), (2, 4), (3, 4)]
 
-    Check that :trac:`24897` is fixed::
+    Check that :issue:`24897` is fixed::
 
         sage: from sage.misc.mrange import cantor_product
         sage: list(cantor_product([1]))

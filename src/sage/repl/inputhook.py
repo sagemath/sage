@@ -57,7 +57,7 @@ def install():
         sage: get_test_shell()
         <sage.repl.interpreter.SageTestShell object at ...>
 
-    Run the function twice, to check it is idempotent (see :trac:`35235`)::
+    Run the function twice, to check it is idempotent (see :issue:`35235`)::
 
         sage: from sage.repl.inputhook import install
         sage: install()

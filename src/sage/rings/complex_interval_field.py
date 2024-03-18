@@ -12,7 +12,7 @@ heavily modified:
 
 - Carl Witty (2007-10-24): rewrite for intervals
 
-- Niles Johnson (2010-08): :trac:`3893`: ``random_element()``
+- Niles Johnson (2010-08): :issue:`3893`: ``random_element()``
   should pass on ``*args`` and ``**kwds``.
 
 - Travis Scrimshaw (2012-10-18): Added documentation to get full coverage.
@@ -152,7 +152,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
     TESTS:
 
-    This checks that :trac:`15355` is fixed::
+    This checks that :issue:`15355` is fixed::
 
         sage: x + CIF(RIF(-2,2), 0)
         x + 0.?e1
@@ -218,7 +218,7 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
         TESTS:
 
-        Test that :trac:`19922` is fixed::
+        Test that :issue:`19922` is fixed::
 
             sage: c = ComplexIntervalField(128).an_element()
             sage: r = RealIntervalField(64).an_element()

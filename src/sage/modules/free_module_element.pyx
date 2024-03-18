@@ -12,7 +12,7 @@ AUTHORS:
 
 - Jeroen Demeyer (2015-02-24): Implement fast Cython methods
   ``get_unsafe`` and ``set_unsafe`` similar to other places in Sage
-  (:trac:`17562`)
+  (:issue:`17562`)
 
 EXAMPLES: We create a vector space over `\QQ` and a
 subspace of this space.
@@ -98,7 +98,7 @@ TESTS::
     sage: 2*p.row(0)                                                                    # needs sage.libs.pari
     (168, 194, 110, 116, 102)
 
-This is a test from :trac:`20211`::
+This is a test from :issue:`20211`::
 
     sage: MatrixSpace(ZZ, 1, 1)(vector([1]))
     [1]
@@ -376,7 +376,7 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
 
     If any of the arguments to vector have Python type int, real,
     or complex, they will first be coerced to the appropriate Sage
-    objects. This fixes :trac:`3847`. ::
+    objects. This fixes :issue:`3847`. ::
 
         sage: v = vector([int(0)]); v
         (0)
@@ -392,7 +392,7 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         Complex Double Field
 
     If the argument is a vector, it doesn't change the base ring. This
-    fixes :trac:`6643`::
+    fixes :issue:`6643`::
 
         sage: # needs sage.rings.number_field
         sage: K.<sqrt3> = QuadraticField(3)
@@ -470,7 +470,7 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
 
     TESTS:
 
-    We check that :trac:`31470` is fixed::
+    We check that :issue:`31470` is fixed::
 
         sage: k.<a> = GF(5^3)                                                           # needs sage.rings.finite_rings
         sage: S.<x> = k['x', k.frobenius_endomorphism()]                                # needs sage.rings.finite_rings
@@ -664,7 +664,7 @@ def prepare(v, R, degree=None):
         sage: prepare(c, None)                                                          # needs sage.symbolic
         ([2.0, 3.0], Real Double Field)
 
-    This checks a bug listed at :trac:`10595`. Without good evidence
+    This checks a bug listed at :issue:`10595`. Without good evidence
     for a ring, the default is the integers. ::
 
         sage: prepare([], None)
@@ -1298,7 +1298,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         These are some legacy doctests that were part of various specialized
         versions of the numerical approximation routine that were removed as
-        part of :trac:`12195`.  ::
+        part of :issue:`12195`.  ::
 
             sage: v = vector(ZZ, [1,2,3])
             sage: v.n()
@@ -1560,7 +1560,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         TESTS:
 
-        Check for :trac:`29630`::
+        Check for :issue:`29630`::
 
             sage: v = vector(QQ, 4, {0:1}, sparse=True)
             sage: v.change_ring(AA).is_sparse()                                         # needs sage.rings.number_field
@@ -1747,7 +1747,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             ...
             ValueError: 0.990000000000000 is not greater than or equal to 1
 
-        Norm works with Python integers (see :trac:`13502`). ::
+        Norm works with Python integers (see :issue:`13502`). ::
 
             sage: v = vector(QQ, [1,2])
             sage: v.norm(int(2))                                                        # needs sage.symbolic
@@ -1790,7 +1790,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: vector(F, [0,0,0,0]) == vector(F, [0,2,0,y])
             False
 
-        Verify that :trac:`33697` is fixed::
+        Verify that :issue:`33697` is fixed::
 
             sage: # needs sage.symbolic
             sage: v = vector(SR, [x])
@@ -2215,7 +2215,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         TESTS:
 
-        The following was fixed in :trac:`8800`::
+        The following was fixed in :issue:`8800`::
 
             sage: M = GF(5)^3
             sage: v = M((4,0,2))
@@ -2609,7 +2609,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             ...
             ArithmeticError: degrees (2 and 3) must be the same
 
-        Check that vectors with different base rings play out nicely (:trac:`3103`)::
+        Check that vectors with different base rings play out nicely (:issue:`3103`)::
 
             sage: vector(CDF, [2, 2]) * vector(ZZ, [1, 3])
             8.0
@@ -2622,7 +2622,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         TESTS:
 
-        Check for :trac:`33814`::
+        Check for :issue:`33814`::
 
             sage: rings = [ZZ, QQ, RDF, ZZ['x']]
             sage: rings += [RR]                                                         # needs sage.rings.real_mpfr
@@ -3948,7 +3948,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
             sage: parent(vector(RDF, (), sparse=False).apply_map(lambda x: x, sparse=False))
             Vector space of dimension 0 over Real Double Field
 
-        Check that the bug in :trac:`14558` has been fixed::
+        Check that the bug in :issue:`14558` has been fixed::
 
             sage: # needs sage.rings.finite_rings
             sage: F.<a> = GF(9)
@@ -4324,7 +4324,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
             sage: v  # last entry did not change
             (-1.00000000000000, 0.000000000000000, 0.666666666666667, 3.14159265358979, +infinity)
 
-        Check that :trac:`11751` is fixed::
+        Check that :issue:`11751` is fixed::
 
             sage: K.<x> = QQ[]
             sage: M = K^1
@@ -4750,7 +4750,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
 
         TESTS:
 
-        Test that :trac:`11751` is fixed::
+        Test that :issue:`11751` is fixed::
 
             sage: K.<x> = QQ[]
             sage: M = FreeModule(K, 1, sparse=True)
@@ -4775,7 +4775,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             sage: R.basis()[0][0].parent()
             Univariate Polynomial Ring in x over Rational Field
 
-        Test that :trac:`17101` is fixed::
+        Test that :issue:`17101` is fixed::
 
             sage: # needs sage.rings.real_interval_field
             sage: v = vector([RIF(-1, 1)], sparse=True)
@@ -4936,7 +4936,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
 
         TESTS:
 
-        Check that :trac:`19377` is fixed::
+        Check that :issue:`19377` is fixed::
 
             sage: w = vector(ZZ, (1,2,3), sparse=False)
             sage: v = vector(ZZ, (1,2,3), sparse=True)
@@ -4990,7 +4990,7 @@ cdef class FreeModuleElement_generic_sparse(FreeModuleElement):
             sage: w == v                                                                # needs sage.symbolic
             True
 
-        Check that the bug in :trac:`13929` has been fixed::
+        Check that the bug in :issue:`13929` has been fixed::
 
             sage: V = FreeModule(GF(3), 2, sparse=True)
             sage: a = V([0,1])

@@ -637,7 +637,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
             True
 
         This example is from Hamm, :arxiv:`1106.1826v1`. It addresses
-        an issue raised at :trac:`15239`::
+        an issue raised at :issue:`15239`::
 
             sage: X = toric_varieties.WP([1,4,2,3], names='z0 z1 z2 z3')
             sage: X.inject_variables()
@@ -659,7 +659,7 @@ class AlgebraicScheme_subscheme_toric(AlgebraicScheme_subscheme):
 
         TESTS:
 
-        Some corner cases discussed at :trac:`15239`::
+        Some corner cases discussed at :issue:`15239`::
 
             sage: P2.<x,y,z> = toric_varieties.P2()
             sage: P2.subscheme([]).is_nondegenerate()

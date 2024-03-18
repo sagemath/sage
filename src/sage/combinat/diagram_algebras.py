@@ -2483,7 +2483,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
     TESTS:
 
-    A computation that returned an incorrect result until :trac:`15958`::
+    A computation that returned an incorrect result until :issue:`15958`::
 
         sage: A = PartitionAlgebra(1,17)
         sage: g = SetPartitionsAk(1).list()
@@ -4673,7 +4673,7 @@ def pair_to_graph(sp1, sp2):
          ((-2, 2), (1, 2), None), ((-1, 1), (1, 2), None),
          ((-1, 1), (2, 1), None), ((-1, 2), (2, 2), None)]
 
-    Another example which used to be wrong until :trac:`15958`::
+    Another example which used to be wrong until :issue:`15958`::
 
         sage: sp3 = da.to_set_partition([[1, -1], [2], [-2]])
         sage: sp4 = da.to_set_partition([[1], [-1], [2], [-2]])
