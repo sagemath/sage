@@ -34,9 +34,12 @@ This creates configuration files:
 
 It can also be invoked as follows::
 
-   $ pipx run cookiecutter gh:sagemath/sage --directory="pkgs/sage-project-cookiecutter/sage_project_cookiecutter/user-project-template"
+   $ pipx run cruft create https://github.com/mkoeppe/sage --checkout sagemath-environment-cookiecutter \
+       --directory="pkgs/sage-project-cookiecutter/sage_project_cookiecutter/user-project-template"
 
-See https://cookiecutter.readthedocs.io/en/latest/README.html for available options.
+TODO: Update URL, remove --checkout ... before merging.
+
+See https://cruft.github.io/cruft/ for available options.
 
 
 Creating a pip-installable downstream package
@@ -49,6 +52,11 @@ Creating a pip-installable downstream package
 Additionally creates:
 
 - ``.github/workflows/``
+
+It can also be invoked as follows::
+
+   $ pipx run cruft create https://github.com/mkoeppe/sage --checkout sagemath-environment-cookiecutter \
+       --directory="pkgs/sage-project-cookiecutter/sage_project_cookiecutter/downstream-package-template"
 
 
 Adding Sage CI portability/integration testing infrastructure to an upstream project
@@ -64,6 +72,11 @@ Creates:
 - ``.devcontainer/portability-*``
 - ``.devcontainer/tox-docker-in-docker``
 
+It can also be invoked as follows::
+
+   $ pipx run cruft create https://github.com/mkoeppe/sage --checkout sagemath-environment-cookiecutter \
+       --directory="pkgs/sage-project-cookiecutter/sage_project_cookiecutter/upstream-package-template"
+
 
 Creating a pip-installable upstream package of the SageMath organization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -76,3 +89,16 @@ Additionally creates:
 
 - ``CODE_OF_CONDUCT.md``
 - ``CONTRIBUTING.md``
+
+It can also be invoked as follows::
+
+   $ pipx run cruft create https://github.com/mkoeppe/sage --checkout sagemath-environment-cookiecutter \
+       --directory="pkgs/sage-project-cookiecutter/sage_project_cookiecutter/sagemath-upstream-package-template"
+
+
+Updating a project
+~~~~~~~~~~~~~~~~~~
+
+::
+
+   $ pipx run cruft update
