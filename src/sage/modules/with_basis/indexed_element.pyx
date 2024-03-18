@@ -364,7 +364,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                *      *       *
                *
 
-        We can get the unicode art when there is no ``one_basis`` method
+        We can get the ascii art when there is no ``one_basis`` method
         (and the basis keys do not compare with ``None``)::
 
             sage: DC3 = groups.permutation.DiCyclic(3)
