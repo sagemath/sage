@@ -43,7 +43,7 @@ cdef class DecompositionNode(SageObject):
         self._dec = dec
         self._root = root
 
-    def _set_row_keys(self, row_keys):
+    cdef _set_row_keys(self, row_keys):
         """
         Set the row keys with consistency checking: if the
         value was previously set, it must remain the same.
@@ -53,12 +53,12 @@ cdef class DecompositionNode(SageObject):
         if self._row_keys is not None and self._row_keys != row_keys:
             raise ValueError(f"inconsistent row keys: should be {self._row_keys} "
                              f"but got {row_keys}")
-        if row_keys is not None and self.nrows() != len(row_keys):
+        if row_keys is not None and self._dec != NULL and self.nrows() != len(row_keys):
             raise ValueError(f"inconsistent row keys: should be of cardinality {self.nrows()} "
                              f"but got {row_keys}")
         self._row_keys = row_keys
 
-    def _set_column_keys(self, column_keys):
+    cdef _set_column_keys(self, column_keys):
         """
         Set the column keys with consistency checking: if the
         value was previously set, it must remain the same.
@@ -68,7 +68,7 @@ cdef class DecompositionNode(SageObject):
         if self._column_keys is not None and self._column_keys != column_keys:
             raise ValueError(f"inconsistent column keys: should be {self._column_keys} "
                              f"but got {column_keys}")
-        if column_keys is not None and self.ncols() != len(column_keys):
+        if column_keys is not None and self._dec != NULL and self.ncols() != len(column_keys):
             raise ValueError(f"inconsistent column keys: should be of cardinality {self.ncols()} "
                              f"but got {column_keys}")
         self._column_keys = column_keys
@@ -82,12 +82,16 @@ cdef class DecompositionNode(SageObject):
     def nrows(self):
         if self._row_keys is not None:
             return len(self._row_keys)
-        return CMRmatroiddecNumRows(self._dec)
+        if self._dec != NULL:
+            return CMRmatroiddecNumRows(self._dec)
+        raise RuntimeError('nrows undefined')
 
     def ncols(self):
         if self._column_keys is not None:
             return len(self._column_keys)
-        return CMRmatroiddecNumColumns(self._dec)
+        if self._dec != NULL:
+            return CMRmatroiddecNumColumns(self._dec)
+        raise RuntimeError('ncols undefined')
 
     def dimensions(self):
         return self.nrows(), self.ncols()
