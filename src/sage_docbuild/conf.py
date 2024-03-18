@@ -983,10 +983,11 @@ class DocstringTransform(SphinxTransform):
                         index = parent.index(node)
                         parent.remove(node)
                         abbr_node = nodes.abbreviation()
+                        remaining_text = text[len(f'{section}:'):]
                         abbr_node += nodes.Text(f'{section}:')
                         para = nodes.paragraph()
                         para += abbr_node
-                        para += nodes.Text(text[len(f'{section}:'):])
+                        para += nodes.Text(remaining_text)
                         parent.insert(index, para)
                         break
 
