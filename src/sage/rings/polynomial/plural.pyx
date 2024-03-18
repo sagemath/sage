@@ -2234,7 +2234,7 @@ cdef class NCPolynomial_plural(RingElement):
 
     cpdef dict monomial_coefficients(self, bint copy=True) noexcept:
         """
-        Return a dictonary representation of ``self`` with the keys
+        Return a dictionary representation of ``self`` with the keys
         the exponent vectors and the values the corresponding coefficients.
 
         INPUT:
