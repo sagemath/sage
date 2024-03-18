@@ -1500,6 +1500,8 @@ cdef class GapElement_Integer(GapElement):
 
         TESTS::
 
+            sage: libgap(0).sage()
+            0
             sage: large = libgap.eval('2^130');  large
             1361129467683753853853498429727072845824
             sage: large.sage()
@@ -1525,11 +1527,9 @@ cdef class GapElement_Integer(GapElement):
             if size > 0:
                 c_sign = 1
                 c_size = size
-            elif size < 0:
+            else: # Must have size < 0, or else self.value == 0 and self.is_C_int() == True
                 c_sign = -1
                 c_size = -size
-            else: # Something is wrong, fall back to string representation
-                return ring(self.String().sage())
             x = GAP_AddrInt(self.value) # pointer to limbs
             mpz_roinit_n(output, <mp_limb_t *>x, c_size)
             return ring(c_sign*mpz_get_pylong(output))
@@ -1722,7 +1722,7 @@ cdef class GapElement_IntegerMod(GapElement):
         r"""
         TESTS::
 
-            sage: n = libgap.eval('One(ZmodnZ(123)) * 13')
+            sage: n = libgap.ZmodnZObj(13, 123)
             sage: ZZ(n)
             13
             sage: ZZ(-n)
@@ -1853,6 +1853,8 @@ cdef class GapElement_FiniteField(GapElement):
             a^2 + a + 1
             sage: n.sage(ring=GF(2^8, 'a'))
             a^7 + a^6 + a^4 + a^2 + a + 1
+            sage: (n^3).sage()
+            1
 
         Check that :issue:`23153` is fixed::
 
