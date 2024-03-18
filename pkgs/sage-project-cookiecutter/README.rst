@@ -25,7 +25,7 @@ Creating a user project
 
 ::
 
-   $ sage-project create PROJECT-DIRECTORY
+   $ sage-project-cookiecutter create PROJECT-DIRECTORY
 
 This creates configuration files:
 
@@ -34,7 +34,7 @@ This creates configuration files:
 
 It can also be invoked as follows::
 
-   $ pipx run cookiecutter gh:sagemath/sage --directory="pkgs/sage-project/sage_project/user-project-template"
+   $ pipx run cookiecutter gh:sagemath/sage --directory="pkgs/sage-project-cookiecutter/sage_project_cookiecutter/user-project-template"
 
 See https://cookiecutter.readthedocs.io/en/latest/README.html for available options.
 
@@ -44,7 +44,7 @@ Creating a pip-installable downstream package
 
 ::
 
-  $ sage-project create --downstream-package PROJECT-DIRECTORY
+  $ sage-project-cookiecutter create --downstream-package PROJECT-DIRECTORY
 
 Additionally creates:
 
@@ -56,10 +56,23 @@ Adding Sage CI portability/integration testing infrastructure to an upstream pro
 
 ::
 
-   $ sage-project create --upstream-package PROJECT-DIRECTORY
+   $ sage-project-cookiecutter create --upstream-package PROJECT-DIRECTORY
 
 Creates:
 
 - ``.github/workflows/ci-sage.yml``
 - ``.devcontainer/portability-*``
 - ``.devcontainer/tox-docker-in-docker``
+
+
+Creating a pip-installable upstream package of the SageMath organization
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+   $ sage-project-cookiecutter create --sagemath-upstream-package PROJECT-DIRECTORY
+
+Additionally creates:
+
+- ``CODE_OF_CONDUCT.md``
+- ``CONTRIBUTING.md``

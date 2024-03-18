@@ -3,7 +3,7 @@ requires = ["setuptools>=61.2"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "sage-project"
+name = "sage-project-cookiecutter"
 description = "Sage: Open Source Mathematics Software: Script for maintaining a SageMath-based project"
 license = {text = "GNU General Public License (GPL) v2 or later"}
 authors = [{name = "The Sage Developers", email = "sage-support@googlegroups.com"}]
@@ -18,12 +18,14 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: Implementation :: CPython",
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
 urls = {Homepage = "https://www.sagemath.org"}
 dependencies = [
     "cookiecutter",
+    "cruft",
 ]
 dynamic = ["version"]
 
@@ -38,7 +40,7 @@ packages = [
 include-package-data = false
 
 [tools.setuptools.package-data]
-"sage_project" = [
+"sage_project_cookiecutter" = [
     "template*/**"
 ]
 
