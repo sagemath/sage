@@ -19,6 +19,7 @@ AUTHORS:
 ##############################################################################
 
 from sage.misc.abstract_method import abstract_method
+from sage.misc.cachefunc import cached_method
 from sage.structure.element import Element
 from sage.combinat.free_module import CombinatorialFreeModule, CombinatorialFreeModule_Tensor
 from sage.categories.modules import Modules
@@ -182,7 +183,7 @@ class Representation_abstract(CombinatorialFreeModule):
         - ``G`` -- a finitely-generated semigroup (default: the semigroup
           this is a representation of)
 
-        This also accepts the group to be the first argument to be the group.
+        This also accepts the first argument to be the group.
 
         OUTPUT:
 
@@ -198,7 +199,7 @@ class Representation_abstract(CombinatorialFreeModule):
             sage: [T.lift(b) for b in T.basis()]
             [() - (1,2,3), -(1,2,3) + (1,3,2), (2,3) - (1,2), -(1,2) + (1,3)]
 
-        We check the different inputs work
+        We check the different inputs work::
 
             sage: R.twisted_invariant_module([2,0,-1], G) is T
             True
@@ -299,13 +300,15 @@ class Representation_abstract(CombinatorialFreeModule):
             sage: L = DC3.regular_representation(QQ, side='left')
             sage: E5 = L.exterior_power(5)
             sage: E5
-            Exterior algebra representation of Left Regular Representation of
+            Exterior power representation of Left Regular Representation of
              Dicyclic group of order 12 as a permutation group over Rational Field
              in degree 5
             sage: L.exterior_power()
             Exterior algebra representation of Left Regular Representation of
              Dicyclic group of order 12 as a permutation group over Rational Field
         """
+        if degree is None or degree == 0:
+            return Representation_ExteriorAlgebra(self, degree)
         return Representation_Exterior(self, degree)
 
     def symmetric_power(self, degree=None):
@@ -838,9 +841,9 @@ Representation_abstract.Tensor = Representation_Tensor
 
 class Representation_Exterior(Representation_abstract):
     r"""
-    The exterior algebra representation (possibly in a fixed degree).
+    The exterior power representation (in a fixed degree).
     """
-    def __init__(self, rep, degree=None, **options):
+    def __init__(self, rep, degree=None, category=None, **options):
         r"""
         Initialize ``self``.
 
@@ -849,14 +852,12 @@ class Representation_Exterior(Representation_abstract):
             sage: G = groups.matrix.GL(3, 2)
             sage: R = G.regular_representation(side="right")
             sage: E2 = R.exterior_power(2)
-            sage: TestSuite(E2).run()
-            sage: E0 = R.exterior_power(0)
+            sage: E2.category()
+            Category of finite dimensional modules with basis over Integer Ring
             sage: TestSuite(E2).run()
 
             sage: G = groups.matrix.GL(2, 3)
             sage: L = G.regular_representation(side="left")
-            sage: E = L.exterior_power()
-            sage: TestSuite(E).run()
             sage: E48 = L.exterior_power(48)
             sage: TestSuite(E48).run()
 
@@ -886,8 +887,10 @@ class Representation_Exterior(Representation_abstract):
         self._basis_order = list(rep.basis().keys())
         self._inv_map = {b: i for i, b in enumerate(self._basis_order)}
         ind = CliffordAlgebraIndices(dim, degree)
-        Representation_abstract.__init__(self, rep.semigroup(), rep.base_ring(), rep.side(),
-                                         ind, **options)
+        R = rep.base_ring()
+        category = Modules(R).WithBasis().or_subcategory(category)
+        Representation_abstract.__init__(self, rep.semigroup(), R, rep.side(),
+                                         ind, category=category, **options)
 
     def _repr_(self):
         r"""
@@ -898,17 +901,16 @@ class Representation_Exterior(Representation_abstract):
             sage: DC3 = groups.permutation.DiCyclic(3)
             sage: L = DC3.regular_representation(QQ, side='left')
             sage: L.exterior_power(7)
-            Exterior algebra representation of Left Regular Representation of
+            Exterior power representation of Left Regular Representation of
              Dicyclic group of order 12 as a permutation group over Rational Field
              in degree 7
             sage: L.exterior_power()
             Exterior algebra representation of Left Regular Representation of
              Dicyclic group of order 12 as a permutation group over Rational Field
         """
-        ret = "Exterior algebra representation of {}".format(repr(self._rep))
-        if self._degree is not None:
-            ret += " in degree {}".format(self._degree)
-        return ret
+        if self._degree is None:
+            return "Exterior algebra representation of {}".format(repr(self._rep))
+        return "Exterior power representation of {} in degree {}".format(repr(self._rep), self._degree)
 
     def _latex_(self):
         r"""
@@ -924,9 +926,9 @@ class Representation_Exterior(Representation_abstract):
             \bigwedge ...
         """
         from sage.misc.latex import latex
-        if self._degree is not None:
-            return "\\bigwedge^{{{}}} {}".format(self._degree, latex(self._rep))
-        return "\\bigwedge " + latex(self._rep)
+        if self._degree is None:
+            return "\\bigwedge " + latex(self._rep)
+        return "\\bigwedge^{{{}}} ".format(self._degree) + latex(self._rep)
 
     def _repr_term(self, m):
         r"""
@@ -1083,9 +1085,76 @@ class Representation_Exterior(Representation_abstract):
         return self.element_class(self, temp._monomial_coefficients)
 
 
+class Representation_ExteriorAlgebra(Representation_Exterior):
+    r"""
+    The exterior algebra representation.
+    """
+    def __init__(self, rep, degree=None, category=None, **options):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: G = groups.matrix.GL(3, 2)
+            sage: R = G.regular_representation(side="right")
+            sage: E0 = R.exterior_power(0)
+            sage: E0.category()
+            Category of finite dimensional algebras with basis over Integer Ring
+            sage: TestSuite(E0).run()
+
+            sage: G = groups.matrix.GL(2, 3)
+            sage: L = G.regular_representation(side="left")
+            sage: E = L.exterior_power()
+            sage: E.category()
+            Category of finite dimensional algebras with basis over Integer Ring
+            sage: TestSuite(E).run()
+        """
+        R = rep.base_ring()
+        from sage.categories.algebras_with_basis import AlgebrasWithBasis
+        category = AlgebrasWithBasis(R).or_subcategory(category)
+        Representation_Exterior.__init__(self, rep, degree=degree, category=category, **options)
+
+    @cached_method
+    def one_basis(self):
+        r"""
+        Return the basis element indexing `1` in ``self`` if it exists.
+
+        EXAMPLES::
+
+            sage: S3 = SymmetricGroup(3)
+            sage: L = S3.regular_representation(side="left")
+            sage: E = L.exterior_power()
+            sage: E.one_basis()
+            0
+            sage: E0 = L.exterior_power(0)
+            sage: E0.one_basis()
+            0
+        """
+        return self._indices([])
+
+    def product_on_basis(self, x, y):
+        r"""
+        Return the product of basis elements indexed by ``x`` and ``y``.
+
+        EXAMPLES::
+
+            sage: S3 = SymmetricGroup(3)
+            sage: L = S3.regular_representation(side="left")
+            sage: E = L.exterior_power()
+            sage: B = list(E.basis())
+            sage: B[:7]
+            [1, (), (1,3,2), (1,2,3), (2,3), (1,3), (1,2)]
+            sage: B[2] * B[4]  # indirect doctest
+            (1,3,2)*(2,3)
+        """
+        B = self._extalg.basis()
+        temp = B[x] * B[y]
+        return self.element_class(self, temp._monomial_coefficients)
+
+
 class Representation_Symmetric(Representation_abstract):
     r"""
-    The symmetric algebra representation in a fixed degree.
+    The symmetric power representation in a fixed degree.
     """
     def __init__(self, rep, degree, **options):
         r"""

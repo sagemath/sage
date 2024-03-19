@@ -113,10 +113,16 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
             00001
             000001
             0000001
+
+            sage: idx = CliffordAlgebraIndices(0)
+            sage: idx([])
+            0
         """
         if isinstance(x, (list, tuple, set, frozenset)):
             if len(x) > self._nbits:
                 raise ValueError(f"{x=} is too long")
+            if not x:
+                return FrozenBitset()
             return FrozenBitset(x)
 
         if isinstance(x, int):
