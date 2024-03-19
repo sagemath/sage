@@ -149,11 +149,6 @@ cdef class DecompositionNode(SageObject):
         """
         return self._column_keys
 
-    def parent_indices(self):
-        r"""
-        """
-        return self._parent_indices
-
     def set_default_keys(self):
         row_keys = self.row_keys()
         column_keys = self.column_keys()
@@ -207,9 +202,9 @@ cdef class DecompositionNode(SageObject):
             (True, OneSumNode (6×4) with 2 children)
             sage: C = certificate.summands(); C
             (GraphicNode (3×2), GraphicNode (3×2))
-            sage: C[0].parent_rows_and_columns()
+            sage: certificate.child_indices()[0]
             ((0, 1, 2), (0, 1))
-            sage: C[1].parent_rows_and_columns()
+            sage: certificate.child_indices()[1]
             ((3, 4, 5), (2, 3))
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -238,7 +233,7 @@ cdef class DecompositionNode(SageObject):
         if isinstance(self.row_keys()[0], ElementKey):
             return self.ancestor_rows_and_columns()
         else:
-            return self.parent_indices()
+            raise ValueError("The child indices can be accessed in the parent node.")
 
     @cached_method
     def ancestor_rows_and_columns(self):
@@ -347,8 +342,7 @@ cdef class DecompositionNode(SageObject):
             child = create_DecompositionNode(child_dec,
                                              row_keys=child_row_indices,
                                              column_keys=child_column_indices)
-        child._parent_indices = child_row_indices, child_column_indices
-        return child, (child_row_indices, child_column_indices)
+        return child, child_row_indices, child_column_indices
 
     def _children(self):
         if self._child_nodes is not None:
@@ -678,8 +672,7 @@ cdef class OneSumNode(SumNode):
             OneSumNode (4×4) with 2 children
             sage: OneSumNode.check(M2,
             ....:                  certificate.summand_matrices(),
-            ....:                  [summand.parent_rows_and_columns()
-            ....:                   for summand in certificate.summands()])
+            ....:                  certificate.child_indices())
 
         Symbolic identities::
 
@@ -785,8 +778,8 @@ cdef class TwoSumNode(SumNode):
             [ 1  1  0  0| 1  0  1  0]
             [ 0  0  0  0| 1  0  1  1]
             [ 0  0  0  0| 0 -1  1  1]
-            sage: [M.parent_rows_and_columns() for M in certificate1.child_nodes()]
-            [((0, 1, 2, 3, 4), (0, 1, 2, 3)), ((4, 5, 6, 7), (0, 4, 5, 6, 7))]
+            sage: certificate1.child_indices()
+            (((0, 1, 2, 3, 4), (0, 1, 2, 3)), ((4, 5, 6, 7), (0, 4, 5, 6, 7)))
             sage: M_perm = M.matrix_from_rows_and_columns([4, 6, 5, 7, 0, 1, 2, 3], range(M.ncols()))
             sage: M_perm
             [ 1  1  0  0  1  1  0  0]
@@ -816,8 +809,8 @@ cdef class TwoSumNode(SumNode):
             [ 0  0  0  0| 1  0  1  1]
             [ 1  1  0  0| 1  0  1  0]
             [ 0  0  0  0| 0 -1  1  1]
-            sage: [M.parent_rows_and_columns() for M in certificate2.child_nodes()]
-            [((4, 5, 6, 7, 0), (0, 1, 2, 3)), ((0, 1, 2, 3), (0, 4, 5, 6, 7))]
+            sage: certificate2.child_indices()
+            (((4, 5, 6, 7, 0), (0, 1, 2, 3)), ((0, 1, 2, 3), (0, 4, 5, 6, 7)))
         """
         M1, M2 = self.summand_matrices()
         return Matrix_cmr_chr_sparse.two_sum(M1, M2, M1.nrows() - 1, 0, "bottom_left")
@@ -854,12 +847,10 @@ cdef class ThreeSumNode(SumNode):
             [-1 -1  0  0  1]
             sage: C1.parent_rows_and_columns()
             ((0, 1, a, 3), (b, c, d, e, +3+e))
-            sage: C1.parent_indices()
-            ((0, 1, 4, 3), (1, 2, 3, 4, 4))
             sage: C2.parent_rows_and_columns()
             ((0, 2, 3, 5), (+0+d, d, 4, e, f))
-            sage: C2.parent_indices()
-            ((0, 2, 3, 5), (3, 3, 0, 4, 5))
+            sage: C.child_indices()
+            (((0, 1, 4, 3), (1, 2, 3, 4, 4)), ((0, 2, 3, 5), (3, 3, 0, 4, 5)))
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: R12_large = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 12, sparse=True),
@@ -1092,13 +1083,11 @@ cdef class ThreeSumNode(SumNode):
                                    for i in range(child1_nrows))
         child_column1_indices = tuple(CMRelementToColumnIndex(parent_columns1[i])
                                       for i in range(child1_ncols))
-        child1._parent_indices = child_row1_indices, child_column1_indices
 
         child_row2_indices = tuple(CMRelementToRowIndex(parent_rows2[i])
                                    for i in range(child2_nrows))
         child_column2_indices = tuple(CMRelementToColumnIndex(parent_columns2[i])
                                       for i in range(child2_ncols))
-        child2._parent_indices = child_row2_indices, child_column2_indices
 
         self._child_nodes = ((child1, child_row1_indices, child_column1_indices),
                              (child2, child_row2_indices, child_column2_indices))

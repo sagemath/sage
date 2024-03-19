@@ -8,10 +8,7 @@ cdef class DecompositionNode(SageObject):
     cdef CMR_MATROID_DEC *_dec
     cdef object _row_keys
     cdef object _column_keys
-    cdef public object _parent_indices
     cdef object _child_nodes
-    cdef object _child_row_keys
-    cdef object _child_column_keys
 
     cdef _set_dec(self, CMR_MATROID_DEC *dec)
     cdef _set_row_keys(self, row_keys)
