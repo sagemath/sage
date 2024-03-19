@@ -1,9 +1,9 @@
 Indices and Tables
 ==================
 
-* :ref:`genindex`_
-* :ref:`modindex`_
-* :ref:`search`_
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
 
 ..
   comment: the following math environment forces Sphinx to load MathJax
