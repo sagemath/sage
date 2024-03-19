@@ -305,7 +305,7 @@ Coercions and Functorial Constructions
 --------------------------------------
 
 The :class:`AsymptoticRing` fully supports
-:ref:`coercion <coercion>`_. For example, the coefficient ring is automatically extended when needed::
+:ref:`coercion <coercion>`. For example, the coefficient ring is automatically extended when needed::
 
     sage: A
     Asymptotic Ring <z^QQ> over Integer Ring
