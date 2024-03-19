@@ -388,10 +388,12 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         if scalar_mult is None:
             scalar_mult = "*"
 
+        one_basis = None
         try:
-            one_basis = self.parent().one_basis()
-        except AttributeError:
-            one_basis = None
+            if self.parent().one_basis is not NotImplemented:
+                one_basis = self.parent().one_basis()
+        except (AttributeError, NotImplementedError, ValueError, TypeError):
+            pass
 
         for monomial, c in terms:
             b = repr_monomial(monomial) # PCR
@@ -471,10 +473,12 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         if scalar_mult is None:
             scalar_mult = "*"
 
+        one_basis = None
         try:
-            one_basis = self.parent().one_basis()
-        except AttributeError:
-            one_basis = None
+            if self.parent().one_basis is not NotImplemented:
+                one_basis = self.parent().one_basis()
+        except (AttributeError, NotImplementedError, ValueError, TypeError):
+            pass
 
         for (monomial, c) in terms:
             b = repr_monomial(monomial)  # PCR
