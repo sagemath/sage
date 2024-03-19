@@ -1484,11 +1484,11 @@ cdef _class(CMR_MATROID_DEC *dec):
     if typ == CMR_MATROID_DEC_TYPE_THREE_SUM:
         return ThreeSumNode
     if typ == CMR_MATROID_DEC_TYPE_GRAPH:
-        if typ == CMR_MATROID_DEC_TYPE_COGRAPH:
-            return PlanarNode
         return GraphicNode
     if typ == CMR_MATROID_DEC_TYPE_COGRAPH:
         return CographicNode
+    if typ == CMR_MATROID_DEC_TYPE_PLANAR:
+        return PlanarNode
     if typ < -1:
         return SpecialLeafNode
     if typ == CMR_MATROID_DEC_TYPE_SERIES_PARALLEL:
@@ -1501,7 +1501,7 @@ cdef _class(CMR_MATROID_DEC *dec):
         return ThreeConnectedIrregularNode
     if typ == CMR_MATROID_DEC_TYPE_UNKNOWN:
         return UnknownNode
-    assert NotImplementedError
+    raise NotImplementedError
 
 
 cdef create_DecompositionNode(CMR_MATROID_DEC *dec, row_keys=None, column_keys=None):
