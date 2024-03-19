@@ -286,8 +286,10 @@ cdef class DecompositionNode(SageObject):
 
     def nchildren(self):
         r"""
-        Returns the number of children of the node.
+        Return the number of children of the node.
         """
+        if self._dec == NULL:
+            return 0
         return CMRmatroiddecNumChildren(self._dec)
 
     cdef _CMRelement_to_key(self, CMR_ELEMENT element):
@@ -1284,11 +1286,21 @@ cdef class SymbolicNode(DecompositionNode):
 
             sage: from sage.matrix.seymour_decomposition import SymbolicNode
             sage: X = SymbolicNode('X', row_keys='abc', column_keys=range(6)); X
-            sage: XX = X.one_sum(X)  # error - not disjoint
-            sage: XX = X.one_sum(X, summands_ids=(0, 1))
-            sage: XX = X.one_sum(X, summands_ids=(None, 'other'))
+            SymbolicNode X (3×6)
+            sage: XX = X.one_sum(X)
+            Traceback (most recent call last):
+            ...
+            ValueError: keys must be disjoint...
+            sage: XX = X.one_sum(X, summand_ids=(0, 1)); XX
+            OneSumNode (6×12) with 2 children
+            sage: XX.row_keys()
+            ((0, 'a'), (0, 'b'), (0, 'c'), (1, 'a'), (1, 'b'), (1, 'c'))
             sage: T = XX.as_ordered_tree(); T
+            OneSumNode (6×12) with 2 children[SymbolicNode X (3×6)[], SymbolicNode X (3×6)[]]
             sage: unicode_art(T)
+            ╭────────────────OneSumNode (6×12) with 2 children
+            │                    │
+            SymbolicNode X (3×6) SymbolicNode X (3×6)
         """
         self._symbol = symbol
         self._set_row_keys(row_keys)
