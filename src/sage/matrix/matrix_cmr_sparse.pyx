@@ -1316,18 +1316,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         if <bint> result:
             sage_graph = _sage_graph(graph)
-            if row_keys is None:
-                sage_forest_edges = tuple(_sage_edge(graph, forest_edges[row])
-                                          for row in range(self.nrows()))
-            else:
-                sage_forest_edges = {row_key: _sage_edge(graph, forest_edges[row])
-                                     for row, row_key in enumerate(row_keys)}
-            if column_keys is None:
-                sage_coforest_edges = tuple(_sage_edge(graph, coforest_edges[column])
-                                            for column in range(self.ncols()))
-            else:
-                sage_coforest_edges = {column_key: _sage_edge(graph, coforest_edges[column])
-                                       for column, column_key in enumerate(column_keys)}
+            sage_forest_edges = _sage_edges(graph, forest_edges, self.nrows(), row_keys)
+            sage_coforest_edges = _sage_edges(graph, coforest_edges, self.ncols(), column_keys)
             return True, (sage_graph, sage_forest_edges, sage_coforest_edges)
 
         return False, NotImplemented  # submatrix TBD
@@ -1373,18 +1363,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         if <bint> result:
             sage_graph = _sage_graph(graph)
-            if row_keys is None:
-                sage_forest_edges = tuple(_sage_edge(graph, forest_edges[row])
-                                          for row in range(self.nrows()))
-            else:
-                sage_forest_edges = {row_key: _sage_edge(graph, forest_edges[row])
-                                     for row, row_key in enumerate(row_keys)}
-            if column_keys is None:
-                sage_coforest_edges = tuple(_sage_edge(graph, coforest_edges[column])
-                                            for column in range(self.ncols()))
-            else:
-                sage_coforest_edges = {column_key: _sage_edge(graph, coforest_edges[column])
-                                       for column, column_key in enumerate(column_keys)}
+            sage_forest_edges = _sage_edges(graph, forest_edges, self.nrows(), row_keys)
+            sage_coforest_edges = _sage_edges(graph, coforest_edges, self.ncols(), column_keys)
             return True, (sage_graph, sage_forest_edges, sage_coforest_edges)
 
         return False, NotImplemented  # submatrix TBD
@@ -1761,6 +1741,14 @@ cdef _set_cmr_regular_parameters(CMR_REGULAR_PARAMS *params, dict kwds):
 
 cdef _sage_edge(CMR_GRAPH *graph, CMR_GRAPH_EDGE e):
     return Integer(CMRgraphEdgeU(graph, e)), Integer(CMRgraphEdgeV(graph, e))
+
+
+cdef _sage_edges(CMR_GRAPH *graph, CMR_GRAPH_EDGE *edges, int n, keys):
+    if keys is None:
+        return tuple(_sage_edge(graph, edges[i])
+                     for i in range(n))
+    return {key: _sage_edge(graph, edges[i])
+            for i, key in enumerate(keys)}
 
 
 cdef _sage_graph(CMR_GRAPH *graph):

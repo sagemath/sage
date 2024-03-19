@@ -23,7 +23,7 @@ from sage.rings.integer_ring import ZZ
 from sage.structure.sage_object cimport SageObject
 
 from .constructor import Matrix
-from .matrix_cmr_sparse cimport Matrix_cmr_chr_sparse, _sage_edge, _sage_graph
+from .matrix_cmr_sparse cimport Matrix_cmr_chr_sparse, _sage_edges, _sage_graph
 from .matrix_space import MatrixSpace
 
 
@@ -1220,7 +1220,7 @@ cdef class BaseGraphicNode(DecompositionNode):
         cdef CMR_GRAPH *graph = CMRmatroiddecGraph(self._dec)
         cdef size_t num_edges = CMRmatroiddecGraphSizeForest(self._dec)
         cdef CMR_GRAPH_EDGE *edges = CMRmatroiddecGraphForest(self._dec)
-        self._forest_edges = tuple(_sage_edge(graph, edges[i]) for i in range(num_edges))
+        self._forest_edges = _sage_edges(graph, edges, num_edges, None)
         return self._forest_edges
 
     def coforest_edges(self):
@@ -1229,7 +1229,7 @@ cdef class BaseGraphicNode(DecompositionNode):
         cdef CMR_GRAPH *graph = CMRmatroiddecGraph(self._dec)
         cdef size_t num_edges = CMRmatroiddecGraphSizeCoforest(self._dec)
         cdef CMR_GRAPH_EDGE *edges = CMRmatroiddecGraphCoforest(self._dec)
-        self._coforest_edges = tuple(_sage_edge(graph, edges[i]) for i in range(num_edges))
+        self._coforest_edges = _sage_edges(graph, edges, num_edges, None)
         return self._coforest_edges
 
 

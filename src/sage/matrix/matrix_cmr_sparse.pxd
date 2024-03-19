@@ -23,6 +23,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
     cdef _from_cmr(CMR_CHRMAT *mat, bint immutable=?)
 
 cdef _sage_edge(CMR_GRAPH *graph, CMR_GRAPH_EDGE e)
+cdef _sage_edges(CMR_GRAPH *graph, CMR_GRAPH_EDGE *edges, int n, keys)
 cdef _sage_graph(CMR_GRAPH *graph)
 
 cdef _sage_arc(CMR_GRAPH *graph, CMR_GRAPH_EDGE e, bint reversed)
