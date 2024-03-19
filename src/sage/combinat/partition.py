@@ -2485,6 +2485,95 @@ class Partition(CombinatorialElement):
         par = Partitions_n(sum(self))
         return par.element_class(par, conjugate(self))
 
+    def franklin_glaisher(self, s):
+        r"""
+        Apply the Franklin-Glaisher bijection to ``self``.
+
+        INPUT:
+
+        - ``s`` -- positive integer
+
+        OUTPUT:
+
+        The Franklin-Glaisher bijection, with parameter `s`, returns
+        a partition whose set of parts that are repeated at least `s`
+        times equals the set of parts divisible by `s` in ``self``,
+        after dividing each part by `s`.
+
+        EXAMPLES::
+
+            sage: Partition([4, 3, 2, 2, 1]).franklin_glaisher(2)
+            [3, 2, 2, 1, 1, 1, 1, 1]
+
+        TESTS::
+
+            sage: d = lambda la, s: set(p / s for p in la if p % s == 0)
+            sage: r = lambda la, s: set(p for p in la if list(la).count(p) >= s)
+            sage: all(d(mu, s) == r(mu.franklin_glaisher(s), s)
+            ....:     for n in range(20) for mu in Partitions(n)
+            ....:     for s in range(1, 5))
+            True
+        """
+        mu = []
+        for p, m in enumerate(self.to_exp(), 1):
+            if not p % s:
+                mu.extend([p//s]*(m*s))
+            else:
+                mu.extend(p * v * s**i for i, v in enumerate(m.digits(s)) if v)
+
+        P = self.parent()
+        return P.element_class(P, sorted(mu, reverse=True))
+
+    def franklin_glaisher_inverse(self, s):
+        r"""
+        Apply the inverse of the Franklin-Glaisher bijection to ``self``.
+
+        INPUT:
+
+        - ``s`` -- positive integer
+
+        OUTPUT:
+
+        The inverse of the Franklin-Glaisher bijection, with
+        parameter `s`, returns a partition whose set of parts that
+        are divisible by `s`, after dividing each by `s`, equals the
+        equals the set of parts repeated at least `s` times in
+        ``self``.
+
+        EXAMPLES::
+
+            sage: Partition([4, 3, 2, 2, 1]).franklin_glaisher(2)
+            [3, 2, 2, 1, 1, 1, 1, 1]
+            sage: Partition([3, 2, 2, 1, 1, 1, 1, 1]).franklin_glaisher_inverse(2)
+            [4, 3, 2, 2, 1]
+
+        TESTS::
+
+            sage: d = lambda la, s: set(p / s for p in la if p % s == 0)
+            sage: r = lambda la, s: set(p for p in la if list(la).count(p) >= s)
+            sage: all(r(mu, s) == d(mu.franklin_glaisher_inverse(s), s)
+            ....:     for n in range(20) for mu in Partitions(n)
+            ....:     for s in range(1, 5))
+            True
+        """
+        mu = []
+        nu = []
+        for p, m in enumerate(self.to_exp(), 1):
+            mu.extend([p*s]*(m // s))
+            nu.extend([p]*(m % s))
+
+        i = 0
+        while i < len(nu):
+            p = nu[i]
+            if not p % s:
+                del nu[i]
+                nu.extend([p // s]*s)
+            else:
+                i += 1
+
+        P = self.parent()
+        return P.element_class(P, sorted(mu + nu, reverse=True))
+
     def suter_diagonal_slide(self, n, exp=1):
         r"""
         Return the image of ``self`` in `Y_n` under Suter's diagonal slide
