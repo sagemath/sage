@@ -5,7 +5,7 @@
 r"""
 Dense Matrices over `\mathbb F_q`, with `q<255`.
 
-This module is a wrapper for the :ref:`Aachen C-MeatAxe library <spkg_meataxe>`_,
+This module is a wrapper for the :ref:`Aachen C-MeatAxe library <spkg_meataxe>`,
 improved by an implementation of the Winograd-Strassen multiplication
 algorithm. It provides matrices over the finite field `\mathbb F_q`,
 where `q\le 255`.
