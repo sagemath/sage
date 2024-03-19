@@ -84,7 +84,7 @@ Sage en tu computador. Aquí hacemos simplemente dos comentarios:
    "Haciendo que TeX conozca a SageTeX" en la guía de instalación de Sage
    `Sage installation guide <http://doc.sagemath.org/html/en/installation/index.html>`_
    (:ref:`Este enlace
-   <installation-guide>`_ debería llevarte a tu copia
+   <installation-guide>` debería llevarte a tu copia
    local de la guía de instalación). Es bastante sencillo: sólo
    necesitas establecer una variable de entorno o copiar un solo archivo
    en un directorio en el que TeX va a buscar.
