@@ -30,15 +30,15 @@ This documentation is licensed under a `Creative Commons Attribution-Share Alike
 Introduction to Sage
 --------------------
 
-* :ref:`Introductory Sage Tutorial (PREP) <prep-intro-tutorial>`_
-* :ref:`Sage's main tutorial <tutorial>`_
+* :ref:`Introductory Sage Tutorial (PREP) <prep-intro-tutorial>`
+* :ref:`Sage's main tutorial <tutorial>`
 
 .. _programming_design:
 
 Introduction to Python
 ----------------------
 
-* :ref:`Tutorial: Sage Introductory Programming (PREP) <prep-programming>`_
+* :ref:`Tutorial: Sage Introductory Programming (PREP) <prep-programming>`
 * :ref:`tutorial-programming-python`
 * :ref:`tutorial-comprehensions`
 * :ref:`tutorial-objects-and-classes`
@@ -47,9 +47,9 @@ Introduction to Python
 Calculus and Plotting
 ---------------------
 
-* :ref:`Tutorial: Symbolics and Plotting (PREP) <prep-symbolics-and-basic-plotting>`_
-* :ref:`Tutorial: Calculus (PREP) <prep-calculus>`_
-* :ref:`Tutorial: Advanced-2D Plotting (PREP) <prep-advanced-2dplotting>`_
+* :ref:`Tutorial: Symbolics and Plotting (PREP) <prep-symbolics-and-basic-plotting>`
+* :ref:`Tutorial: Calculus (PREP) <prep-calculus>`
+* :ref:`Tutorial: Advanced-2D Plotting (PREP) <prep-advanced-2dplotting>`
 * :ref:`vector_calculus`
 
 Algebra
