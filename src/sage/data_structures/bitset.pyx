@@ -2377,7 +2377,7 @@ def test_bitset_copy_flex(py_a):
     """
     TESTS:
 
-    Check that :trac:`33012` is fixed::
+    Check that :issue:`33012` is fixed::
 
         sage: from sage.data_structures.bitset import test_bitset_copy_flex
         sage: test_bitset_copy_flex('0101'*100)

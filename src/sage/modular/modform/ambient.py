@@ -609,7 +609,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
             sage: m._dim_cuspidal()
             6
 
-        Test that :trac:`24030` is fixed::
+        Test that :issue:`24030` is fixed::
 
             sage: ModularForms(GammaH(40, [21]), 1).dimension() # indirect doctest
             16
@@ -766,7 +766,7 @@ class ModularFormsAmbient(space.ModularFormsSpace,
             [ 2  0]
             [ 0 12]
 
-        Check that :trac:`22780` is fixed::
+        Check that :issue:`22780` is fixed::
 
             sage: M = ModularForms(1, 12)
             sage: M._compute_hecke_matrix(2)

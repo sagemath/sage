@@ -582,7 +582,7 @@ class SetPartition(AbstractSetPartition,
          {{1, 2}, {3}, {4}},
          {{1}, {2, 3}, {4}}]
 
-    Since :trac:`14140`, we can create a set partition directly by
+    Since :issue:`14140`, we can create a set partition directly by
     :class:`SetPartition`, which creates the base set by taking the
     union of the parts passed in::
 
@@ -2027,7 +2027,7 @@ class SetPartitions(UniqueRepresentation, Parent):
         70
 
     In strings, repeated letters are not considered distinct as of
-    :trac:`14140`::
+    :issue:`14140`::
 
         sage: SetPartitions('abcde').cardinality()                                      # needs sage.libs.flint
         52

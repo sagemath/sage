@@ -968,7 +968,7 @@ class kSchur(CombinatorialFreeModule):
 
     TESTS:
 
-    Check that :trac:`13743` is fixed::
+    Check that :issue:`13743` is fixed::
 
         sage: ks3 = SymmetricFunctions(QQ).kschur(3, 1)
         sage: f = ks3[2,1]

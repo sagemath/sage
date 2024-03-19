@@ -409,7 +409,7 @@ class FormalSums(UniqueRepresentation, Module):
             sage: F7 = FormalSums(ZZ).base_extend(GF(7)); F7
             Abelian Group of all Formal Finite Sums over Finite Field of size 7
 
-        The following tests against a bug that was fixed at :trac:`18795`::
+        The following tests against a bug that was fixed at :issue:`18795`::
 
             sage: isinstance(F7, F7.category().parent_class)
             True

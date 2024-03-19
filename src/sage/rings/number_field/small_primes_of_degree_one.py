@@ -202,7 +202,7 @@ class Small_primes_of_degree_one_iter():
 
         TESTS:
 
-        We test that :trac:`6396` is fixed. Note that the doctest is
+        We test that :issue:`6396` is fixed. Note that the doctest is
         flagged as random since the string representation of ideals is
         somewhat unpredictable::
 
@@ -223,7 +223,7 @@ class Small_primes_of_degree_one_iter():
              sage: ids[9] == N.ideal(3*a + 1/2*b + 5/2)
              True
 
-        We test that :trac:`23468` is fixed::
+        We test that :issue:`23468` is fixed::
 
             sage: R.<z> = QQ[]
             sage: K.<y> = QQ.extension(25*z^2 + 26*z + 5)

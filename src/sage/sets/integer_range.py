@@ -201,7 +201,7 @@ class IntegerRange(UniqueRepresentation, Parent):
         ....:         L2.sort()
         ....:         assert L1 == L2
 
-    Thanks to :trac:`8543` empty integer range are allowed::
+    Thanks to :issue:`8543` empty integer range are allowed::
 
         sage: TestSuite(IntegerRange(0, 5, -1)).run()
     """

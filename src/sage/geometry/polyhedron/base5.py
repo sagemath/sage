@@ -192,13 +192,13 @@ class Polyhedron_base5(Polyhedron_base4):
 
         TESTS:
 
-        Check that :trac:`25081` is fixed::
+        Check that :issue:`25081` is fixed::
 
             sage: C = polytopes.hypercube(4,backend='cdd')
             sage: C.polar().backend()
             'cdd'
 
-        Check that :trac:`28850` is fixed::
+        Check that :issue:`28850` is fixed::
 
             sage: P = polytopes.simplex(3, base_ring=QQ)
             sage: P.polar()
@@ -815,7 +815,7 @@ class Polyhedron_base5(Polyhedron_base4):
             sage: (X-Y)+Y == X
             True
 
-        Testing that :trac:`28506` is fixed::
+        Testing that :issue:`28506` is fixed::
 
             sage: Q = Polyhedron([[1,0],[0,1]])
             sage: S = Polyhedron([[0,0],[1,2]])
@@ -921,7 +921,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
         TESTS:
 
-        Check that :trac:`15253` is fixed::
+        Check that :issue:`15253` is fixed::
 
             sage: polytopes.hypercube(1) * polytopes.hypercube(2)
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 8 vertices
@@ -1249,7 +1249,7 @@ class Polyhedron_base5(Polyhedron_base4):
             sage: Q.direct_sum(P).backend()
             'ppl'
 
-        Check that :trac:`28506` is fixed::
+        Check that :issue:`28506` is fixed::
 
             sage: s2 = polytopes.simplex(2)
             sage: s3 = polytopes.simplex(3)
@@ -1353,7 +1353,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
         TESTS:
 
-        Check that :trac:`19012` is fixed::
+        Check that :issue:`19012` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: K.<a> = QuadraticField(5)
@@ -1562,7 +1562,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
         TESTS:
 
-        Dilation of empty polyhedra works, see :trac:`14987`::
+        Dilation of empty polyhedra works, see :issue:`14987`::
 
             sage: p = Polyhedron(ambient_dim=2); p
             The empty polyhedron in ZZ^2
@@ -1893,7 +1893,7 @@ class Polyhedron_base5(Polyhedron_base4):
             # Avoid very long doctests.
             return
 
-        # Check that :trac:`30146` is fixed.
+        # Check that :issue:`30146` is fixed.
         from sage.matrix.special import identity_matrix
         tester.assertEqual(self, self.linear_transformation(identity_matrix(self.ambient_dim())))
 
@@ -2029,7 +2029,7 @@ class Polyhedron_base5(Polyhedron_base4):
             sage: face_trunc.backend()
             'field'
 
-        Testing that :trac:`28506` is fixed::
+        Testing that :issue:`28506` is fixed::
 
             sage: P = polytopes.twenty_four_cell()
             sage: P = P.dilation(6)
@@ -2193,7 +2193,7 @@ class Polyhedron_base5(Polyhedron_base4):
             ...
             ValueError: the chosen position is too large
 
-        Testing that :trac:`29057` is fixed::
+        Testing that :issue:`29057` is fixed::
 
             sage: P = polytopes.cross_polytope(4)
             sage: P.stack(P.faces(3)[0])
@@ -2377,7 +2377,7 @@ class Polyhedron_base5(Polyhedron_base4):
 
         TESTS:
 
-        Check that :trac:`28668` is fixed::
+        Check that :issue:`28668` is fixed::
 
             sage: P = polytopes.octahedron()
             sage: P.face_split(P.faces(2)[0])
@@ -2454,11 +2454,11 @@ class Polyhedron_base5(Polyhedron_base4):
 
         TESTS:
 
-        Check that :trac:`28725` is fixed::
+        Check that :issue:`28725` is fixed::
 
             sage: polytopes.regular_polygon(3)._test_lawrence()                         # needs sage.rings.number_field
 
-        Check that :trac:`30293` is fixed::
+        Check that :issue:`30293` is fixed::
 
             sage: polytopes.cube()._test_lawrence()
         """
@@ -2509,7 +2509,7 @@ class Polyhedron_base5(Polyhedron_base4):
                     try:
                         from sage.rings.real_double_field import RDF
                         two = RDF(2.0)
-                        # Implicitly checks :trac:`30328`.
+                        # Implicitly checks :issue:`30328`.
                         R = self.lawrence_extension(two * v - self.center())
                         tester.assertEqual(self.dim() + 1, R.dim())
                         tester.assertEqual(self.n_vertices() + 2, R.n_vertices())

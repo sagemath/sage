@@ -2736,7 +2736,7 @@ cdef class OrePolynomial_generic_dense(OrePolynomial):
 
         TESTS:
 
-        We check that :trac:`32210` is fixed::
+        We check that :issue:`32210` is fixed::
 
             sage: A.<t> = GF(5)[]
             sage: S.<X> = A['X', A.derivation()]

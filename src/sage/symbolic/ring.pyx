@@ -158,7 +158,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             sage: SR.has_coerce_map_from(pari)
             False
 
-        Check if arithmetic with bools works (see :trac:`9560`)::
+        Check if arithmetic with bools works (see :issue:`9560`)::
 
             sage: SR.has_coerce_map_from(bool)
             True
@@ -339,7 +339,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             ...
             TypeError: unsupported operand type(s) for ** or pow(): 'R' and 'sage.rings.rational.Rational'
 
-        Check that :trac:`22068` is fixed::
+        Check that :issue:`22068` is fixed::
 
             sage: _ = var('x')
             sage: sin(x).subs(x=RR('NaN'))
@@ -353,7 +353,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             sage: sin(x).subs(x=complex('NaN'))
             sin(NaN)
 
-        Check that :trac:`24072` is solved::
+        Check that :issue:`24072` is solved::
 
             sage: x = polygen(GF(3))
             sage: a = SR.var('a')
@@ -362,7 +362,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             ...
             TypeError: positive characteristic not allowed in symbolic computations
 
-        Check support for unicode characters (:trac:`29280`)::
+        Check support for unicode characters (:issue:`29280`)::
 
             sage: SR('λ + 2λ')
             3*λ
@@ -461,12 +461,12 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         TESTS:
 
-        Check that :trac:`15047` is fixed::
+        Check that :issue:`15047` is fixed::
 
             sage: latex(SR.wild(0))
             \$0
 
-        Check that :trac:`21455` is fixed::
+        Check that :issue:`21455` is fixed::
 
             sage: coth(SR.wild(0))
             coth($0)
@@ -599,7 +599,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         TESTS:
 
-        Test that :trac:`32404` is fixed::
+        Test that :issue:`32404` is fixed::
 
             sage: SR0 = SR.subring(no_variables=True)
             sage: SR0.I().parent()
@@ -832,7 +832,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             ...
             ValueError: The name "x,y" is not a valid Python identifier.
 
-        Check that :trac:`17206` is fixed::
+        Check that :issue:`17206` is fixed::
 
             sage: var1 = var('var1', latex_name=r'\sigma^2_1'); latex(var1)
             {\sigma^2_1}
@@ -851,7 +851,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             ...
             ValueError: cannot specify n for multiple symbol names
 
-        Check that :trac:`28353` is fixed: Constructions that suggest multiple
+        Check that :issue:`28353` is fixed: Constructions that suggest multiple
         variables but actually only give one variable name return a 1-tuple::
 
             sage: SR.var(['x'])
@@ -1157,7 +1157,7 @@ cdef class NumpyToSRMorphism(Morphism):
 
     TESTS:
 
-    We check that :trac:`8949` and :trac:`9769` are fixed (see also :trac:`18076`)::
+    We check that :issue:`8949` and :issue:`9769` are fixed (see also :issue:`18076`)::
 
         sage: import numpy                                                              # needs numpy
         sage: f(x) = x^2
@@ -1318,7 +1318,7 @@ def var(name, **kwds):
     TESTS:
 
     These examples test that variables can only be made from valid
-    identifiers.  See :trac:`7496` (and :trac:`9724`) for details::
+    identifiers.  See :issue:`7496` (and :issue:`9724`) for details::
 
         sage: var(' ')
         Traceback (most recent call last):

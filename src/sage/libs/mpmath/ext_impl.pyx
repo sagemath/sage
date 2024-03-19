@@ -4,7 +4,7 @@ floating-point arithmetic. Operations are done in-place.
 
 TESTS:
 
-See if :trac:`15118` is fixed::
+See if :issue:`15118` is fixed::
 
     sage: import mpmath
     sage: mpmath.mpf(0)^(-2)

@@ -119,8 +119,8 @@ class PlotField(GraphicPrimitive):
 
         TESTS:
 
-        We check that :trac:`15052` is fixed
-        (note that in general :trac:`15002` should be fixed)::
+        We check that :issue:`15052` is fixed
+        (note that in general :issue:`15002` should be fixed)::
 
             sage: x,y=var('x,y')
             sage: P=plot_vector_field((sin(x), cos(y)), (x,-3,3), (y,-3,3), wrong_option='nonsense')
@@ -335,7 +335,7 @@ def plot_slope_field(f, xrange, yrange, **kwds):
     TESTS:
 
     Verify that we're not getting warnings due to use of headless quivers
-    (:trac:`11208`)::
+    (:issue:`11208`)::
 
         sage: x,y = var('x y')
         sage: import numpy # bump warnings up to errors for testing purposes

@@ -1304,7 +1304,7 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
 
     TESTS:
 
-    Check that :trac:`8162` is resolved::
+    Check that :issue:`8162` is resolved::
 
         sage: R = Qq([(5,3)], names="alpha", check=False); R                            # needs sage.libs.ntl
         5-adic Unramified Extension Field in alpha defined by x^3 + 3*x + 3
@@ -1313,7 +1313,7 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
         sage: Qq(125.factor(), names="alpha") is R                                      # needs sage.libs.ntl
         True
 
-    Check that :trac:`18606` is resolved::
+    Check that :issue:`18606` is resolved::
 
         sage: x = QQ['x'].gen()
         sage: F = Qp(5,20)
@@ -3494,7 +3494,7 @@ def split(poly, prec):
 
     TESTS:
 
-    This checks that :trac:`6186` is still fixed::
+    This checks that :issue:`6186` is still fixed::
 
         sage: k = Qp(13)
         sage: x = polygen(k)                                                            # needs sage.libs.ntl

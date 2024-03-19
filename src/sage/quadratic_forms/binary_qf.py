@@ -908,7 +908,7 @@ class BinaryQF(SageObject):
 
         TESTS:
 
-        Check for :trac:`34229`::
+        Check for :issue:`34229`::
 
             sage: BinaryQF([1,2,3]).reduced_form(transformation=True)                   # needs sage.libs.pari
             (
@@ -1118,7 +1118,7 @@ class BinaryQF(SageObject):
 
         TESTS:
 
-        Check an example in :trac:`28989`::
+        Check an example in :issue:`28989`::
 
             sage: Q = BinaryQF(1, 1, -1)
             sage: Q.cycle(proper=True)
@@ -1332,7 +1332,7 @@ class BinaryQF(SageObject):
 
         TESTS:
 
-        We check that :trac:`25888` is fixed::
+        We check that :issue:`25888` is fixed::
 
             sage: # needs sage.libs.pari
             sage: Q1 = BinaryQF(3, 4, -2)
@@ -1344,7 +1344,7 @@ class BinaryQF(SageObject):
             sage: Q1.is_equivalent(Q2, proper=True)
             True
 
-        We check that the first part of :trac:`29028` is fixed::
+        We check that the first part of :issue:`29028` is fixed::
 
             sage: Q = BinaryQF(0, 2, 0)
             sage: Q.discriminant()
@@ -1361,7 +1361,7 @@ class BinaryQF(SageObject):
             sage: Q1.is_equivalent(Q2, proper=False)                                    # needs sage.libs.pari
             True
 
-        Test another part of :trac:`28989`::
+        Test another part of :issue:`28989`::
 
             sage: Q1, Q2 = BinaryQF(1, 1, -1), BinaryQF(-1, 1, 1)
             sage: Q1.is_equivalent(Q2, proper=True)                                     # needs sage.libs.pari
@@ -1692,7 +1692,7 @@ class BinaryQF(SageObject):
             sage: (xy is None) == (Q3.solve_integer(4*n) is None)
             True
 
-        Test for square discriminants specifically (:trac:`33026`)::
+        Test for square discriminants specifically (:issue:`33026`)::
 
             sage: n = randrange(-10^3, 10^3)
             sage: Q = BinaryQF([n, randrange(-10^3, 10^3), 0][::(-1)**randrange(2)])
@@ -1885,7 +1885,7 @@ def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
          4*x^2 + 6*x*y - 7*y^2,
          6*x^2 + 2*x*y - 6*y^2]
 
-    Test another part of :trac:`29028`::
+    Test another part of :issue:`29028`::
 
         sage: BinaryQF_reduced_representatives(10^2, proper=False, primitive_only=False)
         [-4*x^2 + 10*x*y,

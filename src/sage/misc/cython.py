@@ -122,10 +122,10 @@ def cython(filename, verbose=0, compile_message=False,
 
     TESTS:
 
-    Before :trac:`12975`, it would have been needed to write ``#clang c++``,
+    Before :issue:`12975`, it would have been needed to write ``#clang c++``,
     but upper case ``C++`` has resulted in an error.
     Using pkgconfig to find the libraries, headers and macros. This is a
-    work around while waiting for :trac:`22461` which will offer a better
+    work around while waiting for :issue:`22461` which will offer a better
     solution::
 
         sage: code = [
@@ -151,7 +151,7 @@ def cython(filename, verbose=0, compile_message=False,
         ....:        "cdef vector[int] * v = new vector[int](4)\n")
 
     Check that compiling C++ code works when creating a local C file,
-    first moving to a tempdir to avoid clutter.  Before :trac:`22113`,
+    first moving to a tempdir to avoid clutter.  Before :issue:`22113`,
     the create_local_c_file argument was not tested for C++ code::
 
         sage: orig_cwd = os.getcwd()
@@ -210,7 +210,7 @@ def cython(filename, verbose=0, compile_message=False,
         ...
         RuntimeError: ...
 
-    As of :trac:`29139` the default is ``cdivision=True``::
+    As of :issue:`29139` the default is ``cdivision=True``::
 
         sage: cython('''
         ....: cdef size_t foo = 3/2
@@ -227,7 +227,7 @@ def cython(filename, verbose=0, compile_message=False,
         ....: ''')
 
     In Cython 0.29.33 using `from PACKAGE cimport MODULE` is broken
-    when `PACKAGE` is a namespace package, see :trac:`35322`::
+    when `PACKAGE` is a namespace package, see :issue:`35322`::
 
         sage: cython('''
         ....: from sage.misc cimport cachefunc
@@ -236,7 +236,7 @@ def cython(filename, verbose=0, compile_message=False,
         ...
         RuntimeError: Error compiling Cython file:
         ...
-        ...: 'sage/misc.pxd' not found
+        ...: 'sage/misc.pxd' not found...
     """
     if not filename.endswith('pyx'):
         print("Warning: file (={}) should have extension .pyx".format(filename), file=sys.stderr)
@@ -382,6 +382,12 @@ def cython(filename, verbose=0, compile_message=False,
             "Placing it before 'except' or 'noexcept' will be disallowed in a future version of Cython.\n",
             "", cython_messages, 0, re.MULTILINE)
 
+        # workaround for https://github.com/sagemath/sage/issues/37560
+        # triggered by Cython 3.0.9
+        cython_messages = re.sub(
+            "^warning: .*noexcept clause is ignored for function returning Python object\n",
+            "", cython_messages, 0, re.MULTILINE)
+
         sys.stderr.write(cython_messages)
         sys.stderr.flush()
 
@@ -466,7 +472,7 @@ def cython_lambda(vars, expr, verbose=0, **kwds):
 
     .. warning::
 
-        Accessing ``globals()`` doesn't actually work, see :trac:`12446`.
+        Accessing ``globals()`` doesn't actually work, see :issue:`12446`.
 
     EXAMPLES:
 

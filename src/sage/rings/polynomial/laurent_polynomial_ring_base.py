@@ -37,7 +37,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
     EXAMPLES:
 
     This base class inherits from :class:`~sage.rings.ring.CommutativeRing`.
-    Since :trac:`11900`, it is also initialised as such::
+    Since :issue:`11900`, it is also initialised as such::
 
         sage: R.<x1,x2> = LaurentPolynomialRing(QQ)
         sage: R.category()
@@ -154,7 +154,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: LaurentPolynomialRing(QQ, 2, 'x').is_integral_domain()
             True
 
-        The following used to fail; see :trac:`7530`::
+        The following used to fail; see :issue:`7530`::
 
             sage: L = LaurentPolynomialRing(ZZ, 'X')
             sage: L['Y']
@@ -228,7 +228,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
         TESTS:
 
-        Check that the precision is taken into account (:trac:`24431`)::
+        Check that the precision is taken into account (:issue:`24431`)::
 
             sage: L = LaurentPolynomialRing(QQ, 'x')
             sage: L.completion('x', 100).default_prec()
@@ -274,7 +274,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
               To:   Multivariate Laurent Polynomial Ring in x, y over Rational Field
 
         Let us check that coercion between Laurent Polynomials over
-        different base rings works (:trac:`15345`)::
+        different base rings works (:issue:`15345`)::
 
             sage: R = LaurentPolynomialRing(ZZ, 'x')
             sage: T = LaurentPolynomialRing(QQ, 'x')
@@ -382,7 +382,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
         TESTS:
 
-        check that :trac:`26421` is fixed::
+        check that :issue:`26421` is fixed::
 
             sage: R.<t> = LaurentPolynomialRing(ZZ)
             sage: P.<x> = PolynomialRing(R)

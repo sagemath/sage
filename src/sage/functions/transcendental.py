@@ -115,21 +115,21 @@ class Function_zeta(GinacFunction):
             sage: zeta(x).subs(x=1)                                                     # needs sage.symbolic
             Infinity
 
-        Check that :trac:`19799` is resolved::
+        Check that :issue:`19799` is resolved::
 
             sage: zeta(pi)                                                              # needs sage.symbolic
             zeta(pi)
             sage: zeta(pi).n()  # rel tol 1e-10                                         # needs sage.symbolic
             1.17624173838258
 
-        Check that :trac:`20082` is fixed::
+        Check that :issue:`20082` is fixed::
 
             sage: zeta(x).series(x==pi, 2)                                              # needs sage.symbolic
             (zeta(pi)) + (zetaderiv(1, pi))*(-pi + x) + Order((pi - x)^2)
             sage: (zeta(x) * 1/(1 - exp(-x))).residue(x==2*pi*I)                        # needs sage.symbolic
             zeta(2*I*pi)
 
-        Check that :trac:`20102` is fixed::
+        Check that :issue:`20102` is fixed::
 
             sage: (zeta(x)^2).series(x==1, 1)                                           # needs sage.symbolic
             1*(x - 1)^(-2) + (2*euler_gamma)*(x - 1)^(-1)
@@ -138,7 +138,7 @@ class Function_zeta(GinacFunction):
             4/3*euler_gamma*(3*euler_gamma^2 - 2*stieltjes(1))
             - 28/3*euler_gamma*stieltjes(1) + 2*stieltjes(2)
 
-        Check that the right infinities are returned (:trac:`19439`)::
+        Check that the right infinities are returned (:issue:`19439`)::
 
             sage: zeta(1.0)                                                             # needs sage.symbolic
             +infinity

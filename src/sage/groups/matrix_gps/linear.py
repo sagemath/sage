@@ -322,14 +322,14 @@ class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
 
         TESTS:
 
-        Check if :trac:`36876` is fixed::
+        Check if :issue:`36876` is fixed::
 
             sage: SL(1, QQ).order()
             1
             sage: SL(2, ZZ).cardinality()
             +Infinity
 
-        Check if :trac:`35490` is fixed::
+        Check if :issue:`35490` is fixed::
 
             sage: q = 7
             sage: FqT.<T> = GF(q)[]

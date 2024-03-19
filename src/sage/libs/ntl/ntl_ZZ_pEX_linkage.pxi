@@ -337,7 +337,7 @@ cdef inline int celement_pow(ZZ_pEX_c* res, ZZ_pEX_c* x, long e, ZZ_pEX_c *modul
 
     TESTS:
 
-    Check that :trac:`15777` is fixed::
+    Check that :issue:`15777` is fixed::
 
         sage: k.<t> = GF(5**5)
         sage: x = polygen(k)

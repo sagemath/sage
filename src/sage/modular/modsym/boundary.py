@@ -480,7 +480,7 @@ class BoundarySpace(hecke.HeckeModule_generic):
             sage: B.rank()
             16
 
-        Test that :trac:`7837` is fixed::
+        Test that :issue:`7837` is fixed::
 
             sage: ModularSymbols(Gamma1(4),7).boundary_map().codomain().dimension()
             2
@@ -987,7 +987,7 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
             sage: B == loads(dumps(B))
             True
 
-        A test case from :trac:`6072`::
+        A test case from :issue:`6072`::
 
             sage: ModularSymbols(GammaH(8,[5]), 3).boundary_map()
             Hecke module morphism boundary map defined by the matrix
@@ -1120,7 +1120,7 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
             [1/11],
             -[1/11]]
 
-        Test that :trac:`6072` is fixed. ::
+        Test that :issue:`6072` is fixed. ::
 
             sage: G = GammaH(8,[3])
 
@@ -1139,7 +1139,7 @@ class BoundarySpace_wtk_gamma_h(BoundarySpace):
             sage: B3.rank()
             0
 
-        Test that :trac:`25268` is fixed::
+        Test that :issue:`25268` is fixed::
 
             sage: G = GammaH(20, [13])
             sage: A = ModularSymbols(G, 3)

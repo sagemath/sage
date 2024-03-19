@@ -72,7 +72,7 @@ cdef class Matrix_dense(matrix.Matrix):
 
         TESTS:
 
-        Check :trac:`27629`::
+        Check :issue:`27629`::
 
             sage: # needs sage.symbolic
             sage: var('x')

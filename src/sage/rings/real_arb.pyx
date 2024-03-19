@@ -3707,8 +3707,8 @@ cdef class RealBall(RingElement):
         .. TODO::
 
             At the moment RBF(beta(a,b)) does not work, one needs
-            RBF(a).beta(b) for this to work. See :trac:`32851`
-            and :trac:`24641`.
+            RBF(a).beta(b) for this to work. See :issue:`32851`
+            and :issue:`24641`.
         """
         cdef RealBall a_ball, z_ball
         cdef RealBall res = self._new()

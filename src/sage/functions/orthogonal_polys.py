@@ -1323,13 +1323,13 @@ class Func_legendre_P(GinacFunction):
 
     TESTS:
 
-    Verify that :trac:`33962` is fixed::
+    Verify that :issue:`33962` is fixed::
 
         sage: [legendre_P(n, 0) for n in range(-10, 10)]                                # needs sage.symbolic
         [0, 35/128, 0, -5/16, 0, 3/8, 0, -1/2, 0, 1,
          1, 0, -1/2, 0, 3/8, 0, -5/16, 0, 35/128, 0]
 
-    Verify that :trac:`33963` is fixed::
+    Verify that :issue:`33963` is fixed::
 
         sage: # needs sage.symbolic
         sage: n = var("n")
@@ -2076,7 +2076,7 @@ class Func_hermite(GinacFunction):
         sage: hermite(5, RealField(100)(pi))
         5208.6167627118104649470287166
 
-    Check that :trac:`17192` is fixed::
+    Check that :issue:`17192` is fixed::
 
         sage: # needs sage.symbolic
         sage: x = PolynomialRing(QQ, 'x').gen()
@@ -2202,7 +2202,7 @@ class Func_jacobi_P(OrthogonalFunction):
 
         TESTS:
 
-        Check that :trac:`17192` is fixed::
+        Check that :issue:`17192` is fixed::
 
             sage: x = PolynomialRing(QQ, 'x').gen()
             sage: jacobi_P(0,0,0,x)
@@ -2353,7 +2353,7 @@ class Func_ultraspherical(GinacFunction):
 
     TESTS:
 
-    Check that :trac:`17192` is fixed::
+    Check that :issue:`17192` is fixed::
 
         sage: x = PolynomialRing(QQ, 'x').gen()
         sage: ultraspherical(0, 1, x)                                                   # needs sage.symbolic

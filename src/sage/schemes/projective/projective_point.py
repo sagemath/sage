@@ -273,7 +273,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: P == Q
             False
 
-        Check that :trac:`17433` is fixed::
+        Check that :issue:`17433` is fixed::
 
             sage: P.<x,y> = ProjectiveSpace(Zmod(10), 1)
             sage: p1 = P(1/3, 1)
@@ -294,7 +294,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: P == Q
             True
 
-        Check that :trac:`17429` is fixed::
+        Check that :issue:`17429` is fixed::
 
             sage: # needs sage.rings.complex_interval_field
             sage: R.<x> = PolynomialRing(QQ)
@@ -1257,7 +1257,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
             Projective Space of dimension 1 over Number Field in a with defining
              polynomial y^4 + 1 with a = 0.7071067811865475? + 0.7071067811865475?*I
 
-        The following was fixed in :trac:`23808`::
+        The following was fixed in :issue:`23808`::
 
             sage: # needs sage.rings.number_field sage.symbolic
             sage: R.<x> = PolynomialRing(QQ)

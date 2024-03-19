@@ -430,7 +430,7 @@ class HighestWeightCrystals(Category_singleton):
             TESTS:
 
             Check that we fallback first to trying a crystal homset
-            (:trac:`19458`)::
+            (:issue:`19458`)::
 
                 sage: Binf = crystals.infinity.Tableaux(['A',2])
                 sage: Bi = crystals.elementary.Elementary(Binf.cartan_type(), 1)
@@ -764,7 +764,7 @@ class HighestWeightCrystals(Category_singleton):
                     ...
                     NotImplementedError: not implemented for infinite crystals
 
-                Check that :trac:`30493` is fixed::
+                Check that :issue:`30493` is fixed::
 
                     sage: CW = CartanType("G", 2)
                     sage: C = crystals.Letters(CW)

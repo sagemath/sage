@@ -268,7 +268,7 @@ class Homspace(HomsetWithBase):
 
             During unpickling, the domain and codomain may be unable to
             provide the necessary information. This is why this is a lazy
-            attribute. See :trac:`14793`.
+            attribute. See :issue:`14793`.
 
         EXAMPLES::
 
@@ -784,12 +784,12 @@ class EndomorphismSubring(Homspace):
         TESTS:
 
         The following tests against a problem on 32 bit machines that
-        occurred while working on :trac:`9944`::
+        occurred while working on :issue:`9944`::
 
             sage: sage.modular.abvar.homspace.EndomorphismSubring(J1(12345))
             Endomorphism ring of Abelian variety J1(12345) of dimension 5405473
 
-        :trac:`16275` removed the custom ``__reduce__`` method, since
+        :issue:`16275` removed the custom ``__reduce__`` method, since
         :meth:`Homset.__reduce__` already implements appropriate
         unpickling by construction::
 

@@ -243,7 +243,7 @@ def integral(f, *args, **kwds):
         0
         sage: restore('x,y')   # restore the symbolic variables x and y
 
-    Sage is now (:trac:`27958`) able to compute the following integral::
+    Sage is now (:issue:`27958`) able to compute the following integral::
 
         sage: integral(exp(-x^2)*log(x), x)  # long time
         1/2*sqrt(pi)*erf(x)*log(x) - x*hypergeometric((1/2, 1/2), (3/2, 3/2), -x^2)

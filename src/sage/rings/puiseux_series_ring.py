@@ -331,7 +331,7 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
             l = self._laurent_series_ring(x)
 
         # finally, construct an instance of the element class and adding
-        # the precision afterwards (see also :trac:`28993`).
+        # the precision afterwards (see also :issue:`28993`).
         return self.element_class(self, l, e=e).add_bigoh(prec)
 
     def _coerce_map_from_(self, P):

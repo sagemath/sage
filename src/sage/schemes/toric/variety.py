@@ -1182,7 +1182,7 @@ class ToricVariety_field(AmbientSpace):
             sage: P1xP1.inject_coefficients()
             Defining a, b
 
-        We check that we can use names ``a`` and ``b``, :trac:`10498` is fixed::
+        We check that we can use names ``a`` and ``b``, :issue:`10498` is fixed::
 
             sage: a + b
             a + b
@@ -1927,8 +1927,8 @@ class ToricVariety_field(AmbientSpace):
         TESTS:
 
         The cohomology ring is a circular reference that is
-        potentially troublesome on unpickling, see :trac:`15050`
-        and :trac:`15149` ::
+        potentially troublesome on unpickling, see :issue:`15050`
+        and :issue:`15149` ::
 
             sage: # needs sage.libs.singular
             sage: variety = toric_varieties.P(1)
@@ -2376,7 +2376,7 @@ class ToricVariety_field(AmbientSpace):
 
         TESTS:
 
-        We check that the issue :trac:`12812` is resolved::
+        We check that the issue :issue:`12812` is resolved::
 
             sage: sum(dP6.divisor(i) for i in range(3))
             V(x) + V(u) + V(y)

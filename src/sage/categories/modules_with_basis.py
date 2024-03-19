@@ -5,7 +5,7 @@ AUTHORS:
 
 - Nicolas M. Thiery (2008-2014): initial revision, axiomatization
 - Jason Bandlow and Florent Hivert (2010): Triangular Morphisms
-- Christian Stump (2010): :trac:`9648` module_morphism's to a wider class
+- Christian Stump (2010): :issue:`9648` module_morphism's to a wider class
   of codomains
 """
 #*****************************************************************************
@@ -124,7 +124,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
     .. NOTE::
 
         This category currently requires an implementation of an
-        element method ``support``. Once :trac:`18066` is merged, an
+        element method ``support``. Once :issue:`18066` is merged, an
         implementation of an ``items`` method will be required.
 
     TESTS::
@@ -489,7 +489,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: (phi^-1)(y[30])
                 -B[1] + B[2] + B[3] + B[5] - B[6] - B[10] - B[15] + B[30]
 
-            Since :trac:`8678`, one can also define a triangular
+            Since :issue:`8678`, one can also define a triangular
             morphism from a function::
 
                 sage: # needs sage.modules
@@ -1387,7 +1387,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             TESTS:
 
-            Ensure that the two issues reported in :trac:`28327` are
+            Ensure that the two issues reported in :issue:`28327` are
             fixed; that we don't rely unnecessarily on being able to
             coerce the base ring's zero into the algebra, and that
             we can find a random element in a trivial module::

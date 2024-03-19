@@ -236,7 +236,7 @@ cpdef Integer integer_rational_power(Integer a, Rational b) noexcept:
         sage: integer_rational_power(-1, 9/8) is None
         True
 
-    TESTS (:trac:`11228`)::
+    TESTS (:issue:`11228`)::
 
         sage: integer_rational_power(-10, QQ(2))
         100
@@ -300,7 +300,7 @@ cpdef rational_power_parts(a, Rational b, factor_limit=10**5) noexcept:
 
     TESTS:
 
-    Check if :trac:`8540` is fixed::
+    Check if :issue:`8540` is fixed::
 
         sage: rational_power_parts(3/4, -1/2)
         (2, 3)
@@ -309,7 +309,7 @@ cpdef rational_power_parts(a, Rational b, factor_limit=10**5) noexcept:
         sage: t^2                                                                       # needs sage.symbolic
         4/3
 
-    Check if :trac:`15605` is fixed::
+    Check if :issue:`15605` is fixed::
 
         sage: rational_power_parts(-1, -1/3)
         (1, -1)
@@ -333,7 +333,7 @@ cpdef rational_power_parts(a, Rational b, factor_limit=10**5) noexcept:
         ....:     for p in srange(1, 6) for q in srange(1, 6))
         True
 
-    A few more tests added in :trac:`26414`::
+    A few more tests added in :issue:`26414`::
 
         sage: rational_power_parts(-1, 2/1)
         (1, 1)
@@ -483,7 +483,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
     TESTS:
 
-    Check that :trac:`28321` is fixed::
+    Check that :issue:`28321` is fixed::
 
         sage: QQ((2r^100r, 3r^100r))
         1267650600228229401496703205376/515377520732011331036461129765621272702107522001
@@ -531,7 +531,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         TESTS:
 
-        Check that :trac:`19835` is fixed::
+        Check that :issue:`19835` is fixed::
 
             sage: QQ((0r,-1r))
             0
@@ -867,7 +867,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             ....:     assert (one1 <= one2) is True
             ....:     assert (one1 >= one2) is True
 
-        Comparisons with gmpy2 values (:trac:`28394`)::
+        Comparisons with gmpy2 values (:issue:`28394`)::
 
             sage: import gmpy2
             sage: values = [(-2,5),(-1,3),(0,1),(2,9),(1,1),(73,2)]
@@ -1621,7 +1621,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: (144/1).is_perfect_power(True)
             True
 
-        This test makes sure we workaround a bug in GMP (see :trac:`4612`)::
+        This test makes sure we workaround a bug in GMP (see :issue:`4612`)::
 
             sage: [-a for a in srange(100) if not QQ(-a^3).is_perfect_power()]
             []
@@ -1955,7 +1955,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         Ensure that :issue:`37153` is fixed, so that behaviour aligns
         with other rings and fields.
-        See :issue:`9466` and :trac:`26509` for context::
+        See :issue:`9466` and :issue:`26509` for context::
 
             sage: QQ(3).sqrt(extend=False, all=True)
             []
@@ -2835,7 +2835,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         TESTS:
 
-        Check that :trac:`14870` is fixed::
+        Check that :issue:`14870` is fixed::
 
             sage: int(4) % QQ(3)
             1
@@ -2939,7 +2939,7 @@ cdef class Rational(sage.structure.element.FieldElement):
             sage: (1/3).charpoly('x')
              x - 1/3
 
-        The default is ``var='x'``. (:trac:`20967`)::
+        The default is ``var='x'``. (:issue:`20967`)::
 
             sage: a = QQ(2); a.charpoly('x')
             x - 2
@@ -3965,7 +3965,7 @@ cdef double mpq_get_d_nearest(mpq_t x) except? -648555075988944.5:
 
     AUTHORS:
 
-    - Paul Zimmermann, Jeroen Demeyer (:trac:`14416`)
+    - Paul Zimmermann, Jeroen Demeyer (:issue:`14416`)
     """
     cdef mpz_ptr a = mpq_numref(x)
     cdef mpz_ptr b = mpq_denref(x)
@@ -4167,7 +4167,7 @@ cdef class Z_to_Q(Morphism):
               To:   Integer Ring
 
         This map is a morphism in the category of sets with partial
-        maps (see :trac:`15618`)::
+        maps (see :issue:`15618`)::
 
             sage: f.parent()
             Set of Morphisms from Rational Field to Integer Ring

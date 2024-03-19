@@ -1038,7 +1038,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         TESTS:
 
-        The following example used to crash (cf. :trac:`11771`)::
+        The following example used to crash (cf. :issue:`11771`)::
 
             sage: R.<t> = QQ[]
             sage: f = 10**383 * (t+1)
@@ -1217,7 +1217,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             ...
             OverflowError: Sage Integer too large to convert to C long
 
-        FLINT memory errors do not crash Sage (:trac:`17629`)::
+        FLINT memory errors do not crash Sage (:issue:`17629`)::
 
             sage: t^(sys.maxsize//2)
             Traceback (most recent call last):
@@ -1225,13 +1225,13 @@ cdef class Polynomial_rational_flint(Polynomial):
             RuntimeError: FLINT exception
 
         Flush the output buffer to get rid of stray output -- see
-        :trac:`28649`::
+        :issue:`28649`::
 
             sage: from sage.misc.misc_c import cyflush
             sage: cyflush()
             ...
 
-        Test fractional powers (:trac:`20086`)::
+        Test fractional powers (:issue:`20086`)::
 
             sage: P.<R> = QQ[]
             sage: (1/27*R^3 + 2/3*R^2 + 4*R + 8)^(2/3)
@@ -1517,7 +1517,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             ...
             ValueError: cannot differentiate with respect to 2*x
 
-        Check that :trac:`28187` is fixed::
+        Check that :issue:`28187` is fixed::
 
             sage: x = var("x")                                                          # needs sage.symbolic
             sage: f._derivative(x)                                                      # needs sage.symbolic
@@ -2172,7 +2172,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             ValueError: The polynomial must be irreducible
 
         Variable names that are reserved in PARI, such as ``zeta``,
-        are supported (see :trac:`20631`)::
+        are supported (see :issue:`20631`)::
 
             sage: R.<zeta> = QQ[]
             sage: (zeta^2 + zeta + 1).galois_group(pari_group=True)                     # needs sage.libs.pari
@@ -2269,7 +2269,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             (x + 2)^5
 
         Variable names that are reserved in PARI, such as ``zeta``,
-        are supported (see :trac:`20631`)::
+        are supported (see :issue:`20631`)::
 
             sage: R.<zeta> = QQ[]
             sage: (zeta^2 + zeta + 1).factor_mod(7)
@@ -2324,7 +2324,7 @@ cdef class Polynomial_rational_flint(Polynomial):
         The input polynomial is considered to have "infinite" precision,
         therefore the `p`-adic factorization of the polynomial is not
         the same as first coercing to `\QQ_p` and then factoring
-        (see also :trac:`15422`)::
+        (see also :issue:`15422`)::
 
             sage: # needs sage.rings.padic
             sage: f = x^2 - 3^6
@@ -2413,7 +2413,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             [x + 48]
 
         Variable names that are reserved in PARI, such as ``I``, are
-        supported (see :trac:`20631`)::
+        supported (see :issue:`20631`)::
 
             sage: R.<I> = QQ[]
             sage: (I^2 + 1).hensel_lift(5, 3)
@@ -2519,7 +2519,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             1
 
         Variable names that are reserved in PARI, such as ``I``, are
-        supported (see :trac:`20631`)::
+        supported (see :issue:`20631`)::
 
             sage: R.<I> = QQ[]
             sage: (I^2 + 1).discriminant()
