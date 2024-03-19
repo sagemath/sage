@@ -4,8 +4,9 @@ Seymour's decomposition of totally unimodular matrices and regular matroids
 """
 
 # ****************************************************************************
-#       Copyright (C) 2023 Matthias Koeppe
-#                     2023 Javier Santillan
+#       Copyright (C) 2023      Javier Santillan
+#                     2023-2024 Matthias Koeppe
+#                     2023-2024 Luze Xu
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -296,6 +297,8 @@ cdef class DecompositionNode(SageObject):
         r"""
         Return the number of children of the node.
         """
+        if self._children is not None:
+            return len(self._children)
         if self._dec == NULL:
             return 0
         return CMRmatroiddecNumChildren(self._dec)
@@ -1435,13 +1438,14 @@ cdef class ElementKey:
         INPUT:
 
         - ``keys`` -- a row/column key or a tuple
-        (`\pm 1`, row/column key, `\pm 1`, row/column key).
+          (`\pm 1`, row/column key, `\pm 1`, row/column key).
+
         - ``composition`` -- ``True`` or ``False`` (default).
-        whether the key is a composition key or not.
-        If ``False``, ``self._key`` is a frozenset with a row/column key.
-        If ``True``, ``self._key`` is a frozenset with two tuples,
-        where each tuple has a sign value and a row/column key.
-        For example, ``frozenset((1,'a'), (-1,'7'))``.
+          whether the key is a composition key or not.
+          If ``False``, ``self._key`` is a frozenset with a row/column key.
+          If ``True``, ``self._key`` is a frozenset with two tuples,
+          where each tuple has a sign value and a row/column key.
+          For example, ``frozenset((1,'a'), (-1,'7'))``.
         """
         if composition:
             sign1, key1, sign2, key2 = keys

@@ -4,9 +4,9 @@ Sparse Matrices with CMR
 """
 
 # ****************************************************************************
-#       Copyright (C) 2023 Matthias Koeppe
-#                     2023 Luze Xu
-#                     2023 Javier Santillan
+#       Copyright (C) 2023      Javier Santillan
+#                     2023-2024 Matthias Koeppe
+#                     2023-2024 Luze Xu
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
