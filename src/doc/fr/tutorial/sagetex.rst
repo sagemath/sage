@@ -11,7 +11,7 @@ Cette opération se résume à copier un fichier ; voyez la section
 :ref:`installation` du présent tutoriel ainsi que "Make SageTeX known to
 TeX" dans le guide d'installation de Sage (`Sage installation guide
 <http://doc.sagemath.org/html/en/installation/>`_, :ref:`ce lien
-<installation-guide>`_ devrait conduire à une copie
+<installation-guide>` devrait conduire à une copie
 locale) pour plus de détails.
 
 Voici un bref exemple d'utilisation de SageTeX. La documentation
