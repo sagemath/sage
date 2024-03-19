@@ -9,12 +9,11 @@ cdef class DecompositionNode(SageObject):
     cdef object _row_keys
     cdef object _column_keys
     cdef public object _parent_indices
-    cdef DecompositionNode _root   # my CMR_MATROID_DEC is owned by this
     cdef object _child_nodes
     cdef object _child_row_keys
     cdef object _child_column_keys
 
-    cdef _set_dec(self, CMR_MATROID_DEC *dec, root)
+    cdef _set_dec(self, CMR_MATROID_DEC *dec)
     cdef _set_row_keys(self, row_keys)
     cdef _set_column_keys(self, column_keys)
 
@@ -26,4 +25,4 @@ cdef class SymbolicNode(DecompositionNode):
     cdef object _symbol
 
 
-cdef create_DecompositionNode(CMR_MATROID_DEC *dec, root=?, row_keys=?, column_keys=?)
+cdef create_DecompositionNode(CMR_MATROID_DEC *dec, row_keys=?, column_keys=?)

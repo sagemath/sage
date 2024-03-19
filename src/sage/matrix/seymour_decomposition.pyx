@@ -35,13 +35,13 @@ cdef class DecompositionNode(SageObject):
     def __cinit__(self):
         self._dec = NULL
 
-    cdef _set_dec(self, CMR_MATROID_DEC *dec, root):
-        if self._root is None or self._root is self:
-            if self._dec != NULL:
-                # We own it, so we have to free it.
-                CMR_CALL(CMRmatroiddecRelease(cmr, &self._dec))
+    cdef _set_dec(self, CMR_MATROID_DEC *dec):
+        if self._dec != NULL:
+            # We own it, so we have to free it.
+            CMR_CALL(CMRmatroiddecRelease(cmr, &self._dec))
+        if dec != NULL:
+            CMR_CALL(CMRmatroiddecCapture(cmr, dec))
         self._dec = dec
-        self._root = root
 
     cdef _set_row_keys(self, row_keys):
         """
@@ -74,7 +74,7 @@ cdef class DecompositionNode(SageObject):
         self._column_keys = column_keys
 
     def __dealloc__(self):
-        self._set_dec(NULL, None)
+        self._set_dec(NULL)
 
     def __hash__(self):
         return <int>self._dec
@@ -127,7 +127,7 @@ cdef class DecompositionNode(SageObject):
         ms = MatrixSpace(ZZ, mat.numRows, mat.numColumns, sparse=True)
         result = Matrix_cmr_chr_sparse.__new__(Matrix_cmr_chr_sparse, ms)
         result._mat = mat
-        result._root = self._root or self
+        result._root = self  # Matrix is owned by us
         return result
 
     def row_keys(self):
@@ -324,7 +324,7 @@ cdef class DecompositionNode(SageObject):
                                    for element in parent_rows_tuple)
             child_column_keys = tuple(self._CMRelement_to_key(element)
                                       for element in parent_columns_tuple)
-            child = create_DecompositionNode(child_dec, root=self._root or self,
+            child = create_DecompositionNode(child_dec,
                                              row_keys=child_row_keys,
                                              column_keys=child_column_keys)
             parent_row_indices = tuple(CMRelementToRowIndex(element)
@@ -337,7 +337,7 @@ cdef class DecompositionNode(SageObject):
                                    for element in parent_rows_tuple)
             child_column_keys = tuple(CMRelementToColumnIndex(element)
                                       for element in parent_columns_tuple)
-            child = create_DecompositionNode(child_dec, root=self._root or self,
+            child = create_DecompositionNode(child_dec,
                                              row_keys=child_row_keys,
                                              column_keys=child_column_keys)
             child._parent_indices = child_row_keys, child_column_keys
@@ -924,7 +924,7 @@ cdef class ThreeSumNode(SumNode):
                                     composition=True)
             child1_column_keys += (extra_key,)
 
-        child1 = create_DecompositionNode(child1_dec, root=self._root or self,
+        child1 = create_DecompositionNode(child1_dec,
                                           row_keys=child1_row_keys,
                                           column_keys=child1_column_keys)
 
@@ -986,7 +986,7 @@ cdef class ThreeSumNode(SumNode):
                                     composition=True)
             child2_column_keys = (extra_key,) + child2_column_keys
 
-        child2 = create_DecompositionNode(child2_dec, root=self._root or self,
+        child2 = create_DecompositionNode(child2_dec,
                                           row_keys=child2_row_keys,
                                           column_keys=child2_column_keys)
 
@@ -1404,21 +1404,18 @@ cdef _class(CMR_MATROID_DEC *dec):
     assert NotImplementedError
 
 
-cdef create_DecompositionNode(CMR_MATROID_DEC *dec, root=None, row_keys=None, column_keys=None):
+cdef create_DecompositionNode(CMR_MATROID_DEC *dec, row_keys=None, column_keys=None):
     r"""
     Create an instance of a subclass of :class:`DecompositionNode`.
 
     INPUT:
 
     - ``dec`` -- a ``CMR_MATROID_DEC``
-    - ``root`` -- a :class:`DecompositionNode` or ``None``.
-      If ``None``, ``dec`` will be owned by the returned instance.
-      If non-``None``, ``dec`` is owned by that instance.
     """
     if dec == NULL:
         return None
     cdef DecompositionNode result = <DecompositionNode> _class(dec)()
-    result._set_dec(dec, root)
+    result._set_dec(dec)
     if row_keys is not None:
         result._set_row_keys(row_keys)
     if column_keys is not None:
