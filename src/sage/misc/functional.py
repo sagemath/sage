@@ -154,7 +154,7 @@ def characteristic_polynomial(x, var='x'):
 
     Ensure the variable name of the polynomial does not conflict with
     variables used within the matrix, and that non-integral powers of
-    variables do not confuse the computation (:trac:`14403`)::
+    variables do not confuse the computation (:issue:`14403`)::
 
         sage: # needs sage.libs.pari sage.symbolic
         sage: y = var('y')
@@ -517,7 +517,7 @@ def symbolic_sum(expression, *args, **kwds):
         sage: sum(2^(-k)/(k*(k+1)), k, 1, oo)                                           # needs sage.symbolic
         -log(2) + 1
 
-    Another binomial identity (:trac:`7952`)::
+    Another binomial identity (:issue:`7952`)::
 
         sage: t, k, i = var('t,k,i')                                                    # needs sage.symbolic
         sage: sum(binomial(i + t, t), i, 0, k)                                          # needs sage.symbolic
@@ -565,7 +565,7 @@ def symbolic_sum(expression, *args, **kwds):
         sage: sum(binomial(n, k) * x^k, k, 0, n, algorithm='maple')     # optional - maple, needs sage.symbolic
         (x + 1)^n
 
-    Python ints should work as limits of summation (:trac:`9393`)::
+    Python ints should work as limits of summation (:issue:`9393`)::
 
         sage: sum(x, x, 1r, 5r)                                                         # needs sage.symbolic
         15
@@ -578,7 +578,7 @@ def symbolic_sum(expression, *args, **kwds):
 
     TESTS:
 
-    Check that :trac:`34007` is fixed::
+    Check that :issue:`34007` is fixed::
 
         sage: sum([1, 2], start=1)
         4
@@ -706,14 +706,14 @@ def integral(x, *args, **kwds):
 
     TESTS:
 
-    A symbolic integral from :trac:`11445` that was incorrect in
+    A symbolic integral from :issue:`11445` that was incorrect in
     earlier versions of Maxima::
 
         sage: f = abs(x - 1) + abs(x + 1) - 2*abs(x)                                    # needs sage.symbolic
         sage: integrate(f, (x, -Infinity, Infinity))                                    # needs sage.symbolic
         2
 
-    Another symbolic integral, from :trac:`11238`, that used to return
+    Another symbolic integral, from :issue:`11238`, that used to return
     zero incorrectly; with Maxima 5.26.0 one gets
     ``1/2*sqrt(pi)*e^(1/4)``, whereas with 5.29.1, and even more so
     with 5.33.0, the expression is less pleasant, but still has the
@@ -734,21 +734,21 @@ def integral(x, *args, **kwds):
         sage: sage.calculus.calculus.maxima('domain: complex')
         complex
 
-    An integral which used to return -1 before maxima 5.28. See :trac:`12842`::
+    An integral which used to return -1 before maxima 5.28. See :issue:`12842`::
 
         sage: f = e^(-2*x)/sqrt(1-e^(-2*x))                                             # needs sage.symbolic
         sage: integrate(f, x, 0, infinity)                                              # needs sage.symbolic
         1
 
     This integral would cause a stack overflow in earlier versions of
-    Maxima, crashing sage. See :trac:`12377`. We don't care about the
+    Maxima, crashing sage. See :issue:`12377`. We don't care about the
     result here, just that the computation completes successfully::
 
         sage: y = (x^2)*exp(x) / (1 + exp(x))^2                                         # needs sage.symbolic
         sage: _ = integrate(y, x, -1000, 1000)                                          # needs sage.symbolic
 
     When SymPy cannot solve an integral it gives it back, so we must
-    be able to convert SymPy's ``Integral`` (:trac:`14723`)::
+    be able to convert SymPy's ``Integral`` (:issue:`14723`)::
 
         sage: # needs sage.symbolic
         sage: x, y, z = var('x,y,z')
@@ -775,7 +775,7 @@ def integral(x, *args, **kwds):
         integrate(integrate(integrate(f(x, y, z), x), y), z)
 
     Ensure that the following integral containing a signum term from
-    :trac:`11590` can be integrated::
+    :issue:`11590` can be integrated::
 
         sage: x = SR.symbol('x', domain='real')                                         # needs sage.symbolic
         sage: result = integrate(x * sgn(x^2 - 1/4), x, -1, 0)                          # needs sage.symbolic
@@ -1107,7 +1107,7 @@ def log(*args, **kwds):
 
     TESTS:
 
-    Check if :trac:`10136` is fixed::
+    Check if :issue:`10136` is fixed::
 
         sage: ln(x).operator() is ln                                                    # needs sage.symbolic
         True
@@ -1136,7 +1136,7 @@ def log(*args, **kwds):
         ...
         TypeError: log takes at most 2 arguments (3 given)
 
-    Check if :trac:`29164` is fixed::
+    Check if :issue:`29164` is fixed::
 
         sage: log(0, 2)
         -Infinity
@@ -1494,7 +1494,7 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
         TypeError: cannot approximate to a precision of 53 bits, use at most 24 bits
 
     As an exceptional case, ``digits=1`` usually leads to 2 digits (one
-    significant) in the decimal output (see :trac:`11647`)::
+    significant) in the decimal output (see :issue:`11647`)::
 
         sage: # needs sage.symbolic
         sage: N(pi, digits=1)
@@ -1528,7 +1528,7 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
         sage: type(numerical_approx(CC(1/2)))                                           # needs sage.rings.real_mpfr
         <class 'sage.rings.complex_mpfr.ComplexNumber'>
 
-    The following tests :trac:`10761`, in which ``n()`` would break when
+    The following tests :issue:`10761`, in which ``n()`` would break when
     called on complex-valued algebraic numbers.  ::
 
         sage: E = matrix(3, [3,1,6,5,2,9,7,3,13]).eigenvalues(); E                      # needs sage.modules sage.rings.number_field
@@ -1539,7 +1539,7 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
         [18.1681536508882, -0.0840768254441065 - 0.219026148480291*I, -0.0840768254441065 + 0.219026148480291*I]
 
     Make sure we've rounded up log(10,2) enough to guarantee
-    sufficient precision (:trac:`10164`)::
+    sufficient precision (:issue:`10164`)::
 
         sage: ks = 4*10**5, 10**6
         sage: check_str_length = lambda k: len(str(numerical_approx(1+10**-k,digits=k+1)))-1 >= k+1
@@ -1547,7 +1547,7 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
         sage: all(check_str_length(k) and check_precision(k) for k in ks)               # needs sage.rings.real_mpfr
         True
 
-    Testing we have sufficient precision for the golden ratio (:trac:`12163`), note
+    Testing we have sufficient precision for the golden ratio (:issue:`12163`), note
     that the decimal point adds 1 to the string length::
 
         sage: len(str(n(golden_ratio, digits=5000)))                                    # needs sage.symbolic
@@ -1555,7 +1555,7 @@ def numerical_approx(x, prec=None, digits=None, algorithm=None):
         sage: len(str(n(golden_ratio, digits=5000000)))         # long time (4s on sage.math, 2012), needs sage.symbolic
         5000001
 
-    Check that :trac:`14778` is fixed::
+    Check that :issue:`14778` is fixed::
 
         sage: n(0, algorithm='foo')                                                     # needs sage.rings.real_mpfr
         0.000000000000000
@@ -1686,7 +1686,7 @@ def round(x, ndigits=0):
         sage: round(b)
         5
 
-    This example addresses :trac:`23502`::
+    This example addresses :issue:`23502`::
 
         sage: n = round(6); type(n)
         <class 'sage.rings.integer.Integer'>
@@ -1940,7 +1940,7 @@ def sqrt(x, *args, **kwds):
         ...
         TypeError: ..._do_sqrt() got an unexpected keyword argument 'hold'
 
-    This illustrates that the bug reported in :trac:`6171` has been fixed::
+    This illustrates that the bug reported in :issue:`6171` has been fixed::
 
         sage: a = 1.1
         sage: a.sqrt(prec=100)  # this is supposed to fail

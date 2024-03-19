@@ -156,7 +156,7 @@ class RiggedConfigurationElement(ClonableArray):
             if the rigged partitions comes from another rigged configuration,
             a deep copy should be made before being passed here. We do not
             make a deep copy here because the crystal operators generate
-            their own rigged partitions. See :trac:`17054`.
+            their own rigged partitions. See :issue:`17054`.
 
         EXAMPLES::
 
@@ -2038,7 +2038,7 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
 
         TESTS:
 
-        We check that :trac:`18898` is fixed::
+        We check that :issue:`18898` is fixed::
 
             sage: RC = RiggedConfigurations(['D',4,1], [[2,1], [2,1], [2,3]])
             sage: x = RC(partition_list=[[1], [1,1], [1], [1]], rigging_list=[[0], [2,1], [0], [0]])

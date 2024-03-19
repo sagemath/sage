@@ -7,7 +7,7 @@ by direct method not relying on factorisation.
 
 AUTHORS:
 
-- Vincent Delecroix (2014): first implementation (:trac:`16374`)
+- Vincent Delecroix (2014): first implementation (:issue:`16374`)
 """
 #*****************************************************************************
 #       Copyright (C) 2014 Vincent Delecroix <20100.delecroix@gmail.com>

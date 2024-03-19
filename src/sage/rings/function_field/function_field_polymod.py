@@ -128,7 +128,7 @@ class FunctionField_polymod(FunctionField):
 
         TESTS:
 
-        Test that :trac:`17033` is fixed::
+        Test that :issue:`17033` is fixed::
 
             sage: K.<t> = FunctionField(QQ)
             sage: R.<x> = QQ[]
@@ -263,7 +263,7 @@ class FunctionField_polymod(FunctionField):
 
         TESTS:
 
-        Verify that :trac:`21872` has been resolved::
+        Verify that :issue:`21872` has been resolved::
 
             sage: R.<z> = L[]
             sage: M.<z> = L.extension(z^2 - y)
@@ -305,7 +305,7 @@ class FunctionField_polymod(FunctionField):
 
         TESTS:
 
-        Verify that :trac:`21872` has been resolved::
+        Verify that :issue:`21872` has been resolved::
 
             sage: L(1) in QQ
             True
