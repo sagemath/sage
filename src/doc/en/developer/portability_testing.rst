@@ -219,7 +219,7 @@ on our container to install the necessary build prerequisites::
   ...
   Done.
 
-(The Sage :ref:`Installation Guide <installation-guide>`_ also
+(The Sage :ref:`Installation Guide <installation-guide>` also
 provides such command lines for some distributions; these are
 automatically generated from the database of package names.)
 
