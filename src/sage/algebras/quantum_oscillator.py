@@ -261,7 +261,7 @@ class QuantumOscillatorAlgebra(CombinatorialFreeModule):
 
     def fock_space_representation(self):
         r"""
-        Return the Fock sapce representation of ``self``.
+        Return the Fock space representation of ``self``.
 
         .. SEEALSO::
 
@@ -481,7 +481,7 @@ class FockSpaceRepresentation(CombinatorialFreeModule):
     The unique Fock space representation of the
     :class:`~sage.algebras.quantum_oscillator.QuantumOscillatorAlgebra`.
     """
-    def __init__(self, O):
+    def __init__(self, oscillator_algebra):
         r"""
         Initialize ``self``.
 
@@ -491,9 +491,9 @@ class FockSpaceRepresentation(CombinatorialFreeModule):
             sage: F = O.fock_space_representation()
             sage: TestSuite(F).run()
         """
-        self._O = O
+        self._O = oscillator_algebra
         ind = NonNegativeIntegers()
-        CombinatorialFreeModule.__init__(self, O.base_ring(), ind, prefix='', bracket=['|', '>'],
+        CombinatorialFreeModule.__init__(self, oscillator_algebra.base_ring(), ind, prefix='', bracket=['|', '>'],
                                          latex_bracket=[r'\lvert', r'\rangle'])
 
     def _test_representation(self, **options):

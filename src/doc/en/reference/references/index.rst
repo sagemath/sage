@@ -4062,7 +4062,7 @@ REFERENCES:
 
 .. [Kuniba2022] Atsuo Kuniba,
                 *Quantum Groups in Three-Dimensional Integrability*.
-                Theoretical an Mathematical Phyiscs, Springer. 2022.
+                Theoretical and Mathematical Physics, Springer. 2022.
                 :doi:`10.1007/978-981-19-3262-5`.
 
 .. [Kur2008] Chris Kurth, "K Farey package for Sage",
