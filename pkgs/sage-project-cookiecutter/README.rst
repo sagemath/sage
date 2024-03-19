@@ -66,7 +66,7 @@ Adding Sage CI portability/integration testing infrastructure to an upstream pro
 
    $ sage-project-cookiecutter create --upstream-package PROJECT-DIRECTORY
 
-Creates:
+Creates in the existing ``PROJECT-DIRECTORY``:
 
 - ``.github/workflows/ci-sage.yml``
 - ``.devcontainer/portability-*``
@@ -74,8 +74,11 @@ Creates:
 
 It can also be invoked as follows::
 
-   $ pipx run cruft create https://github.com/mkoeppe/sage --checkout sagemath-environment-cookiecutter \
-       --directory="pkgs/sage-project-cookiecutter/sage_project_cookiecutter/upstream-package-template"
+   [alice@localhost PROJECT-DIRECTORY]$ (cd .. && pipx run cruft create \
+       https://github.com/mkoeppe/sage --checkout sagemath-environment-cookiecutter \
+       --directory="pkgs/sage-project-cookiecutter/sage_project_cookiecutter/upstream-package-template" \
+       --overwrite-if-exists)
+   [1/1] Name of the project (directory name to create) (my-sage-project): PROJECT-DIRECTORY
 
 
 Creating a pip-installable upstream package of the SageMath organization
