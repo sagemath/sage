@@ -5,7 +5,7 @@ Tests for chain complexes, simplicial complexes, etc.
 These test whether CHomP gives the same answers as Sage's built-in
 homology calculator.
 
-Since the CHomP interface has been deprecated --- see :trac:`33777`
+Since the CHomP interface has been deprecated --- see :issue:`33777`
 --- so are many of the functions in is this module.
 
 TESTS::
@@ -73,7 +73,7 @@ def test_random_chain_complex(level=1, trials=1, verbose=False):
     CHomP, and compare the results.  If they are not the same, raise
     an error.
 
-    This function is deprecated: see :trac:`33777`.
+    This function is deprecated: see :issue:`33777`.
 
     :param level: measure of complexity of the chain complex -- see
       :func:`random_chain_complex`

@@ -353,7 +353,7 @@ AUTHORS:
 TESTS:
 
 Check that numerical approximations via Mathematica's `N[]` function work
-correctly (:trac:`18888`, :trac:`28907`)::
+correctly (:issue:`18888`, :issue:`28907`)::
 
     sage: # optional - mathematica
     sage: mathematica('Pi/2').N(10)
@@ -367,7 +367,7 @@ correctly (:trac:`18888`, :trac:`28907`)::
     -0.5 + 3.14159 x
 
 Check that Mathematica's `E` exponential symbol is correctly backtranslated
-as Sage's `e` (:trac:`29833`)::
+as Sage's `e` (:issue:`29833`)::
 
     sage: x = var('x')
     sage: (e^x)._mathematica_().sage()  # optional -- mathematica
@@ -376,7 +376,7 @@ as Sage's `e` (:trac:`29833`)::
     e^x
 
 Check that all trig/hyperbolic functions and their reciprocals are correctly
-translated to Mathematica (:trac:`34087`)::
+translated to Mathematica (:issue:`34087`)::
 
     sage: # optional - mathematica
     sage: x=var('x')
@@ -481,7 +481,7 @@ class Mathematica(ExtraTabCompletion, Expect):
         r"""
         TESTS:
 
-        Test that :trac:`28075` is fixed::
+        Test that :issue:`28075` is fixed::
 
             sage: repr(mathematica.eval("Print[1]; Print[2]; Print[3]"))  # optional - mathematica
             '1\n2\n3'
@@ -831,7 +831,7 @@ class MathematicaElement(ExpectElement):
 
         TESTS:
 
-        Check that :trac:`28814` is fixed::
+        Check that :issue:`28814` is fixed::
 
             sage: mathematica('Exp[1000.0]').sage()  # optional - mathematica
             1.97007111401700e434
@@ -979,7 +979,7 @@ class MathematicaElement(ExpectElement):
             sage: P = mathematica('Plot[Sin[x],{x,-2Pi,4Pi}]')   # optional - mathematica
 
         The following test requires a working X display on Linux so that the
-        Mathematica frontend can do the rendering (:trac:`23112`)::
+        Mathematica frontend can do the rendering (:issue:`23112`)::
 
             sage: P._rich_repr_(dm)                              # optional - mathematica mathematicafrontend
             OutputImagePng container
@@ -1025,7 +1025,7 @@ class MathematicaElement(ExpectElement):
             Sin[x*Cos[y]]/Sqrt[1 - x^2]
 
         The following example starts a Mathematica frontend to do the rendering
-        (:trac:`28819`)::
+        (:issue:`28819`)::
 
             sage: P = mathematica('Plot[Sin[x],{x,-2Pi,4Pi}]')   # optional - mathematica
             sage: show(P)                                        # optional - mathematica mathematicafrontend

@@ -395,7 +395,7 @@ def PolynomialRing(base_ring, *args, **kwds):
 
     TESTS:
 
-    We test here some changes introduced in :trac:`9944`.
+    We test here some changes introduced in :issue:`9944`.
 
     If there is no dense implementation for the given number of
     variables, then requesting a dense ring is an error::
@@ -495,7 +495,7 @@ def PolynomialRing(base_ring, *args, **kwds):
         sage: R.0 == 0
         True
 
-    We verify that :trac:`13187` is fixed::
+    We verify that :issue:`13187` is fixed::
 
         sage: var('t')                                                                  # needs sage.symbolic
         t
@@ -503,7 +503,7 @@ def PolynomialRing(base_ring, *args, **kwds):
         True
 
     We verify that polynomials with interval coefficients from
-    :trac:`7712` and :trac:`13760` are fixed::
+    :issue:`7712` and :issue:`13760` are fixed::
 
         sage: # needs sage.rings.real_interval_field
         sage: P.<y,z> = PolynomialRing(RealIntervalField(2))
@@ -725,7 +725,7 @@ def unpickle_PolynomialRing(base_ring, arg1=None, arg2=None, sparse=False):
     Custom unpickling function for polynomial rings.
 
     This has the same positional arguments as the old
-    ``PolynomialRing`` constructor before :trac:`23338`.
+    ``PolynomialRing`` constructor before :issue:`23338`.
     """
     args = [arg for arg in (arg1, arg2) if arg is not None]
     return PolynomialRing(base_ring, *args, sparse=sparse)

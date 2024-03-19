@@ -325,7 +325,7 @@ def dominating_sets(g, k=1, independent=False, total=False, connected=False,
         [[2], [3]]
 
     The dominating set is calculated for both the directed and undirected graphs
-    (modification introduced in :trac:`17905`)::
+    (modification introduced in :issue:`17905`)::
 
         sage: # needs sage.numerical.mip
         sage: g = digraphs.Path(3)
@@ -561,7 +561,7 @@ def dominating_set(g, k=1, independent=False, total=False, connected=False, valu
         4
 
     The dominating set is calculated for both the directed and undirected graphs
-    (modification introduced in :trac:`17905`)::
+    (modification introduced in :issue:`17905`)::
 
         sage: g = digraphs.Path(3)
         sage: g.dominating_set(value_only=True)                                         # needs sage.numerical.mip

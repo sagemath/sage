@@ -650,7 +650,7 @@ class FanMorphism(FreeModuleMorphism):
             into the support of
             Rational polyhedral fan in 2-d lattice N!
 
-        We check that :trac:`10943` is fixed::
+        We check that :issue:`10943` is fixed::
 
             sage: Sigma = Fan(rays=[(1,1,0), (1,-1,0)], cones=[(0,1)])
             sage: Sigma_prime = FaceFan(lattice_polytope.cross_polytope(3))
@@ -1304,7 +1304,7 @@ class FanMorphism(FreeModuleMorphism):
 
         TESTS:
 
-        We check that reviewer's example on :trac:`11200` works as expected::
+        We check that reviewer's example on :issue:`11200` works as expected::
 
             sage: P1 = toric_varieties.P1()
             sage: A1 = toric_varieties.A1()
@@ -1452,7 +1452,7 @@ class FanMorphism(FreeModuleMorphism):
 
         TESTS:
 
-        We check that reviewer's example on :trac:`11200` works as expected::
+        We check that reviewer's example on :issue:`11200` works as expected::
 
             sage: P1 = toric_varieties.P1()
             sage: A1 = toric_varieties.A1()
@@ -1568,7 +1568,7 @@ class FanMorphism(FreeModuleMorphism):
 
         TESTS:
 
-        We check that reviewer's example from :trac:`9972` is handled correctly::
+        We check that reviewer's example from :issue:`9972` is handled correctly::
 
             sage: # needs palp
             sage: N1 = ToricLattice(1)

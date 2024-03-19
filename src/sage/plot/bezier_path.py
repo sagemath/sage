@@ -64,7 +64,7 @@ class BezierPath(GraphicPrimitive_xydata):
 
         TESTS:
 
-        Check :trac:`31646`::
+        Check :issue:`31646`::
 
             sage: from sage.plot.bezier_path import BezierPath
             sage: p2d = [[(3,0),(4,1),(2,1),(3,0)], [(2,2),(3,1),(2,1)]]
@@ -387,7 +387,7 @@ def bezier_path(path, **options):
 
     TESTS:
 
-    We shouldn't modify our argument, :trac:`13822`::
+    We shouldn't modify our argument, :issue:`13822`::
 
         sage: bp = [[(1,1),(2,3),(3,3)], [(4,4),(5,5)]]
         sage: foo = bezier_path(bp)

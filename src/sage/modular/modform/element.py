@@ -299,7 +299,7 @@ class ModularForm_abstract(ModuleElement):
 
         TESTS:
 
-        The following used to fail (see :trac:`18068`)::
+        The following used to fail (see :issue:`18068`)::
 
             sage: f != loads(dumps(f))
             False
@@ -937,7 +937,7 @@ class ModularForm_abstract(ModuleElement):
             sage: L(1)
             0.0374412812685155
 
-        We check that :trac:`5262` is fixed::
+        We check that :issue:`5262` is fixed::
 
             sage: E = EllipticCurve('37b2')
             sage: h = Newforms(37)[1]
@@ -948,7 +948,7 @@ class ModularForm_abstract(ModuleElement):
             sage: CuspForms(1, 30).0.lseries().eps
             -1.00000000000000
 
-        We check that :trac:`25369` is fixed::
+        We check that :issue:`25369` is fixed::
 
             sage: f5 = Newforms(Gamma1(4), 5, names='a')[0]; f5
             q - 4*q^2 + 16*q^4 - 14*q^5 + O(q^6)
@@ -1072,7 +1072,7 @@ class ModularForm_abstract(ModuleElement):
             sage: CuspForms(1, 12).0.symsquare_lseries(prec=1000)(22) # long time (20s)
             0.999645711124771397835729622033153189549796658647254961493709341358991830134499267117001769570658192128781135161587571716303826382489492569725002840546129937149159065273765309218543427544527498868033604310899372849565046516553245752253255585377793879866297612679545029546953895098375829822346290125161
 
-        Check that :trac:`23247` is fixed::
+        Check that :issue:`23247` is fixed::
 
             sage: F = Newforms(1,12)[0]
             sage: chi = DirichletGroup(7).0
@@ -1459,7 +1459,7 @@ class Newform(ModularForm_abstract):
             False
 
         We test comparison of equal newforms with different parents
-        (see :trac:`18478`)::
+        (see :issue:`18478`)::
 
             sage: f = Newforms(Gamma1(11), 2)[0]; f
             q - 2*q^2 - q^3 + 2*q^4 + q^5 + O(q^6)
@@ -1571,7 +1571,7 @@ class Newform(ModularForm_abstract):
             sage: f._compute([])
             []
 
-        Check that :trac:`20793` is fixed::
+        Check that :issue:`20793` is fixed::
 
             sage: f = Newforms(83, 2, names='a')[1]; f
             q + a1*q^2 + (1/2*a1^4 - 1/2*a1^3 - 7/2*a1^2 + 3/2*a1 + 4)*q^3 + (a1^2 - 2)*q^4 + (-1/2*a1^5 - 1/2*a1^4 + 9/2*a1^3 + 7/2*a1^2 - 8*a1 - 2)*q^5 + O(q^6)
@@ -2065,14 +2065,14 @@ class Newform(ModularForm_abstract):
 
         TESTS:
 
-        Check that the bug reported at :trac:`18061` is fixed::
+        Check that the bug reported at :issue:`18061` is fixed::
 
             sage: K.<i> = CyclotomicField(4)
             sage: f = Newforms(DirichletGroup(30, QQ).1, 2, K)[0]
             sage: f.atkin_lehner_eigenvalue(embedding=K.embeddings(QQbar)[1])
             -0.8944271909999159? - 0.4472135954999580?*I
 
-        Check that :trac:`24086` is fixed::
+        Check that :issue:`24086` is fixed::
 
             sage: f = Newforms(24, 4)[0]
             sage: f.atkin_lehner_eigenvalue(8)
@@ -2525,7 +2525,7 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
 
         TESTS:
 
-        This shows that the issue at :trac:`7548` is fixed::
+        This shows that the issue at :issue:`7548` is fixed::
 
             sage: M = CuspForms(Gamma0(5*3^2), 2)
             sage: f = M.basis()[0]
