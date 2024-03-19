@@ -9,5 +9,5 @@ you need to make TeX aware of SageTeX. Instructions for that are in the
 <http://doc.sagemath.org/html/en/tutorial/sagetex.html#make-sagetex-known-to-tex>`_
 section of the `Sage tutorial
 <http://doc.sagemath.org/html/en/tutorial/index.html>`_ (:ref:`this link
-<tutorial>`_ should take you to a local copy of the
+<tutorial>` should take you to a local copy of the
 tutorial).
