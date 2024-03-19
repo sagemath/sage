@@ -20,6 +20,11 @@ from sage_docbuild.conf import *  # NOQA
 # contains common paths.
 html_static_path = [] + html_common_static_path
 
+# Add a small edit button.
+html_theme_options.update({
+  'source_edit_link': os.path.join(source_repository, 'blob/develop/src/doc/en/prep', '{filename}'),
+})
+
 # General information about the project.
 project = "PREP Tutorials"
 copyright = "2012, Rob Beezer, Karl-Dieter Crisman, and Jason Grout"
