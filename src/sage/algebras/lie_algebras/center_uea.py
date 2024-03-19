@@ -47,7 +47,7 @@ class CenterIndices(IndexedFreeAbelianMonoid):
 
     This also constructs the lift from the center to the universal enveloping
     algebra as part of computing the generators and basis elements. The
-    basic algorithm is to construct the centeralizer of each filtered
+    basic algorithm is to construct the centralizer of each filtered
     component in increasing order (as each is a finite dimensional vector
     space). For more precise details, see [Motsak2006]_.
     """
@@ -290,7 +290,7 @@ class CenterIndices(IndexedFreeAbelianMonoid):
         #   modulo the currently computed center.
         for exps in IntegerListsLex(n=self._cur_deg, length=len(gens)):
             elt = monoid.element_class(monoid, {k: p for k, p in zip(monoid._indices, exps) if p})
-            if elt in new_red:  # already has a centeral element with this leading term
+            if elt in new_red:  # already has a central element with this leading term
                 continue
             # A new basis element to consider
             self._cur_vecs.append(UEA.monomial(elt))
