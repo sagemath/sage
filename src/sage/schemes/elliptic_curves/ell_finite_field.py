@@ -40,7 +40,6 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.schemes.curves.projective_curve import Hasse_bounds
-from sage.schemes.hyperelliptic_curves.hyperelliptic_finite_field import HyperellipticCurve_finite_field
 from sage.structure.element import Element
 
 from . import ell_point
@@ -48,7 +47,7 @@ from .constructor import EllipticCurve
 from .ell_field import EllipticCurve_field
 
 
-class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_field):
+class EllipticCurve_finite_field(EllipticCurve_field):
     r"""
     Elliptic curve over a finite field.
 
@@ -113,10 +112,19 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         return points([P[0:2] for P in self.points() if not P.is_zero()], *args, **kwds)
 
     def _points_via_group_structure(self):
-        """
-        Return a list of all the points on the curve, for prime fields only.
+        r"""
+        Return a list of all the points on the curve using the group structure.
 
-        See points() for the general case.
+        For cyclic groups with generator `G` of order `n`, the set of points
+        is computed from `[x]G` for `x \in [0, n - 1]` requiring `n - 2`
+        additions on the curve.
+
+        For non-cyclic groups, first two cyclic subgroups `H_i` are computed as
+        above from `[x]G_i` for `x \in [0, n_i]` requiring `n_1 + n_2 - 4`
+        additions. The set of all points is returned as the cartesian product
+        of these two cyclic groups.
+
+        When the group is trivial, only the point at infinity is returned.
 
         EXAMPLES::
 
@@ -144,29 +152,45 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             [(0 : 1 : 0), (0 : a : 1), (0 : a + 1 : 1), (1 : 0 : 1), (1 : 1 : 1), (a : 0 : 1), (a : 1 : 1), (a + 1 : 0 : 1), (a + 1 : 1 : 1)]
         """
         # TODO, eliminate when polynomial calling is fast
+        # 11-03-2024 - G. Pope : it is not clear to me what the above TODO references
+
+        # Compute the generators of the abelian group of the curve
         G = self.abelian_group()
-        pts = [x.element() for x in G.gens()]
+        gens = [x.element() for x in G.gens()]
 
-        ni = G.generator_orders()
-        ngens = G.ngens()
+        # Zero element of the group
+        zero = self(0)
 
-        H0 = [self(0)]
-        if ngens == 0:    # trivial group
-            return H0
-        for m in range(1,ni[0]):
-            H0.append(H0[-1]+pts[0])
-        if ngens == 1:    # cyclic group
-            return H0
+        # Trivial group, return the identity element only
+        if len(gens) == 0:
+            return [zero]
 
-        # else noncyclic group
-        H1 = [self(0)]
-        for m in range(1,ni[1]):
-            H1.append(H1[-1]+pts[1])
-        return [P+Q for P in H0 for Q in H1]
+        def __multiples(G):
+            """
+            Compute the list of points [i]G for i in [0, G.order())
+            """
+            H = [zero, G]
+            P = G
+            for _ in range(2, G.order()):
+                P += G
+                H.append(P)
+            return H
+
+        # Collect all multiples of the generator
+        H1 = __multiples(gens[0])
+
+        # Cyclic case, we now have all points
+        if len(gens) == 1:
+            return H1
+
+        # Non-cyclic case we generate the second set of points and compute
+        # the entire set of points from the Cartesian product
+        H2 = __multiples(gens[1])
+        return [P + Q for P in H1 for Q in H2]
 
     def points(self):
         r"""
-        All the points on this elliptic curve. The list of points is cached
+        Return all rational points on this elliptic curve. The list of points is cached
         so subsequent calls are free.
 
         EXAMPLES::
@@ -174,48 +198,36 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: p = 5
             sage: F = GF(p)
             sage: E = EllipticCurve(F, [1, 3])
-            sage: a_sub_p = E.change_ring(QQ).ap(p); a_sub_p
-            2
-
-        ::
-
             sage: len(E.points())
             4
-            sage: p + 1 - a_sub_p
+            sage: E.order()
             4
             sage: E.points()
             [(0 : 1 : 0), (1 : 0 : 1), (4 : 1 : 1), (4 : 4 : 1)]
 
         ::
 
-            sage: # needs sage.rings.finite_rings
-            sage: K = GF((p, 2),'a')
+            sage: K = GF((p, 2), 'a')
             sage: E = E.change_ring(K)
             sage: len(E.points())
             32
-            sage: (p + 1)**2 - a_sub_p**2
+            sage: E.order()
             32
             sage: w = E.points(); w
             [(0 : 1 : 0), (0 : 2*a + 4 : 1), (0 : 3*a + 1 : 1), (1 : 0 : 1), (2 : 2*a + 4 : 1), (2 : 3*a + 1 : 1), (3 : 2*a + 4 : 1), (3 : 3*a + 1 : 1), (4 : 1 : 1), (4 : 4 : 1), (a : 1 : 1), (a : 4 : 1), (a + 2 : a + 1 : 1), (a + 2 : 4*a + 4 : 1), (a + 3 : a : 1), (a + 3 : 4*a : 1), (a + 4 : 0 : 1), (2*a : 2*a : 1), (2*a : 3*a : 1), (2*a + 4 : a + 1 : 1), (2*a + 4 : 4*a + 4 : 1), (3*a + 1 : a + 3 : 1), (3*a + 1 : 4*a + 2 : 1), (3*a + 2 : 2*a + 3 : 1), (3*a + 2 : 3*a + 2 : 1), (4*a : 0 : 1), (4*a + 1 : 1 : 1), (4*a + 1 : 4 : 1), (4*a + 3 : a + 3 : 1), (4*a + 3 : 4*a + 2 : 1), (4*a + 4 : a + 4 : 1), (4*a + 4 : 4*a + 1 : 1)]
 
         Note that the returned list is an immutable sorted Sequence::
 
-            sage: w[0] = 9                                                              # needs sage.rings.finite_rings
+            sage: w[0] = 9
             Traceback (most recent call last):
             ...
             ValueError: object is immutable; please change a copy instead.
         """
-        try:
+        if hasattr(self, "__points"):
             return self.__points
-        except AttributeError:
-            pass
 
         from sage.structure.sequence import Sequence
-        k = self.base_ring()
-        if k.is_prime_field() and k.order() > 50:
-            v = self._points_via_group_structure()
-        else:
-            v = self._points_fast_sqrt()
+        v = self._points_via_group_structure()
         v.sort()
         self.__points = Sequence(v, immutable=True)
         return self.__points
@@ -1641,7 +1653,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             raise ValueError("Incorrect class number {}".format(h))
         if len(cs) == 1:
             return (v//cs[0])**2 * D0
-        from sage.sets.set import Set
+
         L = sorted(set(sum([c.prime_factors() for c in cs], [])))
         for ell in L:
             e = self.height_above_floor(ell,v.valuation(ell))
