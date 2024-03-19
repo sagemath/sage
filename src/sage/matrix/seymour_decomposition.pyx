@@ -297,8 +297,8 @@ cdef class DecompositionNode(SageObject):
         r"""
         Return the number of children of the node.
         """
-        if self._children is not None:
-            return len(self._children)
+        if self._child_nodes is not None:
+            return len(self._child_nodes)
         if self._dec == NULL:
             return 0
         return CMRmatroiddecNumChildren(self._dec)
