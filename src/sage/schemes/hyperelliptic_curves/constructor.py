@@ -260,7 +260,7 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
     bases = []
     cls_name = ["HyperellipticCurve"]
 
-    # For certain genus we specialise to child classes with
+    # For certain genus we specialise to subclasses with
     # optimised methods
     genus_classes = {2: HyperellipticCurve_g2}
     if g in genus_classes:
@@ -287,13 +287,13 @@ def HyperellipticCurve(f, h=0, names=None, PP=None, check_squarefree=True):
             cls_name.append(name)
             break
 
-    # If no specialised child class was found, we simply use the
+    # If no specialised subclasses are identified, we simply use the
     # generic class in the class construction
     if not bases:
         bases = [HyperellipticCurve_generic]
 
     # Dynamically build a class from multiple inheritance. Note that
-    # all classes we slect from are children of HyperellipticCurve_generic
+    # all classes we select from are subclasses of HyperellipticCurve_generic
     class_name = "_".join(cls_name)
     cls = dynamic_class(class_name, tuple(bases), doccls=HyperellipticCurve)
     return cls(PP, f, h, names=names, genus=g)
