@@ -1263,7 +1263,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [ 1  0]
             [-1  1]
             [ 0 -1]
-            sage: M.is_graphic()  # ?? should it not check 0/1-ness?
+            sage: M.is_graphic()
             True
             sage: result, certificate = M.is_graphic(certificate=True)
             sage: graph, forest_edges, coforest_edges = certificate
