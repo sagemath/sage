@@ -1085,9 +1085,9 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: graph.edges(sort=True, labels=False)
                 [(1, 2), (1, 7), (1, 12), (2, 7), (7, 12)]
                 sage: forest_edges    # indexed by rows of M
-                ((1, 2), (7, 1), (12, 7))
+                {'u': (1, 2), 'v': (7, 1), 'w': (12, 7)}
                 sage: coforest_edges  # indexed by cols of M
-                ((2, 7), (1, 12))
+                {'a': (2, 7), 'b': (1, 12)}
             """
             try:
                 matrix = self._matrix_cmr()
@@ -1150,25 +1150,12 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: result, certificate = M.is_network(certificate=True)
                 sage: result, certificate
                 (True,
-                (Digraph on 7 vertices,
-                ((9, 8), (3, 8), (3, 4), (5, 4), (4, 6), (0, 6)),
-                ((3, 9), (5, 3), (4, 0), (0, 8), (9, 0), (4, 9), (5, 6))))
+                 (Digraph on 7 vertices,
+                  {0: (9, 8), 1: (3, 8), 2: (3, 4), 3: (5, 4), 4: (4, 6), 5: (0, 6)},
+                  {'a': (3, 9), 'b': (5, 3), 'c': (4, 0), 'd': (0, 8),
+                   'e': (9, 0), 'f': (4, 9), 'g': (5, 6)}))
                 sage: digraph, forest_arcs, coforest_arcs = certificate
-                sage: list(digraph.edges(sort=True))
-                [(0, 6, None),
-                (0, 8, None),
-                (3, 4, None),
-                (3, 8, None),
-                (3, 9, None),
-                (4, 0, None),
-                (4, 6, None),
-                (4, 9, None),
-                (5, 3, None),
-                (5, 4, None),
-                (5, 6, None),
-                (9, 0, None),
-                (9, 8, None)]
-                sage: digraph.plot(edge_colors={'red': forest_arcs})                    # needs sage.plot
+                sage: digraph.plot(edge_colors={'red': forest_arcs.values()})           # needs sage.plot
                 Graphics object consisting of 21 graphics primitives
             """
             try:
