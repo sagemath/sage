@@ -580,7 +580,9 @@ cdef class UnknownNode(DecompositionNode):
             row_keys=self.row_keys(), column_keys=self.column_keys(), **kwds)
         result = [result]
         if decomposition:
-            raise NotImplementedError
+            graph, forest_edges, coforest_edges = certificate
+            node = GraphicNode(graph, forest_edges, coforest_edges)
+            result.append(node)
         if certificate:
             result.append(certificate)
         return result
@@ -1176,6 +1178,16 @@ cdef class ThreeSumNode(SumNode):
 
 
 cdef class BaseGraphicNode(DecompositionNode):
+
+    def __init__(self, matrix=None, graph=None, forest_edges=None, coforest_edges=None, row_keys=None, column_keys=None):
+        self._matrix = matrix
+        self._graph = graph
+        self._forest_edges = forest_edges
+        self._coforest_edges = coforest_edges
+        if row_keys is not None:
+            self._set_row_keys(row_keys)
+        if column_keys is not None:
+            self._set_column_keys(column_keys)
 
     def graph(self):
         r"""

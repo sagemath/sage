@@ -26,6 +26,18 @@ cdef class BaseGraphicNode(DecompositionNode):
     cdef object _coforest_edges
 
 
+cdef class GraphicNode(BaseGraphicNode):
+    pass
+
+
+cdef class CographicNode(BaseGraphicNode):
+    pass
+
+
+cdef class PlanarNode(BaseGraphicNode):
+    pass
+
+
 cdef class SymbolicNode(DecompositionNode):
 
     cdef object _symbol

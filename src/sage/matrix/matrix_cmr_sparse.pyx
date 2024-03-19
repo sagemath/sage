@@ -28,7 +28,7 @@ from sage.structure.element cimport Matrix
 from .args cimport MatrixArgs_init
 from .constructor import matrix
 from .matrix_space import MatrixSpace
-from .seymour_decomposition cimport create_DecompositionNode
+from .seymour_decomposition cimport create_DecompositionNode, GraphicNode
 
 
 cdef class Matrix_cmr_sparse(Matrix_sparse):
@@ -1252,7 +1252,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         return True if result else False
 
-    def is_graphic(self, *, time_limit=60.0, certificate=False,
+    def is_graphic(self, *, time_limit=60.0, decomposition=False, certificate=False,
                    row_keys=None, column_keys=None):
         r"""
         EXAMPLES::
@@ -1286,6 +1286,13 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: coforest_edges
             {'v': (2, 7), 'w': (1, 12)}
 
+        Creating a decomposition node::
+
+            sage: result, node = M.is_graphic(decomposition=True,
+            ....:     row_keys=['a', 'b', 'c'], column_keys=['v', 'w'])
+            sage: result, node
+            (True, GraphicNode (3×2))
+
         TESTS::
 
             sage: M.is_graphic(time_limit=0.0)
@@ -1293,7 +1300,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             ...
             RuntimeError: Time limit exceeded
         """
-        cdef bool result
+        cdef bool result_bool
         cdef CMR_GRAPH *graph = NULL
         cdef CMR_GRAPH_EDGE* forest_edges = NULL
         cdef CMR_GRAPH_EDGE* coforest_edges = NULL
@@ -1302,25 +1309,37 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         sig_on()
         try:
-            if certificate:
-                CMR_CALL(CMRgraphicTestMatrix(cmr, self._mat, &result, &graph, &forest_edges,
+            if decomposition or certificate:
+                CMR_CALL(CMRgraphicTestMatrix(cmr, self._mat, &result_bool, &graph, &forest_edges,
                                               &coforest_edges, &submatrix, &stats, time_limit))
             else:
-                CMR_CALL(CMRgraphicTestMatrix(cmr, self._mat, &result, NULL, NULL,
+                CMR_CALL(CMRgraphicTestMatrix(cmr, self._mat, &result_bool, NULL, NULL,
                                               NULL, NULL, &stats, time_limit))
         finally:
             sig_off()
 
-        if not certificate:
-            return <bint> result
+        result = <bint> result_bool
 
-        if <bint> result:
+        if not decomposition and not certificate:
+            return result
+
+        if result:
+            result = [result]
             sage_graph = _sage_graph(graph)
             sage_forest_edges = _sage_edges(graph, forest_edges, self.nrows(), row_keys)
             sage_coforest_edges = _sage_edges(graph, coforest_edges, self.ncols(), column_keys)
-            return True, (sage_graph, sage_forest_edges, sage_coforest_edges)
-
-        return False, NotImplemented  # submatrix TBD
+            if decomposition:
+                result.append(GraphicNode(self, sage_graph, sage_forest_edges, sage_coforest_edges,
+                                          row_keys=row_keys, column_keys=column_keys))
+            if certificate:
+                result.append((sage_graph, sage_forest_edges, sage_coforest_edges))
+        else:
+            result = [result]
+            if decomposition:
+                raise NotImplementedError
+            if certificate:
+                result.append(NotImplemented)  # submatrix TBD
+        return result
 
     def is_cographic(self, *, time_limit=60.0, certificate=False,
                      row_keys=None, column_keys=None):
