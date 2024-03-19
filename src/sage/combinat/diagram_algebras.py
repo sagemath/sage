@@ -3108,7 +3108,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
     def potts_representation(self, y=None):
         r"""
         Return the :class:`PottsRepresentation` with magnetic field
-        direction ``Y`` of ``self``.
+        direction ``y`` of ``self``.
 
         .. NOTE::
 
@@ -3130,7 +3130,7 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
             sage: PA.potts_representation()
             Traceback (most recent call last):
             ...
-            ValueError: the partition algebra  deformation parameter must
+            ValueError: the partition algebra deformation parameter must
              be a positive integer
         """
         if self.order() not in ZZ and y is None:
