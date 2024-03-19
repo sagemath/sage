@@ -35,11 +35,11 @@ using one of two mechanisms:
 
 - Backport packages
 
-  - :ref:`importlib_metadata <spkg_importlib_metadata>`_
+  - :ref:`importlib_metadata <spkg_importlib_metadata>`
     (to be used in place of ``importlib.metadata``),
-  - :ref:`importlib_resources <spkg_importlib_resources>`_
+  - :ref:`importlib_resources <spkg_importlib_resources>`
     (to be used in place of ``importlib.resources``),
-  - :ref:`typing_extensions <spkg_typing_extensions>`_
+  - :ref:`typing_extensions <spkg_typing_extensions>`
     (to be used in place of ``typing``).
 
   The Sage library declares these packages as dependencies and ensures that
