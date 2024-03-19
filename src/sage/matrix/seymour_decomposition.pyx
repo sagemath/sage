@@ -1301,6 +1301,10 @@ cdef class SymbolicNode(DecompositionNode):
             ╭────────────────OneSumNode (6×12) with 2 children
             │                    │
             SymbolicNode X (3×6) SymbolicNode X (3×6)
+            sage: Y = SymbolicNode('Y', row_keys='de', column_keys='fg'); Y
+            SymbolicNode Y (2×2)
+            sage: XY = X.one_sum(Y); XY
+            OneSumNode (5×8) with 2 children
         """
         self._symbol = symbol
         self._set_row_keys(row_keys)
