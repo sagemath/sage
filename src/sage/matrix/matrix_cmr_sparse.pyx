@@ -1428,18 +1428,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         if <bint> result:
             sage_digraph = _sage_digraph(digraph, arcs_reversed)
-            if row_keys is None:
-                sage_forest_arcs = tuple(_sage_arc(digraph, forest_arcs[row], arcs_reversed[forest_arcs[row]])
-                                         for row in range(self.nrows()))
-            else:
-                sage_forest_arcs = {row_key: _sage_arc(digraph, forest_arcs[row], arcs_reversed[forest_arcs[row]])
-                                    for row, row_key in enumerate(row_keys)}
-            if column_keys is None:
-                sage_coforest_arcs = tuple(_sage_arc(digraph, coforest_arcs[column], arcs_reversed[coforest_arcs[column]])
-                                           for column in range(self.ncols()))
-            else:
-                sage_coforest_arcs = {column_key: _sage_arc(digraph, coforest_arcs[column], arcs_reversed[coforest_arcs[column]])
-                                      for column, column_key in enumerate(column_keys)}
+            sage_forest_arcs = _sage_arcs(digraph, forest_arcs, arcs_reversed, self.nrows(), row_keys)
+            sage_coforest_arcs = _sage_arcs(digraph, coforest_arcs, arcs_reversed, self.ncols(), column_keys)
             return True, (sage_digraph, sage_forest_arcs, sage_coforest_arcs)
 
         return False, NotImplemented  # submatrix TBD
@@ -1780,6 +1770,14 @@ cdef _sage_arc(CMR_GRAPH *graph, CMR_GRAPH_EDGE e, bint reversed):
     if reversed:
         return Integer(CMRgraphEdgeV(graph, e)), Integer(CMRgraphEdgeU(graph, e))
     return Integer(CMRgraphEdgeU(graph, e)), Integer(CMRgraphEdgeV(graph, e))
+
+
+cdef _sage_arcs(CMR_GRAPH *graph, CMR_GRAPH_EDGE *arcs, bool *arcs_reversed, n, keys):
+    if keys is None:
+        return tuple(_sage_arc(graph, arcs[i], arcs_reversed[arcs[i]])
+                     for i in range(n))
+    return {key: _sage_arc(graph, arcs[i], arcs_reversed[arcs[i]])
+            for i, key in enumerate(keys)}
 
 
 cdef _sage_digraph(CMR_GRAPH *graph, bool *arcs_reversed):

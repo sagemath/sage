@@ -27,4 +27,5 @@ cdef _sage_edges(CMR_GRAPH *graph, CMR_GRAPH_EDGE *edges, int n, keys)
 cdef _sage_graph(CMR_GRAPH *graph)
 
 cdef _sage_arc(CMR_GRAPH *graph, CMR_GRAPH_EDGE e, bint reversed)
+cdef _sage_arcs(CMR_GRAPH *graph, CMR_GRAPH_EDGE *arcs, bool *arcs_reversed, n, keys)
 cdef _sage_digraph(CMR_GRAPH *graph, bool *arcs_reversed)
