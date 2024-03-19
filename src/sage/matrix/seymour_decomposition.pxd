@@ -20,6 +20,12 @@ cdef class DecompositionNode(SageObject):
     cdef _CMRelement_to_key(self, CMR_ELEMENT element)
 
 
+cdef class BaseGraphicNode(DecompositionNode):
+    cdef object _graph
+    cdef object _forest_edges
+    cdef object _coforest_edges
+
+
 cdef class SymbolicNode(DecompositionNode):
 
     cdef object _symbol

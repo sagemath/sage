@@ -1174,7 +1174,6 @@ cdef class ThreeSumNode(SumNode):
 
 cdef class BaseGraphicNode(DecompositionNode):
 
-    @cached_method
     def graph(self):
         r"""
         EXAMPLES::
@@ -1195,9 +1194,11 @@ cdef class BaseGraphicNode(DecompositionNode):
             sage: G.edges(sort=True)
             [(1, 2, None), (1, 7, None), (1, 12, None), (2, 7, None), (7, 12, None)]
         """
-        return _sage_graph(CMRmatroiddecGraph(self._dec))
+        if self._graph is not None:
+            return self._graph
+        self._graph = _sage_graph(CMRmatroiddecGraph(self._dec))
+        return self._graph
 
-    @cached_method
     def forest_edges(self):
         r"""
         EXAMPLES::
@@ -1214,17 +1215,22 @@ cdef class BaseGraphicNode(DecompositionNode):
             sage: certificate.forest_edges()
             ((1, 2), (7, 1), (12, 7))
         """
+        if self._forest_edges is not None:
+            return self._forest_edges
         cdef CMR_GRAPH *graph = CMRmatroiddecGraph(self._dec)
         cdef size_t num_edges = CMRmatroiddecGraphSizeForest(self._dec)
         cdef CMR_GRAPH_EDGE *edges = CMRmatroiddecGraphForest(self._dec)
-        return tuple(_sage_edge(graph, edges[i]) for i in range(num_edges))
+        self._forest_edges = tuple(_sage_edge(graph, edges[i]) for i in range(num_edges))
+        return self._forest_edges
 
-    @cached_method
     def coforest_edges(self):
+        if self._coforest_edges is not None:
+            return self._coforest_edges
         cdef CMR_GRAPH *graph = CMRmatroiddecGraph(self._dec)
         cdef size_t num_edges = CMRmatroiddecGraphSizeCoforest(self._dec)
         cdef CMR_GRAPH_EDGE *edges = CMRmatroiddecGraphCoforest(self._dec)
-        return tuple(_sage_edge(graph, edges[i]) for i in range(num_edges))
+        self._coforest_edges = tuple(_sage_edge(graph, edges[i]) for i in range(num_edges))
+        return self._coforest_edges
 
 
 cdef class GraphicNode(BaseGraphicNode):
@@ -1389,7 +1395,8 @@ cdef class SymbolicNode(DecompositionNode):
             sage: XX.row_keys()
             ((0, 'a'), (0, 'b'), (0, 'c'), (1, 'a'), (1, 'b'), (1, 'c'))
             sage: T = XX.as_ordered_tree(); T
-            OneSumNode (6×12) with 2 children[SymbolicNode X (3×6)[], SymbolicNode X (3×6)[]]
+            OneSumNode (6×12) with 2 children[SymbolicNode X (3×6)[],
+                                              SymbolicNode X (3×6)[]]
             sage: unicode_art(T)
             ╭────────────────OneSumNode (6×12) with 2 children
             │                    │
