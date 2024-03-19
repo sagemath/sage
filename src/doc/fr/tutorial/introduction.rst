@@ -90,7 +90,7 @@ Nous nous limiterons ici à quelques remarques.
    ce faire, consultez la section "Make SageTeX known to TeX" dans le
    guide d'installation (`Sage installation guide
    <http://doc.sagemath.org/html/en/installation/>`_, :ref:`ce lien
-   <installation-guide>`_ devrait pointer vers une copie
+   <installation-guide>` devrait pointer vers une copie
    locale). L'installation est facile : il suffit de copier un fichier
    dans un répertoire que TeX examine, ou de régler une variable
    d'environnement.
