@@ -96,7 +96,6 @@ cdef class DecompositionNode(SageObject):
     def dimensions(self):
         return self.nrows(), self.ncols()
 
-    @cached_method
     def matrix(self):
         r"""
         Return a :class:`Matrix`.
@@ -120,6 +119,8 @@ cdef class DecompositionNode(SageObject):
             [-1  1]
             [ 0  1]
         """
+        if self._matrix is not None:
+            return self._matrix
         cdef Matrix_cmr_chr_sparse result
         cdef CMR_CHRMAT *mat = CMRmatroiddecGetMatrix(self._dec)
         if mat == NULL:
@@ -128,6 +129,7 @@ cdef class DecompositionNode(SageObject):
         result = Matrix_cmr_chr_sparse.__new__(Matrix_cmr_chr_sparse, ms)
         result._mat = mat
         result._root = self  # Matrix is owned by us
+        self._matrix = result
         return result
 
     def row_keys(self):

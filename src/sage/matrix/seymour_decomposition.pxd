@@ -4,7 +4,7 @@ from sage.structure.sage_object cimport SageObject
 
 
 cdef class DecompositionNode(SageObject):
-
+    cdef object _matrix
     cdef CMR_MATROID_DEC *_dec
     cdef object _row_keys
     cdef object _column_keys
