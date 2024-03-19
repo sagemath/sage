@@ -4808,7 +4808,7 @@ REFERENCES:
 .. [MR1998] \P. P. Martin and G. Rollet.
             *The Potts model representation and a Robinson-Schensted
             correspondence for the partition algebra*.
-            Compositoio Math., **112** (1998), pp. 237-254.
+            Compositio Math., **112** (1998), pp. 237-254.
 
 .. [MR2002] \S. Murphy, M. Robshaw *Essential Algebraic Structure
             Within the AES*; in Advances in Cryptology \- CRYPTO

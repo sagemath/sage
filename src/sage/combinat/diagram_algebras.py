@@ -4623,7 +4623,7 @@ class PottsRepresentation(CombinatorialFreeModule):
         sage: SQ.dimension()
         43
 
-    Next, we get orthogonal idempontents that project onto the central
+    Next, we get orthogonal idempotents that project onto the central
     orthogonal idempotents in the semisimple quotient and construct
     the corresponding Peirce summands `e_i P_n(d) e_i`::
 
@@ -4635,7 +4635,7 @@ class PottsRepresentation(CombinatorialFreeModule):
 
     We saw that we obtain the entire endomorphism algebra since `d = 2`
     and `S_{d-1}` is the trivial group. Hence, the 16 dimensional Peirce
-    summand computed above is isomorphic to this endomorphims algebra
+    summand computed above is isomorphic to this endomorphism algebra
     (both are `4 \times 4` matrix algebras over `\QQ`). Hence, we have a
     natural quotient construction of the centralizer algebra from the
     partition algebra.
