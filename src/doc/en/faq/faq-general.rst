@@ -254,7 +254,7 @@ build from source, during the ``./configure`` phase.
 
 To ensure that SageMath builds and runs correctly on a wide variety of
 systems, we use automated testing.  See the chapter :ref:`Portability
-testing <chapter-portability_testing>`_ in the Developer's
+testing <chapter-portability_testing>` in the Developer's
 Guide for details.
 
 
