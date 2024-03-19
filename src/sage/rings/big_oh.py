@@ -3,10 +3,10 @@ Big O for various types (power series, p-adics, etc.)
 
 .. SEEALSO::
 
-    - :ref:`asymptotic expansions <asymptotic_expansions>`_
-    - :ref:`p-adic numbers <padics>`_
-    - :ref:`power series <power_series>`_
-    - :ref:`polynomials <polynomials>`_
+    - :ref:`asymptotic expansions <asymptotic_expansions>`
+    - :ref:`p-adic numbers <padics>`
+    - :ref:`power series <power_series>`
+    - :ref:`polynomials <polynomials>`
 """
 
 from sage.arith.misc import factor
