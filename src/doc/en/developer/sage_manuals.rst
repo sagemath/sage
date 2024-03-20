@@ -144,8 +144,8 @@ by Sage, you can link toward it without specifying its full path:
      - :gap:`Groups <chap39>`
 
    * -
-     - ``:gap_package:`guava```
-     - :gap_package:`guava`
+     - ``:gap_package:`GAP package QuaGroup <quagroup/doc/chap0_mj.html>```
+     - :gap_package:`GAP package QuaGroup <quagroup/doc/chap0_mj.html>`
 
    * - :ref:`Giac <spkg_giac>`
      - ``:giac_cascmd:`gbasis <node280>```

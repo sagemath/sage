@@ -517,7 +517,7 @@ extlinks = {
     'common_lisp': ('https://www.lispworks.com/documentation/lw50/CLHS/Body/%s.htm', 'Common Lisp: %s'),
     'ecl': ('https://ecl.common-lisp.dev/static/manual/%s.html', 'ECL: %s'),
     'gap': ('https://docs.gap-system.org/doc/ref/%s_mj.html', 'GAP: %s'),
-    'gap_package': ('https://www.gap-system.org/Packages/%s.html', 'GAP package %s'),
+    'gap_package': ('https://docs.gap-system.org/pkg/%s', 'GAP package %s'),
     'giac_cascmd': ('https://www-fourier.ujf-grenoble.fr/~parisse/giac/doc/en/cascmd_en/%s.html', 'Giac: %s'),
     'giac_us': ('https://www-fourier.ujf-grenoble.fr/~parisse/giac_us.html#%s', 'Giac API: %s'),
     'maxima': ('https://maxima.sourceforge.io/docs/manual/maxima_singlepage.html#%s', 'Maxima: %s'),
