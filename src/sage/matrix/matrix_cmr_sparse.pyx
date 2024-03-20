@@ -997,6 +997,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: M.is_unimodular()
             False
         """
+        base_ring = self.parent().base_ring()
+        if base_ring.characteristic():
+            raise ValueError(f'only defined over characteristic 0, got {base_ring}')
+
         cdef CMR_INTMAT *int_mat = NULL
         cdef bool result
 
@@ -1037,6 +1041,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: M.is_strongly_unimodular()
             True
         """
+        base_ring = self.parent().base_ring()
+        if base_ring.characteristic():
+            raise ValueError(f'only defined over characteristic 0, got {base_ring}')
+
         cdef CMR_INTMAT *int_mat = NULL
         cdef bool result
 
@@ -1197,6 +1205,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: M.is_k_equimodular(1)
             False
         """
+        base_ring = self.parent().base_ring()
+        if base_ring.characteristic():
+            raise ValueError(f'only defined over characteristic 0, got {base_ring}')
+
         cdef CMR_INTMAT *int_mat = NULL
         cdef bool result
         cdef int64_t gcd_det = k
@@ -1238,6 +1250,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: M.is_strongly_k_equimodular(1)
             True
         """
+        base_ring = self.parent().base_ring()
+        if base_ring.characteristic():
+            raise ValueError(f'only defined over characteristic 0, got {base_ring}')
+
         cdef CMR_INTMAT *int_mat = NULL
         cdef bool result
         cdef int64_t gcd_det = k
@@ -1300,6 +1316,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             ...
             RuntimeError: Time limit exceeded
         """
+        base_ring = self.parent().base_ring()
+        if base_ring.characteristic():
+            raise ValueError(f'only defined over characteristic 0, got {base_ring}')
+
         cdef bool result_bool
         cdef CMR_GRAPH *graph = NULL
         cdef CMR_GRAPH_EDGE* forest_edges = NULL
@@ -1359,6 +1379,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: M.is_cographic()
             True
         """
+        base_ring = self.parent().base_ring()
+        if base_ring.characteristic():
+            raise ValueError(f'only defined over characteristic 0, got {base_ring}')
+
         cdef bool result
         cdef CMR_GRAPH *graph = NULL
         cdef CMR_GRAPH_EDGE* forest_edges = NULL
@@ -1421,6 +1445,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: digraph.plot(edge_colors={'red': forest_arcs})                        # needs sage.plot
             Graphics object consisting of 21 graphics primitives
         """
+        base_ring = self.parent().base_ring()
+        if base_ring.characteristic():
+            raise ValueError(f'only defined over characteristic 0, got {base_ring}')
+
         cdef bool result
         cdef bool support_result
         cdef CMR_GRAPH *digraph = NULL
@@ -1562,7 +1590,26 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             GraphicNode (7×8) SeriesParallelReductionNode (5×4)
                               │
                               GraphicNode (4×4)
+
+        Base ring check::
+
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(GF(5), 3, 2, sparse=True),
+            ....:                           [[1, 0], [6, 11], [0, 1]]); M
+            [1 0]
+            [1 1]
+            [0 1]
+            sage: M._is_binary_linear_matroid_regular()
+            Traceback (most recent call last):
+            ...
+            ValueError: not well-defined
+
         """
+        base_ring = self.parent().base_ring()
+        from sage.rings.finite_rings.finite_field_constructor import GF
+        GF2 = GF(2)
+        if not GF2.has_coerce_map_from(base_ring):
+            raise ValueError('not well-defined')
+
         cdef bool result
         cdef CMR_REGULAR_PARAMS params
         cdef CMR_REGULAR_STATS stats
@@ -1591,11 +1638,11 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         if not certificate:
             return <bint> result
 
-        if <bint> result:
-            return True, create_DecompositionNode(dec, row_keys, column_keys)
+        node = create_DecompositionNode(dec, row_keys, column_keys, base_ring=GF2)
 
-        return False, (create_DecompositionNode(dec, row_keys, column_keys),
-                       NotImplemented)
+        if <bint> result:
+            return True, node
+        return False, (node, NotImplemented)
 
     def is_totally_unimodular(self, *, time_limit=60.0, certificate=False,
                               use_direct_graphicness_test=True,
@@ -1664,6 +1711,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [1 0 1]
             [1 1 0]
         """
+        base_ring = self.parent().base_ring()
+        if base_ring.characteristic():
+            raise ValueError(f'only defined over characteristic 0, got {base_ring}')
+
         cdef bool result
         cdef CMR_TU_PARAMS params
         cdef CMR_TU_STATS stats

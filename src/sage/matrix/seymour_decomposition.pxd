@@ -4,6 +4,7 @@ from sage.structure.sage_object cimport SageObject
 
 
 cdef class DecompositionNode(SageObject):
+    cdef object _base_ring
     cdef object _matrix
     cdef CMR_MATROID_DEC *_dec
     cdef object _row_keys
@@ -40,4 +41,6 @@ cdef class SymbolicNode(DecompositionNode):
     cdef object _symbol
 
 
-cdef create_DecompositionNode(CMR_MATROID_DEC *dec, row_keys=?, column_keys=?)
+cdef create_DecompositionNode(CMR_MATROID_DEC *dec,
+                              row_keys=?, column_keys=?,
+                              base_ring=?)

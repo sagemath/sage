@@ -101,6 +101,9 @@ cdef class DecompositionNode(SageObject):
     def dimensions(self):
         return self.nrows(), self.ncols()
 
+    def base_ring(self):
+        return self._base_ring
+
     def matrix(self):
         r"""
         Return a :class:`Matrix`.
@@ -130,7 +133,7 @@ cdef class DecompositionNode(SageObject):
         cdef CMR_CHRMAT *mat = CMRmatroiddecGetMatrix(self._dec)
         if mat == NULL:
             return None
-        ms = MatrixSpace(ZZ, mat.numRows, mat.numColumns, sparse=True)
+        ms = MatrixSpace(self.base_ring(), mat.numRows, mat.numColumns, sparse=True)
         result = Matrix_cmr_chr_sparse.__new__(Matrix_cmr_chr_sparse, ms)
         result._mat = mat
         result._root = self  # Matrix is owned by us
@@ -267,7 +270,8 @@ cdef class DecompositionNode(SageObject):
                                       for element in parent_columns_tuple)
             child = create_DecompositionNode(child_dec,
                                              row_keys=child_row_keys,
-                                             column_keys=child_column_keys)
+                                             column_keys=child_column_keys,
+                                             base_ring=self.base_ring())
         else:
             child_row_keys = tuple(CMRelementToRowIndex(element)
                                       for element in parent_rows_tuple)
@@ -275,7 +279,8 @@ cdef class DecompositionNode(SageObject):
                                          for element in parent_columns_tuple)
             child = create_DecompositionNode(child_dec,
                                              row_keys=child_row_keys,
-                                             column_keys=child_column_keys)
+                                             column_keys=child_column_keys,
+                                             base_ring=self.base_ring())
         return child, child_row_keys, child_column_keys
 
     def _children(self):
@@ -1004,7 +1009,8 @@ cdef class ThreeSumNode(SumNode):
 
         child1 = create_DecompositionNode(child1_dec,
                                           row_keys=child1_row_keys,
-                                          column_keys=child1_column_keys)
+                                          column_keys=child1_column_keys,
+                                          base_ring=self.base_ring())
 
         child2_nrows = CMRmatroiddecNumRows(child2_dec)
         child2_ncols = CMRmatroiddecNumColumns(child2_dec)
@@ -1066,7 +1072,8 @@ cdef class ThreeSumNode(SumNode):
 
         child2 = create_DecompositionNode(child2_dec,
                                           row_keys=child2_row_keys,
-                                          column_keys=child2_column_keys)
+                                          column_keys=child2_column_keys,
+                                          base_ring=self.base_ring())
 
         self._child_nodes = ((child1, child1_row_keys, child1_column_keys),
                              (child2, child2_row_keys, child2_column_keys))
@@ -1148,7 +1155,11 @@ cdef class ThreeSumNode(SumNode):
 
 cdef class BaseGraphicNode(DecompositionNode):
 
-    def __init__(self, matrix=None, graph=None, forest_edges=None, coforest_edges=None, row_keys=None, column_keys=None):
+    def __init__(self, matrix=None, graph=None, forest_edges=None, coforest_edges=None, row_keys=None, column_keys=None, base_ring=None):
+        if base_ring is None:
+            if matrix is not None:
+                base_ring = matrix.parent().base_ring()
+        self._base_ring = base_ring
         self._matrix = matrix
         self._graph = graph
         self._forest_edges = forest_edges
@@ -1510,7 +1521,7 @@ cdef _class(CMR_MATROID_DEC *dec):
     raise NotImplementedError
 
 
-cdef create_DecompositionNode(CMR_MATROID_DEC *dec, row_keys=None, column_keys=None):
+cdef create_DecompositionNode(CMR_MATROID_DEC *dec, row_keys=None, column_keys=None, base_ring=None):
     r"""
     Create an instance of a subclass of :class:`DecompositionNode`.
 
@@ -1526,4 +1537,5 @@ cdef create_DecompositionNode(CMR_MATROID_DEC *dec, row_keys=None, column_keys=N
         result._set_row_keys(row_keys)
     if column_keys is not None:
         result._set_column_keys(column_keys)
+    result._base_ring = base_ring
     return result
