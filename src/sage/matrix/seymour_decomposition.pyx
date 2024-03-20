@@ -171,71 +171,6 @@ cdef class DecompositionNode(SageObject):
                       column_keys=self.column_keys())
 
     @cached_method
-    def parent_rows_and_columns(self):
-        r"""
-        EXAMPLES::
-
-            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
-            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
-            ....:                           [[1, 0], [-1, 1], [0, 1]]); M
-            [ 1  0]
-            [-1  1]
-            [ 0  1]
-            sage: result, certificate = M.is_totally_unimodular(certificate=True)
-            sage: certificate.parent_rows_and_columns()
-            Traceback (most recent call last):
-            ...
-            ValueError: This is probably a root node. No keys or indices stored.
-
-            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
-            sage: M = matrix([[1, 0], [-1, 1], [0, 1]], sparse=True)
-            sage: M2 = block_diagonal_matrix([M, M], sparse=True)
-            sage: M2cmr = Matrix_cmr_chr_sparse(M2.parent(), M2); M2cmr
-            [ 1  0  0  0]
-            [-1  1  0  0]
-            [ 0  1  0  0]
-            [ 0  0  1  0]
-            [ 0  0 -1  1]
-            [ 0  0  0  1]
-            sage: result, certificate = M2cmr.is_totally_unimodular(certificate=True)
-            sage: result, certificate
-            (True, OneSumNode (6×4) with 2 children)
-            sage: C = certificate.summands(); C
-            (GraphicNode (3×2), GraphicNode (3×2))
-            sage: certificate.child_indices()[0]
-            ((0, 1, 2), (0, 1))
-            sage: certificate.child_indices()[1]
-            ((3, 4, 5), (2, 3))
-
-            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
-            sage: R12 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 12, sparse=True),
-            ....: [[1, -1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
-            ....: [0, 0, 0, 1, -1, 0, 0, 0, 1 , 1, 1, 1],
-            ....: [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
-            ....: [ 1,  0,  1,  0,  0,  0,  0,  0,  1,  1,  0,  0],
-            ....: [ 0,  1,  1,  0,  0,  0,  0,  0,  0,  0, -1, -1],
-            ....: [ 0,  0,  0,  1,  0,  1,  0,  0,  1,  1,  0,  0],
-            ....: [ 0,  0,  0,  0,  1,  1,  0,  0,  0,  0, -1, -1],
-            ....: [ 0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1,  0],
-            ....: [ 0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1]])
-            sage: result, certificate = R12.is_totally_unimodular(certificate=True,
-            ....:                           row_keys=['r1', 'r2', 'r3', 'r4', 'r5',
-            ....:                                     'r6', 'r7', 'r8', 'r9'],
-            ....:                           column_keys=['a','b','c','d','e','f',
-            ....:                                        'g','h','i','j','k','l'])
-            sage: C = certificate.child_nodes()[0]; C
-            ThreeSumNode (9×12) with 2 children
-            sage: C.parent_rows_and_columns()
-            ((r1, i, r3, r4, r5, r6, r7, r8, r9), (a, b, c, d, e, f, g, h, r2, j, k, l))
-        """
-        if self._row_keys is None or self._column_keys is None:
-            raise ValueError("This is probably a root node. No keys or indices stored.")
-        if isinstance(self.row_keys()[0], ElementKey):
-            return self.ancestor_rows_and_columns()
-        else:
-            raise ValueError("The child indices can be accessed in the parent node.")
-
-    @cached_method
     def ancestor_rows_and_columns(self):
         return self.row_keys(), self.column_keys()
 
@@ -325,11 +260,6 @@ cdef class DecompositionNode(SageObject):
             raise ValueError(f"Child {index} does not have parents columns")
         parent_columns_tuple = tuple(parent_columns[i] for i in range(child_ncols))
 
-        child_row_indices = tuple(CMRelementToRowIndex(element)
-                                  for element in parent_rows_tuple)
-        child_column_indices = tuple(CMRelementToColumnIndex(element)
-                                     for element in parent_columns_tuple)
-
         if row_keys is not None and column_keys is not None:
             child_row_keys = tuple(self._CMRelement_to_key(element)
                                    for element in parent_rows_tuple)
@@ -339,10 +269,14 @@ cdef class DecompositionNode(SageObject):
                                              row_keys=child_row_keys,
                                              column_keys=child_column_keys)
         else:
+            child_row_keys = tuple(CMRelementToRowIndex(element)
+                                      for element in parent_rows_tuple)
+            child_column_keys = tuple(CMRelementToColumnIndex(element)
+                                         for element in parent_columns_tuple)
             child = create_DecompositionNode(child_dec,
-                                             row_keys=child_row_indices,
-                                             column_keys=child_column_indices)
-        return child, child_row_indices, child_column_indices
+                                             row_keys=child_row_keys,
+                                             column_keys=child_column_keys)
+        return child, child_row_keys, child_column_keys
 
     def _children(self):
         if self._child_nodes is not None:
@@ -394,6 +328,60 @@ cdef class DecompositionNode(SageObject):
         return tuple(child[0] for child in self._children())
 
     def child_indices(self):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
+            ....:                           [[1, 0], [-1, 1], [0, 1]]); M
+            [ 1  0]
+            [-1  1]
+            [ 0  1]
+            sage: result, certificate = M.is_totally_unimodular(certificate=True)
+            sage: certificate.child_indices()
+            ()
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = matrix([[1, 0], [-1, 1], [0, 1]], sparse=True)
+            sage: M2 = block_diagonal_matrix([M, M], sparse=True)
+            sage: M2cmr = Matrix_cmr_chr_sparse(M2.parent(), M2); M2cmr
+            [ 1  0  0  0]
+            [-1  1  0  0]
+            [ 0  1  0  0]
+            [ 0  0  1  0]
+            [ 0  0 -1  1]
+            [ 0  0  0  1]
+            sage: result, certificate = M2cmr.is_totally_unimodular(certificate=True)
+            sage: result, certificate
+            (True, OneSumNode (6×4) with 2 children)
+            sage: C = certificate.summands(); C
+            (GraphicNode (3×2), GraphicNode (3×2))
+            sage: certificate.child_indices()[0]
+            ((0, 1, 2), (0, 1))
+            sage: certificate.child_indices()[1]
+            ((3, 4, 5), (2, 3))
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: R12 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 12, sparse=True),
+            ....: [[1, -1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1],
+            ....: [0, 0, 0, 1, -1, 0, 0, 0, 1 , 1, 1, 1],
+            ....: [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1],
+            ....: [ 1,  0,  1,  0,  0,  0,  0,  0,  1,  1,  0,  0],
+            ....: [ 0,  1,  1,  0,  0,  0,  0,  0,  0,  0, -1, -1],
+            ....: [ 0,  0,  0,  1,  0,  1,  0,  0,  1,  1,  0,  0],
+            ....: [ 0,  0,  0,  0,  1,  1,  0,  0,  0,  0, -1, -1],
+            ....: [ 0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1,  0],
+            ....: [ 0,  0,  0,  0,  0,  0,  0,  1,  0,  1,  0,  1]])
+            sage: result, certificate = R12.is_totally_unimodular(certificate=True,
+            ....:                           row_keys=['r1', 'r2', 'r3', 'r4', 'r5',
+            ....:                                     'r6', 'r7', 'r8', 'r9'],
+            ....:                           column_keys=['a','b','c','d','e','f',
+            ....:                                        'g','h','i','j','k','l'])
+            sage: C = certificate.child_nodes()[0]; C
+            ThreeSumNode (9×12) with 2 children
+            sage: certificate.child_indices()
+            ((r1, i, r3, r4, r5, r6, r7, r8, r9), (a, b, c, d, e, f, g, h, r2, j, k, l))
+        """
         return tuple((child[1], child[2]) for child in self._children())
 
     def _repr_(self):
@@ -831,9 +819,9 @@ cdef class ThreeSumNode(SumNode):
             ....:                           three_sum_strategy="Wide_Wide",
             ....:                           row_keys=range(6),
             ....:                           column_keys='abcdef')
-            sage: C = certificate.child_nodes()[0]
-            sage: C.parent_rows_and_columns()
+            sage: certificate.child_indices()
             ((0, 1, 2, 3, a, 5), (4, b, c, d, e, f))
+            sage: C = certificate.child_nodes()[0]
             sage: C1, C2 = C.child_nodes()
             sage: C1.matrix()
             [ 0  0  1 -1 -1]
@@ -845,12 +833,8 @@ cdef class ThreeSumNode(SumNode):
             [ 0  0  1  0  1]
             [-1 -1  0  1  1]
             [-1 -1  0  0  1]
-            sage: C1.parent_rows_and_columns()
-            ((0, 1, a, 3), (b, c, d, e, +3+e))
-            sage: C2.parent_rows_and_columns()
-            ((0, 2, 3, 5), (+0+d, d, 4, e, f))
             sage: C.child_indices()
-            (((0, 1, 4, 3), (1, 2, 3, 4, 4)), ((0, 2, 3, 5), (3, 3, 0, 4, 5)))
+            (((0, 1, a, 3), (b, c, d, e, +3+e)), ((0, 2, 3, 5), (+0+d, d, 4, e, f)))
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: R12_large = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 12, sparse=True),
@@ -887,9 +871,9 @@ cdef class ThreeSumNode(SumNode):
             (0, i, 2, 3, 4, 5, 6, 7, 8)
             sage: C.column_keys()
             (a, b, c, d, e, f, g, h, 1, j, k, l)
-            sage: C1.parent_rows_and_columns()
+            sage: C.child_indices()[0]
             ((i, 2, 7, 8, 3), (g, h, j, k, l, d, -3+d))
-            sage: C2.parent_rows_and_columns()
+            sage: C.child_indices()[1]
             ((i, 0, 3, 4, 5, 6), (+i+k, k, a, b, c, d, e, f, 1))
 
             sage: result, certificate = R12.is_totally_unimodular(certificate=True,
@@ -906,9 +890,9 @@ cdef class ThreeSumNode(SumNode):
             [ 0 -1  1  1]
             [ 1  0  1  0]
             [ 0 -1  0  1]
-            sage: C1.parent_rows_and_columns()
+            sage: certificate.child_indices()[0]
             ((r0, r1, r2, r3), (c0, c1, c2, c3, +r2+r3))
-            sage: C2.parent_rows_and_columns()
+            sage: certificate.child_indices()[1]
             ((+c0+c3, r2, r3, r4, r5), (c0, c3, c4, c5))
 
             sage: result, certificate = R12.is_totally_unimodular(certificate=True,
@@ -927,9 +911,9 @@ cdef class ThreeSumNode(SumNode):
             [ 0 -1  1  1]
             [ 1  0  1  0]
             [ 0 -1  0  1]
-            sage: C1.parent_rows_and_columns()
+            sage: certificate.child_indices()[0]
             ((0, 1, 2, 3), (a, b, c, d, +2+3))
-            sage: C2.parent_rows_and_columns()
+            sage: certificate.child_indices()[1]
             ((+a+d, 2, 3, 4, 5), (a, d, e, f))
         """
         if self._child_nodes is not None:
@@ -1079,18 +1063,8 @@ cdef class ThreeSumNode(SumNode):
                                           row_keys=child2_row_keys,
                                           column_keys=child2_column_keys)
 
-        child_row1_indices = tuple(CMRelementToRowIndex(parent_rows1[i])
-                                   for i in range(child1_nrows))
-        child_column1_indices = tuple(CMRelementToColumnIndex(parent_columns1[i])
-                                      for i in range(child1_ncols))
-
-        child_row2_indices = tuple(CMRelementToRowIndex(parent_rows2[i])
-                                   for i in range(child2_nrows))
-        child_column2_indices = tuple(CMRelementToColumnIndex(parent_columns2[i])
-                                      for i in range(child2_ncols))
-
-        self._child_nodes = ((child1, child_row1_indices, child_column1_indices),
-                             (child2, child_row2_indices, child_column2_indices))
+        self._child_nodes = ((child1, child1_row_keys, child1_column_keys),
+                             (child2, child2_row_keys, child2_column_keys))
         return self._child_nodes
 
     def is_distributed_ranks(self):
