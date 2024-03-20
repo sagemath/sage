@@ -5511,7 +5511,7 @@ class Permutation(CombinatorialElement):
 
     def has_nth_root(self, n) -> bool:
         r"""
-        Decide if ``self`` has `n`-th roots.
+        Check if ``self`` has `n`-th roots.
 
         An `n`-th root of the permutation `\sigma` is a permutation `\gamma` such that `\gamma^n = \sigma`.
 
