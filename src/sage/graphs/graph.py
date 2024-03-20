@@ -8091,6 +8091,13 @@ class Graph(GenericGraph):
             (PRIME, [1, 2, 5, 6, 0, (PARALLEL, [3, 4])])
             sage: G2.modular_decomposition()
             (PRIME, [5, 6, 3, 4, 2, (PARALLEL, [0, 1])])
+
+        Check that :issue:`37631` is fixed::
+
+            sage: G = Graph('GxJEE?')
+            sage: G.modular_decomposition(style='tree')
+            PRIME[2[], PARALLEL[3[], 4[]], SERIES[0[], 1[]],
+                  PARALLEL[5[], 6[], 7[]]]
         """
         from sage.graphs.graph_decompositions.modular_decomposition import (NodeType,
                                                                             habib_maurer_algorithm,
@@ -8128,8 +8135,9 @@ class Graph(GenericGraph):
 
             def to_tree(x):
                 if x.node_type == NodeType.NORMAL:
-                    return LabelledRootedTree([], label=x.children[0])
-                return LabelledRootedTree([to_tree(y) for y in x.children], label=x.node_type)
+                    return LabelledRootedTree([], label=str(x.children[0]))
+                return LabelledRootedTree([to_tree(y) for y in x.children],
+                                          label=str(x.node_type))
 
             return to_tree(D)
 
