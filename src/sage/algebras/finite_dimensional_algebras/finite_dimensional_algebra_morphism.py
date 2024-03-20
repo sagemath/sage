@@ -181,7 +181,8 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
         EXAMPLES::
 
             sage: A = FiniteDimensionalAlgebra(QQ, [Matrix([[1, 0], [0, 1]]),
-            ....:                                   Matrix([[0, 1], [0, 0]])])
+            ....:                                   Matrix([[0, 1], [0, 0]])],
+            ....: assume_associative=True)
             sage: I = A.maximal_ideal()                                                 # needs sage.libs.pari
             sage: q = A.quotient_map(I)                                                 # needs sage.libs.pari
             sage: B = q.codomain()                                                      # needs sage.libs.pari
@@ -190,6 +191,7 @@ class FiniteDimensionalAlgebraMorphism(RingHomomorphism_im_gens):
         """
         coker_I = I.basis_matrix().transpose().kernel().basis_matrix().transpose()
         return self.domain().ideal((self._matrix * coker_I).kernel().basis_matrix(), given_by_matrix=True)
+
 
 class FiniteDimensionalAlgebraHomset(RingHomset_generic):
     """
