@@ -57,7 +57,7 @@ We compute some Hecke operators and do a consistency check::
     sage: t2*t5 - t5*t2 == 0
     True
 
-This tests the bug reported in :trac:`1220`::
+This tests the bug reported in :issue:`1220`::
 
     sage: G = GammaH(36, [13, 19])
     sage: G.modular_symbols()
@@ -75,7 +75,7 @@ This test catches a tricky corner case for spaces with character::
      and level 20, weight 3, character [1, -zeta4], sign 1,
      over Cyclotomic Field of order 4 and degree 2
 
-This tests the bugs reported in :trac:`20932`::
+This tests the bugs reported in :issue:`20932`::
 
     sage: chi = kronecker_character(3*34603)
     sage: ModularSymbols(chi, 2, sign=1, base_ring=GF(3))  # not tested  # long time (600 seconds)
@@ -184,7 +184,7 @@ def ModularSymbols_clear_cache():
 
     TESTS:
 
-    Make sure :trac:`10548` is fixed::
+    Make sure :issue:`10548` is fixed::
 
         sage: import gc
         sage: m = ModularSymbols(Gamma1(29))

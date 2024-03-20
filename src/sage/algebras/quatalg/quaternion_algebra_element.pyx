@@ -14,7 +14,7 @@ quaternion algebras and quaternion algebras over number fields.
 
 TESTS:
 
-Check that :trac:`20829` is fixed::
+Check that :issue:`20829` is fixed::
 
     sage: D.<i,j,k> = QuaternionAlgebra(QQ,-1,-3)
     sage: hash(i)
@@ -1827,7 +1827,7 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
             sage: z._add_(w)
             2*a + (2*a + 4/3)*k
 
-        Check that the fix in :trac:`17099` is correct::
+        Check that the fix in :issue:`17099` is correct::
 
             sage: x = polygen(QQ, 'x')
             sage: K = NumberField(x**3 + x - 1, 'a')

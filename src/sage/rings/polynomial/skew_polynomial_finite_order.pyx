@@ -19,7 +19,7 @@ AUTHOR::
 #    (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
-from sage.rings.ring cimport Ring
+from sage.structure.parent cimport Parent
 from sage.structure.element cimport RingElement
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.skew_polynomial_element cimport SkewPolynomial_generic_dense
@@ -69,7 +69,6 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         self._norm = None
         self._charpoly = None
         self._optbound = None
-
 
     cdef _matphir_c(self) noexcept:
         r"""
@@ -131,7 +130,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         from sage.matrix.constructor import matrix
         cdef Py_ssize_t i, j, deb, k, r = self.parent()._order
         cdef Py_ssize_t d = self.degree ()
-        cdef Ring base_ring = <Ring?>self.parent().base_ring()
+        cdef Parent base_ring = <Parent?>self.parent().base_ring()
         cdef RingElement minusone = <RingElement?>base_ring(-1)
         cdef RingElement zero = <RingElement?>base_ring(0)
         cdef Polk = PolynomialRing (base_ring, 'xr')
@@ -151,7 +150,6 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
             for i from 0 <= i <= d:
                 l[i] = self._parent.twisting_morphism()(l[i])
         return matrix(Polk, r, r, M)
-
 
     def reduced_trace(self, var=None):
         r"""
@@ -415,7 +413,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         coeffs = [center(c) for c in self._charpoly]
         return PolynomialRing(center, name=varcharpoly)(coeffs)
 
-    def is_central(self):
+    def is_central(self) -> bool:
         r"""
         Return ``True`` if this skew polynomial lies in the center.
 
@@ -438,7 +436,6 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
             return True
         except ValueError:
             return False
-
 
     def bound(self):
         r"""

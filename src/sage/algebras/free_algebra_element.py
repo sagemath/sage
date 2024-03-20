@@ -92,7 +92,7 @@ class FreeAlgebraElement(IndexedFreeModuleElement, AlgebraElement):
             sage: repr(-x+3*y*z)    # indirect doctest
             '-x + 3*y*z'
 
-        Github issue :trac:`11068` enables the use of local variable names::
+        Github issue :issue:`11068` enables the use of local variable names::
 
             sage: from sage.structure.parent_gens import localvars
             sage: with localvars(A, ['a','b','c']):

@@ -1843,7 +1843,7 @@ def pair_to_graph(sp1, sp2):
          ((-2, 1), (1, 1), None),
          ((-2, 1), (2, 2), None)]
 
-    Another example which used to be wrong until :trac:`15958`::
+    Another example which used to be wrong until :issue:`15958`::
 
         sage: sp3 = pa.to_set_partition([[1, -1], [2], [-2]])
         sage: sp4 = pa.to_set_partition([[1], [-1], [2], [-2]])

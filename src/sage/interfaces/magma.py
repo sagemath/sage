@@ -533,7 +533,7 @@ class Magma(ExtraTabCompletion, Expect):
             sage: magma.eval("a := %s;"%(10^10000))    # optional - magma
             ''
 
-        Verify that :trac:`9705` is fixed::
+        Verify that :issue:`9705` is fixed::
 
             sage: nl=chr(10) # newline character
             sage: magma.eval(  # optional - magma
@@ -544,7 +544,7 @@ class Magma(ExtraTabCompletion, Expect):
             ....: "print \"success\";")
             'success'
 
-        Verify that :trac:`11401` is fixed::
+        Verify that :issue:`11401` is fixed::
 
             sage: nl=chr(10) # newline character
             sage: magma.eval("a:=3;"+nl+"b:=5;") == nl  # optional - magma
@@ -1303,33 +1303,35 @@ class Magma(ExtraTabCompletion, Expect):
     # It's very painful using the interface without this.
     def _left_list_delim(self):
         """
-        Return the left sequence delimiter in Magma. Despite the name in
-        this function, this is really the least painful choice.
+        Return the left sequence delimiter in Magma.
+
+        Despite the name in this function, this is really the least
+        painful choice.
 
         EXAMPLES::
 
             sage: magma._left_list_delim()
             '['
         """
-        #return "[*"
         return "["
 
     def _right_list_delim(self):
         """
-        Return the right sequence delimiter in Magma. Despite the name in
-        this function, this is really the least painful choice.
+        Return the right sequence delimiter in Magma.
+
+        Despite the name in this function, this is really the least
+        painful choice.
 
         EXAMPLES::
 
             sage: magma._right_list_delim()
             ']'
         """
-        #return "*]"
         return "]"
 
     def _assign_symbol(self):
         """
-        Returns the assignment symbol in Magma.
+        Return the assignment symbol in Magma.
 
         EXAMPLES::
 
@@ -1340,7 +1342,7 @@ class Magma(ExtraTabCompletion, Expect):
 
     def _equality_symbol(self):
         """
-        Returns the equality testing logical symbol in Magma.
+        Return the equality testing logical symbol in Magma.
 
         EXAMPLES::
 
@@ -1351,7 +1353,7 @@ class Magma(ExtraTabCompletion, Expect):
 
     def _lessthan_symbol(self):
         """
-        Returns the less than testing logical symbol in Magma.
+        Return the less than testing logical symbol in Magma.
 
         EXAMPLES::
 
@@ -1362,7 +1364,7 @@ class Magma(ExtraTabCompletion, Expect):
 
     def _greaterthan_symbol(self):
         """
-        Returns the greater than testing logical symbol in Magma.
+        Return the greater than testing logical symbol in Magma.
 
         EXAMPLES::
 
@@ -1375,7 +1377,7 @@ class Magma(ExtraTabCompletion, Expect):
     # in your derived class.
     def _true_symbol(self):
         """
-        Returns the string representation of "truth" in Magma.
+        Return the string representation of "truth" in Magma.
 
         EXAMPLES::
 
@@ -1386,7 +1388,7 @@ class Magma(ExtraTabCompletion, Expect):
 
     def _false_symbol(self):
         """
-        Returns the string representation of "false" in Magma.
+        Return the string representation of "false" in Magma.
 
         EXAMPLES::
 
@@ -1641,6 +1643,7 @@ class Magma(ExtraTabCompletion, Expect):
         return int(self.eval('GetNthreads()'))
 
     GetNthreads = get_nthreads
+
 
 @instancedoc
 class MagmaFunctionElement(FunctionElement):
@@ -2078,7 +2081,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
         TESTS:
 
-        Tests for :trac:`30341`::
+        Tests for :issue:`30341`::
 
             sage: P.<t> = PolynomialRing(QQ)
             sage: l = [-27563611963/4251528, -48034411/104976, -257/54, 1]
@@ -2657,7 +2660,7 @@ class MagmaElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.MagmaE
 
         TESTS:
 
-        Verify that :trac:`32602` is fixed::
+        Verify that :issue:`32602` is fixed::
 
             sage: magma("1 eq 0").bool()                  # optional - magma
             False
