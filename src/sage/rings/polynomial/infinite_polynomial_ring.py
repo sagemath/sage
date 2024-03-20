@@ -221,7 +221,7 @@ all constituents coerce.
     sage: x[2]/2+(5/3)*a[3]*x[4] + 1
     5/3*a_3*x_4 + 1/2*x_2 + 1
 
-Check that :trac:`22514` is fixed::
+Check that :issue:`22514` is fixed::
 
     sage: R.<x> = InfinitePolynomialRing(ZZ)
     sage: a = R(3)
@@ -1069,7 +1069,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             sage: R
             Infinite polynomial ring in a, b over Integer Ring
 
-        The following tests against a bug that was fixed at :trac:`10468`::
+        The following tests against a bug that was fixed at :issue:`10468`::
 
             sage: R.<x,y> = InfinitePolynomialRing(QQ)
             sage: R.tensor_with_ring(QQ) is R
@@ -1142,7 +1142,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             sage: R.is_field()
             False
 
-        :trac:`9443`::
+        :issue:`9443`::
 
             sage: W = PowerSeriesRing(InfinitePolynomialRing(QQ,'a'),'x')
             sage: W.is_field()
@@ -1320,7 +1320,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
 
         TESTS:
 
-        :trac:`9443`::
+        :issue:`9443`::
 
             sage: W = PolynomialRing(InfinitePolynomialRing(QQ,'a'),2,'x,y')
             sage: W.is_integral_domain()
@@ -1606,7 +1606,7 @@ class InfinitePolynomialRing_dense(InfinitePolynomialRing_sparse):
             sage: R
             Infinite polynomial ring in a, b over Integer Ring
 
-        The following tests against a bug that was fixed at :trac:`10468`::
+        The following tests against a bug that was fixed at :issue:`10468`::
 
             sage: R.<x,y> = InfinitePolynomialRing(QQ, implementation='sparse')
             sage: R.tensor_with_ring(QQ) is R

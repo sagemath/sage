@@ -57,7 +57,7 @@ class Polyhedron_field(Polyhedron_base):
         sage: p = Polyhedron([(0,0), (1,0), (1/2, sqrt3/2)])                            # needs sage.rings.number_field
         sage: TestSuite(p).run()                                                        # needs sage.rings.number_field
 
-    Check that :trac:`19013` is fixed::
+    Check that :issue:`19013` is fixed::
 
         sage: # needs sage.rings.number_field
         sage: x = polygen(ZZ, 'x')
@@ -68,7 +68,7 @@ class Polyhedron_field(Polyhedron_base):
         The empty polyhedron
          in (Number Field in phi with defining polynomial x^2 - x - 1 with phi = 1.618033988749895?)^2
 
-    Check that :trac:`28654` is fixed::
+    Check that :issue:`28654` is fixed::
 
         sage: Polyhedron(lines=[[1]], backend='field')
         A 1-dimensional polyhedron in QQ^1 defined as the convex hull of 1 vertex and 1 line

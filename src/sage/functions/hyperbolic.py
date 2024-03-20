@@ -170,7 +170,7 @@ class Function_tanh(GinacFunction):
             sage: tanh(x)._sympy_()                                                     # needs sympy sage.symbolic
             tanh(x)
 
-        Check that real/imaginary parts are correct (:trac:`20098`)::
+        Check that real/imaginary parts are correct (:issue:`20098`)::
 
             sage: # needs sage.symbolic
             sage: tanh(1+2*I).n()
@@ -617,7 +617,7 @@ class Function_arccoth(GinacFunction):
             sage: acoth(x)._sympy_()                                                    # needs sympy sage.symbolic
             acoth(x)
 
-        Check that :trac:`23636` is fixed::
+        Check that :issue:`23636` is fixed::
 
             sage: acoth(float(1.1))                                                     # needs sage.symbolic
             1.5222612188617113
@@ -717,7 +717,7 @@ class Function_arccsch(GinacFunction):
 
         TESTS:
 
-        Check that :trac:`20818` is fixed::
+        Check that :issue:`20818` is fixed::
 
             sage: acsch(float(0.1))                                                     # needs sage.symbolic
             2.99822295029797

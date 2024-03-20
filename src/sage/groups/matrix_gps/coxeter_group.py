@@ -250,7 +250,7 @@ class CoxeterMatrixGroup(UniqueRepresentation, FinitelyGeneratedMatrixGroup_gene
             sage: W = CoxeterGroup([[1,3,2],[3,1,-1],[2,-1,1]])
             sage: TestSuite(W).run(max_runs=30)
 
-        We check that :trac:`16630` is fixed::
+        We check that :issue:`16630` is fixed::
 
             sage: CoxeterGroup(['D',4], base_ring=QQ).category()
             Category of finite irreducible Coxeter groups

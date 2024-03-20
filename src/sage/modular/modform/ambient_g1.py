@@ -33,7 +33,7 @@ TESTS::
     True
 
 
-We check that :trac:`10453` is fixed::
+We check that :issue:`10453` is fixed::
 
     sage: CuspForms(Gamma1(11), 2).old_submodule()
     Modular Forms subspace of dimension 0 of Modular Forms space of dimension 10 for Congruence Subgroup Gamma1(11) of weight 2 over Rational Field

@@ -290,7 +290,7 @@ cdef class Matrix_modn_sparse(Matrix_sparse):
 
         TESTS:
 
-        The following shows that :trac:`23669` has been addressed::
+        The following shows that :issue:`23669` has been addressed::
 
             sage: p = next_prime(2**15)
             sage: M = Matrix(GF(p), 1,3, lambda i,j: -1, sparse=True); M

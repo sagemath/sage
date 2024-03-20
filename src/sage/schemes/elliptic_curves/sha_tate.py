@@ -257,7 +257,7 @@ class Sha(SageObject):
             sage: EllipticCurve([0, 0, 1, -79, 342]).sha().an_numerical(prec=10, proof=False)  # long time (22s on sage.math, 2011)
             1.0
 
-        See :trac:`1115`::
+        See :issue:`1115`::
 
             sage: sha = EllipticCurve('37a1').sha()
             sage: [sha.an_numerical(prec) for prec in range(40,100,10)]  # long time (3s on sage.math, 2013)
@@ -395,7 +395,7 @@ class Sha(SageObject):
             sage: E.sha().an()
             1
 
-        See :trac:`10096`: this used to give the wrong result 6.0000
+        See :issue:`10096`: this used to give the wrong result 6.0000
         before since the minimal model was not used::
 
             sage: E = EllipticCurve([1215*1216, 0]) # non-minimal model
@@ -503,7 +503,7 @@ class Sha(SageObject):
             sage: EllipticCurve('130a1').sha().an_padic(5) # rank 1
             1 + O(5)
 
-        Non-split, but rank 0 case (:trac:`7331`)::
+        Non-split, but rank 0 case (:issue:`7331`)::
 
             sage: EllipticCurve('270b1').sha().an_padic(5) # rank 0, long time (2s on sage.math, 2011)
             1 + O(5^22)
@@ -531,7 +531,7 @@ class Sha(SageObject):
             sage: EllipticCurve([-19,34]).sha().an_padic(5)  # see trac #6455, long time (4s on sage.math, 2011)
             1 + O(5)
 
-        Test for :trac:`15737`::
+        Test for :issue:`15737`::
 
             sage: E = EllipticCurve([-100,0])
             sage: s = E.sha()
@@ -835,7 +835,7 @@ class Sha(SageObject):
             sage: e.sha().p_primary_bound(3)  # long time (10s on sage.math, 2011)
             0
 
-        Some checks for :trac:`6406` and :trac:`16959`::
+        Some checks for :issue:`6406` and :issue:`16959`::
 
             sage: e.sha().p_primary_bound(7)  # long time
             2

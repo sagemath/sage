@@ -139,7 +139,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     TESTS:
 
     Check that ``degneglex`` and ``degrevlex`` are the same up to reversal of
-    variables (:trac:`29635`)::
+    variables (:issue:`29635`)::
 
         sage: R = PolynomialRing(QQ, 'x', 4, order='degrevlex')
         sage: S = PolynomialRing(QQ, tuple(reversed(R.gens())), order='degneglex')

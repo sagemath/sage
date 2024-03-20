@@ -928,7 +928,7 @@ cdef class Converter(SageObject):
             sage: freerank(I, true)
             [-1, [x^2*y - x*y^2 - x^2*z + y^2*z + x*z^2 - y*z^2]]
 
-        Singular's genus function is prone to crashing, see :trac:`12851` and :trac:`19750` ::
+        Singular's genus function is prone to crashing, see :issue:`12851` and :issue:`19750` ::
 
             sage: sing_genus = sage.libs.singular.function_factory.ff.normal__lib.genus  # known bug
             sage: sing_genus(I)  # known bug
@@ -1274,7 +1274,7 @@ cdef class SingularFunction(SageObject):
             The input is no groebner basis.
             leaving triang.lib::triangL (0)
 
-        Flush any stray output -- see :trac:`28622`::
+        Flush any stray output -- see :issue:`28622`::
 
             sage: sys.stdout.flush()
             ...
