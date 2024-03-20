@@ -647,7 +647,8 @@ http://fricas.sourceforge.net.
         def explicitly_not_implemented(*args):
             raise NotImplementedError("the translation of the FriCAS Expression '%s' to sage is not yet implemented" % args)
 
-        register_symbol(lambda *args: explicitly_not_implemented("rootOfADE"), {'fricas': 'rootOfADE'}, 2)
+        register_symbol(lambda *args: explicitly_not_implemented("rootOfADE"), {'fricas': 'rootOfADE'}, 2) # to be removed once we fully on FriCAS 1.3.10+
+        register_symbol(lambda *args: explicitly_not_implemented("FEseries"), {'fricas': 'FEseries'}, 2)
         register_symbol(lambda *args: explicitly_not_implemented("rootOfRec"), {'fricas': 'rootOfRec'}, 2)
 
     def set(self, var, value):
@@ -1184,7 +1185,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             \frac{{{\log \left( {{e+1}} \right)} \  {\sin \left( {{y+x}} \right)}}}{{{e} ^{z}}}
 
             sage: latex(fricas("matrix([[1,2],[3,4]])"))
-            \left[ \begin{array}{cc} 1 & 2 \\ 3 & 4\end{array} \right]
+            \left[ \begin{array}{cc} 1 & 2 \\ 3 & 4...\end{array}...\right]
 
             sage: latex(fricas("integrate(sin(x+1/x),x)"))
             \int ^{\displaystyle x} {{\sin \left( {{\frac{{{{ \%...} ^{2}}+1}}{ \%...}}} \right)} \  {d \%...}}
@@ -1836,7 +1837,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             sage: fricas(x+3).sage()
             x + 3
             sage: fricas(x+3).domainOf()
-            Polynomial(Integer())
+            Polynomial(Integer...)
 
             sage: fricas(matrix([[2,3],[4,x+5]])).diagonal().sage()
             (2, x + 5)
@@ -1904,7 +1905,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             sage: s.sage()
             Traceback (most recent call last):
             ...
-            NotImplementedError: the translation of the FriCAS Expression 'rootOfADE' to sage is not yet implemented
+            NotImplementedError: the translation of the FriCAS Expression 'FEseries' to sage is not yet implemented
 
             sage: s = fricas("series(sqrt(1+x), x=0)"); s
                   1     1  2    1  3    5   4    7   5    21   6    33   7    429   8
@@ -2050,7 +2051,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             # (which might not be Expression Integer) and recurse
             return FriCASElement._sage_expression(P.get_InputForm(self._name))
 
-        if head == "Expression" or head == "Pi":
+        if head == "Expression" or head == "Pi" or head == "PiDomain":
             # we treat Expression Integer and Expression Complex
             # Integer just the same
             return FriCASElement._sage_expression(P.get_InputForm(self._name))
