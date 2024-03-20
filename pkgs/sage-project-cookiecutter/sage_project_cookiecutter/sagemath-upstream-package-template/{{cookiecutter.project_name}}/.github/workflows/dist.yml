@@ -7,7 +7,7 @@ on:
 
 concurrency:
   # Cancel previous runs of this workflow for the same branch
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: {{"${{"}} github.workflow {{"}}"}}-{{"${{"}} github.ref {{"}}"}}
   cancel-in-progress: true
 
 jobs:
@@ -16,7 +16,7 @@ jobs:
     name: Build sdist (and upload to PyPI on release tags)
     runs-on: ubuntu-latest
     env:
-      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
+      CAN_DEPLOY: {{"${{"}} secrets.SAGEMATH_PYPI_API_TOKEN != '' {{"}}"}}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
@@ -31,14 +31,14 @@ jobs:
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: __token__
-          password: ${{ secrets.SAGEMATH_PYPI_API_TOKEN }}
+          password: {{"${{"}} secrets.SAGEMATH_PYPI_API_TOKEN {{"}}"}}
           skip_existing: true
           verbose: true
         if: env.CAN_DEPLOY == 'true' && github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
 
   build_wheels:
-    name: Build wheels on ${{ matrix.os }}, arch ${{ matrix.arch }}
-    runs-on: ${{ matrix.os }}
+    name: Build wheels on {{"${{"}} matrix.os {{"}}"}}, arch {{"${{"}} matrix.arch {{"}}"}}
+    runs-on: {{"${{"}} matrix.os {{"}}"}}
     needs: sdists_for_pypi
     strategy:
       fail-fast: false
@@ -61,7 +61,7 @@ jobs:
       # Disable musllinux until #33083 provides alpine package information
       CIBW_SKIP: "pp* *-musllinux*"
       #
-      CIBW_ARCHS: ${{ matrix.arch }}
+      CIBW_ARCHS: {{"${{"}} matrix.arch {{"}}"}}
       # https://cibuildwheel.readthedocs.io/en/stable/options/#requires-python
       CIBW_PROJECT_REQUIRES_PYTHON: ">=3.9"
       # Environment during wheel build
@@ -95,13 +95,13 @@ jobs:
         # In the CIBW_BEFORE_ALL phase, we install libraries using the Sage distribution.
         # https://cibuildwheel.readthedocs.io/en/stable/options/#before-all
         run: |
-          "${{ steps.python.outputs.python-path }}" -m pip install pipx
+          "{{"${{"}} steps.python.outputs.python-path {{"}}"}}" -m pip install pipx
           export PATH=build/bin:$PATH
           export CIBW_BEFORE_ALL="( $(sage-print-system-package-command debian --yes --no-install-recommends install $(sage-get-system-packages debian $SPKGS)) || $(sage-print-system-package-command fedora --yes --no-install-recommends install $(sage-get-system-packages fedora $SPKGS | sed s/pkg-config/pkgconfig/)) || ( $(sage-print-system-package-command homebrew --yes --no-install-recommends install $(sage-get-system-packages homebrew $SPKGS)) || echo error ignored) ) && ./bootstrap && ./configure --enable-build-as-root && make -j4 V=0 $TARGETS_PRE"
           mkdir -p unpacked
           for pkg in {{cookiecutter.project_name}}; do
               (cd unpacked && tar xfz - ) < dist/$pkg*.tar.gz
-              "${{ steps.python.outputs.python-path }}" -m pipx run cibuildwheel==2.17.0 unpacked/$pkg*
+              "{{"${{"}} steps.python.outputs.python-path {{"}}"}}" -m pipx run cibuildwheel==2.17.0 unpacked/$pkg*
           done
 
       - uses: actions/upload-artifact@v3
@@ -116,7 +116,7 @@ jobs:
     if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags')
     runs-on: ubuntu-latest
     env:
-      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
+      CAN_DEPLOY: {{"${{"}} secrets.SAGEMATH_PYPI_API_TOKEN != '' {{"}}"}}
     steps:
 
       - uses: actions/download-artifact@v3
@@ -128,7 +128,7 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: __token__
-          password: ${{ secrets.SAGEMATH_PYPI_API_TOKEN }}
+          password: {{"${{"}} secrets.SAGEMATH_PYPI_API_TOKEN {{"}}"}}
           packages_dir: wheelhouse/
           skip_existing: true
           verbose: true
