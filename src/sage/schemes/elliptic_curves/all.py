@@ -45,3 +45,5 @@ from .ell_curve_isogeny import EllipticCurveIsogeny, isogeny_codomain_from_kerne
 lazy_import('sage.schemes.elliptic_curves.mod_poly', 'classical_modular_polynomial')
 
 from .heegner import heegner_points, heegner_point
+
+lazy_import('sage.schemes.elliptic_curves.kummer_line', ['KummerLine', 'KummerLinePoint', 'KummerLineIsogeny'])
