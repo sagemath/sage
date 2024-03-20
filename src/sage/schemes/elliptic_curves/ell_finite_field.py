@@ -1357,22 +1357,18 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
         EXAMPLES:
 
-        This example illustrates basic usage.
+        This example illustrates basic usage::
 
-        ::
-
-            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 6
-            sage: E.set_order(6)
+            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 12
+            sage: E.set_order(12)
             sage: E.order()
-            6
+            12
             sage: E.order() * E.random_point()
             (0 : 1 : 0)
 
         We now give a more interesting case, the NIST-P521 curve. Its
         order is too big to calculate with Sage, and takes a long time
-        using other packages, so it is very useful here.
-
-        ::
+        using other packages, so it is very useful here::
 
             sage: p = 2^521 - 1
             sage: prev_proof_state = proof.arithmetic()
@@ -1391,7 +1387,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         It is an error to pass a value which is not an integer in the
         Hasse-Weil range::
 
-            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 6
+            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 12
             sage: E.set_order("hi")
             Traceback (most recent call last):
             ...
@@ -1410,40 +1406,50 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         ``num_checks``, the factorization of the actual order, and the
         actual group structure::
 
-            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 6
+            sage: E = EllipticCurve(GF(1009), [0, 1]) # This curve has order 948
+            sage: E.set_order(947)
+            Traceback (most recent call last):
+            ...
+            ValueError: Value 947 illegal (multiple of random point not the identity)
+
+        For curves over small finite fields, the order is cheap to compute, so it is computed
+        directly and compared::
+
+            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 12
             sage: E.set_order(11)
             Traceback (most recent call last):
             ...
-            ValueError: Value 11 illegal (multiple of random point not the identity)
+            ValueError: Value 11 illegal (correct order is 12)
 
-        However, set_order can be fooled, though it's not likely in
-        "real cases of interest". For instance, the order can be set
-        to a multiple of the actual order::
+        TESTS:
 
-            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 6
-            sage: E.set_order(12)  # 12 just fits in the Hasse range
+        The previous version's random tests are not strong enough. In particular, the following used
+        to work::
+
+            sage: E = EllipticCurve(GF(2), [0, 0, 1, 1, 1]) # This curve has order 1
+            sage: E.set_order(3)
+            Traceback (most recent call last):
+            ...
+            ValueError: Value 3 illegal (correct order is 1)
+
+        ::
+
+            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 12
+            sage: E.set_order(4, num_checks=0)
+            Traceback (most recent call last):
+            ...
+            ValueError: Value 4 illegal (correct order is 12)
             sage: E.order()
             12
 
-        Or, the order can be set incorrectly along with ``num_checks`` set
-        too small::
-
-            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 6
-            sage: E.set_order(4, num_checks=0)
-            sage: E.order()
-            4
-
-        The value of ``num_checks`` must be an integer. Negative values
-        are interpreted as zero, which means don't do any checking::
-
-            sage: E = EllipticCurve(GF(7), [0, 1]) # This curve has order 6
-            sage: E.set_order(4, num_checks=-12)
-            sage: E.order()
-            4
+        .. TODO:: Add provable correctness check by computing the abelian group structure and
+            comparing.
 
         AUTHORS:
 
-         - Mariah Lenox (2011-02-16)
+         - Mariah Lenox (2011-02-16): Initial implementation
+
+         - Gareth Ma (2024-01-21): Fix bug for small curves
         """
         value = Integer(value)
 
@@ -1452,12 +1458,19 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             q = self.base_field().order()
             a,b = Hasse_bounds(q,1)
             if not a <= value <= b:
-                raise ValueError('Value %s illegal (not an integer in the Hasse range)' % value)
+                raise ValueError(f"Value {value} illegal (not an integer in the Hasse range)")
+
+            # For really small values, the random tests are too weak to detect wrong orders
+            # So we go with computing directly instead.
+            if q <= 100:
+                if self.order() != value:
+                    raise ValueError(f"Value {value} illegal (correct order is {self.order()})")
+
             # Is value*random == identity?
-            for i in range(num_checks):
+            for _ in range(num_checks):
                 G = self.random_point()
                 if value * G != self(0):
-                    raise ValueError('Value %s illegal (multiple of random point not the identity)' % value)
+                    raise ValueError(f"Value {value} illegal (multiple of random point not the identity)")
 
         # TODO: It might help some of PARI's algorithms if we
         # could copy this over to the .pari_curve() as well.
@@ -1552,10 +1565,9 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         F = j.parent()
         x = polygen(F)
         from sage.rings.polynomial.polynomial_ring import polygens
-        from sage.libs.pari.convert_sage import gen_to_sage
-        from sage.libs.pari.all import pari
-        X,Y = polygens(F,['X', 'Y'],2)
-        phi = gen_to_sage(pari.polmodular(ell),{'x':X, 'y':Y})
+        from sage.schemes.elliptic_curves.mod_poly import classical_modular_polynomial
+        X, Y = polygens(F, "X, Y", 2)
+        phi = classical_modular_polynomial(ell)(X, Y)
         j1 = phi([x,j]).roots(multiplicities=False)
         nj1 = len(j1)
         on_floor = self.two_torsion_rank() < 2 if ell == 2 else nj1 <= ell
@@ -1727,7 +1739,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
             sage: # needs sage.rings.finite_rings
             sage: K = GF(3**5)
-            sage: [E.ainvs() for E in EllipticCurve(j=K(1)).twists()]
+            sage: [E.ainvs() for E in EllipticCurve(j=K(1)).twists()] # random
             [(0, 1, 0, 0, 2), (0, z5, 0, 0, 2*z5^3)]
 
             sage: # needs sage.rings.finite_rings
@@ -1740,7 +1752,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
             sage: # needs sage.rings.finite_rings
             sage: K = GF(3**4)
-            sage: [E.ainvs() for E in EllipticCurve(j=K(1)).twists()]
+            sage: [E.ainvs() for E in EllipticCurve(j=K(1)).twists()] # random
             [(0, 1, 0, 0, 2), (0, z4, 0, 0, 2*z4^3)]
 
             sage: # needs sage.rings.finite_rings
@@ -1759,7 +1771,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
             sage: # needs sage.rings.finite_rings
             sage: K = GF(2**7)
-            sage: [E.ainvs() for E in EllipticCurve(j=K(1)).twists()]
+            sage: [E.ainvs() for E in EllipticCurve(j=K(1)).twists()] # random
             [(1, 0, 0, 0, 1), (1, 1, 0, 0, 1)]
 
             sage: # needs sage.rings.finite_rings
@@ -1782,6 +1794,14 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
              (0, 0, z8^4 + z8^3 + z8^2 + 1, 0, z8^3 + z8^2 + 1),
              (0, 0, z8^6 + z8^3 + z8^2, 0, 0),
              (0, 0, z8^6 + z8^3 + z8^2, 0, z8^3 + z8^2)]
+
+        The order of the quadratic twist is precomputed, so the second
+        computation below is fast::
+
+            sage: E = EllipticCurve(GF(2^255 - 19), [3, 5])
+            sage: E.set_order(2^255 - 94400682670973290858718002131957303262)
+            sage: E.quadratic_twist().order()
+            57896044618658097711785492504343953926729393015491255310587510006088522123194
 
         TESTS:
 
@@ -1824,9 +1844,10 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             twists = curves_with_j_0(K)
         elif j == 1728:
             twists = curves_with_j_1728(K)
-        if twists: # i.e. if j=0 or 1728
+
+        if twists:  # i.e. if j=0 or 1728
             # replace the one isomorphic to self with self and move to front
-            for i,t in enumerate(twists):
+            for i, t in enumerate(twists):
                 if self.is_isomorphic(t):
                     twists[i] = twists[0]
                     twists[0] = self
@@ -1835,15 +1856,20 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
         # Now j is not 0 or 1728, and we only have a quadratic twist
 
-        if K.characteristic() == 2: # find D with trace 1 for the additive twist
-            D = K.one() # will work if degree is odd
-            while D.trace() == 0:
+        if K.characteristic() == 2:
+            # find D with trace 1 for the additive twist
+            D = K.one()
+            while not D or D.trace() == 0:
                 D = K.random_element()
-        else: # find a nonsquare D
+        else:
+            # find a nonsquare D.
             D = K.gen()
-            q2 = (K.cardinality()-1)//2
+            q2 = (K.cardinality() - 1) // 2
             while not D or D**q2 == 1:
                 D = K.random_element()
+            # assert D and D**q2 != 1
+            # assert not D.is_square()
+
         return [self, self.quadratic_twist(D)]
 
 def curves_with_j_0(K):
@@ -1860,6 +1886,7 @@ def curves_with_j_0(K):
 
     For `K=\GF{q}` where `q\equiv1\mod{6}` there are six curves, the sextic twists of `y^2=x^3+1`::
 
+        sage: # needs sage.rings.finite_rings
         sage: from sage.schemes.elliptic_curves.ell_finite_field import curves_with_j_0
         sage: sorted(curves_with_j_0(GF(7)), key = lambda E: E.a_invariants())
         [Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7,
@@ -1868,13 +1895,12 @@ def curves_with_j_0(K):
          Elliptic Curve defined by y^2 = x^3 + 4 over Finite Field of size 7,
          Elliptic Curve defined by y^2 = x^3 + 5 over Finite Field of size 7,
          Elliptic Curve defined by y^2 = x^3 + 6 over Finite Field of size 7]
-        sage: curves_with_j_0(GF(25))                                                   # needs sage.rings.finite_rings
-        [Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field in z2 of size 5^2,
-         Elliptic Curve defined by y^2 = x^3 + z2 over Finite Field in z2 of size 5^2,
-         Elliptic Curve defined by y^2 = x^3 + (z2+3) over Finite Field in z2 of size 5^2,
-         Elliptic Curve defined by y^2 = x^3 + (4*z2+3) over Finite Field in z2 of size 5^2,
-         Elliptic Curve defined by y^2 = x^3 + (2*z2+2) over Finite Field in z2 of size 5^2,
-         Elliptic Curve defined by y^2 = x^3 + (4*z2+1) over Finite Field in z2 of size 5^2]
+        sage: curves = curves_with_j_0(GF(25)); len(curves)
+        6
+        sage: all(not curves[i].is_isomorphic(curves[j]) for i in range(6) for j in range(i + 1, 6))
+        True
+        sage: set(E.j_invariant() for E in curves)
+        {0}
 
     For `K=\GF{q}` where `q\equiv5\mod{6}` there are two curves,
     quadratic twists of each other by `-3`: `y^2=x^3+1` and
@@ -1898,14 +1924,22 @@ def curves_with_j_0(K):
     q = K.cardinality()
     if q % 3 == 2:
         # Then we only have two quadratic twists (and -3 is non-square)
-        return [EllipticCurve(K, [0,a]) for a in [1,-27]]
+        return [EllipticCurve(K, [0, a]) for a in [1, -27]]
     # Now we have genuine sextic twists, find D generating K* mod 6th powers
-    q2 = (q-1)//2
-    q3 = (q-1)//3
+    q2 = (q - 1) // 2
+    q3 = (q - 1) // 3
     D = K.gen()
     while not D or D**q2 == 1 or D**q3 == 1:
         D = K.random_element()
-    return [EllipticCurve(K, [0,D**i]) for i in range(6)]
+
+    curves = [EllipticCurve(K, [0, D**i]) for i in range(6)]
+    # TODO: issue 37110, Precompute orders of sextic twists + docs
+    # The idea should be to evaluate the character (D / q) or something
+    # Probably reference [RS2010]_ and [Connell1999]_
+    # Also a necessary change is `curves_with_j_0` should take in an optional "starting curve"
+    # (passed from the original .twists call), because if you start twisting from that curve,
+    # then you can also compute the orders!
+    return curves
 
 def curves_with_j_1728(K):
     r"""
@@ -1927,7 +1961,7 @@ def curves_with_j_1728(K):
          Elliptic Curve defined by y^2 = x^3 + 2*x over Finite Field of size 5,
          Elliptic Curve defined by y^2 = x^3 + 3*x over Finite Field of size 5,
          Elliptic Curve defined by y^2 = x^3 + 4*x over Finite Field of size 5]
-        sage: curves_with_j_1728(GF(49))                                                # needs sage.rings.finite_rings
+        sage: curves_with_j_1728(GF(49))  # random                                      # needs sage.rings.finite_rings
         [Elliptic Curve defined by y^2 = x^3 + x over Finite Field in z2 of size 7^2,
          Elliptic Curve defined by y^2 = x^3 + z2*x over Finite Field in z2 of size 7^2,
          Elliptic Curve defined by y^2 = x^3 + (z2+4)*x over Finite Field in z2 of size 7^2,
@@ -1954,13 +1988,25 @@ def curves_with_j_1728(K):
         return curves_with_j_0_char3(K)
     q = K.cardinality()
     if q % 4 == 3:
-        return [EllipticCurve(K, [a,0]) for a in [1,-1]]
+        curves = [EllipticCurve(K, [a, 0]) for a in [1, -1]]
+        curves[0].set_order(q + 1)
+        curves[1].set_order(q + 1)
+        return curves
+
     # Now we have genuine quartic twists, find D generating K* mod 4th powers
-    q2 = (q-1)//2
-    D = K.gen()
+    q2 = (q - 1) // 2
+    # Note that computing multiplicative generator is expensive
+    D = K.random_element()
     while not D or D**q2 == 1:
         D = K.random_element()
-    return [EllipticCurve(K, [D**i,0]) for i in range(4)]
+    curves = [EllipticCurve(K, [D**i, 0]) for i in range(4)]
+    # TODO: issue 37110, Precompute orders of quartic twists + docs
+    # The idea should be to evaluate the character (D / q) or something
+    # Probably reference [Connell1999]_
+    # Also a necessary change is `curves_with_j_1728` should take in an optional "starting curve"
+    # (passed from the original .twists call), because if you start twisting from that curve,
+    # then you can also compute the orders!
+    return curves
 
 def curves_with_j_0_char2(K):
     r"""
@@ -2023,13 +2069,32 @@ def curves_with_j_0_char2(K):
 
         sage: sum(1/len(E.automorphisms()) for E in curves) == 1                        # needs sage.rings.finite_rings
         True
+
+    The orders of the twists are precomputed::
+
+        sage: K = GF(2**13)
+        sage: curves = EllipticCurve(j=K(0)).twists()
+        sage: [curve.order() for curve in curves]
+        [8193, 8065, 8321]
     """
     if not K.is_finite() or K.characteristic() != 2:
         raise ValueError("field must be finite of characteristic 2")
-    if K.degree() % 2:
-        return [EllipticCurve(K, [0, 0, 1, 0, 0]),
-                EllipticCurve(K, [0, 0, 1, 1, 0]),
-                EllipticCurve(K, [0, 0, 1, 1, 1])]
+
+    deg = K.degree()
+    if deg % 2 == 1:
+        curves = [EllipticCurve(K, [0, 0, 1, 0, 0]),
+                  EllipticCurve(K, [0, 0, 1, 1, 0]),
+                  EllipticCurve(K, [0, 0, 1, 1, 1])]
+
+        base = 2**deg + 1
+        delta = 2**((deg + 1) // 2) * (-1)**((deg + 1) // 4)
+
+        curves[0].set_order(base)
+        curves[1].set_order(base + delta)
+        curves[2].set_order(base - delta)
+
+        return curves
+
     # find a,b,c,d,e such that
     # a is not a cube, i.e. a**((q-1)//3)!=1
     # Tr(b)=1
@@ -2045,15 +2110,26 @@ def curves_with_j_0_char2(K):
     while not b or not b.trace():
         b = K.random_element()
     c = K.one() # OK if degree is 2 mod 4
-    if K.degree() % 4 == 0:
+    if deg % 4 == 0:
         while (x**4+x+c).roots():
             c = K.random_element()
     while not d or (x**2+a*x+d).roots():
         d = K.random_element()
     while not e or (x**2+asq*x+e).roots():
         e = K.random_element()
-    return [EllipticCurve(K, ai) for ai in
-            [[0,0,1,0,0], [0,0,1,0,b], [0,0,1,c,0], [0,0,a,0,0], [0,0,a,0,d], [0,0,asq,0,0], [0,0,asq,0,e]]]
+
+    curves = [
+        EllipticCurve(K, ai)
+        for ai in [[0, 0, 1, 0, 0], [0, 0, 1, 0, b], [0, 0, 1, c, 0],
+                   [0, 0, a, 0, 0], [0, 0, a, 0, d], [0, 0, asq, 0, 0],
+                   [0, 0, asq, 0, e]]
+    ]
+
+    base = 2**deg + 1
+    delta = (-2)**(deg // 2)
+    for i, f in zip(range(7), [-2, 2, 0, 1, -1, 1, -1]):
+        curves[i].set_order(base + f * delta)
+    return curves
 
 def curves_with_j_0_char3(K):
     r"""
@@ -2118,6 +2194,22 @@ def curves_with_j_0_char3(K):
 
         sage: sum(1/len(E.automorphisms()) for E in curves) == 1                        # needs sage.rings.finite_rings
         True
+
+    The orders of the twists are precomputed::
+
+        sage: K = GF(3**10)
+        sage: curves = EllipticCurve(j=K(0)).twists()
+        sage: [curve.order() for curve in curves]
+        [59536, 58807, 59050, 58564, 59293, 59050]
+
+    Note that for odd degrees, the ordering of the orders of the output is not deterministic::
+
+        sage: K = GF(3**3)
+        sage: curves = EllipticCurve(j=K(0)).twists()
+        sage: orders = [[curve.order() for curve in curves] for _ in range(100)]
+        sage: assert all(order == [28, 28, 37, 19] or order == [28, 28, 19, 37] for order in orders)
+        sage: all(order == (28, 28, 37, 19) for order in orders)
+        False
     """
     if not K.is_finite() or K.characteristic() != 3:
         raise ValueError("field must be finite of characteristic 3")
@@ -2126,9 +2218,27 @@ def curves_with_j_0_char3(K):
     while not b or not b.trace():
         b = K.random_element()
 
-    if K.degree() % 2:
-        return [EllipticCurve(K, a4a6) for a4a6 in
-            [[1,0], [-1,0], [-1,b], [-1,-b]]]
+    deg = K.degree()
+    if deg % 2:
+        curves = [
+            EllipticCurve(K, a4a6)
+            for a4a6 in [[1, 0], [-1, 0], [-1, b], [-1, -b]]
+        ]
+
+        base = 3**deg + 1
+        delta = 3**((deg + 1) // 2)
+
+        curves[0].set_order(base)
+        curves[1].set_order(base)
+        # TODO: issue 37110
+        # try:
+        #     curves[2].set_order(base + delta)
+        #     curves[3].set_order(base - delta)
+        # except ValueError:
+        #     curves[2].set_order(base - delta)
+        #     curves[3].set_order(base + delta)
+
+        return curves
 
     # find a, i, c where:
     # a generates K* mod 4th powers, i.e. non-square,
@@ -2143,8 +2253,18 @@ def curves_with_j_0_char3(K):
     c = None
     while not c or (x**3 + a**2*x + c).roots():
         c = K.random_element()
-    return [EllipticCurve(K, a4a6) for a4a6 in
-            [[1,0], [1,i*b], [a,0], [a**2,0], [a**2,c], [a**3,0]]]
+
+    curves = [
+        EllipticCurve(K, a4a6)
+        for a4a6 in [[1, 0], [1, i * b], [a, 0], [a**2, 0], [a**2, c], [a**3, 0]]
+    ]
+
+    base = 3**deg + 1
+    delta = 3**(deg // 2) * (-1)**(deg // 2)
+    for i, f in enumerate([-2, 1, 0, 2, -1, 0]):
+        curves[i].set_order(base + delta * f)
+
+    return curves
 
 # dict to hold precomputed coefficient vectors of supersingular j values (excluding 0, 1728):
 
@@ -2632,3 +2752,120 @@ def special_supersingular_curve(F, *, endomorphism=False):
     endo._degree = ZZ(q)
     endo.trace.set_cache(ZZ.zero())
     return E, endo
+
+def EllipticCurve_with_order(m, *, D=None):
+    r"""
+    Return an iterator for elliptic curves over finite fields with the given order. The curves are
+    computed using the Complex Multiplication (CM) method.
+
+    A `:sage:`~sage.structure.factorization.Factorization` can be passed for ``m``, in which case
+    the algorithm is more efficient.
+
+    If ``D`` is specified, it is used as the discriminant.
+
+    EXAMPLES::
+
+        sage: from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_with_order
+        sage: E = next(EllipticCurve_with_order(1234)); E  # random
+        Elliptic Curve defined by y^2 = x^3 + 1142*x + 1209 over Finite Field of size 1237
+        sage: E.order() == 1234
+        True
+
+    When ``iter`` is set, the function returns an iterator of all elliptic curves with the given
+    order::
+
+        sage: from sage.schemes.elliptic_curves.ell_finite_field import EllipticCurve_with_order
+        sage: it = EllipticCurve_with_order(21); it
+        <generator object EllipticCurve_with_order at 0x...>
+        sage: E = next(it); E  # random
+        Elliptic Curve defined by y^2 = x^3 + 6*x + 14 over Finite Field of size 23
+        sage: E.order() == 21
+        True
+        sage: Es = [E] + list(it); Es  # random
+        [Elliptic Curve defined by y^2 = x^3 + 6*x + 14 over Finite Field of size 23,
+         Elliptic Curve defined by y^2 = x^3 + 12*x + 4 over Finite Field of size 23,
+         Elliptic Curve defined by y^2 = x^3 + 5*x + 2 over Finite Field of size 23,
+         Elliptic Curve defined by y^2 = x^3 + (z2+3) over Finite Field in z2 of size 5^2,
+         Elliptic Curve defined by y^2 = x^3 + (2*z2+2) over Finite Field in z2 of size 5^2,
+         Elliptic Curve defined by y^2 = x^3 + 7*x + 1 over Finite Field of size 19,
+         Elliptic Curve defined by y^2 = x^3 + 17*x + 10 over Finite Field of size 19,
+         Elliptic Curve defined by y^2 = x^3 + 5*x + 12 over Finite Field of size 17,
+         Elliptic Curve defined by y^2 = x^3 + 9*x + 1 over Finite Field of size 17,
+         Elliptic Curve defined by y^2 = x^3 + 7*x + 6 over Finite Field of size 17,
+         Elliptic Curve defined by y^2 = x^3 + z3^2*x^2 + (2*z3^2+z3) over Finite Field in z3 of size 3^3,
+         Elliptic Curve defined by y^2 = x^3 + (z3^2+2*z3+1)*x^2 + (2*z3^2+2*z3) over Finite Field in z3 of size 3^3,
+         Elliptic Curve defined by y^2 = x^3 + (z3^2+z3+1)*x^2 + (2*z3^2+1) over Finite Field in z3 of size 3^3,
+         Elliptic Curve defined by y^2 + (z4^2+z4+1)*y = x^3 over Finite Field in z4 of size 2^4,
+         Elliptic Curve defined by y^2 + (z4^2+z4)*y = x^3 over Finite Field in z4 of size 2^4,
+         Elliptic Curve defined by y^2 = x^3 + 18*x + 26 over Finite Field of size 29,
+         Elliptic Curve defined by y^2 = x^3 + 11*x + 19 over Finite Field of size 29,
+         Elliptic Curve defined by y^2 = x^3 + 4 over Finite Field of size 19,
+         Elliptic Curve defined by y^2 = x^3 + 19 over Finite Field of size 31,
+         Elliptic Curve defined by y^2 = x^3 + 4 over Finite Field of size 13]
+        sage: all(E.order() == 21 for E in Es)
+        True
+
+    Indeed, we can verify that this is correct. Hasse's bounds tell us that $p \leq 50$
+    (approximately), and the rest can be checked via bruteforce::
+
+        sage: for p in prime_range(50):
+        ....:     for j in range(p):
+        ....:         E0 = EllipticCurve(GF(p), j=j)
+        ....:         for Et in E0.twists():
+        ....:             if Et.order() == 21:
+        ....:                 assert any(Et.is_isomorphic(E) for E in Es)
+
+    .. NOTE::
+
+        The output curves are not deterministic, as :func:`EllipticCurve_finite_field.twists` is not
+        deterministic. However, the order of the j-invariants and base fields is fixed.
+
+    AUTHORS:
+
+     - Gareth Ma and Giacomo Pope (Sage Days 123): initial version
+    """
+    from sage.arith.misc import is_prime_power, factor
+    from sage.quadratic_forms.binary_qf import BinaryQF
+    from sage.structure.factorization import Factorization
+    from sage.schemes.elliptic_curves.cm import hilbert_class_polynomial
+
+    def helper(m, m4_fac, D):
+        all_sol = BinaryQF(1, 0, -D).solve_integer(m4_fac, _flag=3)
+        for t, _ in all_sol:
+            yield m + 1 - t
+            yield m + 1 + t
+
+    if isinstance(m, Factorization):
+        m4_fac = m * factor(4)
+        m_val = m.value()
+    else:
+        m4_fac = factor(m * 4)
+        m_val = m
+
+    if D is None:
+        Ds = (D for D in range(-4 * m_val, 0) if D % 4 in [0, 1])
+    else:
+        assert D < 0 and D % 4 in [0, 1]
+        Ds = [D]
+
+    seen = set()
+    for D in Ds:
+        for q in helper(m_val, m4_fac, D):
+            if not is_prime_power(q):
+                continue
+
+            H = hilbert_class_polynomial(D)
+            K = GF(q)
+            roots = H.roots(ring=K)
+            for j0, _ in roots:
+                E = EllipticCurve(j=j0)
+                for Et in E.twists():
+                    if any(Et.is_isomorphic(E) for E in seen):
+                        continue
+                    try:
+                        # This tests whether the curve has given order
+                        Et.set_order(m_val)
+                        seen.add(Et)
+                        yield Et
+                    except ValueError:
+                        pass
