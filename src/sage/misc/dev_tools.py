@@ -612,7 +612,7 @@ def import_statements(*objects, **kwds):
             except IndexError:
                 if deprecation:
                     raise LookupError(
-                        "object named {!r} is deprecated (see github issue "
+                        "object named {!r} is deprecated (see Issue #"
                         "{})".format(name, deprecation))
                 else:
                     raise LookupError("no object named {!r}".format(name))
