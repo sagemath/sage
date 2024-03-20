@@ -903,7 +903,7 @@ class SagecodeTransform(SphinxTransform):
                             linenostart=1)
                         cell_node += cell_input
                         container = TabContainer("", type="tab", new_set=False)
-                        textnodes = [Text('Sage (live)')]
+                        textnodes = [Text('Sage Live')]
                         label = Label("", "", *textnodes)
                         container += label
                         content = Container("", is_div=True, classes=["tab-content"])
