@@ -2505,7 +2505,24 @@ class Partition(CombinatorialElement):
             sage: Partition([4, 3, 2, 2, 1]).franklin_glaisher(2)
             [3, 2, 2, 1, 1, 1, 1, 1]
 
-        TESTS::
+        TESTS:
+
+        The map preserves the size::
+
+            sage: all(mu.franklin_glaisher(s).size() == n
+            ....:     for n in range(20) for mu in Partitions(n)
+            ....:     for s in range(1, 5))
+            True
+
+        The map is bijective::
+
+            sage: l = [[mu.franklin_glaisher(s)
+            ....:      for n in range(20) for mu in Partitions(n)]
+            ....:     for s in range(1, 5)]
+            sage: all(len(set(ls)) == len(ls) for ls in l)
+            True
+
+        The map transports the statistics::
 
             sage: d = lambda la, s: set(p / s for p in la if p % s == 0)
             sage: r = lambda la, s: set(p for p in la if list(la).count(p) >= s)
@@ -2513,13 +2530,23 @@ class Partition(CombinatorialElement):
             ....:     for n in range(20) for mu in Partitions(n)
             ....:     for s in range(1, 5))
             True
+
+        For `s=2`, the map is known to findstat::
+
+            sage: findmap(Partitions, lambda mu: mu.franklin_glaisher(2))       # optional - internet
+            0: Mp00312 (quality [100])
         """
+        s = ZZ(s)
+        if s.is_one():
+            return self
         mu = []
         for p, m in enumerate(self.to_exp(), 1):
             if not p % s:
-                mu.extend([p//s]*(m*s))
+                mu.extend([p // s]*(m*s))
             else:
-                mu.extend(p * v * s**i for i, v in enumerate(m.digits(s)) if v)
+                mu.extend(p1 for i, v in enumerate(m.digits(s))
+                          if (p1 := p * s**i)
+                          for _ in range(v))
 
         P = self.parent()
         return P.element_class(P, sorted(mu, reverse=True))
@@ -2547,32 +2574,32 @@ class Partition(CombinatorialElement):
             sage: Partition([3, 2, 2, 1, 1, 1, 1, 1]).franklin_glaisher_inverse(2)
             [4, 3, 2, 2, 1]
 
-        TESTS::
+        TESTS:
 
-            sage: d = lambda la, s: set(p / s for p in la if p % s == 0)
-            sage: r = lambda la, s: set(p for p in la if list(la).count(p) >= s)
-            sage: all(r(mu, s) == d(mu.franklin_glaisher_inverse(s), s)
+        The map is inverse to :meth:`franklin_glaisher`::
+
+            sage: all(mu.franklin_glaisher(s).franklin_glaisher_inverse(s) == mu
             ....:     for n in range(20) for mu in Partitions(n)
             ....:     for s in range(1, 5))
             True
-        """
-        mu = []
-        nu = []
-        for p, m in enumerate(self.to_exp(), 1):
-            mu.extend([p*s]*(m // s))
-            nu.extend([p]*(m % s))
 
-        i = 0
-        while i < len(nu):
-            p = nu[i]
-            if not p % s:
-                del nu[i]
-                nu.extend([p // s]*s)
-            else:
-                i += 1
+        For `s=2`, the map is known to findstat::
+
+            sage: findmap(Partitions, lambda mu: mu.franklin_glaisher_inverse(2))         # optional - internet
+            0: Mp00313 (quality [100])
+        """
+        s = ZZ(s)
+        if s.is_one():
+            return self
+        mu = []
+        for p, m in enumerate(self.to_exp(), 1):
+            p = ZZ(p)
+            mu.extend([p * s]*(m // s))
+            m1, p1 = p.val_unit(s)
+            mu.extend([p1]*((m % s) * s**m1))
 
         P = self.parent()
-        return P.element_class(P, sorted(mu + nu, reverse=True))
+        return P.element_class(P, sorted(mu, reverse=True))
 
     def suter_diagonal_slide(self, n, exp=1):
         r"""
