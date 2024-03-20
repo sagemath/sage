@@ -1,29 +1,23 @@
 r"""
 Points on projective varieties
 
-Scheme morphism for points on projective varieties
-
-
+This module implements scheme morphism for points on projective varieties.
 
 AUTHORS:
 
-- David Kohel, William Stein
-
-- William Stein (2006-02-11): fixed bug where P(0,0,0) was allowed as
-  a projective point.
-
-- Volker Braun (2011-08-08): Renamed classes, more documentation, misc
-  cleanups.
-
-- Ben Hutz (June 2012) added support for projective ring;
-  (March 2013) iteration functionality and new directory structure
+- David Kohel, William Stein (2006): initial version
+- William Stein (2006-02-11): fixed bug where P(0,0,0) was allowed as a
+  projective point
+- Volker Braun (2011-08-08): Renamed classes, more documentation, misc cleanups
+- Ben Hutz (2012-06): added support for projective ring
+- Ben Hutz (2013-03): added iteration functionality and new directory structure
   for affine/projective, height functionality
 """
 
 # ****************************************************************************
-#       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
 #       Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu.au>
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
+#       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -52,9 +46,11 @@ from sage.structure.element import AdditiveGroupElement
 from sage.structure.sequence import Sequence
 from sage.structure.richcmp import richcmp, op_EQ, op_NE
 
-#*******************************************************************
+
+# --------------------
 # Projective varieties
-#*******************************************************************
+# --------------------
+
 class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
     """
     A rational point of projective space over a ring.
@@ -1054,6 +1050,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         except AttributeError:
             raise TypeError("map must be a dynamical system")
 
+
 class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring):
     """
     A rational point of projective space over a field.
@@ -1401,6 +1398,35 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
             raise TypeError("this point must be a point on a projective subscheme")
         return self.codomain().multiplicity(self)
 
+    def as_subscheme(self):
+        r"""
+        Return the subscheme associated with this rational point.
+
+        EXAMPLES::
+
+            sage: P2.<x,y,z> = ProjectiveSpace(QQ,2)
+            sage: p1 = P2.point([0,0,1]).as_subscheme(); p1
+            Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+              x, y
+            sage: p2 = P2.point([1,1,1]).as_subscheme(); p2
+            Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+              x - z, y - z
+            sage: p1 + p2
+            Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+              x - y, y^2 - y*z
+        """
+        P = self.codomain().ambient_space()
+        g = P.gens()
+        v = self._coords
+        n = len(v)
+        for i in range(n - 1, -1, -1):
+            if v[i]:
+                break
+        a = v[i]
+        x = g[i]
+        return P.subscheme([a*g[j] - v[j]*x for j in range(n) if j != i])
+
+
 class SchemeMorphism_point_projective_finite_field(SchemeMorphism_point_projective_field):
 
     def __hash__(self):
@@ -1438,9 +1464,11 @@ class SchemeMorphism_point_projective_finite_field(SchemeMorphism_point_projecti
         N = self.codomain().ambient_space().dimension_relative()
         return hash(sum(hash(self[i]) * p**i for i in range(N + 1)))
 
-#*******************************************************************
+
+# -----------------
 # Abelian varieties
-#*******************************************************************
+# -----------------
+
 class SchemeMorphism_point_abelian_variety_field(AdditiveGroupElement, SchemeMorphism_point_projective_field):
     """
     A rational point of an abelian variety over a field.
