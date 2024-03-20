@@ -1376,7 +1376,7 @@ def unpickle_discrete_hmm_v1(A, B, pi, n_out, emission_symbols, emission_symbols
         sage: m2 == m
         True
 
-    Test that :trac:`15711` has been resolved::
+    Test that :issue:`15711` has been resolved::
 
         sage: str(m2) == str(m)
         True

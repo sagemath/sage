@@ -423,7 +423,7 @@ def milnor_multiplication_odd(m1,m2,p):
         sage: (a+b)*c == a*c + b*c
         True
 
-    Test that the bug reported in :trac:`7212` has been fixed::
+    Test that the bug reported in :issue:`7212` has been fixed::
 
         sage: A.P(36,6)*A.P(27,9,81)
         2 P(13,21,83) + P(14,24,82) + P(17,20,83) + P(25,18,83) + P(26,21,82) + P(36,15,80,1) + P(49,12,83) + 2 P(50,15,82) + 2 P(53,11,83) + 2 P(63,15,81)
@@ -887,7 +887,7 @@ def make_mono_admissible(mono, p=2, generic=None):
         sage: make_mono_admissible((0, 2, 0, 1, 0), p=7)
         {(0, 3, 0): 3}
 
-    Test the fix from :trac:`13796`::
+    Test the fix from :issue:`13796`::
 
         sage: SteenrodAlgebra(p=2, basis='adem').Q(2) * (Sq(6) * Sq(2)) # indirect doctest
         Sq^10 Sq^4 Sq^1 + Sq^10 Sq^5 + Sq^12 Sq^3 + Sq^13 Sq^2

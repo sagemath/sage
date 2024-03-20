@@ -109,7 +109,7 @@ AUTHORS:
 - William Stein: the code
 - Jeremy Cho (2006-05-17): some examples (above)
 - Niles Johnson (2010-09): implement multivariate power series
-- Simon King (2012-08): use category and coercion framework, :trac:`13412`
+- Simon King (2012-08): use category and coercion framework, :issue:`13412`
 
 TESTS::
 
@@ -327,7 +327,7 @@ def PowerSeriesRing(base_ring, name=None, arg2=None, names=None,
         sage: L.default_prec()
         5
 
-    By :trac:`14084`, a power series ring belongs to the category of integral
+    By :issue:`14084`, a power series ring belongs to the category of integral
     domains, if the base ring does::
 
         sage: P = ZZ[['x']]
@@ -516,7 +516,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         EXAMPLES:
 
         This base class inherits from :class:`~sage.rings.ring.CommutativeRing`.
-        Since :trac:`11900`, it is also initialised as such, and since :trac:`14084`
+        Since :issue:`11900`, it is also initialised as such, and since :issue:`14084`
         it is actually initialised as an integral domain::
 
             sage: R.<x> = ZZ[[]]
@@ -535,7 +535,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             sage: TestSuite(R).run()
 
         It is checked that the default precision is non-negative
-        (see :trac:`19409`)::
+        (see :issue:`19409`)::
 
             sage: PowerSeriesRing(ZZ, 'x', default_prec=-5)
             Traceback (most recent call last):
@@ -553,7 +553,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             else:
                 implementation = 'poly'
             R = PolynomialRing(base_ring, name, sparse=sparse)
-        elif implementation not in ['pari', 'mpoly']:     # see :trac:`28996`
+        elif implementation not in ['pari', 'mpoly']:     # see :issue:`28996`
             R = PolynomialRing(base_ring, name, sparse=sparse, implementation=implementation)
             implementation = 'poly'
         else:
@@ -784,7 +784,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             1 + euler_gamma*y + (1/2*euler_gamma^2 + 1/12*pi^2)*y^2 + O(y^3)
 
         Laurent series with non-negative valuation are accepted (see
-        :trac:`6431`)::
+        :issue:`6431`)::
 
             sage: L.<q> = LaurentSeriesRing(QQ)
             sage: P = L.power_series_ring()
@@ -796,7 +796,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             TypeError: self is not a power series
 
         It is checked that the precision is non-negative
-        (see :trac:`19409`)::
+        (see :issue:`19409`)::
 
             sage: PowerSeriesRing(ZZ, 'x')(1, prec=-5)
             Traceback (most recent call last):
@@ -1152,7 +1152,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             2 - t - 5*t^2 + t^3 + O(t^4)
 
 
-        Further arguments are passed to the underlying base ring (:trac:`9481`)::
+        Further arguments are passed to the underlying base ring (:issue:`9481`)::
 
             sage: SZ = PowerSeriesRing(ZZ,'v')
             sage: SQ = PowerSeriesRing(QQ,'v')
