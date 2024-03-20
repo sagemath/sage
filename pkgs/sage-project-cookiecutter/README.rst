@@ -75,7 +75,8 @@ Creates in the existing ``PROJECT-DIRECTORY``:
 It can also be invoked as follows::
 
    [alice@localhost PROJECT-DIRECTORY]$ (cd .. && pipx run cruft create \
-       https://github.com/mkoeppe/sage --checkout sagemath-environment-cookiecutter \
+       https://github.com/mkoeppe/sage \
+       --checkout sagemath-environment-cookiecutter \
        --directory="pkgs/sage-project-cookiecutter/sage_project_cookiecutter/upstream-package-template" \
        --overwrite-if-exists)
    [1/1] Name of the project (directory name to create) (my-sage-project): PROJECT-DIRECTORY
@@ -104,4 +105,5 @@ Updating a project
 
 ::
 
-   $ pipx run cruft update
+   [alice@localhost PROJECT-DIRECTORY]$ pipx run cruft update \
+       --checkout sagemath-environment-cookiecutter
