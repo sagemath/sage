@@ -123,18 +123,6 @@ class Rngs(CategoryWithAxiom):
             return C(self, [gen])
 
         @cached_method
-        def unit_ideal(self):
-            """
-            Return the unit ideal of this ring.
-
-            EXAMPLES::
-
-                sage: Zp(7).unit_ideal()                                                    # needs sage.rings.padics
-                Principal ideal (1 + O(7^20)) of 7-adic Ring with capped relative precision 20
-            """
-            return self.principal_ideal(self.one(), coerce=False)
-
-        @cached_method
         def zero_ideal(self):
             """
             Return the zero ideal of this ring (cached).

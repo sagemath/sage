@@ -543,6 +543,18 @@ class Rings(CategoryWithAxiom):
                 from sage.modules.free_module import FreeModule
                 return FreeModule(self, n)
 
+        @cached_method
+        def unit_ideal(self):
+            """
+            Return the unit ideal of this ring.
+
+            EXAMPLES::
+
+                sage: Zp(7).unit_ideal()                                                    # needs sage.rings.padics
+                Principal ideal (1 + O(7^20)) of 7-adic Ring with capped relative precision 20
+            """
+            return self.principal_ideal(self.one(), coerce=False)
+
         def characteristic(self):
             """
             Return the characteristic of this ring.
