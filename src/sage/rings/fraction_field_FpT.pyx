@@ -1128,7 +1128,7 @@ cdef class Polyring_FpT_coerce(RingHomomorphism):
 
         TESTS:
 
-        Check that :trac:`12217` and :trac:`16811` are fixed::
+        Check that :issue:`12217` and :issue:`16811` are fixed::
 
             sage: R.<t> = GF(5)[]
             sage: K = R.fraction_field()
@@ -1223,7 +1223,7 @@ cdef class FpT_Polyring_section(Section):
     .. WARNING::
 
         Comparison of ``FpT_Polyring_section`` objects is not currently
-        implemented. See :trac:`23469`. ::
+        implemented. See :issue:`23469`. ::
 
             sage: fprime = loads(dumps(f))
             sage: fprime == f
@@ -1525,7 +1525,7 @@ cdef class FpT_Fp_section(Section):
     .. WARNING::
 
         Comparison of ``FpT_Fp_section`` objects is not currently
-        implemented. See :trac:`23469`. ::
+        implemented. See :issue:`23469`. ::
 
             sage: fprime = loads(dumps(f))
             sage: fprime == f

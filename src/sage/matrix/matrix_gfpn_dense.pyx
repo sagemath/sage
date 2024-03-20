@@ -708,7 +708,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         TESTS:
 
-        The following tests against a bug that was fixed in :trac:`23352`.
+        The following tests against a bug that was fixed in :issue:`23352`.
         This test could fail for some seed, but it would be highly unlikely::
 
             sage: MS = MatrixSpace(GF(9,'x'),1,5)
@@ -999,7 +999,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         TESTS:
 
-        The following tests against bugs fixed in :trac:`25490`. It shows
+        The following tests against bugs fixed in :issue:`25490`. It shows
         that the optional argument ``start_col`` is correctly dealt with,
         in an example where several marks are packed into one byte, and
         so that temporarily the current field and row size are changed.
@@ -1066,7 +1066,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         TESTS:
 
-        The following tests against bugs fixed at :trac:`25490`. It demonstrates
+        The following tests against bugs fixed at :issue:`25490`. It demonstrates
         that the optional argument ``start_col`` is correctly dealt with,
         in a situation where several marks are packed into one byte
         and the current field and row size are temporarily changed.
@@ -1173,7 +1173,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             [      0       1       2       x   x + 1   x + 2     2*x 2*x + 1 2*x + 2]
             [      0       1       2       x   x + 1   x + 2     2*x 2*x + 1 2*x + 2]
 
-        Check that we can stack a vector (:trac:`31708`)::
+        Check that we can stack a vector (:issue:`31708`)::
 
             sage: R.<a> = GF(3^3)
             sage: M = matrix(R, [[1,1],[0,a+1]])
@@ -1293,7 +1293,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
 
         TESTS:
 
-        Make sure that :trac:`25076` remains fixed::
+        Make sure that :issue:`25076` remains fixed::
 
             sage: M == M*int(4) == int(4)*M
             True
@@ -1837,7 +1837,7 @@ def mtx_unpickle(f, int nr, int nc, data, bint m):
     TESTS:
 
     We test that a pickle created by one machine can be understood
-    by other machines with different architecture (see :trac:`23411`).
+    by other machines with different architecture (see :issue:`23411`).
     Internally, a row is stored in a memory block of length a multiple
     of ``sizeof(long)``, which may be machine dependent, but in a pickle,
     only the bytes actually containing data of the row are stored, which

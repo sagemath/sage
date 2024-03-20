@@ -606,7 +606,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             sage: P(0)
             A 0-dimensional polyhedron in QQ^3 defined as the convex hull of 1 vertex
 
-        Check that :trac:`21270` is fixed::
+        Check that :issue:`21270` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: poly = polytopes.regular_polygon(7)
@@ -765,7 +765,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Test that :trac:`22575` is fixed::
+        Test that :issue:`22575` is fixed::
 
             sage: P = Polyhedra(ZZ,3).base_extend(QQ, backend='field')
             sage: P.backend()
@@ -866,7 +866,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Test that :trac:`28770` is fixed::
+        Test that :issue:`28770` is fixed::
 
             sage: z = QQ['z'].0
             sage: K = NumberField(z^2 - 2, 's')                                         # needs sage.rings.number_field

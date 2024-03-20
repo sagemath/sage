@@ -50,7 +50,7 @@ def factor_using_pari(n, int_=False, debug_level=0, proof=None):
         sage: factor(-2**72 + 3, algorithm='pari')  # indirect doctest
         -1 * 83 * 131 * 294971519 * 1472414939
 
-    Check that PARI's debug level is properly reset (:trac:`18792`)::
+    Check that PARI's debug level is properly reset (:issue:`18792`)::
 
         sage: alarm(0.5); factor(2^1000 - 1, verbose=5)
         Traceback (most recent call last):

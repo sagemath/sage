@@ -220,7 +220,7 @@ class NumberField_relative(NumberField_generic):
             sage: l.base_field().base_field()
             Number Field in a1 with defining polynomial x^2 + 1
 
-        Non-monic and non-integral polynomials are supported (:trac:`252`)::
+        Non-monic and non-integral polynomials are supported (:issue:`252`)::
 
             sage: l.<b> = k.extension(5*x^2 + 3); l
             Number Field in b with defining polynomial 5*x^2 + 3 over its base field
@@ -499,7 +499,7 @@ class NumberField_relative(NumberField_generic):
 
         TESTS:
 
-        Trivial extensions work like non-trivial ones (:trac:`2220`)::
+        Trivial extensions work like non-trivial ones (:issue:`2220`)::
 
             sage: NumberField([x^2 - 3, x], 'a').gens()
             (a0, 0)
@@ -885,7 +885,7 @@ class NumberField_relative(NumberField_generic):
 
         TESTS:
 
-        Examples from :trac:`4727`::
+        Examples from :issue:`4727`::
 
             sage: # needs sage.symbolic
             sage: K.<j,b> = QQ[sqrt(-1), sqrt(2)]
@@ -900,7 +900,7 @@ class NumberField_relative(NumberField_generic):
             sage: K((b*j + 1/2).list())
             sqrt2*I + 1/2
 
-        Examples from :trac:`4869`::
+        Examples from :issue:`4869`::
 
             sage: K.<z> = CyclotomicField(7)
             sage: Ky.<y> = PolynomialRing(K)
@@ -910,7 +910,7 @@ class NumberField_relative(NumberField_generic):
             sage: L(L.polynomial_ring().random_element()) # random
             (z^5 + 1/3*z^4 - z^3 + z^2 - z + 2/3)*a + 1/4*z^5 - 7/2*z^4 + 5/3*z^3 - 1/4*z^2 + 3/2*z - 1
 
-        Examples from :trac:`11307`::
+        Examples from :issue:`11307`::
 
             sage: L = NumberField([x^2 + 1, x^2 - 3], 'a')
             sage: L(L)
@@ -1104,7 +1104,7 @@ class NumberField_relative(NumberField_generic):
 
         TESTS:
 
-        Check that :trac:`5828` is solved::
+        Check that :issue:`5828` is solved::
 
             sage: K.<w> = QuadraticField(-1)
             sage: KX.<X> = K[]
@@ -1215,7 +1215,7 @@ class NumberField_relative(NumberField_generic):
             sage: M.is_galois_relative()
             False
 
-        The next example previously gave a wrong result; see :trac:`9390`::
+        The next example previously gave a wrong result; see :issue:`9390`::
 
             sage: F.<a, b> = NumberField([x^2 - 2, x^2 - 3])
             sage: F.is_galois_relative()
@@ -2395,7 +2395,7 @@ class NumberField_relative(NumberField_generic):
         TESTS:
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(x^2 + 1/2)
             sage: L.<b> = K.extension(x^2 - 1/2)
@@ -2567,7 +2567,7 @@ class NumberField_relative(NumberField_generic):
         TESTS:
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: R.<x> = QQ[]
             sage: K.<a> = NumberField(x^2 + 1/2)

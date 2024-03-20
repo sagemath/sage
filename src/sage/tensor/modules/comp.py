@@ -39,7 +39,7 @@ AUTHORS:
 - Eric Gourgoulhon, Michal Bejger (2014-2015): initial version
 - Joris Vankerschaver (2010): for the idea of storing only the non-zero
   components as dictionaries, whose keys are the component indices (implemented
-  in the old class ``DifferentialForm``; see :trac:`24444`)
+  in the old class ``DifferentialForm``; see :issue:`24444`)
 - Marco Mancini (2015) : parallelization of some computations
 
 EXAMPLES:
@@ -1233,7 +1233,7 @@ class Components(SageObject):
             C_01 = 0.33
             C_21 = 0.29
 
-        Check that the bug reported in :trac:`22520` is fixed::
+        Check that the bug reported in :issue:`22520` is fixed::
 
             sage: c = Components(SR, [1, 2], 1)                                         # needs sage.symbolic
             sage: c[0] = SR.var('t', domain='real')                                     # needs sage.symbolic
@@ -2194,7 +2194,7 @@ class Components(SageObject):
 
         TESTS:
 
-        Check that :trac:`32355` is fixed::
+        Check that :issue:`32355` is fixed::
 
             sage: from sage.tensor.modules.comp import CompFullyAntiSym
             sage: a = CompFullyAntiSym(QQ, V.basis(), 2)

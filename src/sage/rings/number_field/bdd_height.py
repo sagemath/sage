@@ -418,7 +418,7 @@ def bdd_height(K, height_bound, tolerance=1e-2, precision=53):
 
     TESTS:
 
-    Check that :trac:`22771` is fixed::
+    Check that :issue:`22771` is fixed::
 
         sage: from sage.rings.number_field.bdd_height import bdd_height
         sage: K.<v> = NumberField(x^3 + x + 1)
