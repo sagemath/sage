@@ -1,5 +1,8 @@
+include(`sage_spkg_versions_toml.m4')dnl' -*- conf-toml -*-
 [build-system]
-requires = ["setuptools>=61.2"]
+requires = [
+    SPKG_INSTALL_REQUIRES_setuptools
+]
 build-backend = "setuptools.build_meta"
 
 [project]
