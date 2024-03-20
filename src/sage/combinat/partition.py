@@ -2485,9 +2485,9 @@ class Partition(CombinatorialElement):
         par = Partitions_n(sum(self))
         return par.element_class(par, conjugate(self))
 
-    def franklin_glaisher(self, s):
+    def glaisher_franklin(self, s):
         r"""
-        Apply the Franklin-Glaisher bijection to ``self``.
+        Apply the Glaisher-Franklin bijection to ``self``.
 
         INPUT:
 
@@ -2502,21 +2502,21 @@ class Partition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Partition([4, 3, 2, 2, 1]).franklin_glaisher(2)
+            sage: Partition([4, 3, 2, 2, 1]).glaisher_franklin(2)
             [3, 2, 2, 1, 1, 1, 1, 1]
 
         TESTS:
 
         The map preserves the size::
 
-            sage: all(mu.franklin_glaisher(s).size() == n
+            sage: all(mu.glaisher_franklin(s).size() == n
             ....:     for n in range(20) for mu in Partitions(n)
             ....:     for s in range(1, 5))
             True
 
         The map is bijective::
 
-            sage: l = [[mu.franklin_glaisher(s)
+            sage: l = [[mu.glaisher_franklin(s)
             ....:      for n in range(20) for mu in Partitions(n)]
             ....:     for s in range(1, 5)]
             sage: all(len(set(ls)) == len(ls) for ls in l)
@@ -2526,14 +2526,14 @@ class Partition(CombinatorialElement):
 
             sage: d = lambda la, s: set(p / s for p in la if p % s == 0)
             sage: r = lambda la, s: set(p for p in la if list(la).count(p) >= s)
-            sage: all(d(mu, s) == r(mu.franklin_glaisher(s), s)
+            sage: all(d(mu, s) == r(mu.glaisher_franklin(s), s)
             ....:     for n in range(20) for mu in Partitions(n)
             ....:     for s in range(1, 5))
             True
 
         For `s=2`, the map is known to findstat::
 
-            sage: findmap(Partitions, lambda mu: mu.franklin_glaisher(2))       # optional - internet
+            sage: findmap(Partitions, lambda mu: mu.glaisher_franklin(2))       # optional - internet
             0: Mp00312 (quality [100])
         """
         s = ZZ(s)
@@ -2551,9 +2551,9 @@ class Partition(CombinatorialElement):
         P = self.parent()
         return P.element_class(P, sorted(mu, reverse=True))
 
-    def franklin_glaisher_inverse(self, s):
+    def glaisher_franklin_inverse(self, s):
         r"""
-        Apply the inverse of the Franklin-Glaisher bijection to ``self``.
+        Apply the inverse of the Glaisher-Franklin bijection to ``self``.
 
         INPUT:
 
@@ -2569,23 +2569,23 @@ class Partition(CombinatorialElement):
 
         EXAMPLES::
 
-            sage: Partition([4, 3, 2, 2, 1]).franklin_glaisher(2)
+            sage: Partition([4, 3, 2, 2, 1]).glaisher_franklin(2)
             [3, 2, 2, 1, 1, 1, 1, 1]
-            sage: Partition([3, 2, 2, 1, 1, 1, 1, 1]).franklin_glaisher_inverse(2)
+            sage: Partition([3, 2, 2, 1, 1, 1, 1, 1]).glaisher_franklin_inverse(2)
             [4, 3, 2, 2, 1]
 
         TESTS:
 
-        The map is inverse to :meth:`franklin_glaisher`::
+        The map is inverse to :meth:`glaisher_franklin`::
 
-            sage: all(mu.franklin_glaisher(s).franklin_glaisher_inverse(s) == mu
+            sage: all(mu.glaisher_franklin(s).glaisher_franklin_inverse(s) == mu
             ....:     for n in range(20) for mu in Partitions(n)
             ....:     for s in range(1, 5))
             True
 
         For `s=2`, the map is known to findstat::
 
-            sage: findmap(Partitions, lambda mu: mu.franklin_glaisher_inverse(2))         # optional - internet
+            sage: findmap(Partitions, lambda mu: mu.glaisher_franklin_inverse(2))         # optional - internet
             0: Mp00313 (quality [100])
         """
         s = ZZ(s)
