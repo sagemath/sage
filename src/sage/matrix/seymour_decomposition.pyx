@@ -382,6 +382,9 @@ cdef class DecompositionNode(SageObject):
             sage: certificate.child_indices()
             ((r1, i, r3, r4, r5, r6, r7, r8, r9), (a, b, c, d, e, f, g, h, r2, j, k, l))
         """
+        if self.nchildren() == 1:
+            child = self._children()[0]
+            return (child[1], child[2])
         return tuple((child[1], child[2]) for child in self._children())
 
     def _repr_(self):
