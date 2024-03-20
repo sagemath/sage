@@ -1193,7 +1193,7 @@ class ChainComplex_class(Parent):
 
         - ``generators`` -- boolean (optional, default ``False``); if
           ``True``, return generators for the homology groups along with
-          the groups. See :trac:`6100`
+          the groups. See :issue:`6100`
 
         - ``verbose`` - boolean (optional, default ``False``); if
           ``True``, print some messages as the homology is computed
@@ -1239,7 +1239,7 @@ class ChainComplex_class(Parent):
         CHomP. CHomP is available at the web page
         http://chomp.rutgers.edu/, although the software has not been
         tested recently in Sage. The use of this option is deprecated;
-        see :trac:`33777`.
+        see :issue:`33777`.
 
         As of this writing, ``'pari'`` is the fastest standard option.
 
@@ -1267,7 +1267,7 @@ class ChainComplex_class(Parent):
             sage: C.homology(1, generators=True)
             [(C3, Chain(1:(1, 0))), (Z, Chain(1:(0, 1)))]
 
-        Tests for :trac:`6100`, the Klein bottle with generators::
+        Tests for :issue:`6100`, the Klein bottle with generators::
 
             sage: d0 = matrix(ZZ, 0,1)
             sage: d1 = matrix(ZZ, 1,3, [[0,0,0]])
@@ -2140,7 +2140,7 @@ class ChainComplex_class(Parent):
                              [ x -y]            [x]
              0 <-- C_(8, 3) <-------- C_(6, 2) <---- C_(4, 1) <-- 0
 
-        Check that :trac:`21760` is fixed::
+        Check that :issue:`21760` is fixed::
 
             sage: C = ChainComplex({0: matrix(ZZ, 0, 2)}, degree=-1)
             sage: ascii_art(C)

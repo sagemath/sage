@@ -130,7 +130,7 @@ cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False) noexcept
         ...
         ValueError: algorithm must be "pari_primes" or "pari_isprime"
 
-    Confirm the fixes for :trac:`28467`::
+    Confirm the fixes for :issue:`28467`::
 
         sage: prime_range(436273009, 436273010)
         [436273009]

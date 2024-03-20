@@ -175,7 +175,7 @@ def is_strongly_regular(g, parameters=False):
         sage: g.is_strongly_regular()
         False
 
-    Complete graphs are not strongly regular. (:trac:`14297`) ::
+    Complete graphs are not strongly regular. (:issue:`14297`) ::
 
         sage: g = graphs.CompleteGraph(5)
         sage: g.is_strongly_regular()

@@ -118,7 +118,7 @@ class FacadeSets(CategoryWithAxiom):
                 sage: S.facade_for()
                 (Integer Ring,)
 
-            Check that :trac:`13801` is corrected::
+            Check that :issue:`13801` is corrected::
 
                 sage: class A(Parent):
                 ....:     def __init__(self):

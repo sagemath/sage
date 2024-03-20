@@ -347,7 +347,7 @@ OTHER Examples::
 
 AUTHORS:
 
-- Sebastian Oehms (2021): first version from a copy of the Mathematica interface (see :trac:`31778`).
+- Sebastian Oehms (2021): first version from a copy of the Mathematica interface (see :issue:`31778`).
 
 
 Thanks to Rocky Bernstein and Juan Mauricio Matera for their support. For further acknowledgments see `this list <https://github.com/mathics/Mathics/blob/master/AUTHORS.txt>`__.
@@ -358,7 +358,7 @@ Thanks to Rocky Bernstein and Juan Mauricio Matera for their support. For furthe
 TESTS:
 
 Check that numerical approximations via Mathics's `N[]` function work
-correctly (:trac:`18888`, :trac:`28907`)::
+correctly (:issue:`18888`, :issue:`28907`)::
 
     sage: # optional - mathics
     sage: mathics('Pi/2').N(10)
@@ -371,7 +371,7 @@ correctly (:trac:`18888`, :trac:`28907`)::
     '-0.5 + 3.14159 x ^ 2.'
 
 Check that Mathics's `E` exponential symbol is correctly backtranslated
-as Sage's `e` (:trac:`29833`)::
+as Sage's `e` (:issue:`29833`)::
 
     sage: (e^x)._mathics_().sage()  # optional -- mathics
     e^x
@@ -1078,7 +1078,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
             if hasattr(s, '_sage_'):
                 try:
                     return s._sage_()
-                except NotImplementedError:  # see :trac:`33584`
+                except NotImplementedError:  # see :issue:`33584`
                     pass
         p = self.to_python()
         if self is not p and p is not None:
@@ -1159,7 +1159,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
             sage: P = mathics('Plot[Sin[x],{x,-2Pi,4Pi}]')       # optional - mathics
 
         The following test requires a working X display on Linux so that the
-        Mathematica frontend can do the rendering (:trac:`23112`)::
+        Mathematica frontend can do the rendering (:issue:`23112`)::
 
             sage: P._rich_repr_(dm)                              # optional - mathics
             OutputImageSvg container

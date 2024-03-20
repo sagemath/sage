@@ -774,7 +774,7 @@ class IsogenyClass_EC_NumberField(IsogenyClass_EC):
 
         TESTS:
 
-        Check that :trac:`19030` is fixed (codomains of reverse isogenies were wrong)::
+        Check that :issue:`19030` is fixed (codomains of reverse isogenies were wrong)::
 
             sage: K.<i> = NumberField(x^2 + 1)
             sage: E = EllipticCurve([1, i + 1, 1, -72*i + 8, 95*i + 146])

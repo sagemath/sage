@@ -1230,7 +1230,7 @@ class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
 
             The computations are performed using the standard Euclidean
             algorithm which might produce mathematically incorrect results in
-            some cases. See :trac:`13439`.
+            some cases. See :issue:`13439`.
 
         EXAMPLES::
 
@@ -1239,7 +1239,7 @@ class pAdicRingGeneric(pAdicGeneric, sage.rings.abc.pAdicRing):
             sage: f.xgcd(f^2)                                                           # needs sage.libs.ntl
             ((1 + O(3^3))*x + 1 + O(3^3), 1 + O(3^3), 0)
 
-        We check that :trac:`13439` has been fixed::
+        We check that :issue:`13439` has been fixed::
 
             sage: # needs sage.libs.ntl
             sage: R.<x> = Zp(3,3)[]

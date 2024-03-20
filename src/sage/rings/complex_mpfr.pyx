@@ -11,7 +11,7 @@ AUTHORS:
 
 - Vincent Delecroix (2010-01): plot function
 
-- Niles Johnson (2010-08): :trac:`3893`: ``random_element()`` should pass on
+- Niles Johnson (2010-08): :issue:`3893`: ``random_element()`` should pass on
   ``*args`` and ``**kwds``.
 
 - Travis Scrimshaw (2012-10-18): Added documentation for full coverage
@@ -469,7 +469,7 @@ class ComplexField_class(sage.rings.abc.ComplexField):
             sage: CC((1,2)) # indirect doctest
             1.00000000000000 + 2.00000000000000*I
 
-        Check that :trac:`14989` is fixed::
+        Check that :issue:`14989` is fixed::
 
             sage: x = polygen(ZZ, 'x')
             sage: QQi = NumberField(x^2 + 1, 'i', embedding=CC(0,1))                    # needs sage.rings.number_field
@@ -959,7 +959,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         """
         TESTS:
 
-        Check that :trac:`12038` is resolved::
+        Check that :issue:`12038` is resolved::
 
             sage: from sage.rings.complex_mpfr import ComplexNumber as CN
             sage: coerce(CN, 1+I)                                                       # needs sage.symbolic
@@ -1035,7 +1035,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: for prec in (2, 53, 200):  # not tested, known bug (see :trac:`32129`)
+            sage: for prec in (2, 53, 200):  # not tested, known bug (see :issue:`32129`)
             ....:     fld = ComplexField(prec)
             ....:     var = polygen(fld)
             ....:     ins = [-20, 0, 1, -2^4000, 2^-4000] + [fld._real_field().random_element() for _ in range(3)]
@@ -1316,7 +1316,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         Note that the general format does not exactly match the behaviour of
         ``float``. Some Python versions do not implement the full spec
-        (see :trac:`30689`)::
+        (see :issue:`30689`)::
 
             sage: format(CC(3, 0), '.4g')
             '3.000 + 0e-15*I'
@@ -1667,7 +1667,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         TESTS:
 
-        Check that :trac:`11323` is fixed::
+        Check that :issue:`11323` is fixed::
 
             sage: float(5)^(0.5 + 14.1347251*I)
             -1.62414637645790 - 1.53692828324508*I
@@ -2238,7 +2238,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         TESTS:
 
-        Verify that :trac:`29409` is fixed::
+        Verify that :issue:`29409` is fixed::
 
             sage: cot(1 + I).n()
             0.217621561854403 - 0.868014142895925*I
@@ -2868,7 +2868,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         TESTS:
 
-        Check that :trac:`7099` is fixed::
+        Check that :issue:`7099` is fixed::
 
             sage: C = ComplexField(400)
             sage: C(2 + I).gamma_inc(C(3 + I))  # abs tol 1e-120                        # needs sage.libs.pari
@@ -3302,7 +3302,7 @@ def create_ComplexNumber(s_real, s_imag=None, int pad=0, min_prec=53):
     TESTS:
 
     Make sure we've rounded up ``log(10,2)`` enough to guarantee
-    sufficient precision (:trac:`10164`)::
+    sufficient precision (:issue:`10164`)::
 
         sage: s = "1." + "0"*10**6 + "1"
         sage: sage.rings.complex_mpfr.create_ComplexNumber(s,0).real()-1 == 0

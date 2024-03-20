@@ -88,7 +88,7 @@ class SchemeTopologicalPoint(SchemePoint):
         TESTS:
 
         The parent of a topological point is the scheme on which it
-        lies (see :trac:`7946`)::
+        lies (see :issue:`7946`)::
 
             sage: R = Zmod(8)
             sage: S = Spec(R)
