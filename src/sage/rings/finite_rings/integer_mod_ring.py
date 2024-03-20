@@ -617,7 +617,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
         EXAMPLES::
 
-            sage: # optional - gap_package_polycyclic, needs sage.groups
+            sage: # needs sage.groups
             sage: Integers(5).multiplicative_subgroups()
             ((2,), (4,), ())
             sage: Integers(15).multiplicative_subgroups()
@@ -633,7 +633,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             ((),)
             sage: IntegerModRing(2).multiplicative_subgroups()                          # needs sage.groups
             ((),)
-            sage: IntegerModRing(3).multiplicative_subgroups()  # optional - gap_package_polycyclic, needs sage.groups
+            sage: IntegerModRing(3).multiplicative_subgroups()                          # needs sage.groups
             ((2,), ())
         """
         return tuple(tuple(g.value() for g in H.gens())

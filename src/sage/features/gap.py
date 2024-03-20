@@ -75,11 +75,9 @@ class GapPackage(Feature):
 
 
 def all_features():
-    return [GapPackage("atlasrep", spkg="gap_packages"),
-            GapPackage("design", spkg="gap_packages"),
+    return [GapPackage("design", spkg="gap_packages"),
             GapPackage("grape", spkg="gap_packages"),
             GapPackage("guava", spkg="gap_packages"),
             GapPackage("hap", spkg="gap_packages"),
-            GapPackage("polycyclic", spkg="gap_packages"),
             GapPackage("qpa", spkg="gap_packages"),
             GapPackage("quagroup", spkg="gap_packages")]
