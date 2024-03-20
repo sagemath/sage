@@ -10,4 +10,7 @@ fi
 
 PILLOW_CONFIG_SETTINGS="-C debug=true $PILLOW_CONFIG_SETTINGS"
 
+# https://github.com/python-pillow/Pillow/pull/7837#issuecomment-1966361559
+export CPPFLAGS="$CPPFLAGS -DOPJ_VERSION_MAJOR=2"
+
 eval sdh_pip_install $PILLOW_CONFIG_SETTINGS .
