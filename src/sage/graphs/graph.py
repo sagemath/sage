@@ -8096,7 +8096,7 @@ class Graph(GenericGraph):
 
             sage: G = Graph('GxJEE?')
             sage: G.modular_decomposition(style='tree')
-            PRIME[2[], PARALLEL[3[], 4[]], SERIES[0[], 1[]],
+            PRIME[2[], SERIES[0[], 1[]], PARALLEL[3[], 4[]],
                   PARALLEL[5[], 6[], 7[]]]
         """
         from sage.graphs.graph_decompositions.modular_decomposition import (NodeType,
@@ -8137,7 +8137,7 @@ class Graph(GenericGraph):
                 if x.node_type == NodeType.NORMAL:
                     return LabelledRootedTree([], label=str(x.children[0]))
                 return LabelledRootedTree([to_tree(y) for y in x.children],
-                                          label=str(x.node_type))
+                                          label=x.node_type)
 
             return to_tree(D)
 
