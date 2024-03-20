@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Verbosity System and Logging in SageMath
 

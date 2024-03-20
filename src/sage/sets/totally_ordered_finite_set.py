@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Totally Ordered Finite Sets
 
@@ -45,7 +46,7 @@ class TotallyOrderedFiniteSetElement(Element):
         r"""
         TESTS::
 
-            sage: T = TotallyOrderedFiniteSet([3,2,1],facade=False)
+            sage: T = TotallyOrderedFiniteSet([3,2,1], facade=False)
             sage: TestSuite(T.an_element()).run()
         """
         Element.__init__(self, parent)

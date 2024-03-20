@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from sage.rings.ring_extension cimport RingExtension_generic
 
 

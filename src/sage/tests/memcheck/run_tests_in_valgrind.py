@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Launch valgrind and run the memory leak tests
 

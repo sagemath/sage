@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.combinat
 r"""
 Algebra of motivic multiple zeta values

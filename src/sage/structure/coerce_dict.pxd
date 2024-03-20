@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 cimport cython
 from cpython.object cimport PyObject
 

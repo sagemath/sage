@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # distutils: depends = bitset_intrinsics.h
 # distutils: libraries = gmp
 """

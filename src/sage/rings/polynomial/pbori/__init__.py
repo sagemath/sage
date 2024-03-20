@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-brial
 """The PolyBoRi package implements a framework for computations with Polynomials in Boolean Ring.
 
 The core of PolyBoRi is a C++ library, which provides high-level data types for Boolean polynomials and monomials,

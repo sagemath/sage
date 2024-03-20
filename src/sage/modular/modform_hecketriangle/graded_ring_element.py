@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.combinat sage.graphs
 r"""
 Elements of graded rings of modular forms for Hecke triangle groups
@@ -16,8 +17,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.functions.log import exp
-from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
+import sage.geometry.abc
+
 from sage.misc.cachefunc import cached_method
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.lazy_import import lazy_import
@@ -143,7 +144,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         EXAMPLES::
 
             sage: from sage.modular.modform_hecketriangle.graded_ring import MeromorphicModularFormsRing
-            sage: (x,y,z,d) = MeromorphicModularFormsRing().pol_ring().gens()
+            sage: x, y, z, d = MeromorphicModularFormsRing().pol_ring().gens()
             sage: MeromorphicModularFormsRing(n=3)(x) == MeromorphicModularFormsRing(n=4)(x)
             False
             sage: MeromorphicModularFormsRing()(-1/x) is MeromorphicModularFormsRing()(1/(-x))
@@ -1249,7 +1250,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         Return the (overall) order of ``self`` at ``tau`` if easily possible:
         Namely if ``tau`` is ``infinity`` or congruent to ``i`` resp. ``rho``.
 
-        It is possible to determine the order of points from ``HyperbolicPlane()``.
+        It is possible to determine the order of points from :class:`HyperbolicPlane`.
         In this case the coordinates of the upper half plane model are used.
 
         If ``self`` is homogeneous and modular then the rational function
@@ -1337,8 +1338,10 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         i = QuadraticField(-1, 'I').gen()
 
         # if tau is a point of HyperbolicPlane then we use it's coordinates in the UHP model
-        if (tau in HyperbolicPlane()):
-            tau = tau.to_model('UHP').coordinates()
+        if isinstance(tau.parent(), sage.geometry.abc.HyperbolicSpace):
+            from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
+            if tau in HyperbolicPlane():
+                tau = tau.to_model('UHP').coordinates()
 
         if self.is_zero():
             return infinity
@@ -1834,7 +1837,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
         (and fail) for certain (many) choices of
         (``base_ring``, ``tau.parent()``).
 
-        It is possible to evaluate at points of ``HyperbolicPlane()``.
+        It is possible to evaluate at points of :class:`HyperbolicPlane`.
         In this case the coordinates of the upper half plane model are used.
 
         To obtain a precise and fast result the parameters
@@ -2123,7 +2126,7 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
             sage: (f.q_expansion_fixed_d().polynomial())(exp((2*pi*i).n(1000)*az/G.lam()))    # long time
             -140.471170232432551196978... + 469.079369280804086032719...*I
 
-        It is possible to evaluate at points of ``HyperbolicPlane()``::
+        It is possible to evaluate at points of :class:`HyperbolicPlane`::
 
             sage: # needs sage.symbolic
             sage: p = HyperbolicPlane().PD().get_point(-I/2)
@@ -2140,13 +2143,15 @@ class FormsRingElement(CommutativeAlgebraElement, UniqueRepresentation,
 
         i = QuadraticField(-1, 'I').gen()
 
-        # if tau is a point of HyperbolicPlane then we use it's coordinates in the UHP model
-        if (tau in HyperbolicPlane()):
-            tau = tau.to_model('UHP').coordinates()
+        # if tau is a point of HyperbolicPlane then we use its coordinates in the UHP model
+        if isinstance(tau.parent(), sage.geometry.abc.HyperbolicSpace):
+            from sage.geometry.hyperbolic_space.hyperbolic_interface import HyperbolicPlane
+            if tau in HyperbolicPlane():
+                tau = tau.to_model('UHP').coordinates()
 
-        if (prec is None):
+        if prec is None:
             prec = self.parent().default_prec()
-        if (num_prec is None):
+        if num_prec is None:
             num_prec = self.parent().default_num_prec()
 
         # In case the order is known

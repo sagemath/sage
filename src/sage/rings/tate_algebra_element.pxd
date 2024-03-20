@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 from sage.structure.element cimport Element
 from sage.structure.element cimport MonoidElement
 from sage.structure.element cimport CommutativeAlgebraElement

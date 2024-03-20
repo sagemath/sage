@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Join features
 """
@@ -165,9 +166,9 @@ class JoinFeature(Feature):
             FeatureTestResult('sage.groups.perm_gps.permgroup', False)
 
             sage: f.unhide()
-            sage: f.is_present()    # optional sage.groups
+            sage: f.is_present()                                                        # needs sage.groups
             FeatureTestResult('sage.groups', True)
-            sage: f._features[0].is_present() # optional sage.groups
+            sage: f._features[0].is_present()                                           # needs sage.groups
             FeatureTestResult('sage.groups.perm_gps.permgroup', True)
         """
         for f in self._features:

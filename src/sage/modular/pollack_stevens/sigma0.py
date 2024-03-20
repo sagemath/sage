@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 The matrix monoid `\Sigma_0(N)`.
 

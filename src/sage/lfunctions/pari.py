@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 `L`-functions from PARI
 

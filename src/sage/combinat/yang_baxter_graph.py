@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 r"""
 Yang-Baxter Graphs
 """
@@ -19,8 +20,10 @@ Yang-Baxter Graphs
 from sage.graphs.digraph import DiGraph
 from sage.structure.sage_object import SageObject
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.combinat.partition import Partition
+from sage.misc.lazy_import import lazy_import
 from sage.combinat.permutation import Permutation
+
+lazy_import('sage.combinat.partition', 'Partition')
 
 
 def YangBaxterGraph(partition=None, root=None, operators=None):
@@ -45,8 +48,8 @@ def YangBaxterGraph(partition=None, root=None, operators=None):
 
     - Either:
 
-      - :class:`YangBaxterGraph_partition` - if partition is defined
-      - :class:`YangBaxterGraph_generic` - if partition is ``None``
+      - :class:`YangBaxterGraph_partition` -- if partition is defined
+      - :class:`YangBaxterGraph_generic` -- if partition is ``None``
 
     EXAMPLES:
 

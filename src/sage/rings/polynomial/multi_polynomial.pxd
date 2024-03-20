@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 from sage.rings.polynomial.commutative_polynomial cimport CommutativePolynomial
 
 

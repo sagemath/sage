@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from sage.rings.polynomial.laurent_polynomial cimport LaurentPolynomial
 from sage.rings.polynomial.multi_polynomial cimport MPolynomial
 from sage.rings.polynomial.polydict cimport ETuple, PolyDict

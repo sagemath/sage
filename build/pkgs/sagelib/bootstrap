@@ -2,13 +2,13 @@
 set -e
 export M4PATH="$SAGE_ROOT/m4"
 MACRO_PATTERN='SPKG_'
-for infile in src/*.m4; do
+for infile in $(pwd)/src/*.m4; do
     if [ -f "$infile" ]; then
         outfile="src/$(basename $infile .m4)"
         if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
             echo "$0: installing $(pwd)/$outfile"
         fi
-        m4 "$infile" > "$outfile"
+        m4 -s "$infile" > "$outfile"
         if sed 's/#.*//' "$outfile" | grep -q -E "$MACRO_PATTERN"; then
             echo >&2 "$(pwd)/$infile: error: Unrecognized SPKG_ macro:"
             grep -E "$MACRO_PATTERN" "$outfile" >&2

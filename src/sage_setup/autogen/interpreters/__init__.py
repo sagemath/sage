@@ -134,7 +134,7 @@ _INTERPRETER_SOURCES = [
 ]
 
 
-def build_interp(interp_spec, dir):
+def build_interp(interp_spec, dir, distribution=None):
     r"""
     Given an InterpreterSpec, write the C interpreter and the Cython
     wrapper (generate a pyx and a pxd file).
@@ -157,7 +157,13 @@ def build_interp(interp_spec, dir):
         filename = '{}_{}.{}'.format(filename_root, interp_spec.name, ext)
         method = getattr(ig, 'get_{}'.format(method))
         path = os.path.join(dir, filename)
-        write_if_changed(path, method())
+        contents = method()
+        if distribution is not None:
+            if ext in ['pxd', 'pyx']:
+                contents = f'# sage_setup: distribution = {distribution}\n' + contents
+            else:
+                contents = f'/* sage_setup: distribution = {distribution}\n */\n' + contents
+        write_if_changed(path, contents)
 
 
 def rebuild(dirname, force=False, interpreters=None, distribution=None):
@@ -260,7 +266,9 @@ def rebuild(dirname, force=False, interpreters=None, distribution=None):
         return  # Up-to-date
 
     for interp in _INTERPRETERS:
-        build_interp(interp(), dirname)
+        build_interp(interp(), dirname, distribution=distribution)
 
     with open(os.path.join(dirname, all_py), 'w') as f:
+        if distribution is not None:
+            f.write(f"# sage_setup: distribution = {distribution}\n")
         f.write("# " + AUTOGEN_WARN)

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 """
 Classical symmetric functions
@@ -17,11 +18,11 @@ Classical symmetric functions
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from sage.combinat.partition import _Partitions
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
-from sage.combinat.partition import _Partitions
-
 
 from . import hall_littlewood
 from . import sfa

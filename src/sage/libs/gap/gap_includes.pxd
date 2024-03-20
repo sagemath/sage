@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 # distutils: libraries = gap gmp m
 ###############################################################################
 #       Copyright (C) 2009, William Stein <wstein@gmail.com>

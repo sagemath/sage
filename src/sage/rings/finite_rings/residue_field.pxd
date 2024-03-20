@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 from sage.rings.morphism cimport RingHomomorphism
 from sage.structure.element cimport Element
 from sage.rings.finite_rings.integer_mod cimport NativeIntStruct

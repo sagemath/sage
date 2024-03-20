@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Gamma and related functions
 """
@@ -17,8 +18,8 @@ lazy_import('sage.functions.other', 'sqrt')
 
 lazy_import('sage.symbolic.constants', 'pi')
 
-lazy_import('sage.libs.mpmath.utils', 'call', as_='_mpmath_utils_call')
-lazy_import('mpmath', 'gammainc', as_='_mpmath_gammainc')
+lazy_import('sage.libs.mpmath.sage_utils', 'call', as_='_mpmath_call')
+lazy_import('sage.libs.mpmath.all', 'gammainc', as_='_mpmath_gammainc')
 
 
 class Function_gamma(GinacFunction):
@@ -40,9 +41,9 @@ class Function_gamma(GinacFunction):
         EXAMPLES::
 
             sage: from sage.functions.gamma import gamma1
-            sage: gamma1(CDF(0.5, 14))                                                  # needs sage.libs.pari
+            sage: gamma1(CDF(0.5, 14))                                                  # needs sage.libs.pari sage.rings.complex_double
             -4.0537030780372815e-10 - 5.773299834553605e-10*I
-            sage: gamma1(CDF(I))                                                        # needs sage.libs.pari sage.symbolic
+            sage: gamma1(CDF(I))                                                        # needs sage.libs.pari sage.rings.complex_double sage.symbolic
             -0.15494982830181067 - 0.49801566811835607*I
 
         Recall that `\Gamma(n)` is `n-1` factorial::
@@ -99,7 +100,7 @@ class Function_gamma(GinacFunction):
             1*x^(-2) + (-2*euler_gamma)*x^(-1)
             + (2*euler_gamma^2 + 1/6*pi^2) + Order(x)
 
-        To prevent automatic evaluation use the ``hold`` argument::
+        To prevent automatic evaluation, use the ``hold`` argument::
 
             sage: gamma1(1/2, hold=True)                                                # needs sage.symbolic
             gamma(1/2)
@@ -138,9 +139,9 @@ class Function_gamma(GinacFunction):
             Infinity
             sage: (-1.).gamma()                                                         # needs sage.rings.real_mpfr
             NaN
-            sage: CC(-1).gamma()                                                        # needs sage.libs.pari
+            sage: CC(-1).gamma()                                                        # needs sage.libs.pari sage.rings.real_mpfr
             Infinity
-            sage: RDF(-1).gamma()
+            sage: RDF(-1).gamma()                                                       # needs sage.rings.real_mpfr
             NaN
             sage: CDF(-1).gamma()                                                       # needs sage.libs.pari sage.rings.complex_double
             Infinity
@@ -481,7 +482,7 @@ class Function_gamma_inc(BuiltinFunction):
         if algorithm == 'pari':
             v = ComplexField(prec)(x).gamma_inc(y)
         else:
-            v = ComplexField(prec)(_mpmath_utils_call(_mpmath_gammainc, x, y, parent=R))
+            v = ComplexField(prec)(_mpmath_call(_mpmath_gammainc, x, y, parent=R))
         if v.is_real():
             return R(v)
         else:
@@ -612,7 +613,7 @@ class Function_gamma_inc_lower(BuiltinFunction):
             Cx = ComplexField(prec)(x)
             v = Cx.gamma() - Cx.gamma_inc(y)
         else:
-            v = ComplexField(prec)(_mpmath_utils_call(_mpmath_gammainc, x, 0, y, parent=R))
+            v = ComplexField(prec)(_mpmath_call(_mpmath_gammainc, x, 0, y, parent=R))
         return R(v) if v.is_real() else C(v)
 
     def _derivative_(self, x, y, diff_param=None):
@@ -691,9 +692,9 @@ def gamma(a, *args, **kwds):
 
     ::
 
-        sage: gamma(CDF(I))                                                             # needs sage.libs.pari sage.symbolic
+        sage: gamma(CDF(I))                                                             # needs sage.libs.pari sage.rings.complex_double sage.symbolic
         -0.15494982830181067 - 0.49801566811835607*I
-        sage: gamma(CDF(0.5, 14))                                                       # needs sage.libs.pari
+        sage: gamma(CDF(0.5, 14))                                                       # needs sage.libs.pari sage.rings.complex_double
         -4.0537030780372815e-10 - 5.773299834553605e-10*I
 
     Use ``numerical_approx`` to get higher precision from
@@ -721,7 +722,8 @@ def gamma(a, *args, **kwds):
         sage: gamma(i)                                                                  # needs sage.rings.number_field sage.symbolic
         Traceback (most recent call last):
         ...
-        TypeError: cannot coerce arguments: no canonical coercion from Number Field in i with defining polynomial x^2 + 1 to Symbolic Ring
+        TypeError: cannot coerce arguments: no canonical coercion
+        from Number Field in i with defining polynomial x^2 + 1 to Symbolic Ring
 
     .. SEEALSO::
 
@@ -1004,9 +1006,9 @@ class Function_beta(GinacFunction):
 
         INPUT:
 
-        -  ``p`` - number or symbolic expression
+        -  ``p`` -- number or symbolic expression
 
-        -  ``q`` - number or symbolic expression
+        -  ``q`` -- number or symbolic expression
 
 
         OUTPUT: number or symbolic expression (if input is symbolic)
@@ -1016,18 +1018,18 @@ class Function_beta(GinacFunction):
             sage: # needs sage.symbolic
             sage: beta(3, 2)
             1/12
-            sage: beta(3,1)
+            sage: beta(3, 1)
             1/3
             sage: beta(1/2, 1/2)
             beta(1/2, 1/2)
-            sage: beta(-1,1)
+            sage: beta(-1, 1)
             -1
-            sage: beta(-1/2,-1/2)
+            sage: beta(-1/2, -1/2)
             0
             sage: ex = beta(x/2, 3)
             sage: set(ex.operands()) == set([1/2*x, 3])
             True
-            sage: beta(.5,.5)
+            sage: beta(.5, .5)
             3.14159265358979
             sage: beta(1, 2.0+I)
             0.400000000000000 - 0.200000000000000*I

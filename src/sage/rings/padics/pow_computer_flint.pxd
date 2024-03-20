@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 from sage.libs.gmp.mpz cimport mpz_t
 from sage.libs.flint.types cimport padic_ctx_t, fmpz_t, fmpz_poly_t
 from sage.rings.padics.pow_computer cimport PowComputer_class

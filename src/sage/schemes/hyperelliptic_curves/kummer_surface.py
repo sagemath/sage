@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 Kummer surfaces over a general ring
 """

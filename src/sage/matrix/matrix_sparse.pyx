@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-modules
+
 r"""
 Base class for sparse matrices
 """
@@ -696,7 +698,7 @@ cdef class Matrix_sparse(matrix.Matrix):
         If we did not specify the codomain, the resulting matrix in the
         above case ends up over `\ZZ` again::
 
-            sage: n = m.apply_map(lambda x:x%3)
+            sage: n = m.apply_map(lambda x: x%3)
             sage: n.parent()
             Full MatrixSpace of 10000 by 10000 sparse matrices over Integer Ring
             sage: n[1, 2]

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-linbox
 r"""
 Sparse matrices over `\ZZ/n\ZZ` for `n` small
 

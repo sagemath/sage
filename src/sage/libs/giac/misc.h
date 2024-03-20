@@ -1,3 +1,5 @@
+/* sage_setup: distribution = sagemath-giac
+ */
 #ifndef GIACPYMISC_H
 #define GIACPYMISC_H
 #include <giac/giac.h>

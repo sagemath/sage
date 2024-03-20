@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Lie Algebras With Basis
 
@@ -225,7 +226,7 @@ class LieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-                sage: # needs sage.groups
+                sage: # needs sage.combinat sage.groups
                 sage: S = SymmetricGroup(3).algebra(QQ)
                 sage: L = LieAlgebra(associative=S)
                 sage: x = L.gen(3)

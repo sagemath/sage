@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Attribute and method calling
 """

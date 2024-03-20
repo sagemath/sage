@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 r"""
 Iterator for Weil polynomials.
 
@@ -50,7 +51,6 @@ from cysignals.signals cimport sig_on, sig_off
 
 from sage.rings.rational_field import QQ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.functions.generalized import sgn
 
 from sage.rings.integer cimport Integer
 from sage.libs.gmp.types cimport mpz_t
@@ -58,7 +58,7 @@ from sage.libs.gmp.mpz cimport mpz_set
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_vec cimport *
 
-cdef extern from "sage/rings/polynomial/weil/power_sums.c":
+cdef extern from "power_sums.c":
     ctypedef struct ps_static_data_t:
         pass
 
@@ -319,7 +319,7 @@ class WeilPolynomials_iter():
         for _ in range(d2+1-len(coefflist)):
             coefflist.append(0)
             modlist.append(1)
-        coeffsign = sgn(coefflist[0])
+        coeffsign = coefflist[0].sign()
         coefflist = [x*coeffsign for x in reversed(coefflist)]
         if node_limit is None:
             node_limit = -1

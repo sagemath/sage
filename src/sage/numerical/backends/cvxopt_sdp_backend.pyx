@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 # sage.doctest: needs cvxopt
 r"""
 CVXOPT SDP Backend
@@ -357,7 +358,6 @@ cdef class CVXOPTSDPBackend(MatrixSDPBackend):
         n = self.answer['ss'][i].size[0]
         assert(n == self.answer['ss'][i].size[1]) # must be square matrix
         return Matrix(n, n, list(self.answer['ss'][i]), sparse=sparse)
-
 
     cpdef solver_parameter(self, name, value=None) noexcept:
         """

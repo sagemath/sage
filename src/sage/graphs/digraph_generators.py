@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 r"""
 Common digraphs
 
@@ -244,21 +245,21 @@ class DiGraphGenerators:
             sage: digraphs.ButterflyGraph(2, vertices='vectors').edges(sort=True,       # needs sage.modules sage.rings.finite_rings
             ....:                                                      labels=False)
             [(((0, 0), 0), ((0, 0), 1)),
-            (((0, 0), 0), ((1, 0), 1)),
-            (((0, 0), 1), ((0, 0), 2)),
-            (((0, 0), 1), ((0, 1), 2)),
-            (((0, 1), 0), ((0, 1), 1)),
-            (((0, 1), 0), ((1, 1), 1)),
-            (((0, 1), 1), ((0, 0), 2)),
-            (((0, 1), 1), ((0, 1), 2)),
-            (((1, 0), 0), ((0, 0), 1)),
-            (((1, 0), 0), ((1, 0), 1)),
-            (((1, 0), 1), ((1, 0), 2)),
-            (((1, 0), 1), ((1, 1), 2)),
-            (((1, 1), 0), ((0, 1), 1)),
-            (((1, 1), 0), ((1, 1), 1)),
-            (((1, 1), 1), ((1, 0), 2)),
-            (((1, 1), 1), ((1, 1), 2))]
+             (((0, 0), 0), ((1, 0), 1)),
+             (((0, 0), 1), ((0, 0), 2)),
+             (((0, 0), 1), ((0, 1), 2)),
+             (((0, 1), 0), ((0, 1), 1)),
+             (((0, 1), 0), ((1, 1), 1)),
+             (((0, 1), 1), ((0, 0), 2)),
+             (((0, 1), 1), ((0, 1), 2)),
+             (((1, 0), 0), ((0, 0), 1)),
+             (((1, 0), 0), ((1, 0), 1)),
+             (((1, 0), 1), ((1, 0), 2)),
+             (((1, 0), 1), ((1, 1), 2)),
+             (((1, 1), 0), ((0, 1), 1)),
+             (((1, 1), 0), ((1, 1), 1)),
+             (((1, 1), 1), ((1, 0), 2)),
+             (((1, 1), 1), ((1, 1), 2))]
             sage: pos = digraphs.ButterflyGraph(2).get_pos()
             sage: pos['11', 0]
             (0, 0)
@@ -955,10 +956,11 @@ class DiGraphGenerators:
             ...
             ValueError: unknown type for vertices
         """
-        from sage.combinat.words.words import Words
         from sage.rings.integer import Integer
 
         if vertices == 'strings':
+            from sage.combinat.words.words import Words
+
             W = Words(list(range(k)) if isinstance(k, Integer) else k, n)
             A = Words(list(range(k)) if isinstance(k, Integer) else k, 1)
             g = DiGraph(loops=True)
@@ -1223,10 +1225,10 @@ class DiGraphGenerators:
         if D < 1:
             raise ValueError("diameter must be greater than or equal to one")
 
-        from sage.combinat.words.words import Words
         from sage.rings.integer import Integer
 
         if vertices == 'strings':
+            from sage.combinat.words.words import Words
 
             my_alphabet = Words([str(i) for i in range(k + 1)] if isinstance(k,
                                 Integer) else k, 1)

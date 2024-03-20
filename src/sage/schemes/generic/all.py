@@ -1,4 +1,5 @@
+# sage_setup: distribution = sagemath-categories
 # code exports
 
-from .spec import Spec
-from .hypersurface import ProjectiveHypersurface, AffineHypersurface
+from sage.schemes.generic.spec import Spec
+from sage.schemes.generic.hypersurface import ProjectiveHypersurface, AffineHypersurface

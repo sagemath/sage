@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 ##############################################################################
 #       Copyright (C) 2010 Nathann Cohen <nathann.cohen@gmail.com>
 #  Distributed under the terms of the GNU General Public License (GPL)

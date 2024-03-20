@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 """
 Base class for generic `p`-adic polynomials
 

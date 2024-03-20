@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 #############################################################
 #
 #    Sparse Vector over mpq_t (the GMP rationals)

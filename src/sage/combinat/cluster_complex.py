@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.graphs
 r"""
 Cluster complex (or generalized dual associahedron)
@@ -49,9 +50,11 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.categories.coxeter_groups import CoxeterGroups
-from sage.combinat.root_system.coxeter_group import CoxeterGroup
 from sage.combinat.subword_complex import SubwordComplex, SubwordComplexFacet
+from sage.misc.lazy_import import lazy_import
 from sage.rings.semirings.non_negative_integer_semiring import NN
+
+lazy_import('sage.combinat.root_system.coxeter_group', 'CoxeterGroup')
 
 
 class ClusterComplexFacet(SubwordComplexFacet):

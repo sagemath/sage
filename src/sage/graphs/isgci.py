@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 r"""
 ISGCI: Information System on Graph Classes and their Inclusions
 

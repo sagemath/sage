@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 Elliptic curves over finite fields
 

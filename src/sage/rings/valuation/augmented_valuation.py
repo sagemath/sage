@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 r"""
 Augmented valuations on polynomial rings
 
@@ -589,7 +590,7 @@ class AugmentedValuation_base(InductiveValuation):
             sage: R.<x> = K[]
             sage: v = GaussValuation(R, K.valuation(2))
             sage: w = v.augmentation(x^2 + x + 1, 1)
-            sage: w.restriction(QQ['x'])                                                # needs sage.lins.singular
+            sage: w.restriction(QQ['x'])                                                # needs sage.libs.singular
             [ Gauss valuation induced by 2-adic valuation, v(x^2 + x + 1) = 1 ]
         """
         if ring.is_subring(self.domain()):

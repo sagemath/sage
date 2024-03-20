@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Quotient Ring Elements
 
@@ -801,7 +802,7 @@ class QuotientRingElement(RingElement):
         """
         return [self.__class__(self.parent(), m) for m in self.__rep.monomials()]
 
-    def _singular_(self, singular=singular_default):
+    def _singular_(self, singular=None):
         """
         Return Singular representation of self.
 
@@ -844,7 +845,9 @@ class QuotientRingElement(RingElement):
             a - 2/3*b
         """
         if singular is None:
-            raise ImportError("could not import singular")
+            singular = singular_default
+            if singular is None:
+                raise ImportError("could not import singular")
         return self.__rep._singular_(singular)
 
     def _magma_init_(self, magma):

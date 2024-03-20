@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-linbox
 from sage.libs.m4rie cimport mzed_t
 from sage.libs.m4ri cimport m4ri_word
 from sage.matrix.matrix_dense cimport Matrix_dense

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Except from the `random` module from Python 2.7.14 used solely for consistency
 in the doctest suite for random results that depend on the Python PRNG.

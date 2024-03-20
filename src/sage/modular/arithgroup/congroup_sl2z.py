@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 The modular group `\SL_2(\ZZ)`
 

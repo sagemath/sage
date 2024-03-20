@@ -1,4 +1,5 @@
-# sage.doctest: optional - sage.rings.finite_rings       (because all doctests use finite fields)
+# sage_setup: distribution = sagemath-categories
+# sage.doctest: needs sage.rings.finite_rings       (because all doctests use finite fields)
 """
 Places of function fields: rational
 """
@@ -102,6 +103,7 @@ class FunctionFieldPlace_rational(FunctionFieldPlace):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: F.<x> = FunctionField(GF(2))
             sage: O = F.maximal_order()
             sage: i = O.ideal(x^2 + x + 1)

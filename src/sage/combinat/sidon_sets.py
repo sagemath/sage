@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 r"""
 Sidon sets and their generalizations, Sidon `g`-sets
 

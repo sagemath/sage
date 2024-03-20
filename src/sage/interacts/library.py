@@ -39,19 +39,19 @@ from typing import Any, Callable
 
 from sage.arith.misc import factor
 from sage.arith.srange import srange
-from sage.calculus.all import symbolic_expression
-from sage.calculus.functional import derivative
-from sage.calculus.integration import numerical_integral as integral_numerical
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.calculus.all", "symbolic_expression")
+lazy_import("sage.calculus.functional", "derivative")
+lazy_import("sage.calculus.integration", "numerical_integral", as_="integral_numerical")
 from sage.ext.fast_callable import fast_callable
-from sage.functions.log import exp
+lazy_import("sage.functions.log", "exp")
+lazy_import("sage.functions.trig", ["acos", "cos", "sin", "tan"])
 from sage.misc.functional import sqrt
-from sage.functions.trig import (acos, cos, sin, tan)
 from sage.misc.decorators import sage_wraps
 from sage.misc.functional import N
 from sage.misc.latex import latex
 from sage.misc.sage_eval import sage_eval
 from sage.misc.table import table
-from sage.misc.lazy_import import lazy_import
 lazy_import("sage.plot.circle", "circle")
 lazy_import("sage.plot.complex_plot", "complex_plot")
 lazy_import("sage.plot.disk", "disk")
@@ -65,9 +65,10 @@ lazy_import("sage.plot.text", "text")
 from sage.repl.rich_output.pretty_print import (pretty_print, show)
 from sage.rings.complex_double import CDF
 from sage.rings.integer import Integer
-from sage.symbolic.constants import pi
-from sage.symbolic.relation import solve
-from sage.symbolic.ring import SR
+lazy_import("sage.symbolic.constants", "pi")
+lazy_import("sage.symbolic.relation", "solve")
+lazy_import("sage.symbolic.ring", "SR")
+import math
 
 x = SR.var('x')
 

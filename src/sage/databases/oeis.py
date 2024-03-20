@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 The On-Line Encyclopedia of Integer Sequences (OEIS)
 
@@ -1109,7 +1108,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - warn_only -- (bool, default: ``False``), whether to warn when the
+        - ``warn_only`` -- (bool, default: ``False``), whether to warn when the
           sequence is dead instead of returning a boolean.
 
         EXAMPLES:

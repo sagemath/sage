@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 r"""
 Submanifolds of differentiable manifolds
 
@@ -70,9 +71,9 @@ class DifferentiableSubmanifold(DifferentiableManifold, TopologicalSubmanifold):
       values are
 
         - ``'real'`` or an object of type ``RealField`` (e.g., ``RR``) for
-           a manifold over `\RR`
+          a manifold over `\RR`
         - ``'complex'`` or an object of type ``ComplexField`` (e.g., ``CC``)
-           for a manifold over `\CC`
+          for a manifold over `\CC`
         - an object in the category of topological fields (see
           :class:`~sage.categories.fields.Fields` and
           :class:`~sage.categories.topological_spaces.TopologicalSpaces`)

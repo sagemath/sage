@@ -1,3 +1,5 @@
+/* sage_setup: distribution = sagemath-objects
+ */
 /*
  * Workaround to handle Python preprocessor macros: Translate defined /
  * undefined into true / false

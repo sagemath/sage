@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Points on elliptic curves
 
@@ -121,19 +122,18 @@ AUTHORS:
 
 import math
 
-from sage.rings.padics.factory import Qp
-from sage.rings.padics.precision_error import PrecisionError
-
+import sage.groups.generic as generic
 import sage.rings.abc
 
+from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import Infinity as oo
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+from sage.rings.padics.precision_error import PrecisionError
 from sage.rings.rational_field import QQ
 from sage.rings.finite_rings.integer_mod import Mod
 from sage.rings.real_mpfr import RealField
 from sage.rings.real_mpfr import RR
-import sage.groups.generic as generic
 from sage.structure.sequence import Sequence
 from sage.structure.richcmp import richcmp
 
@@ -145,6 +145,8 @@ from sage.schemes.projective.projective_point import (SchemeMorphism_point_proje
 from sage.schemes.generic.morphism import is_SchemeMorphism
 
 from .constructor import EllipticCurve
+
+lazy_import('sage.rings.padics.factory', 'Qp')
 
 try:
     from sage.libs.pari.all import pari, PariError
@@ -3265,7 +3267,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
     def non_archimedean_local_height(self, v=None, prec=None,
                                      weighted=False, is_minimal=None):
         """
-        Compute the local height of self at the non-archimedean place `v`.
+        Compute the local height of ``self`` at the non-archimedean place `v`.
 
         INPUT:
 
@@ -3277,10 +3279,10 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
           of self at `v`. If `v` is None, return the total
           non-archimedean contribution to the global height.
 
-        - ``prec`` -- integer, or None (default). The precision of the
-          computation. If None, the height is returned symbolically.
+        - ``prec`` -- integer, or ``None`` (default). The precision of the
+          computation. If ``None``, the height is returned symbolically.
 
-        - ``weighted`` -- boolean. If False (default), the height is
+        - ``weighted`` -- boolean. If ``False`` (default), the height is
           normalised to be invariant under extension of `K`. If True,
           return this normalised height multiplied by the local degree
           if `v` is a single place, or by the degree of `K` if `v` is

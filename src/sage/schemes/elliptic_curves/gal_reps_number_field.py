@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.rings.number_field
 r"""
 Galois representations for elliptic curves over number fields
@@ -48,15 +49,17 @@ REFERENCES:
 
 from sage.arith.misc import legendre_symbol, primes
 from sage.misc.functional import cyclotomic_polynomial
+from sage.misc.lazy_import import lazy_import
 from sage.modules.free_module import VectorSpace
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.number_field.number_field import NumberField
 from sage.rings.rational_field import QQ
 from sage.sets.set import Set
 from sage.structure.sage_object import SageObject
+
+lazy_import('sage.rings.number_field.number_field', 'NumberField')
 
 
 class GaloisRepresentation(SageObject):
@@ -80,7 +83,9 @@ class GaloisRepresentation(SageObject):
         sage: E = EllipticCurve('11a1').change_ring(K)
         sage: rho = E.galois_representation()
         sage: rho
-        Compatible family of Galois representations associated to the Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20) over Number Field in a with defining polynomial x^2 + 1
+        Compatible family of Galois representations associated to the Elliptic Curve
+         defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20)
+         over Number Field in a with defining polynomial x^2 + 1
     """
 
     def __init__(self, E):
@@ -94,7 +99,9 @@ class GaloisRepresentation(SageObject):
             sage: E = EllipticCurve('11a1').change_ring(K)
             sage: rho = E.galois_representation()
             sage: rho
-            Compatible family of Galois representations associated to the Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20) over Number Field in a with defining polynomial x^2 + 1
+            Compatible family of Galois representations associated to the Elliptic Curve
+             defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20)
+             over Number Field in a with defining polynomial x^2 + 1
             sage: loads(rho.dumps()) == rho
             True
         """
@@ -111,12 +118,16 @@ class GaloisRepresentation(SageObject):
             sage: E = EllipticCurve('11a1').change_ring(K)
             sage: rho = E.galois_representation()
             sage: rho
-            Compatible family of Galois representations associated to the Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20) over Number Field in a with defining polynomial x^2 + 1
+            Compatible family of Galois representations associated to the Elliptic Curve
+             defined by y^2 + y = x^3 + (-1)*x^2 + (-10)*x + (-20)
+             over Number Field in a with defining polynomial x^2 + 1
 
             sage: K.<a> = NumberField(x^2-x+1)
             sage: E = EllipticCurve([0,0,0,a,0])
             sage: E.galois_representation()
-            Compatible family of Galois representations associated to the CM Elliptic Curve defined by y^2 = x^3 + a*x over Number Field in a with defining polynomial x^2 - x + 1
+            Compatible family of Galois representations associated to the
+             CM Elliptic Curve defined by y^2 = x^3 + a*x
+             over Number Field in a with defining polynomial x^2 - x + 1
         """
         if self.E.has_cm():
             return "Compatible family of Galois representations associated to the CM " + repr(self.E)
@@ -225,10 +236,10 @@ class GaloisRepresentation(SageObject):
 
         INPUT:
 
-        * ``p`` - int - a prime number.
+        * ``p`` -- a prime number.
 
-        * ``A`` - int - a bound on the number of traces of Frobenius to use
-                     while trying to prove surjectivity.
+        * ``A`` -- (integer) a bound on the number of traces of Frobenius to use
+          while trying to prove surjectivity.
 
         EXAMPLES::
 
@@ -258,7 +269,7 @@ class GaloisRepresentation(SageObject):
 
         For CM curves, the mod-p representation is never surjective::
 
-            sage: K.<a> = NumberField(x^2-x+1)
+            sage: K.<a> = NumberField(x^2 - x + 1)
             sage: E = EllipticCurve([0,0,0,0,a])
             sage: E.has_cm()
             True
@@ -320,7 +331,7 @@ class GaloisRepresentation(SageObject):
         `p` for which the mod-`p` representation is reducible, and [0]
         is returned::
 
-            sage: K.<a> = NumberField(x^2-x+1)
+            sage: K.<a> = NumberField(x^2 - x + 1)
             sage: E = EllipticCurve([0,0,0,0,a])
             sage: E.has_rational_cm()
             True
@@ -403,7 +414,7 @@ class GaloisRepresentation(SageObject):
         `p` for which the mod-`p` representation is reducible, and [0]
         is returned::
 
-            sage: K.<a> = NumberField(x^2-x+1)
+            sage: K.<a> = NumberField(x^2 - x + 1)
             sage: E = EllipticCurve([0,0,0,0,a])
             sage: E.has_rational_cm()
             True
@@ -426,7 +437,7 @@ def _non_surjective(E, patience=100):
     - ``E`` -- EllipticCurve (over a number field).
 
     - ``A`` -- int (a bound on the number of traces of Frobenius to use
-                 while trying to prove surjectivity).
+      while trying to prove surjectivity).
 
     OUTPUT:
 
@@ -848,7 +859,8 @@ def _semistable_reducible_primes(E, verbose=False):
 
         sage: x = polygen(ZZ, 'x')
         sage: K.<a> = NumberField(x^5 - 6*x^3 + 8*x - 1)
-        sage: E = EllipticCurve(K, [a^3 - 2*a, a^4 - 2*a^3 - 4*a^2 + 6*a + 1, a + 1, -a^3 + a + 1, -a])
+        sage: E = EllipticCurve(K, [a^3 - 2*a, a^4 - 2*a^3 - 4*a^2 + 6*a + 1,
+        ....:                       a + 1, -a^3 + a + 1, -a])
         sage: from sage.schemes.elliptic_curves.gal_reps_number_field import _semistable_reducible_primes
         sage: _semistable_reducible_primes(E)
         [2, 5, 53, 1117]
@@ -1406,7 +1418,7 @@ def Billerey_R_bound(E, max_l=200, num_l=8, small_prime_bound=None, debug=False)
 
     .. NOTE::
 
-        The purpose of the small_prime_bound is that it is faster to
+        The purpose of the ``small_prime_bound`` is that it is faster to
         deal with these using the local test; by ignoring them here,
         we enable the algorithm to terminate sooner when there are no
         large reducible primes, which is always the case in practice.

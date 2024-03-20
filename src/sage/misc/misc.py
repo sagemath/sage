@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Miscellaneous functions
 
@@ -9,23 +10,6 @@ AUTHORS:
   users' home directory has a space in it.
 
 - Robert Bradshaw (2007-09-20): Ellipsis range/iterator.
-
-TESTS:
-
-The following test, verifying that :issue:`16181` has been resolved, needs
-to stay at the beginning of this file so that its context is not
-poisoned by other tests::
-
-    sage: sage.misc.misc.inject_variable('a', 0)
-    sage: a
-    0
-
-Check the fix from :issue:`8323`::
-
-    sage: 'name' in globals()
-    False
-    sage: 'func' in globals()
-    False
 """
 
 # ****************************************************************************
@@ -64,6 +48,9 @@ lazy_import("sage.misc.repr", ["coeff_repr", "repr_lincomb"],
 
 lazy_import("sage.misc.timing", ["cputime", "GlobalCputime", "walltime"],
             deprecation=35816)
+
+lazy_import("sage.misc.globals", ["get_main_globals", "inject_variable"],
+            deprecation=99999)
 
 LOCAL_IDENTIFIER = '%s.%s' % (HOSTNAME, os.getpid())
 
@@ -297,41 +284,6 @@ try:
     os.makedirs(os.environ["MPLCONFIGDIR"], exist_ok=True)
 except KeyError:
     pass
-
-
-def union(x, y=None):
-    """
-    Return the union of x and y, as a list. The resulting list need not
-    be sorted and can change from call to call.
-
-    INPUT:
-
-
-    -  ``x`` - iterable
-
-    -  ``y`` - iterable (may optionally omitted)
-
-
-    OUTPUT: list
-
-    EXAMPLES::
-
-        sage: answer = union([1,2,3,4], [5,6]); answer
-        doctest:...: DeprecationWarning: sage.misc.misc.union is deprecated...
-        See https://github.com/sagemath/sage/issues/32096 for details.
-        [1, 2, 3, 4, 5, 6]
-        sage: union([1,2,3,4,5,6], [5,6]) == answer
-        True
-        sage: union((1,2,3,4,5,6), [5,6]) == answer
-        True
-        sage: union((1,2,3,4,5,6), set([5,6])) == answer
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32096, "sage.misc.misc.union is deprecated, use 'list(set(x).union(y))' or a more suitable replacement")
-    if y is None:
-        return list(set(x))
-    return list(set(x).union(y))
 
 
 def exactly_one_is_true(iterable):
@@ -581,7 +533,7 @@ class BackslashOperator:
         r"""
         EXAMPLES::
 
-            sage: # needs sage.modules
+            sage: # needs scipy sage.modules
             sage: A = matrix(RDF, 5, 5, 2)
             sage: b = vector(RDF, 5, range(5))
             sage: v = A \ b
@@ -1023,139 +975,6 @@ def is_in_string(line, pos):
                     in_double_quote = False
         i += 1
     return in_quote()
-
-
-def get_main_globals():
-    """
-    Return the main global namespace.
-
-    EXAMPLES::
-
-        sage: from sage.misc.misc import get_main_globals
-        sage: G = get_main_globals()
-        sage: bla = 1
-        sage: G['bla']
-        1
-        sage: bla = 2
-        sage: G['bla']
-        2
-        sage: G['ble'] = 5
-        sage: ble
-        5
-
-    This is analogous to :func:`globals`, except that it can be called
-    from any function, even if it is in a Python module::
-
-        sage: def f():
-        ....:     G = get_main_globals()
-        ....:     assert G['bli'] == 14
-        ....:     G['blo'] = 42
-        sage: bli = 14
-        sage: f()
-        sage: blo
-        42
-
-    ALGORITHM:
-
-    The main global namespace is discovered by going up the frame
-    stack until the frame for the :mod:`__main__` module is found.
-    Should this frame not be found (this should not occur in normal
-    operation), an exception "ValueError: call stack is not deep
-    enough" will be raised by ``_getframe``.
-
-    See :meth:`inject_variable_test` for a real test that this works
-    within deeply nested calls in a function defined in a Python
-    module.
-    """
-    import sys
-    depth = 0
-    while True:
-        G = sys._getframe(depth).f_globals
-        if G.get("__name__", None) == "__main__":
-            break
-        depth += 1
-    return G
-
-
-def inject_variable(name, value, warn=True):
-    """
-    Inject a variable into the main global namespace.
-
-    INPUT:
-
-    - ``name``  -- a string
-    - ``value`` -- anything
-    - ``warn`` -- a boolean (default: :obj:`False`)
-
-    EXAMPLES::
-
-        sage: from sage.misc.misc import inject_variable
-        sage: inject_variable("a", 314)
-        sage: a
-        314
-
-    A warning is issued the first time an existing value is overwritten::
-
-        sage: inject_variable("a", 271)
-        doctest:...: RuntimeWarning: redefining global value `a`
-        sage: a
-        271
-        sage: inject_variable("a", 272)
-        sage: a
-        272
-
-    That's because warn seem to not reissue twice the same warning::
-
-        sage: from warnings import warn
-        sage: warn("blah")
-        doctest:...: UserWarning: blah
-        sage: warn("blah")
-
-    Warnings can be disabled::
-
-        sage: b = 3
-        sage: inject_variable("b", 42, warn=False)
-        sage: b
-        42
-
-    Use with care!
-    """
-    assert isinstance(name, str)
-    # Using globals() does not work, even in Cython, because
-    # inject_variable is called not only from the interpreter, but
-    # also from functions in various modules.
-    G = get_main_globals()
-    if name in G and warn:
-        warnings.warn("redefining global value `%s`" % name,
-                      RuntimeWarning, stacklevel=2)
-    G[name] = value
-
-
-def inject_variable_test(name, value, depth):
-    """
-    A function for testing deep calls to inject_variable
-
-    EXAMPLES::
-
-        sage: from sage.misc.misc import inject_variable_test
-        sage: inject_variable_test("a0", 314, 0)
-        sage: a0
-        314
-        sage: inject_variable_test("a1", 314, 1)
-        sage: a1
-        314
-        sage: inject_variable_test("a2", 314, 2)
-        sage: a2
-        314
-        sage: inject_variable_test("a2", 271, 2)
-        doctest:...: RuntimeWarning: redefining global value `a2`
-        sage: a2
-        271
-    """
-    if depth == 0:
-        inject_variable(name, value)
-    else:
-        inject_variable_test(name, value, depth - 1)
 
 
 # from https://stackoverflow.com/questions/4103773/efficient-way-of-having-a-function-only-execute-once-in-a-loop

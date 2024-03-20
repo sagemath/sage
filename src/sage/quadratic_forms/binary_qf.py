@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Binary quadratic forms with integer coefficients
 
@@ -929,17 +930,17 @@ class BinaryQF(SageObject):
             sage: if f.discriminant() > 0:
             ....:     algos.append('sage')
             sage: a = choice(algos)
-            sage: g = f.reduced_form(algorithm=a)
-            sage: g.is_reduced()
+            sage: g = f.reduced_form(algorithm=a)                                       # needs sage.libs.pari
+            sage: g.is_reduced()                                                        # needs sage.libs.pari
             True
-            sage: g.is_equivalent(f)
+            sage: g.is_equivalent(f)                                                    # needs sage.libs.pari
             True
-            sage: g,M = f.reduced_form(transformation=True, algorithm=a)
-            sage: g.is_reduced()
+            sage: g,M = f.reduced_form(transformation=True, algorithm=a)                # needs sage.libs.pari
+            sage: g.is_reduced()                                                        # needs sage.libs.pari
             True
-            sage: g.is_equivalent(f)
+            sage: g.is_equivalent(f)                                                    # needs sage.libs.pari
             True
-            sage: f * M == g
+            sage: f * M == g                                                            # needs sage.libs.pari
             True
         """
         if self.is_reduced():

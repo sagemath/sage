@@ -1,0 +1,75 @@
+include VERSION.txt
+
+prune sage
+
+graft             sage/libs/arb
+graft             sage/libs/flint
+graft             sage/libs/linkages
+include           sage/libs/pari/convert_flint.p*
+recursive-include sage/libs/ntl *.pxi *.h                                       # FIXME
+include           sage/matrix/matrix_complex_ball_dense.p*
+include           sage/matrix/misc_flint.p*
+include           sage/matrix/matrix_integer*.pxd
+include           sage/matrix/matrix_rational*.pxd
+include           sage/rings/*_arb.p*
+include           sage/rings/*_flint.p*
+include           sage/rings/padics/*_flint*.p*
+include           sage/rings/padics/all.p*
+include           sage/rings/padics/padic_relaxed_*.p*
+include           sage/rings/padics/*.pxi                                       # FIXME
+include           sage/rings/polynomial/polynomial_template*.pxi        # FIXME
+include           sage/rings/polynomial/*_flint.p*
+include           sage/rings/polynomial/*_arb.p*
+include           sage/rings/polynomial/hilbert.p*
+graft             sage/rings/polynomial/weil
+include           sage/rings/fraction_field_FpT.p*
+
+include           sage/combinat/posets/hasse_cython_flint.p*
+include           sage/graphs/chrompoly.p*
+include           sage/graphs/matchpoly.p*
+include           sage/data_structures/bounded_integer_sequences.p*     # uses flint ... just for bitcount
+graft             sage/quivers                                  # because of the dep on bounded_integer_sequences
+
+## Number fields, MPFI
+
+graft             sage/libs/mpfi                            # entangled with number_field_element
+include sage/rings/real_mpfi.p*                         # -> convert/mpfi
+include sage/rings/real_interval_absolute.p*
+include sage/rings/real_interval_field.p*                       # deprecated
+
+graft sage/rings/convert                                        # only module mpfi
+# FIXME: split out complex_interval stuff from convert/mpfi ....
+include sage/rings/complex_interval.p*                # needs flint
+include sage/rings/complex_interval_field.p*
+include sage/rings/cif.p*
+
+include sage/rings/polynomial/real_roots.p*   # needs flint, numpy
+include sage/rings/polynomial/complex_roots.p*
+include sage/rings/polynomial/refine_root.p*
+include sage/rings/polynomial/polynomial_number_field.p*
+graft sage/rings/number_field
+exclude sage/rings/number_field/number_field*_base.p*           # sagemath-categories
+exclude sage/rings/number_field/number_field_ideal.p*           # sagemath-categories
+include           sage/rings/number_field/number_field_element_quadratic.p*   #### this is entangled with NTL
+include sage/rings/monomials.p*
+include sage/rings/qqbar.p*
+# include sage/rings/universal_cyclotomic_field.p*       --> sagemath-gap
+
+include sage/rings/imaginary_unit.p*
+
+global-exclude    all__sagemath_*.p*
+global-include    all__sagemath_flint.py
+
+global-exclude *.c
+global-exclude *.cpp
+
+include sage/rings/polynomial/weil/power_sums.c
+
+global-exclude __pycache__
+global-exclude *.py[co]
+global-exclude *.bak
+global-exclude *.so
+global-exclude *~
+prune .tox
+prune build
+prune dist

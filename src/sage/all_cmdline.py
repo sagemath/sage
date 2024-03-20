@@ -15,11 +15,15 @@ This is all.py (load all sage functions) plus set-up for the Sage commandline.
 sage_mode = 'cmdline'
 
 from sage.all import *
-from sage.calculus.predefined import x
+
+try:
+    from sage.calculus.predefined import x
+except ImportError:
+    pass
 
 from sage.misc.lazy_import import lazy_import
 
-for pkg in ['axiom', 'fricas', 'gap' , 'gap3', 'giac', 'gp',
+for pkg in ['axiom', 'fricas', 'gap', 'gap3', 'giac', 'gp',
             'gnuplot', 'kash', 'magma', 'macaulay2', 'maple',
             'mathematica', 'mathics', 'matlab',
             'mupad', 'mwrank', 'octave', 'qepcad', 'singular',

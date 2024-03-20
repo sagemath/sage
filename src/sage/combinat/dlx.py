@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Exact Cover Problem via Dancing Links
 """

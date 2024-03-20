@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 # sage.doctest: # needs sage.symbolic
 """
 Real intervals with a fixed absolute precision

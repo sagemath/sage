@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: optional - ptyprocess
 """
 Sage wrapper around pexpect's ``spawn`` class and

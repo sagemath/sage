@@ -1,3 +1,5 @@
+/* sage_setup: distribution = sagemath-objects
+ */
 /*****************************************************************************
 *       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 *

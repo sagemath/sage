@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Polyhedral subsets of free ZZ, QQ or RR-modules.
 """

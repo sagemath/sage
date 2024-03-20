@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Local Field Invariants
 
@@ -134,6 +135,7 @@ def rational_diagonal_form(self, return_matrix=False):
 
     This example cannot be computed by PARI::
 
+        sage: # needs sage.rings.real_interval_field
         sage: Q = QuadraticForm(RIF, 4, range(10))
         sage: Q.__pari__()
         Traceback (most recent call last):

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 r"""
 Sequences of bounded integers
 

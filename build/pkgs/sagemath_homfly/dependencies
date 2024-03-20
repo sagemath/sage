@@ -1,0 +1,1 @@
+$(PYTHON) sagemath_categories libhomfly | $(PYTHON_TOOLCHAIN) sage_setup cython pkgconfig

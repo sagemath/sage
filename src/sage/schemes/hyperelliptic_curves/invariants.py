@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Compute invariants of quintics and sextics via 'Ueberschiebung'
 

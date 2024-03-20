@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 r"""
 Covering designs: coverings of `t`-element subsets of a `v`-set by `k`-sets
 

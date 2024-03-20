@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-singular
 """
 Direct Access to Singular's Functions via libSingular
 

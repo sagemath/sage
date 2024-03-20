@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # Python can be built with extensive debugging support. This file lets
 # Sage know about which debugging options are enabled.
 #

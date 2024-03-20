@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 FindStat - the search engine for combinatorial statistics and maps
 

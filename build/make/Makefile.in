@@ -136,12 +136,34 @@ PYPI_WHEEL_PACKAGES =				\
 	sagemath_objects			\
 	sagemath_repl				\
 	sagemath_categories			\
+	sagemath_modules			\
+	sagemath_plot				\
+	sagemath_polyhedra			\
+	sagemath_graphs				\
+	sagemath_combinat			\
+	sagemath_schemes			\
+	sagemath_giac				\
+	sagemath_flint				\
+	sagemath_pari				\
+	sagemath_gap				\
+	sagemath_homfly				\
+	sagemath_linbox				\
+	sagemath_ntl				\
+	sagemath_brial				\
+	sagemath_eclib				\
+	sagemath_lcalc				\
+	sagemath_libbraiding			\
+	sagemath_libecm				\
 	sagemath_bliss 				\
 	sagemath_mcqd 				\
 	sagemath_tdlib				\
 	sagemath_coxeter3 			\
 	sagemath_sirocco			\
-	sagemath_meataxe
+	sagemath_meataxe			\
+	sagemath_symbolics			\
+	sagemath_glpk				\
+	sagemath_mpmath				\
+	sagemath_standard_no_symbolics
 
 # sage_docbuild is here, not in PYPI_WHEEL_PACKAGES, because it depends on sagelib
 WHEEL_PACKAGES = $(PYPI_WHEEL_PACKAGES)		\
@@ -614,6 +636,11 @@ $(1)-$(4)-no-deps:
 
 $(1)-no-deps: $(1)-$(4)-no-deps
 
+$(1)-$(4)-check:
+	$(PLUS)@sage-logger -p 'PATH=$$(SAGE_SRC)/bin:$$($(4))/bin:$$$$PATH $$(SAGE_SPKG) --check-only $(1)-$(2) $$($(4))' '$$(SAGE_LOGS)/$(1)-$(2).log'
+
+$(1)-check: $(1)-$(4)-check
+
 $(1)-$(4)-uninstall:
 	if [ -d '$$($(4))' ]; then \
 	    sage-spkg-uninstall $(if $(filter $(1),$(TOOLCHAIN_DEPS)),--keep-files) \
@@ -760,22 +787,7 @@ $(1)-$(4)-no-deps:
 $(1)-no-deps: $(1)-$(4)-no-deps
 
 $(1)-$(4)-check:
-	$(PLUS)@if [ -x $$(SAGE_ROOT)/build/pkgs/$(1)/spkg-check ]; then \
-	    cd '$$(SAGE_ROOT)/build/pkgs/$(1)' && \
-		. '$$(SAGE_ROOT)/src/bin/sage-src-env-config' && \
-		. '$$(SAGE_ROOT)/src/bin/sage-env-config' && \
-		. '$$(SAGE_ROOT)/src/bin/sage-env' && \
-		. '$$(SAGE_ROOT)/build/bin/sage-build-env-config' && \
-		. '$$(SAGE_ROOT)/build/bin/sage-build-env' && \
-		PKG_BASE="$(1)" \
-		PKG_VER="$(2)" \
-		PKG_NAME="$(1)-$(2)" \
-		SAGE_SPKG_WHEELS=$$($(4))/var/lib/sage/wheels \
-		SAGE_SPKG_SCRIPTS=$$($(4))/var/lib/sage/scripts \
-		SAGE_INST_LOCAL=$$($(4)) \
-		SAGE_CHECK=$$(SAGE_CHECK_$(1)) \
-		sage-logger -p '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-check' '$$(SAGE_LOGS)/$(1)-$(2).log'; \
-	    fi
+	$(PLUS)@sage-logger -p 'PATH=$$(SAGE_SRC)/bin:$$($(4))/bin:$$$$PATH $$(SAGE_SPKG) --check-only $(1)-$(2) $$($(4))' '$$(SAGE_LOGS)/$(1)-$(2).log'
 
 $(1)-check: $(1)-$(4)-check
 
@@ -789,11 +801,13 @@ $(1)-uninstall: $(1)-$(4)-uninstall
 
 $(1)-clean: $(1)-uninstall
 
-$(1)-sdist: FORCE python_build sage_setup cython
+$(1)-sdist: FORCE python_build sage_setup cython meson_python
 	$(AM_V_at) cd '$$(SAGE_ROOT)' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-src-env-config' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-env-config' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-env' && \
+		export CXXFLAGS="$$$$CXXFLAGS $$$$(echo "$$$$CXX" | sed -En "s/.*(-std=[a-z0-9+]*).*/\1/p")" && \
+		export CXX=$$$$(echo "$$$$CXX" | sed 's/-std=[a-z0-9+]*//g') && \
 		'$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-src'
 
 # Recursive tox invocation (note - we do not set the environment here).

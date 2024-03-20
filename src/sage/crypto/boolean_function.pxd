@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 cdef inline unsigned int hamming_weight(unsigned int x) noexcept:
     # valid for 32bits
     x -= (x>>1) & 0x55555555UL                        # 0-2 in 2 bits

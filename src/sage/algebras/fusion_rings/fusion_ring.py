@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-singular
 """
 Fusion Rings
 """
@@ -26,7 +27,7 @@ from sage.combinat.root_system.weyl_characters import WeylCharacterRing
 from sage.matrix.constructor import matrix
 from sage.matrix.special import diagonal_matrix
 from sage.misc.cachefunc import cached_method
-from sage.misc.misc import inject_variable
+from sage.misc.globals import inject_variable
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field import CyclotomicField
 from sage.rings.qqbar import QQbar

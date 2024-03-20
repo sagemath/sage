@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 "Global proof preferences"
 
 from sage.structure.sage_object import SageObject
@@ -192,7 +193,7 @@ def get_flag(t=None, subsystem=None):
 
 class WithProof():
     """
-    Use WithProof to temporarily set the value of one of the proof
+    Use :class:`WithProof` to temporarily set the value of one of the proof
     systems for a block of code, with a guarantee that it will be set
     back to how it was before after the block is done, even if there is an error.
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 """
 Monomial symmetric functions
@@ -19,12 +20,16 @@ Monomial symmetric functions
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from . import classical
-import sage.libs.symmetrica.all as symmetrica
-from sage.rings.integer import Integer
-from sage.rings.infinity import infinity
-from sage.combinat.partition import _Partitions
 from sage.arith.misc import multinomial, factorial, binomial
+from sage.combinat.partition import _Partitions
+from sage.misc.lazy_import import lazy_import
+from sage.rings.infinity import infinity
+from sage.rings.integer import Integer
+import sage.libs.symmetrica.all as symmetrica
+
+lazy_import('sage.libs.symmetrica', 'all', as_='symmetrica')
+
+from . import classical
 
 
 class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_classical):

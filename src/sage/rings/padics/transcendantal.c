@@ -1,3 +1,5 @@
+/* sage_setup: distribution = sagemath-pari
+ */
 /*
  *  C helper functions for the computation
  *  of p-adic transcendantal functions

@@ -1,4 +1,5 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage_setup: distribution = sagemath-modules
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Cyclic code
 
@@ -977,7 +978,7 @@ class CyclicCodePolynomialEncoder(Encoder):
             sage: g = x ** 3 + x + 1
             sage: C = codes.CyclicCode(generator_pol=g, length=n)
             sage: E = codes.encoders.CyclicCodePolynomialEncoder(C)
-            sage: E.message_space()
+            sage: E.message_space()                                                     # needs sage.libs.ntl
             Univariate Polynomial Ring in x over Finite Field of size 2 (using GF2X)
         """
         return self._polynomial_ring

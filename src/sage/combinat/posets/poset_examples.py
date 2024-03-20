@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 Catalog of posets and lattices
@@ -969,9 +970,9 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``s`` - shape of the tableaux
+        - ``s`` -- shape of the tableaux
 
-        - ``f`` - maximum fill number.  This is an optional
+        - ``f`` -- maximum fill number.  This is an optional
           argument.  If no maximal number is given, it will use
           the number of cells in the shape.
 
@@ -1034,7 +1035,7 @@ class Posets(metaclass=ClasscallMetaclass):
 
             sage: A = posets.StandardExample(3); A
             Finite poset containing 6 elements
-            sage: A.dimension()
+            sage: A.dimension()                                                         # needs networkx
             3
 
         REFERENCES:
@@ -1199,7 +1200,8 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: posets.TetrahedralPoset(4,'green','red','yellow','silver','blue','orange')
             Finite poset containing 10 elements
 
-            sage: posets.TetrahedralPoset(4,'green','red','yellow','silver','blue','orange', labels='integers')
+            sage: posets.TetrahedralPoset(4,'green','red','yellow','silver','blue','orange',
+            ....:                         labels='integers')
             Finite poset containing 10 elements
 
             sage: A = AlternatingSignMatrices(3)
@@ -1819,9 +1821,9 @@ class Posets(metaclass=ClasscallMetaclass):
             7
 
             sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),
-            ....: {1: [posets.YoungDiagramPoset([3, 2], dual=True)],
-            ....: 3: [posets.DoubleTailedDiamond(6)]},
-            ....: anchor=(4, 2, posets.ChainPoset(6)))
+            ....:         {1: [posets.YoungDiagramPoset([3, 2], dual=True)],
+            ....:          3: [posets.DoubleTailedDiamond(6)]},
+            ....:         anchor=(4, 2, posets.ChainPoset(6)))
             sage: len(P.cover_relations())
             33
         """
@@ -1886,7 +1888,7 @@ def _random_lattice(n, p):
         meet for `e, m` for all `m \in M`. We do that by keeping
         track of meet matrix and list of maximal elements.
     """
-    from sage.functions.other import floor
+    from sage.arith.misc import integer_floor as floor
     from sage.misc.functional import sqrt
     from sage.misc.prandom import random
 

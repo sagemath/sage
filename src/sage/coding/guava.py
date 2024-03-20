@@ -1,4 +1,5 @@
-# sage.doctest: optional - sage.libs.gap sage.modules sage.rings.finite_rings
+# sage_setup: distribution = sagemath-modules
+# sage.doctest: needs sage.libs.gap sage.modules sage.rings.finite_rings
 r"""
 Constructions of generator matrices using the GUAVA package for GAP
 

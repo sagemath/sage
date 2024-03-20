@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Vectors with integer entries
 
@@ -7,7 +8,7 @@ AUTHOR:
 
 EXAMPLES::
 
-    sage: v = vector(ZZ,[1,2,3,4,5])
+    sage: v = vector(ZZ, [1,2,3,4,5])
     sage: v
     (1, 2, 3, 4, 5)
     sage: 3*v

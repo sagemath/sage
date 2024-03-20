@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.flint sage.libs.pari
 r"""
 Atkin/Hecke series for overconvergent modular forms
@@ -70,8 +71,7 @@ A list containing the characteristic series of the `U_{23}` operator modulo `23^
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.misc import valuation
-from sage.functions.other import floor, ceil
+from sage.arith.misc import integer_ceil as ceil, integer_floor as floor, valuation
 from sage.matrix.constructor import matrix, random_matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.functional import dimension, transpose, charpoly
@@ -84,6 +84,7 @@ from sage.rings.finite_rings.integer_mod_ring import Zmod
 from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
+
 
 # AUXILIARY CODE: SPACES OF MODULAR FORMS AND LINEAR ALGEBRA
 

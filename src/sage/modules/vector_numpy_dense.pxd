@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-modules
+
 cimport numpy
 
 from sage.modules.free_module_element cimport FreeModuleElement

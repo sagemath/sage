@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 r"""
 Dyck Paths
 
@@ -138,7 +139,7 @@ class DyckPath(PathTableau):
             sage: path_tableaux.DyckPath([0,1,2.5,1,0])
             Traceback (most recent call last):
             ...
-            ValueError: [0, 1, 2.50000000000000, 1, 0] is not a sequence of integers
+            ValueError: [0, 1, 2.5..., 1, 0] is not a sequence of integers
             sage: path_tableaux.DyckPath(Partition([3,2,1]))
             Traceback (most recent call last):
             ...

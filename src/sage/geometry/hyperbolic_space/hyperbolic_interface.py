@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 r"""
 Interface to Hyperbolic Models
 
@@ -51,6 +52,8 @@ EXAMPLES::
 #                  https://www.gnu.org/licenses/
 # **********************************************************************
 
+import sage.geometry.abc
+
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.categories.sets_cat import Sets
@@ -75,7 +78,7 @@ def HyperbolicSpace(n):
     raise NotImplementedError("currently only implemented in dimension 2")
 
 
-class HyperbolicPlane(Parent, UniqueRepresentation):
+class HyperbolicPlane(sage.geometry.abc.HyperbolicSpace, UniqueRepresentation):
     r"""
     The hyperbolic plane `\mathbb{H}^2`.
 

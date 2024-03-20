@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 cimport sage.structure.parent_gens
 
 cdef class Group(sage.structure.parent.Parent):

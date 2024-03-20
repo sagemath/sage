@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-gap
+
 r"""
 Orthogonal Linear Groups with GAP
 """

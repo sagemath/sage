@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Dynamical systems on projective varieties (Cython helper)
 

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Conductor and reduction types for genus 2 curves
 

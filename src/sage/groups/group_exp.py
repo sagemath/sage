@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-groups
 r"""
 Functor that converts a commutative additive group into a multiplicative group.
 

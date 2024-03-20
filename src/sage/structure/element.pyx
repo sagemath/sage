@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # Compile this with -Os because it works around a bug with
 # GCC-4.7.3 + Cython 0.19 on Itanium, see Issue #14452. Moreover, it
 # actually results in faster code than -O3.
@@ -2862,11 +2863,11 @@ cdef class RingElement(ModuleElement):
 
         EXAMPLES::
 
-            sage: RR(-1).abs()
+            sage: RR(-1).abs()                                                          # needs sage.rings.real_mpfr
             1.00000000000000
             sage: ZZ(-1).abs()
             1
-            sage: CC(I).abs()
+            sage: CC(I).abs()                                                           # needs sage.rings.real_mpfr sage.symbolic
             1.00000000000000
             sage: Mod(-15, 37).abs()
             Traceback (most recent call last):
@@ -3269,13 +3270,13 @@ cdef class CommutativeRingElement(RingElement):
             x
             sage: f = x^2 - 4*x + 4; f.sqrt(all=True)
             [x - 2, -x + 2]
-            sage: sqrtx = x.sqrt(name="y"); sqrtx
+            sage: sqrtx = x.sqrt(name="y"); sqrtx                                       # needs sage.libs.singular
             y
-            sage: sqrtx^2
+            sage: sqrtx^2                                                               # needs sage.libs.singular
             x
-            sage: x.sqrt(all=true, name="y")
+            sage: x.sqrt(all=true, name="y")                                            # needs sage.libs.singular
             [y, -y]
-            sage: x.sqrt(extend=False, all=True)
+            sage: x.sqrt(extend=False, all=True)                                        # needs sage.libs.singular
             []
             sage: x.sqrt()
             Traceback (most recent call last):

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 r"""
 `p`-adic Extension Leaves
 

@@ -1,0 +1,48 @@
+prune sage
+
+include VERSION.txt
+
+graft sage/libs/ntl
+
+include sage/rings/bernoulli_mod_p.p*
+include sage/rings/finite_rings/*_ntl_*.p*
+
+include sage/rings/padics/padic_ext_element.p*
+include sage/rings/padics/pow_computer_ext.p*
+include sage/rings/padics/padic_ZZ_pX_*.p*
+
+include sage/rings/polynomial/*_ntl.p*
+include sage/rings/polynomial/polynomial_zz_pex.p*
+include sage/rings/polynomial/polynomial_template*.pxi
+#include sage/rings/polynomial/polynomial_gf2x.p*               # inexplicably also needs m4ri; -> sagemath-linbox (or could go in a distribution 'sagemath-gf2x' with dep on sagemath-ntl, sagemath-m4ri)
+
+include sage/rings/bernmm.p*            # dep of sage.rings.bernoulli_mod_p
+
+include sage/libs/mpfi/*.pxd            # FIXME - shipped by sagemath-flint
+include sage/rings/real_mpfi.pxd
+include sage/matrix/matrix_modn_*.pxd   # FIXME - shipped by sagemath-linbox
+include sage/matrix/matrix_modn_*.pxi
+include sage/rings/padics/*.pxd
+include sage/rings/padics/*.pxi                                       # FIXME
+exclude sage/rings/padics/*flint*.p*
+exclude sage/rings/padics/local_generic_element.p*
+
+include sage/schemes/hyperelliptic_curves/hypellfrob.p*
+
+global-exclude *.c
+global-exclude *.cpp
+
+graft sage/rings/bernmm
+graft sage/schemes/hyperelliptic_curves/hypellfrob
+
+global-exclude all__sagemath_*.py
+global-include all__sagemath_ntl.py
+
+global-exclude __pycache__
+global-exclude *.py[co]
+global-exclude *.bak
+global-exclude *.so
+global-exclude *~
+prune .tox
+prune build
+prune dist

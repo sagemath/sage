@@ -1,3 +1,5 @@
+// sage_setup: distribution = sagemath-schemes
+
 //****************************************************************************
 //       Copyright (C) 2011 Hartmut Monien <monien@th.physik.uni-bonn.de>
 //

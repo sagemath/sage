@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 """
 `q`-Bernoulli Numbers and Polynomials
 """
@@ -41,8 +42,8 @@ def q_bernoulli(m, p=None):
 
     One can evaluate the rational function by giving a second argument::
 
-        sage: x = PolynomialRing(GF(2),'x').gen()
-        sage: q_bernoulli(5,x)
+        sage: x = PolynomialRing(GF(2),'x').gen()                                       # needs sage.rings.finite_rings
+        sage: q_bernoulli(5, x)                                                         # needs sage.rings.finite_rings
         x/(x^6 + x^5 + x + 1)
 
     The function does not accept negative arguments::
@@ -104,7 +105,8 @@ def q_bernoulli_polynomial(m):
         sage: all(q_bernoulli_polynomial(i)(q=1) == bernoulli_polynomial(x,i)           # needs sage.libs.flint
         ....:     for i in range(12))
         True
-        sage: all(q_bernoulli_polynomial(i)(x=0)==q_bernoulli(i) for i in range(12))
+        sage: all(q_bernoulli_polynomial(i)(x=0) == q_bernoulli(i)
+        ....:     for i in range(12))
         True
 
     The function does not accept negative arguments::

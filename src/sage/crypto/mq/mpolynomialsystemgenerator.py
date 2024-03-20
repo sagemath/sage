@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Abstract base class for generators of polynomial systems
 

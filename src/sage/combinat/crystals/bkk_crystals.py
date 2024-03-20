@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 """
 Benkart-Kang-Kashiwara crystals for the general-linear Lie superalgebra

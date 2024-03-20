@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-linbox
+
 from sage.modules.free_module_element cimport FreeModuleElement
 from sage.libs.m4ri cimport mzd_t
 

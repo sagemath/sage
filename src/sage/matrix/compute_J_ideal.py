@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.libs.pari       (for charpoly, minimal_polynomial in __init__)
 r"""
 `J`-ideals of matrices
@@ -541,8 +542,8 @@ class ComputeMinimalPolynomials(SageObject):
             sage: x = polygen(ZZ, 'x')
             sage: nu_4 = x^2 + 3*x + 2
             sage: g = C.mccoy_column(2, 2, nu_4)
-            sage: b = matrix(9, 1, (x-B).adjugate().list())
-            sage: M = matrix.block([[b , -B.charpoly(x)*matrix.identity(9)]])
+            sage: b = matrix(9, 1, (x - B).adjugate().list())
+            sage: M = matrix.block([[b, -B.charpoly(x)*matrix.identity(9)]])
             sage: (M*g % 4).is_zero()
             True
 

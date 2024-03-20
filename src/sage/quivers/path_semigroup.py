@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# sage_setup: distribution = sagemath-flint
+# sage.doctest: needs sage.graphs
 """
 Path Semigroups
 """

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # cython: binding=True
 r"""
 Vertex separation
@@ -659,9 +660,9 @@ def path_decomposition(G, algorithm="BAB", cut_off=None, upper_bound=None, verbo
 
         sage: from sage.graphs.graph_decompositions.vertex_separation import path_decomposition
         sage: g = graphs.CycleGraph(6)
-        sage: pw, L = path_decomposition(g, algorithm = "BAB"); pw
+        sage: pw, L = path_decomposition(g, algorithm="BAB"); pw
         2
-        sage: pw, L = path_decomposition(g, algorithm = "exponential"); pw
+        sage: pw, L = path_decomposition(g, algorithm="exponential"); pw
         2
         sage: pw, L = path_decomposition(g, algorithm="MILP"); pw                       # needs sage.numerical.mip
         2

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 r"""
 Ribbon Shaped Tableaux
 """
@@ -341,7 +342,8 @@ class StandardRibbonShapedTableaux(StandardSkewTableaux):
         EXAMPLES::
 
             sage: import sage.combinat.ribbon_shaped_tableau as rst
-            sage: [StandardRibbonShapedTableaux().from_permutation(p) for p in Permutations(3)]
+            sage: [StandardRibbonShapedTableaux().from_permutation(p)
+            ....:  for p in Permutations(3)]
             [[[1, 2, 3]],
              [[None, 2], [1, 3]],
              [[1, 3], [2]],

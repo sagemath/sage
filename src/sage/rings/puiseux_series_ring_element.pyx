@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-categories
 r"""
 Puiseux Series Ring Element
 
@@ -49,7 +49,9 @@ Mind the base ring. However, the base ring can be changed::
     sage: I*q                                                                           # needs sage.rings.number_field
     Traceback (most recent call last):
     ...
-    TypeError: unsupported operand parent(s) for *: 'Number Field in I with defining polynomial x^2 + 1 with I = 1*I' and 'Puiseux Series Ring in x over Rational Field'
+    TypeError: unsupported operand parent(s) for *:
+    'Number Field in I with defining polynomial x^2 + 1 with I = 1*I' and
+    'Puiseux Series Ring in x over Rational Field'
     sage: qz = q.change_ring(ZZ); qz
     x^(1/3) + x^(1/2)
     sage: qz.parent()
@@ -872,6 +874,7 @@ cdef class PuiseuxSeries(AlgebraElement):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: P.<y> = PolynomialRing(GF(5))
             sage: R.<x> = PuiseuxSeriesRing(P)
             sage: p = 3*y*x**(-2/3) + 2*y**2*x**(1/5); p
@@ -945,6 +948,7 @@ cdef class PuiseuxSeries(AlgebraElement):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.finite_rings
             sage: R.<x> = PuiseuxSeriesRing(GF(3))
             sage: p = (x**(-1/3) + 2*x**3)**2; p
             x^(-2/3) + x^(8/3) + x^6

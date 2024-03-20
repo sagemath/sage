@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 r"""
 Symmetric Functions
 
@@ -36,7 +37,7 @@ from sage.misc.lazy_import import lazy_import
 
 # In the long run, this will be the single entry point
 # Nothing else will be exported
-lazy_import('sage.combinat.sf.sf', 'SymmetricFunctions')
+from sage.combinat.sf.sf import SymmetricFunctions
 
 # Advanced stuff:
 
@@ -45,3 +46,5 @@ lazy_import('sage.combinat.sf.kfpoly', 'KostkaFoulkesPolynomial')
 lazy_import('sage.combinat.sf.ns_macdonald', ['NonattackingFillings',
                                               'AugmentedLatticeDiagramFilling',
                                               'LatticeDiagram'])
+del lazy_import
+del install_doc

@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-flint
+
 "Monomials"
 
 def _monomials(gens, R, n, i):

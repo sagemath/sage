@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # sage.doctest: needs sage.libs.gap
 r"""
 Database of generalised quadrangles with spread

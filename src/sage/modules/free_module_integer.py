@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Discrete subgroups of `\\ZZ^n`
 
@@ -384,7 +385,10 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         basis = matrix(ZZ, len(basis), len(basis[0]), basis)
         basis.set_immutable()
 
-        if self.reduced_basis[0].norm() > basis[0].norm():
+        b0 = basis[0]
+        rb0 = self.reduced_basis[0]
+
+        if rb0.dot_product(rb0) > b0.dot_product(b0):
             self._reduced_basis = basis
         return basis
 
@@ -662,7 +666,8 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         The volume of the Voronoi cell is the square root of the
         discriminant of the lattice::
 
-            sage: L = IntegerLattice(Matrix(ZZ, 4, 4, [[0,0,1,-1],[1,-1,2,1],[-6,0,3,3,],[-6,-24,-6,-5]])); L
+            sage: L = IntegerLattice(Matrix(ZZ, 4, 4, [[0,0,1,-1], [1,-1,2,1],
+            ....:                                      [-6,0,3,3,], [-6,-24,-6,-5]])); L
             Free module of degree 4 and rank 4 over Integer Ring
             User basis matrix:
             [  0   0   1  -1]

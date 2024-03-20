@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 # sage.doctest: optional - fricas
 r"""
 Interface to FriCAS

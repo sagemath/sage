@@ -30,3 +30,11 @@ distribution of a small part of the Sage Library.  Use at your own risk.  It
 provides a small, fundamental subset of the modules of the Sage library
 ("sagelib", `sagemath-standard`), providing the IPython kernel, Sage preparser,
 and doctester.
+
+
+What is included
+----------------
+
+* `Doctesting Framework <https://doc.sagemath.org/html/en/reference/doctest/index.html>`_
+
+* `The Sage REPL <https://doc.sagemath.org/html/en/reference/repl/sage/repl/index.html>`_

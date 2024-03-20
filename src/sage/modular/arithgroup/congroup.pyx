@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Helper functions for congruence subgroups
 
@@ -16,6 +17,9 @@ functions are for internal use by routines elsewhere in the Sage library.
 
 from cysignals.memory cimport check_allocarray, sig_free
 
+from sage.matrix.matrix_generic_dense cimport Matrix_generic_dense as MatrixClass
+# FIXME: This was Matrix_integer_dense; changed for modularization to avoid flint dep
+
 import random
 from .congroup_gamma1 import Gamma1_constructor as Gamma1
 from .congroup_gamma0 import Gamma0_constructor as Gamma0
@@ -24,16 +28,16 @@ cimport sage.rings.fast_arith
 import sage.rings.fast_arith
 cdef sage.rings.fast_arith.arith_int arith_int
 arith_int = sage.rings.fast_arith.arith_int()
-from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
 from sage.modular.modsym.p1list import lift_to_sl2z
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.integer_ring import ZZ
 Mat2Z = MatrixSpace(ZZ, 2)
 
-cdef Matrix_integer_dense genS, genT, genI
-genS = Matrix_integer_dense(Mat2Z, [0,-1, 1, 0], True, True)
-genT = Matrix_integer_dense(Mat2Z, [1, 1, 0, 1], True, True)
-genI = Matrix_integer_dense(Mat2Z, [1, 0, 0, 1], True, True)
+cdef MatrixClass genS, genT, genI
+
+genS = MatrixClass(Mat2Z, [0,-1, 1, 0], True, True)
+genT = MatrixClass(Mat2Z, [1, 1, 0, 1], True, True)
+genI = MatrixClass(Mat2Z, [1, 0, 0, 1], True, True)
 
 
 # This is the C version of a function formerly implemented in python in
@@ -297,18 +301,18 @@ def generators_helper(coset_reps, level):
         [21  5], [ 7 -1], [-7  1]
         ]
     """
-    cdef Matrix_integer_dense x,y,z,v,vSmod,vTmod
+    cdef MatrixClass x,y,z,v,vSmod,vTmod
 
     crs = coset_reps.list()
     try:
-        reps = [Matrix_integer_dense(Mat2Z,lift_to_sl2z(c, d, level),False,True) for c,d in crs]
+        reps = [MatrixClass(Mat2Z,lift_to_sl2z(c, d, level),False,True) for c,d in crs]
     except Exception:
         raise ArithmeticError("Error lifting to SL2Z: level=%s crs=%s" % (level, crs))
     ans = []
     cdef Py_ssize_t i
     for i in range(len(crs)):
         x = reps[i]
-        v = Matrix_integer_dense(Mat2Z,[crs[i][0],crs[i][1],0,0],False,True)
+        v = MatrixClass(Mat2Z,[crs[i][0],crs[i][1],0,0],False,True)
         vSmod = (v*genS)
         vTmod = (v*genT)
         y_index = coset_reps.normalize(vSmod[0,0],vSmod[0,1])

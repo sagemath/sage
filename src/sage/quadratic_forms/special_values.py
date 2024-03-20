@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-pari
+# sage.doctest: needs sage.libs.pari sage.modules
 r"""
 Routines for computing special values of `L`-functions
 
@@ -172,13 +174,13 @@ def QuadraticBernoulliNumber(k, d):
 
     Let us create a list of some odd negative fundamental discriminants::
 
-        sage: test_set = [d for d in srange(-163, -3, 4)                                # needs sage.libs.pari
+        sage: test_set = [d for d in srange(-163, -3, 4)
         ....:             if d.is_fundamental_discriminant()]
 
     In general, we have `B_{1, \chi_d} = -2 h/w` for odd negative fundamental
     discriminants::
 
-        sage: all(QuadraticBernoulliNumber(1, d)                                        # needs sage.libs.pari
+        sage: all(QuadraticBernoulliNumber(1, d)
         ....:       == -len(BinaryQF_reduced_representatives(d))
         ....:     for d in test_set)
         True
@@ -213,16 +215,16 @@ def quadratic_L_function__exact(n, d):
 
     EXAMPLES::
 
-        sage: quadratic_L_function__exact(1, -4)                                        # needs sage.libs.pari sage.symbolic
+        sage: quadratic_L_function__exact(1, -4)                                        # needs sage.symbolic
         1/4*pi
-        sage: quadratic_L_function__exact(-4, -4)                                       # needs sage.libs.pari
+        sage: quadratic_L_function__exact(-4, -4)
         5/2
-        sage: quadratic_L_function__exact(2, 1)                                         # needs sage.libs.pari sage.symbolic
+        sage: quadratic_L_function__exact(2, 1)                                         # needs sage.symbolic
         1/6*pi^2
 
     TESTS::
 
-        sage: quadratic_L_function__exact(2, -4)                                        # needs sage.libs.pari
+        sage: quadratic_L_function__exact(2, -4)
         Traceback (most recent call last):
         ...
         TypeError: n must be a critical value (i.e. odd > 0 or even <= 0)

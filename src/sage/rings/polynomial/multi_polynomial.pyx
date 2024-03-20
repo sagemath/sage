@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Base class for elements of multivariate polynomial rings
 """
@@ -2151,7 +2152,7 @@ cdef class MPolynomial(CommutativePolynomial):
             self._parent._singular_().set_ring()
             g = self._singular_().gcd(other._singular_())
             return self._parent(g)
-        except (TypeError, AttributeError):
+        except (TypeError, AttributeError, ImportError):
             pass
 
         x = self._parent.gens()[-1]

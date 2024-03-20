@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 r"""
 Compact structure for fast operations on less than 32 vertices
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.pari sage.rings.number_field
 r"""
 Smooth characters of `p`-adic fields

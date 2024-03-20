@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 # sage.doctest: needs sage.libs.gap sage.modules
 """
 Heisenberg Group

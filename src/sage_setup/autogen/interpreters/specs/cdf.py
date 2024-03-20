@@ -145,11 +145,6 @@ class CDFInterpreter(StackInterpreter):
             """)
 
         self.pxd_header = ri(0, """
-            # This is to work around a header incompatibility with PARI using
-            # "I" as variable conflicting with the complex "I".
-            # If we cimport pari earlier, we avoid this problem.
-            cimport cypari2.types
-
             # We need the type double_complex to work around
             #   http://trac.cython.org/ticket/869
             # so this is a bit hackish.

@@ -1,3 +1,5 @@
+/* sage_setup: distribution = sagemath-flint
+ */
 /* WARNING: src/sage/libs/flint/flint_wrap.h is generated from
  * src/sage_setup/autogen/flint/templates/flint_wrap.h.template
  * please make sure that you are modifying the correct file! */

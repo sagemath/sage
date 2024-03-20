@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Jacobian 'morphism' as a class in the Picard group
 

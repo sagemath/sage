@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Cartan matrices
 
@@ -363,7 +364,7 @@ class CartanMatrix(Base, CartanType_abstract,
             Full MatrixSpace of 3 by 3 sparse matrices over Integer Ring
             sage: cm.matrix_space(2, 2)
             Full MatrixSpace of 2 by 2 sparse matrices over Integer Ring
-            sage: cm[:2,1:]   # indirect doctest
+            sage: cm[:2,1:]
             [-1  0]
             [ 2 -1]
         """

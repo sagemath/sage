@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 Some utility routines for the hypergeometric motives package that benefit
 significantly from Cythonization.

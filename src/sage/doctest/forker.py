@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Processes for running doctests
 
@@ -52,7 +53,6 @@ import time
 import signal
 import linecache
 import hashlib
-import multiprocessing
 import warnings
 import re
 import errno
@@ -80,7 +80,15 @@ from sage.cpython.string import bytes_to_str, str_to_bytes
 # multiprocessing, and Sage doctesting doesn't work with 'spawn'. See
 # trac #27754.
 if os.uname().sysname == 'Darwin':
+    import multiprocessing
     multiprocessing.set_start_method('fork', force=True)
+
+from multiprocessing import Process
+
+try:
+    import _multiprocessing
+except ImportError:
+    _multiprocessing = None
 
 
 def _sorted_dict_pprinter_factory(start, end):
@@ -204,7 +212,8 @@ def init_sage(controller=None):
     if controller is None:
         import sage.repl.ipython_kernel.all_jupyter
     else:
-        controller.load_environment()
+        import sage
+        sage.all = controller.load_environment()
 
     try:
         from sage.interfaces.quit import invalidate_all
@@ -236,7 +245,7 @@ def init_sage(controller=None):
         pass
 
     try:
-        import sympy
+        import sympy.printing
     except ImportError:
         # Do not require sympy for running doctests (Issue #25106).
         pass
@@ -530,7 +539,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: from sage.doctest.forker import SageDocTestRunner
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
             sage: import doctest, sys, os
-            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD,
+            ....:           optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: DTR
             <sage.doctest.forker.SageDocTestRunner object at ...>
         """
@@ -574,7 +584,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
             sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os
-            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD,
+            ....:           optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
             sage: FDS = FileDocTestSource(filename,DD)
             sage: doctests, extras = FDS.create_doctests(globals())
@@ -936,7 +947,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: from sage.doctest.forker import SageDocTestRunner
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
             sage: import doctest, sys, os
-            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD,
+            ....:           optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: DTR._name2ft['sage.doctest.forker'] = (1,120)
             sage: results = DTR.summarize()
             **********************************************************************
@@ -1020,7 +1032,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
             sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os, hashlib
-            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD,
+            ....:           optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
             sage: FDS = FileDocTestSource(filename,DD)
             sage: doctests, extras = FDS.create_doctests(globals())
@@ -1202,14 +1215,15 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
             sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os
-            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD,
+            ....:           optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
             sage: FDS = FileDocTestSource(filename,DD)
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
             sage: print(DTR._failure_header(doctests[0], ex))
             **********************************************************************
-            File ".../sage/doctest/forker.py", line 11, in sage.doctest.forker
+            File ".../sage/doctest/forker.py", line 12, in sage.doctest.forker
             Failed example:
                 doctest_var = 42; doctest_var^2
             <BLANKLINE>
@@ -1219,7 +1233,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: import doctest
             sage: print(doctest.DocTestRunner._failure_header(DTR, doctests[0], ex))
             **********************************************************************
-            File ".../sage/doctest/forker.py", line 11, in sage.doctest.forker
+            File ".../sage/doctest/forker.py", line 12, in sage.doctest.forker
             Failed example:
                 doctest_var = Integer(42); doctest_var**Integer(2)
             <BLANKLINE>
@@ -1228,7 +1242,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
             sage: print(DTR._failure_header(doctests[0], ex, message='Hello there!'))
             **********************************************************************
-            File ".../sage/doctest/forker.py", line 11, in sage.doctest.forker
+            File ".../sage/doctest/forker.py", line 12, in sage.doctest.forker
             Hello there!
                 doctest_var = 42; doctest_var^2
             <BLANKLINE>
@@ -1314,13 +1328,14 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
             sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os
-            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=True, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=True, sage_options=DD,
+            ....:           optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
             sage: FDS = FileDocTestSource(filename,DD)
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
             sage: DTR.report_start(sys.stdout.write, doctests[0], ex)
-            Trying (line 11):    doctest_var = 42; doctest_var^2
+            Trying (line 12):    doctest_var = 42; doctest_var^2
             Expecting:
                 1764
         """
@@ -1368,7 +1383,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: from sage.misc.timing import walltime
             sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os
-            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=True, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=True, sage_options=DD,
+            ....:                         optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
             sage: FDS = FileDocTestSource(filename,DD)
             sage: doctests, extras = FDS.create_doctests(globals())
@@ -1409,7 +1425,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
             sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os
-            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=True, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=True, sage_options=DD,
+            ....:                         optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
             sage: FDS = FileDocTestSource(filename,DD)
             sage: doctests, extras = FDS.create_doctests(globals())
@@ -1417,7 +1434,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: DTR.no_failure_yet = True
             sage: DTR.report_failure(sys.stdout.write, doctests[0], ex, 'BAD ANSWER\n', {})
             **********************************************************************
-            File ".../sage/doctest/forker.py", line 11, in sage.doctest.forker
+            File ".../sage/doctest/forker.py", line 12, in sage.doctest.forker
             Failed example:
                 doctest_var = 42; doctest_var^2
             Expected:
@@ -1428,6 +1445,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         If debugging is turned on this function starts an IPython
         prompt when a test returns an incorrect answer::
 
+            sage: # needs sage.symbolic (actually sage.all)
             sage: sage0.quit()
             sage: _ = sage0.eval("import doctest, sys, os, multiprocessing, subprocess")
             sage: _ = sage0.eval("from sage.doctest.parsing import SageOutputChecker")
@@ -1499,7 +1517,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
                 except KeyboardInterrupt:
                     # Assume this is a *real* interrupt. We need to
                     # escalate this to the master doctesting process.
-                    if not self.options.serial:
+                    if not self.options.serial and _multiprocessing:
                         os.kill(os.getppid(), signal.SIGINT)
                     raise
                 finally:
@@ -1543,15 +1561,17 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: from sage.misc.timing import walltime
             sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os
-            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=True, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=True, sage_options=DD,
+            ....:           optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
             sage: FDS = FileDocTestSource(filename,DD)
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
             sage: ex.walltime = 1.23
-            sage: DTR.report_overtime(sys.stdout.write, doctests[0], ex, 'BAD ANSWER\n', check_duration=2.34)
+            sage: DTR.report_overtime(sys.stdout.write, doctests[0], ex, 'BAD ANSWER\n',
+            ....:                     check_duration=2.34)
             **********************************************************************
-            File ".../sage/doctest/forker.py", line 11, in sage.doctest.forker
+            File ".../sage/doctest/forker.py", line 12, in sage.doctest.forker
             Warning, slow doctest:
                 doctest_var = 42; doctest_var^2
             Test ran for 1.23 s, check ran for 2.34 s
@@ -1584,6 +1604,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic (actually sage.all)
             sage: sage0.quit()
             sage: _ = sage0.eval("import doctest, sys, os, multiprocessing, subprocess")
             sage: _ = sage0.eval("from sage.doctest.parsing import SageOutputChecker")
@@ -1638,7 +1659,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
                 except KeyboardInterrupt:
                     # Assume this is a *real* interrupt. We need to
                     # escalate this to the master doctesting process.
-                    if not self.options.serial:
+                    if not self.options.serial and _multiprocessing:
                         os.kill(os.getppid(), signal.SIGINT)
                     raise
                 finally:
@@ -1671,7 +1692,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
             sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os
-            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD,
+            ....:           optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
             sage: FDS = FileDocTestSource(filename,DD)
             sage: doctests, extras = FDS.create_doctests(globals())
@@ -1680,11 +1702,12 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: DTR.run(doctests[0])
             TestResults(failed=0, attempted=4)
             sage: T.stop().annotate(DTR)
-            sage: D = DictAsObject({'cputime':[],'walltime':[],'err':None})
+            sage: D = DictAsObject({'cputime': [], 'walltime': [], 'err': None})
             sage: DTR.update_results(D)
             0
             sage: sorted(list(D.items()))
-            [('cputime', [...]), ('err', None), ('failures', 0), ('tests', 4), ('walltime', [...]), ('walltime_skips', 0)]
+            [('cputime', [...]), ('err', None), ('failures', 0),
+             ('tests', 4), ('walltime', [...]), ('walltime_skips', 0)]
         """
         for key in ["cputime", "walltime"]:
             if key not in D:
@@ -2129,6 +2152,7 @@ class DocTestDispatcher(SageObject):
 
         EXAMPLES::
 
+            sage: # needs sage.modules
             sage: from sage.doctest.control import DocTestController, DocTestDefaults
             sage: from sage.doctest.forker import DocTestDispatcher
             sage: from sage.doctest.reporting import DocTestReporter
@@ -2150,13 +2174,13 @@ class DocTestDispatcher(SageObject):
             sage -t .../sage/rings/big_oh.py
                 [... tests, ... s]
         """
-        if self.controller.options.serial:
+        if self.controller.options.serial or not _multiprocessing:
             self.serial_dispatch()
         else:
             self.parallel_dispatch()
 
 
-class DocTestWorker(multiprocessing.Process):
+class DocTestWorker(Process):
     """
     The DocTestWorker process runs one :class:`DocTestTask` for a given
     source. It returns messages about doctest failures (or all tests if
@@ -2220,7 +2244,7 @@ class DocTestWorker(multiprocessing.Process):
                 cumulative wall time: ... seconds
             Features detected...
         """
-        multiprocessing.Process.__init__(self)
+        Process.__init__(self)
 
         self.source = source
         self.options = options

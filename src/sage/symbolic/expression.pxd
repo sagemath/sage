@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 cpdef _repr_Expression(x) noexcept
 cpdef _latex_Expression(x) noexcept
 cpdef new_Expression(parent, x) noexcept

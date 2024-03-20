@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-pari
+
 from cypari2.types cimport GEN
 from cypari2.gen cimport Gen
 from sage.libs.gmp.types cimport mpz_t, mpq_t, mpz_ptr, mpq_ptr

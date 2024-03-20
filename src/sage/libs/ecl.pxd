@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 # distutils: extra_compile_args = ECL_CFLAGS
 # distutils: include_dirs = ECL_INCDIR
 # distutils: libraries = ECL_LIBRARIES

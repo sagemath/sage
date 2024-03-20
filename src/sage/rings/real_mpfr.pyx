@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-modules
+
 r"""
 Arbitrary Precision Real Numbers
 
@@ -140,7 +142,7 @@ from sage.ext.stdsage cimport PY_NEW
 from sage.libs.gmp.mpz cimport *
 from sage.libs.gmp.pylong cimport mpz_set_pylong
 from sage.libs.mpfr cimport *
-from sage.libs.mpmath.utils cimport mpfr_to_mpfval
+from sage.libs.mpmath.sage_utils cimport mpfr_to_mpfval
 from sage.misc.randstate cimport randstate, current_randstate
 from sage.misc.superseded import deprecation_cython as deprecation
 
@@ -150,8 +152,6 @@ from sage.structure.element cimport have_same_parent
 from sage.structure.richcmp cimport rich_to_bool_sgn
 cdef bin_op
 from sage.structure.element import bin_op
-
-from sage.libs.mpmath.utils cimport mpfr_to_mpfval
 
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
@@ -1641,7 +1641,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             ....:     for rnd_dir in ('RNDN', 'RNDD', 'RNDU', 'RNDZ'):
             ....:         fld = RealField(prec, rnd=rnd_dir)
             ....:         var = polygen(fld)
-            ....:         for v in [NaN, -infinity, -20, -e, 0, 1, 2^500, -2^4000, -2^-500, 2^-4000] + [fld.random_element() for _ in range(5)]:
+            ....:         for v in values + [fld.random_element() for _ in range(5)]:
             ....:             for preparse in (True, False, None):
             ....:                 _ = sage_input(fld(v), verify=True, preparse=preparse)
             ....:                 _ = sage_input(fld(v) * var, verify=True, preparse=preparse)
@@ -4295,7 +4295,9 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: (1/2)^2.0
             0.250000000000000
             sage: [n^(1.5) for n in range(10)]
-            [0.000000000000000, 1.00000000000000, 2.82842712474619, 5.19615242270663, 8.00000000000000, 11.1803398874989, 14.6969384566991, 18.5202591774521, 22.6274169979695, 27.0000000000000]
+            [0.000000000000000, 1.00000000000000, 2.82842712474619, 5.19615242270663,
+             8.00000000000000, 11.1803398874989, 14.6969384566991, 18.5202591774521,
+             22.6274169979695, 27.0000000000000]
             sage: int(-2)^(0.333333)
             0.629961522017056 + 1.09112272417509*I
             sage: int(0)^(1.0)
@@ -5245,8 +5247,8 @@ cdef class RealNumber(sage.structure.element.RingElement):
             if parent._prec > SIG_PREC_THRESHOLD:
                 sig_off()
             return x
-        from sage.libs.mpmath.utils import call
-        from mpmath import loggamma
+        from sage.libs.mpmath.sage_utils import call
+        from sage.libs.mpmath.all import loggamma
         return call(loggamma, mpfr_to_mpfval(self.value), parent=parent)
 
     def zeta(self):

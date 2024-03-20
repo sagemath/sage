@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Reconstruction of Algebraic Forms
 

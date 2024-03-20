@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Timing functions
 """
@@ -17,7 +18,6 @@ Timing functions
 # ****************************************************************************
 
 
-import resource
 import time
 
 
@@ -73,6 +73,12 @@ def cputime(t=0, subprocesses=False):
         CPU time is reported correctly because subprocesses can be
         started and terminated at any given time.
     """
+    try:
+        import resource
+    except ImportError:
+        # The module 'resource' is removed in Pyodide to browser limitations.
+        return walltime(t)
+
     if isinstance(t, GlobalCputime):
         subprocesses = True
 
@@ -138,7 +144,7 @@ class GlobalCputime:
         sage: t = cputime(subprocesses=True)
         sage: P = PolynomialRing(QQ,7,'x')
         sage: I = sage.rings.ideal.Katsura(P)                                           # needs sage.libs.singular
-        sage: gb = I.groebner_basis() # calls Singular                                  # needs sage.libs.singular
+        sage: gb = I.groebner_basis()  # calls Singular                                 # needs sage.libs.singular
         sage: cputime(subprocesses=True) - t    # output random
         0.462987
 
@@ -184,7 +190,7 @@ class GlobalCputime:
             sage: t = cputime(subprocesses=True)
             sage: P = PolynomialRing(QQ,7,'x')
             sage: I = sage.rings.ideal.Katsura(P)                                       # needs sage.libs.singular
-            sage: gb = I.groebner_basis() # calls Singular                              # needs sage.libs.singular
+            sage: gb = I.groebner_basis()  # calls Singular                             # needs sage.libs.singular
             sage: cputime(subprocesses=True) + t # output random
             2.798708
         """
@@ -200,7 +206,7 @@ class GlobalCputime:
             sage: t = cputime(subprocesses=True)
             sage: P = PolynomialRing(QQ,7,'x')
             sage: I = sage.rings.ideal.Katsura(P)                                       # needs sage.libs.singular
-            sage: gb = I.groebner_basis() # calls Singular                              # needs sage.libs.singular
+            sage: gb = I.groebner_basis()  # calls Singular                             # needs sage.libs.singular
             sage: cputime(subprocesses=True) - t # output random
             0.462987
         """

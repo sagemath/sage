@@ -1,4 +1,5 @@
-# sage.doctest: optional - sage.modules sage.rings.finite_rings
+# sage_setup: distribution = sagemath-modules
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Extended code
 
@@ -397,6 +398,7 @@ class ExtendedCodeOriginalCodeDecoder(Decoder):
 
         Another example, with a list decoder::
 
+            sage: # needs sage.symbolic
             sage: C = codes.GeneralizedReedSolomonCode(GF(16, 'a').list()[:15], 7)
             sage: Ce = codes.ExtendedCode(C)
             sage: Dgrs = C.decoder('GuruswamiSudan', tau=4)

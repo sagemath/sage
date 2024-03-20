@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 r"""
 Support for internal use of number fields in backends for polyhedral computations
 """

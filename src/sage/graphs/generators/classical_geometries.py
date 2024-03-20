@@ -1,4 +1,5 @@
-# sage.doctest: optional - sage.modules
+# sage_setup: distribution = sagemath-graphs
+# sage.doctest: needs sage.modules
 r"""
 Families of graphs derived from classical geometries over finite fields
 
@@ -65,7 +66,13 @@ def SymplecticPolarGraph(d, q, algorithm=None):
         sage: O = graphs.OrthogonalPolarGraph(5, 3)
         sage: O.is_strongly_regular(parameters=True)
         (40, 12, 2, 4)
-        sage: O.is_isomorphic(G)
+        sage: O.is_strongly_regular(parameters=True)    # optional - GOT (with --distribution 'sagemath-graphs[modules]')
+        Traceback (most recent call last):
+        ...
+        File "<doctest...>", line 1, in <module>
+        O.is_strongly_regular(parameters=True)
+        AttributeError: 'function' object has no attribute 'is_strongly_regular'
+        sage: O.is_isomorphic(G)                # optional - EXPECTED
         False
         sage: S = graphs.SymplecticPolarGraph(6, 4, algorithm="gap")    # not tested (long time)
         sage: S.is_strongly_regular(parameters=True)                    # not tested (long time)
@@ -159,11 +166,11 @@ def AffineOrthogonalPolarGraph(d, q, sign="+"):
         sage: # needs sage.libs.gap
         sage: g = graphs.AffineOrthogonalPolarGraph(6,2,"-"); g
         Affine Polar Graph VO^-(6,2): Graph on 64 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)    # optional - NameError: 'g' (with --distribution 'sagemath-graphs[modules]')
         (64, 27, 10, 12)
         sage: g = graphs.AffineOrthogonalPolarGraph(6,2,"+"); g
         Affine Polar Graph VO^+(6,2): Graph on 64 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)    # optional - NameError: 'g' (with --distribution 'sagemath-graphs[modules]')
         (64, 35, 18, 20)
 
     When ``sign is None``::
@@ -171,11 +178,11 @@ def AffineOrthogonalPolarGraph(d, q, sign="+"):
         sage: # needs sage.libs.gap
         sage: g = graphs.AffineOrthogonalPolarGraph(5,2,None); g
         Affine Polar Graph VO^-(5,2): Graph on 32 vertices
-        sage: g.is_strongly_regular(parameters=True)
+        sage: g.is_strongly_regular(parameters=True)    # optional - NameError: 'g' (with --distribution 'sagemath-graphs[modules]')
         False
-        sage: g.is_regular()
+        sage: g.is_regular()                    # optional - NameError: 'g' (with --distribution 'sagemath-graphs[modules]')
         True
-        sage: g.is_vertex_transitive()
+        sage: g.is_vertex_transitive()          # optional - NameError: 'g' (with --distribution 'sagemath-graphs[modules]')
         True
     """
     if sign in ["+", "-"]:

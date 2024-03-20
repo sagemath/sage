@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-combinat
+# sage.doctest: needs sage.groups
 """
 Hecke Monoids
 """

@@ -1,4 +1,5 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-graphs
+# sage.doctest: needs sage.modules
 """
 Examples of Sandpile
 
