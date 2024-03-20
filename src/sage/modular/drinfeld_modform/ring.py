@@ -483,10 +483,12 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
                                  f"(={self.rank()})")
             return self._generator_coefficient_form(i)
         try:
-            a = self._base_ring(a)
+            K = self._base_ring
+            T = K.gen()
+            a = K(a)
         except TypeError:
             raise TypeError("a should be an element of the base ring")
-        if not a.denominator().is_one():
+        if a.valuation(T) < 0:
             raise ValueError("a should be in the ring of regular functions")
         a = a.numerator()
         if i < 1 or i > a.degree()*self.rank():
@@ -528,16 +530,33 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
              g1^36*g2 + g1^28*g2^3 + g1^4*g2^9 + (T^81 + T^9 + T)*g2^10,
              g1^81*g2^10 + g1^9*g2^28 + g1*g2^30,
              g2^91]
+
+        TESTS::
+
+            sage: q = 3
+            sage: A = GF(q)['T']
+            sage: K.<T> = Frac(A)
+            sage: M = DrinfeldModularForms(K, 2)
+            sage: M.coefficient_forms(1/T)
+            Traceback (most recent call last):
+            ...
+            ValueError: a should be in the ring of regular functions
+            sage: M.coefficient_forms(x)
+            Traceback (most recent call last):
+            ...
+            TypeError: a should be an element of the base ring
         """
+        K = self._base_ring
+        T = K.gen()
         if a is None:
-            return [self._generator_coefficient_form(i) for i in range(1, self.rank() + 1)]
+            return [self._generator_coefficient_form(i)
+                    for i in range(1, self.rank() + 1)]
         try:
-            a = self._base_ring(a)
+            a = K(a)
         except TypeError:
-            raise TypeError("the input should be an element of the base ring")
-        if not a.denominator().is_one():
-            raise ValueError("the input should be in the ring of regular"
-                             " functions")
+            raise TypeError("a should be an element of the base ring")
+        if a.valuation(T) < 0:
+            raise ValueError("a should be in the ring of regular functions")
         return self._coefficient_forms(a)
 
     def gen(self, n):
