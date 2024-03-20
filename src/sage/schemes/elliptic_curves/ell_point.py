@@ -794,7 +794,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         x3 = -x1 - x2 - a2 + m*(m+a1)
         y3 = -y1 - a3 - a1*x3 + m*(x1-x3)
         # See trac #4820 for why we need to coerce 1 into the base ring here:
-        return E.point([x3, y3, E.base_ring()(1)], check=False)
+        return E.point([x3, y3, E.base_ring().one()], check=False)
 
     def _sub_(self, right):
         """
@@ -839,7 +839,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             return self
         E, x, y = self.curve(), self[0], self[1]
         # See trac #4820 for why we need to coerce 1 into the base ring here:
-        return E.point([x, -y - E.a1()*x - E.a3(), E.base_ring()(1)], check=False)
+        return E.point([x, -y - E.a1()*x - E.a3(), E.base_ring().one()], check=False)
 
     def xy(self):
         """

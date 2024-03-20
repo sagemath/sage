@@ -1668,7 +1668,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             l = L.index(max(L))
             newP = copy(PK)
             #normalize PK
-            newP.scale_by([1/PK[0][i],1])
+            newP.scale_by([~PK[0][i], ZZ.one()])
 
             #Find B and A, helper values for the local height
             if PK[1][j].abs() <= PK[1][l].abs():
@@ -1679,7 +1679,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
             #Normalize Q
             newQ = copy(Q)
-            newQ.scale_by([1,1/Q[1][l]])
+            newQ.scale_by([ZZ.one(), ~Q[1][l]])
 
             if PK[0][i].abs() <= PK[0][k].abs():
                 A = Ry(W.Gpoly(0, k))(tuple(newQ[1]))*PK[0][i]/PK[0][k]
@@ -1691,7 +1691,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
             i = k
             j = l
-            newQ.scale_by([1/Q[0][k], 1])
+            newQ.scale_by([~Q[0][k], ZZ.one()])
             PK = newQ
         return local_height
 
@@ -1763,7 +1763,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             k = L.index(max(L))
             #Normalize the point
             newP = copy(PK)
-            newP.scale_by([1, 1/PK[1][i]])
+            newP.scale_by([ZZ.one(), ~PK[1][i]])
             #Find A and B, helper functions for computing local height
             if PK[0][j].abs() <= PK[0][l].abs():
                 B = Ry(W.Gpoly(0, l))(tuple(newP[1]))*PK[0][j]/PK[0][l]
@@ -1773,7 +1773,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
 
             #Normalize Q
             newQ = copy(Q)
-            newQ.scale_by([1/Q[0][l], 1])
+            newQ.scale_by([~Q[0][l], ZZ.one()])
 
             if PK[1][i].abs() <= PK[1][k].abs():
                 A = Rx(W.Gpoly(1, k))(tuple(newQ[0]))*PK[1][i]/PK[1][k]
@@ -1785,7 +1785,7 @@ class WehlerK3Surface_ring(AlgebraicScheme_subscheme_product_projective):
             local_height += beta**(-2*R(e)-1)*R(A.abs()).log() + beta**(-2*R(e))*R(B.abs()).log()
             i = k
             j = l
-            newQ.scale_by([1, 1/Q[1][k]])
+            newQ.scale_by([ZZ.one(), ~Q[1][k]])
             PK = newQ
         return local_height
 
