@@ -438,6 +438,7 @@ graph, in which all the edges have a capacity of 1::
     :align: center
 
 .. _solvers_backends:
+
 Solvers (backends)
 ------------------
 
