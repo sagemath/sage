@@ -74,7 +74,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             sage: e = SymmetricFunctions(QQ).e()
             sage: f = e.dual_basis(prefix = "m", basis_name="Forgotten symmetric functions"); f
             Symmetric Functions over Rational Field in the Forgotten symmetric functions basis
-            sage: TestSuite(f).run(elements = [f[1,1]+2*f[2], f[1]+3*f[1,1]])
+            sage: TestSuite(f).run(skip='_test_construction', elements = [f[1,1]+2*f[2], f[1]+3*f[1,1]])
             sage: TestSuite(f).run() # long time (11s on sage.math, 2011)
 
         This class defines canonical coercions between ``self`` and
@@ -156,6 +156,9 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
         category = sage.categories.all.ModulesWithBasis(self.base_ring())
         self.register_coercion(SetMorphism(Hom(self._dual_basis, self, category), self._dual_to_self))
         self._dual_basis.register_coercion(SetMorphism(Hom(self, self._dual_basis, category), self._self_to_dual))
+
+    def construction(self):
+        raise NotImplementedError
 
     def _dual_to_self(self, x):
         """

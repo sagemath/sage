@@ -407,6 +407,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
             sage: TestSuite(w).run(skip=['_test_associativity', '_test_distributivity', '_test_prod'])
             sage: TestSuite(w).run(elements = [w[1,1]+w[2], w[1]+2*w[1,1]])
         """
+        self._descriptor = (("w",),)
         self._coerce_h = coerce_h
         self._coerce_e = coerce_e
         self._coerce_p = coerce_p

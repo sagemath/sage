@@ -224,6 +224,7 @@ class induced_trivial_character_basis(generic_character):
         SFA_generic.__init__(self, Sym,
                              basis_name="induced trivial symmetric group character",
                              prefix=pfix, graded=False)
+        self._descriptor = (("ht",),)
         self._other = Sym.complete()
         self._p = Sym.powersum()
 
@@ -451,6 +452,7 @@ class irreducible_character_basis(generic_character):
         SFA_generic.__init__(self, Sym,
                              basis_name="irreducible symmetric group character",
                              prefix=pfix, graded=False)
+        self._descriptor = (("st",),)
         self._other = Sym.Schur()
         self._p = Sym.powersum()
 

@@ -50,8 +50,11 @@ m_to_p_cache = {}
 
 
 class Jack(UniqueRepresentation):
+    @staticmethod
+    def __classcall__(cls, Sym, t='t'):
+        return super().__classcall__(cls, Sym, Sym.base_ring()(t))
 
-    def __init__(self, Sym, t='t'):
+    def __init__(self, Sym, t):
         r"""
         The family of Jack symmetric functions including the `P`, `Q`, `J`, `Qp`
         bases.  The default parameter is ``t``.
@@ -70,7 +73,7 @@ class Jack(UniqueRepresentation):
             Jack polynomials with t=1 over Rational Field
         """
         self._sym = Sym
-        self.t = Sym.base_ring()(t)
+        self.t = t
         self._name_suffix = ""
         if str(t) != 't':
             self._name_suffix += " with t=%s" % t
@@ -874,6 +877,7 @@ class JackPolynomials_p(JackPolynomials_generic):
         self._m_to_self_cache = m_to_p_cache
         self._self_to_m_cache = p_to_m_cache
         JackPolynomials_generic.__init__(self, jack)
+        self._descriptor = (("jack", {"t": self.t}), ("P",))
 
     def _m_cache(self, n):
         r"""
@@ -1076,6 +1080,7 @@ class JackPolynomials_j(JackPolynomials_generic):
         self._name = "Jack polynomials in the J basis"
         self._prefix = "JackJ"
         JackPolynomials_generic.__init__(self, jack)
+        self._descriptor = (("jack", {"t": self.t}), ("J",))
 
         # Should be shared with _q (and possibly other bases in Macdo/HL) as BasesByRenormalization
         self._P = self._jack.P()
@@ -1112,6 +1117,7 @@ class JackPolynomials_q(JackPolynomials_generic):
         self._name = "Jack polynomials in the Q basis"
         self._prefix = "JackQ"
         JackPolynomials_generic.__init__(self, jack)
+        self._descriptor = (("jack", {"t": self.t}), ("Q",))
 
         # Should be shared with _j (and possibly other bases in Macdo/HL) as BasesByRenormalization
         self._P = self._jack.P()
@@ -1150,6 +1156,7 @@ class JackPolynomials_qp(JackPolynomials_generic):
         self._name = "Jack polynomials in the Qp basis"
         self._prefix = "JackQp"
         JackPolynomials_generic.__init__(self, jack)
+        self._descriptor = (("jack", {"t": self.t}), ("Qp",))
         self._P = self._jack.P()
         self._self_to_h_cache = qp_to_h_cache
         self._h_to_self_cache = h_to_qp_cache
@@ -1354,6 +1361,7 @@ class SymmetricFunctionAlgebra_zonal(sfa.SymmetricFunctionAlgebra_generic):
         #self._self_to_m_cache = {} and we don't need to compute it separately for zonals
         sfa.SymmetricFunctionAlgebra_generic.__init__(self, self._sym,
                                                       prefix="Z", basis_name="zonal")
+        self._descriptor = (("zonal",),)
         category = sage.categories.all.ModulesWithBasis(self._sym.base_ring())
         self   .register_coercion(SetMorphism(Hom(self._P, self, category), self.sum_of_terms))
         self._P.register_coercion(SetMorphism(Hom(self, self._P, category), self._P.sum_of_terms))

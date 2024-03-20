@@ -121,8 +121,11 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
     - [Ram1991]_
     - [RR1997]_
     """
+    @staticmethod
+    def __classcall__(cls, Sym, q='q'):
+        return super().__classcall__(cls, Sym, Sym.base_ring()(q))
 
-    def __init__(self, sym, q='q'):
+    def __init__(self, sym, q):
         r"""
         Initialize ``self``.
 
@@ -156,10 +159,11 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
             ....:     for mu in Partitions(n))
             True
         """
-        self.q = sym.base_ring()(q)
+        self.q = q
         SymmetricFunctionAlgebra_multiplicative.__init__(self, sym,
             basis_name="Hecke character with q={}".format(self.q),
             prefix="qbar")
+        self._descriptor = (("qbar", {"q": self.q}),)
         self._p = sym.power()
 
         # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
