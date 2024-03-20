@@ -53,7 +53,7 @@ cdef class Polynomial_GF2X(Polynomial_template):
             sage: x^3 + x^2 + 1
             x^3 + x^2 + 1
 
-        We check that the bug noted at :trac:`12724` is fixed::
+        We check that the bug noted at :issue:`12724` is fixed::
 
             sage: R.<x> = Zmod(2)[]
             sage: R([2^80])

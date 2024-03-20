@@ -231,7 +231,7 @@ cdef class EmbeddedNumberFieldMorphism(NumberFieldEmbedding):
             'Number Field in a with defining polynomial x^3 + 2 with a = -1.259921049894873?' and
             'Number Field in a with defining polynomial x^3 + 2 with a = 0.6299605249474365? + 1.091123635971722?*I'
 
-        The following was fixed to raise a ``TypeError`` in :trac:`15331`::
+        The following was fixed to raise a ``TypeError`` in :issue:`15331`::
 
             sage: L.<i> = NumberField(x^2 + 1)
             sage: K = NumberField(L(i/2+3).minpoly(), names=('i0',), embedding=L(i/2+3))
@@ -598,7 +598,7 @@ cdef class CyclotomicFieldEmbedding(NumberFieldEmbedding):
             ...
             TypeError: The zeta_order of the new field must be a multiple of the zeta_order of the original.
 
-        Check that :trac:`13765` is fixed::
+        Check that :issue:`13765` is fixed::
 
             sage: z3=(CC(-1)^(1/3))^2
             sage: Ka.<a>=CyclotomicField(3,embedding=z3)
@@ -732,7 +732,7 @@ cdef class CyclotomicFieldConversion(Map):
         ...
         ValueError: Element z1 has no image in the codomain
 
-    Tests from :trac:`29511`::
+    Tests from :issue:`29511`::
 
         sage: K.<z> = CyclotomicField(12)
         sage: K1.<z1> = CyclotomicField(3)

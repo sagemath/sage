@@ -23,7 +23,7 @@ We test coercions::
     Singular
 
 Test that write errors to stderr are handled gracefully by GAP
-(see :trac:`13211`) and other interfaces::
+(see :issue:`13211`) and other interfaces::
 
     sage: import subprocess
     sage: try:

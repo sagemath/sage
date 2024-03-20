@@ -68,7 +68,7 @@ class QuotientFields(Category_singleton):
 
             AUTHOR:
 
-            - Simon King (2011-02): See :trac:`10771`
+            - Simon King (2011-02): See :issue:`10771`
 
             EXAMPLES::
 
@@ -162,7 +162,7 @@ class QuotientFields(Category_singleton):
 
             AUTHOR:
 
-            - Simon King (2011-02): See :trac:`10771`
+            - Simon King (2011-02): See :issue:`10771`
 
             EXAMPLES::
 
@@ -221,7 +221,7 @@ class QuotientFields(Category_singleton):
                 0
 
             Check that it is possible to take lcm of a rational and an integer
-            (:trac:`17852`)::
+            (:issue:`17852`)::
 
                 sage: (1/2).lcm(2)
                 2
@@ -355,7 +355,7 @@ class QuotientFields(Category_singleton):
                 sage: f.factor()                                                        # needs sage.libs.pari
                 (x - 3)^-1 * x * (x^2 + 1)
 
-            Here is an example to show that :trac:`7868` has been resolved::
+            Here is an example to show that :issue:`7868` has been resolved::
 
                 sage: R.<x,y> = GF(2)[]
                 sage: f = x*y/(x+y)
@@ -481,7 +481,7 @@ class QuotientFields(Category_singleton):
                 sage: whole + sum(parts) == q                                           # needs sage.libs.pari
                 True
 
-            And also over finite fields (see :trac:`6052`, :trac:`9945`)::
+            And also over finite fields (see :issue:`6052`, :issue:`9945`)::
 
                 sage: R.<x> = GF(2)[]
                 sage: q = (x+1)/(x^3+x+1)
@@ -533,7 +533,7 @@ class QuotientFields(Category_singleton):
                 sage: (1/x+1/x^3).partial_fraction_decomposition()                      # needs sage.libs.pari
                 (0, [1/x, 1/x^3])
 
-            This was fixed in :trac:`16240`::
+            This was fixed in :issue:`16240`::
 
                 sage: # needs sage.libs.pari
                 sage: R.<x> = QQ['x']
