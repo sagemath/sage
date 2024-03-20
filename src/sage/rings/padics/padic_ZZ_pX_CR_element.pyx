@@ -268,13 +268,13 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
         TESTS:
 
-        Check that :trac:`3865` is fixed::
+        Check that :issue:`3865` is fixed::
 
             sage: W(gp('3 + O(5^10)'))
             3 + O(w^3125)
 
 
-        Check that :trac:`13612` has been fixed::
+        Check that :issue:`13612` has been fixed::
 
             sage: R = Zp(3)
             sage: S.<a> = R[]
@@ -1889,7 +1889,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
         TESTS:
 
-            We define ``0^0`` to be unity, :trac:`13786`::
+            We define ``0^0`` to be unity, :issue:`13786`::
 
             sage: R = Zp(5,5)
             sage: S.<x> = R[]
@@ -2774,7 +2774,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
         TESTS:
 
-        We check that :trac:`24949` is fixed::
+        We check that :issue:`24949` is fixed::
 
             sage: R = Zp(2)
             sage: S.<x> = R[]
@@ -2851,7 +2851,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
         TESTS:
 
-        Check that :trac:`13617` has been fixed::
+        Check that :issue:`13617` has been fixed::
 
             sage: W.zero().matrix_mod_pn()
             [0 0 0 0 0]
@@ -3050,7 +3050,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
         TESTS:
 
-        We check that :trac:`8239` is resolved::
+        We check that :issue:`8239` is resolved::
 
             sage: K.<a> = Qq(25)
             sage: K.teichmuller(K(2/5))
@@ -3191,7 +3191,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 
         TESTS:
 
-        We check that :trac:`13616` is resolved::
+        We check that :issue:`13616` is resolved::
 
             sage: z = (1+w)^5
             sage: y = z - 1

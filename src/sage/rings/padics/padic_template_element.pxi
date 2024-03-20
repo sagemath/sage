@@ -516,7 +516,7 @@ cdef class pAdicTemplateElement(pAdicGenericElement):
 
         TESTS:
 
-        Check to see that :trac:`10292` is resolved::
+        Check to see that :issue:`10292` is resolved::
 
             sage: # needs sage.schemes
             sage: E = EllipticCurve('37a')

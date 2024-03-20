@@ -132,13 +132,13 @@ class ClassicalMatrixLieAlgebra(MatrixLieAlgebraFromAssociative):
 
         TESTS:
 
-        Check that :trac:`23266` is fixed::
+        Check that :issue:`23266` is fixed::
 
             sage: sl2 = lie_algebras.sl(QQ, 2, 'matrix')
             sage: isinstance(sl2.indices(), FiniteEnumeratedSet)
             True
 
-        Check that elements are hashable (see :trac:`28961`)::
+        Check that elements are hashable (see :issue:`28961`)::
 
             sage: sl2 = lie_algebras.sl(QQ, 2, 'matrix')
             sage: e,f,h = list(sl2.basis())
@@ -432,7 +432,7 @@ class gl(MatrixLieAlgebraFromAssociative):
 
         TESTS:
 
-        Check that :trac:`23266` is fixed::
+        Check that :issue:`23266` is fixed::
 
             sage: gl2 = lie_algebras.gl(QQ, 2)
             sage: isinstance(gl2.basis().keys(), FiniteEnumeratedSet)

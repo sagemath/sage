@@ -474,7 +474,7 @@ def Fan(cones, rays=None, lattice=None, check=True, normalize=True,
         0
 
     In the following examples, we test the ``allow_arrangement=True`` option.
-    See :trac:`25122`.
+    See :issue:`25122`.
 
     The intersection of the two cones is not a face of each. Therefore,
     they do not belong to the same rational polyhedral fan::
@@ -1097,7 +1097,7 @@ class Cone_of_fan(ConvexRationalPolyhedralCone):
         TESTS:
 
         A mistake in this function used to cause the problem reported in
-        :trac:`9782`. We check that now everything is working smoothly::
+        :issue:`9782`. We check that now everything is working smoothly::
 
             sage: f = Fan([(0, 2, 4),
             ....:          (0, 4, 5),
@@ -1413,7 +1413,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
         These 5 elements are: 1 origin, 2 rays, 1 generating cone, 1 fan.
 
         A subcase of this common case is treatment of fans consisting of the
-        origin only, which used to be handled incorrectly :trac:`18613`::
+        origin only, which used to be handled incorrectly :issue:`18613`::
 
             sage: fan = Fan([Cone([], ToricLattice(0))])
             sage: list(fan.cone_lattice())
@@ -1902,7 +1902,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             (1, 2)
 
         We make sure that this function constructs cones with ordered ambient
-        ray indices (see :trac:`9812`)::
+        ray indices (see :issue:`9812`)::
 
             sage: C = Cone([(1,0,0), (0,1,0), (1,0,1), (0,1,1)])
             sage: F = Fan([C]).make_simplicial()
@@ -3044,7 +3044,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
 
         TESTS:
 
-        We check that :trac:`11902` is fixed::
+        We check that :issue:`11902` is fixed::
 
             sage: fan = toric_varieties.P2().fan()                                      # needs palp
             sage: fan.subdivide(new_rays=[(0,0)])                                       # needs palp
@@ -3129,7 +3129,7 @@ class RationalPolyhedralFan(IntegralRayCollection, Callable, Container):
             N(1, 0, 0, 0)
             in 4-d lattice N
 
-        Make sure that :trac:`16344` is fixed and one can compute
+        Make sure that :issue:`16344` is fixed and one can compute
         the virtual rays of fans in non-saturated lattices::
 
             sage: N = ToricLattice(1)

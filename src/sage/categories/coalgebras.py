@@ -224,7 +224,7 @@ class Coalgebras(Category_over_base_ring):
             .. WARNING::
 
                 This is only correct in certain cases (finite dimension, ...).
-                See :trac:`15647`.
+                See :issue:`15647`.
             """
             from sage.categories.algebras import Algebras
             return [Algebras(self.base_category().base_ring())]

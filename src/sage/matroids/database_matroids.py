@@ -1870,7 +1870,7 @@ def Uniform(r, n):
         sage: M.is_valid()
         True
 
-    Check that bug :trac:`15292` was fixed::
+    Check that bug :issue:`15292` was fixed::
 
         sage: M = matroids.Uniform(4,4)
         sage: len(M.circuit_closures())

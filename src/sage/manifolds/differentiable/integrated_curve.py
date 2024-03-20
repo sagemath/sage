@@ -417,7 +417,7 @@ class IntegratedCurve(DifferentiableCurve):
              manifold M
             sage: TestSuite(c).run()
 
-        Check that :trac:`28669` is fixed::
+        Check that :issue:`28669` is fixed::
 
             sage: E.<r,phi> = EuclideanSpace(coordinates='polar')
             sage: p = E((1, 0))  # the initial point

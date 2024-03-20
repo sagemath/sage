@@ -116,7 +116,7 @@ class ChainComplexMorphism(Morphism):
                 [0 0 0]
                 [0 0 0]}
 
-        Check that the bug in :trac:`13220` has been fixed::
+        Check that the bug in :issue:`13220` has been fixed::
 
             sage: # needs sage.graphs
             sage: X = simplicial_complexes.Simplex(1)
@@ -413,7 +413,7 @@ class ChainComplexMorphism(Morphism):
         TESTS:
 
         Make sure that the product is taken in the correct order
-        (``self * x``, not ``x * self`` -- see :trac:`19065`)::
+        (``self * x``, not ``x * self`` -- see :issue:`19065`)::
 
             sage: C = ChainComplex({0: zero_matrix(ZZ, 0, 2)})
             sage: D = ChainComplex({0: zero_matrix(ZZ, 0, 1)})
@@ -422,7 +422,7 @@ class ChainComplexMorphism(Morphism):
             sage: (f*g).in_degree(0)
             [2]
 
-        Before :trac:`19065`, the following multiplication produced a
+        Before :issue:`19065`, the following multiplication produced a
         :class:`KeyError` because `f` was not explicitly defined in degree 2::
 
             sage: C0 = ChainComplex({0: zero_matrix(ZZ, 0, 1)})

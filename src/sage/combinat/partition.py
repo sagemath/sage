@@ -53,7 +53,7 @@ AUTHORS:
   longer than the length of the inner partition, it would include 0's.
 
 - Andrew Mathas (2012-06-01): Removed deprecated functions and added
-  compatibility with the PartitionTuple classes.  See :trac:`13072`
+  compatibility with the PartitionTuple classes.  See :issue:`13072`
 
 - Travis Scrimshaw (2012-10-12): Added options. Made
   ``Partition_class`` to the element ``Partition``. ``Partitions*`` are now
@@ -1818,7 +1818,7 @@ class Partition(CombinatorialElement):
 
         TESTS:
 
-        We check that :trac:`11435` is fixed::
+        We check that :issue:`11435` is fixed::
 
             sage: Partition([]).down_list() #indirect doctest
             []
@@ -1848,7 +1848,7 @@ class Partition(CombinatorialElement):
             [[2, 2], [3, 1]]
             sage: Partition([3,2,1]).down_list()
             [[2, 2, 1], [3, 1, 1], [3, 2]]
-            sage: Partition([]).down_list()  #checks :trac:`11435`
+            sage: Partition([]).down_list()  #checks :issue:`11435`
             []
         """
         return [p for p in self.down()]
@@ -5588,11 +5588,11 @@ class Partitions(UniqueRepresentation, Parent):
 
     - ``starting=p`` specifies that the partitions should all be less
       than or equal to `p` in lex order. This argument cannot be combined
-      with any other (see :trac:`15467`).
+      with any other (see :issue:`15467`).
 
     - ``ending=p`` specifies that the partitions should all be greater than
       or equal to `p` in lex order. This argument cannot be combined with any
-      other (see :trac:`15467`).
+      other (see :issue:`15467`).
 
     - ``length=k`` specifies that the partitions have
       exactly `k` parts.
@@ -5616,7 +5616,7 @@ class Partitions(UniqueRepresentation, Parent):
     - ``parts_in=S`` specifies that the partitions have parts in the set
       `S`, which can be any sequence of pairwise distinct positive
       integers. This argument cannot be combined with any other
-      (see :trac:`15467`).
+      (see :issue:`15467`).
 
     - ``regular=ell`` specifies that the partitions are `\ell`-regular,
       and can only be combined with the ``max_length`` or ``max_part``, but
@@ -5764,7 +5764,7 @@ class Partitions(UniqueRepresentation, Parent):
         [[6, 5], [6, 4, 1], [6, 3, 2], [5, 4, 2]]
 
     Note that if you specify ``min_part=0``, then it will treat the minimum
-    part as being 1 (see :trac:`13605`)::
+    part as being 1 (see :issue:`13605`)::
 
         sage: [x for x in Partitions(4, length=3, min_part=0)]
         [[2, 1, 1]]
@@ -5822,12 +5822,12 @@ class Partitions(UniqueRepresentation, Parent):
         sage: Partitions(max_part = 3)
         3-Bounded Partitions
 
-    Check that :trac:`14145` has been fixed::
+    Check that :issue:`14145` has been fixed::
 
         sage: 1 in Partitions()
         False
 
-    Check :trac:`15467`::
+    Check :issue:`15467`::
 
         sage: Partitions(5,parts_in=[1,2,3,4], length=4)
         Traceback (most recent call last):
@@ -5851,7 +5851,7 @@ class Partitions(UniqueRepresentation, Parent):
         ValueError: n must be an integer or be equal to one of None, NN, NonNegativeIntegers()
 
     Check that calling ``Partitions`` with ``outer=a`` no longer
-    mutates ``a`` (:trac:`16234`)::
+    mutates ``a`` (:issue:`16234`)::
 
         sage: a = [4,3,2,1,1,1,1]
         sage: for p in Partitions(8, outer=a, min_slope=-1):
@@ -5866,7 +5866,7 @@ class Partitions(UniqueRepresentation, Parent):
         [4, 3, 2, 1, 1, 1, 1]
 
     Check that ``inner`` and ``outer`` indeed accept a partition as
-    argument (:trac:`18423`)::
+    argument (:issue:`18423`)::
 
         sage: P = Partitions(5, inner=Partition([2,1]), outer=Partition([3,2])); P
         Partitions of the integer 5 satisfying constraints inner=[2, 1], outer=[3, 2]
@@ -5892,7 +5892,7 @@ class Partitions(UniqueRepresentation, Parent):
             sage: P is P2
             True
 
-        Check that :trac:`17898` is fixed::
+        Check that :issue:`17898` is fixed::
 
             sage: P = Partitions(5, min_slope=0)
             sage: list(P)
@@ -6452,7 +6452,7 @@ class Partitions_all(Partitions):
             ...
             ValueError: the quotient [[2, 1], [2, 3, 1], [1, 1, 1]] must be a tuple of partitions
 
-        We check that :trac:`11412` is actually fixed::
+        We check that :issue:`11412` is actually fixed::
 
             sage: test = lambda x, k: x == Partition(core=x.core(k),
             ....:                                    quotient=x.quotient(k))
@@ -6765,7 +6765,7 @@ class Partitions_n(Partitions):
             ....:     for Part in map(Partitions, range(10)))
             True
 
-        Check that :trac:`18752` is fixed::
+        Check that :issue:`18752` is fixed::
 
             sage: P = Partitions(5)
             sage: la = P.random_element_uniform()                                       # needs sage.libs.flint
@@ -6841,7 +6841,7 @@ class Partitions_n(Partitions):
             ....:     for Part in map(Partitions, range(10)))
             True
 
-        Check that :trac:`18752` is fixed::
+        Check that :issue:`18752` is fixed::
 
             sage: P = Partitions(5)
             sage: la = P.random_element_plancherel()
@@ -7785,7 +7785,7 @@ class PartitionsInBox(Partitions):
 
         TESTS:
 
-        Check :trac:`10890`::
+        Check :issue:`10890`::
 
             sage: type(PartitionsInBox(0,0)[0])
             <class 'sage.combinat.partition.PartitionsInBox_with_category.element_class'>
@@ -7872,7 +7872,7 @@ class Partitions_with_constraints(IntegerListsLex):
         sage: P = Partitions(6, min_part=2, max_slope=-1)
         sage: TestSuite(P).run()
 
-    Test that :trac:`15525` is fixed::
+    Test that :issue:`15525` is fixed::
 
         sage: loads(dumps(P)) == P
         True
@@ -8044,7 +8044,7 @@ class RegularPartitions_all(RegularPartitions):
             sage: [next(it) for x in range(10)]
             [[], [1], [2], [1, 1], [3], [2, 1], [4], [3, 1], [2, 2], [2, 1, 1]]
 
-        Check that 1-regular partitions works (:trac:`20584`)::
+        Check that 1-regular partitions works (:issue:`20584`)::
 
             sage: P = Partitions(regular=1)
             sage: list(P)
@@ -8134,7 +8134,7 @@ class RegularPartitions_truncated(RegularPartitions):
             sage: [next(it) for x in range(10)]
             [[], [1], [2], [1, 1], [3], [2, 1], [4], [3, 1], [2, 2], [5]]
 
-        Check that 1-regular partitions works (:trac:`20584`)::
+        Check that 1-regular partitions works (:issue:`20584`)::
 
             sage: P = Partitions(regular=1, max_length=2)
             sage: list(P)
@@ -8251,7 +8251,7 @@ class RegularPartitions_bounded(RegularPartitions):
             sage: list(P)
             [[3, 2, 1], [3, 2], [3, 1], [3], [2, 1], [2], [1], []]
 
-        Check that 1-regular partitions works (:trac:`20584`)::
+        Check that 1-regular partitions works (:issue:`20584`)::
 
             sage: P = Partitions(regular=1, max_part=3)
             sage: list(P)
@@ -8995,7 +8995,7 @@ def number_of_partitions(n, algorithm='default'):
     parts.
 
     The options of :meth:`number_of_partitions()` are being deprecated
-    :trac:`13072` in favour of :meth:`Partitions_n.cardinality()` so that
+    :issue:`13072` in favour of :meth:`Partitions_n.cardinality()` so that
     :meth:`number_of_partitions()` can become a stripped down version of
     the fastest algorithm available (currently this is using FLINT).
 

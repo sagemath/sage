@@ -331,7 +331,7 @@ cpdef bint parent_is_integers(P) except -1:
         sage: parent_is_integers(gmpy2.mpq)
         False
 
-    Ensure (:trac:`27893`) is fixed::
+    Ensure (:issue:`27893`) is fixed::
 
         sage: K.<f> = QQ[]
         sage: gmpy2.mpz(2) * f
@@ -446,7 +446,7 @@ cpdef bint is_numpy_type(t) noexcept:
 
     TESTS:
 
-    This used to crash Sage (:trac:`20715`)::
+    This used to crash Sage (:issue:`20715`)::
 
         sage: is_numpy_type(object)
         False
@@ -514,7 +514,7 @@ cdef class CoercionModel:
 
     TESTS:
 
-    Check that :trac:`8426` is fixed (see also :trac:`18076`)::
+    Check that :issue:`8426` is fixed (see also :issue:`18076`)::
 
         sage: import numpy                                                              # needs numpy
 
@@ -530,7 +530,7 @@ cdef class CoercionModel:
         sage: p(int('2'))
         11.0000000000000
 
-    This used to fail (see :trac:`18076`)::
+    This used to fail (see :issue:`18076`)::
 
         sage: 1/3 + numpy.int8('12')                                                    # needs numpy
         37/3
@@ -616,7 +616,7 @@ cdef class CoercionModel:
 
             sage: left_morphism_ref, right_morphism_ref = maps[ZZ, QQ]
 
-        Note that by :trac:`14058` the coercion model only stores a weak
+        Note that by :issue:`14058` the coercion model only stores a weak
         reference to the coercion maps in this case::
 
             sage: left_morphism_ref
@@ -1438,7 +1438,7 @@ cdef class CoercionModel:
 
         .. NOTE::
 
-            By :trac:`14711`, coerce maps should be copied when using them
+            By :issue:`14711`, coerce maps should be copied when using them
             outside of the coercion system, because they may become defunct
             by garbage collection.
 
@@ -1502,7 +1502,7 @@ cdef class CoercionModel:
 
         TESTS:
 
-        We check that with :trac:`14058`, parents are still eligible for
+        We check that with :issue:`14058`, parents are still eligible for
         garbage collection after being involved in binary operations::
 
             sage: # needs sage.libs.pari
@@ -1871,7 +1871,7 @@ cdef class CoercionModel:
               From: Integer Ring
               To:   Rational Field
 
-        Check that :trac:`17740` is fixed::
+        Check that :issue:`17740` is fixed::
 
             sage: R = GF(5)['x']
             sage: cm.discover_action(R, ZZ, operator.truediv)
@@ -1883,7 +1883,7 @@ cdef class CoercionModel:
             sage: cm.bin_op(R.gen(), 7, operator.truediv).parent()
             Univariate Polynomial Ring in x over Finite Field of size 5
 
-        Check that :trac:`18221` is fixed::
+        Check that :issue:`18221` is fixed::
 
             sage: # needs sage.combinat sage.modules
             sage: F.<x> = FreeAlgebra(QQ)
