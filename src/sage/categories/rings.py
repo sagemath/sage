@@ -589,7 +589,7 @@ class Rings(CategoryWithAxiom):
 
             EXAMPLES:
 
-            Since :trac:`7797`, non-commutative rings have ideals as well::
+            Since :issue:`7797`, non-commutative rings have ideals as well::
 
                 sage: A = SteenrodAlgebra(2)                                                # needs sage.combinat sage.modules
                 sage: A._ideal_class_()                                                     # needs sage.combinat sage.modules
@@ -646,7 +646,7 @@ class Rings(CategoryWithAxiom):
 
             TESTS:
 
-            Make sure that :trac:`13644` is fixed::
+            Make sure that :issue:`13644` is fixed::
 
                 sage: # needs sage.rings.padics
                 sage: K = Qp(3)
