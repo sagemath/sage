@@ -120,7 +120,7 @@ class HeckeModuleHomspace(HomsetWithBase):
         TESTS:
 
         Make sure that the element is created correctly when the codomain is
-        not the full module (related to :trac:`21497`)::
+        not the full module (related to :issue:`21497`)::
 
             sage: M = ModularSymbols(Gamma0(3),weight=22,sign=1)
             sage: S = M.cuspidal_subspace()

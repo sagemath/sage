@@ -152,11 +152,11 @@ AUTHORS:
 
 - David Kohel (2007, 2008)
 
-- Niles Johnson (2010-08): (:trac:`3893`) ``random_element()`` should pass on ``*args`` and ``**kwds``.
+- Niles Johnson (2010-08): (:issue:`3893`) ``random_element()`` should pass on ``*args`` and ``**kwds``.
 
-- Simon King (2010-12): (:trac:`8800`) fixed a bug in ``denominator()``.
+- Simon King (2010-12): (:issue:`8800`) fixed a bug in ``denominator()``.
 
-- Simon King (2010-12), Peter Bruin (June 2014): (:trac:`10513`) new coercion model and category framework.
+- Simon King (2010-12), Peter Bruin (June 2014): (:issue:`10513`) new coercion model and category framework.
 
 """
 
@@ -250,7 +250,7 @@ class FreeModuleFactory(UniqueFactory):
             sage: TestSuite(ZZ^6).run()
             sage: TestSuite(RDF^3).run()
 
-        Check that :trac:`34380` is fixed::
+        Check that :issue:`34380` is fixed::
 
             sage: R.<x,y> = QQ[]
             sage: Q = R.quo(R.ideal([x^2 - y^2 - 1]))
@@ -711,7 +711,7 @@ def span(gens, base_ring=None, check=True, already_echelonized=False):
         TypeError: The base_ring (= Ring of integers modulo 6)
         must be a principal ideal domain.
 
-    Fix :trac:`5575`::
+    Fix :issue:`5575`::
 
         sage: V = QQ^3
         sage: span([V.0, V.1])
@@ -720,7 +720,7 @@ def span(gens, base_ring=None, check=True, already_echelonized=False):
         [1 0 0]
         [0 1 0]
 
-    Improve error message from :trac:`12541`::
+    Improve error message from :issue:`12541`::
 
         sage: span({0:vector([0,1])}, QQ)
         Traceback (most recent call last):
@@ -1229,7 +1229,7 @@ class Module_free_ambient(Module):
             sage: V <= M
             False
 
-        We test that :trac:`5525` is fixed::
+        We test that :issue:`5525` is fixed::
 
             sage: A = (QQ^1).span([[1/3]],ZZ); B = (QQ^1).span([[1]],ZZ)
             sage: A.intersection(B)
@@ -1937,7 +1937,7 @@ class FreeModule_generic(Module_free_ambient):
 
     TESTS:
 
-    Check that :trac:`17576` is fixed::
+    Check that :issue:`17576` is fixed::
 
         sage: V = VectorSpace(RDF, 3)
         sage: v = vector(RDF, [1, 2, 3, 4])
@@ -2507,7 +2507,7 @@ class FreeModule_generic(Module_free_ambient):
 
         TESTS:
 
-        Check that :trac:`22987` is fixed::
+        Check that :issue:`22987` is fixed::
 
             sage: VectorSpace(QQ, 0).cardinality()
             1
@@ -2591,12 +2591,12 @@ class FreeModule_generic(Module_free_ambient):
 
         TESTS:
 
-        See :trac:`3699`::
+        See :issue:`3699`::
 
             sage: K = FreeModule(ZZ, 2000)
             sage: I = K.basis_matrix()
 
-        See :trac:`17585`::
+        See :issue:`17585`::
 
             sage: ((ZZ^2)*2).basis_matrix().parent()
             Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
@@ -3560,7 +3560,7 @@ class FreeModule_generic(Module_free_ambient):
 
         TESTS:
 
-        Check that :trac:`17705` is fixed::
+        Check that :issue:`17705` is fixed::
 
             sage: V = GF(2)^2
             sage: W = V.subspace([[1, 0]])
@@ -3853,7 +3853,7 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
 
         TESTS:
 
-        Check that :trac:`24702` is fixed::
+        Check that :issue:`24702` is fixed::
 
             sage: L = FreeQuadraticModule(ZZ,2,matrix.identity(2))
             sage: S1 = L.submodule([(1,0)])
@@ -4035,7 +4035,7 @@ class FreeModule_generic_pid(FreeModule_generic_domain):
 
         TESTS:
 
-        We check that :trac:`24702` is fixed::
+        We check that :issue:`24702` is fixed::
 
             sage: L = FreeQuadraticModule(ZZ,1,matrix.identity(1))
             sage: S = 2*L
@@ -4342,7 +4342,7 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             Vector space of dimension 7 over Finite Field of size 2
 
         We test that objects of this type are initialised correctly;
-        see :trac:`11166` (the failing ``repr`` is fine because this
+        see :issue:`11166` (the failing ``repr`` is fine because this
         is an abstract base class)::
 
             sage: from sage.modules.free_module import FreeModule_generic_field
@@ -5340,7 +5340,7 @@ class FreeModule_ambient(FreeModule_generic):
         TESTS:
 
         We check that the creation of a submodule does not trigger
-        the construction of a basis of the ambient space. See :trac:`15953`::
+        the construction of a basis of the ambient space. See :issue:`15953`::
 
             sage: # needs sage.rings.finite_rings
             sage: F.<a> = GF(4)
@@ -5384,7 +5384,7 @@ class FreeModule_ambient(FreeModule_generic):
 
         TESTS:
 
-        Make sure :trac:`10513` is fixed (no coercion from a quotient
+        Make sure :issue:`10513` is fixed (no coercion from a quotient
         vector space to an isomorphic abstract vector space)::
 
             sage: M = QQ^3 / [[1,2,3]]
@@ -5524,7 +5524,7 @@ class FreeModule_ambient(FreeModule_generic):
             sage: A._echelon_matrix_richcmp(V, op_LT)
             False
 
-        Comparison with a quotient module (see :trac:`10513`)::
+        Comparison with a quotient module (see :issue:`10513`)::
 
             sage: from sage.structure.richcmp import op_LT,op_LE,op_EQ,op_NE,op_GT,op_GE
             sage: M = QQ^3 / [[1,2,3]]
@@ -5745,7 +5745,7 @@ class FreeModule_ambient(FreeModule_generic):
 
         TESTS:
 
-        Check for :trac:`29630`::
+        Check for :issue:`29630`::
 
             sage: V = VectorSpace(QQ, 2, sparse=True)
             sage: V.change_ring(RR).is_sparse()
@@ -5982,7 +5982,7 @@ class FreeModule_ambient(FreeModule_generic):
             ...
             TypeError: unable to convert rational 4/3 to an integer
 
-        Check that :trac:`10262` and :trac:`13304` are fixed
+        Check that :issue:`10262` and :issue:`13304` are fixed
         (coercions involving :class:`FreeModule_ambient` used to take
         quadratic time and space in the rank of the module)::
 
@@ -6483,7 +6483,7 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             sage: W = M.span_of_basis([[1,2,3],[4,5,6]])
             sage: TestSuite(W).run()
 
-        We test that the issue at :trac:`9502` is solved::
+        We test that the issue at :issue:`9502` is solved::
 
             sage: parent(W.basis()[0])
             Free module of degree 3 and rank 2 over Integer Ring
@@ -6496,8 +6496,8 @@ class FreeModule_submodule_with_basis_pid(FreeModule_generic_pid):
             [1 2 3]
             [4 5 6]
 
-        Now we test that the issue introduced at :trac:`9502` and reported at
-        :trac:`10250` is solved as well::
+        Now we test that the issue introduced at :issue:`9502` and reported at
+        :issue:`10250` is solved as well::
 
             sage: V = (QQ^2).span_of_basis([[1,1]])
             sage: w = sqrt(2) * V([1,1])                                                # needs sage.symbolic

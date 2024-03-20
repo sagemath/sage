@@ -26,7 +26,7 @@ seed, but currently there is no facility to do so.
 
 TESTS:
 
-Check that the issues from :trac:`27199` are fixed::
+Check that the issues from :issue:`27199` are fixed::
 
     sage: n = 16262093986406371
     sage: ecm = ECM()

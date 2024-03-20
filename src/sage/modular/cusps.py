@@ -150,7 +150,7 @@ class Cusp(Element):
             ...
             TypeError: unable to convert (Infinity, +Infinity) to a cusp
 
-        Conversion from PARI is supported (see :trac:`32091`)::
+        Conversion from PARI is supported (see :issue:`32091`)::
 
             sage: Cusp(pari.oo())
             Infinity
@@ -937,7 +937,7 @@ class Cusp(Element):
         TESTS:
 
         Here we check that the Galois action is indeed a permutation on the
-        cusps of Gamma1(48) and check that :trac:`13253` is fixed. ::
+        cusps of Gamma1(48) and check that :issue:`13253` is fixed. ::
 
             sage: # needs sage.libs.pari
             sage: G = Gamma1(48)
@@ -946,7 +946,7 @@ class Cusp(Element):
             ....:   C_permuted = [G.reduce_cusp(c.galois_action(i,48)) for c in C]
             ....:   assert len(set(C_permuted))==len(C)
 
-        We test that Gamma1(19) has 9 rational cusps and check that :trac:`8998`
+        We test that Gamma1(19) has 9 rational cusps and check that :issue:`8998`
         is fixed. ::
 
             sage: # needs sage.libs.pari

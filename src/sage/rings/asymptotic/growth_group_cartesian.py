@@ -296,7 +296,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             sage: GrowthGroup('x^ZZ * y^ZZ')  # indirect doctest
             Growth Group x^ZZ * y^ZZ
 
-        Check :trac:`26452`::
+        Check :issue:`26452`::
 
             sage: from sage.rings.asymptotic.growth_group import MonomialGrowthGroup
             sage: R = QQ.extension(x^2+1, 'i')
