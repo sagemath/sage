@@ -4060,6 +4060,11 @@ REFERENCES:
              study of the subgroups of the modular group", American
              Journal of Mathematics 113 (1991), no 6, 1053-1133
 
+.. [Kuniba2022] Atsuo Kuniba,
+                *Quantum Groups in Three-Dimensional Integrability*.
+                Theoretical and Mathematical Physics, Springer. 2022.
+                :doi:`10.1007/978-981-19-3262-5`.
+
 .. [Kur2008] Chris Kurth, "K Farey package for Sage",
              http://wayback.archive-it.org/855/20100510123900/http://www.public.iastate.edu/~kurthc/research/index.html
 
