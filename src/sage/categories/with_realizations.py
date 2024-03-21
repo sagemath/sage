@@ -46,7 +46,8 @@ def WithRealizations(self):
           - :class:`ExtendedAffineWeylGroup`
 
         - The `Implementing Algebraic Structures
-          <../../../../../thematic_tutorials/tutorial-implementing-algebraic-structures>`_ thematic tutorial.
+          <../../../../../thematic_tutorials/tutorial-implementing-algebraic-structures>`_ 
+          thematic tutorial.
 
         - :mod:`sage.categories.realizations`
 
