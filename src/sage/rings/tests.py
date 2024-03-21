@@ -344,12 +344,15 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
         Number Field in a with defining polynomial x^2 - 61891 with a = 248.7790184079036?
         -12
         ----
+        done
 
         sage: # needs sage.rings.finite_rings sage.rings.number_field sage.rings.padics
         sage: sage.rings.tests.test_random_elements(trials=10)
         survived 0 tests...
+        done
         sage: sage.rings.tests.test_random_elements(trials=1000)  # long time (5 seconds)
         survived 0 tests...
+        done
     """
     r = random_rings(level)
     i = 0
@@ -360,6 +363,7 @@ def test_random_elements(level=MAX_LEVEL, trials=1):
         print(R.random_element())
         print("----")
         if i >= trials:
+            print("done")
             return
 
 
@@ -396,10 +400,13 @@ def test_random_arith(level=MAX_LEVEL, trials=1):
         Number Field in a with defining polynomial x^2 - 15083 with a = 122.81286577553673?
         a -2*a - 1
         2*a - 30164
+        done
         sage: sage.rings.tests.test_random_arith(trials=10)
         survived 0 tests...
+        done
         sage: sage.rings.tests.test_random_arith(trials=1000)   # long time (5 seconds?)
         survived 0 tests...
+        done
     """
     i = 0
     for x in random_rings(level):
@@ -411,6 +418,7 @@ def test_random_arith(level=MAX_LEVEL, trials=1):
         print(a, b)
         print(a * b + a - b + 1)
         if i >= trials:
+            print("done")
             return
 
 
@@ -438,6 +446,7 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
           (3*x - 2)*(x - 1)
           (21)*(14*x^5 - x^2 + 4*x + 1)
           (12*x^5 - 12*x^2 + 2*x + 1)*(26*x^4 + x^3 + 1)
+        done
 
     Test Karatsuba multiplication of polynomials of small degree over some common rings::
 
@@ -447,25 +456,35 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
         sage: rings += [MatrixSpace(GF(17), 3)]                                         # needs sage.modules
         sage: for C in rings:                                                           # needs sage.modules
         ....:     test_karatsuba_multiplication(C, 10, 10)
+        done
+        done
+        done
+        done
+        done
 
     Zero-tests over ``QQbar`` are currently very slow, so we test only very small examples::
 
         sage: test_karatsuba_multiplication(QQbar, 3, 3, numtests=2)    # long time, needs sage.rings.number_field
+        done
 
     Larger degrees (over ``ZZ``, using FLINT)::
 
         sage: test_karatsuba_multiplication(ZZ, 1000, 1000,
         ....:                               ref_mul=lambda f,g: f*g,
         ....:                               base_ring_random_elt_args=[1000])
+        done
 
     Some more aggressive tests::
 
         sage: testrings = [ZZ[I, sqrt(2)], ZZ[I, sqrt(2), sqrt(3)]]     # long time
         sage: for C in testrings:                                       # long time
         ....:     test_karatsuba_multiplication(C, 100, 100)
+        done
+        done
         sage: test_karatsuba_multiplication(ZZ, 10000, 10000,           # long time
         ....:                               ref_mul=lambda f,g: f*g,
         ....:                               base_ring_random_elt_args=[100000])
+        done
 
     """
     from sage.misc.prandom import randint
@@ -481,4 +500,4 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
             print("  ({})*({})".format(f, g))
         if ref_mul(f, g) - f._mul_karatsuba(g, threshold) != 0:
             raise ValueError("Multiplication failed")
-    return
+    print("done")
