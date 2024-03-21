@@ -443,6 +443,7 @@ def gamma_classes(graph):
 
         sage: from sage.graphs.graph_decompositions.modular_decomposition import test_gamma_modules
         sage: test_gamma_modules(2, 10, 0.5)
+        done
     """
     from itertools import chain
     from sage.sets.disjoint_set import DisjointSet
@@ -610,6 +611,7 @@ def habib_maurer_algorithm(graph, g_classes=None):
 
         sage: from sage.graphs.graph_decompositions.modular_decomposition import permute_decomposition
         sage: permute_decomposition(2, habib_maurer_algorithm, 20, 0.5)                 # needs sage.groups
+        done
     """
     if graph.is_directed():
         raise ValueError("Graph must be undirected")
@@ -1234,6 +1236,7 @@ def test_gamma_modules(trials, vertices, prob, verbose=False):
 
         sage: from sage.graphs.graph_decompositions.modular_decomposition import *
         sage: test_gamma_modules(3, 7, 0.5)
+        done
     """
     from sage.graphs.generators.random import RandomGNP
     for _ in range(trials):
@@ -1248,6 +1251,7 @@ def test_gamma_modules(trials, vertices, prob, verbose=False):
                     assert either_connected_or_not_connected(v, m_list, g)
         if verbose:
             print("Passes!")
+    print("done")
 
 
 @random_testing
@@ -1263,6 +1267,7 @@ def permute_decomposition(trials, algorithm, vertices, prob, verbose=False):
 
         sage: from sage.graphs.graph_decompositions.modular_decomposition import *
         sage: permute_decomposition(30, habib_maurer_algorithm, 10, 0.5)
+        done
     """
     from sage.graphs.generators.random import RandomGNP
     from sage.combinat.permutation import Permutations
@@ -1281,6 +1286,7 @@ def permute_decomposition(trials, algorithm, vertices, prob, verbose=False):
         assert equivalent_trees(t1p, t2)
         if verbose:
             print("Passes!")
+    print("done")
 
 
 def random_md_tree(max_depth, max_fan_out, leaf_probability):
@@ -1408,8 +1414,8 @@ def recreate_decomposition(trials, algorithm, max_depth, max_fan_out,
     EXAMPLES::
 
         sage: from sage.graphs.graph_decompositions.modular_decomposition import *
-        sage: recreate_decomposition(3, habib_maurer_algorithm, 4, 6, 0.5,
-        ....:                         verbose=False)
+        sage: recreate_decomposition(3, habib_maurer_algorithm, 4, 6, 0.5)
+        done
     """
     for _ in range(trials):
         rand_tree = random_md_tree(max_depth, max_fan_out, leaf_probability)
@@ -1425,3 +1431,4 @@ def recreate_decomposition(trials, algorithm, max_depth, max_fan_out,
         assert equivalent_trees(rand_tree, reconstruction)
         if verbose:
             print("Passes!")
+    print("done")
