@@ -722,7 +722,7 @@ def generic_factory_unpickle(factory, *args):
             return F.get_object(*args)
         except TypeError:
             pass
-    # See trac #16349: When replacing a UniqueFactory by something else (e.g.,
+    # See Issue #16349: When replacing a UniqueFactory by something else (e.g.,
     # a UniqueRepresentation), then we get the object by calling.
     #
     # The first argument of a UniqueFactory pickle is a version number. We

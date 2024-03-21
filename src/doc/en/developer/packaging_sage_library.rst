@@ -265,7 +265,7 @@ that are imposed by the build-time dependencies.
 
 We can define some meaningful small distributions that just consist of
 a single or a few Cython modules. For example, **sagemath-tdlib**
-(:trac:`29864`) would just package the single
+(:issue:`29864`) would just package the single
 Cython module that must be linked with ``tdlib``,
 :mod:`sage.graphs.graph_decompositions.tdlib`. Starting with the Sage
 9.6 development cycle, as soon as namespace packages are activated, we
@@ -701,7 +701,7 @@ The whole ``.tox`` directory can be safely deleted at any time.
 
 We can do the same with other distributions, for example the large
 distribution **sagemath-standard-no-symbolics**
-(from :trac:`35095`), which is intended to provide
+(from :issue:`35095`), which is intended to provide
 everything that is currently in the standard Sage library, i.e.,
 without depending on optional packages, but without the packages
 :mod:`sage.symbolic`, :mod:`sage.calculus`, etc.
@@ -713,7 +713,7 @@ Again we can run the test with ``tox`` in a separate virtual environment::
 Some small distributions, for example the ones providing the two
 lowest levels, `sagemath-objects <https://pypi.org/project/sagemath-objects/>`_
 and `sagemath-categories <https://pypi.org/project/sagemath-categories/>`_
-(from :trac:`29865`), can be installed and tested
+(from :issue:`29865`), can be installed and tested
 without relying on the wheels from the Sage build::
 
   $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-objects && SAGE_NUM_THREADS=16 tox -v -v -v -e sagepython)'

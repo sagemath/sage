@@ -170,7 +170,7 @@ animations, Sage needs to use one of the packages :ref:`FFmpeg
    .. literalinclude:: void-recommended.txt
 
 In addition to these, if you don't want Sage to build optional packages that might
-be available from your OS, cf. the growing list of such packages on :trac:`27330`,
+be available from your OS, cf. the growing list of such packages on :issue:`27330`,
 install:
 
 .. tab:: Debian/Ubuntu
@@ -1016,7 +1016,7 @@ Environment variables dealing with specific Sage packages
 .. envvar:: OPENBLAS_CONFIGURE
 
   Adds additional configuration flags for
-  the OpenBLAS package that gets added to the ``make`` command. (see :trac:`23272`)
+  the OpenBLAS package that gets added to the ``make`` command. (see :issue:`23272`)
 
 .. envvar:: PARI_CONFIGURE
 

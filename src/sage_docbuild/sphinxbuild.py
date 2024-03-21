@@ -205,7 +205,7 @@ class SageSphinxLogger():
 
         TESTS:
 
-        Verify that :trac:`25160` has been resolved::
+        Verify that :issue:`25160` has been resolved::
 
             sage: logger = SageSphinxLogger(stdout, "#25160")
             sage: import traceback

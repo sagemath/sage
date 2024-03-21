@@ -109,7 +109,7 @@ cdef class ntl_ZZ_pE():
                 self.x = ZZ_pX_to_ZZ_pE((<ntl_ZZ_pX>v).x)
             elif isinstance(v, (list, tuple)):
                 tmp_zzpx = <ntl_ZZ_pX>ntl_ZZ_pX(v, self.c.pc)
-                self.c.restore_c()   # allocating tmp_zzpx can change the current modulus trac #25790
+                self.c.restore_c()   # allocating tmp_zzpx can change the current modulus; Issue #25790
                 self.x = ZZ_pX_to_ZZ_pE(tmp_zzpx.x)
             elif isinstance(v, int):
                 PyLong_to_ZZ(&temp, v)
@@ -122,7 +122,7 @@ cdef class ntl_ZZ_pE():
                 mpz_to_ZZ(&temp, (<Integer>v).value)
                 self.x = ZZ_to_ZZ_pE(temp)
             else:
-                str_v = str(v)  # can cause modulus to change  trac #25790
+                str_v = str(v)  # can cause modulus to change; Issue #25790
                 self.c.restore_c()
                 ccreadstr(self.x, str_v)
 

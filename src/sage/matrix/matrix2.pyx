@@ -7252,7 +7252,7 @@ cdef class Matrix(Matrix1):
             if e[1] and defect >= 0:
                 rows.extend(e[1] + [e[1][0].parent().zero_vector()] * defect)
             else:
-                # see trac #27842
+                # see Issue #27842
                 raise RuntimeError(
                         "failed to compute eigenvectors for eigenvalue %s, "
                         "check eigenvectors_left() for partial results" % e[0])
