@@ -237,7 +237,7 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
 
         TESTS:
 
-        Check that :trac:`32209` is fixed::
+        Check that :issue:`32209` is fixed::
 
             sage: S.<x,y> = AffineSpace(ZZ, 2)
             sage: T.<u,v> = AffineSpace(ZZ, 2)
