@@ -971,7 +971,7 @@ class DocTestController(SageObject):
             sage: DC = DocTestController(DD, [dirname])
             sage: DC.expand_files_into_sources()
             sage: len(DC.sources)
-            12
+            13
             sage: DC.sources[0].options.optional
             True
 
@@ -1080,6 +1080,7 @@ class DocTestController(SageObject):
             sage.doctest.external
             sage.doctest.control
             sage.doctest.all
+            sage.doctest.__main__
             sage.doctest
         """
         if self.options.nthreads > 1 and len(self.sources) > self.options.nthreads:
@@ -1261,16 +1262,16 @@ class DocTestController(SageObject):
 
     def _assemble_cmd(self):
         """
-        Assembles a shell command used in running tests under gdb, lldb, or valgrind.
+        Assemble a shell command used in running tests under gdb, lldb, or valgrind.
 
         EXAMPLES::
 
             sage: from sage.doctest.control import DocTestDefaults, DocTestController
             sage: DC = DocTestController(DocTestDefaults(timeout=123), ["hello_world.py"])
             sage: print(DC._assemble_cmd())
-            sage-runtests --serial --timeout=123 hello_world.py
+            ...python... -m sage.doctest --serial --timeout=123 hello_world.py
         """
-        cmd = "sage-runtests --serial "
+        cmd = f"{shlex.quote(sys.executable)} -m sage.doctest --serial "
         opt = dict_difference(self.options.__dict__, DocTestDefaults().__dict__)
         if "all" in opt:
             raise ValueError("You cannot run gdb/lldb/valgrind on the whole sage library")
@@ -1303,14 +1304,14 @@ class DocTestController(SageObject):
             sage: DD = DocTestDefaults(gdb=True)
             sage: DC = DocTestController(DD, ["hello_world.py"])
             sage: DC.run_val_gdb(testing=True)
-            exec gdb --eval-command="run" --args ...python... sage-runtests --serial --timeout=0 hello_world.py
+            exec gdb --eval-command="run" --args ...python... -m sage.doctest --serial --timeout=0 hello_world.py
 
         ::
 
             sage: DD = DocTestDefaults(valgrind=True, optional="all", timeout=172800)
             sage: DC = DocTestController(DD, ["hello_world.py"])
             sage: DC.run_val_gdb(testing=True)
-            exec valgrind --tool=memcheck --leak-resolution=high --leak-check=full --num-callers=25 --suppressions="...valgrind/pyalloc.supp" --suppressions="...valgrind/sage.supp" --suppressions="...valgrind/sage-additional.supp"  --log-file=.../valgrind/sage-memcheck.%p... sage-runtests --serial --timeout=172800 --optional=all hello_world.py
+            exec valgrind --tool=memcheck --leak-resolution=high --leak-check=full --num-callers=25 --suppressions=.../valgrind/pyalloc.supp --suppressions=.../valgrind/sage.supp --suppressions=.../valgrind/sage-additional.supp --suppressions=.../valgrind/valgrind-python.supp  --log-file=.../valgrind/sage-memcheck.%p ...python... -m sage.doctest --serial --timeout=172800 --optional=all hello_world.py
         """
         try:
             sage_cmd = self._assemble_cmd()
@@ -1320,13 +1321,12 @@ class DocTestController(SageObject):
         opt = self.options
 
         if opt.gdb:
-            cmd = f'''exec gdb --eval-command="run" --args {shlex.quote(sys.executable)} '''
+            cmd = f'''exec gdb --eval-command="run" --args '''
             flags = ""
             if opt.logfile:
                 sage_cmd += f" --logfile {shlex.quote(opt.logfile)}"
         elif opt.lldb:
-            sage_cmd = sage_cmd.replace('sage-runtests', '$(command -v sage-runtests)')
-            cmd = f'''exec lldb --one-line "process launch" --one-line "cont" -- {sys.executable} '''
+            cmd = f'''exec lldb --one-line "process launch" --one-line "cont" -- '''
             flags = ""
         else:
             if opt.logfile is None:
@@ -1345,9 +1345,9 @@ class DocTestController(SageObject):
                 flags = os.getenv("SAGE_MEMCHECK_FLAGS")
                 if flags is None:
                     flags = "--leak-resolution=high --leak-check=full --num-callers=25 "
-                    flags += '''--suppressions="%s" ''' % (os.path.join(SAGE_EXTCODE,"valgrind", "pyalloc.supp"))
-                    flags += '''--suppressions="%s" ''' % (os.path.join(SAGE_EXTCODE,"valgrind", "sage.supp"))
-                    flags += '''--suppressions="%s" ''' % (os.path.join(SAGE_EXTCODE,"valgrind", "sage-additional.supp"))
+                    for supp in ["pyalloc.supp", "sage.supp", "sage-additional.supp", "valgrind-python.supp"]:
+                        fname = os.path.join(SAGE_EXTCODE, "valgrind", supp)
+                        flags += f"--suppressions={shlex.quote(fname)} "
             elif opt.massif:
                 toolname = "massif"
                 flags = os.getenv("SAGE_MASSIF_FLAGS", "--depth=6 ")

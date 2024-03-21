@@ -28,6 +28,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from sage.categories.morphism import Morphism
+from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
 
 if TYPE_CHECKING:
@@ -60,14 +61,14 @@ class FiniteRankFreeModuleMorphism(Morphism):
       the images of the basis of `M` (see the convention in the example below)
     - ``bases`` -- (default: ``None``) pair (basis_M, basis_N) defining the
       matrix representation, basis_M being a basis of module `M` and
-      basis_N a basis of module `N` ; if None the pair formed by the
+      basis_N a basis of module `N` ; if ``None``, the pair formed by the
       default bases of each module is assumed.
     - ``name`` -- (default: ``None``) string; name given to the homomorphism
     - ``latex_name`` -- (default: ``None``) string; LaTeX symbol to denote the
-      homomorphism; if None, ``name`` will be used.
+      homomorphism; if ``None``, ``name`` will be used.
     - ``is_identity`` -- (default: ``False``) determines whether the
       constructed object is the identity endomorphism; if set to ``True``, then
-      N must be M and the entry ``matrix_rep`` is not used.
+      `N` must be `M` and the entry ``matrix_rep`` is not used.
 
     EXAMPLES:
 
@@ -1021,6 +1022,24 @@ class FiniteRankFreeModuleMorphism(Morphism):
     # End of Morphism methods
     #
 
+    def _modules_and_bases(self, basis1=None, basis2=None):
+        fmodule1 = self.domain()
+        fmodule2 = self.codomain()
+        if basis1 is None:
+            basis1 = fmodule1.default_basis()
+        elif basis1 not in fmodule1.bases():
+            raise TypeError(str(basis1) + " is not a basis on the " +
+                            str(fmodule1) + ".")
+        if basis2 is None:
+            if self.is_endomorphism():
+                basis2 = basis1
+            else:
+                basis2 = fmodule2.default_basis()
+        elif basis2 not in fmodule2.bases():
+            raise TypeError(str(basis2) + " is not a basis on the " +
+                            str(fmodule2) + ".")
+        return fmodule1, fmodule2, basis1, basis2
+
     def matrix(self, basis1=None, basis2=None):
         r"""
         Return the matrix of ``self`` w.r.t to a pair of bases.
@@ -1108,21 +1127,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
 
         """
         from sage.matrix.constructor import matrix
-        fmodule1 = self.domain()
-        fmodule2 = self.codomain()
-        if basis1 is None:
-            basis1 = fmodule1.default_basis()
-        elif basis1 not in fmodule1.bases():
-            raise TypeError(str(basis1) + " is not a basis on the " +
-                            str(fmodule1) + ".")
-        if basis2 is None:
-            if self.is_endomorphism():
-                basis2 = basis1
-            else:
-                basis2 = fmodule2.default_basis()
-        elif basis2 not in fmodule2.bases():
-            raise TypeError(str(basis2) + " is not a basis on the " +
-                            str(fmodule2) + ".")
+        fmodule1, fmodule2, basis1, basis2 = self._modules_and_bases(basis1, basis2)
         if (basis1, basis2) not in self._matrices:
             if self._is_identity:
                 # The identity endomorphism
@@ -1247,3 +1252,77 @@ class FiniteRankFreeModuleMorphism(Morphism):
                 except ValueError:
                     continue
         return resu
+
+    @cached_method
+    def _matrix_cmr(self, basis1, basis2):
+        from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+        from sage.matrix.matrix_space import MatrixSpace
+        M = self.matrix()
+        MS = MatrixSpace(self.base_ring(), M.nrows(), M.ncols(), sparse=True)
+        return Matrix_cmr_chr_sparse(MS, M)
+
+    def is_unimodular(self, basis1=None, basis2=None, **kwds):
+        r"""
+        Return whether ``self`` is a unimodular morphism.
+
+        This does not depend on the choice of bases.
+
+        EXAMPLES::
+
+            sage: C = FiniteRankFreeModule(ZZ, 3, name='C'); c = C.basis('c')
+            sage: R = FiniteRankFreeModule(ZZ, 2, name='R'); r = R.basis('r')
+            sage: phi = C.hom(R, [[1, 0, 0], [0, 1, 0]]); phi
+            Generic morphism:
+            From: Rank-3 free module C over the Integer Ring
+            To:   Rank-2 free module R over the Integer Ring
+            sage: phi.matrix()
+            [1 0 0]
+            [0 1 0]
+            sage: phi.is_unimodular()
+            True
+            sage: psi = C.hom(R, [[1, 1, 0], [-1, 1, 1]]); psi
+            Generic morphism:
+            From: Rank-3 free module C over the Integer Ring
+            To:   Rank-2 free module R over the Integer Ring
+            sage: psi.is_unimodular()
+            False
+
+        Invariance under change of basis::
+
+            sage: U = R.automorphism(matrix=[[1, 1], [0, -1]], basis=r)
+            sage: V = C.automorphism(matrix=[[1, 1, 0], [0, 1, 1], [0, 0, 1]], basis=c)
+            sage: rp = r.new_basis(U, 'rp', latex_symbol="r'"); rp
+            Basis (rp_0,rp_1) on the Rank-2 free module R over the Integer Ring
+            sage: cp = c.new_basis(V, 'cp', latex_symbol="c'"); cp
+            Basis (cp_0,cp_1,cp_2) on the Rank-3 free module C over the Integer Ring
+            sage: phi.matrix(cp, rp)
+            [ 1  2  1]
+            [ 0 -1 -1]
+            sage: phi.is_unimodular(cp, rp)
+            True
+        """
+        fmodule1, fmodule2, basis1, basis2 = self._modules_and_bases(basis1, basis2)
+        return self._matrix_cmr(basis1, basis2).is_unimodular(**kwds)
+
+    def is_totally_unimodular(self, basis1=None, basis2=None, **kwds):
+        r"""
+        Return whether the matrix of ``self`` is totally unimodular.
+
+        This depends on the choice of the bases.
+
+        EXAMPLES::
+
+
+        """
+        fmodule1, fmodule2, basis1, basis2 = self._modules_and_bases(basis1, basis2)
+        return self._matrix_cmr(basis1, basis2).is_totally_unimodular(**kwds)
+
+
+
+
+    @staticmethod
+    def one_sum(*summands):
+        r"""
+
+        """
+

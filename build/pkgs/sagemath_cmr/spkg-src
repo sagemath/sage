@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+#
+# Script to prepare an sdist tarball for sagemath-cmr
+# This script is not used during build.
+#
+# HOW TO MAKE THE TARBALL:
+# ./sage --sh build/pkgs/sagemath_cmr/spkg-src
+
+if [ -z "$SAGE_ROOT" ] ; then
+    echo >&2 "Error - SAGE_ROOT undefined ... exiting"
+    echo >&2 "Maybe run 'sage -sh'?"
+    exit 1
+fi
+
+# Exit on failure
+set -e
+
+cd build/pkgs/sagemath_cmr
+
+cd src
+# Get rid of old *.egg-info/SOURCES.txt
+rm -Rf *.egg-info
+
+python3 -m build --sdist --no-isolation --skip-dependency-check --outdir "$SAGE_DISTFILES"
