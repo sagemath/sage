@@ -364,7 +364,7 @@ class ModularForm_abstract(ModuleElement):
             self.__coefficients
         except AttributeError:
             self.__coefficients = {}
-        if isinstance(X, Integer):
+        if isinstance(X, (int, Integer)):
             X = list(range(1, X + 1))
         Y = [n for n in X if n not in self.__coefficients]
         v = self._compute(Y)
@@ -2571,6 +2571,48 @@ class ModularFormElement(ModularForm_abstract, element.HeckeModuleElement):
 
         return newparent.base_extend(newqexp.base_ring())(newqexp)
 
+    def _pow_int(self, n):
+        """
+        Raises ``self`` to integer powers.
+
+        TESTS::
+
+            sage: F = ModularForms(1, 12).0
+            sage: (F^5).qexp(20)
+            q^5 - 120*q^6 + 7020*q^7 - 266560*q^8 + 7379190*q^9 - 158562144*q^10 + 2748847640*q^11 -
+            39443189760*q^12 + 476711357265*q^13 - 4910778324400*q^14 + 43440479153652*q^15 -
+            331129448133120*q^16 + 2173189785854230*q^17 - 12199334429782080*q^18 +
+            57636170473930920*q^19 + O(q^20)
+
+            Exponentiation is a lot faster than chain multiplication:
+
+            sage: F = ModularForms(DirichletGroup(6).0, 3).0
+            sage: G = F**8                                                              # long time -- around 3 seconds
+        """
+        # shamelessly copied from above
+        try:
+            eps = self.character()
+            verbose(f"character of self is {eps}")
+            newchar = eps ** n
+            verbose(f"character of product is {newchar}")
+        except (NotImplementedError, ValueError):
+            newchar = None
+            verbose("character of product not determined")
+
+        from .constructor import ModularForms
+        if newchar is not None:
+            verbose("creating a parent with char")
+            newparent = ModularForms(newchar, self.weight() * n,
+                                     base_ring=newchar.base_ring())
+            verbose(f"parent is {newparent}")
+        else:
+            newparent = ModularForms(self.group(), self.weight() * n,
+                                     base_ring=ZZ)
+        m = newparent.sturm_bound()
+        newqexp = self.qexp(m) ** n
+
+        return newparent.base_extend(newqexp.base_ring())(newqexp)
+
     def atkin_lehner_eigenvalue(self, d=None, embedding=None):
         """
         Return the result of the Atkin-Lehner operator `W_d` on
@@ -2786,7 +2828,7 @@ class ModularFormElement_elliptic_curve(Newform):
         """
         M = self.parent()
         S = M.cuspidal_subspace()
-#        return S.find_in_space( self.__E.q_expansion( S.q_expansion_basis()[0].prec() ) ) + [0] * ( M.dimension() - S.dimension() )
+        # return S.find_in_space( self.__E.q_expansion( S.q_expansion_basis()[0].prec() ) ) + [0] * ( M.dimension() - S.dimension() )
         return vector(S.find_in_space(self.__E.q_expansion(S.sturm_bound())) + [0] * (M.dimension() - S.dimension()))
 
     def _compute_q_expansion(self, prec):
@@ -3395,6 +3437,30 @@ class GradedModularFormElement(ModuleElement):
 
     qexp = q_expansion  # alias
 
+    def coefficients(self, X):
+        r"""
+        The coefficients a_n of self, for integers n>=0 in the list of X. If
+        X is an Integer, return coefficients for indices from 1 to X.
+
+        TESTS::
+
+            sage: M = ModularFormsRing(1)
+            sage: E4 = M.0; E6 = M.1
+            sage: F = E4 + E6
+            sage: F.coefficients([0,1,3,6])
+            [2, -264, -116256, -3997728]
+            sage: F.coefficients(10)
+            [-264, -14472, -116256, -515208, -1545264, -3997728, -8388672, -16907400, -29701992, -51719472]
+            sage: M = ModularFormsRing(13)
+            sage: (M.0^3).coefficients(range(10, 20))
+            [22812, 36552, 57680, 85686, 126744, 177408, 249246, 332172, 448926, 575736]
+        """
+        if isinstance(X, (int, Integer)):
+            return list(self.q_expansion(X + 1))[1:X + 1]
+        prec = max(X)
+        v = self.q_expansion(prec + 1)
+        return [v[x] for x in X]
+
     def _repr_(self):
         r"""
         The string representation of self.
@@ -3550,6 +3616,10 @@ class GradedModularFormElement(ModuleElement):
             sage: F4 = M.0; F6 = M.1;
             sage: F4*F6 # indirect doctest
             1 - 264*q - 135432*q^2 - 5196576*q^3 - 69341448*q^4 - 515625264*q^5 + O(q^6)
+
+            sage: E4 = EisensteinForms(1, 4).0
+            sage: E4^2
+            1 + 480*q + 61920*q^2 + 1050240*q^3 + 7926240*q^4 + 37500480*q^5 + O(q^6)
 
         This shows that the issue at :issue:`35932` is fixed::
 
@@ -3745,7 +3815,7 @@ class GradedModularFormElement(ModuleElement):
             return poly_parent(self[k])
 
         # create the set of "weighted exponents" and compute sturm bound
-        weights_of_generators = [gens[i].weight() for i in range(0, len(gens))]
+        weights_of_generators = [gen.weight() for gen in gens]
         W = WeightedIntegerVectors(k, weights_of_generators).list()
         sturm_bound = self.group().sturm_bound(k)
 
@@ -3753,18 +3823,9 @@ class GradedModularFormElement(ModuleElement):
         matrix_datum = []
 
         # form the matrix of coefficients and list the monomials of weight k
-        list_of_monomials = []
-        for exponents in W:
-            monomial_form = M.one()
-            monomial_poly = poly_parent.one()
-            iter = 0
-            for e, g in zip(exponents, gens):
-                monomial_form *= M(g) ** e
-                monomial_poly *= poly_parent.gen(iter) ** e
-                iter += 1
-            matrix_datum.append(monomial_form[k].coefficients(range(0, sturm_bound + 1)))
-            list_of_monomials.append(monomial_poly)
-
+        monomial_forms = [prod(M(gen) ** exp for exp, gen in zip(exps, gens)) for exps in W]
+        monomial_polys = [prod(poly_gen ** exp for exp, poly_gen in zip(exps, poly_parent.gens())) for exps in W]
+        matrix_datum = M._to_matrix(monomial_forms, prec=sturm_bound)
         mat = Matrix(matrix_datum).transpose()
 
         # initialize the column vector of the coefficients of self
@@ -3775,8 +3836,8 @@ class GradedModularFormElement(ModuleElement):
 
         # initialize the polynomial associated to self
         poly = poly_parent.zero()
-        for iter, p in enumerate(list_of_monomials):
-            poly += soln[iter, 0] * p
+        for i, p in enumerate(monomial_polys):
+            poly += soln[i, 0] * p
         return poly
 
     def to_polynomial(self, names='x', gens=None):
@@ -3786,11 +3847,11 @@ class GradedModularFormElement(ModuleElement):
 
         INPUT:
 
-        - ``names`` -- a list or tuple of names (strings), or a comma separated string. Correspond
-          to the names of the variables;
-        - ``gens`` -- (default: None) a list of generator of the parent of ``self``. If set to ``None``,
-          the list returned by :meth:`~sage.modular.modform.find_generator.ModularFormsRing.gen_forms`
-          is used instead
+        - ``names`` -- a list or tuple of names (strings), or a comma separated string,
+          corresponding to the names of the variables.
+        - ``gens`` -- (default: None) a list of generator of the parent of ``self``. If set to
+          ``None``, the list returned by
+          :meth:`~sage.modular.modform.ring.ModularFormsRing.gen_forms` is used instead.
 
         OUTPUT: A polynomial in the variables ``names``
 
@@ -3802,8 +3863,9 @@ class GradedModularFormElement(ModuleElement):
             sage: (M.0^10 + M.0 * M.1).to_polynomial()
             x0^10 + x0*x1
 
-        This method is not necessarily the inverse of :meth:`~sage.modular.modform.find_generator.ModularFormsRing.from_polynomial`
-        since there may be some relations between the generators of the modular forms ring::
+        This method is not necessarily the inverse of
+        :meth:`~sage.modular.modform.ring.ModularFormsRing.from_polynomial` since there may be some
+        relations between the generators of the modular forms ring::
 
             sage: M = ModularFormsRing(Gamma0(6))
             sage: P.<x0,x1,x2> = M.polynomial_ring()
