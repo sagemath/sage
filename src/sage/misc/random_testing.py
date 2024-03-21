@@ -100,27 +100,21 @@ def random_testing(fn):
         sage: foo = random_testing(foo)
         sage: foo(seed=0, verbose=True)
         Random value: 49681376900427
-
         sage: foo(seed=15, verbose=True)
-        Traceback (most recent call last):
-        RuntimeError: Random testing has revealed a problem in foo
+        Random value: 1049538412064764
+        Random testing has revealed a problem in foo
         Please report this bug!  You may be the first
         person in the world to have seen this problem.
         Please include this random seed in your bug report:
         Random seed: 15
-        Error: AssertionError()
-        Output:
-        Random value: 1049538412064764
-
-        sage: foo()
-        Traceback (most recent call last):
-        RuntimeError: Random testing has revealed a problem in foo
+        AssertionError()
+        sage: foo() # random
+        Random testing has revealed a problem in foo
         Please report this bug!  You may be the first
         person in the world to have seen this problem.
         Please include this random seed in your bug report:
-        Random seed: ...
-        Error: AssertionError()
-
+        Random seed: 272500700755151445506092479579811710040
+        AssertionError()
         sage: foo.__doc__
         'oh look, a docstring'
         sage: foo.__name__
@@ -171,16 +165,13 @@ def random_testing(fn):
                         "Please report this bug!  You may be the first",
                         "person in the world to have seen this problem.",
                         "Please include this random seed in your bug report:",
-                        f"Random seed: {used_seed}",
-                        f"Error: {repr(e)}"
+                        f"Random seed: {used_seed}"
                     ]
 
         # if an error occurred, raise it
-        stdout_value = stdout.getvalue().strip()
+        stdout_value = stdout.getvalue()
         if err:
-            if stdout_value:
-                err.extend(["Output:", stdout_value])
-            raise RuntimeError("\n".join(err))
+            raise RuntimeError("\n".join([stdout_value] + err))
         else:
             print(stdout_value)
 
@@ -240,15 +231,13 @@ def test_add_is_mul(trials, verbose=False):
     ::
 
         sage: test_add_is_mul(2, verbose=True, seed=0)
-        Traceback (most recent call last):
-        RuntimeError: Random testing has revealed a problem in test_add_is_mul
+        a == -4, b == 0 ...
+        Random testing has revealed a problem in test_add_is_mul
         Please report this bug!  You may be the first
         person in the world to have seen this problem.
         Please include this random seed in your bug report:
         Random seed: 0
-        Error: AssertionError()
-        Output:
-        a == -4, b == 0 ...
+        AssertionError()
 
     Normally in a ``@random_testing`` doctest, we would leave off the
     ``verbose=True`` and the ``# random``.  We put it in here so that we can
@@ -257,16 +246,14 @@ def test_add_is_mul(trials, verbose=False):
 
     ::
 
-        sage: test_add_is_mul(10, verbose=True)
-        Traceback (most recent call last):
-        RuntimeError: Random testing has revealed a problem in test_add_is_mul
+        sage: test_add_is_mul(10, verbose=True) # random
+        a == -2/7, b == 1 ...
+        Random testing has revealed a problem in test_add_is_mul
         Please report this bug!  You may be the first
         person in the world to have seen this problem.
         Please include this random seed in your bug report:
-        Random seed: ...
-        Error: AssertionError()
-        Output:
-        ...
+        Random seed: 216390410596009428782506007128692114173
+        AssertionError()
 
     OK, now assume that some user has reported a
     :func:`test_add_is_mul` failure.  We can specify the same
@@ -276,15 +263,13 @@ def test_add_is_mul(trials, verbose=False):
     ::
 
         sage: test_add_is_mul(10, verbose=True, seed=216390410596009428782506007128692114173)
-        Traceback (most recent call last):
-        RuntimeError: Random testing has revealed a problem in test_add_is_mul
+        a == -2/7, b == 1 ...
+        Random testing has revealed a problem in test_add_is_mul
         Please report this bug!  You may be the first
         person in the world to have seen this problem.
         Please include this random seed in your bug report:
         Random seed: 216390410596009428782506007128692114173
-        Error: AssertionError()
-        Output:
-        a == -2/7, b == 1 ...
+        AssertionError()
     """
     from sage.rings.rational_field import QQ
     for _ in range(trials):
