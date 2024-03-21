@@ -93,7 +93,7 @@ cdef class GroebnerStrategy(SageObject):
             ...
             NotImplementedError: Only coefficient fields are implemented so far.
 
-        Check that :trac:`27508` is fixed::
+        Check that :issue:`27508` is fixed::
 
             sage: R2.<x,y> = PolynomialRing(QQ, 2, order="lex")
             sage: I2 = R2.ideal(["x^2 - x", "y^2 - y"])

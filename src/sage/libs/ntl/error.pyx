@@ -11,10 +11,10 @@ NTL error handler
 
 AUTHOR:
 
-- Jeroen Demeyer (2015-02-15): initial version, see :trac:`17784`
+- Jeroen Demeyer (2015-02-15): initial version, see :issue:`17784`
 
 - Jeroen Demeyer (2015-07-09): use standard NTL ``ErrorMsgCallback``,
-  see :trac:`18875`
+  see :issue:`18875`
 """
 
 #*****************************************************************************

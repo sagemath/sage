@@ -170,7 +170,7 @@ class QuotientRingElement(RingElement):
             sage: S(2).is_unit()                                                        # needs sage.libs.singular
             True
 
-        Check that :trac:`29469` is fixed::
+        Check that :issue:`29469` is fixed::
 
             sage: a.is_unit()                                                           # needs sage.libs.singular
             True
@@ -200,7 +200,7 @@ class QuotientRingElement(RingElement):
             sage: a-2*a*b     # indirect doctest                                        # needs sage.libs.singular
             -2*a*b + a
 
-        In :trac:`11068`, the case of quotient rings without
+        In :issue:`11068`, the case of quotient rings without
         assigned names has been covered as well::
 
             sage: # needs sage.libs.singular
@@ -392,7 +392,7 @@ class QuotientRingElement(RingElement):
             sage: 1/a                                                                   # needs sage.libs.singular
             a
 
-        Check that :trac:`13670` is fixed (i.e. that the error message
+        Check that :issue:`13670` is fixed (i.e. that the error message
         actually describes what happens when the result of division is not defined)::
 
             sage: R.<x1,x2> = QQ[]
@@ -474,7 +474,7 @@ class QuotientRingElement(RingElement):
         EXAMPLES:
 
         Ring homomorphisms whose domain is the fraction field of a
-        quotient ring work correctly (see :trac:`16135`)::
+        quotient ring work correctly (see :issue:`16135`)::
 
             sage: # needs sage.libs.singular
             sage: R.<x, y> = QQ[]
@@ -648,7 +648,7 @@ class QuotientRingElement(RingElement):
             sage: a > b                                                                 # needs sage.libs.singular
             True
 
-        See :trac:`7797`::
+        See :issue:`7797`::
 
             sage: # needs sage.combinat sage.libs.singular sage.modules
             sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace')
@@ -657,8 +657,8 @@ class QuotientRingElement(RingElement):
             sage: Q.0^4    # indirect doctest
             ybar*zbar*zbar*xbar + ybar*zbar*zbar*ybar + ybar*zbar*zbar*zbar
 
-        The issue from :trac:`8005` was most likely fixed as part of
-        :trac:`9138`::
+        The issue from :issue:`8005` was most likely fixed as part of
+        :issue:`9138`::
 
             sage: # needs sage.libs.singular
             sage: F = GF(5)

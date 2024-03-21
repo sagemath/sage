@@ -307,7 +307,7 @@ cpdef getattr_from_other_class(self, cls, name) noexcept:
         ...
         AttributeError: 'sage.rings.integer.Integer' object has no attribute '__weakref__'...
 
-    This was caught by :trac:`8296` for which we do a couple more tests::
+    This was caught by :issue:`8296` for which we do a couple more tests::
 
         sage: "__weakref__" in dir(A)
         True
@@ -334,7 +334,7 @@ cpdef getattr_from_other_class(self, cls, name) noexcept:
     TESTS:
 
     Check that we do not pick up special attributes from the ``type``
-    class, see :trac:`20686`::
+    class, see :issue:`20686`::
 
         sage: getattr_from_other_class(1, type, "__name__")
         Traceback (most recent call last):
@@ -419,7 +419,7 @@ def dir_with_other_class(self, *cls):
 
     TESTS:
 
-    Check that :trac:`13043` is fixed::
+    Check that :issue:`13043` is fixed::
 
         sage: len(dir(RIF))==len(set(dir(RIF)))                                         # needs sage.rings.real_interval_field
         True

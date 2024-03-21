@@ -176,10 +176,10 @@ AUTHORS:
 - Kwankyu Lee (2010-01): added methods generator_matrix_systematic,
   information_set, and magma interface for linear codes.
 
-- Niles Johnson (2010-08): :trac:`3893`: ``random_element()`` should pass on
+- Niles Johnson (2010-08): :issue:`3893`: ``random_element()`` should pass on
   ``*args`` and ``**kwds``.
 
-- Thomas Feulner (2012-11): :trac:`13723`: deprecation of ``hamming_weight()``
+- Thomas Feulner (2012-11): :issue:`13723`: deprecation of ``hamming_weight()``
 
 - Thomas Feulner (2013-10): added methods to compute a canonical representative
   and the automorphism group
@@ -784,7 +784,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
         TESTS:
 
         Check that interrupting this does not segfault
-        (see :trac:`21651`)::
+        (see :issue:`21651`)::
 
             sage: C = LinearCode(random_matrix(GF(47), 25, 35))
             sage: alarm(0.5); C.canonical_representative()
@@ -1448,7 +1448,7 @@ class AbstractLinearCode(AbstractLinearCodeNoMetric):
 
         TESTS:
 
-        We check that :trac:`18480` is fixed::
+        We check that :issue:`18480` is fixed::
 
             sage: codes.HammingCode(GF(2), 2).minimum_distance()
             3
@@ -2255,7 +2255,7 @@ class LinearCode(AbstractLinearCode):
         [7, 4] linear code over GF(5)
 
     Providing a code as the parameter in order to "forget" its structure (see
-    :trac:`20198`)::
+    :issue:`20198`)::
 
         sage: C = codes.GeneralizedReedSolomonCode(GF(23).list(), 12)
         sage: LinearCode(C)
@@ -2272,7 +2272,7 @@ class LinearCode(AbstractLinearCode):
     AUTHORS:
 
     - David Joyner (11-2005)
-    - Charles Prior (03-2016): :trac:`20198`, LinearCode from a code
+    - Charles Prior (03-2016): :issue:`20198`, LinearCode from a code
     """
     def __init__(self, generator, d=None):
         r"""
@@ -2299,7 +2299,7 @@ class LinearCode(AbstractLinearCode):
             sage: TestSuite(C).run()
 
         Check that it works even with input matrix with non full rank (see
-        :trac:`17452`)::
+        :issue:`17452`)::
 
             sage: K.<a> = GF(4)
             sage: G = matrix([[a, a + 1, 1, a + 1, 1, 0, 0],
@@ -2326,7 +2326,7 @@ class LinearCode(AbstractLinearCode):
             sage: C = LinearCode(VS); C
             [3, 1] linear code over GF(2)
 
-        Forbid the zero vector space (see :trac:`17452` and :trac:`6486`)::
+        Forbid the zero vector space (see :issue:`17452` and :issue:`6486`)::
 
             sage: G = matrix(GF(2), [[0,0,0]])
             sage: C = LinearCode(G)
@@ -2666,7 +2666,7 @@ class LinearCodeSyndromeDecoder(Decoder):
             ValueError: maximum_error_weight has to be less than code's length minus its dimension
 
         The Syndrome Decoder of a Hamming code should have types
-        ``minimum-distance`` and ``always-succeed`` (see :trac:`20898`)::
+        ``minimum-distance`` and ``always-succeed`` (see :issue:`20898`)::
 
             sage: C = codes.HammingCode(GF(5), 3)
             sage: D = C.decoder("Syndrome")
@@ -2782,7 +2782,7 @@ class LinearCodeSyndromeDecoder(Decoder):
 
         TESTS:
 
-        Check that :trac:`24114` is fixed::
+        Check that :issue:`24114` is fixed::
 
             sage: R.<x> = PolynomialRing(GF(3))
             sage: f = x^2 + x + 2
