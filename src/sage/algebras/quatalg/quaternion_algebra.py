@@ -768,11 +768,11 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         TESTS:
 
-        We check that the first part of :issue:`37217` is fixed::
+        We check that :issue:`37417` and the first part of :issue:`37217` are fixed::
 
-            sage: invars = [(-292, -732), (-48, -564), (-436, -768), (-752, -708), (885, 545),
-            ....:           (411, -710), (-411, 593), (805, -591), (-921, 353), (409, 96),
-            ....:           (394, 873), (353, -722), (730, 830), (-466, -427), (-213, -630),
+            sage: invars = [(-4, -28), (-292, -732), (-48, -564), (-436, -768), (-752, -708),
+            ....:           (885, 545), (411, -710), (-411, 593), (805, -591), (-921, 353),
+            ....:           (409, 96), (394, 873), (353, -722), (730, 830), (-466, -427), (-213, -630),
             ....:           (-511, 608), (493, 880), (105, -709), (-213, 530), (97, 745)]
             sage: all(QuaternionAlgebra(a, b).maximal_order().is_maximal() for (a, b) in invars)
             True
