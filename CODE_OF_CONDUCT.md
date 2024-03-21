@@ -37,6 +37,4 @@ Sage can more effectively collaborate with others if they follow this code.
 
 If you believe someone is violating the code of conduct, we ask that you report
 it to https://groups.google.com/g/sage-abuse. The group administrators will
-consider the issue and explore resolutions. It is also possible to move heated
-discussions to https://groups.google.com/g/sage-flame.
-
+consider the issue and explore resolutions.
