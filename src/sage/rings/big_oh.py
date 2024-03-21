@@ -93,7 +93,7 @@ def O(*x, **kwds):
         sage: K(11^-12, 15)
         11^-12 + O(11^15)
 
-    We can also work with `asymptotic expansions`_::
+    We can also work with :ref:`asymptotic expansions <asymptotic_expansions>`::
 
         sage: A.<n> = AsymptoticRing(growth_group='QQ^n * n^QQ * log(n)^QQ',            # needs sage.symbolic
         ....:                        coefficient_ring=QQ); A
