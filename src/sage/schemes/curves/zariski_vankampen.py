@@ -44,7 +44,7 @@ EXAMPLES::
 import itertools
 from copy import copy
 
-from sage.combinat.combination import Combinations
+from itertools import combinations
 from sage.combinat.permutation import Permutation
 from sage.functions.generalized import sign
 from sage.geometry.voronoi_diagram import VoronoiDiagram
@@ -142,7 +142,7 @@ def braid_from_piecewise(strands):
             l1j = l1[j]
             for k in range(j):
                 if l2j < l2[k]:
-                    t = (l1j[0]-l1[k][0])/((l2[k][0] - l2j[0]) + (l1j[0]-l1[k][0]))
+                    t = (l1j[0] - l1[k][0]) / ((l2[k][0] - l2j[0]) + (l1j[0] - l1[k][0]))
                     s = sgn(l1[k][1] * (1 - t) + t * l2[k][1],
                             l1j[1] * (1 - t) + t * l2j[1])
                     cruces.append([t, k, j, s])
@@ -178,7 +178,7 @@ def discrim(pols) -> tuple:
     INPUT:
 
     - ``pols`` -- a list or tuple of polynomials in two variables with
-      coefficients in a number field with a fixed embedding in `QQbar`.
+      coefficients in a number field with a fixed embedding in `\QQbar`.
 
     OUTPUT:
 
@@ -189,9 +189,7 @@ def discrim(pols) -> tuple:
         sage: from sage.schemes.curves.zariski_vankampen import discrim
         sage: R.<x, y> = QQ[]
         sage: flist = (y^3 + x^3 - 1, 2 * x + y)
-        sage: L = list(discrim(flist))
-        sage: L.sort()
-        sage: L
+        sage: sorted((discrim(flist)))
         [-0.522757958574711?,
          -0.500000000000000? - 0.866025403784439?*I,
          -0.500000000000000? + 0.866025403784439?*I,
@@ -210,7 +208,7 @@ def discrim(pols) -> tuple:
         return pol_ring(f.resultant(g, y))
 
     pairs = [(f, None) for f in pols] + [tuple(t) for t
-                                         in Combinations(pols, 2)]
+                                         in combinations(pols, 2)]
     fdiscrim = discrim_pairs(pairs)
     rts = ()
     poly = 1
@@ -270,8 +268,8 @@ def corrected_voronoi_diagram(points):
         V = VoronoiDiagram(configuration)
         valid = True
         for r in V.regions().items():
-            if not r[1].rays() and \
-               not r[1].interior_contains(apprpoints[r[0].affine()]):
+            if (not r[1].rays() and
+               not r[1].interior_contains(apprpoints[r[0].affine()])):
                 prec += 53
                 valid = False
                 break
@@ -568,8 +566,8 @@ def followstrand(f, factors, x0, x1, y0a, prec=53) -> list:
                 ci = c.imag()
                 coefsfactors += list(cr.endpoints())
                 coefsfactors += list(ci.endpoints())
-    from sage.libs.sirocco import contpath, contpath_mp, contpath_comps
-    from sage.libs.sirocco import contpath_mp_comps
+    from sage.libs.sirocco import (contpath, contpath_mp, contpath_comps,
+                                   contpath_mp_comps)
     try:
         if prec == 53:
             if factors:
@@ -626,11 +624,11 @@ def fieldI(field):
 
     INPUT:
 
-    - ``field`` -- a number field with an embedding in ``QQbar``.
+    - ``field`` -- a number field with an embedding in `\QQbar`.
 
     OUTPUT:
 
-    The extension ``F`` of ``field`` containing  ``I`` with  an embedding in ``QQbar``.
+    The extension ``F`` of ``field`` containing  ``I`` with  an embedding in `\QQbar`.
 
     EXAMPLES::
 
@@ -1137,7 +1135,7 @@ def geometric_basis(G, E, EC0, p, dual_graph, vertical_regions={}) -> list:
 
 def vertical_lines_in_braidmon(pols) -> list:
     r"""
-    Returns the vertical lines in ``pols``, unless
+    Return the vertical lines in ``pols``, unless
     one of the other components has a vertical asymptote.
 
     INPUT:
@@ -1201,7 +1199,6 @@ def strand_components(f, pols, p1):
 
     EXAMPLES::
 
-        sage: # needs sirocco
         sage: from sage.schemes.curves.zariski_vankampen import strand_components
         sage: R.<x, y> = QQ[]
         sage: flist = [x^2 - y^3, x + 3 * y - 5]
@@ -1679,8 +1676,7 @@ def fundamental_group(f, simplified=True, projective=False, puiseux=True):
     INPUT:
 
     - ``f`` -- a polynomial in two variables, with coefficients in either
-      the rationals or a number field with a fixed embedding in
-      `\QQbar`
+      the rationals or a number field with a fixed embedding in `\QQbar`
 
     - ``simplified`` -- boolean (default: ``True``); if set to ``True`` the
       presentation will be simplified (see below)
@@ -1812,11 +1808,11 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
 
     - ``vertical`` -- boolean (default: ``False``); if set to ``True``,
       whenever no curve has vertical asymptotes the computation of braid
-      monodromy is simpler if some lines are vertical.
+      monodromy is simpler if some lines are vertical
 
     - ``braid_data`` -- tuple (default: ``None``); if it is not the default
       it is the output of ``fundamental_group_from_braid_mon`` previously
-      computed.
+      computed
 
     OUTPUT:
 

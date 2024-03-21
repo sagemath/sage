@@ -2613,9 +2613,9 @@ class HyperplaneArrangementElement(Element):
         if not normalize:
             return face
         # Look for ``I`` in ``self.closed_faces()``:
-        for I0 in self.closed_faces():
-            if I0[0] == tuple(signs):
-                return I0[1]
+        for I in self.closed_faces():
+            if I[0] == tuple(signs):
+                return I[1]
 
     def face_semigroup_algebra(self, field=None, names='e'):
         r"""

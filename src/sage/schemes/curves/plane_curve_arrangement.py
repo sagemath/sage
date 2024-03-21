@@ -46,8 +46,8 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
 
+from itertools import combinations
 from sage.categories.sets_cat import Sets
-from sage.combinat.combination import Combinations
 from sage.groups.free_group import FreeGroup
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
@@ -72,7 +72,6 @@ class PlaneCurveArrangementElement(Element):
     """
     An ordered plane curve arrangement.
     """
-
     def __init__(self, parent, curves, check=True):
         """
         Construct a plane curve arrangement.
@@ -95,21 +94,15 @@ class PlaneCurveArrangementElement(Element):
             sage: TestSuite(elt).run()
         """
         super().__init__(parent)
-        self._curves = curves
+        self._curves = tuple(curves)
         if check:
-            if not isinstance(curves, tuple):
-                raise ValueError("the curves must be given as a tuple")
             affine = all(isinstance(h, AffinePlaneCurve) for h in curves)
             projective = all(isinstance(h, ProjectivePlaneCurve) for h in curves)
             if not (affine or projective):
                 raise ValueError("not all elements are curves")
-            if not all(h.ambient_space() is self.parent().ambient_space()
+            if not all(h.ambient_space() is parent.ambient_space()
                        for h in curves):
                 raise ValueError("not all curves are in the same ambient space")
-            if projective:
-                homogeneous = all(h.defining_polynomial().is_homogeneous() for h in curves)
-                if not homogeneous:
-                    raise ValueError("the defining polynomials of plane projective curves must be homogeneous")
 
     def __getitem__(self, i):
         """
@@ -142,7 +135,7 @@ class PlaneCurveArrangementElement(Element):
         """
         return hash(self.curves())
 
-    def n_curves(self):
+    def ncurves(self):
         r"""
         Return the number of curves in the arrangement.
 
@@ -154,14 +147,14 @@ class PlaneCurveArrangementElement(Element):
 
             sage: H.<x, y, z> = PlaneCurveArrangements(QQ)
             sage: h = H((x * y, x + y + z))
-            sage: h.n_curves()
+            sage: h.ncurves()
             2
             sage: len(h)    # equivalent
             2
         """
         return len(self._curves)
 
-    __len__ = n_curves
+    __len__ = ncurves
 
     def curves(self):
         r"""
@@ -341,6 +334,7 @@ class PlaneCurveArrangementElement(Element):
         curves = tuple(c.change_ring(base_ring) for c in self)
         return parent(curves)
 
+    @cached_method
     def coordinate_ring(self):
         """
         Return the coordinate ring of ``self``.
@@ -360,7 +354,7 @@ class PlaneCurveArrangementElement(Element):
             sage: C.coordinate_ring()
             Multivariate Polynomial Ring in x, y, z over Rational Field
         """
-        return self.curves()[0].defining_polynomial().parent()
+        return self._curves[0].defining_polynomial().parent()
 
     def defining_polynomials(self):
         r"""
@@ -373,7 +367,7 @@ class PlaneCurveArrangementElement(Element):
             sage: A.defining_polynomials()
             (-x^3 + y^2, x, y, x^2 + x*y + y^2)
         """
-        return tuple(h.defining_polynomial() for h in self)
+        return tuple([h.defining_polynomial() for h in self._curves])
 
     def defining_polynomial(self, simplified=True):
         r"""
@@ -401,12 +395,9 @@ class PlaneCurveArrangementElement(Element):
             sage: H(x * y, x + y^3).have_common_factors()
             False
         """
-        L = [c.defining_polynomial() for c in self]
-        C = Combinations(L, 2)
-        for f1, f2 in C:
-            if f1.gcd(f2).degree() > 0:
-                return True
-        return False
+        L = [c.defining_polynomial() for c in self._curves]
+        C = combinations(L, 2)
+        return any(f1.gcd(f2).degree() > 0 for f1, f2 in C)
 
     def reduce(self, clean=False):
         r"""
@@ -438,15 +429,15 @@ class PlaneCurveArrangementElement(Element):
         """
         P = self.parent()
         R = self.coordinate_ring()
-        L = [self[0].defining_polynomial().radical()]
-        for c in self[1:]:
+        L = [self._curves[0].defining_polynomial().radical()]
+        for c in self._curves[1:]:
             g = c.defining_polynomial().radical()
             for f in L:
                 d = g.gcd(f)
                 if d.degree() > 0 and not clean:
                     print("Some curves have common components")
                     return None
-                g = R(g / d)
+                g //= d
             if g.degree() > 0:
                 L.append(g)
         return P(*L)
@@ -456,7 +447,6 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
     """
     An ordered affine plane curve arrangement.
     """
-
     def __init__(self, parent, curves, check=True):
         """
         Construct an ordered affine plane curve arrangement.
@@ -475,10 +465,8 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             sage: TestSuite(elt).run()
         """
         Element.__init__(self, parent)
-        self._curves = curves
+        self._curves = tuple(curves)
         if check:
-            if not isinstance(curves, tuple):
-                raise ValueError("the curves must be given as a tuple")
             if not all(isinstance(h, AffinePlaneCurve) for h in curves):
                 raise ValueError("not all elements are curves")
             if not all(h.ambient_space() is self.parent().ambient_space()
@@ -506,15 +494,15 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
 
         INPUT:
 
-        - ``vertical`` -- boolean (default: ``True``); if it is ``True``, there
+        - ``vertical`` -- boolean (default: ``True``); if ``True``, there
           are no vertical asymptotes, and there are vertical lines, then a
-          simplified braid braid_monodromy is used.
+          simplified braid :func:`braid_monodromy` is used
 
         - ``simplified`` -- boolean (default: ``True``); if it is ``True``, the
-          group is simplified.
+          group is simplified
 
         - ``projective`` -- boolean (default: ``False``); to be used in the
-          method for projective curves.
+          method for projective curves
 
         OUTPUT:
 
@@ -827,10 +815,8 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             sage: TestSuite(elt).run()
         """
         Element.__init__(self, parent)
-        self._curves = curves
+        self._curves = tuple(curves)
         if check:
-            if not isinstance(curves, tuple):
-                raise ValueError("the curves must be given as a tuple")
             if not all(isinstance(h, ProjectivePlaneCurve) for h in curves):
                 raise ValueError("not all elements are curves")
             if not all(h.ambient_space() is self.parent().ambient_space()
@@ -1053,6 +1039,12 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
 
             sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
             sage: TestSuite(H).run()
+            sage: H.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
+            sage: K = ProjectivePlaneCurveArrangements(QQ, names=('x', 'y', 'z'))
+            sage: H is K
+            True
+            sage: type(K)
+            <class 'sage.schemes.curves.plane_curve_arrangement.ProjectivePlaneCurveArrangements_with_category'>
         """
         if base_ring not in _Fields:
             raise ValueError('base ring must be a field')
@@ -1107,7 +1099,6 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
         """
         return PlaneCurveArrangements(base_ring, names=self.variable_names())
 
-    @cached_method
     def ambient_space(self):
         """
         Return the ambient space.
@@ -1153,13 +1144,13 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: L.<x, y> = AffinePlaneCurveArrangements(QQ)
-            sage: A = L._element_constructor_(x, y); A
+            sage: A = L(x, y); A
             Arrangement (x, y) in Affine Space of dimension 2 over Rational Field
-            sage: L._element_constructor_([x, y]) == A
+            sage: L([x, y]) == A
             True
-            sage: L._element_constructor_(Curve(x), Curve(y)) == A
+            sage: L(Curve(x), Curve(y)) == A
             True
-            sage: L._element_constructor_(y, x) == A
+            sage: L(y, x) == A
             False
        """
         if len(args) == 1:
@@ -1200,8 +1191,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
             sage: H._an_element_()
             Arrangement (t) in Projective Space of dimension 2 over Rational Field
         """
-        x = self.gen(0)
-        return self(x)
+        return self(self.gen(0))
 
     @cached_method
     def ngens(self):
@@ -1286,19 +1276,6 @@ class AffinePlaneCurveArrangements(PlaneCurveArrangements):
     """
     Element = AffinePlaneCurveArrangementElement
 
-    def __init__(self, base_ring, names=tuple()):
-        """
-        Initialize ``self``.
-
-        TESTS::
-
-            sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
-            sage: TestSuite(H).run()
-        """
-        if base_ring not in _Fields:
-            raise ValueError('base ring must be a field')
-        super().__init__(base_ring, names=names)
-
 
 class ProjectivePlaneCurveArrangements(PlaneCurveArrangements):
     """
@@ -1318,25 +1295,3 @@ class ProjectivePlaneCurveArrangements(PlaneCurveArrangements):
         of dimension 2 over Rational Field
     """
     Element = ProjectivePlaneCurveArrangementElement
-
-    def __init__(self, base_ring, names=tuple()):
-        """
-        Initialize ``self``.
-
-        TESTS::
-
-            sage: H.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-            sage: K = ProjectivePlaneCurveArrangements(QQ, names=('x', 'y', 'z'))
-            sage: H is K
-            True
-            sage: type(K)
-            <class 'sage.schemes.curves.plane_curve_arrangement.ProjectivePlaneCurveArrangements_with_category'>
-
-        TESTS::
-
-            sage: H.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-            sage: TestSuite(H).run()
-        """
-        if base_ring not in _Fields:
-            raise ValueError('base ring must be a field')
-        super().__init__(base_ring, names=names)

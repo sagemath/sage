@@ -299,6 +299,11 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             < x0, x1, x2, x3 | x3^-1*x2^-1*x3*x2, x3^-1*x1^-1*x3*x1,
                                x3^-1*x0^-1*x3*x0, x2^-1*x1^-1*x2*x1,
                                x2^-1*x0^-1*x2*x0, x1^-1*x0^-1*x1*x0 >
+        sage: A = OrderedHyperplaneArrangements(QQ, names=())
+        sage: H = A(); H
+        Empty hyperplane arrangement of dimension 0
+        sage: H.affine_fundamental_group()
+        Finitely presented group <  |  >
         """
         K = self.base_ring()
         if not K.is_subring(QQbar):
@@ -424,6 +429,19 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             Traceback (most recent call last):
             ...
             TypeError: the arrangement is not projective
+            sage: T.<t> = QQ[]
+            sage: K.<a> = NumberField(t^3 + t + 1)
+            sage: L.<x, y, z> = OrderedHyperplaneArrangements(K)
+            sage: H = L(a*x + y - z, x + a*y + z, x - z, y - z)
+            sage: H.projective_fundamental_group()
+            Traceback (most recent call last):
+            ...
+            TypeError: the base field is not in QQbar
+        sage: A.<x> = OrderedHyperplaneArrangements(QQ)
+        sage: H = A(); H
+        Empty hyperplane arrangement of dimension 1
+        sage: H.projective_fundamental_group()
+        Finitely presented group <  |  >
         """
         K = self.base_ring()
         if not K.is_subring(QQbar):
@@ -461,7 +479,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
 
     def projective_meridians(self):
         r"""
-        Return the meridian of each hyperplane
+        Return the meridian of each hyperplane.
 
         OUTPUT:
 
@@ -530,7 +548,7 @@ class OrderedHyperplaneArrangements(HyperplaneArrangements):
 
     def _element_constructor_(self, *args, **kwds):
         """
-        Repetition of the corresponding function for hyperplane arrangements without reordering.
+        Construct an element of ``self``.
 
         INPUT:
 
@@ -547,18 +565,18 @@ class OrderedHyperplaneArrangements(HyperplaneArrangements):
         EXAMPLES::
 
             sage: L.<x, y> = OrderedHyperplaneArrangements(QQ)
-            sage: L._element_constructor_(x)
+            sage: L(x)
             Arrangement <x>
-            sage: L._element_constructor_(x, y)
+            sage: L(x, y)
             Arrangement <x | y>
-            sage: L._element_constructor_([x, y])
+            sage: L([x, y])
             Arrangement <x | y>
-            sage: L._element_constructor_([0, 1, 0], [0, 0, 1])
+            sage: L([0, 1, 0], [0, 0, 1])
             Arrangement <x | y>
-            sage: L._element_constructor_([[0, 0, 1], [0, 1, 0]])
+            sage: L([[0, 0, 1], [0, 1, 0]])
             Arrangement <y | x>
 
-            sage: L._element_constructor_(polytopes.hypercube(2))
+            sage: L(polytopes.hypercube(2))
             Arrangement <-x + 1 | -y + 1 | x + 1 | y + 1>
 
             sage: L(-x, x + y - 1, signed=False)
@@ -581,7 +599,7 @@ class OrderedHyperplaneArrangements(HyperplaneArrangements):
         """
         if len(args) == 1:
             arg = args[0]
-            if isinstance(arg, HyperplaneArrangementElement) and args[0].parent() is self:
+            if isinstance(arg, HyperplaneArrangementElement) and arg.parent() is self:
                 # optimization if argument is already a hyperplane arrangement
                 return arg
             if arg == 0 and not isinstance(arg, Hyperplane):
@@ -590,7 +608,6 @@ class OrderedHyperplaneArrangements(HyperplaneArrangements):
         # process keyword arguments
         not_char2 = (self.base_ring().characteristic() != 2)
         signed = kwds.pop('signed', not_char2)
-        warn_duplicates = kwds.pop('warn_duplicates', False)
         check = kwds.pop('check', True)
         backend = kwds.pop('backend', None)
         if len(kwds) > 0:
@@ -608,10 +625,6 @@ class OrderedHyperplaneArrangements(HyperplaneArrangements):
             else:
                 hyperplanes = [AA(_) for _ in arg]
         hyperplanes = [h.primitive(signed) for h in hyperplanes]
-        if warn_duplicates:
-            from warnings import warn
-            warn('Input contained repeated hyperplanes.')
-        # argument checking (optional but recommended)
         if check:
             if signed and not not_char2:
                 raise ValueError('cannot be signed in characteristic 2')
@@ -633,6 +646,7 @@ class OrderedHyperplaneArrangements(HyperplaneArrangements):
         EXAMPLES::
 
             sage: L.<x, y> = OrderedHyperplaneArrangements(QQ);  L
-            Ordered hyperplane arrangements in 2-dimensional linear space over Rational Field with coordinates x, y
+            Ordered hyperplane arrangements in 2-dimensional linear space
+            over Rational Field with coordinates x, y
         """
         return 'Ordered hyperplane arrangements in {0}'.format(self.ambient_space())

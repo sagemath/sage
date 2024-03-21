@@ -437,12 +437,12 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
                     if self.defining_polynomials()[i] != 0:
                         F = self.defining_polynomials()[i]
                 # find a point on which it doesn't vanish
-                ll = list(PP.gens())
+                l = list(PP.gens())
                 for i in range(n + 1):
-                    ll[i] = 0
-                    while F(ll) == 0:
-                        ll[i] += 1
-                Q = PP(ll)  # will be a point not on the curve
+                    l[i] = 0
+                    while F(l) == 0:
+                        l[i] += 1
+                Q = PP(l)  # will be a point not on the curve
             else:
                 # if the base ring is a finite field, iterate over all points in the ambient space and check which
                 # are on this curve
