@@ -940,11 +940,19 @@ Environment variables controlling the documentation build
 
   The value of this variable is passed as an
   argument to ``sage --docbuild all html`` or ``sage --docbuild all pdf`` when
-  you run ``make``, ``make doc``, or ``make doc-pdf``.  For example, you can
-  add ``--no-plot`` to this variable to avoid building the graphics coming from
-  the ``.. PLOT`` directive within the documentation, or you can add
-  ``--include-tests-blocks`` to include all "TESTS" blocks in the reference
-  manual. Run ``sage --docbuild help`` to see the full list of options.
+  you run ``make``, ``make doc``, or ``make doc-pdf``.  For example:
+
+  - add ``--no-plot`` to this variable to avoid building the graphics coming from
+    the ``.. PLOT`` directive within the documentation,
+
+  - add ``--no-preparsed-examples`` to only show the original Sage code of
+    "EXAMPLES" blocks, suppressing the tab with the preparsed, plain Python
+    version, or
+
+  - add ``--include-tests-blocks`` to include all "TESTS" blocks in the reference
+    manual.
+
+  Run ``sage --docbuild help`` to see the full list of options.
 
 .. envvar:: SAGE_SPKG_INSTALL_DOCS
 
