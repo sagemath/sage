@@ -136,9 +136,6 @@ cdef class DecompositionNode(SageObject):
         r"""
         Return a :class:`Matrix`.
 
-        Use :meth:`ancestor_rows_and_columns` for the embedding of it
-        into the matrix of ...
-
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -200,10 +197,6 @@ cdef class DecompositionNode(SageObject):
         return Matrix(self.matrix(),
                       row_keys=self.row_keys(),
                       column_keys=self.column_keys())
-
-    @cached_method
-    def ancestor_rows_and_columns(self):
-        return self.row_keys(), self.column_keys()
 
     def as_ordered_tree(self):
         r"""
