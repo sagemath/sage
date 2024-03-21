@@ -755,8 +755,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
             sage: for d in ( m for m in range(1, 750) if is_squarefree(m) ):        # long time (3s)
             ....:     A = QuaternionAlgebra(d)
-            ....:     R = A.maximal_order(take_shortcuts=False)
-            ....:     assert A.discriminant() == R.discriminant()
+            ....:     assert A.maximal_order(take_shortcuts=False).is_maximal()
 
         We do not support number fields other than the rationals yet::
 
@@ -766,6 +765,17 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             ...
             NotImplementedError: maximal order only implemented
             for rational quaternion algebras
+
+        TESTS:
+
+        We check that the first part of :issue:`37217` is fixed::
+
+            sage: invars = [(-292, -732), (-48, -564), (-436, -768), (-752, -708), (885, 545),
+            ....:           (411, -710), (-411, 593), (805, -591), (-921, 353), (409, 96),
+            ....:           (394, 873), (353, -722), (730, 830), (-466, -427), (-213, -630),
+            ....:           (-511, 608), (493, 880), (105, -709), (-213, 530), (97, 745)]
+            sage: all(QuaternionAlgebra(a, b).maximal_order().is_maximal() for (a, b) in invars)
+            True
         """
         if self.base_ring() != QQ:
             raise NotImplementedError("maximal order only implemented for rational quaternion algebras")
@@ -819,7 +829,8 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         # For each prime at which R is not yet maximal, make it bigger
         for p, _ in d_R.factor():
             e = R.basis()
-            while self.quaternion_order(e).discriminant().valuation(p) > d_A.valuation(p):
+            disc = self.quaternion_order(e).discriminant()
+            while disc.valuation(p) > d_A.valuation(p):
                 # Compute a normalized basis at p
                 f = normalize_basis_at_p(list(e), p)
 
@@ -895,6 +906,16 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
                 # but the basis may be messed up at other primes (it might not even
                 # be an order). We will join them all together at the end
                 e = e_n
+
+                # Since e might not define an order at this point, we need to manually
+                # calculate the updated discriminant
+                L = []
+                for x in e:
+                    MM = []
+                    for y in e:
+                        MM.append(x.pair(y))
+                    L.append(MM)
+                disc = (MatrixSpace(QQ, 4, 4)(L)).determinant().sqrt()
 
             e_new_gens.extend(e[1:])
 
@@ -3529,7 +3550,18 @@ def normalize_basis_at_p(e, p, B=QuaternionAlgebraElement_abstract.pair):
         sage: e = [A(1), k, j, 1/2 + 1/2*i + 1/2*j + 1/2*k]
         sage: normalize_basis_at_p(e, 2)
         [(1, 0), (1/2 + 1/2*i + 1/2*j + 1/2*k, 0), (-34/105*i - 463/735*j + 71/105*k, 1),
-         (-34/105*i - 463/735*j + 71/105*k, 1)]
+         (1/7*i - 8/49*j + 1/7*k, 1)]
+
+    TESTS:
+
+    We check that the second part of :issue:`37217` is fixed::
+
+        sage: A.<i,j,k> = QuaternionAlgebra(-1,-7)
+        sage: e = [A(1), k, j, 1/2 + 1/2*i + 1/2*j + 1/2*k]
+        sage: e_norm = normalize_basis_at_p(e, 2)
+        sage: V = QQ**4
+        sage: V.span([V(x.coefficient_tuple()) for (x,_) in e_norm]).dimension()
+        4
     """
 
     N = len(e)
@@ -3577,8 +3609,7 @@ def normalize_basis_at_p(e, p, B=QuaternionAlgebraElement_abstract.pair):
 
             # Ensures that (B(f0,f0)/2).valuation(p) <= B(f0,f1).valuation(p)
             if B(f0, f1).valuation(p) + 1 < B(f0, f0).valuation(p):
-                f0 += f1
-                f1 = f0
+                f0, f1 = f0 + f1, f0
 
             # Make remaining vectors orthogonal to span of f0, f1
             e[min_m] = e[0]
@@ -3591,7 +3622,7 @@ def normalize_basis_at_p(e, p, B=QuaternionAlgebraElement_abstract.pair):
             tu = [(B01 * B(f1, e[l]) - B11 * B(f0, e[l]),
                    B01 * B(f0, e[l]) - B00 * B(f1, e[l])) for l in range(2, N)]
 
-            e[2:n] = [e[l] + tu[l-2][0]/d * f0 + tu[l-2][1]/d * f1 for l in range(2, N)]
+            e[2:N] = [e[l] + tu[l-2][0]/d * f0 + tu[l-2][1]/d * f1 for l in range(2, N)]
 
             # Recursively normalize remaining vectors
             f = normalize_basis_at_p(e[2:N], p)
