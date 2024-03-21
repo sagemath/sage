@@ -83,10 +83,6 @@ def random_testing(fn):
 
     and look at the last seed that was printed before it crashed.
 
-    .. NOTE::
-
-        If the function being wrapped raises an error, even if it is intended (such
-        as a :class:`NotImplementedError`), it will be treated as a test failure.
 
     TESTS::
 
@@ -124,9 +120,8 @@ def random_testing(fn):
         sage: bar(print_seed=True) # random
         Random seed: 262841091890156346923539765543814146051
     """
-    import io
-    from contextlib import redirect_stdout
     from sage.misc.randstate import seed, initial_seed
+    from sys import stdout
 
     @wraps(fn)
     def wrapped_fun(*args, **kwargs):
@@ -134,47 +129,33 @@ def random_testing(fn):
         if 'seed' in kwargs:
             arg_seed = kwargs['seed']
             del kwargs['seed']
-
-        # we capture stdout and print it in case an error occurs
-        err = []
-        with redirect_stdout(io.StringIO()) as stdout:
-            # run random test
-            with seed(arg_seed):
-                used_seed = initial_seed()
-                if 'print_seed' in kwargs:
-                    if kwargs['print_seed']:
-                        print("Random seed: {}".format(used_seed))
-                        del kwargs['print_seed']
-                    # I don't know if this line is necessary, but it can't
-                    # hurt; and it would be a real pity to lose the
-                    # information you need to reproduce a segfault because
-                    # it was missing...
-                    stdout.flush()
-                try:
-                    fn(*args, **kwargs)
-                except KeyboardInterrupt:
-                    pass
-                except Exception as e:
-                    # We treat any sort of Exception as a doctest
-                    # failure.  (We have to eat the exception, because if
-                    # doctesting sees an exception, it doesn't display
-                    # whatever was printed before the exception happened
-                    # -- so the text we print here would be lost.)
-                    err = [
-                        f"Random testing has revealed a problem in {fn.__name__}",
-                        "Please report this bug!  You may be the first",
-                        "person in the world to have seen this problem.",
-                        "Please include this random seed in your bug report:",
-                        f"Random seed: {used_seed}"
-                    ]
-
-        # if an error occurred, raise it
-        stdout_value = stdout.getvalue()
-        if err:
-            raise RuntimeError("\n".join([stdout_value] + err))
-        else:
-            print(stdout_value)
-
+        with seed(arg_seed):
+            used_seed = initial_seed()
+            if 'print_seed' in kwargs:
+                if kwargs['print_seed']:
+                    print("Random seed: {}".format(used_seed))
+                    del kwargs['print_seed']
+                # I don't know if this line is necessary, but it can't
+                # hurt; and it would be a real pity to lose the
+                # information you need to reproduce a segfault because
+                # it was missing...
+                stdout.flush()
+            try:
+                fn(*args, **kwargs)
+            except Exception as e:
+                # We treat any sort of Exception as a doctest
+                # failure.  (We have to eat the exception, because if
+                # doctesting sees an exception, it doesn't display
+                # whatever was printed before the exception happened
+                # -- so the text we print here would be lost.)  Note
+                # that KeyboardInterrupt is not an Exception, so
+                # pressing Control-C doesn't print this message.
+                print("Random testing has revealed a problem in " + fn.__name__)
+                print("Please report this bug!  You may be the first")
+                print("person in the world to have seen this problem.")
+                print("Please include this random seed in your bug report:")
+                print("Random seed: {}".format(used_seed))
+                print(repr(e))
     return wrapped_fun
 
 
