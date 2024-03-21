@@ -117,11 +117,12 @@ confidence.
 You can report issues to the Sage Code of Conduct Committee at
 sage-conduct@googlegroups.com. Currently, the committee consists of:
 
-- Vincent Delecroix
-- David Joyner
+- Nils Bruin
+- J-P Labbé
 - John Palmieri
+- Viviane Pons
 - David Roe
-- William Stein
+- Julian Rüth
 
 If your report involves any members of the committee, or if they feel
 they have a conflict of interest in handling it, then they will recuse
