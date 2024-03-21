@@ -89,6 +89,7 @@ def test_random_chain_complex(level=1, trials=1, verbose=False):
         sage: test_random_chain_complex(trials=2)  # optional - CHomP
         doctest:...: DeprecationWarning: the CHomP interface is deprecated; hence so is this function
         See https://github.com/sagemath/sage/issues/33777 for details.
+        done
     """
     deprecation(33777, 'the CHomP interface is deprecated; hence so is this function')
     for i in range(trials):
@@ -101,6 +102,7 @@ def test_random_chain_complex(level=1, trials=1, verbose=False):
                 print("Homology in dimension %s according to Sage: %s" % (d, no_chomp))
                 print("Chain complex: %s" % C.differential())
                 raise ValueError
+    print("done")
 
 
 def random_simplicial_complex(level=1, p=0.5):
@@ -151,6 +153,7 @@ def test_random_simplicial_complex(level=1, trials=1, verbose=False):
         sage: test_random_simplicial_complex(trials=2)  # optional - CHomP
         doctest:...: DeprecationWarning: the CHomP interface is deprecated; hence so is this function
         See https://github.com/sagemath/sage/issues/33777 for details.
+        done
     """
     deprecation(33777, 'the CHomP interface is deprecated; hence so is this function')
     for i in range(trials):
@@ -163,3 +166,4 @@ def test_random_simplicial_complex(level=1, trials=1, verbose=False):
             print("Simplicial complex: %s" % X)
             print("Its chain complex: %s" % X.chain_complex())
             raise ValueError
+    print("done")
