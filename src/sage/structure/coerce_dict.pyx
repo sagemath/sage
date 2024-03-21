@@ -16,8 +16,8 @@ as an entry in a normal dictionary: Its existence in :class:`TripleDict`
 prevents it from being garbage collected.
 
 That container currently is used to store coercion and conversion maps between
-two parents (:trac:`715`) and to store homsets of pairs of objects of a
-category (:trac:`11521`). In both cases, it is essential that the parent
+two parents (:issue:`715`) and to store homsets of pairs of objects of a
+category (:issue:`11521`). In both cases, it is essential that the parent
 structures remain garbage collectable, it is essential that the data access is
 faster than with a usual :class:`~weakref.WeakKeyDictionary`, and we enforce
 the "unique parent condition" in Sage (parent structures should be identical
@@ -25,15 +25,15 @@ if they are equal).
 
 :class:`MonoDict` behaves similarly, but it takes a single item as a key. It
 is used for caching the parents which allow a coercion map into a fixed other
-parent (:trac:`12313`).
+parent (:issue:`12313`).
 
-By :trac:`14159`, :class:`MonoDict` and :class:`TripleDict` can be optionally
+By :issue:`14159`, :class:`MonoDict` and :class:`TripleDict` can be optionally
 used with weak references on the values.
 
 Note that this kind of dictionary is also used for caching actions and
 coerce maps. In previous versions of Sage, the cache was by strong
 references and resulted in a memory leak in the following example.
-However, this leak was fixed by :trac:`715`, using weak references::
+However, this leak was fixed by :issue:`715`, using weak references::
 
     sage: # needs sage.combinat sage.modules sage.rings.finite_rings
     sage: K.<t> = GF(2^55)
@@ -368,7 +368,7 @@ cdef class MonoDict:
 
     The following demonstrates that :class:`MonoDict` is safer than
     :class:`~weakref.WeakKeyDictionary` against recursions created by nested
-    callbacks; compare :trac:`15069` (the mechanism used now is different, though)::
+    callbacks; compare :issue:`15069` (the mechanism used now is different, though)::
 
         sage: M = MonoDict()
         sage: class A: pass

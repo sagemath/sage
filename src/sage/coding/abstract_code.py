@@ -282,7 +282,7 @@ class AbstractCode(Parent):
             ValueError: length must be a Python int or a Sage Integer
 
         If the length of the code is not a non-zero positive integer
-        (See :trac:`21326`), it will raise an exception::
+        (See :issue:`21326`), it will raise an exception::
 
             sage: C = MyCodeFamily(0)
             Traceback (most recent call last):
@@ -1098,14 +1098,14 @@ class AbstractCode(Parent):
 
         TESTS:
 
-        Test that the codeword returned is immutable (see :trac:`16469`)::
+        Test that the codeword returned is immutable (see :issue:`16469`)::
 
             sage: c = C.random_element()
             sage: c.is_immutable()
             True
 
         Test that codeword returned has the same parent as any non-random codeword
-        (see :trac:`19653`)::
+        (see :issue:`19653`)::
 
             sage: C = codes.random_linear_code(GF(16, 'a'), 10, 4)
             sage: c1 = C.random_element()

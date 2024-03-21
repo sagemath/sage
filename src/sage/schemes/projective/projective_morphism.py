@@ -99,7 +99,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
           Defn: Defined on coordinates by sending (x : y) to
                 (y : 2*x)
 
-    An example of a morphism between projective plane curves (see :trac:`10297`)::
+    An example of a morphism between projective plane curves (see :issue:`10297`)::
 
         sage: # needs sage.schemes
         sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
@@ -357,7 +357,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
 
         TESTS:
 
-        Check that :trac:`32209` is fixed::
+        Check that :issue:`32209` is fixed::
 
             sage: S.<x,y> = ProjectiveSpace(ZZ, 1)
             sage: T.<u,v> = ProjectiveSpace(ZZ, 1)
@@ -1777,7 +1777,7 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
               Defn: Defined on coordinates by sending (x : y) to
                     (x^2 + (a^3 + 2*a)*x*y + 3*y^2 : y^2 : (2*a^2 + 3)*x*y)
 
-        The following was fixed in :trac:`23808`::
+        The following was fixed in :issue:`23808`::
 
             sage: # needs sage.rings.number_field
             sage: R.<t> = PolynomialRing(QQ)
