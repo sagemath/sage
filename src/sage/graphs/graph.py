@@ -8135,7 +8135,7 @@ class Graph(GenericGraph):
 
             def to_tree(x):
                 if x.node_type == NodeType.NORMAL:
-                    return LabelledRootedTree([], label=str(x.children[0]))
+                    return LabelledRootedTree([], label=x.children[0])
                 return LabelledRootedTree([to_tree(y) for y in x.children],
                                           label=x.node_type)
 
@@ -8144,7 +8144,7 @@ class Graph(GenericGraph):
         raise ValueError("style must be 'tuple' or 'tree'")
 
     @doc_index("Graph properties")
-    def is_polyhedral(self):
+    def is_polyhedral(self) -> bool:
         """
         Check whether the graph is the graph of the polyhedron.
 
