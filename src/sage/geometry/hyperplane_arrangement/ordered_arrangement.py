@@ -299,11 +299,11 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             < x0, x1, x2, x3 | x3^-1*x2^-1*x3*x2, x3^-1*x1^-1*x3*x1,
                                x3^-1*x0^-1*x3*x0, x2^-1*x1^-1*x2*x1,
                                x2^-1*x0^-1*x2*x0, x1^-1*x0^-1*x1*x0 >
-        sage: A = OrderedHyperplaneArrangements(QQ, names=())
-        sage: H = A(); H
-        Empty hyperplane arrangement of dimension 0
-        sage: H.affine_fundamental_group()
-        Finitely presented group <  |  >
+            sage: A = OrderedHyperplaneArrangements(QQ, names=())
+            sage: H = A(); H
+            Empty hyperplane arrangement of dimension 0
+            sage: H.affine_fundamental_group()
+            Finitely presented group <  |  >
         """
         K = self.base_ring()
         if not K.is_subring(QQbar):
@@ -437,11 +437,11 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             Traceback (most recent call last):
             ...
             TypeError: the base field is not in QQbar
-        sage: A.<x> = OrderedHyperplaneArrangements(QQ)
-        sage: H = A(); H
-        Empty hyperplane arrangement of dimension 1
-        sage: H.projective_fundamental_group()
-        Finitely presented group <  |  >
+            sage: A.<x> = OrderedHyperplaneArrangements(QQ)
+            sage: H = A(); H
+            Empty hyperplane arrangement of dimension 1
+            sage: H.projective_fundamental_group()
+            Finitely presented group <  |  >
         """
         K = self.base_ring()
         if not K.is_subring(QQbar):
