@@ -4,10 +4,11 @@ The Poincare-Birkhoff-Witt Basis For A Universal Enveloping Algebra
 AUTHORS:
 
 - Travis Scrimshaw (2013-11-03): Initial version
+- Travis Scrimshaw (2024-01-02): Adding the center
 """
 
 #*****************************************************************************
-#       Copyright (C) 2013-2017 Travis Scrimshaw <tcscrims at gmail.com>
+#       Copyright (C) 2013-2024 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -96,6 +97,14 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
         PBW[2]*PBW[3] + PBW[5]
         sage: G[-2] * G[3] * G[2]
         PBW[-2]*PBW[2]*PBW[3] + PBW[-2]*PBW[5]
+
+    .. TODO::
+
+        When the Lie algebra is finite dimensional, set the ordering of the
+        basis elements, translate the structure coefficients, and work with
+        fixed-length lists as the exponent vectors. This way we only will
+        run any nontrivial sorting only once and avoid other potentially
+        expensive comparisons between keys.
     """
     @staticmethod
     def __classcall_private__(cls, g, basis_key=None, prefix='PBW', **kwds):
@@ -246,6 +255,20 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
              in the Poincare-Birkhoff-Witt basis
         """
         return "Universal enveloping algebra of {} in the Poincare-Birkhoff-Witt basis".format(self._g)
+
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        EXAMPLES::
+
+            sage: g = lie_algebras.pwitt(GF(3), 6)
+            sage: U = g.pbw_basis()
+            sage: latex(U)
+            PBW\left( \mathcal{W}(6)_{\Bold{F}_{3}} \right)
+        """
+        from sage.misc.latex import latex
+        return r"PBW\left( {} \right)".format(latex(self._g))
 
     def _coerce_map_from_(self, R):
         """
@@ -496,7 +519,7 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
         """
         return m.length()
 
-    def casimir_element(self, order=2):
+    def casimir_element(self, order=2, *args, **kwds):
         r"""
         Return the Casimir element of ``self``.
 
@@ -534,7 +557,32 @@ class PoincareBirkhoffWittBasis(CombinatorialFreeModule):
         from sage.rings.infinity import Infinity
         if self._g.dimension() == Infinity:
             raise ValueError("the Lie algebra must be finite dimensional")
-        return self._g.casimir_element(order=order, UEA=self)
+        return self._g.casimir_element(order=order, UEA=self, *args, **kwds)
+
+    def center(self):
+        r"""
+        Return the center of ``self``.
+
+        .. SEEALSO::
+
+            :class:`~sage.algebras.lie_algebras.center_uea.CenterUEA`
+
+        EXAMPLES::
+
+            sage: g = LieAlgebra(QQ, cartan_type=['A', 2])
+            sage: U = g.pbw_basis()
+            sage: U.center()
+            Center of Universal enveloping algebra of Lie algebra of ['A', 2]
+             in the Chevalley basis in the Poincare-Birkhoff-Witt basis
+
+            sage: g = lie_algebras.Heisenberg(GF(3), 4)
+            sage: U = g.pbw_basis()
+            sage: U.center()
+            Center of Universal enveloping algebra of Heisenberg algebra of rank 4
+             over Finite Field of size 3 in the Poincare-Birkhoff-Witt basis
+        """
+        from sage.algebras.lie_algebras.center_uea import CenterUEA
+        return CenterUEA(self._g, self)
 
     class Element(CombinatorialFreeModule.Element):
         def _act_on_(self, x, self_on_left):

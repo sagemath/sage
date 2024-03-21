@@ -4783,6 +4783,11 @@ REFERENCES:
 .. [MoPa1994] \P. Morton and P. Patel. The Galois theory of periodic points
               of polynomial maps. Proc. London Math. Soc., 68 (1994), 225-263.
 
+.. [Motsak2006] Olekasandr Motsak. *Computation of the central elements and
+                centralizers of sets of elements in non-commutative polynomial
+                algebras*. PhD Thesis, 2006.
+                https://kluedo.ub.rptu.de/frontdoor/deliver/index/docId/2308/file/Thesis.pdf
+
 .. [MP2019] \M. Montes, D. Penazzi
             "Yarara and Coral v1"
             https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/yarara_and_coral-spec.pdf
