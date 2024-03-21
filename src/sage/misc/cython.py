@@ -43,14 +43,14 @@ def _standard_libs_libdirs_incdirs_aliases():
 
         sage: from sage.misc.cython import _standard_libs_libdirs_incdirs_aliases
         sage: _standard_libs_libdirs_incdirs_aliases()
-        (['mpfr', 'gmp', 'gmpxx', 'pari', ...],
+        (['mpfr', 'gmp', 'gmpxx', ...],
          [...],
          [...],
          {...})
     """
     aliases = cython_aliases()
     standard_libs = [
-        'mpfr', 'gmp', 'gmpxx', 'pari', 'm',
+        'mpfr', 'gmp', 'gmpxx', 'm',
         'ec', 'gsl',
     ] + aliases["CBLAS_LIBRARIES"] + [
         'ntl']
