@@ -250,7 +250,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         return data
 
     @staticmethod
-    cdef _from_cmr(CMR_CHRMAT *mat, bint immutable=False):
+    cdef _from_cmr(CMR_CHRMAT *mat, bint immutable=False, base_ring=None):
         r"""
         INPUT:
 
@@ -260,7 +260,9 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         """
         cdef Matrix_cmr_chr_sparse result
-        ms = MatrixSpace(ZZ, mat.numRows, mat.numColumns, sparse=True)
+        if base_ring is None:
+            base_ring = ZZ
+        ms = MatrixSpace(base_ring, mat.numRows, mat.numColumns, sparse=True)
         result = Matrix_cmr_chr_sparse.__new__(Matrix_cmr_chr_sparse, ms, immutable=immutable)
         result._mat = mat
         result._root = None
@@ -594,11 +596,32 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [ 0  0  0  0| 0  0 -1  0  1]
             [ 0  0  0  0| 1  0  0 -1  0]
             [ 0  0  0  0| 0  1  0  0  1]
+
+        TESTS::
+
+            sage: M1 = Matrix_cmr_chr_sparse(MatrixSpace(GF(3), 2, 3, sparse=True),
+            ....:                            [[1, 2, 3], [4, 5, 6]]); M1
+            [1 2 0]
+            [1 2 0]
+            sage: M2 = Matrix_cmr_chr_sparse(MatrixSpace(GF(5), 2, 3, sparse=True),
+            ....:                            [[7, 8, 9], [-1, -2, -3]]); M2
+            [2 3 4]
+            [4 3 2]
+            sage: Matrix_cmr_chr_sparse.two_sum(M1, M2, 2, 0)
+            Traceback (most recent call last):
+            ...
+            ValueError: summands must have the same base ring,
+            got Finite Field of size 3, Finite Field of size 5
         """
         cdef Matrix_cmr_chr_sparse sum, first, second
         cdef CMR_CHRMAT *sum_mat = NULL
         first = Matrix_cmr_chr_sparse._from_data(first_mat)
         second = Matrix_cmr_chr_sparse._from_data(second_mat)
+        first_base_ring = first.parent().base_ring()
+        second_base_ring = second.parent().base_ring()
+        if first_base_ring != second_base_ring:
+            raise ValueError(f'summands must have the same base ring, '
+                             f'got {first_base_ring}, {second_base_ring}')
 
         if nonzero_block not in ["top_right", "bottom_left"]:
             raise ValueError("Unknown two sum mode", nonzero_block)
@@ -630,10 +653,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             first_marker = CMRrowToElement(row)
             second_marker = CMRcolumnToElement(column)
 
-        cdef int8_t characteristic = first_mat.parent().characteristic()
-
-        if second_mat.parent().characteristic() != characteristic:
-            raise ValueError("The characteristic of two matrices are different")
+        cdef int8_t characteristic = first_base_ring.characteristic()
 
         sig_on()
         try:
@@ -641,7 +661,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         finally:
             sig_off()
 
-        sum = Matrix_cmr_chr_sparse._from_cmr(sum_mat, immutable=False)
+        sum = Matrix_cmr_chr_sparse._from_cmr(sum_mat, immutable=False, base_ring=first_base_ring)
         if row_subdivision or column_subdivision:
             sum.subdivide(row_subdivision, column_subdivision)
         sum.set_immutable()
@@ -1638,7 +1658,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         if not certificate:
             return <bint> result
 
-        node = create_DecompositionNode(dec, row_keys, column_keys, base_ring=GF2)
+        node = create_DecompositionNode(dec, self, row_keys, column_keys)
 
         if <bint> result:
             return True, node
@@ -1747,8 +1767,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         if not certificate:
             return <bint> result
 
+        node = create_DecompositionNode(dec, self, row_keys, column_keys)
+
         if <bint> result:
-            return True, create_DecompositionNode(dec, row_keys, column_keys)
+            return True, node
 
         if submat == NULL:
             submat_tuple = None
@@ -1756,8 +1778,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             submat_tuple = (tuple(submat.rows[i] for i in range(submat.numRows)),
                             tuple(submat.columns[i] for i in range(submat.numColumns)))
 
-        return False, (create_DecompositionNode(dec, row_keys, column_keys),
-                       submat_tuple)
+        return False, (node, submat_tuple)
 
     def is_complement_totally_unimodular(self, *, time_limit=60.0, certificate=False,
                                          use_direct_graphicness_test=True,

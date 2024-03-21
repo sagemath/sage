@@ -33,8 +33,36 @@ cdef class DecompositionNode(SageObject):
     Base class for nodes in Seymour's decomposition
     """
 
-    def __cinit__(self):
+    def __cinit__(self, *args, **kwds):
         self._dec = NULL
+
+    def __init__(self, matrix=None, row_keys=None, column_keys=None, base_ring=None):
+        if matrix is None:
+            self._matrix = None
+        elif isinstance(matrix, Matrix_cmr_chr_sparse):
+            self._matrix = matrix
+        else:
+            try:
+                self._matrix = matrix._matrix_cmr()
+            except (AttributeError, ImportError, TypeError):
+                if base_ring is not None:
+                    matrix = Matrix(matrix, ring=base_ring)
+                else:
+                    matrix = Matrix(matrix)
+                self._matrix = Matrix_cmr_chr_sparse(matrix.parent(), matrix)
+            else:
+                if row_keys is None:
+                    row_keys = matrix.codomain().basis().keys()
+                if column_keys is None:
+                    column_keys = matrix.domain().basis().keys()
+        if row_keys is not None:
+            self._set_row_keys(row_keys)
+        if column_keys is not None:
+            self._set_column_keys(column_keys)
+        if base_ring is None:
+            if self._matrix is not None:
+                base_ring = self._matrix.parent().base_ring()
+        self._base_ring = base_ring
 
     cdef _set_dec(self, CMR_MATROID_DEC *dec):
         if self._dec != NULL:
@@ -268,7 +296,7 @@ cdef class DecompositionNode(SageObject):
                                    for element in parent_rows_tuple)
             child_column_keys = tuple(self._CMRelement_to_key(element)
                                       for element in parent_columns_tuple)
-            child = create_DecompositionNode(child_dec,
+            child = create_DecompositionNode(child_dec, matrix=None,
                                              row_keys=child_row_keys,
                                              column_keys=child_column_keys,
                                              base_ring=self.base_ring())
@@ -277,7 +305,7 @@ cdef class DecompositionNode(SageObject):
                                       for element in parent_rows_tuple)
             child_column_keys = tuple(CMRelementToColumnIndex(element)
                                          for element in parent_columns_tuple)
-            child = create_DecompositionNode(child_dec,
+            child = create_DecompositionNode(child_dec, matrix=None,
                                              row_keys=child_row_keys,
                                              column_keys=child_column_keys,
                                              base_ring=self.base_ring())
@@ -527,25 +555,6 @@ cdef class UnknownNode(DecompositionNode):
         [1 0 1]
         [0 1 1]
     """
-
-    def __init__(self, matrix=None, row_keys=None, column_keys=None):
-        if matrix is None:
-            self._matrix = None
-        elif isinstance(matrix, Matrix_cmr_chr_sparse):
-            self._matrix = matrix
-        else:
-            try:
-                self._matrix = matrix._matrix_cmr()
-            except (AttributeError, ImportError, TypeError):
-                matrix = Matrix(matrix)
-                self._matrix = Matrix_cmr_chr_sparse(matrix.parent(), matrix)
-            else:
-                if row_keys is None:
-                    row_keys = matrix.codomain().basis().keys()
-                if column_keys is None:
-                    column_keys = matrix.domain().basis().keys()
-        self._row_keys = row_keys
-        self._column_keys = column_keys
 
     def is_graphic(self, *, decomposition=False, certificate=False, **kwds):
         r"""
@@ -1007,7 +1016,7 @@ cdef class ThreeSumNode(SumNode):
                                     composition=True)
             child1_column_keys += (extra_key,)
 
-        child1 = create_DecompositionNode(child1_dec,
+        child1 = create_DecompositionNode(child1_dec, matrix=None,
                                           row_keys=child1_row_keys,
                                           column_keys=child1_column_keys,
                                           base_ring=self.base_ring())
@@ -1070,7 +1079,7 @@ cdef class ThreeSumNode(SumNode):
                                     composition=True)
             child2_column_keys = (extra_key,) + child2_column_keys
 
-        child2 = create_DecompositionNode(child2_dec,
+        child2 = create_DecompositionNode(child2_dec, matrix=None,
                                           row_keys=child2_row_keys,
                                           column_keys=child2_column_keys,
                                           base_ring=self.base_ring())
@@ -1155,19 +1164,14 @@ cdef class ThreeSumNode(SumNode):
 
 cdef class BaseGraphicNode(DecompositionNode):
 
-    def __init__(self, matrix=None, graph=None, forest_edges=None, coforest_edges=None, row_keys=None, column_keys=None, base_ring=None):
-        if base_ring is None:
-            if matrix is not None:
-                base_ring = matrix.parent().base_ring()
-        self._base_ring = base_ring
-        self._matrix = matrix
+    def __init__(self, matrix=None,
+                 graph=None, forest_edges=None, coforest_edges=None,
+                 row_keys=None, column_keys=None, base_ring=None):
+        super().__init__(matrix=matrix, row_keys=row_keys, column_keys=column_keys,
+                         base_ring=base_ring)
         self._graph = graph
         self._forest_edges = forest_edges
         self._coforest_edges = coforest_edges
-        if row_keys is not None:
-            self._set_row_keys(row_keys)
-        if column_keys is not None:
-            self._set_column_keys(column_keys)
 
     def graph(self):
         r"""
@@ -1395,7 +1399,7 @@ cdef class SubmatrixNode(DecompositionNode):
 
 cdef class SymbolicNode(DecompositionNode):
 
-    def __init__(self, symbol, *, row_keys=None, column_keys=None):
+    def __init__(self, symbol, *, row_keys=None, column_keys=None, base_ring=None):
         r"""
         EXAMPLES::
 
@@ -1422,9 +1426,8 @@ cdef class SymbolicNode(DecompositionNode):
             sage: XY = X.one_sum(Y); XY
             OneSumNode (5×8) with 2 children
         """
+        super().__init__(row_keys=row_keys, column_keys=column_keys, base_ring=base_ring)
         self._symbol = symbol
-        self._set_row_keys(row_keys)
-        self._set_column_keys(column_keys)
 
     def _repr_(self):
         nrows, ncols = self.dimensions()
@@ -1521,7 +1524,7 @@ cdef _class(CMR_MATROID_DEC *dec):
     raise NotImplementedError
 
 
-cdef create_DecompositionNode(CMR_MATROID_DEC *dec, row_keys=None, column_keys=None, base_ring=None):
+cdef create_DecompositionNode(CMR_MATROID_DEC *dec, matrix=None, row_keys=None, column_keys=None, base_ring=None):
     r"""
     Create an instance of a subclass of :class:`DecompositionNode`.
 
@@ -1531,11 +1534,7 @@ cdef create_DecompositionNode(CMR_MATROID_DEC *dec, row_keys=None, column_keys=N
     """
     if dec == NULL:
         return None
-    cdef DecompositionNode result = <DecompositionNode> _class(dec)()
+    cdef DecompositionNode result = <DecompositionNode> _class(dec)(
+        matrix, row_keys=row_keys, column_keys=column_keys, base_ring=base_ring)
     result._set_dec(dec)
-    if row_keys is not None:
-        result._set_row_keys(row_keys)
-    if column_keys is not None:
-        result._set_column_keys(column_keys)
-    result._base_ring = base_ring
     return result

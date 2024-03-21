@@ -42,5 +42,6 @@ cdef class SymbolicNode(DecompositionNode):
 
 
 cdef create_DecompositionNode(CMR_MATROID_DEC *dec,
+                              matrix=?,
                               row_keys=?, column_keys=?,
                               base_ring=?)

@@ -20,7 +20,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
     cdef _init_from_dict(self, dict d, int nrows, int ncols, bint immutable=?)
 
     @staticmethod
-    cdef _from_cmr(CMR_CHRMAT *mat, bint immutable=?)
+    cdef _from_cmr(CMR_CHRMAT *mat, bint immutable=?, base_ring=?)
 
 cdef _sage_edge(CMR_GRAPH *graph, CMR_GRAPH_EDGE e)
 cdef _sage_edges(CMR_GRAPH *graph, CMR_GRAPH_EDGE *edges, int n, keys)
