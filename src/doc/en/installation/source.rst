@@ -373,9 +373,49 @@ Installation steps
 #. Follow the procedure in the file `README.md <https://github.com/sagemath/sage/#readme>`_
    in ``SAGE_ROOT``.
 
+#. If you wish to prepare for having to build Sage in an environment
+   without sufficient Internet connectivity:
+
+   - After running ``configure``, you can use ``make download`` to force
+     downloading packages before building. After this, the packages
+     are in the subdirectory ``upstream``.
+
+   - Alternatively, instead of cloning the git repository, you
+     can download a self-contained release tarball for any
+     stable release from the Sage project's
+     `GitHub Releases <https://github.com/sagemath/sage/releases>`_.
+     Use the file named ``sage-x.y.tar.gz`` (1.25 GB as of Sage 10.2)
+     in the Release Assets, which contains a prepopulated subdirectory
+     ``upstream``.
+
+     After downloading the source tarball ``sage-x.y.tar.gz`` into
+     a directory ``~/sage/``::
+
+       $ cd ~/sage/
+       $ tar xf sage-x.y.tar.gz  # adapt x.y; takes a while
+
+     This creates the subdirectory ``sage-x.y``. Now change into it::
+
+       $ cd sage-x.y/  # adapt x.y
+
+     .. note::
+
+        On Windows, it is crucial that you unpack the source tree from the
+        WSL `bash` using the WSL `tar` utility and not using other
+        Windows tools (including mingw).
+
+        This is because the Sage source tree contains symbolic links, and the
+        build will not work if Windows line endings rather than UNIX
+        line endings are used.
+
+   - The Sage mirrors also provide such self-contained tarballs
+     for all `stable releases <https://www.sagemath.org/download-source.html>`_
+     and additionally for all `development releases
+     <https://www.sagemath.org/download-latest.html>`_.
+
 #. Additional remarks:
    You do not need to be logged in as root, since no files are
-   changed outside of the :file:`sage-x.y` directory.
+   changed outside of the :file:`SAGE_ROOT` directory.
    In fact, **it is inadvisable to build Sage as root**, as the root account
    should only be used when absolutely necessary and mistyped commands can have
    serious consequences if you are logged in as root.
@@ -490,7 +530,7 @@ Installation steps
    - Make a symbolic link from :file:`/usr/local/bin/sage` (or another
      directory in your :envvar:`PATH`) to :file:`$SAGE_ROOT/sage`::
 
-         $ ln -s /path/to/sage-x.y/sage /usr/local/bin/sage
+         $ ln -s /path/to/sage_root/sage /usr/local/bin/sage
 
      Now simply typing ``sage`` from any directory should be sufficient to run
      Sage.
