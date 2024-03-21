@@ -441,7 +441,7 @@ class RingClassField(SageObject):
             sage: heegner_point(37,-7,7^2).ring_class_field().degree_over_H()
             49
 
-        Check that :trac:`15218` is solved::
+        Check that :issue:`15218` is solved::
 
             sage: E = EllipticCurve("19a");
             sage: s = E.heegner_point(-3,2).ring_class_field().galois_group().complex_conjugation()
@@ -3455,7 +3455,7 @@ class HeegnerPointOnEllipticCurve(HeegnerPoint):
             sage: P.x_poly_exact(500)
             x^6 + 1108754853727159228/72351048803252547*x^5 + 88875505551184048168/1953478317687818769*x^4 - 2216200271166098662132/3255797196146364615*x^3 + 14941627504168839449851/9767391588439093845*x^2 - 3456417460183342963918/3255797196146364615*x + 1306572835857500500459/5426328660243941025
 
-        See :trac:`34121`::
+        See :issue:`34121`::
 
             sage: E = EllipticCurve('11a1')
             sage: P = E.heegner_point(-7)

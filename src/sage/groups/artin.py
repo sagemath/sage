@@ -534,8 +534,8 @@ class ArtinGroup(FinitelyPresentedGroup):
         """
         Return an isomorphic permutation group.
 
-        Raises a ``ValueError`` error since Artin groups are infinite
-        and have no corresponding permutation group.
+        This raises a :class:`ValueError` error since Artin groups are
+        infinite and have no corresponding permutation group.
 
         EXAMPLES::
 
@@ -715,7 +715,7 @@ class FiniteTypeArtinGroup(ArtinGroup):
         Artin group of type ['E', 7]
 
     Since the word problem for finite-type Artin groups is solvable, their
-    Cayley graph can be locally obtained as follows (see :trac:`16059`)::
+    Cayley graph can be locally obtained as follows (see :issue:`16059`)::
 
         sage: def ball(group, radius):
         ....:     ret = set()

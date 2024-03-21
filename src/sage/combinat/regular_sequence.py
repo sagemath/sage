@@ -762,6 +762,12 @@ class RegularSequence(RecognizableSeries):
 
             sage: S.regenerated().subsequence(1, -4)
             2-regular sequence 0, 0, 0, 0, 1, 3, 6, 9, 12, 18, ...
+
+        Check that the zero sequence is handled correctly (issue:`37282`)
+        ::
+
+            sage: Seq2.zero().subsequence(1, 1)
+            2-regular sequence 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ...
         """
         from itertools import chain
         from sage.rings.integer_ring import ZZ
@@ -835,14 +841,16 @@ class RegularSequence(RecognizableSeries):
             d, f = rule[r, c]
             return [self.mu[f] if d == j else zero_M for j in kernel]
 
+        # We explicitly set the ring when creating vectors in order to avoid
+        # problems with the zero sequence, see issue:`37282`.
         result = P.element_class(
             P,
             {r: Matrix.block([matrix_row(r, c) for c in kernel])
              for r in A},
-            vector(chain.from_iterable(
+            vector(P.coefficient_ring(), chain.from_iterable(
                 b.get(c, 0) * self.left
                 for c in kernel)),
-            vector(chain.from_iterable(
+            vector(P.coefficient_ring(), chain.from_iterable(
                 (self.coefficient_of_n(c, multiply_left=False) if c >= 0 else zero_R)
                 for c in kernel)))
 
@@ -1890,7 +1898,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
             d = len(seq(0)) + len(lines)
 
             # The following search for an inverse works but is inefficient;
-            # see :trac:`35748` for details.
+            # see :issue:`35748` for details.
             for m_indices in cantor_product(xsrange(n_verify), repeat=d, min_slope=1):
                 # Iterate over all increasing lists of length d consisting
                 # of non-negative integers less than `n_verify`.
@@ -2737,7 +2745,7 @@ class RecurrenceParser:
             sage: RP.parse_recurrence([f(2*n) == 0, f(2*n + 1) == 0], f, n)
             (1, 0, {}, {})
 
-        We check that the output is of the correct type (:trac:`33158`)::
+        We check that the output is of the correct type (:issue:`33158`)::
 
             sage: RP = RecurrenceParser(2, QQ)
             sage: equations = [
@@ -2756,7 +2764,7 @@ class RecurrenceParser:
             sage: all(v.parent() == QQ for v in initial_values.values())
             True
 
-        This results in giving the correct (see :trac:`33158`) minimization in::
+        This results in giving the correct (see :issue:`33158`) minimization in::
 
             sage: Seq2 = RegularSequenceRing(2, QQ)
             sage: P = Seq2.from_recurrence(equations, f, n)

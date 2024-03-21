@@ -522,7 +522,7 @@ cpdef rectangular_box_points(list box_min, list box_max,
 
     TESTS:
 
-    Check that this can be interrupted, see :trac:`20781`::
+    Check that this can be interrupted, see :issue:`20781`::
 
         sage: ieqs = [(-1, -1, -1, -1, -1, -1, -1, -1, -1),
         ....:         (0, -1, 0, 0, 0, 0, 0, 0, 0),
@@ -885,7 +885,7 @@ cdef class Inequality_int:
 
     TESTS:
 
-    Check that :trac:`21993` is fixed::
+    Check that :issue:`21993` is fixed::
 
         sage: Inequality_int([18560500, -89466500], 108027, [178933, 37121])
         Traceback (most recent call last):
@@ -1190,7 +1190,7 @@ cdef class InequalityCollection:
 
         TESTS:
 
-        Check that :trac:`21037` is fixed::
+        Check that :issue:`21037` is fixed::
 
             sage: P = Polyhedron(vertices=((0, 0), (17,3)))
             sage: P += 1/1000*polytopes.regular_polygon(5)                              # needs sage.rings.number_field

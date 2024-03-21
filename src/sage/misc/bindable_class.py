@@ -191,7 +191,7 @@ class BoundClass(functools.partial):
             sage: c.__class__.__init__.__doc__
 
     Make sure classes which inherit from :class:`functools.partial` have the correct
-    syntax, see :trac:`14748`::
+    syntax, see :issue:`14748`::
 
         sage: import warnings
         sage: warnings.simplefilter('error', DeprecationWarning)
