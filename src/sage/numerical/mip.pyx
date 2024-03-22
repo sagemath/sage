@@ -255,8 +255,8 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
     INPUT:
 
-    - ``solver`` -- selects a solver; see :ref:`Solvers (backends)
-      <solvers_backends>`
+    - ``solver`` -- selects a solver; see `Solvers (backends)
+      <../../../../thematic_tutorials/linear_programming.html#solvers-backends>`_
       for more information and installation instructions for optional
       solvers.
 
