@@ -952,7 +952,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         #                                     for y in self.basis()])
         #     O = self.quaternion_order(P)
 
-        fact = factor(M1)
+        fact = M1.factor()
         B = O.basis()
 
         for (p, r) in fact:
