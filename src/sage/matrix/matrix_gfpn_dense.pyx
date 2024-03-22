@@ -16,8 +16,8 @@ characteristic two.
 
 .. NOTE::
 
-    The examples shown here will only work when the :ref:`meataxe
-    <spkg_meataxe>` package has been installed.
+    The examples shown here will only work when the `meataxe
+    <../spkg/meataxe.html>` package has been installed.
 
 AUTHORS:
 
