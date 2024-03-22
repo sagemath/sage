@@ -411,11 +411,11 @@ Classes and Methods
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-# http://www.gnu.org/licenses/
+# https://www.gnu.org/licenses/
 # *****************************************************************************
 
-from sage.rings.ring import Algebra
 from sage.structure.element import CommutativeAlgebraElement
+from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.misc.defaults import series_precision
 from sage.categories.pushout import ConstructionFunctor
@@ -3405,7 +3405,7 @@ class AsymptoticExpansion(CommutativeAlgebraElement):
                    for element in self.summands.elements())
 
 
-class AsymptoticRing(Algebra, UniqueRepresentation, WithLocals):
+class AsymptoticRing(Parent, UniqueRepresentation, WithLocals):
     r"""
     A ring consisting of :class:`asymptotic expansions <AsymptoticExpansion>`.
 
@@ -3702,7 +3702,7 @@ class AsymptoticRing(Algebra, UniqueRepresentation, WithLocals):
         self._default_prec_ = default_prec
         self._term_monoid_factory_ = term_monoid_factory
         self._locals_ = locals
-        super().__init__(base_ring=coefficient_ring,
+        super().__init__(base=coefficient_ring,
                          category=category)
 
     @property
@@ -4732,8 +4732,8 @@ class AsymptoticRingFunctor(ConstructionFunctor):
         self._term_monoid_factory_ = term_monoid_factory
         self._locals_ = locals
 
-        from sage.categories.rings import Rings
-        super().__init__(Rings(), Rings())
+        from sage.categories.commutative_rings import CommutativeRings
+        super().__init__(CommutativeRings(), CommutativeRings())
 
     def _repr_(self) -> str:
         r"""
