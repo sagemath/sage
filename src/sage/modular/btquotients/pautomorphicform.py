@@ -1913,7 +1913,6 @@ class pAdicAutomorphicFormElement(ModuleElement):
         if method == 'riemann_sum':
             for e in E:
                 exp = ((R1([e[1, 1], e[1, 0]])) ** (self.parent()._U.weight()) * e.determinant() ** (-(self.parent()._U.weight()) / 2)) * f(R1([e[0, 1], e[0, 0]]) / R1([e[1, 1], e[1, 0]]))
-                # exp = R2([tmp[jj] for jj in range(self.parent()._k-1)])
                 new = eval_dist_at_powseries(self.evaluate(e), exp.truncate(self.parent()._U.weight() + 1))
                 value += new
         elif method == 'moments':
@@ -2146,17 +2145,14 @@ class pAdicAutomorphicFormElement(ModuleElement):
         R1 = LaurentSeriesRing(K, 'r1', default_prec=self.parent()._U.base_ring().precision_cap())
         if E is None:
             E = self.parent()._source._BT.find_covering(t1, t2)
-            # print('Got ', len(E), ' open balls.')
         value = 0
-        ii = 0
         value_exp = K(1)
         if method == 'riemann_sum':
             for e in E:
-                ii += 1
                 b = e[0, 1]
                 d = e[1, 1]
                 y = (b - d * t1) / (b - d * t2)
-                poly = R1(y.log())  # R1(our_log(y))
+                poly = R1(y.log())
                 c_e = self.evaluate(e)
                 new = eval_dist_at_powseries(c_e, poly)
                 value += new
