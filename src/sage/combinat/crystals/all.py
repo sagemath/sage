@@ -5,8 +5,7 @@ Introductory material
 ---------------------
 
 - :ref:`sage.combinat.crystals.crystals`
-- The :ref:`Lie Methods and Related Combinatorics <lie>` thematic tutorial
-
+- The `Lie Methods and Related Combinatorics <../../../../../thematic_tutorials/lie.html>`_ thematic tutorial
 Catalogs of crystals
 --------------------
 
