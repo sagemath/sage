@@ -295,8 +295,8 @@ class SteenrodFPModule(FPModule, SteenrodModuleMixin):
 
     .. SEEALSO::
 
-        The thematic tutorial on :ref:`Steenrod algebra modules
-        <steenrod_algebra_modules>`.
+        The thematic tutorial on `Steenrod algebra modules
+        <../../../../../../thematic_tutorials/steenrod_algebra_modules.html>`_.
 
     INPUT:
 
