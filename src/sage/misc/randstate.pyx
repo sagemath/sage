@@ -480,7 +480,7 @@ cdef class randstate:
 
         TESTS:
 
-        The following used to segfault (see :trac:`10113`). Now,
+        The following used to segfault (see :issue:`10113`). Now,
         there is a proper type error::
 
             sage: seed(1,2)   # indirect doctest

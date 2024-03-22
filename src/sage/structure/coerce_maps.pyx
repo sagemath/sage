@@ -30,7 +30,7 @@ cdef class DefaultConvertMap(Map):
         TESTS:
 
         Maps of this type are morphisms in the category of sets with
-        partial maps (see :trac:`15618`)::
+        partial maps (see :issue:`15618`)::
 
             sage: f = GF(11).convert_map_from(GF(7)); f                                 # needs sage.rings.finite_rings
             Conversion map:
@@ -42,7 +42,7 @@ cdef class DefaultConvertMap(Map):
              to Finite Field of size 11
              in Category of sets with partial maps
 
-        Test that :trac:`23211` is resolved::
+        Test that :issue:`23211` is resolved::
 
             sage: f._is_coercion                                                        # needs sage.rings.finite_rings
             False

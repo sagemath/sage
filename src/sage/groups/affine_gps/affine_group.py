@@ -228,8 +228,10 @@ class AffineGroup(UniqueRepresentation, Group):
 
     def _element_constructor_check(self, A, b):
         """
-        Verify that ``A``, ``b`` define an affine group element and raises a
-        ``TypeError`` if the input does not define a valid group element.
+        Verify that ``A``, ``b`` define an affine group element.
+
+        This raises a :class:`TypeError` if the input does not define
+        a valid group element.
 
         This is called from the group element constructor and can be
         overridden for subgroups of the affine group. It is guaranteed

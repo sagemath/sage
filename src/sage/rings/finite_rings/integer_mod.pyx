@@ -137,7 +137,7 @@ def Mod(n, m, parent=None):
         sage: mod(12,5)
         2
 
-    Illustrates that :trac:`5971` is fixed. Consider `n` modulo `m` when
+    Illustrates that :issue:`5971` is fixed. Consider `n` modulo `m` when
     `m = 0`. Then `\ZZ/0\ZZ` is isomorphic to `\ZZ` so `n` modulo `0`
     is equivalent to `n` for any integer value of `n`::
 
@@ -291,7 +291,7 @@ cdef class NativeIntStruct:
             sage: R(5)^-1 is R(8)
             True
 
-        Check that the inverse of 0 modulo 1 works, see :trac:`13639`::
+        Check that the inverse of 0 modulo 1 works, see :issue:`13639`::
 
             sage: R = IntegerModRing_generic(1, cache=True)  # indirect doctest
             sage: R(0)^-1 is R(0)
@@ -701,12 +701,12 @@ cdef class IntegerMod_abstract(FiniteRingElement):
 
         TESTS:
 
-        We check that :trac:`9205` is fixed::
+        We check that :issue:`9205` is fixed::
 
             sage: Mod(5, 9).log(Mod(2, 9))                                              # needs sage.libs.pari
             5
 
-        We test against a bug (side effect on PARI) fixed in :trac:`9438`::
+        We test against a bug (side effect on PARI) fixed in :issue:`9438`::
 
             sage: # needs sage.libs.pari
             sage: R.<a, b> = QQ[]
@@ -717,14 +717,14 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             sage: pari(b)
             b
 
-        We test that :trac:`23927` is fixed::
+        We test that :issue:`23927` is fixed::
 
             sage: x = mod(48475563673907791151, 10^20 + 763)^2
             sage: e = 25248843418589594761
             sage: (x^e).log(x) == e                                                     # needs sage.libs.pari
             True
 
-        Examples like this took extremely long before :trac:`32375`::
+        Examples like this took extremely long before :issue:`32375`::
 
             sage: (Mod(5, 123337052926643**4) ^ (10^50-1)).log(5)                       # needs sage.libs.pari
             99999999999999999999999999999999999999999999999999
@@ -745,7 +745,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             ...
             ValueError: no logarithm of 230 found to base 173 modulo 323 (incompatible local solutions)
 
-        We test that :trac:`12419` is fixed::
+        We test that :issue:`12419` is fixed::
 
             sage: R.<x,y> = GF(2)[]
             sage: R(1).factor()
@@ -1450,12 +1450,12 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             ....:     except ValueError:
             ....:         pass
 
-        We check that :trac:`13172` is resolved::
+        We check that :issue:`13172` is resolved::
 
             sage: mod(-1, 4489).nth_root(2, all=True)                                   # needs sage.rings.padics
             []
 
-        We check that :trac:`32084` is fixed::
+        We check that :issue:`32084` is fixed::
 
             sage: mod(24, 25).nth_root(50)^50                                           # needs sage.rings.padics
             24
@@ -1777,7 +1777,7 @@ cdef class IntegerMod_abstract(FiniteRingElement):
             ....:                 if a.is_primitive_root().__xor__(a.multiplicative_order()==phin):
             ....:                     print("mod(%s,%s) incorrect" % (a, n))
 
-        `0` is not a primitive root mod `n` (:trac:`23624`) except for `n=0`::
+        `0` is not a primitive root mod `n` (:issue:`23624`) except for `n=0`::
 
             sage: mod(0, 17).is_primitive_root()
             False
@@ -2281,7 +2281,7 @@ cdef class IntegerMod_gmp(IntegerMod_abstract):
 
         TESTS:
 
-        We define ``0^0`` to be unity, :trac:`13894`::
+        We define ``0^0`` to be unity, :issue:`13894`::
 
             sage: p = next_prime(11^10)                                                 # needs sage.libs.pari
             sage: R = Integers(p)                                                       # needs sage.libs.pari
@@ -2769,7 +2769,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
 
         TESTS:
 
-        We define ``0^0`` to be unity, :trac:`13894`::
+        We define ``0^0`` to be unity, :issue:`13894`::
 
             sage: R = Integers(100)
             sage: R(0)^0
@@ -3000,7 +3000,7 @@ cdef class IntegerMod_int(IntegerMod_abstract):
 
         TESTS:
 
-        Check for :trac:`30797`::
+        Check for :issue:`30797`::
 
             sage: GF(103)(-1).sqrt(extend=False, all=True)
             []
@@ -3595,7 +3595,7 @@ cdef class IntegerMod_int64(IntegerMod_abstract):
             sage: type(R(0))
             <class 'sage.rings.finite_rings.integer_mod.IntegerMod_int64'>
 
-        We define ``0^0`` to be unity, :trac:`13894`::
+        We define ``0^0`` to be unity, :issue:`13894`::
 
             sage: p = next_prime(10^5)                                                  # needs sage.libs.pari
             sage: R = Integers(p)                                                       # needs sage.libs.pari
@@ -3933,7 +3933,7 @@ def square_root_mod_prime_power(IntegerMod_abstract a, p, e):
 
     TESTS:
 
-    A big example for the binary case (:trac:`33961`)::
+    A big example for the binary case (:issue:`33961`)::
 
         sage: y = Mod(-7, 2^777)
         sage: hex(y.sqrt()^2 - y)                                                       # needs sage.libs.pari
@@ -4487,7 +4487,7 @@ cdef class IntegerMod_to_Integer(Map):
         TESTS:
 
         Lifting maps are morphisms in the category of sets (see
-        :trac:`15618`)::
+        :issue:`15618`)::
 
             sage: ZZ.convert_map_from(GF(2)).parent()
             Set of Morphisms from Finite Field of size 2 to Integer Ring in Category of sets

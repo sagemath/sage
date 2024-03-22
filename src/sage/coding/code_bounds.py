@@ -266,7 +266,7 @@ def codesize_upper_bound(n, d, q, algorithm=None):
 
     TESTS:
 
-    Make sure :trac:`22961` is fixed::
+    Make sure :issue:`22961` is fixed::
 
         sage: codes.bounds.codesize_upper_bound(19,10,2)
         20

@@ -27,7 +27,7 @@ EXAMPLES::
     Free Algebra on 3 generators (x, y, z) over Integer Ring
 
 The above free algebra is based on a generic implementation. By
-:trac:`7797`, there is a different implementation
+:issue:`7797`, there is a different implementation
 :class:`~sage.algebras.letterplace.free_algebra_letterplace.FreeAlgebra_letterplace`
 based on Singular's letterplace rings. It is currently restricted to
 weighted homogeneous elements and is therefore not the default. But the
@@ -53,7 +53,7 @@ two-sided ideals, and thus provide ideal containment tests::
     True
 
 Positive integral degree weights for the letterplace implementation
-was introduced in :trac:`7797`::
+was introduced in :issue:`7797`::
 
     sage: # needs sage.libs.singular
     sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace', degrees=[2,1,3])
@@ -213,7 +213,7 @@ class FreeAlgebraFactory(UniqueFactory):
         True
         sage: TestSuite(F).run()
 
-    By :trac:`7797`, we provide a different implementation of free
+    By :issue:`7797`, we provide a different implementation of free
     algebras, based on Singular's "letterplace rings". Our letterplace
     wrapper allows for choosing positive integral degree weights for the
     generators of the free algebra. However, only (weighted) homogeneous
@@ -449,7 +449,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
         sage: F == FreeAlgebra(QQ,3,'y')
         False
 
-    Note that since :trac:`7797` there is a different
+    Note that since :issue:`7797` there is a different
     implementation of free algebras. Two corresponding free
     algebras in different implementations are not equal, but there
     is a coercion.
@@ -613,7 +613,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             sage: F.1 + (z+1)*L.2
             b + (z+1)*c
 
-        Check that :trac:`15169` is fixed::
+        Check that :issue:`15169` is fixed::
 
             sage: A.<x> = FreeAlgebra(CC)
             sage: A(2)
@@ -1068,7 +1068,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             sage: F.lie_polynomial('')
             1
 
-        We check that :trac:`22251` is fixed::
+        We check that :issue:`22251` is fixed::
 
             sage: F.lie_polynomial(x*y*z)
             x*y*z - x*z*y - y*z*x + z*y*x

@@ -71,32 +71,19 @@ AC_DEFUN([SAGE_PYTHON_PACKAGE_CHECK], [
       )
       AC_MSG_CHECKING([for python package $1 ("${SAGE_PKG_VERSPEC}")])
 
-      dnl To prevent user-site (pip install --user) packages from being
-      dnl detected as "system" packages, we poison PYTHONUSERBASE. The
-      dnl sage-env script also does this at runtime; we mimic that
-      dnl implementation to ensure that the behaviors at ./configure and
-      dnl runtime are identical. Beware that (as in sage-env) the poisoning
-      dnl is skipped if PYTHONUSERBASE is non-empty. In particular, if the
-      dnl user points PYTHONUSERBASE to any path (even the default), then
-      dnl his local pip packages will be detected.
-      PYTHONUSERBASE_SAVED="${PYTHONUSERBASE}"
-      AS_IF([test -z "${PYTHONUSERBASE}"], [
-        PYTHONUSERBASE="${HOME}/.sage/local"
+      WITH_SAGE_PYTHONUSERBASE([dnl
+        dnl double-quote SAGE_PKG_VERSPEC because platform-specific
+        dnl dependencies like python_version<'3.11' will have single
+        dnl quotes in them. (We normalized the quotes earlier with sed.)
+        AS_IF(
+          [config.venv/bin/python3 -c   dnl
+             "import pkg_resources;                                        dnl
+              pkg_resources.require(\"${SAGE_PKG_VERSPEC}\".splitlines())" dnl
+           2>&AS_MESSAGE_LOG_FD],
+          [AC_MSG_RESULT(yes)],
+          [AC_MSG_RESULT(no); sage_spkg_install_$1=yes]
+        )
       ])
-
-      dnl double-quote SAGE_PKG_VERSPEC because platform-specific
-      dnl dependencies like python_version<'3.11' will have single
-      dnl quotes in them. (We normalized the quotes earlier with sed.)
-      AS_IF(
-        [PYTHONUSERBASE="${PYTHONUSERBASE}" config.venv/bin/python3 -c   dnl
-           "import pkg_resources;                                        dnl
-            pkg_resources.require(\"${SAGE_PKG_VERSPEC}\".splitlines())" dnl
-	 2>&AS_MESSAGE_LOG_FD],
-        [AC_MSG_RESULT(yes)],
-        [AC_MSG_RESULT(no); sage_spkg_install_$1=yes]
-      )
-
-      PYTHONUSERBASE="${PYTHONUSERBASE_SAVED}"
     ], [
       dnl failed to create a venv for some reason
       AC_MSG_RESULT(no)
@@ -127,4 +114,23 @@ AC_DEFUN([SAGE_PYTHON_PACKAGE_CHECK], [
     dnl "no" are not suggested to the user.
     AS_IF([test "${sage_use_system_$1}" = "yes"],[sage_use_system_$1=no])
   ])
+])
+
+
+AC_DEFUN([WITH_SAGE_PYTHONUSERBASE], [dnl
+  dnl To prevent user-site (pip install --user) packages from being
+  dnl detected as "system" packages, we poison PYTHONUSERBASE. The
+  dnl sage-env script also does this at runtime; we mimic that
+  dnl implementation to ensure that the behaviors at ./configure and
+  dnl runtime are identical. Beware that (as in sage-env) the poisoning
+  dnl is skipped if PYTHONUSERBASE is non-empty. In particular, if the
+  dnl user points PYTHONUSERBASE to any path (even the default), then
+  dnl his local pip packages will be detected.
+  PYTHONUSERBASE_SAVED="${PYTHONUSERBASE}"
+  AS_IF([test -z "${PYTHONUSERBASE}"], [dnl
+    PYTHONUSERBASE="${HOME}/.sage/local"
+    export PYTHONUSERBASE
+  ])
+  $1
+  PYTHONUSERBASE="${PYTHONUSERBASE_SAVED}"
 ])
