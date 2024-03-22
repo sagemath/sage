@@ -142,7 +142,7 @@ jobs:
         # Always non-incremental because of the concern that
         # incremental docbuild may introduce broken links (inter-file references) though build succeeds
         run: |
-          export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=5
+          export MAKE="make -j5 --output-sync=recurse" SAGE_NUM_THREADS=5
           make doc-clean doc-uninstall
           export SAGE_USE_CDNS=yes
           ./config.status && make sagemath_doc_html-no-deps
@@ -177,7 +177,7 @@ jobs:
         id: buildlivedoc
         if: (success() || failure()) && steps.copy.outcome == 'success' && github.repository == 'sagemath/sage' && github.ref == 'refs/heads/develop'
         run: |
-          export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=5
+          export MAKE="make -j5 --output-sync=recurse" SAGE_NUM_THREADS=5
           export PATH="build/bin:$PATH"
           eval $(sage-print-system-package-command auto update)
           eval $(sage-print-system-package-command auto --yes --no-install-recommends install zip)
