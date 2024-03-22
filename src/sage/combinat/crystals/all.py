@@ -6,6 +6,7 @@ Introductory material
 
 - :ref:`sage.combinat.crystals.crystals`
 - The `Lie Methods and Related Combinatorics <../../../../../thematic_tutorials/lie.html>`_ thematic tutorial
+
 Catalogs of crystals
 --------------------
 
