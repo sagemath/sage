@@ -1,3 +1,4 @@
+# sage.doctest: needs SAGE_SRC
 """
 Recursive Directory Contents
 """
