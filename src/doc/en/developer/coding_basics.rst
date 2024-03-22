@@ -157,7 +157,8 @@ included in one of the following places:
   location as the Python code. This is referred to as "package data".
 
   The preferred way to access the data from Python is using the
-  `importlib.resources API <https://importlib-resources.readthedocs.io/en/latest/using.html>`,
+  `importlib.resources API
+  <https://importlib-resources.readthedocs.io/en/latest/using.html>`_,
   in particular the function :func:`importlib.resources.files`.
   Using it, you can:
 
@@ -203,9 +204,11 @@ is proposed to do the following:
 
 - add metadata to the repository that make it a pip-installable
   package (distribution package), as explained for example in the
-  `Python Packaging User Guide <https://packaging.python.org/en/latest/tutorials/packaging-projects/>`_,
+  `Python Packaging User Guide
+  <https://packaging.python.org/en/latest/tutorials/packaging-projects/>`_,
 
-- `upload it to PyPI <https://packaging.python.org/en/latest/tutorials/packaging-projects/#uploading-the-distribution-archives>`_,
+- `upload it to PyPI
+  <https://packaging.python.org/en/latest/tutorials/packaging-projects/#uploading-the-distribution-archives>`_,
 
 - create metadata in ``SAGE_ROOT/build/pkgs`` that make your new
   pip-installable package known to Sage; see :ref:`chapter-packaging`.
