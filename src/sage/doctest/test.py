@@ -54,7 +54,7 @@ Check handling of tolerances::
     Doctesting 1 file.
     sage -t --warn-long 0.0 --random-seed=0 tolerance.rst
     **********************************************************************
-    File "tolerance.rst", line ..., in sage.doctest.tests.tolerance
+    File "tolerance.rst", line ..., in ...tolerance
     Failed example:
         print(":-(")    # abs tol 0.1
     Expected:
@@ -62,7 +62,7 @@ Check handling of tolerances::
     Got:
         :-(
     **********************************************************************
-    File "tolerance.rst", line ..., in sage.doctest.tests.tolerance
+    File "tolerance.rst", line ..., in ...tolerance
     Failed example:
         print("1.0 2.0 3.0")  # abs tol 0.1
     Expected:
@@ -70,7 +70,7 @@ Check handling of tolerances::
     Got:
         1.0 2.0 3.0
     **********************************************************************
-    File "tolerance.rst", line ..., in sage.doctest.tests.tolerance
+    File "tolerance.rst", line ..., in ...tolerance
     Failed example:
         print("Hello")  # abs tol 0.1
     Expected:
@@ -78,7 +78,7 @@ Check handling of tolerances::
     Got:
         Hello
     **********************************************************************
-    File "tolerance.rst", line ..., in sage.doctest.tests.tolerance
+    File "tolerance.rst", line ..., in ...tolerance
     Failed example:
         print("1.0")  # abs tol 0.1
     Expected:
@@ -86,7 +86,7 @@ Check handling of tolerances::
     Got:
         1.0
     **********************************************************************
-    File "tolerance.rst", line ..., in sage.doctest.tests.tolerance
+    File "tolerance.rst", line ..., in ...tolerance
     Failed example:
         print("Hello 1.1")  # abs tol 0.1
     Expected:
@@ -94,7 +94,7 @@ Check handling of tolerances::
     Got:
         Hello 1.1
     **********************************************************************
-    File "tolerance.rst", line ..., in sage.doctest.tests.tolerance
+    File "tolerance.rst", line ..., in ...tolerance
     Failed example:
         print("Hello 1.0")  # rel tol 1e-6
     Expected:
@@ -104,7 +104,7 @@ Check handling of tolerances::
     Tolerance exceeded:
         0.999999 vs 1.0, tolerance 2e-6 > 1e-6
     **********************************************************************
-    File "tolerance.rst", line ..., in sage.doctest.tests.tolerance
+    File "tolerance.rst", line ..., in ...tolerance
     Failed example:
         print("Hello 1.0")  # rel tol 1e-6
     Expected:
@@ -124,7 +124,7 @@ Test the ``--initial`` option::
     Doctesting 1 file.
     sage -t --warn-long 0.0 --random-seed=0 initial.rst
     **********************************************************************
-    File "initial.rst", line 4, in sage.doctest.tests.initial
+    File "initial.rst", line 4, in ...initial
     Failed example:
         a = binomiak(10,5)  # random to test that we still get the exception
     Exception raised:
@@ -132,7 +132,7 @@ Test the ``--initial`` option::
         ...
         NameError: name 'binomiak' is not defined
     **********************************************************************
-    File "initial.rst", line 14, in sage.doctest.tests.initial
+    File "initial.rst", line 14, in ...initial
     Failed example:
         binomial(10,5)
     Expected:
@@ -155,7 +155,7 @@ Test the ``--exitfirst`` option::
     Doctesting 1 file.
     sage -t --warn-long 0.0 --random-seed=0 initial.rst
     **********************************************************************
-    File "initial.rst", line 4, in sage.doctest.tests.initial
+    File "initial.rst", line 4, in ...initial
     Failed example:
         a = binomiak(10,5)  # random to test that we still get the exception
     Exception raised:
@@ -200,7 +200,7 @@ Test handling of ``KeyboardInterrupt`` in doctests::
     Doctesting 1 file.
     sage -t --warn-long 0.0 --random-seed=0 keyboardinterrupt.rst
     **********************************************************************
-    File "keyboardinterrupt.rst", line 11, in sage.doctest.tests.keyboardinterrupt
+    File "keyboardinterrupt.rst", line 11, in ...keyboardinterrupt
     Failed example:
         raise KeyboardInterrupt
     Exception raised:
@@ -302,7 +302,7 @@ A different kind of crash::
     Doctesting 1 file.
     sage -t --warn-long 0.0 --random-seed=0 fail_and_die.rst
     **********************************************************************
-    File "fail_and_die.rst", line 5, in sage.doctest.tests.fail_and_die
+    File "fail_and_die.rst", line 5, in ...fail_and_die
     Failed example:
         this_gives_a_NameError
     Exception raised:
@@ -327,7 +327,7 @@ Test that ``sig_on_count`` is checked correctly::
     Doctesting 1 file.
     sage -t --warn-long 0.0 --random-seed=0 sig_on.rst
     **********************************************************************
-    File "sig_on.rst", line 6, in sage.doctest.tests.sig_on
+    File "sig_on.rst", line 6, in ...sig_on
     Failed example:
         sig_on_count() # check sig_on/off pairings (virtual doctest)
     Expected:
@@ -336,7 +336,7 @@ Test that ``sig_on_count`` is checked correctly::
         1
     **********************************************************************
     1 item had failures:
-       1 of   5 in sage.doctest.tests.sig_on
+       1 of   5 in ...sig_on
         [3 tests, 1 failure, ...]
     ----------------------------------------------------------------------
     sage -t --warn-long 0.0 --random-seed=0 sig_on.rst  # 1 doctest failed
@@ -356,7 +356,7 @@ Test logfiles in serial and parallel mode (see :issue:`19271`)::
     Doctesting 1 file.
     sage -t --warn-long 0.0 --random-seed=0 simple_failure.rst
     **********************************************************************
-    File "simple_failure.rst", line 7, in sage.doctest.tests.simple_failure
+    File "simple_failure.rst", line 7, in ...simple_failure
     Failed example:
         a * b
     Expected:
@@ -365,7 +365,7 @@ Test logfiles in serial and parallel mode (see :issue:`19271`)::
         15
     **********************************************************************
     1 item had failures:
-       1 of   5 in sage.doctest.tests.simple_failure
+       1 of   5 in ...simple_failure
         [4 tests, 1 failure, ...]
     ----------------------------------------------------------------------
     sage -t --warn-long 0.0 --random-seed=0 simple_failure.rst  # 1 doctest failed
@@ -381,7 +381,7 @@ Test logfiles in serial and parallel mode (see :issue:`19271`)::
     Doctesting 1 file.
     sage -t --warn-long 0.0 --random-seed=0 simple_failure.rst
     **********************************************************************
-    File "simple_failure.rst", line 7, in sage.doctest.tests.simple_failure
+    File "simple_failure.rst", line 7, in ...simple_failure
     Failed example:
         a * b
     Expected:
@@ -390,7 +390,7 @@ Test logfiles in serial and parallel mode (see :issue:`19271`)::
         15
     **********************************************************************
     1 item had failures:
-       1 of   5 in sage.doctest.tests.simple_failure
+       1 of   5 in ...simple_failure
         [4 tests, 1 failure, ...]
     ----------------------------------------------------------------------
     sage -t --warn-long 0.0 --random-seed=0 simple_failure.rst  # 1 doctest failed
@@ -406,7 +406,7 @@ Test the ``--debug`` option::
     Doctesting 1 file.
     sage -t --warn-long 0.0 --random-seed=0 simple_failure.rst
     **********************************************************************
-    File "simple_failure.rst", line 7, in sage.doctest.tests.simple_failure
+    File "simple_failure.rst", line 7, in ...simple_failure
     Failed example:
         a * b
     Expected:
@@ -424,7 +424,7 @@ Test the ``--debug`` option::
     Returning to doctests...
     **********************************************************************
     1 item had failures:
-       1 of   5 in sage.doctest.tests.simple_failure
+       1 of   5 in ...simple_failure
         [4 tests, 1 failure, ...]
     ----------------------------------------------------------------------
     sage -t --warn-long 0.0 --random-seed=0 simple_failure.rst  # 1 doctest failed
@@ -553,7 +553,7 @@ Test that random tests are reproducible::
     Doctesting 1 file.
     sage -t --warn-long 0.0 --random-seed=0 random_seed.rst
     **********************************************************************
-    File "random_seed.rst", line 3, in sage.doctest.tests.random_seed
+    File "random_seed.rst", line 3, in ...random_seed
     Failed example:
         randint(5, 10)
     Expected:
@@ -562,7 +562,7 @@ Test that random tests are reproducible::
         5
     **********************************************************************
     1 item had failures:
-       1 of   2 in sage.doctest.tests.random_seed
+       1 of   2 in ...random_seed
         [1 test, 1 failure, ...s]
     ----------------------------------------------------------------------
     sage -t --warn-long 0.0 --random-seed=0 random_seed.rst  # 1 doctest failed
