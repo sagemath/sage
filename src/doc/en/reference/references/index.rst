@@ -3888,7 +3888,7 @@ REFERENCES:
 .. [Kob1993] Neal Koblitz, *Introduction to Elliptic Curves and
              Modular Forms*.  Springer GTM 97, 1993.
 
-.. [Koe1999] Wolfram Koepf: Effcient Computation of Chebyshev
+.. [Koe1999] Wolfram Koepf: Efficient Computation of Chebyshev
              Polynomials in Computer Algebra Systems: A Practical
              Guide. John Wiley, Chichester (1999): 79-99.
 

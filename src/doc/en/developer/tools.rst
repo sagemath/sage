@@ -367,7 +367,7 @@ package :mod:`sage.numerical.backends` and some modules in
   ``./sage -pytest -n auto`` will spawn a number of workers processes equal
   to the number of available CPUs.
 
-- VS Code: Install the `Python extension <https://marketplace.visualstudio.com/items?itemName=ms-python.python>`_ and follow the `offical VS Code documentation <https://code.visualstudio.com/docs/python/testing>`__.
+- VS Code: Install the `Python extension <https://marketplace.visualstudio.com/items?itemName=ms-python.python>`_ and follow the `official VS Code documentation <https://code.visualstudio.com/docs/python/testing>`__.
 
 *Configuration:* ``SAGE_ROOT/src/conftest.py``
 

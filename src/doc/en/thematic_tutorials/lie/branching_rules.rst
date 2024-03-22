@@ -222,7 +222,7 @@ to the right of the colon onto the command line::
     sage:branching_rule("E7","A2","miscellaneous")
     miscellaneous branching rule E7 => A2
 
-There are two distict embeddings of `A_1=\hbox{SL}(2)` into
+There are two distinct embeddings of `A_1=\hbox{SL}(2)` into
 `E_7` as maximal subgroups, so the ``maximal_subgroup``
 method will return a list of rules::
 
