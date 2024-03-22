@@ -279,7 +279,7 @@ class UnitGroup(AbelianGroupWithValues_class):
         TESTS:
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`);
+        polynomials are supported (:issue:`252`);
         the representation depends on the PARI version::
 
             sage: K.<a> = NumberField(7/9*x^3 + 7/3*x^2 - 56*x + 123)
@@ -294,7 +294,7 @@ class UnitGroup(AbelianGroupWithValues_class):
             True
 
         Conversion from unit group to a number field and back
-        gives the right results (:trac:`25874`)::
+        gives the right results (:issue:`25874`)::
 
             sage: # needs sage.libs.linbox
             sage: K = QuadraticField(-3).composite_fields(QuadraticField(2))[0]

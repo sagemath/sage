@@ -176,7 +176,7 @@ def SymmetricGroupAlgebra(R, W, category=None):
         usual multiplication function, but rather use the methods
         :meth:`left_action_product` and :meth:`right_action_product`
         for multiplying permutations (these methods don't depend on the
-        setting). See :trac:`14885` for more information.
+        setting). See :issue:`14885` for more information.
 
     We conclude by constructing the algebra of the symmetric group as
     a monoid algebra::
@@ -242,7 +242,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             sage: QS3 in FiniteDimensionalAlgebrasWithBasis(QQ)
             True
 
-        Check that :trac:`16926` works::
+        Check that :issue:`16926` works::
 
             sage: S = SymmetricGroup(4)
             sage: SGA = S.algebra(QQ)
@@ -1267,7 +1267,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
         TESTS:
 
-        Check that :trac:`15309` is fixed::
+        Check that :issue:`15309` is fixed::
 
             sage: S3 = SymmetricGroupAlgebra(QQ, 3)
             sage: S3.algebra_generators()
@@ -3004,6 +3004,13 @@ def HeckeAlgebraSymmetricGroupT(R, n, q=None):
         [2, 3, 1]
 
         sage: TestSuite(H3).run()
+
+    .. NOTE::
+
+        :class:`~sage.algebras.iwahori_hecke_algebra.IwahoriHeckeAlgebra` gives
+        a different implementation of the Iwahori-Hecke algebras of a Coxeter
+        system `(W,S)`. This includes the Hecke algebras of the symmetric group
+        as special case.
     """
     return HeckeAlgebraSymmetricGroup_t(R, n, q)
 
@@ -3065,12 +3072,18 @@ class HeckeAlgebraSymmetricGroup_generic(CombinatorialFreeModule):
         """
         return self._q
 
-    def _coerce_start(self, x):
+    def _element_constructor_(self, x):
         """
         EXAMPLES::
 
             sage: H3 = HeckeAlgebraSymmetricGroupT(QQ, 3)
-            sage: H3._coerce_start([2,1])
+            sage: H3([2,1])  # indirect doc test
+            T[2, 1, 3]
+            sage: H3( Permutations(3).an_element() )
+            T[3, 1, 2]
+            sage: H3( SymmetricGroup(3).an_element() )
+            [1, 3, 2]
+            sage: H3( [2, 1, 3, 4, 5, 6] )
             T[2, 1, 3]
         """
         ###################################################
@@ -3078,11 +3091,15 @@ class HeckeAlgebraSymmetricGroup_generic(CombinatorialFreeModule):
         ###################################################
         if not x:
             return self.one()
-        if len(x) < self.n and x in Permutations():
-            return self.monomial(self._indices(list(x) +
-                                               list(range(len(x) + 1,
-                                                          self.n + 1))))
-        raise TypeError
+        if x in Permutations():
+            if len(x) < self.n:
+                return self.monomial(self._indices(
+                            list(x) + list(range(len(x) + 1, self.n + 1))
+                        ))
+            if all(x[i] == i+1 for i in range(self.n, len(x))):
+                return self.monomial(self._indices(x[:self.n]))
+
+        return self._indices(x)
 
 
 class HeckeAlgebraSymmetricGroup_t(HeckeAlgebraSymmetricGroup_generic):

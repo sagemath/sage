@@ -264,7 +264,7 @@ cdef class FiniteField(Field):
 
         TESTS:
 
-        The variable name is preserved (:trac:`28566`)::
+        The variable name is preserved (:issue:`28566`)::
 
             sage: K = macaulay2(GF(49, 'b'))  # optional - macaulay2
             sage: K.gens()                    # optional - macaulay2
@@ -580,7 +580,7 @@ cdef class FiniteField(Field):
             ....:                 if i == j: continue
             ....:                 assert gcd(F[i][0], F[j][0]) == 1
 
-        Check that :trac:`35323` is fixed::
+        Check that :issue:`35323` is fixed::
 
             sage: R.<x> = GF(2)[]
             sage: (x^2 + 1).squarefree_decomposition()
@@ -720,7 +720,7 @@ cdef class FiniteField(Field):
             a + 1
 
         This works even in very large finite fields, provided that ``n``
-        can be factored (see :trac:`25203`)::
+        can be factored (see :issue:`25203`)::
 
             sage: k.<a> = GF(2^2000)
             sage: p = 8877945148742945001146041439025147034098690503591013177336356694416517527310181938001
@@ -773,7 +773,7 @@ cdef class FiniteField(Field):
 
         TESTS:
 
-        Check that large characteristics work (:trac:`11946`)::
+        Check that large characteristics work (:issue:`11946`)::
 
             sage: p = 10^20 + 39
             sage: x = polygen(GF(p))
@@ -906,7 +906,7 @@ cdef class FiniteField(Field):
 
         TESTS:
 
-        Check that :trac:`31686` is fixed::
+        Check that :issue:`31686` is fixed::
 
             sage: p = 1100585370631
             sage: F = GF(p^24, 'a')
@@ -1401,7 +1401,7 @@ cdef class FiniteField(Field):
               From: 7-adic Unramified Extension Field in a defined by x^2 + 6*x + 3
               To:   Finite Field in a0 of size 7^2
 
-        Check that :trac:`8240 is resolved::
+        Check that :issue:`8240 is resolved::
 
             sage: R.<a> = Zq(81); k = R.residue_field()                                 # needs sage.rings.padics
             sage: k.convert_map_from(R)                                                 # needs sage.rings.padics
@@ -1427,7 +1427,7 @@ cdef class FiniteField(Field):
             sage: v = GF(2^1000, 'a').construction(); v[0].polys[0]
             a^1000 + a^5 + a^4 + a^3 + 1
 
-        The implementation is taken into account, by :trac:`15223`::
+        The implementation is taken into account, by :issue:`15223`::
 
             sage: k = FiniteField(9, 'a', impl='pari_ffelt')
             sage: F, R = k.construction()
@@ -1524,7 +1524,7 @@ cdef class FiniteField(Field):
 
         TESTS:
 
-        We check that :trac:`18915` is fixed::
+        We check that :issue:`18915` is fixed::
 
             sage: F = GF(2)
             sage: F.extension(int(3), 'a')
@@ -1534,7 +1534,7 @@ cdef class FiniteField(Field):
             sage: F.extension(int(3), 'aa')
             Finite Field in aa of size 2^12
 
-        Randomized test for :trac:`33937`::
+        Randomized test for :issue:`33937`::
 
             sage: p = random_prime(100)
             sage: a,b = (randrange(1,10) for _ in 'ab')
@@ -1678,7 +1678,7 @@ cdef class FiniteField(Field):
 
         TESTS:
 
-        We check that :trac:`23801` is resolved::
+        We check that :issue:`23801` is resolved::
 
             sage: k.<a> = GF(5^240)
             sage: l, inc = k.subfield(3, 'z', map=True); l
@@ -2117,6 +2117,50 @@ cdef class FiniteField(Field):
         return [sum(x * y for x, y in zip(col, basis))
                 for col in B.columns()]
 
+    def from_bytes(self, input_bytes, byteorder="big"):
+        """
+        Return the integer represented by the given array of bytes.
+
+        Internally relies on the python ``int.from_bytes()`` method.
+
+        INPUT:
+
+        - ``input_bytes`` -- a bytes-like object or iterable producing bytes
+        - ``byteorder`` -- str (default: ``"big"``); determines the byte order of
+          ``input_bytes``; can only be ``"big"`` or ``"little"``
+
+        EXAMPLES::
+
+            sage: input_bytes = b"some_bytes"
+            sage: F = GF(2**127 - 1)
+            sage: F.from_bytes(input_bytes)
+            545127616933790290830707
+            sage: a = F.from_bytes(input_bytes, byteorder="little"); a
+            544943659528996309004147
+            sage: type(a)
+            <class 'sage.rings.finite_rings.integer_mod.IntegerMod_gmp'>
+
+        ::
+
+            sage: input_bytes = b"some_bytes"
+            sage: F_ext = GF(65537**5)
+            sage: F_ext.from_bytes(input_bytes)
+            29549*z5^4 + 40876*z5^3 + 52171*z5^2 + 13604*z5 + 20843
+            sage: F_ext.from_bytes(input_bytes, byteorder="little")
+            29539*z5^4 + 42728*z5^3 + 47440*z5^2 + 12423*z5 + 27473
+
+        TESTS::
+
+            sage: fields = [GF(2), GF(3), GF(65537), GF(2^10), GF(163^5)]
+            sage: for F in fields:
+            ....:     for _ in range(1000):
+            ....:         a = F.random_element()
+            ....:         order = choice(["little", "big"])
+            ....:         a_bytes = a.to_bytes(byteorder=order)
+            ....:         assert F.from_bytes(a_bytes, byteorder=order) == a
+        """
+        python_int = int.from_bytes(input_bytes, byteorder=byteorder)
+        return self.from_integer(python_int)
 
 def unpickle_FiniteField_ext(_type, order, variable_name, modulus, kwargs):
     r"""

@@ -87,7 +87,7 @@ def pip_remote_version(pkg, pypi_url=DEFAULT_PYPI, ignore_URLError=False):
     EXAMPLES:
 
     The following test does fail if there is no TLS support (see e.g.
-    :trac:`19213`)::
+    :issue:`19213`)::
 
         sage: from sage.misc.package import pip_remote_version
         sage: pip_remote_version('beautifulsoup4') # optional - internet # not tested

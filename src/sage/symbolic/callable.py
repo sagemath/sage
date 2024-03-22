@@ -33,7 +33,7 @@ When you do arithmetic with::
 
 TESTS:
 
-The arguments in the definition must be symbolic variables (:trac:`10747`)::
+The arguments in the definition must be symbolic variables (:issue:`10747`)::
 
     sage: f(1)=2
     Traceback (most recent call last):
@@ -303,7 +303,7 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
             sage: R._repr_()
             'Callable function ring with arguments (x, y, theta)'
 
-        We verify that :trac:`12298` has been fixed::
+        We verify that :issue:`12298` has been fixed::
 
             sage: S = CallableSymbolicExpressionRing([var('z')])
             sage: S._repr_()

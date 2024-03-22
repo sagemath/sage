@@ -163,7 +163,7 @@ TESTS::
 AUTHORS:
 
 - Sebastian Oehms 2019-12-09: initial version.
-- Sebastian Oehms 2022-03-05: fix some corner cases and add :meth:`factor` (:trac:`33463`)
+- Sebastian Oehms 2022-03-05: fix some corner cases and add :meth:`factor` (:issue:`33463`)
 """
 
 
@@ -314,7 +314,7 @@ class LocalizationElement(IntegralDomainElement):
             n = len(names)
             bnames = L.base_ring()._names
             if bnames != names and n == len(bnames):
-                # replace separate names (see :trac:`33482`)
+                # replace separate names (see :issue:`33482`)
                 for i in range(n):
                     s = s.replace(bnames[i], names[i])
         return s
@@ -660,7 +660,7 @@ class Localization(IntegralDomain, UniqueRepresentation):
 
     TESTS:
 
-    Check that :trac:`33463` is fixed::
+    Check that :issue:`33463` is fixed::
 
         sage: R = ZZ.localization(5)
         sage: R.localization(~5)
@@ -696,7 +696,7 @@ class Localization(IntegralDomain, UniqueRepresentation):
         if isinstance(base_ring, Localization):
             # don't allow recursive constructions
             extra_units = [u for u in extra_units
-                           if ~u not in base_ring._extra_units]  # :trac:`33463`
+                           if ~u not in base_ring._extra_units]  # :issue:`33463`
             extra_units += base_ring._extra_units
             base_ring = base_ring.base_ring()
 
@@ -878,7 +878,7 @@ class Localization(IntegralDomain, UniqueRepresentation):
 
         TESTS:
 
-        Check that :trac:`33463` is fixed::
+        Check that :issue:`33463` is fixed::
 
             sage: L = ZZ.localization(5)
             sage: L(0).is_unit()

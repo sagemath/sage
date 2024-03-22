@@ -206,7 +206,7 @@ class ModularFormsRing(Parent):
 
         TESTS:
 
-        Check that :trac:`15037` is fixed::
+        Check that :issue:`15037` is fixed::
 
             sage: ModularFormsRing(3.4)
             Traceback (most recent call last):

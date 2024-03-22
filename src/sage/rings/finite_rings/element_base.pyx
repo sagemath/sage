@@ -5,7 +5,7 @@ Base class for finite field elements
 AUTHORS:
 
 - David Roe (2010-01-14): factored out of sage.structure.element
-- Sebastian Oehms (2018-07-19): added :meth:`conjugate` (see :trac:`26761`)
+- Sebastian Oehms (2018-07-19): added :meth:`conjugate` (see :issue:`26761`)
 """
 
 # ****************************************************************************
@@ -142,6 +142,29 @@ cdef class FiniteRingElement(CommutativeRingElement):
         else:
             raise ValueError("unknown algorithm")
 
+    def to_bytes(self, byteorder="big"):
+        """
+        Return an array of bytes representing an integer.
+
+        Internally relies on the python ``int.to_bytes()`` method.
+        Length of byte array is determined from the field's order.
+
+        INPUT:
+
+        - ``byteorder`` -- str (default: ``"big"``); determines the byte order of
+          ``input_bytes``; can only be ``"big"`` or ``"little"``
+
+        EXAMPLES::
+
+            sage: F = GF(65537)
+            sage: a = F(8726)
+            sage: a.to_bytes()
+            b'\x00"\x16'
+            sage: a.to_bytes(byteorder="little")
+            b'\x16"\x00'
+        """
+        length = (self.parent().order().nbits() + 7) // 8
+        return int(self).to_bytes(length=length, byteorder=byteorder)
 
 cdef class FinitePolyExtElement(FiniteRingElement):
     """
@@ -535,7 +558,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS:
 
-        The following tests against a bug fixed in :trac:`11530`::
+        The following tests against a bug fixed in :issue:`11530`::
 
             sage: F.<d> = GF(3^4)
             sage: F.modulus()
@@ -1002,7 +1025,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS:
 
-        Check that :trac:`26761` is fixed::
+        Check that :issue:`26761` is fixed::
 
             sage: # needs sage.libs.gap
             sage: G32 = GU(3,2)
@@ -1082,6 +1105,35 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         return f(p)
 
     integer_representation = deprecated_function_alias(33941, to_integer)
+
+    def to_bytes(self, byteorder="big"):
+        r"""
+        Return an array of bytes representing an integer.
+
+        Internally relies on the python ``int.to_bytes()`` method.
+        Length of byte array is determined from the field's order.
+
+        INPUT:
+
+        - ``byteorder`` -- str (default: ``"big"``); determines the byte order of
+          the output; can only be ``"big"`` or ``"little"``
+
+        EXAMPLES::
+
+            sage: F.<z5> = GF(3^5)
+            sage: a = z5^4 + 2*z5^3 + 1
+            sage: a.to_bytes()
+            b'\x88'
+
+        ::
+
+            sage: F.<z3> = GF(163^3)
+            sage: a = 136*z3^2 + 10*z3 + 125
+            sage: a.to_bytes()
+            b'7)\xa3'
+        """
+        length = (self.parent().order().nbits() + 7) // 8
+        return self.to_integer().to_bytes(length=length, byteorder=byteorder)
 
 cdef class Cache_base(SageObject):
     cpdef FinitePolyExtElement fetch_int(self, number) noexcept:
