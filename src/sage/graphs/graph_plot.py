@@ -89,7 +89,7 @@ previously::
       settings from ``DEFAULT_SHOW_OPTIONS`` only affects ``G.show()``.
 
     * In order to define a default value permanently, you can add a couple of
-      lines to :ref:`Sage's startup scripts <startup>`. Example::
+      lines to `Sage's startup scripts <../../../repl/startup.html>`_. Example::
 
        sage: import sage.graphs.graph_plot
        sage: sage.graphs.graph_plot.DEFAULT_SHOW_OPTIONS['figsize'] = (4, 4)
