@@ -104,8 +104,8 @@ jobs:
           cache-from: type=gha
           cache-to:   type=gha,mode=max
           build-args: |
-            NUMPROC=4
-            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=3 --output-sync=recurse
+            NUMPROC=6
+            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
             TARGETS_PRE=build/make/Makefile
             TARGETS=ci-build-with-fallback
 
@@ -131,9 +131,9 @@ jobs:
 
       - name: Test changed files (sage -t --new)
         run: |
-          export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
+          export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=4
           # We run tests with "sage -t --new"; this only tests the uncommitted changes.
-          ./sage -t --new -p2
+          ./sage -t --new -p4
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
   mod:
@@ -208,8 +208,8 @@ jobs:
           cache-from: type=gha
           cache-to:   type=gha,mode=max
           build-args: |
-            NUMPROC=4
-            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=3 --output-sync=recurse
+            NUMPROC=6
+            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
             TARGETS_PRE=build/make/Makefile
             TARGETS=ci-build-with-fallback
 
@@ -224,7 +224,7 @@ jobs:
 
       - name: Test modularized distributions
         run: |
-          export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
+          export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=4
           make V=0 tox-ensure && make ${{ matrix.targets }}
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
@@ -295,8 +295,8 @@ jobs:
           cache-from: type=gha
           cache-to:   type=gha,mode=max
           build-args: |
-            NUMPROC=4
-            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=3 --output-sync=recurse
+            NUMPROC=6
+            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
             TARGETS_PRE=build/make/Makefile
             TARGETS=ci-build-with-fallback
 
@@ -313,7 +313,7 @@ jobs:
       - name: Test all files (sage -t --all --long)
         run: |
           ./sage -python -m pip install coverage
-          ./sage -python -m coverage run --rcfile=src/tox.ini src/bin/sage-runtests --all --long -p2 --format github --random-seed=286735480429121101562228604801325644303
+          ./sage -python -m coverage run --rcfile=src/tox.ini src/bin/sage-runtests --all --long -p4 --format github --random-seed=286735480429121101562228604801325644303
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Copy coverage results
