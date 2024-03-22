@@ -38,11 +38,25 @@ using one of two mechanisms:
 
   - `importlib_metadata <../reference/spkg/importlib_metadata>`_
     (to be used in place of ``importlib.metadata`` when Python older
-    than 3.11 is in use),
-  - `importlib_resources <../reference/spkg/importlib_resources>`_:
-    If necessary, you can use it in place of ``importlib.resources``
-    when Python older than 3.11 is in use if you need a newer
-    feature::
+    than 3.11 is in use if you need a newer feature),
+  - `importlib_resources <../reference/spkg/importlib_resources>`_
+    (to be used in place of ``importlib.resources`` when Python older than
+    3.11 is in use if you need a newer feature),
+  - `typing_extensions <../reference/spkg/typing_extensions>`_
+    (to be used in place of ``typing`` when Python older than
+    3.11 is in use and any of the features introduced after Python
+    3.9.0 are used).
+
+  The Sage library declares these backport packages as conditional
+  dependencies for use with Python older than 3.11 and ensures that
+  versions of the packages that provide features of Python 3.11
+  are available.
+
+  The backport packages should not be imported unconditionally.
+  For example, on Linux distributions that only ship newer versions
+  of Python, the backport packages may not be available as
+  system packages. Hence, if there is a need to use the backport
+  packages, they should be imported like this::
 
         import sys
 
@@ -51,13 +65,6 @@ using one of two mechanisms:
             from importlib_resources import files
         else:
             from importlib.resources import files
-
-  - `typing_extensions <../reference/spkg/typing_extensions>`_
-    (to be used in place of ``typing`` when any of the features
-    introduced after Python 3.9.0 are used).
-
-  The Sage library declares these packages as dependencies and ensures that
-  versions that provide features of Python 3.11 are available.
 
 Meta :issue:`29756` keeps track of newer Python features and serves
 as a starting point for discussions on how to make use of them in the
