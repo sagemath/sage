@@ -78,7 +78,8 @@ doctest_line_number = re.compile(r"^\s*doctest:[0-9]")
 
 def get_basename(path):
     """
-    This function returns the basename of the given path, e.g. sage.doctest.sources or doc.ru.tutorial.tour_advanced
+    Return the basename of ``path``, e.g. ``sage.doctest.sources`` or
+    ``doc.ru.tutorial.tour_advanced``.
 
     EXAMPLES::
 
@@ -88,17 +89,26 @@ def get_basename(path):
         'sage.doctest.sources'
         sage: get_basename(os.path.join(sage.structure.__path__[0], 'element.pxd'))
         'sage.structure.element.pxd'
+
+    TESTS:
+
+    Check that :trac:`22445` has been resolved::
+
+        sage: get_basename(os.path.join(SAGE_SRC,'doc','..','sage','doctest','sources.py'))
+        'sage.doctest.sources'
+
     """
     if path is None:
         return None
     if not os.path.exists(path):
         return path
-    path = os.path.abspath(path)
+    path = os.path.realpath(path)
     root = os.path.dirname(path)
+
     # If the file is in the sage library, we can use our knowledge of
     # the directory structure
-    dev = os.path.normpath(SAGE_SRC)
-    sp = os.path.normpath(SAGE_LIB)
+    dev = os.path.realpath(SAGE_SRC)
+    sp = os.path.realpath(SAGE_LIB)
     if path.startswith(dev):
         # there will be a branch name
         i = path.find(os.path.sep, len(dev))
