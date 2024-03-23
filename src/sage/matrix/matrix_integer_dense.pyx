@@ -3158,7 +3158,8 @@ cdef class Matrix_integer_dense(Matrix_dense):
         Check that :issue:`37236` is fixed:
 
             sage: M = matrix(ZZ, 2, 2, [-1,1,1,1])
-            sage: L = M.LLL(algorithm="NTL:LLL"); M.det() == L.det()
+            sage: L = M.LLL(algorithm="NTL:LLL")
+            sage: M.det() == L.det()
             True
 
         .. NOTE::
@@ -3235,9 +3236,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
             if algorithm == "NTL:LLL":
                 if transformation:
-                    r, _, UNTL = A.LLL(a,b, verbose=verb, return_U=True)
+                    r, _, UNTL = A.LLL(a, b, verbose=verb, return_U=True)
                 else:
-                    r, _ = A.LLL(a,b, verbose=verb)
+                    r, _ = A.LLL(a, b, verbose=verb)
             elif algorithm == "NTL:LLL_FP":
                 if use_givens:
                     r = A.G_LLL_FP(delta, verbose=verb, return_U=transformation)
