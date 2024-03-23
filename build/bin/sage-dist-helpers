@@ -230,8 +230,7 @@ sdh_prefix_args () {
     done
 }
 
-sdh_pip_install() {
-    echo "Installing $PKG_NAME"
+sdh_build_wheel() {
     mkdir -p dist
     rm -f dist/*.whl
     install_options=""
@@ -284,6 +283,16 @@ sdh_pip_install() {
                 ;;
         esac
     fi
+}
+
+sdh_build_and_store_wheel() {
+    sdh_build_wheel "$@"
+    sdh_store_wheel .
+}
+
+sdh_pip_install() {
+    echo "Installing $PKG_NAME"
+    sdh_build_wheel "$@"
     sdh_store_and_pip_install_wheel $install_options .
 }
 
