@@ -1,3 +1,30 @@
-#! /usr/bin/env bash
-cd $SAGE_ROOT/src/doc
-$MAKE doc-pdf
+#!/usr/bin/env bash
+# From sage-spkg.
+# For type=script packages, the build rule in build/make/Makefile sources
+# sage-env but not sage-dist-helpers.
+lib="$SAGE_ROOT/build/bin/sage-dist-helpers"
+source "$lib"
+if [ $? -ne 0 ]; then
+    echo >&2 "Error: failed to source $lib"
+    echo >&2 "Is $SAGE_ROOT the correct SAGE_ROOT?"
+    exit 1
+fi
+cd src
+
+if [ "$SAGE_WHEELS" = yes ]; then
+    # Needed because we have trees.txt, which directs us to $SAGE_LOCAL/...
+    export PIP_FIND_LINKS=$SAGE_VENV/var/lib/sage/wheels
+    # Build a wheel using pypa/build.
+    # --wheel:                 Build the wheel directly. We do not go through the sdist
+    #                          because meson insists on packaging the latest commit, not
+    #                          the contents of the working copy.
+    # --skip-dependency-check: meson_python declares the Python package 'meson' as
+    #                          a dependency, but we have installed meson as a non-Python
+    #                          package.
+    DIST_DIR="$(mktemp -d)"
+    python3 -m build --wheel --no-isolation --skip-dependency-check --outdir "$DIST_DIR"/dist . || sdh_die "Failure building wheel"
+    wheel=$(cd "$DIST_DIR" && sdh_store_and_pip_install_wheel --prefix="$SAGE_LOCAL" . >&2 && echo $wheel)
+    ls -l "$wheel"
+else
+    (cd doc && $MAKE doc-pdf) || sdh_die "Failure building PDF documentation"
+fi
