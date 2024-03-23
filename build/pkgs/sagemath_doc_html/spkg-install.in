@@ -1,14 +1,3 @@
-#!/usr/bin/env bash
-# From sage-spkg.
-# For type=script packages, the build rule in build/make/Makefile sources
-# sage-env but not sage-dist-helpers.
-lib="$SAGE_ROOT/build/bin/sage-dist-helpers"
-source "$lib"
-if [ $? -ne 0 ]; then
-    echo >&2 "Error: failed to source $lib"
-    echo >&2 "Is $SAGE_ROOT the correct SAGE_ROOT?"
-    exit 1
-fi
 cd src
 
 if [ "$SAGE_WHEELS" = yes ]; then
