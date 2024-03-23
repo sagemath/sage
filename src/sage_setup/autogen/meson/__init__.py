@@ -245,21 +245,30 @@ def run(folder: Path, output_dir: Path, folder_rel_to_src=None, dry_run=False, f
                 meson_build.write(f"if {distribution_condition(distribution)}\n")
 
             if files.python_files:
-                meson_build.write('py.install_sources(\n')
-                for file in files.python_files:
-                    meson_build.write(f"    '{file.path.name}',\n")
-                meson_build.write(f"    subdir: '{folder_rel_to_src}',\n")
-                meson_build.write(')\n')
+                if monolithic and len(files.python_files) <= 4:
+                    meson_build.write('py.install_sources(')
+                    for file in files.python_files:
+                        meson_build.write(f"'{file.path.name}', ")
+                    meson_build.write(f"subdir : '{folder_rel_to_src}'")
+                    meson_build.write(')\n')
+                else:
+                    meson_build.write('py.install_sources(\n')
+                    for file in files.python_files:
+                        meson_build.write(f"  '{file.path.name}',\n")
+                    meson_build.write(f"  subdir : '{folder_rel_to_src}'\n")
+                    meson_build.write(')\n')
 
             if files.cython_c_files:
                 meson_build.write('\n')
                 meson_build.write('extension_data = {\n')
+                items = []
                 for file in files.cython_c_files:
                     if file.not_yet_on_conda:
-                        meson_build.write(f"    # '{file.path.stem}': files('{file.path.name}'), # not yet on conda\n")
+                        items.append(f"  # '{file.path.stem}' : files('{file.path.name}'), # not yet on conda")
                     else:
-                        meson_build.write(f"    '{file.path.stem}': files('{file.path.name}'),\n")
-                meson_build.write('}\n\n')
+                        items.append(f"  '{file.path.stem}' : files('{file.path.name}')")
+                meson_build.write(',\n'.join(items))
+                meson_build.write('\n}\n\n')
 
                 meson_build.write('foreach name, pyx : extension_data\n')
                 meson_build.write("    py.extension_module(name,\n")
