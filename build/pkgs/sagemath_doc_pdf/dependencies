@@ -1,1 +1,9 @@
-sagemath_doc_html texlive texlive_luatex free_fonts xindy
+sagelib sphinx sphinx_copybutton sphinx_inline_tabs pplpy_doc | $(SAGERUNTIME) maxima networkx scipy sympy matplotlib pillow mathjax mpmath ipykernel jupyter_client conway_polynomials tachyon jmol ipywidgets jupyter_sphinx sage_docbuild elliptic_curves furo fpylll graphs  texlive texlive_luatex free_fonts xindy  $(if $(findstring yes,$(SAGE_WHEELS)),python_build meson_python,sagemath_doc_html)
+
+# Building the documentation has many dependencies, because all
+# documented modules are imported and because we use matplotlib to
+# produce plots.
+#
+# If not going through wheels, sagemath_doc_html has to be an order-only
+# dependency to avoid concurrency bugs because both sagemath_doc_html
+# and sagemath_doc_pdf may modify the doctrees and inventories.
