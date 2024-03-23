@@ -2980,9 +2980,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
         zero rows, so that the output has the same dimensions as the input. The
         transformation matrix is always invertible over the integers.
 
-        Also the rank (and the determinant) of ``self`` are cached if those are
-        computed during the reduction. Note that in general this only happens
-        when ``self.rank() == self.ncols()`` and the exact algorithm is used.
+        Also the rank of ``self`` is cached if it is computed during the
+        reduction. Note that in general this only happens when
+        ``self.rank() == self.ncols()`` and the exact algorithm is used.
 
         INPUT:
 
@@ -3229,15 +3229,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
             if algorithm == "NTL:LLL":
                 if transformation:
-                    r, det2, UNTL = A.LLL(a,b, verbose=verb, return_U=True)
+                    r, _, UNTL = A.LLL(a,b, verbose=verb, return_U=True)
                 else:
-                    r, det2 = A.LLL(a,b, verbose=verb)
-                det2 = ZZ(det2)
-                try:
-                    det = ZZ(det2.sqrt())
-                    self.cache("det", det)
-                except TypeError:
-                    pass
+                    r, _ = A.LLL(a,b, verbose=verb)
             elif algorithm == "NTL:LLL_FP":
                 if use_givens:
                     r = A.G_LLL_FP(delta, verbose=verb, return_U=transformation)
