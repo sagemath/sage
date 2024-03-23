@@ -10,11 +10,6 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 cd src
-if [ "$SAGE_EDITABLE" = yes ]; then
-    sdh_pip_editable_install .
-    if [ "$SAGE_WHEELS" = yes ]; then
-        sdh_setup_bdist_wheel && sdh_store_wheel .
-    fi
-else
-    sdh_pip_install .
-fi
+# Needed because of trees.txt directs us to $SAGE_LOCAL/...
+export PIP_FIND_LINKS=$SAGE_VENV/var/lib/sage/wheels
+python3 -m pip install --verbose --no-index --no-build-isolation --config-settings=editable-verbose=true --config-settings=compile-args="-j12" --config-settings=compile-args="--verbose" --editable . || sdh_die "Error installing $PKG_NAME"
