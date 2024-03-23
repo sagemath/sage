@@ -3157,9 +3157,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         Check that :issue:`37236` is fixed:
 
-            sage: m = matrix(ZZ, 2, 2, [-1,1,1,1])
-            sage: m.LLL(algorithm="NTL:LLL"); m.det()
-            -2
+            sage: M = matrix(ZZ, 2, 2, [-1,1,1,1])
+            sage: L = M.LLL(algorithm="NTL:LLL"); M.det() == L.det()
+            True
 
         .. NOTE::
 
