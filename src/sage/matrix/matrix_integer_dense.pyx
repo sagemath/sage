@@ -3155,6 +3155,12 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: M._cache
             {'rank': 2}
 
+        Check that :issue:`37236` is fixed:
+
+            sage: m = matrix(ZZ, 2, 2, [-1,1,1,1])
+            sage: m.LLL(algorithm="NTL:LLL"); m.det()
+            -2
+
         .. NOTE::
 
             See :mod:`sage.libs.ntl.ntl_mat_ZZ.ntl_mat_ZZ.LLL` and
