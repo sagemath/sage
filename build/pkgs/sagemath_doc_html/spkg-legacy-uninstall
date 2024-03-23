@@ -1,0 +1,4 @@
+#! /usr/bin/env bash
+if [ -d "$SAGE_DOC" ]; then
+    rm -rf "$SAGE_DOC"/doctrees "$SAGE_DOC"/inventory "$SAGE_DOC"/html "$SAGE_DOC"/*.html
+fi
