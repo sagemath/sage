@@ -1,5 +1,5 @@
 """
-Arbitrary Precision Floating Point Complex Numbers
+Arbitrary precision floating point complex numbers using GNU MPFR
 
 AUTHORS:
 
