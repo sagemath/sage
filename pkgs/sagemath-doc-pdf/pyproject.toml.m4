@@ -6,6 +6,7 @@ requires = [
     SPKG_INSTALL_REQUIRES_sage_docbuild
     SPKG_INSTALL_REQUIRES_sphinx
     SPKG_INSTALL_REQUIRES_sphinx_copybutton
+    SPKG_INSTALL_REQUIRES_sphinx_inline_tabs
     SPKG_INSTALL_REQUIRES_furo
     SPKG_INSTALL_REQUIRES_jupyter_sphinx
     SPKG_INSTALL_REQUIRES_sagelib

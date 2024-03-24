@@ -13,8 +13,8 @@ if [ "$SAGE_EDITABLE" = yes ]; then
     find $(pwd -P)/build -maxdepth 1 -newer ${SAGE_DESTDIR}${SAGE_INST_LOCAL} -exec \
          ln -svf {}/html {}/index.html ${SAGE_DESTDIR}${SAGE_INST_LOCAL}/share/doc/sage/ \;
     if [ "$SAGE_WHEELS" = yes ]; then
-        sdh_build_and_store_wheel .
+        sdh_build_and_store_wheel --no-build-isolation .
     fi
 else
-    sdh_pip_install .
+    sdh_pip_install --no-build-isolation .
 fi
