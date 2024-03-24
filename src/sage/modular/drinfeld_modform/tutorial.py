@@ -176,7 +176,9 @@ and
     = \mathbb{C}_{\infty}[g_1,\ldots, g_{r-1}, h_{r}].
 
 where `h_r` is a weight `(q^r - 1)/(q - 1)` modular forms of type `1`
-which is a `(q-1)`-root of `g_r`.
+which is a `(q-1)`-root of `g_r` sometimes known as *Gekeler's* `h`
+*function*, see theorem 3.8 of [Gek2017]_ for the precise definition of
+this function.
 
 .. RUBRIC:: SageMath implementation
 
