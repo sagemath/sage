@@ -2,7 +2,7 @@
 Arithmetic functions using the arb library
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2016 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -10,7 +10,7 @@ Arithmetic functions using the arb library
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.libs.flint.types cimport ulong
 from sage.libs.flint.fmpq cimport fmpq_t, fmpq_init, fmpq_clear, fmpq_get_mpq
