@@ -3,7 +3,3 @@ sagelib sphinx sphinx_copybutton sphinx_inline_tabs pplpy_doc | $(SAGERUNTIME) m
 # Building the documentation has many dependencies, because all
 # documented modules are imported and because we use matplotlib to
 # produce plots.
-#
-# If not going through wheels, sagemath_doc_html has to be an order-only
-# dependency to avoid concurrency bugs because both sagemath_doc_html
-# and sagemath_doc_pdf may modify the doctrees and inventories.
