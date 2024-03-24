@@ -44,6 +44,7 @@ from sage.misc.randstate cimport current_randstate
 
 ZZ_sage = IntegerRing()
 
+
 def ntl_ZZ_p_random_element(v):
     """
     Return a random number modulo p.

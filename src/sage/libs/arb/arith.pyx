@@ -9,7 +9,7 @@ Arithmetic functions using the arb library
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.libs.flint.types cimport ulong
@@ -20,6 +20,7 @@ from sage.rings.rational cimport Rational
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer_ring import ZZ
+
 
 def bernoulli(n):
     """

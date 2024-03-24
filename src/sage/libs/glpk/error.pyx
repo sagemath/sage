@@ -9,7 +9,7 @@ Error handler for the GLPK library
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from cysignals.signals cimport sig_error
@@ -18,6 +18,7 @@ from sage.libs.glpk.env cimport *
 from cpython.exc cimport PyErr_SetObject
 from sage.cpython.string cimport char_to_str
 from sage.numerical.mip import MIPSolverException
+
 
 class GLPKError(MIPSolverException):
     """

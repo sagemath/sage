@@ -13,6 +13,7 @@ from sage.matrix.args cimport (MatrixArgs, MA_ENTRIES_SEQ_SEQ,
 
 from .convert_sage cimport gen_to_sage
 
+
 def gen_to_sage_matrix(Gen z, locals=None):
     cdef GEN g = z.g
     nc = lg(g) - 1

@@ -331,6 +331,7 @@ cdef class Vector_integer_dense(free_module_element.FreeModuleElement):
         from sage.interfaces.singular import SingularElement
         return SingularElement(singular, 'foobar', name, True)
 
+
 def unpickle_v0(parent, entries, degree):
     # If you think you want to change this function, don't.
     # Instead make a new version with a name like
@@ -345,6 +346,7 @@ def unpickle_v0(parent, entries, degree):
         z = Integer(entries[i])
         mpz_set(v._entries[i], z.value)
     return v
+
 
 def unpickle_v1(parent, entries, degree, is_mutable):
     cdef Vector_integer_dense v
