@@ -1,7 +1,7 @@
 # distutils: extra_compile_args = -D_XPG6
 # distutils: libraries = m
 r"""
-Double Precision Complex Numbers
+Double precision floating point complex numbers
 
 Sage supports arithmetic using double-precision complex numbers. A
 double-precision complex number is a complex number ``x + I*y`` with
@@ -9,7 +9,7 @@ double-precision complex number is a complex number ``x + I*y`` with
 
 The field :class:`ComplexDoubleField` implements the field
 of all double-precision complex numbers. You can refer to this
-field by the shorthand CDF. Elements of this field are of type
+field by the shorthand ``CDF``. Elements of this field are of type
 :class:`ComplexDoubleElement`. If `x` and `y` are coercible to
 doubles, you can create a complex double element using
 ``ComplexDoubleElement(x,y)``. You can coerce more
@@ -39,11 +39,12 @@ EXAMPLES::
     True
 
 The underlying arithmetic of complex numbers is implemented using
-functions and macros in GSL (the GNU Scientific Library), and
+functions and macros in :ref:`GSL <spkg_gsl>` (the GNU Scientific Library), and
 should be very fast. Also, all standard complex trig functions,
 log, exponents, etc., are implemented using GSL, and are also
 robust and fast. Several other special functions, e.g. eta, gamma,
-incomplete gamma, etc., are implemented using the PARI C library.
+incomplete gamma, etc., are implemented using the :ref:`PARI <spkg_pari>`
+C library.
 
 AUTHORS:
 
