@@ -70,7 +70,8 @@ class build_py(setuptools_build_py):
             if os.path.exists(os.path.join(SAGE_ROOT, 'config.status')):
                 print(f'Reusing configured SAGE_ROOT={SAGE_ROOT}')
             else:
-                cmd = f"cd {SAGE_ROOT} && ({SETENV}; ./configure --prefix={SAGE_LOCAL} --with-python={sys.executable} --enable-build-as-root --enable-download-from-upstream-url --with-system-python3=force --with-sage-venv --disable-notebook --disable-sagelib --disable-sage_conf --disable-doc)"
+                SAGE_CONF_CONFIGURE_ARGS = os.environ.get('SAGE_CONF_CONFIGURE_ARGS', '')
+                cmd = f"cd {SAGE_ROOT} && ({SETENV}; ./configure --prefix={SAGE_LOCAL} --with-python={sys.executable} --enable-build-as-root --enable-download-from-upstream-url --with-system-python3=force --with-sage-venv --disable-notebook --disable-sagelib --disable-sage_conf --disable-doc {SAGE_CONF_CONFIGURE_ARGS})"
                 print(f"Running {cmd}")
                 sys.stdout.flush()
                 if os.system(cmd) != 0:
