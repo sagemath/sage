@@ -274,7 +274,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: wheels
-          path: ./upstream/sagemath_doc*.whl
+          path: ./venv/var/lib/sage/wheels/sagemath_doc*.whl
 
   upload_wheels:
     needs: build-docs
