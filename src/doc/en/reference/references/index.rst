@@ -4578,6 +4578,10 @@ REFERENCES:
              Cambridge University Press (1915--1916).
              (Reprinted: Chelsea, New York, 1960).
 
+.. [Man1975] Glenn Manacher. A new linear-time “on-line” algorithm for 
+             finding the smallest initial palindrome of a string. 
+             \J. ACM, 22(3):346–351, July 1975. :doi:`10.1145/321892.321896`
+
 .. [Man2019] V. Manero and M. Marco, *Effective computation of
              degree bounded minimal models of GCDA's*, :arxiv:`1909.07761`
 
@@ -5264,6 +5268,11 @@ REFERENCES:
             l'École normale supérieure.
             Vol. 44. No. 1. Elsevier, 2011.
 
+.. [PS2014] Edita Pelantová, Štěpán Starosta. Palindromic richness 
+            for languages invariant under more symmetries,
+            Theoretical Computer Science, Volume 518, 2014, 
+            Pages 42-63, ISSN 0304-3975, :doi:`10.1016/j.tcs.2013.07.021`
+
 .. [PSW1996] Boris Pittel, Joel Spencer and Nicholas Wormald. *Sudden
              Emergence of a Giant k-Core in a Random
              Graph*. (1996). J. Combinatorial Theory. Ser B 67. pages
@@ -5440,6 +5449,10 @@ REFERENCES:
 .. [Rog2018] Baptiste Rognerud,
              *Exceptional and modern intervals of the Tamari lattice*.
              :arxiv:`1801.04097`
+
+.. [Rom2023] Romanenko Ivan. *Algorithms related to generalized palindromes in SageMath*.
+             Bachelor's thesis. Czech Technical University in Prague, Faculty of Information Technology, 2023
+             https://dspace.cvut.cz/bitstream/handle/10467/109827/F8-BP-2023-Romanenko-Ivan-thesis.pdf
 
 .. [Ros1999] \K. Rosen *Handbook of Discrete and Combinatorial
              Mathematics* (1999), Chapman and Hall.
