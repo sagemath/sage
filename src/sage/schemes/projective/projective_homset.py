@@ -579,7 +579,7 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
 
     TESTS:
 
-    The bug reported at :trac:`1785` is fixed::
+    The bug reported at :issue:`1785` is fixed::
 
         sage: # needs sage.rings.number_field sage.schemes
         sage: x = polygen(ZZ, 'x')
@@ -602,7 +602,7 @@ class SchemeHomset_points_abelian_variety_field(SchemeHomset_points_projective_f
         sage: P in X.extended_codomain()
         True
 
-    Check for :trac:`11982`::
+    Check for :issue:`11982`::
 
         sage: P2.<x,y,z> = ProjectiveSpace(QQ,2)
         sage: d = 7

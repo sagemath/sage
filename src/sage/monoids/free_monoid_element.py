@@ -142,7 +142,7 @@ class FreeMonoidElement(MonoidElement):
             sage: latex(alpha*beta*gamma)
             \alpha \beta \gamma
 
-        Check that :trac:`14509` is fixed::
+        Check that :issue:`14509` is fixed::
 
             sage: K.< alpha,b > = FreeAlgebra(SR)
             sage: latex(alpha*b)

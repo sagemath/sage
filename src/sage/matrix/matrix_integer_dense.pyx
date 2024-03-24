@@ -13,12 +13,12 @@ AUTHORS:
 
 - Robert Bradshaw
 
-- Marc Masdeu (August 2014). Implemented using FLINT, see :trac:`16803`.
+- Marc Masdeu (August 2014). Implemented using FLINT, see :issue:`16803`.
 
-- Jeroen Demeyer (October 2014): lots of fixes, see :trac:`17090` and
-  :trac:`17094`.
+- Jeroen Demeyer (October 2014): lots of fixes, see :issue:`17090` and
+  :issue:`17094`.
 
-- Vincent Delecroix (February 2015): make it faster, see :trac:`17822`.
+- Vincent Delecroix (February 2015): make it faster, see :issue:`17822`.
 
 - Vincent Delecroix (May 2017): removed duplication of entries and
   cleaner linbox interface
@@ -736,7 +736,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         TESTS:
 
-        This fixes a bug found in :trac:`17094`::
+        This fixes a bug found in :issue:`17094`::
 
             sage: A = identity_matrix(ZZ, 3)
             sage: A._multiply_linbox(A)
@@ -1305,7 +1305,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         TESTS:
 
         The cached polynomial should be independent of the ``var``
-        argument (:trac:`12292`). We check (indirectly) that the
+        argument (:issue:`12292`). We check (indirectly) that the
         second call uses the cached value by noting that its result is
         not cached::
 
@@ -1583,7 +1583,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         """
         TESTS:
 
-        Check that bug discovered in :trac:`29839` is fixed::
+        Check that bug discovered in :issue:`29839` is fixed::
 
             sage: M = Matrix(ZZ, [[0,1],[0,1]])
             sage: M._mod_int(2).transpose()
@@ -1935,7 +1935,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         TESTS:
 
-        This example illustrated :trac:`2398`::
+        This example illustrated :issue:`2398`::
 
             sage: a = matrix([(0, 0, 3), (0, -2, 2), (0, 1, 2), (0, -2, 5)])
             sage: a.hermite_form()
@@ -1944,7 +1944,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [0 0 0]
             [0 0 0]
 
-        Check that :trac:`12280` is fixed::
+        Check that :issue:`12280` is fixed::
 
             sage: m = matrix([(-2, 1, 9, 2, -8, 1, -3, -1, -4, -1),
             ....:             (5, -2, 0, 1, 0, 4, -1, 1, -2, 0),
@@ -1975,7 +1975,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [  0   0   0   0   0   0   0   0 200   0]
             [  0   0   0   0   0   0   0   0   0 200]
 
-        Check that the output is correct in corner cases, see :trac:`18613`::
+        Check that the output is correct in corner cases, see :issue:`18613`::
 
             sage: m = matrix(2, 0)
             sage: m.parent()
@@ -2436,7 +2436,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [0 2]
             [0 0]
 
-        Empty matrices are handled sensibly (see :trac:`3068`)::
+        Empty matrices are handled sensibly (see :issue:`3068`)::
 
             sage: m = MatrixSpace(ZZ, 2,0)(0); d,u,v = m.smith_form(); u*m*v == d
             True
@@ -3450,7 +3450,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
         TESTS:
 
-        Check that :trac:`9345` is fixed::
+        Check that :issue:`9345` is fixed::
 
             sage: A = random_matrix(ZZ, 3, 3)
             sage: A.rational_reconstruction(0)
@@ -4404,7 +4404,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             ...
             ArithmeticError: B's number of rows must match self's number of columns
 
-        Check that this can be interrupted properly (:trac:`15453`)::
+        Check that this can be interrupted properly (:issue:`15453`)::
 
             sage: A = random_matrix(ZZ, 2000, 2000)
             sage: B = random_matrix(ZZ, 2000, 2000)
@@ -4570,7 +4570,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             ...
             ArithmeticError: B's number of rows must match self's number of columns
 
-        Check that this can be interrupted properly (:trac:`15453`)::
+        Check that this can be interrupted properly (:issue:`15453`)::
 
             sage: A = random_matrix(ZZ, 2000, 2000)
             sage: B = random_matrix(ZZ, 2000, 2000)
@@ -5055,7 +5055,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         EXAMPLES:
 
         A ``ValueError`` is raised if the matrix is not square,
-        fixing :trac:`5548`::
+        fixing :issue:`5548`::
 
             sage: random_matrix(ZZ,16,4)._hnf_mod(100)
             Traceback (most recent call last):
@@ -5862,7 +5862,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             [1 2 3]
             [0 3 6]
 
-        Check that :trac:`12346` is fixed::
+        Check that :issue:`12346` is fixed::
 
             sage: pari('mathnf(Mat([0,1]), 4)')
             [Mat(1), [1, 0; 0, 1]]

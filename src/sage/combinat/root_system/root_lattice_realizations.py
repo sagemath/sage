@@ -1080,7 +1080,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             TESTS:
 
-            Check that :trac:`17982` is fixed::
+            Check that :issue:`17982` is fixed::
 
                 sage: RootSystem(['A', 2]).ambient_space().root_poset()                 # needs sage.graphs
                 Finite poset containing 3 elements
@@ -3199,7 +3199,7 @@ class RootLatticeRealizations(Category_over_base_ring):
 
             TESTS:
 
-            Check that :trac:`29548` is fixed::
+            Check that :issue:`29548` is fixed::
 
                 sage: LS = crystals.LSPaths(['A',2], [1,1])                             # needs sage.combinat
                 sage: L = RootSystem(['A',2]).ambient_space()
