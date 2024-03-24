@@ -1,6 +1,6 @@
-======================================================================
+=====================================================================
  Sage: Open Source Mathematics Software: Documentation in PDF format
-======================================================================
+=====================================================================
 
 About SageMath
 --------------
@@ -8,7 +8,7 @@ About SageMath
    "Creating a Viable Open Source Alternative to
     Magma, Maple, Mathematica, and MATLAB"
 
-   Copyright (C) 2005-2023 The Sage Development Team
+   Copyright (C) 2005-2024 The Sage Development Team
 
    https://www.sagemath.org
 
@@ -26,4 +26,4 @@ About this pip-installable source distribution
 ----------------------------------------------
 
 When installed from source, the distribution `sagemath-doc-pdf` uses Sphinx
-and PDFLaTeX to build the SageMath documentation in PDF format.
+and LuaLaTeX to build the SageMath documentation in PDF format.
