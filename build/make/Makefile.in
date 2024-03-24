@@ -775,7 +775,7 @@ $(1)-uninstall: $(1)-$(4)-uninstall
 
 $(1)-clean: $(1)-uninstall
 
-$(1)-sdist: FORCE python_build sage_setup cython
+$(1)-sdist: FORCE python_build sage_setup cython meson_python
 	$(AM_V_at) cd '$$(SAGE_ROOT)' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-src-env-config' && \
 		. '$$(SAGE_ROOT)/src/bin/sage-env-config' && \
