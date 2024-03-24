@@ -179,7 +179,7 @@ def Matroid(groundset=None, data=None, **kwds):
       matroid.
     - ``independent_sets`` -- The list of independent sets of the matroid.
     - ``circuits`` -- The list of circuits of the matroid.
-    - ``nonspanning_circuits`` -- The list of nonspanning_circuits of the
+    - ``nonspanning_circuits`` -- The list of nonspanning circuits of the
       matroid.
     - ``flats`` -- The dictionary of flats indexed by their rank.
     - ``graph`` -- A graph, whose edges form the elements of the matroid.
@@ -226,6 +226,8 @@ def Matroid(groundset=None, data=None, **kwds):
 
         The ``Matroid()`` method will return instances of type
         :class:`BasisMatroid <sage.matroids.basis_matroid.BasisMatroid>`,
+        :class:`CircuitsMatroid <sage.matroids.circuits_matroid.CircuitsMatroid>`,
+        :class:`FlatsMatroid <sage.matroids.flats_matroid.FlatsMatroid>`,
         :class:`CircuitClosuresMatroid <sage.matroids.circuit_closures_matroid.CircuitClosuresMatroid>`,
         :class:`LinearMatroid <sage.matroids.linear_matroid.LinearMatroid>`,
         :class:`BinaryMatroid <sage.matroids.linear_matroid.LinearMatroid>`,
@@ -307,7 +309,7 @@ def Matroid(groundset=None, data=None, **kwds):
             sage: M1 = Matroid(groundset='abc', circuits=['bc'])
 
         A matroid specified by a list of circuits gets converted to a
-        :class:`CircuitsMatroid <sage.matroids.basis_matroid.CircuitsMatroid>`
+        :class:`CircuitsMatroid <sage.matroids.circuits_matroid.CircuitsMatroid>`
         internally::
 
             sage: from sage.matroids.circuits_matroid import CircuitsMatroid
@@ -330,6 +332,16 @@ def Matroid(groundset=None, data=None, **kwds):
             sage: M = Matroid('abcd', circuits=['ab', 'acd'])
             sage: M.is_valid()
             False
+
+    #.  Dictionary of flats:
+
+        ::
+
+            sage: M = Matroid(flats={0: [''], 1: ['a', 'b'], 2: ['ab']})
+            sage: M.is_valid()
+            True
+            sage: type(M)
+            <class 'sage.matroids.flats_matroid.FlatsMatroid'>
 
     #.  Graph:
 

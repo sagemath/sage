@@ -111,7 +111,7 @@ cdef class FlatsMatroid(Matroid):
 
         INPUT:
 
-        - ``X`` -- an object with Python's ``frozenset`` interface
+        - ``X`` -- an object with Python's :class:`frozenset` interface
 
         OUTPUT: an integer; the rank of ``X`` in the matroid
 
@@ -357,7 +357,7 @@ cdef class FlatsMatroid(Matroid):
 
         - ``k`` -- an integer
 
-        OUTPUT: a SetSystem
+        OUTPUT: a :class:`SetSystem`
 
         EXAMPLES::
 

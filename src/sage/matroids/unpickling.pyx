@@ -181,7 +181,7 @@ def unpickle_circuit_closures_matroid(version, data):
 
 def unpickle_flats_matroid(version, data):
     """
-    Unpickle a FlatsMatroid.
+    Unpickle a :class:`FlatsMatroid`.
 
     *Pickling* is Python's term for the loading and saving of objects.
     Functions like these serve to reconstruct a saved object. This all happens
