@@ -47,9 +47,11 @@ class build_py(setuptools_build_py):
                     raise SetupError(f"environment variable SAGE_CONF_ENV_FILE is set to {SAGE_CONF_ENV_FILE}, "
                                      f"but the file cannot be copied")
             else:
-                # build_scripts skips empty files, so create something nonempty
-                with open(os.path.join(HERE, 'bin', 'sage-env-config'), 'w') as f:
-                    print("# -*- shell-script -*-", file=f)
+                # Remove possible leftover file
+                try:
+                    os.remove(os.path.join(HERE, 'bin', 'sage-env-config'))
+                except OSError:
+                    pass
             SAGE_ROOT = None
         elif self.editable_mode:
             SAGE_ROOT = os.path.join(HERE, 'sage_root')
@@ -144,7 +146,14 @@ class build_py(setuptools_build_py):
 class build_scripts(distutils_build_scripts):
 
     def run(self):
-        self.distribution.scripts.append(os.path.join('bin', 'sage-env-config'))
+        HERE = os.path.dirname(__file__)
+
+        sage_env_config = os.path.join(HERE, 'bin', 'sage-env-config')
+        if os.path.exists(sage_env_config):
+            self.distribution.scripts.append(sage_env_config)
+        else:
+            self.distribution.scripts[:] = [script for script in self.distribution.scripts
+                                            if not script.endswith('sage-env-config')]
         if not self.distribution.entry_points:
             self.entry_points = self.distribution.entry_points = dict()
         distutils_build_scripts.run(self)
