@@ -429,7 +429,7 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
     # calling out_neighbors. This data structure is well documented in the
     # module sage.graphs.base.static_sparse_graph
     cdef short_digraph sd
-    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v)
+    init_short_digraph(sd, G, edge_labelled=False, vertex_list=int_to_v, sort_neighbors=False)
 
     # Initialize the predecessors array
     cdef MemoryAllocator mem = MemoryAllocator()

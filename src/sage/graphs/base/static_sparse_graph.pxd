@@ -19,10 +19,11 @@ ctypedef struct short_digraph_s:
     PyObject * edge_labels
     int m
     int n
+    bint sort_neighbors
 
 ctypedef short_digraph_s short_digraph[1]
 
-cdef int init_short_digraph(short_digraph g, G, edge_labelled=?, vertex_list=?) except -1
+cdef int init_short_digraph(short_digraph g, G, edge_labelled=?, vertex_list=?, sort_neighbors=?) except -1
 cdef void free_short_digraph(short_digraph g) noexcept
 cdef int init_reverse(short_digraph dst, short_digraph src) except -1
 cdef int out_degree(short_digraph g, int u) noexcept

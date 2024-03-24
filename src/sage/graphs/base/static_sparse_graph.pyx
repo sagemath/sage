@@ -204,7 +204,7 @@ cdef extern from "fenv.h":
     int fesetround (int)
 
 
-cdef int init_short_digraph(short_digraph g, G, edge_labelled=False, vertex_list=None) except -1:
+cdef int init_short_digraph(short_digraph g, G, edge_labelled=False, vertex_list=None, sort_neighbors=True) except -1:
     r"""
     Initialize ``short_digraph g`` from a Sage (Di)Graph.
 
@@ -256,6 +256,7 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False, vertex_list
     # Initializing the value of neighbors
     g.neighbors[0] = g.edges
     cdef CGraph cg = <CGraph> G._backend
+    g.sort_neighbors = sort_neighbors
 
     if not G.has_loops():
         # Normal case
@@ -272,7 +273,7 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False, vertex_list
             g.neighbors[i] = g.neighbors[i - 1] + <int> len(G.edges_incident(vertices[i - 1]))
 
     if not edge_labelled:
-        for u, v in G.edge_iterator(labels=False):
+        for u, v in G.edge_iterator(labels=False, sort_vertices=False):
             i = v_to_id[u]
             j = v_to_id[v]
 
@@ -289,22 +290,33 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False, vertex_list
 
         g.neighbors[0] = g.edges
 
-        # Sorting the neighbors
-        for i in range(g.n):
-            qsort(g.neighbors[i], g.neighbors[i + 1] - g.neighbors[i], sizeof(int), compare_uint32_p)
+        if sort_neighbors:
+            # Sorting the neighbors
+            for i in range(g.n):
+                qsort(g.neighbors[i], g.neighbors[i + 1] - g.neighbors[i], sizeof(int), compare_uint32_p)
 
     else:
         from operator import itemgetter
         edge_labels = [None] * n_edges
-        for v in G:
-            neighbor_label = [(v_to_id[uu], l) if uu != v else (v_to_id[u], l)
-                              for u, uu, l in G.edges_incident(v)]
-            neighbor_label.sort(key=itemgetter(0))
-            v_id = v_to_id[v]
+        if sort_neighbors:
+            for v in G:
+                neighbor_label = [(v_to_id[uu], l) if uu != v else (v_to_id[u], l)
+                                  for u, uu, l in G.edges_incident(v)]
+                neighbor_label.sort(key=itemgetter(0))
+                v_id = v_to_id[v]
 
-            for i, (j, label) in enumerate(neighbor_label):
-                g.neighbors[v_id][i] = j
-                edge_labels[(g.neighbors[v_id] + i) - g.edges] = label
+                for i, (j, label) in enumerate(neighbor_label):
+                    g.neighbors[v_id][i] = j
+                    edge_labels[(g.neighbors[v_id] + i) - g.edges] = label
+        else:
+            for v in G:
+                v_id = v_to_id[v]
+                for i, (u, uu, label) in enumerate(G.edges_incident(v)):
+                    if v == uu:
+                        g.neighbors[v_id][i] = v_to_id[u]
+                    else:
+                        g.neighbors[v_id][i] = v_to_id[uu]
+                    edge_labels[(g.neighbors[v_id] + i) - g.edges] = label
 
         g.edge_labels = <PyObject *> <void *> edge_labels
         cpython.Py_XINCREF(g.edge_labels)
@@ -415,7 +427,16 @@ cdef inline uint32_t * has_edge(short_digraph g, int u, int v) noexcept:
 
     Assumes that the neighbors of each vertex are sorted.
     """
-    return <uint32_t *> bsearch(&v, g.neighbors[u], g.neighbors[u + 1] - g.neighbors[u], sizeof(uint32_t), compare_uint32_p)
+    if g.sort_neighbors:
+        return <uint32_t *> bsearch(&v, g.neighbors[u], g.neighbors[u + 1] - g.neighbors[u], sizeof(uint32_t), compare_uint32_p)
+
+    cdef uint32_t * current = g.neighbors[u]
+    cdef uint32_t * end = g.neighbors[u + 1]
+    while current < end:
+        if current[0] == v:
+            return current
+        current += 1
+    return NULL
 
 
 cdef inline object edge_label(short_digraph g, uint32_t * edge) noexcept:
