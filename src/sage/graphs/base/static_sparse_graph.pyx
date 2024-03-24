@@ -204,23 +204,42 @@ cdef extern from "fenv.h":
     int fesetround (int)
 
 
-cdef int init_short_digraph(short_digraph g, G, edge_labelled=False, vertex_list=None, sort_neighbors=True) except -1:
+cdef int init_short_digraph(short_digraph g, G, edge_labelled=False,
+                            vertex_list=None, sort_neighbors=True) except -1:
     r"""
     Initialize ``short_digraph g`` from a Sage (Di)Graph.
 
-    If ``G`` is a ``Graph`` object (and not a ``DiGraph``), an edge between two
-    vertices `u` and `v` is replaced by two arcs in both directions.
+    INPUT:
 
-    The optional argument ``vertex_list`` is assumed to be a list of all
-    vertices of the graph ``G`` in some order.
-    **Beware that no checks are made that this input is correct**.
+    - ``g`` -- a short_digraph
 
-    If ``vertex_list`` is given, it will be used to map vertices of
-    the graph to consecutive integers. Otherwise, the result of
-    ``G.vertices(sort=True)`` will be used instead. Because this only
-    works if the vertices can be sorted, using ``vertex_list`` is
-    useful when working with possibly non-sortable objects in Python
-    3.
+    - ``G`` -- a ``Graph`` or a ``DiGraph``. If ``G`` is a ``Graph`` object,
+    then any edge between two vertices `u` and `v` is replaced by two arcs in
+    both directions.
+
+    - ``edge_labelled`` -- boolean (default: ``False``); whether to store the
+      label of edges or not
+
+    - ``vertex_list`` -- list (default: ``None``); list of all vertices of ``G``
+      in some order. When given, it is used to map the vertices of the graph to
+      consecutive integers. Otherwise, the result of ``G.vertices(sort=True)``
+      is used instead. Because this only works if the vertices can be sorted,
+      using ``vertex_list`` is useful when working with possibly non-sortable
+      objects in Python 3.
+      **Beware that no checks are made that this input is correct**.
+
+    - ``sort_neighbors`` -- boolean (default: ``True``); whether to ensure that
+      the vertices in the list of neighbors of a vertex are sorted by increasing
+      vertex labels. This choice may have a non-negligeable impact on the time
+      complexity of some methods. More precisely:
+
+      - When set to ``True``, the time complexity for initializing ``g`` is in
+        `O(m + n\log{m})` and deciding if ``g`` has edge `(u, v)` can be done in
+        time `O(\log{m})` using binary search.
+
+      - When set to ``False``, the time complexity for initializing ``g`` is
+        reduced to `O(n + m)` but the time complexity for deciding if ``g`` has
+        edge `(u, v)` increases to `O(m)`.
     """
     g.edge_labels = NULL
 
@@ -256,7 +275,7 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False, vertex_list
     # Initializing the value of neighbors
     g.neighbors[0] = g.edges
     cdef CGraph cg = <CGraph> G._backend
-    g.sort_neighbors = sort_neighbors
+    g.sorted_neighbors = sort_neighbors
 
     if not G.has_loops():
         # Normal case
@@ -416,7 +435,7 @@ cdef int init_reverse(short_digraph dst, short_digraph src) except -1:
 
 cdef int compare_uint32_p(const_void *a, const_void *b) noexcept:
     """
-    Comparison function needed for ``bsearch``.
+    Comparison function needed for ``bsearch`` and ``lfind``.
     """
     return (<uint32_t *> a)[0] - (<uint32_t *> b)[0]
 
@@ -425,18 +444,19 @@ cdef inline uint32_t * has_edge(short_digraph g, int u, int v) noexcept:
     r"""
     Test the existence of an edge.
 
-    Assumes that the neighbors of each vertex are sorted.
+    Return a pointer to ``v`` in the list of neighbors of ``u`` if found and
+    ``NULL`` otherwise.
     """
-    if g.sort_neighbors:
-        return <uint32_t *> bsearch(&v, g.neighbors[u], g.neighbors[u + 1] - g.neighbors[u], sizeof(uint32_t), compare_uint32_p)
+    if g.sorted_neighbors:
+        # The neighbors of u are sorted by increasing label. We can use binary
+        # search to decide g has edge (u, v)
+        return <uint32_t *> bsearch(&v, g.neighbors[u], g.neighbors[u + 1] - g.neighbors[u],
+                                    sizeof(uint32_t), compare_uint32_p)
 
-    cdef uint32_t * current = g.neighbors[u]
-    cdef uint32_t * end = g.neighbors[u + 1]
-    while current < end:
-        if current[0] == v:
-            return current
-        current += 1
-    return NULL
+    # Otherwise, we use the linear time lfind method
+    cdef size_t nelem = g.neighbors[u + 1] - g.neighbors[u]
+    return <uint32_t *> lfind(&v, g.neighbors[u], &nelem,
+                              sizeof(uint32_t), compare_uint32_p)
 
 
 cdef inline object edge_label(short_digraph g, uint32_t * edge) noexcept:
