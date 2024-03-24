@@ -15,14 +15,18 @@ This distribution package provides:
 - a sourcable shell script ``sage-env-config``, providing additional configuration
   information in the form of environment variables
 
+The Sage library (distribution package https://pypi.org/project/sagemath-standard/)
+declares ``sage_conf`` both as a PEP 518 build-system requirement and a run-time
+dependency ("install-requires").
+
 The ``sage_conf`` distribution package is polymorphic:  It has several implementations.
 
 
 sage_conf sdist on PyPI
 -----------------------
 
-This implementation of the ``sage_conf`` distribution package comes from
-https://github.com/sagemath/sage/issues/29039, which added the directory
+This implementation of the ``sage_conf`` distribution package comes
+from the directory
 `pkgs/sage-conf_pypi <https://github.com/sagemath/sage/tree/develop/pkgs/sage-conf_pypi/>`_.
 
 To install, use ``pip install -v sage_conf``.  Using ``-v`` ensures that diagnostic
@@ -41,15 +45,29 @@ SAGE_SPKG_WHEELS)`` to list them and ``pip install $(sage-config
 SAGE_SPKG_WHEELS)/*.whl`` to install them.  After this, you can install the Sage
 library, for example, using ``pip install sagemath-standard``.
 
-To skip creation of a build tree and bring your own configuration instead,
-use the environment variables ``SAGE_CONF_FILE`` or ``SAGE_CONF_ENV_FILE``
-at the build time of the package. The files named by these variables
-are copied as ``_sage_conf.py`` and ``sage-env-config``.
+Customization with environment variables:
 
-For example, to skip creation of a build tree and set no configuration
-variables at all, you can use::
+``SAGE_CONF_FILE``
+``SAGE_CONF_ENV_FILE``
+  To skip creation of a build tree and bring your own configuration instead,
+  use the environment variables ``SAGE_CONF_FILE`` or ``SAGE_CONF_ENV_FILE``
+  at the build time of the package. The files named by these variables
+  are copied as ``_sage_conf.py`` and ``sage-env-config``.
 
-  export SAGE_CONF_FILE=/dev/null
+  For example, to skip creation of a build tree and set no configuration
+  variables at all, you can use::
+
+    export SAGE_CONF_FILE=/dev/null
+
+``SAGE_CONF_CONFIGURE_ARGS``
+  If set, this is appended to the invocation of ``./configure``.
+
+``SAGE_CONF_TARGETS``
+  The Makefile targets to build. The default is ``build`` (which builds all
+  standard non-Python and Python packages that have not been disabled).
+  To disable building the wheelhouse, you can use::
+
+    export SAGE_CONF_TARGETS=build-local
 
 
 sage_conf wheels
@@ -105,9 +123,10 @@ https://doc.sagemath.org/html/en/installation/conda.html#using-conda-to-provide-
 sage_conf in downstream distributions
 -------------------------------------
 
-Downstream packagers and advanced developers and users may want to provide
-their own implementation of the distribution package to support the intended
-deployment of the SageMath library.
+If the customization through the environment variables ``SAGE_CONF_...``
+does not give enough flexibility, downstream packagers and advanced developers
+and users can provide their own implementation of the distribution package
+to support the intended deployment of the SageMath library.
 
 
 License
