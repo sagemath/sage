@@ -38,13 +38,13 @@ cdef class GenericBackend (SageObject):
     cpdef bint is_variable_binary(self, int) noexcept
     cpdef bint is_variable_integer(self, int) noexcept
     cpdef bint is_variable_continuous(self, int) noexcept
-    cpdef problem_name(self, name = *)
+    cpdef problem_name(self, name=*)
     cpdef row_bounds(self, int index)
     cpdef col_bounds(self, int index)
     cpdef row_name(self, int index)
     cpdef col_name(self, int index)
-    cpdef variable_upper_bound(self, int index, value = *)
-    cpdef variable_lower_bound(self, int index, value = *)
+    cpdef variable_upper_bound(self, int index, value=*)
+    cpdef variable_lower_bound(self, int index, value=*)
     cpdef solver_parameter(self, name, value=*)
     cpdef zero(self)
     cpdef base_ring(self)
@@ -57,4 +57,4 @@ cdef class GenericBackend (SageObject):
 
     cdef object obj_constant_term
 
-cpdef GenericBackend get_solver(constraint_generation = ?, solver = ?, base_ring = ?)
+cpdef GenericBackend get_solver(constraint_generation=?, solver=?, base_ring=?)
