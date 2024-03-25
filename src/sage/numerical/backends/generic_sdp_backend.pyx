@@ -590,7 +590,7 @@ cdef class GenericSDPBackend:
         """
         raise NotImplementedError()
 
-    cpdef solver_parameter(self, name, value = None):
+    cpdef solver_parameter(self, name, value=None):
         """
         Return or define a solver parameter
 

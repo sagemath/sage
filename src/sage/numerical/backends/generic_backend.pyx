@@ -335,7 +335,7 @@ cdef class GenericBackend:
         else:
             self.obj_constant_term = d
 
-    cpdef set_objective(self, list coeff, d = 0.0):
+    cpdef set_objective(self, list coeff, d=0.0):
         """
         Set the objective function.
 
@@ -1347,7 +1347,7 @@ cdef class GenericBackend:
         p._test_copy(**options)
         p._test_copy_does_not_share_data(**options)
 
-    cpdef variable_upper_bound(self, int index, value = False):
+    cpdef variable_upper_bound(self, int index, value=False):
         """
         Return or define the upper bound on a variable
 
@@ -1374,7 +1374,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef variable_lower_bound(self, int index, value = False):
+    cpdef variable_lower_bound(self, int index, value=False):
         """
         Return or define the lower bound on a variable
 
@@ -1401,7 +1401,7 @@ cdef class GenericBackend:
         """
         raise NotImplementedError()
 
-    cpdef solver_parameter(self, name, value = None):
+    cpdef solver_parameter(self, name, value=None):
         """
         Return or define a solver parameter
 
