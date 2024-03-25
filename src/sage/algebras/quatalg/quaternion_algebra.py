@@ -687,13 +687,18 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         self._gens = (self([0, 1, 0, 0]), self([0, 0, 1, 0]), self([0, 0, 0, 1]))
 
     @cached_method
-    def maximal_order(self, take_shortcuts=True):
+    def maximal_order(self, order_basis=None, take_shortcuts=True):
         r"""
         Return a maximal order in this quaternion algebra.
 
-        The algorithm used is from [Voi2012]_.
+        If ``order_basis`` is specified, the resulting maximal order
+        will contain the quaternion order of ``self`` given by this
+        basis. The algorithm used is from [Voi2012]_.
 
         INPUT:
+
+        - ``order_basis`` -- (optional, default: ``None``) a basis of a
+          quaternion order of ``self``
 
         - ``take_shortcuts`` -- (default: ``True``) if the discriminant is
           prime and the invariants of the algebra are of a nice form, use
@@ -791,7 +796,8 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         # (every quaternion algebra of prime discriminant has a representation
         #  of such a form though)
         a, b = self.invariants()
-        if take_shortcuts and d_A.is_prime() and a in ZZ and b in ZZ:
+        if (not order_basis and take_shortcuts and d_A.is_prime()
+        and a in ZZ and b in ZZ):
             a = ZZ(a)
             b = ZZ(b)
             i, j, k = self.gens()
@@ -824,10 +830,20 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
                 return self.quaternion_order(basis)
 
         # The following code should always work (over QQ)
-        # Start with <1,i,j,k>
-        order_basis = (self.one(),) + self.gens()
-        R = self.quaternion_order(order_basis)
-        d_R = R.discriminant()
+        # If no order basis is given, start with <1,i,j,k>
+        if not order_basis:
+            order_basis = (self.one(),) + self.gens()
+
+        try:
+            R = self.quaternion_order(order_basis)
+            d_R = R.discriminant()
+        except (TypeError, ValueError):
+            raise ValueError('order_basis is not a basis of an order of the'
+                            ' given quaternion algebra')
+
+        if order_basis[0] not in ZZ:
+            raise Warning('the algorithm might not work if the'
+                        ' first basis vector is not an integer')
 
         e_new_gens = []
 
