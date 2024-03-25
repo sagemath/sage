@@ -4498,7 +4498,9 @@ class Link(SageObject):
             False
             sage: set_verbose(0)
 
-        TESTS::
+        TESTS:
+
+        check that :issue:`37668` is fixed::
 
             sage: L = KnotInfo.L6a2_0
             sage: L1 = L.link()
