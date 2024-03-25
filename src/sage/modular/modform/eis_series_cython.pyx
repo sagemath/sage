@@ -140,7 +140,7 @@ cpdef Ek_ZZ(int k, int prec=10):
     return val
 
 
-cpdef eisenstein_series_poly(int k, int prec = 10) :
+cpdef eisenstein_series_poly(int k, int prec=10):
     r"""
     Return the q-expansion up to precision ``prec`` of the weight `k`
     Eisenstein series, as a FLINT :class:`~sage.libs.flint.fmpz_poly.Fmpz_poly`
