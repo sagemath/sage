@@ -1600,7 +1600,7 @@ cdef class GLPKBackend(GenericBackend):
 
         return glp_get_obj_dir(self.lp) == GLP_MAX
 
-    cpdef variable_upper_bound(self, int index, value = False):
+    cpdef variable_upper_bound(self, int index, value=False):
         """
         Return or define the upper bound on a variable
 
@@ -1699,7 +1699,7 @@ cdef class GLPKBackend(GenericBackend):
                     glp_set_col_bnds(self.lp, index + 1, GLP_DB, min, dvalue)
                 sig_off()
 
-    cpdef variable_lower_bound(self, int index, value = False):
+    cpdef variable_lower_bound(self, int index, value=False):
         """
         Return or define the lower bound on a variable
 
@@ -1874,7 +1874,7 @@ cdef class GLPKBackend(GenericBackend):
         return p
 
 
-    cpdef solver_parameter(self, name, value = None):
+    cpdef solver_parameter(self, name, value=None):
         """
         Return or define a solver parameter
 
