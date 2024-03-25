@@ -188,8 +188,8 @@ cdef initialize() noexcept:
     """
     Initialize the GAP library, if it hasn't already been
     initialized.  It is safe to call this multiple times. One can set
-    :envvar:`SAGE_GAP_MEMORY` to a particular value, as desribed in
-    `GAP Manual <https://www.gap-system.org/Manuals/doc/ref/chap3.html>`_
+    :envvar:`SAGE_GAP_MEMORY` to a particular value, as described in
+    the :gap:`GAP Manual <chap3>`.
     Specifically, the value is for `-s` and `-o` options.
 
     TESTS::

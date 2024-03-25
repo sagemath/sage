@@ -6,9 +6,8 @@ AUTHORS:
 
 - Travis Scrimshaw (03-2017): initial version
 
-The documentation for GAP's QuaGroup package, originally authored by
-Willem Adriaan de Graaf, can be found at
-https://www.gap-system.org/Packages/quagroup.html.
+See the :gap_package:`documentation for GAP's QuaGroup package <quagroup/doc/chap0_mj.html>`,
+originally authored by Willem Adriaan de Graaf.
 """
 
 # ****************************************************************************

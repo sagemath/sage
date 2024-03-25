@@ -223,8 +223,7 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
         Type ``G.module_composition_factors(algorithm='verbose')`` to get a
         more verbose version.
 
-        For more on MeatAxe notation, see
-        https://www.gap-system.org/Manuals/doc/ref/chap69.html
+        For more on MeatAxe notation, see :gap:`chap69`.
         """
         from sage.libs.gap.libgap import libgap
         F = self.base_ring()
