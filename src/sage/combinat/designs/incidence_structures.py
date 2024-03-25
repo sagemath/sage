@@ -1810,7 +1810,7 @@ class IncidenceStructure:
 
         REFERENCE:
 
-        - Soicher, Leonard, :gap_package:`Design package manual <design/htm/CHAP003.htm>`
+        - Leonard Soicher, :gap_package:`Design package manual <design/htm/CHAP003.htm>`
         """
         if algorithm == "gap":
             libgap.load_package("design")
