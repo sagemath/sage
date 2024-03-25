@@ -1179,7 +1179,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
                 To: Real Field with 53 bits of precision
                 Defn: a |--> -0.618033988749895])
 
-            sage: QuaternionAlgebra(QQ[sqrt(2)], 3, 19).ramified_places()                  # needs sage.symbolic
+            sage: QuaternionAlgebra(QQ[sqrt(2)], 3, 19).ramified_places()               # needs sage.symbolic
             ([], [])
             sage: QuaternionAlgebra(RR(2.),1).ramified_places()
             Traceback (most recent call last):
