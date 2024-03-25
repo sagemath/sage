@@ -1187,7 +1187,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             ValueError: base field must be rational numbers or a number field
         """
         if not isinstance(inf, bool):
-            raise ValueError("inf must be a truth value")
+            raise TypeError("inf must be a truth value")
 
         F = self.base_ring()
         a = self._a
