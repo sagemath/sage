@@ -2,7 +2,7 @@
 Error handler for the GLPK library
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 # This program is free software: you can redistribute it and/or modify
@@ -10,7 +10,7 @@ Error handler for the GLPK library
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from cysignals.signals cimport sig_error
 
@@ -24,8 +24,8 @@ class GLPKError(MIPSolverException):
     """
     A low-level error that is raised by ``sage_glpk_term_hook``.
 
-    The GLPK API considers these errors non-recoverable.  User code should not try
-    to catch this exception.
+    The GLPK API considers these errors non-recoverable.
+    User code should not try to catch this exception.
 
     EXAMPLES::
 
