@@ -245,7 +245,7 @@ class Mwrank_class(Expect):
 
         TESTS:
 
-        Invalid input raises an ValueError (see :trac:`10108`); this includes
+        Invalid input raises an ValueError (see :issue:`10108`); this includes
         syntactically valid input which defines a singular curve::
 
             sage: mwrank(10)

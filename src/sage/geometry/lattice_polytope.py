@@ -781,7 +781,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             N(-1,  1, 0)
             in 3-d lattice N
 
-        Check that :trac:`28741` is fixed::
+        Check that :issue:`28741` is fixed::
 
             sage: # needs sage.graphs
             sage: p = LatticePolytope([], lattice=ToricLattice(3).dual()); p
@@ -2465,7 +2465,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             sage: o.incidence_matrix().is_immutable()
             True
 
-        Check that the base ring is ``ZZ``, see :trac:`29840`::
+        Check that the base ring is ``ZZ``, see :issue:`29840`::
 
             sage: o.incidence_matrix().base_ring()
             Integer Ring
@@ -3453,7 +3453,7 @@ class LatticePolytopeClass(ConvexSet_compact, Hashable, sage.geometry.abc.Lattic
             None
 
         Now we make sure that the origin of non-full-dimensional polytopes can
-        be identified correctly (:trac:`10661`)::
+        be identified correctly (:issue:`10661`)::
 
             sage: LatticePolytope([(1,0,0), (-1,0,0)]).origin()
             2

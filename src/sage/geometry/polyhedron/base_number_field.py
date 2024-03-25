@@ -87,7 +87,7 @@ class Polyhedron_base_number_field(Polyhedron_base):
             ...
             ValueError: invalid base ring: Number Field in a ... is not real embedded
 
-        Checks that :trac:`30248` is fixed::
+        Checks that :issue:`30248` is fixed::
 
             sage: q = Polyhedron(base_ring=AA,      # indirect doctest  # optional - pynormaliz, needs sage.rings.number_field
             ....:                backend='normaliz',

@@ -2185,7 +2185,7 @@ class IrreducibleComplexReflectionGroup(ComplexReflectionGroup):
                 [2, 1, 2, 3, 2, 1, 2, 1, 3, 2, 1, 2, 3]
                 [1, 2, 1, 3, 2, 1, 2, 1, 3, 2, 1, 2, 3]
 
-            Check that :trac:`25478` is fixed::
+            Check that :issue:`25478` is fixed::
 
                 sage: W = ReflectionGroup(["A",5])
                 sage: w = W.from_reduced_word([1,2,3,5])
