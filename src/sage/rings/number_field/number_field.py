@@ -2581,10 +2581,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         if v % 2 == 1:
             return v
         # compute uniformizer pi
-        for g in p.gens():
-            if g.valuation(p) == 1:
-                pi = g
-                break
+        pi = self.uniformizer(p)
         a = self(a) / pi**v
         F = p.residue_field()
         q = F.reduction_map()
@@ -2602,7 +2599,7 @@ class NumberField_generic(WithEqualityById, number_field_base.NumberField):
         x = R.gen()
         f = R(x**2 + x)
         while w < u and w % 2 == 0:
-            s = self(q((a - 1) / pi**w)**(1/2))
+            s = self(q((a - 1) / pi**w).sqrt())
             a = a / (1 + s*(pi**(w/2)))**2
             w = (a - 1).valuation(p)
         if w < u and w % 2:
