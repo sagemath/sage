@@ -537,8 +537,8 @@ cdef class Matroid(SageObject):
             ....:     Matroid(Matrix(GF(4, 'x'), [[1,0,0,1,1],[0,1,0,1,2],[0,0,1,1,3]])),
             ....:     matroids.catalog.R10()
             ....: ]
-            sage: for M in matroids_lst:
-            ....:     N = copy(M)  # indirect doctest
+            sage: for M in matroids_lst:  # indirect doctest
+            ....:     N = copy(M)
             ....:     assert M == N
             ....:     assert M.groundset() is N.groundset()
 
@@ -582,8 +582,8 @@ cdef class Matroid(SageObject):
             ....:     Matroid(Matrix(GF(4, 'x'), [[1,0,0,1,1],[0,1,0,1,2],[0,0,1,1,3]])),
             ....:     matroids.catalog.R10()
             ....: ]
-            sage: for M in matroids_lst:
-            ....:     N = deepcopy(M)  # indirect doctest
+            sage: for M in matroids_lst:  # indirect doctest
+            ....:     N = deepcopy(M)
             ....:     assert M == N
             ....:     assert M.groundset() is N.groundset()
 
