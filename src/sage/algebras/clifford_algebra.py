@@ -88,7 +88,7 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
         if degree is None:
             self._cardinality = 2 ** Qdim
         else:
-            from sage.functions.other import binomial
+            from sage.arith.misc import binomial
             self._cardinality = binomial(Qdim, degree)
         self._degree = degree
         # the if statement here is in case Qdim is 0.
