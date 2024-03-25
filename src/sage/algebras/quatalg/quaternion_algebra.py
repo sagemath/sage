@@ -768,17 +768,21 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         TESTS:
 
-        We check that :issue:`37417` and the first part of :issue:`37217` are fixed::
+        Check that :issue:`37417` and the first part of :issue:`37217` are fixed::
 
-            sage: invars = [(-4, -28), (-292, -732), (-48, -564), (-436, -768), (-752, -708),
-            ....:           (885, 545), (411, -710), (-411, 593), (805, -591), (-921, 353),
-            ....:           (409, 96), (394, 873), (353, -722), (730, 830), (-466, -427), (-213, -630),
-            ....:           (-511, 608), (493, 880), (105, -709), (-213, 530), (97, 745)]
-            sage: all(QuaternionAlgebra(a, b).maximal_order().is_maximal() for (a, b) in invars)
+            sage: invars = [(-4, -28), (-292, -732), (-48, -564), (-436, -768),
+            ....:           (-752, -708), (885, 545), (411, -710), (-411, 593),
+            ....:           (805, -591), (-921, 353), (409, 96), (394, 873),
+            ....:           (353, -722), (730, 830), (-466, -427), (-213, -630),
+            ....:           (-511, 608), (493, 880), (105, -709), (-213, 530),
+            ....:           (97, 745)]
+            sage: all(QuaternionAlgebra(a, b).maximal_order().is_maximal()
+            ....:           for (a, b) in invars)
             True
         """
         if self.base_ring() != QQ:
-            raise NotImplementedError("maximal order only implemented for rational quaternion algebras")
+            raise NotImplementedError("maximal order only implemented for"
+                                        " rational quaternion algebras")
 
         d_A = self.discriminant()
 
@@ -821,15 +825,16 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         # The following code should always work (over QQ)
         # Start with <1,i,j,k>
-        R = self.quaternion_order((1,) + self.gens())
+        order_basis = (self.one(),) + self.gens()
+        R = self.quaternion_order(order_basis)
         d_R = R.discriminant()
 
         e_new_gens = []
 
         # For each prime at which R is not yet maximal, make it bigger
         for p, _ in d_R.factor():
-            e = R.basis()
-            disc = self.quaternion_order(e).discriminant()
+            e = order_basis
+            disc = d_R
             while disc.valuation(p) > d_A.valuation(p):
                 # Compute a normalized basis at p
                 f = normalize_basis_at_p(list(e), p)
@@ -903,12 +908,12 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
                             e_n = basis_for_quaternion_lattice(list(e) + e_n[1:], reverse=True)
 
                 # e_n now contains elements that locally at p give a bigger order,
-                # but the basis may be messed up at other primes (it might not even
-                # be an order). We will join them all together at the end
+                # but the basis may be messed up at other primes (it might not
+                # even be an order). We will join them all together at the end
                 e = e_n
 
-                # Since e might not define an order at this point, we need to manually
-                # calculate the updated discriminant
+                # Since e might not define an order at this point, we need to
+                # manually calculate the updated discriminant
                 L = []
                 for x in e:
                     MM = []
