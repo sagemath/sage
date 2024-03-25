@@ -2161,7 +2161,6 @@ class pAdicAutomorphicFormElement(ModuleElement):
 
         elif method == 'moments':
             for e in E:
-                ii += 1
                 f = (x - t1) / (x - t2)
                 a, b, c, d = e.list()
                 y0 = f(R1([b, a]) / R1([d, c]))  # f( (ax+b)/(cx+d) )
