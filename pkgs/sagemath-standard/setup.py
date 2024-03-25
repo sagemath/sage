@@ -73,7 +73,7 @@ if os.path.exists(sage.misc.lazy_import_cache.get_cache_file()):
 #########################################################
 
 if any(x in sys.argv
-       for x in ['build', 'bdist_wheel', 'install']):
+       for x in ['build', 'build_ext', 'bdist_wheel', 'install']):
     log.info("Generating auto-generated sources")
     from sage_setup.autogen import autogen_all
     autogen_all()
