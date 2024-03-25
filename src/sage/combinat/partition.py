@@ -2489,16 +2489,14 @@ class Partition(CombinatorialElement):
         r"""
         Apply the Glaisher-Franklin bijection to ``self``.
 
-        INPUT:
-
-        - ``s`` -- positive integer
-
-        OUTPUT:
-
         The Franklin-Glaisher bijection, with parameter `s`, returns
         a partition whose set of parts that are repeated at least `s`
         times equals the set of parts divisible by `s` in ``self``,
         after dividing each part by `s`.
+
+        INPUT:
+
+        - ``s`` -- positive integer
 
         EXAMPLES::
 
@@ -2554,17 +2552,15 @@ class Partition(CombinatorialElement):
         r"""
         Apply the inverse of the Glaisher-Franklin bijection to ``self``.
 
-        INPUT:
-
-        - ``s`` -- positive integer
-
-        OUTPUT:
-
         The inverse of the Franklin-Glaisher bijection, with
         parameter `s`, returns a partition whose set of parts that
         are divisible by `s`, after dividing each by `s`, equals the
         equals the set of parts repeated at least `s` times in
         ``self``.
+
+        INPUT:
+
+        - ``s`` -- positive integer
 
         EXAMPLES::
 
