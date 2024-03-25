@@ -535,7 +535,7 @@ cdef class NonpicklingDict(dict):
 
 cdef unhashable_key = object()
 
-cpdef inline dict_key(o) noexcept:
+cpdef inline dict_key(o):
     """
     Return a key to cache object ``o`` in a dict.
 
@@ -560,7 +560,7 @@ cpdef inline dict_key(o) noexcept:
     return o
 
 
-cpdef inline cache_key(o) noexcept:
+cpdef inline cache_key(o):
     r"""
     Helper function to return a hashable key for ``o`` which can be used for
     caching.
@@ -600,7 +600,7 @@ cpdef inline cache_key(o) noexcept:
     return o
 
 
-cdef cache_key_unhashable(o) noexcept:
+cdef cache_key_unhashable(o):
     """
     Return a key for caching an item which is unhashable.
     """
@@ -786,7 +786,7 @@ cdef class CachedFunction():
     def __module__(self):
         return self.__cached_module__
 
-    cdef get_key_args_kwds(self, tuple args, dict kwds) noexcept:
+    cdef get_key_args_kwds(self, tuple args, dict kwds):
         """
         Return the key in the cache to be used when ``args`` and
         ``kwds`` are passed in as parameters.
@@ -814,7 +814,7 @@ cdef class CachedFunction():
         self._argument_fixer = ArgumentFixer(self.f,
                 classmethod=self.is_classmethod)
 
-    cdef fix_args_kwds(self, tuple args, dict kwds) noexcept:
+    cdef fix_args_kwds(self, tuple args, dict kwds):
         r"""
         Normalize parameters to obtain a key for the cache.
 
@@ -1841,7 +1841,7 @@ cdef class CachedMethodCaller(CachedFunction):
         """
         return self.f(self._instance, *args, **kwds)
 
-    cdef fix_args_kwds(self, tuple args, dict kwds) noexcept:
+    cdef fix_args_kwds(self, tuple args, dict kwds):
         r"""
         Normalize parameters to obtain a key for the cache.
 
@@ -2505,7 +2505,7 @@ cdef class GloballyCachedMethodCaller(CachedMethodCaller):
     The only difference is that the instance is used as part of the
     key.
     """
-    cdef get_key_args_kwds(self, tuple args, dict kwds) noexcept:
+    cdef get_key_args_kwds(self, tuple args, dict kwds):
         """
         Return the key in the cache to be used when ``args`` and
         ``kwds`` are passed in as parameters.
@@ -2750,7 +2750,7 @@ cdef class CachedMethod():
         """
         return self.__get__(inst)(*args, **kwds)
 
-    cpdef _get_instance_cache(self, inst) noexcept:
+    cpdef _get_instance_cache(self, inst):
         """
         Return the cache dictionary.
 
@@ -3238,7 +3238,7 @@ cdef class CachedInParentMethod(CachedMethod):
         self._cache_name = '_cache__' + 'element_' + (name or f.__name__)
         self._cachedfunc = CachedFunction(f, classmethod=True, name=name, key=key, do_pickle=do_pickle)
 
-    cpdef _get_instance_cache(self, inst) noexcept:
+    cpdef _get_instance_cache(self, inst):
         """
         Return the cache dictionary, which is stored in the parent.
 

@@ -73,7 +73,7 @@ cdef class ImmutableListWithParent(ClonableArray):
         self._is_immutable = True
         self._hash = 0
 
-    cpdef _set_index(self, k, value) noexcept:
+    cpdef _set_index(self, k, value):
         r"""
         Return a sibling of ``self`` obtained by setting the
         `k^{th}` entry of self to value.
@@ -573,7 +573,7 @@ cdef class TensorProductOfRegularCrystalsElement(TensorProductOfCrystalsElement)
                 height = height - minus + plus
         return height
 
-    cpdef position_of_last_unmatched_minus(self, i) noexcept:
+    cpdef position_of_last_unmatched_minus(self, i):
         """
         Return the position of the last unmatched `-` or ``None`` if
         there is no unmatched `-`.
@@ -599,7 +599,7 @@ cdef class TensorProductOfRegularCrystalsElement(TensorProductOfCrystalsElement)
                 height = height - minus + plus
         return unmatched_minus
 
-    cpdef position_of_first_unmatched_plus(self, i) noexcept:
+    cpdef position_of_first_unmatched_plus(self, i):
         """
         Return the position of the first unmatched `+` or ``None`` if
         there is no unmatched `+`.

@@ -84,7 +84,7 @@ cdef inline bint indivisible_in_list(ETuple m, list L, size_t i) noexcept:
             return False
     return True
 
-cdef inline list interred(list L) noexcept:
+cdef inline list interred(list L):
     """
     Return interreduction of a list of monomials.
 
@@ -116,7 +116,7 @@ cdef inline list interred(list L) noexcept:
             result.append(m)
     return result
 
-cdef list quotient(list L, ETuple m) noexcept:
+cdef list quotient(list L, ETuple m):
     """
     Return the quotient of the ideal represented by ``L`` and the
     monomial represented by ``m``.
@@ -127,7 +127,7 @@ cdef list quotient(list L, ETuple m) noexcept:
         result.append((<ETuple>PyList_GET_ITEM(L,i)).divide_by_gcd(m))
     return interred(result)
 
-cdef list quotient_by_var(list L, size_t index) noexcept:
+cdef list quotient_by_var(list L, size_t index):
     """
     Return the quotient of the ideal represented by ``L`` and the
     variable number ``index``.
@@ -140,7 +140,7 @@ cdef list quotient_by_var(list L, size_t index) noexcept:
             result.append((<ETuple> PyList_GET_ITEM(L, i)).divide_by_var(index))
     return interred(result)
 
-cdef ETuple sum_from_list(list L, size_t s, size_t l) noexcept:
+cdef ETuple sum_from_list(list L, size_t s, size_t l):
     """
     Compute the vector sum of the ETuples in ``L[s:s+l]`` in a balanced way.
     """
@@ -286,7 +286,7 @@ cdef bint HilbertBaseCase(Polynomial_integer_dense_flint fhs, Node D, tuple w) n
     # We are in a truly difficult case and give up for now...
     return False
 
-cdef make_children(Node D, tuple w) noexcept:
+cdef make_children(Node D, tuple w):
     """
     Create child nodes in ``D`` that allow to compute the first Hilbert
     series of ``D.Id``.

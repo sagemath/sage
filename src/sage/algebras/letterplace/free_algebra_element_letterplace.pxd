@@ -13,5 +13,5 @@ from sage.algebras.letterplace.free_algebra_letterplace cimport FreeAlgebra_lett
 
 cdef class FreeAlgebraElement_letterplace(AlgebraElement):
     cdef MPolynomial_libsingular _poly
-    cpdef _add_(self, other) noexcept
-    cpdef _mul_(self, other) noexcept
+    cpdef _add_(self, other)
+    cpdef _mul_(self, other)

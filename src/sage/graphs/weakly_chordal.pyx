@@ -51,7 +51,7 @@ cdef inline is_long_hole_free_process(g, short_digraph sd, bitset_t dense_graph,
                                       list id_label, int* path, int* InPath,
                                       int* neighbor_index, set VisitedP3,
                                       bint certificate,
-                                      int a, int b, int c, int n) noexcept:
+                                      int a, int b, int c, int n):
     """
     This method is part of method ``is_long_hole_free``.
 
@@ -279,7 +279,7 @@ cdef inline is_long_antihole_free_process(g, short_digraph sd, bitset_t dense_gr
                                           list id_label, int* path, int* InPath,
                                           int* neighbor_index, set VisitedP3,
                                           bint certificate,
-                                          int a, int b, int c, int n) noexcept:
+                                          int a, int b, int c, int n):
     """
     This method is part of method ``is_long_antihole_free``.
 

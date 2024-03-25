@@ -47,13 +47,13 @@ cdef int bitset_from_str(bitset_t bits, object s, char zero=c'0', char one=c'1')
     cdef bytes b = str_to_bytes(s)
     return bitset_from_char(bits, b, zero, one)
 
-cdef bitset_string(fused_bitset_t bits) noexcept:
+cdef bitset_string(fused_bitset_t bits):
     """
     Return a python string representing the bitset.
     """
     return bytes_to_str(bitset_bytes(bits))
 
-cdef bitset_bytes(fused_bitset_t bits) noexcept:
+cdef bitset_bytes(fused_bitset_t bits):
     """
     Return a python bytes string representing the bitset.
 
@@ -66,7 +66,7 @@ cdef bitset_bytes(fused_bitset_t bits) noexcept:
     sig_free(s)
     return py_s
 
-cdef list bitset_list(fused_bitset_t bits) noexcept:
+cdef list bitset_list(fused_bitset_t bits):
     """
     Return a list of elements in the bitset.
     """
@@ -77,7 +77,7 @@ cdef list bitset_list(fused_bitset_t bits) noexcept:
         elt = bitset_next(bits, elt + 1)
     return elts
 
-cdef bitset_pickle(bitset_t bs) noexcept:
+cdef bitset_pickle(bitset_t bs):
     """
     Convert ``bs`` to a reasonably compact Python structure.
 
@@ -91,7 +91,7 @@ cdef bitset_pickle(bitset_t bs) noexcept:
         data.append(bs.bits[i])
     return (version, bs.size, bs.limbs, sizeof(unsigned long), tuple(data))
 
-cdef bitset_unpickle(bitset_t bs, tuple input) noexcept:
+cdef bitset_unpickle(bitset_t bs, tuple input):
     """
     Convert the data into a bitset.
 

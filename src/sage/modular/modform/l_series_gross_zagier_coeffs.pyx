@@ -12,7 +12,7 @@ from libc.math cimport ceil, floor, sqrt
 from libc.string cimport memcpy
 
 
-cpdef to_series(L, var) noexcept:
+cpdef to_series(L, var):
     """
     Create a power series element out of a list ``L`` in the variable`` var``.
 

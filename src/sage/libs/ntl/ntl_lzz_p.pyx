@@ -150,7 +150,7 @@ cdef class ntl_zz_p():
         ## now that we've determined the modulus, set that modulus.
         self.c.restore_c()
 
-    cdef ntl_zz_p _new(self) noexcept:
+    cdef ntl_zz_p _new(self):
         """
         Quick and dirty zz_p object creation.
 

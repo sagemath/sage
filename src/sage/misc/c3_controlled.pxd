@@ -1,1 +1,1 @@
-cpdef tuple C3_sorted_merge(list lists, key=?) noexcept
+cpdef tuple C3_sorted_merge(list lists, key=?)
