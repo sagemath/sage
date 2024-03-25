@@ -2595,9 +2595,9 @@ class Partition(CombinatorialElement):
         mu = []
         for p, m in enumerate(self.to_exp(), 1):
             p = ZZ(p)
-            mu.extend([p * s]*(m // s))
+            mu.extend([p * s] * (m // s))
             m1, p1 = p.val_unit(s)
-            mu.extend([p1]*((m % s) * s**m1))
+            mu.extend([p1] * ((m % s) * s**m1))
 
         P = self.parent()
         return P.element_class(P, sorted(mu, reverse=True))
