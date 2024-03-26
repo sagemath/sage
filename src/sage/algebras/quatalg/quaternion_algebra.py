@@ -692,13 +692,13 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         Return a maximal order in this quaternion algebra.
 
         If ``order_basis`` is specified, the resulting maximal order
-        will contain the quaternion order of ``self`` given by this
+        will contain the order of the quaternion algebra given by this
         basis. The algorithm used is from [Voi2012]_.
 
         INPUT:
 
-        - ``order_basis`` -- (optional, default: ``None``) a basis of a
-          quaternion order of ``self``
+        - ``order_basis`` -- (optional, default: ``None``) a basis of an
+          order of this quaternion algebra
 
         - ``take_shortcuts`` -- (default: ``True``) if the discriminant is
           prime and the invariants of the algebra are of a nice form, use
