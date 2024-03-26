@@ -247,7 +247,7 @@ from .integer_vector import IntegerVectors
 from .integer_vector_weighted import WeightedIntegerVectors
 from .integer_vectors_mod_permgroup import IntegerVectorsModPermutationGroup
 
-lazy_import('sage.combinat.q_analogues', ['gaussian_binomial', 'q_binomial'])
+lazy_import('sage.combinat.q_analogues', ['gaussian_binomial', 'q_binomial', 'number_of_irreducible_polynomials'])
 
 from .species.all import *
 
