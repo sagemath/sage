@@ -6567,6 +6567,8 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         - `f = a + b p_1` with `a, b \neq 0`.
 
+        .. SEEALSO:: :meth:`legendre_transform`
+
         EXAMPLES::
 
             sage: # needs sage.modules
@@ -6673,6 +6675,60 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
     compositional_inverse = revert
 
+    def legendre_transform(self):
+        r"""
+        Return the Legendre transform of ``self``.
+
+        Given a symmetric function `f` of valuation 2, the Legendre
+        transform of `f` is the unique symmetric function `g` of
+        valuation 2 over the same base ring, such that
+
+        .. MATH::
+
+            g \circ \partial_{p_1} f + f = p_1 \partial_{p_1} f.
+
+        This implies that the derivatives of `f` and `g` with respect to `p_1`
+        are inverses of each other with respect to plethystic substitution.
+
+        The Legendre transform is an involution.
+
+        .. SEEALSO:: :meth:`revert`
+
+        EXAMPLES::
+
+            sage: p = SymmetricFunctions(QQ).p()
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: lp = LazySymmetricFunctions(p)
+            sage: A = lp(s([2]))
+            sage: A.legendre_transform()
+            (1/2*p[1,1]-1/2*p[2]) + O^9
+
+            sage: def asso(n):
+            ....:     return p.sum_of_terms((Partition([d] * (n // d)),
+            ....:          euler_phi(d) / n) for d in divisors(n))
+
+            sage: A = lp(asso, valuation=2)
+            sage: A.legendre_transform()[:5]
+            [1/2*p[1, 1] - 1/2*p[2],
+            -1/3*p[1, 1, 1] - 2/3*p[3],
+            1/4*p[1, 1, 1, 1] + 1/4*p[2, 2] - 1/2*p[4]]
+
+        TESTS::
+
+            sage: p = SymmetricFunctions(QQ).p()
+            sage: lp = LazySymmetricFunctions(p)
+            sage: A = lp(p([1]))
+            sage: A.legendre_transform()
+            Traceback (most recent call last):
+            ...
+            ValueError: only for series of valuation 2
+        """
+        if self.valuation() != 2:
+            raise ValueError("only for series of valuation 2")
+        p1 = self.parent()([1])
+        derived_p1 = self.derivative_with_respect_to_p1()
+        return (p1 * derived_p1 - self).plethysm(derived_p1.revert())
+
     def derivative_with_respect_to_p1(self, n=1):
         r"""
         Return the symmetric function obtained by taking the
@@ -6733,6 +6789,30 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
                                                lambda c: c.derivative_with_respect_to_p1(n),
                                                P.is_sparse())
         coeff_stream = Stream_shift(coeff_stream, -n)
+        return P.element_class(P, coeff_stream)
+
+    def suspension(self):
+        r"""
+        Return the suspension of `self``.
+
+        This is an involution, that maps the homogeneous component
+        `f_n` of degree `n` to `(-1)^{n - 1} \omega(f_n)`, where
+        `omega` is the usual involution of symmetric functions.
+
+        EXAMPLES::
+
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: ls = LazySymmetricFunctions(s)
+            sage: f = ls(lambda n: s([n]), valuation=1)
+            sage: g = f.revert().suspension(); g
+            s[1] + (s[1,1]) + (s[2,1]) + (s[2,1,1]+s[3,1]) + ...
+            sage: g.revert().suspension()
+            s[1] + s[2] + s[3] + s[4] + s[5] + ...
+        """
+        P = self.parent()
+        coeff_stream = Stream_map_coefficients(self._coeff_stream,
+                                               lambda c: (-1)**(c.degree() + 1) * c.omega(),
+                                               P.is_sparse())
         return P.element_class(P, coeff_stream)
 
     def functorial_composition(self, *args):
