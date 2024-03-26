@@ -323,8 +323,13 @@ sdh_store_wheel() {
         wheel_basename="${wheel##*/}"
         distname="${wheel_basename%%-*}"
         # Record name and wheel file location
+        if [ -n "$SAGE_DESTDIR" ]; then
+            echo "Staged wheel file, staged ${SAGE_SPKG_SCRIPTS}/${PKG_BASE}/spkg-requirements.txt"
+        else
+            echo "Copied wheel file, wrote ${SAGE_SPKG_SCRIPTS}/${PKG_BASE}/spkg-requirements.txt"
+        fi
         mkdir -p ${SAGE_DESTDIR}${SAGE_SPKG_SCRIPTS}/${PKG_BASE}
-        echo "${distname} @ file://${wheel}" >> ${SAGE_DESTDIR}${SAGE_SPKG_SCRIPTS}/${PKG_BASE}/spkg-requirements.txt
+        echo "${distname} @ file://${wheel}" >> "${SAGE_DESTDIR}${SAGE_SPKG_SCRIPTS}/${PKG_BASE}/spkg-requirements.txt"
     fi
     wheel="${SAGE_DESTDIR}${wheel}"
 }
@@ -392,7 +397,7 @@ sdh_actually_pip_install_wheel() {
     # of sage-conf, sage-setup, etc.) bump the version number, we need to
     # override this behavior.  The pip install option --force-reinstall does too
     # much -- it also reinstalls all dependencies, which we do not want.
-    $sudo sage-pip-uninstall "$distname"
+    $sudo sage-pip-uninstall "$distname" 2>&1 | sed '/^WARNING: Skipping .* as it is not installed./d'
     if [ $? -ne 0 ]; then
         echo "(ignoring error)" >&2
     fi
