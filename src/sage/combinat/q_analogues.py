@@ -9,16 +9,16 @@ r"""
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-
-from sage.misc.cachefunc import cached_function
-from sage.misc.misc_c import prod
-from sage.structure.element import parent
-from sage.rings.integer_ring import ZZ
 from sage.combinat.dyck_word import DyckWords
 from sage.combinat.partition import _Partitions
+from sage.misc.cachefunc import cached_function
+from sage.misc.misc_c import prod
+from sage.rings.integer_ring import ZZ
+from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
+from sage.rings.polynomial.polynomial_ring import polygen
+from sage.structure.element import parent
 
 
 def q_int(n, q=None):
@@ -46,7 +46,7 @@ def q_int(n, q=None):
         sage: q_int(3)
         q^2 + q + 1
         sage: q_int(-3)
-        (-q^2 - q - 1)/q^3
+        -q^-3 - q^-2 - q^-1
         sage: p = ZZ['p'].0
         sage: q_int(3,p)
         p^2 + p + 1
@@ -69,10 +69,12 @@ def q_int(n, q=None):
     """
     if n not in ZZ:
         raise ValueError(f'{n} must be an integer')
-
     if q is None:
-        q = ZZ['q'].gen()
-    if n == 0:  # Special case
+        if n >= 0:
+            q = polygen(ZZ, 'q')
+        else:
+            q = LaurentPolynomialRing(ZZ, 'q').gen()
+    if n == 0:
         return parent(q)(0)
     if n > 0:
         return sum(q**i for i in range(n))
@@ -186,12 +188,19 @@ def q_binomial(n, k, q=None, algorithm='auto'):
         sage: g.parent()
         Univariate Polynomial Ring in q over Integer Ring
 
-    The `q`-binomial coefficient vanishes unless `0 \leq k \leq n`::
+    For `n \geq 0`, the `q`-binomial coefficient vanishes unless `0 \leq k \leq n`::
 
         sage: q_binomial(4,5)
         0
         sage: q_binomial(5,-1)
         0
+
+    For `k \geq 0`, the `q`-binomial coefficient is extended as a polynomial in `n`::
+
+        sage: q_binomial(-4,1)
+        -q^-4 - q^-3 - q^-2 - q^-1
+        sage: q_binomial(-2,3)
+        -q^-9 - q^-8 - q^-7 - q^-6
 
     Other variables can be used, given as third parameter::
 
@@ -237,12 +246,12 @@ def q_binomial(n, k, q=None, algorithm='auto'):
         ...
         TypeError: no conversion of this rational to integer
 
-    One checks that `n` is nonnegative::
+    One checks that either `k` or `n` is nonnegative::
 
-        sage: q_binomial(-4,1)
+        sage: q_binomial(-4,-1)
         Traceback (most recent call last):
         ...
-        ValueError: n must be nonnegative
+        ValueError: either k or n must be nonnegative
 
     This also works for variables in the symbolic ring::
 
@@ -314,19 +323,24 @@ def q_binomial(n, k, q=None, algorithm='auto'):
     # sanity checks
     n = ZZ(n)
     k = ZZ(k)
-    if n < 0:
-        raise ValueError('n must be nonnegative')
-
-    k = min(n - k, k)  # Pick the smallest k
+    if k < 0 and n < 0:
+        raise ValueError('either k or n must be nonnegative')
 
     # polynomiality test
     if q is None:
-        from sage.rings.polynomial.polynomial_ring import polygen
-        q = polygen(ZZ, name='q')
         is_polynomial = True
+        if n >= 0:
+            q = polygen(ZZ, 'q')
+        else:
+            q = LaurentPolynomialRing(ZZ, 'q').gen()
     else:
         from sage.rings.polynomial.polynomial_element import Polynomial
         is_polynomial = isinstance(q, Polynomial)
+
+    if n < 0:
+        return (-1)**k * q**(k * n - (k * k - k) // 2) * q_binomial(-n + k - 1, k, q=q)
+
+    k = min(n - k, k)  # Pick the smallest k
 
     # We support non-Sage Elements too, where parent(q) is really
     # type(q). The calls R(0) and R(1) should work in all cases to
@@ -601,7 +615,7 @@ def q_pochhammer(n, a, q=None):
     - :wikipedia:`Q-Pochhammer_symbol`
     """
     if q is None:
-        q = ZZ['q'].gen()
+        q = polygen(ZZ, 'q')
     if n not in ZZ:
         raise ValueError("{} must be an integer".format(n))
     R = parent(q)
@@ -670,13 +684,13 @@ def q_jordan(t, q=None):
     - Xavier Caruso (2012-06-29)
     """
     if q is None:
-        q = ZZ['q'].gen()
+        q = polygen(ZZ, 'q')
 
     if all(part == 0 for part in t):
         return parent(q)(1)
     tj = 0
     res = parent(q)(0)
-    for i in range(len(t)-1, -1, -1):
+    for i in range(len(t) - 1, -1, -1):
         ti = t[i]
         if ti > tj:
             tp = list(t)
@@ -820,7 +834,7 @@ def q_subgroups_of_abelian_group(la, mu, q=None, algorithm='birkhoff'):
     - Tomer Bauer (2013, 2018): Implemented the Birkhoff algorithm and refactoring
     """
     if q is None:
-        q = ZZ['q'].gen()
+        q = polygen(ZZ, 'q')
     la_c = _Partitions(la).conjugate()
     mu_c = _Partitions(mu).conjugate()
     k = mu_c.length()
@@ -903,7 +917,7 @@ def q_stirling_number1(n, k, q=None):
     - [Ca1954]_
     """
     if q is None:
-        q = ZZ['q'].gen()
+        q = polygen(ZZ, 'q')
     if n < 0:
         raise ValueError('q-Stirling numbers are not defined for n < 0')
     if n == 0 == k:
@@ -965,7 +979,7 @@ def q_stirling_number2(n, k, q=None):
     - [Mil1978]_
     """
     if q is None:
-        q = ZZ['q'].gen()
+        q = polygen(ZZ, 'q')
     if n < 0:
         raise ValueError('q-Stirling numbers are not defined for n < 0')
     if n == 0 == k:
