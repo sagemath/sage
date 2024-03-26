@@ -1,6 +1,5 @@
 # sage.doctest: needs sage.combinat sage.modules
-r"""
-Symmetric Functions
+r"""Symmetric Functions
 
 For a comprehensive tutorial on how to use symmetric functions in Sage
 
@@ -170,21 +169,22 @@ Check that we can handle large integers properly (:issue:`13413`)::
 
 BACKWARD INCOMPATIBLE CHANGES (:issue:`5457`):
 
-The symmetric functions code has been refactored to take
-advantage of the coercion systems. This introduced a couple of glitches:
+The symmetric functions code has been refactored to take advantage of
+the coercion systems. This introduced a couple of glitches, in
+particular, on some bases changes, coefficients in Jack polynomials
+are not normalized
 
-- On some bases changes, coefficients in Jack polynomials are not normalized
+However, conversions and coercions are now also defined between
+symmetric functions over different coefficient rings::
 
-- Except in a few cases, conversions and coercions are only defined
-  between symmetric functions over the same coefficient ring. E.g.
-  the following does not work anymore::
+      sage: S  = SymmetricFunctions(QQ)
+      sage: S2 = SymmetricFunctions(QQ['t'])
+      sage: S3 = SymmetricFunctions(ZZ)
+      sage: S.m()[1] + S2.m()[2]
+      m[1] + m[2]
 
-      sage: s  = SymmetricFunctions(QQ)
-      sage: s2 = SymmetricFunctions(QQ['t'])
-      sage: s([1]) + s2([2]) # todo: not implemented
-
-  This feature will probably come back at some point through
-  improvements to the Sage coercion system.
+      sage: S.m()(S3.sp()[2,1])
+      -m[1] + 2*m[1, 1, 1] + m[2, 1]
 
 Backward compatibility should be essentially retained.
 
@@ -625,6 +625,11 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 sage: Sym = SymmetricFunctions(QQ)
                 sage: m = Sym.monomial()
                 sage: m.corresponding_basis_over(ZZ)
+                doctest:warning
+                ...
+                DeprecationWarning: S.corresponding_basis_over(R) is deprecated.
+                Use S.change_ring(R) instead.
+                See https://github.com/sagemath/sage/issues/37220 for details.
                 Symmetric Functions over Integer Ring in the monomial basis
 
                 sage: Sym = SymmetricFunctions(CyclotomicField())
@@ -635,7 +640,8 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 sage: P = ZZ['q','t']
                 sage: Sym = SymmetricFunctions(P)
                 sage: mj = Sym.macdonald().J()
-                sage: mj.corresponding_basis_over(Integers(13))
+                sage: mj.corresponding_basis_over(Integers(13)['q','t'])
+                Symmetric Functions over Multivariate Polynomial Ring in q, t over Ring of integers modulo 13 in the Macdonald J basis
 
             TESTS:
 
@@ -658,29 +664,50 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 Symmetric Functions over Universal Cyclotomic Field in the forgotten basis
                 sage: Sym.w().corresponding_basis_over(CyclotomicField())
                 Symmetric Functions over Universal Cyclotomic Field in the Witt basis
-                sage: Sym.macdonald().P().corresponding_basis_over(CyclotomicField())
-                sage: Sym.macdonald().Q().corresponding_basis_over(CyclotomicField())
-                sage: Sym.macdonald().J().corresponding_basis_over(CyclotomicField())
-                sage: Sym.macdonald().H().corresponding_basis_over(CyclotomicField())
-                sage: Sym.macdonald().Ht().corresponding_basis_over(CyclotomicField())
-                sage: Sym.macdonald().S().corresponding_basis_over(CyclotomicField())
-                sage: Sym.macdonald(q=1).S().corresponding_basis_over(CyclotomicField())
+                sage: Sym.macdonald().P().corresponding_basis_over(CyclotomicField()['q', 't'])
+                Symmetric Functions over Multivariate Polynomial Ring in q, t over Universal Cyclotomic Field in the Macdonald P basis
+                sage: Sym.macdonald().Q().corresponding_basis_over(CyclotomicField()['q', 't'])
+                Symmetric Functions over Multivariate Polynomial Ring in q, t over Universal Cyclotomic Field in the Macdonald Q basis
+                sage: Sym.macdonald().J().corresponding_basis_over(CyclotomicField()['q', 't'])
+                Symmetric Functions over Multivariate Polynomial Ring in q, t over Universal Cyclotomic Field in the Macdonald J basis
+                sage: Sym.macdonald().H().corresponding_basis_over(CyclotomicField()['q', 't'])
+                Symmetric Functions over Multivariate Polynomial Ring in q, t over Universal Cyclotomic Field in the Macdonald H basis
+                sage: Sym.macdonald().Ht().corresponding_basis_over(CyclotomicField()['q', 't'])
+                Symmetric Functions over Multivariate Polynomial Ring in q, t over Universal Cyclotomic Field in the Macdonald Ht basis
+                sage: Sym.macdonald().S().corresponding_basis_over(CyclotomicField()['q', 't'])
+                Symmetric Functions over Multivariate Polynomial Ring in q, t over Universal Cyclotomic Field in the Macdonald S basis
+                sage: Sym.macdonald(q=1).S().corresponding_basis_over(CyclotomicField()['t'])
+                Symmetric Functions over Univariate Polynomial Ring in t over Universal Cyclotomic Field in the Macdonald S with q=1 basis
                 sage: Sym.macdonald(q=1,t=3).P().corresponding_basis_over(CyclotomicField())
-                sage: Sym.hall_littlewood().P().corresponding_basis_over(CyclotomicField())
-                sage: Sym.hall_littlewood().Q().corresponding_basis_over(CyclotomicField())
-                sage: Sym.hall_littlewood().Qp().corresponding_basis_over(CyclotomicField())
+                Symmetric Functions over Universal Cyclotomic Field in the Macdonald P with q=1 and t=3 basis
+                sage: Sym.hall_littlewood().P().corresponding_basis_over(CyclotomicField()['t'])
+                Symmetric Functions over Univariate Polynomial Ring in t over Universal Cyclotomic Field in the Hall-Littlewood P basis
+                sage: Sym.hall_littlewood().Q().corresponding_basis_over(CyclotomicField()['t'])
+                Symmetric Functions over Univariate Polynomial Ring in t over Universal Cyclotomic Field in the Hall-Littlewood Q basis
+                sage: Sym.hall_littlewood().Qp().corresponding_basis_over(CyclotomicField()['t'])
+                Symmetric Functions over Univariate Polynomial Ring in t over Universal Cyclotomic Field in the Hall-Littlewood Qp basis
                 sage: Sym.hall_littlewood(t=1).P().corresponding_basis_over(CyclotomicField())
-                sage: Sym.jack().J().corresponding_basis_over(CyclotomicField())
-                sage: Sym.jack().P().corresponding_basis_over(CyclotomicField())
-                sage: Sym.jack().Q().corresponding_basis_over(CyclotomicField())
-                sage: Sym.jack().Qp().corresponding_basis_over(CyclotomicField())
+                Symmetric Functions over Universal Cyclotomic Field in the Hall-Littlewood P with t=1 basis
+                sage: Sym.jack().J().corresponding_basis_over(CyclotomicField()['t'])
+                Symmetric Functions over Univariate Polynomial Ring in t over Universal Cyclotomic Field in the Jack J basis
+                sage: Sym.jack().P().corresponding_basis_over(CyclotomicField()['t'])
+                Symmetric Functions over Univariate Polynomial Ring in t over Universal Cyclotomic Field in the Jack P basis
+                sage: Sym.jack().Q().corresponding_basis_over(CyclotomicField()['t'])
+                Symmetric Functions over Univariate Polynomial Ring in t over Universal Cyclotomic Field in the Jack Q basis
+                sage: Sym.jack().Qp().corresponding_basis_over(CyclotomicField()['t'])
+                Symmetric Functions over Univariate Polynomial Ring in t over Universal Cyclotomic Field in the Jack Qp basis
                 sage: Sym.jack(t=1).J().corresponding_basis_over(CyclotomicField())
+                Symmetric Functions over Universal Cyclotomic Field in the Jack J with t=1 basis
                 sage: Sym.zonal().corresponding_basis_over(CyclotomicField())
                 Symmetric Functions over Universal Cyclotomic Field in the zonal basis
-                sage: Sym.llt(3).hspin().corresponding_basis_over(CyclotomicField())
-                sage: Sym.llt(3).hcospin().corresponding_basis_over(CyclotomicField())
+                sage: Sym.llt(3).hspin().corresponding_basis_over(CyclotomicField()['t'])
+                Symmetric Functions over Univariate Polynomial Ring in t over Universal Cyclotomic Field in the level 3 LLT spin basis
+                sage: Sym.llt(3).hcospin().corresponding_basis_over(CyclotomicField()['t'])
+                Symmetric Functions over Univariate Polynomial Ring in t over Universal Cyclotomic Field in the level 3 LLT cospin basis
                 sage: Sym.llt(3, t=1).hspin().corresponding_basis_over(CyclotomicField())
+                Symmetric Functions over Universal Cyclotomic Field in the level 3 LLT spin with t=1 basis
                 sage: Sym.llt(3, t=1).hcospin().corresponding_basis_over(CyclotomicField())
+                Symmetric Functions over Universal Cyclotomic Field in the level 3 LLT cospin with t=1 basis
 
             .. TODO::
 
@@ -688,26 +715,13 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 rewritten as soon as the bases of ``SymmetricFunctions`` are
                 put on a more robust and systematic footing.
             """
-            from sage.combinat.sf.sf import SymmetricFunctions
-            from sage.misc.call import attrcall
+            from sage.misc.superseded import deprecation
+            deprecation(37220, 'S.corresponding_basis_over(R) is deprecated.'
+                        ' Use S.change_ring(R) instead.')
             try:
-                return attrcall(self._basis)(SymmetricFunctions(R))
-            except AttributeError:   # or except (AttributeError, ValueError):
+                return self.change_ring(R)
+            except NotImplementedError:
                 return None
-            #Alternative code proposed by Florent Hivert, which sadly fails for the
-            #forgotten basis (which reduces differently than the other ones):
-            #try:
-            #    parentred1 = self._reduction
-            #    parentred2 = parentred1[1][0]._reduction
-            #    parentred2prime = tuple([parentred2[0], tuple([R]), parentred2[2]])
-            #    from sage.structure.unique_representation import unreduce
-            #    parent2 = unreduce(*parentred2prime)
-            #    parentred1prime = tuple([parentred1[0], tuple([parent2]), parentred1[2]])
-            #    return unreduce(*parentred1prime)
-            #except (AttributeError, ValueError):
-            #    return None
-            #This code relied heavily on the construction of bases of
-            #``SymmetricFunctions`` and on their reduction.
 
         def skew_schur(self, x):
             """
@@ -1034,8 +1048,9 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             # Now let's try to find out what basis self is in, and
             # construct the corresponding basis of symmetric functions
             # over QQ.
-            corresponding_parent_over_QQ = self.corresponding_basis_over(QQ)
-            if corresponding_parent_over_QQ is None:
+            try:
+                corresponding_parent_over_QQ = self.change_ring(QQ)
+            except (NotImplementedError, TypeError):
                 # This is the case where the corresponding basis
                 # over QQ cannot be found. This can have two reasons:
                 # Either the basis depends on variables (like the
@@ -1205,8 +1220,9 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
             # Now let's try to find out what basis self is in, and
             # construct the corresponding basis of symmetric functions
             # over QQ.
-            corresponding_parent_over_QQ = self.corresponding_basis_over(QQ)
-            if corresponding_parent_over_QQ is None:
+            try:
+                corresponding_parent_over_QQ = self.change_ring(QQ)
+            except (NotImplementedError, TypeError):
                 # This is the case where the corresponding basis
                 # over QQ cannot be found. This can have two reasons:
                 # Either the basis depends on variables (like the
@@ -1788,7 +1804,6 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         sage: s(m([2,1]))
         -2*s[1, 1, 1] + s[2, 1]
     """
-
     def __init__(self, Sym, basis_name=None, prefix=None, graded=True):
         r"""
         Initializes the symmetric function algebra.
@@ -3015,6 +3030,36 @@ class SymmetricFunctionAlgebra_generic(CombinatorialFreeModule):
         return self.tensor_square().sum(coeff * tensor([self(s[x]), self(s[y])])
                                         for ((x,y), coeff) in s(elt).coproduct())
 
+    def construction(self):
+        """
+        Return a pair ``(F, R)``, where ``F`` is a
+        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
+        that ``F(R)`` returns ``self``.
+
+        EXAMPLES::
+
+            sage: s = SymmetricFunctions(ZZ).s()
+            sage: F, R = s.construction()
+            sage: F(QQ)
+            Symmetric Functions over Rational Field in the Schur basis
+        """
+        return SymmetricFunctionsFunctor(self._descriptor), self.base_ring()
+
+    def change_ring(self, R):
+        r"""
+        Return the base change of ``self`` to `R`.
+
+        EXAMPLES::
+
+            sage: s = SymmetricFunctions(ZZ).s()
+            sage: s.change_ring(QQ)
+            Symmetric Functions over Rational Field in the Schur basis
+        """
+        if R is self.base_ring():
+            return self
+        functor, _ = self.construction()
+        return functor(R)
+
 
 class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
     r"""
@@ -3035,7 +3080,6 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         m[1, 1, 1] + m[2, 1] + m[3]
         sage: m.set_print_style('lex')
     """
-
     def factor(self):
         """
         Return the factorization of this symmetric function.
@@ -3091,7 +3135,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
         poly = _to_polynomials([self], self.base_ring())[0]
         factors = poly.factor()
-        unit = factors.unit()
+        unit = self.base_ring()(factors.unit())
         if factors.universe() == self.base_ring():
             return Factorization(factors, unit=unit)
         factors = [(_from_polynomial(factor, M), exponent)
@@ -4087,8 +4131,9 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             # Now let's try to find out what basis self is in, and
             # construct the corresponding basis of symmetric functions
             # over QQ.
-            corresponding_parent_over_QQ = parent.corresponding_basis_over(QQ)
-            if corresponding_parent_over_QQ is None:
+            try:
+                corresponding_parent_over_QQ = parent.change_ring(QQ)
+            except (NotImplementedError, TypeError):
                 # This is the case where the corresponding basis
                 # over QQ cannot be found. This can have two reasons:
                 # Either the basis depends on variables (like the
@@ -4286,7 +4331,7 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
         comp_x = comp_parent(x)
         # Now, comp_self and comp_x are the same as self and x, but in the
         # Schur basis, which we call comp_parent.
-        schur_Q = comp_parent.corresponding_basis_over(QQ)
+        schur_Q = comp_parent.change_ring(QQ)
         # schur_Q is the Schur basis of the symmetric functions over QQ.
         result = comp_parent.zero()
         for lam, a in comp_self:
@@ -4728,8 +4773,9 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
             return parent(p._apply_multi_module_morphism(p(self),p(x),f))
         comp_parent = parent
         comp_self = self
-        corresponding_parent_over_QQ = parent.corresponding_basis_over(QQ)
-        if corresponding_parent_over_QQ is None:
+        try:
+            corresponding_parent_over_QQ = parent.change_ring(QQ)
+        except (NotImplementedError, TypeError):
             comp_parent = parent.realization_of().schur()
             comp_self = comp_parent(self)
             from sage.combinat.sf.sf import SymmetricFunctions
@@ -6379,6 +6425,143 @@ class SymmetricFunctionAlgebra_generic_Element(CombinatorialFreeModule.Element):
 
 SymmetricFunctionAlgebra_generic.Element = SymmetricFunctionAlgebra_generic_Element
 
+from sage.categories.pushout import ConstructionFunctor
+from sage.categories.commutative_rings import CommutativeRings
+from sage.categories.functor import Functor
+
+class SymmetricFunctionsFunctor(ConstructionFunctor):
+    """
+    A constructor for algebras of symmetric functions.
+
+    EXAMPLES::
+
+        sage: s = SymmetricFunctions(QQ).s()
+        sage: s.construction()
+        (SymmetricFunctionsFunctor[schur], Rational Field)
+    """
+    rank = 9
+
+    def __init__(self, descriptor):
+        r"""
+        Initialise the functor.
+
+        INPUT:
+
+        - ``descriptor`` -- an iterable of pairs ``(family, params)``
+          or singletons ``(basis,)``, where ``family`` and ``basis``
+          are strings and ``params`` is a dictionary whose keys are
+          strings.
+
+        .. WARNING:
+
+            Strictly speaking, this is not necessarily a functor on
+            :class:`CommutativeRings`, but rather a functor on
+            commutative rings with some distinguished elements.  For
+            example, for the Macdonald polynomials, we have to
+            specify `q` and `t` in the ring.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.sf.sfa import SymmetricFunctionsFunctor
+            sage: R.<q, t> = ZZ[]
+            sage: SymmetricFunctionsFunctor((('macdonald', {'q': q, 't': t}), ('H',)))
+            SymmetricFunctionsFunctor[macdonald(q=q, t=t).H]
+        """
+        self._descriptor = descriptor
+        Functor.__init__(self, CommutativeRings(), CommutativeRings())
+
+    def _apply_functor(self, R):
+        """
+        Apply the functor to an object of ``self``'s domain.
+
+        EXAMPLES::
+
+            sage: s = SymmetricFunctions(ZZ).s()
+            sage: F, R = s.construction()  # indirect doctest
+            sage: F(QQ)
+            Symmetric Functions over Rational Field in the Schur basis
+        """
+        from sage.combinat.sf.sf import SymmetricFunctions
+        S = SymmetricFunctions(R)
+        for method, *params in self._descriptor:
+            if params:
+                assert len(params) == 1
+                S = S.__getattribute__(method)(**params[0])
+            else:
+                S = S.__getattribute__(method)()
+        return S
+
+    def _apply_functor_to_morphism(self, f):
+        """
+        Apply the functor ``self`` to the ring morphism `f`.
+
+        EXAMPLES::
+
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: F, R = s.construction()
+            sage: F(ZZ.hom(GF(3)))  # indirect doctest
+            Generic morphism:
+              From: Symmetric Functions over Integer Ring in the Schur basis
+              To:   Symmetric Functions over Finite Field of size 3 in the Schur basis
+
+            sage: R.<t> = ZZ[]
+            sage: P = SymmetricFunctions(R).jack().P()
+            sage: F, R = P.construction()
+            sage: F(ZZ["t"].hom(GF(3)["t"]))
+            Generic morphism:
+              From: Symmetric Functions over Univariate Polynomial Ring in t over Integer Ring in the Jack P basis
+              To:   Symmetric Functions over Univariate Polynomial Ring in t over Finite Field of size 3 in the Jack P basis
+
+            sage: R.<q, t> = ZZ[]
+            sage: H = SymmetricFunctions(R).macdonald().H()
+            sage: F, R = H.construction()
+            sage: F(ZZ["q", "t"].hom(GF(3)["q", "t"]))  # known bug
+        """
+        dom = self(f.domain())
+        codom = self(f.codomain())
+
+        def action(x):
+            return codom._from_dict({a: f(b)
+                                     for a, b in x.monomial_coefficients().items()})
+        return dom.module_morphism(function=action, codomain=codom)
+
+    def __eq__(self, other):
+        """
+        EXAMPLES::
+
+            sage: R.<t> = ZZ[]
+            sage: S.<t> = QQ[]
+            sage: T.<s> = QQ[]
+            sage: PR = SymmetricFunctions(R).jack().P()
+            sage: PS = SymmetricFunctions(S).jack().P()
+            sage: PT = SymmetricFunctions(T).jack(t=s).P()
+            sage: PR.construction()[0] == PS.construction()[0]
+            True
+            sage: PR.construction()[0] == PT.construction()[0]
+            False
+        """
+        if not isinstance(other, SymmetricFunctionsFunctor):
+            return False
+        return self._descriptor == other._descriptor
+
+    def _repr_(self):
+        """
+        TESTS::
+
+            sage: R.<q, t> = ZZ[]
+            sage: H = SymmetricFunctions(R).macdonald().H()
+            sage: F, R = H.construction()
+            sage: F
+            SymmetricFunctionsFunctor[macdonald(q=q, t=t).H]
+        """
+        basis = ".".join(method
+                         + ("("
+                            + ", ".join(key + "=" + repr(param)
+                                        for key, param in params[0].items())
+                            + ")" if params
+                            else "")
+                         for method, *params in self._descriptor)
+        return "SymmetricFunctionsFunctor[" + basis + "]"
 
 ###################
 def _lmax(x):
