@@ -234,7 +234,6 @@ RUN if [ -d /sage ]; then echo "### Incremental build from \$(cat /sage/VERSION.
 WORKDIR /sage
 $ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap bootstrap-conda configure.ac sage .homebrew-build-env tox.ini Pipfile.m4 ./
 $ADD config/config.rpath config/config.rpath
-$ADD src/doc/bootstrap src/doc/bootstrap
 $ADD src/bin src/bin
 $ADD src/Pipfile.m4 src/pyproject.toml.m4 src/requirements.txt.m4 src/setup.cfg.m4 src/VERSION.txt src/
 $ADD m4 ./m4

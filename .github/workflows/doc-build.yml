@@ -4,9 +4,14 @@ on:
   pull_request:
   merge_group:
   push:
-    branches:
-      - master
-      - develop
+    tags:
+      # Match all release tags including beta, rc
+      - '[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.beta[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.beta[0-9]+'
+      - '[0-9]+.[0-9]+.rc[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+.rc[0-9]+'
   workflow_dispatch:
     # Allow to run manually
 
@@ -95,8 +100,8 @@ jobs:
           ./bootstrap && make sagemath_doc_html-build-deps
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
+          MAKE: make -j4 --output-sync=recurse
+          SAGE_NUM_THREADS: 4
 
       - name: Build (fallback to non-incremental)
         id: build
@@ -106,12 +111,16 @@ jobs:
           make sagelib-clean && git clean -fx src/sage && ./config.status && make sagemath_doc_html-build-deps
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
+          MAKE: make -j4 --output-sync=recurse
+          SAGE_NUM_THREADS: 4
+
+      #
+      # On PRs and pushes to branches
+      #
 
       - name: Build docs
         id: docbuild
-        if: (success() || failure()) && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success')
+        if: (success() || failure()) && (steps.incremental.outcome == 'success' || steps.build.outcome == 'success') && !startsWith(github.ref, 'refs/tags/')
         # Always non-incremental because of the concern that
         # incremental docbuild may introduce broken links (inter-file references) though build succeeds
         run: |
@@ -124,12 +133,12 @@ jobs:
           ./config.status && make sagemath_doc_html-no-deps
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
+          MAKE: make -j4 --output-sync=recurse
+          SAGE_NUM_THREADS: 4
 
       - name: Copy docs
         id: copy
-        if: (success() || failure()) && steps.docbuild.outcome == 'success'
+        if: (success() || failure()) && steps.docbuild.outcome == 'success' && !startsWith(github.ref, 'refs/tags/')
         run: |
           set -ex
           DOC_DIR=/sage/local/share/doc/sage/html
@@ -147,15 +156,19 @@ jobs:
           zip -r docs.zip docs
 
       - name: Upload docs
-        if: (success() || failure()) && steps.copy.outcome == 'success'
+        if: (success() || failure()) && steps.copy.outcome == 'success'  && !startsWith(github.ref, 'refs/tags/')
         uses: actions/upload-artifact@v3
         with:
           name: docs
           path: docs.zip
 
+      #
+      # On release tags: live doc and wheels
+      #
+
       - name: Build live doc
         id: buildlivedoc
-        if: (success() || failure()) && steps.copy.outcome == 'success' && github.repository == 'sagemath/sage' && github.ref == 'refs/heads/develop'
+        if: (success() || failure()) && startsWith(github.ref, 'refs/tags/')
         run: |
           set -ex
           export PATH="build/bin:$PATH"
@@ -165,12 +178,11 @@ jobs:
           export SAGE_USE_CDNS=yes
           export SAGE_LIVE_DOC=yes
           export SAGE_JUPYTER_SERVER=binder:sagemath/sage-binder-env/dev
-          make doc-clean doc-uninstall
-          ./config.status && make sagemath_doc_html-no-deps sagemath_doc_pdf-no-deps
+          ./config.status && make SAGE_WHEELS=yes SAGE_EDITABLE=no sagemath_doc_html-no-deps sagemath_doc_pdf-no-deps
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
+          MAKE: make -j4 --output-sync=recurse
+          SAGE_NUM_THREADS: 4
 
       - name: Copy live doc
         id: copylivedoc
@@ -190,3 +202,32 @@ jobs:
           name: livedoc
           path: livedoc.zip
 
+      - name: Upload sagemath-doc wheels
+        id: uploaddocwheels
+        if: (success() || failure()) && steps.buildlivedoc.outcome == 'success'
+        uses: actions/upload-artifact@v3
+        with:
+          name: wheels
+          path: ./venv/var/lib/sage/wheels/sagemath_doc*.whl
+
+  upload_wheels:
+    needs: build-docs
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    env:
+      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
+    steps:
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: wheels
+          path: wheelhouse
+
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: __token__
+          password: ${{ secrets.SAGEMATH_PYPI_API_TOKEN }}
+          packages-dir: wheelhouse/
+          skip-existing: true
+          verbose: true
+        if: env.CAN_DEPLOY == 'true'

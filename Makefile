@@ -354,7 +354,7 @@ SPKG_INFO_DEPENDENCIES =							\
 	build/pkgs/*/install-requires.txt build/pkgs/*/package-version.txt	\
 	build/pkgs/*/distros/*.txt
 
-configure: bootstrap src/doc/bootstrap $(CONFIGURE_DEPENDENCIES) $(SPKG_INFO_DEPENDENCIES)
+configure: bootstrap $(CONFIGURE_DEPENDENCIES) $(SPKG_INFO_DEPENDENCIES)
 	./bootstrap -d
 
 install: all
