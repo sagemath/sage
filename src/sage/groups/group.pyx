@@ -16,9 +16,9 @@ Base class for groups
 #
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-from sage.structure.parent cimport Parent
+from sage.misc.superseded import deprecation
 from sage.rings.infinity import infinity
+from sage.structure.parent cimport Parent
 
 
 def is_Group(x):
@@ -38,12 +38,14 @@ def is_Group(x):
         sage: F.<a,b> = FreeGroup()                                                     # needs sage.groups
         sage: from sage.groups.group import is_Group
         sage: is_Group(F)                                                               # needs sage.groups
+        doctest:warning...DeprecationWarning: use instead G in Groups()
+        See https://github.com/sagemath/sage/issues/37449 for details.
         True
         sage: is_Group("a string")
         False
     """
-    from sage.groups.old import Group as OldGroup
-    return isinstance(x, (Group, OldGroup))
+    deprecation(37449, 'use instead G in Groups()')
+    return isinstance(x, Group)
 
 
 cdef class Group(Parent):
