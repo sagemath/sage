@@ -288,7 +288,11 @@ class IndexedMonoidElement(MonoidElement):
             [0, 2]
         """
         supp = set(key for key, exp in self._sorted_items() if exp != 0)
-        return sorted(supp)
+        try:
+            return sorted(supp, key=print_options['sorting_key'],
+                          reverse=print_options['sorting_reverse'])
+        except Exception: # Sorting the output is a plus, but if we can't, no big deal
+            return list(supp)
 
     def leading_support(self):
         """
@@ -773,14 +777,12 @@ class IndexedMonoid(Parent, IndexedGenerators, UniqueRepresentation):
             sage: F([[1, 3], [-2, 12]])
             F[-2]^12*F[1]^3
             sage: F(-5)
-            Traceback (most recent call last):
-            ...
-            TypeError: unable to convert -5, use gen() instead
+            F[-5]
         """
         if x is None:
             return self.one()
         if x in self._indices:
-            raise TypeError("unable to convert {!r}, use gen() instead".format(x))
+            return self.gen(x)
         return self.element_class(self, x)
 
     def _an_element_(self):
@@ -933,9 +935,9 @@ class IndexedFreeMonoid(IndexedMonoid):
         if x not in self._indices:
             raise IndexError("{} is not in the index set".format(x))
         try:
-            return self.element_class(self, ((self._indices(x),1),))
-        except (TypeError, NotImplementedError): # Backup (e.g., if it is a string)
-            return self.element_class(self, ((x,1),))
+            return self.element_class(self, ((self._indices(x), ZZ.one()),))
+        except (ValueError, TypeError, NotImplementedError): # Backup (e.g., if it is a string)
+            return self.element_class(self, ((x, ZZ.one()),))
 
 class IndexedFreeAbelianMonoid(IndexedMonoid):
     """
@@ -961,6 +963,11 @@ class IndexedFreeAbelianMonoid(IndexedMonoid):
         sage: F = FreeAbelianMonoid(index_set=Partitions(), prefix='A', bracket=False, scalar_mult='%')
         sage: F.gen([3,1,1]) * F.gen([2,2])
         A[2, 2]%A[3, 1, 1]
+
+    .. TODO::
+
+        Implement a subclass when the index sets is finite that utilizes
+        vectors or the polydict monomials with the index order is fixed.
     """
     def _repr_(self):
         """
@@ -1045,10 +1052,15 @@ class IndexedFreeAbelianMonoid(IndexedMonoid):
             Traceback (most recent call last):
             ...
             IndexError: 0 is not in the index set
+
+            sage: F = lie_algebras.VirasoroAlgebra(QQ).pbw_basis().indices(); F
+            Free abelian monoid indexed by Disjoint union of Family ({'c'}, Integer Ring)
+            sage: F.gen('c')
+            PBW['c']
         """
         if x not in self._indices:
             raise IndexError("{} is not in the index set".format(x))
         try:
-            return self.element_class(self, {self._indices(x): 1})
-        except (TypeError, NotImplementedError):  # Backup (e.g., if it is a string)
-            return self.element_class(self, {x: 1})
+            return self.element_class(self, {self._indices(x): ZZ.one()})
+        except (ValueError, TypeError, NotImplementedError):  # Backup (e.g., if it is a string)
+            return self.element_class(self, {x: ZZ.one()})

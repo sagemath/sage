@@ -25,6 +25,7 @@ from sage.misc.misc_c import prod
 from sage.categories.category_types import Category_over_base_ring
 from sage.sets.family import Family
 from .root_lattice_realizations import RootLatticeRealizations
+from sage.rings.rational_field import QQ
 
 
 class WeightLatticeRealizations(Category_over_base_ring):
@@ -909,6 +910,25 @@ class WeightLatticeRealizations(Category_over_base_ring):
             return Integer(n/d)
 
         @lazy_attribute
+        def _inverse_cartan_matrix(self):
+            r"""
+            Return the inverse Cartan matrix defining ``self``.
+
+            EXAMPLES::
+
+                sage: RootSystem(['A', 3]).ambient_lattice()._inverse_cartan_matrix
+                [3/4 1/2 1/4]
+                [1/2   1 1/2]
+                [1/4 1/2 3/4]
+                sage: RootSystem(['G', 2]).weight_lattice()._inverse_cartan_matrix
+                [2 3]
+                [1 2]
+            """
+            ret = self.cartan_type().cartan_matrix().inverse()
+            ret.set_immutable()
+            return ret
+
+        @lazy_attribute
         def _symmetric_form_matrix(self):
             r"""
             Return the matrix for the symmetric form `( | )` in
@@ -960,7 +980,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
             cm = ct.cartan_matrix()
             if cm.det() != 0:
                 diag = matrix.diagonal(cm.symmetrizer())
-                return cm.inverse().transpose() * diag
+                return self._inverse_cartan_matrix.transpose() * diag
 
             if not ct.is_affine():
                 raise ValueError("only implemented for affine types when the"
@@ -1131,4 +1151,37 @@ class WeightLatticeRealizations(Category_over_base_ring):
             if base_ring is None:
                 base_ring = L.base_ring()
 
-            return L.root_system.weight_space(base_ring).sum_of_terms([i, base_ring(self.scalar(L.simple_coroot(i)))] for i in L.cartan_type().index_set())
+            wt_space = L.root_system.weight_space(base_ring)
+            simple_coroots = L.simple_coroots()
+            return wt_space.sum_of_terms(((i, base_ring(self.scalar(ac)))
+                                          for i, ac in simple_coroots.items()),
+                                         distinct=True)
+
+        @cached_method
+        def _to_root_vector(self):
+            r"""
+            Helper method to express ``self`` as a linear combination
+            of simple roots.
+
+            OUTPUT:
+
+            A list with entries in `\QQ` representing ``self`` as a linear
+            combination of simple roots.
+
+            EXAMPLES::
+
+                sage: L = RootSystem(['A', 3]).ambient_space()
+                sage: e = L.basis()
+                sage: (e[0] + 3*e[3])._to_root_vector()  # not in the root space
+                sage: (e[0] - e[1])._to_root_vector()
+                (1, 0, 0)
+                sage: (e[0] + 2*e[1] - 3*e[2])._to_root_vector()
+                (1, 3, 0)
+            """
+            v = self.to_vector().change_ring(QQ)
+            al = [a.to_vector() for a in self.parent().simple_roots()]
+            b = v.parent().linear_dependence([v] + al)
+            if len(b) != 1 or b[0] == 0:
+                return None
+            b = b[0]  # Get the actual vector that gives the linear dependency
+            return b[1:].change_ring(QQ) / -b[0]
