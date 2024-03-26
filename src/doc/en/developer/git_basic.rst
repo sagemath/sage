@@ -40,11 +40,11 @@ or the following brief instructions::
 
     [alice@localhost ~]$ ssh-keygen
     Generating public/private rsa key pair.
-    Enter file in which to save the key (/home/user/.ssh/id_rsa):
+    Enter file in which to save the key (/home/alice/.ssh/id_rsa):
     Enter passphrase (empty for no passphrase):
     Enter same passphrase again:
-    Your identification has been saved in /home/user/.ssh/id_rsa.
-    Your public key has been saved in /home/user/.ssh/id_rsa.pub.
+    Your identification has been saved in /home/alice/.ssh/id_rsa.
+    Your public key has been saved in /home/alice/.ssh/id_rsa.pub.
     The key fingerprint is:
     ce:32:b3:de:38:56:80:c9:11:f0:b3:88:f2:1c:89:0a alice@localhost
     The key's randomart image is:
