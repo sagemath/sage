@@ -1115,9 +1115,9 @@ cdef class Matroid(SageObject):
             if certificate:
                 return False, None
             return False
-        D = self.dual()
+        YY = self.dual().independent_r_sets(cd)
         for X in self.independent_r_sets_iterator(rd):
-            for Y in D.independent_r_sets_iterator(cd):
+            for Y in YY:
                 if X.isdisjoint(Y):
                     if N._is_isomorphic(self._minor(contractions=X, deletions=Y)):
                         if certificate:
@@ -2317,17 +2317,20 @@ cdef class Matroid(SageObject):
             ['b', 'd', 'f', 'g'], ['b', 'e', 'g'], ['c', 'd', 'e', 'g'],
             ['c', 'f', 'g'], ['d', 'e', 'f']]
         """
-        if k and k < self.rank() + 2:
-            for X in combinations(self.groundset(), k):
+        rk = self.rank()
+        if k is None:
+            start = 0
+            stop = rk + 2
+        else:
+            if k >= rk + 2:
+                return
+            start = k
+            stop = k + 1
+        for j in range(start, stop):
+            for X in combinations(self.groundset(), j):
                 X = frozenset(X)
                 if self._is_circuit(X):
                     yield X
-        elif not k:
-            for k in range(self.rank() + 2):
-                for X in combinations(self.groundset(), k):
-                    X = frozenset(X)
-                    if self._is_circuit(X):
-                        yield X
 
     cpdef nonspanning_circuits(self) noexcept:
         """
@@ -2769,7 +2772,7 @@ cdef class Matroid(SageObject):
             :meth:`M.independent_sets() <sage.matroids.matroid.Matroid.independent_sets>`
             :meth:`M.bases() <sage.matroids.matroid.Matroid.bases>`
         """
-        res = []
+        cdef list res = []
         for X in combinations(self.groundset(), r):
             X = frozenset(X)
             if self._rank(X) == len(X):
@@ -2966,7 +2969,7 @@ cdef class Matroid(SageObject):
         r"""
         Return the `f`-vector of the matroid.
 
-        The `f`-*vector* is a vector `(f_0, \dots, f_r)`, where `f_i` is the
+        The `f`-*vector* is a vector `(f_0, \ldots, f_r)`, where `f_i` is the
         number of independent sets of rank `i`, and `r` is the rank of the
         matroid.
 
@@ -2997,8 +3000,8 @@ cdef class Matroid(SageObject):
         Return the Whitney numbers of the first kind of the matroid.
 
         The Whitney numbers of the first kind -- here encoded as a vector
-        `(w_0=1, ..., w_r)` -- are numbers of alternating sign, where `w_i` is
-        the value of the coefficient of the `(r-i)`-th degree term of the
+        `(w_0=1, \ldots, w_r)` -- are numbers of alternating sign, where `w_i`
+        is the value of the coefficient of the `(r-i)`-th degree term of the
         matroid's characteristic polynomial. Moreover, `|w_i|` is the number of
         `(i-1)`-dimensional faces of the broken circuit complex of the matroid.
 
@@ -3026,8 +3029,8 @@ cdef class Matroid(SageObject):
         Return the Whitney numbers of the second kind of the matroid.
 
         The Whitney numbers of the second kind are here encoded as a vector
-        `(W_0, ..., W_r)`, where `W_i` is the number of flats of rank `i`, and
-        `r` is the rank of the matroid.
+        `(W_0, \ldots, W_r)`, where `W_i` is the number of flats of rank `i`,
+        and `r` is the rank of the matroid.
 
         OUTPUT: a list of integers
 
@@ -3204,7 +3207,6 @@ cdef class Matroid(SageObject):
              and facets {(1, 3, 5), (2, 3, 5), (2, 4, 5), (3, 4, 5)}
         """
         if not self.loops():
-
             if ordering is None:
                 rev_order = sorted(self.groundset(), key=cmp_elements_key, reverse=True)
             else:
@@ -3311,7 +3313,7 @@ cdef class Matroid(SageObject):
 
         over all bases `B` of the matroid. Here `e_i` are the standard
         basis vectors of `\RR^n`. An arbitrary labelling of the
-        groundset by `{0,\dots,n-1}` is chosen.
+        groundset by `{0,\ldots,n-1}` is chosen.
 
         .. SEEALSO::
 
@@ -3358,7 +3360,7 @@ cdef class Matroid(SageObject):
 
         over all independent sets `I` of the matroid. Here `e_i` are
         the standard basis vectors of `\RR^n`. An arbitrary labelling
-        of the groundset by `{0,\dots,n-1}` is chosen.
+        of the groundset by `{0,\ldots,n-1}` is chosen.
 
         .. SEEALSO::
 
