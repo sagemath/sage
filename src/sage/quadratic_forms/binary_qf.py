@@ -177,7 +177,7 @@ class BinaryQF(SageObject):
             sage: type(gp(f))
             <class 'sage.interfaces.gp.GpElement'>
         """
-        return 'Qfb(%s,%s,%s)' % (self._a, self._b, self._c)
+        return f'Qfb({self._a},{self._b},{self._c})'
 
     @staticmethod
     def principal(D):
@@ -218,7 +218,7 @@ class BinaryQF(SageObject):
         """
         D = ZZ(D)
         D4 = D % 4
-        if D4 not in (0,1):
+        if D4 not in (0, 1):
             raise ValueError('discriminant must be congruent to 0 or 1 modulo 4')
         return BinaryQF([1, D4, (D4-D)//4])
 
@@ -475,7 +475,7 @@ class BinaryQF(SageObject):
         """
         return BinaryQF([-self._a, -self._b, -self._c])
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Display the quadratic form.
 
@@ -492,7 +492,7 @@ class BinaryQF(SageObject):
         """
         return repr(self.polynomial())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         """
         Return latex representation of this binary quadratic form.
 
@@ -637,7 +637,7 @@ class BinaryQF(SageObject):
     det = determinant
 
     @cached_method
-    def has_fundamental_discriminant(self):
+    def has_fundamental_discriminant(self) -> bool:
         """
         Return whether the discriminant `D` of this form is a
         fundamental discriminant (i.e. `D` is the smallest element
@@ -659,7 +659,7 @@ class BinaryQF(SageObject):
         """
         return self.discriminant().is_fundamental_discriminant()
 
-    def is_primitive(self):
+    def is_primitive(self) -> bool:
         r"""
         Return whether the form `ax^2 + bxy + cy^2` satisfies
         `\gcd(a, b, c) = 1`, i.e., is primitive.
@@ -705,7 +705,7 @@ class BinaryQF(SageObject):
         """
         return self.content().is_one()
 
-    def is_zero(self):
+    def is_zero(self) -> bool:
         """
         Return whether ``self`` is identically zero.
 
@@ -721,7 +721,7 @@ class BinaryQF(SageObject):
         return self.content().is_zero()
 
     @cached_method
-    def is_weakly_reduced(self):
+    def is_weakly_reduced(self) -> bool:
         r"""
         Check if the form `ax^2 + bxy + cy^2` satisfies
         `|b| \leq a \leq c`, i.e., is weakly reduced.
@@ -745,7 +745,7 @@ class BinaryQF(SageObject):
         return (abs(self._b) <= self._a) and (self._a <= self._c)
 
     @cached_method
-    def is_reducible(self):
+    def is_reducible(self) -> bool:
         r"""
         Return whether this form is reducible and cache the result.
 
@@ -1930,9 +1930,11 @@ def BinaryQF_reduced_representatives(D, primitive_only=False, proper=True):
             b = D.sqrt()
             c = ZZ.zero()
             # -b/2 < a <= b/2
-            for a in xsrange((-b/2).floor() + 1, (b/2).floor() + 1):
-                if not primitive_only or (gcd([a, b, c]) == 1):
-                    form_list.append(BinaryQF(a, b, c))
+            form_list.extend(BinaryQF(a, b, c)
+                             for a in xsrange((-b / 2).floor() + 1,
+                                              (b / 2).floor() + 1)
+                             if not primitive_only or (gcd([a, b, c]) == 1))
+
         # We follow the description of Buchmann/Vollmer 6.7.1.  They
         # enumerate all reduced forms.  We only want representatives.
         else:

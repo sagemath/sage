@@ -188,7 +188,7 @@ def find_p_neighbor_from_vec(self, p, y, return_matrix=False):
     """
     p = ZZ(p)
     if not p.divides(self(y)):
-        raise ValueError("y=%s must be of square divisible by p=%s" % (y, p))
+        raise ValueError(f"y={y} must be of square divisible by p={p}")
     if self.base_ring() not in [ZZ, QQ]:
         raise NotImplementedError("the base ring of this form must be the integers or the rationals")
 
@@ -202,10 +202,10 @@ def find_p_neighbor_from_vec(self, p, y, return_matrix=False):
         odd = True
         if G.denominator() != 1:
             raise ValueError("the associated bilinear form q(x+y)-q(x)-q(y) must be integral.")
-    b = y*G*y
+    b = y * G * y
     if not b % p == 0:
         raise ValueError("y^2 must be divisible by p=%s" % p)
-    y_dual = y*G
+    y_dual = y * G
     if p != 2 and b % p**2 != 0:
         for k in range(n):
             if y_dual[k] % p != 0:
@@ -213,8 +213,8 @@ def find_p_neighbor_from_vec(self, p, y, return_matrix=False):
                 break
         else:
             raise ValueError("either y is not primitive or self is not maximal at %s" % p)
-        z *= (2*y*G*z).inverse_mod(p)
-        y = y - b*z
+        z *= (2 * y * G * z).inverse_mod(p)
+        y = y - b * z
         # assert y*G*y % p^2 == 0
     if p == 2:
         val = b.valuation(p)
@@ -228,14 +228,14 @@ def find_p_neighbor_from_vec(self, p, y, return_matrix=False):
                     break
             else:
                 raise ValueError("either y is not primitive or self is not even, maximal at 2")
-            y += 2*z
+            y += 2 * z
             # assert y*G*y % 8 == 0
 
-    y_dual = G*y
+    y_dual = G * y
     Ly = y_dual.change_ring(GF(p)).column().kernel().matrix().lift()
     B = Ly.stack(p * matrix.identity(n))
     # the rows of B now generate L_y = { x in L | (x,y)=0 mod p}
-    B = y.row().stack(p*B)
+    B = y.row().stack(p * B)
     B = B.hermite_form()[:n, :] / p
     # the rows of B generate ZZ * y/p + L_y
     # by definition this is the p-neighbor of L at y
@@ -243,10 +243,10 @@ def find_p_neighbor_from_vec(self, p, y, return_matrix=False):
 
     if return_matrix:
         return B.T
-    else:
-        QF = self.parent()
-        Gnew = (B*G*B.T).change_ring(R)
-        return QF(Gnew)
+
+    QF = self.parent()
+    Gnew = (B * G * B.T).change_ring(R)
+    return QF(Gnew)
 
 
 def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
@@ -346,9 +346,9 @@ def neighbor_iteration(seeds, p, mass=None, max_classes=ZZ(10)**3,
         raise ValueError("unknown algorithm")
     waiting_list = list(seeds)
     isom_classes = []
-    mass_count = QQ(0)
-    n_isom_classes = ZZ(0)
-    while len(waiting_list) > 0 and mass != mass_count and n_isom_classes < max_classes:
+    mass_count = QQ.zero()
+    n_isom_classes = ZZ.zero()
+    while waiting_list and mass != mass_count and n_isom_classes < max_classes:
         # find all p-neighbors of Q
         Q = waiting_list.pop()
         for v in p_divisible_vectors(Q, max_neighbors):
