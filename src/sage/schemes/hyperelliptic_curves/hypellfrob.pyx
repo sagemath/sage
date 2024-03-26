@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 # distutils: language = c++
 # distutils: sources = sage/schemes/hyperelliptic_curves/hypellfrob/hypellfrob.cpp sage/schemes/hyperelliptic_curves/hypellfrob/recurrences_ntl.cpp
 # distutils: depends = sage/schemes/hyperelliptic_curves/hypellfrob/hypellfrob.h sage/schemes/hyperelliptic_curves/hypellfrob/recurrences_ntl.h

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Ternary quadratic form with integer coefficients
 

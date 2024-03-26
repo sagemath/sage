@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 r"""
 "Named" Permutation groups (such as the symmetric group, S_n)
 

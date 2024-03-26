@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 """
 Convert PARI objects to/from Flint objects
 

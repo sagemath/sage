@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Elements, Array and Lists With Clone Protocol
 

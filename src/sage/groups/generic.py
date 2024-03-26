@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Miscellaneous generic functions
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # cython: old_style_globals=True
 # The old_style_globals directive is important for load() to work correctly.
 # However, this should be removed in favor of user_globals; see

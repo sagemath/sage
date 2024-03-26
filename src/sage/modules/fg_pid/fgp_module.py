@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Finitely generated modules over a PID
 

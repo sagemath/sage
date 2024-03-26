@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 # sage.doctest: needs sage.libs.pari
 r"""
 Genus

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-linbox
 # distutils: extra_compile_args = -D_XPG6 NTL_CFLAGS M4RI_CFLAGS
 # distutils: extra_link_args = NTL_LIBEXTRA
 # distutils: libraries = iml NTL_LIBRARIES m CBLAS_LIBRARIES

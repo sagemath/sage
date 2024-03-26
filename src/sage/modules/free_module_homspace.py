@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Homspaces between free modules
 

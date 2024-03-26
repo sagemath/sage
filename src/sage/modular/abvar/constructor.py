@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 Constructors for certain modular abelian varieties
 

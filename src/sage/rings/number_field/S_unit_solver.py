@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 # sage.doctest: needs sage.rings.number_field sage.rings.padics
 r"""
 Solver for the `S`-unit equation `x + y = 1`

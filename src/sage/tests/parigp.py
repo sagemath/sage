@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 # sage.doctest: needs sage.libs.pari sage.modules
 r"""
 This file is meant to catch errors in the PARI/GP package which are not

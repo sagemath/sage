@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Arbitrary Precision Complex Numbers using GNU MPC
 

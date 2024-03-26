@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Searching a sorted list
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Base class for parent objects
 

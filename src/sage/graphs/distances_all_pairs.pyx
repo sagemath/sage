@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # cython: binding=True
 r"""
 Distances/shortest paths between all pairs of vertices

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # distutils: libraries = gmp
 # distutils: extra_compile_args = -D_XPG6
 """

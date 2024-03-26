@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 from sage.structure.element cimport Element
 
 cdef class Letter(Element):

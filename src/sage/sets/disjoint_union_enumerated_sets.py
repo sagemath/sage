@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Disjoint union of enumerated sets
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # sage.doctest: optional - sage.plot
 r"""
 Graph plotting

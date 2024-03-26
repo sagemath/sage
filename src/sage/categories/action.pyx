@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Group, ring, etc. actions on objects
 

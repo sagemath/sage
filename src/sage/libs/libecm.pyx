@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-libecm
 # distutils: libraries = ecm
 # distutils: extra_link_args = LINUX_NOEXECSTACK
 r"""

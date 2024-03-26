@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-pari
 r"""
 `p`-adic Valuations on Number Fields and Their Subrings and Completions
 

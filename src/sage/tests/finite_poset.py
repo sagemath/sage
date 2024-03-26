@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 # sage.doctest: needs sage.graphs sage.modules
 """
 This file contains test functions that can be used to search

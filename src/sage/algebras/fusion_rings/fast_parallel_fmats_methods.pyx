@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-singular
 """
 Fast F-Matrix Methods
 """

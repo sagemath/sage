@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # autopep8: off
 r"""
 Bipartite graphs

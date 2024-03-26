@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-singular
 r"""
 Shared Memory Managers for F-Symbol Attributes
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-glpk
 
 """
 GLPK/exact Backend (simplex method in exact rational arithmetic)

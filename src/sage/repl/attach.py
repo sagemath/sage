@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Keep track of attached files
 
