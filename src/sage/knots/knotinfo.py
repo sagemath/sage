@@ -349,12 +349,12 @@ class SymmetryMutant(Enum):
         the concordance inverse, `-K = (-S_3, -S_1)`, and the
         mirror image, `K^m = (-S_3, S_1)`.
     """
-    itself ='s'
-    reverse ='r'
-    concordance_inverse ='mr'
-    mirror_image ='m'
+    itself = 's'
+    reverse = 'r'
+    concordance_inverse = 'mr'
+    mirror_image = 'm'
     mixed = 'x' # to be used in connection with KnotInfoSeries
-    unknown ='?'
+    unknown = '?'
 
     def __gt__(self, other):
         r"""
@@ -371,9 +371,7 @@ class SymmetryMutant(Enum):
             <SymmetryMutant.mirror_image: 'm'>,
             <SymmetryMutant.unknown: '?'>]
         """
-        if self.__class__ is other.__class__:
-            return self.value < other.value
-        return NotImplemented
+        return self.value < other.value
 
 
 # ---------------------------------------------------------------------------------
@@ -986,6 +984,12 @@ class KnotInfoBase(Enum):
 
             sage: KnotInfo.K6_3.is_reversible()
             True
+
+        TESTS::
+
+            sage: KnotInfo.K10_67.is_reversible() # optional - database_knotinfo
+            False
+            sage: KnotInfo.L7a4_0.is_reversible() # optional - database_knotinfo
         """
         if self.is_knot():
             symmetry_type = self.symmetry_type()

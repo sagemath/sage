@@ -4294,6 +4294,16 @@ class Link(SageObject):
              (<KnotInfo.L10a171_1_1_0: 'L10a171{1,1,0}'>, <SymmetryMutant.reverse: 'r'>),
              (<KnotInfo.L10a171_1_1_1: 'L10a171{1,1,1}'>, <SymmetryMutant.itself: 's'>),
              (<KnotInfo.L10a171_1_1_1: 'L10a171{1,1,1}'>, <SymmetryMutant.reverse: 'r'>)]
+            sage: KnotInfo.L10a151_0_0.link().get_knotinfo()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: this link cannot be uniquely determined (unknown chirality)
+            use keyword argument `unique` to obtain more details
+            sage: KnotInfo.L10a151_0_0.link().get_knotinfo(unique=False)
+            [(<KnotInfo.L10a151_0_0: 'L10a151{0,0}'>, <SymmetryMutant.unknown: '?'>),
+             (<KnotInfo.L10a151_0_1: 'L10a151{0,1}'>, <SymmetryMutant.unknown: '?'>),
+             (<KnotInfo.L10a151_1_0: 'L10a151{1,0}'>, <SymmetryMutant.unknown: '?'>),
+             (<KnotInfo.L10a151_1_1: 'L10a151{1,1}'>, <SymmetryMutant.unknown: '?'>)]
 
             sage: L = KnotInfo.L6a2_0
             sage: L1 = L.link()
@@ -4509,6 +4519,9 @@ class Link(SageObject):
             sage: L1.is_isotopic(L2)
             verbose 1 (... link.py, is_isotopic) identified by KnotInfo uniquely (KnotInfo.L6a2_0, SymmetryMutant.itself)
             True
+            sage: KnotInfo.K0_1.link().is_isotopic(KnotInfo.L2a1_0.link())
+            verbose 1 (... link.py, is_isotopic) different number of components
+            False
 
             sage: # optional - database_knotinfo
             sage: K = KnotInfo.K10_67
@@ -4517,6 +4530,12 @@ class Link(SageObject):
             sage: K1.is_isotopic(K1r)
             verbose 1 (... link.py, is_isotopic) unidentified by KnotInfo ([<KnotInfo.K10_67: '10_67'>], SymmetryMutant.itself != [<KnotInfo.K10_67: '10_67'>], SymmetryMutant.reverse)
             False
+            sage: KnotInfo.K10_25.link().is_isotopic(KnotInfo.K10_56.link())
+            verbose 1 (... link.py, is_isotopic) unidentified by KnotInfo ([<KnotInfo.K10_25: '10_25'>] != [<KnotInfo.K10_56: '10_56'>], SymmetryMutant.itself)
+            False
+            sage: KnotInfo.L8n2_0.link().is_isotopic(KnotInfo.L8n2_1.link())
+            verbose 1 (... link.py, is_isotopic) identified by KnotInfoSeries ([<KnotInfo.L8n2_0: 'L8n2{0}'>, <KnotInfo.L8n2_1: 'L8n2{1}'>], SymmetryMutant.reverse)
+            True
             sage: set_verbose(0)
 
         """
@@ -4560,7 +4579,7 @@ class Link(SageObject):
                         verbose('identified by KnotInfo uniquely (%s, %s)' % (sl[0], k))
                         return True
                     elif not self.is_knot():
-                        if len(set([l[0].series(oriented=True) for l in sl])) == 1:
+                        if len(set([l.series(oriented=True) for l in sl])) == 1:
                             # all matches are orientation mutants of each other
                             verbose('identified by KnotInfoSeries (%s, %s)' % (sl, k))
                             return True
@@ -4569,7 +4588,7 @@ class Link(SageObject):
                     else:
                         verbose('KnotInfo non-unique (%s, %s)' % (sl, k))
                 else:
-                    common =  [l for l in sl if l in ol]
+                    common = [l for l in sl if l in ol]
                     if common:
                         # better don't trust
                         verbose('KnotInfo common: %s' % common)
