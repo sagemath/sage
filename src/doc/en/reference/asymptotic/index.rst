@@ -1,3 +1,5 @@
+.. _asymptotic_expansions:
+
 Asymptotic Expansions
 =====================
 

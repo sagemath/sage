@@ -17,19 +17,19 @@ Sage's manuals are written in `ReST <http://docutils.sourceforge.net/rst.html>`_
    * - Name
      - Files
 
-   * - `Tutorial <../tutorial/index.html>`_
+   * - :ref:`Tutorial <tutorial>`
      - ``SAGE_ROOT/src/doc/en/tutorial``
 
-   * - `Developer's guide <../developer/index.html>`_
+   * - :ref:`Developer's guide <developers-guide>`
      - ``SAGE_ROOT/src/doc/en/developer``
 
-   * - `Constructions <../constructions/index.html>`_
+   * - :ref:`Constructions <constructions>`
      - ``SAGE_ROOT/src/doc/en/constructions``
 
-   * - `Installation guide <../installation/index.html>`_
+   * - :ref:`Installation guide <installation-guide>`
      - ``SAGE_ROOT/src/doc/en/installation``
 
-   * - `Reference manual <../reference/index.html>`_
+   * - :ref:`Reference manual <reference-manual>`
      - ``SAGE_ROOT/src/doc/en/reference``
        (most of it is generated from the
        source code)

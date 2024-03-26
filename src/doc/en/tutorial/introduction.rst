@@ -82,8 +82,8 @@ computer. Here we merely make a few comments.
    the results of Sage computations into a LaTeX file), you will need to
    make SageTeX known to your TeX distribution. To do this, see the
    section "Make SageTeX known to TeX" in the `Sage installation guide
-   <http://doc.sagemath.org/html/en/>`_ (`this link
-   <../installation/index.html>`_ should take you to a local copy of the
+   <http://doc.sagemath.org/html/en/>`_ (:ref:`this link
+   <installation-guide>` should take you to a local copy of the
    installation guide). It's quite easy; you just need to set an
    environment variable or copy a single file to a directory that TeX
    will search.
