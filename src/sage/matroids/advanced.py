@@ -15,6 +15,7 @@ This adds the following to the main namespace:
         - :class:`RankMatroid <sage.matroids.rank_matroid.RankMatroid>`
         - :class:`CircuitClosuresMatroid <sage.matroids.circuit_closures_matroid.CircuitClosuresMatroid>`
         - :class:`BasisMatroid <sage.matroids.basis_matroid.BasisMatroid>`
+        - :class:`FlatsMatroid <sage.matroids.flats_matroid.FlatsMatroid>`
         - :class:`LinearMatroid <sage.matroids.linear_matroid.LinearMatroid>`
         - :class:`RegularMatroid <sage.matroids.linear_matroid.RegularMatroid>`
         - :class:`BinaryMatroid <sage.matroids.linear_matroid.BinaryMatroid>`
@@ -54,6 +55,7 @@ from .dual_matroid import DualMatroid
 from .rank_matroid import RankMatroid
 from .circuit_closures_matroid import CircuitClosuresMatroid
 from .basis_matroid import BasisMatroid
+from .flats_matroid import FlatsMatroid
 from .linear_matroid import LinearMatroid, RegularMatroid, BinaryMatroid, TernaryMatroid, QuaternaryMatroid
 from .utilities import setprint, newlabel, get_nonisomorphic_matroids, lift_cross_ratios, lift_map
 from . import lean_matrix
