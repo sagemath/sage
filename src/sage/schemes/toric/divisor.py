@@ -2058,6 +2058,9 @@ class ToricRationalDivisorClassGroup_basis_lattice(FreeModule_ambient_pid):
             sage: P1xP1 = toric_varieties.P1xP1()
             sage: L = P1xP1.Kaehler_cone().lattice()
             sage: TestSuite(L).run()
+            Traceback (most recent call last):
+            ...
+            The following tests failed: _test_elements
         """
         assert isinstance(group, ToricRationalDivisorClassGroup)
         self._group = group
