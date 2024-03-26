@@ -388,7 +388,7 @@ print_name_mapping = {
 
 singular_name_mapping = {
     'lex'           : 'lp',
-    'invlex'        : 'rp',
+    'invlex'        : 'ip',
     'degrevlex'     : 'dp',
     'deglex'        : 'Dp',
     'neglex'        : 'ls',
