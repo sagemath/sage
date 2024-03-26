@@ -1,10 +1,10 @@
-sphinx_inline_tabs: Add inline tabbed content to your Sphinx documentation.
-===========================================================================
+sphinx_inline_tabs: Add inline tabbed content to your Sphinx documentation
+==========================================================================
 
 Description
 -----------
 
-Add inline tabbed content to your Sphinx documentation.
+Add inline tabbed content to your Sphinx documentation
 
 License
 -------
