@@ -11,8 +11,8 @@ expression for `w`.
 A subword complex is a shellable sphere if and only if the Demazure
 product of `Q` equals `w`, otherwise it is a shellable ball.
 
-The code is optimized to be used with ReflectionGroup, it works as well
-with CoxeterGroup, but many methods fail for WeylGroup.
+The code is optimized to be used with :class:`ReflectionGroup`, it works as well
+with :class:`CoxeterGroup`, but many methods fail for :class:`WeylGroup`.
 
 EXAMPLES::
 

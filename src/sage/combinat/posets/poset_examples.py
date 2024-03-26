@@ -741,9 +741,9 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` - number of elements, a non-negative integer
+        - ``n`` -- number of elements, a non-negative integer
 
-        - ``p`` - a probability, a real number between 0 and 1 (inclusive)
+        - ``p`` -- a probability, a real number between 0 and 1 (inclusive)
 
         OUTPUT:
 
@@ -969,11 +969,10 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``s`` - shape of the tableaux
+        - ``s`` -- shape of the tableaux
 
-        - ``f`` - maximum fill number.  This is an optional
-          argument.  If no maximal number is given, it will use
-          the number of cells in the shape.
+        - ``f`` -- integer (default: ``None``); the maximum fill number.
+          By default (``None``), the method uses the number of cells in the shape.
 
         .. NOTE::
 
@@ -1010,8 +1009,8 @@ class Posets(metaclass=ClasscallMetaclass):
     @staticmethod
     def StandardExample(n, facade=None):
         r"""
-        Return the partially ordered set on ``2n`` elements with
-        dimension ``n``.
+        Return the partially ordered set on `2n` elements with
+        dimension `n`.
 
         Let `P` be the poset on `\{0, 1, 2, \ldots, 2n-1\}` whose defining
         relations are that `i < j` for every `0 \leq i < n \leq j < 2n`
@@ -1021,7 +1020,8 @@ class Posets(metaclass=ClasscallMetaclass):
         INPUT:
 
         - ``n`` -- an integer `\ge 2`, dimension of the constructed poset
-        - ``facade`` (boolean) -- whether to make the returned poset a
+
+        - ``facade`` -- boolean; whether to make the returned poset a
           facade poset (see :mod:`sage.categories.facade_sets`); the
           default behaviour is the same as the default behaviour of
           the :func:`~sage.combinat.posets.posets.Poset` constructor
@@ -1081,9 +1081,9 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``start`` - list permutation
+        - ``start`` -- list permutation
 
-        - ``end`` - list permutation (same n, of course)
+        - ``end`` -- list permutation (same n, of course)
 
         .. note::
 
@@ -1167,7 +1167,7 @@ class Posets(metaclass=ClasscallMetaclass):
         r"""
         Return the tetrahedral poset based on the input colors.
 
-        This method will return the tetrahedral poset with n-1 layers and
+        This method will return the tetrahedral poset with `n-1` layers and
         covering relations based on the input colors of 'green', 'red',
         'orange', 'silver', 'yellow' and 'blue' as defined in [Striker2011]_.
         For particular color choices, the order ideals of the resulting
@@ -1199,7 +1199,8 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: posets.TetrahedralPoset(4,'green','red','yellow','silver','blue','orange')
             Finite poset containing 10 elements
 
-            sage: posets.TetrahedralPoset(4,'green','red','yellow','silver','blue','orange', labels='integers')
+            sage: posets.TetrahedralPoset(4,'green','red','yellow','silver','blue','orange',
+            ....:                         labels='integers')
             Finite poset containing 10 elements
 
             sage: A = AlternatingSignMatrices(3)
@@ -1322,7 +1323,7 @@ class Posets(metaclass=ClasscallMetaclass):
         - ``label`` -- (default: ``'permutations'``) a label for the elements
           of the poset returned by the function; the options are
 
-          * ``'permutations'`` - labels the elements are given by their
+          * ``'permutations'`` - labels the elements by their
             one-line notation
           * ``'reduced_words'`` - labels the elements by the
             lexicographically minimal reduced word
@@ -1361,8 +1362,8 @@ class Posets(metaclass=ClasscallMetaclass):
 
         INPUT:
 
-        - ``n`` - nonnegative integer, number of elements in the poset
-        - ``m`` - nonnegative integer (default 1), how frequently down
+        - ``n`` -- nonnegative integer, number of elements in the poset
+        - ``m`` -- nonnegative integer (default 1), how frequently down
           steps occur
 
         OUTPUT:
@@ -1601,7 +1602,7 @@ class Posets(metaclass=ClasscallMetaclass):
     def PermutationPattern(n):
         r"""
         Return the poset of permutations under pattern containment
-        up to rank ``n``.
+        up to rank `n`.
 
         INPUT:
 
@@ -1819,9 +1820,9 @@ class Posets(metaclass=ClasscallMetaclass):
             7
 
             sage: P = posets.MobilePoset(posets.RibbonPoset(7, [1,3]),
-            ....: {1: [posets.YoungDiagramPoset([3, 2], dual=True)],
-            ....: 3: [posets.DoubleTailedDiamond(6)]},
-            ....: anchor=(4, 2, posets.ChainPoset(6)))
+            ....:         {1: [posets.YoungDiagramPoset([3, 2], dual=True)],
+            ....:          3: [posets.DoubleTailedDiamond(6)]},
+            ....:         anchor=(4, 2, posets.ChainPoset(6)))
             sage: len(P.cover_relations())
             33
         """

@@ -1129,7 +1129,8 @@ class TamariIntervalPoset(Element,
 
         EXAMPLES::
 
-            sage: tip = TamariIntervalPoset(8, [(1,2), (2,4), (3,4), (6,7), (3,2), (5,4), (6,4), (8,7)])
+            sage: tip = TamariIntervalPoset(8, [(1,2), (2,4), (3,4), (6,7),
+            ....:                               (3,2), (5,4), (6,4), (8,7)])
             sage: t = tip.rise_contact_involution(); t
             The Tamari interval of size 8 induced by relations [(2, 8), (3, 8),
             (4, 5), (5, 7), (6, 7), (7, 8), (8, 1), (7, 2), (6, 2), (5, 3),
@@ -1840,13 +1841,16 @@ class TamariIntervalPoset(Element,
 
         EXAMPLES::
 
-            sage: ip = TamariIntervalPoset(6,[(3,2),(4,3),(5,2),(6,5),(1,2),(4,5)]); ip
-            The Tamari interval of size 6 induced by relations [(1, 2), (4, 5), (6, 5), (5, 2), (4, 3), (3, 2)]
+            sage: ip = TamariIntervalPoset(6, [(3,2),(4,3),(5,2),(6,5),(1,2),(4,5)]); ip
+            The Tamari interval of size 6 induced by relations
+             [(1, 2), (4, 5), (6, 5), (5, 2), (4, 3), (3, 2)]
             sage: ip.lower_binary_tree()
             [[., .], [[., [., .]], [., .]]]
-            sage: TamariIntervalPosets.final_forest(ip.lower_binary_tree()) == ip.final_forest()
+            sage: ff = TamariIntervalPosets.final_forest(ip.lower_binary_tree())
+            sage: ff == ip.final_forest()
             True
-            sage: ip == TamariIntervalPosets.from_binary_trees(ip.lower_binary_tree(),ip.upper_binary_tree())
+            sage: ip == TamariIntervalPosets.from_binary_trees(ip.lower_binary_tree(),
+            ....:                                              ip.upper_binary_tree())
             True
         """
         return self.min_linear_extension().binary_search_tree_shape(left_to_right=False)
@@ -1891,9 +1895,11 @@ class TamariIntervalPoset(Element,
         EXAMPLES::
 
             sage: ip = TamariIntervalPoset(6,[(3,2),(4,3),(5,2),(6,5),(1,2),(4,5)]); ip
-            The Tamari interval of size 6 induced by relations [(1, 2), (4, 5), (6, 5), (5, 2), (4, 3), (3, 2)]
+            The Tamari interval of size 6 induced by relations
+             [(1, 2), (4, 5), (6, 5), (5, 2), (4, 3), (3, 2)]
             sage: ip.upper_binary_tree()
             [[., .], [., [[., .], [., .]]]]
+
             sage: TamariIntervalPosets.initial_forest(ip.upper_binary_tree()) == ip.initial_forest()
             True
             sage: ip == TamariIntervalPosets.from_binary_trees(ip.lower_binary_tree(),ip.upper_binary_tree())
@@ -1941,8 +1947,9 @@ class TamariIntervalPoset(Element,
 
         EXAMPLES::
 
-            sage: ip = TamariIntervalPoset(6,[(3,2),(4,3),(5,2),(6,5),(1,2),(3,5),(4,5)]); ip
-            The Tamari interval of size 6 induced by relations [(1, 2), (3, 5), (4, 5), (6, 5), (5, 2), (4, 3), (3, 2)]
+            sage: ip = TamariIntervalPoset(6, [(3,2),(4,3),(5,2),(6,5),(1,2),(3,5),(4,5)]); ip
+            The Tamari interval of size 6 induced by relations
+             [(1, 2), (3, 5), (4, 5), (6, 5), (5, 2), (4, 3), (3, 2)]
             sage: ip.subposet(1,3)
             The Tamari interval of size 2 induced by relations [(1, 2)]
             sage: ip.subposet(1,4)
@@ -2109,12 +2116,16 @@ class TamariIntervalPoset(Element,
 
         EXAMPLES::
 
-            sage: ip = TamariIntervalPoset(4,[(2,4),(3,4),(2,1),(3,1)])
+            sage: ip = TamariIntervalPoset(4, [(2,4),(3,4),(2,1),(3,1)])
             sage: list(ip.lower_contained_intervals())
-            [The Tamari interval of size 4 induced by relations [(2, 4), (3, 4), (3, 1), (2, 1)],
-             The Tamari interval of size 4 induced by relations [(1, 4), (2, 4), (3, 4), (3, 1), (2, 1)],
-             The Tamari interval of size 4 induced by relations [(2, 3), (3, 4), (3, 1), (2, 1)],
-             The Tamari interval of size 4 induced by relations [(1, 4), (2, 3), (3, 4), (3, 1), (2, 1)]]
+            [The Tamari interval of size 4 induced by relations
+              [(2, 4), (3, 4), (3, 1), (2, 1)],
+             The Tamari interval of size 4 induced by relations
+              [(1, 4), (2, 4), (3, 4), (3, 1), (2, 1)],
+             The Tamari interval of size 4 induced by relations
+              [(2, 3), (3, 4), (3, 1), (2, 1)],
+             The Tamari interval of size 4 induced by relations
+              [(1, 4), (2, 3), (3, 4), (3, 1), (2, 1)]]
             sage: ip = TamariIntervalPoset(4,[])
             sage: len(list(ip.lower_contained_intervals()))
             14
@@ -2256,12 +2267,15 @@ class TamariIntervalPoset(Element,
 
         EXAMPLES::
 
-            sage: ip = TamariIntervalPoset(4,[(2,4),(3,4),(2,1),(3,1)])
+            sage: ip = TamariIntervalPoset(4, [(2,4),(3,4),(2,1),(3,1)])
             sage: list(ip.maximal_chain_tamari_intervals())
-            [The Tamari interval of size 4 induced by relations [(2, 4), (3, 4), (3, 1), (2, 1)],
-             The Tamari interval of size 4 induced by relations [(2, 4), (3, 4), (4, 1), (3, 1), (2, 1)],
-             The Tamari interval of size 4 induced by relations [(2, 4), (3, 4), (4, 1), (3, 2), (2, 1)]]
-            sage: ip = TamariIntervalPoset(4,[])
+            [The Tamari interval of size 4 induced by relations
+              [(2, 4), (3, 4), (3, 1), (2, 1)],
+             The Tamari interval of size 4 induced by relations
+              [(2, 4), (3, 4), (4, 1), (3, 1), (2, 1)],
+             The Tamari interval of size 4 induced by relations
+              [(2, 4), (3, 4), (4, 1), (3, 2), (2, 1)]]
+            sage: ip = TamariIntervalPoset(4, [])
             sage: list(ip.maximal_chain_tamari_intervals())
             [The Tamari interval of size 4 induced by relations [],
              The Tamari interval of size 4 induced by relations [(2, 1)],
@@ -2405,7 +2419,8 @@ class TamariIntervalPoset(Element,
             sage: list(T.tamari_inversions_iter())
             [(4, 5)]
 
-            sage: T = TamariIntervalPoset(8, [(2, 7), (3, 7), (4, 7), (5, 7), (6, 7), (8, 7), (6, 4), (5, 4), (4, 3), (3, 2)])
+            sage: T = TamariIntervalPoset(8, [(2, 7), (3, 7), (4, 7), (5, 7), (6, 7),
+            ....:                             (8, 7), (6, 4), (5, 4), (4, 3), (3, 2)])
             sage: list(T.tamari_inversions_iter())
             [(1, 2), (1, 7), (5, 6)]
 
@@ -2565,12 +2580,14 @@ class TamariIntervalPoset(Element,
 
         EXAMPLES::
 
-            sage: tip = TamariIntervalPoset(8, [(1,2), (2,4), (3,4), (6,7), (3,2), (5,4), (6,4), (8,7)])
+            sage: tip = TamariIntervalPoset(8, [(1,2), (2,4), (3,4), (6,7),
+            ....:                               (3,2), (5,4), (6,4), (8,7)])
             sage: tip.decomposition_to_triple()
             (The Tamari interval of size 3 induced by relations [(1, 2), (3, 2)],
-            The Tamari interval of size 4 induced by relations [(2, 3), (4, 3)],
-            2)
-            sage: tip == TamariIntervalPosets.recomposition_from_triple(*tip.decomposition_to_triple())
+             The Tamari interval of size 4 induced by relations [(2, 3), (4, 3)],
+             2)
+            sage: tip == TamariIntervalPosets.recomposition_from_triple(
+            ....:            *tip.decomposition_to_triple())
             True
 
         TESTS::
@@ -2600,7 +2617,8 @@ class TamariIntervalPoset(Element,
 
         EXAMPLES::
 
-            sage: tip = TamariIntervalPoset(8, [(1,2), (2,4), (3,4), (6,7), (3,2), (5,4), (6,4), (8,7)])
+            sage: tip = TamariIntervalPoset(8, [(1,2), (2,4), (3,4), (6,7),
+            ....:                               (3,2), (5,4), (6,4), (8,7)])
             sage: tip.grafting_tree()
             2[1[0[., .], 0[., .]], 0[., 1[0[., .], 0[., .]]]]
             sage: tip == TamariIntervalPosets.from_grafting_tree(tip.grafting_tree())
@@ -2906,7 +2924,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
             sage: TIP = TamariIntervalPosets
             sage: TIP.options.latex_color_decreasing
             red
-            sage: TIP.options.latex_color_decreasing='green'
+            sage: TIP.options.latex_color_decreasing = 'green'
             sage: TIP.options.latex_color_decreasing
             green
             sage: TIP.options._reset()
@@ -3243,7 +3261,8 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
             sage: tree1 = BinaryTree([[],[[None,[]],[]]])
             sage: tree2 = BinaryTree([None,[None,[None,[[],[]]]]])
             sage: TamariIntervalPosets.from_binary_trees(tree1,tree2)
-            The Tamari interval of size 6 induced by relations [(4, 5), (6, 5), (5, 2), (4, 3), (3, 2)]
+            The Tamari interval of size 6 induced by relations
+             [(4, 5), (6, 5), (5, 2), (4, 3), (3, 2)]
 
             sage: tree3 = BinaryTree([None,[None,[[],[None,[]]]]])
             sage: TamariIntervalPosets.from_binary_trees(tree1,tree3)
