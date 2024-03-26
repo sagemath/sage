@@ -4063,7 +4063,7 @@ def TuranGraph(n, r):
         True
 
     The Turan graph `T(n,r)` has `\frac{(r-1)(n^2-s^2)}{2r} + \frac{s(s-1)}{2}`
-    edges, where `s = n \mod r` (:trac:`34249`)::
+    edges, where `s = n \mod r` (:issue:`34249`)::
 
         sage: n = 12
         sage: r = 8

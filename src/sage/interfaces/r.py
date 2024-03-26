@@ -553,7 +553,7 @@ class R(ExtraTabCompletion, Interface):
         """
         TESTS:
 
-        Check conversion of Booleans (:trac:`28705`)::
+        Check conversion of Booleans (:issue:`28705`)::
 
             sage: repr(r(True)) == r._true_symbol()  # indirect doctest  # optional - rpy2
             True
@@ -1433,7 +1433,7 @@ class R(ExtraTabCompletion, Interface):
 
         Check that ``tmpdir`` and ``r.getwd()`` refer to the same
         directory.  We need to use ``realpath()`` in case ``$TMPDIR``
-        (by default ``/tmp``) is a symbolic link (see :trac:`10264`).
+        (by default ``/tmp``) is a symbolic link (see :issue:`10264`).
 
         ::
 

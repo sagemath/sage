@@ -138,7 +138,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             sage: X.extend([z3, z3**2, z3*z4])
             sage: assert len(X) == len(set(hash(x) for x in X))
 
-        Check that :trac:`19956` is fixed::
+        Check that :issue:`19956` is fixed::
 
             sage: R.<x,y> = GF(2).algebraic_closure()[]
             sage: x.resultant(y)
@@ -501,7 +501,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             Finite Field of size 3
 
         This also works when the element has to be converted between
-        two non-trivial finite subfields (see :trac:`16509`)::
+        two non-trivial finite subfields (see :issue:`16509`)::
 
             sage: K = GF(5).algebraic_closure()
             sage: z = K.gen(5) - K.gen(5) + K.gen(2)

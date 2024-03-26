@@ -48,7 +48,7 @@ AUTHORS:
 - Volker Braun (2013-1) port to new Parent, libGAP.
 
 - Sebastian Oehms (2018-07): Added _permutation_group_element_ (Issue #25706)
-- Sebastian Oehms (2019-01): Revision of :trac:`25706` (:trac:`26903` and :trac:`27143`).
+- Sebastian Oehms (2019-01): Revision of :issue:`25706` (:issue:`26903` and :issue:`27143`).
 """
 
 # #############################################################################
@@ -461,7 +461,7 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
             sage: loads(dumps(G)) == G
             True
 
-        Check that :trac:`22128` is fixed::
+        Check that :issue:`22128` is fixed::
 
             sage: # needs sage.symbolic
             sage: R = MatrixSpace(SR, 2)
