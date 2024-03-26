@@ -67,6 +67,7 @@ from sage.misc.cachefunc import cached_method
 #
 ###############################################################################
 
+
 def IntegralLattice(data, basis=None):
     r"""
     Return the integral lattice spanned by ``basis`` in the ambient space.
@@ -237,7 +238,7 @@ def IntegralLattice(data, basis=None):
     elif isinstance(data, Integer):
         inner_product_matrix = matrix.identity(ZZ, data)
     elif data == "U" or data == "H":
-        inner_product_matrix = matrix([[0,1],[1,0]])
+        inner_product_matrix = matrix([[0, 1], [1, 0]])
     else:
         from sage.combinat.root_system.cartan_matrix import CartanMatrix
         inner_product_matrix = CartanMatrix(data)
@@ -254,6 +255,7 @@ def IntegralLattice(data, basis=None):
                                                  basis=basis,
                                                  inner_product_matrix=A.inner_product_matrix(),
                                                  already_echelonized=False)
+
 
 def IntegralLatticeDirectSum(Lattices, return_embeddings=False):
     r"""
@@ -350,7 +352,7 @@ def IntegralLatticeDirectSum(Lattices, return_embeddings=False):
     basis = [matrix.block(1, 3, [matrix.zero(dims[i], sum_degree[i]),
                                  Lattices[i].basis_matrix(),
                                  matrix.zero(dims[i], sum_degree[-1] - sum_degree[i+1])
-                                ]) for i in range(N)]
+                                 ]) for i in range(N)]
     basis_matrix = matrix.block(N, 1, basis)
     ipm = ambient.inner_product_matrix()
     direct_sum = FreeQuadraticModule_integer_symmetric(ambient=ambient,
@@ -618,6 +620,7 @@ def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
 #
 ###############################################################################
 
+
 class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_basis_pid):
     r"""
     This class represents non-degenerate, integral,
@@ -650,19 +653,19 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: TestSuite(L).run()
         """
         FreeQuadraticModule_submodule_with_basis_pid.__init__(
-                                        self,
-                                        ambient,
-                                        basis,
-                                        inner_product_matrix,
-                                        check=check,
-                                        already_echelonized=already_echelonized)
+            self,
+            ambient,
+            basis,
+            inner_product_matrix,
+            check=check,
+            already_echelonized=already_echelonized)
         if self.determinant() == 0:
             raise ValueError("lattices must be nondegenerate; "
-                            "use FreeQuadraticModule instead")
+                             "use FreeQuadraticModule instead")
         if self.gram_matrix().base_ring() is not ZZ:
             if self.gram_matrix().denominator() != 1:
                 raise ValueError("lattices must be integral; "
-                            "use FreeQuadraticModule instead")
+                                 "use FreeQuadraticModule instead")
 
     def _mul_(self, other, switch_sides=False):
         r"""
@@ -717,7 +720,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         else:
             s += "Lattice "
         s += "of degree %s and rank %s over %s\n" % (
-              self.degree(), self.rank(), self.base_ring())
+            self.degree(), self.rank(), self.base_ring())
         if self.basis_matrix().is_one():
             s += "Standard basis \n"
         else:
@@ -887,14 +890,14 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
         smzero = matrix.zero(self.rank(), M.degree())
         mszero = matrix.zero(M.rank(), self.degree())
         basis = self.basis_matrix().augment(smzero).stack(
-                            mszero.augment(M.basis_matrix()))
+            mszero.augment(M.basis_matrix()))
         ipm = ambient.inner_product_matrix()
         return FreeQuadraticModule_integer_symmetric(ambient=ambient,
                                                      basis=basis,
                                                      inner_product_matrix=ipm,
                                                      already_echelonized=False)
 
-    def is_primitive(self, M):
+    def is_primitive(self, M) -> bool:
         r"""
         Return whether ``M`` is a primitive submodule of this lattice.
 
@@ -922,7 +925,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: (L1 + L2).index_in(U)
             2
         """
-        return (gcd((self/M).invariants()) == 0)
+        return gcd((self/M).invariants()) == 0
 
     def orthogonal_complement(self, M):
         r"""
@@ -954,7 +957,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             Standard scalar product
         """
         from sage.modules.free_module import FreeModule_generic
-        if not isinstance(M,FreeModule_generic):
+        if not isinstance(M, FreeModule_generic):
             M = self.span(M)
         elif M.ambient_vector_space() != self.ambient_vector_space():
             raise ValueError("M must have the same "
@@ -1626,7 +1629,7 @@ def local_modification(M, G, p, check=True):
         [  0 -12   0  24]
     """
     from sage.quadratic_forms.genera.normal_form import p_adic_normal_form
-    from sage.quadratic_forms.genera.genus import Genus_Symbol_p_adic_ring,p_adic_symbol
+    from sage.quadratic_forms.genera.genus import Genus_Symbol_p_adic_ring, p_adic_symbol
 
     # notation
     d = G.inverse().denominator()

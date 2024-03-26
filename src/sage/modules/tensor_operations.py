@@ -122,17 +122,11 @@ def antisymmetrized_coordinate_sums(dim, n):
         ((0, 1) - (1, 0), (0, 2) - (2, 0), (1, 2) - (2, 1))
     """
     from sage.structure.formal_sum import FormalSum
-    table = []
     from sage.groups.perm_gps.permgroup_named import SymmetricGroup
-    S_d = SymmetricGroup(n)
     from sage.combinat.combination import Combinations
-    for i in Combinations(range(dim), n):
-        i = tuple(i)
-        x = []
-        for g in S_d:
-            x.append([g.sign(), g(i)])
-        x = FormalSum(x)
-        table.append(x)
+    S_d = SymmetricGroup(n)
+    table = [FormalSum([[g.sign(), g(tuple(i))] for g in S_d])
+             for i in Combinations(range(dim), n)]
     return tuple(table)
 
 
