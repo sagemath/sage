@@ -1342,9 +1342,9 @@ class DocTestController(SageObject):
                 flags = os.getenv("SAGE_MEMCHECK_FLAGS")
                 if flags is None:
                     flags = "--leak-resolution=high --leak-check=full --num-callers=25 "
-                    flags += '''--suppressions="%s" ''' % (os.path.join(SAGE_EXTCODE, "valgrind", "pyalloc.supp"))
-                    flags += '''--suppressions="%s" ''' % (os.path.join(SAGE_EXTCODE, "valgrind", "sage.supp"))
-                    flags += '''--suppressions="%s" ''' % (os.path.join(SAGE_EXTCODE, "valgrind", "sage-additional.supp"))
+                    for supp in ["pyalloc.supp", "sage.supp", "sage-additional.supp", "valgrind-python.supp"]:
+                        fname = os.path.join(SAGE_EXTCODE, "valgrind", supp)
+                        flags += f"--suppressions={shlex.quote(fname)} "
             elif opt.massif:
                 toolname = "massif"
                 flags = os.getenv("SAGE_MASSIF_FLAGS", "--depth=6 ")
