@@ -75,7 +75,15 @@ m4_include([m4/sage_spkg_configures.m4])
 
 dnl ==========================================================================
 AC_DEFUN([SAGE_SPKG_COLLECT_INIT], [
+AS_BOX([Build status for each package:                                         ]) >& AS_MESSAGE_FD
+AS_BOX([Build status for each package:                                         ]) >& AS_MESSAGE_LOG_FD
 dnl Intialize the collection variables.
+SPKGS="$1"
+dnl Obtain dependencies and versions at configure time.
+AS_IF([properties=$($SAGE_BOOTSTRAP_PYTHON build/bin/sage-package properties --format=shell $SPKGS 2>& AS_MESSAGE_LOG_FD) && eval $properties && dependencies=$($SAGE_BOOTSTRAP_PYTHON build/bin/sage-package dependencies --format=shell $SPKGS) && eval $dependencies], [], [
+    AC_MSG_ERROR([Package directory missing. Re-run bootstrap.])dnl
+])
+
 # To deal with ABI incompatibilities when gcc is upgraded, every package
 # (except gcc) should depend on gcc if gcc is already installed.
 # See https://github.com/sagemath/sage/issues/24703
@@ -85,20 +93,6 @@ else
     SAGE_GCC_DEP=''
 fi
 AC_SUBST([SAGE_GCC_DEP])
-
-AS_BOX([Build status for each package:                                         ]) >& AS_MESSAGE_FD
-AS_BOX([Build status for each package:                                         ]) >& AS_MESSAGE_LOG_FD
-
-# Usage: newest_version $pkg
-# Print version number of latest package $pkg
-newest_version() {
-    SPKG=$[1]
-    if test -f "$SAGE_ROOT/build/pkgs/$SPKG/package-version.txt" ; then
-        cat "$SAGE_ROOT/build/pkgs/$SPKG/package-version.txt"
-    else
-        echo none
-    fi
-}
 
 # Packages that are actually built/installed as opposed to packages that are
 # not required on this platform or that can be taken from the underlying system
@@ -157,16 +151,15 @@ AC_DEFUN([SAGE_SPKG_FINALIZE], [dnl
     dnl depending on the package type and other criteria (such as whether or not it
     dnl needs to be installed)
     dnl
-    DIR="$SAGE_ROOT"/build/pkgs/SPKG_NAME
-    AS_IF([test ! -d "$DIR"], [dnl
-        AC_MSG_ERROR([Directory $DIR is missing. Re-run bootstrap.])dnl
-    ])
-    dnl
-    SPKG_VERSION=$(newest_version SPKG_NAME)
+    SPKG_VERSION=$[version_with_patchlevel_]SPKG_NAME
     dnl
     dnl Determine package source
     dnl
     m4_case(SPKG_SOURCE,
+      [wheel], [dnl Treat it the same as a normal package
+        m4_define([SPKG_SOURCE], [normal])dnl
+        m4_define([in_sdist], [yes])dnl
+      ],
       [normal], [dnl
         m4_define([in_sdist], [yes])dnl
       ], [dnl pip/script/none (dummy package)
@@ -206,7 +199,7 @@ AC_DEFUN([SAGE_SPKG_FINALIZE], [dnl
                 AS_IF([test -r "$f"], [dnl
                     AS_IF([test "$is_installed" = "yes"], [dnl
                         m4_case(SPKG_SOURCE, [normal], [dnl
-                            dnl Only issue the multiple installation record test for normal packages,
+                            dnl Only issue the multiple installation record test for normal/wheel packages,
                             dnl not for script packages.
                             AC_MSG_ERROR(m4_normalize([
                                 multiple installation records for SPKG_NAME:
@@ -346,30 +339,14 @@ AC_DEFUN([SAGE_SPKG_FINALIZE], [dnl
     dnl
     dnl Determine package dependencies
     dnl
-    AS_IF([test -f "$DIR/dependencies"], [dnl
-        dnl - the # symbol is treated as comment which is removed
-        AS_VAR_SET([DEPS], [`sed 's/^ *//; s/ *#.*//; q' $DIR/dependencies`])
-    ], [dnl
-        AS_VAR_SET([DEPS], [])
-    ])
-    AS_IF([test -f "$DIR/dependencies_optional"], [dnl
-        for a in $(sed 's/^ *//; s/ *#.*//; q' "$DIR/dependencies_optional"); do
-            AS_VAR_APPEND([DEPS], [' $(findstring '$a',$(OPTIONAL_INSTALLED_PACKAGES)) '])
-        done
-    ])
-    AS_CASE(["$DEPS"], [*\|*], [], [AS_VAR_APPEND([DEPS], [" |"])])
-    AS_IF([test -f "$DIR/dependencies_order_only"], [dnl
-        ADD_DEPS=$(echo $(sed 's/^ *//; s/ *#.*//; q' $DIR/dependencies_order_only))
-        AS_VAR_APPEND([DEPS], [" $ADD_DEPS"])
-    ], [dnl
-        m4_case(SPKG_SOURCE, [pip], [AS_VAR_APPEND([DEPS], [' pip'])], [:])dnl
-    ])
-    AS_IF([test -f "$DIR/dependencies_check"], [dnl
-        ADD_DEPS=$(echo $(sed 's/^ *//; s/ *#.*//; q' $DIR/dependencies_check))
-        AS_VAR_APPEND([DEPS], [' $(and $(filter-out no,$(SAGE_CHECK_]SPKG_NAME[)), '"$ADD_DEPS"')'])dnl
-    ])
-    dnl
-    SAGE_PACKAGE_DEPENDENCIES="${SAGE_PACKAGE_DEPENDENCIES}$(printf '\ndeps_')SPKG_NAME = ${DEPS}"
+    AS_VAR_COPY([BUILD_DEPS], [build_deps_]SPKG_NAME)
+    for a in [$optional_deps_]SPKG_NAME; do
+        AS_VAR_APPEND([BUILD_DEPS], [' $(optional_inst_'$a') '])
+    done
+    AS_VAR_APPEND([BUILD_DEPS], [" | $order_only_deps_]SPKG_NAME["])
+    AS_VAR_COPY([DEPS], [runtime_deps_]SPKG_NAME)
+    AS_VAR_COPY([CHECK_DEPS], [check_deps_]SPKG_NAME)
+    SAGE_PACKAGE_DEPENDENCIES="${SAGE_PACKAGE_DEPENDENCIES}$(printf '\nbuild_deps_')SPKG_NAME = ${BUILD_DEPS}$(printf '\ndeps_')SPKG_NAME = ${DEPS}$(printf '\ncheck_deps_')SPKG_NAME = ${CHECK_DEPS}"
     dnl
     dnl Determine package build rules
     m4_case(SPKG_SOURCE,
