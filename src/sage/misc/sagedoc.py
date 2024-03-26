@@ -508,6 +508,7 @@ extlinks = {
     'python': (f'https://docs.python.org/release/{pythonversion}/%s', None),
     'trac': ('https://github.com/sagemath/sage/issues/%s', 'github issue #%s'), # support :issue: for backward compatibility
     'issue': ('https://github.com/sagemath/sage/issues/%s', 'github issue #%s'),
+    'sage_root': ('https://github.com/sagemath/sage/tree/develop/%s', 'SAGE_ROOT/%s'),
     'wikipedia': ('https://en.wikipedia.org/wiki/%s', 'Wikipedia article %s'),
     'arxiv': ('https://arxiv.org/abs/%s', 'arXiv %s'),
     'oeis': ('https://oeis.org/%s', 'OEIS sequence %s'),

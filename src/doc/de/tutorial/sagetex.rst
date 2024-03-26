@@ -15,7 +15,7 @@ Tutorial und den Abschnitt "Make SageTeX known to TeX" des `Sage installation gu
 Installationsanleitung führen) um weitere Informationen zu erhalten.
 
 Hier stellen wir ein sehr kurzes Beispiel vor wie man SageTeX nutzt.
-Die komplette Dokumentation finden Sie unter ``SAGE_ROOT/venv/share/texmf/tex/latex/sagetex``,
+Die komplette Dokumentation finden Sie unter :file:`SAGE_ROOT/venv/share/texmf/tex/latex/sagetex`,
 wobei ``SAGE_ROOT`` das Installationsverzeichnis von Sage ist. Dieses Verzeichnis
 enthält die Dokumentation, eine Beispieldatei und einige nützliche Python Skripte.
 
@@ -103,4 +103,4 @@ an den Sage Befehlen in Ihrem Dokument vorgenommen haben.
 
 Es gibt noch viel mehr über SageTeX zu sagen, aber da sowohl Sage alsauch
 LaTeX komplexe und mächtige Werkzeuge sind, sollten Sie die Dokumentation
-über SageTeX in ``SAGE_ROOT/venv/share/texmf/tex/latex/sagetex`` lesen.
+über SageTeX in :file:`SAGE_ROOT/venv/share/texmf/tex/latex/sagetex` lesen.
