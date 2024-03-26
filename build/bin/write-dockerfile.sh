@@ -214,6 +214,18 @@ EOF
         ;;
   esac
 esac
+
+case ${DOCKER_BUILDKIT-0} in
+    1)
+        # With buildkit we cannot retrieve failed builds.
+        # So we do not allow the main step of a build stage to fail.
+        # Instead we record the exit code in the file STATUS.
+        THEN_SAVE_STATUS='; echo $? > STATUS'
+        # ... and at the beginning of the next build stage,
+        # we check the status and exit with an error status.
+        CHECK_STATUS_THEN='STATUS=$(cat STATUS 2>/dev/null); case "$STATUS" in ""|0) ;; *) exit $STATUS;; esac; '
+esac
+
 cat <<EOF
 
 FROM with-system-packages as bootstrapped
@@ -230,20 +242,20 @@ $ADD pkgs pkgs
 $ADD build ./build
 $ADD .upstream.d ./.upstream.d
 ARG BOOTSTRAP=./bootstrap
-$RUN sh -x -c "\${BOOTSTRAP}" $ENDRUN
+$RUN sh -x -c "\${BOOTSTRAP}" $ENDRUN $THEN_SAVE_STATUS
 
 FROM bootstrapped as configured
 #:configuring:
-RUN mkdir -p logs/pkgs; rm -f config.log; ln -s logs/pkgs/config.log config.log
+RUN $CHECK_STATUS_THEN mkdir -p logs/pkgs; rm -f config.log; ln -s logs/pkgs/config.log config.log
 ARG EXTRA_CONFIGURE_ARGS=""
 EOF
 if [ ${WITH_SYSTEM_SPKG} = "force" ]; then
     cat <<EOF
-$RUN echo "****** Configuring: ./configure --enable-build-as-root $CONFIGURE_ARGS \${EXTRA_CONFIGURE_ARGS} *******"; ./configure --enable-build-as-root $CONFIGURE_ARGS \${EXTRA_CONFIGURE_ARGS} || (echo "********** configuring without forcing ***********"; echo "::group::config.log"; cat config.log; echo "::endgroup::"; ./configure --enable-build-as-root; echo "::group::config.log"; cat config.log; echo "::endgroup::"; exit 1) $ENDRUN
+$RUN echo "****** Configuring: ./configure --enable-build-as-root $CONFIGURE_ARGS \${EXTRA_CONFIGURE_ARGS} *******"; ./configure --enable-build-as-root $CONFIGURE_ARGS \${EXTRA_CONFIGURE_ARGS} || (echo "********** configuring without forcing ***********"; echo "::group::config.log"; cat config.log; echo "::endgroup::"; ./configure --enable-build-as-root; echo "::group::config.log"; cat config.log; echo "::endgroup::"; exit 1) $ENDRUN $THEN_SAVE_STATUS
 EOF
 else
     cat <<EOF
-$RUN echo "****** Configuring: ./configure --enable-build-as-root $CONFIGURE_ARGS \${EXTRA_CONFIGURE_ARGS} *******"; ./configure --enable-build-as-root $CONFIGURE_ARGS \${EXTRA_CONFIGURE_ARGS} || (echo "::group::config.log"; cat config.log; echo "::endgroup::"; exit 1) $ENDRUN
+$RUN echo "****** Configuring: ./configure --enable-build-as-root $CONFIGURE_ARGS \${EXTRA_CONFIGURE_ARGS} *******"; ./configure --enable-build-as-root $CONFIGURE_ARGS \${EXTRA_CONFIGURE_ARGS} || (echo "::group::config.log"; cat config.log; echo "::endgroup::"; exit 1) $ENDRUN $THEN_SAVE_STATUS
 EOF
 fi
 cat <<EOF
@@ -256,7 +268,7 @@ ARG USE_MAKEFLAGS="-k V=0"
 ENV SAGE_CHECK=warn
 ENV SAGE_CHECK_PACKAGES="!cython,!r,!python3,!gap,!cysignals,!linbox,!git,!ppl,!cmake,!rpy2,!sage_sws2rst"
 #:toolchain:
-$RUN make \${USE_MAKEFLAGS} base-toolchain $ENDRUN
+$RUN $CHECK_STATUS_THEN make \${USE_MAKEFLAGS} base-toolchain $ENDRUN $THEN_SAVE_STATUS
 
 FROM with-base-toolchain as with-targets-pre
 ARG NUMPROC=8
@@ -266,7 +278,7 @@ ENV SAGE_CHECK=warn
 ENV SAGE_CHECK_PACKAGES="!cython,!r,!python3,!gap,!cysignals,!linbox,!git,!ppl,!cmake,!rpy2,!sage_sws2rst"
 #:make:
 ARG TARGETS_PRE="all-sage-local"
-$RUN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS_PRE} $ENDRUN
+$RUN $CHECK_STATUS_THEN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS_PRE} $ENDRUN $THEN_SAVE_STATUS
 
 FROM with-targets-pre as with-targets
 ARG NUMPROC=8
@@ -276,7 +288,7 @@ ENV SAGE_CHECK=warn
 ENV SAGE_CHECK_PACKAGES="!cython,!r,!python3,!gap,!cysignals,!linbox,!git,!ppl,!cmake,!rpy2,!sage_sws2rst"
 $ADD src src
 ARG TARGETS="build"
-$RUN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS} $ENDRUN
+$RUN $CHECK_STATUS_THEN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS} $ENDRUN $THEN_SAVE_STATUS
 
 FROM with-targets as with-targets-optional
 ARG NUMPROC=8
@@ -285,7 +297,7 @@ ARG USE_MAKEFLAGS="-k V=0"
 ENV SAGE_CHECK=warn
 ENV SAGE_CHECK_PACKAGES="!cython,!r,!python3,!gap,!cysignals,!linbox,!git,!ppl,!cmake,!rpy2,!sage_sws2rst"
 ARG TARGETS_OPTIONAL="ptest"
-$RUN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS_OPTIONAL} || echo "(error ignored)" $ENDRUN
+$RUN $CHECK_STATUS_THEN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS_OPTIONAL} || echo "(error ignored)" $ENDRUN $THEN_SAVE_STATUS
 
 #:end:
 EOF
