@@ -61,8 +61,8 @@ Obtaining the Sage source code
 ==============================
 
 Obviously one needs the Sage source code to develop. You can use your
-local installation of Sage, or (to start from scratch) download it
-from our Sage repository on GitHub::
+local installation of Sage (if you installed Sage from source), or
+(to start from scratch) download it from our Sage repository on GitHub::
 
     [alice@localhost ~]$ git clone --origin upstream https://github.com/sagemath/sage.git
     Cloning into 'sage'...

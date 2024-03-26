@@ -7,10 +7,10 @@ General Conventions
 ===================
 
 
-There are many ways to contribute to Sage including sharing scripts
-and Sage worksheets that implement new functionality using Sage,
+There are many ways to contribute to Sage, including sharing scripts
+and Jupyter notebooks that implement new functionality using Sage,
 improving to the Sage library, or to working on the many underlying
-libraries distributed with Sage [1]_.
+libraries distributed with Sage, see :ref:`spkg`.
 This guide focuses on editing the Sage library itself.
 
 Sage is not just about gathering together functionality. It is about
@@ -19,10 +19,6 @@ number of algorithms, in a coherent framework that makes sense
 mathematically. In the design of Sage, the semantics of objects, the
 definitions, etc., are informed by how the corresponding objects are
 used in everyday mathematics.
-
-.. [1]
-   See https://www.sagemath.org/links-components.html for a full list
-   of packages shipped with every copy of Sage
 
 To meet the goal of making Sage easy to read, maintain, and improve,
 all Python/Cython code that is included with Sage should adhere to the

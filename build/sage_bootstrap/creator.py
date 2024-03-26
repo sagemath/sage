@@ -63,6 +63,21 @@ class PackageCreator(object):
         Write the ``SPKG.rst`` file
         """
         with open(os.path.join(self.path, 'SPKG.rst'), 'w+') as f:
+            # Attempt to bring title to a common style
+            if description.startswith(self.package_name + ':'):
+                description = description[len(self.package_name + ':'):]
+            if description.startswith(self.package_name + ' is'):
+                description = description[len(self.package_name + ' is'):]
+            description = description.strip()
+            if not description.endswith('etc.'):
+                description = description.rstrip('.')
+            if description.startswith('A ') or description.startswith('a '):
+                description = description[2:].strip()
+            if description.startswith('An ') or description.startswith('an '):
+                description = description[3:].strip()
+            if description:
+                description = description[0].upper() + description[1:]
+
             def heading(title, char='-'):
                 return '{0}\n{1}\n\n'.format(title, char * len(title))
             if description:

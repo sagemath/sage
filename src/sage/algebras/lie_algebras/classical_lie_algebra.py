@@ -1796,6 +1796,19 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
         """
         return "Lie algebra of {} in the Chevalley basis".format(self._cartan_type)
 
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        EXAMPLES::
+
+            sage: g = LieAlgebra(QQ, cartan_type=['A', 2])
+            sage: latex(g)
+            \mathfrak{g}(A_{2})_{\Bold{Q}}
+        """
+        from sage.misc.latex import latex
+        return r"\mathfrak{{g}}({})_{{{}}}".format(latex(self._cartan_type), latex(self.base_ring()))
+
     def _test_structure_coeffs(self, **options):
         """
         Check the structure coefficients against the GAP implementation.

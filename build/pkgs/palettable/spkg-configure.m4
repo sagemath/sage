@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([palettable], [SAGE_PYTHON_PACKAGE_CHECK([palettable])])
