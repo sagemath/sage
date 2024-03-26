@@ -1117,6 +1117,11 @@ def lazy_import(module, names, as_=None, *,
     if namespace is None:
         namespace = inspect.currentframe().f_locals
     if "*" in names:
+        from sage.misc.superseded import deprecation_cython
+
+        deprecation_cython(37433,
+                           'lazy_import of * is deprecated; provide the names to be imported explicitly')
+
         ix = names.index("*")
         all = get_star_imports(module)
         names[ix:ix+1] = all
