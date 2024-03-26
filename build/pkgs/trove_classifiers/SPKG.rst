@@ -1,10 +1,10 @@
-trove_classifiers: Canonical source for classifiers on PyPI (pypi.org).
-=======================================================================
+trove_classifiers: Canonical source for classifiers on PyPI (pypi.org)
+======================================================================
 
 Description
 -----------
 
-Canonical source for classifiers on PyPI (pypi.org).
+Canonical source for classifiers on PyPI (pypi.org)
 
 License
 -------

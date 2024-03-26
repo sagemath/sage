@@ -1,10 +1,10 @@
-colorama: Cross-platform colored terminal text.
-===============================================
+colorama: Cross-platform colored terminal text
+==============================================
 
 Description
 -----------
 
-Cross-platform colored terminal text.
+Cross-platform colored terminal text
 
 License
 -------
