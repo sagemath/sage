@@ -65,6 +65,7 @@ from sage.arith.functions import lcm
 from sage.arith.misc import bernoulli, binomial, factorial, kronecker, factor, gcd, fundamental_discriminant, euler_phi, valuation
 from sage.categories.map import Map
 from sage.categories.objects import Objects
+from sage.categories.rings import Rings
 from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import WithEqualityById
 from sage.misc.functional import round
@@ -77,7 +78,6 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ, is_RationalField
-from sage.rings.ring import is_Ring
 from sage.structure.element import MultiplicativeGroupElement
 from sage.structure.factory import UniqueFactory
 from sage.structure.gens_py import multiplicative_iterator
@@ -2481,7 +2481,7 @@ class DirichletGroupFactory(UniqueFactory):
             if integral:
                 base_ring = base_ring.ring_of_integers()
 
-        if not is_Ring(base_ring):
+        if base_ring not in Rings():
             raise TypeError("base_ring (= %s) must be a ring" % base_ring)
 
         # If either zeta or zeta_order is given, compute the other.

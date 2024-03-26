@@ -3,9 +3,9 @@ Random quadratic forms
 
 This file contains a set of routines to create a random quadratic form.
 """
+from sage.categories.rings import Rings
 from sage.quadratic_forms.quadratic_form import QuadraticForm
 from sage.quadratic_forms.ternary_qf import TernaryQF
-from sage.rings.ring import is_Ring
 from sage.rings.integer_ring import ZZ
 
 
@@ -60,7 +60,7 @@ def random_quadraticform(R, n, rand_arg_list=[]):
     if len(rand_arg_list) > 3:
         raise TypeError("the list of randomness arguments can have "
                         "at most 3 elements")
-    if not is_Ring(R):
+    if R not in Rings():
         raise TypeError("the first argument must be a ring")
     # Create a list of upper-triangular entries for the quadratic form
     n2 = (n * (n + 1)) // 2
