@@ -463,7 +463,7 @@ class WordMorphism(SageObject):
 
     def _build_codomain(self, data):
         r"""
-        Return a Words domain containing all the letter in the keys of
+        Return a Words domain containing all the letters in the values of
         data (which must be a dictionary).
 
         TESTS:
@@ -489,10 +489,10 @@ class WordMorphism(SageObject):
             Finite words over {0, 1, 2}
         """
         codom_alphabet = set()
-        for key, val in data.items():
+        for val in data.values():
             try:
                 it = iter(val)
-            except Exception:
+            except TypeError:
                 it = [val]
             codom_alphabet.update(it)
         try:
