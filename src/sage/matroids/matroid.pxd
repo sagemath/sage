@@ -124,8 +124,14 @@ cdef class Matroid(SageObject):
     cpdef coflats(self, r) noexcept
     cpdef hyperplanes(self) noexcept
     cpdef f_vector(self) noexcept
+    cpdef whitney_numbers(self) noexcept
+    cpdef whitney_numbers2(self) noexcept
     cpdef broken_circuits(self, ordering=*) noexcept
     cpdef no_broken_circuits_sets(self, ordering=*) noexcept
+
+    # polytopes
+    cpdef matroid_polytope(self) noexcept
+    cpdef independence_matroid_polytope(self) noexcept
 
     # isomorphism
     cpdef is_isomorphic(self, other, certificate=*) noexcept
@@ -153,6 +159,7 @@ cdef class Matroid(SageObject):
     cpdef modular_cut(self, subsets) noexcept
     cpdef linear_subclasses(self, line_length=*, subsets=*) noexcept
     cpdef extensions(self, element=*, line_length=*, subsets=*) noexcept
+    cpdef coextensions(self, element=*, coline_length=*, subsets=*) noexcept
 
     # connectivity
     cpdef simplify(self) noexcept
@@ -213,14 +220,19 @@ cdef class Matroid(SageObject):
     cpdef _internal(self, B) noexcept
     cpdef _external(self, B) noexcept
     cpdef tutte_polynomial(self, x=*, y=*) noexcept
+    cpdef characteristic_polynomial(self, la=*) noexcept
     cpdef flat_cover(self, solver=*, verbose=*, integrality_tolerance=*) noexcept
 
     # misc
     cpdef automorphism_group(self) noexcept
     cpdef bergman_complex(self) noexcept
     cpdef augmented_bergman_complex(self) noexcept
+    cpdef broken_circuit_complex(self, ordering=*) noexcept
 
     # visualization
     cpdef plot(self,B=*,lineorders=*,pos_method=*,pos_dict=*,save_pos=*) noexcept
     cpdef show(self,B=*,lineorders=*,pos_method=*,pos_dict=*,save_pos=*,lims=*) noexcept
     cpdef _fix_positions(self,pos_dict=*,lineorders=*) noexcept
+
+    # construction
+    cpdef direct_sum(self, matroids) noexcept

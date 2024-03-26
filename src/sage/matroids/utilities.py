@@ -800,3 +800,17 @@ def split_vertex(G, u, v=None, edges=None):
 
     # This modifies the graph without needing to return anything
     return
+
+
+def cmp_elements_key(x):
+    """
+    A helper function to compare elements which may be integers or strings.
+
+    EXAMPLES::
+
+        sage: from sage.matroids.utilities import cmp_elements_key
+        sage: l = ['a', 'b', 1, 3, 2, 10, 111, 100, 'c', 'aa']
+        sage: sorted(l, key=cmp_elements_key)
+        [1, 2, 3, 10, 100, 111, 'a', 'aa', 'b', 'c']
+    """
+    return (isinstance(x, str), x)

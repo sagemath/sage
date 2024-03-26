@@ -541,7 +541,7 @@ def P7():
 
         sage: M = matroids.catalog.P7(); M
         P7: Ternary matroid of rank 3 on 7 elements, type 1+
-        sage: M.f_vector()
+        sage: M.whitney_numbers2()
         [1, 7, 11, 1]
         sage: M.has_minor(matroids.CompleteGraphic(4))
         False
