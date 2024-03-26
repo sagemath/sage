@@ -419,7 +419,7 @@ cdef class CircuitsMatroid(Matroid):
         r"""
         Return the bases of the matroid.
 
-        OUTPUT: a SetSystem
+        OUTPUT: a :class:`SetSystem`
 
         EXAMPLES::
 
@@ -478,7 +478,7 @@ cdef class CircuitsMatroid(Matroid):
 
         - ``k`` -- an integer (optional); the length of the circuits
 
-        OUTPUT: a SetSystem
+        OUTPUT: a :class:`SetSystem`
 
         EXAMPLES::
 
@@ -541,7 +541,7 @@ cdef class CircuitsMatroid(Matroid):
         """
         Return the nonspanning circuits of the matroid.
 
-        OUTPUT: a SetSystem
+        OUTPUT: a :class:`SetSystem`
 
         EXAMPLES::
 

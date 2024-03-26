@@ -531,7 +531,7 @@ cdef class Matroid(SageObject):
         - ``X`` -- An object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``.
 
-        OUTPUT: ``frozenset`` instance containing a subset of the groundset
+        OUTPUT: a subset of the groundset as a :class:`frozenset`
 
         EXAMPLES::
 
@@ -620,7 +620,7 @@ cdef class Matroid(SageObject):
         - ``X`` -- An object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``.
 
-        OUTPUT: ``frozenset`` instance containing a subset of the groundset
+        OUTPUT: a subset of the groundset as a :class:`frozenset`
 
         EXAMPLES::
 
@@ -665,7 +665,7 @@ cdef class Matroid(SageObject):
         - ``X`` -- An object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``.
 
-        OUTPUT: ``frozenset`` instance containing a subset of the groundset
+        OUTPUT: a subset of the groundset as a :class:`frozenset`
 
         EXAMPLES::
 
@@ -754,7 +754,7 @@ cdef class Matroid(SageObject):
         - ``X`` -- An object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``.
 
-        OUTPUT: ``frozenset`` instance containing a subset of the groundset
+        OUTPUT: a subset of the groundset as a :class:`frozenset`
 
         EXAMPLES::
 
@@ -785,7 +785,7 @@ cdef class Matroid(SageObject):
         - ``Y`` -- An object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``, and disjoint from ``X``.
 
-        OUTPUT: ``frozenset`` instance containing a subset of the groundset
+        OUTPUT: a subset of the groundset as a :class:`frozenset`
 
         EXAMPLES::
 
@@ -2274,7 +2274,7 @@ cdef class Matroid(SageObject):
         """
         Return the circuits of the matroid.
 
-        OUTPUT: a SetSystem
+        OUTPUT: a :class:`SetSystem`
 
         .. SEEALSO::
 
@@ -2336,7 +2336,7 @@ cdef class Matroid(SageObject):
         A *nonspanning circuit* is a circuit whose rank is strictly smaller
         than the rank of the matroid.
 
-        OUTPUT: a SetSystem
+        OUTPUT: a :class:`SetSystem`
 
         .. SEEALSO::
 
@@ -2388,7 +2388,7 @@ cdef class Matroid(SageObject):
         """
         Return the cocircuits of the matroid.
 
-        OUTPUT: a SetSystem
+        OUTPUT: a :class:`SetSystem`
 
         .. SEEALSO::
 
@@ -2414,7 +2414,7 @@ cdef class Matroid(SageObject):
         A *noncospanning cocircuit* is a cocircuit whose corank is strictly
         smaller than the corank of the matroid.
 
-        OUTPUT: a SetSystem
+        OUTPUT: a :class:`SetSystem`
 
         .. SEEALSO::
 
@@ -2503,7 +2503,7 @@ cdef class Matroid(SageObject):
         A *nonbasis* is a set with cardinality ``self.full_rank()`` that is
         not a basis.
 
-        OUTPUT: a SetSystem
+        OUTPUT: a :class:`SetSystem`
 
         .. SEEALSO::
 
@@ -2617,7 +2617,7 @@ cdef class Matroid(SageObject):
 
         A *basis* is a maximal independent set.
 
-        OUTPUT: a SetSystem
+        OUTPUT: a :class:`SetSystem`
 
         EXAMPLES::
 
@@ -2884,7 +2884,7 @@ cdef class Matroid(SageObject):
 
         - ``r`` -- A natural number.
 
-        OUTPUT: a SetSystem
+        OUTPUT: a :class:`SetSystem`
 
         .. SEEALSO::
 
@@ -2910,7 +2910,7 @@ cdef class Matroid(SageObject):
 
         - ``r`` -- a nonnegative integer
 
-        OUTPUT: a SetSystem
+        OUTPUT: a :class:`SetSystem`
 
         .. SEEALSO::
 
@@ -3248,7 +3248,7 @@ cdef class Matroid(SageObject):
         - ``invariant`` -- (optional) either a semigroup ``G`` whose
           ``__call__`` acts on the groundset, or pair ``(G, action)`` where
           ``G`` is a semigroup and ``action`` is a function ``action(g,e)``
-          which takes a pair of a group element and a grounset element and
+          which takes a pair of a group element and a groundset element and
           returns the groundset element which is the result of ``e`` acted upon
           by ``g``
 
@@ -5419,7 +5419,7 @@ cdef class Matroid(SageObject):
 
           - ``None`` -- The most appropriate algorithm is chosen automatically.
           - ``"intersection"`` -- an algorithm based on matroid intersection, equivalent
-            to calling ``is_kconnected(4,certificate)``.
+            to calling ``is_kconnected(4, certificate)``.
           - ``"shifting"`` -- an algorithm based on the shifting algorithm [Raj1987]_.
 
         OUTPUT: boolean, or a tuple ``(boolean, frozenset)``
@@ -5782,8 +5782,8 @@ cdef class Matroid(SageObject):
 
         OUTPUT:
 
-        - `False, None`  -- if there is no ``m``-separator
-        - `True, E` -- if there exist an ``m``-separator ``E``
+        - ``False, None``  -- if there is no ``m``-separator
+        - ``True, E`` -- if there exists an ``m``-separator ``E``
 
         EXAMPLES::
 
@@ -6196,7 +6196,7 @@ cdef class Matroid(SageObject):
           ``False``, any output will represent ``self`` if and only if the
           matroid is binary
 
-        OUTPUT: either a ``BinaryMatroid``, or ``None``
+        OUTPUT: either a :class:`BinaryMatroid`, or ``None``
 
         ALGORITHM:
 
@@ -7765,7 +7765,6 @@ cdef class Matroid(SageObject):
 
             :meth:`~sage.matroids.matroid.Matroid.whitney_numbers`
 
-
         TESTS::
 
             sage: M = Matroid(groundset=[0,1,2], circuits=[[0]])
@@ -7774,7 +7773,7 @@ cdef class Matroid(SageObject):
             sage: l = -1
             sage: for M in matroids.AllMatroids(6):  # optional - matroid_database
             ....:     r = M.rank()
-            ....:     assert M.characteristic_polynomial(l) == (-1)**r * M.tutte_polynomial(1-l, 0)
+            ....:     assert M.characteristic_polynomial(l) == (-1)**r * M.tutte_polynomial(1 - l, 0)
             ....:     if not M.loops():
             ....:         assert (-1)**r * M.characteristic_polynomial(l) == sum(M.broken_circuit_complex().f_vector())
         """
