@@ -1,4 +1,4 @@
-p_group_cohomology: Modular cohomology rings of finite groups
+modular_resolution: Modular cohomology rings of finite groups
 =============================================================
 
 Description

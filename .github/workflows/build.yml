@@ -35,13 +35,13 @@ jobs:
         uses: actions/checkout@v4
       - name: Merge CI fixes from sagemath/sage
         run: |
-          .ci/merge-fixes.sh
+          mkdir -p upstream
+          .ci/merge-fixes.sh 2>&1 | tee upstream/ci_fixes.log
         env:
           GH_TOKEN: ${{ github.token }}
           SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
       - name: Store CI fixes in upstream artifact
         run: |
-          mkdir -p upstream
           if git format-patch --stdout test_base > ci_fixes.patch; then
             cp ci_fixes.patch upstream/
           fi

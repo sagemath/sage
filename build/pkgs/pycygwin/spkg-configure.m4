@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([pycygwin], [SAGE_PYTHON_PACKAGE_CHECK([pycygwin])])
