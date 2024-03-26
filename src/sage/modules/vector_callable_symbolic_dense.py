@@ -2,7 +2,8 @@
 Vectors over callable symbolic rings
 
 AUTHOR:
-    -- Jason Grout (2010)
+
+- Jason Grout (2010)
 
 EXAMPLES::
 
@@ -34,7 +35,7 @@ TESTS::
 
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Jason Grout <jason-sage@creativetrax.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -46,8 +47,8 @@ TESTS::
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.modules import free_module_element
 from sage.symbolic.ring import SR

@@ -14,7 +14,7 @@ AUTHORS:
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##############################################################################
 
 from sage.misc.abstract_method import abstract_method
@@ -357,7 +357,7 @@ class Representation(Representation_abstract):
         S = tester.some_elements()
         L = []
         max_len = int(sqrt(tester._max_runs)) + 1
-        for i,x in enumerate(self._semigroup):
+        for i, x in enumerate(self._semigroup):
             L.append(x)
             if i >= max_len:
                 break
@@ -571,17 +571,17 @@ class Representation(Representation_abstract):
                     if self_on_left == P._left_repr:
                         scalar = ~scalar
                     return P.linear_combination(((P._on_basis(scalar, m), c)
-                                                 for m,c in self), not self_on_left)
+                                                 for m, c in self), not self_on_left)
 
                 if sP is P._semigroup_algebra:
                     if not self:
                         return self
                     ret = P.zero()
-                    for ms,cs in scalar:
+                    for ms, cs in scalar:
                         if self_on_left == P._left_repr:
                             ms = ~ms
                         ret += P.linear_combination(((P._on_basis(ms, m), cs*c)
-                                                    for m,c in self), not self_on_left)
+                                                    for m, c in self), not self_on_left)
                     return ret
 
                 if P._semigroup.has_coerce_map_from(sP):
@@ -601,6 +601,7 @@ class Representation(Representation_abstract):
                 return None
 
             return CombinatorialFreeModule.Element._acted_upon_(self, scalar, self_on_left)
+
 
 class RegularRepresentation(Representation):
     r"""
@@ -682,6 +683,7 @@ class RegularRepresentation(Representation):
             sage: R._test_representation()  # indirect doctest
         """
         return self.monomial(m*g)
+
 
 class TrivialRepresentation(Representation_abstract):
     """

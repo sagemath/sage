@@ -445,10 +445,10 @@ class FGP_Element(ModuleElement):
         from sage.rings.integer import Integer
         from sage.arith.functions import lcm
         n = Integer(1)
-        for i, a in enumerate(I):
+        for vi, a in zip(v, I):
             if a == 0:
-                if v[i] != 0:
+                if vi != 0:
                     return infinity
             else:
-                n = lcm(n, Mod(v[i],a).additive_order())
+                n = lcm(n, Mod(vi, a).additive_order())
         return n
