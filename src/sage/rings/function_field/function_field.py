@@ -1228,19 +1228,20 @@ class FunctionField(Field):
         return FunctionFieldCompletion(self, place, name=name, prec=prec, gen_name=gen_name)
 
     def hilbert_symbol(self, a, b, P):
-        """
+        r"""
         Return the Hilbert symbol `(a,b)_{F_P}` (where `F_P` is the
-        completion of ``self`` at the place ``P``).
+        completion of this function field at the place `P`).
 
-        The Hilbert symbol `(a,b)_{F_P}` is `0` if one of ``a`` or ``b`` is
+        The Hilbert symbol `(a,b)_{F_P}` is `0` if one of `a` or `b` is
         zero. Otherwise it takes the value `1` if  the quaternion algebra
         defined by `(a,b)` over `F_P` is split, and `-1` if it is division.
 
-        We use the completion at the place `P` to compute the valuations `v(a)`
-        and `v(b)` as well as elements `a0` and `b0` such that, for a uniformizer
-        `pi` of the unique maximal ideal of the completion, the elememts
-        `a*pi^{-v(a))}` and `a0` respectively the elements `b*pi^{-v(b)}` and `b0`
-        are congruent modulo `pi`. Motivated by formula 12.4.10 in [Voi2021]_.
+        For the valuation `\nu` belonging to the completion of the function
+        field at `P`, we compute the valuations `\nu(a)` and `\nu(b)` as well
+        as elements `a_0` and `b_0` such that, for a uniformizer `\pi` of 
+        `\nu`, the elememts `a*\pi^{-\nu(a))}` and `a_0` respectively the
+        elements `b*\pi^{-\nu(b)}` and `b_0` are congruent modulo `\pi`.
+        Motivated by formula 12.4.10 in [Voi2021]_.
 
         Currently only tested for function fields separable over their base
         since places are not fully supported for other function fields. Only
@@ -1248,9 +1249,9 @@ class FunctionField(Field):
 
         INPUT:
 
-        - ``a`` and ``b``: Elements of ``self``
+        - ``a`` and ``b``: elements of this function field
 
-        - ``P``: A place of ``self``
+        - ``P``: a place of this function field
 
         EXAMPLES::
 
@@ -1269,53 +1270,38 @@ class FunctionField(Field):
             sage: K.hilbert_symbol(c, d, Q)
             1
 
+        Check that the Hilbert symbol is bimultiplicative::
+
             sage: K.<x> = FunctionField(GF(5)); R.<T> = PolynomialRing(K)
             sage: f = ((x^2 + 2*x + 2)*T^5 + (4*x^2 + 2*x + 3)*T^4 + 3*T^3 + 4*T^2
             ....:     + (2/(x^2 + 4*x + 1))*T + 3*x^2 + 2*x + 4)
             sage: L.<y> = K.extension(f)
-            sage: P = L.places_above(K.places()[0])[1]
-            sage: a = (((3*x^3 + 2*x^2 + x + 1)/(x + 2))*y^4 + (4/(x + 4))*y^3
-            ....:     + ((3*x + 4)/(x + 4))*y^2
-            ....:     + ((x^4 + 2*x^3 + 3*x^2 + x + 2)/(x^4 + x^3 + x^2 + 2))*y
-            ....:     + (x^4 + x^2 + 2*x + 4)/(x^2 + 2*x + 2))
-            sage: b = (((x + 1)/(x + 4))*y^4
-            ....:     + ((2*x^4 + 3*x^3 + 3*x^2 + 3)/(x^2 + 2*x + 2))*y^3 + (2/(x + 4))*y^2
-            ....:     + ((4*x^4 + 4*x^3 + 4*x^2 + 2)/(x^4 + x^3 + x^2 + 2))*y
-            ....:     + (x^3 + x)/(x^3 + x^2 + x + 2))
-            sage: L.hilbert_symbol(a, b, P)
-            1
-            sage: Q = L.places_above(K.places()[1])[0]
-            sage: c = (((3*x^3 + 3*x^2 + 3*x + 3)/(x^3 + 3*x^2 + x))*y^4
-            ....:     + ((3*x^4 + 2*x^3 + 2*x^2 + 4*x + 3)/(x^3 + 3*x^2 + x))*y^3
-            ....:     + ((3*x + 4)/(x^3 + 3*x^2 + x))*y^2
-            ....:     + ((4*x + 2)/(x^5 + 2*x^4 + 4*x^3 + 2*x^2 + x))*y
-            ....:     + (x^3 + 2*x^2 + 4)/(x^3 + 3*x^2 + x))
-            sage: d = (((2*x^4 + x^2 + 2*x + 3)/(x^2 + 2*x + 2))*y^4
-            ....:     + ((4*x^2 + 2)/(x^2 + 2*x + 2))*y^3 + ((3*x^2 + 3*x + 3)/(x^2 + 1))*y^2
-            ....:     + ((x^6 + 4*x^5 + 4*x^4 + 3*x^3 + 3*x^2 + x + 3)/(x^4 + x^3 + x^2 + 2))*y
-            ....:     + (4*x^3 + 4*x^2 + 2*x + 2)/(x + 4))
-            sage: L.hilbert_symbol(c, d, Q)
-            -1
+            sage: a = L.random_element()
+            ....: b = L.random_element()
+            ....: c = L.random_element()
 
-            sage: K.<x> = FunctionField(GF(3)); R.<T> = PolynomialRing(K)
-            sage: g = (((2*x + 1)/x)*T^5 + ((2*x + 1)/(x + 1))*T^4 + ((x^2 + 1)/x)*T^3
-            ....:     + (2*x/(x^2 + 2*x + 2))*T^2 + 2*T + (2*x + 2)/(x + 2))
-            sage: L.<y> = K.extension(g)
-            sage: P = L.places_above(K.places()[1])[1]
-            sage: a = (((x + 2)/(x + 1))*y^4 + ((x^4 + 2*x^2 + 1)/(x^2 + 2*x))*y^3
-            ....:     + ((x^5 + x^2 + 2*x + 1)/(x^4 + 2*x^3 + x^2 + x + 1))*y^2
-            ....:     + ((2*x + 2)/(x + 2))*y + (2*x^4 + x^3 + x^2 + 2*x + 2)/(x^2 + x + 1))
-            sage: b = (((x^2 + x + 1)/(x^2 + 2*x + 1))*y^4 + ((2*x^2 + x + 1)/(x + 1))*y^3
-            ....:     + ((x^5 + x^4 + 2*x^3 + x^2 + 2*x + 2)/(x^3 + x + 2))*y^2
-            ....:     + (2*x/(x^2 + 2))*y + 2*x^2 + 2*x + 1)
-            sage: L.hilbert_symbol(a, b, P)
-            -1
+            sage: P = L.places_above(K.places()[0])[1]
+            sage: (L.hilbert_symbol(a, b, P) * L.hilbert_symbol(a, c, P) 
+            ....:   == L.hilbert_symbol(a, b*c, P))
+            True
+            sage: (L.hilbert_symbol(a, c, P) * L.hilbert_symbol(b, c, P)
+            ....:   == L.hilbert_symbol(a*b, c, P)
+            True
+
+            sage: Q = L.places_above(K.places()[1])[0]
+            sage: (L.hilbert_symbol(a, b, Q) * L.hilbert_symbol(a, c, Q) 
+            ....:   == L.hilbert_symbol(a, b*c, Q))
+            True
+            sage: (L.hilbert_symbol(a, c, Q) * L.hilbert_symbol(b, c, Q)
+            ....:   == L.hilbert_symbol(a*b, c, Q)
+            True
         """
         if not self.is_global():
             raise NotImplementedError('only supported for global function fields')
 
         if self.characteristic() == 2:
-            raise NotImplementedError('only supported in odd characteristic')
+            raise NotImplementedError('Hilbert symbol currently only implemented'
+                                    ' for odd characteristic function fields')
 
         if not (a in self and b in self):
             raise ValueError('a and b must be elements of the function field')
@@ -1340,13 +1326,13 @@ class FunctionField(Field):
         v_b = ser_b.valuation()
         b0 = ser_b.coefficients()[0]
 
-        # Get the residue field of the completion, together with the residue map
-        k, _, tau = self.residue_field(P)
+        # Get the residue field of the completion together with the necssary exponent
+        k = sigma.codomain().base_ring()
         e = (k.order() - 1) >> 1
 
         # Use Euler's criterion to compute the powers of Legendre symbols
-        a_rd_pw = tau(a0)**(v_b * e)
-        b_rd_pw = tau(b0)**(v_a * e)
+        a_rd_pw = a0**(v_b * e)
+        b_rd_pw = b0**(v_a * e)
 
         # Finally, put the result together and transform it into the correct output
         res = k(-1)**(v_a * v_b * e) * a_rd_pw * b_rd_pw
