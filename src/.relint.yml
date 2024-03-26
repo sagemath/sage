@@ -1,7 +1,4 @@
-# From https://github.com/sagemath/sage-patchbot/blob/master/sage_patchbot/plugins.py
-# (simple pattern-exclusion plugins)
-# The patterns have been edited slightly because relint tests the regexp to the whole file,
-# whereas the patchbots tests them line by line.
+# Simple pattern exclusions
 
 - name: 'python3: Python3 incompatible code'
   hint: |
