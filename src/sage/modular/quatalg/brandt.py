@@ -202,7 +202,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.arith.misc import gcd, factor, prime_divisors, kronecker, next_prime
+from sage.arith.misc import gcd, prime_divisors, kronecker, next_prime
 from sage.categories.commutative_rings import CommutativeRings
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
@@ -217,7 +217,6 @@ from sage.modular.hecke.submodule import HeckeSubmodule
 from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
 from sage.structure.richcmp import richcmp, richcmp_method
@@ -370,13 +369,18 @@ def maximal_order(A):
     EXAMPLES::
 
         sage: A = BrandtModule(17).quaternion_algebra()
+
         sage: sage.modular.quatalg.brandt.maximal_order(A)
+        doctest:...:  DeprecationWarning: The function maximal_order() is deprecated, use the maximal_order() method of quaternion algebras
+        See https://github.com/sagemath/sage/issues/37090 for details.
         Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/2*i, 1/2*j - 1/2*k, -1/3*i + 1/3*k, -k)
 
         sage: A = QuaternionAlgebra(17,names='i,j,k')
         sage: A.maximal_order()
         Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/2*i, 1/2*j - 1/2*k, -1/3*i + 1/3*k, -k)
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37090, "The function maximal_order() is deprecated, use the maximal_order() method of quaternion algebras")
     return A.maximal_order()
 
 
@@ -397,11 +401,15 @@ def basis_for_left_ideal(R, gens):
 
         sage: B = BrandtModule(17); A = B.quaternion_algebra(); i,j,k = A.gens()
         sage: sage.modular.quatalg.brandt.basis_for_left_ideal(B.maximal_order(), [i+j,i-j,2*k,A(3)])
+        doctest:...:  DeprecationWarning: The function basis_for_left_ideal() is deprecated, use the _left_ideal_basis() method of quaternion algebras
+        See https://github.com/sagemath/sage/issues/37090 for details.
         [1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k]
         sage: sage.modular.quatalg.brandt.basis_for_left_ideal(B.maximal_order(), [3*(i+j),3*(i-j),6*k,A(3)])
         [3/2 + 1/2*i + k, i + 2*k, 3/2*j + 3/2*k, 3*k]
     """
-    return basis_for_quaternion_lattice([b * g for b in R.basis() for g in gens], reverse=False)
+    from sage.misc.superseded import deprecation
+    deprecation(37090, "The function basis_for_left_ideal() is deprecated, use the _left_ideal_basis() method of quaternion algebras")
+    return R._left_ideal_basis(gens)
 
 
 def right_order(R, basis):
@@ -422,40 +430,22 @@ def right_order(R, basis):
 
     We do a consistency check with the ideal equal to a maximal order::
 
-        sage: B = BrandtModule(17); basis = sage.modular.quatalg.brandt.basis_for_left_ideal(B.maximal_order(), B.maximal_order().basis())
+        sage: B = BrandtModule(17); basis = B.maximal_order()._left_ideal_basis([1])
         sage: sage.modular.quatalg.brandt.right_order(B.maximal_order(), basis)
+        doctest:...:  DeprecationWarning: The function right_order() is deprecated, use the _right_order_from_ideal_basis() method of quaternion algebras
+        See https://github.com/sagemath/sage/issues/37090 for details.
         Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k)
         sage: basis
         [1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k]
 
         sage: B = BrandtModule(17); A = B.quaternion_algebra(); i,j,k = A.gens()
-        sage: basis = sage.modular.quatalg.brandt.basis_for_left_ideal(B.maximal_order(), [i*j-j])
+        sage: basis = B.maximal_order()._left_ideal_basis([i*j - j])
         sage: sage.modular.quatalg.brandt.right_order(B.maximal_order(), basis)
         Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k)
     """
-    # Compute matrix of multiplication by each element of the basis.
-    B = R.basis()
-    Z = R.quaternion_algebra()
-    M = MatrixSpace(QQ, 4)
-
-    # I = matrix with rows the given basis for I
-    I = M([list(f) for f in basis])
-
-    # psi = matrix of right multiplication on each basis element
-    psi = [M([list(f * x) for x in Z.basis()]) for f in basis]
-
-    # invert them
-    psi_inv = [x**(-1) for x in psi]
-
-    # apply the four inverses to I
-    W = [I * x for x in psi_inv]
-
-    # The right order is the intersection of the row span of the W with the row span of B.
-    X = M([list(b) for b in B]).row_module(ZZ)
-    for A in W:
-        X = X.intersection(A.row_module(ZZ))
-    C = [Z(list(b)) for b in X.basis()]
-    return Z.quaternion_order(C)
+    from sage.misc.superseded import deprecation
+    deprecation(37090, "The function right_order() is deprecated, use the _right_order_from_ideal_basis() method of quaternion algebras")
+    return R._right_order_from_ideal_basis(basis)
 
 
 def quaternion_order_with_given_level(A, level):
@@ -476,56 +466,17 @@ def quaternion_order_with_given_level(A, level):
         sage: A.<i,j,k> = QuaternionAlgebra(5)
         sage: level = 2 * 5 * 17
         sage: O = quaternion_order_with_given_level(A, level)
-        sage: M = maximal_order(A)
+        doctest:...:  DeprecationWarning: The function quaternion_order_with_given_level() is deprecated, use the order_with_level() method of quaternion algebras
+        See https://github.com/sagemath/sage/issues/37090 for details.
+        sage: M = A.maximal_order()
         sage: L = O.free_module()
         sage: N = M.free_module()
         sage: L.index_in(N) == level/5  #check that the order has the right index in the maximal order
         True
     """
-    if A.base_ring() is not QQ:
-        raise NotImplementedError("base field must be rational numbers")
-
-    if len(A.ramified_primes()) > 1:
-        raise NotImplementedError("Currently this algorithm only works when the quaternion algebra is only ramified at one finite prime.")
-
-    # (The algorithm we use is similar to that in Magma (by David Kohel).)
-    # in the following magma code, M denotes the level
-    level = abs(level)
-    N = A.discriminant()
-    N1 = gcd(level, N)
-    M1 = level // N1
-
-    O = maximal_order(A)
-    # if N1 != 1:
-    #     # we do not know why magma does the following, so we do not do it.
-    #     for p in A.ramified_primes():
-    #         if not (level % p**2):
-    #             raise NotImplementedError("Currently sage can only compute orders whose level is divisible by at most one power of any prime that ramifies in the quaternion algebra")
-
-    #     P = basis_for_left_ideal(O, [N1] + [x * y - y * x
-    #                                         for x in A.basis()
-    #                                         for y in A.basis()])
-    #     O = A.quaternion_order(P)
-
-    fact = factor(M1)
-    B = O.basis()
-
-    for (p, r) in fact:
-        a = int(-p) // 2
-        for v in GF(p)**4:
-            x = sum([int(v[i] + a) * B[i] for i in range(4)])
-            D = x.reduced_trace()**2 - 4 * x.reduced_norm()
-            # x = O.random_element((-p/2).floor(), (p/2).ceil())
-            if kronecker(D, p) == 1:
-                break
-        X = PolynomialRing(GF(p), 'x').gen()
-        a = ZZ((X**2 - ZZ(x.reduced_trace()) * X + ZZ(x.reduced_norm())).roots()[0][0])
-        I = basis_for_left_ideal(O, [p**r, (x - a)**r])
-        O = right_order(O, I)
-        # right_order returns the RightOrder of I inside O, so we
-        # do not need to do another intersection
-
-    return O
+    from sage.misc.superseded import deprecation
+    deprecation(37090, "The function quaternion_order_with_given_level() is deprecated, use the order_with_level() method of quaternion algebras")
+    return A.order_with_level(level)
 
 
 class BrandtSubmodule(HeckeSubmodule):
@@ -809,7 +760,6 @@ class BrandtModule_class(AmbientHeckeModule):
         """
         return QuaternionAlgebra(self.N())
 
-    @cached_method
     def maximal_order(self):
         """
         Return a maximal order in the quaternion algebra associated to this Brandt module.
@@ -821,7 +771,7 @@ class BrandtModule_class(AmbientHeckeModule):
             sage: BrandtModule(17).maximal_order() is BrandtModule(17).maximal_order()
             True
         """
-        return maximal_order(self.quaternion_algebra())
+        return self.quaternion_algebra().maximal_order()
 
     @cached_method
     def order_of_level_N(self):
@@ -838,7 +788,7 @@ class BrandtModule_class(AmbientHeckeModule):
             sage: BrandtModule(7,3*17).order_of_level_N()
             Order of Quaternion Algebra (-1, -7) with base ring Rational Field with basis (1/2 + 1/2*j + 35*k, 1/2*i + 65/2*k, j + 19*k, 51*k)
         """
-        return quaternion_order_with_given_level(self.quaternion_algebra(), self.level())
+        return self.quaternion_algebra().order_with_level(self.level())
 
     def cyclic_submodules(self, I, p):
         """
@@ -1328,6 +1278,7 @@ class BrandtModule_class(AmbientHeckeModule):
             sage: prod(not Is[i].is_right_equivalent(Is[j]) for i in range(n) for j in range(i))
             1
         """
+        # TODO: move this code to orders, along with cyclic_submodules()
         p = self._smallest_good_prime()
         R = self.order_of_level_N()
         I = R.unit_ideal()
