@@ -256,6 +256,9 @@ class Application(object):
         Update a package to the latest version. This modifies the Sage sources.
         """
         pkg = Package(package_name)
+        if pkg.source not in ['normal', 'wheel']:
+            log.debug('update_latest can only update normal and wheel packages; %s is a %s package' % (pkg, pkg.source))
+            return
         dist_name = pkg.distribution_name
         if dist_name is None:
             log.debug('%s does not have Python distribution info in install-requires.txt' % pkg)
@@ -392,7 +395,10 @@ class Application(object):
 
         $ sage --package create jupyterlab_markup --pypi --source wheel --type optional
         """
-        if '-' in package_name:
+        if package_name.startswith('pkg:pypi/'):
+            pypi = True
+            package_name = package_name[len('pkg:pypi/'):].lower().replace('-', '_')
+        elif '-' in package_name:
             raise ValueError('package names must not contain dashes, use underscore instead')
         if pypi:
             if source is None:
