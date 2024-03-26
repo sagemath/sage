@@ -1548,7 +1548,7 @@ class BooleanFormula:
         return len(flatten(self.full_tree()))
 
     # For backward compatibility, we allow `self.length()` to be called as
-    # `len(self)`, but this may be deprecated in the future (see :trac:`32148`):
+    # `len(self)`, but this may be deprecated in the future (see :issue:`32148`):
     __len__ = length
 
 

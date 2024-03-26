@@ -26,7 +26,7 @@ seed, but currently there is no facility to do so.
 
 TESTS:
 
-Check that the issues from :trac:`27199` are fixed::
+Check that the issues from :issue:`27199` are fixed::
 
     sage: n = 16262093986406371
     sage: ecm = ECM()
@@ -55,6 +55,7 @@ from subprocess import Popen, PIPE, call
 from sage.structure.sage_object import SageObject
 from sage.rings.integer_ring import ZZ
 
+from sage.env import SAGE_ECMBIN
 
 class ECM(SageObject):
 
@@ -182,7 +183,7 @@ class ECM(SageObject):
         self._cmd = self._make_cmd(B1, B2, kwds)
 
     def _make_cmd(self, B1, B2, kwds):
-        ecm = ['ecm']
+        ecm = [SAGE_ECMBIN]
         options = []
         for x, v in kwds.items():
             if v is False:

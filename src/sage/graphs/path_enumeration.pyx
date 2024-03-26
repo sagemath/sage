@@ -152,12 +152,12 @@ def all_paths(G, start, end, use_multiedges=False, report_edges=False, labels=Fa
 
     TESTS:
 
-    Starting and ending at the same vertex (see :trac:`13006`)::
+    Starting and ending at the same vertex (see :issue:`13006`)::
 
         sage: graphs.CompleteGraph(4).all_paths(2, 2)
         [[2]]
 
-    Non-existing vertex as end vertex (see :trac:`24495`)::
+    Non-existing vertex as end vertex (see :issue:`24495`)::
 
         sage: g = graphs.PathGraph(5)
         sage: g.all_paths(1, 'junk')
@@ -165,7 +165,7 @@ def all_paths(G, start, end, use_multiedges=False, report_edges=False, labels=Fa
         ...
         LookupError: end vertex (junk) is not a vertex of the graph
 
-    Distinguishing between multiedged paths (see :trac:`27501`)::
+    Distinguishing between multiedged paths (see :issue:`27501`)::
 
         sage: g = Graph(multiedges=True)
         sage: g.add_edge(0, 3, 1)
@@ -196,7 +196,7 @@ def all_paths(G, start, end, use_multiedges=False, report_edges=False, labels=Fa
          [0, 2, 4, 5, 6],
          [0, 2, 4, 5, 6]]
 
-    Added reporting of edges (see :trac:`27501`)::
+    Added reporting of edges (see :issue:`27501`)::
 
         sage: G = DiGraph(multiedges=True)
         sage: G.add_edges([(0, 2), (0, 3), (0, 4), (1, 2), (1, 2), (1, 5), (3, 5), (3, 5)])

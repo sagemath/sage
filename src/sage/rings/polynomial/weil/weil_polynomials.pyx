@@ -513,7 +513,7 @@ class WeilPolynomials():
         True
         True
 
-    Test that :trac:`29475` is resolved::
+    Test that :issue:`29475` is resolved::
 
         sage: P.<x> = QQ[]
         sage: u = x^6 + x^5 + 6*x^4 - 2*x^3 + 66*x^2 + 121*x + 1331
@@ -524,7 +524,7 @@ class WeilPolynomials():
         sage: u in WeilPolynomials(6, 11, 1, [(1,0),(1,11),(6,11)])
         True
 
-    Test that :trac:`31809` is resolved::
+    Test that :issue:`31809` is resolved::
 
         sage: from sage.rings.polynomial.weil.weil_polynomials import WeilPolynomials
         sage: foo = list(WeilPolynomials(12, 3, lead=(1,0,9,2,46), squarefree=False))
@@ -532,7 +532,7 @@ class WeilPolynomials():
         sage: bar == [f for f in foo if f.is_squarefree()]
         True
 
-    Test that :trac:`32348` is resolved::
+    Test that :issue:`32348` is resolved::
 
         sage: list(WeilPolynomials(10, 2, lead=(1,-3,5,-5,5,-5)))
         [x^10 - 3*x^9 + 5*x^8 - 5*x^7 + 5*x^6 - 5*x^5 + 10*x^4 - 20*x^3 + 40*x^2 - 48*x + 32]

@@ -132,13 +132,13 @@ class ClassicalMatrixLieAlgebra(MatrixLieAlgebraFromAssociative):
 
         TESTS:
 
-        Check that :trac:`23266` is fixed::
+        Check that :issue:`23266` is fixed::
 
             sage: sl2 = lie_algebras.sl(QQ, 2, 'matrix')
             sage: isinstance(sl2.indices(), FiniteEnumeratedSet)
             True
 
-        Check that elements are hashable (see :trac:`28961`)::
+        Check that elements are hashable (see :issue:`28961`)::
 
             sage: sl2 = lie_algebras.sl(QQ, 2, 'matrix')
             sage: e,f,h = list(sl2.basis())
@@ -432,7 +432,7 @@ class gl(MatrixLieAlgebraFromAssociative):
 
         TESTS:
 
-        Check that :trac:`23266` is fixed::
+        Check that :issue:`23266` is fixed::
 
             sage: gl2 = lie_algebras.gl(QQ, 2)
             sage: isinstance(gl2.basis().keys(), FiniteEnumeratedSet)
@@ -1795,6 +1795,19 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
             Lie algebra of ['A', 2] in the Chevalley basis
         """
         return "Lie algebra of {} in the Chevalley basis".format(self._cartan_type)
+
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        EXAMPLES::
+
+            sage: g = LieAlgebra(QQ, cartan_type=['A', 2])
+            sage: latex(g)
+            \mathfrak{g}(A_{2})_{\Bold{Q}}
+        """
+        from sage.misc.latex import latex
+        return r"\mathfrak{{g}}({})_{{{}}}".format(latex(self._cartan_type), latex(self.base_ring()))
 
     def _test_structure_coeffs(self, **options):
         """
