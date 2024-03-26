@@ -101,7 +101,7 @@ For a simple linear programming example, if we want to solve
 .. math::
 
    \begin{array}{cc}
-   \text{minimze} & -4x_1-5x_2\\
+   \text{minimize} & -4x_1-5x_2\\
    \text{subject to} & 2x_1 +x_2\le 3\\
                      & x_1+2x_2\le 3\\
                      & x_1 \ge 0 \\
