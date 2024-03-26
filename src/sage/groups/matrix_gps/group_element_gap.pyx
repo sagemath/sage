@@ -210,7 +210,7 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
         entries = self.gap().Flat()
         MS = self.parent().matrix_space()
         ring = MS.base_ring()
-        m = MS([x.sage(ring=ring) for x in entries])
+        m = MS([ring(x) for x in entries])
         m.set_immutable()
         return m
 
