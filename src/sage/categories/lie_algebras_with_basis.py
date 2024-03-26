@@ -54,6 +54,9 @@ class LieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     Graded = LazyImport('sage.categories.graded_lie_algebras_with_basis',
                         'GradedLieAlgebrasWithBasis',
                         as_name='Graded')
+    Super = LazyImport('sage.categories.super_lie_algebras_with_basis',
+                       'SuperLieAlgebrasWithBasis',
+                       as_name='Super')
 
     class ParentMethods:
         def _basis_key(self, x):

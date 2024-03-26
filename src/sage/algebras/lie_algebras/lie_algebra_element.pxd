@@ -24,6 +24,9 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
     cpdef dict monomial_coefficients(self, bint copy=*) noexcept
     # cpdef lift(self)
 
+cdef class SuperStructureCoefficientsElement(StructureCoefficientsElement):
+    pass
+
 cdef class UntwistedAffineLieAlgebraElement(Element):
     cdef dict _t_dict
     cdef _c_coeff

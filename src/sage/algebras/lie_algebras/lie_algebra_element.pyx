@@ -792,7 +792,7 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
         """
         P = self._parent
         cdef dict s_coeff = P._s_coeff
-        d = P.dimension()
+        cdef int d = P.dimension()
         cdef list ret = [P.base_ring().zero()]*d
         cdef int i1, i2, i3
         cdef StructureCoefficientsElement rt = <StructureCoefficientsElement> right
@@ -895,6 +895,61 @@ cdef class StructureCoefficientsElement(LieAlgebraMatrixWrapper):
             -3/2
         """
         return self.value[self._parent._indices.index(i)]
+
+
+cdef class SuperStructureCoefficientsElement(StructureCoefficientsElement):
+    r"""
+    An element of a Lie superalgebra given by structure coefficients.
+
+    .. NOTE::
+
+        Inheriting from :class:`StructureCoefficientsElement` is a slight
+        abuse as a Lie superalgebra is not a Lie algebra under forgetting
+        about the degree (which extends to the elements).
+    """
+    cpdef _bracket_(self, right) noexcept:
+        r"""
+        Return the super Lie bracket ``[self, right]``.
+
+        EXAMPLES::
+
+            sage: L.<x,y,z> = SuperLieAlgebra(QQ, {('x','y'): {'z':1}}, (1,1,2))
+            sage: x.bracket(y)
+            z
+            sage: y.bracket(x)
+            z
+            sage: x.bracket(z)
+            0
+        """
+        P = self._parent
+        cdef tuple degrees = P._degrees
+        cdef dict s_coeff = P._s_coeff
+        cdef int d = P.dimension()
+        cdef list ret = [P.base_ring().zero()] * d
+        cdef int i1, i2, i3
+        cdef SuperStructureCoefficientsElement rt = <SuperStructureCoefficientsElement> right
+        for i1 in range(d):
+            c1 = self.value[i1]
+            if not c1:
+                continue
+            for i2 in range(d):
+                c2 = rt.value[i2]
+                if not c2:
+                    continue
+                prod_c1_c2 = c1 * c2
+                if (i1, i2) in s_coeff:
+                    v = s_coeff[i1, i2]
+                    for i3 in range(d):
+                        ret[i3] += prod_c1_c2 * v[i3]
+                elif (i2, i1) in s_coeff:
+                    # these two lines are (effectively) the only difference
+                    #   with StructureCoefficientsElement._bracket_
+                    if degrees[i1] * degrees[i2] % 2 == 0:
+                        prod_c1_c2 = -prod_c1_c2
+                    v = s_coeff[i2, i1]
+                    for i3 in range(d):
+                        ret[i3] += prod_c1_c2 * v[i3]
+        return type(self)(P, P._M(ret))
 
 
 cdef class UntwistedAffineLieAlgebraElement(Element):
