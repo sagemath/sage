@@ -174,8 +174,7 @@ The source directory of a distribution package, such as
 
     $ ./sage --fixdistributions --set all --from-egg-info
 
-- `pyproject.toml <https://pip.pypa.io/en/stable/reference/build-system/pyproject-toml/>`_,
-  `setup.cfg <https://setuptools.pypa.io/en/latest/userguide/declarative_config.html>`_,
+- `pyproject.toml <https://pip.pypa.io/en/stable/reference/build-system/pyproject-toml/>`_
   and `requirements.txt <https://pip.pypa.io/en/stable/user_guide/#requirements-files>`_ --
   standard Python packaging metadata, declaring the distribution name, dependencies,
   etc.
@@ -288,8 +287,9 @@ modules must be part of the distribution, or provided by another
 distribution -- which then must be declared as a run-time dependency.
 
 *Declaring run-time dependencies:* These dependencies are declared in
-``setup.cfg`` (generated from ``setup.cfg.m4``) as
-`install_requires <https://setuptools.pypa.io/en/latest/userguide/dependency_management.html#declaring-required-dependency>`_.
+``pyproject.toml`` (generated from ``pyproject.toml.m4``) as
+`[project] dependencies <https://setuptools.pypa.io/en/latest/userguide/dependency_management.html#declaring-required-dependency>`_ (in the older terminology of ``setup.cfg`` and ``setup.py``,
+these dependencies were known as ``install_requires``).
 
 *Reducing module-level run-time dependencies:*
 
@@ -467,14 +467,17 @@ features, which will only be working if the user also has installed
 **sagemath-symbolics**.
 
 *Declaring optional run-time dependencies:* It is possible to declare
-such optional dependencies as `extras_require <https://setuptools.pypa.io/en/latest/userguide/dependency_management.html#optional-dependencies>`_ in ``setup.cfg``
-(generated from ``setup.cfg.m4``).  This is a very limited mechanism
+such dependencies as `[project.optional-dependencies] <https://setuptools.pypa.io/en/latest/userguide/dependency_management.html#optional-dependencies>`_ in ``pyproject.toml``
+(generated from ``pyproject.toml.m4``).
+(In the older terminology of ``setup.cfg`` and ``setup.py``,
+these optional dependencies were known as ``extras_require``.)
+This is a very limited mechanism
 -- in particular it does not affect the build phase of the
 distribution in any way. It basically only provides a way to give a
 nickname to a distribution that can be installed as an add-on.
 
-In our example, we could declare an ``extras_require`` so that users
-could use ``pip install sagemath-coding[symbolics]``.
+In our example, we could declare an optional dependency so that users
+could use ``pip install "sagemath-coding[symbolics]"``.
 
 
 Doctest-only dependencies
@@ -516,7 +519,7 @@ The version information for dependencies comes from the files
 ``build/pkgs/*/package-version.txt``.  We use the
 `m4 <https://www.gnu.org/software/m4/manual/html_node/index.html>`_
 macro processor to insert the version information in the generated files
-``pyproject.toml``, ``setup.cfg``, ``requirements.txt``.
+``pyproject.toml`` and ``requirements.txt``.
 
 
 Hierarchy of distribution packages
@@ -546,8 +549,8 @@ Hierarchy of distribution packages
     sphinx_plot(g, figsize=(8, 4), axes=False)
 
 
-Solid arrows indicate ``install_requires``, i.e., a declared runtime dependency.
-Dashed arrows indicate ``extras_require``, i.e., a declared optional runtime dependency.
+Solid arrows indicate declared runtime dependencies (``install_requires``).
+Dashed arrows indicate declared optional runtime dependencies (``extras_require``).
 Not shown in the diagram are build dependencies and optional dependencies for testing.
 
 - `sage_conf <https://pypi.org/project/sage-conf/>`_ is a configuration
