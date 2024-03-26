@@ -1,5 +1,5 @@
 r"""
-Field of Arbitrary Precision Complex Intervals
+Arbitrary precision complex intervals (parent class)
 
 AUTHORS:
 
