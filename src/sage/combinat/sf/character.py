@@ -37,6 +37,25 @@ from sage.rings.integer import Integer
 
 
 class generic_character(SFA_generic):
+
+    def construction(self):
+        """
+        Return a pair ``(F, R)``, where ``F`` is a
+        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
+        that ``F(R)`` returns ``self``.
+
+        EXAMPLES::
+
+            sage: ht = SymmetricFunctions(QQ).ht()
+            sage: ht.construction()
+            (SymmetricFunctionsFunctor[induced trivial symmetric group character],
+             Rational Field)
+        """
+        from sage.combinat.sf.sfa import SymmetricFunctionsFunctor
+        return (SymmetricFunctionsFunctor(self, self.basis_name(),
+                                          self._prefix),
+                self.base_ring())
+
     def _my_key(self, la):
         r"""
         A rank function for partitions.
