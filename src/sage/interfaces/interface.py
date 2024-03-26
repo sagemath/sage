@@ -273,7 +273,7 @@ class Interface(WithEqualityById, ParentWithBase):
 
         TESTS:
 
-        Check conversion of Booleans (:trac:`28705`)::
+        Check conversion of Booleans (:issue:`28705`)::
 
             sage: giac(True)
             true
@@ -341,7 +341,7 @@ class Interface(WithEqualityById, ParentWithBase):
 
         TESTS:
 
-        Check that python type ``complex`` can be converted (:trac:`31775`)::
+        Check that python type ``complex`` can be converted (:issue:`31775`)::
 
             sage: giac(complex(I))**2  # should not return `j^2`
             -1
@@ -955,7 +955,7 @@ class InterfaceElement(Element):
 
         Here, GAP fails to compare, and so ``False`` is returned.
         In previous Sage versions, this example actually resulted
-        in an error; compare :trac:`5962`.
+        in an error; compare :issue:`5962`.
         ::
 
             sage: gap('DihedralGroup(8)')==gap('DihedralGroup(8)')
@@ -1187,7 +1187,7 @@ class InterfaceElement(Element):
 
         TESTS:
 
-        In :trac:`22501`, several string representation methods have been
+        In :issue:`22501`, several string representation methods have been
         removed in favour of using the default implementation. The corresponding
         tests have been moved here::
 
@@ -1341,7 +1341,7 @@ class InterfaceElement(Element):
         TESTS:
 
         By default this returns ``True`` for elements that are considered to be
-        not ``False`` by the interface (:trac:`28705`)::
+        not ``False`` by the interface (:issue:`28705`)::
 
             sage: bool(giac('"a"'))
             True

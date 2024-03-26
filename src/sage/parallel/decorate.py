@@ -172,7 +172,7 @@ class ParallelFunction():
 
         .. note::
 
-            This is the key to fixing :trac:`11461`.
+            This is the key to fixing :issue:`11461`.
 
         EXAMPLES:
 

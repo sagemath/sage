@@ -269,7 +269,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
              got <...GradedAlgebrasWithBasis'>
 
         We note that because ``Algebras.WithBasis`` is not lazily imported
-        on startup (see :trac:`22955`), the test fails at a different
+        on startup (see :issue:`22955`), the test fails at a different
         point in the code. However, if this import becomes lazy again, then
         the following error will be generated and can replace the above::
 
@@ -345,7 +345,7 @@ class FunctorialConstructionCategory(Category): # Should this be CategoryWithBas
             sage: Sets.Subquotients._base_category_class
             (<class 'sage.categories.sets_cat.Sets'>,)
 
-        It also forces the resolution of lazy imports (see :trac:`15648`)::
+        It also forces the resolution of lazy imports (see :issue:`15648`)::
 
             sage: type(Algebras.__dict__["Graded"])
             <class 'sage.misc.lazy_import.LazyImport'>

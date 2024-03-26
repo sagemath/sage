@@ -1,5 +1,5 @@
 div.jupyter_container {
-  margin: .5rem 0;
+  border: 0;
 }
 
 div.jupyter_container + div.jupyter_container {
