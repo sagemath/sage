@@ -2980,9 +2980,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
         zero rows, so that the output has the same dimensions as the input. The
         transformation matrix is always invertible over the integers.
 
-        Also the rank (and the determinant) of ``self`` are cached if those are
-        computed during the reduction. Note that in general this only happens
-        when ``self.rank() == self.ncols()`` and the exact algorithm is used.
+        Also the rank of ``self`` is cached if it is computed during the
+        reduction. Note that in general this only happens when
+        ``self.rank() == self.ncols()`` and the exact algorithm is used.
 
         INPUT:
 
@@ -3144,7 +3144,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: A = random_matrix(ZZ, 0, 0)
             sage: R, U = A.LLL(transformation=True)
 
-        Test rank caching:
+        Test rank caching::
 
             sage: M = matrix(4,3,[1,2,3,2,4,6,7,0,1,-1,-2,-3])
             sage: R = M.LLL(algorithm="NTL:LLL")
@@ -3154,6 +3154,13 @@ cdef class Matrix_integer_dense(Matrix_dense):
             sage: R = M.LLL(algorithm="pari")
             sage: M._cache
             {'rank': 2}
+
+        Check that :issue:`37236` is fixed::
+
+            sage: M = matrix(ZZ, 2, 2, [-1,1,1,1])
+            sage: L = M.LLL(algorithm="NTL:LLL")
+            sage: M.det() == L.det()
+            True
 
         .. NOTE::
 
@@ -3229,15 +3236,9 @@ cdef class Matrix_integer_dense(Matrix_dense):
 
             if algorithm == "NTL:LLL":
                 if transformation:
-                    r, det2, UNTL = A.LLL(a,b, verbose=verb, return_U=True)
+                    r, _, UNTL = A.LLL(a, b, verbose=verb, return_U=True)
                 else:
-                    r, det2 = A.LLL(a,b, verbose=verb)
-                det2 = ZZ(det2)
-                try:
-                    det = ZZ(det2.sqrt())
-                    self.cache("det", det)
-                except TypeError:
-                    pass
+                    r, _ = A.LLL(a, b, verbose=verb)
             elif algorithm == "NTL:LLL_FP":
                 if use_givens:
                     r = A.G_LLL_FP(delta, verbose=verb, return_U=transformation)
