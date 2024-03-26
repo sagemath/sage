@@ -45,6 +45,15 @@ class HyperellipticCurve_g2(hyperelliptic_generic.HyperellipticCurve_generic):
             sage: f = x^5 - x^4 + 3
             sage: HyperellipticCurve(f).jacobian()
             Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - x^4 + 3
+
+        TESTS:
+
+        Ensure that :issue:`37612` is fixed::
+
+            sage: R.<x> = QQ[]
+            sage: f = x^5 - x^4 + 3
+            sage: type(HyperellipticCurve(f).jacobian())
+            <class 'sage.schemes.hyperelliptic_curves.jacobian_g2.HyperellipticJacobian_g2_with_category'>
         """
         return jacobian_g2.HyperellipticJacobian_g2(self)
 
