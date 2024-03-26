@@ -706,8 +706,13 @@ class AlternatingGroup(PermutationGroup_symalt):
 
             sage: groups.permutation.Alternating(6)
             Alternating group of order 6!/2 as a permutation group
+            sage: A = AlternatingGroup(6)
+            sage: h = A.hom(codomain=A, im_gens=A.gens())
+            sage: all(h(a) == a for a in A.gens())
+            True
         """
         PermutationGroup_symalt.__init__(self, gap_group='AlternatingGroup(%s)' % len(domain), domain=domain)
+        self._gens = tuple(self(g) for g in self.gap().GeneratorsOfGroup())
 
     def _repr_(self):
         """
