@@ -9,7 +9,7 @@ cdef class CCtoCDF(Map):
         """
         EXAMPLES::
             sage: from sage.rings.complex_conversion import CCtoCDF
-            sage: f = CCtoCDF(CC, CDF) # indirect doctest
+            sage: f = CCtoCDF(CC, CDF)  # indirect doctest
             sage: f(CC.0)
             1.0*I
             sage: f(exp(pi*CC.0/4))                                                     # needs sage.symbolic

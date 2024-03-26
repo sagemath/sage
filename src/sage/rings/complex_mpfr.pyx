@@ -444,7 +444,9 @@ class ComplexField_class(sage.rings.abc.ComplexField):
             sage: CC.gen() + QQ.extension(x^2 + 1, 'I', embedding=None).gen()           # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for +: 'Complex Field with 53 bits of precision' and 'Number Field in I with defining polynomial x^2 + 1'
+            TypeError: unsupported operand parent(s) for +:
+            'Complex Field with 53 bits of precision' and
+            'Number Field in I with defining polynomial x^2 + 1'
 
         In the absence of arguments we return zero::
 
