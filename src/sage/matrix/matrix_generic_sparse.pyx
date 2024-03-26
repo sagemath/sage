@@ -47,7 +47,8 @@ EXAMPLES::
     [  5   x x^2]
     [x^3 x^4 x^5]
     sage: parent(d)
-    Full MatrixSpace of 2 by 3 dense matrices over Univariate Polynomial Ring in x over Rational Field
+    Full MatrixSpace of 2 by 3 dense matrices
+     over Univariate Polynomial Ring in x over Rational Field
     sage: c.sparse_matrix() is c
     True
     sage: c.is_sparse()
