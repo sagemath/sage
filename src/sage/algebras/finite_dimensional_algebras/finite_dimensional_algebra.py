@@ -760,7 +760,7 @@ class FiniteDimensionalAlgebra(UniqueRepresentation, Algebra):
         EXAMPLES::
 
             sage: A = FiniteDimensionalAlgebra(GF(3), [Matrix([[1, 0], [0, 1]]),
-            ....:                                      Matrix([[0, 1], [0, 0]])])
+            ....:                                      Matrix([[0, 1], [0, 0]])], assume_associative=True)
             sage: q0 = A.quotient_map(A.zero_ideal()); q0
             Morphism
              from Finite-dimensional algebra of degree 2 over Finite Field of size 3

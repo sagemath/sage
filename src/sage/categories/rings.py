@@ -544,40 +544,16 @@ class Rings(CategoryWithAxiom):
                 return FreeModule(self, n)
 
         @cached_method
-        def ideal_monoid(self):
+        def unit_ideal(self):
             """
-            The monoid of the ideals of this ring.
-
-            .. NOTE::
-
-                The code is copied from the base class of rings.
-                This is since there are rings that do not inherit
-                from that class, such as matrix algebras.  See
-                :issue:`7797`.
+            Return the unit ideal of this ring.
 
             EXAMPLES::
 
-                sage: # needs sage.modules
-                sage: MS = MatrixSpace(QQ, 2, 2)
-                sage: isinstance(MS, Ring)
-                False
-                sage: MS in Rings()
-                True
-                sage: MS.ideal_monoid()
-                Monoid of ideals of Full MatrixSpace of 2 by 2 dense matrices
-                over Rational Field
-
-            Note that the monoid is cached::
-
-                sage: MS.ideal_monoid() is MS.ideal_monoid()                            # needs sage.modules
-                True
+                sage: Zp(7).unit_ideal()                                                    # needs sage.rings.padics
+                Principal ideal (1 + O(7^20)) of 7-adic Ring with capped relative precision 20
             """
-            try:
-                from sage.rings.ideal_monoid import IdealMonoid
-                return IdealMonoid(self)
-            except TypeError:
-                from sage.rings.noncommutative_ideals import IdealMonoid_nc
-                return IdealMonoid_nc(self)
+            return self.principal_ideal(self.one(), coerce=False)
 
         def characteristic(self):
             """
@@ -733,61 +709,6 @@ class Rings(CategoryWithAxiom):
             if len(gens) == 1 and isinstance(gens[0], (list, tuple)):
                 gens = gens[0]
             return C(self, gens, **kwds)
-
-        def _ideal_class_(self, n=0):
-            """
-            Return the class that is used to implement ideals of this ring.
-
-            .. NOTE::
-
-                We copy the code from :class:`~sage.rings.ring.Ring`. This is
-                necessary because not all rings inherit from that class, such
-                as matrix algebras.
-
-            INPUT:
-
-            - ``n`` (optional integer, default 0): The number of generators
-              of the ideal to be created.
-
-            OUTPUT:
-
-            The class that is used to implement ideals of this ring with
-            ``n`` generators.
-
-            .. NOTE::
-
-                Often principal ideals (``n==1``) are implemented via
-                a different class.
-
-            EXAMPLES::
-
-                sage: MS = MatrixSpace(QQ, 2, 2)                                        # needs sage.modules
-                sage: MS._ideal_class_()                                                # needs sage.modules
-                <class 'sage.rings.noncommutative_ideals.Ideal_nc'>
-
-            We do not know of a commutative ring in Sage that does not inherit
-            from the base class of rings. So, we need to cheat in the next
-            example::
-
-                sage: super(Ring,QQ)._ideal_class_.__module__
-                'sage.categories.rings'
-                sage: super(Ring,QQ)._ideal_class_()
-                <class 'sage.rings.ideal.Ideal_generic'>
-                sage: super(Ring,QQ)._ideal_class_(1)
-                <class 'sage.rings.ideal.Ideal_principal'>
-                sage: super(Ring,QQ)._ideal_class_(2)
-                <class 'sage.rings.ideal.Ideal_generic'>
-            """
-            from sage.rings.noncommutative_ideals import Ideal_nc
-            try:
-                if not self.is_commutative():
-                    return Ideal_nc
-            except (NotImplementedError, AttributeError):
-                return Ideal_nc
-            from sage.rings.ideal import Ideal_generic, Ideal_principal
-            if n == 1:
-                return Ideal_principal
-            return Ideal_generic
 
         ##
         # Quotient rings
