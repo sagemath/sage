@@ -205,7 +205,7 @@ tutorials.  Here is a reminder of what can be done.
     sage: # import matplotlib.cm; matplotlib.cm.datad.keys()
     sage: # 'Spectral', 'summer', 'blues'
     sage: g(x,y)=e^-x*sin(y)
-    sage: contour_plot(g, (x, -2, 2), (y, -4*pi, 4*pi), cmap = 'Blues', contours=10, colorbar=True)
+    sage: contour_plot(g, (x, -2, 2), (y, -4*pi, 4*pi), cmap = 'Blues', contours=10, colorbar=True)  # not tested
     Graphics object consisting of 1 graphics primitive
 
 Partial Differentiation

@@ -21,7 +21,7 @@
        <... 'function'>
        sage: f(3)
        9
-       sage: plot(f, 0, 2)
+       sage: plot(f, 0, 2)  # not tested
        Graphics object consisting of 1 graphics primitive
 
 Обратите внимание на синтаксис в последней строчке. ``plot(f(z), 0, 2)``

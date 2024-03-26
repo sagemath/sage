@@ -430,7 +430,7 @@ points!
 
 ::
 
-    sage: plot3d(g,(x,-5,5),(y,-5,5),plot_points=300)
+    sage: plot3d(g,(x,-5,5),(y,-5,5),plot_points=300)  # not tested
     Graphics3d Object
 
 As with 2D plots, we can superimpose 3D plots by adding them together.
@@ -463,7 +463,7 @@ We close this tutorial with a cool plot that we define *implicitly* as a
     sage: T = golden_ratio
     sage: p = 2 - (cos(x + T*y) + cos(x - T*y) + cos(y + T*z) + cos(y - T*z) + cos(z - T*x) + cos(z + T*x))
     sage: r = 4.78
-    sage: implicit_plot3d(p, (x, -r, r), (y, -r, r), (z, -r, r), plot_points=50, color='yellow')
+    sage: implicit_plot3d(p, (x, -r, r), (y, -r, r), (z, -r, r), plot_points=50, color='yellow')  # not tested
     Graphics3d Object
 
 The next tutorial will use all that you have learned about Sage basics,

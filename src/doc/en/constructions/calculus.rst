@@ -177,7 +177,7 @@ where :math:`f(x)=1`, :math:`0<x<1`:
     sage: g = f.convolution(f)
     sage: h = f.convolution(g)
     sage: set_verbose(-1)
-    sage: P = f.plot(); Q = g.plot(rgbcolor=(1,1,0)); R = h.plot(rgbcolor=(0,1,1))
+    sage: P = f.plot(); Q = g.plot(rgbcolor=(1,1,0)); R = h.plot(rgbcolor=(0,1,1))  # not tested
 
 To view this, type ``show(P+Q+R)``.
 
@@ -387,7 +387,7 @@ are obtained via ``fourier_series_partial_sum``::
     -6/5/pi
     sage: s5 = f.fourier_series_partial_sum(5); s5
     -6/5*sin(10*x)/pi - 2*sin(6*x)/pi - 6*sin(2*x)/pi + 1/2
-    sage: plot(f, (0,pi)) + plot(s5, (x,0,pi), color='red')
+    sage: plot(f, (0,pi)) + plot(s5, (x,0,pi), color='red')  # not tested
     Graphics object consisting of 2 graphics primitives
 
 .. PLOT::

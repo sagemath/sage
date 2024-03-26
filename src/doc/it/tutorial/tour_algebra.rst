@@ -245,7 +245,7 @@ Essa può essere disegnata in forma parametrica usando
     sage: t = var('t')
     sage: P = parametric_plot((cos(2*t) + 2*cos(t), 4*cos(t) - cos(2*t) ),
     ....: (0, 2*pi), rgbcolor=hue(0.9))
-    sage: show(P)
+    sage: show(P)  # not tested
 
 Le singole componenti possono essere tracciate usando::
 

@@ -138,7 +138,7 @@ the above call ``E.spherical_coordinates()``::
 These formulas are automatically used if we ask to plot the grid of spherical
 coordinates in terms of Cartesian coordinates::
 
-    sage: spherical.plot(cartesian, color={r:'red', th:'green', ph:'orange'})
+    sage: spherical.plot(cartesian, color={r:'red', th:'green', ph:'orange'})  # not tested
     Graphics3d Object
 
 .. PLOT::
@@ -164,7 +164,7 @@ For customizing the plot, see the list of options in the documentation of
 spherical coordinates in the plane `\theta=\pi/2` in terms of the coordinates
 `(x, y)`::
 
-    sage: spherical.plot(cartesian, fixed_coords={th: pi/2}, ambient_coords=(x,y),
+    sage: spherical.plot(cartesian, fixed_coords={th: pi/2}, ambient_coords=(x,y),  # not tested
     ....:                color={r:'red', th:'green', ph:'orange'})
     Graphics object consisting of 18 graphics primitives
 
@@ -182,7 +182,7 @@ spherical coordinates in the plane `\theta=\pi/2` in terms of the coordinates
 Similarly the grid of spherical coordinates in the half-plane `\phi=0`
 drawn in terms of the coordinates `(x, z)` is obtained via::
 
-    sage: spherical.plot(cartesian, fixed_coords={ph: 0}, ambient_coords=(x,z),
+    sage: spherical.plot(cartesian, fixed_coords={ph: 0}, ambient_coords=(x,z),  # not tested
     ....:                color={r:'red', th:'green', ph:'orange'})
     Graphics object consisting of 18 graphics primitives
 

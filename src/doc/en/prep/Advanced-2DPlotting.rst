@@ -58,7 +58,7 @@ A simple quadratic is easy.
 
 ::
 
-    sage: plot(x^2, (x,-2,2))
+    sage: plot(x^2, (x,-2,2))  # not tested
     Graphics object consisting of 1 graphics primitive
 
 You can combine "plot objects" by adding them.

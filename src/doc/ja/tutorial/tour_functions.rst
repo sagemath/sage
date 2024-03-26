@@ -18,7 +18,7 @@ Sageで「関数」と呼ばれるべきものを定義する方法は何通り�
        <... 'function'>
        sage: f(3)
        9
-       sage: plot(f, 0, 2)
+       sage: plot(f, 0, 2)  # not tested
        Graphics object consisting of 1 graphics primitive
 
 

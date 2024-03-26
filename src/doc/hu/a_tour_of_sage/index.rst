@@ -59,7 +59,7 @@ Az eredmény egyenleteknek a listája.
 
     sage: S[0].rhs()
     -1/2*sqrt(4*a + 1) - 1/2
-    sage: show(plot(sin(x) + sin(1.6*x), 0, 40))
+    sage: show(plot(sin(x) + sin(1.6*x), 0, 40))  # not tested
 
 .. image:: sin_plot.*
 

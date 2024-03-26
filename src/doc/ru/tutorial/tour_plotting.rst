@@ -22,7 +22,7 @@ Sage может строить двумерные и трехмерные гра
 
 ::
 
-    sage: circle((0,0), 1, rgbcolor=(1,1,0))
+    sage: circle((0,0), 1, rgbcolor=(1,1,0))  # not tested
     Graphics object consisting of 1 graphics primitive
 
 Также можно построить круг:

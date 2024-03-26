@@ -63,7 +63,7 @@ Sage can plot various useful functions, of course.
 
 ::
 
-    sage: show(plot(sin(x) + sin(1.6*x), 0, 40))
+    sage: show(plot(sin(x) + sin(1.6*x), 0, 40))  # not tested
 
 .. image:: sin_plot.*
 
@@ -83,7 +83,7 @@ It takes Sage a second to compute the eigenvalues of the matrix and plot them.
 
     sage: e = m.eigenvalues()  # about 1 second
     sage: w = [(i, abs(e[i])) for i in range(len(e))]
-    sage: show(points(w))
+    sage: show(points(w))  # not tested
 
 .. image:: eigen_plot.*
 

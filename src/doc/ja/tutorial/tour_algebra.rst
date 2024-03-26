@@ -272,7 +272,7 @@ Sageを使って常微分方程式を研究することもできる． :math:`x'
     sage: t = var('t')
     sage: P = parametric_plot((cos(2*t) + 2*cos(t), 4*cos(t) - cos(2*t) ),
     ....: (t, 0, 2*pi), rgbcolor=hue(0.9))
-    sage: show(P)
+    sage: show(P)  # not tested
 
 各成分ごとにプロットするには
 

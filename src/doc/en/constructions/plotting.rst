@@ -39,7 +39,7 @@ You can plot piecewise-defined functions:
     sage: f3 = exp(x)
     sage: f4 = sin(2*x)
     sage: f = piecewise([((0,1),f1), ((1,2),f2), ((2,3),f3), ((3,10),f4)])
-    sage: f.plot(x,0,10)
+    sage: f.plot(x,0,10)  # not tested
     Graphics object consisting of 1 graphics primitive
 
 Other function plots can be produced as well:
@@ -52,7 +52,7 @@ A red plot of the Jacobi elliptic function
 
     sage: L = [(i/100.0, maxima.eval('jacobi_sn (%s/100.0,2.0)'%i))
     ....:     for i in range(-300,300)]
-    sage: show(line(L, rgbcolor=(3/4,1/4,1/8)))
+    sage: show(line(L, rgbcolor=(3/4,1/4,1/8)))  # not tested
 
 A red plot of :math:`J`-Bessel function :math:`J_2(x)`,
 :math:`0<x<10`:
