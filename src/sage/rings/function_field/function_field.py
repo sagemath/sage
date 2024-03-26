@@ -1277,8 +1277,8 @@ class FunctionField(Field):
             ....:     + (2/(x^2 + 4*x + 1))*T + 3*x^2 + 2*x + 4)
             sage: L.<y> = K.extension(f)
             sage: a = L.random_element()
-            ....: b = L.random_element()
-            ....: c = L.random_element()
+            sage: b = L.random_element()
+            sage: c = L.random_element()
 
             sage: P = L.places_above(K.places()[0])[1]
             sage: hs_a_c = L.hilbert_symbol(a, c, P)
@@ -1288,7 +1288,7 @@ class FunctionField(Field):
             True
 
             sage: Q = L.places_above(K.places()[1])[0]
-            sage: hs_a_c = L.hilbert_symbol(a, c, P)
+            sage: hs_a_c = L.hilbert_symbol(a, c, Q)
             sage: L.hilbert_symbol(a, b, Q) * hs_a_c == L.hilbert_symbol(a, b*c, Q)
             True
             sage: hs_a_c * L.hilbert_symbol(b, c, Q) == L.hilbert_symbol(a*b, c, Q)
