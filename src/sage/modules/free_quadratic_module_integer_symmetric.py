@@ -631,7 +631,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
 
     EXAMPLES::
 
-        sage: IntegralLattice("U",basis=[vector([1,1])])
+        sage: IntegralLattice("U", basis=[vector([1,1])])
         Lattice of degree 2 and rank 1 over Integer Ring
         Basis matrix:
         [1 1]

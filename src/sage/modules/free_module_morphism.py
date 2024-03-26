@@ -73,8 +73,8 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
         EXAMPLES::
 
-            sage: V = ZZ^3; W = span([[1,2,3],[-1,2,8]], ZZ)
-            sage: phi = V.hom(matrix(ZZ,3,[1..9]))
+            sage: V = ZZ^3; W = span([[1,2,3], [-1,2,8]], ZZ)
+            sage: phi = V.hom(matrix(ZZ, 3, [1..9]))
             sage: type(phi)
             <class 'sage.modules.free_module_morphism.FreeModuleMorphism'>
         """
@@ -91,8 +91,8 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
         EXAMPLES::
 
-            sage: V = QQ^3; W = span([[1,2,3],[-1,2,5/3]], QQ)
-            sage: phi = V.hom(matrix(QQ,3,[1..9]))
+            sage: V = QQ^3; W = span([[1,2,3], [-1,2,5/3]], QQ)
+            sage: phi = V.hom(matrix(QQ, 3, [1..9]))
             sage: phi.rank()
             2
             sage: phi(V)   #indirect doctest
@@ -104,12 +104,12 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         We compute the image of a submodule of a ZZ-module embedded in
         a rational vector space::
 
-            sage: V = QQ^3; W = V.span_of_basis([[2,2,3],[-1,2,5/3]], ZZ)
-            sage: phi = W.hom([W.0, W.0-W.1]); phi
+            sage: V = QQ^3; W = V.span_of_basis([[2,2,3], [-1,2,5/3]], ZZ)
+            sage: phi = W.hom([W.0, W.0 - W.1]); phi
             Free module morphism defined by the matrix
             [ 1  0]
             [ 1 -1]...
-            sage: phi(span([2*W.1],ZZ))
+            sage: phi(span([2*W.1], ZZ))
             Free module of degree 3 and rank 1 over Integer Ring
             Echelon basis matrix:
             [  6   0 8/3]
@@ -127,8 +127,8 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
         EXAMPLES::
 
-            sage: V = ZZ^3; W = span([[1,2,3],[-1,2,8]], ZZ)
-            sage: phi = V.hom(matrix(ZZ,3,[1..9]))
+            sage: V = ZZ^3; W = span([[1,2,3], [-1,2,8]], ZZ)
+            sage: phi = V.hom(matrix(ZZ, 3, [1..9]))
             sage: phi._repr_()
             'Free module morphism defined by the matrix\n[1 2 3]\n[4 5 6]\n[7 8 9]\nDomain: Ambient free module of rank 3 over the principal ideal domain Integer Ring\nCodomain: Ambient free module of rank 3 over the principal ideal domain Integer Ring'
 
@@ -242,8 +242,8 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
         We test computing inverse images over a field::
 
-            sage: V = QQ^3; W = span([[1,2,3],[-1,2,5/3]], QQ)
-            sage: phi = V.hom(matrix(QQ,3,[1..9]))
+            sage: V = QQ^3; W = span([[1,2,3], [-1,2,5/3]], QQ)
+            sage: phi = V.hom(matrix(QQ, 3, [1..9]))
             sage: phi.rank()
             2
             sage: I = phi.inverse_image(W); I
@@ -297,7 +297,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
         We test that :issue:`24590` is resolved::
 
-            sage: A = FreeQuadraticModule(ZZ,1,matrix([2]))
+            sage: A = FreeQuadraticModule(ZZ, 1, matrix([2]))
             sage: f = A.Hom(A).an_element()
             sage: f.inverse_image(A)
             Free module of degree 1 and rank 1 over Integer Ring
@@ -443,7 +443,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             sage: V = QQ^2; m = matrix(2, [1, 1, 0, 1])
             sage: V.hom(m, side="right").lift(V.0 + V.1)
             (0, 1)
-            sage: V.hom(m).lift(V.0+V.1)
+            sage: V.hom(m).lift(V.0 + V.1)
             (1, 0)
         """
         from .free_module_element import vector

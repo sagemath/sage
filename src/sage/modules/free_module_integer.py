@@ -662,7 +662,8 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         The volume of the Voronoi cell is the square root of the
         discriminant of the lattice::
 
-            sage: L = IntegerLattice(Matrix(ZZ, 4, 4, [[0,0,1,-1],[1,-1,2,1],[-6,0,3,3,],[-6,-24,-6,-5]])); L
+            sage: L = IntegerLattice(Matrix(ZZ, 4, 4, [[0,0,1,-1], [1,-1,2,1],
+            ....:                                      [-6,0,3,3,], [-6,-24,-6,-5]])); L
             Free module of degree 4 and rank 4 over Integer Ring
             User basis matrix:
             [  0   0   1  -1]
