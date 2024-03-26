@@ -861,6 +861,7 @@ class sp(ClassicalMatrixLieAlgebra):
             return 2*h[i,i]
         return h[i,i] - h[i+1,i+1]
 
+
 class ExceptionalMatrixLieAlgebra(ClassicalMatrixLieAlgebra):
     """
     A matrix Lie algebra of exceptional type.
@@ -890,6 +891,7 @@ class ExceptionalMatrixLieAlgebra(ClassicalMatrixLieAlgebra):
         """
         return "Simple matrix Lie algebra of type {} over {}".format(self.cartan_type(), self.base_ring())
 
+
 class e6(ExceptionalMatrixLieAlgebra):
     r"""
     The matrix Lie algebra `\mathfrak{e}_6`.
@@ -917,6 +919,7 @@ class e6(ExceptionalMatrixLieAlgebra):
         e = [MS({c: one for c in coord}) for coord in coords]
         f = [MS({(c[1],c[0]): one for c in coord}) for coord in coords]
         ExceptionalMatrixLieAlgebra.__init__(self, R, CartanType(['E', 6]), e, f)
+
 
 class e7(ExceptionalMatrixLieAlgebra):
     r"""
@@ -951,6 +954,7 @@ class e7(ExceptionalMatrixLieAlgebra):
         e = [MS({c: one for c in coord}) for coord in coords]
         f = [MS({(c[1], c[0]): one for c in coord}) for coord in coords]
         ExceptionalMatrixLieAlgebra.__init__(self, R, CartanType(['E', 7]), e, f)
+
 
 class e8(ExceptionalMatrixLieAlgebra):
     r"""
@@ -992,6 +996,7 @@ class e8(ExceptionalMatrixLieAlgebra):
         """
         g = LieAlgebraChevalleyBasis(self.base_ring(), self.cartan_type())
         return Family([ge.adjoint_matrix(sparse=True) for ge in g.basis()])
+
 
 class f4(ExceptionalMatrixLieAlgebra):
     r"""
@@ -1040,6 +1045,7 @@ class f4(ExceptionalMatrixLieAlgebra):
         f.reverse()
         ExceptionalMatrixLieAlgebra.__init__(self, R, CartanType(['F', 4]), e, f)
 
+
 class g2(ExceptionalMatrixLieAlgebra):
     r"""
     The matrix Lie algebra `\mathfrak{g}_2`.
@@ -1065,6 +1071,7 @@ class g2(ExceptionalMatrixLieAlgebra):
         h = [MS({(0,0): one, (1,1): -one, (2,2): 2*one, (4,4): -2*one, (5,5): one, (6,6): -one}),
              MS({(1,1): one, (2,2): -one, (4,4): one, (5,5): -one})]
         ExceptionalMatrixLieAlgebra.__init__(self, R, CartanType(['G', 2]), e, f, h)
+
 
 #######################################
 ## Compact real form
@@ -2130,13 +2137,9 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
         alphacheck = self._Q.simple_coroots()
         B = self.basis()
 
-        ret = []
-        for i in index_set:
-            ret.append(B[alpha[i]])
-        for i in index_set:
-            ret.append(B[-alpha[i]])
-        for i in index_set:
-            ret.append(B[alphacheck[i]])
+        ret = [B[alpha[i]] for i in index_set]
+        ret.extend(B[-alpha[i]] for i in index_set)
+        ret.extend(B[alphacheck[i]] for i in index_set)
         return tuple(ret)
 
     def highest_root_basis_elt(self, pos=True):

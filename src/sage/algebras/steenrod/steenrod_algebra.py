@@ -1215,12 +1215,12 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 if t1[-1] + t2[0] == 2:
                     return self.zero()
                 mono = t1[:-1] + (t1[-1] + t2[0],) + t2[1:]
-                d = make_mono_admissible(mono, p,generic=self._generic)
+                d = make_mono_admissible(mono, p, generic=self._generic)
             else:  # p=2
                 mono = t1 + t2
                 while len(mono) > 1 and mono[-1] == 0:
                     mono = mono[:-1]
-                d = make_mono_admissible(mono,generic=self._generic)
+                d = make_mono_admissible(mono, generic=self._generic)
             return self._from_dict(d, coerce=True)
         else:
             x = self({t1: 1})
@@ -1382,9 +1382,10 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             A = SteenrodAlgebra(p=p, basis=algorithm, generic=self._generic)
             x = A(self._change_basis_on_basis(t, algorithm)).coproduct(algorithm=algorithm)
             result = []
-            for (a,b), coeff in x:
+            for (a, b), coeff in x:
                 result.append((tensor((A._change_basis_on_basis(a, basis),
-                                       A._change_basis_on_basis(b, basis))),coeff))
+                                       A._change_basis_on_basis(b, basis))),
+                               coeff))
             return self.tensor_square().linear_combination(result)
 
     def coproduct(self, x, algorithm='milnor'):
@@ -1516,7 +1517,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                         if n != 0:
                             antipode = -self.Q(0) * antipode * (-1)**antipode.degree()
                     else:
-                        B = SteenrodAlgebra(p=p,generic=self._generic).basis(n * 2 * (p-1))
+                        B = SteenrodAlgebra(p=p, generic=self._generic).basis(n * 2 * (p-1))
                         s = self(0)
                         for b in B:
                             if len(b.leading_support()[0]) == 0:
@@ -1620,7 +1621,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         """
         basis = self.basis_name()
         p = self.prime()
-        A = SteenrodAlgebra(p=p,generic=self._generic)
+        A = SteenrodAlgebra(p=p, generic=self._generic)
         # milnor
         if basis == 'milnor':
             return A({t: 1})
@@ -1645,14 +1646,14 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         elif basis == 'woody' or basis == 'woodz':
             # each entry in t is a pair (m,k), corresponding to w(m,k), defined by
             # `w(m,k) = \text{Sq}^{2^m (2^{k+1}-1)}`.
-            for (m,k) in t:
+            for (m, k) in t:
                 ans = ans * A.Sq(2**m * (2**(k+1) - 1))
 
         # wall[_long]
         elif basis.find('wall') >= 0:
             # each entry in t is a pair (m,k), corresponding to Q^m_k, defined by
             # `Q^m_k = Sq(2^k) Sq(2^{k+1}) ... Sq(2^m)`.
-            for (m,k) in t:
+            for (m, k) in t:
                 exponent = 2**k
                 ans = ans * A.Sq(exponent)
                 for i in range(m-k):
@@ -1796,7 +1797,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         """
         from sage.matrix.constructor import matrix
         from sage.rings.finite_rings.finite_field_constructor import GF
-        from .steenrod_algebra_bases import steenrod_algebra_basis,\
+        from .steenrod_algebra_bases import steenrod_algebra_basis, \
             convert_from_milnor_matrix
         from .steenrod_algebra_misc import get_basis_name
         basis = get_basis_name(basis, self.prime(), generic=self._generic)
@@ -1813,9 +1814,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             return A(a.leading_coefficient())
         Bnew = steenrod_algebra_basis(deg, basis, p, generic=self._generic)
         Bmil = steenrod_algebra_basis(deg, 'milnor', p, generic=self._generic)
-        v = []
-        for a in Bmil:
-            v.append(d.get(a, 0))
+        v = [d.get(a, 0) for a in Bmil]
         out = (matrix(GF(p), 1, len(v), v) *
                convert_from_milnor_matrix(deg, basis, p, generic=self._generic))
         new_d = dict(zip(Bnew, out[0]))
@@ -1952,7 +1951,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         if basis == 'woody' or basis == 'woodz':
             # each entry in t is a pair (m,k), corresponding to w(m,k), defined by
             # `w(m,k) = \text{Sq}^{2^m (2^{k+1}-1)}`.
-            return sum(2**m * (2**(k+1)-1) for (m,k) in t)
+            return sum(2**m * (2**(k+1)-1) for (m, k) in t)
 
         # wall, arnon_a
         if basis.find('wall') >= 0 or basis.find('arnona') >= 0:
@@ -1963,7 +1962,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             # Arnon A: each entry in t is a pair (m,k), corresponding
             # to X^m_k, defined by `X^m_k = Sq(2^m) ... Sq(2^{k+1})
             # Sq(2^k)`
-            return sum(2**k * (2**(m-k+1)-1) for (m,k) in t)
+            return sum(2**k * (2**(m-k+1)-1) for (m, k) in t)
 
         # pst, comm
         if basis.find('pst') >= 0 or basis.find('comm') >= 0:
@@ -1974,7 +1973,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 # to c_{i,j}, the iterated commutator defined by
                 # c_{i,1} = Sq(2^i) and c_{i,j} = [c_{i,j-1},
                 # Sq(2^{i+j-1})].
-                return sum(2**m * (2**k - 1) for (m,k) in t)
+                return sum(2**m * (2**k - 1) for (m, k) in t)
             # p odd:
             #
             # Pst: have pair (Q, P) where Q is a tuple of Q's, as in
@@ -1987,7 +1986,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             # iterated commutator defined by c_{s,1} = P(p^s) and
             # c_{s,t} = [P(p^{s+t-1}), c_{s,t-1}].
             q_deg = q_degree(t[0], prime=p)
-            p_deg = sum(2 * n * p**s * (p**t - 1) for ((s,t), n) in t[1])
+            p_deg = sum(2 * n * p**s * (p**t - 1) for ((s, t), n) in t[1])
             return q_deg + p_deg
 
     # coercion methods:
@@ -2305,8 +2304,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         # p odd:
         if any(self.profile(i, 1) != 2 for i in t[0]):
             return False
-        return all(self.profile(i + 1,0) == Infinity
-                   or t[1][i] < p**self.profile(i + 1,0)
+        return all(self.profile(i + 1, 0) == Infinity
+                   or t[1][i] < p**self.profile(i + 1, 0)
                    for i in range(len(t[1])))
 
     def P(self, *nums):
@@ -2789,7 +2788,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 for t in range(1, min(j, last_t) + 1):
                     s = j - t
                     if self.profile(t) > s:
-                        guess = self.pst(s,t)
+                        guess = self.pst(s, t)
                         idx += 1
                     if idx == i:
                         elt = guess
@@ -2800,7 +2799,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         if self.profile(1) == Infinity:
             if not self._generic:
                 return self.Sq(p**i)
-            elif self.profile(0,1) == 2:
+            elif self.profile(0, 1) == 2:
                 if i == 0:
                     return self.Q(0)
                 else:
@@ -2810,7 +2809,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         idx = -1
         tot = 1
         found = False
-        A = SteenrodAlgebra(p=p,generic=self._generic)
+        A = SteenrodAlgebra(p=p, generic=self._generic)
         while not found:
             if self._generic:
                 test = A.Q(tot-1)
@@ -2820,7 +2819,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                         break
             for t in range(1, tot+1):
                 s = tot - t
-                test = A.pst(s,t)
+                test = A.pst(s, t)
                 if test in self:
                     idx += 1
                     if idx == i:
@@ -2878,8 +2877,8 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             n = max(self._profile)
             return all(self.profile(i) == 0 for i in range(1, n))
         n = max(self._profile[0])
-        return (all(self.profile(i,0) == 0 for i in range(1, n))
-                and all(self.profile(i,1) == 1 for i in range(n)))
+        return (all(self.profile(i, 0) == 0 for i in range(1, n))
+                and all(self.profile(i, 1) == 1 for i in range(n)))
 
     def is_finite(self):
         r"""
@@ -2979,7 +2978,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             rp, ep = self._profile
             e = [kk for kk in range(len(ep)) if ep[kk] == 2]
             r = [p**kk-1 for kk in rp]
-            ans = AM.monomial((tuple(e),tuple(r)))
+            ans = AM.monomial((tuple(e), tuple(r)))
         return self(ans.change_basis(self.basis_name()))
 
     def order(self):
@@ -3331,7 +3330,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             A = self.parent()
             return A._change_basis(self, basis)
 
-        def _basis_dictionary(self,basis):
+        def _basis_dictionary(self, basis):
             r"""
             Convert self to ``basis``, returning a dictionary of terms of
             the form (mono: coeff), where mono is a monomial in the given
@@ -3733,7 +3732,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                     if x > 0:
                         for j in range(1+Integer(x).exact_log(2)):
                             if (2**j & x) != 0:
-                                for k in range(j,i+j):
+                                for k in range(j, i+j):
                                     h[k] += 1
                     i += 1
                 h.reverse()
