@@ -1,7 +1,7 @@
 // Logic for info flags of function expressions
 //
 // (c) 2016,2017  Ralf Stephan <ralf@ark.in-berlin.de>
-// Distributed under GPL2, see http://www.gnu.org
+// Distributed under GPL2, see https://www.gnu.org
 
 #include <unordered_map>
 

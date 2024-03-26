@@ -12377,11 +12377,11 @@ cdef class Expression(Expression_abc):
         """
         from sage.symbolic.relation import solve
         return solve(self, x, multiplicities=multiplicities,
-                              solution_dict=solution_dict,
-                              explicit_solutions=explicit_solutions,
-                              to_poly_solve=to_poly_solve,
-                              algorithm=algorithm,
-                              domain=domain)
+                     solution_dict=solution_dict,
+                     explicit_solutions=explicit_solutions,
+                     to_poly_solve=to_poly_solve,
+                     algorithm=algorithm,
+                     domain=domain)
 
     def solve_diophantine(self, x=None, solution_dict=False):
         """

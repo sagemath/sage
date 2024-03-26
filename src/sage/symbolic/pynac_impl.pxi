@@ -707,20 +707,20 @@ cdef stdstring* py_latex_fderivative(unsigned id, params,
                 nv += 1
             else:
                 if nv == 1:
-                    diff_args.append(r"\partial %s"%(args[v]._latex_(),))
+                    diff_args.append(r"\partial %s" % (args[v]._latex_(),))
                 else:
-                    diff_args.append(r"(\partial %s)^{%s}"%(args[v]._latex_(),nv))
+                    diff_args.append(r"(\partial %s)^{%s}" % (args[v]._latex_(),nv))
                 v=next_v
                 nv=1
         if nv == 1:
-            diff_args.append(r"\partial %s"%(args[v]._latex_(),))
+            diff_args.append(r"\partial %s" % (args[v]._latex_(),))
         else:
-            diff_args.append(r"(\partial %s)^{%s}"%(args[v]._latex_(),nv))
+            diff_args.append(r"(\partial %s)^{%s}" % (args[v]._latex_(),nv))
         if len(params) == 1:
-            operator_string=r"\frac{\partial}{%s}"%(''.join(diff_args),)
+            operator_string=r"\frac{\partial}{%s}" % (''.join(diff_args),)
         else:
-            operator_string=r"\frac{\partial^{%s}}{%s}"%(len(params),''.join(diff_args))
-        py_res = operator_string+py_latex_function_pystring(id,args,False)
+            operator_string=r"\frac{\partial^{%s}}{%s}" % (len(params),''.join(diff_args))
+        py_res = operator_string+py_latex_function_pystring(id, args, False)
     else:
         ostr = ''.join([r'\mathrm{D}_{',
                         ', '.join(repr(int(x)) for x in params), '}'])
@@ -886,7 +886,7 @@ cdef py_binomial_int(int n, unsigned int k) noexcept:
     cdef bint sign
     if n < 0:
         n = -n + (k-1)
-        sign = k%2
+        sign = k % 2
     else:
         sign = 0
     cdef Integer ans = PY_NEW(Integer)
@@ -903,7 +903,7 @@ cdef py_binomial(n, k) noexcept:
     cdef bint sign
     if n < 0:
         n = k-n-1
-        sign = k%2
+        sign = k % 2
     else:
         sign = 0
     # Convert n and k to unsigned ints.
@@ -931,7 +931,7 @@ def test_binomial(n, k):
 
     OUTPUT:
 
-        integer
+    integer
 
     EXAMPLES::
 
