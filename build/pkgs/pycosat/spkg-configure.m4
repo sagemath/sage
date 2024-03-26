@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([pycosat], [SAGE_PYTHON_PACKAGE_CHECK([pycosat])])
