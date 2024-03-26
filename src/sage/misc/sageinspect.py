@@ -2577,10 +2577,6 @@ def sage_getvariablename(self, omit_underscore_names=True):
     ``omit_underscore_names`` is True (the default) then omit names
     starting with an underscore "_".
 
-    This is a modified version of code taken from
-    http://pythonic.pocoo.org/2009/5/30/finding-objects-names,
-    written by Georg Brandl.
-
     EXAMPLES::
 
         sage: # needs sage.modules
@@ -2597,6 +2593,9 @@ def sage_getvariablename(self, omit_underscore_names=True):
         sage: sage_getvariablename(random_matrix(ZZ, 60))                               # needs sage.modules
         []
     """
+    # This is a modified version of code taken from
+    # https://web.archive.org/web/20100416095847/http://pythonic.pocoo.org/2009/5/30/finding-objects-names
+    # written by Georg Brandl.
     result = []
     for frame in inspect.stack():
         for name, obj in frame[0].f_globals.items():
