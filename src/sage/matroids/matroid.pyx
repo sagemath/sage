@@ -3313,7 +3313,7 @@ cdef class Matroid(SageObject):
 
         over all bases `B` of the matroid. Here `e_i` are the standard
         basis vectors of `\RR^n`. An arbitrary labelling of the
-        groundset by `{0,\ldots,n-1}` is chosen.
+        groundset by `\{0,\ldots,n-1\}` is chosen.
 
         .. SEEALSO::
 
@@ -3360,7 +3360,7 @@ cdef class Matroid(SageObject):
 
         over all independent sets `I` of the matroid. Here `e_i` are
         the standard basis vectors of `\RR^n`. An arbitrary labelling
-        of the groundset by `{0,\ldots,n-1}` is chosen.
+        of the groundset by `\{0,\ldots,n-1\}` is chosen.
 
         .. SEEALSO::
 
@@ -3411,7 +3411,7 @@ cdef class Matroid(SageObject):
         - ``other`` -- a matroid
         - ``certificate`` -- boolean (default: ``False``)
 
-        OUTPUT: boolean, and, if ``certificate = True``, a dictionary or
+        OUTPUT: boolean, and, if ``certificate=True``, a dictionary or
         ``None``
 
         EXAMPLES::
@@ -6081,7 +6081,7 @@ cdef class Matroid(SageObject):
             False
         """
         if self.rank() >= 2:
-            for X in combinations(self.groundset(), self.rank()-1):
+            for X in combinations(self.groundset(), self.rank() - 1):
                 if not self._is_independent(frozenset(X)):
                     return False
         return True
@@ -8343,7 +8343,7 @@ cdef class Matroid(SageObject):
         matroids.
 
         Let `(M_1, M_2, \ldots, M_k)` be a list of matroids where each `M_i`
-        has groundset `E_i`. The matroid sum `(E_1,I_1),\ldots,(E_n,I_n)`
+        has groundset `E_i`. The matroid sum of `(E_1,I_1),\ldots,(E_n,I_n)`
         is a matroid `(E,I)` where `E= \bigsqcup_{i=1}^n E_i` and
         `I= \bigsqcup_{i=1}^n I_i`.
 
