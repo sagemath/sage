@@ -403,7 +403,7 @@ class QuaternionAlgebra_abstract(Parent):
 
     def is_division_algebra(self) -> bool:
         """
-        Check whether the quaternion algebra is a division algebra,
+        Check whether this quaternion algebra is a division algebra,
         i.e. whether every nonzero element in it is invertible.
 
         EXAMPLES::
@@ -432,7 +432,7 @@ class QuaternionAlgebra_abstract(Parent):
 
     def is_matrix_ring(self) -> bool:
         """
-        Check whether the quaternion algebra is isomorphic to the
+        Check whether this quaternion algebra is isomorphic to the
         2x2 matrix ring over the base field.
 
         EXAMPLES::
@@ -1057,8 +1057,8 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
     def is_definite(self):
         r"""
-        Check whether the given quaternion algebra is definite, i.e. whether
-        it ramifies at the unique Archimedean place of its base field `\QQ`.
+        Check whether this quaternion algebra is definite, i.e. whether
+        it ramifies at the unique real place of its base field `\QQ`.
 
         A quaternion algebra over `\QQ` is definite if and only if both of
         its invariants are negative (see Exercise 2.4(c) in [Voi2021]_).
@@ -1082,8 +1082,10 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
     def is_totally_definite(self):
         """
-        Check whether the quaternion algebra ``self`` is totally definite, i.e.
-        whether it ramifies at all real Archimedean places of its base number field.
+        Check whether this quaternion algebra is totally definite.
+
+        A quaternion algebra defined over a number field is totally definite
+        if it ramifies at all real places of its base field.
 
         EXAMPLES::
 
@@ -1120,11 +1122,11 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
     @cached_method
     def ramified_places(self, inf=True):
-        """
-        Return the places of the base number field at which the given
+        r"""
+        Return the places of the base number field at which this
         quaternion algebra ramifies.
 
-        Note: The initial choice of primes (for the base field ``\\QQ``)
+        Note: The initial choice of primes (for the base field `\QQ`)
         respectively of prime ideals (in the number field case) to check
         ramification for is motivated by 12.4.12(a) in [Voi2021]_. The
         restriction to real embeddings is due to 14.5.8 in [Voi2021]_.
@@ -1135,12 +1137,13 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         OUTPUT:
 
-        The non-Archimedean (AKA finite) places at which ``self`` ramifies
-        (given as elements of ZZ, sorted small to large, if ``self`` is
-        defined over the rational field QQ, respectively as fractional ideals
-        of the number field's ring of integers, otherwise) and, if ``inf`` is
-        set to ``True``, also the Archimedean (AKA infinite) places at which
-        ``self`` ramifies (given by real embeddings of the base field).
+        The non-Archimedean (AKA finite) places at which the quaternion
+        algebra ramifies (given as elements of `\ZZ`, sorted small to
+        large, if the algebra is defined over the rational field `\QQ`,
+        respectively as fractional ideals of the number field's ring of
+        integers, otherwise) and, if ``inf`` is set to ``True``, also the
+        Archimedean (AKA infinite) places at which the quaternion algebra
+        ramifies (given by real embeddings of the base field).
 
         EXAMPLES::
 
@@ -1229,15 +1232,15 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
     @cached_method
     def ramified_primes(self):
         """
-        Return the (finite) primes of the base number field at which
-        the given quaternion algebra ramifies.
+        Return the (finite) primes of the base number field at
+        which this quaternion algebra ramifies.
 
         OUTPUT:
 
         The list of finite primes at which ``self`` ramifies; given as
-        integers, sorted small to large, if ``self`` is defined over `\\QQ`,
-        and as fractional ideals in the ring of integers of the base number
-        field otherwise.
+        integers, sorted small to large, if ``self`` is defined over
+        `\\QQ`, and as fractional ideals in the ring of integers of the
+        base number field otherwise.
 
         EXAMPLES::
 
@@ -1268,7 +1271,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
     @cached_method
     def discriminant(self):
         r"""
-        Return the discriminant of the given quaternion algebra, i.e. the
+        Return the discriminant of this quaternion algebra, i.e. the
         product of the finite places it ramifies at.
 
         OUTPUT:
@@ -1315,10 +1318,11 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
     def is_isomorphic(self, A) -> bool:
         """
-        Check whether the given quaternion algebra is isomorphic to ``A``.
+        Check whether this quaternion algebra is isomorphic to ``A``.
 
-        Currently only implemented over a number field; motivated by Main
-        Theorem 14.6.1 in [Voi2021]_, noting that QQ has a unique real place.
+        Currently only implemented over a number field; motivated by
+        Main Theorem 14.6.1 in [Voi2021]_, noting that `\\QQ` has a
+        unique infinite place.
 
         INPUT:
 
