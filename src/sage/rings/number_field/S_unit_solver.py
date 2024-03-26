@@ -150,23 +150,21 @@ def c3_func(SUK, prec=106):
     - [AKMRVW]_ :arxiv:`1903.00977`
 
     """
-
     R = RealField(prec)
 
     all_places = list(SUK.primes()) + SUK.number_field().places(prec)
     Possible_U = Combinations(all_places, SUK.rank())
-    c1 = R(1) # guarantees final c1 >= 1
+    c1 = R(1)  # guarantees final c1 >= 1
     for U in Possible_U:
         # first, build the matrix C_{i,U}
-        columns_of_C = []
-        for unit in SUK.fundamental_units():
-            columns_of_C.append(column_Log(SUK, unit, U, prec))
+        columns_of_C = [column_Log(SUK, unit, U, prec)
+                        for unit in SUK.fundamental_units()]
         C = matrix(SUK.rank(), SUK.rank(), columns_of_C)
         # Is it invertible?
         if abs(C.determinant()) > 10**(-10):
             poss_c1 = C.inverse().apply_map(abs).norm(Infinity)
             c1 = R(max(poss_c1, c1))
-    return R(0.9999999) / (c1*SUK.rank())
+    return R(0.9999999) / (c1 * SUK.rank())
 
 
 def c4_func(SUK, v, A, prec=106):

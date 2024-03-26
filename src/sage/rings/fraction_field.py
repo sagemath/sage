@@ -917,13 +917,12 @@ class FractionField_generic(ring.Field):
              (2*x^2 + 2)/x^3,
              (2*x^2 + 2)/(x^2 - 1),
              2]
-
         """
         ret = [self.zero(), self.one()]
-        for a in self._R.some_elements():
-            for b in self._R.some_elements():
-                if a != b and self(a) and self(b):
-                    ret.append(self(a) / self(b))
+        ret.extend(self(a) / self(b)
+                   for a in self._R.some_elements()
+                   for b in self._R.some_elements()
+                   if a != b and self(a) and self(b))
         return ret
 
     def _gcd_univariate_polynomial(self, f, g):
