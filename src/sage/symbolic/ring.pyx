@@ -32,7 +32,6 @@ The symbolic ring
 # ****************************************************************************
 
 from sage.rings.integer cimport Integer
-from sage.rings.ring cimport CommutativeRing
 
 import sage.rings.abc
 
@@ -45,7 +44,9 @@ from sage.symbolic.expression cimport (
     new_Expression_symbol,
 )
 
+from sage.categories.commutative_rings import CommutativeRings
 from sage.structure.element cimport Element, Expression
+from sage.structure.parent cimport Parent
 from sage.categories.morphism cimport Morphism
 from sage.structure.coerce cimport is_numpy_type
 
@@ -71,6 +72,8 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
         """
         Initialize the Symbolic Ring.
 
+        This is a commutative ring of symbolic expressions and functions.
+
         EXAMPLES::
 
             sage: SR
@@ -85,7 +88,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
         """
         if base_ring is None:
             base_ring = self
-        CommutativeRing.__init__(self, base_ring)
+        Parent.__init__(self, base_ring, category=CommutativeRings())
         self._populate_coercion_lists_(convert_method_name='_symbolic_')
         self.symbols = {}
 
@@ -98,9 +101,9 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
         """
         return the_SymbolicRing, tuple()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
-        Return a string representation of self.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
