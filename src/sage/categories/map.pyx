@@ -1272,7 +1272,7 @@ cdef class Map(Element):
 
     def section(self):
         """
-        Return a section of self.
+        Return a section of ``self``.
 
         .. NOTE::
 
@@ -1438,6 +1438,7 @@ cdef class Section(Map):
                     y |--> x - y
         """
         return self._inverse
+
 
 cdef class FormalCompositeMap(Map):
     """
