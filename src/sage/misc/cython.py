@@ -22,16 +22,14 @@ AUTHORS:
 import builtins
 import os
 import re
-import sys
 import shutil
+import sys
 
-from sage.env import (SAGE_LOCAL, cython_aliases,
-                      sage_include_directories)
+from sage.env import SAGE_LOCAL, cython_aliases, sage_include_directories
+from sage.misc.cachefunc import cached_function
+from sage.misc.sage_ostools import redirection, restore_cwd
 from sage.misc.temporary_file import spyx_tmp, tmp_filename
 from sage.repl.user_globals import get_globals
-from sage.misc.sage_ostools import restore_cwd, redirection
-from sage.cpython.string import str_to_bytes
-from sage.misc.cachefunc import cached_function
 
 
 @cached_function
@@ -227,16 +225,13 @@ def cython(filename, verbose=0, compile_message=False,
         ....: ''')
 
     In Cython 0.29.33 using `from PACKAGE cimport MODULE` is broken
-    when `PACKAGE` is a namespace package, see :issue:`35322`::
+    when `PACKAGE` is a namespace package, see :issue:`35322`
+    (but as of now sage.misc is not a namespace package, so this passes)::
 
         sage: cython('''
         ....: from sage.misc cimport cachefunc
         ....: ''')
-        Traceback (most recent call last):
-        ...
-        RuntimeError: Error compiling Cython file:
-        ...
-        ...: 'sage/misc.pxd' not found...
+
     """
     if not filename.endswith('pyx'):
         print("Warning: file (={}) should have extension .pyx".format(filename), file=sys.stderr)
@@ -318,9 +313,9 @@ def cython(filename, verbose=0, compile_message=False,
     includes = [os.getcwd()] + standard_includes
 
     # Now do the actual build, directly calling Cython and distutils
+    import Cython.Compiler.Options
     from Cython.Build import cythonize
     from Cython.Compiler.Errors import CompileError
-    import Cython.Compiler.Options
 
     try:
         from setuptools.dist import Distribution
@@ -328,8 +323,8 @@ def cython(filename, verbose=0, compile_message=False,
     except ImportError:
         # Fall back to distutils (stdlib); note that it is deprecated
         # in Python 3.10, 3.11; https://www.python.org/dev/peps/pep-0632/
-        from distutils.dist import Distribution
         from distutils.core import Extension
+        from distutils.dist import Distribution
 
     from distutils.log import set_verbosity
     set_verbosity(verbose)
