@@ -542,6 +542,7 @@ cdef class NCGroebnerStrategy(SageObject):
             _p = redtailBba(_p, max_ind, self._strat)
         return new_NCP(self._parent, _p)
 
+
 def unpickle_NCGroebnerStrategy0(I):
     """
     EXAMPLES::
@@ -555,6 +556,7 @@ def unpickle_NCGroebnerStrategy0(I):
         True
     """
     return NCGroebnerStrategy(I)
+
 
 def unpickle_GroebnerStrategy0(I):
     """

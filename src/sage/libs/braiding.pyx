@@ -76,6 +76,7 @@ def conjugatingbraid(braid1, braid2):
     sig_off()
     return rop
 
+
 def leftnormalform(braid):
     r"""
     Return the left normal form of a braid.
@@ -106,6 +107,7 @@ def leftnormalform(braid):
     sig_off()
     return rop
 
+
 def rightnormalform(braid):
     r"""
     Return the right normal form of a braid.
@@ -135,6 +137,7 @@ def rightnormalform(braid):
     cdef list[list[int]] rop = RightNormalForm(nstrands, l1)
     sig_off()
     return rop
+
 
 def greatestcommondivisor(braid1, braid2):
     r"""
@@ -167,6 +170,7 @@ def greatestcommondivisor(braid1, braid2):
     sig_off()
     return rop
 
+
 def leastcommonmultiple(braid1, braid2):
     r"""
     Return the least common multiple of two braids.
@@ -188,7 +192,6 @@ def leastcommonmultiple(braid1, braid2):
         sage: b2 = B([2, 2, 2])
         sage: leastcommonmultiple(b1, b2)
         [[1], [1], [1]]
-
     """
     nstrands = max(braid1.parent().strands(), braid2.parent().strands())
     l1 = braid1.Tietze()
@@ -197,6 +200,7 @@ def leastcommonmultiple(braid1, braid2):
     cdef list[list[int]] rop = LeastCommonMultiple(nstrands, l1, l2)
     sig_off()
     return rop
+
 
 def centralizer(braid):
     r"""
@@ -235,6 +239,7 @@ def centralizer(braid):
     sig_off()
     return rop
 
+
 def supersummitset(braid):
     r"""
     Return a list with the super-summit-set of a braid.
@@ -263,6 +268,7 @@ def supersummitset(braid):
     sig_off()
     return rop
 
+
 def ultrasummitset(braid):
     r"""
     Return a list with the orbits forming the ultra-summit-set of the braid.
@@ -283,7 +289,6 @@ def ultrasummitset(braid):
         sage: b = B([1,2,-1])
         sage: ultrasummitset(b)
         [[[[0], [2]]], [[[0], [1]]]]
-
     """
     nstrands = braid.parent().strands()
     l = braid.Tietze()
@@ -326,10 +331,11 @@ def thurston_type(braid):
     sig_off()
     if i == 1:
         return 'periodic'
-    elif i==2:
+    if i == 2:
         return 'reducible'
-    elif i==3:
+    if i == 3:
         return 'pseudo-anosov'
+
 
 def rigidity(braid):
     r"""
@@ -358,6 +364,7 @@ def rigidity(braid):
     cdef int i = Rigidity_ext(nstrands, l)
     sig_off()
     return i
+
 
 def sliding_circuits(braid):
     r"""

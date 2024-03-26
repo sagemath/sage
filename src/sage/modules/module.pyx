@@ -270,6 +270,7 @@ cdef class Module(Parent):
         from sage.categories.homset import End
         return End(self)
 
+
 def is_Module(x):
     """
     Return ``True`` if ``x`` is a module, ``False`` otherwise.
@@ -286,9 +287,9 @@ def is_Module(x):
         True
         sage: is_Module(10)
         False
-
     """
     return isinstance(x, Module)
+
 
 def is_VectorSpace(x):
     """

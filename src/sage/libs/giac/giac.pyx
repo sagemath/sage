@@ -198,6 +198,7 @@ Pygen('I:=sqrt(-1)').eval()   # WTF?
 # self._giac_() does.
 SRexpressiontoGiac = InterfaceInit(giac)
 
+
 #######################################################
 # The wrapper to eval with giac
 #######################################################
@@ -1978,6 +1979,7 @@ class GiacFunction(Pygen):
             args = (Pygen(args[0]).eval(),)
         return Pygen.__call__(self, *args)
 
+
 class GiacFunctionNoEV(Pygen):
     # a class to allow to write the __doc__ attribute.
     """
@@ -2007,19 +2009,19 @@ for i in mostkeywords:
     if i in NoEvArgsFunc:
         # do not eval args before calling this function. Ex purge
         #tmp=Pygen(i)
-        tmp=GiacFunctionNoEV(i)
+        tmp = GiacFunctionNoEV(i)
     else:
-        tmp=GiacFunction(i)
+        tmp = GiacFunction(i)
     # in the sage version we remove:    globals()[i]=tmp
-    GiacMethods[i]=tmp
+    GiacMethods[i] = tmp
 
 # We put the giac names that should not be exported to Python in moremethods.
 for i in moremethods:
-    tmp=GiacFunction(i)
-    GiacMethods[i]=tmp
+    tmp = GiacFunction(i)
+    GiacMethods[i] = tmp
 
 for i in mostkeywords+moremethods:
-    GiacMethods[i].__doc__=eval("Pygen."+i+".__doc__")
+    GiacMethods[i].__doc__ = eval("Pygen."+i+".__doc__")
 
 # To avoid conflicts we export only these few ones.  Most giac keywords will be
 # avaible through: libgiac.keywordname

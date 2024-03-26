@@ -2,15 +2,15 @@
 Error handler for the GLPK library
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2015 Jeroen Demeyer <jdemeyer@cage.ugent.be>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from cysignals.signals cimport sig_error
 
@@ -19,12 +19,13 @@ from cpython.exc cimport PyErr_SetObject
 from sage.cpython.string cimport char_to_str
 from sage.numerical.mip import MIPSolverException
 
+
 class GLPKError(MIPSolverException):
     """
     A low-level error that is raised by ``sage_glpk_term_hook``.
 
-    The GLPK API considers these errors non-recoverable.  User code should not try
-    to catch this exception.
+    The GLPK API considers these errors non-recoverable.
+    User code should not try to catch this exception.
 
     EXAMPLES::
 

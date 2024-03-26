@@ -485,6 +485,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             v[i] = switch[mzd_read_bit(self._entries, 0, i)]
         return v
 
+
 def unpickle_v0(parent, entries, degree, is_immutable):
     """
     EXAMPLES::
@@ -500,7 +501,7 @@ def unpickle_v0(parent, entries, degree, is_immutable):
     v._init(degree, parent)
     cdef int xi
 
-    for i from 0 <= i < degree:
+    for i in range(degree):
         if isinstance(entries[i], (IntegerMod_int, int, Integer)):
             xi = entries[i]
             mzd_write_bit(v._entries, 0, i, xi%2)
