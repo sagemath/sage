@@ -1132,7 +1132,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: G = AbelianGroup(2,[2,3]); G
             Multiplicative Abelian group isomorphic to C2 x C3
             sage: G.permutation_group()                                                 # needs sage.groups
-            Permutation Group with generators [(3,4,5), (1,2)]
+            Permutation Group with generators [(1,2), (3,4,5)]
 
         TESTS:
 
