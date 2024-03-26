@@ -261,30 +261,85 @@ toc_object_entries_show_parents = 'hide'
 # include the todos
 todo_include_todos = True
 
-# Cross-links to other project's online documentation.
-python_version = sys.version_info.major
+#
+# intersphinx: Cross-links to other projects' online or installed documentation.
+#
+SAGE_DOC_REMOTE_INVENTORIES = os.environ.get('SAGE_DOC_REMOTE_INVENTORIES', 'no') == 'yes'
+
+_vendored_inventories_dir = os.path.join(SAGE_DOC_SRC, "common", "_vendor")
+
+
+# Run "sage -python -m sage_docbuild.vendor" to update src/doc/common/_vendor/*.inv
+_intersphinx_targets = {
+    'cvxopt':     ['https://cvxopt.org/userguide/'],
+    'cvxpy':      ['https://www.cvxpy.org/'],
+    'cypari2':    ['https://cypari2.readthedocs.io/en/latest/'],
+    'cysignals':  ['https://cysignals.readthedocs.io/en/latest/'],
+    'flint':      ['https://flintlib.org/doc/'],
+    'fpylll':     ['https://fpylll.readthedocs.io/en/latest/'],
+    'gmpy2':      ['https://gmpy2.readthedocs.io/en/latest/'],
+    'ipywidgets': ['https://ipywidgets.readthedocs.io/en/stable/'],
+    'matplotlib': ['https://matplotlib.org/stable/'],
+    'mpmath':     ['https://mpmath.org/doc/current/'],
+    'networkx':   ['https://networkx.org/documentation/stable/'],
+    'numpy':      ['https://numpy.org/doc/stable/'],
+    'pplpy':      [PPLPY_DOCS, 'https://www.sagemath.org/pplpy/'],
+    'python':     ['https://docs.python.org/'],
+    'rpy2':       ['https://rpy2.github.io/doc/latest/html/'],
+    'scipy':      ['https://docs.scipy.org/doc/scipy/'],
+    'sympy':      ['https://docs.sympy.org/latest/'],
+}
+
+
+def _intersphinx_mapping(key):
+    inventories = []
+    link_target = None
+    for target in _intersphinx_targets[key]:
+        if not target:
+            pass
+        elif target.startswith('http'):
+            if not link_target:
+                link_target = target
+                if SAGE_DOC_REMOTE_INVENTORIES:
+                    inventories.append(None)  # Try downloading inventory from link_target
+        elif os.path.exists(target):
+            if not link_target:
+                link_target = target
+            inventory = os.path.join(target, 'objects.inv')
+            if os.path.exists(inventory):
+                inventories.append(inventory)
+                break
+    else:
+        vendored_inventory = os.path.join(_vendored_inventories_dir, key + '.inv')
+        if os.path.exists(vendored_inventory):
+            inventories.append(vendored_inventory)
+        else:
+            # To avoid docbuild failures when building Sage without internet
+            # connection, we use the local python inventory file as a fallback for other
+            # projects. Cross-references will not be resolved in that case, but the
+            # docbuild will still succeed.
+            python_inventory_file = os.path.join(_vendored_inventories_dir, "python.inv")
+            inventories.append(python_inventory_file)
+    assert link_target
+    if len(inventories) == 1:
+        return link_target, inventories[0]
+    return link_target, tuple(inventories)
 
 
 def set_intersphinx_mappings(app, config):
     """
     Add precompiled inventory (the objects.inv)
     """
+    app.config.intersphinx_mapping = {}
+
     refpath = os.path.join(SAGE_DOC, "html", "en", "reference")
     invpath = os.path.join(SAGE_DOC, "inventory", "en", "reference")
     if app.config.multidoc_first_pass == 1 or \
             not (os.path.exists(refpath) and os.path.exists(invpath)):
-        app.config.intersphinx_mapping = {}
         return
 
-    app.config.intersphinx_mapping = {
-        'python': ('https://docs.python.org/',
-                   os.path.join(SAGE_DOC_SRC, "common",
-                                "python{}.inv".format(python_version))),
-    }
-    if PPLPY_DOCS and os.path.exists(os.path.join(PPLPY_DOCS, 'objects.inv')):
-        app.config.intersphinx_mapping['pplpy'] = (PPLPY_DOCS, None)
-    else:
-        app.config.intersphinx_mapping['pplpy'] = ('https://www.labri.fr/perso/vdelecro/pplpy/latest/', None)
+    app.config.intersphinx_mapping = {key: _intersphinx_mapping(key)
+                                      for key in _intersphinx_targets}
 
     # Add master intersphinx mapping
     dst = os.path.join(invpath, 'objects.inv')

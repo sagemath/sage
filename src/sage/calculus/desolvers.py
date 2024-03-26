@@ -27,8 +27,8 @@ Commands:
   order equations, return list of points.
 
 - :func:`desolve_odeint` - Solve numerically a system of first-order ordinary
-  differential equations using ``odeint`` from `scipy.integrate module.
-  <https://docs.scipy.org/doc/scipy/reference/integrate.html#module-scipy.integrate>`_
+  differential equations using :func:`~scipy:scipy.integrate.odeint` from
+  the module :mod:`scipy:scipy.integrate`.
 
 - :func:`desolve_system` - Solve a system of 1st order ODEs of any size using
   Maxima. Initial conditions are optional.
@@ -1499,7 +1499,7 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
                    mxstep=0, mxhnil=0, mxordn=12, mxords=5, printmessg=0):
     r"""
     Solve numerically a system of first-order ordinary differential equations
-    using ``odeint`` from scipy.integrate module.
+    using :func:`scipy:scipy.integrate.odeint`.
 
     INPUT:
 
@@ -1517,8 +1517,9 @@ def desolve_odeint(des, ics, times, dvars, ivar=None, compute_jac=False, args=()
     - ``compute_jac`` -- boolean. If True, the Jacobian of ``des`` is computed and
       used during the integration of stiff systems. Default value is False.
 
-    Other Parameters (taken from the documentation of odeint function from `scipy.integrate module.
-    <https://docs.scipy.org/doc/scipy/reference/integrate.html#module-scipy.integrate>`_)
+    Other Parameters (taken from the documentation of the
+    :func:`~scipy:scipy.integrate.odeint` function from
+    :mod:`scipy:scipy.integrate`):
 
     - ``rtol``, ``atol`` : float
       The input parameters ``rtol`` and ``atol`` determine the error
