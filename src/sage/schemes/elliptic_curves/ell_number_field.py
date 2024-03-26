@@ -805,7 +805,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: K.<a> = QuadraticField(4569)
             sage: j = 46969655/32768
             sage: E = EllipticCurve(j=K(j))
-            sage: C = E.isogeny_class()
+            sage: C = E.isogeny_class()                                                 # long time (9.5s)
         """
         K = self.base_field()
         r1, r2 = K.signature()
