@@ -806,7 +806,7 @@ class FilteredVectorSpace_class(FreeModule_ambient_field):
             return 'RR'
         from sage.categories.finite_fields import FiniteFields
         if self.base_ring() in FiniteFields():
-            return 'GF({0})'.format(len(self.base_ring()))
+            return 'GF({})'.format(len(self.base_ring()))
         else:
             raise NotImplementedError()
 

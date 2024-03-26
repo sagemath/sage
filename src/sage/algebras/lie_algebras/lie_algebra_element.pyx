@@ -156,10 +156,6 @@ cdef class LieAlgebraElement(IndexedFreeModuleElement):
             PBW[-1] + PBW[0] - 3*PBW[1]
         """
         UEA = self._parent.universal_enveloping_algebra()
-        try:
-            gen_dict = UEA.algebra_generators()
-        except (TypeError, AttributeError):
-            gen_dict = UEA.gens_dict()
         s = UEA.zero()
         if not self:
             return s
@@ -167,9 +163,14 @@ cdef class LieAlgebraElement(IndexedFreeModuleElement):
         #   does not match the generators index set of the UEA.
         if hasattr(self._parent, '_UEA_names_map'):
             names_map = self._parent._UEA_names_map
+            gen_dict = UEA.gens_dict()
             for t, c in self._monomial_coefficients.items():
                 s += c * gen_dict[names_map[t]]
         else:
+            try:
+                gen_dict = UEA.algebra_generators()
+            except (TypeError, AttributeError):
+                gen_dict = UEA.gens_dict()
             for t, c in self._monomial_coefficients.items():
                 s += c * gen_dict[t]
         return s

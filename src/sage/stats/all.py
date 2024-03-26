@@ -1,3 +1,4 @@
+import sage.stats.distributions.catalog as distributions
 
 from .r import ttest
 from .basic_stats import (mean, mode, std, variance, median, moving_average)

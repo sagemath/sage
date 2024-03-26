@@ -670,7 +670,7 @@ class RingLWEConverter(SageObject):
             sage: lwe = RingLWEConverter(RingLWE(16, 257, D, secret_dist='uniform'))
             sage: set_random_seed(1337)
             sage: lwe()
-            ((32, 216, 3, 125, 58, 197, 171, 43), ...)
+            ((171, 197, 58, 125, 3, 216, 32, 130), ...)
         """
         self.ringlwe = ringlwe
         self._i = 0
@@ -686,7 +686,7 @@ class RingLWEConverter(SageObject):
             sage: lwe = RingLWEConverter(RingLWE(16, 257, D, secret_dist='uniform'))
             sage: set_random_seed(1337)
             sage: lwe()
-            ((32, 216, 3, 125, 58, 197, 171, 43), ...)
+            ((171, 197, 58, 125, 3, 216, 32, 130), ...)
         """
         R_q = self.ringlwe.R_q
 

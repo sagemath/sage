@@ -7,13 +7,13 @@ AUTHORS:
 """
 
 #*****************************************************************************
-#       Copyright (C) 2013-2017 Travis Scrimshaw <tcscrims at gmail.com>
+#       Copyright (C) 2013-2024 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #*****************************************************************************
 
 from sage.misc.abstract_method import abstract_method
@@ -239,10 +239,6 @@ class LieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             """
             P = self.parent()
             UEA = P.universal_enveloping_algebra()
-            try:
-                gen_dict = UEA.algebra_generators()
-            except (TypeError, AttributeError):
-                gen_dict = UEA.gens_dict()
             s = UEA.zero()
             if not self:
                 return s
@@ -250,9 +246,14 @@ class LieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             #   does not match the generators index set of the UEA.
             if hasattr(P, '_UEA_names_map'):
                 names_map = P._UEA_names_map
+                gen_dict = UEA.gens_dict()
                 for t, c in self.monomial_coefficients(copy=False).items():
                     s += c * gen_dict[names_map[t]]
             else:
+                try:
+                    gen_dict = UEA.algebra_generators()
+                except (TypeError, AttributeError):
+                    gen_dict = UEA.gens_dict()
                 for t, c in self.monomial_coefficients(copy=False).items():
                     s += c * gen_dict[t]
             return s
