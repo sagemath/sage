@@ -139,6 +139,10 @@ Start Ubuntu from the Start menu.
 -   **No development:**
 
     Type the following commands to install Sage from conda-forge.
+    (The ``$`` represents the command
+    line prompt, don't type it!) The second step will ask a few questions,
+    and you may need to hit :kbd:`Enter` to confirm or type ``yes``
+    and then hit :kbd:`Enter`.
 
     .. code-block:: shell
 
@@ -157,9 +161,10 @@ Start Ubuntu from the Start menu.
        $ conda activate sage
        $ sage
 
-To use Sage in a Jupyter notebook, it is convenient to use Visual Studio Code.
-See :ref:`sec-launching-vscode-wsl`.
-
+    This way of starting Sage gives you the most basic way of using
+    Sage in the terminal. See :ref:`sec-launching` for recommended next steps,
+    in particular for setting up the Jupyter notebook, which is required if
+    you want to use graphics.
 
 .. _installation-guide-windows-devcontainers:
 
