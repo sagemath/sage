@@ -88,7 +88,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         sage: x.foata_normal_form()
         (b, a*d, a, b*c)
     """
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Textual representation of ``self``.
 
@@ -106,7 +106,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         """
         if self == self.parent().one():
             return "1"
-        return "[{}]".format(self.value)
+        return f"[{self.value}]"
 
     def _richcmp_(self, other, op):
         r"""
@@ -285,7 +285,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         elif algorithm == "min":
             return self.min_hasse_diagram()
         raise ValueError("`alg` option must be `naive` "
-                         "or `min`, got `{}`.".format(algorithm))
+                         f"or `min`, got `{algorithm}`.")
 
     def min_hasse_diagram(self):
         r"""
@@ -312,7 +312,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
         elements = self._flat_elements()
         elements.reverse()
         independence = self.parent()._independence
-        reachable = dict()
+        reachable = {}
         min = set()
         graph = DiGraph({})
 
@@ -331,7 +331,7 @@ class TraceMonoidElement(ElementWrapper, MonoidElement):
                             min.remove(j)
                         used.add(j)
                 forbidden = set(chain.from_iterable(reachable[v] for v in used))
-                front = set(dest for _, dest in graph.outgoing_edges(front, labels=False))
+                front = {dest for _, dest in graph.outgoing_edges(front, labels=False)}
                 front = front - forbidden
 
             min.add(i)
@@ -638,7 +638,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
               d: [False, False, True, False]})
         """
         independence = self._independence
-        generators_set = set(e for e, _ in x)
+        generators_set = {e for e, _ in x}
         stacks = dict(sorted((g, []) for g in generators_set))
         for generator, times in reversed(list(x)):
             stacks[generator].extend(repeat(True, times))
@@ -723,7 +723,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
             (b, a*d, a, b, a, b*c, c, a)
         """
         if not x._element_list:
-            return tuple()
+            return ()
 
         generators_set, stacks = self._compute_dependence_stack(x)
         independence = self._independence
@@ -818,8 +818,8 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
             sage: M.dependence_graph() == Graph({a:[a,b], b:[b], c:[c,b]})
             True
         """
-        return Graph(set(frozenset((e1, e2)) if e1 != e2 else (e1, e2)
-                         for e1, e2 in self.dependence()), loops=True,
+        return Graph({frozenset((e1, e2)) if e1 != e2 else (e1, e2)
+                      for e1, e2 in self.dependence()}, loops=True,
                      format="list_of_edges",
                      immutable=True)
 
@@ -963,9 +963,9 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
             [[a, c]]
         """
         return sorted(sorted(x_y)
-                      for x_y in sorted(self.independence()))
+                      for x_y in self.independence())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Textual representation of trace monoids.
 
@@ -979,7 +979,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
         """
         return ("Trace monoid on {!s} generators {!s} "
                 "with independence relation {{{}}}").format(self.ngens(), self.gens(),
-                                                            ", ".join("{{{}, {}}}".format(x, y)
+                                                            ", ".join(f"{{{x}, {y}}}"
                                                                       for (x, y) in self._sorted_independence()))
 
     def _latex_(self):
@@ -996,7 +996,7 @@ class TraceMonoid(UniqueRepresentation, Monoid_class):
         return "\\langle {} \\mid {} \\rangle".format(
             repr(self._free_monoid.gens())[1:-1],
             ",".join(
-                "{0!r}{1!r}={1!r}{0!r}".format(v1, v2)
+                f"{v1!r}{v2!r}={v2!r}{v1!r}"
                 for v1, v2 in self._sorted_independence()
             )
         )

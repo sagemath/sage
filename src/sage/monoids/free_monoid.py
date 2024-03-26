@@ -196,7 +196,7 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
         Monoid_class.__init__(self, names)
 
     def _repr_(self):
-        return "Free monoid on %s generators %s" % (self.__ngens, self.gens())
+        return f"Free monoid on {self.__ngens} generators {self.gens()}"
 
     def _element_constructor_(self, x, check=True):
         """
