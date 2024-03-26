@@ -762,6 +762,19 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             ....:     A = QuaternionAlgebra(d)
             ....:     assert A.maximal_order(take_shortcuts=False).is_maximal()
 
+        Specifying an order basis gives an extension of orders::
+
+            sage: A.<i,j,k> = QuaternionAlgebra(-292, -732)
+            sage: alpha = A.random_element()
+            sage: while alpha.is_zero():
+            ....:     alpha = A.random_element()
+            sage: conj = [alpha * b * alpha.inverse() for b in [k,i,j]]
+            sage: order_basis = tuple(conj) + (A.one(),)
+            sage: O = A.quaternion_order(order_basis)
+            sage: R = A.maximal_order(order_basis)
+            sage: O <= R and R.is_maximal()
+            True
+
         We do not support number fields other than the rationals yet::
 
             sage: K = QuadraticField(5)
