@@ -841,15 +841,15 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             raise ValueError('order_basis is not a basis of an order of the'
                             ' given quaternion algebra')
 
-        if order_basis[0] not in ZZ:
-            raise Warning('the algorithm might not work if the'
-                        ' first basis vector is not an integer')
+        # Since Voight's algorithm only works for a starting basis having 1 as
+        # its first vector, we derive such a basis from the given order basis
+        basis = basis_for_quaternion_lattice(order_basis, reverse=True)
 
         e_new_gens = []
 
         # For each prime at which R is not yet maximal, make it bigger
         for p, _ in d_R.factor():
-            e = order_basis
+            e = basis
             disc = d_R
             while disc.valuation(p) > d_A.valuation(p):
                 # Compute a normalized basis at p
@@ -940,7 +940,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
             e_new_gens.extend(e[1:])
 
-        e_new = basis_for_quaternion_lattice(list(R.basis()) + e_new_gens, reverse=True)
+        e_new = basis_for_quaternion_lattice(list(basis) + e_new_gens, reverse=True)
         return self.quaternion_order(e_new)
 
     def invariants(self):
