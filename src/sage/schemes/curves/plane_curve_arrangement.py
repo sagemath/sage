@@ -1114,11 +1114,6 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
             sage: L.ambient_space()
             Projective Space of dimension 2 over Rational Field
         """
-        n = len(self._names)
-        if n == 2:
-            return AffineSpace(self.base_ring(), 2, self._names)
-        if n == 3:
-            return ProjectiveSpace(self.base_ring(), 2, self._names)
 
     def _repr_(self):
         """
