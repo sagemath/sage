@@ -24,11 +24,6 @@
         "--doctest-modules"
     ],
     "python.testing.unittestEnabled": false,
-    "python.linting.pycodestyleEnabled": true,
-    "python.linting.enabled": true,
-    // The following pycodestyle arguments are the same as the pycodestyle-minimal
-    // tox environnment, see the file SAGE_ROOT/src/tox.ini
-    "python.linting.pycodestyleArgs": ["--select= E111,E21,E222,E225,E227,E228,E25,E271,E303,E305,E306,E401,E502,E701,E702,E703,E71,E72,W291,W293,W391,W605"],
     "cSpell.words": [
         "furo",
         "Conda",
