@@ -49,6 +49,7 @@ AUTHORS:
 from itertools import combinations
 from sage.categories.sets_cat import Sets
 from sage.groups.free_group import FreeGroup
+from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.misc.misc_c import prod
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -1099,6 +1100,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
         """
         return PlaneCurveArrangements(base_ring, names=self.variable_names())
 
+    @abstract_method
     def ambient_space(self):
         """
         Return the ambient space.
@@ -1276,6 +1278,21 @@ class AffinePlaneCurveArrangements(PlaneCurveArrangements):
     """
     Element = AffinePlaneCurveArrangementElement
 
+    def ambient_space(self):
+        """
+        Return the ambient space.
+
+        EXAMPLES::
+
+            sage: L.<x, y> = AffinePlaneCurveArrangements(QQ)
+            sage: L.ambient_space()
+            Affine Space of dimension 2 over Rational Field
+            sage: L.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
+            sage: L.ambient_space()
+            Projective Space of dimension 2 over Rational Field
+        """
+        return AffineSpace(self.base_ring(), 2, self._names)
+
 
 class ProjectivePlaneCurveArrangements(PlaneCurveArrangements):
     """
@@ -1295,3 +1312,19 @@ class ProjectivePlaneCurveArrangements(PlaneCurveArrangements):
         of dimension 2 over Rational Field
     """
     Element = ProjectivePlaneCurveArrangementElement
+
+    def ambient_space(self):
+        """
+        Return the ambient space.
+
+        EXAMPLES::
+
+            sage: L.<x, y> = AffinePlaneCurveArrangements(QQ)
+            sage: L.ambient_space()
+            Affine Space of dimension 2 over Rational Field
+            sage: L.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
+            sage: L.ambient_space()
+            Projective Space of dimension 2 over Rational Field
+        """
+        return ProjectiveSpace(self.base_ring(), 2, self._names)
+
