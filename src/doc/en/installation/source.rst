@@ -370,6 +370,12 @@ does not raise an :class:`ImportError`, then it worked.
 Installation steps
 ------------------
 
+.. hint:: 
+
+  The following steps use the classical ``./configure && make`` build
+  process. The modern Meson build system is also supported, see
+  :ref:`build-source-meson`.
+
 #. Follow the procedure in the file `README.md <https://github.com/sagemath/sage/#readme>`_
    in ``SAGE_ROOT``.
 
