@@ -85,8 +85,7 @@ else:
     from sage_setup.autogen import autogen_all
     autogen_all()
 
-    log.info("Discovering Python/Cython source code....")
-    t = time.time()
+    log.info("Discovering Python/Cython source code...")
 
     # Exclude a few files if the corresponding distribution is not loaded
     optional_packages = ['mcqd', 'bliss', 'tdlib',
@@ -103,13 +102,19 @@ else:
     python_packages = find_namespace_packages(where=SAGE_SRC, include=['sage', 'sage.*'])
     log.debug(f"python_packages = {python_packages}")
 
-    log.info(f"Discovered Python/Cython sources, time: {(time.time() - t):.2f} seconds.")
+    log.info(f"Discovering Python/Cython source code... done")
 
     # from sage_build_cython:
     import Cython.Compiler.Options
     Cython.Compiler.Options.embed_pos_in_docstring = True
     gdb_debug = os.environ.get('SAGE_DEBUG', None) != 'no'
 
+    aliases = cython_aliases()
+    log.debug(f"aliases = {aliases}")
+    include_path = sage_include_directories(use_sources=True) + ['.']
+    log.debug(f"include_path = {include_path}")
+    nthreads = sage_build_ext_minimal.get_default_number_build_jobs()
+    log.info(f"Cythonizing with {nthreads} threads...")
     try:
         from Cython.Build import cythonize
         from sage.env import cython_aliases, sage_include_directories
@@ -118,16 +123,17 @@ else:
             extensions = cythonize(
                 ["sage/**/*.pyx"],
                 exclude=files_to_exclude,
-                include_path=sage_include_directories(use_sources=True) + ['.'],
+                include_path=include_path,
                 compile_time_env=compile_time_env_variables(),
                 compiler_directives=compiler_directives(False),
-                aliases=cython_aliases(),
+                aliases=aliases,
                 create_extension=create_extension,
                 gdb_debug=gdb_debug,
-                nthreads=4)
+                nthreads=nthreads)
     except Exception as exception:
         log.warn(f"Exception while cythonizing source files: {repr(exception)}")
         raise
+    log.info(f"Cythonizing with {nthreads} threads... done")
 
 # ########################################################
 # ## Distutils
