@@ -578,7 +578,6 @@ cdef inline int celement_gcd(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsi
         sage: (G//d)*d == G
         True
     """
-    cdef unsigned long leadcoeff, modulus, leadcoeff_res
     if celement_is_zero(b, n):
         nmod_poly_set(res, a)
         return 0
