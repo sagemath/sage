@@ -1298,8 +1298,8 @@ class FunctionField(Field):
             raise NotImplementedError('only supported for global function fields')
 
         if self.characteristic() == 2:
-            raise NotImplementedError('Hilbert symbol currently only implemented'
-                                    ' for odd characteristic function fields')
+            raise ValueError('Hilbert symbol is only defined for'
+                            ' odd characteristic function fields')
 
         if not (a in self and b in self):
             raise ValueError('a and b must be elements of the function field')
