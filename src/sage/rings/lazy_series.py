@@ -6687,7 +6687,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
             g \circ \partial_{p_1} f + f = p_1 \partial_{p_1} f.
 
-        This implies that the derivatives of `f` and `g` w.r.t. `p_1`
+        This implies that the derivatives of `f` and `g` with respect to `p_1`
         are inverses of each other with respect to plethystic substitution.
 
         The Legendre transform is an involution.
