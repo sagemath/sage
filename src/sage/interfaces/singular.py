@@ -1211,14 +1211,14 @@ class Singular(ExtraTabCompletion, Expect):
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/127
             //   number of vars : 3
-            //        block   1 : ordering rp
+            //        block   1 : ordering ip
             //                  : names    x y z
             //        block   2 : ordering C
             sage: singular.current_ring()
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/127
             //   number of vars : 3
-            //        block   1 : ordering rp
+            //        block   1 : ordering ip
             //                  : names    x y z
             //        block   2 : ordering C
         """
@@ -2040,6 +2040,9 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         elif typ == 'intvec':
             from sage.modules.free_module_element import vector
             return vector([sage.rings.integer.Integer(str(e)) for e in self])
+        elif typ == 'bigintvec':
+            from sage.modules.free_module_element import vector
+            return vector([sage.rings.rational.Rational(str(e)) for e in self])
         elif typ == 'intmat':
             from sage.matrix.constructor import matrix
             from sage.rings.integer_ring import ZZ
