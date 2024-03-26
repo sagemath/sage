@@ -51,7 +51,7 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
     A facade parent for the indices of Clifford algebra.
     Users should not create instances of this class directly.
     """
-    def __init__(self, Qdim):
+    def __init__(self, Qdim, degree=None):
         r"""
         Initialize ``self``.
 
@@ -67,9 +67,30 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
             1111
             sage: type(i)
             <class 'sage.data_structures.bitset.FrozenBitset'>
+
+            sage: idx = CliffordAlgebraIndices(7, 3)
+            sage: idx._nbits
+            7
+            sage: idx._degree
+            3
+            sage: idx._cardinality
+            35
+
+            sage: idx = CliffordAlgebraIndices(7, 0)
+            sage: idx._nbits
+            7
+            sage: idx._degree
+            0
+            sage: idx._cardinality
+            1
         """
         self._nbits = Qdim
-        self._cardinality = 2 ** Qdim
+        if degree is None:
+            self._cardinality = 2 ** Qdim
+        else:
+            from sage.arith.misc import binomial
+            self._cardinality = binomial(Qdim, degree)
+        self._degree = degree
         # the if statement here is in case Qdim is 0.
         category = FiniteEnumeratedSets().Facade()
         Parent.__init__(self, category=category, facade=True)
@@ -92,10 +113,16 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
             00001
             000001
             0000001
+
+            sage: idx = CliffordAlgebraIndices(0)
+            sage: idx([])
+            0
         """
         if isinstance(x, (list, tuple, set, frozenset)):
             if len(x) > self._nbits:
                 raise ValueError(f"{x=} is too long")
+            if not x:
+                return FrozenBitset()
             return FrozenBitset(x)
 
         if isinstance(x, int):
@@ -129,6 +156,12 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
             True
             sage: len(idx) == 2^7
             True
+
+            sage: idx = CliffordAlgebraIndices(7, 3)
+            sage: idx.cardinality() == binomial(7, 3)
+            True
+            sage: len(idx) == binomial(7, 3)
+            True
         """
         return self._cardinality
 
@@ -149,14 +182,20 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
             Subsets of {0}
             sage: CliffordAlgebraIndices(2)
             Subsets of {0,1}
+            sage: CliffordAlgebraIndices(5, 3)
+            Subsets of {0,1,...,4} of size 3
         """
+        if self._degree is not None:
+            extra = f" of size {self._degree}"
+        else:
+            extra = ""
         if self._nbits == 0:
-            return "Subsets of {}"
+            return "Subsets of {}" + extra
         if self._nbits == 1:
-            return "Subsets of {0}"
+            return "Subsets of {0}" + extra
         if self._nbits == 2:
-            return "Subsets of {0,1}"
-        return f"Subsets of {{0,1,...,{self._nbits-1}}}"
+            return "Subsets of {0,1}" + extra
+        return f"Subsets of {{0,1,...,{self._nbits-1}}}" + extra
 
     def _latex_(self):
         r"""
@@ -166,21 +205,27 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
 
             sage: from sage.algebras.clifford_algebra import CliffordAlgebraIndices
             sage: latex(CliffordAlgebraIndices(7))
-            \mathcal{P}({0,1,\ldots,6})
+            \mathcal{P}(\{0,1,\ldots,6\})
             sage: latex(CliffordAlgebraIndices(0))
             \mathcal{P}(\emptyset)
             sage: latex(CliffordAlgebraIndices(1))
-            \mathcal{P}({0})
+            \mathcal{P}(\{0\})
             sage: latex(CliffordAlgebraIndices(2))
-            \mathcal{P}({0,1})
+            \mathcal{P}(\{0,1\})
+            sage: latex(CliffordAlgebraIndices(2, 1))
+            \mathcal{P}(\{0,1\}, 1)
         """
+        if self._degree is not None:
+            extra = f", {self._degree}"
+        else:
+            extra = ""
         if self._nbits == 0:
-            return "\\mathcal{P}(\\emptyset)"
+            return f"\\mathcal{{P}}(\\emptyset{extra})"
         if self._nbits == 1:
-            return "\\mathcal{P}({0})"
+            return f"\\mathcal{{P}}(\\{{0\\}}{extra})"
         if self._nbits == 2:
-            return "\\mathcal{P}({0,1})"
-        return f"\\mathcal{{P}}({{0,1,\\ldots,{self._nbits-1}}})"
+            return f"\\mathcal{{P}}(\\{{0,1\\}}{extra})"
+        return f"\\mathcal{{P}}(\\{{0,1,\\ldots,{self._nbits-1}\\}}{extra})"
 
     def __iter__(self):
         r"""
@@ -200,9 +245,25 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
             101
             011
             111
+
+            sage: idx = CliffordAlgebraIndices(5, 3)
+            sage: list(idx)
+            [111, 1101, 11001, 1011, 10101, 10011, 0111, 01101, 01011, 00111]
+
+            sage: idx = CliffordAlgebraIndices(7, 0)
+            sage: list(idx)
+            [0]
         """
         import itertools
         n = self._nbits
+        if self._degree is not None:
+            if self._degree == 0:  # special corner case
+                yield FrozenBitset()
+                return
+            for C in itertools.combinations(range(n), self._degree):
+                yield FrozenBitset(C)
+            return
+
         yield FrozenBitset()
         k = 1
         while k <= n:
@@ -226,10 +287,34 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
             True
             sage: FrozenBitset('000001') in idx
             False
+
+            sage: idx = CliffordAlgebraIndices(6, 3)
+            sage: FrozenBitset('01011') in idx
+            True
+            sage: FrozenBitset('00011') in idx
+            False
+            sage: int(7) in idx
+            True
+            sage: int(8) in idx
+            False
+
+            sage: idx = CliffordAlgebraIndices(7, 0)
+            sage: FrozenBitset() in idx
+            True
+            sage: FrozenBitset('01') in idx
+            False
+            sage: int(0) in idx
+            True
+            sage: int(5) in idx
+            False
         """
         if isinstance(elt, int):
+            if self._degree is not None and sum(ZZ(elt).bits()) != self._degree:
+                return False
             return elt < self._cardinality and elt >= 0
         if not isinstance(elt, FrozenBitset):
+            return False
+        if self._degree is not None and len(elt) != self._degree:
             return False
         return elt.capacity() <= self._nbits
 
@@ -252,13 +337,25 @@ class CliffordAlgebraIndices(UniqueRepresentation, Parent):
             sage: idx = CliffordAlgebraIndices(3)
             sage: idx._an_element_()
             11
+            sage: idx = CliffordAlgebraIndices(5, 3)
+            sage: idx._an_element_()
+            111
+            sage: idx = CliffordAlgebraIndices(7, 0)
+            sage: idx._an_element_()
+            0
         """
         if not self._nbits:
             return FrozenBitset()
 
+        if self._degree is not None:
+            if self._degree == 0:  # special corner case
+                return FrozenBitset()
+            return FrozenBitset(range(self._degree))
+
         from sage.combinat.subset import SubsetsSorted
         X = SubsetsSorted(range(self._nbits))
         return FrozenBitset(X.an_element())
+
 
 class CliffordAlgebra(CombinatorialFreeModule):
     r"""
