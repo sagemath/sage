@@ -6,7 +6,7 @@ from sage.misc.lazy_attribute import lazy_attribute, lazy_class_attribute
 from sage.misc.lazy_import import lazy_import
 
 from sage.misc.verbose import (set_verbose, set_verbose_files,
-                      get_verbose_files, unset_verbose_files, get_verbose)
+                               get_verbose_files, unset_verbose_files, get_verbose)
 lazy_import('sage.misc.verbose', 'verbose',
             deprecation=17815)
 from sage.misc.call import attrcall
