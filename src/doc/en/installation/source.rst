@@ -264,24 +264,10 @@ WSL prerequisites
 Ubuntu on Windows Subsystem for Linux (WSL) prerequisite installation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Sage can be installed onto Linux running on Windows Subsystem for Linux (WSL). These instructions describe a fresh install of Ubuntu 20.10, but other distributions or installation methods should work too, though have not been tested.
-
-- Enable hardware-assisted virtualization in the EFI or BIOS of your system. Refer to your system (or motherboard) maker's documentation for instructions on how to do this.
-
-- Set up WSL by following the `official WSL setup guide <https://docs.microsoft.com/en-us/windows/wsl/install-win10>`_. Be sure to do the steps to install WSL2 and set it as default.
-
-- Go to the Microsoft Store and install Ubuntu.
-
-- Start Ubuntu from the start menu. Update all packages to the latest version.
-
-- Reboot the all running WSL instances one of the following ways:
-
-  - Open Windows Services and restart the LxssManager service.
-  - Open the Command Prompt or Powershell and enter this command::
-
-      wsl --shutdown
-
-- `Upgrade to the Ubuntu 20.10 <https://linuxconfig.org/how-to-upgrade-ubuntu-to-20-10>`_. This step will not be necessary once Ubuntu 20.10 is available in the Microsoft Store.
+Refer to :ref:`installation-guide-windows` for installing Ubuntu on
+Windows Subsystem for Linux (WSL). These instructions describe a fresh
+install of Ubuntu, the default distribution in WSL, but other
+distributions or installation methods should work too.
 
 From this point on, follow the instructions in the :ref:`sec-installation-from-sources-linux-recommended-installation` section.
 It is strongly recommended to put the Sage source files in the Linux file system, for example, in the ``/home/username/sage`` directory, and not in the Windows file system (e.g. ``/mnt/c/...``).
@@ -387,9 +373,49 @@ Installation steps
 #. Follow the procedure in the file `README.md <https://github.com/sagemath/sage/#readme>`_
    in ``SAGE_ROOT``.
 
+#. If you wish to prepare for having to build Sage in an environment
+   without sufficient Internet connectivity:
+
+   - After running ``configure``, you can use ``make download`` to force
+     downloading packages before building. After this, the packages
+     are in the subdirectory ``upstream``.
+
+   - Alternatively, instead of cloning the git repository, you
+     can download a self-contained release tarball for any
+     stable release from the Sage project's
+     `GitHub Releases <https://github.com/sagemath/sage/releases>`_.
+     Use the file named ``sage-x.y.tar.gz`` (1.25 GB as of Sage 10.2)
+     in the Release Assets, which contains a prepopulated subdirectory
+     ``upstream``.
+
+     After downloading the source tarball ``sage-x.y.tar.gz`` into
+     a directory ``~/sage/``::
+
+       $ cd ~/sage/
+       $ tar xf sage-x.y.tar.gz  # adapt x.y; takes a while
+
+     This creates the subdirectory ``sage-x.y``. Now change into it::
+
+       $ cd sage-x.y/  # adapt x.y
+
+     .. note::
+
+        On Windows, it is crucial that you unpack the source tree from the
+        WSL `bash` using the WSL `tar` utility and not using other
+        Windows tools (including mingw).
+
+        This is because the Sage source tree contains symbolic links, and the
+        build will not work if Windows line endings rather than UNIX
+        line endings are used.
+
+   - The Sage mirrors also provide such self-contained tarballs
+     for all `stable releases <https://www.sagemath.org/download-source.html>`_
+     and additionally for all `development releases
+     <https://www.sagemath.org/download-latest.html>`_.
+
 #. Additional remarks:
    You do not need to be logged in as root, since no files are
-   changed outside of the :file:`sage-x.y` directory.
+   changed outside of the :file:`SAGE_ROOT` directory.
    In fact, **it is inadvisable to build Sage as root**, as the root account
    should only be used when absolutely necessary and mistyped commands can have
    serious consequences if you are logged in as root.
@@ -504,7 +530,7 @@ Installation steps
    - Make a symbolic link from :file:`/usr/local/bin/sage` (or another
      directory in your :envvar:`PATH`) to :file:`$SAGE_ROOT/sage`::
 
-         $ ln -s /path/to/sage-x.y/sage /usr/local/bin/sage
+         $ ln -s /path/to/sage_root/sage /usr/local/bin/sage
 
      Now simply typing ``sage`` from any directory should be sufficient to run
      Sage.
@@ -940,11 +966,19 @@ Environment variables controlling the documentation build
 
   The value of this variable is passed as an
   argument to ``sage --docbuild all html`` or ``sage --docbuild all pdf`` when
-  you run ``make``, ``make doc``, or ``make doc-pdf``.  For example, you can
-  add ``--no-plot`` to this variable to avoid building the graphics coming from
-  the ``.. PLOT`` directive within the documentation, or you can add
-  ``--include-tests-blocks`` to include all "TESTS" blocks in the reference
-  manual. Run ``sage --docbuild help`` to see the full list of options.
+  you run ``make``, ``make doc``, or ``make doc-pdf``.  For example:
+
+  - add ``--no-plot`` to this variable to avoid building the graphics coming from
+    the ``.. PLOT`` directive within the documentation,
+
+  - add ``--no-preparsed-examples`` to only show the original Sage code of
+    "EXAMPLES" blocks, suppressing the tab with the preparsed, plain Python
+    version, or
+
+  - add ``--include-tests-blocks`` to include all "TESTS" blocks in the reference
+    manual.
+
+  Run ``sage --docbuild help`` to see the full list of options.
 
 .. envvar:: SAGE_SPKG_INSTALL_DOCS
 
