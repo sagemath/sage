@@ -1576,7 +1576,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         return pAdicValuation(self, p)
 
     def from_bytes(self, input_bytes, byteorder="big", is_signed=False):
-        """
+        r"""
         Return the integer represented by the given array of bytes.
 
         Internally relies on the python ``int.from_bytes()`` method.
