@@ -193,7 +193,7 @@ from sage.rings.integer import Integer
 import lrcalc
 
 
-def _lrcalc_dict_to_sage(result):
+def _lrcalc_dict_to_sage(result) -> dict:
     r"""
     Translate from lrcalc output format to Sage expected format.
 
@@ -203,7 +203,9 @@ def _lrcalc_dict_to_sage(result):
         sage: mult([2,1],[3,2,1],3) # indirect doctest
         {[3, 3, 3]: 1, [4, 3, 2]: 2, [4, 4, 1]: 1, [5, 2, 2]: 1, [5, 3, 1]: 1}
     """
-    return {_Partitions(la): Integer(k) for la, k in result.items()}
+    return {_Partitions.element_class(_Partitions, [Integer(p) for p in la]):
+            Integer(k) for la, k in result.items()}
+
 
 def lrcoef_unsafe(outer, inner1, inner2):
     r"""
@@ -268,7 +270,7 @@ def lrcoef(outer, inner1, inner2):
     return lrcoef_unsafe(_Partitions(outer), _Partitions(inner1), _Partitions(inner2))
 
 
-def mult(part1, part2, maxrows=None, level=None, quantum=None):
+def mult(part1, part2, maxrows=None, level=None, quantum=None) -> dict:
     r"""
     Compute a product of two Schur functions.
 
@@ -345,13 +347,13 @@ def mult(part1, part2, maxrows=None, level=None, quantum=None):
     result = lrcalc.mult_quantum(part1, part2, maxrows, level, degrees=True)
     P = quantum.parent()
     output = {}
-    for i,k in result.items():
+    for i, k in result.items():
         la = _Partitions(i[0])
         output[la] = output.get(la, P.zero()) + k * quantum**(i[1])
     return output
 
 
-def skew(outer, inner, maxrows=-1):
+def skew(outer, inner, maxrows=-1) -> dict:
     """
     Compute the Schur expansion of a skew Schur function.
 
@@ -377,7 +379,7 @@ def skew(outer, inner, maxrows=-1):
     return _lrcalc_dict_to_sage(lrcalc.skew(outer, inner, maxrows))
 
 
-def coprod(part, all=0):
+def coprod(part, all=0) -> dict:
     """
     Compute the coproduct of a Schur function.
 
@@ -404,11 +406,13 @@ def coprod(part, all=0):
         [(([1, 1], [1]), 1), (([2], [1]), 1), (([2, 1], []), 1)]
     """
     result = lrcalc.coprod(part, all)
-    return {tuple([_Partitions(mu) for mu in la]): Integer(k)
+    return {tuple([_Partitions.element_class(_Partitions,
+                                             [Integer(p) for p in mu])
+                   for mu in la]): Integer(k)
             for la, k in result.items()}
 
 
-def mult_schubert(w1, w2, rank=0):
+def mult_schubert(w1, w2, rank=0) -> dict:
     r"""
     Compute a product of two Schubert polynomials.
 
@@ -436,7 +440,7 @@ def mult_schubert(w1, w2, rank=0):
          ([7, 3, 4, 1, 2, 5, 6], 1), ([7, 4, 2, 1, 3, 5, 6], 1)]
     """
     result = lrcalc.schubmult(w1, w2, rank)
-    return {Permutation(list(la)):Integer(k) for la,k in result.items()}
+    return {Permutation(list(la)): Integer(k) for la, k in result.items()}
 
 
 def lrskew(outer, inner, weight=None, maxrows=-1):
@@ -503,7 +507,7 @@ def lrskew(outer, inner, weight=None, maxrows=-1):
     if weight is None:
         ST = SemistandardSkewTableaux(shape)
         for data in iterator:
-            yield ST.from_shape_and_word(shape, [i+1 for i in data])
+            yield ST.from_shape_and_word(shape, [i + 1 for i in data])
     else:
         wt = _Partitions(weight)
         ST = SemistandardSkewTableaux(shape, wt)
@@ -517,4 +521,4 @@ def lrskew(outer, inner, weight=None, maxrows=-1):
                     break
                 w[j] += 1
             if w == wt:
-                yield ST.from_shape_and_word(shape, [i+1 for i in data])
+                yield ST.from_shape_and_word(shape, [i + 1 for i in data])
