@@ -1281,19 +1281,17 @@ class FunctionField(Field):
             ....: c = L.random_element()
 
             sage: P = L.places_above(K.places()[0])[1]
-            sage: (L.hilbert_symbol(a, b, P) * L.hilbert_symbol(a, c, P) 
-            ....:   == L.hilbert_symbol(a, b*c, P))
+            sage: hs_a_c = L.hilbert_symbol(a, c, P)
+            sage: L.hilbert_symbol(a, b, P) * hs_a_c == L.hilbert_symbol(a, b*c, P)
             True
-            sage: (L.hilbert_symbol(a, c, P) * L.hilbert_symbol(b, c, P)
-            ....:   == L.hilbert_symbol(a*b, c, P)
+            sage: hs_a_c * L.hilbert_symbol(b, c, P) == L.hilbert_symbol(a*b, c, P)
             True
 
             sage: Q = L.places_above(K.places()[1])[0]
-            sage: (L.hilbert_symbol(a, b, Q) * L.hilbert_symbol(a, c, Q) 
-            ....:   == L.hilbert_symbol(a, b*c, Q))
+            sage: hs_a_c = L.hilbert_symbol(a, c, P)
+            sage: L.hilbert_symbol(a, b, Q) * hs_a_c == L.hilbert_symbol(a, b*c, Q)
             True
-            sage: (L.hilbert_symbol(a, c, Q) * L.hilbert_symbol(b, c, Q)
-            ....:   == L.hilbert_symbol(a*b, c, Q)
+            sage: hs_a_c * L.hilbert_symbol(b, c, Q) == L.hilbert_symbol(a*b, c, Q)
             True
         """
         if not self.is_global():
