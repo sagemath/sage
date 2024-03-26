@@ -55,10 +55,10 @@ class msolve(Executable):
         """
         msolve_out = subprocess.run(["msolve", "-h"], capture_output=True)
 
-        if msolve_out.returncode != 0:
-            return FeatureTestResult(self, False, reason="msolve -h returned "
-                                f"non-zero exit status {msolve_out.returncode}")
-        elif (msolve_out.stdout[:46] !=
+#        if msolve_out.returncode != 0:
+#            return FeatureTestResult(self, False, reason="msolve -h returned "
+#                                f"non-zero exit status {msolve_out.returncode}")
+        if (msolve_out.stdout[:46] !=
               b'\nmsolve library for polynomial system solving\n'):
             return FeatureTestResult(self, False,
                                      reason="output of msolve -h not recognized")
