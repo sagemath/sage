@@ -13,16 +13,21 @@ cdef extern from "stdlib.h":
     void *bsearch(const_void *key, const_void *base, size_t nmemb,
                   size_t size, int(*compar)(const_void *, const_void *)) nogil
 
+cdef extern from "search.h":
+    void *lfind(const_void *key, const_void *base, size_t *nmemb,
+                  size_t size, int(*compar)(const_void *, const_void *)) nogil
+
 ctypedef struct short_digraph_s:
     uint32_t * edges
     uint32_t ** neighbors
     PyObject * edge_labels
     int m
     int n
+    bint sorted_neighbors
 
 ctypedef short_digraph_s short_digraph[1]
 
-cdef int init_short_digraph(short_digraph g, G, edge_labelled=?, vertex_list=?) except -1
+cdef int init_short_digraph(short_digraph g, G, edge_labelled=?, vertex_list=?, sort_neighbors=?) except -1
 cdef void free_short_digraph(short_digraph g) noexcept
 cdef int init_reverse(short_digraph dst, short_digraph src) except -1
 cdef int out_degree(short_digraph g, int u) noexcept
