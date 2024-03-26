@@ -1633,7 +1633,7 @@ class QuaternionOrder(Parent):
         """
         return self.__basis[n]
 
-    def __eq__(self, R):
+    def __eq__(self, other):
         """
         Compare orders self and other.
 
@@ -1654,17 +1654,17 @@ class QuaternionOrder(Parent):
             sage: Q.quaternion_order([1,-i,k,j+i*7]) == Q.quaternion_order([1,i,j,k])
             True
         """
-        if not isinstance(R, QuaternionOrder):
+        if not isinstance(other, QuaternionOrder):
             return False
-        return (self.__quaternion_algebra == R.__quaternion_algebra and
-                self.unit_ideal() == R.unit_ideal())
+        return (self.__quaternion_algebra == other.__quaternion_algebra and
+                self.unit_ideal() == other.unit_ideal())
 
     def __ne__(self, other):
         """
         Compare orders self and other.
 
-        Two orders are equal if they
-        have the same basis and are in the same quaternion algebra.
+        Two orders are equal if they have the same
+        basis and are in the same quaternion algebra.
 
         EXAMPLES::
 
@@ -1675,6 +1675,74 @@ class QuaternionOrder(Parent):
             True
         """
         return not self.__eq__(other)
+
+    def __le__(self, other):
+        """
+        Compare orders self and other.
+
+        EXAMPLES::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(-1, -11)
+            sage: O = B.quaternion_order([1,i,j,k])
+            sage: R = B.quaternion_order([1,i,(i+j)/2,(1+k)/2])
+            sage: O <= R
+            True
+            sage: R <= O
+            False
+        """
+        if not isinstance(other, QuaternionOrder):
+            return False
+        return self.unit_ideal().__le__(other.unit_ideal())
+
+    def __lt__(self, other):
+        """
+        Compare orders self and other.
+
+        EXAMPLES::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(-1, -11)
+            sage: O = B.quaternion_order([1,i,j,k])
+            sage: R = B.quaternion_order([1,i,(i+j)/2,(1+k)/2])
+            sage: O < R
+            True
+            sage: R < O
+            False
+        """
+        return self.__le__(other) and self.__ne__(other)
+
+    def __ge__(self, other):
+        """
+        Compare orders self and other.
+
+        EXAMPLES::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(-1, -11)
+            sage: O = B.quaternion_order([1,i,j,k])
+            sage: R = B.quaternion_order([1,i,(i+j)/2,(1+k)/2])
+            sage: O >= R
+            False
+            sage: R >= O
+            True
+        """
+        if not isinstance(other, QuaternionOrder):
+            return False
+        return self.unit_ideal().__ge__(other.unit_ideal())
+
+    def __gt__(self, other):
+        """
+        Compare orders self and other.
+
+        EXAMPLES::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(-1, -11)
+            sage: O = B.quaternion_order([1,i,j,k])
+            sage: R = B.quaternion_order([1,i,(i+j)/2,(1+k)/2])
+            sage: O > R
+            False
+            sage: R > O
+            True
+        """
+        return self.__ge__(other) and self.__ne__(other)
 
     def __hash__(self):
         """
