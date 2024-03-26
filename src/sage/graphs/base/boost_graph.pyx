@@ -55,7 +55,7 @@ from libcpp.set cimport set as cset
 from libcpp.pair cimport pair
 
 
-cdef boost_graph_from_sage_graph(BoostGenGraph *g, g_sage, vertex_to_int, reverse=False) noexcept:
+cdef boost_graph_from_sage_graph(BoostGenGraph *g, g_sage, vertex_to_int, reverse=False):
     r"""
     Initialize the Boost graph ``g`` to be equal to ``g_sage``.
 
@@ -98,7 +98,7 @@ cdef boost_weighted_graph_from_sage_graph(BoostWeightedGraph *g,
                                           g_sage,
                                           vertex_to_int,
                                           weight_function=None,
-                                          reverse=False) noexcept:
+                                          reverse=False):
     r"""
     Initialize the Boost weighted graph ``g`` to be equal to ``g_sage``.
 
@@ -169,7 +169,7 @@ cdef boost_weighted_graph_from_sage_graph(BoostWeightedGraph *g,
                 g.add_edge(vertex_to_int[u], vertex_to_int[v], 1)
 
 
-cdef boost_edge_connectivity(BoostVecGenGraph *g) noexcept:
+cdef boost_edge_connectivity(BoostVecGenGraph *g):
     r"""
     Compute the edge connectivity of the input Boost graph.
 
@@ -189,7 +189,7 @@ cdef boost_edge_connectivity(BoostVecGenGraph *g) noexcept:
     return (result.ec, edges)
 
 
-cpdef edge_connectivity(g) noexcept:
+cpdef edge_connectivity(g):
     r"""
     Compute the edge connectivity of the input graph, using Boost.
 
@@ -244,7 +244,7 @@ cpdef edge_connectivity(g) noexcept:
     return (ec, [(int_to_vertex[u], int_to_vertex[v]) for u, v in edges])
 
 
-cdef boost_clustering_coeff(BoostGenGraph *g, vertices) noexcept:
+cdef boost_clustering_coeff(BoostGenGraph *g, vertices):
     r"""
     Compute the clustering coefficient of all vertices in the list provided.
 
@@ -276,7 +276,7 @@ cdef boost_clustering_coeff(BoostGenGraph *g, vertices) noexcept:
         return ((sum(clust_of_v.itervalues()) / len(clust_of_v)), clust_of_v)
 
 
-cpdef clustering_coeff(g, vertices=None) noexcept:
+cpdef clustering_coeff(g, vertices=None):
     r"""
     Compute the clustering coefficient of the input graph, using Boost.
 
@@ -343,7 +343,7 @@ cpdef clustering_coeff(g, vertices=None) noexcept:
 
 
 @cython.binding(True)
-cpdef dominator_tree(g, root, return_dict=False, reverse=False) noexcept:
+cpdef dominator_tree(g, root, return_dict=False, reverse=False):
     r"""
     Use Boost to compute the dominator tree of ``g``, rooted at ``root``.
 
@@ -500,7 +500,7 @@ cpdef dominator_tree(g, root, return_dict=False, reverse=False) noexcept:
             return Graph(edges)
 
 
-cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee') noexcept:
+cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee'):
     r"""
     Use Boost heuristics to approximate the bandwidth of the input graph.
 
@@ -621,7 +621,7 @@ cpdef bandwidth_heuristics(g, algorithm='cuthill_mckee') noexcept:
 
 cpdef min_spanning_tree(g,
                         weight_function=None,
-                        algorithm='Kruskal') noexcept:
+                        algorithm='Kruskal'):
     r"""
     Use Boost to compute the minimum spanning tree of the input graph.
 
@@ -746,7 +746,7 @@ cpdef min_spanning_tree(g,
     return [(u, v, g.edge_label(u, v)) for u, v in edges]
 
 
-cpdef blocks_and_cut_vertices(g) noexcept:
+cpdef blocks_and_cut_vertices(g):
     r"""
     Compute the blocks and cut vertices of the graph.
 
@@ -841,7 +841,7 @@ cpdef blocks_and_cut_vertices(g) noexcept:
     return (result_blocks, list(result_cut))
 
 
-cpdef shortest_paths(g, start, weight_function=None, algorithm=None) noexcept:
+cpdef shortest_paths(g, start, weight_function=None, algorithm=None):
     r"""
     Compute the shortest paths from ``start`` to all other vertices.
 
@@ -1039,7 +1039,7 @@ cpdef shortest_paths(g, start, weight_function=None, algorithm=None) noexcept:
     return (dist, pred)
 
 
-cdef get_predecessors(BoostWeightedGraph g, result, int_to_v, directed, weight_type) noexcept:
+cdef get_predecessors(BoostWeightedGraph g, result, int_to_v, directed, weight_type):
     r"""
     Return the predecessor matrix from the distance matrix of the graph.
 
@@ -1096,7 +1096,7 @@ cdef get_predecessors(BoostWeightedGraph g, result, int_to_v, directed, weight_t
     return pred
 
 
-cpdef johnson_shortest_paths(g, weight_function=None, distances=True, predecessors=False) noexcept:
+cpdef johnson_shortest_paths(g, weight_function=None, distances=True, predecessors=False):
     r"""
     Use Johnson algorithm to solve the all-pairs-shortest-paths.
 
@@ -1251,7 +1251,7 @@ cpdef johnson_shortest_paths(g, weight_function=None, distances=True, predecesso
         return pred
 
 
-cpdef floyd_warshall_shortest_paths(g, weight_function=None, distances=True, predecessors=False) noexcept:
+cpdef floyd_warshall_shortest_paths(g, weight_function=None, distances=True, predecessors=False):
     r"""
     Use Floyd-Warshall algorithm to solve the all-pairs-shortest-paths.
 
@@ -1407,7 +1407,7 @@ cpdef floyd_warshall_shortest_paths(g, weight_function=None, distances=True, pre
         return pred
 
 
-cpdef johnson_closeness_centrality(g, weight_function=None) noexcept:
+cpdef johnson_closeness_centrality(g, weight_function=None):
     r"""
     Use Johnson algorithm to compute the closeness centrality of all vertices.
 
@@ -1512,7 +1512,7 @@ cpdef johnson_closeness_centrality(g, weight_function=None) noexcept:
     return {v: closeness[i] for i, v in enumerate(int_to_v) if closeness[i] != sys.float_info.max}
 
 
-cpdef min_cycle_basis(g_sage, weight_function=None, by_weight=False) noexcept:
+cpdef min_cycle_basis(g_sage, weight_function=None, by_weight=False):
     r"""
     Return a minimum weight cycle basis of the input graph ``g_sage``.
 
@@ -1631,7 +1631,7 @@ cpdef min_cycle_basis(g_sage, weight_function=None, by_weight=False) noexcept:
     return cycle_basis
 
 
-cpdef eccentricity_DHV(g, vertex_list=None, weight_function=None, check_weight=True) noexcept:
+cpdef eccentricity_DHV(g, vertex_list=None, weight_function=None, check_weight=True):
     r"""
     Return the vector of eccentricities using the algorithm of [Dragan2018]_.
 
@@ -1819,7 +1819,7 @@ cpdef eccentricity_DHV(g, vertex_list=None, weight_function=None, check_weight=T
     return eccentricity
 
 
-cpdef radius_DHV(g, weight_function=None, check_weight=True) noexcept:
+cpdef radius_DHV(g, weight_function=None, check_weight=True):
     r"""
     Return the radius of weighted graph `g`.
 
@@ -1956,7 +1956,7 @@ cpdef radius_DHV(g, weight_function=None, check_weight=True) noexcept:
     return UB
 
 
-cpdef diameter_DHV(g, weight_function=None, check_weight=True) noexcept:
+cpdef diameter_DHV(g, weight_function=None, check_weight=True):
     r"""
     Return the diameter of weighted graph `g`.
 
@@ -2129,7 +2129,7 @@ cpdef diameter_DHV(g, weight_function=None, check_weight=True) noexcept:
 cdef tuple diameter_lower_bound_2Dsweep(BoostVecWeightedDiGraphU g_boost,
                                         BoostVecWeightedDiGraphU rev_g_boost,
                                         v_index source,
-                                        str algorithm) noexcept:
+                                        str algorithm):
     r"""
     Return a lower bound on the diameter of `G`.
 
@@ -2490,7 +2490,7 @@ cdef double diameter_DiFUB(BoostVecWeightedDiGraphU g_boost,
     return LB
 
 cpdef diameter(G, algorithm=None, source=None,
-               weight_function=None, check_weight=True) noexcept:
+               weight_function=None, check_weight=True):
     r"""
     Return the diameter of `G`.
 
@@ -2626,7 +2626,7 @@ cpdef diameter(G, algorithm=None, source=None,
         return LB
 
 cpdef shortest_paths_from_vertices(g, vertex_list=None, order=None,
-                                   weight_function=None, algorithm=None) noexcept:
+                                   weight_function=None, algorithm=None):
     r"""
     Compute the shortest paths to all vertices from each vertex in
     ``vertex_list``.
@@ -2869,7 +2869,7 @@ cpdef shortest_paths_from_vertices(g, vertex_list=None, order=None,
 
     return distances, predecessors
 
-cpdef wiener_index(g, algorithm=None, weight_function=None, check_weight=True) noexcept:
+cpdef wiener_index(g, algorithm=None, weight_function=None, check_weight=True):
     r"""
     Return the Wiener index of the graph.
 

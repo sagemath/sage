@@ -6,9 +6,9 @@ cdef class RiggedPartition(SageObject):
     cdef public list rigging
     cdef long _hash
 
-    cpdef get_num_cells_to_column(self, int end_column, t=*) noexcept
-    cpdef insert_cell(self, int max_width) noexcept
-    cpdef remove_cell(self, row, int num_cells=*) noexcept
+    cpdef get_num_cells_to_column(self, int end_column, t=*)
+    cpdef insert_cell(self, int max_width)
+    cpdef remove_cell(self, row, int num_cells=*)
 
 cdef class RiggedPartitionTypeB(RiggedPartition):
     pass

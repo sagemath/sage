@@ -2395,7 +2395,7 @@ def sage_getsourcelines(obj):
          '\n',
          '    cdef GEx _gobj\n',
          '\n',
-         '    cpdef object pyobject(self) noexcept:\n']
+         '    cpdef object pyobject(self):\n']
         sage: lines[-1]    # last line                                                  # needs sage.symbolic
         '        return S\n'
 

@@ -73,7 +73,7 @@ cimport sage.structure.parent as parent
 cimport sage.structure.category_object as category_object
 
 
-cdef inline check_old_coerce(parent.Parent p) noexcept:
+cdef inline check_old_coerce(parent.Parent p):
     if p._element_constructor is not None:
         raise RuntimeError("%s still using old coercion framework" % p)
 

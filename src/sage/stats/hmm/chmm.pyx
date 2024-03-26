@@ -446,7 +446,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
         return obs, states
 
-    cdef probability_init(self) noexcept:
+    cdef probability_init(self):
         r"""
         Used internally to compute caching information that makes
         certain computations in the Baum-Welch algorithm faster.  This
@@ -716,7 +716,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
 
         return state_sequence, mx
 
-    cdef TimeSeries _backward_scale_all(self, TimeSeries obs, TimeSeries scale) noexcept:
+    cdef TimeSeries _backward_scale_all(self, TimeSeries obs, TimeSeries scale):
         r"""
         This function returns the matrix beta_t(i), and is used
         internally as part of the Baum-Welch algorithm.
@@ -756,7 +756,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             t -= 1
         return beta
 
-    cdef _forward_scale_all(self, TimeSeries obs) noexcept:
+    cdef _forward_scale_all(self, TimeSeries obs):
         r"""
         Return scaled values alpha_t(i), the sequence of scalings, and
         the log probability.
@@ -821,7 +821,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
         # Termination
         return alpha, scale, log_probability
 
-    cdef TimeSeries _baum_welch_xi(self, TimeSeries alpha, TimeSeries beta, TimeSeries obs) noexcept:
+    cdef TimeSeries _baum_welch_xi(self, TimeSeries alpha, TimeSeries beta, TimeSeries obs):
         r"""
         Used internally to compute the scaled quantity xi_t(i,j)
         appearing in the Baum-Welch reestimation algorithm.
@@ -1292,7 +1292,7 @@ cdef class GaussianMixtureHiddenMarkovModel(GaussianHiddenMarkovModel):
         return G.prob(observation)
 
     cdef TimeSeries _baum_welch_mixed_gamma(self, TimeSeries alpha, TimeSeries beta,
-                                            TimeSeries obs, int j) noexcept:
+                                            TimeSeries obs, int j):
         r"""
         Let gamma_t(j,m) be the m-component (in the mixture) of the
         probability of being in state j at time t, given the

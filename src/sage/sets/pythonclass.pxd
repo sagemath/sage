@@ -5,4 +5,4 @@ cdef class Set_PythonType_class(Set_generic):
     cdef type _type
 
 
-cpdef Set_PythonType(typ) noexcept
+cpdef Set_PythonType(typ)

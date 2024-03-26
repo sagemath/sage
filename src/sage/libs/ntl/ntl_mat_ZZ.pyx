@@ -32,7 +32,7 @@ from cpython.object cimport PyObject_RichCompare
 
 from sage.libs.ntl.ntl_ZZ import unpickle_class_args
 
-cdef inline ntl_ZZ make_ZZ(ZZ_c* x) noexcept:
+cdef inline ntl_ZZ make_ZZ(ZZ_c* x):
     cdef ntl_ZZ y
     y = ntl_ZZ()
     y.x = x[0]
@@ -40,12 +40,12 @@ cdef inline ntl_ZZ make_ZZ(ZZ_c* x) noexcept:
     return y
 
 # You must do sig_on() before calling this function
-cdef inline ntl_ZZ make_ZZ_sig_off(ZZ_c* x) noexcept:
+cdef inline ntl_ZZ make_ZZ_sig_off(ZZ_c* x):
     cdef ntl_ZZ y = make_ZZ(x)
     sig_off()
     return y
 
-cdef inline ntl_mat_ZZ make_mat_ZZ(mat_ZZ_c* x) noexcept:
+cdef inline ntl_mat_ZZ make_mat_ZZ(mat_ZZ_c* x):
     cdef ntl_mat_ZZ y
     y = ntl_mat_ZZ.__new__(ntl_mat_ZZ)
     y.x = x[0]
@@ -55,7 +55,7 @@ cdef inline ntl_mat_ZZ make_mat_ZZ(mat_ZZ_c* x) noexcept:
     return y
 
 # You must do sig_on() before calling this function
-cdef inline ntl_mat_ZZ make_mat_ZZ_sig_off(mat_ZZ_c* x) noexcept:
+cdef inline ntl_mat_ZZ make_mat_ZZ_sig_off(mat_ZZ_c* x):
     cdef ntl_mat_ZZ y = make_mat_ZZ(x)
     sig_off()
     return y
