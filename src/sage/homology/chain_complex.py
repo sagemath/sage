@@ -418,6 +418,15 @@ class Chain_class(ModuleElement):
                d_2       d_1       d_0  [1]  d_-1
             0 <---- [0] <---- [4] <---- [2] <----- 0
                               [5]       [3]
+
+        TESTS:
+
+        check that :issue:`37678` is fixed::
+
+            sage: C = ChainComplex(base_ring=ZZ)
+            sage: ascii_art(C())
+            []
+
         """
         from sage.typeset.ascii_art import AsciiArt
 
@@ -468,6 +477,8 @@ class Chain_class(ModuleElement):
                                         ⎛1⎞
                d_2       d_1  ⎛4⎞  d_0  ⎜2⎟  d_-1
             0 <──── (0) <──── ⎝5⎠ <──── ⎝3⎠ <───── 0
+            sage: unicode_art(C())
+            []
         """
         from sage.typeset.unicode_art import UnicodeArt
 
@@ -495,10 +506,13 @@ class Chain_class(ModuleElement):
             for n in ordered:
                 result_ordered += arrow_art(n) + vector_art(n)
             result = [result_ordered] + result
-        concatenated = result[0]
-        for r in result[1:]:
-            concatenated += UnicodeArt([u' ... ']) + r
-        return concatenated
+        try:
+            concatenated = result[0]
+            for r in result[1:]:
+                concatenated += AsciiArt([' ... ']) + r
+            return concatenated
+        except IndexError:
+            return []
 
     def is_cycle(self):
         """
@@ -1778,6 +1792,8 @@ class ChainComplex_class(Parent):
             sage: ascii_art(D)
                         [1]                             [1]       [0]       [1]
              0 <-- C_7 <---- C_6 <-- 0  ...  0 <-- C_3 <---- C_2 <---- C_1 <---- C_0 <-- 0
+             sage: ascii_art(ChainComplex(base_ring=ZZ))
+             []
         """
         from sage.typeset.ascii_art import AsciiArt
 
@@ -1834,6 +1850,14 @@ class ChainComplex_class(Parent):
             sage: unicode_art(D)
                       (1)                           (1)     (0)     (1)
             0 <── C_7 <── C_6 <── 0  ...  0 <── C_3 <── C_2 <── C_1 <── C_0 <── 0
+
+        TESTS:
+
+        check that :issue:`37678` is fixed::
+
+            sage: C = ChainComplex(base_ring=ZZ)
+            sage: unicode_art(C)
+            []
         """
         from sage.typeset.unicode_art import UnicodeArt
 
@@ -1862,10 +1886,13 @@ class ChainComplex_class(Parent):
             for n in ordered:
                 result_ordered += arrow_art(n) + module_art(n)
             result = [result_ordered] + result
-        concatenated = result[0]
-        for r in result[1:]:
-            concatenated += UnicodeArt([u' ... ']) + r
-        return concatenated
+        try:
+            concatenated = result[0]
+            for r in result[1:]:
+                concatenated += AsciiArt([' ... ']) + r
+            return concatenated
+        except IndexError:
+            return []
 
     def _latex_(self):
         """
