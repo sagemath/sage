@@ -946,7 +946,7 @@ class DocTestController(SageObject):
                              filename.endswith(".pyx") or
                              filename.endswith(".rst"))
                         and not skipfile(opj(SAGE_ROOT, filename),
-                                         True if self.options.optional else False,
+                                         bool(self.options.optional),
                                          if_installed=self.options.if_installed)):
                     self.files.append(os.path.relpath(opj(SAGE_ROOT, filename)))
 
@@ -1008,11 +1008,11 @@ class DocTestController(SageObject):
                                 dirs.remove(dir)
                         for file in files:
                             if not skipfile(os.path.join(root, file),
-                                            True if self.options.optional else False,
+                                            bool(self.options.optional),
                                             if_installed=self.options.if_installed):
                                 yield os.path.join(root, file)
                 else:
-                    if not skipfile(path, True if self.options.optional else False,
+                    if not skipfile(path, bool(self.options.optional),
                                     if_installed=self.options.if_installed, log=self.log):  # log when directly specified filenames are skipped
                         yield path
         self.sources = [FileDocTestSource(path, self.options) for path in expand()]
