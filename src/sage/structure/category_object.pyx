@@ -58,7 +58,6 @@ This example illustrates generators for a free module over `\ZZ`.
 
 from sage.cpython.getattr import dir_with_other_class
 from sage.cpython.getattr cimport getattr_from_other_class
-from sage.categories.category import Category
 from sage.misc.cachefunc import cached_method
 from sage.structure.dynamic_class import DynamicMetaclass
 
@@ -145,6 +144,8 @@ cdef class CategoryObject(SageObject):
             ...
             TypeError: CategoryObject of type CategoryObject requires a Category, list or tuple, not NoneType
         """
+        from sage.categories.category import Category
+
         if isinstance(category, Category):
             self._category = category
         elif isinstance(category, (list, tuple)):

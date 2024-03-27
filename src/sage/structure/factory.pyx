@@ -768,7 +768,3 @@ def lookup_global(name):
     else:
         import sage.all as all
     return getattr(all, name)
-
-
-# Old imports required for unpickling old pickles
-from sage.structure.test_factory import test_factory

@@ -1,7 +1,5 @@
 # Subset of sage.misc.all that is made available by the sage-objects distribution
 
-import sage.structure.all   # to break a cyclic import
-
 from sage.misc.lazy_attribute import lazy_attribute, lazy_class_attribute
 from sage.misc.lazy_import import lazy_import
 
