@@ -17,6 +17,7 @@ AUTHORS:
 # ****************************************************************************
 from itertools import combinations
 
+from sage.categories.fields import Fields
 from sage.homology.homology_group import HomologyGroup
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
@@ -485,7 +486,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         for j in range(n + 1):
             for x in combinations(vertices, j):
                 S = self._simplicial_complex.generated_subcomplex(x)
-                if base_ring.is_field():
+                if base_ring in Fields():
                     invfac.append(S.homology(i - j - 1, base_ring=base_ring,
                                              cohomology=cohomology, algorithm=algorithm,
                                              verbose=verbose, reduced=True).dimension())
@@ -494,7 +495,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
                                              cohomology=cohomology, algorithm=algorithm,
                                              verbose=verbose, reduced=True)._original_invts)
 
-        if base_ring.is_field():
+        if base_ring in Fields():
             return HomologyGroup(sum(invfac), base_ring)
 
         m = len(invfac)
