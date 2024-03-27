@@ -1238,7 +1238,7 @@ class FunctionField(Field):
 
         For the valuation `\nu` belonging to the completion of the function
         field at `P`, we compute the valuations `\nu(a)` and `\nu(b)` as well
-        as elements `a_0` and `b_0` such that, for a uniformizer `\pi` of 
+        as elements `a_0` and `b_0` such that, for a uniformizer `\pi` of
         `\nu`, the elememts `a*\pi^{-\nu(a))}` and `a_0` respectively the
         elements `b*\pi^{-\nu(b)}` and `b_0` are congruent modulo `\pi`.
         Motivated by formula 12.4.10 in [Voi2021]_.
@@ -1249,9 +1249,9 @@ class FunctionField(Field):
 
         INPUT:
 
-        - ``a`` and ``b``: elements of this function field
+        - ``a`` and ``b`` -- elements of this function field
 
-        - ``P``: a place of this function field
+        - ``P`` -- a place of this function field
 
         EXAMPLES::
 
@@ -1270,7 +1270,7 @@ class FunctionField(Field):
             sage: K.hilbert_symbol(c, d, Q)
             1
 
-        Check that the Hilbert symbol is bimultiplicative::
+        Check that the Hilbert symbol is symmetric and bimultiplicative::
 
             sage: K.<x> = FunctionField(GF(5)); R.<T> = PolynomialRing(K)
             sage: f = ((x^2 + 2*x + 2)*T^5 + (4*x^2 + 2*x + 3)*T^4 + 3*T^3 + 4*T^2
@@ -1279,19 +1279,23 @@ class FunctionField(Field):
             sage: a = L.random_element()
             sage: b = L.random_element()
             sage: c = L.random_element()
-
             sage: P = L.places_above(K.places()[0])[1]
-            sage: hs_a_c = L.hilbert_symbol(a, c, P)
-            sage: L.hilbert_symbol(a, b, P) * hs_a_c == L.hilbert_symbol(a, b*c, P)
+            sage: Q = L.places_above(K.places()[1])[0]
+
+            sage: hP_a_c = L.hilbert_symbol(a, c, P)
+            sage: hP_a_c == L.hilbert_symbol(c, a, P)
             True
-            sage: hs_a_c * L.hilbert_symbol(b, c, P) == L.hilbert_symbol(a*b, c, P)
+            sage: L.hilbert_symbol(a, b, P) * hP_a_c == L.hilbert_symbol(a, b*c, P)
+            True
+            sage: hP_a_c * L.hilbert_symbol(b, c, P) == L.hilbert_symbol(a*b, c, P)
             True
 
-            sage: Q = L.places_above(K.places()[1])[0]
-            sage: hs_a_c = L.hilbert_symbol(a, c, Q)
-            sage: L.hilbert_symbol(a, b, Q) * hs_a_c == L.hilbert_symbol(a, b*c, Q)
+            sage: hQ_a_c = L.hilbert_symbol(a, c, Q)
+            sage: hQ_a_c == L.hilbert_symbol(c, a, Q)
             True
-            sage: hs_a_c * L.hilbert_symbol(b, c, Q) == L.hilbert_symbol(a*b, c, Q)
+            sage: L.hilbert_symbol(a, b, Q) * hQ_a_c == L.hilbert_symbol(a, b*c, Q)
+            True
+            sage: hQ_a_c * L.hilbert_symbol(b, c, Q) == L.hilbert_symbol(a*b, c, Q)
             True
         """
         if not self.is_global():
@@ -1326,7 +1330,7 @@ class FunctionField(Field):
 
         # Get the residue field of the completion together with the necssary exponent
         k = sigma.codomain().base_ring()
-        e = (k.order() - 1) >> 1
+        e = (k.order() - 1) // 2
 
         # Use Euler's criterion to compute the powers of Legendre symbols
         a_rd_pw = a0**(v_b * e)
@@ -1334,7 +1338,9 @@ class FunctionField(Field):
 
         # Finally, put the result together and transform it into the correct output
         res = k(-1)**(v_a * v_b * e) * a_rd_pw * b_rd_pw
-        return (res.is_one() << 1) - 1
+
+        from sage.rings.integer import Integer
+        return Integer(1) if res.is_one() else Integer(-1)
 
     def extension_constant_field(self, k):
         """
