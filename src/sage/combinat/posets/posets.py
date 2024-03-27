@@ -1230,6 +1230,21 @@ class FinitePoset(UniqueRepresentation, Parent):
         else:
             return element.element
 
+    def __bool__(self) -> bool:
+        r"""
+        Return if ``self`` is empty or not.
+
+        EXAMPLES::
+
+            sage: P = Poset((divisors(15), attrcall("divides")), facade=True)
+            sage: bool(P)
+            True
+            sage: P = Poset()
+            sage: bool(P)
+            False
+        """
+        return bool(self._elements)
+
     def __contains__(self, x) -> bool:
         r"""
         Return ``True`` if ``x`` is an element of the poset.
