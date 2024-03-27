@@ -2,6 +2,7 @@
 	// List of extensions which should be recommended for developers when a workspace is opened for the first time.
 	// See https://go.microsoft.com/fwlink/?LinkId=827846 to learn about workspace recommendations.
 	"recommendations": [
-		"ms-python.python"
+		"ms-python.python",
+		"charliermarsh.ruff"
 	],
 }
