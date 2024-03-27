@@ -162,7 +162,7 @@ class MatrixPlot(GraphicPrimitive):
             sage: m = M[0]; m                                                           # needs sage.symbolic
             MatrixPlot defined by a 5 x 5 data grid
         """
-        return "MatrixPlot defined by a %s x %s data grid" % (self.xy_array_row, self.xy_array_col)
+        return "MatrixPlot defined by a {} x {} data grid".format(self.xy_array_row, self.xy_array_col)
 
     def _render_on_subplot(self, subplot):
         """
@@ -195,9 +195,9 @@ class MatrixPlot(GraphicPrimitive):
                 rowstyle = subdiv_options['style']
                 colstyle = subdiv_options['style']
             if rowstyle is None:
-                rowstyle = dict()
+                rowstyle = {}
             if colstyle is None:
-                colstyle = dict()
+                colstyle = {}
 
             # Make line objects for subdivisions
             from .line import line2d
@@ -224,10 +224,10 @@ class MatrixPlot(GraphicPrimitive):
             extent = (lim['xmin'], lim['xmax'],
                       lim['ymax' if flip_y else 'ymin'],
                       lim['ymin' if flip_y else 'ymax'])
-            opts = dict(cmap=cmap, interpolation='nearest', aspect='equal',
-                      norm=norm, vmin=options['vmin'], vmax=options['vmax'],
-                      origin=('upper' if flip_y else 'lower'),
-                      extent=extent, zorder=options.get('zorder'))
+            opts = {'cmap': cmap, 'interpolation': 'nearest', 'aspect': 'equal',
+                      'norm': norm, 'vmin': options['vmin'], 'vmax': options['vmax'],
+                      'origin': ('upper' if flip_y else 'lower'),
+                      'extent': extent, 'zorder': options.get('zorder')}
             image = subplot.imshow(self.xy_data_array, **opts)
 
             if options.get('colorbar', False):
