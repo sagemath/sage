@@ -163,7 +163,7 @@ Here are some tips on making your PR easy to review:
 * Clearly describe how to test the changes in your PR.
 * List any Issues or Pull Requests that your PR depends on.
 * Make sure your PR is based on a recent (preferably, the latest) Sage beta version.
-* Follow the :ref:`relevant coding conventions <chapter-code-basics>
+* Follow the :ref:`relevant coding conventions <chapter-code-basics>`
   as documented in the Developer Guide.
 
 
