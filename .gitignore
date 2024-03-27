@@ -284,3 +284,6 @@ src/.coverage/
 # git worktree
 worktree*
 **/worktree*
+
+# meson build directory
+builddir
