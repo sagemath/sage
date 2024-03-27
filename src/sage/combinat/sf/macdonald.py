@@ -97,7 +97,14 @@ class Macdonald(UniqueRepresentation):
         """
         return self._name
 
-    def __init__(self, Sym, q='q', t='t'):
+    @staticmethod
+    def __classcall__(cls, Sym, q='q', t='t'):
+        """
+        Normalize the arguments.
+        """
+        return super().__classcall__(cls, Sym, Sym.base_ring()(q), Sym.base_ring()(t))
+
+    def __init__(self, Sym, q, t):
         r"""
         Macdonald Symmetric functions including `P`, `Q`, `J`, `H`, `Ht` bases
         also including the S basis which is the plethystic transformation
@@ -119,8 +126,8 @@ class Macdonald(UniqueRepresentation):
         """
         self._sym = Sym
         self._s = Sym.s()
-        self.q = Sym.base_ring()(q)
-        self.t = Sym.base_ring()(t)
+        self.q = q
+        self.t = t
         self._name_suffix = ""
         if str(q) != 'q':
             self._name_suffix += " with q=%s" % q
@@ -767,6 +774,24 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
             self.register_coercion(SetMorphism(Hom(self._s, self, category), self._s_to_self))
             self._s.register_coercion(SetMorphism(Hom(self, self._s, category), self._self_to_s))
 
+    def construction(self):
+        """
+        Return a pair ``(F, R)``, where ``F`` is a
+        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
+        that ``F(R)`` returns ``self``.
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(FractionField(QQ['q']))
+            sage: J = Sym.macdonald(t=2).J()
+            sage: J.construction()
+            (SymmetricFunctionsFunctor[Macdonald J with t=2],
+             Fraction Field of Univariate Polynomial Ring in q over Rational Field)
+        """
+        return (MacdonaldSymmetricFunctionsFunctor(self, self.basis_name(),
+                                                   self.q, self.t),
+                self.base_ring())
+
     def _s_to_self(self, x):
         r"""
         Isomorphism from the Schur basis into self
@@ -990,9 +1015,87 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
                 Ht = parent.realization_of().macdonald(q=q,t=t).Ht()
             return parent(Ht(self).nabla(power=power))
 
+
+from sage.combinat.sf.sfa import SymmetricFunctionsFunctor
+class MacdonaldSymmetricFunctionsFunctor(SymmetricFunctionsFunctor):
+    def __init__(self, basis, name, q, t):
+        r"""
+        Initialise the functor.
+
+        INPUT:
+
+        - ``basis`` -- the basis of the Macdonald symmetric function algebra
+        - ``name`` -- the name of the basis
+        - ``q`` -- the parameter `q`
+        - ``t`` -- the parameter `t`
+
+        .. WARNING::
+
+            Strictly speaking, this is not a functor on
+            :class:`CommutativeRings`, but rather a functor on
+            commutative rings with some distinguished elements.  For
+            example, for the Macdonald polynomials, we have to
+            specify `q` and `t` in the ring.  Apart from that, the
+            codomain of this functor could actually be
+            :class:`CommutativeAlgebras` over the given ring, but
+            parameterized functors are currently not available.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.sf.macdonald import MacdonaldSymmetricFunctionsFunctor
+            sage: R.<t> = ZZ[]
+            sage: H = SymmetricFunctions(R).macdonald(q=1).H()
+            sage: MacdonaldSymmetricFunctionsFunctor(H, H.basis_name(), 1, t)
+            SymmetricFunctionsFunctor[Macdonald H with q=1]
+        """
+        super().__init__(basis, name)
+        self._q = q
+        self._t = t
+
+    def _apply_functor(self, R):
+        """
+        Apply the functor to an object of ``self``'s domain.
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(QQ['q','t'])
+            sage: P = Sym.macdonald(q=1/2).P(); P
+            Symmetric Functions over Multivariate Polynomial Ring in q, t
+             over Rational Field in the Macdonald P with q=1/2 basis
+            sage: F, R = P.construction()  # indirect doctest
+            sage: F(QQ['t'])
+            Symmetric Functions over Univariate Polynomial Ring in t
+             over Rational Field in the Macdonald P with q=1/2 basis
+
+        TESTS::
+
+            sage: F(QQ)
+            Traceback (most recent call last):
+            ...
+            TypeError: not a constant polynomial
+        """
+        from sage.combinat.sf.sf import SymmetricFunctions
+        return self._basis(Macdonald(SymmetricFunctions(R), self._q, self._t))
+
+    def __eq__(self, other):
+        """
+        EXAMPLES::
+
+            sage: R.<q, t> = ZZ[]
+            sage: S.<q, t> = QQ[]
+            sage: T.<q, s> = QQ[]
+            sage: PR = SymmetricFunctions(R).macdonald().P()
+            sage: PS = SymmetricFunctions(S).macdonald().P()
+            sage: PT = SymmetricFunctions(T).macdonald(t=s).P()
+            sage: PR.construction()[0] == PS.construction()[0]
+            True
+            sage: PR.construction()[0] == PT.construction()[0]
+            False
+        """
+        return super().__eq__(other) and self._q == other._q and self._t == other._t
+
+
 #P basis
-
-
 class MacdonaldPolynomials_p(MacdonaldPolynomials_generic):
     def __init__(self, macdonald):
         r"""

@@ -121,8 +121,14 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
     - [Ram1991]_
     - [RR1997]_
     """
+    @staticmethod
+    def __classcall__(cls, Sym, q='q'):
+        """
+        Normalize the arguments.
+        """
+        return super().__classcall__(cls, Sym, Sym.base_ring()(q))
 
-    def __init__(self, sym, q='q'):
+    def __init__(self, sym, q):
         r"""
         Initialize ``self``.
 
@@ -156,7 +162,7 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
             ....:     for mu in Partitions(n))
             True
         """
-        self.q = sym.base_ring()(q)
+        self.q = q
         SymmetricFunctionAlgebra_multiplicative.__init__(self, sym,
             basis_name="Hecke character with q={}".format(self.q),
             prefix="qbar")
@@ -168,6 +174,22 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
                                                            codomain=self))
         self._p.register_coercion(self._module_morphism(self._qbar_to_p_on_basis,
                                                         codomain=self._p))
+
+    def construction(self):
+        """
+        Return a pair ``(F, R)``, where ``F`` is a
+        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
+        that ``F(R)`` returns ``self``.
+
+        EXAMPLES::
+
+            sage: qbar = SymmetricFunctions(QQ['q']).qbar('q')
+            sage: qbar.construction()
+            (SymmetricFunctionsFunctor[Hecke character with q=q],
+             Univariate Polynomial Ring in q over Rational Field)
+        """
+        return (HeckeSymmetricFunctionsFunctor(self, self.basis_name(), self.q),
+                self.base_ring())
 
     def _p_to_qbar_on_generator(self, n):
         r"""
@@ -298,3 +320,70 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
         q = self.q
         return T.sum_of_terms(((P(j), P(r-j)), one if j in [0,r] else q-one)
                               for j in range(r+1))
+
+
+from sage.combinat.sf.sfa import SymmetricFunctionsFunctor
+class HeckeSymmetricFunctionsFunctor(SymmetricFunctionsFunctor):
+    def __init__(self, basis, name, q):
+        r"""
+        Initialise the functor.
+
+        INPUT:
+
+        - ``basis`` -- the basis of the Hecke symmetric function algebra
+        - ``name`` -- the name of the basis
+        - ``q`` -- the parameter `q`
+
+        .. WARNING::
+
+            Strictly speaking, this is not a functor on
+            :class:`CommutativeRings`, but rather a functor on
+            commutative rings with a distinguished element.  Apart
+            from that, the codomain of this functor could actually be
+            :class:`CommutativeAlgebras` over the given ring, but
+            parameterized functors are currently not available.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.sf.hecke import HeckeSymmetricFunctionsFunctor
+            sage: R.<q> = ZZ[]
+            sage: B = SymmetricFunctions(R).hecke_character()
+            sage: HeckeSymmetricFunctionsFunctor(B, B.basis_name(), q)
+            SymmetricFunctionsFunctor[Hecke character with q=q]
+        """
+        super().__init__(basis, name)
+        self._q = q
+
+    def _apply_functor(self, R):
+        """
+        Apply the functor to an object of ``self``'s domain.
+
+        EXAMPLES::
+
+            sage: R.<q> = ZZ[]
+            sage: B = SymmetricFunctions(R).hecke_character()
+            sage: F, R = B.construction()  # indirect doctest
+            sage: F(QQ['q'])
+            Symmetric Functions over Univariate Polynomial Ring in q over
+             Rational Field in the Hecke character with q=q basis
+
+        TESTS::
+
+            sage: F(QQ)
+            Traceback (most recent call last):
+            ...
+            TypeError: cannot convert nonconstant polynomial
+        """
+        from sage.combinat.sf.sf import SymmetricFunctions
+        return self._basis(SymmetricFunctions(R), self._q)
+
+    def __eq__(self, other):
+        """
+        EXAMPLES::
+
+            sage: B1 = SymmetricFunctions(ZZ["q"]).hecke_character()
+            sage: B2 = SymmetricFunctions(QQ["q"]).qbar()
+            sage: B1.construction()[0] == B2.construction()[0]
+            True
+        """
+        return super().__eq__(other) and self._q == other._q

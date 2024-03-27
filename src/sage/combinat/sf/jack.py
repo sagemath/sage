@@ -50,8 +50,14 @@ m_to_p_cache = {}
 
 
 class Jack(UniqueRepresentation):
+    @staticmethod
+    def __classcall__(cls, Sym, t='t'):
+        """
+        Normalize the arguments.
+        """
+        return super().__classcall__(cls, Sym, Sym.base_ring()(t))
 
-    def __init__(self, Sym, t='t'):
+    def __init__(self, Sym, t):
         r"""
         The family of Jack symmetric functions including the `P`, `Q`, `J`, `Qp`
         bases.  The default parameter is ``t``.
@@ -70,7 +76,7 @@ class Jack(UniqueRepresentation):
             Jack polynomials with t=1 over Rational Field
         """
         self._sym = Sym
-        self.t = Sym.base_ring()(t)
+        self.t = t
         self._name_suffix = ""
         if str(t) != 't':
             self._name_suffix += " with t=%s" % t
@@ -533,6 +539,23 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
             self   .register_coercion(SetMorphism(Hom(self._h, self, category), self._h_to_self))
             self._h.register_coercion(SetMorphism(Hom(self, self._h, category), self._self_to_h))
 
+    def construction(self):
+        """
+        Return a pair ``(F, R)``, where ``F`` is a
+        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
+        that ``F(R)`` returns ``self``.
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
+            sage: JP = Sym.jack().P()
+            sage: JP.construction()
+            (SymmetricFunctionsFunctor[Jack P],
+             Fraction Field of Univariate Polynomial Ring in t over Rational Field)
+        """
+        return (JackSymmetricFunctionsFunctor(self, self.basis_name(), self.t),
+                self.base_ring())
+
     def _m_to_self(self, x):
         r"""
         Isomorphism from the monomial basis into ``self``
@@ -815,6 +838,81 @@ class JackPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
             res = p(self).scalar_jack(p(x), t)
 
             return parent._normalize_coefficients(res)
+
+
+from sage.combinat.sf.sfa import SymmetricFunctionsFunctor
+class JackSymmetricFunctionsFunctor(SymmetricFunctionsFunctor):
+    def __init__(self, basis, name, t):
+        r"""
+        Initialise the functor.
+
+        INPUT:
+
+        - ``basis`` -- the basis of the Jack symmetric function algebra
+        - ``name`` -- the name of the basis
+        - ``t`` -- the parameter `t`
+
+        .. WARNING::
+
+            Strictly speaking, this is not a functor on
+            :class:`CommutativeRings`, but rather a functor on
+            commutative rings with a distinguished element.  Apart
+            from that, the codomain of this functor could actually be
+            :class:`CommutativeAlgebras` over the given ring, but
+            parameterized functors are currently not available.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.sf.jack import JackSymmetricFunctionsFunctor
+            sage: R.<t> = ZZ[]
+            sage: P = SymmetricFunctions(R).jack().P()
+            sage: JackSymmetricFunctionsFunctor(P, P.basis_name(), t)
+            SymmetricFunctionsFunctor[Jack P]
+        """
+        super().__init__(basis, name)
+        self._t = t
+
+    def _apply_functor(self, R):
+        """
+        Apply the functor to an object of ``self``'s domain.
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(QQ['t'])
+            sage: P = Sym.jack().P(); P
+            Symmetric Functions over Univariate Polynomial Ring in t
+             over Rational Field in the Jack P basis
+            sage: F, R = P.construction()  # indirect doctest
+            sage: F(QQ['t'])
+            Symmetric Functions over Univariate Polynomial Ring in t
+             over Rational Field in the Jack P basis
+
+        TESTS::
+
+            sage: F(QQ)
+            Traceback (most recent call last):
+            ...
+            TypeError: not a constant polynomial
+        """
+        from sage.combinat.sf.sf import SymmetricFunctions
+        return self._basis(Jack(SymmetricFunctions(R), self._t))
+
+    def __eq__(self, other):
+        """
+        EXAMPLES::
+
+            sage: R.<q, t> = ZZ[]
+            sage: S.<q, t> = QQ[]
+            sage: T.<q, s> = QQ[]
+            sage: PR = SymmetricFunctions(R).jack().P()
+            sage: PS = SymmetricFunctions(S).jack().P()
+            sage: PT = SymmetricFunctions(T).jack(t=s).P()
+            sage: PR.construction()[0] == PS.construction()[0]
+            True
+            sage: PR.construction()[0] == PT.construction()[0]
+            False
+        """
+        return super().__eq__(other) and self._t == other._t
 
 
 def part_scalar_jack(part1, part2, t):

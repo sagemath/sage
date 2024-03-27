@@ -91,8 +91,14 @@ class LLT_class(UniqueRepresentation):
         sage: HS3x(HC3t2[3,1])
         2*HSp3[3, 1] + (-2*x+1)*HSp3[4]
     """
+    @staticmethod
+    def __classcall__(cls, Sym, k, t='t'):
+        """
+        Normalize the arguments.
+        """
+        return super().__classcall__(cls, Sym, k, Sym.base_ring()(t))
 
-    def __init__(self, Sym, k, t='t'):
+    def __init__(self, Sym, k, t):
         r"""
         Class of LLT symmetric function bases
 
@@ -129,7 +135,7 @@ class LLT_class(UniqueRepresentation):
         self._k = k
         self._sym = Sym
         self._name = "level %s LLT polynomials" % self._k
-        self.t = Sym.base_ring()(t)
+        self.t = t
         self._name_suffix = ""
         if str(t) != 't':
             self._name_suffix += " with t=%s" % self.t
@@ -441,13 +447,31 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
         self._llt = llt
         self._k = llt._k
 
-        sfa.SymmetricFunctionAlgebra_generic.__init__(self, self._sym)
+        sfa.SymmetricFunctionAlgebra_generic.__init__(self, self._sym, self._basis_name)
 
         # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
         category = sage.categories.all.ModulesWithBasis(self._sym.base_ring())
         self._m = llt._sym.m()
         self   .register_coercion(SetMorphism(Hom(self._m, self, category), self._m_to_self))
         self._m.register_coercion(SetMorphism(Hom(self, self._m, category), self._self_to_m))
+
+    def construction(self):
+        """
+        Return a pair ``(F, R)``, where ``F`` is a
+        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
+        that ``F(R)`` returns ``self``.
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
+            sage: HSp3 = Sym.llt(3).hspin()
+            sage: HSp3.construction()
+            (SymmetricFunctionsFunctor[level 3 LLT spin],
+             Fraction Field of Univariate Polynomial Ring in t over Rational Field)
+        """
+        return (LLTSymmetricFunctionsFunctor(self, self.basis_name(),
+                                             self._k, self.t),
+                self.base_ring())
 
     def _m_to_self(self, x):
         r"""
@@ -606,6 +630,84 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
 
     class Element(sfa.SymmetricFunctionAlgebra_generic.Element):
         pass
+
+
+from sage.combinat.sf.sfa import SymmetricFunctionsFunctor
+class LLTSymmetricFunctionsFunctor(SymmetricFunctionsFunctor):
+    def __init__(self, basis, name, k, t):
+        r"""
+        Initialise the functor.
+
+        INPUT:
+
+        - ``basis`` -- the basis of the LLT symmetric function algebra
+        - ``name`` -- the name of the basis
+        - ``k`` -- the parameter `k`
+        - ``t`` -- the parameter `t`
+
+        .. WARNING::
+
+            Strictly speaking, this is not a functor on
+            :class:`CommutativeRings`, but rather a functor on
+            commutative rings with some distinguished elements.
+            Apart from that, the codomain of this functor could
+            actually be :class:`CommutativeAlgebras` over the given
+            ring, but parameterized functors are currently not
+            available.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.sf.llt import LLTSymmetricFunctionsFunctor
+            sage: R.<t> = ZZ[]
+            sage: B = SymmetricFunctions(R).llt(3).hcospin()
+            sage: LLTSymmetricFunctionsFunctor(B, B.basis_name(), 3, t)
+            SymmetricFunctionsFunctor[level 3 LLT cospin]
+        """
+        super().__init__(basis, name)
+        self._k = k
+        self._t = t
+
+    def _apply_functor(self, R):
+        """
+        Apply the functor to an object of ``self``'s domain.
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(QQ['t'])
+            sage: B = Sym.llt(3).hcospin(); B
+            Symmetric Functions over Univariate Polynomial Ring in t
+             over Rational Field in the level 3 LLT cospin basis
+            sage: F, R = B.construction()  # indirect doctest
+            sage: F(ZZ['t'])
+            Symmetric Functions over Univariate Polynomial Ring in t
+             over Integer Ring in the level 3 LLT cospin basis
+
+        TESTS::
+
+            sage: F(QQ)
+            Traceback (most recent call last):
+            ...
+            TypeError: not a constant polynomial
+        """
+        from sage.combinat.sf.sf import SymmetricFunctions
+        return self._basis(LLT_class(SymmetricFunctions(R), self._k, self._t))
+
+    def __eq__(self, other):
+        """
+        EXAMPLES::
+
+            sage: R.<q, t> = ZZ[]
+            sage: S.<q, t> = QQ[]
+            sage: T.<q, s> = QQ[]
+            sage: PR = SymmetricFunctions(R).llt(3).hcospin()
+            sage: PS = SymmetricFunctions(S).llt(3).hcospin()
+            sage: PT = SymmetricFunctions(T).llt(3, t=s).hcospin()
+            sage: PR.construction()[0] == PS.construction()[0]
+            True
+            sage: PR.construction()[0] == PT.construction()[0]
+            False
+        """
+        return super().__eq__(other) and self._k == other._k and self._t == other._t
 
 
 # the H-spin basis
