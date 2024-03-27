@@ -155,7 +155,7 @@ cdef class ntl_GF2E():
             self.c = <ntl_GF2EContext_class>ntl_GF2EContext(modulus)
             self.c.restore_c()
 
-    cdef ntl_GF2E _new(self) noexcept:
+    cdef ntl_GF2E _new(self):
         cdef ntl_GF2E r
         self.c.restore_c()
         r = ntl_GF2E.__new__(ntl_GF2E)

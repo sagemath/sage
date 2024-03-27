@@ -44,7 +44,7 @@ def QFEvaluateVector(Q, v):
     return QFEvaluateVector_cdef(Q, v)
 
 
-cdef QFEvaluateVector_cdef(Q, v) noexcept:
+cdef QFEvaluateVector_cdef(Q, v):
     r"""
     Routine to quickly evaluate a quadratic form `Q` on a vector `v`.  See
     the Python wrapper function :meth:`QFEvaluate` above for details.
@@ -111,7 +111,7 @@ def QFEvaluateMatrix(Q, M, Q2):
     return QFEvaluateMatrix_cdef(Q, M, Q2)
 
 
-cdef QFEvaluateMatrix_cdef(Q, M, Q2) noexcept:
+cdef QFEvaluateMatrix_cdef(Q, M, Q2):
     r"""
     Routine to quickly evaluate a quadratic form `Q` on a matrix `M`.  See
     the Python wrapper function :func:`QFEvaluateMatrix` above for details.

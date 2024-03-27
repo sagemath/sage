@@ -55,4 +55,4 @@ cdef ring *singular_ring_reference(ring *existing_ring) except NULL
 cdef void singular_ring_delete(ring *doomed) noexcept
 
 # Used internally for reference counting
-cdef wrap_ring(ring* R) noexcept
+cdef wrap_ring(ring* R)

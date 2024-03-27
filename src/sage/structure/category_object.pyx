@@ -63,7 +63,7 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.dynamic_class import DynamicMetaclass
 
 
-cpdef inline check_default_category(default_category, category) noexcept:
+cpdef inline check_default_category(default_category, category):
     ## The resulting category is guaranteed to be
     ## a sub-category of the default.
     if category is None:
@@ -848,7 +848,7 @@ cdef class CategoryObject(SageObject):
         """
         return self.getattr_from_category(name)
 
-    cdef getattr_from_category(self, name) noexcept:
+    cdef getattr_from_category(self, name):
         # Lookup a method or attribute from the category abstract classes.
         # See __getattr__ above for documentation.
         try:
@@ -913,7 +913,7 @@ cdef class CategoryObject(SageObject):
         """
         return dir_with_other_class(self, self.category().parent_class)
 
-cpdef normalize_names(Py_ssize_t ngens, names) noexcept:
+cpdef normalize_names(Py_ssize_t ngens, names):
     r"""
     Return a tuple of strings of variable names of length ngens given
     the input names.

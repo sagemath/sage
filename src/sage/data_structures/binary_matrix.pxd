@@ -126,7 +126,7 @@ cdef inline bint binary_matrix_get(binary_matrix_t m, mp_bitcnt_t row, mp_bitcnt
     """
     return bitset_in(m.rows[row], col)
 
-cdef inline binary_matrix_print(binary_matrix_t m) noexcept:
+cdef inline binary_matrix_print(binary_matrix_t m):
     r"""
     Print the binary matrix
     """

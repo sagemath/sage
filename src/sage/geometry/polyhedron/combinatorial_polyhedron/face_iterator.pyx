@@ -1199,7 +1199,7 @@ cdef class FaceIterator_base(SageObject):
         # for the dimension. By this time the current dimension has changed.
         self.structure.highest_dimension = self.structure.current_dimension - 1
 
-    cdef inline CombinatorialFace next_face(self) noexcept:
+    cdef inline CombinatorialFace next_face(self):
         r"""
         Set attribute ``face`` to the next face and return it as
         :class:`sage.geometry.polyhedron.combinatorial_polyhedron.combinatorial_face.CombinatorialFace`.

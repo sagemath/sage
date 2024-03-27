@@ -5,8 +5,8 @@ cdef class IndexedFreeModuleElement(ModuleElement):
     cdef long _hash
     cdef bint _hash_set
 
-    cpdef _add_(self, other) noexcept
-    cpdef _sub_(self, other) noexcept
-    cpdef _neg_(self) noexcept
+    cpdef _add_(self, other)
+    cpdef _sub_(self, other)
+    cpdef _neg_(self)
 
-    cpdef dict monomial_coefficients(self, bint copy=*) noexcept
+    cpdef dict monomial_coefficients(self, bint copy=*)

@@ -345,7 +345,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         if self.val is not NULL:
             gunclone_deep(self.val)
 
-    cdef FiniteFieldElement_pari_ffelt _new(self) noexcept:
+    cdef FiniteFieldElement_pari_ffelt _new(self):
         """
         Create an empty element with the same parent as ``self``.
         """
@@ -599,7 +599,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         # immutable
         return self
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         """
         Comparison of finite field elements.
 
@@ -660,7 +660,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
         sig_off()
         return rich_to_bool(op, r)
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         Addition.
 
@@ -676,7 +676,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
                            (<FiniteFieldElement_pari_ffelt>right).val))
         return x
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         Subtraction.
 
@@ -692,7 +692,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
                            (<FiniteFieldElement_pari_ffelt>right).val))
         return x
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         """
         Multiplication.
 
@@ -708,7 +708,7 @@ cdef class FiniteFieldElement_pari_ffelt(FinitePolyExtElement):
                            (<FiniteFieldElement_pari_ffelt>right).val))
         return x
 
-    cpdef _div_(self, right) noexcept:
+    cpdef _div_(self, right):
         """
         Division.
 

@@ -1,6 +1,6 @@
 from cypari2.convert cimport new_gen_from_double
 
-cpdef Gen new_gen_from_real_double_element(RealDoubleElement self) noexcept:
+cpdef Gen new_gen_from_real_double_element(RealDoubleElement self):
     """
     Return a PARI representation of ``self``.
 
