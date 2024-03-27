@@ -444,10 +444,13 @@ class Chain_class(ModuleElement):
             for n in ordered:
                 result_ordered += arrow_art(n) + vector_art(n)
             result = [result_ordered] + result
-        concatenated = result[0]
-        for r in result[1:]:
-            concatenated += AsciiArt([' ... ']) + r
-        return concatenated
+        try:
+            concatenated = result[0]
+            for r in result[1:]:
+                concatenated += AsciiArt([' ... ']) + r
+            return concatenated
+        except IndexError:
+            return []
 
     def _unicode_art_(self):
         """
@@ -1803,10 +1806,13 @@ class ChainComplex_class(Parent):
             for n in ordered:
                 result_ordered += arrow_art(n) + module_art(n)
             result = [result_ordered] + result
-        concatenated = result[0]
-        for r in result[1:]:
-            concatenated += AsciiArt([' ... ']) + r
-        return concatenated
+        try:
+            concatenated = result[0]
+            for r in result[1:]:
+                concatenated += AsciiArt([' ... ']) + r
+            return concatenated
+        except IndexError:
+            return []
 
     def _unicode_art_(self):
         """
