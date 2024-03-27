@@ -1,4 +1,3 @@
-# -*- encoding: utf-8 -*-
 r"""
 Graphics objects
 
@@ -100,23 +99,23 @@ def _parse_figsize(figsize):
         # figsize should be a pair of positive numbers
         if len(figsize) != 2:
             raise ValueError("figsize should be a positive number or a list "
-                             "of two positive numbers, not {0}".format(figsize))
+                             f"of two positive numbers, not {figsize}")
         figsize = (float(figsize[0]), float(figsize[1]))  # floats for mpl
         if not (figsize[0] > 0 and figsize[1] > 0):
             raise ValueError("figsize should be positive numbers, "
-                             "not {0} and {1}".format(figsize[0], figsize[1]))
+                             f"not {figsize[0]} and {figsize[1]}")
     else:
         # in this case, figsize is a single number representing the width and
         # should be positive
         try:
             figsize = float(figsize)  # to pass to mpl
         except TypeError:
-            raise TypeError("figsize should be a positive number, not {0}".format(figsize))
+            raise TypeError(f"figsize should be a positive number, not {figsize}")
         if figsize > 0:
             default_width, default_height = rcParams['figure.figsize']
             figsize = (figsize, default_height * figsize / default_width)
         else:
-            raise ValueError("figsize should be positive, not {0}".format(figsize))
+            raise ValueError(f"figsize should be positive, not {figsize}")
     return figsize
 
 
@@ -1398,7 +1397,7 @@ class Graphics(WithEqualityById, SageObject):
 
         if scale not in ('linear', 'loglog', 'semilogx', 'semilogy'):
             raise ValueError("The scale must be one of 'linear', 'loglog',"
-                    " 'semilogx' or 'semilogy' -- got '{0}'".format(scale))
+                    f" 'semilogx' or 'semilogy' -- got '{scale}'")
 
         if isinstance(base, (list, tuple)):
             basex, basey = base
@@ -1437,37 +1436,37 @@ class Graphics(WithEqualityById, SageObject):
     # NOTE: If you intend to use a new parameter in show(), you should update
     # this dictionary to contain the default value for that parameter.
 
-    SHOW_OPTIONS = dict(# axes options
-                        axes=None, axes_labels=None, axes_labels_size=None,
-                        axes_pad=None, base=None, scale=None,
-                        xmin=None, xmax=None, ymin=None, ymax=None,
-                        flip_x=False, flip_y=False,
+    SHOW_OPTIONS = {# axes options
+                        'axes': None, 'axes_labels': None, 'axes_labels_size': None,
+                        'axes_pad': None, 'base': None, 'scale': None,
+                        'xmin': None, 'xmax': None, 'ymin': None, 'ymax': None,
+                        'flip_x': False, 'flip_y': False,
                         # Figure options
-                        aspect_ratio=None, dpi=DEFAULT_DPI, fig_tight=True,
-                        figsize=None, fontsize=None, frame=False,
-                        title=None, title_pos=None, transparent=False,
+                        'aspect_ratio': None, 'dpi': DEFAULT_DPI, 'fig_tight': True,
+                        'figsize': None, 'fontsize': None, 'frame': False,
+                        'title': None, 'title_pos': None, 'transparent': False,
                         # Grid options
-                        gridlines=None, gridlinesstyle=None,
-                        hgridlinesstyle=None, vgridlinesstyle=None,
+                        'gridlines': None, 'gridlinesstyle': None,
+                        'hgridlinesstyle': None, 'vgridlinesstyle': None,
                         # Legend options
-                        legend_options={}, show_legend=None,
+                        'legend_options': {}, 'show_legend': None,
                         # Ticks options
-                        ticks=None, tick_formatter=None, ticks_integer=False,
+                        'ticks': None, 'tick_formatter': None, 'ticks_integer': False,
                         # Text options
-                        typeset='default')
+                        'typeset': 'default'}
 
     # Default options for the legends:
 
-    LEGEND_OPTIONS = dict(back_color='white', borderpad=0.6,
-                          borderaxespad=None,
-                          columnspacing=None,
-                          fancybox=False, font_family='sans-serif',
-                          font_size='medium', font_style='normal',
-                          font_variant='normal', font_weight='medium',
-                          handlelength=0.05, handletextpad=0.5,
-                          labelspacing=0.02, loc='best',
-                          markerscale=0.6, ncol=1, numpoints=2,
-                          shadow=True, title=None)
+    LEGEND_OPTIONS = {'back_color': 'white', 'borderpad': 0.6,
+                          'borderaxespad': None,
+                          'columnspacing': None,
+                          'fancybox': False, 'font_family': 'sans-serif',
+                          'font_size': 'medium', 'font_style': 'normal',
+                          'font_variant': 'normal', 'font_weight': 'medium',
+                          'handlelength': 0.05, 'handletextpad': 0.5,
+                          'labelspacing': 0.02, 'loc': 'best',
+                          'markerscale': 0.6, 'ncol': 1, 'numpoints': 2,
+                          'shadow': True, 'title': None}
 
     @suboptions('legend', **LEGEND_OPTIONS)
     def show(self, **kwds):
@@ -2788,7 +2787,7 @@ class Graphics(WithEqualityById, SageObject):
             rcParams['text.usetex'] = True
         elif typeset != 'default':  # We won't change (maybe user-set) defaults
             raise ValueError("typeset must be set to one of 'default', 'latex',"
-                             " or 'type1'; got '{}'.".format(typeset))
+                             f" or 'type1'; got '{typeset}'.")
 
         self.fontsize(fontsize)
         self.axes_labels(l=axes_labels)
@@ -2805,7 +2804,7 @@ class Graphics(WithEqualityById, SageObject):
         if not subplot:
             subplot = figure.add_subplot(111)
         # Add all the primitives to the subplot
-        old_opts = dict()
+        old_opts = {}
         for g in self._objects:
             opts, old_opts[g] = g.options(), g.options()
             for k, v in opts.items():
@@ -2867,7 +2866,7 @@ class Graphics(WithEqualityById, SageObject):
 
         if show_legend:
             from matplotlib.font_manager import FontProperties
-            lopts = dict()
+            lopts = {}
             lopts.update(legend_options)
             lopts.update(self._legend_opts)
             prop = FontProperties(
@@ -2898,8 +2897,8 @@ class Graphics(WithEqualityById, SageObject):
         subplot.set_xlim([xmin, xmax])
         subplot.set_ylim([ymin, ymax])
 
-        locator_options = dict(nbins=9, steps=[1, 2, 5, 10],
-                               integer=ticks_integer)
+        locator_options = {'nbins': 9, 'steps': [1, 2, 5, 10],
+                               'integer': ticks_integer}
 
         if axes is None:
             axes = self._show_axes
@@ -3090,8 +3089,8 @@ class Graphics(WithEqualityById, SageObject):
 
             if gridlinesstyle is None:
                 # Set up the default grid style
-                gridlinesstyle = dict(color='black', linestyle=':',
-                                      linewidth=0.5)
+                gridlinesstyle = {'color': 'black', 'linestyle': ':',
+                                      'linewidth': 0.5}
 
             vgridstyle = gridlinesstyle.copy()
             if vgridlinesstyle is not None:
@@ -3341,7 +3340,7 @@ class Graphics(WithEqualityById, SageObject):
             Graphics object consisting of 1 graphics primitive
 
         """
-        options = dict()
+        options = {}
         options.update(self.SHOW_OPTIONS)
         options.update(self._extra_kwds)
         options.update(kwds)
@@ -3406,7 +3405,7 @@ class Graphics(WithEqualityById, SageObject):
             # tight_layout adjusts the *subplot* parameters so ticks aren't cut off, etc.
             figure.tight_layout()
 
-            opts = dict(dpi=dpi, transparent=transparent)
+            opts = {'dpi': dpi, 'transparent': transparent}
             if fig_tight is True:
                 opts['bbox_inches'] = 'tight'
             if self._bbox_extra_artists:
@@ -3438,7 +3437,7 @@ class Graphics(WithEqualityById, SageObject):
         """
         tmpfilename = tmp_filename(ext='.pgf')
         self.save(filename=tmpfilename, **kwds)
-        with open(tmpfilename, "r") as tmpfile:
+        with open(tmpfilename) as tmpfile:
             latex_list = tmpfile.readlines()
         from sage.misc.latex import latex
         latex.add_package_to_preamble_if_available('pgf')
@@ -3464,7 +3463,7 @@ class Graphics(WithEqualityById, SageObject):
         for g in self:
             g_zorder = g.options().get('zorder', 0)
             if hasattr(g, 'xdata'):
-                g_str = '{0}:\t{1}'.format(g, list(zip(g.xdata, g.ydata)))
+                g_str = f'{g}:\t{list(zip(g.xdata, g.ydata))}'
             else:
                 g_str = repr(g)
             data.append([g_zorder, g_str, g])

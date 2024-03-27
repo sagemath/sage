@@ -346,7 +346,7 @@ class Arc(GraphicPrimitive):
             sage: print(Arc(2,3,2.2,2.2,0,2,3,{}))
             Arc with center (2.0,3.0) radii (2.2,2.2) angle 0.0 inside the sector (2.0,3.0)
         """
-        return "Arc with center (%s,%s) radii (%s,%s) angle %s inside the sector (%s,%s)" % (self.x, self.y, self.r1, self.r2, self.angle, self.s1, self.s2)
+        return "Arc with center ({},{}) radii ({},{}) angle {} inside the sector ({},{})".format(self.x, self.y, self.r1, self.r2, self.angle, self.s1, self.s2)
 
     def _render_on_subplot(self, subplot):
         """

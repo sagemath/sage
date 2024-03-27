@@ -139,7 +139,7 @@ class PlotField(GraphicPrimitive):
             20
 
         """
-        return "PlotField defined by a %s x %s vector grid" % (
+        return "PlotField defined by a {} x {} vector grid".format(
                self._options['plot_points'], self._options['plot_points'])
 
     def _render_on_subplot(self, subplot):
@@ -355,6 +355,6 @@ def plot_slope_field(f, xrange, yrange, **kwds):
         norm_inverse = lambda x,y: 1/sqrt(f(x, y)**2+1)
         f_normalized = lambda x,y: f(x, y)*norm_inverse(x, y)
     else:
-        norm_inverse = 1 / sqrt((f**2+1))
+        norm_inverse = 1 / sqrt(f**2+1)
         f_normalized = f * norm_inverse
     return plot_vector_field((norm_inverse, f_normalized), xrange, yrange, **slope_options)

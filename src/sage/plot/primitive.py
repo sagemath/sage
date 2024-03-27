@@ -21,6 +21,7 @@ from sage.misc.fast_methods import WithEqualityById
 from sage.structure.sage_object import SageObject
 from sage.misc.verbose import verbose
 
+
 class GraphicPrimitive(WithEqualityById, SageObject):
     """
     Base class for graphics primitives, e.g., things that knows how to draw
@@ -183,7 +184,7 @@ class GraphicPrimitive(WithEqualityById, SageObject):
             for k in O.keys():
                 if k not in K:
                     do_verify = False
-                    verbose("WARNING: Ignoring option '%s'=%s" % (k, O[k]),
+                    verbose(f"WARNING: Ignoring option '{k}'={O[k]}",
                             level=0)
                     t = True
             if t:
