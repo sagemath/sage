@@ -282,8 +282,7 @@ def MacMahonOmega(var, expression, denominator=None, op=operator.ge,
     if isinstance(denominator, (list, tuple)):
         factors_denominator = denominator
     else:
-        if not isinstance(denominator, Factorization):
-            denominator = factor(denominator)
+        denominator = factor(denominator)
         if not denominator.is_integral():
             raise ValueError('Factorization {} of the denominator '
                              'contains negative exponents.'.format(denominator))
