@@ -807,7 +807,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
             sage: L.series(3)
             O(3^5) + O(3^2)*T + (2 + 2*3 + O(3^2))*T^2 + (2 + O(3))*T^3 + (1 + O(3))*T^4 + O(T^5)
 
-        Checks if the precision can be changed (:trac:`5846`)::
+        Checks if the precision can be changed (:issue:`5846`)::
 
             sage: L.series(3,prec=4)
             O(3^5) + O(3^2)*T + (2 + 2*3 + O(3^2))*T^2 + (2 + O(3))*T^3 + O(T^4)
@@ -835,7 +835,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
             2 + O(5^6) + (1 + 5 + O(5^3))*T + (2 + 4*5 + 3*5^2 + O(5^3))*T^2 + (4 + 5 + 2*5^2 + O(5^3))*T^3 + (4 + O(5^3))*T^4 + O(T^5)
             3 + 5 + 2*5^2 + 5^3 + 3*5^4 + 4*5^5 + O(5^6) + (1 + 2*5 + 4*5^2 + O(5^3))*T + (1 + 4*5 + O(5^3))*T^2 + (3 + 2*5 + 2*5^2 + O(5^3))*T^3 + (5 + 5^2 + O(5^3))*T^4 + O(T^5)
 
-        It should now also work with `p=2` (:trac:`20798`)::
+        It should now also work with `p=2` (:issue:`20798`)::
 
             sage: E = EllipticCurve("53a1")
             sage: lp = E.padic_lseries(2)
@@ -847,7 +847,7 @@ class pAdicLseriesOrdinary(pAdicLseries):
             sage: lp.series(6)
             2^2 + 2^6 + O(2^7) + (2 + O(2^4))*T + O(2^3)*T^2 + (2^2 + O(2^3))*T^3 + (2 + O(2^2))*T^4 + O(T^5)
 
-        Check that twists by odd Teichmuller characters are ok (:trac:`32258`)::
+        Check that twists by odd Teichmuller characters are ok (:issue:`32258`)::
 
             sage: E = EllipticCurve("443c1")
             sage: lp = E.padic_lseries(17, implementation="num")
@@ -1197,7 +1197,7 @@ class pAdicLseriesSupersingular(pAdicLseries):
             sage: L.alpha(2).parent()
             3-adic Eisenstein Extension Field in alpha defined by x^2 + 3*x + 3
 
-        An example where we only compute the leading term (:trac:`15737`)::
+        An example where we only compute the leading term (:issue:`15737`)::
 
             sage: E = EllipticCurve("17a1")
             sage: L = E.padic_lseries(3)

@@ -670,7 +670,7 @@ class FreeLieAlgebra(Parent, UniqueRepresentation):
 
         TESTS:
 
-        We check that :trac:`27069` is fixed::
+        We check that :issue:`27069` is fixed::
 
             sage: Lzxy = LieAlgebra(QQ, ['z','x','y']).Lyndon()
             sage: z,x,y = Lzxy.gens(); z,x,y
