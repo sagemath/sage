@@ -11,7 +11,7 @@ The implementation is based on the following identification:
     M^r(\mathrm{GL}_r(A))
     = \mathbb{C}_{\infty}[g_1, \ldots, g_{r-1}, g_{r}].
 
-where `g_i` the `i`-th coefficient form of weight `q^{i} - 1`.
+where `g_i` is the `i`-th coefficient form of weight `q^{i} - 1`.
 
 AUTHORS:
 
