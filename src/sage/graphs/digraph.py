@@ -748,8 +748,8 @@ class DiGraph(GenericGraph):
         if format == 'dig6':
             if weighted is None:
                 self._weighted = False
-            self.allow_loops(True if loops else False, check=False)
-            self.allow_multiple_edges(True if multiedges else False, check=False)
+            self.allow_loops(bool(loops), check=False)
+            self.allow_multiple_edges(bool(multiedges), check=False)
             from .graph_input import from_dig6
             from_dig6(self, data)
 
@@ -788,7 +788,7 @@ class DiGraph(GenericGraph):
                 loops = any(f(v, v) for v in data[0])
             if weighted is None:
                 weighted = False
-            self.allow_multiple_edges(True if multiedges else False, check=False)
+            self.allow_multiple_edges(bool(multiedges), check=False)
             self.allow_loops(loops, check=False)
             self.add_vertices(data[0])
             self.add_edges((u, v) for u in data[0] for v in data[0] if f(u, v))
@@ -832,17 +832,17 @@ class DiGraph(GenericGraph):
         elif format == 'int':
             if weighted is None:
                 weighted = False
-            self.allow_loops(True if loops else False, check=False)
-            self.allow_multiple_edges(True if multiedges else False,
+            self.allow_loops(bool(loops), check=False)
+            self.allow_multiple_edges(bool(multiedges),
                                       check=False)
             if data < 0:
                 raise ValueError("the number of vertices cannot be strictly negative")
             elif data:
                 self.add_vertices(range(data))
         elif format == 'list_of_edges':
-            self.allow_multiple_edges(True if multiedges else False,
+            self.allow_multiple_edges(bool(multiedges),
                                       check=False)
-            self.allow_loops(True if loops else False, check=False)
+            self.allow_loops(bool(loops), check=False)
             self.add_edges(data)
         else:
             raise ValueError("unknown input format '{}'".format(format))
