@@ -18,6 +18,7 @@ Classes and methods
 
 cimport cython
 
+from sage.categories.fields import Fields
 from libc.limits cimport UINT_MAX
 from libc.string cimport memset, memcpy
 
@@ -214,8 +215,8 @@ cdef class EvenlyDistributedSetsBacktracker:
 
         cdef unsigned int i,j
 
-        if not K.is_field():
-            raise ValueError("{} is not a field".format(K))
+        if K not in Fields():
+            raise ValueError(f"{K} is not a field")
         cdef unsigned int q = K.cardinality()
         cdef unsigned int e = k*(k-1)/2
         if (q-1) % (2*e) != 0:
