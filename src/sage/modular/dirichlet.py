@@ -235,7 +235,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             sage: TestSuite(G[1]).run()
 
         It is checked that the orders of the elements in `x` are
-        admissible (see :trac:`17283`)::
+        admissible (see :issue:`17283`)::
 
             sage: k.<i> = CyclotomicField(4)
             sage: G = DirichletGroup(192)
@@ -370,7 +370,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             ...
             TypeError: Unable to coerce zeta12 to a rational
 
-        We test the case where `R` is a map (:trac:`18072`)::
+        We test the case where `R` is a map (:issue:`18072`)::
 
             sage: K.<i> = QuadraticField(-1)
             sage: chi = DirichletGroup(5, K)[1]
@@ -539,7 +539,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         TESTS:
 
         Dirichlet characters modulo 1 and 2 are printed correctly (see
-        :trac:`17338`)::
+        :issue:`17338`)::
 
             sage: DirichletGroup(1)[0]
             Dirichlet character modulo 1 of conductor 1
@@ -570,7 +570,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
         TESTS:
 
         Dirichlet characters modulo 1 and 2 are printed correctly (see
-        :trac:`17338`)::
+        :issue:`17338`)::
 
             sage: latex(DirichletGroup(1)[0])
             \hbox{Dirichlet character modulo } 1 \hbox{ of conductor } 1
@@ -676,7 +676,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         TESTS:
 
-        Check that :trac:`17586` is fixed::
+        Check that :issue:`17586` is fixed::
 
             sage: DirichletGroup(1)[0].bernoulli(1)
             1/2
@@ -1328,13 +1328,13 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         TESTS:
 
-        The field of algebraic numbers is supported (:trac:`19056`)::
+        The field of algebraic numbers is supported (:issue:`19056`)::
 
             sage: G = DirichletGroup(7, QQbar)
             sage: G[1].gauss_sum()
             -2.440133358345538? + 1.022618791871794?*I
 
-        Check that :trac:`19060` is fixed::
+        Check that :issue:`19060` is fixed::
 
             sage: K.<z> = CyclotomicField(8)
             sage: G = DirichletGroup(13, K)
@@ -1342,7 +1342,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             sage: chi.gauss_sum()
             zeta52^22 + zeta52^21 + zeta52^19 - zeta52^16 + zeta52^15 + zeta52^14 + zeta52^12 - zeta52^11 - zeta52^10 - zeta52^7 - zeta52^5 + zeta52^4
 
-        Check that :trac:`25127` is fixed::
+        Check that :issue:`25127` is fixed::
 
             sage: G = DirichletGroup(1)
             sage: chi = G.one()
@@ -1427,7 +1427,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         TESTS:
 
-        The field of algebraic numbers is supported (:trac:`19056`)::
+        The field of algebraic numbers is supported (:issue:`19056`)::
 
             sage: G = DirichletGroup(7, QQbar)
             sage: G[1].gauss_sum_numerical()
@@ -1523,7 +1523,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
             sage: sum([g(x)*g(1-x) for x in IntegerModRing(N)])
             11
 
-        And sums where exactly one character is nontrivial (see :trac:`6393`)::
+        And sums where exactly one character is nontrivial (see :issue:`6393`)::
 
             sage: G = DirichletGroup(5); X = G.list(); Y=X[0]; Z=X[1]
             sage: Y.jacobi_sum(Z)
@@ -1547,7 +1547,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         TESTS:
 
-        This shows that :trac:`6393` has been fixed::
+        This shows that :issue:`6393` has been fixed::
 
             sage: G = DirichletGroup(5); X = G.list(); Y = X[0]; Z = X[1]
             sage: # Y is trivial and Z is quartic
@@ -1889,14 +1889,14 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         TESTS:
 
-        Check that :trac:`18479` is fixed::
+        Check that :issue:`18479` is fixed::
 
             sage: f = Newforms(Gamma1(25), names='a')[1]
             sage: eps = f.character()
             sage: eps.minimize_base_ring() == eps
             True
 
-        A related bug (see :trac:`18086`)::
+        A related bug (see :issue:`18086`)::
 
             sage: K.<a,b> = NumberField([x^2 + 1, x^2 - 3])
             sage: chi = DirichletGroup(7, K).0
@@ -2057,7 +2057,7 @@ class DirichletCharacter(MultiplicativeGroupElement):
 
         TESTS:
 
-        Test that :trac:`11783` and :trac:`14368` are fixed::
+        Test that :issue:`11783` and :issue:`14368` are fixed::
 
             sage: chi = DirichletGroup(1).list()[0]
             sage: chi.values()
@@ -2675,7 +2675,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
 
         TESTS:
 
-        We test the case where `R` is a map (:trac:`18072`)::
+        We test the case where `R` is a map (:issue:`18072`)::
 
             sage: # needs sage.rings.number_field
             sage: K.<i> = QuadraticField(-1)
@@ -2741,7 +2741,7 @@ class DirichletGroup_class(WithEqualityById, Parent):
             TypeError: no coercion map from Rational Field to Integer Ring is defined
 
         Base-extended Dirichlet groups do not silently get roots of
-        unity with smaller order than expected (:trac:`6018`)::
+        unity with smaller order than expected (:issue:`6018`)::
 
             sage: G = DirichletGroup(10, QQ).base_extend(CyclotomicField(4))
             sage: H = DirichletGroup(10, CyclotomicField(4))

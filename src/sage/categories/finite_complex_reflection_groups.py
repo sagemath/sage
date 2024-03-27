@@ -118,7 +118,7 @@ class FiniteComplexReflectionGroups(CategoryWithAxiom):
 
                 The category of well generated finite complex
                 reflection groups is currently implemented as an
-                axiom. See discussion on :trac:`11187`. This may be a
+                axiom. See discussion on :issue:`11187`. This may be a
                 bit of overkill. Still it's nice to have a full
                 subcategory.
 

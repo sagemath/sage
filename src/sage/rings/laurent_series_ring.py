@@ -138,7 +138,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
     TESTS:
 
     Check if changing global series precision does it right (and
-    that :trac:`17955` is fixed)::
+    that :issue:`17955` is fixed)::
 
         sage: set_series_precision(3)
         sage: R.<x> = LaurentSeriesRing(ZZ)
@@ -150,7 +150,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         1 + 2*x + 4*x^2 + 8*x^3 + 16*x^4 + O(x^5)
         sage: set_series_precision(20)
 
-    Check categories (:trac:`24420`)::
+    Check categories (:issue:`24420`)::
 
         sage: LaurentSeriesRing(ZZ, 'x').category()
         Category of infinite commutative no zero divisors algebras
@@ -163,7 +163,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         Category of infinite commutative algebras
          over (finite commutative rings and subquotients of monoids and quotients of semigroups and finite enumerated sets)
 
-    Check coercions (:trac:`24431`)::
+    Check coercions (:issue:`24431`)::
 
         sage: pts = [LaurentSeriesRing,
         ....:        PolynomialRing,
@@ -441,7 +441,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
 
         TESTS:
 
-        Check that :trac:`28993` is fixed::
+        Check that :issue:`28993` is fixed::
 
             sage: from sage.modular.etaproducts import qexp_eta                         # needs sage.modular
             sage: S.<t> = LaurentSeriesRing(RationalField())
@@ -449,7 +449,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             1 - t - t^2 + t^5 + t^7 - t^12 - t^15 + t^22 + t^26 + O(t^30)
 
         When converting from `R((z))` to `R((z))((w))`, the variable
-        `z` is sent to `z` rather than to `w` (see :trac:`7085`)::
+        `z` is sent to `z` rather than to `w` (see :issue:`7085`)::
 
             sage: A.<z> = LaurentSeriesRing(QQ)
             sage: B.<w> = LaurentSeriesRing(A)
@@ -458,7 +458,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: z/w
             z*w^-1
 
-        Various conversions from PARI (see also :trac:`2508`)::
+        Various conversions from PARI (see also :issue:`2508`)::
 
             sage: # needs sage.libs.pari
             sage: L.<q> = LaurentSeriesRing(QQ, default_prec=10)
@@ -481,7 +481,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: L(pari('O(x^-10)'))
             O(q^-10)
 
-        Check that :trac:`30073` is fixed::
+        Check that :issue:`30073` is fixed::
 
             sage: P.<x> = LaurentSeriesRing(QQ)
             sage: P({-3: 1})

@@ -180,7 +180,7 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
             sage: a.change_ring(GF(3))
             2*x^-1 + x^2
 
-        Check that :trac:`22277` is fixed::
+        Check that :issue:`22277` is fixed::
 
             sage: # needs sage.modules
             sage: R.<x, y> = LaurentPolynomialRing(QQ)
@@ -546,7 +546,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: elt.polynomial_construction()
             (t^2 + 1, 2)
 
-        Check that :trac:`21272` is fixed::
+        Check that :issue:`21272` is fixed::
 
             sage: (t - t).polynomial_construction()
             (0, 0)
@@ -611,7 +611,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: latex(f)
             \frac{\frac{17}{2}}{x^{2}} + x + x^{2} + 3x^{4}
 
-        Verify that :trac:`6656` has been fixed::
+        Verify that :issue:`6656` has been fixed::
 
             sage: R.<a,b> = PolynomialRing(QQ)
             sage: T.<x> = LaurentPolynomialRing(R)
@@ -693,7 +693,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             ....:     assert hash(R(p)) == hash(p), "p = {}".format(p)
             ....:     assert hash(R(t*p)) == hash(t*p), "p = {}".format(p)
 
-        Check that :trac:`21272` is fixed::
+        Check that :issue:`21272` is fixed::
 
             sage: R.<t> = LaurentPolynomialRing(QQ)
             sage: hash(R.zero()) == hash(t - t)
@@ -743,7 +743,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: f[:3]
             -5*t^-10 + 1/3 + t + t^2
 
-        Any other kind of slicing is an error, see :trac:`18940`::
+        Any other kind of slicing is an error, see :issue:`18940`::
 
             sage: f[-10:2]
             Traceback (most recent call last):
@@ -830,7 +830,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: g(x=2)
             9
 
-        Since :trac:`24072` the symbolic ring does not accept positive
+        Since :issue:`24072` the symbolic ring does not accept positive
         characteristic::
 
             sage: R.<w> = LaurentPolynomialRing(GF(7))
@@ -1446,7 +1446,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
 
         TESTS:
 
-        Check that :trac:`34330` is fixed::
+        Check that :issue:`34330` is fixed::
 
             sage: num = t^-2 + 3 + t
             sage: den = t^-4 + t
@@ -1833,7 +1833,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             sage: f._derivative(t)
             2*x^-1 + (6*t + 6)*x
 
-        Check that :trac:`28187` is fixed::
+        Check that :issue:`28187` is fixed::
 
             sage: # needs sage.symbolic
             sage: R.<x> = LaurentPolynomialRing(ZZ)

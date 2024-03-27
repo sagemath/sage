@@ -77,7 +77,7 @@ class LieAlgebras(Category_over_base_ring):
     .. TODO::
 
         Many of these tests should use Lie algebras that are not the minimal
-        example and need to be added after :trac:`16820` (and :trac:`16823`).
+        example and need to be added after :issue:`16820` (and :issue:`16823`).
     """
     @cached_method
     def super_categories(self):
@@ -345,6 +345,25 @@ class LieAlgebras(Category_over_base_ring):
                 sage: L.universal_enveloping_algebra()  # indirect doctest              # needs sage.combinat sage.modules
                 Multivariate Polynomial Ring in x0, x1, x2 over Rational Field
             """
+
+        def center_universal_enveloping_algebra(self, UEA=None):
+            """
+            Return the center of the universal enveloping algebra of ``self``.
+
+            EXAMPLES::
+
+                sage: L = LieAlgebra(QQ, 3, 'x', abelian=True)
+                sage: L.center_universal_enveloping_algebra()
+                Center of Universal enveloping algebra of Abelian Lie algebra on 3 generators (x0, x1, x2)
+                 over Rational Field in the Poincare-Birkhoff-Witt basis
+                sage: PBW = L.pbw_basis()
+                sage: L.center_universal_enveloping_algebra(PBW)
+                Center of Universal enveloping algebra of Abelian Lie algebra on 3 generators (x0, x1, x2)
+                 over Rational Field in the Poincare-Birkhoff-Witt basis
+            """
+            if UEA is not None:
+                return UEA.center()
+            return self.pbw_basis().center()
 
         @abstract_method(optional=True)
         def module(self):

@@ -111,7 +111,7 @@ cdef class qAdicCappedAbsoluteElement(CAElement):
     def __hash__(self):
         r"""
         Raise a ``TypeError`` since this element is not hashable
-        (:trac:`11895`.)
+        (:issue:`11895`.)
 
         TESTS::
 
