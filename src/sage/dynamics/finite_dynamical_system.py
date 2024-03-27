@@ -98,21 +98,14 @@ class DiscreteDynamicalSystem(SageObject, metaclass=ClasscallMetaclass):
 
     A *discrete dynamical system* (henceforth *DDS*) is a
     pair `(X, \phi)` of a set `X` and a map `\phi : X \to X`.
-    This set `X` is called the *ground set* of the DDS, while
-    the map `\phi` is called the *evolution* of the DDS.
-
-    A *discrete dynamical system* (short: *DDS*) is a pair
-    `(X, \phi)` of a set `X` and a map `\phi : X \to X`.
-    (This is one of several things known as a "discrete
-    dynamical system" in mathematics.)
-    Thus, a DDS is the same as an endomorphism of a set.
-    The DDS is said to be *finite* if `X` is finite.
-    The DDS is said to be *invertible* if the map `\phi` is
-    invertible.
     The set `X` is called the *ground set* of the DDS;
     the map `\phi` is called the *evolution* of the DDS;
     the inverse map `\phi^{-1}` (when it exists) is called the
     *inverse evolution* of the DDS.
+
+    The DDS is called *finite* if `X` is finite.
+    The DDS is called *invertible* if the map `\phi` is
+    invertible.
 
     Given a DDS `(X, \phi)`, we can study
 
@@ -138,7 +131,7 @@ class DiscreteDynamicalSystem(SageObject, metaclass=ClasscallMetaclass):
 
     - ``X`` -- set, list, tuple, or another iterable, or
       ``None`` (default: ``None``); the ground set for the DDS.
-      Tthis can be ``None`` (in which case Sage will not know
+      This can be ``None`` (in which case Sage will not know
       the ground set, but can still apply evolution to any
       elements that are provided to it).
       Make sure to set the ``create_tuple`` argument to
