@@ -416,7 +416,7 @@ class QuaternionAlgebra_abstract(Parent):
             sage: QuaternionAlgebra(2,9).is_division_algebra()
             False
 
-        By checking ramification, the methods correctly recognizes division
+        By checking ramification, the method correctly recognizes division
         quaternion algebras over a number field even if they have trivial
         discriminant::
 
@@ -1150,7 +1150,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
             The initial choice of primes (for the base field `\QQ`)
             respectively of prime ideals (in the number field case) to check
-            ramification for is motivated by 12.4.12(a) in [Voi2021]_. The
+            ramification for is based on 12.4.12(a) in [Voi2021]_. The
             restriction to real embeddings is due to 14.5.8 in [Voi2021]_.
 
         INPUT:
@@ -1159,14 +1159,12 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         OUTPUT:
 
-        The non-Archimedean (AKA finite) places at which the quaternion
+        The non-Archimedean (AKA finite) places at which this quaternion
         algebra ramifies, given as
 
-        - elements of `\ZZ` (sorted small to large) if the algebra is
-            defined over `\QQ`,
+        - elements of `\ZZ` (sorted small to large) if the base field is `\QQ`,
 
-        - fractional ideals in the ring of integers of the base number field,
-            otherwise.
+        - integral fractional ideals of the base number field, otherwise.
 
         Additionally, if ``inf`` is set to ``True``, then the Archimedean
         (AKA infinite) places at which the quaternion algebra ramifies are
@@ -1193,8 +1191,8 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             sage: QuaternionAlgebra(F, -1, -1).ramified_places()
             ([], [])
 
-        Extending the base field can resolve all ramification at finite places
-        while still leaving some ramification at infinite places::
+        Extending the base field can also resolve all ramification at finite
+        places while still leaving some ramification at infinite places::
 
             sage: K = QuadraticField(3)
             sage: QuaternionAlgebra(K, -1, -1).ramified_places()
@@ -1215,7 +1213,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             sage: QuaternionAlgebra(L, -1, -1).ramified_places()
             ([Fractional ideal (2, 1/2*a + 1/2), Fractional ideal (2, 1/2*a - 1/2)], [])
 
-        We can also use number field elements as invariants::
+        We can use number field elements as invariants as well::
 
             sage: x = polygen(ZZ, 'x')
             sage: F.<a> = NumberField(x^2 - x - 1)
@@ -1281,13 +1279,12 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         OUTPUT:
 
-        The list of finite primes at which ``self`` ramifies, given as
+        The list of finite primes at which this quaternion algebra ramifies,
+        given as
 
-        - elements of `\ZZ` (sorted small to large) if the algebra is
-            defined over `\QQ`,
+        - elements of `\ZZ` (sorted small to large) if the base field is `\QQ`,
 
-        - fractional ideals in the ring of integers of the base number field,
-            otherwise.
+        - integral fractional ideals of the base number field, otherwise.
 
         EXAMPLES::
 
@@ -1332,12 +1329,11 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         OUTPUT:
 
-        The discriminant of this quaternion algebra, as
+        The discriminant of this quaternion algebra, given as
 
         - an element of `\ZZ` if the algebra is defined over `\QQ`,
 
-        - a fractional ideal in the ring of integers of the base number
-            field, otherwise.
+        - an integral fractional ideal of the base number field, otherwise.
 
         EXAMPLES::
 
