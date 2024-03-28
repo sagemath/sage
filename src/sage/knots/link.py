@@ -4510,7 +4510,7 @@ class Link(SageObject):
 
         TESTS:
 
-        check that :issue:`37668` is fixed::
+        Check that :issue:`37668` is fixed::
 
             sage: L = KnotInfo.L6a2_0
             sage: L1 = L.link()
