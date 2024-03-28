@@ -1118,95 +1118,6 @@ If all went fine, open a PR with the code under
 ``SAGE_ROOT/build/pkgs``.
 
 
-.. _section-inclusion-procedure:
-
-Inclusion procedure for new and updated packages
-================================================
-
-Packages that are not part of Sage will first become optional or
-experimental (the latter if they will not build on all supported
-systems). After they have been in optional for some time without
-problems they can be proposed to be included as standard packages in
-Sage.
-
-To propose a package for optional/experimental inclusion please open a GitHub
-PR added with labels ``c: packages: experimental`` or ``c: packages:
-optional``. The associated code requirements are described in the following
-sections.
-
-After the PR was reviewed and included, optional packages stay in
-that status for at least a year, after which they can be proposed to be
-included as standard packages in Sage. For this a GitHub PR is opened
-with the label ``c: packages: standard``. Then make
-a proposal in the Google Group ``sage-devel``.
-
-Upgrading packages to new upstream versions or with additional patches
-includes opening a PR in the respective category too, as described
-above.
-
-License information
--------------------
-
-If you are patching a standard Sage spkg, then you should make sure that
-the license information for that package is up-to-date, both in its
-``SPKG.rst`` or ``SPKG.txt`` file and in the file ``SAGE_ROOT/COPYING.txt``.  For
-example, if you are producing an spkg which upgrades the vanilla source
-to a new version, check whether the license changed between versions.
-
-If an upstream tarball of a package cannot be redistributed for license
-reasons, rename it to include the string ``do-not-distribute``.  This
-will keep the release management scripts from uploading it to the Sage mirrors.
-
-Sometimes an upstream tarball contains some distributable parts using
-a free software license and some non-free parts.  In this case, it can
-be a good solution to make a custom tarball consisting of only the free
-parts; see :ref:`section-spkg-src` and the ``giac`` package as an example.
-
-
-Prerequisites for new standard packages
----------------------------------------
-
-For a package to become part of Sage's standard distribution, it
-must meet the following requirements:
-
-- **License**. For standard packages, the license must be compatible
-  with the GNU General Public License, version 3. The Free Software
-  Foundation maintains a long list of `licenses and comments about
-  them <http://www.gnu.org/licenses/license-list.html>`_.
-
-- **Build Support**. The code must build on all the fully supported
-  platforms (Linux, macOS); see :ref:`chapter-portability_testing`.
-  It must be installed either from source as a normal package,
-  or as a Python (platform-independent) wheel package, see
-  :ref:`section-package-source-types`.
-
-- **Quality**. The code should be "better" than any other available
-  code (that passes the two above criteria), and the authors need to
-  justify this. The comparison should be made to both Python and other
-  software. Criteria in passing the quality test include:
-
-  - Speed
-
-  - Documentation
-
-  - Usability
-
-  - Absence of memory leaks
-
-  - Maintainable
-
-  - Portability
-
-  - Reasonable build time, size, dependencies
-
-- **Previously an optional package**. A new standard package must have
-  spent some time as an optional package. Or have a good reason why
-  this is not possible.
-
-- **Refereeing**. The code must be refereed, as discussed in
-  :ref:`chapter-github`.
-
-
 .. _section-spkg-patching:
 
 Modifying third-party code
@@ -1429,3 +1340,92 @@ If you really must modify the upstream tarball, then it is
 recommended that you write a script, called ``spkg-src``, that makes the
 changes. This not only serves as documentation but also makes it easier
 to apply the same modifications to future versions.
+
+
+.. _section-inclusion-procedure:
+
+Inclusion procedure for new and updated packages
+================================================
+
+Packages that are not part of Sage will first become optional or
+experimental (the latter if they will not build on all supported
+systems). After they have been in optional for some time without
+problems they can be proposed to be included as standard packages in
+Sage.
+
+To propose a package for optional/experimental inclusion please open a GitHub
+PR added with labels ``c: packages: experimental`` or ``c: packages:
+optional``. The associated code requirements are described in the following
+sections.
+
+After the PR was reviewed and included, optional packages stay in
+that status for at least a year, after which they can be proposed to be
+included as standard packages in Sage. For this a GitHub PR is opened
+with the label ``c: packages: standard``. Then make
+a proposal in the Google Group ``sage-devel``.
+
+Upgrading packages to new upstream versions or with additional patches
+includes opening a PR in the respective category too, as described
+above.
+
+License information
+-------------------
+
+If you are patching a standard Sage spkg, then you should make sure that
+the license information for that package is up-to-date, both in its
+``SPKG.rst`` or ``SPKG.txt`` file and in the file ``SAGE_ROOT/COPYING.txt``.  For
+example, if you are producing an spkg which upgrades the vanilla source
+to a new version, check whether the license changed between versions.
+
+If an upstream tarball of a package cannot be redistributed for license
+reasons, rename it to include the string ``do-not-distribute``.  This
+will keep the release management scripts from uploading it to the Sage mirrors.
+
+Sometimes an upstream tarball contains some distributable parts using
+a free software license and some non-free parts.  In this case, it can
+be a good solution to make a custom tarball consisting of only the free
+parts; see :ref:`section-spkg-src` and the ``giac`` package as an example.
+
+
+Prerequisites for new standard packages
+---------------------------------------
+
+For a package to become part of Sage's standard distribution, it
+must meet the following requirements:
+
+- **License**. For standard packages, the license must be compatible
+  with the GNU General Public License, version 3. The Free Software
+  Foundation maintains a long list of `licenses and comments about
+  them <http://www.gnu.org/licenses/license-list.html>`_.
+
+- **Build Support**. The code must build on all the fully supported
+  platforms (Linux, macOS); see :ref:`chapter-portability_testing`.
+  It must be installed either from source as a normal package,
+  or as a Python (platform-independent) wheel package, see
+  :ref:`section-package-source-types`.
+
+- **Quality**. The code should be "better" than any other available
+  code (that passes the two above criteria), and the authors need to
+  justify this. The comparison should be made to both Python and other
+  software. Criteria in passing the quality test include:
+
+  - Speed
+
+  - Documentation
+
+  - Usability
+
+  - Absence of memory leaks
+
+  - Maintainable
+
+  - Portability
+
+  - Reasonable build time, size, dependencies
+
+- **Previously an optional package**. A new standard package must have
+  spent some time as an optional package. Or have a good reason why
+  this is not possible.
+
+- **Refereeing**. The code must be refereed, as discussed in
+  :ref:`chapter-github`.
