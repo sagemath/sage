@@ -127,7 +127,7 @@ the following source types:
 
    - the file ``package-version.txt`` is optional;
 
-   - may be associated with a source tree included in the repository;
+   - may be associated with a source tree in the repository;
 
    - installing the package runs the installation script ``spkg-install`` or
      ``spkg-install.in`` (see :ref:`section-spkg-install`);
@@ -368,8 +368,8 @@ at build time,  which should to the appropriate system-specific
 
 If an ``spkg-src`` file is present, it indicates that the tarball is not
 an unmodified third-party tarball (see :ref:`section-spkg-patching`).
-It documents how the tarball was generated (either by changing an upstream
-tarball or generating it from an repository). As ideally
+It documents how the tarball was generated (either by modifying an upstream
+tarball or generating it from a repository). As ideally
 our tarballs are not modified, for most packages there is no ``spkg-src`` file.
 
 
@@ -1214,9 +1214,12 @@ Modifying third-party code
 
 In the Sage distribution, we try to use unpatched original upstream tarballs
 of stable versions of third-party packages whenever possible.
-
 Sometimes, however, modifications are necessary, either to fix a bug or
 to make the package build on the platforms supported by Sage.
+
+Only ``normal`` packages can be patched; see :ref:`section-package-source-types`.
+If a Python package is currently a ``wheel`` package
+and you need to patch it, change it to a ``normal`` package first.
 
 
 .. _section-spkg-patch-or-repackage:
@@ -1278,12 +1281,8 @@ When to patch, when to repackage, when to autoconfiscate
 
 .. _section-spkg-patch-from-pr:
 
-Patching sources by importing a pull request from GitHub
---------------------------------------------------------
-
-Only ``normal`` packages can be patched; see :ref:`section-package-source-types`.
-If a Python package is currently a ``wheel`` package
-and you need to patch it, change it to a ``normal`` package first.
+Preparing a patch by importing a pull request from GitHub
+---------------------------------------------------------
 
 In the easiest and quite commmon case, a pull request is already available on
 the upstream package's GitHub repository.
@@ -1297,10 +1296,8 @@ rename it.
 
 Modify the ``package-version.txt`` file to indicate the changed patch level; see
 :ref:`section-spkg-versioning`. This ensures that the package will be rebuilt,
-even though its upstream version did not change. This is important because when
-you open a pull request in the Sage repository that adds the patch, also
-our automatic test runs on GitHub Actions need to rebuild the packages,
-and likewise when other people are testing your pull request.
+even though its upstream version did not change. This is important in particular
+when other people are testing your added patch.
 
 Next, test building the package with the patch, for example using ``make build``.
 You should see a message like ``Applying 64.patch``. Messages such as
@@ -1309,9 +1306,17 @@ ignore. They appear when the PR from which you prepared the patch is based
 on a version that differs from the version that the Sage package uses, or
 when there are other patches that make changes to the same file.
 
+Be sure add the patch file to your branch using ``git add``. When you commit it,
+use a commit message such as
+``build/pkgs/cmr: Add https://github.com/discopt/cmr/pull/64 as a patch``.
+When you open your PR from this branch, our automatic test runs on GitHub
+Actions will automatically rebuild the patched package.
 
-Manual preparation of patches
------------------------------
+
+.. _section-spkg-patch-manually:
+
+Preparing a patch manually
+--------------------------
 
 Patches must include documentation in their header (before the first diff hunk), and
 must have only one "prefix" level in the paths (that is, only one path level
