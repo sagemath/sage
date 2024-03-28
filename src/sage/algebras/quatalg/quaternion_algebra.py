@@ -1104,8 +1104,10 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         """
         Check whether this quaternion algebra is totally definite.
 
-        A quaternion algebra defined over a number field is totally definite
-        if it ramifies at all real places of its base field.
+        A quaternion algebra defined over a number field is
+        totally definite if it ramifies at all Archimedean
+        places of its base field. In particular, the base number
+        field has to be totally real (see 14.5.8 in [Voi2021]_).
 
         EXAMPLES::
 
@@ -1137,21 +1139,18 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         if F not in NumberFields():
             raise ValueError("base field must be rational numbers or a number field")
 
-        return all(F.hilbert_symbol(self._a, self._b, e) == -1
-                                    for e in F.real_embeddings())
+        # Since we need the list of real embeddings of the number field (instead
+        # of just the number of them), we avoid a call of the `is_totally_real()`-
+        # method by directly comparing the embedding list's length to the degree
+        E = F.real_embeddings()
+        return len(E) == F.degree() and all(F.hilbert_symbol(self._a, self._b, e) == -1
+                                                                        for e in E)
 
     @cached_method
     def ramified_places(self, inf=True):
         r"""
         Return the places of the base number field at which this
         quaternion algebra ramifies.
-
-        .. NOTE::
-
-            The initial choice of primes (for the base field `\QQ`)
-            respectively of prime ideals (in the number field case) to check
-            ramification for is based on 12.4.12(a) in [Voi2021]_. The
-            restriction to real embeddings is due to 14.5.8 in [Voi2021]_.
 
         INPUT:
 
@@ -1169,6 +1168,11 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         Additionally, if ``inf`` is set to ``True``, then the Archimedean
         (AKA infinite) places at which the quaternion algebra ramifies are
         also returned, given by real embeddings of the base field.
+
+        .. NOTE::
+
+            Any Archimedean place at which a quaternion algebra ramifies
+            has to be real (see 14.5.8 in [Voi2021]_).
 
         EXAMPLES::
 
@@ -1237,6 +1241,10 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         F = self.base_ring()
         a = self._a
         b = self._b
+
+        # The initial choice of primes (for the base field QQ) respectively
+        # of prime ideals (in the number field case) to check ramification
+        # for is based on 12.4.12(a) in [Voi2021]_.
 
         # For efficiency (and to not convert QQ into a number field manually),
         # we handle the case F = QQ first
