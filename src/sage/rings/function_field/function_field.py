@@ -1241,16 +1241,17 @@ class FunctionField(Field):
         - ``P`` -- a place of this function field
 
         The Hilbert symbol `(a,b)_{F_P}` is `0` if `a` or `b` is zero.
-        Otherwise it takes the value `1` if  the quaternion algebra defined
-        by `(a,b)` over `F_P` is split, and `-1` if it is a division ring.
+        Otherwise it takes the value `1` if  the quaternion algebra
+        defined by `(a,b)` over `F_P` is split, and `-1` if said
+        algebra is a division ring.
 
         ALGORITHM:
 
         For the valuation `\nu = \nu_P` of `F`, we compute the valuations
         `\nu(a)` and `\nu(b)` as well as elements `a_0` and `b_0` of the
         residue field such that for a uniformizer `\pi` at `P`,
-        `a\pi^{-\nu(a))}` respectively `b\pi^{-\nu(b)}`has the residue class
-        `a_0` respectively `b_0` modulo `P`. Then the Hilbert symbol is
+        `a\pi^{-\nu(a))}` respectively `b\pi^{-\nu(b)}` has the residue class
+        `a_0` respectively `b_0` modulo `\pi`. Then the Hilbert symbol is
         computed by formula 12.4.10 in [Voi2021]_.
 
         Currently only implemented for global function fields.
