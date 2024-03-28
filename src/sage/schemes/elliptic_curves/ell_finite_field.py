@@ -2736,9 +2736,8 @@ def EllipticCurve_with_order(m, *, D=None):
     from sage.structure.factorization import Factorization
     from sage.schemes.elliptic_curves.cm import hilbert_class_polynomial
 
-    def helper(m, m4_fac, D):
-        all_sol = BinaryQF(1, 0, -D).solve_integer(m4_fac, _flag=3)
-        for t, _ in all_sol:
+    def find_q(m, m4_fac, D):
+        for t, _ in BinaryQF(1, 0, -D).solve_integer(m4_fac, _flag=3):
             yield m + 1 - t
             yield m + 1 + t
 
@@ -2757,7 +2756,7 @@ def EllipticCurve_with_order(m, *, D=None):
 
     seen = set()
     for D in Ds:
-        for q in helper(m_val, m4_fac, D):
+        for q in find_q(m_val, m4_fac, D):
             if not is_prime_power(q):
                 continue
 

@@ -1741,11 +1741,11 @@ class BinaryQF(SageObject):
             return (-self).solve_integer(-n)
 
         if self.is_reducible():  # square discriminant; not supported by PARI
-            try:
-                n = ZZ(n)
-            except TypeError:
-                # Factorization
+            from sage.structure.factorization import Factorization
+            if isinstance(n, Factorization):
                 n = ZZ(n.value())
+            else:
+                n = ZZ(n)
 
             if self._a:
                 # https://math.stackexchange.com/a/980075
