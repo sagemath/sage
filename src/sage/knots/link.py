@@ -4342,7 +4342,7 @@ class Link(SageObject):
             elif not chiral:
                 sym_mut = SymmetryMutant.itself
             else:
-                for k in match_lists.keys():
+                for k in match_lists:
                     lk = match_lists[k]
                     if proves[k] and L in lk:
                         lk.remove(L)
