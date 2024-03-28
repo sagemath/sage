@@ -21,3 +21,9 @@ a.pdf:hover {
   text-decoration: none;
 }
 
+
+/* For sections INPUT, OUTPUT, EXAMPLES, etc. */
+
+abbr {
+  font-weight: 500;
+}
