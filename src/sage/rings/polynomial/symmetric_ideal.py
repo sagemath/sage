@@ -226,7 +226,7 @@ class SymmetricIdeal(Ideal_generic):
 
         """
         from sage.misc.latex import latex
-        return '\\left({}\\right){}[\\mathfrak{{S}}_{{\\infty}}]'.format(", ".join(latex(g) for g in self.gens()), latex(self.ring()))
+        return r'\left({}\right){}[\mathfrak{{S}}_{{\infty}}]'.format(", ".join(latex(g) for g in self.gens()), latex(self.ring()))
 
     def _contains_(self, p):
         """
@@ -968,7 +968,8 @@ class SymmetricIdeal(Ideal_generic):
                 CommonR = PolynomialRing(PARENT._base, VarList, order=PARENT._order)
 
             try:  # working around one libsingular bug and one libsingular oddity
-                DenseIdeal = [CommonR(P._p) if ((CommonR is P._p.parent()) or CommonR.ngens() != P._p.parent().ngens()) else CommonR(repr(P._p)) for P in OUT.gens()] * CommonR
+                DenseIdeal = [CommonR(P._p) if ((CommonR is P._p.parent()) or CommonR.ngens() != P._p.parent().ngens()) else CommonR(repr(P._p)) 
+                              for P in OUT.gens()] * CommonR
             except Exception:
                 if report is not None:
                     print("working around a libsingular bug")
@@ -978,7 +979,7 @@ class SymmetricIdeal(Ideal_generic):
                 print("Classical Groebner basis")
                 if algorithm != '':
                     print("(using %s)" % algorithm)
-            newOUT = (DenseIdeal.groebner_basis(algorithm) * PARENT)
+            newOUT = DenseIdeal.groebner_basis(algorithm) * PARENT
             if report is not None:
                 print("->", len(newOUT.gens()), 'generators')
             # Symmetrise out to the next index:
