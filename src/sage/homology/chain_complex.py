@@ -509,7 +509,7 @@ class Chain_class(ModuleElement):
         try:
             concatenated = result[0]
             for r in result[1:]:
-                concatenated += AsciiArt([' ... ']) + r
+                concatenated += UnicodeArt([' ... ']) + r
             return concatenated
         except IndexError:
             return []
