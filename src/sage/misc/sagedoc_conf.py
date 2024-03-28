@@ -19,6 +19,7 @@ from sphinx.ext.doctest import blankline_re
 # The reST default role (used for this markup: `text`) to use for all documents.
 default_role = 'math'
 
+
 def process_docstring_aliases(app, what, name, obj, options, docstringlines):
     """
     Change the docstrings for aliases to point to the original object.
@@ -26,6 +27,7 @@ def process_docstring_aliases(app, what, name, obj, options, docstringlines):
     basename = name.rpartition('.')[2]
     if hasattr(obj, '__name__') and obj.__name__ != basename:
         docstringlines[:] = ['See :obj:`%s`.' % name]
+
 
 def process_directives(app, what, name, obj, options, docstringlines):
     """
@@ -39,6 +41,7 @@ def process_directives(app, what, name, obj, options, docstringlines):
     if 'nodetex' in directives:
         docstringlines.pop(0)
 
+
 def process_docstring_cython(app, what, name, obj, options, docstringlines):
     """
     Remove Cython's filename and location embedding.
@@ -51,6 +54,7 @@ def process_docstring_cython(app, what, name, obj, options, docstringlines):
         #Remove the first two lines
         docstringlines.pop(0)
         docstringlines.pop(0)
+
 
 def process_docstring_module_title(app, what, name, obj, options, docstringlines):
     """
@@ -74,6 +78,7 @@ def process_docstring_module_title(app, what, name, obj, options, docstringlines
         else:
             break
 
+
 def process_dollars(app, what, name, obj, options, docstringlines):
     r"""
     Replace dollar signs with backticks.
@@ -86,6 +91,7 @@ def process_dollars(app, what, name, obj, options, docstringlines):
         lines = s.split("\n")
         for i in range(len(lines)):
             docstringlines[i] = lines[i]
+
 
 def process_inherited(app, what, name, obj, options, docstringlines):
     """
@@ -110,6 +116,7 @@ def process_inherited(app, what, name, obj, options, docstringlines):
     for i in range(len(docstringlines)):
         docstringlines.pop()
 
+
 def skip_TESTS_block(app, what, name, obj, options, docstringlines):
     """
     Skip blocks labeled "TESTS:".
@@ -126,6 +133,7 @@ def skip_TESTS_block(app, what, name, obj, options, docstringlines):
         docstringlines[i] = lines[i]
     while len(docstringlines) > len(lines):
         del docstringlines[len(lines)]
+
 
 class SagemathTransform(Transform):
     """
@@ -145,6 +153,7 @@ class SagemathTransform(Transform):
                 source = blankline_re.sub('', source)
                 node.rawsource = source
                 node[:] = [nodes.Text(source)]
+
 
 # This is only used by sage.misc.sphinxify
 def setup(app):
