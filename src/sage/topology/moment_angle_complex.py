@@ -483,10 +483,12 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         n = len(vertices)
         invfac = []
 
+        in_field = base_ring in Fields()
+
         for j in range(n + 1):
             for x in combinations(vertices, j):
                 S = self._simplicial_complex.generated_subcomplex(x)
-                if base_ring in Fields():
+                if in_field:
                     invfac.append(S.homology(i - j - 1, base_ring=base_ring,
                                              cohomology=cohomology, algorithm=algorithm,
                                              verbose=verbose, reduced=True).dimension())
@@ -495,7 +497,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
                                              cohomology=cohomology, algorithm=algorithm,
                                              verbose=verbose, reduced=True)._original_invts)
 
-        if base_ring in Fields():
+        if in_field:
             return HomologyGroup(sum(invfac), base_ring)
 
         m = len(invfac)
@@ -700,7 +702,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         except AttributeError:
             return H.dimension()
 
-    def euler_characteristic(self) -> int:
+    def euler_characteristic(self):
         """
         Return the Euler characteristic of ``self``.
 
@@ -722,7 +724,8 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
             1
         """
         sc = self.simplicial_complex()
-        return 1 if sc.dimension() + 1 == len(sc.vertices()) else 0
+        return (ZZ.one() if sc.dimension() + 1 == len(sc.vertices())
+                else ZZ.zero())
 
     def product(self, other):
         """
