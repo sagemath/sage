@@ -1747,7 +1747,7 @@ class FPModuleMorphism(Morphism):
             if not kernel_n:
                 continue
 
-            generator_degrees = tuple((x.degree() for x in F_.generators()))
+            generator_degrees = tuple(x.degree() for x in F_.generators())
 
             if j.is_zero():
                 # The map j is not onto in degree `n` of the kernel.
@@ -1875,7 +1875,7 @@ class FPModuleMorphism(Morphism):
             if image_n.dimension() == 0:
                 continue
 
-            generator_degrees = tuple((x.degree() for x in F_.generators()))
+            generator_degrees = tuple(x.degree() for x in F_.generators())
             if j.is_zero():
                 # The map j is not onto in degree `n` of the image.
                 new_generator_degrees = image_n.rank() * (n,)
