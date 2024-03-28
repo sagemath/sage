@@ -124,7 +124,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: len(S)
             100
 
-        See :trac:`4687`, where the following example did not work::
+        See :issue:`4687`, where the following example did not work::
 
             sage: E = EllipticCurve(GF(2),[0, 0, 1, 1, 1])
             sage: E.points()
@@ -300,7 +300,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
         AUTHORS:
 
         - Jeroen Demeyer (2014-09-09): choose points uniformly random,
-          see :trac:`16951`.
+          see :issue:`16951`.
 
         EXAMPLES::
 
@@ -346,7 +346,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
         TESTS:
 
-        See :trac:`8311`::
+        See :issue:`8311`::
 
             sage: E = EllipticCurve(GF(3), [0,0,0,2,2])
             sage: E.random_element()
@@ -403,7 +403,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: E.trace_of_frobenius()                                                # needs sage.rings.finite_rings
             802
 
-        The following shows that the issue from :trac:`2849` is fixed::
+        The following shows that the issue from :issue:`2849` is fixed::
 
             sage: E = EllipticCurve(GF(3^5,'a'),[-1,-1])                                # needs sage.rings.finite_rings
             sage: E.trace_of_frobenius()                                                # needs sage.rings.finite_rings
@@ -549,7 +549,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: E.cardinality(algorithm='foobar')
             10076
 
-        Check that a bug noted at :trac:`15667` is fixed::
+        Check that a bug noted at :issue:`15667` is fixed::
 
             sage: # needs sage.rings.finite_rings
             sage: F.<a> = GF(3^6)
@@ -609,6 +609,24 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
                               cardinality_exhaustive, _cardinality_subfield)
 
     order = cardinality  # alias
+
+    @cached_method
+    def multiplication_by_p_isogeny(self):
+        r"""
+        Return the multiplication-by-`p` isogeny.
+
+        EXAMPLES::
+
+            sage: p = 23
+            sage: K.<a> = GF(p^3)
+            sage: E = EllipticCurve(j=K.random_element())
+            sage: phi = E.multiplication_by_p_isogeny()
+            sage: assert phi.degree() == p**2
+            sage: P = E.random_element()
+            sage: assert phi(P) == P * p
+        """
+        frob = self.frobenius_isogeny()
+        return frob.dual() * frob
 
     def frobenius_polynomial(self):
         r"""
@@ -760,7 +778,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: E.cardinality_pari()
             999945
 
-        Since :trac:`16931`, this now works over finite fields which
+        Since :issue:`16931`, this now works over finite fields which
         are not prime fields::
 
             sage: # needs sage.rings.finite_rings
@@ -1010,7 +1028,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: E.cardinality(extension_degree=100)
             1267650600228231653296516890625
 
-        This tests the patch for :trac:`3111`, using 10 primes randomly
+        This tests the patch for :issue:`3111`, using 10 primes randomly
         selected::
 
             sage: E = EllipticCurve('389a')
@@ -1020,7 +1038,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             ....:     if p != 389:
             ....:         G = E.change_ring(GF(p)).abelian_group()
 
-        This tests that the bug reported in :trac:`3926` has been fixed::
+        This tests that the bug reported in :issue:`3926` has been fixed::
 
             sage: # needs sage.rings.number_field
             sage: K.<i> = QuadraticField(-1)
@@ -1053,8 +1071,8 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
 
             S = n//nQ * P
             T = n2 * Q
-            S.set_order(nQ//n2, check=False)    # for .discrete_log()
-            x = S.discrete_log(T)
+            S.set_order(nQ//n2, check=False)    # for .log()
+            x = T.log(S)
             Q -= x * n1//nQ * P
 
             assert not n2 * Q                   # by construction
@@ -1793,13 +1811,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: p = next_prime(randrange(2,100))
             sage: e = randrange(1,10)
             sage: F.<t> = GF((p,e))
-            sage: while True:
-            ....:     try:
-            ....:         E = EllipticCurve([F.random_element() for _ in range(5)])
-            ....:     except ArithmeticError:
-            ....:         pass
-            ....:     else:
-            ....:         break
+            sage: E = EllipticCurve(j=F.random_element())
             sage: twists1 = E.twists()
             sage: {sum(E1.is_isomorphic(E2) for E2 in twists1) == 1 for E1 in twists1}
             {True}
@@ -1808,7 +1820,12 @@ class EllipticCurve_finite_field(EllipticCurve_field, HyperellipticCurve_finite_
             sage: eq = 1728*4*A**3 - j * (4*A**3 + 27*B**2)
             sage: twists2 = []
             sage: for _ in range(10):
-            ....:     V = Ideal([eq, A + B - F.random_element()]).variety()
+            ....:     I = Ideal([eq, A + B - F.random_element()])
+            ....:     try:
+            ....:         V = I.variety()
+            ....:     except ValueError:
+            ....:         if I.dimension() == 0:
+            ....:              raise
             ....:     if not V:
             ....:         continue
             ....:     sol = choice(V)

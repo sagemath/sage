@@ -508,6 +508,11 @@ REFERENCES:
             Springer, 2012,
             http://homepages.cwi.nl/~aeb/math/ipm/ipm.pdf
 
+.. [BMFPR2011] \M. Bousquet-Melou, É. Fusy, L.-F. Préville-Ratelle,
+                *The number of intervals in the m-Tamari lattices*.
+                Electronic Journal of Combinatorics 18(2), 2011.
+                :doi:`10.37236/2027`
+
 .. [BPPSST2017] Banik, Pandey, Peyrin, Sasaki, Sim, and Todo,
                 GIFT : A Small Present Towards Reaching the Limit of Lightweight
                 Encryption. *Cryptographic Hardware and Embedded Systems - CHES 2017*,
@@ -1425,6 +1430,9 @@ REFERENCES:
 .. [CC2013] Mahir Bilen Can and Yonah Cherniavsky.
             *Omitting parentheses from the cyclic notation*. (2013).
             :arxiv:`1308.0936v2`.
+
+.. [CC2023] \C. Ceballos and C. Chenevière.
+                *On linear intervals in the alt `\nu`-Tamari lattices* :arxiv:`2305.02250`
 
 .. [CCL2015] \N. Cohen, D. Coudert, and A. Lancin. *On computing the Gromov
              hyperbolicity*. ACM Journal of Experimental Algorithmics,
@@ -2443,6 +2451,11 @@ REFERENCES:
 .. [Epp2008] David Eppstein, *Recognizing partial cubes in quadratic time*,
              J. Graph Algorithms and Applications 15 (2): 269-293, 2011.
              :doi:`10.7155/jgaa.00226`, :arxiv:`0705.1025`.
+
+.. [EPSV2023] Jonathan Komada Eriksen, Lorenz Panny, Jana Sotáková, and Mattia Veroni.
+              Deuring for the People: Supersingular Elliptic Curves with Prescribed
+              Endomorphism Ring in General Characteristic.
+              LuCaNT 2023. https://ia.cr/2023/106
 
 .. [Eri1995] \H. Erikson.  Computational and Combinatorial Aspects
              of Coxeter Groups.  Thesis, 1995.
@@ -3704,6 +3717,10 @@ REFERENCES:
              class number*, Habilitationsschrift, RWTH Aachen University, 2016.
              http://www.math.rwth-aachen.de/~Markus.Kirschmer/papers/herm.pdf
 
+.. [KV2010] \M. Kirschmer, J. Voight: *Algorithmic enumeration of ideal classes
+            for quaternion orders*. SIAM J. Comput. 39(5): 1714-1747 (2010)
+            https://math.dartmouth.edu/~jvoight/articles/73446.pdf
+
 .. [KB1983] \W. Kühnel and T. F. Banchoff, "The 9-vertex complex
             projective plane", Math. Intelligencer 5 (1983), no. 3,
             11-22.
@@ -4042,6 +4059,11 @@ REFERENCES:
 .. [Kul1991] Ravi Kulkarni, "An arithmetic geometric method in the
              study of the subgroups of the modular group", American
              Journal of Mathematics 113 (1991), no 6, 1053-1133
+
+.. [Kuniba2022] Atsuo Kuniba,
+                *Quantum Groups in Three-Dimensional Integrability*.
+                Theoretical and Mathematical Physics, Springer. 2022.
+                :doi:`10.1007/978-981-19-3262-5`.
 
 .. [Kur2008] Chris Kurth, "K Farey package for Sage",
              http://wayback.archive-it.org/855/20100510123900/http://www.public.iastate.edu/~kurthc/research/index.html
@@ -4593,13 +4615,14 @@ REFERENCES:
 .. [Mat1978] \R. A. Mathon, *Symmetric conference matrices of order `pq^2 + 1`*,
              Canad. J. Math. 30 (1978) 321-331, :doi:`10.4153/CJM-1978-029-1`.
 
+.. [Mat2012] Yoshitake Matsumoto, *Database of Matroids*, 2012,
+             https://www-imai.is.s.u-tokyo.ac.jp/~ymatsu/matroid/index.html
+
 .. [Mat2015]  \A. Mathas. *Cyclotomic quiver Hecke algebras of type A*,
               in "Modular representation theory of finite and p-adic groups",
               165–266, Lect. Notes Ser. Inst. Math. Sci. Natl. Univ. Singap.,
               **30**, World Sci. Publ., Hackensack, NJ, 2015.
               :mathscinet:`MR3495747`
-
-.. [MatroidDatabase] `Database of Matroids <http://www-imai.is.s.u-tokyo.ac.jp/~ymatsu/matroid/index.html>`_
 
 .. [May1964] \J. P. May, "The cohomology of restricted Lie algebras
              and of Hopf algebras; application to the Steenrod
@@ -4759,6 +4782,11 @@ REFERENCES:
 
 .. [MoPa1994] \P. Morton and P. Patel. The Galois theory of periodic points
               of polynomial maps. Proc. London Math. Soc., 68 (1994), 225-263.
+
+.. [Motsak2006] Olekasandr Motsak. *Computation of the central elements and
+                centralizers of sets of elements in non-commutative polynomial
+                algebras*. PhD Thesis, 2006.
+                https://kluedo.ub.rptu.de/frontdoor/deliver/index/docId/2308/file/Thesis.pdf
 
 .. [MP2019] \M. Montes, D. Penazzi
             "Yarara and Coral v1"
@@ -5118,6 +5146,11 @@ REFERENCES:
 .. [Pec2014] Oliver Pechenik, *Cyclic sieving of increasing tableaux and
              small Schroeder paths*, JCTA 125 (2014), 357-378,
              :doi:`10.1016/j.jcta.2014.04.002`
+
+.. [Pei2010] Peikert, C. (2010). An Efficient and Parallel Gaussian Sampler for
+             Lattices. In: Rabin, T. (eds) Advances in Cryptology – CRYPTO 2010.
+             CRYPTO 2010. Lecture Notes in Computer Science, vol 6223. Springer,
+             Berlin, Heidelberg. :doi:`10.1007/978-3-642-14623-7_5`
 
 .. [Pen2012] \R. Pendavingh, On the evaluation at `(-i, i)` of the
              Tutte polynomial of a binary matroid. Preprint:
@@ -5801,6 +5834,11 @@ REFERENCES:
              Proceedings of the American Mathematical Society,
              Volume 90. Number 2, February 1984, pp. 199-202.
 
+.. [Sq1998] Matthew B. Squire.
+            *Generating the acyclic orientations of a graph*.
+            Journal of Algorithms, Volume 26, Issue 2, Pages 275 - 290, 1998.
+            (https://doi.org/10.1006/jagm.1997.0891)
+
 .. [SS1983] Shorey and Stewart. "On the Diophantine equation a
             x^{2t} + b x^t y + c y^2 = d and pure powers in recurrence
             sequences." Mathematica Scandinavica, 1983.
@@ -6346,6 +6384,8 @@ REFERENCES:
 .. [Voi2012] \J. Voight. Identifying the matrix ring: algorithms for
              quaternion algebras and quadratic forms, to appear.
 
+.. [Voi2021] \J. Voight. Quaternion algebras, Springer Nature (2021).
+
 .. [VS06]   \G.D. Villa Salvador. Topics in the Theory of Algebraic Function
             Fields. Birkh\"auser, 2006.
 
@@ -6654,6 +6694,10 @@ REFERENCES:
 .. [ZJRRS2019] \M. R. Z'aba, N. Jamil, M. S. Rohmad, H. A. Rani, S. Shamsuddin
            *The CiliPadi Family of Lightweight Authenticated Encryption*
            https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/cilipadi-spec.pdf
+
+.. [ZL2014] Wei Zhou and George Labahn. "Unimodular completion of polynomial
+            matrices".  In Proceedings ISSAC 2014, pages 413-420. ACM, 2014.
+            :doi:`10.1145/2608628.2608640`
 
 .. [ZZ2005] Hechun Zhang and R. B. Zhang.
             *Dual canonical bases for the quantum special linear group

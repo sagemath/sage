@@ -361,7 +361,7 @@ cdef class NCPolynomialRing_plural(Ring):
             sage: A2.<x,y,z> = FreeAlgebra(GF(5), 3)
             sage: R2 = A2.g_algebra({y*x:x*y-z, z*x:x*z+2*x, z*y:y*z-2*y}, order=TermOrder('degrevlex', 2))
 
-        Check that :trac:`17224` is fixed::
+        Check that :issue:`17224` is fixed::
 
             sage: from sage.rings.polynomial.term_order import TermOrder
             sage: F.<x,y> = FreeAlgebra(QQ)
@@ -385,7 +385,7 @@ cdef class NCPolynomialRing_plural(Ring):
         This example caused a segmentation fault with a previous version
         of this method. This doctest still results in a segmentation fault
         occasionally which is difficult to isolate, so this test is partially
-        disabled (:trac:`29528`)::
+        disabled (:issue:`29528`)::
 
             sage: import gc
             sage: from sage.rings.polynomial.plural import NCPolynomialRing_plural
@@ -695,7 +695,7 @@ cdef class NCPolynomialRing_plural(Ring):
         TESTS:
 
         Make the method accept additional parameters, such as the flag ``proof``.
-        See :trac:`22910`::
+        See :issue:`22910`::
 
             sage: P.is_field(proof=False)
             False
@@ -855,6 +855,20 @@ cdef class NCPolynomialRing_plural(Ring):
         p_Setm(_p, _ring)
 
         return new_NCP(self,_p)
+
+    def algebra_generators(self):
+        r"""
+        Return the algebra generators of ``self``.
+
+        EXAMPLES::
+
+            sage: A.<x,y,z> = FreeAlgebra(QQ, 3)
+            sage: P = A.g_algebra(relations={y*x:-x*y}, order='lex')
+            sage: P.algebra_generators()
+            Finite family {'x': x, 'y': y, 'z': z}
+        """
+        from sage.sets.family import Family
+        return Family(self.gens_dict())
 
     def ideal(self, *gens, **kwds):
         """
@@ -2178,7 +2192,7 @@ cdef class NCPolynomial_plural(RingElement):
 
         return (<NCPolynomialRing_plural>self._parent)._base._zero_element
 
-    def dict(self):
+    cpdef dict dict(self) noexcept:
         """
         Return a dictionary representing ``self``. This dictionary is in
         the same format as the generic MPolynomial: The dictionary
@@ -2204,7 +2218,8 @@ cdef class NCPolynomial_plural(RingElement):
             rChangeCurrRing(r)
         base = (<NCPolynomialRing_plural>self._parent)._base
         p = self._poly
-        pd = dict()
+        cdef dict d
+        cdef dict pd = dict()
         while p:
             d = dict()
             for v from 1 <= v <= r.N:
@@ -2216,6 +2231,30 @@ cdef class NCPolynomial_plural(RingElement):
 
             p = pNext(p)
         return pd
+
+    cpdef dict monomial_coefficients(self, bint copy=True) noexcept:
+        """
+        Return a dictionary representation of ``self`` with the keys
+        the exponent vectors and the values the corresponding coefficients.
+
+        INPUT:
+
+        * "copy" -- ignored
+
+        EXAMPLES::
+
+            sage: A.<x,z,y> = FreeAlgebra(GF(389), 3)
+            sage: R = A.g_algebra(relations={y*x:-x*y + z},  order='lex')
+            sage: R.inject_variables()
+            Defining x, z, y
+            sage: f = (2*x*y^3*z^2 + (7)*x^2 + (3))
+            sage: d = f.monomial_coefficients(False); d
+            {(0, 0, 0): 3, (1, 2, 3): 2, (2, 0, 0): 7}
+            sage: d.clear()
+            sage: f.monomial_coefficients()
+            {(0, 0, 0): 3, (1, 2, 3): 2, (2, 0, 0): 7}
+        """
+        return self.dict()
 
     def _im_gens_(self, codomain, im_gens, base_map=None):
         """
@@ -2508,13 +2547,13 @@ cdef class NCPolynomial_plural(RingElement):
             sage: f.monomials()
             [x]
 
-        Check if :trac:`12706` is fixed::
+        Check if :issue:`12706` is fixed::
 
             sage: f = P(0)
             sage: f.monomials()
             []
 
-        Check if :trac:`7152` is fixed::
+        Check if :issue:`7152` is fixed::
 
             sage: # needs sage.symbolic
             sage: x = var('x')
@@ -2842,7 +2881,7 @@ cpdef MPolynomialRing_libsingular new_CRing(RingWrap rw, base_ring) noexcept:
         sage: R # indirect doctest
         Multivariate Polynomial Ring in x, y, z over Rational Field
 
-    Check that :trac:`13145` has been resolved::
+    Check that :issue:`13145` has been resolved::
 
         sage: h = hash(R.gen() + 1) # sets currRing
         sage: from sage.libs.singular.ring import ring_refcount_dict, currRing_wrapper
@@ -2851,7 +2890,7 @@ cpdef MPolynomialRing_libsingular new_CRing(RingWrap rw, base_ring) noexcept:
         sage: ring_refcount_dict[currRing_wrapper()] - curcnt
         2
 
-    Check that :trac:`29311` is fixed::
+    Check that :issue:`29311` is fixed::
 
         sage: R.<x,y,z> = QQ[]
         sage: from sage.libs.singular.function_factory import ff

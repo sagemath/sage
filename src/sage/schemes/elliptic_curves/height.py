@@ -72,7 +72,7 @@ class UnionOfIntervals:
     .. TODO::
 
         Unify :class:`UnionOfIntervals` with the class ``RealSet``
-        introduced by :trac:`13125`; see :trac:`16063`.
+        introduced by :issue:`13125`; see :issue:`16063`.
     """
     def __init__(self, endpoints):
         r"""
@@ -1177,7 +1177,7 @@ class EllipticCurveCanonicalHeight:
             3.51086196882538
             sage: L(P) / L.real_period()
             0.867385122699931
-            sage: xP = v(P.xy()[0])
+            sage: xP = v(P.x())
             sage: H = E.height_function()
             sage: H.psi(xP, v)
             0.867385122699931
@@ -1950,7 +1950,7 @@ class EllipticCurveCanonicalHeight:
 
         TESTS:
 
-        This example from the LMFDB gave problems before the fix in :trac:`8829`::
+        This example from the LMFDB gave problems before the fix in :issue:`8829`::
 
             sage: # needs sage.rings.number_field
             sage: K.<phi> = NumberField(x^2 - x - 1)

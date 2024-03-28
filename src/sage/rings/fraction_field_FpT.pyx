@@ -268,7 +268,7 @@ cdef class FpTElement(FieldElement):
         """
         return self.numer()(*args, **kwds) / self.denom()(*args, **kwds)
 
-    def subs(self, *args, **kwds):
+    def subs(self, in_dict=None, *args, **kwds):
         """
         EXAMPLES::
 
@@ -280,7 +280,7 @@ cdef class FpTElement(FieldElement):
             sage: f.subs(X=2)
             (t + 1)/(t + 10)
         """
-        return self.numer().subs(*args, **kwds) / self.denom().subs(*args, **kwds)
+        return self.numer().subs(in_dict, *args, **kwds) / self.denom().subs(in_dict, *args, **kwds)
 
     def valuation(self, v):
         """
@@ -1128,7 +1128,7 @@ cdef class Polyring_FpT_coerce(RingHomomorphism):
 
         TESTS:
 
-        Check that :trac:`12217` and :trac:`16811` are fixed::
+        Check that :issue:`12217` and :issue:`16811` are fixed::
 
             sage: R.<t> = GF(5)[]
             sage: K = R.fraction_field()
@@ -1223,7 +1223,7 @@ cdef class FpT_Polyring_section(Section):
     .. WARNING::
 
         Comparison of ``FpT_Polyring_section`` objects is not currently
-        implemented. See :trac:`23469`. ::
+        implemented. See :issue:`23469`. ::
 
             sage: fprime = loads(dumps(f))
             sage: fprime == f
@@ -1525,7 +1525,7 @@ cdef class FpT_Fp_section(Section):
     .. WARNING::
 
         Comparison of ``FpT_Fp_section`` objects is not currently
-        implemented. See :trac:`23469`. ::
+        implemented. See :issue:`23469`. ::
 
             sage: fprime = loads(dumps(f))
             sage: fprime == f

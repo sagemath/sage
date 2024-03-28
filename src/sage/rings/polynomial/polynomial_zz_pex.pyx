@@ -87,7 +87,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
 
         TESTS:
 
-        The following tests against a bug that was fixed in :trac:`9944`.
+        The following tests against a bug that was fixed in :issue:`9944`.
         With the ring definition above, we now have::
 
             sage: R([3,'1234'])
@@ -102,7 +102,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             TypeError: not a constant polynomial
 
         Check that NTL contexts are correctly restored and that
-        :trac:`9524` has been fixed::
+        :issue:`9524` has been fixed::
 
             sage: x = polygen(GF(9, 'a'))
             sage: x = polygen(GF(49, 'a'))
@@ -111,7 +111,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             sage: 5*x
             5*x
 
-        Check that :trac:`11239` is fixed::
+        Check that :issue:`11239` is fixed::
 
             sage: Fq.<a> = GF(2^4); Fqq.<b> = GF(3^7)
             sage: PFq.<x> = Fq[]; PFqq.<y> = Fqq[]
@@ -235,7 +235,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
 
         TESTS:
 
-        The work around provided in :trac:`10475` is superseded by :trac:`24072`::
+        The work around provided in :issue:`10475` is superseded by :issue:`24072`::
 
             sage: F.<x> = GF(4)
             sage: P.<y> = F[]
@@ -246,7 +246,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             TypeError: positive characteristic not allowed in symbolic computations
 
         Check that polynomial evaluation works when using logarithmic
-        representation of finite field elements (:trac:`16383`)::
+        representation of finite field elements (:issue:`16383`)::
 
             sage: for i in range(10):
             ....:     F = FiniteField(random_prime(15) ** ZZ.random_element(2, 5), 'a', repr='log')
@@ -513,13 +513,18 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             sage: f.reverse(degree=200)
             2*x^200 + 3*x^199 + 5*x^198 + 7*x^197 + 11*x^196 + 13*x^195 + 17*x^194 + 19*x^193
             sage: f.reverse(degree=0)
-            Traceback (most recent call last):
-            ...
-            ValueError: degree argument must be a non-negative integer, got 0
+            2
             sage: f.reverse(degree=-5)
             Traceback (most recent call last):
             ...
             ValueError: degree argument must be a non-negative integer, got -5
+
+        Check that this implementation is compatible with the generic one::
+
+            sage: p = R([0,1,0,2])
+            sage: all(p.reverse(d) == Polynomial.reverse(p, d)
+            ....:     for d in [None, 0, 1, 2, 3, 4])
+            True
         """
         self._parent._modulus.restore()
 
@@ -533,11 +538,10 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         # When a degree has been supplied, ensure it is a valid input
         cdef unsigned long d
         if degree is not None:
-            if degree <= 0:
+            if degree < 0:
                 raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
-            try:
-                d = degree
-            except ValueError:
+            d = degree
+            if d != degree:
                 raise ValueError("degree argument must be a non-negative integer, got %s" % (degree))
             ZZ_pEX_reverse_hi(r.x, (<Polynomial_ZZ_pEX> self).x, d)
         else:

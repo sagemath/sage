@@ -161,7 +161,7 @@ cdef class ECModularSymbol:
 
         TESTS:
 
-        This one is from :trac:`8042`::
+        This one is from :issue:`8042`::
 
             sage: from sage.libs.eclib.newforms import ECModularSymbol
             sage: E = EllipticCurve('858k2')
@@ -169,7 +169,7 @@ cdef class ECModularSymbol:
             Modular symbol with sign 1 over Rational Field attached to Elliptic Curve defined by y^2 + x*y = x^3 + 16353089*x - 335543012233 over Rational Field
 
         We allow a-invariants which are larger than 64 bits
-        (:trac:`16977`)::
+        (:issue:`16977`)::
 
             sage: E = EllipticCurve([-25194941007454971, -1539281792450963687794218])  # non-minimal model of 21758k3
             sage: ECModularSymbol(E)  # long time
@@ -317,7 +317,7 @@ cdef class ECModularSymbol:
             ...
             ValueError: impossible to evaluate both symbols on a plus space
 
-        TESTS (see :trac:`11211`)::
+        TESTS (see :issue:`11211`)::
 
             sage: from sage.libs.eclib.newforms import ECModularSymbol
             sage: E = EllipticCurve('11a')

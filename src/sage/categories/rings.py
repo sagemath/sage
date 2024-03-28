@@ -49,7 +49,7 @@ class Rings(CategoryWithAxiom):
 
     .. TODO::
 
-        (see :trac:`sage_trac/wiki/CategoriesRoadMap`)
+        (see :issue:`sage_trac/wiki/CategoriesRoadMap`)
 
         - Make Rings() into a subcategory or alias of Algebras(ZZ);
 
@@ -322,6 +322,23 @@ class Rings(CategoryWithAxiom):
             """
             return True
 
+        def is_commutative(self) -> bool:
+            """
+            Return whether the ring is commutative.
+
+            The answer is ``True`` only if the category is a sub-category of
+            ``CommutativeRings``.
+
+            It is recommended to use instead ``R in Rings().Commutative()``.
+
+            EXAMPLES::
+
+                sage: Q.<i,j,k> = QuaternionAlgebra(QQ, -1, -1)                             # needs sage.combinat sage.modules
+                sage: Q.is_commutative()                                                    # needs sage.combinat sage.modules
+                False
+            """
+            return False
+
         def is_zero(self) -> bool:
             """
             Return ``True`` if this is the zero ring.
@@ -431,7 +448,7 @@ class Rings(CategoryWithAxiom):
                 parents that belong to the category of rings also
                 inherits from the base class of rings. Therefore, we
                 implemented a ``__mul__`` method for parents, that
-                calls a ``_mul_`` method implemented here. See :trac:`7797`.
+                calls a ``_mul_`` method implemented here. See :issue:`7797`.
 
             INPUT:
 
@@ -536,7 +553,7 @@ class Rings(CategoryWithAxiom):
                 The code is copied from the base class of rings.
                 This is since there are rings that do not inherit
                 from that class, such as matrix algebras.  See
-                :trac:`7797`.
+                :issue:`7797`.
 
             EXAMPLES::
 
@@ -615,7 +632,7 @@ class Rings(CategoryWithAxiom):
                 :class:`~sage.rings.ring.Ring`. This is
                 because there are rings that do not inherit
                 from that class, such as matrix algebras.
-                See :trac:`7797`.
+                See :issue:`7797`.
 
             INPUT:
 
@@ -1330,6 +1347,34 @@ class Rings(CategoryWithAxiom):
                 if not self.has_coerce_map_from(base):
                     raise ValueError("base must be a subring of this ring")
                 raise NotImplementedError
+
+        def _random_nonzero_element(self, *args, **kwds):
+            """
+            Return a random non-zero element in this ring.
+
+            The default behaviour of this method is to repeatedly call the
+            ``random_element`` method until a non-zero element is obtained.
+
+            In this implementation, all parameters are simply pushed forward
+            to the ``random_element`` method.
+
+            INPUT:
+
+            - ``*args``, ``**kwds`` - parameters that can be forwarded to
+              the ``random_element`` method
+
+            EXAMPLES::
+
+                sage: ZZ._random_nonzero_element() != 0
+                True
+                sage: A = GF((5, 3))
+                sage: A._random_nonzero_element() != 0
+                True
+            """
+            while True:
+                x = self.random_element(*args, **kwds)
+                if not x.is_zero():
+                    return x
 
     class ElementMethods:
         def is_unit(self) -> bool:

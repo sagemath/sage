@@ -147,7 +147,7 @@ class DocTestReporter(SageObject):
             False
 
         When latex is available, doctests marked with optional tag
-        ``latex`` are run by default since :trac:`32174`::
+        ``latex`` are run by default since :issue:`32174`::
 
             sage: filename = os.path.join(SAGE_SRC,'sage','misc','latex.py')
             sage: DC = DocTestController(DocTestDefaults(),[filename])
@@ -213,10 +213,13 @@ class DocTestReporter(SageObject):
         baseline = self.controller.source_baseline(source)
         if fail_msg:
             cmd += "  # " + fail_msg
-        if baseline.get('failed', False):
+        if failed := baseline.get('failed', False):
             if not fail_msg:
                 cmd += "  #"
-            cmd += " [failed in baseline]"
+            if failed is True:
+                cmd += " [failed in baseline]"
+            else:
+                cmd += f" [failed in baseline: {failed}]"
         return cmd
 
     def report(self, source, timeout, return_code, results, output, pid=None):

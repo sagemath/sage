@@ -14,7 +14,7 @@ quaternion algebras and quaternion algebras over number fields.
 
 TESTS:
 
-Check that :trac:`20829` is fixed::
+Check that :issue:`20829` is fixed::
 
     sage: D.<i,j,k> = QuaternionAlgebra(QQ,-1,-3)
     sage: hash(i)
@@ -683,6 +683,30 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
             -26/3
         """
         return (self.conjugate() * right).reduced_trace()
+
+    def _im_gens_(self, codomain, im_gens, base_map):
+        r"""
+        Return the image of this quaternion under the morphism
+        defined by ``im_gens`` in ``codomain``, where elements
+        of the base ring are mapped by ``base_map``.
+
+        EXAMPLES::
+
+            sage: Quat.<i,j,k> = QuaternionAlgebra(-1, -19)
+            sage: b = 5 + 6*i + 7*j + 8*k
+            sage: ims = [~b * g * b for g in Quat.gens()]
+            sage: Quat(1)._im_gens_(Quat, ims, None) == 1
+            True
+            sage: i._im_gens_(Quat, ims, None) == ims[0]
+            True
+            sage: j._im_gens_(Quat, ims, None) == ims[1]
+            True
+            sage: k._im_gens_(Quat, ims, None) == ims[2]
+            True
+        """
+        if base_map is None:
+            base_map = lambda v: v
+        return sum(base_map(c)*g for c,g in zip(self, [1] + list(im_gens)))
 
 
 cdef class QuaternionAlgebraElement_generic(QuaternionAlgebraElement_abstract):
@@ -1803,7 +1827,7 @@ cdef class QuaternionAlgebraElement_number_field(QuaternionAlgebraElement_abstra
             sage: z._add_(w)
             2*a + (2*a + 4/3)*k
 
-        Check that the fix in :trac:`17099` is correct::
+        Check that the fix in :issue:`17099` is correct::
 
             sage: x = polygen(QQ, 'x')
             sage: K = NumberField(x**3 + x - 1, 'a')

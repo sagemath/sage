@@ -23,7 +23,7 @@ from sage.structure.element import have_same_parent
 
 class PosetElement(Element):
 
-    def __init__(self, poset, element, vertex):
+    def __init__(self, poset, element, vertex) -> None:
         r"""
         Establish the parent-child relationship between ``poset``
         and ``element``, where ``element`` is associated to the
@@ -118,7 +118,7 @@ class PosetElement(Element):
             sage: PosetElement(P,1,"c") == PosetElement(P,0,"c")
             True
 
-        Test that :trac:`12351` is fixed::
+        Test that :issue:`12351` is fixed::
 
             sage: P(0) == int(0)
             False

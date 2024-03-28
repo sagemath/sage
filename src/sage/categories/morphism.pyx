@@ -178,8 +178,9 @@ cdef class Morphism(Map):
             sage: f = R.hom([t**2])
             sage: f.category()
             Category of endsets of unital magmas and right modules over
-             (euclidean domains and infinite enumerated sets and metric spaces)
-             and left modules over (euclidean domains
+             (Dedekind domains and euclidean domains
+              and infinite enumerated sets and metric spaces)
+             and left modules over (Dedekind domains and euclidean domains
              and infinite enumerated sets and metric spaces)
 
             sage: # needs sage.rings.number_field
@@ -364,14 +365,14 @@ cdef class Morphism(Map):
             NotImplementedError: unable to compare morphisms of type <... 'sage.categories.morphism.IdentityMorphism'>
             and <... 'sage.categories.morphism.SetMorphism'> with domain Partitions of the integer 5
 
-        We check that :trac:`28617` is fixed::
+        We check that :issue:`28617` is fixed::
 
             sage: FF = GF(2^20)                                                         # needs sage.rings.finite_rings
             sage: f = FF.frobenius_endomorphism()                                       # needs sage.rings.finite_rings
             sage: f == FF.frobenius_endomorphism()                                      # needs sage.rings.finite_rings
             True
 
-        and that :trac:`29632` is fixed::
+        and that :issue:`29632` is fixed::
 
             sage: R.<x,y> = QuadraticField(-1)[]                                        # needs sage.rings.number_field
             sage: f = R.hom(R.gens(), R)                                                # needs sage.rings.number_field
@@ -515,7 +516,7 @@ cdef class IdentityMorphism(Morphism):
             sage: E.identity().is_identity()                                            # needs sage.combinat
             True
 
-        Check that :trac:`15478` is fixed::
+        Check that :issue:`15478` is fixed::
 
             sage: # needs sage.rings.finite_rings
             sage: K.<z> = GF(4)

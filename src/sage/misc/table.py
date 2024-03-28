@@ -432,7 +432,7 @@ class table(SageObject):
             widths = w
         return tuple(widths)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         String representation of a table.
 
@@ -470,7 +470,8 @@ class table(SageObject):
 
         for row in rows[:-1]:
             s += self._str_table_row(row, header_row=False)
-        s += self._str_table_row(rows[-1], header_row=False, last_row=True)
+        if rows:
+            s += self._str_table_row(rows[-1], header_row=False, last_row=True)
         return s.strip("\n")
 
     def _rich_repr_(self, display_manager, **kwds):
@@ -509,7 +510,7 @@ class table(SageObject):
             sage: T._str_table_row([1,2,3], False)
             '│  1 ║   2 |     3 |\n├────╫─────┼───────┤\n'
 
-        Check that :trac:`14601` has been fixed::
+        Check that :issue:`14601` has been fixed::
 
             sage: table([['111111', '222222', '333333']])._str_table_row([False,True,None], False)
             '  False    True     None\n'

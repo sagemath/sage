@@ -651,7 +651,7 @@ class ColoredPermutations(Parent, UniqueRepresentation):
         return {i: ~s[i] for i in self.index_set()}
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 
@@ -1578,7 +1578,7 @@ class SignedPermutations(ColoredPermutations):
 
         TESTS:
 
-        Check that this is the element of maximal length (:trac:`25200`)::
+        Check that this is the element of maximal length (:issue:`25200`)::
 
             sage: S = SignedPermutations(4)
             sage: S.long_element().length() == max(x.length() for x in S)

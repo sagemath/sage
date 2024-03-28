@@ -91,7 +91,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         TESTS:
 
-        Check :trac:`22622`::
+        Check :issue:`22622`::
 
             sage: P1 = Polyhedron(vertices = [[1, 0], [0, 1]], rays = [[1, 1]])
             sage: P1.is_lattice_polytope()
@@ -514,7 +514,7 @@ class Polyhedron_ZZ(Polyhedron_QQ):
 
         TESTS:
 
-        Test that :trac:`28551` is fixed::
+        Test that :issue:`28551` is fixed::
 
             sage: polytopes.cube(backend='normaliz').polar().backend()  # optional - pynormaliz
             'normaliz'

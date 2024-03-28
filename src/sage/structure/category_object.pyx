@@ -210,9 +210,11 @@ cdef class CategoryObject(SageObject):
         EXAMPLES::
 
             sage: ZZ.categories()
-            [Join of Category of euclidean domains
+            [Join of Category of Dedekind domains
+                 and Category of euclidean domains
                  and Category of infinite enumerated sets
                  and Category of metric spaces,
+             Category of Dedekind domains,
              Category of euclidean domains,
              Category of principal ideal domains,
              Category of unique factorization domains,
@@ -350,7 +352,7 @@ cdef class CategoryObject(SageObject):
             Univariate Polynomial Ring in x over Rational Field
 
         For orders, we correctly use the ring generator, see
-        :trac:`15348`::
+        :issue:`15348`::
 
             sage: A.<i> = ZZ.extension(x^2 + 1)                                         # needs sage.rings.number_field
             sage: i                                                                     # needs sage.rings.number_field
@@ -365,7 +367,12 @@ cdef class CategoryObject(SageObject):
             sage: z.minpoly()                                                           # needs sage.rings.number_field
             x^2 + 3
         """
-        return self._defining_names()[:n]
+        names = self._defining_names()
+        if isinstance(names, (list, tuple)):
+            return names[:n]
+        # case of Family
+        it = iter(names)
+        return tuple(next(it) for i in range(n))
 
     @cached_method
     def _defining_names(self):
@@ -388,7 +395,7 @@ cdef class CategoryObject(SageObject):
             (x,)
 
         For orders, we correctly use the ring generator, see
-        :trac:`15348`::
+        :issue:`15348`::
 
             sage: B.<z> = EquationOrder(x^2 + 3)                                        # needs sage.rings.number_field
             sage: B._defining_names()                                                   # needs sage.rings.number_field
@@ -501,7 +508,7 @@ cdef class CategoryObject(SageObject):
         In an old version, it was impossible to temporarily change
         the names if no names were previously assigned. But if one
         wants to print elements of the quotient of such an "unnamed"
-        ring, an error resulted. That was fixed in :trac:`11068`::
+        ring, an error resulted. That was fixed in :issue:`11068`::
 
             sage: # needs sage.modules
             sage: MS = MatrixSpace(GF(5), 2, 2)

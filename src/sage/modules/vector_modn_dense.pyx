@@ -79,7 +79,7 @@ TESTS::
     sage: isinstance(hash(w), int)
     True
 
-Test that :trac:`28042` is fixed::
+Test that :issue:`28042` is fixed::
 
     sage: # needs sage.rings.finite_rings
     sage: p = 193379

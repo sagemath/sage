@@ -23,6 +23,7 @@ from sage.structure.element cimport FieldElement, parent
 from sage.structure.richcmp cimport richcmp
 
 from sage.rings.rational_field import QQ
+from sage.rings.integer_ring import ZZ
 
 import sage.misc.latex as latex
 
@@ -62,14 +63,14 @@ cdef class FractionFieldElement(FieldElement):
 
     TESTS:
 
-    Test if :trac:`5451` is fixed::
+    Test if :issue:`5451` is fixed::
 
         sage: A = FiniteField(9,'theta')['t']                                           # needs sage.rings.finite_rings
         sage: K.<t> = FractionField(A)                                                  # needs sage.rings.finite_rings
         sage: f = 2/(t^2 + 2*t); g = t^9/(t^18 + t^10 + t^2); f + g                     # needs sage.rings.finite_rings
         (2*t^15 + 2*t^14 + 2*t^13 + 2*t^12 + 2*t^11 + 2*t^10 + 2*t^9 + t^7 + t^6 + t^5 + t^4 + t^3 + t^2 + t + 1)/(t^17 + t^9 + t)
 
-    Test if :trac:`8671` is fixed::
+    Test if :issue:`8671` is fixed::
 
         sage: P.<n> = QQ[]
         sage: F = P.fraction_field()
@@ -182,7 +183,7 @@ cdef class FractionFieldElement(FieldElement):
 
         TESTS:
 
-        Check that :trac:`8111` is fixed::
+        Check that :issue:`8111` is fixed::
 
             sage: K.<k>= QQ[]
             sage: frac = (64*k^2+128)/(64*k^3+256)
@@ -378,7 +379,7 @@ cdef class FractionFieldElement(FieldElement):
             sage: hash(R(1)/R(2))==hash(1/2)
             True
 
-        Check that :trac:`16268` is fixed::
+        Check that :issue:`16268` is fixed::
 
             sage: ku.<u> = FractionField(PolynomialRing(QQ,'u'))
             sage: a = 27*u^2+81*u+243
@@ -392,7 +393,7 @@ cdef class FractionFieldElement(FieldElement):
             sage: len(set([s,t]))
             1
 
-        Check that :trac:`25199` is fixed::
+        Check that :issue:`25199` is fixed::
 
             sage: R.<x,y,z> = QQbar[]                                                   # needs sage.rings.number_field
             sage: hash(R.0) == hash(FractionField(R).0)
@@ -445,6 +446,41 @@ cdef class FractionFieldElement(FieldElement):
             (-2*x1*x2 + x1 + 1)/(x1 + x2)
         """
         return self._numerator(*x, **kwds) / self._denominator(*x, **kwds)
+
+    def subs(self, in_dict=None, *args, **kwds):
+        r"""
+        Substitute variables in the numerator and denominator of ``self``.
+
+        If a dictionary is passed, the keys are mapped to generators
+        of the parent ring.  Otherwise, the arguments are transmitted
+        unchanged to the method ``subs`` of the numerator and the
+        denominator.
+
+        EXAMPLES::
+
+            sage: x, y = PolynomialRing(ZZ, 2, 'xy').gens()
+            sage: f = x^2 + y + x^2*y^2 + 5
+            sage: (1/f).subs(x=5)
+            1/(25*y^2 + y + 30)
+
+        TESTS:
+
+        Check that :issue:`37122` is fixed::
+
+            sage: P = PolynomialRing(QQ, ["x%s" % i for i in range(10000)])
+            sage: PF = P.fraction_field()
+            sage: p = sum(i*P.gen(i) for i in range(5)) / sum(i*P.gen(i) for i in range(8))
+            sage: v = P.gen(4)
+            sage: p.subs({v: 100})
+            (x1 + 2*x2 + 3*x3 + 400)/(x1 + 2*x2 + 3*x3 + 5*x5 + 6*x6 + 7*x7 + 400)
+        """
+        if isinstance(in_dict, dict):
+            R = self.parent().base()
+            in_dict = {ZZ(m) if m in ZZ else R(m): v for m, v in in_dict.items()}
+
+        num = self._numerator.subs(in_dict, *args, **kwds)
+        den = self._denominator.subs(in_dict, *args, **kwds)
+        return num / den
 
     def _is_atomic(self):
         """
@@ -1100,7 +1136,7 @@ cdef class FractionFieldElement(FieldElement):
             sage: pol(rat)
             (2*y^3 + 3*y^2*z + 3*y*z^2 + z^3)/y^3
 
-        Check that :trac:`25440` has been resolved::
+        Check that :issue:`25440` has been resolved::
 
             sage: R.<x> = GF(2)[]
             sage: S.<y> = R.fraction_field()[]

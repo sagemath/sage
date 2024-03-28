@@ -93,7 +93,7 @@ One can prove that two ideals `I` and `J` are equivalent if and only
 if there exists an element `\alpha \in I \overline{J}` such
 `N(\alpha)=N(I)N(J)`.
 
-``is_equivalent(I,J)`` returns true if `I` and `J` are equivalent. This
+``is_right_equivalent(I,J)`` returns true if `I` and `J` are equivalent. This
 method first compares the theta series of `I` and `J`. If they are the
 same, it computes the theta series of the lattice `I\overline(J)`. It
 returns true if the `n^{th}` coefficient of this series is nonzero
@@ -203,6 +203,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.arith.misc import gcd, factor, prime_divisors, kronecker, next_prime
+from sage.categories.commutative_rings import CommutativeRings
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
@@ -219,7 +220,6 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
-from sage.rings.ring import CommutativeRing
 from sage.structure.richcmp import richcmp, richcmp_method
 
 lazy_import('sage.algebras.quatalg.quaternion_algebra', ['QuaternionAlgebra', 'basis_for_quaternion_lattice'])
@@ -300,7 +300,7 @@ def BrandtModule(N, M=1, weight=2, base_ring=QQ, use_cache=True):
         raise ValueError("M must be coprime to N")
     if weight < 2:
         raise ValueError("weight must be at least 2")
-    if not isinstance(base_ring, CommutativeRing):
+    if base_ring not in CommutativeRings():
         raise TypeError("base_ring must be a commutative ring")
     key = (N, M, weight, base_ring)
     if use_cache:
@@ -590,7 +590,7 @@ class BrandtModuleElement(HeckeModuleElement):
 
         TESTS:
 
-        One check for :trac:`12866`::
+        One check for :issue:`12866`::
 
             sage: Br = BrandtModule(2,7)
             sage: g1, g2 = Br.basis()
@@ -1193,7 +1193,7 @@ class BrandtModule_class(AmbientHeckeModule):
                     T[r, v[0]] += 1
                 else:
                     for i in v:
-                        if C[i].is_equivalent(J, 0):
+                        if C[i].is_right_equivalent(J, 0):
                             T[r, i] += 1
                             break
         return T
@@ -1325,7 +1325,7 @@ class BrandtModule_class(AmbientHeckeModule):
             sage: B = BrandtModule(1009)
             sage: Is = B.right_ideals()
             sage: n = len(Is)
-            sage: prod(not Is[i].is_equivalent(Is[j]) for i in range(n) for j in range(i))
+            sage: prod(not Is[i].is_right_equivalent(Is[j]) for i in range(n) for j in range(i))
             1
         """
         p = self._smallest_good_prime()
@@ -1353,7 +1353,7 @@ class BrandtModule_class(AmbientHeckeModule):
                     J_theta = tuple(J.theta_series_vector(B))
                     if J_theta in ideals_theta:
                         for K in ideals_theta[J_theta]:
-                            if J.is_equivalent(K, 0):
+                            if J.is_right_equivalent(K, 0):
                                 is_new = False
                                 break
                     if is_new:
@@ -1365,7 +1365,10 @@ class BrandtModule_class(AmbientHeckeModule):
                             ideals_theta[J_theta] = [J]
                         verbose("found %s of %s ideals" % (len(ideals), self.dimension()), level=2)
                         if len(ideals) >= self.dimension():
-                            ideals = tuple(sorted(ideals))
+                            # order by basis matrix (as ideals were previously
+                            # ordered) for backward compatibility and
+                            # deterministic order of the output
+                            ideals = tuple(sorted(ideals, key=lambda x: x.basis_matrix()))
                             self.__right_ideals = ideals
                             return ideals
                         got_something_new = True

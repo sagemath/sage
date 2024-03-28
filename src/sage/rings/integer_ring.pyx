@@ -56,12 +56,12 @@ import sage.rings.rational_field
 import sage.rings.ideal
 import sage.libs.pari.all
 import sage.rings.ideal
-from sage.categories.basic import EuclideanDomains
+from sage.categories.basic import EuclideanDomains, DedekindDomains
 from sage.categories.infinite_enumerated_sets import InfiniteEnumeratedSets
 from sage.rings.number_field.number_field_element_base import NumberFieldElement_base
 from sage.structure.coerce cimport is_numpy_type
 from sage.structure.element cimport parent
-from sage.structure.parent_gens import ParentWithGens
+from sage.structure.parent cimport Parent
 from sage.structure.richcmp cimport rich_to_bool
 
 from sage.misc.misc_c import prod
@@ -122,7 +122,8 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         sage: Z.is_field()
         False
         sage: Z.category()
-        Join of Category of euclidean domains
+        Join of Category of Dedekind domains
+            and Category of euclidean domains
             and Category of infinite enumerated sets
             and Category of metric spaces
         sage: Z(2^(2^5) + 1)
@@ -306,13 +307,13 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             sage: A = IntegerRing_class()
 
         We check that ``ZZ`` is an infinite enumerated set
-        (see :trac:`16239`)::
+        (see :issue:`16239`)::
 
             sage: A in InfiniteEnumeratedSets()
             True
         """
-        ParentWithGens.__init__(self, self, ('x',), normalize=False,
-                                category=(EuclideanDomains(), InfiniteEnumeratedSets().Metric()))
+        Parent.__init__(self, base=self, names=('x',), normalize=False,
+                        category=(EuclideanDomains(), DedekindDomains(), InfiniteEnumeratedSets().Metric()))
         self._populate_coercion_lists_(init_no_parent=True,
                                        convert_method_name='_integer_')
 
@@ -455,7 +456,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
              3626777458843887524118528, 4835703278458516698824704, 6044629098073145873530880,
              7253554917687775048237056, 8462480737302404222943232]
 
-        Make sure :trac:`8818` is fixed::
+        Make sure :issue:`8818` is fixed::
 
             sage: ZZ.range(1r, 10r)
             [1, 2, 3, 4, 5, 6, 7, 8, 9]
@@ -730,7 +731,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
 
         TESTS:
 
-        Check that :trac:`32124` is fixed::
+        Check that :issue:`32124` is fixed::
 
             sage: ZZ.random_element(5, -5, distribution="1/n").parent() is ZZ
             True
@@ -851,17 +852,6 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             return im_gens[0] == base_map(self.gen(0))
         except TypeError:
             return False
-
-    def is_noetherian(self):
-        """
-        Return ``True`` since the integers are a Noetherian ring.
-
-        EXAMPLES::
-
-            sage: ZZ.is_noetherian()
-            True
-        """
-        return True
 
     def _repr_option(self, key):
         """
@@ -1132,6 +1122,11 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         """
         Return the Krull dimension of the integers, which is 1.
 
+        .. NOTE::
+
+            This should rather be inherited from the category
+            of ``DedekindDomains``.
+
         EXAMPLES::
 
             sage: ZZ.krull_dimension()
@@ -1142,6 +1137,11 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
     def is_integrally_closed(self):
         """
         Return that the integer ring is, in fact, integrally closed.
+
+        .. NOTE::
+
+            This should rather be inherited from the category
+            of ``DedekindDomains``.
 
         EXAMPLES::
 
@@ -1573,6 +1573,38 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         """
         from sage.rings.padics.padic_valuation import pAdicValuation
         return pAdicValuation(self, p)
+
+    def from_bytes(self, input_bytes, byteorder="big", is_signed=False):
+        r"""
+        Return the integer represented by the given array of bytes.
+
+        Internally relies on the python ``int.from_bytes()`` method.
+
+        INPUT:
+
+        - ``input_bytes`` -- a bytes-like object or iterable producing bytes
+        - ``byteorder`` -- str (default: ``"big"``); determines the byte order of
+          ``input_bytes``; can only be ``"big"`` or ``"little"``
+        - ``is_signed`` -- boolean (default: ``False``); determines whether to use two's
+          compliment to represent the integer
+
+        EXAMPLES::
+
+            sage: ZZ.from_bytes(b'\x00\x10', byteorder='big')
+            16
+            sage: ZZ.from_bytes(b'\x00\x10', byteorder='little')
+            4096
+            sage: ZZ.from_bytes(b'\xfc\x00', byteorder='big', is_signed=True)
+            -1024
+            sage: ZZ.from_bytes(b'\xfc\x00', byteorder='big', is_signed=False)
+            64512
+            sage: ZZ.from_bytes([255, 0, 0], byteorder='big')
+            16711680
+            sage: type(_)
+            <class 'sage.rings.integer.Integer'>
+        """
+        python_int = int.from_bytes(input_bytes, byteorder=byteorder, signed=is_signed)
+        return self(python_int)
 
 ZZ = IntegerRing_class()
 Z = ZZ

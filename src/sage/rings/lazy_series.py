@@ -730,7 +730,7 @@ class LazyModuleElement(Element):
             True
 
         We compare the shifting with converting to the fraction field
-        (see also :trac:`35293`)::
+        (see also :issue:`35293`)::
 
             sage: M = L.fraction_field()
             sage: f = L([1,2,3,4]); f
@@ -5160,7 +5160,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: T(1-x-2*y + x*y^2)(1/(1-a), 3)
             3 + 8*a + 8*a^2 + 8*a^3 + 8*a^4 + 8*a^5 + 8*a^6 + O(a,b)^7
 
-        Check that issue :trac:`35261` is fixed::
+        Check that issue :issue:`35261` is fixed::
 
             sage: L.<z> = LazyPowerSeriesRing(QQ)
             sage: fun = lambda n: 1 if ZZ(n).is_power_of(2) else 0
@@ -5398,7 +5398,7 @@ class LazyPowerSeries(LazyCauchyProductSeries):
             sage: f.revert()
             (-z) + z^3 + (-z^4) + (-2*z^5) + 6*z^6 + z^7 + O(z^8)
 
-        Check that issue :trac:`35261` is fixed::
+        Check that issue :issue:`35261` is fixed::
 
             sage: L.<z> = LazyPowerSeriesRing(QQ)
             sage: f = L(lambda n: 1 if ZZ(n).is_power_of(2) else 0)
@@ -5617,6 +5617,71 @@ class LazyPowerSeries(LazyCauchyProductSeries):
                                                    lambda c: c.derivative(vars),
                                                    P.is_sparse())
         return P.element_class(P, coeff_stream)
+
+    def adams_operator(self, p):
+        """
+        Return the image of ``self`` under the Adams operator of index ``p``.
+
+        This raises all variables to the power ``p``, both the power
+        series variables and the variables inside the coefficient ring.
+
+        INPUT:
+
+        - ``p`` -- a positive integer
+
+        EXAMPLES:
+
+        With no variables in the base ring::
+
+            sage: A = LazyPowerSeriesRing(QQ,'t')
+            sage: f = A([1,2,3,4]); f
+            1 + 2*t + 3*t^2 + 4*t^3
+            sage: f.adams_operator(2)
+            1 + 2*t^2 + 3*t^4 + 4*t^6
+
+        With variables in the base ring::
+
+            sage: q = polygen(QQ,'q')
+            sage: A = LazyPowerSeriesRing(q.parent(),'t')
+            sage: f = A([0,1+q,2,3+q**2]); f
+            ((q+1)*t) + 2*t^2 + ((q^2+3)*t^3)
+            sage: f.adams_operator(2)
+            ((q^2+1)*t^2) + 2*t^4 + ((q^4+3)*t^6)
+
+        In the multivariate case::
+
+            sage: A = LazyPowerSeriesRing(ZZ,'t,u')
+            sage: f = A({(1,2):4,(2,3):6}); f
+            4*t*u^2 + 6*t^2*u^3
+            sage: f.adams_operator(3)
+            4*t^3*u^6 + 6*t^6*u^9
+
+        TESTS::
+
+            sage: A = LazyPowerSeriesRing(QQ,'t')
+            sage: f = A([1,2,3,4])
+            sage: f.adams_operator(1)
+            1 + 2*t + 3*t^2 + 4*t^3
+            sage: f.adams_operator(-1)
+            Traceback (most recent call last):
+            ...
+            ValueError: p must be a positive integer
+        """
+        if p <= 0:
+            raise ValueError("p must be a positive integer")
+
+        if p == 1:
+            return self
+
+        stretched = self(*[g**p for g in self.parent().gens()])
+        BR = self.base_ring()
+        try:
+            D = {v: v**p for v in BR.gens()}
+            BR.one().subs(D)
+        except AttributeError:
+            return stretched
+
+        return stretched.map_coefficients(lambda cf: cf.subs(D))
 
     def integral(self, variable=None, *, constants=None):
         r"""

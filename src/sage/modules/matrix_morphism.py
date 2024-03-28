@@ -71,6 +71,7 @@ def is_MatrixMorphism(x):
     """
     return isinstance(x, MatrixMorphism_abstract)
 
+
 class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
     def __init__(self, parent, side='left'):
         """
@@ -188,7 +189,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             if parent(x) is not self.domain():
                 x = self.domain()(x)
         except TypeError:
-            raise TypeError("%s must be coercible into %s" % (x,self.domain()))
+            raise TypeError("%s must be coercible into %s" % (x, self.domain()))
         if self.domain().is_ambient():
             x = x.element()
         else:
@@ -860,12 +861,12 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             ]
         """
         if not self.is_endomorphism():
-            raise ArithmeticError("Matrix morphism must be an endomorphism.")
+            raise ArithmeticError("matrix morphism must be an endomorphism")
         D = self.domain()
         if self.side() == "left":
-            E = self.matrix().decomposition(*args,**kwds)
+            E = self.matrix().decomposition(*args, **kwds)
         else:
-            E = self.matrix().transpose().decomposition(*args,**kwds)
+            E = self.matrix().transpose().decomposition(*args, **kwds)
         if D.is_ambient():
             return Sequence([D.submodule(V, check=False) for V, _ in E],
                             cr=True, check=False)
@@ -899,7 +900,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             2
         """
         if not self.is_endomorphism():
-            raise ArithmeticError("Matrix morphism must be an endomorphism.")
+            raise ArithmeticError("matrix morphism must be an endomorphism")
         return self.matrix().determinant()
 
     def fcp(self, var='x'):
@@ -1050,7 +1051,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         EXAMPLES:
 
         Check that this works with the :func:`matrix` function
-        (:trac:`16844`)::
+        (:issue:`16844`)::
 
             sage: H = Hom(ZZ^2, ZZ^3)
             sage: x = H.an_element()
@@ -1635,7 +1636,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
             if A.nrows() != parent.domain().rank():
                 raise ArithmeticError("number of rows of matrix (={}) must equal rank of domain (={})".format(A.nrows(), parent.domain().rank()))
             if A.ncols() != parent.codomain().rank():
-                    raise ArithmeticError("number of columns of matrix (={}) must equal rank of codomain (={})".format(A.ncols(), parent.codomain().rank()))
+                raise ArithmeticError("number of columns of matrix (={}) must equal rank of codomain (={})".format(A.ncols(), parent.codomain().rank()))
         if side == "right":
             if A.nrows() != parent.codomain().rank():
                 raise ArithmeticError("number of rows of matrix (={}) must equal rank of codomain (={})".format(A.nrows(), parent.domain().rank()))
@@ -1697,7 +1698,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
             ValueError: side must be 'left' or 'right', not junk
         """
         if side not in ['left', 'right', None]:
-            raise ValueError("side must be 'left' or 'right', not {0}".format(side))
+            raise ValueError("side must be 'left' or 'right', not {}".format(side))
         if side == self.side() or side is None:
             return self._matrix
         return self._matrix.transpose()
@@ -1756,7 +1757,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
             sage: H.is_surjective()
             True
 
-        This tests if :trac:`11552` is fixed. ::
+        This tests if :issue:`11552` is fixed. ::
 
             sage: V = ZZ^2
             sage: m = matrix(ZZ, [[1,2],[0,2]])
@@ -1794,7 +1795,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
             sage: phi._repr_()
             'Free module morphism defined by the matrix\n[3 0]\n[0 2]\nDomain: Ambient free module of rank 2 over the principal ideal domain Integer Ring\nCodomain: Ambient free module of rank 2 over the principal ideal domain Integer Ring'
         """
-        rep = "Morphism defined by the matrix\n{0}".format(self.matrix())
+        rep = "Morphism defined by the matrix\n{}".format(self.matrix())
         if self._side == 'right':
             rep += " acting by multiplication on the left"
         return rep

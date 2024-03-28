@@ -509,7 +509,7 @@ class SageCustomizations():
 
         TESTS:
 
-        Check that :trac:`31951` is fixed::
+        Check that :issue:`31951` is fixed::
 
              sage: from IPython import get_ipython
              sage: ip = get_ipython()

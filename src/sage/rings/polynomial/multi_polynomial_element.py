@@ -88,7 +88,7 @@ class MPolynomial_element(MPolynomial):
         zeros. In all arithmetic operations on :class:`MPolynomial_element`
         there is an additional call to the method ``remove_zeros`` to clear
         them. This is not ideal because of the presence of inexact zeros, see
-        :trac:`35174`.
+        :issue:`35174`.
     """
     def __init__(self, parent, x):
         """
@@ -149,7 +149,7 @@ class MPolynomial_element(MPolynomial):
 
         TESTS:
 
-        Check :trac:`27446`::
+        Check :issue:`27446`::
 
             sage: P = PolynomialRing(QQ, 't', 0)
             sage: a = P(1)
@@ -178,8 +178,8 @@ class MPolynomial_element(MPolynomial):
         except AttributeError:
             K = self.parent().base_ring()
         y = K(0)
-        for (m,c) in self.element().dict().items():
-            y += c*prod([ x[i]**m[i] for i in range(n) if m[i] != 0])
+        for m, c in self.element().dict().items():
+            y += c * prod(v ** e for v, e in zip(x, m) if e)
         return y
 
     def _richcmp_(self, right, op):
@@ -392,7 +392,7 @@ class MPolynomial_element(MPolynomial):
 
         TESTS:
 
-        Ensure that :trac:`13704` is fixed.::
+        Ensure that :issue:`13704` is fixed.::
 
             sage: R.<t> = PolynomialRing(QQ)
             sage: S.<x,y> = PolynomialRing(R)
@@ -411,40 +411,6 @@ class MPolynomial_element(MPolynomial):
 
     def element(self):
         return self.__element
-
-    def change_ring(self, R):
-        r"""
-        Change the base ring of this polynomial to ``R``.
-
-        INPUT:
-
-        - ``R`` -- ring or morphism.
-
-        OUTPUT: a new polynomial converted to ``R``.
-
-        EXAMPLES::
-
-            sage: R.<x,y> = QQ[]
-            sage: f = x^2 + 5*y
-            sage: f.change_ring(GF(5))
-            x^2
-
-        ::
-
-            sage: # needs sage.rings.number_field
-            sage: K.<w> = CyclotomicField(5)
-            sage: R.<x,y> = K[]
-            sage: f = x^2 + w*y
-            sage: f.change_ring(K.embeddings(QQbar)[1])
-            x^2 + (-0.8090169943749474? + 0.5877852522924731?*I)*y
-        """
-        if isinstance(R, Morphism):
-            #if we're given a hom of the base ring extend to a poly hom
-            if R.domain() == self.base_ring():
-                R = self.parent().hom(R, self.parent().change_ring(R.codomain()))
-            return R(self)
-        else:
-            return self.parent().change_ring(R)(self)
 
 
 class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
@@ -655,7 +621,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         for example if it is a generator of a polynomial algebra which
         maps naturally to this one, then it is converted to an element
         of this algebra. (This fixes the problem reported in
-        :trac:`17366`.)
+        :issue:`17366`.)
 
         ::
 
@@ -697,7 +663,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: R(0).degree()
             -1
 
-        Degree of zero polynomial for other implementation :trac:`20048` ::
+        Degree of zero polynomial for other implementation :issue:`20048` ::
 
             sage: R.<x,y> = GF(3037000453)[]                                            # needs sage.rings.finite_rings
             sage: R.zero().degree(x)
@@ -1422,7 +1388,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         """
         return len(self.element()) == 1
 
-    def subs(self, fixed=None, **kw):
+    def subs(self, fixed=None, **kwds):
         """
         Fix some given variables in a given multivariate polynomial and
         return the changed multivariate polynomials. The polynomial itself
@@ -1434,10 +1400,9 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         INPUT:
 
-
         -  ``fixed`` - (optional) dictionary of inputs
 
-        -  ``**kw`` - named parameters
+        -  ``**kwds`` - named parameters
 
 
         OUTPUT: new :class:`MPolynomial`
@@ -1453,11 +1418,14 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             25*y^2 + y + 30
         """
         variables = list(self.parent().gens())
-        for i in range(0,len(variables)):
-            if str(variables[i]) in kw:
-                variables[i] = kw[str(variables[i])]
-            elif fixed and variables[i] in fixed:
-                variables[i] = fixed[variables[i]]
+        for i in range(len(variables)):
+            if str(variables[i]) in kwds:
+                variables[i] = kwds[str(variables[i])]
+            elif fixed:
+                if variables[i] in fixed:
+                    variables[i] = fixed[variables[i]]
+                elif i in fixed:
+                    variables[i] = fixed[i]
         return self(tuple(variables))
 
     def monomials(self):
@@ -1642,7 +1610,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         TESTS:
 
-        This shows that the issue at :trac:`7077` is fixed::
+        This shows that the issue at :issue:`7077` is fixed::
 
             sage: x,y,z=polygens(QQ,'x,y,z')
             sage: (x^2).variables()
@@ -1988,7 +1956,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             ...
             ValueError: must specify which variable to integrate with respect to
 
-        :trac:`34000`::
+        :issue:`34000`::
 
             sage: R = ZZ['x']['y,z']
             sage: y, z = R.gens()
@@ -2041,7 +2009,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         TESTS:
 
-        Check if we can handle polynomials with no variables, see :trac:`7950`::
+        Check if we can handle polynomials with no variables, see :issue:`7950`::
 
             sage: P = PolynomialRing(ZZ,0,'')
             sage: res = P(10).factor(); res
@@ -2058,13 +2026,13 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             ...
             ArithmeticError: factorization of 0 is not defined
 
-        Check if we can factor a constant polynomial, see :trac:`8207`::
+        Check if we can factor a constant polynomial, see :issue:`8207`::
 
             sage: R.<x,y> = CC[]                                                        # needs sage.rings.real_mpfr
             sage: R(1).factor()                                                         # needs sage.rings.real_mpfr
             1.00000000000000
 
-        Check that we prohibit too large moduli, :trac:`11829`::
+        Check that we prohibit too large moduli, :issue:`11829`::
 
             sage: R.<x,y> = GF(previous_prime(2^31))[]                                  # needs sage.rings.finite_rings
             sage: factor(x + y + 1)                                                     # needs sage.rings.finite_rings
@@ -2073,7 +2041,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             NotImplementedError: Factorization of multivariate polynomials
             over prime fields with characteristic > 2^29 is not implemented.
 
-        Check that we can factor over the algebraic field (:trac:`25390`)::
+        Check that we can factor over the algebraic field (:issue:`25390`)::
 
             sage: # needs sage.libs.singular sage.rings.number_field
             sage: R.<x,y> = PolynomialRing(QQbar)
@@ -2097,7 +2065,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             ...
             TypeError: no conversion of this ring to a Singular ring defined
 
-        We check that the original issue in :trac:`7554` is fixed::
+        We check that the original issue in :issue:`7554` is fixed::
 
             sage: K.<a> = PolynomialRing(QQ)
             sage: R.<x,y> = PolynomialRing(FractionField(K))
@@ -2214,7 +2182,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         TESTS:
 
-        Check that this method works over ``QQbar`` (:trac:`25351`)::
+        Check that this method works over ``QQbar`` (:issue:`25351`)::
 
             sage: # needs sage.rings.number_field
             sage: A.<x,y> = QQbar[]
@@ -2262,7 +2230,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         TESTS:
 
-        Check that this method works over ``QQbar`` (:trac:`25351`)::
+        Check that this method works over ``QQbar`` (:issue:`25351`)::
 
             sage: R.<x,y> = QQbar[]                                                     # needs sage.rings.number_field
             sage: f = y*x^2 + x + 1                                                     # needs sage.rings.number_field
@@ -2324,13 +2292,13 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: a.resultant(b, y)                                                     # needs sage.libs.singular
             2*x^3
 
-        Check that :trac:`15061` is fixed::
+        Check that :issue:`15061` is fixed::
 
             sage: R.<x, y> = AA[]                                                       # needs sage.rings.number_field
             sage: (x^2 + 1).resultant(x^2 - y)                                          # needs sage.libs.singular sage.rings.number_field
             y^2 + 2*y + 1
 
-        Test for :trac:`2693`::
+        Test for :issue:`2693`::
 
             sage: R.<x,y> = RR[]
             sage: p = x + y
@@ -2338,7 +2306,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: p.resultant(q)                                                        # needs sage.libs.singular sage.modules
             -y^2
 
-        Check that this method works over QQbar (:trac:`25351`)::
+        Check that this method works over QQbar (:issue:`25351`)::
 
             sage: # needs sage.rings.number_field
             sage: P.<x,y> = QQbar[]
@@ -2438,7 +2406,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: f = y13*y15 + y9 - y12; f.reduce(J)
             y13*y15 - 2*y12
 
-        Make sure the remainder returns the correct type, fixing :trac:`13903`::
+        Make sure the remainder returns the correct type, fixing :issue:`13903`::
 
             sage: R.<y1,y2> = PolynomialRing(Qp(5), 2, order='lex')                     # needs sage.rings.padics
             sage: G = [y1^2 + y2^2, y1*y2 + y2^2, y2^3]                                 # needs sage.rings.padics
@@ -2447,7 +2415,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
 
         TESTS:
 
-        Verify that :trac:`34105` is fixed::
+        Verify that :issue:`34105` is fixed::
 
             sage: R.<x,y> = AA[]                                                        # needs sage.rings.number_field
             sage: x.reduce(R.zero_ideal())                                              # needs sage.rings.number_field

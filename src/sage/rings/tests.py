@@ -184,7 +184,7 @@ def relative_number_field(n=2, maxdeg=2):
 
     TESTS:
 
-    Check that :trac:`32117` is fixed::
+    Check that :issue:`32117` is fixed::
 
         sage: set_random_seed(3030)
         sage: from sage.rings.tests import relative_number_field
@@ -428,16 +428,16 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
         sage: from sage.rings.tests import test_karatsuba_multiplication
         sage: test_karatsuba_multiplication(ZZ, 6, 5, verbose=True, seed=42)
         test_karatsuba_multiplication: ring=Univariate Polynomial Ring in x over Integer Ring, threshold=2
-        (2*x^6 - x^5 - x^4 - 3*x^3 + 4*x^2 + 4*x + 1)*(4*x^4 + x^3 - 2*x^2 - 20*x + 3)
-          (16*x^2)*(-41*x + 1)
-          (x^6 + 2*x^5 + 8*x^4 - x^3 + x^2 + x)*(-x^2 - 4*x + 3)
-          (-x^3 - x - 8)*(-1)
-          (x - 1)*(-x^5 + 3*x^4 - x^3 + 2*x + 1)
-          (x^3 + x^2 + x + 1)*(4*x^3 + 76*x^2 - x - 1)
-          (x^6 - 5*x^4 - x^3 + 6*x^2 + 1)*(5*x^2 - x + 4)
-          (3*x - 2)*(x - 1)
-          (21)*(14*x^5 - x^2 + 4*x + 1)
-          (12*x^5 - 12*x^2 + 2*x + 1)*(26*x^4 + x^3 + 1)
+          (x^6 + 4*x^5 + 4*x^4 - 3*x^3 - x^2 - x)*(2*x^4 + 3*x^3 - 20*x^2 - 2*x + 1)
+          (4*x^5 + 16*x^2 + x - 41)*(x^2 + x - 1)
+          (8*x^2 + 2*x + 1)*(3)
+          (-4*x - 1)*(-8*x^2 - x)
+          (-x^6 - x^3 - x^2 + x + 1)*(2*x^3 - x + 3)
+          (-x^2 + x + 1)*(x^4 + x^3 - x^2 - x + 76)
+          (4*x^3 + x^2 + 6)*(-x^2 - 5*x)
+          (x + 4)*(-x + 5)
+          (-2*x)*(3*x^2 - x)
+          (x^6 + 21*x^5 + x^4 + 4*x^3 - x^2)*(14*x^4 + x^3 + 2*x^2 - 12*x)
 
     Test Karatsuba multiplication of polynomials of small degree over some common rings::
 
@@ -474,9 +474,9 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
     R = PolynomialRing(base_ring, 'x')
     if verbose:
         print("test_karatsuba_multiplication: ring={}, threshold={}".format(R, threshold))
-    for i in range(numtests):
-        f = R.random_element(randint(0, maxdeg1), *base_ring_random_elt_args)
-        g = R.random_element(randint(0, maxdeg2), *base_ring_random_elt_args)
+    for _ in range(numtests):
+        f = R.random_element(randint(0, maxdeg1), False, *base_ring_random_elt_args)
+        g = R.random_element(randint(0, maxdeg2), False, *base_ring_random_elt_args)
         if verbose:
             print("  ({})*({})".format(f, g))
         if ref_mul(f, g) - f._mul_karatsuba(g, threshold) != 0:
