@@ -816,7 +816,9 @@ Sage-specific environment variables controlling the build process
   Because of this, it is necessary to have an Internet connection while
   building ccache for Sage, so that Sage can pull down the necessary
   sources.
+
 .. _sage_debug:
+
 .. envvar:: SAGE_DEBUG
 
   Controls debugging support. There are three different possible values:
@@ -906,7 +908,9 @@ Sage-specific environment variables controlling the build process
       building Sage from scratch or when installing individual spkgs.
       So you can set this variable to ``yes`` instead of using the ``-s`` flag
       for ``sage -i`` and ``sage -f``.
+
 .. _sage_fat_binary:
+
 .. envvar:: SAGE_FAT_BINARY
 
   To build binaries that will run on the

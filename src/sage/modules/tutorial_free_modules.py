@@ -241,7 +241,7 @@ modules with a basis indexed by any kind of objects.
 
 To learn how to endow such free modules with additional structure,
 define morphisms, or implement modules with several distinguished
-basis, see the :ref:`Implementing Algebraic Structures
-<tutorial-implementing-algebraic-structures>`
+basis, see the `Implementing Algebraic Structures
+<../../../../../thematic_tutorials/tutorial-implementing-algebraic-structures>`_
 thematic tutorial.
 """
