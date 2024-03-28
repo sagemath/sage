@@ -478,6 +478,10 @@ class Chain_class(ModuleElement):
                d_2       d_1  ⎛4⎞  d_0  ⎜2⎟  d_-1
             0 <──── (0) <──── ⎝5⎠ <──── ⎝3⎠ <───── 0
             sage: unicode_art(C())
+                                        ⎛0⎞
+               d_2       d_1  ⎛0⎞  d_0  ⎜0⎟  d_-1
+            0 <──── (0) <──── ⎝0⎠ <──── ⎝0⎠ <───── 0
+            sage: unicode_art(ChainComplex())
             []
         """
         from sage.typeset.unicode_art import UnicodeArt
