@@ -36,7 +36,7 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.integer import Integer
 
 
-class generic_character(SFA_generic):
+class Character_generic(SFA_generic):
 
     def _my_key(self, la):
         r"""
@@ -152,7 +152,7 @@ class generic_character(SFA_generic):
                                     for d in divisors(k))
 
 
-class InducedTrivialCharacterBasis(generic_character):
+class InducedTrivialCharacterBasis(Character_generic):
     r"""
     The induced trivial symmetric group character basis of
     the symmetric functions.
@@ -382,7 +382,7 @@ class InducedTrivialCharacterBasis(generic_character):
         return self._other(self._self_to_power_on_basis(lam))
 
 
-class IrreducibleCharacterBasis(generic_character):
+class IrreducibleCharacterBasis(Character_generic):
     r"""
     The irreducible symmetric group character basis of
     the symmetric functions.

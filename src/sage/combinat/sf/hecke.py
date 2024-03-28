@@ -125,6 +125,17 @@ class HeckeCharacter(SymmetricFunctionAlgebra_multiplicative):
     def __classcall__(cls, Sym, q='q'):
         """
         Normalize the arguments.
+
+        TESTS::
+
+            sage: R.<q, t> = QQ[]
+            sage: B1 = SymmetricFunctions(R).qbar()
+            sage: B2 = SymmetricFunctions(R).qbar(q)
+            sage: B3 = SymmetricFunctions(R).qbar(t)
+            sage: B1 is B2
+            True
+            sage: B1 == B3
+            False
         """
         return super().__classcall__(cls, Sym, Sym.base_ring()(q))
 

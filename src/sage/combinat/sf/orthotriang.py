@@ -53,6 +53,17 @@ class SymmetricFunctionAlgebra_orthotriang(sfa.SymmetricFunctionAlgebra_generic)
     def __classcall__(cls, Sym, base, scalar, prefix, basis_name, leading_coeff=None):
         """
         Normalize the arguments.
+
+        TESTS::
+
+            sage: from sage.combinat.sf.sfa import zee
+            sage: from sage.combinat.sf.orthotriang import SymmetricFunctionAlgebra_orthotriang
+            sage: Sym = SymmetricFunctions(QQ)
+            sage: m = Sym.m()
+            sage: B1 = SymmetricFunctionAlgebra_orthotriang(Sym, m, zee, 's', 'Schur')
+            sage: B2 = SymmetricFunctionAlgebra_orthotriang(Sym, m, zee, 's', 'Schur', None)
+            sage: B1 is B2
+            True
         """
         return super().__classcall__(cls, Sym, base, scalar, prefix, basis_name, leading_coeff)
 
@@ -299,6 +310,16 @@ class OrthotriangBasisFunctor(SymmetricFunctionsFunctor):
         INPUT:
 
         - ``basis`` -- the basis of the symmetric function algebra
+
+        TESTS::
+
+            sage: from sage.combinat.sf.sfa import zee
+            sage: from sage.combinat.sf.orthotriang import SymmetricFunctionAlgebra_orthotriang
+            sage: Sym = SymmetricFunctions(QQ)
+            sage: m = Sym.m()
+            sage: s = SymmetricFunctionAlgebra_orthotriang(Sym, m, zee, 's', 'Schur')
+            sage: F, R = s.construction()
+            sage: TestSuite(F).run()
         """
         self._basis_name = basis.basis_name()
         self._sf_base = basis._sf_base

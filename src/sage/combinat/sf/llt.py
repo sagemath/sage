@@ -95,6 +95,17 @@ class LLT_class(UniqueRepresentation):
     def __classcall__(cls, Sym, k, t='t'):
         """
         Normalize the arguments.
+
+        TESTS::
+
+            sage: R.<q, t> = QQ[]
+            sage: B1 = SymmetricFunctions(R).llt(3).hspin()
+            sage: B2 = SymmetricFunctions(R).llt(3, t).hspin()
+            sage: B3 = SymmetricFunctions(R).llt(3, q).hspin()
+            sage: B1 is B2
+            True
+            sage: B1 == B3
+            False
         """
         return super().__classcall__(cls, Sym, k, Sym.base_ring()(t))
 

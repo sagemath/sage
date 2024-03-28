@@ -975,6 +975,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         from . import witt
         return witt.SymmetricFunctionAlgebra_witt(self, coerce_h=coerce_h, coerce_e=coerce_e, coerce_p=coerce_p)
     w = witt
+    Witt = witt
 
     def irreducible_symmetric_group_character(self):
         r"""

@@ -54,6 +54,17 @@ class Jack(UniqueRepresentation):
     def __classcall__(cls, Sym, t='t'):
         """
         Normalize the arguments.
+
+        TESTS::
+
+            sage: R.<q, t> = QQ[]
+            sage: B1 = SymmetricFunctions(R).jack().P()
+            sage: B2 = SymmetricFunctions(R).jack(t).P()
+            sage: B3 = SymmetricFunctions(R).jack(q).P()
+            sage: B1 is B2
+            True
+            sage: B1 == B3
+            False
         """
         return super().__classcall__(cls, Sym, Sym.base_ring()(t))
 

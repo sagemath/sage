@@ -30,6 +30,14 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
     def __classcall__(cls, dual_basis, scalar, scalar_name="", basis_name=None, prefix=None):
         """
         Normalize the arguments.
+
+        TESTS::
+
+            sage: w = SymmetricFunctions(QQ).w()
+            sage: B1 = w.dual_basis()
+            sage: B2 = w.dual_basis(prefix="d_w")
+            sage: B1 is B2
+            True
         """
         if prefix is None:
             prefix = 'd_'+dual_basis.prefix()
@@ -946,6 +954,12 @@ class DualBasisFunctor(SymmetricFunctionsFunctor):
         INPUT:
 
         - ``basis`` -- the basis of the symmetric function algebra
+
+        TESTS::
+
+            sage: w = SymmetricFunctions(ZZ).witt()
+            sage: F = w.dual_basis().construction()[0]
+            sage: TestSuite(F).run()
         """
         self._dual_basis = basis._dual_basis
         self._basis_name = basis._basis_name

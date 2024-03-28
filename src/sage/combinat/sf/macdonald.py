@@ -101,6 +101,17 @@ class Macdonald(UniqueRepresentation):
     def __classcall__(cls, Sym, q='q', t='t'):
         """
         Normalize the arguments.
+
+        TESTS::
+
+            sage: R.<q, t> = QQ[]
+            sage: B1 = SymmetricFunctions(R).macdonald().P()
+            sage: B2 = SymmetricFunctions(R).macdonald(q, t).P()
+            sage: B3 = SymmetricFunctions(R).macdonald(t, q).P()
+            sage: B1 is B2
+            True
+            sage: B1 == B3
+            False
         """
         return super().__classcall__(cls, Sym, Sym.base_ring()(q), Sym.base_ring()(t))
 
