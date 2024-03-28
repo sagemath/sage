@@ -1229,29 +1229,31 @@ class FunctionField(Field):
 
     def hilbert_symbol(self, a, b, P):
         r"""
-        Return the Hilbert symbol `(a,b)_{F_P}` (where `F_P` is the
-        completion of this function field at the place `P`).
+        Return the Hilbert symbol `(a,b)_{F_P}` for the local field `F_P`.
 
-        The Hilbert symbol `(a,b)_{F_P}` is `0` if one of `a` or `b` is
-        zero. Otherwise it takes the value `1` if  the quaternion algebra
-        defined by `(a,b)` over `F_P` is split, and `-1` if it is division.
-
-        For the valuation `\nu` belonging to the completion of the function
-        field at `P`, we compute the valuations `\nu(a)` and `\nu(b)` as well
-        as elements `a_0` and `b_0` such that, for a uniformizer `\pi` of
-        `\nu`, the elememts `a*\pi^{-\nu(a))}` and `a_0` respectively the
-        elements `b*\pi^{-\nu(b)}` and `b_0` are congruent modulo `\pi`.
-        Motivated by formula 12.4.10 in [Voi2021]_.
-
-        Currently only tested for function fields separable over their base
-        since places are not fully supported for other function fields. Only
-        implemented for global function fields of odd characteristic.
+        The local field `F_P` is the completion of this function field `F`
+        at the place `P`.
 
         INPUT:
 
         - ``a`` and ``b`` -- elements of this function field
 
         - ``P`` -- a place of this function field
+
+        The Hilbert symbol `(a,b)_{F_P}` is `0` if `a` or `b` is zero.
+        Otherwise it takes the value `1` if  the quaternion algebra defined
+        by `(a,b)` over `F_P` is split, and `-1` if it is a division ring.
+
+        ALGORITHM:
+
+        For the valuation `\nu = \nu_P` of `F`, we compute the valuations
+        `\nu(a)` and `\nu(b)` as well as elements `a_0` and `b_0` of the
+        residue field such that for a uniformizer `\pi` at `P`,
+        `a\pi^{-\nu(a))}` respectively `b\pi^{-\nu(b)}`has the residue class
+        `a_0` respectively `b_0` modulo `P`. Then the Hilbert symbol is
+        computed by formula 12.4.10 in [Voi2021]_.
+
+        Currently only implemented for global function fields.
 
         EXAMPLES::
 
@@ -1328,7 +1330,7 @@ class FunctionField(Field):
         v_b = ser_b.valuation()
         b0 = ser_b.coefficients()[0]
 
-        # Get the residue field of the completion together with the necssary exponent
+        # Get the residue field of the completion together with the necessary exponent
         k = sigma.codomain().base_ring()
         e = (k.order() - 1) // 2
 
