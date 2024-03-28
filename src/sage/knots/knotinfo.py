@@ -371,6 +371,8 @@ class SymmetryMutant(Enum):
             <SymmetryMutant.mirror_image: 'm'>,
             <SymmetryMutant.unknown: '?'>]
         """
+        # We use the reversal of the alphabetical order of the values so that
+        # `itself` occurs before the mirrored cases
         return self.value < other.value
 
 
