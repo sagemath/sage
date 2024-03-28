@@ -396,8 +396,14 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
         ....:      #this holds for all odd i and is easily proven by induction
         True
     """
+    @staticmethod
+    def __classcall__(cls, Sym, coerce_h=True, coerce_e=False, coerce_p=False):
+        """
+        Normalize the arguments.
+        """
+        return super().__classcall__(cls, Sym, coerce_h, coerce_e, coerce_p)
 
-    def __init__(self, Sym, coerce_h=True, coerce_e=False, coerce_p=False):
+    def __init__(self, Sym, coerce_h, coerce_e, coerce_p):
         """
         Initialize ``self``.
 
@@ -609,7 +615,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
         by choosing a ground ring unlikely to appear elsewhere::
 
             sage: Sym = SymmetricFunctions(ZZ['hell', 'yeah'])
-            sage: w = Sym.Witt()
+            sage: w = Sym.witt()
             sage: l = lambda c: [ (i[0],[j for j in sorted(i[1].items())]) for i in sorted(c.items())]
             sage: l(w._h_to_self_cache)
             []
@@ -673,7 +679,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
         by choosing a ground ring unlikely to appear elsewhere::
 
             sage: Sym = SymmetricFunctions(ZZ['hell', 'yeah'])
-            sage: w = Sym.Witt(coerce_e=True)
+            sage: w = Sym.witt(coerce_e=True)
             sage: l = lambda c: [ (i[0],[j for j in sorted(i[1].items())]) for i in sorted(c.items())]
             sage: l(w._e_to_self_cache)
             []
@@ -736,7 +742,7 @@ class SymmetricFunctionAlgebra_witt(multiplicative.SymmetricFunctionAlgebra_mult
         by choosing a ground ring unlikely to appear elsewhere::
 
             sage: Sym = SymmetricFunctions(QQ['hell', 'yeah'])
-            sage: w = Sym.Witt(coerce_h=False, coerce_e=True, coerce_p=True)
+            sage: w = Sym.witt(coerce_h=False, coerce_e=True, coerce_p=True)
             sage: l = lambda c: [ (i[0],[j for j in sorted(i[1].items())]) for i in sorted(c.items())]
             sage: l(w._p_to_self_cache)
             []

@@ -77,7 +77,14 @@ class HallLittlewood(UniqueRepresentation):
         """
         return self._name + " over %s" % self._sym.base_ring()
 
-    def __init__(self, Sym, t='t'):
+    @staticmethod
+    def __classcall__(cls, Sym, t='t'):
+        """
+        Normalize the arguments.
+        """
+        return super().__classcall__(cls, Sym, Sym.base_ring()(t))
+
+    def __init__(self, Sym, t):
         """
         Initialize ``self``.
 
@@ -387,6 +394,24 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
             self   .register_coercion(SetMorphism(Hom(self._s, self, category), self._s_to_self))
             self._s.register_coercion(SetMorphism(Hom(self, self._s, category), self._self_to_s))
 
+    def construction(self):
+        """
+        Return a pair ``(F, R)``, where ``F`` is a
+        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
+        that ``F(R)`` returns ``self``.
+
+        EXAMPLES::
+
+            sage: P = SymmetricFunctions(QQ).hall_littlewood(t=2).P()
+            sage: P.construction()
+            (SymmetricFunctionsFunctor[Hall-Littlewood P with t=2], Rational Field)
+        """
+
+        return (HallLittlewoodSymmetricFunctionsFunctor(self,
+                                                        self.basis_name(),
+                                                        self.t),
+                self.base_ring())
+
     def _s_to_self(self, x):
         r"""
         Isomorphism from the Schur basis into ``self``
@@ -672,6 +697,80 @@ class HallLittlewood_generic(sfa.SymmetricFunctionAlgebra_generic):
             return parent._apply_multi_module_morphism(p(self), p(x), f,
                                                        orthogonal=True)
 
+
+from sage.combinat.sf.sfa import SymmetricFunctionsFunctor
+class HallLittlewoodSymmetricFunctionsFunctor(SymmetricFunctionsFunctor):
+    def __init__(self, basis, name, t):
+        r"""Initialise the functor.
+
+        INPUT:
+
+        - ``basis`` -- the basis of the Hall-Littlewood symmetric function
+          algebra
+        - ``name`` -- the name of the basis
+        - ``t`` -- the parameter `t`
+
+        .. WARNING::
+
+            Strictly speaking, this is not a functor on
+            :class:`CommutativeRings`, but rather a functor on
+            commutative rings with a distinguished element.  Apart
+            from that, the codomain of this functor could actually be
+            :class:`CommutativeAlgebras` over the given ring, but
+            parameterized functors are currently not available.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.sf.hall_littlewood import HallLittlewoodSymmetricFunctionsFunctor
+            sage: R.<t> = ZZ[]
+            sage: P = SymmetricFunctions(R).hall_littlewood().P()
+            sage: HallLittlewoodSymmetricFunctionsFunctor(P, P.basis_name(), t)
+            SymmetricFunctionsFunctor[Hall-Littlewood P]
+        """
+        super().__init__(basis, name)
+        self._t = t
+
+    def _apply_functor(self, R):
+        """
+        Apply the functor to an object of ``self``'s domain.
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(QQ['t'])
+            sage: P = Sym.hall_littlewood().P(); P
+            Symmetric Functions over Univariate Polynomial Ring in t
+             over Rational Field in the Hall-Littlewood P basis
+            sage: F, R = P.construction()  # indirect doctest
+            sage: F(QQ['t'])
+            Symmetric Functions over Univariate Polynomial Ring in t
+             over Rational Field in the Hall-Littlewood P basis
+
+        TESTS::
+
+            sage: F(QQ)
+            Traceback (most recent call last):
+            ...
+            TypeError: not a constant polynomial
+        """
+        from sage.combinat.sf.sf import SymmetricFunctions
+        return self._basis(HallLittlewood(SymmetricFunctions(R), self._t))
+
+    def __eq__(self, other):
+        """
+        EXAMPLES::
+
+            sage: R.<q, t> = ZZ[]
+            sage: S.<q, t> = QQ[]
+            sage: T.<q, s> = QQ[]
+            sage: PR = SymmetricFunctions(R).hall_littlewood().P()
+            sage: PS = SymmetricFunctions(S).hall_littlewood().P()
+            sage: PT = SymmetricFunctions(T).hall_littlewood(t=s).P()
+            sage: PR.construction()[0] == PS.construction()[0]
+            True
+            sage: PR.construction()[0] == PT.construction()[0]
+            False
+        """
+        return super().__eq__(other) and self._t == other._t
 
 ###########
 # P basis #

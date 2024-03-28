@@ -37,6 +37,23 @@ from sage.rings.integer import Integer
 
 
 class generic_character(SFA_generic):
+
+    def construction(self):
+        """
+        Return a pair ``(F, R)``, where ``F`` is a
+        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
+        that ``F(R)`` returns ``self``.
+
+        EXAMPLES::
+
+            sage: ht = SymmetricFunctions(QQ).ht()
+            sage: ht.construction()
+            (SymmetricFunctionsFunctor[induced trivial symmetric group character],
+             Rational Field)
+        """
+        return (CharacterSymmetricFunctionsFunctor(self, self.basis_name()),
+                self.base_ring())
+
     def _my_key(self, la):
         r"""
         A rank function for partitions.
@@ -149,6 +166,61 @@ class generic_character(SFA_generic):
         if k > 0:
             return ~k * self._p.linear_combination((self._p([d]),moebius(k//d))
                                     for d in divisors(k))
+
+
+from sage.combinat.sf.sfa import SymmetricFunctionsFunctor
+class CharacterSymmetricFunctionsFunctor(SymmetricFunctionsFunctor):
+    def __init__(self, basis, name):
+        r"""
+        Initialise the functor.
+
+        INPUT:
+
+        - ``basis`` -- the basis of the Character symmetric function algebra
+        - ``name`` -- the name of the basis
+
+        .. WARNING::
+
+            The codomain of this functor could actually be
+            :class:`CommutativeAlgebras` over the given ring, but
+            parameterized functors are currently not available.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.sf.character import CharacterSymmetricFunctionsFunctor
+            sage: B = SymmetricFunctions(QQ).ht()
+            sage: CharacterSymmetricFunctionsFunctor(B, B.basis_name())
+            SymmetricFunctionsFunctor[induced trivial symmetric group character]
+
+        """
+        super().__init__(basis, name)
+        self._prefix = basis._prefix
+
+    def _apply_functor(self, R):
+        """
+        Apply the functor to an object of ``self``'s domain.
+
+        EXAMPLES::
+
+            sage: B = SymmetricFunctions(QQ).ht()
+            sage: F, R = B.construction()  # indirect doctest
+            sage: F(QQbar)
+            Symmetric Functions over Algebraic Field in the induced trivial
+             symmetric group character basis
+        """
+        from sage.combinat.sf.sf import SymmetricFunctions
+        return self._basis(SymmetricFunctions(R), self._prefix)
+
+    def __eq__(self, other):
+        """
+        EXAMPLES::
+
+            sage: B1 = SymmetricFunctions(QQ).ht()
+            sage: B2 = SymmetricFunctions(QQ).st()
+            sage: B1.construction()[0] == B2.construction()[0]
+            False
+        """
+        return super().__eq__(other) and self._prefix == other._prefix
 
 
 class induced_trivial_character_basis(generic_character):

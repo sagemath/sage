@@ -908,7 +908,6 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         return schur.SymmetricFunctionAlgebra_schur(self)
     s = schur
     Schur = schur # Currently needed by SymmetricFunctions.__init_extra__
-                  # and sfa.GradedSymmetricFunctionsBases.corresponding_basis_over
 
     def powersum(self):
         r"""
@@ -976,8 +975,6 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         from . import witt
         return witt.SymmetricFunctionAlgebra_witt(self, coerce_h=coerce_h, coerce_e=coerce_e, coerce_p=coerce_p)
     w = witt
-    # Currently needed by sfa.GradedSymmetricFunctionsBases.corresponding_basis_over
-    Witt = witt
 
     def irreducible_symmetric_group_character(self):
         r"""
