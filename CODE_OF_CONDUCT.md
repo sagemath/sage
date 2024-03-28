@@ -1,9 +1,7 @@
 # Code of Conduct #
 
 This Code was approved by the Sage community by a vote which ended on
-November 24, 2014.
-
-**The date needs to be updated if these changes are approved.**
+March 31, 2024.
 
 ## Introduction ##
 
