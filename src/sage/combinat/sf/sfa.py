@@ -6442,7 +6442,7 @@ class SymmetricFunctionsFunctor(ConstructionFunctor):
 
     def __init__(self, basis, name, *args):
         r"""
-        Initialise the functor.
+        Initialize the functor.
 
         INPUT:
 
@@ -6466,7 +6466,7 @@ class SymmetricFunctionsFunctor(ConstructionFunctor):
             sage: from sage.combinat.sf.sfa import SymmetricFunctionsFunctor
             sage: R.<q> = ZZ[]
             sage: qbar = SymmetricFunctions(R).hecke_character()
-            sage: SymmetricFunctionsFunctor(type(qbar), qbar.basis_name(), q)
+            sage: SymmetricFunctionsFunctor(qbar, qbar.basis_name(), q)
             SymmetricFunctionsFunctor[Hecke character with q=q]
 
         """
@@ -6549,6 +6549,20 @@ class SymmetricFunctionsFunctor(ConstructionFunctor):
                 and self._name == other._name
                 and self._args == other._args)
 
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(QQ)
+            sage: F1 = Sym.qbar(q=1/2).construction()[0]
+            sage: F2 = Sym.qbar(q=1).construction()[0]
+            sage: hash(F1) == hash(F2)
+            False
+        """
+        return hash(repr(self))
+
     def _repr_(self):
         """
         Return a string representation of ``self``.
@@ -6572,7 +6586,7 @@ class SymmetricFunctionsFunctor(ConstructionFunctor):
 class SymmetricFunctionsFamilyFunctor(SymmetricFunctionsFunctor):
     def __init__(self, basis, family, name, *args):
         r"""
-        Initialise the functor.
+        Initialize the functor.
 
         INPUT:
 
@@ -6593,8 +6607,10 @@ class SymmetricFunctionsFamilyFunctor(SymmetricFunctionsFunctor):
 
             sage: from sage.combinat.sf.sfa import SymmetricFunctionsFamilyFunctor
             sage: R.<t> = ZZ[]
-            sage: H = SymmetricFunctions(R).macdonald(q=1).H()
-            sage: SymmetricFunctionsFamilyFunctor(type(H), sage.combinat.sf.macdonald.Macdonald, H.basis_name(), 1, t)
+            sage: basis = SymmetricFunctions(R).macdonald(q=1).H()
+            sage: family = sage.combinat.sf.macdonald.Macdonald
+            sage: name = basis.basis_name()
+            sage: SymmetricFunctionsFamilyFunctor(basis, family, name, 1, t)
             SymmetricFunctionsFunctor[Macdonald H with q=1]
         """
         super().__init__(basis, name, *args)
@@ -6607,9 +6623,7 @@ class SymmetricFunctionsFamilyFunctor(SymmetricFunctionsFunctor):
         EXAMPLES::
 
             sage: Sym = SymmetricFunctions(QQ['q','t'])
-            sage: P = Sym.macdonald(q=1/2).P(); P
-            Symmetric Functions over Multivariate Polynomial Ring in q, t
-             over Rational Field in the Macdonald P with q=1/2 basis
+            sage: P = Sym.macdonald(q=1/2).P()
             sage: F, R = P.construction()  # indirect doctest
             sage: F(QQ['t'])
             Symmetric Functions over Univariate Polynomial Ring in t
@@ -6641,6 +6655,21 @@ class SymmetricFunctionsFamilyFunctor(SymmetricFunctionsFunctor):
             False
         """
         return super().__eq__(other) and self._family == other._family
+
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: P1 = SymmetricFunctions(QQ['q','t']).macdonald(q=1).P()
+            sage: F1 = P1.construction()[0]
+            sage: P2 = SymmetricFunctions(ZZ['t']).macdonald(q=1).P()
+            sage: F2 = P2.construction()[0]
+            sage: hash(F1) == hash(F2)
+            True
+        """
+        return hash(repr(self))
 
 
 ###################

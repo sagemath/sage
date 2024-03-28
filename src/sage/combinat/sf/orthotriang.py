@@ -294,7 +294,7 @@ class OrthotriangBasisFunctor(SymmetricFunctionsFunctor):
     """
     def __init__(self, basis):
         r"""
-        Initialise the functor.
+        Initialize the functor.
 
         INPUT:
 

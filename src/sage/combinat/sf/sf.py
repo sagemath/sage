@@ -1015,8 +1015,8 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             ....:   for rho in Partitions(5)]))
             [4, 2, 0, 1, -1, 0, -1]
         """
-        from .character import irreducible_character_basis
-        return irreducible_character_basis(self, 'st')
+        from .character import IrreducibleCharacterBasis
+        return IrreducibleCharacterBasis(self)
 
     st = irreducible_symmetric_group_character
 
@@ -1071,8 +1071,8 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             sage: [ht([1]).eval_at_permutation_roots(rho) for rho in Partitions(5)]
             [0, 1, 0, 2, 1, 3, 5]
         """
-        from .character import induced_trivial_character_basis
-        return induced_trivial_character_basis(self, 'ht')
+        from .character import InducedTrivialCharacterBasis
+        return InducedTrivialCharacterBasis(self)
 
     ht = induced_trivial_character
 

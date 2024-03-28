@@ -38,24 +38,6 @@ from sage.rings.integer import Integer
 
 class generic_character(SFA_generic):
 
-    def construction(self):
-        """
-        Return a pair ``(F, R)``, where ``F`` is a
-        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
-        that ``F(R)`` returns ``self``.
-
-        EXAMPLES::
-
-            sage: ht = SymmetricFunctions(QQ).ht()
-            sage: ht.construction()
-            (SymmetricFunctionsFunctor[induced trivial symmetric group character],
-             Rational Field)
-        """
-        from sage.combinat.sf.sfa import SymmetricFunctionsFunctor
-        return (SymmetricFunctionsFunctor(self, self.basis_name(),
-                                          self._prefix),
-                self.base_ring())
-
     def _my_key(self, la):
         r"""
         A rank function for partitions.
@@ -170,7 +152,7 @@ class generic_character(SFA_generic):
                                     for d in divisors(k))
 
 
-class induced_trivial_character_basis(generic_character):
+class InducedTrivialCharacterBasis(generic_character):
     r"""
     The induced trivial symmetric group character basis of
     the symmetric functions.
@@ -222,7 +204,7 @@ class induced_trivial_character_basis(generic_character):
         sage: TestSuite(ht).run()
     """
 
-    def __init__(self, Sym, pfix):
+    def __init__(self, Sym):
         r"""
         Initialize the basis and register coercions.
 
@@ -242,7 +224,7 @@ class induced_trivial_character_basis(generic_character):
         """
         SFA_generic.__init__(self, Sym,
                              basis_name="induced trivial symmetric group character",
-                             prefix=pfix, graded=False)
+                             prefix="ht", graded=False)
         self._other = Sym.complete()
         self._p = Sym.powersum()
 
@@ -400,7 +382,7 @@ class induced_trivial_character_basis(generic_character):
         return self._other(self._self_to_power_on_basis(lam))
 
 
-class irreducible_character_basis(generic_character):
+class IrreducibleCharacterBasis(generic_character):
     r"""
     The irreducible symmetric group character basis of
     the symmetric functions.
@@ -446,7 +428,7 @@ class irreducible_character_basis(generic_character):
         sage: TestSuite(st).run()
     """
 
-    def __init__(self, Sym, pfix):
+    def __init__(self, Sym):
         r"""
         Initialize the basis and register coercions.
 
@@ -469,7 +451,7 @@ class irreducible_character_basis(generic_character):
         """
         SFA_generic.__init__(self, Sym,
                              basis_name="irreducible symmetric group character",
-                             prefix=pfix, graded=False)
+                             prefix="st", graded=False)
         self._other = Sym.Schur()
         self._p = Sym.powersum()
 
