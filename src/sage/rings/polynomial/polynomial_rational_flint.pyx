@@ -336,7 +336,7 @@ cdef class Polynomial_rational_flint(Polynomial):
 
         INPUT:
 
-        - ``singular`` - Singular interpreter (default: default interpreter)
+        - ``singular`` -- Singular interpreter (default: default interpreter)
 
         EXAMPLES::
 
