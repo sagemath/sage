@@ -558,7 +558,7 @@ class WordMorphism(SageObject):
             sage: n != o
             True
 
-        This solves :trac:`12475`::
+        This solves :issue:`12475`::
 
             sage: s = WordMorphism('1->121,2->131,3->4,4->1')
             sage: s == s.reversal()
@@ -1202,7 +1202,7 @@ class WordMorphism(SageObject):
             sage: m.is_endomorphism()
             True
 
-        We check that :trac:`8674` is fixed::
+        We check that :issue:`8674` is fixed::
 
             sage: P = WordPaths('abcd')                                                 # needs sage.modules
             sage: m = WordMorphism('a->adab,b->ab,c->cbcd,d->cd',                       # needs sage.modules
@@ -1365,7 +1365,7 @@ class WordMorphism(SageObject):
             sage: WordMorphism({0:[0],1:[1]}).is_identity()
             True
 
-        We check that :trac:`8618` is fixed::
+        We check that :issue:`8618` is fixed::
 
             sage: t = WordMorphism({'a1':['a2'], 'a2':['a1']})
             sage: (t*t).is_identity()
@@ -1668,7 +1668,7 @@ class WordMorphism(SageObject):
             sage: WordMorphism('a->bb,b->aac').is_prolongable(letter='a')
             False
 
-        We check that :trac:`8595` is fixed::
+        We check that :issue:`8595` is fixed::
 
             sage: s = WordMorphism({('a', 1) : [('a', 1), ('a', 2)], ('a', 2) : [('a', 1)]})
             sage: s.is_prolongable(('a',1))
@@ -1863,7 +1863,7 @@ class WordMorphism(SageObject):
             sage: for w in f.fixed_points(): print(w)
             abcabbccabcabcabbccbccabcabbccabcabbccab...
 
-        This shows that issue :trac:`13668` has been resolved::
+        This shows that issue :issue:`13668` has been resolved::
 
             sage: d = {1:[1,2],2:[2,3],3:[4],4:[5],5:[6],6:[7],7:[8],8:[9],9:[10],10:[1]}
             sage: s = WordMorphism(d)
@@ -1874,7 +1874,7 @@ class WordMorphism(SageObject):
             sage: s7r.periodic_point(2)
             word: 2,1,1,10,9,8,7,6,5,4,3,2,1,10,9,8,7,6,5,4,3,2,10,9,8,7,6,5,4,3,2,9,8,7,6,5,4,3,2,8,...
 
-        This shows that issue :trac:`13668` has been resolved::
+        This shows that issue :issue:`13668` has been resolved::
 
             sage: s = "1->321331332133133,2->133321331332133133,3->2133133133321331332133133"
             sage: s = WordMorphism(s)
@@ -1902,7 +1902,7 @@ class WordMorphism(SageObject):
             ...
             TypeError: self must be prolongable on a
 
-        Make sure that :trac:`31759` is fixed::
+        Make sure that :issue:`31759` is fixed::
 
             sage: WordMorphism('a->b,b->a').periodic_point('a')
             word: a
@@ -1950,7 +1950,7 @@ class WordMorphism(SageObject):
             sage: f.fixed_points()
             []
 
-        This shows that issue :trac:`13668` has been resolved::
+        This shows that issue :issue:`13668` has been resolved::
 
             sage: d = {1:[1,2],2:[2,3],3:[4],4:[5],5:[6],6:[7],7:[8],8:[9],9:[10],10:[1]}
             sage: s = WordMorphism(d)
@@ -1968,7 +1968,7 @@ class WordMorphism(SageObject):
              word: 7654326543254324323221654325432432322154...,
              word: 4,3,2,3,2,2,1,3,2,2,1,2,1,1,10,9,8,7,6,5...]
 
-        Make sure that :trac:`31454` is fixed::
+        Make sure that :issue:`31454` is fixed::
 
             sage: WordMorphism('a->a,b->bb').periodic_points()
             [[word: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb...]]
@@ -3066,7 +3066,7 @@ class WordMorphism(SageObject):
 
         TESTS:
 
-        Make sure that :trac:`31454` is fixed::
+        Make sure that :issue:`31454` is fixed::
 
             sage: WordMorphism('a->a').is_growing('a')
             False
@@ -3103,7 +3103,7 @@ class WordMorphism(SageObject):
 
         TESTS:
 
-        Make sure that :trac:`31454` is fixed::
+        Make sure that :issue:`31454` is fixed::
 
             sage: WordMorphism('a->a').growing_letters()
             []

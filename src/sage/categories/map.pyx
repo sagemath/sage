@@ -6,10 +6,10 @@ AUTHORS:
 - Robert Bradshaw: initial implementation
 
 - Sebastien Besnier (2014-05-5): :class:`FormalCompositeMap` contains
-  a list of Map instead of only two Map. See :trac:`16291`.
+  a list of Map instead of only two Map. See :issue:`16291`.
 
 - Sebastian Oehms   (2019-01-19): :meth:`section` added to :class:`FormalCompositeMap`.
-  See :trac:`27081`.
+  See :issue:`27081`.
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Robert Bradshaw <robertwb@math.washington.edu>
@@ -264,7 +264,7 @@ cdef class Map(Element):
             sage: Q = QuadraticField(-5)                                                # needs sage.rings.number_field
             sage: phi = CDF._internal_convert_map_from(Q)                               # needs sage.rings.number_field
 
-        By :trac:`14711`, maps used in the coercion and conversion system
+        By :issue:`14711`, maps used in the coercion and conversion system
         use *weak* references to domain and codomain, in contrast to other
         maps::
 
@@ -332,7 +332,7 @@ cdef class Map(Element):
             sage: Q = QuadraticField(-5)                                                # needs sage.rings.number_field
             sage: phi = CDF._internal_convert_map_from(Q)                               # needs sage.rings.number_field
 
-        By :trac:`14711`, maps used in the coercion and conversion system
+        By :issue:`14711`, maps used in the coercion and conversion system
         use *weak* references to domain and codomain, in contrast to other
         maps::
 
@@ -718,7 +718,7 @@ cdef class Map(Element):
 
         We test that the map can be applied to something that converts
         (but not coerces) into the domain and can *not* be dealt with
-        by :meth:`pushforward` (see :trac:`10496`)::
+        by :meth:`pushforward` (see :issue:`10496`)::
 
             sage: D = {(0, 2): -1, (0, 0): -1, (1, 1): 7, (2, 0): 1/3}
             sage: phi(D)
@@ -736,7 +736,7 @@ cdef class Map(Element):
             but a `pushforward` method is not properly implemented
 
         We test that the default call method really works as described
-        above (that was fixed in :trac:`10496`)::
+        above (that was fixed in :issue:`10496`)::
 
             sage: class FOO(Map):
             ....:   def _call_(self, x):
@@ -1920,7 +1920,7 @@ cdef class FormalCompositeMap(Map):
 
         TESTS:
 
-        Check that :trac:`23205` has been resolved::
+        Check that :issue:`23205` has been resolved::
 
             sage: f = QQ.hom(QQbar) * ZZ.hom(QQ)                                        # needs sage.rings.number_field
             sage: f.is_injective()                                                      # needs sage.rings.number_field

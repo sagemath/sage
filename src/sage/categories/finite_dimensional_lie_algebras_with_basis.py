@@ -7,7 +7,7 @@ AUTHORS:
 """
 
 # ****************************************************************************
-#       Copyright (C) 2013-2017 Travis Scrimshaw <tcscrims at gmail.com>
+#       Copyright (C) 2013-2024 Travis Scrimshaw <tcscrims at gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -59,7 +59,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
     .. TODO::
 
         Many of these tests should use non-abelian Lie algebras and need to
-        be added after :trac:`16820`.
+        be added after :issue:`16820`.
     """
     _base_category_class_and_axiom = (LieAlgebras.FiniteDimensional, "WithBasis")
 
@@ -222,7 +222,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                  - 4*PBW[-alpha[1]]*PBW[alpha[1]] + PBW[alphacheck[1]]^2
                  - 2*PBW[alphacheck[1]]
 
-            Check that :trac:`23266` is fixed::
+            Check that :issue:`23266` is fixed::
 
                 sage: # needs sage.groups sage.modules
                 sage: sl2 = lie_algebras.sl(QQ, 2, 'matrix')
@@ -1745,10 +1745,10 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             R = P[0].parent()
             return R.quotient(P)
 
-        def casimir_element(self, order=2, UEA=None, force_generic=False):
+        def casimir_element(self, order=2, UEA=None, force_generic=False, basis=False):
             r"""
-            Return the Casimir element in the universal enveloping algebra
-            of ``self``.
+            Return a Casimir element of order ``order`` in the universal
+            enveloping algebra of ``self``.
 
             A *Casimir element* of order `k` is a distinguished basis element
             for the center of `U(\mathfrak{g})` of homogeneous degree `k`
@@ -1760,11 +1760,13 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             INPUT:
 
             - ``order`` -- (default: ``2``) the order of the Casimir element
-            - ``UEA`` -- (optional) the universal enveloping algebra to
-              return the result in
+            - ``UEA`` -- (optional) the universal enveloping algebra
+              implementation to return the result in
             - ``force_generic`` -- (default: ``False``) if ``True`` for the
               quadratic order, then this uses the default algorithm; otherwise
               this is ignored
+            - ``basis`` -- (default: ``False``) if ``True``, this returns a
+              basis of all Casimir elements of order ``order`` as a list
 
             ALGORITHM:
 
@@ -1832,6 +1834,13 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: L.casimir_element()
                 0
 
+                sage: # needs sage.combinat sage.modules
+                sage: g = LieAlgebra(QQ, cartan_type=['D',2])
+                sage: U = g.pbw_basis()
+                sage: U.casimir_element(2, basis=True)
+                [2*PBW[alpha[2]]*PBW[-alpha[2]] + 1/2*PBW[alphacheck[2]]^2 - PBW[alphacheck[2]],
+                 2*PBW[alpha[1]]*PBW[-alpha[1]] + 1/2*PBW[alphacheck[1]]^2 - PBW[alphacheck[1]]]
+
             TESTS::
 
                 sage: # needs sage.combinat sage.modules
@@ -1856,7 +1865,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             B = self.basis()
 
-            if order == 2 and not force_generic:
+            if order == 2 and not force_generic and not basis:
                 # Special case for the quadratic using the Killing form
                 try:
                     K = self.killing_form_matrix().inverse()
@@ -1896,11 +1905,10 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             if ker.dimension() == 0:
                 return self.zero()
 
-            tens = ker.basis()[0]
             del eqns  # no need to hold onto the matrix
 
-            def to_prod(index):
-                coeff = tens[index]
+            def to_prod(vec, index):
+                coeff = vec[index]
                 p = [0] * order
                 base = dim ** (order-1)
                 for i in range(order):
@@ -1910,7 +1918,14 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 p.reverse()
                 return coeff * UEA.prod(UEA(B[keys[i]]) for i in p)
 
-            return UEA.sum(to_prod(index) for index in tens.support())
+            tens = ker.basis()
+
+            if not basis:
+                vec = tens[0]
+                return UEA.sum(to_prod(vec, index) for index in vec.support())
+
+            return [UEA.sum(to_prod(vec, index) for index in vec.support())
+                    for vec in tens]
 
     class ElementMethods:
         def adjoint_matrix(self, sparse=False): # In #11111 (more or less) by using matrix of a morphism
@@ -1985,7 +2000,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             TESTS:
 
             Check that the error raised agrees with the one
-            from ``monomial_coefficients()`` (see :trac:`25007`)::
+            from ``monomial_coefficients()`` (see :issue:`25007`)::
 
                 sage: # needs sage.combinat sage.modules
                 sage: L = lie_algebras.sp(QQ, 4, representation='matrix')

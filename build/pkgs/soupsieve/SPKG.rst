@@ -1,10 +1,10 @@
-soupsieve: A modern CSS selector implementation for Beautiful Soup.
-===================================================================
+soupsieve: Modern CSS selector implementation for Beautiful Soup
+================================================================
 
 Description
 -----------
 
-A modern CSS selector implementation for Beautiful Soup.
+Modern CSS selector implementation for Beautiful Soup
 
 License
 -------

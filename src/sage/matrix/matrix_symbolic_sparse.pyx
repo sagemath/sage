@@ -144,7 +144,7 @@ Conversion to Maxima::
 
 TESTS:
 
-Check that :trac:`12778` is fixed::
+Check that :issue:`12778` is fixed::
 
     sage: M = Matrix([[1, 0.9, 1/5, x^2], [2, 1.9, 2/5, x^3], [3, 2.9, 3/5, x^4]], sparse=True); M
     [                1 0.900000000000000               1/5               x^2]
@@ -203,7 +203,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
 
         TESTS:
 
-        Check for :trac:`31700`::
+        Check for :issue:`31700`::
 
             sage: m = matrix([[cos(pi/5), sin(pi/5)], [-sin(pi/5), cos(pi/5)]], sparse=True)
             sage: t = linear_transformation(m)
@@ -309,7 +309,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
             NotImplementedError: generalized eigenvector decomposition is
             implemented for RDF and CDF, but not for Symbolic Ring
 
-        Check that :trac:`23332` is fixed::
+        Check that :issue:`23332` is fixed::
 
             sage: matrix([[x, x^2], [1, 0]], sparse=True).eigenvectors_left()
             [(-1/2*x*(sqrt(5) - 1), [(1, -1/2*x*(sqrt(5) + 1))], 1),
@@ -374,7 +374,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
             NotImplementedError: generalized eigenvector decomposition is
             implemented for RDF and CDF, but not for Symbolic Ring
 
-        Check that :trac:`23332` is fixed::
+        Check that :issue:`23332` is fixed::
 
             sage: matrix([[x, x^2], [1, 0]], sparse=True).eigenvectors_right()
             [(-1/2*x*(sqrt(5) - 1), [(1, -1/2*(sqrt(5) + 1)/x)], 1),
@@ -409,7 +409,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
             [1/2*(e^(2*x) - 1)*e^(-x) 1/2*(e^(2*x) + 1)*e^(-x)]
 
         Exponentiation works on 0x0 and 1x1 matrices, but the 1x1 example
-        requires a patched version of maxima (:trac:`32898`) for now::
+        requires a patched version of maxima (:issue:`32898`) for now::
 
             sage: m = matrix(SR,0,[], sparse=True); m
             []
@@ -499,7 +499,7 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
         TESTS:
 
         The cached polynomial should be independent of the ``var``
-        argument (:trac:`12292`). We check (indirectly) that the
+        argument (:issue:`12292`). We check (indirectly) that the
         second call uses the cached value by noting that its result is
         not cached::
 
@@ -515,17 +515,17 @@ cdef class Matrix_symbolic_sparse(Matrix_generic_sparse):
             x^2 - 3*x - 2
 
         Ensure the variable name of the polynomial does not conflict
-        with variables used within the matrix (:trac:`14403`)::
+        with variables used within the matrix (:issue:`14403`)::
 
             sage: Matrix(SR, [[sqrt(x), x],[1,x]], sparse=True).charpoly().list()
             [x^(3/2) - x, -x - sqrt(x), 1]
 
-        Test that :trac:`13711` is fixed::
+        Test that :issue:`13711` is fixed::
 
             sage: matrix([[sqrt(2), -1], [pi, e^2]], sparse=True).charpoly()
             x^2 + (-sqrt(2) - e^2)*x + pi + sqrt(2)*e^2
 
-        Test that :trac:`26427` is fixed::
+        Test that :issue:`26427` is fixed::
 
             sage: M = matrix(SR, 7, 7, SR.var('a', 49), sparse=True)
             sage: M.charpoly().degree() # long time
