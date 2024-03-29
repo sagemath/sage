@@ -1,13 +1,8 @@
-"""
-Functions for changing the base ring of matrices quickly
-"""
-
+# Importing necessary modules
 from sage.matrix.matrix_space import MatrixSpace
 from sage.matrix.matrix_real_double_dense cimport Matrix_real_double_dense
 from sage.matrix.matrix_integer_dense cimport Matrix_integer_dense
-
 from sage.rings.real_double import RDF
-
 
 def integer_to_real_double_dense(Matrix_integer_dense A):
     """
@@ -33,10 +28,14 @@ def integer_to_real_double_dense(Matrix_integer_dense A):
     """
     cdef Py_ssize_t i, j
     cdef Matrix_real_double_dense M
+    
+    # Creating a MatrixSpace with real double entries
     S = MatrixSpace(RDF, A._nrows, A._ncols, sparse=False)
-    M = Matrix_real_double_dense.__new__(Matrix_real_double_dense,
-                                         S, None, None, None)
-    for i from 0 <= i < A._nrows:
-        for j from 0 <= j < A._ncols:
-            M.set_unsafe_double(i, j, A.get_unsafe_double(i, j))
+    M = S()
+    
+    # Copying elements from the integer matrix to the real double matrix
+    for i in range(A._nrows):
+        for j in range(A._ncols):
+            M[i, j] = RDF(A[i, j])
+    
     return M
