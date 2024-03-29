@@ -5133,6 +5133,10 @@ REFERENCES:
              B46f,
              https://eudml.org/doc/121696
 
+.. [Pap2023] Mihran Papikian, *Drinfeld modules*.
+             Graduate Texts in Mathematics, 206,
+             Springer International Publishing, Cham, 2023.
+
 .. [PALP] Maximilian Kreuzer, Harald Skarke: "PALP: A Package for
           Analyzing Lattice Polytopes with Applications to Toric
           Geometry" omput.Phys.Commun. 157 (2004) 87-106
