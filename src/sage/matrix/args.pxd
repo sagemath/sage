@@ -113,6 +113,16 @@ cdef class MatrixArgs:
                              f"but got {n}")
         self.nrows = n
 
+    cdef inline int _ensure_nrows_ncols(self) except -1:
+        r"""
+        Make sure that the number of rows and columns is set.
+        If ``row_keys`` or ``column_keys`` is not finite, this can raise an exception.
+        """
+        if self.nrows == -1:
+            self.nrows = len(self.row_keys)
+        if self.ncols == -1:
+            self.ncols = len(self.column_keys)
+
     cpdef int set_column_keys(self, column_keys) except -1
     cpdef int set_row_keys(self, row_keys) except -1
     cpdef int set_space(self, space) except -1

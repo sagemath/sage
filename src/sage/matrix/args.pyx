@@ -473,12 +473,6 @@ cdef class MatrixArgs:
         """
         return self.iter()
 
-    def _ensure_nrows_ncols(self):
-        if self.nrows == -1:
-            self.nrows = len(self.row_keys)
-        if self.ncols == -1:
-            self.ncols = len(self.column_keys)
-
     def iter(self, bint convert=True, bint sparse=False):
         """
         Iteration over the entries in the matrix
