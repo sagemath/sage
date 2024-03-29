@@ -52,7 +52,7 @@ character-by-character::
     Traceback (most recent call last):
     ...
         exec(code, globals)
-      File ".../foobar.sage....py", line ..., in <module>
+      File ".../foobar...sage.py", line ..., in <module>
         raise ValueError("third")   # this should appear in the source snippet...
     ValueError: third
     sage: detach(src)
