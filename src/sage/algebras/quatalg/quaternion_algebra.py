@@ -54,6 +54,7 @@ from sage.rings.ideal import Ideal_fractional
 from sage.rings.rational_field import is_RationalField, QQ
 from sage.rings.infinity import infinity
 from sage.rings.number_field.number_field_base import NumberField
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.structure.category_object import normalize_names
 from sage.structure.parent import Parent
@@ -900,6 +901,76 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         e_new = basis_for_quaternion_lattice(list(R.basis()) + e_new_gens, reverse=True)
         return self.quaternion_order(e_new)
+
+    def order_with_level(self, level):
+        """
+        Return an order in this quaternion algebra with given level.
+
+        INPUT:
+
+        - ``level`` -- positive integer
+
+        Currently this is only implemented when the base field is the
+        rational numbers and the level is divisible by at most one
+        power of a prime that ramifies in this quaternion algebra.
+
+        EXAMPLES::
+
+            sage: A.<i,j,k> = QuaternionAlgebra(5)
+            sage: level = 2 * 5 * 17
+            sage: O = A.order_with_level(level); O
+            Order of Quaternion Algebra (-2, -5) with base ring Rational Field with basis (1/2 + 1/2*j + 7/2*k, 1/2*i + 19/2*k, j + 7*k, 17*k)
+
+        Check that the order has the right index in the maximal order::
+
+            sage: L = O.free_module()
+            sage: N = A.maximal_order().free_module()
+            sage: L.index_in(N) == level / 5
+            True
+        """
+        if self.base_ring() is not QQ:
+            raise NotImplementedError("base field must be rational numbers")
+
+        if len(self.ramified_primes()) > 1:
+            raise NotImplementedError("currently this algorithm only works when the quaternion algebra is only ramified at one finite prime")
+
+        # The algorithm we use is similar to that in Magma (by David Kohel).
+        level = abs(level)
+        N = self.discriminant()
+        N1 = gcd(level, N)
+        M1 = level // N1
+
+        O = self.maximal_order()
+        # if N1 != 1:
+        #     # we do not know why magma does the following, so we do not do it.
+        #     for p in self.ramified_primes():
+        #         if not (level % p**2):
+        #             raise NotImplementedError("Currently sage can only compute orders whose level is divisible by at most one power of any prime that ramifies in the quaternion algebra")
+
+        #     P = O._left_ideal_basis([N1] + [x * y - y * x
+        #                                     for x in self.basis()
+        #                                     for y in self.basis()])
+        #     O = self.quaternion_order(P)
+
+        fact = M1.factor()
+        B = O.basis()
+
+        for (p, r) in fact:
+            a = int(-p) // 2
+            for v in GF(p)**4:
+                x = sum([int(v[i] + a) * B[i] for i in range(4)])
+                D = x.reduced_trace()**2 - 4 * x.reduced_norm()
+                # x = O.random_element((-p/2).floor(), (p/2).ceil())
+                if kronecker_symbol(D, p) == 1:
+                    break
+            X = PolynomialRing(GF(p), 'x').gen()
+            a = ZZ((X**2 - ZZ(x.reduced_trace()) * X + ZZ(x.reduced_norm())).roots()[0][0])
+            I = O._left_ideal_basis([p**r, (x - a)**r])
+            O = O._right_order_from_ideal_basis(I)
+            # right_order returns the RightOrder of I inside O, so we
+            # do not need to do another intersection
+
+        return O
 
     def invariants(self):
         """
@@ -1868,6 +1939,75 @@ class QuaternionOrder(Parent):
             raise NotImplementedError("check for maximality is only implemented for quaternion algebras over number fields")
         return self.discriminant() == self.quaternion_algebra().discriminant()
 
+    def _left_ideal_basis(self, gens):
+        """
+        Return a basis for the left ideal of ``self`` with given generators.
+
+        INPUT:
+
+        - ``gens`` -- list of elements of ``self``
+
+        OUTPUT:
+
+        A list of four elements of ``self``.
+
+        EXAMPLES::
+
+            sage: A.<i,j,k> = QuaternionAlgebra(-17, -3)
+            sage: A.maximal_order()._left_ideal_basis([i + j, i - j, 2*k, A(3)])
+            [1/2 + 1/6*j + 2/3*k, 1/2*i + 1/2*k, 1/3*j + 1/3*k, k]
+            sage: A.maximal_order()._left_ideal_basis([3*(i + j), 3*(i - j), 6*k, A(3)])
+            [3/2 + 1/2*j + 2*k, 3/2*i + 3/2*k, j + k, 3*k]
+        """
+        return basis_for_quaternion_lattice([b * g for b in self.basis() for g in gens], reverse=False)
+
+    def _right_order_from_ideal_basis(self, basis):
+        """
+        Given a basis for a left ideal `I`, return the right order in
+        ``self`` of elements `x` such that `I x` is contained in `I`.
+
+        INPUT:
+
+        - ``basis`` -- basis for an ideal `I`
+
+        EXAMPLES:
+
+            sage: A.<i,j,k> = QuaternionAlgebra(17)
+            sage: O = A.maximal_order()
+            sage: basis = O._left_ideal_basis([1]); basis
+            [1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k]
+            sage: O._right_order_from_ideal_basis(basis)
+            Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k)
+
+            sage: basis = O._left_ideal_basis([i*j - j]); basis
+            [17 + 17/3*i + 4/3*k, 34/3*i + 2/3*k, j + k, 2*k]
+            sage: O._right_order_from_ideal_basis(basis)
+            Order of Quaternion Algebra (-3, -17) with base ring Rational Field with basis (1/2 + 1/6*i + 1/3*k, 1/3*i + 2/3*k, 1/2*j + 1/2*k, k)
+        """
+        # Compute matrix of multiplication by each element of the basis.
+        B = self.basis()
+        Z = self.quaternion_algebra()
+        M = MatrixSpace(QQ, 4)
+
+        # I = matrix with rows the given basis for I
+        I = M([list(f) for f in basis])
+
+        # psi = matrix of right multiplication on each basis element
+        psi = [M([list(f * x) for x in Z.basis()]) for f in basis]
+
+        # invert them
+        psi_inv = [x**(-1) for x in psi]
+
+        # apply the four inverses to I
+        W = [I * x for x in psi_inv]
+
+        # The right order is the intersection of the row span of the W with the row span of B.
+        X = M([list(b) for b in B]).row_module(ZZ)
+        for A in W:
+            X = X.intersection(A.row_module(ZZ))
+        C = [Z(list(b)) for b in X.basis()]
+        return Z.quaternion_order(C)
+
     def left_ideal(self, gens, check=True, *, is_basis=False):
         r"""
         Return the left ideal of this order generated by the given generators.
@@ -2491,13 +2631,15 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
     def _compute_order(self, side='left'):
         r"""
         Used internally to compute either the left or right order
-        associated to an ideal in a quaternion algebra.  If
-        action='right', compute the left order, and if action='left'
-        compute the right order.
+        associated to an ideal in a quaternion algebra.
 
         INPUT:
 
         - ``side`` -- 'left' or 'right'
+
+        OUTPUT:
+
+        The left order if side='left'; the right order if side='right'.
 
         EXAMPLES::
 
