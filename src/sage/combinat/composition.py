@@ -45,6 +45,9 @@ from sage.rings.integer import Integer
 from sage.combinat.combinatorial_map import combinatorial_map
 from sage.misc.persist import register_unpickle_override
 
+from sage.misc.lazy_import import lazy_import
+lazy_import("sage.combinat.partition", "Partition")
+
 
 class Composition(CombinatorialElement):
     r"""
@@ -1186,7 +1189,6 @@ class Composition(CombinatorialElement):
             sage: Composition([]).to_partition()                                        # needs sage.combinat
             []
         """
-        from sage.combinat.partition import Partition
         return Partition(sorted(self, reverse=True))
 
     def to_skew_partition(self, overlap=1):
@@ -1753,8 +1755,10 @@ class Compositions(UniqueRepresentation, Parent):
             sage: P = Compositions()
             sage: P([3,3,1]) # indirect doctest
             [3, 3, 1]
+            sage: P(Partition([5,2,1]))
+            [5, 2, 1]
         """
-        if isinstance(lst, Composition):
+        if isinstance(lst, (Composition, Partition)):
             lst = list(lst)
         elt = self.element_class(self, lst)
         if elt not in self:
@@ -1774,7 +1778,7 @@ class Compositions(UniqueRepresentation, Parent):
             sage: [0,0] in Compositions()
             True
         """
-        if isinstance(x, Composition):
+        if isinstance(x, (Composition, Partition)):
             return True
         elif isinstance(x, list):
             for i in x:
