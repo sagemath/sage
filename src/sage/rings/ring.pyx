@@ -441,7 +441,8 @@ cdef class Ring(ParentWithGens):
             g = gens[0]
             if len(gens) == 1:
                 try:
-                    g = g.gcd(g) # note: we set g = gcd(g, g) to "canonicalize" the generator: make polynomials monic, etc.
+                    # note: we set g = gcd(g, g) to "canonicalize" the generator: make polynomials monic, etc.
+                    g = g.gcd(g)
                 except (AttributeError, NotImplementedError):
                     pass
             else:
