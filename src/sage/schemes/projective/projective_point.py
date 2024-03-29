@@ -29,6 +29,7 @@ AUTHORS:
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.number_fields import NumberFields
 _NumberFields = NumberFields()
+from sage.rings.integer_ring import ZZ
 from sage.rings.fraction_field import FractionField
 from sage.rings.number_field.order import is_NumberFieldOrder, Order as NumberFieldOrder
 from sage.rings.qqbar import number_field_elements_from_algebraics
@@ -179,7 +180,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             R = X.value_ring()
             v = Sequence(v, R)
             if len(v) == d-1:     # very common special case
-                v.append(R(1))
+                v.append(R.one())
 
             if R in IntegralDomains():
                 # Over integral domains, any tuple with at least one
@@ -520,7 +521,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: Q.scale_by(1/2);Q
             (1 : 1 : 1)
         """
-        if t == 0:  #what if R(t) == 0 ?
+        if t.is_zero():  #what if R(t) == 0 ?
             raise ValueError("Cannot scale by 0")
         R = self.codomain().base_ring()
         if isinstance(R, QuotientRing_generic):
@@ -603,7 +604,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             return
         R = self.codomain().base_ring()
         if isinstance(R, QuotientRing_generic):
-            index = self.codomain().ambient_space().dimension_relative()
+            index = len(self._coords) - 1
             while not self._coords[index]:
                 index -= 1
             last = self._coords[index].lift()
@@ -616,14 +617,14 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             GCD = R(gcd(self._coords[0], self._coords[1]))
             index = 2
             neg = self._coords[0] <= 0 and self._coords[1] <= 0
-            while GCD != 1 and index < len(self._coords):
+            while not GCD.is_one() and index < len(self._coords):
                 neg = self._coords[index] <= 0
                 GCD = R(gcd(GCD, self._coords[index]))
                 index += 1
-            if GCD != 1:
+            if not GCD.is_one():
                 self.scale_by(~GCD)
             if neg:
-                self.scale_by(-1)
+                self.scale_by(-ZZ.one())
         self._normalized = True
 
     def dehomogenize(self,n):
@@ -672,7 +673,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             ...
             ValueError: can...t dehomogenize at 0 coordinate
         """
-        if self[n] == 0:
+        if self[n].is_zero():
             raise ValueError("can't dehomogenize at 0 coordinate")
         PS = self.codomain()
         A = PS.affine_patch(n)
@@ -1156,25 +1157,21 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
             R = X.value_ring()
             v = Sequence(v, R)
             if len(v) == d-1:     # very common special case
-                v.append(R(1))
+                v.append(R.one())
 
-            n = len(v)
-            all_zero = True
-            for i in range(n):
-                last = n-1-i
-                if v[last]:
-                    all_zero = False
-                    c = v[last]
-                    if c == R.one():
-                        break
+            for last in reversed(range(len(v))):
+                c = v[last]
+                if c.is_one():
+                    break
+                if c:
                     for j in range(last):
                         v[j] /= c
                     v[last] = R.one()
-                    self._normalized = True
                     break
-            if all_zero:
+            else:
                 raise ValueError(f"{v} does not define a valid projective "
                                  "point since all entries are zero")
+            self._normalized = True
 
             X.extended_codomain()._check_satisfies_equations(v)
 
@@ -1221,16 +1218,19 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
         """
         if self._normalized:
             return
-        index = self.codomain().ambient_space().dimension_relative()
-        while not self._coords[index]:
-            index -= 1
-        inv = self._coords[index].inverse()
-        new_coords = []
-        for i in range(index):
-            new_coords.append(self._coords[i] * inv)
-        new_coords.append(self.base_ring().one())
-        new_coords.extend(self._coords[index+1:])
-        self._coords = tuple(new_coords)
+        for index in reversed(range(len(self._coords))):
+            c = self._coords[index]
+            if c.is_one():
+                break
+            if c:
+                inv = c.inverse()
+                new_coords = [d * inv for d in self._coords[:index]]
+                new_coords.append(self.base_ring().one())
+                new_coords.extend(self._coords[index+1:])
+                self._coords = tuple(new_coords)
+                break
+        else:
+            assert False, 'bug: invalid projective point'
         self._normalized = True
 
     def _number_field_from_algebraics(self):
