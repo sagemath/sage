@@ -1847,6 +1847,16 @@ cdef class Matrix(sage.structure.element.Matrix):
           :class:`~sage.typeset.unicode_art.UnicodeArt` which support line
           breaking of wide matrices that exceed the window width
 
+        - ``left_border``, ``right_border`` -- sequence (default: ``None``);
+          if not ``None``, call :func:`str` on the elements and use the
+          results as labels for the rows of the matrix. The labels appear
+          outside of the parentheses.
+
+        - ``top_border``, ``bottom_border`` -- sequence (default: ``None``);
+          if not ``None``, call :func:`str` on the elements and use the
+          results as labels for the columns of the matrix. The labels appear
+          outside of the parentheses.
+
         EXAMPLES::
 
             sage: R = PolynomialRing(QQ,6,'z')
@@ -1974,6 +1984,32 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: matrix(R, [[2/3 - 10^6 * x^3 + 3 * y + O(x, y)^4]])
             [2/3 + 3*y - 1000000*x^3 + O(x, y)^4]
             sage: matrix.options._reset()
+
+        Edge cases of matrices with borders::
+
+            sage: print(matrix(ZZ, 0, 0).str(
+            ....:     top_border=[], bottom_border=[], left_border=[], right_border=[]))
+            []
+            sage: print(matrix(ZZ, 0, 4).str(
+            ....:     unicode=True,
+            ....:     top_border='abcd', bottom_border=range(4)))
+            ()
+            sage: print(matrix(ZZ, 1, 4).str(
+            ....:     unicode=True,
+            ....:     top_border='abcd', bottom_border=range(4)))
+             a b c d
+            (0 0 0 0)
+             0 1 2 3
+            sage: print(matrix(ZZ, 2, 4).str(
+            ....:     unicode=True,
+            ....:     top_border='abcd', bottom_border=range(4), left_border='uv'))
+                a b c d
+              u⎛0 0 0 0⎞
+              v⎝0 0 0 0⎠
+                0 1 2 3
+            sage: print(matrix(ZZ, 2, 0).str(
+            ....:     top_border='', left_border='uv', right_border=['*', '']))
+              []
         """
         cdef Py_ssize_t nr, nc, r, c
         nr = self._nrows
