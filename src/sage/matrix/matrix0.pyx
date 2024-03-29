@@ -2156,7 +2156,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                     left.extend([""] * n)
                     rows.extend([hline] * n)
                     right.extend([""] * n)
-            if top_border is not None and 0 <= r < nr:
+            if left_border is not None and 0 <= r < nr:
                 left.append(str(left_border[r]))
             else:
                 left.append("")
@@ -2180,7 +2180,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                 else:
                     s = s + " " * col_div_counts[nc]
             rows.append(s)
-            if bottom_border is not None and 0 <= r < nr:
+            if right_border is not None and 0 <= r < nr:
                 right.append(str(right_border[r]))
             else:
                 right.append("")
