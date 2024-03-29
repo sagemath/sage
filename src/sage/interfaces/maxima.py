@@ -448,14 +448,14 @@ A long complicated input expression::
     sage: maxima._eval_line('((((((((((0) + ((1) / ((n0) ^ (0)))) + ((1) / ((n1) ^ (1)))) + ((1) / ((n2) ^ (2)))) + ((1) / ((n3) ^ (3)))) + ((1) / ((n4) ^ (4)))) + ((1) / ((n5) ^ (5)))) + ((1) / ((n6) ^ (6)))) + ((1) / ((n7) ^ (7)))) + ((1) / ((n8) ^ (8)))) + ((1) / ((n9) ^ (9)));')
     '1/n9^9+1/n8^8+1/n7^7+1/n6^6+1/n5^5+1/n4^4+1/n3^3+1/n2^2+1/n1+1'
 
-Test that Maxima gracefully handles this syntax error (:trac:`17667`)::
+Test that Maxima gracefully handles this syntax error (:issue:`17667`)::
 
     sage: maxima.eval("1 == 1;")
     Traceback (most recent call last):
     ...
     TypeError: ...incorrect syntax: = is not a prefix operator...
 
-Test that conversion of symbolic functions with latex names works (:trac:`31047`)::
+Test that conversion of symbolic functions with latex names works (:issue:`31047`)::
 
     sage: var('phi')
     phi
@@ -467,7 +467,7 @@ Test that conversion of symbolic functions with latex names works (:trac:`31047`
     sage: test.operator()._latex_() == 'C_+'
     True
 
-Test that the output is parseable (:trac:`31796`)::
+Test that the output is parseable (:issue:`31796`)::
 
     sage: foo = maxima('a and (b or c)') ; foo
     a and (b or c)
@@ -542,7 +542,7 @@ class Maxima(MaximaAbstract, Expect):
             sage: maxima == loads(dumps(m))
             True
 
-        We make sure labels are turned off (see :trac:`6816`)::
+        We make sure labels are turned off (see :issue:`6816`)::
 
             sage: 'nolabels : true' in maxima._Expect__init_code
             True

@@ -93,7 +93,7 @@ One can prove that two ideals `I` and `J` are equivalent if and only
 if there exists an element `\alpha \in I \overline{J}` such
 `N(\alpha)=N(I)N(J)`.
 
-``is_equivalent(I,J)`` returns true if `I` and `J` are equivalent. This
+``is_right_equivalent(I,J)`` returns true if `I` and `J` are equivalent. This
 method first compares the theta series of `I` and `J`. If they are the
 same, it computes the theta series of the lattice `I\overline(J)`. It
 returns true if the `n^{th}` coefficient of this series is nonzero
@@ -590,7 +590,7 @@ class BrandtModuleElement(HeckeModuleElement):
 
         TESTS:
 
-        One check for :trac:`12866`::
+        One check for :issue:`12866`::
 
             sage: Br = BrandtModule(2,7)
             sage: g1, g2 = Br.basis()
@@ -1193,7 +1193,7 @@ class BrandtModule_class(AmbientHeckeModule):
                     T[r, v[0]] += 1
                 else:
                     for i in v:
-                        if C[i].is_equivalent(J, 0):
+                        if C[i].is_right_equivalent(J, 0):
                             T[r, i] += 1
                             break
         return T
@@ -1325,7 +1325,7 @@ class BrandtModule_class(AmbientHeckeModule):
             sage: B = BrandtModule(1009)
             sage: Is = B.right_ideals()
             sage: n = len(Is)
-            sage: prod(not Is[i].is_equivalent(Is[j]) for i in range(n) for j in range(i))
+            sage: prod(not Is[i].is_right_equivalent(Is[j]) for i in range(n) for j in range(i))
             1
         """
         p = self._smallest_good_prime()
@@ -1353,7 +1353,7 @@ class BrandtModule_class(AmbientHeckeModule):
                     J_theta = tuple(J.theta_series_vector(B))
                     if J_theta in ideals_theta:
                         for K in ideals_theta[J_theta]:
-                            if J.is_equivalent(K, 0):
+                            if J.is_right_equivalent(K, 0):
                                 is_new = False
                                 break
                     if is_new:

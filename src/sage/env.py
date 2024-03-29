@@ -3,7 +3,7 @@ Sage Runtime Environment
 
 Verify that importing ``sage.all`` works in Sage's Python without any ``SAGE_``
 environment variables, and has the same ``SAGE_ROOT`` and ``SAGE_LOCAL``
-(see also :trac:`29446`)::
+(see also :issue:`29446`)::
 
     sage: env = {k:v for (k,v) in os.environ.items() if not k.startswith("SAGE_")}
     sage: from subprocess import check_output
@@ -220,6 +220,7 @@ MAXIMA = var("MAXIMA", "maxima")
 MAXIMA_FAS = var("MAXIMA_FAS")
 KENZO_FAS = var("KENZO_FAS")
 SAGE_NAUTY_BINS_PREFIX = var("SAGE_NAUTY_BINS_PREFIX", "")
+SAGE_ECMBIN = var("SAGE_ECMBIN")
 RUBIKS_BINS_PREFIX = var("RUBIKS_BINS_PREFIX", "")
 FOURTITWO_HILBERT = var("FOURTITWO_HILBERT")
 FOURTITWO_MARKOV = var("FOURTITWO_MARKOV")

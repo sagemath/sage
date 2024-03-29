@@ -2418,7 +2418,7 @@ class ScalarField(CommutativeAlgebraElement, ModuleElementWithMutability):
 
         TESTS:
 
-        Check that :trac:`28072` has been fixed::
+        Check that :issue:`28072` has been fixed::
 
             sage: c_ab.<a,b> = W.chart()
             sage: xy_to_ab = c_xy_W.transition_map(c_ab, (3*y, x-y))
