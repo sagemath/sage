@@ -33,8 +33,8 @@ def get_remote_file(filename, verbose=True) -> Path:
         print("Attempting to load remote file: " + filename)
 
     from sage.misc.temporary_file import tmp_filename
-    ext = os.path.splitext(filename)[1][1:]
-    temp_name = Path(tmp_filename()).with_suffix(f'.{ext}')
+    ext = os.path.splitext(filename)[1]
+    temp_name = Path(tmp_filename(ext=ext))
     # IMPORTANT -- urllib takes a long time to load,
     # so do not import it in the module scope.
 
