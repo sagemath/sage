@@ -268,7 +268,7 @@ def reset_load_attach_path():
         [PosixPath('.')]
     """
     global search_paths
-    search_paths = [Path('.')]
+    search_paths = [Path()]
     for path in os.environ.get('SAGE_LOAD_ATTACH_PATH', '').split(':'):
         load_attach_path(path=path)
 
