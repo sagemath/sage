@@ -1,0 +1,14 @@
+Determining if the function sgemm_ exists failed with the following output:
+Change Dir: /home/veeransh/Desktop/sage-1/build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/ninja cmTC_100bd && [1/2] Building C object CMakeFiles/cmTC_100bd.dir/CheckFunctionExists.c.o
+[2/2] Linking C executable cmTC_100bd
+FAILED: cmTC_100bd 
+: && /usr/bin/clang -DCHECK_FUNCTION_EXISTS=sgemm_ -rdynamic CMakeFiles/cmTC_100bd.dir/CheckFunctionExists.c.o -o cmTC_100bd   && :
+/usr/bin/ld: CMakeFiles/cmTC_100bd.dir/CheckFunctionExists.c.o: in function `main':
+CheckFunctionExists.c:(.text+0x17): undefined reference to `sgemm_'
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+ninja: build stopped: subcommand failed.
+
+
+

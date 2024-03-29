@@ -36,5 +36,6 @@
         "Cython"
     ],
     "editor.formatOnType": true,
-    "esbonio.sphinx.confDir": ""
+    "esbonio.sphinx.confDir": "",
+    "cmake.sourceDirectory": "/home/veeransh/Desktop/sage-1/build/pkgs/dsdp/patches"
 }
