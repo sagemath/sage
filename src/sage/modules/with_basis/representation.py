@@ -329,11 +329,14 @@ class Representation_abstract(CombinatorialFreeModule):
         """
         return Representation_Symmetric(self, degree)
 
-    @abstract_method
+    @abstract_method(optional=True)
     def _semigroup_action(self, g, vec, vec_on_left):
         """
         Return the action of the semigroup element ``g`` on the
         vector ``vec`` of ``self``.
+
+        If this is not defined, the representation element must
+        override ``_acted_upon_``.
 
         EXAMPLES::
 
