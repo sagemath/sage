@@ -78,23 +78,22 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
-from sage.structure.sage_object import SageObject
-from sage.rings.integer import Integer
-from sage.rings.real_mpfr import RealField
-from sage.rings.rational_field import RationalField
-from sage.rings.real_mpfi import RIF
-from sage.rings.integer_ring import ZZ
-from sage.functions.log import log
 from math import sqrt
+
+from sage.functions.log import log
 from sage.misc.verbose import verbose
-import sage.arith.all as arith
-from sage.rings.padics.factory import Qp
 from sage.modules.free_module_element import vector
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
+from sage.rings.padics.factory import Qp
+from sage.rings.rational_field import Q
+from sage.rings.real_mpfi import RIF
+from sage.rings.real_mpfr import RealField
+from sage.structure.sage_object import SageObject
+import sage.arith.all as arith
 
 factor = arith.factor
 valuation = arith.valuation
-Q = RationalField()
 
 
 class Sha(SageObject):
@@ -296,7 +295,7 @@ class Sha(SageObject):
 
     def an(self, use_database=False, descent_second_limit=12):
         r"""
-        Returns the Birch and Swinnerton-Dyer conjectural order of `Sha`
+        Return the Birch and Swinnerton-Dyer conjectural order of `Sha`
         as a provably correct integer, unless the analytic rank is > 1,
         in which case this function returns a numerical value.
 
@@ -432,7 +431,7 @@ class Sha(SageObject):
             return Sha
 
         else:  # rank > 0  (Not provably correct)
-            L1, error_bound = E.lseries().deriv_at1(10*sqrt(E.conductor()) + 10)
+            L1, error_bound = E.lseries().deriv_at1(10 * sqrt(E.conductor()) + 10)
             if abs(L1) < error_bound:
                 s = self.an_numerical()
                 E.__an = s
@@ -455,7 +454,7 @@ class Sha(SageObject):
 
     def an_padic(self, p, prec=0, use_twists=True):
         r"""
-        Returns the conjectural order of `Sha(E/\QQ)`,
+        Return the conjectural order of `Sha(E/\QQ)`,
         according to the `p`-adic analogue of the Birch
         and Swinnerton-Dyer conjecture as formulated
         in [MTT1986]_ and [BP1993]_.
@@ -561,21 +560,21 @@ class Sha(SageObject):
             Et, D = E.minimal_quadratic_twist()
             # trac 6455 : we have to assure that the twist back is allowed
             D = ZZ(D)
-            if D % p == 0:
-                D = ZZ(D/p)
+            if not D % p:
+                D = D // p
             for ell in D.prime_divisors():
-                if ell % 2 == 1:
-                    if Et.conductor() % ell**2 == 0:
-                        D = ZZ(D/ell)
+                if ell % 2:
+                    if not Et.conductor() % ell**2:
+                        D = D // ell
             ve = valuation(D, 2)
-            de = ZZ((D/2**ve).abs())
+            de = (D >> ve).abs()
             if de % 4 == 3:
                 de = -de
             Et = E.quadratic_twist(de)
             # now check individually if we can twist by -1 or 2 or -2
             Nmin = Et.conductor()
             Dmax = de
-            for DD in [-4*de, 8*de, -8*de]:
+            for DD in [-4 * de, 8 * de, -8 * de]:
                 Et = E.quadratic_twist(DD)
                 if Et.conductor() < Nmin and valuation(Et.conductor(), 2) <= valuation(DD, 2):
                     Nmin = Et.conductor()
@@ -593,12 +592,12 @@ class Sha(SageObject):
             # term will be the L-value divided by the Neron
             # period.
             ms = E.modular_symbol(sign=+1, normalize='L_ratio')
-            lstar = ms(0)/E.real_components()
-            bsd = tam/tors
+            lstar = ms(0) / E.real_components()
+            bsd = tam / tors
             if prec == 0:
                 # prec = valuation(lstar/bsd, p)
                 prec = 20
-            shan = Qp(p, prec=prec + 2)(lstar/bsd)
+            shan = Qp(p, prec=prec + 2)(lstar / bsd)
 
         elif E.is_ordinary(p):
             K = reg.parent()
@@ -608,9 +607,9 @@ class Sha(SageObject):
                 if not E.is_good(p):
                     eps = 2
                 else:
-                    eps = (1 - arith.kronecker_symbol(D, p)/lp.alpha())**2
+                    eps = (1 - arith.kronecker_symbol(D, p) / lp.alpha())**2
                 # according to the p-adic BSD this should be equal to the leading term of the p-adic L-series divided by sha:
-                bsdp = tam * reg * eps/tors/lg**r
+                bsdp = tam * reg * eps / tors / lg**r
             else:
                 r += 1   # exceptional zero
                 eq = E.tate_curve(p)
@@ -618,7 +617,7 @@ class Sha(SageObject):
 
                 # according to the p-adic BSD (Mazur-Tate-Teitelbaum)
                 # this should be equal to the leading term of the p-adic L-series divided by sha:
-                bsdp = tam * reg * Li/tors/lg**r
+                bsdp = tam * reg * Li / tors / lg**r
 
             v = bsdp.valuation()
             if v > 0:
@@ -647,7 +646,7 @@ class Sha(SageObject):
                     n += 1
                     verbose("increased precision to %s" % n)
 
-            shan = lstar/bsdp
+            shan = lstar / bsdp
 
         elif E.is_supersingular(p):
             K = reg[0].parent()
@@ -681,14 +680,14 @@ class Sha(SageObject):
 
             verbose("...putting things together")
             if bsdp[0] != 0:
-                shan0 = lstar[0]/bsdp[0]
+                shan0 = lstar[0] / bsdp[0]
             else:
                 shan0 = 0   # this should actually never happen
             if bsdp[1] != 0:
-                shan1 = lstar[1]/bsdp[1]
+                shan1 = lstar[1] / bsdp[1]
             else:
                 shan1 = 0   # this should conjecturally only happen when the rank is 0
-            verbose("the two values for Sha : %s" % [shan0, shan1])
+            verbose(f"the two values for Sha : {shan0}, {shan1}")
 
             # check consistency (the first two are only here to avoid a bug in the p-adic L-series
             # (namely the coefficients of zero-relative precision are treated as zero)
@@ -728,7 +727,7 @@ class Sha(SageObject):
 
         - `e` -- a non-negative integer such that `p^e` is the
           order of the `p`-primary order if the conditions are satisfied
-          and raises a ``ValueError`` otherwise.
+          and raises a :class:`ValueError` otherwise.
 
         EXAMPLES::
 
@@ -747,14 +746,14 @@ class Sha(SageObject):
         E = self.E
         # does not work if p = 2
         if p == 2:
-            raise ValueError("{} is not an odd prime".format(p))
-        if (E.is_ordinary(p) and E.conductor() % p != 0 and
+            raise ValueError(f"{p} is not an odd prime")
+        if (E.is_ordinary(p) and E.conductor() % p and
                 E.galois_representation().is_surjective(p)):
             N = E.conductor()
             fac = N.factor()
             # the auxiliary prime will be one dividing the conductor
             if all(E.tate_curve(ell).parameter().valuation() % p == 0
-                   for (ell, e) in fac if e == 1):
+                   for ell, e in fac if e == 1):
                 raise ValueError("The order is not provably known using Skinner-Urban.\n" +
                                  "Try running p_primary_bound to get a bound.")
         else:
@@ -859,24 +858,21 @@ class Sha(SageObject):
         if p == 2:
             raise ValueError("The prime p must be odd.")
         E = self.Emin
-        if E.is_ordinary(p) or E.is_good(p):
-            rho = E.galois_representation()
-            su = rho.is_surjective(p)
-            re = rho.is_reducible(p)
-            if not su and not re:
-                raise ValueError("The p-adic Galois representation is not surjective or reducible. Current knowledge about Euler systems does not provide an upper bound in this case. Try an_padic for a conjectural bound.")
-            shan = self.an_padic(p, prec=0, use_twists=True)
-            if shan == 0:
-                raise RuntimeError("There is a bug in an_padic.")
-            S = shan.valuation()
-        else:
+        if not (E.is_ordinary(p) or E.is_good(p)):
             raise ValueError("The curve has to have semi-stable reduction at p.")
-
-        return S
+        rho = E.galois_representation()
+        su = rho.is_surjective(p)
+        re = rho.is_reducible(p)
+        if not su and not re:
+            raise ValueError("The p-adic Galois representation is not surjective or reducible. Current knowledge about Euler systems does not provide an upper bound in this case. Try an_padic for a conjectural bound.")
+        shan = self.an_padic(p, prec=0, use_twists=True)
+        if shan == 0:
+            raise RuntimeError("There is a bug in an_padic.")
+        return shan.valuation()
 
     def two_selmer_bound(self):
         r"""
-        This returns the 2-rank, i.e. the `\GF{2}`-dimension
+        Return the 2-rank, i.e. the `\GF{2}`-dimension
         of the 2-torsion part of `Sha`, provided we can determine the
         rank of `E`.
 
@@ -905,9 +901,7 @@ class Sha(SageObject):
         r = E.rank()
         t = E.two_torsion_rank()
         b = S - r - t
-        if b < 0:
-            b = 0
-        return b
+        return 0 if b < 0 else b
 
     def bound_kolyvagin(self, D=0, regulator=None,
                         ignore_nonsurj_hypothesis=False):
@@ -997,10 +991,10 @@ class Sha(SageObject):
         L1_vanishes = E.lseries().L1_vanishes()
         if eps == 1 and L1_vanishes:
             return 0, 0        # rank even hence >= 2, so Kolyvagin gives nothing.
-        alpha = sqrt(abs(D)) / (2*E.period_lattice().complex_area())
+        alpha = sqrt(abs(D)) / (2 * E.period_lattice().complex_area())
         F = E.quadratic_twist(D)
-        k_E = 2*sqrt(E.conductor()) + 10
-        k_F = 2*sqrt(F.conductor()) + 10
+        k_E = 2 * sqrt(E.conductor()) + 10
+        k_F = 2 * sqrt(F.conductor()) + 10
         # k_E = 2
         # k_F = 2
 
@@ -1020,17 +1014,17 @@ class Sha(SageObject):
                 err_F = max(err_F, MIN_ERR)
                 err_E = max(err_E, MIN_ERR)
                 if regulator is not None:
-                    hZ = regulator/2
+                    hZ = regulator / 2
                 else:
-                    hZ = F.regulator(use_database=True)/2
+                    hZ = F.regulator(use_database=True) / 2
                 I = RIF(alpha) * RIF(LE1-err_E, LE1+err_E) * RIF(LF1-err_F, LF1+err_F) / RIF(hZ)
 
             else:          # E has odd rank
 
                 if regulator is not None:
-                    hZ = regulator/2
+                    hZ = regulator / 2
                 else:
-                    hZ = E.regulator(use_database=True)/2
+                    hZ = E.regulator(use_database=True) / 2
                 LE1, err_E = E.lseries().deriv_at1(k_E)
                 LF1, err_F = F.lseries().at1(k_F)
                 err_F = max(err_F, MIN_ERR)
@@ -1044,7 +1038,7 @@ class Sha(SageObject):
             if t:
                 break
             elif I.absolute_diameter() < 1:
-                raise RuntimeError("Problem in bound_kolyvagin; square of index is not an integer -- D=%s, I=%s." % (D, I))
+                raise RuntimeError("Problem in bound_kolyvagin; square of index is not an integer -- D={}, I={}.".format(D, I))
             verbose("Doubling bounds")
             k_E *= 2
             k_F *= 2
@@ -1054,22 +1048,20 @@ class Sha(SageObject):
         if n == 0:
             return 0, 0  # no bound
         B = [2]
-        for p, e in factor(n):
+        for p, e in n.factor():
             if p > 2:
                 if e % 2:
-                    raise RuntimeError("Problem in bound_kolyvagin; square of index is not a perfect square!  D=%s, I=%s, n=%s, e=%s." % (D, I, n, e))
+                    raise RuntimeError("Problem in bound_kolyvagin; square of index is not a perfect square!  D={}, I={}, n={}, e={}.".format(D, I, n, e))
                 B.append(p)
             else:
-                n /= 2**e  # replace n by its odd part
+                n >>= e  # replace n by its odd part
         if not ignore_nonsurj_hypothesis:
-            for p in E.galois_representation().non_surjective():
-                B.append(p)
-        B = sorted({int(x) for x in B})
-        return B, n
+            B.extend(E.galois_representation().non_surjective())
+        return sorted({int(x) for x in B}), n
 
     def bound_kato(self):
         r"""
-        Returns a list of primes `p` such that the theorems of Kato's [Kat2004]_
+        Return a list of primes `p` such that the theorems of Kato's [Kat2004]_
         and others (e.g., as explained in a thesis of Grigor Grigorov [Gri2005]_)
         imply that if `p` divides  the order of `Sha(E/\QQ)` then `p` is in
         the list.
@@ -1128,30 +1120,28 @@ class Sha(SageObject):
             return False
         B = [2]
         rho = E.galois_representation()
-        for p in rho.non_surjective():
-            if p > 2 and p not in rho.reducible_primes():
-                B.append(p)
-        for p in E.conductor().prime_divisors():
-            if E.has_additive_reduction(p) and p not in B:
-                B.append(p)
+        B.extend(p for p in rho.non_surjective()
+                 if p > 2 and p not in rho.reducible_primes())
+        B.extend(p for p in E.conductor().prime_divisors()
+                 if E.has_additive_reduction(p))
 
         # The only other p that might divide B are those that divide
         # the integer 2*#E(Q)_tor^2 * L(E,1)/omega.  So we compute
         # that to sufficient precision to determine it.  Note that
         # we have to assume the Manin constant is <=2 in order to provably
         # compute L(E,1)/omega.
-        for p, n in factor(self.an()):
+        for p, n in self.an().factor():
             if n >= 2:    # use parity of Sha
                 B.append(int(p))
-        B = sorted(set(B))
-        return B
+        return sorted(set(B))
 
     def bound(self):
         r"""
         Compute a provably correct bound on the order of the Tate-Shafarevich
-        group of this curve. The bound is either ``False`` (no bound) or a
-        list ``B`` of primes such that any prime divisor of the order of `Sha`
-        is in this list.
+        group of this curve.
+
+        The bound is either ``False`` (no bound) or a list ``B`` of primes
+        such that any prime divisor of the order of `Sha` is in this list.
 
         EXAMPLES::
 
@@ -1159,7 +1149,5 @@ class Sha(SageObject):
             ([2], 1)
         """
         if self.Emin.lseries().L1_vanishes():
-            B = self.bound_kolyvagin()
-        else:
-            B = self.bound_kato()
-        return B
+            return self.bound_kolyvagin()
+        return self.bound_kato()
