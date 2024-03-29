@@ -241,8 +241,7 @@ def load(filename, globals, attach=False):
 
     from sage.repl.attach import load_attach_path
     for path in load_attach_path():
-        fpath = Path(path) / filename
-        fpath = fpath.expanduser()
+        fpath = (path / filename).expanduser()
         if fpath.is_file():
             break
     else:
