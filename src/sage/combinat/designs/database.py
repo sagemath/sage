@@ -3663,18 +3663,18 @@ def DM_51_6_1():
         [  34,  32,  36,  26,  20]
         ]
 
-    Mb = [[0,0,0,0,0]]
+    Mb = [[0, 0, 0, 0, 0]]
 
     for R in zip(*M):
         for i in range(5):
-            for RR in [list(R), [-x for x in R]]:
-                Mb.append(RR)
-            R = cyclic_shift(R,1)
+            Mb.extend([list(R), [-x for x in R]])
+            R = cyclic_shift(R, 1)
 
     for R in Mb:
         R.append(0)
 
-    return G,Mb
+    return G, Mb
+
 
 def DM_52_6_1():
     r"""
