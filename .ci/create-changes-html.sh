@@ -19,8 +19,8 @@ echo '<script>hljs.highlightAll();</script>' >> CHANGES.html
 cat >> CHANGES.html << EOF
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+const baseDocURL = 'https://sagemath.netlify.app'
 const diffSite = 'https://pianomister.github.io/diffsite'
-const baseDocURL = 'https://sagemath-tobias.netlify.app'
 const diffParagraphs = document.querySelectorAll('p.diff');
 diffParagraphs.forEach(paragraph => {
   const rootURL = window.location.origin;
