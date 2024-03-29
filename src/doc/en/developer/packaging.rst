@@ -75,6 +75,8 @@ the following source types:
 
    - its version number is defined by the required file ``package-version.txt``;
 
+   - can be patched;
+
    - Sage installs the package using build and install scripts
      (see :ref:`section-spkg-install`);
 
@@ -91,6 +93,8 @@ the following source types:
      ``*-none-any.whl`` files;
 
    - its version number is defined by the required file ``package-version.txt``;
+
+   - cannot be patched;
 
    - no build and install scripts are needed
      (with one exception: the package :ref:`spkg_pip` installs itself from
@@ -109,6 +113,8 @@ the following source types:
      contains the name of the package (more details at
      https://pip.pypa.io/en/stable/user_guide/#requirements-files);
 
+   - cannot be patched;
+
    - Sage installs the package using the ``pip`` package manager;
 
    - Sage delegates the recording of installed package version numbers to it;
@@ -120,6 +126,8 @@ the following source types:
    - is not associated with a tarball;
 
    - the file ``package-version.txt`` is optional;
+
+   - may be associated with a source tree in the repository;
 
    - installing the package runs the installation script ``spkg-install`` or
      ``spkg-install.in`` (see :ref:`section-spkg-install`);
@@ -157,8 +165,7 @@ Third-party packages in Sage consist of two parts:
    the filename of the tarball.
    In any case, the actual code must be unmodified: if you need to
    change the sources, add a :ref:`patch <section-spkg-patching>`
-   instead. See also :ref:`section-spkg-src` for automating the
-   modifications to the upstream tarball.
+   instead.
 
 #. The build scripts and associated files are in a subdirectory
    ``SAGE_ROOT/build/pkgs/<package>``, where you replace ``<package>``
@@ -215,8 +222,8 @@ See :ref:`section-package-types` for the meaning of these types.
 
 .. _section-spkg-install:
 
-Build and install scripts of normal packages
---------------------------------------------
+Build and install scripts of ``normal`` packages
+------------------------------------------------
 
 The ``spkg-build.in`` and ``spkg-install.in`` files are templates for
 ``bash`` scripts ``spkg-build`` and ``spkg-install``, which build
@@ -359,13 +366,26 @@ at build time,  which should to the appropriate system-specific
   packages should prefix all commands in ``spkg-install.in`` that write into
   the installation hierarchy with ``$SAGE_SUDO``.
 
-Install scripts of script packages
-----------------------------------
+If an ``spkg-src`` file is present, it indicates that the tarball is not
+an unmodified third-party tarball (see :ref:`section-spkg-patching`).
+It documents how the tarball was generated (either by modifying an upstream
+tarball or generating it from a repository). As ideally
+our tarballs are not modified, for most packages there is no ``spkg-src`` file.
 
-For script packages, it is also possible to use an install script named ``spkg-install``.
+
+Install and source scripts of ``script`` packages
+-------------------------------------------------
+
+For ``script`` packages, it is also possible to use an install script named ``spkg-install``.
 It needs to be an executable shell script; it is not subject to the templating
 described in the previous section and will be executed directly from
 the build directory.
+
+Most of our ``script`` packages are associated with a source tree included in the
+repository, in a subdirectory of ``$SAGE_ROOT/pkgs/``. In this case, there
+is a symlink ``src`` that points to the source tree and a script ``spkg-src``
+that builds a tarball for the package.
+
 
 .. _section-sdh-helpers:
 
@@ -927,184 +947,6 @@ word ``SAGE_VENV``, and ``build/pkgs/sagemath_doc_html/trees.txt`` contains the
 word ``SAGE_DOCS``.
 
 
-.. _section-spkg-patching:
-
-Patching sources
-----------------
-
-Actual changes to the source code must be via patches, which should be placed
-in the ``patches/`` directory, and must have the ``.patch`` extension. GNU
-patch is distributed with Sage, so you can rely on it being available. Patches
-must include documentation in their header (before the first diff hunk), and
-must have only one "prefix" level in the paths (that is, only one path level
-above the root of the upstream sources being patched).  So a typical patch file
-should look like this:
-
-.. CODE-BLOCK:: diff
-
-    Add autodoc_builtin_argspec config option
-
-    Following the title line you can add a multi-line description of
-    what the patch does, where you got it from if you did not write it
-    yourself, if they are platform specific, if they should be pushed
-    upstream, etc...
-
-    diff -dru Sphinx-1.2.2/sphinx/ext/autodoc.py.orig Sphinx-1.2.2/sphinx/ext/autodoc.py
-    --- Sphinx-1.2.2/sphinx/ext/autodoc.py.orig  2014-03-02 20:38:09.000000000 +1300
-    +++ Sphinx-1.2.2/sphinx/ext/autodoc.py  2014-10-19 23:02:09.000000000 +1300
-    @@ -1452,6 +1462,7 @@
-
-         app.add_config_value('autoclass_content', 'class', True)
-         app.add_config_value('autodoc_member_order', 'alphabetic', True)
-    +    app.add_config_value('autodoc_builtin_argspec', None, True)
-         app.add_config_value('autodoc_default_flags', [], True)
-         app.add_config_value('autodoc_docstring_signature', True, True)
-         app.add_event('autodoc-process-docstring')
-
-Patches directly under the ``patches/`` directly are applied automatically
-before running the ``spkg-install`` script (so long as they have the ``.patch``
-extension).  If you need to apply patches conditionally (such as only on
-a specifically platform), you can place those patches in a subdirectory of
-``patches/`` and apply them manually using the ``sage-apply-patches`` script.
-For example, considering the layout:
-
-.. CODE-BLOCK:: text
-
-    SAGE_ROOT/build/pkgs/foo
-    |-- patches
-    |   |-- solaris
-    |   |   |-- solaris.patch
-    |   |-- bar.patch
-    |   `-- baz.patch
-
-The patches ``bar.patch`` and ``baz.patch`` are applied to the unpacked
-upstream sources in ``src/`` before running ``spkg-install``.  To conditionally
-apply the patch for Solaris the ``spkg-install`` should contain a section like
-this:
-
-.. CODE-BLOCK:: bash
-
-    if [ $UNAME == "SunOS" ]; then
-        sage-apply-patches -d solaris
-    fi
-
-where the ``-d`` flag applies all patches in the ``solaris/`` subdirectory of
-the main ``patches/`` directory.
-
-
-.. _section-spkg-patch-or-repackage:
-
-When to patch, when to repackage, when to autoconfiscate
---------------------------------------------------------
-
-- Use unpatched original upstream tarball when possible.
-
-  Sometimes it may seem as if you need to patch a (hand-written)
-  ``Makefile`` because it "hard-codes" some paths or compiler flags:
-
-  .. CODE-BLOCK:: diff
-
-      --- a/Makefile
-      +++ b/Makefile
-      @@ -77,7 +77,7 @@
-       # This is a Makefile.
-       # Handwritten.
-
-      -DESTDIR = /usr/local
-      +DESTDIR = $(SAGE_ROOT)/local
-       BINDIR   = $(DESTDIR)/bin
-       INCDIR   = $(DESTDIR)/include
-       LIBDIR   = $(DESTDIR)/lib
-
-  Don't use patching for that.  Makefile variables can be overridden
-  from the command-line.  Just use the following in ``spkg-install``:
-
-  .. CODE-BLOCK:: bash
-
-      $(MAKE) DESTDIR="$SAGE_ROOT/local"
-
-- Check if Debian or another distribution already provides patches
-  for upstream.  Use them, don't reinvent the wheel.
-
-- If the upstream Makefile does not build shared libraries,
-  don't bother trying to patch it.
-
-  Autoconfiscate the package instead and use the standard facilities
-  of Automake and Libtool.  This ensures that the shared library build
-  is portable between Linux and macOS.
-
-- If you have to make changes to ``configure.ac`` or other source
-  files of the autotools build system (or if you are autoconfiscating
-  the package), then you can't use patching; make a :ref:`modified
-  tarball <section-spkg-src>` instead.
-
-- If the patch would be huge, don't use patching.  Make a
-  :ref:`modified tarball <section-spkg-src>` instead.
-
-- Otherwise, :ref:`maintain a set of patches
-  <section-spkg-patch-maintenance>`.
-
-
-.. _section-spkg-patch-maintenance:
-
-How to maintain a set of patches
---------------------------------
-
-We recommend the following workflow for maintaining a set of patches.
-
-- Fork the package and put it on a public git repository.
-
-  If upstream has a public version control repository, import it from
-  there.  If upstream does not have a public version control
-  repository, import the current sources from the upstream tarball.
-  Let's call the branch ``upstream``.
-
-- Create a branch for the changes necessary for Sage, let's call it
-  ``sage_package_VERSION``, where ``version`` is the upstream version
-  number.
-
-- Make the changes and commit them to the branch.
-
-- Generate the patches against the ``upstream`` branch:
-
-  .. CODE-BLOCK:: bash
-
-      rm -Rf SAGE_ROOT/build/pkgs/PACKAGE/patches
-      mkdir SAGE_ROOT/build/pkgs/PACKAGE/patches
-      git format-patch -o SAGE_ROOT/build/pkgs/PACKAGE/patches/ upstream
-
-- Optionally, create an ``spkg-src`` file in the Sage package's
-  directory that regenerates the patch directory using the above
-  commands.
-
-- When a new upstream version becomes available, merge (or import) it
-  into ``upstream``, then create a new branch and rebase it on top of
-  the updated upstream:
-
-  .. CODE-BLOCK:: bash
-
-      git checkout sage_package_OLDVERSION
-      git checkout -b sage_package_NEWVERSION
-      git rebase upstream
-
-  Then regenerate the patches.
-
-
-.. _section-spkg-src:
-
-Modified tarballs
------------------
-
-The ``spkg-src`` file is optional and only to document how the upstream
-tarball was changed. Ideally it is not modified, then there would be no
-``spkg-src`` file present either.
-
-However, if you really must modify the upstream tarball then it is
-recommended that you write a script, called ``spkg-src``, that makes the
-changes. This not only serves as documentation but also makes it easier
-to apply the same modifications to future versions.
-
-
 .. _section-spkg-versioning:
 
 Package versioning
@@ -1124,9 +966,8 @@ This particular Sage package for ``database_stein_watkins`` was created
 in 2014, but the data it contains was last updated in 2011.
 
 If you apply any patches, or if you made changes to the upstream tarball
-(see :ref:`section-directory-structure` for allowable changes),
-then you should append a ``.p0`` to the version to indicate that it's
-not a vanilla package.
+(see :ref:`section-spkg-patching` below), then you should append a ``.p0``
+to the version to indicate that it's not an unmodified package.
 
 Additionally, whenever you make changes to a package *without* changing
 the upstream tarball (for example, you add an additional patch or you
@@ -1388,6 +1229,230 @@ If all went fine, open a PR with the code under
 ``SAGE_ROOT/build/pkgs``.
 
 
+.. _section-spkg-patching:
+
+Modifying third-party code
+==========================
+
+In the Sage distribution, we try to use unpatched original upstream tarballs
+of stable versions of third-party packages whenever possible.
+Sometimes, however, modifications are necessary, either to fix a bug or
+to make the package build on the platforms supported by Sage.
+
+Only ``normal`` packages can be patched; see :ref:`section-package-source-types`.
+If a Python package is currently a ``wheel`` package
+and you need to patch it, change it to a ``normal`` package first.
+
+
+.. _section-spkg-patch-or-repackage:
+
+When to patch, when to repackage, when to autoconfiscate
+--------------------------------------------------------
+
+- First check whether there is already a newer stable version of the package
+  available that fixes the problem. In this case, try to upgrade the package.
+
+- Check if Debian or another distribution already provides patches
+  for upstream.  Use them if possible, don't reinvent the wheel.
+
+- If the upstream project is maintained on GitHub, check if there is a Pull
+  Request that can be imported; see :ref:`section-spkg-patch-from-pr` below.
+
+- Sometimes it may seem as if you need to patch a (hand-written)
+  ``Makefile`` because it "hard-codes" some paths or compiler flags:
+
+  .. CODE-BLOCK:: diff
+
+      --- a/Makefile
+      +++ b/Makefile
+      @@ -77,7 +77,7 @@
+       # This is a Makefile.
+       # Handwritten.
+
+      -DESTDIR = /usr/local
+      +DESTDIR = $(SAGE_ROOT)/local
+       BINDIR   = $(DESTDIR)/bin
+       INCDIR   = $(DESTDIR)/include
+       LIBDIR   = $(DESTDIR)/lib
+
+  Don't use patching for that.  Makefile variables can be overridden
+  from the command-line.  Just use the following in ``spkg-install``:
+
+  .. CODE-BLOCK:: bash
+
+      $(MAKE) DESTDIR="$SAGE_ROOT/local"
+
+- If the upstream Makefile does not build shared libraries,
+  don't bother trying to patch it.
+
+  Autoconfiscate the package instead and use the standard facilities
+  of Automake and Libtool.  This ensures that the shared library build
+  is portable between Linux and macOS.
+
+- If you have to make changes to ``configure.ac`` or other source
+  files of the autotools build system (or if you are autoconfiscating
+  the package), then you can't use patching; make a :ref:`modified
+  tarball <section-spkg-src>` instead.
+
+- If the patch would be huge, don't use patching.  Make a
+  :ref:`modified tarball <section-spkg-src>` instead.
+
+- Otherwise, :ref:`maintain a set of patches
+  <section-spkg-patch-maintenance>`.
+
+
+.. _section-spkg-patch-from-pr:
+
+Preparing a patch by importing a pull request from GitHub
+---------------------------------------------------------
+
+In the easiest and quite commmon case, a pull request is already available on
+the upstream package's GitHub repository.
+
+For example, if https://github.com/discopt/cmr/pull/64 is the PR that we wish to use,
+change the URL to https://github.com/discopt/cmr/pull/64.patch and save this file
+in the ``patches/`` subdirectory of the package directory (create the subdirectory
+if it does not exist yet). Make sure that it has the ``.patch``
+file name extension; if your browser saved it with a ``.patch.txt`` extension,
+rename it.
+
+Modify the ``package-version.txt`` file to indicate the changed patch level; see
+:ref:`section-spkg-versioning`. This ensures that the package will be rebuilt,
+even though its upstream version did not change. This is important in particular
+when other people are testing your added patch.
+
+Next, test building the package with the patch, for example using ``make build``.
+You should see a message like ``Applying 64.patch``. Messages such as
+``Hunk #1 succeeded at 144 with fuzz 1 (offset 9 lines)`` are safe to
+ignore. They appear when the PR from which you prepared the patch is based
+on a version that differs from the version that the Sage package uses, or
+when there are other patches that make changes to the same file.
+
+Be sure add the patch file to your branch using ``git add``. When you commit it,
+use a commit message such as
+``build/pkgs/cmr: Add https://github.com/discopt/cmr/pull/64 as a patch``.
+When you open your PR from this branch, our automatic test runs on GitHub
+Actions will automatically rebuild the patched package.
+
+
+.. _section-spkg-patch-manually:
+
+Preparing a patch manually
+--------------------------
+
+Patches must include documentation in their header (before the first diff hunk), and
+must have only one "prefix" level in the paths (that is, only one path level
+above the root of the upstream sources being patched).  So a typical patch file
+should look like this:
+
+.. CODE-BLOCK:: diff
+
+    Add autodoc_builtin_argspec config option
+
+    Following the title line you can add a multi-line description of
+    what the patch does, where you got it from if you did not write it
+    yourself, if they are platform specific, if they should be pushed
+    upstream, etc...
+
+    diff -dru Sphinx-1.2.2/sphinx/ext/autodoc.py.orig Sphinx-1.2.2/sphinx/ext/autodoc.py
+    --- Sphinx-1.2.2/sphinx/ext/autodoc.py.orig  2014-03-02 20:38:09.000000000 +1300
+    +++ Sphinx-1.2.2/sphinx/ext/autodoc.py  2014-10-19 23:02:09.000000000 +1300
+    @@ -1452,6 +1462,7 @@
+
+         app.add_config_value('autoclass_content', 'class', True)
+         app.add_config_value('autodoc_member_order', 'alphabetic', True)
+    +    app.add_config_value('autodoc_builtin_argspec', None, True)
+         app.add_config_value('autodoc_default_flags', [], True)
+         app.add_config_value('autodoc_docstring_signature', True, True)
+         app.add_event('autodoc-process-docstring')
+
+Patches directly under the ``patches/`` directly are applied automatically
+before running the ``spkg-install`` script (so long as they have the ``.patch``
+extension).  If you need to apply patches conditionally (such as only on
+a specifically platform), you can place those patches in a subdirectory of
+``patches/`` and apply them manually using the ``sage-apply-patches`` script.
+For example, considering the layout:
+
+.. CODE-BLOCK:: text
+
+    SAGE_ROOT/build/pkgs/foo
+    |-- patches
+    |   |-- solaris
+    |   |   |-- solaris.patch
+    |   |-- bar.patch
+    |   `-- baz.patch
+
+The patches ``bar.patch`` and ``baz.patch`` are applied to the unpacked
+upstream sources in ``src/`` before running ``spkg-install``.  To conditionally
+apply the patch for Solaris the ``spkg-install`` should contain a section like
+this:
+
+.. CODE-BLOCK:: bash
+
+    if [ $UNAME == "SunOS" ]; then
+        sage-apply-patches -d solaris
+    fi
+
+where the ``-d`` flag applies all patches in the ``solaris/`` subdirectory of
+the main ``patches/`` directory.
+
+
+.. _section-spkg-patch-maintenance:
+
+How to maintain a set of patches
+--------------------------------
+
+We recommend the following workflow for maintaining a set of patches.
+
+- Fork the package and put it on a public git repository.
+
+  If upstream has a public version control repository, import it from
+  there.  If upstream does not have a public version control
+  repository, import the current sources from the upstream tarball.
+  Let's call the branch ``upstream``.
+
+- Create a branch for the changes necessary for Sage, let's call it
+  ``sage_package_VERSION``, where ``version`` is the upstream version
+  number.
+
+- Make the changes and commit them to the branch.
+
+- Generate the patches against the ``upstream`` branch:
+
+  .. CODE-BLOCK:: bash
+
+      rm -Rf SAGE_ROOT/build/pkgs/PACKAGE/patches
+      mkdir SAGE_ROOT/build/pkgs/PACKAGE/patches
+      git format-patch -o SAGE_ROOT/build/pkgs/PACKAGE/patches/ upstream
+
+- Optionally, create an ``spkg-src`` file in the Sage package's
+  directory that regenerates the patch directory using the above
+  commands.
+
+- When a new upstream version becomes available, merge (or import) it
+  into ``upstream``, then create a new branch and rebase it on top of
+  the updated upstream:
+
+  .. CODE-BLOCK:: bash
+
+      git checkout sage_package_OLDVERSION
+      git checkout -b sage_package_NEWVERSION
+      git rebase upstream
+
+  Then regenerate the patches.
+
+
+.. _section-spkg-src:
+
+Modified tarballs
+-----------------
+
+If you really must modify the upstream tarball, then it is
+recommended that you write a script, called ``spkg-src``, that makes the
+changes. This not only serves as documentation but also makes it easier
+to apply the same modifications to future versions.
+
+
 .. _section-inclusion-procedure:
 
 Inclusion procedure for new and updated packages
@@ -1474,5 +1539,3 @@ must meet the following requirements:
 
 - **Refereeing**. The code must be refereed, as discussed in
   :ref:`chapter-github`.
-
-
