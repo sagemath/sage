@@ -1307,7 +1307,6 @@ class GraphicsArray(MultiGraphics):
              0.20212705964722733,
              0.4489880779745068,
              0.5986507706326758)
-
         """
         if not self._positions:
             # self._positions must be generated, by invoking get_position() on
