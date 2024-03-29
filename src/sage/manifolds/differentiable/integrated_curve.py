@@ -949,7 +949,7 @@ class IntegratedCurve(DifferentiableCurve):
           use for the integration of the curve; available algorithms are:
 
           * ``'odeint'`` - makes use of
-            `scipy.integrate.odeint <https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.odeint.html>`_
+            :func:`scipy:scipy.integrate.odeint`
             via Sage solver
             :func:`~sage.calculus.desolvers.desolve_odeint`; ``odeint`` invokes
             the LSODA algorithm of the
@@ -961,9 +961,9 @@ class IntegratedCurve(DifferentiableCurve):
             makes use of Maxima's dynamics package via Sage solver
             :func:`~sage.calculus.desolvers.desolve_system_rk4` (quite slow)
           * ``'dopri5'`` - Dormand-Prince Runge-Kutta of order (4)5 provided by
-            `scipy.integrate.ode <https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.ode.html>`_
+            :obj:`scipy:scipy.integrate.ode`
           * ``'dop853'`` - Dormand-Prince Runge-Kutta of order 8(5,3) provided by
-            `scipy.integrate.ode <https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.ode.html>`_
+            :obj:`scipy:scipy.integrate.ode`
 
           and those provided by ``GSL`` via Sage class
           :class:`~sage.calculus.ode.ode_solver`:
@@ -1425,8 +1425,8 @@ class IntegratedCurve(DifferentiableCurve):
         Integrate the curve numerically over the domain of integration, with
         the ability to switch chart mid-integration.
 
-        The only supported solver is
-        `scipy.integrate.ode <https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.ode.html>`_, because it supports basic event handling, needed to detect when the
+        The only supported solver is :obj:`scipy:scipy.integrate.ode`,
+        because it supports basic event handling, needed to detect when the
         curve is reaching the frontier of the chart. This is an adaptive step
         solver. So the ``step`` is not the step of integration but instead the
         step used to peak at the current chart, and switch if needed.
@@ -1525,8 +1525,8 @@ class IntegratedCurve(DifferentiableCurve):
 
         The integration is done as usual, but using the method
         :meth:`solve_across_charts` instead of :meth:`solve`. This forces the
-        use of ``scipy.integrate.ode`` as the solver, because of event handling
-        support.
+        use of :obj:`scipy:scipy.integrate.ode` as the solver, because of event
+        handling support.
 
         The argument ``verbose=True`` will cause the solver to write a small
         message each time it is switching chart::
