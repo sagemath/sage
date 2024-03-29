@@ -112,3 +112,16 @@ thebelab.on("status", function (evt, data) {
     kernel.requestExecute({code: "%display latex"});
   }
 });
+
+// Activate Thebe when "Sage (live)" tab is clicked
+document.querySelectorAll('input[class="tab-input"]').forEach((elem) => {
+    elem.addEventListener("click", function(event) {
+        if (elem.nextElementSibling) {
+            if (elem.nextElementSibling.nextElementSibling) {
+                if (elem.nextElementSibling.nextElementSibling.querySelector('div[class="thebelab-code"]')) {
+                    initThebelab();
+                }
+            }
+        }
+    });
+});
