@@ -582,9 +582,9 @@ class ToricLattice_generic(FreeModule_generic_pid):
 
         def make_name(N1, N2, use_latex=False):
             if use_latex:
-                return latex(N1)+ r' \oplus ' +latex(N2)
+                return latex(N1) + r' \oplus ' + latex(N2)
             else:
-                return N1._name+ '+' +N2._name
+                return N1._name + '+' + N2._name
 
         rank = self.rank() + other.rank()
         name = make_name(self, other, False)
@@ -677,7 +677,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
             by Sublattice <N(1, 8, 0), N(0, 12, 0)>
 
         Attempting to quotient one lattice by a sublattice of another
-        will result in a ``ValueError``::
+        will result in a :class:`ValueError`::
 
             sage: N = ToricLattice(3)
             sage: M = ToricLattice(3, name='M')
@@ -706,7 +706,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
 
         TESTS:
 
-        We check that :trac:`19603` is fixed::
+        We check that :issue:`19603` is fixed::
 
             sage: K = Cone([(1,0,0),(0,1,0)])
             sage: K.lattice()
@@ -951,7 +951,7 @@ class ToricLattice_ambient(ToricLattice_generic, FreeModule_ambient_pid):
         """
         if self is right:
             return rich_to_bool(op, 0)
-        if type(self) != type(right):
+        if type(self) is not type(right):
             return NotImplemented
 
         lx = self.rank()
@@ -1068,7 +1068,7 @@ class ToricLattice_ambient(ToricLattice_generic, FreeModule_ambient_pid):
         EXAMPLES::
 
             sage: N = ToricLattice(3)
-            sage: N.plot()  # optional - sage.plot
+            sage: N.plot()                                                              # needs sage.plot
             Graphics3d Object
         """
         if "show_lattice" not in options:
@@ -1215,12 +1215,12 @@ class ToricLattice_sublattice_with_basis(ToricLattice_generic,
 
             sage: N = ToricLattice(3)
             sage: sublattice = N.submodule_with_basis([(1,1,0), (3,2,1)])
-            sage: sublattice.plot()  # optional - sage.plot
+            sage: sublattice.plot()                                                     # needs sage.plot
             Graphics3d Object
 
         Now we plot both the ambient lattice and its sublattice::
 
-            sage: N.plot() + sublattice.plot(point_color="red")  # optional - sage.plot
+            sage: N.plot() + sublattice.plot(point_color="red")                         # needs sage.plot
             Graphics3d Object
         """
         if "show_lattice" not in options:
@@ -1467,7 +1467,7 @@ class ToricLattice_quotient(FGP_Module_class):
             sage: ToricLattice_quotient(N, N.span([N(1,2,3)]))
             2-d lattice, quotient of 3-d lattice N by Sublattice <N(1, 2, 3)>
 
-        An ``ArithmeticError`` will be raised if ``W`` is not a
+        An :class:`ArithmeticError` will be raised if ``W`` is not a
         sublattice of ``V``::
 
             sage: N = ToricLattice(3)
@@ -1492,7 +1492,7 @@ class ToricLattice_quotient(FGP_Module_class):
             return
 
         self._flip_sign_of_generator = False
-        assert self.is_torsion_free() and self.ngens()==1, \
+        assert self.is_torsion_free() and self.ngens() == 1, \
             'You may only specify a positive direction in the codimension one case.'
         quotient_generator = self.gen(0)
         lattice = self.V().ambient_module()
@@ -1500,18 +1500,18 @@ class ToricLattice_quotient(FGP_Module_class):
             assert positive_point in lattice, 'positive_point must be a lattice point.'
             point_quotient = self(positive_point)
             scalar_product = quotient_generator.vector()[0] * point_quotient.vector()[0]
-            if scalar_product==0:
+            if scalar_product == 0:
                 raise ValueError(str(positive_point)+' is zero in the quotient.')
         elif (positive_point is None) and (positive_dual_point is not None):
             assert positive_dual_point in lattice.dual(), 'positive_dual_point must be a dual lattice point.'
             scalar_product = quotient_generator.lift() * positive_dual_point
-            if scalar_product==0:
+            if scalar_product == 0:
                 raise ValueError(str(positive_dual_point)+' is zero on the lift of the quotient generator.')
         else:
             raise ValueError('You may not specify both positive_point and positive_dual_point.')
-        self._flip_sign_of_generator = (scalar_product<0)
+        self._flip_sign_of_generator = (scalar_product < 0)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of the quotient.
 
@@ -1529,7 +1529,7 @@ class ToricLattice_quotient(FGP_Module_class):
         """
         gens = self.smith_form_gens()
         if self._flip_sign_of_generator:
-            assert len(gens)==1
+            assert len(gens) == 1
             return (-gens[0],)
         else:
             return gens

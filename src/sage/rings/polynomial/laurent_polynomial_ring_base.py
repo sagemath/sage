@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.modules
+# sage.doctest: needs sage.modules
 r"""
 Ring of Laurent Polynomials (base class)
 
@@ -25,6 +25,7 @@ AUTHORS:
 
 
 from sage.rings.infinity import infinity
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.ring import CommutativeRing
 from sage.structure.parent import Parent
 
@@ -36,7 +37,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
     EXAMPLES:
 
     This base class inherits from :class:`~sage.rings.ring.CommutativeRing`.
-    Since :trac:`11900`, it is also initialised as such::
+    Since :issue:`11900`, it is also initialised as such::
 
         sage: R.<x1,x2> = LaurentPolynomialRing(QQ)
         sage: R.category()
@@ -61,6 +62,13 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         self._one_element = self.element_class(self, R.one())
         CommutativeRing.__init__(self, R.base_ring(), names=names,
                                  category=R.category())
+        ernames = []
+        for n in names:
+            ernames.append(n)
+            ernames.append(n + "inv")
+        ER = PolynomialRing(R.base_ring(), ernames)
+        self._extended_ring = ER
+        self._extended_ring_ideal = ER.ideal([ER.gen(2*i)*ER.gen(2*i+1)-1 for i in range(self._n)])
 
     def ngens(self):
         """
@@ -146,7 +154,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: LaurentPolynomialRing(QQ, 2, 'x').is_integral_domain()
             True
 
-        The following used to fail; see :trac:`7530`::
+        The following used to fail; see :issue:`7530`::
 
             sage: L = LaurentPolynomialRing(ZZ, 'X')
             sage: L['Y']
@@ -162,11 +170,9 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         EXAMPLES::
 
             sage: LaurentPolynomialRing(QQ, 2, 'x').is_noetherian()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
+            True
         """
-        raise NotImplementedError
+        return self.base_ring().is_noetherian()
 
     def construction(self):
         """
@@ -212,6 +218,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: 1 / g
             -x^-1 + 1 + O(x^19)
 
+            sage: # needs sage.combinat
             sage: PP = P.completion(x, prec=oo); PP
             Lazy Laurent Series Ring in x over Rational Field
             sage: g = 1 / PP(f); g
@@ -221,7 +228,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
         TESTS:
 
-        Check that the precision is taken into account (:trac:`24431`)::
+        Check that the precision is taken into account (:issue:`24431`)::
 
             sage: L = LaurentPolynomialRing(QQ, 'x')
             sage: L.completion('x', 100).default_prec()
@@ -267,7 +274,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
               To:   Multivariate Laurent Polynomial Ring in x, y over Rational Field
 
         Let us check that coercion between Laurent Polynomials over
-        different base rings works (:trac:`15345`)::
+        different base rings works (:issue:`15345`)::
 
             sage: R = LaurentPolynomialRing(ZZ, 'x')
             sage: T = LaurentPolynomialRing(QQ, 'x')
@@ -302,7 +309,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: P == R
             False
         """
-        if type(self) != type(right):
+        if type(self) is not type(right):
             return False
         return self._R == right._R
 
@@ -375,7 +382,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
         TESTS:
 
-        check that :trac:`26421` is fixed::
+        check that :issue:`26421` is fixed::
 
             sage: R.<t> = LaurentPolynomialRing(ZZ)
             sage: P.<x> = PolynomialRing(R)
@@ -390,15 +397,16 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
         """
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: T.<t> = ZZ[]
-            sage: K.<i> = NumberField(t^2 + 1)                                                      # optional - sage.rings.number_field
-            sage: L.<x,y> = LaurentPolynomialRing(K)                                                # optional - sage.rings.number_field
-            sage: L._is_valid_homomorphism_(K, (K(1/2), K(3/2)))                                    # optional - sage.rings.number_field
+            sage: K.<i> = NumberField(t^2 + 1)
+            sage: L.<x,y> = LaurentPolynomialRing(K)
+            sage: L._is_valid_homomorphism_(K, (K(1/2), K(3/2)))
             True
-            sage: Q5 = Qp(5); i5 = Q5(-1).sqrt()                                                    # optional - sage.rings.padics
-            sage: L._is_valid_homomorphism_(Q5, (Q5(1/2), Q5(3/2))) # no coercion                   # optional - sage.rings.padics
+            sage: Q5 = Qp(5); i5 = Q5(-1).sqrt()                                                    # needs sage.rings.padics
+            sage: L._is_valid_homomorphism_(Q5, (Q5(1/2), Q5(3/2)))  # no coercion                  # needs sage.rings.padics
             False
-            sage: L._is_valid_homomorphism_(Q5, (Q5(1/2), Q5(3/2)), base_map=K.hom([i5]))           # optional - sage.rings.padics
+            sage: L._is_valid_homomorphism_(Q5, (Q5(1/2), Q5(3/2)), base_map=K.hom([i5]))           # needs sage.rings.padics
             True
         """
         if base_map is None and not codomain.has_coerce_map_from(self.base_ring()):
@@ -463,7 +471,7 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
 
             sage: LaurentPolynomialRing(QQ, 2, 'x').characteristic()
             0
-            sage: LaurentPolynomialRing(GF(3), 2, 'x').characteristic()                 # optional - sage.libs.pari
+            sage: LaurentPolynomialRing(GF(3), 2, 'x').characteristic()
             3
 
         """
@@ -518,8 +526,8 @@ class LaurentPolynomialRing_generic(CommutativeRing, Parent):
             sage: P.<x> = LaurentPolynomialRing(QQ, 1)
             sage: P
             Multivariate Laurent Polynomial Ring in x over Rational Field
-            sage: K.<i> = CyclotomicField(4)                                                        # optional - sage.rings.number_field
-            sage: P.change_ring(K)                                                                  # optional - sage.rings.number_field
+            sage: K.<i> = CyclotomicField(4)                                                        # needs sage.rings.number_field
+            sage: P.change_ring(K)                                                                  # needs sage.rings.number_field
             Multivariate Laurent Polynomial Ring in x over
              Cyclotomic Field of order 4 and degree 2
         """

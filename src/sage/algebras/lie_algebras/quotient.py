@@ -51,7 +51,7 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         L: Free Nilpotent Lie algebra on 5 generators (X_1, X_2, X_12, X_112, X_122) over Rational Field
         I: Ideal (X_122)
         sage: E.category()
-        Join of Category of finite dimensional nilpotent lie algebras with basis
+        Join of Category of finite dimensional nilpotent Lie algebras with basis
         over Rational Field and Category of subquotients of sets
         sage: E.basis().list()
         [X_1, X_2, X_12, X_112]
@@ -154,7 +154,7 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         True
 
     Verify a quotient construction when the basis ordering and indices ordering
-    are different, see :trac:`26352`::
+    are different, see :issue:`26352`::
 
         sage: L.<c,b,a> = LieAlgebra(QQ, abelian=True)
         sage: I2 = L.ideal([a+b, a+c], order=sorted)
@@ -242,6 +242,7 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
 
         TESTS::
 
+            sage: # needs sage.symbolic
             sage: L.<x,y,z> = LieAlgebra(SR, {('x','y'): {'x':1}})
             sage: K = L.quotient(y)
             sage: K.dimension()

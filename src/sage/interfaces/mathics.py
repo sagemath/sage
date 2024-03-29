@@ -47,14 +47,15 @@ object. However if you want to import Mathics's output back to Sage,
 call the Mathics wrapper object's ``sage()`` method. This method returns
 a native Sage object::
 
-    sage: mobj = mathics(x^2-1)                 # optional - mathics
-    sage: mobj2 = mobj.Factor(); mobj2          # optional - mathics
+    sage: # optional - mathics
+    sage: mobj = mathics(x^2-1)
+    sage: mobj2 = mobj.Factor(); mobj2
     (-1 + x) (1 + x)
-    sage: mobj2.parent()                        # optional - mathics
+    sage: mobj2.parent()
     Mathics
-    sage: sobj = mobj2.sage(); sobj             # optional - mathics
+    sage: sobj = mobj2.sage(); sobj
     (x + 1)*(x - 1)
-    sage: sobj.parent()                         # optional - mathics
+    sage: sobj.parent()
     Symbolic Ring
 
 
@@ -132,15 +133,16 @@ Some typical input
 
 We solve an equation and a system of two equations::
 
-    sage: eqn = mathics('3x + 5 == 14')     # optional - mathics
-    sage: eqn                               # optional - mathics
+    sage: # optional - mathics
+    sage: eqn = mathics('3x + 5 == 14')
+    sage: eqn
     5 + 3 x == 14
-    sage: eqn.Solve('x')                    # optional - mathics
+    sage: eqn.Solve('x')
     {{x -> 3}}
-    sage: sys = mathics('{x^2 - 3y == 3, 2x - y == 1}')  # optional - mathics
-    sage: print(sys)                        # optional - mathics
+    sage: sys = mathics('{x^2 - 3y == 3, 2x - y == 1}')
+    sage: print(sys)
     {x ^ 2 - 3 y == 3, 2 x - y == 1}
-    sage: sys.Solve('{x, y}')               # optional - mathics
+    sage: sys.Solve('{x, y}')
     {{x -> 0, y -> -1}, {x -> 6, y -> 11}}
 
 Assignments and definitions
@@ -233,15 +235,16 @@ We can also factor a multivariate polynomial::
 
 We factor an integer::
 
-    sage: n = mathics(2434500)               # optional - mathics
-    sage: n.FactorInteger()                  # optional - mathics
+    sage: # optional - mathics
+    sage: n = mathics(2434500)
+    sage: n.FactorInteger()
     {{2, 2}, {3, 2}, {5, 3}, {541, 1}}
-    sage: n = mathics(2434500)               # optional - mathics
-    sage: F = n.FactorInteger(); F           # optional - mathics
+    sage: n = mathics(2434500)
+    sage: F = n.FactorInteger(); F
     {{2, 2}, {3, 2}, {5, 3}, {541, 1}}
-    sage: F[1]                               # optional - mathics
+    sage: F[1]
     {2, 2}
-    sage: F[4]                               # optional - mathics
+    sage: F[4]
     {541, 1}
 
 
@@ -266,15 +269,16 @@ first examples test saving and loading to strings.
 
 ::
 
-    sage: x = mathics(pi/2)         # optional - mathics
-    sage: print(x)                  # optional - mathics
+    sage: # optional - mathics
+    sage: x = mathics(pi/2)
+    sage: print(x)
     Pi / 2
-    sage: loads(dumps(x)) == x      # optional - mathics
+    sage: loads(dumps(x)) == x
     True
-    sage: n = x.N(50)               # optional - mathics
-    sage: print(n)                  # optional - mathics
+    sage: n = x.N(50)
+    sage: print(n)
                   1.5707963267948966192313216916397514420985846996876
-    sage: loads(dumps(n)) == n      # optional - mathics
+    sage: loads(dumps(n)) == n
     True
 
 Complicated translations
@@ -343,7 +347,7 @@ OTHER Examples::
 
 AUTHORS:
 
-- Sebastian Oehms (2021): first version from a copy of the Mathematica interface (see :trac:`31778`).
+- Sebastian Oehms (2021): first version from a copy of the Mathematica interface (see :issue:`31778`).
 
 
 Thanks to Rocky Bernstein and Juan Mauricio Matera for their support. For further acknowledgments see `this list <https://github.com/mathics/Mathics/blob/master/AUTHORS.txt>`__.
@@ -354,19 +358,20 @@ Thanks to Rocky Bernstein and Juan Mauricio Matera for their support. For furthe
 TESTS:
 
 Check that numerical approximations via Mathics's `N[]` function work
-correctly (:trac:`18888`, :trac:`28907`)::
+correctly (:issue:`18888`, :issue:`28907`)::
 
-    sage: mathics('Pi/2').N(10)           # optional -- mathics
+    sage: # optional - mathics
+    sage: mathics('Pi/2').N(10)
     1.570796327
-    sage: mathics('Pi').N(10)             # optional -- mathics
+    sage: mathics('Pi').N(10)
     3.141592654
-    sage: mathics('Pi').N(50)             # optional -- mathics
+    sage: mathics('Pi').N(50)
     3.1415926535897932384626433832795028841971693993751
-    sage: str(mathics('Pi*x^2-1/2').N())  # optional -- mathics
+    sage: str(mathics('Pi*x^2-1/2').N())
     '-0.5 + 3.14159 x ^ 2.'
 
 Check that Mathics's `E` exponential symbol is correctly backtranslated
-as Sage's `e` (:trac:`29833`)::
+as Sage's `e` (:issue:`29833`)::
 
     sage: (e^x)._mathics_().sage()  # optional -- mathics
     e^x
@@ -405,15 +410,16 @@ def _mathics_sympysage_symbol(self):
 
     EXAMPLES::
 
+        sage: # optional - mathics
         sage: from sage.interfaces.mathics import _mathics_sympysage_symbol
-        sage: mt = mathics('t')             # optional - mathics
-        sage: st = mt.to_sympy(); st        # optional - mathics
+        sage: mt = mathics('t')
+        sage: st = mt.to_sympy(); st
         _Mathics_User_Global`t
-        sage: _mathics_sympysage_symbol(st) # optional - mathics
+        sage: _mathics_sympysage_symbol(st)
         t
-        sage: bool(_ == st._sage_())        # optional - mathics
+        sage: bool(_ == st._sage_())
         True
-        sage: type(st._sage_())             # optional - mathics
+        sage: type(st._sage_())
         <class 'sage.symbolic.expression.Expression'>
     """
     from sage.symbolic.ring import SR
@@ -442,20 +448,21 @@ class Mathics(Interface):
 
     EXAMPLES::
 
-        sage: t = mathics('Tan[I + 0.5]')  # optional - mathics
-        sage: t.parent()                   # optional - mathics
+        sage: # optional - mathics
+        sage: t = mathics('Tan[I + 0.5]')
+        sage: t.parent()
         Mathics
-        sage: ts = t.sage()                # optional - mathics
-        sage: ts.parent()                  # optional - mathics
+        sage: ts = t.sage()
+        sage: ts.parent()
         Complex Field with 53 bits of precision
-        sage: t == mathics(ts)             # optional - mathics
+        sage: t == mathics(ts)
         True
-        sage: mtan = mathics.Tan           # optional - mathics
-        sage: mt = mtan(I+1/2)             # optional - mathics
-        sage: mt == t                      # optional - mathics
+        sage: mtan = mathics.Tan
+        sage: mt = mtan(I+1/2)
+        sage: mt == t
         True
-        sage: u = mathics(I+1/2)           # optional - mathics
-        sage: u.Tan() == mt                # optional - mathics
+        sage: u = mathics(I+1/2)
+        sage: u.Tan() == mt
         True
 
 
@@ -586,7 +593,7 @@ optional Sage package Mathics installed.
             sage: bool(mathics('u').sage() == 2*x+e) # optional - mathics
             True
         """
-        cmd = '%s=%s;' % (var, value)
+        cmd = f'{var}={value};'
         _ = self.eval(cmd)
 
     def get(self, var):
@@ -610,7 +617,7 @@ optional Sage package Mathics installed.
             sage: mathics._function_call_string('Sin', ['x'], [])
             'Sin[x]'
         """
-        return "%s[%s]" % (function, ",".join(args))
+        return "{}[{}]".format(function, ",".join(args))
 
     def _left_list_delim(self):
         r"""
@@ -829,34 +836,37 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
 
     EXAMPLES::
 
-        sage: me=mathics(e); me                # optional - mathics
+        sage: # optional - mathics
+        sage: me=mathics(e); me
         E
-        sage: type(me)                         # optional - mathics
+        sage: type(me)
         <class 'sage.interfaces.mathics.MathicsElement'>
-        sage: P = me.parent(); P               # optional - mathics
+        sage: P = me.parent(); P
         Mathics
-        sage: type(P)                          # optional - mathics
+        sage: type(P)
         <class 'sage.interfaces.mathics.Mathics'>
 
     Access to the Mathics expression objects::
 
-        sage: res = me._mathics_result         # optional - mathics
-        sage: type(res)                        # optional - mathics
+        sage: # optional - mathics
+        sage: res = me._mathics_result
+        sage: type(res)
         <class 'mathics.core.evaluation.Result'>
-        sage: expr = res.last_eval; expr       # optional - mathics
+        sage: expr = res.last_eval; expr
         <Symbol: System`E>
-        sage: type(expr)                       # optional - mathics
+        sage: type(expr)
         <class 'mathics.core.expression.Symbol'>
 
     Applying Mathics methods::
 
-        sage: me.to_sympy()                    # optional - mathics
+        sage: # optional - mathics
+        sage: me.to_sympy()
         E
-        sage: me.get_name()                    # optional - mathics
+        sage: me.get_name()
         'System`E'
-        sage: me.is_inexact()                  # optional - mathics
+        sage: me.is_inexact()
         False
-        sage: me.is_symbol()                   # optional - mathics
+        sage: me.is_symbol()
         True
 
     Conversion to Sage::
@@ -894,18 +904,19 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
             x
             0.15
         """
-        return self.parent().new('%s[[%s]]' % (self._name, n))
+        return self.parent().new(f'{self._name}[[{n}]]')
 
     def __getattr__(self, attrname):
         r"""
         EXAMPLES::
 
-            sage: a = mathics(5*x)              # optional - mathics
-            sage: res = a._mathics_result       # optional - mathics
-            sage: str(a) == res.result          # optional - mathics
+            sage: # optional - mathics
+            sage: a = mathics(5*x)
+            sage: res = a._mathics_result
+            sage: str(a) == res.result
             True
-            sage: t = mathics._eval('5*x')      # optional - mathics
-            sage: t.last_eval  == res.last_eval # optional - mathics
+            sage: t = mathics._eval('5*x')
+            sage: t.last_eval  == res.last_eval
             True
         """
         P = self._check_valid()
@@ -928,7 +939,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
             True
         """
         P = self.parent()
-        return float(P._eval('N[%s,%s]' % (self.name(), precision)).last_eval.to_mpmath())
+        return float(P._eval(f'N[{self.name()},{precision}]').last_eval.to_mpmath())
 
     def _reduce(self):
         r"""
@@ -1004,12 +1015,13 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
         Mathics lists of numbers/constants become Sage lists of
         numbers/constants::
 
-            sage: m = mathics('{{1., 4}, Pi, 3.2e100, I}')  # optional - mathics
-            sage: s = m.sage(); s       # optional - mathics
+            sage: # optional - mathics
+            sage: m = mathics('{{1., 4}, Pi, 3.2e100, I}')
+            sage: s = m.sage(); s
             [[1.00000000000000, 4], pi, 3.20000000000000*e100, 1.00000000000000*I]
-            sage: s[1].n()              # optional - mathics
+            sage: s[1].n()
             3.14159265358979
-            sage: s[3]^2                # optional - mathics
+            sage: s[3]^2
             -1.00000000000000
 
         ::
@@ -1040,11 +1052,12 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
 
         ::
 
-            sage: m = mathics('bla^2')              # optional - mathics
-            sage: mb = m.sage()                     # optional - mathics
-            sage: var('bla')                        # optional - mathics
+            sage: # optional - mathics
+            sage: m = mathics('bla^2')
+            sage: mb = m.sage()
+            sage: var('bla')
             bla
-            sage: bla^2 - mb                        # optional - mathics
+            sage: bla^2 - mb
             0
 
         """
@@ -1065,15 +1078,15 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
             if hasattr(s, '_sage_'):
                 try:
                     return s._sage_()
-                except NotImplementedError:  # see :trac:`33584`
+                except NotImplementedError:  # see :issue:`33584`
                     pass
         p = self.to_python()
         if self is not p and p is not None:
             def conv(i):
                 return self.parent()(i).sage()
-            if type(p) is list:
+            if isinstance(p, list):
                 return [conv(i) for i in p]
-            elif type(p) is tuple:
+            elif isinstance(p, tuple):
                 return tuple([conv(i) for i in p])
             elif type(p) is dict:
                 return {conv(k): conv(v) for k, v in p.items()}
@@ -1130,7 +1143,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
         if not self._is_graphics():
             raise ValueError('mathics expression is not graphics')
         filename = os.path.abspath(filename)
-        s = 'Export["%s", %s, ImageSize->%s]' % (filename, self.name(), ImageSize)
+        s = f'Export["{filename}", {self.name()}, ImageSize->{ImageSize}]'
         P.eval(s)
 
     def _rich_repr_(self, display_manager, **kwds):
@@ -1146,7 +1159,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
             sage: P = mathics('Plot[Sin[x],{x,-2Pi,4Pi}]')       # optional - mathics
 
         The following test requires a working X display on Linux so that the
-        Mathematica frontend can do the rendering (:trac:`23112`)::
+        Mathematica frontend can do the rendering (:issue:`23112`)::
 
             sage: P._rich_repr_(dm)                              # optional - mathics
             OutputImageSvg container
@@ -1203,22 +1216,23 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
         r"""
         EXAMPLES::
 
-            sage: mobj1 = mathics([x^2-1, 2])     # optional - mathics
-            sage: mobj2 = mathics('{x^2-1, 2}')   # optional - mathics
-            sage: mobj3 = mathics('5*x + y')      # optional - mathics
-            sage: mobj1 == mobj2                  # optional - mathics
+            sage: # optional - mathics
+            sage: mobj1 = mathics([x^2-1, 2])
+            sage: mobj2 = mathics('{x^2-1, 2}')
+            sage: mobj3 = mathics('5*x + y')
+            sage: mobj1 == mobj2
             True
-            sage: mobj1 < mobj2                   # optional - mathics
+            sage: mobj1 < mobj2
             False
-            sage: mobj1 == mobj3                  # optional - mathics
+            sage: mobj1 == mobj3
             False
         """
         P = self.parent()
-        if str(P("%s < %s" % (self.name(), other.name()))) == P._true_symbol():
+        if str(P(f"{self.name()} < {other.name()}")) == P._true_symbol():
             return rich_to_bool(op, -1)
-        elif str(P("%s > %s" % (self.name(), other.name()))) == P._true_symbol():
+        elif str(P(f"{self.name()} > {other.name()}")) == P._true_symbol():
             return rich_to_bool(op, 1)
-        elif str(P("%s == %s" % (self.name(), other.name()))) == P._true_symbol():
+        elif str(P(f"{self.name()} == {other.name()}")) == P._true_symbol():
             return rich_to_bool(op, 0)
         return NotImplemented
 
@@ -1239,7 +1253,7 @@ class MathicsElement(ExtraTabCompletion, InterfaceElement):
             True
         """
         P = self._check_valid()
-        cmd = '%s===%s' % (self._name, P._false_symbol())
+        cmd = f'{self._name}==={P._false_symbol()}'
         return not str(P(cmd)) == P._true_symbol()
 
     def n(self, *args, **kwargs):

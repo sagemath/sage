@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Robinson-Schensted-Knuth correspondence
 
@@ -397,7 +398,7 @@ class Rule(UniqueRepresentation):
             return self._backward_format_output(rev_word, None, output, p.is_standard(), True)
 
         if q not in SemistandardTableaux():
-            raise ValueError("q(=%s) must be a semistandard tableau" %q)
+            raise ValueError("q(=%s) must be a semistandard tableau" % q)
 
         # Thus, q is semistandard but not standard.
 
@@ -513,7 +514,7 @@ class Rule(UniqueRepresentation):
                 return [list(reversed(upper_row)), list(reversed(lower_row))]
             if output in ['permutation', 'word']:
                 raise TypeError(
-                    "q must be standard to have a %s as valid output" %output)
+                    "q must be standard to have a %s as valid output" % output)
             raise ValueError("invalid output option")
 
 
@@ -2276,7 +2277,7 @@ class RuleSuperRSK(RuleRSK):
         bisect = bisect_right if epsilon == 0 else bisect_left
 
         if (r[-1] < j) or (r[-1] == j and epsilon == 0):
-            return None, len(r) # j needs to be added at the end of the list r.
+            return None, len(r)  # j needs to be added at the end of the list r.
         # Figure out where to insert j into the list r. The
         # bisect command returns the position of the least
         # element of r greater than j.  We will call it y.
@@ -2380,7 +2381,7 @@ class RuleSuperRSK(RuleRSK):
                         if vi in iter_dict:
                             iter_dict[vi].append(k)
                         else:
-                            iter_dict[vi]=[k]
+                            iter_dict[vi] = [k]
             for key in sorted(iter_dict, reverse=True):
                 for rows in iter_dict[key]:
                     row_index, col_index = (rows, key) if epsilon == 0 else (key, rows)
@@ -2489,7 +2490,7 @@ class RuleSuperRSK(RuleRSK):
                 return Word(reversed(lower_row))
             else:
                 raise TypeError("q must be standard to have a %s as "
-                                "valid output" %output)
+                                "valid output" % output)
         raise ValueError("invalid output option")
 
 
@@ -2727,7 +2728,7 @@ class RuleStar(Rule):
                 obj1 = list(range(1, len(obj1)+1))
             else:
                 h = obj1
-                obj1 = sum([[h.factors-i]*len(h.value[i]) for i in reversed(range(h.factors))],[])
+                obj1 = sum([[h.factors-i]*len(h.value[i]) for i in reversed(range(h.factors))], [])
                 obj2 = [i for f in h.value[::-1] for i in reversed(f)]
         if len(obj1) != len(obj2):
             raise ValueError(f"{obj1} and {obj2} have different number of elements")
@@ -2742,7 +2743,7 @@ class RuleStar(Rule):
             h = H.from_reduced_word(obj2)
             from sage.combinat import permutation
             p = permutation.from_reduced_word(h.reduced_word())
-            if p.has_pattern([3,2,1]):
+            if p.has_pattern([3, 2, 1]):
                 raise ValueError("the Star insertion is not defined for non-fully commutative words")
 
         p = []  # the "insertion" tableau
@@ -2834,7 +2835,7 @@ class RuleStar(Rule):
         h = H.from_reduced_word(row_reading)
         from sage.combinat import permutation
         w = permutation.from_reduced_word(h.reduced_word())
-        if w.has_pattern([3,2,1]):
+        if w.has_pattern([3, 2, 1]):
             raise ValueError(f"the row reading word of the insertion tableau {p} is not fully-commutative")
 
         p_copy = p.to_list()
@@ -2859,7 +2860,7 @@ class RuleStar(Rule):
                     x = self.reverse_insertion(x, row)
                 line2.append(x)
                 line1.append(value)
-        return self._backward_format_output(line1[::-1],line2[::-1],output)
+        return self._backward_format_output(line1[::-1], line2[::-1], output)
 
     def insertion(self, b, r):
         r"""
@@ -2887,7 +2888,7 @@ class RuleStar(Rule):
                 k -= 1
             k += 1
         else:
-            y_pos = bisect_right(r,b)
+            y_pos = bisect_right(r, b)
             k = r[y_pos]
             r[y_pos] = b
         return k
@@ -2955,7 +2956,7 @@ class RuleStar(Rule):
                 if j == 0:
                     df.append([])
                 if j > 0 and obj1[j] < obj1[j-1]:
-                    for a in range(obj1[j-1]-obj1[j]):
+                    for _ in range(obj1[j-1]-obj1[j]):
                         df.append([])
                 df[-1].append(obj2[j])
             if obj1:
@@ -2967,7 +2968,7 @@ class RuleStar(Rule):
             return DecreasingHeckeFactorization(df)
 
 
-class InsertionRules():
+class InsertionRules:
     r"""
     Catalog of rules for RSK-like insertion algorithms.
     """
@@ -3345,7 +3346,7 @@ def RSK_inverse(p, q, output='array', insertion=InsertionRules.RSK):
         ...
         ValueError: p(=[[1, 2, 3]]) and q(=[[1, 2]]) must have the same shape
 
-    Check that :trac:`20430` is fixed::
+    Check that :issue:`20430` is fixed::
 
         sage: RSK([1,1,1,1,1,1,1,2,2,2,3], [1,1,1,1,1,1,3,2,2,2,1])
         [[[1, 1, 1, 1, 1, 1, 1, 2, 2], [2], [3]],

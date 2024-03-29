@@ -141,11 +141,11 @@ class lfun_generic():
             sage: L(14)
             0.998583063162746
             sage: a = delta_qexp(1000)
-            sage: sum(a[n]/float(n)^14 for n in range(1,1000))
-            0.9985830631627459
+            sage: sum(a[n]/float(n)^14 for n in reversed(range(1,1000)))
+            0.9985830631627461
 
         Illustrate that one can give a list of complex numbers for v
-        (see :trac:`10937`)::
+        (see :issue:`10937`)::
 
             sage: l2 = lfun_generic(conductor=1, gammaV=[0, 1], weight=12, eps=1)
             sage: l2.init_coeffs(list(delta_qexp(1000))[1:])
@@ -156,7 +156,7 @@ class lfun_generic():
         TESTS:
 
         Verify that setting the `w` parameter does not raise an error
-        (see :trac:`10937`)::
+        (see :issue:`10937`)::
 
             sage: L2 = lfun_generic(conductor=1, gammaV=[0, 1], weight=12, eps=1)
             sage: L2.init_coeffs(list(delta_qexp(1000))[1:], w=[1..1000])
@@ -254,6 +254,28 @@ def lfun_character(chi):
         chi = chi.primitive_character()
     G, v = chi._pari_init_()
     return pari.lfuncreate([G, v])
+
+
+def lfun_hgm(motif, t):
+    """
+    Create the L-function of an hypergeometric motive.
+
+    OUTPUT:
+
+    one :pari:`lfun` object
+
+    EXAMPLES::
+
+        sage: from sage.lfunctions.pari import lfun_hgm, LFunction
+        sage: from sage.modular.hypergeometric_motive import HypergeometricData as Hyp
+        sage: H = Hyp(gamma_list=([3,-1,-1,-1]))
+        sage: L = LFunction(lfun_hgm(H, 1/5))
+        sage: L(3)
+        0.901925346034773
+    """
+    H = pari.hgminit(*motif.alpha_beta())
+    lf = pari.lfunhgm(H, t)
+    return pari.lfuncreate(lf)
 
 
 def lfun_elliptic_curve(E):
@@ -689,7 +711,7 @@ class LFunction(SageObject):
             sage: L.taylor_series(1, 3)
             2...e-63 + (...e-63)*z + 0.75931650028842677023019260789472201907809751649492435158581*z^2 + O(z^3)
 
-        Check that :trac:`25402` is fixed::
+        Check that :issue:`25402` is fixed::
 
             sage: L = EllipticCurve("24a1").modular_form().lseries()
             sage: L.taylor_series(-1, 3)

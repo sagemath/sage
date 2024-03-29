@@ -97,7 +97,6 @@ class RankMatroid(Matroid):
             ....:                 rank_function=matroids.Uniform(3, 6).rank)
             sage: M
             Matroid of rank 3 on 6 elements
-
         """
         self._groundset = frozenset(groundset)
         self._rank_function = rank_function
@@ -113,7 +112,6 @@ class RankMatroid(Matroid):
             ....:                 rank_function=matroids.Uniform(3, 6).rank)
             sage: sorted(M.groundset())
             [0, 1, 2, 3, 4, 5]
-
         """
         return self._groundset
 
@@ -267,9 +265,7 @@ class RankMatroid(Matroid):
         N = RankMatroid(groundset=[], rank_function=None)
         N._groundset = self._groundset
         N._rank_function = self._rank_function
-        if getattr(self, '__custom_name') is not None:
-            # because of name wrangling, this is not caught by the default copy
-            N.rename(getattr(self, '__custom_name'))
+        N.rename(self.get_custom_name())
         return N
 
     def __deepcopy__(self, memo={}):
@@ -293,8 +289,7 @@ class RankMatroid(Matroid):
         from copy import deepcopy
         # Since matroids are immutable, N cannot reference itself in correct code, so no need to worry about the recursion.
         N = RankMatroid(groundset=deepcopy(self._groundset), rank_function=deepcopy(self._rank_function))
-        if getattr(self, '__custom_name') is not None:  # because of name wrangling, this is not caught by the default deepcopy
-            N.rename(deepcopy(getattr(self, '__custom_name'), memo))
+        N.rename(deepcopy(self.get_custom_name(), memo))
         return N
 
     def __reduce__(self):
@@ -316,6 +311,5 @@ class RankMatroid(Matroid):
             TypeError: unfortunately, functions cannot be saved reliably, so
             this class doesn't have load/save support. Convert to another
             class, such as BasisMatroid, instead.
-
         """
         raise TypeError("unfortunately, functions cannot be saved reliably, so this class doesn't have load/save support. Convert to another class, such as BasisMatroid, instead.")

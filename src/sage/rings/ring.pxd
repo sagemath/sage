@@ -7,7 +7,7 @@ cdef class Ring(ParentWithGens):
     cdef public object _one_element
     cdef public object _zero_ideal
     cdef public object _unit_ideal
-    cdef public object __ideal_monoid
+    cdef public object _ideal_monoid
 
 
 cdef class CommutativeRing(Ring):
@@ -21,9 +21,6 @@ cdef class DedekindDomain(IntegralDomain):
 
 
 cdef class PrincipalIdealDomain(IntegralDomain):
-    pass
-
-cdef class EuclideanDomain(PrincipalIdealDomain):
     pass
 
 cdef class Field(PrincipalIdealDomain):

@@ -1,6 +1,11 @@
---- a/source/main/BEGINQEPCAD.c.orig	2018-08-29 20:03:05.718540333 -0600
-+++ b/source/main/BEGINQEPCAD.c	2018-08-29 20:09:45.542106837 -0600
-@@ -53,7 +53,7 @@ void BEGINQEPCAD(int &argc, char**& argv
+Description: Fix syntactically incorrect expressions.
+Origin: https://src.fedoraproject.org/rpms/qepcad-B/blob/91dd25b/f/qepcad-B-syntax.patch
+Forwarded: https://github.com/chriswestbrown/qepcad/pull/2
+Last-Update: 2021-06-23
+
+--- a/source/main/BEGINQEPCAD.c
++++ b/source/main/BEGINQEPCAD.c
+@@ -53,7 +53,7 @@
    {
      int tmp = system("bash -c 'exit $(stty size | cut -d\" \" -f2)'");
      tmp = WEXITSTATUS(tmp);
@@ -9,9 +14,9 @@
        cols = tmp;
    }
  
---- a/source/userint/USERINT.c.orig	2018-03-16 14:22:00.000000000 -0600
-+++ b/source/userint/USERINT.c	2018-08-29 20:09:45.543106835 -0600
-@@ -492,7 +492,7 @@ void VERTFILL2D(Word D)
+--- a/source/userint/USERINT.c
++++ b/source/userint/USERINT.c
+@@ -507,7 +507,7 @@
    Word L, S, T, CB;
  
    /* GET 1D CAD STACK */

@@ -1,4 +1,4 @@
-$(PYTHON) packaging six filelock pluggy py toml virtualenv importlib_metadata | $(PYTHON_TOOLCHAIN)
+cachetools chardet colorama filelock packaging platformdirs pluggy pyproject_api tomli virtualenv | $(PYTHON_TOOLCHAIN) $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

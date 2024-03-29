@@ -65,11 +65,12 @@ def install_scripts(directory=None, ignore_existing=False):
 
     - Arthur Gaer: design
 
-    - John Palmieri: revision, 2011-07 (:trac:`11602`)
+    - John Palmieri: revision, 2011-07 (:issue:`11602`)
 
     EXAMPLES::
 
         sage: import tempfile
+        sage: from sage.misc.dist import install_scripts
         sage: with tempfile.TemporaryDirectory() as d:
         ....:     install_scripts(d, ignore_existing=True)
         doctest:warning...

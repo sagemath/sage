@@ -14,15 +14,16 @@ AUTHORS:
 EXAMPLES::
 
     sage: from sage.stats.distributions.discrete_gaussian_polynomial import DiscreteGaussianDistributionPolynomialSampler
-    sage: sigma = 3.0; n=1000
-    sage: l = [DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], 64, sigma)() for _ in range(n)]
-    sage: l = [vector(f).norm().n() for f in l]
-    sage: from numpy import mean
-    sage: mean(l), sqrt(64)*sigma  # abs tol 5e-1
+    sage: sigma = 3.0; n = 1000
+    sage: l = [DiscreteGaussianDistributionPolynomialSampler(ZZ['x'], 64, sigma)()
+    ....:      for _ in range(n)]
+    sage: l = [vector(f).norm().n() for f in l]                                         # needs sage.symbolic
+    sage: from numpy import mean                                                        # needs numpy
+    sage: mean(l), sqrt(64)*sigma  # abs tol 5e-1                                       # needs numpy sage.symbolic
     (24.0, 24.0)
 
 """
-#******************************************************************************
+# ******************************************************************************
 #
 #                        DGS - Discrete Gaussian Samplers
 #
@@ -52,7 +53,7 @@ EXAMPLES::
 # The views and conclusions contained in the software and documentation are
 # those of the authors and should not be interpreted as representing official
 # policies, either expressed or implied, of the FreeBSD Project.
-#*****************************************************************************/
+# *****************************************************************************/
 
 from sage.rings.real_mpfr import RR
 from sage.rings.integer_ring import ZZ

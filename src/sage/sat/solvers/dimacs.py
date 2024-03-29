@@ -93,7 +93,7 @@ class DIMACS(SatSolver):
         else:
             self._command = self.__class__.command
 
-        self._tail  = open(tmp_filename(),'w')
+        self._tail = open(tmp_filename(), 'w')
         self._var = 0
         self._lit = 0
 
@@ -105,7 +105,7 @@ class DIMACS(SatSolver):
             sage: DIMACS(command="iliketurtles {input}")
             DIMACS Solver: 'iliketurtles {input}'
         """
-        return "DIMACS Solver: '%s'"%(self._command)
+        return "DIMACS Solver: '%s'" % (self._command)
 
     def __del__(self):
         """
@@ -135,7 +135,7 @@ class DIMACS(SatSolver):
             sage: solver.var()
             1
         """
-        self._var+= 1
+        self._var += 1
         return self._var
 
     def nvars(self):
@@ -225,7 +225,7 @@ class DIMACS(SatSolver):
         headname = self._headname if filename is None else filename
         head = open(headname, "w")
         head.truncate(0)
-        head.write("p cnf %d %d\n"%(self._var,self._lit))
+        head.write("p cnf %d %d\n" % (self._var,self._lit))
         head.close()
 
         tail = self._tail
@@ -342,7 +342,7 @@ class DIMACS(SatSolver):
             <BLANKLINE>
         """
         fh = open(filename, "w")
-        fh.write("p cnf %d %d\n"%(nlits,len(clauses)))
+        fh.write("p cnf %d %d\n" % (nlits,len(clauses)))
         for clause in clauses:
             if len(clause) == 3 and clause[1] in (True, False) and clause[2] in (True,False,None):
                 lits, is_xor, rhs = clause
@@ -351,7 +351,7 @@ class DIMACS(SatSolver):
 
             if is_xor:
                 closing = lits[-1] if rhs else -lits[-1]
-                fh.write("x" + " ".join(map(str, lits[:-1])) + " %d 0\n"%closing)
+                fh.write("x" + " ".join(map(str, lits[:-1])) + " %d 0\n" % closing)
             else:
                 fh.write(" ".join(map(str, lits)) + " 0\n")
         fh.close()
@@ -490,14 +490,14 @@ class DIMACS(SatSolver):
         TESTS::
 
             sage: from sage.sat.boolean_polynomials import solve as solve_sat
-            sage: sr = mq.SR(1,1,1,4,gf2=True,polybori=True)
-            sage: while True:  # workaround (see :trac:`31891`)
+            sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)                       # needs sage.rings.finite_rings sage.rings.polynomial.pbori
+            sage: while True:  # workaround (see :issue:`31891`)                         # needs sage.rings.finite_rings sage.rings.polynomial.pbori
             ....:     try:
             ....:         F, s = sr.polynomial_system()
             ....:         break
             ....:     except ZeroDivisionError:
             ....:         pass
-            sage: solve_sat(F, solver=sage.sat.solvers.RSat)  # optional - RSat
+            sage: solve_sat(F, solver=sage.sat.solvers.RSat)    # optional - rsat, needs sage.rings.finite_rings sage.rings.polynomial.pbori
 
         """
         if assumptions is not None:
@@ -518,7 +518,7 @@ class DIMACS(SatSolver):
         if v_lines:
             L = " ".join(v_lines).split(" ")
             assert L[-1] == "0", "last digit of solution line must be zero (not {})".format(L[-1])
-            return (None,) + tuple(int(e)>0 for e in L[:-1])
+            return (None,) + tuple(int(e) > 0 for e in L[:-1])
         else:
             raise ValueError("When parsing the output, no line starts with letter v or s")
 

@@ -81,7 +81,7 @@ class CartesianProductPoset(CartesianProduct):
         :class:`CartesianProduct`
     """
 
-    def __init__(self, sets, category, order=None, **kwargs):
+    def __init__(self, sets, category, order=None, **kwargs) -> None:
         r"""
         See :class:`CartesianProductPoset` for details.
 
@@ -102,7 +102,7 @@ class CartesianProductPoset(CartesianProduct):
             try:
                 self._le_ = getattr(self, 'le_' + order)
             except AttributeError:
-                raise ValueError("no order '%s' known" % (order,))
+                raise ValueError(f"no order '{order}' known")
         else:
             self._le_ = order
 
@@ -172,7 +172,7 @@ class CartesianProductPoset(CartesianProduct):
             sage: T = [Q((0, 0)), Q((1, 1)), Q((0, 1)), Q((1, 0))]
             sage: for a in T:
             ....:     for b in T:
-            ....:         assert(Q.le(a, b) == (a <= b))
+            ....:         assert Q.le(a, b) == (a <= b)
             ....:         print('%s <= %s = %s' % (a, b, a <= b))
             (0, 0) <= (0, 0) = True
             (0, 0) <= (1, 1) = True
@@ -193,7 +193,7 @@ class CartesianProductPoset(CartesianProduct):
 
         TESTS:
 
-        Check that :trac:`19999` is resolved::
+        Check that :issue:`19999` is resolved::
 
             sage: P = Poset((srange(2), lambda left, right: left <= right))
             sage: Q = cartesian_product((P, P), order='product')
@@ -239,7 +239,7 @@ class CartesianProductPoset(CartesianProduct):
             sage: T = [Q((0, 0)), Q((1, 1)), Q((0, 1)), Q((1, 0))]
             sage: for a in T:
             ....:     for b in T:
-            ....:         assert(Q.le(a, b) == (a <= b))
+            ....:         assert Q.le(a, b) == (a <= b)
             ....:         print('%s <= %s = %s' % (a, b, a <= b))
             (0, 0) <= (0, 0) = True
             (0, 0) <= (1, 1) = True
@@ -285,7 +285,7 @@ class CartesianProductPoset(CartesianProduct):
             sage: T = [Q((0, 0)), Q((1, 1)), Q((0, 1)), Q((1, 0))]
             sage: for a in T:
             ....:     for b in T:
-            ....:         assert(Q.le(a, b) == (a <= b))
+            ....:         assert Q.le(a, b) == (a <= b)
             ....:         print('%s <= %s = %s' % (a, b, a <= b))
             (0, 0) <= (0, 0) = True
             (0, 0) <= (1, 1) = True
@@ -360,7 +360,7 @@ class CartesianProductPoset(CartesianProduct):
                 This method uses the coercion framework to find a
                 suitable common parent.
 
-                This method can be deleted once :trac:`10130` is fixed and
+                This method can be deleted once :issue:`10130` is fixed and
                 provides these methods automatically.
 
             TESTS::
@@ -377,7 +377,7 @@ class CartesianProductPoset(CartesianProduct):
                 True
 
             The following example tests that the coercion gets involved in
-            comparisons; it can be simplified once :trac:`18182` is merged.
+            comparisons; it can be simplified once :issue:`18182` is merged.
             ::
 
                 sage: class MyCP(CartesianProductPoset):
@@ -423,7 +423,7 @@ class CartesianProductPoset(CartesianProduct):
                 This method uses the coercion framework to find a
                 suitable common parent.
 
-                This method can be deleted once :trac:`10130` is fixed and
+                This method can be deleted once :issue:`10130` is fixed and
                 provides these methods automatically.
 
             TESTS::
@@ -458,7 +458,7 @@ class CartesianProductPoset(CartesianProduct):
                 This method uses the coercion framework to find a
                 suitable common parent.
 
-                This method can be deleted once :trac:`10130` is fixed and
+                This method can be deleted once :issue:`10130` is fixed and
                 provides these methods automatically.
 
             TESTS::
@@ -493,7 +493,7 @@ class CartesianProductPoset(CartesianProduct):
                 This method uses the coercion framework to find a
                 suitable common parent.
 
-                This method can be deleted once :trac:`10130` is fixed and
+                This method can be deleted once :issue:`10130` is fixed and
                 provides these methods automatically.
 
             TESTS::

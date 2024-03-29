@@ -46,7 +46,7 @@ def p_saturation(A, p, proof=True):
         sage: C3.index_in_saturation()
         2
     """
-    tm = verbose("%s-saturating a %sx%s matrix"%(p, A.nrows(), A.ncols()))
+    tm = verbose("%s-saturating a %sx%s matrix" % (p, A.nrows(), A.ncols()))
     H = A.hermite_form(include_zero_rows=False, proof=proof)
     while True:
         if p == 2:
@@ -256,7 +256,7 @@ def saturation(A, proof=True, p=0, max_dets=5):
             v = random_sublist_of_size(nc, nr)
             tm = verbose('saturation -- checking det condition on submatrix')
             d = gcd(d, A.matrix_from_columns(v).determinant(proof=proof))
-            verbose('saturation -- got det down to %s'%d, tm)
+            verbose('saturation -- got det down to %s' % d, tm)
             if gcd(d, p) == 1:
                 return A._insert_zero_columns(zero_cols)
             already_tried.append(v)
@@ -316,7 +316,7 @@ def index_in_saturation(A, proof=True):
         sage: W.index_in(S)
         18
 
-    For any zero matrix the index in its saturation is 1 (see :trac:`13034`)::
+    For any zero matrix the index in its saturation is 1 (see :issue:`13034`)::
 
         sage: m = matrix(ZZ, 3)
         sage: m

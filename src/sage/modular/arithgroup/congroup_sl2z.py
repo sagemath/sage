@@ -3,7 +3,7 @@ The modular group `\SL_2(\ZZ)`
 
 AUTHORS:
 
-- Niles Johnson (2010-08): :trac:`3893`: ``random_element()`` should pass on ``*args`` and ``**kwds``.
+- Niles Johnson (2010-08): :issue:`3893`: ``random_element()`` should pass on ``*args`` and ``**kwds``.
 
 """
 
@@ -146,7 +146,7 @@ class SL2Z_class(Gamma0_class):
             sage: latex(SL2Z)
             \mbox{\rm SL}_2(\Bold{Z})
         """
-        return "\\mbox{\\rm SL}_2(%s)"%(ZZ._latex_())
+        return "\\mbox{\\rm SL}_2(%s)" % (ZZ._latex_())
 
     def is_subgroup(self, right):
         """

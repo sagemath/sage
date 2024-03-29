@@ -8,9 +8,9 @@ When writing code for Sage, use Python for the basic structure and
 interface. For speed, efficiency, or convenience, you can implement
 parts of the code using any of the following languages: :ref:`Cython
 <chapter-cython>`, C/C++, Fortran 95, GAP, Common Lisp, Singular, and
-PARI/GP. You can also use all C/C++ libraries included with Sage
-[SageComponents]_. And if you are okay with your code depending on
-optional Sage packages, you can use Octave, or even Magma,
+PARI/GP. You can also use all C/C++ libraries included with Sage,
+see :ref:`spkg`. And if you are okay with your code depending on
+external programs, you can use Octave, or even Magma,
 Mathematica, or Maple.
 
 In this chapter, we discuss interfaces between Sage and :ref:`PARI
@@ -97,14 +97,14 @@ In case you are familiar with gp, please note that the PARI C function
 may have a name that is different from the corresponding gp function
 (for example, see ``mathnf``), so always check the manual.
 
-We can also add a ``frobenius(flag)`` method to the ``matrix_integer``
+We can also add a ``frobenius_form(flag)`` method to the ``matrix_integer``
 class where we call the ``matfrobenius()`` method on the PARI object
 associated to the matrix after doing some sanity checking. Then we
 convert output from PARI to Sage objects:
 
 .. CODE-BLOCK:: cython
 
-    def frobenius(self, flag=0, var='x'):
+    def frobenius_form(self, flag=0, var='x'):
         """
         Return the Frobenius form (rational canonical form) of this matrix.
 
@@ -129,13 +129,13 @@ convert output from PARI to Sage objects:
         EXAMPLES::
 
             sage: A = MatrixSpace(ZZ, 3)(range(9))
-            sage: A.frobenius(0)
+            sage: A.frobenius_form(0)
             [ 0  0  0]
             [ 1  0 18]
             [ 0  1 12]
-            sage: A.frobenius(1)
+            sage: A.frobenius_form(1)
             [x^3 - 12*x^2 - 18*x]
-            sage: A.frobenius(1, var='y')
+            sage: A.frobenius_form(1, var='y')
             [y^3 - 12*y^2 - 18*y]
         """
         if not self.is_square():
@@ -714,7 +714,7 @@ dumps the user into an Octave interactive shell:
 
             OUTPUT:
 
-            An list x (if it exists) which solves M*x = b
+            A list x (if it exists) which solves M*x = b
 
             EXAMPLES::
 
@@ -753,7 +753,3 @@ These are only excerpts from ``octave.py``; check that file for more
 definitions and examples. Look at other files in the directory
 ``SAGE_ROOT/src/sage/interfaces/`` for examples of interfaces to other
 software packages.
-
-
-.. [SageComponents] See http://www.sagemath.org/links-components.html
-   for a list

@@ -338,7 +338,7 @@ class Variable(CachedRepresentation, SageObject):
             ...
             ValueError: ':-' is not a valid name for a variable.
 
-        Check :trac:`26452`::
+        Check :issue:`26452`::
 
             sage: Variable(('w',),
             ....:          repr='w^(Number Field in i with defining polynomial x^2 + 1) * log(w)^ZZ')
@@ -1572,7 +1572,7 @@ class GenericGrowthElement(MultiplicativeGroupElement):
             Traceback (most recent call last):
             ...
             AttributeError: 'GenericGrowthGroup_with_category.element_class' object
-            has no attribute 'is_one'
+            has no attribute 'is_one'...
         """
         if self.is_one():
             return tuple()
@@ -2775,7 +2775,7 @@ class AbstractGrowthGroupFunctor(ConstructionFunctor):
             sage: F == G
             False
         """
-        return type(self) == type(other) and self.var == other.var
+        return type(self) is type(other) and self.var == other.var
 
     def __ne__(self, other):
         r"""
@@ -3137,7 +3137,7 @@ class MonomialGrowthElement(GenericGrowthElement):
                 return ((e, coefficient),)
 
         if var.startswith('exp('):
-            assert(var[-1] == ')')
+            assert (var[-1] == ')')
             v = var[4:-1]
         else:
             v = 'log(%s)' % (var,)
@@ -3207,7 +3207,7 @@ class MonomialGrowthElement(GenericGrowthElement):
             x^(log(2))
         """
         var = str(self.parent()._var_)
-        if not(var.startswith('log(') and self.exponent.is_one()):
+        if not (var.startswith('log(') and self.exponent.is_one()):
             raise ValueError('Variable %s is not a log of something.' % (var,))
         new_var = var[4:-1]
         if base == 'e':
@@ -4283,7 +4283,7 @@ class ExponentialGrowthElement(GenericGrowthElement):
             True
             sage: forget()
 
-        Check that :trac:`19999` is fixed::
+        Check that :issue:`19999` is fixed::
 
             sage: P_ZZ_UU = GrowthGroup('ZZ^x * UU^x')
             sage: P_ZZ_UU((-2)^x) <= P_ZZ_UU(2^x) or P_ZZ_UU(2^x) <= P_ZZ_UU((-2)^x)

@@ -8,7 +8,7 @@ AUTHOR:
 TESTS:
 
 We create some rings and run the test suite for them. We skip the Smith form
-tests because they take a few minutes as of mid 2018, see :trac:`25431`::
+tests because they take a few minutes as of mid 2018, see :issue:`25431`::
 
     sage: R1 = ZpLC(2)
     doctest:...: FutureWarning: This class/method/function is marked as experimental. It, its functionality or its interface might change without a formal deprecation.
@@ -17,10 +17,11 @@ tests because they take a few minutes as of mid 2018, see :trac:`25431`::
     sage: R3 = QpLC(2)
     sage: R4 = QpLF(2)
 
-    sage: TestSuite(R1).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
-    sage: TestSuite(R2).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
-    sage: TestSuite(R3).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
-    sage: TestSuite(R4).run(skip=['_test_teichmuller', '_test_matrix_smith']) # long time
+    sage: # long time, needs sage.rings.padics
+    sage: TestSuite(R1).run(skip=['_test_teichmuller', '_test_matrix_smith'])
+    sage: TestSuite(R2).run(skip=['_test_teichmuller', '_test_matrix_smith'])
+    sage: TestSuite(R3).run(skip=['_test_teichmuller', '_test_matrix_smith'])
+    sage: TestSuite(R4).run(skip=['_test_teichmuller', '_test_matrix_smith'])
 """
 
 # ****************************************************************************
@@ -208,7 +209,7 @@ class pAdicLatticeElement(pAdicGenericElement):
         EXAMPLES::
 
             sage: K = QpLC(7)
-            sage: K.random_element()._is_base_elt(7)  # not tested, known bug (see :trac:`32126`)
+            sage: K.random_element()._is_base_elt(7)  # not tested, known bug (see :issue:`32126`)
             True
         """
         return p == self._parent.prime()

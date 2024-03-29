@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat
 r"""
 Elements of finitely presented graded modules
 

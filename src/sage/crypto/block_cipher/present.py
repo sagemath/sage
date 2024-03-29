@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 PRESENT
 
@@ -63,8 +64,8 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.integer import Integer
 from sage.modules.free_module_element import vector
 from sage.rings.finite_rings.finite_field_constructor import GF
+from sage.structure.element import Vector
 from sage.crypto.sboxes import PRESENT as PRESENTSBOX
-from sage.modules.vector_mod2_dense import Vector_mod2_dense
 
 
 def _smallscale_present_linearlayer(nsboxes=16):
@@ -72,7 +73,7 @@ def _smallscale_present_linearlayer(nsboxes=16):
     .. TODO::
 
         switch to sage.crypto.linearlayer
-        (:trac:`25735`) as soon as it is included in sage
+        (:issue:`25735`) as soon as it is included in sage
 
     EXAMPLES::
 
@@ -417,7 +418,7 @@ class PRESENT(SageObject):
         \leq 32` and current STATE `b_{63} \dots b_0`, addRoundkey consists of
         the operation for `0 \leq j \leq 63`, `b_j = b_j \oplus \kappa^i_j`.
         """
-        if isinstance(plaintext, (list, tuple, Vector_mod2_dense)):
+        if isinstance(plaintext, (list, tuple, Vector)):
             inputType = 'vector'
         elif isinstance(plaintext, (Integer, int)):
             inputType = 'integer'
@@ -472,8 +473,8 @@ class PRESENT(SageObject):
             sage: c4 = 0x3333DCD3213210D2
             sage: present.decrypt(c4, k4) == p4
             True
-       """
-        if isinstance(ciphertext, (list, tuple, Vector_mod2_dense)):
+        """
+        if isinstance(ciphertext, (list, tuple, Vector)):
             inputType = 'vector'
         elif isinstance(ciphertext, (Integer, int)):
             inputType = 'integer'
@@ -773,7 +774,7 @@ class PRESENT_KS(SageObject):
             pass a ``master_key`` value on initialisation. Otherwise you can
             omit ``master_key`` and pass a key when you call the object.
         """
-        if isinstance(K, (list, tuple, Vector_mod2_dense)):
+        if isinstance(K, (list, tuple, Vector)):
             inputType = 'vector'
         elif isinstance(K, (Integer, int)):
             inputType = 'integer'

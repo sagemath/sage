@@ -16,7 +16,7 @@ from sage.libs.gmp.all cimport *
 
 from sage.rings.real_mpfr cimport RealField
 
-cpdef int bitcount(n):
+cpdef int bitcount(n) noexcept:
     """
     Bitcount of a Sage Integer or Python int/long.
 
@@ -46,7 +46,7 @@ cpdef int bitcount(n):
         return 0
     return mpz_sizeinbase(m.value, 2)
 
-cpdef isqrt(n):
+cpdef isqrt(n) noexcept:
     """
     Square root (rounded to floor) of a Sage Integer or Python int/long.
     The result is a Sage Integer.
@@ -77,7 +77,7 @@ cpdef isqrt(n):
     mpz_sqrt(y.value, m.value)
     return y
 
-cpdef from_man_exp(man, exp, long prec = 0, str rnd = 'd'):
+cpdef from_man_exp(man, exp, long prec = 0, str rnd = 'd') noexcept:
     """
     Create normalized mpf value tuple from mantissa and exponent.
 
@@ -106,7 +106,7 @@ cpdef from_man_exp(man, exp, long prec = 0, str rnd = 'd'):
     else:
         return normalize(0, res, exp, bc, prec, rnd)
 
-cpdef normalize(long sign, Integer man, exp, long bc, long prec, str rnd):
+cpdef normalize(long sign, Integer man, exp, long bc, long prec, str rnd) noexcept:
     """
     Create normalized mpf value tuple from full list of components.
 
@@ -154,7 +154,7 @@ cpdef normalize(long sign, Integer man, exp, long bc, long prec, str rnd):
     bc = mpz_sizeinbase(res.value, 2)
     return (sign, res, int(exp), bc)
 
-cdef mpfr_from_mpfval(mpfr_t res, tuple x):
+cdef mpfr_from_mpfval(mpfr_t res, tuple x) noexcept:
     """
     Set value of an MPFR number (in place) to that of a given mpmath mpf
     data tuple.
@@ -180,7 +180,7 @@ cdef mpfr_from_mpfval(mpfr_t res, tuple x):
     else:
         mpfr_set_nan(res)
 
-cdef mpfr_to_mpfval(mpfr_t value):
+cdef mpfr_to_mpfval(mpfr_t value) noexcept:
     """
     Given an MPFR value, return an mpmath mpf data tuple representing
     the same number.
@@ -409,12 +409,12 @@ def call(func, *args, **kwargs):
         sage: type(_)
         <class 'sage.rings.real_double...RealDoubleElement...'>
 
-    Check that :trac:`11885` is fixed::
+    Check that :issue:`11885` is fixed::
 
         sage: a.call(a.ei, 1.0r, parent=float)
         1.8951178163559366
 
-    Check that :trac:`14984` is fixed::
+    Check that :issue:`14984` is fixed::
 
         sage: a.call(a.log, -1.0r, parent=float)
         3.141592653589793j

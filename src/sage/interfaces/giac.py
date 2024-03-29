@@ -48,7 +48,7 @@ EXAMPLES::
 
 
 If the string "error" (case insensitive) occurs in the output of
-anything from Giac, a RuntimeError exception is raised.
+anything from Giac, a :class:`RuntimeError` exception is raised.
 
 Tutorial
 --------
@@ -214,7 +214,7 @@ For more details, see the documentation for ``._sage_()``.
 
 TESTS:
 
-Test that conversion of symbolic functions with latex names works (:trac:`31047`)::
+Test that conversion of symbolic functions with latex names works (:issue:`31047`)::
 
     sage: var('phi')
     phi
@@ -559,7 +559,7 @@ If you got giac from the spkg then ``$PREFIX`` is ``$SAGE_LOCAL``
                 try:
                     self.__tab_completion = sage.misc.persist.load(COMMANDS_CACHE)
                     return self.__tab_completion
-                except IOError:
+                except OSError:
                     pass
             if verbose:
                 print("\nBuilding Giac command completion list (this takes")
@@ -1107,12 +1107,12 @@ class GiacElement(ExpectElement):
 
         TESTS:
 
-        Check conversion of Booleans (:trac:`28705`)::
+        Check conversion of Booleans (:issue:`28705`)::
 
             sage: giac('true')._sage_(), giac('false')._sage_()
             (True, False)
 
-        Check that variables and constants are not mixed up (:trac:`30133`)::
+        Check that variables and constants are not mixed up (:issue:`30133`)::
 
             sage: ee, ii, pp = SR.var('e,i,pi')
             sage: giac(ee * ii * pp).sage().variables()

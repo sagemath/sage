@@ -159,8 +159,8 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
         sage: N.from_reduced_word([1, 2, 1, 2, 2, 1, 2, 1, 2, 2]).lift()
         (1,4,3,5,2)
 
-   We can also create a semigroup of matrices, where we define the
-   multiplication as matrix multiplication::
+    We can also create a semigroup of matrices, where we define the
+    multiplication as matrix multiplication::
 
         sage: M1=matrix([[0,0,1],[1,0,0],[0,1,0]])
         sage: M2=matrix([[0,0,0],[1,1,0],[0,0,1]])
@@ -884,7 +884,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
 
             TESTS:
 
-            We check that :trac:`19631` is fixed::
+            We check that :issue:`19631` is fixed::
 
                 sage: R = IntegerModRing(101)
                 sage: M = AutomaticSemigroup(Family({1: R(3), 2: R(5)}), one=R.one())

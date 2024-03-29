@@ -46,31 +46,6 @@ cdef extern from "dict_internal.h":
         PyObject * me_key
         PyObject * me_value
 
-
-# dk_lookup was removed in python 3.11
-DEF HAS_DK_LOOKUP = PY_VERSION_HEX < 0x30b0000
-
-IF HAS_DK_LOOKUP:
-
-    cdef extern from *:
-        """
-        #define DK_LOOKUP(dk) ((dk)->dk_lookup)
-        """
-        ctypedef void * dict_lookup_func  # Precise definition not needed
-        dict_lookup_func DK_LOOKUP(PyDictKeysObject *mp)
-
-    cdef dict_lookup_func lookdict
-
-    def init_lookdict():
-        global lookdict
-        # A dict which a non-string key uses the generic "lookdict"
-        # as lookup function
-        cdef object D = {}
-        D[0] = 0
-        lookdict = DK_LOOKUP((<PyDictObject *>D).ma_keys)
-
-    init_lookdict()
-
 cdef int del_dictitem_by_exact_value(PyDictObject *mp, PyObject *value, Py_hash_t hash) except -1:
     """
     This is used in callbacks for the weak values of :class:`WeakValueDictionary`.
@@ -87,7 +62,7 @@ cdef int del_dictitem_by_exact_value(PyDictObject *mp, PyObject *value, Py_hash_
 
     TESTS:
 
-    The following is an indirect doctest, as discussed on :trac:`13394`.
+    The following is an indirect doctest, as discussed on :issue:`13394`.
     ::
 
         sage: from sage.misc.weak_dict import WeakValueDictionary
@@ -112,7 +87,7 @@ cdef int del_dictitem_by_exact_value(PyDictObject *mp, PyObject *value, Py_hash_
     TESTS:
 
     The following shows that the deletion of deeply nested structures does not
-    result in an error, by :trac:`15506`::
+    result in an error, by :issue:`15506`::
 
         sage: class A: pass
         sage: a = A(); prev = a
@@ -147,12 +122,6 @@ cdef int del_dictitem_by_exact_value(PyDictObject *mp, PyObject *value, Py_hash_
             return 0
         ep = &(entries[ix])
 
-    # We need the lookup function to be the generic lookdict, otherwise
-    # deletions may not work correctly
-    IF HAS_DK_LOOKUP:
-        # Can this fail? In any case dk_lookup was removed in python 3.11
-        assert DK_LOOKUP(keys) is lookdict
-
     T = PyList_New(2)
     PyList_SetItem(T, 0, ep.me_key)
     PyList_SetItem(T, 1, ep.me_value)
@@ -160,11 +129,12 @@ cdef int del_dictitem_by_exact_value(PyDictObject *mp, PyObject *value, Py_hash_
     ep.me_value = NULL
     mp.ma_used -= 1
     dictkeys_set_index(keys, i, DKIX_DUMMY)
-    #We have transferred the to-be-deleted references to the list T
-    #we now delete the list so that the actual decref happens through a
-    #deallocation routine that uses the Python Trashcan macros to
-    #avoid stack overflow in deleting deep structures.
+    # We have transferred the to-be-deleted references to the list T
+    # we now delete the list so that the actual decref happens through a
+    # deallocation routine that uses the Python Trashcan macros to
+    # avoid stack overflow in deleting deep structures.
     del T
+
 
 def test_del_dictitem_by_exact_value(D, value, h):
     """
@@ -186,7 +156,7 @@ def test_del_dictitem_by_exact_value(D, value, h):
 
     TESTS:
 
-    See :trac:`13394` for a discussion.
+    See :issue:`13394` for a discussion.
     ::
 
         sage: from sage.cpython.dict_del_by_value import test_del_dictitem_by_exact_value

@@ -122,7 +122,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
         """
         return r'\text{SR}'
 
-    cpdef _coerce_map_from_(self, R):
+    cpdef _coerce_map_from_(self, R) noexcept:
         """
         EXAMPLES::
 
@@ -158,7 +158,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             sage: SR.has_coerce_map_from(pari)
             False
 
-        Check if arithmetic with bools works (see :trac:`9560`)::
+        Check if arithmetic with bools works (see :issue:`9560`)::
 
             sage: SR.has_coerce_map_from(bool)
             True
@@ -213,7 +213,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             from sage.rings.real_lazy import RLF, CLF
             from sage.rings.finite_rings.finite_field_base import FiniteField
 
-            from .subring import GenericSymbolicSubring
+            from sage.symbolic.subring import GenericSymbolicSubring
 
             if R._is_numerical():
                 # Almost anything with a coercion into any precision of CC
@@ -339,7 +339,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             ...
             TypeError: unsupported operand type(s) for ** or pow(): 'R' and 'sage.rings.rational.Rational'
 
-        Check that :trac:`22068` is fixed::
+        Check that :issue:`22068` is fixed::
 
             sage: _ = var('x')
             sage: sin(x).subs(x=RR('NaN'))
@@ -353,7 +353,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             sage: sin(x).subs(x=complex('NaN'))
             sin(NaN)
 
-        Check that :trac:`24072` is solved::
+        Check that :issue:`24072` is solved::
 
             sage: x = polygen(GF(3))
             sage: a = SR.var('a')
@@ -362,7 +362,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             ...
             TypeError: positive characteristic not allowed in symbolic computations
 
-        Check support for unicode characters (:trac:`29280`)::
+        Check support for unicode characters (:issue:`29280`)::
 
             sage: SR('λ + 2λ')
             3*λ
@@ -461,12 +461,12 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         TESTS:
 
-        Check that :trac:`15047` is fixed::
+        Check that :issue:`15047` is fixed::
 
             sage: latex(SR.wild(0))
             \$0
 
-        Check that :trac:`21455` is fixed::
+        Check that :issue:`21455` is fixed::
 
             sage: coth(SR.wild(0))
             coth($0)
@@ -599,7 +599,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         TESTS:
 
-        Test that :trac:`32404` is fixed::
+        Test that :issue:`32404` is fixed::
 
             sage: SR0 = SR.subring(no_variables=True)
             sage: SR0.I().parent()
@@ -760,7 +760,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         - ``n`` -- (optional) positive integer; number of symbolic variables, indexed from `0` to `n-1`
 
-        - ``domain`` -- (optional) specify the domain of the variable(s); it is the complex plane
+        - ``domain`` -- (optional) specify the domain of the variable(s); it is None
           by default, and possible options are (non-exhaustive list, see note below):
           ``'real'``, ``'complex'``, ``'positive'``, ``'integer'`` and ``'noninteger'``
 
@@ -780,7 +780,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
 
         EXAMPLES:
 
-        Create a variable `zz` (complex by default)::
+        Create a variable `zz`::
 
             sage: zz = SR.var('zz'); zz
             zz
@@ -832,7 +832,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             ...
             ValueError: The name "x,y" is not a valid Python identifier.
 
-        Check that :trac:`17206` is fixed::
+        Check that :issue:`17206` is fixed::
 
             sage: var1 = var('var1', latex_name=r'\sigma^2_1'); latex(var1)
             {\sigma^2_1}
@@ -851,7 +851,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
             ...
             ValueError: cannot specify n for multiple symbol names
 
-        Check that :trac:`28353` is fixed: Constructions that suggest multiple
+        Check that :issue:`28353` is fixed: Constructions that suggest multiple
         variables but actually only give one variable name return a 1-tuple::
 
             sage: SR.var(['x'])
@@ -865,7 +865,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
         """
         if isinstance(name, Expression):
             return name
-        if not isinstance(name, (basestring, list, tuple)):
+        if not isinstance(name, (str, list, tuple)):
             name = repr(name)
 
         is_multiple = False
@@ -1133,7 +1133,7 @@ cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
         """
         if self is not SR:
             raise NotImplementedError('cannot create subring of %s' % (self,))
-        from .subring import SymbolicSubring
+        from sage.symbolic.subring import SymbolicSubring
         return SymbolicSubring(*args, **kwds)
 
     def _fricas_init_(self):
@@ -1157,26 +1157,26 @@ cdef class NumpyToSRMorphism(Morphism):
 
     TESTS:
 
-    We check that :trac:`8949` and :trac:`9769` are fixed (see also :trac:`18076`)::
+    We check that :issue:`8949` and :issue:`9769` are fixed (see also :issue:`18076`)::
 
-        sage: import numpy
+        sage: import numpy                                                              # needs numpy
         sage: f(x) = x^2
-        sage: f(numpy.int8('2'))
+        sage: f(numpy.int8('2'))                                                        # needs numpy
         4
-        sage: f(numpy.int32('3'))
+        sage: f(numpy.int32('3'))                                                       # needs numpy
         9
 
     Note that the answer is a Sage integer and not a numpy type::
 
-        sage: a = f(numpy.int8('2')).pyobject()
-        sage: type(a)
+        sage: a = f(numpy.int8('2')).pyobject()                                         # needs numpy
+        sage: type(a)                                                                   # needs numpy
         <class 'sage.rings.integer.Integer'>
 
     This behavior also applies to standard functions::
 
         sage: cos(int('2'))
         cos(2)
-        sage: numpy.cos(int('2'))
+        sage: numpy.cos(int('2'))                                                       # needs numpy
         -0.4161468365471424
     """
     cdef _intermediate_ring
@@ -1192,6 +1192,7 @@ cdef class NumpyToSRMorphism(Morphism):
 
         EXAMPLES::
 
+            sage: # needs numpy
             sage: import numpy
             sage: from sage.symbolic.ring import NumpyToSRMorphism
             sage: f = NumpyToSRMorphism(numpy.float64)
@@ -1200,7 +1201,7 @@ cdef class NumpyToSRMorphism(Morphism):
             sage: _.parent()
             Symbolic Ring
 
-            sage: NumpyToSRMorphism(str)
+            sage: NumpyToSRMorphism(str)                                                # needs numpy
             Traceback (most recent call last):
             ...
             TypeError: <... 'str'> is not a numpy number type
@@ -1220,24 +1221,23 @@ cdef class NumpyToSRMorphism(Morphism):
         else:
             raise TypeError("{} is not a numpy number type".format(numpy_type))
 
-    cpdef Element _call_(self, a):
+    cpdef Element _call_(self, a) noexcept:
         """
         EXAMPLES:
 
         This should be called when coercing or converting a NumPy
         float or complex to the Symbolic Ring::
 
+            sage: # needs numpy
             sage: import numpy
             sage: SR(numpy.int32('1')).pyobject().parent()
             Integer Ring
             sage: SR(numpy.int64('-2')).pyobject().parent()
             Integer Ring
-
             sage: SR(numpy.float16('1')).pyobject().parent()
             Real Double Field
             sage: SR(numpy.float64('2.0')).pyobject().parent()
             Real Double Field
-
             sage: SR(numpy.complex64(1jr)).pyobject().parent()
             Complex Double Field
         """
@@ -1252,6 +1252,7 @@ cdef class UnderscoreSageMorphism(Morphism):
 
         EXAMPLES::
 
+            sage: # needs sympy
             sage: import sympy
             sage: from sage.symbolic.ring import UnderscoreSageMorphism
             sage: b = sympy.var('b')
@@ -1267,16 +1268,16 @@ cdef class UnderscoreSageMorphism(Morphism):
         from sage.interfaces.sympy import sympy_init
         sympy_init()
 
-    cpdef Element _call_(self, a):
+    cpdef Element _call_(self, a) noexcept:
         """
         EXAMPLES:
 
         This should be called when coercing or converting a SymPy
         object to the Symbolic Ring::
 
-            sage: import sympy
-            sage: b = sympy.var('b')
-            sage: bool(SR(b) == SR(b._sage_()))
+            sage: import sympy                                                          # needs sympy
+            sage: b = sympy.var('b')                                                    # needs sympy
+            sage: bool(SR(b) == SR(b._sage_()))                                         # needs sympy
             True
         """
         return self.codomain()(a._sage_())
@@ -1300,33 +1301,6 @@ def the_SymbolicRing():
     return SR
 
 
-def is_SymbolicExpressionRing(R):
-    """
-    Return True if ``R`` is the symbolic expression ring.
-
-    This function is deprecated.  Instead, either use ``R is SR`` (to
-    test whether ``R`` is the unique symbolic ring ``SR``); or
-    ``isinstance`` with :class:`~sage.rings.abc.SymbolicRing`
-    (when also symbolic subrings and callable symbolic rings should
-    be accepted).
-
-    EXAMPLES::
-
-        sage: from sage.symbolic.ring import is_SymbolicExpressionRing
-        sage: is_SymbolicExpressionRing(ZZ)
-        doctest:warning...
-        DeprecationWarning: is_SymbolicExpressionRing is deprecated;
-        use "... is SR" or isinstance(..., sage.rings.abc.SymbolicRing instead
-        See https://github.com/sagemath/sage/issues/32665 for details.
-        False
-        sage: is_SymbolicExpressionRing(SR)
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32665, 'is_SymbolicExpressionRing is deprecated; use "... is SR" or isinstance(..., sage.rings.abc.SymbolicRing instead')
-    return R is SR
-
-
 def var(name, **kwds):
     """
     EXAMPLES::
@@ -1344,7 +1318,7 @@ def var(name, **kwds):
     TESTS:
 
     These examples test that variables can only be made from valid
-    identifiers.  See :trac:`7496` (and :trac:`9724`) for details::
+    identifiers.  See :issue:`7496` (and :issue:`9724`) for details::
 
         sage: var(' ')
         Traceback (most recent call last):

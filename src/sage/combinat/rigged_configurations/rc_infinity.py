@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Rigged Configurations of `\mathcal{B}(\infty)`
 
@@ -146,7 +147,7 @@ class InfinityCrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
             return InfinityCrystalOfNonSimplyLacedRC(cartan_type)
 
         cartan_type = CartanType(cartan_type)
-        return super(InfinityCrystalOfRiggedConfigurations, cls).__classcall__(cls, cartan_type)
+        return super().__classcall__(cls, cartan_type)
 
     def __init__(self, cartan_type):
         r"""
@@ -203,7 +204,7 @@ class InfinityCrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Check that :trac:`17054` is fixed::
+        Check that :issue:`17054` is fixed::
 
             sage: RC = RiggedConfigurations(['A',2,1], [[1,1]]*4 + [[2,1]]*4)
             sage: B = crystals.infinity.RiggedConfigurations(['A',2])
@@ -240,7 +241,7 @@ class InfinityCrystalOfRiggedConfigurations(UniqueRepresentation, Parent):
                 and self.cartan_type().is_simply_laced()):
                 from sage.combinat.rigged_configurations.bij_infinity import FromTableauIsomorphism
                 return FromTableauIsomorphism(Hom(P, self))
-        return super(InfinityCrystalOfRiggedConfigurations, self)._coerce_map_from_(P)
+        return super()._coerce_map_from_(P)
 
     def _calc_vacancy_number(self, partitions, a, i, **options):
         r"""
@@ -334,7 +335,7 @@ class InfinityCrystalOfNonSimplyLacedRC(InfinityCrystalOfRiggedConfigurations):
             sage: vct = CartanType(['C', 2, 1]).as_folding()
             sage: RC = crystals.infinity.RiggedConfigurations(vct)
             sage: TestSuite(RC).run() # long time
-         """
+        """
         self._folded_ct = vct
         InfinityCrystalOfRiggedConfigurations.__init__(self, vct._cartan_type)
 
@@ -357,7 +358,7 @@ class InfinityCrystalOfNonSimplyLacedRC(InfinityCrystalOfRiggedConfigurations):
             if isinstance(P, InfinityCrystalOfTableaux):
                 from sage.combinat.rigged_configurations.bij_infinity import FromTableauIsomorphism
                 return FromTableauIsomorphism(Hom(P, self))
-        return super(InfinityCrystalOfNonSimplyLacedRC, self)._coerce_map_from_(P)
+        return super()._coerce_map_from_(P)
 
     def _calc_vacancy_number(self, partitions, a, i):
         r"""

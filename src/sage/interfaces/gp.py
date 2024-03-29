@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.pari
 r"""
 Interface to the GP calculator of PARI/GP
 
@@ -135,19 +136,23 @@ AUTHORS:
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 #
 ##########################################################################
 import os
 
+import sage.interfaces.abc
+
 from sage.env import DOT_SAGE
-from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
-from sage.misc.verbose import verbose
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.libs.pari.all import pari
-import sage.rings.complex_mpfr
 from sage.misc.instancedoc import instancedoc
-import sage.interfaces.abc
+from sage.misc.lazy_import import lazy_import
+from sage.misc.verbose import verbose
+
+lazy_import('sage.rings.cc', 'CC')
+
+from .expect import Expect, ExpectElement, ExpectFunction, FunctionElement
 
 
 class Gp(ExtraTabCompletion, Expect):
@@ -433,7 +438,7 @@ class Gp(ExtraTabCompletion, Expect):
 
         TESTS:
 
-        We verify that :trac:`11617` is fixed::
+        We verify that :issue:`11617` is fixed::
 
             sage: gp._eval_line('a='+str(list(range(2*10^5))))[:70]
             '[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,'
@@ -615,7 +620,7 @@ class Gp(ExtraTabCompletion, Expect):
         The vector of results is correctly resized when the stack has
         to be enlarged during this operation::
 
-            sage: g = Gp(stacksize=10^4,init_list_length=12000)  # long time
+            sage: g = Gp(stacksize=3*10^6,init_list_length=12000)  # long time
             sage: for n in [1..13000]:  # long time
             ....:     a = g(n)
             sage: g('length(sage)')     # long time
@@ -787,6 +792,7 @@ class Gp(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: pi_def = gp(pi); pi_def
             3.141592653589793238462643383                  # 32-bit
             3.1415926535897932384626433832795028842        # 64-bit
@@ -877,13 +883,14 @@ class GpElement(ExpectElement, sage.interfaces.abc.GpElement):
 
         EXAMPLES::
 
-            sage: gp(SR(I)).sage()
+            sage: gp(SR(I)).sage()                                                      # needs sage.symbolic
             i
-            sage: gp(SR(I)).sage().parent()
+            sage: gp(SR(I)).sage().parent()                                             # needs sage.symbolic
             Number Field in i with defining polynomial x^2 + 1 with i = 1*I
 
         ::
 
+            sage: # needs sage.modules
             sage: M = Matrix(ZZ,2,2,[1,2,3,4]); M
             [1 2]
             [3 4]
@@ -955,6 +962,7 @@ class GpElement(ExpectElement, sage.interfaces.abc.GpElement):
 
         EXAMPLES::
 
+            sage: # needs sage.symbolic
             sage: z = gp(SR(1+15*I)); z
             1 + 15*I
             sage: z._complex_mpfr_field_(CC)
@@ -977,12 +985,12 @@ class GpElement(ExpectElement, sage.interfaces.abc.GpElement):
 
         EXAMPLES::
 
-            sage: CDF(gp(pi+I*e))
+            sage: CDF(gp(pi+I*e))                                                       # needs sage.symbolic
             3.141592653589793 + 2.718281828459045*I
         """
         # Retrieving values from another computer algebra system is
         # slow anyway, right?
-        cc_val = self._complex_mpfr_field_(sage.rings.complex_mpfr.ComplexField())
+        cc_val = self._complex_mpfr_field_(CC)
         return CDF(cc_val)
 
     def __len__(self):

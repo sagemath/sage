@@ -92,6 +92,10 @@ the following source types:
 
    - its version number is defined by the required file ``package-version.txt``;
 
+   - no build and install scripts are needed
+     (with one exception: the package :ref:`spkg_pip` installs itself from
+     its wheel using a custom install script);
+
    - Sage records the version number of the package installed using a file in
      ``$SAGE_LOCAL/var/lib/sage/installed/`` and will rerun the installation
      if ``package-version.txt`` changes.
@@ -117,8 +121,8 @@ the following source types:
 
    - the file ``package-version.txt`` is optional;
 
-   - installing the package runs the installation script ``spkg-install``
-     (see :ref:`section-spkg-install`);
+   - installing the package runs the installation script ``spkg-install`` or
+     ``spkg-install.in`` (see :ref:`section-spkg-install`);
 
    - Sage records the version number of the package installed using a file in
      ``$SAGE_LOCAL/var/lib/sage/installed/`` and will rerun the installation
@@ -134,8 +138,8 @@ the following source types:
 To summarize: the package source type is determined as follows: if
 there is a file ``requirements.txt``, it is a ``pip`` package. If not,
 then if there is a ``checksums.ini`` file, it is ``normal`` or ``wheel``.
-Otherwise, if it has an ``spkg-install`` script, it is a ``script`` package,
-and if it does not, then it is a ``dummy`` package.
+Otherwise, if it has an ``spkg-install`` or ``spkg-install.in`` script,
+it is a ``script`` package, and if it does not, then it is a ``dummy`` package.
 
 
 .. _section-directory-structure:
@@ -322,23 +326,23 @@ Likewise for :envvar:`CXXFLAGS`, :envvar:`FCFLAGS`, and :envvar:`F77FLAGS`.
 
         exec python3 spkg-install.py
 
-   In more detail: ``sage-bootstrap-python`` runs a version of Python
-   pre-installed on the machine, which is a build prerequisite of Sage.
-   Note that ``sage-bootstrap-python`` accepts a wide range of Python
-   versions, Python >= 2.6 and >= 3.4, see ``SAGE_ROOT/build/tox.ini``
-   for details.  You should only use ``sage-bootstrap-python`` for
-   installation tasks that must be able to run before Sage has made
-   ``python3`` available.  It must not be used for running ``pip`` or
-   ``setup.py`` for any package.
+    In more detail: ``sage-bootstrap-python`` runs a version of Python
+    pre-installed on the machine, which is a build prerequisite of Sage.
+    Note that ``sage-bootstrap-python`` accepts a wide range of Python
+    versions, Python >= 2.6 and >= 3.4, see ``SAGE_ROOT/build/tox.ini``
+    for details.  You should only use ``sage-bootstrap-python`` for
+    installation tasks that must be able to run before Sage has made
+    ``python3`` available.  It must not be used for running ``pip`` or
+    ``setup.py`` for any package.
 
-   ``python3`` runs the version of Python managed by Sage (either its
-   own installation of Python 3 from an SPKG or a venv over a system
-   python3.  You should use this if you are installing a Python package
-   to make sure that the libraries are installed in the right place.
+    ``python3`` runs the version of Python managed by Sage (either its
+    own installation of Python 3 from an SPKG or a venv over a system
+    python3.  You should use this if you are installing a Python package
+    to make sure that the libraries are installed in the right place.
 
-   By the way, there is also a script ``sage-python``. This should be
-   used at runtime, for example in scripts in ``SAGE_LOCAL/bin`` which
-   expect Sage's Python to already be built.
+    By the way, there is also a script ``sage-python``. This should be
+    used at runtime, for example in scripts in ``SAGE_LOCAL/bin`` which
+    expect Sage's Python to already be built.
 
 Many packages currently do not separate the build and install steps and only
 provide a ``spkg-install.in`` file that does both.  The separation is useful in
@@ -358,13 +362,10 @@ at build time,  which should to the appropriate system-specific
 Install scripts of script packages
 ----------------------------------
 
-A script package has a single install script named ``spkg-install``.
+For script packages, it is also possible to use an install script named ``spkg-install``.
 It needs to be an executable shell script; it is not subject to the templating
-described in the previous section.
-
-Sage runs ``spkg-install`` from the directory ``$SAGE_ROOT/build/pkgs/<package>``
-in the environment obtained by sourcing the files ``src/bin/sage-env``,
-``build/bin/sage-build-env-config``, and ``build/bin/sage-build-env``.
+described in the previous section and will be executed directly from
+the build directory.
 
 .. _section-sdh-helpers:
 
@@ -415,82 +416,82 @@ begin with ``sdh_``, which stands for "Sage-distribution helper".
   may be given as arguments.
 
 - ``sdh_make [...]``: Runs ``$MAKE`` with the default target.
-   Additional arguments to ``$MAKE`` may be given as arguments.
+  Additional arguments to ``$MAKE`` may be given as arguments.
 
 - ``sdh_make_install [...]``: Runs ``$MAKE install`` with DESTDIR
-   correctly set to a temporary install directory, for staged
-   installations. Additional arguments to ``$MAKE`` may be given as
-   arguments. If ``$SAGE_DESTDIR`` is not set then the command is run
-   with ``$SAGE_SUDO``, if set.
+  correctly set to a temporary install directory, for staged
+  installations. Additional arguments to ``$MAKE`` may be given as
+  arguments. If ``$SAGE_DESTDIR`` is not set then the command is run
+  with ``$SAGE_SUDO``, if set.
 
 - ``sdh_setup_bdist_wheel [...]``: Runs ``setup.py bdist_wheel`` with
-   the given arguments, as well as additional default arguments used for
-   installing packages into Sage.
+  the given arguments, as well as additional default arguments used for
+  installing packages into Sage.
 
 - ``sdh_pip_install [...]``: The equivalent of running ``pip install``
-   with the given arguments, as well as additional default arguments used for
-   installing packages into Sage with pip. The last argument must be
-   ``.`` to indicate installation from the current directory.
+  with the given arguments, as well as additional default arguments used for
+  installing packages into Sage with pip. The last argument must be
+  ``.`` to indicate installation from the current directory.
 
-   ``sdh_pip_install`` actually does the installation via ``pip wheel``,
-   creating a wheel file in ``dist/``, followed by
-   ``sdh_store_and_pip_install_wheel`` (see below).
+  ``sdh_pip_install`` actually does the installation via ``pip wheel``,
+  creating a wheel file in ``dist/``, followed by
+  ``sdh_store_and_pip_install_wheel`` (see below).
 
 - ``sdh_pip_editable_install [...]``: The equivalent of running ``pip install -e``
-   with the given arguments, as well as additional default arguments used for
-   installing packages into Sage with pip. The last argument must be
-   ``.`` to indicate installation from the current directory.
-   See `pip documentation <https://pip.pypa.io/en/stable/cli/pip_install/#editable-installs>`_
-   for more details concerning editable installs.
+  with the given arguments, as well as additional default arguments used for
+  installing packages into Sage with pip. The last argument must be
+  ``.`` to indicate installation from the current directory.
+  See `pip documentation <https://pip.pypa.io/en/stable/cli/pip_install/#editable-installs>`_
+  for more details concerning editable installs.
 
 - ``sdh_pip_uninstall [...]``: Runs ``pip uninstall`` with the given arguments.
-   If unsuccessful, it displays a warning.
+  If unsuccessful, it displays a warning.
 
 - ``sdh_store_and_pip_install_wheel .``: The current directory,
-   indicated by the required argument ``.``, must have a subdirectory
-   ``dist`` containing a unique wheel file (``*.whl``).
+  indicated by the required argument ``.``, must have a subdirectory
+  ``dist`` containing a unique wheel file (``*.whl``).
 
-   This command (1) moves this wheel file to the
-   directory ``$SAGE_SPKG_WHEELS`` (``$SAGE_LOCAL/var/lib/sage/wheels``)
-   and then (2) installs the wheel in ``$SAGE_LOCAL``.
+  This command (1) moves this wheel file to the
+  directory ``$SAGE_SPKG_WHEELS`` (``$SAGE_LOCAL/var/lib/sage/wheels``)
+  and then (2) installs the wheel in ``$SAGE_LOCAL``.
 
-   Both of these steps, instead of writing directly into ``$SAGE_LOCAL``,
-   use the staging directory ``$SAGE_DESTDIR`` if set; otherwise, they
-   use ``$SAGE_SUDO`` (if set).
+  Both of these steps, instead of writing directly into ``$SAGE_LOCAL``,
+  use the staging directory ``$SAGE_DESTDIR`` if set; otherwise, they
+  use ``$SAGE_SUDO`` (if set).
 
 - ``sdh_install [-T] SRC [SRC...] DEST``: Copies one or more files or
-   directories given as ``SRC`` (recursively in the case of
-   directories) into the destination directory ``DEST``, while
-   ensuring that ``DEST`` and all its parent directories exist.
-   ``DEST`` should be a path under ``$SAGE_LOCAL``, generally. For
-   ``DESTDIR`` installs, the ``$SAGE_DESTDIR`` path is automatically
-   prepended to the destination.
+  directories given as ``SRC`` (recursively in the case of
+  directories) into the destination directory ``DEST``, while
+  ensuring that ``DEST`` and all its parent directories exist.
+  ``DEST`` should be a path under ``$SAGE_LOCAL``, generally. For
+  ``DESTDIR`` installs, the ``$SAGE_DESTDIR`` path is automatically
+  prepended to the destination.
 
-   The ``-T`` option treats ``DEST`` as a normal file instead
-   (e.g. for copying a file to a different filename). All directory
-   components are still created in this case.
+  The ``-T`` option treats ``DEST`` as a normal file instead
+  (e.g. for copying a file to a different filename). All directory
+  components are still created in this case.
 
 The following is automatically added to each install script, so you
 should not need to add it yourself.
 
 - ``sdh_guard``: Wrapper for ``sdh_check_vars`` that checks some
-   common variables without which many/most packages won't build
-   correctly (``SAGE_ROOT``, ``SAGE_LOCAL``, ``SAGE_SHARE``). This is
-   important to prevent installation to unintended locations.
+  common variables without which many/most packages won't build
+  correctly (``SAGE_ROOT``, ``SAGE_LOCAL``, ``SAGE_SHARE``). This is
+  important to prevent installation to unintended locations.
 
 The following are also available, but rarely used.
 
 - ``sdh_cmake [...]``: Runs ``cmake`` in the current directory with
-   the given arguments, as well as additional arguments passed to
-   cmake (assuming packages are using the GNUInstallDirs module) so
-   that ``CMAKE_INSTALL_PREFIX`` and ``CMAKE_INSTALL_LIBDIR`` are set
-   correctly.
+  the given arguments, as well as additional arguments passed to
+  cmake (assuming packages are using the GNUInstallDirs module) so
+  that ``CMAKE_INSTALL_PREFIX`` and ``CMAKE_INSTALL_LIBDIR`` are set
+  correctly.
 
 - ``sdh_preload_lib EXECUTABLE SONAME``: (Linux only -- no-op on other
-   platforms.)  Check shared libraries loaded by ``EXECUTABLE`` (may be a
-   program or another library) for a library starting with ``SONAME``, and
-   if found appends ``SONAME`` to the ``LD_PRELOAD`` environment variable.
-   See :trac:`24885`.
+  platforms.)  Check shared libraries loaded by ``EXECUTABLE`` (may be a
+  program or another library) for a library starting with ``SONAME``, and
+  if found appends ``SONAME`` to the ``LD_PRELOAD`` environment variable.
+  See :trac:`24885`.
 
 
 .. _spkg-configure.m4:
@@ -514,12 +515,16 @@ containing files with names like ::
 
     arch.txt
     conda.txt
-    cygwin.txt
     debian.txt
+    fedora.txt
     homebrew.txt
     ...
 
-corresponding to different packaging systems.
+corresponding to different packaging systems. Each system package
+should appear on a separate line. If the shell-style variable reference
+``${PYTHON_MINOR}`` appears, it is replaced by the minor version of
+Python, e.g., 12 for Python 3.12.x. Everything on a line after a ``#``
+character is ignored, so comments can be included in the files.
 
 For example, if ``./configure`` detects that the Homebrew packaging
 system is in use, and if the current package can be provided by a
@@ -554,7 +559,7 @@ script template to run self-tests of the package.  The format for the
 ``spkg-check`` is the same as ``spkg-build`` and ``spkg-install``.  It
 is run after building and installing if the ``SAGE_CHECK`` environment
 variable is set, see the Sage installation guide. Ideally, upstream
-has some sort of tests suite that can be run with the standard ``make
+has some sort of test suite that can be run with the standard ``make
 check`` target. In that case, the ``spkg-check.in`` script template
 would simply contain:
 
@@ -628,7 +633,8 @@ The comments may include links to GitHub Issues/PRs, as in the following example
 
     $ cat build/pkgs/packaging/install-requires.txt
     packaging >=18.0
-    # Issue #30975: packaging 20.5 is known to work but we have to silence "DeprecationWarning: Creating a LegacyVersion"
+    # Issue #30975: packaging 20.5 is known to work
+    # but we have to silence "DeprecationWarning: Creating a LegacyVersion"
 
 The currently encoded version constraints are merely a starting point.
 Developers and downstream packagers are invited to refine the version
@@ -649,6 +655,7 @@ The ``SPKG.rst`` file should follow this pattern:
 .. CODE-BLOCK:: text
 
      PACKAGE_NAME: One line description
+     ==================================
 
      Description
      -----------
@@ -769,19 +776,32 @@ optional packages.
 Package tags
 ------------
 
-You can mark a package as "huge" by placing an empty file named
-``huge`` in the package directory.  For example, the package
-``polytopes_db_4d`` is a large database whose compressed tarball has a
-size of 9 GB.
+We use the following "tags" to organize our :ref:`index of packages in the
+Reference Manual <spkg>`.
 
-For some other packages, we have placed an empty file named
-``has_nonfree_dependencies`` in the package directory. This is to
-indicate that Sage with this package installed cannot be
-redistributed, and also that the package can only be installed after
-installing some other, non-free package.
+- Place an empty file named ``math`` in the package directory to make the
+  package appear in the "Mathematics" subsections of the index of standard,
+  optional, and experimental packages.
 
-We use these tags in our continuous integration scripts to filter
+- Place an empty file name ``front-end`` in the package directory to make
+  the package appear in the "Front-end, graphics, document preparation"
+  subsections.
+
+- Packages without these tags appear in the "Other dependencies" subsections.
+
+We use the following tags in our continuous integration scripts to filter
 out packages that we cannot or should not test automatically.
+
+- You can mark a package as "huge" by placing an empty file named
+  ``huge`` in the package directory.  For example, the package
+  ``polytopes_db_4d`` is a large database whose compressed tarball has a
+  size of 9 GB.
+
+- For some other packages, we have placed an empty file named
+  ``has_nonfree_dependencies`` in the package directory. This is to
+  indicate that Sage with this package installed cannot be
+  redistributed, and also that the package can only be installed after
+  installing some other, non-free package.
 
 
 .. _section-trees:
@@ -1032,13 +1052,10 @@ upstream is ``$SAGE_ROOT/upstream/FoO-1.3.tar.gz``, create a new file
     tarball=FoO-VERSION.tar.gz
 
 Sage internally replaces the ``VERSION`` substring with the content of
-``package-version.txt``. To recompute the checksums, run::
+``package-version.txt``.
 
-    [alice@localhost sage]$ sage --package fix-checksum foo
 
-which will modify the ``checksums.ini`` file with the correct
-checksums.
-
+.. _section-spkg-upstream-urls:
 
 Upstream URLs
 -------------
@@ -1052,9 +1069,11 @@ Sage mirrors when a new release is prepared.  On GitHub PRs
 upgrading a package, the PR description should no longer contain
 the upstream URL to avoid duplication of information.
 
-Note that, like the ``tarball`` field, the ``tpstream_url`` is a
+Note that, like the ``tarball`` field, the ``upstream_url`` is a
 template; the substring ``VERSION`` is substituted with the actual
-version.
+version. It can also be written as ``${VERSION}``, and it is possible
+to refer to the dot-separated components of a version by ``VERSION_MAJOR``,
+``VERSION_MINOR``, and ``VERSION_MICRO``.
 
 For Python packages available from PyPI, you should use an
 ``upstream_url`` from ``pypi.io``, which follows the format
@@ -1063,39 +1082,33 @@ For Python packages available from PyPI, you should use an
 
     upstream_url=https://pypi.io/packages/source/m/matplotlib/matplotlib-VERSION.tar.gz
 
-A package that has the ``upstream_url`` information can be updated by
-simply typing::
-
-    [alice@localhost sage]$ sage --package update numpy 3.14.59
-
-which will automatically download the archive and update the
-information in ``build/pkgs/``.
-
-For Python packages available from PyPI, there is another shortcut::
-
-    [alice@localhost sage]$ sage --package update-latest matplotlib
-    Updating matplotlib: 3.3.0 -> 3.3.1
-    Downloading tarball to ...matplotlib-3.3.1.tar.bz2
-    [...............................................................]
-
-The ``upstream_url`` information serves yet another purpose.
 Developers who wish to test a package update from a PR branch before
-the archive is available on a Sage mirror can do so by configuring
-their Sage tree using ``./configure
---enable-download-from-upstream-url``.  Then Sage will fall back to
+the archive is available on a Sage mirror. Sage falls back to
 downloading package tarballs from the ``upstream_url`` after trying all
-Sage mirrors.  (To speed up this process,  trim ``upstream/mirror_list``
-to fewer mirrors.)
-It is then no longer necessary to manually download upstream tarballs.
+Sage mirrors. (This can be disabled by using ``./configure
+--disable-download-from-upstream-url``.)  To speed up this process,
+you can trim ``upstream/mirror_list`` to fewer mirrors.
 
 
-Utility script to create packages
-=================================
+.. _section-sage-package-command:
+
+Utility script to create and maintain packages
+==============================================
+
+The command ``sage --package`` offers a range of functionality for
+creating and maintaining packages of the Sage distribution.
+
+
+Creating packages
+-----------------
 
 Assuming that you have downloaded
 ``$SAGE_ROOT/upstream/FoO-1.3.tar.gz``, you can use::
 
-    [alice@localhost sage]$ sage --package create foo --version 1.3 --tarball FoO-VERSION.tar.gz --type experimental
+    [alice@localhost sage]$ sage --package create foo                     \
+                                             --version 1.3                \
+                                             --tarball FoO-VERSION.tar.gz \
+                                             --type experimental
 
 to create ``$SAGE_ROOT/build/pkgs/foo/package-version.txt``,
 ``checksums.ini``, and ``type`` in one step.
@@ -1106,22 +1119,132 @@ set the ``upstream_url`` field in ``checksums.ini`` described above.
 
 For Python packages available from PyPI, you can use::
 
-    [alice@localhost sage]$ sage --package create scikit_spatial --pypi --type optional
+    [alice@localhost sage]$ sage --package create scikit_spatial --pypi   \
+                                             --type optional
 
 This automatically downloads the most recent version from PyPI and also
 obtains most of the necessary information by querying PyPI.
+
 The ``dependencies`` file may need editing (watch out for warnings regarding
 ``--no-deps`` that Sage issues during installation of the package!).
 Also you may want to set lower and upper bounds for acceptable package versions
 in the file ``install-requires.txt``.
 
-To create a pip package rather than a normal package, you can use::
+By default, when the package is available as a platform-independent
+wheel, the ``sage --package`` creates a wheel package. To create a normal package
+instead (for example, when the package requires patching), you can use::
 
-    [alice@localhost sage]$ sage --package create scikit_spatial --pypi --source pip --type optional
+    [alice@localhost sage]$ sage --package create scikit_spatial --pypi   \
+                                             --source normal              \
+                                             --type optional
 
-To create a wheel package rather than a normal package, you can use::
+To create a pip package rather than a normal or wheel package, you can use::
 
-    [alice@localhost sage]$ sage --package create scikit_spatial --pypi --source wheel --type optional
+    [alice@localhost sage]$ sage --package create scikit_spatial --pypi   \
+                                             --source pip                 \
+                                             --type optional
+
+When the package already exists, ``sage --package create`` overwrites it.
+
+
+Updating packages to a new version
+----------------------------------
+
+A package that has the ``upstream_url`` information can be updated by
+simply typing::
+
+    [alice@localhost sage]$ sage --package update numpy 3.14.59
+
+which will automatically download the archive and update the
+information in ``build/pkgs/numpy/``.
+
+For Python packages available from PyPI, there is another shortcut::
+
+    [alice@localhost sage]$ sage --package update-latest matplotlib
+    Updating matplotlib: 3.3.0 -> 3.3.1
+    Downloading tarball to ...matplotlib-3.3.1.tar.bz2
+    [...............................................................]
+
+If you pass the switch ``--commit``, the script will run ``git commit``
+for you.
+
+If you prefer to make update a package ``foo`` by making manual
+changes to the files in ``build/pkgs/foo``, you will need to run::
+
+    [alice@localhost sage]$ sage --package fix-checksum foo
+
+which will modify the ``checksums.ini`` file with the correct
+checksums.
+
+
+Obtaining package metrics
+-------------------------
+
+The command ``sage --package metrics`` computes machine-readable
+aggregated metrics for all packages in the Sage distribution or a
+given list of packages::
+
+    [alice@localhost sage]$ sage --package metrics
+    has_file_distros_arch_txt=181
+    has_file_distros_conda_txt=289
+    has_file_distros_debian_txt=172
+    has_file_distros_fedora_txt=183
+    has_file_distros_gentoo_txt=211
+    has_file_distros_homebrew_txt=95
+    has_file_distros_macports_txt=173
+    has_file_distros_nix_txt=72
+    has_file_distros_opensuse_txt=206
+    has_file_distros_slackware_txt=32
+    has_file_distros_void_txt=221
+    has_file_patches=63
+    has_file_spkg_check=106
+    has_file_spkg_configure_m4=262
+    has_file_spkg_install=322
+    has_tarball_upstream_url=291
+    line_count_file_patches=31904
+    line_count_file_spkg_check=585
+    line_count_file_spkg_configure_m4=3337
+    line_count_file_spkg_install=4342
+    packages=442
+    type_base=1
+    type_experimental=18
+    type_optional=151
+    type_standard=272
+
+Developers can use these metrics to monitor the complexity and quality
+of the Sage distribution. Here are some examples:
+
+- ``has_file_patches`` indicates how many packages have non-empty
+  ``patches/`` directories, and ``line_count_file_patches`` gives
+  the total number of lines in the patch files.
+
+  Ideally, we would not have to carry patches for a
+  package. For example, updating patches when a new upstream version
+  is released can be a maintenance burden.
+
+  Developers can help by working with the upstream maintainers of the
+  package to prepare a new version that requires fewer or smaller
+  patches, or none at all.
+
+- ``line_count_spkg_install`` gives the total number of lines in
+  ``spkg-install`` or ``spkg-install.in`` files; see
+  :ref:`section-spkg-install`.
+
+  When we carry complex ``spkg-install.in`` scripts for normal packages,
+  it may indicate that the upstream package's build and installation
+  scripts should be improved.
+
+  Developers can help by working with the upstream maintainers of the
+  package to prepare an improved version.
+
+- ``has_file_spkg_check`` indicates how many packages have an
+  ``spkg-check`` or ``spkg-check.in`` file; see :ref:`section-spkg-check`.
+
+- ``has_file_spkg_configure_m4`` indicates how many packages
+  are prepared to check for an equivalent system package, and
+  ``has_file_distros_arch_txt``, ``has_file_distros_conda_txt``
+  etc. count how many packages provide the corresponding system package
+  information.
 
 
 .. _section-manual-build:
@@ -1131,9 +1254,7 @@ Building the package
 
 At this stage you have a new tarball that is not yet distributed with
 Sage (``FoO-1.3.tar.gz`` in the example of section
-:ref:`section-directory-structure`). Now you need to manually place it
-in the ``SAGE_ROOT/upstream/`` directory and run
-``sage --fix-pkg-checksums`` if you have not done that yet.
+:ref:`section-directory-structure`).
 
 Now you can install the package using::
 
@@ -1152,8 +1273,7 @@ or::
 
     [alice@localhost sage]$ sage -f -c package_name
 
-If all went fine, open a PR, put a link to the original tarball in
-the PR and upload a branch with the code under
+If all went fine, open a PR with the code under
 ``SAGE_ROOT/build/pkgs``.
 
 
@@ -1195,8 +1315,6 @@ to a new version, check whether the license changed between versions.
 If an upstream tarball of a package cannot be redistributed for license
 reasons, rename it to include the string ``do-not-distribute``.  This
 will keep the release management scripts from uploading it to the Sage mirrors.
-For an example, see the ``scipoptsuite`` package, which has an "academic"
-proprietary license.
 
 Sometimes an upstream tarball contains some distributable parts using
 a free software license and some non-free parts.  In this case, it can
@@ -1216,7 +1334,7 @@ must meet the following requirements:
   them <http://www.gnu.org/licenses/license-list.html>`_.
 
 - **Build Support**. The code must build on all the fully supported
-  platforms (Linux, macOS, Cygwin); see :ref:`chapter-portability_testing`.
+  platforms (Linux, macOS); see :ref:`chapter-portability_testing`.
   It must be installed either from source as a normal package,
   or as a Python (platform-independent) wheel package, see
   :ref:`section-package-source-types`.

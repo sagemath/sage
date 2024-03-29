@@ -97,7 +97,7 @@ class MatrixGroup_gap(GroupMixinLibGAP, MatrixGroup_generic, ParentLibGAP):
             sage: all(g in G for g in G.list())
             True
 
-        An example over a ring (see :trac:`5241`)::
+        An example over a ring (see :issue:`5241`)::
 
             sage: M1 = matrix(ZZ,2,[[-1,0],[0,1]])
             sage: M2 = matrix(ZZ,2,[[1,0],[0,-1]])
@@ -117,7 +117,7 @@ class MatrixGroup_gap(GroupMixinLibGAP, MatrixGroup_generic, ParentLibGAP):
             [ 0  1], [ 0 -1], [ 0 -1]
             )
 
-        An example over a field (see :trac:`10515`)::
+        An example over a field (see :issue:`10515`)::
 
             sage: gens = [matrix(QQ,2,[1,0,0,1])]
             sage: MatrixGroup(gens).list()
@@ -126,7 +126,7 @@ class MatrixGroup_gap(GroupMixinLibGAP, MatrixGroup_generic, ParentLibGAP):
             [0 1]
             )
 
-        Another example over a ring (see :trac:`9437`)::
+        Another example over a ring (see :issue:`9437`)::
 
             sage: len(SL(2, Zmod(4)).list())
             48
@@ -154,8 +154,8 @@ class MatrixGroup_gap(GroupMixinLibGAP, MatrixGroup_generic, ParentLibGAP):
         infinite groups can be dealt with::
 
             sage: import itertools
-            sage: W = WeylGroup(["A",3,1])
-            sage: list(itertools.islice(W, int(4)))
+            sage: W = WeylGroup(["A",3,1])                                              # needs sage.rings.number_field
+            sage: list(itertools.islice(W, int(4)))                                     # needs sage.rings.number_field
             [
             [1 0 0 0]  [-1  1  0  1]  [ 1  0  0  0]  [ 1  0  0  0]
             [0 1 0 0]  [ 0  1  0  0]  [ 1 -1  1  0]  [ 0  1  0  0]
@@ -204,7 +204,7 @@ class MatrixGroup_gap(GroupMixinLibGAP, MatrixGroup_generic, ParentLibGAP):
 
         OUTPUT:
 
-        A ``TypeError`` must be raised if ``x`` is invalid.
+        A :class:`TypeError` must be raised if ``x`` is invalid.
 
         EXAMPLES::
 
@@ -238,6 +238,7 @@ class MatrixGroup_gap(GroupMixinLibGAP, MatrixGroup_generic, ParentLibGAP):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: UCF = UniversalCyclotomicField()
             sage: G  = GL(3, UCF)
             sage: e3 = UCF.gen(3); e5 = UCF.gen(5)
@@ -249,6 +250,7 @@ class MatrixGroup_gap(GroupMixinLibGAP, MatrixGroup_generic, ParentLibGAP):
             [   4    3    2]
             ) of General Linear Group of degree 3 over Universal Cyclotomic Field
 
+            sage: # needs sage.rings.number_field
             sage: CF3 = CyclotomicField(3)
             sage: G  = GL(3, CF3)
             sage: e3 = CF3.gen()
@@ -262,15 +264,17 @@ class MatrixGroup_gap(GroupMixinLibGAP, MatrixGroup_generic, ParentLibGAP):
 
         TESTS::
 
-            sage: TestSuite(G).run()
-            sage: TestSuite(S).run()
+            sage: TestSuite(G).run()                                                    # needs sage.rings.number_field
+            sage: TestSuite(S).run()                                                    # needs sage.rings.number_field
 
+            sage: # needs sage.rings.number_field
             sage: W = CoxeterGroup(['I',7])
             sage: s = W.simple_reflections()
             sage: G = W.subgroup([s[1]])
             sage: G.category()
             Category of finite groups
 
+            sage: # needs sage.rings.number_field
             sage: W = WeylGroup(['A',2])
             sage: s = W.simple_reflections()
             sage: G = W.subgroup([s[1]])

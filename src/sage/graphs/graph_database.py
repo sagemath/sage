@@ -49,9 +49,9 @@ import os
 import re
 from sage.rings.integer import Integer
 from sage.databases.sql_db import SQLDatabase, SQLQuery
-from sage.env import GRAPHS_DATA_DIR
+from sage.features.databases import DatabaseGraphs
 from sage.graphs.graph import Graph
-dblocation = os.path.join(GRAPHS_DATA_DIR, 'graphs.db')
+dblocation = DatabaseGraphs().absolute_filename()
 
 
 def degseq_to_data(degree_sequence):
@@ -120,7 +120,7 @@ def graph6_to_plot(graph6):
     EXAMPLES::
 
         sage: from sage.graphs.graph_database import graph6_to_plot
-        sage: type(graph6_to_plot('D??'))                                               # optional - sage.plot
+        sage: type(graph6_to_plot('D??'))                                               # needs sage.plot
         <class 'sage.plot.graphics.Graphics'>
     """
     g = Graph(str(graph6))
@@ -972,8 +972,8 @@ class GraphDatabase(SQLDatabase):
         EXAMPLES::
 
             sage: D = GraphDatabase()
-            sage: q = D.query(display_cols=['graph6', 'num_vertices', 'degree_sequence'], num_edges=['<=', 5])
-            sage: q.show()
+            sage: q = D.query(display_cols=['graph6', 'num_vertices', 'degree_sequence'], num_edges=['<=', 5])          # needs sage.symbolic
+            sage: q.show()                                                              # needs sage.symbolic
             Graph6               Num Vertices         Degree Sequence
             ------------------------------------------------------------
             @                    1                    [0]
@@ -1109,7 +1109,7 @@ class GraphDatabase(SQLDatabase):
         EXAMPLES::
 
             sage: D = GraphDatabase()
-            sage: D.interactive_query(display_cols=['graph6', 'num_vertices', 'degree_sequence'], num_edges=5, max_degree=3)
+            sage: D.interactive_query(display_cols=['graph6', 'num_vertices', 'degree_sequence'], num_edges=5, max_degree=3)                                    # needs sage.symbolic
             Traceback (most recent call last):
             ...
             NotImplementedError: not available in Jupyter notebook

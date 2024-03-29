@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Morphic words
 
@@ -14,8 +13,7 @@ EXAMPLES:
 Creation of the fixed point of a morphism::
 
     sage: m = WordMorphism('a->abc,b->baba,c->ca')
-    sage: w = m.fixed_point('a')
-    sage: w
+    sage: w = m.fixed_point('a'); w
     word: abcbabacababaabcbabaabccaabcbabaabcbabaa...
     sage: w.length()
     +Infinity
@@ -24,14 +22,16 @@ Computing the n-th letter of a fixed point is fast as it is using the
 abstract numeration system associated to the morphism and the starting
 letter, see chapter 3 of the book [BR2010b]_::
 
-    sage: w[10000000]                                                                   # optional - sage.modules
+    sage: w[10000000]                                                                   # needs sage.modules
     'b'
 
 """
 
 from sage.combinat.words.word_infinite_datatypes import WordDatatype_callable
+from sage.misc.lazy_import import lazy_import
 from sage.rings.infinity import Infinity
-from sage.modules.free_module_element import vector
+
+lazy_import('sage.modules.free_module_element', 'vector')
 
 
 class WordDatatype_morphic(WordDatatype_callable):
@@ -57,7 +57,7 @@ class WordDatatype_morphic(WordDatatype_callable):
             sage: w = m.fixed_point('a')
             sage: w
             word: abaababaabaababaababaabaababaabaababaaba...
-            sage: w[555:1000]                                                           # optional - sage.modules
+            sage: w[555:1000]                                                           # needs sage.modules
             word: abaababaabaababaababaabaababaabaababaaba...
             sage: w.length()
             +Infinity
@@ -68,20 +68,19 @@ class WordDatatype_morphic(WordDatatype_callable):
             sage: m.fixed_point('a')
             word: abcbabacababaabcbabaabccaabcbabaabcbabaa...
             sage: w = m.fixed_point('a')
-            sage: w[7]                                                                  # optional - sage.modules
+            sage: w[7]                                                                  # needs sage.modules
             'c'
-            sage: w[2:7]                                                                # optional - sage.modules
+            sage: w[2:7]                                                                # needs sage.modules
             word: cbaba
-            sage: w[500:503]                                                            # optional - sage.modules
+            sage: w[500:503]                                                            # needs sage.modules
             word: caa
 
         When the morphic word is finite::
 
             sage: m = WordMorphism("a->ab,b->")
-            sage: w = m.fixed_point("a")
-            sage: w
+            sage: w = m.fixed_point("a"); w
             word: ab
-            sage: w[0]                                                                  # optional - sage.modules
+            sage: w[0]                                                                  # needs sage.modules
             'a'
             sage: w.length()
             2
@@ -93,7 +92,7 @@ class WordDatatype_morphic(WordDatatype_callable):
             sage: from sage.combinat.words.morphic import WordDatatype_morphic
             sage: coding = {'a':'x', 'b':'y'}
             sage: w = WordDatatype_morphic(W, m, 'a', coding=coding)
-            sage: [w[i] for i in range(10)]                                             # optional - sage.modules
+            sage: [w[i] for i in range(10)]                                             # needs sage.modules
             ['x', 'y', 'x', 'x', 'y', 'x', 'y', 'x', 'x', 'y']
 
         TESTS::
@@ -104,9 +103,9 @@ class WordDatatype_morphic(WordDatatype_callable):
             sage: for _ in range(10000): _ = next(it)
             sage: L = [next(it) for _ in range(10)]; L
             ['d', 'd', 'd', 'c', 'd', 'd', 'd', 'c', 'b', 'a']
-            sage: w[10000:10010]                                                        # optional - sage.modules
+            sage: w[10000:10010]                                                        # needs sage.modules
             word: dddcdddcba
-            sage: list(w[10000:10010]) == L                                             # optional - sage.modules
+            sage: list(w[10000:10010]) == L                                             # needs sage.modules
             True
 
         """
@@ -177,18 +176,18 @@ class WordDatatype_morphic(WordDatatype_callable):
 
             sage: m = WordMorphism('a->ab,b->a')
             sage: w = m.fixed_point('a')
-            sage: w.representation(5)                                                   # optional - sage.modules
+            sage: w.representation(5)                                                   # needs sage.modules
             [1, 0, 0, 0]
 
         When the morphic word is finite::
 
             sage: m = WordMorphism("a->ab,b->,c->cdab,d->dcab")
             sage: w = m.fixed_point("a")
-            sage: w.representation(0)                                                   # optional - sage.modules
+            sage: w.representation(0)                                                   # needs sage.modules
             []
-            sage: w.representation(1)                                                   # optional - sage.modules
+            sage: w.representation(1)                                                   # needs sage.modules
             [1]
-            sage: w.representation(2)                                                   # optional - sage.modules
+            sage: w.representation(2)                                                   # needs sage.modules
             Traceback (most recent call last):
             ...
             IndexError: index (=2) out of range, the fixed point is finite and has length 2
@@ -204,7 +203,7 @@ class WordDatatype_morphic(WordDatatype_callable):
             sage: w = WordDatatype_morphic(W, m, 'a')
             sage: type(w)
             <class 'sage.combinat.words.morphic.WordDatatype_morphic'>
-            sage: w.representation(5)                                                   # optional - sage.modules
+            sage: w.representation(5)                                                   # needs sage.modules
             [1, 0, 0, 0]
         """
         letters_to_int = {a:i for (i,a) in enumerate(self._alphabet)}
@@ -255,11 +254,11 @@ class WordDatatype_morphic(WordDatatype_callable):
 
             sage: m = WordMorphism("a->ab,b->a")
             sage: w = m.fixed_point("a")
-            sage: w[0]
+            sage: w[0]                                                                  # needs sage.modules
             'a'
-            sage: w[5]
+            sage: w[5]                                                                  # needs sage.modules
             'a'
-            sage: w[10000]
+            sage: w[10000]                                                              # needs sage.modules
             'a'
 
         TESTS:
@@ -271,7 +270,7 @@ class WordDatatype_morphic(WordDatatype_callable):
             sage: W = m.domain()
             sage: from sage.combinat.words.morphic import WordDatatype_morphic
             sage: w = WordDatatype_morphic(W, m, 'a')
-            sage: w._func(5)
+            sage: w._func(5)                                                            # needs sage.modules
             'a'
 
         """
@@ -332,7 +331,7 @@ class WordDatatype_morphic(WordDatatype_callable):
             ...
             TypeError: self (=a->ac, b->aac) is not self-composable
 
-        We check that :trac:`8595` is fixed::
+        We check that :issue:`8595` is fixed::
 
             sage: s = WordMorphism({('a', 1):[('a', 1), ('a', 2)], ('a', 2):[('a', 1)]})
             sage: w = s.fixed_point(('a', 1))
@@ -340,7 +339,7 @@ class WordDatatype_morphic(WordDatatype_callable):
             sage: next(it)
             ('a', 1)
 
-        This shows that issue :trac:`13668` has been resolved::
+        This shows that issue :issue:`13668` has been resolved::
 
             sage: s = WordMorphism({1:[1,2],2:[2,3],3:[4],4:[5],5:[6],6:[7],7:[8],8:[9],9:[10],10:[1]})
             sage: (s^7).fixed_points()

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 An introduction to crystals
 ===========================
@@ -103,7 +104,7 @@ documentations)::
 
 One can get (currently) crude plotting via::
 
-    sage: Tab.plot()                                                                    # optional - sage.plot
+    sage: Tab.plot()                                                                    # needs sage.plot
     Graphics object consisting of 52 graphics primitives
 
 If dot2tex is installed, one can obtain nice latex pictures via::
@@ -245,7 +246,7 @@ class CrystalBacktracker(GenericBacktracker):
             for j in self._index_set:
                 if j == i:
                     break
-                if not y.e(j) is None:
+                if y.e(j) is not None:
                     hasParent = True
                     break
             if hasParent:

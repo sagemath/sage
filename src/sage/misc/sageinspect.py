@@ -76,8 +76,8 @@ Cython functions::
     sage: sage_getdoc(sage.rings.rational.make_rational).lstrip()
     'Make a rational number ...'
 
-    sage: sage_getsource(sage.rings.rational.make_rational)[4:]
-    'make_rational(s):...'
+    sage: sage_getsource(sage.rings.rational.make_rational)
+    '@cython.binding(True)\ndef make_rational(s):...'
 
 Python functions::
 
@@ -102,13 +102,14 @@ generic argspec::
     sage: sage_getdef(str.find, 'find')
     'find(*args, **kwds)'
 
-By :trac:`9976` and :trac:`14017`, introspection also works for interactively
+By :issue:`9976` and :issue:`14017`, introspection also works for interactively
 defined Cython code, and with rather tricky argument lines::
 
-    sage: cython('def foo(unsigned int x=1, a=\')"\', b={not (2+1==3):\'bar\'}, *args, **kwds): return')    # optional - sage.misc.cython
-    sage: print(sage_getsource(foo))                                                                        # optional - sage.misc.cython
+    sage: # needs sage.misc.cython
+    sage: cython('def foo(unsigned int x=1, a=\')"\', b={not (2+1==3):\'bar\'}, *args, **kwds): return')
+    sage: print(sage_getsource(foo))
     def foo(unsigned int x=1, a=')"', b={not (2+1==3):'bar'}, *args, **kwds): return
-    sage: sage_getargspec(foo)                                                                              # optional - sage.misc.cython
+    sage: sage_getargspec(foo)
     FullArgSpec(args=['x', 'a', 'b'], varargs='args', varkw='kwds', defaults=(1, ')"', {False: 'bar'}), kwonlyargs=[], kwonlydefaults=None, annotations={})
 
 """
@@ -162,8 +163,8 @@ def is_function_or_cython_function(obj):
     functions::
 
         sage: from ipywidgets.widgets.interaction import signature
-        sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import fast_mandelbrot_plot
-        sage: signature(fast_mandelbrot_plot)  # random
+        sage: from sage.dynamics.complex_dynamics.mandel_julia_helper import fast_mandelbrot_plot   # needs sage.symbolic
+        sage: signature(fast_mandelbrot_plot)  # random                                 # needs sage.symbolic
         <IPython.utils._signatures.Signature object at 0x7f3ec8274e10>
     """
     # We use type(obj) instead of just obj to avoid __getattr__().
@@ -176,8 +177,6 @@ def is_function_or_cython_function(obj):
 def loadable_module_extension():
     r"""
     Return the filename extension of loadable modules, including the dot.
-
-    It is '.dll' on cygwin, '.so' otherwise.
 
     This function is deprecated.
 
@@ -223,7 +222,11 @@ def isclassinstance(obj):
     return (not inspect.isclass(obj) and
             hasattr(obj, '__class__') and
             hasattr(obj.__class__, '__module__') and
-            obj.__class__.__module__ not in builtin_mods)
+            obj.__class__.__module__ not in builtin_mods and
+            # Starting with Cython 3, Cython's builtin types have __module__ set
+            # to the shared module names like _cython_3_0_0.
+            not (isinstance(obj.__class__.__module__, str) and
+                 obj.__class__.__module__.startswith('_cython_')))
 
 
 # Parse strings of form "File: sage/rings/rational.pyx (starting at line 1080)"
@@ -252,30 +255,30 @@ def _extract_embedded_position(docstring):
 
        sage: from sage.misc.sageinspect import _extract_embedded_position
        sage: import inspect
-       sage: _extract_embedded_position(inspect.getdoc(var))[1][-21:]
+       sage: _extract_embedded_position(inspect.getdoc(var))[1][-21:]                   # needs sage.symbolic
        'sage/calculus/var.pyx'
 
     TESTS:
 
-    The following has been fixed in :trac:`13916`::
+    The following has been fixed in :issue:`13916`::
 
-        sage: cython('''cpdef test_funct(x,y): return''')                           # optional - sage.misc.cython
-        sage: func_doc = inspect.getdoc(test_funct)                                 # optional - sage.misc.cython
-        sage: with open(_extract_embedded_position(func_doc)[1]) as f:              # optional - sage.misc.cython
+        sage: cython('''cpdef test_funct(x,y): return''')                               # needs sage.misc.cython
+        sage: func_doc = inspect.getdoc(test_funct)                                     # needs sage.misc.cython
+        sage: with open(_extract_embedded_position(func_doc)[1]) as f:                  # needs sage.misc.cython
         ....:     print(f.read())
         cpdef test_funct(x,y): return
 
     Ensure that the embedded filename of the compiled function is
     correct.  In particular it should be relative to ``spyx_tmp()`` in
     order for certain documentation functions to work properly.  See
-    :trac:`24097`::
+    :issue:`24097`::
 
         sage: from sage.env import DOT_SAGE
         sage: from sage.misc.sage_ostools import restore_cwd
-        sage: with restore_cwd(DOT_SAGE):                                           # optional - sage.misc.cython
+        sage: with restore_cwd(DOT_SAGE):                                               # needs sage.misc.cython
         ....:     cython('''cpdef test_funct(x,y): return''')
-        sage: func_doc = inspect.getdoc(test_funct)                                 # optional - sage.misc.cython
-        sage: with open(_extract_embedded_position(func_doc)[1]) as f:              # optional - sage.misc.cython
+        sage: func_doc = inspect.getdoc(test_funct)                                     # needs sage.misc.cython
+        sage: with open(_extract_embedded_position(func_doc)[1]) as f:                  # needs sage.misc.cython
         ....:     print(f.read())
         cpdef test_funct(x,y): return
 
@@ -327,7 +330,7 @@ def _extract_embedded_signature(docstring, name):
     If docstring starts with the embedded of a method called ``name``, return
     a tuple (original_docstring, argspec).  If not, return (docstring, None).
 
-    See :trac:`17814`.
+    See :issue:`17814`.
 
     INPUT: ``docstring`` (string)
 
@@ -597,7 +600,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
             On Python 3 negative numbers are parsed first, for some reason, as
             a UnaryOp node.
         """
-        return node.n
+        return node.value
 
     def visit_Str(self, node):
         r"""
@@ -619,7 +622,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
             sage: [vis(s) for s in ['"abstract"', "'syntax'", r'''r"tr\ee"''']]
             ['abstract', 'syntax', 'tr\\ee']
         """
-        return node.s
+        return node.value
 
     def visit_List(self, node):
         """
@@ -640,7 +643,7 @@ class SageArgSpecVisitor(ast.NodeVisitor):
             sage: vis = lambda x: visitor.visit_List(ast.parse(x).body[0].value)
             sage: [vis(l) for l in ['[]', "['s', 't', 'u']", '[[e], [], [pi]]']]
             [[], ['s', 't', 'u'], [['e'], [], ['pi']]]
-         """
+        """
         t = []
         for n in node.elts:
             t.append(self.visit(n))
@@ -1000,7 +1003,7 @@ def _split_syntactical_unit(s):
 
     TESTS:
 
-    The following was fixed in :trac:`16309`::
+    The following was fixed in :issue:`16309`::
 
         sage: _split_syntactical_unit('()): pass')
         ('()', '): pass')
@@ -1081,12 +1084,12 @@ def _split_syntactical_unit(s):
         tmp_group, s = _split_syntactical_unit(s)
         out.append(tmp_group)
         s = s.strip()
-        if tmp_group==stop:
+        if tmp_group == stop:
             return ''.join(out), s
         elif s.startswith(stop):
             out.append(stop)
             return ''.join(out), s[1:].strip()
-    raise SyntaxError("Syntactical group starting with %s did not end with %s"%(repr(start),repr(stop)))
+    raise SyntaxError("Syntactical group starting with %s did not end with %s" % (repr(start),repr(stop)))
 
 
 def _sage_getargspec_from_ast(source):
@@ -1118,7 +1121,7 @@ def _sage_getargspec_from_ast(source):
         FullArgSpec(args=['a', 'b', 'c', 'd'], varargs=None, varkw=None, defaults=(2, {'a': [4, 5.5, False]}, (None, True)), kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: from_ast(s) == inspect.getfullargspec(context['f'])
         True
-        sage: set(from_ast(sms.sage_getsource(x)) == inspect.getfullargspec(x) for x in [factor, identity_matrix, Graph.__init__])
+        sage: set(from_ast(sms.sage_getsource(x)) == inspect.getfullargspec(x) for x in [factor, identity_matrix, Graph.__init__])                              # needs sage.graphs sage.modules
         {True}
     """
     ast_args = ast.parse(source.lstrip()).body[0].args
@@ -1203,17 +1206,21 @@ def _sage_getargspec_cython(source):
 
         sage: def dummy_python(self, *args, x=1): pass
         sage: sgc("def dummy_python(self, *args, x=1): pass")
-        FullArgSpec(args=['self', 'x'], varargs='args', varkw=None, defaults=(1,), kwonlyargs=[], kwonlydefaults=None, annotations={})
-        sage: cython("def dummy_cython(self, *args, x=1): pass")
+        FullArgSpec(args=['self', 'x'], varargs='args', varkw=None, defaults=(1,),
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: cython("def dummy_cython(self, *args, x=1): pass")                        # needs sage.misc.cython
         sage: sgc("def dummy_cython(self, *args, x=1): pass")
-        FullArgSpec(args=['self', 'x'], varargs='args', varkw=None, defaults=(1,), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['self', 'x'], varargs='args', varkw=None, defaults=(1,),
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     In some examples above, a syntax error was raised when a type
     definition contains a pointer. An exception is made for ``char*``,
     since C strings are acceptable input in public Cython functions::
 
         sage: sgc('def f(char *x = "a string", z = {(1,2,3): True}): pass')
-        FullArgSpec(args=['x', 'z'], varargs=None, varkw=None, defaults=('a string', {(1, 2, 3): True}), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['x', 'z'], varargs=None, varkw=None,
+                    defaults=('a string', {(1, 2, 3): True}),
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
 
 
     AUTHORS:
@@ -1254,7 +1261,7 @@ def _sage_getargspec_cython(source):
     nb_stars = 0
     varargs = None
     keywords = None
-    while (i<l):
+    while (i < l):
         unit = cy_units[i]
         if expect_default:
             if unit in ('=','*',','):
@@ -1262,13 +1269,13 @@ def _sage_getargspec_cython(source):
             while unit != ',':
                 py_units.append(unit)
                 i += 1
-                if i==l:
+                if i == l:
                     break
                 unit = cy_units[i]
             expect_default = False
             name = None
             if nb_stars:
-                raise SyntaxError("The %s argument has no default"%('varargs' if nb_stars==1 else 'keywords'))
+                raise SyntaxError("The %s argument has no default" % ('varargs' if nb_stars == 1 else 'keywords'))
             continue
         i += 1
         if unit == '*':
@@ -1291,14 +1298,14 @@ def _sage_getargspec_cython(source):
             expect_default = True
             name = None
             if nb_stars:
-                raise SyntaxError("The %s argument has no default"%('varargs' if nb_stars==1 else 'keywords'))
+                raise SyntaxError("The %s argument has no default" % ('varargs' if nb_stars == 1 else 'keywords'))
         else:
             name = unit
         if name is not None:
             # Is "name" part of a type definition?
             # If it is the last identifier before '=' or ',',
             # then it *is* a variable name,
-            if i==l or cy_units[i] in ('=',','):
+            if i == l or cy_units[i] in ('=',','):
                 if nb_stars == 0:
                     py_units.append(name)
                 elif nb_stars == 1:
@@ -1352,37 +1359,36 @@ def sage_getfile(obj):
         sage: from sage.misc.sageinspect import sage_getfile
         sage: sage_getfile(sage.rings.rational)
         '...sage/rings/rational.pyx'
-        sage: sage_getfile(Sq)
+        sage: sage_getfile(Sq)                                                          # needs sage.combinat sage.modules
         '...sage/algebras/steenrod/steenrod_algebra.py'
-        sage: sage_getfile(x)
+        sage: sage_getfile(x)                                                           # needs sage.symbolic
         '...sage/symbolic/expression.pyx'
 
-    The following tests against some bugs fixed in :trac:`9976`::
+    The following tests against some bugs fixed in :issue:`9976`::
 
-        sage: obj = sage.combinat.partition_algebra.SetPartitionsAk
-        sage: obj = sage.combinat.partition_algebra.SetPartitionsAk
-        sage: sage_getfile(obj)
+        sage: obj = sage.combinat.partition_algebra.SetPartitionsAk                     # needs sage.combinat sage.modules
+        sage: sage_getfile(obj)                                                         # needs sage.combinat sage.modules
         '...sage/combinat/partition_algebra.py'
 
-    And here is another bug, fixed in :trac:`11298`::
+    And here is another bug, fixed in :issue:`11298`::
 
         sage: P.<x,y> = QQ[]
-        sage: sage_getfile(P)
+        sage: sage_getfile(P)                                                           # needs sage.libs.singular
         '...sage/rings/polynomial/multi_polynomial_libsingular...'
 
-    A problem fixed in :trac:`16309`::
+    A problem fixed in :issue:`16309`::
 
-        sage: cython(                           # optional - sage.misc.cython
+        sage: cython(                                                                   # needs sage.misc.cython
         ....: '''
         ....: class Bar: pass
         ....: cdef class Foo: pass
         ....: ''')
-        sage: sage_getfile(Bar)                 # optional - sage.misc.cython
+        sage: sage_getfile(Bar)                                                         # needs sage.misc.cython
         '...pyx'
-        sage: sage_getfile(Foo)                 # optional - sage.misc.cython
+        sage: sage_getfile(Foo)                                                         # needs sage.misc.cython
         '...pyx'
 
-    By :trac:`18249`, we return an empty string for Python builtins. In that
+    By :issue:`18249`, we return an empty string for Python builtins. In that
     way, there is no error when the user types, for example, ``range?``::
 
         sage: sage_getfile(range)
@@ -1433,9 +1439,9 @@ def sage_getfile_relative(obj):
         sage: from sage.misc.sageinspect import sage_getfile_relative
         sage: sage_getfile_relative(sage.rings.rational)
         'sage/rings/rational.pyx'
-        sage: sage_getfile_relative(Sq)
+        sage: sage_getfile_relative(Sq)                                                 # needs sage.combinat sage.modules
         'sage/algebras/steenrod/steenrod_algebra.py'
-        sage: sage_getfile_relative(x)
+        sage: sage_getfile_relative(x)                                                  # needs sage.symbolic
         'sage/symbolic/expression.pyx'
         sage: sage_getfile_relative(range)
         ''
@@ -1470,27 +1476,20 @@ def sage_getargspec(obj):
 
     INPUT:
 
-    ``obj``, any callable object
+    - ``obj`` -- any callable object
 
     OUTPUT:
 
-    An ``ArgSpec`` is returned. This is a named tuple
-    ``(args, varargs, keywords, defaults)``.
-
-    - ``args`` is a list of the argument names (it may contain nested lists).
-
-    - ``varargs`` and ``keywords`` are the names of the ``*`` and ``**``
-      arguments or ``None``.
-
-    - ``defaults`` is an `n`-tuple of the default values of the last `n` arguments.
+    A named tuple :class:`FullArgSpec` is returned, as specified by the
+    Python library function :func:`inspect.getfullargspec`.
 
     NOTE:
 
-    If the object has a method ``_sage_argspec_`` then the output of
+    If the object has a method ``_sage_argspec_``, then the output of
     that method is transformed into a named tuple and then returned.
 
-    If a class instance has a method ``_sage_src_`` then its output
-    is  studied to determine the argspec. This is because currently
+    If a class instance has a method ``_sage_src_``, then its output
+    is studied to determine the argspec. This is because currently
     the :class:`~sage.misc.cachefunc.CachedMethod` decorator has
     no ``_sage_argspec_`` method.
 
@@ -1500,65 +1499,79 @@ def sage_getargspec(obj):
         sage: def f(x, y, z=1, t=2, *args, **keywords):
         ....:     pass
         sage: sage_getargspec(f)
-        FullArgSpec(args=['x', 'y', 'z', 't'], varargs='args', varkw='keywords', defaults=(1, 2), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['x', 'y', 'z', 't'], varargs='args', varkw='keywords',
+                    defaults=(1, 2), kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     We now run sage_getargspec on some functions from the Sage library::
 
-        sage: sage_getargspec(identity_matrix)
-        FullArgSpec(args=['ring', 'n', 'sparse'], varargs=None, varkw=None, defaults=(0, False), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: sage_getargspec(identity_matrix)                                          # needs sage.modules
+        FullArgSpec(args=['ring', 'n', 'sparse'], varargs=None, varkw=None,
+                    defaults=(0, False), kwonlyargs=[], kwonlydefaults=None,
+                    annotations={})
         sage: sage_getargspec(factor)
-        FullArgSpec(args=['n', 'proof', 'int_', 'algorithm', 'verbose'], varargs=None, varkw='kwds', defaults=(None, False, 'pari', 0), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['n', 'proof', 'int_', 'algorithm', 'verbose'],
+                    varargs=None, varkw='kwds', defaults=(None, False, 'pari', 0),
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
 
-    In the case of a class or a class instance, the ``ArgSpec`` of the
+    In the case of a class or a class instance, the :class:`FullArgSpec` of the
     ``__new__``, ``__init__`` or ``__call__`` method is returned::
 
         sage: P.<x,y> = QQ[]
-        sage: sage_getargspec(P)
-        FullArgSpec(args=['base_ring', 'n', 'names', 'order'], varargs=None, varkw=None, defaults=('degrevlex',), kwonlyargs=[], kwonlydefaults=None, annotations={})
-        sage: sage_getargspec(P.__class__)
-        FullArgSpec(args=['self', 'x'], varargs='args', varkw='kwds', defaults=(0,), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: sage_getargspec(P)                                                        # needs sage.libs.singular
+        FullArgSpec(args=['base_ring', 'n', 'names', 'order'],
+                    varargs=None, varkw=None, defaults=('degrevlex',),
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: sage_getargspec(P.__class__)                                              # needs sage.libs.singular
+        FullArgSpec(args=['self', 'x'], varargs='args', varkw='kwds', defaults=(0,),
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     The following tests against various bugs that were fixed in
-    :trac:`9976`::
+    :issue:`9976`::
 
-        sage: from sage.rings.polynomial.real_roots import bernstein_polynomial_factory_ratlist
-        sage: sage_getargspec(bernstein_polynomial_factory_ratlist.coeffs_bitsize)
-        FullArgSpec(args=['self'], varargs=None, varkw=None, defaults=None, kwonlyargs=[], kwonlydefaults=None, annotations={})
-        sage: from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid
-        sage: sage_getargspec(BooleanMonomialMonoid.gen)
-        FullArgSpec(args=['self', 'i'], varargs=None, varkw=None, defaults=(0,), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: from sage.rings.polynomial.real_roots import bernstein_polynomial_factory_ratlist     # needs sage.modules
+        sage: sage_getargspec(bernstein_polynomial_factory_ratlist.coeffs_bitsize)                  # needs sage.modules
+        FullArgSpec(args=['self'], varargs=None, varkw=None, defaults=None,
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: from sage.rings.polynomial.pbori.pbori import BooleanMonomialMonoid       # needs sage.rings.polynomial.pbori
+        sage: sage_getargspec(BooleanMonomialMonoid.gen)                                # needs sage.rings.polynomial.pbori
+        FullArgSpec(args=['self', 'i'], varargs=None, varkw=None, defaults=(0,),
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
         sage: I = P*[x,y]
-        sage: sage_getargspec(I.groebner_basis)
+        sage: sage_getargspec(I.groebner_basis)                                         # needs sage.libs.singular
         FullArgSpec(args=['self', 'algorithm', 'deg_bound', 'mult_bound', 'prot'],
-        varargs='args', varkw='kwds', defaults=('', None, None, False), kwonlyargs=[], kwonlydefaults=None, annotations={})
-        sage: cython("cpdef int foo(x,y) except -1: return 1")
-        sage: sage_getargspec(foo)
-        FullArgSpec(args=['x', 'y'], varargs=None, varkw=None, defaults=None, kwonlyargs=[], kwonlydefaults=None, annotations={})
+                    varargs='args', varkw='kwds', defaults=('', None, None, False),
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: cython("cpdef int foo(x,y) except -1: return 1")                          # needs sage.misc.cython
+        sage: sage_getargspec(foo)                                                      # needs sage.misc.cython
+        FullArgSpec(args=['x', 'y'], varargs=None, varkw=None, defaults=None,
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
 
-    If a ``functools.partial`` instance is involved, we see no other meaningful solution
+    If a :func:`functools.partial` instance is involved, we see no other meaningful solution
     than to return the argspec of the underlying function::
 
-        sage: def f(a,b,c,d=1):
-        ....:     return a+b+c+d
+        sage: def f(a, b, c, d=1):
+        ....:     return a + b + c + d
         sage: import functools
-        sage: f1 = functools.partial(f, 1,c=2)
+        sage: f1 = functools.partial(f, 1, c=2)
         sage: sage_getargspec(f1)
-        FullArgSpec(args=['a', 'b', 'c', 'd'], varargs=None, varkw=None, defaults=(1,), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['a', 'b', 'c', 'd'], varargs=None, varkw=None, defaults=(1,),
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     TESTS:
 
-    By :trac:`9976`, rather complicated cases work. In the
+    By :issue:`9976`, rather complicated cases work. In the
     following example, we dynamically create an extension class
     that returns some source code, and the example shows that
     the source code is taken for granted, i.e., the argspec of
     an instance of that class does not coincide with the argspec
     of its call method. That behaviour is intended, since a
     decorated method appears to have the generic signature
-    ``*args,**kwds``, but in fact it is only supposed to be called
+    ``*args, **kwds``, but in fact it is only supposed to be called
     with the arguments requested by the underlying undecorated
     method. We saw an easy example above, namely ``I.groebner_basis``.
     Here is a more difficult one::
 
+        sage: # needs sage.misc.cython
         sage: cython_code = [
         ....: 'cdef class MyClass:',
         ....: '    def _sage_src_(self):',
@@ -1576,26 +1589,32 @@ def sage_getargspec(obj):
         sage: sorted(spec.defaults[1].items(), key=lambda x: str(x))
         [(3, 'bar'), (48, 5), (False, 3)]
         sage: sage.misc.sageinspect.sage_getargspec(O.__call__)
-        FullArgSpec(args=['self', 'm', 'n'], varargs=None, varkw=None, defaults=None, kwonlyargs=[], kwonlydefaults=None, annotations={})
+        FullArgSpec(args=['self', 'm', 'n'], varargs=None, varkw=None, defaults=None,
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
 
     ::
 
-        sage: cython('def foo(x, a=\'\\\')"\', b={not (2+1==3):\'bar\'}): return')
-        sage: print(sage.misc.sageinspect.sage_getsource(foo))
+        sage: cython('def foo(x, a=\'\\\')"\', b={not (2+1==3):\'bar\'}): return')      # needs sage.misc.cython
+        sage: print(sage.misc.sageinspect.sage_getsource(foo))                          # needs sage.misc.cython
         def foo(x, a='\')"', b={not (2+1==3):'bar'}): return
         <BLANKLINE>
-        sage: sage.misc.sageinspect.sage_getargspec(foo)
-        FullArgSpec(args=['x', 'a', 'b'], varargs=None, varkw=None, defaults=('\')"', {False: 'bar'}), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: sage.misc.sageinspect.sage_getargspec(foo)                                # needs sage.misc.cython
+        FullArgSpec(args=['x', 'a', 'b'], varargs=None, varkw=None,
+                    defaults=('\')"', {False: 'bar'}),
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
 
-    The following produced a syntax error before the patch at :trac:`11913`,
-    see also :trac:`26906`::
+    The following produced a syntax error before the patch at :issue:`11913`,
+    see also :issue:`26906`::
 
-        sage: sage.misc.sageinspect.sage_getargspec(r.lm)                         # optional - rpy2
-        FullArgSpec(args=['self'], varargs='args', varkw='kwds', defaults=None, kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: sage.misc.sageinspect.sage_getargspec(r.lm)       # optional - rpy2
+        FullArgSpec(args=['self'], varargs='args', varkw='kwds', defaults=None,
+                    kwonlyargs=[], kwonlydefaults=None, annotations={})
 
-    The following was fixed in :trac:`16309`::
+    The following was fixed in :issue:`16309`::
 
-        sage: cython('''  # optional - sage.misc.cython
+        sage: # needs sage.misc.cython
+        sage: cython(
+        ....: '''
         ....: class Foo:
         ....:     @staticmethod
         ....:     def join(categories, bint as_list = False, tuple ignore_axioms=(), tuple axioms=()): pass
@@ -1611,19 +1630,20 @@ def sage_getargspec(obj):
         sage: sage_getargspec(Bar.meet)
         FullArgSpec(args=['categories', 'as_list', 'ignore_axioms', 'axioms'], varargs=None, varkw=None, defaults=(False, (), ()), kwonlyargs=[], kwonlydefaults=None, annotations={})
 
-    Test that :trac:`17009` is fixed::
+    Test that :issue:`17009` is fixed::
 
-        sage: sage_getargspec(gap)
-        FullArgSpec(args=['self', 'x', 'name'], varargs=None, varkw=None, defaults=(None,), kwonlyargs=[], kwonlydefaults=None, annotations={})
+        sage: sage_getargspec(gap)                                                      # needs sage.libs.gap
+        FullArgSpec(args=['self', 'x', 'name'], varargs=None, varkw=None,
+                    defaults=(None,), kwonlyargs=[], kwonlydefaults=None, annotations={})
 
-    By :trac:`17814`, the following gives the correct answer (previously, the
+    By :issue:`17814`, the following gives the correct answer (previously, the
     defaults would have been found ``None``)::
 
         sage: from sage.misc.nested_class import MainClass
         sage: sage_getargspec(MainClass.NestedClass.NestedSubClass.dummy)
         FullArgSpec(args=['self', 'x', 'r'], varargs='args', varkw='kwds', defaults=((1, 2, 3.4),), kwonlyargs=[], kwonlydefaults=None, annotations={})
 
-    In :trac:`18249` was decided to return a generic signature for Python
+    In :issue:`18249` was decided to return a generic signature for Python
     builtin functions, rather than to raise an error (which is what Python's
     inspect module does)::
 
@@ -1631,7 +1651,7 @@ def sage_getargspec(obj):
         sage: sage_getargspec(range)
         FullArgSpec(args=[], varargs='args', varkw='kwds', defaults=None, kwonlyargs=[], kwonlydefaults=None, annotations={})
 
-    Test that :trac:`28524` is fixed::
+    Test that :issue:`28524` is fixed::
 
         sage: from sage.repl.interpreter import get_test_shell
         sage: shell = get_test_shell()
@@ -1785,14 +1805,17 @@ def formatannotation(annotation, base_module=None):
     return repr(annotation)
 
 
+_formatannotation = formatannotation
+
+
 def sage_formatargspec(args, varargs=None, varkw=None, defaults=None,
                        kwonlyargs=(), kwonlydefaults=None, annotations={},
                        formatarg=str,
-                       formatvarargs=lambda name: '*' + name,
-                       formatvarkw=lambda name: '**' + name,
-                       formatvalue=lambda value: '=' + repr(value),
-                       formatreturns=lambda text: ' -> ' + text,
-                       formatannotation=formatannotation):
+                       formatvarargs=None,
+                       formatvarkw=None,
+                       formatvalue=None,
+                       formatreturns=None,
+                       formatannotation=None):
     """
     Format an argument spec from the values returned by getfullargspec.
 
@@ -1821,6 +1844,17 @@ def sage_formatargspec(args, varargs=None, varkw=None, defaults=None,
         sage: sage_formatargspec(args, defaults=defaults)
         '(a, b, c=3)'
     """
+    if formatvarargs is None:
+        formatvarargs = lambda name: '*' + name
+    if formatvarkw is None:
+        formatvarkw = lambda name: '**' + name
+    if formatvalue is None:
+        formatvalue = lambda value: '=' + repr(value)
+    if formatreturns is None:
+        formatreturns = lambda text: ' -> ' + text
+    if formatannotation is None:
+        formatannotation = _formatannotation
+
     def formatargandannotation(arg):
         result = formatarg(arg)
         if arg in annotations:
@@ -1867,12 +1901,12 @@ def sage_getdef(obj, obj_name=''):
     EXAMPLES::
 
         sage: from sage.misc.sageinspect import sage_getdef
-        sage: sage_getdef(identity_matrix)
+        sage: sage_getdef(identity_matrix)                                              # needs sage.modules
         '(ring, n=0, sparse=False)'
-        sage: sage_getdef(identity_matrix, 'identity_matrix')
+        sage: sage_getdef(identity_matrix, 'identity_matrix')                           # needs sage.modules
         'identity_matrix(ring, n=0, sparse=False)'
 
-    Check that :trac:`6848` has been fixed::
+    Check that :issue:`6848` has been fixed::
 
         sage: sage_getdef(RDF.random_element)
         '(min=-1, max=1)'
@@ -1898,7 +1932,7 @@ def sage_getdef(obj, obj_name=''):
         # change * to \*, and change ** to \**.
         return obj_name + '(' + s + ')'
     except (AttributeError, TypeError, ValueError):
-        return '%s( [noargspec] )'%obj_name
+        return '%s( [noargspec] )' % obj_name
 
 
 def _sage_getdoc_unformatted(obj):
@@ -1927,7 +1961,7 @@ def _sage_getdoc_unformatted(obj):
 
     TESTS:
 
-    Test that we suppress useless built-in output (:trac:`3342`)::
+    Test that we suppress useless built-in output (:issue:`3342`)::
 
         sage: from sage.misc.sageinspect import _sage_getdoc_unformatted
         sage: _sage_getdoc_unformatted(isinstance.__class__)
@@ -1935,7 +1969,7 @@ def _sage_getdoc_unformatted(obj):
 
     Construct an object raising an exception when accessing the
     ``__doc__`` attribute. This should not give an error in
-    ``_sage_getdoc_unformatted``, see :trac:`19671`::
+    ``_sage_getdoc_unformatted``, see :issue:`19671`::
 
         sage: class NoSageDoc():
         ....:     @property
@@ -2002,7 +2036,7 @@ def sage_getdoc_original(obj):
 
     If the class does not have a docstring, the docstring of the
     ``__init__`` method is used, but not the ``__init__`` method
-    of the base class (this was fixed in :trac:`24936`)::
+    of the base class (this was fixed in :issue:`24936`)::
 
         sage: from sage.categories.category import Category
         sage: class A(Category):
@@ -2034,7 +2068,7 @@ def sage_getdoc_original(obj):
     If an instance of a class does not have its own docstring, the docstring
     of its class results::
 
-        sage: sage_getdoc_original(sage.plot.colors.aliceblue) == sage_getdoc_original(sage.plot.colors.Color)
+        sage: sage_getdoc_original(sage.plot.colors.aliceblue) == sage_getdoc_original(sage.plot.colors.Color)          # needs sage.plot
         True
 
     """
@@ -2077,7 +2111,7 @@ def sage_getdoc(obj, obj_name='', embedded=False):
     EXAMPLES::
 
         sage: from sage.misc.sageinspect import sage_getdoc
-        sage: sage_getdoc(identity_matrix)[87:124]
+        sage: sage_getdoc(identity_matrix)[87:124]                                      # needs sage.modules
         'Return the n x n identity matrix over'
         sage: def f(a,b,c,d=1): return a+b+c+d
         ...
@@ -2130,9 +2164,9 @@ def sage_getsource(obj):
     EXAMPLES::
 
         sage: from sage.misc.sageinspect import sage_getsource
-        sage: sage_getsource(identity_matrix)[19:60]
+        sage: sage_getsource(identity_matrix)[19:60]                                    # needs sage.modules
         'identity_matrix(ring, n=0, sparse=False):'
-        sage: sage_getsource(identity_matrix)[19:60]
+        sage: sage_getsource(identity_matrix)[19:60]                                    # needs sage.modules
         'identity_matrix(ring, n=0, sparse=False):'
 
     AUTHORS:
@@ -2175,9 +2209,11 @@ def _sage_getsourcelines_name_with_dot(obj):
 
     TESTS:
 
-    The following was fixed in :trac:`16309`::
+    The following was fixed in :issue:`16309`::
 
-        sage: cython('''  # optional - sage.misc.cython
+        sage: # needs sage.misc.cython
+        sage: cython(
+        ....: '''
         ....: class A:
         ....:     def __init__(self):
         ....:         "some init doc"
@@ -2220,7 +2256,7 @@ def _sage_getsourcelines_name_with_dot(obj):
             if B is None:
                 raise AttributeError
         except AttributeError:
-            raise IOError("could not get source code")
+            raise OSError("could not get source code")
         return sage_getsourcelines(B)
     # M should just be the top-most module.
     # Hence, normally it is just 'sage'
@@ -2233,14 +2269,14 @@ def _sage_getsourcelines_name_with_dot(obj):
             if B is None:
                 raise AttributeError
         except AttributeError:
-            raise IOError("could not get source code")
+            raise OSError("could not get source code")
         return sage_getsourcelines(B)
 
     lines, base_lineno = sage_getsourcelines(M)
     # the rest of the function is copied from
     # inspect.findsource
     if not lines:
-        raise IOError('could not get source code')
+        raise OSError('could not get source code')
 
     if inspect.ismodule(obj):
         return lines, base_lineno
@@ -2265,7 +2301,7 @@ def _sage_getsourcelines_name_with_dot(obj):
             candidates.sort()
             return inspect.getblock(lines[candidates[0][1]:]), candidates[0][1]+base_lineno
         else:
-            raise IOError('could not find class definition')
+            raise OSError('could not find class definition')
 
     if inspect.ismethod(obj):
         obj = obj.__func__
@@ -2277,7 +2313,7 @@ def _sage_getsourcelines_name_with_dot(obj):
         obj = obj.f_code
     if inspect.iscode(obj):
         if not hasattr(obj, 'co_firstlineno'):
-            raise IOError('could not find function definition')
+            raise OSError('could not find function definition')
         pat = re.compile(r'^(\s*def\s)|(.*(?<!\w)lambda(:|\s))|^(\s*@)')
         pmatch = pat.match
         # fperez - fix: sometimes, co_firstlineno can give a number larger than
@@ -2289,7 +2325,7 @@ def _sage_getsourcelines_name_with_dot(obj):
             lnum -= 1
 
         return inspect.getblock(lines[lnum:]), lnum+base_lineno
-    raise IOError('could not find code object')
+    raise OSError('could not find code object')
 
 
 def sage_getsourcelines(obj):
@@ -2309,29 +2345,29 @@ def sage_getsourcelines(obj):
     EXAMPLES::
 
         sage: from sage.misc.sageinspect import sage_getsourcelines
-        sage: sage_getsourcelines(matrix)[1]
+        sage: sage_getsourcelines(matrix)[1]                                            # needs sage.modules
         21
-        sage: sage_getsourcelines(matrix)[0][0]
+        sage: sage_getsourcelines(matrix)[0][0]                                         # needs sage.modules
         'def matrix(*args, **kwds):\n'
 
     Some classes customize this using a ``_sage_src_lines_`` method,
     which gives the source lines of a class instance, but not the class
     itself. We demonstrate this for :class:`CachedFunction`::
 
-        sage: cachedfib = cached_function(fibonacci)
-        sage: sage_getsourcelines(cachedfib)[0][0]
+        sage: cachedfib = cached_function(fibonacci)                                    # needs sage.combinat
+        sage: sage_getsourcelines(cachedfib)[0][0]                                      # needs sage.combinat
         'def fibonacci(n, algorithm="pari") -> Integer:\n'
-        sage: sage_getsourcelines(type(cachedfib))[0][0]
+        sage: sage_getsourcelines(type(cachedfib))[0][0]                                # needs sage.combinat
         'cdef class CachedFunction():\n'
 
     TESTS::
 
-        sage: cython('''cpdef test_funct(x,y): return''')                           # optional - sage.misc.cython
-        sage: sage_getsourcelines(test_funct)                                       # optional - sage.misc.cython
+        sage: cython('''cpdef test_funct(x,y): return''')                               # needs sage.misc.cython
+        sage: sage_getsourcelines(test_funct)                                           # needs sage.misc.cython
         (['cpdef test_funct(x,y): return\n'], 1)
 
     The following tests that an instance of ``functools.partial`` is correctly
-    dealt with (see :trac:`9976`)::
+    dealt with (see :issue:`9976`)::
 
         sage: from sage.tests.functools_partial_src import test_func
         sage: sage_getsourcelines(test_func)
@@ -2339,31 +2375,31 @@ def sage_getsourcelines(obj):
         ...
         '    return x\n'], 7)
 
-    Here are some cases that were covered in :trac:`11298`;
+    Here are some cases that were covered in :issue:`11298`;
     note that line numbers may easily change, and therefore we do
     not test them::
 
         sage: P.<x,y> = QQ[]
         sage: I = P*[x,y]
-        sage: sage_getsourcelines(P)
+        sage: sage_getsourcelines(P)                                                    # needs sage.libs.singular
         (['cdef class MPolynomialRing_libsingular(MPolynomialRing_base):\n',
           '\n',
           '    def __cinit__(self):\n',
         ...)
-        sage: sage_getsourcelines(I)
+        sage: sage_getsourcelines(I)                                                    # needs sage.libs.singular
         ([...'class MPolynomialIdeal(MPolynomialIdeal_singular_repr,\n',
         ...)
-        sage: x = var('x')
-        sage: lines, lineno = sage_getsourcelines(x); lines[0:5]
+        sage: x = var('x')                                                              # needs sage.symbolic
+        sage: lines, lineno = sage_getsourcelines(x); lines[0:5]                        # needs sage.symbolic
         ['cdef class Expression(...):\n',
          '\n',
          '    cdef GEx _gobj\n',
          '\n',
-         '    cpdef object pyobject(self):\n']
-        sage: lines[-1]    # last line
+         '    cpdef object pyobject(self) noexcept:\n']
+        sage: lines[-1]    # last line                                                  # needs sage.symbolic
         '        return S\n'
 
-    We show some enhancements provided by :trac:`11768`. First, we
+    We show some enhancements provided by :issue:`11768`. First, we
     use a dummy parent class that has defined an element class by a
     nested class definition::
 
@@ -2393,7 +2429,7 @@ def sage_getsourcelines(obj):
         sage: sage_getsourcelines(HC)
         (['    class Homsets(HomsetsCategory):\n', ...], ...)
 
-    Testing against a bug that has occurred during work on :trac:`11768`::
+    Testing against a bug that has occurred during work on :issue:`11768`::
 
         sage: P.<x,y> = QQ[]
         sage: I = P*[x,y]
@@ -2457,7 +2493,7 @@ def sage_getsourcelines(obj):
             # and str (=unicode) in python3
             return inspect.getsourcelines(obj)
 
-        except (IOError, TypeError) as err:
+        except (OSError, TypeError) as err:
             try:
                 objinit = obj.__init__
             except AttributeError:
@@ -2481,14 +2517,14 @@ def sage_getsourcelines(obj):
     try:
         with open(filename) as f:
             source_lines = f.readlines()
-    except IOError:
+    except OSError:
         try:
             from sage.misc.temporary_file import spyx_tmp
             raw_name = filename.split('/')[-1]
             newname = os.path.join(spyx_tmp(), '_'.join(raw_name.split('_')[:-1]), raw_name)
             with open(newname) as f:
                 source_lines = f.readlines()
-        except IOError:
+        except OSError:
             return None
 
     # It is possible that the source lines belong to the __init__ method,
@@ -2496,7 +2532,7 @@ def sage_getsourcelines(obj):
     # definition.
     first_line = source_lines[lineno-1]
     leading_blanks = len(first_line)-len(first_line.lstrip())
-    if first_line.lstrip().startswith('def ') and "__init__" in first_line and obj.__name__!='__init__':
+    if first_line.lstrip().startswith('def ') and "__init__" in first_line and obj.__name__ != '__init__':
         ignore = False
         double_quote = None
         for lnb in range(lineno, 0, -1):
@@ -2504,17 +2540,17 @@ def sage_getsourcelines(obj):
             nfl_strip = new_first_line.lstrip()
             if nfl_strip.startswith('"""'):
                 if double_quote is None:
-                    double_quote=True
+                    double_quote = True
                 if double_quote:
                     ignore = not ignore
             elif nfl_strip.startswith("'''"):
                 if double_quote is None:
-                    double_quote=False
+                    double_quote = False
                 if double_quote is False:
                     ignore = not ignore
             if ignore:
                 continue
-            if len(new_first_line)-len(nfl_strip)<leading_blanks and nfl_strip:
+            if len(new_first_line)-len(nfl_strip) < leading_blanks and nfl_strip:
                 # We are not inside a doc string. So, if the indentation
                 # is less than the indentation of the __init__ method
                 # then we must be at the class definition!
@@ -2547,6 +2583,7 @@ def sage_getvariablename(self, omit_underscore_names=True):
 
     EXAMPLES::
 
+        sage: # needs sage.modules
         sage: from sage.misc.sageinspect import sage_getvariablename
         sage: A = random_matrix(ZZ, 100)
         sage: sage_getvariablename(A)
@@ -2557,7 +2594,7 @@ def sage_getvariablename(self, omit_underscore_names=True):
 
     If an object is not assigned to a variable, an empty list is returned::
 
-        sage: sage_getvariablename(random_matrix(ZZ, 60))
+        sage: sage_getvariablename(random_matrix(ZZ, 60))                               # needs sage.modules
         []
     """
     result = []
@@ -2611,7 +2648,7 @@ def __internal_tests():
         sage: sage_getdef(sage.rings.integer.Integer.factor, obj_name='factor')
         "factor(algorithm='pari', proof=None, limit=None, int_=False, verbose=0)"
 
-    This used to be problematic, but was fixed in :trac:`10094`::
+    This used to be problematic, but was fixed in :issue:`10094`::
 
         sage: sage_getsource(sage.rings.integer.Integer.__init__)
         '    def __init__(self, x=None, base=0):\n...'

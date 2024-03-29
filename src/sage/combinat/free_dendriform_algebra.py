@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Free Dendriform Algebras
 
@@ -285,7 +285,7 @@ class FreeDendriformAlgebra(CombinatorialFreeModule):
         """
         return FreeDendriformAlgebra(R, names=self.variable_names())
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self`` (as an algebra).
 

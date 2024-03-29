@@ -157,8 +157,7 @@ cdef class ArgumentFixer:
         EXAMPLES::
 
             sage: from sage.misc.function_mangling import ArgumentFixer
-            sage: g = ArgumentFixer(number_of_partitions)
-            sage: g
+            sage: g = ArgumentFixer(number_of_partitions); g                            # needs sage.combinat
             Argument Fixer of <function number_of_partitions at 0x...>
         """
         return "Argument Fixer of %s"%self.f
@@ -285,7 +284,7 @@ cdef class ArgumentFixer:
         """
         return self.fix_to_pos_args_kwds(args, kwds)
 
-    cdef fix_to_pos_args_kwds(self, tuple args, dict kwds):
+    cdef fix_to_pos_args_kwds(self, tuple args, dict kwds) noexcept:
         """
         Fast Cython implementation of :meth:`fix_to_pos`.
         """

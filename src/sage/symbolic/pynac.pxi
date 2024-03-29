@@ -1,9 +1,9 @@
 """
 Declarations for pynac, a Python frontend for ginac
 
-Check that we can externally cimport this (:trac:`18825`)::
+Check that we can externally cimport this (:issue:`18825`)::
 
-    sage: cython(  # optional - sage.misc.cython
+    sage: cython(                                                                       # needs sage.misc.cython
     ....: '''
     ....: cimport sage.symbolic.expression
     ....: ''')

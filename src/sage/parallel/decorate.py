@@ -107,8 +107,8 @@ class Parallel():
 
             sage: from sage.parallel.decorate import Parallel
             sage: p = Parallel()
-            sage: f = x^2-1
-            sage: p(f)
+            sage: f = x^2 - 1                                                           # needs sage.symbolic
+            sage: p(f)                                                                  # needs sage.symbolic
             <sage.parallel.decorate.ParallelFunction object at ...>
 
             sage: P = sage.parallel.decorate.Parallel()
@@ -172,7 +172,7 @@ class ParallelFunction():
 
         .. note::
 
-            This is the key to fixing :trac:`11461`.
+            This is the key to fixing :issue:`11461`.
 
         EXAMPLES:
 
@@ -342,7 +342,7 @@ def parallel(p_iter='fork', ncpus=None, **kwds):
 
         sage: @parallel(ncpus=3, timeout=10)
         ....: def fac(n): return factor(2^n-1)
-        sage: for X, Y in sorted(list(fac([101,119,151,197,209]))): print((X,Y))
+        sage: for X, Y in sorted(list(fac([101,119,151,197,209]))): print((X,Y))        # needs sage.libs.pari
         (((101,), {}), 7432339208719 * 341117531003194129)
         (((119,), {}), 127 * 239 * 20231 * 131071 * 62983048367 * 131105292137)
         (((151,), {}), 18121 * 55871 * 165799 * 2332951 * 7289088383388253664437433)
@@ -531,6 +531,7 @@ def fork(f=None, timeout=0, verbose=False):
     We illustrate that the state of the pexpect interface is not altered by
     forked functions (they get their own new pexpect interfaces!)::
 
+        sage: # needs sage.libs.pari
         sage: gp.eval('a = 5')
         '5'
         sage: @fork()
@@ -545,21 +546,21 @@ def fork(f=None, timeout=0, verbose=False):
     We illustrate that the forked function has its own pexpect
     interface::
 
-        sage: gp.eval('a = 15')
+        sage: gp.eval('a = 15')                                                         # needs sage.libs.pari
         '15'
         sage: @fork()
         ....: def g(): return gp.eval('a')
-        sage: g()
+        sage: g()                                                                       # needs sage.libs.pari
         'a'
 
     We illustrate that segfaulting subprocesses are no trouble at all::
 
-        sage: cython('def f(): print(<char*>0)')                            # optional - sage.misc.cython
+        sage: cython('def f(): print(<char*>0)')                                        # needs sage.misc.cython
         sage: @fork
         ....: def g():
         ....:     os.environ["CYSIGNALS_CRASH_NDEBUG"]="yes" # skip enhanced backtrace (it is slow)
         ....:     f()
-        sage: print("this works"); g()                                      # optional - sage.misc.cython
+        sage: print("this works"); g()                                                  # needs sage.misc.cython
         this works...
         <BLANKLINE>
         ------------------------------------------------------------------------

@@ -339,7 +339,7 @@ class Arrow(GraphicPrimitive):
 
         The length of the ends (shrinkA and shrinkB) should not depend
         on the width of the arrow, because Matplotlib already takes
-        this into account. See :trac:`12836`::
+        this into account. See :issue:`12836`::
 
             sage: fig = Graphics().matplotlib()
             sage: sp = fig.add_subplot(1,1,1, label='axis1')
@@ -352,7 +352,7 @@ class Arrow(GraphicPrimitive):
             sage: p1.shrinkB == p2.shrinkB
             True
 
-        Dashed arrows should have solid arrowheads, :trac:`12852`. We tried to
+        Dashed arrows should have solid arrowheads, :issue:`12852`. We tried to
         make up a test for this, which turned out to be fragile and hence was
         removed. In general, robust testing of graphics seems basically need a
         human eye or AI.
@@ -398,7 +398,7 @@ class Arrow(GraphicPrimitive):
             class CheckNthSubPath():
                 def __init__(self, patch, n):
                     """
-                    creates an callable object that returns True if the
+                    creates a callable object that returns True if the
                     provided path is the n-th path from the patch.
                     """
                     self._patch = patch
@@ -475,7 +475,7 @@ def arrow(tailpoint=None, headpoint=None, **kwds):
 
     TESTS:
 
-    Check that :trac:`35031` is fixed::
+    Check that :issue:`35031` is fixed::
 
         sage: arrow((0,0), (0,0), linestyle='dashed')
         Graphics object consisting of 1 graphics primitive
@@ -489,7 +489,8 @@ def arrow(tailpoint=None, headpoint=None, **kwds):
 
 
 @rename_keyword(color='rgbcolor')
-@options(width=2, rgbcolor=(0,0,1), zorder=2, head=1, linestyle='solid', legend_label=None)
+@options(width=2, rgbcolor=(0,0,1), zorder=2, head=1, linestyle='solid',
+         legend_label=None, legend_color=None)
 def arrow2d(tailpoint=None, headpoint=None, path=None, **options):
     """
     If ``tailpoint`` and ``headpoint`` are provided, returns an arrow from
@@ -586,7 +587,8 @@ def arrow2d(tailpoint=None, headpoint=None, path=None, **options):
 
     A pretty circle of arrows::
 
-        sage: sum([arrow2d((0,0), (cos(x),sin(x)), hue=x/(2*pi)) for x in [0..2*pi,step=0.1]])
+        sage: sum(arrow2d((0,0), (cos(x),sin(x)), hue=x/(2*pi))                         # needs sage.symbolic
+        ....:     for x in [0..2*pi, step=0.1])
         Graphics object consisting of 63 graphics primitives
 
     .. PLOT::
@@ -639,6 +641,12 @@ def arrow2d(tailpoint=None, headpoint=None, path=None, **options):
     ::
 
         sage: arrow2d((-2,2), (7,1)).show(frame=True)
+
+    TESTS:
+
+    Verify that :issue:`36153` is fixed::
+
+        sage: A = arrow2d((-1,-1), (2,3), legend_label="test")
     """
     from sage.plot.all import Graphics
     g = Graphics()

@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 Small Scale Variants of the AES (SR) Polynomial System Generator
 
@@ -19,7 +20,7 @@ AUTHORS:
 
 - Martin Albrecht (2007-09): initial version
 
-- Niles Johnson (2010-08): (:trac:`3893`) ``random_element()`` should pass on ``*args`` and ``**kwds``.
+- Niles Johnson (2010-08): (:issue:`3893`) ``random_element()`` should pass on ``*args`` and ``**kwds``.
 
 EXAMPLES:
 
@@ -103,8 +104,8 @@ instances to recover all solutions to the system.::
     sage: a = K.gen()
     sage: K = [a]
     sage: P = [1]
-    sage: F,s = sr.polynomial_system(P=P, K=K)
-    sage: F.groebner_basis()
+    sage: F,s = sr.polynomial_system(P=P, K=K)                                          # needs sage.rings.polynomial.pbori
+    sage: F.groebner_basis()                                                            # needs sage.rings.polynomial.pbori
     [k100, k101 + 1, k102, k103 + k003,
      x100 + 1, x101 + k003 + 1, x102 + k003 + 1,
      x103 + k003, w100, w101, w102 + 1, w103 + k003 + 1,
@@ -123,8 +124,8 @@ to the same ciphertext::
 
 All solutions can easily be recovered using the variety function for ideals.::
 
-   sage: I = F.ideal()
-   sage: for V in I.variety():
+   sage: I = F.ideal()                                                                  # needs sage.rings.polynomial.pbori
+   sage: for V in I.variety():                                                          # needs sage.rings.polynomial.pbori sage.symbolic
    ....:    for k,v in sorted(V.items()):
    ....:       print("{} {}".format(k, v))
    ....:    print("\n")
@@ -173,7 +174,7 @@ All solutions can easily be recovered using the variety function for ideals.::
 We can also verify the correctness of the variety by evaluating all
 ideal generators on all points.::
 
-   sage: for V in I.variety():
+   sage: for V in I.variety():                                                          # needs sage.rings.polynomial.pbori sage.symbolic
    ....:     for f in I.gens():
    ....:         if f.subs(V) != 0:
    ....:            print("epic fail")
@@ -206,7 +207,7 @@ For example, we can now study the difference distribution table of ``S``::
 
 or use ``S`` to find alternative polynomial representations for the S-Box.::
 
-   sage: S.polynomials(degree=3)
+   sage: S.polynomials(degree=3)                                                        # needs sage.libs.singular
    [x0*x1 + x1*x2 + x0*x3 + x0*y2 + x1 + y0 + y1 + 1,
     x0*x1 + x0*x2 + x0*y0 + x0*y1 + x0*y2 + x1 + x2 + y0 + y1 + y2,
     x0*x1 + x0*x2 + x0*x3 + x1*x3 + x0*y0 + x1*y0 + x0*y1 + x0*y3,
@@ -307,23 +308,21 @@ REFERENCES:
 - [MR2002]_
 """
 
-from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
-from sage.rings.integer_ring import ZZ
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing, BooleanPolynomialRing_constructor as BooleanPolynomialRing
-
-from sage.structure.element import is_Matrix
 from sage.matrix.constructor import Matrix, random_matrix
 from sage.matrix.matrix_space import MatrixSpace
-
-from sage.misc.verbose import get_verbose
 from sage.misc.flatten import flatten
-
+from sage.misc.verbose import get_verbose
 from sage.modules.vector_modn_dense import Vector_modn_dense
-
+from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
+from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
-from .mpolynomialsystemgenerator import MPolynomialSystemGenerator
-
+from sage.rings.polynomial.polynomial_ring_constructor import \
+    BooleanPolynomialRing_constructor as BooleanPolynomialRing
+from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.polynomial.term_order import TermOrder
+from sage.structure.element import is_Matrix
+
+from .mpolynomialsystemgenerator import MPolynomialSystemGenerator
 
 
 def SR(n=1, r=1, c=1, e=4, star=False, **kwargs):
@@ -585,7 +584,7 @@ class SR_generic(MPolynomialSystemGenerator):
             self.Mstar = self.ShiftRows * self.Lin
             return self.Mstar
 
-        raise AttributeError("%s has no attribute %s"%(type(self), attr))
+        raise AttributeError("%s has no attribute %s" % (type(self), attr))
 
     def _repr_(self):
         """
@@ -597,9 +596,9 @@ class SR_generic(MPolynomialSystemGenerator):
             SR*(1,2,2,4)
         """
         if self._star:
-            return "SR*(%d,%d,%d,%d)"%(self._n, self._r, self._c, self._e)
+            return "SR*(%d,%d,%d,%d)" % (self._n, self._r, self._c, self._e)
         else:
-            return "SR(%d,%d,%d,%d)"%(self._n, self._r, self._c, self._e)
+            return "SR(%d,%d,%d,%d)" % (self._n, self._r, self._c, self._e)
 
     def base_ring(self):
         r"""
@@ -747,7 +746,7 @@ class SR_generic(MPolynomialSystemGenerator):
                                                 [1, 0, 1, 1],
                                                 [1, 1, 0, 1]])
 
-            elif e==8:
+            elif e == 8:
                 if not hasattr(self, "_L"):
                     self._L = Matrix(GF(2), 8, 8, [[1, 0, 0, 0, 1, 1, 1, 1],
                                                 [1, 1, 0, 0, 0, 1, 1, 1],
@@ -910,7 +909,7 @@ class SR_generic(MPolynomialSystemGenerator):
         d = self.state_array(d)
         ret = []
         for i in range(d.nrows()):
-            ret += list(d.row(i)[i%d.ncols():]) + list(d.row(i)[:i%d.ncols()])
+            ret += list(d.row(i)[i % d.ncols():]) + list(d.row(i)[:i % d.ncols()])
         return Matrix(self.base_ring(), self._r, self._c, ret)
 
     def mix_columns(self, d):
@@ -957,7 +956,7 @@ class SR_generic(MPolynomialSystemGenerator):
                                               [1, a, a+1, 1],
                                               [1, 1, a, a+1],
                                               [a+1, 1, 1, a]])
-        ret =[]
+        ret = []
         for column in d.columns():
             ret.append(M * column)
         # AES uses the column major ordering
@@ -1314,7 +1313,7 @@ class SR_generic(MPolynomialSystemGenerator):
             elif len(P) == len(K) == r*c*e:
                 _type = self.vector
             else:
-                raise TypeError("length %d or %d doesn't match either %d or %d"%(len(P),len(K),r*c,r*c*e))
+                raise TypeError("length %d or %d doesn't match either %d or %d" % (len(P),len(K),r*c,r*c*e))
         else:
             raise TypeError("plaintext or key parameter not understood")
 
@@ -1331,46 +1330,46 @@ class SR_generic(MPolynomialSystemGenerator):
 
         for r in range(self._n-1):
             if get_verbose() >= 2:
-                print("R[%02d].start   %s"%(r+1, self.hex_str_vector(P)))
+                print("R[%02d].start   %s" % (r+1, self.hex_str_vector(P)))
 
             P = SubBytes(P)
             if get_verbose() >= 2:
-                print("R[%02d].s_box   %s"%(r+1, self.hex_str_vector(P)))
+                print("R[%02d].s_box   %s" % (r+1, self.hex_str_vector(P)))
 
             P = ShiftRows(P)
             if get_verbose() >= 2:
-                print("R[%02d].s_row   %s"%(r+1, self.hex_str_vector(P)))
+                print("R[%02d].s_row   %s" % (r+1, self.hex_str_vector(P)))
 
             P = MixColumns(P)
             if get_verbose() >= 2:
-                print("R[%02d].m_col   %s"%(r+1, self.hex_str_vector(P)))
+                print("R[%02d].m_col   %s" % (r+1, self.hex_str_vector(P)))
 
             K = KeyExpansion(K, r+1)
             if get_verbose() >= 2:
-                print("R[%02d].k_sch   %s"%(r+1, self.hex_str_vector(K)))
+                print("R[%02d].k_sch   %s" % (r+1, self.hex_str_vector(K)))
 
             P = AddRoundKey(P, K)
 
         P = SubBytes(P)
         if get_verbose() >= 2:
-            print("R[%02d].s_box   %s"%(self.n, self.hex_str_vector(P)))
+            print("R[%02d].s_box   %s" % (self.n, self.hex_str_vector(P)))
 
         P = ShiftRows(P)
         if get_verbose() >= 2:
-            print("R[%02d].s_row   %s"%(self.n, self.hex_str_vector(P)))
+            print("R[%02d].s_row   %s" % (self.n, self.hex_str_vector(P)))
 
         if not self._star:
             P = MixColumns(P)
             if get_verbose() >= 2:
-                print("R[%02d].m_col   %s"%(self.n, self.hex_str_vector(P)))
+                print("R[%02d].m_col   %s" % (self.n, self.hex_str_vector(P)))
 
         K = KeyExpansion(K, self._n)
         if get_verbose() >= 2:
-            print("R[%02d].k_sch   %s"%(self.n, self.hex_str_vector(K)))
+            print("R[%02d].k_sch   %s" % (self.n, self.hex_str_vector(K)))
 
         P = AddRoundKey(P, K)
         if get_verbose() >= 2:
-            print("R[%02d].output  %s"%(self.n, self.hex_str_vector(P)))
+            print("R[%02d].output  %s" % (self.n, self.hex_str_vector(P)))
 
         return _type(P)
 
@@ -1651,7 +1650,7 @@ class SR_generic(MPolynomialSystemGenerator):
              'x103': x103}
 
             sage: sr = mq.SR(1,1,1,4,gf2=True)
-            sage: sr.variable_dict()
+            sage: sr.variable_dict()                                                    # needs sage.rings.polynomial.pbori
             {'k000': k000,
              'k001': k001,
              'k002': k002,
@@ -1859,7 +1858,7 @@ class SR_generic(MPolynomialSystemGenerator):
                 plaintext = Matrix(R, r*c*e, 1, self.phi(plaintext))
             return tuple((w1 + k0 + plaintext).list())
 
-        elif i>0 and i<=n:
+        elif i > 0 and i <= n:
 
             if self._star and i == n:
                 M = self.Mstar
@@ -1946,7 +1945,7 @@ class SR_generic(MPolynomialSystemGenerator):
             si = Matrix(R, r*e, 1, self.vars("s", i-1, r, e))
 
             rc = Matrix(R, r*e, 1, self.phi([a**(i-1)] + [k(0)]*(r-1)) )
-            d  = Matrix(R, r*e, 1, self.phi([self.sbox_constant()]*r) )
+            d = Matrix(R, r*e, 1, self.phi([self.sbox_constant()]*r) )
 
             sbox = []
 
@@ -1956,8 +1955,8 @@ class SR_generic(MPolynomialSystemGenerator):
             if r == 1:
                 sbox += self.inversion_polynomials(kj[(c - 1)*e:(c - 1)*e + e], si[0:e], e)
             if r == 2:
-                sbox += self.inversion_polynomials( kj[(2*c -1)*e : (2*c -1)*e + e] , si[0:1*e], e )
-                sbox += self.inversion_polynomials( kj[(2*c -2)*e : (2*c -2)*e + e] , si[e:2*e], e )
+                sbox += self.inversion_polynomials( kj[(2*c - 1)*e : (2*c - 1)*e + e] , si[0:1*e], e )
+                sbox += self.inversion_polynomials( kj[(2*c - 2)*e : (2*c - 2)*e + e] , si[e:2*e], e )
             if r == 4:
                 if self._aes_mode:
                     sbox += self.inversion_polynomials( kj[(4*c-3)*e  : (4*c-3)*e + e] , si[0*e : 1*e] , e )
@@ -2003,16 +2002,16 @@ class SR_generic(MPolynomialSystemGenerator):
             sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)
             sage: P = sr.vector([0, 0, 1, 0])
             sage: K = sr.vector([1, 0, 0, 1])
-            sage: F, s = sr.polynomial_system(P, K)
+            sage: F, s = sr.polynomial_system(P, K)                                     # needs sage.rings.polynomial.pbori
 
         This returns a polynomial system::
 
-            sage: F
+            sage: F                                                                     # needs sage.rings.polynomial.pbori
             Polynomial Sequence with 36 Polynomials in 20 Variables
 
         and a solution::
 
-            sage: s # random -- maybe we need a better doctest here?
+            sage: s  # random -- maybe we need a better doctest here?                   # needs sage.rings.polynomial.pbori
             {k000: 1, k001: 0, k003: 1, k002: 0}
 
         This solution is not the only solution that we can learn from the
@@ -2020,24 +2019,25 @@ class SR_generic(MPolynomialSystemGenerator):
 
         ::
 
-            sage: F.groebner_basis()[-3:]
+            sage: F.groebner_basis()[-3:]                                               # needs sage.rings.polynomial.pbori
             [k000 + 1, k001, k003 + 1]
 
         In particular we have two solutions::
 
-            sage: len(F.ideal().variety())
+            sage: len(F.ideal().variety())                                              # needs sage.rings.polynomial.pbori
             2
 
         In the following example we provide ``C`` explicitly::
 
            sage: C = sr(P,K)
-           sage: F,s = sr.polynomial_system(P=P, C=C)
-           sage: F
+           sage: F,s = sr.polynomial_system(P=P, C=C)                                   # needs sage.rings.polynomial.pbori
+           sage: F                                                                      # needs sage.rings.polynomial.pbori
            Polynomial Sequence with 36 Polynomials in 20 Variables
 
         Alternatively, we can use symbols for the ``P`` and
         ``C``. First, we have to create a polynomial ring::
 
+            sage: # needs sage.rings.polynomial.pbori
             sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)
             sage: R = sr.R
             sage: vn = sr.varstrs("P",0,1,4) + R.variable_names() + sr.varstrs("C",0,1,4)
@@ -2047,6 +2047,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         Now, we can construct the purely symbolic equation system::
 
+            sage: # needs sage.rings.polynomial.pbori
             sage: C = sr.vars("C",0); C
             (C000, C001, C002, C003)
             sage: P = sr.vars("P",0)
@@ -2061,13 +2062,13 @@ class SR_generic(MPolynomialSystemGenerator):
         We show that the (returned) key is a solution to the returned system::
 
             sage: sr = mq.SR(3,4,4,8, star=True, gf2=True, polybori=True)
-            sage: while True:  # workaround (see :trac:`31891`)
+            sage: while True:  # workaround (see :issue:`31891`)                         # needs sage.rings.polynomial.pbori
             ....:     try:
             ....:         F, s = sr.polynomial_system()
             ....:         break
             ....:     except ZeroDivisionError:
             ....:         pass
-            sage: F.subs(s).groebner_basis() # long time
+            sage: F.subs(s).groebner_basis()    # long time                             # needs sage.rings.polynomial.pbori
             Polynomial Sequence with 1248 Polynomials in 1248 Variables
         """
         plaintext = P
@@ -2105,19 +2106,19 @@ class SR_generic(MPolynomialSystemGenerator):
         plaintext, key, ciphertext = data
 
         if plaintext is False:
-            raise TypeError("type %s of P not understood"%(type(plaintext)))
+            raise TypeError("type %s of P not understood" % (type(plaintext)))
         elif plaintext is None:
             plaintext = self.random_element("vector")
 
         if key is None:
             key = self.random_element("vector")
         elif key is False and ciphertext is False:
-            raise TypeError("type %s of K not understood"%(type(key)))
+            raise TypeError("type %s of K not understood" % (type(key)))
 
         if ciphertext is None:
             ciphertext = self(plaintext, key)
         elif ciphertext is False:
-            raise TypeError("type %s of C not understood"%(type(ciphertext)))
+            raise TypeError("type %s of C not understood" % (type(ciphertext)))
 
         for i in range(n+1):
             system.append( self.round_polynomials(i, plaintext, ciphertext) )
@@ -2321,13 +2322,13 @@ class SR_gf2n(SR_generic):
             for k in range( 0, length ):
                 for i in range(0, 4):
                     for j in range(0, 4):
-                        lin[k*4+j, k*4+i] = l[(i-j)%4] ** (2**j)
+                        lin[k*4+j, k*4+i] = l[(i-j) % 4] ** (2**j)
         elif e == 8:
             l = [k.from_integer(x) for x in (5, 9, 249, 37, 244, 1, 181, 143)]
             for k in range( 0, length ):
                 for i in range(0, 8):
                     for j in range(0, 8):
-                        lin[k*8+j, k*8+i] = l[(i-j)%8] ** (2**j)
+                        lin[k*8+j, k*8+i] = l[(i-j) % 8] ** (2**j)
 
         return lin
 
@@ -2477,7 +2478,7 @@ class SR_gf2n(SR_generic):
             l = r*c
 
         _vars = self.vars(name, i, l, e)
-        return [_vars[e*j+k]**2 - _vars[e*j+(k+1)%e]   for j in range(l)  for k in range(e)]
+        return [_vars[e*j+k]**2 - _vars[e*j+(k+1) % e]   for j in range(l)  for k in range(e)]
 
 class SR_gf2(SR_generic):
     def __init__(self, n=1, r=1, c=1, e=4, star=False, **kwargs):
@@ -2588,7 +2589,7 @@ class SR_gf2(SR_generic):
             sage: sr = mq.SR(2, 1, 2, 4, gf2=True)
             sage: k = sr.base_ring()
             sage: A = matrix(k, 1, 2, [k.gen(), 0] )
-            sage: sr.phi(A)
+            sage: sr.phi(A)                                                             # needs sage.libs.gap
             [0 0]
             [0 0]
             [1 0]
@@ -2642,7 +2643,7 @@ class SR_gf2(SR_generic):
 
             sage: sr = mq.SR(gf2=True)
             sage: A = sr.random_state_array()
-            sage: sr.antiphi(sr.phi(A)) == A
+            sage: sr.antiphi(sr.phi(A)) == A                                            # needs sage.libs.gap
             True
         """
         e = self.e
@@ -2662,7 +2663,7 @@ class SR_gf2(SR_generic):
         elif isinstance(l, tuple):
             return tuple(ret)
         elif is_Matrix(l):
-            return Matrix(self.base_ring(), self.r *self.c, 1, ret)
+            return Matrix(self.base_ring(), self.r * self.c, 1, ret)
         else:
             raise TypeError
 
@@ -2908,7 +2909,7 @@ class SR_gf2(SR_generic):
 
         if x is None and w is None:
             # make sure it prints like in the book.
-            names = ["w%d" % i for i in reversed(range(e))] + ["x%d"%i for i in reversed(range(e))]
+            names = ["w%d" % i for i in reversed(range(e))] + ["x%d" % i for i in reversed(range(e))]
             P = PolynomialRing(GF(2), e*2, names, order='lex')
             x = P.gens()[e:]
             w = P.gens()[:e]
@@ -3083,7 +3084,7 @@ class SR_gf2(SR_generic):
 
         if x is None and w is None:
             # make sure it prints like in the book.
-            names = ["w%d" % i for i in reversed(range(e))] + ["x%d"%i for i in reversed(range(e))]
+            names = ["w%d" % i for i in reversed(range(e))] + ["x%d" % i for i in reversed(range(e))]
             P = PolynomialRing(GF(2), e*2, names, order='lex')
             x = Matrix(P, e, 1, P.gens()[e:])
             w = Matrix(P, e, 1, P.gens()[:e])
@@ -3120,8 +3121,8 @@ class SR_gf2(SR_generic):
             l.append( (Cw * x + o).list()[:-1] )
         else:
             l.append( (Cw * x + o).list() )
-        l.append( (Cw * S *x  + x).list() )
-        l.append( (Cx * S *w  + w).list() )
+        l.append( (Cw * S * x + x).list() )
+        l.append( (Cx * S * w + w).list() )
         if not biaffine_only:
             l.append( ((Cw * S**2 + Cx*S)*x).list() )
             l.append( ((Cx * S**2 + Cw*S)*w).list() )
@@ -3145,9 +3146,9 @@ class SR_gf2(SR_generic):
         EXAMPLES::
 
             sage: sr = mq.SR(1, 1, 1, 8, gf2=True)
-            sage: xi = sr.vars('x', 1)
-            sage: wi = sr.vars('w', 1)
-            sage: sr.inversion_polynomials(xi, wi, len(xi))[:3]
+            sage: xi = sr.vars('x', 1)                                                  # needs sage.rings.polynomial.pbori
+            sage: wi = sr.vars('w', 1)                                                  # needs sage.rings.polynomial.pbori
+            sage: sr.inversion_polynomials(xi, wi, len(xi))[:3]                         # needs sage.rings.polynomial.pbori
             [x100*w100 + x100*w102 + x100*w103 + x100*w107 + x101*w101 + x101*w102 + x101*w106 + x102*w100 + x102*w101 + x102*w105 + x103*w100 + x103*w104 + x104*w103 + x105*w102 + x106*w101 + x107*w100,
              x100*w101 + x100*w103 + x100*w104 + x101*w100 + x101*w102 + x101*w103 + x101*w107 + x102*w101 + x102*w102 + x102*w106 + x103*w100 + x103*w101 + x103*w105 + x104*w100 + x104*w104 + x105*w103 + x106*w102 + x107*w101,
              x100*w102 + x100*w104 + x100*w105 + x101*w101 + x101*w103 + x101*w104 + x102*w100 + x102*w102 + x102*w103 + x102*w107 + x103*w101 + x103*w102 + x103*w106 + x104*w100 + x104*w101 + x104*w105 + x105*w100 + x105*w104 + x106*w103 + x107*w102]
@@ -3227,7 +3228,7 @@ class SR_gf2_2(SR_gf2):
             sage: sr = SR_gf2_2(1, 1, 1, e)
             sage: P = PolynomialRing(GF(2),['x%d'%i for i in range(e)] + ['w%d'%i for i in range(e)],order='lex')
             sage: X,W = P.gens()[:e],P.gens()[e:]
-            sage: sr.inversion_polynomials_single_sbox(X, W, groebner=True)
+            sage: sr.inversion_polynomials_single_sbox(X, W, groebner=True)             # needs sage.libs.singular
             [x0 + w0*w1*w2 + w0*w1 + w0*w2 + w0*w3 + w0 + w1 + w2,
              x1 + w0*w1*w3 + w0*w3 + w0 + w1*w3 + w1 + w2*w3,
              x2 + w0*w2*w3 + w0*w2 + w0 + w1*w2 + w1*w3 + w2*w3,
@@ -3236,7 +3237,7 @@ class SR_gf2_2(SR_gf2):
             sage: from sage.crypto.mq.sr import SR_gf2_2
             sage: e = 4
             sage: sr = SR_gf2_2(1, 1, 1, e)
-            sage: sr.inversion_polynomials_single_sbox()
+            sage: sr.inversion_polynomials_single_sbox()                                # needs sage.libs.singular
             [w3*w1 + w3*w0 + w3*x2 + w3*x1 + w3 + w2*w1 + w1 + x3 + x2 + x1,
              w3*w2 + w3*w1 + w3*x3 + w2 + w1 + x3,
              w3*w2 + w3*w1 + w3*x2 + w3 + w2*x3 + x2 + x1,
@@ -3269,15 +3270,15 @@ class SR_gf2_2(SR_gf2):
             sage: from sage.crypto.mq.sr import SR_gf2_2
             sage: e = 4
             sage: sr = SR_gf2_2(1, 1, 1, e)
-            sage: l = sr.inversion_polynomials_single_sbox()
-            sage: l == sr.inversion_polynomials_single_sbox(biaffine_only=True, correct_only=False)
+            sage: l = sr.inversion_polynomials_single_sbox()                            # needs sage.libs.singular
+            sage: l == sr.inversion_polynomials_single_sbox(biaffine_only=True, correct_only=False)                     # needs sage.libs.singular
             True
 
-       """
+        """
         e = self.e
         if x is None and w is None:
             # make sure it prints like in the book.
-            names = ["w%d" % i for i in reversed(range(e))] + ["x%d"%i for i in reversed(range(e))]
+            names = ["w%d" % i for i in reversed(range(e))] + ["x%d" % i for i in reversed(range(e))]
             P = PolynomialRing(GF(2), e*2, names, order='lex')
             x = P.gens()[e:]
             w = P.gens()[:e]

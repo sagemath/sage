@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.combinat        (because all doctests use FreeAlgebra, SymmetricGroupAlgebra, etc.)
+# sage.doctest: needs sage.combinat        (because all doctests use FreeAlgebra, SymmetricGroupAlgebra, etc.)
 """
 Hochschild Complexes
 """
@@ -273,13 +273,13 @@ class HochschildComplex(UniqueRepresentation, Parent):
 
         def on_basis(k):
             p = self._M.monomial(k[0]) * self._A.monomial(k[1])
-            ret = Fd._from_dict({(m,) + k[2:]: c for m,c in p}, remove_zeros=False)
+            ret = Fd._from_dict({(m,) + k[2:]: c for m, c in p}, remove_zeros=False)
             for i in range(1, d):
                 p = self._A.monomial(k[i]) * self._A.monomial(k[i+1])
                 ret += mone**i * Fd._from_dict({k[:i] + (m,) + k[i+2:]: c
-                                                   for m,c in p}, remove_zeros=False)
+                                                for m, c in p}, remove_zeros=False)
             p = self._A.monomial(k[-1]) * self._M.monomial(k[0])
-            ret += mone**d * Fd._from_dict({(m,) + k[1:-1]: c for m,c in p},
+            ret += mone**d * Fd._from_dict({(m,) + k[1:-1]: c for m, c in p},
                                            remove_zeros=False)
             return ret
         return Fd1.module_morphism(on_basis, codomain=Fd)
@@ -493,7 +493,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
             return self.element_class(self, {0: vec})
         if isinstance(vectors, (Chain_class, self.element_class)):
             vectors = vectors._vec
-        data = dict()
+        data = {}
         if not isinstance(vectors, dict):
             raise ValueError("cannot construct an element from {}".format(vectors))
         # Special handling for the 0 free module
@@ -624,10 +624,9 @@ class HochschildComplex(UniqueRepresentation, Parent):
 
             if n == 1:
                 (deg, vec), = self._vec.items()
-                return 'Chain({0}: {1})'.format(deg, vec)
+                return f'Chain({deg}: {vec})'
 
-            return 'Chain with {0} nonzero terms over {1}'.format(n,
-                self.parent().base_ring())
+            return f'Chain with {n} nonzero terms over {self.parent().base_ring()}'
 
         def _ascii_art_(self):
             """
@@ -691,7 +690,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
                  3*F[1] # F[1] + 2*F[1] # F[x] + 3*F[1] # F[y],
                  3*F[1] # F[1] # F[1] + 2*F[1] # F[1] # F[x] + 3*F[1] # F[1] # F[y]]
             """
-            vectors = dict(self._vec) # Make a (shallow) copy
+            vectors = dict(self._vec)  # Make a (shallow) copy
             for d in other._vec:
                 if d in vectors:
                     vectors[d] += other._vec[d]
@@ -719,7 +718,7 @@ class HochschildComplex(UniqueRepresentation, Parent):
             """
             if scalar == 0:
                 return self.zero()
-            vectors = dict()
+            vectors = {}
             for d in self._vec:
                 vec = scalar * self._vec[d]
                 if vec:

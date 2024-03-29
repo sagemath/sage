@@ -641,11 +641,11 @@ class DiffMap(ContinuousMap):
                   for i in range(n2)]
         bases = (chart1.frame().at(point), chart2.frame().at(image_point))
         if self._name is not None and point._name is not None:
-            name = 'd%s_%s'%(self._name, point._name)
+            name = 'd%s_%s' % (self._name, point._name)
         else:
             name = None
         if self._latex_name is not None and point._latex_name is not None:
-            latex_name = r'{\mathrm{d}%s}_{%s}'%(self._latex_name,
+            latex_name = r'{\mathrm{d}%s}_{%s}' % (self._latex_name,
                                                  point._latex_name)
         else:
             latex_name = None
@@ -936,7 +936,7 @@ class DiffMap(ContinuousMap):
 
         TESTS:
 
-        Check that :trac:`31904` is fixed::
+        Check that :issue:`31904` is fixed::
 
             sage: E.<x,y> = EuclideanSpace()
             sage: polar.<r,ph> = E.polar_coordinates()

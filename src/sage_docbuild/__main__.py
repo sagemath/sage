@@ -1,3 +1,4 @@
+# sage.doctest: needs sphinx
 r"""
 Sage docbuild main
 
@@ -288,12 +289,18 @@ def setup_parser():
     standard.add_argument("--no-plot", dest="no_plot",
                           action="store_true",
                           help="do not include graphics auto-generated using the '.. plot' markup")
+    standard.add_argument("--no-preparsed-examples", dest="no_preparsed_examples",
+                          action="store_true",
+                          help="do not show preparsed versions of EXAMPLES blocks")
     standard.add_argument("--include-tests-blocks", dest="skip_tests", default=True,
                           action="store_false",
                           help="include TESTS blocks in the reference manual")
     standard.add_argument("--no-pdf-links", dest="no_pdf_links",
                           action="store_true",
                           help="do not include PDF links in DOCUMENT 'website'; FORMATs: html, json, pickle, web")
+    standard.add_argument("--live-doc", dest="live_doc",
+                          action="store_true",
+                          help="make Sage code blocks live for html FORMAT")
     standard.add_argument("--warn-links", dest="warn_links",
                           action="store_true",
                           help="issue a warning whenever a link is not properly resolved; equivalent to '--sphinx-opts -n' (sphinx option: nitpicky)")
@@ -474,6 +481,10 @@ def main():
         build_options.ALLSPHINXOPTS += "-n "
     if args.no_plot:
         os.environ['SAGE_SKIP_PLOT_DIRECTIVE'] = 'yes'
+    if args.no_preparsed_examples:
+        os.environ['SAGE_PREPARSED_DOC'] = 'no'
+    if args.live_doc:
+        os.environ['SAGE_LIVE_DOC'] = 'yes'
     if args.skip_tests:
         os.environ['SAGE_SKIP_TESTS_BLOCKS'] = 'True'
     if args.use_cdns:
@@ -497,6 +508,7 @@ def main():
 
     builder = getattr(get_builder(name), typ)
     builder()
+
 
 if __name__ == '__main__':
     sys.exit(main())

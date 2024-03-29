@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 Morphisms of toric varieties
 
@@ -181,12 +182,12 @@ torus orbits are::
     sage: table([('cone', 'dim')] +
     ....:       [(cone.ambient_ray_indices(), single_chart.fiber_dimension(cone))
     ....:        for cone in A2_Z2_cones], header_row=True)
-      cone     dim
-    +--------+-----+
-      ()       0
-      (0,)     0
-      (1,)     -1
-      (0, 1)   1
+        cone     dim
+      ├────────┼─────┤
+        ()       0
+        (0,)     0
+        (1,)     -1
+        (0, 1)   1
 
 Lets look closer at the one-dimensional fiber. Although not the case
 in this example, connected components of fibers over higher-dimensional cones
@@ -201,12 +202,12 @@ base that defines the torus orbit::
     ....:       [(cone.ambient_ray_indices(),
     ....:         single_chart.fan_morphism().primitive_preimage_cones(cone))
     ....:        for cone in A2_Z2_cones], header_row=True)
-      base cone   primitive preimage cones
-    +-----------+---------------------------------------------------------+
-      ()          (0-d cone of Rational polyhedral fan in 2-d lattice N,)
-      (0,)        (1-d cone of Rational polyhedral fan in 2-d lattice N,)
-      (1,)        ()
-      (0, 1)      (1-d cone of Rational polyhedral fan in 2-d lattice N,)
+        base cone   primitive preimage cones
+      ├───────────┼─────────────────────────────────────────────────────────┤
+        ()          (0-d cone of Rational polyhedral fan in 2-d lattice N,)
+        (0,)        (1-d cone of Rational polyhedral fan in 2-d lattice N,)
+        (1,)        ()
+        (0, 1)      (1-d cone of Rational polyhedral fan in 2-d lattice N,)
 
 The fiber over the trivial cone is the generic fiber that we have
 already encountered. The interesting fiber is the one over the
@@ -245,7 +246,7 @@ Here is an example with higher dimensional varieties involved::
     Traceback (most recent call last):
     ...
     AttributeError: 'SchemeMorphism_fan_toric_variety' object
-    has no attribute 'fiber_generic'
+    has no attribute 'fiber_generic'...
 
 Let's use factorization mentioned above::
 
@@ -283,7 +284,7 @@ verified by ::
     sage: phi_d.codomain().fan().is_isomorphic(toric_varieties.P2().fan()) # known bug
     True
 
-(Unfortunately it cannot be verified correctly until :trac:`16012` is fixed.)
+(Unfortunately it cannot be verified correctly until :issue:`16012` is fixed.)
 
 We now have access to fiber methods::
 

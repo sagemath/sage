@@ -255,7 +255,7 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
 
         TESTS:
 
-        Check that :trac:`23373` is fixed::
+        Check that :issue:`23373` is fixed::
 
             sage: L = lie_algebras.sl(QQ, 2)
             sage: sorted(L.structure_coefficients(True), key=str)
@@ -411,8 +411,8 @@ class LieAlgebraWithStructureCoefficients(FinitelyGeneratedLieAlgebra, IndexedGe
             sage: LQQ = L.change_ring(QQ)
             sage: LQQ.structure_coefficients()
             Finite family {('x', 'y'): z}
-            sage: LSR = LQQ.change_ring(SR)
-            sage: LSR.structure_coefficients()
+            sage: LSR = LQQ.change_ring(SR)                                             # needs sage.symbolic
+            sage: LSR.structure_coefficients()                                          # needs sage.symbolic
             Finite family {('x', 'y'): z}
         """
         return LieAlgebraWithStructureCoefficients(

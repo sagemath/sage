@@ -36,7 +36,7 @@ def var(*args, **kwds):
     If a single symbolic variable was created, the variable
     itself. Otherwise, a tuple of symbolic variables. The variable
     names are checked to be valid Python identifiers and a
-    ``ValueError`` is raised otherwise.
+    :class:`ValueError` is raised otherwise.
 
     EXAMPLES:
 
@@ -342,7 +342,7 @@ def function(s, **kwds):
 
     TESTS:
 
-    Make sure that :trac:`15860` is fixed and whitespaces are removed::
+    Make sure that :issue:`15860` is fixed and whitespaces are removed::
 
         sage: function('A, B')
         (A, B)

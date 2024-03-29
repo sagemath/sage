@@ -10,9 +10,9 @@ AUTHORS:
 
 - Eric Gourgoulhon, Michal Bejger (2014-2015): initial version
 - Travis Scrimshaw (2016): ABC Basis_abstract and list functionality for bases
-  (:trac:`20770`)
+  (:issue:`20770`)
 - Eric Gourgoulhon (2018): some refactoring and more functionalities in the
-  choice of symbols for basis elements (:trac:`24792`)
+  choice of symbols for basis elements (:issue:`24792`)
 
 REFERENCES:
 
@@ -700,7 +700,7 @@ class FreeModuleBasis(Basis_abstract):
             symbol_dual = tuple(symbol_dual)
         if isinstance(latex_symbol_dual, list):
             latex_symbol_dual = tuple(latex_symbol_dual)
-        return super(FreeModuleBasis, cls).__classcall__(cls, fmodule, symbol,
+        return super().__classcall__(cls, fmodule, symbol,
                                            latex_symbol=latex_symbol,
                                            indices=indices,
                                            latex_indices=latex_indices,

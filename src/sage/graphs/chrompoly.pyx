@@ -1,4 +1,5 @@
 # cython: binding=True
+# sage.doctest: needs sage.libs.flint sage.graphs
 """
 Chromatic polynomial
 
@@ -30,7 +31,7 @@ from memory_allocator cimport MemoryAllocator
 from sage.libs.gmp.mpz cimport *
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
-from sage.rings.ring cimport Algebra
+from sage.rings.ring cimport Ring
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
@@ -123,12 +124,12 @@ def chromatic_polynomial(G, return_tree_basis=False, algorithm='C', cache=None):
 
     TESTS:
 
-    Check that :trac:`21502` is solved::
+    Check that :issue:`21502` is solved::
 
         sage: graphs.EmptyGraph().chromatic_polynomial()
         1
 
-    Check that :trac:`27966` is solved::
+    Check that :issue:`27966` is solved::
 
         sage: Graph([[1, 1]], multiedges=True, loops=True).chromatic_polynomial()
         0
@@ -185,7 +186,7 @@ def chromatic_polynomial(G, return_tree_basis=False, algorithm='C', cache=None):
     # Breadth first search from 0:
     bfs_reorder[0] = 0
     mpz_init(tot[0])  # sets to 0
-    for i from 0 < i < nverts:
+    for i in range(1, nverts):
         bfs_reorder[i] = -1
         mpz_init(tot[i])  # sets to 0
     mpz_init(tot[nverts])  # sets to 0
@@ -230,12 +231,12 @@ def chromatic_polynomial(G, return_tree_basis=False, algorithm='C', cache=None):
         for i in range(nverts):
             mpz_clear(tot[i])
         raise
-    for i from 0 <= i <= nverts:
+    for i in range(nverts + 1):
         mpz_init(coeffs[i])  # also sets them to 0
     mpz_init(coeff)
     mpz_init_set_si(m, -1)
     # start with the zero polynomial: f(x) = 0
-    for i from nverts >= i > 0:
+    for i in range(nverts, 0, -1):  # nverts >= i > 0
         if not mpz_sgn(tot[i]):
             continue
         mpz_neg(m, m)
@@ -244,7 +245,7 @@ def chromatic_polynomial(G, return_tree_basis=False, algorithm='C', cache=None):
         # f += tot[i]*m*x*(x-1)**(i-1)
         mpz_addmul(coeffs[i], m, tot[i])
         mpz_set_si(coeff, 1)
-        for j from 1 <= j < i:
+        for j in range(1, i):
             # an iterative method for binomial coefficients...
             mpz_mul_si(coeff, coeff, j-i)
             mpz_divexact_ui(coeff, coeff, j)
@@ -254,13 +255,13 @@ def chromatic_polynomial(G, return_tree_basis=False, algorithm='C', cache=None):
             mpz_mul(coeff, coeff, m)
     coeffs_ZZ = []
     cdef Integer c_ZZ
-    for i from 0 <= i <= nverts:
+    for i in range(nverts + 1):
         c_ZZ = Integer(0)
         mpz_set(c_ZZ.value, coeffs[i])
         coeffs_ZZ.append(c_ZZ)
     f = R(coeffs_ZZ)
 
-    for i from 0 <= i <= nverts:
+    for i in range(nverts + 1):
         mpz_clear(tot[i])
         mpz_clear(coeffs[i])
 
@@ -435,7 +436,7 @@ def chromatic_polynomial_with_cache(G, cache=None):
         ...
         TypeError: parameter cache must be a dictionary or None
     """
-    cdef Algebra R = PolynomialRing(ZZ, "x", implementation="FLINT")
+    cdef Ring R = PolynomialRing(ZZ, "x", implementation="FLINT")
     cdef Polynomial_integer_dense_flint one = R.one()
     cdef Polynomial_integer_dense_flint zero = R.zero()
     cdef Polynomial_integer_dense_flint x = R.gen()

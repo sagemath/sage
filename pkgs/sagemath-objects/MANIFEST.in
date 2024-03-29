@@ -3,8 +3,6 @@ graft sage/cpython
 
 include VERSION.txt
 
-global-include all__sagemath_objects.py
-
 graft sage/structure
 include sage/categories/action.*
 include sage/categories/algebra_functor.*
@@ -85,6 +83,8 @@ graft sage/libs/gmp
 include sage/misc/misc.*                # some_tuples used in sage.misc.sage_unittest
 include sage/misc/timing.p*             # walltime, cputime used in sage.doctest
 
+global-exclude all__*.py
+global-include all__sagemath_objects.py
 
 global-exclude *.c
 global-exclude *.cpp

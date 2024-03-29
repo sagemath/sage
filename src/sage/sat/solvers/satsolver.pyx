@@ -98,7 +98,7 @@ cdef class SatSolver:
         http://elis.dvo.ru/~lab_11/glpk-doc/cnfsat.pdf.
 
         The differences were summarized in the discussion on the issue
-        :trac:`16924`. This method assumes the following DIMACS format:
+        :issue:`16924`. This method assumes the following DIMACS format:
 
         - Any line starting with "c" is a comment
         - Any line starting with "p" is a header
@@ -139,9 +139,9 @@ cdef class SatSolver:
 
             sage: from io import StringIO
             sage: file_object = StringIO("c A sample .cnf file with xor clauses.\np cnf 3 3\n1 2 0\n3 0\nx1 2 3 0")
-            sage: from sage.sat.solvers.sat_lp import SatLP
-            sage: solver = SatLP()
-            sage: solver.read(file_object)
+            sage: from sage.sat.solvers.sat_lp import SatLP                             # needs sage.numerical.mip
+            sage: solver = SatLP()                                                      # needs sage.numerical.mip
+            sage: solver.read(file_object)                                              # needs sage.numerical.mip
             Traceback (most recent call last):
             ...
             NotImplementedError: the solver "an ILP-based SAT Solver" does not support xor clauses
@@ -158,7 +158,7 @@ cdef class SatSolver:
             if line.startswith("x"):
                 line = line[1:].split(" ")
                 clause = [int(e) for e in line if e]
-                clause = clause[:-1] # strip trailing zero
+                clause = clause[:-1]  # strip trailing zero
                 try:
                     self.add_xor_clause(clause)
                 except AttributeError:
@@ -339,7 +339,7 @@ def SAT(solver=None, *args, **kwds):
 
     EXAMPLES::
 
-        sage: SAT(solver="LP")
+        sage: SAT(solver="LP")                                                          # needs sage.numerical.mip
         an ILP-based SAT Solver
 
     TESTS::
@@ -351,12 +351,12 @@ def SAT(solver=None, *args, **kwds):
 
     Forcing CryptoMiniSat::
 
-        sage: SAT(solver="cryptominisat") # optional - pycryptosat
+        sage: SAT(solver="cryptominisat")                                   # optional - pycryptosat
         CryptoMiniSat solver: 0 variables, 0 clauses.
 
     Forcing PicoSat::
 
-        sage: SAT(solver="picosat") # optional - pycosat
+        sage: SAT(solver="picosat")                                         # optional - pycosat
         PicoSAT solver: 0 variables, 0 clauses.
 
     Forcing Glucose::
@@ -375,10 +375,10 @@ def SAT(solver=None, *args, **kwds):
         DIMACS Solver: 'kissat -q {input}'
     """
     if solver is None:
-        import pkgutil
-        if pkgutil.find_loader('pycryptosat') is not None:
+        from importlib.util import find_spec
+        if find_spec('pycryptosat') is not None:
             solver = "cryptominisat"
-        elif pkgutil.find_loader('pycosat') is not None:
+        elif find_spec('pycosat') is not None:
             solver = "picosat"
         else:
             solver = "LP"
@@ -390,16 +390,16 @@ def SAT(solver=None, *args, **kwds):
         from sage.sat.solvers.picosat import PicoSAT
         return PicoSAT(*args, **kwds)
     elif solver == "LP":
-        from .sat_lp import SatLP
+        from sage.sat.solvers.sat_lp import SatLP
         return SatLP()
     elif solver == 'glucose':
-        from .dimacs import Glucose
+        from sage.sat.solvers.dimacs import Glucose
         return Glucose(*args, **kwds)
     elif solver == 'glucose-syrup':
-        from .dimacs import GlucoseSyrup
+        from sage.sat.solvers.dimacs import GlucoseSyrup
         return GlucoseSyrup(*args, **kwds)
     elif solver == 'kissat':
-        from .dimacs import Kissat
+        from sage.sat.solvers.dimacs import Kissat
         return Kissat(*args, **kwds)
     else:
         raise ValueError("Solver '{}' is not available".format(solver))

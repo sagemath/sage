@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 r"""
 Substitutions over unit cube faces (Rauzy fractals)
 
@@ -159,9 +160,9 @@ Plotting patches made of unit segments instead of unit faces::
     sage: P = Patch([Face([0,0], 1), Face([0,0], 2)])
     sage: E = E1Star(WordMorphism({1:[1,2],2:[1]}))
     sage: F = E1Star(WordMorphism({1:[1,1,2],2:[2,1]}))
-    sage: E(P,5).plot()                                                                 # optional - sage.plot
+    sage: E(P,5).plot()                                                                 # needs sage.plot
     Graphics object consisting of 21 graphics primitives
-    sage: F(P,3).plot()                                                                 # optional - sage.plot
+    sage: F(P,3).plot()                                                                 # needs sage.plot
     Graphics object consisting of 34 graphics primitives
 
 Everything works in any dimension (except for the plotting features
@@ -280,14 +281,14 @@ class Face(SageObject):
 
         TESTS:
 
-        We test that types can be given by an int (see :trac:`10699`)::
+        We test that types can be given by an int (see :issue:`10699`)::
 
             sage: f = Face((0,2,0), int(1))
         """
         self._vector = (ZZ**len(v))(v)
         self._vector.set_immutable()
 
-        if not((t in ZZ) and 1 <= t <= len(v)):
+        if not ((t in ZZ) and 1 <= t <= len(v)):
             raise ValueError('the type must be an integer between 1 and len(v)')
         self._type = t
 
@@ -490,12 +491,12 @@ class Face(SageObject):
             sage: face_contour[1] = map(vector, [(0,0,0),(0,1,0),(0,1,1),(0,0,1)])
             sage: face_contour[2] = map(vector, [(0,0,0),(0,0,1),(1,0,1),(1,0,0)])
             sage: face_contour[3] = map(vector, [(0,0,0),(1,0,0),(1,1,0),(0,1,0)])
-            sage: G = f._plot(projmat, face_contour, 0.75)                              # optional - sage.plot
+            sage: G = f._plot(projmat, face_contour, 0.75)                              # needs sage.plot
 
         ::
 
             sage: f = Face((0,0), 2)
-            sage: f._plot(None, None, 1)                                                # optional - sage.plot
+            sage: f._plot(None, None, 1)                                                # needs sage.plot
             Graphics object consisting of 1 graphics primitive
         """
         v = self.vector()
@@ -596,7 +597,7 @@ class Patch(SageObject):
         TESTS:
 
         We test that colors are not anymore mixed up between
-        Patches (see :trac:`11255`)::
+        Patches (see :issue:`11255`)::
 
             sage: P = Patch([Face([0,0,0],2)])
             sage: Q = Patch(P)
@@ -674,7 +675,7 @@ class Patch(SageObject):
 
         TESTS:
 
-        We test that two equal patches have the same hash (see :trac:`11255`)::
+        We test that two equal patches have the same hash (see :issue:`11255`)::
 
             sage: P = Patch([Face([0,0,0],1), Face([0,0,0],2)])
             sage: Q = Patch([Face([0,0,0],2), Face([0,0,0],1)])
@@ -1102,7 +1103,7 @@ class Patch(SageObject):
 
             sage: from sage.combinat.e_one_star import E1Star, Face, Patch
             sage: P = Patch([Face((0,0,0),t) for t in [1,2,3]])
-            sage: P.plot()                                                              # optional - sage.plot
+            sage: P.plot()                                                              # needs sage.plot
             Graphics object consisting of 3 graphics primitives
 
         ::
@@ -1111,7 +1112,7 @@ class Patch(SageObject):
             sage: E = E1Star(sigma)
             sage: P = Patch([Face((0,0,0),t) for t in [1,2,3]])
             sage: P = E(P, 5)
-            sage: P.plot()                                                              # optional - sage.plot
+            sage: P.plot()                                                              # needs sage.plot
             Graphics object consisting of 57 graphics primitives
 
         Plot with a different projection matrix::
@@ -1121,7 +1122,7 @@ class Patch(SageObject):
             sage: P = Patch([Face((0,0,0),t) for t in [1,2,3]])
             sage: M = matrix(2, 3, [1,0,-1,0.3,1,-3])
             sage: P = E(P, 3)
-            sage: P.plot(projmat=M)                                                     # optional - sage.plot
+            sage: P.plot(projmat=M)                                                     # needs sage.plot
             Graphics object consisting of 17 graphics primitives
 
         Plot patches made of unit segments::
@@ -1129,9 +1130,9 @@ class Patch(SageObject):
             sage: P = Patch([Face([0,0], 1), Face([0,0], 2)])
             sage: E = E1Star(WordMorphism({1:[1,2],2:[1]}))
             sage: F = E1Star(WordMorphism({1:[1,1,2],2:[2,1]}))
-            sage: E(P,5).plot()                                                         # optional - sage.plot
+            sage: E(P,5).plot()                                                         # needs sage.plot
             Graphics object consisting of 21 graphics primitives
-            sage: F(P,3).plot()                                                         # optional - sage.plot
+            sage: F(P,3).plot()                                                         # needs sage.plot
             Graphics object consisting of 34 graphics primitives
         """
         if self.dimension() == 2:
@@ -1418,8 +1419,8 @@ class E1Star(SageObject):
             raise ValueError("the substitution (%s) must be unimodular" % sigma)
 
         first_letter = sigma.codomain().alphabet()[0]
-        if not (first_letter in ZZ) or (first_letter < 1):
-            raise ValueError("the substitution (%s) must be defined on positive integers" % sigma)
+        if first_letter not in ZZ or first_letter < 1:
+            raise ValueError(f"the substitution ({sigma}) must be defined on positive integers")
 
         self._sigma = WordMorphism(sigma)
         self._d = self._sigma.domain().alphabet().cardinality()
@@ -1494,7 +1495,7 @@ class E1Star(SageObject):
 
         TESTS:
 
-        We test that iterations=0 works (see :trac:`10699`)::
+        We test that iterations=0 works (see :issue:`10699`)::
 
             sage: P = Patch([Face((0,0,0),t) for t in [1,2,3]])
             sage: sigma = WordMorphism({1:[1,2], 2:[1,3], 3:[1]})
@@ -1508,7 +1509,7 @@ class E1Star(SageObject):
             raise ValueError("iterations (=%s) must be >= 0" % iterations)
         else:
             old_faces = patch
-            for i in range(iterations):
+            for _ in range(iterations):
                 new_faces = []
                 for f in old_faces:
                     new_faces.extend(self._call_on_face(f, color=f.color()))

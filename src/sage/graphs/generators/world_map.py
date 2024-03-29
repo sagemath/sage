@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Graphs from the World Map
 
@@ -48,7 +47,7 @@ def AfricaMap(continental=False, year=2018):
 
     TESTS::
 
-        sage: Africa.plot()  # long time
+        sage: Africa.plot()                     # long time                             # needs sage.plot
         Graphics object consisting of 159 graphics primitives
     """
     if year != 2018:
@@ -95,7 +94,7 @@ def AfricaMap(continental=False, year=2018):
     G = Graph(common_border, format='dict_of_lists')
 
     if continental:
-        G = G.subgraph(G.connected_component_containing_vertex('Central Africa'))
+        G = G.subgraph(G.connected_component_containing_vertex('Central Africa', sort=False))
         G.name(new="Continental Africa Map")
     else:
         G.add_vertices(no_land_border)
@@ -172,7 +171,7 @@ def EuropeMap(continental=False, year=2018):
     G = Graph(common_border, format='dict_of_lists')
 
     if continental:
-        G = G.subgraph(G.connected_component_containing_vertex('Austria'))
+        G = G.subgraph(G.connected_component_containing_vertex('Austria', sort=False))
         G.name(new="Continental Europe Map")
     else:
         G.add_vertices(no_land_border)
@@ -308,12 +307,12 @@ def WorldMap():
         True
         sage: g.gps_coordinates["Bolivia"]
         [[17, 'S'], [65, 'W']]
-        sage: sorted(g.connected_component_containing_vertex('Ireland'))
+        sage: g.connected_component_containing_vertex('Ireland', sort=True)
         ['Ireland', 'United Kingdom']
 
     TESTS:
 
-    :trac:`24488`::
+    :issue:`24488`::
 
         sage: 'Iceland' in graphs.WorldMap()
         True

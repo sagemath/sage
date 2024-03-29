@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint
 """
 Numerical computation of newforms
 """
@@ -28,7 +29,7 @@ from sage.structure.sage_object  import SageObject
 from sage.structure.sequence     import Sequence
 
 # This variable controls importing the SciPy library sparingly
-scipy=None
+scipy = None
 
 @richcmp_method
 class NumericalEigenforms(SageObject):
@@ -163,7 +164,7 @@ class NumericalEigenforms(SageObject):
             sage: n._repr_()
             'Numerical Hecke eigenvalues for Congruence Subgroup Gamma0(61) of weight 2'
         """
-        return "Numerical Hecke eigenvalues for %s of weight %s"%(
+        return "Numerical Hecke eigenvalues for %s of weight %s" % (
             self._group, self._weight)
 
     @cached_method
@@ -209,7 +210,7 @@ class NumericalEigenforms(SageObject):
         (ostensibly unique) are visible in the test, which should be
         independent of which eigenvectors are returned, but it does presume
         an ordering of these eigenvectors for the test to succeed.
-        This exercises a correction in :trac:`8018`. ::
+        This exercises a correction in :issue:`8018`. ::
 
             sage: n = numerical_eigenforms(61, eps=2.0)
             sage: evectors = n._eigenvectors()

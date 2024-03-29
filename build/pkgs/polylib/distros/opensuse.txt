@@ -1,2 +1,2 @@
 polylib
-"pkgconfig(polylibgmp)"
+pkgconfig(polylibgmp)

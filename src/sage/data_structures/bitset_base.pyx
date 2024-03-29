@@ -11,7 +11,7 @@ Few functions from ``bitset_base.pxd`` that are not inlined.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-cdef char* bitset_chars(char* s, fused_bitset_t bits, char zero=c'0', char one=c'1'):
+cdef char* bitset_chars(char* s, fused_bitset_t bits, char zero=c'0', char one=c'1') noexcept:
     """
     Return a string representation of the bitset in s, using zero for
     the character representing the items not in the bitset and one for
@@ -47,13 +47,13 @@ cdef int bitset_from_str(bitset_t bits, object s, char zero=c'0', char one=c'1')
     cdef bytes b = str_to_bytes(s)
     return bitset_from_char(bits, b, zero, one)
 
-cdef bitset_string(fused_bitset_t bits):
+cdef bitset_string(fused_bitset_t bits) noexcept:
     """
     Return a python string representing the bitset.
     """
     return bytes_to_str(bitset_bytes(bits))
 
-cdef bitset_bytes(fused_bitset_t bits):
+cdef bitset_bytes(fused_bitset_t bits) noexcept:
     """
     Return a python bytes string representing the bitset.
 
@@ -66,7 +66,7 @@ cdef bitset_bytes(fused_bitset_t bits):
     sig_free(s)
     return py_s
 
-cdef list bitset_list(fused_bitset_t bits):
+cdef list bitset_list(fused_bitset_t bits) noexcept:
     """
     Return a list of elements in the bitset.
     """
@@ -77,7 +77,7 @@ cdef list bitset_list(fused_bitset_t bits):
         elt = bitset_next(bits, elt + 1)
     return elts
 
-cdef bitset_pickle(bitset_t bs):
+cdef bitset_pickle(bitset_t bs) noexcept:
     """
     Convert ``bs`` to a reasonably compact Python structure.
 
@@ -91,7 +91,7 @@ cdef bitset_pickle(bitset_t bs):
         data.append(bs.bits[i])
     return (version, bs.size, bs.limbs, sizeof(unsigned long), tuple(data))
 
-cdef bitset_unpickle(bitset_t bs, tuple input):
+cdef bitset_unpickle(bitset_t bs, tuple input) noexcept:
     """
     Convert the data into a bitset.
 

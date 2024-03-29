@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Base class of the space of modular symbols
 
@@ -27,6 +27,7 @@ from sage.arith.misc import divisors, next_prime
 from sage.categories.fields import Fields
 from sage.matrix.matrix_space import MatrixSpace
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_import import lazy_import
 from sage.misc.misc_c import prod
 from sage.modules.free_module import EchelonMatrixKey, FreeModule, VectorSpace
 from sage.modules.free_module_element import FreeModuleElement
@@ -46,7 +47,7 @@ from sage.modular.arithgroup.all import Gamma0, is_Gamma0  # for Sturm bound giv
 from sage.modular.hecke.module import HeckeModule_free_module
 from sage.modular.modsym.element import ModularSymbolsElement
 
-from . import hecke_operator
+lazy_import('sage.modular.modsym', 'hecke_operator')
 
 
 def is_ModularSymbolsSpace(x):
@@ -217,7 +218,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         TESTS:
 
-        Verify that :trac:`12772` is fixed::
+        Verify that :issue:`12772` is fixed::
 
             sage: M = ModularSymbols(1,12,sign=1).cuspidal_subspace().new_subspace()
             sage: A = M.decomposition()[0]

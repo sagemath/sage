@@ -71,9 +71,9 @@ def get_systems(cmd):
         sage: from sage.misc.citation import get_systems
         sage: get_systems('print("hello")')  # random (may print warning)
         []
-        sage: integrate(x^2, x)  # Priming coercion model
+        sage: integrate(x^2, x)  # Priming coercion model                               # needs sage.symbolic
         1/3*x^3
-        sage: get_systems('integrate(x^2, x)')
+        sage: get_systems('integrate(x^2, x)')                                          # needs sage.symbolic
         ['Maxima', 'ginac']
         sage: R.<x,y,z> = QQ[]
         sage: I = R.ideal(x^2+y^2, z^2+y)
@@ -91,7 +91,7 @@ def get_systems(cmd):
              "Rebuild Sage with the environment variable 'SAGE_PROFILE=yes' "
              "to enable profiling.")
 
-    if not isinstance(cmd, basestring):
+    if not isinstance(cmd, str):
         raise TypeError("command must be a string")
 
     from sage.repl.preparse import preparse
@@ -143,7 +143,7 @@ cdef extern from *:
         """
 
 
-cpdef inline bint cython_profile_enabled():
+cpdef inline bint cython_profile_enabled() noexcept:
     """
     Return whether Cython profiling is enabled.
 

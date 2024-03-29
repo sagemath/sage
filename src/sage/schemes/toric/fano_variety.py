@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 Fano toric varieties
 
@@ -1302,11 +1303,11 @@ class AnticanonicalHypersurface(AlgebraicScheme_subscheme_toric):
              covered by 4 affine patches defined by:
               a0*s^2*x^2 + a3*t^2*x^2 + a6*s*t*x*y + a1*s^2*y^2 + a2*t^2*y^2
 
-        Check that finite fields are handled correctly :trac:`14899`::
+        Check that finite fields are handled correctly :issue:`14899`::
 
-            sage: F = GF(5^2, "a")                                                      # optional - sage.rings.finite_rings
-            sage: X = P1xP1.change_ring(F)                                              # optional - sage.rings.finite_rings
-            sage: X.anticanonical_hypersurface(monomial_points="all",                   # optional - sage.rings.finite_rings
+            sage: F = GF(5^2, "a")                                                      # needs sage.rings.finite_rings
+            sage: X = P1xP1.change_ring(F)                                              # needs sage.rings.finite_rings
+            sage: X.anticanonical_hypersurface(monomial_points="all",                   # needs sage.rings.finite_rings
             ....:                   coefficients=[1]*X.Delta().npoints())
             Closed subscheme of 2-d CPR-Fano toric variety
              covered by 4 affine patches defined by:
@@ -1517,7 +1518,7 @@ class NefCompleteIntersection(AlgebraicScheme_subscheme_toric):
              covered by 8 affine patches defined by:
               a2*z0^2*z1 + a5*z0*z1*z3 + a1*z1*z3^2 + a3*z0^2*z4 + a4*z0*z3*z4 + a0*z3^2*z4,
               b1*z1*z2^2 + b2*z2^2*z4 + b5*z1*z2*z5 + b4*z2*z4*z5 + b3*z1*z5^2 + b0*z4*z5^2
-            sage: CI.cohomology_class()
+            sage: CI.cohomology_class()                                                 # needs sage.libs.singular
             [2*z3*z4 + 4*z3*z5 + 2*z4*z5]
         """
         X = self.ambient_space()

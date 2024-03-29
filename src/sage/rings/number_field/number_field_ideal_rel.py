@@ -1,13 +1,5 @@
 r"""
-Relative Number Field Ideals
-
-AUTHORS:
-
-- Steven Sivek (2005-05-16)
-
-- William Stein (2007-09-06)
-
-- Nick Alexander (2009-01)
+Ideals of relative number fields
 
 EXAMPLES::
 
@@ -22,6 +14,13 @@ EXAMPLES::
     Fractional ideal ((1/2*b + 2)*a - 1/2*b + 2)
     sage: K.fractional_ideal(G).absolute_norm().factor()
     7^2
+
+AUTHORS:
+
+- Steven Sivek (2005-05-16)
+- William Stein (2007-09-06)
+- Nick Alexander (2009-01)
+
 """
 
 #*****************************************************************************
@@ -272,7 +271,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
         TESTS:
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(2*x^2 - 1/3)
             sage: L.<b> = K.extension(5*x^2 + 1)
@@ -405,7 +404,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             815730721
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(2*x^2 - 1/3)
             sage: L.<b> = K.extension(5*x^2 + 1)
@@ -524,7 +523,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             True
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(2*x^2 - 1/3)
             sage: L.<b> = K.extension(5*x^2 + 1)
@@ -687,7 +686,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
         """
         if self.is_prime():
             return self.absolute_ideal().ramification_index()
-        raise ValueError("the fractional ideal (= %s) is not prime"%self)
+        raise ValueError("the fractional ideal (= %s) is not prime" % self)
 
     def relative_ramification_index(self):
         """
@@ -722,7 +721,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             abs_index = self.absolute_ramification_index()
             base_ideal = self.ideal_below()
             return ZZ(abs_index/base_ideal.absolute_ramification_index())
-        raise ValueError("the fractional ideal (= %s) is not prime"%self)
+        raise ValueError("the fractional ideal (= %s) is not prime" % self)
 
     def ramification_index(self):
         r"""
@@ -738,7 +737,8 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: K.ideal(2).ramification_index()
             Traceback (most recent call last):
             ...
-            NotImplementedError: For an ideal in a relative number field you must use relative_ramification_index or absolute_ramification_index as appropriate
+            NotImplementedError: For an ideal in a relative number field you must use
+            relative_ramification_index or absolute_ramification_index as appropriate
         """
         raise NotImplementedError("For an ideal in a relative number field you must use relative_ramification_index or absolute_ramification_index as appropriate")
 
@@ -754,10 +754,10 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             sage: K.<c> = F.extension(Y^2 - (1 + a)*(a + b)*a*b)
             sage: [I.residue_class_degree() for I in K.ideal(c).prime_factors()]
             [1, 2]
-         """
+        """
         if self.is_prime():
             return self.absolute_ideal().residue_class_degree()
-        raise ValueError("the ideal (= %s) is not prime"%self)
+        raise ValueError("the ideal (= %s) is not prime" % self)
 
     def residues(self):
         """
@@ -814,14 +814,14 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
         # Catch invalid inputs by making sure that we can make an ideal out of other.
         K = self.number_field()
         if not self.is_integral():
-            raise TypeError("%s is not an integral ideal"%self)
+            raise TypeError("%s is not an integral ideal" % self)
 
         other = K.ideal(other)
         if not other.is_integral():
-            raise TypeError("%s is not an integral ideal"%other)
+            raise TypeError("%s is not an integral ideal" % other)
 
         if not self.is_coprime(other):
-            raise TypeError("%s and %s are not coprime ideals"%(self, other))
+            raise TypeError("%s and %s are not coprime ideals" % (self, other))
 
         to_K = K.absolute_field('a').structure()[0]
         return to_K(self.absolute_ideal().element_1_mod(other.absolute_ideal()))
@@ -871,15 +871,15 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             Traceback (most recent call last):
             ...
             ValueError: p (= Fractional ideal (5)) must be a prime
-         """
+        """
         if p == 0:
-            raise ValueError("p (= %s) must be nonzero"%p)
+            raise ValueError("p (= %s) must be nonzero" % p)
         if not isinstance(p, NumberFieldFractionalIdeal):
             p = self.number_field().ideal(p)
         if not p.is_prime():
-            raise ValueError("p (= %s) must be a prime"%p)
+            raise ValueError("p (= %s) must be a prime" % p)
         if p.ring() != self.number_field():
-            raise ValueError("p (= %s) must be an ideal in %s"%self.number_field())
+            raise ValueError("p (= %s) must be an ideal in %s" % self.number_field())
         return self.absolute_ideal().valuation(p.absolute_ideal())
 
 def is_NumberFieldFractionalIdeal_rel(x):

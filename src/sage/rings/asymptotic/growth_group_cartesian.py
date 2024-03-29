@@ -296,7 +296,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
             sage: GrowthGroup('x^ZZ * y^ZZ')  # indirect doctest
             Growth Group x^ZZ * y^ZZ
 
-        Check :trac:`26452`::
+        Check :issue:`26452`::
 
             sage: from sage.rings.asymptotic.growth_group import MonomialGrowthGroup
             sage: R = QQ.extension(x^2+1, 'i')
@@ -346,7 +346,6 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
              x^(2/3)*log(x)^(-4)*(6/7)^y,
              x^(-2/3)*log(x)^5*(7/6)^y)
         """
-        from builtins import zip
         return iter(
             self(c) for c in
             zip(*tuple(F.some_elements() for F in self.cartesian_factors())))
@@ -486,7 +485,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
         elif data is None:
             raise ValueError('%s cannot be converted.' % (data,))
 
-        elif type(data) == self.element_class and data.parent() == self:
+        elif type(data) is self.element_class and data.parent() == self:
             return data
 
         elif isinstance(data, str):
@@ -837,7 +836,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
                 S.next_custom()
                 O.next_custom()
 
-        assert(len(newS) == len(newO))
+        assert (len(newS) == len(newO))
 
         if (len(Sfactors) == len(newS) and
             len(Ofactors) == len(newO)):
@@ -1193,7 +1192,7 @@ class GenericProduct(CartesianProductPoset, GenericGrowthGroup):
 
             OUTPUT:
 
-            An growth element.
+            A growth element.
 
             .. NOTE::
 

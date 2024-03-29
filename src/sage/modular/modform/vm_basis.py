@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.libs.flint
 r"""
 The Victor Miller basis
 
@@ -29,7 +30,7 @@ TESTS::
 
 import math
 
-from sage.libs.flint.fmpz_poly import Fmpz_poly
+from sage.libs.flint.fmpz_poly_sage import Fmpz_poly
 from sage.misc.verbose import verbose
 from sage.rings.big_oh import O as bigO
 from sage.rings.finite_rings.integer_mod_ring import Integers
@@ -128,7 +129,7 @@ def victor_miller_basis(k, prec=10, cusp_only=False, var='q'):
     - Martin Raum (2009-08-02): use FLINT for polynomial arithmetic (instead of NTL)
     """
     k = Integer(k)
-    if k%2 == 1 or k==2:
+    if k % 2 == 1 or k == 2:
         return Sequence([])
     elif k < 0:
         raise ValueError("k must be non-negative")
@@ -375,7 +376,7 @@ def delta_qexp(prec=10, var='q', K=ZZ) :
 
     TESTS:
 
-    Test algorithm with modular arithmetic (see also :trac:`11804`)::
+    Test algorithm with modular arithmetic (see also :issue:`11804`)::
 
         sage: delta_qexp(10^4).change_ring(GF(13)) == delta_qexp(10^4, K=GF(13))
         True

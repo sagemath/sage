@@ -17,7 +17,7 @@ parallelizable. Accordingly, there are two classes for vector field modules:
 AUTHORS:
 
 - Eric Gourgoulhon, Michal Bejger (2014-2015): initial version
-- Travis Scrimshaw (2016): structure of Lie algebroid (:trac:`20771`)
+- Travis Scrimshaw (2016): structure of Lie algebroid (:issue:`20771`)
 
 REFERENCES:
 
@@ -885,7 +885,7 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
             sage: XM.tensor(XM).tensor(XM.dual().tensor(XM.dual()))
             Traceback (most recent call last):
             ...
-            AttributeError: 'TensorFieldModule_with_category' object has no attribute '_basis_sym'
+            AttributeError: 'TensorFieldModule_with_category' object has no attribute '_basis_sym'...
 
         .. SEEALSO::
 
@@ -1188,15 +1188,15 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
         ndim = self._ambient_domain.dimension()
         try:
             for elt in signature:
-                if (elt<0) or (not isinstance(elt, (int, Integer))):
+                if (elt < 0) or (not isinstance(elt, (int, Integer))):
                     raise ValueError("{} must be a positive integer".format(elt))
                 if elt > ndim:
                     raise ValueError("{} must be less than {}".format(elt,ndim))
                 sign = signature[0]+signature[1]+signature[2]
-                if sign!=ndim:
-                    raise ValueError("{} is different from the dimension".format(sign)+
+                if sign != ndim:
+                    raise ValueError("{} is different from the dimension".format(sign) +
                                         " of the manifold, who is {}".format(ndim))
-            if signature[2]!=0:
+            if signature[2] != 0:
                 from sage.manifolds.differentiable.metric import DegenerateMetric
                 return DegenerateMetric(self, name, signature=signature,
                                         latex_name=latex_name)
@@ -1205,8 +1205,8 @@ class VectorFieldModule(UniqueRepresentation, ReflexiveModule_base):
         if signature is None:
             signature = (ndim,0)
         if isinstance(signature, (Integer, int)):
-            if (signature+ndim)%2 == 1:
-                if ndim%2 == 0:
+            if (signature+ndim) % 2 == 1:
+                if ndim % 2 == 0:
                     raise ValueError("the metric signature must be even")
                 else:
                     raise ValueError("the metric signature must be odd")
@@ -2395,13 +2395,13 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
         ndim = self._ambient_domain.dimension()
         try:
             for elt in signature:
-                if (elt<0) or (not isinstance(elt, (int, Integer))):
+                if (elt < 0) or (not isinstance(elt, (int, Integer))):
                     raise ValueError("{} must be a positive integer".format(elt))
             sign = signature[0]+signature[1]+signature[2]
-            if sign!=ndim:
-                raise ValueError("{} is different from the dimension".format(sign)+
+            if sign != ndim:
+                raise ValueError("{} is different from the dimension".format(sign) +
                                         " of the manifold, who is {}".format(ndim))
-            if signature[2]!=0:
+            if signature[2] != 0:
                 from sage.manifolds.differentiable.metric import DegenerateMetricParal
                 return DegenerateMetricParal(self, name, signature=signature,
                                              latex_name=latex_name)
@@ -2410,8 +2410,8 @@ class VectorFieldFreeModule(FiniteRankFreeModule):
         if signature is None:
             signature = (ndim,0)
         if isinstance(signature, (Integer, int)):
-            if (signature+ndim)%2 == 1:
-                if ndim%2 == 0:
+            if (signature+ndim) % 2 == 1:
+                if ndim % 2 == 0:
                     raise ValueError("the metric signature must be even")
                 else:
                     raise ValueError("the metric signature must be odd")

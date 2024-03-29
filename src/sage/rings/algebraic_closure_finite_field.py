@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.rings.finite_rings
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Algebraic closures of finite fields
 
@@ -138,7 +138,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             sage: X.extend([z3, z3**2, z3*z4])
             sage: assert len(X) == len(set(hash(x) for x in X))
 
-        Check that :trac:`19956` is fixed::
+        Check that :issue:`19956` is fixed::
 
             sage: R.<x,y> = GF(2).algebraic_closure()[]
             sage: x.resultant(y)
@@ -501,7 +501,7 @@ class AlgebraicClosureFiniteFieldElement(FieldElement):
             Finite Field of size 3
 
         This also works when the element has to be converted between
-        two non-trivial finite subfields (see :trac:`16509`)::
+        two non-trivial finite subfields (see :issue:`16509`)::
 
             sage: K = GF(5).algebraic_closure()
             sage: z = K.gen(5) - K.gen(5) + K.gen(2)
@@ -591,7 +591,7 @@ class AlgebraicClosureFiniteField_generic(Field):
         """
         if self is other:
             return True
-        if type(self) != type(other):
+        if type(self) is not type(other):
             return False
         return ((self.base_ring(), self.variable_name(), self.category()) ==
                 (other.base_ring(), other.variable_name(), other.category()))

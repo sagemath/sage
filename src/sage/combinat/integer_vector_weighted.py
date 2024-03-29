@@ -101,7 +101,7 @@ class WeightedIntegerVectors(Parent, UniqueRepresentation):
         if n is None:
             return WeightedIntegerVectors_all(weight)
 
-        return super(WeightedIntegerVectors, cls).__classcall__(cls, n, weight)
+        return super().__classcall__(cls, n, weight)
 
     def __init__(self, n, weight):
         """
@@ -361,7 +361,7 @@ def iterator_fast(n, l):
         sage: list(iterator_fast(2, [2]))
         [[1]]
 
-    Test that :trac:`20491` is fixed::
+    Test that :issue:`20491` is fixed::
 
         sage: type(list(iterator_fast(2, [2]))[0][0])
         <class 'sage.rings.integer.Integer'>

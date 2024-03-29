@@ -21,13 +21,13 @@ EXAMPLES::
     [0 0 1]
     sage: is_MatrixMorphism(m)
     True
-    sage: m.charpoly('x')
+    sage: m.charpoly('x')                                                               # needs sage.libs.pari
     x^3 - 3*x^2 + 3*x - 1
     sage: m.base_ring()
     Rational Field
     sage: m.det()
     1
-    sage: m.fcp('x')
+    sage: m.fcp('x')                                                                    # needs sage.libs.pari
     (x - 1)^3
     sage: m.matrix()
     [1 0 0]
@@ -70,6 +70,7 @@ def is_MatrixMorphism(x):
         False
     """
     return isinstance(x, MatrixMorphism_abstract)
+
 
 class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
     def __init__(self, parent, side='left'):
@@ -188,7 +189,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             if parent(x) is not self.domain():
                 x = self.domain()(x)
         except TypeError:
-            raise TypeError("%s must be coercible into %s"%(x,self.domain()))
+            raise TypeError("%s must be coercible into %s" % (x, self.domain()))
         if self.domain().is_ambient():
             x = x.element()
         else:
@@ -212,13 +213,15 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.real_mpfr sage.symbolic
             sage: V = RR^2
             sage: f = V.hom(V.gens())
             sage: f._matrix *= I         # f is now invalid
             sage: f((1, 0))
             Traceback (most recent call last):
             ...
-            TypeError: Unable to coerce entries (=[1.00000000000000*I, 0.000000000000000]) to coefficients in Real Field with 53 bits of precision
+            TypeError: Unable to coerce entries (=[1.00000000000000*I, 0.000000000000000])
+            to coefficients in Real Field with 53 bits of precision
             sage: f((1, 0), coerce=False)
             (1.00000000000000*I, 0.000000000000000)
 
@@ -319,7 +322,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         r"""
         Return the inverse of this matrix morphism, if the inverse exists.
 
-        Raises a ``ZeroDivisionError`` if the inverse does not exist.
+        This raises a :class:`ZeroDivisionError` if the inverse does not exist.
 
         EXAMPLES:
 
@@ -523,10 +526,11 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
         Composite maps can be formed with matrix morphisms::
 
+            sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
-            sage: K.<a> = NumberField(x^2 + 23)                                         # optional - sage.rings.number_field
-            sage: V, VtoK, KtoV = K.vector_space()                                      # optional - sage.rings.number_field
-            sage: f = V.hom([V.0 - V.1, V.0 + V.1])*KtoV; f                             # optional - sage.rings.number_field
+            sage: K.<a> = NumberField(x^2 + 23)
+            sage: V, VtoK, KtoV = K.vector_space()
+            sage: f = V.hom([V.0 - V.1, V.0 + V.1])*KtoV; f
             Composite map:
             From: Number Field in a with defining polynomial x^2 + 23
             To:   Vector space of dimension 2 over Rational Field
@@ -836,7 +840,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         EXAMPLES::
 
             sage: V = ZZ^2; phi = V.hom([V.0+V.1, 2*V.1])
-            sage: phi.decomposition()
+            sage: phi.decomposition()                                                   # needs sage.libs.pari
             [
             Free module of degree 2 and rank 1 over Integer Ring
             Echelon basis matrix:
@@ -846,7 +850,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             [ 1 -1]
             ]
             sage: phi2 = V.hom(phi.matrix(), side="right")
-            sage: phi2.decomposition()
+            sage: phi2.decomposition()                                                  # needs sage.libs.pari
             [
             Free module of degree 2 and rank 1 over Integer Ring
             Echelon basis matrix:
@@ -857,12 +861,12 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             ]
         """
         if not self.is_endomorphism():
-            raise ArithmeticError("Matrix morphism must be an endomorphism.")
+            raise ArithmeticError("matrix morphism must be an endomorphism")
         D = self.domain()
         if self.side() == "left":
-            E = self.matrix().decomposition(*args,**kwds)
+            E = self.matrix().decomposition(*args, **kwds)
         else:
-            E = self.matrix().transpose().decomposition(*args,**kwds)
+            E = self.matrix().transpose().decomposition(*args, **kwds)
         if D.is_ambient():
             return Sequence([D.submodule(V, check=False) for V, _ in E],
                             cr=True, check=False)
@@ -896,7 +900,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             2
         """
         if not self.is_endomorphism():
-            raise ArithmeticError("Matrix morphism must be an endomorphism.")
+            raise ArithmeticError("matrix morphism must be an endomorphism")
         return self.matrix().determinant()
 
     def fcp(self, var='x'):
@@ -905,10 +909,10 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
         EXAMPLES::
 
-            sage: V = ZZ^2; phi = V.hom([V.0+V.1, 2*V.1])
-            sage: phi.fcp()
+            sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
+            sage: phi.fcp()                                                             # needs sage.libs.pari
             (x - 2) * (x - 1)
-            sage: phi.fcp('T')
+            sage: phi.fcp('T')                                                          # needs sage.libs.pari
             (T - 2) * (T - 1)
         """
         return self.charpoly(var).factor()
@@ -1047,7 +1051,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         EXAMPLES:
 
         Check that this works with the :func:`matrix` function
-        (:trac:`16844`)::
+        (:issue:`16844`)::
 
             sage: H = Hom(ZZ^2, ZZ^3)
             sage: x = H.an_element()
@@ -1632,7 +1636,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
             if A.nrows() != parent.domain().rank():
                 raise ArithmeticError("number of rows of matrix (={}) must equal rank of domain (={})".format(A.nrows(), parent.domain().rank()))
             if A.ncols() != parent.codomain().rank():
-                    raise ArithmeticError("number of columns of matrix (={}) must equal rank of codomain (={})".format(A.ncols(), parent.codomain().rank()))
+                raise ArithmeticError("number of columns of matrix (={}) must equal rank of codomain (={})".format(A.ncols(), parent.codomain().rank()))
         if side == "right":
             if A.nrows() != parent.codomain().rank():
                 raise ArithmeticError("number of rows of matrix (={}) must equal rank of codomain (={})".format(A.nrows(), parent.domain().rank()))
@@ -1694,7 +1698,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
             ValueError: side must be 'left' or 'right', not junk
         """
         if side not in ['left', 'right', None]:
-            raise ValueError("side must be 'left' or 'right', not {0}".format(side))
+            raise ValueError("side must be 'left' or 'right', not {}".format(side))
         if side == self.side() or side is None:
             return self._matrix
         return self._matrix.transpose()
@@ -1741,7 +1745,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
 
         An example over a PID that is not `\ZZ`.  ::
 
-            sage: R = PolynomialRing(QQ, 'x')
+            sage: R.<x> = PolynomialRing(QQ)
             sage: A = R^2
             sage: B = R^2
             sage: H = A.hom([B([x^2-1, 1]), B([x^2, 1])])
@@ -1753,7 +1757,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
             sage: H.is_surjective()
             True
 
-        This tests if :trac:`11552` is fixed. ::
+        This tests if :issue:`11552` is fixed. ::
 
             sage: V = ZZ^2
             sage: m = matrix(ZZ, [[1,2],[0,2]])
@@ -1791,7 +1795,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
             sage: phi._repr_()
             'Free module morphism defined by the matrix\n[3 0]\n[0 2]\nDomain: Ambient free module of rank 2 over the principal ideal domain Integer Ring\nCodomain: Ambient free module of rank 2 over the principal ideal domain Integer Ring'
         """
-        rep = "Morphism defined by the matrix\n{0}".format(self.matrix())
+        rep = "Morphism defined by the matrix\n{}".format(self.matrix())
         if self._side == 'right':
             rep += " acting by multiplication on the left"
         return rep

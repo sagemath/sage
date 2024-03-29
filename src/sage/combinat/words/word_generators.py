@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Common words
 
@@ -8,7 +7,7 @@ AUTHORS:
 - Sébastien Labbé (2008-12-17): merged into sage
 - Arnaud Bergeron (2008-12-17): merged into sage
 - Amy Glen (2008-12-17): merged into sage
-- Sébastien Labbé (2009-12-19): Added S-adic words (:trac:`7543`)
+- Sébastien Labbé (2009-12-19): Added S-adic words (:issue:`7543`)
 
 USE:
 
@@ -59,7 +58,6 @@ from itertools import cycle, count
 from random import randint
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer_ring import ZZ
-from sage.rings.real_mpfr import RR
 from sage.rings.infinity import Infinity
 from sage.combinat.words.abstract_word import Word_class
 from sage.combinat.words.word import FiniteWord_list
@@ -68,6 +66,9 @@ from sage.combinat.words.words import FiniteWords, InfiniteWords
 from sage.combinat.words.morphism import WordMorphism
 from sage.arith.misc import gcd
 from sage.misc.decorators import rename_keyword
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('sage.rings.real_mpfr', 'RR')
 
 
 def _build_tab(sym, tab, W):
@@ -241,10 +242,10 @@ class LowerChristoffelWord(FiniteWord_list):
 
             sage: w0 = words.LowerChristoffelWord(4,7)
             sage: w1, w2 = w0.standard_factorization()
-            sage: (m0,m1,m2) = (w.markoff_number() for w in (w0,w1,w2))                 # optional - sage.modules
-            sage: (m0,m1,m2)                                                            # optional - sage.modules
+            sage: (m0,m1,m2) = (w.markoff_number() for w in (w0,w1,w2))                 # needs sage.modules
+            sage: (m0,m1,m2)                                                            # needs sage.modules
             (294685, 13, 7561)
-            sage: m0**2 + m1**2 + m2**2 == 3*m0*m1*m2                                   # optional - sage.modules
+            sage: m0**2 + m1**2 + m2**2 == 3*m0*m1*m2                                   # needs sage.modules
             True
         """
         from sage.matrix.constructor import matrix
@@ -312,7 +313,7 @@ class LowerChristoffelWord(FiniteWord_list):
         return self.__class__, (self.__p, self.__q, self.parent().alphabet())
 
 
-class WordGenerator():
+class WordGenerator:
     r"""
     Constructor of several famous words.
 
@@ -540,9 +541,9 @@ class WordGenerator():
 
         ::
 
-            sage: words.FibonacciWord([0,1], 'function')                                # optional - sage.symbolic
+            sage: words.FibonacciWord([0,1], 'function')                                # needs sage.symbolic
             word: 0100101001001010010100100101001001010010...
-            sage: words.FibonacciWord('ab', 'function')                                 # optional - sage.symbolic
+            sage: words.FibonacciWord('ab', 'function')                                 # needs sage.symbolic
             word: abaababaabaababaababaabaababaabaababaaba...
 
         TESTS::
@@ -640,7 +641,7 @@ class WordGenerator():
             sage: tm = words.FixedPointOfMorphism(mu,0); tm
             word: 0110100110010110100101100110100110010110...
             sage: TM = words.ThueMorseWord()
-            sage: tm[:1000] == TM[:1000]                                                # optional - sage.modules
+            sage: tm[:1000] == TM[:1000]                                                # needs sage.modules
             True
 
         ::
@@ -650,7 +651,7 @@ class WordGenerator():
             word: 0100101001001010010100100101001001010010...
             sage: F = words.FibonacciWord(); F
             word: 0100101001001010010100100101001001010010...
-            sage: f[:1000] == F[:1000]                                                  # optional - sage.modules
+            sage: f[:1000] == F[:1000]                                                  # needs sage.modules
             True
 
         ::
@@ -774,13 +775,13 @@ class WordGenerator():
 
         From real slope::
 
-            sage: words.CharacteristicSturmianWord(1/golden_ratio^2)                    # optional - sage.symbolic
+            sage: words.CharacteristicSturmianWord(1/golden_ratio^2)                    # needs sage.symbolic
             word: 0100101001001010010100100101001001010010...
-            sage: words.CharacteristicSturmianWord(4/5)
+            sage: words.CharacteristicSturmianWord(4/5)                                 # needs sage.rings.real_mpfr
             word: 11110
-            sage: words.CharacteristicSturmianWord(5/14)
+            sage: words.CharacteristicSturmianWord(5/14)                                # needs sage.rings.real_mpfr
             word: 01001001001001
-            sage: words.CharacteristicSturmianWord(pi - 3)                              # optional - sage.symbolic
+            sage: words.CharacteristicSturmianWord(pi - 3)                              # needs sage.symbolic
             word: 0000001000000100000010000001000000100000...
 
         From an iterator of the continued fraction expansion of a real::
@@ -789,21 +790,21 @@ class WordGenerator():
             ....:   yield 0
             ....:   yield 2
             ....:   while True: yield 1
-            sage: F = words.CharacteristicSturmianWord(cf()); F
+            sage: F = words.CharacteristicSturmianWord(cf()); F                         # needs sage.rings.real_mpfr
             word: 0100101001001010010100100101001001010010...
             sage: Fib = words.FibonacciWord(); Fib
             word: 0100101001001010010100100101001001010010...
-            sage: F[:10000] == Fib[:10000]
+            sage: F[:10000] == Fib[:10000]                                              # needs sage.rings.real_mpfr
             True
 
         The alphabet may be specified::
 
-            sage: words.CharacteristicSturmianWord(cf(), 'rs')
+            sage: words.CharacteristicSturmianWord(cf(), 'rs')                          # needs sage.rings.real_mpfr
             word: rsrrsrsrrsrrsrsrrsrsrrsrrsrsrrsrrsrsrrsr...
 
         The characteristic sturmian word of slope `(\sqrt{3}-1)/2`::
 
-            sage: words.CharacteristicSturmianWord((sqrt(3)-1)/2)                       # optional - sage.symbolic
+            sage: words.CharacteristicSturmianWord((sqrt(3)-1)/2)                       # needs sage.symbolic
             word: 0100100101001001001010010010010100100101...
 
         The same word defined from the continued fraction expansion of
@@ -846,17 +847,18 @@ class WordGenerator():
 
         ::
 
-            sage: words.CharacteristicSturmianWord(1/golden_ratio^2)                    # optional - sage.symbolic
+            sage: words.CharacteristicSturmianWord(1/golden_ratio^2)                    # needs sage.symbolic
             word: 0100101001001010010100100101001001010010...
-            sage: _.length()                                                            # optional - sage.symbolic
+            sage: _.length()                                                            # needs sage.symbolic
             +Infinity
 
         ::
 
-            sage: a = words.LowerMechanicalWord(1/pi)[1:]                               # optional - sage.symbolic
-            sage: b = words.UpperMechanicalWord(1/pi)[1:]                               # optional - sage.symbolic
-            sage: c = words.CharacteristicSturmianWord(1/pi)                            # optional - sage.symbolic
-            sage: n = 500; a[:n] == b[:n] == c[:n]                                      # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: a = words.LowerMechanicalWord(1/pi)[1:]
+            sage: b = words.UpperMechanicalWord(1/pi)[1:]
+            sage: c = words.CharacteristicSturmianWord(1/pi)
+            sage: n = 500; a[:n] == b[:n] == c[:n]
             True
 
         ::
@@ -927,19 +929,20 @@ class WordGenerator():
 
         EXAMPLES::
 
-            sage: continued_fraction(1/golden_ratio^2)[:8]                              # optional - sage.symbolic
+            sage: continued_fraction(1/golden_ratio^2)[:8]                              # needs sage.symbolic
             [0; 2, 1, 1, 1, 1, 2]
-            sage: cf = iter(_)                                                          # optional - sage.symbolic
-            sage: Word(words._CharacteristicSturmianWord_LetterIterator(cf))            # optional - sage.symbolic
+            sage: cf = iter(_)                                                          # needs sage.symbolic
+            sage: Word(words._CharacteristicSturmianWord_LetterIterator(cf))            # needs sage.symbolic
             word: 0100101001001010010100100101001010
 
         ::
 
-            sage: alpha = (sqrt(3)-1)/2                                                 # optional - sage.symbolic
-            sage: continued_fraction(alpha)[:10]                                        # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: alpha = (sqrt(3)-1)/2
+            sage: continued_fraction(alpha)[:10]
             [0; 2, 1, 2, 1, 2, 1, 2, 1, 2]
-            sage: cf = iter(_)                                                          # optional - sage.symbolic
-            sage: Word(words._CharacteristicSturmianWord_LetterIterator(cf))            # optional - sage.symbolic
+            sage: cf = iter(_)
+            sage: Word(words._CharacteristicSturmianWord_LetterIterator(cf))
             word: 0100100101001001001010010010010100100101...
         """
         try:
@@ -1133,23 +1136,23 @@ class WordGenerator():
 
         EXAMPLES::
 
-            sage: words.LowerMechanicalWord(1/golden_ratio^2)                           # optional - sage.symbolic
+            sage: words.LowerMechanicalWord(1/golden_ratio^2)                           # needs sage.symbolic
             word: 0010010100100101001010010010100100101001...
-            sage: words.LowerMechanicalWord(1/5)                                        # optional - sage.symbolic
+            sage: words.LowerMechanicalWord(1/5)                                        # needs sage.symbolic
             word: 0000100001000010000100001000010000100001...
-            sage: words.LowerMechanicalWord(1/pi)                                       # optional - sage.symbolic
+            sage: words.LowerMechanicalWord(1/pi)                                       # needs sage.symbolic
             word: 0001001001001001001001000100100100100100...
 
         TESTS::
 
-            sage: m = words.LowerMechanicalWord(1/golden_ratio^2)[1:]                   # optional - sage.symbolic
-            sage: s = words.CharacteristicSturmianWord(1/golden_ratio^2)                # optional - sage.symbolic
-            sage: m[:500] == s[:500]                                                    # optional - sage.symbolic
+            sage: m = words.LowerMechanicalWord(1/golden_ratio^2)[1:]                   # needs sage.symbolic
+            sage: s = words.CharacteristicSturmianWord(1/golden_ratio^2)                # needs sage.symbolic
+            sage: m[:500] == s[:500]                                                    # needs sage.symbolic
             True
 
-        Check that this returns a word in an alphabet (:trac:`10054`)::
+        Check that this returns a word in an alphabet (:issue:`10054`)::
 
-            sage: words.UpperMechanicalWord(1/golden_ratio^2).parent()                  # optional - sage.symbolic
+            sage: words.UpperMechanicalWord(1/golden_ratio^2).parent()                  # needs sage.symbolic
             Infinite words over {0, 1}
         """
         if not 0 <= alpha <= 1:
@@ -1193,23 +1196,23 @@ class WordGenerator():
 
         EXAMPLES::
 
-            sage: words.UpperMechanicalWord(1/golden_ratio^2)                           # optional - sage.symbolic
+            sage: words.UpperMechanicalWord(1/golden_ratio^2)                           # needs sage.symbolic
             word: 1010010100100101001010010010100100101001...
-            sage: words.UpperMechanicalWord(1/5)                                        # optional - sage.symbolic
+            sage: words.UpperMechanicalWord(1/5)                                        # needs sage.symbolic
             word: 1000010000100001000010000100001000010000...
-            sage: words.UpperMechanicalWord(1/pi)                                       # optional - sage.symbolic
+            sage: words.UpperMechanicalWord(1/pi)                                       # needs sage.symbolic
             word: 1001001001001001001001000100100100100100...
 
         TESTS::
 
-            sage: m = words.UpperMechanicalWord(1/golden_ratio^2)[1:]                   # optional - sage.symbolic
-            sage: s = words.CharacteristicSturmianWord(1/golden_ratio^2)                # optional - sage.symbolic
-            sage: m[:500] == s[:500]                                                    # optional - sage.symbolic
+            sage: m = words.UpperMechanicalWord(1/golden_ratio^2)[1:]                   # needs sage.symbolic
+            sage: s = words.CharacteristicSturmianWord(1/golden_ratio^2)                # needs sage.symbolic
+            sage: m[:500] == s[:500]                                                    # needs sage.symbolic
             True
 
-        Check that this returns a word in an alphabet (:trac:`10054`)::
+        Check that this returns a word in an alphabet (:issue:`10054`)::
 
-            sage: words.UpperMechanicalWord(1/golden_ratio^2).parent()                  # optional - sage.symbolic
+            sage: words.UpperMechanicalWord(1/golden_ratio^2).parent()                  # needs sage.symbolic
             Infinite words over {0, 1}
         """
         if not 0 <= alpha <= 1:
@@ -1499,13 +1502,13 @@ class WordGenerator():
         from sage.combinat.words.morphism import WordMorphism
         W = FiniteWords([0,1,2,3])
         bar = WordMorphism({0:0,1:3,3:1,2:2},codomain=W)
-        if n==0:
+        if n == 0:
             a = [] if q_0 is None else [q_0]
             return W(a)
-        elif n==1:
+        elif n == 1:
             b = [] if q_1 is None else [q_1]
             return W(b)
-        elif n%3 == 2:
+        elif n % 3 == 2:
             u = self._fibonacci_tile(n-1,q_0,q_1)
             v = self._fibonacci_tile(n-2,q_0,q_1)
             return u * v
@@ -1520,7 +1523,7 @@ class WordGenerator():
 
         EXAMPLES::
 
-            sage: for i in range(3): words.fibonacci_tile(i)                            # optional - sage.modules
+            sage: for i in range(3): words.fibonacci_tile(i)                            # needs sage.modules
             Path: 3210
             Path: 323030101212
             Path: 3230301030323212323032321210121232121010...
@@ -1538,7 +1541,7 @@ class WordGenerator():
 
         EXAMPLES::
 
-            sage: for i in range(4): words.dual_fibonacci_tile(i)                       # optional - sage.modules
+            sage: for i in range(4): words.dual_fibonacci_tile(i)                       # needs sage.modules
             Path: 3210
             Path: 32123032301030121012
             Path: 3212303230103230321232101232123032123210...
@@ -1649,10 +1652,9 @@ class WordGenerator():
         yield precedent_letter
         for (i,(m,a)) in enumerate(zip(sequence, letters)):
             if not precedent_letter == m(a)[0]:
-                raise ValueError("the hypothesis of the algorithm used is not satisfied; the image of the %s-th letter (=%s) under the %s-th morphism (=%s) should start with the %s-th letter (=%s)"%(i+1,a,i+1,m,i,precedent_letter))
+                raise ValueError("the hypothesis of the algorithm used is not satisfied; the image of the %s-th letter (=%s) under the %s-th morphism (=%s) should start with the %s-th letter (=%s)" % (i+1,a,i+1,m,i,precedent_letter))
             w = p(m(a)[1:])
-            for b in w:
-                yield b
+            yield from w
             p = p * m
             precedent_letter = a
 

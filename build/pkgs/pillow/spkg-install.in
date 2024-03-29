@@ -1,20 +1,13 @@
 cd src
 
-# Delete old version
-rm -rf \
-   "$SAGE_LOCAL"/lib/python*/site-packages/PIL \
-   "$SAGE_LOCAL"/lib/python*/site-packages/PIL-*.egg* \
-   "$SAGE_LOCAL"/lib/python*/site-packages/Pillow-*.egg*
-
 if [ "$CONDA_PREFIX" != "" ]; then
-    # Quoted quotes so that whitespace in CONDA_PREFIX works correctly.
-    # Below we run the command line through eval.
-    PILLOW_BUILD_EXT="$PILLOW_BUILD_EXT --disable-platform-guessing -I\"$CONDA_PREFIX/include\" -L\"$CONDA_PREFIX/lib\""
+    PILLOW_CONFIG_SETTINGS="$PILLOW_CONFIG_SETTINGS -C platform-guessing=disable"
 fi
 
-PILLOW_BUILD_EXT="--debug --disable-jpeg $PILLOW_BUILD_EXT"
+if [ "$SAGE_HAVE_LIBJPEG" != 1 ]; then
+    PILLOW_CONFIG_SETTINGS="-C jpeg=disable $PILLOW_CONFIG_SETTINGS"
+fi
 
-# Note: Avoid shared libraries inside egg files, Trac #19467
-eval sdh_pip_install \
-     $(eval sdh_prefix_args "--build-option" build_ext $PILLOW_BUILD_EXT) \
-     .
+PILLOW_CONFIG_SETTINGS="-C debug=true $PILLOW_CONFIG_SETTINGS"
+
+eval sdh_pip_install $PILLOW_CONFIG_SETTINGS .

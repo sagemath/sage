@@ -67,7 +67,7 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
         ....:     return x
         sage: g(2)
         4
-        sage: g(x)
+        sage: g(x)                                                                      # needs sage.symbolic
         x^2
         sage: g.__doc__
         'My little function'
@@ -77,7 +77,7 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
 
     Demonstrate that the argument description are retained from the
     decorated function through the special method (when left
-    unchanged) (see :trac:`9976`)::
+    unchanged) (see :issue:`9976`)::
 
         sage: def diff_arg_dec(f):
         ....:     @sage_wraps(f)
@@ -104,7 +104,7 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
         sage: I = P*[x,y]
         sage: sage_getfile(I.interreduced_basis)       # known bug
         '.../sage/rings/polynomial/multi_polynomial_ideal.py'
-        sage: sage_getsourcelines(I.interreduced_basis)
+        sage: sage_getsourcelines(I.interreduced_basis)                                 # needs sage.libs.singular
         (['    @handle_AA_and_QQbar\n',
           '    @singular_gb_standard_options\n',
           '    @libsingular_gb_standard_options\n',
@@ -124,7 +124,7 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
         True
 
     Demonstrate that sage_wraps works for non-function callables
-    (:trac:`9919`)::
+    (:issue:`9919`)::
 
         sage: def square_for_met(f):
         ....:   @sage_wraps(f)
@@ -142,7 +142,7 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
         sage: t.g.__doc__
         'My little method'
 
-    The bug described in :trac:`11734` is fixed::
+    The bug described in :issue:`11734` is fixed::
 
         sage: def square(f):
         ....:     @sage_wraps(f)
@@ -151,7 +151,7 @@ def sage_wraps(wrapped, assigned=WRAPPER_ASSIGNMENTS, updated=WRAPPER_UPDATES):
         ....:     return new_f
         sage: f = lambda x:x^2
         sage: g = square(f)
-        sage: g(3) # this line used to fail for some people if these command were manually entered on the sage prompt
+        sage: g(3)  # this line used to fail for some people if these command were manually entered on the sage prompt
         81
 
     """
@@ -192,13 +192,14 @@ class infix_operator():
         ....: def dot(a, b):
         ....:     '''Dot product.'''
         ....:     return a.dot_product(b)
-        sage: u = vector([1, 2, 3])
-        sage: v = vector([5, 4, 3])
-        sage: u *dot* v
+        sage: u = vector([1, 2, 3])                                                     # needs sage.modules
+        sage: v = vector([5, 4, 3])                                                     # needs sage.modules
+        sage: u *dot* v                                                                 # needs sage.modules
         22
 
     An infix element-wise addition operator::
 
+        sage: # needs sage.modules
         sage: @infix_operator('add')
         ....: def eadd(a, b):
         ....:   return a.parent([i + j for i, j in zip(a, b)])
@@ -214,7 +215,7 @@ class infix_operator():
         sage: @infix_operator('or')
         ....: def thendo(a, b):
         ....:     return b(a)
-        sage: x |thendo| cos |thendo| (lambda x: x^2)
+        sage: x |thendo| cos |thendo| (lambda x: x^2)                                   # needs sage.symbolic
         cos(x)^2
     """
 
@@ -389,7 +390,7 @@ class suboptions():
             [('arrow_options', {'size': 5})]
 
          Demonstrate that the introspected argument specification of the
-         wrapped function is updated (see :trac:`9976`)::
+         wrapped function is updated (see :issue:`9976`)::
 
             sage: from sage.misc.sageinspect import sage_getargspec
             sage: sage_getargspec(f)
@@ -453,7 +454,7 @@ class options():
             {'rgbcolor': (0, 0, 1)}
 
         Demonstrate that the introspected argument specification of the wrapped
-        function is updated (see :trac:`9976`)::
+        function is updated (see :issue:`9976`)::
 
             sage: from sage.misc.decorators import options
             sage: o = options(rgbcolor=(0,0,1))

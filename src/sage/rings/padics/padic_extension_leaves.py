@@ -20,11 +20,13 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
+from sage.misc.lazy_import import lazy_import
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.integer_mod_ring import Zmod
-from .pow_computer_ext import PowComputer_ext_maker
-from .pow_computer_flint import PowComputer_flint_maker
-from sage.libs.ntl.ntl_ZZ_pX import ntl_ZZ_pX
+
+lazy_import('sage.rings.padics.pow_computer_ext', 'PowComputer_ext_maker')
+lazy_import('sage.rings.padics.pow_computer_flint', 'PowComputer_flint_maker')
+lazy_import('sage.libs.ntl.ntl_ZZ_pX', 'ntl_ZZ_pX')
 
 from .unramified_extension_generic import UnramifiedExtensionGeneric
 from .eisenstein_extension_generic import EisensteinExtensionGeneric
@@ -47,13 +49,21 @@ from .generic_nodes import pAdicCappedRelativeRingGeneric, \
 #from padic_general_extension_capped_relative_element import pAdicGeneralExtensionCappedRelativeElement
 #from padic_general_extension_lazy_element import pAdicGeneralExtensionRelaxedElement
 
-from .padic_ZZ_pX_FM_element import pAdicZZpXFMElement
-from .padic_ZZ_pX_CR_element import pAdicZZpXCRElement
-from .padic_ZZ_pX_CA_element import pAdicZZpXCAElement
-from .qadic_flint_CR import qAdicCappedRelativeElement
-from .qadic_flint_CA import qAdicCappedAbsoluteElement
-from .qadic_flint_FM import qAdicFixedModElement
-from .qadic_flint_FP import qAdicFloatingPointElement
+try:
+    from .padic_ZZ_pX_FM_element import pAdicZZpXFMElement
+    from .padic_ZZ_pX_CR_element import pAdicZZpXCRElement
+    from .padic_ZZ_pX_CA_element import pAdicZZpXCAElement
+except ImportError:
+    pass
+
+try:
+    from .qadic_flint_CR import qAdicCappedRelativeElement
+    from .qadic_flint_CA import qAdicCappedAbsoluteElement
+    from .qadic_flint_FM import qAdicFixedModElement
+    from .qadic_flint_FP import qAdicFloatingPointElement
+except ImportError:
+    pass
+
 
 def _make_integral_poly(exact_modulus, p, prec):
     """
@@ -89,8 +99,8 @@ class UnramifiedExtensionRingCappedRelative(UnramifiedExtensionGeneric, pAdicCap
     """
     TESTS::
 
-        sage: R.<a> = ZqCR(27,1000)
-        sage: TestSuite(R).run(skip='_test_log',max_runs=4)
+        sage: R.<a> = ZqCR(27,1000)                                                     # needs sage.libs.ntl
+        sage: TestSuite(R).run(skip='_test_log',max_runs=4)                             # needs sage.libs.ntl
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
         r"""
@@ -116,10 +126,10 @@ class UnramifiedExtensionRingCappedRelative(UnramifiedExtensionGeneric, pAdicCap
 
         EXAMPLES::
 
-            sage: R.<a> = ZqCR(27,10000); R #indirect doctest
+            sage: R.<a> = ZqCR(27,10000); R  # indirect doctest                         # needs sage.libs.ntl
             3-adic Unramified Extension Ring in a defined by x^3 + 2*x + 1
 
-            sage: R.<a> = ZqCR(next_prime(10^30)^3, 3); R.prime()
+            sage: R.<a> = ZqCR(next_prime(10^30)^3, 3); R.prime()                       # needs sage.libs.ntl
             1000000000000000000000000000057
         """
         self._shift_seed = None
@@ -147,8 +157,8 @@ class UnramifiedExtensionFieldCappedRelative(UnramifiedExtensionGeneric, pAdicCa
     """
     TESTS::
 
-        sage: R.<a> = QqCR(27,1000)
-        sage: TestSuite(R).run(skip='_test_log',max_runs=4)
+        sage: R.<a> = QqCR(27,1000)                                                     # needs sage.libs.ntl
+        sage: TestSuite(R).run(skip='_test_log',max_runs=4)                             # needs sage.libs.ntl
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
         r"""
@@ -174,10 +184,10 @@ class UnramifiedExtensionFieldCappedRelative(UnramifiedExtensionGeneric, pAdicCa
 
         EXAMPLES::
 
-            sage: R.<a> = Qq(27,10000); R #indirect doctest
+            sage: R.<a> = Qq(27,10000); R  # indirect doctest                           # needs sage.libs.ntl
             3-adic Unramified Extension Field in a defined by x^3 + 2*x + 1
 
-            sage: R.<a> = Qq(next_prime(10^30)^3, 3); R.prime()
+            sage: R.<a> = Qq(next_prime(10^30)^3, 3); R.prime()                         # needs sage.libs.ntl
             1000000000000000000000000000057
         """
         # Currently doesn't support polynomials with non-integral coefficients
@@ -209,12 +219,12 @@ class UnramifiedExtensionFieldCappedRelative(UnramifiedExtensionGeneric, pAdicCa
 
         EXAMPLES::
 
-            sage: R.<a> = QqCR(27)
-            sage: R.coerce_map_from(ZqCR(27,names='a')) # indirect doctest
+            sage: R.<a> = QqCR(27)                                                      # needs sage.libs.ntl
+            sage: R.coerce_map_from(ZqCR(27,names='a'))  # indirect doctest             # needs sage.libs.ntl
             Ring morphism:
               From: 3-adic Unramified Extension Ring in a defined by x^3 + 2*x + 1
               To:   3-adic Unramified Extension Field in a defined by x^3 + 2*x + 1
-            sage: R.coerce_map_from(ZqCA(27,names='a')) # indirect doctest
+            sage: R.coerce_map_from(ZqCA(27,names='a'))  # indirect doctest             # needs sage.libs.ntl
             Ring morphism:
               From: 3-adic Unramified Extension Ring in a defined by x^3 + 2*x + 1
               To:   3-adic Unramified Extension Field in a defined by x^3 + 2*x + 1
@@ -233,8 +243,8 @@ class UnramifiedExtensionRingCappedAbsolute(UnramifiedExtensionGeneric, pAdicCap
     """
     TESTS::
 
-        sage: R.<a> = ZqCA(27,1000)
-        sage: TestSuite(R).run(skip='_test_log',max_runs=4)
+        sage: R.<a> = ZqCA(27,1000)                                                     # needs sage.libs.flint
+        sage: TestSuite(R).run(skip='_test_log',max_runs=4)                             # needs sage.libs.flint
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
         r"""
@@ -260,10 +270,10 @@ class UnramifiedExtensionRingCappedAbsolute(UnramifiedExtensionGeneric, pAdicCap
 
         EXAMPLES::
 
-            sage: R.<a> = ZqCA(27,10000); R #indirect doctest
+            sage: R.<a> = ZqCA(27,10000); R  # indirect doctest                         # needs sage.libs.flint
             3-adic Unramified Extension Ring in a defined by x^3 + 2*x + 1
 
-            sage: R.<a> = ZqCA(next_prime(10^30)^3, 3); R.prime()
+            sage: R.<a> = ZqCA(next_prime(10^30)^3, 3); R.prime()                       # needs sage.libs.flint
             1000000000000000000000000000057
         """
         # Currently doesn't support polynomials with non-integral coefficients
@@ -292,8 +302,8 @@ class UnramifiedExtensionRingFixedMod(UnramifiedExtensionGeneric, pAdicFixedModR
     """
     TESTS::
 
-        sage: R.<a> = ZqFM(27,1000)
-        sage: TestSuite(R).run(skip='_test_log',max_runs=4) # long time
+        sage: R.<a> = ZqFM(27,1000)                                                     # needs sage.libs.flint
+        sage: TestSuite(R).run(skip='_test_log',max_runs=4)     # long time             # needs sage.libs.flint
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
         """
@@ -318,10 +328,10 @@ class UnramifiedExtensionRingFixedMod(UnramifiedExtensionGeneric, pAdicFixedModR
 
         EXAMPLES::
 
-            sage: R.<a> = ZqFM(27,10000); R #indirect doctest
+            sage: R.<a> = ZqFM(27,10000); R  # indirect doctest                         # needs sage.libs.flint
             3-adic Unramified Extension Ring in a defined by x^3 + 2*x + 1
 
-            sage: R.<a> = ZqFM(next_prime(10^30)^3, 3); R.prime()
+            sage: R.<a> = ZqFM(next_prime(10^30)^3, 3); R.prime()                       # needs sage.libs.flint
             1000000000000000000000000000057
         """
         self._shift_seed = None
@@ -354,7 +364,7 @@ class UnramifiedExtensionRingFloatingPoint(UnramifiedExtensionGeneric, pAdicFloa
     """
     TESTS::
 
-        sage: R.<a> = ZqFP(27,10000); R == loads(dumps(R))
+        sage: R.<a> = ZqFP(27,10000); R == loads(dumps(R))                              # needs sage.libs.flint
         True
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
@@ -380,16 +390,16 @@ class UnramifiedExtensionRingFloatingPoint(UnramifiedExtensionGeneric, pAdicFloa
 
         EXAMPLES::
 
-            sage: R.<a> = ZqFP(27,10000); R #indirect doctest
+            sage: R.<a> = ZqFP(27,10000); R  # indirect doctest                         # needs sage.libs.flint
             3-adic Unramified Extension Ring in a defined by x^3 + 2*x + 1
-            sage: R.<a> = ZqFP(next_prime(10^30)^3, 3); R.prime()
+            sage: R.<a> = ZqFP(next_prime(10^30)^3, 3); R.prime()                       # needs sage.libs.flint
             1000000000000000000000000000057
 
         TESTS:
 
-        Check that :trac:`23228` has been resolved::
+        Check that :issue:`23228` has been resolved::
 
-            sage: a % R.prime()
+            sage: a % R.prime()                                                         # needs sage.libs.flint
             a
 
         """
@@ -411,7 +421,7 @@ class UnramifiedExtensionFieldFloatingPoint(UnramifiedExtensionGeneric, pAdicFlo
     """
     TESTS::
 
-        sage: R.<a> = QqFP(27,10000); R == loads(dumps(R))
+        sage: R.<a> = QqFP(27,10000); R == loads(dumps(R))                              # needs sage.libs.flint
         True
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='FLINT'):
@@ -437,9 +447,9 @@ class UnramifiedExtensionFieldFloatingPoint(UnramifiedExtensionGeneric, pAdicFlo
 
         EXAMPLES::
 
-            sage: R.<a> = QqFP(27,10000); R #indirect doctest
+            sage: R.<a> = QqFP(27,10000); R  # indirect doctest                         # needs sage.libs.flint
             3-adic Unramified Extension Field in a defined by x^3 + 2*x + 1
-            sage: R.<a> = Qq(next_prime(10^30)^3, 3); R.prime()
+            sage: R.<a> = Qq(next_prime(10^30)^3, 3); R.prime()                         # needs sage.libs.ntl
             1000000000000000000000000000057
         """
         # Currently doesn't support polynomials with non-integral coefficients
@@ -463,8 +473,8 @@ class UnramifiedExtensionFieldFloatingPoint(UnramifiedExtensionGeneric, pAdicFlo
 
         EXAMPLES::
 
-            sage: R.<a> = QqFP(27)
-            sage: R.coerce_map_from(ZqFP(27,names='a')) # indirect doctest
+            sage: R.<a> = QqFP(27)                                                      # needs sage.libs.flint
+            sage: R.coerce_map_from(ZqFP(27,names='a'))  # indirect doctest             # needs sage.libs.flint
             Ring morphism:
               From: 3-adic Unramified Extension Ring in a defined by x^3 + 2*x + 1
               To:   3-adic Unramified Extension Field in a defined by x^3 + 2*x + 1
@@ -473,15 +483,15 @@ class UnramifiedExtensionFieldFloatingPoint(UnramifiedExtensionGeneric, pAdicFlo
             from sage.rings.padics.qadic_flint_FP import pAdicCoercion_FP_frac_field
             return pAdicCoercion_FP_frac_field(R, self)
 
-        return super(UnramifiedExtensionFieldFloatingPoint, self)._coerce_map_from_(R)
+        return super()._coerce_map_from_(R)
 
 class EisensteinExtensionRingCappedRelative(EisensteinExtensionGeneric, pAdicCappedRelativeRingGeneric):
     """
     TESTS::
 
         sage: R = Zp(3, 1000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
-        sage: W.<w> = R.ext(f)
-        sage: TestSuite(R).run(skip='_test_log',max_runs=4)
+        sage: W.<w> = R.ext(f)                                                          # needs sage.libs.ntl sage.rings.padics
+        sage: TestSuite(R).run(skip='_test_log',max_runs=4)                             # needs sage.geometry.polyhedron
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='NTL'):
         r"""
@@ -507,15 +517,15 @@ class EisensteinExtensionRingCappedRelative(EisensteinExtensionGeneric, pAdicCap
         EXAMPLES::
 
             sage: R = Zp(3, 10000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
-            sage: W.<w> = R.ext(f); W #indirect doctest
+            sage: W.<w> = R.ext(f); W  # indirect doctest                               # needs sage.libs.ntl
             3-adic Eisenstein Extension Ring in w defined by x^3 + 9*x - 3
-            sage: W.precision_cap()
+            sage: W.precision_cap()                                                     # needs sage.libs.ntl
             30000
 
-            sage: R.<p> = Zp(next_prime(10^30), 3, print_pos=False); S.<x> = ZZ[]; f = x^3 + p^2*x - p
-            sage: W.<w> = R.ext(f); W.prime()
+            sage: R.<p> = Zp(next_prime(10^30), 3, print_pos=False); S.<x> = ZZ[]; f = x^3 + p^2*x - p                  # needs sage.libs.ntl
+            sage: W.<w> = R.ext(f); W.prime()                                           # needs sage.libs.ntl
             1000000000000000000000000000057
-            sage: W.precision_cap()
+            sage: W.precision_cap()                                                     # needs sage.libs.ntl
             9
         """
         unram_prec = (prec + poly.degree() - 1) // poly.degree()
@@ -535,8 +545,8 @@ class EisensteinExtensionFieldCappedRelative(EisensteinExtensionGeneric, pAdicCa
     TESTS::
 
         sage: R = Qp(3, 1000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
-        sage: W.<w> = R.ext(f)
-        sage: TestSuite(R).run(skip='_test_log',max_runs=4)
+        sage: W.<w> = R.ext(f)                                                          # needs sage.libs.ntl
+        sage: TestSuite(R).run(skip='_test_log',max_runs=4)                             # needs sage.geometry.polyhedron
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='NTL'):
         r"""
@@ -562,15 +572,15 @@ class EisensteinExtensionFieldCappedRelative(EisensteinExtensionGeneric, pAdicCa
         EXAMPLES::
 
             sage: R = Qp(3, 10000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
-            sage: W.<w> = R.ext(f); W #indirect doctest
+            sage: W.<w> = R.ext(f); W  # indirect doctest                               # needs sage.libs.ntl
             3-adic Eisenstein Extension Field in w defined by x^3 + 9*x - 3
-            sage: W.precision_cap()
+            sage: W.precision_cap()                                                     # needs sage.libs.ntl
             30000
 
-            sage: R.<p> = Qp(next_prime(10^30), 3, print_pos=False); S.<x> = ZZ[]; f = x^3 + p^2*x - p
-            sage: W.<w> = R.ext(f); W.prime()
+            sage: R.<p> = Qp(next_prime(10^30), 3, print_pos=False); S.<x> = ZZ[]; f = x^3 + p^2*x - p                  # needs sage.libs.ntl
+            sage: W.<w> = R.ext(f); W.prime()                                           # needs sage.libs.ntl
             1000000000000000000000000000057
-            sage: W.precision_cap()
+            sage: W.precision_cap()                                                     # needs sage.libs.ntl
             9
         """
         # Currently doesn't support polynomials with non-integral coefficients
@@ -591,8 +601,8 @@ class EisensteinExtensionRingCappedAbsolute(EisensteinExtensionGeneric, pAdicCap
     TESTS::
 
         sage: R = ZpCA(3, 1000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
-        sage: W.<w> = R.ext(f)
-        sage: TestSuite(R).run(skip='_test_log',max_runs=4)
+        sage: W.<w> = R.ext(f)                                                          # needs sage.libs.ntl sage.rings.padics
+        sage: TestSuite(R).run(skip='_test_log',max_runs=4)                             # needs sage.geometry.polyhedron
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation):
         r"""
@@ -618,15 +628,15 @@ class EisensteinExtensionRingCappedAbsolute(EisensteinExtensionGeneric, pAdicCap
         EXAMPLES::
 
             sage: R = ZpCA(3, 10000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
-            sage: W.<w> = R.ext(f); W
+            sage: W.<w> = R.ext(f); W                                                   # needs sage.libs.ntl
             3-adic Eisenstein Extension Ring in w defined by x^3 + 9*x - 3
-            sage: W.precision_cap()
+            sage: W.precision_cap()                                                     # needs sage.libs.ntl
             30000
 
             sage: R.<p> = ZpCA(next_prime(10^30), 3, print_pos=False); S.<x> = ZZ[]; f = x^3 + p^2*x - p
-            sage: W.<w> = R.ext(f); W.prime()
+            sage: W.<w> = R.ext(f); W.prime()                                           # needs sage.libs.ntl
             1000000000000000000000000000057
-            sage: W.precision_cap()
+            sage: W.precision_cap()                                                     # needs sage.libs.ntl
             9
         """
         unram_prec = (prec + poly.degree() - 1) // poly.degree()
@@ -646,8 +656,8 @@ class EisensteinExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFixedModR
     TESTS::
 
         sage: R = ZpFM(3, 1000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
-        sage: W.<w> = R.ext(f)
-        sage: TestSuite(R).run(skip='_test_log',max_runs=4)
+        sage: W.<w> = R.ext(f)                                                          # needs sage.libs.ntl sage.rings.padics
+        sage: TestSuite(R).run(skip='_test_log',max_runs=4)                             # needs sage.geometry.polyhedron
     """
     def __init__(self, exact_modulus, poly, prec, print_mode, shift_seed, names, implementation='NTL'):
         r"""
@@ -673,15 +683,15 @@ class EisensteinExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFixedModR
         EXAMPLES::
 
             sage: R = ZpFM(3, 10000, print_pos=False); S.<x> = ZZ[]; f = x^3 + 9*x - 3
-            sage: W.<w> = R.ext(f); W #indirect doctest
+            sage: W.<w> = R.ext(f); W  # indirect doctest                               # needs sage.libs.ntl
             3-adic Eisenstein Extension Ring in w defined by x^3 + 9*x - 3
-            sage: W.precision_cap()
+            sage: W.precision_cap()                                                     # needs sage.libs.ntl
             30000
 
             sage: R.<p> = ZpFM(next_prime(10^30), 3, print_pos=False); S.<x> = ZZ[]; f = x^3 + p^2*x - p
-            sage: W.<w> = R.ext(f); W.prime()
+            sage: W.<w> = R.ext(f); W.prime()                                           # needs sage.libs.ntl
             1000000000000000000000000000057
-            sage: W.precision_cap()
+            sage: W.precision_cap()                                                     # needs sage.libs.ntl
             9
         """
         unram_prec = (prec + poly.degree() - 1) // poly.degree()
@@ -702,8 +712,8 @@ class EisensteinExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFixedModR
         EXAMPLES::
 
             sage: S.<x> = ZZ[]
-            sage: R.<a> = ZpFM(5).extension(x^2 - 5)
-            sage: R.fraction_field()
+            sage: R.<a> = ZpFM(5).extension(x^2 - 5)                                    # needs sage.libs.ntl
+            sage: R.fraction_field()                                                    # needs sage.libs.ntl
             Traceback (most recent call last):
             ...
             TypeError: This implementation of the p-adic ring

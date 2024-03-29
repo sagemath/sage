@@ -4,8 +4,8 @@ from cysignals.signals cimport sig_on, sig_off
 from cython.operator cimport dereference as deref
 from cython.operator cimport preincrement as inc
 
-from ..eclib cimport svec, mat, smat
-from .mat cimport MatrixFactory
+from sage.libs.eclib cimport svec, mat, smat
+from sage.libs.eclib.mat cimport MatrixFactory
 
 from sage.matrix.matrix_space import MatrixSpace
 from sage.rings.integer_ring import ZZ
@@ -259,7 +259,7 @@ cdef class ModularSymbols:
             sage: print(T == U.change_ring(GF(7)))
             True
 
-        This concerns an issue reported on :trac:`21303`::
+        This concerns an issue reported on :issue:`21303`::
 
             sage: C = CremonaModularSymbols(45, cuspidal=True,sign=-1)
             sage: T2a = C.hecke_matrix(2).sage_matrix_over_ZZ()

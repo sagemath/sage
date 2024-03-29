@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.combinat sage.modules
 """
 Symmetric Functions in Non-Commuting Variables
 
@@ -102,6 +103,13 @@ def nesting(la, nu):
         sage: nesting(set(mu).difference(nu), nu)
         1
 
+        sage: A = SetPartition([[1], [2,5], [3,4]])
+        sage: B = SetPartition([[1,3,4], [2,5]])
+        sage: nesting(A, B)
+        1
+        sage: nesting(B, A)
+        1
+
     ::
 
         sage: lst = list(SetPartitions(4))
@@ -134,11 +142,13 @@ def nesting(la, nu):
     nst = 0
     for p in la:
         p = sorted(p)
-        for i in range(len(p)-1):
-            for a in arcs:
-                if a[0] >= p[i]:
+        for a in arcs:
+            if p[-1] < a[0]:
+                continue
+            for i in range(len(p)-1):
+                if a[1] <= p[i+1]:
                     break
-                if p[i+1] < a[1]:
+                if a[0] < p[i]:
                     nst += 1
     return nst
 
@@ -293,10 +303,10 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
             sage: NCSym2 = SymmetricFunctionsNonCommutingVariables(Integers(23))
             sage: TestSuite(SymmetricFunctionsNonCommutingVariables(QQ)).run()
         """
-        # change the line below to assert(R in Rings()) once MRO issues from #15536, #15475 are resolved
-        assert(R in Fields() or R in Rings()) # side effect of this statement assures MRO exists for R
-        self._base = R # Won't be needed once CategoryObject won't override base_ring
-        category = GradedHopfAlgebras(R)  # TODO: .Cocommutative()
+        # change the line below to assert R in Rings() once MRO issues from #15536, #15475 are resolved
+        assert R in Fields() or R in Rings()  # side effect of this statement assures MRO exists for R
+        self._base = R  # Won't be needed once CategoryObject won't override base_ring
+        category = GradedHopfAlgebras(R).Cocommutative()
         Parent.__init__(self, category=category.WithRealizations())
 
     def _repr_(self):
@@ -361,9 +371,13 @@ class SymmetricFunctionsNonCommutingVariables(UniqueRepresentation, Parent):
                 sage: NCSym = SymmetricFunctionsNonCommutingVariables(QQ)
                 sage: TestSuite(NCSym.m()).run()
             """
-            CombinatorialFreeModule.__init__(self, NCSym.base_ring(), SetPartitions(),
+            R = NCSym.base_ring()
+            category = GradedHopfAlgebras(R).Cocommutative()
+            category &= NCSymBases(NCSym)
+
+            CombinatorialFreeModule.__init__(self, R, SetPartitions(),
                                              prefix='m', bracket=False,
-                                             category=NCSymBases(NCSym))
+                                             category=category)
 
         @cached_method
         def _m_to_p_on_basis(self, A):

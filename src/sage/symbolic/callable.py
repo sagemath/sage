@@ -33,7 +33,7 @@ When you do arithmetic with::
 
 TESTS:
 
-The arguments in the definition must be symbolic variables (:trac:`10747`)::
+The arguments in the definition must be symbolic variables (:issue:`10747`)::
 
     sage: f(1)=2
     Traceback (most recent call last):
@@ -69,63 +69,6 @@ from sage.structure.factory import UniqueFactory
 ######################################################################
 #  Callable functions
 ######################################################################
-def is_CallableSymbolicExpressionRing(x):
-    """
-    Return ``True`` if ``x`` is a callable symbolic expression ring.
-
-    INPUT:
-
-    -  ``x`` - object
-
-    OUTPUT: bool
-
-    EXAMPLES::
-
-        sage: from sage.symbolic.callable import is_CallableSymbolicExpressionRing
-        sage: is_CallableSymbolicExpressionRing(QQ)
-        doctest:warning...
-        DeprecationWarning: is_CallableSymbolicExpressionRing is deprecated;
-        use isinstance(..., sage.rings.abc.CallableSymbolicExpressionRing instead
-        See https://github.com/sagemath/sage/issues/32665 for details.
-        False
-        sage: var('x,y,z')
-        (x, y, z)
-        sage: is_CallableSymbolicExpressionRing(CallableSymbolicExpressionRing((x,y,z)))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32665, 'is_CallableSymbolicExpressionRing is deprecated; use isinstance(..., sage.rings.abc.CallableSymbolicExpressionRing instead')
-    return isinstance(x, CallableSymbolicExpressionRing_class)
-
-
-def is_CallableSymbolicExpression(x):
-    r"""
-    Return ``True`` if ``x`` is a callable symbolic expression.
-
-    EXAMPLES::
-
-        sage: from sage.symbolic.callable import is_CallableSymbolicExpression
-        sage: var('a x y z')
-        (a, x, y, z)
-        sage: f(x,y) = a + 2*x + 3*y + z
-        sage: is_CallableSymbolicExpression(f)
-        doctest:warning...
-        DeprecationWarning: is_CallableSymbolicExpression is deprecated;
-        use isinstance(..., Expression) and ....is_callable() instead
-        See https://github.com/sagemath/sage/issues/34215 for details.
-        True
-        sage: is_CallableSymbolicExpression(a+2*x)
-        False
-        sage: def foo(n): return n^2
-        ...
-        sage: is_CallableSymbolicExpression(foo)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34215, 'is_CallableSymbolicExpression is deprecated; use isinstance(..., Expression) and ....is_callable() instead')
-    from sage.structure.element import Expression
-    return isinstance(x, Expression) and isinstance(x.parent(), CallableSymbolicExpressionRing_class)
-
 
 class CallableSymbolicExpressionFunctor(ConstructionFunctor):
     def __init__(self, arguments):
@@ -360,7 +303,7 @@ class CallableSymbolicExpressionRing_class(SymbolicRing, sage.rings.abc.Callable
             sage: R._repr_()
             'Callable function ring with arguments (x, y, theta)'
 
-        We verify that :trac:`12298` has been fixed::
+        We verify that :issue:`12298` has been fixed::
 
             sage: S = CallableSymbolicExpressionRing([var('z')])
             sage: S._repr_()

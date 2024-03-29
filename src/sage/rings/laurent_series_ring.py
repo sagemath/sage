@@ -6,11 +6,11 @@ EXAMPLES::
     sage: R = LaurentSeriesRing(QQ, "x")
     sage: R.base_ring()
     Rational Field
-    sage: S = LaurentSeriesRing(GF(17)['x'], 'y')                                       # optional - sage.rings.finite_rings
-    sage: S                                                                             # optional - sage.rings.finite_rings
+    sage: S = LaurentSeriesRing(GF(17)['x'], 'y')
+    sage: S
     Laurent Series Ring in y over
      Univariate Polynomial Ring in x over Finite Field of size 17
-    sage: S.base_ring()                                                                 # optional - sage.rings.finite_rings
+    sage: S.base_ring()
     Univariate Polynomial Ring in x over Finite Field of size 17
 
 .. SEEALSO::
@@ -32,20 +32,17 @@ EXAMPLES::
 # ****************************************************************************
 
 
-from sage.categories.rings import Rings
-from sage.rings.infinity import infinity
 from sage.categories.algebras import Algebras
-from sage.categories.integral_domains import IntegralDomains
-from sage.categories.fields import Fields
 from sage.categories.complete_discrete_valuation import CompleteDiscreteValuationFields
-
-from .laurent_series_ring_element import LaurentSeries
-from .ring import CommutativeRing
-
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.categories.fields import Fields
+from sage.categories.integral_domains import IntegralDomains
+from sage.categories.rings import Rings
 from sage.misc.cachefunc import cached_method
-
+from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
+from sage.rings.laurent_series_ring_element import LaurentSeries
+from sage.rings.ring import CommutativeRing
+from sage.structure.unique_representation import UniqueRepresentation
 
 try:
     from sage.libs.pari.all import pari_gen
@@ -89,7 +86,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
 
         sage: Frac(QQ[['x']])
         Laurent Series Ring in x over Rational Field
-        sage: Frac(GF(5)['y'])                                                          # optional - sage.rings.finite_rings
+        sage: Frac(GF(5)['y'])
         Fraction Field of Univariate Polynomial Ring in y over Finite Field of size 5
 
     When the base ring is a domain, the fraction field is the
@@ -101,23 +98,23 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
     Laurent series rings are determined by their variable and the base
     ring, and are globally unique::
 
-        sage: K = Qp(5, prec=5)                                                         # optional - sage.rings.padics
-        sage: L = Qp(5, prec=200)                                                       # optional - sage.rings.padics
-        sage: R.<x> = LaurentSeriesRing(K)                                              # optional - sage.rings.padics
-        sage: S.<y> = LaurentSeriesRing(L)                                              # optional - sage.rings.padics
-        sage: R is S                                                                    # optional - sage.rings.padics
+        sage: # needs sage.rings.padics
+        sage: K = Qp(5, prec=5)
+        sage: L = Qp(5, prec=200)
+        sage: R.<x> = LaurentSeriesRing(K)
+        sage: S.<y> = LaurentSeriesRing(L)
+        sage: R is S
         False
-        sage: T.<y> = LaurentSeriesRing(Qp(5, prec=200))                                # optional - sage.rings.padics
-        sage: S is T                                                                    # optional - sage.rings.padics
+        sage: T.<y> = LaurentSeriesRing(Qp(5, prec=200))
+        sage: S is T
         True
-        sage: W.<y> = LaurentSeriesRing(Qp(5, prec=199))                                # optional - sage.rings.padics
-        sage: W is T                                                                    # optional - sage.rings.padics
+        sage: W.<y> = LaurentSeriesRing(Qp(5, prec=199))
+        sage: W is T
         False
 
-        sage: K = LaurentSeriesRing(CC, 'q')
-        sage: K
+        sage: K = LaurentSeriesRing(CC, 'q'); K                                         # needs sage.rings.real_mpfr
         Laurent Series Ring in q over Complex Field with 53 bits of precision
-        sage: loads(K.dumps()) == K
+        sage: loads(K.dumps()) == K                                                     # needs sage.rings.real_mpfr
         True
         sage: P = QQ[['x']]
         sage: F = Frac(P)
@@ -127,10 +124,10 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
     a field equipped with a discrete valuation for which it is complete.
     The appropriate (sub)category is automatically set in this case::
 
-        sage: k = GF(11)                                                                # optional - sage.rings.finite_rings
-        sage: R.<x> = k[[]]                                                             # optional - sage.rings.finite_rings
-        sage: F = Frac(R)                                                               # optional - sage.rings.finite_rings
-        sage: F.category()                                                              # optional - sage.rings.finite_rings
+        sage: k = GF(11)
+        sage: R.<x> = k[[]]
+        sage: F = Frac(R)
+        sage: F.category()
         Join of
          Category of complete discrete valuation fields and
          Category of commutative algebras over (finite enumerated fields and
@@ -141,7 +138,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
     TESTS:
 
     Check if changing global series precision does it right (and
-    that :trac:`17955` is fixed)::
+    that :issue:`17955` is fixed)::
 
         sage: set_series_precision(3)
         sage: R.<x> = LaurentSeriesRing(ZZ)
@@ -153,11 +150,12 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         1 + 2*x + 4*x^2 + 8*x^3 + 16*x^4 + O(x^5)
         sage: set_series_precision(20)
 
-    Check categories (:trac:`24420`)::
+    Check categories (:issue:`24420`)::
 
         sage: LaurentSeriesRing(ZZ, 'x').category()
         Category of infinite commutative no zero divisors algebras
-         over (euclidean domains and infinite enumerated sets and metric spaces)
+         over (Dedekind domains and euclidean domains
+         and infinite enumerated sets and metric spaces)
         sage: LaurentSeriesRing(QQ, 'x').category()
         Join of Category of complete discrete valuation fields and Category of commutative algebras
          over (number fields and quotient fields and metric spaces) and Category of infinite sets
@@ -165,7 +163,7 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         Category of infinite commutative algebras
          over (finite commutative rings and subquotients of monoids and quotients of semigroups and finite enumerated sets)
 
-    Check coercions (:trac:`24431`)::
+    Check coercions (:issue:`24431`)::
 
         sage: pts = [LaurentSeriesRing,
         ....:        PolynomialRing,
@@ -228,7 +226,8 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: RZZ = LaurentSeriesRing(ZZ, 't')
             sage: RZZ.category()
             Category of infinite commutative no zero divisors algebras
-             over (euclidean domains and infinite enumerated sets and metric spaces)
+             over (Dedekind domains and euclidean domains
+             and infinite enumerated sets and metric spaces)
             sage: TestSuite(RZZ).run()
 
             sage: R1 = LaurentSeriesRing(Zmod(1), 't')
@@ -315,8 +314,8 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             ...
             ValueError: must be an integral domain
         """
-        from sage.categories.integral_domains import IntegralDomains
         from sage.categories.fields import Fields
+        from sage.categories.integral_domains import IntegralDomains
         if self in Fields():
             return self
         elif self in IntegralDomains():
@@ -405,49 +404,52 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
 
         EXAMPLES::
 
-            sage: R.<u> = LaurentSeriesRing(Qp(5, 10))                                  # optional - sage.rings.padics
-            sage: S.<t> = LaurentSeriesRing(RationalField())                            # optional - sage.rings.padics
-            sage: R(t + t^2 + O(t^3))                                                   # optional - sage.rings.padics
+            sage: # needs sage.rings.padics
+            sage: R.<u> = LaurentSeriesRing(Qp(5, 10))
+            sage: S.<t> = LaurentSeriesRing(RationalField())
+            sage: R(t + t^2 + O(t^3))
             (1 + O(5^10))*u + (1 + O(5^10))*u^2 + O(u^3)
-            sage: R(t + t^2 + O(t^3), prec=2)                                           # optional - sage.rings.padics
+            sage: R(t + t^2 + O(t^3), prec=2)
             (1 + O(5^10))*u + O(u^2)
 
         Coercing an element into its own parent produces that element
         again, unless a different ``n`` or ``prec`` is given::
 
-            sage: u is R(u)                                                             # optional - sage.rings.padics
+            sage: u is R(u)                                                             # needs sage.rings.padics
             True
-            sage: R(u, n=3, prec=7)                                                     # optional - sage.rings.padics
+            sage: R(u, n=3, prec=7)                                                     # needs sage.rings.padics
             (1 + O(5^10))*u^4 + O(u^7)
 
         Rational functions are accepted::
 
-            sage: I = sqrt(-1)                                                          # optional - sage.rings.number_field sage.symbolic
-            sage: K.<I> = QQ[I]                                                         # optional - sage.rings.number_field sage.symbolic
-            sage: P.<t> = PolynomialRing(K)                                             # optional - sage.rings.number_field sage.symbolic
-            sage: L.<u> = LaurentSeriesRing(QQ[I])                                      # optional - sage.rings.number_field sage.symbolic
-            sage: L((t*I)/(t^3+I*2*t))                                                  # optional - sage.rings.number_field sage.symbolic
+            sage: # needs sage.rings.number_field sage.symbolic
+            sage: I = sqrt(-1)
+            sage: K.<I> = QQ[I]
+            sage: P.<t> = PolynomialRing(K)
+            sage: L.<u> = LaurentSeriesRing(QQ[I])
+            sage: L((t*I)/(t^3+I*2*t))
             1/2 + 1/4*I*u^2 - 1/8*u^4 - 1/16*I*u^6 + 1/32*u^8 +
             1/64*I*u^10 - 1/128*u^12 - 1/256*I*u^14 + 1/512*u^16 +
             1/1024*I*u^18 + O(u^20)
 
         ::
 
-            sage: L(t*I) / L(t^3+I*2*t)                                                 # optional - sage.rings.number_field
+            sage: L(t*I) / L(t^3+I*2*t)                                                 # needs sage.rings.number_field sage.symbolic
             1/2 + 1/4*I*u^2 - 1/8*u^4 - 1/16*I*u^6 + 1/32*u^8 +
             1/64*I*u^10 - 1/128*u^12 - 1/256*I*u^14 + 1/512*u^16 +
             1/1024*I*u^18 + O(u^20)
 
         TESTS:
 
-        Check that :trac:`28993` is fixed::
+        Check that :issue:`28993` is fixed::
 
-            sage: from sage.modular.etaproducts import qexp_eta
-            sage: qexp_eta(S, prec=30)
+            sage: from sage.modular.etaproducts import qexp_eta                         # needs sage.modular
+            sage: S.<t> = LaurentSeriesRing(RationalField())
+            sage: qexp_eta(S, prec=30)                                                  # needs sage.modular
             1 - t - t^2 + t^5 + t^7 - t^12 - t^15 + t^22 + t^26 + O(t^30)
 
         When converting from `R((z))` to `R((z))((w))`, the variable
-        `z` is sent to `z` rather than to `w` (see :trac:`7085`)::
+        `z` is sent to `z` rather than to `w` (see :issue:`7085`)::
 
             sage: A.<z> = LaurentSeriesRing(QQ)
             sage: B.<w> = LaurentSeriesRing(A)
@@ -456,37 +458,38 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: z/w
             z*w^-1
 
-        Various conversions from PARI (see also :trac:`2508`)::
+        Various conversions from PARI (see also :issue:`2508`)::
 
+            sage: # needs sage.libs.pari
             sage: L.<q> = LaurentSeriesRing(QQ, default_prec=10)
-            sage: L(pari('1/x'))                                                                    # optional - sage.libs.pari
+            sage: L(pari('1/x'))
             q^-1
-            sage: L(pari('polchebyshev(5)'))                                                        # optional - sage.libs.pari
+            sage: L(pari('polchebyshev(5)'))
             5*q - 20*q^3 + 16*q^5
-            sage: L(pari('polchebyshev(5) - 1/x^4'))                                                # optional - sage.libs.pari
+            sage: L(pari('polchebyshev(5) - 1/x^4'))
             -q^-4 + 5*q - 20*q^3 + 16*q^5
-            sage: L(pari('1/polchebyshev(5)'))                                                      # optional - sage.libs.pari
+            sage: L(pari('1/polchebyshev(5)'))
             1/5*q^-1 + 4/5*q + 64/25*q^3 + 192/25*q^5 + 2816/125*q^7 + O(q^9)
-            sage: L(pari('polchebyshev(5) + O(x^40)'))                                              # optional - sage.libs.pari
+            sage: L(pari('polchebyshev(5) + O(x^40)'))
             5*q - 20*q^3 + 16*q^5 + O(q^40)
-            sage: L(pari('polchebyshev(5) - 1/x^4 + O(x^40)'))                                      # optional - sage.libs.pari
+            sage: L(pari('polchebyshev(5) - 1/x^4 + O(x^40)'))
             -q^-4 + 5*q - 20*q^3 + 16*q^5 + O(q^40)
-            sage: L(pari('1/polchebyshev(5) + O(x^10)'))                                            # optional - sage.libs.pari
+            sage: L(pari('1/polchebyshev(5) + O(x^10)'))
             1/5*q^-1 + 4/5*q + 64/25*q^3 + 192/25*q^5 + 2816/125*q^7 + 8192/125*q^9 + O(q^10)
-            sage: L(pari('1/polchebyshev(5) + O(x^10)'), -10)  # Multiply by q^-10                  # optional - sage.libs.pari
+            sage: L(pari('1/polchebyshev(5) + O(x^10)'), -10)  # Multiply by q^-10
             1/5*q^-11 + 4/5*q^-9 + 64/25*q^-7 + 192/25*q^-5 + 2816/125*q^-3 + 8192/125*q^-1 + O(1)
-            sage: L(pari('O(x^-10)'))                                                               # optional - sage.libs.pari
+            sage: L(pari('O(x^-10)'))
             O(q^-10)
 
-        Check that :trac:`30073` is fixed::
+        Check that :issue:`30073` is fixed::
 
             sage: P.<x> = LaurentSeriesRing(QQ)
             sage: P({-3: 1})
             x^-3
         """
         from sage.rings.fraction_field_element import is_FractionFieldElement
-        from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.rings.polynomial.multi_polynomial import MPolynomial
+        from sage.rings.polynomial.polynomial_element import Polynomial
         from sage.structure.element import parent
 
         P = parent(x)
@@ -540,8 +543,8 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
 
         EXAMPLES::
 
-            sage: S.<s> = LaurentSeriesRing(GF(3))                                      # optional - sage.rings.finite_rings
-            sage: S.random_element()  # random                                          # optional - sage.rings.finite_rings
+            sage: S.<s> = LaurentSeriesRing(GF(3))
+            sage: S.random_element()  # random
             s^-8 + s^-7 + s^-6 + s^-5 + s^-1 + s + s^3 + s^4
             + s^5 + 2*s^6 + s^7 + s^11 + O(s^12)
         """
@@ -577,9 +580,9 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: parent(1/2 * t)
             Laurent Series Ring in t over Rational Field
 
-            sage: QQbar.gen() * t                                                       # optional - sage.rings.number_field
+            sage: QQbar.gen() * t                                                       # needs sage.rings.number_field
             I*t
-            sage: parent(QQbar.gen() * t)                                               # optional - sage.rings.number_field
+            sage: parent(QQbar.gen() * t)                                               # needs sage.rings.number_field
             Laurent Series Ring in t over Algebraic Field
         """
         from sage.categories.pushout import CompletionFunctor
@@ -639,9 +642,11 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
             True
         """
         A = self.base_ring()
+        from sage.rings.polynomial.laurent_polynomial_ring_base import (
+            LaurentPolynomialRing_generic,
+        )
         from sage.rings.polynomial.polynomial_ring import is_PolynomialRing
         from sage.rings.power_series_ring import is_PowerSeriesRing
-        from sage.rings.polynomial.laurent_polynomial_ring_base import LaurentPolynomialRing_generic
 
         if ((is_LaurentSeriesRing(P) or
              isinstance(P, LaurentPolynomialRing_generic) or
@@ -655,15 +660,16 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         """
         EXAMPLES::
 
-            sage: R.<x> = LaurentSeriesRing(GF(17))                                     # optional - sage.rings.finite_rings
-            sage: S.<y> = LaurentSeriesRing(GF(19))                                     # optional - sage.rings.finite_rings
-            sage: R.hom([y], S) # indirect doctest                                      # optional - sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: R.<x> = LaurentSeriesRing(GF(17))
+            sage: S.<y> = LaurentSeriesRing(GF(19))
+            sage: R.hom([y], S) # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: relations do not all (canonically) map to 0
             under map determined by images of generators
-            sage: f = R.hom(x + x^3, R)                                                 # optional - sage.rings.finite_rings
-            sage: f(x^2)                                                                # optional - sage.rings.finite_rings
+            sage: f = R.hom(x + x^3, R)
+            sage: f(x^2)
             x^2 + 2*x^4 + x^6
 
         The image of the generator needs to be a unit::
@@ -690,8 +696,8 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
         """
         EXAMPLES::
 
-            sage: R.<x> = LaurentSeriesRing(GF(17))                                     # optional - sage.rings.finite_rings
-            sage: R.characteristic()                                                    # optional - sage.rings.finite_rings
+            sage: R.<x> = LaurentSeriesRing(GF(17))
+            sage: R.characteristic()
             17
         """
         return self.base_ring().characteristic()
@@ -705,8 +711,8 @@ class LaurentSeriesRing(UniqueRepresentation, CommutativeRing):
 
         EXAMPLES::
 
-            sage: R.<x> = LaurentSeriesRing(GF(17))                                     # optional - sage.rings.finite_rings
-            sage: R.residue_field()                                                     # optional - sage.rings.finite_rings
+            sage: R.<x> = LaurentSeriesRing(GF(17))
+            sage: R.residue_field()
             Finite Field of size 17
 
             sage: R.<x> = LaurentSeriesRing(ZZ)

@@ -4,7 +4,7 @@ all.py -- much of sage is imported into this module, so you don't
 
 TESTS:
 
-This is to test :trac:`10570`. If the number of stackframes at startup
+This is to test :issue:`10570`. If the number of stackframes at startup
 changes due to a patch you made, please check that this was an
 intended effect of your patch.
 
@@ -39,7 +39,7 @@ Check lazy import of ``interacts``::
     sage: interacts
     <module 'sage.interacts.all' from '...'>
 
-Check that :trac:`34506` is resolved::
+Check that :issue:`34506` is resolved::
 
     sage: x = int('1'*4301)
 """
@@ -132,16 +132,12 @@ from sage.quadratic_forms.all import *
 
 from sage.games.all      import *
 
-lazy_import('sage.media.wav', 'Wave', as_='wave', deprecation=12673)
-
 from sage.logic.all      import *
 
 from sage.numerical.all  import *
 
 from sage.stats.all      import *
 import sage.stats.all as stats
-
-lazy_import("sage.finance", "all", as_="finance", deprecation=32427)
 
 from sage.parallel.all   import *
 
@@ -193,10 +189,6 @@ i = I
 from sage.misc.copying import license
 copying = license
 copyright = license
-
-_cpu_time_ = cputime()
-_wall_time_ = walltime()
-
 
 def quit_sage(verbose=True):
     """

@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.libs.pari sage.rings.number_field
+# sage.doctest: needs sage.libs.pari sage.rings.number_field
 """
 Local Representation Conditions
 """
@@ -17,7 +17,7 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 
 
-class QuadraticFormLocalRepresentationConditions():
+class QuadraticFormLocalRepresentationConditions:
     """
     A class for dealing with the local conditions of a
     quadratic form, and checking local representability of numbers.

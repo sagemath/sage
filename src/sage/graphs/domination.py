@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Domination
 
@@ -17,6 +16,7 @@ and more precisely:
     :meth:`~is_redundant` | Check whether a set of vertices has redundant vertices (with respect to domination).
     :meth:`~private_neighbors` | Return the private neighbors of a vertex with respect to other vertices.
     :meth:`~greedy_dominating_set` | Return a greedy distance-`k` dominating set of the graph.
+    :meth:`~maximum_leaf_number` | Return the maximum leaf number of the graph.
 
 
 EXAMPLES:
@@ -24,7 +24,7 @@ EXAMPLES:
 We compute the size of a minimum dominating set of the Petersen graph::
 
     sage: g = graphs.PetersenGraph()
-    sage: g.dominating_set(value_only=True)
+    sage: g.dominating_set(value_only=True)                                             # needs sage.numerical.mip
     3
 
 We enumerate the minimal dominating sets of the 5-star graph::
@@ -137,7 +137,7 @@ def is_redundant(G, dom, focus=None):
         False
     """
     dom = list(dom)
-    focus = list(G) if focus is None else list(focus)
+    focus = G if focus is None else set(focus)
 
     # dominator[v] (for v in focus) will be equal to:
     #  - (0, None) if v has no neighbor in dom
@@ -219,7 +219,7 @@ def private_neighbors(G, vertex, dom):
 # Computation of minimum dominating sets
 # ==============================================================================
 
-def dominating_sets(g, k=1, independent=False, total=False,
+def dominating_sets(g, k=1, independent=False, total=False, connected=False,
                     solver=None, verbose=0, *, integrality_tolerance=1e-3):
     r"""
     Return an iterator over the minimum distance-`k` dominating sets
@@ -261,6 +261,9 @@ def dominating_sets(g, k=1, independent=False, total=False,
     - ``total`` -- boolean (default: ``False``); when ``True``, computes total
       dominating sets (see the See the :wikipedia:`Dominating_set`)
 
+    - ``connected`` -- boolean (default: ``False``); when ``True``, computes
+      connected dominating sets (see :wikipedia:`Connected_dominating_set`)
+
     - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
       Programming (MILP) solver to be used. If set to ``None``, the default one
       is used. For more information on MILP solvers and which default solver is
@@ -281,7 +284,7 @@ def dominating_sets(g, k=1, independent=False, total=False,
     Number of distance-`k` dominating sets of a Path graph of order 10::
 
         sage: g = graphs.PathGraph(10)
-        sage: [sum(1 for _ in g.dominating_sets(k=k)) for k in range(11)]
+        sage: [sum(1 for _ in g.dominating_sets(k=k)) for k in range(11)]               # needs sage.numerical.mip
         [1, 13, 1, 13, 25, 2, 4, 6, 8, 10, 10]
 
     If we build a graph from two disjoint stars, then link their centers we will
@@ -290,15 +293,15 @@ def dominating_sets(g, k=1, independent=False, total=False,
 
         sage: g = 2 * graphs.StarGraph(5)
         sage: g.add_edge(0, 6)
-        sage: [sum(1 for _ in g.dominating_sets(k=k)) for k in range(11)]
+        sage: [sum(1 for _ in g.dominating_sets(k=k)) for k in range(11)]               # needs sage.numerical.mip
         [1, 1, 2, 12, 12, 12, 12, 12, 12, 12, 12]
 
     The total dominating set of the Petersen graph has cardinality 4::
 
         sage: G = graphs.PetersenGraph()
-        sage: G.dominating_set(total=True, value_only=True)
+        sage: G.dominating_set(total=True, value_only=True)                             # needs sage.numerical.mip
         4
-        sage: sorted(G.dominating_sets(k=1))
+        sage: sorted(G.dominating_sets(k=1))                                            # needs sage.numerical.mip
         [[0, 2, 6],
          [0, 3, 9],
          [0, 7, 8],
@@ -312,6 +315,7 @@ def dominating_sets(g, k=1, independent=False, total=False,
 
     Independent distance-`k` dominating sets of a Path graph::
 
+        sage: # needs sage.numerical.mip
         sage: G = graphs.PathGraph(6)
         sage: sorted(G.dominating_sets(k=1, independent=True))
         [[1, 4]]
@@ -321,8 +325,9 @@ def dominating_sets(g, k=1, independent=False, total=False,
         [[2], [3]]
 
     The dominating set is calculated for both the directed and undirected graphs
-    (modification introduced in :trac:`17905`)::
+    (modification introduced in :issue:`17905`)::
 
+        sage: # needs sage.numerical.mip
         sage: g = digraphs.Path(3)
         sage: g.dominating_set(value_only=True)
         2
@@ -336,6 +341,38 @@ def dominating_sets(g, k=1, independent=False, total=False,
         sage: next(g.dominating_sets())
         [1]
 
+    Minimum connected dominating sets of the Peterson graph::
+
+        sage: G = graphs.PetersenGraph()
+        sage: G.dominating_set(total=True, value_only=True)                             # needs sage.numerical.mip
+        4
+        sage: sorted(G.dominating_sets(k=1, connected=True))
+        [[0, 1, 2, 6],
+         [0, 1, 4, 5],
+         [0, 3, 4, 9],
+         [0, 5, 7, 8],
+         [1, 2, 3, 7],
+         [1, 6, 8, 9],
+         [2, 3, 4, 8],
+         [2, 5, 7, 9],
+         [3, 5, 6, 8],
+         [4, 6, 7, 9]]
+
+    Subgraph induced by the dominating set is connected::
+
+        sage: G = graphs.PetersenGraph()
+        sage: all(G.subgraph(vertices=dom).is_connected()
+        ....:     for dom in G.dominating_set(k=1, connected=True))
+        True
+
+    Minimum distance-k connected dominating sets of the Tietze graph::
+
+        sage: G = graphs.TietzeGraph()
+        sage: sorted(G.dominating_sets(k=2, connected=True))
+        [[0, 9], [1, 0], [2, 3], [4, 3], [5, 6], [7, 6], [8, 0], [10, 3], [11, 6]]
+        sage: sorted(G.dominating_sets(k=3, connected=True))
+        [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9], [10], [11]]
+
     TESTS::
 
         sage: g = Graph([(0, 1)])
@@ -343,13 +380,20 @@ def dominating_sets(g, k=1, independent=False, total=False,
         Traceback (most recent call last):
         ...
         ValueError: the domination distance must be a non-negative integer
+
+    The method is robust to vertices with incomparable labels::
+
+        sage: G = Graph([(1, 'A'), ('A', 2), (2, 3), (3, 1)])
+        sage: L = list(G.dominating_sets())
+        sage: len(L)
+        6
     """
     g._scream_if_not_simple(allow_multiple_edges=True, allow_loops=not total)
 
     if not k:
         yield list(g)
         return
-    elif k < 0:
+    if k < 0:
         raise ValueError("the domination distance must be a non-negative integer")
 
     from sage.numerical.mip import MixedIntegerLinearProgram
@@ -386,6 +430,32 @@ def dominating_sets(g, k=1, independent=False, total=False,
         for u, v in g.edge_iterator(labels=None):
             p.add_constraint(b[u] + b[v], max=1)
 
+    if connected:
+        E = set(frozenset(e) for e in g.edge_iterator(labels=False))
+        # edges used in the spanning tree
+        edge = p.new_variable(binary=True, name='e')
+        # relaxed edges to test for acyclicity
+        r_edge = p.new_variable(nonnegative=True, name='re')
+
+        # 1. We want a tree
+        p.add_constraint(p.sum(edge[fe] for fe in E)
+                         == p.sum(b[u] for u in g) - 1)
+
+        # 2. An edge can be in the tree if its end vertices are selected
+        for fe in E:
+            u, v = fe
+            p.add_constraint(edge[fe] <= b[u])
+            p.add_constraint(edge[fe] <= b[v])
+
+        # 3. Subtour elimination constraints
+        for fe in E:
+            u, v = fe
+            p.add_constraint(edge[fe] <= r_edge[u, v] + r_edge[v, u])
+
+        eps = 1 / (5 * Integer(g.order()))
+        for v in g:
+            p.add_constraint(p.sum(r_edge[u, v] for u in g.neighbor_iterator(v)), max=1 - eps)
+
     # Minimizes the number of vertices used
     p.set_objective(p.sum(b[v] for v in g))
 
@@ -406,8 +476,7 @@ def dominating_sets(g, k=1, independent=False, total=False,
         # Prevent finding twice a solution
         p.add_constraint(p.sum(b[u] for u in dom) <= best - 1)
 
-
-def dominating_set(g, k=1, independent=False, total=False, value_only=False,
+def dominating_set(g, k=1, independent=False, total=False, connected=False, value_only=False,
                    solver=None, verbose=0, *, integrality_tolerance=1e-3):
     r"""
     Return a minimum distance-`k` dominating set of the graph.
@@ -444,6 +513,9 @@ def dominating_set(g, k=1, independent=False, total=False, value_only=False,
     - ``total`` -- boolean (default: ``False``); when ``True``, computes a total
       dominating set (see the See the :wikipedia:`Dominating_set`)
 
+    - ``connected`` -- boolean (default: ``False``); when ``True``, computes a
+      connected dominating set (see :wikipedia:`Connected_dominating_set`)
+
     - ``value_only`` -- boolean (default: ``False``); whether to only return the
       cardinality of the computed dominating set, or to return its list of
       vertices (default)
@@ -468,7 +540,7 @@ def dominating_set(g, k=1, independent=False, total=False, value_only=False,
     A basic illustration on a ``PappusGraph``::
 
         sage: g = graphs.PappusGraph()
-        sage: g.dominating_set(value_only=True)
+        sage: g.dominating_set(value_only=True)                                         # needs sage.numerical.mip
         5
 
     If we build a graph from two disjoint stars, then link their centers we will
@@ -477,38 +549,38 @@ def dominating_set(g, k=1, independent=False, total=False, value_only=False,
 
         sage: g = 2 * graphs.StarGraph(5)
         sage: g.add_edge(0, 6)
-        sage: len(g.dominating_set())
+        sage: len(g.dominating_set())                                                   # needs sage.numerical.mip
         2
-        sage: len(g.dominating_set(independent=True))
+        sage: len(g.dominating_set(independent=True))                                   # needs sage.numerical.mip
         6
 
     The total dominating set of the Petersen graph has cardinality 4::
 
         sage: G = graphs.PetersenGraph()
-        sage: G.dominating_set(total=True, value_only=True)
+        sage: G.dominating_set(total=True, value_only=True)                             # needs sage.numerical.mip
         4
 
     The dominating set is calculated for both the directed and undirected graphs
-    (modification introduced in :trac:`17905`)::
+    (modification introduced in :issue:`17905`)::
 
         sage: g = digraphs.Path(3)
-        sage: g.dominating_set(value_only=True)
+        sage: g.dominating_set(value_only=True)                                         # needs sage.numerical.mip
         2
         sage: g = graphs.PathGraph(3)
-        sage: g.dominating_set(value_only=True)
+        sage: g.dominating_set(value_only=True)                                         # needs sage.numerical.mip
         1
 
     Cardinality of distance-`k` dominating sets::
 
         sage: G = graphs.PetersenGraph()
-        sage: [G.dominating_set(k=k, value_only=True) for k in range(G.radius() + 1)]
+        sage: [G.dominating_set(k=k, value_only=True) for k in range(G.radius() + 1)]   # needs sage.numerical.mip
         [10, 3, 1]
         sage: G = graphs.PathGraph(5)
-        sage: [G.dominating_set(k=k, value_only=True) for k in range(G.radius() + 1)]
+        sage: [G.dominating_set(k=k, value_only=True) for k in range(G.radius() + 1)]   # needs sage.numerical.mip
         [5, 2, 1]
     """
     dom = next(dominating_sets(g, k=k, independent=independent, total=total,
-                               solver=solver, verbose=verbose,
+                               connected=connected, solver=solver, verbose=verbose,
                                integrality_tolerance=integrality_tolerance))
     return Integer(len(dom)) if value_only else dom
 
@@ -719,8 +791,8 @@ def _cand_ext_enum(G, to_dom, u_next):
 
     # Here we use aux_with_rep twice to enumerate the minimal
     # dominating sets while avoiding repeated outputs
-    for (X, i) in _aux_with_rep(G, to_dom, u_next):
-        for (Y, j) in _aux_with_rep(G, to_dom, u_next):
+    for X, i in _aux_with_rep(G, to_dom, u_next):
+        for Y, j in _aux_with_rep(G, to_dom, u_next):
             if j >= i:
                 # This is the first time we meet X: we output it
                 yield X
@@ -730,7 +802,7 @@ def _cand_ext_enum(G, to_dom, u_next):
                 break
 
 
-def minimal_dominating_sets(G, to_dominate=None, work_on_copy=False, k=1):
+def minimal_dominating_sets(G, to_dominate=None, work_on_copy=True, k=1):
     r"""
     Return an iterator over the minimal dominating sets of a graph.
 
@@ -741,7 +813,7 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=False, k=1):
     - ``to_dominate`` -- vertex iterable or ``None`` (default: ``None``);
       the set of vertices to be dominated.
 
-    - ``work_on_copy`` -- boolean (default: ``False``); whether or not to work on
+    - ``work_on_copy`` -- boolean (default: ``True``); whether or not to work on
       a copy of the input graph; if set to ``False``, the input graph will be
       modified (relabeled).
 
@@ -780,32 +852,32 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=False, k=1):
 
         sage: ll = list(graphs.PetersenGraph().minimal_dominating_sets())
         sage: pp = [{0, 2, 6},
-        ....: {0, 9, 3},
-        ....: {0, 8, 7},
-        ....: {1, 3, 7},
-        ....: {1, 4, 5},
-        ....: {8, 1, 9},
-        ....: {8, 2, 4},
-        ....: {9, 2, 5},
-        ....: {3, 5, 6},
-        ....: {4, 6, 7},
-        ....: {0, 8, 2, 9},
-        ....: {0, 3, 6, 7},
-        ....: {1, 3, 5, 9},
-        ....: {8, 1, 4, 7},
-        ....: {2, 4, 5, 6},
-        ....: {0, 1, 2, 3, 4},
-        ....: {0, 1, 2, 5, 7},
-        ....: {0, 1, 4, 6, 9},
-        ....: {0, 1, 5, 6, 8},
-        ....: {0, 8, 3, 4, 5},
-        ....: {0, 9, 4, 5, 7},
-        ....: {8, 1, 2, 3, 6},
-        ....: {1, 2, 9, 6, 7},
-        ....: {9, 2, 3, 4, 7},
-        ....: {8, 2, 3, 5, 7},
-        ....: {8, 9, 3, 4, 6},
-        ....: {8, 9, 5, 6, 7}]
+        ....:       {0, 9, 3},
+        ....:       {0, 8, 7},
+        ....:       {1, 3, 7},
+        ....:       {1, 4, 5},
+        ....:       {8, 1, 9},
+        ....:       {8, 2, 4},
+        ....:       {9, 2, 5},
+        ....:       {3, 5, 6},
+        ....:       {4, 6, 7},
+        ....:       {0, 8, 2, 9},
+        ....:       {0, 3, 6, 7},
+        ....:       {1, 3, 5, 9},
+        ....:       {8, 1, 4, 7},
+        ....:       {2, 4, 5, 6},
+        ....:       {0, 1, 2, 3, 4},
+        ....:       {0, 1, 2, 5, 7},
+        ....:       {0, 1, 4, 6, 9},
+        ....:       {0, 1, 5, 6, 8},
+        ....:       {0, 8, 3, 4, 5},
+        ....:       {0, 9, 4, 5, 7},
+        ....:       {8, 1, 2, 3, 6},
+        ....:       {1, 2, 9, 6, 7},
+        ....:       {9, 2, 3, 4, 7},
+        ....:       {8, 2, 3, 5, 7},
+        ....:       {8, 9, 3, 4, 6},
+        ....:       {8, 9, 5, 6, 7}]
         sage: len(ll) == len(pp) and all(x in pp for x in ll) and all(x in ll for x in pp)
         True
 
@@ -833,6 +905,19 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=False, k=1):
          {(1, 1)}]
         sage: list(G.minimal_dominating_sets(k=3))
         [{(0, 0)}, {(0, 1)}, {(0, 2)}, {(1, 0)}, {(1, 1)}, {(1, 2)}]
+
+    When parameter ``work_on_copy`` is ``False``, the input graph is modified
+    (relabeled)::
+
+        sage: G = Graph([('A', 'B')])
+        sage: _ = list(G.minimal_dominating_sets(work_on_copy=True))
+        sage: set(G) == {'A', 'B'}
+        True
+        sage: _ = list(G.minimal_dominating_sets(work_on_copy=False))
+        sage: set(G) == {'A', 'B'}
+        False
+        sage: set(G) == {0, 1}
+        True
 
     TESTS:
 
@@ -889,6 +974,15 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=False, k=1):
         Traceback (most recent call last):
         ...
         ValueError: vertex (foo) is not a vertex of the graph
+
+    The method is robust to vertices with incomparable labels::
+
+        sage: G = Graph([(1, 'A'), ('A', 2), (2, 3), (3, 1)])
+        sage: L = list(G.minimal_dominating_sets())
+        sage: len(L)
+        6
+        sage: {3, 'A'} in L
+        True
     """
     def tree_search(H, plng, dom, i):
         r"""
@@ -942,7 +1036,8 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=False, k=1):
             # We complete dom with can_ext -> canD
             canD = set().union(can_ext, dom)
 
-            if (not H.is_redundant(canD, V_next)) and set(dom) == set(_parent(H, canD, plng[i][1])):
+            if (not H.is_redundant(canD, V_next)
+                    and set(dom) == set(_parent(H, canD, plng[i][1]))):
                 # By construction, can_ext is a dominating set of
                 # `V_next - N[dom]`, so canD dominates V_next.
                 # If canD is a legitimate child of dom and is not redundant, we
@@ -951,6 +1046,12 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=False, k=1):
                     yield Di
     ##
     # end of tree-search routine
+
+    if k < 0:
+        raise ValueError("the domination distance must be a non-negative integer")
+    if not k:
+        yield set(G) if to_dominate is None else set(to_dominate)
+        return
 
     int_to_vertex = list(G)
     vertex_to_int = {u: i for i, u in enumerate(int_to_vertex)}
@@ -963,28 +1064,24 @@ def minimal_dominating_sets(G, to_dominate=None, work_on_copy=False, k=1):
                 raise ValueError(f"vertex ({u}) is not a vertex of the graph")
         vertices_to_dominate = {vertex_to_int[u] for u in to_dominate}
 
-    if k < 0:
-        raise ValueError("the domination distance must be a non-negative integer")
-    elif not k:
-        yield set(int_to_vertex) if to_dominate is None else set(to_dominate)
-        return
-    elif k > 1:
-        # We build a graph H with an edge between u and v if these vertices are
-        # at distance at most k in G
-        H = G.__class__(G.order())
-        for u, ui in vertex_to_int.items():
-            H.add_edges((ui, vertex_to_int[v]) for v in G.breadth_first_search(u, distance=k) if u != v)
-        G = H
-    elif work_on_copy:
-        G.relabel(perm=vertex_to_int)
-    else:
-        G = G.relabel(perm=vertex_to_int, inplace=False)
-
     if not vertices_to_dominate:
         # base case: vertices_to_dominate is empty
         # the empty set/list is the only minimal DS of the empty set
         yield set()
         return
+    if k > 1:
+        # We build a graph H with an edge between u and v if these vertices are
+        # at distance at most k in G
+        H = G.__class__(G.order())
+        for u, ui in vertex_to_int.items():
+            H.add_edges((ui, vertex_to_int[v])
+                        for v in G.breadth_first_search(u, distance=k) if u != v)
+        G = H
+    elif work_on_copy:
+        G = G.relabel(perm=vertex_to_int, inplace=False)
+    else:
+        # The input graph is modified
+        G.relabel(perm=vertex_to_int, inplace=True)
 
     peeling = _peel(G, vertices_to_dominate)
 
@@ -1117,6 +1214,12 @@ def greedy_dominating_set(G, k=1, vertices=None, ordering=None, return_sets=Fals
         sage: G = graphs.PathGraph(5)
         sage: dom = greedy_dominating_set(G, vertices=[0, 1, 3, 4])
 
+    The method is robust to vertices with incomparable labels::
+
+        sage: G = Graph([(1, 'A')])
+        sage: len(greedy_dominating_set(G))
+        1
+
     Check parameters::
 
         sage: greedy_dominating_set(G, ordering="foo")
@@ -1181,3 +1284,81 @@ def greedy_dominating_set(G, k=1, vertices=None, ordering=None, return_sets=Fals
         return dom
     else:
         return list(dom)
+
+
+def maximum_leaf_number(G, solver=None, verbose=0, integrality_tolerance=1e-3):
+    r"""
+    Return the maximum leaf number of the graph.
+
+    The maximum leaf number is the maximum possible number of leaves of a
+    spanning tree of `G`. This is also the cardinality of the complement of a
+    minimum connected dominating set.
+    See the :wikipedia:`Connected_dominating_set`.
+
+    The MLN of a graph with less than 2 vertices is 0, while the MLN of a connected
+    graph with 2 or 3 vertices is 1 or 2 respectively.
+
+    INPUT:
+
+    - ``G`` -- a Graph
+
+    - ``solver`` -- string (default: ``None``); specify a Mixed Integer Linear
+      Programming (MILP) solver to be used. If set to ``None``, the default one
+      is used. For more information on MILP solvers and which default solver is
+      used, see the method :meth:`solve
+      <sage.numerical.mip.MixedIntegerLinearProgram.solve>` of the class
+      :class:`MixedIntegerLinearProgram
+      <sage.numerical.mip.MixedIntegerLinearProgram>`.
+
+    - ``verbose`` -- integer (default: ``0``); sets the level of verbosity. Set
+      to 0 by default, which means quiet.
+
+    - ``integrality_tolerance`` -- float; parameter for use with MILP solvers
+      over an inexact base ring; see
+      :meth:`MixedIntegerLinearProgram.get_values`.
+
+    EXAMPLES:
+
+    Empty graph::
+
+        sage: G = Graph()
+        sage: G.maximum_leaf_number()
+        0
+
+    Petersen graph::
+
+        sage: G = graphs.PetersenGraph()
+        sage: G.maximum_leaf_number()
+        6
+
+    TESTS:
+
+    One vertex::
+
+        sage: G = Graph(1)
+        sage: G.maximum_leaf_number()
+        0
+
+    Two vertices::
+
+        sage: G = graphs.PathGraph(2)
+        sage: G.maximum_leaf_number()
+        1
+
+    Unconnected graph::
+
+        sage: G = Graph(2)
+        sage: G.maximum_leaf_number()
+        Traceback (most recent call last):
+        ...
+        ValueError: the graph must be connected
+    """
+    if G.order() <= 1:
+        return 0
+    if not G.is_connected():
+        raise ValueError('the graph must be connected')
+    if G.order() <= 3:
+        return G.order() - 1
+    return G.order() - dominating_set(G, connected=True, value_only=True,
+                                      solver=solver, verbose=verbose,
+                                      integrality_tolerance=integrality_tolerance)

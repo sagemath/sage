@@ -10,9 +10,9 @@ AUTHORS:
 
 - Nathann Cohen (2009-08-14): Initial version
 
-- Jeroen Demeyer (2011-05-06): Make cliquer interruptible (:trac:`11252`)
+- Jeroen Demeyer (2011-05-06): Make cliquer interruptible (:issue:`11252`)
 
-- Nico Van Cleemput (2013-05-27): Handle the empty graph (:trac:`14525`)
+- Nico Van Cleemput (2013-05-27): Handle the empty graph (:issue:`14525`)
 
 REFERENCE:
 
@@ -35,7 +35,7 @@ from cysignals.memory cimport sig_free
 from cysignals.signals cimport sig_on, sig_off
 
 
-cdef extern from "sage/graphs/cliquer/cl.c":
+cdef extern from "cliquer/cl.c":
     cdef int sage_clique_max(graph_t *g, int ** list_of_vertices)
     cdef int sage_all_clique_max(graph_t *g, int ** list_of_vertices)
     cdef int sage_clique_number(graph_t *g)
@@ -115,7 +115,7 @@ def all_max_clique(graph):
          [2, 6], [2, 8], [3, 4], [3, 7], [3, 9], [4, 5], [4, 8], [5, 10],
          [5, 11], [6, 10], [6, 11], [7, 8], [7, 11], [8, 10], [9, 10], [9, 11]]
         sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
-        sage: G.show(figsize=[2,2])                                                     # optional - sage.plot
+        sage: G.show(figsize=[2,2])                                                     # needs sage.plot
         sage: G.cliques_maximum()
         [[0, 1, 2], [0, 1, 3]]
         sage: C = graphs.PetersenGraph()
@@ -302,7 +302,7 @@ def clique_number(graph):
         sage: C.clique_number()
         4
         sage: G = Graph({0:[1,2,3], 1:[2], 3:[0,1]})
-        sage: G.show(figsize=[2,2])                                                     # optional - sage.plot
+        sage: G.show(figsize=[2,2])                                                     # needs sage.plot
         sage: G.clique_number()
         3
 

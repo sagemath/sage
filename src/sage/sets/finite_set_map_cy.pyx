@@ -58,7 +58,7 @@ from sage.arith.power cimport generic_power
 from sage.sets.set import Set_object_enumerated
 
 
-cpdef fibers(f, domain):
+cpdef fibers(f, domain) noexcept:
     r"""
     Returns the fibers of the function ``f`` on the finite set ``domain``
 
@@ -157,7 +157,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
         """
         return True
 
-    cpdef domain(self):
+    cpdef domain(self) noexcept:
         """
         Returns the domain of ``self``
 
@@ -168,7 +168,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
         """
         return self._parent.domain()
 
-    cpdef codomain(self):
+    cpdef codomain(self) noexcept:
         """
         Returns the codomain of ``self``
 
@@ -179,7 +179,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
         """
         return self._parent.codomain()
 
-    cpdef _setimage(self, int i, int j):
+    cpdef _setimage(self, int i, int j) noexcept:
         """
         Set the image of ``i`` as ``j`` in ``self``
 
@@ -221,7 +221,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
         """
         self._setitem(i, j)
 
-    cpdef _getimage(self, int i):
+    cpdef _getimage(self, int i) noexcept:
         """
         Returns the image of ``i`` by ``self``
 
@@ -239,7 +239,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
         """
         return self._getitem(i)
 
-    cpdef setimage(self, i, j):
+    cpdef setimage(self, i, j) noexcept:
         """
         Set the image of ``i`` as ``j`` in ``self``
 
@@ -268,7 +268,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
         """
         self._setitem(int(i), int(j))
 
-    cpdef getimage(self, i):
+    cpdef getimage(self, i) noexcept:
         """
         Returns the image of ``i`` by ``self``
 
@@ -286,7 +286,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
         """
         return self._getitem(int(i))
 
-    cpdef image_set(self):
+    cpdef image_set(self) noexcept:
         """
         Returns the image set of ``self``
 
@@ -299,7 +299,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
         """
         return Set_object_enumerated(self)
 
-    cpdef fibers(self):
+    cpdef fibers(self) noexcept:
         """
         Returns the fibers of ``self``
 
@@ -318,7 +318,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
         """
         return fibers(self, self.domain())
 
-    cpdef items(self):
+    cpdef items(self) noexcept:
         """
         The items of ``self``
 
@@ -331,7 +331,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
         """
         return [(i, self._getimage(i)) for i in self.domain()]
 
-    cpdef check(self):
+    cpdef check(self) noexcept:
         """
         Performs checks on ``self``
 
@@ -362,7 +362,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
             self._parent.check_element(self)
 
     cpdef FiniteSetMap_MN _compose_internal_(self, FiniteSetMap_MN other,
-                                             Parent resParent):
+                                             Parent resParent) noexcept:
         """
         TESTS::
 
@@ -383,7 +383,7 @@ cdef class FiniteSetMap_MN(ClonableIntArray):
         return res
 
 
-cpdef FiniteSetMap_Set FiniteSetMap_Set_from_list(t, parent, lst):
+cpdef FiniteSetMap_Set FiniteSetMap_Set_from_list(t, parent, lst) noexcept:
     """
     Creates a ``FiniteSetMap`` from a list
 
@@ -406,7 +406,7 @@ cpdef FiniteSetMap_Set FiniteSetMap_Set_from_list(t, parent, lst):
     super(FiniteSetMap_MN, res).__init__(parent, lst)
     return res
 
-cpdef FiniteSetMap_Set FiniteSetMap_Set_from_dict(t, parent, d):
+cpdef FiniteSetMap_Set FiniteSetMap_Set_from_dict(t, parent, d) noexcept:
     """
     Creates a ``FiniteSetMap`` from a dictionary
 
@@ -491,7 +491,7 @@ cdef class FiniteSetMap_Set(FiniteSetMap_MN):
         parent = self._parent
         return parent._unrank_codomain(self._getitem(parent._rank_domain(i)))
 
-    cpdef image_set(self):
+    cpdef image_set(self) noexcept:
         """
         Returns the image set of ``self``
 
@@ -507,7 +507,7 @@ cdef class FiniteSetMap_Set(FiniteSetMap_MN):
         image_i = self._parent._unrank_codomain
         return Set_object_enumerated([image_i(i) for i in self])
 
-    cpdef setimage(self, i, j):
+    cpdef setimage(self, i, j) noexcept:
         """
         Set the image of ``i`` as ``j`` in ``self``
 
@@ -550,7 +550,7 @@ cdef class FiniteSetMap_Set(FiniteSetMap_MN):
         parent = self._parent
         return self._setitem(parent._rank_domain(i), parent._rank_codomain(j))
 
-    cpdef getimage(self, i):
+    cpdef getimage(self, i) noexcept:
         """
         Returns the image of ``i`` by ``self``
 
@@ -568,7 +568,7 @@ cdef class FiniteSetMap_Set(FiniteSetMap_MN):
         parent = self._parent
         return parent._unrank_codomain(self._getitem(parent._rank_domain(i)))
 
-    cpdef items(self):
+    cpdef items(self) noexcept:
         """
         The items of ``self``
 

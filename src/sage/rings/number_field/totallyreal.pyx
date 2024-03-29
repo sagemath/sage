@@ -1,5 +1,5 @@
 r"""
-Enumeration of Primitive Totally Real Fields
+Enumeration of primitive totally real fields
 
 This module contains functions for enumerating all primitive
 totally real number fields of given degree and small discriminant.
@@ -9,8 +9,7 @@ subfields except `\QQ`.
 See also :mod:`sage.rings.number_field.totallyreal_rel`, which handles the non-primitive
 case using relative extensions.
 
-Algorithm
----------
+ALGORITHM:
 
 We use Hunter's algorithm ([Coh2000]_, Section 9.3) with modifications
 due to Takeuchi [Tak1999]_ and the author [Voi2008]_.
@@ -22,13 +21,10 @@ Hunter's theorem gives bounds on `a_{n-1}` and `a_{n-2}`; then given
 looking at the zeros of successive derivatives and applying
 Rolle's theorem. See [Tak1999]_ for more details.
 
-Examples
---------
+EXAMPLES:
 
 In this first simple example, we compute the totally real quadratic
-fields of discriminant `\le 50`.
-
-::
+fields of discriminant `\le 50`. ::
 
     sage: enumerate_totallyreal_fields_prim(2,50)
     [[5, x^2 - x - 1],
@@ -68,18 +64,14 @@ We see that there are 9 such fields (up to isomorphism!).
 
 See also [Mar1980]_.
 
-Authors
--------
+AUTHORS:
 
-- John Voight (2007-09-01): Initial version.
-- John Voight (2007-09-19): Various optimization tweaks.
-- John Voight (2007-10-09): Added DSage module.
-- John Voight (2007-10-17): Added pari functions to avoid recomputations.
-- John Voight (2007-10-27): Separated DSage component.
-- Craig Citro and John Voight (2007-11-04): Additional doctests and type checking.
-- Craig Citro and John Voight (2008-02-10): Final modifications for submission.
+- John Voight (2007-09-01): initial version; various optimization tweaks
+- John Voight (2007-10-09): added DSage module; added pari functions to avoid
+  recomputations; separated DSage component
+- Craig Citro and John Voight (2007-11-04): additional doctests and type checking
+- Craig Citro and John Voight (2008-02-10): final modifications for submission
 
-------
 """
 
 # ****************************************************************************
@@ -112,7 +104,7 @@ from sage.rings.number_field.totallyreal_data import tr_data, int_has_small_squa
 from sage.rings.number_field.totallyreal_data cimport tr_data
 
 
-cpdef double odlyzko_bound_totallyreal(int n):
+cpdef double odlyzko_bound_totallyreal(int n) noexcept:
     r"""
     This function returns the unconditional Odlyzko bound for the root
     discriminant of a totally real number field of degree `n`.
@@ -292,7 +284,7 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
     f_out[n_int] = 1
 
     if keep_fields:
-        if type(keep_fields) == bool:
+        if isinstance(keep_fields, bool):
             keepB = pari(int(math.floor(B*math.log(B))))
         else:
             keepB = pari(keep_fields)
@@ -337,7 +329,7 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
     if verbose:
         verb_int = 1
         saveout = sys.stdout
-        if type(verbose) == str:
+        if isinstance(verbose, str):
             fsock = open(verbose, 'w')
             sys.stdout = fsock
         # Else, print to screen
@@ -458,7 +450,7 @@ def enumerate_totallyreal_fields_prim(n, B, a = [], verbose=0, return_seqs=False
         print("Polynomials with nfdisc <= B:", counts[3])
         for i from 0 <= i < lenS:
             print(S[i])
-        if type(verbose) == str:
+        if isinstance(verbose, str):
             fsock.close()
         sys.stdout = saveout
 

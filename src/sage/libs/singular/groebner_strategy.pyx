@@ -93,7 +93,7 @@ cdef class GroebnerStrategy(SageObject):
             ...
             NotImplementedError: Only coefficient fields are implemented so far.
 
-        Check that :trac:`27508` is fixed::
+        Check that :issue:`27508` is fixed::
 
             sage: R2.<x,y> = PolynomialRing(QQ, 2, order="lex")
             sage: I2 = R2.ideal(["x^2 - x", "y^2 - y"])
@@ -260,7 +260,7 @@ cdef class GroebnerStrategy(SageObject):
         """
         return unpickle_GroebnerStrategy0, (self._ideal,)
 
-    cpdef MPolynomial_libsingular normal_form(self, MPolynomial_libsingular p):
+    cpdef MPolynomial_libsingular normal_form(self, MPolynomial_libsingular p) noexcept:
         """
         Compute the normal form of ``p`` with respect to the
         generators of this object.
@@ -511,7 +511,7 @@ cdef class NCGroebnerStrategy(SageObject):
         """
         return unpickle_NCGroebnerStrategy0, (self._ideal,)
 
-    cpdef NCPolynomial_plural normal_form(self, NCPolynomial_plural p):
+    cpdef NCPolynomial_plural normal_form(self, NCPolynomial_plural p) noexcept:
         """
         Compute the normal form of ``p`` with respect to the
         generators of this object.

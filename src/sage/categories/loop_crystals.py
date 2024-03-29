@@ -1,4 +1,4 @@
-# sage.doctest: optional - sage.graphs sage.combinat
+# sage.doctest: needs sage.graphs sage.combinat
 r"""
 Loop Crystals
 """
@@ -269,7 +269,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
 
             TESTS:
 
-            Check that :trac:`23028` is fixed::
+            Check that :issue:`23028` is fixed::
 
                 sage: ct = CartanType(['A',8,2]).dual()
                 sage: K = crystals.KirillovReshetikhin(ct, 4, 1)
@@ -528,7 +528,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
             TESTS:
 
             Check that this works correctly for `B^{n,s}`
-            of type `A_{2n}^{(2)\dagger}` (:trac:`24364`)::
+            of type `A_{2n}^{(2)\dagger}` (:issue:`24364`)::
 
                 sage: K = crystals.KirillovReshetikhin(CartanType(['A',6,2]).dual(), 3, 1)
                 sage: K.is_perfect()
@@ -612,7 +612,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
             TESTS:
 
             Check that this works correctly for `B^{n,s}`
-            of type `A_{2n}^{(2)\dagger}` (:trac:`24364`)::
+            of type `A_{2n}^{(2)\dagger}` (:issue:`24364`)::
 
                 sage: ct = CartanType(['A',6,2]).dual()
                 sage: K1 = crystals.KirillovReshetikhin(ct, 3,1)
@@ -868,7 +868,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
                 B = P0.algebra(q.parent())
                 if group_components:
                     G = self.digraph(index_set=self.cartan_type().classical().index_set())
-                    C = G.connected_components()
+                    C = G.connected_components(sort=False)
                     return B.sum(q**(c[0].energy_function())*B.sum(B(P0(b.weight())) for b in c)
                                  for c in C)
                 return B.sum(q**(b.energy_function())*B(P0(b.weight())) for b in self)
@@ -1088,7 +1088,7 @@ class KirillovReshetikhinCrystals(Category_singleton):
 
                 TESTS:
 
-                Check that :trac:`22882` is fixed::
+                Check that :issue:`22882` is fixed::
 
                     sage: K = crystals.KirillovReshetikhin(CartanType(['A',6,2]).dual(), 1,1)
                     sage: T = tensor([K,K,K])
@@ -1183,7 +1183,7 @@ class LocalEnergyFunction(Map):
 
         TESTS:
 
-        Check that :trac:`23014` is fixed::
+        Check that :issue:`23014` is fixed::
 
             sage: La = RootSystem(['G',2,1]).weight_space().fundamental_weights()
             sage: K = crystals.ProjectedLevelZeroLSPaths(La[1])

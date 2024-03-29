@@ -121,9 +121,9 @@ class FreeMonoidElement(MonoidElement):
             g = x[int(v[i][0])]
             e = v[i][1]
             if e == 1:
-                s += "%s"%g
+                s += "%s" % g
             else:
-                s += "%s^%s"%(g,e)
+                s += "%s^%s" % (g,e)
         if len(s) == 0:
             s = "1"
         return s
@@ -142,7 +142,7 @@ class FreeMonoidElement(MonoidElement):
             sage: latex(alpha*beta*gamma)
             \alpha \beta \gamma
 
-        Check that :trac:`14509` is fixed::
+        Check that :issue:`14509` is fixed::
 
             sage: K.< alpha,b > = FreeAlgebra(SR)
             sage: latex(alpha*b)
