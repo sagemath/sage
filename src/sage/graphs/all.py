@@ -22,7 +22,7 @@ from sage.graphs.isgci import graph_classes
 TESTS:
 
 Test that methods all_max_clique, max_clique and clique_number from
-sage.graphs.cliquer are deprecated from the global namespace (:trac:`26200`)::
+sage.graphs.cliquer are deprecated from the global namespace (:issue:`26200`)::
 
     sage: all_max_clique(Graph())
     Traceback (most recent call last):

@@ -47,7 +47,7 @@ def matrix_integer_sparse_rational_reconstruction(Matrix_integer_sparse A, Integ
 
     TESTS:
 
-    Check that :trac:`9345` is fixed::
+    Check that :issue:`9345` is fixed::
 
         sage: A = random_matrix(ZZ, 3, sparse=True)
         sage: sage.matrix.misc.matrix_integer_sparse_rational_reconstruction(A, 0)

@@ -105,7 +105,7 @@ cdef class Module(Parent):
 
      TESTS:
 
-     We check that :trac:`8119` has been resolved::
+     We check that :issue:`8119` has been resolved::
 
         sage: # needs sage.modules
         sage: M = ZZ^3
@@ -161,7 +161,7 @@ cdef class Module(Parent):
 
         TESTS:
 
-        Make sure :trac:`3638` is fixed::
+        Make sure :issue:`3638` is fixed::
 
             sage: vector(ZZ,[1,2,11]) == vector(Zmod(8),[1,2,3])                        # needs sage.modules
             True

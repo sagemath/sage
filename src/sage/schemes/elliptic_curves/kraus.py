@@ -781,7 +781,7 @@ def check_Kraus_global(c4, c6, assume_nonsingular=False, debug=False):
         sage: check_Kraus_global(c4,c6)
         Elliptic Curve defined by y^2 = x^3 + (4536*a+14148)*x + (-163728*a-474336) over Number Field in a with defining polynomial x^2 - 15
 
-    TESTS (see :trac:`17295`)::
+    TESTS (see :issue:`17295`)::
 
         sage: # needs sage.rings.number_field
         sage: K.<a> = NumberField(x^3 - 7*x - 5)
@@ -954,7 +954,7 @@ def semi_global_minimal_model(E, debug=False):
 
     TESTS:
 
-    Consider (see :trac:`20737`) a curve with no global minimal model
+    Consider (see :issue:`20737`) a curve with no global minimal model
     whose non-minimality class has order 3 in the class group, which
     has order 3315. The smallest prime in that ideal class has norm
     23567::

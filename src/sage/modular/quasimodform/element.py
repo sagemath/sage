@@ -31,15 +31,19 @@ from sage.rings.integer_ring import ZZ
 
 class QuasiModularFormsElement(ModuleElement):
     r"""
-    A quasimodular forms ring element. Such an element is describbed by SageMath
-    as a polynomial
+    A quasimodular forms ring element. Such an element is described by
+    SageMath as a polynomial
 
     .. MATH::
 
-        f_0 + f_1 E_2 + f_2 E_2^2 + \cdots + f_m E_2^m
+        F = f_0 + f_1 E_2 + f_2 E_2^2 + \cdots + f_m E_2^m
 
     where each `f_i` a graded modular form element
     (see :class:`~sage.modular.modform.element.GradedModularFormElement`)
+
+    For an integer `k`, we say that `F` is homogeneous of weight `k` if
+    it lies in an homogeneous component of degree `k` of the graded ring
+    of quasimodular forms.
 
     EXAMPLES::
 
@@ -295,6 +299,45 @@ class QuasiModularFormsElement(ModuleElement):
         """
         return bool(self._polynomial)
 
+    def depth(self):
+        r"""
+        Return the depth of this quasimodular form.
+
+        Note that the quasimodular form must be homogeneous of weight
+        `k`. Recall that the *depth* is the integer `p` such that
+
+        .. MATH::
+
+            f = f_0 + f_1 E_2 + \cdots + f_p E_2^p,
+
+        where `f_i` is a modular form of weight `k - 2i` and `f_p` is
+        nonzero.
+
+        EXAMPLES::
+
+            sage: QM = QuasiModularForms(1)
+            sage: E2, E4, E6 = QM.gens()
+            sage: E2.depth()
+            1
+            sage: F = E4^2 + E6*E2 + E4*E2^2 + E2^4
+            sage: F.depth()
+            4
+            sage: QM(7/11).depth()
+            0
+
+        TESTS::
+
+            sage: QM = QuasiModularForms(1)
+            sage: (QM.0 + QM.1).depth()
+            Traceback (most recent call last):
+            ...
+            ValueError: the given graded quasiform is not an homogeneous element
+        """
+        if not self.is_homogeneous():
+            raise ValueError("the given graded quasiform is not an "
+                             "homogeneous element")
+        return self._polynomial.degree()
+
     def is_zero(self):
         r"""
         Return whether the given quasimodular form is zero.
@@ -425,7 +468,7 @@ class QuasiModularFormsElement(ModuleElement):
             sage: (1/2 + QM.0 + 2*QM.1^2 + QM.0*QM.2).polynomial()
             E2*E6 + 2*E4^2 + E2 + 1/2
 
-        Check that :trac:`34569` is fixed::
+        Check that :issue:`34569` is fixed::
 
             sage: QM = QuasiModularForms(Gamma1(3))
             sage: QM.ngens()
@@ -655,7 +698,7 @@ class QuasiModularFormsElement(ModuleElement):
             sage: F.serre_derivative().weight()
             8
 
-        Check that :trac:`34569` is fixed::
+        Check that :issue:`34569` is fixed::
 
             sage: QM = QuasiModularForms(Gamma1(3))
             sage: E2 = QM.weight_2_eisenstein_series()

@@ -513,7 +513,7 @@ class DiGraph(GenericGraph):
         sage: G.edges(sort=True)
         [(1, 2, None)]
 
-    Check that :trac:`27505` is fixed::
+    Check that :issue:`27505` is fixed::
 
         sage: DiGraph(DiGraph().networkx_graph(), weighted=None, format='NX')           # needs networkx
         Digraph on 0 vertices
@@ -550,7 +550,7 @@ class DiGraph(GenericGraph):
             sage: g.get_pos() == graphs.PetersenGraph().get_pos()
             True
 
-        The position dictionary is not the input one (:trac:`22424`)::
+        The position dictionary is not the input one (:issue:`22424`)::
 
             sage: my_pos = {0:(0,0), 1:(1,1)}
             sage: D = DiGraph([[0,1], [(0,1)]], pos=my_pos)
@@ -566,8 +566,8 @@ class DiGraph(GenericGraph):
             sage: DiGraph({1:{2:0}})
             Digraph on 2 vertices
 
-        An empty list or dictionary defines a simple graph (:trac:`10441` and
-        :trac:`12910`)::
+        An empty list or dictionary defines a simple graph (:issue:`10441` and
+        :issue:`12910`)::
 
             sage: DiGraph([])
             Digraph on 0 vertices
@@ -575,7 +575,7 @@ class DiGraph(GenericGraph):
             Digraph on 0 vertices
             sage: # not "Multi-digraph on 0 vertices"
 
-        Problem with weighted adjacency matrix (:trac:`13919`)::
+        Problem with weighted adjacency matrix (:issue:`13919`)::
 
             sage: B = {0:{1:2,2:5,3:4},1:{2:2,4:7},2:{3:1,4:4,5:3},
             ....:      3:{5:4},4:{5:1,6:5},5:{4:1,6:7,5:1}}
@@ -626,7 +626,7 @@ class DiGraph(GenericGraph):
             ...
             ValueError: a *directed* igraph graph was expected. To build an undirected graph, call the Graph constructor
 
-        Vertex labels are retained in the graph (:trac:`14708`)::
+        Vertex labels are retained in the graph (:issue:`14708`)::
 
             sage: g = DiGraph()
             sage: g.add_vertex(0)
@@ -1044,12 +1044,12 @@ class DiGraph(GenericGraph):
 
         TESTS:
 
-        Immutable graphs yield immutable graphs (:trac:`17005`)::
+        Immutable graphs yield immutable graphs (:issue:`17005`)::
 
             sage: DiGraph([[1, 2]], immutable=True).to_undirected()._backend
             <sage.graphs.base.static_sparse_backend.StaticSparseBackend object at ...>
 
-        Vertex labels will be retained (:trac:`14708`)::
+        Vertex labels will be retained (:issue:`14708`)::
 
             sage: D.set_vertex(0, 'foo')
             sage: G = D.to_undirected()
@@ -1578,7 +1578,7 @@ class DiGraph(GenericGraph):
         TESTS:
 
         Comparing with/without constraint generation. Also double-checks issue
-        :trac:`12833`::
+        :issue:`12833`::
 
             sage: for i in range(20):                                                   # needs sage.numerical.mip
             ....:     g = digraphs.RandomDirectedGNP(10, .3)
@@ -1589,7 +1589,7 @@ class DiGraph(GenericGraph):
             ....:         print("Oh my, oh my !")
             ....:         break
 
-        Loops are part of the feedback edge set (:trac:`23989`)::
+        Loops are part of the feedback edge set (:issue:`23989`)::
 
             sage: # needs sage.combinat
             sage: D = digraphs.DeBruijn(2, 2)
@@ -1617,7 +1617,7 @@ class DiGraph(GenericGraph):
             ....:                          constraint_generation=False)
             10
 
-        Strongly connected components are well handled (:trac:`23989`)::
+        Strongly connected components are well handled (:issue:`23989`)::
 
             sage: g = digraphs.Circuit(3) * 2
             sage: g.add_edge(0, 3)
@@ -2423,7 +2423,7 @@ class DiGraph(GenericGraph):
             ...
             ValueError: radius is not defined for the empty DiGraph
 
-        Check that :trac:`35300` is fixed::
+        Check that :issue:`35300` is fixed::
 
             sage: H = DiGraph([[42, 'John'], [(42, 'John')]])
             sage: H.radius()
@@ -2552,7 +2552,7 @@ class DiGraph(GenericGraph):
             ...
             ValueError: diameter is not defined for the empty DiGraph
 
-        :trac:`32095` is fixed::
+        :issue:`32095` is fixed::
 
             sage: g6 = 'guQOUOQCW[IaDBCVP_IE\\RfxV@WMSaeHgheEIA@tfOJkB~@EpGLCrs'
             sage: g6 += 'aPIpwgQI_`Abs_x?VWxNJAo@w\\hffCDAW]bYGMIZGC_PYOrIw[Gp['
@@ -2563,7 +2563,7 @@ class DiGraph(GenericGraph):
             sage: G.diameter(algorithm='DiFUB', by_weight=True)
             3.0
 
-        Check that :trac:`35300` is fixed::
+        Check that :issue:`35300` is fixed::
 
             sage: H = DiGraph([[42, 'John'], [(42, 'John')]])
             sage: H.diameter()
@@ -3422,7 +3422,7 @@ class DiGraph(GenericGraph):
 
         TESTS:
 
-        :trac:`31681` is fixed::
+        :issue:`31681` is fixed::
 
             sage: H = DiGraph({0: [1], 'X': [1]}, format='dict_of_lists')
             sage: pos = H.layout_acyclic_dummy(rankdir='up')
@@ -3763,7 +3763,7 @@ class DiGraph(GenericGraph):
             A 0-dimensional polyhedron in QQ^0 defined as the convex hull
             of 1 vertex
 
-        A digraph with multiple edges (:trac:`28837`)::
+        A digraph with multiple edges (:issue:`28837`)::
 
             sage: G = DiGraph([(0, 1), (0,1)], multiedges=True); G
             Multi-digraph on 2 vertices

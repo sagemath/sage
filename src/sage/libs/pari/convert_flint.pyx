@@ -6,7 +6,7 @@ Utility function to convert PARI ``GEN``s to/from flint types.
 AUTHORS:
 
 - Luca De Feo (2016-09-06): Separate Sage-specific components from
-  generic C-interface in ``Pari`` (:trac:`20241`)
+  generic C-interface in ``Pari`` (:issue:`20241`)
 """
 
 # ****************************************************************************

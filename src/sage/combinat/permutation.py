@@ -9,7 +9,7 @@ the combinatorial class of permutations.
 
    This file defined :class:`Permutation` which depends upon
    :class:`CombinatorialElement` despite it being deprecated (see
-   :trac:`13742`). This is dangerous. In particular, the
+   :issue:`13742`). This is dangerous. In particular, the
    :meth:`Permutation._left_to_right_multiply_on_right` method (which can
    be called through multiplication) disables the input checks (see
    :meth:`Permutation`). This should not happen. Do not trust the results.
@@ -211,7 +211,7 @@ AUTHORS:
   * (2013-07-13): Removed ``CombinatorialClass`` and moved permutations to the
     category framework.
 
-- Darij Grinberg (2013-09-07): added methods; ameliorated :trac:`14885` by
+- Darij Grinberg (2013-09-07): added methods; ameliorated :issue:`14885` by
   exposing and documenting methods for global-independent
   multiplication.
 - Travis Scrimshaw (2014-02-05): Made :class:`StandardPermutations_n` a
@@ -314,7 +314,7 @@ class Permutation(CombinatorialElement):
 
     .. WARNING::
 
-        Since :trac:`13742` the input is checked for correctness : it is not
+        Since :issue:`13742` the input is checked for correctness : it is not
         accepted unless it actually is a permutation on `\{1, \ldots, n\}`. It
         means that some :meth:`Permutation` objects cannot be created anymore
         without setting ``check=False``, as there is no certainty that
@@ -338,7 +338,7 @@ class Permutation(CombinatorialElement):
         particular standard, but rather use the methods
         :meth:`left_action_product` and :meth:`right_action_product` for
         multiplying permutations (these methods don't depend on the setting).
-        See :trac:`14885` for more details.
+        See :issue:`14885` for more details.
 
     .. NOTE::
 
@@ -822,7 +822,7 @@ class Permutation(CombinatorialElement):
             sage: p.prev()
             False
 
-        Check that :trac:`16913` is fixed::
+        Check that :issue:`16913` is fixed::
 
             sage: Permutation([1,4,3,2]).prev()
             [1, 4, 2, 3]
@@ -1263,7 +1263,7 @@ class Permutation(CombinatorialElement):
             sage: p213 * SGA.an_element()
             3*[1, 2, 3] + [1, 3, 2] + [2, 1, 3] + 2*[3, 1, 2]
             sage: p213 * SM.an_element()
-            2*B[0] - 4*B[1]
+            2*S[[1, 2], [3]] - 4*S[[1, 3], [2]]
         """
         if not isinstance(rp, Permutation) and isinstance(rp, Element):
             return get_coercion_model().bin_op(self, rp, operator.mul)
@@ -2264,7 +2264,7 @@ class Permutation(CombinatorialElement):
 
             This algorithm could be made faster using a balanced search tree
             for each column instead of sorted lists. See discussion on
-            :trac:`31451`.
+            :issue:`31451`.
         """
         n = self.size()
         if n == 0:
@@ -3281,7 +3281,7 @@ class Permutation(CombinatorialElement):
 
         TESTS:
 
-        Check that the original error of :trac:`23891` is fixed::
+        Check that the original error of :issue:`23891` is fixed::
 
             sage: Permutations(4)([1,4,3,2]).weak_covers()
             [[1, 3, 4, 2], [1, 4, 2, 3]]
@@ -7092,7 +7092,19 @@ class StandardPermutations_n_abstract(Permutations):
             [1, 4, 5, 2, 3, 6]
             sage: Permutations(6)(x)            # known bug
             [1, 4, 5, 2, 3, 6]
+
+        Ensure that :issue:`37284` is fixed::
+
+            sage: PG = PermutationGroup([[(1,2,3),(5,6)],[(7,8)]])
+            sage: P8 = Permutations(8)
+            sage: p = PG.an_element()
+            sage: q = P8(p); q
+            [2, 3, 1, 4, 6, 5, 8, 7]
+            sage: q.parent()
+            Standard permutations of 8
         """
+        if isinstance(x, PermutationGroupElement):
+            return self. _from_permutation_group_element(x)
         if len(x) < self.n:
             x = list(x) + list(range(len(x) + 1, self.n + 1))
         return self.element_class(self, x, check=check)
@@ -7341,6 +7353,19 @@ class StandardPermutations_n(StandardPermutations_n_abstract):
             24
         """
         return factorial(self.n)
+
+    @cached_method
+    def gens(self) -> tuple:
+        r"""
+        Return a set of generators for ``self`` as a group.
+
+        EXAMPLES::
+
+            sage: P4 = Permutations(4)
+            sage: P4.gens()
+            ([2, 1, 3, 4], [1, 3, 2, 4], [1, 2, 4, 3])
+        """
+        return tuple(self.group_generators())
 
     def degree(self):
         """
@@ -7937,7 +7962,7 @@ def from_cycles(n, cycles, parent=None):
         sage: permutation.from_cycles(0, [])
         []
 
-    Bad input (see :trac:`13742`)::
+    Bad input (see :issue:`13742`)::
 
         sage: Permutation("(-12,2)(3,4)")
         Traceback (most recent call last):
@@ -7954,7 +7979,7 @@ def from_cycles(n, cycles, parent=None):
 
     TESTS:
 
-    Verify that :trac:`34662` has been fixed::
+    Verify that :issue:`34662` has been fixed::
 
         sage: permutation.from_cycles(6, (c for c in [[1,2,3], [4,5,6]]))
         [2, 3, 1, 5, 6, 4]
