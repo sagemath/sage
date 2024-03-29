@@ -584,7 +584,7 @@ def call_intersphinx(app, env, node, contnode):
     TESTS:
 
     Check that the link from the thematic tutorials to the reference
-    manual is relative, see :trac:`20118`::
+    manual is relative, see :issue:`20118`::
 
         sage: from sage.env import SAGE_DOC
         sage: thematic_index = os.path.join(SAGE_DOC, "html", "en", "thematic_tutorials", "index.html")

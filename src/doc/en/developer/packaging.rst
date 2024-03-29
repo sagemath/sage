@@ -240,7 +240,7 @@ before or after the package has been installed into
 ``$SAGE_LOCAL``. It is encouraged to put steps which modify already
 installed files in a separate ``spkg-postinst.in`` script template
 rather than combining them with ``spkg-install.in``.  This is because
-since :trac:`24106`, ``spkg-install`` does not necessarily install
+since :issue:`24106`, ``spkg-install`` does not necessarily install
 packages directly to ``$SAGE_LOCAL``.  However, by the time
 ``spkg-postinst`` is run, the installation to ``$SAGE_LOCAL`` is
 complete.
@@ -308,7 +308,7 @@ Likewise for :envvar:`CXXFLAGS`, :envvar:`FCFLAGS`, and :envvar:`F77FLAGS`.
 
     Prior to Sage 8.1 the shebang line was included, and the scripts were
     marked executable.  However, this is no longer the case as of
-    :trac:`23179`.  Now the scripts in the source tree are deliberately
+    :issue:`23179`.  Now the scripts in the source tree are deliberately
     written not to be directly executed, and are only made into executable
     scripts when they are copied to the package's build directory.
 
@@ -491,7 +491,7 @@ The following are also available, but rarely used.
   platforms.)  Check shared libraries loaded by ``EXECUTABLE`` (may be a
   program or another library) for a library starting with ``SONAME``, and
   if found appends ``SONAME`` to the ``LD_PRELOAD`` environment variable.
-  See :trac:`24885`.
+  See :issue:`24885`.
 
 
 .. _spkg-configure.m4:
@@ -660,7 +660,7 @@ constraints based on their experience and tests.  When a package
 update is made in order to pick up a critical bug fix from a newer
 version, then the lower bound should be adjusted.
 Setting upper bounds to guard against incompatible future changes is
-a complex topic; see :trac:`33520`.
+a complex topic; see :issue:`33520`.
 
 
 Concrete (pinned) requirements of ``normal``, ``wheel``, ``script`` packages: The ``package-version.txt`` file

@@ -7828,9 +7828,9 @@ cdef class Expression(Expression_abc):
             sage: gcd(I + I*x, x^2 - 1)
             x + 1
             sage: alg = SR(QQbar(sqrt(2) + I*sqrt(3)))
-            sage: gcd(alg + alg*x, x^2 - 1)  # known bug (trac #28489)
+            sage: gcd(alg + alg*x, x^2 - 1)  # known bug (Issue #28489)
             x + 1
-            sage: gcd(alg - alg*x, x^2 - 1)  # known bug (trac #28489)
+            sage: gcd(alg - alg*x, x^2 - 1)  # known bug (Issue #28489)
             x - 1
             sage: sqrt2 = SR(QQbar(sqrt(2)))
             sage: gcd(sqrt2 + x, x^2 - 2)    # known bug
