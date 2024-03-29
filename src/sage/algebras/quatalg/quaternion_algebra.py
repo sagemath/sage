@@ -1154,7 +1154,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         INPUT:
 
-        - ``inf`` -- (default: ``True``)
+        - ``inf`` -- bool (default: ``True``)
 
         OUTPUT:
 
