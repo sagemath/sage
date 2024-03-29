@@ -2116,7 +2116,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: G = f.galois_group(); G
             Transitive group number 5 of degree 4
             sage: G.gens()
-            ((1,2), (1,2,3,4))
+            ((1,2,3,4), (1,2))
             sage: G.order()
             24
 
