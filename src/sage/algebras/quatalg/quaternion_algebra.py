@@ -1903,13 +1903,12 @@ class QuaternionOrder(Parent):
 
         return (MatrixSpace(QQ, 4, 4)(L)).determinant().sqrt()
 
-    def is_maximal(self):
+    def is_maximal(self) -> bool:
         r"""
         Check whether the order of ``self`` is maximal in the ambient quaternion algebra.
 
-        Only works in quaternion algebras over number fields
-
-        OUTPUT: Boolean
+        Only implemented for quaternion algebras over number fields; for reference,
+        see Theorem 15.5.5 in [Voi2021]_.
 
         EXAMPLES::
 
@@ -2781,8 +2780,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
             sage: B.<i,j,k> = QuaternionAlgebra(211)
             sage: I = B.ideal([1, 1/4*j, 20*(i+k), 2/3*i])
-            sage: x = I.random_element()  # random
-            sage: x in I
+            sage: I.random_element() in I
             True
         """
         return sum(ZZ.random_element(*args, **kwds) * g for g in self.gens())
@@ -3664,14 +3662,14 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             ans.append(J)
         return ans
 
-    def is_integral(self):
+    def is_integral(self) -> bool:
         r"""
-        Check if a quaternion fractional ideal is integral. An ideal in a quaternion algebra is
-        said integral if it is contained in its left order. If the left order is already defined it just
-        check the definition, otherwise it uses one of the alternative definition of Lemma 16.2.8 of
-        [Voi2021]_.
+        Check whether the quaternion fractional ideal ``self`` is integral.
 
-        OUTPUT: a boolean.
+        An ideal in a quaternion algebra is integral if and only if it is
+        contained in its left order. If the left order is already defined
+        this method just checks this definition, otherwise it uses one
+        of the alternative definitions from Lemma 16.2.8 of [Voi2021]_.
 
         EXAMPLES::
 
@@ -3700,7 +3698,8 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         Let `I` = ``self``. If `I` is an integral left `\mathcal{O}`-ideal return its decomposition
         as an equivalent primitive ideal and an integer such that their product is the initial ideal.
 
-        OUTPUTS: and quivalent primitive ideal to `I`, i.e. equivalent ideal not contained in `n\mathcal{O}` for any `n>0`, and the smallest integer such that `I \subset g\mathcal{O}`.
+        OUTPUTS: A primitive ideal equivalent to `I`, i.e. an equivalent ideal not contained
+        in `n\mathcal{O}` for any `n>0`, and the smallest integer `g` such that `I \subset g\mathcal{O}`.
 
         EXAMPLES::
 
@@ -3717,7 +3716,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
         TESTS:
 
-        Checks on random crafted ideals that they decompose as expected::
+        Check that randomly generated ideals decompose as expected::
 
             sage: for d in ( m for m in range(400, 750) if is_squarefree(m) ):
             ....:     A = QuaternionAlgebra(d)
@@ -3749,13 +3748,13 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
         return J, g
 
-    def is_primitive(self):
+    def is_primitive(self) -> bool:
         r"""
-        Check if the quaternion fractional ideal is primitive. An integral left
-        $O$-ideal for some order $O$ is said primitive if for all integers $n > 1$
-        $I$ is not contained in $nO$.
+        Check whether the quaternion fractional ideal ``self`` is primitive.
 
-        OUTPUT: a boolean.
+        An integral left `\mathcal{O}`-ideal for some order `\mathcal{O}`
+        is called primitive if for all integers `n > 1` it is not
+        contained in `n\mathcal{O}`.
 
         EXAMPLES::
 
