@@ -224,6 +224,7 @@ class PseudoConwayLattice(WithEqualityById, SageObject):
 
         Check that :issue:`35357` is fixed::
 
+            sage: # needs sage.rings.finite_rings
             sage: PCL = PseudoConwayLattice(65537, use_database=True)
             sage: PCL.polynomial(12)  # random
             x^12 + 6282*x^11 + 11122*x^10 + 35286*x^9 + 38302*x^8 + 62766*x^7 + 4264*x^6 + 4288*x^5 + 32878*x^4 + 39221*x^3 + 27451*x^2 + 17153*x + 3
