@@ -742,7 +742,7 @@ class EllipticCurveLocalData(SageObject):
             sage: # needs sage.rings.number_field
             sage: K.<t> = NumberField(x^7 - 2*x + 177)
             sage: E = EllipticCurve([0,1,0,t,t])
-            sage: P = K.ideal(2,t^3 + t + 1)
+            sage: P = K.ideal(2, t^3 + t + 1)
             sage: E.local_data(P).kodaira_symbol()
             II
         """
@@ -1142,17 +1142,17 @@ def check_prime(K, P):
 
     .. NOTE::
 
-        If `P` is not a prime and does not generate a prime, a ``TypeError``
+        If `P` is not a prime and does not generate a prime, a :class:`TypeError`
         is raised.
 
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.ell_local_data import check_prime
-        sage: check_prime(QQ,3)
+        sage: check_prime(QQ, 3)
         3
-        sage: check_prime(QQ,QQ(3))
+        sage: check_prime(QQ, QQ(3))
         3
-        sage: check_prime(QQ,ZZ.ideal(31))
+        sage: check_prime(QQ, ZZ.ideal(31))
         31
 
         sage: # needs sage.rings.number_field
@@ -1160,11 +1160,11 @@ def check_prime(K, P):
         sage: K.<a> = NumberField(x^2 - 5)
         sage: check_prime(K, a)
         Fractional ideal (a)
-        sage: check_prime(K,a+1)
+        sage: check_prime(K, a + 1)
         Fractional ideal (a + 1)
-        sage: [check_prime(K,P) for P in K.primes_above(31)]
+        sage: [check_prime(K, P) for P in K.primes_above(31)]
         [Fractional ideal (5/2*a + 1/2), Fractional ideal (5/2*a - 1/2)]
-        sage: L.<b> = NumberField(x^2+3)
+        sage: L.<b> = NumberField(x^2 + 3)
         sage: check_prime(K, L.ideal(5))
         Traceback (most recent call last):
         ...

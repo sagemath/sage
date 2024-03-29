@@ -3265,23 +3265,23 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
     def non_archimedean_local_height(self, v=None, prec=None,
                                      weighted=False, is_minimal=None):
         """
-        Compute the local height of self at the non-archimedean place `v`.
+        Compute the local height of ``self`` at the non-archimedean place `v`.
 
         INPUT:
 
         - ``self`` -- a point on an elliptic curve over a number field
           `K`.
 
-        - ``v`` -- a non-archimedean place of `K`, or None (default).
+        - ``v`` -- a non-archimedean place of `K`, or ``None`` (default).
           If `v` is a non-archimedean place, return the local height
-          of self at `v`. If `v` is None, return the total
+          of self at `v`. If `v` is ``None``, return the total
           non-archimedean contribution to the global height.
 
-        - ``prec`` -- integer, or None (default). The precision of the
-          computation. If None, the height is returned symbolically.
+        - ``prec`` -- integer, or ``None`` (default). The precision of the
+          computation. If ``None``, the height is returned symbolically.
 
-        - ``weighted`` -- boolean. If False (default), the height is
-          normalised to be invariant under extension of `K`. If True,
+        - ``weighted`` -- boolean. If ``False`` (default), the height is
+          normalised to be invariant under extension of `K`. If ``True``,
           return this normalised height multiplied by the local degree
           if `v` is a single place, or by the degree of `K` if `v` is
           None.

@@ -629,7 +629,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
     def dehomogenize(self,n):
         r"""
-        Dehomogenizes at the nth coordinate.
+        Dehomogenizes at the `n`-th coordinate.
 
         INPUT:
 
