@@ -5374,20 +5374,23 @@ class Permutation(CombinatorialElement):
 
     def nth_roots(self, n):
         r"""
-        Return all n-th roots of ``self`` (as a generator).
+        Return all `n`-th roots of ``self`` (as a generator).
 
-        An n-th root of the permutation `\sigma` is a permutation `\gamma` such that `\gamma^n = \sigma`.
+        An `n`-th root of the permutation `\sigma` is a permutation `\gamma` such that `\gamma^n = \sigma`.
 
-        Note that the number of n-th roots only depends on the cycle type of ``self``.
+        Note that the number of `n`-th roots only depends on the cycle type of ``self``.
 
         EXAMPLES::
 
+            sage: # needs sage.combinat
             sage: sigma = Permutations(5).identity()
             sage: list(sigma.nth_roots(3))
-            [[1, 4, 3, 5, 2], [1, 5, 3, 2, 4], [1, 2, 4, 5, 3], [1, 2, 5, 3, 4], [4, 2, 3, 5, 1], [5, 2, 3, 1, 4], [3, 2, 5, 4, 1],
-             [5, 2, 1, 4, 3], [2, 5, 3, 4, 1], [5, 1, 3, 4, 2], [2, 3, 1, 4, 5], [3, 1, 2, 4, 5], [2, 4, 3, 1, 5], [4, 1, 3, 2, 5],
-             [3, 2, 4, 1, 5], [4, 2, 1, 3, 5], [1, 3, 4, 2, 5], [1, 4, 2, 3, 5], [1, 3, 5, 4, 2], [1, 5, 2, 4, 3], [1, 2, 3, 4, 5]]
-
+            [[1, 4, 3, 5, 2], [1, 5, 3, 2, 4], [1, 2, 4, 5, 3], [1, 2, 5, 3, 4],
+             [4, 2, 3, 5, 1], [5, 2, 3, 1, 4], [3, 2, 5, 4, 1], [5, 2, 1, 4, 3],
+             [2, 5, 3, 4, 1], [5, 1, 3, 4, 2], [2, 3, 1, 4, 5], [3, 1, 2, 4, 5],
+             [2, 4, 3, 1, 5], [4, 1, 3, 2, 5], [3, 2, 4, 1, 5], [4, 2, 1, 3, 5],
+             [1, 3, 4, 2, 5], [1, 4, 2, 3, 5], [1, 3, 5, 4, 2], [1, 5, 2, 4, 3],
+             [1, 2, 3, 4, 5]]
             sage: sigma = Permutation('(1, 3)')
             sage: list(sigma.nth_roots(2))
             []
@@ -5492,11 +5495,11 @@ class Permutation(CombinatorialElement):
 
     def has_nth_root(self, n) -> bool:
         r"""
-        Decide if ``self`` has n-th roots.
+        Check if ``self`` has `n`-th roots.
 
-        An n-th root of the permutation `\sigma` is a permutation `\gamma` such that `\gamma^n = \sigma`.
+        An `n`-th root of the permutation `\sigma` is a permutation `\gamma` such that `\gamma^n = \sigma`.
 
-        Note that the number of n-th roots only depends on the cycle type of ``self``.
+        Note that the number of `n`-th roots only depends on the cycle type of ``self``.
 
         EXAMPLES::
 
@@ -5553,11 +5556,11 @@ class Permutation(CombinatorialElement):
 
     def number_of_nth_roots(self, n):
         r"""
-        Return the number of n-th roots of ``self``.
+        Return the number of `n`-th roots of ``self``.
 
-        An n-th root of the permutation `\sigma` is a permutation `\gamma` such that `\gamma^n = \sigma`.
+        An `n`-th root of the permutation `\sigma` is a permutation `\gamma` such that `\gamma^n = \sigma`.
 
-        Note that the number of n-th roots only depends on the cycle type of ``self``.
+        Note that the number of `n`-th roots only depends on the cycle type of ``self``.
 
         EXAMPLES::
 

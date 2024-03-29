@@ -1604,7 +1604,8 @@ class FinitePoset(UniqueRepresentation, Parent):
 
                 sage: P = Poset((divisors(12), attrcall("divides")), linear_extension=True)
                 sage: L = P.linear_extensions(facade=True); L
-                The set of all linear extensions of Finite poset containing 6 elements with distinguished linear extension
+                The set of all linear extensions of
+                 Finite poset containing 6 elements with distinguished linear extension
                 sage: L([1, 2, 3, 4, 6, 12])
                 Traceback (most recent call last):
                 ...
@@ -1616,7 +1617,8 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: P.list()
             [1, 2, 3, 4, 6, 12]
             sage: L = P.linear_extensions(); L
-            The set of all linear extensions of Finite poset containing 6 elements with distinguished linear extension
+            The set of all linear extensions of
+             Finite poset containing 6 elements with distinguished linear extension
             sage: l = L.an_element(); l
             [1, 2, 3, 4, 6, 12]
             sage: L.cardinality()
@@ -4959,7 +4961,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         Eventually the following syntax will be accepted::
 
-            sage: C.subset(size = 2)            # not implemented
+            sage: C.subset(size=2)              # not implemented
 
         .. SEEALSO:: :meth:`maximal_chains`, :meth:`antichains`
         """
@@ -5153,7 +5155,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
             sage: Poset({0: [1]}).product(Poset())  # Product with empty poset
             Finite poset containing 0 elements
-            sage: Poset().product(Poset())  # Product of two empty poset
+            sage: Poset().product(Poset())  # Product of two empty posets
             Finite poset containing 0 elements
 
         We check that :issue:`19113` is fixed::
@@ -5253,7 +5255,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: Q = P*P
             sage: Q.factor()
             [Finite poset containing 5 elements,
-            Finite poset containing 5 elements]
+             Finite poset containing 5 elements]
 
             sage: P1 = posets.ChainPoset(3)
             sage: P2 = posets.ChainPoset(7)
@@ -5261,7 +5263,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             [Finite lattice containing 3 elements]
             sage: (P1 * P2).factor()
             [Finite poset containing 7 elements,
-            Finite poset containing 3 elements]
+             Finite poset containing 3 elements]
 
             sage: P = posets.TamariLattice(4)
             sage: (P*P).factor()
@@ -6125,7 +6127,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         Relabeling a (semi)lattice gives a (semi)lattice::
 
             sage: P = JoinSemilattice({0: [1]})
-            sage: P.relabel(lambda n: n+1)
+            sage: P.relabel(lambda n: n + 1)
             Finite join-semilattice containing 2 elements
 
         .. NOTE::
@@ -6994,7 +6996,8 @@ class FinitePoset(UniqueRepresentation, Parent):
 
             sage: P = posets.BooleanLattice(3)
             sage: P.maximal_chains()
-            [[0, 1, 3, 7], [0, 1, 5, 7], [0, 2, 3, 7], [0, 2, 6, 7], [0, 4, 5, 7], [0, 4, 6, 7]]
+            [[0, 1, 3, 7], [0, 1, 5, 7], [0, 2, 3, 7],
+             [0, 2, 6, 7], [0, 4, 5, 7], [0, 4, 6, 7]]
             sage: P.maximal_chains(partial=[0,2])
             [[0, 2, 3, 7], [0, 2, 6, 7]]
             sage: Q = posets.ChainPoset(6)
@@ -7108,15 +7111,17 @@ class FinitePoset(UniqueRepresentation, Parent):
             sage: Q.order_complex().homology()    # a circle
             {0: 0, 1: Z}
 
-            sage: P = Poset((divisors(15), attrcall("divides")), facade = True)
+            sage: P = Poset((divisors(15), attrcall("divides")), facade=True)
             sage: P.order_complex()
-            Simplicial complex with vertex set (1, 3, 5, 15) and facets {(1, 3, 15), (1, 5, 15)}
+            Simplicial complex with vertex set (1, 3, 5, 15) and
+             facets {(1, 3, 15), (1, 5, 15)}
 
         If ``on_ints``, then the elements of the poset are labelled
         `0,1,\dots` in the chain complex::
 
             sage: P.order_complex(on_ints=True)
-            Simplicial complex with vertex set (0, 1, 2, 3) and facets {(0, 1, 3), (0, 2, 3)}
+            Simplicial complex with vertex set (0, 1, 2, 3) and
+             facets {(0, 1, 3), (0, 2, 3)}
         """
         from sage.topology.simplicial_complex import SimplicialComplex
         L = self.list()
@@ -7205,10 +7210,10 @@ class FinitePoset(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: P = posets.AntichainPoset(3)
-            sage: Q = P.chain_polytope();Q                                              # needs sage.geometry.polyhedron
+            sage: Q = P.chain_polytope(); Q                                             # needs sage.geometry.polyhedron
             A 3-dimensional polyhedron in ZZ^3 defined as the convex hull of 8 vertices
             sage: P = posets.PentagonPoset()
-            sage: Q = P.chain_polytope();Q                                              # needs sage.geometry.polyhedron
+            sage: Q = P.chain_polytope(); Q                                             # needs sage.geometry.polyhedron
             A 5-dimensional polyhedron in ZZ^5 defined as the convex hull of 8 vertices
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
