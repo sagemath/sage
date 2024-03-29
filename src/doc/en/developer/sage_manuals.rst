@@ -200,6 +200,66 @@ by Sage, you can link toward it without specifying its full path:
      - ``:mathscinet:`MR0100971```
      - :mathscinet:`MR0100971`
 
+   * - :ref:`ECL <spkg_ecl>`
+     - ``:ecl:`Manipulating-Lisp-objects```
+     - :ecl:`Manipulating-Lisp-objects`
+
+   * -
+     - ``:common_lisp:`RENAME-PACKAGE <f_rn_pkg>```
+     - :common_lisp:`RENAME-PACKAGE <f_rn_pkg>`
+
+   * - :ref:`GAP <spkg_gap>`
+     - ``:gap:`Groups <chap39>```
+     - :gap:`Groups <chap39>`
+
+   * -
+     - ``:gap_package:`GAP package QuaGroup <quagroup/doc/chap0_mj.html>```
+     - :gap_package:`GAP package QuaGroup <quagroup/doc/chap0_mj.html>`
+
+   * - :ref:`Giac <spkg_giac>`
+     - ``:giac_cascmd:`gbasis <node280>```
+     - :giac_cascmd:`gbasis <node280>`
+
+   * -
+     - ``:giac_us:`Unary-functions```
+     - :giac_us:`Unary-functions`
+
+   * - :ref:`Maxima <spkg_maxima>`
+     - ``:maxima:`struve_h <index-struve_005fh>```
+     - :maxima:`struve_h <index-struve_005fh>`
+
+   * - :ref:`Meson <spkg_meson>`
+     - ``:meson:`install_subdir <Reference-manual_functions.html#install_subdir>```
+     - :meson:`install_subdir <Reference-manual_functions.html#install_subdir>`
+
+   * - :ref:`Pari <spkg_pari>`
+     - ``:pari:`lfungenus2```
+     - :pari:`lfungenus2`
+
+   * - :ref:`polymake <spkg_polymake>`
+     - ``:polymake:`matroid```
+     - :polymake:`matroid`
+
+   * - :ref:`PPL <spkg_ppl>`
+     - ``:ppl:`Linear_Expression <classParma__Polyhedra__Library_1_1 Linear__Expression>```
+     - :ppl:`Linear_Expression <classParma__Polyhedra__Library_1_1Linear__Expression>`
+
+   * - :ref:`QEPCAD <spkg_qepcad>`
+     - ``:qepcad:`QEPCAD: Entering formulas <user/EnterForm>```
+     - :qepcad:`QEPCAD: Entering formulas <user/EnterForm>`
+
+   * - :ref:`SCIP <spkg_scip>`
+     - ``:scip:`SCIPsolve <group__PublicSolveMethods>```
+     - :scip:`SCIPsolve <group__PublicSolveMethods>`
+
+   * - :ref:`Singular <spkg_singular>`
+     - ``:singular:`stdfglm <sing_358>```
+     - :singular:`stdfglm <sing_358>`
+
+   * - :ref:`SoPlex <spkg_soplex>`
+     - ``:soplex:`soplex::LinSolverRational <classsoplex_1_1SLinSolverRational>```
+     - :soplex:`soplex::LinSolverRational <classsoplex_1_1SLinSolverRational>`
+
 **http links:** copy/pasting a http link in the documentation works. If you want
 a specific link name, use ```link name <http://www.example.com>`_``
 
