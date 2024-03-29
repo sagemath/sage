@@ -1,5 +1,6 @@
 # Importing necessary modules
 from sage.matrix.matrix import Matrix
+from sage.matrix.matrix_rational_dense cimport Matrix_rational_dense
 from sage.structure.richcmp cimport richcmp_item, rich_to_bool
 from sage.matrix.matrix_space cimport MatrixSpace
 from sage.structure.sequence cimport Sequence
@@ -10,22 +11,15 @@ cdef class Matrix_dense(Matrix):
     cdef int _degree
     cdef int _n
 
-    cdef bint is_sparse_c(self) except +:
-        return False
-
-    cdef bint is_dense_c(self) except +:
-        return True
-
-    # Define other methods and functions here...
+    # Define methods and functions here...
 
     def __copy__(self):
         """
-        Return a copy of this matrix. Changing the entries of the copy will
-        not change the entries of this matrix.
+        Return a copy of this matrix.
         """
         # Implementation goes here
 
-    def _richcmp_(self, right, int op) except +:
+    def _richcmp_(self, right, int op):
         """
         Comparison operator.
         """
