@@ -135,7 +135,7 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
             True
 
         Fix a bug when ``index_set`` is ``None`` and ``names`` is a
-        string (:trac:`26221`)::
+        string (:issue:`26221`)::
 
             sage: FreeMonoid(2, names=['a','b']) is FreeMonoid(names='a,b')
             True

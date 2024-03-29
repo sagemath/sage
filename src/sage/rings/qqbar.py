@@ -347,7 +347,7 @@ fact that the third output is different than the first::
 
 Just for fun, let's try ``sage_input`` on a very complicated expression. The
 output of this example changed with the rewriting of polynomial multiplication
-algorithms in :trac:`10255`::
+algorithms in :issue:`10255`::
 
     sage: rt2 = sqrt(AA(2))
     sage: rt3 = sqrt(QQbar(3))
@@ -480,14 +480,14 @@ y2`` but this is currently infinitely long.
 
 TESTS:
 
-Verify that :trac:`10981` is fixed::
+Verify that :issue:`10981` is fixed::
 
     sage: x = AA['x'].gen()
     sage: P = 1/(1+x^4)
     sage: P.partial_fraction_decomposition()
     (0, [(-0.3535533905932738?*x + 1/2)/(x^2 - 1.414213562373095?*x + 1), (0.3535533905932738?*x + 1/2)/(x^2 + 1.414213562373095?*x + 1)])
 
-Check that :trac:`22202` is fixed::
+Check that :issue:`22202` is fixed::
 
     sage: R1.<x> = AA[]; R2.<s> = QQbar[]
     sage: v = QQbar.polynomial_root(x^2 - x + 1, CIF(0.5, RIF(-0.87, -0.85)))
@@ -495,8 +495,8 @@ Check that :trac:`22202` is fixed::
     sage: QQ(a)
     1/4
 
-This example from :trac:`17896` should run in reasonable time, see also
-:trac:`15600`::
+This example from :issue:`17896` should run in reasonable time, see also
+:issue:`15600`::
 
     sage: x,y = polygens(QQ,"x,y")
     sage: p1 = x^5 + 6*x^4 - 42*x^3 - 142*x^2 + 467*x + 422
@@ -507,7 +507,7 @@ This example from :trac:`17896` should run in reasonable time, see also
     sage: z, = [r for r in p4.roots(QQbar, False) if r in ival]
     sage: z.exactify()
 
-Check that :trac:`17895` is fixed. We check that ``polynomial_root``
+Check that :issue:`17895` is fixed. We check that ``polynomial_root``
 runs under 5 seconds (used to take ~40sec)::
 
     sage: x,y = polygens(QQ,"x,y")
@@ -520,7 +520,7 @@ runs under 5 seconds (used to take ~40sec)::
     sage: z2 = QQbar.polynomial_root(p4, ival)
     sage: cancel_alarm()
 
-Check that :trac:`28530` is fixed::
+Check that :issue:`28530` is fixed::
 
     sage: x = polygen(QQ)
     sage: K.<a> = NumberField(x^2 - x - 6256320, embedding=-2500.763730596996)
@@ -751,7 +751,7 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
         REFERENCES:
 
         - [GCL1992]_ Section 8.8
-        - :trac:`25390` and https://github.com/sagemath/sage/files/10659152/qqbar.pdf.gz
+        - :issue:`25390` and https://github.com/sagemath/sage/files/10659152/qqbar.pdf.gz
 
         .. TODO::
 
@@ -887,7 +887,7 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
             sage: F = QQbar._factor_multivariate_polynomial(p); F
             (a + (-1.189207115002722?*I)*b) * (a + 1.189207115002722?*I*b)
 
-        A test that led to :trac:`26898`::
+        A test that led to :issue:`26898`::
 
             sage: # needs sage.libs.singular
             sage: R.<x> = QQ[]
@@ -897,7 +897,7 @@ class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
             ....:    factor_f = (x - b).map_coefficients(hom)
             ....:    assert(minpoly % factor_f == 0)
 
-        Test :trac:`29076`::
+        Test :issue:`29076`::
 
             sage: # needs sage.libs.singular
             sage: AA['x','y'](1).factor()   # indirect doctest
@@ -2342,7 +2342,7 @@ def do_polred(poly, threshold=32):
         sage: do_polred(x^3 + 123456)
         (-1/4*x, -4*x, x^3 - 1929)
 
-    This shows that :trac:`13054` has been fixed::
+    This shows that :issue:`13054` has been fixed::
 
         sage: do_polred(x^4 - 4294967296*x^2 + 54265257667816538374400)
         (1/4*x, 4*x, x^4 - 268435456*x^2 + 211973662764908353025)
@@ -4706,7 +4706,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
 
         TESTS:
 
-        Check that :trac:`20209` is fixed::
+        Check that :issue:`20209` is fixed::
 
             sage: RIF(QQbar(2).sqrt())
             1.414213562373095?
@@ -4895,7 +4895,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
         component has to be compared for exact equality, which can be
         a costly operation.  For the special case where both numbers
         have the same minimal polynomial, that cost can be avoided,
-        though (see :trac:`16964`)::
+        though (see :issue:`16964`)::
 
             sage: x = polygen(ZZ)
             sage: p = 69721504*x^8 + 251777664*x^6 + 329532012*x^4 + 184429548*x^2 + 37344321
@@ -4963,7 +4963,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
             sage: QQbar.zeta(3).real() == -1/2
             True
 
-        Check that :trac:`26593` is fixed (the test here has to be repeated
+        Check that :issue:`26593` is fixed (the test here has to be repeated
         twice)::
 
             sage: pi = x^7 - 2*x^6 + x^3 - 2*x^2 + 2*x - 1
@@ -4975,7 +4975,7 @@ class AlgebraicNumber(AlgebraicNumber_base):
             sage: pi = b.minpoly()
             sage: K = NumberField(pi, 'b', embedding=b)
 
-        Check that :trac:`29220` is fixed::
+        Check that :issue:`29220` is fixed::
 
             sage: # needs sage.symbolic
             sage: a = AA(2**(1/2) - 2**(1/3))
@@ -5421,7 +5421,7 @@ class AlgebraicReal(AlgebraicNumber_base):
 
         TESTS:
 
-        Both of the following examples, from :trac:`11728`, trigger
+        Both of the following examples, from :issue:`11728`, trigger
         taking the real part below. This is necessary because
         sometimes a very small (e.g., 1e-17) complex part appears in a
         complex interval used to create an AlgebraicReal.::
@@ -5470,7 +5470,7 @@ class AlgebraicReal(AlgebraicNumber_base):
 
         We have to ensure after doing this that self._value is still
         real which is not the case without calling _ensure_real (see
-        :trac:`11728`)::
+        :issue:`11728`)::
 
             sage: x = polygen(ZZ, 'x')
             sage: P = AA['x'](1 + x^4); a1,a2 = P.factor()[0][0], P.factor()[1][0]; a1*a2
@@ -5679,7 +5679,7 @@ class AlgebraicReal(AlgebraicNumber_base):
 
         TESTS:
 
-        Check that :trac:`15501` is fixed::
+        Check that :issue:`15501` is fixed::
 
             sage: a = QQbar((-1)^(1/4)).real()                                          # needs sage.symbolic
             sage: (floor(a-a) + a).parent()                                             # needs sage.symbolic
@@ -6026,7 +6026,7 @@ class AlgebraicReal(AlgebraicNumber_base):
 
         TESTS:
 
-        Check that :trac:`26898` is fixed.  This calculation triggers the 40 bits
+        Check that :issue:`26898` is fixed.  This calculation triggers the 40 bits
         of extra precision below, and the point is not that the length of the list
         is seven, but that the code runs in a reasonable time::
 
@@ -6342,7 +6342,7 @@ class AlgebraicNumberPowQQAction(Action):
         sage: AA(-16)^(1/4)/QQbar.zeta(8)
         2
 
-    We check that :trac:`7859` is fixed::
+    We check that :issue:`7859` is fixed::
 
         sage: (AA(2)^(1/2)-AA(2)^(1/2))^(1/2)
         0
@@ -7542,7 +7542,7 @@ class ANRoot(ANDescr):
 
         TESTS:
 
-        Verify that :trac:`12727` is fixed::
+        Verify that :issue:`12727` is fixed::
 
             sage: m = sqrt(sin(pi/5)); a = QQbar(m); b = AA(m)                          # needs sage.symbolic
             sage: a.minpoly()                                                           # needs sage.symbolic
@@ -7674,7 +7674,7 @@ class ANRoot(ANDescr):
             sage: y._interval_fast(128)
             -0.68232780382801932736948373971104825689?
 
-        Check that :trac:`15493` is fixed::
+        Check that :issue:`15493` is fixed::
 
             sage: y._interval_fast(20).parent() is RealIntervalField(20)
             True

@@ -180,7 +180,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
             sage: x != y
             True
 
-        This once caused a segfault (see :trac:`5443`)::
+        This once caused a segfault (see :issue:`5443`)::
 
             sage: r,s,t,u,v = map(SL2Z, [[1, 1, 0, 1], [-1, 0, 0, -1], [1, -1, 0, 1], [1, -1, 2, -1], [-1, 1, -2, 1]])
             sage: v == s*u
@@ -216,7 +216,7 @@ cdef class ArithmeticSubgroupElement(MultiplicativeGroupElement):
             sage: x.parent()
             Modular Group SL(2,Z)
 
-        We check that :trac:`5048` is fixed::
+        We check that :issue:`5048` is fixed::
 
             sage: a = Gamma0(10).1 * Gamma0(5).2; a # random
             sage: a.parent()

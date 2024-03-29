@@ -224,7 +224,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
             sage: I = L.ideal(X)
             sage: TestSuite(I).run()
 
-        Check that :trac:`34006` is fixed::
+        Check that :issue:`34006` is fixed::
 
             sage: S.gens()[0].parent() is S
             True
@@ -960,7 +960,7 @@ class LieSubalgebra_finite_dimensional_with_basis(Parent, UniqueRepresentation):
 
             TESTS:
 
-            Check that :trac:`34006` is fixed::
+            Check that :issue:`34006` is fixed::
 
                 sage: MS = MatrixSpace(QQ, 2)
                 sage: m = MS([[0, -1], [1, 0]])

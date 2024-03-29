@@ -139,7 +139,7 @@ class HeckeModules(Category_module):
             Fixing :meth:`_test_zero` (``__call__`` should accept a
             function as input) and :meth:`_test_elements*` (modular
             form morphisms elements should inherit from categories) is
-            :trac:`12879`.
+            :issue:`12879`.
 
             TESTS::
 
@@ -170,7 +170,7 @@ class HeckeModules(Category_module):
             TESTS:
 
             Check that Hom sets of Hecke modules are in the correct
-            category (see :trac:`17359`)::
+            category (see :issue:`17359`)::
 
                 sage: HeckeModules(ZZ).Homsets().super_categories()
                 [Category of modules over Integer Ring, Category of homsets]

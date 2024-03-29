@@ -1,10 +1,10 @@
-python_json_logger: A python library adding a json log formatter
-================================================================
+python_json_logger: Python library adding a json log formatter
+==============================================================
 
 Description
 -----------
 
-A python library adding a json log formatter
+Python library adding a json log formatter
 
 License
 -------
