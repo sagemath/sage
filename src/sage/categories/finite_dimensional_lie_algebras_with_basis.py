@@ -561,6 +561,18 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: L.<a,b,c,d,e> = LieAlgebra(QQ, scoeffs)
                 sage: L.normalizer_basis([a, e])
                 [b, c]
+
+                sage: S = L.subalgebra([a, e])
+                sage: L.normalizer_basis(S)
+                [a, b, c, e]
+
+            When the subalgebra is the ambient Lie algebra, we return the
+            basis of the ambient Lie algebra::
+
+                sage: L.normalizer_basis(L)
+                Finite family {'a': a, 'b': b, 'c': c, 'd': d, 'e': e}
+                sage: L.normalizer_basis([a,b,c,a,d+e,a+e])
+                Finite family {'a': a, 'b': b, 'c': c, 'd': d, 'e': e}
             """
             from sage.matrix.constructor import matrix
 
