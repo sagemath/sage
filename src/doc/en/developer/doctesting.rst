@@ -26,7 +26,7 @@ this syntax:
 
 .. CODE-BLOCK:: text
 
-    /path/to/sage-x.y.z/sage -t [--long] /path/to/sage-x.y.z/path/to/module.py[x]
+    /path/to/sage_root/sage -t [--long] /path/to/sage_root/path/to/module.py[x]
 
 where ``--long`` is an optional argument (see :ref:`section-options`
 for more options). The version of ``sage`` used must match the version
