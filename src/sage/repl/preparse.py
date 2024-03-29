@@ -238,9 +238,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import os
 import re
-
+from pathlib import Path
 from types import SimpleNamespace
 
 from sage.repl.load import load_wrap
@@ -2205,8 +2204,8 @@ def preparse_file_named_to_stream(name, out):
     Preparse file named \code{name} (presumably a .sage file), outputting to
     stream \code{out}.
     """
-    name = os.path.abspath(name)
-    with open(name) as f:
+    name = Path(name).resolve()
+    with name.open() as f:
         contents = f.read()
     contents = handle_encoding_declaration(contents, out)
     parsed = preparse_file(contents)
@@ -2216,13 +2215,16 @@ def preparse_file_named_to_stream(name, out):
     out.write(parsed)
 
 
-def preparse_file_named(name):
+def preparse_file_named(name) -> Path:
     r"""
-    Preparse file named \code{name} (presumably a .sage file), outputting to a
-    temporary file.  Returns name of temporary file.
+    Preparse file named ``name`` (presumably a ``.sage`` file),
+    outputting to a temporary file.
+
+    This returns the temporary file as a ``Path`` object.
     """
     from sage.misc.temporary_file import tmp_filename
-    tmpfilename = tmp_filename(os.path.basename(name)) + '.py'
-    with open(tmpfilename, 'w') as out:
+    name = Path(name)
+    tmpfilename = Path(tmp_filename(name.name)).with_suffix(name.suffix + '.py')
+    with tmpfilename.open('w') as out:
         preparse_file_named_to_stream(name, out)
     return tmpfilename
