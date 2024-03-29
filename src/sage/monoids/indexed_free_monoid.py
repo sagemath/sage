@@ -355,6 +355,31 @@ class IndexedMonoidElement(MonoidElement):
         """
         return [k for k,e in self._sorted_items() for dummy in range(e)]
 
+    def is_one(self) -> bool:
+        """
+        Return if ``self`` is the identity element.
+
+        EXAMPLES::
+
+            sage: F = FreeMonoid(index_set=ZZ)
+            sage: a,b,c,d,e = [F.gen(i) for i in range(5)]
+            sage: (b*a*c^3*a).is_one()
+            False
+            sage: F.one().is_one()
+            True
+
+        ::
+
+            sage: F = FreeAbelianMonoid(index_set=ZZ)
+            sage: a,b,c,d,e = [F.gen(i) for i in range(5)]
+            sage: (b*c^3*a).is_one()
+            False
+            sage: F.one().is_one()
+            True
+        """
+        return not self._monomial
+
+
 class IndexedFreeMonoidElement(IndexedMonoidElement):
     """
     An element of an indexed free abelian monoid.
@@ -591,6 +616,29 @@ class IndexedFreeAbelianMonoidElement(IndexedMonoidElement):
                 d[k] = diff
         return self.__class__(self.parent(), d)
 
+    def divides(self, m) -> bool:
+        r"""
+        Return whether ``self`` divides ``m``.
+
+        EXAMPLES::
+
+            sage: F = FreeAbelianMonoid(index_set=ZZ)
+            sage: a,b,c,d,e = [F.gen(i) for i in range(5)]
+            sage: elt = a*b*c^3*d^2
+            sage: a.divides(elt)
+            True
+            sage: c.divides(elt)
+            True
+            sage: (a*b*d^2).divides(elt)
+            True
+            sage: (a^4).divides(elt)
+            False
+            sage: e.divides(elt)
+            False
+        """
+        other = m._monomial
+        return all(k in other and v <= other[k] for k, v in self._monomial.items())
+
     def __len__(self):
         """
         Return the length of ``self``.
@@ -605,8 +653,7 @@ class IndexedFreeAbelianMonoidElement(IndexedMonoidElement):
             sage: len(elt)
             7
         """
-        m = self._monomial
-        return sum(m[gen] for gen in m)
+        return sum(self._monomial.values())
 
     length = __len__
 
