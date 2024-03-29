@@ -2,7 +2,7 @@
 r"""
 Compute Hilbert series of monomial ideals
 
-This implementation was provided at :trac:`26243` and is supposed to be a way
+This implementation was provided at :issue:`26243` and is supposed to be a way
 out when Singular fails with an int overflow, which will regularly be the case
 in any example with more than 34 variables.
 """
@@ -572,7 +572,7 @@ def hilbert_poincare_series(I, grading=None):
         sage: hilbert_poincare_series((R * R.gens())^2, grading=range(1,10))
         t^9 + t^8 + t^7 + t^6 + t^5 + t^4 + t^3 + t^2 + t + 1
 
-    The following example is taken from :trac:`20145`::
+    The following example is taken from :issue:`20145`::
 
         sage: # needs sage.libs.singular
         sage: n=4; m=11; P = PolynomialRing(QQ, n*m, "x"); x = P.gens(); M = Matrix(n, x)

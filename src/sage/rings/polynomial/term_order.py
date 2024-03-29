@@ -645,7 +645,7 @@ class TermOrder(SageObject):
             1
 
         We enforce consistency when calling the copy constructor (cf.
-        :trac:`12748`)::
+        :issue:`12748`)::
 
             sage: T = TermOrder('degrevlex', 6) + TermOrder('degrevlex',10)
             sage: R.<x0,y0,z0,x1,y1,z1,a0,a1,a2,a3,a4,a5,a6,a7,a8> = PolynomialRing(QQ, order=T)
@@ -682,7 +682,7 @@ class TermOrder(SageObject):
             //        block   2 : ordering dp
             //                  : names    x y z
 
-        Check that :trac:`29635` is fixed::
+        Check that :issue:`29635` is fixed::
 
             sage: T = PolynomialRing(GF(101^5), 'u,v,w',                                # needs sage.rings.finite_rings
             ....:                    order=TermOrder('degneglex')).term_order()
@@ -1199,7 +1199,7 @@ class TermOrder(SageObject):
 
         TESTS:
 
-        Check that the issue in :trac:`27139` is fixed::
+        Check that the issue in :issue:`27139` is fixed::
 
             sage: R.<x,y,z,t> = PolynomialRing(AA, order='lex(2),lex(2)')               # needs sage.rings.number_field
             sage: x > y                                                                 # needs sage.rings.number_field
@@ -1867,7 +1867,7 @@ class TermOrder(SageObject):
 
         NOTE:
 
-        This method has been added in :trac:`11316`. There used
+        This method has been added in :issue:`11316`. There used
         to be an *attribute* of the same name and the same content.
         So, it is a backward incompatible syntax change.
 
@@ -1939,7 +1939,7 @@ class TermOrder(SageObject):
         TESTS:
 
         We assert that comparisons take into account the block size of
-        orderings (cf. :trac:`24981`)::
+        orderings (cf. :issue:`24981`)::
 
             sage: R = PolynomialRing(QQ, 6, 'x', order="lex(1),degrevlex(5)")
             sage: S = R.change_ring(order="lex(2),degrevlex(4)")
@@ -2222,7 +2222,7 @@ def termorder_from_singular(S):
     TESTS:
 
     Check that ``degneglex`` term orders are converted correctly
-    (:trac:`29635`)::
+    (:issue:`29635`)::
 
         sage: # needs sage.libs.singular
         sage: _ = singular.ring(0, '(x,y,z,w)', '(a(1:4),ls(4))')

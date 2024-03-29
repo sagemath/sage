@@ -86,6 +86,7 @@ if [ "${BOOTSTRAP_QUIET}" = "no" ]; then
 fi
 OUTPUT_INDEX="$OUTPUT_DIR"/index.rst
 cat > "$OUTPUT_INDEX" <<EOF
+.. _spkg:
 
 Packages and Features
 =====================
@@ -97,11 +98,33 @@ The Sage distribution includes most programs and libraries on which
 Sage depends.  It installs them automatically if it does not find
 equivalent system packages.
 
+Mathematics
+~~~~~~~~~~~
+
 EOF
-for PKG_BASE in $(sage-package list --has-file SPKG.rst :standard: | grep -v '^sagemath_'); do
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --has-file math :standard: | grep -v '^sagemath_'); do
     echo "* :ref:\`spkg_$PKG_BASE\`"
 done >> "$OUTPUT_INDEX"
 cat >> "$OUTPUT_INDEX" <<EOF
+
+Front-end, graphics, document preparation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+EOF
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --no-file math --has-file front-end :standard: | grep -v '^sagemath_'); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done >> "$OUTPUT_INDEX"
+cat >> "$OUTPUT_INDEX" <<EOF
+
+Other dependencies
+~~~~~~~~~~~~~~~~~~
+
+EOF
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --no-file math --no-file front-end :standard: | grep -v '^sagemath_'); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done >> "$OUTPUT_INDEX"
+cat >> "$OUTPUT_INDEX" <<EOF
+
 
 Optional Packages
 -----------------
@@ -109,11 +132,33 @@ Optional Packages
 For additional functionality, you can install some of the following
 optional packages.
 
+Mathematics
+~~~~~~~~~~~
+
 EOF
-for PKG_BASE in $(sage-package list --has-file SPKG.rst :optional: | grep -v '^sagemath_'); do
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --has-file math :optional: | grep -v '^sagemath_'); do
     echo "* :ref:\`spkg_$PKG_BASE\`"
 done >> "$OUTPUT_INDEX"
 cat >> "$OUTPUT_INDEX" <<EOF
+
+Front-end, graphics, document preparation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+EOF
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --no-file math --has-file front-end :optional: | grep -v '^sagemath_'); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done >> "$OUTPUT_INDEX"
+cat >> "$OUTPUT_INDEX" <<EOF
+
+Other dependencies
+~~~~~~~~~~~~~~~~~~
+
+EOF
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --no-file math --no-file front-end :optional: | grep -v '^sagemath_'); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done >> "$OUTPUT_INDEX"
+cat >> "$OUTPUT_INDEX" <<EOF
+
 
 Features
 --------
@@ -170,12 +215,26 @@ Some packages that provide additional functionality are marked as
 "experimental".  Developers are needed in order to improve the
 integration of these packages into the Sage distribution.
 
+Mathematics
+~~~~~~~~~~~
+
 EOF
-for PKG_BASE in $(sage-package list --has-file SPKG.rst :experimental: | grep -v '^sagemath_'); do
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --has-file math :experimental: | grep -v '^sagemath_'); do
     echo "* :ref:\`spkg_$PKG_BASE\`"
 done >> "$OUTPUT_INDEX"
 
 cat >> "$OUTPUT_INDEX" <<EOF
+
+Other dependencies
+~~~~~~~~~~~~~~~~~~
+
+EOF
+for PKG_BASE in $(sage-package list --has-file SPKG.rst --no-file math :experimental: | grep -v '^sagemath_'); do
+    echo "* :ref:\`spkg_$PKG_BASE\`"
+done >> "$OUTPUT_INDEX"
+
+cat >> "$OUTPUT_INDEX" <<EOF
+
 
 All External Packages
 ---------------------
