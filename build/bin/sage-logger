@@ -63,18 +63,21 @@ fi
 
 timefile="$logdir/$logname.time"
 rm -f "$timefile"
-if /usr/bin/time -p -o /dev/null true; then
-    TIME="/usr/bin/time -p -o $timefile"
+if /usr/bin/time -h -o /dev/null true; then
+    TIME="/usr/bin/time -h -o $timefile"
 else
     TIME=""
 fi
 
 report_time ()
 {
-    if grep -q 'real [1-9][0-9]' $timefile 2>/dev/null; then
-        # at least 10 seconds
-        echo $(echo $(cat $timefile));
-    fi;
+    time=$(echo $(cat $timefile))
+    case "$time" in
+        *m*real*|*h*real*|*[1-9][0-9].*real*|*[1-9][0-9],*real*)
+            # at least 10 seconds wall time
+            echo "$time"
+            ;;
+    esac
 }
 
 mkdir -p "$logdir"
