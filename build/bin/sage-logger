@@ -69,6 +69,14 @@ else
     TIME=""
 fi
 
+report_time ()
+{
+    if grep -q 'real [1-9][0-9]' $timefile 2>/dev/null; then
+        # at least 10 seconds
+        echo $(echo $(cat $timefile));
+    fi;
+}
+
 mkdir -p "$logdir"
 
 # Do all logging of child processes with V=1 to ensure that no
@@ -90,10 +98,13 @@ if [ -n "$SAGE_SILENT_BUILD" -a ${use_prefix} = true ]; then
         echo "  [$logname] error installing, exit status $status. End of log file:"
         tail -n 120 "$logfile" | sed "/Please email sage-devel/,$ d;s;^;  [$logname]   ;" >&2
         echo "  [$logname] Full log file: $logfile"
-    elif grep -q 'real [1-9][0-9]' $timefile 2>/dev/null; then  # at least 10 seconds
-        echo "  [$logname] successfully installed ($(echo $(cat $timefile)))."
     else
-        echo "  [$logname] successfully installed."
+        time=$(report_time)
+        if [ -n "$time" ]; then
+            echo "  [$logname] successfully installed ($time)."
+        else
+            echo "  [$logname] successfully installed."
+        fi
     fi
     exit $status
 else
@@ -102,8 +113,7 @@ else
     # run, not the logging.
 
     ( exec 2>&1;
-      $TIME sh -c "$cmd"; status=$?;
-      if grep -q 'real [1-9][0-9]' $timefile 2>/dev/null; then echo $(echo $(cat $timefile)); fi;
+      $TIME sh -c "$cmd"; status=$?; report_time;
       exit $status ) | \
         ( trap '' SIGINT; if [ -n "$GITHUB_ACTIONS" -a -n "$prefix" ]; then echo "::group::${logname}"; fi; tee -a "$logfile" | $SED; if [ -n "$GITHUB_ACTIONS" -a -n "$prefix" ]; then echo "::endgroup::"; fi )
 
