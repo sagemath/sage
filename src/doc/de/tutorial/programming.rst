@@ -2,10 +2,10 @@
 Programmierung
 **************
 
-.. _section-loadattach:
+:ref:`section-loadattach`.
 
 Sage-Dateien Laden und Anhängen
-===============================
+=================================
 
 Als nächstes zeigen wir wie man Programme, die einer separaten Datei
 geschrieben wurden in Sage lädt. Erstellen Sie eine Datei, welche Sie
@@ -76,7 +76,7 @@ Jedoch beseht die beste Möglichkeit solchen Code in Sage einzufügen darin,
 diesen in einer Datei zu speichern und ``attach`` wie oben beschrieben zu verwenden.
 
 
-.. _section-compile:
+:ref:`section-compile`.
 
 Kompilierten Code erzeugen
 ==========================
@@ -164,10 +164,10 @@ die Zeile ``clib foo`` zu dem Cython-Quellcode hinzu. Auf ähnliche
 Weise kann eine zusätzliche Datei ``bar`` zu der Kompilierung mit der
 Deklaration ``cfile bar`` hinzugefügt werden.
 
-.. _section-standalone:
+:ref:`section-standalone`.
 
 eigenständige Python/Sage Skripte
-=================================
+===================================
 
 Das folgende eigenständige Sageskript faktorisiert ganze Zahlen,
 Polynome, usw.:
@@ -723,10 +723,11 @@ die :math:`1 \in \GF{5}` gleich der :math:`1 \in \QQ` festlegt.
 
 ::
 
-    sage: magma('GF(5)!1 eq Rationals()!1')            # optional - magma
+    sage: magma('GF(5)!1 eq Rationals()!1')            [‡]
     true
 
 Profiling
+.. [‡] This warning explains that Sage's way of comparing things is stricter than Magma's.
 =========
 
 Autor des Abschnitts: Martin Albrecht (malb@informatik.uni-bremen.de)

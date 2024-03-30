@@ -2,7 +2,7 @@
 Programmation
 *************
 
-.. _section-loadattach:
+:ref:`section-loadattach`
 
 Charger et attacher des fichiers Sage
 =====================================
@@ -78,10 +78,10 @@ dans Sage est de l'enregistrer dans un fichier et d'utiliser la commande
 ``attach`` comme décrit ci-dessus.
 
 
-.. _section-compile:
+:ref:`section-compile`
 
 Écrire des programmes compilés
-==============================
+=================================
 
 Dans les calculs mathématiques sur ordinateur, la vitesse a une
 importance cruciale. Or, si Python est un langage commode et de très haut
@@ -122,7 +122,7 @@ vaut 0 et non le nombre rationnel :math:`1/3`. Pour appeler une fonction
         return sage.all.factorial(n)
 
 Appeler des fonctions définies dans des fichiers C séparés
-----------------------------------------------------------
+--------------------------------------------------------------
 
 Il n'est pas difficile non plus d'accéder à des fonctions écrites en C,
 dans des fichiers \*.c séparés. Créez dans un même répertoire deux
@@ -163,7 +163,7 @@ Cython la ligne ``clib foo``. De même, il est possible d'ajouter un
 fichier C supplémentaire ``bar`` aux fichiers à compiler avec la
 déclaration ``cfile bar``.
 
-.. _section-standalone:
+:ref:`section-standalone`
 
 Scripts Python/Sage autonomes
 =============================
@@ -196,7 +196,7 @@ suivant :
     2 * 17 * 59
 
 Types de données
-================
+==================
 
 Chaque objet Sage a un type bien défini. Python dispose d'une vaste
 gamme de types intégrés et la bibliothèque Sage en fournit de nombreux
@@ -287,7 +287,7 @@ sur la touche ``[tab]`` de votre clavier, comme expliqué dans la section
 
 
 Listes, n-uplets et séquences
-=============================
+===============================
 
 Une liste stocke des éléments qui peuvent être de type arbitraire. Comme
 en C, en C++ etc. (mais au contraire de ce qu'il se passe dans la
@@ -531,7 +531,7 @@ supplémentaires utiles à Sage. Pour créer un ensemble Sage, on utilise
     Set of elements of Integer Ring
 
 Itérateurs
-==========
+============
 
 Les itérateurs sont un ajout récent à Python, particulièrement utile
 dans les applications mathématiques. Voici quelques exemples, consultez
@@ -580,7 +580,7 @@ d'itérateurs associés :
     (0, -1)
 
 Boucles, fonctions, structures de contrôle et comparaisons
-==========================================================
+============================================================
 
 Nous avons déjà vu quelques exemples courants d'utilisation des boucles
 ``for``. En Python, les boucles ``for`` ont la structure suivante, avec
@@ -721,8 +721,10 @@ considère :math:`1 \in \GF{5}` comme égal à :math:`1 \in \QQ`.
 
 ::
 
-    sage: magma('GF(5)!1 eq Rationals()!1')  # optional - magma
+    sage: magma('GF(5)!1 eq Rationals()!1')  [†] 
     true
+
+.. [†] Requires Magma.
 
 Profilage (profiling)
 =====================

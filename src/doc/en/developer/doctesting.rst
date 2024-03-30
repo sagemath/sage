@@ -2,7 +2,7 @@
 
 .. highlight:: shell-session
 
-.. _chapter-doctesting:
+:ref:`chapter-doctesting`
 
 =======================
 Running Sage's Doctests
@@ -493,7 +493,7 @@ As the number of threads increases, the total testing time
 decreases.
 
 
-.. _section-parallel-test-whole-library:
+:ref:`section-parallel-test-whole-library`
 
 Parallel testing the whole Sage library
 =======================================
@@ -692,7 +692,7 @@ function in the global namespace, passing it either a string or a module:
         cumulative wall time: 4.3 seconds
 
 
-.. _section-options:
+:ref:`section-options`
 
 Optional arguments
 ==================
@@ -867,7 +867,7 @@ It can also be set explicitly using the environment variable
 ``SAGE_DOCTEST_RANDOM_SEED``.
 
 
-.. _section-optional-doctest-flag:
+:ref:`section-optional-doctest-flag`
 
 Run optional doctests
 ---------------------
@@ -1311,7 +1311,7 @@ code loads the globals from that file into the namespace before
 running tests.  To disable this behaviour (and require imports to be
 explicitly specified), use the ``--force-lib`` option.
 
-.. _section-doctest-auxiliary-files:
+:ref:`section-doctest-auxiliary-files`
 
 Auxiliary files
 ^^^^^^^^^^^^^^^
@@ -1372,7 +1372,7 @@ failures in the doctest report; and if there are only baseline failures, no
 new failures, then ``sage -t`` will exit with status code 0 (success).
 
 
-.. _section-doctesting-venv:
+:ref:`section-doctesting-venv`
 
 Options for testing in virtual environments
 -------------------------------------------
@@ -1428,7 +1428,7 @@ This option can also be combined with ``--all``::
                                 --if-installed --all
 
 
-.. _section-fixdoctests:
+:ref:`section-fixdoctests`
 
 The doctest fixer
 =================
@@ -1501,13 +1501,13 @@ This will give the following result on the above example::
   |
   | EXAMPLES::
   |
-  |     sage: 2 + 2                                 # optional - EXPECTED
+  |     sage: 2 + 2                                 [1]
   |     5
-  |     sage: 2 + 2                                 # optional - GOT
+  |     sage: 2 + 2                                 [2]
   |     4
-  |     sage: factor("91")                          # optional - EXPECTED
+  |     sage: factor("91")                          [1]
   |     "7" * "13"
-  |     sage: factor("91")                          # optional - GOT
+  |     sage: factor("91")                          [2]
   |     Traceback (most recent call last):
   |     ...
   |     File "<doctest...>", line 1, in <module>
@@ -1517,6 +1517,9 @@ This will give the following result on the above example::
   |     TypeError: unable to factor '91'
   | ...
   | """
+
+.. [1]Indicates the expected result in a doctest scenario. 
+.. [2] Indicates the actual result obtained in a doctest scenario.
 
 To make sure that all doctests are updated, you may have to use the option ``--long``::
 
@@ -1531,7 +1534,7 @@ instead of overwriting the source file::
                                 --no-overwrite src/sage/arith/weird.py
 
 
-.. _section-fixdoctests-optional-needs:
+:ref:`section-fixdoctests-optional-needs`
 
 Managing ``# optional`` and ``# needs`` tags
 --------------------------------------------
@@ -1551,7 +1554,10 @@ redundant tags from all doctests in this scope. For example::
   |     sage: # needs sage.modules sage.rings.number_field
   |     sage: Q5 = QuadraticField(5)
   |     sage: V = Q5^42                                 # needs sage.modules
-  |     sage: T = transmogrify(V)           # optional - bliss sirocco
+  |     sage: T = transmogrify(V)           [3]
+
+
+.. [3] Requires 'bliss sirocco'.
 
 is automatically transformed to::
 
@@ -1564,7 +1570,9 @@ is automatically transformed to::
   |     sage: # needs sage.modules
   |     sage: Q5 = QuadraticField(5)
   |     sage: V = Q5^42
-  |     sage: T = transmogrify(V)               # optional - bliss
+  |     sage: T = transmogrify(V)               [4]
+
+.. [4] Applies transmogrify to a vector space, possibly leveraging bliss.
 
 The doctest fixer also aligns the ``# optional/needs FEATURE`` tags on
 individual doctests at a fixed set of tab stops.

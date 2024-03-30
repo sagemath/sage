@@ -182,7 +182,7 @@ where :math:`f(x)=1`, :math:`0<x<1`:
 To view this, type ``show(P+Q+R)``.
 
 
-.. _section-riemannsums:
+:ref:`section-riemannsums`.
 
 Riemann and trapezoid sums for integrals
 ----------------------------------------
@@ -306,11 +306,11 @@ If you have ``Octave`` and ``gnuplot`` installed,
 
 ::
 
-    sage: octave.de_system_plot(['x+y','x-y'], [1,-1], [0,2]) # optional - octave
+    sage: octave.de_system_plot(['x+y','x-y'], [1,-1], [0,2]) [†]
 
 yields the two plots :math:`(t,x(t)), (t,y(t))` on the same graph
 (the :math:`t`-axis is the horizontal axis) of the system of ODEs
-
+.. [†] This generates plots of the system of ODEs using Octave and gnuplot.
 .. math::
     x' = x+y, x(0) = 1; y' = x-y, y(0) = -1,
 

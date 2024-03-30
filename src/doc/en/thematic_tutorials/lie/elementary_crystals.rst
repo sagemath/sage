@@ -154,7 +154,7 @@ containing the highest weight `r_{\mu-\lambda} \otimes u_\lambda`, where
     sage: G = T.digraph(subset=S)
     sage: Bmu.digraph().is_isomorphic(G, edge_labels=True)
     True
-    sage: view(G, tightpage=True) # optional - dot2tex graphviz, not tested (opens external window)
+    sage: view(G, tightpage=True) [*]
 
 .. image:: ../media/RmutensorBlambda.png
    :scale: 50
@@ -203,7 +203,9 @@ example::
     sage: sorted(s for s in S)
     [-4, -3, -2, -1, 0, 1, 2, 3, 4]
     sage: G = B.digraph(subset=S)
-    sage: view(G, tightpage=True) # optional - dot2tex graphviz, not tested (opens external window)
+    sage: view(G, tightpage=True) [*]
+
+.. [*] Requires the 'dot2tex' and 'graphviz' packages. This may not have been tested and opens an external window.
 
 .. image:: ../media/elementaryA2.png
    :scale: 50

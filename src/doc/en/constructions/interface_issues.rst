@@ -5,7 +5,7 @@ Interface Issues
 .. index::
    single: background, running Sage in
 
-.. _section-background:
+:ref:`section-background`
 
 Background jobs
 ===============
@@ -285,12 +285,12 @@ sage/interfaces/octave.py) with ``octave``
 
 ::
 
-    sage: octave("atanh(1.1)")   ## optional - octave
+    sage: octave("atanh(1.1)")   [†]
     (1.52226,1.5708)
 
 Here's an example using Sage's interface to ``pari``'s special
 functions.
-
+.. [†] This computes the inverse hyperbolic tangent function using Sage's interface to PARI's special functions.
 ::
 
     sage: pari('2+I').besselk(3)

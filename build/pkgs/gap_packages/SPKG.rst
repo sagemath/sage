@@ -11,9 +11,9 @@ Installing this SPKG will install the corresponding GAP packages, but
 before you can use them in Sage, they still have to be loaded into
 either the GAP interface or libgap::
 
-  sage: gap.eval('LoadPackage("Grape")')  # optional - gap_packages
+  sage: gap.eval('LoadPackage("Grape")')  [†]
   'true'
-  sage: libgap.LoadPackage("Grape")       # optional - gap_packages
+  sage: libgap.LoadPackage("Grape")       [‡]
   true
 
 Those correspond to::
@@ -21,7 +21,8 @@ Those correspond to::
   gap> LoadPackage("Grape");
 
 within the GAP interface and libgap, respectively.
-
+.. [†] This loads "Grape" package in the GAP interface.
+.. [‡] This loads "Grape" package using libgap.
 Upstream Contact
 ----------------
 

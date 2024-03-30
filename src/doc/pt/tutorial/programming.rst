@@ -1,11 +1,11 @@
-***********
+*************
 Programação
-***********
+*************
 
-.. _section-loadattach:
+:ref:`section-loadattach`
 
 Carregando e Anexando Arquivos do Sage
-======================================
+=========================================
 
 A seguir ilustramos como carregar no Sage programas escritos em um
 arquivo separado. Crie um arquivo chamado ``example.sage`` com o
@@ -75,10 +75,10 @@ código a uma sessão do Sage é salvá-lo em um arquivo e usar
 ``attach``, como descrito anteriormente.
 
 
-.. _section-compile:
+:ref:`section-compile`
 
 Criando Código Compilado
-========================
+===========================
 
 Velocidade é crucial em cálculos matemáticos. Embora o Python seja uma
 linguagem conveniente de alto nível, certos cálculos podem ser várias
@@ -139,7 +139,7 @@ em um arquivo spyx importe ``sage.all`` e use ``sage.all.foo``.
         return sage.all.factorial(n)
 
 Acessando Funções em C em Arquivos Separados
---------------------------------------------
+-----------------------------------------------
 
 É fácil também acessar funções em C definidas em arquivos \*.c
 separados. Aqui vai um exemplo. Crie os arquivos ``test.c`` e
@@ -180,7 +180,7 @@ foo`` no arquivo fonte em Cython. De forma similar, um arquivo em C
 adicional ``bar`` pode ser incluído na compilação declarando ``cfile
 bar``.
 
-.. _section-standalone:
+:ref:`section-standalone`
 
 Scripts Independentes em Python/Sage
 ====================================
@@ -300,7 +300,7 @@ Simplesmente digite ``A.``, então tecle ``[tab]`` no seu teclado, como
 descrito em :ref:`section-tabcompletion`.
 
 Listas, Tuplas e Sequências
-===========================
+==============================
 
 O tipo de dados lista armazena elementos de um tipo arbitrário. Como
 em C, C++, etc. (mas diferentemente da maioria dos sistemas de álgebra
@@ -449,7 +449,7 @@ imutáveis, pois é importante que elas não sejam modificadas.
     Vector space of dimension 3 over Rational Field
 
 Dicionários
-===========
+===============
 
 Um dicionário (também chamado as vezes de lista associativa ou "hash
 table") é um mapeamento de objetos em objetos arbitrários. (Exemplos
@@ -583,7 +583,7 @@ iteradores associados a eles:
     (0, -1)
 
 Laços, Funções, Enunciados de Controle e Comparações
-====================================================
+===========================================================
 
 Nós já vimos alguns exemplos de alguns usos comuns de laços (loops)
 ``for``. Em Python, um laço ``for`` possui uma estrutura tabulada, tal
@@ -718,11 +718,13 @@ declara :math:`1 \in \GF{5}` igual a :math:`1 \in \QQ`.
 
 ::
 
-    sage: magma('GF(5)!1 eq Rationals()!1')            # optional magma required
+    sage: magma('GF(5)!1 eq Rationals()!1')            [†]
     true
 
+.. [†] Requires Magma.
+
 Otimização (Profiling)
-======================
+==========================
 
 Autor desta seção: Martin Albrecht (https://martinralbrecht.wordpress.com/)
 

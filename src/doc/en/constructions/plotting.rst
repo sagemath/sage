@@ -1,4 +1,4 @@
-.. _chapter-plot:
+:ref:`chapter-plot`.
 
 ********
 Plotting
@@ -19,7 +19,7 @@ implicit plot, it is best to use the Singular's interface to surf,
 as described in chapter ch:AG, Algebraic geometry.
 
 
-.. _section-piecewise:
+:ref:`section-piecewise`
 
 Plotting functions in 2D
 ========================
@@ -70,7 +70,7 @@ A purple plot of the Riemann zeta function
     sage: I = CDF.0
     sage: show(line([zeta(1/2 + k*I/6) for k in range(180)], rgbcolor=(3/4,1/2,5/8)))
 
-.. _section-curve:
+:ref:`section-curve`
 
 Plotting curves
 ===============
@@ -319,12 +319,16 @@ and Gnuplot): {plot!points} {Riemann zeta function}
     ....:     for i in range(70,150)]
     sage: zeta_ptsy = [ (pari(1/2 + i*I/10).zeta().imag()).precision(1)
     ....:     for i in range(70,150)]
-    sage: maxima.plot_list(zeta_ptsx, zeta_ptsy)  # optional -- pops up a window.
+    sage: maxima.plot_list(zeta_ptsx, zeta_ptsy)  [1]
     sage: opts='[gnuplot_preamble, "set nokey"], [gnuplot_term, ps],
     ....:     [gnuplot_out_file, "zeta.eps"]'
-    sage: maxima.plot_list(zeta_ptsx, zeta_ptsy, opts) # optional -- pops up a window.
+    sage: maxima.plot_list(zeta_ptsx, zeta_ptsy, opts) [2]
 
-.. _section-surface:
+.. [1] This plots the real and imaginary parts of the Riemann zeta function using Maxima and Gnuplot.
+
+.. [2] Specifies optional plot settings.
+
+:ref:`section-surface`
 
 Plotting surfaces
 =================

@@ -1,4 +1,4 @@
-.. _chapter-linear_algebra:
+:ref:`chapter-linear_algebra`
 
 **************
 Linear algebra
@@ -8,7 +8,7 @@ Linear algebra
    pair: vector space; basis
    pair: vector space; subspace
 
-.. _section-vector_space:
+:ref:`section-vector_space`
 
 Vector spaces
 =============
@@ -33,7 +33,7 @@ one can create a subspace. Note the basis computed by Sage is
 .. index:
    pair: matrix; powers
 
-.. _section-matrixpower:
+:ref:`section-matrixpower`
 
 Matrix powers
 =============
@@ -61,7 +61,7 @@ the example below.
    pair: matrix; kernel
    single: kernel; nullspace
 
-.. _section-kernel:
+:ref:`section-kernel`
 
 Kernels
 =======
@@ -182,7 +182,7 @@ See the file ``matrix.py`` for further details.
 
 .. index:: eigenvalues, eigenvectors
 
-.. _section-eigen:
+:ref:`section-eigen`
 
 Eigenvectors and eigenvalues
 ============================
@@ -313,7 +313,7 @@ Finally, you can use Sage's GAP interface as well to compute
     sage: print(gap.eval("lambda := Eigenvalues( Rationals,A)"))
     [ 0 ]
 
-.. _section-rref:
+:ref:`section-rref`
 
 Row reduction
 =============
@@ -341,7 +341,7 @@ in the following example.
 .. index::
    pair: matrix; characteristic polynomial
 
-.. _section-characteristic:
+:ref:`section-characteristic`
 
 Characteristic polynomial
 =========================
@@ -451,5 +451,7 @@ interface::
     sage: A   = M33([1,2,3,4,5,6,7,8,0])
     sage: V3  = VectorSpace(QQ,3)
     sage: b   = V3([1,2,3])
-    sage: octave.solve_linear_system(A,b)    # optional - octave
+    sage: octave.solve_linear_system(A,b)    [*]
     [-0.333333, 0.666667, 0]
+
+.. [*] This utilizes Sage's interface to Octave for solving a linear system.

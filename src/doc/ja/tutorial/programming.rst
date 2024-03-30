@@ -2,7 +2,7 @@
  プログラミング
 =================
 
-.. _section-loadattach:
+:ref:`section-loadattach`
 
 Sageファイルの読み込みと結合
 ==============================
@@ -60,7 +60,7 @@ Sageファイルの読み込みと結合
 しかしSage上にコードを取り込むには，そのコードをファイルに保存してから，先に説明したように ``attach`` するのが一番安全だ．
 
 
-.. _section-compile:
+:ref:`section-compile`
 
 実行形式の作成
 ===============
@@ -131,7 +131,7 @@ Cythonソースファイルから生成されたC言語コードをコンパイ�
 同様に、他にもCソースファイル ``bar`` が必要ならばCythonソースに取り込みを宣言する行 ``cfile bar`` を加えてコンパイルすればよい．
 
 
-.. _section-standalone:
+:ref:`section-standalone`
 
 スタンドアロンPython/Sageスクリプト
 ====================================
@@ -673,9 +673,11 @@ Sageにおける異種オブジェクト間の比較演算では，まず対象�
 
 ::
 
-    sage: magma('GF(5)!1 eq Rationals()!1')  # optional - magma オプションでmagmaが必要
+    sage: magma('GF(5)!1 eq Rationals()!1')  [†] 
     true
 
+
+.. [†] Requires Magma.
 
 プロファイリング
 ================

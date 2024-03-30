@@ -18,8 +18,8 @@ First load the database:
 
 ::
 
-    sage: J = JonesDatabase()            # optional - database
-    sage: J                              # optional - database
+    sage: J = JonesDatabase()            [1]
+    sage: J                              [2]
     John Jones's table of number fields with bounded ramification and degree <= 6
 
 .. index::
@@ -27,12 +27,13 @@ First load the database:
 
 List the degree and discriminant of all fields in the database that
 have ramification at most at 2:
-
+.. [1] This initializes access to the Jones database of number fields.
+.. [2] Displays the contents of the Jones database
 .. link
 
 ::
 
-    sage: [(k.degree(), k.disc()) for k in J.unramified_outside([2])] # optional - database
+    sage: [(k.degree(), k.disc()) for k in J.unramified_outside([2])]  - database
     [(4, -2048), (2, 8), (4, -1024), (1, 1), (4, 256), (2, -4), (4, 2048), (4, 512), (4, 2048), (2, -8), (4, 2048)]
 
 List the discriminants of the fields of degree exactly 2 unramified
@@ -42,8 +43,10 @@ outside 2:
 
 ::
 
-    sage: [k.disc() for k in J.unramified_outside([2],2)] # optional - database
+    sage: [k.disc() for k in J.unramified_outside([2],2)] [3]
     [8, -4, -8]
+
+.. [3] Displays the discriminants of degree 2 fields unramified outside 2.
 
 List the discriminants of cubic field in the database ramified
 exactly at 3 and 5:
@@ -52,7 +55,7 @@ exactly at 3 and 5:
 
 ::
 
-    sage: [k.disc() for k in J.ramified_at([3,5],3)] # optional - database
+    sage: [k.disc() for k in J.ramified_at([3,5],3)] [4]
     [-6075, -6075, -675, -135]
     sage: factor(6075)
     3^5 * 5^2
@@ -61,18 +64,23 @@ exactly at 3 and 5:
     sage: factor(135)
     3^3 * 5
 
+
+.. [4] Displays the discriminants of cubic fields in the database that are ramified exactly at 3 and 5.
+
 List all fields in the database ramified at 101:
 
 .. link
 
 ::
 
-    sage: J.ramified_at(101)                     # optional - database
+    sage: J.ramified_at(101)                     [5]
     [Number Field in a with defining polynomial x^2 - 101,
      Number Field in a with defining polynomial x^4 - x^3 + 13*x^2 - 19*x + 361,
      Number Field in a with defining polynomial x^5 - x^4 - 40*x^3 - 93*x^2 - 21*x + 17,
      Number Field in a with defining polynomial x^5 + x^4 - 6*x^3 - x^2 + 18*x + 4,
      Number Field in a with defining polynomial x^5 + 2*x^4 + 7*x^3 + 4*x^2 + 11*x - 6]
+
+.. [5] Displays all fields in the database that are ramified at the prime number 101.
 
 .. index::
    pair: number field; class_number

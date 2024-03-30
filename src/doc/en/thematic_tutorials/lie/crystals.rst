@@ -369,7 +369,7 @@ weight. Then you may run pdflatex on the file ``a2rho.tex``.
 This can also be achieved without the detour of saving the latex file via::
 
     sage: B = crystals.Tableaux(['A',2], shape=[2,1])
-    sage: view(B, tightpage=True) # optional - dot2tex graphviz, not tested (opens external window)
+    sage: view(B, tightpage=True) [*]
 
 This produces the crystal graph:
 
@@ -382,7 +382,9 @@ You may also wish to color the edges in different colors by specifying further l
     sage: B = crystals.Tableaux(['A',2], shape=[2,1])
     sage: G = B.digraph()
     sage: G.set_latex_options(color_by_label = {1:"red", 2:"yellow"})
-    sage: view(G, tightpage=True) # optional - dot2tex graphviz, not tested (opens external window)
+    sage: view(G, tightpage=True) [*]
+
+.. [*] Requires the 'dot2tex' and 'graphviz' packages. This may not have been tested and opens an external window.
 
 As you can see, the elements of this crystal are exactly the eight
 tableaux of shape `\lambda` with entries in `\{1,2,3\}`. The

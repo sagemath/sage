@@ -46,7 +46,7 @@ view::
     sage: B = crystals.infinity.Tableaux(['A',2])
     sage: S = B.subcrystal(max_depth=4)
     sage: G = B.digraph(subset=S)
-    sage: view(G, tightpage=True) # optional - dot2tex graphviz, not tested (opens external window)
+    sage: view(G, tightpage=True) [*]
 
 .. image:: ../media/BinfA2.png
    :scale: 50
@@ -68,7 +68,7 @@ from `B(\infty)` in type `A_2`::
     sage: t0 = TP(c,t,b)
     sage: STP = TP.subcrystal(generators=[t0])
     sage: GTP = TP.digraph(subset=STP)
-    sage: view(GTP, tightpage=True) # optional - dot2tex graphviz, not tested (opens external window)
+    sage: view(GTP, tightpage=True) [*]
 
 .. image:: ../media/BinfTCrhoA2.png
    :scale: 50
@@ -84,9 +84,9 @@ Note that the above code can be simplified using the R-crystal::
     sage: t2 = TP2(r,b)
     sage: STP2 = TP2.subcrystal(generators=[t2])
     sage: GTP2 = TP2.digraph(subset=STP2)
-    sage: view(GTP2, tightpage=True) # optional - dot2tex graphviz, not tested (opens external window)
-
+    sage: view(GTP2, tightpage=True) [*]
 .. image:: ../media/BinfRrhoA2.png
+
    :scale: 50
    :align: center
 
@@ -103,7 +103,7 @@ On the other hand, we can embed the irreducible highest weight crystal
     sage: hw = TlambdaBinf(T[0],binf)
     sage: Psi = Brho.crystal_morphism({brho : hw})
     sage: BG = B.digraph(subset=[Psi(x) for x in Brho])
-    sage: view(BG, tightpage=True) # optional - dot2tex graphviz, not tested (opens external window)
+    sage: view(BG, tightpage=True) [*]
 
 .. image:: ../media/BrhoinBinf.png
    :scale: 50
@@ -151,8 +151,7 @@ the crystal graph::
     sage: Y = crystals.infinity.GeneralizedYoungWalls(2)
     sage: SY = Y.subcrystal(max_depth=3)
     sage: GY = Y.digraph(subset=SY)
-    sage: view(GY, tightpage=True) # optional - dot2tex graphviz, not tested (opens external window)
-
+    sage: view(GY, tightpage=True) [*]
 .. image:: ../media/YinfA21.png
    :scale: 50
    :align: center
@@ -164,7 +163,7 @@ walls::
     sage: YLa = crystals.GeneralizedYoungWalls(2,La[0])
     sage: SYLa = YLa.subcrystal(max_depth=3)
     sage: GYLa = YLa.digraph(subset=SYLa)
-    sage: view(GYLa, tightpage=True) # optional - dot2tex graphviz, not tested (opens external window)
+    sage: view(GYLa, tightpage=True) [*]
 
 .. image:: ../media/YLa0.png
    :scale: 50
@@ -272,7 +271,9 @@ as the constructions above::
     sage: Minf = crystals.infinity.NakajimaMonomials(['C',3,1])
     sage: Sinf = Minf.subcrystal(max_depth=2)
     sage: Ginf = Minf.digraph(subset=Sinf)
-    sage: view(Ginf, tightpage=True) # optional - dot2tex graphviz, not tested (opens external window)
+    sage: view(Ginf, tightpage=True) [*]
+
+.. [*] Requires the 'dot2tex' and 'graphviz' packages. This may not have been tested and opens an external window.
 
 .. image:: ../media/MinfC31.png
    :scale: 50

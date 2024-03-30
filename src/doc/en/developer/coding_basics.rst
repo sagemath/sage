@@ -1,6 +1,6 @@
 .. highlight:: ipython
 
-.. _chapter-code-basics:
+:ref:`chapter-code-basics`
 
 ===================
 General Conventions
@@ -25,7 +25,7 @@ all Python/Cython code that is included with Sage should adhere to the
 style conventions discussed in this chapter.
 
 
-.. _section-coding-python:
+:ref:`section-coding-python`
 
 Python code style
 =================
@@ -84,7 +84,7 @@ In particular,
            return SomeValue(1)
 
 
-.. _chapter-directory-structure:
+:ref:`chapter-directory-structure`
 
 Files and directory structure
 =============================
@@ -234,12 +234,12 @@ All code included with Sage must be licensed under the GPLv2+ or a
 compatible, that is, less restrictive license (e.g. the BSD license).
 
 
-.. _section-docstrings:
+:ref:`section-docstrings`
 
 Documentation strings
 =====================
 
-.. _section-docstring-function:
+:ref:`section-docstring-function`
 
 The docstring of a function: content
 -------------------------------------
@@ -765,7 +765,7 @@ there is not one already. That is, you can do the following:
     sage: sage_getdoc(foo.__init__)     # constructor docstring
     'Construct a Foo.\n'
 
-.. _section-latex-typeset:
+:ref:`section-latex-typeset`
 
 LaTeX typesetting
 -----------------
@@ -869,7 +869,7 @@ interactive help. Other examples: ``\\GF{q}`` (`\GF{q}`) and ``\\Zmod{p}``
 See the file ``SAGE_ROOT/src/sage/misc/latex_macros.py`` for a full list and
 for details about how to add more macros.
 
-.. _section-doctest-writing:
+:ref:`section-doctest-writing`
 
 Writing testable examples
 -------------------------
@@ -1029,12 +1029,13 @@ written.
     browser-dependent, of course.) In visually dense doctests, you can try to sculpt out visual space to separate
     the test commands from the annotation.
 
-  - Doctest tags such as ``# optional - pynormaliz`` that make the doctest
+  - Doctest tags such as ``[1]`` that make the doctest
     conditional on the presence of optional packages, on the other hand,
     should be aligned so that they are visible without having to scroll horizontally.
     The :ref:`doctest fixer <section-fixdoctests-optional-needs>` uses
     tab stops at columns 48, 56, 64, ... for these tags.
 
+.. [1] Marks optional doctest tag dependent on sage.modules.
 - **Split long lines:** You may want to split long lines of code with a
   backslash. Note: this syntax is non-standard and may be removed in the
   future::
@@ -1047,7 +1048,7 @@ written.
 - **Doctests flags:** flags are available to change the behaviour of doctests:
   see :ref:`section-further_conventions`.
 
-.. _section-further_conventions:
+:ref:`section-further_conventions`
 
 Special markup to influence doctests
 ------------------------------------
@@ -1205,27 +1206,31 @@ framework. Here is a comprehensive list:
   - **optional packages:** When a line requires an optional package to be
     installed (e.g. the ``sloane_database`` package)::
 
-      sage: SloaneEncyclopedia[60843]    # optional - sloane_database
+      sage: SloaneEncyclopedia[60843]    [2]
+
+.. [2] Indicates a doctest line that requires the sloane_database package to be installed.
+
 
   - **internet:** For lines that require an internet connection::
 
-       sage: oeis(60843)                 # optional - internet
+       sage: oeis(60843)                 [3]
        A060843: Busy Beaver problem: a(n) = maximal number of steps that an
        n-state Turing machine can make on an initially blank tape before
        eventually halting.
 
-  - **known bugs:** For lines that describe known bugs, you can use ``# optional - bug``,
+.. [3] Requires internet access
+  - **known bugs:** For lines that describe known bugs, you can use ``#optional - bug``,
     although ``# known bug`` is preferred.
 
     .. CODE-BLOCK:: rest
 
         The following should yield 4.  See :issue:`2`. ::
 
-            sage: 2+2  # optional - bug
+            sage: 2+2  [4]
             5
             sage: 2+2  # known bug
             5
-
+.. [4] Indicates a line in the doctest that relates to a known bug.
   - **modularization:** To enable
     :ref:`separate testing of the distribution packages <section-doctesting-venv>`
     of the modularized Sage library, doctests that depend on features provided
@@ -1321,7 +1326,7 @@ easily find the aforementioned keywords. In the case of ``todo: not
 implemented``, one can use the results of such a search to direct
 further development on Sage.
 
-.. _chapter-testing:
+:ref:`chapter-testing`
 
 Running automated doctests
 ==========================
@@ -1336,7 +1341,7 @@ follow. The chapter :ref:`chapter-doctesting` contains a tutorial on
 doctesting modules in the Sage library.
 
 
-.. _section-testpython:
+:ref:`section-testpython`
 
 Testing .py, .pyx and .sage files
 ---------------------------------
@@ -1404,7 +1409,7 @@ examples of how to include automated testing in reST documentation for
 Sage.
 
 
-.. _section-coding-general-whitespace:
+:ref:`section-coding-general-whitespace`
 
 General coding style regarding whitespace
 =========================================

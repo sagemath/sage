@@ -1,4 +1,4 @@
-.. _AffineFinite:
+:ref:`AffineFinite`
 
 ======================
 Affine Finite Crystals
@@ -122,11 +122,12 @@ In Sage this can be obtained via::
 
     sage: K = crystals.KirillovReshetikhin(['A',2,1],1,1)
     sage: G = K.digraph()
-    sage: view(G, tightpage=True) # optional - dot2tex graphviz, not tested (opens external window)
-
+    sage: view(G, tightpage=True) [*]
 
 Types `D_n^{(1)}`, `B_n^{(1)}`, `A_{2n-1}^{(2)}`
 ------------------------------------------------
+.. [*] Requires the 'dot2tex' and 'graphviz' packages. This may not have been tested and opens an external window.
+
 
 The Dynkin diagrams for types `D_n^{(1)}`, `B_n^{(1)}`, `A_{2n-1}^{(2)}`
 are invariant under interchanging nodes `0` and `1`::

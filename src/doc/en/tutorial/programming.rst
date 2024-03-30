@@ -2,7 +2,7 @@
 Programming
 ***********
 
-.. _section-loadattach:
+:ref:`section-loadattach`
 
 Loading and Attaching Sage files
 ================================
@@ -72,7 +72,7 @@ However, the best way to enter such code into Sage is to save it to
 a file and use ``attach``, as described above.
 
 
-.. _section-compile:
+:ref:`section-compile`
 
 Creating Compiled Code
 ======================
@@ -153,7 +153,7 @@ generated from a Cython file, add the line ``clib foo`` to the
 Cython source. Similarly, an additional C file ``bar`` can be
 included in the compilation with the declaration ``cfile bar``.
 
-.. _section-standalone:
+:ref:`section-standalone`
 
 Standalone Python/Sage Scripts
 ==============================
@@ -698,8 +698,10 @@ declares the :math:`1 \in \GF{5}` equal to :math:`1 \in \QQ`.
 
 ::
 
-    sage: magma('GF(5)!1 eq Rationals()!1')            # optional - magma
+    sage: magma('GF(5)!1 eq Rationals()!1')            [†]
     true
+
+.. [†] Requires Magma.
 
 Profiling
 =========

@@ -2,7 +2,7 @@
 
 .. linkall
 
-.. _lectures:
+:ref:`lectures`
 
 =========================================================
 A Longer Introduction to Polyhedral Computations in Sage
@@ -649,7 +649,7 @@ for sage is installed.
 
 ::
 
-    sage: p = Polyhedron(vertices=[(0,0),(1,0),(0,1)],             # optional - jupymake
+    sage: p = Polyhedron(vertices=[(0,0),(1,0),(0,1)],             [*]
     ....:                rays=[(1,1)], lines=[],
     ....:                backend='polymake', base_ring=QQ)
 
@@ -660,13 +660,15 @@ An example with quadratic field:
 ::
 
     sage: V = polytopes.dodecahedron().vertices_list()                                  # needs sage.rings.number_field
-    sage: Polyhedron(vertices=V, backend='polymake')    # optional - jupymake           # needs sage.rings.number_field
+    sage: Polyhedron(vertices=V, backend='polymake')    [*]           # needs sage.rings.number_field
     A 3-dimensional polyhedron
      in (Number Field in sqrt5 with defining polynomial x^2 - 5
      with sqrt5 = 2.236067977499790?)^3
      defined as the convex hull of 20 vertices
 
 .. end of output
+
+.. [*] Requires 'jupymake'.
 
 The :code:`field` backend
 -------------------------
@@ -713,7 +715,7 @@ The fourth backend is :code:`normaliz` and is an optional Sage package.
 
 ::
 
-    sage: # optional - pynormaliz
+    sage: [†] 
     sage: P1_normaliz = Polyhedron(vertices=[[1, 0], [0, 1]], rays=[[1, 1]],
     ....:                          backend='normaliz')
     sage: type(P1_normaliz)
@@ -730,7 +732,7 @@ This backend does not work with :code:`RDF` or other inexact fields.
 
 ::
 
-    sage: P3_normaliz = Polyhedron(vertices=[[0.5, 0], [0, 0.5]], backend='normaliz')   # optional - pynormaliz
+    sage: P3_normaliz = Polyhedron(vertices=[[0.5, 0], [0, 0.5]], backend='normaliz')   [†]
     Traceback (most recent call last):
     ...
     ValueError: No such backend (=normaliz) implemented for given basering (=Real Double Field).
@@ -744,7 +746,7 @@ the computation is done using an embedded number field.
 
 ::
 
-    sage: # optional - pynormaliz
+    sage: [†]
     sage: P4_normaliz = Polyhedron(vertices=[[sqrt_2, 0], [0, cbrt_2]],
     ....:                          backend='normaliz')
     sage: P4_normaliz
@@ -761,7 +763,7 @@ The backend :code:`normaliz` provides other methods such as
 
 ::
 
-    sage: # optional - pynormaliz
+    sage: [†]
     sage: P6 = Polyhedron(vertices=[[0, 0], [3/2, 0], [3/2, 3/2], [0, 3]],
     ....:                 backend='normaliz')
     sage: IH = P6.integral_hull(); IH
@@ -772,6 +774,10 @@ The backend :code:`normaliz` provides other methods such as
     A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 2 vertices and 1 ray
 
 .. end of output
+
+.. [†] Requires 'pynormaliz'.
+
+
 
 Lecture 3: To every polyhedron, the proper parent class
 =======================================================

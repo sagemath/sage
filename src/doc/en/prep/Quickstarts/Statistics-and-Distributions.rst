@@ -2,7 +2,7 @@
 
 .. linkall
 
-.. _prep-quickstart-statistics-and-distributions:
+:ref:`prep-quickstart-statistics-and-distributions`
 
 Sage Quickstart for Statistics
 ==============================
@@ -142,7 +142,7 @@ the examples in ``r.kruskal_test?`` in the notebook.
 
 ::
 
-    sage: # optional - rpy2
+    sage: [*]
     sage: x = r([2.9, 3.0, 2.5, 2.6, 3.2])      # normal subjects
     sage: y = r([3.8, 2.7, 4.0, 2.4])           # with obstructive airway disease
     sage: z = r([2.8, 3.4, 3.7, 2.2, 2.0])      # with asbestosis
@@ -154,11 +154,12 @@ the examples in ``r.kruskal_test?`` in the notebook.
      [1] 1 1 1 1 1 2 2 2 2 3 3 3 3 3
     Levels: 1 2 3
 
+
 .. skip
 
 ::
 
-    sage: r.kruskal_test(a,b)             # do the KW test!                       # optional - rpy2
+    sage: r.kruskal_test(a,b)             # do the KW test!                       [*]
         Kruskal-Wallis rank sum test
 
     data:  sage17 and sage33
@@ -176,7 +177,7 @@ Notice that R also uses the ``#`` symbol to indicate comments.
 
 ::
 
-    sage: %r                                                                      # optional - rpy2
+    sage: %r                                                                      [*]
     ....: x = c(18,23,25,35,65,54,34,56,72,19,23,42,18,39,37) # ages of individuals
     ....: y = c(202,186,187,180,156,169,174,172,153,199,193,174,198,183,178) # maximum heart rate of each one
     ....: png() # turn on plotting
@@ -200,3 +201,4 @@ Notice that R also uses the ``#`` symbol to indicate comments.
 To get a whole worksheet to evaluate in R (and be able to ignore the
 ``%``), you could also drop down the ``r`` option in the menu close to
 the top which currently has ``sage`` in it.
+.. [*] Requires 'rpy2'.

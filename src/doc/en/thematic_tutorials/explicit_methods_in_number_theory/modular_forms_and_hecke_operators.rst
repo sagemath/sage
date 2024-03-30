@@ -98,7 +98,7 @@ such that for every matrix
 :math:`\left(\begin{smallmatrix}a&b\\c&d\end{smallmatrix}\right)\in\Gamma`,
 we have
 
-.. _modform:
+:ref:`modform`
 .. math::
 
    f\left(\frac{az+b}{cz+d}\right) = (cz+d)^{k} f(z).
@@ -167,12 +167,12 @@ dimension formulas.
     sage: from sage.modular.dims import dimension_cusp_forms
     sage: a = [dimension_cusp_forms(Gamma0(N),2) for N in [1..25]]; a
     [0, 0, ..., 1, 0, 0, 1, 1, 0, 1, 0, 1, 1, 1, 2, 2, 1, 0]
-    sage: oeis(a)                                       # optional - internet
+    sage: oeis(a)                                       [*]
     0: A001617: Genus of modular group Gamma_0(n). Or, genus of modular curve X_0(n).
 
 Sage does not have simple formulas for dimensions of spaces of modular
 forms of weight :math:`1`, since such formulas perhaps do not exist.
-
+.. [*] Requires internet access for OEIS lookup.
 Diamond Bracket Operators
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 

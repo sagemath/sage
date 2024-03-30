@@ -1,4 +1,4 @@
-.. _chapter-other:
+:ref:`chapter-other`
 
 =======================================
 Using External Libraries and Interfaces
@@ -18,7 +18,7 @@ In this chapter, we discuss interfaces between Sage and :ref:`PARI
 :ref:`section-singular`.
 
 
-.. _section-pari-library:
+:ref:`section-pari-library`
 
 The PARI C library interface
 ============================
@@ -157,7 +157,7 @@ convert output from PARI to Sage objects:
 
 
 
-.. _section-gap:
+:ref:`section-gap`
 
 GAP
 ===
@@ -282,7 +282,7 @@ A "hard" example is left as an exercise! Here are a few ideas.
   for this.
 
 
-.. _section_libgap:
+:ref:`section_libgap`
 
 LibGAP
 ======
@@ -308,7 +308,7 @@ includes a shared library version of the GAP kernel, available as
     [-3  2]
 
 
-.. _section-singular:
+:ref:`section-singular`
 
 Singular
 ========
@@ -722,7 +722,7 @@ dumps the user into an Octave interactive shell:
                 sage: A   = M33([1,2,3,4,5,6,7,8,0])
                 sage: V3  = VectorSpace(QQ,3)
                 sage: b   = V3([1,2,3])
-                sage: octave.solve_linear_system(A,b)    # optional - octave
+                sage: octave.solve_linear_system(A,b)    [*]
                 [-0.333333, 0.666667, 0]
 
             AUTHOR: David Joyner and William Stein
@@ -745,6 +745,8 @@ dumps the user into an Octave interactive shell:
             soln = soln.replace("\n", ",")
             sol  = soln[3:]
             return eval(sol)
+
+.. [*] Solves a linear system using Sage's interface to Octave.
 
 This code defines the method ``solve_linear_system``, which works as
 documented.

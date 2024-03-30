@@ -73,7 +73,7 @@ and very helpful exposition of the theory of integrable representations
 of affine Lie algebras with explicit examples and explanations of the
 connections with mathematical physics and vertex operators.
 
-.. _support_integrable:
+:ref:`support_integrable`
 
 The support of an integrable highest weight representation
 ----------------------------------------------------------
@@ -221,9 +221,11 @@ is the same as that for ``mw2``, calculated above::
 String functions of integrable representations often appear
 in the Online Encyclopedia of Integer Sequences::
 
-    sage: [oeis(x) for x in V.strings().values()]    # optional - internet
+    sage: [oeis(x) for x in V.strings().values()]    [*]
     [0: A233758: Bisection of A006950 (the even part).,
      0: A233759: Bisection of A006950 (the odd part).]
+
+.. [*]Requires internet connection 
 
 Reading what the OEIS tells us about the sequence :oeis:`A006950`,
 we learn that the two strings are the odd and even parts of the series

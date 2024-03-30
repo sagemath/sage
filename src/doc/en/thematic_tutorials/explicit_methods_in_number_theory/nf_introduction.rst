@@ -104,7 +104,7 @@ source code, type ``K.minkowski_embedding??[tab key]``.
     sage: K.[tab key]
 
 
-.. _section-symbolic:
+:ref:`section-symbolic`
 
 Symbolic Expressions
 --------------------
@@ -141,14 +141,14 @@ persistent connection between Sage and those sessions.
 
     sage: gp('sqrt(2)')
     1.414213562373095048801688724...
-    sage: magma('Sqrt(2)')                  # optional - magma
+    sage: magma('Sqrt(2)')                  [*]
     1.414213562373095048801688724...
 
 You probably noticed a pause when evaluated the second line as
 Magma started up. Also, note the ``# optional``
 comment, which indicates that the line won't work if you don't have
 Magma installed.
-
+.. [*] Computing the square root of 2 using both Sage's built-in functionality and Magma, which is optional.
 
 Numerically evaluating sqrt(2)
 ------------------------------
