@@ -520,7 +520,7 @@ def FreeModule(base_ring, rank_or_basis_keys=None, sparse=False, inner_product_m
         sage: FreeModule(ZZ, rank=3, basis_keys=['c','d'])
         Traceback (most recent call last):
         ...
-        ValueError: inconsistent basis keys: should be of cardinality 3, got ['c', 'd']
+        ValueError: inconsistent basis_keys: should be of cardinality 3, got ['c', 'd']
     """
     if rank_or_basis_keys is not None:
         try:
