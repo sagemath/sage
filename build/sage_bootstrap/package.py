@@ -344,7 +344,7 @@ class Package(object):
         """
         if self.__trees is not None:
             return self.__trees
-        if self.__install_requires is not None:
+        if self.__version_requirements is not None:
             return 'SAGE_VENV'
         if self.has_file('requirements.txt'):
             return 'SAGE_VENV'
