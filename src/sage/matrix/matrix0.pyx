@@ -1942,11 +1942,11 @@ cdef class Matrix(sage.structure.element.Matrix):
             ....:             bottom_border=['*', '', ''],
             ....:             left_border=[1, 10, 100],
             ....:             right_border=['', ' <', '']))
-                        ab cde   f
-                     1⎛  1   2│  3⎞
-                    10⎜  4   5│  6⎟ <
-                   100⎝  7   8│  9⎠
-                         *
+                 ab cde   f
+              1⎛  1   2│  3⎞
+             10⎜  4   5│  6⎟ <
+            100⎝  7   8│  9⎠
+                  *
 
         TESTS:
 
@@ -2004,10 +2004,10 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: print(matrix(ZZ, 2, 4).str(
             ....:     unicode=True,
             ....:     top_border='abcd', bottom_border=range(4), left_border='uv'))
-                a b c d
-              u⎛0 0 0 0⎞
-              v⎝0 0 0 0⎠
-                0 1 2 3
+              a b c d
+            u⎛0 0 0 0⎞
+            v⎝0 0 0 0⎠
+              0 1 2 3
             sage: print(matrix(ZZ, 2, 0).str(
             ....:     top_border='', left_border='uv', right_border=['*', '']))
               []
