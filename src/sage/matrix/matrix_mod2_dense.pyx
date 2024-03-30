@@ -346,7 +346,9 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
 
     def str(self, rep_mapping=None, zero=None, plus_one=None, minus_one=None,
-            *, unicode=False, shape=None, character_art=False):
+            *, unicode=False, shape=None, character_art=False,
+            left_border=None, right_border=None,
+            top_border=None, bottom_border=None):
         r"""
         Return a nice string representation of the matrix.
 
@@ -384,6 +386,16 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
           :class:`~sage.typeset.unicode_art.UnicodeArt` which support line
           breaking of wide matrices that exceed the window width
 
+        - ``left_border``, ``right_border`` -- sequence (default: ``None``);
+          if not ``None``, call :func:`str` on the elements and use the
+          results as labels for the rows of the matrix. The labels appear
+          outside of the parentheses.
+
+        - ``top_border``, ``bottom_border`` -- sequence (default: ``None``);
+          if not ``None``, call :func:`str` on the elements and use the
+          results as labels for the columns of the matrix. The labels appear
+          outside of the parentheses.
+
         EXAMPLES::
 
             sage: B = matrix(GF(2), 3, 3, [0, 1, 0, 0, 1, 1, 0, 0, 0])
@@ -416,13 +428,19 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         # Set the mapping based on keyword arguments
         # We ignore minus_one (it's only there for compatibility with Matrix)
         if (rep_mapping is not None or zero is not None or plus_one is not None
-                or unicode or shape is not None or character_art):
+                or unicode or shape is not None or character_art
+                or left_border is not None or right_border is not None
+                or top_border is not None or bottom_border is not None):
             # Shunt mappings off to the generic code since they might not be
             # single characters
             return matrix_dense.Matrix_dense.str(self, rep_mapping=rep_mapping,
                                                  zero=zero, plus_one=plus_one,
                                                  unicode=unicode, shape=shape,
-                                                 character_art=character_art)
+                                                 character_art=character_art,
+                                                 left_border=left_border,
+                                                 right_border=right_border,
+                                                 top_border=top_border,
+                                                 bottom_border=bottom_border)
 
         if self._nrows == 0 or self._ncols == 0:
             return "[]"
