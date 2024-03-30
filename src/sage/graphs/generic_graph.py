@@ -2285,6 +2285,13 @@ class GenericGraph(GenericGraph_pyx):
              4⎜      0       0       1       0       0      -1       0⎟
              6⎜      0       0       0       1       1       0      -1⎟
             12⎝      0       0       0       0       0       1       1⎠
+            sage: E = phi_VE.domain()
+            sage: P1 = E.monomial((2, 4)) + E.monomial((4, 12)); P1
+            B[(2, 4)] + B[(4, 12)]
+            sage: P2 = E.monomial((2, 6)) + E.monomial((6, 12)); P2
+            B[(2, 6)] + B[(6, 12)]
+            sage: phi_VE(P1 - P2)
+            0
 
         TESTS::
 
