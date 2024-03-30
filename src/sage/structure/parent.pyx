@@ -1438,6 +1438,47 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         Hom_kwds = {} if category is None else {'category': category}
         return self.Hom(codomain, **Hom_kwds)(im_gens, **kwds)
 
+    def End(self, category=None):
+        r"""
+        Return the endomorphism set ``End(self, category)``, which is equivalent to
+        ``Hom(self, self, category)``.
+
+        INPUT:
+
+        - ``category`` -- a category or ``None`` (default: ``None``)
+          If ``None``, the category of ``self`` is used.
+
+        OUTPUT:
+
+        The endomorphism set of ``self`` in the category ``category``.
+
+        .. SEEALSO:: :func:`~sage.categories.homset.End`, :func:`~sage.categories.homset.Hom`
+
+        TODO::
+
+            The method does not return a endomorphism *ring*, since currently
+            there are no classes for sum (and composition, without computing
+            the rational maps) of endomorphisms. Ideally it should be unified
+            with :class:`sage.schemes.elliptic_curves.hom_sum.EllipticCurveHom_sum`.
+
+        EXAMPLES::
+
+            sage: R.<x,y> = PolynomialRing(QQ, 2)
+            sage: R.End()
+            Set of Homomorphisms from Multivariate Polynomial Ring in x, y over Rational Field to Rational Field
+            sage: R.End() is End(R)
+            True
+            sage: R.End() is R.Hom(R)
+            True
+
+        This example illustrates the optional third argument::
+
+            sage: QQ.End(Sets())
+            Set of Morphisms from Rational Field to Integer Ring in Category of sets
+        """
+        from sage.categories.homset import End
+        return End(self, category)
+
     #################################################################################
     # New Coercion support functionality
     #################################################################################

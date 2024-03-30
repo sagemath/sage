@@ -116,6 +116,8 @@ def Hom(X, Y, category=None, check=True):
          from Alternating group of order 3!/2 as a permutation group
            to Alternating group of order 3!/2 as a permutation group
            in Category of finite enumerated permutation groups
+        sage: Hom(G, G) is End(G)
+        True
         sage: Hom(ZZ, QQ, Sets())
         Set of Morphisms from Integer Ring to Rational Field in Category of sets
 
