@@ -228,11 +228,11 @@ def load(filename, globals, attach=False):
         # rest of this functions operate on filename as a str
         filename = bytes_to_str(filename, FS_ENCODING, 'surrogateescape')
 
-    if filename.lower().startswith(('http://', 'https://')):
+    if isinstance(filename, str) and filename.lower().startswith(('http://', 'https://')):
         if attach:
             # But see https://en.wikipedia.org/wiki/HTTP_ETag for how
             # we will do this.
-            # http://www.diveintopython.net/http_web_services/etags.html
+            # https://diveintopython3.net/http-web-services.html#etags
             raise NotImplementedError("you cannot attach a URL")
         from sage.misc.remote_file import get_remote_file
         filename = get_remote_file(filename, verbose=False)

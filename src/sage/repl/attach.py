@@ -67,6 +67,7 @@ character-by-character::
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from __future__ import annotations
 
 import os
 import time
@@ -374,7 +375,7 @@ def add_attached_file(filename):
 
     INPUT:
 
-    - ``filename`` -- string, the fully qualified file name or Path object
+    - ``filename`` -- string (the fully qualified file name) or ``Path`` object
 
     EXAMPLES::
 
@@ -426,7 +427,8 @@ def detach(filename):
 
     INPUT:
 
-    - ``filename`` -- a string, or a list of strings, or a tuple of strings.
+    - ``filename`` -- a string, a list of strings or a tuple of strings
+      or a ``Path``, a list of ``Path`` or a tuple of ``Path``
 
     EXAMPLES::
 
@@ -517,7 +519,7 @@ def reset():
 
 def modified_file_iterator():
     """
-    Iterate over the changed files
+    Iterate over the changed files.
 
     As a side effect the stored time stamps are updated with the
     actual time stamps. So if you iterate over the attached files in
@@ -566,7 +568,7 @@ def modified_file_iterator():
 
 def reload_attached_files_if_modified():
     r"""
-    Reload attached files that have been modified
+    Reload attached files that have been modified.
 
     This is the internal implementation of the attach mechanism.
 
