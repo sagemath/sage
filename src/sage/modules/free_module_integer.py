@@ -804,3 +804,41 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             t_new = t_new - CVPP_2V(t_new, V_scaled, ZZ(2 ** (i - 1)) * voronoi_cell)
             i -= 1
         return t - t_new
+
+    def approximate_closest_vector(self, t):
+        r"""
+        Compute a vector `w` such that `|t-w| < (\frac{1}{\delta-\frac{1}{4}})^{d/2} |t-u|`
+        where `u` is the closest lattice point to `t`, `\delta` is the LLL reduction parameter
+        used to reduce the lattice basis, and `d` is the dimension of the lattice.
+
+        INPUT:
+
+        - ``t`` -- the target vector to compute a close vector to
+
+        OUTPUT:
+
+        The vector `w` described above.
+
+        EXAMPLES::
+
+            sage: from sage.modules.free_module_integer import IntegerLattice
+            sage: L = IntegerLattice([[1, 0], [0, 1]])
+            sage: L.approximate_closest_vector((-6, 5/3))
+            (-6, 2)
+
+        ALGORITHM:
+
+        Uses the algorithm from [Bab86]_.
+
+        """
+        if not self._basis_is_LLL_reduced:
+            self.LLL()
+
+        B = self.basis_matrix()
+        G = B.gram_schmidt()[0]
+        t = vector(t)
+    
+        b = t
+        for i in reversed(range(G.nrows())):
+            b -= B[i] * ((b * G[i]) / (G[i] * G[i])).round("even")
+        return (t - b).change_ring(ZZ)
