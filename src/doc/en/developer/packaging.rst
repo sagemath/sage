@@ -623,8 +623,8 @@ For example, the ``scipy`` ``spkg-check.in`` file contains the line
 
     exec python3 spkg-check.py
 
-Abstract requirements: The ``install-requires.txt`` file
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Abstract requirements: The ``version_requirements.txt`` file
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All ``normal`` Python packages and all ``wheel`` packages must have a file
 ``version_requirements.txt``. For ``pip`` packages, the file is optional; if
@@ -1113,7 +1113,7 @@ For Python packages available from PyPI, there is another shortcut::
 
 When preparing the update, check that any lower and upper bounds for
 acceptable package versions that may be declared in the file
-``install-requires.txt`` are still correct, and update them as needed.
+``version_requirements.txt`` are still correct, and update them as needed.
 The version in ``package-version.txt`` always needs to fall within the
 version range!
 
