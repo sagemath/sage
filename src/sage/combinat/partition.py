@@ -2542,8 +2542,8 @@ class Partition(CombinatorialElement):
             if not p % s:
                 mu.extend([p // s] * (m*s))
             else:
-                mu.extend([p1]*v for i, v in enumerate(m.digits(s))
-                          if (p1 := p * s**i))
+                for i, v in enumerate(m.digits(s)):
+                    mu.extend([p * s**i]*v)
 
         P = self.parent()
         return P.element_class(P, sorted(mu, reverse=True))
