@@ -14,21 +14,21 @@ fi
 
 case "$SYSTEM" in
     install-requires)
-        # Collect install-requires.txt (falling back to requirements.txt) and output it in the format
-        # needed by setup.cfg [options] install_requires=
-        SYSTEM_PACKAGES_FILE_NAMES="install-requires.txt requirements.txt"
+        # Collect version_requirements.txt (falling back to requirements.txt) and output it in the format
+        # needed by setup.cfg [options] version_requirements=
+        SYSTEM_PACKAGES_FILE_NAMES="version_requirements.txt requirements.txt"
         STRIP_COMMENTS="sed s/#.*//;/^[[:space:]]*$/d;"
         COLLECT=
         ;;
     install-requires-toml)
-        # Collect install-requires.txt (falling back to requirements.txt) and output it in the format
+        # Collect version_requirements.txt (falling back to requirements.txt) and output it in the format
         # needed by pyproject.toml [build-system] requires=
-        SYSTEM_PACKAGES_FILE_NAMES="install-requires.txt requirements.txt"
+        SYSTEM_PACKAGES_FILE_NAMES="version_requirements.txt requirements.txt"
         STRIP_COMMENTS="sed s/#.*//;/^[[:space:]]*$/d;s/^/'/;s/$/',/;"
         COLLECT=
         ;;
     pip)
-        SYSTEM_PACKAGES_FILE_NAMES="requirements.txt install-requires.txt"
+        SYSTEM_PACKAGES_FILE_NAMES="requirements.txt version_requirements.txt"
         STRIP_COMMENTS='sed s/#.*//;s/[[:space:]]//g;'
         COLLECT=echo
         ;;

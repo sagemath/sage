@@ -258,7 +258,7 @@ class Application(object):
         pkg = Package(package_name)
         dist_name = pkg.distribution_name
         if dist_name is None:
-            log.debug('%s does not have Python distribution info in install-requires.txt' % pkg)
+            log.debug('%s does not have Python distribution info in version_requirements.txt' % pkg)
             return
         if pkg.tarball_pattern.endswith('.whl'):
             source = 'wheel'
@@ -279,7 +279,7 @@ class Application(object):
             'cypari'   # Name conflict
         ]
         # Restrict to normal Python packages
-        pc = PackageClass(package_name_or_class, has_files=['checksums.ini', 'install-requires.txt'])
+        pc = PackageClass(package_name_or_class, has_files=['checksums.ini', 'version_requirements.txt'])
         if not pc.names:
             log.warn('nothing to do (does not name a normal Python package)')
         for package_name in sorted(pc.names):
