@@ -2574,7 +2574,7 @@ class Partition(CombinatorialElement):
         The map is inverse to :meth:`glaisher_franklin`::
 
             sage: all(mu.glaisher_franklin(s).glaisher_franklin_inverse(s) == mu
-            ....:     mu.glaisher_franklin_inverse(s).glaisher_franklin(s) == mu
+            ....:     and mu.glaisher_franklin_inverse(s).glaisher_franklin(s) == mu
             ....:     for n in range(20) for mu in Partitions(n)
             ....:     for s in range(1, 5))
             True
