@@ -195,11 +195,11 @@ def is_Q_curve(E, maxp=100, certificate=False, verbose=False):
         True
         sage: cert
         {'CM': 0,
-        'N': 2,
-        'core_degs': [1, 2],
-        'core_poly': x^2 - 840064*x + 1593413632,
-        'r': 1,
-        'rho': 1}
+         'N': 2,
+         'core_degs': [1, 2],
+         'core_poly': x^2 - 840064*x + 1593413632,
+         'r': 1,
+         'rho': 1}
 
     TESTS::
 

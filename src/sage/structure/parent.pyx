@@ -2503,7 +2503,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
             return self._convert_from_hash.get(S)
         except KeyError:
             mor = self.discover_convert_map_from(S)
-            # Before trac #14711, the morphism has been
+            # Before Issue #14711, the morphism has been
             # put both into _convert_from_list and into
             # _convert_from_hash. But there is no reason
             # to have a double book-keeping, specifically
@@ -2635,6 +2635,25 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
             sage: print(coercion_model.get_action(E, ZZ, operator.pow))                 # needs sage.schemes
             None
+
+        ::
+
+            With Pull Request #37369, registered multiplication actions by
+            `ZZ` are also discovered and used when a Python ``int`` is multiplied.
+            Previously, it was only discovering the generic Integer Multiplication
+            Action that all additive groups have. As a result, optimised
+            implementations, such as the use of Pari for scalar multiplication of points
+            on elliptic curves over Finite Fields, was not used if an ``int``
+            multiplied a point, resulting in a 10x slowdown for large characteristic::
+
+            sage: E = EllipticCurve(GF(17),[1,1])
+            sage: coercion_model.discover_action(ZZ, E, operator.mul)
+            Left action by Integer Ring on Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 17
+            sage: coercion_model.discover_action(int, E, operator.mul)
+            Left action by Integer Ring on Elliptic Curve defined by y^2 = x^3 + x + 1 over Finite Field of size 17
+            with precomposition on left by Native morphism:
+            From: Set of Python objects of class 'int'
+            To:   Integer Ring
         """
         # G acts on S, G -> G', R -> S => G' acts on R (?)
         # NO! ZZ[x,y] acts on Matrices(ZZ[x]) but ZZ[y] does not.
@@ -2678,6 +2697,33 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
                     return action
 
                 if parent_is_integers(S) and not self.has_coerce_map_from(S):
+                    # Try the above again, but first coerce integer-like type to Integer
+                    # with a connecting coercion
+                    global _Integer
+                    if _Integer is None:
+                        from sage.rings.integer import Integer as _Integer
+                    ZZ_el = _Integer(S_el)
+                    ZZ = ZZ_el.parent()
+
+                    # Now we check if there's an element action from Integers
+                    action = detect_element_action(self, ZZ, self_on_left, self_el, ZZ_el)
+
+                    # When this is not None, we can do the Precomposed action
+                    if action is not None:
+                        # Compute the coercion from whatever S is to the Integer class
+                        # This should always work because parent_is_integers(S) is True
+                        # but it fails when S is gmpy2.mpz.
+                        # TODO: should we also patch _internal_coerce_map_from so that
+                        # there's a map from gmpy2.mpz to ZZ?
+                        connecting = ZZ._internal_coerce_map_from(S)
+                        if connecting is not None:
+                            if self_on_left:
+                                action = PrecomposedAction(action, None, connecting)
+                            else:
+                                action = PrecomposedAction(action, connecting, None)
+                            return action
+
+                    # Otherwise, we do the most basic IntegerMulAction
                     from sage.structure.coerce_actions import IntegerMulAction
                     try:
                         return IntegerMulAction(S, self, not self_on_left, self_el)

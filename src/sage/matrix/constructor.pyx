@@ -101,32 +101,32 @@ def matrix(*args, **kwds):
 
     ::
 
-        sage: m = matrix(2,3); m; m.parent()
+        sage: m = matrix(2, 3); m; m.parent()
         [0 0 0]
         [0 0 0]
         Full MatrixSpace of 2 by 3 dense matrices over Integer Ring
 
     ::
 
-        sage: m = matrix(QQ,[[1,2,3],[4,5,6]]); m; m.parent()
+        sage: m = matrix(QQ, [[1,2,3], [4,5,6]]); m; m.parent()
         [1 2 3]
         [4 5 6]
         Full MatrixSpace of 2 by 3 dense matrices over Rational Field
 
     ::
 
-        sage: m = matrix(QQ, 3, 3, lambda i, j: i+j); m
+        sage: m = matrix(QQ, 3, 3, lambda i, j: i + j); m
         [0 1 2]
         [1 2 3]
         [2 3 4]
-        sage: m = matrix(3, lambda i,j: i-j); m
+        sage: m = matrix(3, lambda i, j: i - j); m
         [ 0 -1 -2]
         [ 1  0 -1]
         [ 2  1  0]
 
     ::
 
-        sage: matrix(QQ, 2, 3, lambda x, y: x+y)
+        sage: matrix(QQ, 2, 3, lambda x, y: x + y)
         [0 1 2]
         [1 2 3]
         sage: matrix(QQ, 5, 5, lambda x, y: (x+1) / (y+1))
@@ -291,11 +291,11 @@ def matrix(*args, **kwds):
         [0 0]
         [0 0]
         Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
-        sage: m = matrix(QQ,2); m; m.parent()
+        sage: m = matrix(QQ, 2); m; m.parent()
         [0 0]
         [0 0]
         Full MatrixSpace of 2 by 2 dense matrices over Rational Field
-        sage: m = matrix(QQ,2,3); m; m.parent()
+        sage: m = matrix(QQ, 2, 3); m; m.parent()
         [0 0 0]
         [0 0 0]
         Full MatrixSpace of 2 by 3 dense matrices over Rational Field
@@ -336,19 +336,19 @@ def matrix(*args, **kwds):
         [1 2 3]
         [4 5 6]
         Full MatrixSpace of 2 by 3 dense matrices over Integer Ring
-        sage: m = matrix(QQ,2,[[1,2,3],[4,5,6]]); m; m.parent()
+        sage: m = matrix(QQ, 2, [[1,2,3],[4,5,6]]); m; m.parent()
         [1 2 3]
         [4 5 6]
         Full MatrixSpace of 2 by 3 dense matrices over Rational Field
-        sage: m = matrix(QQ,3,[[1,2,3],[4,5,6]]); m; m.parent()
+        sage: m = matrix(QQ, 3, [[1,2,3],[4,5,6]]); m; m.parent()
         Traceback (most recent call last):
         ...
         ValueError: inconsistent number of rows: should be 3 but got 2
-        sage: m = matrix(QQ,2,3,[[1,2,3],[4,5,6]]); m; m.parent()
+        sage: m = matrix(QQ, 2, 3, [[1,2,3],[4,5,6]]); m; m.parent()
         [1 2 3]
         [4 5 6]
         Full MatrixSpace of 2 by 3 dense matrices over Rational Field
-        sage: m = matrix(QQ,2,4,[[1,2,3],[4,5,6]]); m; m.parent()
+        sage: m = matrix(QQ, 2, 4, [[1,2,3],[4,5,6]]); m; m.parent()
         Traceback (most recent call last):
         ...
         ValueError: sequence too short (expected length 4, got 3)
@@ -362,19 +362,19 @@ def matrix(*args, **kwds):
         sage: m = matrix((1,2,3,4,5,6)); m; m.parent()
         [1 2 3 4 5 6]
         Full MatrixSpace of 1 by 6 dense matrices over Integer Ring
-        sage: m = matrix(QQ,[1,2,3,4,5,6]); m; m.parent()
+        sage: m = matrix(QQ, [1,2,3,4,5,6]); m; m.parent()
         [1 2 3 4 5 6]
         Full MatrixSpace of 1 by 6 dense matrices over Rational Field
-        sage: m = matrix(QQ,3,2,[1,2,3,4,5,6]); m; m.parent()
+        sage: m = matrix(QQ, 3, 2, [1,2,3,4,5,6]); m; m.parent()
         [1 2]
         [3 4]
         [5 6]
         Full MatrixSpace of 3 by 2 dense matrices over Rational Field
-        sage: m = matrix(QQ,2,4,[1,2,3,4,5,6]); m; m.parent()
+        sage: m = matrix(QQ, 2, 4, [1,2,3,4,5,6]); m; m.parent()
         Traceback (most recent call last):
         ...
         ValueError: sequence too short (expected length 8, got 6)
-        sage: m = matrix(QQ,5,[1,2,3,4,5,6]); m; m.parent()
+        sage: m = matrix(QQ, 5, [1,2,3,4,5,6]); m; m.parent()
         Traceback (most recent call last):
         ...
         ValueError: sequence too long (expected length 5, got more)
@@ -389,47 +389,47 @@ def matrix(*args, **kwds):
         [0 0]
         [0 2]
         Full MatrixSpace of 2 by 2 dense matrices over Integer Ring
-        sage: m = matrix(QQ,{(1,1): 2}); m; m.parent()
+        sage: m = matrix(QQ, {(1,1): 2}); m; m.parent()
         [0 0]
         [0 2]
         Full MatrixSpace of 2 by 2 sparse matrices over Rational Field
-        sage: m = matrix(QQ,3,{(1,1): 2}); m; m.parent()
+        sage: m = matrix(QQ, 3, {(1,1): 2}); m; m.parent()
         [0 0 0]
         [0 2 0]
         [0 0 0]
         Full MatrixSpace of 3 by 3 sparse matrices over Rational Field
-        sage: m = matrix(QQ,3,4,{(1,1): 2}); m; m.parent()
+        sage: m = matrix(QQ, 3, 4, {(1,1): 2}); m; m.parent()
         [0 0 0 0]
         [0 2 0 0]
         [0 0 0 0]
         Full MatrixSpace of 3 by 4 sparse matrices over Rational Field
-        sage: m = matrix(QQ,2,{(1,1): 2}); m; m.parent()
+        sage: m = matrix(QQ, 2, {(1,1): 2}); m; m.parent()
         [0 0]
         [0 2]
         Full MatrixSpace of 2 by 2 sparse matrices over Rational Field
-        sage: m = matrix(QQ,1,{(1,1): 2}); m; m.parent()
+        sage: m = matrix(QQ, 1, {(1,1): 2}); m; m.parent()
         Traceback (most recent call last):
         ...
         IndexError: invalid row index 1
         sage: m = matrix({}); m; m.parent()
         []
         Full MatrixSpace of 0 by 0 sparse matrices over Integer Ring
-        sage: m = matrix(QQ,{}); m; m.parent()
+        sage: m = matrix(QQ, {}); m; m.parent()
         []
         Full MatrixSpace of 0 by 0 sparse matrices over Rational Field
-        sage: m = matrix(QQ,2,{}); m; m.parent()
+        sage: m = matrix(QQ, 2, {}); m; m.parent()
         [0 0]
         [0 0]
         Full MatrixSpace of 2 by 2 sparse matrices over Rational Field
-        sage: m = matrix(QQ,2,3,{}); m; m.parent()
+        sage: m = matrix(QQ, 2, 3, {}); m; m.parent()
         [0 0 0]
         [0 0 0]
         Full MatrixSpace of 2 by 3 sparse matrices over Rational Field
-        sage: m = matrix(2,{}); m; m.parent()
+        sage: m = matrix(2, {}); m; m.parent()
         [0 0]
         [0 0]
         Full MatrixSpace of 2 by 2 sparse matrices over Integer Ring
-        sage: m = matrix(2,3,{}); m; m.parent()
+        sage: m = matrix(2, 3, {}); m; m.parent()
         [0 0 0]
         [0 0 0]
         Full MatrixSpace of 2 by 3 sparse matrices over Integer Ring
@@ -442,27 +442,27 @@ def matrix(*args, **kwds):
         sage: m = matrix(2,0); m; m.parent()
         []
         Full MatrixSpace of 2 by 0 dense matrices over Integer Ring
-        sage: m = matrix(0,[1]); m; m.parent()
+        sage: m = matrix(0, [1]); m; m.parent()
         Traceback (most recent call last):
         ...
         ValueError: sequence too long (expected length 0, got more)
-        sage: m = matrix(1,0,[]); m; m.parent()
+        sage: m = matrix(1, 0, []); m; m.parent()
         []
         Full MatrixSpace of 1 by 0 dense matrices over Integer Ring
-        sage: m = matrix(0,1,[]); m; m.parent()
+        sage: m = matrix(0, 1, []); m; m.parent()
         []
         Full MatrixSpace of 0 by 1 dense matrices over Integer Ring
-        sage: m = matrix(0,[]); m; m.parent()
+        sage: m = matrix(0, []); m; m.parent()
         []
         Full MatrixSpace of 0 by 0 dense matrices over Integer Ring
-        sage: m = matrix(0,{}); m; m.parent()
+        sage: m = matrix(0, {}); m; m.parent()
         []
         Full MatrixSpace of 0 by 0 sparse matrices over Integer Ring
-        sage: m = matrix(0,{(1,1):2}); m; m.parent()
+        sage: m = matrix(0, {(1,1): 2}); m; m.parent()
         Traceback (most recent call last):
         ...
         IndexError: invalid row index 1
-        sage: m = matrix(2,0,{(1,1):2}); m; m.parent()
+        sage: m = matrix(2, 0, {(1,1): 2}); m; m.parent()
         Traceback (most recent call last):
         ...
         IndexError: invalid column index 1
@@ -569,7 +569,7 @@ def matrix(*args, **kwds):
         [        1.0         2.0         3.0]
         [        2.0 1.0 + 2.0*I         3.0]
         Full MatrixSpace of 2 by 3 dense matrices over Complex Double Field
-        sage: m = matrix(3,3,1/2); m; m.parent()
+        sage: m = matrix(3, 3, 1/2); m; m.parent()
         [1/2   0   0]
         [  0 1/2   0]
         [  0   0 1/2]
@@ -582,7 +582,7 @@ def matrix(*args, **kwds):
         Traceback (most recent call last):
         ...
         TypeError: 'sage.rings.integer.Integer' object is not iterable
-        sage: matrix(vector(RR,[1,2,3])).parent()
+        sage: matrix(vector(RR, [1,2,3])).parent()
         Full MatrixSpace of 1 by 3 dense matrices over Real Field with 53 bits of precision
 
     Check :issue:`10158`::

@@ -18,8 +18,8 @@ directly.''
 
 EXAMPLES::
 
-    sage: M = Matrix(QQ,[[2,1,0],[1,2,1],[0,1,2]])
-    sage: V = VectorSpace(QQ,3,inner_product_matrix=M)
+    sage: M = Matrix(QQ, [[2,1,0], [1,2,1], [0,1,2]])
+    sage: V = VectorSpace(QQ, 3, inner_product_matrix=M)
     sage: type(V)
     <class 'sage.modules.free_quadratic_module.FreeQuadraticModule_ambient_field_with_category'>
     sage: V.inner_product_matrix()
@@ -44,11 +44,11 @@ EXAMPLES::
 
 TESTS::
 
-    sage: M = Matrix(QQ,[[2,1,0],[1,2,1],[0,1,2]])
-    sage: V = VectorSpace(QQ,3,inner_product_matrix = M)
+    sage: M = Matrix(QQ, [[2,1,0], [1,2,1], [0,1,2]])
+    sage: V = VectorSpace(QQ, 3, inner_product_matrix=M)
     sage: V == loads(dumps(V))
     True
-    sage: W = QuadraticSpace(QQ,3,M)
+    sage: W = QuadraticSpace(QQ, 3, M)
     sage: W == V
     True
 
@@ -111,13 +111,13 @@ def FreeQuadraticModule(base_ring, rank, inner_product_matrix,
 
     EXAMPLES::
 
-        sage: M2 = FreeQuadraticModule(ZZ,2,inner_product_matrix=[1,2,3,4])
-        sage: M2 is FreeQuadraticModule(ZZ,2,inner_product_matrix=[1,2,3,4])
+        sage: M2 = FreeQuadraticModule(ZZ, 2, inner_product_matrix=[1,2,3,4])
+        sage: M2 is FreeQuadraticModule(ZZ, 2, inner_product_matrix=[1,2,3,4])
         True
         sage: M2.inner_product_matrix()
         [1 2]
         [3 4]
-        sage: M3 = FreeModule(ZZ,2,inner_product_matrix=[[1,2],[3,4]])
+        sage: M3 = FreeModule(ZZ, 2, inner_product_matrix=[[1,2],[3,4]])
         sage: M3 is M2
         True
 
@@ -193,10 +193,11 @@ def QuadraticSpace(K, dimension, inner_product_matrix, sparse=False):
     The base can be complicated, as long as it is a field::
 
         sage: F.<x> = FractionField(PolynomialRing(ZZ,'x'))
-        sage: D = diagonal_matrix([x,x-1,x+1])
-        sage: V = QuadraticSpace(F,3,D)
+        sage: D = diagonal_matrix([x, x - 1, x + 1])
+        sage: V = QuadraticSpace(F, 3, D)
         sage: V
-        Ambient quadratic space of dimension 3 over Fraction Field of Univariate Polynomial Ring in x over Integer Ring
+        Ambient quadratic space of dimension 3 over
+         Fraction Field of Univariate Polynomial Ring in x over Integer Ring
         Inner product matrix:
         [    x     0     0]
         [    0 x - 1     0]
@@ -210,7 +211,7 @@ def QuadraticSpace(K, dimension, inner_product_matrix, sparse=False):
 
     The base must be a field or a :class:`TypeError` is raised::
 
-        sage: QuadraticSpace(ZZ,5,identity_matrix(ZZ,2))
+        sage: QuadraticSpace(ZZ, 5, identity_matrix(ZZ,2))
         Traceback (most recent call last):
         ...
         TypeError: argument K (= Integer Ring) must be a field
@@ -1362,7 +1363,7 @@ class FreeQuadraticModule_submodule_with_basis_pid(free_module.FreeModule_submod
             Basis matrix:
             [1 2 4]
 
-            sage: N = FreeModule(ZZ, 2, inner_product_matrix=[[1,-1],[2,5]])
+            sage: N = FreeModule(ZZ, 2, inner_product_matrix=[[1,-1], [2,5]])
             sage: N.inner_product_matrix()
             [ 1 -1]
             [ 2  5]
@@ -1392,7 +1393,7 @@ class FreeQuadraticModule_submodule_pid(free_module.FreeModule_submodule_pid,
     EXAMPLES::
 
         sage: M = ZZ^3
-        sage: W = M.span_of_basis([[1,2,3],[4,5,19]]); W
+        sage: W = M.span_of_basis([[1,2,3], [4,5,19]]); W
         Free module of degree 3 and rank 2 over Integer Ring
         User basis matrix:
         [ 1  2  3]
@@ -1510,14 +1511,14 @@ class FreeQuadraticModule_submodule_with_basis_field(free_module.FreeModule_subm
         EXAMPLES::
 
             sage: V = QQ^3
-            sage: W = V.span_of_basis([[1,2,3],[4,5,6]])
+            sage: W = V.span_of_basis([[1,2,3], [4,5,6]])
             sage: W
             Vector space of degree 3 and dimension 2 over Rational Field
             User basis matrix:
             [1 2 3]
             [4 5 6]
             sage: V = VectorSpace(QQ, 3, inner_product_matrix=1)
-            sage: V.span_of_basis([[1,2,3],[4,5,6]])
+            sage: V.span_of_basis([[1,2,3], [4,5,6]])
             Quadratic space of degree 3 and dimension 2 over Rational Field
             Basis matrix:
             [1 2 3]
@@ -1604,7 +1605,7 @@ class FreeQuadraticModule_submodule_field(free_module.FreeModule_submodule_field
     coordinates::
 
         sage: V = QQ^3
-        sage: W = V.span([[1,2,3],[4,5,6]])
+        sage: W = V.span([[1,2,3], [4,5,6]])
         sage: W
         Vector space of degree 3 and dimension 2 over Rational Field
         Basis matrix:
@@ -1630,7 +1631,7 @@ class FreeQuadraticModule_submodule_field(free_module.FreeModule_submodule_field
         EXAMPLES::
 
             sage: V = QQ^3
-            sage: W = V.span([[1,2,3],[4,5,6]])
+            sage: W = V.span([[1,2,3], [4,5,6]])
             sage: W
             Vector space of degree 3 and dimension 2 over Rational Field
             Basis matrix:
@@ -1647,7 +1648,7 @@ class FreeQuadraticModule_submodule_field(free_module.FreeModule_submodule_field
 
         EXAMPLES::
 
-            sage: V = VectorSpace(QQ,5)
+            sage: V = VectorSpace(QQ, 5)
             sage: U = V.submodule([ V.gen(i) - V.gen(0) for i in range(1,5) ])
             sage: U # indirect doctest
             Vector space of degree 5 and dimension 4 over Rational Field
@@ -1680,7 +1681,7 @@ class FreeQuadraticModule_submodule_field(free_module.FreeModule_submodule_field
 
         Sparse vector spaces print this fact::
 
-            sage: V = VectorSpace(QQ,5,sparse=True)
+            sage: V = VectorSpace(QQ, 5, sparse=True)
             sage: U = V.submodule([ V.gen(i) - V.gen(0) for i in range(1,5) ])
             sage: U # indirect doctest
             Sparse vector space of degree 5 and dimension 4 over Rational Field

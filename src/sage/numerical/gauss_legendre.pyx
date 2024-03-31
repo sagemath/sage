@@ -103,8 +103,8 @@ def nodes_uncached(degree, prec):
 
     .. TODO::
 
-        It may be worth testing if using the Arb algorithm for finding the
-        nodes and weights in ``arb/acb_calc/integrate_gl_auto_deg.c`` has better
+        It may be worth testing if using the FLINT/Arb algorithm for finding the
+        nodes and weights in ``src/acb_calc/integrate_gl_auto_deg.c`` has better
         performance.
     """
     cdef long j,j1,n

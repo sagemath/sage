@@ -705,7 +705,7 @@ cdef class PolynomialRealDense(Polynomial):
 
         TESTS::
 
-            sage: R.<x> = RR[]       # trac #17311
+            sage: R.<x> = RR[]  # Issue #17311
             sage: (x^2+1)(x=5)
             26.0000000000000
         """

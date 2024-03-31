@@ -9,17 +9,22 @@
 # sage.doctest: needs sage.libs.ntl sage.modules sage.rings.padics
 
 r"""
-Frobenius on Monsky-Washnitzer cohomology of a hyperelliptic curve over a
-largish prime finite field
+Frobenius on Monsky-Washnitzer cohomology of a hyperelliptic curve
 
-This is a wrapper for the matrix() function in hypellfrob.cpp.
+This module provides :func:`hypellfrob`, that is a wrapper for the ``matrix()``
+function in ``hypellfrob.cpp``.
 
-AUTHOR:
+``hypellfrob.cpp`` is a C++ program for computing the zeta function of a
+hyperelliptic curve over a largish prime finite field, based on the method
+described in the paper [Harv2007]_. More precisely, it computes the matrix of
+Frobenius on the Monsky-Washnitzer cohomology of the curve; the zeta function
+can be recovered via the characteristic polynomial of the matrix.
 
-- David Harvey (2007-05)
+AUTHORS:
 
+- David Harvey (2007-05): initial version
 - David Harvey (2007-12): rewrote for ``hypellfrob`` version 2.0
-
+- Alex J. Best (2018-02): added wrapper
 """
 
 # *****************************************************************************
@@ -66,23 +71,19 @@ cdef extern from "hypellfrob.h":
 
 def interval_products(M0, M1, target):
     r"""
-    Given a matrix `M` with coefficients linear polynomials over `\ZZ/N\ZZ` and
-    a list of integers `a_0 < b_0 \le a_1 < b_1 \le \cdots \le a_n < b_n`
-    compute the matrices
-    ``\prod_{t = a_i + 1}^{b_i} M(t)``
-    for `i = 0` to `n`.
-
-    This is a wrapper for code in the ``hypellfrob`` package.
+    Given matrices `M(t)` with entries linear in `t` over `\ZZ/N\ZZ` and a list
+    of integers `a_0 < b_0 \le a_1 < b_1 \le \cdots \le a_n < b_n`, compute the
+    matrices `\prod_{t = a_i + 1}^{b_i} M(t)` for `i = 0` to `n`.
 
     INPUT:
 
-    - ``M0``, ``M1`` -- matrices over `\ZZ/N\ZZ`, so that `M = M0 + M1*x`
-    - ``target`` -- a list of integers
+    - ``M0``, ``M1`` -- matrices over `\ZZ/N\ZZ`, so that `M(t) = M_0 + M_1t`
+    - ``target`` -- a list of integers `a_0, b_0, \dots, a_n, b_n`
 
     ALGORITHM:
 
-    Described in [Harv2007]_.
-    Based on the work of Bostan-Gaudry-Schost [BGS2007]_.
+    Described in [Harv2007]_, Theorem 10. Based on the work of Bostan-Gaudry-Schost
+    [BGS2007]_.
 
     EXAMPLES::
 
@@ -116,20 +117,6 @@ def interval_products(M0, M1, target):
         sage: [prod(Matrix(Integers(3^18), 1, 1, [t + 1]) for t in range(3,5))]
         [[20]]
 
-    AUTHORS:
-
-    - David Harvey (2007-12): Original code
-    - Alex J. Best (2018-02): Wrapper
-
-    REFERENCES:
-
-    .. [Harv2007] David Harvey. *Kedlaya's algorithm in larger characteristic*,
-       :arxiv:`math/0610973`.
-
-    .. [BGS2007] Alin Bostan, Pierrick Gaudry, and Eric Schost,
-       *Linear recurrences with polynomial coefficients and application
-       to integer factorization and Cartier-Manin operator*, SIAM
-       Journal on Computing 36 (2007), no. 6, 1777-1806
     """
     # Sage objects that wrap the NTL objects
     cdef mat_ZZ_p_c mm0, mm1
@@ -175,24 +162,17 @@ def hypellfrob(p, N, Q):
     INPUT:
 
     - ``p`` -- a prime
-    - ``Q`` -- a monic polynomial in `\ZZ[x]` of odd degree.
-      Must have no multiple roots mod `p`.
-    - ``N`` -- precision parameter; the output matrix will be correct modulo `p^N`.
+    - ``Q`` -- a monic polynomial in `\ZZ[x]` of odd degree; must have no
+      multiple roots mod `p`.
+    - ``N`` -- precision parameter; the output matrix will be correct modulo `p^N`
 
-    PRECONDITIONS:
-
-    Must have `p > (2g+1)(2N-1)`, where `g = (\deg(Q)-1)/2` is the genus
-    of the curve.
+    The prime `p` should satisfy `p > (2g+1)(2N-1)`, where `g =
+    \left(\deg Q - 1\right) / 2` is the genus of the curve.
 
     ALGORITHM:
 
-    Described in "Kedlaya's algorithm in larger characteristic" by David
-    Harvey. Running time is theoretically soft-`O(p^{1/2} N^{5/2} g^3)`.
-
-    .. TODO::
-
-        Remove the restriction on `p`. Probably by merging in Robert's code,
-        which eventually needs a fast C++/NTL implementation.
+    Described in [Harv2007]_, Section 7. Running time is theoretically
+    `\widetilde{O}(p^{1/2} N^{5/2} g^3)`.
 
     EXAMPLES::
 
@@ -216,10 +196,11 @@ def hypellfrob(p, N, Q):
         [     O(101)      O(101) 65 + O(101) 42 + O(101)]
         [     O(101)      O(101) 89 + O(101) 29 + O(101)]
 
-    AUTHORS:
+    .. TODO::
 
-    - David Harvey (2007-05)
-    - David Harvey (2007-12): updated for hypellfrob version 2.0
+        Remove the restriction on `p`. Probably by merging in Robert's code,
+        which eventually needs a fast C++/NTL implementation.
+
     """
     # Sage objects that wrap the NTL objects
     cdef ntl_ZZ pp
@@ -268,5 +249,3 @@ def hypellfrob(p, N, Q):
     data = [[mm[j, i]._integer_() + prec for i in range(2 * g)]
             for j in range(2 * g)]
     return Matrix(R, data)
-
-# end of file

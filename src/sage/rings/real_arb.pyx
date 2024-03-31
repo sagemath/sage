@@ -1,17 +1,17 @@
 # -*- coding: utf-8
 r"""
-Arbitrary precision real balls using Arb
+Arbitrary precision real balls
 
-This is a binding to the `Arb library <http://arblib.org>`_ for ball
-arithmetic. It may be useful to refer to its documentation for more details.
+This is a binding to the `arb module of FLINT <https://flintlib.org/doc/arb.html>`_.
+It may be useful to refer to its documentation for more details.
 
-Parts of the documentation for this module are copied or adapted from
-Arb's own documentation, licenced under the GNU General Public License
-version 2, or later.
+Parts of the documentation for this module are copied or adapted from Arb's
+(now FLINT's) own documentation, licenced (at the time) under the GNU General
+Public License version 2, or later.
 
 .. SEEALSO::
 
-    - :mod:`Complex balls using Arb <sage.rings.complex_arb>`
+    - :mod:`Complex balls <sage.rings.complex_arb>`
     - :mod:`Real intervals using MPFI <sage.rings.real_mpfi>`
 
 Data Structure
@@ -24,7 +24,7 @@ the overhead of traditional (inf-sup) interval arithmetic at high precision,
 and eliminating much of the need for time-consuming and bug-prone manual error
 analysis associated with standard floating-point arithmetic.
 
-Sage :class:`RealBall` objects wrap Arb objects of type ``arb_t``. A real
+Sage :class:`RealBall` objects wrap FLINT objects of type ``arb_t``. A real
 ball represents a ball over the real numbers, that is, an interval `[m-r,m+r]`
 where the midpoint `m` and the radius `r` are (extended) real numbers::
 
@@ -62,7 +62,7 @@ Comparison
 
 .. WARNING::
 
-    In accordance with the semantics of Arb, identical :class:`RealBall`
+    In accordance with the semantics of FLINT/Arb, identical :class:`RealBall`
     objects are understood to give permission for algebraic simplification.
     This assumption is made to improve performance.  For example, setting ``z =
     x*x`` may set `z` to a ball enclosing the set `\{t^2 : t \in x\}` and not
@@ -204,11 +204,11 @@ from cpython.long cimport PyLong_AsLong
 from cpython.object cimport Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE
 from libc.stdlib cimport abort
 
-from sage.libs.arb.arb cimport *
-from sage.libs.arb.arb_hypgeom cimport *
-from sage.libs.arb.arf cimport *
-from sage.libs.arb.arf cimport *
-from sage.libs.arb.mag cimport *
+from sage.libs.flint.arb cimport *
+from sage.libs.flint.arb_hypgeom cimport *
+from sage.libs.flint.arf cimport *
+from sage.libs.flint.arf cimport *
+from sage.libs.flint.mag cimport *
 from sage.libs.flint.flint cimport flint_free
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpq cimport *
@@ -1143,7 +1143,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
 
 cdef inline bint _do_sig(long prec) noexcept:
     """
-    Whether signal handlers should be installed for calls to arb.
+    Whether signal handlers should be installed for calls to FLINT.
 
     TESTS::
 
@@ -1181,8 +1181,7 @@ def create_RealBall(parent, serialized):
 
 cdef class RealBall(RingElement):
     """
-    Hold one ``arb_t`` of the `Arb library
-    <http://arblib.org>`_
+    Hold one ``arb_t``
 
     EXAMPLES::
 
