@@ -1458,7 +1458,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
             sage: R.<x,y> = PolynomialRing(QQ, 2)
             sage: R.End()
-            Set of Homomorphisms from Multivariate Polynomial Ring in x, y over Rational Field to Rational Field
+            Set of Homomorphisms from Multivariate Polynomial Ring in x, y over Rational Field to Multivariate Polynomial Ring in x, y over Rational Field
             sage: R.End() is End(R)
             True
             sage: R.End() is R.Hom(R)

@@ -127,8 +127,14 @@ class Jacobian_generic(Scheme):
             raise TypeError("C (=%s) must be defined over a field." % C)
         if C.dimension() != 1:
             raise ValueError("C (=%s) must have dimension 1." % C)
+        # Jacobian of curves defined over a field are abelian varities
+        from sage.categories.schemes import AbelianVarieties
         self.__curve = C
-        Scheme.__init__(self, C.base_scheme())
+
+        category = None
+        if C.is_smooth():
+            category = AbelianVarieties(C.base_ring())
+        Scheme.__init__(self, C.base_scheme(), category=category)
 
     def __richcmp__(self, J, op):
         """

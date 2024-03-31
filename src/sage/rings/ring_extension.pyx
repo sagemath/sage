@@ -669,6 +669,7 @@ cdef class RingExtension_generic(CommutativeRing):
             sage: dir(K)                                                                # needs sage.rings.number_field
             ['CartesianProduct',
              'Element',
+             'End',
              'Hom',
              ...
              'zeta',

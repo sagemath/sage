@@ -393,10 +393,9 @@ cdef class MatrixPolymapAction(MatrixMulAction):
             sage: H = Hom(P,P)
             sage: A = MatrixPolymapAction(M,H)
             sage: A
-            Left action by Full MatrixSpace of 2 by 2 dense matrices over Rational
-            Field on Set of morphisms
-              From: Projective Space of dimension 1 over Rational Field
-              To:   Projective Space of dimension 1 over Rational Field
+            Left action by Full MatrixSpace of 2 by 2 dense matrices over
+             Rational Field on Set of scheme endomorphisms of Projective Space of
+             dimension 1 over Rational Field
         """
         if not isinstance(S, SchemeHomset_generic):
             raise TypeError("not a scheme polynomial morphism: %s"% S)
@@ -412,9 +411,7 @@ cdef class MatrixPolymapAction(MatrixMulAction):
             sage: H = End(P)
             sage: A = MatrixPolymapAction(M,H)
             sage: A.codomain()
-            Set of morphisms
-              From: Projective Space of dimension 1 over Rational Field
-              To:   Projective Space of dimension 1 over Rational Field
+            Set of scheme endomorphisms of Projective Space of dimension 1 over Rational Field
             sage: A.codomain().is_endomorphism_set()
             True
         """
@@ -464,10 +461,9 @@ cdef class PolymapMatrixAction(MatrixMulAction):
             sage: H = Hom(P,P)
             sage: A = PolymapMatrixAction(M,H)
             sage: A
-            Right action by Full MatrixSpace of 2 by 2 dense matrices over Rational
-            Field on Set of morphisms
-              From: Projective Space of dimension 1 over Rational Field
-              To:   Projective Space of dimension 1 over Rational Field
+            Right action by Full MatrixSpace of 2 by 2 dense matrices over
+             Rational Field on Set of scheme endomorphisms of Projective Space of
+             dimension 1 over Rational Field
         """
         if not isinstance(S, SchemeHomset_generic):
             raise TypeError("not a scheme polynomial morphism: %s"% S)
@@ -485,9 +481,7 @@ cdef class PolymapMatrixAction(MatrixMulAction):
             sage: H = End(P)
             sage: A = PolymapMatrixAction(M,H)
             sage: A.codomain()
-            Set of morphisms
-              From: Projective Space of dimension 1 over Rational Field
-              To:   Projective Space of dimension 1 over Rational Field
+            Set of scheme endomorphisms of Projective Space of dimension 1 over Rational Field
             sage: A.codomain().is_endomorphism_set()
             True
         """

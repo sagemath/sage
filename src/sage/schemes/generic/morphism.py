@@ -363,6 +363,12 @@ class SchemeMorphism(Element):
               Defn: Identity map, Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + x + 1
               Defn: Identity map)
         """
+        from sage.categories.additive_magmas import AdditiveMagmas
+        if self not in AdditiveMagmas():
+            raise TypeError(f"{self} is not an additive magma")
+        if other not in AdditiveMagmas():
+            raise TypeError(f"{other} is not an additive magma")
+
         phis = []
         if isinstance(self, SchemeMorphism_sum):
             phis.extend(self.summands())
@@ -871,7 +877,7 @@ class SchemeMorphism_sum(SchemeMorphism):
 
         OUTPUT:
 
-        A boolean or ``NotImplemented``.
+        A boolean or ``NotImplemented``
 
         EXAMPLES::
 
@@ -2411,7 +2417,7 @@ class SchemeMorphism_point(SchemeMorphism):
 
     def _add_(self, point):
         r"""
-        Add two point schemes.
+        Add two scheme points.
 
         EXAMPLES::
 
