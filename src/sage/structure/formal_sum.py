@@ -48,6 +48,7 @@ AUTHORS:
 
 - Volker Braun (2010-07-19): new-style coercions, documentation
   added. FormalSums now derives from UniqueRepresentation
+
 """
 
 # ****************************************************************************
