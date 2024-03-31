@@ -808,7 +808,12 @@ class SchemeMorphism_sum(SchemeMorphism):
 
         EXAMPLES::
 
-            PR_TODO
+            sage: R.<x> = QQ[]
+            sage: J = HyperellipticCurve(x^5 - 8*x).jacobian()
+            sage: phi = End(J).identity()
+            sage: P = J(2, 4)
+            sage: (phi + phi)(P) == P * 2
+            True
         """
         return sum((phi(P) for phi in self._phis), self._codomain.zero())
 
@@ -818,7 +823,16 @@ class SchemeMorphism_sum(SchemeMorphism):
 
         EXAMPLES::
 
-            PR_TODO
+            sage: R.<x> = QQ[]
+            sage: J = HyperellipticCurve(x^5 - 8*x).jacobian()
+            sage: phi = End(J).identity()
+            sage: phi + phi
+            Sum morphism:
+              From: Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+              To:   Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+              Via:  (Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+              Defn: Identity map, Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+              Defn: Identity map)
         """
         return f'Sum morphism:' \
                 f'\n  From: {self._domain}' \
@@ -831,7 +845,16 @@ class SchemeMorphism_sum(SchemeMorphism):
 
         EXAMPLES::
 
-            PR_TODO
+            sage: R.<x> = QQ[]
+            sage: J = HyperellipticCurve(x^5 - 8*x).jacobian()
+            sage: phi = End(J).identity()
+            sage: (phi + phi).summands()
+            (Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+               Defn: Identity map,
+             Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+               Defn: Identity map)
+            sage: _ == (phi, phi)
+            True
         """
         return self._phis
 
@@ -839,7 +862,16 @@ class SchemeMorphism_sum(SchemeMorphism):
     # How to do it non-stupidly?
     def _richcmp_(self, other, op):
         r"""
-        Help.
+        Compare two scheme morphisms.
+
+        INPUT:
+
+        - ``other`` -- anything. To compare against the scheme
+          morphism ``self``.
+
+        OUTPUT:
+
+        A boolean or ``NotImplemented``.
 
         EXAMPLES::
 
