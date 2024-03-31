@@ -8474,6 +8474,27 @@ class NumberField_absolute(NumberField_generic):
         """
         return QQ
 
+    def __iter__(self):
+        r"""
+        Iterate over ``self``.
+
+        EXAMPLES::
+
+            sage: K = CyclotomicField(5)
+            sage: it = iter(K)
+            sage: [next(it) for _ in range(20)]
+            [0, 1, zeta5, zeta5^2, zeta5^3, -1, zeta5 + 1, zeta5^2 + 1,
+             zeta5^3 + 1, -zeta5, zeta5^2 + zeta5, zeta5^3 + zeta5, -zeta5^2,
+             zeta5^3 + zeta5^2, -zeta5^3, 1/2, zeta5 - 1, zeta5^2 - 1,
+             zeta5^3 - 1, -zeta5 + 1]
+        """
+        from sage.categories.sets_cat import cartesian_product
+        M, f, g = self.free_module()
+        # We iterate over the Cartesian product since the free module does
+        #   not iterate using the diagonal embedding.
+        for v in cartesian_product([M.base_ring()] * M.dimension()):
+            yield f(M(list(v)))
+
     def is_absolute(self):
         r"""
         Return ``True`` since ``self`` is an absolute field.
