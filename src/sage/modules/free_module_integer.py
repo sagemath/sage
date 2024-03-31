@@ -805,15 +805,30 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             i -= 1
         return t - t_new
 
-    def approximate_closest_vector(self, t):
+    def approximate_closest_vector(self, t, delta=None, *args, **kwargs):
         r"""
-        Compute a vector `w` such that `|t-w| < (\frac{1}{\delta-\frac{1}{4}})^{d/2} |t-u|`
-        where `u` is the closest lattice point to `t`, `\delta` is the LLL reduction parameter
-        used to reduce the lattice basis, and `d` is the dimension of the lattice.
+        Compute a vector `w` such that
+
+        .. MATH::
+
+            |t-w|<(\frac{1}{\delta-\frac{1}{4}})^{d/2}|t-u|
+
+        where `u` is the closest lattice point to `t`, `\delta` is the LLL
+        reduction parameter, and `d` is the dimension of the lattice.
+
+        This will check whether the basis is already `\delta`-LLL-reduced
+        and otherwise it will run LLL to make sure that it is. For more
+        information about `delta` see :meth:`LLL`.
 
         INPUT:
 
         - ``t`` -- the target vector to compute a close vector to
+
+        - ``delta`` -- (default: ``0.99``) the LLL reduction parameter
+
+        - ``*args`` -- passed through to :meth:`LLL`
+
+        - ``**kwds`` -- passed through to :meth:`LLL`
 
         OUTPUT:
 
@@ -829,15 +844,18 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         ALGORITHM:
 
         Uses the algorithm from [Bab86]_.
-
         """
-        if not self._basis_is_LLL_reduced:
-            self.LLL()
+        if delta is None:
+            delta = ZZ(99)/ZZ(100)
 
-        B = self.basis_matrix()
+        # bound checks on delta are performed in is_LLL_reduced
+        if not self._reduced_basis.is_LLL_reduced(delta=delta):
+            self.LLL(*args, delta=delta, **kwargs)
+
+        B = self._reduced_basis
         G = B.gram_schmidt()[0]
         t = vector(t)
-    
+
         b = t
         for i in reversed(range(G.nrows())):
             b -= B[i] * ((b * G[i]) / (G[i] * G[i])).round("even")
