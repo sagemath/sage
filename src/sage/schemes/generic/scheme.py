@@ -971,9 +971,7 @@ class AffineScheme(UniqueRepresentation, Scheme):
         following one::
 
             sage: S(S)
-            Set of morphisms
-              From: Spectrum of Integer Ring
-              To:   Spectrum of Integer Ring
+            Set of scheme endomorphisms of Spectrum of Integer Ring
 
         For affine or projective varieties, passing the correct number
         of elements of the base ring constructs the rational point

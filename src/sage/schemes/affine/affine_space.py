@@ -371,9 +371,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
             sage: A.<x,y> = AffineSpace(2, QQ)
             sage: Hom(A, A)
-            Set of morphisms
-              From: Affine Space of dimension 2 over Rational Field
-              To:   Affine Space of dimension 2 over Rational Field
+            Set of scheme endomorphisms of Affine Space of dimension 2 over Rational Field
         """
         return SchemeHomset_polynomial_affine_space(*args, **kwds)
 

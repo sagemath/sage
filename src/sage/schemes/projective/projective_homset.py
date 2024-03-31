@@ -540,9 +540,7 @@ class SchemeHomset_polynomial_projective_space(SchemeHomset_generic):
 
         sage: P.<x,y,z> = ProjectiveSpace(2, QQ)
         sage: Hom(P, P)
-        Set of morphisms
-          From: Projective Space of dimension 2 over Rational Field
-          To:   Projective Space of dimension 2 over Rational Field
+        Set of scheme endomorphisms of Projective Space of dimension 2 over Rational Field
     """
     def identity(self):
         """
@@ -552,9 +550,7 @@ class SchemeHomset_polynomial_projective_space(SchemeHomset_generic):
 
             sage: P.<x,y,z> = ProjectiveSpace(2, QQ)
             sage: Hom(P, P)
-            Set of morphisms
-              From: Projective Space of dimension 2 over Rational Field
-              To:   Projective Space of dimension 2 over Rational Field
+            Set of scheme endomorphisms of Projective Space of dimension 2 over Rational Field
             sage: _.identity()
             Scheme endomorphism of Projective Space of dimension 2 over Rational Field
               Defn: Identity map

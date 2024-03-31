@@ -101,6 +101,7 @@ class EllipticCurveHomset(SchemeHomset_generic):
             sage: E2 = EllipticCurve(GF(101), [4,9])
             sage: H = Hom(E1, E2)
             sage: TestSuite(H).run(skip='_test_elements')
+            # PR_TODO: Fix
 
         ::
 

@@ -102,8 +102,7 @@ def is_SchemeMorphism(f):
 
     OUTPUT:
 
-    Boolean. Return ``True`` if ``f`` is a scheme morphism or a point
-    on an elliptic curve.
+    Boolean. Return ``True`` if ``f`` is a scheme morphism.
 
     EXAMPLES::
 
@@ -114,9 +113,13 @@ def is_SchemeMorphism(f):
         sage: from sage.schemes.generic.morphism import is_SchemeMorphism
         sage: is_SchemeMorphism(f)
         True
+
+        sage: E = EllipticCurve(GF(103), [3, 5])
+        sage: P = E.random_point()
+        sage: is_SchemeMorphism(P)
+        True
     """
-    from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
-    return isinstance(f, (SchemeMorphism, EllipticCurvePoint_field))
+    return isinstance(f, SchemeMorphism)
 
 
 class SchemeMorphism(Element):
@@ -727,7 +730,7 @@ class SchemeMorphism_sum(SchemeMorphism):
 
         EXAMPLES::
 
-            sage: from src.sage.schemes.generic.morphism import SchemeMorphism_sum
+            sage: from sage.schemes.generic.morphism import SchemeMorphism_sum
             sage: phi = Spec(QQ).identity_morphism()
             sage: SchemeMorphism_sum([phi, phi])
             PR_TODO
@@ -798,14 +801,7 @@ class SchemeMorphism_sum(SchemeMorphism):
 
         EXAMPLES::
 
-            sage: E = EllipticCurve(j=5)
-            sage: m2 = E.scalar_multiplication(2)
-            sage: m3 = E.scalar_multiplication(3)
-            sage: m2 + m3
-            Sum morphism:
-              From: Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field
-              To:   Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field
-              Via:  (Scalar-multiplication endomorphism [2] of Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field, Scalar-multiplication endomorphism [3] of Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field)
+            wrong
         """
         return self._phis
 
@@ -879,10 +875,10 @@ class SchemeMorphism_id(SchemeMorphism):
             sage: P = J(2, 4); P
             (2, y - 4)
             sage: phi = J.End().identity(); phi
-            Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - x
+            Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
               Defn: Identity map
             sage: phi(P)
-            (1)
+            (2, y - 4)
         """
         return P
 
@@ -2328,7 +2324,7 @@ class SchemeMorphism_point(SchemeMorphism):
 
             sage: A = AffineSpace(QQ, 2)
             sage: A(2, 3) + A(3, 5)
-            Traceback (most recent call first):
+            Traceback (most recent call last):
             ...
             NotImplementedError
         """

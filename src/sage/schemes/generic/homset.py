@@ -245,9 +245,7 @@ class SchemeHomset_generic(HomsetWithBase):
         sage: from sage.schemes.generic.homset import SchemeHomset_generic
         sage: A2 = AffineSpace(QQ,2)
         sage: Hom = SchemeHomset_generic(A2, A2); Hom
-        Set of morphisms
-          From: Affine Space of dimension 2 over Rational Field
-          To:   Affine Space of dimension 2 over Rational Field
+        Set of scheme endomorphisms of Affine Space of dimension 2 over Rational Field
         sage: Hom.category()
         Category of endsets of schemes over Rational Field
     """
@@ -295,12 +293,12 @@ class SchemeHomset_generic(HomsetWithBase):
         EXAMPLES::
 
             sage: A = AffineSpace(4, QQ)
-            sage: repr(A.structure_morphism().parent())
-            Scheme morphism:
+            sage: print(repr(A.structure_morphism().parent()))
+            Set of morphisms
               From: Affine Space of dimension 4 over Rational Field
               To:   Spectrum of Rational Field
 
-            sage: repr(Spec(QQ).End())
+            sage: print(repr(Spec(QQ).End()))
             Set of scheme endomorphisms of Spectrum of Rational Field
         """
         if self.is_endomorphism_set():
@@ -331,9 +329,7 @@ class SchemeHomset_generic(HomsetWithBase):
               Defn: Structure map
 
             sage: Spec(QQ).End().natural_map()
-            Scheme endomorphism of Set of morphisms
-              From: Spectrum of Rational Field
-              To:   Spectrum of Rational Field
+            Scheme endomorphism of Spectrum of Rational Field
               Defn: Identity map
         """
         X = self.domain()
@@ -353,14 +349,11 @@ class SchemeHomset_generic(HomsetWithBase):
 
         EXAMPLES::
 
-            sage: Spec(QQ).End().identity()
-            Scheme endomorphism of Set of morphisms
-              From: Spectrum of Rational Field
-              To:   Spectrum of Rational Field
+            Scheme endomorphism of Spectrum of Rational Field
               Defn: Identity map
 
             sage: Hom(Spec(ZZ), Spec(QQ)).identity()
-            Traceback (most recent call first):
+            Traceback (most recent call last):
             ...
             ValueError: domain and codomain must be equal
         """
@@ -378,6 +371,8 @@ class SchemeHomset_generic(HomsetWithBase):
         EXAMPLES::
 
             sage: Spec(QQ).End().an_element()
+            Scheme endomorphism of Spectrum of Rational Field
+              Defn: Identity map
         """
         return self.natural_map()
 
@@ -430,11 +425,8 @@ class SchemeHomset_generic(HomsetWithBase):
             sage: A.<x,y> = AffineSpace(R)
             sage: C = A.subscheme(x*y - 1)
             sage: H = C.Hom(C); H
-            Set of morphisms
-              From: Closed subscheme of Affine Space of dimension 2 over Rational Field
-                    defined by: x*y - 1
-              To:   Closed subscheme of Affine Space of dimension 2 over Rational Field
-                    defined by: x*y - 1
+            Set of scheme endomorphisms of Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+             x*y - 1
             sage: H(1)
             Traceback (most recent call last):
             ...

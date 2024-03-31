@@ -750,9 +750,7 @@ class ProjectiveSpace_ring(UniqueRepresentation, AmbientSpace):
 
             sage: P.<x,y,z> = ProjectiveSpace(2, QQ)
             sage: Hom(P, P)
-            Set of morphisms
-              From: Projective Space of dimension 2 over Rational Field
-              To:   Projective Space of dimension 2 over Rational Field
+            Set of scheme endomorphisms of Projective Space of dimension 2 over Rational Field
         """
         return SchemeHomset_polynomial_projective_space(*args, **kwds)
 
