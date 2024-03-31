@@ -9915,8 +9915,11 @@ cdef class Matrix(Matrix1):
             ....:             [1,1,7,1,-5], [1,1,1,7,-5]])
             sage: B.is_nilpotent()
             True
-            sage: C = matrix(GF(7), [[1, 2], [2, 4]])
+            sage: C = matrix(GF(7), [[1, 2], [2, 6]])
             sage: C.is_nilpotent()
+            False
+            sage: D = matrix([[1,0],[0,0]])
+            sage: D.is_nilpotent()
             False
             sage: Z = matrix.zero(QQ, 5)
             sage: Z.is_nilpotent()
@@ -9933,6 +9936,8 @@ cdef class Matrix(Matrix1):
             sage: Z.is_nilpotent()
             True
         """
+        if self.trace():
+            return False
         chi = self.charpoly()
         return chi.is_monomial()
 
