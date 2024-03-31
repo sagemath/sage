@@ -1229,7 +1229,8 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             Traceback (most recent call last):
             ...
             TypeError: (20 : 90 : 1) fails to convert into the map's domain
-            Elliptic Curve defined by y^2 = x^3 + 7*x over Number Field in th with defining polynomial x^2 + 3,
+            Elliptic Curve defined by y^2 = x^3 + 7*x over
+            Number Field in th with defining polynomial x^2 + 3,
             but a `pushforward` method is not properly implemented
 
         Check that copying the order over works::

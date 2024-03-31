@@ -314,22 +314,22 @@ class PlanePartition(ClonableArray,
             return Tableau(X)
         return X
 
-    def cells(self) -> list[list[int]]:
+    def cells(self) -> list[tuple[int, int, int]]:
         r"""
         Return the list of cells inside ``self``.
+
+        Each cell is a tuple.
 
         EXAMPLES::
 
             sage: PP = PlanePartition([[3,1],[2]])
             sage: PP.cells()
-            [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [1, 0, 0], [1, 0, 1]]
+            [(0, 0, 0), (0, 0, 1), (0, 0, 2), (0, 1, 0), (1, 0, 0), (1, 0, 1)]
         """
-        L = []
-        for r in range(len(self)):
-            for c in range(len(self[r])):
-                for h in range(self[r][c]):
-                    L.append([r, c, h])
-        return L
+        return [(r, c, h)
+                for r in range(len(self))
+                for c in range(len(self[r]))
+                for h in range(self[r][c])]
 
     def number_of_boxes(self) -> Integer:
         r"""
@@ -1999,9 +1999,9 @@ class PlanePartitions_SPP(PlanePartitions):
 
             sage: list(PlanePartitions([2,2,1], symmetry='SPP'))                        # needs sage.graphs sage.modules sage.rings.finite_rings
             [Plane partition [],
-            Plane partition [[1, 1], [1, 1]],
-            Plane partition [[1, 1], [1]],
-            Plane partition [[1]]]
+             Plane partition [[1, 1], [1, 1]],
+             Plane partition [[1, 1], [1]],
+             Plane partition [[1]]]
 
         TESTS::
 
@@ -3164,7 +3164,8 @@ class PlanePartitions_TSSCPP(PlanePartitions):
             sage: PP = PlanePartitions([6,6,6], symmetry='TSSCPP')
             sage: A = [(0, 0, 1), (1, 1, 0)]
             sage: PP.from_antichain(A)
-            Plane partition [[6, 6, 6, 5, 5, 3], [6, 5, 5, 4, 3, 1], [6, 5, 4, 3, 2, 1], [5, 4, 3, 2, 1], [5, 3, 2, 1, 1], [3, 1, 1]]
+            Plane partition [[6, 6, 6, 5, 5, 3], [6, 5, 5, 4, 3, 1], [6, 5, 4, 3, 2, 1],
+                             [5, 4, 3, 2, 1], [5, 3, 2, 1, 1], [3, 1, 1]]
         """
         # ac format ex: [x,y,z]
         a = self._box[0]
@@ -3271,7 +3272,7 @@ class PlanePartitions_TSSCPP(PlanePartitions):
 
             sage: list(PlanePartitions([4,4,4], symmetry='TSSCPP'))                     # needs sage.graphs sage.modules
             [Plane partition [[4, 4, 2, 2], [4, 4, 2, 2], [2, 2], [2, 2]],
-            Plane partition [[4, 4, 3, 2], [4, 3, 2, 1], [3, 2, 1], [2, 1]]]
+             Plane partition [[4, 4, 3, 2], [4, 3, 2, 1], [3, 2, 1], [2, 1]]]
 
         TESTS::
 

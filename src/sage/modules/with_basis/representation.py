@@ -6,6 +6,7 @@ AUTHORS:
 
 - Travis Scrimshaw (2015-11-21): initial version
 - Siddharth Singh  (2020-03-21): signed representation
+- Travis Scrimshaw (2024-02-17): tensor products
 
 """
 
@@ -18,10 +19,11 @@ AUTHORS:
 ##############################################################################
 
 from sage.misc.abstract_method import abstract_method
+from sage.misc.cachefunc import cached_method
 from sage.structure.element import Element
-from sage.combinat.free_module import CombinatorialFreeModule
+from sage.combinat.free_module import CombinatorialFreeModule, CombinatorialFreeModule_Tensor
 from sage.categories.modules import Modules
-
+from sage.matrix.constructor import matrix
 
 class Representation_abstract(CombinatorialFreeModule):
     """
@@ -32,7 +34,7 @@ class Representation_abstract(CombinatorialFreeModule):
     - ``semigroup`` -- a semigroup
     - ``base_ring`` -- a commutative ring
     """
-    def __init__(self, semigroup, base_ring, *args, **opts):
+    def __init__(self, semigroup, base_ring, side, *args, **opts):
         """
         Initialize ``self``.
 
@@ -44,6 +46,11 @@ class Representation_abstract(CombinatorialFreeModule):
         """
         self._semigroup = semigroup
         self._semigroup_algebra = semigroup.algebra(base_ring)
+        self._side = side
+        if side not in ["left", "right", "twosided"]:
+            raise ValueError("the side must be either 'left', 'right', or 'twosided'")
+        self._left_repr = bool(side == "left" or side == "twosided")
+        self._right_repr = bool(side == "right" or side == "twosided")
         CombinatorialFreeModule.__init__(self, base_ring, *args, **opts)
 
     def semigroup(self):
@@ -78,7 +85,6 @@ class Representation_abstract(CombinatorialFreeModule):
         """
         return self._semigroup_algebra
 
-    @abstract_method
     def side(self):
         """
         Return whether ``self`` is a left, right, or two-sided representation.
@@ -93,7 +99,17 @@ class Representation_abstract(CombinatorialFreeModule):
             sage: R = G.regular_representation()
             sage: R.side()
             'left'
+            sage: S = G.regular_representation(side="right")
+            sage: S.side()
+            'right'
+            sage: R = G.sign_representation()
+            sage: R.side()
+            'twosided'
+            sage: R = G.trivial_representation()
+            sage: R.side()
+            'twosided'
         """
+        return self._side
 
     def invariant_module(self, S=None, **kwargs):
         r"""
@@ -167,7 +183,7 @@ class Representation_abstract(CombinatorialFreeModule):
         - ``G`` -- a finitely-generated semigroup (default: the semigroup
           this is a representation of)
 
-        This also accepts the group to be the first argument to be the group.
+        This also accepts the first argument to be the group.
 
         OUTPUT:
 
@@ -183,7 +199,7 @@ class Representation_abstract(CombinatorialFreeModule):
             sage: [T.lift(b) for b in T.basis()]
             [() - (1,2,3), -(1,2,3) + (1,3,2), (2,3) - (1,2), -(1,2) + (1,3)]
 
-        We check the different inputs work
+        We check the different inputs work::
 
             sage: R.twisted_invariant_module([2,0,-1], G) is T
             True
@@ -201,9 +217,237 @@ class Representation_abstract(CombinatorialFreeModule):
 
         return super().twisted_invariant_module(G, chi, side=side, **kwargs)
 
+    def representation_matrix(self, g, side=None, sparse=False):
+        r"""
+        Return the matrix representation of ``g`` acting on ``self``.
+
+        EXAMPLES::
+
+            sage: S3 = SymmetricGroup(3)
+            sage: g = S3.an_element(); g
+            (2,3)
+            sage: L = S3.regular_representation(side="left")
+            sage: R = S3.regular_representation(side="right")
+            sage: R.representation_matrix(g)
+            [0 0 0 1 0 0]
+            [0 0 0 0 0 1]
+            [0 0 0 0 1 0]
+            [1 0 0 0 0 0]
+            [0 0 1 0 0 0]
+            [0 1 0 0 0 0]
+            sage: L.representation_matrix(g)
+            [0 0 0 1 0 0]
+            [0 0 0 0 1 0]
+            [0 0 0 0 0 1]
+            [1 0 0 0 0 0]
+            [0 1 0 0 0 0]
+            [0 0 1 0 0 0]
+            sage: A = S3.algebra(ZZ)
+            sage: R.representation_matrix(sum(A.basis()), side='right')
+            [1 1 1 1 1 1]
+            [1 1 1 1 1 1]
+            [1 1 1 1 1 1]
+            [1 1 1 1 1 1]
+            [1 1 1 1 1 1]
+            [1 1 1 1 1 1]
+
+        We verify tensor products agree::
+
+            sage: T = tensor([L, R])
+            sage: for g in S3:
+            ....:     gL = L.representation_matrix(g, side='left')
+            ....:     gR = R.representation_matrix(g, side='left')
+            ....:     gT = T.representation_matrix(g, side='left')
+            ....:     assert gL.tensor_product(gR) == gT
+        """
+        if self.dimension() == float('inf'):
+            raise NotImplementedError("only implemented for finite dimensional modules")
+
+        B = self.basis()
+        order = self.get_order()
+        inv_order = {b: i for i, b in enumerate(order)}
+        ret = matrix.zero(self.base_ring(), len(order), sparse=sparse)
+        if side is None:
+            if self._side == "twosided":
+                side = "left"
+            else:
+                side = self._side
+        use_left = side == "left"
+        for i, k in enumerate(order):
+            if use_left:
+                temp = g * B[k]
+            else:
+                temp = B[k] * g
+            for m, c in temp._monomial_coefficients.items():
+                if not use_left:
+                    ret[i, inv_order[m]] = c
+                else:
+                    ret[inv_order[m], i] = c
+        return ret
+
+    def exterior_power(self, degree=None):
+        r"""
+        Return the exterior power of ``self``.
+
+        INPUT:
+
+        - ``degree`` -- (optional) if given, then only consider the
+          given degree
+
+        EXAMPLES::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: L = DC3.regular_representation(QQ, side='left')
+            sage: E5 = L.exterior_power(5)
+            sage: E5
+            Exterior power representation of Left Regular Representation of
+             Dicyclic group of order 12 as a permutation group over Rational Field
+             in degree 5
+            sage: L.exterior_power()
+            Exterior algebra representation of Left Regular Representation of
+             Dicyclic group of order 12 as a permutation group over Rational Field
+        """
+        if degree is None or degree == 0:
+            return Representation_ExteriorAlgebra(self, degree)
+        return Representation_Exterior(self, degree)
+
+    def symmetric_power(self, degree=None):
+        r"""
+        Return the symmetric power of ``self`` in degree ``degree``.
+
+        EXAMPLES::
+
+            sage: W = CoxeterGroup(['H', 3])
+            sage: R = W.reflection_representation()
+            sage: S3R = R.symmetric_power(3)
+            sage: S3R
+            Symmetric power representation of Reflection representation of
+            Finite Coxeter group over ... with Coxeter matrix:
+            [1 3 2]
+            [3 1 5]
+            [2 5 1] in degree 3
+        """
+        return Representation_Symmetric(self, degree)
+
+    @abstract_method(optional=True)
+    def _semigroup_action(self, g, vec, vec_on_left):
+        """
+        Return the action of the semigroup element ``g`` on the
+        vector ``vec`` of ``self``.
+
+        If this is not defined, the representation element must
+        override ``_acted_upon_``.
+
+        EXAMPLES::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: T = DC3.trivial_representation()
+            sage: T._semigroup_action(DC3.an_element(), T.basis()['v'], True)
+            B['v']
+        """
+
+    class Element(CombinatorialFreeModule.Element):
+        def _acted_upon_(self, scalar, self_on_left=False):
+            """
+            Return the action of ``scalar`` on ``self``.
+
+            EXAMPLES::
+
+                sage: G = groups.misc.WeylGroup(['B',2], prefix='s')
+                sage: R = G.regular_representation()
+                sage: s1,s2 = G.gens()
+                sage: x = R.an_element(); x
+                2*s2*s1*s2 + s1*s2 + 3*s2 + 1
+                sage: 2 * x
+                4*s2*s1*s2 + 2*s1*s2 + 6*s2 + 2
+                sage: s1 * x
+                2*s2*s1*s2*s1 + 3*s1*s2 + s1 + s2
+                sage: s2 * x
+                s2*s1*s2 + 2*s1*s2 + s2 + 3
+
+                sage: G = groups.misc.WeylGroup(['B',2], prefix='s')
+                sage: R = G.regular_representation(side="right")
+                sage: s1,s2 = G.gens()
+                sage: x = R.an_element(); x
+                2*s2*s1*s2 + s1*s2 + 3*s2 + 1
+                sage: x * s1
+                2*s2*s1*s2*s1 + s1*s2*s1 + 3*s2*s1 + s1
+                sage: x * s2
+                2*s2*s1 + s1 + s2 + 3
+
+                sage: G = groups.misc.WeylGroup(['B',2], prefix='s')
+                sage: R = G.regular_representation()
+                sage: R.base_ring()
+                Integer Ring
+                sage: A = G.algebra(ZZ)
+                sage: s1,s2 = A.algebra_generators()
+                sage: x = R.an_element(); x
+                2*s2*s1*s2 + s1*s2 + 3*s2 + 1
+                sage: s1 * x
+                2*s2*s1*s2*s1 + 3*s1*s2 + s1 + s2
+                sage: s2 * x
+                s2*s1*s2 + 2*s1*s2 + s2 + 3
+                sage: (2*s1 - s2) * x
+                4*s2*s1*s2*s1 - s2*s1*s2 + 4*s1*s2 + 2*s1 + s2 - 3
+                sage: (3*s1 + s2) * R.zero()
+                0
+
+                sage: A = G.algebra(QQ)
+                sage: s1,s2 = A.algebra_generators()
+                sage: a = 1/2 * s1
+                sage: a * x
+                Traceback (most recent call last):
+                ...
+                TypeError: unsupported operand parent(s) for *:
+                 'Algebra of Weyl Group of type ['B', 2] ... over Rational Field'
+                 and 'Left Regular Representation of Weyl Group of type ['B', 2] ... over Integer Ring'
+
+            Check that things that coerce into the group (algebra) also have
+            an action::
+
+                sage: D4 = groups.permutation.Dihedral(4)
+                sage: S4 = SymmetricGroup(4)
+                sage: S4.has_coerce_map_from(D4)
+                True
+                sage: R = S4.regular_representation()
+                sage: D4.an_element() * R.an_element()
+                2*(2,4) + 3*(1,2,3,4) + (1,3) + (1,4,2,3)
+            """
+            if isinstance(scalar, Element):
+                P = self.parent()
+                sP = scalar.parent()
+                if sP is P._semigroup:
+                    if not self:
+                        return self
+                    return P._semigroup_action(scalar, self, self_on_left)
+
+                if sP is P._semigroup_algebra:
+                    if not self:
+                        return self
+                    return P.linear_combination(((P._semigroup_action(ms, self, self_on_left), cs)
+                                                 for ms, cs in scalar), not self_on_left)
+
+                if P._semigroup.has_coerce_map_from(sP):
+                    scalar = P._semigroup(scalar)
+                    return self._acted_upon_(scalar, self_on_left)
+
+                # Check for scalars first before general coercion to the semigroup algebra.
+                # This will result in a faster action for the scalars.
+                ret = CombinatorialFreeModule.Element._acted_upon_(self, scalar, self_on_left)
+                if ret is not None:
+                    return ret
+
+                if P._semigroup_algebra.has_coerce_map_from(sP):
+                    scalar = P._semigroup_algebra(scalar)
+                    return self._acted_upon_(scalar, self_on_left)
+
+                return None
+
+            return CombinatorialFreeModule.Element._acted_upon_(self, scalar, self_on_left)
+
 
 class Representation(Representation_abstract):
-    """
+    r"""
     Representation of a semigroup.
 
     INPUT:
@@ -319,19 +563,17 @@ class Representation(Representation_abstract):
 
         category = kwargs.pop('category', Modules(module.base_ring()).WithBasis())
 
-        if side not in ["left", "right"]:
-            raise ValueError('side must be "left" or "right"')
-
-        self._left_repr = (side == "left")
         self._on_basis = on_basis
         self._module = module
+        if side == "twosided":
+            raise ValueError("the defined action must be either left or right")
 
         indices = module.basis().keys()
 
         if 'FiniteDimensional' in module.category().axioms():
             category = category.FiniteDimensional()
 
-        Representation_abstract.__init__(self, semigroup, module.base_ring(), indices,
+        Representation_abstract.__init__(self, semigroup, module.base_ring(), side, indices,
                                          category=category, **module.print_options())
 
     def _test_representation(self, **options):
@@ -431,9 +673,9 @@ class Representation(Representation_abstract):
         return super()._element_constructor_(x)
 
     def product_by_coercion(self, left, right):
-        """
-        Return the product of ``left`` and ``right`` by passing to ``self._module``
-        and then building a new element of ``self``.
+        r"""
+        Return the product of ``left`` and ``right`` by passing to
+        ``self._module`` and then building a new element of ``self``.
 
         EXAMPLES::
 
@@ -445,9 +687,9 @@ class Representation(Representation_abstract):
             sage: r = R.an_element(); r
             1 + 2*e0 + 3*e1 + e1*e2
             sage: g = G.an_element();
-            sage: g*r == r
+            sage: g * r == r  # indirect doctest
             True
-            sage: r*r
+            sage: r * r  # indirect doctest
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for *:
@@ -461,11 +703,10 @@ class Representation(Representation_abstract):
             sage: T = Representation(G, E, on_basis, category=category)
             sage: t = T.an_element(); t
             1 + 2*e0 + 3*e1 + e1*e2
-            sage: g*t == t
+            sage: g * t == t  # indirect doctest
             True
-            sage: t*t
+            sage: t * t  # indirect doctest
             1 + 4*e0 + 4*e0*e1*e2 + 6*e1 + 2*e1*e2
-
         """
         M = self._module
 
@@ -475,132 +716,709 @@ class Representation(Representation_abstract):
         # Convert from a term in self._module to a term in self
         return self._from_dict(p.monomial_coefficients(copy=False), False, False)
 
-    def side(self):
+    def _semigroup_action(self, g, vec, vec_on_left):
         """
-        Return whether ``self`` is a left or a right representation.
-
-        OUTPUT:
-
-        - the string ``"left"`` or ``"right"``
+        Return the action of the semigroup element ``g`` on the
+        vector ``vec`` of ``self``.
 
         EXAMPLES::
 
-            sage: G = groups.permutation.Dihedral(4)
-            sage: R = G.regular_representation()
-            sage: R.side()
-            'left'
-            sage: S = G.regular_representation(side="right")
-            sage: S.side()
-            'right'
+            sage: G = groups.permutation.KleinFour()
+            sage: E = algebras.Exterior(QQ,'e',4)
+            sage: on_basis = lambda g,m: E.monomial(m) # the trivial representation
+            sage: from sage.modules.with_basis.representation import Representation
+            sage: R = Representation(G, E, on_basis)
+            sage: R._semigroup_action(G.an_element(), R.an_element(), True)
+            1 + 2*e0 + 3*e1 + e1*e2
         """
-        return "left" if self._left_repr else "right"
+        if self._left_repr == vec_on_left:
+            g = ~g
+        return self.linear_combination(((self._on_basis(g, m), c)
+                                       for m, c in vec._monomial_coefficients.items()), not vec_on_left)
 
-    class Element(CombinatorialFreeModule.Element):
-        def _acted_upon_(self, scalar, self_on_left=False):
-            """
-            Return the action of ``scalar`` on ``self``.
 
-            EXAMPLES::
+class Representation_Tensor(CombinatorialFreeModule_Tensor, Representation_abstract):
+    r"""
+    Tensor product of representations.
+    """
+    @staticmethod
+    def __classcall_private__(cls, reps, **options):
+        r"""
+        Normalize input to ensure a unique representation.
 
-                sage: G = groups.misc.WeylGroup(['B',2], prefix='s')
-                sage: R = G.regular_representation()
-                sage: s1,s2 = G.gens()
-                sage: x = R.an_element(); x
-                2*s2*s1*s2 + s1*s2 + 3*s2 + 1
-                sage: 2 * x
-                4*s2*s1*s2 + 2*s1*s2 + 6*s2 + 2
-                sage: s1 * x
-                2*s2*s1*s2*s1 + 3*s1*s2 + s1 + s2
-                sage: s2 * x
-                s2*s1*s2 + 2*s1*s2 + s2 + 3
+        EXAMPLES::
 
-                sage: G = groups.misc.WeylGroup(['B',2], prefix='s')
-                sage: R = G.regular_representation(side="right")
-                sage: s1,s2 = G.gens()
-                sage: x = R.an_element(); x
-                2*s2*s1*s2 + s1*s2 + 3*s2 + 1
-                sage: x * s1
-                2*s2*s1*s2*s1 + s1*s2*s1 + 3*s2*s1 + s1
-                sage: x * s2
-                2*s2*s1 + s1 + s2 + 3
+            sage: S3 = SymmetricGroup(3)
+            sage: L = S3.regular_representation(side='left')
+            sage: S = S3.sign_representation()
+            sage: R = S3.regular_representation(side='right')
+            sage: tensor([tensor([L, S]), R]) == tensor([L, S, R])
+            True
+            sage: tensor([L, tensor([S, R])]) == tensor([L, S, R])
+            True
 
-                sage: G = groups.misc.WeylGroup(['B',2], prefix='s')
-                sage: R = G.regular_representation()
-                sage: R.base_ring()
-                Integer Ring
-                sage: A = G.algebra(ZZ)
-                sage: s1,s2 = A.algebra_generators()
-                sage: x = R.an_element(); x
-                2*s2*s1*s2 + s1*s2 + 3*s2 + 1
-                sage: s1 * x
-                2*s2*s1*s2*s1 + 3*s1*s2 + s1 + s2
-                sage: s2 * x
-                s2*s1*s2 + 2*s1*s2 + s2 + 3
-                sage: (2*s1 - s2) * x
-                4*s2*s1*s2*s1 - s2*s1*s2 + 4*s1*s2 + 2*s1 + s2 - 3
-                sage: (3*s1 + s2) * R.zero()
-                0
+        Check that the tensor product with more general modules
+        can be constructed::
 
-                sage: A = G.algebra(QQ)
-                sage: s1,s2 = A.algebra_generators()
-                sage: a = 1/2 * s1
-                sage: a * x
-                Traceback (most recent call last):
-                ...
-                TypeError: unsupported operand parent(s) for *:
-                 'Algebra of Weyl Group of type ['B', 2] ... over Rational Field'
-                 and 'Left Regular Representation of Weyl Group of type ['B', 2] ... over Integer Ring'
+            sage: C = CombinatorialFreeModule(ZZ, ['a','b'])
+            sage: T = tensor([C, R])
+            sage: type(T)
+            <class 'sage.combinat.free_module.CombinatorialFreeModule_Tensor_with_category'>
+            sage: T = tensor([R, C])
+            sage: type(T)
+            <class 'sage.combinat.free_module.CombinatorialFreeModule_Tensor_with_category'>
+        """
+        assert len(reps) > 0
+        assert isinstance(reps[0], Representation_abstract)
+        S = reps[0].semigroup()
+        if not all(isinstance(module, Representation_abstract)
+                   and module.semigroup() == S for module in reps):
+            return CombinatorialFreeModule_Tensor(reps, **options)
+        R = reps[0].base_ring()
+        if not all(module in Modules(R).WithBasis() for module in reps):
+            raise ValueError("not all representations over the same base ring")
+        # flatten the list of modules so that tensor(A, tensor(B,C)) gets rewritten into tensor(A, B, C)
+        reps = sum((module._sets if isinstance(module, Representation_Tensor) else (module,) for module in reps), ())
+        if all('FiniteDimensional' in M.category().axioms() for M in reps):
+            options['category'] = options['category'].FiniteDimensional()
+        return super(Representation_Tensor, cls).__classcall__(cls, reps, **options)
 
-            Check that things that coerce into the group (algebra) also have
-            an action::
+    def __init__(self, reps, **options):
+        r"""
+        Initialize ``self``.
 
-                sage: D4 = groups.permutation.Dihedral(4)
-                sage: S4 = SymmetricGroup(4)
-                sage: S4.has_coerce_map_from(D4)
-                True
-                sage: R = S4.regular_representation()
-                sage: D4.an_element() * R.an_element()
-                2*(2,4) + 3*(1,2,3,4) + (1,3) + (1,4,2,3)
-            """
-            if isinstance(scalar, Element):
-                P = self.parent()
-                sP = scalar.parent()
-                if sP is P._semigroup:
-                    if not self:
-                        return self
-                    if self_on_left == P._left_repr:
-                        scalar = ~scalar
-                    return P.linear_combination(((P._on_basis(scalar, m), c)
-                                                 for m,c in self), not self_on_left)
+        EXAMPLES::
 
-                if sP is P._semigroup_algebra:
-                    if not self:
-                        return self
-                    ret = P.zero()
-                    for ms,cs in scalar:
-                        if self_on_left == P._left_repr:
-                            ms = ~ms
-                        ret += P.linear_combination(((P._on_basis(ms, m), cs*c)
-                                                    for m,c in self), not self_on_left)
-                    return ret
+            sage: G = groups.permutation.Alternating(5)
+            sage: L = G.regular_representation(side='left')
+            sage: S = G.sign_representation()
+            sage: T = tensor([L, S, L])
+            sage: TestSuite(T).run()
+        """
+        sides = set(M.side() for M in reps)
+        if "left" and "right" in sides:
+            self._side = reps[0].side()  # make a choice as this is not fundamentally important
+        else:
+            if len(sides) == 2:  # mix of one side and twosided
+                sides.remove("twosided")
+            self._side, = sides  # get the unique side remaining
+        self._semigroup = reps[0].semigroup()
+        self._semigroup_algebra = reps[0].semigroup_algebra()
+        self._left_repr = bool(self._side == "left" or self._side == "twosided")
+        self._right_repr = bool(self._side == "right" or self._side == "twosided")
+        CombinatorialFreeModule_Tensor.__init__(self, reps, **options)
 
-                if P._semigroup.has_coerce_map_from(sP):
-                    scalar = P._semigroup(scalar)
-                    return self._acted_upon_(scalar, self_on_left)
+    def _semigroup_action(self, g, vec, vec_on_left):
+        """
+        Return the action of the semigroup element ``g`` on the
+        vector ``vec`` of ``self``.
 
-                # Check for scalars first before general coercion to the semigroup algebra.
-                # This will result in a faster action for the scalars.
-                ret = CombinatorialFreeModule.Element._acted_upon_(self, scalar, self_on_left)
-                if ret is not None:
-                    return ret
+        EXAMPLES::
 
-                if P._semigroup_algebra.has_coerce_map_from(sP):
-                    scalar = P._semigroup_algebra(scalar)
-                    return self._acted_upon_(scalar, self_on_left)
+            sage: S3 = SymmetricGroup(3)
+            sage: L = S3.regular_representation(side="left")
+            sage: R = S3.regular_representation(side="right")
+            sage: T = tensor([R, L])
+            sage: g = S3.an_element(); g
+            (2,3)
+            sage: v = T.an_element(); v
+            2*() # () + 3*() # (1,2,3) + 2*() # (1,3,2)
+            sage: g * v
+            2*(2,3) # (2,3) + 3*(2,3) # (1,2) + 2*(2,3) # (1,3)
+            sage: T._semigroup_action(g, v, True)
+            2*(2,3) # (2,3) + 3*(2,3) # (1,2) + 2*(2,3) # (1,3)
+        """
+        bases = [M.basis() for M in self._sets]
+        if vec_on_left:
+            return self.linear_combination((self._tensor_of_elements([B[k] * g for B, k in zip(bases, b)]), c)
+                                           for b, c in vec._monomial_coefficients.items())
+        return self.linear_combination((self._tensor_of_elements([g * B[k] for B, k in zip(bases, b)]), c)
+                                       for b, c in vec._monomial_coefficients.items())
 
-                return None
+    class Element(Representation_abstract.Element):
+        pass
 
-            return CombinatorialFreeModule.Element._acted_upon_(self, scalar, self_on_left)
+
+Representation_abstract.Tensor = Representation_Tensor
+
+
+class Representation_Exterior(Representation_abstract):
+    r"""
+    The exterior power representation (in a fixed degree).
+    """
+    def __init__(self, rep, degree=None, category=None, **options):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: G = groups.matrix.GL(3, 2)
+            sage: R = G.regular_representation(side="right")
+            sage: E2 = R.exterior_power(2)
+            sage: E2.category()
+            Category of finite dimensional modules with basis over Integer Ring
+            sage: TestSuite(E2).run()
+
+            sage: G = groups.matrix.GL(2, 3)
+            sage: L = G.regular_representation(side="left")
+            sage: E48 = L.exterior_power(48)
+            sage: TestSuite(E48).run()
+
+            sage: L.exterior_power(-2)
+            Traceback (most recent call last):
+            ...
+            ValueError: the degree must be an integer in [0, 48]
+            sage: L.exterior_power(120)
+            Traceback (most recent call last):
+            ...
+            ValueError: the degree must be an integer in [0, 48]
+            sage: L.exterior_power(5/6)
+            Traceback (most recent call last):
+            ...
+            ValueError: the degree must be an integer in [0, 48]
+        """
+        from sage.algebras.clifford_algebra import ExteriorAlgebra
+        from sage.algebras.clifford_algebra import CliffordAlgebraIndices
+        from sage.rings.integer_ring import ZZ
+        self._degree = degree
+        self._rep = rep
+        R = rep.base_ring()
+        dim = rep.dimension()
+        if degree is not None and (degree not in ZZ or degree > dim or degree < 0):
+            raise ValueError(f"the degree must be an integer in [0, {dim}]")
+        self._extalg = ExteriorAlgebra(R, dim)
+        self._basis_order = list(rep.basis().keys())
+        self._inv_map = {b: i for i, b in enumerate(self._basis_order)}
+        ind = CliffordAlgebraIndices(dim, degree)
+        R = rep.base_ring()
+        category = Modules(R).WithBasis().or_subcategory(category)
+        Representation_abstract.__init__(self, rep.semigroup(), R, rep.side(),
+                                         ind, category=category, **options)
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: L = DC3.regular_representation(QQ, side='left')
+            sage: L.exterior_power(7)
+            Exterior power representation of Left Regular Representation of
+             Dicyclic group of order 12 as a permutation group over Rational Field
+             in degree 7
+            sage: L.exterior_power()
+            Exterior algebra representation of Left Regular Representation of
+             Dicyclic group of order 12 as a permutation group over Rational Field
+        """
+        if self._degree is None:
+            return "Exterior algebra representation of {}".format(repr(self._rep))
+        return "Exterior power representation of {} in degree {}".format(repr(self._rep), self._degree)
+
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        EXAMPLES::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: L = DC3.regular_representation(QQ, side='left')
+            sage: latex(L.exterior_power(4))
+            \bigwedge^{4} ...
+            sage: latex(L.exterior_power())
+            \bigwedge ...
+        """
+        from sage.misc.latex import latex
+        if self._degree is None:
+            return "\\bigwedge " + latex(self._rep)
+        return "\\bigwedge^{{{}}} ".format(self._degree) + latex(self._rep)
+
+    def _repr_term(self, m):
+        r"""
+        Return a string representation of the basis element indexed by
+        ``m``.
+
+        EXAMPLES::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: L = DC3.regular_representation(QQ, side='left')
+            sage: E2 = L.exterior_power(2)
+            sage: E2._repr_term(E2.an_element().leading_support())
+            '()*(5,6,7)'
+        """
+        if len(m) == 0:
+            return '1'
+        B = self._rep.basis()
+        return '*'.join(repr(B[self._basis_order[i]]) for i in m)
+
+    def _ascii_art_term(self, m):
+        r"""
+        Return ascii art for the basis element indexed by ``m``.
+
+        EXAMPLES::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: L = DC3.regular_representation(QQ, side='left')
+            sage: E2 = L.exterior_power(2)
+            sage: E2._ascii_art_term(E2.an_element().leading_support())
+            ()/\(5,6,7)
+            sage: ascii_art(E2.an_element())
+            2*()/\(5,6,7) + 2*()/\(5,7,6) + 3*()/\(1,2)(3,4)
+        """
+        from sage.typeset.ascii_art import ascii_art
+        if len(m) == 0:
+            return ascii_art('1')
+        wedge = '/\\'
+        B = self._rep.basis()
+        return ascii_art(*[B[self._basis_order[i]] for i in m], sep=wedge)
+
+    def _unicode_art_term(self, m):
+        r"""
+        Return unicode art for the basis element indexed by ``m``.
+
+        EXAMPLES::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: L = DC3.regular_representation(QQ, side='left')
+            sage: E2 = L.exterior_power(2)
+            sage: E2._unicode_art_term(E2.an_element().leading_support())
+            ()∧(5,6,7)
+            sage: unicode_art(E2.an_element())
+            2*()∧(5,6,7) + 2*()∧(5,7,6) + 3*()∧(1,2)(3,4)
+        """
+        from sage.typeset.unicode_art import unicode_art
+        if len(m) == 0:
+            return unicode_art('1')
+        import unicodedata
+        wedge = unicodedata.lookup('LOGICAL AND')
+        B = self._rep.basis()
+        return unicode_art(*[B[self._basis_order[i]] for i in m], sep=wedge)
+
+    def _latex_term(self, m):
+        r"""
+        Return a `\LaTeX` representation of the basis element indexed
+        by ``m``.
+
+        EXAMPLES::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: L = DC3.regular_representation(QQ, side='left')
+            sage: E2 = L.exterior_power(2)
+            sage: E2._latex_term(E2.an_element().leading_support())
+            '1 \\wedge (5,6,7)'
+        """
+        if len(m) == 0:
+            return '1'
+        from sage.misc.latex import latex
+        B = self._rep.basis()
+        return " \\wedge ".join(latex(B[self._basis_order[i]]) for i in m)
+
+    def _from_repr_to_ext(self, elt):
+        r"""
+        Return the element ``elt`` from the defining representation
+        to the corresponding exterior algebra.
+
+        EXAMPLES::
+
+            sage: G = groups.matrix.GL(2, 2)
+            sage: L = G.regular_representation(side="left")
+            sage: E = L.exterior_power()
+            sage: E._from_repr_to_ext(sum(i*b for i,b in enumerate(L.basis(), start=1)))
+            e0 + 2*e1 + 3*e2 + 4*e3 + 5*e4 + 6*e5
+        """
+        ind = self._indices
+        data = {ind([self._inv_map[k]]): c for k, c in elt._monomial_coefficients.items()}
+        return self._extalg.element_class(self._extalg, data)
+
+    def _semigroup_action(self, g, vec, vec_on_left):
+        r"""
+        Return the action of the semigroup element ``g`` on the
+        vector ``vec`` of ``self``.
+
+        EXAMPLES::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: g = DC3.an_element(); g
+            (1,4,2,3)(5,6)
+            sage: R = DC3.regular_representation(side="right")
+            sage: E2 = R.exterior_power(2)
+            sage: vec = E2.an_element(); vec
+            2*()*(5,6,7) + 2*()*(5,7,6) + 3*()*(1,2)(3,4)
+            sage: E2._semigroup_action(g, vec, True)
+            -2*(1,4,2,3)(6,7)*(1,4,2,3)(5,6) + 2*(1,4,2,3)(5,6)*(1,4,2,3)(5,7)
+             + 3*(1,4,2,3)(5,6)*(1,3,2,4)(5,6)
+            sage: E2._semigroup_action(g, vec, False)
+            -2*(1,3,2,4)(6,7)*(1,3,2,4)(5,6) + 2*(1,3,2,4)(5,6)*(1,3,2,4)(5,7)
+             - 3*(1,4,2,3)(5,6)*(1,3,2,4)(5,6)
+        """
+        return self.linear_combination(((self._action_on_basis(g, b, vec_on_left), c)
+                                        for b, c in vec._monomial_coefficients.items()), not vec_on_left)
+
+    def _action_on_basis(self, g, b, vec_on_left):
+        r"""
+        Return the action of ``g`` on the basis element indexed by ``b``.
+
+        EXAMPLES::
+
+            sage: S3 = SymmetricGroup(3)
+            sage: g = S3.an_element(); g
+            (2,3)
+            sage: L = S3.regular_representation(side="left")
+            sage: E2 = L.exterior_power(2)
+            sage: vec = E2.an_element(); vec
+            2*()*(1,3,2) + 2*()*(1,2,3) + 3*()*(2,3)
+            sage: g * vec
+            2*(2,3)*(1,3) + 2*(2,3)*(1,2) - 3*()*(2,3)
+            sage: vec * g
+            2*(2,3)*(1,3) + 2*(2,3)*(1,2) - 3*()*(2,3)
+            sage: supp = vec.leading_support(); supp
+            11
+            sage: E2._action_on_basis(g, supp, True)
+            (2,3)*(1,3)
+            sage: E2._action_on_basis(g, supp, False)
+            (2,3)*(1,3)
+        """
+        B = self._rep.basis()
+        if vec_on_left:
+            temp = self._extalg.prod(self._from_repr_to_ext(B[self._basis_order[bk]] * g)
+                                     for bk in b)
+        else:
+            temp = self._extalg.prod(self._from_repr_to_ext(g * B[self._basis_order[bk]])
+                                     for bk in b)
+        return self.element_class(self, temp._monomial_coefficients)
+
+
+class Representation_ExteriorAlgebra(Representation_Exterior):
+    r"""
+    The exterior algebra representation.
+    """
+    def __init__(self, rep, degree=None, category=None, **options):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: G = groups.matrix.GL(3, 2)
+            sage: R = G.regular_representation(side="right")
+            sage: E0 = R.exterior_power(0)
+            sage: E0.category()
+            Category of finite dimensional algebras with basis over Integer Ring
+            sage: TestSuite(E0).run()
+
+            sage: G = groups.matrix.GL(2, 3)
+            sage: L = G.regular_representation(side="left")
+            sage: E = L.exterior_power()
+            sage: E.category()
+            Category of finite dimensional algebras with basis over Integer Ring
+            sage: TestSuite(E).run()
+        """
+        R = rep.base_ring()
+        from sage.categories.algebras_with_basis import AlgebrasWithBasis
+        category = AlgebrasWithBasis(R).or_subcategory(category)
+        Representation_Exterior.__init__(self, rep, degree=degree, category=category, **options)
+
+    @cached_method
+    def one_basis(self):
+        r"""
+        Return the basis element indexing `1` in ``self`` if it exists.
+
+        EXAMPLES::
+
+            sage: S3 = SymmetricGroup(3)
+            sage: L = S3.regular_representation(side="left")
+            sage: E = L.exterior_power()
+            sage: E.one_basis()
+            0
+            sage: E0 = L.exterior_power(0)
+            sage: E0.one_basis()
+            0
+        """
+        return self._indices([])
+
+    def product_on_basis(self, x, y):
+        r"""
+        Return the product of basis elements indexed by ``x`` and ``y``.
+
+        EXAMPLES::
+
+            sage: S3 = SymmetricGroup(3)
+            sage: L = S3.regular_representation(side="left")
+            sage: E = L.exterior_power()
+            sage: B = list(E.basis())
+            sage: B[:7]
+            [1, (), (1,3,2), (1,2,3), (2,3), (1,3), (1,2)]
+            sage: B[2] * B[4]  # indirect doctest
+            (1,3,2)*(2,3)
+        """
+        B = self._extalg.basis()
+        temp = B[x] * B[y]
+        return self.element_class(self, temp._monomial_coefficients)
+
+
+class Representation_Symmetric(Representation_abstract):
+    r"""
+    The symmetric power representation in a fixed degree.
+    """
+    def __init__(self, rep, degree, **options):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: G = groups.matrix.GL(3, 2)
+            sage: R = G.regular_representation(side="right")
+            sage: S2 = R.symmetric_power(2)
+            sage: TestSuite(S2).run()
+            sage: S0 = R.symmetric_power(0)
+            sage: TestSuite(S2).run()
+
+            sage: R.symmetric_power(-2)
+            Traceback (most recent call last):
+            ...
+            ValueError: the degree must be a nonnegative integer
+            sage: R.symmetric_power(3/2)
+            Traceback (most recent call last):
+            ...
+            ValueError: the degree must be a nonnegative integer
+        """
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        from sage.combinat.integer_vector import IntegerVectors
+        from sage.rings.integer_ring import ZZ
+        self._degree = degree
+        self._rep = rep
+        R = rep.base_ring()
+        dim = rep.dimension()
+        if degree not in ZZ or degree < 0:
+            raise ValueError(f"the degree must be a nonnegative integer")
+        self._symalg = PolynomialRing(R, 'e', dim)
+        self._basis_order = list(rep.basis().keys())
+        G = self._symalg.gens()
+        self._inv_map = {b: G[i] for i, b in enumerate(self._basis_order)}
+        ind = IntegerVectors(degree, dim)
+        Representation_abstract.__init__(self, rep.semigroup(), rep.base_ring(), rep.side(),
+                                         ind, **options)
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: L = DC3.regular_representation(QQ, side='left')
+            sage: L.symmetric_power(7)
+            Symmetric power representation of Left Regular Representation of
+             Dicyclic group of order 12 as a permutation group over Rational Field
+             in degree 7
+        """
+        return "Symmetric power representation of {} in degree {}".format(repr(self._rep), self._degree)
+
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        EXAMPLES::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: L = DC3.regular_representation(QQ, side='left')
+            sage: latex(L.symmetric_power(4))
+            S^{4} ...
+        """
+        from sage.misc.latex import latex
+        return "S^{{{}}} {}".format(self._degree, latex(self._rep))
+
+    def _repr_term(self, m):
+        r"""
+        Return a string representation of the basis element indexed by
+        ``m``.
+
+        EXAMPLES::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: L = DC3.regular_representation(QQ, side='left')
+            sage: S2L = L.symmetric_power(2)
+            sage: S2L.an_element()
+            3*()*(5,7,6) + 2*()*(5,6,7) + 2*()^2
+            sage: S2L._repr_term(S2L.an_element().trailing_support())
+            '()*(5,7,6)'
+            sage: S2L._repr_term(S2L.an_element().leading_support())
+            '()^2'
+            sage: L.symmetric_power(0).an_element()
+            2
+        """
+        if not self._degree:
+            return '1'
+        B = self._rep.basis()
+        return '*'.join(repr(B[self._basis_order[i]]) if e == 1 else repr(B[self._basis_order[i]]) + f'^{e}'
+                        for i,e in enumerate(m) if e)
+
+    def _ascii_art_term(self, m):
+        r"""
+        Return ascii art for the basis element indexed by ``m``.
+
+        EXAMPLES::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: L = DC3.regular_representation(QQ, side='left')
+            sage: S2L = L.symmetric_power(2)
+            sage: S2L._ascii_art_term(S2L.an_element().leading_support())
+              2
+            ()
+            sage: ascii_art(S2L.an_element())
+                                              2
+            3*()*(5,7,6) + 2*()*(5,6,7) + 2*()
+            sage: ascii_art(L.symmetric_power(0).an_element())
+            2*1
+        """
+        from sage.typeset.ascii_art import ascii_art
+        if not self._degree:
+            return ascii_art('1')
+        B = self._rep.basis()
+        ret = ascii_art("")
+        for i, e in enumerate(m):
+            if not e:
+                continue
+            cur = ascii_art(B[self._basis_order[i]])
+            if e > 1:
+                cur += ascii_art(e, baseline=-cur.height())
+            if ret:
+                ret += ascii_art('*')
+            ret += cur
+        return ret
+
+    def _unicode_art_term(self, m):
+        r"""
+        Return unicode art for the basis element indexed by ``m``.
+
+        EXAMPLES::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: L = DC3.regular_representation(QQ, side='left')
+            sage: S2L = L.symmetric_power(2)
+            sage: S2L._unicode_art_term(S2L.an_element().leading_support())
+              2
+            ()
+            sage: unicode_art(S2L.an_element())
+                                              2
+            3*()*(5,7,6) + 2*()*(5,6,7) + 2*()
+            sage: unicode_art(L.symmetric_power(0).an_element())
+            2*1
+        """
+        from sage.typeset.unicode_art import unicode_art
+        if not self._degree:
+            return unicode_art('1')
+        B = self._rep.basis()
+        ret = unicode_art("")
+        for i, e in enumerate(m):
+            if not e:
+                continue
+            cur = unicode_art(B[self._basis_order[i]])
+            if e > 1:
+                cur += unicode_art(e, baseline=-cur.height())
+            if ret:
+                ret += unicode_art('*')
+            ret += cur
+        return ret
+
+    def _latex_term(self, m):
+        r"""
+        Return a `\LaTeX` representation of the basis element indexed
+        by ``m``.
+
+        EXAMPLES::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: L = DC3.regular_representation(QQ, side='left')
+            sage: S2L = L.symmetric_power(2)
+            sage: S2L._latex_term(S2L.an_element().leading_support())
+            '1 ^{2}'
+            sage: latex(S2L.an_element())
+            3 1 (5,7,6) + 2 1 (5,6,7) + 2 1 ^{2}
+            sage: latex(L.symmetric_power(0).an_element())
+            2
+        """
+        if not self._degree:
+            return '1'
+        from sage.misc.latex import latex
+        B = self._rep.basis()
+        return " ".join(latex(B[self._basis_order[i]]) if e == 1 else latex(B[self._basis_order[i]]) + f"^{{{e}}}"
+                        for i, e in enumerate(m) if e)
+
+    def _from_repr_to_sym(self, elt):
+        r"""
+        Return the element ``elt`` from the defining representation
+        to the corresponding exterior algebra.
+
+        EXAMPLES::
+
+            sage: G = groups.matrix.GL(2, 2)
+            sage: L = G.regular_representation(side="left")
+            sage: S3L = L.symmetric_power(3)
+            sage: S3L._from_repr_to_sym(sum(i*b for i,b in enumerate(L.basis(), start=1)))
+            e0 + 2*e1 + 3*e2 + 4*e3 + 5*e4 + 6*e5
+        """
+        return self._symalg.sum(c * self._inv_map[k]
+                                for k, c in elt._monomial_coefficients.items())
+
+    def _semigroup_action(self, g, vec, vec_on_left):
+        r"""
+        Return the action of the semigroup element ``g`` on the
+        vector ``vec`` of ``self``.
+
+        EXAMPLES::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: g = DC3.an_element(); g
+            (1,4,2,3)(5,6)
+            sage: R = DC3.regular_representation(side="right")
+            sage: S2L = R.symmetric_power(2)
+            sage: vec = S2L.an_element(); vec
+            3*()*(5,7,6) + 2*()*(5,6,7) + 2*()^2
+            sage: S2L._semigroup_action(g, vec, True)
+            3*(1,4,2,3)(5,6)*(1,4,2,3)(5,7) + 2*(1,4,2,3)(5,6)^2
+             + 2*(1,4,2,3)(6,7)*(1,4,2,3)(5,6)
+            sage: S2L._semigroup_action(g, vec, False)
+            3*(1,3,2,4)(5,6)*(1,3,2,4)(5,7) + 2*(1,3,2,4)(5,6)^2
+             + 2*(1,3,2,4)(6,7)*(1,3,2,4)(5,6)
+        """
+        return self.linear_combination(((self._action_on_basis(g, b, vec_on_left), c)
+                                        for b, c in vec._monomial_coefficients.items()), not vec_on_left)
+
+    def _action_on_basis(self, g, b, vec_on_left):
+        r"""
+        Return the action of ``g`` on the basis element indexed by ``b``.
+
+        EXAMPLES::
+
+            sage: S3 = SymmetricGroup(3)
+            sage: g = S3.an_element(); g
+            (2,3)
+            sage: L = S3.regular_representation(side="left")
+            sage: S2L = L.symmetric_power(2)
+            sage: vec = S2L.an_element(); vec
+            3*()*(1,2,3) + 2*()*(1,3,2) + 2*()^2
+            sage: g * vec
+            3*(2,3)*(1,2) + 2*(2,3)*(1,3) + 2*(2,3)^2
+            sage: vec * g
+            3*(2,3)*(1,2) + 2*(2,3)*(1,3) + 2*(2,3)^2
+            sage: supp = vec.leading_support(); supp
+            [2, 0, 0, 0, 0, 0]
+            sage: S2L._action_on_basis(g, supp, True)
+            (2,3)^2
+            sage: S2L._action_on_basis(g, supp, False)
+            (2,3)^2
+        """
+        B = self._rep.basis()
+        if vec_on_left:
+            temp = self._symalg.prod(self._from_repr_to_sym(B[self._basis_order[bk]] * g) ** e
+                                     for bk, e in enumerate(b))
+        else:
+            temp = self._symalg.prod(self._from_repr_to_sym(g * B[self._basis_order[bk]]) ** e
+                                     for bk, e in enumerate(b))
+        ind = self._indices
+        data = {ind(mon.exponents()[0]): c for c, mon in temp}
+        return self.element_class(self, data)
+
 
 class RegularRepresentation(Representation):
     r"""
@@ -669,7 +1487,7 @@ class RegularRepresentation(Representation):
             sage: R = G.regular_representation()
             sage: R._test_representation()  # indirect doctest
         """
-        return self.monomial(g*m)
+        return self.monomial(g * m)
 
     def _right_on_basis(self, g, m):
         """
@@ -681,7 +1499,8 @@ class RegularRepresentation(Representation):
             sage: R = G.regular_representation(side="right")
             sage: R._test_representation()  # indirect doctest
         """
-        return self.monomial(m*g)
+        return self.monomial(m * g)
+
 
 class TrivialRepresentation(Representation_abstract):
     """
@@ -713,7 +1532,9 @@ class TrivialRepresentation(Representation_abstract):
             sage: TestSuite(V).run()
         """
         cat = Modules(base_ring).WithBasis().FiniteDimensional()
-        Representation_abstract.__init__(self, semigroup, base_ring, ['v'], category=cat)
+        from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
+        indices = FiniteEnumeratedSet(['v'])
+        Representation_abstract.__init__(self, semigroup, base_ring, "twosided", indices, category=cat)
 
     def _repr_(self):
         """
@@ -729,24 +1550,22 @@ class TrivialRepresentation(Representation_abstract):
         return "Trivial representation of {} over {}".format(self._semigroup,
                                                              self.base_ring())
 
-    def side(self):
-        """
-        Return that ``self`` is a two-sided representation.
-
-        OUTPUT:
-
-        - the string ``"twosided"``
+    def _semigroup_action(self, g, vec, vec_on_left):
+        r"""
+        Return the action of the semigroup element ``g`` on the
+        vector ``vec`` of ``self``.
 
         EXAMPLES::
 
-            sage: G = groups.permutation.Dihedral(4)
-            sage: R = G.trivial_representation()
-            sage: R.side()
-            'twosided'
+            sage: SGA = SymmetricGroupAlgebra(QQ, 4)
+            sage: V = SGA.trivial_representation()
+            sage: x = V.an_element()
+            sage: V._semigroup_action(SGA.group().random_element(), x, True) == x
+            True
         """
-        return "twosided"
+        return vec
 
-    class Element(CombinatorialFreeModule.Element):
+    class Element(Representation_abstract.Element):
         def _acted_upon_(self, scalar, self_on_left=False):
             """
             Return the action of ``scalar`` on ``self``.
@@ -804,7 +1623,8 @@ class SignRepresentation_abstract(Representation_abstract):
 
     The sign representation of a semigroup `S` over a commutative ring
     `R` is the `1`-dimensional `R`-module on which every element of `S`
-    acts by 1 if order of element is even (including 0) or -1 if order of element if odd.
+    acts by `1` if order of element is even (including 0) or `-1` if
+    order of element if odd.
 
     This is simultaneously a left and right representation.
 
@@ -812,13 +1632,13 @@ class SignRepresentation_abstract(Representation_abstract):
 
     - ``permgroup`` -- a permgroup
     - ``base_ring`` -- the base ring for the representation
-    - ``sign_function`` -- a function which returns 1 or -1 depending on the elements sign
+    - ``sign_function`` -- a function which returns `1` or `-1` depending
+      on the elements sign
 
     REFERENCES:
 
     - :wikipedia:`Representation_theory_of_the_symmetric_group`
     """
-
     def __init__(self, group, base_ring, sign_function=None):
         """
         Initialize ``self``.
@@ -838,7 +1658,7 @@ class SignRepresentation_abstract(Representation_abstract):
 
         cat = Modules(base_ring).WithBasis().FiniteDimensional()
 
-        Representation_abstract.__init__(self, group, base_ring, ["v"], category=cat)
+        Representation_abstract.__init__(self, group, base_ring, "twosided", ["v"], category=cat)
 
     def _repr_(self):
         """
@@ -855,101 +1675,64 @@ class SignRepresentation_abstract(Representation_abstract):
             self._semigroup, self.base_ring()
         )
 
-    def side(self):
-        """
-        Return that ``self`` is a two-sided representation.
-
-        OUTPUT:
-
-        - the string ``"twosided"``
+    def _semigroup_action(self, g, vec, vec_on_left):
+        r"""
+        Return the action of the semigroup element ``g`` on the
+        vector ``vec`` of ``self``.
 
         EXAMPLES::
 
-            sage: G = groups.permutation.Dihedral(4)
+            sage: G = PermutationGroup(gens=[(1,2,3), (1,2)])
+            sage: S = G.sign_representation()
+            sage: x = S.an_element(); x
+            2*B['v']
+            sage: s, c = G.gens(); c
+            (1,2,3)
+            sage: S._semigroup_action(s, x, True)
+            -2*B['v']
+            sage: S._semigroup_action(s, x, False)
+            -2*B['v']
+            sage: s * x
+            -2*B['v']
+            sage: s*x*s
+            2*B['v']
+            sage: s*x*s*s*c
+            -2*B['v']
+            sage: A = G.algebra(ZZ)
+            sage: s,c = A.algebra_generators()
+            sage: c
+            (1,2,3)
+            sage: s
+            (1,2)
+            sage: c*x
+            2*B['v']
+            sage: c*c*x
+            2*B['v']
+            sage: c*x*s
+            -2*B['v']
+            sage: c*x*s*s
+            2*B['v']
+            sage: (c+s)*x
+            0
+            sage: (c-s)*x
+            4*B['v']
+
+            sage: H = groups.permutation.Dihedral(4)
+            sage: G = SymmetricGroup(4)
+            sage: G.has_coerce_map_from(H)
+            True
             sage: R = G.sign_representation()
-            sage: R.side()
-            'twosided'
+            sage: H.an_element() * R.an_element()
+            -2*B['v']
+
+            sage: AG = G.algebra(ZZ)
+            sage: AH = H.algebra(ZZ)
+            sage: AG.has_coerce_map_from(AH)
+            True
+            sage: AH.an_element() * R.an_element()
+            -2*B['v']
         """
-        return "twosided"
-
-    class Element(CombinatorialFreeModule.Element):
-        def _acted_upon_(self, scalar, self_on_left=False):
-            """
-            Return the action of ``scalar`` on ``self``.
-
-            EXAMPLES::
-
-                sage: G = PermutationGroup(gens=[(1,2,3), (1,2)])
-                sage: S = G.sign_representation()
-                sage: x = S.an_element(); x
-                2*B['v']
-                sage: s,c = G.gens(); c
-                (1,2,3)
-                sage: s*x
-                -2*B['v']
-                sage: s*x*s
-                2*B['v']
-                sage: s*x*s*s*c
-                -2*B['v']
-                sage: A = G.algebra(ZZ)
-                sage: s,c = A.algebra_generators()
-                sage: c
-                (1,2,3)
-                sage: s
-                (1,2)
-                sage: c*x
-                2*B['v']
-                sage: c*c*x
-                2*B['v']
-                sage: c*x*s
-                -2*B['v']
-                sage: c*x*s*s
-                2*B['v']
-                sage: (c+s)*x
-                0
-                sage: (c-s)*x
-                4*B['v']
-
-                sage: H = groups.permutation.Dihedral(4)
-                sage: G = SymmetricGroup(4)
-                sage: G.has_coerce_map_from(H)
-                True
-                sage: R = G.sign_representation()
-                sage: H.an_element() * R.an_element()
-                -2*B['v']
-
-                sage: AG = G.algebra(ZZ)
-                sage: AH = H.algebra(ZZ)
-                sage: AG.has_coerce_map_from(AH)
-                True
-                sage: AH.an_element() * R.an_element()
-                -2*B['v']
-            """
-            if isinstance(scalar, Element):
-                P = self.parent()
-                if P._semigroup.has_coerce_map_from(scalar.parent()):
-                    scalar = P._semigroup(scalar)
-                    return self if P.sign_function(scalar) > 0 else -self
-
-                # We need to check for scalars first
-                ret = CombinatorialFreeModule.Element._acted_upon_(self, scalar, self_on_left)
-                if ret is not None:
-                    return ret
-
-                if P._semigroup_algebra.has_coerce_map_from(scalar.parent()):
-                    if not self:
-                        return self
-                    sum_scalar_coeff = 0
-                    scalar = P._semigroup_algebra(scalar)
-                    for ms, cs in scalar:
-                        sum_scalar_coeff += P.sign_function(ms) * cs
-                    return sum_scalar_coeff * self
-
-                return None
-
-            return CombinatorialFreeModule.Element._acted_upon_(
-                self, scalar, self_on_left
-            )
+        return vec if self.sign_function(g) > 0 else -vec
 
 
 class SignRepresentationPermgroup(SignRepresentation_abstract):
@@ -964,7 +1747,7 @@ class SignRepresentationPermgroup(SignRepresentation_abstract):
     """
     def _default_sign(self, elem):
         """
-        Return the sign of the element
+        Return the sign of the element.
 
         INPUT:
 
@@ -995,7 +1778,7 @@ class SignRepresentationMatrixGroup(SignRepresentation_abstract):
     """
     def _default_sign(self, elem):
         """
-        Return the sign of the element
+        Return the sign of the element.
 
         INPUT:
 
@@ -1027,7 +1810,7 @@ class SignRepresentationCoxeterGroup(SignRepresentation_abstract):
     """
     def _default_sign(self, elem):
         """
-        Return the sign of the element
+        Return the sign of the element.
 
         INPUT:
 
@@ -1042,3 +1825,96 @@ class SignRepresentationCoxeterGroup(SignRepresentation_abstract):
             1
         """
         return -1 if elem.length() % 2 else 1
+
+
+class ReflectionRepresentation(Representation_abstract):
+    r"""
+    The reflection representation of a Coxeter group.
+
+    This is the canonical faithful representation of a Coxeter group.
+
+    EXAMPLES::
+
+        sage: W = CoxeterGroup(['B', 4])
+        sage: R = W.reflection_representation()
+        sage: all(g.matrix() == R.representation_matrix(g) for g in W)
+        True
+    """
+    @staticmethod
+    def __classcall_private__(cls, W, base_ring=None):
+        r"""
+        Normalize input to ensure a unique representation.
+
+        EXAMPLES::
+
+            sage: W = CoxeterGroup(['D', 4])
+            sage: R1 = W.reflection_representation()
+            sage: R2 = W.reflection_representation(ZZ)
+            sage: R1 is R2
+            True
+        """
+        if base_ring is None:
+            base_ring = W.one().canonical_matrix().base_ring()
+        return super().__classcall__(cls, W, base_ring)
+
+    def __init__(self, W, base_ring):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: W = CoxeterGroup(['C', 3])
+            sage: R = W.reflection_representation()
+            sage: TestSuite(R).run()
+
+            sage: W = CoxeterGroup(['E', 6, 1])
+            sage: R = W.reflection_representation()
+            sage: TestSuite(R).run()
+        """
+        self._W = W
+        rk = W.coxeter_matrix().rank()
+        from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
+        indices = FiniteEnumeratedSet(range(rk))
+        super().__init__(W, base_ring, "left", indices, prefix='e', bracket=False)
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: W = CoxeterGroup(['E', 8])
+            sage: W.reflection_representation()
+            Reflection representation of Finite Coxeter group over Integer Ring with Coxeter matrix:
+            [1 2 3 2 2 2 2 2]
+            [2 1 2 3 2 2 2 2]
+            [3 2 1 3 2 2 2 2]
+            [2 3 3 1 3 2 2 2]
+            [2 2 2 3 1 3 2 2]
+            [2 2 2 2 3 1 3 2]
+            [2 2 2 2 2 3 1 3]
+            [2 2 2 2 2 2 3 1]
+        """
+        return "Reflection representation of {}".format(self._W)
+
+    def _semigroup_action(self, g, vec, vec_on_left):
+        r"""
+        Return the action of the Coxeter group element ``g`` on the
+        vector ``vec`` of ``self``.
+
+        EXAMPLES::
+
+            sage: W = CoxeterGroup(['E', 8])
+            sage: R = W.reflection_representation()
+            sage: g = W.an_element()
+            sage: g == ~g
+            False
+            sage: vec = R.an_element()
+            sage: R._semigroup_action(g, vec, True)
+            e0 - 2*e1 - 2*e2 - 4*e3 - 4*e4 - 4*e5 - 4*e6 - 4*e7
+            sage: R._semigroup_action(g, vec, False)
+            2*e0 + 3*e1 + 4*e2 + 5*e3
+        """
+        if vec_on_left:
+            g = ~g
+        return self.from_vector(g.canonical_matrix() * vec.to_vector())

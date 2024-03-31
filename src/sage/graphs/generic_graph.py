@@ -1336,9 +1336,9 @@ class GenericGraph(GenericGraph_pyx):
 
         - ``format`` -- string (default: ``None``); select the output format
           explicitly. If set to ``None`` (default), the format is set to be the
-          file extension of ``filename``. Admissible formats are: ``adjlist``,
-          ``dot``, ``edgelist``, ``gexf``, ``gml``, ``graphml``,
-          ``multiline_adjlist``, ``pajek``, ``yaml``.
+          file extension of ``filename``. Admissible formats are: ``'adjlist'``,
+          ``'dot'``, ``'edgelist'``, ``'gexf'``, ``'gml'``, ``'graphml'``,
+          ``'multiline_adjlist'``, ``'pajek'``.
 
         - All other arguments are forwarded to the subfunction. For more
           information, see their respective documentation:
@@ -1348,15 +1348,14 @@ class GenericGraph(GenericGraph_pyx):
               :widths: 30, 70
               :delim: |
 
-              ``adjlist`` | http://networkx.lanl.gov/reference/generated/networkx.readwrite.adjlist.write_adjlist.html
-              ``dot`` | https://networkx.github.io/documentation/latest/reference/generated/networkx.drawing.nx_pydot.write_dot.html
-              ``edgelist`` | http://networkx.lanl.gov/reference/generated/networkx.readwrite.edgelist.write_edgelist.html
-              ``gexf`` | http://networkx.lanl.gov/reference/generated/networkx.readwrite.gexf.write_gexf.html
-              ``gml`` | http://networkx.lanl.gov/reference/generated/networkx.readwrite.gml.write_gml.html
-              ``graphml`` | http://networkx.lanl.gov/reference/generated/networkx.readwrite.graphml.write_graphml.html
-              ``multiline_adjlist`` | http://networkx.lanl.gov/reference/generated/networkx.readwrite.multiline_adjlist.write_multiline_adjlist.html
-              ``pajek`` | http://networkx.lanl.gov/reference/generated/networkx.readwrite.pajek.write_pajek.html
-              ``yaml`` | http://networkx.lanl.gov/reference/generated/networkx.readwrite.nx_yaml.write_yaml.html
+              ``'adjlist'``           | :func:`networkx.readwrite.adjlist.write_adjlist`
+              ``'dot'``               | :func:`networkx.drawing.nx_pydot.write_dot`
+              ``'edgelist'``          | :func:`networkx.readwrite.edgelist.write_edgelist`
+              ``'gexf'``              | :func:`networkx.readwrite.gexf.write_gexf`
+              ``'gml'``               | :func:`networkx.readwrite.gml.write_gml`
+              ``'graphml'``           | :func:`networkx.readwrite.graphml.write_graphml`
+              ``'multiline_adjlist'`` | :func:`networkx.readwrite.multiline_adjlist.write_multiline_adjlist`
+              ``'pajek'``             | :func:`networkx.readwrite.pajek.write_pajek`
 
         .. SEEALSO::
 
@@ -1366,7 +1365,7 @@ class GenericGraph(GenericGraph_pyx):
         .. NOTE::
 
             This functions uses the ``write_*`` functions defined in NetworkX
-            (see http://networkx.lanl.gov/reference/readwrite.html).
+            (see :mod:`networkx.readwrite`).
 
         EXAMPLES::
 

@@ -12806,6 +12806,18 @@ cdef class Polynomial_generic_dense_inexact(Polynomial_generic_dense):
             ...
             PrecisionError: the leading coefficient is indistinguishable from 0
 
+        TESTS:
+
+        Ensure that :issue:`37621` is fixed::
+
+            sage: k.<x> = QQ[]
+            sage: K = Qp(11,5)
+            sage: L.<a> = K.extension(x^20-11)
+            sage: R.<x> = L[]
+            sage: f = R.random_element()
+            sage: type(f.degree())
+            <class 'sage.rings.integer.Integer'>
+
         AUTHOR:
 
         - Xavier Caruso (2013-03)
@@ -12822,7 +12834,7 @@ cdef class Polynomial_generic_dense_inexact(Polynomial_generic_dense):
                     d -= 1
             else:
                 break
-        return d
+        return Integer(d)
 
     def prec_degree(self):
         r"""
