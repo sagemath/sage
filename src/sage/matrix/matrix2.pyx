@@ -9964,6 +9964,33 @@ cdef class Matrix(Matrix1):
         chi = self.charpoly()
         return chi.is_monomial()
 
+    def is_semisimple(self) -> bool:
+        r"""
+        Return if ``self`` is semisimple.
+
+        A (square) matrix `A` is *semisimple* if the
+        :meth:`minimal polynomial <minpoly>` of `A` is sqaure-free.
+
+        If `A` represents a linear map from `F^n \to F^n` for some field `F`,
+        then this is equivalent to every `A`-invariant subspace of `F^n`
+        has a complementary `A`-invariant subspace. This is also equivalent
+        to saying the matrix is diagonalizable over `\bar{F}`, the algebraic
+        closure of `F`.
+
+        EXAMPLES::
+
+            sage: A = matrix([[0, -1], [1, 0]]); A
+            [ 0 -1]
+            [ 1  0]
+            sage: A.is_semisimple()
+            True
+            sage: A.change_ring(QQ).is_diagonalizable()
+            False
+            sage: A.change_ring(CyclotomicField(4)).is_diagonalizable()
+            True
+        """
+        return self.minpoly().is_squarefree()
+
     def as_sum_of_permutations(self):
         r"""
         Returns the current matrix as a sum of permutation matrices
@@ -11659,6 +11686,59 @@ cdef class Matrix(Matrix1):
             return J, transformation_matrix
         else:
             return J
+
+    def jordan_decomposition(self):
+        r"""
+        Return the Jordan decomposition of ``self``.
+
+        The Jordan decomposition of a matrix `A` is a pair of
+        matrices `(S, N)` such that
+
+        - `A = S + N`,
+        - `S` is semisimple,
+        - `N` is nilpotent.
+
+        EXAMPLES::
+
+            sage: A = matrix(QQ, 5, 5, {(0,1): -1, (1,0): 1, (2,3): -1}); A
+            [ 0 -1  0  0  0]
+            [ 1  0  0  0  0]
+            [ 0  0  0 -1  0]
+            [ 0  0  0  0  0]
+            [ 0  0  0  0  0]
+            sage: S, N = A.jordan_decomposition()
+            sage: S
+            [ 0 -1  0  0  0]
+            [ 1  0  0  0  0]
+            [ 0  0  0  0  0]
+            [ 0  0  0  0  0]
+            [ 0  0  0  0  0]
+            sage: N
+            [ 0  0  0  0  0]
+            [ 0  0  0  0  0]
+            [ 0  0  0 -1  0]
+            [ 0  0  0  0  0]
+            [ 0  0  0  0  0]
+            sage: A == S + N
+            True
+            sage: S.is_semisimple()
+            True
+            sage: N.is_nilpotent()
+            True
+            sage: A.jordan_form()
+            Traceback (most recent call last):
+            ...
+            RuntimeError: Some eigenvalue does not exist in Rational Field.
+        """
+        f = self.minpoly()
+        h = f // f.gcd(f.diff())
+        o, p, q = h.xgcd(h.diff())
+        assert o.is_one()
+        A = self
+        hq = h * q
+        while h(A):
+            A -= hq(A)
+        return (A, self - A)
 
     def diagonalization(self, base_field=None):
         """
