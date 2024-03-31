@@ -121,6 +121,8 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
                 R = PolynomialRing(self.value_ring(), 'x')
                 return JacobianMorphism_divisor_class_field(self,
                                                             (R.one(), R.zero()))
+            elif len(P) == 1:
+                return self(P[0])
             elif len(P) == 2:
                 P1 = P[0]
                 P2 = P[1]

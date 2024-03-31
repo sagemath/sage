@@ -60,6 +60,8 @@ AUTHORS:
 
 - Simon King (2013-10): copy the changes of :class:`~sage.categories.morphism.Morphism`
   that have been introduced in :issue:`14711`.
+
+- Lorenz Panny, Gareth Ma (Mar 2024): introduce :class:`SchemeMorphism_sum`.
 """
 
 # ****************************************************************************
@@ -337,13 +339,49 @@ class SchemeMorphism(Element):
             s += "\n  To:   %s" % self._codomain
         d = self._repr_defn()
         if d != '':
-            s += "\n  Defn: %s" % ('\n        '.join(self._repr_defn().split('\n')))
+            s += "\n  Defn: %s" % '\n        '.join(d.split('\n'))
         return s
+
+    def _add_(self, other):
+        r"""
+        Add two :class:`SchemeMorphism` objects by constructing a
+        formal :class:`SchemeMorphism_sum`.
+
+        EXAMPLES::
+
+            sage: phi = Spec(QQ).End().identity()
+            sage: phi + phi
+            Sum morphism:
+              From: Set of morphisms
+              From: Spectrum of Rational Field
+              To:   Spectrum of Rational Field
+              To:   Set of morphisms
+              From: Spectrum of Rational Field
+              To:   Spectrum of Rational Field
+              Via:  (Scheme endomorphism of Set of morphisms
+              From: Spectrum of Rational Field
+              To:   Spectrum of Rational Field
+              Defn: Identity map, Scheme endomorphism of Set of morphisms
+              From: Spectrum of Rational Field
+              To:   Spectrum of Rational Field
+              Defn: Identity map)
+        """
+        phis = []
+        if isinstance(self, SchemeMorphism_sum):
+            phis.extend(self.summands())
+        else:
+            phis.append(self)
+        if isinstance(other, SchemeMorphism_sum):
+            phis.extend(other.summands())
+        else:
+            phis.append(other)
+
+        #TODO should probably try to simplify some more?
+        assert other.domain() == self.domain() and other.codomain() == self.codomain()
+        return SchemeMorphism_sum(phis, domain=self.domain(), codomain=self.codomain())
 
     def __mul__(self, right):
         """
-        We can currently only multiply scheme morphisms.
-
         If one factor is an identity morphism, the other is returned.
         Otherwise, a formal composition of maps obtained from the scheme
         morphisms is returned.
@@ -669,6 +707,109 @@ class SchemeMorphism(Element):
         return glue.GluedScheme(self, other)
 
 
+class SchemeMorphism_sum(SchemeMorphism):
+    """
+    Formal sum of scheme morphisms.
+
+    EXAMPLES::
+
+        PR_TODO
+    """
+
+    _phis = None
+
+    def __init__(self, phis, domain=None, codomain=None, check=True):
+        r"""
+        Construct a sum morphism from its summands.
+
+        The codomain scheme should implement addition. For empty sums, the
+        domain and codomain schemes must be given.
+
+        EXAMPLES::
+
+            sage: from src.sage.schemes.generic.morphism import SchemeMorphism_sum
+            sage: phi = Spec(QQ).identity_morphism()
+            sage: SchemeMorphism_sum([phi, phi])
+            PR_TODO
+
+        The zero morphism can be defined when the codomain implements addition::
+
+            sage: SchemeMorphism_sum([], Spec(QQ), ZZ)
+            Sum morphism:
+              From: Spectrum of Rational Field
+              To:   Spectrum of Integer Ring
+              Via:  ()
+        """
+        phis = tuple(phis)
+
+        if not phis and (domain is None or codomain is None):
+            raise ValueError('need either phis or both domain and codomain')
+
+        for phi in phis:
+            if not isinstance(phi, SchemeMorphism):
+                raise ValueError(f'not a scheme morphism: {phi}')
+
+        if domain is None:
+            domain = phis[0].domain()
+        if codomain is None:
+            codomain = phis[0].codomain()
+        if check:
+            try:
+                x = codomain.an_element()
+                _ = x + x
+            except (TypeError, NotImplementedError):
+                raise ValueError(f"addition is not implemented for {codomain}")
+        for phi in phis:
+            if phi.domain() != domain:
+                raise ValueError(f'summand {phi} has incorrect domain (need {domain})')
+            if phi.codomain() != codomain:
+                raise ValueError(f'summand {phi} has incorrect codomain (need {codomain})')
+
+        self._phis = phis
+        self._domain = domain
+        SchemeMorphism.__init__(self, self._domain, codomain)
+
+    def _call_(self, P):
+        r"""
+        Evaluate this sum morphism at a point.
+
+        EXAMPLES::
+
+            ...
+        """
+        return sum((phi(P) for phi in self._phis), self._codomain.zero())
+
+    def _repr_(self):
+        r"""
+        Return basic facts about this sum morphism as a string.
+
+        EXAMPLES::
+
+            ...
+        """
+        return f'Sum morphism:' \
+                f'\n  From: {self._domain}' \
+                f'\n  To:   {self._codomain}' \
+                f'\n  Via:  {self._phis}'
+
+    def summands(self):
+        r"""
+        Return the individual summands making up this sum morphism.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(j=5)
+            sage: m2 = E.scalar_multiplication(2)
+            sage: m3 = E.scalar_multiplication(3)
+            sage: m2 + m3
+            Sum morphism:
+              From: Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field
+              To:   Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field
+              Via:  (Scalar-multiplication endomorphism [2] of Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field, Scalar-multiplication endomorphism [3] of Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field)
+        """
+        return self._phis
+
+
 class SchemeMorphism_id(SchemeMorphism):
     """
     Return the identity morphism from `X` to itself.
@@ -698,6 +839,8 @@ class SchemeMorphism_id(SchemeMorphism):
         """
         SchemeMorphism.__init__(self, X.Hom(X))
 
+    # TODO: Replace all _repr_defn with just _repr_ overload
+    # For example, this should be an "Identity endomorphism of ..." directly
     def _repr_defn(self):
         r"""
         Return a string representation of the definition of ``self``.
@@ -712,6 +855,36 @@ class SchemeMorphism_id(SchemeMorphism):
             'Identity map'
         """
         return 'Identity map'
+
+    def _call_(self, P):
+        r"""
+        Compute image of `P` under the identity morphism, which is `P`.
+
+        INPUT:
+
+        - ``P`` -- a scheme.
+
+        OUTPUT:
+
+        The scheme `P`.
+
+        EXAMPLES::
+
+            sage: S = Spec(QQ).an_element()
+            sage: Spec(QQ).End().identity()(S) == S
+            True
+
+            sage: R.<x> = QQ[]
+            sage: J = HyperellipticCurve(x^5 - 8*x).jacobian()
+            sage: P = J(2, 4); P
+            (2, y - 4)
+            sage: phi = J.End().identity(); phi
+            Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - x
+              Defn: Identity map
+            sage: phi(P)
+            (1)
+        """
+        return P
 
 
 class SchemeMorphism_structure_map(SchemeMorphism):
@@ -2146,3 +2319,17 @@ class SchemeMorphism_point(SchemeMorphism):
                 ambient = ambient.change_ring(phi.codomain().base_ring())
         psi = ambient.ambient_space().coordinate_ring().hom([0 for i in range(ambient.ambient_space().ngens())], ambient.base_ring())
         return ambient([psi(phi(t)) for t in self])
+
+    def _add_(self, point):
+        r"""
+        Add two point schemes.
+
+        EXAMPLES::
+
+            sage: A = AffineSpace(QQ, 2)
+            sage: A(2, 3) + A(3, 5)
+            Traceback (most recent call first):
+            ...
+            NotImplementedError
+        """
+        raise NotImplementedError

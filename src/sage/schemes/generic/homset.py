@@ -295,15 +295,20 @@ class SchemeHomset_generic(HomsetWithBase):
         EXAMPLES::
 
             sage: A = AffineSpace(4, QQ)
-            sage: print(A.structure_morphism()._repr_())
+            sage: repr(A.structure_morphism().parent())
             Scheme morphism:
               From: Affine Space of dimension 4 over Rational Field
               To:   Spectrum of Rational Field
-              Defn: Structure map
+
+            sage: repr(Spec(QQ).End())
+            Set of scheme endomorphisms of Spectrum of Rational Field
         """
-        s = 'Set of morphisms'
-        s += '\n  From: %s' % self.domain()
-        s += '\n  To:   %s' % self.codomain()
+        if self.is_endomorphism_set():
+            return f"Set of scheme endomorphisms of {self.domain()}"
+
+        s = "Set of morphisms"
+        s += f'\n  From: {self.domain()}'
+        s += f'\n  To:   {self.codomain()}'
         return s
 
     def natural_map(self):
@@ -324,12 +329,57 @@ class SchemeHomset_generic(HomsetWithBase):
               From: Affine Space of dimension 4 over Rational Field
               To:   Spectrum of Rational Field
               Defn: Structure map
+
+            sage: Spec(QQ).End().natural_map()
+            Scheme endomorphism of Set of morphisms
+              From: Spectrum of Rational Field
+              To:   Spectrum of Rational Field
+              Defn: Identity map
         """
         X = self.domain()
         Y = self.codomain()
         if is_AffineScheme(Y) and Y.coordinate_ring() == X.base_ring():
             return SchemeMorphism_structure_map(self)
+        if self.is_endomorphism_set():
+            return self.identity()
         raise NotImplementedError
+
+    def identity(self):
+        r"""
+        Return the identity morphism in this homset as an
+        :class:`SchemeMorphism` object.
+
+        .. SEEALSO:: :method:`natural_map`
+
+        EXAMPLES::
+
+            sage: Spec(QQ).End().identity()
+            Scheme endomorphism of Set of morphisms
+              From: Spectrum of Rational Field
+              To:   Spectrum of Rational Field
+              Defn: Identity map
+
+            sage: Hom(Spec(ZZ), Spec(QQ)).identity()
+            Traceback (most recent call first):
+            ...
+            ValueError: domain and codomain must be equal
+        """
+        if not self.is_endomorphism_set():
+            raise ValueError('domain and codomain must be equal')
+        from sage.schemes.generic.morphism import SchemeMorphism_id
+        return SchemeMorphism_id(self.domain())
+
+    def _an_element_(self):
+        r"""
+        Return a morphism from this homset via the :meth:`natural_map`. In
+        particular, it returns the identity map when this is an endomorphism
+        set.
+
+        EXAMPLES::
+
+            sage: Spec(QQ).End().an_element()
+        """
+        return self.natural_map()
 
     def _element_constructor_(self, x, check=True):
         """
@@ -400,7 +450,6 @@ class SchemeHomset_generic(HomsetWithBase):
             return SchemeMorphism_spec(self, x, check=check)
 
         raise TypeError("x must be a ring homomorphism, list or tuple")
-
 
 # *******************************************************************
 #  Base class for points
