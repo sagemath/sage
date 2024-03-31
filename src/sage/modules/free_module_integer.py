@@ -819,7 +819,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         This will check whether the basis is already `\delta`-LLL-reduced
         and otherwise it will run LLL to make sure that it is. For more
-        information about `delta` see :meth:`LLL`.
+        information about ``delta`` see :meth:`LLL`.
 
         INPUT:
 
