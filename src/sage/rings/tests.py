@@ -416,8 +416,9 @@ def test_random_arith(level=MAX_LEVEL, trials=1):
 
 @random_testing
 def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
-        ref_mul=lambda f, g: f._mul_generic(g), base_ring_random_elt_args=[],
-        numtests=10, verbose=False):
+                                  ref_mul=lambda f, g: f._mul_generic(g),
+                                  base_ring_random_elt_args=[],
+                                  numtests=10, verbose=False):
     """
     Test univariate Karatsuba multiplication against other multiplication algorithms.
 
@@ -469,16 +470,21 @@ def test_karatsuba_multiplication(base_ring, maxdeg1, maxdeg2,
 
     """
     from sage.misc.prandom import randint
+    from sage.misc.sage_input import sage_input
     from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
     threshold = randint(0, min(maxdeg1, maxdeg2))
     R = PolynomialRing(base_ring, 'x')
     if verbose:
-        print("test_karatsuba_multiplication: ring={}, threshold={}".format(R, threshold))
+        print(f"test_karatsuba_multiplication: ring={R}, threshold={threshold}")
     for _ in range(numtests):
         f = R.random_element(randint(0, maxdeg1), False, *base_ring_random_elt_args)
         g = R.random_element(randint(0, maxdeg2), False, *base_ring_random_elt_args)
         if verbose:
             print("  ({})*({})".format(f, g))
         if ref_mul(f, g) - f._mul_karatsuba(g, threshold) != 0:
-            raise ValueError("Multiplication failed")
+            msg = "Multiplication failed for elements defined by\n"
+            msg += f"{sage_input(f)}\n"
+            msg += "and\n"
+            msg += f"{sage_input(g)}"
+            raise ValueError(msg)
     return

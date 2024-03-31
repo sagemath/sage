@@ -9,7 +9,7 @@ Elements of free monoids are represented internally as lists of
 pairs of integers.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -22,7 +22,7 @@ pairs of integers.
 #  is available at:
 #
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.rings.integer import Integer
 from sage.structure.element import MonoidElement
@@ -123,12 +123,12 @@ class FreeMonoidElement(MonoidElement):
             if e == 1:
                 s += "%s" % g
             else:
-                s += "%s^%s" % (g,e)
+                s += f"{g}^{e}"
         if len(s) == 0:
             s = "1"
         return s
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return latex representation of self.
 
@@ -159,9 +159,9 @@ class FreeMonoidElement(MonoidElement):
             g = x[int(v[i][0])]
             e = v[i][1]
             if e == 1:
-                s += "%s " % (g,)
+                s += f"{g} "
             else:
-                s += "%s^{%s}" % (g, e)
+                s += f"{g}^{{{e}}}"
         s = s.rstrip(" ")  # strip the trailing whitespace caused by adding a space after each element name
         if len(s) == 0:
             s = "1"
@@ -212,7 +212,7 @@ class FreeMonoidElement(MonoidElement):
             raise ValueError("must specify as many values as generators in parent")
 
         # I don't start with 0, because I don't want to preclude evaluation with
-        #arbitrary objects (e.g. matrices) because of funny coercion.
+        # arbitrary objects (e.g. matrices) because of funny coercion.
         one = P.one()
         result = None
         for var_index, exponent in self._element_list:
@@ -262,7 +262,7 @@ class FreeMonoidElement(MonoidElement):
                 z._element_list = x_elt + y_elt
             else:
                 m = (y_elt[0][0], x_elt[k][1]+y_elt[0][1])
-                z._element_list = x_elt[:k] + [ m ] + y_elt[1:]
+                z._element_list = x_elt[:k] + [m] + y_elt[1:]
         return z
 
     def __invert__(self):
@@ -278,7 +278,7 @@ class FreeMonoidElement(MonoidElement):
         """
         raise NotImplementedError
 
-    def __len__(self):
+    def __len__(self) -> int:
         """
         Return the degree of the monoid element ``self``, where each
         generator of the free monoid is given degree `1`.
@@ -296,12 +296,9 @@ class FreeMonoidElement(MonoidElement):
             sage: len(a[0]**2 * a[1])
             3
         """
-        s = 0
-        for x in self._element_list:
-            s += x[1]
-        return s
+        return sum(x[1] for x in self._element_list)
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other, op) -> bool:
         """
         Compare two free monoid elements with the same parents.
 
@@ -334,8 +331,7 @@ class FreeMonoidElement(MonoidElement):
 
     def _acted_upon_(self, x, self_on_left):
         """
-        Currently, returns the action of the integer 1 on this
-        element.
+        Return the action of the integer 1 on this element.
 
         EXAMPLES::
 
@@ -373,11 +369,11 @@ class FreeMonoidElement(MonoidElement):
         gens = self.parent().gens()
         if alph is None:
             alph = gens
-        alph = [str(_) for _ in alph]
-        W = Words(alph)
-        return W(sum([ [alph[gens.index(i[0])]] * i[1] for i in list(self) ], []))
+        alph = [str(c) for c in alph]
+        W = Words(alph, infinite=False)
+        return W(sum([[alph[gens.index(i[0])]] * i[1] for i in self], []))
 
-    def to_list(self, indices=False):
+    def to_list(self, indices=False) -> list:
         r"""
         Return ``self`` as a list of generators.
 

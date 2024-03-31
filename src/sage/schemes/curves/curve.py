@@ -209,17 +209,9 @@ class Curve_generic(AlgebraicScheme_subscheme):
         r"""
         Return the geometric genus of the curve.
 
-        This is by definition the genus of the normalization of the projective
-        closure of the curve over the algebraic closure of the base field; the
-        base field must be a prime field.
-
-        .. NOTE::
-
-            This calls Singular's genus command.
-
         EXAMPLES:
 
-        Examples of projective curves. ::
+        Examples of projective curves::
 
             sage: P2 = ProjectiveSpace(2, GF(5), names=['x','y','z'])
             sage: x, y, z = P2.coordinate_ring().gens()
@@ -233,7 +225,7 @@ class Curve_generic(AlgebraicScheme_subscheme):
             sage: C.geometric_genus()
             3
 
-        Examples of affine curves. ::
+        Examples of affine curves::
 
             sage: x, y = PolynomialRing(GF(5), 2, 'xy').gens()
             sage: C = Curve(y^2 - x^3 - 17*x + y)
@@ -246,12 +238,22 @@ class Curve_generic(AlgebraicScheme_subscheme):
             sage: C.geometric_genus()
             3
 
+        .. WARNING::
+
+            Geometric genus is only defined for `geometrically irreducible curve
+            <https://stacks.math.columbia.edu/tag/0BYE>`_. This method does not
+            check the condition. You may get a nonsensical result if the curve is
+            not geometrically irreducible::
+
+                sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
+                sage: C = Curve(x^2 + y^2, P2)
+                sage: C.geometric_genus()  # nonsense!
+                -1
         """
         try:
             return self._genus
         except AttributeError:
-            self._genus = self.defining_ideal().genus()
-            return self._genus
+            raise NotImplementedError
 
     def union(self, other):
         """

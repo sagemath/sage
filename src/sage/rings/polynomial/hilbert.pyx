@@ -106,7 +106,7 @@ cdef inline list interred(list L) noexcept:
     # that appears later in L.
     if not L:
         return []
-    L.sort(key=ETuple.unweighted_degree)
+    L.sort(key=ETuple._unweighted_degree)
     cdef size_t i
     cdef ETuple m
     cdef list result = [<ETuple> PyList_GET_ITEM(L, 0)]

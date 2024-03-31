@@ -8,7 +8,7 @@ specific base classes.
 .. WARNING::
 
     Those classes, except maybe for the lowest ones like
-    :class:`CommutativeRing` and :class:`CommutativeAlgebra`,
+    :class:`CommutativeRing` and :class:`Field`,
     are being progressively deprecated in favor of the corresponding
     categories. which are more flexible, in particular with respect to multiple
     inheritance.
@@ -21,7 +21,7 @@ The class inheritance hierarchy is:
   - :class:`CommutativeRing`
 
     - :class:`NoetherianRing` (deprecated)
-    - :class:`CommutativeAlgebra` (to be deprecated)
+    - :class:`CommutativeAlgebra` (deprecated and essentially removed)
     - :class:`IntegralDomain` (deprecated)
 
       - :class:`DedekindDomain` (deprecated and essentially removed)
@@ -58,7 +58,7 @@ TESTS:
 
 This is to test a deprecation::
 
-    sage: from sage.rings.ring import DedekindDomain
+    sage: from sage.rings.ring import DedekindDomain, CommutativeAlgebra
     sage: class No(DedekindDomain):
     ....:     pass
     sage: F = No(QQ)
@@ -67,6 +67,15 @@ This is to test a deprecation::
     See https://github.com/sagemath/sage/issues/37234 for details.
     sage: F.category()
     Category of Dedekind domains
+
+    sage: class Nein(CommutativeAlgebra):
+    ....:     pass
+    sage: F = Nein(QQ, QQ)
+    ...:
+    DeprecationWarning: use the category CommutativeAlgebras
+    See https://github.com/sagemath/sage/issues/37999 for details.
+    sage: F.category()
+    Category of commutative rings
 """
 
 # ****************************************************************************
@@ -441,7 +450,8 @@ cdef class Ring(ParentWithGens):
             g = gens[0]
             if len(gens) == 1:
                 try:
-                    g = g.gcd(g) # note: we set g = gcd(g, g) to "canonicalize" the generator: make polynomials monic, etc.
+                    # note: we set g = gcd(g, g) to "canonicalize" the generator: make polynomials monic, etc.
+                    g = g.gcd(g)
                 except (AttributeError, NotImplementedError):
                     pass
             else:
@@ -2150,55 +2160,11 @@ cdef class Algebra(Ring):
 
 
 cdef class CommutativeAlgebra(CommutativeRing):
-    """
-    Generic commutative algebra
-    """
-    def __init__(self, base_ring, names=None, normalize=True, category=None):
-        r"""
-        Standard init function. This just checks that the base is a commutative
-        ring and then passes the buck.
+    __default_category = CommutativeRings()
 
-        EXAMPLES::
-
-            sage: sage.rings.ring.CommutativeAlgebra(QQ)
-            <sage.rings.ring.CommutativeAlgebra object at ...>
-
-            sage: sage.rings.ring.CommutativeAlgebra(QuaternionAlgebra(QQ, -1, -1))     # needs sage.combinat sage.modules
-            Traceback (most recent call last):
-            ...
-            TypeError: base ring must be a commutative ring
-        """
-        # TODO: use the idiom base_ring in CommutativeRings()
-        try:
-            if not base_ring.is_commutative():
-                raise TypeError("base ring must be a commutative ring")
-        except (AttributeError, NotImplementedError):
-            raise TypeError("base ring must be a commutative ring")
-        # This is a low-level class. For performance, we trust that
-        # the category is fine, if it is provided. If it isn't, we use
-        # the category of commutative algebras.
-        if category is None:
-            category = CommutativeAlgebras(base_ring)
-        CommutativeRing.__init__(self, base_ring, names=names, normalize=normalize, category=category)
-
-    def is_commutative(self):
-        """
-        Return ``True`` since this algebra is commutative.
-
-        EXAMPLES:
-
-        Any commutative ring is a commutative algebra over itself::
-
-            sage: A = sage.rings.ring.CommutativeAlgebra
-            sage: A(ZZ).is_commutative()
-            True
-            sage: A(QQ).is_commutative()
-            True
-
-        Trying to create a commutative algebra over a non-commutative ring
-        will result in a ``TypeError``.
-        """
-        return True
+    def __init__(self, base_ring, *args, **kwds):
+        deprecation(37999, "use the category CommutativeAlgebras")
+        super().__init__(*args, **kwds)
 
 
 def is_Ring(x):

@@ -2716,6 +2716,13 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
             ...
             ValueError: basis should be in GradedAlgebrasWithBasis
 
+        Check that :issue:`37625` is fixed::
+
+            sage: R = algebras.Free(QQ, ('a', 'b'), degrees=(1, 2))
+            sage: L = R.completion()
+            sage: a, b = R.gens()
+            sage: (L(a) + L(b))^2
+            a^2 + (a*b+b*a) + b^2
         """
         base_ring = basis.base_ring()
         self._minimal_valuation = 0
@@ -2738,11 +2745,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         Parent.__init__(self, base=base_ring, category=category)
         self._sparse = sparse
         self._laurent_poly_ring = basis
-        if self._laurent_poly_ring not in Rings().Commutative():
-            from sage.algebras.free_algebra import FreeAlgebra
-            self._internal_poly_ring = FreeAlgebra(self._laurent_poly_ring, 1, "DUMMY_VARIABLE")
-        else:
-            self._internal_poly_ring = PolynomialRing(self._laurent_poly_ring, "DUMMY_VARIABLE", sparse=sparse)
+        self._internal_poly_ring = PolynomialRing(self._laurent_poly_ring, "DUMMY_VARIABLE", sparse=sparse)
 
     def _repr_(self):
         """

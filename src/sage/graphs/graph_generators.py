@@ -2237,6 +2237,12 @@ class GraphGenerators:
             sage: g.is_isomorphic(graphs.OctahedralGraph())           # optional - plantri
             True
 
+        The minimum degree of a triangulation is 3, so the method can not output
+        a triangle::
+
+            sage: list(graphs.triangulations(3))                      # optional - plantri
+            []
+
         An overview of the number of 5-connected triangulations on up to 22 vertices. This
         agrees with :oeis:`A081621`::
 

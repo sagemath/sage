@@ -1489,7 +1489,7 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         .. MATH::
 
             j_{k_1, \ldots, k_n}^{d_1, \ldots, d_n, d_r}(\phi)
-            := \frac{1}{g_r^{d_q}}\prod_{i = 1}^n g_{k_i}^{d_i}
+            := \frac{1}{g_r^{d_r}}\prod_{i = 1}^n g_{k_i}^{d_i}
 
         where `1\leqslant k_1 < k_2 < \ldots < k_n \leqslant r - 1` and
         the integers `d_i` satisfy the *weight-0 condition*:
@@ -1509,6 +1509,26 @@ class DrinfeldModule(Parent, UniqueRepresentation):
         then the `j`-invariant is called *basic*. See the method
         :meth:`basic_j_invariant_parameters` for computing the list of
         all basic `j`-invariant parameters.
+
+        .. NOTE::
+
+            In [Pap2023]_, Papikian follows a slightly different
+            convention:
+
+            - His `j`-invariants (see Definition 3.8.7) correspond to
+              our basic `j`-invariants, as defined above.
+            - His *basic* `j`-invariant (see Example 3.8.10) correspond
+              to our `j_k`-invariants, as implemented in
+              :meth:`jk_invariants`.
+
+            We chose to follow Potemine's convention, as he introduced
+            those objects in [Pot1998]_. Theorem 2.2 of [Pot1998]_ or
+            Theorem 3.8.11 of [Pap2023]_ assert that two Drinfeld
+            `\mathbb F_q[T]`-modules over `K` are isomorphic over the
+            separable closure of `K` if and only if their basic
+            `j`-invariants (as implemented here) coincide for any
+            well-defined couple of tuples `((k_1, k_2, \ldots, k_n),
+            (d_1, d_2, \ldots, d_n, d_r))`, .
 
         INPUT:
 
@@ -1535,11 +1555,6 @@ class DrinfeldModule(Parent, UniqueRepresentation):
           is valid and satisfy the weight-0 condition.
 
         OUTPUT: the `j`-invariant of ``self`` for the given parameter.
-
-        REFERENCE:
-
-        The notion of basic `j`-invariant was introduced by Potemine in
-        [Pot1998]_.
 
         EXAMPLES::
 
