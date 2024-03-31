@@ -1583,9 +1583,9 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: sp4 = LieAlgebra(GF(3), cartan_type=['C',2])
                 sage: sp4.killing_form_matrix().det()
                 0
-                sage: sp4.solvable_radical_basis()
+                sage: sp4.solvable_radical_basis()  # long time
                 ()
-                sage: sp4.is_semisimple()
+                sage: sp4.is_semisimple()  # long time
                 True
             """
             if self.base_ring().characteristic() == 0:
