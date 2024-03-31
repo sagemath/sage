@@ -58,10 +58,8 @@ from sage.rings.ring import _Fields
 from sage.schemes.affine.affine_space import AffineSpace
 from sage.schemes.curves.affine_curve import AffinePlaneCurve
 from sage.schemes.curves.constructor import Curve
-from sage.schemes.curves.projective_curve import ProjectiveSpace
-from sage.schemes.curves.projective_curve import ProjectivePlaneCurve
-from sage.schemes.curves.zariski_vankampen import braid_monodromy
-from sage.schemes.curves.zariski_vankampen import fundamental_group_arrangement
+from sage.schemes.curves.projective_curve import ProjectiveSpace, ProjectivePlaneCurve
+from sage.schemes.curves.zariski_vankampen import braid_monodromy, fundamental_group_arrangement
 from sage.structure.category_object import normalize_names
 from sage.structure.parent import Parent
 from sage.structure.element import Element
@@ -195,14 +193,13 @@ class PlaneCurveArrangementElement(Element):
             sage: h
             Arrangement of 5 curves in Affine Space of dimension 2 over Rational Field
             sage: H(())
-            Empty curve arrangement in Affine Space of dimension 2 over Rational Field
+            Arrangement () in Affine Space of dimension 2 over Rational Field
             sage: H.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
             sage: h = H([x * y, x + y + z, x^3 * z^2 - y^5, x^2 * y^2 * z + x^5 + y^5, (x^2 + y^2)^3 + (x^3 + y^3 - z^3)^2])
             sage: h
             Arrangement of 5 curves in Projective Space of dimension 2 over Rational Field
-
         """
-        if len(self) == 0:
+        if not self:
             return 'Empty curve arrangement in {0}'.format(self.parent().ambient_space())
         elif len(self) < 5:
             curves = ', '.join(h.defining_polynomial()._repr_()
@@ -252,18 +249,15 @@ class PlaneCurveArrangementElement(Element):
             sage: h1 = h.union(C); h1
             Arrangement of 6 curves in Affine Space of dimension 2 over Rational Field
             sage: h1 == h1.union(C)
-            Repeated curve
             True
         """
         P = self.parent()
         other_h = P(other)
         curves0 = self._curves + other_h._curves
-        curves = ()
+        curves = []
         for h in curves0:
             if h not in curves:
-                curves += (h, )
-            else:
-                print("Repeated curve")
+                curves.append(h)
         result = P(*curves)
         return result
 
@@ -400,13 +394,13 @@ class PlaneCurveArrangementElement(Element):
         C = combinations(L, 2)
         return any(f1.gcd(f2).degree() > 0 for f1, f2 in C)
 
-    def reduce(self, clean=False):
+    def reduce(self, clean=False, verbose=False):
         r"""
         Replace the curves by their reduction.
 
         INPUT:
 
-        - ``clean`` -- boolean (default: False); if ``False``
+        - ``clean`` -- boolean (default: ``False``); if ``False``
           and there are common factors it returns ``None`` and
           a warning message. If ``True``, the common factors are kept
           only in the first occurance.
@@ -419,7 +413,7 @@ class PlaneCurveArrangementElement(Element):
             Arrangement (y, x^3 + 2*x^2*y + 2*x*y^2 + y^3) in Affine Space
             of dimension 2 over Rational Field
             sage: C = H(x*y, x*(y + 1))
-            sage: C.reduce()
+            sage: C.reduce(verbose=True)
             Some curves have common components
             sage: C.reduce(clean=True)
             Arrangement (x*y, y + 1) in Affine Space of dimension 2
@@ -429,14 +423,14 @@ class PlaneCurveArrangementElement(Element):
             Arrangement (x*y) in Affine Space of dimension 2 over Rational Field
         """
         P = self.parent()
-        R = self.coordinate_ring()
         L = [self._curves[0].defining_polynomial().radical()]
         for c in self._curves[1:]:
             g = c.defining_polynomial().radical()
             for f in L:
                 d = g.gcd(f)
                 if d.degree() > 0 and not clean:
-                    print("Some curves have common components")
+                    if verbose:
+                        print("Some curves have common components")
                     return None
                 g //= d
             if g.degree() > 0:
@@ -645,13 +639,13 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             return computed
         self.fundamental_group(simplified=simplified, vertical=vertical)
         if simplified and vertical:
-            return self._meridians_simpl_vertical
+            return dict(self._meridians_simpl_vertical)
         elif simplified and not vertical:
-            return self._meridians_group_simpl_nonvertical
+            return dict(self._meridians_group_simpl_nonvertical)
         elif not simplified and vertical:
-            return self._meridians_nonsimpl_vertical
+            return dict(self._meridians_nonsimpl_vertical)
         else:
-            return self._meridians_nonsimpl_nonvertical
+            return dict(self._meridians_nonsimpl_nonvertical)
 
     def braid_monodromy(self, vertical=True):
         r"""
@@ -765,7 +759,7 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             self.braid_monodromy(vertical=True)
         return self._strands_vertical
 
-    def vertical_lines_in_braid_mon(self):
+    def vertical_lines_in_braid_monodromy(self):
         r"""
         Return the vertical lines in the arrangement.
 
@@ -783,7 +777,7 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             sage: # needs sirocco
             sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
             sage: A = H(y^2 + x, y + x - 1, x)
-            sage: A.vertical_lines_in_braid_mon()
+            sage: A.vertical_lines_in_braid_monodromy()
             {1: 2}
             sage: A.braid_monodromy(vertical=True)
             [s1*s0*s1*s0^-1*s1^-1*s0, s0^-1*s1*s0*s1^-1*s0, s0^-1*s1^2*s0]
@@ -797,7 +791,6 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
     """
     An ordered projective plane curve arrangement.
     """
-
     def __init__(self, parent, curves, check=True):
         """
         Construct an ordered projective plane curve arrangement.
@@ -837,7 +830,7 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
         INPUT:
 
         - ``simplified`` -- boolean (default: True); set if the group
-          is simplified..
+          is simplified
 
         OUTPUT:
 
@@ -917,10 +910,10 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
         affine = AffinePlaneCurveArrangements(K, names=('u', 'v'))
         u, v = affine.gens()
         affines = [f.defining_polynomial().subs({x: u, y: v, z: 1}) for f in C]
-        changes = any([g.degree(v) < g.degree() > 1 for g in affines])
+        changes = any(g.degree(v) < g.degree() > 1 for g in affines)
         while changes:
             affines = [f.subs({u: u + v}) for f in affines]
-            changes = any([g.degree(v) < g.degree() > 1 for g in affines])
+            changes = any(g.degree(v) < g.degree() > 1 for g in affines)
         C_affine = affine(affines)
         proj = not (infinity_divides or infinity_in_C)
         G = C_affine.fundamental_group(simplified=simplified, vertical=True,
@@ -989,9 +982,7 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
             computed = self._meridians_nonsimpl
         if computed:
             return computed
-        if computed:
-            return computed
-        _ = self._fundamental_group(simplified=simplified)
+        self._fundamental_group(simplified=simplified)
         if simplified:
             return self._meridians_simpl
         else:
@@ -1021,6 +1012,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
     def __classcall__(cls, base, names=()):
         """
         Normalize names
+
         TESTS::
 
             sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
@@ -1084,7 +1076,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
         OUTPUT:
 
         A new :class:`PlaneCurveArrangements` instance over the new
-        base ring.
+        base ring
 
         EXAMPLES::
 

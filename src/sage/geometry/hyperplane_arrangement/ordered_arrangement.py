@@ -71,7 +71,7 @@ AUTHORS:
 
 - Enrique Artal (2023-12): initial version
 
-This module add some features to the *unordered* one for some
+This module adds some features to the *unordered* one for some
 properties which depend on the order.
 """
 
@@ -252,7 +252,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
 
         OUTPUT:
 
-        A finitely presented fundamental group`.
+        A finitely presented fundamental group.
 
         .. NOTE::
 
@@ -324,8 +324,7 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
         if n == 2:
             S = self.parent().ambient_space().symmetric_space()
             coord = vector((1,) + S.gens())
-            Af = AffinePlaneCurveArrangements(K,
-                                              names=self.parent().variable_names())
+            Af = AffinePlaneCurveArrangements(K, names=self.parent().variable_names())
             L = Af([vector(line.coefficients()) * coord for line in self])
             G = L.fundamental_group()
             self._affine_fundamental_group = G
@@ -355,17 +354,24 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             sage: A.<x, y> = OrderedHyperplaneArrangements(QQ)
             sage: L = [y + x, y + x - 1]
             sage: H = A(L)
-            sage: H.affine_meridians()
+            sage: H._affine_meridians is None
+            True
+            sage: g = H.affine_fundamental_group()
+            sage: g
+            Finitely presented group < x0, x1 |  >
+            sage: H._affine_meridians
             {0: [x0], 1: [x1], 2: [x1^-1*x0^-1]}
-            sage: L = [x, y, x + 1, y + 1, x - y]
-            sage: H = A(L)
-            sage: H.affine_meridians()
-            {0: [x4], 1: [x1], 2: [x3], 3: [x0], 4: [x2], 5: [x4^-1*x3^-1*x2^-1*x1^-1*x0^-1]}
-            sage: H = A(x, y, x + y)
-            sage: H.affine_meridians()
-            {0: [x2], 1: [x1], 2: [x0], 3: [x2^-1*x1^-1*x0^-1]}
+            sage: H.affine_meridians() == H._affine_meridians
+            True
+            sage: H1 = H.add_hyperplane(y - x)
+            sage: H1._affine_meridians is None
+            True
+            sage: dic = H1.affine_meridians(); dic
+            {0: [x0], 1: [x1], 2: [x2], 3: [x2^-1*x1^-1*x0^-1]}
+            sage: dic == H1._affine_meridians
+            True
         """
-        if not self._affine_meridians:
+        if self._affine_meridians is None:
             self.affine_fundamental_group()
         return self._affine_meridians
 
@@ -516,9 +522,9 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             sage: H.projective_meridians()
             {0: [x2], 1: [x3], 2: [x0], 3: [x3^-1*x2^-1*x1^-1*x0^-1], 4: [x1]}
         """
-        if not self._projective_meridians:
+        if self._projective_meridians is None:
             self.projective_fundamental_group()
-        return self._projective_meridians
+        return dict(self._projective_meridians)
 
 
 class OrderedHyperplaneArrangements(HyperplaneArrangements):
@@ -610,12 +616,12 @@ class OrderedHyperplaneArrangements(HyperplaneArrangements):
         signed = kwds.pop('signed', not_char2)
         check = kwds.pop('check', True)
         backend = kwds.pop('backend', None)
-        if len(kwds) > 0:
+        if kwds:
             raise ValueError('unknown keyword argument')
         # process positional arguments
         AA = self.ambient_space()
         try:
-            hyperplanes = [AA(_) for _ in args]
+            hyperplanes = [AA(a) for a in args]
         except (TypeError, ValueError, AttributeError):
             if len(args) > 1:
                 raise
@@ -623,7 +629,7 @@ class OrderedHyperplaneArrangements(HyperplaneArrangements):
             if hasattr(arg, 'Hrepresentation'):
                 hyperplanes = [AA(h) for h in arg.Hrepresentation()]
             else:
-                hyperplanes = [AA(_) for _ in arg]
+                hyperplanes = [AA(a) for a in arg]
         hyperplanes = [h.primitive(signed) for h in hyperplanes]
         if check:
             if signed and not not_char2:

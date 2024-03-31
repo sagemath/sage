@@ -652,10 +652,6 @@ class HyperplaneArrangementElement(Element):
 
         A new hyperplane arrangement.
 
-        REMARK:
-
-        It applies also to ordered arrangements.
-
         EXAMPLES::
 
             sage: H.<x,y> = HyperplaneArrangements(QQ)
@@ -1229,7 +1225,7 @@ class HyperplaneArrangementElement(Element):
 
         - ``hyperplane`` -- a hyperplane of the hyperplane arrangement
 
-        - ``repetitions`` -- (boolean, default: ``False``) eliminate
+        - ``repetitions`` -- boolean (default: ``False``); eliminate
           repetitions for ordered arrangements
 
         OUTPUT:
@@ -2210,7 +2206,6 @@ class HyperplaneArrangementElement(Element):
             sage: A.poset_of_regions()
             Finite poset containing 24 elements
 
-            sage: # needs sage.combinat
             sage: H.<x,y,z> = HyperplaneArrangements(QQ)
             sage: A = H([[0,1,1,1], [0,1,2,3], [0,1,3,2], [0,2,1,3]])
             sage: R = A.regions()
@@ -2476,8 +2471,8 @@ class HyperplaneArrangementElement(Element):
                     # inequalities are always equalities on it). Check for
                     # this:
                     zero_part_point = zero_part.representative_point()
-                    for ll, testhype in enumerate(hypes[:k]):
-                        if signs[ll] != 0:
+                    for l, testhype in enumerate(hypes[:k]):
+                        if signs[l] != 0:
                             h = testhype.dense_coefficient_list()
                             testval = R.sum(h[i+1] * gi for i, gi in enumerate(zero_part_point)) + h[0]
                             if testval == 0:
@@ -2727,8 +2722,8 @@ class HyperplaneArrangementElement(Element):
             matrix_j = []
             for i, si in enumerate(Fs):
                 row_i = [zero] * N
-                sk = [sil if sil != 0 else sj[ll]
-                      for ll, sil in enumerate(si)]
+                sk = [sil if sil != 0 else sj[l]
+                      for l, sil in enumerate(si)]
                 k = Fdict[tuple(sk)]
                 row_i[k] = one
                 matrix_j += row_i
@@ -2930,7 +2925,8 @@ class HyperplaneArrangementElement(Element):
 
         EXAMPLES::
 
-            sage: A = hyperplane_arrangements.Shi(3)                                  # needs sage.combinat
+            sage: # needs sage.combinat
+            sage: A = hyperplane_arrangements.Shi(3)
             sage: A.whitney_data()
             (
             [  1  -6   9]  [ 1  6  6]
@@ -3593,8 +3589,8 @@ class HyperplaneArrangementElement(Element):
             # import sage.libs.singular.function_factory
             # syz = sage.libs.singular.function_factory.ff.syz
             f = self.defining_polynomial()
-            I0 = f + f.jacobian_ideal()
-            IS = I0._singular_()
+            I = f + f.jacobian_ideal()
+            IS = I._singular_()
             ISS = IS.syz()
             MSTD = ISS.mstd()
             basis = MSTD[2]._sage_().transpose().submatrix(0, 1)

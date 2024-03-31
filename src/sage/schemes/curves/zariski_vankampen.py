@@ -1010,7 +1010,7 @@ def geometric_basis(G, E, EC0, p, dual_graph, vertical_regions={}) -> list:
     # starting and ending at p
     if G.size() == E.size():
         if E.is_cycle():
-            j = list(dual_graph.vertices())[0][0]
+            j = next(dual_graph.vertex_iterator())[0]
             if j in vertical_regions:
                 vd = {j: 0}
             else:
@@ -1031,8 +1031,7 @@ def geometric_basis(G, E, EC0, p, dual_graph, vertical_regions={}) -> list:
                 break
         if EC[-i] in Internal:
             EI = [v for v in E if v in
-                  Internal.connected_component_containing_vertex(EC[-i],
-                                                                 sort=True)
+                  Internal.connected_component_containing_vertex(EC[-i], sort=True)
                   and v != EC[-i]]
             if EI:
                 q = EC[-i]
@@ -1609,7 +1608,7 @@ def fundamental_group_from_braid_mon(bm, degree=None,
         sage: g = fundamental_group_from_braid_mon(bm, projective=True); g      # needs sirocco
         Finitely presented group
         < x1, x3 | x3^2*x1^2, x1^-1*x3^-1*x1*x3^-1*x1^-1*x3^-1 >
-        sage: print (g.order(), g.abelian_invariants())                         # needs sirocco
+        sage: print(g.order(), g.abelian_invariants())                         # needs sirocco
         12 (4,)
         sage: B2 = BraidGroup(2)
         sage: bm = [B2(3 * [1])]
@@ -1886,7 +1885,7 @@ def fundamental_group_arrangement(flist, simplified=True, projective=False,
         R = PolynomialRing(QQ, ('x', 'y'))
         f = R(1)
     x, y = R.gens()
-    flist1 = tuple(list(flist).copy())
+    flist1 = tuple(flist)
     if vertical and vertical_lines_in_braidmon(flist1):
         infinity = all([Curve(g).is_vertical_line() or
                         g.degree(y) == g.degree() for g in flist1])

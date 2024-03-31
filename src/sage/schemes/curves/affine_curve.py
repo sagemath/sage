@@ -456,10 +456,9 @@ class AffinePlaneCurve(AffineCurve):
 
         A cuspidal curve::
 
-            sage: # needs sage.plot
             sage: R.<x, y> = QQ[]
             sage: C = Curve(x^3 - y^2)
-            sage: C.plot()
+            sage: C.plot()                                      # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         A 5-nodal curve of degree 11.  This example also illustrates
