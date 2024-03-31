@@ -1454,13 +1454,6 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
 
         .. SEEALSO:: :func:`~sage.categories.homset.End`, :func:`~sage.categories.homset.Hom`
 
-        TODO::
-
-            The method does not return a endomorphism *ring*, since currently
-            there are no classes for sum (and composition, without computing
-            the rational maps) of endomorphisms. Ideally it should be unified
-            with :class:`sage.schemes.elliptic_curves.hom_sum.EllipticCurveHom_sum`.
-
         EXAMPLES::
 
             sage: R.<x,y> = PolynomialRing(QQ, 2)
