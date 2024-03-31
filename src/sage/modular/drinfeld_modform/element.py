@@ -226,11 +226,11 @@ class DrinfeldModularFormsElement(ModuleElement):
             sage: M.0 < M.1
             Traceback (most recent call last):
             ...
-            TypeError: invalid comparison between Drinfeld modular forms ring elements
+            NotImplementedError: invalid comparison between Drinfeld modular forms ring elements
         """
         if op != op_EQ and op != op_NE:
-            raise TypeError('invalid comparison between Drinfeld'
-                            ' modular forms ring elements')
+            raise NotImplementedError('invalid comparison between Drinfeld'
+                                      ' modular forms ring elements')
         return richcmp(self._polynomial, other._polynomial, op)
 
     def rank(self):
