@@ -870,7 +870,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             # positive characteristic
             if self.is_nilpotent():
-                return self
+                return tuple(self.basis())
 
             from sage.matrix.matrix_space import MatrixSpace
             from sage.matrix.constructor import matrix
@@ -938,11 +938,14 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: S.is_solvable()
                 True
 
-            A positive characteristic example::
+            Positive characteristic examples::
 
                 sage: L.<x,y,z> = LieAlgebra(GF(3), {('x','z'): {'x':1, 'y':1}, ('y','z'): {'y':1}})
                 sage: L.solvable_radical_basis()
-                (x, y)
+                (x, y, z)
+                sage: sl3 = LieAlgebra(GF(3), cartan_type=['A',2])
+                sage: sl3.solvable_radical_basis()
+                (2*h1 + h2,)
             """
             if self.base_ring().characteristic() == 0:
                 P = self.derived_subalgebra()  # same ambient space as self
@@ -956,19 +959,19 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 return tuple([self.from_vector(c) for c in mat.right_kernel().basis_matrix()])
 
             # positive characteristic
-            R = self.nilradical()
-            if not R.dimension():
-                return R
+            if not self.nilradical_basis():
+                return ()
             dim = self.dimension()
+            R = self.nilradical()
             while True:
                 Q = self.quotient(R)
                 RQ = Q.nilradical()
                 if not RQ.dimension():  # we did not add anything
-                    return R
+                    return tuple([self(b) for b in R.basis()])
                 new_gens = [Q.lift(b.value) for b in RQ.basis()]
                 R = self.ideal(list(R.basis()) + new_gens)
                 if R.dimension() == dim:
-                    return tuple(R.basis())
+                    return tuple(self.basis())
 
         def solvable_radical(self):
             r"""
@@ -1570,8 +1573,26 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
                 sage: L.is_semisimple()
                 False
+
+            Positive characteristic examples::
+
+                sage: L.<x,y,z> = LieAlgebra(GF(3), {('x','z'): {'x':1, 'y':1}, ('y','z'): {'y':1}})
+                sage: L.is_semisimple()
+                False
+
+                sage: sp4 = LieAlgebra(GF(3), cartan_type=['C',2])
+                sage: sp4.killing_form_matrix().det()
+                0
+                sage: sp4.solvable_radical_basis()
+                ()
+                sage: sp4.is_semisimple()
+                True
             """
-            return not self.killing_form_matrix().is_singular()
+            if self.base_ring().characteristic() == 0:
+                return not self.killing_form_matrix().is_singular()
+            if not self.killing_form_matrix().is_singular():
+                return True
+            return not self.solvable_radical_basis()
 
         @cached_method(key=_ce_complex_key)
         def chevalley_eilenberg_complex(self, M=None, dual=False, sparse=True, ncpus=None):
@@ -2514,7 +2535,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                           [P.bracket(self, b).to_vector(sparse=sparse) for b in basis],
                           sparse=sparse).transpose()
 
-        def to_vector(self, order=None, sparse=False):
+        def to_vector(self, sparse=False, order=None):
             r"""
             Return the vector in ``g.module()`` corresponding to the
             element ``self`` of ``g`` (where ``g`` is the parent of
