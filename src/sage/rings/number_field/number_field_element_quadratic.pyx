@@ -43,8 +43,8 @@ from cysignals.signals cimport sig_on, sig_off
 from sage.libs.gmp.mpz cimport *
 from sage.libs.gmp.mpq cimport *
 from sage.libs.flint.fmpz cimport *
-from sage.libs.arb.arb cimport *
-from sage.libs.arb.acb cimport *
+from sage.libs.flint.arb cimport *
+from sage.libs.flint.acb cimport *
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZX cimport ntl_ZZX
 from sage.libs.mpfi cimport *

@@ -12,13 +12,13 @@ These are special classes of free monoid elements with distinct printing.
 The internal representation of elements does not use the exponential
 compression of FreeMonoid elements (a feature), and could be packed into words.
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 David Kohel <kohel@maths.usyd.edu.au>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 # import operator
 from sage.rings.integer import Integer
@@ -32,19 +32,21 @@ def is_StringMonoidElement(x):
     """
     return isinstance(x, StringMonoidElement)
 
+
 def is_AlphabeticStringMonoidElement(x):
     r"""
     """
     from .string_monoid import AlphabeticStringMonoid
     return isinstance(x, StringMonoidElement) and \
-           isinstance(x.parent(), AlphabeticStringMonoid)
+        isinstance(x.parent(), AlphabeticStringMonoid)
+
 
 def is_BinaryStringMonoidElement(x):
     r"""
     """
     from .string_monoid import BinaryStringMonoid
     return isinstance(x, StringMonoidElement) and \
-           isinstance(x.parent(), BinaryStringMonoid)
+        isinstance(x.parent(), BinaryStringMonoid)
 
 
 def is_OctalStringMonoidElement(x):
@@ -52,7 +54,7 @@ def is_OctalStringMonoidElement(x):
     """
     from .string_monoid import OctalStringMonoid
     return isinstance(x, StringMonoidElement) and \
-           isinstance(x.parent(), OctalStringMonoid)
+        isinstance(x.parent(), OctalStringMonoid)
 
 
 def is_HexadecimalStringMonoidElement(x):
@@ -60,7 +62,7 @@ def is_HexadecimalStringMonoidElement(x):
     """
     from .string_monoid import HexadecimalStringMonoid
     return isinstance(x, StringMonoidElement) and \
-           isinstance(x.parent(), HexadecimalStringMonoid)
+        isinstance(x.parent(), HexadecimalStringMonoid)
 
 
 def is_Radix64StringMonoidElement(x):
@@ -68,7 +70,7 @@ def is_Radix64StringMonoidElement(x):
     """
     from .string_monoid import Radix64StringMonoid
     return isinstance(x, StringMonoidElement) and \
-           isinstance(x.parent(), Radix64StringMonoid)
+        isinstance(x.parent(), Radix64StringMonoid)
 
 
 class StringMonoidElement(FreeMonoidElement):
@@ -89,7 +91,7 @@ class StringMonoidElement(FreeMonoidElement):
                     if not isinstance(b, (int, Integer)):
                         raise TypeError(
                             "x (= %s) must be a list of integers." % x)
-            self._element_list = list(x) # make copy
+            self._element_list = list(x)  # make copy
         elif isinstance(x, str):
             alphabet = list(self.parent().alphabet())
             self._element_list = []
@@ -312,15 +314,15 @@ class StringMonoidElement(FreeMonoidElement):
         if isinstance(S, BinaryStringMonoid):
             if not n % 8 == 0:
                 "String %s must have even length 0 mod 8 to determine a byte character string." % str(self)
-            pows = [ 2**i for i in range(8) ]
+            pows = [2**i for i in range(8)]
             s = []
             x = self._element_list
             for k in range(n//8):
                 m = 8*k
                 if padic:
-                    c = chr(sum([ x[m+i]*pows[i] for i in range(8) ]))
+                    c = chr(sum([x[m+i] * pows[i] for i in range(8)]))
                 else:
-                    c = chr(sum([ x[m+7-i]*pows[i] for i in range(8) ]))
+                    c = chr(sum([x[m+7-i] * pows[i] for i in range(8)]))
                 s.append(c)
             return ''.join(s)
         raise TypeError(
@@ -328,7 +330,7 @@ class StringMonoidElement(FreeMonoidElement):
 
     def coincidence_index(self, prec=0):
         """
-        Returns the probability of two randomly chosen characters being equal.
+        Return the probability of two randomly chosen characters being equal.
         """
         if prec == 0:
             RR = RealField()
@@ -424,10 +426,12 @@ class StringMonoidElement(FreeMonoidElement):
 
     def frequency_distribution(self, length=1, prec=0):
         """
-        Returns the probability space of character frequencies. The output
-        of this method is different from that of the method
+        Return the probability space of character frequencies.
+
+        The output of this method is different from that of the method
         :func:`characteristic_frequency()
         <sage.monoids.string_monoid.AlphabeticStringMonoid.characteristic_frequency>`.
+
         One can think of the characteristic frequency probability of an
         element in an alphabet `A` as the expected probability of that element
         occurring. Let `S` be a string encoded using elements of `A`. The

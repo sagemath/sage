@@ -158,7 +158,7 @@ class AmbientSpace(Scheme):
 
     def change_ring(self, R):
         r"""
-        Return an ambient space over ring `R` and otherwise the same as self.
+        Return an ambient space over ring `R` and otherwise the same as ``self``.
 
         INPUT:
 

@@ -1,14 +1,14 @@
 # distutils: libraries = flint
 r"""
-Arbitrary precision complex ball matrices using Arb
+Arbitrary precision complex ball matrices
 
 AUTHORS:
 
 - Clemens Heuberger (2014-10-25): Initial version.
 
-This is a rudimentary binding to the `Arb library
-<http://arblib.org>`_; it may be useful to refer to its
-documentation for more details.
+This is an incomplete interface to the `acb_mat module
+<https://flintlib.org/doc/acb_mat.html>`_ of FLINT; it may be useful to refer
+to its documentation for more details.
 
 TESTS::
 
@@ -36,8 +36,8 @@ from cpython.object cimport Py_EQ, Py_NE
 from cysignals.signals cimport sig_on, sig_str, sig_off
 
 from sage.arith.power cimport generic_power_pos
-from sage.libs.arb.acb cimport *
-from sage.libs.arb.acb_mat cimport *
+from sage.libs.flint.acb cimport *
+from sage.libs.flint.acb_mat cimport *
 from sage.libs.gmp.mpz cimport mpz_fits_ulong_p, mpz_get_ui
 from sage.matrix.constructor import matrix
 from sage.matrix.args cimport SparseEntry, MatrixArgs_init
@@ -120,7 +120,7 @@ cdef inline long prec(Matrix_complex_ball_dense mat) noexcept:
 cdef class Matrix_complex_ball_dense(Matrix_dense):
     """
     Matrix over a complex ball field. Implemented using the
-    ``acb_mat`` type of the Arb library.
+    ``acb_mat`` type of the FLINT library.
 
     EXAMPLES::
 
@@ -143,7 +143,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
             sage: type(a)
             <class 'sage.matrix.matrix_complex_ball_dense.Matrix_complex_ball_dense'>
         """
-        sig_str("Arb exception")
+        sig_str("FLINT exception")
         acb_mat_init(self.value, self._nrows, self._ncols)
         sig_off()
 
@@ -695,7 +695,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         There is currently no guarantee that the algorithm converges as the
         working precision is increased.
 
-        See the `Arb documentation <http://arblib.org/acb_mat.html#c.acb_mat_eig_multiple>`__
+        See the `FLINT documentation <https://flintlib.org/doc/acb_mat.html#c.acb_mat_eig_multiple>`__
         for more information.
 
         EXAMPLES::
@@ -764,7 +764,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
 
         No guarantees are made about the accuracy of the output.
 
-        See the `Arb documentation <http://arblib.org/acb_mat.html#c.acb_mat_approx_eig_qr>`__
+        See the `FLINT documentation <https://flintlib.org/doc/acb_mat.html#c.acb_mat_approx_eig_qr>`__
         for more information.
 
         EXAMPLES::
@@ -822,7 +822,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         Additionally, there is currently no guarantee that the algorithm
         converges as the working precision is increased.
 
-        See the `Arb documentation <http://arblib.org/acb_mat.html#c.acb_mat_eig_simple>`__
+        See the `FLINT documentation <https://flintlib.org/doc/acb_mat.html#c.acb_mat_eig_simple>`__
         for more information.
 
         EXAMPLES::
@@ -882,7 +882,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
 
         No guarantees are made about the accuracy of the output.
 
-        See the `Arb documentation <http://arblib.org/acb_mat.html#c.acb_mat_approx_eig_qr>`__
+        See the `FLINT documentation <https://flintlib.org/doc/acb_mat.html#c.acb_mat_approx_eig_qr>`__
         for more information.
 
         EXAMPLES::
@@ -921,7 +921,7 @@ cdef class Matrix_complex_ball_dense(Matrix_dense):
         Additionally, there is currently no guarantee that the algorithm
         converges as the working precision is increased.
 
-        See the `Arb documentation <http://arblib.org/acb_mat.html#c.acb_mat_eig_simple>`__
+        See the `FLINT documentation <https://flintlib.org/doc/acb_mat.html#c.acb_mat_eig_simple>`__
         for more information.
 
         EXAMPLES::

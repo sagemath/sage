@@ -108,7 +108,7 @@ def mode(v):
     in `v`, then the mode is the list of elements of `v` that
     occur `n` times. The list is sorted if possible.
 
-    This function is deprecated.  Use :func:`scipy.stats.mode` or
+    This function is deprecated.  Use :func:`scipy:scipy.stats.mode` or
     :func:`statistics.mode` instead.
 
     .. NOTE::

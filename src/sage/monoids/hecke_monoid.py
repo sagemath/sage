@@ -1,15 +1,15 @@
-# -*- coding: utf-8 -*-
 """
 Hecke Monoids
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2015 Nicolas M. Thiéry <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.misc.cachefunc import cached_function
 from sage.sets.finite_set_maps import FiniteSetMaps
+
 
 @cached_function
 def HeckeMonoid(W):

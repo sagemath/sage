@@ -1133,9 +1133,7 @@ class RingDerivationWithoutTwist(RingDerivation):
         parent = self.parent()
         if parent.domain() is not parent.codomain():
             raise TypeError("the bracket is only defined for derivations with same domain and codomain")
-        arg = [ ]
-        for x in parent.dual_basis():
-            arg.append(self(other(x)) - other(self(x)))
+        arg = [self(other(x)) - other(self(x)) for x in parent.dual_basis()]
         return parent(arg)
 
     def pth_power(self):
@@ -1268,9 +1266,7 @@ class RingDerivationWithoutTwist(RingDerivation):
         elif not (isinstance(morphism, Map) and morphism.category_for().is_subcategory(Rings())):
             raise TypeError("you must give a homomorphism of rings")
         M = RingDerivationModule(morphism.domain(), parent.defining_morphism() * morphism)
-        arg = [ ]
-        for x in M.dual_basis():
-            arg.append(self(morphism(x)))
+        arg = [self(morphism(x)) for x in M.dual_basis()]
         return M(arg)
 
     def postcompose(self, morphism):
@@ -1328,9 +1324,7 @@ class RingDerivationWithoutTwist(RingDerivation):
         elif not (isinstance(morphism, Map) and morphism.category_for().is_subcategory(Rings())):
             raise TypeError("you must give a homomorphism of rings")
         M = RingDerivationModule(parent.domain(), morphism * parent.defining_morphism())
-        arg = [ ]
-        for x in M.dual_basis():
-            arg.append(morphism(self(x)))
+        arg = [morphism(self(x)) for x in M.dual_basis()]
         return M(arg)
 
     def extend_to_fraction_field(self):
