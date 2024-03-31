@@ -316,7 +316,20 @@ cdef class MatrixArgs:
             sage: MatrixArgs(3, ncols=1).finalized()
             <MatrixArgs for Full MatrixSpace of 1 by 1 dense matrices over Integer Ring; typ=SCALAR; entries=3>
         """
-        self.base = ring
+        # Treating the case where base_ring keyword argument is given
+        if "base_ring" in kwds.keys():
+            if ring is not None:
+                if ring is not kwds["base_ring"]:
+                    raise TypeError("positional argument ring and keyword argument base_ring have different values")
+                else:
+                    kwds.pop("base_ring", None)
+                    self.base = ring
+            else:
+                self.base = kwds["base_ring"]
+                kwds.pop("base_ring", None)
+        else:
+            self.base = ring
+
         if nrows is not None:
             self.set_nrows(pyobject_to_long(nrows))
         if ncols is not None:
