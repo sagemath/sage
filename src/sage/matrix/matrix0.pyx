@@ -157,6 +157,28 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         return list(self._list())
 
+    def dense_coefficient_list(self, order=None) -> list:
+        """
+        Return a list of *all* coefficients of ``self``.
+
+        By default, this is the same as :meth:`list`.
+
+        INPUT:
+
+        - ``order`` -- (optional) an ordering of the basis indexing set
+
+        EXAMPLES::
+
+            sage: A = matrix([[1,2,3], [4,5,6]])
+            sage: A.dense_coefficient_list()
+            [1, 2, 3, 4, 5, 6]
+            sage: A.dense_coefficient_list([(1,2), (1,0), (0,1), (0,2), (0,0), (1,1)])
+            [6, 4, 2, 3, 1, 5]
+        """
+        if order is None:
+            return self.list()
+        return [self[i] for i in order]
+
     def _list(self):
         """
         Unsafe version of the ``list`` method, mainly for internal use.
