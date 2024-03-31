@@ -974,7 +974,8 @@ class DocstringTransform(SphinxTransform):
                     node.insert(0, admonition_title)
                     node.append(list_node)
                     node.parent.remove(list_node)
-            if isinstance(node.children[0], nodes.Text):
+            # Not applied for now, Issue #37614
+            if False and isinstance(node.children[0], nodes.Text):
                 text = node.children[0].astext()
                 for section in ['INPUT', 'OUTPUT', 'EXAMPLES', 'EXAMPLE', 'TESTS', 'TEST',
                                 'ALGORITHM', 'REFERENCE', 'REFERENCES']:
