@@ -1699,7 +1699,7 @@ cdef object si2sa_intvec(intvec *v):
         l.append(v.get(r))
     return tuple(l)
 
-cdef object si2sa_bigintvec(bigintmat *v) noexcept:
+cdef object si2sa_bigintvec(bigintmat *v):
     r"""
     create a sage tuple from a singular vector of big integers
 
