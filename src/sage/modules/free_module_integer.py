@@ -332,7 +332,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         A lattice basis `(b_1, b_2, ..., b_d)` is `(\delta, \eta)`-LLL-reduced
         if the two following conditions hold:
 
-        -  For any `i > j`, we have `\lvert \mu_{i, j} \rvert \leq η`.
+        -  For any `i > j`, we have `\lvert \mu_{i, j} \rvert \leq \eta`.
 
         -  For any `i < d`, we have
            `\delta \lvert b_i^* \rvert^2 \leq \lvert b_{i+1}^* +
@@ -342,12 +342,13 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         \rangle` and `b_i^*` is the `i`-th vector of the Gram-Schmidt
         orthogonalisation of `(b_1, b_2, \ldots, b_d)`.
 
-        The default reduction parameters are `\delta = 3/4` and
+        The default reduction parameters are `\delta = 0.99` and
         `\eta = 0.501`.
 
         The parameters `\delta` and `\eta` must satisfy:
         `0.25 < \delta \leq 1.0` and `0.5 \leq \eta < \sqrt{\delta}`.
         Polynomial time complexity is only guaranteed for `\delta < 1`.
+        Not every algorithm admits the case `\delta = 1`.
 
         INPUT:
 
