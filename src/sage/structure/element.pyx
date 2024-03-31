@@ -2845,9 +2845,7 @@ cdef class RingElement(ModuleElement):
             True
             sage: m = matrix(QQ, 3, [[3,2,3], [9,0,3], [-9,0,-3]])                      # needs sage.modules
             sage: m.is_nilpotent()                                                      # needs sage.modules
-            Traceback (most recent call last):
-            ...
-            AttributeError: '...' object has no attribute 'is_nilpotent'...
+            True
         """
         if self.is_unit():
             return False
