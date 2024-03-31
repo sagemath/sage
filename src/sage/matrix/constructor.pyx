@@ -84,6 +84,9 @@ def matrix(*args, **kwds):
     - ``immutable`` -- (boolean) make the matrix immutable. By default,
       the output matrix is mutable.
 
+    - ``base_ring`` -- another way of specifying the base ring of a matrix.
+      Must not be different from the ``ring`` positional argument if both are specified.
+
 
     OUTPUT:
 
@@ -257,10 +260,19 @@ def matrix(*args, **kwds):
         sage: m = matrix(ring=QQ); m; m.parent()
         []
         Full MatrixSpace of 0 by 0 dense matrices over Rational Field
+        sage: m = matrix(base_ring=QQ); m; m.parent()
+        []
+        Full MatrixSpace of 0 by 0 dense matrices over Rational Field
+        sage: m = matrix(ring=QQ, base_ring=QQ); m; m.parent()
+        []
+        Full MatrixSpace of 0 by 0 dense matrices over Rational Field
         sage: m = matrix(0); m; m.parent()
         []
         Full MatrixSpace of 0 by 0 dense matrices over Integer Ring
         sage: m = matrix(0, 0, ring=QQ); m; m.parent()
+        []
+        Full MatrixSpace of 0 by 0 dense matrices over Rational Field
+        sage: m = matrix(0, 0, base_ring=QQ); m; m.parent()
         []
         Full MatrixSpace of 0 by 0 dense matrices over Rational Field
         sage: m = matrix([]); m; m.parent()
@@ -618,6 +630,17 @@ def matrix(*args, **kwds):
         Traceback (most recent call last):
         ...
         TypeError: too many arguments in matrix constructor
+
+    You cannot specify ``ring`` and ``base_ring`` simultaneously,
+    unless they have the same value ::
+
+        sage: m = matrix(ring=ZZ, base_ring=QQ);
+        Traceback (most recent call last):
+        ...
+        TypeError: positional argument ring and keyword argument base_ring have different values
+        sage: m = matrix(ring=QQ, base_ring=QQ); m; m.parent()
+        []
+        Full MatrixSpace of 0 by 0 dense matrices over Rational Field
 
     Some calls using an iterator::
 
