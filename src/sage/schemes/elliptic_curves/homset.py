@@ -57,7 +57,6 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.rings.integer_ring import ZZ
-from sage.categories.morphism import Morphism
 from sage.schemes.generic.homset import SchemeHomset_generic
 from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
 
@@ -101,7 +100,6 @@ class EllipticCurveHomset(SchemeHomset_generic):
             sage: E2 = EllipticCurve(GF(101), [4,9])
             sage: H = Hom(E1, E2)
             sage: TestSuite(H).run(skip='_test_elements')
-            # PR_TODO: Fix
 
         ::
 
@@ -231,24 +229,6 @@ class EllipticCurveHomset(SchemeHomset_generic):
         s += f'\n  From: {self.domain()}'
         s += f'\n  To:   {self.codomain()}'
         return s
-
-    def identity(self):
-        r"""
-        Return the identity morphism in this elliptic-curve homset
-        as an :class:`EllipticCurveHom` object.
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve(j=42)
-            sage: End(E).identity()
-            Elliptic-curve endomorphism of Elliptic Curve defined by y^2 = x^3 + 5901*x + 1105454 over Rational Field
-              Via:  (u,r,s,t) = (1, 0, 0, 0)
-            sage: End(E).identity() == E.scalar_multiplication(1)
-            True
-        """
-        if not self.is_endomorphism_set():
-            raise ValueError('domain and codomain must be equal')
-        return self.domain().identity_morphism()
 
     def is_commutative(self):
         r"""

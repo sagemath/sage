@@ -176,7 +176,7 @@ class SchemeHomsetFactory(UniqueFactory):
             from sage.categories.schemes import Schemes
             category = Schemes(base_spec)
         key = (id(X), id(Y), category, as_point_homset)
-        extra = {'X':X, 'Y':Y, 'base_ring':base_ring, 'check':check}
+        extra = {'X': X, 'Y': Y, 'base_ring': base_ring, 'check': check}
         return key, extra
 
     def create_object(self, version, key, **extra_args):
@@ -263,8 +263,9 @@ class SchemeHomset_generic(HomsetWithBase):
             sage: loads(Hom.dumps()) == Hom
             True
         """
-        return SchemeHomset, (self.domain(), self.codomain(), self.homset_category(),
-                              self.base_ring(), False, False)
+        return SchemeHomset, (self.domain(), self.codomain(),
+                              self.homset_category(), self.base_ring(), False,
+                              False)
 
     def __call__(self, *args, **kwds):
         r"""
@@ -342,13 +343,17 @@ class SchemeHomset_generic(HomsetWithBase):
 
     def identity(self):
         r"""
-        Return the identity morphism in this homset as an
-        :class:`SchemeMorphism` object.
+        Return the identity morphism in this homset.
 
-        .. SEEALSO:: :method:`natural_map`
+        Only implemented when this homset is an endomorphism set. In this case,
+        either the :meth:`identity_morphism` of the domain is returned, or a
+        :class:`SchemeMorphism_id` class is constructed.
+
+        .. SEEALSO:: :meth:`natural_map`
 
         EXAMPLES::
 
+            sage: End(Spec(QQ)).identity()
             Scheme endomorphism of Spectrum of Rational Field
               Defn: Identity map
 
@@ -356,17 +361,29 @@ class SchemeHomset_generic(HomsetWithBase):
             Traceback (most recent call last):
             ...
             ValueError: domain and codomain must be equal
+
+        Elliptic curves have a custom :meth:`identity_morphism`::
+
+            sage: E = EllipticCurve(j=42)
+            sage: End(E).identity()
+            Elliptic-curve endomorphism of Elliptic Curve defined by y^2 = x^3 + 5901*x + 1105454 over Rational Field
+              Via:  (u,r,s,t) = (1, 0, 0, 0)
+            sage: End(E).identity() == E.scalar_multiplication(1)
+            True
         """
         if not self.is_endomorphism_set():
             raise ValueError('domain and codomain must be equal')
-        from sage.schemes.generic.morphism import SchemeMorphism_id
-        return SchemeMorphism_id(self.domain())
+        try:
+            return self.domain().identity_morphism()
+        except AttributeError:
+            from sage.schemes.generic.morphism import SchemeMorphism_id
+            return SchemeMorphism_id(self.domain())
 
     def _an_element_(self):
         r"""
-        Return a morphism from this homset via the :meth:`natural_map`. In
-        particular, it returns the identity map when this is an endomorphism
-        set.
+        Return a morphism from this homset via the
+        :meth:`natural_map`, or :meth:`zero` if a natural map does
+        not exist.
 
         EXAMPLES::
 
@@ -374,7 +391,10 @@ class SchemeHomset_generic(HomsetWithBase):
             Scheme endomorphism of Spectrum of Rational Field
               Defn: Identity map
         """
-        return self.natural_map()
+        try:
+            return self.natural_map()
+        except NotImplementedError:
+            return self.zero()
 
     def _element_constructor_(self, x, check=True):
         """
@@ -623,7 +643,7 @@ class SchemeHomset_points(SchemeHomset_generic):
             except AttributeError:  # no .ambient_space
                 return False
         elif isinstance(other, SchemeHomset_points):
-        #we are converting between scheme points
+            #we are converting between scheme points
             source = other.codomain()
             if isinstance(target, AlgebraicScheme_subscheme):
                 #subscheme coerce when there is containment

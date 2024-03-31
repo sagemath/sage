@@ -142,6 +142,21 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         sage: J1 == J2
         False
     """
+    def zero(self):
+        """
+        Return the additive identity of this Jacobian.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: J = HyperellipticCurve(x^5 + x + 1).jacobian()
+            sage: J.zero()
+            (1)
+            sage: J.zero() == J(0) == J.point(0)
+            True
+        """
+        return self.point(0)
+
     def dimension(self):
         """
         Return the dimension of this Jacobian.

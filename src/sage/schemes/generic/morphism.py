@@ -352,21 +352,15 @@ class SchemeMorphism(Element):
 
         EXAMPLES::
 
-            sage: phi = Spec(QQ).End().identity()
+            sage: R.<x> = QQ[]
+            sage: J = HyperellipticCurve(x^5 + x + 1).jacobian()
+            sage: phi = End(J).identity()
             sage: phi + phi
             Sum morphism:
-              From: Set of morphisms
-              From: Spectrum of Rational Field
-              To:   Spectrum of Rational Field
-              To:   Set of morphisms
-              From: Spectrum of Rational Field
-              To:   Spectrum of Rational Field
-              Via:  (Scheme endomorphism of Set of morphisms
-              From: Spectrum of Rational Field
-              To:   Spectrum of Rational Field
-              Defn: Identity map, Scheme endomorphism of Set of morphisms
-              From: Spectrum of Rational Field
-              To:   Spectrum of Rational Field
+              From: Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + x + 1
+              To:   Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + x + 1
+              Via:  (Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + x + 1
+              Defn: Identity map, Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + x + 1
               Defn: Identity map)
         """
         phis = []
@@ -716,7 +710,18 @@ class SchemeMorphism_sum(SchemeMorphism):
 
     EXAMPLES::
 
-        PR_TODO
+        sage: R.<x> = QQ[]
+        sage: J = HyperellipticCurve(x^5 - 8*x).jacobian()
+        sage: phi = End(J).identity(); phi
+        Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+          Defn: Identity map
+        sage: psi = phi + phi; psi
+        Sum morphism:
+          From: Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+          To:   Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+          Via:  (Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+          Defn: Identity map, Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+          Defn: Identity map)
     """
 
     _phis = None
@@ -731,9 +736,34 @@ class SchemeMorphism_sum(SchemeMorphism):
         EXAMPLES::
 
             sage: from sage.schemes.generic.morphism import SchemeMorphism_sum
+            sage: R.<x> = QQ[]
+            sage: J = HyperellipticCurve(x^5 - 8*x).jacobian()
+            sage: phi = End(J).identity(); phi
+            Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+              Defn: Identity map
+            sage: psi = SchemeMorphism_sum([phi, phi, phi]); psi
+            Sum morphism:
+              From: Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+              To:   Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+              Via:  (Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+              Defn: Identity map, Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+              Defn: Identity map, Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+              Defn: Identity map)
+            sage: phi + phi == phi + phi
+            True
+            sage: psi == phi + phi + phi
+            True
+
+            sage: P = J(2, 4); (P, psi(P), P * 3)
+            ((2, y - 4), (1), (1))
+
+        The codomain should implement addition::
+
             sage: phi = Spec(QQ).identity_morphism()
             sage: SchemeMorphism_sum([phi, phi])
-            PR_TODO
+            Traceback (most recent call last):
+            ...
+            ValueError: addition is not implemented for Spectrum of Rational Field
 
         The zero morphism can be defined when the codomain implements addition::
 
@@ -778,7 +808,7 @@ class SchemeMorphism_sum(SchemeMorphism):
 
         EXAMPLES::
 
-            ...
+            PR_TODO
         """
         return sum((phi(P) for phi in self._phis), self._codomain.zero())
 
@@ -788,7 +818,7 @@ class SchemeMorphism_sum(SchemeMorphism):
 
         EXAMPLES::
 
-            ...
+            PR_TODO
         """
         return f'Sum morphism:' \
                 f'\n  From: {self._domain}' \
@@ -801,9 +831,40 @@ class SchemeMorphism_sum(SchemeMorphism):
 
         EXAMPLES::
 
-            wrong
+            PR_TODO
         """
         return self._phis
+
+    # PR_TODO: Implement equality check
+    # How to do it non-stupidly?
+    def _richcmp_(self, other, op):
+        r"""
+        Help.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: J = HyperellipticCurve(x^5 - 8*x).jacobian()
+            sage: phi = End(J).identity()
+            sage: phi == phi
+            True
+            sage: phi + phi == phi + phi
+            True
+            sage: phi + phi == phi + phi + phi
+            False
+            sage: sorted([phi + phi, phi + phi])
+            Traceback (most recent call last):
+            ...
+            TypeError: '<' not supported between instances of 'SchemeMorphism_sum' and 'SchemeMorphism_sum'
+        """
+        if not isinstance(other, SchemeMorphism_sum):
+            return self._richcmp_(SchemeMorphism_sum([other]), op)
+
+        from sage.structure.richcmp import op_EQ
+        if op != op_EQ:
+            return NotImplemented
+
+        return self._phis == other._phis
 
 
 class SchemeMorphism_id(SchemeMorphism):
@@ -867,14 +928,14 @@ class SchemeMorphism_id(SchemeMorphism):
         EXAMPLES::
 
             sage: S = Spec(QQ).an_element()
-            sage: Spec(QQ).End().identity()(S) == S
+            sage: End(Spec(QQ)).identity()(S) == S
             True
 
             sage: R.<x> = QQ[]
             sage: J = HyperellipticCurve(x^5 - 8*x).jacobian()
             sage: P = J(2, 4); P
             (2, y - 4)
-            sage: phi = J.End().identity(); phi
+            sage: phi = End(J).identity(); phi
             Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
               Defn: Identity map
             sage: phi(P)
