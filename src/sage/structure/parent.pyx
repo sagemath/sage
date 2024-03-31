@@ -1467,7 +1467,7 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
         This example illustrates the optional third argument::
 
             sage: QQ.End(Sets())
-            Set of Morphisms from Rational Field to Integer Ring in Category of sets
+            Set of Morphisms from Rational Field to Rational Field in Category of sets
         """
         from sage.categories.homset import End
         return End(self, category)
