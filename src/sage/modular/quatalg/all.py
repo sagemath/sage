@@ -1,2 +1,2 @@
 
-from .brandt import BrandtModule
+from sage.modular.quatalg.brandt import BrandtModule

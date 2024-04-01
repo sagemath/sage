@@ -12,7 +12,7 @@ from sage.structure.element import (
     get_coercion_model,
     coercion_traceback,
     parent
-    )
+)
 
 from sage.structure.parent import Parent
 
