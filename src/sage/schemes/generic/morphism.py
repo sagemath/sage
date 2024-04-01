@@ -380,7 +380,7 @@ class SchemeMorphism(Element):
         else:
             phis.append(other)
 
-        #TODO should probably try to simplify some more?
+        # TODO should probably try to simplify some more?
         assert other.domain() == self.domain() and other.codomain() == self.codomain()
         return SchemeMorphism_sum(phis, domain=self.domain(), codomain=self.codomain())
 
@@ -937,7 +937,7 @@ class SchemeMorphism_sum(SchemeMorphism):
             sage: J = HyperellipticCurve(x^5 - 8*x).jacobian()
             sage: phi = End(J).identity()
             sage: psi = phi + phi
-            sage: hash(phi) == hash((phi.__class__, J, J, (phi, phi)))
+            sage: hash(psi) == hash((psi.__class__, J, J, (phi, phi)))
             True
         """
         return hash((self.__class__, self.codomain(), self.domain(),
@@ -1347,7 +1347,7 @@ class SchemeMorphism_polynomial(SchemeMorphism):
 
             sage: A.<x,y> = AffineSpace(2, QQ)
             sage: phi = A.hom([2*x, 2*y], A)
-            sage: hash(phi) == hash(phi.__class__, A, A, (2*x, 2*y))
+            sage: hash(phi) == hash((phi.__class__, A, A, (2*x, 2*y)))
             True
         """
         return hash((self.__class__, self.domain(), self.codomain(), self._polys))
