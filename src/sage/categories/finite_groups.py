@@ -48,7 +48,7 @@ class FiniteGroups(CategoryWithAxiom):
 
         def semigroup_generators(self):
             """
-            Returns semigroup generators for self.
+            Return semigroup generators for ``self``.
 
             For finite groups, the group generators are also semigroup
             generators. Hence, this default implementation calls

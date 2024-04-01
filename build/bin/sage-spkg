@@ -355,8 +355,9 @@ export SAGE_DESTDIR="${SAGE_BUILD_DIR}/${PKG_NAME}/inst"
 # end of spkg-install.
 export SAGE_DESTDIR_LOCAL="${SAGE_DESTDIR}${SAGE_INST_LOCAL}"
 
-INSTALLED_SCRIPTS="prerm piprm postrm"
-WRAPPED_SCRIPTS="build install check preinst postinst $INSTALLED_SCRIPTS"
+INSTALLED_SCRIPTS_DEST="$SAGE_SPKG_SCRIPTS/$PKG_BASE"
+INSTALLED_SCRIPTS="prerm piprm postrm check"
+WRAPPED_SCRIPTS="build install preinst pipinst postinst $INSTALLED_SCRIPTS"
 
 
 warning_for_experimental_packages() { ############################
@@ -490,7 +491,7 @@ if [ -z "$PKG_NAME_UPSTREAM" ]; then
     if [ -d "$PKG_SCRIPTS"/src ]; then
         ln -s $(cd "$PKG_SCRIPTS"/src && pwd -P) "$PKG_NAME"/src
     fi
-    for a in build install check preinst postinst; do  # replace by use of $WRAPPED_SCRIPTS later
+    for a in $WRAPPED_SCRIPTS; do
         if [ -r "$PKG_SCRIPTS"/spkg-$a.in ]; then
             cp "$PKG_SCRIPTS"/spkg-$a.in "$PKG_NAME"/
         elif [ -x "$PKG_SCRIPTS"/spkg-$a ]; then
@@ -544,6 +545,7 @@ prepare_for_installation() { #####################################
 write_script_wrapper() {
     local script="$1"
     local script_dir="$2"
+    local fallback_script_dir="$3"
 
     trap "echo >&2 Error: Unexpected error writing wrapper script for $script; exit \$_" ERR
 
@@ -584,6 +586,14 @@ if [ \$? -ne 0 ]; then
     exit 1
 fi
 
+__EOF__
+    if [ -n "$fallback_script_dir" ]; then
+        cat >> "$tmpscript" <<__EOF__
+cd "\$SAGE_PKG_DIR" 2>/dev/null || cd "$fallback_script_dir"
+
+__EOF__
+    else
+        cat >> "$tmpscript" <<__EOF__
 cd "\$SAGE_PKG_DIR"
 if [ \$? -ne 0 ]; then
     echo >&2 "Error: could not cd to the package build directory \$SAGE_PKG_DIR"
@@ -591,7 +601,7 @@ if [ \$? -ne 0 ]; then
 fi
 
 __EOF__
-
+    fi
     cat "$script.in" >> "$tmpscript"
     mv "$tmpscript" "$script"
     chmod +x "$script"
@@ -607,20 +617,29 @@ touch spkg-piprm.in
 # or sdh_store_and_pip_install_wheel.
 touch spkg-pipinst.in
 
-for script in $WRAPPED_SCRIPTS pipinst; do  # pipinst can be added to WRAPPED_SCRIPTS later
+for script in $WRAPPED_SCRIPTS; do
     # 'Installed' scripts are not run immediately out of the package build
-    # directory, and may be run later, so set their root directory to
-    # $SAGE_ROOT
-    if echo "$INSTALLED_SCRIPTS" | grep -w "$script" > /dev/null; then
-        script_dir="$SAGE_ROOT"
-    else
-        script_dir="$(pwd)"
-    fi
+    # directory, and may be run later.
+    # For the installed *rm scripts, set their root directory to $SAGE_ROOT.
+    # For the installed check scripts, some need the temporary build directory,
+    # others are OK with $PKG_SCRIPTS. So try to run out of the temporary
+    # build directory but fall back to the latter.
+    case $script in
+        check) script_dir="$(pwd)"
+               fallback_script_dir="$PKG_SCRIPTS"
+               ;;
+        *rm)   script_dir="\$SAGE_ROOT"
+               fallback_script_dir=
+               ;;
+        *)     script_dir="$(pwd)"
+               fallback_script_dir=
+               ;;
+    esac
 
     script="spkg-$script"
 
     if [ -f "$script.in" ]; then
-            write_script_wrapper "$(pwd)/$script" "$script_dir"
+        write_script_wrapper "$(pwd)/$script" "$script_dir" "$fallback_script_dir"
     fi
 done
 } ####################################### prepare_for_installation
@@ -735,15 +754,14 @@ install_scripts() { ##############################################
 # Some spkg scripts, if they exist, should also be installed to
 # $SAGE_SPKG_SCRIPTS; they are not included in the package's manifest, but are
 # removed by sage-spkg-uninstall
-INSTALLED_SCRIPTS_DEST="$SAGE_SPKG_SCRIPTS/$PKG_BASE"
 
-if [ ! -f $INSTALLED_SCRIPTS_DEST/spkg-requirements.txt ]; then
+if [ ! -f "$INSTALLED_SCRIPTS_DEST"/spkg-requirements.txt ]; then
     # No packages to uninstall with pip, so remove the prepared uninstall script
     # and the prepared deferred installation script
     rm -f spkg-piprm spkg-piprm.in spkg-pipinst spkg-pipinst.in
 fi
 
-for script in $INSTALLED_SCRIPTS pipinst; do  # pipinst can be added to WRAPPED_SCRIPTS later
+for script in $INSTALLED_SCRIPTS; do
     script="spkg-$script"
 
     if [ -f "$script" ]; then
@@ -788,11 +806,14 @@ run_test_suite() { ###############################################
 # SAGE_INST_LOCAL.  It might make more sense to run the tests before, but the
 # spkg-check scripts were written before use of DESTDIR installs, and so
 # fail in many cases.  This might be good to change later.
+    if ! cd "$SAGE_BUILD_DIR/$PKG_NAME" 2>/dev/null; then
+        cd "$PKG_SCRIPTS" || exit $?
+    fi
 
-if [ "$SAGE_CHECK" = "yes" -o "$SAGE_CHECK" = "warn" ]; then
-    if [ -f spkg-check ]; then
+    if [ -f "$INSTALLED_SCRIPTS_DEST"/spkg-check ]; then
         echo "Running the test suite for $PKG_NAME..."
-        time ./spkg-check
+        export PKG_BASE
+        time "$INSTALLED_SCRIPTS_DEST"/spkg-check
         if [ $? -ne 0 ]; then
             TEST_SUITE_RESULT="failed"
             if [ "$SAGE_CHECK" = "warn" ]; then
@@ -807,11 +828,15 @@ if [ "$SAGE_CHECK" = "yes" -o "$SAGE_CHECK" = "warn" ]; then
             TEST_SUITE_RESULT="passed"
             echo "Passed the test suite for $PKG_NAME."
         fi
+    elif [ -f "$PKG_SCRIPTS"/spkg-check.in -o -f "$PKG_SCRIPTS"/spkg-check ]; then
+        echo "The test suite for $PKG_NAME cannot be run because the script"
+        echo "$INSTALLED_SCRIPTS_DEST/spkg-check"
+        echo "is missing. Install/re-install package $PKG_NAME to run the test suite."
+        exit 1
     else
         echo "Package $PKG_NAME has no test suite."
         TEST_SUITE_RESULT="not available"
     fi
-fi
 } ################################################# run_test_suite
 
 write_installation_record() { ####################################
@@ -889,17 +914,18 @@ if [ $INSTALL = 1 ]; then
     extract_the_package
     prepare_for_installation
     actually_build_and_install
-else
-    cd "$SAGE_BUILD_DIR/$PKG_NAME" || exit $?
 fi
 
 if [ $POST_INSTALL = 1 ]; then
+    cd "$SAGE_BUILD_DIR/$PKG_NAME" || exit $?
     unload_destdir
     install_scripts
     post_install
 fi
 
-run_test_suite
+if [ "$SAGE_CHECK" = "yes" -o "$SAGE_CHECK" = "warn" ]; then
+    run_test_suite
+fi
 
 if [ $POST_INSTALL = 1 ]; then
     write_installation_record

@@ -64,8 +64,8 @@ matrices and Latin squares. See:
 # ****************************************************************************
 from copy import copy
 
-from sage.rings.ring import is_Ring
 import sage.matrix.matrix_space as matrix_space
+from sage.categories.rings import Rings
 from sage.modules.free_module_element import vector
 from sage.structure.element import is_Matrix, parent
 from sage.structure.sequence import Sequence
@@ -845,7 +845,7 @@ def diagonal_matrix(arg0=None, arg1=None, arg2=None, sparse=True):
     # Leads with a ring?
     # Formats 3, 4, else remains None
     ring = None
-    if is_Ring(arg0):
+    if arg0 in Rings():
         ring = arg0
         arg0 = arg1
         arg1 = arg2
@@ -1414,10 +1414,10 @@ def elementary_matrix(arg0, arg1=None, **kwds):
     """
     import sage.structure.element
     # determine ring and matrix size
-    if arg1 is not None and not is_Ring(arg0):
+    if arg1 is not None and arg0 not in Rings():
         raise TypeError('optional first parameter must be a ring, not {0}'.format(arg0))
     scale = kwds.pop('scale', None)
-    if is_Ring(arg0):
+    if arg0 in Rings():
         R = arg0
         arg0 = arg1
     elif scale is not None:
@@ -1602,7 +1602,7 @@ def _determine_block_matrix_grid(sub_matrices):
                 if is_Matrix(M):
                     sub_width = M.ncols()
                     sub_height = M.nrows()
-                elif M: # non-zero scalar is interpreted as a square matrix
+                elif M:  # non-zero scalar is interpreted as a square matrix
                     if row_heights[i] is None:
                         sub_width = col_widths[j]
                     else:
@@ -1939,7 +1939,7 @@ def block_matrix(*args, **kwds):
         else:
             return matrix_space.MatrixSpace(ZZ, 0, 0)([])
 
-    if len(args) >= 1 and is_Ring(args[0]):
+    if len(args) >= 1 and args[0] in Rings():
         # A ring is specified
         if kwds.get('ring', args[0]) != args[0]:
             raise ValueError("base ring specified twice and they are different")
@@ -2092,7 +2092,7 @@ def block_matrix(*args, **kwds):
                     M = matrix(ring, row_heights[i], zero_widths[i], 0, sparse=sparse)
                     zero_widths[i] = 0
                 else:
-                    continue # zero-width matrix
+                    continue  # zero-width matrix
             else:
                 if zero_widths is not None:
                     M = matrix(ring, row_heights[i], row_heights[i], M, sparse=sparse)
@@ -2722,7 +2722,7 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
     if ring is QQ or ring is ZZ:
         # If upper_bound is not set, don't control entry size.
         if upper_bound is None:
-        # If size control is not desired, the routine will run slightly faster, particularly with large matrices.
+            # If size control is not desired, the routine will run slightly faster, particularly with large matrices.
             for pivots in range(rank-1, -1, -1):
                 row_index = 0
                 while row_index < rows:
@@ -2741,30 +2741,30 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
                 while max(abs(c) for c in matrix.list()) >= upper_bound:
                     matrix = random_rref_matrix(parent, rank)
                     tries += 1
-                    if tries > max_tries: # to prevent endless attempts
+                    if tries > max_tries:  # to prevent endless attempts
                         raise ValueError("tried "+str(max_tries)+" times to get a rank 1 random matrix. Try bigger upper_bound?")
                 matrix_copy = matrix
 
             for pivots in range(len(matrix.pivots()) - 1, -1, -1):
-            # keep track of the pivot column positions from the pivot column with the largest index to
-            # the one with the smallest.
+                # keep track of the pivot column positions from the pivot column with the largest index to
+                # the one with the smallest.
                 row_index = 0
                 tries = 0
                 while row_index < rows:
                     # To each row in a pivot column add a scalar multiple of the pivot row.
                     # for full rank, square matrices, using only this row operation preserves the determinant of 1.
                     if pivots != row_index:
-                    # To ensure a leading one is not removed by the addition of the pivot row by its
-                    # additive inverse.
+                        # To ensure a leading one is not removed by the addition of the pivot row by its
+                        # additive inverse.
                         matrix_copy = matrix.with_added_multiple_of_row(row_index,matrix.pivot_rows()[pivots],randint(-5,5))
                         tries += 1
                         # Range for scalar multiples determined experimentally.
-                    if max(map(abs,matrix_copy.list())) < upper_bound:
-                    # Continue if the largest entry after a row operation is within the bound.
+                    if max(map(abs, matrix_copy.list())) < upper_bound:
+                        # Continue if the largest entry after a row operation is within the bound.
                         matrix = matrix_copy
                         row_index += 1
                         tries = 0
-                    if tries > max_tries: # to prevent endless unsuccessful row adding
+                    if tries > max_tries:  # to prevent endless unsuccessful row adding
                         raise ValueError("tried "+str(max_tries)+" times to get row number "+str(row_index)+". Try bigger upper_bound?")
             # The leading one in row one has not been altered, so add a scalar multiple of a random row
             # to row one.
@@ -3192,19 +3192,19 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
         raise ValueError("the list of dimensions must have a list of corresponding eigenvalues.")
     if eigenvalues is None and dimensions is None:
         values = []
-        #create a list with "size" number of entries
+        # create a list with "size" number of entries
         for eigen_index in range(size):
             eigenvalue = randint(-10, 10)
             values.append(eigenvalue)
         values.sort()
         dimensions = []
         eigenvalues = []
-        #create a list with no duplicate values to be the eigenvalues
+        # create a list with no duplicate values to be the eigenvalues
         for eigenvalue in range(size):
             if values[eigenvalue] not in eigenvalues:
                 eigenvalues.append(values[eigenvalue])
         for dimension in range(len(eigenvalues)):
-            #dimension is equal to how many times an eigenvalue was generated in the 'values' list
+            # dimension is equal to how many times an eigenvalue was generated in the 'values' list
             dimensions.append(values.count(eigenvalues[dimension]))
     size_check = 0
     for check in range(len(dimensions)):
@@ -3217,11 +3217,11 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
         raise ValueError("eigenspaces must have a dimension of at least 1.")
     if len(eigenvalues) != len(dimensions):
         raise ValueError("each eigenvalue must have a corresponding dimension and each dimension a corresponding eigenvalue.")
-    #sort the dimensions in order of increasing size, and sort the eigenvalues list in an identical fashion, to maintain corresponding values.
+    # sort the dimensions in order of increasing size, and sort the eigenvalues list in an identical fashion, to maintain corresponding values.
     dimensions_sort = sorted(zip(dimensions, eigenvalues))
     dimensions = [x[0] for x in dimensions_sort]
     eigenvalues = [x[1] for x in dimensions_sort]
-    #Create the matrix of eigenvalues on the diagonal.  Use a lower limit and upper limit determined by the eigenvalue dimensions.
+    # Create the matrix of eigenvalues on the diagonal.  Use a lower limit and upper limit determined by the eigenvalue dimensions.
     diagonal_matrix = matrix(QQ, size)
     up_bound = 0
     low_bound = 0
@@ -3235,33 +3235,33 @@ def random_diagonalizable_matrix(parent,eigenvalues=None,dimensions=None):
     eigenvector_matrix = matrix(QQ, size, size, 1)
     upper_limit = 0
     lower_limit = 0
-    #run the routine over the necessary number of columns corresponding eigenvalue dimension.
+    # run the routine over the necessary number of columns corresponding eigenvalue dimension.
     for dimension_index in range(len(dimensions)-1):
         upper_limit = upper_limit+dimensions[dimension_index]
         lowest_index_row_with_one = size-dimensions[dimension_index]
-        #assign a one to the row that is the eigenvalue dimension rows up from the bottom row then assign ones diagonally down to the right.
+        # assign a one to the row that is the eigenvalue dimension rows up from the bottom row then assign ones diagonally down to the right.
         for eigen_ones in range(lower_limit,upper_limit):
             eigenvector_matrix[lowest_index_row_with_one,eigen_ones] = 1
             lowest_index_row_with_one += 1
         lower_limit = lower_limit+dimensions[dimension_index]
-    #Create a list to give the eigenvalue dimension corresponding to each column.
+    # Create a list to give the eigenvalue dimension corresponding to each column.
     dimension_check = []
     for i in range(len(dimensions)):
         for k in range(dimensions[i]):
             dimension_check.append(dimensions[i])
-    #run routine over the rows that are in the range of the protected ones.  Use addition of column multiples to fill entries.
+    # run routine over the rows that are in the range of the protected ones.  Use addition of column multiples to fill entries.
     for dimension_multiplicity in range(max(dimensions),min(dimensions),-1):
         highest_one_row = size-dimension_multiplicity
         highest_one_column = 0
-        #find the column with the protected one in the lowest indexed row.
+        # find the column with the protected one in the lowest indexed row.
         while eigenvector_matrix[highest_one_row,highest_one_column] == 0:
             highest_one_column += 1
-        #dimension_check determines if column has a low enough eigenvalue dimension to take a column multiple.
+        # dimension_check determines if column has a low enough eigenvalue dimension to take a column multiple.
         for bottom_entry_filler in range(len(dimension_check)):
             if dimension_check[bottom_entry_filler] < dimension_multiplicity and eigenvector_matrix[highest_one_row,bottom_entry_filler] == 0:
                 # randint range determined experimentally to keep entries manageable.
                 eigenvector_matrix.add_multiple_of_column(bottom_entry_filler,highest_one_column,randint(-4,4))
-    #Fill remaining rows using scalar row addition.
+    # Fill remaining rows using scalar row addition.
     for row in range(size-max(dimensions),size):
         for upper_row in range(size-max(dimensions)):
             # range of multiplier determined experimentally so that entries stay manageable for small matrices

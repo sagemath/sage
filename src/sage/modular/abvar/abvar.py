@@ -37,6 +37,7 @@ import sage.rings.abc
 
 from sage.arith.functions import lcm as LCM
 from sage.arith.misc import divisors, next_prime, is_prime
+from sage.categories.fields import Fields
 from sage.categories.modular_abelian_varieties import ModularAbelianVarieties
 from sage.matrix.constructor import matrix
 from sage.matrix.special import block_diagonal_matrix, identity_matrix
@@ -58,7 +59,6 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.rational_field import QQ
-from sage.rings.ring import is_Ring
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.sets.primes import Primes
 from sage.structure.parent import Parent
@@ -172,7 +172,7 @@ class ModularAbelianVariety_abstract(Parent):
             self.__degen_t = number
         if isogeny_number is not None:
             self.__isogeny_number = isogeny_number
-        if check and not is_Ring(base_field) and base_field.is_field():
+        if check and base_field not in Fields():
             raise TypeError("base_field must be a field")
         Parent.__init__(self, base=base_field,
                         category=ModularAbelianVarieties(base_field))
@@ -2060,8 +2060,8 @@ class ModularAbelianVariety_abstract(Parent):
             if none_if_not_known:
                 return None
             level = LCM([f.level() for f in self.newform_decomposition('a')])
-            groups = sorted({f.group() for f in
-                                 self.newform_decomposition('a')})
+            groups = sorted({f.group()
+                             for f in self.newform_decomposition('a')})
             if len(groups) == 1:
                 groups = groups[0]
             self.__newform_level = level, groups
