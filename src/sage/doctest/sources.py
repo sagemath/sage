@@ -814,7 +814,7 @@ class FileDocTestSource(DocTestSource):
             sage: # not tested (because the output will change when source files are changed)
             sage: from sage.doctest.control import DocTestDefaults
             sage: from sage.doctest.sources import FileDocTestSource
-                sage: cwd = os.getcwd()
+            sage: cwd = os.getcwd()
             sage: os.chdir(SAGE_SRC)
             sage: import itertools
             sage: for path, dirs, files in itertools.chain(os.walk('sage'), os.walk('doc')):
