@@ -1578,7 +1578,7 @@ cdef class ExpressionChoice(Expression):
                                        repr(self._cond),
                                        repr(self._iffalse))
 
-cpdef _expression_binop_helper(s, o, op) noexcept:
+cpdef _expression_binop_helper(s, o, op):
     r"""
     Make an Expression for (s op o).  Either s or o (or both) must already
     be an expression.
@@ -1714,7 +1714,7 @@ class IntegerPowerFunction():
         return x**self.exponent
 
 cdef dict builtin_functions = None
-cpdef dict get_builtin_functions() noexcept:
+cpdef dict get_builtin_functions():
     r"""
     To handle ExpressionCall, we need to map from Sage and
     Python functions to opcode names.
@@ -1768,7 +1768,7 @@ cpdef dict get_builtin_functions() noexcept:
 
 cdef class InstructionStream  # forward declaration
 
-cpdef generate_code(Expression expr, InstructionStream stream) noexcept:
+cpdef generate_code(Expression expr, InstructionStream stream):
     r"""
     Generate code from an Expression tree; write the result into an
     InstructionStream.
@@ -2192,7 +2192,7 @@ cdef class InstructionStream:
         """
         self.instr0(opname, args)
 
-    cdef instr0(self, opname, tuple args) noexcept:
+    cdef instr0(self, opname, tuple args):
         """
         Cdef version of instr. (Can't cpdef because of star args.)
         """

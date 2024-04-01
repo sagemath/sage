@@ -22,7 +22,7 @@ cdef class PowComputer_class(SageObject):
     cdef unsigned long cache_limit
     cdef unsigned long prec_cap
 
-    cdef Integer pow_Integer(self, long n) noexcept
+    cdef Integer pow_Integer(self, long n)
     cdef mpz_srcptr pow_mpz_t_top(self) noexcept
     cdef mpz_srcptr pow_mpz_t_tmp(self, long n) except NULL
     cdef mpz_t temp_m
