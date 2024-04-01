@@ -20,7 +20,7 @@ AUTHORS:
 #                     2014-2022 Frédéric Chapoton
 #                     2017      Erik M. Bray
 #                     2021      Sébastien Labbé
-#                     2021-2023 Matthias Koeppe
+#                     2021-2024 Matthias Koeppe
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -39,7 +39,7 @@ from sage.misc.package_dir import is_package_or_sage_namespace_package_dir
 from .parsing import SageDocTestParser
 from .util import NestedName
 from sage.structure.dynamic_class import dynamic_class
-from sage.env import SAGE_SRC, SAGE_LIB
+from sage.env import SAGE_SRC
 
 # Python file parsing
 triple_quotes = re.compile(r"\s*[rRuU]*((''')|(\"\"\"))")
@@ -77,7 +77,8 @@ doctest_line_number = re.compile(r"^\s*doctest:[0-9]")
 
 def get_basename(path):
     """
-    This function returns the basename of the given path, e.g. sage.doctest.sources or doc.ru.tutorial.tour_advanced
+    Return the basename of ``path``, e.g. ``sage.doctest.sources`` or
+    ``doc.ru.tutorial.tour_advanced``.
 
     EXAMPLES::
 
@@ -88,17 +89,27 @@ def get_basename(path):
         'sage.doctest.sources'
         sage: get_basename(os.path.join(SAGE_SRC, 'sage', 'structure', 'element.pxd'))
         'sage.structure.element.pxd'
+        sage: get_basename(os.path.join(SAGE_SRC, 'sage', 'doctest', 'tests', 'tolerance.rst'))
+        'sage.doctest.tests.tolerance'
+
+    TESTS:
+
+    Check that :issue:`22445` has been resolved::
+
+        sage: get_basename(os.path.join(SAGE_SRC, 'doc', '..', 'sage', 'doctest', 'sources.py'))
+        'sage.doctest.sources'
+
     """
     if path is None:
         return None
     if not os.path.exists(path):
         return path
-    path = os.path.abspath(path)
+    path = os.path.realpath(path)
     root = os.path.dirname(path)
-    # If the file is in the sage library, we can use our knowledge of
-    # the directory structure
-    dev = SAGE_SRC
-    sp = SAGE_LIB
+
+    # If the file is in the Sage source tree (including SAGE_SRC/doc),
+    # we can use the known layout
+    dev = os.path.realpath(SAGE_SRC)
     if path.startswith(dev):
         # there will be a branch name
         i = path.find(os.path.sep, len(dev))
@@ -106,12 +117,18 @@ def get_basename(path):
             # this source is the whole library....
             return path
         root = path[:i]
-    elif path.startswith(sp):
-        root = path[:len(sp)]
     else:
         # If this file is in some python package we can see how deep
-        # it goes.
-        while is_package_or_sage_namespace_package_dir(root):
+        # it goes. We recognize:
+        #  - ordinary packages (with __init__ files),
+        #  - namespace packages in the Sage-specific layout
+        #    (with all*.py files)
+        #  - package data directories with Sage-specific markers
+        # but not other PEP-420 namespace packages because for those
+        # it is not well-defined where to stop when walking up.
+        while (is_package_or_sage_namespace_package_dir(root)
+               or os.path.exists(os.path.join(root, "nodoctest.py"))
+               or os.path.exists(os.path.join(root, "nodoctest"))):
             root = os.path.dirname(root)
     fully_qualified_path, ext = os.path.splitext(path[len(root) + 1:])
     if os.path.split(path)[1] == '__init__.py':
@@ -854,6 +871,10 @@ class FileDocTestSource(DocTestSource):
         """
         expected = []
         rest = isinstance(self, RestSource)
+        # initialize starting_indent to silence pyflakes; note that this
+        # variable is only read once it has been set in the code block that
+        # sets in_block=True below.
+        starting_indent = None
         if rest:
             skipping = False
             in_block = False
