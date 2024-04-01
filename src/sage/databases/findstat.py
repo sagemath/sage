@@ -841,7 +841,7 @@ def _generating_functions_from_dict(gfs, style):
     if style == "polynomial":
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         from sage.rings.integer_ring import ZZ
-        P = PolynomialRing(ZZ, "q")
+        P = PolynomialRing(ZZ, "q", sparse=True)
         q = P.gen()
         return {level: sum(coefficient * q**exponent
                            for exponent, coefficient in gen_dict.items())

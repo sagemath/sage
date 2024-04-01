@@ -1569,13 +1569,20 @@ class MPolynomialIdeal_singular_repr(
     @handle_AA_and_QQbar
     def genus(self):
         r"""
-        Return the genus of the projective curve defined by this ideal,
-        which must be 1 dimensional.
+        Return the geometric genus of the projective curve defined by this
+        ideal.
+
+        OUTPUT:
+
+        If the ideal is homogeneous and defines a curve in a projective space,
+        then the genus of the curve is returned. If the ideal is not
+        homogeneous and defines a curve in an affine space, the genus of the
+        projective closure of the curve is returned.
 
         EXAMPLES:
 
-        Consider the hyperelliptic curve `y^2 = 4x^5 - 30x^3 + 45x -
-        22` over `\QQ`, it has genus 2::
+        Consider the hyperelliptic curve `y^2 = 4x^5 - 30x^3 + 45x - 22` over
+        `\QQ`, it has genus 2::
 
             sage: P.<x> = QQ[]
             sage: f = 4*x^5 - 30*x^3 + 45*x - 22
@@ -1592,18 +1599,25 @@ class MPolynomialIdeal_singular_repr(
             sage: I.genus()
             2
 
-        TESTS:
-
-        Check that the answer is correct for reducible curves::
+        Geometric genus is only defined for geometrically irreducible curves.
+        You may get a nonsensical answer if the condition is not met.  A curve
+        reducible over a quadratic extension of `\QQ`::
 
             sage: R.<x, y, z> = QQ[]
             sage: C = Curve(x^2 - 2*y^2)
-            sage: C.is_singular()
-            True
             sage: C.genus()
             -1
-            sage: Ideal(x^4+y^2*x+x).genus()
+
+        TESTS:
+
+        An ideal that does not define a curve but we get a result! ::
+
+            sage: R.<x, y, z> = QQ[]
+            sage: Ideal(x^4 + y^2*x + x).genus()
             0
+
+        An ideal that defines a geometrically reducible affine curve::
+
             sage: T.<t1,t2,u1,u2> = QQ[]
             sage: TJ = Ideal([t1^2 + u1^2 - 1,t2^2 + u2^2 - 1, (t1-t2)^2 + (u1-u2)^2 -1])
             sage: TJ.genus()
@@ -1611,9 +1625,10 @@ class MPolynomialIdeal_singular_repr(
 
         Check that this method works over QQbar (:issue:`25351`)::
 
-            sage: P.<x,y> = QQbar[]                                                     # needs sage.rings.number_field
-            sage: I = ideal(y^3*z + x^3*y + x*z^3)                                      # needs sage.rings.number_field
-            sage: I.genus()                                                             # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: P.<x,y> = QQbar[]
+            sage: I = ideal(y^3*z + x^3*y + x*z^3)
+            sage: I.genus()
             3
         """
         from sage.libs.singular.function_factory import ff
