@@ -14,12 +14,12 @@ Arithmetic subgroups, finite index subgroups of `\SL_2(\ZZ)`
 #
 ################################################################################
 
-from sage.groups.old import Group
+from sage.groups.group import Group
 from sage.categories.groups import Groups
 from sage.rings.integer_ring import ZZ
 from sage.arith.functions import lcm
 from sage.misc.cachefunc import cached_method
-from copy import copy # for making copies of lists of cusps
+from copy import copy  # for making copies of lists of cusps
 from sage.modular.modsym.p1list import lift_to_sl2z
 from sage.modular.cusps import Cusp
 
@@ -30,7 +30,7 @@ from sage.structure.element import parent
 from .arithgroup_element import ArithmeticSubgroupElement, M2Z as Mat2Z
 
 
-def is_ArithmeticSubgroup(x):
+def is_ArithmeticSubgroup(x) -> bool:
     r"""
     Return ``True`` if ``x`` is of type :class:`ArithmeticSubgroup`.
 
@@ -67,7 +67,7 @@ class ArithmeticSubgroup(Group):
         """
         Group.__init__(self, category=Groups().Infinite())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the string representation of self.
 

@@ -1595,10 +1595,8 @@ class K_kSchur(CombinatorialFreeModule):
         for i in range(m + 1):
             for x in Partitions(m - i, max_part=self.k):
                 f = mon(G(x, m))
-                vec = []
-                for j in range(m + 1):
-                    for y in Partitions(m - j, max_part=self.k):
-                        vec.append(f.coefficient(y))
+                vec = [f.coefficient(y) for j in range(m + 1)
+                       for y in Partitions(m - j, max_part=self.k)]
                 new_mat.append(vec)
         from sage.matrix.constructor import Matrix
         return Matrix(new_mat)

@@ -2,10 +2,7 @@ This directory contains the main source files for hypellfrob
 version 2.1.1, by David Harvey.
 
 hypellfrob is also maintained as a separate project, see
-http://cims.nyu.edu/~harvey/hypellfrob/
-
-At that web site you'll find a standalone demo program and
-a test suite.
+https://web.maths.unsw.edu.au/~davidharvey/code/hypellfrob
 
 hypellfrob 2.1.1 is Copyright (C) 2007, 2008 David Harvey and is
 licensed under the GPL (version 2 or later).
