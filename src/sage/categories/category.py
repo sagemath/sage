@@ -1228,7 +1228,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: structure(Rings())
             (Category of unital magmas, Category of additive unital additive magmas)
             sage: structure(Fields())
-            (Category of euclidean domains,)
+            (Category of euclidean domains, Category of noetherian rings)
             sage: structure(Algebras(QQ))
             (Category of unital magmas,
              Category of right modules over Rational Field,
