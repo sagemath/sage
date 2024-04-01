@@ -283,16 +283,13 @@ class CommutativeRings(CategoryWithAxiom):
         """
         def extra_super_categories(self):
             r"""
-            Let Sage knows that Cartesian products of commutative rings is a
-            commutative ring.
+            Let Sage knows that finite commutative rings
+            are Noetherian.
 
             EXAMPLES::
 
-                sage: CommutativeRings().Commutative().CartesianProducts().extra_super_categories()
-                [Category of commutative rings]
-                sage: cartesian_product([ZZ, Zmod(34),
-                ....:                    QQ, GF(5)]) in CommutativeRings()
-                True
+                sage: CommutativeRings().Finite().extra_super_categories()
+                [Category of noetherian rings]
             """
             from sage.categories.noetherian_rings import NoetherianRings
             return [NoetherianRings()]
@@ -416,7 +413,7 @@ class CommutativeRings(CategoryWithAxiom):
                 try:
                     ~q
                 except ZeroDivisionError:
-                    raise ValueError("%s is not invertible in %s" % (q,self))
+                    raise ValueError("%s is not invertible in %s" % (q, self))
 
                 if cosets is None:
                     rest = set(self)
@@ -427,7 +424,7 @@ class CommutativeRings(CategoryWithAxiom):
                 while rest:
                     x0 = rest.pop()
                     o = [x0]
-                    x = q*x0
+                    x = q * x0
                     while x != x0:
                         o.append(x)
                         rest.discard(x)

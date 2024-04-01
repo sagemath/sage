@@ -9,7 +9,7 @@ EXAMPLES::
     sage: QQ in NoetherianRings()
     True
     sage: ZZ in NoetherianRings()
-    False?
+    True
     sage: IntegerModRing(4) in NoetherianRings()
     True
     sage: IntegerModRing(5) in NoetherianRings()
@@ -52,8 +52,9 @@ class NoetherianRings(Category):
         """
         EXAMPLES::
 
-            sage: DedekindDomains().super_categories()
-            [Category of integral domains]
+            sage: from sage.categories.noetherian_rings import NoetherianRings
+            sage: NoetherianRings().super_categories()
+            [Category of commutative rings]
         """
         return [CommutativeRings()]
 
@@ -69,16 +70,14 @@ class NoetherianRings(Category):
                 True
                 sage: QQ.is_noetherian()
                 True
-                sage: ZZ['x'].is_integral_domain()
+                sage: ZZ['x'].is_noetherian()
                 True
                 sage: R.<x> = PolynomialRing(QQ)
                 sage: R.is_noetherian()
                 True
 
                 sage: L.<z> = LazyLaurentSeriesRing(QQ)                                 # needs sage.combinat
-                sage: L.is_integral_domain()                                            # needs sage.combinat
-                True
-                sage: L.is_integral_domain(proof=True)                                  # needs sage.combinat
+                sage: L.is_noetherian()                                            # needs sage.combinat
                 True
             """
             return True
