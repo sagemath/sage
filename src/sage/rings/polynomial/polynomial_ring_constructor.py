@@ -22,7 +22,6 @@ rings but rather quotients of them (see module
 # ****************************************************************************
 
 from sage.structure.category_object import normalize_names
-from sage.rings.ring import IntegralDomain
 
 try:
     import sage.rings.padics.padic_base_leaves as padic_base_leaves

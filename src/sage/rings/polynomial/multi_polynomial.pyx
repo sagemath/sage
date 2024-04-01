@@ -2154,7 +2154,12 @@ cdef class MPolynomial(CommutativePolynomial):
         except (TypeError, AttributeError):
             pass
 
-        x = self._parent.gens()[-1]
+        gens = self.parent().gens()
+        if not gens:
+            base = self.parent().base_ring()
+            return base(self).gcd(base(other))
+
+        x = gens[-1]
         uniself = self.polynomial(x)
         unibase = uniself.base_ring()
         try:
