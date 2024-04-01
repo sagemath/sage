@@ -28,7 +28,7 @@ Interval Arithmetic
 -------------------
 
 Sage implements real and complex interval arithmetic using MPFI
-(RealIntervalField, ComplexIntervalField) and arb (RealBallField,
+(RealIntervalField, ComplexIntervalField) and FLINT (RealBallField,
 ComplexBallField).
 
 .. toctree::

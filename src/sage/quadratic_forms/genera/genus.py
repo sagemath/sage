@@ -408,7 +408,7 @@ def LocalGenusSymbol(A, p):
     return Genus_Symbol_p_adic_ring(p, symbol)
 
 
-def is_GlobalGenus(G):
+def is_GlobalGenus(G) -> bool:
     r"""
     Return if `G` represents the genus of a global quadratic form or lattice.
 
@@ -445,13 +445,13 @@ def is_GlobalGenus(G):
                 verbose(mesg="False in is_2_adic_genus(sym)", level=2)
                 return False
             if (a*b).kronecker(p) != 1:
-                verbose(mesg="False in (%s*%s).kronecker(%s)" % (a, b, p),
+                verbose(mesg=f"False in ({a}*{b}).kronecker({p})",
                         level=2)
                 return False
             oddity -= loc.excess()
         else:
             if a.kronecker(p) != b:
-                verbose(mesg="False in %s.kronecker(%s) != *%s" % (a, p, b),
+                verbose(mesg=f"False in {a}.kronecker({p}) != *{b}",
                         level=2)
                 return False
             oddity += loc.excess()
@@ -461,7 +461,7 @@ def is_GlobalGenus(G):
     return True
 
 
-def is_2_adic_genus(genus_symbol_quintuple_list):
+def is_2_adic_genus(genus_symbol_quintuple_list) -> bool:
     r"""
     Given a `2`-adic local symbol (as the underlying list of quintuples)
     check whether it is the `2`-adic symbol of a `2`-adic form.
@@ -1355,7 +1355,7 @@ class Genus_Symbol_p_adic_ring:
                         # mark the beginning of this compartment with [
                         CS_string += "["
                     block = CS[block_index]
-                    block_string = "%s^%s " % (p**block[0], block[2] * block[1])
+                    block_string = f"{p**block[0]}^{block[2] * block[1]} "
                     CS_string += block_string
                     if block_index in compartment_ends:
                         # close this compartment with ] and remove a space
@@ -1373,8 +1373,8 @@ class Genus_Symbol_p_adic_ring:
 
         else:
             for s in self._symbol:
-                CS_string += " %s^%s" % (p**s[0], s[2] * s[1])
-        rep = "Genus symbol at %s:    %s" % (p, CS_string)
+                CS_string += f" {p**s[0]}^{s[2] * s[1]}"
+        rep = f"Genus symbol at {p}:    {CS_string}"
         return rep.rstrip()
 
     def _latex_(self):
@@ -1409,7 +1409,7 @@ class Genus_Symbol_p_adic_ring:
                         # mark the beginning of this compartment with [
                         CS_string += "["
                     block = CS[block_index]
-                    block_string = "%s^{%s} " % (p**block[0], block[2] * block[1])
+                    block_string = f"{p**block[0]}^{{{block[2] * block[1]}}} "
                     CS_string += block_string
                     if block_index in compartment_ends:
                         # close this compartment with ] and remove a space
@@ -1425,8 +1425,8 @@ class Genus_Symbol_p_adic_ring:
 
         else:
             for s in self._symbol:
-                CS_string += " {%s}^{%s}" % (p**s[0], s[2]*s[1])
-        return r"\mbox{Genus symbol at } %s\mbox{: }%s" % (p, CS_string)
+                CS_string += f" {{{p**s[0]}}}^{{{s[2]*s[1]}}}"
+        return fr"\mbox{{Genus symbol at }} {p}\mbox{{: }}{CS_string}"
 
     def __eq__(self, other):
         r"""
@@ -1587,9 +1587,8 @@ class Genus_Symbol_p_adic_ring:
                 if I.count(r) > 2:
                     I.remove(r)
             # products of all pairs
-            for r1 in I:
-                for r2 in I:
-                    automorphs.append(r1*r2)
+            automorphs.extend(r1*r2 for r1 in I for r2 in I)
+
             # supplement (i)
             for block in sym:
                 if block[1] >= 2:
@@ -1635,7 +1634,7 @@ class Genus_Symbol_p_adic_ring:
         for k in range(len(sym)):
             s = sym[k:k+3]
             if sum([b[1] for b in s if b[0] - s[0][0] < 4]) >= 3:
-                automorphs += [ZZ(1), ZZ(3), ZZ(5), ZZ(7)]
+                automorphs += [ZZ.one(), ZZ(3), ZZ(5), ZZ(7)]
             break
 
         # supplement (ii)
@@ -1759,11 +1758,9 @@ class Genus_Symbol_p_adic_ring:
             [---+-+-]
             [0 0|0|8]
         """
-        G = []
         p = self._prime
         symbol = self.symbol_tuple_list()
-        for block in symbol:
-            G.append(_gram_from_jordan_block(p, block))
+        G = [_gram_from_jordan_block(p, block) for block in symbol]
         G = matrix.block_diagonal(G)
         # check calculation
         if check:
@@ -1816,11 +1813,11 @@ class Genus_Symbol_p_adic_ring:
         # type factors
         nII = ZZ.sum(fq[1] for fq in sym if fq[3] == 0)
 
-        nI_I = ZZ(0)   # the total number of pairs of adjacent constituents f_q,
+        nI_I = ZZ.zero()  # the total number of pairs of adjacent constituents f_q,
         # f_2q that are both of type I (odd)
         for k in range(r-1):
             if sym[k][3] == sym[k+1][3] == 1 and sym[k][0] + 1 == sym[k+1][0]:
-                nI_I += ZZ(1)
+                nI_I += ZZ.one()
         return m_p * ZZ(2)**(nI_I - nII)
 
     def _standard_mass(self):
@@ -1838,15 +1835,15 @@ class Genus_Symbol_p_adic_ring:
         """
         n = self.dimension()
         p = self.prime()
-        s = (n + 1) // ZZ(2)
-        std = 2 * QQ.prod(1-p**(-2*k) for k in range(1, s))
-        if n % 2 == 0:
+        s = (n + 1) // 2
+        std = 2 * QQ.prod(1 - p**(-2 * k) for k in range(1, s))
+        if not n % 2:
             D = ZZ(-1)**s * self.determinant()
-            epsilon = (4*D).kronecker(p)
-            std *= (1 - epsilon*p**(-s))
-        return QQ(1) / std
+            epsilon = (4 * D).kronecker(p)
+            std *= (1 - epsilon * p**(-s))
+        return QQ.one() / std
 
-    def _species_list(self):
+    def _species_list(self) -> list:
         r"""
         Return the species list.
 
@@ -1896,7 +1893,7 @@ class Genus_Symbol_p_adic_ring:
             if sym[k][3] == 0 or n % 2 == 1:
                 t = n // ZZ(2)
             else:
-                t = (n // ZZ(2)) - ZZ(1)
+                t = (n // ZZ(2)) - ZZ.one()
             if free and (o == 0 or o == 1 or o == 7):
                 species = 2*t
             elif free and (o == 3 or o == 5 or o == 4):
@@ -2223,7 +2220,7 @@ class Genus_Symbol_p_adic_ring:
             1
         """
         if self.rank() == 0:
-            return ZZ(0)
+            return ZZ.zero()
         return self.prime()**self._symbol[0][0]
 
     def norm(self):
@@ -2244,7 +2241,7 @@ class Genus_Symbol_p_adic_ring:
             2
         """
         if self.rank() == 0:
-            return ZZ(0)
+            return ZZ.zero()
         p = self.prime()
         if p == 2:
             fq = self._symbol[0]
@@ -2263,10 +2260,10 @@ class Genus_Symbol_p_adic_ring:
             4
         """
         if self.rank() == 0:
-            return ZZ(1)
+            return ZZ.one()
         return self.prime()**self._symbol[-1][0]
 
-    def trains(self):
+    def trains(self) -> list:
         r"""
         Compute the indices for each of the trains in this local genus
         symbol if it is associated to the prime `p=2` (and raise an
@@ -2293,7 +2290,7 @@ class Genus_Symbol_p_adic_ring:
         symbol = self._symbol
         return canonical_2_adic_trains(symbol)
 
-    def compartments(self):
+    def compartments(self) -> list:
         r"""
         Compute the indices for each of the compartments in this local genus
         symbol if it is associated to the prime `p=2` (and raise an
@@ -2393,7 +2390,7 @@ class GenusSymbol_global_ring:
         self._signature = signature_pair
         self._local_symbols = local_symbols
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representing the global genus symbol.
 
@@ -2426,12 +2423,12 @@ class GenusSymbol_global_ring:
         rep = "Genus"
         if self.dimension() <= 20:
             rep += " of\n%s" % self._representative
-        rep += "\nSignature:  %s" % (self._signature,)
+        rep += f"\nSignature:  {self._signature}"
         for s in self._local_symbols:
             rep += "\n" + s.__repr__()
         return rep
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         The Latex representation of this lattice.
 
@@ -2452,12 +2449,12 @@ class GenusSymbol_global_ring:
             rep += r" of}\\ %s" % self._representative._latex_()
         else:
             rep += r"}"
-        rep += r"\\ \mbox{Signature: } %s" % (self._signature,)
+        rep += fr"\\ \mbox{{Signature: }} {self._signature}"
         for s in self._local_symbols:
             rep += r"\\ " + s._latex_()
         return rep
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Determines if two global genus symbols are equal (not just equivalent!).
 
@@ -2507,7 +2504,7 @@ class GenusSymbol_global_ring:
                 return False
         return True
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Determine if two global genus symbols are unequal (not just inequivalent!).
 
@@ -2539,7 +2536,7 @@ class GenusSymbol_global_ring:
         """
         return not self == other
 
-    def is_even(self):
+    def is_even(self) -> bool:
         r"""
         Return if this genus is even.
 
@@ -2606,11 +2603,10 @@ class GenusSymbol_global_ring:
         sig = self.signature_pair_of_matrix()
         if sig[0] * sig[1] > 1:
             kernel_gens.append(A.delta(-1, prime=-1))
-        for sym in syms:
-            for r in sym.automorphous_numbers():
-                kernel_gens.append(A.delta(r, prime=sym.prime()))
-        K = A.subgroup(kernel_gens)
-        return A, K
+        kernel_gens.extend(A.delta(r, prime=sym.prime())
+                           for sym in syms
+                           for r in sym.automorphous_numbers())
+        return A, A.subgroup(kernel_gens)
 
     def _improper_spinor_kernel(self):
         r"""
@@ -2651,7 +2647,7 @@ class GenusSymbol_global_ring:
             K = A.subgroup(K.gens() + (j,))
             return A, K
 
-    def spinor_generators(self, proper):
+    def spinor_generators(self, proper) -> list:
         r"""
         Return the spinor generators.
 
@@ -2853,8 +2849,9 @@ class GenusSymbol_global_ring:
         qL = []
         for gs in self._local_symbols:
             p = gs._prime
-            for block in gs.symbol_tuple_list():
-                qL.append(_gram_from_jordan_block(p, block, True))
+            qL.extend(_gram_from_jordan_block(p, block, True)
+                      for block in gs.symbol_tuple_list())
+
         q = matrix.block_diagonal(qL)
         return TorsionQuadraticForm(q)
 
@@ -3070,7 +3067,7 @@ class GenusSymbol_global_ring:
                 return [self.representative()]
             if n == 2:
                 # Binary forms are considered positive definite take care of that.
-                e = ZZ(1)
+                e = ZZ.one()
                 if self.signature_pair()[0] == 0:
                     e = ZZ(-1)
                 d = - 4 * self.determinant()
@@ -3083,7 +3080,7 @@ class GenusSymbol_global_ring:
             if n > 2:
                 from sage.quadratic_forms.quadratic_form import QuadraticForm
                 from sage.quadratic_forms.quadratic_form__neighbors import neighbor_iteration
-                e = ZZ(1)
+                e = ZZ.one()
                 if not self.is_even():
                     e = ZZ(2)
                 if self.signature_pair()[0] == 0:
@@ -3256,7 +3253,7 @@ class GenusSymbol_global_ring:
         if pos * neg != 0:
             raise ValueError("the genus must be definite.")
         if pos + neg == 1:
-            return QQ(1) / QQ(2)
+            return QQ((1, 2))
         if backend == 'sage':
             mass = self._standard_mass()
             for sym in self._local_symbols:
@@ -3504,10 +3501,10 @@ def M_p(species, p):
         625/1152
     """
     if species == 0:
-        return QQ(1)
+        return QQ.one()
     n = species.abs()
     s = (n + 1) // ZZ(2)
-    mp = ZZ(2) * ZZ.prod(ZZ(1) - p**(-2 * k) for k in range(1, s))
+    mp = ZZ(2) * ZZ.prod(ZZ.one() - p**(-2 * k) for k in range(1, s))
     if n % 2 == 0:
         mp *= ZZ.one() - species.sign() * p**(-s)
     return QQ.one() / mp
