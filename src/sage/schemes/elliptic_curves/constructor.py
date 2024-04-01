@@ -32,8 +32,8 @@ from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.finite_rings.finite_field_base import FiniteField
 from sage.rings.polynomial.multi_polynomial import MPolynomial
-from sage.rings.ring import is_Ring
 
+from sage.categories.rings import Rings
 from sage.categories.fields import Fields
 _Fields = Fields()
 
@@ -405,8 +405,8 @@ class EllipticCurveFactory(UniqueFactory):
             True
         """
         R = None
-        if is_Ring(x):
-            (R, x) = (x, y)
+        if x in Rings():
+            R, x = (x, y)
 
         if j is not None:
             if R is not None:
