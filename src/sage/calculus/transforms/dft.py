@@ -294,13 +294,15 @@ class IndexedSequence(SageObject):
             Indexed sequence: [6, 0, 0, 0, 0, 0]
              indexed by [0, 1, 2, 3, 4, 5]
 
-            sage: # needs sage.groups
+            sage: # needs sage.combinat sage.groups
             sage: G = SymmetricGroup(3)
             sage: J = G.conjugacy_classes_representatives()
             sage: s = IndexedSequence([1,2,3], J)  # 1,2,3 are the values of a class fcn on G
             sage: s.dft()   # the "scalar-valued Fourier transform" of this class fcn
             Indexed sequence: [8, 2, 2]
              indexed by [(), (1,2), (1,2,3)]
+
+            sage: # needs sage.rings.number_field
             sage: J = AbelianGroup(2, [2,3], names='ab')
             sage: s = IndexedSequence([1,2,3,4,5,6], J)
             sage: s.dft()   # the precision of output is somewhat random and architecture dependent.
@@ -311,6 +313,8 @@ class IndexedSequence(SageObject):
                                -0.00000000000000976996261670137 - 0.0000000000000159872115546022*I,
                                -0.00000000000000621724893790087 - 0.0000000000000106581410364015*I]
              indexed by Multiplicative Abelian group isomorphic to C2 x C3
+
+            sage: # needs sage.groups sage.rings.number_field
             sage: J = CyclicPermutationGroup(6)
             sage: s = IndexedSequence([1,2,3,4,5,6], J)
             sage: s.dft()   # the precision of output is somewhat random and architecture dependent.
