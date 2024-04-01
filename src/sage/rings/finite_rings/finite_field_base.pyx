@@ -876,7 +876,7 @@ cdef class FiniteField(Field):
         return self.characteristic()**self.degree()
 
     # cached because constructing the Factorization is slow;
-    # see trac #11628.
+    # see Issue #11628.
     @cached_method
     def factored_order(self):
         """
@@ -2118,7 +2118,7 @@ cdef class FiniteField(Field):
                 for col in B.columns()]
 
     def from_bytes(self, input_bytes, byteorder="big"):
-        """
+        r"""
         Return the integer represented by the given array of bytes.
 
         Internally relies on the python ``int.from_bytes()`` method.

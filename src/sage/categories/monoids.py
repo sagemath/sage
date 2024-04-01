@@ -565,7 +565,7 @@ class Monoids(CategoryWithAxiom):
 
                     sage: A10 = AlternatingGroup(10)                                    # needs sage.groups
                     sage: GroupAlgebras(QQ).example(A10).algebra_generators()           # needs sage.groups sage.modules
-                    Family ((8,9,10), (1,2,3,4,5,6,7,8,9))
+                    Family ((1,2,3,4,5,6,7,8,9), (8,9,10))
 
                     sage: A = DihedralGroup(3).algebra(QQ); A                           # needs sage.groups sage.modules
                     Algebra of Dihedral group of order 6 as a permutation group

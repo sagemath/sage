@@ -60,7 +60,8 @@ jobs:
           df -h
       - name: Merge CI fixes from sagemath/sage
         run: |
-          .ci/merge-fixes.sh
+          mkdir -p upstream
+          .ci/merge-fixes.sh 2>&1 | tee upstream/ci_fixes.log
         env:
           GH_TOKEN: ${{ github.token }}
           SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}

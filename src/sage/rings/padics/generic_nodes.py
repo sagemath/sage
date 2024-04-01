@@ -683,10 +683,8 @@ class pAdicLatticeGeneric(pAdicGeneric):
                     raise NotImplementedError("multiple conversion of a set of variables for which the module precision is not a lattice is not implemented yet")
                 for j in range(len(L)):
                     x = L[j]
-                    dx = []
-                    for i in range(j):
-                        dx.append([L[i], lattice[i,j]])
-                    prec = lattice[j,j].valuation(p)
+                    dx = [[L[i], lattice[i, j]] for i in range(j)]
+                    prec = lattice[j, j].valuation(p)
                     y = self._element_class(self, x.value(), prec, dx=dx, dx_mode='values', check=False, reduce=False)
                     for i in indices[id(x)]:
                         ans[i] = y
@@ -699,6 +697,7 @@ class pAdicLatticeGeneric(pAdicGeneric):
 
         # We return the created elements
         return ans
+
 
 class pAdicRelaxedGeneric(pAdicGeneric):
     r"""

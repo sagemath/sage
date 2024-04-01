@@ -102,7 +102,7 @@ class Groups(CategoryWithAxiom):
 
                 sage: A = AlternatingGroup(4)                                           # needs sage.groups
                 sage: A.group_generators()                                              # needs sage.groups
-                Family ((2,3,4), (1,2,3))
+                Family ((1,2,3), (2,3,4))
             """
             from sage.sets.family import Family
             try:
@@ -124,7 +124,7 @@ class Groups(CategoryWithAxiom):
                 sage: # needs sage.groups
                 sage: A = AlternatingGroup(4)
                 sage: A.monoid_generators()
-                Family ((2,3,4), (1,2,3))
+                Family ((1,2,3), (2,3,4))
                 sage: F.<x,y> = FreeGroup()
                 sage: F.monoid_generators()
                 Family (x, y, x^-1, y^-1)

@@ -7,10 +7,10 @@ General Conventions
 ===================
 
 
-There are many ways to contribute to Sage including sharing scripts
-and Sage worksheets that implement new functionality using Sage,
+There are many ways to contribute to Sage, including sharing scripts
+and Jupyter notebooks that implement new functionality using Sage,
 improving to the Sage library, or to working on the many underlying
-libraries distributed with Sage [1]_.
+libraries distributed with Sage, see :ref:`spkg`.
 This guide focuses on editing the Sage library itself.
 
 Sage is not just about gathering together functionality. It is about
@@ -19,10 +19,6 @@ number of algorithms, in a coherent framework that makes sense
 mathematically. In the design of Sage, the semantics of objects, the
 definitions, etc., are informed by how the corresponding objects are
 used in everyday mathematics.
-
-.. [1]
-   See https://www.sagemath.org/links-components.html for a full list
-   of packages shipped with every copy of Sage
 
 To meet the goal of making Sage easy to read, maintain, and improve,
 all Python/Cython code that is included with Sage should adhere to the
@@ -93,9 +89,9 @@ In particular,
 Files and directory structure
 =============================
 
-Roughly, the Sage directory tree is layout like this. Note that we use
-``SAGE_ROOT`` in the following as a shortcut for the (arbitrary) name
-of the directory containing the Sage sources:
+Roughly, the Sage directory tree is laid out like this. Note that we
+use ``SAGE_ROOT`` in the following as a shortcut for the name of the
+directory containing the Sage sources:
 
 .. CODE-BLOCK:: text
 
@@ -108,7 +104,7 @@ of the directory containing the Sage sources:
             setup.py
             ...
             sage/            # Sage library
-                ext_data/    # extra Sage resources (formerly src/ext)
+                ext_data/    # extra Sage resources (legacy)
             bin/             # the scripts in local/bin that are tracked
         upstream/            # tarballs of upstream sources
         local/               # installed binaries
@@ -153,15 +149,36 @@ Adding new top-level packages below :mod:`sage` should be done
 sparingly.  It is often better to create subpackages of existing
 packages.
 
-Non-Python Sage source code and supporting files can be included in one
-of the following places:
+Non-Python Sage source code and small supporting files can be
+included in one of the following places:
 
 - In the directory of the Python code that uses that file.  When the
   Sage library is installed, the file will be installed in the same
-  location as the Python code. For example,
-  ``SAGE_ROOT/src/sage/interfaces/maxima.py`` needs to use the file
-  ``SAGE_ROOT/src/sage/interfaces/maxima.lisp`` at runtime, so it refers
-  to it as ::
+  location as the Python code. This is referred to as "package data".
+
+  The preferred way to access the data from Python is using the
+  `importlib.resources API
+  <https://importlib-resources.readthedocs.io/en/latest/using.html>`_,
+  in particular the function :func:`importlib.resources.files`.
+  Using it, you can:
+
+  - open a resource for text reading: ``fd = files(package).joinpath(resource).open('rt')``
+  - open a resource for binary reading: ``fd = files(package).joinpath(resource).open('rb')``
+  - read a resource as text: ``text = files(package).joinpath(resource).read_text()``
+  - read a resource as bytes: ``bytes = files(package).joinpath(resource).read_bytes()``
+  - open an xz-compressed resource for text reading: ``fd = lzma.open(files(package).joinpath(resource).open('rb'), 'rt')``
+  - open an xz-compressed resource for binary reading: ``fd = lzma.open(files(package).joinpath(resource).open('rb'), 'rb')``
+
+  If the file needs to be used outside of Python, then the
+  preferred way is using the context manager
+  :func:`importlib.resources.as_file`. It should be imported in the
+  same way as shown above.
+
+- Older code in the Sage library accesses
+  the package data in more direct ways. For example,
+  ``SAGE_ROOT/src/sage/interfaces/maxima.py`` uses the file
+  ``SAGE_ROOT/src/sage/interfaces/maxima.lisp`` at runtime, so it
+  refers to it as::
 
     os.path.join(os.path.dirname(__file__), 'sage-maxima.lisp')
 
@@ -173,10 +190,38 @@ of the following places:
     from sage.env import SAGE_EXTCODE
     file = os.path.join(SAGE_EXTCODE, 'directory', 'file')
 
-In both cases, the files must be listed (explicitly or via wildcards) in
+  This practice is deprecated, see :issue:`33037`.
+
+In all cases, the files must be listed (explicitly or via wildcards) in
 the section ``[tool.setuptools.package-data]`` of the file
 ``SAGE_ROOT/pkgs/sagemath-standard/pyproject.toml.m4`` (or the corresponding
 file of another distribution).
+
+Large data files should not be added to the Sage source tree. Instead, it
+is proposed to do the following:
+
+- create a separate git repository and upload them there [2]_,
+
+- add metadata to the repository that make it a pip-installable
+  package (distribution package), as explained for example in the
+  `Python Packaging User Guide
+  <https://packaging.python.org/en/latest/tutorials/packaging-projects/>`_,
+
+- `upload it to PyPI
+  <https://packaging.python.org/en/latest/tutorials/packaging-projects/#uploading-the-distribution-archives>`_,
+
+- create metadata in ``SAGE_ROOT/build/pkgs`` that make your new
+  pip-installable package known to Sage; see :ref:`chapter-packaging`.
+
+For guiding examples of external repositories that host large data
+files, see https://github.com/sagemath/conway-polynomials, and
+https://github.com/gmou3/matroid-database.
+
+.. [2]
+
+  It is also suggested that the files are compressed, e.g., through
+  the command ``xz -e``. They can then be read via a command such as
+  ``lzma.open(file, 'rt')``.
 
 
 Learn by copy/paste
@@ -667,6 +712,9 @@ You are strongly encouraged to:
 
 - Use LaTeX typesetting (see :ref:`section-latex-typeset`).
 
+- Use raw strings (``r"""..."""``), regardless of whether the docstring
+  currently contains any backslashes or not.
+
 - Liberally describe what the examples do.
 
   .. NOTE::
@@ -779,8 +827,7 @@ In Sage's documentation LaTeX code is allowed and is marked with **backticks**:
     ```x^2 + y^2 = 1``` yields `x^2 + y^2 = 1`.
 
 **Backslashes:** For LaTeX commands containing backslashes, either use double
-backslashes or begin the docstring with a ``r"""`` instead of ``"""``. Both of
-the following are valid::
+backslashes or begin the docstring with a ``r"""`` instead of ``"""``::
 
     def cos(x):
         """
@@ -791,6 +838,8 @@ the following are valid::
         r"""
         Return `\sin(x)`.
         """
+
+We strongly suggest to use the latter.
 
 **MATH block:** This is similar to the LaTeX syntax ``\[<math expression>\]``
 (or ``$$<math expression>$$``). For instance:
