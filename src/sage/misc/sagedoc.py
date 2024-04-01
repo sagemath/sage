@@ -501,6 +501,7 @@ def process_dollars(s):
             s = s[:m.start()] + "$" + s[m.end():]
     return s
 
+
 # When adding roles here, also add them to SAGE_ROOT/src/tox.ini [flake8]
 # and document them in SAGE_ROOT/src/doc/en/developer/sage_manuals.rst
 #
