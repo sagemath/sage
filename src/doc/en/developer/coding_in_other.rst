@@ -639,7 +639,7 @@ asynchronous because it derives from the Sage class ``Expect``, which
 handles the communication between Sage and the external process.
 
 For example, here is part of the file
-``SAGE_ROOT/src/sage/interfaces/octave.py``, which
+:sage_root:`src/sage/interfaces/octave.py`, which
 defines an interface between Sage and Octave, an open source program
 for doing numerical computations, among other things:
 
@@ -751,5 +751,5 @@ documented.
 
 These are only excerpts from ``octave.py``; check that file for more
 definitions and examples. Look at other files in the directory
-``SAGE_ROOT/src/sage/interfaces/`` for examples of interfaces to other
+:sage_root:`src/sage/interfaces/` for examples of interfaces to other
 software packages.
