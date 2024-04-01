@@ -108,8 +108,7 @@ def get_basename(path):
 
     # If the file is in the Sage source tree (including SAGE_SRC/doc),
     # we can use the known layout
-    dev = os.path.realpath(SAGE_SRC)
-    if path.startswith(dev):
+    if SAGE_SRC and path.startswith(dev := os.path.realpath(SAGE_SRC)):
         # there will be a branch name
         i = path.find(os.path.sep, len(dev))
         if i == -1:
