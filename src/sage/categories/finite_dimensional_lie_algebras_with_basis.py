@@ -1936,7 +1936,10 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                     algorithm = "regular"
                 if algorithm == "regular":
                     from sage.algebras.lie_algebras.representation import FaithfulRepresentationNilpotentPBW
-                    return FaithfulRepresentationNilpotentPBW(self)
+                    return FaithfulRepresentationNilpotentPBW(self, minimal=False)
+                if algorithm == "minimal":
+                    from sage.algebras.lie_algebras.representation import FaithfulRepresentationNilpotentPBW
+                    return FaithfulRepresentationNilpotentPBW(self, minimal=True)
                 raise ValueError("invalid algorithm")
             raise NotImplementedError("only implemented for nilpotent Lie algebras")
 

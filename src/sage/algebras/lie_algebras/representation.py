@@ -97,6 +97,44 @@ class Representation_abstract:
             for v in S:
                 tester.assertEqual(x.bracket(y) * v, x * (y * v) - y * (x * v))
 
+    def representation_matrix(self, elt):
+        """
+        Return the matrix for the action of ``elt`` on ``self``.
+
+        EXAMPLES::
+
+            sage: H1 = lie_algebras.Heisenberg(QQ, 1)
+            sage: F = H1.faithful_representation(algorithm="minimal")
+            sage: P1 = F.representation_matrix(H1.gen(0)); P1
+            [0 0 0]
+            [0 0 0]
+            [1 0 0]
+            sage: Q1 = F.representation_matrix(H1.gen(1)); Q1
+            [ 0  0  0]
+            [ 0  0 -1]
+            [ 0  0  0]
+            sage: Z = P1.commutator(Q1); Z
+            [0 0 0]
+            [1 0 0]
+            [0 0 0]
+            sage: P1.commutator(Z) == Q1.commutator(Z) == 0
+            True
+            sage: (H1.gen(0) * F.an_element()).to_vector()
+            (0, 0, 2)
+            sage: P1 * F.an_element().to_vector()
+            (0, 0, 2)
+            sage: (H1.gen(1) * F.an_element()).to_vector()
+            (0, -3, 0)
+            sage: Q1 * F.an_element().to_vector()
+            (0, -3, 0)
+            sage: (H1.basis()['z'] * F.an_element()).to_vector()
+            (0, 2, 0)
+            sage: Z * F.an_element().to_vector()
+            (0, 2, 0)
+        """
+        B = self.basis()
+        return matrix([(elt * B[k]).to_vector() for k in self.get_order()]).transpose()
+
 
 class RepresentationByMorphism(CombinatorialFreeModule, Representation_abstract):
     r"""
@@ -466,13 +504,18 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
         2*F[1, 0, 0] + 8*F[1, 1, 0] + 3*F[2, 0, 0] + 4*F[0, 1, 0]
          + 4*F[0, 2, 0] + 4*F[0, 0, 1]
 
+    An example with ``minimal=True`` for `H_2 \oplus A_1`, where `A_1` is
+    a `1`-dimensional Abelian Lie algebra::
+
+        sage: L.<a,b,c,d> = LieAlgebra(QQ, {('a','b'): {'b':-1, 'c':1}, ('a','c'): {'b':-1, 'c':1}})
+
     REFERENCES:
 
     - Dietrich Burde, Bettina Eick, and Willem de Graaf.
       *Computing faithful representations for nilpotent Lie algebras*.
       https://homepage.univie.ac.at/dietrich.burde/papers/burde_35_nilrep.pdf
     """
-    def __init__(self, L):
+    def __init__(self, L, minimal=True):
         r"""
         Initialize ``self``.
 
@@ -481,6 +524,10 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
             sage: H2 = lie_algebras.Heisenberg(QQ, 2)
             sage: F = H2.faithful_representation()
             sage: TestSuite(F).run(elements=list(F.basis()))
+
+            sage: L.<a,b,c> = LieAlgebra(QQ, {('a','b'): {'b':-1, 'c':1}, ('a','c'): {'b':-1, 'c':1}})
+            sage: F = L.faithful_representation()
+            sage: TestSuite(F).run()
         """
         LCS = L.lower_central_series()
         if LCS[-1].dimension() != 0:
@@ -488,11 +535,29 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
         # construct an appropriate basis of L
         basis_by_deg = {}
         self._step = len(LCS) - 1
-        prev = LCS[-1]
-        for D in reversed(LCS[:-1]):
-            temp = [L(bred) for b in D.basis() if (bred := prev.reduce(b))]
-            basis_by_deg[self._step-len(basis_by_deg)] = L.echelon_form(temp)
-            prev = D
+        self._minimal = minimal
+        if self._minimal:
+            Z = L.center()
+            ZB = [L(b) for b in Z.basis()]
+            prev = LCS[-1]
+            for D in reversed(LCS[:-1]):
+                cur = []
+                for ind in range(len(ZB)-1, -1, -1):
+                    z = ZB[ind]
+                    if z in D:
+                        ZB.pop(ind)
+                    cur.append(z)
+                k = self._step-len(basis_by_deg)
+                basis_by_deg[k] = cur
+                temp = [bred for b in D.basis() if (bred := Z.reduce(prev.reduce(L(b))))]
+                basis_by_deg[k].extend(L.echelon_form(temp))
+                prev = D
+        else:
+            prev = LCS[-1]
+            for D in reversed(LCS[:-1]):
+                temp = [L(bred) for b in D.basis() if (bred := prev.reduce(L(b)))]
+                basis_by_deg[self._step-len(basis_by_deg)] = L.echelon_form(temp)
+                prev = D
 
         L_basis = sum((basis_by_deg[deg] for deg in sorted(basis_by_deg)), [])
 
@@ -517,6 +582,43 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
         indices = DisjointUnionEnumeratedSets([WeightedIntegerVectors(n, self._degrees)
                                                for n in range(self._step+1)])
 
+        if self._minimal:
+            X = set([tuple(index) for index in indices])
+            monoid = self._pbw._indices
+            I = monoid._indices
+            one = L.base_ring().one()
+            pbw_gens = self._pbw.algebra_generators()
+            ZB = frozenset([L(b) for b in Z.basis()])
+            Zind = [i for i, b in enumerate(L_basis) if b in ZB]
+            Ztup = set()
+            for i in Zind:
+                vec = [0] * L.dimension()
+                vec[i] = 1
+                Ztup.add(tuple(vec))
+
+            def as_exp(s):
+                sm = s._monomial
+                return tuple([sm[i] if i in sm else 0 for i in I])
+
+            def test_ideal(m, X):
+                elt = self._pbw.element_class(self._pbw, {monoid(list(zip(I, m))): one})
+                for g in pbw_gens:
+                    gelt = g * elt
+                    if any(as_exp(s) in X for s in gelt.support()):
+                        return False
+                return True
+
+            to_remove = set([None])
+            while to_remove:
+                X -= to_remove
+                to_remove = set()
+                for m in X:
+                    m = tuple(m)
+                    if m in Ztup or not test_ideal(m, X):
+                        continue
+                    to_remove.add(m)
+            indices = sorted(X)
+
         Representation_abstract.__init__(self, L)
         CombinatorialFreeModule.__init__(self, L.base_ring(), indices, prefix='F', bracket=False)
 
@@ -531,6 +633,8 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
             Faithful 16 dimensional representation of Heisenberg algebra
              of rank 2 over Rational Field
         """
+        if self._minimal:
+            return "Minimal faithful representation of {}".format(self._lie_algebra)
         return "Faithful {} dimensional representation of {}".format(self.dimension(), self._lie_algebra)
 
     def _latex_(self):
@@ -545,7 +649,10 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
         """
         from sage.misc.latex import latex
         g = latex(self._lie_algebra)
-        return "U({0}) / U({0})^{{{1}}}".format(g, self._step+1)
+        ret = "U({0}) / U({0})^{{{1}}}".format(g, self._step+1)
+        if self._minimal:
+            return "\\min " + ret
+        return ret
 
     def _project(self, elt):
         r"""
@@ -565,11 +672,18 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
         """
         ret = {}
         I = self._pbw._indices._indices
-        for m, c in elt._monomial_coefficients.items():
-            mm = m._monomial
-            vec = [mm[i] if i in mm else 0 for i in I]
-            if sum(e * d for e, d in zip(vec, self._degrees)) <= self._step:
-                ret[self._indices(vec)] = c
+        if self._minimal:
+            for m, c in elt._monomial_coefficients.items():
+                mm = m._monomial
+                vec = tuple([mm[i] if i in mm else 0 for i in I])
+                if vec in self._indices:
+                    ret[self._indices(vec)] = c
+        else:
+            for m, c in elt._monomial_coefficients.items():
+                mm = m._monomial
+                vec = [mm[i] if i in mm else 0 for i in I]
+                if sum(e * d for e, d in zip(vec, self._degrees)) <= self._step:
+                    ret[self._indices(vec)] = c
         return self.element_class(self, ret)
 
     def _to_pbw(self, elt):
