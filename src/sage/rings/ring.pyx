@@ -82,7 +82,7 @@ This is to test a deprecation::
     sage: F = Non(QQ)
     ...:
     DeprecationWarning: use the category PrincipalIdealDomains
-    See https://github.com/sagemath/sage/issues/44444 for details.
+    See https://github.com/sagemath/sage/issues/37719 for details.
     sage: F.category()
     Category of principal ideal domains
 """
@@ -1584,7 +1584,7 @@ cdef class PrincipalIdealDomain(CommutativeRing):
     _default_category = PrincipalIdealDomains()
 
     def __init__(self, *args, **kwds):
-        deprecation(44444, "use the category PrincipalIdealDomains")
+        deprecation(37719, "use the category PrincipalIdealDomains")
         super().__init__(*args, **kwds)
 
 
