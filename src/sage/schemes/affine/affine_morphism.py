@@ -273,6 +273,19 @@ class SchemeMorphism_polynomial_affine_space(SchemeMorphism_polynomial):
             P = [f(x._coords) for f in self._polys]
         return self.codomain().point_homset(R)(P, check=check)
 
+    def __hash__(self):
+        """
+        Return a hash for this scheme morphism.
+
+        EXAMPLES::
+
+            sage: A.<x,y> = AffineSpace(QQ, 2)
+            sage: F = A.hom([2*x, 2*y], A)
+            sage: hash(F) == hash((F.__class__, A, A, (2*x, 2*y)))
+            True
+        """
+        return hash((self.__class__, self.domain(), self.codomain(), self._polys))
+
     def __eq__(self, right):
         """
         Tests the equality of two affine maps.

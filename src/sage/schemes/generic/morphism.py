@@ -851,6 +851,7 @@ class SchemeMorphism_sum(SchemeMorphism):
               Defn: Identity map, Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
               Defn: Identity map)
         """
+        # PR_TODO: Remove the "Via:" part?
         return f'Sum morphism:' \
                 f'\n  From: {self._domain}' \
                 f'\n  To:   {self._codomain}' \
@@ -925,6 +926,22 @@ class SchemeMorphism_sum(SchemeMorphism):
             return NotImplemented
 
         return self._phis == other._phis
+
+    def __hash__(self):
+        """
+        Return a hash for this sum of scheme morhpisms.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: J = HyperellipticCurve(x^5 - 8*x).jacobian()
+            sage: phi = End(J).identity()
+            sage: psi = phi + phi
+            sage: hash(phi) == hash((phi.__class__, J, J, (phi, phi)))
+            True
+        """
+        return hash((self.__class__, self.codomain(), self.domain(),
+                    tuple(self._phis)))
 
 
 class SchemeMorphism_id(SchemeMorphism):
@@ -1002,6 +1019,18 @@ class SchemeMorphism_id(SchemeMorphism):
             (2, y - 4)
         """
         return P
+
+    def __hash__(self):
+        """
+        Return a hash for self.
+
+        EXAMPLES::
+
+            sage: phi = Spec(QQ).End().identity()
+            sage: hash(phi) == hash((phi.__class__, Spec(QQ)))
+            True
+        """
+        return hash((self.__class__, self.domain()))
 
 
 class SchemeMorphism_structure_map(SchemeMorphism):
@@ -1309,6 +1338,19 @@ class SchemeMorphism_polynomial(SchemeMorphism):
         self._polys = tuple(polys)
 
         SchemeMorphism.__init__(self, parent)
+
+    def __hash__(self):
+        """
+        Return a hash for self.
+
+        EXAMPLES::
+
+            sage: A.<x,y> = AffineSpace(2, QQ)
+            sage: phi = A.hom([2*x, 2*y], A)
+            sage: hash(phi) == hash(phi.__class__, A, A, (2*x, 2*y))
+            True
+        """
+        return hash((self.__class__, self.domain(), self.codomain(), self._polys))
 
     def __eq__(self, other):
         """
