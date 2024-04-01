@@ -229,9 +229,9 @@ def Mestre_conic(i, xyz=False, names='u,v,w'):
 
     - ``i`` - list or tuple of length 4 containing the four Igusa-Clebsch
       invariants: I2, I4, I6, I10
-    - ``xyz`` - Boolean (default: False) if True, the algorithm also
-      returns three invariants x,y,z used in Mestre's algorithm
-    - ``names`` (default: 'u,v,w') - the variable names for the conic
+    - ``xyz`` - Boolean (default: ``False``) if ``True``, the algorithm also
+      returns three invariants `x`,`y`,`z` used in Mestre's algorithm
+    - ``names`` (default: ``'u,v,w'``) - the variable names for the conic
 
     OUTPUT:
 

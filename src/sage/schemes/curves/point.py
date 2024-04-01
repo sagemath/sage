@@ -451,7 +451,7 @@ class IntegralAffineCurvePoint_finite_field(IntegralAffineCurvePoint):
 
 class IntegralAffinePlaneCurvePoint(IntegralAffineCurvePoint, AffinePlaneCurvePoint_field):
     """
-    Point of an integral affine plane curve over a finite field.
+    Point of an integral affine plane curve.
     """
     pass
 

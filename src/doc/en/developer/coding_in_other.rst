@@ -8,9 +8,9 @@ When writing code for Sage, use Python for the basic structure and
 interface. For speed, efficiency, or convenience, you can implement
 parts of the code using any of the following languages: :ref:`Cython
 <chapter-cython>`, C/C++, Fortran 95, GAP, Common Lisp, Singular, and
-PARI/GP. You can also use all C/C++ libraries included with Sage
-[SageComponents]_. And if you are okay with your code depending on
-optional Sage packages, you can use Octave, or even Magma,
+PARI/GP. You can also use all C/C++ libraries included with Sage,
+see :ref:`spkg`. And if you are okay with your code depending on
+external programs, you can use Octave, or even Magma,
 Mathematica, or Maple.
 
 In this chapter, we discuss interfaces between Sage and :ref:`PARI
@@ -753,7 +753,3 @@ These are only excerpts from ``octave.py``; check that file for more
 definitions and examples. Look at other files in the directory
 ``SAGE_ROOT/src/sage/interfaces/`` for examples of interfaces to other
 software packages.
-
-
-.. [SageComponents] See http://www.sagemath.org/links-components.html
-   for a list
