@@ -88,14 +88,14 @@ def get_basename(path):
         'sage.doctest.sources'
         sage: get_basename(os.path.join(sage.structure.__path__[0], 'element.pxd'))
         'sage.structure.element.pxd'
-        sage: get_basename(os.path.join(SAGE_SRC, 'sage', 'doctest', 'tests', 'tolerance.rst'))
+        sage: get_basename(os.path.join(sage.doctest.tests.__path__[0], 'tolerance.rst'))
         'sage.doctest.tests.tolerance'
 
     TESTS:
 
     Check that :issue:`22445` has been resolved::
 
-        sage: get_basename(os.path.join(SAGE_SRC, 'doc', '..', 'sage', 'doctest', 'sources.py'))
+        sage: get_basename(os.path.join(SAGE_SRC, 'doc', '..', 'sage', 'doctest', 'sources.py'))    # needs SAGE_SRC
         'sage.doctest.sources'
 
     """
