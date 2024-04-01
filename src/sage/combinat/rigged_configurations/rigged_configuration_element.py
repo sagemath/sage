@@ -199,9 +199,7 @@ class RiggedConfigurationElement(ClonableArray):
             if len(data) == 0:
                 # Create a size n array of empty rigged tableau since no tableau
                 #   were given
-                nu = []
-                for i in range(n):
-                    nu.append(RiggedPartition())
+                nu = [RiggedPartition() for _ in range(n)]
             else:
                 if len(data) != n:  # otherwise n should be equal to the number of tableaux
                     raise ValueError("incorrect number of partitions")
@@ -1308,9 +1306,8 @@ class KRRiggedConfigurationElement(RiggedConfigurationElement):
             shape_data = data[0]
             rigging_data = data[1]
             vac_data = data[2]
-            nu = []
-            for i in range(n):
-                nu.append(RiggedPartition(shape_data[i], rigging_data[i], vac_data[i]))
+            nu = [RiggedPartition(a, b, c)
+                  for a, b, c in zip(shape_data, rigging_data, vac_data)]
             # Special display case
             if parent.cartan_type().type() == 'B':
                 nu[-1] = RiggedPartitionTypeB(nu[-1])

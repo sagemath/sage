@@ -500,7 +500,7 @@ manifold endowed with a positive definite metric tensor::
 
 Actually ``RR`` is used here as a proxy for the real field (this should
 be replaced in the future, see the discussion at
-:trac:`24456`) and the 53 bits of
+:issue:`24456`) and the 53 bits of
 precision play of course no role for the symbolic computations.
 
 The user atlas of `\mathbb{E}^2` has two charts::

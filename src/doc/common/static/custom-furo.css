@@ -21,3 +21,17 @@ a.pdf:hover {
   text-decoration: none;
 }
 
+/* Style for announcement banner */
+
+.announcement {
+    background: orange;
+}
+
+.announcement-content {
+    color: black;
+}
+
+.announcement-content a {
+    color: white;
+    text-decoration: none;
+}

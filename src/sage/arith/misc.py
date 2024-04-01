@@ -291,8 +291,10 @@ def bernoulli(n, algorithm='default', num_threads=1):
       - ``'default'`` -- use 'flint' for n <= 20000, then 'arb' for n <= 300000
         and 'bernmm' for larger values (this is just a heuristic, and not guaranteed
         to be optimal on all hardware)
-      - ``'arb'`` -- use the arb library
-      - ``'flint'`` -- use the FLINT library
+      - ``'arb'`` -- use the ``bernoulli_fmpq_ui`` function (formerly part of
+        Arb) of the FLINT library
+      - ``'flint'`` -- use the ``arith_bernoulli_number`` function of the FLINT
+        library
       - ``'pari'`` -- use the PARI C library
       - ``'gap'`` -- use GAP
       - ``'gp'`` -- use PARI/GP interpreter
