@@ -501,8 +501,10 @@ def process_dollars(s):
             s = s[:m.start()] + "$" + s[m.end():]
     return s
 
-
-# Sage github issue shortcuts. For example, :issue:`7549` .
+# When adding roles here, also add them to SAGE_ROOT/src/tox.ini [flake8]
+# and document them in SAGE_ROOT/src/doc/en/developer/sage_manuals.rst
+#
+# Sage github issue shortcuts. For example, :issue:`7549`.
 pythonversion = sys.version.split(' ')[0]
 extlinks = {
     'python': (f'https://docs.python.org/release/{pythonversion}/%s', None),
