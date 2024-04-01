@@ -2543,12 +2543,11 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         OUTPUT:
 
-        If ``x`` is not given, return the maximum degree of the monomials of
-        the polynomial. Note that the degree of a monomial is affected by the
-        gradings given to the generators of the parent ring. If ``x`` is given,
-        it is (or coercible to) a generator of the parent ring and the output
-        is the maximum degree in ``x``. This is not affected by the gradings of
-        the generators.
+        If ``x`` is ``None``, return the total degree of ``self``. Note that
+        this result is affected by the weighting given to the generators of the
+        parent ring. Otherwise, if ``x`` is (or is coercible to) a generator of
+        the parent ring, the output is the maximum degree of ``x`` in ``self``.
+        This is not affected by the weighting of the generators.
 
         EXAMPLES::
 
@@ -2562,6 +2561,19 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             3
             sage: (y^10*x - 7*x^2*y^5 + 5*x^3).degree(y)
             10
+
+        When the generators have a grading (weighting) then the total degree
+        respects this, but the degree for a given generator is unaffected::
+
+            sage: T = TermOrder("wdegrevlex", (2, 3))
+            sage: R.<x, y> = PolynomialRing(QQ, order=T)
+            sage: f = x^2 * y + y^4
+            sage: f.degree()
+            12
+            sage: f.degree(x)
+            2
+            sage: f.degree(y)
+            4
 
         The term ordering of the parent ring determines the grading of the
         generators. ::
@@ -2659,13 +2671,25 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             1
             sage: poly.degree(S.1)
             2
+
+        Ensure that :issue:`37603` is fixed::
+
+            sage: R.<x, y> = QQ[]
+            sage: f = x + y + 1
+            sage: type(f.degree())
+            <class 'sage.rings.integer.Integer'>
+            sage: type(f.degree(x))
+            <class 'sage.rings.integer.Integer'>
+            sage: type(f.degree(y))
+            <class 'sage.rings.integer.Integer'>
+
         """
         cdef ring *r = self._parent_ring
         cdef poly *p = self._poly
         if not x:
             if std_grading:
-                return self.total_degree(std_grading=True)
-            return singular_polynomial_deg(p, NULL, r)
+                return Integer(self.total_degree(std_grading=True))
+            return Integer(singular_polynomial_deg(p, NULL, r))
 
         if not x.parent() is self.parent():
             try:
@@ -2675,7 +2699,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         if not x.is_generator():
             raise TypeError("argument is not a generator")
 
-        return singular_polynomial_deg(p, x._poly, r)
+        return Integer(singular_polynomial_deg(p, x._poly, r))
 
     def total_degree(self, int std_grading=False):
         """
@@ -2727,6 +2751,14 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             -1
             sage: R(1).total_degree()
             0
+
+        Ensure that :issue:`37603` is fixed::
+            sage: R.<x,y,z> = QQ[]
+            sage: f = x^4 + y + z
+            sage: f.total_degree()
+            4
+            sage: type(f.total_degree())
+            <class 'sage.rings.integer.Integer'>
         """
         cdef int i, result
         cdef poly *p = self._poly
@@ -2737,8 +2769,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             while p:
                 result = max(result, sum([p_GetExp(p,i,r) for i in range(1,r.N+1)]))
                 p = pNext(p)
-            return result
-        return singular_polynomial_deg(p, NULL, r)
+            return Integer(result)
+        return Integer(singular_polynomial_deg(p, NULL, r))
 
     def degrees(self):
         """
@@ -2755,6 +2787,17 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             (1, 2, 1)
             sage: (q + y0^5).degrees()
             (5, 2, 1)
+
+        TESTS:
+
+        Ensure that :issue:`37603` is fixed::
+
+            sage: R.<x,y,z> = QQ[]
+            sage: f = x^4 + y + z
+            sage: f.degrees()
+            (4, 1, 1)
+            sage: type(f.degrees()[0])
+            <class 'sage.rings.integer.Integer'>
         """
         cdef poly *p = self._poly
         cdef ring *r = self._parent_ring
@@ -2764,7 +2807,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             for i from 0 <= i < r.N:
                 d[i] = max(d[i],p_GetExp(p, i+1, r))
             p = pNext(p)
-        return tuple(d)
+        return tuple(map(Integer, d))
 
     def coefficient(self, degrees):
         """

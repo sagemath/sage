@@ -38,7 +38,7 @@ Sage's manuals are written in `ReST <http://docutils.sourceforge.net/rst.html>`_
   ``SAGE_ROOT/src/doc/en``.
 
 - Some documents have been **translated** into other languages. In order to
-  access them, change en/ into fr/,es/, de/... See :ref:`section-manuals-names`.
+  access them, change ``en/`` into ``fr/``, ``es/``, ``de/``... See :ref:`section-manuals-names`.
 
 .. _section-manuals-edit:
 
@@ -82,9 +82,12 @@ The documentation can contain links toward modules, classes, or methods, e.g.::
     :mod:`link to a module <sage.module_name>`
     :mod:`sage.module_name` (here the link's text is the module's name)
 
-For links toward classes, methods, or function, replace **:mod:** by
-**:class:**, **:meth:** or **:func:** respectively.  See `Sphinx' documentation
-<https://www.sphinx-doc.org/en/master/usage/restructuredtext/roles.html>`_.
+For links toward classes, methods, or functions, replace ``:mod:`` by
+``:class:``, ``:meth:``, or ``:func:``, respectively.  See Sphinx' documentation
+on `cross-referencing Python objects
+<https://www.sphinx-doc.org/en/master/usage/domains/python.html#cross-referencing-python-objects>`_
+and for the general syntax of
+`roles <https://www.sphinx-doc.org/en/master/usage/restructuredtext/roles.html>`_.
 
 **Short links:** the link ``:func:`~sage.mod1.mod2.mod3.func1``` is equivalent
 to ``:func:`func1 <sage.mod1.mod2.mod3.func1>```: the function's name will be
@@ -93,6 +96,72 @@ used as the link name, instead of its full path.
 **Local names:** links between methods of the same class do not need to be
 absolute. If you are documenting ``method_one``, you can write
 ``:meth:`method_two```.
+
+**Intersphinx references:** in the same way, you can refer to the modules, classes,
+methods, functions of the Python standard library and of several Python packages
+used by SageMath; see the `Intersphinx documentation
+<https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html>`_
+for details. Likewise, you can refer to the C functions of the
+:ref:`FLINT <spkg_flint>` library; see `Sphinx' documentation on
+cross-referencing C constructs
+<https://www.sphinx-doc.org/en/master/usage/domains/c.html#cross-referencing-c-constructs>`_
+for more information.
+
+.. LIST-TABLE::
+   :widths: 4 7 5
+   :header-rows: 0
+
+   * - Python
+     - ``:exc:`ValueError```
+     - :exc:`ValueError`
+   * - :ref:`CVXOPT <spkg_cvxopt>`
+     - ``:func:`cvxopt.solvers.socp```
+     - :func:`cvxopt.solvers.socp`
+   * - :ref:`CVXpy <spkg_cvxpy>`
+     - ``:class:`~cvxpy.atoms.log_det.log_det```
+     - :class:`~cvxpy.atoms.log_det.log_det`
+   * - :ref:`cypari2 <spkg_cypari>`
+     - ``:class:`cypari2.gen.Gen```
+     - :class:`cypari2.gen.Gen`
+   * - :ref:`cysignals <spkg_cysignals>`
+     - ``:envvar:`CYSIGNALS_CRASH_DAYS```
+     - :envvar:`CYSIGNALS_CRASH_DAYS`
+   * - :ref:`FLINT <spkg_flint>`
+     - ``:c:func:`arith_bell_number```
+     - :c:func:`arith_bell_number`
+   * - :ref:`gmpy2 <spkg_gmpy2>`
+     - ``:func:`gmpy2.gamma_inc```
+     - :func:`gmpy2.gamma_inc`
+   * - :ref:`ipywidgets <spkg_ipywidgets>`
+     - ``:mod:`~ipywidgets.widgets.widget_date```
+     - :mod:`~ipywidgets.widgets.widget_date`
+   * - :ref:`Matplotlib <spkg_matplotlib>`
+     - ``:mod:`matplotlib.bezier```
+     - :mod:`matplotlib.bezier`
+   * - :ref:`mpmath <spkg_mpmath>`
+     - ``:attr:`mpmath.mp.khinchin```
+     - :attr:`mpmath.mp.khinchin`
+   * - :ref:`NetworkX <spkg_networkx>`
+     - ``:attr:`~networkx.DiGraph.out_degree```
+     - :attr:`~networkx.DiGraph.out_degree`
+   * - :ref:`NumPy <spkg_numpy>`
+     - ``:data:`numpy.NAN```
+     - :data:`numpy.NAN`
+   * - :ref:`pplpy <spkg_pplpy>`
+     - ``:mod:`ppl.polyhedron```
+     - :mod:`ppl.polyhedron`
+   * - :ref:`rpy2 <spkg_rpy2>`
+     - ``:class:`~rpy2.robjects.vectors.DataFrame```
+     - :class:`~rpy2.robjects.vectors.DataFrame`
+   * - :ref:`SciPy <spkg_scipy>`
+     - ``:data:`scipy.special.huber```
+     - :data:`scipy.special.huber`
+   * - :ref:`SymPy <spkg_sympy>`
+     - ``:class:`~sympy.diffgeom.WedgeProduct```
+     - :class:`~sympy.diffgeom.WedgeProduct`
+
+To see the available cross references in any of these libraries, you can use the command
+``./sage -python -m sphinx.ext.intersphinx src/doc/common/_vendor/numpy.inv``.
 
 **Global namespace:** if an object (e.g. ``integral``) is automatically imported
 by Sage, you can link toward it without specifying its full path:
@@ -130,6 +199,66 @@ by Sage, you can link toward it without specifying its full path:
    * - MathSciNet
      - ``:mathscinet:`MR0100971```
      - :mathscinet:`MR0100971`
+
+   * - :ref:`ECL <spkg_ecl>`
+     - ``:ecl:`Manipulating-Lisp-objects```
+     - :ecl:`Manipulating-Lisp-objects`
+
+   * -
+     - ``:common_lisp:`RENAME-PACKAGE <f_rn_pkg>```
+     - :common_lisp:`RENAME-PACKAGE <f_rn_pkg>`
+
+   * - :ref:`GAP <spkg_gap>`
+     - ``:gap:`Groups <chap39>```
+     - :gap:`Groups <chap39>`
+
+   * -
+     - ``:gap_package:`GAP package QuaGroup <quagroup/doc/chap0_mj.html>```
+     - :gap_package:`GAP package QuaGroup <quagroup/doc/chap0_mj.html>`
+
+   * - :ref:`Giac <spkg_giac>`
+     - ``:giac_cascmd:`gbasis <node280>```
+     - :giac_cascmd:`gbasis <node280>`
+
+   * -
+     - ``:giac_us:`Unary-functions```
+     - :giac_us:`Unary-functions`
+
+   * - :ref:`Maxima <spkg_maxima>`
+     - ``:maxima:`struve_h <index-struve_005fh>```
+     - :maxima:`struve_h <index-struve_005fh>`
+
+   * - :ref:`Meson <spkg_meson>`
+     - ``:meson:`install_subdir <Reference-manual_functions.html#install_subdir>```
+     - :meson:`install_subdir <Reference-manual_functions.html#install_subdir>`
+
+   * - :ref:`Pari <spkg_pari>`
+     - ``:pari:`lfungenus2```
+     - :pari:`lfungenus2`
+
+   * - :ref:`polymake <spkg_polymake>`
+     - ``:polymake:`matroid```
+     - :polymake:`matroid`
+
+   * - :ref:`PPL <spkg_ppl>`
+     - ``:ppl:`Linear_Expression <classParma__Polyhedra__Library_1_1 Linear__Expression>```
+     - :ppl:`Linear_Expression <classParma__Polyhedra__Library_1_1Linear__Expression>`
+
+   * - :ref:`QEPCAD <spkg_qepcad>`
+     - ``:qepcad:`QEPCAD: Entering formulas <user/EnterForm>```
+     - :qepcad:`QEPCAD: Entering formulas <user/EnterForm>`
+
+   * - :ref:`SCIP <spkg_scip>`
+     - ``:scip:`SCIPsolve <group__PublicSolveMethods>```
+     - :scip:`SCIPsolve <group__PublicSolveMethods>`
+
+   * - :ref:`Singular <spkg_singular>`
+     - ``:singular:`stdfglm <sing_358>```
+     - :singular:`stdfglm <sing_358>`
+
+   * - :ref:`SoPlex <spkg_soplex>`
+     - ``:soplex:`soplex::LinSolverRational <classsoplex_1_1SLinSolverRational>```
+     - :soplex:`soplex::LinSolverRational <classsoplex_1_1SLinSolverRational>`
 
 **http links:** copy/pasting a http link in the documentation works. If you want
 a specific link name, use ```link name <http://www.example.com>`_``

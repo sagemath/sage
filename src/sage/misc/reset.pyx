@@ -7,7 +7,7 @@ import sys
 
 # Exclude these from the reset command.
 # DATA, base64 -- needed by the notebook
-# Add exit and quit to EXCLUDE to resolve trac #22529 and trac #16704
+# Add exit and quit to EXCLUDE to resolve Issue #22529 and Issue #16704
 EXCLUDE = set(['sage_mode', '__DIR__', 'DIR', 'DATA', 'base64', 'exit', 'quit'])
 
 
