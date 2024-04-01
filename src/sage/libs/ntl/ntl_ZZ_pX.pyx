@@ -111,7 +111,7 @@ cdef class ntl_ZZ_pX():
                     cc = x
                 ZZ_pX_SetCoeff(self.x, i, cc.x)
         elif v is not None:
-            s = str(v).replace(',', ' ').replace('L', '')  # can change the modulus trac #25790
+            s = str(v).replace(',', ' ').replace('L', '')  # can change the modulus; Issue #25790
             self.c.restore_c()
             ccreadstr(self.x, s)
 

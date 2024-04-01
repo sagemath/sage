@@ -1625,8 +1625,7 @@ def structure_description(G, latex=False):
     This methods wraps GAP's ``StructureDescription`` method.
 
     For full details, including the form of the returned string and the
-    algorithm to build it, see `GAP's documentation
-    <https://www.gap-system.org/Manuals/doc/ref/chap39.html>`_.
+    algorithm to build it, see :gap:`GAP's documentation <chap39>`.
 
     INPUT:
 
