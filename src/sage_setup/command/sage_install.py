@@ -2,6 +2,7 @@
 ### Install Jupyter kernel spec
 #########################################################
 
+import logging
 import os
 import time
 
@@ -9,9 +10,10 @@ import time
 # can replace distutils by its own vendored copy.
 import setuptools
 
-from distutils import log
 from distutils.command.install import install
 from setuptools.command.develop import develop
+
+log = logging.getLogger(__name__)
 
 
 class install_kernel_spec_mixin:
