@@ -227,28 +227,3 @@ class SchemeTopologicalPoint_prime_ideal(SchemeTopologicalPoint):
             False
         """
         return richcmp(self.__P, other.__P, op)
-
-########################################################
-# Points on a scheme defined by a morphism
-########################################################
-
-def is_SchemeRationalPoint(x):
-    return isinstance(x, SchemeRationalPoint)
-
-class SchemeRationalPoint(SchemePoint):
-    def __init__(self, f):
-        """
-        INPUT:
-
-
-        -  ``f`` - a morphism of schemes
-        """
-        SchemePoint.__init__(self, f.codomain(), parent=f.parent())
-        self.__f = f
-
-    def _repr_(self):
-        return "Point on %s defined by the morphism %s" % (self.scheme(),
-                                                         self.morphism())
-
-    def morphism(self):
-        return self.__f

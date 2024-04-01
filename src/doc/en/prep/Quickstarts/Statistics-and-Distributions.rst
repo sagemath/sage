@@ -38,7 +38,7 @@ harmonic mean::
     2.5531914893617023
 
 We do not recommend to use Python's built in ``statistics`` module with Sage.
-It has a known incompatibility with number types defined in Sage, see :trac:`28234`.
+It has a known incompatibility with number types defined in Sage, see :issue:`28234`.
 
 
 Distributions

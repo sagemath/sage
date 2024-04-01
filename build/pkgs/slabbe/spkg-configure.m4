@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([slabbe], [SAGE_PYTHON_PACKAGE_CHECK([slabbe])])

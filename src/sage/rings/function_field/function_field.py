@@ -220,6 +220,9 @@ AUTHORS:
 
 - Brent Baccala (2019-12-20): added function fields over number fields and QQbar
 
+- Sebastian A. Spindler (2024-03-06): implemented Hilbert symbols for global
+  function fields
+
 """
 
 # *****************************************************************************
@@ -1223,6 +1226,124 @@ class FunctionField(Field):
         """
         from .maps import FunctionFieldCompletion
         return FunctionFieldCompletion(self, place, name=name, prec=prec, gen_name=gen_name)
+
+    def hilbert_symbol(self, a, b, P):
+        r"""
+        Return the Hilbert symbol `(a,b)_{F_P}` for the local field `F_P`.
+
+        The local field `F_P` is the completion of this function field `F`
+        at the place `P`.
+
+        INPUT:
+
+        - ``a`` and ``b`` -- elements of this function field
+
+        - ``P`` -- a place of this function field
+
+        The Hilbert symbol `(a,b)_{F_P}` is `0` if `a` or `b` is zero.
+        Otherwise it takes the value `1` if  the quaternion algebra
+        defined by `(a,b)` over `F_P` is split, and `-1` if said
+        algebra is a division ring.
+
+        ALGORITHM:
+
+        For the valuation `\nu = \nu_P` of `F`, we compute the valuations
+        `\nu(a)` and `\nu(b)` as well as elements `a_0` and `b_0` of the
+        residue field such that for a uniformizer `\pi` at `P`,
+        `a\pi^{-\nu(a))}` respectively `b\pi^{-\nu(b)}` has the residue class
+        `a_0` respectively `b_0` modulo `\pi`. Then the Hilbert symbol is
+        computed by formula 12.4.10 in [Voi2021]_.
+
+        Currently only implemented for global function fields.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(GF(17))
+            sage: P = K.places()[0]; P
+            Place (1/x)
+            sage: a = (5*x + 6)/(x + 15)
+            sage: b = 7/x
+            sage: K.hilbert_symbol(a, b, P)
+            -1
+
+            sage: Q = K.places()[7]; Q
+            Place (x + 6)
+            sage: c = 15*x + 12
+            sage: d = 16/(x + 13)
+            sage: K.hilbert_symbol(c, d, Q)
+            1
+
+        Check that the Hilbert symbol is symmetric and bimultiplicative::
+
+            sage: K.<x> = FunctionField(GF(5)); R.<T> = PolynomialRing(K)
+            sage: f = ((x^2 + 2*x + 2)*T^5 + (4*x^2 + 2*x + 3)*T^4 + 3*T^3 + 4*T^2
+            ....:     + (2/(x^2 + 4*x + 1))*T + 3*x^2 + 2*x + 4)
+            sage: L.<y> = K.extension(f)
+            sage: a = L.random_element()
+            sage: b = L.random_element()
+            sage: c = L.random_element()
+            sage: P = L.places_above(K.places()[0])[1]
+            sage: Q = L.places_above(K.places()[1])[0]
+
+            sage: hP_a_c = L.hilbert_symbol(a, c, P)
+            sage: hP_a_c == L.hilbert_symbol(c, a, P)
+            True
+            sage: L.hilbert_symbol(a, b, P) * hP_a_c == L.hilbert_symbol(a, b*c, P)
+            True
+            sage: hP_a_c * L.hilbert_symbol(b, c, P) == L.hilbert_symbol(a*b, c, P)
+            True
+
+            sage: hQ_a_c = L.hilbert_symbol(a, c, Q)
+            sage: hQ_a_c == L.hilbert_symbol(c, a, Q)
+            True
+            sage: L.hilbert_symbol(a, b, Q) * hQ_a_c == L.hilbert_symbol(a, b*c, Q)
+            True
+            sage: hQ_a_c * L.hilbert_symbol(b, c, Q) == L.hilbert_symbol(a*b, c, Q)
+            True
+        """
+        if not self.is_global():
+            raise NotImplementedError('only supported for global function fields')
+
+        if self.characteristic() == 2:
+            raise ValueError('Hilbert symbol is only defined for'
+                            ' odd characteristic function fields')
+
+        if not (a in self and b in self):
+            raise ValueError('a and b must be elements of the function field')
+
+        if a.is_zero() or b.is_zero():
+            return 0
+
+        # Compute the completion map to precision 1 for computation of the
+        # valuations v(a), v(b) as well as the elements a0, b0
+        try:
+            sigma = self.completion(P, prec=1, gen_name='i')
+        except AttributeError:
+            raise ValueError('P must be a place of the function field F')
+
+        # Apply the completion map to a to get v(a) and a0
+        ser_a = sigma(a)
+        v_a = ser_a.valuation()
+        a0 = ser_a.coefficients()[0]
+
+        # Apply the completion map to b to get v(b) and b0
+        ser_b = sigma(b)
+        v_b = ser_b.valuation()
+        b0 = ser_b.coefficients()[0]
+
+        # Get the residue field of the completion together with the necessary exponent
+        k = sigma.codomain().base_ring()
+        e = (k.order() - 1) // 2
+
+        # Use Euler's criterion to compute the powers of Legendre symbols
+        a_rd_pw = a0**(v_b * e)
+        b_rd_pw = b0**(v_a * e)
+
+        # Finally, put the result together and transform it into the correct output
+        res = k(-1)**(v_a * v_b * e) * a_rd_pw * b_rd_pw
+
+        from sage.rings.integer import Integer
+        return Integer(1) if res.is_one() else Integer(-1)
 
     def extension_constant_field(self, k):
         """
