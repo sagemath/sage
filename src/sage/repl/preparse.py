@@ -116,9 +116,8 @@ valid)::
 Raw literals:
 
 Raw literals are not preparsed, which can be useful from an efficiency
-point of view.  Just like Python ints are denoted by an L, in Sage raw
-integer and floating literals are followed by an"r" (or "R") for raw,
-meaning not preparsed.
+point of view. In Sage raw integer and floating literals are followed
+by an"r" (or "R") for raw, meaning not preparsed.
 
 We create a raw integer::
 

@@ -795,7 +795,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         x3 = -x1 - x2 - a2 + m*(m+a1)
         y3 = -y1 - a3 - a1*x3 + m*(x1-x3)
         # See trac #4820 for why we need to coerce 1 into the base ring here:
-        return E.point([x3, y3, E.base_ring()(1)], check=False)
+        return E.point([x3, y3, E.base_ring().one()], check=False)
 
     def _sub_(self, right):
         """
@@ -840,7 +840,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             return self
         E, x, y = self.curve(), self[0], self[1]
         # See trac #4820 for why we need to coerce 1 into the base ring here:
-        return E.point([x, -y - E.a1()*x - E.a3(), E.base_ring()(1)], check=False)
+        return E.point([x, -y - E.a1()*x - E.a3(), E.base_ring().one()], check=False)
 
     def xy(self):
         """
@@ -3266,23 +3266,23 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
     def non_archimedean_local_height(self, v=None, prec=None,
                                      weighted=False, is_minimal=None):
         """
-        Compute the local height of self at the non-archimedean place `v`.
+        Compute the local height of ``self`` at the non-archimedean place `v`.
 
         INPUT:
 
         - ``self`` -- a point on an elliptic curve over a number field
           `K`.
 
-        - ``v`` -- a non-archimedean place of `K`, or None (default).
+        - ``v`` -- a non-archimedean place of `K`, or ``None`` (default).
           If `v` is a non-archimedean place, return the local height
-          of self at `v`. If `v` is None, return the total
+          of self at `v`. If `v` is ``None``, return the total
           non-archimedean contribution to the global height.
 
-        - ``prec`` -- integer, or None (default). The precision of the
-          computation. If None, the height is returned symbolically.
+        - ``prec`` -- integer, or ``None`` (default). The precision of the
+          computation. If ``None``, the height is returned symbolically.
 
-        - ``weighted`` -- boolean. If False (default), the height is
-          normalised to be invariant under extension of `K`. If True,
+        - ``weighted`` -- boolean. If ``False`` (default), the height is
+          normalised to be invariant under extension of `K`. If ``True``,
           return this normalised height multiplied by the local degree
           if `v` is a single place, or by the degree of `K` if `v` is
           None.

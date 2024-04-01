@@ -1,5 +1,7 @@
 # sage_setup: distribution = sagemath-schemes
 # distutils: sources = sage/modular/arithgroup/sl2z.cpp sage/modular/arithgroup/farey.cpp
+# distutils: language = c++
+# distutils: extra_compile_args = -std=c++11
 # sage.doctest: needs sage.libs.pari
 r"""
 Farey symbol for arithmetic subgroups of `\PSL_2(\ZZ)`

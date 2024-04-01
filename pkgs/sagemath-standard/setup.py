@@ -60,15 +60,6 @@ cmdclass = dict(build_cython=sage_build_cython,
                 install=sage_install_and_clean)
 
 #########################################################
-### Testing related stuff
-#########################################################
-
-# Remove (potentially invalid) star import caches
-import sage.misc.lazy_import_cache
-if os.path.exists(sage.misc.lazy_import_cache.get_cache_file()):
-    os.unlink(sage.misc.lazy_import_cache.get_cache_file())
-
-#########################################################
 ### Discovering Sources
 #########################################################
 

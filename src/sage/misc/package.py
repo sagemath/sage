@@ -25,7 +25,6 @@ command inside Sage::
     sage: sorted(pkgs.keys())  # optional - sage_spkg, random
     ['4ti2',
      'alabaster',
-     'arb',
      ...
      'zlib']
 
@@ -300,7 +299,6 @@ def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 's
         sage: L = list_packages('standard')
         sage: sorted(L.keys())  # random
         ['alabaster',
-         'arb',
          'babel',
          ...
          'zlib']
