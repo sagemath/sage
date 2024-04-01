@@ -780,12 +780,12 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: F = L.undefined()
             sage: L.define_implicitly([F], [F(2*z) - (1+exp(x*z)+exp(y*z))*F - exp((x+y)*z)*F(-z)])
             sage: F
-            <repr(...) failed: ValueError: could not determine any coefficients using the equation in degree 3: (x*y)*FESDUMMY_0 + (-2*x - 2*y)*FESDUMMY_1 + 6*FESDUMMY_2>
+            <repr(...) failed: ValueError: could not determine any coefficients using the equation in degree 3: 6*FESDUMMY_2 + (-2*x - 2*y)*FESDUMMY_1 + (x*y)*FESDUMMY_0>
 
             sage: F = L.undefined()
             sage: L.define_implicitly([(F, [0, f1])], [F(2*z) - (1+exp(x*z)+exp(y*z))*F - exp((x+y)*z)*F(-z)])
             sage: F
-            <repr(...) failed: ValueError: could not determine any coefficients using the equation in degree 3: (-2*x - 2*y)*FESDUMMY_3 + 6*FESDUMMY_4 + (x*y*f1)>
+            <repr(...) failed: ValueError: could not determine any coefficients using the equation in degree 3: 6*FESDUMMY_4 + (-2*x - 2*y)*FESDUMMY_3 + (x*y*f1)>
 
         Laurent series examples::
 
@@ -872,7 +872,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: B
             O(z^16)
             sage: C
-            O(z^22)
+            O(z^23)
 
             sage: L.<z> = LazyPowerSeriesRing(QQ)
             sage: A = L.undefined()

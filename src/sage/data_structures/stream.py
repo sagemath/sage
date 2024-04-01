@@ -1247,210 +1247,69 @@ class Stream_taylor(Stream_inexact):
             denom *= n
 
 
-from sage.structure.parent import Parent
-from sage.structure.element import Element, parent
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.categories.fields import Fields
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
 
-class UndeterminedCoefficientsRingElement(Element):
-    def __init__(self, parent, v):
-        Element.__init__(self, parent)
-        self._p = v
-
-    def __bool__(self):
-        return bool(self._p)
-
-    def _repr_(self):
-        return repr(self._p)
-
-    def _add_(self, other):
-        """
-
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import UndeterminedCoefficientsRing
-            sage: R = UndeterminedCoefficientsRing(QQ)
-            sage: R(None) + 1
-            FESDUMMY_... + 1
-        """
-        P = self.parent()
-        return P.element_class(P, self._p + other._p)
-
-    def _sub_(self, other):
-        """
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import UndeterminedCoefficientsRing
-            sage: R = UndeterminedCoefficientsRing(QQ)
-            sage: 1 - R(None)
-            -FESDUMMY_... + 1
-        """
-        P = self.parent()
-        return P.element_class(P, self._p - other._p)
-
-    def _neg_(self):
-        """
-        Return the negative of ``self``.
-        """
-        P = self.parent()
-        return P.element_class(P, -self._p)
-
-    def _mul_(self, other):
-        """
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import UndeterminedCoefficientsRing
-            sage: R = UndeterminedCoefficientsRing(QQ)
-            sage: R(None) * R(None)
-            FESDUMMY_...*FESDUMMY_...
-        """
-        P = self.parent()
-        return P.element_class(P, self._p * other._p)
-
-    def _div_(self, other):
-        P = self.parent()
-        return P.element_class(P, self._p / other._p)
-
-    def numerator(self):
-        return self._p.numerator()
-
-    def variables(self):
-        """
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import UndeterminedCoefficientsRing
-            sage: R = UndeterminedCoefficientsRing(QQ)
-            sage: R(None) / (R(None) + R(None))
-            FESDUMMY_.../(FESDUMMY_... + FESDUMMY_...)
-        """
-        return self._p.numerator().variables() + self._p.denominator().variables()
-
-    def rational_function(self):
-        return self._p
-
-    def is_constant(self):
-        return (self._p.numerator().is_constant()
-                and self._p.denominator().is_constant())
-
-    def subs(self, in_dict=None, *args, **kwds):
-        """
-        EXAMPLES::
-
-            sage: from sage.data_structures.stream import UndeterminedCoefficientsRing
-            sage: R = UndeterminedCoefficientsRing(QQ)
-            sage: p = R(None) + 1
-            sage: v = p.variables()[0]
-            sage: q = R(None) + 1
-            sage: (p/q).subs({v: 3})
-            4/(FESDUMMY_... + 1)
-        """
-#        if isinstance(in_dict, dict):
-#            R = self._p.parent()
-#            in_dict = {ZZ(m) if m in ZZ else R(m): v for m, v in in_dict.items()}
-#
-#        P = self.parent()
-#        return P.element_class(P, self._p.subs(in_dict, *args, **kwds))
-        P = self.parent()
-        p_num = P._P(self._p.numerator())
-        V_num = p_num.variables()
-        d_num = {P._P(v): c for v, c in in_dict.items()
-                 if v in V_num}
-        num = p_num.subs(d_num)
-        p_den = P._P(self._p.denominator())
-        V_den = p_den.variables()
-        d_den = {P._P(v): c for v, c in in_dict.items()
-                 if v in V_den}
-        den = p_den.subs(d_den)
-        return P.element_class(P, P._PF(num, den))
-
-
-class UndeterminedCoefficientsFunctor(ConstructionFunctor):
-    rank = 0
-
-    def __init__(self):
-        Functor.__init__(self, Rings(), Rings())
-
-    def _apply_functor(self, R):
-        return UndeterminedCoefficientsRing(R)
-
-    __hash__ = ConstructionFunctor.__hash__
-
-    def _repr_(self):
-        return "UndeterminedCoefficients"
-
-
-class UndeterminedCoefficientsRing(UniqueRepresentation, Parent):
+class VariablePool(UniqueRepresentation):
     """
-    Rational functions in unknowns over a base ring.
+    A class to keep track of used and unused variables in an
+    :cls:`InfinitePolynomialRing`.
+
+    INPUT:
+
+    - ``ring``, an :cls:`InfinitePolynomialRing`.
     """
-    # must not inherit from UniqueRepresentation, because we want a
-    # new set of variables for each system of equations
-
-    _PREFIX = "FESDUMMY_"
-    @staticmethod
-    def __classcall_private__(cls, base_ring, *args, **kwds):
-        return super().__classcall__(cls, base_ring, *args, **kwds)
-
-    def __init__(self, base_ring):
+    def __init__(self, ring):
+        self._gen = ring.gen(0) # alternatively, make :cls:`InfinitePolynomialGen` inherit from `UniqueRepresentation`.
         self._pool = dict()  # dict from variables actually used to indices of gens
-        # we must start with at least two variables, to make PolynomialSequence work
-        self._P = PolynomialRing(base_ring, names=[self._PREFIX+str(i) for i in range(2)])
-        self._PF = self._P.fraction_field()
-        Parent.__init__(self, base=base_ring, category=Fields())
 
-    def construction(self):
-        return (UndeterminedCoefficientsFunctor(), self.base_ring())
-
-    def polynomial_ring(self):
+    def new_variable(self):
         """
-        .. WARNING::
+        Return an unused variable.
 
-            This ring changes when new variables are requested.
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import VariablePool
+            sage: R.<a> = InfinitePolynomialRing(QQ)
+            sage: P = VariablePool(R)
+            sage: P.new_variable()
+            a_0
+
+        TESTS:
+
+        Check, that we get a new pool for each
+        :cls:`InfinitePolynomialRing`::
+
+            sage: R0.<b> = InfinitePolynomialRing(QQ)
+            sage: P0 = VariablePool(R0)
+            sage: P0.new_variable()
+            b_0
+
         """
-        return self._P
+        for i in range(len(self._pool)+1):
+            if i not in self._pool.values():
+                break
+        v = self._gen[i]
+        self._pool[v] = i
+        return v
 
-    def _element_constructor_(self, x):
-        if x is None:
-            n = self._P.ngens()
-            for i in range(n):
-                if i not in self._pool.values():
-                    break
-            else:
-                names = self._P.variable_names() + (self._PREFIX+str(n),)  # tuple(self._PREFIX+str(i) for i in range(n, 2*n))
-                self._P = PolynomialRing(self._P.base_ring(), names)
-                self._PF = self._P.fraction_field()
-                i = n
-            v = self._P.gen(i)
-            self._pool[v] = i
-            return self.element_class(self, self._PF(v))
+    def del_variable(self, v):
+        """
+        Remove ``v`` from the pool.
 
-        if x in self._PF:
-            return self.element_class(self, self._PF(x))
+        EXAMPLES::
 
-        raise ValueError(f"{x} is not in {self}")
+            sage: from sage.data_structures.stream import VariablePool
+            sage: R.<a> = InfinitePolynomialRing(QQ)
+            sage: P = VariablePool(R)
+            sage: v = P.new_variable(); v
+            a_0
 
-    def delete_variable(self, v):
+            sage: P.del_variable(v)
+            sage: v = P.new_variable(); v
+            a_0
+        """
         del self._pool[v]
-
-    def _coerce_map_from_(self, S):
-        """
-        Return ``True`` if a coercion from ``S`` exists.
-        """
-        if self._P.base_ring().has_coerce_map_from(S):
-            return True
-        return None
-
-    def _coerce_map_from_base_ring(self):
-        """
-        Return a coercion map from the base ring of ``self``.
-        """
-        return self._generic_coerce_map(self._P.base_ring())
-
-    def _repr_(self):
-        return f"Undetermined coefficient ring over {self._P.base_ring()}"
-
-    Element = UndeterminedCoefficientsRingElement
 
 
 class Stream_uninitialized(Stream):
@@ -1567,9 +1426,11 @@ class Stream_uninitialized(Stream):
 
         self._coefficient_ring = coefficient_ring
         self._base_ring = base_ring
-        self._P = UndeterminedCoefficientsRing(self._base_ring)
+        self._P = InfinitePolynomialRing(self._base_ring, names=["FESDUMMY"])
+        self._PF = self._P.fraction_field()
         if self._coefficient_ring != self._base_ring:
-            self._U = self._coefficient_ring.change_ring(self._P)
+            self._U = self._coefficient_ring.change_ring(self._PF)
+        self._pool = VariablePool(self._P)
         self._uncomputed = True
         self._eqs = equations
         self._series = series
@@ -1676,8 +1537,8 @@ class Stream_uninitialized(Stream):
         if len(self._cache) > n - self._approximate_order:
             return self._cache[n - self._approximate_order]
 
-        x = sum(self._P(None) * m
-                for m in self._terms_of_degree(n, self._P))
+        x = sum(self._pool.new_variable() * m
+                for m in self._terms_of_degree(n, self._PF))
         self._cache.append(x)
         return x
 
@@ -1688,7 +1549,7 @@ class Stream_uninitialized(Stream):
 
         INPUT:
 
-            - ``var``, a variable
+            - ``var``, a variable in ``self._P``
             - ``val``, the value that should replace the variable
         """
         for j, s in enumerate(self._input_streams):
@@ -1704,18 +1565,18 @@ class Stream_uninitialized(Stream):
             good = m
             for i0, i in enumerate(indices):
                 c = s._cache[i]
-                if self._base_ring == self._coefficient_ring:
-                    if c.parent() == self._P:
-                        c = c.subs({var: val})
-                        if c.is_constant():
-                            c = self._base_ring(c.rational_function())
+                if self._coefficient_ring == self._base_ring:
+                    if c.parent() == self._PF:
+                        c = self._PF(c.subs({var: val}))
+                        if c.numerator().is_constant() and c.denominator().is_constant():
+                            c = self._base_ring(c)
                         else:
                             good = m - i0 - 1
                 else:
                     if c.parent() == self._U:
                         c = c.map_coefficients(lambda e: e.subs({var: val}))
                         try:
-                            c = c.map_coefficients(lambda e: self._base_ring(e.rational_function()),
+                            c = c.map_coefficients(lambda e: self._base_ring(e),
                                                    self._base_ring)
                         except TypeError:
                             good = m - i0 - 1
@@ -1743,7 +1604,7 @@ class Stream_uninitialized(Stream):
                     ao += 1
             s._approximate_order = ao
 
-        self._P.delete_variable(var)
+        self._pool.del_variable(var)
 
     def _compute(self):
         """
@@ -1771,7 +1632,7 @@ class Stream_uninitialized(Stream):
                 lcoeff = coeff.coefficients()
 
             for c in lcoeff:
-                c = self._P(c).numerator()
+                c = self._PF(c).numerator()
                 V = c.variables()
                 if not V:
                     if len(self._eqs) == 1:
@@ -1799,7 +1660,7 @@ class Stream_uninitialized(Stream):
             raise ValueError(f"there are no linear equations in degrees {degrees}: {non_linear_coeffs}")
         # solve
         from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
-        eqs = PolynomialSequence(self._P.polynomial_ring(), coeffs)
+        eqs = PolynomialSequence([c.polynomial() for c in coeffs])
         m1, v1 = eqs.coefficients_monomials()
         # there should be at most one entry in v1 of degree 0
         for j, c in enumerate(v1):
@@ -1820,7 +1681,7 @@ class Stream_uninitialized(Stream):
         for i, (var, y) in enumerate(zip(v, x)):
             if k.column(i).is_zero():
                 val = self._base_ring(y)
-                self._subs_in_caches(var, val)
+                self._subs_in_caches(self._P(var), val)
                 bad = False
         if bad:
             if len(self._eqs) == 1:
