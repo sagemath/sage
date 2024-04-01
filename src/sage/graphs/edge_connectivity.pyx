@@ -86,7 +86,7 @@ cdef class GabowEdgeConnectivity:
 
     TESTS:
 
-    :trac:`32169`::
+    :issue:`32169`::
 
         sage: dig6_string = r'[E_S?_hKIH@eos[BSg???Q@FShGC?hTHUGM?IPug?'
         sage: dig6_string += r'JOEYCdOzdkQGo@ADA@AAg?GAQW?'

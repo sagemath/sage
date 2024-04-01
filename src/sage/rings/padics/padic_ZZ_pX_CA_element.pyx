@@ -237,7 +237,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
 
         TESTS:
 
-        Check that :trac:`13600` is fixed::
+        Check that :issue:`13600` is fixed::
 
             sage: K = W.fraction_field()
             sage: W(K.zero())
@@ -247,12 +247,12 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             sage: W(K.zero().add_bigoh(3))
             O(w^3)
 
-        Check that :trac:`3865` is fixed:
+        Check that :issue:`3865` is fixed:
 
             sage: W(gp('5 + O(5^2)'))
             w^5 + 2*w^7 + 4*w^9 + O(w^10)
 
-        Check that :trac:`13612` has been fixed::
+        Check that :issue:`13612` has been fixed::
 
             sage: # needs sage.libs.flint
             sage: R = ZpCA(3)
@@ -1913,7 +1913,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
             sage: list(A(0,4).expansion())
             []
 
-        Check that :trac:`25879` has been resolved::
+        Check that :issue:`25879` has been resolved::
 
             sage: K = ZpCA(3,5)
             sage: R.<a> = K[]
@@ -2153,7 +2153,7 @@ cdef class pAdicZZpXCAElement(pAdicZZpXElement):
 
         TESTS:
 
-        Check that :trac:`22083` has been resolved::
+        Check that :issue:`22083` has been resolved::
 
             sage: R.<a> = ZpCA(2).extension(x^2 - 2)
             sage: R.teichmuller(a)

@@ -35,7 +35,7 @@ cdef class CVXOPTBackend(GenericBackend):
 
     TESTS:
 
-    :trac:`20332`::
+    :issue:`20332`::
 
         sage: p
         Mixed Integer Program (no objective, 0 variables, 0 constraints)

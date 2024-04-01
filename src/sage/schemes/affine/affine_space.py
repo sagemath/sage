@@ -740,7 +740,7 @@ class AffineSpace_generic(AmbientSpace, AffineScheme):
 
         TESTS:
 
-        Check that :trac:`25897` is fixed::
+        Check that :issue:`25897` is fixed::
 
             sage: A.<x,y> = AffineSpace(ZZ, 2)
             sage: A.projective_embedding(4)

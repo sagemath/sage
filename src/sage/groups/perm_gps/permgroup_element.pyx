@@ -10,9 +10,9 @@ AUTHORS:
 - Robert Bradshaw (2007-11): convert to Cython
 
 - Sebastian Oehms (2018-11): Added :meth:`gap` as synonym to
-  :meth:`_gap_` (compatibility to libgap framework, see :trac:`26750`)
+  :meth:`_gap_` (compatibility to libgap framework, see :issue:`26750`)
 
-- Sebastian Oehms (2019-02): Implemented :meth:`gap` properly (:trac:`27234`)
+- Sebastian Oehms (2019-02): Implemented :meth:`gap` properly (:issue:`27234`)
 
 There are several ways to define a permutation group element:
 
@@ -89,7 +89,7 @@ We create element of a permutation group of large degree::
 
 TESTS:
 
-Check that :trac:`13569` is fixed::
+Check that :issue:`13569` is fixed::
 
     sage: [g*h for g in SymmetricGroup(3) for h in AlternatingGroup(3)]
     [(), (1,2,3), (1,3,2), (1,3,2), (), (1,2,3), (1,2,3), (1,3,2), (), (2,3),
@@ -424,7 +424,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: PermutationGroupElement([()])
             ()
 
-        We check that :trac:`16678` is fixed::
+        We check that :issue:`16678` is fixed::
 
             sage: Permutations.options.display='cycle'
             sage: p = Permutation((1,2))
@@ -948,10 +948,15 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
             sage: S = SymmetricGroup(['a', 'b'])
             sage: latex(S.gens())
             \left((\text{\texttt{a}},\text{\texttt{b}})\right)
+            sage: latex(S.one())
+            1
         """
+        cycle_tuples = self.cycle_tuples()
+        if not cycle_tuples:
+            return '1'
         from sage.misc.latex import latex
         return "".join(("(" + ",".join(latex(x) for x in cycle) + ")")
-                       for cycle in self.cycle_tuples())
+                       for cycle in cycle_tuples)
 
     def __getitem__(self, i):
         r"""
@@ -1003,7 +1008,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         TESTS:
 
-        Verify that we fixed bug :trac:`5537`::
+        Verify that we fixed bug :issue:`5537`::
 
             sage: h = PermutationGroupElement('(1,3,2)')
             sage: k = PermutationGroupElement('(1,2,3)(4,5)')
@@ -2034,7 +2039,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
         TESTS:
 
-        Check for :trac:`28556`::
+        Check for :issue:`28556`::
 
             sage: G = SymmetricGroup(6)
             sage: g = G('(1,2,3)')

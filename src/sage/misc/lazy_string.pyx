@@ -313,7 +313,7 @@ cdef class _LazyString():
         Return the file system representation of ``self``, assuming that
         ``self`` is a path.
 
-        This is for Python 3 compatibility: see :trac:`24046`, and also
+        This is for Python 3 compatibility: see :issue:`24046`, and also
         :pep:`519` and
         https://docs.python.org/3/library/os.html#os.fspath
 

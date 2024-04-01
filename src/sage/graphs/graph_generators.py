@@ -711,7 +711,7 @@ class GraphGenerators:
         (10, 19)
 
     Make sure that the graphs are really independent and the generator
-    survives repeated vertex removal (:trac:`8458`)::
+    survives repeated vertex removal (:issue:`8458`)::
 
         sage: for G in graphs(3):
         ....:     G.delete_vertex(0)
@@ -961,7 +961,7 @@ class GraphGenerators:
 
         TESTS:
 
-        Wrong input, ``"-c3"`` instead of ``"-c 3"`` (:trac:`14068`)::
+        Wrong input, ``"-c3"`` instead of ``"-c 3"`` (:issue:`14068`)::
 
             sage: list(graphs.nauty_geng("-c3", debug=False))
             Traceback (most recent call last):
@@ -1134,7 +1134,7 @@ class GraphGenerators:
             sage: list(graphs.nauty_genbg("-c 1 2", debug=True))
             ['>A ...genbg n=1+2 e=2:2 d=1:1 D=2:1 c...\n', Bipartite graph on 3 vertices]
 
-        We must have n1=1..24, n2=0..32 and n1+n2=1..32 (:trac:`34179`)::
+        We must have n1=1..24, n2=0..32 and n1+n2=1..32 (:issue:`34179`)::
 
             sage: next(graphs.nauty_genbg("25 1", debug=False))
             Traceback (most recent call last):
@@ -2236,6 +2236,12 @@ class GraphGenerators:
             sage: g = next(gen)                                       # optional - plantri
             sage: g.is_isomorphic(graphs.OctahedralGraph())           # optional - plantri
             True
+
+        The minimum degree of a triangulation is 3, so the method can not output
+        a triangle::
+
+            sage: list(graphs.triangulations(3))                      # optional - plantri
+            []
 
         An overview of the number of 5-connected triangulations on up to 22 vertices. This
         agrees with :oeis:`A081621`::

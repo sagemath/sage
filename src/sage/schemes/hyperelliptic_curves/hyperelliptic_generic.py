@@ -885,7 +885,7 @@ class HyperellipticCurve_generic(plane_curve.ProjectivePlaneCurve):
             (1 : -1 : 1),
             (1 : 0 : 1)]
 
-        Check that :trac:`29509` is fixed for the LMFDB genus 2 curve
+        Check that :issue:`29509` is fixed for the LMFDB genus 2 curve
         `169.a.169.1 <https://www.lmfdb.org/Genus2Curve/Q/169/a/169/1>`_::
 
             sage: C = HyperellipticCurve(R([0, 0, 0, 0, 1, 1]), R([1, 1, 0, 1]))

@@ -51,7 +51,7 @@ AUTHORS:
 - Thierry Monteil: add a ``__hash__`` method consistent with the word
   problem to ensure correct Cayley graph computations.
 - Sebastian Oehms (July and Nov 2018): add other versions for
-  burau_matrix (unitary + simple, see :trac:`25760` and :trac:`26657`)
+  burau_matrix (unitary + simple, see :issue:`25760` and :issue:`26657`)
 - Moritz Firsching (Sept 2021): Colored Jones polynomial
 - Sebastian Oehms (May 2022): add :meth:`links_gould_polynomial`
 """
@@ -2546,14 +2546,14 @@ class BraidGroup_class(FiniteTypeArtinGroup):
             sage: B1.category()
             Category of infinite groups
 
-        Check that :trac:`14081` is fixed::
+        Check that :issue:`14081` is fixed::
 
             sage: BraidGroup(2)
             Braid group on 2 strands
             sage: BraidGroup(('a',))
             Braid group on 2 strands
 
-        Check that :trac:`15505` is fixed::
+        Check that :issue:`15505` is fixed::
 
             sage: B = BraidGroup(4)
             sage: B.relations()
@@ -3533,7 +3533,7 @@ def BraidGroup(n=None, names='s'):
         (g0, g1)
 
     Since the word problem for the braid groups is solvable, their Cayley graph
-    can be locally obtained as follows (see :trac:`16059`)::
+    can be locally obtained as follows (see :issue:`16059`)::
 
         sage: def ball(group, radius):
         ....:     ret = set()

@@ -272,7 +272,7 @@ cpdef factor_trial_division(m, long limit=LONG_MAX) noexcept:
 
     TESTS:
 
-    Test that :trac:`13692` is solved::
+    Test that :issue:`13692` is solved::
 
         sage: from sage.rings.factorint import factor_trial_division
         sage: list(factor_trial_division(8))

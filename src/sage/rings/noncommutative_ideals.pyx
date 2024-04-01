@@ -6,7 +6,7 @@ Generic implementation of one- and two-sided ideals of non-commutative rings.
 
 AUTHOR:
 
-- Simon King (2011-03-21), <simon.king@uni-jena.de>, :trac:`7797`.
+- Simon King (2011-03-21), <simon.king@uni-jena.de>, :issue:`7797`.
 
 EXAMPLES::
 

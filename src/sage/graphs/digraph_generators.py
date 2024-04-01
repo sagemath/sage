@@ -938,7 +938,7 @@ class DiGraphGenerators:
             sage: digraphs.DeBruijn(0, 0)                                               # needs sage.combinat
             De Bruijn digraph (k=0, n=0): Looped multi-digraph on 0 vertices
 
-        :trac:`22355`::
+        :issue:`22355`::
 
             sage: db = digraphs.DeBruijn(2, 2, vertices='strings')                      # needs sage.combinat
             sage: db.vertices(sort=True)                                                # needs sage.combinat
@@ -1200,7 +1200,7 @@ class DiGraphGenerators:
             ...
             ValueError: diameter must be greater than or equal to one
 
-        :trac:`22355`::
+        :issue:`22355`::
 
             sage: K = digraphs.Kautz(2, 2, vertices='strings')                          # needs sage.combinat
             sage: K.vertices(sort=True)                                                 # needs sage.combinat

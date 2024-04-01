@@ -322,7 +322,7 @@ cdef class TensorProductOfCrystalsElement(ImmutableListWithParent):
 
         TESTS:
 
-        Check that :trac:`15462` is fixed::
+        Check that :issue:`15462` is fixed::
 
             sage: B = crystals.Tableaux(['A',2], shape=[2,1])
             sage: La = RootSystem(['A',2]).ambient_space().fundamental_weights()
@@ -371,7 +371,7 @@ cdef class TensorProductOfCrystalsElement(ImmutableListWithParent):
 
         TESTS:
 
-        Check that :trac:`18469` is fixed::
+        Check that :issue:`18469` is fixed::
 
             sage: E1 = crystals.elementary.B(['A',2], 1)
             sage: E2 = crystals.elementary.B(['A',2], 2)
@@ -712,7 +712,7 @@ cdef class CrystalOfTableauxElement(TensorProductOfRegularCrystalsElement):
             [[1, 2], [3, 4]]
 
         Currently inputting the empty tableau as an empty sequence is
-        broken due to a bug in the generic __call__ method (see :trac:`8648`).
+        broken due to a bug in the generic __call__ method (see :issue:`8648`).
 
         EXAMPLES::
 
@@ -726,7 +726,7 @@ cdef class CrystalOfTableauxElement(TensorProductOfRegularCrystalsElement):
         Integer types that are not a Sage ``Integer`` (such as a Python ``int``
         and typically arise from compiled code) were not converted into a
         letter. This caused certain functions to fail. This is fixed in
-        :trac:`13204`::
+        :issue:`13204`::
 
             sage: T = crystals.Tableaux(['A',3], shape = [2,2])
             sage: t = T(list=[int(3),1,4,2])
@@ -806,7 +806,7 @@ cdef class CrystalOfTableauxElement(TensorProductOfRegularCrystalsElement):
 
         EXAMPLES:
 
-        We check that :trac:`16486` is fixed::
+        We check that :issue:`16486` is fixed::
 
             sage: T = crystals.Tableaux(['B',6], shape=[1]*5)
             sage: ascii_art(T.module_generators[0])

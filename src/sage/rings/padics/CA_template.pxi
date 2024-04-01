@@ -226,7 +226,7 @@ cdef class CAElement(pAdicTemplateElement):
             sage: R(12) + R(1)
             13 + O(13^4)
 
-        Check that :trac:`20245` is resolved::
+        Check that :issue:`20245` is resolved::
 
             sage: R(1,1) + R(169,3)
             1 + O(13)
@@ -455,7 +455,7 @@ cdef class CAElement(pAdicTemplateElement):
             sage: (a.log() * 19/7).exp()
             1 + 14*19^2 + 11*19^3 + 13*19^4 + O(19^5)
 
-        Check that :trac:`31875` is fixed::
+        Check that :issue:`31875` is fixed::
 
             sage: R(1)^R(0)
             1 + O(19^5)
@@ -626,7 +626,7 @@ cdef class CAElement(pAdicTemplateElement):
 
         TESTS:
 
-        Verify that :trac:`13591` has been resolved::
+        Verify that :issue:`13591` has been resolved::
 
             sage: k(3).add_bigoh(-1)
             O(3^-1)
@@ -1078,7 +1078,7 @@ cdef class CAElement(pAdicTemplateElement):
 
         .. WARNING::
 
-            Hashing of `p`-adic elements will likely be deprecated soon.  See :trac:`11895`.
+            Hashing of `p`-adic elements will likely be deprecated soon.  See :issue:`11895`.
 
         EXAMPLES::
 

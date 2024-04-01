@@ -166,7 +166,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         When constructing a curve from the large database using a
         label, we must be careful that the copied generators have the
-        right curve (see :trac:`10999`: the following used not to work when
+        right curve (see :issue:`10999`: the following used not to work when
         the large database was installed)::
 
             sage: E = EllipticCurve('389a1')
@@ -614,12 +614,12 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: Epari
             [0, 0, 1, -1, 0, 0, -2, 1, -1, 48, -216, 37, 110592/37, Vecsmall([1]), [Vecsmall([64, 1])], [[2.99345864623196, -2.45138938198679*I], 0, [0.837565435283323, 0.269594436405445, -1.10715987168877, 1.37675430809421, 1.94472530697209, 0.567970998877878]~, 0, 0, 0, 0, 0]]
 
-        This shows that the bug uncovered by :trac:`4715` is fixed::
+        This shows that the bug uncovered by :issue:`4715` is fixed::
 
             sage: Ep = EllipticCurve('903b3').pari_curve()
 
         This still works, even when the curve coefficients are large
-        (see :trac:`13163`)::
+        (see :issue:`13163`)::
 
             sage: E = EllipticCurve([4382696457564794691603442338788106497, 28, 3992, 16777216, 298])
             sage: E.pari_curve()
@@ -697,7 +697,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
         Return the curve in the elliptic curve database isomorphic to this
         curve, if possible. Otherwise raise a ``LookupError`` exception.
 
-        Since :trac:`11474`, this returns exactly the same curve as
+        Since :issue:`11474`, this returns exactly the same curve as
         :meth:`minimal_model`; the only difference is the additional
         work of checking whether the curve is in the database.
 
@@ -1260,7 +1260,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E.modular_symbol(implementation = 'sage', normalize='period')(0)
             1/25
 
-        Since :trac:`10256`, the interface for negative modular symbols in eclib is available::
+        Since :issue:`10256`, the interface for negative modular symbols in eclib is available::
 
             sage: E = EllipticCurve('11a1')
             sage: Mplus = E.modular_symbol(+1); Mplus
@@ -1276,10 +1276,10 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         With older version of eclib, in the default 'eclib'
         implementation, if ``nap`` is too small, the normalization may
-        be computed incorrectly (see :trac:`31317`).  This was fixed
+        be computed incorrectly (see :issue:`31317`).  This was fixed
         in eclib version v20210310, since now eclib increase ``nap``
         automatically. The following used to give incorrect results.
-        See :trac:`31443`::
+        See :issue:`31443`::
 
             sage: E = EllipticCurve('1590g1')
             sage: m = E.modular_symbol(nap=300)     # long time
@@ -1890,7 +1890,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: r, s, G = E.simon_two_descent(); r,s  # long time
             (8, 8)
 
-        Example from :trac:`10832`::
+        Example from :issue:`10832`::
 
             sage: E = EllipticCurve([1,0,0,-6664,86543])
             sage: E.simon_two_descent()
@@ -1912,7 +1912,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E.gens()     # uses mwrank
             [(4311692542083/48594841 : -13035144436525227/338754636611 : 1)]
 
-        Example for :trac:`5153`::
+        Example for :issue:`5153`::
 
             sage: E = EllipticCurve([3,0])
             sage: E.simon_two_descent()
@@ -1920,7 +1920,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         The upper bound on the 2-Selmer rank returned by this method
         need not be sharp.  In following example, the upper bound
-        equals the actual 2-Selmer rank plus 2 (see :trac:`10735`)::
+        equals the actual 2-Selmer rank plus 2 (see :issue:`10735`)::
 
             sage: E = EllipticCurve('438e1')
             sage: E.simon_two_descent()
@@ -2095,7 +2095,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E.saturation(_)[1]
             1
 
-        Since :trac:`23962`, the default is to use the Cremona
+        Since :issue:`23962`, the default is to use the Cremona
         database. We also check that the result is cached correctly::
 
             sage: E = EllipticCurve([-517, -4528])  # 1888b1
@@ -2745,7 +2745,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         TESTS:
 
-        See :trac:`10590`.  With ``eclib`` versions up to
+        See :issue:`10590`.  With ``eclib`` versions up to
         ``v20190909``, this example would loop forever at default
         precision.  Since version ``v20210310`` it runs fine::
 
@@ -2763,7 +2763,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: reg
             113.302910926080
 
-        See :trac:`10840`.  This used to cause eclib to crash since the
+        See :issue:`10840`.  This used to cause eclib to crash since the
         curve is non-minimal at 2::
 
             sage: E = EllipticCurve([0,0,0,-13711473216,0])
@@ -2774,7 +2774,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E.saturation([P,Q,R,S])
             ([(-19992 : 16313472 : 1), (-24108 : -17791704 : 1), (-97104 : -20391840 : 1), (-113288 : -9969344 : 1)], 1, 172.792031341679)
 
-        See :trac:`34029`.  With eclib versions prior to 20220621 this failed to saturate::
+        See :issue:`34029`.  With eclib versions prior to 20220621 this failed to saturate::
 
             sage: E = EllipticCurve([0, 0, 0, -17607, -889490])
             sage: Q = E([-82,54])
@@ -3359,7 +3359,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E.tamagawa_exponent(5)
             2
 
-        See :trac:`4715`::
+        See :issue:`4715`::
 
             sage: E = EllipticCurve('117a3')
             sage: E.tamagawa_exponent(13)
@@ -4623,7 +4623,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             (Elliptic Curve defined by y^2 = x^3 + 4*x over Rational Field, 5)
 
         If the curve has square-free conductor then it is already
-        minimal (see :trac:`14060`)::
+        minimal (see :issue:`14060`)::
 
             sage: E = next(cremona_optimal_curves([2*3*5*7*11]))
             sage: (E, 1) == E.minimal_quadratic_twist()
@@ -5270,7 +5270,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: EllipticCurve('11a3').change_weierstrass_model([1/35,0,0,0]).manin_constant()
             5
 
-        Rather complicated examples (see :trac:`12080`) ::
+        Rather complicated examples (see :issue:`12080`) ::
 
             sage: [ EllipticCurve('27a%s'%i).manin_constant() for i in [1,2,3,4]]
             [1, 1, 3, 3]
@@ -6005,7 +6005,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         TESTS:
 
-        The bug reported on :trac:`22719` is now fixed::
+        The bug reported on :issue:`22719` is now fixed::
 
             sage: E = EllipticCurve("141d1")
             sage: E.integral_points()
@@ -6110,7 +6110,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
 
         TESTS:
 
-        The bug reported on :trac:`4525` is now fixed::
+        The bug reported on :issue:`4525` is now fixed::
 
             sage: EllipticCurve('91b1').integral_points()
             [(-1 : -4 : 1), (1 : -1 : 1), (3 : -5 : 1)]
@@ -6120,12 +6120,12 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: [len(e.integral_points(both_signs=False)) for e in cremona_curves([11..100])]  # long time (15s on sage.math, 2011)
             [2, 0, 2, 3, 2, 1, 3, 0, 2, 4, 2, 4, 3, 0, 0, 1, 2, 1, 2, 0, 2, 1, 0, 1, 3, 3, 1, 1, 4, 2, 3, 2, 0, 0, 5, 3, 2, 2, 1, 1, 1, 0, 1, 3, 0, 1, 0, 1, 1, 3, 6, 1, 2, 2, 2, 0, 0, 2, 3, 1, 2, 2, 1, 1, 0, 3, 2, 1, 0, 1, 0, 1, 3, 3, 1, 1, 5, 1, 0, 1, 1, 0, 1, 2, 0, 2, 0, 1, 1, 3, 1, 2, 2, 4, 4, 2, 1, 0, 0, 5, 1, 0, 1, 2, 0, 2, 2, 0, 0, 0, 1, 0, 3, 1, 5, 1, 2, 4, 1, 0, 1, 0, 1, 0, 1, 0, 2, 2, 0, 0, 1, 0, 1, 1, 4, 1, 0, 1, 1, 0, 4, 2, 0, 1, 1, 2, 3, 1, 1, 1, 1, 6, 2, 1, 1, 0, 2, 0, 6, 2, 0, 4, 2, 2, 0, 0, 1, 2, 0, 2, 1, 0, 3, 1, 2, 1, 4, 6, 3, 2, 1, 0, 2, 2, 0, 0, 5, 4, 1, 0, 0, 1, 0, 2, 2, 0, 0, 2, 3, 1, 3, 1, 1, 0, 1, 0, 0, 1, 2, 2, 0, 2, 0, 0, 1, 2, 0, 0, 4, 1, 0, 1, 1, 0, 1, 2, 0, 1, 4, 3, 1, 2, 2, 1, 1, 1, 1, 6, 3, 3, 3, 3, 1, 1, 1, 1, 1, 0, 7, 3, 0, 1, 3, 2, 1, 0, 3, 2, 1, 0, 2, 2, 6, 0, 0, 6, 2, 2, 3, 3, 5, 5, 1, 0, 6, 1, 0, 3, 1, 1, 2, 3, 1, 2, 1, 1, 0, 1, 0, 1, 0, 5, 5, 2, 2, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1]
 
-        The bug reported at :trac:`4897` is now fixed::
+        The bug reported at :issue:`4897` is now fixed::
 
             sage: [P[0] for P in EllipticCurve([0,0,0,-468,2592]).integral_points()]
             [-24, -18, -14, -6, -3, 4, 6, 18, 21, 24, 36, 46, 102, 168, 186, 381, 1476, 2034, 67246]
 
-        See :trac:`22063`::
+        See :issue:`22063`::
 
             sage: for n in [67,71,74,91]:  # long time
             ....:     assert 4*n^6 + 4*n^2 in [P[0] for P in EllipticCurve([0,0,0,2,n^2]).integral_points()]
@@ -6568,7 +6568,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             sage: E.rank(), len(E.S_integral_points([3,5,7]))  # long time (5s on sage.math, 2011)
             (4, 72)
 
-        This is curve "7690e1" which failed until :trac:`4805` was fixed::
+        This is curve "7690e1" which failed until :issue:`4805` was fixed::
 
             sage: EllipticCurve([1,1,1,-301,-1821]).S_integral_points([13,2])
             [(-13 : -4 : 1), (-9 : -12 : 1), (-7 : 2 : 1), (21 : -52 : 1),

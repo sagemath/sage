@@ -159,7 +159,7 @@ def line3d(points, thickness=1, radius=None, arrow_head=False, **kwds):
         sage: L = line3d(((0,0,0),(1,2,3)))
 
     This function should work for anything than can be turned into a
-    list, such as iterators and such (see :trac:`10478`)::
+    list, such as iterators and such (see :issue:`10478`)::
 
         sage: line3d(iter([(0,0,0), (sqrt(3), 2, 4)]))                                  # needs sage.symbolic
         Graphics3d Object
@@ -272,7 +272,7 @@ def bezier3d(path, **options):
 
     TESTS:
 
-    Check for :trac:`31640`::
+    Check for :issue:`31640`::
 
         sage: p2d = [[(3,0.0),(3,0.13),(2,0.2),(2,0.3)],
         ....:        [(2.7,0.4),(2.6,0.5),(2.5,0.5)], [(2.3,0.5),(2.2,0.4),(2.1,0.3)]]
@@ -1064,7 +1064,7 @@ class Line(PrimitiveObject):
         sage: Line([(0,0,0),(1,0,0),(2,1,0),(0,1,0)], corner_cutoff=0)
         Graphics3d Object
 
-    Make sure that the ``corner_cutoff`` keyword works (:trac:`3859`)::
+    Make sure that the ``corner_cutoff`` keyword works (:issue:`3859`)::
 
         sage: N = 11
         sage: c = 0.4
@@ -1478,7 +1478,7 @@ def point3d(v, size=5, **kwds):
         import numpy
         sphinx_plot(point3d(numpy.array([[1,2,3], [4,5,6], [7,8,9]])))
 
-    We check that iterators of points are accepted (:trac:`13890`)::
+    We check that iterators of points are accepted (:issue:`13890`)::
 
         sage: point3d(iter([(1,1,2),(2,3,4),(3,5,8)]), size=20, color='red')
         Graphics3d Object

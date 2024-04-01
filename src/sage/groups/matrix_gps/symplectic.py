@@ -28,7 +28,7 @@ AUTHORS:
 - Sebastian Oehms (2018-8) add option for user defined invariant bilinear
   form and bug-fix in
   :meth:`~sage.groups.matrix_gps.symplectic.SymplecticMatrixGroup_generic.invariant_form`
-  (see :trac:`26028`)
+  (see :issue:`26028`)
 """
 
 # ****************************************************************************

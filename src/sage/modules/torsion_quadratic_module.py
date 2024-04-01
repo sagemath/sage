@@ -164,7 +164,7 @@ class TorsionQuadraticModuleElement(FGP_Element):
             sage: from sage.modules.torsion_quadratic_module import TorsionQuadraticModule
             sage: W = FreeQuadraticModule(ZZ, 2, 2*matrix.identity(2))
             sage: V = (1/2) * W
-            sage: T = TorsionQuadraticModule(V,W)
+            sage: T = TorsionQuadraticModule(V, W)
             sage: x = T.gen(0)
             sage: x
             (1, 0)
@@ -1004,7 +1004,7 @@ class TorsionQuadraticModule(FGP_Module_class, CachedRepresentation):
             [1/2   0]
             [  0 1/4]
 
-        We check that :trac:`24864` is fixed::
+        We check that :issue:`24864` is fixed::
 
             sage: L1 = IntegralLattice(matrix([[-4,0,0], [0,4,0], [0,0,-2]]))
             sage: AL1 = L1.discriminant_group()

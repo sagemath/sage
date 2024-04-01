@@ -62,7 +62,7 @@ def gram_schmidt(B):
          ([], [])
 
     Linearly dependent input leads to a zero dot product in a denominator.
-    This shows that :trac:`10791` is fixed. ::
+    This shows that :issue:`10791` is fixed. ::
 
         sage: from sage.modules.misc import gram_schmidt
         sage: V = [vector(ZZ,[1,1]), vector(ZZ,[2,2]), vector(ZZ,[1,2])]

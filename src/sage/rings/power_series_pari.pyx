@@ -92,7 +92,7 @@ cdef PowerSeries_pari construct_from_pari(parent, pari_gen g) noexcept:
 
     TESTS:
 
-    Check for :trac:`33224`::
+    Check for :issue:`33224`::
 
         sage: R.<z> = LaurentSeriesRing(QQ, implementation='pari')
         sage: (z^-2).prec()
@@ -318,7 +318,7 @@ cdef class PowerSeries_pari(PowerSeries):
             True
 
         The following demonstrates that the problems raised in
-        :trac:`3979` and :trac:`5367` are solved::
+        :issue:`3979` and :issue:`5367` are solved::
 
             sage: [f(t^2 + O(t^n)) for n in [9, 10, 11]]
             [t^4 + t^6 + O(t^11), t^4 + t^6 + O(t^12), t^4 + t^6 + O(t^12)]

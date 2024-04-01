@@ -1365,7 +1365,7 @@ def get_cmap(cmap):
 
     TESTS:
 
-    Check that :trac:`33491` is fixed::
+    Check that :issue:`33491` is fixed::
 
         sage: get_cmap('turbo')
         <matplotlib.colors.ListedColormap object at 0x...>

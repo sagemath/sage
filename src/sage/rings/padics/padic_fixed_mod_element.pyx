@@ -206,7 +206,7 @@ cdef class pAdicFixedModElement(FMElement):
               p^l : [&=...] INT(lg=3):... (+,lgefint=3):... ...
                 I : gen_0
 
-        This checks that :trac:`15653` is fixed::
+        This checks that :issue:`15653` is fixed::
 
             sage: x = polygen(ZpFM(3,10))
             sage: (x^3 + x + 1).__pari__().poldisc()

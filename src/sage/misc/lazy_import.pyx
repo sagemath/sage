@@ -327,7 +327,7 @@ cdef class LazyImport():
 
         TESTS:
 
-        Check that :trac:`19475` is fixed::
+        Check that :issue:`19475` is fixed::
 
             sage: 'A subset of the real line' in RealSet.__doc__
             True
@@ -1117,6 +1117,11 @@ def lazy_import(module, names, as_=None, *,
     if namespace is None:
         namespace = inspect.currentframe().f_locals
     if "*" in names:
+        from sage.misc.superseded import deprecation_cython
+
+        deprecation_cython(37433,
+                           'lazy_import of * is deprecated; provide the names to be imported explicitly')
+
         ix = names.index("*")
         all = get_star_imports(module)
         names[ix:ix+1] = all

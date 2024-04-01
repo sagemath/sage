@@ -1578,7 +1578,7 @@ class SignedPermutations(ColoredPermutations):
 
         TESTS:
 
-        Check that this is the element of maximal length (:trac:`25200`)::
+        Check that this is the element of maximal length (:issue:`25200`)::
 
             sage: S = SignedPermutations(4)
             sage: S.long_element().length() == max(x.length() for x in S)

@@ -44,7 +44,7 @@ def strassen_window_multiply(C, A,B, cutoff):
     AUTHORS:
 
     - David Harvey
-    - Simon King (2011-07): Improve memory efficiency; :trac:`11610`
+    - Simon King (2011-07): Improve memory efficiency; :issue:`11610`
     """
     strassen_window_multiply_c(C, A, B, cutoff)
 

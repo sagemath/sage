@@ -98,7 +98,7 @@ class KodairaSymbol_class(SageObject):
             sage: KodairaSymbol_class('In')
             In
 
-        Check that :trac:`31147` is fixed::
+        Check that :issue:`31147` is fixed::
 
             sage: latex(KodairaSymbol_class(-14))
             I_{10}^{*}

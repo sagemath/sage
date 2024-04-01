@@ -16,7 +16,7 @@ from sage.structure.factorization import Factorization
 from sage.misc.derivative import multi_derivative
 from sage.rings.polynomial.polydict cimport monomial_exponent
 from sage.matrix.matrix0 cimport Matrix
-
+from sage.rings.infinity import Infinity
 
 cdef class LaurentPolynomial_mpair(LaurentPolynomial):
     """
@@ -54,7 +54,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         TESTS:
 
-        Check that :trac:`19538` is fixed::
+        Check that :issue:`19538` is fixed::
 
             sage: R = LaurentPolynomialRing(QQ,'x2,x0')
             sage: S = LaurentPolynomialRing(QQ,'x',3)
@@ -70,7 +70,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: LaurentPolynomial_mpair(L, {(1,2): 1/42}, mon=(-3, -3))
             1/42*w^-2*z^-1
 
-        :trac:`22398`::
+        :issue:`22398`::
 
             sage: LQ = LaurentPolynomialRing(QQ, 'x0, x1, x2, y0, y1, y2, y3, y4, y5')
             sage: LZ = LaurentPolynomialRing(ZZ, 'x0, x1, x2, y0, y1, y2, y3, y4, y5')
@@ -146,13 +146,13 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         r"""
         TESTS:
 
-        Test that the hash is non-constant (see also :trac:`27914`)::
+        Test that the hash is non-constant (see also :issue:`27914`)::
 
             sage: L.<w,z> = LaurentPolynomialRing(QQ)
             sage: len({hash(w^i*z^j) for i in [-2..2] for j in [-2..2]})
             25
 
-        Check that :trac:`20490` is fixed::
+        Check that :issue:`20490` is fixed::
 
             sage: R.<a,b> = LaurentPolynomialRing(ZZ)
             sage: p = a*~a
@@ -163,7 +163,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: hash(p)
             1
 
-        Check that :trac:`23864` is fixed (compatibility with integers, rationals
+        Check that :issue:`23864` is fixed (compatibility with integers, rationals
         and polynomial rings)::
 
             sage: L = LaurentPolynomialRing(QQ, 'x0,x1,x2')
@@ -183,7 +183,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: hash(1 - 7*x0 + x1*x2) == hash(L(1 - 7*x0 + x1*x2))
             True
 
-        Check that :trac:`27914` is fixed::
+        Check that :issue:`27914` is fixed::
 
             sage: L.<w,z> = LaurentPolynomialRing(QQ)
             sage: Lw = LaurentPolynomialRing(QQ, 'w')
@@ -233,7 +233,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         TESTS:
 
-        check compatibility with  :trac:`26105`::
+        check compatibility with  :issue:`26105`::
 
             sage: # needs sage.rings.finite_rings
             sage: F.<t> = GF(4)
@@ -267,7 +267,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: f.factor() # Notice the y has been factored out.
             (y) * (2*x^2 + x + 1)
 
-        Check that :trac:`23864` has been fixed::
+        Check that :issue:`23864` has been fixed::
 
             sage: hash(L.zero())
             0
@@ -472,7 +472,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         TESTS:
 
-        Check that :trac:`2952` is fixed::
+        Check that :issue:`2952` is fixed::
 
             sage: R.<q> = QQ[]
             sage: L.<x,y,z> = LaurentPolynomialRing(R)
@@ -1029,12 +1029,12 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         TESTS:
 
-        Check that :trac:`19357` is fixed::
+        Check that :issue:`19357` is fixed::
 
             sage: x // y
             x*y^-1
 
-        Check that :trac:`21999` is fixed::
+        Check that :issue:`21999` is fixed::
 
             sage: L.<a,b> = LaurentPolynomialRing(QQbar)                                # needs sage.rings.number_field
             sage: (a+a*b) // a                                                          # needs sage.libs.singular sage.rings.number_field
@@ -1074,7 +1074,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         TESTS:
 
-        Verify that :trac:`31257` is fixed::
+        Verify that :issue:`31257` is fixed::
 
             sage: # needs sage.libs.singular
             sage: R.<x,y> = LaurentPolynomialRing(QQ)
@@ -1172,16 +1172,77 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         if not x:
             return self._poly.total_degree() + sum(self._mon)
 
+        # Get the index of the generator or error
         cdef tuple g = <tuple > self._parent.gens()
         cdef Py_ssize_t i
-        cdef bint no_generator_found = True
-        for i in range(len(g)):
-            if g[i] is x:
-                no_generator_found = False
-                break
-        if no_generator_found:
-            raise TypeError("x must be a generator of parent")
+        try:
+            i = g.index(x)
+        except ValueError:  # not in the tuple
+            raise TypeError(f"{x} is not a generator of parent")
         return self._poly.degree(self._parent._R.gens()[i]) + self._mon[i]
+
+    def valuation(self, x=None):
+        r"""
+        Return the valuation of ``self``.
+
+        If ``x`` is ``None``, the returned valuation is the minimal total degree
+        of the monomials occurring in ``self``. Geometrically, this is the order
+        of vanishing of ``self`` at the generic point of the blow-up of the
+        point `(0,0,\ldots,0)`.
+
+        If ``x`` is not ``None``, then it must be a generator. In that case, the
+        minimum degree of that generator occurring in ``self`` is returned.
+        Geometrically, this is the order of vanishing of ``self`` at the generic
+        point of the curve `x = 0`.
+
+        INPUT:
+
+        - ``x`` -- (optional) a generator; if given, return the valuation
+          with respect to this generator
+
+        EXAMPLES::
+
+            sage: R.<x,y> = LaurentPolynomialRing(ZZ)
+            sage: f = 2*x^2*y^-3 - 13*x^-1*y^-3 + 2*x^2*y^-5 - 2*x^-3*y^2
+            sage: f.valuation()
+            -4
+            sage: f.valuation(x)
+            -3
+            sage: f.valuation(y)
+            -5
+            sage: R.zero().valuation()
+            +Infinity
+
+        TESTS:
+
+        If supplied, ``x`` must be a generator::
+
+            sage: R.<x,y> = LaurentPolynomialRing(ZZ)
+            sage: f = 1 + x + x^2*y^-1
+            sage: f.valuation(1)
+            Traceback (most recent call last):
+            ...
+            TypeError: 1 is not a generator of parent
+        """
+        # Valuation of zero polynomial is defined to be +Infinity
+        if self.is_zero():
+            return Infinity
+
+        # When x is None find the minimal valuation by finding the minimal
+        # valuation of the sum of exponents
+        if x is None:
+            return Integer(min(sum(e) for e in self.exponents()))
+
+        # Get the index of the generator or error
+        cdef tuple g = <tuple > self._parent.gens()
+        cdef Py_ssize_t i
+        try:
+            i = g.index(x)
+        except ValueError:  # not in the tuple
+            raise TypeError(f"{x} is not a generator of parent")
+
+        # Find the minimal valuation of x by checking each term
+        return Integer(min(e[i] for e in self.exponents()))
 
     def has_inverse_of(self, i):
         """
@@ -1597,7 +1658,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         TESTS:
 
-        Tests for :trac:`29173`::
+        Tests for :issue:`29173`::
 
             sage: L.<a, b> = LaurentPolynomialRing(ZZ, 'a, b')
             sage: (a*b + a + b + 1).factor()
@@ -1703,7 +1764,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: p.rescale_vars({0: 3, 1: 7}, new_ring=L.change_ring(F))
             x*y^-2 + x^-2*y
 
-        Test for :trac:`30331`::
+        Test for :issue:`30331`::
 
             sage: F.<z> = CyclotomicField(3)                                            # needs sage.rings.number_field
             sage: p.rescale_vars({0: 2, 1: z}, new_ring=L.change_ring(F))               # needs sage.rings.number_field
@@ -1834,7 +1895,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
 
         TESTS:
 
-        Tests for :trac:`30331`::
+        Tests for :issue:`30331`::
 
             sage: L.<x,y> = LaurentPolynomialRing(QQ, 2)
             sage: p = x + y

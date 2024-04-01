@@ -352,7 +352,7 @@ cdef class CategoryObject(SageObject):
             Univariate Polynomial Ring in x over Rational Field
 
         For orders, we correctly use the ring generator, see
-        :trac:`15348`::
+        :issue:`15348`::
 
             sage: A.<i> = ZZ.extension(x^2 + 1)                                         # needs sage.rings.number_field
             sage: i                                                                     # needs sage.rings.number_field
@@ -395,7 +395,7 @@ cdef class CategoryObject(SageObject):
             (x,)
 
         For orders, we correctly use the ring generator, see
-        :trac:`15348`::
+        :issue:`15348`::
 
             sage: B.<z> = EquationOrder(x^2 + 3)                                        # needs sage.rings.number_field
             sage: B._defining_names()                                                   # needs sage.rings.number_field
@@ -508,7 +508,7 @@ cdef class CategoryObject(SageObject):
         In an old version, it was impossible to temporarily change
         the names if no names were previously assigned. But if one
         wants to print elements of the quotient of such an "unnamed"
-        ring, an error resulted. That was fixed in :trac:`11068`::
+        ring, an error resulted. That was fixed in :issue:`11068`::
 
             sage: # needs sage.modules
             sage: MS = MatrixSpace(GF(5), 2, 2)

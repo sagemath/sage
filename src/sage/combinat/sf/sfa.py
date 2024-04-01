@@ -161,14 +161,14 @@ Here are further examples::
 
 TESTS:
 
-Check that we can handle large integers properly (:trac:`13413`)::
+Check that we can handle large integers properly (:issue:`13413`)::
 
     sage: s = SymmetricFunctions(QQ).s()
     sage: p = SymmetricFunctions(QQ).p()
     sage: max(s(p([1]*36)).coefficients())  # long time (4s on sage.math, 2013)
     40971642983700000000
 
-BACKWARD INCOMPATIBLE CHANGES (:trac:`5457`):
+BACKWARD INCOMPATIBLE CHANGES (:issue:`5457`):
 
 The symmetric functions code has been refactored to take
 advantage of the coercion systems. This introduced a couple of glitches:

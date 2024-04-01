@@ -16,7 +16,7 @@ where `\eta(q)` is Dirichlet's eta function
 
 These are useful for obtaining explicit models of modular curves.
 
-See :trac:`3934` for background.
+See :issue:`3934` for background.
 
 AUTHOR:
 

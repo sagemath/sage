@@ -1144,7 +1144,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             sage: for x in cpts:
             ....:     assert (x * (~x) - 1).contains_zero()
 
-        Test that the bug reported in :trac:`25414` has been fixed::
+        Test that the bug reported in :issue:`25414` has been fixed::
 
             sage: 1 / CIF(RIF(-1,1),0)
             [.. NaN ..] + [.. NaN ..]*I
@@ -2019,7 +2019,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             sage: CIF(0,2).cos()
             3.762195691083632?
 
-        Check that :trac:`17285` is fixed::
+        Check that :issue:`17285` is fixed::
 
             sage: CIF(cos(2/3))                                                         # needs sage.symbolic
             0.7858872607769480?
@@ -2061,7 +2061,7 @@ cdef class ComplexIntervalFieldElement(FieldElement):
             sage: CIF(0,2).sin()
             3.626860407847019?*I
 
-        Check that :trac:`17825` is fixed::
+        Check that :issue:`17825` is fixed::
 
             sage: CIF(sin(2/3))                                                         # needs sage.symbolic
             0.618369803069737?
@@ -2263,7 +2263,7 @@ def create_ComplexIntervalFieldElement(s_real, s_imag=None, int pad=0, min_prec=
     TESTS:
 
     Make sure we've rounded up ``log(10,2)`` enough to guarantee
-    sufficient precision (:trac:`10164`).  This is a little tricky
+    sufficient precision (:issue:`10164`).  This is a little tricky
     because at the time of writing, we don't support intervals long
     enough to trip the error.  However, at least we can make sure that
     we either do it correctly or fail noisily::

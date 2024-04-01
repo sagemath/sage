@@ -2508,7 +2508,7 @@ cdef class mpc(mpnumber):
 
         TESTS:
 
-        Check that :trac:`31676` is fixed::
+        Check that :issue:`31676` is fixed::
 
             sage: from mpmath import mpc
             sage: hash(mpc(1, -1)) == hash(mpc(-1, -1))  # should not return OverflowError: Python int too large to convert to C ssize_t

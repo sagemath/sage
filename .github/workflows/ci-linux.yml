@@ -39,6 +39,7 @@ jobs:
     uses: ./.github/workflows/docker.yml
     with:
       # Build from scratch
+      free_disk_space: true
       docker_targets: "with-system-packages configured with-targets-pre with-targets"
       # FIXME: duplicated from env.TARGETS
       targets_pre: all-sage-local

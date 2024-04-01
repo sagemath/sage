@@ -4,7 +4,7 @@ all.py -- much of sage is imported into this module, so you don't
 
 TESTS:
 
-This is to test :trac:`10570`. If the number of stackframes at startup
+This is to test :issue:`10570`. If the number of stackframes at startup
 changes due to a patch you made, please check that this was an
 intended effect of your patch.
 
@@ -39,7 +39,7 @@ Check lazy import of ``interacts``::
     sage: interacts
     <module 'sage.interacts.all' from '...'>
 
-Check that :trac:`34506` is resolved::
+Check that :issue:`34506` is resolved::
 
     sage: x = int('1'*4301)
 """

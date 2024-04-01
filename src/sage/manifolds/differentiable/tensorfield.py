@@ -777,7 +777,7 @@ class TensorField(ModuleElementWithMutability):
 
         TESTS:
 
-        Check that :trac:`29639` is fixed::
+        Check that :issue:`29639` is fixed::
 
             sage: v = M.vector_field()
             sage: v._init_components(1/2, -1)

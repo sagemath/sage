@@ -318,7 +318,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
             ...
             TypeError: no canonical coercion from Symbolic Ring to Real Double Field
 
-        Test that :trac:`15695` is fixed (see also :trac:`18076`)::
+        Test that :issue:`15695` is fixed (see also :issue:`18076`)::
 
             sage: 1j + numpy.float64(2)                                                 # needs numpy
             2.00000000000000 + 1.00000000000000*I
@@ -973,7 +973,7 @@ cdef class RealDoubleElement(FieldElement):
         """
         TESTS:
 
-        Check that :trac:`28814` is fixed::
+        Check that :issue:`28814` is fixed::
 
             sage: mathematica(RDF(1e25))   # optional - mathematica
             1.*^25
@@ -1756,7 +1756,7 @@ cdef class RealDoubleElement(FieldElement):
 
         TESTS:
 
-        Check comparisons with ``NaN`` (:trac:`16515`)::
+        Check comparisons with ``NaN`` (:issue:`16515`)::
 
             sage: n = RDF('NaN')
             sage: n == n

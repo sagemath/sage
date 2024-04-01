@@ -276,7 +276,7 @@ class FriCAS(ExtraTabCompletion, Expect):
             sage: fricas == loads(dumps(fricas))
             True
 
-        Check that :trac:`25174` is fixed::
+        Check that :issue:`25174` is fixed::
 
             sage: fricas(I)
             %i
@@ -731,7 +731,7 @@ http://fricas.sourceforge.net.
             sage: fricas.get_string(s)
             '(-1234567890123456789012345678901234567890123456789012345678901234567890)*n'
 
-        Check that :trac:`25628` is fixed::
+        Check that :issue:`25628` is fixed::
 
             sage: var("a b"); f = 1/(1+a*cos(x))
             (a, b)
@@ -1400,7 +1400,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             (-1.23, 8)
 
         This function cannot use the symbol table to translate
-        symbols which are not function calls, as :trac:`31849` shows
+        symbols which are not function calls, as :issue:`31849` shows
         - ``D`` would erroneously be interpreted as differential
         then::
 
@@ -1512,7 +1512,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             sage: FriCASElement._sage_expression(s)
             1/2*sqrt(2)*sqrt(pi)*fresnel_sin(sqrt(2)*x/sqrt(pi))
 
-        Check that :trac:`22525` is fixed::
+        Check that :issue:`22525` is fixed::
 
             sage: l = [sin, cos, sec, csc, cot, tan, asin, acos, atan, acot, acsc, asec, arcsin, arccos, arctan, arccot, arccsc, arcsec]
             sage: [f(x)._fricas_().sage().subs(x=0.9) for f in l]
@@ -1555,13 +1555,13 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
              0.467145308103262,
              0.957800449200672]
 
-        Check that :trac:`23782` is fixed::
+        Check that :issue:`23782` is fixed::
 
             sage: s = '((3*n^10-25*n^9+50*n^8+62*n^7-229*n^6-25*n^5+320*n^4-12*n^3-144*n^2)/11520)::EXPR INT'
             sage: fricas(s).sage()
             1/3840*n^10 - 5/2304*n^9 + 5/1152*n^8 + 31/5760*n^7 - 229/11520*n^6 - 5/2304*n^5 + 1/36*n^4 - 1/960*n^3 - 1/80*n^2
 
-        Some checks for digamma and polygamma (:trac:`31853`)::
+        Some checks for digamma and polygamma (:issue:`31853`)::
 
             sage: fricas.digamma(1.0)
             - 0.5772156649_0153286061
@@ -1579,7 +1579,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             sage: fricas(laplace(log(x), x, w)).sage()
             -(euler_gamma + log(w))/w
 
-        Check that :trac:`25224` is fixed::
+        Check that :issue:`25224` is fixed::
 
             sage: integrate(log(x)/(1-x),x,algorithm='fricas')
             dilog(-x + 1)
@@ -1590,12 +1590,12 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             sage: dilog(1.0)
             1.64493406684823
 
-        Check that :trac:`25987` is fixed::
+        Check that :issue:`25987` is fixed::
 
             sage: integrate(lambert_w(x), x, algorithm="fricas")
             (x*lambert_w(x)^2 - x*lambert_w(x) + x)/lambert_w(x)
 
-        Check that :trac:`25838` is fixed::
+        Check that :issue:`25838` is fixed::
 
             sage: F = function('f'); f = SR.var('f')
             sage: FF = fricas(F(f)); FF
@@ -1605,7 +1605,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             sage: bool(FF.D(f).integrate(f).sage() == F(f))
             True
 
-        Check that :trac:`25602` is fixed::
+        Check that :issue:`25602` is fixed::
 
             sage: r = fricas.integrate(72000/(1+x^5), x).sage()
             sage: abs(n(r.subs(x=5) - r.subs(x=3)) - 193.020947266210) <= 0.1
@@ -1650,7 +1650,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             sage: f.sage()
             sum(factorial(_... + 1), _..., 0, n - 1)
 
-        Check that :trac:`26746` is fixed::
+        Check that :issue:`26746` is fixed::
 
             sage: _ = var('x, y, z')
             sage: f = sin(x^2) + y^z
@@ -1667,18 +1667,18 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             sage: fricas("fresnelC(1.0)")
             0.7798934003_7682282947_42
 
-        Check that :trac:`17908` is fixed::
+        Check that :issue:`17908` is fixed::
 
             sage: fricas(abs(x)).sage().subs(x=-1783)
             1783
 
-        Check that :trac:`27310` is fixed::
+        Check that :issue:`27310` is fixed::
 
             sage: fricas.set("F", "operator 'f")
             sage: fricas("eval(D(F(x,y), [x, y], [2, 1]), x=x+y)").sage()
             D[0, 0, 1](f)(x + y, y)
 
-        Conversion of hypergeometric functions (:trac:`31298`)::
+        Conversion of hypergeometric functions (:issue:`31298`)::
 
             sage: a,b,c = var("a b c")
             sage: A = hypergeometric([a, b], [c], x)
@@ -1687,7 +1687,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             sage: fricas(A).D(x).sage() - diff(A, x)
             0
 
-        Check that :trac:`31858` is fixed::
+        Check that :issue:`31858` is fixed::
 
             sage: fricas.Gamma(3/2).sage()
             1/2*sqrt(pi)
@@ -1697,7 +1697,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             gamma(3, 2)
 
 
-        Check that :trac:`32133` is fixed::
+        Check that :issue:`32133` is fixed::
 
             sage: var("y")
             y

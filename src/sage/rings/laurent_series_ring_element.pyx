@@ -438,7 +438,7 @@ cdef class LaurentSeries(AlgebraElement):
             sage: latex(f)
             \frac{\frac{17}{2}}{x^{2}} + x + x^{2} + 3x^{4} + O(x^{7})
 
-        Verify that :trac:`6656` has been fixed::
+        Verify that :issue:`6656` has been fixed::
 
             sage: R.<a,b> = PolynomialRing(QQ)
             sage: T.<x> = LaurentSeriesRing(R)
@@ -526,7 +526,7 @@ cdef class LaurentSeries(AlgebraElement):
             sage: f[:2]
             -5*t^-10 + 1/3 + t + O(t^5)
 
-        Any other kind of slicing is an error, see :trac:`18940`::
+        Any other kind of slicing is an error, see :issue:`18940`::
 
             sage: f[-10:2:2]
             Traceback (most recent call last):
@@ -756,7 +756,7 @@ cdef class LaurentSeries(AlgebraElement):
 
         TESTS:
 
-        Verify that :trac:`35860` is fixed::
+        Verify that :issue:`35860` is fixed::
 
             sage: R.<t> = LaurentPolynomialRing(ZZ)
             sage: sqrt(t^2) + t^-1
@@ -843,7 +843,7 @@ cdef class LaurentSeries(AlgebraElement):
 
         TESTS:
 
-        Check that :trac:`28239` is fixed::
+        Check that :issue:`28239` is fixed::
 
             sage: (t^(-2)).add_bigoh(-1)
             t^-2 + O(t^-1)
@@ -1247,7 +1247,7 @@ cdef class LaurentSeries(AlgebraElement):
             sage: f > g
             True
 
-        Check that :trac:`19664` is fixed::
+        Check that :issue:`19664` is fixed::
 
             sage: R.<x> = LaurentSeriesRing(RR)
             sage: x^(10^9) > 0
@@ -1311,7 +1311,7 @@ cdef class LaurentSeries(AlgebraElement):
         TESTS:
 
         The valuation of the zero element is ``+Infinity``
-        (see :trac:`15088`)::
+        (see :issue:`15088`)::
 
             sage: zero = R(0)
             sage: zero.valuation()
@@ -1753,7 +1753,7 @@ cdef class LaurentSeries(AlgebraElement):
         TESTS:
 
         Check whether a polynomial over a Laurent series ring is contained in the
-        polynomial ring over the power series ring (see :trac:`19459`):
+        polynomial ring over the power series ring (see :issue:`19459`):
 
             sage: # needs sage.rings.finite_rings
             sage: L.<t> = LaurentSeriesRing(GF(2))
@@ -1763,7 +1763,7 @@ cdef class LaurentSeries(AlgebraElement):
             False
 
         There used to be an issue with non-canonical representations of zero,
-        see :trac:`31383`::
+        see :issue:`31383`::
 
             sage: S.<x> = PowerSeriesRing(QQ)
             sage: L = Frac(S)
@@ -1777,7 +1777,7 @@ cdef class LaurentSeries(AlgebraElement):
             ...
             TypeError: self is not a power series
 
-        Test for :trac:`32440`::
+        Test for :issue:`32440`::
 
             sage: L.<x> = LaurentSeriesRing(QQ, implementation='pari')                  # needs sage.libs.pari
             sage: (x + O(x^3)).power_series()                                           # needs sage.libs.pari
@@ -1839,7 +1839,7 @@ cdef class LaurentSeries(AlgebraElement):
             ...
             ValueError: Can only substitute elements of positive valuation
 
-        Test for :trac:`23928`::
+        Test for :issue:`23928`::
 
             sage: R.<x> = LaurentSeriesRing(QQ, implementation='pari')                  # needs sage.libs.pari
             sage: f = x.add_bigoh(7)                                                    # needs sage.libs.pari
@@ -1886,7 +1886,7 @@ cdef class LaurentSeries(AlgebraElement):
             sage: f.__pari__()                                                          # needs sage.libs.pari
             x^-1 + x + O(x^2)
 
-        Check that :trac:`32437` is fixed::
+        Check that :issue:`32437` is fixed::
 
             sage: # needs sage.rings.finite_rings
             sage: F.<u> = GF(257^2)

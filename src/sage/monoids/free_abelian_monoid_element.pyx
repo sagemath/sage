@@ -321,7 +321,7 @@ cdef class FreeAbelianMonoidElement(MonoidElement):
 
     def __pow__(self, n, modulus):
         """
-        Raises self to the power of ``n``.
+        Raise ``self`` to the power of ``n``.
 
         AUTHORS:
 

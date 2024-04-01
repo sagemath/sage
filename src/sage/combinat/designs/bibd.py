@@ -789,7 +789,7 @@ def v_4_1_BIBD(v, check=True):
         sage: assert designs.difference_family(37,4,existence=True)
         sage: _ = designs.difference_family(37,4)
 
-    Check some larger `(v,4,1)`-BIBD (see :trac:`17557`)::
+    Check some larger `(v,4,1)`-BIBD (see :issue:`17557`)::
 
         sage: for v in range(400):                                      # long time
         ....:     if v%12 in [1,4]:
@@ -959,7 +959,7 @@ def PBD_4_5_8_9_12(v, check=True):
          [0, 15, 27, 38], [0, 16, 22, 32], [0, 17, 23, 34],
         ...
 
-    Check that :trac:`16476` is fixed::
+    Check that :issue:`16476` is fixed::
 
         sage: from sage.combinat.designs.bibd import PBD_4_5_8_9_12
         sage: for v in (0,1,4,5,8,9,12,13,16,17,20,21,24,25):                           # needs sage.schemes

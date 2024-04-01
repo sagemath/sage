@@ -151,7 +151,7 @@ class Category_over_base(CategoryWithParameters):
     - ``base`` -- a category `C` or an object of such a category
 
     Assumption: the classes for the parents, elements, morphisms, of
-    ``self`` should only depend on `C`. See :trac:`11935` for details.
+    ``self`` should only depend on `C`. See :issue:`11935` for details.
 
     EXAMPLES::
 
@@ -213,7 +213,7 @@ class Category_over_base(CategoryWithParameters):
         r"""
         Return what the element/parent/... classes depend on.
 
-        Since :trac:`11935`, the element and parent classes of a
+        Since :issue:`11935`, the element and parent classes of a
         category over base only depend on the category of the base (or
         the base itself if it is a category).
 
@@ -451,7 +451,7 @@ class Category_over_base_ring(Category_over_base):
             ....:            VectorSpaces(GF(3)).parent_class)
             True
 
-        Check that :trac:`16618` is fixed: this `_subcategory_hook_`
+        Check that :issue:`16618` is fixed: this `_subcategory_hook_`
         method is only valid for :class:`Category_over_base_ring`, not
         :class:`Category_over_base`::
 

@@ -66,7 +66,7 @@ cdef class Matrix_generic_dense(matrix_dense.Matrix_dense):
 
         TESTS:
 
-        We check that the problem related to :trac:`9049` is not an issue any
+        We check that the problem related to :issue:`9049` is not an issue any
         more::
 
             sage: # needs sage.rings.number_field

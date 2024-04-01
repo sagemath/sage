@@ -3,7 +3,7 @@ Other functions
 
 TESTS:
 
-Check that gamma function imports are deprecated (:trac:`24411`)::
+Check that gamma function imports are deprecated (:issue:`24411`)::
 
     sage: from sage.functions.other import beta
     sage: beta(x, x)                                                                    # needs sage.symbolic
@@ -78,7 +78,7 @@ class Function_abs(GinacFunction):
 
         TESTS:
 
-        Check that :trac:`12588` is fixed::
+        Check that :issue:`12588` is fixed::
 
             sage: # needs sage.symbolic
             sage: abs(pi*I)
@@ -158,7 +158,7 @@ def _eval_floor_ceil(self, x, method, bits=0, **kwds):
         ....:     else:
         ....:         assert f + 1 == c
 
-    A test from :trac:`12121`::
+    A test from :issue:`12121`::
 
         sage: # needs sage.symbolic
         sage: e1 = pi - continued_fraction(pi).convergent(2785)
@@ -183,7 +183,7 @@ def _eval_floor_ceil(self, x, method, bits=0, **kwds):
         ValueError: Calling ceil() on infinity or NaN
 
     Test that elements of symbolic subrings work in the same way as
-    elements of ``SR``, :trac:`32724`::
+    elements of ``SR``, :issue:`32724`::
 
         sage: SCR = SR.subring(no_variables=True)                                       # needs sage.symbolic
         sage: floor(log(2^(3/2)) / log(2) + 1/2)                                        # needs sage.symbolic
@@ -663,7 +663,7 @@ class Function_Order(GinacFunction):
 
         TESTS:
 
-        Check that :trac:`19425` is resolved::
+        Check that :issue:`19425` is resolved::
 
             sage: x.Order().operator()                                                  # needs sage.symbolic
             Order
@@ -1091,7 +1091,7 @@ class Function_arg(BuiltinFunction):
         TESTS:
 
         Make sure that the ``_evalf_`` method works when it receives a
-        keyword argument ``parent`` :trac:`12289`::
+        keyword argument ``parent`` :issue:`12289`::
 
             sage: arg(5+I, hold=True).n()                                               # needs sage.symbolic
             0.197395559849881
@@ -1179,7 +1179,7 @@ class Function_real_part(GinacFunction):
             sage: real_part(x)._sympy_()                                                # needs sympy sage.symbolic
             re(x)
 
-        Check if :trac:`6401` is fixed::
+        Check if :issue:`6401` is fixed::
 
             sage: latex(x.real())                                                       # needs sage.symbolic
             \Re \left( x \right)
@@ -1189,7 +1189,7 @@ class Function_real_part(GinacFunction):
             \Re \left( f\left(x\right) \right)
 
         Check that some real part expansions evaluate correctly
-        (:trac:`21614`)::
+        (:issue:`21614`)::
 
             sage: real(sqrt(sin(x))).subs(x==0)                                         # needs sage.symbolic
             0
@@ -1248,7 +1248,7 @@ class Function_imag_part(GinacFunction):
             sage: imag_part(x)._sympy_()                                                # needs sympy sage.symbolic
             im(x)
 
-        Check if :trac:`6401` is fixed::
+        Check if :issue:`6401` is fixed::
 
             sage: latex(x.imag())                                                       # needs sage.symbolic
             \Im \left( x \right)
@@ -1324,7 +1324,7 @@ class Function_conjugate(GinacFunction):
             sage: x.conjugate().operator() == conjugate
             True
 
-        Check if :trac:`8755` is fixed::
+        Check if :issue:`8755` is fixed::
 
             sage: # needs sage.symbolic
             sage: conjugate(sqrt(-3))
@@ -1340,7 +1340,7 @@ class Function_conjugate(GinacFunction):
             sage: conjugate(sqrt(y))
             sqrt(y)
 
-        Check if :trac:`10964` is fixed::
+        Check if :issue:`10964` is fixed::
 
             sage: # needs sage.symbolic
             sage: z = I*sqrt(-3); z
@@ -1483,7 +1483,7 @@ class Function_factorial(GinacFunction):
             sage: latex(factorial)
             {\rm factorial}
 
-        Check that :trac:`11539` is fixed::
+        Check that :issue:`11539` is fixed::
 
             sage: # needs sage.symbolic
             sage: (factorial(x) == 0).simplify()
@@ -1494,7 +1494,7 @@ class Function_factorial(GinacFunction):
             sage: (factorial(x) == y).solve(x)
             [factorial(x) == y]
 
-        Check that :trac:`16166` is fixed::
+        Check that :issue:`16166` is fixed::
 
             sage: RBF = RealBallField(53)                                               # needs sage.libs.flint
             sage: factorial(RBF(4.2))  # abs tol 1e-13                                  # needs sage.libs.flint
@@ -1539,12 +1539,12 @@ class Function_factorial(GinacFunction):
 
         TESTS:
 
-        Check that :trac:`25421` is fixed::
+        Check that :issue:`25421` is fixed::
 
             sage: factorial(RBF(2)**64)                                                 # needs sage.libs.flint
             [+/- 2.30e+347382171326740403407]
 
-        Check that :trac:`26749` is fixed::
+        Check that :issue:`26749` is fixed::
 
             sage: factorial(float(3.2))        # abs tol 1e-14                          # needs sage.symbolic
             7.7566895357931776
@@ -1660,7 +1660,7 @@ class Function_binomial(GinacFunction):
             sage: binomial(y, 2).parent()                                               # needs sage.symbolic
             Univariate Polynomial Ring in y over Rational Field
 
-        :trac:`16726`::
+        :issue:`16726`::
 
             sage: binomial(CIF(1), 2)                                                   # needs sage.symbolic
             0
@@ -1985,7 +1985,7 @@ class Function_limit(BuiltinFunction):
             sage: latex(limit(f(x),x=a,dir='left'))
             \lim_{x \to a^-}\, f\left(x\right)
 
-        Check if :trac:`13181` is fixed::
+        Check if :issue:`13181` is fixed::
 
             sage: # needs sage.symbolic
             sage: t = var('t')
@@ -2089,7 +2089,7 @@ class Function_cases(GinacFunction):
 
         TESTS:
 
-        Verify that :trac:`25624` is fixed::
+        Verify that :issue:`25624` is fixed::
 
             sage: L = latex(cases([(x == 0, 0), (1, 1)])); L                            # needs sage.symbolic
             \begin{cases}{0} & {x = 0}\\{1} & {1}\end{cases}
@@ -2202,7 +2202,7 @@ class Function_crootof(BuiltinFunction):
 
         TESTS:
 
-        Check that low precision is handled (:trac:`24378`)::
+        Check that low precision is handled (:issue:`24378`)::
 
             sage: complex_root_of(x^8 - 1, 7).n(2)                                      # needs sage.symbolic
             0.75 + 0.75*I

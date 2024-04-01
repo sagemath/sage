@@ -73,7 +73,7 @@ AUTHORS:
 - Sebastian Oehms (2018-8) add
   :meth:`~sage.groups.matrix_gps.orthogonal.OrthogonalMatrixGroup_generic.invariant_form`
   (as alias), ``_OG``, option for user defined invariant bilinear form,
-  and bug-fix in cmd-string for calling GAP (see :trac:`26028`)
+  and bug-fix in cmd-string for calling GAP (see :issue:`26028`)
 """
 
 # ****************************************************************************
@@ -154,12 +154,12 @@ def _OG(n, R, special, e=0, var='a', invariant_form=None):
 
     TESTS:
 
-    Check that :trac:`26028` is fixed::
+    Check that :issue:`26028` is fixed::
 
         sage: GO(3,25).order()  # indirect doctest                                      # needs sage.libs.gap sage.rings.finite_rings
         31200
 
-    Check that :trac:`28054` is fixed::
+    Check that :issue:`28054` is fixed::
 
         sage: G = SO(2, GF(3), -1)
         sage: m = G.invariant_form()

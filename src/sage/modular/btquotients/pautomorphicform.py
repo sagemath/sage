@@ -564,7 +564,7 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
 
         TESTS:
 
-        Check that :trac:`22634` is fixed::
+        Check that :issue:`22634` is fixed::
 
             sage: X = BruhatTitsQuotient(7,2)
             sage: H = X.harmonic_cocycles(4,20)

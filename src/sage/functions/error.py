@@ -135,19 +135,19 @@ class Function_erf(BuiltinFunction):
         sage: (integrate(exp(-x**2), (x,0,3))*2/sqrt(pi)).n()                           # needs sage.symbolic
         0.999977909503001
 
-    :trac:`9044`::
+    :issue:`9044`::
 
         sage: N(erf(sqrt(2)),200)                                                       # needs sage.symbolic
         0.95449973610364158559943472566693312505644755259664313203267
 
-    :trac:`11626`::
+    :issue:`11626`::
 
         sage: n(erf(2),100)                                                             # needs sage.symbolic
         0.99532226501895273416206925637
         sage: erf(2).n(100)                                                             # needs sage.symbolic
         0.99532226501895273416206925637
 
-    Test (indirectly) :trac:`11885`::
+    Test (indirectly) :issue:`11885`::
 
         sage: erf(float(0.5))
         0.5204998778130465
@@ -270,14 +270,14 @@ class Function_erf(BuiltinFunction):
             0.84270079294971486934122063508260925929606699796630290845994
 
         Check that for an imaginary input, the output is also imaginary, see
-        :trac:`13193`::
+        :issue:`13193`::
 
             sage: erf(3.0*I)                                                            # needs sage.symbolic
             1629.99462260157*I
             sage: erf(33.0*I)                                                           # needs sage.symbolic
             1.51286977510409e471*I
 
-        Check that real ball evaluation is fixed :trac:`28061`::
+        Check that real ball evaluation is fixed :issue:`28061`::
 
             sage: RealBallField(128)(erf(5))  # abs tol 1e-38                           # needs sage.symbolic
             [0.99999999999846254020557196514981165651 +/- 7.33e-39]
@@ -297,7 +297,7 @@ class Function_erf(BuiltinFunction):
 
         TESTS:
 
-        Check if :trac:`8568` is fixed::
+        Check if :issue:`8568` is fixed::
 
             sage: var('c,x')                                                            # needs sage.symbolic
             (c, x)
@@ -417,7 +417,7 @@ class Function_erfc(BuiltinFunction):
 
     TESTS:
 
-    Check that :trac:`25991` is fixed::
+    Check that :issue:`25991` is fixed::
 
             sage: erfc(x)._fricas_()                                            # optional - fricas, needs sage.symbolic
             - erf(x) + 1
@@ -518,7 +518,7 @@ class Function_erfinv(BuiltinFunction):
 
         TESTS:
 
-        Check that :trac:`11349` is fixed::
+        Check that :issue:`11349` is fixed::
 
             sage: # needs sage.symbolic
             sage: _ = var('z,t')

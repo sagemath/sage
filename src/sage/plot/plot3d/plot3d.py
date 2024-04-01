@@ -1063,7 +1063,7 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
         ...
         ValueError: range variables should be distinct, but there are duplicates
 
-    Verify that :trac:`7423` is fixed::
+    Verify that :issue:`7423` is fixed::
 
         sage: f(x,y)=ln(x)
         sage: P=plot3d(f,(x,0,1),(y,0,1))
