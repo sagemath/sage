@@ -5750,7 +5750,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             # that it's 1.
             #
             # However, doing this naively causes trouble over inexact
-            # fields -- see trac #2256. The *right* thing to do would
+            # fields -- see Issue #2256. The *right* thing to do would
             # probably be to make sure that self.det() is nonzero. That
             # doesn't work here, because our det over an arbitrary field
             # just does expansion by minors and is unusable for even 10x10

@@ -1640,7 +1640,7 @@ cdef class Rational(sage.structure.element.FieldElement):
 
         # We should be able to run the code in the sign == 1 case
         # below for both cases. However, we need to do extra work to
-        # avoid a bug in GMP's mpz_perfect_power_p; see trac #4612 for
+        # avoid a bug in GMP's mpz_perfect_power_p; see Issue #4612 for
         # more details.
         #
         # The code in the case of sign == -1 could definitely be

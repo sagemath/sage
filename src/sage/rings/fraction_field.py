@@ -80,7 +80,7 @@ Test that :issue:`15971` is fixed::
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 import sage.misc.latex as latex
@@ -135,16 +135,16 @@ def FractionField(R, names=None):
         sage: Frac(Integers(4))
         Traceback (most recent call last):
         ...
-        TypeError: R must be an integral domain.
+        TypeError: R must be an integral domain
     """
-    if not ring.is_Ring(R):
+    if R not in Rings():
         raise TypeError("R must be a ring")
     if not R.is_integral_domain():
-        raise TypeError("R must be an integral domain.")
+        raise TypeError("R must be an integral domain")
     return R.fraction_field()
 
 
-def is_FractionField(x):
+def is_FractionField(x) -> bool:
     """
     Test whether or not ``x`` inherits from :class:`FractionField_generic`.
 
@@ -917,13 +917,12 @@ class FractionField_generic(ring.Field):
              (2*x^2 + 2)/x^3,
              (2*x^2 + 2)/(x^2 - 1),
              2]
-
         """
         ret = [self.zero(), self.one()]
-        for a in self._R.some_elements():
-            for b in self._R.some_elements():
-                if a != b and self(a) and self(b):
-                    ret.append(self(a) / self(b))
+        ret.extend(self(a) / self(b)
+                   for a in self._R.some_elements()
+                   for b in self._R.some_elements()
+                   if a != b and self(a) and self(b))
         return ret
 
     def _gcd_univariate_polynomial(self, f, g):

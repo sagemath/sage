@@ -49,7 +49,9 @@ Mind the base ring. However, the base ring can be changed::
     sage: I*q                                                                           # needs sage.rings.number_field
     Traceback (most recent call last):
     ...
-    TypeError: unsupported operand parent(s) for *: 'Number Field in I with defining polynomial x^2 + 1 with I = 1*I' and 'Puiseux Series Ring in x over Rational Field'
+    TypeError: unsupported operand parent(s) for *:
+    'Number Field in I with defining polynomial x^2 + 1 with I = 1*I' and
+    'Puiseux Series Ring in x over Rational Field'
     sage: qz = q.change_ring(ZZ); qz
     x^(1/3) + x^(1/2)
     sage: qz.parent()

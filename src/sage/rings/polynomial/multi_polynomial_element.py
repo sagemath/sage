@@ -668,10 +668,21 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: R.<x,y> = GF(3037000453)[]                                            # needs sage.rings.finite_rings
             sage: R.zero().degree(x)
             -1
+
+        Ensure that :issue:`37603` is fixed::
+
+            sage: R.<x,y,z> = PolynomialRing(QQbar)
+            sage: f = 3*x^2 - 2*y + 7*x^2*y^2 + 5
+            sage: type(f.degree())
+            <class 'sage.rings.integer.Integer'>
+            sage: type(f.degree(x))
+            <class 'sage.rings.integer.Integer'>
+            sage: type(f.degree(x)) == type(f.degree(y)) == type(f.degree(z))
+            True
         """
         if x is None:
             if std_grading or not self.parent().term_order().is_weighted_degree_order():
-                return self.element().degree(None)
+                return Integer(self.element().degree(None))
             return self.weighted_degree(self.parent().term_order().weights())
         if isinstance(x, MPolynomial):
             if not x.parent() is self.parent():
@@ -683,7 +694,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
                 raise TypeError("x must be one of the generators of the parent")
         else:
             raise TypeError("x must be one of the generators of the parent")
-        return self.element().degree(x.element())
+        return Integer(self.element().degree(x.element()))
 
     def total_degree(self):
         """
@@ -712,6 +723,16 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             sage: f = z^9 + 10*x^4 + y^8*x^2
             sage: f.total_degree()
             10
+
+        TESTS:
+
+        Ensure that :issue:`37603` is fixed::
+             sage: R.<x,y,z> = QQbar[]
+             sage: f = 2*x*y^3*z^2
+             sage: f.total_degree()
+             6
+             sage: type(f.total_degree())
+             <class 'sage.rings.integer.Integer'>
         """
         return self.degree()
 

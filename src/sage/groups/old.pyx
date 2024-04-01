@@ -1,5 +1,5 @@
 """
-Base class for groups
+Deprecated base class for groups
 """
 
 # ****************************************************************************
@@ -17,11 +17,11 @@ Base class for groups
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-doc="""
-Base class for all groups
+doc = """
+Deprecated base class for all groups
 """
-from sage.rings.infinity import infinity
 import sage.rings.integer_ring
+from sage.misc.superseded import deprecation
 
 
 cdef class Group(sage.structure.parent.Parent):
@@ -35,6 +35,9 @@ cdef class Group(sage.structure.parent.Parent):
 
             sage: from sage.groups.old import Group
             sage: G = Group()
+            doctest:warning...:
+            DeprecationWarning: do not use the old Group class
+            See https://github.com/sagemath/sage/issues/37449 for details.
             sage: G.category()
             Category of groups
             sage: G = Group(category = Groups()) # todo: do the same test with some subcategory of Groups when there will exist one
@@ -54,6 +57,7 @@ cdef class Group(sage.structure.parent.Parent):
             sage: h == hash(G)
             True
         """
+        deprecation(37449, 'do not use the old Group class')
         from sage.categories.basic import Groups
         if category is None:
             category = Groups()
@@ -62,12 +66,6 @@ cdef class Group(sage.structure.parent.Parent):
 
         sage.structure.parent.Parent.__init__(self,
                 base=sage.rings.integer_ring.ZZ, category=category)
-
-    #def __call__(self, x): # this gets in the way of the coercion mechanism
-    #    """
-    #    Coerce x into this group.
-    #    """
-    #    raise NotImplementedError
 
     def __contains__(self, x):
         r"""
@@ -87,13 +85,6 @@ cdef class Group(sage.structure.parent.Parent):
         except TypeError:
             return False
         return True
-
-#    def category(self):
-#        """
-#        The category of all groups
-#        """
-#        import sage.categories.all
-#        return sage.categories.all.Groups()
 
     def is_abelian(self):
         """
@@ -141,21 +132,6 @@ cdef class Group(sage.structure.parent.Parent):
             NotImplementedError
         """
         raise NotImplementedError
-
-    def is_finite(self):
-        """
-        Returns True if this group is finite.
-
-        EXAMPLES::
-
-            sage: from sage.groups.old import Group
-            sage: G = Group()
-            sage: G.is_finite()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
-        """
-        return self.order() != infinity
 
     def is_multiplicative(self):
         r"""

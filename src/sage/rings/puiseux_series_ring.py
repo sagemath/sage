@@ -23,23 +23,23 @@ REFERENCES:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-
+from sage.categories.fields import Fields
 from sage.misc.cachefunc import cached_method
 from sage.rings.infinity import infinity
-from sage.rings.puiseux_series_ring_element import PuiseuxSeries
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.ring import CommutativeRing
-from sage.structure.element import parent
 from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.laurent_series_ring_element import LaurentSeries
 from sage.rings.power_series_ring import is_PowerSeriesRing
 from sage.rings.power_series_ring_element import PowerSeries
+from sage.rings.puiseux_series_ring_element import PuiseuxSeries
+from sage.structure.element import parent
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 
-class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
+class PuiseuxSeriesRing(UniqueRepresentation, Parent):
     """
     Rings of Puiseux series.
 
@@ -101,11 +101,14 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
         # ring will be R(( x ))
         self._laurent_series_ring = laurent_series
 
-        CommutativeRing.__init__(self, base_ring,
-                                 names=laurent_series.variable_names(),
-                                 category=laurent_series.category())
+        cat = laurent_series.category()
+        if base_ring in Fields():
+            cat &= Fields()
+        Parent.__init__(self, base_ring,
+                        names=laurent_series.variable_names(),
+                        category=cat)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation.
 
@@ -114,8 +117,7 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: PuiseuxSeriesRing(AA, 'y')                                            # needs sage.rings.number_field
             Puiseux Series Ring in y over Algebraic Real Field
         """
-        s = "Puiseux Series Ring in {} over {}".format(self.variable_name(),
-                                                       self.base_ring())
+        s = f"Puiseux Series Ring in {self.variable_name()} over {self.base_ring()}"
         if self.is_sparse():
             s = 'Sparse ' + s
         return s
@@ -152,7 +154,7 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
         """
         return PuiseuxSeriesRing(self._laurent_series_ring.change_ring(R))
 
-    def is_sparse(self):
+    def is_sparse(self) -> bool:
         """
         Return whether ``self`` is sparse.
 
@@ -164,7 +166,7 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
         """
         return self.laurent_series_ring().is_sparse()
 
-    def is_dense(self):
+    def is_dense(self) -> bool:
         """
         Return whether ``self`` is dense.
 
@@ -176,7 +178,7 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
         """
         return self.laurent_series_ring().is_dense()
 
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         r"""
         Return whether ``self`` is a field.
 
@@ -188,7 +190,11 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
             sage: A = PuiseuxSeriesRing(ZZ, 'y')
             sage: A.is_field()
             False
-            sage: A.change_ring(QQ).is_field()
+            sage: A in Fields()
+            False
+            sage: B = A.change_ring(QQ); B.is_field()
+            True
+            sage: B in Fields()
             True
         """
         return self.base_ring().is_field(proof=proof)
@@ -199,7 +205,7 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
 
         If the base ring is a field, then Puiseux series are already a field.
         If the base ring is a domain, then the Puiseux series over its fraction
-        field is returned. Otherwise, raise a ``ValueError``.
+        field is returned. Otherwise, raise a :class:`ValueError`.
 
         EXAMPLES::
 
@@ -218,10 +224,9 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
         from sage.categories.fields import Fields
         if self in Fields():
             return self
-        elif self in IntegralDomains():
+        if self in IntegralDomains():
             return PuiseuxSeriesRing(self._laurent_series_ring.fraction_field())
-        else:
-            raise ValueError('must be an integral domain')
+        raise ValueError('must be an integral domain')
 
     def residue_field(self):
         r"""
@@ -242,7 +247,7 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
             ...
             TypeError: the base ring is not a field
         """
-        if not self.base_ring().is_field():
+        if self.base_ring() not in Fields():
             raise TypeError("the base ring is not a field")
         return self.base_ring()
 
@@ -264,7 +269,7 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
             ...
             TypeError: the base ring is not a field
         """
-        if not self.base_ring().is_field():
+        if self.base_ring() not in Fields():
             raise TypeError("the base ring is not a field")
         return self.gen()
 
@@ -310,7 +315,7 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
 
         # 1. x is a Puiseux series belonging to this ring.
         #    This is short-circuited by the coercion framework.
-        #if isinstance(x, self.element_class) and P is self:
+        # if isinstance(x, self.element_class) and P is self:
         #    return x
         # 2. x is a Puiseux series but not an element of this ring. the laurent
         #    part should be coercible to the laurent series ring of self
@@ -400,10 +405,22 @@ class PuiseuxSeriesRing(UniqueRepresentation, CommutativeRing):
             z
         """
         if n != 0:
-            raise IndexError("generator {} not defined".format(n))
+            raise IndexError(f"generator {n} not defined")
         return self.element_class(self, [0, 1], e=1)
 
-    def ngens(self):
+    def gens(self) -> tuple:
+        """
+        Return the tuple of generators.
+
+        EXAMPLES::
+
+            sage: A = PuiseuxSeriesRing(QQ, 'z')
+            sage: A.gens()
+            (z,)
+        """
+        return (self.gen(),)
+
+    def ngens(self) -> int:
         r"""
         Return the number of generators of ``self``, namely 1.
 
