@@ -1927,6 +1927,19 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             return [UEA.sum(to_prod(vec, index) for index in vec.support())
                     for vec in tens]
 
+        def faithful_representation(self, algorithm=None):
+            """
+            Return a faithful representation of ``self``.
+            """
+            if self.is_nilpotent():
+                if algorithm is None:
+                    algorithm = "regular"
+                if algorithm == "regular":
+                    from sage.algebras.lie_algebras.representation import FaithfulRepresentationNilpotentPBW
+                    return FaithfulRepresentationNilpotentPBW(self)
+                raise ValueError("invalid algorithm")
+            raise NotImplementedError("only implemented for nilpotent Lie algebras")
+
     class ElementMethods:
         def adjoint_matrix(self, sparse=False): # In #11111 (more or less) by using matrix of a morphism
             """
