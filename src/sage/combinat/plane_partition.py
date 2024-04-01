@@ -317,22 +317,22 @@ class PlanePartition(ClonableArray,
             return Tableau(X)
         return X
 
-    def cells(self) -> list[list[int]]:
+    def cells(self) -> list[tuple[int, int, int]]:
         r"""
         Return the list of cells inside ``self``.
+
+        Each cell is a tuple.
 
         EXAMPLES::
 
             sage: PP = PlanePartition([[3,1],[2]])
             sage: PP.cells()
-            [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 1, 0], [1, 0, 0], [1, 0, 1]]
+            [(0, 0, 0), (0, 0, 1), (0, 0, 2), (0, 1, 0), (1, 0, 0), (1, 0, 1)]
         """
-        L = []
-        for r in range(len(self)):
-            for c in range(len(self[r])):
-                for h in range(self[r][c]):
-                    L.append([r, c, h])
-        return L
+        return [(r, c, h)
+                for r in range(len(self))
+                for c in range(len(self[r]))
+                for h in range(self[r][c])]
 
     def number_of_boxes(self) -> Integer:
         r"""

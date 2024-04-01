@@ -7,9 +7,10 @@ Monoids
 from sage.structure.parent import Parent
 from sage.misc.cachefunc import cached_method
 
-def is_Monoid(x):
+
+def is_Monoid(x) -> bool:
     r"""
-    Returns True if ``x`` is of type ``Monoid_class``.
+    Return ``True`` if ``x`` is of type ``Monoid_class``.
 
     EXAMPLES::
 
@@ -28,6 +29,7 @@ def is_Monoid(x):
         True
     """
     return isinstance(x, Monoid_class)
+
 
 class Monoid_class(Parent):
     def __init__(self, names):

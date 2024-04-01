@@ -3929,6 +3929,16 @@ class Graph(GenericGraph):
         - ``R`` -- (optional) the base ring for the symmetric functions;
           this uses `\ZZ` by default
 
+        ALGORITHM:
+
+        We traverse a binary tree whose leaves correspond to subsets of
+        edges, and whose internal vertices at depth `d` correspond to a
+        choice of whether to include the `d`-th edge in a given subset.
+        The components of the induced subgraph are incrementally
+        updated using a disjoint-set forest. If the next edge would
+        introduce a cycle to the subset, we prune the branch as the
+        terms produced by the two subtrees cancel in this case.
+
         EXAMPLES::
 
             sage: s = SymmetricFunctions(ZZ).s()                                        # needs sage.combinat sage.modules
@@ -3964,18 +3974,56 @@ class Graph(GenericGraph):
             sage: XG3 = G3.chromatic_symmetric_function()
             sage: XG == XG1 + XG2 - XG3
             True
+
+        TESTS::
+
+            sage: Graph([]).chromatic_symmetric_function() == 1
+            True
+
+            sage: e = SymmetricFunctions(ZZ).e()
+            sage: e(graphs.CompleteGraph(5).chromatic_symmetric_function())
+            120*e[5]
         """
         from sage.combinat.sf.sf import SymmetricFunctions
         from sage.combinat.partition import _Partitions
-        from sage.combinat.subset import powerset
         if R is None:
             R = ZZ
         p = SymmetricFunctions(R).p()
-        ret = p.zero()
-        for F in powerset(self.edges(sort=True)):
-            la = _Partitions(self.subgraph(edges=F).connected_components_sizes())
-            ret += (-1)**len(F) * p[la]
-        return ret
+
+        # Dict to store parent of each vertex in disjoint-set forest
+        # representing components of current induced subgraph.
+        dsf = {v: None for v in self.vertices()}
+
+        # Dict to store size of tree rooted at each vertex.
+        sizes = {v: 1 for v in self.vertices()}
+
+        def find(dsf, v):
+            # Find root of tree in disjoint-set forest.
+            return v if dsf[v] is None else find(dsf, dsf[v])
+
+        def summand(stack, dsf, sizes):
+            # Compute powersum terms obtained by adding each subset of
+            # edges in stack to current subgraph.
+            if not stack:
+                return p.monomial(_Partitions(sorted(
+                            [s for v, s in sizes.items() if dsf[v] is None],
+                            reverse=True)))
+            ret = p.zero()
+            e = stack.pop()
+            u = find(dsf, e[0])
+            v = find(dsf, e[1])
+            # Terms cancel if edge creates a cycle.
+            if u is not v:
+                ret = summand(stack, dsf, sizes)
+                dsf[v] = u
+                sizes[u] += sizes[v]
+                ret -= summand(stack, dsf, sizes)
+                dsf[v] = None
+                sizes[u] -= sizes[v]
+            stack.append(e)
+            return ret
+
+        return summand(list(self.edges(labels=False)), dsf, sizes)
 
     @doc_index("Coloring")
     def chromatic_quasisymmetric_function(self, t=None, R=None):
@@ -10127,7 +10175,7 @@ class Graph(GenericGraph):
     from sage.graphs.tutte_polynomial import tutte_polynomial
     from sage.graphs.lovasz_theta import lovasz_theta
     from sage.graphs.partial_cube import is_partial_cube
-    from sage.graphs.orientations import strong_orientations_iterator, random_orientation
+    from sage.graphs.orientations import strong_orientations_iterator, random_orientation, acyclic_orientations
     from sage.graphs.connectivity import bridges, cleave, spqr_tree
     from sage.graphs.connectivity import is_triconnected
     from sage.graphs.comparability import is_comparability
@@ -10173,6 +10221,7 @@ _additional_categories = {
     "lovasz_theta"              : "Leftovers",
     "strong_orientations_iterator" : "Connectivity, orientations, trees",
     "random_orientation"        : "Connectivity, orientations, trees",
+    "acyclic_orientations"      : "Connectivity, orientations, trees",
     "bridges"                   : "Connectivity, orientations, trees",
     "cleave"                    : "Connectivity, orientations, trees",
     "spqr_tree"                 : "Connectivity, orientations, trees",

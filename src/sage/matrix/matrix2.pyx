@@ -76,10 +76,15 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from copy import copy
 
 from cpython cimport *
 from cysignals.signals cimport sig_check
 
+from sage.categories.fields import Fields
+from sage.categories.integral_domains import IntegralDomains
+from sage.categories.principal_ideal_domains import PrincipalIdealDomains
+from sage.categories.rings import Rings
 from sage.misc.lazy_string import lazy_string
 from sage.misc.randstate cimport current_randstate
 from sage.structure.coerce cimport py_scalar_parent
@@ -88,16 +93,11 @@ from sage.structure.coerce cimport coercion_model
 from sage.structure.element import is_Vector
 from sage.structure.element cimport have_same_parent
 from sage.misc.verbose import verbose
-from sage.categories.fields import Fields
-from sage.categories.integral_domains import IntegralDomains
-from sage.categories.principal_ideal_domains import PrincipalIdealDomains
-from sage.rings.ring import is_Ring
 from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.integer_ring import ZZ, is_IntegerRing
 from sage.rings.rational_field import QQ, is_RationalField
 import sage.rings.abc
 from sage.arith.numerical_approx cimport digits_to_bits
-from copy import copy
 
 import sage.modules.free_module
 from sage.matrix import berlekamp_massey
@@ -2797,7 +2797,7 @@ cdef class Matrix(Matrix1):
 
         if isinstance(R, type):
             R = py_scalar_parent(R)
-        if not is_Ring(R):
+        if R not in Rings():
             raise TypeError("unable to find a common ring for all elements")
 
         if sparse is None or sparse is self.is_sparse():
@@ -7273,7 +7273,7 @@ cdef class Matrix(Matrix1):
             if e[1] and defect >= 0:
                 rows.extend(e[1] + [e[1][0].parent().zero_vector()] * defect)
             else:
-                # see trac #27842
+                # see Issue #27842
                 raise RuntimeError(
                         "failed to compute eigenvectors for eigenvalue %s, "
                         "check eigenvectors_left() for partial results" % e[0])

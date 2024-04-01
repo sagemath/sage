@@ -2,11 +2,11 @@
 r"""
 Global and semi-global minimal models for elliptic curves over number fields
 
-When E is an elliptic curve defined over a number field K of class
+When `E` is an elliptic curve defined over a number field `K` of class
 number 1, then it has a global minimal model, and we have a method to
-compute it, namely E.global_minimal_model().  Until Sage-6.7 this was
+compute it, namely ``E.global_minimal_model()``.  Until Sage-6.7 this was
 done using Tate's algorithm to minimise one prime at a time without
-affecting the other primes.  When the class number is not 1 a
+affecting the other primes.  When the class number is not 1, a
 different approach is used.
 
 In the general case global minimal models may or may not exist. This
@@ -22,8 +22,8 @@ return such a model.
 
 The implementation of this functionality is based on work of Kraus
 [Kra1989]_ which gives a local condition for when a pair of number field
-elements \(c_4\), \(c_6\) belong to a Weierstrass model which is
-integral at a prime \(P\), together with a global version. Only primes
+elements `c_4`, `c_6` belong to a Weierstrass model which is
+integral at a prime `P`, together with a global version. Only primes
 dividing 2 or 3 are hard to deal with. In order to compute the
 corresponding integral model one then needs to combine together the
 local transformations implicit in [Kra1989]_ into a single global one.
@@ -57,7 +57,7 @@ from sage.schemes.elliptic_curves.constructor import EllipticCurve
 
 def c4c6_nonsingular(c4, c6):
     r"""
-    Check if c4, c6 are integral with valid associated discriminant.
+    Check if `c_4`, `c_6` are integral with valid associated discriminant.
 
     INPUT:
 
@@ -65,7 +65,7 @@ def c4c6_nonsingular(c4, c6):
 
     OUTPUT:
 
-    Boolean, True if c4, c6 are both integral and c4^3-c6^2 is a
+    Boolean, ``True`` if `c_4`, `c_6` are both integral and `c_4^3-c_6^2` is a
     nonzero multiple of 1728.
 
     EXAMPLES:
@@ -114,8 +114,8 @@ def c4c6_model(c4, c6, assume_nonsingular=False):
 
     OUTPUT:
 
-    The elliptic curve with a-invariants [0,0,0,-c4/48,-c6/864], whose
-    c-invariants are the given c4, c6.  If the supplied invariants are
+    The elliptic curve with a-invariants `[0,0,0,-c_4/48,-c_6/864]`, whose
+    c-invariants are the given `c_4`, `c_6`.  If the supplied invariants are
     singular, returns ``None`` when ``assume_nonsingular`` is ``False`` and
     raises an :class:`ArithmeticError` otherwise.
 
@@ -142,11 +142,11 @@ def c4c6_model(c4, c6, assume_nonsingular=False):
 
 def make_integral(a, P, e):
     r"""
-    Returns b in O_K with P^e|(a-b), given a in O_{K,P}.
+    Return `b` in `O_K` with `P^e|(a-b)`, given `a` in `O_{K,P}`.
 
     INPUT:
 
-    - ``a`` -- a number field element integral at ``P``
+    - ``a`` -- a number field element integral at `P`
 
     - ``P`` -- a prime ideal of the number field
 
@@ -160,7 +160,7 @@ def make_integral(a, P, e):
     ALGORITHM:
 
     Totally naive, we simply test residues modulo `P^e` until one
-    works.  We will only use this when P is a prime dividing 2 and e
+    works.  We will only use this when `P` is a prime dividing 2 and `e`
     is the ramification degree, so the number of residues to check is
     at worst `2^d` where `d` is the degree of the field.
 
@@ -192,7 +192,7 @@ def make_integral(a, P, e):
 
 def sqrt_mod_4(x, P):
     r"""
-    Returns a local square root mod 4, if it exists.
+    Return a local square root mod 4, if it exists.
 
     INPUT:
 
@@ -202,8 +202,8 @@ def sqrt_mod_4(x, P):
 
     OUTPUT:
 
-    A pair (True, r) where that `r^2-x` has valuation at least `2e`,
-    or (False, 0) if there is no such `r`.  Note that
+    A pair ``(True, r)`` where that `r^2-x` has valuation at least `2e`,
+    or ``(False, 0)`` if there is no such `r`.  Note that
     `r^2\mod{P^{2e}}` only depends on `r\mod{P^e}`.
 
     EXAMPLES::
@@ -235,7 +235,7 @@ def sqrt_mod_4(x, P):
 
 def test_b2_local(c4, c6, P, b2, debug=False):
     r"""
-    Test if b2 gives a valid model at a prime dividing 3.
+    Test if `b_2` gives a valid model at a prime dividing 3.
 
     INPUT:
 
@@ -247,8 +247,8 @@ def test_b2_local(c4, c6, P, b2, debug=False):
 
     OUTPUT:
 
-    The elliptic curve which is the (b2/12,0,0)-transform of
-    [0,0,0,-c4/48,-c6/864] if this is integral at P, else False.
+    The elliptic curve which is the `(b_2/12,0,0)`-transform of
+    `[0,0,0,-c_4/48,-c_6/864]` if this is integral at `P`, else ``False``.
 
     EXAMPLES::
 
@@ -260,7 +260,7 @@ def test_b2_local(c4, c6, P, b2, debug=False):
         sage: P3a, P3b = K.primes_above(3)
         sage: from sage.schemes.elliptic_curves.kraus import test_b2_local
 
-    b2=0 works at the first prime but not the second::
+    `b_2=0` works at the first prime but not the second::
 
         sage: b2 = 0
         sage: test_b2_local(c4,c6,P3a,b2)                                               # needs sage.rings.number_field
@@ -270,7 +270,7 @@ def test_b2_local(c4, c6, P, b2, debug=False):
         sage: test_b2_local(c4,c6,P3b,b2)                                               # needs sage.rings.number_field
         False
 
-    b2=-a works at the second prime but not the first::
+    `b_2=-a` works at the second prime but not the first::
 
         sage: b2 = -a                                                                   # needs sage.rings.number_field
         sage: test_b2_local(c4,c6,P3a,b2,debug=True)                                    # needs sage.rings.number_field
@@ -281,7 +281,7 @@ def test_b2_local(c4, c6, P, b2, debug=False):
          y^2 = x^3 + (-1/4*a)*x^2 + (3784/3*a-192893/24)*x + (56378369/864*a-32879311/108)
          over Number Field in a with defining polynomial x^2 - 10
 
-    Using CRT we can do both with the same b2::
+    Using CRT we can do both with the same `b_2`::
 
         sage: b2 = K.solve_CRT([0,-a],[P3a,P3b]); b2                                    # needs sage.rings.number_field
         a + 1
@@ -308,7 +308,7 @@ def test_b2_local(c4, c6, P, b2, debug=False):
 
 def test_b2_global(c4, c6, b2, debug=False):
     r"""
-    Test if b2 gives a valid model at all primes dividing 3.
+    Test if `b_2` gives a valid model at all primes dividing 3.
 
     INPUT:
 
@@ -318,9 +318,9 @@ def test_b2_global(c4, c6, b2, debug=False):
 
     OUTPUT:
 
-    The elliptic curve which is the (b2/12,0,0)-transform of
-    [0,0,0,-c4/48,-c6/864] if this is integral at all primes P
-    dividing 3, else False.
+    The elliptic curve which is the `(b_2/12,0,0)`-transform of
+    `[0,0,0,-c_4/48,-c_6/864]` if this is integral at all primes `P`
+    dividing 3, else ``False``.
 
     EXAMPLES::
 
@@ -357,7 +357,7 @@ def test_b2_global(c4, c6, b2, debug=False):
 
 def check_Kraus_local_3(c4, c6, P, assume_nonsingular=False, debug=False):
     r"""
-    Test if c4,c6 satisfy Kraus's conditions at a prime P dividing 3.
+    Test if `c_4`, `c_6` satisfy Kraus's conditions at a prime `P` dividing 3.
 
     INPUT:
 
@@ -365,14 +365,14 @@ def check_Kraus_local_3(c4, c6, P, assume_nonsingular=False, debug=False):
 
     - ``P`` -- a prime ideal of the number field which divides 3
 
-    - ``assume_nonsingular`` (boolean, default False) -- if True,
+    - ``assume_nonsingular`` (boolean, default ``False``) -- if ``True``,
       check for integrality and nosingularity.
 
     OUTPUT:
 
-    Either (False, 0) if Kraus's conditions fail, or (True, b2) if
+    Either ``(False, 0)`` if Kraus's conditions fail, or ``(True, b2)`` if
     they pass, in which case the elliptic curve which is the
-    (b2/12,0,0)-transform of [0,0,0,-c4/48,-c6/864] is integral at P.
+    `(b_2/12,0,0)`-transform of `[0,0,0,-c_4/48,-c_6/864]` is integral at `P`.
 
     EXAMPLES::
 
@@ -430,7 +430,7 @@ def check_Kraus_local_3(c4, c6, P, assume_nonsingular=False, debug=False):
 
 def test_a1a3_local(c4, c6, P, a1, a3, debug=False):
     r"""
-    Test if a1,a3 are valid at a prime P dividing 2.
+    Test if `a_1`, `a_3` are valid at a prime `P` dividing `2`.
 
     INPUT:
 
@@ -442,8 +442,8 @@ def test_a1a3_local(c4, c6, P, a1, a3, debug=False):
 
     OUTPUT:
 
-    The elliptic curve which is the (a1^2/12,a1/2,a3/2)-transform of
-    [0,0,0,-c4/48,-c6/864] if this is integral at P, else False.
+    The elliptic curve which is the `(a_1^2/12,a_1/2,a_3/2)`-transform of
+    `[0,0,0,-c_4/48,-c_6/864]` if this is integral at `P`, else ``False``.
 
     EXAMPLES::
 
@@ -476,7 +476,7 @@ def test_a1a3_local(c4, c6, P, a1, a3, debug=False):
 
 def test_a1a3_global(c4, c6, a1, a3, debug=False):
     r"""
-    Test if a1,a3 are valid at all primes P dividing 2.
+    Test if `a_1`, `a_3` are valid at all primes `P` dividing 2.
 
     INPUT:
 
@@ -486,8 +486,8 @@ def test_a1a3_global(c4, c6, a1, a3, debug=False):
 
     OUTPUT:
 
-    The elliptic curve which is the (a1^2/12,a1/2,a3/2)-transform of
-    [0,0,0,-c4/48,-c6/864] if this is integral at all primes P
+    The elliptic curve which is the `(a_1^2/12,a_1/2,a_3/2)`-transform of
+    `[0,0,0,-c_4/48,-c_6/864]` if this is integral at all primes `P`
     dividing 2, else ``False``.
 
     EXAMPLES::
@@ -520,7 +520,7 @@ def test_a1a3_global(c4, c6, a1, a3, debug=False):
 
 def test_rst_global(c4, c6, r, s, t, debug=False):
     r"""
-    Test if the (r,s,t)-transform of the standard c4,c6-model is integral.
+    Test if the `(r,s,t)`-transform of the standard `c_4,c_6`-model is integral.
 
     INPUT:
 
@@ -530,8 +530,8 @@ def test_rst_global(c4, c6, r, s, t, debug=False):
 
     OUTPUT:
 
-    The elliptic curve which is the (r,s,t)-transform of
-    [0,0,0,-c4/48,-c6/864] if this is integral at all primes P, else
+    The elliptic curve which is the `(r,s,t)`-transform of
+    `[0,0,0,-c_4/48,-c_6/864]` if this is integral at all primes `P`, else
     ``False``.
 
     EXAMPLES::
@@ -582,7 +582,7 @@ def test_rst_global(c4, c6, r, s, t, debug=False):
 
 def check_Kraus_local_2(c4, c6, P, a1=None, assume_nonsingular=False):
     r"""
-    Test if c4,c6 satisfy Kraus's conditions at a prime P dividing 2.
+    Test if `c_4`, `c_6` satisfy Kraus's conditions at a prime `P` dividing 2.
 
     INPUT:
 
@@ -599,9 +599,9 @@ def check_Kraus_local_2(c4, c6, P, a1=None, assume_nonsingular=False):
 
     Either ``(False, 0, 0)`` if Kraus's conditions fail, or ``(True, a1,
     a3)`` if they pass, in which case the elliptic curve which is the
-    (a1**2/12,a1/2,a3/2)-transform of [0,0,0,-c4/48,-c6/864] is
-    integral at P.  If a1 is provided and valid then the output will
-    be ``(True, a1, a3)`` for suitable a3.
+    `(a_1^2/12,a_1/2,a_3/2)`-transform of `[0,0,0,-c_4/48,-c_6/864]` is
+    integral at `P`.  If `a_1` is provided and valid then the output will
+    be ``(True, a1, a3)`` for suitable `a_3`.
 
     EXAMPLES::
 
@@ -674,7 +674,7 @@ def check_Kraus_local_2(c4, c6, P, a1=None, assume_nonsingular=False):
 
 def check_Kraus_local(c4, c6, P, assume_nonsingular=False):
     r"""
-    Check Kraus's conditions locally at a prime P.
+    Check Kraus's conditions locally at a prime `P`.
 
     INPUT:
 
@@ -687,8 +687,8 @@ def check_Kraus_local(c4, c6, P, assume_nonsingular=False):
 
     OUTPUT:
 
-    Tuple: either ``(True, E)`` if there is a Weierstrass model E integral
-    at P and with invariants c4, c6, or ``(False, None)`` if there is
+    Tuple: either ``(True, E)`` if there is a Weierstrass model `E` integral
+    at `P` and with invariants `c_4`, `c_6`, or ``(False, None)`` if there is
     none.
 
     EXAMPLES::
@@ -748,7 +748,7 @@ def check_Kraus_local(c4, c6, P, assume_nonsingular=False):
 
 def check_Kraus_global(c4, c6, assume_nonsingular=False, debug=False):
     r"""
-    Test if c4,c6 satisfy Kraus's conditions at all primes.
+    Test if `c_4`, `c_6` satisfy Kraus's conditions at all primes.
 
     INPUT:
 
@@ -760,7 +760,7 @@ def check_Kraus_global(c4, c6, assume_nonsingular=False, debug=False):
     OUTPUT:
 
     Either ``False`` if Kraus's conditions fail, or, if they pass, an
-    elliptic curve E which is integral and has c-invariants c4,c6.
+    elliptic curve `E` which is integral and has c-invariants `c_4`, `c_6`.
 
     EXAMPLES::
 
@@ -932,12 +932,12 @@ def semi_global_minimal_model(E, debug=False):
 
     OUTPUT:
 
-    A tuple ``(Emin, I)`` where Emin is an elliptic curve which is either a
-    global minimal model of E if one exists (i.e., an integral model
+    A tuple ``(Emin, I)`` where ``Emin`` is an elliptic curve which is either a
+    global minimal model of `E` if one exists (i.e., an integral model
     which is minimal at every prime), or a semi-global minimal model
     (i.e., an integral model which is minimal at every prime except
-    one).  I is the unit ideal of Emin is a global minimal model, else
-    is the unique prime at which Emin is not minimal.  Thus in all
+    one).  `I` is the unit ideal of ``Emin`` is a global minimal model, else
+    is the unique prime at which ``Emin`` is not minimal.  Thus in all
     cases,
     ``Emin.minimal_discriminant_ideal() * I**12 == (E.discriminant())``.
 

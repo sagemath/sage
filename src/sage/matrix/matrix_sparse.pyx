@@ -17,9 +17,9 @@ from cysignals.signals cimport sig_check
 
 cimport sage.matrix.matrix as matrix
 cimport sage.matrix.matrix0 as matrix0
+from sage.categories.rings import Rings
 from sage.structure.element cimport Element, Vector
 from sage.structure.richcmp cimport richcmp_item, rich_to_bool
-from sage.rings.ring import is_Ring
 
 from cpython cimport *
 from cpython.object cimport Py_EQ, Py_NE
@@ -64,7 +64,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             [2.00000000000000*x  -2.00000000000000]
             [-------------------------------------]
         """
-        if not is_Ring(ring):
+        if ring not in Rings():
             raise TypeError("input must be a ring")
         if ring is self._base_ring:
             if self._is_immutable:

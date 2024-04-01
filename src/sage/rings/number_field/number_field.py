@@ -10439,9 +10439,8 @@ class NumberField_absolute(NumberField_generic):
                 L.append(P)
 
         # This adds some infinite places to L
-        for sigma in self.real_places():
-            if sigma(b) < 0 and sigma not in S:
-                L.append(sigma)
+        L.extend(sigma for sigma in self.real_places()
+                 if sigma(b) < 0 and sigma not in S)
         Cl = self.class_group(proof=False)
         U = self.unit_group(proof=False).gens()
         SL = S + L
@@ -10463,10 +10462,8 @@ class NumberField_absolute(NumberField_generic):
         # on the set of generators
 
         def phi(x):
-            v = []
-            for p in SL:
-                v.append((1-self.hilbert_symbol(x, b, p))//2)
-            return V(v)
+            return V([(1 - self.hilbert_symbol(x, b, p)) // 2 for p in SL])
+
         M = matrix([phi(g) for g in U])
 
         # we have to work around the inconvenience that multiplicative

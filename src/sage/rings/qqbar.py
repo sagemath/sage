@@ -4821,11 +4821,10 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
         roots = poly.roots(SR, multiplicities=False)
         if len(roots) != poly.degree():
             return self
+        itv = interval_field(self._value)
         while True:
-            candidates = []
-            for root in roots:
-                if interval_field(root).overlaps(interval_field(self._value)):
-                    candidates.append(root)
+            candidates = [root for root in roots
+                          if interval_field(root).overlaps(itv)]
             if len(candidates) == 1:
                 return candidates[0]
             roots = candidates

@@ -1824,11 +1824,11 @@ class TilingSolver(SageObject):
     @cached_method
     def rows_for_piece(self, i, mod_box_isometries=False):
         r"""
-        Return the rows for the i-th piece.
+        Return the rows for the `i`-th piece.
 
         INPUT:
 
-        - ``i`` -- integer, the i-th piece
+        - ``i`` -- integer, the `i`-th piece
 
         - ``mod_box_isometries`` -- bool (default: ``False``), whether to
           consider only rows for positions up to the action of the
@@ -1939,7 +1939,7 @@ class TilingSolver(SageObject):
         Return a list of rows representing the solutions up to isometries of
         the box.
 
-        The positions of the ``i``-th pieces are chosen up to isometries of
+        The positions of the `i`-th pieces are chosen up to isometries of
         the box. In dimension 3, there are four times less rows for that
         piece.
 
@@ -1947,7 +1947,7 @@ class TilingSolver(SageObject):
 
         INPUT:
 
-        - ``i`` - integer, the i-th piece to consider, that piece must not
+        - ``i`` -- integer, the `i`-th piece to consider, that piece must not
           be isometric to itself by a isometry that preserve the box.
 
         EXAMPLES::
@@ -2055,7 +2055,7 @@ class TilingSolver(SageObject):
 
         INPUT:
 
-        - ``row_number`` -- integer, the i-th row
+        - ``row_number`` -- integer, the `i`-th row
 
         OUTPUT:
 

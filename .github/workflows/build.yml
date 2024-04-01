@@ -50,10 +50,10 @@ jobs:
           - 5000:5000
     steps:
       - name: Maximize build disk space
-        uses: easimon/maximize-build-space@v8
+        uses: easimon/maximize-build-space@v10
         with:
           # need space in /var for Docker images
-          root-reserve-mb:      40000
+          root-reserve-mb:      30000
           remove-dotnet:        true
           remove-android:       true
           remove-haskell:       true
@@ -74,7 +74,8 @@ jobs:
         # This step needs to happen after the commit sha is put in DOCKER_TAG
         # so that multi-stage builds can work correctly.
         run: |
-          .ci/merge-fixes.sh
+          mkdir -p upstream
+          .ci/merge-fixes.sh 2>&1 | tee upstream/ci_fixes.log
         env:
           GH_TOKEN: ${{ github.token }}
           SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
@@ -108,8 +109,8 @@ jobs:
           cache-from: type=gha
           cache-to:   type=gha,mode=max
           build-args: |
-            NUMPROC=4
-            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=3 --output-sync=recurse
+            NUMPROC=6
+            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
             TARGETS_PRE=build/make/Makefile
             TARGETS=ci-build-with-fallback
 
@@ -135,9 +136,9 @@ jobs:
 
       - name: Test changed files (sage -t --new)
         run: |
-          export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
+          export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=4
           # We run tests with "sage -t --new"; this only tests the uncommitted changes.
-          ./sage -t --new -p2
+          ./sage -t --new -p4
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
   mod:
@@ -156,10 +157,10 @@ jobs:
           - sagemath_categories-check
     steps:
       - name: Maximize build disk space
-        uses: easimon/maximize-build-space@v8
+        uses: easimon/maximize-build-space@v10
         with:
           # need space in /var for Docker images
-          root-reserve-mb:      40000
+          root-reserve-mb:      30000
           remove-dotnet:        true
           remove-android:       true
           remove-haskell:       true
@@ -212,8 +213,8 @@ jobs:
           cache-from: type=gha
           cache-to:   type=gha,mode=max
           build-args: |
-            NUMPROC=4
-            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=3 --output-sync=recurse
+            NUMPROC=6
+            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
             TARGETS_PRE=build/make/Makefile
             TARGETS=ci-build-with-fallback
 
@@ -228,7 +229,7 @@ jobs:
 
       - name: Test modularized distributions
         run: |
-          export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=2
+          export MAKE="make -j2 --output-sync=recurse" SAGE_NUM_THREADS=4
           make V=0 tox-ensure && make ${{ matrix.targets }}
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
@@ -243,10 +244,10 @@ jobs:
           - 5000:5000
     steps:
       - name: Maximize build disk space
-        uses: easimon/maximize-build-space@v8
+        uses: easimon/maximize-build-space@v10
         with:
           # need space in /var for Docker images
-          root-reserve-mb:      40000
+          root-reserve-mb:      30000
           remove-dotnet:        true
           remove-android:       true
           remove-haskell:       true
@@ -299,8 +300,8 @@ jobs:
           cache-from: type=gha
           cache-to:   type=gha,mode=max
           build-args: |
-            NUMPROC=4
-            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=3 --output-sync=recurse
+            NUMPROC=6
+            USE_MAKEFLAGS=-k V=0 SAGE_NUM_THREADS=4 --output-sync=recurse
             TARGETS_PRE=build/make/Makefile
             TARGETS=ci-build-with-fallback
 
@@ -317,7 +318,7 @@ jobs:
       - name: Test all files (sage -t --all --long)
         run: |
           ./sage -python -m pip install coverage
-          ./sage -python -m coverage run --rcfile=src/tox.ini src/bin/sage-runtests --all --long -p2 --format github --random-seed=286735480429121101562228604801325644303
+          ./sage -python -m coverage run --rcfile=src/tox.ini src/bin/sage-runtests --all --long -p4 --format github --random-seed=286735480429121101562228604801325644303
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Copy coverage results

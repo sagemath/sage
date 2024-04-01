@@ -1,6 +1,6 @@
 # sage_setup: distribution = sagemath-flint
 from sage.libs.gmp.types cimport mpz_t
-from sage.libs.arb.types cimport arb_t
+from sage.libs.flint.types cimport arb_t
 from sage.rings.integer cimport Integer
 from sage.rings.rational cimport Rational
 from sage.rings.number_field.number_field_element cimport NumberFieldElement, NumberFieldElement_absolute

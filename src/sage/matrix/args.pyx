@@ -231,9 +231,10 @@ cdef class MatrixArgs:
         [3/5   0]
         [  0 3/5]
 
-        sage: ma = MatrixArgs(entries=matrix(2,2)); ma.finalized(); ma.matrix()
-        <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices over Integer Ring; typ=MATRIX; entries=[0 0]
-        [0 0]>
+        sage: ma = MatrixArgs(entries=matrix(2,2)); ma.finalized()
+        <MatrixArgs for Full MatrixSpace of 2 by 2 dense matrices
+         over Integer Ring; typ=MATRIX; entries=[0 0]
+                                                [0 0]>
         sage: ma.matrix()
         [0 0]
         [0 0]

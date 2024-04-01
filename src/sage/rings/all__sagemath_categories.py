@@ -1,4 +1,7 @@
 # sage_setup: distribution = sagemath-categories
+
+from sage.misc.lazy_import import lazy_import
+
 # Ring base classes
 from sage.rings.ring import (Ring, Field, CommutativeRing, IntegralDomain,
                              PrincipalIdealDomain)
@@ -54,6 +57,7 @@ ideal = Ideal
 from sage.rings.semirings.all import *
 
 from sage.rings.finite_rings.all__sagemath_categories import *
+from sage.rings.function_field.all__sagemath_categories import *
 from sage.rings.number_field.all__sagemath_categories import *
 from sage.rings.padics.all__sagemath_categories import *
 from sage.rings.polynomial.all__sagemath_categories import *
@@ -84,3 +88,5 @@ from sage.rings.continued_fraction import (continued_fraction,
 # Preliminary version of real numbers for doctesting without sage.rings.real_mpfr.
 # sage.rings.all redefines it.
 RealNumber = RR = RDF             # used by the preparser to wrap real literals
+
+del lazy_import

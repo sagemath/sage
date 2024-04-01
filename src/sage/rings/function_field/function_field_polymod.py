@@ -35,6 +35,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.integer import Integer
 from sage.categories.homset import Hom
 from sage.categories.function_fields import FunctionFields
+from sage.categories.number_fields import NumberFields
 
 from .element import FunctionFieldElement
 from .element_polymod import FunctionFieldElement_polymod
@@ -1855,11 +1856,27 @@ class FunctionField_simple(FunctionField_polymod):
             sage: L.genus()
             6
 
+            sage: # needs sage.rings.number_field
+            sage: R.<T> = QQ[]
+            sage: N.<a> = NumberField(T^2 + 1)
+            sage: K.<x> = FunctionField(N); K
+            Rational function field in x over Number Field in a with defining polynomial T^2 + 1
+            sage: K.genus()
+            0
+            sage: S.<t> = PolynomialRing(K)
+            sage: L.<y> = K.extension(t^2 - x^3 + x)
+            sage: L.genus()
+            1
+
         The genus is computed by the Hurwitz genus formula.
         """
         k, _ = self.exact_constant_field()
+        if k in NumberFields():
+            k_degree = k.relative_degree()
+        else:
+            k_degree = k.degree()
         different_degree = self.different().degree()  # must be even
-        return Integer(different_degree // 2 - self.degree() / k.degree()) + 1
+        return Integer(different_degree // 2 - self.degree() / k_degree) + 1
 
     def residue_field(self, place, name=None):
         """

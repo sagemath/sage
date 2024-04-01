@@ -595,8 +595,8 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         ALGORITHM:
 
-        Computation is performed by the ``norm()`` function of
-        the SciPy/NumPy library.
+        Computation is performed by the :func:`~scipy:scipy.linalg.norm`
+        function of the SciPy/NumPy library.
 
         EXAMPLES:
 
@@ -740,7 +740,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         ALGORITHM:
 
         The singular values come from the SVD decomposition
-        computed by SciPy/NumPy.
+        computed by SciPy/NumPy using :func:`scipy:scipy.linalg.svd`.
 
         EXAMPLES:
 
@@ -1074,7 +1074,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
           - ``'default'`` - applicable to any matrix
             with double-precision floating point entries.
-            Uses the :meth:`~scipy.linalg.eigvals` method from SciPy.
+            Uses the :func:`~scipy:scipy.linalg.eigvals` function from SciPy.
 
           - ``'symmetric'`` - converts the matrix into a real matrix
             (i.e. with entries from :class:`~sage.rings.real_double.RDF`),
@@ -1082,9 +1082,9 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             algorithm can be significantly faster than the
             ``'default'`` algorithm.
 
-          - ``'hermitian'`` - uses the :meth:`~scipy.linalg.eigh` method
-            from SciPy, which applies only to real symmetric or complex
-            Hermitian matrices.  Since Hermitian is defined as a matrix
+          - ``'hermitian'`` - uses the :func:`~scipy:scipy.linalg.eigh`
+            function from SciPy, which applies only to real symmetric or
+            complex Hermitian matrices.  Since Hermitian is defined as a matrix
             equaling its conjugate-transpose, for a matrix with real
             entries this property is equivalent to being symmetric.
             This algorithm can be significantly faster than the
@@ -1708,6 +1708,10 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         Find a solution `X` to the equation `A X = B` if ``self`` is a square
         matrix `A`.
 
+        ALGORITHM:
+
+        Uses the function :func:`scipy:scipy.linalg.solve` from SciPy.
+
         TESTS::
 
             sage: # needs sage.symbolic
@@ -1730,6 +1734,10 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         """
         Compute a least-squares solution `X` to the equation `A X = B` where
         ``self`` is the matrix `A`.
+
+        ALGORITHM:
+
+        Uses the function :func:`scipy:scipy.linalg.lstsq` from SciPy.
 
         TESTS::
 
@@ -1755,7 +1763,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         ALGORITHM:
 
-        Use numpy
+        Uses :func:`scipy:scipy.linalg.det`.
 
         EXAMPLES::
 
@@ -2038,7 +2046,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         ALGORITHM:
 
-        Calls "linalg.qr" from SciPy, which is in turn an
+        Calls :func:`scipy:scipy.linalg.qr` from SciPy, which is in turn an
         interface to LAPACK routines.
 
         EXAMPLES:

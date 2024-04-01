@@ -414,7 +414,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
             sage: product_of_spheres = S3.product(S3)
             sage: Z.cohomology()                                                        # needs sage.modules
             {0: 0, 1: 0, 2: 0, 3: Z x Z, 4: 0, 5: 0, 6: Z}
-            sage: Z.cohomology() == product_of_spheres.cohomology()                     # needs sage.modules
+            sage: Z.cohomology() == product_of_spheres.cohomology()  # long time        # needs sage.modules
             True
         """
         return self._components
@@ -599,7 +599,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
             sage: # needs sage.modules
             sage: Z = MomentAngleComplex([[0,1,2,3,4,5], [0,1,2,3,4,6],
             ....:                         [0,1,2,3,5,7], [0,1,2,3,6,8,9]])
-            sage: Z.homology()
+            sage: Z.homology()  # long time
             {0: 0,
              1: 0,
              2: 0,
@@ -672,7 +672,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
             sage: product_of_spheres = S3.product(S3)
             sage: Z.cohomology()
             {0: 0, 1: 0, 2: 0, 3: Z x Z, 4: 0, 5: 0, 6: Z}
-            sage: Z.cohomology() == product_of_spheres.cohomology()
+            sage: Z.cohomology() == product_of_spheres.cohomology()  # long time
             True
         """
         return self.homology(dim=dim, cohomology=True, base_ring=base_ring,
@@ -728,7 +728,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
             sage: X = SimplicialComplex([[0,1,2,3,4,5], [0,1,2,3,4,6],
             ....:                        [0,1,2,3,5,7], [0,1,2,3,6,8,9]])
             sage: M = MomentAngleComplex(X)
-            sage: M.euler_characteristic()
+            sage: M.euler_characteristic()  # long time
             0
             sage: Z = MomentAngleComplex([[0,1,2,3,4]])
             sage: Z.euler_characteristic()

@@ -585,9 +585,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
             sage: f(-7r)
             -7
         """
-        if S is long:
-            return sage.rings.integer.long_to_Z()
-        elif S is int:
+        if S is int:
             return sage.rings.integer.int_to_Z()
         elif S is bool:
             return True
@@ -1574,7 +1572,7 @@ cdef class IntegerRing_class(PrincipalIdealDomain):
         return pAdicValuation(self, p)
 
     def from_bytes(self, input_bytes, byteorder="big", is_signed=False):
-        """
+        r"""
         Return the integer represented by the given array of bytes.
 
         Internally relies on the python ``int.from_bytes()`` method.

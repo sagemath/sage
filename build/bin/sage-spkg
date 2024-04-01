@@ -595,6 +595,7 @@ cd "\$SAGE_PKG_DIR" 2>/dev/null || cd "$fallback_script_dir"
 __EOF__
     else
         cat >> "$tmpscript" <<__EOF__
+cd "\$SAGE_PKG_DIR"
 if [ \$? -ne 0 ]; then
     echo >&2 "Error: could not cd to the package build directory \$SAGE_PKG_DIR"
     exit 1

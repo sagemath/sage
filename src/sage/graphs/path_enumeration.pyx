@@ -1597,7 +1597,7 @@ def _all_paths_iterator(self, vertex, ending_vertices=None,
                 # the first vertex in the path). In this latter case we must
                 # not exit the new vertex again, so we do not consider it
                 # for further extension, but just yield it immediately. See
-                # trac #12385.
+                # Issue #12385.
                 frozen_path = frozenset(path)
                 for neighbor in neighbor_iterator(path[-1]):
                     if neighbor not in frozen_path:

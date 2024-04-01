@@ -29,16 +29,16 @@ from cysignals.signals cimport sig_on, sig_str, sig_off
 from cpython.long cimport PyLong_AsLong
 from sage.arith.long cimport pyobject_to_long
 
-from sage.libs.arb.acb cimport acb_div_fmpz
-from sage.libs.arb.arb cimport arb_div_fmpz
-from sage.libs.arb.arb_fmpz_poly cimport _arb_fmpz_poly_evaluate_arb, _arb_fmpz_poly_evaluate_acb
-from sage.libs.gmp.mpz cimport *
-from sage.libs.gmp.mpq cimport *
+from sage.libs.flint.acb cimport acb_div_fmpz
+from sage.libs.flint.arb cimport arb_div_fmpz
+from sage.libs.flint.arb_fmpz_poly cimport _arb_fmpz_poly_evaluate_arb, _arb_fmpz_poly_evaluate_acb
 from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpq cimport *
 from sage.libs.flint.fmpz_poly cimport *
 from sage.libs.flint.fmpq_poly cimport *
 from sage.libs.flint.fmpq_poly_sage cimport *
+from sage.libs.gmp.mpz cimport *
+from sage.libs.gmp.mpq cimport *
 
 from cypari2.gen import Gen as pari_gen
 
@@ -2117,7 +2117,7 @@ cdef class Polynomial_rational_flint(Polynomial):
             sage: G = f.galois_group(); G
             Transitive group number 5 of degree 4
             sage: G.gens()
-            ((1,2), (1,2,3,4))
+            ((1,2,3,4), (1,2))
             sage: G.order()
             24
 
