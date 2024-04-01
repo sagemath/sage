@@ -3294,7 +3294,7 @@ cdef class RealIntervalFieldElement(RingElement):
 
         This method returns `+1` if all elements in this interval are positive,
         `-1` if all of them are negative and `0` if it contains only zero.
-        Otherwise it raises a ``ValueError``.
+        Otherwise it raises a :class:`ValueError`.
 
         EXAMPLES::
 
@@ -3329,7 +3329,7 @@ cdef class RealIntervalFieldElement(RingElement):
     def argument(self):
         r"""
         The argument of this interval, if it is well-defined, in the
-        complex sense. Otherwise raises a ``ValueError``.
+        complex sense. Otherwise raises a :class:`ValueError`.
 
         OUTPUT:
 
@@ -3367,12 +3367,10 @@ cdef class RealIntervalFieldElement(RingElement):
 
     def unique_floor(self):
         """
-        Returns the unique floor of this interval, if it is well defined,
-        otherwise raises a ``ValueError``.
+        Return the unique floor of this interval, if it is well defined,
+        otherwise raise a :class:`ValueError`.
 
-        OUTPUT:
-
-        - an integer.
+        OUTPUT: an integer.
 
         .. SEEALSO::
 
@@ -3398,12 +3396,10 @@ cdef class RealIntervalFieldElement(RingElement):
 
     def unique_ceil(self):
         """
-        Returns the unique ceiling of this interval, if it is well defined,
-        otherwise raises a ``ValueError``.
+        Return the unique ceiling of this interval, if it is well defined,
+        otherwise raise a :class:`ValueError`.
 
-        OUTPUT:
-
-        - an integer.
+        OUTPUT: an integer.
 
         .. SEEALSO::
 
@@ -3429,12 +3425,10 @@ cdef class RealIntervalFieldElement(RingElement):
 
     def unique_round(self):
         """
-        Returns the unique round (nearest integer) of this interval,
-        if it is well defined, otherwise raises a ``ValueError``.
+        Return the unique round (nearest integer) of this interval,
+        if it is well defined, otherwise raise a :class:`ValueError`.
 
-        OUTPUT:
-
-        - an integer.
+        OUTPUT: an integer.
 
         .. SEEALSO::
 
@@ -3494,7 +3488,7 @@ cdef class RealIntervalFieldElement(RingElement):
     def unique_trunc(self):
         r"""
         Return the nearest integer toward zero if it is unique, otherwise raise
-        a ``ValueError``.
+        a :class:`ValueError`.
 
         .. SEEALSO::
 
@@ -3526,7 +3520,7 @@ cdef class RealIntervalFieldElement(RingElement):
     def unique_integer(self):
         """
         Return the unique integer in this interval, if there is exactly one,
-        otherwise raises a ``ValueError``.
+        otherwise raise a :class:`ValueError`.
 
         EXAMPLES::
 
@@ -3563,7 +3557,7 @@ cdef class RealIntervalFieldElement(RingElement):
             Traceback (most recent call last):
             ...
             ValueError: unable to convert interval 0.50000000000000000? to an integer
-            sage: ZZ(RIF(1/2,3/2))
+            sage: ZZ(RIF(1/2, 3/2))
             Traceback (most recent call last):
             ...
             ValueError: unable to convert interval 1.? to an integer
@@ -4331,51 +4325,51 @@ cdef class RealIntervalFieldElement(RingElement):
     ############################
 
     def sqrt(self):
+        r"""
+        Return a square root of ``self``. Raises an error if ``self`` is
+        nonpositive.
+
+        If you use :meth:`square_root()` then an interval will always be
+        returned (though it will be ``NaN`` if ``self`` is nonpositive).
+
+        EXAMPLES::
+
+            sage: r = RIF(4.0)
+            sage: r.sqrt()
+            2
+            sage: r.sqrt()^2 == r
+            True
+
+        ::
+
+            sage: r = RIF(4344)
+            sage: r.sqrt()
+            65.90902821313633?
+            sage: r.sqrt()^2 == r
+            False
+            sage: r in r.sqrt()^2
+            True
+            sage: r.sqrt()^2 - r
+            0.?e-11
+            sage: (r.sqrt()^2 - r).str(style='brackets')
+            '[-9.0949470177292824e-13 .. 1.8189894035458565e-12]'
+
+        ::
+
+            sage: r = RIF(-2.0)
+            sage: r.sqrt()
+            Traceback (most recent call last):
+            ...
+            ValueError: self (=-2) is not >= 0
+
+        ::
+
+            sage: r = RIF(-2, 2)
+            sage: r.sqrt()
+            Traceback (most recent call last):
+            ...
+            ValueError: self (=0.?e1) is not >= 0
         """
-            Return a square root of ``self``. Raises an error if ``self`` is
-            nonpositive.
-
-            If you use :meth:`square_root()` then an interval will always be
-            returned (though it will be ``NaN`` if self is nonpositive).
-
-            EXAMPLES::
-
-                sage: r = RIF(4.0)
-                sage: r.sqrt()
-                2
-                sage: r.sqrt()^2 == r
-                True
-
-            ::
-
-                sage: r = RIF(4344)
-                sage: r.sqrt()
-                65.90902821313633?
-                sage: r.sqrt()^2 == r
-                False
-                sage: r in r.sqrt()^2
-                True
-                sage: r.sqrt()^2 - r
-                0.?e-11
-                sage: (r.sqrt()^2 - r).str(style='brackets')
-                '[-9.0949470177292824e-13 .. 1.8189894035458565e-12]'
-
-            ::
-
-                sage: r = RIF(-2.0)
-                sage: r.sqrt()
-                Traceback (most recent call last):
-                ...
-                ValueError: self (=-2) is not >= 0
-
-            ::
-
-                sage: r = RIF(-2, 2)
-                sage: r.sqrt()
-                Traceback (most recent call last):
-                ...
-                ValueError: self (=0.?e1) is not >= 0
-            """
         if self.lower() < 0:
             raise ValueError("self (=%s) is not >= 0" % self)
         return self.square_root()
@@ -4384,7 +4378,7 @@ cdef class RealIntervalFieldElement(RingElement):
     def square_root(self):
         """
         Return a square root of ``self``. An interval will always be returned
-        (though it will be ``NaN`` if self is nonpositive).
+        (though it will be ``NaN`` if ``self`` is nonpositive).
 
         EXAMPLES::
 
@@ -5135,7 +5129,7 @@ cdef class RealIntervalFieldElement(RingElement):
 
     def psi(self):
         """
-        Return the digamma function evaluated on self.
+        Return the digamma function evaluated on ``self``.
 
         INPUT:
 

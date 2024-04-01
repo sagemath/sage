@@ -1845,7 +1845,7 @@ cdef class ETuple:
 
     # additional methods
 
-    cpdef int unweighted_degree(self) except *:
+    cdef int _unweighted_degree(self) except *:
         r"""
         Return the sum of entries.
 
@@ -1862,6 +1862,20 @@ cdef class ETuple:
         for i in range(self._nonzero):
             degree += self._data[2 * i + 1]
         return degree
+
+    cpdef int unweighted_degree(self) except *:
+        r"""
+        Return the sum of entries.
+
+        EXAMPLES::
+
+             sage: from sage.rings.polynomial.polydict import ETuple
+             sage: ETuple([1, 1, 0, 2, 0]).unweighted_degree()
+             4
+             sage: ETuple([-1, 1]).unweighted_degree()
+             0
+        """
+        return self._unweighted_degree()
 
     @cython.boundscheck(False)
     @cython.wraparound(False)

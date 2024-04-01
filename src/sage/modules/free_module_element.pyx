@@ -82,7 +82,7 @@ field.
 
 Matrix vector multiply::
 
-    sage: MS = MatrixSpace(QQ,3)
+    sage: MS = MatrixSpace(QQ, 3)
     sage: A = MS([0,1,0,1,0,0,0,0,1])
     sage: V = QQ^3
     sage: v = V([1,2,3])
@@ -115,13 +115,13 @@ This is a test from :issue:`20211`::
 cimport cython
 from cpython.slice cimport PySlice_GetIndicesEx
 
+from sage.categories.rings import Rings
 from sage.structure.sequence import Sequence
 from sage.structure.element cimport Element, RingElement, Vector
 from sage.structure.element import canonical_coercion
 from sage.structure.richcmp cimport richcmp_not_equal, richcmp, rich_to_bool
 
 import sage.rings.abc
-from sage.rings.ring import is_Ring
 from sage.rings.infinity import Infinity, AnInfinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.abc import RealDoubleField, ComplexDoubleField
@@ -483,9 +483,8 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
     # over a ring. See trac 11657.
     # !! PLEASE DO NOT MOVE THIS CODE LOWER IN THIS FUNCTION !!
     arg1_integer = isinstance(arg1, (int, Integer))
-    if arg2 is None and is_Ring(arg0) and arg1_integer:
-        M = FreeModule(arg0, arg1, bool(sparse))
-        v = M.zero_vector()
+    if arg2 is None and arg1_integer and arg0 in Rings():
+        v = FreeModule(arg0, arg1, bool(sparse)).zero_vector()
         if immutable:
             v.set_immutable()
         return v
@@ -527,7 +526,7 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
         #   else we size-check arg2 and slide it into arg1
         degree = arg1
         if arg2 is None:
-            if not is_Ring(arg0):
+            if arg0 not in Rings():
                 msg = "first argument must be base ring of zero vector, not {0}"
                 raise TypeError(msg.format(arg0))
         else:
@@ -536,10 +535,10 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
             arg1 = arg2
 
     # Analyze arg0 and arg1 to create a ring (R) and entries (v)
-    if is_Ring(arg0):
+    if arg0 in Rings():
         R = arg0
         v = arg1
-    elif is_Ring(arg1):
+    elif arg1 in Rings():
         R = arg1
         v = arg0
     else:
@@ -686,9 +685,10 @@ def prepare(v, R, degree=None):
             pass
     v = Sequence(v, universe=R, use_sage_types=True)
     ring = v.universe()
-    if not is_Ring(ring):
+    if ring not in Rings():
         raise TypeError("unable to find a common ring for all elements")
     return v, ring
+
 
 def zero_vector(arg0, arg1=None):
     r"""
@@ -763,7 +763,7 @@ def zero_vector(arg0, arg1=None):
         arg0 = ZZ(arg0)
         # default to a zero vector over the integers (ZZ) if no ring given
         return (ZZ**arg0).zero_vector()
-    if is_Ring(arg0):
+    if arg0 in Rings():
         return (arg0**arg1).zero_vector()
     raise TypeError("first argument must be a ring")
 
@@ -922,7 +922,7 @@ def random_vector(ring, degree=None, *args, **kwds):
         raise TypeError("degree of a random vector must be an integer, not %s" % degree)
     if degree < 0:
         raise ValueError("degree of a random vector must be non-negative, not %s" % degree)
-    if not is_Ring(ring):
+    if ring not in Rings():
         raise TypeError("elements of a vector, or module element, must come from a ring, not %s" % ring)
     if not hasattr(ring, "random_element"):
         raise AttributeError("cannot create a random vector since there is no random_element() method for %s" % ring )
@@ -1033,36 +1033,36 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
             sage: F = FreeModule(ZZ, 2, inner_product_matrix=matrix(ZZ, 2, 2, [1, 0, 0, -1]))
             sage: v = F([1, 2])
-            sage: M = magma(v); M # optional - magma
+            sage: M = magma(v); M                       # optional - magma
             (1 2)
-            sage: M.Type() # optional - magma
+            sage: M.Type()                              # optional - magma
             ModTupRngElt
-            sage: M.Parent() # optional - magma
+            sage: M.Parent()                            # optional - magma
             Full RSpace of degree 2 over Integer Ring
             Inner Product Matrix:
             [ 1  0]
             [ 0 -1]
-            sage: M.sage() # optional - magma
+            sage: M.sage()                              # optional - magma
             (1, 2)
-            sage: M.sage() == v # optional - magma
+            sage: M.sage() == v                         # optional - magma
             True
-            sage: M.sage().parent() is v.parent() # optional - magma
+            sage: M.sage().parent() is v.parent()       # optional - magma
             True
 
         ::
 
             sage: v = vector(QQ, [1, 2, 5/6])
-            sage: M = magma(v); M # optional - magma
+            sage: M = magma(v); M                       # optional - magma
             (  1   2 5/6)
-            sage: M.Type() # optional - magma
+            sage: M.Type()                              # optional - magma
             ModTupFldElt
-            sage: M.Parent() # optional - magma
+            sage: M.Parent()                            # optional - magma
             Full Vector space of degree 3 over Rational Field
-            sage: M.sage() # optional - magma
+            sage: M.sage()                              # optional - magma
             (1, 2, 5/6)
-            sage: M.sage() == v # optional - magma
+            sage: M.sage() == v                         # optional - magma
             True
-            sage: M.sage().parent() is v.parent() # optional - magma
+            sage: M.sage().parent() is v.parent()       # optional - magma
             True
         """
         # Get a reference to Magma version of parent.
@@ -1143,7 +1143,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
     def __hash__(self):
         """
-        Return hash of this vector.  Only mutable vectors are hashable.
+        Return hash of this vector.  Only immutable vectors are hashable.
 
         EXAMPLES::
 
@@ -2332,7 +2332,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         Three-dimensional examples::
 
             sage: v = vector(RDF, (1,2,1))
-            sage: plot(v) # defaults to an arrow plot                                   # needs sage.plot
+            sage: plot(v)  # defaults to an arrow plot                                  # needs sage.plot
             Graphics3d Object
 
         ::
@@ -2348,7 +2348,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         ::
 
-            sage: plot(v, plot_type='step') # calls v.plot_step()                       # needs sage.plot
+            sage: plot(v, plot_type='step')  # calls v.plot_step()                      # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         ::
@@ -2377,7 +2377,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
         TESTS::
 
             sage: u = vector([1,1]); v = vector([2,2,2]); z=(3,3,3)
-            sage: plot(u) #test when start=None                                         # needs sage.plot
+            sage: plot(u)  #test when start=None                                        # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         ::

@@ -269,7 +269,8 @@ The paper "ARPREC: An Arbitrary Precision Computation Package" by
 Bailey, Yozo, Li and Thompson discusses this result. Evidently it is
 difficult to find, but we can easily verify it. ::
 
-    sage: alpha = QQbar.polynomial_root(x^10 + x^9 - x^7 - x^6 - x^5 - x^4 - x^3 + x + 1, RIF(1, 1.2))
+    sage: alpha = QQbar.polynomial_root(x^10 + x^9 - x^7 - x^6
+    ....:                                - x^5 - x^4 - x^3 + x + 1, RIF(1, 1.2))
     sage: lhs = alpha^630 - 1
     sage: rhs_num = (alpha^315 - 1) * (alpha^210 - 1) * (alpha^126 - 1)^2 * (alpha^90 - 1) * (alpha^3 - 1)^3 * (alpha^2 - 1)^5 * (alpha - 1)^3
     sage: rhs_den = (alpha^35 - 1) * (alpha^15 - 1)^2 * (alpha^14 - 1)^2 * (alpha^5 - 1)^6 * alpha^68
@@ -468,8 +469,10 @@ http://mathworld.wolfram.com/TrigonometryAnglesPi17.html)::
     0.?e-15
 
     sage: ax = polygen(AA)
-    sage: x2 = AA.polynomial_root(256*ax**8 - 128*ax**7 - 448*ax**6 + 192*ax**5 + 240*ax**4 - 80*ax**3 - 40*ax**2 + 8*ax + 1, RIF(0.9829, 0.983))
-    sage: y2 = (1-x2**2).sqrt()
+    sage: x2 = AA.polynomial_root(256*ax**8 - 128*ax**7 - 448*ax**6 + 192*ax**5
+    ....:                          + 240*ax**4 - 80*ax**3 - 40*ax**2 + 8*ax + 1,
+    ....:                         RIF(0.9829, 0.983))
+    sage: y2 = (1 - x2**2).sqrt()
     sage: x - x2
     0.?e-18
     sage: y - y2
@@ -485,7 +488,8 @@ Verify that :issue:`10981` is fixed::
     sage: x = AA['x'].gen()
     sage: P = 1/(1+x^4)
     sage: P.partial_fraction_decomposition()
-    (0, [(-0.3535533905932738?*x + 1/2)/(x^2 - 1.414213562373095?*x + 1), (0.3535533905932738?*x + 1/2)/(x^2 + 1.414213562373095?*x + 1)])
+    (0, [(-0.3535533905932738?*x + 1/2)/(x^2 - 1.414213562373095?*x + 1),
+         (0.3535533905932738?*x + 1/2)/(x^2 + 1.414213562373095?*x + 1)])
 
 Check that :issue:`22202` is fixed::
 
@@ -2638,7 +2642,8 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
     Things work fine with rational numbers, too::
 
         sage: number_field_elements_from_algebraics((QQbar(1/2), AA(17)))
-        (Rational Field, [1/2, 17], Ring morphism:
+        (Rational Field, [1/2, 17],
+         Ring morphism:
             From: Rational Field
             To:   Algebraic Real Field
             Defn: 1 |--> 1)
@@ -2690,8 +2695,8 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
     It is also possible to have an embedded Number Field::
 
         sage: x = polygen(ZZ)
-        sage: my_num = AA.polynomial_root(x^3-2, RIF(0,3))
-        sage: res = number_field_elements_from_algebraics(my_num,embedded=True)
+        sage: my_num = AA.polynomial_root(x^3 - 2, RIF(0,3))
+        sage: res = number_field_elements_from_algebraics(my_num, embedded=True)
         sage: res[0].gen_embedding()
         1.259921049894873?
         sage: res[2]
@@ -2783,12 +2788,14 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
     Tests trivial cases::
 
         sage: number_field_elements_from_algebraics([], embedded=True)
-        (Rational Field, [], Ring morphism:
+        (Rational Field, [],
+         Ring morphism:
            From: Rational Field
            To:   Algebraic Real Field
            Defn: 1 |--> 1)
         sage: number_field_elements_from_algebraics([1], embedded=True)
-        (Rational Field, [1], Ring morphism:
+        (Rational Field, [1],
+         Ring morphism:
            From: Rational Field
            To:   Algebraic Real Field
            Defn: 1 |--> 1)
@@ -2798,7 +2805,7 @@ def number_field_elements_from_algebraics(numbers, minimal=False,
         sage: # needs sage.libs.gap sage.symbolic
         sage: UCF = UniversalCyclotomicField()
         sage: E = UCF.gen(5)
-        sage: L.<b> = NumberField(x^2-189*x+16, embedding=200)
+        sage: L.<b> = NumberField(x^2 - 189*x + 16, embedding=200)
         sage: x = polygen(ZZ)
         sage: my_nums = [-52*E - 136*E^2 - 136*E^3 - 52*E^4,
         ....:            L.gen()._algebraic_(AA),
@@ -4382,7 +4389,8 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
             sage: AA(elt)
             Traceback (most recent call last):
             ...
-            ValueError: need a real or complex embedding to convert a non rational element of a number field into an algebraic number
+            ValueError: need a real or complex embedding to convert a non rational
+            element of a number field into an algebraic number
             sage: hom(elt) == rt
             True
 
@@ -4391,7 +4399,8 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
             sage: (nf, elt, hom) = rt.as_number_field_element(embedded=True)
             sage: nf.coerce_embedding()
             Generic morphism:
-              From: Number Field in a with defining polynomial y^3 - 2*y^2 - 31*y - 50 with a = 7.237653139801104?
+              From: Number Field in a with defining polynomial y^3 - 2*y^2 - 31*y - 50
+                    with a = 7.237653139801104?
               To:   Algebraic Real Field
               Defn: a -> 7.237653139801104?
             sage: elt
@@ -4518,9 +4527,11 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
             sage: QQbar(2)._exact_field()
             Trivial generator
             sage: (sqrt(QQbar(2)) + sqrt(QQbar(19)))._exact_field()
-            Number Field in a with defining polynomial y^4 - 20*y^2 + 81 with a in -3.789313782671036?
+            Number Field in a with defining polynomial y^4 - 20*y^2 + 81
+             with a in -3.789313782671036?
             sage: (QQbar(7)^(3/5))._exact_field()
-            Number Field in a with defining polynomial y^5 - 2*y^4 - 18*y^3 + 38*y^2 + 82*y - 181 with a in 2.554256611698490?
+            Number Field in a with defining polynomial
+             y^5 - 2*y^4 - 18*y^3 + 38*y^2 + 82*y - 181 with a in 2.554256611698490?
         """
         sd = self._descr
         if isinstance(sd, (ANRational, ANExtensionElement)):
@@ -4801,11 +4812,10 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
         roots = poly.roots(SR, multiplicities=False)
         if len(roots) != poly.degree():
             return self
+        itv = interval_field(self._value)
         while True:
-            candidates = []
-            for root in roots:
-                if interval_field(root).overlaps(interval_field(self._value)):
-                    candidates.append(root)
+            candidates = [root for root in roots
+                          if interval_field(root).overlaps(itv)]
             if len(candidates) == 1:
                 return candidates[0]
             roots = candidates

@@ -675,10 +675,9 @@ class FreeSymmetricFunctions(UniqueRepresentation, Parent):
             """
             n = t1.size()
             m = n + t2.size()
-            tableaux = []
-            for t in StandardTableaux(m):
-                if t.restrict(n) == t1 and standardize(t.anti_restrict(n).rectify()) == t2:
-                    tableaux.append(t)
+            tableaux = [t for t in StandardTableaux(m)
+                        if t.restrict(n) == t1
+                        and standardize(t.anti_restrict(n).rectify()) == t2]
             return self.sum_of_monomials(tableaux)
 
         @cached_method

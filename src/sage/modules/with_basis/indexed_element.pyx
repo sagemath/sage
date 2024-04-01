@@ -343,7 +343,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                             strip_one = True)
 
     def _ascii_art_(self):
-        """
+        r"""
         TESTS::
 
             sage: # needs sage.combinat
@@ -363,6 +363,15 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                *      *       **
                *      *       *
                *
+
+        We can get the ascii art when there is no ``one_basis`` method
+        (and the basis keys do not compare with ``None``)::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: L = DC3.regular_representation(QQ, side='left')
+            sage: E2 = L.exterior_power(2)
+            sage: ascii_art(E2.an_element())
+            2*()/\(5,6,7) + 2*()/\(5,7,6) + 3*()/\(1,2)(3,4)
         """
         from sage.misc.repr import coeff_repr
         terms = self._sorted_items_for_printing()
@@ -379,10 +388,12 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         if scalar_mult is None:
             scalar_mult = "*"
 
+        one_basis = None
         try:
-            one_basis = self.parent().one_basis()
-        except AttributeError:
-            one_basis = None
+            if self.parent().one_basis is not NotImplemented:
+                one_basis = self.parent().one_basis()
+        except (AttributeError, NotImplementedError, ValueError, TypeError):
+            pass
 
         for monomial, c in terms:
             b = repr_monomial(monomial) # PCR
@@ -395,7 +406,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                     elif coeff == "-1":
                         coeff = "-"
                     elif b._l > 0:
-                        if len(coeff) > 0 and monomial == one_basis and strip_one:
+                        if one_basis is not None and len(coeff) > 0 and monomial == one_basis and strip_one:
                             b = empty_ascii_art # ""
                         else:
                             b = AsciiArt([scalar_mult]) + b
@@ -421,7 +432,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             return s
 
     def _unicode_art_(self):
-        """
+        r"""
         TESTS::
 
             sage: M = QuasiSymmetricFunctions(QQ).M()                                   # needs sage.combinat
@@ -437,6 +448,15 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
             sage: unicode_art([M.zero()])  # indirect doctest                           # needs sage.combinat
             [ 0 ]
+
+        We can get the unicode art when there is no ``one_basis`` method
+        (and the basis keys do not compare with ``None``)::
+
+            sage: DC3 = groups.permutation.DiCyclic(3)
+            sage: L = DC3.regular_representation(QQ, side='left')
+            sage: E2 = L.exterior_power(2)
+            sage: unicode_art(E2.an_element())
+            2*()∧(5,6,7) + 2*()∧(5,7,6) + 3*()∧(1,2)(3,4)
         """
         from sage.misc.repr import coeff_repr
         terms = self._sorted_items_for_printing()
@@ -453,10 +473,12 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         if scalar_mult is None:
             scalar_mult = "*"
 
+        one_basis = None
         try:
-            one_basis = self.parent().one_basis()
-        except AttributeError:
-            one_basis = None
+            if self.parent().one_basis is not NotImplemented:
+                one_basis = self.parent().one_basis()
+        except (AttributeError, NotImplementedError, ValueError, TypeError):
+            pass
 
         for (monomial, c) in terms:
             b = repr_monomial(monomial)  # PCR
@@ -469,7 +491,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                     elif coeff == "-1":
                         coeff = "-"
                     elif b._l > 0:
-                        if len(coeff) > 0 and monomial == one_basis and strip_one:
+                        if one_basis is not None and len(coeff) > 0 and monomial == one_basis and strip_one:
                             b = empty_unicode_art  # ""
                         else:
                             b = UnicodeArt([scalar_mult]) + b
@@ -508,7 +530,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
             sage: QS3 = SymmetricGroupAlgebra(QQ, 3)                                    # needs sage.combinat
             sage: a = 2 + QS3([2,1,3])                                                  # needs sage.combinat
-            sage: latex(a) #indirect doctest                                            # needs sage.combinat
+            sage: latex(a)  #indirect doctest                                           # needs sage.combinat
             2 [1, 2, 3] + [2, 1, 3]
 
        ::
@@ -687,7 +709,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         ::
 
             sage: s = SymmetricFunctions(QQ).schur()                                    # needs sage.combinat
-            sage: -s([2,1]) # indirect doctest                                          # needs sage.combinat
+            sage: -s([2,1])  # indirect doctest                                         # needs sage.combinat
             -s[2, 1]
         """
         return type(self)(self._parent, negate(self._monomial_coefficients))
@@ -704,7 +726,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         ::
 
             sage: s = SymmetricFunctions(QQ).schur()                                    # needs sage.combinat
-            sage: s([2,1]) - s([5,4]) # indirect doctest                                # needs sage.combinat
+            sage: s([2,1]) - s([5,4])  # indirect doctest                               # needs sage.combinat
             s[2, 1] - s[5, 4]
         """
         return type(self)(self._parent,
@@ -994,7 +1016,7 @@ def _unpickle_element(C, d):
     """
     return C._from_dict(d, coerce=False, remove_zeros=False)
 
-# Handle old CombinatorialFreeModuleElement pickles, see trac #22632
+# Handle old CombinatorialFreeModuleElement pickles, see Issue #22632
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override("sage.combinat.free_module",
                            "CombinatorialFreeModuleElement",

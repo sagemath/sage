@@ -76,6 +76,11 @@ else
     fi
 fi
 
+# Remove (potentially invalid) star import caches.
+# lazy star imports are not used by the Sage library, but could still be used by
+# downstream code.
+python3 -c 'import pathlib; from sage.misc.lazy_import_cache import get_cache_file; pathlib.Path(get_cache_file()).unlink(missing_ok=True)'
+
 # Issue #33103: The temp.* directories are large after a full build.
 # We remove them to save space; they are not needed for fast rebuilds.
 rm -rf build/temp.*

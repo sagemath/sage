@@ -7,8 +7,8 @@ is a chain complex of free `R`-modules
 
 .. MATH::
 
-    R^{n_0} \xleftarrow{d_1}  R^{n_1} \xleftarrow{d_2}
-    \cdots \xleftarrow{d_k} R^{n_k} \xleftarrow{d_{k+1}} 0
+    0 \rightarrow R^{n_k} \xrightarrow{d_k}
+    \cdots \xrightarrow{d_2} R^{n_1} \xrightarrow{d_1} R^{n_0}
 
 terminating with a zero module at the end that is exact (all homology groups
 are zero) such that the image of `d_1` is `M`.
@@ -87,8 +87,8 @@ class FreeResolution(SageObject, metaclass=ClasscallMetaclass):
 
     .. MATH::
 
-        R^{n_1} \xleftarrow{d_1}  R^{n_1} \xleftarrow{d_2}
-        \cdots \xleftarrow{d_k} R^{n_k} \xleftarrow{d_{k+1}} \cdots
+        \cdots \rightarrow R^{n_k} \xrightarrow{d_k}
+        \cdots \xrightarrow{d_2} R^{n_1} \xrightarrow{d_1} R^{n_0}
 
     that is exact (all homology groups are zero) such that the image
     of `d_1` is `M`.
@@ -792,14 +792,14 @@ class FiniteFreeResolution_singular(FiniteFreeResolution):
     The available algorithms and the corresponding Singular commands
     are shown below:
 
-        ============= ============================
-        algorithm     Singular commands
-        ============= ============================
-        ``minimal``   ``mres(ideal)``
-        ``shreyer``   ``minres(sres(std(ideal)))``
-        ``standard``  ``minres(nres(std(ideal)))``
-        ``heuristic`` ``minres(res(std(ideal)))``
-        ============= ============================
+    ============= ============================
+    algorithm     Singular commands
+    ============= ============================
+    ``minimal``   ``mres(ideal)``
+    ``shreyer``   ``minres(sres(std(ideal)))``
+    ``standard``  ``minres(nres(std(ideal)))``
+    ``heuristic`` ``minres(res(std(ideal)))``
+    ============= ============================
 
     EXAMPLES::
 

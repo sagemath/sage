@@ -16,7 +16,3 @@ Upstream Contact
 
 https://pypi.org/project/PySCIPOpt/
 
-Dependencies
-------------
-
-scipoptsuite

@@ -164,7 +164,7 @@ class TorsionQuadraticModuleElement(FGP_Element):
             sage: from sage.modules.torsion_quadratic_module import TorsionQuadraticModule
             sage: W = FreeQuadraticModule(ZZ, 2, 2*matrix.identity(2))
             sage: V = (1/2) * W
-            sage: T = TorsionQuadraticModule(V,W)
+            sage: T = TorsionQuadraticModule(V, W)
             sage: x = T.gen(0)
             sage: x
             (1, 0)

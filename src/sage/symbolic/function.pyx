@@ -652,8 +652,8 @@ cdef class Function(SageObject):
         if isinstance(x, (float, complex)):
             return True
         if isinstance(x, Element):
-            parent = (<Element>x)._parent
-            return hasattr(parent, 'precision') and parent._is_numerical()
+            xparent = (<Element>x)._parent
+            return hasattr(xparent, 'precision') and xparent._is_numerical()
         return False
 
     def _interface_init_(self, I=None):
@@ -1058,8 +1058,8 @@ cdef class BuiltinFunction(Function):
                     return res
                 from sage.rings.polynomial.polynomial_ring import PolynomialRing_commutative
                 from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_polydict_domain
-                if (isinstance(arg_parent, PolynomialRing_commutative)
-                    or isinstance(arg_parent, MPolynomialRing_polydict_domain)):
+                if isinstance(arg_parent, (PolynomialRing_commutative,
+                                           MPolynomialRing_polydict_domain)):
                     try:
                         return SR(res).polynomial(ring=arg_parent)
                     except TypeError:
@@ -1105,7 +1105,7 @@ cdef class BuiltinFunction(Function):
             sage: p3 = AFunction('p3', 3)
             sage: p3(x)                                                                 # needs sage.symbolic
             x^3
-            sage: loads(dumps(cot)) == cot    # trac #15138
+            sage: loads(dumps(cot)) == cot  # Issue #15138
             True
         """
         # check if already defined
@@ -1223,8 +1223,8 @@ cdef class SymbolicFunction(Function):
             slist = [self._nargs, self._name, str(self._latex_name),
                     self._evalf_params_first]
             for fname in sfunctions_funcs:
-                real_fname = '_%s_'%fname
-                if hasattr(self, '%s'%real_fname):
+                real_fname = '_%s_' % fname
+                if hasattr(self, '%s' % real_fname):
                     slist.append(hash(getattr(self, real_fname).__code__))
                 else:
                     slist.append(' ')
@@ -1398,7 +1398,7 @@ cdef class SymbolicFunction(Function):
 
         for pickle, fname in zip(function_pickles, sfunctions_funcs):
             if pickle:
-                real_fname = '_%s_'%fname
+                real_fname = '_%s_' % fname
                 setattr(self, real_fname, unpickle_function(pickle))
 
         SymbolicFunction.__init__(self, name, nargs, latex_name,
