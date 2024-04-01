@@ -363,6 +363,7 @@ class SchemeMorphism(Element):
               Defn: Identity map, Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + x + 1
               Defn: Identity map)
         """
+        # PR_TODO: Move this to category level
         from sage.categories.additive_magmas import AdditiveMagmas
         if self not in AdditiveMagmas():
             raise TypeError(f"{self} is not an additive magma")
@@ -820,6 +821,16 @@ class SchemeMorphism_sum(SchemeMorphism):
             sage: P = J(2, 4)
             sage: (phi + phi)(P) == P * 2
             True
+
+        ::
+
+            sage: E = EllipticCurve(GF(101), [5,5])
+            sage: phi = E.isogenies_prime_degree(7)[0]
+            sage: P = E.lift_x(0)
+            sage: (phi + phi)(P)
+            (72 : 56 : 1)
+            sage: (phi - phi)(P)
+            (0 : 1 : 0)
         """
         return sum((phi(P) for phi in self._phis), self._codomain.zero())
 
@@ -861,6 +872,17 @@ class SchemeMorphism_sum(SchemeMorphism):
                Defn: Identity map)
             sage: _ == (phi, phi)
             True
+
+        ::
+
+            sage: E = EllipticCurve(j=5)
+            sage: m2 = E.scalar_multiplication(2)
+            sage: m3 = E.scalar_multiplication(3)
+            sage: m2 + m3
+            Sum morphism:
+              From: Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field
+              To:   Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field
+              Via:  (Scalar-multiplication endomorphism [2] of Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field, Scalar-multiplication endomorphism [3] of Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field)
         """
         return self._phis
 

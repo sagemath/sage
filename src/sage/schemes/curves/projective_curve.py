@@ -222,8 +222,11 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
 
     def _an_element_(self):
         r"""
-        Return an element of this projective curve. We try to find variables
-        that never appear as a pure monomial, and fail otherwise.
+        Return an element of this projective curve.
+
+        ALGORITHM:
+
+        We try to find variables that never appear as a pure monomial, and fail otherwise.
 
         EXAMPLES::
 
