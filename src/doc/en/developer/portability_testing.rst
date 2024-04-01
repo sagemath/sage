@@ -247,21 +247,22 @@ At the end of the ``./configure`` run, Sage issued a message like the
 following::
 
   configure: notice: the following SPKGs did not find equivalent system packages:
-                     arb boost_cropped bzip2 ... zeromq zlib
+                     boost_cropped bzip2 ... zeromq zlib
   checking for the package system in use... debian
   configure: hint: installing the following system packages is recommended and
                    may avoid building some of the above SPKGs from source:
-  configure:   $ sudo apt-get install libflint-arb-dev ... libzmq3-dev libz-dev
+  configure:   $ sudo apt-get install ... libzmq3-dev libz-dev
   configure: After installation, re-run configure using:
   configure:   $ make reconfigure
 
 This information comes from Sage's database of equivalent system
 packages.  For example::
 
-  root@39d693b2a75d:/sage# ls build/pkgs/arb/distros/
-  arch.txt	conda.txt	debian.txt	gentoo.txt
-  root@39d693b2a75d:/sage# cat build/pkgs/arb/distros/debian.txt
-  libflint-arb-dev
+  $ ls build/pkgs/flint/distros/
+  alpine.txt  cygwin.txt  fedora.txt   gentoo.txt    macports.txt  opensuse.txt  void.txt
+  conda.txt   debian.txt  freebsd.txt  homebrew.txt  nix.txt       repology.txt
+  $ cat build/pkgs/flint/distros/debian.txt
+  libflint-dev
 
 Note that these package equivalencies are based on a current stable or
 testing version of the distribution; the packages are not guaranteed
@@ -899,7 +900,7 @@ an isolated copy of Homebrew with all prerequisites for bootstrapping::
   checking for a BSD-compatible install... /usr/bin/install -c
   checking whether build environment is sane... yes
   ...
-  configure: notice: the following SPKGs did not find equivalent system packages: arb cbc cliquer ... tachyon xz zeromq
+  configure: notice: the following SPKGs did not find equivalent system packages: cbc cliquer ... tachyon xz zeromq
   checking for the package system in use... homebrew
   configure: hint: installing the following system packages is recommended and may avoid building some of the above SPKGs from source:
   configure:   $ brew install cmake gcc gsl mpfi ninja openblas gpatch r readline xz zeromq
@@ -1099,7 +1100,7 @@ Scrolling down in the right pane shows "Annotations":
 
        docker (fedora-31, standard)
        artifacts/logs-commit-8ca1c2df8f1fb4c6d54b44b34b4d8320ebecb164-tox-docker-fedora-31-standard/config.log#L1
-       configure: notice: the following SPKGs did not find equivalent system packages: arb cbc cddlib cmake eclib ecm fflas_ffpack flint fplll givaro gp
+       configure: notice: the following SPKGs did not find equivalent system packages: cbc cddlib cmake eclib ecm fflas_ffpack flint fplll givaro gp
 
 Clicking on the annotations does not take you to a very useful
 place. To view details, click on one of the items in the pane. This

@@ -28,12 +28,12 @@ provide a method
   new Hom-set class does not use ``MyScheme._morphism`` then you
   do not have to provide it.
 
-Note that points on schemes are morphisms `Spec(K)\to X`, too. But we
-typically use a different notation, so they are implemented in a
-different derived class. For this, you should implement a method
+Note that points on schemes are morphisms `\mathrm{Spec}(K)\to X`, too. But we
+typically use a different notation, so they are implemented in a different
+derived class. For this, you should implement a method
 
-* ``MyScheme._point(*args, **kwds)`` returning a point, that is,
-  a morphism `Spec(K)\to X`. Your point class should derive from
+* ``MyScheme._point(*args, **kwds)`` returning a point, that is, a morphism
+  `\mathrm{Spec}(K)\to X`. Your point class should derive from
   :class:`SchemeMorphism_point`.
 
 Optionally, you can also provide a special Hom-set for the points, for
@@ -1790,11 +1790,11 @@ class SchemeMorphism_polynomial_id(SchemeMorphism_id, SchemeMorphism_polynomial)
 ############################################################################
 
 class SchemeMorphism_point(SchemeMorphism):
-    """
+    r"""
     Base class for rational points on schemes.
 
     Recall that the `K`-rational points of a scheme `X` over `k` can
-    be identified with the set of morphisms `Spec(K) \to X`. In Sage,
+    be identified with the set of morphisms `\mathrm{Spec}(K) \to X`. In Sage,
     the rational points are implemented by such scheme morphisms.
 
     EXAMPLES::
