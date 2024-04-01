@@ -21,6 +21,7 @@ from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element import AlgebraElement
 from sage.structure.richcmp import richcmp
 from sage.categories.magmatic_algebras import MagmaticAlgebras
+from sage.categories.sets_cat import Sets
 from sage.misc.cachefunc import cached_method
 from sage.structure.element import is_Matrix
 from sage.modules.free_module import FreeModule
@@ -347,7 +348,10 @@ class SpecialJordanAlgebra(JordanAlgebra):
             ...
             NotImplementedError: infinite set
         """
-        return tuple(self.algebra_generators())
+        if self.algebra_generators() in Sets().Finite():
+            return tuple(self.algebra_generators())
+        else:
+            raise NotImplementedError('infinite set')
 
     @cached_method
     def zero(self):
