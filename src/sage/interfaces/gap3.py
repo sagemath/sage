@@ -752,7 +752,8 @@ class GAP3Element(GapElement_generic):
         r"""
         EXAMPLES::
 
-            sage: s = gap("[[1,2], [3/4, 5/6]]")
+            sage: # optional - gap3
+            sage: s = gap3("[[1,2], [3/4, 5/6]]")
             sage: s._latex_()
             '\\left(\\begin{array}{rr} 1&2\\\\ 3/4&\\frac{5}{6}\\\\ \\end{array}\\right)'
             sage: latex(s)

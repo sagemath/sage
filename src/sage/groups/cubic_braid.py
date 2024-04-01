@@ -274,8 +274,8 @@ class CubicBraidElement(FinitelyPresentedGroupElement):
         :class:`FinitelyPresentedGroupElement` (via Gap) does not terminate
         in the case of more than 5 strands (not only infinite cases).
         On less than 5 strands comparison is not assumed to be deterministic
-        (see the :issue:`33498` and section 47.3-2 of the
-        `Gap Reference manual <https://www.gap-system.org/Manuals/doc/ref/chap47.html>`__).
+        (see the :issue:`33498` and :gap:`section 47.3-2 of the
+        Gap Reference manual <chap47>`).
 
         Therefore, the comparison is done via the Burau representation.
 

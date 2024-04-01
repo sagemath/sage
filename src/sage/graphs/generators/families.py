@@ -513,12 +513,13 @@ def BalancedTree(r, h):
     OUTPUT:
 
     The perfectly balanced tree of height `h \geq 1` and whose root has
-    degree `r \geq 2`. A ``NetworkXError`` is returned if `r < 2` or
-    `h < 1`.
+    degree `r \geq 2`. A :exc:`~networkx.exception.NetworkXError` is raised
+    if `r < 2` or `h < 1`.
 
     ALGORITHM:
 
-    Uses `NetworkX <http://networkx.lanl.gov>`_.
+    Uses the :ref:`NetworkX <spkg_networkx>` function
+    :func:`~networkx.generators.classic.balanced_tree`.
 
     EXAMPLES:
 

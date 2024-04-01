@@ -1873,8 +1873,7 @@ class SetPartition(AbstractSetPartition,
         arcs = []
         for p in self:
             p = sorted(p)
-            for i in range(len(p) - 1):
-                arcs.append((p[i], p[i + 1]))
+            arcs.extend((p[i], p[i + 1]) for i in range(len(p) - 1))
         return arcs
 
     def plot(self, angle=None, color='black', base_set_dict=None):

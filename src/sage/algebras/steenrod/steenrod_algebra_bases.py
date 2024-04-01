@@ -106,12 +106,13 @@ method for :class:`SteenrodAlgebra_generic
 :file:`steenrod_algebra.py`.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008-2010 John H. Palmieri <palmieri@math.washington.edu>
 #  Distributed under the terms of the GNU General Public License (GPL)
-#*****************************************************************************
+# ****************************************************************************
 
 from sage.misc.cachefunc import cached_function
+
 
 @cached_function
 def convert_to_milnor_matrix(n, basis, p=2, generic='auto'):
@@ -171,7 +172,7 @@ def convert_to_milnor_matrix(n, basis, p=2, generic='auto'):
         generic = p != 2
     if n == 0:
         return matrix(GF(p), 1, 1, [[1]])
-    milnor_base = steenrod_algebra_basis(n,'milnor',p, generic=generic)
+    milnor_base = steenrod_algebra_basis(n, 'milnor', p, generic=generic)
     rows = []
     A = SteenrodAlgebra(basis=basis, p=p, generic=generic)
     for poly in A.basis(n):
@@ -180,7 +181,8 @@ def convert_to_milnor_matrix(n, basis, p=2, generic='auto'):
             entry = d.get(v, 0)
             rows = rows + [entry]
     d = len(milnor_base)
-    return matrix(GF(p),d,d,rows)
+    return matrix(GF(p), d, d, rows)
+
 
 def convert_from_milnor_matrix(n, basis, p=2, generic='auto'):
     r"""
@@ -248,11 +250,11 @@ def convert_from_milnor_matrix(n, basis, p=2, generic='auto'):
         [1 2 0 0]
         [0 1 0 0]
     """
-    mat = convert_to_milnor_matrix(n,basis,p,generic)
-    if mat.nrows() != 0:
-        return convert_to_milnor_matrix(n,basis,p,generic).inverse()
-    else:
-        return mat
+    mat = convert_to_milnor_matrix(n, basis, p, generic)
+    if mat.nrows():
+        return convert_to_milnor_matrix(n, basis, p, generic).inverse()
+    return mat
+
 
 @cached_function
 def steenrod_algebra_basis(n, basis='milnor', p=2, **kwds):
@@ -348,36 +350,37 @@ def steenrod_algebra_basis(n, basis='milnor', p=2, **kwds):
 
     profile = kwds.get("profile", None)
     if (profile is not None and profile != () and profile != ((), ())
-        and basis != 'milnor' and basis.find('pst') == -1):
+            and basis != 'milnor' and basis.find('pst') == -1):
         raise ValueError("Profile functions may only be used with the Milnor or pst bases")
 
-    ## Milnor basis
+    # Milnor basis
     if basis_name == 'milnor':
-        return milnor_basis(n,p,**kwds)
-    ## Serre-Cartan basis
+        return milnor_basis(n, p, **kwds)
+    # Serre-Cartan basis
     elif basis_name == 'serre-cartan':
-        return serre_cartan_basis(n,p,**kwds)
-    ## Atomic bases, p odd:
+        return serre_cartan_basis(n, p, **kwds)
+    # Atomic bases, p odd:
     elif generic and (basis_name.find('pst') >= 0
                     or basis_name.find('comm') >= 0):
         return atomic_basis_odd(n, basis_name, p, **kwds)
-    ## Atomic bases, p=2
+    # Atomic bases, p=2
     elif not generic and (basis_name == 'woody' or basis_name == 'woodz'
                      or basis_name == 'wall' or basis_name == 'arnona'
                      or basis_name.find('pst') >= 0
                      or basis_name.find('comm') >= 0):
         return atomic_basis(n, basis_name, **kwds)
-    ## Arnon 'C' basis
+    # Arnon 'C' basis
     elif not generic and basis == 'arnonc':
         return arnonC_basis(n)
     else:
         raise ValueError("Unknown basis: %s at the prime %s" % (basis, p))
 
+
 # helper functions for producing bases
 
 def restricted_partitions(n, l, no_repeats=False):
     """
-    List of 'restricted' partitions of `n`: partitions with parts taken
+    Iterator over 'restricted' partitions of `n`: partitions with parts taken
     from list `l`.
 
     INPUT:
@@ -387,25 +390,29 @@ def restricted_partitions(n, l, no_repeats=False):
     - ``no_repeats`` -- boolean (optional, default: ``False``), if ``True``,
       only return partitions with no repeated parts
 
-    OUTPUT: list of lists
+    OUTPUT: iterator of lists
 
     One could also use ``Partitions(n, parts_in=l)``, but this
     function may be faster.  Also, while ``Partitions(n, parts_in=l,
     max_slope=-1)`` should in theory return the partitions of `n` with
     parts in ``l`` with no repetitions, the ``max_slope=-1`` argument
-    is ignored, so it doesn't work.  (At the moment, the
+    is ignored, so it does not work.  (At the moment, the
     ``no_repeats=True`` case is the only one used in the code.)
+
+    .. TODO::
+
+        This should be re-implemented in a non-recursive way.
 
     EXAMPLES::
 
         sage: from sage.algebras.steenrod.steenrod_algebra_bases import restricted_partitions
-        sage: restricted_partitions(10, [7,5,1])
+        sage: list(restricted_partitions(10, [7,5,1]))
         [[7, 1, 1, 1], [5, 5], [5, 1, 1, 1, 1, 1], [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]]
-        sage: restricted_partitions(10, [6,5,4,3,2,1], no_repeats=True)
+        sage: list(restricted_partitions(10, [6,5,4,3,2,1], no_repeats=True))
         [[6, 4], [6, 3, 1], [5, 4, 1], [5, 3, 2], [4, 3, 2, 1]]
-        sage: restricted_partitions(10, [6,4,2])
+        sage: list(restricted_partitions(10, [6,4,2]))
         [[6, 4], [6, 2, 2], [4, 4, 2], [4, 2, 2, 2], [2, 2, 2, 2, 2]]
-        sage: restricted_partitions(10, [6,4,2], no_repeats=True)
+        sage: list(restricted_partitions(10, [6,4,2], no_repeats=True))
         [[6, 4]]
 
     ``l`` may have repeated elements. If ``no_repeats`` is ``False``, this
@@ -413,9 +420,9 @@ def restricted_partitions(n, l, no_repeats=False):
     elements appear consecutively in ``l``, then each element may be
     used only as many times as it appears in ``l``::
 
-        sage: restricted_partitions(10, [6,4,2,2], no_repeats=True)
+        sage: list(restricted_partitions(10, [6,4,2,2], no_repeats=True))
         [[6, 4], [6, 2, 2]]
-        sage: restricted_partitions(10, [6,4,2,2,2], no_repeats=True)
+        sage: list(restricted_partitions(10, [6,4,2,2,2], no_repeats=True))
         [[6, 4], [6, 2, 2], [4, 2, 2, 2]]
 
     (If the repeated elements don't appear consecutively, the results
@@ -424,31 +431,29 @@ def restricted_partitions(n, l, no_repeats=False):
 
     In the following examples, ``no_repeats`` is ``False``::
 
-        sage: restricted_partitions(10, [6,4,2])
+        sage: list(restricted_partitions(10, [6,4,2]))
         [[6, 4], [6, 2, 2], [4, 4, 2], [4, 2, 2, 2], [2, 2, 2, 2, 2]]
-        sage: restricted_partitions(10, [6,4,2,2,2])
+        sage: list(restricted_partitions(10, [6,4,2,2,2]))
         [[6, 4], [6, 2, 2], [4, 4, 2], [4, 2, 2, 2], [2, 2, 2, 2, 2]]
-        sage: restricted_partitions(10, [6,4,4,4,2,2,2,2,2,2])
+        sage: list(restricted_partitions(10, [6,4,4,4,2,2,2,2,2,2]))
         [[6, 4], [6, 2, 2], [4, 4, 2], [4, 2, 2, 2], [2, 2, 2, 2, 2]]
     """
     if n < 0:
-        return []
-    elif n == 0:
-        return [[]]
-    else:
-        results = []
-        if no_repeats:
-            index = 1
-        else:
-            index = 0
-        old_i = 0
-        for i in l:
-            if old_i != i:
-                for sigma in restricted_partitions(n-i, l[index:], no_repeats):
-                    results.append([i] + sigma)
-            index += 1
-            old_i = i
-        return results
+        return
+
+    if n == 0:
+        yield []
+        return
+
+    index = 1 if no_repeats else 0
+    old_i = 0
+    for i in l:
+        if old_i != i:
+            for sigma in restricted_partitions(n - i, l[index:], no_repeats):
+                yield [i] + sigma
+        index += 1
+        old_i = i
+
 
 def xi_degrees(n, p=2, reverse=True):
     r"""
@@ -490,6 +495,7 @@ def xi_degrees(n, p=2, reverse=True):
     if reverse:
         l.reverse()
     return l
+
 
 ########################################################
 # Functions for defining bases.
@@ -665,6 +671,7 @@ def milnor_basis(n, p=2, **kwds):
                             result.append((tuple(q_mono), tuple(p_mono)))
     return tuple(result)
 
+
 def serre_cartan_basis(n, p=2, bound=1, **kwds):
     r"""
     Serre-Cartan basis in dimension `n`.
@@ -745,6 +752,7 @@ def serre_cartan_basis(n, p=2, bound=1, **kwds):
                     new = vec + (last, 1)
                     result.append(new)
     return tuple(result)
+
 
 def atomic_basis(n, basis, **kwds):
     r"""
@@ -927,8 +935,9 @@ def atomic_basis(n, basis, **kwds):
                 result.append(tuple(big_list))
         return tuple(result)
 
+
 @cached_function
-def arnonC_basis(n,bound=1):
+def arnonC_basis(n, bound=1):
     r"""
     Arnon's C basis in dimension `n`.
 
@@ -959,18 +968,20 @@ def arnonC_basis(n,bound=1):
     """
     if n == 0:
         return ((),)
-    else:
-        # Build basis recursively.  first = first term.
-        # first is >= bound, and we will prepend (first,) to the
-        # elements from arnonC_basis (n - first, first / 2).
-        # first also must be divisible by 2**(len(old-basis-elt))
-        # This means that 3 first <= 2 n.
-        result = [(n,)]
-        for first in range(bound, 1+2*n//3):
-            for vec in arnonC_basis(n - first, max(first//2,1)):
-                if first % 2**len(vec) == 0:
-                    result.append((first,) + vec)
-        return tuple(result)
+
+    # Build basis recursively.  first = first term.
+    # first is >= bound, and we will prepend (first,) to the
+    # elements from arnonC_basis (n - first, first / 2).
+    # first also must be divisible by 2**(len(old-basis-elt))
+    # This means that 3 first <= 2 n.
+    result = [(n,)]
+    for first in range(bound, 1 + 2 * n // 3):
+        tup = (first,)
+        result.extend(tup + vec
+                      for vec in arnonC_basis(n - first, max(first // 2, 1))
+                      if not first % 2**len(vec))
+    return tuple(result)
+
 
 def atomic_basis_odd(n, basis, p, **kwds):
     r"""
@@ -1018,15 +1029,15 @@ def atomic_basis_odd(n, basis, p, **kwds):
         sage: atomic_basis_odd(18, 'pst_rlex', 3, profile=((), (2,2,2)))
         (((0, 2), ()),)
     """
-    def sorting_pair(s,t,basis):   # pair used for sorting the basis
+    def sorting_pair(s, t, basis):   # pair used for sorting the basis
         if basis.find('rlex') >= 0:
-            return (t,s)
+            return (t, s)
         elif basis.find('llex') >= 0:
-            return (s,t)
+            return (s, t)
         elif basis.find('deg') >= 0:
-            return (s+t,t)
+            return (s + t, t)
         elif basis.find('revz') >= 0:
-            return (s+t,s)
+            return (s + t, s)
 
     generic = kwds.get('generic', p != 2)
     if n == 0:

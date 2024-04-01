@@ -8,7 +8,7 @@ Base class for matrices, part 0
 
 EXAMPLES::
 
-    sage: matrix(2,[1,2,3,4])
+    sage: matrix(2, [1,2,3,4])
     [1 2]
     [3 4]
 """
@@ -467,7 +467,8 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: A[0,0] = 10
             Traceback (most recent call last):
             ...
-            ValueError: matrix is immutable; please change a copy instead (i.e., use copy(M) to change a copy of M).
+            ValueError: matrix is immutable; please change a copy instead
+            (i.e., use copy(M) to change a copy of M).
             sage: hash(A) #random
             12
             sage: v = {A:1}; v
@@ -674,7 +675,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             ...
             TypeError: index must be an integer
 
-            sage: m=[(1, -2, -1, -1,9), (1, 8, 6, 2,2), (1, 1, -1, 1,4), (-1, 2, -2, -1,4)];M= matrix(m)
+            sage: m = [(1, -2, -1, -1,9), (1, 8, 6, 2,2), (1, 1, -1, 1,4), (-1, 2, -2, -1,4)]; M = matrix(m)
             sage: M
             [ 1 -2 -1 -1  9]
             [ 1  8  6  2  2]
@@ -1619,7 +1620,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES::
 
-            sage: m=matrix(QQ,2,[1,2,3,4])
+            sage: m = matrix(QQ, 2, [1,2,3,4])
             sage: m.base_ring()
             Rational Field
         """
@@ -2548,7 +2549,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES: We create a matrix::
 
-            sage: M = matrix(ZZ,[[1,0,0,0,0],[0,2,0,0,0],[0,0,3,0,0],[0,0,0,4,0],[0,0,0,0,5]])
+            sage: M = matrix(ZZ, [[1,0,0,0,0],[0,2,0,0,0],[0,0,3,0,0],[0,0,0,4,0],[0,0,0,0,5]])
             sage: M
             [1 0 0 0 0]
             [0 2 0 0 0]
@@ -2600,7 +2601,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES: We create some matrix::
 
-            sage: M = matrix(ZZ,[[1,0,0,0,0],[0,2,0,0,0],[0,0,3,0,0],[0,0,0,4,0],[0,0,0,0,5]])
+            sage: M = matrix(ZZ, [[1,0,0,0,0],[0,2,0,0,0],[0,0,3,0,0],[0,0,0,4,0],[0,0,0,0,5]])
             sage: M
             [1 0 0 0 0]
             [0 2 0 0 0]
@@ -2646,8 +2647,8 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES: We create a rational matrix::
 
-            sage: M = MatrixSpace(QQ,3,3)
-            sage: A = M([1,9,-7,4/5,4,3,6,4,3])
+            sage: M = MatrixSpace(QQ, 3, 3)
+            sage: A = M([1,9,-7, 4/5,4,3, 6,4,3])
             sage: A
             [  1   9  -7]
             [4/5   4   3]
@@ -2656,7 +2657,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         Since the first row is numbered zero, this swaps the first and
         third rows::
 
-            sage: A.swap_rows(0,2); A
+            sage: A.swap_rows(0, 2); A
             [  6   4   3]
             [4/5   4   3]
             [  1   9  -7]
@@ -2733,7 +2734,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES: We create a matrix::
 
-            sage: M = matrix(ZZ,[[1,0,0,0,0],[0,2,0,0,0],[0,0,3,0,0],[0,0,0,4,0],[0,0,0,0,5]])
+            sage: M = matrix(ZZ, [[1,0,0,0,0],[0,2,0,0,0],[0,0,3,0,0],[0,0,0,4,0],[0,0,0,0,5]])
             sage: M
             [1 0 0 0 0]
             [0 2 0 0 0]
@@ -2783,7 +2784,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES: We create a matrix::
 
-            sage: M = matrix(ZZ,[[1,0,0,0,0],[0,2,0,0,0],[0,0,3,0,0],[0,0,0,4,0],[0,0,0,0,5]])
+            sage: M = matrix(ZZ, [[1,0,0,0,0],[0,2,0,0,0],[0,0,3,0,0],[0,0,0,4,0],[0,0,0,0,5]])
             sage: M
             [1 0 0 0 0]
             [0 2 0 0 0]
@@ -2842,7 +2843,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES: We create a matrix::
 
-            sage: M = matrix(ZZ,[[1,0,0,0,0],[0,2,0,0,0],[0,0,3,0,0],[0,0,0,4,0],[0,0,0,0,5]])
+            sage: M = matrix(ZZ, [[1,0,0,0,0],[0,2,0,0,0],[0,0,3,0,0],[0,0,0,4,0],[0,0,0,0,5]])
             sage: M
             [1 0 0 0 0]
             [0 2 0 0 0]
@@ -2888,7 +2889,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES: We create a matrix::
 
-            sage: M = matrix(ZZ,[[1,0,0,0,0],[0,2,0,0,0],[0,0,3,0,0],[0,0,0,4,0],[0,0,0,0,5]])
+            sage: M = matrix(ZZ, [[1,0,0,0,0],[0,2,0,0,0],[0,0,3,0,0],[0,0,0,4,0],[0,0,0,0,5]])
             sage: M
             [1 0 0 0 0]
             [0 2 0 0 0]
@@ -3047,10 +3048,10 @@ cdef class Matrix(sage.structure.element.Matrix):
         EXAMPLES: We add -1 times the third column to the second column of
         an integer matrix, remembering to start numbering cols at zero::
 
-            sage: a = matrix(ZZ,2,3,range(6)); a
+            sage: a = matrix(ZZ, 2, 3, range(6)); a
             [0 1 2]
             [3 4 5]
-            sage: b = a.with_added_multiple_of_column(1,2,-1); b
+            sage: b = a.with_added_multiple_of_column(1, 2, -1); b
             [ 0 -1  2]
             [ 3 -1  5]
 
@@ -3063,7 +3064,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         Adding a rational multiple is okay, and reassigning a variable is
         okay::
 
-            sage: a = a.with_added_multiple_of_column(0,1,1/3); a
+            sage: a = a.with_added_multiple_of_column(0, 1, 1/3); a
             [ 1/3    1    2]
             [13/3    4    5]
         """
@@ -3100,11 +3101,11 @@ cdef class Matrix(sage.structure.element.Matrix):
         EXAMPLES: We rescale the second row of a matrix over the rational
         numbers::
 
-            sage: a = matrix(QQ,3,range(6)); a
+            sage: a = matrix(QQ, 3, range(6)); a
             [0 1]
             [2 3]
             [4 5]
-            sage: a.rescale_row(1,1/2); a
+            sage: a.rescale_row(1, 1/2); a
             [ 0   1]
             [ 1 3/2]
             [ 4   5]
@@ -3112,11 +3113,11 @@ cdef class Matrix(sage.structure.element.Matrix):
         We rescale the second row of a matrix over a polynomial ring::
 
             sage: R.<x> = QQ[]
-            sage: a = matrix(R,3,[1,x,x^2,x^3,x^4,x^5]);a
+            sage: a = matrix(R, 3, [1,x,x^2,x^3,x^4,x^5]); a
             [  1   x]
             [x^2 x^3]
             [x^4 x^5]
-            sage: a.rescale_row(1,1/2); a
+            sage: a.rescale_row(1, 1/2); a
             [      1       x]
             [1/2*x^2 1/2*x^3]
             [    x^4     x^5]
@@ -3124,10 +3125,10 @@ cdef class Matrix(sage.structure.element.Matrix):
         We try and fail to rescale a matrix over the integers by a
         non-integer::
 
-            sage: a = matrix(ZZ,2,3,[0,1,2, 3,4,4]); a
+            sage: a = matrix(ZZ, 2, 3, [0,1,2, 3,4,4]); a
             [0 1 2]
             [3 4 4]
-            sage: a.rescale_row(1,1/2)
+            sage: a.rescale_row(1, 1/2)
             Traceback (most recent call last):
             ...
             TypeError: Rescaling row by Rational Field element cannot be done
@@ -3139,7 +3140,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: a = a.change_ring(QQ); a
             [0 1 2]
             [3 4 4]
-            sage: a.rescale_col(1,1/2); a
+            sage: a.rescale_col(1, 1/2); a
             [  0 1/2   2]
             [  3   2   4]
         """
@@ -3162,11 +3163,11 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES: We rescale the second row of a matrix over the integers::
 
-            sage: a = matrix(ZZ,3,2,range(6)); a
+            sage: a = matrix(ZZ, 3, 2, range(6)); a
             [0 1]
             [2 3]
             [4 5]
-            sage: b = a.with_rescaled_row(1,-2); b
+            sage: b = a.with_rescaled_row(1, -2); b
             [ 0  1]
             [-4 -6]
             [ 4  5]
@@ -3181,7 +3182,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         Adding a rational multiple is okay, and reassigning a variable is
         okay::
 
-            sage: a = a.with_rescaled_row(2,1/3); a
+            sage: a = a.with_rescaled_row(2, 1/3); a
             [  0   1]
             [  2   3]
             [4/3 5/3]
@@ -3219,30 +3220,30 @@ cdef class Matrix(sage.structure.element.Matrix):
         EXAMPLES: We rescale the last column of a matrix over the rational
         numbers::
 
-            sage: a = matrix(QQ,2,3,range(6)); a
+            sage: a = matrix(QQ, 2, 3, range(6)); a
             [0 1 2]
             [3 4 5]
-            sage: a.rescale_col(2,1/2); a
+            sage: a.rescale_col(2, 1/2); a
             [  0   1   1]
             [  3   4 5/2]
             sage: R.<x> = QQ[]
 
         We rescale the last column of a matrix over a polynomial ring::
 
-            sage: a = matrix(R,2,3,[1,x,x^2,x^3,x^4,x^5]); a
+            sage: a = matrix(R, 2, 3, [1,x,x^2,x^3,x^4,x^5]); a
             [  1   x x^2]
             [x^3 x^4 x^5]
-            sage: a.rescale_col(2,1/2); a
+            sage: a.rescale_col(2, 1/2); a
             [      1       x 1/2*x^2]
             [    x^3     x^4 1/2*x^5]
 
         We try and fail to rescale a matrix over the integers by a
         non-integer::
 
-            sage: a = matrix(ZZ,2,3,[0,1,2, 3,4,4]); a
+            sage: a = matrix(ZZ, 2, 3, [0,1,2, 3,4,4]); a
             [0 1 2]
             [3 4 4]
-            sage: a.rescale_col(2,1/2)
+            sage: a.rescale_col(2, 1/2)
             Traceback (most recent call last):
             ...
             TypeError: Rescaling column by Rational Field element cannot be done
@@ -3278,10 +3279,10 @@ cdef class Matrix(sage.structure.element.Matrix):
         EXAMPLES: We rescale the last column of a matrix over the
         integers::
 
-            sage: a = matrix(ZZ,2,3,range(6)); a
+            sage: a = matrix(ZZ, 2, 3, range(6)); a
             [0 1 2]
             [3 4 5]
-            sage: b = a.with_rescaled_col(2,-2); b
+            sage: b = a.with_rescaled_col(2, -2); b
             [  0   1  -4]
             [  3   4 -10]
 
@@ -3294,7 +3295,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         Adding a rational multiple is okay, and reassigning a variable is
         okay::
 
-            sage: a = a.with_rescaled_col(1,1/3); a
+            sage: a = a.with_rescaled_col(1, 1/3); a
             [  0 1/3   2]
             [  3 4/3   5]
         """
@@ -3319,10 +3320,10 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES: We change the second row to -3 times the first row::
 
-            sage: a = matrix(ZZ,2,3,range(6)); a
+            sage: a = matrix(ZZ, 2, 3, range(6)); a
             [0 1 2]
             [3 4 5]
-            sage: a.set_row_to_multiple_of_row(1,0,-3)
+            sage: a.set_row_to_multiple_of_row(1, 0, -3)
             sage: a
             [ 0  1  2]
             [ 0 -3 -6]
@@ -3330,10 +3331,11 @@ cdef class Matrix(sage.structure.element.Matrix):
         If we try to multiply a row by a rational number, we get an error
         message::
 
-            sage: a.set_row_to_multiple_of_row(1,0,1/2)
+            sage: a.set_row_to_multiple_of_row(1, 0, 1/2)
             Traceback (most recent call last):
             ...
-            TypeError: Multiplying row by Rational Field element cannot be done over Integer Ring, use change_ring or with_row_set_to_multiple_of_row instead.
+            TypeError: Multiplying row by Rational Field element cannot be done over
+            Integer Ring, use change_ring or with_row_set_to_multiple_of_row instead.
         """
         self.check_row_bounds_and_mutability(i, j)
         cdef Py_ssize_t n
@@ -3350,10 +3352,10 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES: We change the second row to -3 times the first row::
 
-            sage: a = matrix(ZZ,2,3,range(6)); a
+            sage: a = matrix(ZZ, 2, 3, range(6)); a
             [0 1 2]
             [3 4 5]
-            sage: b = a.with_row_set_to_multiple_of_row(1,0,-3); b
+            sage: b = a.with_row_set_to_multiple_of_row(1, 0, -3); b
             [ 0  1  2]
             [ 0 -3 -6]
 
@@ -3366,7 +3368,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         Adding a rational multiple is okay, and reassigning a variable is
         okay::
 
-            sage: a = a.with_row_set_to_multiple_of_row(1,0,1/2); a
+            sage: a = a.with_row_set_to_multiple_of_row(1, 0, 1/2); a
             [  0   1   2]
             [  0 1/2   1]
         """
@@ -3397,10 +3399,10 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         ::
 
-            sage: a = matrix(ZZ,2,3,range(6)); a
+            sage: a = matrix(ZZ, 2, 3, range(6)); a
             [0 1 2]
             [3 4 5]
-            sage: a.set_col_to_multiple_of_col(1,0,-3)
+            sage: a.set_col_to_multiple_of_col(1, 0, -3)
             sage: a
             [ 0  0  2]
             [ 3 -9  5]
@@ -3408,7 +3410,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         If we try to multiply a column by a rational number, we get an
         error message::
 
-            sage: a.set_col_to_multiple_of_col(1,0,1/2)
+            sage: a.set_col_to_multiple_of_col(1, 0, 1/2)
             Traceback (most recent call last):
             ...
             TypeError: Multiplying column by Rational Field element cannot be done over Integer Ring, use change_ring or with_col_set_to_multiple_of_col instead.
@@ -3433,10 +3435,10 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         ::
 
-            sage: a = matrix(ZZ,2,3,range(6)); a
+            sage: a = matrix(ZZ, 2, 3, range(6)); a
             [0 1 2]
             [3 4 5]
-            sage: b = a.with_col_set_to_multiple_of_col(1,0,-3); b
+            sage: b = a.with_col_set_to_multiple_of_col(1, 0, -3); b
             [ 0  0  2]
             [ 3 -9  5]
 
@@ -3449,7 +3451,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         Adding a rational multiple is okay, and reassigning a variable is
         okay::
 
-            sage: a = a.with_col_set_to_multiple_of_col(1,0,1/2); a
+            sage: a = a.with_col_set_to_multiple_of_col(1, 0, 1/2); a
             [  0   0   2]
             [  3 3/2   5]
         """
@@ -3600,7 +3602,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         Mutation of the B-matrix of the quiver of type `A_3`::
 
-            sage: M = matrix(ZZ,3,[0,1,0,-1,0,-1,0,1,0]); M
+            sage: M = matrix(ZZ, 3, [0,1,0,-1,0,-1,0,1,0]); M
             [ 0  1  0]
             [-1  0 -1]
             [ 0  1  0]
@@ -3615,7 +3617,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             [-1  0  1]
             [ 1 -1  0]
 
-            sage: M = matrix(ZZ,6,[0,1,0,-1,0,-1,0,1,0,1,0,0,0,1,0,0,0,1]); M
+            sage: M = matrix(ZZ, 6, [0,1,0,-1,0,-1,0,1,0,1,0,0,0,1,0,0,0,1]); M
             [ 0  1  0]
             [-1  0 -1]
             [ 0  1  0]
@@ -3683,12 +3685,12 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES::
 
-            sage: M = matrix(ZZ,3,[0,1,0,-1,0,-1,0,1,0]); M
+            sage: M = matrix(ZZ, 3, [0,1,0,-1,0,-1,0,1,0]); M
             [ 0  1  0]
             [-1  0 -1]
             [ 0  1  0]
 
-            sage: M._travel_column({0:1},0,-1,True)
+            sage: M._travel_column({0: 1}, 0, -1, True)
             [1]
         """
         cdef list L = []
@@ -3797,7 +3799,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES::
 
-            sage: a = matrix(ZZ,2,3,range(6)); a
+            sage: a = matrix(ZZ, 2, 3, range(6)); a
             [0 1 2]
             [3 4 5]
             sage: a.linear_combination_of_rows([1,2])
@@ -3818,7 +3820,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         We check that a matrix with no rows behaves properly. ::
 
-            sage: matrix(QQ,0,2).linear_combination_of_rows([])
+            sage: matrix(QQ, 0, 2).linear_combination_of_rows([])
             (0, 0)
 
         The object returned is a vector, or a free module element. ::
@@ -3838,7 +3840,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         The length of v can be less than the number of rows, but not
         greater. ::
 
-            sage: A = matrix(QQ,3,4,range(12))
+            sage: A = matrix(QQ, 3, 4, range(12))
             sage: A.linear_combination_of_rows([2,3])
             (12, 17, 22, 27)
             sage: A.linear_combination_of_rows([1,2,3,4])
@@ -3874,7 +3876,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES::
 
-            sage: a = matrix(ZZ,2,3,range(6)); a
+            sage: a = matrix(ZZ, 2, 3, range(6)); a
             [0 1 2]
             [3 4 5]
             sage: a.linear_combination_of_columns([1,1,1])
@@ -3895,7 +3897,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         We check that a matrix with no columns behaves properly. ::
 
-            sage: matrix(QQ,2,0).linear_combination_of_columns([])
+            sage: matrix(QQ, 2, 0).linear_combination_of_columns([])
             (0, 0)
 
         The object returned is a vector, or a free module element. ::
@@ -3915,7 +3917,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         The length of v can be less than the number of columns, but not
         greater. ::
 
-            sage: A = matrix(QQ,3,5, range(15))
+            sage: A = matrix(QQ, 3, 5, range(15))
             sage: A.linear_combination_of_columns([1,-2,3,-4])
             (-8, -18, -28)
             sage: A.linear_combination_of_columns([1,2,3,4,5,6])
@@ -4415,7 +4417,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: matrix([[0,6],[3,0]]).is_skew_symmetrizable(positive=True)
             False
 
-            sage: M = matrix(4,[0,1,0,0,-1,0,-1,0,0,2,0,1,0,0,-1,0]); M
+            sage: M = matrix(4, [0,1,0,0, -1,0,-1,0, 0,2,0,1, 0,0,-1,0]); M
             [ 0  1  0  0]
             [-1  0 -1  0]
             [ 0  2  0  1]
@@ -4424,7 +4426,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: M.is_skew_symmetrizable(return_diag=True)
             [1, 1, 1/2, 1/2]
 
-            sage: M2 = diagonal_matrix([1,1,1/2,1/2])*M; M2
+            sage: M2 = diagonal_matrix([1,1,1/2,1/2]) * M; M2
             [   0    1    0    0]
             [  -1    0   -1    0]
             [   0    1    0  1/2]
@@ -4450,9 +4452,9 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES::
 
-            sage: matrix(QQ,2,2,range(4)).is_dense()
+            sage: matrix(QQ, 2, 2, range(4)).is_dense()
             True
-            sage: matrix(QQ,2,2,range(4),sparse=True).is_dense()
+            sage: matrix(QQ, 2, 2, range(4), sparse=True).is_dense()
             False
         """
         return self.is_dense_c()
@@ -4466,9 +4468,9 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES::
 
-            sage: matrix(QQ,2,2,range(4)).is_sparse()
+            sage: matrix(QQ, 2, 2, range(4)).is_sparse()
             False
-            sage: matrix(QQ,2,2,range(4),sparse=True).is_sparse()
+            sage: matrix(QQ, 2, 2, range(4), sparse=True).is_sparse()
             True
         """
         return self.is_sparse_c()
@@ -4480,9 +4482,9 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES::
 
-            sage: matrix(QQ,2,2,range(4)).is_square()
+            sage: matrix(QQ, 2, 2, range(4)).is_square()
             True
-            sage: matrix(QQ,2,3,range(6)).is_square()
+            sage: matrix(QQ, 2, 3, range(6)).is_square()
             False
         """
         return self._nrows == self._ncols
@@ -4515,7 +4517,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         ::
 
-            sage: A = MatrixSpace(IntegerRing(),2)([1,10,0,-1])
+            sage: A = MatrixSpace(IntegerRing(), 2)([1,10,0,-1])
             sage: A.is_invertible()
             True
             sage: ~A                # compute the inverse
@@ -4528,7 +4530,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         ::
 
             sage: R.<x> = PolynomialRing(IntegerRing())
-            sage: A = MatrixSpace(R,2)([1,x,0,-1])
+            sage: A = MatrixSpace(R, 2)([1,x,0,-1])
             sage: A.is_invertible()
             True
             sage: ~A
@@ -4565,7 +4567,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         A singular matrix over the field ``QQ``. ::
 
-            sage: A = matrix(QQ, 4, [-1,2,-3,6,0,-1,-1,0,-1,1,-5,7,-1,6,5,2])
+            sage: A = matrix(QQ, 4, [-1,2,-3,6, 0,-1,-1,0, -1,1,-5,7, -1,6,5,2])
             sage: A.is_singular()
             True
             sage: A.right_kernel().dimension()
@@ -4573,7 +4575,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         A matrix that is not singular, i.e. nonsingular, over a field. ::
 
-            sage: B = matrix(QQ, 4, [1,-3,-1,-5,2,-5,-2,-7,-2,5,3,4,-1,4,2,6])
+            sage: B = matrix(QQ, 4, [1,-3,-1,-5, 2,-5,-2,-7, -2,5,3,4, -1,4,2,6])
             sage: B.is_singular()
             False
             sage: B.left_kernel().dimension()
@@ -4593,7 +4595,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         When the base ring is not a field, then a matrix
         may be both not invertible and not singular. ::
 
-            sage: D = matrix(ZZ, 4, [2,0,-4,8,2,1,-2,7,2,5,7,0,0,1,4,-6])
+            sage: D = matrix(ZZ, 4, [2,0,-4,8, 2,1,-2,7, 2,5,7,0, 0,1,4,-6])
             sage: D.is_invertible()
             False
             sage: D.is_singular()
@@ -4686,7 +4688,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES::
 
-            sage: a = matrix(QQ,3,3,range(9)); a
+            sage: a = matrix(QQ, 3, 3, range(9)); a
             [0 1 2]
             [3 4 5]
             [6 7 8]
@@ -5050,7 +5052,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES::
 
-            sage: B = matrix(QQ,2, [1,2,3,4])
+            sage: B = matrix(QQ, 2, [1,2,3,4])
             sage: V = VectorSpace(QQ, 2)
             sage: v = V([-1,5])
             sage: v*B
@@ -5155,13 +5157,13 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         EXAMPLES::
 
-            sage: A = matrix(ZZ,2, [1,1,3,5]); A
+            sage: A = matrix(ZZ, 2, [1,1,3,5]); A
             [1 1]
             [3 5]
             sage: v = vector([1,0])
-            sage: A.iterates(v,0)
+            sage: A.iterates(v, 0)
             []
-            sage: A.iterates(v,5)
+            sage: A.iterates(v, 5)
             [  1   0]
             [  1   1]
             [  4   6]
@@ -5170,17 +5172,17 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         Another example::
 
-            sage: a = matrix(ZZ,3,range(9)); a
+            sage: a = matrix(ZZ, 3, range(9)); a
             [0 1 2]
             [3 4 5]
             [6 7 8]
             sage: v = vector([1,0,0])
-            sage: a.iterates(v,4)
+            sage: a.iterates(v, 4)
             [  1   0   0]
             [  0   1   2]
             [ 15  18  21]
             [180 234 288]
-            sage: a.iterates(v,4,rows=False)
+            sage: a.iterates(v, 4, rows=False)
             [  1   0  15 180]
             [  0   3  42 558]
             [  0   6  69 936]
@@ -5300,13 +5302,13 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         EXAMPLES::
 
-            sage: a = matrix(QQ['x'],2,range(6))
+            sage: a = matrix(QQ['x'], 2, range(6))
             sage: (3/4) * a
             [   0  3/4  3/2]
             [ 9/4    3 15/4]
 
             sage: R.<x,y> = QQ[]
-            sage: a = matrix(R,2,3,[1,x,y,-x*y,x+y,x-y]); a
+            sage: a = matrix(R, 2, 3, [1,x,y, -x*y,x+y,x-y]); a
             [    1     x     y]
             [ -x*y x + y x - y]
             sage: (x*y) * a
@@ -5388,7 +5390,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         ::
 
             sage: R.<x,y> = QQ[]
-            sage: a = matrix(R,2,3,[1,x,y,-x*y,x+y,x-y]); a
+            sage: a = matrix(R, 2, 3, [1,x,y, -x*y,x+y,x-y]); a
             [    1     x     y]
             [ -x*y x + y x - y]
             sage: b = a.transpose(); b
@@ -5629,7 +5631,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         ::
 
-            sage: I = MatrixSpace(ZZ,2)(1)  # identity matrix
+            sage: I = MatrixSpace(ZZ, 2)(1)  # identity matrix
             sage: ~I
             [1 0]
             [0 1]
@@ -5644,7 +5646,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         A matrix with 0 rows and 0 columns is invertible (see :issue:`3734`)::
 
-            sage: M = MatrixSpace(RR,0,0)(0); M
+            sage: M = MatrixSpace(RR, 0, 0)(0); M
             []
             sage: M.determinant()
             1.00000000000000
@@ -5655,13 +5657,13 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         Matrices over the integers modulo a composite modulus::
 
-            sage: m = matrix(Zmod(49),2,[2,1,3,3])
+            sage: m = matrix(Zmod(49), 2, [2,1,3,3])
             sage: type(m)
             <class 'sage.matrix.matrix_modn_dense_float.Matrix_modn_dense_float'>
             sage: ~m
             [ 1 16]
             [48 17]
-            sage: m = matrix(Zmod(2^100),2,[2,1,3,3])
+            sage: m = matrix(Zmod(2^100), 2, [2,1,3,3])
             sage: type(m)
             <class 'sage.matrix.matrix_generic_dense.Matrix_generic_dense'>
             sage: (~m)*m                                                                # needs sage.libs.pari
@@ -5687,7 +5689,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         This matrix is not invertible::
 
-            sage: m = matrix(Zmod(9),2,[2,1,3,3])
+            sage: m = matrix(Zmod(9), 2, [2,1,3,3])
             sage: ~m
             Traceback (most recent call last):
             ...
@@ -5748,7 +5750,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             # that it's 1.
             #
             # However, doing this naively causes trouble over inexact
-            # fields -- see trac #2256. The *right* thing to do would
+            # fields -- see Issue #2256. The *right* thing to do would
             # probably be to make sure that self.det() is nonzero. That
             # doesn't work here, because our det over an arbitrary field
             # just does expansion by minors and is unusable for even 10x10
@@ -6138,8 +6140,8 @@ def unpickle(cls, parent, immutability, cache, data, version):
 
     OVER `\ZZ`::
 
-        sage: A = matrix(ZZ,2,range(4))
-        sage: loads(dumps(A)) # indirect doctest
+        sage: A = matrix(ZZ, 2, range(4))
+        sage: loads(dumps(A))  # indirect doctest
         [0 1]
         [2 3]
 
