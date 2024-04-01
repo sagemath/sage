@@ -842,6 +842,19 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: L.approximate_closest_vector((-6, 5/3))
             (-6, 2)
 
+        The quality of the approximation depends on ``delta``::
+
+            sage: from sage.modules.free_module_integer import IntegerLattice
+            sage: L = IntegerLattice([[101, 0, 0, 0], [0, 101, 0, 0],
+            ....:                     [0, 0, 101, 0], [-28, 39, 45, 1]], lll_reduce=False)
+            sage: t = vector([1337]*4)
+            sage: L.approximate_closest_vector(t, delta=0.26)
+            (1348, 1340, 1383, 1337)
+            sage: L.approximate_closest_vector(t, delta=0.99)
+            (1326, 1349, 1339, 1345)
+            sage: L.closest_vector(t)
+            (1326, 1349, 1339, 1345)
+
         ALGORITHM:
 
         Uses the algorithm from [Bab86]_.
