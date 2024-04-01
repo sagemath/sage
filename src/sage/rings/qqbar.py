@@ -8789,7 +8789,7 @@ for t1 in (ANRational, ANRoot, ANExtensionElement, ANUnaryExpr, ANBinaryExpr):
     for t2 in (ANUnaryExpr, ANBinaryExpr, ANRoot):
         _binop_algo[t1, t2] = _binop_algo[t2, t1] = an_binop_expr
 
-qq_generator = AlgebraicGenerator(QQ, ANRoot(AAPoly.gen() - 1, RIF(1)))
+qq_generator = AlgebraicGenerator(QQ, ANRoot(AAPoly([1, -1]), RIF.one()))
 
 
 def _init_qqbar():

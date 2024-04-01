@@ -862,7 +862,7 @@ def _multi_variate(base_ring, names, sparse=None, order="degrevlex", implementat
 
     if R is None and implementation == "generic":
         from . import multi_polynomial_ring
-        if isinstance(base_ring, IntegralDomain):
+        if base_ring in _Domains:
             constructor = multi_polynomial_ring.MPolynomialRing_polydict_domain
         else:
             constructor = multi_polynomial_ring.MPolynomialRing_polydict

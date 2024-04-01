@@ -64,11 +64,11 @@ from sage.structure.dynamic_class import DynamicMetaclass
 
 
 cpdef inline check_default_category(default_category, category) noexcept:
-    ## The resulting category is guaranteed to be
-    ## a sub-category of the default.
+    # The resulting category is guaranteed to be
+    # a sub-category of the default.
     if category is None:
         return default_category
-    return default_category.join([default_category,category])
+    return default_category.join([default_category, category])
 
 
 cdef class CategoryObject(SageObject):
