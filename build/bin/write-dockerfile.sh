@@ -33,7 +33,7 @@ echo "# to simplify writing scripts that customize this file"
 ADD="ADD $__CHOWN"
 RUN=RUN
 cat <<EOF
-ARG BASE_IMAGE
+ARG BASE_IMAGE=$(eval echo "${FULL_BASE_IMAGE_AND_TAG}")
 FROM \${BASE_IMAGE} as with-system-packages
 EOF
 case $SYSTEM in
@@ -55,7 +55,10 @@ case $SYSTEM in
                 ;;
             *)
                 cat <<EOF
-RUN (yes | unminimize) || echo "(ignored)"
+RUN if command -v unminimize > /dev/null; then  \
+        (yes | unminimize) || echo "(ignored)"; \
+        rm -f "$(command -v unminimize)";       \
+    fi
 EOF
                 if [ -n "$DIST_UPGRADE" ]; then
                     cat <<EOF
@@ -143,7 +146,7 @@ EOF
                 ;;
             *)
                 cat <<EOF
-ARG USE_CONDARC=condarc.yml
+ARG USE_CONDARC=${USE_CONDARC-condarc.yml}
 ADD *condarc*.yml /tmp/
 RUN echo \${CONDARC}; cd /tmp && conda config --stdin < \${USE_CONDARC}
 RUN conda update -n base conda
@@ -230,24 +233,41 @@ cat <<EOF
 
 FROM with-system-packages as bootstrapped
 #:bootstrapping:
-RUN if [ -d /sage ]; then echo "### Incremental build from \$(cat /sage/VERSION.txt)" && mv /sage /sage-old && mkdir /sage && for a in local logs; do if [ -d /sage-old/\$a ]; then mv /sage-old/\$a /sage; fi; done; rm -rf /sage-old; else mkdir -p /sage; fi
+$ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap bootstrap-conda configure.ac sage .homebrew-build-env tox.ini Pipfile.m4 .gitignore /new/
+$ADD config/config.rpath /new/config/config.rpath
+$ADD src/doc/bootstrap /new/src/doc/bootstrap
+$ADD src/bin /new/src/bin
+$ADD src/Pipfile.m4 src/pyproject.toml.m4 src/requirements.txt.m4 src/VERSION.txt /new/src/
+$ADD m4 /new/m4
+$ADD pkgs /new/pkgs
+$ADD build /new/build
+$ADD .ci /new/.ci
+$ADD .upstream.d /new/.upstream.d
+RUN if [ -d /sage ]; then                                               \
+        echo "### Incremental build from \$(cat /sage/VERSION.txt)" &&  \
+        if command -v git; then                                         \
+            (cd /new &&                                                 \
+             echo /src >> .gitignore &&                                 \
+             ./.ci/retrofit-worktree.sh worktree-image /sage);          \
+        else                                                            \
+            for a in local logs; do                                     \
+                if [ -d /sage/\$a ]; then mv /sage/\$a /new/; fi;       \
+            done;                                                       \
+            rm -rf /sage;                                               \
+            mv /new /sage;                                              \
+        fi;                                                             \
+    else                                                                \
+        mv /new /sage;                                                  \
+    fi
 WORKDIR /sage
-$ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap bootstrap-conda configure.ac sage .homebrew-build-env tox.ini Pipfile.m4 ./
-$ADD config/config.rpath config/config.rpath
-$ADD src/doc/bootstrap src/doc/bootstrap
-$ADD src/bin src/bin
-$ADD src/Pipfile.m4 src/pyproject.toml.m4 src/requirements.txt.m4 src/VERSION.txt src/
-$ADD m4 ./m4
-$ADD pkgs pkgs
-$ADD build ./build
-$ADD .upstream.d ./.upstream.d
-ARG BOOTSTRAP=./bootstrap
+
+ARG BOOTSTRAP=${BOOTSTRAP-./bootstrap}
 $RUN sh -x -c "\${BOOTSTRAP}" $ENDRUN $THEN_SAVE_STATUS
 
 FROM bootstrapped as configured
 #:configuring:
 RUN $CHECK_STATUS_THEN mkdir -p logs/pkgs; rm -f config.log; ln -s logs/pkgs/config.log config.log
-ARG EXTRA_CONFIGURE_ARGS=""
+ARG EXTRA_CONFIGURE_ARGS="${CONFIGURE_ARGS}"
 EOF
 if [ ${WITH_SYSTEM_SPKG} = "force" ]; then
     cat <<EOF
@@ -286,7 +306,16 @@ ENV MAKE="make -j\${NUMPROC}"
 ARG USE_MAKEFLAGS="-k V=0"
 ENV SAGE_CHECK=warn
 ENV SAGE_CHECK_PACKAGES="!cython,!r,!python3,!gap,!cysignals,!linbox,!git,!ppl,!cmake,!rpy2,!sage_sws2rst"
-$ADD src src
+$ADD .gitignore /new/.gitignore
+$ADD src /new/src
+RUN if command -v git; then                             \
+        cd /new && rm -rf .git &&                       \
+        ./.ci/retrofit-worktree.sh worktree-pre /sage;  \
+    else                                                \
+        rm -rf /sage/src;                               \
+        mv /new/src /sage/src;                          \
+    fi
+
 ARG TARGETS="build"
 $RUN $CHECK_STATUS_THEN make SAGE_SPKG="sage-spkg -y -o" \${USE_MAKEFLAGS} \${TARGETS} $ENDRUN $THEN_SAVE_STATUS
 

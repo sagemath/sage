@@ -95,6 +95,14 @@ download:
 dist: build/make/Makefile
 	./sage --sdist
 
+ci-build-with-fallback:
+	$(MAKE) build && $(MAKE) SAGE_CHECK=no pypi-wheels; 	\
+	if [ $$? != 0 ]; then					\
+            echo "Incremental build failed, falling back";	\
+	    $(MAKE) doc-clean doc-uninstall sagelib-clean;	\
+	    $(MAKE) build && $(MAKE) SAGE_CHECK=no pypi-wheels;	\
+	fi
+
 ###############################################################################
 # Cleaning up
 ###############################################################################
