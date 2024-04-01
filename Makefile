@@ -351,7 +351,7 @@ CONFIGURE_DEPENDENCIES =							\
 	build/pkgs/*/spkg-configure.m4						\
 	build/pkgs/*/type build/pkgs/*/SPKG.rst					\
 	build/pkgs/*/checksums.ini build/pkgs/*/requirements.txt		\
-	build/pkgs/*/install-requires.txt build/pkgs/*/package-version.txt	\
+	build/pkgs/*/version_requirements.txt build/pkgs/*/package-version.txt	\
 	build/pkgs/*/spkg-install build/pkgs/*/spkg-install.in
 
 # SPKG_INFO_DEPENDENCIES is the list of files that influence the run of 'sage-spkg-info' and hence
@@ -359,7 +359,7 @@ CONFIGURE_DEPENDENCIES =							\
 SPKG_INFO_DEPENDENCIES =							\
 	build/pkgs/*/type build/pkgs/*/SPKG.rst					\
 	build/pkgs/*/requirements.txt						\
-	build/pkgs/*/install-requires.txt build/pkgs/*/package-version.txt	\
+	build/pkgs/*/version_requirements.txt build/pkgs/*/package-version.txt	\
 	build/pkgs/*/distros/*.txt
 
 configure: bootstrap src/doc/bootstrap $(CONFIGURE_DEPENDENCIES) $(SPKG_INFO_DEPENDENCIES)
