@@ -424,9 +424,9 @@ in the Installation Guide.
         $ sudo ln -s $(./sage -sh -c 'ls $SAGE_ROOT/venv/bin/sage') /usr/local/bin
 
 21. Optional: Set up SageMath as a Jupyter kernel in an existing Jupyter notebook
-    or JupyterLab installation, as described in [section
-    "Launching SageMath"](https://doc.sagemath.org/html/en/installation/launching.html)
-    in the Sage Installation Manual.
+    or JupyterLab installation, as described in the section
+    [Launching SageMath](https://doc.sagemath.org/html/en/installation/launching.html)
+    in the Sage Installation Guide.
 
 Alternative Installation using PyPI
 ---------------
