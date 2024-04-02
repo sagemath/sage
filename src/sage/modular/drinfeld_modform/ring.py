@@ -228,17 +228,17 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             sage: DrinfeldModularForms(Frac(GF(2)['T']), rank=3, names='f1, f2, f3, f4')
             Traceback (most recent call last):
             ...
-            ValueError: the number of generators must be equal to the rank (=3)
+            ValueError: the number of generators (=4) must be equal to the rank (=3)
 
             sage: DrinfeldModularForms(Frac(GF(2)['T']), rank=3, names=['f1', 'f2', 'f3', 'f4'])
             Traceback (most recent call last):
             ...
-            ValueError: the number of generators must be equal to the rank (=3)
+            ValueError: the number of generators (=4) must be equal to the rank (=3)
 
             sage: DrinfeldModularForms(Frac(GF(2)['T']), rank=3, names=('f1', 'f2', 'f3', 'f4'))
             Traceback (most recent call last):
             ...
-            ValueError: the number of generators must be equal to the rank (=3)
+            ValueError: the number of generators (=4) must be equal to the rank (=3)
 
             sage: DrinfeldModularForms(Frac(GF(2)['T']))
             Traceback (most recent call last):
@@ -279,7 +279,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
                     g = names[0]
                     names = [f'{g}{i}' for i in range(1, rank + 1, 1)]
                 elif nb_names != rank:
-                    raise ValueError("the number of generators "
+                    raise ValueError(f"the number of generators (={nb_names}) "
                                      f"must be equal to the rank (={rank})")
         else:
             raise TypeError("names must be None, a comma seperated string "
