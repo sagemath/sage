@@ -836,7 +836,6 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: B
             -1 + O(z^7)
 
-
             sage: L.<z> = LazyPowerSeriesRing(QQ)
             sage: A = L.undefined()
             sage: B = L.undefined()

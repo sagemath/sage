@@ -1568,8 +1568,10 @@ class Stream_uninitialized(Stream):
                 if self._coefficient_ring == self._base_ring:
                     if c.parent() == self._PF:
                         c = self._PF(c.subs({var: val}))
-                        if c.numerator().is_constant() and c.denominator().is_constant():
-                            c = self._base_ring(c)
+                        num = c.numerator()
+                        den = c.denominator()
+                        if num.is_constant() and den.is_constant():
+                            c = num.constant_coefficient() / den.constant_coefficient()
                         else:
                             good = m - i0 - 1
                 else:
