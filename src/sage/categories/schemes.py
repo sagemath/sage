@@ -61,7 +61,6 @@ class Schemes(Category):
         sage: Schemes().Homsets().super_categories()
         [Category of homsets]
     """
-
     @staticmethod
     def __classcall_private__(cls, X=None):
         """
@@ -79,8 +78,7 @@ class Schemes(Category):
             Category of schemes over Integer Ring
         """
         if X is not None:
-            from sage.schemes.generic.scheme import is_Scheme
-            if not is_Scheme(X):
+            if X not in Schemes():
                 X = Schemes()(X)
             return Schemes_over_base(X)
         return super().__classcall__(cls)
@@ -175,7 +173,6 @@ class Schemes_over_base(Category_over_base):
         sage: C = Schemes(ZZ)
         sage: TestSuite(C).run()
     """
-
     def base_scheme(self):
         """
         EXAMPLES::
@@ -201,12 +198,11 @@ class Schemes_over_base(Category_over_base):
             sage: Schemes(Spec(ZZ)) # indirect doctest
             Category of schemes over Integer Ring
         """
-        # To work around the name of the class (schemes_over_base)
         from sage.schemes.generic.scheme import is_AffineScheme
-        if is_AffineScheme(self.base_scheme()):
-            return "schemes over %s" % self.base_scheme().coordinate_ring()
-        else:
-            return "schemes over %s" % self.base_scheme()
+        base = self.base()
+        if is_AffineScheme(base):
+            base = base.coordinate_ring()
+        return f"schemes over {base}"
 
 
 class AbelianVarieties(Schemes_over_base):
@@ -240,6 +236,18 @@ class AbelianVarieties(Schemes_over_base):
             raise ValueError('category of abelian varieties is only defined over fields')
         super().__init__(base)
 
+    def base_scheme(self):
+        """
+        EXAMPLES::
+
+            sage: Schemes(Spec(ZZ)).base_scheme()
+            Spectrum of Integer Ring
+        """
+        base = self.base()
+        if base not in Schemes():
+            base = Schemes()(base)
+        return base
+
     def super_categories(self):
         """
         EXAMPLES::
@@ -257,7 +265,7 @@ class AbelianVarieties(Schemes_over_base):
             sage: AbelianVarieties(Spec(QQ))  # indirect doctest
             Category of abelian varieties over Rational Field
         """
-        return "abelian varieties over %s" % self.base_scheme()
+        return "abelian varieties over %s" % self.base()
 
     class Homsets(HomsetsCategory):
         r"""
@@ -313,8 +321,42 @@ class Jacobians(Schemes_over_base):
 
         sage: TestSuite(Jacobians(QQ)).run()
     """
+    def __init__(self, base):
+        r"""
+        Constructor of this category.
+
+        EXAMPLES::
+
+            sage: Jacobians(QQ)
+            Category of Jacobians over Rational Field
+            sage: Jacobians(Spec(QQ))
+            Category of Jacobians over Rational Field
+        """
+        from sage.schemes.generic.scheme import is_AffineScheme
+        if is_AffineScheme(base):
+            base = base.coordinate_ring()
+        if base not in Fields():
+            raise ValueError('category of Jacobians is only defined over fields')
+        super().__init__(base)
+
+    def base_scheme(self):
+        """
+        Return the base scheme of this Jacobians category.
+
+        EXAMPLES::
+
+            sage: Jacobians(QQ).base_scheme()
+            Spectrum of Rational Field
+        """
+        base = self.base()
+        if base not in Schemes():
+            base = Schemes()(base)
+        return base
+
     def super_categories(self):
         """
+        Return the super categories of this Jacobians category.
+
         EXAMPLES::
 
             sage: Jacobians(QQ).super_categories()
@@ -324,12 +366,14 @@ class Jacobians(Schemes_over_base):
 
     def _repr_object_names(self):
         """
+        Return the string representation of this category.
+
         EXAMPLES::
 
             sage: Jacobians(Spec(QQ))  # indirect doctest
-            Category of Jacobians over Spectrum of Rational Field
+            Category of Jacobians over Rational Field
         """
-        return "Jacobians over %s" % self.base_scheme()
+        return "Jacobians over %s" % self.base()
 
     class ParentMethods:
 
