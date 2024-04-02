@@ -43,7 +43,6 @@ AUTHORS:
 """
 
 from sage.misc.cachefunc import cached_method
-from sage.schemes.generic.morphism import SchemeMorphism_sum
 from sage.structure.sequence import Sequence
 
 from sage.arith.misc import gcd
@@ -61,6 +60,7 @@ from sage.schemes.elliptic_curves.hom import EllipticCurveHom, compare_via_evalu
 
 class EllipticCurveHom_sum(EllipticCurveHom):
 
+    _phis = None
     _degree = None
 
     def __init__(self, phis, domain=None, codomain=None):
@@ -128,6 +128,22 @@ class EllipticCurveHom_sum(EllipticCurveHom):
         EllipticCurveHom.__init__(self, self._domain, self._codomain)
         self._degree = None
 
+    def _call_(self, P):
+        r"""
+        Evaluate this sum morphism at a point.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [5,5])
+            sage: phi = E.isogenies_prime_degree(7)[0]
+            sage: P = E.lift_x(0)
+            sage: (phi + phi)(P)
+            (72 : 56 : 1)
+            sage: (phi - phi)(P)
+            (0 : 1 : 0)
+        """
+        return sum((phi(P) for phi in self._phis), self._codomain(0))
+
     def _eval(self, P):
         r"""
         Less strict evaluation method for internal use.
@@ -172,6 +188,23 @@ class EllipticCurveHom_sum(EllipticCurveHom):
                 f'\n  From: {self._domain}' \
                 f'\n  To:   {self._codomain}' \
                 f'\n  Via:  {self._phis}'
+
+    def summands(self):
+        r"""
+        Return the individual summands making up this sum morphism.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(j=5)
+            sage: m2 = E.scalar_multiplication(2)
+            sage: m3 = E.scalar_multiplication(3)
+            sage: m2 + m3
+            Sum morphism:
+              From: Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field
+              To:   Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field
+              Via:  (Scalar-multiplication endomorphism [2] of Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field, Scalar-multiplication endomorphism [3] of Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field)
+        """
+        return self._phis
 
     @cached_method
     def to_isogeny_chain(self):
