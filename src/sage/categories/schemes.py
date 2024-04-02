@@ -303,6 +303,15 @@ class AbelianVarieties(Schemes_over_base):
 class Jacobians(Schemes_over_base):
     """
     The category of Jacobians attached to curves or function fields.
+
+    EXAMPLES::
+
+        sage: Jacobians(QQ)
+        Category of Jacobians over Rational Field
+
+    TESTS::
+
+        sage: TestSuite(Jacobians(QQ)).run()
     """
     def super_categories(self):
         """
@@ -337,5 +346,3 @@ class Jacobians(Schemes_over_base):
             sage: J.base_curve()
             Rational function field in x over Finite Field of size 2
             """
-
-
