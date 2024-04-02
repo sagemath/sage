@@ -806,35 +806,6 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         """
         return self.domain().base_ring()
 
-    def characteristic_polynomial(self, var='x'):
-        r"""
-        Return the characteristic polynomial of this endomorphism.
-
-        ``characteristic_polynomial`` and ``char_poly`` are the same method.
-
-        INPUT:
-
-        - var -- variable
-
-        EXAMPLES::
-
-            sage: V = ZZ^2; phi = V.hom([V.0+V.1, 2*V.1])
-            sage: phi.characteristic_polynomial()
-            x^2 - 3*x + 2
-            sage: phi.charpoly()
-            x^2 - 3*x + 2
-            sage: phi.matrix().charpoly()
-            x^2 - 3*x + 2
-            sage: phi.charpoly('T')
-            T^2 - 3*T + 2
-        """
-        if not self.is_endomorphism():
-            raise ArithmeticError("charpoly only defined for endomorphisms "
-                                  "(i.e., domain = range)")
-        return self.matrix().charpoly(var)
-
-    charpoly = characteristic_polynomial
-
     def decomposition(self, *args, **kwds):
         """
         Return decomposition of this endomorphism, i.e., sequence of
@@ -883,46 +854,6 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             return Sequence([D.submodule((V.basis_matrix() * B).row_module(R),
                                          check=False) for V, _ in E],
                             cr=True, check=False)
-
-    def trace(self):
-        r"""
-        Return the trace of this endomorphism.
-
-        EXAMPLES::
-
-            sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
-            sage: phi.trace()
-            3
-        """
-        return self._matrix.trace()
-
-    def det(self):
-        """
-        Return the determinant of this endomorphism.
-
-        EXAMPLES::
-
-            sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
-            sage: phi.det()
-            2
-        """
-        if not self.is_endomorphism():
-            raise ArithmeticError("matrix morphism must be an endomorphism")
-        return self.matrix().determinant()
-
-    def fcp(self, var='x'):
-        """
-        Return the factorization of the characteristic polynomial.
-
-        EXAMPLES::
-
-            sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
-            sage: phi.fcp()                                                             # needs sage.libs.pari
-            (x - 2) * (x - 1)
-            sage: phi.fcp('T')                                                          # needs sage.libs.pari
-            (T - 2) * (T - 1)
-        """
-        return self.charpoly(var).factor()
 
     def kernel(self):
         """
