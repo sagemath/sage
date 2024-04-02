@@ -37,8 +37,10 @@ compositions are [3], [2, 1], [1, 2], and [1, 1, 1].
 #
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-from sage.combinat.combinat import CombinatorialClass, CombinatorialObject
+from sage.categories.enumerated_sets import EnumeratedSets
+from sage.combinat.combinat import CombinatorialObject
 from sage.rings.integer import Integer
+from sage.structure.parent import Parent
 from copy import copy
 
 
@@ -326,7 +328,7 @@ class SpeciesStructureWrapper(GenericSpeciesStructure):
 ##############################################################
 
 
-class SpeciesWrapper(CombinatorialClass):
+class SpeciesWrapper(Parent):
     def __init__(self, species, labels, iterator, generating_series, name, structure_class):
         """
         This is a abstract base class for the set of structures of a
@@ -350,6 +352,7 @@ class SpeciesWrapper(CombinatorialClass):
             sage: S.cardinality()
             1
         """
+        Parent.__init__(self, category=EnumeratedSets())
         self._species = species
         self._labels = labels
         self._iterator = iterator
