@@ -96,6 +96,9 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
       * ``g1, g2, ..., hr`` for the arbitrary type forms.
 
+      If this parameter is a single character ``f`` and a rank is
+      specified, then the names will be of the form ``f1, f2, ..., fr``.
+
     EXAMPLES::
 
         sage: q = 3
@@ -109,16 +112,23 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
         sage: M.gens()
         [g1, g2, g3]
-        sage: M.inject_variables()
+        sage: M.inject_variables()  # assign the variable g1, g2, g3
         Defining g1, g2, g3
+        sage: T*g1*g2 + g3
+        g3 + T*g1*g2
 
-    One can also assign and name the generator when creating the ring::
+    When creating the ring, one can name and assign the generators in
+    various ways::
 
-        sage: M.<g1, g2> = DrinfeldModularForms(K)
-        sage: M
-        Ring of Drinfeld modular forms of rank 2 over Fraction Field of Univariate Polynomial Ring in T over Finite Field of size 3
-        sage: (T*g2*g1).parent() == M
-        True
+        sage: M.<F, G> = DrinfeldModularForms(K, 2)
+        sage: M.gens()
+        [F, G]
+        sage: M = DrinfeldModularForms(K, 3, names='f')
+        sage: M.gens()
+        [f1, f2, f3]
+        sage: M = DrinfeldModularForms(K, names='u, v, w, x')
+        sage: M.gens()
+        [u, v, w, x]
 
     Set the keyword parameter `has_type` to `True` in order to create
     the ring of Drinfeld modular forms of arbitrary type::
