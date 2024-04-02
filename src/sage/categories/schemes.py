@@ -23,6 +23,7 @@ from sage.categories.commutative_additive_groups import CommutativeAdditiveGroup
 from sage.categories.rings import Rings
 from sage.categories.fields import Fields
 from sage.categories.homsets import HomsetsCategory
+from sage.misc.abstract_method import abstract_method
 
 
 class Schemes(Category):
@@ -299,7 +300,7 @@ class AbelianVarieties(Schemes_over_base):
                 return [Rings()]
 
 
-class Jacobians(AbelianVarieties):
+class Jacobians(Schemes_over_base):
     """
     The category of Jacobians attached to curves or function fields.
     """
@@ -317,7 +318,24 @@ class Jacobians(AbelianVarieties):
         EXAMPLES::
 
             sage: Jacobians(Spec(QQ))  # indirect doctest
-            Category of Jacobians over Rational Field
+            Category of Jacobians over Spectrum of Rational Field
         """
         return "Jacobians over %s" % self.base_scheme()
+
+    class ParentMethods:
+
+        @abstract_method
+        def base_curve(self):
+            """
+            Return the curve to which this Jacobian is attached.
+
+            EXAMPLES::
+
+            sage: # needs sage.rings.function_field
+            sage: K.<x> = FunctionField(GF(2))
+            sage: J = K.jacobian()
+            sage: J.base_curve()
+            Rational function field in x over Finite Field of size 2
+            """
+
 

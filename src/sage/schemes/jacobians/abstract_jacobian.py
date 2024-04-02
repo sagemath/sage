@@ -192,6 +192,8 @@ class Jacobian_generic(Scheme):
         """
         return self.__curve
 
+    base_curve = curve
+
     def change_ring(self, R):
         r"""
         Return the Jacobian over the ring `R`.

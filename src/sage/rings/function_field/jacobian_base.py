@@ -616,11 +616,7 @@ class Jacobian_base(Parent):
             sage: F.jacobian()
             Jacobian of Function field in y defined by y^2 + y + (x^2 + 1)/x (Hess model)
         """
-        if self._curve is not None:
-            F = self._curve
-        else:
-            F = self._function_field
-        return f'Jacobian of {F}'
+        return f'Jacobian of {self.base_curve()}'
 
     def _an_element_(self):
         """
@@ -689,6 +685,20 @@ class Jacobian_base(Parent):
             sage: J.curve()
         """
         return self._curve
+
+    def base_curve(self):
+        """
+        Return the base curve or the function field that abstractly defines a curve.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
+            sage: F.<y> = K.extension(Y^2 + Y + x + 1/x)
+            sage: J = F.jacobian()
+            sage: J.base_curve()
+            Function field in y defined by y^2 + y + (x^2 + 1)/x
+        """
+        return self._function_field if self._curve is None else self._curve
 
     def facade_for(self):
         """
