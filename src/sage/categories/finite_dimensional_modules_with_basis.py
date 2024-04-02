@@ -839,6 +839,12 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
                 sage: phi.det()
                 2
+
+                sage: W = CombinatorialFreeModule(ZZ, ['x', 'y'])
+                sage: M = matrix(ZZ, [[1, 0], [1, 2]])
+                sage: psi = W.module_morphism(matrix=M, codomain=W)
+                sage: phi.det()
+                2
             """
             if not self.is_endomorphism():
                 return NotImplemented
@@ -856,10 +862,16 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             EXAMPLES::
 
                 sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
-                sage: phi.fcp()                                                             # needs sage.libs.pari
+                sage: phi.fcp()                                                         # needs sage.libs.pari
                 (x - 2) * (x - 1)
-                sage: phi.fcp('T')                                                          # needs sage.libs.pari
+                sage: phi.fcp('T')                                                      # needs sage.libs.pari
                 (T - 2) * (T - 1)
+
+                sage: W = CombinatorialFreeModule(ZZ, ['x', 'y'])
+                sage: M = matrix(ZZ, [[1, 0], [1, 2]])
+                sage: psi = W.module_morphism(matrix=M, codomain=W)
+                sage: psi.fcp()                                                         # needs sage.libs.pari
+                (x - 2) * (x - 1)
             """
             if not self.is_endomorphism():
                 return NotImplemented
@@ -874,6 +886,12 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
                 sage: phi.trace()
+                3
+
+                sage: W = CombinatorialFreeModule(ZZ, ['x', 'y'])
+                sage: M = matrix(ZZ, [[1, 0], [1, 2]])
+                sage: psi = W.module_morphism(matrix=M, codomain=W)
+                sage: psi.trace()
                 3
             """
             if not self.is_endomorphism():
