@@ -4,7 +4,7 @@ Schemes
 """
 
 # ****************************************************************************
-#       Copyright (C) 2013 David Kohel <kohel@maths.usyd.edu>
+#       Copyright (C) 2005 David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
 #                2008-2012 Nicolas M. Thiery <nthiery@users.sf.net>
 #
