@@ -340,9 +340,9 @@ class Jacobians(Schemes_over_base):
 
             EXAMPLES::
 
-            sage: # needs sage.rings.function_field
-            sage: K.<x> = FunctionField(GF(2))
-            sage: J = K.jacobian()
-            sage: J.base_curve()
-            Rational function field in x over Finite Field of size 2
+                sage: # needs sage.rings.function_field
+                sage: K.<x> = FunctionField(GF(2))
+                sage: J = K.jacobian()
+                sage: J.base_curve()
+                Rational function field in x over Finite Field of size 2
             """

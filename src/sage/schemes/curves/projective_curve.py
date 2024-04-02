@@ -2758,8 +2758,8 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
             sage: A.<x,y> = AffineSpace(GF(5), 2)
             sage: C = Curve(y^2*(x^3 - 1) - (x^3 - 2)).projective_closure()
             sage: J = C.jacobian(model='hess'); J
-            Jacobian of Projective Plane Curve over Finite Field of size 5 defined by 
-             2*x0^5 - x0^2*x1^3 - x0^3*x2^2 + x1^3*x2^2 (Hess model)
+            Jacobian of Projective Plane Curve over Finite Field of size 5
+             defined by 2*x0^5 - x0^2*x1^3 - x0^3*x2^2 + x1^3*x2^2 (Hess model)
             sage: J.base_divisor().degree() == C.genus()
             True
         """
