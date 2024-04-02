@@ -232,24 +232,25 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
 
             sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: C = Curve(x*y^2*z^7 - x^10 - x^2*z^8)
-            sage: C.an_element()  # random
-            (0 : 0 : 1 : 0)
+            sage: C.an_element()
+            (0 : 1 : 0)
             sage: C.an_element() in C
             True
         """
-        gens = self.ambient_space().gens()
-        variables = set(gens)
+        # The dimension won't be too large anyways.
+        gens = list(self.ambient_space().gens())
+        counts = [0] * len(gens)
         for poly in self.defining_polynomials():
             for m in poly.monomials():
                 mvs = m.variables()
-                if len(mvs) == 1 and mvs[0] in variables:
-                    variables.remove(mvs[0])
-        if len(variables) == 0:
+                if len(mvs) == 1:
+                    counts[gens.index(mvs[0])] += 1
+        if min(counts) > 0:
             return NotImplemented
 
         # Set this to 1 and others to 0
         ring = self.base_ring()
-        idx = gens.index(list(variables)[0])
+        idx = counts.index(0)
         coordinate = [ring.zero()] * len(gens)
         coordinate[idx] = ring.one()
         return self(coordinate)
