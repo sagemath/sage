@@ -78,17 +78,18 @@ AUTHORS:
 
 
 import operator
-from sage.structure.element import Element, parent, coercion_model
 from sage.arith.power import generic_power
+from sage.structure.element import Element, parent, coercion_model
 from sage.structure.richcmp import richcmp
 from sage.structure.sequence import Sequence
+from sage.categories.additive_magmas import AdditiveMagmas
 from sage.categories.homset import Homset, Hom, End
+from sage.categories.map import FormalCompositeMap, Map
+from sage.categories.morphism import SetMorphism
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.fraction_field import is_FractionField
-from sage.categories.map import FormalCompositeMap, Map
 from sage.misc.constant_function import ConstantFunction
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.categories.morphism import SetMorphism
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 
 
@@ -363,12 +364,16 @@ class SchemeMorphism(Element):
               Defn: Identity map, Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + x + 1
               Defn: Identity map)
         """
-        # PR_TODO: Move this to category level
+        # TODO: Move this to category level
         from sage.categories.additive_magmas import AdditiveMagmas
         if self not in AdditiveMagmas():
             raise TypeError(f"{self} is not an additive magma")
         if other not in AdditiveMagmas():
             raise TypeError(f"{other} is not an additive magma")
+
+        # TODO: should probably try to simplify some more?
+        if other.domain() != self.domain() and other.codomain() != self.codomain():
+            raise TypeError(f"{self} and {other} must have the same domains and codomains")
 
         phis = []
         if isinstance(self, SchemeMorphism_sum):
@@ -380,8 +385,6 @@ class SchemeMorphism(Element):
         else:
             phis.append(other)
 
-        # TODO should probably try to simplify some more?
-        assert other.domain() == self.domain() and other.codomain() == self.codomain()
         return SchemeMorphism_sum(phis, domain=self.domain(), codomain=self.codomain())
 
     def __mul__(self, right):
@@ -793,12 +796,10 @@ class SchemeMorphism_sum(SchemeMorphism):
             domain = phis[0].domain()
         if codomain is None:
             codomain = phis[0].codomain()
-        if check:
-            try:
-                x = codomain.an_element()
-                _ = x + x
-            except (TypeError, NotImplementedError):
-                raise ValueError(f"addition is not implemented for {codomain}")
+        if check and codomain not in AdditiveMagmas():
+            # If you see this message but it seems wrong, you should initialize codomain
+            # within the AdditiveMagma category.
+            raise ValueError(f"addition is not implemented for {codomain}")
         for phi in phis:
             if phi.domain() != domain:
                 raise ValueError(f'summand {phi} has incorrect domain (need {domain})')
@@ -940,8 +941,7 @@ class SchemeMorphism_sum(SchemeMorphism):
             sage: hash(psi) == hash((psi.__class__, J, J, (phi, phi)))
             True
         """
-        return hash((self.__class__, self.codomain(), self.domain(),
-                    tuple(self._phis)))
+        return hash((self.__class__, self.codomain(), self.domain(), self._phis))
 
 
 class SchemeMorphism_id(SchemeMorphism):
