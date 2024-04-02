@@ -123,7 +123,7 @@ read the following step-by-step instructions for building Sage.
 The instructions cover all of Linux, macOS, and WSL.
 
 More details, providing a background for these instructions, can be found
-in the [section "Install from Source Code"](https://doc.sagemath.org/html/en/installation/source.html)
+in the section [Install from Source Code](https://doc.sagemath.org/html/en/installation/source.html)
 in the Installation Guide.
 
 
