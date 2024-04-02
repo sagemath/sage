@@ -56,7 +56,8 @@ del quickref, tutorial
 
 from sage.misc.lazy_import import lazy_import
 
-from .combinat import (bell_number, bell_polynomial, bernoulli_polynomial,
+from .combinat import (CombinatorialObject,
+                       bell_number, bell_polynomial, bernoulli_polynomial,
                        catalan_number, euler_number,
                        fibonacci, fibonacci_sequence, fibonacci_xrange,
                        lucas_number1, lucas_number2,
