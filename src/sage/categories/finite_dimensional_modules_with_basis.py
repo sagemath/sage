@@ -804,7 +804,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             r"""
             Return the characteristic polynomial of this endomorphism.
 
-            :meth:`characteristic_polynomial` and :meth:`char_poly` are the same method.
+            :meth:`characteristic_polynomial` and :meth:`charpoly` are the same method.
 
             INPUT:
 
@@ -821,6 +821,12 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 x^2 - 3*x + 2
                 sage: phi.charpoly('T')
                 T^2 - 3*T + 2
+
+                sage: W = CombinatorialFreeModule(ZZ, ['x', 'y'])
+                sage: M = matrix(ZZ, [[1, 0], [1, 2]])
+                sage: psi = W.module_morphism(matrix=M, codomain=W)
+                sage: psi.charpoly()
+                x^2 - 3*x + 2
             """
             if not self.is_endomorphism():
                 return NotImplemented
@@ -846,7 +852,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: W = CombinatorialFreeModule(ZZ, ['x', 'y'])
                 sage: M = matrix(ZZ, [[1, 0], [1, 2]])
                 sage: psi = W.module_morphism(matrix=M, codomain=W)
-                sage: phi.det()
+                sage: psi.det()
                 2
             """
             if not self.is_endomorphism():
@@ -881,6 +887,37 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             if not self.is_endomorphism():
                 return NotImplemented
             return self.matrix().fcp
+
+        @lazy_attribute
+        def minimal_polynomial(self):
+            r"""
+            Return the minimal polynomial of this endomorphism.
+
+            :meth:`minimal_polynomial` and :meth:`minpoly` are the same method.
+
+            INPUT:
+
+            - ``var`` -- variable
+
+            EXAMPLES::
+
+                sage: # needs sage.rings.finite_rings
+                sage: k = GF(9, 'c')
+                sage: V = CombinatorialFreeModule(k, ['x', 'y', 'z', 'w'])
+                sage: A = matrix(k, 4, [1,1,0,0, 0,1,0,0, 0,0,5,0, 0,0,0,5])
+                sage: phi = V.module_morphism(matrix=A, codomain=V)
+                sage: factor(phi.minpoly())
+                (x + 1) * (x + 2)^2
+                sage: A.minpoly()(A) == 0
+                True
+                sage: factor(phi.charpoly())
+                (x + 1)^2 * (x + 2)^2
+            """
+            if not self.is_endomorphism():
+                return NotImplemented
+            return self.matrix().minimal_polynomial
+
+        minpoly = minimal_polynomial
 
         @lazy_attribute
         def trace(self):
