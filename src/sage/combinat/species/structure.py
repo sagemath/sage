@@ -352,7 +352,7 @@ class SpeciesWrapper(Parent):
             sage: S.cardinality()
             1
         """
-        Parent.__init__(self, category=EnumeratedSets())
+        Parent.__init__(self, category=EnumeratedSets().Finite())
         self._species = species
         self._labels = labels
         self._iterator = iterator
