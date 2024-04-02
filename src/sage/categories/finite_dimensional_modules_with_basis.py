@@ -829,13 +829,17 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
         charpoly = characteristic_polynomial
 
         @lazy_attribute
-        def det(self):
+        def determinant(self):
             """
             Return the determinant of this endomorphism.
+
+            :meth:`determinant` and :meth:`det` are the same method.
 
             EXAMPLES::
 
                 sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
+                sage: phi.determinant()
+                2
                 sage: phi.det()
                 2
 
@@ -848,6 +852,8 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             if not self.is_endomorphism():
                 return NotImplemented
             return self.matrix().determinant
+
+        det = determinant
 
         @lazy_attribute
         def fcp(self):
