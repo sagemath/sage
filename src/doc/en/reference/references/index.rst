@@ -695,6 +695,11 @@ REFERENCES:
    *Finite hypergeometric functions*,
    :arxiv:`1505.02900`
 
+.. [BEdG2009] Dietrich Burde, Bettina Eick, and Willem de Graaf.
+              *Computing faithful representations for nilpotent Lie algebras*.
+              J. Algebra, **322** no. 3 (2009) pp. 602-612.
+              doi:`10.1016/j.jalgebra.2009.04.041`, arxiv:`0807.2345`.
+
 .. [Bee] Robert A. Beezer, *A First Course in Linear Algebra*,
          http://linear.ups.edu/. Accessed 15 July 2010.
 

@@ -1928,8 +1928,73 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                     for vec in tens]
 
         def faithful_representation(self, algorithm=None):
-            """
+            r"""
             Return a faithful representation of ``self``.
+
+            By Ado's and Iwasawa's theorems, every finite dimensional
+            Lie algebra has a faithful finite dimensional representation.
+
+            INPUT:
+
+            - ``algorithm`` -- one of the following depending on the
+              classification of the Lie algebra:
+
+              Nilpotent Lie algebras:
+
+              * ``'regular'`` -- use the universal enveloping algebra quotient
+                :class:`~sage.algebras.lie_algebras.representation.FaithfulRepresentationNilpotentPBW`
+              * ``'minimal'`` -- construct the minimal representation (for
+                precise details, see the documentation of
+                :class:`~sage.algebras.lie_algebras.representation.FaithfulRepresentationNilpotentPBW`)
+
+              Solvable but not nilpotent:
+
+              * Not implemented
+
+              Semisimple:
+
+              * Not implemented
+
+              General case
+
+              * Not implemented
+
+            EXAMPLES::
+
+                sage: H2 = lie_algebras.Heisenberg(QQ, 2)
+                sage: H2.is_nilpotent()
+                True
+                sage: F = H2.faithful_representation(); F
+                Faithful 16 dimensional representation of Heisenberg algebra of rank 2 over Rational Field
+                sage: M = H2.faithful_representation(algorithm="minimal"); M
+                Minimal faithful representation of Heisenberg algebra of rank 2 over Rational Field
+                sage: M.dimension()
+                4
+                sage: H2.faithful_representation(algorithm="invalid")
+                Traceback (most recent call last):
+                ...
+                ValueError: invalid algorithm 'invalid'
+
+                sage: scoeffs = {('a','d'): {'a':1}, ('a','e'): {'b':-1},
+                ....:            ('b','d'): {'b':1}, ('b','e'): {'a':1},
+                ....:            ('d','e'): {'c':1}}
+                sage: L.<a,b,c,d,e> = LieAlgebra(QQ, scoeffs)
+                sage: L.is_nilpotent()
+                False
+                sage: L.is_solvable()
+                True
+                sage: L.faithful_representation()
+                Traceback (most recent call last):
+                ...
+                NotImplementedError: only implemented for nilpotent Lie algebras
+
+                sage: sl3 = LieAlgebra(QQ, cartan_type=['A', 2])
+                sage: sl3.is_semisimple()
+                True
+                sage: sl3.faithful_representation()
+                Traceback (most recent call last):
+                ...
+                NotImplementedError: only implemented for nilpotent Lie algebras
             """
             if self.is_nilpotent():
                 if algorithm is None:
@@ -1940,8 +2005,9 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 if algorithm == "minimal":
                     from sage.algebras.lie_algebras.representation import FaithfulRepresentationNilpotentPBW
                     return FaithfulRepresentationNilpotentPBW(self, minimal=True)
-                raise ValueError("invalid algorithm")
-            raise NotImplementedError("only implemented for nilpotent Lie algebras")
+            else:
+                raise NotImplementedError("only implemented for nilpotent Lie algebras")
+            raise ValueError("invalid algorithm '{}'".format(algorithm))
 
     class ElementMethods:
         def adjoint_matrix(self, sparse=False): # In #11111 (more or less) by using matrix of a morphism
