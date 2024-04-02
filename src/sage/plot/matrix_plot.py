@@ -1,7 +1,7 @@
 """
 Matrix plots
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2006 Alex Clemesha <clemesha@gmail.com>,
 #                          William Stein <wstein@gmail.com>,
 #                     2008 Mike Hansen <mhansen@gmail.com>,
@@ -15,8 +15,8 @@ Matrix plots
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.plot.primitive import GraphicPrimitive
 from sage.misc.decorators import options, suboptions
@@ -224,10 +224,11 @@ class MatrixPlot(GraphicPrimitive):
             extent = (lim['xmin'], lim['xmax'],
                       lim['ymax' if flip_y else 'ymin'],
                       lim['ymin' if flip_y else 'ymax'])
-            opts = {'cmap': cmap, 'interpolation': 'nearest', 'aspect': 'equal',
-                      'norm': norm, 'vmin': options['vmin'], 'vmax': options['vmax'],
-                      'origin': ('upper' if flip_y else 'lower'),
-                      'extent': extent, 'zorder': options.get('zorder')}
+            opts = {'cmap': cmap, 'interpolation': 'nearest',
+                    'aspect': 'equal', 'norm': norm,
+                    'vmin': options['vmin'], 'vmax': options['vmax'],
+                    'origin': ('upper' if flip_y else 'lower'),
+                    'extent': extent, 'zorder': options.get('zorder')}
             image = subplot.imshow(self.xy_data_array, **opts)
 
             if options.get('colorbar', False):
@@ -240,7 +241,7 @@ class MatrixPlot(GraphicPrimitive):
             subplot.xaxis.tick_top()
         else:
             subplot.xaxis.tick_bottom()
-        subplot.xaxis.set_ticks_position('both') #only tick marks, not tick labels
+        subplot.xaxis.set_ticks_position('both')  # only tick marks, not tick labels
 
 
 @suboptions('colorbar', orientation='vertical', format=None)

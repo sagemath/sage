@@ -338,8 +338,8 @@ def rgbcolor(c, space='rgb'):
 
     elif isinstance(c, (list, tuple)):
         if len(c) != 3:
-            raise ValueError("color list or tuple '{}' must have 3 entries, one for each RGB, HSV, HLS, or HSL channel".format(c ))
-        c = [mod_one(_) for _ in list(c)]
+            raise ValueError(f"color list or tuple '{c}' must have 3 entries, one for each RGB, HSV, HLS, or HSL channel")
+        c = [mod_one(comp) for comp in c]
         if space == 'rgb':
             return tuple(c)
         elif space == 'hsv':
