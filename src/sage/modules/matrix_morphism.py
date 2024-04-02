@@ -19,8 +19,6 @@ EXAMPLES::
     [1 0 0]
     [0 1 0]
     [0 0 1]
-    sage: is_MatrixMorphism(m)
-    True
     sage: m.charpoly('x')                                                               # needs sage.libs.pari
     x^3 - 3*x^2 + 3*x - 1
     sage: m.base_ring()
@@ -65,10 +63,18 @@ def is_MatrixMorphism(x):
 
         sage: V = ZZ^2; phi = V.hom([3*V.0, 2*V.1])
         sage: sage.modules.matrix_morphism.is_MatrixMorphism(phi)
+        doctest:warning...
+        DeprecationWarning: is_MatrixMorphism is deprecated;
+        use isinstance(..., MatrixMorphism_abstract) or categories instead
+        See https://github.com/sagemath/sage/issues/99999 for details.
         True
         sage: sage.modules.matrix_morphism.is_MatrixMorphism(3)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(99999,
+                "is_MatrixMorphism is deprecated; "
+                "use isinstance(..., MatrixMorphism_abstract) or categories instead")
     return isinstance(x, MatrixMorphism_abstract)
 
 
@@ -1366,7 +1372,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
         - Rob Beezer (2011-07-15)
         """
-        if not is_MatrixMorphism(other):
+        if not isinstance(other, MatrixMorphism_abstract):
             msg = 'can only compare to a matrix morphism, not {0}'
             raise TypeError(msg.format(other))
         if self.domain() != other.domain():
