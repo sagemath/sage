@@ -259,13 +259,16 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             names.append(last)
         elif isinstance(names, (str, list, tuple)):
             if isinstance(names, str):
-                names = names.split(',')
+                names = names.replace(' ', '').split(',')
             nb_names = len(names)
             if rank is None:
                 rank = nb_names
             else:
                 rank = ZZ(rank)
-                if nb_names != rank:
+                if nb_names == 1:
+                    g = names[0]
+                    names = [f'{g}{i}' for i in range(1, rank + 1, 1)]
+                elif nb_names != rank:
                     raise ValueError("the number of generators "
                                      f"must be equal to the rank (={rank})")
         else:
