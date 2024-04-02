@@ -52,7 +52,7 @@ obtaining Sage from a package manager, using a container image, or using
 Sage in the cloud.
 
 **This README contains self-contained instructions for building Sage from source.**
-It requires you to clone the git repository (as described in this README) or download the
+This requires you to clone the git repository (as described in this README) or download the
 [sources](https://www.sagemath.org/download-source.html) in the form
 of a tarball.
 
