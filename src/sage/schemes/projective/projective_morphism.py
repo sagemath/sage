@@ -1580,9 +1580,9 @@ class SchemeMorphism_polynomial_projective_space_field(SchemeMorphism_polynomial
 
         INPUT:
 
-        - ``Q`` - a rational point or subscheme in the domain of this map.
+        - ``Q`` -- a rational point or subscheme in the domain of this map.
 
-        - ``k`` - positive integer.
+        - ``k`` -- positive integer.
 
         OUTPUT:
 

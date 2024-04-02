@@ -33,8 +33,8 @@ def find_root(f, a, b, xtol=10e-13, rtol=2.0**-50, maxiter=100, full_output=Fals
       to lie within ``xtol`` of the value return. Should be `\geq 0`.
       The routine modifies this to take into account the relative precision
       of doubles. By default, rtol is ``4*numpy.finfo(float).eps``, the
-      minimum allowed value for ``scipy.optimize.brentq``, which is what
-      this method uses underneath. This value is equal to ``2.0**-50`` for
+      minimum allowed value for :func:`scipy:scipy.optimize.brentq`, which is
+      what this method uses underneath. This value is equal to ``2.0**-50`` for
       IEEE-754 double precision floats as used by Python.
 
     - ``maxiter`` -- integer; if convergence is not achieved in
@@ -274,9 +274,7 @@ def find_local_minimum(f, a, b, tol=1.48e-08, maxfun=500):
 
     ALGORITHM:
 
-    Uses `scipy.optimize.fminbound
-    <http://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.fminbound.html>`_
-    which uses Brent's method.
+    Uses :func:`scipy:scipy.optimize.fminbound` which uses Brent's method.
 
 
     AUTHOR:
@@ -338,8 +336,8 @@ def minimize(func, x0, gradient=None, hessian=None, algorithm="default",
     .. NOTE::
 
         For additional information on the algorithms implemented in this function,
-        consult SciPy's `documentation on optimization and root
-        finding <https://docs.scipy.org/doc/scipy/reference/optimize.html>`_
+        consult SciPy's :mod:`documentation on optimization and root
+        finding <scipy:scipy.optimize>`.
 
     EXAMPLES:
 
@@ -650,8 +648,8 @@ def find_fit(data, model, initial_guess=None, parameters=None, variables=None, s
 
     ALGORITHM:
 
-    Uses ``scipy.optimize.leastsq`` which in turn uses MINPACK's lmdif and
-    lmder algorithms.
+    Uses :func:`scipy:scipy.optimize.leastsq` which in turn uses MINPACK's
+    ``lmdif`` and ``lmder`` algorithms.
     """
     import numpy
 

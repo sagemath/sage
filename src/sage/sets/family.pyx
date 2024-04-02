@@ -935,7 +935,7 @@ class FiniteFamilyWithHiddenKeys(FiniteFamily):
             hidden_function = unpickle_function(hidden_function)
         self.__init__(d['dictionary'], d['hidden_keys'], hidden_function)
         self.hidden_dictionary = d['hidden_dictionary']
-        # Old pickles from before trac #22955 may not have a 'keys'
+        # Old pickles from before Issue #22955 may not have a 'keys'
         if 'keys' in d:
             self._keys = d['keys']
         else:
