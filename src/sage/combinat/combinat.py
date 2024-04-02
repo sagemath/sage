@@ -180,8 +180,6 @@ from sage.structure.parent import Parent
 from sage.misc.lazy_import import lazy_import
 from sage.misc.lazy_attribute import lazy_attribute
 from .combinat_cython import _stirling_number2
-from sage.categories.enumerated_sets import EnumeratedSets
-from sage.misc.classcall_metaclass import ClasscallMetaclass
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.structure.element import Element
 
