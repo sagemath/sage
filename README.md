@@ -52,7 +52,7 @@ obtaining Sage from a package manager, using a container image, or using
 Sage in the cloud.
 
 **This README contains self-contained instructions for building Sage from source.**
-It assumes that you have already cloned the git repository or downloaded the
+It requires you to clone the git repository (as described in this README) or download the
 [sources](https://www.sagemath.org/download-source.html) in the form
 of a tarball.
 
@@ -123,7 +123,7 @@ read the following step-by-step instructions for building Sage.
 The instructions cover all of Linux, macOS, and WSL.
 
 More details, providing a background for these instructions, can be found
-in the [section "Install from Source Code"](https://doc.sagemath.org/html/en/installation/source.html).
+in the [section "Install from Source Code"](https://doc.sagemath.org/html/en/installation/source.html)
 in the Installation Guide.
 
 
