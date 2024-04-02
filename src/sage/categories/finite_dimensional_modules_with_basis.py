@@ -14,6 +14,8 @@ from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.fields import Fields
 from sage.categories.tensor import TensorProductsCategory
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
+
 
 class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
     """
@@ -796,6 +798,86 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             C = self.codomain()
             return C.submodule(self.image_basis(), already_echelonized=True,
                                category=self.category_for())
+
+        @lazy_attribute
+        def characteristic_polynomial(self):
+            r"""
+            Return the characteristic polynomial of this endomorphism.
+
+            :meth:`characteristic_polynomial` and :meth:`char_poly` are the same method.
+
+            INPUT:
+
+            - ``var`` -- variable
+
+            EXAMPLES::
+
+                sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
+                sage: phi.characteristic_polynomial()
+                x^2 - 3*x + 2
+                sage: phi.charpoly()
+                x^2 - 3*x + 2
+                sage: phi.matrix().charpoly()
+                x^2 - 3*x + 2
+                sage: phi.charpoly('T')
+                T^2 - 3*T + 2
+            """
+            if not self.is_endomorphism():
+                return NotImplemented
+            return self.matrix().charpoly
+
+        charpoly = characteristic_polynomial
+
+        @lazy_attribute
+        def det(self):
+            """
+            Return the determinant of this endomorphism.
+
+            EXAMPLES::
+
+                sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
+                sage: phi.det()
+                2
+            """
+            if not self.is_endomorphism():
+                return NotImplemented
+            return self.matrix().determinant
+
+        @lazy_attribute
+        def fcp(self):
+            """
+            Return the factorization of the characteristic polynomial.
+
+            INPUT:
+
+            - ``var`` -- variable
+
+            EXAMPLES::
+
+                sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
+                sage: phi.fcp()                                                             # needs sage.libs.pari
+                (x - 2) * (x - 1)
+                sage: phi.fcp('T')                                                          # needs sage.libs.pari
+                (T - 2) * (T - 1)
+            """
+            if not self.is_endomorphism():
+                return NotImplemented
+            return self.matrix().fcp
+
+        @lazy_attribute
+        def trace(self):
+            r"""
+            Return the trace of this endomorphism.
+
+            EXAMPLES::
+
+                sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
+                sage: phi.trace()
+                3
+            """
+            if not self.is_endomorphism():
+                return NotImplemented
+            return self.matrix().trace
 
     class TensorProducts(TensorProductsCategory):
 
