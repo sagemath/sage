@@ -116,6 +116,10 @@ class Tarball(object):
     def _compute_sha1(self):
         import hashlib
         return self._compute_hash(hashlib.sha1())
+    
+    def _compute_sha256(self):
+        import hashlib
+        return self._compute_hash(hashlib.sha256())
 
     def _compute_md5(self):
         import hashlib

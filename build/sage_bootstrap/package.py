@@ -91,6 +91,17 @@ class Package(object):
         String.
         """
         return self.__sha1
+    
+    @property
+    def sha256(self):
+        """
+        Return the SHA256 checksum
+
+        OUTPUT:
+
+        String.
+        """
+        return self.__sha256
 
     @property
     def cksum(self):
@@ -478,6 +489,7 @@ class Package(object):
             pass
         self.__md5 = result.get('md5', None)
         self.__sha1 = result.get('sha1', None)
+        self.__sha256 = result.get('sha256', None)
         self.__cksum = result.get('cksum', None)
         self.__tarball_pattern = result.get('tarball', None)
         self.__tarball_upstream_url_pattern = result.get('upstream_url', None)
