@@ -28,7 +28,7 @@ from sage.structure.element cimport Element, RingElement, Vector
 from sage.arith.long cimport pyobject_to_long
 from sage.misc.misc_c import sized_iter
 from sage.categories import monoids
-from sage.misc.decorators import rename_keyword
+from sage.misc.superseded import deprecation_cython
 
 
 try:
@@ -312,7 +312,6 @@ cdef class MatrixArgs:
         self.sparse = -1
         self.kwds = {}
 
-    @rename_keyword(deprecation=33380, ring='base_ring')
     def __init__(self, *args, base_ring=None, nrows=None, ncols=None, entries=None, sparse=None, space=None, **kwds):
         """
         Parse arguments for creating a new matrix.
@@ -342,7 +341,12 @@ cdef class MatrixArgs:
             sage: MatrixArgs(3, ncols=1).finalized()
             <MatrixArgs for Full MatrixSpace of 1 by 1 dense matrices over Integer Ring; typ=SCALAR; entries=3>
         """
-        self.base = base_ring
+        if "ring" in kwds.keys():
+            deprecation_cython(issue_number=33380, message="ring is deprecated (keyword will be removed in the future). Use base_ring instead", stacklevel=3)
+            self.base = kwds.pop("ring")
+        else:
+            self.base = base_ring
+
         if nrows is not None:
             self.set_nrows(pyobject_to_long(nrows))
         if ncols is not None:
