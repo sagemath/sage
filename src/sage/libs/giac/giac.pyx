@@ -2102,7 +2102,7 @@ class GiacInstance:
 
 libgiac=GiacInstance()
 
-# trac #23976 (bound threads with SAGE_NUM_THREADS)
+# Issue #23976 (bound threads with SAGE_NUM_THREADS)
 import os
 try:
     ncpus = int(os.environ['SAGE_NUM_THREADS'])

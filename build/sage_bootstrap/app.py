@@ -57,8 +57,8 @@ class Application(object):
 
         $ sage --package list
         4ti2
-        arb
-        autotools
+        _bootstrap
+        _develop
         [...]
         zlib
 
@@ -66,9 +66,9 @@ class Application(object):
         perl_term_readline_gnu
 
         $ sage -package list --has-file=spkg-configure.m4 --has-file=distros/debian.txt
-        arb
-        boost_cropped
-        brial
+        4ti2
+        _develop
+        _prereq
         [...]
         zlib
         """
