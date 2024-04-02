@@ -253,8 +253,8 @@ This so-called "spkg-configure" mechanism runs at the beginning of a
 build from source, during the ``./configure`` phase.
 
 To ensure that SageMath builds and runs correctly on a wide variety of
-systems, we use automated testing.  See the chapter `Portability
-testing <../developer/portability_testing.html>`_ in the Developer's
+systems, we use automated testing.  See the chapter :ref:`Portability
+testing <chapter-portability_testing>` in the Developer's
 Guide for details.
 
 

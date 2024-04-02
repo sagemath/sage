@@ -92,7 +92,7 @@ Hier geben wir nur ein paar Kommentare ab.
    machen. Um dies zu tun, lesen Sie den Abschnitt `Make SageTeX known
    to TeX <http://doc.sagemath.org/html/en/installation/sagetex.html>`_ im
    Sage Installation Guide
-   (`Dieser Link <../../en/installation/index.html>`_ sollte Sie zu
+   (:ref:`Dieser Link <installation-guide>` sollte Sie zu
    eine lokalen Kopie des Installation Guides führen). Es ist ziemlich
    einfach; Sie müssen  nur eine Umgebungsvariable setzen oder eine
    einzige Datei in ein Verzeichnis kopieren, welches TeX durchsucht.

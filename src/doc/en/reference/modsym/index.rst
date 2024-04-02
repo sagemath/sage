@@ -1,3 +1,5 @@
+.. _modsym:
+
 Modular Symbols
 ===============
 

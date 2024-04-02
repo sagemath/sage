@@ -19,7 +19,7 @@ If you are on an older version of your distribution and a recent
 version of SageMath is only available on a newer version of the
 distribution, consider upgrading your distribution.
 
-See `the _sagemath dummy package <../reference/spkg/_sagemath.html>`_
+See :ref:`the _sagemath dummy package <spkg__sagemath>`
 for the names of packages that provide a standard installation of
 SageMath, including documentation and Jupyter.  See also `repology.org: sagemath
 <https://repology.org/project/sagemath/versions>`_ for information

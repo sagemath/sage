@@ -1,3 +1,5 @@
+.. _coercion:
+
 Coercion
 ========
 

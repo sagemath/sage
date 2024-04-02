@@ -219,7 +219,7 @@ on our container to install the necessary build prerequisites::
   ...
   Done.
 
-(The Sage `Installation Guide <../installation/index.html>`_ also
+(The Sage :ref:`Installation Guide <installation-guide>` also
 provides such command lines for some distributions; these are
 automatically generated from the database of package names.)
 
@@ -1304,7 +1304,7 @@ dev container, to use Sage in a terminal, `open a new terminal in VS Code
 Files named ``$SAGE_ROOT/.devcontainer/downstream-.../devcontainer.json`` configure
 containers with an installation of downstream packages providing SageMath from a
 package manager (``downstream-archlinux-...``, ``downstream-conda-forge``;
-see also `the _sagemath dummy package <../reference/spkg/_sagemath.html>`_),
+see also :ref:`the _sagemath dummy package <spkg__sagemath>`),
 or from a public Docker image that provides SageMath (``docker-cocalc``, ``docker-computop``).
 These ``devcontainer.json`` configuration files are useful for testing
 user scripts on these deployments of SageMath. You may also find it

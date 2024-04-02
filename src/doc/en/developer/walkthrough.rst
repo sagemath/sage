@@ -79,10 +79,10 @@ to the develop branch (latest development release)::
 Next, build Sage, following the instruction in the file `README.md
 <https://github.com/sagemath/sage/#readme>`_ in ``SAGE_ROOT``. If all
 prerequisites to build are in place, the commands ``./configure && make -j4``
-will do it.  Additional details can be found in the section on `installation
-from source <../installation/source.html>`_ in the Sage installation guide. If
-you wish to use conda-forge, see the section on `conda
-<../installation/conda.html>`_.
+will do it.  Additional details can be found in the section on :ref:`installation
+from source <sec-installation-from-sources>` in the Sage installation guide. If
+you wish to use conda-forge, see the section on :ref:`conda
+<sec-installation-conda>`.
 
 .. NOTE::
 

@@ -42,7 +42,7 @@ using the Mac app and have placed it in your Applications directory.
   ``sage --sws2rst -h`` once you have installed beautifulsoup4.
 
 * In principle, such a file could be added directly to Sage's documentation (see
-  the `developer's manual <../developer/index.html>`_). However, you probably
+  the :ref:`developer's manual <developers-guide>`). However, you probably
   want to check whether it looks right first. So next we will compile this file
   to html documentation.
 
