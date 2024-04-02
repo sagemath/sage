@@ -2338,7 +2338,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         ret = ret**e
         return ret
 
-    def point_of_jacobian_of_projective_curve(self):
+    def point_of_jacobian_of_curve(self):
         r"""
         Return the point in the Jacobian of the curve.
 
@@ -2358,13 +2358,13 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             (a : 2*a + 4 : 1)
             sage: P.order()
             8
-            sage: p = P.point_of_jacobian_of_projective_curve()
+            sage: p = P.point_of_jacobian_of_curve()
             sage: p
             [Place (x + 4*a, y + 3*a + 1)]
             sage: p.order()
             8
             sage: Q = 3*P
-            sage: q = Q.point_of_jacobian_of_projective_curve()
+            sage: q = Q.point_of_jacobian_of_curve()
             sage: q == 3*p
             True
             sage: G = p.parent()

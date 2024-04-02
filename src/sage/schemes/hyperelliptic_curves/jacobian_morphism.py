@@ -515,7 +515,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
         """
         return self.codomain()
 
-    def point_of_jacobian_of_projective_curve(self):
+    def point_of_jacobian_of_curve(self):
         r"""
         Return the point in the Jacobian of the curve.
 
@@ -534,7 +534,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
             sage: jacobian_order = sum(H.frobenius_polynomial())
             sage: jacobian_order
             234
-            sage: p = D.point_of_jacobian_of_projective_curve(); p
+            sage: p = D.point_of_jacobian_of_curve(); p
             [Place (1/x0, 1/x0^3*x1 + 1)
              + Place (x0 + 10, x1 + 6)]
             sage: p  # Jacobian point represented by an effective divisor
