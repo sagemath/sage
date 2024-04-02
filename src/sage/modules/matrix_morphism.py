@@ -479,7 +479,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
         TESTS:
 
-        Check that :trac:`28272` is fixed::
+        Check that :issue:`28272` is fixed::
 
             sage: V = VectorSpace(QQ,2)
             sage: f = V.hom(identity_matrix(QQ,2))
@@ -491,6 +491,29 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             Vector space morphism represented by the matrix:
             [1/2   0]
             [  0 1/2]...
+
+        Check that :issue:`16830` is fixed::
+
+            sage: K = GF(7); K
+            Finite Field of size 7
+            sage: phi = End(K^2)([[1,1],[1,1]]); phi
+            Vector space morphism represented by the matrix:
+            [1 1]
+            [1 1]
+            Domain:   Vector space of dimension 2 over Finite Field of size 7
+            Codomain: Vector space of dimension 2 over Finite Field of size 7
+            sage: 2*phi
+            Vector space morphism represented by the matrix:
+            [2 2]
+            [2 2]
+            Domain:   Vector space of dimension 2 over Finite Field of size 7
+            Codomain: Vector space of dimension 2 over Finite Field of size 7
+            sage: K(2)*phi
+            Vector space morphism represented by the matrix:
+            [2 2]
+            [2 2]
+            Domain:   Vector space of dimension 2 over Finite Field of size 7
+            Codomain: Vector space of dimension 2 over Finite Field of size 7
         """
         R = self.base_ring()
         return self.parent()(R(left) * self.matrix(), side=self.side())
