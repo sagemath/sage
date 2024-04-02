@@ -12,13 +12,6 @@
 
 from sage_docbuild.conf import release
 from sage_docbuild.conf import *  # NOQA
-import os
-import sys
-
-current_dir = os.path.dirname(os.path.abspath(__file__))
-installation_dir = os.path.abspath(os.path.join(current_dir, '../../en/installation'))
-sys.path.insert(0, installation_dir)
-
 
 # Add any paths that contain custom static files (such as style sheets),
 # relative to this directory to html_static_path. They are copied after the

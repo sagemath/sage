@@ -14,11 +14,6 @@ import os
 from sage.env import SAGE_DOC_SRC, SAGE_DOC
 from sage_docbuild.conf import release, exclude_patterns
 from sage_docbuild.conf import *
-import sys
-
-current_dir = os.path.dirname(os.path.abspath(__file__))
-tutorial_dir = os.path.abspath(os.path.join(current_dir, '../tutorial'))
-sys.path.insert(0, tutorial_dir)
 
 # Add any paths that contain custom static files (such as style sheets),
 # relative to this directory to html_static_path. They are copied after the
