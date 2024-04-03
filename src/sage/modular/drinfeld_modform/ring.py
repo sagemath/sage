@@ -283,7 +283,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
                 rank = nb_names
             else:
                 rank = ZZ(rank)
-                if nb_names == 1:
+                if nb_names == 1 and rank > 1:
                     g = names[0]
                     names = [f'{g}{i}' for i in range(1, rank + 1, 1)]
                 elif nb_names != rank:
