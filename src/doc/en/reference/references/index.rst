@@ -4224,6 +4224,9 @@ REFERENCES:
 .. [Lin1999] \J. van Lint, Introduction to coding theory, 3rd ed.,
              Springer-Verlag GTM, 86, 1999.
 
+.. [Lin2019] \A. Linton, "Massey Products in Moment-Angle Complexes", 2019.
+             https://eprints.soton.ac.uk/438662/1/ALinton_Thesis_FinalSubmission.pdf
+
 .. [Liv1993] Charles Livingston, *Knot Theory*, Carus Mathematical
              Monographs, number 24.
 
