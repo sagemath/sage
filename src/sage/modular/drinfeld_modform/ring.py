@@ -166,6 +166,12 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
          g1^27*g3 + g1*g3^3 + g2^10,
          g2^27*g3 + g2*g3^9,
          g3^28]
+
+    REFERENCE:
+
+    For a quick introduction to Drinfeld modular forms, see the tutorial
+    :mod:`sage.modular.drinfeld_modform.tutorial`. For more extensive
+    references, see [Gek1988]_ and [BRP2018]_.
     """
 
     Element = DrinfeldModularFormsElement
