@@ -58,8 +58,13 @@ class SAGE_SRC(StaticFile):
             True
         """
         from sage.env import SAGE_SRC
+        # We check the file bin/sage-src-env-config.in, which by design is:
+        # - never installed,
+        # - not included in the sagemath-standard sdist,
+        # - included only in one modularized sdist, of pkgs/sage-conf_pypi,
+        #   where it appears in a subdirectory (sage_root/src/bin/)
         StaticFile.__init__(self, 'SAGE_SRC',
-                            filename='VERSION.txt',  # a file that is never installed
+                            filename='bin/sage-src-env-config.in',
                             search_path=(SAGE_SRC,) if SAGE_SRC else ())
 
 
