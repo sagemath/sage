@@ -1303,11 +1303,11 @@ class VariablePool(UniqueRepresentation):
             sage: R.<a> = InfinitePolynomialRing(QQ)
             sage: P = VariablePool(R)
             sage: v = P.new_variable(); v
-            a_0
+            a_1
 
             sage: P.del_variable(v)
             sage: v = P.new_variable(); v
-            a_0
+            a_1
         """
         del self._pool[v]
 
@@ -1521,6 +1521,8 @@ class Stream_uninitialized(Stream):
             return ZZ.zero()
 
         # define_implicitly
+        if self._eqs is None:
+            raise ValueError("Stream is not yet defined")
         if self._good_cache[0] > n - self._approximate_order:
             return self._cache[n - self._approximate_order]
 
