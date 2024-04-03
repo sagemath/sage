@@ -41,6 +41,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import re
 from sys import stdout
 from signal import (SIGABRT, SIGALRM, SIGBUS, SIGFPE, SIGHUP, SIGILL,
                     SIGINT, SIGKILL, SIGPIPE, SIGQUIT, SIGSEGV, SIGTERM)
@@ -256,12 +257,34 @@ class DocTestReporter(SageObject):
             **********************************************************************
         """
         log = self.controller.log
-        stars = "*" * 70
-        log(f"    {fail_msg}\n{stars}\n")
-        if output:
-            log(f"Tests run before {event}:")
-            log(output)
-            log(stars)
+        format = self.controller.options.format
+        if format == 'sage':
+            stars = "*" * 70
+            log(f"    {fail_msg}\n{stars}\n")
+            if output:
+                log(f"Tests run before {event}:")
+                log(output)
+                log(stars)
+        elif format == 'github':
+            # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#using-workflow-commands-to-access-toolkit-functions
+            command = f'::error title={fail_msg}'
+            command += f',file={source.printpath}'
+            if output:
+                if m := re.search("## line ([0-9]+) ##\n-{40,100}\n(.*)", output, re.MULTILINE|re.DOTALL):
+                    lineno = m.group(1)
+                    message = m.group(2)
+                    command += f',line={lineno}'
+                else:
+                    message = output
+                # Urlencoding trick for multi-line annotations
+                # https://github.com/actions/starter-workflows/issues/68#issuecomment-581479448
+                message = message.replace('\n', '%0A')
+            else:
+                message = ""
+            command += f'::{message}'
+            log(command)
+        else:
+            raise ValueError(f'unknown format option: {format}')
 
     def report(self, source, timeout, return_code, results, output, pid=None):
         """
