@@ -29,17 +29,16 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
     r"""
     Cartesian product of finite sets.
 
-    This class will soon be deprecated (see :issue:`18411` and :issue:`19195`).
-    One should instead use the functorial construction
+    This class is deprecated. Instead use the functorial construction
     :class:`cartesian_product <sage.categories.cartesian_product.CartesianProductFunctor>`.
     The main differences in behavior are:
 
-    - construction: ``CartesianProduct`` takes as many argument as
-      there are factors whereas ``cartesian_product`` takes a single
+    - construction: ``CartesianProduct_iters`` takes as many argument as
+      there are factors, whereas ``cartesian_product`` takes a single
       list (or iterable) of factors;
 
     - representation of elements: elements are represented by plain
-      Python list for ``CartesianProduct`` versus a custom element
+      Python list for ``CartesianProduct_iters`` versus a custom element
       class for ``cartesian_product``;
 
     - membership testing: because of the above, plain Python lists are
@@ -54,6 +53,9 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
         sage: F3 = Permutations(3)
         sage: from sage.combinat.cartesian_product import CartesianProduct_iters
         sage: C = CartesianProduct_iters(F1, F2, F3)
+        doctest:warning...
+        DeprecationWarning: CartesianProduct_iters is deprecated; use cartesian_product instead
+        See http://trac.sagemath.org/19195 for details.
         sage: c = cartesian_product([F1, F2, F3])
 
         sage: type(C.an_element())
@@ -81,10 +83,16 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
 
             sage: from sage.combinat.cartesian_product import CartesianProduct_iters
             sage: cp = CartesianProduct_iters([1,2],[3,4]); cp
+            doctest:warning...
+            DeprecationWarning: CartesianProduct_iters is deprecated; use cartesian_product instead
+            See http://trac.sagemath.org/19195 for details.
             Cartesian product of [1, 2], [3, 4]
             sage: loads(dumps(cp)) == cp
             True
             sage: TestSuite(cp).run(skip='_test_an_element')
+            doctest:warning...
+            DeprecationWarning: CartesianProduct_iters is deprecated; use cartesian_product instead
+            See http://trac.sagemath.org/19195 for details.
 
         Check that :issue:`24558` is fixed::
 
@@ -92,8 +100,14 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
             sage: from sage.sets.set_from_iterator import EnumeratedSetFromIterator
             sage: I = EnumeratedSetFromIterator(Integers)
             sage: CartesianProduct_iters(I, I)
+            doctest:warning...
+            DeprecationWarning: CartesianProduct_iters is deprecated; use cartesian_product instead
+            See http://trac.sagemath.org/19195 for details.
             Cartesian product of {0, 1, -1, 2, -2, ...}, {0, 1, -1, 2, -2, ...}
         """
+        from sage.misc.superseded import deprecation
+        deprecation(19195, 'CartesianProduct_iters is deprecated; use cartesian_product instead')
+
         self.iters = iters
         self._mrange = xmrange_iter(iters)
         category = EnumeratedSets()
@@ -128,6 +142,9 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
 
             sage: from sage.combinat.cartesian_product import CartesianProduct_iters
             sage: cp = CartesianProduct_iters([1,2],[3,4])
+            doctest:warning...
+            DeprecationWarning: CartesianProduct_iters is deprecated; use cartesian_product instead
+            See http://trac.sagemath.org/19195 for details.
             sage: [1,3] in cp
             True
             sage: [1,2] in cp
@@ -164,6 +181,9 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
 
             sage: from sage.combinat.cartesian_product import CartesianProduct_iters
             sage: CartesianProduct_iters(list(range(2)), list(range(3)))
+            doctest:warning...
+            DeprecationWarning: CartesianProduct_iters is deprecated; use cartesian_product instead
+            See http://trac.sagemath.org/19195 for details.
             Cartesian product of [0, 1], [0, 1, 2]
         """
         return "Cartesian product of " + ", ".join(map(str, self.iters))
@@ -177,6 +197,9 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
 
             sage: from sage.combinat.cartesian_product import CartesianProduct_iters
             sage: CartesianProduct_iters(range(2), range(3)).cardinality()
+            doctest:warning...
+            DeprecationWarning: CartesianProduct_iters is deprecated; use cartesian_product instead
+            See http://trac.sagemath.org/19195 for details.
             6
             sage: CartesianProduct_iters(range(2), range(3)).cardinality()
             6
@@ -210,6 +233,9 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
 
             sage: from sage.combinat.cartesian_product import CartesianProduct_iters
             sage: C = CartesianProduct_iters(range(3), range(4))
+            doctest:warning...
+            DeprecationWarning: CartesianProduct_iters is deprecated; use cartesian_product instead
+            See http://trac.sagemath.org/19195 for details.
             sage: len(C)
             12
             sage: C = CartesianProduct_iters(ZZ, QQ)
@@ -231,6 +257,9 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
 
             sage: from sage.combinat.cartesian_product import CartesianProduct_iters
             sage: CartesianProduct_iters(range(3), range(3)).list()
+            doctest:warning...
+            DeprecationWarning: CartesianProduct_iters is deprecated; use cartesian_product instead
+            See http://trac.sagemath.org/19195 for details.
             [[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0], [2, 1], [2, 2]]
             sage: CartesianProduct_iters('dog', 'cat').list()
             [['d', 'c'],
@@ -257,6 +286,9 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
 
             sage: from sage.combinat.cartesian_product import CartesianProduct_iters
             sage: [e for e in CartesianProduct_iters(range(3), range(3))]
+            doctest:warning...
+            DeprecationWarning: CartesianProduct_iters is deprecated; use cartesian_product instead
+            See http://trac.sagemath.org/19195 for details.
             [[0, 0], [0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0], [2, 1], [2, 2]]
             sage: [e for e in CartesianProduct_iters('dog', 'cat')]
             [['d', 'c'],
@@ -280,6 +312,9 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
 
             sage: from sage.combinat.cartesian_product import CartesianProduct_iters
             sage: CartesianProduct_iters(ZZ, []).is_finite()
+            doctest:warning...
+            DeprecationWarning: CartesianProduct_iters is deprecated; use cartesian_product instead
+            See http://trac.sagemath.org/19195 for details.
             True
             sage: CartesianProduct_iters(4,4).is_finite()
             Traceback (most recent call last):
@@ -305,6 +340,9 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
 
             sage: from sage.combinat.cartesian_product import CartesianProduct_iters
             sage: C = CartesianProduct_iters(range(1000), range(1000), range(1000))
+            doctest:warning...
+            DeprecationWarning: CartesianProduct_iters is deprecated; use cartesian_product instead
+            See http://trac.sagemath.org/19195 for details.
             sage: C[238792368]
             [238, 792, 368]
 
@@ -340,6 +378,9 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
 
             sage: from sage.combinat.cartesian_product import CartesianProduct_iters
             sage: c = CartesianProduct_iters('dog', 'cat').random_element()
+            doctest:warning...
+            DeprecationWarning: CartesianProduct_iters is deprecated; use cartesian_product instead
+            See http://trac.sagemath.org/19195 for details.
             sage: c in CartesianProduct_iters('dog', 'cat')
             True
         """
