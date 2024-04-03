@@ -1808,13 +1808,15 @@ cdef class Polynomial_dense_mod_p(Polynomial_dense_mod_n):
 
         TESTS:
 
-        Negative powers will not work::
+        Negative powers work but use the generic
+        implementation of fraction fields::
 
             sage: R.<x> = PolynomialRing(Integers(101), implementation='NTL')
-            sage: (x-1)^(-5)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: Fraction fields not implemented for this type.
+            sage: f = (x-1)^(-5)
+            sage: type(f)
+            <class 'sage.rings.fraction_field_element.FractionFieldElement_1poly_field'>
+            sage: (f + 2).numerator()
+            2*x^5 + 91*x^4 + 20*x^3 + 81*x^2 + 10*x + 100
 
         We define ``0^0`` to be unity, :issue:`13895`::
 

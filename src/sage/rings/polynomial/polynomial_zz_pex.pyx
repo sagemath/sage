@@ -670,6 +670,10 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
          """
         exp = Integer(exp)
         if modulus is not None:
+            # Handle when modulus is zero
+            if modulus.is_zero():
+                raise ZeroDivisionError("modulus must be nonzero")
+
             # Similar to coerce_binop
             if not have_same_parent(self, modulus):
                 a, m = canonical_coercion(self, modulus)
