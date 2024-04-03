@@ -1199,7 +1199,7 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
             sage: f.degree(1)
             Traceback (most recent call last):
             ...
-            TypeError: x must be a generator of parent
+            TypeError: 1 is not a generator of parent
         """
         # The zero polynomial is defined to have degree -Infinity
         if self.is_zero():
