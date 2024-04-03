@@ -101,7 +101,7 @@ from sage.misc.superseded import deprecation
 
 from sage.structure.coerce cimport coercion_model
 from sage.structure.parent cimport Parent
-from sage.structure.category_object import check_default_category
+from sage.structure.category_object cimport check_default_category
 from sage.structure.sequence import Sequence
 from sage.misc.prandom import randint
 from sage.categories.rings import Rings
@@ -235,7 +235,7 @@ cdef class Ring(ParentWithGens):
         # This is a low-level class. For performance, we trust that the category
         # is fine, if it is provided. If it isn't, we use the category of rings.
         if category is None:
-            category = _Rings
+            category = check_default_category(_Rings, category)
         Parent.__init__(self, base=base, names=names, normalize=normalize,
                         category=category)
 
@@ -1823,7 +1823,7 @@ cdef class Algebra(Ring):
         # This is a low-level class. For performance, we trust that the category
         # is fine, if it is provided. If it isn't, we use the category of Algebras(base_ring).
         if category is None:
-            category = Algebras(base_ring)
+            category = check_default_category(Algebras(base_ring), category)
         Ring.__init__(self,base_ring, names=names, normalize=normalize,
                       category=category)
 

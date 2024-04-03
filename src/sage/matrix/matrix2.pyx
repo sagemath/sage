@@ -18265,12 +18265,13 @@ def _generic_clear_column(m):
     I = ideal_or_fractional(R, a[0, 0])  # need to make sure we change this when a[0,0] changes
     for k in range(1, a.nrows()):
         if a[k, 0] not in I:
+            new_ideal = ideal_or_fractional(R, a[0, 0], a[k, 0])
             try:
-                v = ideal_or_fractional(R, a[0, 0], a[k, 0]).gens_reduced()
+                v = new_ideal.gens_reduced()
             except Exception as msg:
                 raise ArithmeticError("%s\nCan't create ideal on %s and %s" % (msg, a[0, 0], a[k, 0]))
             if len(v) > 1:
-                raise ArithmeticError("Ideal %s not principal" % ideal_or_fractional(R, a[0, 0], a[k, 0]))
+                raise ArithmeticError("Ideal %s not principal" % new_ideal)
             B = v[0]
 
             # now we find c,d, using the fact that c * (a_{0,0}/B) - d *
