@@ -2117,12 +2117,12 @@ class pAdicAutomorphicFormElement(ModuleElement):
             sage: p = 7
             sage: lev = 2
             sage: prec = 10
-            sage: X = BruhatTitsQuotient(p,lev)
+            sage: X = BruhatTitsQuotient(p, lev)
             sage: k = 2
-            sage: M = X.harmonic_cocycles(k,prec)
+            sage: M = X.harmonic_cocycles(k, prec)
             sage: B = M.basis()
             sage: f = 3*B[0]
-            sage: MM = X.padic_automorphic_forms(k,prec,overconvergent = True)
+            sage: MM = X.padic_automorphic_forms(k, prec, overconvergent=True)
             sage: D = -11
             sage: X.is_admissible(D)
             True
