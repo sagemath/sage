@@ -213,6 +213,7 @@ cdef class CategoryObject(SageObject):
             sage: ZZ.categories()
             [Join of Category of Dedekind domains
                  and Category of euclidean domains
+                 and Category of noetherian rings
                  and Category of infinite enumerated sets
                  and Category of metric spaces,
              Category of Dedekind domains,
@@ -221,7 +222,7 @@ cdef class CategoryObject(SageObject):
              Category of unique factorization domains,
              Category of gcd domains,
              Category of integral domains,
-             Category of domains,
+             Category of domains, ...
              Category of commutative rings, ...
              Category of monoids, ...,
              Category of commutative additive groups, ...,
