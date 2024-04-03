@@ -68,7 +68,9 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
     where `h_r` is a form of weight `(q^r - 1)/(q - 1)` and type `1`.
 
     We will see the elements of this ring as formal objects given by
-    algebraic combination of the generator of the ring.
+    algebraic combination of the generator of the ring. See the class
+    :class:`~sage.modular.drinfeld_modform.element.DrinfeldModularFormsElement`
+    for more details about their implementation.
 
     INPUT:
 
