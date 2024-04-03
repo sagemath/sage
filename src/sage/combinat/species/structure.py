@@ -360,6 +360,18 @@ class SpeciesWrapper(Parent):
         self._name = "%s for %s with labels %s" % (name, species, labels)
         self._structure_class = structure_class if structure_class is not None else species._default_structure_class
 
+    def _repr_(self) -> str:
+        """
+        EXAMPLES::
+
+            sage: from sage.combinat.species.structure import SpeciesWrapper
+            sage: F = species.SetSpecies()
+            sage: S = SpeciesWrapper(F, [1,2,3], "_structures", "generating_series", 'Structures', None)
+            sage: repr(S)   # indirect doctest
+            'Structures for Set species with labels [1, 2, 3]'
+        """
+        return self._name
+
     def labels(self):
         """
         Returns the labels used on these structures.  If `X` is the
