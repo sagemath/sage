@@ -133,8 +133,13 @@ class Tarball(object):
         """
         Test whether the checksum of the downloaded file is correct.
         """
-        sha1 = self._compute_sha1()
-        return sha1 == self.package.sha1
+        if self.package.sha256:
+            sha256 = self._compute_sha256()
+            return sha256 == self.package.sha256
+        else:
+            log.warning('sha1 used for {pn} checksum'.format(pn=self.package.package_name))
+            sha1 = self._compute_sha1()
+            return sha1 == self.package.sha1
 
     def is_distributable(self):
         return 'do-not-distribute' not in self.filename
