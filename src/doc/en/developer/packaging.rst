@@ -776,19 +776,32 @@ optional packages.
 Package tags
 ------------
 
-You can mark a package as "huge" by placing an empty file named
-``huge`` in the package directory.  For example, the package
-``polytopes_db_4d`` is a large database whose compressed tarball has a
-size of 9 GB.
+We use the following "tags" to organize our :ref:`index of packages in the
+Reference Manual <spkg>`.
 
-For some other packages, we have placed an empty file named
-``has_nonfree_dependencies`` in the package directory. This is to
-indicate that Sage with this package installed cannot be
-redistributed, and also that the package can only be installed after
-installing some other, non-free package.
+- Place an empty file named ``math`` in the package directory to make the
+  package appear in the "Mathematics" subsections of the index of standard,
+  optional, and experimental packages.
 
-We use these tags in our continuous integration scripts to filter
+- Place an empty file name ``front-end`` in the package directory to make
+  the package appear in the "Front-end, graphics, document preparation"
+  subsections.
+
+- Packages without these tags appear in the "Other dependencies" subsections.
+
+We use the following tags in our continuous integration scripts to filter
 out packages that we cannot or should not test automatically.
+
+- You can mark a package as "huge" by placing an empty file named
+  ``huge`` in the package directory.  For example, the package
+  ``polytopes_db_4d`` is a large database whose compressed tarball has a
+  size of 9 GB.
+
+- For some other packages, we have placed an empty file named
+  ``has_nonfree_dependencies`` in the package directory. This is to
+  indicate that Sage with this package installed cannot be
+  redistributed, and also that the package can only be installed after
+  installing some other, non-free package.
 
 
 .. _section-trees:

@@ -372,7 +372,7 @@ class SchemeMorphism_polynomial_projective_space(SchemeMorphism_polynomial):
             sage: F.<a> = GF(4)
             sage: P = T(F)(1, a)
             sage: h(P)                                                                  # needs sage.libs.singular
-            (a : a)
+            (1 : 1)
             sage: h(P).domain()
             Spectrum of Finite Field in a of size 2^2
             sage: h.change_ring(F)(P)

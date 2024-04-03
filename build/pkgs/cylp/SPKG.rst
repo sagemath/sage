@@ -1,10 +1,10 @@
-cylp: A Python interface for CLP, CBC, and CGL
-==============================================
+cylp: Python interface for CLP, CBC, and CGL
+============================================
 
 Description
 -----------
 
-A Python interface for CLP, CBC, and CGL
+Python interface for CLP, CBC, and CGL
 
 License
 -------

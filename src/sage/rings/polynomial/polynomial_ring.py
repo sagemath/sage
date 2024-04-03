@@ -281,7 +281,6 @@ class PolynomialRing_general(Ring):
 
             sage: GF(7)['x']['y'].is_finite()
             False
-
         """
         # We trust that, if category is given, it is useful and does not need to be joined
         # with the default category
@@ -1320,7 +1319,7 @@ class PolynomialRing_general(Ring):
             sage: R.monomial(m.degree()) == m
             True
         """
-        return self({exponent:self.base_ring().one()})
+        return self({exponent: self.base_ring().one()})
 
     def krull_dimension(self):
         """
@@ -1362,23 +1361,25 @@ class PolynomialRing_general(Ring):
         """
         return 1
 
-    def random_element(self, degree=(-1,2), *args, **kwds):
+    def random_element(self, degree=(-1, 2), monic=False, *args, **kwds):
         r"""
-        Return a random polynomial of given degree or with given degree bounds.
+        Return a random polynomial of given degree (bounds).
 
         INPUT:
 
-        -  ``degree`` - optional integer for fixing the degree
-           or a tuple of minimum and maximum degrees. By default set to
-           ``(-1,2)``.
+        -  ``degree`` -- (default: ``(-1, 2)``) integer for fixing the degree or
+           a tuple of minimum and maximum degrees
 
-        -  ``*args, **kwds`` - Passed on to the ``random_element`` method for
-           the base ring
+        -  ``monic`` -- boolean (optional); indicate whether the sampled
+           polynomial should be monic
+
+        -  ``*args, **kwds`` -- additional keyword parameters passed on to the
+           ``random_element`` method for the base ring
 
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
-            sage: f = R.random_element(10, 5, 10)
+            sage: f = R.random_element(10, x=5, y=10)
             sage: f.degree()
             10
             sage: f.parent() is R
@@ -1388,20 +1389,30 @@ class PolynomialRing_general(Ring):
             sage: R.random_element(6).degree()
             6
 
-        If a tuple of two integers is given for the ``degree`` argument, a degree
-        is first uniformly chosen, then a polynomial of that degree is given::
+        If a tuple of two integers is given for the ``degree`` argument, a
+        polynomial is chosen among all polynomials with degree between them. If
+        the base ring can be sampled uniformly, then this method also samples
+        uniformly::
 
-            sage: R.random_element(degree=(0, 8)).degree() in range(0, 9)
+            sage: R.random_element(degree=(0, 4)).degree() in range(0, 5)
             True
-            sage: found = [False]*9
+            sage: found = [False]*5
             sage: while not all(found):
-            ....:     found[R.random_element(degree=(0, 8)).degree()] = True
+            ....:     found[R.random_element(degree=(0, 4)).degree()] = True
 
         Note that the zero polynomial has degree `-1`, so if you want to
         consider it set the minimum degree to `-1`::
 
             sage: while R.random_element(degree=(-1,2), x=-1, y=1) != R.zero():
             ....:     pass
+
+        Monic polynomials are chosen among all monic polynomials with degree
+        between the given ``degree`` argument::
+
+            sage: all(R.random_element(degree=(-1, 1), monic=True).is_monic() for _ in range(10^3))
+            True
+            sage: all(R.random_element(degree=(0, 1), monic=True).is_monic() for _ in range(10^3))
+            True
 
         TESTS::
 
@@ -1419,14 +1430,42 @@ class PolynomialRing_general(Ring):
 
             sage: R = PolynomialRing(GF(2), 'z')
             sage: for _ in range(100):
-            ....:     d = randint(-1,20)
+            ....:     d = randint(-1, 20)
             ....:     P = R.random_element(degree=d)
-            ....:     assert P.degree() == d, "problem with {} which has not degree {}".format(P,d)
+            ....:     assert P.degree() == d
 
-            sage: R.random_element(degree=-2)
+        In :issue:`37118`, ranges including integers below `-1` no longer raise
+        an error::
+
+            sage: R.random_element(degree=(-2, 3))  # random
+            z^3 + z^2 + 1
+
+        ::
+
+            sage: 0 in [R.random_element(degree=(-1, 2), monic=True) for _ in range(500)]
+            False
+
+        Testing error handling::
+
+            sage: R.random_element(degree=-5)
             Traceback (most recent call last):
             ...
-            ValueError: degree should be an integer greater or equal than -1
+            ValueError: degree (=-5) must be at least -1
+
+            sage: R.random_element(degree=(-3, -2))
+            Traceback (most recent call last):
+            ...
+            ValueError: maximum degree (=-2) must be at least -1
+
+        Testing uniformity::
+
+            sage: from collections import Counter
+            sage: R = GF(3)["x"]
+            sage: samples = [R.random_element(degree=(-1, 2)) for _ in range(27000)]    # long time
+            sage: assert all(750 <= f <= 1250 for f in Counter(samples).values())       # long time
+
+            sage: samples = [R.random_element(degree=(-1, 2), monic=True) for _ in range(13000)] # long time
+            sage: assert all(750 <= f <= 1250 for f in Counter(samples).values())       # long time
         """
         R = self.base_ring()
 
@@ -1435,11 +1474,15 @@ class PolynomialRing_general(Ring):
                 raise ValueError("degree argument must be an integer or a tuple of 2 integers (min_degree, max_degree)")
             if degree[0] > degree[1]:
                 raise ValueError("minimum degree must be less or equal than maximum degree")
+            if degree[1] < -1:
+                raise ValueError(f"maximum degree (={degree[1]}) must be at least -1")
         else:
-            degree = (degree,degree)
+            if degree < -1:
+                raise ValueError(f"degree (={degree}) must be at least -1")
+            degree = (degree, degree)
 
         if degree[0] <= -2:
-            raise ValueError("degree should be an integer greater or equal than -1")
+            degree = (-1, degree[1])
 
         # If the coefficient range only contains 0, then
         # * if the degree range includes -1, return the zero polynomial,
@@ -1450,24 +1493,44 @@ class PolynomialRing_general(Ring):
             else:
                 raise ValueError("No polynomial of degree >= 0 has all coefficients zero")
 
-        # Pick a random degree
-        d = randint(degree[0], degree[1])
-
-        # If degree is -1, return the 0 polynomial
-        if d == -1:
+        if degree == (-1, -1):
             return self.zero()
 
-        # If degree is 0, return a random constant term
-        if d == 0:
-            return self(R._random_nonzero_element(*args, **kwds))
+        # If `monic` is set, zero should be ignored
+        if degree[0] == -1 and monic:
+            if degree[1] == -1:
+                raise ValueError("the maximum degree of monic polynomials needs to be at least 0")
+            if degree[1] == 0:
+                return self.one()
+            degree = (0, degree[1])
 
         # Pick random coefficients
-        p = self([R.random_element(*args, **kwds) for _ in range(d)])
+        end = degree[1]
+        if degree[0] == -1:
+            return self([R.random_element(*args, **kwds) for _ in range(end + 1)])
 
-        # Add non-zero leading coefficient
-        p += R._random_nonzero_element(*args, **kwds) * self.gen() ** d
+        nonzero = False
+        coefs = [None] * (end + 1)
 
-        return p
+        while not nonzero:
+            # Pick leading coefficients, if `monic` is set it's handle here.
+            if monic:
+                for i in range(degree[1] - degree[0] + 1):
+                    coefs[end - i] = R.random_element(*args, **kwds)
+                    if not nonzero and not coefs[end - i].is_zero():
+                        coefs[end - i] = R.one()
+                        nonzero = True
+            else:
+                # Fast path
+                for i in range(degree[1] - degree[0] + 1):
+                    coefs[end - i] = R.random_element(*args, **kwds)
+                    nonzero |= not coefs[end - i].is_zero()
+
+        # Now we pick the remaining coefficients.
+        for i in range(degree[1] - degree[0] + 1, degree[1] + 1):
+            coefs[end - i] = R.random_element(*args, **kwds)
+
+        return self(coefs)
 
     def _monics_degree(self, of_degree):
         """
@@ -1562,8 +1625,8 @@ class PolynomialRing_general(Ring):
 
     def set_karatsuba_threshold(self, Karatsuba_threshold):
         """
-        Changes the default threshold for this ring in the method :meth:`_mul_karatsuba`
-        to fall back to the schoolbook algorithm.
+        Changes the default threshold for this ring in the method
+        :meth:`_mul_karatsuba` to fall back to the schoolbook algorithm.
 
         .. warning::
 
@@ -1587,11 +1650,11 @@ class PolynomialRing_general(Ring):
 
         INPUT: Pass exactly one of:
 
-        -  ``max_degree`` - an int; the iterator will generate
+        -  ``max_degree`` -- an int; the iterator will generate
            all polynomials which have degree less than or equal to
            ``max_degree``
 
-        -  ``of_degree`` - an int; the iterator will generate
+        -  ``of_degree`` -- an int; the iterator will generate
            all polynomials which have degree ``of_degree``
 
         OUTPUT: an iterator
@@ -1653,11 +1716,11 @@ class PolynomialRing_general(Ring):
         INPUT: Pass exactly one of:
 
 
-        -  ``max_degree`` - an int; the iterator will generate
+        -  ``max_degree`` -- an int; the iterator will generate
            all monic polynomials which have degree less than or equal to
            ``max_degree``
 
-        -  ``of_degree`` - an int; the iterator will generate
+        -  ``of_degree`` -- an int; the iterator will generate
            all monic polynomials which have degree ``of_degree``
 
 
@@ -1734,7 +1797,7 @@ class PolynomialRing_commutative(PolynomialRing_general):
 
         INPUT:
 
-        - ``f`` - either a polynomial in ``self``, or a principal
+        - ``f`` -- either a polynomial in ``self``, or a principal
           ideal of ``self``.
         - further named arguments that are passed to the quotient constructor.
 
@@ -1884,7 +1947,8 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
     @cached_method(key=lambda self, d, q, sign, lead: (d, q, sign, tuple([x if isinstance(x, (tuple, list)) else (x, 0) for x in lead]) if isinstance(lead, (tuple, list)) else ((lead, 0))))
     def weil_polynomials(self, d, q, sign=1, lead=1):
         r"""
-        Return all integer polynomials whose complex roots all have a specified absolute value.
+        Return all integer polynomials whose complex roots all have a specified
+        absolute value.
 
         Such polynomials `f` satisfy a functional equation
 
@@ -1892,29 +1956,34 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
 
             T^d f(q/T) = s q^{d/2} f(T)
 
-        where `d` is the degree of `f`, `s` is a sign and `q^{1/2}` is the absolute value
-        of the roots of `f`.
+        where `d` is the degree of `f`, `s` is a sign and `q^{1/2}` is the
+        absolute value of the roots of `f`.
 
         INPUT:
 
         - ``d`` -- integer, the degree of the polynomials
 
-        - ``q`` -- integer, the square of the complex absolute value of the roots
+        - ``q`` -- integer, the square of the complex absolute value of the
+          roots
 
-        - ``sign`` -- integer (default `1`), the sign `s` of the functional equation
+        - ``sign`` -- integer (default `1`), the sign `s` of the functional
+          equation
 
-        - ``lead`` -- integer, list of integers or list of pairs of integers (default `1`),
-          constraints on the leading few coefficients of the generated polynomials.
-          If pairs `(a, b)` of integers are given, they are treated as a constraint
-          of the form `\equiv a \pmod{b}`; the moduli must be in decreasing order by
-          divisibility, and the modulus of the leading coefficient must be 0.
+        - ``lead`` -- integer, list of integers or list of pairs of integers
+          (default `1`), constraints on the leading few coefficients of the
+          generated polynomials. If pairs `(a, b)` of integers are given, they
+          are treated as a constraint of the form `\equiv a \pmod{b}`; the
+          moduli must be in decreasing order by divisibility, and the modulus
+          of the leading coefficient must be 0.
 
         .. SEEALSO::
 
-            More documentation and additional options are available using the iterator
+            More documentation and additional options are available using the
+            iterator
             :class:`sage.rings.polynomial.weil.weil_polynomials.WeilPolynomials`
-            directly. In addition, polynomials have a method :meth:`is_weil_polynomial` to
-            test whether or not the given polynomial is a Weil polynomial.
+            directly. In addition, polynomials have a method
+            :meth:`is_weil_polynomial` to test whether or not the given
+            polynomial is a Weil polynomial.
 
         EXAMPLES::
 
@@ -1949,7 +2018,8 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
 
         TESTS:
 
-        We check that products of Weil polynomials are also listed as Weil polynomials::
+        We check that products of Weil polynomials are also listed as Weil
+        polynomials::
 
             sage: all((f * g) in R.weil_polynomials(6, q) for q in [3, 4]                                               # needs sage.libs.flint
             ....:     for f in R.weil_polynomials(2, q) for g in R.weil_polynomials(4, q))
@@ -1964,13 +2034,15 @@ class PolynomialRing_integral_domain(PolynomialRing_commutative, PolynomialRing_
             ....:                          for j in range(1, (3+i)//2 + 1))
             ....:          for i in range(4)]) for f in simples]
 
-        Check that every polynomial in this list has 3 real roots between `-2 \sqrt{3}` and `2 \sqrt{3}`::
+        Check that every polynomial in this list has 3 real roots between `-2
+        \sqrt{3}` and `2 \sqrt{3}`::
 
             sage: roots = [f.roots(RR, multiplicities=False) for f in reals]                                            # needs sage.libs.flint
             sage: all(len(L) == 3 and all(x^2 <= 12 for x in L) for L in roots)                                         # needs sage.libs.flint
             True
 
-        Finally, check that the original polynomials are reconstructed as CM polynomials::
+        Finally, check that the original polynomials are reconstructed as CM
+        polynomials::
 
             sage: all(f == T^3*r(T + 3/T) for (f, r) in zip(simples, reals))                                            # needs sage.libs.flint
             True
@@ -2126,7 +2198,8 @@ class PolynomialRing_field(PolynomialRing_integral_domain,
 
     def _ideal_class_(self, n=0):
         """
-        Returns the class representing ideals in univariate polynomial rings over fields.
+        Returns the class representing ideals in univariate polynomial rings
+        over fields.
 
         EXAMPLES::
 
