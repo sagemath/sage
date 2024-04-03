@@ -29,7 +29,7 @@ class HyperellipticCurve_rational_field(hyperelliptic_generic.HyperellipticCurve
 
         INPUT:
 
-        - ``p`` (prime integer or pAdic ring / field ) -- if ``p`` is an integer,
+        - ``p`` (prime integer or pAdic ring / field) -- if ``p`` is an integer,
           constructs a ``pAdicField`` with ``p`` to compute the matrix of
           Frobenius, otherwise uses the supplied pAdic ring or field.
 
