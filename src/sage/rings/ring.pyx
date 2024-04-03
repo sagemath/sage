@@ -446,7 +446,7 @@ cdef class Ring(ParentWithGens):
             elif isinstance(first, (list, tuple)):
                 gens = first
             elif is_Parent(first) and self.has_coerce_map_from(first):
-                gens = first.gens() # we have a ring as argument
+                gens = first.gens()  # we have a ring as argument
             else:
                 break
 
@@ -655,7 +655,7 @@ cdef class Ring(ParentWithGens):
             return x
         return self._one_element
 
-    def is_field(self, proof = True):
+    def is_field(self, proof=True):
         """
         Return ``True`` if this ring is a field.
 
@@ -1025,7 +1025,7 @@ cdef class CommutativeRing(Ring):
     Generic commutative ring.
     """
     _default_category = _CommutativeRings
-    
+
     def __init__(self, base_ring, names=None, normalize=True, category=None):
         """
         Initialize ``self``.
@@ -1540,7 +1540,7 @@ cdef class IntegralDomain(CommutativeRing):
         """
         raise NotImplementedError
 
-    def is_field(self, proof = True):
+    def is_field(self, proof=True):
         r"""
         Return ``True`` if this ring is a field.
 
