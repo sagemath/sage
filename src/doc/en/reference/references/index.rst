@@ -1801,6 +1801,10 @@ REFERENCES:
 .. [Com2019] Camille Combe, *Réalisation cubique du poset des
              intervalles de Tamari*, preprint :arxiv:`1904.00658`
 
+.. [Com1974] Comtet Louis, *Identities and Expansions*.
+             In: Advanced Combinatorics. 1974. pp. 127-175
+             :doi:`10.1007/978-94-010-2196-8_3`
+
 .. [Con] Keith Conrad, *Groups of order 12*,
          http://www.math.uconn.edu/~kconrad/blurbs/grouptheory/group12.pdf,
          accessed 21 October 2009.
