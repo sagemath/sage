@@ -52,6 +52,7 @@ AUTHOR:
 
 import sage.categories.morphism
 import sage.categories.homset
+from sage.categories.finite_dimensional_modules_with_basis import FiniteDimensionalModulesWithBasis
 from sage.structure.all import Sequence, parent
 from sage.structure.richcmp import richcmp, op_NE, op_EQ
 
@@ -80,6 +81,17 @@ def is_MatrixMorphism(x):
 
 
 class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
+
+    # Copy in methods that delegate to self.matrix.
+    # This is needed because MatrixMorphism_abstract is subclassed
+    # for use with parents that are merely set up as additive abelian groups,
+    # but not as ZZ-modules; see sage.modular.abvar.
+
+    characteristic_polynomial = charpoly = FiniteDimensionalModulesWithBasis.MorphismMethods.characteristic_polynomial
+    det = determinant = FiniteDimensionalModulesWithBasis.MorphismMethods.determinant
+    fcp = FiniteDimensionalModulesWithBasis.MorphismMethods.fcp
+    trace = FiniteDimensionalModulesWithBasis.MorphismMethods.trace
+
     def __init__(self, parent, side='left'):
         """
         INPUT:
