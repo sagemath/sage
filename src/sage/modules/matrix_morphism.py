@@ -60,6 +60,8 @@ def is_MatrixMorphism(x):
     """
     Return True if x is a Matrix morphism of free modules.
 
+    This function is deprecated.
+
     EXAMPLES::
 
         sage: V = ZZ^2; phi = V.hom([3*V.0, 2*V.1])
@@ -73,7 +75,7 @@ def is_MatrixMorphism(x):
         False
     """
     from sage.misc.superseded import deprecation
-    deprecation(99999,
+    deprecation(37731,
                 "is_MatrixMorphism is deprecated; "
                 "use isinstance(..., MatrixMorphism_abstract) or categories instead")
     return isinstance(x, MatrixMorphism_abstract)
