@@ -1579,7 +1579,8 @@ class DocTestController(SageObject):
             self.log("Features detected for doctesting: "
                      + ','.join(available_software.seen()))
             if self.options.hidden_features:
-                for f in self.options.hidden_features: f.unhide()
+                for f in self.options.hidden_features:
+                    f.unhide()
                 self.log("Features that have been hidden: " + ','.join(available_software.hidden()))
             self.cleanup()
             return self.reporter.error_status
