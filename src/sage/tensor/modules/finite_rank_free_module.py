@@ -248,7 +248,7 @@ This is also revealed by the category of each module::
     Category of finite dimensional modules over Integer Ring
     sage: N.category()
     Category of finite dimensional modules with basis over
-     (Dedekind domains and euclidean domains
+     (Dedekind domains and euclidean domains and noetherian rings
      and infinite enumerated sets and metric spaces)
 
 In other words, the module created by ``FreeModule`` is actually `\ZZ^3`,
