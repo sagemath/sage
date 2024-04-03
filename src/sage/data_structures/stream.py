@@ -1664,7 +1664,7 @@ class Stream_uninitialized(Stream):
             raise ValueError(f"there are no linear equations in degrees {degrees}: {non_linear_coeffs}")
         # solve
         from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
-        eqs = PolynomialSequence(c.polynomial() for c in coeffs)
+        eqs = PolynomialSequence(coeffs)
         m1, v1 = eqs.coefficients_monomials()
         # there should be at most one entry in v1 of degree 0
         for j, c in enumerate(v1):
@@ -1685,10 +1685,6 @@ class Stream_uninitialized(Stream):
         for i, (var, y) in enumerate(zip(v, x)):
             if k.column(i).is_zero():
                 val = self._base_ring(y)
-                # workaround for `var = self._P(var)`
-                var = next(self._P.gen(0)[i]
-                           for i, v in enumerate(reversed(self._P._P.gens()))
-                           if v == var)
                 self._subs_in_caches(var, val)
                 bad = False
         if bad:

@@ -578,8 +578,17 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
         """
         if hasattr(self._p, 'variables'):
-            return tuple(self._p.variables())
+            P = self.parent()
+            return tuple(InfinitePolynomial(P, v) for v in self._p.variables())
         return ()
+
+    @cached_method
+    def monomials(self):
+        P = self.parent()
+        return [InfinitePolynomial(P, m) for m in self._p.monomials()]
+
+    def monomial_coefficient(self, mon):
+        return self._p.monomial_coefficient(mon._p)
 
     @cached_method
     def max_index(self):
