@@ -270,7 +270,7 @@ class DocTestReporter(SageObject):
             command = f'::error title={fail_msg}'
             command += f',file={source.printpath}'
             if output:
-                if m := re.search("## line ([0-9]+) ##\n-{40,100}\n(.*)", output, re.MULTILINE|re.DOTALL):
+                if m := re.search("## line ([0-9]+) ##\n-{40,100}\n(.*)", output, re.MULTILINE | re.DOTALL):
                     lineno = m.group(1)
                     message = m.group(2)
                     command += f',line={lineno}'
