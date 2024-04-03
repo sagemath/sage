@@ -70,7 +70,7 @@ jobs:
         with:
           number: ${{ steps.source-run-info.outputs.pullRequestNumber }}
           header: preview-comment
-          recreate: true
+          recreate: false
           message: |
             [Documentation preview for this PR](${{ steps.deploy-netlify.outputs.NETLIFY_URL }}/html/en) (built with commit ${{ steps.source-run-info.outputs.sourceHeadSha }}; [changes](${{ steps.deploy-netlify.outputs.NETLIFY_URL }}/CHANGES.html)) is ready! :tada:
 
