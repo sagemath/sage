@@ -784,6 +784,8 @@ def is_VectorSpaceMorphism(x) -> bool:
     r"""
     Returns ``True`` if ``x`` is a vector space morphism (a linear transformation).
 
+    This function is deprecated.
+
     INPUT:
 
     ``x`` - anything
@@ -797,10 +799,18 @@ def is_VectorSpaceMorphism(x) -> bool:
 
         sage: V = QQ^2; f = V.hom([V.1,-2*V.0])
         sage: sage.modules.vector_space_morphism.is_VectorSpaceMorphism(f)
+        doctest:warning...
+        DeprecationWarning: is_VectorSpaceMorphism is deprecated;
+        use isinstance(..., VectorSpaceMorphism) or categories instead
+        See https://github.com/sagemath/sage/issues/37731 for details.
         True
         sage: sage.modules.vector_space_morphism.is_VectorSpaceMorphism('junk')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37731,
+                "is_VectorSpaceMorphism is deprecated; "
+                "use isinstance(..., VectorSpaceMorphism) or categories instead")
     return isinstance(x, VectorSpaceMorphism)
 
 

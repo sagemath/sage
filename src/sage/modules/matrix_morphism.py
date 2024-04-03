@@ -69,7 +69,7 @@ def is_MatrixMorphism(x):
         doctest:warning...
         DeprecationWarning: is_MatrixMorphism is deprecated;
         use isinstance(..., MatrixMorphism_abstract) or categories instead
-        See https://github.com/sagemath/sage/issues/99999 for details.
+        See https://github.com/sagemath/sage/issues/37731 for details.
         True
         sage: sage.modules.matrix_morphism.is_MatrixMorphism(3)
         False
