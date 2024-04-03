@@ -582,12 +582,64 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             return tuple(InfinitePolynomial(P, v) for v in self._p.variables())
         return ()
 
-    @cached_method
     def monomials(self):
+        """
+        Return the list of monomials in self. The returned list is
+        decreasingly ordered by the term ordering of
+        ``self.parent()``.
+
+        EXAMPLES::
+
+            sage: X.<x> = InfinitePolynomialRing(QQ)
+            sage: p = x[1]^3 + x[2] - 2*x[1]*x[3]
+            sage: p.monomials()
+            [x_3*x_1, x_2, x_1^3]
+
+            sage: X.<x> = InfinitePolynomialRing(QQ, order='deglex')
+            sage: p = x[1]^3 + x[2] - 2*x[1]*x[3]
+            sage: p.monomials()
+            [x_1^3, x_3*x_1, x_2]
+        """
         P = self.parent()
         return [InfinitePolynomial(P, m) for m in self._p.monomials()]
 
     def monomial_coefficient(self, mon):
+        """
+        Return the coefficient in the base ring of the monomial mon in
+        ``self``, where mon must have the same parent as self.
+
+        This function contrasts with the function ``coefficient``
+        which returns the coefficient of a monomial viewing this
+        polynomial in a polynomial ring over a base ring having fewer
+        variables.
+
+        INPUT:
+
+        - ``mon`` - a monomial
+
+        OUTPUT:
+
+        coefficient in base ring
+
+        .. SEEALSO::
+
+            For coefficients in a base ring of fewer variables,
+            look at ``coefficient``.
+
+        EXAMPLES::
+
+            sage: X.<x> = InfinitePolynomialRing(QQ)
+            sage: f = 2*x[0]*x[2] + 3*x[1]^2
+            sage: c = f.monomial_coefficient(x[1]^2); c
+            3
+            sage: c.parent()
+            Rational Field
+
+            sage: c = f.coefficient(x[2]); c
+            2*x_0
+            sage: c.parent()
+            Infinite polynomial ring in x over Rational Field
+        """
         return self._p.monomial_coefficient(mon._p)
 
     @cached_method
