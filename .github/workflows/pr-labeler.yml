@@ -9,6 +9,7 @@ on:
       - edited
 jobs:
   label-changes:
+    if: vars.SMALL_THRESHOLD && vars.MODERATE_THRESHOLD && vars.LARGE_THRESHOLD
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -20,66 +21,19 @@ jobs:
 
       - name: Add labels based on size
         run: |
-          git fetch origin ${{ github.base_ref }}
-
-          # get all the changes made and changed files
-          CHANGES=$(git diff --ignore-all-space ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})
-          CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} | awk -F'src/sage/' '{print $2}' | cut -d'/' -f1 | sed 's/\([^ ]\+\)/c: \1/g')
-
-          # ignore blank lines
-          CHANGES=$(echo "$CHANGES" | grep -vE '^[\+\-]\s*$')
-
-          # ignore non necessary lines from git diff
-          CHANGES=$(echo "$CHANGES" | grep -E '^[+\-]' | grep -vE '^\+\+\+|^\-\-\-')
-
-          # count total no of lines
-          CHANGES=$(echo "$CHANGES" | wc -l)
-
-          echo "CHANGES MADE: $CHANGES"
-
-          PR_NUMBER="${{ github.event.number }}"
-          API_URL="https://api.github.com/repos/${{ github.repository }}/issues/${PR_NUMBER}/labels"
-          AUTH_HEADER="Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"
-
-          DELETE_LABELS=("v: minimal" "v: small" "v: moderate" "v: large")
-
-          if [ "$CHANGES" -gt "$SMALL_THRESHOLD" ]; then
-            SIZE_LABEL="v: small"
-          elif [ "$CHANGES" -gt "$MODERATE_THRESHOLD" ]; then
-            SIZE_LABEL="v: moderate"
-          elif [ "$CHANGES" -gt "$LARGE_THRESHOLD" ]; then
-            SIZE_LABEL="v: large"
-          else
-            SIZE_LABEL="v: minimal"
-          fi
-
-          DELETE_LABELS=("${DELETE_LABELS[@]//${SIZE_LABEL}}")
-
-          readarray -t LABELS <<< "$CHANGED_FILES"
-          LABELS+=("$SIZE_LABEL")
-
-          echo "Adding label: ${LABELS[@]}"
-          for LABEL in "${LABELS[@]}"; do
-              curl -X POST \
-                -H "$AUTH_HEADER" \
-                -H "Accept: application/vnd.github+json" \
-                -H "X-GitHub-Api-Version: 2022-11-28" \
-                -d "{\"labels\":[\"$LABEL\"]}" \
-                "$API_URL" >/dev/null
-          done
-
-          echo "Deleting Labels:"
-
-          for DELETE_LABEL in "${DELETE_LABELS[@]}"; do
-              ENCODED_LABEL=$(echo "$DELETE_LABEL" | sed 's/ /%20/g')
-              curl -X DELETE \
-                -H "Accept: application/vnd.github+json" \
-                -H "$AUTH_HEADER" \
-                -H "X-GitHub-Api-Version: 2022-11-28" \
-                "$API_URL/$ENCODED_LABEL" >/dev/null
-          done
+          git fetch origin $BASE_SHA
+          chmod a+x .github/workflows/get_changes.sh
+          .github/workflows/get_changes.sh
         env:
+          BASE_SHA: ${{ github.base_ref }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          API_URL: "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/labels"
+          MINIMAL: 'v: minimal'
+          SMALL: 'v: small'
+          MODERATE: 'v: moderate'
+          LARGE: 'v: large'
           SMALL_THRESHOLD: ${{ vars.SMALL_THRESHOLD }}
           MODERATE_THRESHOLD: ${{ vars.MODERATE_THRESHOLD }}
           LARGE_THRESHOLD: ${{ vars.LARGE_THRESHOLD }}
