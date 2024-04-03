@@ -2127,11 +2127,11 @@ class pAdicAutomorphicFormElement(ModuleElement):
             sage: X.is_admissible(D)
             True
             sage: K.<a> = QuadraticField(D)
-            sage: Kp.<g> = Qq(p**2,prec)
+            sage: Kp.<g> = Qq(p**2, prec)
             sage: P = Kp.gen()
-            sage: Q = 2+Kp.gen()+ p*(Kp.gen() +1)
-            sage: F = MM.lift(f) # long time
-            sage: J0 = F.coleman(P,Q,mult = True) # long time
+            sage: Q = 2 + Kp.gen() + p*(Kp.gen()+1)
+            sage: F = MM.lift(f)  # long time
+            sage: J0 = F.coleman(P, Q, mult=True)  # long time
 
         AUTHORS:
 
