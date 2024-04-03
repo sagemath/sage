@@ -51,14 +51,24 @@ from sage.structure.sequence import Sequence
 
 def is_FreeModuleMorphism(x):
     """
+    This function is deprecated.
+
     EXAMPLES::
 
         sage: V = ZZ^2; f = V.hom([V.1, -2*V.0])
         sage: sage.modules.free_module_morphism.is_FreeModuleMorphism(f)
+        doctest:warning...
+        DeprecationWarning: is_FreeModuleMorphism is deprecated;
+        use isinstance(..., FreeModuleMorphism) or categories instead
+        See https://github.com/sagemath/sage/issues/37731 for details.
         True
         sage: sage.modules.free_module_morphism.is_FreeModuleMorphism(0)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37731,
+                "is_FreeModuleMorphism is deprecated; "
+                "use isinstance(..., FreeModuleMorphism) or categories instead")
     return isinstance(x, FreeModuleMorphism)
 
 
