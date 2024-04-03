@@ -1,6 +1,6 @@
 r"""
 This module defines the elements of the class
-:class:`~drinfeld_modular_forms.ring.DrinfeldModularForms`.
+:class:`~sage.modular.drinfeld_modform.ring.DrinfeldModularForms`.
 
 AUTHORS:
 
@@ -86,8 +86,8 @@ class DrinfeldModularFormsElement(ModuleElement):
 
         This class should not be directly instanciated, instead create
         an instance of the parent
-        :class:`~drinfeld_modular_forms.ring.DrinfeldModularForms` and
-        access its elements using the relevant methods.
+        :class:`~sage.modular.drinfeld_modform.ring.DrinfeldModularForms`
+        and access its elements using the relevant methods.
     """
     def __init__(self, parent, polynomial):
         if not isinstance(polynomial, MPolynomial):
