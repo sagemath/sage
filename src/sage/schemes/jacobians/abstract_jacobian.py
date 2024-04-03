@@ -28,6 +28,30 @@ from sage.structure.richcmp import richcmp_method, richcmp
 _Fields = Fields()
 
 
+def is_Jacobian(J):
+    """
+    Return True if `J` is of type Jacobian_generic.
+
+    EXAMPLES::
+
+        sage: from sage.schemes.jacobians.abstract_jacobian import Jacobian, is_Jacobian
+        sage: P2.<x, y, z> = ProjectiveSpace(QQ, 2)
+        sage: C = Curve(x^3 + y^3 + z^3)
+        sage: J = Jacobian(C)
+        sage: is_Jacobian(J)
+        True
+
+    ::
+
+        sage: E = EllipticCurve('37a1')
+        sage: is_Jacobian(E)
+        False
+    """
+    from sage.misc.superseded import deprecation
+    deprecation(35467, "Use Jacobian_generic directly")
+    return isinstance(J, Jacobian_generic)
+
+
 def Jacobian(C):
     """
     EXAMPLES::
