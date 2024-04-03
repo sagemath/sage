@@ -1253,14 +1253,14 @@ from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRin
 class VariablePool(UniqueRepresentation):
     """
     A class to keep track of used and unused variables in an
-    :cls:`InfinitePolynomialRing`.
+    :class:`InfinitePolynomialRing`.
 
     INPUT:
 
-    - ``ring``, an :cls:`InfinitePolynomialRing`.
+    - ``ring``, an :class:`InfinitePolynomialRing`.
     """
     def __init__(self, ring):
-        self._gen = ring.gen(0) # alternatively, make :cls:`InfinitePolynomialGen` inherit from `UniqueRepresentation`.
+        self._gen = ring.gen(0) # alternatively, make :class:`InfinitePolynomialGen` inherit from `UniqueRepresentation`.
         self._pool = dict()  # dict from variables actually used to indices of gens
 
     def new_variable(self):
@@ -1278,7 +1278,7 @@ class VariablePool(UniqueRepresentation):
         TESTS:
 
         Check, that we get a new pool for each
-        :cls:`InfinitePolynomialRing`::
+        :class:`InfinitePolynomialRing`::
 
             sage: R0.<b> = InfinitePolynomialRing(QQ)
             sage: P0 = VariablePool(R0)
