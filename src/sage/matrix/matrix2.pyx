@@ -11729,16 +11729,52 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             RuntimeError: Some eigenvalue does not exist in Rational Field.
+
+        TESTS::
+
+            sage: X = random_matrix(QQ, 4)
+            sage: S, N = X.jordan_decomposition()
+            sage: X == S + N
+            True
+            sage: S is X.jordan_decomposition()[0]  # result is cached
+            True
+            sage: N is X.jordan_decomposition()[1]  # result is cached
+            True
+            sage: A = matrix(ZZ, 5, 5, {(0,1): -1, (1,0): 1, (2,3): -1})
+            sage: A.jordan_decomposition()
+            Traceback (most recent call last):
+            ...
+            ValueError: unable to compute Jordan decomposition
+            sage: B = A.change_ring(RR)
+            sage: B.jordan_decomposition()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Jordan decomposition not implemented over inexact rings
         """
+        if not self.base_ring().is_exact():
+            raise NotImplementedError("Jordan decomposition not implemented over inexact rings")
+        JD = self.fetch('jordan_decomposition')
+        if JD is not None:
+            return JD
         f = self.minpoly()
         h = f // f.gcd(f.diff())
         o, p, q = h.xgcd(h.diff())
-        assert o.is_one()
+        if not o.is_one():
+            raise ValueError("unable to compute Jordan decomposition")
         A = self
         hq = h * q
-        while h(A):
+        # very bad bound, but requires no extra computation
+        # a better bound is the maximum multiplicity in the minpoly,
+        #   but this requires factoring the minpoly
+        for _ in range(self.nrows()):
+            if not h(A):
+                ret = (A, self - A)
+                ret[0].set_immutable()
+                ret[1].set_immutable()
+                self.cache('jordan_decomposition', ret)
+                return ret
             A -= hq(A)
-        return (A, self - A)
+        raise ValueError("Jordan decomposition does not exist")
 
     def diagonalization(self, base_field=None):
         """
