@@ -571,7 +571,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: L.normalizer_basis(L)
                 Finite family {'a': a, 'b': b, 'c': c, 'd': d, 'e': e}
-                sage: L.normalizer_basis([a,b,c,a,d+e,a+e])
+                sage: L.normalizer_basis([a, b, c, a, d + e, a + e])
                 Finite family {'a': a, 'b': b, 'c': c, 'd': d, 'e': e}
             """
             from sage.matrix.constructor import matrix
