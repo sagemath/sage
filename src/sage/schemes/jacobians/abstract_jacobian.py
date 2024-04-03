@@ -39,6 +39,9 @@ def is_Jacobian(J):
         sage: C = Curve(x^3 + y^3 + z^3)
         sage: J = Jacobian(C)
         sage: is_Jacobian(J)
+        ...
+        DeprecationWarning: Use Jacobian_generic directly
+        See https://github.com/sagemath/sage/issues/35467 for details.
         True
 
     ::
