@@ -41,8 +41,8 @@ This file contains
 #. some named latin squares (back circulant, forward circulant, abelian
    `2`-group);
 
-#. functions is\_partial\_latin\_square and is\_latin\_square to test
-   if a LatinSquare object satisfies the definition of a latin square
+#. methods :meth:`is_partial_latin_square` and :meth:`is_latin_square` to test
+   if a :class:`LatinSquare` object satisfies the definition of a latin square
    or partial latin square, respectively;
 
 #. tests for completion and unique completion (these use the C++
@@ -57,7 +57,7 @@ This file contains
 
 #. a few examples of `\tau_i` representations of bitrades constructed
    from the action of a group on itself by right multiplication,
-   functions for converting to a pair of LatinSquare objects.
+   functions for converting to a pair of :class:`LatinSquare` objects.
 
 EXAMPLES::
 

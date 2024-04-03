@@ -170,7 +170,7 @@ animations, Sage needs to use one of the packages :ref:`FFmpeg
    .. literalinclude:: void-recommended.txt
 
 In addition to these, if you don't want Sage to build optional packages that might
-be available from your OS, cf. the growing list of such packages on :trac:`27330`,
+be available from your OS, cf. the growing list of such packages on :issue:`27330`,
 install:
 
 .. tab:: Debian/Ubuntu
@@ -1050,7 +1050,7 @@ Environment variables dealing with specific Sage packages
 .. envvar:: OPENBLAS_CONFIGURE
 
   Adds additional configuration flags for
-  the OpenBLAS package that gets added to the ``make`` command. (see :trac:`23272`)
+  the OpenBLAS package that gets added to the ``make`` command. (see :issue:`23272`)
 
 .. envvar:: PARI_CONFIGURE
 
@@ -1173,3 +1173,143 @@ a single copy of Sage in a multi-user computer network.
    the installation by yourself::
 
        $ sudo chown -R root SAGE_LOCAL
+
+
+Upgrading the system and upgrading Sage
+---------------------------------------
+
+Caveats when upgrading system packages
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+When Sage has been installed from source, it will make use of various system
+packages; in particular, it will link to shared libraries provided by
+the system.
+
+The system's package manager does not keep track of the applications that
+make use of the shared libraries.  Therefore indiscriminate upgrades of
+system packages can break a Sage installation.
+
+This can always be fixed by a full rebuild::
+
+  $ make distclean && make build
+
+But this time-consuming step can often be avoided by just reinstalling a
+few packages. The command ``make -j list-broken-packages`` assists with
+this::
+
+  $ make -j list-broken-packages
+  make --no-print-directory auditwheel_or_delocate-no-deps
+  ...
+  # Checking .../local/var/lib/sage/installed/bliss-0.73+debian-1+sage-2016-08-02.p0
+  ...
+  Checking shared library file '.../local/lib/libumfpack.dylib'
+  Checking shared library file '.../local/var/tmp/sage/build/suitesparse-5.10.1/src/lib/libsliplu.1.0.2.dylib'
+  Error during installcheck of 'suitesparse': .../local/var/tmp/sage/build/suitesparse-5.10.1/src/lib/libsliplu.1.0.2.dylib
+  ...
+  Uninstall broken packages by typing:
+
+      make lcalc-SAGE_LOCAL-uninstall;
+      make ratpoints-SAGE_LOCAL-uninstall;
+      make r-SAGE_LOCAL-uninstall;
+      make suitesparse-SAGE_LOCAL-uninstall;
+
+After running the suggested commands, run::
+
+  $ make build
+
+
+Upgrading Sage using a separate git worktree
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+When you have a working installation of Sage built from source and wish to
+try out a new version, we strongly recommend to use a separate
+`git worktree <https://git-scm.com/docs/git-worktree>`_, so that you
+can keep using your existing installation when something goes wrong.
+
+Start from the directory created when you used ``git clone``, perhaps
+``~/sage/sage/``. Let's verify that this is indeed a git repository by
+looking at the hidden ``.git`` subdirectory. It will looks like this,
+but the exact contents can vary::
+
+  [alice@localhost sage]$ ls .git
+  COMMIT_EDITMSG HEAD           branches       description    gitk.cache
+  index          logs           packed-refs    FETCH_HEAD     ORIG_HEAD
+  config         hooks          info           objects        refs
+
+Good. Now let's see what worktrees already exist::
+
+  [alice@localhost sage]$ git worktree list
+  /home/alice/sage/sage                     c0ffeefe10 [master]
+
+We see just one line, the directory created when you used ``git clone``.
+We will call this the "main worktree" from now on. Next to the directory,
+you can see the abbreviated commit sha and the name of the branch that
+we're on (``master``).
+
+To try out a new version of Sage, let's fetch it first from the main
+repository::
+
+  [alice@localhost sage]$ git fetch upstream 10.3.beta8
+  From https://github.com/sagemath/sage
+   * tag                     10.3.beta8 -> FETCH_HEAD
+
+Now let's create a new worktree. We need a name for it; it should
+start with ``worktree-`` but can be anything after that. Experience
+shows that worktrees are often repurposed later, and because a
+directory containing a Sage installation cannot be moved without
+breaking the installation in it, it may be a good idea to choose
+a memorable name without much meaning::
+
+  [alice@localhost sage]$ git worktree add worktree-purple FETCH_HEAD
+  Preparing worktree (detached HEAD 30b3d78fac)
+  Updating files: 100% (11191/11191), done.
+  HEAD is now at 30b3d78fac Updated SageMath version to 10.3.beta8
+
+We now have a subdirectory ``worktree-purple``. This is a
+"linked worktree"::
+
+  [alice@localhost sage]$ git worktree list
+  /home/alice/sage/sage                     c0ffeefe10 [master]
+  /home/alice/sage/sage/worktree-purple     30b3d78fac (detached HEAD)
+  [alice@localhost sage]$ cd worktree-purple
+  [alice@localhost worktree-purple]$ cat VERSION.txt
+  SageMath version 10.3.beta8, Release Date: 2024-02-13
+
+All worktrees created in this way share the same repository,
+so they have access to all branches::
+
+  [alice@localhost worktree-purple]$ git --no-pager branch -v
+  * (no branch) 30b3d78fac Updated SageMath version to 10.3.beta8
+  + master      2a9a4267f9 Updated SageMath version to 10.2
+
+In fact, ``.git`` here is not a directory, just a hidden
+file::
+
+  [alice@localhost worktree-purple]$ ls -l .git
+  -rw-r--r--  1 alice  staff  59 Feb 20 18:16 .git
+
+In the new worktree, we now build Sage from scratch. This
+is completely independent of and will not disrupt your
+existing working installation in the main worktree.
+
+We will refer again to the step-by-step instructions
+from the file
+`README.md <https://github.com/sagemath/sage/#readme>`_.
+Our worktree ``worktree-purple`` is the ``SAGE_ROOT``
+for this purpose.
+
+One thing that we can share between worktrees without
+worry is the directory ``upstream``, where Sage caches
+downloaded archives of packages. To have the new worktree
+share it with the main worktree, let's create a symbolic
+link. This is an optional step that will avoid
+re-downloading files that you already have::
+
+  [alice@localhost worktree-purple]$ ln -s ../upstream/ .
+
+Now let's build Sage, starting with the step::
+
+  [alice@localhost worktree-purple]$ make configure
+
+Refer to the file `README.md <https://github.com/sagemath/sage/#readme>`_
+for the following steps.

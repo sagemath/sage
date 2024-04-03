@@ -7,6 +7,7 @@ Coding in Python for Sage
 This chapter discusses some issues with, and advice for, coding in
 Sage.
 
+.. _section-python-language-standard:
 
 Python language standard
 ========================
@@ -259,9 +260,9 @@ replacements are made:
       3 * 29
 
 - Raw literals are not preparsed, which can be useful from an
-  efficiency point of view. Just like Python ints are denoted by an L,
-  in Sage raw integer and floating literals are followed by an "r" (or
-  "R") for raw, meaning not preparsed. For example::
+  efficiency point of view. In Sage raw integer and floating
+  literals are followed by an "r" (or "R") for raw, meaning
+  not preparsed. For example::
 
       sage: a = 393939r
       sage: a

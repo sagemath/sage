@@ -1,17 +1,17 @@
 # -*- coding: utf-8
 r"""
-Arbitrary precision complex balls using Arb
+Arbitrary precision complex balls
 
-This is a binding to the `Arb library <http://arblib.org>`_; it
-may be useful to refer to its documentation for more details.
+This is an incomplete interface to the `acb module of FLINT <https://flintlib.org/doc/acb.html>`_;
+it may be useful to refer to its documentation for more details.
 
-Parts of the documentation for this module are copied or adapted from
-Arb's own documentation, licenced under the GNU General Public License
-version 2, or later.
+Parts of the documentation for this module are copied or adapted from Arb's
+(now FLINT's) own documentation, licenced at the time under the GNU General
+Public License version 2, or later.
 
 .. SEEALSO::
 
-    - :mod:`Real balls using Arb <sage.rings.real_arb>`
+    - :mod:`Real balls <sage.rings.real_arb>`
     - :mod:`Complex interval field (using MPFI) <sage.rings.complex_interval_field>`
     - :mod:`Complex intervals (using MPFI) <sage.rings.complex_interval>`
 
@@ -19,12 +19,12 @@ Data Structure
 ==============
 
 A :class:`ComplexBall` represents a complex number with error bounds. It wraps
-an Arb object of type ``acb_t``, which  consists of a pair of real number balls
+an object of type ``acb_t``, which  consists of a pair of real number balls
 representing the real and imaginary part with separate error bounds. (See the
 documentation of :mod:`sage.rings.real_arb` for more information.)
 
 A :class:`ComplexBall` thus represents a rectangle `[m_1-r_1, m_1+r_1] +
-[m_2-r_2, m_2+r_2] i` in the complex plane. This is used in Arb instead of a
+[m_2-r_2, m_2+r_2] i` in the complex plane. This is used instead of a
 disk or square representation (consisting of a complex floating-point midpoint
 with a single radius), since it allows implementing many operations more
 conveniently by splitting into ball operations on the real and imaginary parts.
@@ -43,7 +43,7 @@ Comparison
 
 .. WARNING::
 
-    In accordance with the semantics of Arb, identical :class:`ComplexBall`
+    In accordance with the semantics of FLINT/Arb, identical :class:`ComplexBall`
     objects are understood to give permission for algebraic simplification.
     This assumption is made to improve performance. For example, setting ``z =
     x*x`` sets `z` to a ball enclosing the set `\{t^2 : t \in x\}` and not the
@@ -161,16 +161,16 @@ from cpython.complex cimport PyComplex_FromDoubles
 from sage.ext.stdsage cimport PY_NEW
 
 from sage.libs.mpfr cimport MPFR_RNDU, MPFR_RNDD, MPFR_PREC_MIN, mpfr_get_d_2exp
-from sage.libs.arb.types cimport ARF_RND_NEAR, arf_t, mag_t
-from sage.libs.arb.arb cimport *
-from sage.libs.arb.acb cimport *
-from sage.libs.arb.acb_calc cimport *
-from sage.libs.arb.acb_hypgeom cimport *
-from sage.libs.arb.acb_elliptic cimport *
-from sage.libs.arb.acb_modular cimport *
-from sage.libs.arb.acb_poly cimport *
-from sage.libs.arb.arf cimport arf_init, arf_get_d, arf_get_mpfr, arf_clear, arf_set, arf_is_nan
-from sage.libs.arb.mag cimport (mag_init, mag_clear, mag_set_d,
+from sage.libs.flint.types cimport ARF_RND_NEAR, arf_t, mag_t
+from sage.libs.flint.arb cimport *
+from sage.libs.flint.acb cimport *
+from sage.libs.flint.acb_calc cimport *
+from sage.libs.flint.acb_hypgeom cimport *
+from sage.libs.flint.acb_elliptic cimport *
+from sage.libs.flint.acb_modular cimport *
+from sage.libs.flint.acb_poly cimport *
+from sage.libs.flint.arf cimport arf_init, arf_get_d, arf_get_mpfr, arf_clear, arf_set, arf_is_nan
+from sage.libs.flint.mag cimport (mag_init, mag_clear, mag_set_d,
         MAG_BITS, mag_zero, mag_set_ui_2exp_si,
         mag_mul_2exp_si)
 from sage.libs.flint.fmpz cimport fmpz_t, fmpz_init, fmpz_get_mpz, fmpz_set_mpz, fmpz_clear
@@ -371,7 +371,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             sage: CBF.base_ring()
             Real ball field with 53 bits of precision
 
-        There are direct coercions from ZZ and QQ (for which arb provides
+        There are direct coercions from ZZ and QQ (for which FLINT provides
         construction functions)::
 
             sage: CBF.coerce_map_from(ZZ)
@@ -1029,7 +1029,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
           the ball field) -- absolute accuracy goal
 
         Additionally, the following optional parameters can be used to control
-        the integration algorithm. See the `Arb documentation <http://arblib.org/acb_calc.html>`_
+        the integration algorithm. See the `FLINT documentation <https://flintlib.org/doc/acb_calc.html>`_
         for more information.
 
         - ``deg_limit`` -- maximum quadrature degree for each
@@ -1150,8 +1150,8 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
 
         ALGORITHM:
 
-        Uses the `acb_calc <http://arblib.org/acb_calc.html>`_ module of the Arb
-        library.
+        Uses the `acb_calc <https://flintlib.org/doc/acb_calc.html>`_ module of
+        the FLINT library.
 
         TESTS::
 
@@ -1256,7 +1256,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
 
 cdef inline bint _do_sig(long prec) noexcept:
     """
-    Whether signal handlers should be installed for calls to arb.
+    Whether signal handlers should be installed for calls to FLINT.
     """
     return (prec > 1000)
 
@@ -1298,8 +1298,7 @@ cdef inline real_ball_field(ComplexBall ball) noexcept:
 
 cdef class ComplexBall(RingElement):
     """
-    Hold one ``acb_t`` of the `Arb library
-    <http://arblib.org>`_
+    Hold one ``acb_t`` of the `FLINT library <https://flintlib.org>`_
 
     EXAMPLES::
 

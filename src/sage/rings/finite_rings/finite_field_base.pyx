@@ -876,7 +876,7 @@ cdef class FiniteField(Field):
         return self.characteristic()**self.degree()
 
     # cached because constructing the Factorization is slow;
-    # see trac #11628.
+    # see Issue #11628.
     @cached_method
     def factored_order(self):
         """
