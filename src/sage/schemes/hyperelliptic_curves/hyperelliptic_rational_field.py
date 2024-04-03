@@ -34,7 +34,7 @@ class HyperellipticCurve_rational_field(hyperelliptic_generic.HyperellipticCurve
           Frobenius, otherwise uses the supplied pAdic ring or field.
 
         - ``prec`` (optional) -- if ``p`` is an prime integer, the `p`-adic
-          precision of the coefficient ring constructed
+          precision of the coefficient ring constructed.
 
         EXAMPLES::
 
