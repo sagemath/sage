@@ -7,7 +7,7 @@ Image Sets
 #                     2012      Christian Stump
 #                     2020-2021 Frédéric Chapoton
 #                     2021      Travis Scrimshaw
-#                     2021      Matthias Koeppe
+#                     2021-2024 Matthias Koeppe
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -130,6 +130,40 @@ class ImageSubobject(Parent):
         self._inverse = inverse
         self._domain_subset = domain_subset
         self._is_injective = is_injective
+
+    def __eq__(self, other):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.sets.image_set import ImageSubobject
+            sage: D = ZZ
+            sage: def f(x):
+            ....:     return 2 * x
+            sage: I = ImageSubobject(f, ZZ)
+            sage: I == ImageSubobject(f, ZZ)
+            True
+        """
+        if not isinstance(other, ImageSubobject):
+            return False
+        return (self._map == other._map
+                and self._inverse == other._inverse
+                and self._domain_subset == other._domain_subset
+                and self._is_injective == other._is_injective
+                and self.category() == other.category())
+
+    def __ne__(self, other):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.sets.image_set import ImageSubobject
+            sage: D = ZZ
+            sage: def f(x):
+            ....:     return 2 * x
+            sage: I = ImageSubobject(f, ZZ)
+            sage: I != ImageSubobject(f, QQ)
+            True
+        """
+        return not (self == other)
 
     def _element_constructor_(self, x):
         """
