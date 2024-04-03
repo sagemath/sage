@@ -429,6 +429,7 @@ class AvailableSoftware():
         self._features = sorted(features, key=lambda feature: feature.name)
         self._indices = {feature.name: idx for idx, feature in enumerate(self._features)}
         self._seen = Array('i', len(self._features)) # initialized to zeroes
+        self._hidden = Array('i', len(self._features)) # initialized to zeroes
 
     def __contains__(self, item):
         """
@@ -444,6 +445,11 @@ class AvailableSoftware():
             idx = self._indices[item]
         except KeyError:
             return False
+        if not self._hidden[idx]:
+            if self._features[idx].is_hidden():
+                self._hidden[idx] = 1
+            else:
+                self._hidden[idx] = -1
         if not self._seen[idx]:
             if not self._allow_external and self._features[idx] in self._external_features:
                 self._seen[idx] = -1 # not available
@@ -494,6 +500,29 @@ class AvailableSoftware():
         return [feature.name
                 for feature, seen in zip(self._features, self._seen)
                 if seen > 0]
+
+    def hidden(self):
+        """
+        Return the list of detected hidden external software.
+
+        EXAMPLES::
+
+            sage: from sage.doctest.external import available_software
+            sage: from sage.features.databases import all_features
+            sage: for f in all_features():
+            ....:    f.hide()
+            ....:    if f._spkg_type() == 'standard':
+            ....:         test = f.name in available_software
+            ....:    f.unhide()
+            sage: available_software.hidden()
+            [...'conway_polynomials',
+             'database_cremona_mini_ellcurve',
+             'database_ellcurves',
+             'database_graphs'...]
+        """
+        return [feature.name
+                for feature, hidden in zip(self._features, self._hidden)
+                if hidden > 0]
 
 
 available_software = AvailableSoftware()
