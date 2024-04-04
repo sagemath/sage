@@ -1909,12 +1909,14 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         """
         if form == "seminormal":
             return self._dft_seminormal(mult=mult)
+        if form == "modular":
+            return self._dft_modular()
         else:
             raise ValueError("invalid form (= %s)" % form)
-
+        
     def _dft_seminormal(self, mult='l2r'):
         """
-        Return the seminormal form of the discrete Fourier for ``self``.
+        Return the seminormal form of the discrete Fourier transform for ``self``.
 
         INPUT:
 
@@ -1940,6 +1942,54 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         """
         snb = self.seminormal_basis(mult=mult)
         return matrix([vector(b) for b in snb]).inverse().transpose()
+    
+    def _dft_modular(self):
+        """
+        Return the discrete Foruier transform when the characterisc divides the order of the group.
+        The usual .dft() throws ZeroDivisionError when p|n.
+
+        EXAMPLES: 
+            p=3, n=3:
+            sage: SGA_3_3 = SymmetricGroupAlgebra(GF(3),3)
+            sage: SGA_3_3.dft(form="modular")
+            [1 0 0 0 0 0]
+            [0 0 0 1 0 0]
+            [0 0 0 0 0 1]
+            [0 0 1 0 0 0]
+            [0 1 0 0 0 0]
+            [0 0 0 0 1 0]
+
+        """
+        #helper function to flatten a list
+        def flatten(l):
+            return [item for sublist in l for item in sublist]
+        
+        #create a spanning set for the block corresponding to an idempotent
+        def spanning_set(idem,p,n):
+            return [self(sigma)*idem for sigma in self.group()]
+        
+        #compute all the blocks
+        #compute the submodule corresponding to span_GF(p){\sigma*e_i | \sigma \in S_n}
+        def symmetric_group_blocks(p,n):
+            idempotents = self.central_orthogonal_idempotents()
+            return [self.submodule(spanning_set(idem,p,n)) for idem in idempotents]
+        
+        #implements modular Fourier transform
+        #project v onto each block U_i = F_p[S_n]*e_i 
+        #use \pi_i: v |--> v*e_i as a projection
+        def modular_fourier_transform(p,n):
+            blocks = symmetric_group_blocks(p,n)
+            #compute the list of basis vectors lifed to the SGA from each block
+            block_decomposition_basis = flatten([[u.lift() for u in block.basis()] for block in blocks])
+            #the elements of the symmetric group are ordered, giving the map from the standard basis
+            sym_group_list = list(self.group())
+            change_of_basis_matrix = []
+            for b in block_decomposition_basis:
+                coord_vector = [0]*len(sym_group_list)
+                for pair in list(b):
+                    coord_vector[sym_group_list.index(pair[0])] = pair[1]
+                change_of_basis_matrix.append(coord_vector)
+            return Matrix(self.base_ring(),change_of_basis_matrix)
 
     def epsilon_ik(self, itab, ktab, star=0, mult='l2r'):
         r"""
