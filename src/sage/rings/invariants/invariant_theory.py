@@ -1038,18 +1038,15 @@ class QuadraticForm(AlgebraicForm):
         def prod(a, b):
             if a is None and b is None:
                 return self._ring.one()
-            elif a is None:
+            if a is None:
                 return b
-            elif b is None:
+            if b is None:
                 return a
-            else:
-                return a * b
-        squares = tuple( prod(x,x) for x in var )
-        mixed = []
-        for i in range(self._n):
-            for j in range(i+1, self._n):
-                mixed.append(prod(var[i], var[j]))
-        mixed = tuple(mixed)
+            return a * b
+
+        squares = tuple(prod(x, x) for x in var)
+        mixed = tuple([prod(var[i], var[j]) for i in range(self._n)
+                       for j in range(i + 1, self._n)])
         return squares + mixed
 
     @cached_method

@@ -242,7 +242,7 @@ def points_of_bounded_height(PS, K, dim, bound, prec=53):
 
     - ``K`` -- a number field
 
-    - ``dim`` -- a positive interger
+    - ``dim`` -- a positive integer
 
     - ``bound`` -- a real number
 
