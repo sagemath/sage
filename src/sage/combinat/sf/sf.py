@@ -975,12 +975,12 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             doctest:warning
             ...
             DeprecationWarning: the coerce_* inputs are deprecated and ignored
-            See https://github.com/sagemath/sage/issues/12345678 for details.
+            See https://github.com/sagemath/sage/issues/37736 for details.
             Symmetric Functions over Rational Field in the Witt basis
         """
         if coerce_h is not None or coerce_e is not None or coerce_p is not None:
             from sage.misc.superseded import deprecation
-            deprecation(12345678, "the coerce_* inputs are deprecated and ignored")
+            deprecation(37736, "the coerce_* inputs are deprecated and ignored")
         from . import witt
         return witt.SymmetricFunctionAlgebra_witt(self)
     w = witt
