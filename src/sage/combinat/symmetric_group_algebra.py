@@ -1962,20 +1962,15 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         #helper function to flatten a list
         def flatten(l):
             return [item for sublist in l for item in sublist]
-        
         #create a spanning set for the block corresponding to an idempotent
         def spanning_set(idem,p,n):
             return [self(sigma)*idem for sigma in self.group()]
-        
         #compute all the blocks
-        #compute the submodule corresponding to span_GF(p){\sigma*e_i | \sigma \in S_n}
         def symmetric_group_blocks(p,n):
             idempotents = self.central_orthogonal_idempotents()
+            #compute the submodule corresponding to span_GF(p){\sigma*e_i | \sigma \in S_n}
             return [self.submodule(spanning_set(idem,p,n)) for idem in idempotents]
-        
-        #implements modular Fourier transform
-        #project v onto each block U_i = F_p[S_n]*e_i 
-        #use \pi_i: v |--> v*e_i as a projection
+        #project v onto each block U_i = F_p[S_n]*e_i via \pi_i: v |--> v*e_i
         def modular_fourier_transform(p,n):
             blocks = symmetric_group_blocks(p,n)
             #compute the list of basis vectors lifed to the SGA from each block
