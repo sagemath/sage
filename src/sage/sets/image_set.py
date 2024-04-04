@@ -142,14 +142,25 @@ class ImageSubobject(Parent):
             sage: I = ImageSubobject(f, ZZ)
             sage: I == ImageSubobject(f, ZZ)
             True
+
+        This method does not take into account whether an inverse is provided,
+        injectivity is declared, or the category::
+
+            sage: def f_inv(y):
+            ....:     return y // 2
+            sage: I == ImageSubobject(f, ZZ, inverse=f_inv)
+            True
+            sage: I == ImageSubobject(f, ZZ, is_injective=True)
+            True
+            sage: I.category()
+            Category of enumerated subobjects of sets
+            sage: I == ImageSubobject(f, ZZ, category=EnumeratedSets().Infinite())
+            True
         """
         if not isinstance(other, ImageSubobject):
             return False
         return (self._map == other._map
-                and self._inverse == other._inverse
-                and self._domain_subset == other._domain_subset
-                and self._is_injective == other._is_injective
-                and self.category() == other.category())
+                and self._domain_subset == other._domain_subset)
 
     def __ne__(self, other):
         r"""
@@ -176,8 +187,7 @@ class ImageSubobject(Parent):
             sage: hash(I) == hash(ImageSubobject(f, ZZ))
             True
         """
-        return hash((self._map, self._inverse, self._domain_subset,
-                     self._is_injective, self.category()))
+        return hash((self._map, self._domain_subset))
 
     def _element_constructor_(self, x):
         """
