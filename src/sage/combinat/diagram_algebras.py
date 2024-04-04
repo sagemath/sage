@@ -11,6 +11,8 @@ AUTHORS:
   ``*Diagram`` classes and other methods to improve diagram algebras.
 - Mike Zabrocki (2018): Implementation of individual element diagram classes
 - Aaron Lauve, Mike Zabrocki (2018): Implementation of orbit basis for Partition algebra.
+- Travis Scrimshaw (2024): Implemented the Potts representation of the
+  partition algebra.
 """
 
 # ****************************************************************************
@@ -3103,6 +3105,38 @@ class PartitionAlgebra(DiagramBasis, UnitDiagramMixin):
 
     L = jucys_murphy_element
 
+    def potts_representation(self, y=None):
+        r"""
+        Return the :class:`PottsRepresentation` with magnetic field
+        direction ``y`` of ``self``.
+
+        .. NOTE::
+
+            The deformation parameter `d` of ``self`` must be a
+            positive integer.
+
+        INPUT:
+
+        - ``y`` -- (option) an integer between 1 and `d`; ignored
+          if the order of ``self`` is an integer, otherwise the
+          default is `1`
+
+        EXAMPLES::
+
+            sage: PA = algebras.Partition(5/2, QQ(4))
+            sage: PR = PA.potts_representation()
+
+            sage: PA = algebras.Partition(5/2, 3/2)
+            sage: PA.potts_representation()
+            Traceback (most recent call last):
+            ...
+            ValueError: the partition algebra deformation parameter must
+             be a positive integer
+        """
+        if self.order() not in ZZ and y is None:
+            y = ZZ.one()
+        return PottsRepresentation(self, y)
+
     class Element(DiagramBasis.Element):
         def to_orbit_basis(self):
             """
@@ -4419,7 +4453,7 @@ def TL_diagram_ascii_art(diagram, use_unicode=False, blobs=[]):
     else:
         from sage.typeset.ascii_art import AsciiArt
         d = [".", ".", "`", "`", "-", "|"]
-        #db = [".", ".", "`", "`", "=", "|"]
+        # db = [".", ".", "`", "`", "=", "|"]
         blob = '0'
         ret = [" o" * n]
         char_art = AsciiArt
@@ -4489,12 +4523,12 @@ def diagram_latex(diagram, fill=False, edge_options=None, edge_additions=None):
         if x < 0:
             return -1
         return 0
+
     l1 = []  # list of blocks
     l2 = []  # list of nodes
     for i in list(diagram):
         l1.append(list(i))
-        for j in list(i):
-            l2.append(j)
+        l2.extend(list(i))
     output = "\\begin{tikzpicture}[scale = 0.5,thick, baseline={(0,-1ex/2)}] \n\\tikzstyle{vertex} = [shape = circle, minimum size = 7pt, inner sep = 1pt] \n" #setup beginning of picture
     for i in l2: #add nodes
         output = output + "\\node[vertex] (G-{}) at ({}, {}) [shape = circle, draw{}] {{}}; \n".format(i, (abs(i)-1)*1.5, sgn(i), filled_str)
@@ -4535,6 +4569,570 @@ def diagram_latex(diagram, fill=False, edge_options=None, edge_additions=None):
                             edge_options(j), j[0], outVec, inVec, edge_additions(j), j[1])
     output = output + "\\end{tikzpicture}" #end picture
     return output
+
+
+class PottsRepresentation(CombinatorialFreeModule):
+    r"""
+    The Potts representation of the partition algebra.
+
+    Let `P_n(d)` be the :class:`PartitionAlgebra` over `R` with the
+    deformation parameter `d \in \ZZ_{>0}` being a positive integer.
+    Recall the multiplication convention of diagrams in `P_n(d)`
+    computing `D D'` by placing `D` above `D'`.
+
+    The *Potts representation* is the  right `P_n(d)`-module on
+    `M = V^{\otimes n}`, with `V = R^d`, with the action given as follows.
+    We identify the natural basis vectors in `M` with words of length `n`
+    in the alphabet `\{1, \dotsc, d\}` (which we call colors). For a basis
+    vector `w` and diagram `D`, define `w \cdot D` as the sum over all `v`
+    such that every part in `w D v` (consider this as coloring the nodes
+    of `D`) is given by the same color.
+
+    If `n` is a half integer, then there is an extra fixed color for the
+    node `\lceil n \rceil`, which is called the *magnetic field direction*
+    from the physics interpretation of this representation.
+
+    EXAMPLES:
+
+    In this example, we consider `R = \QQ` and use the Potts representation
+    to construct the centralizer algebra of the left `S_{d-1}`-action on
+    `V^{\otimes n}` with `V = \QQ^d` being the permutation action. ::
+
+        sage: PA = algebras.Partition(5/2, QQ(2))
+        sage: PR = PA.potts_representation(2)
+        sage: mats = [PR.representation_matrix(x) for x in PA.basis()]
+        sage: MS = mats[0].parent()
+        sage: CM = MS.submodule(mats)
+        sage: CM.dimension()
+        16
+
+    We check that this commutes with the `S_{d-1}`-action::
+
+        sage: all((g * v) * x == g * (v * x) for g in PR.symmetric_group()
+        ....:     for v in PR.basis() for x in PA.basis())
+        True
+
+    Next, we see that the centralizer of the `S_d`-action is smaller
+    than the semisimple quotient of the partition algebra::
+
+        sage: PA.dimension()
+        52
+        sage: len(PA.radical_basis())
+        9
+        sage: SQ = PA.semisimple_quotient()
+        sage: SQ.dimension()
+        43
+
+    Next, we get orthogonal idempotents that project onto the central
+    orthogonal idempotents in the semisimple quotient and construct
+    the corresponding Peirce summands `e_i P_n(d) e_i`::
+
+        sage: # long time
+        sage: orth_idems = PA.orthogonal_idempotents_central_mod_radical()
+        sage: algs = [PA.peirce_summand(idm, idm) for idm in orth_idems]
+        sage: [A.dimension() for A in algs]
+        [16, 2, 1, 25]
+
+    We saw that we obtain the entire endomorphism algebra since `d = 2`
+    and `S_{d-1}` is the trivial group. Hence, the 16 dimensional Peirce
+    summand computed above is isomorphic to this endomorphism algebra
+    (both are `4 \times 4` matrix algebras over `\QQ`). Hence, we have a
+    natural quotient construction of the centralizer algebra from the
+    partition algebra.
+
+    Next, we consider a case with a nontrivial `S_d`-action (now it is `S_d`
+    since the partition algebra has integer rank). We perform the same
+    computations as before::
+
+        sage: PA = algebras.Partition(2, QQ(2))
+        sage: PA.dimension()
+        15
+        sage: PA.semisimple_quotient().dimension()
+        10
+        sage: orth_idems = PA.orthogonal_idempotents_central_mod_radical()
+        sage: algs = [PA.peirce_summand(idm, idm) for idm in orth_idems]
+        sage: [A.dimension() for A in algs]
+        [4, 2, 4, 1]
+
+        sage: PR = PA.potts_representation()
+        sage: mats = [PR.representation_matrix(x) for x in PA.basis()]
+        sage: MS = mats[0].parent()
+        sage: cat = Algebras(QQ).WithBasis().Subobjects()
+        sage: CM = MS.submodule(mats, category=cat)
+        sage: CM.dimension()
+        8
+
+    To do the remainder of the computation, we need to monkey patch a
+    ``product_on_basis`` method::
+
+        sage: CM.product_on_basis
+        NotImplemented
+        sage: CM.product_on_basis = lambda x,y: CM.retract(CM.basis()[x].lift() * CM.basis()[y].lift())
+        sage: CM.orthogonal_idempotents_central_mod_radical()
+        (1/2*B[0] + 1/2*B[3] + 1/2*B[5] + 1/2*B[6],
+         1/2*B[0] - 1/2*B[3] + 1/2*B[5] - 1/2*B[6])
+        sage: CM.peirce_decomposition()
+        [[Free module generated by {0, 1, 2, 3} over Rational Field,
+          Free module generated by {} over Rational Field],
+         [Free module generated by {} over Rational Field,
+          Free module generated by {0, 1, 2, 3} over Rational Field]]
+
+    Hence, we see that the centralizer algebra is isomorphic to a product
+    of two `2 \times 2` matrix algebras (over `\QQ`), which are naturally
+    a part of the partition algebra decomposition.
+
+    Lastly, we verify the commuting actions::
+
+        sage: all((g * v) * x == g * (v * x) for g in PR.symmetric_group()
+        ....:     for v in PR.basis() for x in PA.basis())
+        True
+
+    REFERENCES:
+
+    - [MR1998]_
+    """
+    def __init__(self, PA, y):
+        r"""
+        Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: PA = algebras.Partition(5/2, QQ(4))
+            sage: PR = PA.potts_representation()
+            sage: TestSuite(PR).run()
+
+            sage: PA = algebras.Partition(5/2, QQ(2))  # not semisimple
+            sage: PR = PA.potts_representation()
+            sage: TestSuite(PR).run()
+            sage: PR = PA.potts_representation(2)
+            sage: TestSuite(PR).run()
+
+        ::
+
+            sage: PA = algebras.Partition(2, QQ(4))
+            sage: PR = PA.potts_representation()
+            sage: TestSuite(PR).run()
+
+            sage: PA = algebras.Partition(3, QQ(2))  # not semisimple
+            sage: PR = PA.potts_representation()
+            sage: TestSuite(PR).run()
+
+        TESTS::
+
+            sage: PA = algebras.Partition(3, QQ(0))
+            sage: PA.potts_representation()
+            Traceback (most recent call last):
+            ...
+            ValueError: the partition algebra deformation parameter must be a positive integer
+
+            sage: PA = algebras.Partition(3, QQ(2))
+            sage: PA.potts_representation(1)
+            Traceback (most recent call last):
+            ...
+            ValueError: the magnetic field direction should not be given for integer rank
+
+            sage: PA = algebras.Partition(5/2, QQ(4))
+            sage: PA.potts_representation(6)
+            Traceback (most recent call last):
+            ...
+            ValueError: the magnetic field direction must be an integer in [1, 4]
+            sage: PA.potts_representation(0)
+            Traceback (most recent call last):
+            ...
+            ValueError: the magnetic field direction must be an integer in [1, 4]
+            sage: PA.potts_representation(3/2)
+            Traceback (most recent call last):
+            ...
+            ValueError: the magnetic field direction must be an integer in [1, 4]
+        """
+        if PA._q not in ZZ or PA._q <= 0:
+            raise ValueError("the partition algebra deformation parameter must be a positive integer")
+        self._d = ZZ(PA._q)
+        self._PA = PA
+        order = PA.order()
+        if order not in ZZ:
+            order = order.floor()
+            if y not in ZZ or y < 1 or y > self._d:
+                raise ValueError(f"the magnetic field direction must be an integer in [1, {self._d}]")
+            y = ZZ(y)
+        else:
+            if y is not None:
+                raise ValueError("the magnetic field direction should not be given for integer rank")
+        self._y = y
+        # _order is used to define the ordering of the basis elements
+        self._num_factors = ZZ(order)
+        from sage.combinat.words.words import Words
+        indices = Words(self._d, self._num_factors)
+        R = PA.base_ring()
+        from sage.categories.modules_with_basis import ModulesWithBasis
+        cat = ModulesWithBasis(R).FiniteDimensional()
+        CombinatorialFreeModule.__init__(self, R, indices, prefix='P', category=cat)
+
+        from sage.groups.perm_gps.permgroup_named import SymmetricGroup
+        if self._y is None:
+            self._symgp = SymmetricGroup(self._d)
+        else:
+            self._symgp = SymmetricGroup([i for i in range(1, self._d+1) if i != self._y])
+        self._sga = self._symgp.algebra(R)
+
+    def _repr_(self):
+        r"""
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: PA = algebras.Partition(5/2, QQ(4))
+            sage: PA.potts_representation(2)
+            Potts representation with 4 colors and magnetic field direction 2 of
+             Partition Algebra of rank 5/2 with parameter 4 over Rational Field
+
+            sage: PA = algebras.Partition(3, QQ(4))
+            sage: PA.potts_representation()
+            Potts representation with 4 colors of
+             Partition Algebra of rank 3 with parameter 4 over Rational Field
+        """
+        if self._y is not None:
+            return "Potts representation with {} colors and magnetic field direction {} of {}".format(self._d, self._y, self._PA)
+        return "Potts representation with {} colors of {}".format(self._d, self._PA)
+
+    def _test_representation(self, **options):
+        r"""
+        Test that ``self`` is a representation.
+
+        EXAMPLES::
+
+            sage: PA = algebras.Partition(4, QQ(3))
+            sage: PR = PA.potts_representation()
+            sage: PR._test_representation()
+        """
+        tester = self._tester(**options)
+        S = tester.some_elements()
+        B = self._PA.basis()
+        from sage.misc.misc import some_tuples
+        for x, y in some_tuples(B, 2, tester._max_runs // len(S)):
+            for v in S:
+                tester.assertEqual((v * x) * y, v * (x * y))
+
+    def _monomial(self, index):
+        """
+        Consturct a monomial of ``self`` from ``index``.
+
+        EXAMPLES::
+
+            sage: PA = algebras.Partition(4, QQ(3))
+            sage: PR = PA.potts_representation()
+            sage: PR._monomial([1, 2, 1, 3])
+            P[word: 1213]
+        """
+        return super()._monomial(self._indices(index))
+
+    def __getitem__(self, ind):
+        r"""
+        Return the basis element indexed by ``ind``.
+
+        EXAMPLES::
+
+            sage: PA = algebras.Partition(4, QQ(3))
+            sage: PR = PA.potts_representation()
+            sage: PR[1,2,1,3]
+            P[word: 1213]
+
+            sage: PA = algebras.Partition(1, QQ(4))
+            sage: PR = PA.potts_representation()
+            sage: PR[2]
+            P[word: 2]
+            sage: PR[10]
+            Traceback (most recent call last):
+            ...
+            AttributeError: 'PottsRepresentation_with_category' object has no attribute 'list'
+        """
+        try:
+            if self._num_factors == 1 and ind in ZZ:
+                ind = self._indices([ind])
+            else:
+                ind = self._indices(ind)
+        except (TypeError, ValueError):
+            return super().__getitem__(ind)
+        return self.monomial(ind)
+
+    def partition_algebra(self):
+        r"""
+        Return the partition algebra that ``self`` is a representation of.
+
+        EXAMPLES::
+
+            sage: PA = algebras.Partition(3, QQ(4))
+            sage: PR = PA.potts_representation()
+            sage: PR.partition_algebra() is PA
+            True
+        """
+        return self._PA
+
+    def number_of_factors(self):
+        r"""
+        Return the number of factors defining ``self``.
+
+        EXAMPLES::
+
+            sage: PA = algebras.Partition(7/2, QQ(4))
+            sage: PR = PA.potts_representation()
+            sage: PR.number_of_factors()
+            3
+        """
+        return self._num_factors
+
+    def number_of_colors(self):
+        r"""
+        Return the number of colors defining ``self``.
+
+        EXAMPLES::
+
+            sage: PA = algebras.Partition(3, QQ(4))
+            sage: PR = PA.potts_representation()
+            sage: PR.number_of_colors()
+            4
+        """
+        return self._d
+
+    def magnetic_field_direction(self):
+        r"""
+        Return the magnetic field direction defining ``self``.
+
+        EXAMPLES::
+
+            sage: PA = algebras.Partition(7/2, QQ(4))
+            sage: PR = PA.potts_representation(2)
+            sage: PR.magnetic_field_direction()
+            2
+        """
+        return self._y
+
+    def symmetric_group(self):
+        r"""
+        Return the symmetric group that naturally acts on ``self``.
+
+        EXAMPLES::
+
+            sage: PA = algebras.Partition(3, QQ(4))
+            sage: PR = PA.potts_representation()
+            sage: PR.symmetric_group()
+            Symmetric group of order 4! as a permutation group
+
+            sage: PA = algebras.Partition(7/2, QQ(4))
+            sage: PR = PA.potts_representation()
+            sage: PR.symmetric_group().domain()
+            {2, 3, 4}
+            sage: PR = PA.potts_representation(2)
+            sage: PR.symmetric_group().domain()
+            {1, 3, 4}
+            sage: PR = PA.potts_representation(4)
+            sage: PR.symmetric_group().domain()
+            {1, 2, 3}
+        """
+        return self._symgp
+
+    def _basis_action(self, word, diagram):
+        r"""
+        Return the action of the partition algebra basis element indexed
+        by ``diagram`` on the basis element of ``self`` indexed by ``word``.
+
+        EXAMPLES::
+
+            sage: PA = algebras.Partition(9/2, QQ(4))
+            sage: PR = PA.potts_representation(2)
+            sage: D = PA._indices([[1,2],[3,-3],[-1,-2,-4],[4,5,-5]])
+            sage: PR._basis_action(PR._indices([1,1,3,4]), D)
+            0
+            sage: PR._basis_action(PR._indices([1,2,3,2]), D)
+            0
+            sage: PR._basis_action(PR._indices([1,1,3,2]), D)
+            P[word: 1131] + P[word: 2232] + P[word: 3333] + P[word: 4434]
+        """
+        order = self._num_factors
+        fixed = [None] * self._num_factors
+        word = [None] + list(word) + [self._y]  # make this 1-based indexing
+        neg_parts = []
+        for part in diagram:
+            if part[-1] < 0:
+                # This should never happen since it should be a propagating block
+                assert -part[0] != order + 1
+                neg_parts.append(part)
+                continue
+            color = word[part[-1]]
+            for i in reversed(part):
+                if i > 0:
+                    if word[i] != color:
+                        return self.zero()
+                else:  # i < 0
+                    if -i == order + 1:
+                        assert color == self._y
+                    else:
+                        fixed[-i-1] = color  # convert 1-based to 0-based
+        if not neg_parts:
+            return self._monomial(fixed)
+
+        import itertools
+        ret = []
+        for c in itertools.product(range(1, self._d+1), repeat=len(neg_parts)):
+            temp = list(fixed)  # make a copy
+            for color, part in zip(c, neg_parts):
+                for j in part:
+                    temp[-j-1] = color  # convert 1-based to 0-based
+            ret.append(self._indices(temp))
+        return self.sum_of_monomials(ret)
+
+    def _sym_group_action(self, g, word):
+        r"""
+        Return the action of the symmetric group element ``g``
+        on the basis element of ``self`` indexed by ``word``.
+
+        EXAMPLES::
+
+            sage: PA = algebras.Partition(9/2, QQ(4))
+            sage: PR = PA.potts_representation(2)
+            sage: G = PR.symmetric_group()
+            sage: g = G.an_element(); g
+            (3,4)
+            sage: PR._sym_group_action(g, PR._indices([1,2,3,4]))
+            P[word: 1243]
+        """
+        return self._monomial([g(i) for i in word])
+
+    def representation_matrix(self, elt):
+        r"""
+        Return the representation matrix of ``self`` in ``self``.
+
+        EXAMPLES::
+
+            sage: PA = algebras.Partition(7/2, QQ(2))
+            sage: PR = PA.potts_representation()
+            sage: PR.representation_matrix(PA.an_element())
+            [7 0 3 0 2 0 0 0]
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+            [0 0 0 0 0 0 0 0]
+
+            sage: all(b.to_vector() * PR.representation_matrix(x)  # long time
+            ....:     == (b * x).to_vector()
+            ....:     for b in PR.basis() for x in PA.basis())
+            True
+
+            sage: PA = algebras.Partition(2, QQ(2))
+            sage: PR = PA.potts_representation()
+            sage: [PR.representation_matrix(x) for x in PA.basis()]
+            [
+            [1 0 0 0]  [1 0 1 0]  [1 1 0 0]  [1 0 0 1]  [1 1 1 1]  [1 0 0 0]
+            [0 0 0 0]  [0 0 0 0]  [0 0 0 0]  [0 0 0 0]  [0 0 0 0]  [1 0 0 0]
+            [0 0 0 0]  [0 0 0 0]  [0 0 0 0]  [0 0 0 0]  [0 0 0 0]  [0 0 0 1]
+            [0 0 0 1], [0 1 0 1], [0 0 1 1], [1 0 0 1], [1 1 1 1], [0 0 0 1],
+            <BLANKLINE>
+            [1 0 0 0]  [1 0 1 0]  [1 0 0 0]  [1 0 0 0]  [1 0 1 0]  [1 1 0 0]
+            [0 0 1 0]  [1 0 1 0]  [0 1 0 0]  [0 0 0 1]  [0 1 0 1]  [1 1 0 0]
+            [0 1 0 0]  [0 1 0 1]  [0 0 1 0]  [1 0 0 0]  [1 0 1 0]  [0 0 1 1]
+            [0 0 0 1], [0 1 0 1], [0 0 0 1], [0 0 0 1], [0 1 0 1], [0 0 1 1],
+            <BLANKLINE>
+            [1 1 0 0]  [1 0 0 1]  [1 1 1 1]
+            [0 0 1 1]  [1 0 0 1]  [1 1 1 1]
+            [1 1 0 0]  [1 0 0 1]  [1 1 1 1]
+            [0 0 1 1], [1 0 0 1], [1 1 1 1]
+            ]
+
+            sage: PA = algebras.Partition(5/2, QQ(2))
+            sage: PR = PA.potts_representation()
+            sage: all(PR.representation_matrix(x) * PR.representation_matrix(y)  # long time
+            ....:     == PR.representation_matrix(x * y)
+            ....:     for x in PA.basis() for y in PA.basis())
+            True
+
+            sage: PA = algebras.Partition(2, QQ(4))
+            sage: PR = PA.potts_representation()
+            sage: all(PR.representation_matrix(x) * PR.representation_matrix(y)
+            ....:     == PR.representation_matrix(x * y)
+            ....:     for x in PA.basis() for y in PA.basis())
+            True
+        """
+        from sage.matrix.constructor import matrix
+        return matrix([(b * elt).to_vector() for b in self.basis()])
+
+    class Element(CombinatorialFreeModule.Element):
+        def _acted_upon_(self, scalar, self_on_left=True):
+            """
+            Return the action of ``scalar`` on ``self``.
+
+            EXAMPLES::
+
+                sage: PA = algebras.Partition(5/2, QQ(4))
+                sage: PR = PA.potts_representation()
+                sage: v = PR.an_element(); v
+                P[word: 11] + 3*P[word: 12] + 3*P[word: 13]
+                sage: 3 * v
+                3*P[word: 11] + 9*P[word: 12] + 9*P[word: 13]
+                sage: v * 3
+                3*P[word: 11] + 9*P[word: 12] + 9*P[word: 13]
+                sage: x = PA.an_element(); x
+                2*P{{-3, -2, -1, 1, 2, 3}} + 2*P{{-3, -2, 1, 2, 3}, {-1}}
+                 + 3*P{{-3, -1, 1, 2, 3}, {-2}}
+                sage: v * x
+                7*P[word: 11] + 3*P[word: 12] + 3*P[word: 13] + 3*P[word: 14]
+                 + 2*P[word: 21] + 2*P[word: 31] + 2*P[word: 41]
+                sage: x * v
+                Traceback (most recent call last):
+                ...
+                TypeError: unsupported operand parent(s) for *:
+                 'Partition Algebra ...' and 'Potts representation ...'
+
+                sage: PA = algebras.Partition(2, QQ(4))
+                sage: PR = PA.potts_representation()
+                sage: v = PR.an_element(); v
+                P[word: 11] + 3*P[word: 12] + 3*P[word: 13]
+                sage: G = PR.symmetric_group()
+                sage: g = G.an_element(); g
+                (2,3,4)
+                sage: g * v
+                P[word: 11] + 3*P[word: 13] + 3*P[word: 14]
+                sage: SGA = G.algebra(ZZ)
+                sage: a = SGA.an_element(); a
+                () + (2,3,4) + 2*(1,3)(2,4) + 3*(1,4)(2,3)
+                sage: a * v
+                2*P[word: 11] + 3*P[word: 12] + 6*P[word: 13] + 3*P[word: 14]
+                 + 6*P[word: 31] + 2*P[word: 33] + 6*P[word: 34]
+                 + 9*P[word: 42] + 9*P[word: 43] + 3*P[word: 44]
+            """
+            # Check for scalars first
+            ret = super()._acted_upon_(scalar, self_on_left)
+            if ret is not None:
+                return ret
+
+            par = self.parent()
+
+            if not self_on_left:
+                # left action, so convert to the symmetric group algebra
+                sP = scalar.parent()
+                if sP is par._symgp:
+                    scalar = par._sga.monomial(scalar)
+                    sP = par._sga
+                if sP is not par._sga:
+                    try:
+                        scalar = par._sga(scalar)
+                    except (ValueError, TypeError):
+                        return None
+                return par.linear_combination((par._sym_group_action(g, wd), cg * cr)
+                                              for (wd, cr) in self._monomial_coefficients.items()
+                                              for (g, cg) in scalar.monomial_coefficients(copy=False).items())
+
+            # right action, so convert to the partition algebra
+            try:
+                scalar = par._PA(scalar)
+            except (ValueError, TypeError):
+                return None
+            return par.linear_combination((par._basis_action(wd, diag), cr * ca)
+                                          for (wd, cr) in self._monomial_coefficients.items()
+                                          for (diag, ca) in scalar.monomial_coefficients(copy=False).items())
+
 
 #########################################################################
 # START BORROWED CODE
