@@ -7,15 +7,15 @@ Pynac's ``subs()`` methods and pass a wrapper for the substitution map
 back to Python.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2013 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.structure.sage_object cimport SageObject
 
@@ -26,7 +26,7 @@ cdef class SubstitutionMap(SageObject):
 
     cpdef Expression apply_to(self, Expression expr, unsigned options) noexcept:
         """
-        Apply the substitution to a symbolic expression
+        Apply the substitution to a symbolic expression.
 
         EXAMPLES::
 
@@ -40,7 +40,7 @@ cdef class SubstitutionMap(SageObject):
 
     def _repr_(self):
         """
-        Return the string representation
+        Return the string representation.
 
         EXAMPLES::
 
@@ -53,7 +53,7 @@ cdef class SubstitutionMap(SageObject):
 
 cdef SubstitutionMap new_SubstitutionMap_from_GExMap(const GExMap& smap) noexcept:
     """
-    Wrap a Pynac object into a Python object
+    Wrap a Pynac object into a Python object.
 
     INPUT:
 
@@ -77,7 +77,7 @@ cdef SubstitutionMap new_SubstitutionMap_from_GExMap(const GExMap& smap) noexcep
 
 cpdef SubstitutionMap make_map(subs_dict) noexcept:
     """
-    Construct a new substitution map
+    Construct a new substitution map.
 
     OUTPUT:
 
@@ -94,4 +94,3 @@ cpdef SubstitutionMap make_map(subs_dict) noexcept:
         smap.insert(make_pair((<Expression>k)._gobj,
                               (<Expression>v)._gobj))
     return new_SubstitutionMap_from_GExMap(smap)
-

@@ -193,7 +193,7 @@ class FreeGradedModuleElement(IndexedFreeModuleElement):
              Sq(1,1,1)*x0 + Sq(1,1,1)*y0 + Sq(5,1)*z3,
              Sq(3,2)*z3]
         """
-        return self.parent()((a * c for c in self.dense_coefficient_list()))
+        return self.parent()(a * c for c in self.dense_coefficient_list())
 
     @cached_method
     def vector_presentation(self):

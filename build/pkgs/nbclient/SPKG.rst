@@ -1,10 +1,10 @@
-nbclient: A client library for executing notebooks. Formerly nbconvert's ExecutePreprocessor.
-=============================================================================================
+nbclient: Client library for executing notebooks. Formerly nbconvert's ExecutePreprocessor
+==========================================================================================
 
 Description
 -----------
 
-A client library for executing notebooks. Formerly nbconvert's ExecutePreprocessor.
+Client library for executing notebooks. Formerly nbconvert's ExecutePreprocessor
 
 License
 -------
