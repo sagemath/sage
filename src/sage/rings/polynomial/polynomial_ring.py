@@ -267,7 +267,7 @@ class PolynomialRing_general(Ring):
         Check that category for zero ring::
 
             sage: PolynomialRing(Zmod(1), 'x').category()
-            Category of finite commutative ring
+            Category of finite commutative rings
 
         Check `is_finite` inherited from category (:issue:`24432`)::
 
