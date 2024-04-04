@@ -16,7 +16,7 @@ from sage.structure.factorization import Factorization
 from sage.misc.derivative import multi_derivative
 from sage.rings.polynomial.polydict cimport monomial_exponent
 from sage.matrix.matrix0 cimport Matrix
-
+from sage.rings.infinity import Infinity
 
 cdef class LaurentPolynomial_mpair(LaurentPolynomial):
     """
@@ -1172,16 +1172,77 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         if not x:
             return self._poly.total_degree() + sum(self._mon)
 
+        # Get the index of the generator or error
         cdef tuple g = <tuple > self._parent.gens()
         cdef Py_ssize_t i
-        cdef bint no_generator_found = True
-        for i in range(len(g)):
-            if g[i] is x:
-                no_generator_found = False
-                break
-        if no_generator_found:
-            raise TypeError("x must be a generator of parent")
+        try:
+            i = g.index(x)
+        except ValueError:  # not in the tuple
+            raise TypeError(f"{x} is not a generator of parent")
         return self._poly.degree(self._parent._R.gens()[i]) + self._mon[i]
+
+    def valuation(self, x=None):
+        r"""
+        Return the valuation of ``self``.
+
+        If ``x`` is ``None``, the returned valuation is the minimal total degree
+        of the monomials occurring in ``self``. Geometrically, this is the order
+        of vanishing of ``self`` at the generic point of the blow-up of the
+        point `(0,0,\ldots,0)`.
+
+        If ``x`` is not ``None``, then it must be a generator. In that case, the
+        minimum degree of that generator occurring in ``self`` is returned.
+        Geometrically, this is the order of vanishing of ``self`` at the generic
+        point of the curve `x = 0`.
+
+        INPUT:
+
+        - ``x`` -- (optional) a generator; if given, return the valuation
+          with respect to this generator
+
+        EXAMPLES::
+
+            sage: R.<x,y> = LaurentPolynomialRing(ZZ)
+            sage: f = 2*x^2*y^-3 - 13*x^-1*y^-3 + 2*x^2*y^-5 - 2*x^-3*y^2
+            sage: f.valuation()
+            -4
+            sage: f.valuation(x)
+            -3
+            sage: f.valuation(y)
+            -5
+            sage: R.zero().valuation()
+            +Infinity
+
+        TESTS:
+
+        If supplied, ``x`` must be a generator::
+
+            sage: R.<x,y> = LaurentPolynomialRing(ZZ)
+            sage: f = 1 + x + x^2*y^-1
+            sage: f.valuation(1)
+            Traceback (most recent call last):
+            ...
+            TypeError: 1 is not a generator of parent
+        """
+        # Valuation of zero polynomial is defined to be +Infinity
+        if self.is_zero():
+            return Infinity
+
+        # When x is None find the minimal valuation by finding the minimal
+        # valuation of the sum of exponents
+        if x is None:
+            return Integer(min(sum(e) for e in self.exponents()))
+
+        # Get the index of the generator or error
+        cdef tuple g = <tuple > self._parent.gens()
+        cdef Py_ssize_t i
+        try:
+            i = g.index(x)
+        except ValueError:  # not in the tuple
+            raise TypeError(f"{x} is not a generator of parent")
+
+        # Find the minimal valuation of x by checking each term
+        return Integer(min(e[i] for e in self.exponents()))
 
     def has_inverse_of(self, i):
         """
