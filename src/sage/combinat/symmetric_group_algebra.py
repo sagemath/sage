@@ -1913,7 +1913,6 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             return self._dft_modular()
         else:
             raise ValueError("invalid form (= %s)" % form)
-        
     def _dft_seminormal(self, mult='l2r'):
         """
         Return the seminormal form of the discrete Fourier transform for ``self``.
