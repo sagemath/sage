@@ -267,9 +267,7 @@ class PolynomialRing_general(Ring):
         Check that category for zero ring::
 
             sage: PolynomialRing(Zmod(1), 'x').category()
-            Category of finite commutative algebras over
-            (finite commutative rings and subquotients of monoids and
-            quotients of semigroups and finite enumerated sets)
+            Category of finite commutative ring
 
         Check `is_finite` inherited from category (:issue:`24432`)::
 
@@ -791,6 +789,11 @@ class PolynomialRing_general(Ring):
             False
         """
         base_ring = self.base_ring()
+
+        # workaround, useful for the zero ring
+        if P == base_ring:
+            return self._coerce_map_from_base_ring()
+
         # handle constants that canonically coerce into self.base_ring()
         # first, if possible
         try:
