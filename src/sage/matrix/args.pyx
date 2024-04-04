@@ -756,7 +756,7 @@ cdef class MatrixArgs:
 
         - ``immutable`` -- boolean; if ``True``, the result will be immutable.
 
-        OUTPUT: an element of ``self.space``.
+        OUTPUT: an element of ``self.space``
 
         .. NOTE::
 

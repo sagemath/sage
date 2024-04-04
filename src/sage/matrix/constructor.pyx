@@ -91,7 +91,7 @@ def matrix(*args, **kwds):
 
 
     OUTPUT: a matrix or, more generally, a homomorphism between free
-    modules.
+    modules
 
     EXAMPLES::
 
