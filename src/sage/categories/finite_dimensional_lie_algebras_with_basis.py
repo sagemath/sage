@@ -1630,37 +1630,6 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             return LieAlgebraMorphism_from_generators(on_generators, domain=self,
                                                       codomain=codomain, base_map=base_map, check=check)
 
-        def representation(self, f=None):
-            """
-            Return a representation of ``self``.
-
-            Currently the only implementated method of constructing a
-            representation is by explicitly specifying the action of
-            the basis elements of ``self`` by matrices using a ``dict``.
-
-            If no arguments are given, then this returns the trivial
-            representation.
-
-            .. SEEALSO::
-
-                :class:`~sage.algebras.lie_algebras.representation.RepresentationByMorphism`
-
-            EXAMPLES::
-
-                sage: L.<x,y> = LieAlgebra(QQ, {('x','y'): {'y':1}})
-                sage: f = {x: Matrix([[1,0],[0,0]]), y: Matrix([[0,1],[0,0]])}
-                sage: L.representation(f)
-                Representation of Lie algebra on 2 generators (x, y) over Rational Field defined by:
-                       [1 0]
-                x |--> [0 0]
-                       [0 1]
-                y |--> [0 0]
-            """
-            if f is None:
-                return self.trivial_representation()
-            from sage.algebras.lie_algebras.representation import RepresentationByMorphism
-            return RepresentationByMorphism(self, f)
-
         @cached_method
         def universal_polynomials(self):
             r"""

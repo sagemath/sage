@@ -132,6 +132,7 @@ class SuperLieAlgebra(CombinatorialFreeModule):
 
             sage: L.<x,y,z> = SuperLieAlgebra(QQ, {('x','y'):{'z':1}}, (1,1,2))
             sage: L[x, y]
+            z
         """
         if isinstance(x, tuple) and len(x) == 2:
             # Check if we need to construct an ideal
@@ -205,13 +206,14 @@ class SuperLieAlgebra(CombinatorialFreeModule):
     # Morphisms of graded Lie algebras:
 
     def graded_morphism(self, on_generators, domain, codomain, argument):
-        """
+        r"""
         Return a graded morphim of super Lie algebras.
 
         EXAMPLES::
 
             sage: L.<x,y,z> = SuperLieAlgebra(QQ, {('x','y'):{'z':1}}, (1,1,2))
             sage: L.graded_morphism({x:x, y:y, z:z}, L, L, x.bracket(y))
+            (0, 0, 1)
         """
         from itertools import combinations
         from sage.matrix.constructor import matrix
@@ -272,9 +274,9 @@ class SuperLieAlgebra(CombinatorialFreeModule):
 
                 sage: L.<x,y,z> = SuperLieAlgebra(QQ, {('x','y'):{'z':1}}, (1,1,2))
                 sage: x.bracket(y)
-                B['z']
+                z
                 sage: y.bracket(x)
-                B['z']
+                z
             """
             P = self.parent()
 
@@ -317,15 +319,15 @@ def _standardize_s_coeff(s_coeff, index_set, degrees):
 
     EXAMPLES::
 
-        sage: from sage.algebras.lie_algebras.structure_coefficients import LieAlgebraWithStructureCoefficients
+        sage: from sage.algebras.lie_algebras.superliealgebra import _standardize_s_coeff
         sage: d = {('y', 'x'): {'x': -1}}
-        sage: LieAlgebraWithStructureCoefficients._standardize_s_coeff(d, ('x', 'y'), (0, 0))
+        sage: _standardize_s_coeff(d, ('x', 'y'), (0, 0))
         Finite family {('x', 'y'): (('x', 1),)}
-        sage: LieAlgebraWithStructureCoefficients._standardize_s_coeff(d, ('x', 'y'), (1, 0))
+        sage: _standardize_s_coeff(d, ('x', 'y'), (1, 0))
         Finite family {('x', 'y'): (('x', 1),)}
-        sage: LieAlgebraWithStructureCoefficients._standardize_s_coeff(d, ('x', 'y'), (0, 1))
+        sage: _standardize_s_coeff(d, ('x', 'y'), (0, 1))
         Finite family {('x', 'y'): (('x', 1),)}
-        sage: LieAlgebraWithStructureCoefficients._standardize_s_coeff(d, ('x', 'y'), (1, 1))
+        sage: _standardize_s_coeff(d, ('x', 'y'), (1, 1))
         Finite family {('x', 'y'): (('x', -1),)}
     """
     # Try to handle infinite basis (once/if supported)
