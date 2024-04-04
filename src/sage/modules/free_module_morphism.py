@@ -74,7 +74,7 @@ def is_FreeModuleMorphism(x):
 
 class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
 
-    minimal_polynomial = minpoly = FiniteDimensionalModulesWithBasis.MorphismMethods.minimal_polynomial
+    minimal_polynomial = minpoly = FiniteDimensionalModulesWithBasis.Homsets.Endset.ElementMethods.minimal_polynomial
 
     def __init__(self, parent, A, side="left"):
         """
