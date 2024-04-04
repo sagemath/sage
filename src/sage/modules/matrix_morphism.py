@@ -88,10 +88,10 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
     # for use with parents that are merely set up as additive abelian groups,
     # but not as ZZ-modules; see sage.modular.abvar.
 
-    characteristic_polynomial = charpoly = FiniteDimensionalModulesWithBasis.MorphismMethods.characteristic_polynomial
-    det = determinant = FiniteDimensionalModulesWithBasis.MorphismMethods.determinant
-    fcp = FiniteDimensionalModulesWithBasis.MorphismMethods.fcp
-    trace = FiniteDimensionalModulesWithBasis.MorphismMethods.trace
+    characteristic_polynomial = charpoly = FiniteDimensionalModulesWithBasis.Homsets.Endset.ElementMethods.characteristic_polynomial
+    det = determinant = FiniteDimensionalModulesWithBasis.Homsets.Endset.ElementMethods.determinant
+    fcp = FiniteDimensionalModulesWithBasis.Homsets.Endset.ElementMethods.fcp
+    trace = FiniteDimensionalModulesWithBasis.Homsets.Endset.ElementMethods.trace
 
     def __init__(self, parent, side='left'):
         """
