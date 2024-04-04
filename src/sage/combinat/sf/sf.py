@@ -959,7 +959,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         return monomial.SymmetricFunctionAlgebra_monomial(self)
     m = monomial
 
-    def witt(self, coerce_h=True, coerce_e=False, coerce_p=False):
+    def witt(self, coerce_h=None, coerce_e=None, coerce_p=None):
         r"""
         The Witt basis of the symmetric functions.
 
@@ -967,13 +967,21 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
             sage: SymmetricFunctions(QQ).witt()
             Symmetric Functions over Rational Field in the Witt basis
+
+        TESTS::
+
             sage: SymmetricFunctions(QQ).witt(coerce_p=True)
-            Symmetric Functions over Rational Field in the Witt basis
-            sage: SymmetricFunctions(QQ).witt(coerce_h=False, coerce_e=True, coerce_p=True)
+            doctest:warning
+            ...
+            DeprecationWarning: the coerce_* inputs are deprecated and ignored
+            See https://github.com/sagemath/sage/issues/37736 for details.
             Symmetric Functions over Rational Field in the Witt basis
         """
+        if coerce_h is not None or coerce_e is not None or coerce_p is not None:
+            from sage.misc.superseded import deprecation
+            deprecation(37736, "the coerce_* inputs are deprecated and ignored")
         from . import witt
-        return witt.SymmetricFunctionAlgebra_witt(self, coerce_h=coerce_h, coerce_e=coerce_e, coerce_p=coerce_p)
+        return witt.SymmetricFunctionAlgebra_witt(self)
     w = witt
     Witt = witt
 
