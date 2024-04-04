@@ -45,7 +45,6 @@ class SymmetricFunctionAlgebra_monomial(classical.SymmetricFunctionAlgebra_class
             sage: TestSuite(m).run(skip=['_test_associativity', '_test_distributivity', '_test_prod'])
             sage: TestSuite(m).run(elements = [m[1,1]+m[2], m[1]+2*m[1,1]])
         """
-        self._descriptor = (("monomial",),)
         classical.SymmetricFunctionAlgebra_classical.__init__(self, Sym, "monomial", 'm')
 
     def _dual_basis_default(self):

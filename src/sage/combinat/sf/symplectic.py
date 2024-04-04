@@ -178,7 +178,6 @@ class SymmetricFunctionAlgebra_symplectic(sfa.SymmetricFunctionAlgebra_generic):
         """
         sfa.SymmetricFunctionAlgebra_generic.__init__(self, Sym, "symplectic",
                                                       'sp', graded=False)
-        self._descriptor = (("sp",),)
 
         # We make a strong reference since we use it for our computations
         #   and so we can define the coercion below (only codomains have

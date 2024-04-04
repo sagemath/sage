@@ -28,6 +28,17 @@ from . import classical
 class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical):
     @staticmethod
     def __classcall__(cls, dual_basis, scalar, scalar_name="", basis_name=None, prefix=None):
+        """
+        Normalize the arguments.
+
+        TESTS::
+
+            sage: w = SymmetricFunctions(QQ).w()
+            sage: B1 = w.dual_basis()
+            sage: B2 = w.dual_basis(prefix="d_w")
+            sage: B1 is B2
+            True
+        """
         if prefix is None:
             prefix = 'd_'+dual_basis.prefix()
         return super().__classcall__(cls, dual_basis, scalar, scalar_name, basis_name, prefix)
@@ -129,9 +140,6 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
         self._dual_basis = dual_basis
         self._scalar = scalar
         self._scalar_name = scalar_name
-        if self._scalar == sage.combinat.sf.sfa.zee:
-            self._descriptor = (self._dual_basis._descriptor
-                                + (("dual_basis", {"prefix": prefix, "basis_name": basis_name}),))
 
         # Set up the cache
 
@@ -162,6 +170,20 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
         category = sage.categories.all.ModulesWithBasis(self.base_ring())
         self.register_coercion(SetMorphism(Hom(self._dual_basis, self, category), self._dual_to_self))
         self._dual_basis.register_coercion(SetMorphism(Hom(self, self._dual_basis, category), self._self_to_dual))
+
+    def construction(self):
+        """
+        Return a pair ``(F, R)``, where ``F`` is a
+        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
+        that ``F(R)`` returns ``self``.
+
+        EXAMPLES::
+
+            sage: w = SymmetricFunctions(ZZ).witt()
+            sage: w.dual_basis().construction()
+            (SymmetricFunctionsFunctor[dual Witt], Integer Ring)
+        """
+        return DualBasisFunctor(self), self.base_ring()
 
     def _dual_to_self(self, x):
         """
@@ -265,6 +287,24 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
         """
         return self._dual_basis
 
+    def basis_name(self):
+        r"""
+        Return the name of the basis of ``self``.
+
+        This is used for output and, for the classical bases of
+        symmetric functions, to connect this basis with Symmetrica.
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(QQ)
+            sage: f = Sym.f()
+            sage: f.basis_name()
+            'forgotten'
+        """
+        if self._basis_name is None:
+            return "dual " + self._dual_basis.basis_name()
+        return self._basis_name
+
     def _repr_(self):
         """
         Representation of ``self``.
@@ -282,12 +322,11 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
             sage: h = m.dual_basis(scalar=zee, scalar_name='Hall scalar product'); h #indirect doctest
             Dual basis to Symmetric Functions over Rational Field in the monomial basis with respect to the Hall scalar product
         """
-        if hasattr(self, "_basis"):
+        if self._basis_name is not None:
             return super()._repr_()
         if self._scalar_name:
             return "Dual basis to %s" % self._dual_basis + " with respect to the " + self._scalar_name
-        else:
-            return "Dual basis to %s" % self._dual_basis
+        return "Dual basis to %s" % self._dual_basis
 
     def _precompute(self, n):
         """
@@ -894,6 +933,78 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
                 3
             """
             return self._dual.expand(n, alphabet)
+
+
+from sage.combinat.sf.sfa import SymmetricFunctionsFunctor
+class DualBasisFunctor(SymmetricFunctionsFunctor):
+    """
+    A constructor for algebras of symmetric functions constructed by
+    duality.
+
+    EXAMPLES::
+
+        sage: w = SymmetricFunctions(ZZ).witt()
+        sage: w.dual_basis().construction()
+        (SymmetricFunctionsFunctor[dual Witt], Integer Ring)
+    """
+    def __init__(self, basis):
+        r"""
+        Initialize the functor.
+
+        INPUT:
+
+        - ``basis`` -- the basis of the symmetric function algebra
+
+        TESTS::
+
+            sage: w = SymmetricFunctions(ZZ).witt()
+            sage: F = w.dual_basis().construction()[0]
+            sage: TestSuite(F).run()
+        """
+        self._dual_basis = basis._dual_basis
+        self._basis_name = basis._basis_name
+        self._scalar = basis._scalar
+        self._scalar_name = basis._scalar_name
+        self._prefix = basis._prefix
+        super().__init__(basis, self._basis_name)
+
+    def _apply_functor(self, R):
+        """
+        Apply the functor to an object of ``self``'s domain.
+
+        EXAMPLES::
+
+            sage: m = SymmetricFunctions(ZZ).monomial()
+            sage: zee = sage.combinat.sf.sfa.zee
+            sage: h = m.dual_basis(scalar=zee)
+            sage: F, R = h.construction()  # indirect doctest
+            sage: F(QQ)
+            Dual basis to Symmetric Functions over Rational Field in the monomial basis
+
+            sage: b = m.dual_basis(scalar=zee).dual_basis(scalar=lambda x: 1)
+            sage: F, R = b.construction()  # indirect doctest
+            sage: F(QQ)
+            Dual basis to Dual basis to Symmetric Functions over Rational Field in the monomial basis
+        """
+        dual_basis = self._dual_basis.change_ring(R)
+        return self._basis(dual_basis, self._scalar, self._scalar_name,
+                           self._basis_name, self._prefix)
+
+    def _repr_(self):
+        """
+        Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: w = SymmetricFunctions(ZZ).witt()
+            sage: w.dual_basis().construction()
+            (SymmetricFunctionsFunctor[dual Witt], Integer Ring)
+        """
+        if self._basis_name is None:
+            name = "dual " + self._dual_basis.basis_name()
+        else:
+            name = self._basis_name
+        return "SymmetricFunctionsFunctor[" + name + "]"
 
 
 # Backward compatibility for unpickling

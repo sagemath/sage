@@ -50,7 +50,6 @@ class SymmetricFunctionAlgebra_elementary(multiplicative.SymmetricFunctionAlgebr
             sage: TestSuite(e).run(skip=['_test_associativity', '_test_distributivity', '_test_prod'])
             sage: TestSuite(e).run(elements = [e[1,1]+e[2], e[1]+2*e[1,1]])
         """
-        self._descriptor = (("elementary",),)
         classical.SymmetricFunctionAlgebra_classical.__init__(self, Sym, "elementary", 'e')
 
     def _dual_basis_default(self):

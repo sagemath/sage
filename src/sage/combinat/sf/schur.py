@@ -48,7 +48,6 @@ class SymmetricFunctionAlgebra_schur(classical.SymmetricFunctionAlgebra_classica
             sage: TestSuite(s).run(skip=['_test_associativity', '_test_distributivity', '_test_prod'])
             sage: TestSuite(s).run(elements = [s[1,1]+s[2], s[1]+2*s[1,1]])
         """
-        self._descriptor = (("schur",),)
         classical.SymmetricFunctionAlgebra_classical.__init__(self, Sym, "Schur", 's')
 
     def _dual_basis_default(self):

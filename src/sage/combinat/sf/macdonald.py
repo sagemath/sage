@@ -99,6 +99,20 @@ class Macdonald(UniqueRepresentation):
 
     @staticmethod
     def __classcall__(cls, Sym, q='q', t='t'):
+        """
+        Normalize the arguments.
+
+        TESTS::
+
+            sage: R.<q, t> = QQ[]
+            sage: B1 = SymmetricFunctions(R).macdonald().P()
+            sage: B2 = SymmetricFunctions(R).macdonald(q, t).P()
+            sage: B3 = SymmetricFunctions(R).macdonald(t, q).P()
+            sage: B1 is B2
+            True
+            sage: B1 == B3
+            False
+        """
         return super().__classcall__(cls, Sym, Sym.base_ring()(q), Sym.base_ring()(t))
 
     def __init__(self, Sym, q, t):
@@ -771,6 +785,25 @@ class MacdonaldPolynomials_generic(sfa.SymmetricFunctionAlgebra_generic):
             self.register_coercion(SetMorphism(Hom(self._s, self, category), self._s_to_self))
             self._s.register_coercion(SetMorphism(Hom(self, self._s, category), self._self_to_s))
 
+    def construction(self):
+        """
+        Return a pair ``(F, R)``, where ``F`` is a
+        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
+        that ``F(R)`` returns ``self``.
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(FractionField(QQ['q']))
+            sage: J = Sym.macdonald(t=2).J()
+            sage: J.construction()
+            (SymmetricFunctionsFunctor[Macdonald J with t=2],
+             Fraction Field of Univariate Polynomial Ring in q over Rational Field)
+        """
+        return (sfa.SymmetricFunctionsFamilyFunctor(self, Macdonald,
+                                                    self.basis_name(),
+                                                    self.q, self.t),
+                self.base_ring())
+
     def _s_to_self(self, x):
         r"""
         Isomorphism from the Schur basis into self
@@ -1016,7 +1049,6 @@ class MacdonaldPolynomials_p(MacdonaldPolynomials_generic):
             sage: TestSuite(P).run(elements = [P.t*P[1,1]+P.q*P[2], P[1]+(P.q+P.t)*P[1,1]])  # long time (depends on previous)
         """
         MacdonaldPolynomials_generic.__init__(self, macdonald)
-        self._descriptor = (("macdonald", {"q": self.q, "t": self.t}), ("P",))
 
         self._J = macdonald.J()
         # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
@@ -1087,7 +1119,6 @@ class MacdonaldPolynomials_q(MacdonaldPolynomials_generic):
             sage: TestSuite(Q).run(elements = [Q.t*Q[1,1]+Q.q*Q[2], Q[1]+(Q.q+Q.t)*Q[1,1]])  # long time (depends on previous)
         """
         MacdonaldPolynomials_generic.__init__(self, macdonald)
-        self._descriptor = (("macdonald", {"q": self.q, "t": self.t}), ("Q",))
 
         self._J = macdonald.J()
         self._P = macdonald.P()
@@ -1124,7 +1155,6 @@ class MacdonaldPolynomials_j(MacdonaldPolynomials_generic):
         self._self_to_s_cache = _j_to_s_cache
         self._s_to_self_cache = _s_to_j_cache
         MacdonaldPolynomials_generic.__init__(self, macdonald)
-        self._descriptor = (("macdonald", {"q": self.q, "t": self.t}), ("J",))
 
     def _s_cache(self, n):
         r"""
@@ -1225,7 +1255,6 @@ class MacdonaldPolynomials_h(MacdonaldPolynomials_generic):
 
         """
         MacdonaldPolynomials_generic.__init__(self, macdonald)
-        self._descriptor = (("macdonald", {"q": self.q, "t": self.t}), ("H",))
         self._m = self._sym.m()
         self._Lmunu = macdonald.Ht()._Lmunu
         if not self.t:
@@ -1448,7 +1477,6 @@ class MacdonaldPolynomials_ht(MacdonaldPolynomials_generic):
 
         """
         MacdonaldPolynomials_generic.__init__(self, macdonald)
-        self._descriptor = (("macdonald", {"q": self.q, "t": self.t}), ("Ht",))
         self._self_to_m_cache = _ht_to_m_cache
         self._m = self._sym.m()
         category = ModulesWithBasis(self.base_ring())
@@ -1744,7 +1772,6 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
 
         """
         MacdonaldPolynomials_generic.__init__(self, macdonald)
-        self._descriptor = (("macdonald", {"q": self.q, "t": self.t}), ("S",))
         self._s = macdonald._s
         self._self_to_s_cache = _S_to_s_cache
         self._s_to_self_cache = _s_to_S_cache

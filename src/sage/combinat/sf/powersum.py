@@ -45,7 +45,6 @@ class SymmetricFunctionAlgebra_power(multiplicative.SymmetricFunctionAlgebra_mul
             sage: TestSuite(p).run(skip=['_test_associativity', '_test_distributivity', '_test_prod'])
             sage: TestSuite(p).run(elements = [p[1,1]+p[2], p[1]+2*p[1,1]])
         """
-        self._descriptor = (("powersum",),)
         classical.SymmetricFunctionAlgebra_classical.__init__(self, Sym, "powersum", 'p')
 
     def coproduct_on_generators(self, i):

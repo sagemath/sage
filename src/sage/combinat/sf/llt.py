@@ -93,6 +93,20 @@ class LLT_class(UniqueRepresentation):
     """
     @staticmethod
     def __classcall__(cls, Sym, k, t='t'):
+        """
+        Normalize the arguments.
+
+        TESTS::
+
+            sage: R.<q, t> = QQ[]
+            sage: B1 = SymmetricFunctions(R).llt(3).hspin()
+            sage: B2 = SymmetricFunctions(R).llt(3, t).hspin()
+            sage: B3 = SymmetricFunctions(R).llt(3, q).hspin()
+            sage: B1 is B2
+            True
+            sage: B1 == B3
+            False
+        """
         return super().__classcall__(cls, Sym, k, Sym.base_ring()(t))
 
     def __init__(self, Sym, k, t):
@@ -444,13 +458,33 @@ class LLT_generic(sfa.SymmetricFunctionAlgebra_generic):
         self._llt = llt
         self._k = llt._k
 
-        sfa.SymmetricFunctionAlgebra_generic.__init__(self, self._sym)
+        sfa.SymmetricFunctionAlgebra_generic.__init__(self, self._sym, self._basis_name)
 
         # temporary until Hom(GradedHopfAlgebrasWithBasis work better)
         category = sage.categories.all.ModulesWithBasis(self._sym.base_ring())
         self._m = llt._sym.m()
         self   .register_coercion(SetMorphism(Hom(self._m, self, category), self._m_to_self))
         self._m.register_coercion(SetMorphism(Hom(self, self._m, category), self._self_to_m))
+
+    def construction(self):
+        """
+        Return a pair ``(F, R)``, where ``F`` is a
+        :class:`SymmetricFunctionsFunctor` and `R` is a ring, such
+        that ``F(R)`` returns ``self``.
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(FractionField(QQ['t']))
+            sage: HSp3 = Sym.llt(3).hspin()
+            sage: HSp3.construction()
+            (SymmetricFunctionsFunctor[level 3 LLT spin],
+             Fraction Field of Univariate Polynomial Ring in t over Rational Field)
+        """
+        from sage.combinat.sf.sfa import SymmetricFunctionsFamilyFunctor
+        return (SymmetricFunctionsFamilyFunctor(self, LLT_class,
+                                                self.basis_name(),
+                                                self._k, self.t),
+                self.base_ring())
 
     def _m_to_self(self, x):
         r"""
@@ -648,7 +682,6 @@ class LLT_spin(LLT_generic):
         self._m_to_self_cache = m_to_hsp_cache[level]
 
         LLT_generic.__init__(self, llt, prefix="HSp%s" % level)
-        self._descriptor = (("llt", {"k": self.level(), "t": self.t}), ("hspin",))
 
     def _to_m(self, part):
         r"""
@@ -717,7 +750,6 @@ class LLT_cospin(LLT_generic):
         self._self_to_m_cache = hcosp_to_m_cache[level]
         self._m_to_self_cache = m_to_hcosp_cache[level]
         LLT_generic.__init__(self, llt, prefix="HCosp%s" % level)
-        self._descriptor = (("llt", {"k": self.level(), "t": self.t}), ("hcospin",))
 
     def _to_m(self, part):
         r"""

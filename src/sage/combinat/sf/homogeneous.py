@@ -52,7 +52,6 @@ class SymmetricFunctionAlgebra_homogeneous(multiplicative.SymmetricFunctionAlgeb
             sage: TestSuite(h).run(skip=['_test_associativity', '_test_distributivity', '_test_prod'])
             sage: TestSuite(h).run(elements = [h[1,1]+h[2], h[1]+2*h[1,1]])
         """
-        self._descriptor = (("homogeneous",),)
         classical.SymmetricFunctionAlgebra_classical.__init__(self, Sym, "homogeneous", 'h')
 
     def _dual_basis_default(self):
