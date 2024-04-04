@@ -2987,12 +2987,12 @@ cdef class Matroid(SageObject):
             ....:     assert M.f_vector() == SimplicialComplex(M.bases()).f_vector()
         """
         cdef list f = []
-        cdef int i, sum
+        cdef int i, s
         for i in range(self.full_rank() + 1):
-            sum = 0
+            s = 0
             for _ in self.independent_r_sets_iterator(i):
-                sum += 1
-            f.append(sum)
+                s += 1
+            f.append(ZZ(s))
         return f
 
     cpdef whitney_numbers(self) noexcept:
@@ -3022,7 +3022,7 @@ cdef class Matroid(SageObject):
         cdef list abs_w = [0] * (self.rank()+1)
         for S in self.no_broken_circuits_sets_iterator():
             abs_w[len(S)] += 1
-        return [(-1)**i * abs_w[i] for i in range(len(abs_w)) if abs_w[i] != 0]
+        return [ZZ((-1)**i * val) for i, val in enumerate(abs_w) if val != 0]
 
     cpdef whitney_numbers2(self) noexcept:
         r"""
@@ -3042,10 +3042,10 @@ cdef class Matroid(SageObject):
         """
         loops = self._closure(set())
         flags = [[loops, set(), self.groundset() - loops]]
-        W = [1]
+        W = [ZZ.one()]
         for r in range(self.full_rank()):
             flags = self._extend_flags(flags)
-            W.append(len(flags))
+            W.append(ZZ(len(flags)))
         return W
 
     cpdef broken_circuits(self, ordering=None) noexcept:
@@ -3205,39 +3205,48 @@ cdef class Matroid(SageObject):
             sage: SimplicialComplex(list(M.no_broken_circuits_sets_iterator([5,4,3,2,1])))
             Simplicial complex with vertex set (1, 2, 3, 4, 5)
              and facets {(1, 3, 5), (2, 3, 5), (2, 4, 5), (3, 4, 5)}
+
+        For a matroid with loops all sets contain the broken circuit
+        `\emptyset`, and thus we shouldn't get any set as output::
+
+            sage: M = Matroid(groundset=[1,2,3], circuits=[[3]])
+            sage: list(M.no_broken_circuits_sets_iterator())
+            []
         """
-        if not self.loops():
-            if ordering is None:
-                rev_order = sorted(self.groundset(), key=cmp_elements_key, reverse=True)
-            else:
-                if frozenset(ordering) != self.groundset():
-                    raise ValueError("not an ordering of the groundset")
-                rev_order = list(reversed(ordering))
+        if self.loops():
+            return
 
-            Tmax = len(rev_order)
-            reverse_dict = {value: key for key, value in enumerate(rev_order)}
+        if ordering is None:
+            rev_order = sorted(self.groundset(), key=cmp_elements_key, reverse=True)
+        else:
+            if frozenset(ordering) != self.groundset():
+                raise ValueError("not an ordering of the groundset")
+            rev_order = list(reversed(ordering))
 
-            yield frozenset()
-            next_level = [[val] for val in rev_order]
-            i = 0
-            level = -1
-            while next_level:
-                cur_level = next_level
-                next_level = []
-                level += 1
-                for H in cur_level:
-                    tp = (<Py_ssize_t> reverse_dict[H[level]]) + 1
-                    is_indep = True
-                    Ht = [None] * (Tmax-tp)
-                    for i in range(tp, Tmax):
-                        temp = H + [rev_order[i]]
-                        if not self._is_independent(frozenset(temp)):
-                            is_indep = False
-                            break
-                        Ht[i-tp] = temp
-                    if is_indep:
-                        yield frozenset(H)
-                        next_level.extend(Ht)
+        Tmax = len(rev_order)
+        reverse_dict = {value: key for key, value in enumerate(rev_order)}
+
+        yield frozenset()
+        next_level = [[val] for val in rev_order]
+        i = 0
+        level = -1
+        while next_level:
+            cur_level = next_level
+            next_level = []
+            level += 1
+            for H in cur_level:
+                tp = (<Py_ssize_t> reverse_dict[H[level]]) + 1
+                is_indep = True
+                Ht = [None] * (Tmax-tp)
+                for i in range(tp, Tmax):
+                    temp = H + [rev_order[i]]
+                    if not self._is_independent(frozenset(temp)):
+                        is_indep = False
+                        break
+                    Ht[i-tp] = temp
+                if is_indep:
+                    yield frozenset(H)
+                    next_level.extend(Ht)
 
     def orlik_solomon_algebra(self, R, ordering=None, **kwargs):
         """
@@ -3390,9 +3399,9 @@ cdef class Matroid(SageObject):
         convert = {ind: i for i, ind in enumerate(self.groundset())}
         cdef list lst, vertices = []
         for IS in self.independent_sets_iterator():
-            lst = []
-            for i in IS:
-                lst.append(vector_e[convert[i]])
+            lst = [None] * len(IS)
+            for ind, i in enumerate(IS):
+                lst[ind] = vector_e[convert[i]]
             vertices.append(ambient.sum(lst))
         return Polyhedron(vertices)
 
