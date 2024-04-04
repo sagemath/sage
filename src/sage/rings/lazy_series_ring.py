@@ -777,6 +777,9 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         We need to specify the initial values for the degree 1 and 2
         components to get a unique solution in the previous example::
 
+            sage: L.<z> = LazyPowerSeriesRing(QQ["x,y,f1"].fraction_field())
+            sage: L.base_ring().inject_variables()
+            Defining x, y, f1
             sage: F = L.undefined()
             sage: L.define_implicitly([F], [F(2*z) - (1+exp(x*z)+exp(y*z))*F - exp((x+y)*z)*F(-z)])
             sage: F
@@ -825,7 +828,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: f[1]
             0
 
-        Some systems of two coupled functional equations::
+        Some systems of coupled functional equations::
 
             sage: L.<z> = LazyPowerSeriesRing(QQ)
             sage: A = L.undefined()
@@ -877,17 +880,22 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: A = L.undefined()
             sage: B = L.undefined()
             sage: C = L.undefined()
-            sage: D = L.undefined()
-            sage: L.define_implicitly([(A, [0,0,0]), (B, [0,0]), (C, [0,0]), (D, [0,0])], [C^2 + D^2, A + B + C + D, A*D])
-            sage: B[2]  # known bug, not tested
+            sage: L.define_implicitly([A, B, C], [B - C - 1, B*z + 2*C + 1, A + 2*C + 1])
+            sage: A + 2*C + 1
+            O(z^7)
+
+        The following system does not determine `B`, but the solver
+        will inductively discover that each coefficient of `A` must
+        be zero.  Therefore, asking for a coefficient of `B` will
+        loop forever::
 
             sage: L.<z> = LazyPowerSeriesRing(QQ)
             sage: A = L.undefined()
             sage: B = L.undefined()
             sage: C = L.undefined()
-            sage: L.define_implicitly([A, B, C], [B - C - 1, B*z + 2*C + 1, A + 2*C + 1])
-            sage: A + 2*C + 1
-            O(z^7)
+            sage: D = L.undefined()
+            sage: L.define_implicitly([(A, [0,0,0]), (B, [0,0]), (C, [0,0]), (D, [0,0])], [C^2 + D^2, A + B + C + D, A*D])
+            sage: B[2]  # known bug, not tested
 
         A bivariate example::
 
@@ -954,6 +962,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: T.define_implicitly([A], [P(X)*P(Y)*A - P(X+Y)])
             sage: A[:4]
             [p[] # p[], 0, p[1] # p[1], p[1] # p[1, 1] + p[1, 1] # p[1]]
+
         """
         s = [a[0]._coeff_stream if isinstance(a, (tuple, list))
              else a._coeff_stream
