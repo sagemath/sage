@@ -1962,19 +1962,14 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             [0 0 0 0 1 0]
 
         """
-        #helper function to flatten a list
-        def flatten(l):
-            return [item for sublist in l for item in sublist]
         #create a spanning set for the block corresponding to an idempotent
-        def spanning_set(idem):
-            return [self(sigma)*idem for sigma in self.group()]
-        #compute all the blocks
-        def symmetric_group_blocks():
-            idempotents = self.central_orthogonal_idempotents()
-            #compute the submodule corresponding to span_GF(p){\sigma*e_i | \sigma \in S_n}
-            return [self.submodule(spanning_set(idem)) for idem in idempotents]
+        spanning_set = lambda idem: [self(sigma)*idem for sigma in self.group()]
+        #compute central primitive orthogonal idempotents
+        idempotents = self.central_orthogonal_idempotents()
         #project v onto each block U_i = F_p[S_n]*e_i via \pi_i: v |--> v*e_i
-        blocks = symmetric_group_blocks(p,n)
+        blocks = [self.submodule(spanning_set(idem)) for idem in idempotents]
+        #helper function to flatten a list
+        flatten = lambda l: [item for sublist in l for item in sublist]
         #compute the list of basis vectors lifed to the SGA from each block
         block_decomposition_basis = flatten([[u.lift() for u in block.basis()] for block in blocks])
         #the elements of the symmetric group are ordered, giving the map from the standard basis
