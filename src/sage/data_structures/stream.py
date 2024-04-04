@@ -1249,6 +1249,7 @@ class Stream_taylor(Stream_inexact):
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
+from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
 
 class VariablePool(UniqueRepresentation):
     """
@@ -1554,6 +1555,20 @@ class Stream_uninitialized(Stream):
             - ``var``, a variable in ``self._P``
             - ``val``, the value that should replace the variable
         """
+        def subs(c, var, val):
+            P = self._P.polynomial_ring()
+            num = P(c.numerator()._p).subs({P(var._p): val})
+            den = P(c.denominator()._p).subs({P(var._p): val})
+            return self._PF(InfinitePolynomial(self._P, num),
+                            InfinitePolynomial(self._P, den))
+
+        def retract(c):
+            num = c.numerator()
+            den = c.denominator()
+            if num.is_constant() and den.is_constant():
+                return num.constant_coefficient() / den.constant_coefficient()
+            return c
+
         for j, s in enumerate(self._input_streams):
             m = len(s._cache) - self._good_cache[j]
             if s._is_sparse:
@@ -1569,19 +1584,14 @@ class Stream_uninitialized(Stream):
                 c = s._cache[i]
                 if self._coefficient_ring == self._base_ring:
                     if c.parent() == self._PF:
-                        c = self._PF(c.subs({var: val}))
-                        num = c.numerator()
-                        den = c.denominator()
-                        if num.is_constant() and den.is_constant():
-                            c = num.constant_coefficient() / den.constant_coefficient()
-                        else:
+                        c = retract(subs(c, var, val))
+                        if not c.parent() is self._base_ring:
                             good = m - i0 - 1
                 else:
                     if c.parent() == self._U:
-                        c = c.map_coefficients(lambda e: e.subs({var: val}))
+                        c = c.map_coefficients(lambda e: subs(e, var, val))
                         try:
-                            c = c.map_coefficients(lambda e: self._base_ring(e),
-                                                   self._base_ring)
+                            c = c.map_coefficients(lambda e: retract(e), self._base_ring)
                         except TypeError:
                             good = m - i0 - 1
                 s._cache[i] = c
