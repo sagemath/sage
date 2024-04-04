@@ -99,7 +99,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             sage: R([3,x])
             Traceback (most recent call last):
             ...
-            TypeError: not a constant polynomial
+            TypeError: not a constant polynomial: x
 
         Check that NTL contexts are correctly restored and that
         :issue:`9524` has been fixed::

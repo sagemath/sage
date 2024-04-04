@@ -1332,7 +1332,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: A._from_dict(d, coerce=True)                                      # needs sage.modules
                 Traceback (most recent call last):
                 ...
-                TypeError: not a constant polynomial
+                TypeError: not a constant polynomial: y
             """
             R = self.base_ring()
             B = self.basis()

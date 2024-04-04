@@ -1476,7 +1476,7 @@ cdef class Polynomial(CommutativePolynomial):
             sage: QQ(3*x + 45)
             Traceback (most recent call last):
             ...
-            TypeError: not a constant polynomial
+            TypeError: not a constant polynomial: 3*x + 45
         """
         return self._scalar_conversion(sage.rings.rational.Rational)
 
@@ -12894,7 +12894,7 @@ cdef class ConstantPolynomialSection(Map):
         sage: phi(y_1)
         Traceback (most recent call last):
         ...
-        TypeError: not a constant polynomial
+        TypeError: not a constant polynomial: y_1
     """
     cpdef Element _call_(self, x) noexcept:
         """
@@ -12913,7 +12913,7 @@ cdef class ConstantPolynomialSection(Map):
             sage: m(x)
             Traceback (most recent call last):
             ...
-            TypeError: not a constant polynomial
+            TypeError: not a constant polynomial: x
         """
         if x.degree() <= 0:
             try:
@@ -12921,7 +12921,7 @@ cdef class ConstantPolynomialSection(Map):
             except AttributeError:
                 return <Element>((<Polynomial>x).constant_coefficient())
         else:
-            raise TypeError("not a constant polynomial")
+            raise TypeError(f"not a constant polynomial: {x}")
 
 cdef class PolynomialBaseringInjection(Morphism):
     """

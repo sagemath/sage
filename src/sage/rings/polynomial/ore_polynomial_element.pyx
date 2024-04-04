@@ -3010,7 +3010,7 @@ cdef class ConstantOrePolynomialSection(Map):
             sage: m(S([0,1])-S([0,t]))
             Traceback (most recent call last):
             ...
-            TypeError: not a constant polynomial
+            TypeError: not a constant polynomial: (-t + 1)*x
         """
         if x.degree() <= 0:
             try:
@@ -3018,7 +3018,7 @@ cdef class ConstantOrePolynomialSection(Map):
             except AttributeError:
                 return <Element>((<OrePolynomial>x).constant_coefficient())
         else:
-            raise TypeError("not a constant polynomial")
+            raise TypeError(f"not a constant polynomial: {x}")
 
 
 cdef class OrePolynomialBaseringInjection(Morphism):
