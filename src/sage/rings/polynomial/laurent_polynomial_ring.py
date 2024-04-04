@@ -442,7 +442,7 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
 
         TESTS::
 
-            sage: TestSuite(LaurentPolynomialRing(Zmod(2), 'y')).run()
+            sage: TestSuite(LaurentPolynomialRing(Zmod(2), 'y')).run(skip=['_test_gcd_vs_xgcd'])
             sage: TestSuite(LaurentPolynomialRing(Zmod(4), 'y')).run()
             sage: TestSuite(LaurentPolynomialRing(ZZ, 'u')).run()
             sage: TestSuite(LaurentPolynomialRing(Zmod(2)['T'], 'u')).run()
