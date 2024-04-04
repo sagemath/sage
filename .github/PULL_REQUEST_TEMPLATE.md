@@ -15,7 +15,7 @@
 - [ ] The description explains in detail what this PR is about.
 - [ ] I have linked a relevant issue or discussion.
 - [ ] I have created tests covering the changes.
-- [ ] I have updated the documentation and checked the generated documentation. <!-- You do not need to build the documentation locally. A bot is recreating the documentation whenever there is a change to this PR and will maintain a link to the latest preview once it's ready. -->
+- [ ] I have updated the documentation and checked the generated documentation.
 
 ### :hourglass: Dependencies
 
