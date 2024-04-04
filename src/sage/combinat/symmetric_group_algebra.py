@@ -1950,10 +1950,8 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
         EXAMPLES::
 
-            p=3, n=3:
-
-            sage: SGA_3_3 = SymmetricGroupAlgebra(GF(3),3)
-            sage: SGA_3_3.dft(form="modular")
+            sage: GF3S3 = SymmetricGroupAlgebra(GF(3),3)
+            sage: GF3S3._dft_modular()
             [1 0 0 0 0 0]
             [0 0 0 1 0 0]
             [0 0 0 0 0 1]
