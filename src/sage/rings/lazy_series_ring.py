@@ -942,7 +942,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
         Permutations with two kinds of labels such that each cycle
         contains at least one element of each kind (defined
-        implicitely to have a test)::
+        implicitly to have a test)::
 
             sage: p = SymmetricFunctions(QQ).p()
             sage: S = LazySymmetricFunctions(p)
@@ -2954,7 +2954,6 @@ class LazyPowerSeriesRing(LazySeriesRing):
             BR = R.base_ring()
             args = f.arguments()
             subs = {str(va): ZZ.zero() for va in args}
-            gens = R.gens()
             ell = len(subs)
             from sage.combinat.integer_vector import integer_vectors_nk_fast_iter
             from sage.arith.misc import factorial

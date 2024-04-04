@@ -102,11 +102,10 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.lazy_import import lazy_import
 from sage.combinat.integer_vector_weighted import iterator_fast as wt_int_vec_iter
 from sage.categories.hopf_algebras_with_basis import HopfAlgebrasWithBasis
-from sage.categories.rings import Rings
+from sage.structure.unique_representation import UniqueRepresentation
+from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
+from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
 from sage.misc.cachefunc import cached_method
-from sage.categories.functor import Functor
-from sage.categories.pushout import ConstructionFunctor
-from collections import defaultdict
 lazy_import('sage.combinat.sf.sfa', ['_variables_recursive', '_raise_variables'])
 
 
@@ -1029,6 +1028,23 @@ class Stream_function(Stream_inexact):
         r"""
         Return the list of streams which are used to compute the
         coefficients of ``self``, as provided.
+
+        EXAMPLES:
+
+        Only streams that appear in the closure are detected::
+
+            sage: from sage.data_structures.stream import Stream_function, Stream_exact
+            sage: f = Stream_exact([1,3,5], constant=7)
+            sage: g = Stream_function(lambda n: f[n]^2, False, 0)
+            sage: g.input_streams()
+            []
+
+            sage: def fun():
+            ....:     f = Stream_exact([1,3,5], constant=7)
+            ....:     g = Stream_function(lambda n: f[n]^2, False, 0)
+            ....:     return g.input_streams()
+            sage: fun()
+            [<sage.data_structures.stream.Stream_exact object at 0x...>]
         """
         closure = self.get_coefficient.__closure__
         if closure is None:
@@ -1247,10 +1263,6 @@ class Stream_taylor(Stream_inexact):
             denom *= n
 
 
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.rings.polynomial.infinite_polynomial_ring import InfinitePolynomialRing
-from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
-
 class VariablePool(UniqueRepresentation):
     """
     A class to keep track of used and unused variables in an
@@ -1261,8 +1273,18 @@ class VariablePool(UniqueRepresentation):
     - ``ring``, an :class:`InfinitePolynomialRing`.
     """
     def __init__(self, ring):
-        self._gen = ring.gen(0) # alternatively, make :class:`InfinitePolynomialGen` inherit from `UniqueRepresentation`.
-        self._pool = dict()  # dict from variables actually used to indices of gens
+        """
+        Inititialize the pool.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import VariablePool
+            sage: R.<a> = InfinitePolynomialRing(QQ)
+            sage: P = VariablePool(R)
+            sage: TestSuite(P).run()
+        """
+        self._gen = ring.gen(0)  # alternatively, make :class:`InfinitePolynomialGen` inherit from `UniqueRepresentation`.
+        self._pool = []   # list of variables actually used
 
     def new_variable(self):
         """
@@ -1287,12 +1309,11 @@ class VariablePool(UniqueRepresentation):
             b_0
 
         """
-        for i in range(len(self._pool)+1):
-            if i not in self._pool.values():
-                break
-        v = self._gen[i]
-        self._pool[v] = i
-        return v
+        for i in range(len(self._pool) + 1):
+            v = self._gen[i]
+            if v not in self._pool:
+                self._pool.append(v)
+                return v
 
     def del_variable(self, v):
         """
@@ -1310,7 +1331,7 @@ class VariablePool(UniqueRepresentation):
             sage: v = P.new_variable(); v
             a_1
         """
-        del self._pool[v]
+        self._pool.remove(v)
 
 
 class Stream_uninitialized(Stream):
@@ -1391,9 +1412,17 @@ class Stream_uninitialized(Stream):
 
             - ``target`` -- a stream
 
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_exact, Stream_cauchy_mul, Stream_add
+            sage: x = Stream_exact([1], order=1)
+            sage: C = Stream_uninitialized(1)
+            sage: C.define(Stream_add(x, Stream_cauchy_mul(C, C, True), True))
+            sage: C[6]
+            42
         """
         self._target = target
-        self._n = self._approximate_order - 1 # the largest index of a coefficient we know
+        self._n = self._approximate_order - 1  # the largest index of a coefficient we know
         # we only need this if target does not have a dense cache
         self._cache = list()
         self._iter = self.iterate_coefficients()
@@ -1412,6 +1441,17 @@ class Stream_uninitialized(Stream):
             - ``coefficient_ring`` -- the ring containing the elements of the stream (after substitution)
             - ``terms_of_degree`` -- a function returning the list of terms of a given degree
 
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_exact, Stream_cauchy_mul, Stream_add, Stream_sub
+            sage: terms_of_degree = lambda n, R: [R.one()]
+            sage: x = Stream_exact([1], order=1)
+            sage: C = Stream_uninitialized(1)
+            sage: D = Stream_add(x, Stream_cauchy_mul(C, C, True), True)
+            sage: eq = Stream_sub(C, D, True)
+            sage: C.define_implicitly([C], [], [eq], QQ, QQ, terms_of_degree)
+            sage: C[6]
+            42
         """
         assert self._target is None
 
@@ -1440,14 +1480,31 @@ class Stream_uninitialized(Stream):
     @lazy_attribute
     def _input_streams(self):
         r"""
-        Return the list of streams which have a cache and ``self``
-        depends on.
+        Return the list of streams which have a cache and an implicitly
+        defined ``self`` depends on.
 
         ``self`` is the first stream in this list.
 
-        All caches must have been created before this is called.
-        Does this mean that this should only be called after the
-        first invocation of `_compute`?
+        .. WARNING::
+
+            All caches must have been created before this is called.
+            Currently, the first invocation is via
+            :meth:`_good_cache` in :meth:`__getitem__`.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_exact, Stream_cauchy_mul, Stream_add, Stream_sub
+            sage: terms_of_degree = lambda n, R: [R.one()]
+            sage: x = Stream_exact([1], order=1)
+            sage: C = Stream_uninitialized(1)
+            sage: D = Stream_add(x, Stream_cauchy_mul(C, C, True), True)
+            sage: eq = Stream_sub(C, D, True)
+            sage: C.define_implicitly([C], [], [eq], QQ, QQ, terms_of_degree)
+            sage: C._input_streams
+            [<sage.data_structures.stream.Stream_uninitialized object at 0x...>,
+             <sage.data_structures.stream.Stream_sub object at 0x...>,
+             <sage.data_structures.stream.Stream_add object at 0x...>,
+             <sage.data_structures.stream.Stream_cauchy_mul object at 0x...>]
         """
         known = [self]
         todo = [self]
@@ -1462,14 +1519,32 @@ class Stream_uninitialized(Stream):
     @lazy_attribute
     def _good_cache(self):
         r"""
-        The number of coefficients in each input stream - in the same
-        order - that are free of undetermined coefficients.
+        The number of coefficients in each :meth:`_input_streams` - in
+        the same order - that are free of undetermined coefficients.
 
         This is used in :meth:`_subs_in_caches` to only substitute
         items that may contain undetermined coefficients.
 
-        It might be better to share this across all uninitialized
-        series in one system.
+        .. TODO::
+
+            It might be an better to share this across all uninitialized
+            series in one system.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_exact, Stream_cauchy_mul, Stream_add, Stream_sub
+            sage: terms_of_degree = lambda n, R: [R.one()]
+            sage: x = Stream_exact([1], order=1)
+            sage: C = Stream_uninitialized(1)
+            sage: D = Stream_add(x, Stream_cauchy_mul(C, C, True), True)
+            sage: eq = Stream_sub(C, D, True)
+            sage: C.define_implicitly([C], [], [eq], QQ, QQ, terms_of_degree)
+            sage: C._good_cache
+            [0, 0, 0, 0]
+            sage: C[1]
+            1
+            sage: C._good_cache
+            [1, 0, 1, 0]
         """
         g = []
         for c in self._input_streams:
@@ -1495,7 +1570,12 @@ class Stream_uninitialized(Stream):
 
         EXAMPLES::
 
-            sage:
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_exact, Stream_cauchy_mul, Stream_add, Stream_cauchy_compose
+            sage: x = Stream_exact([1], order=1)
+            sage: A = Stream_uninitialized(1)
+            sage: A.define(Stream_add(x, Stream_cauchy_mul(x, Stream_cauchy_compose(A, A, True), True), True))
+            sage: [A[n] for n in range(10)]
+            [0, 1, 1, 2, 6, 23, 104, 531, 2982, 18109]
         """
         if n < self._approximate_order:
             return ZZ.zero()
@@ -1554,6 +1634,18 @@ class Stream_uninitialized(Stream):
 
             - ``var``, a variable in ``self._P``
             - ``val``, the value that should replace the variable
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_exact, Stream_cauchy_mul, Stream_add, Stream_sub
+            sage: terms_of_degree = lambda n, R: [R.one()]
+            sage: x = Stream_exact([1], order=1)
+            sage: C = Stream_uninitialized(1)
+            sage: D = Stream_add(x, Stream_cauchy_mul(C, C, True), True)
+            sage: eq = Stream_sub(C, D, True)
+            sage: C.define_implicitly([C], [], [eq], QQ, QQ, terms_of_degree)
+            sage: C[3]  # implicit doctest
+            2
         """
         def subs(c, var, val):
             P = self._P.polynomial_ring()
@@ -1621,8 +1713,30 @@ class Stream_uninitialized(Stream):
         self._pool.del_variable(var)
 
     def _compute(self):
-        """
-        Solve the next equations, until the next variable is determined.
+        r"""
+        Determine the next equations by comparing coefficients, and solve
+        those which are linear.
+
+        For each of the equations in the given list of equations
+        ``self._eqs``, we determine the first coefficient which is
+        non-zero.  Among these, we only keep the coefficients which
+        are linear, i.e., whose total degree is one, and those which
+        are a single variable raised to a positive power, implying
+        that the variable itself must be zero.  We then solve the
+        resulting linear system.  If the system does not determine
+        any variable, we raise an error.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_exact, Stream_cauchy_mul, Stream_add, Stream_sub
+            sage: terms_of_degree = lambda n, R: [R.one()]
+            sage: x = Stream_exact([1], order=1)
+            sage: C = Stream_uninitialized(1)
+            sage: D = Stream_add(x, Stream_cauchy_mul(C, C, True), True)
+            sage: eq = Stream_sub(C, D, True)
+            sage: C.define_implicitly([C], [], [eq], QQ, QQ, terms_of_degree)
+            sage: C[3]  # implicit doctest
+            2
         """
         # determine the next linear equations
         coeffs = []
@@ -1641,8 +1755,8 @@ class Stream_uninitialized(Stream):
             if self._base_ring == self._coefficient_ring:
                 lcoeff = [coeff]
             else:
-                # TODO: it is a coincidence that this currently
-                # exists in all examples
+                # TODO: it is a coincidence that `coefficients`
+                # currently exists in all examples
                 lcoeff = coeff.coefficients()
 
             for c in lcoeff:
@@ -2107,7 +2221,7 @@ class Stream_zero(Stream):
             sage: s.order()
             +Infinity
         """
-        return self._approximate_order # == infinity
+        return self._approximate_order  # == infinity
 
     def __eq__(self, other):
         """
@@ -2177,6 +2291,7 @@ class Stream_add(Stream_binaryCommutative):
 
     - ``left`` -- :class:`Stream` of coefficients on the left side of the operator
     - ``right`` -- :class:`Stream` of coefficients on the right side of the operator
+    - ``is_sparse`` -- boolean; whether the implementation of the stream is sparse
 
     EXAMPLES::
 
@@ -2235,6 +2350,7 @@ class Stream_sub(Stream_binary):
 
     - ``left`` -- :class:`Stream` of coefficients on the left side of the operator
     - ``right`` -- :class:`Stream` of coefficients on the right side of the operator
+    - ``is_sparse`` -- boolean; whether the implementation of the stream is sparse
 
     EXAMPLES::
 
@@ -2301,6 +2417,7 @@ class Stream_cauchy_mul(Stream_binary):
 
     - ``left`` -- :class:`Stream` of coefficients on the left side of the operator
     - ``right`` -- :class:`Stream` of coefficients on the right side of the operator
+    - ``is_sparse`` -- boolean; whether the implementation of the stream is sparse
 
     EXAMPLES::
 
@@ -2774,7 +2891,7 @@ class Stream_plethysm(Stream_binary):
 
         return sum((c * self.compute_product(n, la)
                     for k in range(self._left._approximate_order, K)
-                    if self._left[k] # necessary, because it might be int(0)
+                    if self._left[k]  # necessary, because it might be int(0)
                     for la, c in self._left[k]),
                    self._basis.zero())
 
