@@ -1582,8 +1582,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: result, certificate = MFR2cmr._is_binary_linear_matroid_regular(
             ....:                           certificate=True, complete_tree=False)
             sage: result, certificate
-            (False, (OneSumNode (6×14) with 2 children, NotImplemented))
-            sage: unicode_art(certificate)
+            ('Not Determined', (OneSumNode (6×14) with 2 children, NotImplemented))
+            sage: unicode_art(certificate[0])
             ╭───────────OneSumNode (6×14) with 2 children
             │                 │
             UnknownNode (3×7) UnknownNode (3×7)
@@ -1651,7 +1651,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         if not GF2.has_coerce_map_from(base_ring):
             raise ValueError('not well-defined')
 
-        cdef bool result
+        cdef bool result_bool = False
         cdef CMR_REGULAR_PARAMS params
         cdef CMR_REGULAR_STATS stats
         cdef CMR_MATROID_DEC *dec = NULL
@@ -1671,19 +1671,21 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         _set_cmr_regular_parameters(&params, kwds)
         sig_on()
         try:
-            CMR_CALL(CMRregularTest(cmr, self._mat, &result, pdec, pminor,
+            CMR_CALL(CMRregularTest(cmr, self._mat, &result_bool, pdec, pminor,
                                           &params, &stats, time_limit))
         finally:
             sig_off()
 
+        result = <bint> result_bool
+        if result == False and CMRmatroiddecRegularity(dec) == 0:
+            result = 'Not Determined'
         if not certificate:
-            return <bint> result
-
+            return result
         node = create_DecompositionNode(dec, self, row_keys, column_keys)
 
-        if <bint> result:
+        if result == True:
             return True, node
-        return False, (node, NotImplemented)
+        return result, (node, NotImplemented)
 
     def is_totally_unimodular(self, *, time_limit=60.0, certificate=False,
                               use_direct_graphicness_test=True,
@@ -1766,7 +1768,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             ....:                            [0, 0, 0, 0, 0, 1, 0, 1, 1],
             ....:                            [0, 0, 0, 0, 0, 0, 1, 1, 1]])
             sage: result, certificate = M.is_totally_unimodular(
-            ....:                           certificate=True, complete_tree='if_not_regular')
+            ....:                           certificate=True, complete_tree=False)
             sage: result, certificate
             (False, (OneSumNode (9×9) with 2 children, ((3, 2, 0), (3, 1, 0))))
             sage: unicode_art(certificate[0])
@@ -1774,7 +1776,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             │                 │
             UnknownNode (5×4) UnknownNode (4×5)
             sage: result, certificate = M.is_totally_unimodular(
-            ....:                           certificate=True, complete_tree='if_not_graphic')
+            ....:                           certificate=True, complete_tree='find_nongraphic')
             sage: result, certificate
             (False, (OneSumNode (9×9) with 2 children, ((3, 2, 0), (3, 1, 0))))
             sage: unicode_art(certificate[0])
@@ -1784,7 +1786,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             │
             Isomorphic to a minor of |det| = 2 submatrix
             sage: result, certificate = M.is_totally_unimodular(
-            ....:                           certificate=True, complete_tree='if_not_cographic')
+            ....:                           certificate=True, complete_tree='find_noncographic')
             sage: result, certificate
             (False, (OneSumNode (9×9) with 2 children, ((3, 2, 0), (3, 1, 0))))
             sage: unicode_art(certificate[0])
@@ -1793,22 +1795,6 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             SubmatrixNode (5×4)                          SubmatrixNode (4×5)
             │                                            │
             Isomorphic to a minor of |det| = 2 submatrix Isomorphic to a minor of |det| = 2 submatrix
-            sage: result, certificate = M.is_totally_unimodular(
-            ....:                           certificate=True, complete_tree=4)
-            sage: result, certificate
-            (False, (OneSumNode (9×9) with 2 children, ((3, 2, 0), (3, 1, 0))))
-            sage: unicode_art(certificate[0])
-            ╭───────────OneSumNode (9×9) with 2 children
-            │                 │
-            UnknownNode (5×4) UnknownNode (4×5)
-            sage: result, certificate = M.is_totally_unimodular(
-            ....:                           certificate=True, complete_tree=8)
-            sage: result, certificate
-            (False, (OneSumNode (9×9) with 2 children, ((3, 2, 0), (3, 1, 0))))
-            sage: unicode_art(certificate[0])
-            ╭───────────OneSumNode (9×9) with 2 children
-            │                 │
-            UnknownNode (5×4) UnknownNode (4×5)
         """
         base_ring = self.parent().base_ring()
         if base_ring.characteristic():
