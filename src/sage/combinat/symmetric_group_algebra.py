@@ -1977,7 +1977,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             for pair in list(b):
                 coord_vector[sym_group_list.index(pair[0])] = pair[1]
             change_of_basis_matrix.append(coord_vector)
-        return matrix(self.base_ring(),change_of_basis_matrix)
+        return matrix(self.base_ring(),change_of_basis_matrix).transpose()
 
     def epsilon_ik(self, itab, ktab, star=0, mult='l2r'):
         r"""
