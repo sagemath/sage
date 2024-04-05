@@ -121,14 +121,6 @@ class Tarball(object):
         import hashlib
         return self._compute_hash(hashlib.sha256())
 
-    def _compute_md5(self):
-        import hashlib
-        return self._compute_hash(hashlib.md5())
-
-    def _compute_cksum(self):
-        from sage_bootstrap.cksum import CksumAlgorithm
-        return self._compute_hash(CksumAlgorithm())
-
     def checksum_verifies(self):
         """
         Test whether the checksum of the downloaded file is correct.
@@ -137,7 +129,7 @@ class Tarball(object):
             sha256 = self._compute_sha256()
             return sha256 == self.package.sha256
         else:
-            log.warning('sha1 used for {pn} checksum'.format(pn=self.package.package_name))
+            log.warning('sha1 used for {pn} checksum'.format(pn=self.package.name))
             sha1 = self._compute_sha1()
             return sha1 == self.package.sha1
 
