@@ -1950,14 +1950,14 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
         EXAMPLES::
 
-            sage: GF3S3 = SymmetricGroupAlgebra(GF(3),3)
+            sage: GF3S3 = SymmetricGroupAlgebra(GF(2),3)
             sage: GF3S3._dft_modular()
-            [1   0   0   0   0   0]
-            [0   0   0   1   0   0]
-            [0   0   0   0   0   1]
-            [0   0   1   0   0   0]
-            [0   1   0   0   0   0]
-            [0   0   0   0   1   0]
+            [1 0 0 0 1 0]
+            [0 1 0 0 0 1]
+            [0 0 1 0 0 1]
+            [0 0 0 1 1 0]
+            [1 0 0 1 1 0]
+            [0 1 1 0 0 1]
         """
         #create a spanning set for the block corresponding to an idempotent
         spanning_set = lambda idem: [self(sigma)*idem for sigma in self.group()]
