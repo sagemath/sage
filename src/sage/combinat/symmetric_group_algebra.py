@@ -1950,8 +1950,8 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
         EXAMPLES::
 
-            sage: GF3S3 = SymmetricGroupAlgebra(GF(2),3)
-            sage: GF3S3._dft_modular()
+            sage: GF2S3 = SymmetricGroupAlgebra(GF(2),3)
+            sage: GF2S3._dft_modular()
             [1 0 0 0 1 0]
             [0 1 0 0 0 1]
             [0 0 1 0 0 1]
@@ -1977,7 +1977,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             for pair in list(b):
                 coord_vector[sym_group_list.index(pair[0])] = pair[1]
             change_of_basis_matrix.append(coord_vector)
-        return Matrix(self.base_ring(),change_of_basis_matrix)
+        return matrix(self.base_ring(),change_of_basis_matrix)
 
     def epsilon_ik(self, itab, ktab, star=0, mult='l2r'):
         r"""
