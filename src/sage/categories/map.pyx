@@ -2087,7 +2087,7 @@ cdef class FormalCompositeMap(Map):
             sage: ZZ(3*x + 45)              # indirect doctest
             Traceback (most recent call last):
             ...
-            TypeError: not a constant polynomial: 3*x + 45
+            TypeError: 3*x + 45 is not a constant polynomial
         """
         sections = []
         for m in reversed(list(self)):
