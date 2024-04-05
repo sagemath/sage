@@ -45,6 +45,7 @@ class ChecksumUpdater(object):
         result = [
             'tarball=' + self.package.tarball_pattern,
             'sha1=' + tarball._compute_sha1(),
+            'sha256=' + tarball._compute_sha256(),
             'md5=' + tarball._compute_md5(),
             'cksum=' + tarball._compute_cksum()
         ]
