@@ -1468,7 +1468,7 @@ class HypergeometricData:
         .. WARNING::
 
             This is apparently working correctly as can be tested
-            using ``ComplexField(70)`` as value ring.
+            using ``ComplexField(70)`` as the value ring.
 
             Using instead :class:`UniversalCyclotomicfield`, this is much
             slower than the `p`-adic version :meth:`padic_H_value`.

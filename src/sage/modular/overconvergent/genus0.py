@@ -1734,7 +1734,7 @@ class OverconvergentModularFormElement(ModuleElement):
     def __pari__(self):
         r"""
         Return the Pari object corresponding to ``self``, which is just the
-        `q`-expansion of self as a formal power series.
+        `q`-expansion of ``self`` as a formal power series.
 
         EXAMPLES::
 

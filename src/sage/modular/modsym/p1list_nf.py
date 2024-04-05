@@ -128,10 +128,10 @@ class MSymbol(SageObject):
       level N.
 
     - ``d`` -- (optional) when present, it must be an integral element such
-      that `\la c\ra + \la d\ra + N = R, where `R` is the corresponding ring of integers.
+      that `\langle c\rangle + \langle d\rangle + N = R`, where `R` is the corresponding ring of integers.
 
     - ``check`` -- bool (default ``True``). If ``check=False`` the constructor does
-      not check the condition `\la c\ra + \la d\ra + N = R`.
+      not check the condition `\langle c\rangle + \langle d\rangle + N = R`.
 
     OUTPUT:
 
@@ -154,7 +154,7 @@ class MSymbol(SageObject):
         sage: MSymbol(N, (1, 0))
         M-symbol (1: 0) of level Fractional ideal (2, a + 1)
 
-    We get an error if `\la c\ra`, `\la d\ra` and `N` are not coprime:
+    We get an error if `\langle c\rangle`, `\langle d\rangle` and `N` are not coprime:
 
     ::
 
@@ -916,7 +916,7 @@ class P1NFList(SageObject):
 
     def apply_T_alpha(self, i, alpha=1):
         r"""
-        Applies the matrix `T_alpha` = [1, alpha, 0, 1] to the `i`-th M-Symbol of
+        Applies the matrix `T_{alpha}` = [1, `alpha`, 0, 1] to the `i`-th M-Symbol of
         the list.
 
         INPUT:
@@ -928,7 +928,7 @@ class P1NFList(SageObject):
         OUTPUT:
 
         integer -- the index of the M-Symbol obtained by the right action of
-        the matrix `T_alpha` = [1, `alpha`, 0, 1] on the i-th M-Symbol.
+        the matrix `T_{alpha}` = [1, `alpha`, 0, 1] on the i-th M-Symbol.
 
         EXAMPLES::
 
@@ -1164,7 +1164,7 @@ def lift_to_sl2_Ok(N, c, d):
 def make_coprime(N, c, d):
     r"""
     Return (c, d') so d' is congruent to d modulo N, and such that c and d' are
-    coprime (`\la c\ra + \la d'\ra = R`).
+    coprime (`\langle c\rangle + \langle d'\rangle = R`).
 
     INPUT:
 
@@ -1177,7 +1177,7 @@ def make_coprime(N, c, d):
     OUTPUT:
 
     A pair `(c, d')` where `c`, `d'` are integral elements of the corresponding
-    number field, with `d'` congruent to `d` mod `N`, and such that `\la c\ra + \la d'\ra = R`
+    number field, with `d'` congruent to `d` mod `N`, and such that `\langle c\rangle + \langle d'\rangle = R`
     (`R` being the corresponding ring of integers).
 
     EXAMPLES::
