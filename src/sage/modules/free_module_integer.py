@@ -875,5 +875,5 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         for i in reversed(range(G.nrows())):
             b -= B[i] * ((b * G[i]) / (G[i] * G[i])).round("even")
         return (t - b).change_ring(ZZ)
-        
+
     babai = approximate_closest_vector
