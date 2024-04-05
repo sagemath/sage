@@ -67,7 +67,7 @@ cdef inline void digit_clear(fmpz_t a) noexcept:
 
 # get and set
 
-cdef inline Integer digit_get_sage(fmpz_t a) noexcept:
+cdef inline Integer digit_get_sage(fmpz_t a):
     r"""
     Convert a digit to a Sage element.
 
@@ -329,7 +329,7 @@ cdef inline void element_clear(fmpz_poly_t x) noexcept:
 
 # get and set
 
-cdef inline Integer element_get_sage(fmpz_poly_t x, PowComputer_flint prime_pow) noexcept:
+cdef inline Integer element_get_sage(fmpz_poly_t x, PowComputer_flint prime_pow):
     r"""
     Convert a digit to a Sage element.
 
