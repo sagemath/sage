@@ -256,6 +256,7 @@ cdef extern from "cmr/matroid.h":
     size_t* CMRmatroiddecPivotRows(CMR_MATROID_DEC* dec)
     size_t* CMRmatroiddecPivotColumns(CMR_MATROID_DEC* dec)
     # CMR_ERROR CMRmatroiddecPrint(CMR* cmr, CMR_MATROID_DEC* dec, FILE* stream, bool printChildren, bool printParentElements, bool printMatrices, bool printGraphs, bool printReductions, bool printPivots)
+    CMR_ERROR CMRmatroiddecCloneUnknown(CMR* cmr, CMR_MATROID_DEC* dec, CMR_MATROID_DEC** pclone)
     CMR_ERROR CMRmatroiddecCapture(CMR* cmr, CMR_MATROID_DEC* dec)
     CMR_ERROR CMRmatroiddecRelease(CMR* cmr, CMR_MATROID_DEC** pdec)
 
@@ -371,11 +372,18 @@ cdef extern from "cmr/regular.h":
     const int CMR_DEC_CONSTRUCT_LEAVES
     const int CMR_DEC_CONSTRUCT_ALL
 
+    const int CMR_REGULAR_TREE_FLAGS_RECURSE
+    const int CMR_REGULAR_TREE_FLAGS_STOP_IRREGULAR
+    const int CMR_REGULAR_TREE_FLAGS_STOP_NONGRAPHIC
+    const int CMR_REGULAR_TREE_FLAGS_STOP_NONCOGRAPHIC
+    const int CMR_REGULAR_TREE_FLAGS_STOP_NONGRAPHIC_NONCOGRAPHIC
+    const int CMR_REGULAR_TREE_FLAGS_DEFAULT
+
     ctypedef struct CMR_REGULAR_PARAMS:
         bint directGraphicness
         bint seriesParallel
         bint planarityCheck
-        bint completeTree
+        int treeFlags
         bool threeSumPivotChildren
         int threeSumStrategy
         CMR_DEC_CONSTRUCT graphs

@@ -1509,7 +1509,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                                           use_direct_graphicness_test=True,
                                           series_parallel_ok=True,
                                           check_graphic_minors_planar=False,
-                                          complete_tree='if_regular',
+                                          complete_tree='find_irregular',
                                           three_sum_pivot_children=False,
                                           three_sum_strategy=None,
                                           construct_graphs=False,
@@ -1523,7 +1523,20 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         INPUT:
 
-        - ``certificate``: One of ``False``, ``True``, ``'if_regular'``, ``'if_not_regular'``
+        - ``certificate``: ``False`` or ``True``
+        - ``complete_tree``: one of the following values
+          ``True`` - return the full decomposition node
+          ``False`` - return the decomposition node with only children (no grandchildren).
+                      If the node type is not determined, return a UnknownNode.
+          ``'find_irregular'``  - return the decomposition node which only stops
+                                  when you find an irregular node
+          ``'find_nongraphic'`` - return the decomposition node which only stops
+                                  when you find a nongraphic node
+          ``'find_noncographic'`` - return the decomposition node which only stops
+                                  when you find a noncographic node
+          ``'find_nongraphic_and_noncographic'``
+            - return the decomposition node which stops
+              when you find a nongraphic node and a noncographic node
 
         EXAMPLES::
 
@@ -1668,7 +1681,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                               use_direct_graphicness_test=True,
                               series_parallel_ok=True,
                               check_graphic_minors_planar=False,
-                              complete_tree='if_regular',
+                              complete_tree='find_irregular',
                               three_sum_pivot_children=False,
                               three_sum_strategy=None,
                               construct_graphs=False,
@@ -1730,6 +1743,64 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [0 1 1]
             [1 0 1]
             [1 1 0]
+
+        This is test ``TreeFlagsNorecurse``, ``TreeFlagsStopNoncographic``,
+        and ``TreeFlagsStopNongraphic`` in CMR's ``test_regular.cpp``::
+
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 9, sparse=True),
+            ....:                           [[1, 1, 0, 0, 0, 0, 0, 0, 0],
+            ....:                            [1, 1, 1, 0, 0, 0, 0, 0, 0],
+            ....:                            [1, 0, 0, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 1, 1, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 1, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 0, 0, 1, 1, 1, 0, 0],
+            ....:                            [0, 0, 0, 0, 1, 1, 0, 1, 0],
+            ....:                            [0, 0, 0, 0, 0, 1, 0, 1, 1],
+            ....:                            [0, 0, 0, 0, 0, 0, 1, 1, 1]])
+            sage: result, certificate = M.is_totally_unimodular(
+            ....:                           certificate=True, complete_tree='if_not_regular')
+            sage: result, certificate
+            (False, (OneSumNode (9×9) with 2 children, ((3, 2, 0), (3, 1, 0))))
+            sage: unicode_art(certificate[0])
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            UnknownNode (5×4) UnknownNode (4×5)
+            sage: result, certificate = M.is_totally_unimodular(
+            ....:                           certificate=True, complete_tree='if_not_graphic')
+            sage: result, certificate
+            (False, (OneSumNode (9×9) with 2 children, ((3, 2, 0), (3, 1, 0))))
+            sage: unicode_art(certificate[0])
+            ╭──────OneSumNode (9×9) with 2 children──────╮
+            │                                            │
+            SubmatrixNode (5×4)                          UnknownNode (4×5)
+            │
+            Isomorphic to a minor of |det| = 2 submatrix
+            sage: result, certificate = M.is_totally_unimodular(
+            ....:                           certificate=True, complete_tree='if_not_cographic')
+            sage: result, certificate
+            (False, (OneSumNode (9×9) with 2 children, ((3, 2, 0), (3, 1, 0))))
+            sage: unicode_art(certificate[0])
+            ╭──────OneSumNode (9×9) with 2 children──────╮
+            │                                            │
+            SubmatrixNode (5×4)                          SubmatrixNode (4×5)
+            │                                            │
+            Isomorphic to a minor of |det| = 2 submatrix Isomorphic to a minor of |det| = 2 submatrix
+            sage: result, certificate = M.is_totally_unimodular(
+            ....:                           certificate=True, complete_tree=4)
+            sage: result, certificate
+            (False, (OneSumNode (9×9) with 2 children, ((3, 2, 0), (3, 1, 0))))
+            sage: unicode_art(certificate[0])
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            UnknownNode (5×4) UnknownNode (4×5)
+            sage: result, certificate = M.is_totally_unimodular(
+            ....:                           certificate=True, complete_tree=8)
+            sage: result, certificate
+            (False, (OneSumNode (9×9) with 2 children, ((3, 2, 0), (3, 1, 0))))
+            sage: unicode_art(certificate[0])
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            UnknownNode (5×4) UnknownNode (4×5)
         """
         base_ring = self.parent().base_ring()
         if base_ring.characteristic():
@@ -1784,7 +1855,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                                          use_direct_graphicness_test=True,
                                          series_parallel_ok=True,
                                          check_graphic_minors_planar=False,
-                                         complete_tree='if_regular',
+                                         complete_tree='find_irregular',
                                          construct_matrices=False,
                                          construct_transposes=False,
                                          construct_graphs=False,
@@ -1806,7 +1877,6 @@ cdef _set_cmr_regular_parameters(CMR_REGULAR_PARAMS *params, dict kwds):
     params.directGraphicness = kwds['use_direct_graphicness_test']
     params.seriesParallel = kwds['series_parallel_ok']
     params.planarityCheck = kwds['check_graphic_minors_planar']
-    params.completeTree = kwds['complete_tree'] is True
     params.threeSumPivotChildren = kwds['three_sum_pivot_children']
     if kwds['three_sum_strategy'] is not None:
         if kwds['three_sum_strategy'] == 'Mixed_Mixed':
@@ -1815,6 +1885,21 @@ cdef _set_cmr_regular_parameters(CMR_REGULAR_PARAMS *params, dict kwds):
             params.threeSumStrategy = CMR_MATROID_DEC_THREESUM_FLAG_DISTRIBUTED_RANKS | CMR_MATROID_DEC_THREESUM_FLAG_FIRST_WIDE | CMR_MATROID_DEC_THREESUM_FLAG_SECOND_WIDE
         else:
             params.threeSumStrategy = kwds['three_sum_strategy']
+    if kwds['complete_tree'] is not None:
+        if kwds['complete_tree'] is True:
+            params.treeFlags = CMR_REGULAR_TREE_FLAGS_RECURSE
+        elif kwds['complete_tree'] is False or kwds['complete_tree'] == 'no_recurse':
+            params.treeFlags = CMR_REGULAR_TREE_FLAGS_STOP_IRREGULAR
+        elif kwds['complete_tree'] == 'find_irregular':
+            params.treeFlags = CMR_REGULAR_TREE_FLAGS_RECURSE | CMR_REGULAR_TREE_FLAGS_STOP_IRREGULAR
+        elif kwds['complete_tree'] == 'find_nongraphic':
+            params.treeFlags = CMR_REGULAR_TREE_FLAGS_RECURSE | CMR_REGULAR_TREE_FLAGS_STOP_NONGRAPHIC
+        elif kwds['complete_tree'] == 'find_noncographic':
+            params.treeFlags = CMR_REGULAR_TREE_FLAGS_RECURSE | CMR_REGULAR_TREE_FLAGS_STOP_NONCOGRAPHIC
+        elif kwds['complete_tree'] == 'find_nongraphic_and_noncographic':
+            params.treeFlags = CMR_REGULAR_TREE_FLAGS_RECURSE | CMR_REGULAR_TREE_FLAGS_STOP_NONGRAPHIC_NONCOGRAPHIC
+        else:
+            params.treeFlags = kwds['complete_tree']
     params.graphs = _cmr_dec_construct(kwds['construct_graphs'])
 
 

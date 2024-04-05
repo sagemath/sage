@@ -502,6 +502,25 @@ cdef class DecompositionNode(SageObject):
         # compute it... wait for CMR functions
         raise NotImplementedError
 
+    def is_cographic(self, *, decomposition=False, **kwds):
+        r"""
+
+        """
+        certificate = kwds.get('certificate', False)
+        cdef int8_t cographicness = CMRmatroiddecCographicness(self._dec)
+        if cographicness:
+            result = cographicness == +1
+            if not decomposition and not certificate:
+                return result
+            result = [result]
+            if decomposition:
+                result.append(self)
+            if certificate:
+                raise NotImplementedError
+            return result
+        # compute it... wait for CMR functions
+        raise NotImplementedError
+
 
 cdef class ThreeConnectedIrregularNode(DecompositionNode):
 
@@ -577,6 +596,38 @@ cdef class UnknownNode(DecompositionNode):
         if decomposition:
             graph, forest_edges, coforest_edges = cert
             node = GraphicNode(matrix, graph, forest_edges, coforest_edges)
+            result.append(node)
+        if certificate:
+            result.append(cert)
+        return result
+
+    def is_cographic(self, *, decomposition=False, certificate=False, **kwds):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.matrix.seymour_decomposition import UnknownNode
+            sage: node = UnknownNode([[1, -1, 0], [0, 1, -1]]); node
+            UnknownNode (2×3)
+            sage: node.matrix()
+            [ 1 -1  0]
+            [ 0  1 -1]
+            sage: node.is_cographic()
+            True
+            sage: result, certificate = node.is_cographic(certificate=True)
+            sage: graph, forest_edges, coforest_edges = certificate
+            sage: forest_edges
+            ((1, 2), (7, 1), (12, 7))
+        """
+        matrix = self.matrix()
+        if not decomposition and not certificate:
+            return matrix.is_cographic(**kwds)
+        result, cert = matrix.is_cographic(certificate=True,
+                                         row_keys=self.row_keys(),
+                                         column_keys=self.column_keys(), **kwds)
+        result = [result]
+        if decomposition:
+            graph, forest_edges, coforest_edges = cert
+            node = CographicNode(matrix, graph, forest_edges, coforest_edges)
             result.append(node)
         if certificate:
             result.append(cert)
