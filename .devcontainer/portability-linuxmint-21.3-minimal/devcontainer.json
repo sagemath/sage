@@ -3,12 +3,12 @@
 //      from .devcontainer/portability-devcontainer.json.in
 // See https://aka.ms/devcontainer.json for format details.
 {
-    "name": "opensuse-15.4-gcc_11-python3.10-minimal (≥ 8-core)",
+    "name": "linuxmint-21.3-minimal (≥ 8-core)",
     "build": {
         "dockerfile": "portability-Dockerfile",
         // See tox.ini for definitions
         "args": {
-            "SYSTEM_FACTOR": "opensuse-15.4-gcc_11-python3.10",
+            "SYSTEM_FACTOR": "linuxmint-21.3",
             "PACKAGE_FACTOR": "minimal",
             "DOCKER_TARGET": "with-targets",
             "DOCKER_TAG": "dev"
