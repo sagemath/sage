@@ -1580,6 +1580,14 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             │
             ThreeConnectedIrregularNode (3×4)
             sage: result, certificate = MFR2cmr._is_binary_linear_matroid_regular(
+            ....:                           certificate=True, complete_tree=False)
+            sage: result, certificate
+            (False, (OneSumNode (6×14) with 2 children, NotImplemented))
+            sage: unicode_art(certificate)
+            ╭───────────OneSumNode (6×14) with 2 children
+            │                 │
+            UnknownNode (3×7) UnknownNode (3×7)
+            sage: result, certificate = MFR2cmr._is_binary_linear_matroid_regular(
             ....:                           certificate=True, complete_tree=True)
             sage: result, certificate
             (False, (OneSumNode (6×14) with 2 children, NotImplemented))
