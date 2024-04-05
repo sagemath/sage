@@ -583,8 +583,14 @@ cdef class UnknownNode(DecompositionNode):
             True
             sage: result, certificate = node.is_graphic(certificate=True)
             sage: graph, forest_edges, coforest_edges = certificate
-            sage: forest_edges
+            sage: graph.vertices(sort=True)  # the numbers have no meaning
+            [1, 2, 7, 12]
+            sage: graph.edges(sort=True, labels=False)
+            [(1, 2), (1, 7), (1, 12), (2, 7), (7, 12)]
+            sage: forest_edges    # indexed by rows of M
             ((1, 2), (7, 1), (12, 7))
+            sage: coforest_edges  # indexed by cols of M
+            ((2, 7), (1, 12))
         """
         matrix = self.matrix()
         if not decomposition and not certificate:
@@ -615,8 +621,14 @@ cdef class UnknownNode(DecompositionNode):
             True
             sage: result, certificate = node.is_cographic(certificate=True)
             sage: graph, forest_edges, coforest_edges = certificate
-            sage: forest_edges
-            ((1, 2), (7, 1), (12, 7))
+            sage: graph.vertices(sort=True)  # the numbers have no meaning
+            [1, 2, 7, 12]
+            sage: graph.edges(sort=True, labels=False)
+            [(1, 2), (1, 7), (1, 12), (2, 7), (7, 12)]
+            sage: forest_edges    # indexed by rows of M
+            ((1, 2), (7, 1))
+            sage: coforest_edges  # indexed by cols of M
+            ((2, 7), (1, 12), (1, 2))
         """
         matrix = self.matrix()
         if not decomposition and not certificate:
