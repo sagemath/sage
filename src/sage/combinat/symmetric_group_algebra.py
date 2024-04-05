@@ -1945,8 +1945,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
     def _dft_modular(self):
         """
-        Return the discrete Foruier transform when the characterisc divides the order of the group.
-        The usual .dft() throws ZeroDivisionError when p|n.
+        Return the discrete Foruier transform when the characteristic divides the order of the group.
 
         EXAMPLES::
 
