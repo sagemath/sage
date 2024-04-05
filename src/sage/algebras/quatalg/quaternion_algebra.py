@@ -781,8 +781,8 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             True
         """
         if self.base_ring() != QQ:
-            raise NotImplementedError("maximal order only implemented for"
-                                        " rational quaternion algebras")
+            raise NotImplementedError("maximal order only implemented for "
+                                      "rational quaternion algebras")
 
         d_A = self.discriminant()
 
@@ -914,13 +914,8 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
                 # Since e might not define an order at this point, we need to
                 # manually calculate the updated discriminant
-                L = []
-                for x in e:
-                    MM = []
-                    for y in e:
-                        MM.append(x.pair(y))
-                    L.append(MM)
-                disc = (MatrixSpace(QQ, 4, 4)(L)).determinant().sqrt()
+                L = [[x.pair(y) for y in e] for x in e]
+                disc = matrix(QQ, 4, 4, L).determinant().sqrt()
 
             e_new_gens.extend(e[1:])
 
@@ -1826,14 +1821,9 @@ class QuaternionOrder(Parent):
             sage: type(S.discriminant())
             <... 'sage.rings.rational.Rational'>
         """
-        L = []
-        for d in self.basis():
-            MM = []
-            for e in self.basis():
-                MM.append(d.pair(e))
-            L.append(MM)
-
-        return (MatrixSpace(QQ, 4, 4)(L)).determinant().sqrt()
+        e = self.basis()
+        L = [[x.pair(y) for y in e] for x in e]
+        return matrix(QQ, 4, 4, L).determinant().sqrt()
 
     def is_maximal(self):
         r"""
