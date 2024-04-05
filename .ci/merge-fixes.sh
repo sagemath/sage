@@ -42,6 +42,7 @@ for REPO in ${SAGE_CI_FIXES_FROM_REPOSITORIES:-sagemath/sage}; do
                     # Considered alternative: Use https://github.com/$REPO/pull/$a.diff,
                     # which squashes everything into one diff without commit metadata.
                     PULL_URL="https://github.com/$REPO/pull/$a"
+                    PULL_SHORT="$REPO#$a"
                     PULL_FILE="$REPO_FILE-$a"
                     PATH=build/bin:$PATH build/bin/sage-download-file --quiet "$PULL_URL.patch" $PULL_FILE.patch
                     date -u +"%Y-%m-%dT%H:%M:%SZ" > $PULL_FILE.date  # Record the date, for future reference
@@ -67,7 +68,7 @@ for REPO in ${SAGE_CI_FIXES_FROM_REPOSITORIES:-sagemath/sage}; do
                         git am --signoff --show-current-patch=diff
                         echo "--------------------------------------------------------------------8<-----------------------------"
                         echo "::endgroup::"
-                        echo "Failure applying $PULL_URL as a patch, resetting"
+                        echo "Failure applying $PULL_SHORT as a patch, resetting"
                         git am --signoff --abort
                     fi
                 done

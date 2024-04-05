@@ -77,7 +77,7 @@ class Scheme(Parent):
         sage: ProjectiveSpace(4, QQ).category()
         Category of schemes over Rational Field
 
-    There is a special and unique `Spec(\ZZ)` that is the default base
+    There is a special and unique `\mathrm{Spec}(\ZZ)` that is the default base
     scheme::
 
         sage: Spec(ZZ).base_scheme() is Spec(QQ).base_scheme()
@@ -267,7 +267,7 @@ class Scheme(Parent):
 
     @cached_method
     def point_homset(self, S=None):
-        """
+        r"""
         Return the set of S-valued points of this scheme.
 
         INPUT:
@@ -276,7 +276,7 @@ class Scheme(Parent):
 
         OUTPUT:
 
-        The set of morphisms `Spec(S)\to X`.
+        The set of morphisms `\mathrm{Spec}(S) \to X`.
 
         EXAMPLES::
 

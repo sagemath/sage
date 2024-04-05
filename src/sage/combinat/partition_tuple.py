@@ -155,7 +155,7 @@ dominance and so::
        *   **        *
        *             *
                      *
-    sage: lam=PartitionTuples(3)([[3,2],[],[1,1,1,1]]); lam
+    sage: lam = PartitionTuples(3)([[3,2],[],[1,1,1,1]]); lam
     ([3, 2], [], [1, 1, 1, 1])
     sage: lam.level()
     3
@@ -200,7 +200,7 @@ dominance and so::
 
 Every partition tuple behaves every much like a tuple of partitions::
 
-    sage: mu=PartitionTuple([[4,1],[],[2,2,1],[3]])
+    sage: mu = PartitionTuple([[4,1],[],[2,2,1],[3]])
     sage: [ nu for nu in mu ]
     [[4, 1], [], [2, 2, 1], [3]]
     sage: Set([ type(nu) for nu in mu ])
@@ -228,9 +228,11 @@ Every partition tuple behaves every much like a tuple of partitions::
     sage: len(mu)
     4
     sage: mu.cells()
-    [(0, 0, 0), (0, 0, 1), (0, 0, 2), (0, 0, 3), (0, 1, 0), (2, 0, 0), (2, 0, 1), (2, 1, 0), (2, 1, 1), (2, 2, 0), (3, 0, 0), (3, 0, 1), (3, 0, 2)]
+    [(0, 0, 0), (0, 0, 1), (0, 0, 2), (0, 0, 3), (0, 1, 0), (2, 0, 0), (2, 0, 1),
+     (2, 1, 0), (2, 1, 1), (2, 2, 0), (3, 0, 0), (3, 0, 1), (3, 0, 2)]
     sage: mu.addable_cells()
-    [(0, 0, 4), (0, 1, 1), (0, 2, 0), (1, 0, 0), (2, 0, 2), (2, 2, 1), (2, 3, 0), (3, 0, 3), (3, 1, 0)]
+    [(0, 0, 4), (0, 1, 1), (0, 2, 0), (1, 0, 0), (2, 0, 2), (2, 2, 1),
+     (2, 3, 0), (3, 0, 3), (3, 1, 0)]
     sage: mu.removable_cells()
     [(0, 0, 3), (0, 1, 0), (2, 1, 1), (2, 2, 0), (3, 0, 2)]
 
@@ -2376,7 +2378,7 @@ class PartitionTuples_level_size(PartitionTuples):
 
             sage: PartitionTuples(4,2)
             Partition tuples of level 4 and size 2
-            sage: PartitionTuples(size=2,level=4)
+            sage: PartitionTuples(size=2, level=4)
             Partition tuples of level 4 and size 2
         """
         return 'Partition tuples of level {} and size {}'.format(self._level, self._size)
@@ -3037,7 +3039,7 @@ class RegularPartitionTuples_level_size(PartitionTuples_level_size):
             (2, 1, 4)-Regular partition tuples of level 3 and size 7
             sage: PartitionTuples(4,2,3)
             3-Regular partition tuples of level 4 and size 2
-            sage: PartitionTuples(size=2,level=4,regular=3)
+            sage: PartitionTuples(size=2, level=4, regular=3)
             3-Regular partition tuples of level 4 and size 2
         """
         if self._ell[1:] == self._ell[:-1]:
