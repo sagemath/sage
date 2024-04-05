@@ -1950,7 +1950,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         EXAMPLES::
 
             sage: GF2S3 = SymmetricGroupAlgebra(GF(2),3)
-            sage: GF2S3._dft_modular()
+            sage: GF2S3.dft(form="modular")
             [1 0 0 0 1 0]
             [0 1 0 0 0 1]
             [0 0 1 0 0 1]
