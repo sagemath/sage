@@ -770,8 +770,8 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             ....:     alpha = A.random_element()
             sage: conj = [alpha * b * alpha.inverse() for b in [k,i,j]]
             sage: order_basis = tuple(conj) + (A.one(),)
-            sage: O = A.quaternion_order(order_basis)
-            sage: R = A.maximal_order(order_basis)
+            sage: O = A.quaternion_order(basis=order_basis)
+            sage: R = A.maximal_order(order_basis=order_basis)
             sage: O <= R and R.is_maximal()
             True
 
