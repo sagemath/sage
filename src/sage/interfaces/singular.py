@@ -2025,6 +2025,10 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             sage: type(singular(int(5)).sage())
             <class 'sage.rings.integer.Integer'>
 
+        Test that bigintvec can be coerced::
+
+            sage: singular('hilb((ideal(x)), 1)').sage()
+            (1, -1, 0, 0, -1, 1, 0)
         """
         typ = self.type()
         if typ == 'poly':
