@@ -1328,6 +1328,7 @@ cdef class SBox(SageObject):
             x0*x2 + x0 + x1*x2
     
         TESTS::
+        
             sage: from sage.crypto.sboxes import SBox
             sage: sb = SBox(7, 6, 0, 4, 2, 5, 1, 3)
             sage: sb.component_function([1, 0, 0])
