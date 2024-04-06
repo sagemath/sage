@@ -39,7 +39,7 @@ Furthermore, if we work over `\CC_p`, the `r`-overconvergent locus on `X_0(p)`
 (This is Theorem 1 of [Loe2007]_.)
 
 Hence if we fix an element `c` with `|c| = p^{-\frac{12r}{p-1}}`, the space
-`S_k^\dag(1, r)` of overconvergent `p`-adic modular forms has an orthonormal
+`S_k^\dagger(1, r)` of overconvergent `p`-adic modular forms has an orthonormal
 basis given by the functions `(cf)^n`.  So any element can be written in the
 form `E_k \times \sum_{n \ge 0} a_n (cf)^n`, where `a_n \to 0` as `N \to
 \infty`, and any such sequence `a_n` defines a unique overconvergent form.
