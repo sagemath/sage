@@ -1090,7 +1090,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         The method does not make sense over an arbitrary base ring::
 
-            sage: QuaternionAlgebra(RR(2.),1).is_definite()
+            sage: QuaternionAlgebra(RR(2.), 1).is_definite()
             Traceback (most recent call last):
             ...
             ValueError: base field must be rational numbers
@@ -1127,7 +1127,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         The method does not make sense over an arbitrary base ring::
 
-            sage: QuaternionAlgebra(RR(2.),1).is_totally_definite()
+            sage: QuaternionAlgebra(RR(2.), 1).is_totally_definite()
             Traceback (most recent call last):
             ...
             ValueError: base field must be rational numbers or a number field
@@ -1144,7 +1144,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         # method by directly comparing the embedding list's length to the degree
         E = F.real_embeddings()
         return len(E) == F.degree() and all(F.hilbert_symbol(self._a, self._b, e) == -1
-                                                                        for e in E)
+                                            for e in E)
 
     @cached_method
     def ramified_places(self, inf=True):
@@ -1382,12 +1382,12 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         return F.ideal(F.prod(self.ramified_places(inf=False)))
 
     def is_isomorphic(self, A) -> bool:
-        """
+        r"""
         Check whether this quaternion algebra is isomorphic to ``A``.
 
         Currently only implemented for quaternion algebras defined over
         a number field; based on Main Theorem 14.6.1 in [Voi2021]_,
-        noting that `\\QQ` has a unique infinite place.
+        noting that `\QQ` has a unique infinite place.
 
         INPUT:
 
