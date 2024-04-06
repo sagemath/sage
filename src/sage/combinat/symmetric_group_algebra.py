@@ -1885,7 +1885,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
                     basis.append(self.epsilon_ik(t1, t2, mult=mult))
         return basis
 
-    def dft(self, form="seminormal", mult='l2r'):
+    def dft(self, mult='l2r'):
         """
         Return the discrete Fourier transform for ``self``.
 
@@ -1907,12 +1907,10 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             [   1 -1/2    1 -1/2 -1/2 -1/2]
             [   1   -1   -1    1    1   -1]
         """
-        if form == "seminormal":
-            return self._dft_seminormal(mult=mult)
-        if form == "modular":
+        if self.base_ring().characteristic().divides(len(self.group())):
             return self._dft_modular()
         else:
-            raise ValueError("invalid form (= %s)" % form)
+            return self._dft_seminormal(mult=mult)
 
     def _dft_seminormal(self, mult='l2r'):
         """
@@ -1946,6 +1944,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
     def _dft_modular(self):
         """
         Return the discrete Foruier transform when the characteristic divides the order of the group.
+        See [Mur1983]_ for contrstruction of central primitive orthogonal idempotents.
 
         EXAMPLES::
 
