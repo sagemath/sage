@@ -1050,6 +1050,17 @@ cdef class LibraryCallHandler(BaseCallHandler):
         """
         return False
 
+# mapping int --> string for function arity
+arity_dict = {
+        CMD_1: "CMD_1",
+        CMD_2: "CMD_2",
+        CMD_3: "CMD_3",
+        CMD_12: "CMD_12",
+        CMD_13: "CMD_13",
+        CMD_23: "CMD_23",
+        CMD_123: "CMD_123",
+        CMD_M: "CMD_M"
+}
 
 cdef class KernelCallHandler(BaseCallHandler):
     """
@@ -1127,8 +1138,9 @@ cdef class KernelCallHandler(BaseCallHandler):
 
         errorreported += 1
         error_messages.append(
-                "Wrong number of arguments (got {} arguments, arity code is {})"
-                .format(number_of_arguments, self.arity))
+                "Wrong number of arguments (got {} arguments, arity is {})"
+                .format(number_of_arguments,
+                        arity_dict.get(self.arity) or self.arity))
         return NULL
 
     cdef bint free_res(self) noexcept:
@@ -1233,7 +1245,7 @@ cdef class SingularFunction(SageObject):
             Traceback (most recent call last):
             ...
             RuntimeError: error in Singular function call 'size':
-            Wrong number of arguments (got 2 arguments, arity code is 303)
+            Wrong number of arguments (got 2 arguments, arity is CMD_1)
             sage: size('foobar', ring=P)
             6
 
@@ -1636,17 +1648,17 @@ def singular_function(name):
         Traceback (most recent call last):
         ...
         RuntimeError: error in Singular function call 'factorize':
-        Wrong number of arguments (got 0 arguments, arity code is 306)
+        Wrong number of arguments (got 0 arguments, arity is CMD_12)
         sage: factorize(f, 1, 2)
         Traceback (most recent call last):
         ...
         RuntimeError: error in Singular function call 'factorize':
-        Wrong number of arguments (got 3 arguments, arity code is 306)
+        Wrong number of arguments (got 3 arguments, arity is CMD_12)
         sage: factorize(f, 1, 2, 3)
         Traceback (most recent call last):
         ...
         RuntimeError: error in Singular function call 'factorize':
-        Wrong number of arguments (got 4 arguments, arity code is 306)
+        Wrong number of arguments (got 4 arguments, arity is CMD_12)
 
     The Singular function ``list`` can be called with any number of
     arguments::
