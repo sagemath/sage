@@ -1945,11 +1945,14 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         """
         Return the discrete Foruier transform when the characteristic divides the order of the group.
         See [Mur1983]_ for contrstruction of central primitive orthogonal idempotents.
+        For each idempotent e_i we have a projection v |--> v*e_i. This is a homomorphism.
+        We choose a basis for each submodule spanning by {\sigma*e_i | \sigma \in S_n}.
+        The change-of-basis from the standard basis {\sigma}_\sigma is returned.
 
         EXAMPLES::
 
             sage: GF2S3 = SymmetricGroupAlgebra(GF(2),3)
-            sage: GF2S3.dft(form="modular")
+            sage: GF2S3.dft()
             [1 0 0 0 1 0]
             [0 1 0 0 0 1]
             [0 0 1 0 0 1]
