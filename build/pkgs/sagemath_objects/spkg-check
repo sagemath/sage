@@ -1,9 +1,19 @@
+#!/usr/bin/env bash
 cd src
 
 if [ ! -r tox.ini ]; then
     echo "Not testing the package because there is no tox.ini"
     exit 0
 fi
+
+for lib in "$SAGE_SRC/bin/sage-src-env-config" "$SAGE_SRC/bin/sage-env-config" "$SAGE_SRC/bin/sage-env" "$SAGE_ROOT/build/bin/sage-build-env-config" "$SAGE_ROOT/build/bin/sage-build-env"; do
+    source "$lib"
+    if [ $? -ne 0 ]; then
+        echo >&2 "Error: failed to source $lib"
+        echo >&2 "Is $SAGE_ROOT the correct SAGE_ROOT?"
+        exit 1
+    fi
+done
 
 export PIP_NO_INDEX=true
 export PIP_FIND_LINKS="file://$SAGE_SPKG_WHEELS"
