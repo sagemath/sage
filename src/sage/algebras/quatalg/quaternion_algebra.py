@@ -687,7 +687,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         self._gens = (self([0, 1, 0, 0]), self([0, 0, 1, 0]), self([0, 0, 0, 1]))
 
     @cached_method
-    def maximal_order(self, order_basis=None, take_shortcuts=True):
+    def maximal_order(self, take_shortcuts=True, order_basis=None):
         r"""
         Return a maximal order in this quaternion algebra.
 
@@ -795,12 +795,11 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             ....:           (-511, 608), (493, 880), (105, -709), (-213, 530),
             ....:           (97, 745)]
             sage: all(QuaternionAlgebra(a, b).maximal_order().is_maximal()
-            ....:           for (a, b) in invars)
+            ....:     for (a, b) in invars)
             True
         """
         if self.base_ring() != QQ:
-            raise NotImplementedError("maximal order only implemented for"
-                                        " rational quaternion algebras")
+            raise NotImplementedError("maximal order only implemented for rational quaternion algebras")
 
         d_A = self.discriminant()
 
@@ -1648,7 +1647,7 @@ class QuaternionOrder(Parent):
 
     def __eq__(self, other):
         """
-        Compare orders self and other.
+        Compare orders ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -1674,7 +1673,7 @@ class QuaternionOrder(Parent):
 
     def __ne__(self, other):
         """
-        Compare orders self and other.
+        Compare orders ``self`` and ``other``.
 
         Two orders are equal if they have the same
         basis and are in the same quaternion algebra.
@@ -1691,7 +1690,7 @@ class QuaternionOrder(Parent):
 
     def __le__(self, other):
         """
-        Compare orders self and other.
+        Compare orders ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -1709,7 +1708,7 @@ class QuaternionOrder(Parent):
 
     def __lt__(self, other):
         """
-        Compare orders self and other.
+        Compare orders ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -1725,7 +1724,7 @@ class QuaternionOrder(Parent):
 
     def __ge__(self, other):
         """
-        Compare orders self and other.
+        Compare orders ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -1743,7 +1742,7 @@ class QuaternionOrder(Parent):
 
     def __gt__(self, other):
         """
-        Compare orders self and other.
+        Compare orders ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -3711,7 +3710,9 @@ def normalize_basis_at_p(e, p, B=QuaternionAlgebraElement_abstract.pair):
 
             # Ensures that (B(f0,f0)/2).valuation(p) <= B(f0,f1).valuation(p)
             if B(f0, f1).valuation(p) + 1 < B(f0, f0).valuation(p):
-                f0, f1 = f0 + f1, f0
+                g = f0
+                f0 += f1
+                f1 = g
 
             # Make remaining vectors orthogonal to span of f0, f1
             e[min_m] = e[0]
