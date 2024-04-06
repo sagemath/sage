@@ -1326,7 +1326,7 @@ cdef class SBox(SageObject):
             sage: f5 = S.component_function([1, 0, 1])
             sage: f5.algebraic_normal_form()                                            # needs sage.rings.polynomial.pbori
             x0*x2 + x0 + x1*x2
-    
+
         TESTS::
 
             sage: from sage.crypto.sboxes import SBox
