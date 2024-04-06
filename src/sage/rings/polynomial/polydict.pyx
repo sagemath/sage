@@ -102,7 +102,7 @@ cdef class PolyDict:
 
     No arithmetic operation on :class:`PolyDict` clear zero coefficients as of
     now there is no reliable way of testing it in the most general setting, see
-    :trac:`35319`. For removing zero coefficients from a :class:`PolyDict` you
+    :issue:`35319`. For removing zero coefficients from a :class:`PolyDict` you
     can use the method :meth:`remove_zeros` which can be parametrized by a zero
     test.
     """
@@ -770,7 +770,7 @@ cdef class PolyDict:
 
         TESTS:
 
-        We check that the issue on :trac:`9478` is resolved::
+        We check that the issue on :issue:`9478` is resolved::
 
             sage: R2.<a> = QQ[]
             sage: R3.<xi, x> = R2[]
@@ -779,7 +779,7 @@ cdef class PolyDict:
 
         TESTS:
 
-        Check that :trac:`29604` is fixed::
+        Check that :issue:`29604` is fixed::
 
             sage: PolyDict({(1, 0): GF(2)(1)}).latex(['x', 'y'])
             'x'
@@ -875,7 +875,7 @@ cdef class PolyDict:
 
         TESTS:
 
-        Check that :trac:`29604` is fixed::
+        Check that :issue:`29604` is fixed::
 
             sage: PolyDict({(1, 0): GF(4)(1)}).poly_repr(['x', 'y'])                    # needs sage.rings.finite_rings
             'x'
@@ -1789,7 +1789,7 @@ cdef class ETuple:
             sage: list(e)
             [4, 0, 0, 2, 0]
 
-        Check that :trac:`28178` is fixed::
+        Check that :issue:`28178` is fixed::
 
             sage: it = iter(e)
             sage: iter(it) is it
@@ -1845,7 +1845,7 @@ cdef class ETuple:
 
     # additional methods
 
-    cpdef int unweighted_degree(self) except *:
+    cdef int _unweighted_degree(self) except *:
         r"""
         Return the sum of entries.
 
@@ -1862,6 +1862,20 @@ cdef class ETuple:
         for i in range(self._nonzero):
             degree += self._data[2 * i + 1]
         return degree
+
+    cpdef int unweighted_degree(self) except *:
+        r"""
+        Return the sum of entries.
+
+        EXAMPLES::
+
+             sage: from sage.rings.polynomial.polydict import ETuple
+             sage: ETuple([1, 1, 0, 2, 0]).unweighted_degree()
+             4
+             sage: ETuple([-1, 1]).unweighted_degree()
+             0
+        """
+        return self._unweighted_degree()
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -1987,7 +2001,7 @@ cdef class ETuple:
             sage: e.eadd(f)
             (1, 1, 3)
 
-        Verify that :trac:`6428` has been addressed::
+        Verify that :issue:`6428` has been addressed::
 
             sage: # needs sage.libs.singular
             sage: R.<y, z> = Frac(QQ['x'])[]
@@ -2052,7 +2066,7 @@ cdef class ETuple:
 
         TESTS:
 
-        Test segmentation faults occurring as described in :trac:`34000`::
+        Test segmentation faults occurring as described in :issue:`34000`::
 
             sage: ETuple([0, 1, 1]).eadd_p(1, 0)
             (1, 1, 1)

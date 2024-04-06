@@ -382,11 +382,7 @@ class DualMatroid(Matroid):
             sage: N.rank()
             3
             sage: N
-            Pappus: Matroid of rank 3 on 9 elements with circuit-closures
-            {2: {{'a', 'b', 'c'}, {'a', 'e', 'i'}, {'a', 'f', 'h'},
-                 {'b', 'd', 'i'}, {'b', 'f', 'g'}, {'c', 'd', 'h'},
-                 {'c', 'e', 'g'}, {'d', 'e', 'f'}, {'g', 'h', 'i'}},
-             3: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'}}}
+            Pappus: Matroid of rank 3 on 9 elements with 9 nonspanning circuits
         """
         return self._matroid
 

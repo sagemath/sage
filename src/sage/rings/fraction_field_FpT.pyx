@@ -44,16 +44,27 @@ class FpT(FractionField_1poly_field):
         """
         INPUT:
 
-        - ``R`` -- A polynomial ring over a finite field of prime order `p` with `2 < p < 2^16`
+        - ``R`` -- a dense polynomial ring over a finite field of prime order
+          `p` with `2 < p < 2^{16}`
 
         EXAMPLES::
 
             sage: R.<x> = GF(31)[]
             sage: K = R.fraction_field(); K
             Fraction Field of Univariate Polynomial Ring in x over Finite Field of size 31
+
+        TESTS::
+
+            sage: from sage.rings.fraction_field_FpT import FpT
+            sage: FpT(PolynomialRing(GF(37), ['x'], sparse=True))
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported polynomial ring
         """
         cdef long p = R.base_ring().characteristic()
         assert 2 < p < FpT.INTEGER_LIMIT
+        if not issubclass(R.element_class, Polynomial_zmod_flint):
+            raise TypeError("unsupported polynomial ring")
         self.p = p
         self.poly_ring = R
         FractionField_1poly_field.__init__(self, R, element_class=FpTElement)
@@ -1128,7 +1139,7 @@ cdef class Polyring_FpT_coerce(RingHomomorphism):
 
         TESTS:
 
-        Check that :trac:`12217` and :trac:`16811` are fixed::
+        Check that :issue:`12217` and :issue:`16811` are fixed::
 
             sage: R.<t> = GF(5)[]
             sage: K = R.fraction_field()
@@ -1223,7 +1234,7 @@ cdef class FpT_Polyring_section(Section):
     .. WARNING::
 
         Comparison of ``FpT_Polyring_section`` objects is not currently
-        implemented. See :trac:`23469`. ::
+        implemented. See :issue:`23469`. ::
 
             sage: fprime = loads(dumps(f))
             sage: fprime == f
@@ -1525,7 +1536,7 @@ cdef class FpT_Fp_section(Section):
     .. WARNING::
 
         Comparison of ``FpT_Fp_section`` objects is not currently
-        implemented. See :trac:`23469`. ::
+        implemented. See :issue:`23469`. ::
 
             sage: fprime = loads(dumps(f))
             sage: fprime == f

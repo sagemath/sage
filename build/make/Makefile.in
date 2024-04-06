@@ -205,7 +205,7 @@ else
 AM_V_at =
 endif
 
-# Trac #33125: Handle make options -n, -t, -q
+# Issue #33125: Handle make options -n, -t, -q
 ifeq ($(strip $(foreach flag,n t q,$(findstring $(flag),$(filter-out --%,$(MAKEFLAGS))))),)
 PLUS = +
 else
@@ -326,7 +326,7 @@ all-toolchain: base-toolchain
 # typical Python packages from source. Wheel packages only need pip.
 PYTHON_TOOLCHAIN = setuptools pip setuptools_scm wheel flit_core hatchling
 
-# Trac #32056: Avoid installed setuptools leaking into the build of python3 by uninstalling it.
+# Issue #32056: Avoid installed setuptools leaking into the build of python3 by uninstalling it.
 # It will have to be reinstalled anyway because of its dependency on $(PYTHON).
 python3-SAGE_LOCAL-no-deps: setuptools-clean
 python3-SAGE_VENV-no-deps: setuptools-clean
@@ -582,7 +582,7 @@ pkg_deps = \
 # For packages listed in $(TOOLCHAIN_DEPS) we also pass --keep-existing to
 # sage-spkg, and --keep-files to sage-spkg-uninstall since those packages can
 # have a recursive self-dependency, and should not be deleted while upgrading.
-# See Trac #25857
+# See Issue #25857
 
 # Positional arguments:
 #     $(1): package name
@@ -613,6 +613,11 @@ $(1)-$(4)-no-deps:
 	fi
 
 $(1)-no-deps: $(1)-$(4)-no-deps
+
+$(1)-$(4)-check:
+	$(PLUS)@sage-logger -p 'PATH=$$(SAGE_SRC)/bin:$$($(4))/bin:$$$$PATH $$(SAGE_SPKG) --check-only $(1)-$(2) $$($(4))' '$$(SAGE_LOGS)/$(1)-$(2).log'
+
+$(1)-check: $(1)-$(4)-check
 
 $(1)-$(4)-uninstall:
 	if [ -d '$$($(4))' ]; then \
@@ -760,22 +765,7 @@ $(1)-$(4)-no-deps:
 $(1)-no-deps: $(1)-$(4)-no-deps
 
 $(1)-$(4)-check:
-	$(PLUS)@if [ -x $$(SAGE_ROOT)/build/pkgs/$(1)/spkg-check ]; then \
-	    cd '$$(SAGE_ROOT)/build/pkgs/$(1)' && \
-		. '$$(SAGE_ROOT)/src/bin/sage-src-env-config' && \
-		. '$$(SAGE_ROOT)/src/bin/sage-env-config' && \
-		. '$$(SAGE_ROOT)/src/bin/sage-env' && \
-		. '$$(SAGE_ROOT)/build/bin/sage-build-env-config' && \
-		. '$$(SAGE_ROOT)/build/bin/sage-build-env' && \
-		PKG_BASE="$(1)" \
-		PKG_VER="$(2)" \
-		PKG_NAME="$(1)-$(2)" \
-		SAGE_SPKG_WHEELS=$$($(4))/var/lib/sage/wheels \
-		SAGE_SPKG_SCRIPTS=$$($(4))/var/lib/sage/scripts \
-		SAGE_INST_LOCAL=$$($(4)) \
-		SAGE_CHECK=$$(SAGE_CHECK_$(1)) \
-		sage-logger -p '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-check' '$$(SAGE_LOGS)/$(1)-$(2).log'; \
-	    fi
+	$(PLUS)@sage-logger -p 'PATH=$$(SAGE_SRC)/bin:$$($(4))/bin:$$$$PATH $$(SAGE_SPKG) --check-only $(1)-$(2) $$($(4))' '$$(SAGE_LOGS)/$(1)-$(2).log'
 
 $(1)-check: $(1)-$(4)-check
 

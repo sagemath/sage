@@ -94,7 +94,7 @@ def setup_glpk_error_handler():
         GLPKError: glp_term_out: flag = 12345; invalid parameter
         Error detected in file env/stdout.c at line ...
 
-    Check that normal terminal output still works, see :trac:`20832`::
+    Check that normal terminal output still works, see :issue:`20832`::
 
         sage: def verbose_GLPK():
         ....:     from sage.numerical.backends.generic_backend import get_solver

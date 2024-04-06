@@ -67,7 +67,7 @@ TESTS::
     Residue field in zbar of Fractional ideal (17)
     sage: TestSuite(ff).run()
 
-Verify that :trac:`15192` has been resolved::
+Verify that :issue:`15192` has been resolved::
 
     sage: a.is_unit()                                                                   # needs sage.rings.number_field
     True
@@ -81,7 +81,7 @@ Verify that :trac:`15192` has been resolved::
     Residue field in a of Principal ideal (t^3 + t + 4) of
      Univariate Polynomial Ring in t over Finite Field of size 11
 
-Verify that :trac:`7475` is fixed::
+Verify that :issue:`7475` is fixed::
 
     sage: K = ZZ.residue_field(2)
     sage: loads(dumps(K)) is K
@@ -568,7 +568,7 @@ class ResidueField_generic(Field):
         The residue field is determined by a prime (fractional) ideal in a
         number field. If this ideal can be coerced into a different number
         field, then the construction functor applied to this number field will
-        return the corresponding residue field. See :trac:`15223`.
+        return the corresponding residue field. See :issue:`15223`.
 
         EXAMPLES::
 
@@ -631,7 +631,7 @@ class ResidueField_generic(Field):
 
         .. NOTE::
 
-            The behaviour of this method was changed in :trac:`8800`.
+            The behaviour of this method was changed in :issue:`8800`.
             Before, an error was raised if there was no coercion. Now,
             a conversion is possible even when there is no coercion.
             This is like for different finite fields.
@@ -648,13 +648,13 @@ class ResidueField_generic(Field):
             sage: ResidueField_generic._element_constructor_(F, i)
             8
 
-        With :trac:`8800`, we also have::
+        With :issue:`8800`, we also have::
 
             sage: ResidueField_generic._element_constructor_(F, GF(13)(8))              # needs sage.rings.number_field
             8
 
         Here is a test that was temporarily removed, but newly introduced
-        in :trac:`8800`::
+        in :issue:`8800`::
 
             sage: # needs sage.rings.finite_rings
             sage: R.<t> = GF(17)[]; P = R.ideal(t^3 + t^2 + 7)
@@ -698,7 +698,7 @@ class ResidueField_generic(Field):
 
         TESTS:
 
-        Check that :trac:`11319` is fixed::
+        Check that :issue:`11319` is fixed::
 
             sage: GF(13).has_coerce_map_from(F)                                         # needs sage.rings.number_field
             True
@@ -1101,7 +1101,7 @@ cdef class ReductionMap(Map):
             ...
             ZeroDivisionError...
 
-        An example to show that the issue raised in :trac:`1951`
+        An example to show that the issue raised in :issue:`1951`
         has been fixed::
 
             sage: # needs sage.rings.number_field

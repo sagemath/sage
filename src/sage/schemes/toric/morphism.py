@@ -284,7 +284,7 @@ verified by ::
     sage: phi_d.codomain().fan().is_isomorphic(toric_varieties.P2().fan()) # known bug
     True
 
-(Unfortunately it cannot be verified correctly until :trac:`16012` is fixed.)
+(Unfortunately it cannot be verified correctly until :issue:`16012` is fixed.)
 
 We now have access to fiber methods::
 

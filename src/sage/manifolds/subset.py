@@ -2482,7 +2482,7 @@ class ManifoldSubset(UniqueRepresentation, Parent):
             sage: M.union(a) is M
             True
 
-        Check that :trac:`30401` is fixed::
+        Check that :issue:`30401` is fixed::
 
             sage: d = a.subset('D')
             sage: e = a.subset('E')

@@ -47,6 +47,24 @@ class CommutativeRings(CategoryWithAxiom):
 
     """
     class ParentMethods:
+        def is_commutative(self) -> bool:
+            """
+            Return whether the ring is commutative.
+
+            The answer is ``True`` only if the category is a sub-category of
+            ``CommutativeRings``.
+
+            It is recommended to use instead ``R in Rings().Commutative()``.
+
+            EXAMPLES::
+
+                sage: QQ.is_commutative()
+                True
+                sage: QQ['x,y,z'].is_commutative()
+                True
+            """
+            return True
+
         def _test_divides(self, **options):
             r"""
             Run generic tests on the method :meth:`divides`.

@@ -54,7 +54,7 @@ cpdef hessenbergize_cdvf(Matrix_generic_dense H) noexcept:
         sage: M.charpoly()[0] == M.determinant()                                        # needs sage.rings.padics
         True
 
-    We check that :trac:`31753` is resolved::
+    We check that :issue:`31753` is resolved::
 
         sage: R.<t> = GF(5)[[]]
         sage: M = matrix(3, 3, [ 1, t + O(t^3), t^2,

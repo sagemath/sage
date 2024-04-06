@@ -416,7 +416,7 @@ def wrap_FpGroup(libgap_fpgroup):
     return FinitelyPresentedGroup(free_group, relations)
 
 
-class RewritingSystem():
+class RewritingSystem:
     """
     A class that wraps GAP's rewriting systems.
 
@@ -967,7 +967,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         A Sage
         :func:`~sage.groups.perm_gps.permgroup.PermutationGroup`. If
         the number of cosets exceeds the given ``limit``, a
-        ``ValueError`` is returned.
+        :class:`ValueError` is returned.
 
         EXAMPLES::
 

@@ -3,7 +3,7 @@ Vectors with integer mod `n` entries, with small `n`
 
 EXAMPLES::
 
-    sage: v = vector(Integers(8),[1,2,3,4,5])
+    sage: v = vector(Integers(8), [1,2,3,4,5])
     sage: type(v)
     <class 'sage.modules.vector_modn_dense.Vector_modn_dense'>
     sage: v
@@ -21,8 +21,8 @@ EXAMPLES::
     sage: v * v
     7
 
-    sage: v = vector(Integers(8),[1,2,3,4,5])
-    sage: u = vector(Integers(8),[1,2,3,4,4])
+    sage: v = vector(Integers(8), [1,2,3,4,5])
+    sage: u = vector(Integers(8), [1,2,3,4,4])
     sage: v - u
     (0, 0, 0, 0, 1)
     sage: u - v
@@ -79,7 +79,7 @@ TESTS::
     sage: isinstance(hash(w), int)
     True
 
-Test that :trac:`28042` is fixed::
+Test that :issue:`28042` is fixed::
 
     sage: # needs sage.rings.finite_rings
     sage: p = 193379

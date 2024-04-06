@@ -656,7 +656,7 @@ cdef class SubgraphSearch:
 
         TESTS:
 
-        Test proper initialization and deallocation, see :trac:`14067`.
+        Test proper initialization and deallocation, see :issue:`14067`.
         We intentionally only create the class without doing any
         computations with it::
 
@@ -727,7 +727,7 @@ cdef class SubgraphSearch:
             6
 
         Check that the method is working even when vertices or edges are of
-        incomparable types (see :trac:`35904`)::
+        incomparable types (see :issue:`35904`)::
 
             sage: from sage.graphs.generic_graph_pyx import SubgraphSearch
             sage: G = Graph()
@@ -778,7 +778,7 @@ cdef class SubgraphSearch:
 
         TESTS:
 
-        Check that :trac:`21828` is fixed::
+        Check that :issue:`21828` is fixed::
 
             sage: Poset().is_incomparable_chain_free(1,1)   # indirect doctest          # needs sage.modules
             True
@@ -1285,7 +1285,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
 
     TESTS:
 
-    :trac:`10206` -- Hamiltonian cycle in small (di)graphs::
+    :issue:`10206` -- Hamiltonian cycle in small (di)graphs::
 
         sage: for n in range(3):
         ....:     for G in graphs(n):
@@ -1303,7 +1303,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
         order 2 and size 1: (False, [0, 1])
         order 2 and size 2: (False, [0, 1])
 
-    :trac:`10206` -- Hamiltonian path in small (di)graphs::
+    :issue:`10206` -- Hamiltonian path in small (di)graphs::
 
         sage: for n in range(3):
         ....:     for G in graphs(n):
@@ -1321,7 +1321,7 @@ cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
         order 2 and size 1: (True, [0, 1])
         order 2 and size 2: (True, [0, 1])
 
-    :trac:`10206` -- disconnected graphs::
+    :issue:`10206` -- disconnected graphs::
 
         sage: G = graphs.CompleteGraph(4) + Graph(1)
         sage: fh(G, find_path=False)

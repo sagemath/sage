@@ -986,7 +986,7 @@ cdef class SBox(SageObject):
 
         TESTS:
 
-        Check that :trac:`22453` is fixed::
+        Check that :issue:`22453` is fixed::
 
             sage: from sage.crypto.sboxes import AES
             sage: aes_polys = AES.polynomials()  # long time
@@ -1090,7 +1090,7 @@ cdef class SBox(SageObject):
 
             The method-internal call to the S-box initially used a different
             endianess for handling finite field elements. This changed in
-            :trac:`25633`, by calling the S-box directly.
+            :issue:`25633`, by calling the S-box directly.
         """
         if self.m != self.n:
             raise TypeError("Lagrange interpolation only supported if"

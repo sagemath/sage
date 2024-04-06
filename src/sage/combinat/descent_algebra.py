@@ -19,6 +19,7 @@ from sage.misc.lazy_attribute import lazy_attribute
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.categories.algebras import Algebras
+from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.realizations import Realizations, Category_realization_of_parent
 from sage.categories.finite_dimensional_algebras_with_basis import FiniteDimensionalAlgebrasWithBasis
 from sage.rings.integer_ring import ZZ
@@ -929,7 +930,7 @@ class DescentAlgebraBases(Category_realization_of_parent):
                 return self.base_ring().is_field()
             return False
 
-        def is_commutative(self):
+        def is_commutative(self) -> bool:
             """
             Return whether this descent algebra is commutative.
 
@@ -942,8 +943,8 @@ class DescentAlgebraBases(Category_realization_of_parent):
                 sage: B.is_commutative()
                 True
             """
-            return self.base_ring().is_commutative() \
-                and self.realization_of()._n <= 2
+            return (self.base_ring() in CommutativeRings()
+                    and self.realization_of()._n <= 2)
 
         @lazy_attribute
         def to_symmetric_group_algebra(self):

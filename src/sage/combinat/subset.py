@@ -535,7 +535,7 @@ class Subsets_s(Parent):
             sage: Subsets([2,4,5]).an_element()
             {2, 4}
 
-         Check that :trac:`33988` is fixed::
+         Check that :issue:`33988` is fixed::
 
             sage: Subsets([1,2,3]).an_element() == Subsets([1,2,3])._an_element_()
             True
@@ -1318,7 +1318,7 @@ class SubMultiset_sk(SubMultiset_s):
             sage: S.list()
             [[1, 2], [1, 3], [2, 2], [2, 3]]
 
-        Check that :trac:`28588` is fixed::
+        Check that :issue:`28588` is fixed::
 
             sage: Subsets([3,2,2], submultiset=True).list()
             [[], [3], [2], [3, 2], [2, 2], [3, 2, 2]]

@@ -922,7 +922,7 @@ cdef class pAdicPrinter_class(SageObject):
 
         TESTS:
 
-        Check that :trac:`24843` is resolved::
+        Check that :issue:`24843` is resolved::
 
             sage: R = Zp(2, print_mode='digits', show_prec=True)
             sage: repr(R(0,10))

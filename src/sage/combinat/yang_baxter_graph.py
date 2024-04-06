@@ -45,8 +45,8 @@ def YangBaxterGraph(partition=None, root=None, operators=None):
 
     - Either:
 
-      - :class:`YangBaxterGraph_partition` - if partition is defined
-      - :class:`YangBaxterGraph_generic` - if partition is ``None``
+      - :class:`YangBaxterGraph_partition` -- if partition is defined
+      - :class:`YangBaxterGraph_generic` -- if partition is ``None``
 
     EXAMPLES:
 

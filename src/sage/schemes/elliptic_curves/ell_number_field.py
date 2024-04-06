@@ -150,7 +150,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
              with defining polynomial x^2 + 5 with a = 2.236067977499790?*I
 
         Check that non-torsion points are remembered when extending
-        the base field (see :trac:`16034`)::
+        the base field (see :issue:`16034`)::
 
             sage: E = EllipticCurve([1, 0, 1, -1751, -31352])
             sage: K.<d> = QuadraticField(5)
@@ -266,7 +266,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: E.simon_two_descent()  # long time (3s on sage.math, 2013), points can vary
             (1, 3, [...])
 
-        Check that the bug reported in :trac:`15483` is fixed::
+        Check that the bug reported in :issue:`15483` is fixed::
 
             sage: K.<s> = QuadraticField(229)
             sage: c4 = 2173 - 235*(1 - s)/2
@@ -615,7 +615,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
              y^2 + (-i)*x*y + (-25*i)*y = x^3 + 5*i*x^2 + 125*i*x + 3125*i
              over Number Field in i with defining polynomial x^2 + 1
 
-        :trac:`7935`::
+        :issue:`7935`::
 
             sage: K.<a> = NumberField(x^2 - 38)
             sage: E = EllipticCurve([a,1/2])
@@ -623,7 +623,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             Elliptic Curve defined by y^2 = x^3 + 1444*a*x + 27436
              over Number Field in a with defining polynomial x^2 - 38
 
-        :trac:`9266`::
+        :issue:`9266`::
 
             sage: K.<s> = NumberField(x^2 - 5)
             sage: w = (1+s)/2
@@ -632,7 +632,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             Elliptic Curve defined by y^2 = x^3 + 2*x + (1/2*s+1/2)
              over Number Field in s with defining polynomial x^2 - 5
 
-        :trac:`12151`::
+        :issue:`12151`::
 
             sage: K.<v> = NumberField(x^2 + 161*x - 150)
             sage: E = EllipticCurve([25105/216*v - 3839/36, 634768555/7776*v - 98002625/1296, 634768555/7776*v - 98002625/1296, 0, 0])
@@ -641,7 +641,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             y^2 + (2094779518028859*v-1940492905300351)*x*y + (477997268472544193101178234454165304071127500*v-442791377441346852919930773849502871958097500)*y = x^3 + (26519784690047674853185542622500*v-24566525306469707225840460652500)*x^2
              over Number Field in v with defining polynomial x^2 + 161*x - 150
 
-        :trac:`14476`::
+        :issue:`14476`::
 
             sage: R.<t> = QQ[]
             sage: K.<g> = NumberField(t^4 - t^3 - 3*t^2 - t + 1)
@@ -800,7 +800,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         TESTS:
 
-        See :trac:`34174`.  This used to raise an error due to insufficient precision::
+        See :issue:`34174`.  This used to raise an error due to insufficient precision::
 
             sage: K.<a> = QuadraticField(4569)
             sage: j = 46969655/32768
@@ -915,7 +915,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
               Kodaira Symbol: I1
               Tamagawa Number: 1
 
-        An example raised in :trac:`3897`::
+        An example raised in :issue:`3897`::
 
             sage: E = EllipticCurve([1,1])
             sage: E.local_data(3)
@@ -1423,7 +1423,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: [dav.tamagawa_number() for dav in da]
             [1, 1]
 
-        An example over `\QQ` (:trac:`9413`)::
+        An example over `\QQ` (:issue:`9413`)::
 
             sage: E = EllipticCurve('30a')
             sage: E.tamagawa_product_bsd()
@@ -1511,14 +1511,14 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: E.conductor()
             Fractional ideal (1)
 
-        An example which used to fail (see :trac:`5307`)::
+        An example which used to fail (see :issue:`5307`)::
 
             sage: K.<w> = NumberField(x^2 + x + 6)
             sage: E = EllipticCurve([w, -1, 0, -w-6, 0])
             sage: E.conductor()
             Fractional ideal (86304, w + 5898)
 
-        An example raised in :trac:`11346`::
+        An example raised in :issue:`11346`::
 
             sage: K.<g> = NumberField(x^2 - x - 1)
             sage: E1 = EllipticCurve(K, [0, 0, 0, -1/48, -161/864])
@@ -1812,7 +1812,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: E2.local_data()
             []
 
-        See :trac:`11347`::
+        See :issue:`11347`::
 
             sage: K.<g> = NumberField(x^2 - x - 1)
             sage: E = EllipticCurve(K, [0, 0, 0, -1/48, 161/864])
@@ -1824,7 +1824,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: [(p.norm(), e) for p, e in E2.discriminant().factor()]
             [(-5, 2), (9, 1)]
 
-        See :trac:`14472`, this used not to work over a relative extension::
+        See :issue:`14472`, this used not to work over a relative extension::
 
             sage: K1.<w> = NumberField(x^2 + x + 1)
             sage: m = polygen(K1)
@@ -1834,7 +1834,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             Elliptic Curve defined by y^2 + y = x^3
              over Number Field in v with defining polynomial x^2 - w + 1 over its base field
 
-        See :trac:`18662`: for fields of class number greater than 1,
+        See :issue:`18662`: for fields of class number greater than 1,
         even when global minimal models did exist, their computation
         was not implemented.  Now it is::
 
@@ -2358,7 +2358,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
              (-186948623/4656964 : 549438861195/10049728312*a : 1)]
 
         It can happen that no points are found if the height bounds
-        used in the search are too small (see :trac:`10745`)::
+        used in the search are too small (see :issue:`10745`)::
 
             sage: K.<t> = NumberField(x^4 + x^2 - 7)
             sage: E = EllipticCurve(K, [1, 0, 5*t^2 + 16, 0, 0])
@@ -2385,7 +2385,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: E.rank()
             2
 
-        Test that points of finite order are not included (see :trac:`13593`)::
+        Test that points of finite order are not included (see :issue:`13593`)::
 
             sage: E = EllipticCurve("17a3")
             sage: K.<t> = NumberField(x^2 + 3)
@@ -2864,7 +2864,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
         forms of discriminant `-104`, from which we have selected a
         small prime::
 
-            sage: CL.matrix() # long time # random (see :trac:`19229`)
+            sage: CL.matrix() # long time # random (see :issue:`19229`)
             [1 2 3 3 5 5]
             [2 1 5 5 3 3]
             [3 5 1 3 2 5]
@@ -2874,7 +2874,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         To see the array of binary quadratic forms::
 
-            sage: CL.qf_matrix()  # long time # random (see :trac:`19229`)
+            sage: CL.qf_matrix()  # long time # random (see :issue:`19229`)
             [[[1], [2, 0, 13], [3, -2, 9], [3, -2, 9], [5, -4, 6], [5, -4, 6]],
              [[2, 0, 13], [1], [5, -4, 6], [5, -4, 6], [3, -2, 9], [3, -2, 9]],
              [[3, -2, 9], [5, -4, 6], [1], [3, -2, 9], [2, 0, 13], [5, -4, 6]],
@@ -2917,7 +2917,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         TESTS:
 
-        An example which failed until fixed at :trac:`19229`::
+        An example which failed until fixed at :issue:`19229`::
 
             sage: K.<a> = NumberField(x^2 - x + 1)
             sage: E = EllipticCurve([a+1, 1, 1, 0, 0])
@@ -3153,7 +3153,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
 
         TESTS:
 
-        Check that :trac:`15890` is fixed::
+        Check that :issue:`15890` is fixed::
 
             sage: K.<s> = QuadraticField(229)
             sage: c4 = 2173 - 235*(1 - s)/2
@@ -3165,7 +3165,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             sage: E.is_isogenous(Ec)
             True
 
-        Check that :trac:`17295` is fixed::
+        Check that :issue:`17295` is fixed::
 
             sage: k.<s> = QuadraticField(2)
             sage: K.<b> = k.extension(x^2 - 3)
@@ -3455,7 +3455,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
             [(-4 : 1 : 1), (-3 : 5 : 1), (-2 : 6 : 1), (1 : -7 : 1)], [0 0 1 1]
             )
 
-        Some examples over number fields (see :trac:`9411`)::
+        Some examples over number fields (see :issue:`9411`)::
 
             sage: K.<a> = QuadraticField(-23, 'a')
             sage: E = EllipticCurve(K, [0,0,1,-1,0])
@@ -3990,7 +3990,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
              45,
              0.152460177943144)
 
-        See :trac:`27387`::
+        See :issue:`27387`::
 
             sage: K.<a> = NumberField(x^2 - x - 26)
             sage: E = EllipticCurve([a, 1-a, 0, 93-16*a, 3150-560*a])
@@ -4161,7 +4161,7 @@ class EllipticCurve_number_field(EllipticCurve_field):
              (2 : -3 : 1),
              (2 : 2 : 1)]
 
-        Check that :trac:`26677` is fixed::
+        Check that :issue:`26677` is fixed::
 
             sage: E = EllipticCurve("11a1")
             sage: E.rational_points(bound=5)

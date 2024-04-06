@@ -267,7 +267,7 @@ cdef class WordDatatype_char(WordDatatype):
             sage: w > w[1:] or w[1:] < w
             False
 
-        Testing that :trac:`21609` is fixed::
+        Testing that :issue:`21609` is fixed::
 
             sage: w = Word([1,2], alphabet=[1,2])
             sage: z = Word([1,1], alphabet=[1,2])
@@ -284,7 +284,7 @@ cdef class WordDatatype_char(WordDatatype):
             sage: (w>=w, z>=z, w>=z, z>=w)
             (True, True, True, False)
 
-        Testing that :trac:`22717` is fixed::
+        Testing that :issue:`22717` is fixed::
 
             sage: w = Word([1,2], alphabet=[1,2,3])
             sage: z = Word([1,2,3], alphabet=[1,2,3])
@@ -301,7 +301,7 @@ cdef class WordDatatype_char(WordDatatype):
             sage: (w>=w, z>=z, w>=z, z>=w)
             (True, True, False, True)
 
-        Check that :trac:`23317` is fixed::
+        Check that :issue:`23317` is fixed::
 
             sage: L = [Word([2,2], (1,2)), Word([], (1,2))]
             sage: sorted(L)
@@ -356,7 +356,7 @@ cdef class WordDatatype_char(WordDatatype):
             ...
             TypeError: slice indices must be integers or None or have an __index__ method
 
-        Check a weird behavior of PySlice_GetIndicesEx (:trac:`17056`)::
+        Check a weird behavior of PySlice_GetIndicesEx (:issue:`17056`)::
 
             sage: w[1:0]
             word:
@@ -607,7 +607,7 @@ cdef class WordDatatype_char(WordDatatype):
 
         TESTS:
 
-        :trac:`19322`::
+        :issue:`19322`::
 
             sage: W = Words([0,1,2])
             sage: w = W([0,1,0,2])

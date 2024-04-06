@@ -125,7 +125,7 @@ cdef class FPElement(pAdicTemplateElement):
             sage: R(5) - R(5)
             0
 
-        We check that :trac:`23966` is resolved::
+        We check that :issue:`23966` is resolved::
 
             sage: R = ZpFM(2)
             sage: K = R.fraction_field()
@@ -605,7 +605,7 @@ cdef class FPElement(pAdicTemplateElement):
 
         TESTS:
 
-        Check that :trac:`31875` is fixed::
+        Check that :issue:`31875` is fixed::
 
             sage: R(1)^R(0)
             1

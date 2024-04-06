@@ -51,7 +51,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
 
         TESTS:
 
-        Check that types B and C are hashed differently, see :trac:`29726`::
+        Check that types B and C are hashed differently, see :issue:`29726`::
 
             sage: WB = ReflectionGroup(['B',5])                     # optional - gap3
             sage: WC = ReflectionGroup(['C',5])                     # optional - gap3
@@ -68,7 +68,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
             sage: WB_hash.intersection(WC_hash)                     # optional - gap3
             set()
 
-        Check that :trac:`34912` is fixed::
+        Check that :issue:`34912` is fixed::
 
             sage: # optional - gap3
             sage: G4 = ReflectionGroup(4)

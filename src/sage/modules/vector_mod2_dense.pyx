@@ -155,7 +155,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
 
         TESTS:
 
-        Check that issue :trac:`8601` is fixed::
+        Check that issue :issue:`8601` is fixed::
 
             sage: VS = VectorSpace(GF(2), 3)
             sage: VS((-1,-2,-3))
@@ -166,7 +166,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             sage: V([1,-3])
             (1, 1)
 
-        Check integer overflow prior to :trac:`21746`::
+        Check integer overflow prior to :issue:`21746`::
 
             sage: VS = VectorSpace(GF(2),1)
             sage: VS([2**64])

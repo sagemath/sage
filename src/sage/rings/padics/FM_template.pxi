@@ -364,7 +364,7 @@ cdef class FMElement(pAdicTemplateElement):
 
         TESTS:
 
-        We check that :trac:`15640` is resolved::
+        We check that :issue:`15640` is resolved::
 
             sage: R(11)^-1
             Traceback (most recent call last):

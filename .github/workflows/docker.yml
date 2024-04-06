@@ -248,9 +248,8 @@ jobs:
       - name: Copy logs from the Docker image or build container
         run: |
           mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"
-          cp -r .tox/$TOX_ENV/Dockerfile .tox/$TOX_ENV/log "artifacts/$LOGS_ARTIFACT_NAME"
-          if [ -f .tox/$TOX_ENV/Dockertags ]; then CONTAINERS=$(docker create $(tail -1 .tox/$TOX_ENV/Dockertags) /bin/bash || true); fi
-          if [ -n "$CONTAINERS" ]; then for CONTAINER in $CONTAINERS; do for ARTIFACT in /sage/logs; do docker cp $CONTAINER:$ARTIFACT artifacts/$LOGS_ARTIFACT_NAME && HAVE_LOG=1; done; if [ -n "$HAVE_LOG" ]; then break; fi; done; fi
+          cp -r .tox/$TOX_ENV/* "artifacts/$LOGS_ARTIFACT_NAME"
+          rm -rf "artifacts/$LOGS_ARTIFACT_NAME"/{bin,lib,pyvenv.cfg}
         if: always()
       - uses: actions/upload-artifact@v3
         with:
@@ -262,9 +261,46 @@ jobs:
         run: |
           .github/workflows/scan-logs.sh "artifacts/$LOGS_ARTIFACT_NAME"
         if: always()
-      - name: List docker images
+      - name: List Docker images
         run: |
-          if [ -f .tox/$TOX_ENV/Dockertags ]; then
-             cat .tox/$TOX_ENV/Dockertags
+          if [ -n "$DOCKER_PUSH_REPOSITORY" -a -f .tox/$TOX_ENV/Dockertags.pushed ]; then
+             set -- $(cat .tox/$TOX_ENV/Dockertags.pushed)
+             case $# in
+                 1) images="image";  one_image="the image";;
+                 *) images="images"; one_image="one of the images";;
+             esac
+             echo "::notice title=Docker $images pushed::Pushed $images $*)"
+             echo
+             echo "To pull $one_image and enter the container, type:"
+             echo
+             for TAG in $*; do
+                 echo "  \$ docker run -it $TAG bash"
+             done
+             echo
+             echo "To use $one_image as the base for an incremental build, type:"
+             echo
+             TOX_ENV_SANS_INCREMENTAL=${TOX_ENV/-incremental/}
+             DOCKER_IMAGE=${TOX_ENV_SANS_INCREMENTAL#docker-}
+             for TAG in $*; do
+                 echo -n "  \$"
+                 if [ "$DOCKER_PUSH_REPOSITORY" != "ghcr.io/sagemath/sage/" ]; then
+                     echo -n " FROM_DOCKER_REPOSITORY=$DOCKER_PUSH_REPOSITORY"
+                 fi
+                 eval DOCKER_TARGET=\${TAG#*$DOCKER_IMAGE-}
+                 DOCKER_TARGET=${DOCKER_TARGET%:*}
+                 if [ "$DOCKER_TARGET" != "with-targets" ]; then
+                     echo -n " FROM_DOCKER_TARGET=$DOCKER_TARGET"
+                 fi
+                 echo " FROM_DOCKER_TAG=${TAG#*:} tox -e $TOX_ENV_SANS_INCREMENTAL-incremental"
+             done
+          elif [ -n "$DOCKER_PUSH_REPOSITORY" -a -f .tox/$TOX_ENV/Dockertags ]; then
+             echo "Unable to push Docker images to $DOCKER_PUSH_REPOSITORY."
+             echo "This is normal in a pull request to sagemath/sage or to another user's repository."
+             echo
+             echo "If you need Docker images, "
+             echo " - either run this GitHub Actions workflow in your repository fork"
+             echo " - or use the method described in https://doc.sagemath.org/html/en/developer/portability_testing.html#automatic-docker-based-build-testing-using-tox"
+          else
+             echo "No Docker images created."
           fi
-        if: always()
+        if: always() && ${{ inputs.docker_push_repository }}

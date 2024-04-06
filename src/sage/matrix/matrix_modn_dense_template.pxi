@@ -1367,7 +1367,7 @@ cdef class Matrix_modn_dense_template(Matrix_dense):
         TESTS:
 
         The cached polynomial should be independent of the ``var``
-        argument (:trac:`12292`). We check (indirectly) that the
+        argument (:issue:`12292`). We check (indirectly) that the
         second call uses the cached value by noting that its result is
         not cached. The polynomial here is not unique, so we only
         check the polynomial's variable.

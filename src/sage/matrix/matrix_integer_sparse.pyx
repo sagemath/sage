@@ -414,7 +414,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
         TESTS:
 
-        Check that :trac:`9345` is fixed::
+        Check that :issue:`9345` is fixed::
 
             sage: A = random_matrix(ZZ, 3, 3, sparse=True)
             sage: A.rational_reconstruction(0)
@@ -642,7 +642,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
             [0 2]
             [0 0]
 
-        The examples above show that :trac:`10626` has been implemented.
+        The examples above show that :issue:`10626` has been implemented.
 
 
         .. SEEALSO::
@@ -732,7 +732,7 @@ cdef class Matrix_integer_sparse(Matrix_sparse):
 
             This method is much slower than converting to a dense matrix and
             computing the determinant there. There is not much point in making
-            it available. See :trac:`28318`.
+            it available. See :issue:`28318`.
 
         EXAMPLES::
 

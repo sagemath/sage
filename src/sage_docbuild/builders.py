@@ -30,7 +30,7 @@ times saved in ``local/share/doctree/reference.pickle`` from the previous
 build. Then new rst files are generated for new and updated modules. See
 :meth:`get_new_and_updated_modules()`.
 
-After :trac:`31948`, when Sage is built, :class:`ReferenceBuilder` is not used
+After :issue:`31948`, when Sage is built, :class:`ReferenceBuilder` is not used
 and its responsibility is now taken by the ``Makefile`` in ``$SAGE_ROOT/src/doc``.
 """
 
@@ -109,7 +109,7 @@ def builder_helper(type):
 
     TESTS:
 
-    Check that :trac:`25161` has been resolved::
+    Check that :issue:`25161` has been resolved::
 
         sage: from sage_docbuild.builders import DocBuilder
         sage: from sage_docbuild.__main__ import setup_parser
@@ -171,12 +171,10 @@ def builder_helper(type):
             if build_options.ABORT_ON_ERROR:
                 raise Exception("Non-exception during docbuild: %s" % (e,), e)
 
-        if "/latex" in output_dir:
-            logger.warning("LaTeX file written to {}".format(output_dir))
-        else:
-            logger.warning(
-                "Build finished. The built documents can be found in {}".
-                format(output_dir))
+        if type == 'latex':
+            logger.warning(f"LaTeX files can be found in {output_dir}.")
+        elif type != 'inventory':
+            logger.warning(f"Build finished. The built documents can be found in {output_dir}.")
 
     f.is_output_format = True
     return f
@@ -298,7 +296,7 @@ class DocBuilder():
 
         if subprocess.call(make_target % (tex_dir, command, pdf_dir), close_fds=False, shell=True):
             raise RuntimeError(error_message % (command, tex_dir))
-        logger.warning("Build finished.  The built documents can be found in %s", pdf_dir)
+        logger.warning(f"Build finished. The built documents can be found in {pdf_dir}.")
 
     def clean(self, *args):
         shutil.rmtree(self._doctrees_dir())

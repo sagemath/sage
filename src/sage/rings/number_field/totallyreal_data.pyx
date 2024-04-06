@@ -212,7 +212,7 @@ cpdef lagrange_degree_3(int n, int an1, int an2, int an3) noexcept:
 
     TESTS:
 
-    Check that :trac:`13101` is solved::
+    Check that :issue:`13101` is solved::
 
         sage: sage.rings.number_field.totallyreal_data.lagrange_degree_3(4,12,19,42)
         [0.0, -1.0]

@@ -308,7 +308,7 @@ cdef class Polynomial_dense_mod_n(Polynomial):
 
         TESTS:
 
-        Check output type (see :trac:`25182`)::
+        Check output type (see :issue:`25182`)::
 
             sage: R.<x> = PolynomialRing(Integers(3), implementation='NTL')
             sage: isinstance(x.degree(), Integer)
@@ -852,15 +852,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
             sage: (x-1)^5
             x^5 + 95*x^4 + 10*x^3 + 90*x^2 + 5*x + 99
 
-        Negative powers will not work::
-
-            sage: R.<x> = PolynomialRing(Integers(101), implementation='NTL')
-            sage: (x-1)^(-5)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: Fraction fields not implemented for this type.
-
-        We define ``0^0`` to be unity, :trac:`13895`::
+        We define ``0^0`` to be unity, :issue:`13895`::
 
             sage: R.<x> = PolynomialRing(Integers(100), implementation='NTL')
             sage: R(0)^0
@@ -872,6 +864,21 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
             sage: type(R(0)^0) == type(R(0))
             True
 
+        Negative powers work (over prime fields) but use the generic
+        implementation of fraction fields::
+
+            sage: R.<x> = PolynomialRing(Integers(101), implementation='NTL')
+            sage: f = (x-1)^(-5)
+            sage: type(f)
+            <class 'sage.rings.fraction_field_element.FractionFieldElement_1poly_field'>
+            sage: (f + 2).numerator()
+            2*x^5 + 91*x^4 + 20*x^3 + 81*x^2 + 10*x + 100
+
+            sage: R.<x> = PolynomialRing(Integers(100), implementation='NTL')
+            sage: (x-1)^(-5)
+            Traceback (most recent call last):
+            ...
+            TypeError: ...
         """
         cdef bint recip = 0, do_sig
         cdef long e = ee
@@ -1419,7 +1426,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
             sage: (x+1)^5
             x^5 + 5*x^4 + 10*x^3 + 10*x^2 + 5*x + 1
 
-        We define ``0^0`` to be unity, :trac:`13895`::
+        We define ``0^0`` to be unity, :issue:`13895`::
 
             sage: R.<x> = PolynomialRing(Integers(10^30), implementation='NTL')
             sage: R(0)^0

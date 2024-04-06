@@ -595,7 +595,7 @@ cdef class GLPKBackend(GenericBackend):
 
         TESTS:
 
-        This used to crash Sage, but was fixed in :trac:`19525`::
+        This used to crash Sage, but was fixed in :issue:`19525`::
 
             sage: p = MixedIntegerLinearProgram(solver="glpk")
             sage: q = MixedIntegerLinearProgram(solver="glpk")
@@ -966,7 +966,7 @@ cdef class GLPKBackend(GenericBackend):
         .. WARNING::
 
             GLPK's ``glp_intopt`` sometimes fails catastrophically
-            when given a system it cannot solve (:trac:`12309`). It
+            when given a system it cannot solve (:issue:`12309`). It
             can loop indefinitely, or just plain segfault. Upstream
             considers this behavior "essentially innate" to the
             current design, and suggests preprocessing with
@@ -1062,7 +1062,7 @@ cdef class GLPKBackend(GenericBackend):
             True
 
         Below we test that GLPK backend can detect unboundedness in
-        "simplex_only" mode (:trac:`18838`).
+        "simplex_only" mode (:issue:`18838`).
 
         EXAMPLES::
 
@@ -1626,7 +1626,7 @@ cdef class GLPKBackend(GenericBackend):
 
         TESTS:
 
-        :trac:`14581`::
+        :issue:`14581`::
 
             sage: P = MixedIntegerLinearProgram(solver="GLPK")
             sage: x = P["x"]
@@ -1634,7 +1634,7 @@ cdef class GLPKBackend(GenericBackend):
             sage: P.get_max(x)
             0.0
 
-        Check that :trac:`10232` is fixed::
+        Check that :issue:`10232` is fixed::
 
             sage: p = get_solver(solver="GLPK")
             sage: p.variable_upper_bound(2)
@@ -1725,7 +1725,7 @@ cdef class GLPKBackend(GenericBackend):
 
         TESTS:
 
-        :trac:`14581`::
+        :issue:`14581`::
 
             sage: P = MixedIntegerLinearProgram(solver="GLPK")
             sage: x = P["x"]
@@ -1734,7 +1734,7 @@ cdef class GLPKBackend(GenericBackend):
             sage: P.get_min(x)
             0.0
 
-        Check that :trac:`10232` is fixed::
+        Check that :issue:`10232` is fixed::
 
             sage: p = get_solver(solver="GLPK")
             sage: p.variable_lower_bound(2)

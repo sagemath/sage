@@ -867,9 +867,9 @@ class EllipticCurveIsogeny(EllipticCurveHom):
 
         sage: E = EllipticCurve(j=GF(7)(0))
         sage: phi = E.isogeny([E(0), E((0,1)), E((0,-1))]); phi
-        Isogeny of degree 3
-         from Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7
-           to Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7
+        Composite morphism of degree 3:
+          From: Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7
+          To:   Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7
         sage: phi2 = phi * phi; phi2
         Composite morphism of degree 9 = 3^2:
           From: Elliptic Curve defined by y^2 = x^3 + 1 over Finite Field of size 7
@@ -1229,7 +1229,8 @@ class EllipticCurveIsogeny(EllipticCurveHom):
             Traceback (most recent call last):
             ...
             TypeError: (20 : 90 : 1) fails to convert into the map's domain
-            Elliptic Curve defined by y^2 = x^3 + 7*x over Number Field in th with defining polynomial x^2 + 3,
+            Elliptic Curve defined by y^2 = x^3 + 7*x over
+            Number Field in th with defining polynomial x^2 + 3,
             but a `pushforward` method is not properly implemented
 
         Check that copying the order over works::

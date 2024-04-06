@@ -55,7 +55,7 @@ def lcm(a, b=None):
 
     TESTS:
 
-    The following tests against a bug that was fixed in :trac:`10771`::
+    The following tests against a bug that was fixed in :issue:`10771`::
 
         sage: lcm(4/1,2)
         4
@@ -70,7 +70,7 @@ def lcm(a, b=None):
         sage: parent(lcm([1/p,q]))
         Fraction Field of Univariate Polynomial Ring in x over Rational Field
 
-    Make sure we try `\QQ` and not merely `\ZZ` (:trac:`13014`)::
+    Make sure we try `\QQ` and not merely `\ZZ` (:issue:`13014`)::
 
         sage: bool(lcm(2/5, 3/7) == lcm(SR(2/5), SR(3/7)))                              # needs sage.symbolic
         True
@@ -95,14 +95,14 @@ def lcm(a, b=None):
         ...
         TypeError: unable to find lcm of x and y
 
-    Check rational and integers (:trac:`17852`)::
+    Check rational and integers (:issue:`17852`)::
 
         sage: lcm(1/2, 4)
         4
         sage: lcm(4, 1/2)
         4
 
-    Check that we do not mutate the list (:trac:`22630`)::
+    Check that we do not mutate the list (:issue:`22630`)::
 
         sage: L = [int(1), int(2)]
         sage: lcm(L)

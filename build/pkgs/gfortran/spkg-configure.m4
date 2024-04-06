@@ -80,7 +80,7 @@ SAGE_SPKG_CONFIGURE([gfortran], [
                 GFORTRAN_VERSION="`$FC -dumpversion`"
                 AC_MSG_RESULT([$GFORTRAN_VERSION])
                 # Add the .0 because Debian/Ubuntu gives version numbers like
-                # 4.6 instead of 4.6.4 (Trac #18885)
+                # 4.6 instead of 4.6.4 (Issue #18885)
                 AS_CASE(["$GFORTRAN_VERSION.0"],
                     [[[0-3]].*|4.[[0-7]].*], [
                         # Install our own gfortran if the system-provided one is older than gcc-4.8.

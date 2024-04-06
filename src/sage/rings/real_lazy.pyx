@@ -13,7 +13,7 @@ specified in the forward direction).
 
 TESTS:
 
-Bug :trac:`21991`::
+Bug :issue:`21991`::
 
     sage: a = QuadraticField(5).gen()                                                   # needs sage.rings.number_field
     sage: u = -573147844013817084101/2*a + 1281597540372340914251/2                     # needs sage.rings.number_field
@@ -1484,7 +1484,7 @@ cdef class LazyConstant(LazyFieldElement):
 
         TESTS:
 
-        Check that :trac:`26839` is fixed::
+        Check that :issue:`26839` is fixed::
 
             sage: RLF.pi().eval(float)
             3.141592653589793

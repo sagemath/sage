@@ -211,7 +211,7 @@ sdh_make_install() {
 }
 
 sdh_setup_bdist_wheel() {
-    # Trac #32046: Most uses of this function can be replaced by sdh_pip_install
+    # Issue #32046: Most uses of this function can be replaced by sdh_pip_install
     mkdir -p dist
     rm -f dist/*.whl
     BDIST_DIR="$(mktemp -d)"
@@ -364,14 +364,14 @@ sdh_store_and_pip_install_wheel() {
         echo "sdh_actually_pip_install_wheel $distname $pip_options -r \"\$SAGE_SPKG_SCRIPTS/\$PKG_BASE/spkg-requirements.txt\"" >> "$script_dir"/spkg-pipinst
     else
         if [ -n "$SAGE_DESTDIR" ]; then
-            # Trac #29585: Do the SAGE_DESTDIR staging of the wheel installation
+            # Issue #29585: Do the SAGE_DESTDIR staging of the wheel installation
             # ONLY if SAGE_SUDO is set (in that case, we still do the staging so
             # that we do not invoke pip as root).
             # --no-warn-script-location: Suppress a warning caused by --root
             local sudo=""
             local root="--root=$SAGE_DESTDIR --no-warn-script-location"
         elif [ -n "$SAGE_SUDO" ]; then
-            # Trac #32361: For script packages, we do have to invoke pip as root.
+            # Issue #32361: For script packages, we do have to invoke pip as root.
             local sudo="$SAGE_SUDO"
             local root=""
         else
@@ -387,7 +387,7 @@ sdh_store_and_pip_install_wheel() {
 sdh_actually_pip_install_wheel() {
     distname=$1
     shift
-    # Trac #32659: pip no longer reinstalls local wheels if the version is the same.
+    # Issue #32659: pip no longer reinstalls local wheels if the version is the same.
     # Because neither (1) applying patches nor (2) local changes (in the case
     # of sage-conf, sage-setup, etc.) bump the version number, we need to
     # override this behavior.  The pip install option --force-reinstall does too

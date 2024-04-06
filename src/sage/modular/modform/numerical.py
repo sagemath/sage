@@ -210,7 +210,7 @@ class NumericalEigenforms(SageObject):
         (ostensibly unique) are visible in the test, which should be
         independent of which eigenvectors are returned, but it does presume
         an ordering of these eigenvectors for the test to succeed.
-        This exercises a correction in :trac:`8018`. ::
+        This exercises a correction in :issue:`8018`. ::
 
             sage: n = numerical_eigenforms(61, eps=2.0)
             sage: evectors = n._eigenvectors()

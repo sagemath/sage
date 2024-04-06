@@ -47,7 +47,8 @@ EXAMPLES::
     [  5   x x^2]
     [x^3 x^4 x^5]
     sage: parent(d)
-    Full MatrixSpace of 2 by 3 dense matrices over Univariate Polynomial Ring in x over Rational Field
+    Full MatrixSpace of 2 by 3 dense matrices
+     over Univariate Polynomial Ring in x over Rational Field
     sage: c.sparse_matrix() is c
     True
     sage: c.is_sparse()
@@ -96,7 +97,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
     .. NOTE::
 
         The datastructure can potentially be optimized. Firstly, as noticed in
-        :trac:`17663`, we lose time in using 2-tuples to store indices.
+        :issue:`17663`, we lose time in using 2-tuples to store indices.
         Secondly, there is no fast way to access non-zero elements in a given
         row/column.
     """

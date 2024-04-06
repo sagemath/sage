@@ -87,7 +87,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
 
         TESTS:
 
-        The following tests against a bug that was fixed in :trac:`9944`.
+        The following tests against a bug that was fixed in :issue:`9944`.
         With the ring definition above, we now have::
 
             sage: R([3,'1234'])
@@ -102,7 +102,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             TypeError: not a constant polynomial
 
         Check that NTL contexts are correctly restored and that
-        :trac:`9524` has been fixed::
+        :issue:`9524` has been fixed::
 
             sage: x = polygen(GF(9, 'a'))
             sage: x = polygen(GF(49, 'a'))
@@ -111,7 +111,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             sage: 5*x
             5*x
 
-        Check that :trac:`11239` is fixed::
+        Check that :issue:`11239` is fixed::
 
             sage: Fq.<a> = GF(2^4); Fqq.<b> = GF(3^7)
             sage: PFq.<x> = Fq[]; PFqq.<y> = Fqq[]
@@ -235,7 +235,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
 
         TESTS:
 
-        The work around provided in :trac:`10475` is superseded by :trac:`24072`::
+        The work around provided in :issue:`10475` is superseded by :issue:`24072`::
 
             sage: F.<x> = GF(4)
             sage: P.<y> = F[]
@@ -246,7 +246,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             TypeError: positive characteristic not allowed in symbolic computations
 
         Check that polynomial evaluation works when using logarithmic
-        representation of finite field elements (:trac:`16383`)::
+        representation of finite field elements (:issue:`16383`)::
 
             sage: for i in range(10):
             ....:     F = FiniteField(random_prime(15) ** ZZ.random_element(2, 5), 'a', repr='log')

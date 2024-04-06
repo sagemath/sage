@@ -8,7 +8,7 @@ based on Gröbner bases.
 This module provide implementations of some operations on polynomial ideals
 based on msolve.
 
-Note that the `optional package msolve <../../../../spkg/msolve.html>`_ must be installed.
+Note that the :ref:`optional package msolve <spkg_msolve>` must be installed.
 
 .. SEEALSO::
 

@@ -533,7 +533,7 @@ cdef inline int celement_pow(nmod_poly_t res, nmod_poly_t x, long e, nmod_poly_t
         sage: f^5 % g
         7231*x + 17274
 
-    Make sure that exponentiation can be interrupted, see :trac:`17470`::
+    Make sure that exponentiation can be interrupted, see :issue:`17470`::
 
         sage: n = 2^23
         sage: alarm(0.2); x^n; cancel_alarm()
@@ -582,11 +582,13 @@ cdef inline int celement_gcd(nmod_poly_t res, nmod_poly_t a, nmod_poly_t b, unsi
         nmod_poly_set(res, a)
         return 0
 
-    nmod_poly_gcd(res, a, b)
-    cdef unsigned long leadcoeff = nmod_poly_get_coeff_ui(res, nmod_poly_degree(res))
-    cdef unsigned long modulus = nmod_poly_modulus(res)
-    if n_gcd(modulus,leadcoeff) == 1:
-        nmod_poly_make_monic(res, res)
+    # A check that the leading coefficients are invertible is *not* sufficient
+    try:
+        sig_on()
+        nmod_poly_gcd(res, a, b)
+        sig_off()
+    except RuntimeError:
+        raise ValueError("non-invertible elements encountered during GCD")
 
 cdef inline int celement_xgcd(nmod_poly_t res, nmod_poly_t s, nmod_poly_t t, nmod_poly_t a, nmod_poly_t b, unsigned long n) except -2:
     """

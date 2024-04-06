@@ -303,7 +303,7 @@ class DegreeSequences:
 
         TESTS:
 
-        :trac:`21824`::
+        :issue:`21824`::
 
             sage: DegreeSequences(-1)
             Traceback (most recent call last):
@@ -326,12 +326,12 @@ class DegreeSequences:
 
         TESTS:
 
-        :trac:`15503`::
+        :issue:`15503`::
 
             sage: [2,2,2,2,1,1,1] in DegreeSequences(7)
             False
 
-        :trac:`21824`::
+        :issue:`21824`::
 
             sage: [d for d in DegreeSequences(0)]
             [[]]

@@ -327,7 +327,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
     TESTS:
 
-    Check that :trac:`16497` is fixed::
+    Check that :issue:`16497` is fixed::
 
         sage: for type in ["binary", "integer"]:
         ....:     k = 3
@@ -406,7 +406,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         TESTS:
 
         Checks that the objects are deallocated without invoking the cyclic garbage
-        collector (cf. :trac:`12616`)::
+        collector (cf. :issue:`12616`)::
 
             sage: del p
             sage: def just_create_variables():
@@ -420,7 +420,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: sum([1 for x in gc.get_objects() if isinstance(x,C)])
             0
 
-        We now disable the cyclic garbage collector. Since :trac:`12616` avoids
+        We now disable the cyclic garbage collector. Since :issue:`12616` avoids
         a reference cycle, the mixed integer linear program created in
         ``just_create_variables()`` is removed even without the cyclic garbage
         collection::
@@ -1086,7 +1086,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
             sage: P = p.polyhedron(); P
             A 3-dimensional polyhedron in RDF^3 defined as the convex hull of 1 vertex, 1 ray, 2 lines
 
-        A square (see :trac:`14395`) ::
+        A square (see :issue:`14395`) ::
 
             sage: p = MixedIntegerLinearProgram(solver='GLPK')
             sage: x,y = p['x'], p['y']
@@ -1110,7 +1110,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
 
         TESTS:
 
-        Check if :trac:`23326` is fixed::
+        Check if :issue:`23326` is fixed::
 
             sage: p = MixedIntegerLinearProgram(solver='GLPK')
             sage: x, y = p['x'], p['y']
@@ -2088,7 +2088,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
                 x_0 is a continuous variable (min=-oo, max=+oo)
                 x_1 is a continuous variable (min=-oo, max=+oo)
 
-        Catch ``True`` / ``False`` as INPUT (:trac:`13646`)::
+        Catch ``True`` / ``False`` as INPUT (:issue:`13646`)::
 
             sage: p = MixedIntegerLinearProgram(solver='GLPK')
             sage: x = p.new_variable(nonnegative=True)
@@ -2368,7 +2368,7 @@ cdef class MixedIntegerLinearProgram(SageObject):
         TESTS:
 
         Removing no constraints does not make Sage crash, see
-        :trac:`34881`::
+        :issue:`34881`::
 
              sage: MixedIntegerLinearProgram().remove_constraints([])
 
@@ -3489,7 +3489,7 @@ cdef class MIPVariable(FiniteFamily):
 
         TESTS:
 
-        Test that :trac:`20462` is fixed::
+        Test that :issue:`20462` is fixed::
 
             sage: p.<x,y> = MixedIntegerLinearProgram()
             sage: x[0], y[0]
@@ -3526,7 +3526,7 @@ cdef class MIPVariable(FiniteFamily):
 
         TESTS:
 
-        Test that :trac:`20462` is fixed::
+        Test that :issue:`20462` is fixed::
 
             sage: p.<x,y> = MixedIntegerLinearProgram()
             sage: x[0], y[0]
