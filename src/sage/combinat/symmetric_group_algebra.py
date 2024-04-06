@@ -1885,7 +1885,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
                     basis.append(self.epsilon_ik(t1, t2, mult=mult))
         return basis
 
-    def dft(self, form="seminormal", mult='l2r'):
+    def dft(self, mult='l2r'):
         """
         Return the discrete Fourier transform for ``self``.
 
@@ -1907,14 +1907,14 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             [   1 -1/2    1 -1/2 -1/2 -1/2]
             [   1   -1   -1    1    1   -1]
         """
-        if form == "seminormal":
-            return self._dft_seminormal(mult=mult)
+        if self.base_ring().characteristic().divides(len(self.group())):
+            return self._dft_modular()
         else:
-            raise ValueError("invalid form (= %s)" % form)
+            return self._dft_seminormal(mult=mult)
 
     def _dft_seminormal(self, mult='l2r'):
         """
-        Return the seminormal form of the discrete Fourier for ``self``.
+        Return the seminormal form of the discrete Fourier transform for ``self``.
 
         INPUT:
 
@@ -1940,6 +1940,45 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         """
         snb = self.seminormal_basis(mult=mult)
         return matrix([vector(b) for b in snb]).inverse().transpose()
+
+    def _dft_modular(self):
+        """
+        Return the discrete Foruier transform when the characteristic divides the order of the group.
+        See [Mur1983]_ for contrstruction of central primitive orthogonal idempotents.
+        For each idempotent e_i we have a projection v |--> v*e_i. This is a homomorphism.
+        We choose a basis for each submodule spanning by {\sigma*e_i | \sigma \in S_n}.
+        The change-of-basis from the standard basis {\sigma}_\sigma is returned.
+
+        EXAMPLES::
+
+            sage: GF2S3 = SymmetricGroupAlgebra(GF(2),3)
+            sage: GF2S3.dft()
+            [1 0 0 0 1 0]
+            [0 1 0 0 0 1]
+            [0 0 1 0 0 1]
+            [0 0 0 1 1 0]
+            [1 0 0 1 1 0]
+            [0 1 1 0 0 1]
+        """
+        #create a spanning set for the block corresponding to an idempotent
+        spanning_set = lambda idem: [self(sigma)*idem for sigma in self.group()]
+        #compute central primitive orthogonal idempotents
+        idempotents = self.central_orthogonal_idempotents()
+        #project v onto each block U_i = F_p[S_n]*e_i via \pi_i: v |--> v*e_i
+        blocks = [self.submodule(spanning_set(idem)) for idem in idempotents]
+        #helper function to flatten a list
+        flatten = lambda l: [item for sublist in l for item in sublist]
+        #compute the list of basis vectors lifed to the SGA from each block
+        block_decomposition_basis = flatten([[u.lift() for u in block.basis()] for block in blocks])
+        #the elements of the symmetric group are ordered, giving the map from the standard basis
+        sym_group_list = list(self.group())
+        change_of_basis_matrix = []
+        for b in block_decomposition_basis:
+            coord_vector = [0]*len(sym_group_list)
+            for pair in list(b):
+                coord_vector[sym_group_list.index(pair[0])] = pair[1]
+            change_of_basis_matrix.append(coord_vector)
+        return matrix(self.base_ring(),change_of_basis_matrix).transpose()
 
     def epsilon_ik(self, itab, ktab, star=0, mult='l2r'):
         r"""
