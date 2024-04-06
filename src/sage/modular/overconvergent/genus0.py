@@ -1262,10 +1262,13 @@ class OverconvergentModularFormsSpace(Module):
 
     def recurrence_matrix(self, use_smithline=True):
         r"""
-        Return the recurrence matrix satisfied by the coefficients of `U`,
-        that is a matrix  `R =(r_{rs})_{r,s=1 \dots p}` such that `u_{ij} =
-        \sum_{r,s=1}^p r_{rs} u_{i-r, j-s}`. Uses an elegant construction which
-        I believe is due to Smithline. See [Loe2007]_.
+        Return the recurrence matrix satisfied by the coefficients of `U`.
+
+        This is a matrix `R =(r_{rs})_{r,s=1,\dots,p}` such that `u_{ij} =
+        \sum_{r,s=1}^p r_{rs} u_{i-r, j-s}`.
+
+        Uses an elegant construction which the author believes to be due
+        to Smithline. See [Loe2007]_.
 
         EXAMPLES::
 
