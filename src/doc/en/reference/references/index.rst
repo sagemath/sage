@@ -4325,6 +4325,9 @@ REFERENCES:
               and Communication Technology, LNCS 2510, pp 858-865, 2002.
               :doi:`10.1007/3-540-36087-5_99`
 
+.. [LLL21] M. Liu, X. Lu, D. Lin, *Differential-Linear Cryptanalysis from an Algebraic 
+           Perspective.*; in CRYPTO, (2021), pp. 247-277.
+
 .. [LLM2003] \A. Lascoux, L. Lapointe, and J. Morse.  *Tableau atoms and a new
              Macdonald positivity conjecture.* Duke Math Journal, **116 (1)**,
              2003.  :arxiv:`math/0008073`

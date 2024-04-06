@@ -747,6 +747,26 @@ cdef class BooleanFunction(SageObject):
                 d[abs(i)] = 1
         return d
 
+    def hamming_weight(self):
+        """
+        Return the Hamming weight of this function.
+
+        EXAMPLES::
+
+            sage: from sage.crypto.boolean_function import random_boolean_function
+            sage: B = random_boolean_function(5)
+            sage: B.hamming_weight() == sum(B.truth_table())
+            True
+
+            sage: B = random_boolean_function(12)
+            sage: B.hamming_weight() == sum(B.truth_table())
+            True
+        """
+        if self._nvariables < 6:
+            return sum(self.truth_table(format='int'))
+        else:
+            return bitset_len(self._truth_table)
+
     def is_balanced(self):
         """
         Return ``True`` if the function takes the value ``True`` half of the time.
@@ -761,7 +781,7 @@ cdef class BooleanFunction(SageObject):
             sage: B.is_balanced()
             True
         """
-        return self.walsh_hadamard_transform()[0] == 0
+        return self.hamming_weight() == 1 << (self._nvariables-1)
 
     def is_symmetric(self):
         """

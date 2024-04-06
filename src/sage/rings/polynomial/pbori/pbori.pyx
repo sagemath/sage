@@ -182,6 +182,7 @@ from cpython.object cimport Py_EQ, Py_NE
 from cython.operator cimport dereference as deref
 from cysignals.memory cimport sig_malloc, sig_free
 from sage.ext.cplusplus cimport ccrepr
+from cysignals.signals cimport sig_check
 
 import operator
 
@@ -4104,6 +4105,100 @@ cdef class BooleanPolynomial(MPolynomial):
             {{a,b}, {z}, {}}
         """
         return new_BS_from_PBSet(self._pbpoly.set(), self._parent)
+
+    def separate(self):
+        r"""
+        Returns a list of polynomials whose sum is ``self`` and 
+        whose sets of variables are mutually disjoint
+
+
+        EXAMPLES::
+
+            sage: B.<x,y,z,w> = BooleanPolynomialRing(4)
+            sage: (x*y+x+z*w).separate()
+            [x*y + x, z*w]
+        """
+        if self.nvariables() <= 1:
+            return [self]
+        fp = (self/self.variable(0)) * self.variable(0)
+        fq = self.subs({self.variable(0): 0})
+        var_intersec = set(fp.variables()) & set(fq.variables())
+        while len(var_intersec) > 0:
+            for var in var_intersec:
+                fp += (fq/var) * var 
+                fq = fq.subs({var: 0})
+            var_intersec = set(fq.variables()) & set(fp.variables())
+        if fq.is_constant():
+            return [fp + fq]
+        else:
+            return [fp] + fq.separate()
+
+    def hamming_weight(self, threshold=15):
+        r"""
+        Return the Hamming weight of this polynomial.
+
+        When the number of variables is less than the given threshold,
+        the Hamming weight is calculated using the Mobius transform,
+        otherwise the Algorithm 2 of [LLL21]_ is used.
+
+        INPUT:
+
+        -  ``threshold`` - (optional) the threshold used in the Algorithm 2 of [LLL21]_
+
+        EXAMPLES::
+
+            sage: from sage.crypto.boolean_function import random_boolean_function
+            sage: B = random_boolean_function(12)
+            sage: B.algebraic_normal_form().hamming_weight() == B.hamming_weight()
+            True
+
+            sage: B = random_boolean_function(5)
+            sage: B.algebraic_normal_form().hamming_weight() == B.hamming_weight()
+            True
+        """
+
+        from sage.crypto.boolean_function import BooleanFunction
+
+        sig_check()
+
+        if threshold > 30:
+            raise ValueError("The threshold should be not greater than 30")
+
+        for var in self.variables():
+            if self / var == 1:
+                return 1<<(self.nvariables() - 1)
+        
+        epsilon = 1
+
+        for fi in self.separate():
+            if fi.nvariables() <= threshold:
+                fi = BooleanPolynomialRing(fi.nvariables(), map(lambda x:str(x),fi.variables()))(fi)
+                epsiloni = BooleanFunction(fi).hamming_weight()
+            else:
+                # For complex polynomials, select a variable v that minimizing
+                # the maximum caridinality of the variable sets of the polynomials
+                # in separate(f_{v=0}) and separate(f_{v=1})
+                seperated_nvars = fi.nvariables()
+                guessed_var = 0
+                for var in fi.variables():
+                    fi0_nvar = max(map(lambda x: x.nvariables(),
+                                fi.subs({var: 0}).separate()))
+                    fi1_nvar = max(map(lambda x: x.nvariables(),
+                                fi.subs({var: 1}).separate()))
+                    if max(fi0_nvar, fi1_nvar) < seperated_nvars:
+                        seperated_nvars = max(fi0_nvar, fi1_nvar)
+                        guessed_var = var
+
+                fi0 = fi.subs({guessed_var: 0})
+                fi1 = fi.subs({guessed_var: 1})
+                epsiloni = fi0.hamming_weight()*(1<<(fi.nvariables()-fi0.nvariables()-1)) + \
+                    fi1.hamming_weight()*(1<<(fi.nvariables()-fi1.nvariables()-1))
+            
+            # piling-up lemma
+            epsilon *= 2 * ((1<<fi.nvariables()-1)-epsiloni)
+            if epsilon == 0:
+                break
+        return (1<<(self.nvariables()-1)) - (epsilon>>1)
 
     def deg(self):
         r"""
