@@ -998,19 +998,30 @@ class OverconvergentModularFormsSpace(Module):
             x = x - self._basis_cache[i] * answer[i]
         return answer + O(g**n)
 
-    def hecke_matrix(self, m, n, use_recurrence=False, exact_arith=False):
+    def hecke_matrix(self, m, n, use_recurrence=False, exact_arith=False, side='left'):
         r"""
-        Calculate the matrix of the `T_m` operator in the basis of this space,
-        truncated to an `n \times n` matrix. Conventions are that operators act
-        on the left on column vectors (this is the opposite of the conventions
-        of the :mod:`sage.modules.matrix_morphism` class!) Uses naive `q`-expansion
-        arguments if ``use_recurrence=False`` and uses the Kolberg style
-        recurrences if ``use_recurrence=True``.
+        Calculate the matrix of the `T_m` operator, truncated to `n \times n`.
 
-        The argument ``exact_arith`` causes the computation to be done with
-        rational arithmetic, even if the base ring is an inexact `p`-adic ring.
-        This is useful as there can be precision loss issues (particularly with
-        ``use_recurrence=False``).
+        INPUT:
+
+        - ``m`` -- integer; determines the operator `T_m`
+
+        - ``n`` -- integer; truncate the matrix in the basis of this space
+          to an `n \times n` matrix
+
+        - ``use_recurrence`` -- boolean (default: ``False``); whether to use
+          Kolberg style recurrences. If ``False``, use naive `q`-expansion
+          arguments.
+
+        - ``exact_arith`` -- boolean (default: ``True``); whether to do the
+          computation to be done with rational arithmetic, even if the base ring
+          is an inexact `p`-adic ring.
+
+          This is useful as there can be precision loss issues (particularly
+          with ``use_recurrence=False``).
+
+        - ``side`` -- ``'left'`` (default) or ``'right'``; if ``'left'``, the
+          operator acts on the left on column vectors
 
         EXAMPLES::
 
@@ -1029,10 +1040,17 @@ class OverconvergentModularFormsSpace(Module):
             [                             1                              0                              0]
             [                             0               33881928/1414477                             64]
             [                             0 -192898739923312/2000745183529             1626332544/1414477]
-        """
 
+        Side switch::
+
+            sage: OverconvergentModularForms(2, 0, 1/2).hecke_matrix(2, 4, side='right')
+            [    1     0     0     0]
+            [    0    24    32     0]
+            [    0    64  1152  3072]
+            [    0     0  4608 61440]
+        """
         if exact_arith and not self.base_ring().is_exact():
-            return self.change_ring(QQ).hecke_matrix(m, n, use_recurrence)
+            return self.change_ring(QQ).hecke_matrix(m, n, use_recurrence, side=side)
 
         M = MatrixSpace(self.base_ring(), n)
         mat = M(0)
@@ -1079,6 +1097,10 @@ class OverconvergentModularFormsSpace(Module):
                 l = self._convert_to_basis(self.hecke_operator(self._basis_cache[j], m))
                 for i in range(n):
                     mat[i, j] = l[i]
+
+        if side == 'right':
+            return mat.transpose()
+
         return mat
 
     def slopes(self, n, use_recurrence=False):
