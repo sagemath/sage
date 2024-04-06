@@ -1402,6 +1402,13 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         if self._name in s:
             if self.get_custom_name() is None and self.type() == 'matrix':
                 s = self.parent().eval('pmat(%s,20)' % (self.name()))
+        # compatibility for singular 4.3.2p10 and before
+        if s.startswith("polynomial ring,"):
+            from sage.rings.polynomial.term_order import singular_name_mapping
+            # this is our cue that singular uses `rp` instead of `ip`
+            if singular_name_mapping['invlex'] == 'rp':
+                s = re.sub('^(// .*block.* : ordering )rp$', '\\1ip',
+                           s, 0, re.MULTILINE);
         return s
 
     def __copy__(self):

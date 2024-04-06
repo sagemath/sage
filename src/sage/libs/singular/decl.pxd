@@ -48,6 +48,13 @@ cdef extern from "factory/factory.h":
     cdef int SW_USE_NTL_SORT
 
 cdef extern from "singular/Singular/libsingular.h":
+    """
+    // compatibility for singular 4.3.2p10 and before
+    #if SINGULAR_VERSION <= 4330
+    #define ringorder_ip ringorder_rp
+    #define BIGINTVEC_CMD INTVEC_CMD
+    #endif
+    """
 
     #
     # OPTIONS
