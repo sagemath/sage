@@ -38,5 +38,5 @@ SAGE_SPKG_CONFIGURE([ecm], [dnl CHECK - test whether the package is already inst
 ], [dnl PRE - always perform
     ECMBIN=ecm
 ], [dnl POST - always perform
-    AC_SUBST(SAGE_ECMBIN, $ECMBIN)
+    AC_SUBST([SAGE_ECMBIN], ["$ECMBIN"])
 ])
