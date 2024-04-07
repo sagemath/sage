@@ -4108,7 +4108,7 @@ cdef class BooleanPolynomial(MPolynomial):
 
     def separate(self):
         r"""
-        Returns a list of polynomials whose sum is ``self`` and 
+        Returns a list of polynomials whose sum is ``self`` and
         whose sets of variables are mutually disjoint
 
 
@@ -4125,7 +4125,7 @@ cdef class BooleanPolynomial(MPolynomial):
         var_intersec = set(fp.variables()) & set(fq.variables())
         while len(var_intersec) > 0:
             for var in var_intersec:
-                fp += (fq/var) * var 
+                fp += (fq/var) * var
                 fq = fq.subs({var: 0})
             var_intersec = set(fq.variables()) & set(fp.variables())
         if fq.is_constant():
@@ -4167,7 +4167,7 @@ cdef class BooleanPolynomial(MPolynomial):
         for var in self.variables():
             if self / var == 1:
                 return 1<<(self.nvariables() - 1)
-        
+
         epsilon = 1
 
         for fi in self.separate():
@@ -4193,7 +4193,7 @@ cdef class BooleanPolynomial(MPolynomial):
                 fi1 = fi.subs({guessed_var: 1})
                 epsiloni = fi0.hamming_weight()*(1<<(fi.nvariables()-fi0.nvariables()-1)) + \
                     fi1.hamming_weight()*(1<<(fi.nvariables()-fi1.nvariables()-1))
-            
+
             # piling-up lemma
             epsilon *= 2 * ((1<<fi.nvariables()-1)-epsiloni)
             if epsilon == 0:
