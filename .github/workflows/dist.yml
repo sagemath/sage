@@ -61,7 +61,7 @@ jobs:
       - name: make download (--enable-download-from-upstream-url)
         if: (success() || failure()) && steps.make_download.outcome != 'success'
         run: |
-          make -k download DOWNLOAD_PACKAGES=":all: --no-file huge"
+          make -k download DOWNLOAD_PACKAGES=":all: --no-file huge --allow-upstream"
         env:
           MAKE: make -j8
       - name: Remove what cannot be distributed
