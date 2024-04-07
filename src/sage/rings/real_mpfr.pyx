@@ -427,6 +427,12 @@ cpdef RealField(mpfr_prec_t prec=53, int sci_not=0, rnd=MPFR_RNDN):
        computations with double-precision machine floating-point
        numbers (double type in C), except the default exponent range
        is much wider and subnormal numbers are not implemented.'
+
+    .. SEEALSO::
+
+        - :mod:`sage.rings.real_mpfr`
+        - :class:`sage.rings.real_arb.RealBallField` (real numbers with rigorous
+          error bounds)
     """
     # We allow specifying the rounding mode as string or integer.
     # But we pass an integer to __init__
@@ -457,8 +463,12 @@ cdef class RealField_class(sage.rings.abc.RealField):
     numbers. This is due to the rounding errors inherent to finite
     precision calculations.
 
-    See the documentation for the module :mod:`sage.rings.real_mpfr` for more
-    details.
+    .. SEEALSO::
+
+        - :mod:`sage.rings.real_mpfr`
+        - :class:`sage.rings.real_arb.RealBallField` (real numbers with rigorous
+          error bounds)
+        - :mod:`sage.rings.complex_mpfr`
     """
     def __init__(self, mpfr_prec_t prec=53, int sci_not=0, long rnd=MPFR_RNDN):
         """

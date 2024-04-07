@@ -511,6 +511,13 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
 
         sage: RealIntervalField(10).is_finite()
         False
+
+    .. SEEALSO::
+
+        - :mod:`sage.rings.real_mpfi`
+        - :mod:`sage.rings.complex_interval_field`
+        - :class:`sage.rings.real_arb.RealBallField` (alternative
+          implementation of real intervals, with more features)
     """
     Element = RealIntervalFieldElement
 
