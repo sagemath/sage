@@ -1167,7 +1167,7 @@ framework. Here is a comprehensive list:
 
   This is mathematically correct, as it is
   guaranteed to terminate. However, there is a
-  nonzero probability of a timout.
+  nonzero probability of a timeout.
 
 - **long time:** The line is only tested if the ``--long`` option is given, e.g.
   ``sage -t --long f.py``.
