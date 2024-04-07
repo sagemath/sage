@@ -1,5 +1,4 @@
-SAGE_SPKG_CONFIGURE([ecm], [
-    # CHECK - test whether the package is already installed
+SAGE_SPKG_CONFIGURE([ecm], [dnl CHECK - test whether the package is already installed
     m4_pushdef([SAGE_ECM_MINVER],[7.0.4])
     SAGE_SPKG_DEPCHECK([gmp], [
         AC_CHECK_HEADER(ecm.h, [
