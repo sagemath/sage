@@ -871,6 +871,13 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             ValueError: matrix equation has no solutions
+
+        Check that :issue:`28586` is fixed::
+
+            sage: m = matrix(GF(3), 2, 2, [1,2,2,0], sparse=True)
+            sage: v = vector(GF(3), [1,1])
+            sage: m.solve_right(v)
+            (2, 1)
         """
         try:
             L = B.base_ring()
