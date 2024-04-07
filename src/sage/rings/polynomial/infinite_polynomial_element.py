@@ -622,8 +622,9 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
     def monomials(self):
         """
-        Return the list of monomials in self. The returned list is
-        decreasingly ordered by the term ordering of
+        Return the list of monomials in ``self``. 
+        
+        The returned list is decreasingly ordered by the term ordering of
         ``self.parent()``.
 
         EXAMPLES::
