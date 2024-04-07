@@ -16,7 +16,7 @@ A :class:`TableauTuple` is an ordered tuple
 its *level* and the tableaux `t^{(1)}, t^{(2)}, \ldots, t^{(l)}` are the
 components of the :class:`TableauTuple`.
 
-A tableaux can be thought of as the labelled diagram of a partition.
+A tableau can be thought of as the labelled diagram of a partition.
 Analogously, a :class:`TableauTuple` is the labelled diagram of a
 :class:`PartitionTuple`. That is, a :class:`TableauTuple` is a tableau of
 :class:`PartitionTuple` shape. As much as possible, :class:`TableauTuples`

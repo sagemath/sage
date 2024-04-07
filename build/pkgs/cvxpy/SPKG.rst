@@ -1,10 +1,10 @@
-cvxpy: A domain-specific language for modeling convex optimization problems in Python.
-======================================================================================
+cvxpy: Domain-specific language for modeling convex optimization problems in Python
+===================================================================================
 
 Description
 -----------
 
-A domain-specific language for modeling convex optimization problems in Python.
+Domain-specific language for modeling convex optimization problems in Python
 
 License
 -------

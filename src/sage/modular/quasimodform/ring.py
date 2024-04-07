@@ -779,3 +779,49 @@ class QuasiModularForms(Parent, UniqueRepresentation):
             raise ValueError("the number of variables (%s) of the given polynomial cannot exceed the number of generators (%s) of the quasimodular forms ring" % (nb_var, self.ngens()))
         gens_dict = {poly_parent.gen(i):self.gen(i) for i in range(0, nb_var)}
         return self(polynomial.subs(gens_dict))
+
+    def basis_of_weight(self, weight):
+        r"""
+        Return a basis of elements generating the subspace of the given
+        weight.
+
+        INPUT:
+
+        - ``weight`` (integer) -- the weight of the subspace
+
+        OUTPUT:
+
+        A list of quasimodular forms of the given weight.
+
+        EXAMPLES::
+
+            sage: QM = QuasiModularForms(1)
+            sage: QM.basis_of_weight(12)
+            [q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6),
+             1 + 65520/691*q + 134250480/691*q^2 + 11606736960/691*q^3 + 274945048560/691*q^4 + 3199218815520/691*q^5 + O(q^6),
+             1 - 288*q - 129168*q^2 - 1927296*q^3 + 65152656*q^4 + 1535768640*q^5 + O(q^6),
+             1 + 432*q + 39312*q^2 - 1711296*q^3 - 14159664*q^4 + 317412000*q^5 + O(q^6),
+             1 - 576*q + 21168*q^2 + 308736*q^3 - 15034608*q^4 - 39208320*q^5 + O(q^6),
+             1 + 144*q - 17712*q^2 + 524736*q^3 - 2279088*q^4 - 79760160*q^5 + O(q^6),
+             1 - 144*q + 8208*q^2 - 225216*q^3 + 2634192*q^4 + 1488672*q^5 + O(q^6)]
+            sage: QM = QuasiModularForms(Gamma1(3))
+            sage: QM.basis_of_weight(3)
+            [1 + 54*q^2 + 72*q^3 + 432*q^5 + O(q^6),
+             q + 3*q^2 + 9*q^3 + 13*q^4 + 24*q^5 + O(q^6)]
+            sage: QM.basis_of_weight(5)
+            [1 - 90*q^2 - 240*q^3 - 3744*q^5 + O(q^6),
+             q + 15*q^2 + 81*q^3 + 241*q^4 + 624*q^5 + O(q^6),
+             1 - 24*q - 18*q^2 - 1320*q^3 - 5784*q^4 - 10080*q^5 + O(q^6),
+             q - 21*q^2 - 135*q^3 - 515*q^4 - 1392*q^5 + O(q^6)]
+        """
+        basis = []
+        E2 = self.weight_2_eisenstein_series()
+        M = self.__modular_forms_subring
+        E2_pow = self.one()
+        for j in range(weight//2):
+            basis += [f*E2_pow for f
+                      in M.modular_forms_of_weight(weight - 2*j).basis()]
+            E2_pow *= E2
+        if not weight%2:
+            basis.append(E2_pow)
+        return basis

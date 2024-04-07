@@ -37,24 +37,20 @@ AUTHORS:
 # ********************************************************************
 
 from sage.categories.fields import Fields
+from sage.categories.number_fields import NumberFields
 
 from sage.rings.polynomial.multi_polynomial import MPolynomial
 from sage.rings.polynomial.multi_polynomial_ring import is_MPolynomialRing
 from sage.rings.finite_rings.finite_field_base import FiniteField
-
 from sage.rings.rational_field import QQ
 
 from sage.structure.all import Sequence
 
-from sage.schemes.affine.affine_space import is_AffineSpace
 from sage.schemes.generic.ambient_space import is_AmbientSpace
 from sage.schemes.generic.algebraic_scheme import is_AlgebraicScheme
-from sage.schemes.projective.projective_space import is_ProjectiveSpace
-
-from sage.schemes.affine.affine_space import AffineSpace
-
-from sage.schemes.projective.projective_space import ProjectiveSpace
-
+from sage.schemes.affine.affine_space import AffineSpace, is_AffineSpace
+from sage.schemes.projective.projective_space import ProjectiveSpace, is_ProjectiveSpace
+from sage.schemes.plane_conics.constructor import Conic
 
 from .projective_curve import (ProjectiveCurve,
                                ProjectivePlaneCurve,
@@ -75,9 +71,6 @@ from .affine_curve import (AffineCurve,
                            IntegralAffineCurve_finite_field,
                            IntegralAffinePlaneCurve,
                            IntegralAffinePlaneCurve_finite_field)
-
-
-from sage.schemes.plane_conics.constructor import Conic
 
 
 def _is_irreducible_and_reduced(F) -> bool:
@@ -113,11 +106,13 @@ def Curve(F, A=None):
 
     INPUT:
 
-    - ``F`` -- a multivariate polynomial, or a list or tuple of polynomials, or an algebraic scheme.
+    - ``F`` -- a multivariate polynomial, or a list or tuple of polynomials, or an algebraic scheme
 
-    - ``A`` -- (default: None) an ambient space in which to create the curve.
+    - ``A`` -- (default: None) an ambient space in which to create the curve
 
-    EXAMPLES: A projective plane curve.  ::
+    EXAMPLES:
+
+    A projective plane curve::
 
         sage: x,y,z = QQ['x,y,z'].gens()
         sage: C = Curve(x^3 + y^3 + z^3); C
@@ -215,7 +210,7 @@ def Curve(F, A=None):
         sage: Curve(P1)
         Projective Line over Finite Field of size 5
 
-    ::
+    An affine line::
 
         sage: A1.<x> = AffineSpace(1, QQ)
         sage: R = A1.coordinate_ring()
@@ -224,6 +219,18 @@ def Curve(F, A=None):
         sage: Curve(A1)
         Affine Line over Rational Field
 
+    A projective line::
+
+        sage: R.<x> = QQ[]
+        sage: N.<a> = NumberField(x^2 + 1)
+        sage: P1.<x,y> = ProjectiveSpace(N, 1)
+        sage: C = Curve(P1)
+        sage: C
+        Projective Line over Number Field in a with defining polynomial x^2 + 1
+        sage: C.geometric_genus()
+        0
+        sage: C.arithmetic_genus()
+        0
     """
     if A is None:
         if is_AmbientSpace(F) and F.dimension() == 1:
@@ -298,12 +305,20 @@ def Curve(F, A=None):
     k = A.base_ring()
 
     if is_AffineSpace(A):
+        if n == 1:
+            if A.coordinate_ring().ideal(F).is_zero():
+                if isinstance(k, FiniteField):
+                    return IntegralAffineCurve_finite_field(A, F)
+                if k in Fields():
+                    return IntegralAffineCurve(A, F)
+                return AffineCurve(A, F)
+            raise TypeError(f"{F} does not define a curve in one-dimensional affine space")
         if n != 2:
             if isinstance(k, FiniteField):
                 if A.coordinate_ring().ideal(F).is_prime():
                     return IntegralAffineCurve_finite_field(A, F)
             if k in Fields():
-                if k == QQ and A.coordinate_ring().ideal(F).is_prime():
+                if (k == QQ or k in NumberFields()) and A.coordinate_ring().ideal(F).is_prime():
                     return IntegralAffineCurve(A, F)
                 return AffineCurve_field(A, F)
             return AffineCurve(A, F)
@@ -317,12 +332,20 @@ def Curve(F, A=None):
                 return IntegralAffinePlaneCurve_finite_field(A, F)
             return AffinePlaneCurve_finite_field(A, F)
         if k in Fields():
-            if k == QQ and _is_irreducible_and_reduced(F):
+            if (k == QQ or k in NumberFields()) and _is_irreducible_and_reduced(F):
                 return IntegralAffinePlaneCurve(A, F)
             return AffinePlaneCurve_field(A, F)
         return AffinePlaneCurve(A, F)
 
     elif is_ProjectiveSpace(A):
+        if n == 1:
+            if A.coordinate_ring().ideal(F).is_zero():
+                if isinstance(k, FiniteField):
+                    return IntegralProjectiveCurve_finite_field(A, F)
+                if k in Fields():
+                    return IntegralProjectiveCurve(A, F)
+                return ProjectiveCurve(A, F)
+            raise TypeError(f"{F} does not define a curve in one-dimensional projective space")
         if n != 2:
             if not all(f.is_homogeneous() for f in F):
                 raise TypeError("polynomials defining a curve in a projective space must be homogeneous")
@@ -330,7 +353,7 @@ def Curve(F, A=None):
                 if A.coordinate_ring().ideal(F).is_prime():
                     return IntegralProjectiveCurve_finite_field(A, F)
             if k in Fields():
-                if k == QQ and A.coordinate_ring().ideal(F).is_prime():
+                if (k == QQ or k in NumberFields()) and A.coordinate_ring().ideal(F).is_prime():
                     return IntegralProjectiveCurve(A, F)
                 return ProjectiveCurve_field(A, F)
             return ProjectiveCurve(A, F)
@@ -349,7 +372,7 @@ def Curve(F, A=None):
                 return IntegralProjectivePlaneCurve_finite_field(A, F)
             return ProjectivePlaneCurve_finite_field(A, F)
         if k in Fields():
-            if k == QQ and _is_irreducible_and_reduced(F):
+            if (k == QQ or k in NumberFields()) and _is_irreducible_and_reduced(F):
                 return IntegralProjectivePlaneCurve(A, F)
             return ProjectivePlaneCurve_field(A, F)
         return ProjectivePlaneCurve(A, F)
