@@ -724,6 +724,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
         Some more examples over different rings::
 
+            sage: # needs sage.symbolic
             sage: L.<z> = LazyPowerSeriesRing(SR)
             sage: G = L.undefined(0)
             sage: L.define_implicitly([(G, [ln(2)])], [diff(G) - exp(-G(-z))])
