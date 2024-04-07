@@ -1434,12 +1434,12 @@ class Stream_uninitialized(Stream):
 
         INPUT:
 
-            - ``series`` -- a list of series
-            - ``equations`` -- a list of equations defining the series
-            - ``initial_values`` -- a list specifying ``self[0], self[1], ...``
-            - ``base_ring`` -- the base ring
-            - ``coefficient_ring`` -- the ring containing the elements of the stream (after substitution)
-            - ``terms_of_degree`` -- a function returning the list of terms of a given degree
+        - ``series`` -- a list of series
+        - ``equations`` -- a list of equations defining the series
+        - ``initial_values`` -- a list specifying ``self[0], self[1], ...``
+        - ``base_ring`` -- the base ring
+        - ``coefficient_ring`` -- the ring containing the elements of the stream (after substitution)
+        - ``terms_of_degree`` -- a function returning the list of terms of a given degree
 
         EXAMPLES::
 
