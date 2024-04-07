@@ -100,7 +100,7 @@ cdef class WordDatatype_char(WordDatatype):
 
     @cython.boundscheck(False)  # assume that indexing will not cause any IndexErrors
     @cython.wraparound(False)  # not check not correctly handle negative indices
-    cdef _set_data(self, data) noexcept:
+    cdef _set_data(self, data):
         r"""
         set the attribute ._data and ._length from the sequence data
         (usually data is a word, a tuple or a list)
@@ -209,7 +209,7 @@ cdef class WordDatatype_char(WordDatatype):
         bitset_free(seen)
         return res
 
-    cdef _new_c(self, unsigned char * data, size_t length, WordDatatype_char master) noexcept:
+    cdef _new_c(self, unsigned char * data, size_t length, WordDatatype_char master):
         r"""
         TO DISCUSS: in Integer (sage.rings.integer) this method is actually an
         external function. But we might want to have several possible inheritance.
@@ -425,7 +425,7 @@ cdef class WordDatatype_char(WordDatatype):
         """
         return reversed_word_iterator(self)
 
-    cdef _concatenate(self, WordDatatype_char other) noexcept:
+    cdef _concatenate(self, WordDatatype_char other):
         cdef unsigned char * data
         data = <unsigned char *>check_allocarray(self._length + other._length, sizeof(unsigned char))
 

@@ -195,7 +195,7 @@ cdef class DenseGraph(CGraph):
         sig_free(self.out_degrees)
         bitset_free(self.active_vertices)
 
-    cpdef realloc(self, int total_verts) noexcept:
+    cpdef realloc(self, int total_verts):
         """
         Reallocate the number of vertices to use, without actually adding any.
 

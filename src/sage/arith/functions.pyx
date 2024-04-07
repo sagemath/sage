@@ -124,7 +124,7 @@ def lcm(a, b=None):
     raise TypeError(f"unable to find lcm of {a!r} and {b!r}")
 
 
-cpdef LCM_list(v) noexcept:
+cpdef LCM_list(v):
     """
     Return the LCM of an iterable ``v``.
 
@@ -206,7 +206,7 @@ cpdef LCM_list(v) noexcept:
     return z
 
 
-cdef LCM_generic(itr, ret) noexcept:
+cdef LCM_generic(itr, ret):
     """
     Return the least common multiple of the element ``ret`` and the
     elements in the iterable ``itr``.
