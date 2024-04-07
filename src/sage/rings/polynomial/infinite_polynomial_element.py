@@ -641,26 +641,23 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
     def monomial_coefficient(self, mon):
         """
-        Return the coefficient in the base ring of the monomial mon in
-        ``self``, where mon must have the same parent as self.
-
-        This function contrasts with the function ``coefficient``
+        Return the base ring element that is the coefficient of ``mon`` in ``self``.
+        
+        This function contrasts with the function :meth:`coefficient`,
         which returns the coefficient of a monomial viewing this
         polynomial in a polynomial ring over a base ring having fewer
         variables.
 
         INPUT:
 
-        - ``mon`` - a monomial
+        - ``mon`` -- a monomial of the parent of ``self``
 
-        OUTPUT:
-
-        coefficient in base ring
+        OUTPUT: coefficient in base ring
 
         .. SEEALSO::
 
             For coefficients in a base ring of fewer variables,
-            look at ``coefficient``.
+            look at :meth:`coefficient`.
 
         EXAMPLES::
 
