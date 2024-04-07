@@ -8139,6 +8139,13 @@ class Graph(GenericGraph):
             (PRIME, [1, 2, 5, 6, 0, (PARALLEL, [3, 4])])
             sage: G2.modular_decomposition()
             (PRIME, [5, 6, 3, 4, 2, (PARALLEL, [0, 1])])
+
+        Check that :issue:`37631` is fixed::
+
+            sage: G = Graph('GxJEE?')
+            sage: G.modular_decomposition(style='tree')
+            PRIME[2[], SERIES[0[], 1[]], PARALLEL[3[], 4[]],
+                  PARALLEL[5[], 6[], 7[]]]
         """
         from sage.graphs.graph_decompositions.modular_decomposition import (NodeType,
                                                                             habib_maurer_algorithm,
@@ -8177,14 +8184,15 @@ class Graph(GenericGraph):
             def to_tree(x):
                 if x.node_type == NodeType.NORMAL:
                     return LabelledRootedTree([], label=x.children[0])
-                return LabelledRootedTree([to_tree(y) for y in x.children], label=x.node_type)
+                return LabelledRootedTree([to_tree(y) for y in x.children],
+                                          label=x.node_type)
 
             return to_tree(D)
 
         raise ValueError("style must be 'tuple' or 'tree'")
 
     @doc_index("Graph properties")
-    def is_polyhedral(self):
+    def is_polyhedral(self) -> bool:
         """
         Check whether the graph is the graph of the polyhedron.
 
