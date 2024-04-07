@@ -1442,7 +1442,8 @@ class BinaryQF(SageObject):
           coefficients `(-a, b, -c)` is reduced.
 
         - If `f` is indefinite (`D > 0`), then `f` is reduced if and
-          only if `|\sqrt{D} - 2|a|| < b < \sqrt{D}`
+          only if [`b > 0`, `ac < 0` and `(a-c)^2 < D`]
+          (equivalently if `|\sqrt{D} - 2|a|| < b < \sqrt{D}`)
           or [`a = 0` and `-b < 2c \leq b`]
           or [`c = 0` and `-b < 2a \leq b`].
 
@@ -1474,20 +1475,31 @@ class BinaryQF(SageObject):
             sage: BinaryQF(1, 5, -1).is_reduced()
             True
 
+        TESTS:
+
+        We check that :issue:`37635` is fixed::
+
+            sage: list = range(0xa19ae44106b09bfffffffffff0, 0xa19ae44106b09c000000000010)
+            sage: all(BinaryQF([1, 0, -x]).reduced_form().is_reduced() for x in list)
+            True
         """
         D = self.discriminant()
+        if D.is_zero():
+            raise ValueError('the quadratic form must be non-singular')
+
         a = self._a
         b = self._b
         c = self._c
         if D < 0 and a > 0:
             return ((-a < b <= a < c)
                     or (ZZ(0) <= b <= a == c))
-        elif D < 0 and self._a < 0:
+        elif D < 0 and a < 0:
             return ((a < b <= -a < -c)
                     or (ZZ(0) <= b <= -a == -c))
+
+        # Note that a = 0 implies D > 0 here
         else:
-            d = D.sqrt(prec=53)
-            return (((d - 2*a.abs()).abs() < b < d)
+            return ((b > 0 and a*c < 0 and (a-c)**2 < D)
                     or (0 == a and -b < 2*c <= b)
                     or (0 == c and -b < 2*a <= b))
 
