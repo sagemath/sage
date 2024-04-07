@@ -570,7 +570,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
         .. warning::
 
            This is not the numerator of the rational function
-           defined by ``self``, which would always be self since ``self`` is a
+           defined by ``self``, which would always be ``self`` since it is a
            polynomial.
 
         EXAMPLES:
