@@ -584,6 +584,16 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
             sage: num.parent()
             Infinite polynomial ring in x over Rational Field
+
+        Check that :issue:`37756` is fixed::
+
+            sage: R.<a> = InfinitePolynomialRing(QQ)
+            sage: P.<x,y> = QQ[]
+            sage: FF = P.fraction_field()
+            sage: FF(a[0])
+            Traceback (most recent call last):
+            ...
+            TypeError: Could not find a mapping of the passed element to this ring.
         """
         P = self.parent()
         return InfinitePolynomial(P, self._p.numerator())
