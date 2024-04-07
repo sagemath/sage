@@ -1632,8 +1632,8 @@ class Stream_uninitialized(Stream):
 
         INPUT:
 
-            - ``var``, a variable in ``self._P``
-            - ``val``, the value that should replace the variable
+        - ``var``, a variable in ``self._P``
+        - ``val``, the value that should replace the variable
 
         EXAMPLES::
 
