@@ -962,7 +962,6 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: T.define_implicitly([A], [P(X)*P(Y)*A - P(X+Y)])
             sage: A[:4]
             [p[] # p[], 0, p[1] # p[1], p[1] # p[1, 1] + p[1, 1] # p[1]]
-
         """
         s = [a[0]._coeff_stream if isinstance(a, (tuple, list))
              else a._coeff_stream
@@ -2088,6 +2087,13 @@ class LazyLaurentSeriesRing(LazySeriesRing):
         Return the list consisting of a single element ``1`` in the given
         ring.
 
+        EXAMPLES::
+
+            sage: L = LazyLaurentSeriesRing(ZZ, 'z')
+            sage: t = L._terms_of_degree(3, ZZ['x']); t
+            [1]
+            sage: t[0].parent()
+            Univariate Polynomial Ring in x over Integer Ring
         """
         return [R.one()]
 
@@ -2401,6 +2407,18 @@ class LazyPowerSeriesRing(LazySeriesRing):
                         category=category)
 
     def construction(self):
+        """
+        Return a pair ``(F, R)``, where ``F`` is a
+        :class:`CompletionFunctor` and `R` is a ring, such that
+        ``F(R)`` returns ``self``.
+
+        EXAMPLES::
+
+            sage: L = LazyPowerSeriesRing(ZZ, 't')
+            sage: L.construction()
+            (Completion[t, prec=+Infinity],
+             Sparse Univariate Polynomial Ring in t over Integer Ring)
+        """
         from sage.categories.pushout import CompletionFunctor
         if self._arity == 1:
             return (CompletionFunctor(self._names[0], infinity),
@@ -3813,6 +3831,14 @@ class LazyDirichletSeriesRing(LazySeriesRing):
     def _terms_of_degree(self, n, R):
         r"""
         Return the list consisting of a single element 1 in the base ring.
+
+        EXAMPLES::
+
+            sage: L = LazyDirichletSeriesRing(ZZ, 'z')
+            sage: t = L._terms_of_degree(3, ZZ['x']); t
+            [1]
+            sage: t[0].parent()
+            Univariate Polynomial Ring in x over Integer Ring
         """
         return [R.one()]
 
