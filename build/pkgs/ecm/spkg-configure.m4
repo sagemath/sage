@@ -34,12 +34,9 @@ SAGE_SPKG_CONFIGURE([ecm], [dnl CHECK - test whether the package is already inst
         ], [sage_spkg_install_ecm=yes])
     ])
     m4_popdef([SAGE_ECM_MINVER])
-], [
-    # REQUIRED-check is empty
-], [
-    # PRE - always perform
+], [dnl REQUIRED-check is empty
+], [dnl PRE - always perform
     ECMBIN=ecm
-], [
-    # POST - always perform
+], [dnl POST - always perform
     AC_SUBST(SAGE_ECMBIN, $ECMBIN)
 ])
