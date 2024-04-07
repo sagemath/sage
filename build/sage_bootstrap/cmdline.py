@@ -387,7 +387,21 @@ def make_parser():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         help='Download tarball')
     parser_download.add_argument(
-        'package_name', type=str, help='Package name or :type:')
+        'package_class', metavar='[package_name|:package_type:]',
+        type=str, nargs='+',
+        help=('package name or designator for all packages of a given type '
+              '(one of :all:, :standard:, :optional:, and :experimental:)'))
+    parser_download.add_argument(
+        '--has-file', action='append', default=[], metavar='FILENAME', dest='has_files',
+        help=('only include packages that have this file in their metadata directory '
+              '(examples: SPKG.rst, spkg-configure.m4, distros/debian.txt, spkg-install|spkg-install.in)'))
+    parser_download.add_argument(
+        '--no-file', action='append', default=[], metavar='FILENAME', dest='no_files',
+        help=('only include packages that do not have this file in their metadata directory '
+              '(examples: huge, patches, huge|has_nonfree_dependencies)'))
+    parser_download.add_argument(
+        '--exclude', nargs='*', action='append', default=[], metavar='PACKAGE_NAME',
+        help='exclude package from list')
     parser_download.add_argument(
         '--allow-upstream', action="store_true",
         help='Whether to fall back to downloading from the upstream URL')
@@ -517,7 +531,9 @@ def run():
                 ssl._create_default_https_context = ssl._create_unverified_context
             except ImportError:
                 pass
-        app.download_cls(args.package_name,
+        app.download_cls(*args.package_class,
+                         has_files=args.has_files, no_files=args.no_files,
+                         exclude=args.exclude,
                          allow_upstream=args.allow_upstream,
                          on_error=args.on_error)
     elif args.subcommand == 'create':
