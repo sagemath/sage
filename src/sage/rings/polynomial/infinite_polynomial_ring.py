@@ -19,7 +19,7 @@ INPUT:
 
 - ``R``, the base ring. It has to be a commutative ring, and in some
   applications it must even be a field
-- ``names``, a finite list of generator names. Generator names must be alpha-numeric.
+- ``names``, a finite list of generator names. Generator names must be alphanumeric.
 - ``order`` (optional string). The default order is ``'lex'`` (lexicographic).
   ``'deglex'`` is degree lexicographic, and ``'degrevlex'`` (degree reverse
   lexicographic) is possible but discouraged.
@@ -566,7 +566,7 @@ class GenDictWithBasering:
 
     def __next__(self):
         """
-        Return a dictionary that can be used to interprete strings in the base ring of ``self``.
+        Return a dictionary that can be used to interpret strings in the base ring of ``self``.
 
         EXAMPLES::
 
@@ -704,7 +704,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             names = ['x']
         for n in names:
             if not (isinstance(n, str) and n.isalnum() and (not n[0].isdigit())):
-                raise ValueError("generator names must be alpha-numeric strings not starting with a  digit, but %s is not" % n)
+                raise ValueError("generator names must be alphanumeric strings not starting with a digit, but %s is not" % n)
         if len(names) != len(set(names)):
             raise ValueError("generator names must be pairwise different")
         self._names = tuple(names)
@@ -888,6 +888,15 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             Traceback (most recent call last):
             ...
             ValueError: cannot convert 1/3 into an element of Infinite polynomial ring in x over Integer Ring
+
+        Check that :issue:`37756` is fixed::
+
+            sage: L.<x, y> = QQ[]
+            sage: R.<a> = InfinitePolynomialRing(QQ)
+            sage: M = InfinitePolynomialRing(L, names=["a"])
+            sage: c = a[0]
+            sage: M(c)
+            a_0
         """
         from sage.rings.polynomial.infinite_polynomial_element import InfinitePolynomial
         # In many cases, the easiest solution is to "simply" evaluate
@@ -922,7 +931,7 @@ class InfinitePolynomialRing_sparse(CommutativeRing):
             if isinstance(self._base, MPolynomialRing_polydict):
                 x = sage_eval(repr(), next(self.gens_dict()))
             else:
-                x = self._base(x)
+                x = self._base.coerce(x)
             # remark: Conversion to self._P (if applicable)
             # is done in InfinitePolynomial()
             return InfinitePolynomial(self, x)

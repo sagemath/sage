@@ -560,6 +560,44 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
         """
         return self._p.is_nilpotent()
 
+    def numerator(self):
+        r"""
+        Return a numerator of ``self``, computed as ``self * self.denominator()``.
+
+        Note that some subclasses may implement its own numerator
+        function.
+
+        .. warning::
+
+           This is not the numerator of the rational function
+           defined by ``self``, which would always be self since ``self`` is a
+           polynomial.
+
+        EXAMPLES:
+
+            sage: X.<x> = InfinitePolynomialRing(QQ)
+            sage: p = 2/3*x[1] + 4/9*x[2] - 2*x[1]*x[3]
+            sage: num = p.numerator(); num
+            -18*x_3*x_1 + 4*x_2 + 6*x_1
+
+        TESTS::
+
+            sage: num.parent()
+            Infinite polynomial ring in x over Rational Field
+
+        Check that :issue:`37756` is fixed::
+
+            sage: R.<a> = InfinitePolynomialRing(QQ)
+            sage: P.<x,y> = QQ[]
+            sage: FF = P.fraction_field()
+            sage: FF(a[0])
+            Traceback (most recent call last):
+            ...
+            TypeError: Could not find a mapping of the passed element to this ring.
+        """
+        P = self.parent()
+        return InfinitePolynomial(P, self._p.numerator())
+
     @cached_method
     def variables(self):
         """
@@ -1079,42 +1117,42 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             2
 
         """
+        P = self.parent()
         if self._p == 0:
-            res = 0
-        elif isinstance(monomial, self.__class__):
-            if not (self.parent().has_coerce_map_from(monomial.parent())):
-                res = 0
+            return P.zero()
+        if isinstance(monomial, self.__class__):
+            if not (P.has_coerce_map_from(monomial.parent())):
+                return P.zero()
+            if hasattr(self._p, 'variables'):
+                VarList = [str(X) for X in self._p.variables()]
             else:
-                if hasattr(self._p, 'variables'):
-                    VarList = [str(X) for X in self._p.variables()]
-                else:
-                    VarList = []
-                if hasattr(monomial._p, 'variables'):
-                    VarList.extend([str(X) for X in monomial._p.variables()])
-                VarList = list(set(VarList))
-                VarList.sort(key=self.parent().varname_key, reverse=True)
-                from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-                if len(VarList) == 1:
-                    # 'xx' is guaranteed to be no variable
-                    # name of monomial, since coercions
-                    # were tested before
-                    R = PolynomialRing(self._p.base_ring(), VarList + ['xx'], order=self.parent()._order)
+                VarList = []
+            if hasattr(monomial._p, 'variables'):
+                VarList.extend([str(X) for X in monomial._p.variables()])
+            VarList = list(set(VarList))
+            VarList.sort(key=P.varname_key, reverse=True)
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            if len(VarList) == 1:
+                # 'xx' is guaranteed to be no variable
+                # name of monomial, since coercions
+                # were tested before
+                R = PolynomialRing(self._p.base_ring(), VarList + ['xx'], order=P._order)
+                S = PolynomialRing(self._p.base_ring(), VarList, order=P._order)
+                res = S(R(self._p).coefficient(R(monomial._p)))
+                return InfinitePolynomial(P, res)
 
-                    res = PolynomialRing(self._p.base_ring(), VarList, order=self.parent()._order)(R(self._p).coefficient(R(monomial._p)))
-                else:
-                    R = PolynomialRing(self._p.base_ring(), VarList, order=self.parent()._order)
-                    res = R(self._p).coefficient(R(monomial._p))
-        elif isinstance(monomial, dict):
+            R = PolynomialRing(self._p.base_ring(), VarList, order=P._order)
+            res = R(self._p).coefficient(R(monomial._p))
+            return InfinitePolynomial(P, res)
+
+        if isinstance(monomial, dict):
             if monomial:
                 I = iter(monomial)
                 K = next(I)
                 del monomial[K]
-                res = self.coefficient(K).coefficient(monomial)
-            else:
-                return self
-        else:
-            raise TypeError("Objects of type %s have no coefficients in InfinitePolynomials" % (type(monomial)))
-        return self.parent()(res)
+                return self.coefficient(K).coefficient(monomial)
+            return self
+        raise TypeError("Objects of type %s have no coefficients in InfinitePolynomials" % (type(monomial)))
 
     # Essentials for Buchberger
     def reduce(self, I, tailreduce=False, report=None):
