@@ -564,9 +564,6 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
         r"""
         Return a numerator of ``self``, computed as ``self * self.denominator()``.
 
-        Note that some subclasses may implement its own numerator
-        function.
-
         .. warning::
 
            This is not the numerator of the rational function
@@ -622,8 +619,8 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
     def monomials(self):
         """
-        Return the list of monomials in ``self``. 
-        
+        Return the list of monomials in ``self``.
+
         The returned list is decreasingly ordered by the term ordering of
         ``self.parent()``.
 
