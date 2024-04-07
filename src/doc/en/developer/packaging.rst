@@ -19,7 +19,7 @@ giving the command::
 options can be:
 
 - -f: install a package even if the same version is already installed
-- -s: do not delete temporary build directory
+- -s: do not delete build directory
 - -c: after installing, run the test suite for the spkg. This should
   override the settings of ``SAGE_CHECK`` and ``SAGE_CHECK_PACKAGES``.
 - -d: only download the package
