@@ -1,5 +1,5 @@
 r"""
-Arbitrary Precision Real Numbers
+Arbitrary precision floating point real numbers using GNU MPFR
 
 AUTHORS:
 

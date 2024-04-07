@@ -1,5 +1,5 @@
 r"""
-Double Precision Real Numbers
+Double precision floating point real numbers
 
 EXAMPLES:
 
