@@ -570,7 +570,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
            defined by ``self``, which would always be ``self`` since it is a
            polynomial.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: X.<x> = InfinitePolynomialRing(QQ)
             sage: p = 2/3*x[1] + 4/9*x[2] - 2*x[1]*x[3]
