@@ -1410,7 +1410,7 @@ class Stream_uninitialized(Stream):
 
         INPUT:
 
-            - ``target`` -- a stream
+        - ``target`` -- a stream
 
         EXAMPLES::
 
