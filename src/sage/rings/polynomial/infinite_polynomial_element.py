@@ -561,12 +561,32 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
         return self._p.is_nilpotent()
 
     def numerator(self):
+        r"""
+        Return a numerator of ``self``, computed as ``self * self.denominator()``.
+
+        Note that some subclasses may implement its own numerator
+        function.
+
+        .. warning::
+
+           This is not the numerator of the rational function
+           defined by ``self``, which would always be self since ``self`` is a
+           polynomial.
+
+        EXAMPLES:
+
+            sage: X.<x> = InfinitePolynomialRing(QQ)
+            sage: p = 2/3*x[1] + 4/9*x[2] - 2*x[1]*x[3]
+            sage: num = p.numerator(); num
+            -18*x_3*x_1 + 4*x_2 + 6*x_1
+
+        TESTS::
+
+            sage: num.parent()
+            Infinite polynomial ring in x over Rational Field
+        """
         P = self.parent()
         return InfinitePolynomial(P, self._p.numerator())
-
-    def denominator(self):
-        P = self.parent()
-        return InfinitePolynomial(P, self._p.denominator())
 
     @cached_method
     def variables(self):
