@@ -356,6 +356,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
                 z._entries[i] = 0
         return z
 
+
 def unpickle_v0(parent, entries, degree, p):
     # If you think you want to change this function, don't.
     # Instead make a new version with a name like
@@ -367,6 +368,7 @@ def unpickle_v0(parent, entries, degree, p):
     for i from 0 <= i < degree:
         v._entries[i] = entries[i]
     return v
+
 
 def unpickle_v1(parent, entries, degree, p, is_mutable):
     cdef Vector_modn_dense v

@@ -79,6 +79,7 @@ cdef object string_sigoff(char* s):
 # set the default bit precision
 mwrank_set_precision(150)
 
+
 def get_precision():
     """
     Return the working floating point bit precision of mwrank, which is

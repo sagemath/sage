@@ -151,7 +151,8 @@ cpdef _fast_possible_periods(self, return_points=False):
     if not return_points:
         return sorted(periods)
     else:
-        return(points_periods)
+        return points_periods
+
 
 def _enum_points(int prime, int dimension):
     """

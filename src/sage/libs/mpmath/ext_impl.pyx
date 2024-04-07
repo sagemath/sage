@@ -1453,6 +1453,7 @@ def exp_fixed(Integer x, int prec, ln2=None):
     mpz_clear(n)
     return v
 
+
 def cos_sin_fixed(Integer x, int prec, pi2=None):
     """
     Returns fixed-point approximations of cos(x), sin(x) where
@@ -1505,6 +1506,7 @@ cdef mpz_log_int(mpz_t v, mpz_t n, int prec):
     mpfr_mul_2exp(f, f, prec, MPFR_RNDN)
     mpfr_get_z(v, f, MPFR_RNDN)
     mpfr_clear(f)
+
 
 def log_int_fixed(n, long prec, ln2=None):
     """
