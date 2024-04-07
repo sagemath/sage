@@ -3190,7 +3190,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
              s[] # s[2, 1],
              s[] # s[1, 1, 1]]
             sage: m[0].parent()
-            Symmetric Functions over Univariate Polynomial Ring in x over Rational Field in the Schur basis 
+            Symmetric Functions over Univariate Polynomial Ring in x over Rational Field in the Schur basis
              # Symmetric Functions over Univariate Polynomial Ring in x over Rational Field in the Schur basis
         """
         from sage.combinat.integer_vector import IntegerVectors
