@@ -1117,7 +1117,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
         if self._p == 0:
             return P.zero()
         if isinstance(monomial, self.__class__):
-            if not (P.has_coerce_map_from(monomial.parent())):
+            if not P.has_coerce_map_from(monomial.parent()):
                 return P.zero()
             if hasattr(self._p, 'variables'):
                 VarList = [str(X) for X in self._p.variables()]
