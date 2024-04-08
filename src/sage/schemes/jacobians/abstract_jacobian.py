@@ -92,15 +92,15 @@ class Jacobian_generic(Scheme):
 
         Note: this is an abstract parent, so we skip element tests::
 
-            sage: TestSuite(J).run(skip =["_test_an_element",\
-                                          "_test_elements",\
-                                          "_test_elements_eq_reflexive",\
-                                          "_test_elements_eq_symmetric",\
-                                          "_test_elements_eq_transitive",\
-                                          "_test_elements_neq",\
-                                          "_test_some_elements",
-                                          "_test_additive_associativity",
-                                          "_test_zero"])
+            sage: TestSuite(J).run(skip=["_test_an_element",\
+                                         "_test_elements",\
+                                         "_test_elements_eq_reflexive",\
+                                         "_test_elements_eq_symmetric",\
+                                         "_test_elements_eq_transitive",\
+                                         "_test_elements_neq",\
+                                         "_test_some_elements",\
+                                         "_test_additive_associativity",\
+                                         "_test_zero"])
 
         ::
 
