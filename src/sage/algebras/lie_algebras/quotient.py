@@ -297,7 +297,7 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
 
             sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
             sage: a,b,c = L.gens()
-            sage: I = L.ideal([a+2*b, b+3*c])
+            sage: I = L.ideal([a + 2*b, b + 3*c])
             sage: Q = L.quotient(I)
             sage: Q
             Lie algebra quotient L/I of dimension 1 over Rational Field where

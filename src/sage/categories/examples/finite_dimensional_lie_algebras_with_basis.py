@@ -152,7 +152,7 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
             sage: L.lift(b).parent() is L.universal_enveloping_algebra()
             True
 
-            sage: I = L.ideal([a+2*b, b+3*c])
+            sage: I = L.ideal([a + 2*b, b + 3*c])
             sage: I.lift(I.basis()[0])
             (1, 0, -6)
         """
@@ -367,7 +367,7 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
 
             sage: L = LieAlgebras(QQ).FiniteDimensional().WithBasis().example()
             sage: a, b, c = L.lie_algebra_generators()
-            sage: I = L.ideal([2*a+b, b + c])
+            sage: I = L.ideal([2*a + b, b + c])
             sage: I.leading_monomials()
             ((1, 0, 0), (0, 1, 0))
         """

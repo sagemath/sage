@@ -2193,7 +2193,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                     sage: sc = {('a','b'): {'d': 1}, ('a','c'): {'e': 1},
                     ....:       ('b','c'): {'f': 1}}
                     sage: L.<a,b,c,d,e,f> = LieAlgebra(QQ, sc)
-                    sage: I =  L.ideal(c)
+                    sage: I = L.ideal(c)
                     sage: I.reduce(a + b + c + d + e + f)
                     a + b + d
 
