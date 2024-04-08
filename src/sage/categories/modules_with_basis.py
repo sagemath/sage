@@ -2130,7 +2130,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 R = R.change_ring(B)
             else:
                 B = self.base_ring()
-            return R.sum_of_terms((m, B(f(c))) for m, c in self)
+            mc = self.monomial_coefficients(copy=False)
+            return R.sum_of_terms((m, B(f(c))) for m, c in mc.items())
 
         def map_support(self, f):
             """
