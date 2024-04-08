@@ -2078,7 +2078,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             INPUT:
 
             - ``f`` -- a callable that will be applied to the
-              coefficients of ``self``.
+              coefficients of ``self``
 
             - ``new_base_ring`` (optional) -- if given, the resulting element
               will be defined over this ring.
