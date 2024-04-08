@@ -4142,8 +4142,8 @@ cdef class BooleanPolynomial(MPolynomial):
 
         INPUT:
 
-        -  ``threshold`` - (optional, default: 15) the threshold used
-           in the Algorithm 2 of [LLL21]_
+        - ``threshold`` -- (optional, default: 15) the threshold used
+          in the Algorithm 2 of [LLL21]_
 
         EXAMPLES::
 
