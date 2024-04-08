@@ -2410,16 +2410,16 @@ class Link(SageObject):
         EXAMPLES::
 
             sage: b = BraidGroup(4)((3, 2, -1, -1))
-          sage: L = Link(b)
-          sage: L.remove_loops()
-          Link with 2 components represented by 2 crossings
-          sage: K4 = Link([[1, 7, 2, 6], [3, 1, 4, 8], [5, 5, 6, 4], [7, 3, 8, 2]])
-          sage: K3 = K4.remove_loops()
-          sage: K3.pd_code()
-          [[1, 7, 2, 4], [3, 1, 4, 8], [7, 3, 8, 2]]
-          sage: U = Link([[1, 2, 2, 1]])
-          sage: U.remove_loops()
-          Link with 1 component represented by 0 crossings
+            sage: L = Link(b)
+            sage: L.remove_loops()
+            Link with 2 components represented by 2 crossings
+            sage: K4 = Link([[1, 7, 2, 6], [3, 1, 4, 8], [5, 5, 6, 4], [7, 3, 8, 2]])
+            sage: K3 = K4.remove_loops()
+            sage: K3.pd_code()
+            [[1, 7, 2, 4], [3, 1, 4, 8], [7, 3, 8, 2]]
+            sage: U = Link([[1, 2, 2, 1]])
+            sage: U.remove_loops()
+            Link with 1 component represented by 0 crossings
         """
         pd = self.pd_code()
         new_pd = []
@@ -2579,7 +2579,8 @@ class Link(SageObject):
         if self._reverse:
             return self._reverse
 
-        if self._braid:
+        b = self._braid
+        if b and len(b.Tietze()) <= len(self.pd_code()):
             self._reverse = type(self)(self._braid.reverse())
             self._reverse._reverse = self
             return self._reverse
@@ -2992,7 +2993,7 @@ class Link(SageObject):
         Comparison with KnotInfo::
 
             sage: KI, m = K.get_knotinfo(); KI, m
-             (<KnotInfo.K5_1: '5_1'>, False)
+             (<KnotInfo.K5_1: '5_1'>, <SymmetryMutant.itself: 's'>)
             sage: K.homfly_polynomial(normalization='vz') == KI.homfly_polynomial()
             True
 
@@ -3930,13 +3931,12 @@ class Link(SageObject):
 
         EXAMPLES::
 
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: KnotInfo.L5a1_0.inject()
             Defining L5a1_0
-            sage: L5a1_0.link()._knotinfo_matching_list()
-            ([<KnotInfo.L5a1_0: 'L5a1{0}'>], True)
-            sage: Link(L5a1_0.braid())._knotinfo_matching_list()
+            sage: ML = L5a1_0.link()._knotinfo_matching_list(); ML
             ([<KnotInfo.L5a1_0: 'L5a1{0}'>, <KnotInfo.L5a1_1: 'L5a1{1}'>], True)
+            sage: ML == Link(L5a1_0.braid())._knotinfo_matching_list()
+            True
 
         Care is needed for links having non irreducible HOMFLY-PT polynomials::
 
@@ -3993,7 +3993,9 @@ class Link(SageObject):
         res = []
         for L in l:
             if L.pd_notation() == pd_code:
-                return [L], True  # pd_notation is unique in the KnotInfo database
+                # pd_notation is unique in the KnotInfo database
+                res.append(L)
+                continue
 
             Lbraid = L.braid()
             if Lbraid.strands() <= br_ind:
@@ -4005,6 +4007,45 @@ class Link(SageObject):
                 return res, True
         return l, False
 
+    def _knotinfo_matching_dict(self):
+        r"""
+        Return a dictionary mapping items of the enum :class:`~sage.knots.knotinfo.SymmetryType`
+        to list of links from the KnotInfo and LinkInfo databases which match
+        the properties of the according symmetry mutant of ``self`` as much as
+        possible.
+
+        OUTPUT:
+
+        A pair (``match_lists, proves``) of dictionaries with keys from the
+        enum :class:`~sage.knots.knotinfo.SymmetryType`. The first dictionary maps these keys to
+        the corresponding matching list and ``proves`` maps them to booleans
+        telling if the entries of the corresponding ``match_lists`` are checked
+        to be isotopic to the symmetry mutant of ``self`` or not.
+
+        EXAMPLES::
+
+            sage: KnotInfo.L4a1_0.inject()
+            Defining L4a1_0
+            sage: L4a1_0.link()._knotinfo_matching_dict()
+            ({<SymmetryMutant.itself: 's'>: [<KnotInfo.L4a1_0: 'L4a1{0}'>],
+              <SymmetryMutant.reverse: 'r'>: [<KnotInfo.L4a1_0: 'L4a1{0}'>],
+              <SymmetryMutant.concordance_inverse: 'mr'>: [],
+              <SymmetryMutant.mirror_image: 'm'>: []},
+             {<SymmetryMutant.itself: 's'>: True,
+              <SymmetryMutant.reverse: 'r'>: True,
+              <SymmetryMutant.concordance_inverse: 'mr'>: False,
+              <SymmetryMutant.mirror_image: 'm'>: False})
+        """
+        from sage.knots.knotinfo import SymmetryMutant
+        mutant = {}
+        mutant[SymmetryMutant.itself] = self
+        mutant[SymmetryMutant.mirror_image] = self.mirror_image()
+        mutant[SymmetryMutant.reverse] = self.reverse()
+        mutant[SymmetryMutant.concordance_inverse] = mutant[SymmetryMutant.mirror_image].reverse()
+        match_lists = {k: list(mutant[k]._knotinfo_matching_list()[0]) for k in mutant.keys()}
+        proves = {k: mutant[k]._knotinfo_matching_list()[1] for k in mutant.keys()}
+        return match_lists, proves
+
     def get_knotinfo(self, mirror_version=True, unique=True):
         r"""
         Identify this link as an item of the KnotInfo database (if possible).
@@ -4013,7 +4054,7 @@ class Link(SageObject):
 
         - ``mirror_version`` -- boolean (default is ``True``). If set to ``False``
           the result of the method will be just the instance of :class:`~sage.knots.knotinfo.KnotInfoBase`
-          (by default the result is a tuple of the instance and a boolean, see
+          (by default the result is a tuple of the instance and an enum, see
           explanation of the output below)
 
         - ``unique`` -- boolean (default is ``True``). This only affects the case
@@ -4023,10 +4064,10 @@ class Link(SageObject):
         OUTPUT:
 
         A tuple ``(K, m)`` where ``K`` is an instance of :class:`~sage.knots.knotinfo.KnotInfoBase`
-        and ``m`` a boolean (for chiral links) telling if ``self`` corresponds
-        to the mirrored version of ``K`` or not. The value of ``m`` is ``None``
-        for amphicheiral links and ``?`` if it cannot be determined uniquely
-        and the keyword option ``unique=False`` is given.
+        and ``m`` an instance of :class:`~sage.knots.knotinfo.SymmetryMutant`
+        (for chiral links) specifying the symmetry mutant of ``K`` to which
+        ``self`` is isotopic. The value of ``m`` is ``unknown`` if it cannot
+        be determined uniquely and the keyword option ``unique=False`` is given.
 
         For proper links, if the orientation mutant cannot be uniquely determined,
         K will be a series of links gathering all links having the same unoriented
@@ -4065,11 +4106,22 @@ class Link(SageObject):
             ....:           [18,10,19,9], [2,12,3,11], [13,21,14,20], [15,7,16,6],
             ....:           [22,17,1,18], [8,20,9,19], [21,15,22,14]])
             sage: L.get_knotinfo()
-            (<KnotInfo.K11n_121: '11n_121'>, True)
+            (<KnotInfo.K11n_121: '11n_121'>, <SymmetryMutant.mirror_image: 'm'>)
             sage: K = KnotInfo.K10_25
             sage: l = K.link()
             sage: l.get_knotinfo()
-            (<KnotInfo.K10_25: '10_25'>, False)
+            (<KnotInfo.K10_25: '10_25'>, <SymmetryMutant.itself: 's'>)
+            sage: k11  = KnotInfo.K11n_82.link()
+            sage: k11m = k11.mirror_image()
+            sage: k11mr = k11m.reverse()
+            sage: k11mr.get_knotinfo()
+            (<KnotInfo.K11n_82: '11n_82'>, <SymmetryMutant.concordance_inverse: 'mr'>)
+            sage: k11r = k11.reverse()
+            sage: k11r.get_knotinfo()
+            (<KnotInfo.K11n_82: '11n_82'>, <SymmetryMutant.reverse: 'r'>)
+            sage: k11rm = k11r.mirror_image()
+            sage: k11rm.get_knotinfo()
+            (<KnotInfo.K11n_82: '11n_82'>, <SymmetryMutant.concordance_inverse: 'mr'>)
 
         Knots with more than 13 and proper links having more than 11 crossings
         cannot be identified. In addition non prime links or even links whose
@@ -4077,7 +4129,7 @@ class Link(SageObject):
 
             sage: b, = BraidGroup(2).gens()
             sage: Link(b**13).get_knotinfo()    # optional - database_knotinfo
-            (<KnotInfo.K13a_4878: '13a_4878'>, False)
+            (<KnotInfo.K13a_4878: '13a_4878'>, <SymmetryMutant.itself: 's'>)
             sage: Link(b**14).get_knotinfo()
             Traceback (most recent call last):
             ...
@@ -4096,7 +4148,7 @@ class Link(SageObject):
             ....:           [17,19,8,18], [9,10,11,14], [10,12,13,11],
             ....:           [12,19,15,13], [20,16,14,15], [16,20,17,2]])
             sage: L.get_knotinfo()
-            (<KnotInfo.K0_1: '0_1'>, None)
+            (<KnotInfo.K0_1: '0_1'>, <SymmetryMutant.itself: 's'>)
 
         Usage of option ``mirror_version``::
 
@@ -4113,17 +4165,10 @@ class Link(SageObject):
             NotImplementedError: this link cannot be uniquely determined
             use keyword argument `unique` to obtain more details
             sage: l.get_knotinfo(unique=False)
-            [(<KnotInfo.K10_25: '10_25'>, False), (<KnotInfo.K10_56: '10_56'>, False)]
-            sage: k11  = KnotInfo.K11n_82.link()
-            sage: k11m = k11.mirror_image()
-            sage: k11mr = k11m.reverse()
-            sage: k11mr.get_knotinfo()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: mirror type of this link cannot be uniquely determined
-            use keyword argument `unique` to obtain more details
-            sage: k11mr.get_knotinfo(unique=False)
-            [(<KnotInfo.K11n_82: '11n_82'>, '?')]
+            [(<KnotInfo.K10_25: '10_25'>, <SymmetryMutant.itself: 's'>),
+             (<KnotInfo.K10_25: '10_25'>, <SymmetryMutant.reverse: 'r'>),
+             (<KnotInfo.K10_56: '10_56'>, <SymmetryMutant.itself: 's'>),
+             (<KnotInfo.K10_56: '10_56'>, <SymmetryMutant.reverse: 'r'>)]
             sage: t = (1, -2, 1, 1, -2, 1, -2, -2)
             sage: l8 = Link(BraidGroup(3)(t))
             sage: l8.get_knotinfo()
@@ -4132,8 +4177,8 @@ class Link(SageObject):
             NotImplementedError: this link cannot be uniquely determined
             use keyword argument `unique` to obtain more details
             sage: l8.get_knotinfo(unique=False)
-            [(<KnotInfo.L8a19_0_0: 'L8a19{0,0}'>, None),
-             (<KnotInfo.L8a19_1_1: 'L8a19{1,1}'>, None)]
+            [(<KnotInfo.L8a19_0_0: 'L8a19{0,0}'>, <SymmetryMutant.itself: 's'>),
+             (<KnotInfo.L8a19_1_1: 'L8a19{1,1}'>, <SymmetryMutant.itself: 's'>)]
             sage: t = (2, -3, -3, -2, 3, 3, -2, 3, 1, -2, -2, 1)
             sage: l12 = Link(BraidGroup(5)(t))
             sage: l12.get_knotinfo()
@@ -4142,10 +4187,14 @@ class Link(SageObject):
             NotImplementedError: this link having more than 11 crossings cannot be uniquely determined
             use keyword argument `unique` to obtain more details
             sage: l12.get_knotinfo(unique=False)
-            [(<KnotInfo.L10n36_0: 'L10n36{0}'>, '?'),
-             (<KnotInfo.L10n36_1: 'L10n36{1}'>, None),
-             (<KnotInfo.L10n59_0: 'L10n59{0}'>, None),
-             (<KnotInfo.L10n59_1: 'L10n59{1}'>, None)]
+            [(<KnotInfo.L10n36_0: 'L10n36{0}'>, <SymmetryMutant.unknown: '?'>),
+             (<KnotInfo.L10n36_1: 'L10n36{1}'>, <SymmetryMutant.itself: 's'>),
+             (<KnotInfo.L10n36_1: 'L10n36{1}'>, <SymmetryMutant.reverse: 'r'>),
+             (<KnotInfo.L10n36_1: 'L10n36{1}'>,
+              <SymmetryMutant.concordance_inverse: 'mr'>),
+             (<KnotInfo.L10n36_1: 'L10n36{1}'>, <SymmetryMutant.mirror_image: 'm'>),
+             (<KnotInfo.L10n59_0: 'L10n59{0}'>, <SymmetryMutant.itself: 's'>),
+             (<KnotInfo.L10n59_1: 'L10n59{1}'>, <SymmetryMutant.itself: 's'>)]
 
         Furthermore, if the result is a complete  series of oriented links having
         the same unoriented name (according to the note above) the option can be
@@ -4153,33 +4202,39 @@ class Link(SageObject):
 
             sage: L2a1 = Link(b**2)
             sage: L2a1.get_knotinfo()
-            (Series of links L2a1, None)
+            (Series of links L2a1, <SymmetryMutant.mixed: 'x'>)
             sage: L2a1.get_knotinfo(unique=False)
-            [(<KnotInfo.L2a1_0: 'L2a1{0}'>, True), (<KnotInfo.L2a1_1: 'L2a1{1}'>, False)]
+            [(<KnotInfo.L2a1_0: 'L2a1{0}'>, <SymmetryMutant.concordance_inverse: 'mr'>),
+             (<KnotInfo.L2a1_0: 'L2a1{0}'>, <SymmetryMutant.mirror_image: 'm'>),
+             (<KnotInfo.L2a1_1: 'L2a1{1}'>, <SymmetryMutant.itself: 's'>),
+             (<KnotInfo.L2a1_1: 'L2a1{1}'>, <SymmetryMutant.reverse: 'r'>)]
 
             sage: KnotInfo.L5a1_0.inject()
             Defining L5a1_0
             sage: l5 = Link(L5a1_0.braid())
             sage: l5.get_knotinfo()
-            (Series of links L5a1, False)
+            (Series of links L5a1, <SymmetryMutant.itself: 's'>)
             sage: _[0].inject()
             Defining L5a1
             sage: list(L5a1)
             [<KnotInfo.L5a1_0: 'L5a1{0}'>, <KnotInfo.L5a1_1: 'L5a1{1}'>]
             sage: l5.get_knotinfo(unique=False)
-            [(<KnotInfo.L5a1_0: 'L5a1{0}'>, False), (<KnotInfo.L5a1_1: 'L5a1{1}'>, False)]
+            [(<KnotInfo.L5a1_0: 'L5a1{0}'>, <SymmetryMutant.itself: 's'>),
+             (<KnotInfo.L5a1_0: 'L5a1{0}'>, <SymmetryMutant.reverse: 'r'>),
+             (<KnotInfo.L5a1_1: 'L5a1{1}'>, <SymmetryMutant.itself: 's'>),
+             (<KnotInfo.L5a1_1: 'L5a1{1}'>, <SymmetryMutant.reverse: 'r'>)]
 
         Clarifying the series around the Perko pair (:wikipedia:`Perko_pair`)::
 
             sage: for i in range(160, 166):           # optional - database_knotinfo
             ....:     K = Knots().from_table(10, i)
             ....:     print('%s_%s' %(10, i), '--->', K.get_knotinfo())
-            10_160 ---> (<KnotInfo.K10_160: '10_160'>, False)
-            10_161 ---> (<KnotInfo.K10_161: '10_161'>, True)
-            10_162 ---> (<KnotInfo.K10_162: '10_162'>, False)
-            10_163 ---> (<KnotInfo.K10_163: '10_163'>, False)
-            10_164 ---> (<KnotInfo.K10_164: '10_164'>, False)
-            10_165 ---> (<KnotInfo.K10_165: '10_165'>, True)
+            10_160 ---> (<KnotInfo.K10_160: '10_160'>, <SymmetryMutant.itself: 's'>)
+            10_161 ---> (<KnotInfo.K10_161: '10_161'>, <SymmetryMutant.mirror_image: 'm'>)
+            10_162 ---> (<KnotInfo.K10_162: '10_162'>, <SymmetryMutant.itself: 's'>)
+            10_163 ---> (<KnotInfo.K10_163: '10_163'>, <SymmetryMutant.itself: 's'>)
+            10_164 ---> (<KnotInfo.K10_164: '10_164'>, <SymmetryMutant.itself: 's'>)
+            10_165 ---> (<KnotInfo.K10_165: '10_165'>, <SymmetryMutant.mirror_image: 'm'>)
 
         Clarifying ther Perko series against `SnapPy
         <https://snappy.math.uic.edu/index.html>`__::
@@ -4197,27 +4252,29 @@ class Link(SageObject):
             ....:     K = K10(i)
             ....:     k = K.link(K.items.name, snappy=True)
             ....:     print(k, '--->', k.sage_link().get_knotinfo())
-            <Link 10_160: 1 comp; 10 cross> ---> (<KnotInfo.K10_160: '10_160'>, False)
-            <Link 10_161: 1 comp; 10 cross> ---> (<KnotInfo.K10_161: '10_161'>, True)
-            <Link 10_162: 1 comp; 10 cross> ---> (<KnotInfo.K10_161: '10_161'>, False)
-            <Link 10_163: 1 comp; 10 cross> ---> (<KnotInfo.K10_162: '10_162'>, False)
-            <Link 10_164: 1 comp; 10 cross> ---> (<KnotInfo.K10_163: '10_163'>, False)
-            <Link 10_165: 1 comp; 10 cross> ---> (<KnotInfo.K10_164: '10_164'>, False)
+            <Link 10_160: 1 comp; 10 cross> ---> (<KnotInfo.K10_160: '10_160'>, <SymmetryMutant.itself: 's'>)
+            <Link 10_161: 1 comp; 10 cross> ---> (<KnotInfo.K10_161: '10_161'>, <SymmetryMutant.mirror_image: 'm'>)
+            <Link 10_162: 1 comp; 10 cross> ---> (<KnotInfo.K10_161: '10_161'>, <SymmetryMutant.itself: 's'>)
+            <Link 10_163: 1 comp; 10 cross> ---> (<KnotInfo.K10_162: '10_162'>, <SymmetryMutant.itself: 's'>)
+            <Link 10_164: 1 comp; 10 cross> ---> (<KnotInfo.K10_163: '10_163'>, <SymmetryMutant.itself: 's'>)
+            <Link 10_165: 1 comp; 10 cross> ---> (<KnotInfo.K10_164: '10_164'>, <SymmetryMutant.itself: 's'>)
             sage: snappy.Link('10_166')
             <Link 10_166: 1 comp; 10 cross>
             sage: _.sage_link().get_knotinfo()
-            (<KnotInfo.K10_165: '10_165'>, True)
+            (<KnotInfo.K10_165: '10_165'>, <SymmetryMutant.mirror_image: 'm'>)
 
         Another pair of confusion (see the corresponding `Warning
         <http://katlas.math.toronto.edu/wiki/10_86>`__)::
 
-           sage: # optional - database_knotinfo snappy
-           sage: Ks10_86 = snappy.Link('10_86')
-           sage: Ks10_83 = snappy.Link('10_83')
-           sage: Ks10_86.sage_link().get_knotinfo()
-           (<KnotInfo.K10_83: '10_83'>, True)
-           sage: Ks10_83.sage_link().get_knotinfo()
-           (<KnotInfo.K10_86: '10_86'>, False)
+            sage: # optional - database_knotinfo snappy
+            sage: Ks10_86 = snappy.Link('10_86')
+            sage: Ks10_83 = snappy.Link('10_83')
+            sage: Ks10_86.sage_link().get_knotinfo(unique=False)
+            [(<KnotInfo.K10_83: '10_83'>, <SymmetryMutant.concordance_inverse: 'mr'>),
+            (<KnotInfo.K10_83: '10_83'>, <SymmetryMutant.mirror_image: 'm'>)]
+            sage: Ks10_83.sage_link().get_knotinfo(unique=False)
+            [(<KnotInfo.K10_86: '10_86'>, <SymmetryMutant.itself: 's'>),
+            (<KnotInfo.K10_86: '10_86'>, <SymmetryMutant.reverse: 'r'>)]
 
         TESTS::
 
@@ -4225,15 +4282,40 @@ class Link(SageObject):
             sage: L = KnotInfo.L10a171_1_1_0
             sage: l = L.link(L.items.braid_notation)
             sage: l.get_knotinfo(unique=False)
-            [(<KnotInfo.L10a171_0_1_0: 'L10a171{0,1,0}'>, True),
-             (<KnotInfo.L10a171_1_0_1: 'L10a171{1,0,1}'>, True),
-             (<KnotInfo.L10a171_1_1_0: 'L10a171{1,1,0}'>, False),
-             (<KnotInfo.L10a171_1_1_1: 'L10a171{1,1,1}'>, False)]
+            [(<KnotInfo.L10a171_0_1_0: 'L10a171{0,1,0}'>,
+              <SymmetryMutant.concordance_inverse: 'mr'>),
+             (<KnotInfo.L10a171_0_1_0: 'L10a171{0,1,0}'>,
+              <SymmetryMutant.mirror_image: 'm'>),
+             (<KnotInfo.L10a171_1_0_1: 'L10a171{1,0,1}'>,
+              <SymmetryMutant.concordance_inverse: 'mr'>),
+             (<KnotInfo.L10a171_1_0_1: 'L10a171{1,0,1}'>,
+              <SymmetryMutant.mirror_image: 'm'>),
+             (<KnotInfo.L10a171_1_1_0: 'L10a171{1,1,0}'>, <SymmetryMutant.itself: 's'>),
+             (<KnotInfo.L10a171_1_1_0: 'L10a171{1,1,0}'>, <SymmetryMutant.reverse: 'r'>),
+             (<KnotInfo.L10a171_1_1_1: 'L10a171{1,1,1}'>, <SymmetryMutant.itself: 's'>),
+             (<KnotInfo.L10a171_1_1_1: 'L10a171{1,1,1}'>, <SymmetryMutant.reverse: 'r'>)]
+            sage: KnotInfo.L10a151_0_0.link().get_knotinfo()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: this link cannot be uniquely determined (unknown chirality)
+            use keyword argument `unique` to obtain more details
+            sage: KnotInfo.L10a151_0_0.link().get_knotinfo(unique=False)
+            [(<KnotInfo.L10a151_0_0: 'L10a151{0,0}'>, <SymmetryMutant.unknown: '?'>),
+             (<KnotInfo.L10a151_0_1: 'L10a151{0,1}'>, <SymmetryMutant.unknown: '?'>),
+             (<KnotInfo.L10a151_1_0: 'L10a151{1,0}'>, <SymmetryMutant.unknown: '?'>),
+             (<KnotInfo.L10a151_1_1: 'L10a151{1,1}'>, <SymmetryMutant.unknown: '?'>)]
+
+            sage: L = KnotInfo.L6a2_0
+            sage: L1 = L.link()
+            sage: L2 = L.link(L.items.braid_notation)
+            sage: L1.get_knotinfo() == L2.get_knotinfo()
+            True
         """
         # ToDo: extension to non prime links in which case an element of the monoid
         # over :class:`KnotInfo` should be returned
 
         non_unique_hint = '\nuse keyword argument `unique` to obtain more details'
+        from sage.knots.knotinfo import SymmetryMutant
 
         def answer(L):
             r"""
@@ -4246,33 +4328,45 @@ class Link(SageObject):
             chiral = True
             ach = L.is_amphicheiral()
             achp = L.is_amphicheiral(positive=True)
-            if ach is None and achp is None:
+            rev = L.is_reversible()
+            if ach is None and achp is None and rev is None:
                 if unique:
                     raise NotImplementedError('this link cannot be uniquely determined (unknown chirality)%s' % non_unique_hint)
-            elif L.is_amphicheiral() or L.is_amphicheiral(positive=True):
+                chiral = None
+            elif ach and achp:
                 chiral = False
 
-            if not chiral:
-                mirrored = None
-            elif proved_m and not proved_s and L in lm:
-                mirrored = True
-            elif proved_s and not proved_m and L in l:
-                mirrored = False
+            sym_mut = None
+            if chiral is None:
+                sym_mut = SymmetryMutant.unknown
+            elif not chiral:
+                sym_mut = SymmetryMutant.itself
             else:
-                # nothing proved
-                if L in ls and L in lm:
-                    # In case of a chiral link this means that the HOMFLY-PT
-                    # polynomial does not distinguish mirror images (see the above
-                    # example ``k11m``).
-                    if unique:
-                        raise NotImplementedError('mirror type of this link cannot be uniquely determined%s' % non_unique_hint)
-                    mirrored = '?'
-                elif L in lm:
-                    mirrored = True
-                else:
-                    mirrored = False
+                for k in match_lists:
+                    lk = match_lists[k]
+                    if proves[k] and L in lk:
+                        lk.remove(L)
+                        sym_mut = k
+                        break
 
-            return L, mirrored
+            if not sym_mut:
+                for k in match_lists:
+                    lk = match_lists[k]
+                    if L in lk:
+                        lk.remove(L)
+                        sym_mut = k
+                        break
+
+            if not sym_mut:
+                # In case of a chiral link this means that the HOMFLY-PT
+                # polynomial does not distinguish mirror images (see the above
+                # example ``L10n36_0``).
+                sym_mut = SymmetryMutant.unknown
+
+            if unique and sym_mut is SymmetryMutant.unknown:
+                raise NotImplementedError('symmetry mutant of this link cannot be uniquely determined%s' % non_unique_hint)
+
+            return L, sym_mut
 
         def answer_unori(S):
             r"""
@@ -4282,21 +4376,18 @@ class Link(SageObject):
             if not mirror_version:
                 return S
 
-            mirrored = [answer(L)[1] for L in S]
-            if all(mirrored):
+            sym_mut = [answer(L)[1] for L in S]
+            if all(i is SymmetryMutant.mirror_image for i in sym_mut):
                 # all matching links are mirrored to self
-                return S, True
-            if any(i == '?' for i in mirrored):
+                return S, SymmetryMutant.mirror_image
+            if all(i is SymmetryMutant.itself  for i in sym_mut):
+                # all matching links are self itself
+                return S, SymmetryMutant.itself
+            if any(i is SymmetryMutant.unknown for i in sym_mut):
                 # unknown chirality for a matching link
-                return S, '?'
-            if any(i is None for i in mirrored):
-                # an amphicheiral link matches
-                return S, None
-            if not any(mirrored):
-                # no matching link is mirrored to self
-                return S, False
-            # finally both mirror types match
-            return S, None
+                return S, SymmetryMutant.unknown
+            # finally several mirror types match
+            return S, SymmetryMutant.mixed
 
         def answer_list(l):
             r"""
@@ -4304,9 +4395,9 @@ class Link(SageObject):
             argument ``unique``.
             """
             if not unique:
-                return sorted([answer(L) for L in l])
+                return sorted(set([answer(L) for L in l]))
 
-            if len(l) == 1:
+            if len(set(l)) == 1:
                 return answer(l[0])
 
             if not l[0].is_knot():
@@ -4316,22 +4407,27 @@ class Link(SageObject):
 
             raise NotImplementedError('this link cannot be uniquely determined%s' % non_unique_hint)
 
-        self_m = self.mirror_image()
-        ls, proved_s = self._knotinfo_matching_list()
-        lm, proved_m = self_m._knotinfo_matching_list()
-        l = list(set(ls + lm))
+        match_lists, proves = self._knotinfo_matching_dict()
+
+        # first add only proved matching lists
+        proved = any(proves[k] for k in proves.keys())
+
+        l = []
+        if proved and unique and self.is_knot():
+            for k in match_lists.keys():
+                if proves[k]:
+                    l += match_lists[k]
+        else:
+            # for multi-component links there could regularily be more than one
+            # matching entry
+            for k in match_lists.keys():
+                l += match_lists[k]
 
         if l and not unique:
             return answer_list(l)
 
-        if proved_s and proved_m:
+        if proved:
             return answer_list(l)
-
-        if proved_s:
-            return answer_list(ls)
-
-        if proved_m:
-            return answer_list(lm)
 
         # here we come if we cannot be sure about the found result
 
@@ -4386,7 +4482,6 @@ class Link(SageObject):
             False
 
             sage: # optional - database_knotinfo
-            sage: from sage.knots.knotinfo import KnotInfo
             sage: L = KnotInfo.L7a7_0_0
             sage: L.series(oriented=True).inject()
             Defining L7a7
@@ -4401,6 +4496,48 @@ class Link(SageObject):
             True
             sage: l.is_isotopic(L7a7(3).link())
             False
+
+        Using verbosity::
+
+            sage: set_verbose(1)
+            sage: l1.is_isotopic(l2)
+            verbose 1 (... link.py, is_isotopic) identified by KnotInfo (KnotInfo.K7_2, SymmetryMutant.mirror_image)
+            True
+            sage: l1.is_isotopic(l3)
+            verbose 1 (... link.py, is_isotopic) different Homfly-PT polynomials
+            False
+            sage: set_verbose(0)
+
+        TESTS:
+
+        Check that :issue:`37668` is fixed::
+
+            sage: L = KnotInfo.L6a2_0
+            sage: L1 = L.link()
+            sage: L2 = L.link(L.items.braid_notation)
+            sage: set_verbose(1)
+            sage: L1.is_isotopic(L2)
+            verbose 1 (... link.py, is_isotopic) identified by KnotInfo uniquely (KnotInfo.L6a2_0, SymmetryMutant.itself)
+            True
+            sage: KnotInfo.K0_1.link().is_isotopic(KnotInfo.L2a1_0.link())
+            verbose 1 (... link.py, is_isotopic) different number of components
+            False
+
+            sage: # optional - database_knotinfo
+            sage: K = KnotInfo.K10_67
+            sage: K1 = K.link()
+            sage: K1r = K.link().reverse()
+            sage: K1.is_isotopic(K1r)
+            verbose 1 (... link.py, is_isotopic) unidentified by KnotInfo ([<KnotInfo.K10_67: '10_67'>], SymmetryMutant.itself != [<KnotInfo.K10_67: '10_67'>], SymmetryMutant.reverse)
+            False
+            sage: KnotInfo.K10_25.link().is_isotopic(KnotInfo.K10_56.link())
+            verbose 1 (... link.py, is_isotopic) unidentified by KnotInfo ([<KnotInfo.K10_25: '10_25'>] != [<KnotInfo.K10_56: '10_56'>], SymmetryMutant.itself)
+            False
+            sage: KnotInfo.L8n2_0.link().is_isotopic(KnotInfo.L8n2_1.link())
+            verbose 1 (... link.py, is_isotopic) identified by KnotInfoSeries ([<KnotInfo.L8n2_0: 'L8n2{0}'>, <KnotInfo.L8n2_1: 'L8n2{1}'>], SymmetryMutant.reverse)
+            True
+            sage: set_verbose(0)
+
         """
         from sage.misc.verbose import verbose
         if not isinstance(other, Link):
@@ -4412,6 +4549,11 @@ class Link(SageObject):
             verbose('identified by representation')
             return True
 
+        if self.number_of_components() != other.number_of_components():
+            # surely non isotopic
+            verbose('different number of components')
+            return False
+
         if self.homfly_polynomial() != other.homfly_polynomial():
             # surely non isotopic
             verbose('different Homfly-PT polynomials')
@@ -4422,21 +4564,53 @@ class Link(SageObject):
             verbose('identified via Markov moves')
             return True
 
-        try:
-            ki, m = self.get_knotinfo()
-            verbose('KnotInfo self: %s mirrored %s' % (ki, m))
-            try:
-                if ki.is_unique():
-                    try:
-                        kio = other.get_knotinfo()
-                        verbose('KnotInfo other: %s mirrored %s' % kio)
-                        return (ki, m) == kio
-                    except NotImplementedError:
-                        pass
-            except AttributeError:
-                # ki is a series
-                pass
-        except NotImplementedError:
-            pass
+        slists, sproves = self._knotinfo_matching_dict()
+        olists, oproves = other._knotinfo_matching_dict()
+        proved_s = None
+        proved_o = None
+        for k in slists.keys():
+            sl = slists[k]
+            ol = olists[k]
+            sp = sproves[k]
+            op = oproves[k]
+            if sp and op:
+                if sorted(sl) == sorted(ol):
+                    if len(sl) == 1:
+                        verbose('identified by KnotInfo uniquely (%s, %s)' % (sl[0], k))
+                        return True
+                    elif not self.is_knot():
+                        if len(set([l.series(oriented=True) for l in sl])) == 1:
+                            # all matches are orientation mutants of each other
+                            verbose('identified by KnotInfoSeries (%s, %s)' % (sl, k))
+                            return True
+                        else:
+                            verbose('KnotInfoSeries non-unique (%s, %s)' % (sl, k))
+                    else:
+                        verbose('KnotInfo non-unique (%s, %s)' % (sl, k))
+                else:
+                    common = [l for l in sl if l in ol]
+                    if common:
+                        # better don't trust
+                        verbose('KnotInfo common: %s' % common)
+                    else:
+                        verbose('unidentified by KnotInfo (%s != %s, %s)' % (sl, ol, k))
+                        return False
+            elif sp:
+                proved_s = (sl, k)
+            elif op:
+                proved_o = (ol, k)
+        if proved_s and proved_o:
+            sl, sk = proved_s
+            ol, ok = proved_o
+            verbose('unidentified by KnotInfo (%s, %s != %s, %s)' % (sl, sk, ol, ok))
+            return False
+
+        for k in slists.keys():
+            # second loop without provings
+            sl = slists[k]
+            ol = olists[k]
+            if sorted(sl) == sorted(ol) and len(sl) == 1:
+                verbose('identified by KnotInfo (%s, %s)' % (sl[0], k))
+                return True
 
         raise NotImplementedError('comparison not possible!')

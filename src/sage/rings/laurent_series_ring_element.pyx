@@ -303,7 +303,7 @@ cdef class LaurentSeries(AlgebraElement):
         x = im_gens[0]
         return codomain(self.__u._im_gens_(codomain, im_gens, base_map=base_map) * x**self.__n)
 
-    cdef _normalize(self) noexcept:
+    cdef _normalize(self):
         r"""
         A Laurent series is a pair (u(t), n), where either u=0 (to some
         precision) or u is a unit. This pair corresponds to
@@ -729,7 +729,7 @@ cdef class LaurentSeries(AlgebraElement):
                 self.__u = self.__u._parent(coeffs)
         self._normalize()
 
-    cpdef _add_(self, right_m) noexcept:
+    cpdef _add_(self, right_m):
         """
         Add two power series with the same parent.
 
@@ -787,7 +787,7 @@ cdef class LaurentSeries(AlgebraElement):
         # 3. Add
         return type(self)(self._parent, f1 + f2, m)
 
-    cpdef _sub_(self, right_m) noexcept:
+    cpdef _sub_(self, right_m):
         """
         Subtract two power series with the same parent.
 
@@ -915,7 +915,7 @@ cdef class LaurentSeries(AlgebraElement):
         """
         return type(self)(self._parent, -self.__u, self.__n)
 
-    cpdef _mul_(self, right_r) noexcept:
+    cpdef _mul_(self, right_r):
         """
         EXAMPLES::
 
@@ -930,10 +930,10 @@ cdef class LaurentSeries(AlgebraElement):
                           self.__u * right.__u,
                           self.__n + right.__n)
 
-    cpdef _rmul_(self, Element c) noexcept:
+    cpdef _rmul_(self, Element c):
         return type(self)(self._parent, self.__u._rmul_(c), self.__n)
 
-    cpdef _lmul_(self, Element c) noexcept:
+    cpdef _lmul_(self, Element c):
         return type(self)(self._parent, self.__u._lmul_(c), self.__n)
 
     def __pow__(_self, r, dummy):
@@ -1082,7 +1082,7 @@ cdef class LaurentSeries(AlgebraElement):
         """
         return type(self)(self._parent, self.__u >> (n - self.__n), n)
 
-    cpdef _div_(self, right_r) noexcept:
+    cpdef _div_(self, right_r):
         """
         EXAMPLES::
 
@@ -1203,7 +1203,7 @@ cdef class LaurentSeries(AlgebraElement):
         """
         return min(self.valuation(), other.valuation())
 
-    cpdef _richcmp_(self, right_r, int op) noexcept:
+    cpdef _richcmp_(self, right_r, int op):
         r"""
         Comparison of ``self`` and ``right``.
 

@@ -42,7 +42,7 @@ from sage.rings.integer cimport Integer
 
 from sage.libs.gmp.pylong cimport *
 
-cdef mpz_set_integer(mpz_t v, x) noexcept:
+cdef mpz_set_integer(mpz_t v, x):
     if isinstance(x, int):
         mpz_set_pylong(v, x)
     elif isinstance(x, Integer):
@@ -57,10 +57,10 @@ cdef inline void mpz_add_si(mpz_t a, mpz_t b, long x) noexcept:
         # careful: overflow when negating INT_MIN
         mpz_sub_ui(a, b, <unsigned long>(-x))
 
-cdef inline mpzi(mpz_t n) noexcept:
+cdef inline mpzi(mpz_t n):
     return mpz_get_pyintlong(n)
 
-cdef inline mpzl(mpz_t n) noexcept:
+cdef inline mpzl(mpz_t n):
     return mpz_get_pylong(n)
 
 # This should be done better
@@ -120,14 +120,14 @@ DEF S_INF = 3
 DEF S_NINF = 4
 DEF S_NAN = 5
 
-cdef inline str rndmode_to_python(int rnd) noexcept:
+cdef inline str rndmode_to_python(int rnd):
     if rnd == ROUND_N: return 'n'
     if rnd == ROUND_F: return 'f'
     if rnd == ROUND_C: return 'c'
     if rnd == ROUND_D: return 'd'
     if rnd == ROUND_U: return 'u'
 
-cdef inline rndmode_from_python(str rnd) noexcept:
+cdef inline rndmode_from_python(str rnd):
     if rnd == 'n': return ROUND_N
     if rnd == 'f': return ROUND_F
     if rnd == 'c': return ROUND_C
@@ -205,7 +205,7 @@ cdef inline void MPF_set_ninf(MPF *x) noexcept:
     """Set value to -infinity."""
     x.special = S_NINF
 
-cdef MPF_set_si(MPF *x, long n) noexcept:
+cdef MPF_set_si(MPF *x, long n):
     """Set value to that of a given C (long) integer."""
     if n:
         x.special = S_NORMAL
@@ -215,7 +215,7 @@ cdef MPF_set_si(MPF *x, long n) noexcept:
     else:
         MPF_set_zero(x)
 
-cdef MPF_set_int(MPF *x, n) noexcept:
+cdef MPF_set_int(MPF *x, n):
     """Set value to that of a given Python integer."""
     x.special = S_NORMAL
     mpz_set_integer(x.man, n)
@@ -225,7 +225,7 @@ cdef MPF_set_int(MPF *x, n) noexcept:
     else:
         MPF_set_zero(x)
 
-cdef MPF_set_man_exp(MPF *x, man, exp) noexcept:
+cdef MPF_set_man_exp(MPF *x, man, exp):
     """
     Set value to man*2^exp where man, exp may be of any appropriate
     Python integer types.
@@ -260,7 +260,7 @@ cdef tuple _mpf_fnan = (0, MPZ_ZERO, -123, -1)
 cdef tuple _mpf_finf = (0, MPZ_ZERO, -456, -2)
 cdef tuple _mpf_fninf = (1, MPZ_ZERO, -789, -3)
 
-cdef MPF_set_tuple(MPF *x, tuple value) noexcept:
+cdef MPF_set_tuple(MPF *x, tuple value):
     """
     Set value of an MPF to that of a normalized (sign, man, exp, bc) tuple
     in the format used by mpmath.libmp.
@@ -289,7 +289,7 @@ cdef MPF_set_tuple(MPF *x, tuple value) noexcept:
     else:
         MPF_set_nan(x)
 
-cdef MPF_to_tuple(MPF *x) noexcept:
+cdef MPF_to_tuple(MPF *x):
     """Convert MPF value to (sign, man, exp, bc) tuple."""
     cdef Integer man
     if x.special:
@@ -309,7 +309,7 @@ cdef MPF_to_tuple(MPF *x) noexcept:
     bc = mpz_sizeinbase(x.man, 2)
     return (sign, man, exp, bc)
 
-cdef MPF_set_double(MPF *r, double x) noexcept:
+cdef MPF_set_double(MPF *r, double x):
     """
     Set r to the value of a C double x.
     """
@@ -366,7 +366,7 @@ cdef double MPF_to_double(MPF *x, bint strict) noexcept:
         return _double_ninf
     return _double_nan
 
-cdef MPF_to_fixed(mpz_t r, MPF *x, long prec, bint truncate) noexcept:
+cdef MPF_to_fixed(mpz_t r, MPF *x, long prec, bint truncate):
     """
     Set r = x, r being in the format of a fixed-point number with prec bits.
     Floor division is used unless truncate=True in which case
@@ -443,7 +443,7 @@ cdef void MPF_abs(MPF *r, MPF *s) noexcept:
     if r is not s:
         mpz_set(r.exp, s.exp)
 
-cdef MPF_normalize(MPF *x, MPopts opts) noexcept:
+cdef MPF_normalize(MPF *x, MPopts opts):
     """
     Normalize.
 
@@ -616,7 +616,7 @@ cdef void _mul_special(MPF *r, MPF *s, MPF *t) noexcept:
         else:
             MPF_set_ninf(r)
 
-cdef _div_special(MPF *r, MPF *s, MPF *t) noexcept:
+cdef _div_special(MPF *r, MPF *s, MPF *t):
     # TODO: handle signed zeros correctly
     if s.special == S_NAN or t.special == S_NAN:
         MPF_set_nan(r)
@@ -637,7 +637,7 @@ cdef _div_special(MPF *r, MPF *s, MPF *t) noexcept:
     elif t.special == S_INF or t.special == S_NINF:
         MPF_set_zero(r)
 
-cdef _add_perturbation(MPF *r, MPF *s, int sign, MPopts opts) noexcept:
+cdef _add_perturbation(MPF *r, MPF *s, int sign, MPopts opts):
     cdef long shift
     if opts.rounding == ROUND_N:
         MPF_set(r, s)
@@ -650,7 +650,7 @@ cdef _add_perturbation(MPF *r, MPF *s, int sign, MPopts opts) noexcept:
         mpz_sub_ui(r.exp, s.exp, shift)
         MPF_normalize(r, opts)
 
-cdef MPF_add(MPF *r, MPF *s, MPF *t, MPopts opts) noexcept:
+cdef MPF_add(MPF *r, MPF *s, MPF *t, MPopts opts):
     """
     Set r = s + t, with exact rounding.
 
@@ -704,7 +704,7 @@ cdef MPF_add(MPF *r, MPF *s, MPF *t, MPopts opts) noexcept:
         else:
             _add_perturbation(r, t, mpz_sgn(s.man), opts)
 
-cdef MPF_sub(MPF *r, MPF *s, MPF *t, MPopts opts) noexcept:
+cdef MPF_sub(MPF *r, MPF *s, MPF *t, MPopts opts):
     """
     Set r = s - t, with exact rounding.
 
@@ -850,7 +850,7 @@ cdef bint MPF_ge(MPF *s, MPF *t) noexcept:
         return False
     return MPF_cmp(s, t) >= 0
 
-cdef MPF_mul(MPF *r, MPF *s, MPF *t, MPopts opts) noexcept:
+cdef MPF_mul(MPF *r, MPF *s, MPF *t, MPopts opts):
     """
     Set r = s * t, with correct rounding.
 
@@ -866,7 +866,7 @@ cdef MPF_mul(MPF *r, MPF *s, MPF *t, MPopts opts) noexcept:
         if opts.prec:
             MPF_normalize(r, opts)
 
-cdef MPF_div(MPF *r, MPF *s, MPF *t, MPopts opts) noexcept:
+cdef MPF_div(MPF *r, MPF *s, MPF *t, MPopts opts):
     """
     Set r = s / t, with correct rounding.
     """
@@ -961,7 +961,7 @@ cdef int MPF_sqrt(MPF *r, MPF *s, MPopts opts) noexcept:
     MPF_normalize(r, opts)
     return 0
 
-cdef MPF_hypot(MPF *r, MPF *a, MPF *b, MPopts opts) noexcept:
+cdef MPF_hypot(MPF *r, MPF *a, MPF *b, MPopts opts):
     """
     Set r = sqrt(a^2 + b^2)
     """
@@ -981,7 +981,7 @@ cdef MPF_hypot(MPF *r, MPF *a, MPF *b, MPopts opts) noexcept:
     MPF_add(r, &tmp1, &tmp2, tmp_opts)
     MPF_sqrt(r, r, opts)
 
-cdef MPF_pow_int(MPF *r, MPF *x, mpz_t n, MPopts opts) noexcept:
+cdef MPF_pow_int(MPF *r, MPF *x, mpz_t n, MPopts opts):
     """
     Set r = x ** n. Currently falls back to mpmath.libmp
     unless n is tiny.
@@ -1074,7 +1074,7 @@ cdef int _pi_prec = -1
 cdef mpz_t _ln2_value
 cdef int _ln2_prec = -1
 
-cdef mpz_set_pi(mpz_t x, int prec) noexcept:
+cdef mpz_set_pi(mpz_t x, int prec):
     """
     Set x = pi as a fixed-point number.
     """
@@ -1090,7 +1090,7 @@ cdef mpz_set_pi(mpz_t x, int prec) noexcept:
         mpz_set(x, _pi_value)
         _pi_prec = prec
 
-cdef mpz_set_ln2(mpz_t x, int prec) noexcept:
+cdef mpz_set_ln2(mpz_t x, int prec):
     """
     Set x = ln(2) as a fixed-point number.
     """
@@ -1122,7 +1122,7 @@ cdef void _cy_exp_mpfr(mpz_t y, mpz_t x, int prec) noexcept:
     mpfr_clear(yf)
     mpfr_clear(xf)
 
-cdef cy_exp_basecase(mpz_t y, mpz_t x, int prec) noexcept:
+cdef cy_exp_basecase(mpz_t y, mpz_t x, int prec):
     """
     Computes y = exp(x) for fixed-point numbers y and x, assuming
     that x is small (|x| ~< 1). At small precisions, this function
@@ -1174,7 +1174,7 @@ cdef cy_exp_basecase(mpz_t y, mpz_t x, int prec) noexcept:
     mpz_clear(a)
 
 
-cdef MPF_exp(MPF *y, MPF *x, MPopts opts) noexcept:
+cdef MPF_exp(MPF *y, MPF *x, MPopts opts):
     """
     Set y = exp(x).
     """
@@ -1229,7 +1229,7 @@ cdef MPF_exp(MPF *y, MPF *x, MPopts opts) noexcept:
     MPF_normalize(y, opts)
 
 
-cdef MPF_complex_sqrt(MPF *c, MPF *d, MPF *a, MPF *b, MPopts opts) noexcept:
+cdef MPF_complex_sqrt(MPF *c, MPF *d, MPF *a, MPF *b, MPopts opts):
     """
     Set c+di = sqrt(a+bi).
 
@@ -1321,7 +1321,7 @@ cdef int MPF_get_mpfr_overflow(mpfr_t y, MPF *x) noexcept:
     else:
         return 1
 
-cdef MPF_set_mpfr(MPF *y, mpfr_t x, MPopts opts) noexcept:
+cdef MPF_set_mpfr(MPF *y, mpfr_t x, MPopts opts):
     """
     Convert the MPFR number x to a normalized MPF y.
     inf/nan and zero are handled.
@@ -1400,7 +1400,7 @@ cdef int MPF_log(MPF *y, MPF *x, MPopts opts) noexcept:
     mpfr_clear(yy)
     return negative
 
-cdef MPF_set_pi(MPF *x, MPopts opts) noexcept:
+cdef MPF_set_pi(MPF *x, MPopts opts):
     """
     Set x = pi.
     """
@@ -1409,7 +1409,7 @@ cdef MPF_set_pi(MPF *x, MPopts opts) noexcept:
     mpz_set_si(x.exp, -(opts.prec+20))
     MPF_normalize(x, opts)
 
-cdef MPF_set_ln2(MPF *x, MPopts opts) noexcept:
+cdef MPF_set_ln2(MPF *x, MPopts opts):
     """
     Set x = ln(2).
     """
@@ -1453,6 +1453,7 @@ def exp_fixed(Integer x, int prec, ln2=None):
     mpz_clear(n)
     return v
 
+
 def cos_sin_fixed(Integer x, int prec, pi2=None):
     """
     Returns fixed-point approximations of cos(x), sin(x) where
@@ -1493,7 +1494,7 @@ cdef mpz_t log_int_cache[MAX_LOG_INT_CACHE+1]
 cdef long log_int_cache_prec[MAX_LOG_INT_CACHE+1]
 cdef bint log_int_cache_initialized = 0
 
-cdef mpz_log_int(mpz_t v, mpz_t n, int prec) noexcept:
+cdef mpz_log_int(mpz_t v, mpz_t n, int prec):
     """
     Set v = log(n) where n is an integer and v is a fixed-point number
     with the specified precision.
@@ -1505,6 +1506,7 @@ cdef mpz_log_int(mpz_t v, mpz_t n, int prec) noexcept:
     mpfr_mul_2exp(f, f, prec, MPFR_RNDN)
     mpfr_get_z(v, f, MPFR_RNDN)
     mpfr_clear(f)
+
 
 def log_int_fixed(n, long prec, ln2=None):
     """
@@ -1543,7 +1545,7 @@ def log_int_fixed(n, long prec, ln2=None):
     return t
 
 
-cdef _MPF_cos_python(MPF *c, MPF *x, MPopts opts) noexcept:
+cdef _MPF_cos_python(MPF *c, MPF *x, MPopts opts):
     """
     Computes c = cos(x) by calling the mpmath.libmp Python implementation.
     """
@@ -1552,7 +1554,7 @@ cdef _MPF_cos_python(MPF *c, MPF *x, MPopts opts) noexcept:
             rndmode_to_python(opts.rounding), 1, False)
     MPF_set_tuple(c, ct)
 
-cdef _MPF_sin_python(MPF *s, MPF *x, MPopts opts) noexcept:
+cdef _MPF_sin_python(MPF *s, MPF *x, MPopts opts):
     """
     Computes s = sin(x) by calling the mpmath.libmp Python implementation.
     """
@@ -1562,7 +1564,7 @@ cdef _MPF_sin_python(MPF *s, MPF *x, MPopts opts) noexcept:
     MPF_set_tuple(s, st)
 
 
-cdef MPF_cos(MPF *c, MPF *x, MPopts opts) noexcept:
+cdef MPF_cos(MPF *c, MPF *x, MPopts opts):
     """
     Set c = cos(x)
     """
@@ -1585,7 +1587,7 @@ cdef MPF_cos(MPF *c, MPF *x, MPopts opts) noexcept:
     mpfr_clear(xf)
     mpfr_clear(cf)
 
-cdef MPF_sin(MPF *s, MPF *x, MPopts opts) noexcept:
+cdef MPF_sin(MPF *s, MPF *x, MPopts opts):
     """
     Set s = sin(x)
     """
@@ -1608,7 +1610,7 @@ cdef MPF_sin(MPF *s, MPF *x, MPopts opts) noexcept:
     mpfr_clear(xf)
     mpfr_clear(sf)
 
-cdef MPF_cos_sin(MPF *c, MPF *s, MPF *x, MPopts opts) noexcept:
+cdef MPF_cos_sin(MPF *c, MPF *s, MPF *x, MPopts opts):
     """
     Set c = cos(x), s = sin(x)
     """
@@ -1638,7 +1640,7 @@ cdef MPF_cos_sin(MPF *c, MPF *s, MPF *x, MPopts opts) noexcept:
     mpfr_clear(sf)
 
 
-cdef MPF_complex_exp(MPF *re, MPF *im, MPF *a, MPF *b, MPopts opts) noexcept:
+cdef MPF_complex_exp(MPF *re, MPF *im, MPF *a, MPF *b, MPopts opts):
     """
     Set re+im*i = exp(a+bi)
     """
@@ -1752,7 +1754,7 @@ cdef int MPF_pow(MPF *z, MPF *x, MPF *y, MPopts opts) except -1:
     MPF_clear(&w)
     return 0
 
-cdef MPF_complex_square(MPF *re, MPF *im, MPF *a, MPF *b, MPopts opts) noexcept:
+cdef MPF_complex_square(MPF *re, MPF *im, MPF *a, MPF *b, MPopts opts):
     """
     Set re+im*i = (a+bi)^2 = a^2-b^2, 2ab*i.
     """
@@ -1769,7 +1771,7 @@ cdef MPF_complex_square(MPF *re, MPF *im, MPF *a, MPF *b, MPopts opts) noexcept:
     MPF_clear(&u)
 
 
-cdef MPF_complex_reciprocal(MPF *re, MPF *im, MPF *a, MPF *b, MPopts opts) noexcept:
+cdef MPF_complex_reciprocal(MPF *re, MPF *im, MPF *a, MPF *b, MPopts opts):
     """
     Set re+im*i = 1/(a+bi), i.e. compute the reciprocal of
     a complex number.
@@ -1793,7 +1795,7 @@ cdef MPF_complex_reciprocal(MPF *re, MPF *im, MPF *a, MPF *b, MPopts opts) noexc
     MPF_clear(&m)
 
 
-cdef MPF_complex_pow_int(MPF *zre, MPF *zim, MPF *xre, MPF *xim, mpz_t n, MPopts opts) noexcept:
+cdef MPF_complex_pow_int(MPF *zre, MPF *zim, MPF *xre, MPF *xim, mpz_t n, MPopts opts):
     """
     Set zre+zim*i = (xre+xim) ^ n, i.e. raise a complex number to an integer power.
     """
@@ -1859,7 +1861,7 @@ cdef MPF_complex_pow_int(MPF *zre, MPF *zim, MPF *xre, MPF *xim, mpz_t n, MPopts
     MPF_set_tuple(zim, vi)
 
 
-cdef MPF_complex_pow_re(MPF *zre, MPF *zim, MPF *xre, MPF *xim, MPF *y, MPopts opts) noexcept:
+cdef MPF_complex_pow_re(MPF *zre, MPF *zim, MPF *xre, MPF *xim, MPF *y, MPopts opts):
     """
     Set (zre+zim*i) = (xre+xim*i) ^ y, i.e. raise a complex number
     to a real power.
@@ -1904,7 +1906,7 @@ cdef MPF_complex_pow_re(MPF *zre, MPF *zim, MPF *xre, MPF *xim, MPF *y, MPopts o
     MPF_set_tuple(zim, vi)
 
 
-cdef MPF_complex_pow(MPF *zre, MPF *zim, MPF *xre, MPF *xim, MPF *yre, MPF *yim, MPopts opts) noexcept:
+cdef MPF_complex_pow(MPF *zre, MPF *zim, MPF *xre, MPF *xim, MPF *yre, MPF *yim, MPopts opts):
     """
     Set (zre + zim*i) = (xre+xim*i) ^ (yre+yim*i).
     """
@@ -1922,7 +1924,7 @@ cdef MPF_complex_pow(MPF *zre, MPF *zim, MPF *xre, MPF *xim, MPF *yre, MPF *yim,
     MPF_set_tuple(zim, vi)
 
 
-cdef mpz_set_tuple_fixed(mpz_t x, tuple t, long prec) noexcept:
+cdef mpz_set_tuple_fixed(mpz_t x, tuple t, long prec):
     """
     Set the integer x to a fixed-point number with specified precision
     and the value of t = (sign,man,exp,bc). Truncating division is used
@@ -1939,7 +1941,7 @@ cdef mpz_set_tuple_fixed(mpz_t x, tuple t, long prec) noexcept:
     else:
         mpz_tdiv_q_2exp(x, x, -offset)
 
-cdef mpz_set_complex_tuple_fixed(mpz_t x, mpz_t y, tuple t, long prec) noexcept:
+cdef mpz_set_complex_tuple_fixed(mpz_t x, mpz_t y, tuple t, long prec):
     """
     Set the integers (x,y) to fixed-point numbers with the values of
     the mpf pair t = ((xsign,xman,xexp,xbc), (ysign,yman,yexp,ybc)).
@@ -1947,7 +1949,7 @@ cdef mpz_set_complex_tuple_fixed(mpz_t x, mpz_t y, tuple t, long prec) noexcept:
     mpz_set_tuple_fixed(x, t[0], prec)
     mpz_set_tuple_fixed(y, t[1], prec)
 
-cdef MPF_set_fixed(MPF *x, mpz_t man, long wp, long prec, int rnd) noexcept:
+cdef MPF_set_fixed(MPF *x, mpz_t man, long wp, long prec, int rnd):
     """
     Set value of an MPF given a fixed-point mantissa of precision wp,
     rounding to the given precision and rounding mode.
@@ -1978,7 +1980,7 @@ cdef mpz_t BCIM[MAX_PARAMS]
 
 
 cdef MPF_hypsum(MPF *a, MPF *b, int p, int q, param_types, str ztype, coeffs, z,
-    long prec, long wp, long epsshift, dict magnitude_check, kwargs) noexcept:
+    long prec, long wp, long epsshift, dict magnitude_check, kwargs):
     """
     Evaluates a+bi = pFq(..., z) by summing the hypergeometric
     series in fixed-point arithmetic.
