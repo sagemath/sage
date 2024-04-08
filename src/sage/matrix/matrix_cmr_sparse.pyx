@@ -1398,6 +1398,23 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [ 0  0  0  1  1  0  0  1 -1]
             sage: M.is_cographic()
             True
+            sage: C3 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 3, sparse=True),
+            ....:                           [[1, 1, 0],
+            ....:                            [1, 0, 1],
+            ....:                            [0, 1, 1]]); C3
+            [1 1 0]
+            [1 0 1]
+            [0 1 1]
+            sage: result, certificate = C3.is_cographic(certificate=True)
+            sage: result
+            True
+            sage: graph, forest_edges, coforest_edges = certificate
+            sage: graph.edges(sort=True, labels=False)
+            [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
+            sage: forest_edges
+            ((3, 2), (0, 3), (1, 3))
+            sage: coforest_edges
+            ((2, 0), (2, 1), (0, 1))
         """
         base_ring = self.parent().base_ring()
         if base_ring.characteristic():
@@ -1501,9 +1518,58 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         return False, NotImplemented  # submatrix TBD
 
-    def is_dual_network_matrix(self, *, time_limit=60.0, certificate=False,
+    def is_conetwork_matrix(self, *, time_limit=60.0, certificate=False,
                                row_keys=None, column_keys=None):
-        raise NotImplementedError
+        r"""
+        EXAMPLES:
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: C3 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 3, sparse=True),
+            ....:                           [[1, 1, 0],
+            ....:                            [1, 0, 1],
+            ....:                            [0, 1, 1]]); C3
+            [1 1 0]
+            [1 0 1]
+            [0 1 1]
+            sage: result, certificate = C3.is_conetwork_matrix(certificate=True)
+            sage: result
+            False
+        """
+        base_ring = self.parent().base_ring()
+        if base_ring.characteristic():
+            raise ValueError(f'only defined over characteristic 0, got {base_ring}')
+
+        cdef bool result
+        cdef bool support_result
+        cdef CMR_GRAPH *digraph = NULL
+        cdef CMR_GRAPH_EDGE* forest_arcs = NULL
+        cdef CMR_GRAPH_EDGE* coforest_arcs = NULL
+        cdef bool* arcs_reversed = NULL
+        cdef CMR_SUBMAT* submatrix = NULL
+        cdef CMR_NETWORK_STATISTICS stats
+
+        sig_on()
+        try:
+            if certificate:
+                CMR_CALL(CMRnetworkTestTranspose(cmr, self._mat, &result, &support_result, &digraph, &forest_arcs,
+                                                &coforest_arcs, &arcs_reversed, &submatrix, &stats,
+                                                time_limit))
+            else:
+                CMR_CALL(CMRnetworkTestTranspose(cmr, self._mat, &result, &support_result, NULL, NULL,
+                                                NULL, NULL, NULL, &stats, time_limit))
+        finally:
+            sig_off()
+
+        if not certificate:
+            return <bint> result
+
+        if <bint> result:
+            sage_digraph = _sage_digraph(digraph, arcs_reversed)
+            sage_forest_arcs = _sage_arcs(digraph, forest_arcs, arcs_reversed, self.nrows(), row_keys)
+            sage_coforest_arcs = _sage_arcs(digraph, coforest_arcs, arcs_reversed, self.ncols(), column_keys)
+            return True, (sage_digraph, sage_forest_arcs, sage_coforest_arcs)
+
+        return False, NotImplemented  # submatrix TBD
 
     def _is_binary_linear_matroid_regular(self, *, time_limit=60.0, certificate=False,
                                           use_direct_graphicness_test=True,
@@ -1860,8 +1926,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             │                                            │
             Isomorphic to a minor of |det| = 2 submatrix Isomorphic to a minor of |det| = 2 submatrix
             sage: C1, C2 = certificate[0].child_nodes()
-            sage: C1.matrix().is_network_matrix()
-            sage: C2.matrix().is_network_matrix()
+            sage: C1.matrix().is_conetwork_matrix()
+            sage: C2.matrix().is_conetwork_matrix()
             sage: result, certificate = M.is_totally_unimodular(
             ....:                           certificate=True,
             ....:                           complete_tree='find_nongraphic')
