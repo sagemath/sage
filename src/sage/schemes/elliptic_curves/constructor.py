@@ -130,7 +130,7 @@ class EllipticCurveFactory(UniqueFactory):
         sage: type(E)
         <class 'sage.schemes.elliptic_curves.ell_finite_field.EllipticCurve_finite_field_with_category'>
         sage: E.category()
-        Category of abelian varieties over Ring of integers modulo 101
+        Category of abelian varieties over Spectrum of Ring of integers modulo 101
 
     In contrast, elliptic curves over `\ZZ/N\ZZ` with `N` composite
     are of type "generic elliptic curve"::
@@ -282,7 +282,7 @@ class EllipticCurveFactory(UniqueFactory):
         sage: type(E)
         <class 'sage.schemes.elliptic_curves.ell_field.EllipticCurve_field_with_category'>
         sage: E.category()
-        Category of abelian varieties over Symbolic Ring
+        Category of abelian varieties over Spectrum of Symbolic Ring
         sage: SR in Fields()
         True
 
@@ -295,7 +295,7 @@ class EllipticCurveFactory(UniqueFactory):
         <class 'sage.schemes.elliptic_curves.ell_field.EllipticCurve_field_with_category'>
         sage: E.category()
         Category of abelian varieties over
-         Fraction Field of Univariate Polynomial Ring in t over Rational Field
+         Spectrum of Fraction Field of Univariate Polynomial Ring in t over Rational Field
 
     See :issue:`12517`::
 

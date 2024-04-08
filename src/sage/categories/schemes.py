@@ -18,6 +18,7 @@ from sage.categories.commutative_additive_groups import CommutativeAdditiveGroup
 from sage.categories.rings import Rings
 from sage.categories.fields import Fields
 from sage.categories.homsets import HomsetsCategory
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class Schemes(Category):
@@ -212,28 +213,53 @@ class AbelianVarieties(Schemes_over_base):
     EXAMPLES::
 
         sage: AbelianVarieties(QQ)
-        Category of abelian varieties over Rational Field
+        Category of abelian varieties over Spectrum of Rational Field
         sage: AbelianVarieties(ZZ)
         Traceback (most recent call last):
         ...
         ValueError: category of abelian varieties is only defined over fields
     """
-    def __init__(self, base):
+    @staticmethod
+    def __classcall__(cls, base):
         r"""
-        Constructor for the ``AbelianVarieties`` category.
+        Normalise arguments for the constructor of the
+        :class:`AbelianVarieties` category.
 
         EXAMPLES::
 
-            sage: AbelianVarieties(QQ)
-            Category of abelian varieties over Rational Field
-            sage: AbelianVarieties(Spec(QQ))
-            Category of abelian varieties over Rational Field
+            sage: AbelianVarieties(QQ) is AbelianVarieties(Spec(QQ))  # indirect doctest
+            True
         """
-        from sage.schemes.generic.scheme import is_AffineScheme
-        if is_AffineScheme(base):
-            base = base.coordinate_ring()
-        if base not in Fields():
+        # from sage.schemes.generic.scheme import is_AffineScheme
+        # if is_AffineScheme(base):
+        #     base = base.coordinate_ring()
+        from sage.schemes.generic.scheme import is_Scheme, is_AffineScheme
+        if not is_Scheme(base):
+            base = Schemes()(base)
+        if not (is_AffineScheme(base) and base.coordinate_ring() in Fields()):
             raise ValueError('category of abelian varieties is only defined over fields')
+        return UniqueRepresentation.__classcall__(cls, base)
+
+    def __init__(self, base):
+        r"""
+        Cosntructor for the :class:`AbelianVarieties` category.
+
+        EXAMPLES::
+
+            sage: A = AbelianVarieties(QQ); A
+            Category of abelian varieties over Spectrum of Rational Field
+            sage: B = AbelianVarieties(Spec(QQ)); B
+            Category of abelian varieties over Spectrum of Rational Field
+            sage: A is B
+            True
+
+        The category of abelian varieties is only defined over fields::
+
+            sage: AbelianVarieties(ZZ)
+            Traceback (most recent call last):
+            ...
+            ValueError: category of abelian varieties is only defined over fields
+        """
         super().__init__(base)
 
     def super_categories(self):
@@ -251,7 +277,7 @@ class AbelianVarieties(Schemes_over_base):
         EXAMPLES::
 
             sage: AbelianVarieties(Spec(QQ))  # indirect doctest
-            Category of abelian varieties over Rational Field
+            Category of abelian varieties over Spectrum of Rational Field
         """
         return "abelian varieties over %s" % self.base_scheme()
 
