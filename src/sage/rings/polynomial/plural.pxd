@@ -37,6 +37,8 @@ cdef class NCPolynomial_plural(RingElement):
     cpdef _repr_short_(self) noexcept
     cdef long _hash_c(self) noexcept
     cpdef is_constant(self) noexcept
+    cpdef dict dict(self) noexcept
+    cpdef dict monomial_coefficients(self, bint copy=*) noexcept
 #    cpdef _homogenize(self, int var)
 
 cdef NCPolynomial_plural new_NCP(NCPolynomialRing_plural parent, poly *juice) noexcept
