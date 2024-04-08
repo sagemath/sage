@@ -642,7 +642,8 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
     def monomial_coefficient(self, mon):
         """
-        Return the base ring element that is the coefficient of ``mon`` in ``self``.
+        Return the base ring element that is the coefficient of ``mon``
+        in ``self``.
 
         This function contrasts with the function :meth:`coefficient`,
         which returns the coefficient of a monomial viewing this
@@ -651,7 +652,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
 
         INPUT:
 
-        - ``mon`` -- a monomial of the parent of ``self``
+        - ``mon`` -- a monomial in the parent of ``self``
 
         OUTPUT: coefficient in base ring
 
@@ -673,6 +674,7 @@ class InfinitePolynomial(CommutativePolynomial, metaclass=InheritComparisonClass
             2*x_0
             sage: c.parent()
             Infinite polynomial ring in x over Rational Field
+
         """
         return self._p.monomial_coefficient(mon._p)
 
