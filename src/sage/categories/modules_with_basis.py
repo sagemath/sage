@@ -2122,14 +2122,14 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 TypeError: no conversion of this rational to integer
             """
             R = self.parent()
-            if new_base_ring is not None:
-                B = new_base_ring
-                R = R.change_ring(B)
-            elif isinstance(f, Map):
+            if isinstance(f, Map):
                 B = f.codomain()
-                R = R.change_ring(B)
             else:
                 B = self.base_ring()
+            if new_base_ring is not None:
+                B = new_base_ring
+            if B is not self.base_ring():
+                R = R.change_ring(B)
             mc = self.monomial_coefficients(copy=False)
             return R.sum_of_terms((m, B(f(c))) for m, c in mc.items())
 
