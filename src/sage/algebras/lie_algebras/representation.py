@@ -497,7 +497,8 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
     but with a non-standard basis given by `a = p_1 + z`, `b = q_1`,
     and `c = q_1 + z`::
 
-        sage: L.<a,b,c> = LieAlgebra(QQ, {('a','b'): {'b':-1, 'c':1}, ('a','c'): {'b':-1, 'c':1}})
+        sage: scoeffs = {('a','b'): {'b':-1, 'c':1}, ('a','c'): {'b':-1, 'c':1}}
+        sage: L.<a,b,c> = LieAlgebra(QQ, scoeffs)
         sage: TestSuite(L).run(elements=list(L.basis()))
         sage: L.is_nilpotent()
         True
@@ -523,11 +524,14 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
     An example with ``minimal=True`` for `H_2 \oplus A_1`, where `A_1` is
     a `1`-dimensional Abelian Lie algebra::
 
-        sage: L.<a,b,c,d> = LieAlgebra(QQ, {('a','b'): {'b':-1, 'c':1}, ('a','c'): {'b':-1, 'c':1}})
+        sage: scoeffs = {('a','b'): {'b':-1, 'c':1}, ('a','c'): {'b':-1, 'c':1}}
+        sage: L.<a,b,c,d> = LieAlgebra(QQ, scoeffs)
         sage: F = L.faithful_representation(); F
-        Faithful 11 dimensional representation of Lie algebra on 4 generators (a, b, c, d) over Rational Field
+        Faithful 11 dimensional representation of Lie algebra on 4
+         generators (a, b, c, d) over Rational Field
         sage: MF = L.faithful_representation(algorithm="minimal"); MF
-        Minimal faithful representation of Lie algebra on 4 generators (a, b, c, d) over Rational Field
+        Minimal faithful representation of Lie algebra on 4
+         generators (a, b, c, d) over Rational Field
         sage: MF.dimension()
         4
 
@@ -552,7 +556,8 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
             sage: MF = H2.faithful_representation(algorithm="minimal")
             sage: TestSuite(MF).run(elements=list(MF.basis()))
 
-            sage: L.<a,b,c> = LieAlgebra(QQ, {('a','b'): {'b':-1, 'c':1}, ('a','c'): {'b':-1, 'c':1}})
+            sage: sc = {('a','b'): {'b':-1, 'c':1}, ('a','c'): {'b':-1, 'c':1}}
+            sage: L.<a,b,c> = LieAlgebra(QQ, sc)
             sage: F = L.faithful_representation()
             sage: TestSuite(F).run(elements=list(F.basis()))
             sage: MF = L.faithful_representation(algorithm="minimal")
@@ -571,12 +576,12 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
             prev = LCS[-1]
             for D in reversed(LCS[:-1]):
                 cur = []
-                for ind in range(len(ZB)-1, -1, -1):
+                for ind in range(len(ZB) - 1, -1, -1):
                     z = ZB[ind]
                     if z in D:
                         ZB.pop(ind)
                         cur.append(z)
-                k = self._step-len(basis_by_deg)
+                k = self._step - len(basis_by_deg)
                 basis_by_deg[k] = cur
                 temp = [bred for b in D.basis() if (bred := Z.reduce(prev.reduce(L(b))))]
                 basis_by_deg[k].extend(L.echelon_form(temp))
@@ -594,7 +599,7 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
             self._Lp = L
         else:
             cob = matrix([b._vector_() for b in L_basis]).transpose()
-            self._invcob = ~cob
+            self._invcob = cob.inverse()
             scoeffs = {}
             for i, b in enumerate(L_basis):
                 for j, bp in enumerate(L_basis[i+1:], start=i+1):
@@ -689,7 +694,8 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
 
         EXAMPLES::
 
-            sage: L.<a,b,c> = LieAlgebra(QQ, {('a','b'): {'b':-1, 'c':1}, ('a','c'): {'b':-1, 'c':1}})
+            sage: sc = {('a','b'): {'b':-1, 'c':1}, ('a','c'): {'b':-1, 'c':1}}
+            sage: L.<a,b,c> = LieAlgebra(QQ, sc)
             sage: F = L.faithful_representation()
             sage: elt = F._to_pbw(a + b + c)^2; elt
             PBW[0]^2 + 4*PBW[0]*PBW[1] - 2*PBW[0]*PBW[2] + 4*PBW[1]^2
@@ -721,7 +727,8 @@ class FaithfulRepresentationNilpotentPBW(CombinatorialFreeModule, Representation
 
         EXAMPLES::
 
-            sage: L.<a,b,c> = LieAlgebra(QQ, {('a','b'): {'b':-1, 'c':1}, ('a','c'): {'b':-1, 'c':1}})
+            sage: sc = {('a','b'): {'b':-1, 'c':1}, ('a','c'): {'b':-1, 'c':1}}
+            sage: L.<a,b,c> = LieAlgebra(QQ, sc)
             sage: F = L.faithful_representation()
             sage: F._to_pbw(a)
             PBW[0]

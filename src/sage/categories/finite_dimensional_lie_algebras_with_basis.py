@@ -1965,9 +1965,11 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: H2.is_nilpotent()
                 True
                 sage: F = H2.faithful_representation(); F
-                Faithful 16 dimensional representation of Heisenberg algebra of rank 2 over Rational Field
+                Faithful 16 dimensional representation of
+                 Heisenberg algebra of rank 2 over Rational Field
                 sage: M = H2.faithful_representation(algorithm="minimal"); M
-                Minimal faithful representation of Heisenberg algebra of rank 2 over Rational Field
+                Minimal faithful representation of
+                 Heisenberg algebra of rank 2 over Rational Field
                 sage: M.dimension()
                 4
                 sage: H2.faithful_representation(algorithm="invalid")
