@@ -232,7 +232,7 @@ FROM with-system-packages as bootstrapped
 #:bootstrapping:
 RUN if [ -d /sage ]; then echo "### Incremental build from \$(cat /sage/VERSION.txt)" && mv /sage /sage-old && mkdir /sage && for a in local logs; do if [ -d /sage-old/\$a ]; then mv /sage-old/\$a /sage; fi; done; rm -rf /sage-old; else mkdir -p /sage; fi
 WORKDIR /sage
-$ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap bootstrap-conda configure.ac sage .homebrew-build-env tox.ini Pipfile.m4 ./
+$ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap configure.ac sage .homebrew-build-env tox.ini Pipfile.m4 ./
 $ADD config/config.rpath config/config.rpath
 $ADD src/doc/bootstrap src/doc/bootstrap
 $ADD src/bin src/bin
