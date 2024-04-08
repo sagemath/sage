@@ -225,6 +225,7 @@ cdef class BooleanFunction(SageObject):
     cdef object _autocorrelation
     cdef object _absolute_indicator
     cdef object _sum_of_square_indicator
+    cdef long long _hamming_weight
 
     def __cinit__(self, x):
         r"""
@@ -347,6 +348,7 @@ cdef class BooleanFunction(SageObject):
             bitset_copy(self._truth_table,(<BooleanFunction>x)._truth_table)
         else:
             raise TypeError("unable to init the Boolean function")
+        self._hamming_weight = -1
 
     def __dealloc__(self):
         bitset_free(self._truth_table)
@@ -762,10 +764,15 @@ cdef class BooleanFunction(SageObject):
             sage: B.hamming_weight() == sum(B.truth_table())
             True
         """
+        if self._hamming_weight != -1:
+            return self._hamming_weight
+
         if self._nvariables < 6:
-            return sum(self.truth_table(format='int'))
+            self._hamming_weight = sum(self.truth_table(format='int'))
         else:
-            return bitset_len(self._truth_table)
+            self._hamming_weight = bitset_len(self._truth_table)
+
+        return self._hamming_weight
 
     def is_balanced(self):
         """
@@ -1360,6 +1367,7 @@ cdef class BooleanFunction(SageObject):
         """
         self._clear_cache()
         bitset_set_to(self._truth_table, int(i), int(y)&1)
+        self._hamming_weight = -1
 
     def __getitem__(self, i):
         """
