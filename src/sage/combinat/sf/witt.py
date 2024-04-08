@@ -23,7 +23,6 @@ from . import multiplicative
 from sage.arith.misc import divisors
 from sage.combinat.integer_lists.invlex import IntegerListsLex
 from sage.combinat.partitions import ZS1_iterator
-from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 
 
