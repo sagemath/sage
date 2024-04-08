@@ -2080,8 +2080,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             - ``f`` -- a callable that will be applied to the
               coefficients of ``self``
 
-            - ``new_base_ring`` (optional) -- if given, the resulting element
-              will be defined over this ring.
+            - ``new_base_ring`` -- (optional) if given, the resulting element
+              will be defined over this ring
 
             EXAMPLES::
 
