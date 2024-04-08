@@ -607,7 +607,7 @@ cdef class PeriodicRegion:
 
     def innermost_point(self):
         """
-        Returns a point well inside the region, specifically the center of
+        Return a point well inside the region, specifically the center of
         (one of) the last tile(s) to be removed on contraction.
 
         EXAMPLES::
@@ -635,7 +635,7 @@ cdef class PeriodicRegion:
 
     def plot(self, **kwds):
         """
-        Plots this region in the fundamental lattice.  If full is False plots
+        Plot this region in the fundamental lattice.  If ``full`` is ``False``, plots
         only the lower half.  Note that the true nature of this region is periodic.
 
         EXAMPLES::

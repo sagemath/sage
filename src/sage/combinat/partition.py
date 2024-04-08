@@ -5197,7 +5197,8 @@ class Partition(CombinatorialElement):
         Checks that the sum of squares of dimensions of characters of the
         symmetric group is the order of the group::
 
-            sage: all(sum(mu.dimension()^2 for mu in Partitions(i))==factorial(i) for i in range(10))
+            sage: all(sum(mu.dimension()^2 for mu in Partitions(i)) == factorial(i)
+            ....:     for i in range(10))
             True
 
         A check coming from the theory of `k`-differentiable posets::
@@ -5495,9 +5496,8 @@ class Partition(CombinatorialElement):
         EXAMPLES::
 
             sage: SM = Partition([2,2,1]).specht_module(QQ); SM
-            Specht module of [(0, 0), (0, 1), (1, 0), (1, 1), (2, 0)] over Rational Field
-            sage: s = SymmetricFunctions(QQ).s()
-            sage: s(SM.frobenius_image())                                               # needs sage.modules
+            Specht module of [2, 2, 1] over Rational Field
+            sage: SM.frobenius_image()                                               # needs sage.modules
             s[2, 2, 1]
         """
         from sage.combinat.specht_module import SpechtModule
@@ -5570,6 +5570,24 @@ class Partition(CombinatorialElement):
         from sage.combinat.specht_module import simple_module_rank
         return simple_module_rank(self, base_ring)
 
+    def tabloid_module(self, base_ring=None):
+        r"""
+        Return the tabloid module corresponding to ``self``.
+
+        EXAMPLES::
+
+            sage: TM = Partition([2,2,1]).tabloid_module(QQ); TM
+            Tabloid module of [2, 2, 1] over Rational Field
+            sage: TM.frobenius_image()
+            s[2, 2, 1] + s[3, 1, 1] + 2*s[3, 2] + 2*s[4, 1] + s[5]
+        """
+        from sage.combinat.specht_module import TabloidModule
+        from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
+        if base_ring is None:
+            from sage.rings.rational_field import QQ
+            base_ring = QQ
+        R = SymmetricGroupAlgebra(base_ring, sum(self))
+        return TabloidModule(R, self)
 
 ##############
 # Partitions #
@@ -5699,14 +5717,14 @@ class Partitions(UniqueRepresentation, Parent):
     Here are some more examples illustrating ``min_part``, ``max_part``,
     and ``length``::
 
-        sage: Partitions(5,min_part=2)
+        sage: Partitions(5, min_part=2)
         Partitions of the integer 5 satisfying constraints min_part=2
-        sage: Partitions(5,min_part=2).list()
+        sage: Partitions(5, min_part=2).list()
         [[5], [3, 2]]
 
     ::
 
-        sage: Partitions(3,max_length=2).list()
+        sage: Partitions(3, max_length=2).list()
         [[3], [2, 1]]
 
     ::
@@ -5819,7 +5837,7 @@ class Partitions(UniqueRepresentation, Parent):
         ...
         ValueError: the size must be specified with any keyword argument
 
-        sage: Partitions(max_part = 3)
+        sage: Partitions(max_part=3)
         3-Bounded Partitions
 
     Check that :issue:`14145` has been fixed::

@@ -58,7 +58,7 @@ cdef class ntl_GF2EX():
         if modulus is None:
             raise ValueError("You must specify a modulus when creating a GF2E.")
 
-        str_x = str(x)  # can cause modulus to change  trac #25790
+        str_x = str(x)  # can cause modulus to change; Issue #25790
         self.c.restore_c()
         ccreadstr(self.x, str_x)
 

@@ -101,7 +101,7 @@ class AbelianGroupElement(AbelianGroupElementBase):
             Multiplicative Abelian group isomorphic to C2 x C3 x C4
             sage: a,b,c = G.gens()
             sage: Gp = G.permutation_group(); Gp                                        # needs sage.groups
-            Permutation Group with generators [(6,7,8,9), (3,4,5), (1,2)]
+            Permutation Group with generators [(1,2), (3,4,5), (6,7,8,9)]
             sage: a.as_permutation()                                                    # needs sage.libs.gap
             (1,2)
             sage: ap = a.as_permutation(); ap                                           # needs sage.libs.gap

@@ -338,9 +338,13 @@ class SchubertPolynomial_class(CombinatorialFreeModule.Element):
             sage: s = SymmetricFunctions(ZZ).schur()
             sage: c = s([2,1,1])
             sage: b.scalar_product(a).expand()
-            x0^2*x1*x2 + x0*x1^2*x2 + x0*x1*x2^2 + x0^2*x1*x3 + x0*x1^2*x3 + x0^2*x2*x3 + 3*x0*x1*x2*x3 + x1^2*x2*x3 + x0*x2^2*x3 + x1*x2^2*x3 + x0*x1*x3^2 + x0*x2*x3^2 + x1*x2*x3^2
+            x0^2*x1*x2 + x0*x1^2*x2 + x0*x1*x2^2 + x0^2*x1*x3 + x0*x1^2*x3
+             + x0^2*x2*x3 + 3*x0*x1*x2*x3 + x1^2*x2*x3 + x0*x2^2*x3 + x1*x2^2*x3
+             + x0*x1*x3^2 + x0*x2*x3^2 + x1*x2*x3^2
             sage: c.expand(4)
-            x0^2*x1*x2 + x0*x1^2*x2 + x0*x1*x2^2 + x0^2*x1*x3 + x0*x1^2*x3 + x0^2*x2*x3 + 3*x0*x1*x2*x3 + x1^2*x2*x3 + x0*x2^2*x3 + x1*x2^2*x3 + x0*x1*x3^2 + x0*x2*x3^2 + x1*x2*x3^2
+            x0^2*x1*x2 + x0*x1^2*x2 + x0*x1*x2^2 + x0^2*x1*x3 + x0*x1^2*x3
+             + x0^2*x2*x3 + 3*x0*x1*x2*x3 + x1^2*x2*x3 + x0*x2^2*x3 + x1*x2^2*x3
+             + x0*x1*x3^2 + x0*x2*x3^2 + x1*x2*x3^2
         """
         if isinstance(x, SchubertPolynomial_class):
             return symmetrica.scalarproduct_schubert(self, x)
