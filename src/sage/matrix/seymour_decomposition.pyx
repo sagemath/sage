@@ -502,7 +502,9 @@ cdef class DecompositionNode(SageObject):
                 raise NotImplementedError
             return result
         # compute it... wait for CMR functions
-        raise NotImplementedError
+        if decomposition:
+            raise NotImplementedError
+        return "Graphic/Network Not Determined"
 
     def is_cographic(self, *, decomposition=False, **kwds):
         r"""
@@ -521,7 +523,29 @@ cdef class DecompositionNode(SageObject):
                 raise NotImplementedError
             return result
         # compute it... wait for CMR functions
-        raise NotImplementedError
+        if decomposition:
+            raise NotImplementedError
+        return "Cographic/Conetwork Not Determined"
+
+    def is_regular(self, *, decomposition=False, **kwds):
+        r"""
+
+        """
+        certificate = kwds.get('certificate', False)
+        cdef int8_t regularity = CMRmatroiddecRegularity(self._dec)
+        if regularity:
+            result = regularity > 0
+            if not decomposition and not certificate:
+                return result
+            result = [result]
+            if decomposition:
+                result.append(self)
+            if certificate:
+                raise NotImplementedError
+            return result
+        if decomposition:
+            raise NotImplementedError
+        return "Regular/TU Not Determined"
 
 
 cdef class ThreeConnectedIrregularNode(DecompositionNode):

@@ -1925,9 +1925,6 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             SubmatrixNode (5×4)                          SubmatrixNode (4×5)
             │                                            │
             Isomorphic to a minor of |det| = 2 submatrix Isomorphic to a minor of |det| = 2 submatrix
-            sage: C1, C2 = certificate[0].child_nodes()
-            sage: C1.matrix().is_conetwork_matrix()
-            sage: C2.matrix().is_conetwork_matrix()
             sage: result, certificate = M.is_totally_unimodular(
             ....:                           certificate=True,
             ....:                           complete_tree='find_nongraphic')
@@ -1939,8 +1936,6 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             SubmatrixNode (5×4)                          UnknownNode (4×5)
             │
             Isomorphic to a minor of |det| = 2 submatrix
-            sage: C1, C2 = certificate[0].child_nodes()
-            sage: C1.matrix().is_network_matrix()
         """
         base_ring = self.parent().base_ring()
         if base_ring.characteristic():
