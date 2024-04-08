@@ -182,7 +182,6 @@ from cpython.object cimport Py_EQ, Py_NE
 from cython.operator cimport dereference as deref
 from cysignals.memory cimport sig_malloc, sig_free
 from sage.ext.cplusplus cimport ccrepr
-from cysignals.signals cimport sig_check
 
 import operator
 
@@ -4108,8 +4107,8 @@ cdef class BooleanPolynomial(MPolynomial):
 
     def separate(self):
         r"""
-        Returns a list of polynomials whose sum is ``self`` and
-        whose sets of variables are mutually disjoint
+        Return a list of polynomials whose sum is ``self`` and
+        whose sets of variables are mutually disjoint.
 
 
         EXAMPLES::
@@ -4130,8 +4129,8 @@ cdef class BooleanPolynomial(MPolynomial):
             var_intersec = set(fq.variables()) & set(fp.variables())
         if fq.is_constant():
             return [fp + fq]
-        else:
-            return [fp] + fq.separate()
+
+        return [fp] + fq.separate()
 
     def hamming_weight(self, threshold=15):
         r"""
@@ -4143,7 +4142,8 @@ cdef class BooleanPolynomial(MPolynomial):
 
         INPUT:
 
-        -  ``threshold`` - (optional) the threshold used in the Algorithm 2 of [LLL21]_
+        -  ``threshold`` - (optional, default: 15) the threshold used
+           in the Algorithm 2 of [LLL21]_
 
         EXAMPLES::
 
@@ -4156,23 +4156,25 @@ cdef class BooleanPolynomial(MPolynomial):
             sage: B.algebraic_normal_form().hamming_weight() == B.hamming_weight()
             True
         """
+        if self._hamming_weight is not None:
+            return self._hamming_weight
 
         from sage.crypto.boolean_function import BooleanFunction
-
-        sig_check()
 
         if threshold > 30:
             raise ValueError("The threshold should be not greater than 30")
 
         for var in self.variables():
             if self / var == 1:
-                return 1<<(self.nvariables() - 1)
+                self._hamming_weight = 1<<(self.nvariables() - 1)
+                return self._hamming_weight
 
         epsilon = 1
 
         for fi in self.separate():
             if fi.nvariables() <= threshold:
-                fi = BooleanPolynomialRing(fi.nvariables(), map(lambda x:str(x),fi.variables()))(fi)
+                fi = BooleanPolynomialRing(fi.nvariables(),
+                                           map(str, fi.variables()))(fi)
                 epsiloni = BooleanFunction(fi).hamming_weight()
             else:
                 # For complex polynomials, select a variable v that minimizing
@@ -4181,24 +4183,28 @@ cdef class BooleanPolynomial(MPolynomial):
                 seperated_nvars = fi.nvariables()
                 guessed_var = 0
                 for var in fi.variables():
-                    fi0_nvar = max(map(lambda x: x.nvariables(),
-                                fi.subs({var: 0}).separate()))
-                    fi1_nvar = max(map(lambda x: x.nvariables(),
-                                fi.subs({var: 1}).separate()))
+                    fi0_nvar = max(x.nvariables() for x in
+                                            fi.subs({var: 0}).separate())
+                    fi1_nvar = max(x.nvariables() for x in
+                                            fi.subs({var: 1}).separate())
                     if max(fi0_nvar, fi1_nvar) < seperated_nvars:
                         seperated_nvars = max(fi0_nvar, fi1_nvar)
                         guessed_var = var
 
                 fi0 = fi.subs({guessed_var: 0})
                 fi1 = fi.subs({guessed_var: 1})
-                epsiloni = fi0.hamming_weight()*(1<<(fi.nvariables()-fi0.nvariables()-1)) + \
-                    fi1.hamming_weight()*(1<<(fi.nvariables()-fi1.nvariables()-1))
+                epsiloni = fi0.hamming_weight()*\
+                           (1<<(fi.nvariables()-fi0.nvariables()-1))\
+                         + fi1.hamming_weight()*\
+                           (1<<(fi.nvariables()-fi1.nvariables()-1))
 
             # piling-up lemma
             epsilon *= 2 * ((1<<fi.nvariables()-1)-epsiloni)
             if epsilon == 0:
                 break
-        return (1<<(self.nvariables()-1)) - (epsilon>>1)
+
+        self._hamming_weight = (1<<(self.nvariables()-1)) - (epsilon>>1)
+        return self._hamming_weight
 
     def deg(self):
         r"""
