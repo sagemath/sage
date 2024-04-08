@@ -256,7 +256,7 @@ cpdef bint next_perm(array l) noexcept:
 
 
 @cython.boundscheck(False)
-cpdef map_to_list(array l, tuple values, int n) noexcept:
+cpdef map_to_list(array l, tuple values, int n):
     """
     Build a list by mapping the array ``l`` using ``values``.
 
@@ -292,7 +292,7 @@ cpdef map_to_list(array l, tuple values, int n) noexcept:
 #####################################################################
 ## Multiplication functions for permutations
 
-cpdef list left_action_same_n(list S, list lp) noexcept:
+cpdef list left_action_same_n(list S, list lp):
     r"""
     Return the permutation obtained by composing a permutation
     ``S`` with a permutation ``lp`` in such an order that ``lp``
@@ -319,7 +319,7 @@ cpdef list left_action_same_n(list S, list lp) noexcept:
         ret.append(S[i-1])
     return ret
 
-cpdef list right_action_same_n(list S, list rp) noexcept:
+cpdef list right_action_same_n(list S, list rp):
     """
     Return the permutation obtained by composing a permutation
     ``S`` with a permutation ``rp`` in such an order that ``S`` is
@@ -346,7 +346,7 @@ cpdef list right_action_same_n(list S, list rp) noexcept:
         ret.append(rp[i-1])
     return ret
 
-cpdef list left_action_product(list S, list lp) noexcept:
+cpdef list left_action_product(list S, list lp):
     r"""
     Return the permutation obtained by composing a permutation
     ``S`` with a permutation ``lp`` in such an order that ``lp`` is
@@ -380,7 +380,7 @@ cpdef list left_action_product(list S, list lp) noexcept:
         lp.append(i)
     return left_action_same_n(S, lp)
 
-cpdef list right_action_product(list S, list rp) noexcept:
+cpdef list right_action_product(list S, list rp):
     """
     Return the permutation obtained by composing a permutation
     ``S`` with a permutation ``rp`` in such an order that ``S`` is

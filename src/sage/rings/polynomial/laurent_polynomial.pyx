@@ -22,7 +22,7 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
     """
     Base class for Laurent polynomials.
     """
-    cdef LaurentPolynomial _new_c(self) noexcept:
+    cdef LaurentPolynomial _new_c(self):
         """
         Return a new Laurent polynomial.
 
@@ -38,7 +38,7 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
         ans._parent = self._parent
         return ans
 
-    cpdef _add_(self, other) noexcept:
+    cpdef _add_(self, other):
         """
         Abstract addition method
 
@@ -53,7 +53,7 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
         """
         raise NotImplementedError
 
-    cpdef _mul_(self, other) noexcept:
+    cpdef _mul_(self, other):
         """
         Abstract multiplication method
 
@@ -68,7 +68,7 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
         """
         raise NotImplementedError
 
-    cpdef _floordiv_(self, other) noexcept:
+    cpdef _floordiv_(self, other):
         """
         Abstract floor division method
 
@@ -222,7 +222,7 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
         """
         return self.number_of_terms()
 
-    cpdef dict dict(self) noexcept:
+    cpdef dict dict(self):
         """
         Abstract ``dict`` method.
 
@@ -534,7 +534,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             u = u.map_coefficients(base_map)
         return codomain(u(x) * x**self.__n)
 
-    cpdef _normalize(self) noexcept:
+    cpdef _normalize(self):
         r"""
         A Laurent series is a pair `(u(t), n)`, where either `u = 0`
         (to some precision) or `u` is a unit. This pair corresponds to
@@ -843,7 +843,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         d = {repr(g): R.var(g) for g in self._parent.gens()}
         return self.subs(**d)
 
-    cpdef dict dict(self) noexcept:
+    cpdef dict dict(self):
         """
         Return a dictionary representing ``self``.
 
@@ -898,7 +898,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         """
         raise IndexError("Laurent polynomials are immutable")
 
-    cpdef _unsafe_mutate(self, i, value) noexcept:
+    cpdef _unsafe_mutate(self, i, value):
         r"""
         Sage assumes throughout that commutative ring elements are
         immutable. This is relevant for caching, etc. But sometimes you
@@ -924,7 +924,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
                 self.__u = self.__u._parent(coeffs)
         self._normalize()
 
-    cpdef _add_(self, right_m) noexcept:
+    cpdef _add_(self, right_m):
         """
         Add two Laurent polynomials with the same parent.
 
@@ -978,7 +978,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         ret._normalize()
         return ret
 
-    cpdef _sub_(self, right_m) noexcept:
+    cpdef _sub_(self, right_m):
         """
         Subtract two Laurent polynomials with the same parent.
 
@@ -1051,7 +1051,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         # No need to normalize
         return ret
 
-    cpdef _mul_(self, right_r) noexcept:
+    cpdef _mul_(self, right_r):
         """
         EXAMPLES::
 
@@ -1069,7 +1069,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         ret._normalize()
         return ret
 
-    cpdef _rmul_(self, Element c) noexcept:
+    cpdef _rmul_(self, Element c):
         """
         EXAMPLES::
 
@@ -1085,7 +1085,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         ret._normalize()
         return ret
 
-    cpdef _lmul_(self, Element c) noexcept:
+    cpdef _lmul_(self, Element c):
         """
         EXAMPLES::
 
@@ -1155,7 +1155,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
             c = self._parent._R(self.__u.leading_coefficient() ** right)
             return self._parent.element_class(self._parent, c, self.__n*right)
 
-    cpdef _floordiv_(self, rhs) noexcept:
+    cpdef _floordiv_(self, rhs):
         """
         Perform division with remainder and return the quotient.
 
@@ -1243,7 +1243,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         # No need to normalize
         return ret
 
-    cpdef _div_(self, rhs) noexcept:
+    cpdef _div_(self, rhs):
         """
         EXAMPLES::
 
@@ -1475,7 +1475,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
         qr._normalize()
         return ql, qr
 
-    cpdef _richcmp_(self, right_r, int op) noexcept:
+    cpdef _richcmp_(self, right_r, int op):
         r"""
         Comparison of ``self`` and ``right_r``.
 

@@ -145,7 +145,7 @@ complex_ten = '(?P<im_first>(?P<im_first_im_sign>' + sign + r')?\s*(?P<im_first_
     r'(\s*(?P<re_first_im_sign>' + sign + r')\s*(?P<re_first_im_abs>' + imaginary_ten + '))?)'
 re_complex_ten = re.compile(r'^\s*(?:' + complex_ten + r')\s*$', re.I)
 
-cpdef inline split_complex_string(string, int base=10) noexcept:
+cpdef inline split_complex_string(string, int base=10):
     """
     Split and return in that order the real and imaginary parts
     of a complex in a string.
@@ -323,7 +323,7 @@ cdef class MPComplexField_class(Field):
                         category=Fields().Infinite())
         self._populate_coercion_lists_(coerce_list=[MPFRtoMPC(self._real_field(), self)])
 
-    cdef MPComplexNumber _new(self) noexcept:
+    cdef MPComplexNumber _new(self):
         """
         Return a new complex number with parent ``self`.
         """
@@ -437,7 +437,7 @@ cdef class MPComplexField_class(Field):
         zz._set(z)
         return zz
 
-    cpdef _coerce_map_from_(self, S) noexcept:
+    cpdef _coerce_map_from_(self, S):
         """
         Canonical coercion of `z` to this mpc complex field.
 
@@ -539,7 +539,7 @@ cdef class MPComplexField_class(Field):
         """
         return 1
 
-    cpdef _an_element_(self) noexcept:
+    cpdef _an_element_(self):
         """
         Return an element of this complex field.
 
@@ -699,7 +699,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
     A floating point approximation to a complex number using any specified
     precision common to both real and imaginary part.
     """
-    cdef MPComplexNumber _new(self) noexcept:
+    cdef MPComplexNumber _new(self):
         """
         Return a new complex number with same parent as ``self``.
         """
@@ -1259,7 +1259,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         """
         return gmpy2.GMPy_MPC_From_mpfr(self.value.re, self.value.im)
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         r"""
         Compare ``self`` to ``other``.
 
@@ -1376,7 +1376,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
     # Basic Arithmetic
     ################################
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         Add two complex numbers with the same parent.
 
@@ -1391,7 +1391,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         mpc_add(z.value, self.value, (<MPComplexNumber>right).value, (<MPComplexField_class>self._parent).__rnd)
         return z
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         Subtract two complex numbers with the same parent.
 
@@ -1406,7 +1406,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         mpc_sub(z.value, self.value, (<MPComplexNumber>right).value, (<MPComplexField_class>self._parent).__rnd)
         return z
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         """
         Multiply two complex numbers with the same parent.
 
@@ -1421,7 +1421,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
         mpc_mul(z.value, self.value, (<MPComplexNumber>right).value, (<MPComplexField_class>self._parent).__rnd)
         return z
 
-    cpdef _div_(self, right) noexcept:
+    cpdef _div_(self, right):
         """
         Divide two complex numbers with the same parent.
 
@@ -1440,7 +1440,7 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
             mpc_div(z.value, self.value, x.value, (<MPComplexField_class>self._parent).__rnd)
         return z
 
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         """
         Return the negative of this complex number.
 
@@ -2445,7 +2445,7 @@ __create_MPComplexNumber_version0 = __create__MPComplexNumber_version0
 #*****************************************************************************
 
 cdef class MPCtoMPC(Map):
-    cpdef Element _call_(self, z) noexcept:
+    cpdef Element _call_(self, z):
         """
         EXAMPLES::
 
@@ -2482,7 +2482,7 @@ cdef class MPCtoMPC(Map):
         return MPCtoMPC(self.codomain(), self.domain())
 
 cdef class INTEGERtoMPC(Map):
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         EXAMPLES::
 
@@ -2505,7 +2505,7 @@ cdef class INTEGERtoMPC(Map):
         return y
 
 cdef class MPFRtoMPC(Map):
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         EXAMPLES::
 
@@ -2529,7 +2529,7 @@ cdef class MPFRtoMPC(Map):
         return y
 
 cdef class CCtoMPC(Map):
-    cpdef Element _call_(self, z) noexcept:
+    cpdef Element _call_(self, z):
         """
         EXAMPLES::
 

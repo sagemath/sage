@@ -86,7 +86,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
         """
         return self._x
 
-    cpdef list list(self) noexcept:
+    cpdef list list(self):
         """
         Return a list with just the element.
 
@@ -144,7 +144,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
         """
         return hash(self._x)
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         """
         Compare the element with the other element with respect to ``op``
 
@@ -175,7 +175,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
         except TypeError:
             return NotImplemented
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         Add the element with the other element.
 
@@ -193,7 +193,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
         res._x = self._x + (<FunctionFieldElement>right)._x
         return res
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         Subtract the other element from the element.
 
@@ -211,7 +211,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
         res._x = self._x - (<FunctionFieldElement>right)._x
         return res
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         """
         Multiply the element with the other element
 
@@ -229,7 +229,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
         res._x = self._x * (<FunctionFieldElement>right)._x
         return res
 
-    cpdef _div_(self, right) noexcept:
+    cpdef _div_(self, right):
         """
         Divide the element with the other element
 
@@ -413,7 +413,7 @@ cdef class FunctionFieldElement_rational(FunctionFieldElement):
 
         raise NotImplementedError("is_nth_power() not implemented for the given n")
 
-    cpdef FunctionFieldElement nth_root(self, n) noexcept:
+    cpdef FunctionFieldElement nth_root(self, n):
         r"""
         Return an ``n``-th root of this element in the function field.
 

@@ -619,7 +619,7 @@ cdef class ring_wrapper_Py():
         return (self._ring == r._ring) == (op == Py_EQ)
 
 
-cdef wrap_ring(ring* R) noexcept:
+cdef wrap_ring(ring* R):
     """
     Wrap a C ring pointer into a Python object.
 
@@ -746,7 +746,7 @@ cdef void singular_ring_delete(ring *doomed) noexcept:
 #############################################################################
 # helpers for debugging
 
-cpdef poison_currRing(frame, event, arg) noexcept:
+cpdef poison_currRing(frame, event, arg):
     """
     Poison the ``currRing`` pointer.
 
@@ -779,7 +779,7 @@ cpdef poison_currRing(frame, event, arg) noexcept:
     return poison_currRing
 
 
-cpdef print_currRing() noexcept:
+cpdef print_currRing():
     """
     Print the ``currRing`` pointer.
 

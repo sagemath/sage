@@ -1736,7 +1736,7 @@ def is_nowhere0_twoweight(int v, int k, int l, int mu):
         return (Nowhere0WordsTwoWeightCodeGraph, q)
 
 
-cdef eigenvalues(int v, int k, int l, int mu) noexcept:
+cdef eigenvalues(int v, int k, int l, int mu):
     r"""
     Return the eigenvalues of a (v,k,l,mu)-strongly regular graph.
 
@@ -1846,7 +1846,7 @@ def eigenmatrix(int v, int k, int l, int mu):
         return Matrix(ZZ, [[1, k, v-k-1], [1, r, -r-1], [1, s, -s-1]])
 
 
-cpdef latin_squares_graph_parameters(int v, int k, int l,int mu) noexcept:
+cpdef latin_squares_graph_parameters(int v, int k, int l,int mu):
     r"""
     Check whether (v,k,l,mu)-strongly regular graph has parameters of an `L_g(n)` s.r.g.
 
@@ -3256,7 +3256,7 @@ def _build_small_srg_database():
             _small_srg_database[N, K, l, m] = [strongly_regular_from_two_weight_code, code['M']]
 
 
-cdef load_brouwer_database() noexcept:
+cdef load_brouwer_database():
     r"""
     Loads Andries Brouwer's database into _brouwer_database.
     """

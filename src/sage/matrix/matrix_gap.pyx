@@ -126,7 +126,7 @@ cdef class Matrix_gap(Matrix_dense):
             mat.append(row)
         self._libgap = libgap(mat)
 
-    cdef Matrix_gap _new(self, Py_ssize_t nrows, Py_ssize_t ncols) noexcept:
+    cdef Matrix_gap _new(self, Py_ssize_t nrows, Py_ssize_t ncols):
         if nrows == self._nrows and ncols == self._ncols:
             P = self._parent
         else:
@@ -167,7 +167,7 @@ cdef class Matrix_gap(Matrix_dense):
         """
         return self._parent, (self.list(),)
 
-    cpdef GapElement gap(self) noexcept:
+    cpdef GapElement gap(self):
         r"""
         Return the underlying gap object.
 
@@ -185,10 +185,10 @@ cdef class Matrix_gap(Matrix_dense):
         """
         return self._libgap
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         return self._base_ring(self._libgap[i,j])
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object x) noexcept:
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object x):
         r"""
         TESTS::
 
@@ -205,7 +205,7 @@ cdef class Matrix_gap(Matrix_dense):
         """
         self._libgap[i,j] = x
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         r"""
         Compare ``self`` and ``right``.
 
@@ -285,7 +285,7 @@ cdef class Matrix_gap(Matrix_dense):
         else:
             return Matrix_dense.__invert__(self)
 
-    cpdef _add_(left, right) noexcept:
+    cpdef _add_(left, right):
         r"""
         TESTS::
 
@@ -298,7 +298,7 @@ cdef class Matrix_gap(Matrix_dense):
         ans._libgap = left._libgap + (<Matrix_gap> right)._libgap
         return ans
 
-    cpdef _sub_(left, right) noexcept:
+    cpdef _sub_(left, right):
         r"""
         TESTS::
 
@@ -311,7 +311,7 @@ cdef class Matrix_gap(Matrix_dense):
         ans._libgap = left._libgap - (<Matrix_gap> right)._libgap
         return ans
 
-    cdef Matrix _matrix_times_matrix_(left, Matrix right) noexcept:
+    cdef Matrix _matrix_times_matrix_(left, Matrix right):
         r"""
         TESTS::
 

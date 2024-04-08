@@ -155,7 +155,7 @@ cdef class ntl_ZZ_p():
             self.c = <ntl_ZZ_pContext_class>ntl_ZZ_pContext(modulus)
             self.c.restore_c()
 
-    cdef ntl_ZZ_p _new(self) noexcept:
+    cdef ntl_ZZ_p _new(self):
         cdef ntl_ZZ_p r
         self.c.restore_c()
         r = ntl_ZZ_p.__new__(ntl_ZZ_p)

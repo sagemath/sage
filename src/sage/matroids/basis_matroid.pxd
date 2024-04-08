@@ -15,33 +15,33 @@ cdef class BasisMatroid(BasisExchangeMatroid):
     cdef _bases_invariant3_var
     cdef SetSystem _bases_partition3_var
 
-    cdef reset_current_basis(self) noexcept
+    cdef reset_current_basis(self)
 
-    cpdef _is_basis(self, X) noexcept
+    cpdef _is_basis(self, X)
 
-    cpdef bases_count(self) noexcept
-    cpdef bases(self) noexcept
-    cpdef nonbases(self) noexcept
+    cpdef bases_count(self)
+    cpdef bases(self)
+    cpdef nonbases(self)
 
-    cpdef truncation(self) noexcept
-    cpdef _extension(self, e, H) noexcept
-    cpdef _with_coloop(self, e) noexcept
-    cpdef relabel(self, l) noexcept
+    cpdef truncation(self)
+    cpdef _extension(self, e, H)
+    cpdef _with_coloop(self, e)
+    cpdef relabel(self, l)
 
-    cpdef _bases_invariant(self) noexcept
-    cpdef _bases_partition(self) noexcept
-    cpdef _bases_invariant2(self) noexcept
-    cpdef _bases_partition2(self) noexcept
-    cpdef _bases_invariant3(self) noexcept
-    cpdef _bases_partition3(self) noexcept
-    cdef _reset_invariants(self) noexcept
+    cpdef _bases_invariant(self)
+    cpdef _bases_partition(self)
+    cpdef _bases_invariant2(self)
+    cpdef _bases_partition2(self)
+    cpdef _bases_invariant3(self)
+    cpdef _bases_partition3(self)
+    cdef _reset_invariants(self)
     cpdef  bint is_distinguished(self, e) noexcept
-    cpdef _is_relaxation(self, M, morphism) noexcept
-    cpdef _is_isomorphism(self, M, morphism) noexcept
-    cpdef _isomorphism(self, other) noexcept
-    cpdef _is_isomorphic(self, other, certificate=*) noexcept
+    cpdef _is_relaxation(self, M, morphism)
+    cpdef _is_isomorphism(self, M, morphism)
+    cpdef _isomorphism(self, other)
+    cpdef _is_isomorphic(self, other, certificate=*)
 
 
-cdef  binom_init(long n, long k) noexcept
+cdef  binom_init(long n, long k)
 cdef  long set_to_index(bitset_t S) noexcept
-cdef  index_to_set(bitset_t, long, long, long) noexcept
+cdef  index_to_set(bitset_t, long, long, long)

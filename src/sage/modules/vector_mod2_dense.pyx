@@ -51,7 +51,7 @@ cimport sage.modules.free_module_element as free_module_element
 from sage.libs.m4ri cimport *
 
 cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
-    cdef _new_c(self) noexcept:
+    cdef _new_c(self):
         """
         EXAMPLES::
 
@@ -106,7 +106,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             mzd_copy(y._entries, self._entries)
         return y
 
-    cdef _init(self, Py_ssize_t degree, parent) noexcept:
+    cdef _init(self, Py_ssize_t degree, parent):
         """
         EXAMPLES::
 
@@ -228,7 +228,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         if self._entries:
             mzd_free(self._entries)
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         EXAMPLES::
 
@@ -254,7 +254,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         c = mzd_cmp(left._entries, (<Vector_mod2_dense>right)._entries)
         return rich_to_bool(op, c)
 
-    cdef get_unsafe(self, Py_ssize_t i) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i):
         """
         EXAMPLES::
 
@@ -303,7 +303,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         return unpickle_v0, (self._parent, self.list(), self._degree,
                              self._is_immutable)
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         EXAMPLES::
 
@@ -318,7 +318,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             mzd_add(z._entries, self._entries, (<Vector_mod2_dense>right)._entries)
         return z
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         EXAMPLES::
 
@@ -350,7 +350,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
         return res
 
 
-    cpdef _dot_product_(self, Vector right) noexcept:
+    cpdef _dot_product_(self, Vector right):
         """
         EXAMPLES::
 
@@ -398,7 +398,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
 
         return n
 
-    cpdef _pairwise_product_(self, Vector right) noexcept:
+    cpdef _pairwise_product_(self, Vector right):
         """
         EXAMPLES::
 
@@ -420,7 +420,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             zrow[i] = (lrow[i] & rrow[i])
         return z
 
-    cpdef _lmul_(self, Element left) noexcept:
+    cpdef _lmul_(self, Element left):
         """
         EXAMPLES::
 
@@ -448,7 +448,7 @@ cdef class Vector_mod2_dense(free_module_element.FreeModuleElement):
             return self.__copy__()
         return self._new_c()
 
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         """
         EXAMPLES::
 

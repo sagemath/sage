@@ -302,7 +302,7 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         return left.new_matrix(left._nrows, right._ncols, entries=e, coerce=False, copy=False)
 
-    cpdef _lmul_(self, Element right) noexcept:
+    cpdef _lmul_(self, Element right):
         """
         Left scalar multiplication. Internal usage only.
 
@@ -371,7 +371,7 @@ cdef class Matrix_sparse(matrix.Matrix):
         else:
             raise RuntimeError("unknown matrix version (=%s)" % version)
 
-    cpdef _richcmp_(self, right, int op) noexcept:
+    cpdef _richcmp_(self, right, int op):
         """
         Rich comparison.
 
@@ -969,7 +969,7 @@ cdef class Matrix_sparse(matrix.Matrix):
                         A.set_unsafe(new_row, new_col, entry)
         return A
 
-    cdef _stack_impl(self, bottom) noexcept:
+    cdef _stack_impl(self, bottom):
         r"""
         Stack ``self`` on top of ``bottom``::
 
@@ -1120,7 +1120,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             Z._subdivide_on_augment(self, other)
         return Z
 
-    cdef _vector_times_matrix_(self, Vector v) noexcept:
+    cdef _vector_times_matrix_(self, Vector v):
         """
         Return the vector times matrix product.
 
@@ -1153,7 +1153,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             s[j] += v[i] * a
         return s
 
-    cdef _matrix_times_vector_(self, Vector v) noexcept:
+    cdef _matrix_times_vector_(self, Vector v):
         """
         Return the matrix times vector product.
 

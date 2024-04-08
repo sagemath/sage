@@ -876,7 +876,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         True
     """
 
-    cdef ComplexNumber _new(self) noexcept:
+    cdef ComplexNumber _new(self):
         """
         Quickly creates a new initialized complex number with the same
         parent as ``self``.
@@ -1469,7 +1469,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         import sympy
         return self.real()._sympy_() + self.imag()._sympy_() * sympy.I
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         Add ``self`` to ``right``.
 
@@ -1484,7 +1484,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         mpfr_add(x.__im, self.__im, (<ComplexNumber>right).__im, rnd)
         return x
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         Subtract ``right`` from ``self``.
 
@@ -1499,7 +1499,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         mpfr_sub(x.__im, self.__im, (<ComplexNumber>right).__im, rnd)
         return x
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         """
         Multiply ``self`` by ``right``.
 
@@ -1568,7 +1568,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         """
         return self.norm_c()
 
-    cdef RealNumber norm_c(ComplexNumber self) noexcept:
+    cdef RealNumber norm_c(ComplexNumber self):
         cdef RealNumber x
         x = RealNumber(self._parent._real_field(), None)
 
@@ -1585,7 +1585,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         mpfr_clear(t1)
         return x
 
-    cdef RealNumber abs_c(ComplexNumber self) noexcept:
+    cdef RealNumber abs_c(ComplexNumber self):
         cdef RealNumber x
         x = RealNumber(self._parent._real_field(), None)
 
@@ -1603,7 +1603,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         mpfr_clear(t1)
         return x
 
-    cpdef _div_(self, right) noexcept:
+    cpdef _div_(self, right):
         """
         Divide ``self`` by ``right``.
 
@@ -1960,7 +1960,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         return complex(mpfr_get_d(self.__re, rnd),
                        mpfr_get_d(self.__im, rnd))
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Compare ``left`` and ``right``.
 
@@ -3349,7 +3349,7 @@ cdef class RRtoCC(Map):
         self._zero = ComplexNumber(CC, 0)
         self._repr_type_str = "Natural"
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         A helper for pickling and copying.
 
@@ -3375,7 +3375,7 @@ cdef class RRtoCC(Map):
         slots['_zero'] = self._zero
         return slots
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         A helper for unpickling and copying.
 
@@ -3394,7 +3394,7 @@ cdef class RRtoCC(Map):
         Map._update_slots(self, _slots)
         self._zero = _slots['_zero']
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         EXAMPLES::
 

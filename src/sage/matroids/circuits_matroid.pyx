@@ -84,7 +84,7 @@ cdef class CircuitsMatroid(Matroid):
         self._matroid_rank = self.rank(self._groundset)
         self._nsc_defined = nsc_defined
 
-    cpdef groundset(self) noexcept:
+    cpdef groundset(self):
         """
         Return the groundset of the matroid.
 
@@ -100,7 +100,7 @@ cdef class CircuitsMatroid(Matroid):
         """
         return self._groundset
 
-    cpdef _rank(self, X) noexcept:
+    cpdef _rank(self, X):
         """
         Return the rank of a set ``X``.
 
@@ -123,7 +123,7 @@ cdef class CircuitsMatroid(Matroid):
 
     # optional
 
-    cpdef full_rank(self) noexcept:
+    cpdef full_rank(self):
         r"""
         Return the rank of the matroid.
 
@@ -140,7 +140,7 @@ cdef class CircuitsMatroid(Matroid):
         """
         return self._matroid_rank
 
-    cpdef _is_independent(self, F) noexcept:
+    cpdef _is_independent(self, F):
         """
         Test if input is independent.
 
@@ -168,7 +168,7 @@ cdef class CircuitsMatroid(Matroid):
                         return False
         return True
 
-    cpdef _max_independent(self, F) noexcept:
+    cpdef _max_independent(self, F):
         """
         Compute a maximal independent subset.
 
@@ -195,7 +195,7 @@ cdef class CircuitsMatroid(Matroid):
 
         return frozenset(I)
 
-    cpdef _circuit(self, F) noexcept:
+    cpdef _circuit(self, F):
         """
         Return a minimal dependent subset.
 
@@ -223,7 +223,7 @@ cdef class CircuitsMatroid(Matroid):
                 return C
         raise ValueError("no circuit in independent set")
 
-    cpdef _is_isomorphic(self, other, certificate=False) noexcept:
+    cpdef _is_isomorphic(self, other, certificate=False):
         """
         Test if ``self`` is isomorphic to ``other``.
 
@@ -415,7 +415,7 @@ cdef class CircuitsMatroid(Matroid):
 
     # enumeration
 
-    cpdef bases(self) noexcept:
+    cpdef bases(self):
         r"""
         Return the bases of the matroid.
 
@@ -470,7 +470,7 @@ cdef class CircuitsMatroid(Matroid):
             if not any(C <= B for C in NSC):
                 yield B
 
-    cpdef circuits(self, k=None) noexcept:
+    cpdef circuits(self, k=None):
         """
         Return the circuits of the matroid.
 
@@ -537,7 +537,7 @@ cdef class CircuitsMatroid(Matroid):
                 for C in self._k_C[i]:
                     yield C
 
-    cpdef nonspanning_circuits(self) noexcept:
+    cpdef nonspanning_circuits(self):
         """
         Return the nonspanning circuits of the matroid.
 
@@ -572,7 +572,7 @@ cdef class CircuitsMatroid(Matroid):
                 for C in self._k_C[i]:
                     yield C
 
-    cpdef no_broken_circuits_sets(self, ordering=None) noexcept:
+    cpdef no_broken_circuits_sets(self, ordering=None):
         r"""
         Return the no broken circuits (NBC) sets of ``self``.
 
@@ -641,7 +641,7 @@ cdef class CircuitsMatroid(Matroid):
 
     # properties
 
-    cpdef girth(self) noexcept:
+    cpdef girth(self):
         r"""
         Return the girth of the matroid.
 
@@ -659,7 +659,7 @@ cdef class CircuitsMatroid(Matroid):
         """
         return min(self._k_C, default=float('inf'))
 
-    cpdef is_paving(self) noexcept:
+    cpdef is_paving(self):
         """
         Return if ``self`` is paving.
 
@@ -678,7 +678,7 @@ cdef class CircuitsMatroid(Matroid):
 
     # verification
 
-    cpdef is_valid(self) noexcept:
+    cpdef is_valid(self):
         r"""
         Test if ``self`` obeys the matroid axioms.
 

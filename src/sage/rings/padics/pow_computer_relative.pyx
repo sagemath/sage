@@ -228,7 +228,7 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
         PowComputer_relative.__init__(self, prime, cache_limit, prec_cap, ram_prec_cap, in_field, poly, shift_seed)
         self._inv_shift_seed = self.invert(shift_seed, self.ram_prec_cap)
 
-    cpdef Polynomial_generic_dense invert(self, Polynomial_generic_dense a, long prec) noexcept:
+    cpdef Polynomial_generic_dense invert(self, Polynomial_generic_dense a, long prec):
         r"""
         Return the inverse of ``a``.
 

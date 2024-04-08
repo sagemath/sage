@@ -137,7 +137,7 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
         """
         return self.matrix()._latex_()
 
-    cpdef _act_on_(self, x, bint self_on_left) noexcept:
+    cpdef _act_on_(self, x, bint self_on_left):
         """
         EXAMPLES::
 
@@ -158,7 +158,7 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
             except TypeError:
                 return None
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         """
         EXAMPLES::
 
@@ -231,7 +231,7 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
         """
         return self.matrix()
 
-    cpdef list list(self) noexcept:
+    cpdef list list(self):
         """
         Return list representation of this matrix.
 

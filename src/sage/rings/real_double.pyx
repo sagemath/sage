@@ -279,7 +279,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
         from sage.rings.complex_double import CDF
         return CDF
 
-    cpdef _coerce_map_from_(self, S) noexcept:
+    cpdef _coerce_map_from_(self, S):
         """
         Canonical coercion of ``S`` to the real double field.
 
@@ -474,7 +474,7 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
         """
         return Integer(0)
 
-    cdef _new_c(self, double value) noexcept:
+    cdef _new_c(self, double value):
         cdef RealDoubleElement x
         x = PY_NEW(RealDoubleElement)
         x._value = value
@@ -742,7 +742,7 @@ cdef class RealDoubleElement(FieldElement):
         """
         return RealDoubleElement, (self._value, )
 
-    cdef _new_c(self, double value) noexcept:
+    cdef _new_c(self, double value):
         cdef RealDoubleElement x
         x = PY_NEW(RealDoubleElement)
         x._value = value
@@ -1311,7 +1311,7 @@ cdef class RealDoubleElement(FieldElement):
         x._value = 1.0 / self._value
         return x
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         Add two real numbers with the same parent.
 
@@ -1324,7 +1324,7 @@ cdef class RealDoubleElement(FieldElement):
         x._value = self._value + (<RealDoubleElement>right)._value
         return x
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         Subtract two real numbers with the same parent.
 
@@ -1337,7 +1337,7 @@ cdef class RealDoubleElement(FieldElement):
         x._value = self._value - (<RealDoubleElement>right)._value
         return x
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         """
         Multiply two real numbers with the same parent.
 
@@ -1350,7 +1350,7 @@ cdef class RealDoubleElement(FieldElement):
         x._value = self._value * (<RealDoubleElement>right)._value
         return x
 
-    cpdef _div_(self, right) noexcept:
+    cpdef _div_(self, right):
         """
         Divide ``self`` by ``right``.
 
@@ -1411,7 +1411,7 @@ cdef class RealDoubleElement(FieldElement):
         else:
             return self._new_c(-self._value)
 
-    cpdef RealDoubleElement abs(RealDoubleElement self) noexcept:
+    cpdef RealDoubleElement abs(RealDoubleElement self):
         """
         Returns the absolute value of ``self``.
 
@@ -1742,7 +1742,7 @@ cdef class RealDoubleElement(FieldElement):
         """
         return bool(libc.math.isinf(self._value))
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Rich comparison of ``left`` and ``right``.
 
@@ -2000,7 +2000,7 @@ cdef class ToRDF(Morphism):
             R = Set_PythonType(R)
         Morphism.__init__(self, Hom(R, RDF))
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         Send ``x`` to the image under this map.
 
@@ -2187,7 +2187,7 @@ else:
     # From here on, calling PY_NEW(RealDoubleElement) actually creates an instance of RealDoubleElement_gsl
 
 
-cdef double_repr(double x) noexcept:
+cdef double_repr(double x):
     """
     Convert a double to a string with maximum precision.
     """

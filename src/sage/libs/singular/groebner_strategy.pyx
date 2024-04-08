@@ -261,7 +261,7 @@ cdef class GroebnerStrategy(SageObject):
         """
         return unpickle_GroebnerStrategy0, (self._ideal,)
 
-    cpdef MPolynomial_libsingular normal_form(self, MPolynomial_libsingular p) noexcept:
+    cpdef MPolynomial_libsingular normal_form(self, MPolynomial_libsingular p):
         """
         Compute the normal form of ``p`` with respect to the
         generators of this object.
@@ -512,7 +512,7 @@ cdef class NCGroebnerStrategy(SageObject):
         """
         return unpickle_NCGroebnerStrategy0, (self._ideal,)
 
-    cpdef NCPolynomial_plural normal_form(self, NCPolynomial_plural p) noexcept:
+    cpdef NCPolynomial_plural normal_form(self, NCPolynomial_plural p):
         """
         Compute the normal form of ``p`` with respect to the
         generators of this object.

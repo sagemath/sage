@@ -631,7 +631,7 @@ cdef class MatrixArgs:
         self.finalize()
         return self.nrows * self.ncols
 
-    cpdef Matrix matrix(self, bint convert=True) noexcept:
+    cpdef Matrix matrix(self, bint convert=True):
         """
         Return the entries of the matrix as a Sage Matrix.
 
@@ -722,7 +722,7 @@ cdef class MatrixArgs:
         self.typ = MA_ENTRIES_MATRIX
         return M
 
-    cpdef list list(self, bint convert=True) noexcept:
+    cpdef list list(self, bint convert=True):
         """
         Return the entries of the matrix as a flat list of scalars.
 
@@ -789,7 +789,7 @@ cdef class MatrixArgs:
         self.typ = MA_ENTRIES_SEQ_FLAT
         return L
 
-    cpdef dict dict(self, bint convert=True) noexcept:
+    cpdef dict dict(self, bint convert=True):
         """
         Return the entries of the matrix as a dict. The keys of this
         dict are the non-zero positions ``(i,j)``. The corresponding
@@ -1393,7 +1393,7 @@ cdef class MatrixArgs:
             return MA_ENTRIES_SEQ_SEQ
 
 
-cpdef MatrixArgs MatrixArgs_init(space, entries) noexcept:
+cpdef MatrixArgs MatrixArgs_init(space, entries):
     """
     Construct a :class:`MatrixArgs` object from a matrix space and
     entries. This is the typical use in a matrix constructor.

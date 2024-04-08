@@ -444,7 +444,7 @@ cdef randstate _pari_seed_randstate
 # randstate object was the most recent one to seed it.
 _gp_seed_randstates = weakref.WeakKeyDictionary()
 
-cpdef randstate current_randstate() noexcept:
+cpdef randstate current_randstate():
     r"""
     Return the current random number state.
 
@@ -611,7 +611,7 @@ cdef class randstate:
         self._python_random = rand
         return rand
 
-    cpdef ZZ_seed(self) noexcept:
+    cpdef ZZ_seed(self):
         r"""
         When called on the current :class:`randstate`, returns a 128-bit
         :mod:`Integer <sage.rings.integer_ring>` suitable for seeding another
@@ -626,7 +626,7 @@ cdef class randstate:
         from sage.rings.integer_ring import ZZ
         return ZZ.random_element(long(1)<<128)
 
-    cpdef long_seed(self) noexcept:
+    cpdef long_seed(self):
         r"""
         When called on the current :class:`randstate`, returns a 128-bit
         Python long suitable for seeding another random number generator.
@@ -640,7 +640,7 @@ cdef class randstate:
         from sage.rings.integer_ring import ZZ
         return long(ZZ.random_element(long(1)<<128))
 
-    cpdef set_seed_libc(self, bint force) noexcept:
+    cpdef set_seed_libc(self, bint force):
         r"""
         Checks to see if ``self`` was the most recent :class:`randstate`
         to seed the libc random number generator.  If not, seeds the
@@ -665,7 +665,7 @@ cdef class randstate:
             c_libc_srandom(gmp_urandomb_ui(self.gmp_state, sizeof(int)*8))
             _libc_seed_randstate = self
 
-    cpdef set_seed_ntl(self, bint force) noexcept:
+    cpdef set_seed_ntl(self, bint force):
         r"""
         Checks to see if ``self`` was the most recent :class:`randstate`
         to seed the NTL random number generator.  If not, seeds
@@ -923,7 +923,7 @@ cdef class randstate:
         return False
 
 
-cpdef set_random_seed(seed=None) noexcept:
+cpdef set_random_seed(seed=None):
     r"""
     Set the current random number seed from the given ``seed``
     (which must be coercible to a Python long).

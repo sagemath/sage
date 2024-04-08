@@ -415,7 +415,7 @@ class DegreeSequences:
         sig_free(seq)
 
 
-cdef init(int n) noexcept:
+cdef init(int n):
     """
     Initializes the memory and starts the enumeration algorithm.
     """
@@ -439,7 +439,7 @@ cdef init(int n) noexcept:
     sig_free(seq)
     return sequences
 
-cdef inline add_seq() noexcept:
+cdef inline add_seq():
     """
     This function is called whenever a sequence is found.
 

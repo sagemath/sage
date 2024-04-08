@@ -468,7 +468,7 @@ cdef void late_import() noexcept:
     sage_maxint = Integer(maxint)
 
 ##########################################
-cdef object _py(OP a) noexcept:
+cdef object _py(OP a):
     cdef OBJECTKIND objk
     objk = s_o_k(a)
     if objk == INTEGER:
@@ -570,7 +570,7 @@ cdef int _op_int(object x, OP a) except -1:
     M_I_I(x, a)
     return 0
 
-cdef object _py_int(OP a) noexcept:
+cdef object _py_int(OP a):
     late_import()
     return Integer(S_I_I(a))
 
@@ -598,7 +598,7 @@ cdef int _op_longint(object x, OP a) except -1:
     freeall(op_maxint_long)
     return 0
 
-cdef object _py_longint(OP a) noexcept:
+cdef object _py_longint(OP a):
     late_import()
     cdef longint *x = S_O_S(a).ob_longint
     cdef loc *l = x.floc
@@ -621,7 +621,7 @@ cdef object _py_longint(OP a) noexcept:
 ###########
 #Fractions#
 ###########
-cdef object _py_fraction(OP a) noexcept:
+cdef object _py_fraction(OP a):
     return _py(S_B_O(a))/_py(S_B_U(a))
 
 cdef int _op_fraction(object f, OP a) except -1:
@@ -633,7 +633,7 @@ cdef int _op_fraction(object f, OP a) except -1:
 #########
 #Vectors#
 #########
-cdef object _py_vector(OP a) noexcept:
+cdef object _py_vector(OP a):
     cdef INT i
     res = []
     for i from 0 <= i < s_v_li(a):
@@ -651,7 +651,7 @@ cdef void* _op_il_vector(object l, OP a) noexcept:
 #########
 #Numbers#
 #########
-cdef object _py_sq_radical(OP a) noexcept:
+cdef object _py_sq_radical(OP a):
     late_import()
 
     cdef OP ptr
@@ -690,7 +690,7 @@ cdef void* _op_partition(object p, OP a) noexcept:
         _op_integer(p[i], S_PA_I(a,j))
         j = j + 1
 
-cdef object _py_partition(OP a) noexcept:
+cdef object _py_partition(OP a):
     cdef INT n, i
     late_import()
     res = []
@@ -710,7 +710,7 @@ cdef void* _op_skew_partition(object p, OP a) noexcept:
     _op_partition(p[1], klein)
     b_gk_spa(gross, klein, a)
 
-cdef object _py_skew_partition(OP a) noexcept:
+cdef object _py_skew_partition(OP a):
     late_import()
     return SkewPartition( [ _py_partition(s_spa_g(a)), _py_partition(s_spa_k(a)) ] )
 
@@ -728,7 +728,7 @@ cdef void* _op_permutation(object p, OP a) noexcept:
     for i from 0 <= i < n:
         _op_integer(p[i], s_p_i(a,i))
 
-cdef object _py_permutation(OP a) noexcept:
+cdef object _py_permutation(OP a):
     late_import()
     cdef INT n, i
     res = []
@@ -744,7 +744,7 @@ cdef object _py_permutation(OP a) noexcept:
 #######
 #Lists#
 #######
-cdef object _py_list(OP a) noexcept:
+cdef object _py_list(OP a):
     cdef OP x
     x = a
     res = []
@@ -762,7 +762,7 @@ cdef object _py_list(OP a) noexcept:
 #############
 #Polynomials#
 #############
-cdef object _py_polynom(OP a) noexcept:
+cdef object _py_polynom(OP a):
     late_import()
     cdef int maxneeded = 0, i = 0
     cdef OP pointer = a
@@ -793,7 +793,7 @@ cdef object _py_polynom(OP a) noexcept:
     return P(d)
 
 
-cdef object _py_polynom_alphabet(OP a, object alphabet, object length) noexcept:
+cdef object _py_polynom_alphabet(OP a, object alphabet, object length):
     """
     Converts a symmetrica multivariate polynomial a to a Sage multivariate
     polynomials.  Alphabet specifies the names of the variables which are
@@ -829,7 +829,7 @@ cdef object _py_polynom_alphabet(OP a, object alphabet, object length) noexcept:
         pointer = s_po_n(pointer)
     return res
 
-cdef object _op_polynom(object d, OP res) noexcept:
+cdef object _op_polynom(object d, OP res):
     late_import()
 
     poly_ring = d.parent()
@@ -866,7 +866,7 @@ cdef object _op_polynom(object d, OP res) noexcept:
 #######################################
 #Schur symmetric functions and friends#
 #######################################
-cdef object _py_schur(OP a) noexcept:
+cdef object _py_schur(OP a):
     late_import()
     z_elt = _py_schur_general(a)
     if len(z_elt) == 0:
@@ -883,7 +883,7 @@ cdef object _py_schur(OP a) noexcept:
 cdef void* _op_schur(object d, OP res) noexcept:
     _op_schur_general(d, res)
 
-cdef object _py_monomial(OP a) noexcept: #Monomial symmetric functions
+cdef object _py_monomial(OP a): #Monomial symmetric functions
     late_import()
     z_elt = _py_schur_general(a)
     if len(z_elt) == 0:
@@ -903,7 +903,7 @@ cdef void* _op_monomial(object d, OP res) noexcept: #Monomial symmetric function
         c_o_k(pointer, MONOMIAL)
         pointer = s_s_n(pointer)
 
-cdef object _py_powsym(OP a) noexcept:  #Power-sum symmetric functions
+cdef object _py_powsym(OP a):  #Power-sum symmetric functions
     late_import()
     z_elt = _py_schur_general(a)
     if len(z_elt) == 0:
@@ -924,7 +924,7 @@ cdef void* _op_powsym(object d, OP res) noexcept: #Power-sum symmetric functions
         pointer = s_s_n(pointer)
 
 
-cdef object _py_elmsym(OP a) noexcept: #Elementary symmetric functions
+cdef object _py_elmsym(OP a): #Elementary symmetric functions
     late_import()
     z_elt = _py_schur_general(a)
     if len(z_elt) == 0:
@@ -945,7 +945,7 @@ cdef void* _op_elmsym(object d, OP res) noexcept: #Elementary symmetric function
         pointer = s_s_n(pointer)
 
 
-cdef object _py_homsym(OP a) noexcept: #Homogenous symmetric functions
+cdef object _py_homsym(OP a): #Homogenous symmetric functions
     late_import()
     z_elt = _py_schur_general(a)
     if len(z_elt) == 0:
@@ -966,7 +966,7 @@ cdef void* _op_homsym(object d, OP res) noexcept: #Homogenous symmetric function
         pointer = s_s_n(pointer)
 
 
-cdef object _py_schur_general(OP a) noexcept:
+cdef object _py_schur_general(OP a):
     cdef OP pointer = a
     d = {}
     if a == NULL:
@@ -1070,7 +1070,7 @@ cdef void* _op_schubert_dict(object d, OP res) noexcept:
 
         insert(next, res, NULL, NULL)
 
-cdef object _py_schubert(OP a) noexcept:
+cdef object _py_schubert(OP a):
     late_import()
     cdef OP pointer = a
     cdef dict z_elt = {}
@@ -1097,7 +1097,7 @@ cdef object _py_schubert(OP a) noexcept:
 ##########
 #Matrices#
 ##########
-cdef object _py_matrix(OP a) noexcept:
+cdef object _py_matrix(OP a):
 
     late_import()
 
@@ -1137,7 +1137,7 @@ cdef void* _op_matrix(object a, OP res) noexcept:
 ##########
 #Tableaux#
 ##########
-cdef object _py_tableau(OP t) noexcept:
+cdef object _py_tableau(OP t):
 
     late_import()
 

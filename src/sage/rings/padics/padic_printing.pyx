@@ -817,7 +817,7 @@ cdef class pAdicPrinter_class(SageObject):
         """
         return self.base_p_list(value, pos)
 
-    cdef base_p_list(self, value, bint pos) noexcept:
+    cdef base_p_list(self, value, bint pos):
         """
         Returns a list of integers forming the base p expansion of
         value.
@@ -895,7 +895,7 @@ cdef class pAdicPrinter_class(SageObject):
                 pprint = latex_variable_name(pprint)
         return self._repr_gen(elt, do_latex, _pos, _mode, pprint)
 
-    cdef _repr_gen(self, pAdicGenericElement elt, bint do_latex, bint pos, int mode, ram_name) noexcept:
+    cdef _repr_gen(self, pAdicGenericElement elt, bint do_latex, bint pos, int mode, ram_name):
         r"""
         Prints a string representation of the element.  See __init__ for more details on print modes.
 
@@ -1055,7 +1055,7 @@ cdef class pAdicPrinter_class(SageObject):
         if s == "": s = "0"
         return s
 
-    cdef _repr_spec(self, pAdicGenericElement elt, bint do_latex, bint pos, int mode, bint paren, ram_name) noexcept:
+    cdef _repr_spec(self, pAdicGenericElement elt, bint do_latex, bint pos, int mode, bint paren, ram_name):
         """
         A function used by repr_gen for terse and series printing.
 
@@ -1272,7 +1272,7 @@ cdef class pAdicPrinter_class(SageObject):
             s = "(" + s + ")"
         return s
 
-    cdef _var(self, x, exp, do_latex) noexcept:
+    cdef _var(self, x, exp, do_latex):
         """
         Returns a representation of 'x^exp', latexed if necessary.
         """
@@ -1285,7 +1285,7 @@ cdef class pAdicPrinter_class(SageObject):
         else:
             return "%s^%s"%(x, exp)
 
-    cdef _dot_var(self, x, exp, do_latex) noexcept:
+    cdef _dot_var(self, x, exp, do_latex):
         """
         Returns a representation of '*x^exp', latexed if necessary.
         """
@@ -1301,7 +1301,7 @@ cdef class pAdicPrinter_class(SageObject):
         else:
             return "*%s^%s"%(x, exp)
 
-    cdef _co_dot_var(self, co, x, exp, do_latex) noexcept:
+    cdef _co_dot_var(self, co, x, exp, do_latex):
         """
         Returns a representation of 'co*x^exp', latexed if necessary.
 
@@ -1326,7 +1326,7 @@ cdef class pAdicPrinter_class(SageObject):
         else:
             return "%s*%s^%s"%(co, x, exp)
 
-    cdef _plus_ellipsis(self, bint do_latex) noexcept:
+    cdef _plus_ellipsis(self, bint do_latex):
         """
         Returns a representation of '+ ...', latexed if necessary.
         """
@@ -1335,7 +1335,7 @@ cdef class pAdicPrinter_class(SageObject):
         else:
             return " + ..."
 
-    cdef _ellipsis(self, bint do_latex) noexcept:
+    cdef _ellipsis(self, bint do_latex):
         """
         Returns a representation of '...', latexed if necessary.
         """
@@ -1344,7 +1344,7 @@ cdef class pAdicPrinter_class(SageObject):
         else:
             return "..."
 
-    cdef _truncate_list(self, L, max_terms, zero) noexcept:
+    cdef _truncate_list(self, L, max_terms, zero):
         """
         Takes a list L of coefficients and returns a list with at most max_terms nonzero terms.
 
@@ -1376,7 +1376,7 @@ cdef class pAdicPrinter_class(SageObject):
             ans.append(c)
         return ans, False
 
-    cdef _print_unram_term(self, L, bint do_latex, polyname, long max_unram_terms, long expshift, bint increasing) noexcept:
+    cdef _print_unram_term(self, L, bint do_latex, polyname, long max_unram_terms, long expshift, bint increasing):
         """
         Returns a string representation of L when considered as a polynomial, truncating to at most max_unram_terms nonzero terms.
 
@@ -1449,7 +1449,7 @@ cdef class pAdicPrinter_class(SageObject):
                             s = self._print_term_of_poly(s, L[j], do_latex, polyname, exp)
         return s
 
-    cdef _terse_frac(self, a, v, u, ram_name, bint do_latex) noexcept:
+    cdef _terse_frac(self, a, v, u, ram_name, bint do_latex):
         """
         Returns a representation of a=u/ram_name^v, latexed if necessary.
         """
@@ -1469,7 +1469,7 @@ cdef class pAdicPrinter_class(SageObject):
                 arep = "%s/%s^%s"%(u, ram_name, -v)
         return arep
 
-    cdef _print_list_as_poly(self, L, bint do_latex, polyname, long expshift, bint increasing) noexcept:
+    cdef _print_list_as_poly(self, L, bint do_latex, polyname, long expshift, bint increasing):
         """
         Prints a list L as a polynomial.
 
@@ -1500,7 +1500,7 @@ cdef class pAdicPrinter_class(SageObject):
                 s = self._print_term_of_poly(s, L[j], do_latex, polyname, exp)
         return s
 
-    cdef _print_term_of_poly(self, s, coeff, bint do_latex, polyname, long exp) noexcept:
+    cdef _print_term_of_poly(self, s, coeff, bint do_latex, polyname, long exp):
         """
         Appends +coeff*polyname^exp to s, latexed if necessary.
         """
