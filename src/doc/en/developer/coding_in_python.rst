@@ -96,9 +96,9 @@ or from some other already existing Sage class:
 
 .. CODE-BLOCK:: python
 
-    from sage.rings.ring import Algebra
+    from sage.structure.parent import Parent
 
-    class MyFavoriteAlgebra(Algebra):
+    class MyFavoriteAlgebra(Parent):
         ...
 
 You should implement the ``_latex_`` and ``_repr_`` method for every

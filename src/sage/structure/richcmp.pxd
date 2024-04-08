@@ -3,7 +3,7 @@ from cpython.object cimport (Py_LT, Py_LE, Py_EQ, Py_NE, Py_GT, Py_GE,
                              PyObject_RichCompare)
 
 
-cpdef inline richcmp(x, y, int op) noexcept:
+cpdef inline richcmp(x, y, int op):
     """
     Return the result of the rich comparison of ``x`` and ``y`` with
     operator ``op``.
@@ -50,10 +50,10 @@ cpdef inline richcmp(x, y, int op) noexcept:
     return PyObject_RichCompare(x, y, op)
 
 
-cpdef richcmp_item(x, y, int op) noexcept
+cpdef richcmp_item(x, y, int op)
 
 
-cpdef inline richcmp_not_equal(x, y, int op) noexcept:
+cpdef inline richcmp_not_equal(x, y, int op):
     """
     Like ``richcmp(x, y, op)`` but assuming that `x` is not equal to `y`.
 

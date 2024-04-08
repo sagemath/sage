@@ -435,7 +435,7 @@ cdef inline int ccopy(mpz_t out, mpz_t a, PowComputer_ prime_pow) except -1:
     """
     mpz_set(out, a)
 
-cdef inline cpickle(mpz_t a, PowComputer_ prime_pow) noexcept:
+cdef inline cpickle(mpz_t a, PowComputer_ prime_pow):
     """
     Serialization into objects that Sage knows how to pickle.
 
@@ -493,7 +493,7 @@ cdef inline long chash(mpz_t a, long ordp, long prec, PowComputer_ prime_pow) ex
         return n
 
 # the expansion_mode enum is defined in padic_template_element_header.pxi
-cdef inline cexpansion_next(mpz_t value, expansion_mode mode, long curpower, PowComputer_ prime_pow) noexcept:
+cdef inline cexpansion_next(mpz_t value, expansion_mode mode, long curpower, PowComputer_ prime_pow):
     """
     Return the next digit in a `p`-adic expansion of ``value``.
 
@@ -523,7 +523,7 @@ cdef inline cexpansion_next(mpz_t value, expansion_mode mode, long curpower, Pow
         mpz_sub(value, value, prime_pow.pow_mpz_t_tmp(curpower))
     return ans
 
-cdef inline cexpansion_getitem(mpz_t value, long m, PowComputer_ prime_pow) noexcept:
+cdef inline cexpansion_getitem(mpz_t value, long m, PowComputer_ prime_pow):
     """
     Return the `m`th `p`-adic digit in the ``simple_mode`` expansion.
 
@@ -545,7 +545,7 @@ cdef inline cexpansion_getitem(mpz_t value, long m, PowComputer_ prime_pow) noex
 # It could be [] for some other linkages.
 _expansion_zero = Integer(0)
 
-cdef list ccoefficients(mpz_t x, long valshift, long prec, PowComputer_ prime_pow) noexcept:
+cdef list ccoefficients(mpz_t x, long valshift, long prec, PowComputer_ prime_pow):
     """
     Return a list of coefficients, as elements that can be converted into the base ring.
 

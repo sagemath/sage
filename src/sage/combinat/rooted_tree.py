@@ -191,7 +191,7 @@ class RootedTree(AbstractClonableTree, NormalizedClonableList,
         try:
             children = list(children)
         except TypeError:
-            raise TypeError("input ({}) is not a valid tree".format(children))
+            raise TypeError(f"input ({children}) is not a valid tree")
         #if not (children.__class__ is self.__class__
         #        and children.parent() == parent):
         children = [self.__class__(parent, x) for x in children]
@@ -215,7 +215,7 @@ class RootedTree(AbstractClonableTree, NormalizedClonableList,
         .. NOTE::
 
             The tree ``self`` must be normalized before calling this
-            method (see :meth:`normalize`). This doesn't matter
+            method (see :meth:`normalize`). This does not matter
             unless you are inside the :meth:`clone` context manager,
             because outside of it every rooted tree is already
             normalized.
@@ -813,6 +813,10 @@ class LabelledRootedTree(AbstractLabelledClonableTree, RootedTree):
 
     - ``label`` -- any hashable Sage object (default is ``None``)
 
+    .. NOTE::
+
+        It is required that all labels are comparable.
+
     EXAMPLES::
 
         sage: x = LabelledRootedTree([], label = 3); x
@@ -904,7 +908,7 @@ class LabelledRootedTree(AbstractLabelledClonableTree, RootedTree):
         .. NOTE::
 
             The tree ``self`` must be normalized before calling this
-            method (see :meth:`normalize`). This doesn't matter
+            method (see :meth:`normalize`). This does not matter
             unless you are inside the :meth:`clone` context manager,
             because outside of it every rooted tree is already
             normalized.

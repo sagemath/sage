@@ -62,7 +62,7 @@ Create a truth table of a boolean formula::
     True   True   False  True
     True   True   True   True
 
-Get the letex code for a truth table::
+Get the LaTeX code for a truth table::
 
     sage: latex(s.truthtable(5,11))
     \\\begin{tabular}{llll}c & b & a & value \\\hline True & False & True & False \\True & True & False & True \\True & True & True & True\end{tabular}

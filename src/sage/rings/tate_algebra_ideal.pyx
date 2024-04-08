@@ -567,7 +567,7 @@ def groebner_basis_buchberger(I, prec, py_integral):
 
 # F5 algorithms
 
-cdef Jpair(p1, p2) noexcept:
+cdef Jpair(p1, p2):
     r"""
     Return the J-pair of ``p1`` and ``p2``
 
@@ -605,7 +605,7 @@ cdef Jpair(p1, p2) noexcept:
         return su2, t2*v2
 
 
-cdef TateAlgebraElement regular_reduce(sgb, TateAlgebraTerm s, TateAlgebraElement v, stopval) noexcept:
+cdef TateAlgebraElement regular_reduce(sgb, TateAlgebraTerm s, TateAlgebraElement v, stopval):
     r"""
     Return the result of the regular reduction of the pair ``(s,v)`` by ``sgb``
 
@@ -689,7 +689,7 @@ cdef TateAlgebraElement regular_reduce(sgb, TateAlgebraTerm s, TateAlgebraElemen
     return f
 
 
-cdef TateAlgebraElement reduce(gb, TateAlgebraElement v, stopval) noexcept:
+cdef TateAlgebraElement reduce(gb, TateAlgebraElement v, stopval):
     r"""
     Return the result of the reduction of ``v`` by ``gb``
 

@@ -341,7 +341,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         self._cache = None
         self.hash = -1
 
-    cdef fetch(self, key) noexcept:
+    cdef fetch(self, key):
         """
         Try to get an element from the cache; if there isn't anything
         there, return None.
@@ -353,7 +353,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         except KeyError:
             return None
 
-    cdef cache(self, key, x) noexcept:
+    cdef cache(self, key, x):
         """
         Record x in the cache with given key.
         """
@@ -380,7 +380,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     # Mutability and bounds checking
     ###########################################################
 
-    cdef check_bounds(self, Py_ssize_t i, Py_ssize_t j) noexcept:
+    cdef check_bounds(self, Py_ssize_t i, Py_ssize_t j):
         """
         This function gets called when you're about to access the i,j entry
         of this matrix. If i, j are out of range, an :class:`IndexError` is
@@ -389,7 +389,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         if i < 0 or i >= self._nrows or j < 0 or j >= self._ncols:
             raise IndexError("matrix index out of range")
 
-    cdef check_mutability(self) noexcept:
+    cdef check_mutability(self):
         """
         This function gets called when you're about to change this matrix.
 
@@ -403,7 +403,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         else:
             self._cache = None
 
-    cdef check_bounds_and_mutability(self, Py_ssize_t i, Py_ssize_t j) noexcept:
+    cdef check_bounds_and_mutability(self, Py_ssize_t i, Py_ssize_t j):
         """
         This function gets called when you're about to set the i,j entry of
         this matrix. If i or j is out of range, an :class:`IndexError`
@@ -517,7 +517,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     # Entry access
     #    The first two must be overloaded in the derived class
     ###########################################################
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object x) noexcept:
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, object x):
         """
         Set entry quickly without doing any bounds checking. Calling this
         with invalid arguments is allowed to produce a segmentation fault.
@@ -527,7 +527,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         raise NotImplementedError("this must be defined in the derived class (type=%s)" % type(self))
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         """
         Entry access, but fast since it might be without bounds checking.
 
@@ -1563,7 +1563,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
 
 
-    cdef _coerce_element(self, x) noexcept:
+    cdef _coerce_element(self, x):
         """
         Return coercion of x into the base ring of self.
         """
@@ -1796,7 +1796,9 @@ cdef class Matrix(sage.structure.element.Matrix):
         return self.str()
 
     def str(self, rep_mapping=None, zero=None, plus_one=None, minus_one=None,
-            *, unicode=False, shape=None, character_art=False):
+            *, unicode=False, shape=None, character_art=False,
+            left_border=None, right_border=None,
+            top_border=None, bottom_border=None):
         r"""
         Return a nice string representation of the matrix.
 
@@ -1845,6 +1847,16 @@ cdef class Matrix(sage.structure.element.Matrix):
           result will be of type :class:`~sage.typeset.ascii_art.AsciiArt` or
           :class:`~sage.typeset.unicode_art.UnicodeArt` which support line
           breaking of wide matrices that exceed the window width
+
+        - ``left_border``, ``right_border`` -- sequence (default: ``None``);
+          if not ``None``, call :func:`str` on the elements and use the
+          results as labels for the rows of the matrix. The labels appear
+          outside of the parentheses.
+
+        - ``top_border``, ``bottom_border`` -- sequence (default: ``None``);
+          if not ``None``, call :func:`str` on the elements and use the
+          results as labels for the columns of the matrix. The labels appear
+          outside of the parentheses.
 
         EXAMPLES::
 
@@ -1921,6 +1933,21 @@ cdef class Matrix(sage.structure.element.Matrix):
             [ 0.333333333333333   66.6666666666667]
             [ -3.00000000000000 1.00000000000000e6]
 
+        Matrices with borders::
+
+            sage: M = matrix([[1,2,3], [4,5,6], [7,8,9]])
+            sage: M.subdivide(None, 2)
+            sage: print(M.str(unicode=True,
+            ....:             top_border=['ab', 'cde', 'f'],
+            ....:             bottom_border=['*', '', ''],
+            ....:             left_border=[1, 10, 100],
+            ....:             right_border=['', ' <', '']))
+                 ab cde   f
+              1⎛  1   2│  3⎞
+             10⎜  4   5│  6⎟ <
+            100⎝  7   8│  9⎠
+                  *
+
         TESTS:
 
         Prior to :issue:`11544` this could take a full minute to run (2011). ::
@@ -1958,6 +1985,32 @@ cdef class Matrix(sage.structure.element.Matrix):
             sage: matrix(R, [[2/3 - 10^6 * x^3 + 3 * y + O(x, y)^4]])
             [2/3 + 3*y - 1000000*x^3 + O(x, y)^4]
             sage: matrix.options._reset()
+
+        Edge cases of matrices with borders::
+
+            sage: print(matrix(ZZ, 0, 0).str(
+            ....:     top_border=[], bottom_border=[], left_border=[], right_border=[]))
+            []
+            sage: print(matrix(ZZ, 0, 4).str(
+            ....:     unicode=True,
+            ....:     top_border='abcd', bottom_border=range(4)))
+            ()
+            sage: print(matrix(ZZ, 1, 4).str(
+            ....:     unicode=True,
+            ....:     top_border='abcd', bottom_border=range(4)))
+             a b c d
+            (0 0 0 0)
+             0 1 2 3
+            sage: print(matrix(ZZ, 2, 4).str(
+            ....:     unicode=True,
+            ....:     top_border='abcd', bottom_border=range(4), left_border='uv'))
+              a b c d
+            u⎛0 0 0 0⎞
+            v⎝0 0 0 0⎠
+              0 1 2 3
+            sage: print(matrix(ZZ, 2, 0).str(
+            ....:     top_border='', left_border='uv', right_border=['*', '']))
+              []
         """
         cdef Py_ssize_t nr, nc, r, c
         nr = self._nrows
@@ -2063,6 +2116,12 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         # compute column widths
         S = []
+        if top_border is not None:
+            for x in top_border:
+                S.append(str(x))
+            top_count = 1
+        else:
+            top_count = 0
         for x in entries:
             # Override the usual representations with those specified
             if callable(rep_mapping):
@@ -2075,39 +2134,83 @@ cdef class Matrix(sage.structure.element.Matrix):
             else:
                 rep = repr(x)
             S.append(rep)
+        if bottom_border is not None:
+            for x in bottom_border:
+                S.append(str(x))
+            bottom_count = 1
+        else:
+            bottom_count = 0
 
         width = max(map(len, S))
+        left = []
         rows = []
+        right = []
 
         hline = cl.join(hl * ((width + 1)*(b - a) - 1)
-                       for a,b in zip([0] + col_divs, col_divs + [nc]))
+                        for a,b in zip([0] + col_divs, col_divs + [nc]))
 
         # compute rows
-        for r from 0 <= r < nr:
-            rows += [hline] * row_divs.count(r)
+        for r in range(-top_count, nr + bottom_count):
+            if 0 <= r < nr:
+                n = row_divs.count(r)
+                if n:
+                    left.extend([""] * n)
+                    rows.extend([hline] * n)
+                    right.extend([""] * n)
+            if left_border is not None and 0 <= r < nr:
+                left.append(str(left_border[r]))
+            else:
+                left.append("")
             s = ""
             for c from 0 <= c < nc:
                 if col_div_counts[c]:
-                    sep = vl * col_div_counts[c]
+                    if 0 <= r < nr:
+                        sep = vl * col_div_counts[c]
+                    else:
+                        sep = " " * col_div_counts[c]
                 elif c == 0:
                     sep = ""
                 else:
                     sep = " "
-                entry = S[r * nc + c]
+                entry = S[(r + top_count) * nc + c]
                 entry = " " * (width - len(entry)) + entry
                 s = s + sep + entry
-            s = s + vl * col_div_counts[nc]
+            else:
+                if 0 <= r < nr:
+                    s = s + vl * col_div_counts[nc]
+                else:
+                    s = s + " " * col_div_counts[nc]
             rows.append(s)
-        rows += [hline] * row_divs.count(nr)
-
-        last_row = len(rows) - 1
-        if last_row == 0:
-            rows[0] = slb + rows[0] + srb
+            if right_border is not None and 0 <= r < nr:
+                right.append(str(right_border[r]))
+            else:
+                right.append("")
         else:
-            rows[0] = tlb + rows[0] + trb
-            for r from 1 <= r < last_row:
-                rows[r] = mlb + rows[r] + mrb
-            rows[last_row] = blb + rows[last_row] + brb
+            if nr == nr + bottom_count:
+                n = row_divs.count(nr)
+                if n:
+                    left.extend([""] * n)
+                    rows.extend([hline] * n)
+                    right.extend([""] * n)
+
+        # left and right brackets
+        for i in range(top_count):
+            rows[i] = " "*len(slb) + rows[i] + " "*len(srb)
+        if len(rows) == top_count + 1 + bottom_count:
+            rows[top_count] = slb + rows[top_count] + srb
+        else:
+            rows[top_count] = tlb + rows[top_count] + trb
+            for i in range(top_count + 1, len(rows) - bottom_count - 1):
+                rows[i] = mlb + rows[i] + mrb
+            rows[-1 - bottom_count] = blb + rows[-1 - bottom_count] + brb
+        for i in range(bottom_count):
+            rows[-1 - i] = " "*len(slb) + rows[-1 - i] + " "*len(srb)
+
+        # left and right border
+        left_width = max(len(s) for s in left)
+        right_width = max(len(s) for s in right)
+        for i in range(len(rows)):
+            rows[i] = left[i].rjust(left_width) + rows[i] + right[i].rjust(right_width)
 
         if character_art:
             breakpoints = []
@@ -2432,11 +2535,11 @@ cdef class Matrix(sage.structure.element.Matrix):
     # involve multiplication outside base ring, including
     # with_ versions of these methods for this situation
     ###################################################
-    cdef check_row_bounds(self, Py_ssize_t r1, Py_ssize_t r2) noexcept:
+    cdef check_row_bounds(self, Py_ssize_t r1, Py_ssize_t r2):
         if r1 < 0 or r1 >= self._nrows or r2 < 0 or r2 >= self._nrows:
             raise IndexError("matrix row index out of range")
 
-    cdef check_row_bounds_and_mutability(self, Py_ssize_t r1, Py_ssize_t r2) noexcept:
+    cdef check_row_bounds_and_mutability(self, Py_ssize_t r1, Py_ssize_t r2):
         if self._is_immutable:
             raise ValueError("Matrix is immutable; please change a copy instead (i.e., use copy(M) to change a copy of M).")
         else:
@@ -2444,11 +2547,11 @@ cdef class Matrix(sage.structure.element.Matrix):
         if r1 < 0 or r1 >= self._nrows or r2 < 0 or r2 >= self._nrows:
             raise IndexError("matrix row index out of range")
 
-    cdef check_column_bounds(self, Py_ssize_t c1, Py_ssize_t c2) noexcept:
+    cdef check_column_bounds(self, Py_ssize_t c1, Py_ssize_t c2):
         if c1 < 0 or c1 >= self._ncols or c2 < 0 or c2 >= self._ncols:
             raise IndexError("matrix column index out of range")
 
-    cdef check_column_bounds_and_mutability(self, Py_ssize_t c1, Py_ssize_t c2) noexcept:
+    cdef check_column_bounds_and_mutability(self, Py_ssize_t c1, Py_ssize_t c2):
         if self._is_immutable:
             raise ValueError("Matrix is immutable; please change a copy instead (i.e., use copy(M) to change a copy of M).")
         else:
@@ -2634,7 +2737,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                     temp.swap_columns_c(cycle[0], elt)
         return temp
 
-    cdef swap_columns_c(self, Py_ssize_t c1, Py_ssize_t c2) noexcept:
+    cdef swap_columns_c(self, Py_ssize_t c1, Py_ssize_t c2):
         cdef Py_ssize_t r
         for r from 0 <= r < self._nrows:
             a = self.get_unsafe(r, c2)
@@ -2816,7 +2919,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                     temp.swap_rows_c(cycle[0], elt)
         return temp
 
-    cdef swap_rows_c(self, Py_ssize_t r1, Py_ssize_t r2) noexcept:
+    cdef swap_rows_c(self, Py_ssize_t r1, Py_ssize_t r2):
         cdef Py_ssize_t c
         for c from 0 <= c < self._ncols:
             a = self.get_unsafe(r2, c)
@@ -2951,7 +3054,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         except TypeError:
             raise TypeError('Multiplying row by %s element cannot be done over %s, use change_ring or with_added_multiple_of_row instead.' % (s.parent(), self.base_ring()))
 
-    cdef add_multiple_of_row_c(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_col) noexcept:
+    cdef add_multiple_of_row_c(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_col):
         cdef Py_ssize_t c
         for c from start_col <= c < self._ncols:
             self.set_unsafe(i, c, self.get_unsafe(i, c) + s*self.get_unsafe(j, c))
@@ -3036,7 +3139,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         except TypeError:
             raise TypeError('Multiplying column by %s element cannot be done over %s, use change_ring or with_added_multiple_of_column instead.' % (s.parent(), self.base_ring()))
 
-    cdef add_multiple_of_column_c(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_row) noexcept:
+    cdef add_multiple_of_column_c(self, Py_ssize_t i, Py_ssize_t j, s, Py_ssize_t start_row):
         cdef Py_ssize_t r
         for r from start_row <= r < self._nrows:
             self.set_unsafe(r, i, self.get_unsafe(r, i) + s*self.get_unsafe(r, j))
@@ -3151,7 +3254,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         except TypeError:
             raise TypeError('Rescaling row by %s element cannot be done over %s, use change_ring or with_rescaled_row instead.' % (s.parent(), self.base_ring()))
 
-    cdef rescale_row_c(self, Py_ssize_t i, s, Py_ssize_t start_col) noexcept:
+    cdef rescale_row_c(self, Py_ssize_t i, s, Py_ssize_t start_col):
         cdef Py_ssize_t j
         for j from start_col <= j < self._ncols:
             self.set_unsafe(i, j, self.get_unsafe(i, j)*s)
@@ -3266,7 +3369,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         except TypeError:
             raise TypeError('Rescaling column by %s element cannot be done over %s, use change_ring or with_rescaled_col instead.' % (s.parent(), self.base_ring()))
 
-    cdef rescale_col_c(self, Py_ssize_t i, s, Py_ssize_t start_row) noexcept:
+    cdef rescale_col_c(self, Py_ssize_t i, s, Py_ssize_t start_row):
         cdef Py_ssize_t j
         for j from start_row <= j < self._nrows:
             self.set_unsafe(j, i, self.get_unsafe(j, i)*s)
@@ -5040,7 +5143,7 @@ cdef class Matrix(sage.structure.element.Matrix):
     ###################################################
     # Arithmetic
     ###################################################
-    cdef _vector_times_matrix_(self, Vector v) noexcept:
+    cdef _vector_times_matrix_(self, Vector v):
         r"""
         Return the vector times matrix product.
 
@@ -5097,7 +5200,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         return sum([v[i] * self.row(i, from_list=True)
                     for i in range(self._nrows)], M(0))
 
-    cdef _matrix_times_vector_(self, Vector v) noexcept:
+    cdef _matrix_times_vector_(self, Vector v):
         """
         EXAMPLES::
 
@@ -5208,7 +5311,7 @@ cdef class Matrix(sage.structure.element.Matrix):
             MS = self.matrix_space(n, m)
             return MS(X).transpose()
 
-    cpdef _add_(self, _right) noexcept:
+    cpdef _add_(self, _right):
         """
         Add two matrices with the same parent.
 
@@ -5232,7 +5335,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                 A.set_unsafe(i, j, self.get_unsafe(i,j)._add_(right.get_unsafe(i,j)))
         return A
 
-    cpdef _sub_(self, _right) noexcept:
+    cpdef _sub_(self, _right):
         """
         Subtract two matrices with the same parent.
 
@@ -5298,7 +5401,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         """
         return self.change_ring(self._base_ring.quotient_ring(p))
 
-    cpdef _rmul_(self, Element left) noexcept:
+    cpdef _rmul_(self, Element left):
         """
         EXAMPLES::
 
@@ -5336,7 +5439,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                 ans.set_unsafe(r, c, x * self.get_unsafe(r, c))
         return ans
 
-    cpdef _lmul_(self, Element right) noexcept:
+    cpdef _lmul_(self, Element right):
         """
         EXAMPLES:
 
@@ -5380,7 +5483,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                 ans.set_unsafe(r, c, self.get_unsafe(r, c) * x)
         return ans
 
-    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix right) noexcept:
+    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix right):
         r"""
         Return the product of two matrices.
 
@@ -5773,7 +5876,7 @@ cdef class Matrix(sage.structure.element.Matrix):
                     raise ZeroDivisionError("input matrix must be nonsingular")
             return A.matrix_from_columns(list(range(self._ncols, 2 * self._ncols)))
 
-    cdef build_inverse_from_augmented_sparse(self, A) noexcept:
+    cdef build_inverse_from_augmented_sparse(self, A):
         # We can directly use the dict entries of A
         cdef Py_ssize_t i, nrows
         cdef dict data = <dict> A._dict()
@@ -6076,7 +6179,7 @@ cdef class Matrix(sage.structure.element.Matrix):
         # C[0] = (1 - m * (m - 1)/2) * C[2] - (m - 1) * C[1]
         C[0] = (1 - mm) * C[2] - (m - 1) * C[1]
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Compare two matrices.
 
