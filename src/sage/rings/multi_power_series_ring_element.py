@@ -657,9 +657,7 @@ class MPowerSeries(PowerSeries):
 
             sage: A.<a,b> = PowerSeriesRing(ZZ)
             sage: A.hom([0,0],ZZ)(1 - a^3 + b^5)
-            0
-            sage: A.hom([0,0],ZZ)(1 - a^3 + O(b^5))
-            0
+            1
         """
         if base_map is None:
             # __call__ might be faster if codomain coerces into the base ring
