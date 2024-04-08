@@ -655,9 +655,9 @@ class MPowerSeries(PowerSeries):
 
         Check that :issue:`37729` has been fixed::
 
-            sage: A.<a,b> = PowerSeriesRing(QQ)
-            sage: A.hom([1,2],ZZ)(a + 2 * b)
-            5
+            sage: A.<a,b> = PowerSeriesRing(ZZ)
+            sage: A.hom([0,0],ZZ)(1 - a^3 + b^5)
+            0
             sage: A.hom([0,0],ZZ)(1 - a^3 + O(b^5))
             0
         """
