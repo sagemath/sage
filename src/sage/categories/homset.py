@@ -655,11 +655,20 @@ class Homset(Set_generic):
 
             sage: MyHomset(ZZ^3, ZZ^3, base=QQ).base_ring()                             # needs sage.modules
             Rational Field
+
+        Check that :issue:`37730` is resolved::
+
+            sage: E = EllipticCurve(QQ, [3, 5])
+            sage: E.point_homset() in CommutativeAdditiveGroups()
+            True
+            sage: from sage.schemes.generic.homset import SchemeHomset_points
+            sage: SchemeHomset_points(Spec(QQ), E) in CommutativeAdditiveGroups()
+            True
         """
         self._domain = X
         self._codomain = Y
         if category is None:
-            category = X.category()
+            category = Y.category()
         self.__category = category
         if check:
             if not isinstance(category, Category):

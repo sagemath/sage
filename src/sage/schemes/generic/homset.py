@@ -434,6 +434,10 @@ class SchemeHomset_points(SchemeHomset_generic):
         """
         Python constructor.
 
+        This class should not be constructed directly. Instead, use the
+        :func:`sage.schemes.generic.homset.SchemeHomset` function or the
+        ``point_homset`` method, which initializes the correct category etc.
+
         INPUT:
 
         See :class:`SchemeHomset_generic`.
@@ -441,11 +445,19 @@ class SchemeHomset_points(SchemeHomset_generic):
         EXAMPLES::
 
             sage: from sage.schemes.generic.homset import SchemeHomset_points
-            sage: SchemeHomset_points(Spec(QQ), AffineSpace(ZZ,2))
+            sage: SchemeHomset_points(Spec(QQ), AffineSpace(ZZ, 2))
             Set of rational points of Affine Space of dimension 2 over Rational Field
+
+        This constructor might not initialize the correct category::
+
+            sage: E = EllipticCurve(QQ, [3, 6])
+            sage: E.point_homset(QQ)
+            Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 3*x + 6 over Rational Field
+            sage: SchemeHomset_points(Spec(QQ), E)
+            Set of rational points of Elliptic Curve defined by y^2 = x^3 + 3*x + 6 over Rational Field
         """
         if check and not is_AffineScheme(X):
-            raise ValueError('The domain must be an affine scheme.')
+            raise ValueError('the domain must be an affine scheme')
         SchemeHomset_generic.__init__(self, X, Y, category=category, check=check, base=base)
 
     def __reduce__(self):
