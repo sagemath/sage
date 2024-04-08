@@ -652,12 +652,22 @@ class MPowerSeries(PowerSeries):
                     b |--> 2*y
             sage: phi(a+b+3*a*b^2 + A.O(5))  # indirect doctest
             x + 2*y + 12*x*y^2 + O(x, y)^5
+
+        Check that :issue:`37729` has been fixed::
+
+            sage: A.<a,b> = PowerSeriesRing(QQ)
+            sage: A.hom([1,2],ZZ)(a + 2 * b)
+            5
+            sage: A.hom([0,0],ZZ)(1 - a^3 + O(b^5))
+            0
         """
         if base_map is None:
             # __call__ might be faster if codomain coerces into the base ring
-            return codomain(self(*im_gens))
-        else:
-            return codomain(self._subs_formal(*im_gens, base_map=base_map))
+            try:
+                return codomain(self(*im_gens))
+            except TypeError:
+                pass
+        return codomain(self._subs_formal(*im_gens, base_map=base_map))
 
     def __getitem__(self,n):
         """
