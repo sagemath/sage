@@ -58,7 +58,6 @@ available::
                                   (same as "sage --startuptime")
         pycodestyle-minimal    -- check against Sage's minimal style conventions
         relint                 -- check whether some forbidden patterns appear
-                                  (includes all patchbot pattern-exclusion plugins)
         codespell              -- check for misspelled words in source code
         rst                    -- validate Python docstrings markup as reStructuredText
         coverage.py            -- run the Sage doctester with Coverage.py
@@ -180,9 +179,7 @@ As of Sage 9.5, the entire Sage library conforms to this configuration::
     congratulations :)
 
 When preparing a branch for a Sage ticket, developers should verify that ``./sage -tox -e
-pycodestyle-minimal`` passes.  When the Sage patchbot runs on the ticket, it will perform similar
-coding style checks; but running the check locally reduces the turnaround time from hours
-to seconds.
+pycodestyle-minimal`` passes.
 
 The second configuration is used with the command ``./sage -tox -e pycodestyle`` and runs a
 more thorough check::
@@ -367,7 +364,7 @@ package :mod:`sage.numerical.backends` and some modules in
   ``./sage -pytest -n auto`` will spawn a number of workers processes equal
   to the number of available CPUs.
 
-- VS Code: Install the `Python extension <https://marketplace.visualstudio.com/items?itemName=ms-python.python>`_ and follow the `offical VS Code documentation <https://code.visualstudio.com/docs/python/testing>`__.
+- VS Code: Install the `Python extension <https://marketplace.visualstudio.com/items?itemName=ms-python.python>`_ and follow the `official VS Code documentation <https://code.visualstudio.com/docs/python/testing>`__.
 
 *Configuration:* :sage_root:`src/conftest.py`
 

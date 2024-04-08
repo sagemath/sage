@@ -1,6 +1,6 @@
 # sage_setup: distribution = sagemath-categories
 r"""
-Double Precision Real Numbers
+Double precision floating point real numbers
 
 EXAMPLES:
 

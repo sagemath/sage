@@ -419,7 +419,7 @@ cdef class CircuitsMatroid(Matroid):
         r"""
         Return the bases of the matroid.
 
-        OUTPUT: a SetSystem
+        OUTPUT: a :class:`SetSystem`
 
         EXAMPLES::
 
@@ -478,7 +478,7 @@ cdef class CircuitsMatroid(Matroid):
 
         - ``k`` -- an integer (optional); the length of the circuits
 
-        OUTPUT: a SetSystem
+        OUTPUT: a :class:`SetSystem`
 
         EXAMPLES::
 
@@ -541,7 +541,7 @@ cdef class CircuitsMatroid(Matroid):
         """
         Return the nonspanning circuits of the matroid.
 
-        OUTPUT: a SetSystem
+        OUTPUT: a :class:`SetSystem`
 
         EXAMPLES::
 
@@ -612,8 +612,9 @@ cdef class CircuitsMatroid(Matroid):
             sage: C1 == C2
             True
         """
+        from sage.matroids.utilities import cmp_elements_key
         if ordering is None:
-            ordering = sorted(self.groundset(), key=str)
+            ordering = sorted(self.groundset(), key=cmp_elements_key)
         else:
             if frozenset(ordering) != self.groundset():
                 raise ValueError("not an ordering of the groundset")

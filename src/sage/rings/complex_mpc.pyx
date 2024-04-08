@@ -1,12 +1,12 @@
 # sage_setup: distribution = sagemath-modules
 """
-Arbitrary Precision Complex Numbers using GNU MPC
+Arbitrary precision floating point complex numbers using GNU MPC
 
-This is a binding for the MPC arbitrary-precision floating point library.
-It is adaptated from ``real_mpfr.pyx`` and ``complex_mpfr.pyx``.
+This is a binding for the arbitrary-precision floating point library
+:ref:`GNU MPC <spkg_mpc>`.
 
-We define a class :class:`MPComplexField`, where each instance of
-``MPComplexField`` specifies a field of floating-point complex numbers with
+We define a class :class:`MPComplexField`, each instance of which
+specifies a field of floating-point complex numbers with
 a specified precision shared by the real and imaginary part and a rounding
 mode stating the rounding mode directions specific to real and imaginary
 parts.
@@ -18,7 +18,8 @@ documentation for the :mod:`sage.rings.real_mpfr`.
 
 AUTHORS:
 
-- Philippe Theveny (2008-10-13): initial version.
+- Philippe Theveny (2008-10-13): initial version, adapted from
+  :mod:`sage.rings.real_mpfr` and :mod:`sage.rings.complex_mpfr`.
 
 - Alex Ghitza (2008-11): cache, generators, random element, and many doctests.
 

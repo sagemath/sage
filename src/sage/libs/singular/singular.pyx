@@ -1815,6 +1815,7 @@ cdef void libsingular_error_callback(const_char_ptr s) noexcept:
     _s = char_to_str(s)
     error_messages.append(_s)
 
+
 def get_resource(id):
     """
     Return a Singular "resource".

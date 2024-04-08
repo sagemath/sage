@@ -1233,27 +1233,26 @@ cdef class BasisExchangeMatroid(Matroid):
 
     # enumeration
 
-    cpdef f_vector(self):
+    cpdef whitney_numbers2(self):
         r"""
-        Return the `f`-vector of the matroid.
+        Return the Whitney numbers of the second kind of the matroid.
 
-        The `f`-*vector* is a vector `(f_0, ..., f_r)`, where `f_i` is the
-        number of flats of rank `i`, and `r` is the rank of the matroid.
+        The Whitney numbers of the second kind are here encoded as a vector
+        `(W_0, \ldots, W_r)`, where `W_i` is the number of flats of rank `i`,
+        and `r` is the rank of the matroid.
 
-        OUTPUT:
-
-        List of integers.
+        OUTPUT: a list of integers
 
         EXAMPLES::
 
             sage: M = matroids.catalog.S8()
-            sage: M.f_vector()
+            sage: M.whitney_numbers2()
             [1, 8, 22, 14, 1]
         """
         cdef bitset_t *flats
         cdef bitset_t *todo
         if self._matroid_rank == 0:
-            return [0]
+            return [1]
         flats = <bitset_t*>sig_malloc((self.full_rank() + 1) * sizeof(bitset_t))
         todo = <bitset_t*>sig_malloc((self.full_rank() + 1) * sizeof(bitset_t))
 
@@ -1265,7 +1264,7 @@ cdef class BasisExchangeMatroid(Matroid):
         bitset_clear(todo[0])
         self.__closure(flats[0], todo[0])
         bitset_complement(todo[0], flats[0])
-        self._f_vector_rec(f_vec, flats, todo, 0, 0)
+        self._whitney_numbers2_rec(f_vec, flats, todo, 0, 0)
         for i in range(self.full_rank() + 1):
             bitset_free(flats[i])
             bitset_free(todo[i])
@@ -1273,9 +1272,9 @@ cdef class BasisExchangeMatroid(Matroid):
         sig_free(todo)
         return f_vec
 
-    cdef _f_vector_rec(self, object f_vec, bitset_t* flats, bitset_t* todo, long elt, long i):
+    cdef _whitney_numbers2_rec(self, object f_vec, bitset_t* flats, bitset_t* todo, long elt, long i):
         """
-        Recursion for the f_vector method.
+        Recursion for the whitney_numbers2 method.
         """
         cdef long e
         f_vec[i] += 1
@@ -1288,7 +1287,7 @@ cdef class BasisExchangeMatroid(Matroid):
             bitset_difference(todo[i + 1], flats[i + 1], flats[i])
             if bitset_first(todo[i + 1]) == e:
                 bitset_copy(todo[i + 1], todo[i])
-                self._f_vector_rec(f_vec, flats, todo, e + 1, i + 1)
+                self._whitney_numbers2_rec(f_vec, flats, todo, e + 1, i + 1)
             e = bitset_next(todo[i], e)
 
     cpdef flats(self, r):
@@ -1312,7 +1311,7 @@ cdef class BasisExchangeMatroid(Matroid):
         EXAMPLES::
 
             sage: M = matroids.catalog.S8()
-            sage: M.f_vector()
+            sage: M.whitney_numbers2()
             [1, 8, 22, 14, 1]
             sage: len(M.flats(2))
             22
@@ -1387,7 +1386,7 @@ cdef class BasisExchangeMatroid(Matroid):
         EXAMPLES::
 
             sage: M = matroids.catalog.S8().dual()
-            sage: M.f_vector()
+            sage: M.whitney_numbers2()
             [1, 8, 22, 14, 1]
             sage: len(M.coflats(2))
             22
@@ -1951,6 +1950,7 @@ cdef class BasisExchangeMatroid(Matroid):
             sage: M._weak_invariant() == N._weak_invariant()
             False
         """
+        from sage.matroids.utilities import cmp_elements_key
         if self._weak_invariant_var is None:
             if self.full_rank() == 0 or self.full_corank() == 0:
                 self._weak_invariant_var = 0
@@ -1958,8 +1958,8 @@ cdef class BasisExchangeMatroid(Matroid):
             else:
                 k = min(self.full_rank() - 1, 2)
                 fie, f_vec = self._flat_element_inv(k)
-                self._weak_invariant_var = hash(tuple([tuple([(f, len(fie[f])) for f in sorted(fie)]), f_vec]))
-                self._weak_partition_var = SetSystem(self._E, [fie[f] for f in sorted(fie)])
+                self._weak_invariant_var = hash(tuple([tuple([(f, len(fie[f])) for f in sorted(fie, key=cmp_elements_key)]), f_vec]))
+                self._weak_partition_var = SetSystem(self._E, [fie[f] for f in sorted(fie, key=cmp_elements_key)])
         return self._weak_invariant_var
 
     cpdef _weak_partition(self):

@@ -1,6 +1,6 @@
 # sage_setup: distribution = sagemath-flint
 """
-Arbitrary Precision Complex Intervals
+Arbitrary precision complex intervals
 
 This is a simple complex interval package, using intervals which are
 axis-aligned rectangles in the complex plane.  It has very few special

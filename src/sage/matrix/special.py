@@ -3454,7 +3454,7 @@ def ith_to_zero_rotation_matrix(v, i, ring=None):
     bb = b / norm
     entries = {(k, k): 1 for k in range(dim)}
     entries.update({(j, j): aa, (j, i): bb, (i, j): -bb, (i, i): aa})
-    return matrix(entries, nrows=dim, ring=ring)
+    return matrix(entries, nrows=dim, base_ring=ring)
 
 
 @matrix_method
@@ -3488,7 +3488,7 @@ def hilbert(dim, ring=QQ):
     """
     def entries(i, j):
         return ZZ.one() / (i + j + 1)
-    return matrix(entries, nrows=dim, ncols=dim, ring=ring)
+    return matrix(entries, nrows=dim, ncols=dim, base_ring=ring)
 
 
 @matrix_method
@@ -3522,7 +3522,7 @@ def vandermonde(v, ring=None):
     """
     def entries(i, j):
         return v[i]**j
-    return matrix(entries, nrows=len(v), ncols=len(v), ring=ring)
+    return matrix(entries, nrows=len(v), ncols=len(v), base_ring=ring)
 
 
 @matrix_method
@@ -3568,7 +3568,7 @@ def toeplitz(c, r, ring=None):
     """
     def entries(i, j):
         return c[i - j] if i >= j else r[j - i - 1]
-    return matrix(entries, nrows=len(c), ncols=len(r)+1, ring=ring)
+    return matrix(entries, nrows=len(c), ncols=len(r)+1, base_ring=ring)
 
 
 @matrix_method
@@ -3638,4 +3638,4 @@ def hankel(c, r=None, ring=None):
 
     def entries(i):
         return c[i] if i < m else r[i - m]
-    return matrix(lambda i, j: entries(i + j), nrows=m, ncols=n + 1, ring=ring)
+    return matrix(lambda i, j: entries(i + j), nrows=m, ncols=n + 1, base_ring=ring)

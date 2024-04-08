@@ -146,6 +146,7 @@ def is_FreeModuleElement(x):
     """
     return isinstance(x, FreeModuleElement)
 
+
 def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
     r"""
     Return a vector or free module element with specified entries.
@@ -594,6 +595,7 @@ def vector(arg0, arg1=None, arg2=None, sparse=None, immutable=False):
 
 
 free_module_element = vector
+
 
 def prepare(v, R, degree=None):
     r"""
@@ -4147,7 +4149,7 @@ cdef class FreeModuleElement(Vector):   # abstract base class
 
         return (vector(answers,sparse=self.is_sparse()), v)
 
-    nintegrate=nintegral
+    nintegrate = nintegral
 
     def concatenate(self, other, *, ring=None):
         r"""
@@ -4691,6 +4693,7 @@ cdef class FreeModuleElement_generic_dense(FreeModuleElement):
         """
         from sage.symbolic.callable import CallableSymbolicExpressionRing
         return vector(CallableSymbolicExpressionRing(args), self.list())
+
 
 #############################################
 # Generic sparse element

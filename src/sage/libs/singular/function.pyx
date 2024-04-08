@@ -365,6 +365,7 @@ cdef free_leftv(leftv *args, ring *r = NULL):
     args.CleanUp(r)
     omFreeBin(args, sleftv_bin)
 
+
 # =====================================
 # = Singular/Plural Abstraction Layer =
 # =====================================
@@ -402,9 +403,10 @@ cdef new_sage_polynomial(ring,  poly *p):
             return new_NCP(ring, p)
     raise ValueError("not a singular or plural ring")
 
+
 def is_singular_poly_wrapper(p):
     """
-    Checks if p is some data type corresponding to some singular ``poly``.
+    Check if ``p`` is some data type corresponding to some singular ``poly``.
 
     EXAMPLES::
 
@@ -413,9 +415,9 @@ def is_singular_poly_wrapper(p):
         sage: H.<x,y,z> = A.g_algebra({z*x:x*z+2*x, z*y:y*z-2*y})
         sage: is_singular_poly_wrapper(x+y)
         True
-
     """
-    return isinstance(p, MPolynomial_libsingular) or isinstance(p,  NCPolynomial_plural)
+    return isinstance(p, (MPolynomial_libsingular, NCPolynomial_plural))
+
 
 def all_singular_poly_wrapper(s):
     """
@@ -431,10 +433,8 @@ def all_singular_poly_wrapper(s):
         sage: all_singular_poly_wrapper([x+1, y, 1])
         False
     """
-    for p in s:
-        if not is_singular_poly_wrapper(p):
-            return False
-    return True
+    return all(is_singular_poly_wrapper(p) for p in s)
+
 
 cdef poly* access_singular_poly(p) except <poly*> -1:
     """
@@ -1773,11 +1773,11 @@ def singular_function(name):
         sage: ring(l)
         <noncommutative RingWrap>
     """
-
     try:
         return SingularKernelFunction(name)
     except NameError:
         return SingularLibraryFunction(name)
+
 
 def lib(name):
     """
@@ -1812,6 +1812,7 @@ def lib(name):
 
     if failure:
         raise NameError("Singular library {!r} not found".format(name))
+
 
 def list_of_functions(packages=False):
     """

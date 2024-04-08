@@ -109,6 +109,7 @@ cdef class ntl_GF2EContext_class():
     cdef void restore_c(self) noexcept:
         self.x.restore()
 
+
 def ntl_GF2EContext( v ):
     """
     Create a new GF2EContext.

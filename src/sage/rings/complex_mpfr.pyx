@@ -1,6 +1,6 @@
 # sage_setup: distribution = sagemath-modules
 """
-Arbitrary Precision Floating Point Complex Numbers
+Arbitrary precision floating point complex numbers using GNU MPFR
 
 AUTHORS:
 
@@ -177,6 +177,12 @@ def ComplexField(prec=53, names=None):
         sage: i = ComplexField(200).gen()
         sage: i^2
         -1.0000000000000000000000000000000000000000000000000000000000
+
+    .. SEEALSO::
+
+        - :class:`~sage.rings.complex_mpfr.ComplexField_class`
+        - :class:`~sage.rings.real_arb.ComplexBallField` (complex numbers with
+          rigorous error bounds)
     """
     global cache
     if prec in cache:
@@ -262,6 +268,13 @@ class ComplexField_class(sage.rings.abc.ComplexField):
         False
         sage: CC == 1.1
         False
+
+    .. SEEALSO::
+
+        - :func:`~sage.rings.complex_mpfr.ComplexField` (constructor)
+        - :class:`~sage.rings.real_arb.ComplexBallField` (complex numbers with
+          rigorous error bounds)
+        - :mod:`~sage.rings.real_mpfr`
     """
     def __init__(self, prec=53):
         """

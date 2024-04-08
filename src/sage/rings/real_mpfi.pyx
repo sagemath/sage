@@ -1,6 +1,6 @@
 # sage_setup: distribution = sagemath-flint
 r"""
-Arbitrary Precision Real Intervals
+Arbitrary precision real intervals using MPFI
 
 AUTHORS:
 
@@ -17,8 +17,8 @@ AUTHORS:
 
 - Travis Scrimshaw (2012-11-02): Added doctests for full coverage
 
-This is a straightforward binding to the MPFI library; it may be
-useful to refer to its documentation for more details.
+This is a straightforward binding to the :ref:`MPFI library <spkg_mpfi>`;
+it may be useful to refer to its documentation for more details.
 
 An interval is represented as a pair of floating-point numbers `a`
 and `b` (where `a \leq b`) and is printed as a standard floating-point
@@ -512,6 +512,13 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
 
         sage: RealIntervalField(10).is_finite()
         False
+
+    .. SEEALSO::
+
+        - :mod:`sage.rings.real_mpfi`
+        - :mod:`sage.rings.complex_interval_field`
+        - :class:`sage.rings.real_arb.RealBallField` (alternative
+          implementation of real intervals, with more features)
     """
     Element = RealIntervalFieldElement
 

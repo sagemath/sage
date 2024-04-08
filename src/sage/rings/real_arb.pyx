@@ -368,6 +368,14 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
 
         sage: loads(dumps(RealBallField(60))) is RealBallField(60)
         True
+
+    .. SEEALSO::
+
+        - :mod:`sage.rings.real_arb`
+        - :mod:`sage.rings.real_mpfr`
+        - :mod:`sage.rings.real_mpfi` (real intervals represented by their
+          endpoints)
+        - :mod:`sage.rings.complex_arb`
     """
     Element = RealBall
 

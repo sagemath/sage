@@ -212,6 +212,7 @@ cdef mpfr_to_mpfval(mpfr_t value):
     bc = mpz_sizeinbase(man.value, 2)
     return (sign, man, int(exp), bc)
 
+
 def mpmath_to_sage(x, prec):
     """
     Convert any mpmath number (mpf or mpc) to a Sage RealNumber or
@@ -281,6 +282,7 @@ def mpmath_to_sage(x, prec):
     else:
         raise TypeError("cannot convert %r to Sage", x)
 
+
 def sage_to_mpmath(x, prec):
     """
     Convert any Sage number that can be coerced into a RealNumber
@@ -340,6 +342,7 @@ def sage_to_mpmath(x, prec):
     if isinstance(x, dict):
         return dict([(k, sage_to_mpmath(v, prec)) for (k, v) in x.items()])
     return x
+
 
 def call(func, *args, **kwargs):
     """

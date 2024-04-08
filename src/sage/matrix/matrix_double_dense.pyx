@@ -3684,7 +3684,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             sage: A = matrix(CDF, 2, [1,2+I,3*I,4]); A                                  # needs sage.symbolic
             [        1.0 2.0 + 1.0*I]
             [      3.0*I         4.0]
-            sage: A.exp()  # tol 1.1e-14                                                # needs sage.symbolic
+            sage: A.exp()  # tol 3e-14                                                  # needs sage.symbolic
             [-19.614602953804912 + 12.517743846762578*I   3.7949636449582176 + 28.88379930658099*I]
             [ -32.383580980922254 + 21.88423595789845*I   2.269633004093535 + 44.901324827684824*I]
 

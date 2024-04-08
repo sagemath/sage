@@ -429,9 +429,9 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             sage: M = Matroid(bases=matroids.catalog.N2().bases())
             sage: M.truncation()
             Matroid of rank 5 on 12 elements with 702 bases
-            sage: M.f_vector()
+            sage: M.whitney_numbers2()
             [1, 12, 66, 190, 258, 99, 1]
-            sage: M.truncation().f_vector()
+            sage: M.truncation().whitney_numbers2()
             [1, 12, 66, 190, 258, 1]
         """
         if self.full_rank() == 0:

@@ -11,7 +11,7 @@ Wrappers on GAP matrices
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-
+from sage.categories.fields import Fields
 from sage.libs.gap.libgap import libgap
 from sage.structure.element cimport Matrix
 from sage.matrix.args cimport MatrixArgs_init
@@ -278,12 +278,11 @@ cdef class Matrix_gap(Matrix_dense):
             [-1/2    1]
         """
         cdef Matrix_gap M
-        if self._base_ring.is_field():
+        if self._base_ring in Fields():
             M = self._new(self._nrows, self._ncols)
             M._libgap = self._libgap.Inverse()
             return M
-        else:
-            return Matrix_dense.__invert__(self)
+        return Matrix_dense.__invert__(self)
 
     cpdef _add_(left, right):
         r"""

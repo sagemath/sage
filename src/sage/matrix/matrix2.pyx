@@ -872,6 +872,13 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             ValueError: matrix equation has no solutions
+
+        Check that :issue:`28586` is fixed::
+
+            sage: m = matrix(GF(3), 2, 2, [1,2,2,0], sparse=True)
+            sage: v = vector(GF(3), [1,1])
+            sage: m.solve_right(v)
+            (2, 1)
         """
         try:
             L = B.base_ring()
@@ -9914,6 +9921,49 @@ cdef class Matrix(Matrix1):
                 break
         self.cache(key, normal)
         return normal
+
+    def is_nilpotent(self) -> bool:
+        r"""
+        Return if ``self`` is a nilpotent matrix.
+
+        A matrix `A` is *nilpotent* if there exists a positive integer
+        `k` such that `A^k = 0`. We test this by using the Cayley-Hamilton
+        theorem to see if the characteristic polynomial is `x^n = 0`.
+
+        EXAMPLES::
+
+            sage: A = matrix([[0,2,1,6], [0,0,1,2], [0,0,0,3], [0,0,0,0]])
+            sage: A.is_nilpotent()
+            True
+            sage: B = matrix([[2,2,2,2,-4], [7,1,1,1,-5], [1,7,1,1,-5],
+            ....:             [1,1,7,1,-5], [1,1,1,7,-5]])
+            sage: B.is_nilpotent()
+            True
+            sage: C = matrix(GF(7), [[1, 2], [2, 6]])
+            sage: C.is_nilpotent()
+            False
+            sage: D = matrix([[1,0],[0,0]])
+            sage: D.is_nilpotent()
+            False
+            sage: Z = matrix.zero(QQ, 5)
+            sage: Z.is_nilpotent()
+            True
+
+        TESTS:
+
+        Check the corner case of the `0 \times 0` matrix::
+
+            sage: Z = matrix.zero(QQ, 0); Z
+            []
+            sage: Z.charpoly()
+            1
+            sage: Z.is_nilpotent()
+            True
+        """
+        if self.trace():
+            return False
+        chi = self.charpoly()
+        return chi.is_monomial()
 
     def as_sum_of_permutations(self):
         r"""

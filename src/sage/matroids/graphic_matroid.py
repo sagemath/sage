@@ -739,7 +739,7 @@ class GraphicMatroid(Matroid):
 
         - ``X`` -- an iterable container of ground set elements
 
-        OUTPUT: ``frozenset`` instance containing a subset of the groundset
+        OUTPUT: a subset of the groundset as a :class:`frozenset`
 
         EXAMPLES::
 
@@ -790,7 +790,7 @@ class GraphicMatroid(Matroid):
         - ``X`` -- An object with Python's ``frozenset`` interface containing
           a subset of ``self.groundset()``
 
-        OUTPUT: ``frozenset`` instance containing a subset of the groundset
+        OUTPUT: a subset of the groundset as a :class:`frozenset`
 
         EXAMPLES::
 
@@ -829,7 +829,7 @@ class GraphicMatroid(Matroid):
 
         - ``X`` -- an iterable container of ground set elements
 
-        OUTPUT: ``frozenset`` instance containing a subset of the groundset
+        OUTPUT: a subset of the groundset as a :class:`frozenset`
 
         EXAMPLES::
 
@@ -943,7 +943,7 @@ class GraphicMatroid(Matroid):
 
         - ``X`` -- an iterable container of ground set elements
 
-        OUTPUT: ``frozenset`` instance containing a subset of the groundset
+        OUTPUT: a subset of the groundset as a :class:`frozenset`
 
         EXAMPLES::
 

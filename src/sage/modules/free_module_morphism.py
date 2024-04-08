@@ -361,7 +361,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             # A and explicitly represents each element in this basis
             # as the image of some element of the domain (the rows of
             # U give these elements of the domain).
-            H, U = A.hermite_form(transformation=True,include_zero_rows=False)
+            H, U = A.hermite_form(transformation=True, include_zero_rows=False)
 
             # 2. Next we find the unique solution to the equation
             #    Y*H = B.  This writes each basis element of V in
@@ -463,7 +463,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             # see inverse_image for similar code but with comments
             if not hasattr(A, 'hermite_form'):
                 raise NotImplementedError("base ring (%s) must have hermite_form algorithm in order to compute inverse image" % R)
-            H, U = A.hermite_form(transformation=True,include_zero_rows=False)
+            H, U = A.hermite_form(transformation=True, include_zero_rows=False)
             Y = H.solve_left(vector(self.codomain().coordinates(x)))
             C = Y*U
         try:
@@ -563,7 +563,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
                 for i in seigenvec:
                     V = self.domain().base_extend(i[0].parent())
                     svectors = Sequence([V(j * V.basis_matrix()) for j in i[1]], cr=True)
-                    resu.append((i[0],svectors,i[2]))
+                    resu.append((i[0], svectors, i[2]))
                 return resu
             else:
                 raise TypeError("not an endomorphism")
@@ -636,7 +636,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         return [(vec[0], Sequence(vec[1]).universe().subspace(vec[1]))
                 for vec in ev]
 
-    def minimal_polynomial(self,var='x'):
+    def minimal_polynomial(self, var='x'):
         r"""
         Computes the minimal polynomial.
 
@@ -684,6 +684,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             raise TypeError("not an endomorphism")
 
     minpoly = minimal_polynomial
+
 
 class BaseIsomorphism1D(Morphism):
     """
@@ -746,6 +747,7 @@ class BaseIsomorphism1D(Morphism):
         else:
             return rich_to_bool(op, 1)
 
+
 class BaseIsomorphism1D_to_FM(BaseIsomorphism1D):
     """
     An isomorphism from a ring to its 1-dimensional free module
@@ -801,6 +803,7 @@ class BaseIsomorphism1D_to_FM(BaseIsomorphism1D):
         if self._basis is not None:
             x *= self._basis
         return self.codomain()([x])
+
 
 class BaseIsomorphism1D_from_FM(BaseIsomorphism1D):
     """
