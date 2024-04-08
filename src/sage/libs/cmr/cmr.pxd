@@ -440,7 +440,7 @@ cdef extern from "cmr/tu.h":
     CMR_ERROR CMRtuStatsInit(CMR_TU_STATS* stats)
     # CMR_ERROR CMRtuStatsPrint(FILE* stream, CMR_TU_STATS* stats, const char* prefix)
     CMR_ERROR CMRtuTest(CMR* cmr, CMR_CHRMAT* matrix, bool* pisTotallyUnimodular, CMR_MATROID_DEC** pdec, CMR_SUBMAT** psubmatrix, CMR_TU_PARAMS* params, CMR_TU_STATS* stats, double timeLimit)
-    CMR_ERROR CMRtuCompleteDecomposition(CMR* cmr, CMR_MATROID_DEC* dec, CMR_REGULAR_PARAMS* params, CMR_REGULAR_STATS* stats, double timeLimit)
+    CMR_ERROR CMRtuCompleteDecomposition(CMR* cmr, CMR_MATROID_DEC* dec, CMR_TU_PARAMS* params, CMR_TU_STATS* stats, double timeLimit)
 
 
 cdef extern from "cmr/equimodular.h":

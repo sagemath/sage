@@ -1632,6 +1632,79 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                               │
                               GraphicNode (4×4)
 
+        This is the example in tests ``TreeFlagsNorecurse``,
+        ``TreeFlagsStopNoncographic`` in CMR's ``test_regular.cpp``::
+
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 9, sparse=True),
+            ....:                           [[1, 1, 0, 0, 0, 0, 0, 0, 0],
+            ....:                            [1, 1, 1, 0, 0, 0, 0, 0, 0],
+            ....:                            [1, 0, 0, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 1, 1, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 1, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 0, 0, 1, 1, 1, 0, 0],
+            ....:                            [0, 0, 0, 0, 1, 1, 0, 1, 0],
+            ....:                            [0, 0, 0, 0, 0, 1, 0, 1, 1],
+            ....:                            [0, 0, 0, 0, 0, 0, 1, 1, 1]])
+            sage: result, certificate = M._is_binary_linear_matroid_regular(
+            ....:                           certificate=True, complete_tree=False)
+            sage: result, certificate
+            ('Not Determined', OneSumNode (9×9) with 2 children)
+            sage: unicode_art(certificate)
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            UnknownNode (5×4) UnknownNode (4×5)
+            sage: result, certificate = M._is_binary_linear_matroid_regular(
+            ....:                           certificate=True,
+            ....:                           complete_tree='find_noncographic')
+            sage: result, certificate
+            (True, OneSumNode (9×9) with 2 children)
+            sage: unicode_art(certificate)
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            GraphicNode (5×4) CographicNode (4×5)
+            sage: result, certificate = M._is_binary_linear_matroid_regular(
+            ....:                           certificate=True,
+            ....:                           check_graphic_minors_planar=True,
+            ....:                           complete_tree='find_noncographic')
+            sage: result, certificate
+            ('Not Determined', OneSumNode (9×9) with 2 children)
+            sage: unicode_art(certificate)
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            GraphicNode (5×4) UnknownNode (4×5)
+
+        This is the same example, but tests stopping at nongraphic nodes::
+            sage: result, certificate = M._is_binary_linear_matroid_regular(
+            ....:                           certificate=True,
+            ....:                           complete_tree='find_nongraphic')
+            sage: result, certificate
+            ('Not Determined', OneSumNode (9×9) with 2 children)
+            sage: unicode_art(certificate)
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            GraphicNode (5×4) UnknownNode (4×5)
+            sage: result, certificate = M._is_binary_linear_matroid_regular(
+            ....:                           certificate=True,
+            ....:                           check_graphic_minors_planar=True,
+            ....:                           complete_tree='find_nongraphic')
+            sage: result, certificate
+            ('Not Determined', OneSumNode (9×9) with 2 children)
+            sage: unicode_art(certificate)
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            GraphicNode (5×4) UnknownNode (4×5)
+            sage: MT = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 9, sparse=True), M.transpose())
+            sage: result, certificate = MT._is_binary_linear_matroid_regular(
+            ....:                           certificate=True,
+            ....:                           check_graphic_minors_planar=True,
+            ....:                           complete_tree='find_nongraphic')
+            sage: result, certificate
+            ('Not Determined', OneSumNode (9×9) with 2 children)
+            sage: unicode_art(certificate)
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            UnknownNode (4×5) UnknownNode (5×4)
+
         Base ring check::
 
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(GF(5), 3, 2, sparse=True),
@@ -1776,17 +1849,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             │                 │
             UnknownNode (5×4) UnknownNode (4×5)
             sage: result, certificate = M.is_totally_unimodular(
-            ....:                           certificate=True, complete_tree='find_nongraphic')
-            sage: result, certificate
-            (False, (OneSumNode (9×9) with 2 children, ((3, 2, 0), (3, 1, 0))))
-            sage: unicode_art(certificate[0])
-            ╭──────OneSumNode (9×9) with 2 children──────╮
-            │                                            │
-            SubmatrixNode (5×4)                          UnknownNode (4×5)
-            │
-            Isomorphic to a minor of |det| = 2 submatrix
-            sage: result, certificate = M.is_totally_unimodular(
-            ....:                           certificate=True, complete_tree='find_noncographic')
+            ....:                           certificate=True,
+            ....:                           complete_tree='find_noncographic')
             sage: result, certificate
             (False, (OneSumNode (9×9) with 2 children, ((3, 2, 0), (3, 1, 0))))
             sage: unicode_art(certificate[0])
@@ -1795,6 +1859,22 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             SubmatrixNode (5×4)                          SubmatrixNode (4×5)
             │                                            │
             Isomorphic to a minor of |det| = 2 submatrix Isomorphic to a minor of |det| = 2 submatrix
+            sage: C1, C2 = certificate[0].child_nodes()
+            sage: C1.matrix().is_network_matrix()
+            sage: C2.matrix().is_network_matrix()
+            sage: result, certificate = M.is_totally_unimodular(
+            ....:                           certificate=True,
+            ....:                           complete_tree='find_nongraphic')
+            sage: result, certificate
+            (False, (OneSumNode (9×9) with 2 children, ((3, 2, 0), (3, 1, 0))))
+            sage: unicode_art(certificate[0])
+            ╭──────OneSumNode (9×9) with 2 children──────╮
+            │                                            │
+            SubmatrixNode (5×4)                          UnknownNode (4×5)
+            │
+            Isomorphic to a minor of |det| = 2 submatrix
+            sage: C1, C2 = certificate[0].child_nodes()
+            sage: C1.matrix().is_network_matrix()
         """
         base_ring = self.parent().base_ring()
         if base_ring.characteristic():

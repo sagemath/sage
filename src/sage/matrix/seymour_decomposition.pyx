@@ -17,6 +17,8 @@ Seymour's decomposition of totally unimodular matrices and regular matroids
 
 from libc.stdint cimport SIZE_MAX
 
+from cysignals.signals cimport sig_on, sig_off
+
 from sage.libs.cmr.cmr cimport *
 from sage.misc.cachefunc import cached_method
 from sage.rings.integer cimport Integer
@@ -24,7 +26,7 @@ from sage.rings.integer_ring import ZZ
 from sage.structure.sage_object cimport SageObject
 
 from .constructor import Matrix
-from .matrix_cmr_sparse cimport Matrix_cmr_chr_sparse, _sage_edges, _sage_graph
+from .matrix_cmr_sparse cimport Matrix_cmr_chr_sparse, _sage_edges, _sage_graph, _set_cmr_regular_parameters
 from .matrix_space import MatrixSpace
 
 
@@ -644,6 +646,98 @@ cdef class UnknownNode(DecompositionNode):
         if certificate:
             result.append(cert)
         return result
+
+    def complete_decomposition(self, *, time_limit=60.0,
+                               use_direct_graphicness_test=True,
+                               series_parallel_ok=True,
+                               check_graphic_minors_planar=False,
+                               complete_tree='find_irregular',
+                               three_sum_pivot_children=False,
+                               three_sum_strategy=None,
+                               construct_graphs=False,):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 9, sparse=True),
+            ....:                           [[1, 1, 0, 0, 0, 0, 0, 0, 0],
+            ....:                            [1, 1, 1, 0, 0, 0, 0, 0, 0],
+            ....:                            [1, 0, 0, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 1, 1, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 1, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 0, 0, 1, 1, 1, 0, 0],
+            ....:                            [0, 0, 0, 0, 1, 1, 0, 1, 0],
+            ....:                            [0, 0, 0, 0, 0, 1, 0, 1, 1],
+            ....:                            [0, 0, 0, 0, 0, 0, 1, 1, 1]])
+            sage: result, certificate = M.is_totally_unimodular(
+            ....:                           certificate=True, complete_tree=False)
+            sage: result, certificate
+            ('Not Determined', OneSumNode (9×9) with 2 children)
+            sage: unicode_art(certificate)
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            UnknownNode (5×4) UnknownNode (4×5)
+            sage: C1, C2 = certificate.child_nodes()
+            sage: C11 = C1.complete_decomposition(complete_tree=False); C11
+            SubmatrixNode (5×4)
+            sage: unicode_art(C11)
+            SubmatrixNode (5×4)
+            │
+            Isomorphic to a minor of |det| = 2 submatrix
+            sage: C1.matrix()
+            [1 1 0 0]
+            [1 1 1 0]
+            [0 1 1 1]
+            [1 0 0 1]
+            [0 0 1 1]
+            sage: C11.matrix()
+            [1 1 0 0]
+            [1 1 1 0]
+            [0 1 1 1]
+            [1 0 0 1]
+            [0 0 1 1]
+            sage: C22 = C2.complete_decomposition(complete_tree=False); C22
+            SubmatrixNode (4×5)
+            sage: unicode_art(C22)
+            SubmatrixNode (4×5)
+            │
+            Isomorphic to a minor of |det| = 2 submatrix
+            sage: C2.matrix()
+            [1 1 1 0 0]
+            [0 0 1 1 1]
+            [0 1 0 1 1]
+            [1 1 0 1 0]
+            sage: C22.matrix()
+            [1 1 1 0 0]
+            [0 0 1 1 1]
+            [0 1 0 1 1]
+            [1 1 0 1 0]
+        """
+        cdef CMR_TU_PARAMS params
+        cdef CMR_TU_STATS stats
+        cdef CMR_MATROID_DEC *clone = NULL
+
+        cdef CMR_MATROID_DEC **pclone = &clone
+
+        cdef dict kwds = dict(use_direct_graphicness_test=use_direct_graphicness_test,
+                              series_parallel_ok=series_parallel_ok,
+                              check_graphic_minors_planar=check_graphic_minors_planar,
+                              complete_tree=complete_tree,
+                              three_sum_pivot_children=three_sum_pivot_children,
+                              three_sum_strategy=three_sum_strategy,
+                              construct_graphs=construct_graphs)
+        params.algorithm = CMR_TU_ALGORITHM_DECOMPOSITION
+        params.directCamion = False
+        _set_cmr_regular_parameters(&params.regular, kwds)
+
+        sig_on()
+        try:
+            CMR_CALL(CMRmatroiddecCloneUnknown(cmr, self._dec, pclone))
+            CMR_CALL(CMRtuCompleteDecomposition(cmr, clone, &params, &stats, time_limit))
+        finally:
+            sig_off()
+        node = create_DecompositionNode(clone, self.matrix(), self.row_keys(), self.column_keys())
+        return node
 
 
 cdef class SumNode(DecompositionNode):

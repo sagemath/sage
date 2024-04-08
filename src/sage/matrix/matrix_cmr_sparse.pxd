@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-cmr
-from sage.libs.cmr.cmr cimport CMR_CHRMAT, CMR_GRAPH, CMR_GRAPH_EDGE, bool
+from sage.libs.cmr.cmr cimport CMR_CHRMAT, CMR_REGULAR_PARAMS, CMR_GRAPH, CMR_GRAPH_EDGE, bool
 
 from .matrix_sparse cimport Matrix_sparse
 
@@ -21,6 +21,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
     @staticmethod
     cdef _from_cmr(CMR_CHRMAT *mat, bint immutable=?, base_ring=?)
+
+cdef _set_cmr_regular_parameters(CMR_REGULAR_PARAMS *params, dict kwds)
 
 cdef _sage_edge(CMR_GRAPH *graph, CMR_GRAPH_EDGE e)
 cdef _sage_edges(CMR_GRAPH *graph, CMR_GRAPH_EDGE *edges, int n, keys)
