@@ -24,8 +24,9 @@ cdef class CircuitsMatroid(Matroid):
     cpdef girth(self)
     cpdef is_paving(self)
 
-    # isomorphism
+    # isomorphism and relabeling
     cpdef _is_isomorphic(self, other, certificate=*)
+    cpdef relabel(self, f)
 
     # verification
     cpdef is_valid(self)

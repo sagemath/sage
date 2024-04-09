@@ -120,6 +120,7 @@ additional functionality (e.g. linear extensions).
     - :meth:`is_binary() <sage.matroids.matroid.Matroid.is_binary>`
     - :meth:`ternary_matroid() <sage.matroids.matroid.Matroid.ternary_matroid>`
     - :meth:`is_ternary() <sage.matroids.matroid.Matroid.is_ternary>`
+    - :meth:`relabel() <sage.matroids.matroid.Matroid.relabel>`
 
 - Optimization
     - :meth:`max_weight_independent() <sage.matroids.matroid.Matroid.max_weight_independent>`
@@ -8389,3 +8390,85 @@ cdef class Matroid(SageObject):
         # place this matroid at the beginning of the list
         matroids.insert(0, self)
         return union_matroid.MatroidSum(iter(matroids))
+
+    cpdef _relabel_map(self, f):
+        """
+        Return a dictionary from the groundset to the relabeled groundset
+        and check that the mapping defined by ``f`` is valid.
+
+        INPUT:
+
+        - ``f`` -- a python object such that `f[e]` is the new label of `e`; if
+          ``e not in f`` then the identity map is assumed
+
+        EXAMPLES::
+
+            sage: M = matroids.catalog.Vamos([1,2,3,4,5,6,7,8])
+            sage: M._relabel_map({1:'a', 8:'h', 9:'i'})
+            {1: 'a', 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 'h'}
+            sage: M._relabel_map({1:2})
+            Traceback (most recent call last):
+            ...
+            ValueError: given map doesn't relabel the groundset properly
+        """
+        E = set()
+        d = {}
+        for x in self.groundset():
+            try:
+                E.add(f[x])
+                d[x] = f[x]
+            except LookupError:
+                E.add(x)
+                d[x] = x
+        if len(E) != len(self.groundset()):
+            raise ValueError("given map doesn't relabel the groundset properly")
+        return d
+
+    def relabel(self, f):
+        r"""
+        Return an isomorphic matroid with relabeled groundset.
+
+        The output is obtained by relabeling each element ``e`` by ``f[e]``,
+        where ``f`` is a given injective map. If ``e not in f`` then the
+        identity map is assumed.
+
+        INPUT:
+
+        - ``f`` -- a python object such that `f[e]` is the new label of `e`
+
+        OUTPUT: a matroid
+
+        EXAMPLES::
+
+            sage: from sage.matroids.rank_matroid import RankMatroid
+            sage: N = matroids.catalog.Sp8pp()
+            sage: M = RankMatroid(groundset=N.groundset(), rank_function=N.rank)
+            sage: sorted(M.groundset())
+            [1, 2, 3, 4, 5, 6, 7, 8]
+            sage: N = M.relabel({8:0})
+            sage: sorted(N.groundset())
+            [0, 1, 2, 3, 4, 5, 6, 7]
+            sage: M.is_isomorphic(N)
+            True
+
+        TESTS::
+
+            sage: from sage.matroids.rank_matroid import RankMatroid
+            sage: N = matroids.catalog.Sp8pp()
+            sage: M = RankMatroid(groundset=N.groundset(), rank_function=N.rank)
+            sage: f = {1:'a', 2:'b', 3:'c', 4:'d', 5:'e', 6:'f', 7:'g', 8:'h'}
+            sage: N = M.relabel(f)
+            sage: for S in powerset(M.groundset()):
+            ....:     assert M.rank(S) == N.rank([f[x] for x in S])
+        """
+        from sage.matroids.rank_matroid import RankMatroid
+        d = self._relabel_map(f)
+        E = [d[x] for x in self.groundset()]
+
+        def f_relabel(X):
+            d_inv = {d[x]: x for x in self.groundset()}
+            X_inv = [d_inv[x] for x in X]
+            return self.rank(X_inv)
+
+        M = RankMatroid(groundset=E, rank_function=f_relabel)
+        return M

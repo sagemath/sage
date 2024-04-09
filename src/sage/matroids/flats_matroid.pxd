@@ -13,8 +13,9 @@ cdef class FlatsMatroid(Matroid):
     cpdef flats(self, k)
     cpdef whitney_numbers2(self)
 
-    # isomorphism
+    # isomorphism and relabeling
     cpdef _is_isomorphic(self, other, certificate=*)
+    cpdef relabel(self, f)
 
     # verification
     cpdef is_valid(self)
