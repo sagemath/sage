@@ -70,7 +70,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
         self._charpoly = None
         self._optbound = None
 
-    cdef _matphir_c(self) noexcept:
+    cdef _matphir_c(self):
         r"""
         Return the matrix of the multiplication by `X^r` on
         the quotient `K[X,\sigma] / K[X,\sigma]*self`.
@@ -121,7 +121,7 @@ cdef class SkewPolynomial_finite_order_dense(SkewPolynomial_generic_dense):
             phir.append(line)
         return matrix(k, phir)
 
-    cdef _matmul_c(self) noexcept:
+    cdef _matmul_c(self):
         r"""
         Return the matrix of the multiplication by ``self`` on
         `K[X,\sigma]` considered as a free module over `K[X^r]`

@@ -54,7 +54,7 @@ from itertools import product
 from sage.misc.flatten import flatten
 
 
-cdef dict dense_graph_init(binary_matrix_t m, g, translation=None, force_undirected=False) noexcept:
+cdef dict dense_graph_init(binary_matrix_t m, g, translation=None, force_undirected=False):
     r"""
     Fill a binary matrix with the information from a Sage (di)graph.
 

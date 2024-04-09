@@ -97,6 +97,7 @@ def unpickle_v0(parent, entries, degree):
     """
     return unpickle_v1(parent, entries, degree)
 
+
 def unpickle_v1(parent, entries, degree, is_mutable=None):
     """
     Create a complex double vector with the given parent, entries,

@@ -52,7 +52,7 @@ obtaining Sage from a package manager, using a container image, or using
 Sage in the cloud.
 
 **This README contains self-contained instructions for building Sage from source.**
-It assumes that you have already cloned the git repository or downloaded the
+This requires you to clone the git repository (as described in this README) or download the
 [sources](https://www.sagemath.org/download-source.html) in the form
 of a tarball.
 
@@ -123,7 +123,7 @@ read the following step-by-step instructions for building Sage.
 The instructions cover all of Linux, macOS, and WSL.
 
 More details, providing a background for these instructions, can be found
-in the [section "Install from Source Code"](https://doc.sagemath.org/html/en/installation/source.html).
+in the section [Install from Source Code](https://doc.sagemath.org/html/en/installation/source.html)
 in the Installation Guide.
 
 
@@ -424,9 +424,9 @@ in the Installation Guide.
         $ sudo ln -s $(./sage -sh -c 'ls $SAGE_ROOT/venv/bin/sage') /usr/local/bin
 
 21. Optional: Set up SageMath as a Jupyter kernel in an existing Jupyter notebook
-    or JupyterLab installation, as described in [section
-    "Launching SageMath"](https://doc.sagemath.org/html/en/installation/launching.html)
-    in the Sage Installation Manual.
+    or JupyterLab installation, as described in the section
+    [Launching SageMath](https://doc.sagemath.org/html/en/installation/launching.html)
+    in the Sage Installation Guide.
 
 Alternative Installation using PyPI
 ---------------

@@ -44,7 +44,7 @@ include "polynomial_template.pxi"
 
 from sage.libs.ntl.ntl_ZZ_pE cimport ntl_ZZ_pE
 
-cdef inline ZZ_pE_c_to_list(ZZ_pE_c x) noexcept:
+cdef inline ZZ_pE_c_to_list(ZZ_pE_c x):
     cdef list L = []
     cdef ZZ_pX_c c_pX
     cdef ZZ_p_c c_p
@@ -152,7 +152,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
 
         Polynomial_template.__init__(self, parent, x, check, is_gen, construct)
 
-    cdef get_unsafe(self, Py_ssize_t i) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i):
         r"""
         Return the `i`-th coefficient of ``self``.
 
@@ -176,7 +176,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         cdef ZZ_pE_c c_pE = ZZ_pEX_coeff(self.x, i)
         return self._parent._base(ZZ_pE_c_to_list(c_pE))
 
-    cpdef list list(self, bint copy=True) noexcept:
+    cpdef list list(self, bint copy=True):
         r"""
         Return the list of coefficients.
 
@@ -198,7 +198,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         return [K(ZZ_pE_c_to_list(ZZ_pEX_coeff(self.x, i)))
                 for i in range(celement_len(&self.x, (<Polynomial_template>self)._cparent))]
 
-    cpdef _lmul_(self, Element left) noexcept:
+    cpdef _lmul_(self, Element left):
         r"""
         EXAMPLES::
 
@@ -410,7 +410,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         ZZ_pEX_MinPolyMod(r.x, (<Polynomial_ZZ_pEX>(self % other)).x, (<Polynomial_ZZ_pEX>other).x)
         return r
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         r"""
         EXAMPLES::
 
