@@ -123,7 +123,7 @@ def centrality_betweenness(G, bint exact=False, bint normalize=True):
 
 
 @cython.cdivision(True)
-cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True) noexcept:
+cdef dict centrality_betweenness_C(G, numerical_type _, bint normalize=True):
     r"""
     Return the centrality betweenness of G (C implementation)
 
