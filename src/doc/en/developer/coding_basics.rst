@@ -123,7 +123,7 @@ of several different types of polynomial rings.
 
 If you want to create a new directory (`package
 <https://docs.python.org/3/tutorial/modules.html#packages>`_) in the
-Sage library ``SAGE_ROOT/src/sage`` (say, ``measure_theory``), that
+Sage library :sage_root:`src/sage` (say, ``measure_theory``), that
 directory will usually contain an empty file ``__init__.py``, which
 marks the directory as an ordinary package (see
 :ref:`section_namespace_packages`), and also a file ``all.py``,
@@ -141,7 +141,7 @@ framework::
     lazy_import('sage.measure_theory.borel_measure', 'BorelMeasure')
     lazy_import('sage.measure_theory.banach_tarski', 'BanachTarskiParadox')
 
-Then in the file ``SAGE_ROOT/src/sage/all.py``, add a line ::
+Then in the file :sage_root:`src/sage/all.py`, add a line ::
 
     from sage.measure_theory.all import *
 
@@ -176,16 +176,16 @@ included in one of the following places:
 
 - Older code in the Sage library accesses
   the package data in more direct ways. For example,
-  ``SAGE_ROOT/src/sage/interfaces/maxima.py`` uses the file
-  ``SAGE_ROOT/src/sage/interfaces/maxima.lisp`` at runtime, so it
+  :sage_root:`src/sage/interfaces/maxima.py` uses the file
+  :sage_root:`src/sage/interfaces/maxima.lisp` at runtime, so it
   refers to it as::
 
     os.path.join(os.path.dirname(__file__), 'sage-maxima.lisp')
 
-- In an appropriate subdirectory of ``SAGE_ROOT/src/sage/ext_data/``.
+- In an appropriate subdirectory of :sage_root:`src/sage/ext_data/`.
   (At runtime, it is then available in the directory indicated by
   ``SAGE_EXTCODE``).  For example, if ``file`` is placed in
-  ``SAGE_ROOT/src/sage/ext_data/directory/`` it can be accessed with ::
+  :sage_root:`src/sage/ext_data/directory/` it can be accessed with ::
 
     from sage.env import SAGE_EXTCODE
     file = os.path.join(SAGE_EXTCODE, 'directory', 'file')
@@ -194,7 +194,7 @@ included in one of the following places:
 
 In all cases, the files must be listed (explicitly or via wildcards) in
 the section ``options.package_data`` of the file
-``SAGE_ROOT/pkgs/sagemath-standard/setup.cfg.m4`` (or the corresponding
+:sage_root:`pkgs/sagemath-standard/setup.cfg.m4` (or the corresponding
 file of another distribution).
 
 Large data files should not be added to the Sage source tree. Instead, it
@@ -270,7 +270,7 @@ The top of each Sage code file should follow this format::
     #                  https://www.gnu.org/licenses/
     # ****************************************************************************
 
-As an example, see ``SAGE_ROOT/src/sage/rings/integer.pyx``, which contains the
+As an example, see :sage_root:`src/sage/rings/integer.pyx`, which contains the
 implementation for `\ZZ`. The names of the people who made major contributions
 to the file appear in the ``AUTHORS`` section. You can add your name to the
 list if you belong to the people, but refrain from being verbose in the
@@ -432,7 +432,7 @@ information. You can use the existing functions of Sage as templates.
 
    The bibliographical reference should go in Sage's master
    bibliography file,
-   :file:`SAGE_ROOT/src/doc/en/reference/references/index.rst`:
+   :sage_root:`src/doc/en/reference/references/index.rst`:
 
    .. CODE-BLOCK:: rest
 
@@ -605,7 +605,7 @@ Sage's master **BIBLIOGRAPHY** file
 
 All bibliographical references should be stored in the master
 bibliography file,
-:file:`SAGE_ROOT/src/doc/en/reference/references/index.rst`, in the
+:sage_root:`src/doc/en/reference/references/index.rst`, in the
 format
 
 .. CODE-BLOCK:: rest
@@ -919,7 +919,7 @@ LaTeX-formatted ``\\Bold{Z}`` in the html manual, and as ``Z`` in the
 interactive help. Other examples: ``\\GF{q}`` (`\GF{q}`) and ``\\Zmod{p}``
 (`\Zmod{p}`).
 
-See the file ``SAGE_ROOT/src/sage/misc/latex_macros.py`` for a full list and
+See the file :sage_root:`src/sage/misc/latex_macros.py` for a full list and
 for details about how to add more macros.
 
 .. _section-doctest-writing:
@@ -968,13 +968,13 @@ written.
 
      Note that **TestSuites** are an automatic way to generate some of these
      tests in specific situations. See
-     ``SAGE_ROOT/src/sage/misc/sage_unittest.py``.
+     :sage_root:`src/sage/misc/sage_unittest.py`.
 
 **The syntax:**
 
 - **Environment:** doctests should work if you copy/paste them in Sage's
   interactive console. For example, the function ``AA()`` in the file
-  ``SAGE_ROOT/src/sage/algebras/steenrod/steenrod_algebra.py`` includes an
+  :sage_root:`src/sage/algebras/steenrod/steenrod_algebra.py` includes an
   EXAMPLES block containing the following::
 
     sage: from sage.algebras.steenrod.steenrod_algebra import AA as A
@@ -1001,7 +1001,7 @@ written.
 - **Writing files:** If a test outputs to a file, the file should be a
   temporary file.  Use :func:`tmp_filename` to get a temporary filename, or
   :func:`tmp_dir` to get a temporary directory. An example from
-  ``SAGE_ROOT/src/sage/plot/graphics.py``)::
+  :sage_root:`src/sage/plot/graphics.py`)::
 
       sage: plot(x^2 - 5, (x, 0, 5), ymin=0).save(tmp_filename(ext='.png'))
 
@@ -1167,7 +1167,7 @@ framework. Here is a comprehensive list:
 
   This is mathematically correct, as it is
   guaranteed to terminate. However, there is a
-  nonzero probability of a timout.
+  nonzero probability of a timeout.
 
 - **long time:** The line is only tested if the ``--long`` option is given, e.g.
   ``sage -t --long f.py``.
@@ -1445,14 +1445,14 @@ put ``.. linkall`` anywhere in the file, on a line by itself.  (For
 clarity, it might be best to put it near the top of the file.)  Then
 ``sage -t`` will act as if there were a ``.. link`` before each
 verbatim environment.  The file
-``SAGE_ROOT/src/doc/en/tutorial/interfaces.rst`` contains a
+:sage_root:`src/doc/en/tutorial/interfaces.rst` contains a
 ``.. linkall`` directive, for example.
 
 You can also put ``.. skip`` right before a verbatim environment to
 have that example skipped when testing the file.  This goes in the
 same place as the ``.. link`` in the previous example.
 
-See the files in ``SAGE_ROOT/src/doc/en/tutorial/`` for many
+See the files in :sage_root:`src/doc/en/tutorial/` for many
 examples of how to include automated testing in reST documentation for
 Sage.
 
