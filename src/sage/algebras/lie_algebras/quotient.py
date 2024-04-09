@@ -218,11 +218,10 @@ class LieQuotient_finite_dimensional_with_basis(LieAlgebraWithStructureCoefficie
         index_set = [i for i in sorted_indices if i not in I_supp]
 
         if names is None:
-            try:
+            if ambient._names is not None:
+                # ambient has assigned variable names, so use those
                 amb_names = dict(zip(sorted_indices, ambient.variable_names()))
                 names = [amb_names[i] for i in index_set]
-            except ValueError:  # ambient has not assigned variable names
-                pass
         elif isinstance(names, str):
             if len(index_set) == 1:
                 names = [names]
