@@ -407,7 +407,7 @@ class SuffixTrie(SageObject):
             F.append(s)
         return Set(F)
 
-    def has_suffix(self, word):
+    def has_suffix(self, word) -> bool:
         r"""
         Return ``True`` if and only if ``word`` is a suffix of ``self.word()``.
 
@@ -427,11 +427,11 @@ class SuffixTrie(SageObject):
         q = self._active_state
         if q == s:
             return True
-        else:
-            while q != 0:
-                q = self._suffix_link[q]
-                if q == s:
-                    return True
+
+        while q != 0:
+            q = self._suffix_link[q]
+            if q == s:
+                return True
         return False
 
     def to_digraph(self):
@@ -491,7 +491,7 @@ class SuffixTrie(SageObject):
 
     def show(self, *args, **kwds):
         r"""
-        Display the output of ``self.plot()``.
+        Display the output of :meth:`plot`.
 
         EXAMPLES::
 
@@ -902,7 +902,7 @@ class ImplicitSuffixTree(SageObject):
 
     def show(self, word_labels=None, *args, **kwds):
         r"""
-        Displays the output of ``self.plot()``.
+        Display the output of :meth:`plot`.
 
         INPUT:
 
@@ -1654,13 +1654,15 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
         """
         w = self.word()
         if len(w) > 40:
-            w = str(w[:40])+'...'
-        return "Decorated suffix tree of : {}".format(w)
+            w = str(w[:40]) + '...'
+        return f"Decorated suffix tree of : {w}"
 
     def _partial_labeling(self):
         r"""
         Make a depth-first search in the suffix tree and mark some squares of a
-        leftmost covering set of the tree. Used by ``self._complete_labeling``.
+        leftmost covering set of the tree.
+
+        This is used by :meth:`_complete_labeling`.
 
         EXAMPLES::
 
