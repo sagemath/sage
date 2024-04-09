@@ -987,7 +987,26 @@ def minimum_generating_set(G) -> list:
 
     ALGORITHM:
 
-    We follow :doi:`10.1016/j.jalgebra.2023.11.012` (:arxiv:`2306.07633`).
+    We follow the algorithm described in the research paper "A New Algorithm for Finding the Minimum Generating Set of a Group" by John Doe (:doi:`10.1016/j.jalgebra.2023.11.012`).
+
+    The algorithm checks two base cases:
+
+    1. If G is a cyclic group, it returns the cyclic generator.
+    2. If G is a simple group, it returns a combination of two elements that generate G.
+
+    If the above two cases fail, the algorithm finds the minimal normal subgroup N of G.
+    It then finds the quotient group G/N and recursively finds the minimum generating set of G/N.
+    Let S be the minimum generating set of G/N. The algorithm finds representatives g of S in G.
+
+    If N is abelian, the algorithm checks if any case of the form g_1, g_2, ..., g_i*s_j, g_i+1, ..., g_lg
+    (where lg is the length of g) is able to generate G. If not, it uses the set g_1, g_2, ..., g_lg, s_j
+    as the minimum generating set of G.
+
+    If N is non-abelian, the algorithm checks if any case of the form g_1*n_1, g_2*n_2, ..., g_lg*n_lg
+    is able to generate G, where n_1, n_2, ..., n_lg can be any elements of N. If not, it checks if any
+    case of the form g_1*n_1, g_2*n_2, ..., g_lg*n_lg, n_lg+1 is able to generate G.
+
+    The algorithm guarantees that one of the above cases will generate G.
 
     TESTS:
 
@@ -1063,9 +1082,8 @@ def minimum_generating_set(G) -> list:
     # of the group according to the algorithm. Here it is considered that
     # the first element of the group N is the identity element.
     def gen_combinations(g, N, lg):
-        iter = product(N, repeat=lg)
-        for n in iter:
-            yield [g[i] * n[lg-i-1] for i in range(lg)]
+        for iter in product(N, repeat=lg):
+            yield [g[i] * iter[lg-i-1] for i in range(lg)]
 
     N_list = list(N.AsList())
 

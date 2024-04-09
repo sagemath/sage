@@ -451,7 +451,6 @@ class Groups(CategoryWithAxiom):
             from sage.groups.conjugacy_classes import ConjugacyClass
             return ConjugacyClass(self, g)
 
-        @cached_method
         def minimum_generating_set(self):
             """
             Return a list of the minimum generating set of this group.
@@ -462,7 +461,7 @@ class Groups(CategoryWithAxiom):
                 sage: G.minimum_generating_set()
                 [
                 [1 2]  [1 2]
-                [1 1], [0 1]
+                [0 1], [1 1]
                 ]
 
                 sage: G = SymmetricGroup(3)
@@ -473,14 +472,14 @@ class Groups(CategoryWithAxiom):
 
                 sage: A5 = AlternatingGroup(5)
                 sage: A5.minimum_generating_set()
-                [(3,4,5), (1,2,3)]
+                [(1,2,3,4,5), (3,4,5)]
 
                 sage: H = groups.matrix.Heisenberg(1,3); H
                 Heisenberg group of degree 1 over Ring of integers modulo 3
                 sage: H.minimum_generating_set()
                 [
-                [1 0 0]  [1 1 0]
-                [0 1 1]  [0 1 0]
+                [1 1 0]  [1 0 0]
+                [0 1 0]  [0 1 1]
                 [0 0 1], [0 0 1]
                 ]
 
@@ -495,7 +494,11 @@ class Groups(CategoryWithAxiom):
                 NotImplementedError: only implemented for finite groups
             """
             from sage.groups.libgap_mixin import minimum_generating_set
-            return [self(x) for x in minimum_generating_set(self)]
+            try:
+                G = self.gap()
+                return [self(x) for x in G.MinimalGeneratingSet()]
+            except (NotImplementedError, AttributeError, ValueError):
+                return [self(x) for x in minimum_generating_set(self)]
 
     class ElementMethods:
         def conjugacy_class(self):
