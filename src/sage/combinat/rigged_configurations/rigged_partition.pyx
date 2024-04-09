@@ -354,7 +354,7 @@ cdef class RiggedPartition(SageObject):
 
     # Should we move these functions to the CP -> RC bijections?
 
-    cpdef get_num_cells_to_column(self, int end_column, t=1) noexcept:
+    cpdef get_num_cells_to_column(self, int end_column, t=1):
         r"""
         Get the number of cells in all columns before the ``end_column``.
 
@@ -394,7 +394,7 @@ cdef class RiggedPartition(SageObject):
 
         return sum_cells
 
-    cpdef insert_cell(self, int max_width) noexcept:
+    cpdef insert_cell(self, int max_width):
         r"""
         Insert a cell given at a singular value as long as its less than the
         specified width.
@@ -446,7 +446,7 @@ cdef class RiggedPartition(SageObject):
         self.rigging[max_pos] = None # State that we've changed this row
         return self._list[max_pos] - 1
 
-    cpdef remove_cell(self, row, int num_cells=1) noexcept:
+    cpdef remove_cell(self, row, int num_cells=1):
         r"""
         Removes a cell at the specified ``row``.
 

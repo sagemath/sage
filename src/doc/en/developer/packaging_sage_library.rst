@@ -515,7 +515,7 @@ Version constraints of dependencies
 -----------------------------------
 
 The version information for dependencies comes from the files
-``build/pkgs/*/install-requires.txt`` and
+``build/pkgs/*/version_requirements.txt`` and
 ``build/pkgs/*/package-version.txt``.  We use the
 `m4 <https://www.gnu.org/software/m4/manual/html_node/index.html>`_
 macro processor to insert the version information in the generated files

@@ -213,7 +213,7 @@ to put together.
     ....:                    axes = False
     ....:                    )
     sage: def sine_and_unit_circle( angle=30, instant_show = True, show_pi=True ):
-    ....:     ccenter_x, ccenter_y = -radius, 0  # center of cirlce on real coords
+    ....:     ccenter_x, ccenter_y = -radius, 0  # center of circle on real coords
     ....:     sine_x = angle # the big magic to sync both graphs :)
     ....:     current_y = circle_y = sine_y = radius * sin(angle*pi/180)
     ....:     circle_x = ccenter_x + radius * cos(angle*pi/180)
