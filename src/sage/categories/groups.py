@@ -495,8 +495,7 @@ class Groups(CategoryWithAxiom):
             """
             from sage.groups.libgap_mixin import minimum_generating_set
             try:
-                G = self.gap()
-                return [self(x) for x in G.MinimalGeneratingSet()]
+                return [self(x) for x in self.gap().MinimalGeneratingSet()]
             except (NotImplementedError, AttributeError, ValueError):
                 return [self(x) for x in minimum_generating_set(self)]
 
