@@ -256,6 +256,9 @@ class Application(object):
         Update a package to the latest version. This modifies the Sage sources.
         """
         pkg = Package(package_name)
+        if pkg.source not in ['normal', 'wheel']:
+            log.debug('update_latest can only update normal and wheel packages; %s is a %s package' % (pkg, pkg.source))
+            return
         dist_name = pkg.distribution_name
         if dist_name is None:
             log.debug('%s does not have Python distribution info in version_requirements.txt' % pkg)
