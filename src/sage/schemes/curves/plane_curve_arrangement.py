@@ -636,7 +636,7 @@ class AffinePlaneCurveArrangementElement(PlaneCurveArrangementElement):
         else:
             computed = self._meridians_nonsimpl_nonvertical
         if computed:
-            return computed
+            return dict(computed)
         self.fundamental_group(simplified=simplified, vertical=vertical)
         if simplified and vertical:
             return dict(self._meridians_simpl_vertical)
@@ -981,12 +981,12 @@ class ProjectivePlaneCurveArrangementElement(PlaneCurveArrangementElement):
         else:
             computed = self._meridians_nonsimpl
         if computed:
-            return computed
+            return dict(computed)
         self._fundamental_group(simplified=simplified)
         if simplified:
-            return self._meridians_simpl
+            return dict(self._meridians_simpl)
         else:
-            return self._meridians_nonsimpl
+            return dict(self._meridians_nonsimpl)
 
 
 class PlaneCurveArrangements(UniqueRepresentation, Parent):
@@ -1011,7 +1011,7 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
     @staticmethod
     def __classcall__(cls, base, names=()):
         """
-        Normalize names
+        Normalize the inputs to ensure a unique representation.
 
         TESTS::
 
@@ -1019,7 +1019,6 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
             sage: K = AffinePlaneCurveArrangements(QQ, names=('x', 'y'))
             sage: H is K
             True
-            sage: TestSuite(K).run()
         """
         names = normalize_names(len(names), names)
         return super().__classcall__(cls, base, names)
@@ -1032,12 +1031,6 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
 
             sage: H.<x, y> = AffinePlaneCurveArrangements(QQ)
             sage: TestSuite(H).run()
-            sage: H.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-            sage: K = ProjectivePlaneCurveArrangements(QQ, names=('x', 'y', 'z'))
-            sage: H is K
-            True
-            sage: type(K)
-            <class 'sage.schemes.curves.plane_curve_arrangement.ProjectivePlaneCurveArrangements_with_category'>
         """
         if base_ring not in _Fields:
             raise ValueError('base ring must be a field')
@@ -1064,7 +1057,6 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
         """
         return PolynomialRing(self.base_ring(), self.variable_names())
 
-    @abstract_method
     def change_ring(self, base_ring):
         """
         Return curve arrangements over a different base ring.
@@ -1080,11 +1072,16 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: L.<x, y> = PlaneCurveArrangements(QQ)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: <abstract method ambient_space at  0x...>
-        """
+            sage: L.<x, y> = AffinePlaneCurveArrangements(QQ)
+            sage: L.change_ring(RR).base_ring()
+            Real Field with 53 bits of precision
+
+        TESTS::
+
+            sage: L.change_ring(QQ) is L
+            True
+         """
+        return type(self)(base_ring, names=self.variable_names())
 
     @abstract_method
     def ambient_space(self):
@@ -1097,6 +1094,12 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
             Traceback (most recent call last):
             ...
             NotImplementedError: <abstract method ambient_space at  0x...>
+            sage: L.<x, y> = AffinePlaneCurveArrangements(QQ)
+            sage: L.ambient_space()
+            Affine Space of dimension 2 over Rational Field
+            sage: L.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
+            sage: L.ambient_space()
+            Projective Space of dimension 2 over Rational Field
         """
 
     def _repr_(self):
@@ -1265,39 +1268,8 @@ class AffinePlaneCurveArrangements(PlaneCurveArrangements):
             sage: L.<x, y> = AffinePlaneCurveArrangements(QQ)
             sage: L.ambient_space()
             Affine Space of dimension 2 over Rational Field
-            sage: L.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-            sage: L.ambient_space()
-            Projective Space of dimension 2 over Rational Field
         """
         return AffineSpace(self.base_ring(), 2, self._names)
-
-    def change_ring(self, base_ring):
-        """
-        Return curve arrangements over a different base ring.
-
-        INPUT:
-
-        - ``base_ring`` -- a ring; the new base ring.
-
-        OUTPUT:
-
-        A new :class:`AffinePlaneCurveArrangements` instance over the new
-        base ring.
-
-        EXAMPLES::
-
-            sage: L.<x, y> = AffinePlaneCurveArrangements(QQ)
-            sage: L.gen(0)
-            x
-            sage: L.change_ring(RR).base_ring()
-            Real Field with 53 bits of precision
-
-        TESTS::
-
-            sage: L.change_ring(QQ) is L
-            True
-        """
-        return AffinePlaneCurveArrangements(base_ring, names=self.variable_names())
 
 
 class ProjectivePlaneCurveArrangements(PlaneCurveArrangements):
@@ -1325,39 +1297,8 @@ class ProjectivePlaneCurveArrangements(PlaneCurveArrangements):
 
         EXAMPLES::
 
-            sage: L.<x, y> = AffinePlaneCurveArrangements(QQ)
-            sage: L.ambient_space()
-            Affine Space of dimension 2 over Rational Field
             sage: L.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
             sage: L.ambient_space()
             Projective Space of dimension 2 over Rational Field
         """
         return ProjectiveSpace(self.base_ring(), 2, self._names)
-
-    def change_ring(self, base_ring):
-        """
-        Return curve arrangements over a different base ring.
-
-        INPUT:
-
-        - ``base_ring`` -- a ring; the new base ring.
-
-        OUTPUT:
-
-        A new :class:`ProjectivePlaneCurveArrangements` instance over the new
-        base ring.
-
-        EXAMPLES::
-
-            sage: L.<x, y, z> = ProjectivePlaneCurveArrangements(QQ)
-            sage: L.gen(0)
-            x
-            sage: L.change_ring(RR).base_ring()
-            Real Field with 53 bits of precision
-
-        TESTS::
-
-            sage: L.change_ring(QQ) is L
-            True
-        """
-        return ProjectivePlaneCurveArrangements(base_ring, names=self.variable_names())

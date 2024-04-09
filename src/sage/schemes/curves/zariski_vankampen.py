@@ -566,19 +566,16 @@ def followstrand(f, factors, x0, x1, y0a, prec=53) -> list:
                 ci = c.imag()
                 coefsfactors += list(cr.endpoints())
                 coefsfactors += list(ci.endpoints())
-    from sage.libs.sirocco import (contpath, contpath_mp, contpath_comps,
-                                   contpath_mp_comps)
+    from sage.libs.sirocco import (contpath, contpath_mp, contpath_comps, contpath_mp_comps)
     try:
         if prec == 53:
             if factors:
-                points = contpath_comps(deg, coefs, yr, yi,
-                                        degsfactors, coefsfactors)
+                points = contpath_comps(deg, coefs, yr, yi, degsfactors, coefsfactors)
             else:
                 points = contpath(deg, coefs, yr, yi)
         else:
             if factors:
-                points = contpath_mp_comps(deg, coefs, yr, yi, prec,
-                                           degsfactors, coefsfactors)
+                points = contpath_mp_comps(deg, coefs, yr, yi, prec, degsfactors, coefsfactors)
             else:
                 points = contpath_mp(deg, coefs, yr, yi, prec)
         return points

@@ -354,26 +354,18 @@ class OrderedHyperplaneArrangementElement(HyperplaneArrangementElement):
             sage: A.<x, y> = OrderedHyperplaneArrangements(QQ)
             sage: L = [y + x, y + x - 1]
             sage: H = A(L)
-            sage: H._affine_meridians is None
-            True
             sage: g = H.affine_fundamental_group()
             sage: g
             Finitely presented group < x0, x1 |  >
-            sage: H._affine_meridians
+            sage: H.affine_meridians()
             {0: [x0], 1: [x1], 2: [x1^-1*x0^-1]}
-            sage: H.affine_meridians() == H._affine_meridians
-            True
             sage: H1 = H.add_hyperplane(y - x)
-            sage: H1._affine_meridians is None
-            True
-            sage: dic = H1.affine_meridians(); dic
+            sage: H1.affine_meridians()
             {0: [x0], 1: [x1], 2: [x2], 3: [x2^-1*x1^-1*x0^-1]}
-            sage: dic == H1._affine_meridians
-            True
         """
         if self._affine_meridians is None:
             self.affine_fundamental_group()
-        return self._affine_meridians
+        return dict(self._affine_meridians)
 
     def projective_fundamental_group(self):
         r"""
