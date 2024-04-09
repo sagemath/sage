@@ -1080,8 +1080,8 @@ class PlaneCurveArrangements(UniqueRepresentation, Parent):
 
             sage: L.change_ring(QQ) is L
             True
-         """
-        return type(self)(base_ring, names=self.variable_names())
+        """
+        return self.__reduce__()[1][0](base_ring, names=self.variable_names())
 
     @abstract_method
     def ambient_space(self):
