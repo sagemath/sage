@@ -4443,6 +4443,36 @@ cdef class Matrix(sage.structure.element.Matrix):
             raise ValueError("The matrix is not a square matrix")
         return self._check_symmetrizability(return_diag=return_diag, skew=True, positive=positive)
 
+    def is_symplectic(self):
+        r"""
+        Return ``True`` if the matrix is symplectic.
+
+        INPUT:
+
+        A `(2g \times 2g)`-matrix invertible over a ring.
+
+        EXAMPLES:
+
+        Symplectic `2 \times 2` matrices are those with determinant one::
+
+            sage: K.<a> = NumberField(x^3 + 2)
+            sage: R = K.order(2*a)
+            sage: M = random_matrix(R, 2, algorithm="unimodular")
+            sage: M.is_symplectic()
+            True
+
+        Identity matrices are symplectic::
+
+            sage: identity_matrix(R, 32).is_symplectic()
+            True
+        """
+        # TODO: Is [BL2004]_ faster?
+        if self._ncols != self._nrows:
+            raise ValueError("the matrix is not a square matrix")
+
+        from sage.groups.matrix_gps.symplectic import Sp
+        return self in Sp(self._nrows, self._base_ring)
+
     def is_dense(self):
         """
         Return True if this is a dense matrix.
