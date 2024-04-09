@@ -5,11 +5,14 @@ on:
   pull_request_target:
     types:
       - opened
+      - reopened
       - synchronize
+      - ready_for_review
+      - review_requested
       - edited
 jobs:
   label-changes:
-    if: vars.SMALL_THRESHOLD && vars.MODERATE_THRESHOLD && vars.LARGE_THRESHOLD
+    if: vars.SMALL_THRESHOLD && vars.MODERATE_THRESHOLD && vars.LARGE_THRESHOLD && github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
@@ -22,18 +25,15 @@ jobs:
       - name: Add labels based on size
         run: |
           git fetch origin $BASE_SHA
-          chmod a+x .github/workflows/get_changes.sh
-          .github/workflows/get_changes.sh
+          chmod a+x .github/workflows/set_labels_by_changes.sh
+          .github/workflows/set_labels_by_changes.sh
         env:
           BASE_SHA: ${{ github.base_ref }}
           PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
           PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          API_URL: "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/labels"
-          MINIMAL: 'v: minimal'
-          SMALL: 'v: small'
-          MODERATE: 'v: moderate'
-          LARGE: 'v: large'
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number}}
           SMALL_THRESHOLD: ${{ vars.SMALL_THRESHOLD }}
           MODERATE_THRESHOLD: ${{ vars.MODERATE_THRESHOLD }}
           LARGE_THRESHOLD: ${{ vars.LARGE_THRESHOLD }}
