@@ -267,10 +267,9 @@ class AbelianVarieties(Schemes_over_base):
         EXAMPLES::
 
             sage: AbelianVarieties(QQ).super_categories()
-            [Category of schemes over Rational Field,
-             Category of commutative additive groups]
+            [Category of schemes over Spectrum of Rational Field]
         """
-        return [Schemes(self.base_scheme()), CommutativeAdditiveGroups()]
+        return [Schemes(self.base_scheme())]
 
     def _repr_object_names(self):
         """

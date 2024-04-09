@@ -98,9 +98,7 @@ class Jacobian_generic(Scheme):
                                          "_test_elements_eq_symmetric",\
                                          "_test_elements_eq_transitive",\
                                          "_test_elements_neq",\
-                                         "_test_some_elements",\
-                                         "_test_additive_associativity",\
-                                         "_test_zero"])
+                                         "_test_some_elements"])
 
         ::
 

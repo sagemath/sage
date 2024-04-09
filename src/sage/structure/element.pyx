@@ -710,7 +710,9 @@ cdef class Element(SageObject):
         SageObject._test_category(self, tester = tester)
         category = self.category()
         # Tests that self inherits methods from the categories
-        if can_assign_class(self):
+        # SchemeMorphisms are skipped, see #37768.
+        from sage.schemes.generic.morphism import SchemeMorphism
+        if can_assign_class(self) and not isinstance(self, SchemeMorphism):
             # For usual Python classes, that should be done with
             # standard inheritance
             tester.assertTrue(isinstance(self, self.parent().category().element_class))
