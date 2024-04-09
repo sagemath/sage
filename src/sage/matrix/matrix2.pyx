@@ -871,6 +871,13 @@ cdef class Matrix(Matrix1):
             Traceback (most recent call last):
             ...
             ValueError: matrix equation has no solutions
+
+        Check that :issue:`28586` is fixed::
+
+            sage: m = matrix(GF(3), 2, 2, [1,2,2,0], sparse=True)
+            sage: v = vector(GF(3), [1,1])
+            sage: m.solve_right(v)
+            (2, 1)
         """
         try:
             L = B.base_ring()
@@ -2208,7 +2215,7 @@ cdef class Matrix(Matrix1):
         self.cache('det', d)
         return d
 
-    cdef _det_by_minors(self, Py_ssize_t level) noexcept:
+    cdef _det_by_minors(self, Py_ssize_t level):
         """
         Compute the determinant of the upper-left level x level submatrix
         of self. Does not handle degenerate cases, level MUST be >= 2
@@ -2578,7 +2585,7 @@ cdef class Matrix(Matrix1):
 
         return res
 
-    cdef _pf_bfl(self) noexcept:
+    cdef _pf_bfl(self):
         r"""
         Computes the Pfaffian of ``self`` using the Baer-Faddeev-LeVerrier
         algorithm.
@@ -7983,7 +7990,7 @@ cdef class Matrix(Matrix1):
         else:
             return E
 
-    cpdef _echelon(self, str algorithm) noexcept:
+    cpdef _echelon(self, str algorithm):
         """
         Return the echelon form of ``self`` using ``algorithm``.
 
@@ -8063,7 +8070,7 @@ cdef class Matrix(Matrix1):
         """
         return self._echelon('classical')
 
-    cpdef _echelon_in_place(self, str algorithm) noexcept:
+    cpdef _echelon_in_place(self, str algorithm):
         """
         Transform ``self`` into echelon form and return the pivots of ``self``.
 
@@ -8894,7 +8901,7 @@ cdef class Matrix(Matrix1):
 
     cpdef matrix_window(self, Py_ssize_t row=0, Py_ssize_t col=0,
                         Py_ssize_t nrows=-1, Py_ssize_t ncols=-1,
-                        bint check=1) noexcept:
+                        bint check=1):
         """
         Return the requested matrix window.
 
@@ -9913,6 +9920,49 @@ cdef class Matrix(Matrix1):
                 break
         self.cache(key, normal)
         return normal
+
+    def is_nilpotent(self) -> bool:
+        r"""
+        Return if ``self`` is a nilpotent matrix.
+
+        A matrix `A` is *nilpotent* if there exists a positive integer
+        `k` such that `A^k = 0`. We test this by using the Cayley-Hamilton
+        theorem to see if the characteristic polynomial is `x^n = 0`.
+
+        EXAMPLES::
+
+            sage: A = matrix([[0,2,1,6], [0,0,1,2], [0,0,0,3], [0,0,0,0]])
+            sage: A.is_nilpotent()
+            True
+            sage: B = matrix([[2,2,2,2,-4], [7,1,1,1,-5], [1,7,1,1,-5],
+            ....:             [1,1,7,1,-5], [1,1,1,7,-5]])
+            sage: B.is_nilpotent()
+            True
+            sage: C = matrix(GF(7), [[1, 2], [2, 6]])
+            sage: C.is_nilpotent()
+            False
+            sage: D = matrix([[1,0],[0,0]])
+            sage: D.is_nilpotent()
+            False
+            sage: Z = matrix.zero(QQ, 5)
+            sage: Z.is_nilpotent()
+            True
+
+        TESTS:
+
+        Check the corner case of the `0 \times 0` matrix::
+
+            sage: Z = matrix.zero(QQ, 0); Z
+            []
+            sage: Z.charpoly()
+            1
+            sage: Z.is_nilpotent()
+            True
+        """
+        if self.trace():
+            return False
+        chi = self.charpoly()
+        return chi.is_monomial()
 
     def as_sum_of_permutations(self):
         r"""
@@ -14089,7 +14139,7 @@ cdef class Matrix(Matrix1):
             raise ValueError(msg.format(d))
         return L, vector(L.base_ring(), d)
 
-    cdef tuple _block_ldlt(self, bint classical) noexcept:
+    cdef tuple _block_ldlt(self, bint classical):
         r"""
         Perform a user-unfriendly block-`LDL^{T}` factorization of the
         Hermitian matrix `A`

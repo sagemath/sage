@@ -1,3 +1,3 @@
-cpdef LCM_list(v) noexcept
+cpdef LCM_list(v)
 
-cdef LCM_generic(itr, ret) noexcept
+cdef LCM_generic(itr, ret)

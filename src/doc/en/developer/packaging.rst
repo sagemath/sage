@@ -9,9 +9,9 @@ Packaging Third-Party Code for Sage
 One of the mottoes of the Sage project is to not reinvent the wheel: If
 an algorithm is already implemented in a well-tested library then
 consider incorporating that library into Sage. The current list of
-available packages are the subdirectories of ``SAGE_ROOT/build/pkgs/``.
+available packages are the subdirectories of :sage_root:`build/pkgs/`.
 The installation of packages is done through a bash script located in
-``SAGE_ROOT/build/bin/sage-spkg``. This script is typically invoked by
+:sage_root:`build/bin/sage-spkg`. This script is typically invoked by
 giving the command::
 
     [alice@localhost sage]$ sage -i <options> <package name>...
@@ -19,13 +19,13 @@ giving the command::
 options can be:
 
 - -f: install a package even if the same version is already installed
-- -s: do not delete temporary build directory
+- -s: do not delete build directory
 - -c: after installing, run the test suite for the spkg. This should
   override the settings of ``SAGE_CHECK`` and ``SAGE_CHECK_PACKAGES``.
 - -d: only download the package
 
 The section :ref:`section-directory-structure` describes the structure
-of each individual package in ``SAGE_ROOT/build/pkgs``. In section
+of each individual package in :sage_root:`build/pkgs`. In section
 :ref:`section-manual-build` we see how you can install and test a new
 spkg that you or someone else wrote. Finally,
 :ref:`section-inclusion-procedure` explains how to submit a new package
@@ -168,8 +168,8 @@ Third-party packages in Sage consist of two parts:
    instead.
 
 #. The build scripts and associated files are in a subdirectory
-   ``SAGE_ROOT/build/pkgs/<package>``, where you replace ``<package>``
-   with a lower-case version of the upstream project name. If the
+   of :sage_root:`build/pkgs/` whose name is the lower-case version of
+   the upstream project name. If the
    project name contains characters which are not alphanumeric
    and are not an underscore, those characters should be removed
    or replaced by an underscore. For example, the project
@@ -177,7 +177,7 @@ Third-party packages in Sage consist of two parts:
 
 As an example, let us consider a hypothetical FoO project. They
 (upstream) distribute a tarball ``FoO-1.3.tar.gz`` (that will be
-automatically placed in ``SAGE_ROOT/upstream`` during the installation
+automatically placed in :file:`SAGE_ROOT/upstream` during the installation
 process). To package it in Sage, we create a subdirectory containing as
 a minimum the following files:
 
@@ -336,7 +336,7 @@ Likewise for :envvar:`CXXFLAGS`, :envvar:`FCFLAGS`, and :envvar:`F77FLAGS`.
     In more detail: ``sage-bootstrap-python`` runs a version of Python
     pre-installed on the machine, which is a build prerequisite of Sage.
     Note that ``sage-bootstrap-python`` accepts a wide range of Python
-    versions, Python >= 2.6 and >= 3.4, see ``SAGE_ROOT/build/tox.ini``
+    versions, Python >= 2.6 and >= 3.4, see :sage_root:`build/tox.ini`
     for details.  You should only use ``sage-bootstrap-python`` for
     installation tasks that must be able to run before Sage has made
     ``python3`` available.  It must not be used for running ``pip`` or
@@ -394,7 +394,7 @@ Helper functions
 
 In the ``spkg-build``, ``spkg-install``, and ``spkg-check`` scripts,
 the following functions are available. They are defined in the file
-``$SAGE_ROOT/build/bin/sage-dist-helpers``, if you want to look at the
+:sage_root:`build/bin/sage-dist-helpers`, if you want to look at the
 source code.  They should be used to make sure that appropriate
 variables are set and to avoid code duplication. These function names
 begin with ``sdh_``, which stands for "Sage-distribution helper".
@@ -623,18 +623,18 @@ For example, the ``scipy`` ``spkg-check.in`` file contains the line
 
     exec python3 spkg-check.py
 
-Abstract requirements: The ``install-requires.txt`` file
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Abstract requirements: The ``version_requirements.txt`` file
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All ``normal`` Python packages and all ``wheel`` packages must have a file
-``install-requires.txt``. For ``pip`` packages, the file is optional; if
+``version_requirements.txt``. For ``pip`` packages, the file is optional; if
 it is missing, the ``requirements.txt`` file is used instead.
 
-If a Python package is available on PyPI, the ``install-requires.txt`` file must
+If a Python package is available on PyPI, the ``version_requirements.txt`` file must
 contain the name of the package as it is known to PyPI.
 
 Optionally,
-``install-requires.txt`` can encode version constraints (such as lower
+``version_requirements.txt`` can encode version constraints (such as lower
 and upper bounds).  The constraints are in the format of the
 ``install_requires`` key of `setup.cfg
 <https://setuptools.readthedocs.io/en/latest/userguide/declarative_config.html>`_
@@ -661,7 +661,7 @@ For example:
 
     $ cat build/pkgs/sphinx/package-version.txt
     3.1.2.p0
-    $ cat build/pkgs/sphinx/install-requires.txt
+    $ cat build/pkgs/sphinx/version_requirements.txt
     # gentoo uses 3.2.1
     sphinx >=3, <3.3
 
@@ -669,7 +669,7 @@ The comments may include links to GitHub Issues/PRs, as in the following example
 
 .. CODE-BLOCK:: bash
 
-    $ cat build/pkgs/packaging/install-requires.txt
+    $ cat build/pkgs/packaging/version_requirements.txt
     packaging >=18.0
     # Issue #30975: packaging 20.5 is known to work
     # but we have to silence "DeprecationWarning: Creating a LegacyVersion"
@@ -933,7 +933,7 @@ Where packages are installed
 The Sage distribution has the notion of several installation trees.
 
 - ``$SAGE_VENV`` is the default installation tree for all Python packages, i.e.,
-  normal packages with an ``install-requires.txt``, wheel packages, and pip packages
+  normal packages with an ``version_requirements.txt``, wheel packages, and pip packages
   with a ``requirements.txt``.
 
 - ``$SAGE_LOCAL`` is the default installation tree for all non-Python packages.
@@ -1073,7 +1073,7 @@ The ``dependencies`` file may need editing (watch out for warnings regarding
 ``--no-deps`` that Sage issues during installation of the package!).
 
 Also you may want to set lower and upper bounds for acceptable package versions
-in the file ``install-requires.txt``. (Make sure that the version in
+in the file ``version_requirements.txt``. (Make sure that the version in
 ``package-version.txt`` falls within this acceptable version range!)
 
 By default, when the package is available as a platform-independent
@@ -1113,7 +1113,7 @@ For Python packages available from PyPI, there is another shortcut::
 
 When preparing the update, check that any lower and upper bounds for
 acceptable package versions that may be declared in the file
-``install-requires.txt`` are still correct, and update them as needed.
+``version_requirements.txt`` are still correct, and update them as needed.
 The version in ``package-version.txt`` always needs to fall within the
 version range!
 
@@ -1226,7 +1226,7 @@ or::
     [alice@localhost sage]$ sage -f -c package_name
 
 If all went fine, open a PR with the code under
-``SAGE_ROOT/build/pkgs``.
+:sage_root:`build/pkgs`.
 
 
 .. _section-spkg-patching:
@@ -1483,7 +1483,7 @@ License information
 -------------------
 
 License information for a package needs to be put both in its
-``SPKG.rst`` file and in the file ``SAGE_ROOT/COPYING.txt``.
+``SPKG.rst`` file and in the file :sage_root:`COPYING.txt`.
 Whenever upgrading a package, check whether the license changed between
 versions.
 

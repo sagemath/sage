@@ -260,7 +260,7 @@ cdef class GroebnerStrategy(SageObject):
         """
         return unpickle_GroebnerStrategy0, (self._ideal,)
 
-    cpdef MPolynomial_libsingular normal_form(self, MPolynomial_libsingular p) noexcept:
+    cpdef MPolynomial_libsingular normal_form(self, MPolynomial_libsingular p):
         """
         Compute the normal form of ``p`` with respect to the
         generators of this object.
@@ -511,7 +511,7 @@ cdef class NCGroebnerStrategy(SageObject):
         """
         return unpickle_NCGroebnerStrategy0, (self._ideal,)
 
-    cpdef NCPolynomial_plural normal_form(self, NCPolynomial_plural p) noexcept:
+    cpdef NCPolynomial_plural normal_form(self, NCPolynomial_plural p):
         """
         Compute the normal form of ``p`` with respect to the
         generators of this object.
@@ -542,6 +542,7 @@ cdef class NCGroebnerStrategy(SageObject):
             _p = redtailBba(_p, max_ind, self._strat)
         return new_NCP(self._parent, _p)
 
+
 def unpickle_NCGroebnerStrategy0(I):
     """
     EXAMPLES::
@@ -555,6 +556,7 @@ def unpickle_NCGroebnerStrategy0(I):
         True
     """
     return NCGroebnerStrategy(I)
+
 
 def unpickle_GroebnerStrategy0(I):
     """
