@@ -22,8 +22,8 @@ jobs:
       - name: Add labels based on size
         run: |
           git fetch origin $BASE_SHA
-          chmod a+x .github/workflows/get_changes.sh
-          .github/workflows/get_changes.sh
+          chmod a+x .github/workflows/set_labels_by_changes.sh
+          .github/workflows/set_labels_by_changes.sh
         env:
           BASE_SHA: ${{ github.base_ref }}
           PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
