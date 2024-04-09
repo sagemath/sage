@@ -119,6 +119,12 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
         sage: P = E([-1,1,1])
         sage: -5*P
         (179051/80089 : -91814227/22665187 : 1)
+
+    ::
+
+        sage: for R in [Zmod(10), QQ, NumberField(x^3 + 5, "a"), Qp(3), GF(2), GF(3), GF((7, 3))]:
+        ....:     params = [3, 5] if R.characteristic() not in [2, 3] else [1, 0, 1, 3, 5]
+        ....:     TestSuite(EllipticCurve(R, params)).run(skip="_test_not_implemented_methods")
     """
     def __init__(self, K, ainvs, category=None):
         r"""
@@ -567,8 +573,8 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             [(0 : 1 : 0)]
         """
         if len(args) == 1 and args[0] == 0:
-            R = self.base_ring()
-            return self.point([R(0),R(1),R(0)], check=False)
+            R = self.__base_ring
+            return self.point([R.zero(), R.one(), R.zero()], check=False)
         P = args[0]
         if isinstance(P, groups.AdditiveAbelianGroupElement) and isinstance(P.parent(),ell_torsion.EllipticCurveTorsionSubgroup):
             return self(P.element())
@@ -588,6 +594,20 @@ class EllipticCurve_generic(WithEqualityById, plane_curve.ProjectivePlaneCurve):
             args = tuple(args[0])
 
         return plane_curve.ProjectivePlaneCurve.__call__(self, *args, **kwds)
+
+    def zero(self):
+        """
+        Return the additive identity of this abelian variety.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(Zmod(10), [1, 3])
+            sage: E.zero()
+            (0 : 1 : 0)
+            sage: E.zero() == E(0)
+            True
+        """
+        return self(0)
 
     def _reduce_point(self, R, p):
         r"""

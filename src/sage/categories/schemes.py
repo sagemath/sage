@@ -280,6 +280,27 @@ class AbelianVarieties(Schemes_over_base):
         """
         return "abelian varieties over %s" % self.base_scheme()
 
+    class ParentMethods:
+        def zero(self):
+            """
+            Return the additive identity of this abelian variety.
+
+            EXAMPLES::
+
+                sage: E = EllipticCurve([1, 3])
+                sage: E.zero()
+                (0 : 1 : 0)
+                sage: E.zero() == E(0)
+                True
+            """
+            try:
+                return self(0)
+            except Exception:
+                try:
+                    return self.point_homset()(0)
+                except Exception:
+                    raise NotImplementedError
+
     class Homsets(HomsetsCategory):
         r"""
         Overloaded ``Homsets`` class to register the homset

@@ -4409,10 +4409,9 @@ class FreeModule_generic_field(FreeModule_generic_pid):
             sage: type(H)
             <class 'sage.modules.free_module_homspace.FreeModuleHomspace_with_category'>
             sage: H
-            Set of Morphisms from Vector space of dimension 2 over Rational Field
-             to Ambient free module of rank 3 over the principal ideal domain Integer Ring
-             in Category of finite dimensional vector spaces with basis over
-              (number fields and quotient fields and metric spaces)
+            Set of Morphisms from Vector space of dimension 2 over Rational
+             Field to Ambient free module of rank 3 over the principal ideal
+             domain Integer Ring in Category of commutative additive groups
         """
         if Y.base_ring().is_field():
             from sage.modules import vector_space_homspace

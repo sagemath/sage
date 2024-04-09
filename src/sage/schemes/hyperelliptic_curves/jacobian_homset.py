@@ -148,6 +148,22 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
             return self((x - x0, R(y0)))
         raise TypeError("argument P (= %s) does not determine a divisor class" % P)
 
+    def zero(self):
+        r"""
+        Return the additive identity of this elliptic curve.
+
+        EXAMPLES::
+
+            sage: H = HyperellipticCurve(GF(103), [3, 5])
+            sage: J = H.jacobian()
+            sage: S = J.point_homset()
+            sage: S.zero()
+            (0 : 1 : 0)
+            sage: S.zero() == S(0)
+            True
+        """
+        return self(0)
+
     def _morphism(self, *args, **kwds):
         return JacobianMorphism_divisor_class_field(*args, **kwds)
 
