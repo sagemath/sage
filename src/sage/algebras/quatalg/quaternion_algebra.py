@@ -1190,9 +1190,12 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         if not is_RationalField(self.base_ring()):
             raise ValueError("base field must be the rational numbers")
 
-        return sorted([p for p in set([2]).union(prime_divisors(self._a.numerator()),
-                prime_divisors(self._a.denominator()), prime_divisors(self._b.numerator()),
-                prime_divisors(self._b.denominator())) if hilbert_symbol(self._a, self._b, p) == -1])
+        a, b = self._a, self._b
+        return sorted(p for p in {2}.union(prime_divisors(a.numerator()),
+                                           prime_divisors(a.denominator()),
+                                           prime_divisors(b.numerator()),
+                                           prime_divisors(b.denominator()))
+                      if hilbert_symbol(self._a, self._b, p) == -1)
 
     def is_isomorphic(self, A) -> bool:
         """

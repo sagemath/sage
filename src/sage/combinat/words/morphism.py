@@ -401,7 +401,7 @@ class WordMorphism(SageObject):
 
             self._morph = {}
 
-            dom_alph = list()
+            dom_alph = []
             for key, val in data.items():
                 dom_alph.append(key)
                 if val in codomain.alphabet():
@@ -950,7 +950,8 @@ class WordMorphism(SageObject):
             sage: m * WordMorphism('')
             WordMorphism:
         """
-        return WordMorphism(dict((key, self(w)) for key, w in other._morph.items()), codomain=self.codomain())
+        return WordMorphism({key: self(w) for key, w in other._morph.items()},
+                            codomain=self.codomain())
 
     def __pow__(self, exp):
         r"""
@@ -1090,7 +1091,8 @@ class WordMorphism(SageObject):
             ...
             TypeError: 'sage.rings.integer.Integer' object is not iterable
         """
-        return WordMorphism(dict((a, self(a)) for a in alphabet if a in self.domain().alphabet()))
+        return WordMorphism({a: self(a) for a in alphabet
+                             if a in self.domain().alphabet()})
 
     def _matrix_(self, R=None):
         r"""
@@ -1276,7 +1278,7 @@ class WordMorphism(SageObject):
         """
         return self._morph[letter]
 
-    def images(self):
+    def images(self) -> list:
         r"""
         Return the list of all the images of the letters of the alphabet
         under ``self``.
@@ -1727,9 +1729,8 @@ class WordMorphism(SageObject):
             True
         """
         if k is None:
-            return len(set(w.length() for w in self.images())) == 1
-        else:
-            return all(w.length() == k for w in self.images())
+            k = self.images()[0].length()
+        return all(w.length() == k for w in self.images())
 
     def fixed_point(self, letter):
         r"""
@@ -1980,7 +1981,7 @@ class WordMorphism(SageObject):
             raise NotImplementedError("f should be non erasing")
 
         A = self.domain().alphabet()
-        d = dict((letter, self(letter)[0]) for letter in A)
+        d = {letter: self(letter)[0] for letter in A}
         G = set(self.growing_letters())
 
         res = []
@@ -2173,7 +2174,8 @@ class WordMorphism(SageObject):
             sage: m.conjugate(2)
             WordMorphism: a->cdeab, b->zxy
         """
-        return WordMorphism(dict((key, w.conjugate(pos)) for (key, w) in self._morph.items()))
+        return WordMorphism({key: w.conjugate(pos)
+                             for (key, w) in self._morph.items()})
 
     def has_left_conjugate(self):
         r"""
@@ -3785,7 +3787,7 @@ class WordMorphism(SageObject):
             h = {letter: [letter] if image else [] for letter, image in f.items()}
         elif len(Y) < len(X):  # Trivial case #2.
             k = {x: [y] for x, y in zip(X, Y)}
-            k_inverse = {y: x for y, x in zip(Y, X)}
+            k_inverse = dict(zip(Y, X))
             h = {x: [k_inverse[y] for y in image] for x, image in f.items()}
         elif not self.is_injective():  # Non-trivial but a fast case.
             k = dict(f)
@@ -3822,7 +3824,7 @@ class WordMorphism(SageObject):
             for comb in combinations(factors, len(X) - 1):
                 if any(x.is_proper_prefix(y) for x in comb for y in comb):
                     continue
-                k = {x: image for x, image in zip(X, comb)}
+                k = dict(zip(X, comb))
                 h = try_create_h(f, k)
                 if h:
                     break
