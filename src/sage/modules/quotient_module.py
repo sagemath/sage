@@ -31,6 +31,7 @@ from sage.modules.free_module import (
 #
 ###############################################################################
 
+
 class QuotientModule_free_ambient(Module_free_ambient):
     """
     Quotients of ambient free modules by a submodule.
@@ -179,7 +180,7 @@ class QuotientModule_free_ambient(Module_free_ambient):
         if isinstance(M, Submodule_free_ambient):
             return self._module.has_coerce_map_from(self.ambient_module())
         if (isinstance(M, QuotientModule_free_ambient)
-            and M.free_cover() == self.free_cover()):
+                and M.free_cover() == self.free_cover()):
             try:
                 return M.free_relations().is_submodule(self.free_relations())
             except NotImplementedError:

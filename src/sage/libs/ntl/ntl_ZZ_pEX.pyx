@@ -133,7 +133,7 @@ cdef class ntl_ZZ_pEX():
             raise ValueError("modulus must not be None")
         self.c.restore_c()
 
-    cdef ntl_ZZ_pEX _new(self) noexcept:
+    cdef ntl_ZZ_pEX _new(self):
         cdef ntl_ZZ_pEX r
         self.c.restore_c()
         r = ntl_ZZ_pEX.__new__(ntl_ZZ_pEX)

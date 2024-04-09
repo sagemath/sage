@@ -883,11 +883,11 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
         else:
             raise ValueError("side must either be 'left' or 'right'")
 
-        proj_matrix = Matrix(M.dimension()) #initialize the zero-matrix
+        proj_matrix = Matrix(M.dimension())  # initialize the zero-matrix
         for g in self._group:
-            proj_matrix += self._chi(g)*Matrix((self.__sided_action__(g,b)).to_vector() for b in M.basis())
+            proj_matrix += self._chi(g)*Matrix((self.__sided_action__(g, b)).to_vector() for b in M.basis())
 
-        n = self._chi(self._group.identity()) # chi(1) is the dimension
+        n = self._chi(self._group.identity())  # chi(1) is the dimension
         g = self._group.order()
 
         self._projection_matrix = (n/g)*proj_matrix
@@ -960,7 +960,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
         """
         return self.retract(self.project_ambient(x))
 
-    def project_ambient(self,x):
+    def project_ambient(self, x):
         r"""
         Project ``x`` in the ambient representation onto the submodule of the
         ambient representation to which ``self`` is isomorphic as a module.
@@ -1005,7 +1005,7 @@ class FiniteDimensionalTwistedInvariantModule(SubmoduleWithBasis):
             sage: G.rename(); M.rename()  # reset names
         """
         if (isinstance(self._ambient, Representation)
-            and x.parent() is self._ambient._module):
+                and x.parent() is self._ambient._module):
             x = self._ambient._element_constructor_(x)
         return self._project_ambient(x)
 
