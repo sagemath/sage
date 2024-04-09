@@ -1700,6 +1700,26 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
             [((alpha[1], -alpha[1]), {alphacheck[1]: 1}),
              ((alpha[1], alphacheck[1]), {alpha[1]: -2}),
              ((alphacheck[1], -alpha[1]), {-alpha[1]: -2})]
+
+        TESTS:
+
+        Check that we can construct Lie algebras over positive characteristic
+        fields (:issue:`37773`)::
+
+            sage: sl4 = lie_algebras.sl(GF(3), 4)
+            sage: sl4.is_nilpotent()
+            False
+            sage: sl4.lower_central_series()
+            (Lie algebra of ['A', 3] in the Chevalley basis,)
+            sage: sl4.is_solvable()
+            False
+            sage: sl4.is_semisimple()
+            True
+            sage: sl4.killing_form_matrix().det()
+            2
+            sage: sl5 = lie_algebras.sl(GF(3), 5)
+            sage: sl5.killing_form_matrix().det()
+            2
         """
         alphacheck = self._Q.simple_coroots()
         roots = frozenset(self._Q.roots())
@@ -1727,12 +1747,12 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
                     continue
 
                 if b - x in roots:
-                    t1 = ((b-x).norm_squared() / b.norm_squared()
+                    t1 = (R((b-x).norm_squared()) / R(b.norm_squared())
                           * sp_sign[(x, b-x)] * sp_sign[(a, y-a)])
                 else:
                     t1 = 0
                 if a - x in roots:
-                    t2 = ((a-x).norm_squared() / a.norm_squared()
+                    t2 = (R((a-x).norm_squared()) / R(a.norm_squared())
                           * sp_sign[(x, a-x)] * sp_sign[(b, y-b)])
                 else:
                     t2 = 0
