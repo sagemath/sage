@@ -170,7 +170,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         sage: a^3
         -a - 1
     """
-    cdef _new(self) noexcept:
+    cdef _new(self):
         """
         Quickly creates a new initialized NumberFieldElement with the same
         parent as self.
@@ -182,7 +182,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         x._fld_denominator = self._fld_denominator
         return x
 
-    cdef number_field(self) noexcept:
+    cdef number_field(self):
         r"""
 
         Return the number field of self. Only accessible from Cython.
@@ -783,7 +783,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
             return QQ.zero()
         return coeffs[n]
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         r"""
         EXAMPLES::
 
@@ -2443,7 +2443,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         self._numerator = t2
         self._denominator = t1
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         r"""
         EXAMPLES::
 
@@ -2469,7 +2469,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         x._reduce_c_()
         return x
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         r"""
         EXAMPLES::
 
@@ -2494,7 +2494,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         x._reduce_c_()
         return x
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         """
         Returns the product of self and other as elements of a number
         field.
@@ -2542,7 +2542,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         # but asymptotically fast poly multiplication means it's
         # actually faster to *not* build a table!?!
 
-    cpdef _div_(self, other) noexcept:
+    cpdef _div_(self, other):
         """
         Returns the quotient of self and other as elements of a number
         field.
@@ -2654,7 +2654,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         """
         return not IsZero_ZZX(self._numerator)
 
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         r"""
         EXAMPLES::
 
@@ -2669,7 +2669,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
         x._denominator = self._denominator
         return x
 
-    cpdef _copy_for_parent(self, Parent parent) noexcept:
+    cpdef _copy_for_parent(self, Parent parent):
         r"""
         Return a copy of ``self`` with the parent replaced by ``parent``.
 
@@ -3232,7 +3232,7 @@ cdef class NumberFieldElement(NumberFieldElement_base):
 
         return h
 
-    cpdef list _coefficients(self) noexcept:
+    cpdef list _coefficients(self):
         """
         Return the coefficients of the underlying polynomial corresponding
         to this number field element.
@@ -5247,7 +5247,7 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
         self._number_field = K
         (<Element>self)._parent = order
 
-    cdef _new(self) noexcept:
+    cdef _new(self):
         """
         Quickly creates a new initialized NumberFieldElement with the same
         parent as ``self``.
@@ -5269,7 +5269,7 @@ cdef class OrderElement_absolute(NumberFieldElement_absolute):
         x._fld_denominator = self._fld_denominator
         return x
 
-    cdef number_field(self) noexcept:
+    cdef number_field(self):
         r"""
         Return the number field of ``self``. Only accessible from Cython.
 
@@ -5363,10 +5363,10 @@ cdef class OrderElement_relative(NumberFieldElement_relative):
         (<Element>self)._parent = order
         self._number_field = K
 
-    cdef number_field(self) noexcept:
+    cdef number_field(self):
         return self._number_field
 
-    cdef _new(self) noexcept:
+    cdef _new(self):
         """
         Quickly creates a new initialized NumberFieldElement with the same
         parent as self.

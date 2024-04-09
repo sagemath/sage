@@ -191,7 +191,7 @@ from sage.data_structures.bitset_base cimport *
 
 cdef tuple PS_refinement(PartitionStack * part, long *refine_vals, long *best,
                          int begin, int end,
-                         bint * cand_initialized, bint *changed_partition) noexcept:
+                         bint * cand_initialized, bint *changed_partition):
     """
     Refine the partition stack by the values given by ``refine_vals``.
     We also compare our actual refinement result with the vector ``best`` in the
@@ -356,7 +356,7 @@ cdef class LabelledBranching:
         sig_free(self.father)
         sig_free(self.act_perm)
 
-    cpdef add_gen(self, GapElement_Permutation gen) noexcept:
+    cpdef add_gen(self, GapElement_Permutation gen):
         r"""
         Add a further generator to the group and
         update the complete labeled branching.
@@ -524,7 +524,7 @@ cdef class PartitionRefinement_generic:
         """
         raise NotImplementedError
 
-    cdef tuple _store_state_(self) noexcept:
+    cdef tuple _store_state_(self):
         r"""
         Store the current state of the node to a tuple, such that it can be
         restored by :meth:`_restore_state_`.
