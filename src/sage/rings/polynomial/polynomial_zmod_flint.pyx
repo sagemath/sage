@@ -123,7 +123,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
                 pass
         Polynomial_template.__init__(self, parent, x, check, is_gen, construct)
 
-    cdef Polynomial_template _new(self) noexcept:
+    cdef Polynomial_template _new(self):
         """
         EXAMPLES::
 
@@ -138,7 +138,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         e._cparent = self._cparent
         return e
 
-    cpdef Polynomial _new_constant_poly(self, x, Parent P) noexcept:
+    cpdef Polynomial _new_constant_poly(self, x, Parent P):
         r"""
         Quickly creates a new constant polynomial with value x in parent P.
 
@@ -245,7 +245,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         sig_off()
         return 0
 
-    cdef get_unsafe(self, Py_ssize_t i) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i):
         """
         Return the `i`-th coefficient of ``self``.
 
@@ -413,7 +413,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         else:
             raise IndexError("Polynomial coefficient index must be nonnegative.")
 
-    cpdef Polynomial _mul_trunc_(self, Polynomial right, long n) noexcept:
+    cpdef Polynomial _mul_trunc_(self, Polynomial right, long n):
         """
         Return the product of this polynomial and other truncated to the
         given length `n`.
@@ -446,7 +446,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
 
     _mul_short = _mul_trunc_
 
-    cpdef Polynomial _mul_trunc_opposite(self, Polynomial_zmod_flint other, n) noexcept:
+    cpdef Polynomial _mul_trunc_opposite(self, Polynomial_zmod_flint other, n):
         """
         Return the product of this polynomial and other ignoring the least
         significant `n` terms of the result which may be set to anything.
@@ -572,7 +572,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         fmpz_clear(exp_fmpz)
         return ans
 
-    cpdef Polynomial _power_trunc(self, unsigned long n, long prec) noexcept:
+    cpdef Polynomial _power_trunc(self, unsigned long n, long prec):
         r"""
         TESTS::
 
@@ -609,7 +609,7 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         nmod_poly_pow_trunc(&ans.x, &self.x, n, prec)
         return ans
 
-    cpdef rational_reconstruction(self, m, n_deg=0, d_deg=0) noexcept:
+    cpdef rational_reconstruction(self, m, n_deg=0, d_deg=0):
         """
         Construct a rational function `n/d` such that `p*d` is equivalent to `n`
         modulo `m` where `p` is this polynomial.

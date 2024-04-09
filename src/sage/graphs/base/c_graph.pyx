@@ -126,7 +126,7 @@ cdef class CGraph:
                 <mp_bitcnt_t>n < self.active_vertices.size and
                 bitset_in(self.active_vertices, n))
 
-    cpdef check_vertex(self, int n) noexcept:
+    cpdef check_vertex(self, int n):
         """
         Check that ``n`` is a vertex of ``self``.
 
@@ -333,7 +333,7 @@ cdef class CGraph:
             self.realloc(2 * self.active_vertices.size)
         return self.add_vertex_unsafe(k)
 
-    cpdef add_vertices(self, verts) noexcept:
+    cpdef add_vertices(self, verts):
         """
         Add vertices from the iterable ``verts``.
 
@@ -433,7 +433,7 @@ cdef class CGraph:
         self.num_verts -= 1
         bitset_remove(self.active_vertices, v)
 
-    cpdef del_vertex(self, int v) noexcept:
+    cpdef del_vertex(self, int v):
         """
         Delete the vertex ``v``, along with all edges incident to it.
 
@@ -581,7 +581,7 @@ cdef class CGraph:
         """
         return self.active_vertices.size
 
-    cpdef list verts(self) noexcept:
+    cpdef list verts(self):
         """
         Return a list of the vertices in ``self``.
 
@@ -614,7 +614,7 @@ cdef class CGraph:
         """
         return bitset_list(self.active_vertices)
 
-    cpdef realloc(self, int total) noexcept:
+    cpdef realloc(self, int total):
         """
         Reallocate the number of vertices to use, without actually adding any.
 
@@ -725,7 +725,7 @@ cdef class CGraph:
     cdef int del_arc_unsafe(self, int u, int v) except -1:
         raise NotImplementedError()
 
-    cpdef add_arc(self, int u, int v) noexcept:
+    cpdef add_arc(self, int u, int v):
         """
         Add arc ``(u, v)`` to the graph.
 
@@ -823,7 +823,7 @@ cdef class CGraph:
             return False
         return self.has_arc_unsafe(u, v) == 1
 
-    cpdef del_all_arcs(self, int u, int v) noexcept:
+    cpdef del_all_arcs(self, int u, int v):
         """
         Delete all arcs from ``u`` to ``v``.
 
@@ -933,7 +933,7 @@ cdef class CGraph:
         self.check_vertex(v)
         return self.arc_label_unsafe(u, v)
 
-    cpdef list all_arcs(self, int u, int v) noexcept:
+    cpdef list all_arcs(self, int u, int v):
         """
         Gives the labels of all arcs ``(u, v)``. An unlabeled arc is interpreted as
         having label 0.
@@ -973,7 +973,7 @@ cdef class CGraph:
         sig_free(arc_labels)
         return output
 
-    cpdef del_arc_label(self, int u, int v, int l) noexcept:
+    cpdef del_arc_label(self, int u, int v, int l):
         """
         Delete an arc ``(u, v)`` with label ``l``.
 
@@ -1124,7 +1124,7 @@ cdef class CGraph:
     cdef int next_in_neighbor_unsafe(self, int v, int u, int* l) except -2:
         raise NotImplementedError()
 
-    cdef adjacency_sequence_out(self, int n, int *vertices, int v, int* sequence) noexcept:
+    cdef adjacency_sequence_out(self, int n, int *vertices, int v, int* sequence):
         r"""
         Return the adjacency sequence corresponding to a list of vertices and a
         vertex.
@@ -1164,7 +1164,7 @@ cdef class CGraph:
         for i in range(n):
             sequence[i] = self.has_arc_unsafe(v, vertices[i])
 
-    cdef adjacency_sequence_in(self, int n, int *vertices, int v, int* sequence) noexcept:
+    cdef adjacency_sequence_in(self, int n, int *vertices, int v, int* sequence):
         r"""
         Compute the adjacency sequence corresponding to a list of vertices and a
         vertex.
@@ -1203,7 +1203,7 @@ cdef class CGraph:
         for i in range(n):
             sequence[i] = self.has_arc_unsafe(vertices[i], v)
 
-    cpdef list out_neighbors(self, int u) noexcept:
+    cpdef list out_neighbors(self, int u):
         """
         Return the list of out-neighbors of the vertex ``u``.
 
@@ -1257,7 +1257,7 @@ cdef class CGraph:
         sig_free(neighbors)
         return output
 
-    cpdef list in_neighbors(self, int v) noexcept:
+    cpdef list in_neighbors(self, int v):
         """
         Return the list of in-neighbors of the vertex ``v``.
 
@@ -1375,7 +1375,7 @@ cdef class CGraphBackend(GenericGraphBackend):
     # Basic Access
     ###################################
 
-    cdef CGraph cg(self) noexcept:
+    cdef CGraph cg(self):
         r"""
         Return the attribute ``_cg`` casted into ``CGraph``.
         """
@@ -1631,7 +1631,7 @@ cdef class CGraphBackend(GenericGraphBackend):
         else:
             return -1
 
-    cdef vertex_label(self, int u_int) noexcept:
+    cdef vertex_label(self, int u_int):
         """
         Return the object represented by ``u_int``, or ``None`` if this does not
         represent a vertex.
@@ -2357,7 +2357,7 @@ cdef class CGraphBackend(GenericGraphBackend):
                 continue
             self.add_edge(u, v, l, directed)
 
-    cpdef add_edge(self, object u, object v, object l, bint directed) noexcept:
+    cpdef add_edge(self, object u, object v, object l, bint directed):
         """
         Add the edge ``(u,v)`` to self.
 
@@ -2489,7 +2489,7 @@ cdef class CGraphBackend(GenericGraphBackend):
                 l = None
             self.del_edge(u, v, l, directed)
 
-    cpdef del_edge(self, object u, object v, object l, bint directed) noexcept:
+    cpdef del_edge(self, object u, object v, object l, bint directed):
         """
         Delete edge ``(u, v, l)``.
 
@@ -2607,7 +2607,7 @@ cdef class CGraphBackend(GenericGraphBackend):
     cdef int free_edge_label(self, int l_int) except -1:
         raise NotImplementedError()
 
-    cdef list _all_edge_labels(self, int u, int v, uint32_t* edge=NULL) noexcept:
+    cdef list _all_edge_labels(self, int u, int v, uint32_t* edge=NULL):
         """
         Gives the labels of all arcs from ``u`` to ``v``.
 
@@ -4885,7 +4885,7 @@ cdef class Search_iterator:
         """
         return self
 
-    cdef inline next_breadth_first_search(self) noexcept:
+    cdef inline next_breadth_first_search(self):
         r"""
         Return the next vertex in a breadth first search traversal of a graph.
 
@@ -4947,7 +4947,7 @@ cdef class Search_iterator:
             return value_prev, value
         return value
 
-    cdef inline next_depth_first_search(self) noexcept:
+    cdef inline next_depth_first_search(self):
         r"""
         Return the next vertex in a depth first search traversal of a graph.
 

@@ -7,7 +7,7 @@ cdef class ntl_ZZ_pX():
     cdef ntl_ZZ_pContext_class c
     cdef void setitem_from_int(ntl_ZZ_pX self, long i, int value) noexcept
     cdef int getitem_as_int(ntl_ZZ_pX self, long i) noexcept
-    cdef ntl_ZZ_pX _new(self) noexcept
+    cdef ntl_ZZ_pX _new(self)
     cdef ntl_ZZ_pX _pow(ntl_ZZ_pX self, long exp)
     cdef ntl_ZZ_pX _powmod(ntl_ZZ_pX self, Integer exp, ntl_ZZ_pX modulus)
 

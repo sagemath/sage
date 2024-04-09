@@ -178,7 +178,7 @@ cdef class ListOfFaces:
         """
         assert face_list_check_alignment(self.data)
 
-    cpdef ListOfFaces __copy__(self) noexcept:
+    cpdef ListOfFaces __copy__(self):
         r"""
         Return a copy of self.
 
@@ -303,7 +303,7 @@ cdef class ListOfFaces:
         # by calculating dimension of one of its faces.
         return new_faces.compute_dimension() + 1
 
-    cpdef ListOfFaces pyramid(self) noexcept:
+    cpdef ListOfFaces pyramid(self):
         r"""
         Return the list of faces of the pyramid.
 
@@ -381,7 +381,7 @@ cdef class ListOfFaces:
 
         return copy
 
-    cdef ListOfFaces delete_atoms_unsafe(self, bint *delete, face_t face) noexcept:
+    cdef ListOfFaces delete_atoms_unsafe(self, bint *delete, face_t face):
         r"""
         Return a copy of ``self`` where bits in ``delete`` have been
         removed/contracted.
@@ -518,7 +518,7 @@ cdef class ListOfFaces:
         M.set_immutable()
         return M
 
-cdef tuple face_as_combinatorial_polyhedron(ListOfFaces facets, ListOfFaces Vrep, face_t face, bint dual) noexcept:
+cdef tuple face_as_combinatorial_polyhedron(ListOfFaces facets, ListOfFaces Vrep, face_t face, bint dual):
     r"""
     Obtain facets and Vrepresentation of ``face`` as new combinatorial polyhedron.
 
