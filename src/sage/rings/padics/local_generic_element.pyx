@@ -32,7 +32,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
     #cpdef _add_(self, right):
     #    raise NotImplementedError
 
-    cpdef _div_(self, right) noexcept:
+    cpdef _div_(self, right):
         r"""
         Returns the quotient of ``self`` by ``right``.
 
@@ -185,7 +185,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
             iterable.
 
             There doesn't seem to be an obvious behaviour that iteration over
-            such elements should produce, so it is disabled; see :trac:`13592`.
+            such elements should produce, so it is disabled; see :issue:`13592`.
 
         TESTS::
 
@@ -340,7 +340,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
             sage: a.slice(0, 1)
             O(w)
 
-        Verify that :trac:`14106` has been fixed::
+        Verify that :issue:`14106` has been fixed::
 
             sage: R = Zp(5,7)
             sage: a = R(300)
@@ -351,7 +351,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
             sage: a.slice(None, 5, None)
             2*5^2 + 2*5^3 + O(5^5)
 
-        Verify that :trac:`30695` has been fixed::
+        Verify that :issue:`30695` has been fixed::
 
             sage: F = Qp(3)
             sage: a = F(0)
@@ -435,7 +435,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
     #def __pow__(self, right):
     #    raise NotImplementedError
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         r"""
         Returns the difference between ``self`` and ``right``.
 
@@ -508,7 +508,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
             sage: R(0).add_bigoh(infinity)
             0
 
-        Check that :trac:`23464` has been resolved::
+        Check that :issue:`23464` has been resolved::
 
             sage: x = polygen(QQ)
             sage: R.<pi> = Qp(7).extension(x^3 - 7)                                     # needs sage.libs.ntl

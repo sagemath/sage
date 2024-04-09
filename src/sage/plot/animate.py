@@ -205,13 +205,13 @@ class Animation(WithEqualityById, SageObject):
 
     TESTS:
 
-    This illustrates that :trac:`2066` is fixed (setting axes
+    This illustrates that :issue:`2066` is fixed (setting axes
     ranges when an endpoint is 0)::
 
         sage: animate([plot(sin, -1,1)], xmin=0, ymin=0)._kwds['xmin']
         0
 
-    We check that :trac:`7981` is fixed::
+    We check that :issue:`7981` is fixed::
 
         sage: x = SR.var("x")
         sage: a = animate([plot(sin(x + float(k)), (0, 2*pi), ymin=-5, ymax=5)
@@ -269,7 +269,7 @@ class Animation(WithEqualityById, SageObject):
             sage: list(sorted(kwds.items()))
             [('a', 1), ('b', 3), ('xmax', 5), ('xmin', 0)]
 
-        Test that the bug reported in :trac:`12107` has been fixed::
+        Test that the bug reported in :issue:`12107` has been fixed::
 
             sage: kwds3 = {}
             sage: kwds4 = {'b':3, 'xmin':0, 'xmax':4}
@@ -1159,7 +1159,7 @@ class Animation(WithEqualityById, SageObject):
         TESTS:
 
         Ensure that we can pass delay and iteration count to the saved
-        GIF image (see :trac:`18176`)::
+        GIF image (see :issue:`18176`)::
 
             sage: # long time, optional -- ImageMagick
             sage: a.save(td + 'wave.gif')

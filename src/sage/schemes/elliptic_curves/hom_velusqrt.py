@@ -711,7 +711,7 @@ class EllipticCurveHom_velusqrt(EllipticCurveHom):
         over `\GF{3}`, the point `Q` required in the formulas has to be
         defined over a cubic extension rather than an at most quadratic
         extension, which can result in the constructed isogeny being
-        irrational. See :trac:`34467`. The assertion in the following
+        irrational. See :issue:`34467`. The assertion in the following
         example currently fails if the minimum degree is lowered::
 
             sage: E = EllipticCurve(GF(3), [2,1])

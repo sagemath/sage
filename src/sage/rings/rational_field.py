@@ -44,7 +44,7 @@ TESTS::
 
 AUTHORS:
 
-- Niles Johnson (2010-08): :trac:`3893`: ``random_element()`` should pass on
+- Niles Johnson (2010-08): :issue:`3893`: ``random_element()`` should pass on
   ``*args`` and ``**kwds``.
 
 - Travis Scrimshaw (2012-10-18): Added additional docstrings for full coverage.
@@ -1545,7 +1545,7 @@ class RationalField(Singleton, number_field_base.NumberField):
 
         TESTS:
 
-        See :trac:`5521`::
+        See :issue:`5521`::
 
             sage: loads(dumps(QQ)) == QQ  # optional - magma
             True

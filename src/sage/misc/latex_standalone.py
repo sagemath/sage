@@ -1595,7 +1595,7 @@ class TikzPicture(Standalone):
             sage: _ = tikz.pdf()      # not tested
 
         Using subgraphs clusters (broken when using labels, see
-        :trac:`22070`)::
+        :issue:`22070`)::
 
             sage: S = FiniteSetMaps(5)
             sage: I = S((0,1,2,3,4))

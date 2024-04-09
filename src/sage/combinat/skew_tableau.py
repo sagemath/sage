@@ -6,11 +6,11 @@ AUTHORS:
 - Mike Hansen: Initial version
 - Travis Scrimshaw, Arthur Lubovsky (2013-02-11):
   Factored out ``CombinatorialClass``
-- Trevor K. Karn (2022-08-03): added `backward_slide`
+- Trevor K. Karn (2022-08-03): added ``backward_slide``
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
-#       Copyright (C) 2013 Travis Scrimshaw <tscrim at ucdavis.edu>
+#       Copyright (C) 2013 Travis Scrimshaw <tcscrims at gmail.com>
 #       Copyright (C) 2013 Arthur Lubovsky
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -109,7 +109,7 @@ class SkewTableau(ClonableList,
             sage: st = SkewTableau([[None,1,1],[None,2],[4]])
             sage: TestSuite(st).run()
 
-        A skew tableau is immutable, see :trac:`15862`::
+        A skew tableau is immutable, see :issue:`15862`::
 
             sage: T = SkewTableau([[None,2],[2]])
             sage: t0 = T[0]
@@ -204,7 +204,7 @@ class SkewTableau(ClonableList,
 
         EXAMPLES:
 
-        Check that :trac:`35137` is fixed::
+        Check that :issue:`35137` is fixed::
 
             sage: t = SkewTableau([[None,1,2]])
             sage: hash(t) == hash(tuple(t))

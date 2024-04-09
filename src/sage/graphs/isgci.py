@@ -818,7 +818,7 @@ class GraphClasses(UniqueRepresentation):
 
             sage: graph_classes._parse_db()
         """
-        import xml.etree.cElementTree as ET
+        import xml.etree.ElementTree as ET
         from sage.graphs.graph import Graph
 
         data_dir = os.path.dirname(DatabaseGraphs().absolute_filename())

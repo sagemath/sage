@@ -776,7 +776,7 @@ class PSModularSymbolElement(ModuleElement):
 
         TESTS:
 
-        Check for :trac:`32878`::
+        Check for :issue:`32878`::
 
             sage: E = EllipticCurve('11a1')
             sage: L = E.padic_lseries(3, implementation="pollackstevens", precision=4)

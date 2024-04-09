@@ -339,7 +339,7 @@ class Arrow(GraphicPrimitive):
 
         The length of the ends (shrinkA and shrinkB) should not depend
         on the width of the arrow, because Matplotlib already takes
-        this into account. See :trac:`12836`::
+        this into account. See :issue:`12836`::
 
             sage: fig = Graphics().matplotlib()
             sage: sp = fig.add_subplot(1,1,1, label='axis1')
@@ -352,7 +352,7 @@ class Arrow(GraphicPrimitive):
             sage: p1.shrinkB == p2.shrinkB
             True
 
-        Dashed arrows should have solid arrowheads, :trac:`12852`. We tried to
+        Dashed arrows should have solid arrowheads, :issue:`12852`. We tried to
         make up a test for this, which turned out to be fragile and hence was
         removed. In general, robust testing of graphics seems basically need a
         human eye or AI.
@@ -475,7 +475,7 @@ def arrow(tailpoint=None, headpoint=None, **kwds):
 
     TESTS:
 
-    Check that :trac:`35031` is fixed::
+    Check that :issue:`35031` is fixed::
 
         sage: arrow((0,0), (0,0), linestyle='dashed')
         Graphics object consisting of 1 graphics primitive

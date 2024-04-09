@@ -97,7 +97,7 @@ class PSage(Sage):
                 if fobj.read() != '__locked__':
                     return False
         except FileNotFoundError:
-            # Directory may have already been deleted :trac:`30730`
+            # Directory may have already been deleted :issue:`30730`
             return False
         # looks like we are locked, but check health first
         try:
@@ -111,7 +111,7 @@ class PSage(Sage):
         """
         TESTS:
 
-        Check that :trac:`29989` is fixed::
+        Check that :issue:`29989` is fixed::
 
             sage: PSage().__del__()
         """

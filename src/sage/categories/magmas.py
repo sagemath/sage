@@ -323,7 +323,7 @@ class Magmas(Category_singleton):
 
             This axiom is in fact only meaningful for
             :class:`semigroups <Semigroups>`. This stub definition is
-            here as a workaround for :trac:`20515`, in order to define
+            here as a workaround for :issue:`20515`, in order to define
             the `J`-trivial axiom as the intersection of the `L` and
             `R`-trivial axioms.
 

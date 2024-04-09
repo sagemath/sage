@@ -66,7 +66,7 @@ cdef inline void OP_dealloc(OrbitPartition *OP) noexcept:
         sig_free(OP.parent)
         sig_free(OP)
 
-cdef OP_string(OrbitPartition *OP) noexcept:
+cdef OP_string(OrbitPartition *OP):
     """
     Return a string representation of the OrbitPartition.
     """
@@ -260,7 +260,7 @@ cdef PartitionStack *PS_from_list(list L) noexcept:
     PS.degree = n
     return PS
 
-cdef PS_print(PartitionStack *PS) noexcept:
+cdef PS_print(PartitionStack *PS):
     """
     Print a visual representation of PS.
     """
@@ -268,7 +268,7 @@ cdef PS_print(PartitionStack *PS) noexcept:
     for i in range(PS.depth + 1):
         PS_print_partition(PS, i)
 
-cdef PS_print_partition(PartitionStack *PS, int k) noexcept:
+cdef PS_print_partition(PartitionStack *PS, int k):
     """
     Print the partition at depth k.
     """
@@ -381,7 +381,7 @@ cdef int PS_find_element(PartitionStack *PS, bitset_t b, int x) except -1:
         i += 1
     return location
 
-cdef list PS_singletons(PartitionStack * part) noexcept:
+cdef list PS_singletons(PartitionStack * part):
     """
     Return the list of all singletons in the PartitionStack.
     """
@@ -818,7 +818,7 @@ cdef int SC_copy_nomalloc(StabilizerChain *SC_dest, StabilizerChain *SC, int lev
         memcpy(SC_dest.gen_inverses[i], SC.gen_inverses[i], SC.num_gens[i]*n * sizeof(int) )
     return 0
 
-cdef SC_print_level(StabilizerChain *SC, int level) noexcept:
+cdef SC_print_level(StabilizerChain *SC, int level):
     cdef int i, j, n = SC.degree
     if level < SC.base_size:
         print('/ level {}'.format(level))
@@ -1280,7 +1280,7 @@ def SC_test_list_perms(list L, int n, int limit, bint gap, bint limit_complain, 
         ....:     test_stab_chain_fns_4(n, 2, 1, 0)
         ....:     test_stab_chain_fns_4(n, 2, 1, 0)
         ....:     test_stab_chain_fns_4(n, 3, 1, 0)
-        sage: for n in range(4,9):              # known bug (see :trac:`32187`), not tested
+        sage: for n in range(4,9):              # known bug (see :issue:`32187`), not tested
         ....:     test_stab_chain_fns_4(n, 1, 0, 1)
         ....:     for j in range(6):
         ....:         test_stab_chain_fns_4(n, 2, 0, 1)

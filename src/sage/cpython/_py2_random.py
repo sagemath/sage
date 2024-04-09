@@ -6,7 +6,7 @@ It should be made clear that the actual random data from the PRNG is consistent
 between Python versions, but the difference lies in higher-level methods such
 as `random.randint`.
 
-See :trac:`24508`
+See :issue:`24508`
 """
 
 # The following code was copied from

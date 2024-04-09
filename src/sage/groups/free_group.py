@@ -552,7 +552,7 @@ class FreeGroupElement(ElementLibGAP):
             sage: w(i+1 for i in range(2))
             1/2
 
-        Check that :trac:`25017` is fixed::
+        Check that :issue:`25017` is fixed::
 
             sage: F = FreeGroup(2)
             sage: x0, x1 = F.gens()
@@ -720,7 +720,7 @@ def wrap_FreeGroup(libgap_free_group):
 
     TESTS:
 
-    Check that we can do it twice (see :trac:`12339`) ::
+    Check that we can do it twice (see :issue:`12339`) ::
 
         sage: G = libgap.FreeGroup(['a', 'b'])
         sage: wrap_FreeGroup(G)
@@ -856,7 +856,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
             sage: G(a^2*b^-3*a^-1)
             a^2*b^-3*a^-1
 
-        Check that :trac:`17246` is fixed::
+        Check that :issue:`17246` is fixed::
 
             sage: F = FreeGroup(0)
             sage: F([])

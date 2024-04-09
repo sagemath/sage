@@ -60,20 +60,11 @@ cmdclass = dict(build_cython=sage_build_cython,
                 install=sage_install_and_clean)
 
 #########################################################
-### Testing related stuff
-#########################################################
-
-# Remove (potentially invalid) star import caches
-import sage.misc.lazy_import_cache
-if os.path.exists(sage.misc.lazy_import_cache.get_cache_file()):
-    os.unlink(sage.misc.lazy_import_cache.get_cache_file())
-
-#########################################################
 ### Discovering Sources
 #########################################################
 
 if any(x in sys.argv
-       for x in ['build', 'bdist_wheel', 'install']):
+       for x in ['build', 'build_ext', 'bdist_wheel', 'install']):
     log.info("Generating auto-generated sources")
     from sage_setup.autogen import autogen_all
     autogen_all()

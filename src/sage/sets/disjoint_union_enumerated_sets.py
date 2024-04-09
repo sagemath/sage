@@ -562,7 +562,7 @@ class DisjointUnionEnumeratedSets(UniqueRepresentation, Parent):
             Partitions of the integer 0
 
         Test that facade parents can create and properly access elements
-        that are tuples (fixed by :trac:`22382`)::
+        that are tuples (fixed by :issue:`22382`)::
 
             sage: # needs sage.combinat sage.libs.flint
             sage: f = lambda mu: cartesian_product([mu.standard_tableaux(),
