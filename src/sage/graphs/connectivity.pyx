@@ -2676,7 +2676,7 @@ def spqr_tree_to_graph(T):
 # Helper methods for ``TriconnectivitySPQR``.
 # Define a doubly linked list
 
-cdef inline _LinkedListNode_initialize(_LinkedListNode * node, Py_ssize_t data) noexcept:
+cdef inline _LinkedListNode_initialize(_LinkedListNode * node, Py_ssize_t data):
     """
     Initialize the ``_LinkedListNode`` with value data.
     """
@@ -2685,7 +2685,7 @@ cdef inline _LinkedListNode_initialize(_LinkedListNode * node, Py_ssize_t data) 
     node.data = data
 
 
-cdef inline _LinkedList_initialize(_LinkedList * ll) noexcept:
+cdef inline _LinkedList_initialize(_LinkedList * ll):
     """
     Initialize the ``_LinkedList``.
     """
@@ -2693,7 +2693,7 @@ cdef inline _LinkedList_initialize(_LinkedList * ll) noexcept:
     ll.tail = NULL
     ll.length = 0
 
-cdef _LinkedList_set_head(_LinkedList * ll, _LinkedListNode * h) noexcept:
+cdef _LinkedList_set_head(_LinkedList * ll, _LinkedListNode * h):
     """
     Set the node ``h`` as the head and tail of the linked list ``ll``.
     """
@@ -2713,7 +2713,7 @@ cdef inline Py_ssize_t _LinkedList_get_length(_LinkedList * ll) noexcept:
     """
     return ll.length
 
-cdef _LinkedList_append(_LinkedList * ll, _LinkedListNode * node) noexcept:
+cdef _LinkedList_append(_LinkedList * ll, _LinkedListNode * node):
     """
     Append the node ``node`` to the linked list ``ll``.
     """
@@ -2725,7 +2725,7 @@ cdef _LinkedList_append(_LinkedList * ll, _LinkedListNode * node) noexcept:
         ll.tail = node
         ll.length += 1
 
-cdef _LinkedList_remove(_LinkedList * ll, _LinkedListNode * node) noexcept:
+cdef _LinkedList_remove(_LinkedList * ll, _LinkedListNode * node):
     """
     Remove the node ``node`` from the linked list ``ll``.
     """
@@ -2743,7 +2743,7 @@ cdef _LinkedList_remove(_LinkedList * ll, _LinkedListNode * node) noexcept:
         node.next.prev = node.prev
     ll.length -= 1
 
-cdef _LinkedList_push_front(_LinkedList * ll, _LinkedListNode * node) noexcept:
+cdef _LinkedList_push_front(_LinkedList * ll, _LinkedListNode * node):
     """
     Add node ``node`` to the beginning of the linked list ``ll``.
     """
@@ -2755,7 +2755,7 @@ cdef _LinkedList_push_front(_LinkedList * ll, _LinkedListNode * node) noexcept:
         ll.head = node
         ll.length += 1
 
-cdef _LinkedList_concatenate(_LinkedList * lst1, _LinkedList * lst2) noexcept:
+cdef _LinkedList_concatenate(_LinkedList * lst1, _LinkedList * lst2):
     """
     Concatenate lst2 to lst1.
 
@@ -2768,7 +2768,7 @@ cdef _LinkedList_concatenate(_LinkedList * lst1, _LinkedList * lst2) noexcept:
     lst2.head = NULL
     lst2.length = 0
 
-cdef str _LinkedList_to_string(_LinkedList * ll) noexcept:
+cdef str _LinkedList_to_string(_LinkedList * ll):
     """
     Return a string representation of self.
     """
@@ -2827,7 +2827,7 @@ cdef class _Component:
             self.add_edge(e_index)
         self.component_type = type_c
 
-    cdef add_edge(self, Py_ssize_t e_index) noexcept:
+    cdef add_edge(self, Py_ssize_t e_index):
         """
         Add edge index ``e_index`` to the component.
         """
@@ -2835,7 +2835,7 @@ cdef class _Component:
         _LinkedListNode_initialize(node, e_index)
         _LinkedList_append(self.edge_list, node)
 
-    cdef finish_tric_or_poly(self, Py_ssize_t e_index) noexcept:
+    cdef finish_tric_or_poly(self, Py_ssize_t e_index):
         r"""
         Finalize the component by adding edge ``e``.
 
@@ -2873,7 +2873,7 @@ cdef class _Component:
             type_str = "Triconnected: "
         return type_str + _LinkedList_to_string(self.edge_list)
 
-    cdef list get_edge_list(self) noexcept:
+    cdef list get_edge_list(self):
         """
         Return the list of edges belonging to the component.
         """
@@ -3301,7 +3301,7 @@ cdef class TriconnectivitySPQR:
             return head.data
         return 0
 
-    cdef __del_high(self, int e_index) noexcept:
+    cdef __del_high(self, int e_index):
         """
         Delete edge ``e`` from the ``highpt`` list of the endpoint ``v``
         it belongs to.
@@ -3315,7 +3315,7 @@ cdef class TriconnectivitySPQR:
                 v = self.edge_extremity_second[e_index]
             _LinkedList_remove(self.highpt[v], it)
 
-    cdef __split_multiple_edges(self) noexcept:
+    cdef __split_multiple_edges(self):
         """
         Make the graph simple and build bonds recording multiple edges.
 
@@ -3487,7 +3487,7 @@ cdef class TriconnectivitySPQR:
 
         return cut_vertex  # cut_vertex is -1 if graph does not have a cut vertex
 
-    cdef __build_acceptable_adj_struct(self) noexcept:
+    cdef __build_acceptable_adj_struct(self):
         """
         Build the adjacency lists for each vertex with certain properties of
         the ordering, using the ``lowpt1`` and ``lowpt2`` values.
@@ -3542,7 +3542,7 @@ cdef class TriconnectivitySPQR:
                     _LinkedList_append(self.adj[self.edge_extremity_first[e_index]], node)
                 self.in_adj[e_index] = node
 
-    cdef __path_finder(self, int start) noexcept:
+    cdef __path_finder(self, int start):
         """
         This function is a helper function for :meth:`__dfs2` function.
 
@@ -3601,7 +3601,7 @@ cdef class TriconnectivitySPQR:
                 self.dfs_counter -= 1
                 stack_top -= 1
 
-    cdef __dfs2(self) noexcept:
+    cdef __dfs2(self):
         """
         Update the values of ``lowpt1`` and ``lowpt2`` lists with the
         help of new numbering obtained from :meth:`__path_finder`.
@@ -3984,7 +3984,7 @@ cdef class TriconnectivitySPQR:
             # Go to next edge in adjacency list
             e_node_dict[v] = e_node.next
 
-    cdef __assemble_triconnected_components(self) noexcept:
+    cdef __assemble_triconnected_components(self):
         """
         Iterate through all the split components built by :meth:`__path_finder`
         and merges two bonds or two polygons that share an edge for constructing
@@ -4111,7 +4111,7 @@ cdef class TriconnectivitySPQR:
                 self.comp_type.append((<_Component> comp).component_type)
                 self.comp_final_edge_list.append(e_list_new)
 
-    cdef __build_spqr_tree(self) noexcept:
+    cdef __build_spqr_tree(self):
         """
         Build the SPQR-tree of the graph and store it in variable
         ``self.spqr_tree``. See
