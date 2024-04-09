@@ -445,7 +445,8 @@ class SchemeHomset_generic(HomsetWithBase):
             sage: A.<x,y> = AffineSpace(R)
             sage: C = A.subscheme(x*y - 1)
             sage: H = C.Hom(C); H
-            Set of scheme endomorphisms of Closed subscheme of Affine Space of dimension 2 over Rational Field defined by:
+            Set of scheme endomorphisms of Closed subscheme of Affine Space of
+             dimension 2 over Rational Field defined by:
              x*y - 1
             sage: H(1)
             Traceback (most recent call last):
