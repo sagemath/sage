@@ -174,7 +174,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             if M.base_ring() != self.base_ring():
                 M = M.change_ring(self.base_ring())
         except (TypeError, AttributeError) as msg:
-            raise TypeError("%s\nunable to coerce x (=%s) into %s" % (msg,x,self))
+            raise TypeError("%s\nunable to coerce x (=%s) into %s" % (msg, x, self))
         return M
 
     def is_abelian(self):
@@ -582,7 +582,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 return ModuleMorphismByLinearity(
                     domain=self, on_basis=on_basis, **keywords)
             else:
-                return ModuleMorphismFromFunction( # Or just SetMorphism?
+                return ModuleMorphismFromFunction(  # Or just SetMorphism?
                     domain=self, function=function, **keywords)
 
         _module_morphism = module_morphism
@@ -1265,7 +1265,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 except Exception:
                     raise ValueError('codomain could not be determined')
 
-            if hasattr( codomain, 'linear_combination' ):
+            if hasattr(codomain, 'linear_combination'):
                 mc = x.monomial_coefficients(copy=False)
                 return codomain.linear_combination((on_basis(key), coeff)
                                                    for key, coeff in mc.items())
@@ -1289,8 +1289,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 2*s[2, 1] + 2*s[3]
             """
             mc = x.monomial_coefficients(copy=False)
-            return self.linear_combination( (on_basis(key), coeff)
-                                            for key, coeff in mc.items())
+            return self.linear_combination((on_basis(key), coeff)
+                                           for key, coeff in mc.items())
 
         def dimension(self):
             """
@@ -2183,7 +2183,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: y.parent() is B                                                   # needs sage.modules
                 True
             """
-            return self.parent().sum_of_terms( (f(m), c) for m,c in self )
+            return self.parent().sum_of_terms((f(m), c) for m, c in self)
 
         def map_support_skip_none(self, f):
             """
@@ -2217,7 +2217,9 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: y.parent() is B                                                   # needs sage.modules
                 True
             """
-            return self.parent().sum_of_terms( (fm,c) for (fm,c) in ((f(m), c) for m,c in self) if fm is not None)
+            return self.parent().sum_of_terms((fm, c)
+                                              for fm, c in ((f(m), c) for m, c in self)
+                                              if fm is not None)
 
         def map_item(self, f):
             """
@@ -2251,7 +2253,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: a.map_item(f)                                                     # needs sage.combinat sage.modules
                 2*s[2, 1] + 2*s[3]
             """
-            return self.parent().sum_of_terms( f(m,c) for m,c in self )
+            return self.parent().sum_of_terms(f(m, c) for m, c in self)
 
         def tensor(*elements):
             """
@@ -2587,11 +2589,13 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     except AttributeError:
                         codomain = f(*[module.zero() for module in modules]).parent()
                 if codomain in ModulesWithBasis(K):
-                    return codomain.linear_combination((f(*[module.monomial(t) for (module,t) in zip(modules, m)]), c)
-                                                       for m,c in self)
+                    return codomain.linear_combination((f(*[module.monomial(t)
+                                                            for module, t in zip(modules, m)]), c)
+                                                       for m, c in self)
                 else:
-                    return sum((c * f(*[module.monomial(t) for (module,t) in zip(modules, m)])
-                                for m,c in self),
+                    return sum((c * f(*[module.monomial(t)
+                                        for module, t in zip(modules, m)])
+                                for m, c in self),
                                codomain.zero())
 
     class DualObjects(DualObjectsCategory):
