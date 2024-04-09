@@ -44,7 +44,7 @@ using one of two mechanisms:
     (to be used in place of ``typing``).
 
   The Sage library declares these packages as dependencies and ensures that
-  versions that provide features of Python 3.11 are available.
+  versions that provide features of Python 3.12 are available.
 
 Meta :issue:`29756` keeps track of newer Python features and serves
 as a starting point for discussions on how to make use of them in the
