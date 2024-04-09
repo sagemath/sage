@@ -229,7 +229,7 @@ cdef inline void permute(hypergraph * h,int n1,int n2) noexcept:
         bs_set(h.sets[i],n1,b2)
         bs_set(h.sets[i],n2,b1)
 
-cdef induced_hypergraph(hypergraph * h, int n, hypergraph * tmp) noexcept:
+cdef induced_hypergraph(hypergraph * h, int n, hypergraph * tmp):
     r"""
     Fills tmp with the hypergraph induced by points {0,...,n-1} in h.
 

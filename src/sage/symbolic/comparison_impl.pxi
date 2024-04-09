@@ -135,7 +135,7 @@ class _print_key():
         return print_order_c(self.ex, other.ex) < 0
 
 
-cpdef print_sorted(expressions) noexcept:
+cpdef print_sorted(expressions):
     """
     Sort a list in print order
 
@@ -219,7 +219,7 @@ class _math_key():
                 raise ValueError('cannot compare {0} and {1}'.format(self.ex, other.ex))
 
 
-cpdef math_sorted(expressions) noexcept:
+cpdef math_sorted(expressions):
     """
     Sort a list of symbolic numbers in the "Mathematics" order
 
@@ -409,7 +409,7 @@ class _mixed_key():
             return num < 0
 
 
-cpdef mixed_sorted(expressions) noexcept:
+cpdef mixed_sorted(expressions):
     """
     Sort a list of symbolic numbers in the "Mixed" order
 

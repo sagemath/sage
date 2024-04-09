@@ -15,18 +15,19 @@ AUTHORS:
 # (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from itertools import combinations
 
+from sage.categories.fields import Fields
+from sage.homology.homology_group import HomologyGroup
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.homology.homology_group import HomologyGroup
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
-from .cubical_complex import CubicalComplex, cubical_complexes
-from .simplicial_complex import SimplicialComplex, copy
 from sage.topology import simplicial_complex_catalog as simplicial_complexes
-from itertools import combinations
+from sage.topology.cubical_complex import CubicalComplex, cubical_complexes
+from sage.topology.simplicial_complex import SimplicialComplex, copy
 
 
 def _cubical_complex_union(c1, c2):
@@ -208,20 +209,15 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         """
         # The underlying simplicial complex
         self._simplicial_complex = copy(simplicial_complex)
-        # A dictionary of components indexed by facets
-        self._components = {}
-
         vertices = self._simplicial_complex.vertices()
-        # it suffices to perform union only over facets
-        for facet in self._simplicial_complex.maximal_faces():
-            Y = []
-            for j in vertices:
-                if j in facet:
-                    Y.append(simplicial_complexes.Simplex(2))
-                else:
-                    Y.append(simplicial_complexes.Sphere(1))
 
-            self._components[facet] = Y
+        disk = simplicial_complexes.Simplex(2)
+        circle = simplicial_complexes.Sphere(1)
+
+        # A dictionary of components indexed by facets
+        self._components = {facet: [disk if j in facet else circle
+                                    for j in vertices]
+                            for facet in self._simplicial_complex.maximal_faces()}
 
     @lazy_attribute
     def _moment_angle_complex(self):
@@ -233,7 +229,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
 
         .. WARNING::
 
-            The construction can be very slow, it is not reccomended unless
+            The construction can be very slow, it is not recommended unless
             the corresponding simplicial complex has 5 or less vertices.
 
         TESTS::
@@ -251,21 +247,20 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
             sage: Z.cubical_complex() == Z._moment_angle_complex
             True
         """
-        n = len(self._simplicial_complex.vertices())
-        D = [cubical_complexes.Cube(2)] * n
-        S = [cubical_complexes.Sphere(1)] * n
+        cube = cubical_complexes.Cube(2)
+        sphere = cubical_complexes.Sphere(1)
 
         moment_angle_complex = CubicalComplex()
         for component in self._components.values():
-            x = D[0] if component[0] == simplicial_complexes.Simplex(2) else S[0]
+            x = cube if component[0] == simplicial_complexes.Simplex(2) else sphere
             for j in range(1, len(component)):
-                y = D[j] if component[j] == simplicial_complexes.Simplex(2) else S[j]
+                y = cube if component[j] == simplicial_complexes.Simplex(2) else sphere
                 x = x.product(y)
             moment_angle_complex = _cubical_complex_union(moment_angle_complex, x)
 
         return moment_angle_complex
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         Return a string representation of ``self``.
 
@@ -488,19 +483,21 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         n = len(vertices)
         invfac = []
 
-        for j in range(n+1):
+        in_field = base_ring in Fields()
+
+        for j in range(n + 1):
             for x in combinations(vertices, j):
                 S = self._simplicial_complex.generated_subcomplex(x)
-                if base_ring.is_field():
-                    invfac.append(S.homology(i-j-1, base_ring=base_ring,
+                if in_field:
+                    invfac.append(S.homology(i - j - 1, base_ring=base_ring,
                                              cohomology=cohomology, algorithm=algorithm,
                                              verbose=verbose, reduced=True).dimension())
                 else:
-                    invfac.extend(S.homology(i-j-1, base_ring=base_ring,
+                    invfac.extend(S.homology(i - j - 1, base_ring=base_ring,
                                              cohomology=cohomology, algorithm=algorithm,
                                              verbose=verbose, reduced=True)._original_invts)
 
-        if base_ring.is_field():
+        if in_field:
             return HomologyGroup(sum(invfac), base_ring)
 
         m = len(invfac)
@@ -633,11 +630,10 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
                 high = dim
             dims = range(low, high + 1)
         else:
-            dims = range(self.dimension()+1)
+            dims = range(self.dimension() + 1)
 
-        answer = {i: self._homology_group(i, base_ring=base_ring, cohomology=cohomology,
-                                          algorithm=algorithm, verbose=verbose, reduced=reduced) for i in dims}
-        return answer
+        return {i: self._homology_group(i, base_ring=base_ring, cohomology=cohomology,
+                                        algorithm=algorithm, verbose=verbose, reduced=reduced) for i in dims}
 
     def cohomology(self, dim=None, base_ring=ZZ, algorithm='pari',
                    verbose=False, reduced=True):
@@ -698,7 +694,7 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         dict = {}
         H = self.homology(dim=dim, base_ring=QQ)
         try:
-            for n in H.keys():
+            for n in H:
                 dict[n] = H[n].dimension()
                 if n == 0:
                     dict[n] += 1
@@ -713,6 +709,9 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
         The Euler characteristic is defined as the alternating sum
         of the Betti numbers of ``self``.
 
+        The Euler characteristic of a moment-angle complex is 0
+        if the associated simplicial complex is not a simplex.
+
         EXAMPLES::
 
             sage: X = SimplicialComplex([[0,1,2,3,4,5], [0,1,2,3,4,6],
@@ -724,8 +723,9 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
             sage: Z.euler_characteristic()
             1
         """
-        betti_numbers = self.betti()
-        return ZZ.sum((-1)**n * betti_numbers[n] for n in range(self.dimension() + 1))
+        sc = self.simplicial_complex()
+        return (ZZ.one() if sc.dimension() + 1 == len(sc.vertices())
+                else ZZ.zero())
 
     def product(self, other):
         """
@@ -810,4 +810,4 @@ class MomentAngleComplex(UniqueRepresentation, SageObject):
             Graph([(1, 2), (1, 4), (2, 3), (3, 5), (5, 6), (3, 4), (2, 6), (4, 6)]),
         ]
 
-        return not any(one_skeleton.subgraph_search(g) is not None for g in obstruction_graphs)
+        return all(one_skeleton.subgraph_search(g) is None for g in obstruction_graphs)

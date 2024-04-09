@@ -84,8 +84,8 @@ Modes of operation (provide at most one):
    -x, --check-only: exclusively run the test suite;
        this may assume that:
         * the package has been installed already and/or that
-        * the temporary build directory has not been deleted
-   -e, --erase-build-directory-only: erase (delete) the temporary
+        * the build directory has not been deleted
+   -e, --erase-build-directory-only: erase (delete) the
        build directory only
    --info: print information on the package only
    --help: print this help only
@@ -103,7 +103,7 @@ Other options:
        exit with an error on test suite failures
    -w: after installing, run the test suite for the package;
        print a warning on test suite failures
-   -s: save (do not delete) the temporary build directory,
+   -s: save (do not delete) the build directory,
        even when the installation was successful
 EOF
 }
@@ -451,9 +451,6 @@ if [ ! -w "$SAGE_INST_LOCAL" ]; then
     exit 1
 fi
 
-echo "$PKG_NAME"
-echo "===================================================="
-
 # Make absolutely sure that we are in the build directory before doing
 # a scary "rm -rf" below.
 cd "$SAGE_BUILD_DIR" || exit $?
@@ -483,7 +480,7 @@ fi
 extract_the_package() { ##########################################
 
 cd "$SAGE_BUILD_DIR" || exit $?
-echo "Setting up build directory for $PKG_NAME"
+echo "Setting up build directory $SAGE_BUILD_DIR/$PKG_NAME"
 if [ -z "$PKG_NAME_UPSTREAM" ]; then
     # Not a normal or wheel package.
     # Transplant the 'src' symlink, copy scripts.
@@ -521,7 +518,6 @@ else
             error_msg "Error: failed to extract $PKG_SRC"
             exit 1
         fi
-        echo "Finished extraction"
         cd src
         if ! sage-apply-patches; then
             error_msg "Error applying patches"
@@ -646,14 +642,15 @@ done
 
 actually_build_and_install() { ###################################
 
-echo "****************************************************"
-echo "Host system:"
-uname -a
-echo "****************************************************"
-echo "C compiler: $CC"
-echo "C compiler version:"
-$CC -v
-echo "****************************************************"
+case "$PKG_SRC" in
+    *.whl)
+        # Silence is golden.
+        ;;
+    *)
+        echo "Host system: $(uname -a)"
+        echo "C compiler: $CC$($CC -v 2>&1 | while read -r line; do echo -n ", $line"; done)"
+        ;;
+esac
 
 # Poison the proxy variable to forbid downloads in spkg-install
 # for normal packages
@@ -665,10 +662,13 @@ if [ -n "$PKG_NAME_UPSTREAM" ]; then
     export rsync_proxy=$http_proxy
 fi
 
+# Make sage-logger show the full logs
+unset SAGE_SILENT_BUILD
+unset V
 
 # First uninstall the previous version of this package, if any
 if [ "$KEEP_EXISTING" != "yes" ]; then
-    sage-spkg-uninstall "$PKG_BASE" "$SAGE_INST_LOCAL"
+    sage-spkg-uninstall "$PKG_BASE" "$SAGE_INST_LOCAL" --log-directory .
 fi
 
 # To work around #26996: Create lib and set a symlink so that writes into lib64/ end up in lib/
@@ -676,8 +676,7 @@ fi
 
 # Run the pre-install script, if any
 if [ -f spkg-preinst ]; then
-    echo "Running pre-install script for $PKG_NAME."
-    time $SAGE_SUDO ./spkg-preinst
+    sage-logger -p "$SAGE_SUDO ./spkg-preinst" spkg-preinst.log
     if [ $? -ne 0 ]; then
         error_msg "Error running the preinst script for $PKG_NAME."
         exit 1
@@ -686,19 +685,19 @@ fi
 
 if [ -f spkg-build ]; then
     # Package has both spkg-build and spkg-install; execute the latter with SAGE_SUDO
-    time ./spkg-build
+    sage-logger -p "./spkg-build" spkg-build.log
     if [ $? -ne 0 ]; then
         error_msg "Error building package $PKG_NAME" "make"
         exit 1
     fi
-    time $SAGE_SUDO ./spkg-install
+    sage-logger -p "$SAGE_SUDO ./spkg-install" spkg-install.log
     if [ $? -ne 0 ]; then
         error_msg "Error installing package $PKG_NAME" "make"
         exit 1
     fi
 else
     # Package only has spkg-install
-    time ./spkg-install
+    sage-logger -p "./spkg-install" spkg-install.log
     if [ $? -ne 0 ]; then
         error_msg "Error installing package $PKG_NAME" "make"
         exit 1
@@ -784,16 +783,14 @@ post_install() { #################################################
 # Run the post-install script, if any
 # But first complete the delayed installation of wheels.
 if [ -f spkg-pipinst ]; then
-    echo "Running pip-install script for $PKG_NAME."
-    $SAGE_SUDO ./spkg-pipinst
+    sage-logger -p "$SAGE_SUDO ./spkg-pipinst" spkg-pipinst.log
     if [ $? -ne 0 ]; then
         error_msg "Error running the pipinst script for $PKG_NAME."
         exit 1
     fi
 fi
 if [ -f spkg-postinst ]; then
-    echo "Running post-install script for $PKG_NAME."
-    time $SAGE_SUDO ./spkg-postinst
+    sage-logger -p "$SAGE_SUDO ./spkg-postinst" spkg-postinst.log
     if [ $? -ne 0 ]; then
         error_msg "Error running the postinst script for $PKG_NAME."
         exit 1
@@ -813,7 +810,7 @@ run_test_suite() { ###############################################
     if [ -f "$INSTALLED_SCRIPTS_DEST"/spkg-check ]; then
         echo "Running the test suite for $PKG_NAME..."
         export PKG_BASE
-        time "$INSTALLED_SCRIPTS_DEST"/spkg-check
+        sage-logger -p "$INSTALLED_SCRIPTS_DEST"/spkg-check spkg-check.log
         if [ $? -ne 0 ]; then
             TEST_SUITE_RESULT="failed"
             if [ "$SAGE_CHECK" = "warn" ]; then
@@ -869,8 +866,7 @@ __EOF__
 } ###################################### write_installation_record
 
 delete_the_temporary_build_directory() { #########################
-    echo "Deleting temporary build directory"
-    echo "$SAGE_BUILD_DIR/$PKG_NAME"
+    echo "Deleting build directory $SAGE_BUILD_DIR/$PKG_NAME"
     # On Solaris, the current working directory cannot be deleted,
     # so we "cd" out of $SAGE_BUILD_DIR/$PKG_NAME. See #12637.
     cd "$SAGE_BUILD_DIR"
@@ -881,8 +877,7 @@ delete_the_temporary_build_directory_if_required() { #############
 if [ ! -e "$SAGE_BUILD_DIR/$PKG_NAME/.keep" ]; then
     delete_the_temporary_build_directory
 else
-    echo "You can safely delete the temporary build directory"
-    echo "$SAGE_BUILD_DIR/$PKG_NAME"
+    echo "You can safely delete the build directory $SAGE_BUILD_DIR/$PKG_NAME"
 fi
 } ############### delete_the_temporary_build_directory_if_required
 
@@ -929,7 +924,6 @@ fi
 
 if [ $POST_INSTALL = 1 ]; then
     write_installation_record
-    echo "Successfully installed $PKG_NAME"
     delete_the_temporary_build_directory_if_required
     echo "Finished installing $PKG_NAME"
 fi

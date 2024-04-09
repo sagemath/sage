@@ -211,11 +211,11 @@ cdef object numpy_long_interface = {'typestr': '=i4' if sizeof(long) == 4 else '
 cdef object numpy_int64_interface = {'typestr': '=i8'}
 cdef object numpy_object_interface = {'typestr': '|O'}
 
-cdef set_from_Integer(Integer self, Integer other) noexcept:
+cdef set_from_Integer(Integer self, Integer other):
     mpz_set(self.value, other.value)
 
 
-cdef _digits_naive(mpz_t v,l,int offset,Integer base,digits) noexcept:
+cdef _digits_naive(mpz_t v,l,int offset,Integer base,digits):
     """
     This method fills in digit entries in the list, l, using the most
     basic digit algorithm -- repeat division by base.
@@ -262,7 +262,7 @@ cdef _digits_naive(mpz_t v,l,int offset,Integer base,digits) noexcept:
 
     mpz_clear(mpz_value)
 
-cdef _digits_internal(mpz_t v,l,int offset,int power_index,power_list,digits) noexcept:
+cdef _digits_internal(mpz_t v,l,int offset,int power_index,power_list,digits):
     """
     INPUT:
 
@@ -337,7 +337,7 @@ def is_Integer(x):
     return isinstance(x, Integer)
 
 
-cdef inline Integer as_Integer(x) noexcept:
+cdef inline Integer as_Integer(x):
     if isinstance(x, Integer):
         return <Integer>x
     else:
@@ -773,7 +773,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         return codomain.coerce(self)
 
-    cdef _xor(Integer self, Integer other) noexcept:
+    cdef _xor(Integer self, Integer other):
         cdef Integer x
         x = PY_NEW(Integer)
         mpz_xor(x.value, self.value, other.value)
@@ -915,7 +915,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         return rich_to_bool_sgn(op, c)
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         r"""
         EXAMPLES::
 
@@ -1764,7 +1764,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         return coercion_model.bin_op(left, right, operator.add)
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         Integer addition.
 
@@ -1782,7 +1782,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         mpz_add(x.value, self.value, (<Integer>right).value)
         return x
 
-    cdef _add_long(self, long n) noexcept:
+    cdef _add_long(self, long n):
         """
         Fast path for adding a C long.
 
@@ -1851,7 +1851,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         return coercion_model.bin_op(left, right, operator.sub)
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         Integer subtraction.
 
@@ -1889,12 +1889,12 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         mpz_neg(x.value, self.value)
         return x
 
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         cdef Integer x = <Integer>PY_NEW(Integer)
         mpz_neg(x.value, self.value)
         return x
 
-    cpdef _act_on_(self, s, bint self_on_left) noexcept:
+    cpdef _act_on_(self, s, bint self_on_left):
         """
         EXAMPLES::
 
@@ -1911,7 +1911,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             else:
                 return s * int(self)  # will raise the appropriate exception
 
-    cdef _mul_long(self, long n) noexcept:
+    cdef _mul_long(self, long n):
         """
         Fast path for multiplying a C long.
 
@@ -1959,7 +1959,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         return coercion_model.bin_op(left, right, operator.mul)
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         """
         Integer multiplication.
 
@@ -2032,7 +2032,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         return coercion_model.bin_op(left, right, operator.truediv)
 
-    cpdef _div_(self, right) noexcept:
+    cpdef _div_(self, right):
         r"""
         Computes `\frac{a}{b}`
 
@@ -2049,7 +2049,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         mpq_div_zz(x.value, self.value, (<Integer>right).value)
         return x
 
-    cpdef _floordiv_(self, right) noexcept:
+    cpdef _floordiv_(self, right):
         r"""
         Computes the whole part of `\frac{x}{y}`.
 
@@ -2191,7 +2191,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         # left is a non-Element: do the powering with a Python int
         return left ** int(right)
 
-    cpdef _pow_(self, other) noexcept:
+    cpdef _pow_(self, other):
         """
         Integer powering.
 
@@ -2271,7 +2271,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         else:
             return ~r
 
-    cdef _pow_long(self, long n) noexcept:
+    cdef _pow_long(self, long n):
         if n == 0:
             return smallInteger(1)
         elif n == 1:
@@ -2301,7 +2301,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             sig_off()
             return q
 
-    cpdef _pow_int(self, n) noexcept:
+    cpdef _pow_int(self, n):
         """
         Integer powering to an integer exponent.
 
@@ -3683,7 +3683,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         """
         return mpz_pythonhash(self.value)
 
-    cdef hash_c(self) noexcept:
+    cdef hash_c(self):
         """
         A C version of the __hash__ function.
         """
@@ -4199,7 +4199,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         sig_off()
         return t
 
-    cpdef RingElement _valuation(Integer self, Integer p) noexcept:
+    cpdef RingElement _valuation(Integer self, Integer p):
         r"""
         Return the p-adic valuation of ``self``.
 
@@ -4224,7 +4224,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         mpz_clear(u)
         return v
 
-    cdef object _val_unit(Integer self, Integer p) noexcept:
+    cdef object _val_unit(Integer self, Integer p):
         r"""
         Return a pair: the p-adic valuation of ``self``, and the p-adic unit
         of ``self``.
@@ -4373,7 +4373,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         mpz_tdiv_q_2exp(odd.value, self.value, bits)
         return odd
 
-    cdef Integer _divide_knowing_divisible_by(Integer self, Integer right) noexcept:
+    cdef Integer _divide_knowing_divisible_by(Integer self, Integer right):
         r"""
         Return the integer ``self`` / ``right`` when ``self`` is divisible by right.
 
@@ -6200,7 +6200,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
         d = self // 4
         return d % 4 in [2, 3] and d.is_squarefree()
 
-    cpdef __pari__(self) noexcept:
+    cpdef __pari__(self):
         """
         Return the PARI version of this integer.
 
@@ -6668,7 +6668,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
         return g, s, t
 
-    cpdef _shift_helper(Integer self, y, int sign) noexcept:
+    cpdef _shift_helper(Integer self, y, int sign):
         """
         Compute left and right shifts of integers.
         Shifts ``self`` ``y`` bits to the left if ``sign`` is `1`, and to the right
@@ -6810,7 +6810,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             return x >> int(y)
         return (<Integer>x)._shift_helper(y, -1)
 
-    cdef _and(Integer self, Integer other) noexcept:
+    cdef _and(Integer self, Integer other):
         cdef Integer x = PY_NEW(Integer)
         mpz_and(x.value, self.value, other.value)
         return x
@@ -6831,7 +6831,7 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             return (<Integer>x)._and(y)
         return coercion_model.bin_op(x, y, operator.and_)
 
-    cdef _or(Integer self, Integer other) noexcept:
+    cdef _or(Integer self, Integer other):
         cdef Integer x = PY_NEW(Integer)
         mpz_ior(x.value, self.value, other.value)
         return x
@@ -7440,7 +7440,7 @@ cdef class int_to_Z(Morphism):
         from sage.sets.pythonclass import Set_PythonType
         Morphism.__init__(self, sage.categories.homset.Hom(Set_PythonType(long), integer_ring.ZZ))
 
-    cpdef Element _call_(self, a) noexcept:
+    cpdef Element _call_(self, a):
         cdef Integer r
         cdef long l
         cdef int err = 0
@@ -7624,7 +7624,7 @@ cdef void fast_tp_dealloc(PyObject* o) noexcept:
 
 
 from sage.misc.allocator cimport hook_tp_functions
-cdef hook_fast_tp_functions() noexcept:
+cdef hook_fast_tp_functions():
     """
     Initialize the fast integer creation functions.
     """
@@ -7642,7 +7642,7 @@ cdef hook_fast_tp_functions() noexcept:
     # to be constructed/destructed.
     hook_tp_functions(global_dummy_Integer, <newfunc>(&fast_tp_new), <destructor>(&fast_tp_dealloc), False)
 
-cdef integer(x) noexcept:
+cdef integer(x):
     if isinstance(x, Integer):
         return x
     return Integer(x)
@@ -7672,7 +7672,7 @@ hook_fast_tp_functions()
 
 # zero and one initialization
 initialized = False
-cdef set_zero_one_elements() noexcept:
+cdef set_zero_one_elements():
     global the_integer_ring, initialized
     if initialized:
         return
@@ -7692,7 +7692,7 @@ DEF small_pool_max = 256
 # we could use the above zero and one here
 cdef list small_pool = [Integer(k) for k in range(small_pool_min, small_pool_max+1)]
 
-cdef inline Integer smallInteger(long value) noexcept:
+cdef inline Integer smallInteger(long value):
     """
     This is the fastest way to create a (likely) small Integer.
     """

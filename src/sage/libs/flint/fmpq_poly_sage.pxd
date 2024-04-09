@@ -18,7 +18,7 @@ from sage.libs.flint.fmpq_poly cimport fmpq_poly_numref, fmpq_poly_length
 
 
 # since the fmpq_poly header seems to be lacking this inline function
-cdef inline sage_fmpq_poly_max_limbs(const fmpq_poly_t poly) noexcept:
+cdef inline sage_fmpq_poly_max_limbs(const fmpq_poly_t poly):
     return _fmpz_vec_max_limbs(fmpq_poly_numref(poly), fmpq_poly_length(poly))
 
 # functions removed from flint but still needed in sage
