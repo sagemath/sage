@@ -130,7 +130,7 @@ cdef bint is_entry_zero_unsafe(c_vector_modint* v, Py_ssize_t n) noexcept:
     """
     return binary_search0_modn(v.positions, v.num_nonzero, n) == -1
 
-cdef object to_list(c_vector_modint* v) noexcept:
+cdef object to_list(c_vector_modint* v):
     """
     Return a Python list of 2-tuples (i,x), where x=v[i] runs
     through the nonzero elements of x, in order.

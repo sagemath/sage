@@ -389,7 +389,7 @@ cdef class Map(Element):
         self.domain = ConstantFunction(D)
         self._parent = homset.Hom(D, C, self._category_for)
 
-    cdef _update_slots(self, dict slots) noexcept:
+    cdef _update_slots(self, dict slots):
         """
         Set various attributes of this map to implement unpickling.
 
@@ -451,7 +451,7 @@ cdef class Map(Element):
         """
         self._update_slots(_slots)
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Return a dict with attributes to pickle and copy this map.
         """
@@ -816,7 +816,7 @@ cdef class Map(Element):
             return self._call_(x)
         return self._call_with_args(x, args, kwds)
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         Call method with a single argument, not implemented in the base class.
 
@@ -831,7 +831,7 @@ cdef class Map(Element):
         """
         raise NotImplementedError(type(self))
 
-    cpdef Element _call_with_args(self, x, args=(), kwds={}) noexcept:
+    cpdef Element _call_with_args(self, x, args=(), kwds={}):
         """
         Call method with multiple arguments, not implemented in the base class.
 
@@ -1222,7 +1222,7 @@ cdef class Map(Element):
         """
         raise NotImplementedError(type(self))
 
-    cpdef _pow_int(self, n) noexcept:
+    cpdef _pow_int(self, n):
         """
         TESTS::
 
@@ -1368,7 +1368,7 @@ cdef class Section(Map):
         Map.__init__(self, Hom(map.codomain(), map.domain(), SetsWithPartialMaps()))
         self._inverse = map    # TODO: Use this attribute somewhere!
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Helper for pickling and copying.
 
@@ -1387,7 +1387,7 @@ cdef class Section(Map):
         slots['_inverse'] = self._inverse
         return slots
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         Helper for pickling and copying.
 
@@ -1576,7 +1576,7 @@ cdef class FormalCompositeMap(Map):
         """
         return FormalCompositeMap(self.parent(), [f.__copy__() for f in self.__list])
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         Used in pickling and copying.
 
@@ -1595,7 +1595,7 @@ cdef class FormalCompositeMap(Map):
         self.__list = _slots['__list']
         Map._update_slots(self, _slots)
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Used in pickling and copying.
 
@@ -1708,7 +1708,7 @@ cdef class FormalCompositeMap(Map):
         """
         return self.__list[i]
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         Call with a single argument
 
@@ -1726,7 +1726,7 @@ cdef class FormalCompositeMap(Map):
             x = f._call_(x)
         return x
 
-    cpdef Element _call_with_args(self, x, args=(), kwds={}) noexcept:
+    cpdef Element _call_with_args(self, x, args=(), kwds={}):
         """
         Additional arguments are only passed to the last applied map.
 

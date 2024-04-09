@@ -95,7 +95,7 @@ cdef inline OrbitPartition *OP_copy(OrbitPartition *OP) noexcept:
     OP_copy_from_to(OP, OP2)
     return OP2
 
-cdef OP_string(OrbitPartition *OP) noexcept
+cdef OP_string(OrbitPartition *OP)
 
 cdef inline void OP_clear(OrbitPartition *OP) noexcept:
     cdef int i, n = OP.degree
@@ -255,7 +255,7 @@ cdef PartitionStack *PS_copy(PartitionStack *PS) noexcept
 
 cdef void PS_dealloc(PartitionStack *PS) noexcept
 
-cdef PS_print(PartitionStack *PS) noexcept
+cdef PS_print(PartitionStack *PS)
 
 cdef void PS_unit_partition(PartitionStack *PS) noexcept
 
@@ -263,7 +263,7 @@ cdef int PS_first_smallest(PartitionStack *PS, bitset_t b, int *second_pos=?) no
 
 cdef PartitionStack *PS_from_list(list L) noexcept
 
-cdef list PS_singletons(PartitionStack * part) noexcept
+cdef list PS_singletons(PartitionStack * part)
 
 cdef int PS_all_new_cells(PartitionStack *PS, bitset_t** nonsingletons_ptr) noexcept
 
