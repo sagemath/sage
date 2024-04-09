@@ -4546,13 +4546,18 @@ cdef class Matrix(sage.structure.element.Matrix):
             raise ValueError("The matrix is not a square matrix")
         return self._check_symmetrizability(return_diag=return_diag, skew=True, positive=positive)
 
-    def is_symplectic(self):
+    def is_symplectic(self, invariant_form=None):
         r"""
-        Return ``True`` if the matrix is symplectic.
+        Return ``True`` if this matrix `M` is symplectic with respect to the
+        invariant form `E`.
 
-        INPUT:
+        The matrix `M` is symplectic with respect to `E` if it satisfies `M^T E
+        M = E`. By default, the alternating form `E` is represented by the
+        block matrix `\begin{pmatrix} 0 & J_{n / 2} \\ -J_{n / 2} & 0
+        \end{pmatrix}`, where `J_{n / 2}` is the `(n / 2) \times (n / 2)`
+        antidiagonal matrix with all ones on the diagonal.
 
-        A `(2g \times 2g)`-matrix invertible over a ring.
+        INPUT: see :func:`~sage.groups.matrix_gps.symplectic`.
 
         EXAMPLES:
 
@@ -4568,13 +4573,21 @@ cdef class Matrix(sage.structure.element.Matrix):
 
             sage: identity_matrix(R, 32).is_symplectic()
             True
+
+        We can pass in an invariant form::
+
+            sage: E = Matrix(ZZ, [[0, 0, 0, 1], [0, 0, 2, 1], [0, -2, 0, 0], [-1, -1, 0, 0]])
+            sage: M = Matrix(ZZ, [[1, 0, 0, 1], [0, 1, 0, 0], [0, 1, 1, 0], [0, 0, 0, 1]])
+            sage: M.is_symplectic(invariant_form=E)
+            True
+            sage: M.T * E * M == E
+            True
         """
-        # TODO: Is [BL2004]_ faster?
         if self._ncols != self._nrows:
             raise ValueError("the matrix is not a square matrix")
 
         from sage.groups.matrix_gps.symplectic import Sp
-        return self in Sp(self._nrows, self._base_ring)
+        return self in Sp(self._nrows, self._base_ring, invariant_form=invariant_form)
 
     def is_dense(self):
         """
