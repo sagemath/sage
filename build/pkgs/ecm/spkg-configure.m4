@@ -1,6 +1,5 @@
-SAGE_SPKG_CONFIGURE([ecm], [
+SAGE_SPKG_CONFIGURE([ecm], [dnl CHECK - test whether the package is already installed
     m4_pushdef([SAGE_ECM_MINVER],[7.0.4])
-    ECMBIN=ecm
     SAGE_SPKG_DEPCHECK([gmp], [
         AC_CHECK_HEADER(ecm.h, [
             AX_ABSOLUTE_HEADER([ecm.h])
@@ -35,5 +34,9 @@ SAGE_SPKG_CONFIGURE([ecm], [
         ], [sage_spkg_install_ecm=yes])
     ])
     m4_popdef([SAGE_ECM_MINVER])
-    AC_SUBST(SAGE_ECMBIN, $ECMBIN)
+], [dnl REQUIRED-check is empty
+], [dnl PRE - always perform
+    ECMBIN=ecm
+], [dnl POST - always perform
+    AC_SUBST([SAGE_ECMBIN], ["$ECMBIN"])
 ])

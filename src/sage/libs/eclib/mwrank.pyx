@@ -68,7 +68,7 @@ cdef extern from "wrap.cpp":
     long two_descent_get_selmer_rank(two_descent* t)
     void two_descent_saturate(two_descent* t, long sat_bd, long sat_low_bd)
 
-cdef object string_sigoff(char* s) noexcept:
+cdef object string_sigoff(char* s):
     sig_off()
     # Makes a python string and deletes what is pointed to by s.
     t = char_to_str(s)
@@ -78,6 +78,7 @@ cdef object string_sigoff(char* s) noexcept:
 
 # set the default bit precision
 mwrank_set_precision(150)
+
 
 def get_precision():
     """
@@ -238,7 +239,7 @@ cdef class _bigint:
         return string_sigoff(bigint_to_str(self.x))
 
 
-cdef make_bigint(bigint* x) noexcept:
+cdef make_bigint(bigint* x):
     cdef _bigint y
     sig_off()
     y = _bigint.__new__(_bigint)

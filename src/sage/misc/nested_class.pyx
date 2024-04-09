@@ -93,7 +93,7 @@ __all__ = ['modify_for_nested_pickle', 'nested_pickle',
            #, 'SubClass', 'CopiedClass', 'A1'
            ]
 
-cpdef modify_for_nested_pickle(cls, str name_prefix, module, first_run=True) noexcept:
+cpdef modify_for_nested_pickle(cls, str name_prefix, module, first_run=True):
     r"""
     Modify the subclasses of the given class to be picklable, by
     giving them a mangled name and putting the mangled name in the

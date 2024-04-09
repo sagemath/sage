@@ -28,6 +28,7 @@ from sage.structure.element cimport Element, RingElement, Vector
 from sage.arith.long cimport pyobject_to_long
 from sage.misc.misc_c import sized_iter
 from sage.categories import monoids
+from sage.misc.superseded import deprecation_cython
 
 
 try:
@@ -311,7 +312,7 @@ cdef class MatrixArgs:
         self.sparse = -1
         self.kwds = {}
 
-    def __init__(self, *args, ring=None, nrows=None, ncols=None, entries=None, sparse=None, space=None, **kwds):
+    def __init__(self, *args, base_ring=None, nrows=None, ncols=None, entries=None, sparse=None, space=None, **kwds):
         """
         Parse arguments for creating a new matrix.
 
@@ -340,7 +341,12 @@ cdef class MatrixArgs:
             sage: MatrixArgs(3, ncols=1).finalized()
             <MatrixArgs for Full MatrixSpace of 1 by 1 dense matrices over Integer Ring; typ=SCALAR; entries=3>
         """
-        self.base = ring
+        if "ring" in kwds.keys():
+            deprecation_cython(issue_number=33380, message="ring is deprecated (keyword will be removed in the future). Use base_ring instead", stacklevel=3)
+            self.base = kwds.pop("ring")
+        else:
+            self.base = base_ring
+
         if nrows is not None:
             self.set_nrows(pyobject_to_long(nrows))
         if ncols is not None:
@@ -630,7 +636,7 @@ cdef class MatrixArgs:
         self.finalize()
         return self.nrows * self.ncols
 
-    cpdef Matrix matrix(self, bint convert=True) noexcept:
+    cpdef Matrix matrix(self, bint convert=True):
         """
         Return the entries of the matrix as a Sage Matrix.
 
@@ -721,7 +727,7 @@ cdef class MatrixArgs:
         self.typ = MA_ENTRIES_MATRIX
         return M
 
-    cpdef list list(self, bint convert=True) noexcept:
+    cpdef list list(self, bint convert=True):
         """
         Return the entries of the matrix as a flat list of scalars.
 
@@ -788,7 +794,7 @@ cdef class MatrixArgs:
         self.typ = MA_ENTRIES_SEQ_FLAT
         return L
 
-    cpdef dict dict(self, bint convert=True) noexcept:
+    cpdef dict dict(self, bint convert=True):
         """
         Return the entries of the matrix as a dict. The keys of this
         dict are the non-zero positions ``(i,j)``. The corresponding
@@ -1392,7 +1398,7 @@ cdef class MatrixArgs:
             return MA_ENTRIES_SEQ_SEQ
 
 
-cpdef MatrixArgs MatrixArgs_init(space, entries) noexcept:
+cpdef MatrixArgs MatrixArgs_init(space, entries):
     """
     Construct a :class:`MatrixArgs` object from a matrix space and
     entries. This is the typical use in a matrix constructor.

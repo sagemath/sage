@@ -109,7 +109,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         """
         fmpz_poly_clear(self._poly)
 
-    cdef Polynomial_integer_dense_flint _new(self) noexcept:
+    cdef Polynomial_integer_dense_flint _new(self):
         r"""
         Quickly creates a new initialized Polynomial_integer_dense_flint
         with the correct parent and _is_gen == 0.
@@ -119,7 +119,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         x._is_gen = 0
         return x
 
-    cpdef Polynomial _new_constant_poly(self, a, Parent P) noexcept:
+    cpdef Polynomial _new_constant_poly(self, a, Parent P):
         r"""
         Quickly creates a new constant polynomial with value a in parent P
 
@@ -474,7 +474,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
 
         return Polynomial.__call__(self, *x, **kwds)
 
-    cpdef Integer content(self) noexcept:
+    cpdef Integer content(self):
         r"""
         Return the greatest common divisor of the coefficients of this
         polynomial. The sign is the sign of the leading coefficient.  The
@@ -537,7 +537,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         return Polynomial_integer_dense_flint, \
                (self.parent(), self.list(), False, self.is_gen())
 
-    cdef get_unsafe(self, Py_ssize_t n) noexcept:
+    cdef get_unsafe(self, Py_ssize_t n):
         """
         Return the `n`-th coefficient of ``self``.
 
@@ -636,7 +636,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             name = self.parent().latex_variable_names()[0]
         return self._repr(name=name, latex=True)
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         r"""
         Return ``self`` plus ``right``.
 
@@ -656,7 +656,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         return x
 
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         r"""
         Return ``self`` minus ``right``.
 
@@ -676,7 +676,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         return x
 
 
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         r"""
         Return negative of ``self``.
 
@@ -959,7 +959,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             return self._parent(rr), ss, tt
 
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         r"""
         Return ``self`` multiplied by ``right``.
 
@@ -976,7 +976,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         sig_off()
         return x
 
-    cpdef Polynomial _mul_trunc_(self, Polynomial right, long n) noexcept:
+    cpdef Polynomial _mul_trunc_(self, Polynomial right, long n):
         r"""
         Truncated multiplication
 
@@ -1007,7 +1007,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         sig_off()
         return x
 
-    cpdef _lmul_(self, Element right) noexcept:
+    cpdef _lmul_(self, Element right):
         r"""
         Return ``self`` multiplied by ``right``, where ``right`` is a scalar (integer).
 
@@ -1025,7 +1025,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         sig_off()
         return x
 
-    cpdef _rmul_(self, Element right) noexcept:
+    cpdef _rmul_(self, Element right):
         r"""
         Return ``self`` multiplied by ``right``, where right is a scalar (integer).
 
@@ -1165,7 +1165,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
                     sig_off()
                 return res
 
-    cpdef Polynomial _power_trunc(self, unsigned long n, long prec) noexcept:
+    cpdef Polynomial _power_trunc(self, unsigned long n, long prec):
         r"""
         Truncated power
 
@@ -1253,7 +1253,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
             sig_off()
             return res
 
-    cpdef Polynomial inverse_series_trunc(self, long prec) noexcept:
+    cpdef Polynomial inverse_series_trunc(self, long prec):
         r"""
         Return a polynomial approximation of precision ``prec`` of the inverse
         series of this polynomial.
@@ -1308,7 +1308,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         sig_off()
         return res
 
-    cpdef _unsafe_mutate(self, long n, value) noexcept:
+    cpdef _unsafe_mutate(self, long n, value):
         r"""
         Sets coefficient of `x^n` to value.
 
@@ -1731,7 +1731,7 @@ cdef class Polynomial_integer_dense_flint(Polynomial):
         from sage.rings.polynomial.padics.polynomial_padic import _pari_padic_factorization_to_sage
         return _pari_padic_factorization_to_sage(G, R, self.leading_coefficient())
 
-    cpdef list list(self, bint copy=True) noexcept:
+    cpdef list list(self, bint copy=True):
         """
         Return a new copy of the list of the underlying
         elements of ``self``.

@@ -988,3 +988,92 @@ def q_stirling_number2(n, k, q=None):
         return parent(q)(0)
     return (q**(k-1)*q_stirling_number2(n - 1, k - 1, q=q) +
             q_int(k, q=q) * q_stirling_number2(n - 1, k, q=q))
+
+
+def number_of_irreducible_polynomials(n, q=None, m=1):
+    r"""
+    Return the number of monic irreducible polynomials of degree ``n``
+    in ``m`` variables over the finite field with ``q`` elements.
+
+    If ``q`` is not given, the result is returned as an integer-valued
+    polynomial in `\QQ[q]`.
+
+    INPUT:
+
+    - ``n`` -- positive integer
+    - ``q`` -- ``None`` (default) or a prime power
+    - ``m`` -- positive integer (default `1`)
+
+    OUTPUT: integer or integer-valued polynomial over `\QQ`
+
+    EXAMPLES::
+
+        sage: number_of_irreducible_polynomials(8, q=2)
+        30
+        sage: number_of_irreducible_polynomials(9, q=9)
+        43046640
+        sage: number_of_irreducible_polynomials(5, q=11, m=3)
+        2079650567184059145647246367401741345157369643207055703168
+
+    ::
+
+        sage: poly = number_of_irreducible_polynomials(12); poly
+        1/12*q^12 - 1/12*q^6 - 1/12*q^4 + 1/12*q^2
+        sage: poly(5) == number_of_irreducible_polynomials(12, q=5)
+        True
+        sage: poly = number_of_irreducible_polynomials(5, m=3); poly
+        q^55 + q^54 + q^53 + q^52 + q^51 + q^50 + ... + 1/5*q^5 - 1/5*q^3 - 1/5*q^2 - 1/5*q
+        sage: poly(11) == number_of_irreducible_polynomials(5, q=11, m=3)
+        True
+
+    This function is *much* faster than enumerating the polynomials::
+
+        sage: num = number_of_irreducible_polynomials(99, q=101)
+        sage: num.bit_length()
+        653
+
+    ALGORITHM:
+
+    In the univariate case, classical formula
+    `\frac1n \sum_{d\mid n} \mu(n/d) q^d`
+    using the Möbius function `\mu`;
+    see :func:`moebius`.
+
+    In the multivariate case, formula from [Bodin2007]_,
+    independently [Alekseyev2006]_.
+    """
+    n = ZZ(n)
+    if n <= 0:
+        raise ValueError('n must be positive')
+    if m <= 0:
+        raise ValueError('m must be positive')
+
+    if q is None:
+        from sage.rings.rational_field import QQ
+        q = QQ['q'].gen()  # we produce an integer-valued polynomial in q, but it does not necessarily have integer coefficients
+
+    if m == 1:
+        from sage.arith.misc import moebius
+        r = sum((moebius(n//d) * q**d for d in n.divisors()), parent(q).zero())
+        return r // n
+
+    from sage.functions.other import binomial
+    from sage.combinat.partition import Partitions
+
+    def monic_reducible(irreducible, d):
+        """
+        Compute the number of monic reducible polynomials of degree `d`
+        given the numbers of irreducible polynomials up to degree `d-1`.
+        """
+        res = 0
+        for p in Partitions(d+1, max_part=d):
+            res += prod(binomial(r+t-1, t) for r, t in zip(irreducible, p.to_exp(d)))
+        return res
+
+    r = []
+    for d in range(n):
+        monic = (q**binomial(d + m, m - 1) - 1) * q**binomial(d + m, m) // (q - 1)
+        reducible = monic_reducible(r, d)
+        r.append(monic - reducible)
+
+    return r[-1]

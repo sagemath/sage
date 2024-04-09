@@ -854,7 +854,7 @@ cdef class Matrix(Matrix0):
     #############################################################################################
     # rows, columns, sparse_rows, sparse_columns, dense_rows, dense_columns, row, column
     #############################################################################################
-    cpdef row_ambient_module(self, base_ring=None, sparse=None) noexcept:
+    cpdef row_ambient_module(self, base_ring=None, sparse=None):
         r"""
         Return the free module that contains the rows of the matrix.
 
@@ -911,7 +911,7 @@ cdef class Matrix(Matrix0):
         deprecation(32984, 'the method _row_ambient_module is deprecated use row_ambient_module (without underscore) instead')
         return self.row_ambient_module(base_ring)
 
-    cpdef column_ambient_module(self, base_ring=None, sparse=None) noexcept:
+    cpdef column_ambient_module(self, base_ring=None, sparse=None):
         r"""
         Return the free module that contains the columns of the matrix.
 
@@ -1747,7 +1747,7 @@ cdef class Matrix(Matrix0):
             Z._subdivide_on_stack(self, other)
         return Z
 
-    cdef _stack_impl(self, bottom) noexcept:
+    cdef _stack_impl(self, bottom):
         """
         Implementation of :meth:`stack`.
 
