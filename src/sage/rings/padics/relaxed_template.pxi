@@ -1710,7 +1710,7 @@ cdef class RelaxedElement(pAdicGenericElement):
         """
         return self.__rshift__(-s)
 
-    cpdef _add_(self, other) noexcept:
+    cpdef _add_(self, other):
         r"""
         Return the sum of this element with ``other``.
 
@@ -1729,7 +1729,7 @@ cdef class RelaxedElement(pAdicGenericElement):
             return self
         return element_class_add(self._parent, self, <RelaxedElement>other)
 
-    cpdef _sub_(self, other) noexcept:
+    cpdef _sub_(self, other):
         r"""
         Return the difference of this element and ``other``.
 
@@ -1751,7 +1751,7 @@ cdef class RelaxedElement(pAdicGenericElement):
             return self
         return element_class_sub(self._parent, self, <RelaxedElement>other)
 
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         r"""
         Return the opposite of this element.
 
@@ -1768,7 +1768,7 @@ cdef class RelaxedElement(pAdicGenericElement):
             return self
         return element_class_sub(self._parent, self._parent.zero(), self)
 
-    cpdef _mul_(self, other) noexcept:
+    cpdef _mul_(self, other):
         r"""
         Return the product of this element with ``other``.
 
@@ -1790,7 +1790,7 @@ cdef class RelaxedElement(pAdicGenericElement):
             return other
         return element_class_mul(self._parent, self, <RelaxedElement>other)
 
-    cpdef _div_(self, other) noexcept:
+    cpdef _div_(self, other):
         r"""
         Return the quotient if this element by ``other``.
 
@@ -3838,7 +3838,7 @@ cdef class RelaxedElement_unknown(RelaxedElementWithDigits):
             definition = self._definition
         return unpickle_unknown, (id(self), self.__class__, self._parent, self._initialvaluation, digits, definition)
 
-    cpdef set(self, RelaxedElement definition) noexcept:
+    cpdef set(self, RelaxedElement definition):
         r"""
         Set the recursive definition of this self-referent number.
 
@@ -4155,7 +4155,7 @@ cdef class ExpansionIter():
         """
         return self
 
-    cdef _next_simple(self) noexcept:
+    cdef _next_simple(self):
         r"""
         Return the next digit of this expansion (simple mode).
         """
@@ -4165,7 +4165,7 @@ cdef class ExpansionIter():
         self.current += 1
         return digit_get_sage(self.digit)
 
-    cdef _next_smallest(self) noexcept:
+    cdef _next_smallest(self):
         r"""
         Return the next digit of this expansion (smallest mode).
         """
@@ -4176,7 +4176,7 @@ cdef class ExpansionIter():
         self.current += 1
         return digit_get_sage(self.digit)
 
-    cdef _next_teichmuller(self) noexcept:
+    cdef _next_teichmuller(self):
         r"""
         Return the next digit of this expansion (Teichmüller mode).
         """

@@ -57,7 +57,7 @@ def matrix(*args, **kwds):
 
     Positional and keyword arguments:
 
-    - ``ring`` -- parent of the entries of the matrix (despite the
+    - ``base_ring`` -- parent of the entries of the matrix (despite the
       name, this is not a priori required to be a ring). By default,
       determine this from the given entries, falling back to ``ZZ`` if
       no entries are given.
@@ -78,7 +78,7 @@ def matrix(*args, **kwds):
       defaults to ``False``.
 
     - ``space`` -- matrix space which will be the parent of the output
-      matrix. This determines ``ring``, ``nrows``, ``ncols`` and
+      matrix. This determines ``base_ring``, ``nrows``, ``ncols`` and
       ``sparse``.
 
     - ``immutable`` -- (boolean) make the matrix immutable. By default,
@@ -254,13 +254,13 @@ def matrix(*args, **kwds):
         sage: m = matrix(QQ); m; m.parent()
         []
         Full MatrixSpace of 0 by 0 dense matrices over Rational Field
-        sage: m = matrix(ring=QQ); m; m.parent()
+        sage: m = matrix(base_ring=QQ); m; m.parent()
         []
         Full MatrixSpace of 0 by 0 dense matrices over Rational Field
         sage: m = matrix(0); m; m.parent()
         []
         Full MatrixSpace of 0 by 0 dense matrices over Integer Ring
-        sage: m = matrix(0, 0, ring=QQ); m; m.parent()
+        sage: m = matrix(0, 0, base_ring=QQ); m; m.parent()
         []
         Full MatrixSpace of 0 by 0 dense matrices over Rational Field
         sage: m = matrix([]); m; m.parent()
@@ -612,9 +612,9 @@ def matrix(*args, **kwds):
         sage: parent(M) is S
         True
 
-    A redundant ``ring`` argument::
+    A redundant ``base_ring`` argument::
 
-        sage: matrix(ZZ, 3, 3, ring=ZZ)
+        sage: matrix(ZZ, 3, 3, base_ring=ZZ)
         Traceback (most recent call last):
         ...
         TypeError: too many arguments in matrix constructor

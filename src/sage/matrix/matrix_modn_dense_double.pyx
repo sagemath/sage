@@ -101,7 +101,7 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
         """
         self._matrix[i][j] = <double>value
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, x) noexcept:
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, x):
         r"""
         Set the (i,j) entry with no bounds-checking, or any other checks.
 
@@ -136,7 +136,7 @@ cdef class Matrix_modn_dense_double(Matrix_modn_dense_template):
         else:
             self._matrix[i][j] = <double>(<IntegerMod_int64>x).ivalue
 
-    cdef IntegerMod_abstract get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
+    cdef IntegerMod_abstract get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         r"""
         Return the (i,j) entry with no bounds-checking.
 
