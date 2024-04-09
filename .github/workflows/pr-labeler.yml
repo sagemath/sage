@@ -1,0 +1,36 @@
+# This action automatically labels Pull-Requests
+# based on files edited and no of lines changed.
+name: Size Labeler/Checker
+on:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+      - edited
+jobs:
+  label-changes:
+    if: vars.SMALL_THRESHOLD && vars.MODERATE_THRESHOLD && vars.LARGE_THRESHOLD
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Add labels based on size
+        run: |
+          git fetch origin $BASE_SHA
+          chmod a+x .github/workflows/get_changes.sh
+          .github/workflows/get_changes.sh
+        env:
+          BASE_SHA: ${{ github.base_ref }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number}}
+          SMALL_THRESHOLD: ${{ vars.SMALL_THRESHOLD }}
+          MODERATE_THRESHOLD: ${{ vars.MODERATE_THRESHOLD }}
+          LARGE_THRESHOLD: ${{ vars.LARGE_THRESHOLD }}
