@@ -243,7 +243,6 @@ cdef extern from "singular/Singular/libsingular.h":
         ringorder_s
         ringorder_lp
         ringorder_dp
-        ringorder_rp
         ringorder_ip
         ringorder_Dp
         ringorder_wp

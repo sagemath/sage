@@ -24,7 +24,7 @@ from sage.libs.gmp.mpz cimport mpz_init_set_ui
 from sage.libs.singular.decl cimport ring, currRing
 from sage.libs.singular.decl cimport rChangeCurrRing, rComplete, rDelete, idInit
 from sage.libs.singular.decl cimport omAlloc0, omStrDup, omAlloc
-from sage.libs.singular.decl cimport ringorder_dp, ringorder_Dp, ringorder_lp, ringorder_ip, ringorder_rp, ringorder_ds, ringorder_Ds, ringorder_ls, ringorder_M, ringorder_c, ringorder_C, ringorder_wp, ringorder_Wp, ringorder_ws, ringorder_Ws, ringorder_a, rRingOrder_t
+from sage.libs.singular.decl cimport ringorder_dp, ringorder_Dp, ringorder_lp, ringorder_ip, ringorder_ds, ringorder_Ds, ringorder_ls, ringorder_M, ringorder_c, ringorder_C, ringorder_wp, ringorder_Wp, ringorder_ws, ringorder_Ws, ringorder_a, rRingOrder_t
 from sage.libs.singular.decl cimport prCopyR
 from sage.libs.singular.decl cimport n_unknown, n_algExt, n_transExt, n_Z, n_Zn,  n_Znm, n_Z2m
 from sage.libs.singular.decl cimport n_coeffType
@@ -50,12 +50,17 @@ from cpython.object cimport Py_EQ, Py_NE
 
 from collections import defaultdict
 
-# mapping str --> SINGULAR representation
 
+
+
+
+
+# mapping str --> SINGULAR representation
 order_dict = {
     "dp": ringorder_dp,
     "Dp": ringorder_Dp,
     "lp": ringorder_lp,
+    "ip": ringorder_ip,
     "ds": ringorder_ds,
     "Ds": ringorder_Ds,
     "ls": ringorder_ls,
@@ -66,11 +71,6 @@ order_dict = {
     "a":  ringorder_a,
 }
 
-from sage.interfaces.singular import singular_version_number
-if int(singular_version_number()[0:3]) < 432 or (int(singular_version_number()[0:3]) == 432 and int(singular_version_number()[3:]) < 15):
-    order_dict["rp"] = ringorder_rp
-else:
-    order_dict["ip"] = ringorder_ip
 
 #############################################################################
 cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:

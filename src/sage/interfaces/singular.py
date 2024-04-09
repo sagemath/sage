@@ -1206,18 +1206,15 @@ class Singular(ExtraTabCompletion, Expect):
 
         EXAMPLES::
 
-            sage: import re
             sage: r = PolynomialRing(GF(127),3,'xyz', order='invlex')
-            sage: rsing = r._singular_()
-            sage: print(re.sub('ordering rp', 'ordering ip', rsing._repr_()))
+            sage: r._singular_()
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/127
             //   number of vars : 3
             //        block   1 : ordering ip
             //                  : names    x y z
             //        block   2 : ordering C
-            sage: curring = singular.current_ring()
-            sage: print(re.sub('ordering rp', 'ordering ip', curring._repr_()))
+            sage: singular.current_ring()
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/127
             //   number of vars : 3
@@ -2470,20 +2467,6 @@ def singular_version():
         "Singular ... version 4...
     """
     return singular.eval('system("--version");')
-
-
-def singular_version_number():
-    """
-    Return the version number of Singular being used as a string.
-
-    EXAMPLES::
-
-        sage: singular.version_number()
-        '4...'
-    """
-    import re
-    r = re.compile(r"\((\d+),")
-    return r.findall(singular_version())[0]
 
 
 class SingularGBLogPrettyPrinter:

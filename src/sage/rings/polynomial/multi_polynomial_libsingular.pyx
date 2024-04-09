@@ -1280,10 +1280,8 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             //                  : names    x y
             //        block   2 : ordering C
 
-            sage: import re
             sage: R = PolynomialRing(GF(2**8,'a'),10,'x', order='invlex')               # needs sage.rings.finite_rings
-            sage: out = singular(R)                                                     # needs sage.rings.finite_rings
-            sage: print(re.sub('ordering rp', 'ordering ip', out._repr_()))             # needs sage.rings.finite_rings
+            sage: singular(R)                                                           # needs sage.rings.finite_rings
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/2[a]/(a^8+a^4+a^3+a^2+1)
             //   number of vars : 10
@@ -1291,10 +1289,8 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             //                  : names    x0 x1 x2 x3 x4 x5 x6 x7 x8 x9
             //        block   2 : ordering C
 
-            sage: import re
             sage: R = PolynomialRing(GF(127),2,'x', order='invlex')
-            sage: out = singular(R)                                                     # needs sage.rings.finite_rings
-            sage: print(re.sub('ordering rp', 'ordering ip', out._repr_()))             # needs sage.rings.finite_rings
+            sage: singular(R)                                                           # needs sage.rings.finite_rings
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/127
             //   number of vars : 2
@@ -1302,10 +1298,8 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             //                  : names    x0 x1
             //        block   2 : ordering C
 
-            sage: import re
             sage: R = PolynomialRing(QQ,2,'x', order='invlex')
-            sage: out = singular(R)                                                     # needs sage.rings.function_field
-            sage: print(re.sub('ordering rp', 'ordering ip', out._repr_()))             # needs sage.rings.function_field
+            sage: singular(R)                                                           # needs sage.rings.function_field
             polynomial ring, over a field, global ordering
             //   coefficients: QQ
             //   number of vars : 2

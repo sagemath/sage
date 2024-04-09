@@ -386,15 +386,9 @@ print_name_mapping = {
     'negwdeglex'    : 'Negative weighted degree lexicographic',
 }
 
-from sage.interfaces.singular import singular_version_number
-if int(singular_version_number()[0:3]) < 432 or (int(singular_version_number()[0:3]) == 432 and int(singular_version_number()[3:]) < 15):
-    invlex_singular_name = 'rp'
-else:
-    invlex_singular_name = 'ip'
-
 singular_name_mapping = {
     'lex'           : 'lp',
-    'invlex'        : invlex_singular_name,
+    'invlex'        : 'ip',
     'degrevlex'     : 'dp',
     'deglex'        : 'Dp',
     'neglex'        : 'ls',
