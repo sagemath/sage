@@ -1388,7 +1388,7 @@ class Graphics(WithEqualityById, SageObject):
         if isinstance(scale, (list, tuple)):
             if len(scale) != 2 and len(scale) != 3:
                 raise ValueError("If the input is a tuple, it must be of "
-                    "the form (scale, base) or (scale, basex, basey)")
+                                 "the form (scale, base) or (scale, basex, basey)")
             if len(scale) == 2:
                 base = scale[1]
             else:
@@ -1397,7 +1397,7 @@ class Graphics(WithEqualityById, SageObject):
 
         if scale not in ('linear', 'loglog', 'semilogx', 'semilogy'):
             raise ValueError("The scale must be one of 'linear', 'loglog',"
-                    f" 'semilogx' or 'semilogy' -- got '{scale}'")
+                             f" 'semilogx' or 'semilogy' -- got '{scale}'")
 
         if isinstance(base, (list, tuple)):
             basex, basey = base
@@ -1436,37 +1436,37 @@ class Graphics(WithEqualityById, SageObject):
     # NOTE: If you intend to use a new parameter in show(), you should update
     # this dictionary to contain the default value for that parameter.
 
-    SHOW_OPTIONS = {# axes options
-                        'axes': None, 'axes_labels': None, 'axes_labels_size': None,
-                        'axes_pad': None, 'base': None, 'scale': None,
-                        'xmin': None, 'xmax': None, 'ymin': None, 'ymax': None,
-                        'flip_x': False, 'flip_y': False,
-                        # Figure options
-                        'aspect_ratio': None, 'dpi': DEFAULT_DPI, 'fig_tight': True,
-                        'figsize': None, 'fontsize': None, 'frame': False,
-                        'title': None, 'title_pos': None, 'transparent': False,
-                        # Grid options
-                        'gridlines': None, 'gridlinesstyle': None,
-                        'hgridlinesstyle': None, 'vgridlinesstyle': None,
-                        # Legend options
-                        'legend_options': {}, 'show_legend': None,
-                        # Ticks options
-                        'ticks': None, 'tick_formatter': None, 'ticks_integer': False,
-                        # Text options
-                        'typeset': 'default'}
+    SHOW_OPTIONS = {  # axes options
+        'axes': None, 'axes_labels': None, 'axes_labels_size': None,
+        'axes_pad': None, 'base': None, 'scale': None,
+        'xmin': None, 'xmax': None, 'ymin': None, 'ymax': None,
+        'flip_x': False, 'flip_y': False,
+        # Figure options
+        'aspect_ratio': None, 'dpi': DEFAULT_DPI, 'fig_tight': True,
+        'figsize': None, 'fontsize': None, 'frame': False,
+        'title': None, 'title_pos': None, 'transparent': False,
+        # Grid options
+        'gridlines': None, 'gridlinesstyle': None,
+        'hgridlinesstyle': None, 'vgridlinesstyle': None,
+        # Legend options
+        'legend_options': {}, 'show_legend': None,
+        # Ticks options
+        'ticks': None, 'tick_formatter': None, 'ticks_integer': False,
+        # Text options
+        'typeset': 'default'}
 
     # Default options for the legends:
 
     LEGEND_OPTIONS = {'back_color': 'white', 'borderpad': 0.6,
-                          'borderaxespad': None,
-                          'columnspacing': None,
-                          'fancybox': False, 'font_family': 'sans-serif',
-                          'font_size': 'medium', 'font_style': 'normal',
-                          'font_variant': 'normal', 'font_weight': 'medium',
-                          'handlelength': 0.05, 'handletextpad': 0.5,
-                          'labelspacing': 0.02, 'loc': 'best',
-                          'markerscale': 0.6, 'ncol': 1, 'numpoints': 2,
-                          'shadow': True, 'title': None}
+                      'borderaxespad': None,
+                      'columnspacing': None,
+                      'fancybox': False, 'font_family': 'sans-serif',
+                      'font_size': 'medium', 'font_style': 'normal',
+                      'font_variant': 'normal', 'font_weight': 'medium',
+                      'handlelength': 0.05, 'handletextpad': 0.5,
+                      'labelspacing': 0.02, 'loc': 'best',
+                      'markerscale': 0.6, 'ncol': 1, 'numpoints': 2,
+                      'shadow': True, 'title': None}
 
     @suboptions('legend', **LEGEND_OPTIONS)
     def show(self, **kwds):
@@ -2359,9 +2359,9 @@ class Graphics(WithEqualityById, SageObject):
         return {'xmin': xmin, 'xmax': xmax, 'ymin': ymin, 'ymax': ymax}
 
     def _matplotlib_tick_formatter(self, subplot, base=(10, 10),
-                            locator_options={}, scale=('linear', 'linear'),
-                            tick_formatter=(None, None), ticks=(None, None),
-                            xmax=None, xmin=None, ymax=None, ymin=None):
+                                   locator_options={}, scale=('linear', 'linear'),
+                                   tick_formatter=(None, None), ticks=(None, None),
+                                   xmax=None, xmin=None, ymax=None, ymin=None):
         r"""
         Take a matplotlib subplot instance representing the graphic and set
         the ticks formatting. This function is only for internal use.
@@ -2387,8 +2387,10 @@ class Graphics(WithEqualityById, SageObject):
         # This function is created to refactor some code that is repeated
         # in the matplotlib function
         from matplotlib.ticker import (FixedLocator, Locator,
-                LogFormatterMathtext, LogLocator, MaxNLocator,
-                MultipleLocator, NullLocator, ScalarFormatter)
+                                       LogFormatterMathtext,
+                                       LogLocator, MaxNLocator,
+                                       MultipleLocator,
+                                       NullLocator, ScalarFormatter)
 
         x_locator, y_locator = ticks
         # ---------------------- Location of x-ticks ---------------------
@@ -2410,8 +2412,8 @@ class Graphics(WithEqualityById, SageObject):
                 x_locator = MultipleLocator(float(x_locator))
             else:  # not enough room for two major ticks
                 raise ValueError('Expand the range of the independent '
-                'variable to allow two multiples of your tick locator '
-                '(option `ticks`).')
+                                 'variable to allow two multiples of your tick locator '
+                                 '(option `ticks`).')
 
         # ---------------------- Location of y-ticks ---------------------
         if y_locator is None:
@@ -2431,8 +2433,8 @@ class Graphics(WithEqualityById, SageObject):
                 y_locator = MultipleLocator(float(y_locator))
             else:  # not enough room for two major ticks
                 raise ValueError('Expand the range of the dependent '
-                'variable to allow two multiples of your tick locator '
-                '(option `ticks`).')
+                                 'variable to allow two multiples of your tick locator '
+                                 '(option `ticks`).')
 
         x_formatter, y_formatter = tick_formatter
         from matplotlib.ticker import FuncFormatter, FixedFormatter
@@ -2453,8 +2455,8 @@ class Graphics(WithEqualityById, SageObject):
             if scale[0] == 'log':
                 # We need to strip out '\\mathdefault' from the string
                 x_formatter = FuncFormatter(lambda n, pos:
-                    LogFormatterMathtext(base=base[0])(n, pos).replace(
-                        "\\mathdefault", ""))
+                                            LogFormatterMathtext(base=base[0])(n, pos).replace(
+                                                "\\mathdefault", ""))
             else:
                 # circumvent the problem of symbolic tick values (trac #34693)
                 if isinstance(x_locator, FixedLocator):
@@ -2465,8 +2467,8 @@ class Graphics(WithEqualityById, SageObject):
             if (not isinstance(ticks[0], (list, tuple)) or
                     len(ticks[0]) != len(x_formatter)):
                 raise ValueError("If the first component of the list "
-                    "`tick_formatter` is a list then the first component "
-                    "of `ticks` must also be a list of equal length.")
+                                 "`tick_formatter` is a list then the first component "
+                                 "of `ticks` must also be a list of equal length.")
             x_formatter = FixedFormatter(x_formatter)
         # ---------------------- Formatting y-ticks ----------------------
         if y_formatter is None:
@@ -2482,8 +2484,8 @@ class Graphics(WithEqualityById, SageObject):
             if scale[1] == 'log':
                 # We need to strip out '\\mathdefault' from the string
                 y_formatter = FuncFormatter(lambda n, pos:
-                    LogFormatterMathtext(base=base[1])(n, pos).replace(
-                        "\\mathdefault", ""))
+                                            LogFormatterMathtext(base=base[1])(n, pos).replace(
+                                                "\\mathdefault", ""))
             else:
                 # circumvent the problem of symbolic tick values (trac #34693)
                 if isinstance(y_locator, FixedLocator):
@@ -2494,8 +2496,8 @@ class Graphics(WithEqualityById, SageObject):
             if (not isinstance(ticks[1], (list, tuple)) or
                     len(ticks[1]) != len(y_formatter)):
                 raise ValueError("If the second component of the list "
-                    "`tick_formatter` is a list then the second component "
-                    "of `ticks` must also be a list of equal length.")
+                                 "`tick_formatter` is a list then the second component "
+                                 "of `ticks` must also be a list of equal length.")
             y_formatter = FixedFormatter(y_formatter)
 
         subplot.xaxis.set_major_locator(x_locator)
@@ -2898,7 +2900,7 @@ class Graphics(WithEqualityById, SageObject):
         subplot.set_ylim([ymin, ymax])
 
         locator_options = {'nbins': 9, 'steps': [1, 2, 5, 10],
-                               'integer': ticks_integer}
+                           'integer': ticks_integer}
 
         if axes is None:
             axes = self._show_axes
@@ -3054,7 +3056,7 @@ class Graphics(WithEqualityById, SageObject):
             # We do this change only on linear scale, otherwise matplotlib
             # errors out with a memory error.
             from matplotlib.ticker import (AutoMinorLocator, FixedLocator,
-                    LogLocator, NullLocator)
+                                           LogLocator, NullLocator)
             if isinstance(x_locator, (NullLocator, FixedLocator)):
                 subplot.xaxis.set_minor_locator(NullLocator())
             elif xscale == 'linear':
@@ -3090,7 +3092,7 @@ class Graphics(WithEqualityById, SageObject):
             if gridlinesstyle is None:
                 # Set up the default grid style
                 gridlinesstyle = {'color': 'black', 'linestyle': ':',
-                                      'linewidth': 0.5}
+                                  'linewidth': 0.5}
 
             vgridstyle = gridlinesstyle.copy()
             if vgridlinesstyle is not None:
@@ -3179,7 +3181,7 @@ class Graphics(WithEqualityById, SageObject):
                 labeltrans = offset_copy(trans, figure, x=xaxis_labeloffset,
                                          y=0, units='points')
                 subplot.xaxis.set_label_coords(x=xaxis_labelx,
-                                    y=xaxis_labely, transform=labeltrans)
+                                               y=xaxis_labely, transform=labeltrans)
 
                 ylabel = subplot.yaxis.get_label()
                 ylabel.set_horizontalalignment('center')
@@ -3189,7 +3191,7 @@ class Graphics(WithEqualityById, SageObject):
                 labeltrans = offset_copy(trans, figure, x=0,
                                          y=yaxis_labeloffset, units='points')
                 subplot.yaxis.set_label_coords(x=yaxis_labelx,
-                                    y=yaxis_labely, transform=labeltrans)
+                                               y=yaxis_labely, transform=labeltrans)
 
         # This option makes the xlim and ylim limits not take effect
         # todo: figure out which limits were specified, and let the

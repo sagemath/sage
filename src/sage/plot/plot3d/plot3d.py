@@ -354,8 +354,8 @@ class _Coordinates:
                     indep_var_dummies[1]: float({params[1]})
                 }})"""
                 return eval(ll, {'t': t, 'func': func,
-                                     'dep_var_dummy': dep_var_dummy,
-                                     'indep_var_dummies': indep_var_dummies})
+                                 'dep_var_dummy': dep_var_dummy,
+                                 'indep_var_dummies': indep_var_dummies})
             return [subs_func(m) for m in transformation]
 
     def __repr__(self):
@@ -1114,13 +1114,13 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
     elif adaptive:
         P = plot3d_adaptive(f, urange, vrange, **kwds)
     else:
-        arg1 = lambda u,v: u
-        arg2 = lambda u,v: v
-        P = parametric_plot3d.parametric_plot3d((arg1,arg2,f),
+        arg1 = lambda u, v: u
+        arg2 = lambda u, v: v
+        P = parametric_plot3d.parametric_plot3d((arg1, arg2, f),
                                                 urange,
                                                 vrange,
                                                 **kwds)
-    P.frame_aspect_ratio([1.0,1.0,0.5])
+    P.frame_aspect_ratio([1.0, 1.0, 0.5])
     return P
 
 
@@ -1441,7 +1441,7 @@ def axes(scale=1, radius=None, **kwds):
         sphinx_plot(T)
     """
     if radius is None:
-        radius = scale/100.0
-    return Graphics3dGroup([arrow3d((0,0,0),(scale,0,0), radius, **kwds),
-                            arrow3d((0,0,0),(0,scale,0), radius, **kwds),
-                            arrow3d((0,0,0),(0,0,scale), radius, **kwds)])
+        radius = scale / 100.0
+    return Graphics3dGroup([arrow3d((0, 0, 0), (scale, 0, 0), radius, **kwds),
+                            arrow3d((0, 0, 0), (0, scale, 0), radius, **kwds),
+                            arrow3d((0, 0, 0), (0, 0, scale), radius, **kwds)])
