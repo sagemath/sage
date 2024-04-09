@@ -353,7 +353,7 @@ cdef leftv* new_leftv(void *data, res_type) noexcept:
     res.rtyp = res_type
     return res
 
-cdef free_leftv(leftv *args, ring *r = NULL) noexcept:
+cdef free_leftv(leftv *args, ring *r = NULL):
     """
     Kills this ``leftv`` and all ``leftv``s in the tail.
 
@@ -363,6 +363,7 @@ cdef free_leftv(leftv *args, ring *r = NULL) noexcept:
     """
     args.CleanUp(r)
     omFreeBin(args, sleftv_bin)
+
 
 # =====================================
 # = Singular/Plural Abstraction Layer =
@@ -393,7 +394,7 @@ def is_sage_wrapper_for_singular_ring(ring):
         return True
     return False
 
-cdef new_sage_polynomial(ring,  poly *p) noexcept:
+cdef new_sage_polynomial(ring,  poly *p):
     if isinstance(ring, MPolynomialRing_libsingular):
         return new_MP(ring, p)
     else:
@@ -401,9 +402,10 @@ cdef new_sage_polynomial(ring,  poly *p) noexcept:
             return new_NCP(ring, p)
     raise ValueError("not a singular or plural ring")
 
+
 def is_singular_poly_wrapper(p):
     """
-    Checks if p is some data type corresponding to some singular ``poly``.
+    Check if ``p`` is some data type corresponding to some singular ``poly``.
 
     EXAMPLES::
 
@@ -412,9 +414,9 @@ def is_singular_poly_wrapper(p):
         sage: H.<x,y,z> = A.g_algebra({z*x:x*z+2*x, z*y:y*z-2*y})
         sage: is_singular_poly_wrapper(x+y)
         True
-
     """
-    return isinstance(p, MPolynomial_libsingular) or isinstance(p,  NCPolynomial_plural)
+    return isinstance(p, (MPolynomial_libsingular, NCPolynomial_plural))
+
 
 def all_singular_poly_wrapper(s):
     """
@@ -430,10 +432,8 @@ def all_singular_poly_wrapper(s):
         sage: all_singular_poly_wrapper([x+1, y, 1])
         False
     """
-    for p in s:
-        if not is_singular_poly_wrapper(p):
-            return False
-    return True
+    return all(is_singular_poly_wrapper(p) for p in s)
+
 
 cdef poly* access_singular_poly(p) except <poly*> -1:
     """
@@ -678,7 +678,7 @@ cdef class Converter(SageObject):
         """
         return self._append_leftv( new_leftv(data, res_type) )
 
-    cdef to_sage_matrix(self, matrix* mat) noexcept:
+    cdef to_sage_matrix(self, matrix* mat):
         """
         Convert singular matrix to matrix over the polynomial ring.
         """
@@ -693,7 +693,7 @@ cdef class Converter(SageObject):
                 result[i,j] = p
         return result
 
-    cdef to_sage_vector_destructive(self, poly *p, free_module = None) noexcept:
+    cdef to_sage_vector_destructive(self, poly *p, free_module = None):
         cdef int rank
         if free_module:
             rank = free_module.rank()
@@ -733,7 +733,7 @@ cdef class Converter(SageObject):
             result.append(new_sage_polynomial(self._sage_ring, first))
         return free_module(result)
 
-    cdef object to_sage_module_element_sequence_destructive( self, ideal *i) noexcept:
+    cdef object to_sage_module_element_sequence_destructive( self, ideal *i):
         """
         Convert a SINGULAR module to a Sage Sequence (the format Sage
         stores a Groebner basis in).
@@ -756,7 +756,7 @@ cdef class Converter(SageObject):
 
         return Sequence(l, check=False, immutable=True)
 
-    cdef to_sage_integer_matrix(self, intvec* mat) noexcept:
+    cdef to_sage_integer_matrix(self, intvec* mat):
         """
         Convert Singular matrix to matrix over the polynomial ring.
         """
@@ -908,7 +908,7 @@ cdef class Converter(SageObject):
         b = str_to_bytes(n)
         return self._append(omStrDup(b), STRING_CMD)
 
-    cdef to_python(self, leftv* to_convert) noexcept:
+    cdef to_python(self, leftv* to_convert):
         """
         Convert the ``leftv`` to a Python object.
 
@@ -1168,7 +1168,7 @@ cdef class SingularFunction(SageObject):
                 currRingHdl.data.uring = <ring *>omAlloc0Bin(sip_sring_bin)
             currRingHdl.data.uring.ref += 1
 
-    cdef BaseCallHandler get_call_handler(self) noexcept:
+    cdef BaseCallHandler get_call_handler(self):
         """
         Return a call handler which does the actual work.
         """
@@ -1358,7 +1358,7 @@ The Singular documentation for '%s' is given below.
         else:
             return prefix + "\n::\n\n"+"    Singular documentation not found"
 
-    cdef common_ring(self, tuple args, ring=None) noexcept:
+    cdef common_ring(self, tuple args, ring=None):
         """
         Return the common ring for the argument list ``args``.
 
@@ -1442,7 +1442,7 @@ The Singular documentation for '%s' is given below.
         return richcmp(lx._name, rx._name, op)
 
 
-cdef inline call_function(SingularFunction self, tuple args, object R, bint signal_handler=True, attributes=None) noexcept:
+cdef inline call_function(SingularFunction self, tuple args, object R, bint signal_handler=True, attributes=None):
     global currRingHdl
     global errorreported
     global currentVoice
@@ -1530,7 +1530,7 @@ cdef class SingularLibraryFunction(SingularFunction):
         super().__init__(name)
         self.call_handler = self.get_call_handler()
 
-    cdef BaseCallHandler get_call_handler(self) noexcept:
+    cdef BaseCallHandler get_call_handler(self):
         cdef idhdl* singular_idhdl = ggetid(str_to_bytes(self._name))
         if singular_idhdl==NULL:
             raise NameError("Singular library function {!r} is not defined".format(self._name))
@@ -1577,7 +1577,7 @@ cdef class SingularKernelFunction(SingularFunction):
         super().__init__(name)
         self.call_handler = self.get_call_handler()
 
-    cdef BaseCallHandler get_call_handler(self) noexcept:
+    cdef BaseCallHandler get_call_handler(self):
         cdef int cmd_n = 0
         arity = IsCmd(str_to_bytes(self._name), cmd_n) # call by reverence for CMD_n
         if not cmd_n:
@@ -1772,11 +1772,11 @@ def singular_function(name):
         sage: ring(l)
         <noncommutative RingWrap>
     """
-
     try:
         return SingularKernelFunction(name)
     except NameError:
         return SingularLibraryFunction(name)
+
 
 def lib(name):
     """
@@ -1812,6 +1812,7 @@ def lib(name):
     if failure:
         raise NameError("Singular library {!r} not found".format(name))
 
+
 def list_of_functions(packages=False):
     """
     Return a list of all function names currently available.
@@ -1842,7 +1843,7 @@ def list_of_functions(packages=False):
         h = IDNEXT(h)
     return l
 
-cdef inline RingWrap new_RingWrap(ring* r) noexcept:
+cdef inline RingWrap new_RingWrap(ring* r):
     cdef RingWrap ring_wrap_result = RingWrap.__new__(RingWrap)
     ring_wrap_result._ring = r
     ring_wrap_result._ring.ref += 1

@@ -243,7 +243,7 @@ cdef class Spline:
         """
         return str(self.v)
 
-    cdef start_interp(self) noexcept:
+    cdef start_interp(self):
         if self.started:
             sig_free(self.x)
             sig_free(self.y)
@@ -271,7 +271,7 @@ cdef class Spline:
         gsl_spline_init (self.spline, self.x, self.y, n)
         self.started = 1
 
-    cdef stop_interp(self) noexcept:
+    cdef stop_interp(self):
         if not self.started:
             return
         sig_free(self.x)
