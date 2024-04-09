@@ -130,7 +130,7 @@ AUTHOR:
 
 from sage.arith.misc import GCD as gcd
 from sage.categories.morphism import SetMorphism
-from sage.functions.generalized import sign
+from sage.categories.groups import Groups
 from sage.groups.free_group import FreeGroup
 from sage.groups.free_group import FreeGroupElement
 from sage.groups.group import Group
@@ -805,6 +805,10 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         self._free_group = free_group
         self._relations = relations
         self._assign_names(free_group.variable_names())
+        if category is None:
+            category = Groups().FinitelyGenerated()
+        else:
+            category &= Groups().FinitelyGenerated()
         parent_gap = free_group.gap() / libgap([rel.gap() for rel in relations])
         ParentLibGAP.__init__(self, parent_gap)
         Group.__init__(self, category=category)
@@ -849,15 +853,15 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         """
         r = '\\langle '
         for i in range(self.ngens()):
-            r = r+self.gen(i)._latex_()
-            if i < self.ngens()-1:
-                r = r+', '
-        r = r+' \\mid '
+            r = r + self.gen(i)._latex_()
+            if i < self.ngens() - 1:
+                r = r + ', '
+        r = r + ' \\mid '
         for i in range(len(self._relations)):
-            r = r+(self._relations)[i]._latex_()
-            if i < len(self.relations())-1:
-                r = r+' , '
-        r = r+'\\rangle'
+            r = r + (self._relations)[i]._latex_()
+            if i < len(self.relations()) - 1:
+                r = r + ' , '
+        r = r + '\\rangle'
         return r
 
     def free_group(self):
@@ -1005,7 +1009,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         from sage.combinat.permutation import Permutation
         from sage.groups.perm_gps.permgroup import PermutationGroup
         return PermutationGroup([
-                Permutation(coset_table[2*i]) for i in range(len(coset_table)//2)])
+            Permutation(coset_table[2 * i])
+            for i in range(len(coset_table) // 2)])
 
     def direct_product(self, H, reduced=False, new_names=True):
         r"""
@@ -1492,7 +1497,10 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         """
         II = self.gap().IsomorphismSimplifiedFpGroup()
         codomain = wrap_FpGroup(II.Range())
-        phi = lambda x: codomain(II.ImageElm(x.gap()))
+
+        def phi(x):
+            return codomain(II.ImageElm(x.gap()))
+
         HS = self.Hom(codomain)
         return GroupMorphismWithGensImages(HS, phi)
 
@@ -1555,7 +1563,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
             C.sort()
             L1.append(C[0])
         L1.sort()
-        return F/L1
+        return F / L1
 
     def epimorphisms(self, H):
         r"""
@@ -1606,9 +1614,13 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         Hg = libgap(H)
         gquotients = Gg.GQuotients(Hg)
         res = []
+
         # the following closure is needed to attach a specific value of quo to
         # each function in the different morphisms
-        fmap = lambda tup: (lambda a: H(prod(tup[abs(i)-1]**sign(i) for i in a.Tietze())))
+        def fmap(tup):
+            return lambda a: H(prod(tup[abs(i) - 1]**(1 if i > 0 else -1)
+                                    for i in a.Tietze() if i))
+
         for quo in gquotients:
             tup = tuple(H(quo.ImageElm(i.gap()).sage()) for i in self.gens())
             fhom = GroupMorphismWithGensImages(HomSpace, fmap(tup))
