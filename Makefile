@@ -78,14 +78,6 @@ reconfigure:
 	        exit 1; \
 	fi
 
-# This is used to monitor progress towards Python 3 and prevent
-# regressions. Should be removed after the full switch to python3.
-#
-# As of Sage 9.0: keep the build target for backward compatibility,
-# but it just runs "make".
-buildbot-python3:
-	$(MAKE)
-
 # Preemptively download all source tarballs of normal packages.
 download:
 	export SAGE_ROOT=$$(pwd) && \
@@ -343,7 +335,7 @@ CONFIGURE_DEPENDENCIES =							\
 	build/pkgs/*/spkg-configure.m4						\
 	build/pkgs/*/type build/pkgs/*/SPKG.rst					\
 	build/pkgs/*/checksums.ini build/pkgs/*/requirements.txt		\
-	build/pkgs/*/install-requires.txt build/pkgs/*/package-version.txt	\
+	build/pkgs/*/version_requirements.txt build/pkgs/*/package-version.txt	\
 	build/pkgs/*/spkg-install build/pkgs/*/spkg-install.in
 
 # SPKG_INFO_DEPENDENCIES is the list of files that influence the run of 'sage-spkg-info' and hence
@@ -351,7 +343,7 @@ CONFIGURE_DEPENDENCIES =							\
 SPKG_INFO_DEPENDENCIES =							\
 	build/pkgs/*/type build/pkgs/*/SPKG.rst					\
 	build/pkgs/*/requirements.txt						\
-	build/pkgs/*/install-requires.txt build/pkgs/*/package-version.txt	\
+	build/pkgs/*/version_requirements.txt build/pkgs/*/package-version.txt	\
 	build/pkgs/*/distros/*.txt
 
 configure: bootstrap src/doc/bootstrap $(CONFIGURE_DEPENDENCIES) $(SPKG_INFO_DEPENDENCIES)
@@ -376,5 +368,5 @@ list:
 	misc-clean bdist-clean distclean bootstrap-clean maintainer-clean \
 	test check testoptional testall testlong testoptionallong testallong \
 	ptest ptestoptional ptestall ptestlong ptestoptionallong ptestallong \
-	buildbot-python3 list \
+	list \
 	doc-clean clean sagelib-clean build-clean

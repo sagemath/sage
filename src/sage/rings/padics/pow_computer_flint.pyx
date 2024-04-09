@@ -432,7 +432,7 @@ cdef class PowComputer_flint_1step(PowComputer_flint):
             fmpz_poly_set(ans._poly, self.get_modulus(_n)[0])
         return ans
 
-    cdef _new_fmpz_poly(self, fmpz_poly_t value, var='x') noexcept:
+    cdef _new_fmpz_poly(self, fmpz_poly_t value, var='x'):
         """
         Returns a polynomial with the value stored in ``value`` and
         variable name ``var``.

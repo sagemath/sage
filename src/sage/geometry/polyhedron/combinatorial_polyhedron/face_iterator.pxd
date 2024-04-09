@@ -70,7 +70,7 @@ cdef class FaceIterator_base(SageObject):
     # If ``dual == 0``, then coatoms are facets, atoms vertices and vice versa.
     cdef ListOfFaces atoms, coatoms, coatoms_coatom_rep
 
-    cdef inline CombinatorialFace next_face(self) noexcept
+    cdef inline CombinatorialFace next_face(self)
     cdef inline int next_dimension(self) except -1
     cdef inline int next_face_loop(self) except -1
     cdef size_t n_atom_rep(self) except -1

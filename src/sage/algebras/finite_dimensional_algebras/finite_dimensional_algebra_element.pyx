@@ -20,7 +20,7 @@ from sage.rings.integer import Integer
 
 from cpython.object cimport PyObject_RichCompare as richcmp
 
-cpdef FiniteDimensionalAlgebraElement unpickle_FiniteDimensionalAlgebraElement(A, vec, mat) noexcept:
+cpdef FiniteDimensionalAlgebraElement unpickle_FiniteDimensionalAlgebraElement(A, vec, mat):
     """
     Helper for unpickling of finite dimensional algebra elements.
 
@@ -365,7 +365,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         return self._vector.ncols()
 
     # (Rich) comparison
-    cpdef _richcmp_(self, right, int op) noexcept:
+    cpdef _richcmp_(self, right, int op):
         """
         EXAMPLES::
 
@@ -400,7 +400,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         return richcmp(self._vector, <FiniteDimensionalAlgebraElement>right._vector, op)
 
-    cpdef _add_(self, other) noexcept:
+    cpdef _add_(self, other):
         """
         EXAMPLES::
 
@@ -411,7 +411,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         return self._parent.element_class(self._parent, self._vector + <FiniteDimensionalAlgebraElement>other._vector)
 
-    cpdef _sub_(self, other) noexcept:
+    cpdef _sub_(self, other):
         """
         EXAMPLES::
 
@@ -422,7 +422,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         return self._parent.element_class(self._parent, self._vector - <FiniteDimensionalAlgebraElement>other._vector)
 
-    cpdef _mul_(self, other) noexcept:
+    cpdef _mul_(self, other):
         """
         EXAMPLES::
 
@@ -434,7 +434,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         return self._parent.element_class(self._parent, self._vector * <FiniteDimensionalAlgebraElement>(other)._matrix)
 
-    cpdef _lmul_(self, Element other) noexcept:
+    cpdef _lmul_(self, Element other):
         """
         TESTS::
 
@@ -450,7 +450,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
                             .format(self.parent(), other.parent()))
         return self._parent.element_class(self._parent, self._vector * other)
 
-    cpdef _rmul_(self, Element other) noexcept:
+    cpdef _rmul_(self, Element other):
         """
         TESTS::
 

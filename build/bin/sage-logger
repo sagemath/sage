@@ -61,6 +61,25 @@ else
     SED=cat
 fi
 
+timefile="$logdir/$logname.time"
+rm -f "$timefile"
+if /usr/bin/time -h -o /dev/null true; then
+    TIME="/usr/bin/time -h -o $timefile"
+else
+    TIME=""
+fi
+
+report_time ()
+{
+    time=$(echo $(cat $timefile))
+    case "$time" in
+        *m*real*|*h*real*|*[1-9][0-9].*real*|*[1-9][0-9],*real*)
+            # at least 10 seconds wall time
+            echo "$time"
+            ;;
+    esac
+}
+
 mkdir -p "$logdir"
 
 # Do all logging of child processes with V=1 to ensure that no
@@ -75,14 +94,20 @@ if [ -n "$SAGE_SILENT_BUILD" -a ${use_prefix} = true ]; then
     # Silent build.
     # Similar to https://www.gnu.org/software/automake/manual/html_node/Automake-Silent-Rules.html#Automake-Silent-Rules
     echo "[$logname] installing. Log file: $logfile"
-    ( exec>> $logfile 2>&1 ; eval "$cmd" )
+    ( exec>> $logfile 2>&1 ; $TIME sh -c "$cmd"; status=$?;
+      [ -r $timefile ] && cat $timefile; exit $status )
     status=$?
     if [[ $status != 0 ]]; then
         echo "  [$logname] error installing, exit status $status. End of log file:"
         tail -n 120 "$logfile" | sed "/Please email sage-devel/,$ d;s;^;  [$logname]   ;" >&2
         echo "  [$logname] Full log file: $logfile"
     else
-        echo "  [$logname] successfully installed."
+        time=$(report_time)
+        if [ -n "$time" ]; then
+            echo "  [$logname] successfully installed ($time)."
+        else
+            echo "  [$logname] successfully installed."
+        fi
     fi
     exit $status
 else
@@ -90,7 +115,9 @@ else
     # We trap SIGINT such that SIGINT interrupts the main process being
     # run, not the logging.
 
-    ( exec 2>&1; eval "$cmd" ) | \
+    ( exec 2>&1;
+      $TIME sh -c "$cmd"; status=$?; report_time;
+      exit $status ) | \
         ( trap '' SIGINT; if [ -n "$GITHUB_ACTIONS" -a -n "$prefix" ]; then echo "::group::${logname}"; fi; tee -a "$logfile" | $SED; if [ -n "$GITHUB_ACTIONS" -a -n "$prefix" ]; then echo "::endgroup::"; fi )
 
     pipestatus=(${PIPESTATUS[*]})
