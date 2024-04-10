@@ -75,7 +75,7 @@ already_pickled = { }
 already_unpickled = { }
 
 
-cdef _normalize_filename(s) noexcept:
+cdef _normalize_filename(s):
     """
     Append the .sobj extension to a filename if it doesn't already have it.
     """

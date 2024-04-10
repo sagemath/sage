@@ -619,7 +619,7 @@ configuration `.devcontainer/tox-docker-in-docker
 ``tox`` is already installed.
 
 Sage provides a sophisticated tox configuration in the file
-``$SAGE_ROOT/tox.ini`` for the purpose of portability testing.
+:sage_root:`tox.ini` for the purpose of portability testing.
 
 A tox "environment" is identified by a symbolic name composed of
 several `Tox "factors"
@@ -639,7 +639,7 @@ The next two factors determine the host system configuration: The
   ``archlinux-latest``, ``fedora-30``, ``slackware-14.2``,
   ``centos-7-i386``, and ``ubuntu-bionic-arm64``.
 
-- See ``$SAGE_ROOT/tox.ini`` for a complete list, and to which images
+- See :sage_root:`tox.ini` for a complete list, and to which images
   on Docker hub they correspond.
 
 The **packages factor** describes a list of system packages to be
@@ -919,7 +919,7 @@ a Homebrew installation in ``/usr/local`` that you may have.
 
 The test script sets the ``PATH`` to the ``bin`` directory of the
 Homebrew prefix, followed by ``/usr/bin:/bin:/usr/sbin:/sbin``.  It
-then uses the script ``$SAGE_ROOT/.homebrew-build-env`` to set
+then uses the script :sage_root:`.homebrew-build-env` to set
 environment variables so that Sage's build scripts will find
 "keg-only" packages such as ``gettext``.
 
@@ -1002,13 +1002,11 @@ on every release tag.
 
 This is defined in the files
 
-- `$SAGE_ROOT/.github/workflows/ci-linux.yml
-  <https://github.com/sagemath/sage/tree/develop/.github/workflows/ci-linux.yml>`_
-  (which calls `$SAGE_ROOT/.github/workflows/docker.yml
-  <https://github.com/sagemath/sage/tree/develop/.github/workflows/docker.yml>`_) and
+- :sage_root:`.github/workflows/ci-linux.yml`
+  (which calls :sage_root:`.github/workflows/docker.yml`) and
 
-- `$SAGE_ROOT/.github/workflows/ci-macos.yml
-  <https://github.com/sagemath/sage/tree/develop/.github/workflows/ci-macos.yml>`_.
+- :sage_root:`.github/workflows/ci-macos.yml`
+  (which calls :sage_root:`.github/workflows/macos.yml`).
 
 GitHub Actions runs these build jobs on 2-core machines with 7 GB of
 RAM memory and 14 GB of SSD disk space, cf.
@@ -1236,8 +1234,7 @@ Once VS Code starts configuring the dev container, by clicking on "show log",
 you can see what it does:
 
 - It pulls the prebuilt image from ghcr.io (via
-  `$SAGE_ROOT/.devcontainer/portability-Dockerfile
-  <https://github.com/sagemath/sage/tree/develop/.devcontainer/portability-Dockerfile>`_);
+  :sage_root:`.devcontainer/portability-Dockerfile`);
   note that these are multi-gigabyte images, so it may take a while.
 
 - As part of the "onCreateCommand", it installs additional system packages to
@@ -1270,8 +1267,7 @@ The Sage source tree contains premade configuration files for all platforms
 for which our portability CI builds Docker images, both in the ``minimal`` and
 ``standard`` system package configurations. The configuration files can be
 generated using the command ``tox -e update_docker_platforms`` (see
-`$SAGE_ROOT/tox.ini <https://github.com/sagemath/sage/tree/develop/tox.ini>`_
-for environment variables that take effect).
+:sage_root:`tox.ini` for environment variables that take effect).
 
 You can edit a copy of the configuration file to change to a different platform, another
 version, or build stage.  After editing the configuration file, run "Dev Containers: Rebuild Container" from the command
@@ -1284,7 +1280,7 @@ for more information.
 In addition to the
 ``$SAGE_ROOT/.devcontainer/portability-.../devcontainer.json`` files, Sage also
 provides several other sample ``devcontainer.json`` configuration files in the
-directory ``$SAGE_ROOT/.devcontainer``.
+directory :sage_root:`.devcontainer`.
 
 Files named ``$SAGE_ROOT/.devcontainer/develop-.../devcontainer.json`` configure
 containers from a public Docker image that provides SageMath and then updates the

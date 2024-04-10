@@ -15,7 +15,7 @@ AUTHORS:
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  The full text of the GPL is available at:
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ##############################################################################
 
 from sage.misc.abstract_method import abstract_method
@@ -599,7 +599,7 @@ class Representation(Representation_abstract):
         S = tester.some_elements()
         L = []
         max_len = int(sqrt(tester._max_runs)) + 1
-        for i,x in enumerate(self._semigroup):
+        for i, x in enumerate(self._semigroup):
             L.append(x)
             if i >= max_len:
                 break
@@ -1420,6 +1420,7 @@ class Representation_Symmetric(Representation_abstract):
         return self.element_class(self, data)
 
 
+
 class RegularRepresentation(Representation):
     r"""
     The regular representation of a semigroup.
@@ -1500,6 +1501,7 @@ class RegularRepresentation(Representation):
             sage: R._test_representation()  # indirect doctest
         """
         return self.monomial(m * g)
+
 
 
 class TrivialRepresentation(Representation_abstract):

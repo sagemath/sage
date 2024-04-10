@@ -32,7 +32,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
     #cpdef _add_(self, right):
     #    raise NotImplementedError
 
-    cpdef _div_(self, right) noexcept:
+    cpdef _div_(self, right):
         r"""
         Returns the quotient of ``self`` by ``right``.
 
@@ -435,7 +435,7 @@ cdef class LocalGenericElement(CommutativeRingElement):
     #def __pow__(self, right):
     #    raise NotImplementedError
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         r"""
         Returns the difference between ``self`` and ``right``.
 

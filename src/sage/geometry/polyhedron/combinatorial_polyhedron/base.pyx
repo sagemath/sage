@@ -397,7 +397,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         else:
             self._init_from_list_of_facets(data)
 
-    cdef _init_from_polyhedron(self, data) noexcept:
+    cdef _init_from_polyhedron(self, data):
         r'''
         Initialize from :class:`~sage.geometry.polyhedron.parent.Polyhedron_base`.
         '''
@@ -414,7 +414,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         return self._init_from_incidence_matrix(data.incidence_matrix())
 
-    cdef _init_from_lattice_polytope(self, data) noexcept:
+    cdef _init_from_lattice_polytope(self, data):
         r'''
         Initialize from :class:`~sage.geometry.lattice_polytope.LatticePolytopeClass`.
         '''
@@ -424,7 +424,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         self._dimension = data.dimension()
         return self._init_from_incidence_matrix(data.incidence_matrix())
 
-    cdef _init_from_cone(self, data) noexcept:
+    cdef _init_from_cone(self, data):
         r'''
         Initialize from :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone`.
         '''
@@ -439,7 +439,7 @@ cdef class CombinatorialPolyhedron(SageObject):
                                   + [[ZZ.one() for _ in range(len(data.facet_normals()))]])
         return self._init_from_incidence_matrix(incidence_matrix)
 
-    cdef _init_facet_names(self, facets) noexcept:
+    cdef _init_facet_names(self, facets):
         '''
         Store facet names and compute equations.
         '''
@@ -460,7 +460,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         else:
             self._facet_names = None
 
-    cdef _init_from_incidence_matrix(self, data) noexcept:
+    cdef _init_from_incidence_matrix(self, data):
         """
         Initialize from an incidence matrix.
         """
@@ -496,7 +496,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         self._initialize_far_face()
 
-    cdef _init_from_list_of_facets(self, data) noexcept:
+    cdef _init_from_list_of_facets(self, data):
         """
         Initialize from a list of facets.
 
@@ -541,7 +541,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         self._initialize_far_face()
 
-    cdef _init_from_ListOfFaces(self, ListOfFaces facets, ListOfFaces Vrep) noexcept:
+    cdef _init_from_ListOfFaces(self, ListOfFaces facets, ListOfFaces Vrep):
         """
         Initialize self from two ``ListOfFaces``.
         """
@@ -554,7 +554,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
         self._initialize_far_face()
 
-    cdef _initialize_far_face(self) noexcept:
+    cdef _initialize_far_face(self):
         """
         Initialize far_face if unbounded.
         """
@@ -562,7 +562,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             face_init(self._far_face, self.bitrep_facets().n_atoms(), self._n_facets)
             Vrep_list_to_bit_rep(tuple(self._far_face_tuple), self._far_face)
 
-    cdef _init_as_trivial_polyhedron(self, int dimension) noexcept:
+    cdef _init_as_trivial_polyhedron(self, int dimension):
         """
         Initialize polyhedron equal to its affine hull.
         """
@@ -2801,7 +2801,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     face_iter = face_generator
 
-    cdef FaceIterator _face_iter(self, bint dual, int dimension) noexcept:
+    cdef FaceIterator _face_iter(self, bint dual, int dimension):
         r"""
         A method to obtain the FaceIterator as Cython object.
 
@@ -3251,13 +3251,13 @@ cdef class CombinatorialPolyhedron(SageObject):
                 tester.assertTrue(all(j in f.ambient_V_indices() for f in b))
                 tester.assertTrue(all(i in f.ambient_H_indices() for f in b))
 
-    cdef tuple Vrep(self) noexcept:
+    cdef tuple Vrep(self):
         r"""
         Return the names of the Vrepresentation, if they exist. Else return ``None``.
         """
         return self._Vrep
 
-    cdef tuple facet_names(self) noexcept:
+    cdef tuple facet_names(self):
         r"""
         Return the names Hrepresentatives, which are facets.
 
@@ -3265,7 +3265,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         """
         return self._facet_names
 
-    cdef tuple equations(self) noexcept:
+    cdef tuple equations(self):
         r"""
         Return the names of the equations.
 
@@ -3273,7 +3273,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         """
         return self._equations
 
-    cdef tuple equalities(self) noexcept:
+    cdef tuple equalities(self):
         from sage.misc.superseded import deprecation
         deprecation(31834, "the method equalities of CombinatorialPolyhedron is deprecated; use equations", 3)
         return self.equations()
@@ -3317,19 +3317,19 @@ cdef class CombinatorialPolyhedron(SageObject):
         """
         return self._bounded
 
-    cdef ListOfFaces bitrep_facets(self) noexcept:
+    cdef ListOfFaces bitrep_facets(self):
         r"""
         Return the facets in bit representation.
         """
         return self._bitrep_facets
 
-    cdef ListOfFaces bitrep_Vrep(self) noexcept:
+    cdef ListOfFaces bitrep_Vrep(self):
         r"""
         Return the Vrepresentations in bit representation.
         """
         return self._bitrep_Vrep
 
-    cdef tuple far_face_tuple(self) noexcept:
+    cdef tuple far_face_tuple(self):
         r"""
         Return the far face as it was given on initialization.
         """
@@ -3352,7 +3352,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     # Methods to obtain a different combinatorial polyhedron.
 
-    cpdef CombinatorialPolyhedron dual(self) noexcept:
+    cpdef CombinatorialPolyhedron dual(self):
         r"""
         Return the dual/polar of self.
 
@@ -3395,7 +3395,7 @@ cdef class CombinatorialPolyhedron(SageObject):
 
     polar = dual
 
-    cpdef CombinatorialPolyhedron pyramid(self, new_vertex=None, new_facet=None) noexcept:
+    cpdef CombinatorialPolyhedron pyramid(self, new_vertex=None, new_facet=None):
         r"""
         Return the pyramid of ``self``.
 
