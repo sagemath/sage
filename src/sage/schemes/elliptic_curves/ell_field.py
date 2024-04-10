@@ -41,10 +41,10 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
 
             sage: E = EllipticCurve(QQ, [1,1])
             sage: E.category()
-            Category of abelian varieties over Spectrum of Rational Field
+            Category of abelian varieties over Rational Field
             sage: E = EllipticCurve(GF(101), [1,1])
             sage: E.category()
-            Category of abelian varieties over Spectrum of Finite Field of size 101
+            Category of abelian varieties over Finite Field of size 101
         """
         from sage.categories.schemes import AbelianVarieties
         if category is None:
