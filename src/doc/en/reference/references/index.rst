@@ -5556,6 +5556,10 @@ REFERENCES:
              imaginary quadratic fields. Invent. Math. 103 (1991),
              no. 1, 25--68.
 
+.. [RS2010] RUBIN, K., & SILVERBERG, A. (2010). CHOOSING THE CORRECT ELLIPTIC
+            CURVE IN THE CM METHOD. Mathematics of Computation, 79(269),
+            545–561. :doi:`10.1090/S0025-5718-09-02266-2`
+
 .. [Rud1958] \M. E. Rudin. *An unshellable triangulation of a
              tetrahedron*. Bull. Amer. Math. Soc. 64 (1958), 90-91.
 
