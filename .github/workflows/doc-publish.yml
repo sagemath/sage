@@ -75,7 +75,7 @@ jobs:
             [Documentation preview for this PR](${{ steps.deploy-netlify.outputs.NETLIFY_URL }}/html/en) (built with commit ${{ steps.source-run-info.outputs.sourceHeadSha }}; [changes](${{ steps.deploy-netlify.outputs.NETLIFY_URL }}/CHANGES.html)) is ready! :tada:
 
       - name: Update deployment status PR check
-        uses: myrotvorets/set-commit-status-action@v2.0.0
+        uses: myrotvorets/set-commit-status-action@v2.0.1
         if: ${{ always() }}
         env:
           DEPLOY_SUCCESS: Successfully deployed preview.
