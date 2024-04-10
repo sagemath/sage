@@ -2012,7 +2012,7 @@ class GraphicMatroid(Matroid):
 
         INPUT:
 
-        - ``f`` -- a python object such that `f[e]` is the new label of `e`
+        - ``f`` -- a python object such that ``f[e]`` is the new label of `e`
 
         OUTPUT: a matroid
 

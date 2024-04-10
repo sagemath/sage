@@ -540,7 +540,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             sage: M = BasisMatroid(matroids.catalog.Fano())
             sage: sorted(M.groundset())
             ['a', 'b', 'c', 'd', 'e', 'f', 'g']
-            sage: N = M.relabel({'a':0, 'g':'x'})
+            sage: N = M.relabel({'a': 0, 'g': 'x'})
             sage: from sage.matroids.utilities import cmp_elements_key
             sage: sorted(N.groundset(), key=cmp_elements_key)
             [0, 'b', 'c', 'd', 'e', 'f', 'x']

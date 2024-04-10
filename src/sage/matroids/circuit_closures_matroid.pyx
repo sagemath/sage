@@ -578,7 +578,7 @@ cdef class CircuitClosuresMatroid(Matroid):
 
         INPUT:
 
-        - ``f`` -- a python object such that `f[e]` is the new label of `e`
+        - ``f`` -- a python object such that ``f[e]`` is the new label of `e`
 
         OUTPUT: a matroid
 
@@ -588,7 +588,7 @@ cdef class CircuitClosuresMatroid(Matroid):
             sage: M = CircuitClosuresMatroid(matroids.catalog.RelaxedNonFano())
             sage: sorted(M.groundset())
             [0, 1, 2, 3, 4, 5, 6]
-            sage: N = M.relabel({'g':'x', 0:'z'}) # 'g':'x' is ignored
+            sage: N = M.relabel({'g': 'x', 0: 'z'})  # 'g': 'x' is ignored
             sage: from sage.matroids.utilities import cmp_elements_key
             sage: sorted(N.groundset(), key=cmp_elements_key)
             [1, 2, 3, 4, 5, 6, 'z']

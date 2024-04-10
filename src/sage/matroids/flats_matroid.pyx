@@ -320,7 +320,7 @@ cdef class FlatsMatroid(Matroid):
             sage: M = FlatsMatroid(matroids.catalog.RelaxedNonFano())
             sage: sorted(M.groundset())
             [0, 1, 2, 3, 4, 5, 6]
-            sage: N = M.relabel({'g':'x', 0:'z'}) # 'g':'x' is ignored
+            sage: N = M.relabel({'g': 'x', 0: 'z'})  # 'g': 'x' is ignored
             sage: from sage.matroids.utilities import cmp_elements_key
             sage: sorted(N.groundset(), key=cmp_elements_key)
             [1, 2, 3, 4, 5, 6, 'z']

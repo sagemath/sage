@@ -2983,7 +2983,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         INPUT:
 
-        - ``f`` -- a python object such that `f[e]` is the new label of `e`
+        - ``f`` -- a python object such that ``f[e]`` is the new label of `e`
 
         OUTPUT: a matroid
 
@@ -2992,7 +2992,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             sage: M = matroids.catalog.Fano()
             sage: sorted(M.groundset())
             ['a', 'b', 'c', 'd', 'e', 'f', 'g']
-            sage: N = M.relabel({'g':'x'})
+            sage: N = M.relabel({'g': 'x'})
             sage: sorted(N.groundset())
             ['a', 'b', 'c', 'd', 'e', 'f', 'x']
 
@@ -4084,7 +4084,7 @@ cdef class BinaryMatroid(LinearMatroid):
 
         INPUT:
 
-        - ``f`` -- a python object such that `f[e]` is the new label of `e`
+        - ``f`` -- a python object such that ``f[e]`` is the new label of `e`
 
         OUTPUT: a matroid
 
@@ -4093,7 +4093,7 @@ cdef class BinaryMatroid(LinearMatroid):
             sage: M = matroids.catalog.Fano()
             sage: sorted(M.groundset())
             ['a', 'b', 'c', 'd', 'e', 'f', 'g']
-            sage: N = M.relabel({'g':'x'})
+            sage: N = M.relabel({'g': 'x'})
             sage: sorted(N.groundset())
             ['a', 'b', 'c', 'd', 'e', 'f', 'x']
 
@@ -5014,7 +5014,7 @@ cdef class TernaryMatroid(LinearMatroid):
 
         INPUT:
 
-        - ``f`` -- a python object such that `f[e]` is the new label of `e`
+        - ``f`` -- a python object such that ``f[e]`` is the new label of `e`
 
         OUTPUT: a matroid
 
@@ -5023,7 +5023,7 @@ cdef class TernaryMatroid(LinearMatroid):
             sage: M = matroids.catalog.NonFano()
             sage: sorted(M.groundset())
             ['a', 'b', 'c', 'd', 'e', 'f', 'g']
-            sage: N = M.relabel({'g':'x'})
+            sage: N = M.relabel({'g': 'x'})
             sage: sorted(N.groundset())
             ['a', 'b', 'c', 'd', 'e', 'f', 'x']
 
@@ -5775,7 +5775,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         INPUT:
 
-        - ``f`` -- a python object such that `f[e]` is the new label of `e`
+        - ``f`` -- a python object such that ``f[e]`` is the new label of `e`
 
         OUTPUT: a matroid
 
@@ -6730,7 +6730,7 @@ cdef class RegularMatroid(LinearMatroid):
 
         INPUT:
 
-        - ``f`` -- a python object such that `f[e]` is the new label of `e`
+        - ``f`` -- a python object such that ``f[e]`` is the new label of `e`
 
         OUTPUT: a matroid
 
@@ -6739,7 +6739,7 @@ cdef class RegularMatroid(LinearMatroid):
             sage: M = matroids.catalog.R10()
             sage: sorted(M.groundset())
             ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
-            sage: N = M.relabel({'g':'x'})
+            sage: N = M.relabel({'g': 'x'})
             sage: sorted(N.groundset())
             ['a', 'b', 'c', 'd', 'e', 'f', 'h', 'i', 'j', 'x']
 
