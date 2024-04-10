@@ -1217,7 +1217,7 @@ class ToricVariety_field(AmbientSpace):
         this method will return the dimension of the
         largest-dimensional component.
 
-        This returns -1 if the toric variety is smooth.
+        This returns `-1` if the toric variety is smooth.
 
         EXAMPLES::
 
