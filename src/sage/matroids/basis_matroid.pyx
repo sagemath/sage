@@ -79,7 +79,7 @@ from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
 from sage.matroids.set_system cimport SetSystem
 from sage.matroids.utilities import cmp_elements_key
 from cpython.object cimport Py_EQ, Py_NE
-
+from sage.misc.decorators import rename_keyword
 from itertools import combinations
 
 # class of general matroids, represented by their list of bases
@@ -520,17 +520,19 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         cdef frozenset se = frozenset([e])
         return BasisMatroid(groundset=self._E + (e,), bases=[B | se for B in self.bases()])
 
-    cpdef relabel(self, f):
+    @rename_keyword(deprecation=37775, l='mapping')
+    def relabel(self, mapping):
         r"""
         Return an isomorphic matroid with relabeled groundset.
 
-        The output is obtained by relabeling each element ``e`` by ``f[e]``,
-        where ``f`` is a given injective map. If ``e not in f`` then the
-        identity map is assumed.
+        The output is obtained by relabeling each element ``e`` by
+        ``mapping[e]``, where ``mapping`` is a given injective map. If
+        ``mapping[e]`` is not defined, then the identity map is assumed.
 
         INPUT:
 
-        - ``f`` -- a python object such that `f[e]` is the new label of `e`
+        - ``mapping`` -- a python object such that `mapping[e]` is the new
+          label of `e`
 
         OUTPUT: a matroid
 
@@ -556,7 +558,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             sage: for S in powerset(M.groundset()):
             ....:     assert M.rank(S) == N.rank([f[x] for x in S])
         """
-        d = self._relabel_map(f)
+        d = self._relabel_map(mapping)
         E = [d[x] for x in self.groundset()]
         B = [[d[y] for y in list(x)] for x in self.bases()]
         M = BasisMatroid(groundset=E, bases=B)

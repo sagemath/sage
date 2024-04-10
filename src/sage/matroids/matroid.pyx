@@ -8424,17 +8424,18 @@ cdef class Matroid(SageObject):
             raise ValueError("given map doesn't relabel the groundset properly")
         return d
 
-    def relabel(self, f):
+    def relabel(self, mapping):
         r"""
         Return an isomorphic matroid with relabeled groundset.
 
-        The output is obtained by relabeling each element ``e`` by ``f[e]``,
-        where ``f`` is a given injective map. If ``e not in f`` then the
-        identity map is assumed.
+        The output is obtained by relabeling each element ``e`` by
+        ``mapping[e]``, where ``mapping`` is a given injective map. If
+        ``mapping[e]`` is not defined, then the identity map is assumed.
 
         INPUT:
 
-        - ``f`` -- a python object such that ``f[e]`` is the new label of `e`
+        - ``mapping`` -- a python object such that `mapping[e]` is the new
+          label of `e`
 
         OUTPUT: a matroid
 
@@ -8462,7 +8463,7 @@ cdef class Matroid(SageObject):
             ....:     assert M.rank(S) == N.rank([f[x] for x in S])
         """
         from sage.matroids.rank_matroid import RankMatroid
-        d = self._relabel_map(f)
+        d = self._relabel_map(mapping)
         E = [d[x] for x in self.groundset()]
 
         def f_relabel(X):

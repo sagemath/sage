@@ -13,4 +13,4 @@ cdef class CircuitClosuresMatroid(Matroid):
     cpdef _circuit(self, F)
     cpdef circuit_closures(self)
     cpdef _is_isomorphic(self, other, certificate=*)
-    cpdef relabel(self, f)
+    cpdef relabel(self, mapping)

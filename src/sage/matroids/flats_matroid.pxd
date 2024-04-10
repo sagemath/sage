@@ -15,7 +15,7 @@ cdef class FlatsMatroid(Matroid):
 
     # isomorphism and relabeling
     cpdef _is_isomorphic(self, other, certificate=*)
-    cpdef relabel(self, f)
+    cpdef relabel(self, mapping)
 
     # verification
     cpdef is_valid(self)

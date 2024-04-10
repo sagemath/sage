@@ -2973,17 +2973,18 @@ cdef class LinearMatroid(BasisExchangeMatroid):
         data = (A, gs, reduced, self.get_custom_name())
         return sage.matroids.unpickling.unpickle_linear_matroid, (version, data)
 
-    cpdef relabel(self, f):
+    cpdef relabel(self, mapping):
         r"""
         Return an isomorphic matroid with relabeled groundset.
 
-        The output is obtained by relabeling each element ``e`` by ``f[e]``,
-        where ``f`` is a given injective map. If ``e not in f`` then the
-        identity map is assumed.
+        The output is obtained by relabeling each element ``e`` by
+        ``mapping[e]``, where ``mapping`` is a given injective map. If
+        ``mapping[e]`` is not defined, then the identity map is assumed.
 
         INPUT:
 
-        - ``f`` -- a python object such that ``f[e]`` is the new label of `e`
+        - ``mapping`` -- a python object such that `mapping[e]` is the new
+          label of `e`
 
         OUTPUT: a matroid
 
@@ -3004,7 +3005,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             sage: for S in powerset(M.groundset()):
             ....:     assert M.rank(S) == N.rank([f[x] for x in S])
         """
-        d = self._relabel_map(f)
+        d = self._relabel_map(mapping)
         E = [d[x] for x in self.groundset_list()]
         M = LinearMatroid(groundset=E, matrix=self._matrix_())
         return M
@@ -4074,17 +4075,18 @@ cdef class BinaryMatroid(LinearMatroid):
         data = (A, gs, basis, self.get_custom_name())
         return sage.matroids.unpickling.unpickle_binary_matroid, (version, data)
 
-    cpdef relabel(self, f):
+    cpdef relabel(self, mapping):
         r"""
         Return an isomorphic matroid with relabeled groundset.
 
-        The output is obtained by relabeling each element ``e`` by ``f[e]``,
-        where ``f`` is a given injective map. If ``e not in f`` then the
-        identity map is assumed.
+        The output is obtained by relabeling each element ``e`` by
+        ``mapping[e]``, where ``mapping`` is a given injective map. If
+        ``mapping[e]`` is not defined, then the identity map is assumed.
 
         INPUT:
 
-        - ``f`` -- a python object such that ``f[e]`` is the new label of `e`
+        - ``mapping`` -- a python object such that `mapping[e]` is the new
+          label of `e`
 
         OUTPUT: a matroid
 
@@ -4105,7 +4107,7 @@ cdef class BinaryMatroid(LinearMatroid):
             sage: for S in powerset(M.groundset()):
             ....:     assert M.rank(S) == N.rank([f[x] for x in S])
         """
-        d = self._relabel_map(f)
+        d = self._relabel_map(mapping)
         E = [d[x] for x in self.groundset_list()]
         M = BinaryMatroid(groundset=E, matrix=self._matrix_())
         return M
@@ -5004,17 +5006,18 @@ cdef class TernaryMatroid(LinearMatroid):
         data = (A, gs, basis, self.get_custom_name())
         return sage.matroids.unpickling.unpickle_ternary_matroid, (version, data)
 
-    cpdef relabel(self, f):
+    cpdef relabel(self, mapping):
         r"""
         Return an isomorphic matroid with relabeled groundset.
 
-        The output is obtained by relabeling each element ``e`` by ``f[e]``,
-        where ``f`` is a given injective map. If ``e not in f`` then the
-        identity map is assumed.
+        The output is obtained by relabeling each element ``e`` by
+        ``mapping[e]``, where ``mapping`` is a given injective map. If
+        ``mapping[e]`` is not defined, then the identity map is assumed.
 
         INPUT:
 
-        - ``f`` -- a python object such that ``f[e]`` is the new label of `e`
+        - ``mapping`` -- a python object such that `mapping[e]` is the new
+          label of `e`
 
         OUTPUT: a matroid
 
@@ -5035,7 +5038,7 @@ cdef class TernaryMatroid(LinearMatroid):
             sage: for S in powerset(M.groundset()):
             ....:     assert M.rank(S) == N.rank([f[x] for x in S])
         """
-        d = self._relabel_map(f)
+        d = self._relabel_map(mapping)
         E = [d[x] for x in self.groundset_list()]
         M = TernaryMatroid(groundset=E, matrix=self._matrix_())
         return M
@@ -5765,17 +5768,18 @@ cdef class QuaternaryMatroid(LinearMatroid):
         data = (A, gs, basis, self.get_custom_name())
         return sage.matroids.unpickling.unpickle_quaternary_matroid, (version, data)
 
-    cpdef relabel(self, f):
+    cpdef relabel(self, mapping):
         r"""
         Return an isomorphic matroid with relabeled groundset.
 
-        The output is obtained by relabeling each element ``e`` by ``f[e]``,
-        where ``f`` is a given injective map. If ``e not in f`` then the
-        identity map is assumed.
+        The output is obtained by relabeling each element ``e`` by
+        ``mapping[e]``, where ``mapping`` is a given injective map. If
+        ``mapping[e]`` is not defined, then the identity map is assumed.
 
         INPUT:
 
-        - ``f`` -- a python object such that ``f[e]`` is the new label of `e`
+        - ``mapping`` -- a python object such that `mapping[e]` is the new
+          label of `e`
 
         OUTPUT: a matroid
 
@@ -5796,7 +5800,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
             sage: for S in powerset(M.groundset()):
             ....:     assert M.rank(S) == N.rank([f[x] for x in S])
         """
-        d = self._relabel_map(f)
+        d = self._relabel_map(mapping)
         E = [d[x] for x in self.groundset_list()]
         M = QuaternaryMatroid(groundset=E, matrix=self._matrix_())
         return M
@@ -6720,17 +6724,18 @@ cdef class RegularMatroid(LinearMatroid):
         data = (A, gs, reduced, self.get_custom_name())
         return sage.matroids.unpickling.unpickle_regular_matroid, (version, data)
 
-    cpdef relabel(self, f):
+    cpdef relabel(self, mapping):
         r"""
         Return an isomorphic matroid with relabeled groundset.
 
-        The output is obtained by relabeling each element ``e`` by ``f[e]``,
-        where ``f`` is a given injective map. If ``e not in f`` then the
-        identity map is assumed.
+        The output is obtained by relabeling each element ``e`` by
+        ``mapping[e]``, where ``mapping`` is a given injective map. If
+        ``mapping[e]`` is not defined, then the identity map is assumed.
 
         INPUT:
 
-        - ``f`` -- a python object such that ``f[e]`` is the new label of `e`
+        - ``mapping`` -- a python object such that `mapping[e]` is the new
+          label of `e`
 
         OUTPUT: a matroid
 
@@ -6751,7 +6756,7 @@ cdef class RegularMatroid(LinearMatroid):
             sage: for S in powerset(M.groundset()):
             ....:     assert M.rank(S) == N.rank([M._relabel_map(f)[x] for x in S])
         """
-        d = self._relabel_map(f)
+        d = self._relabel_map(mapping)
         E = [d[x] for x in self.groundset_list()]
         M = RegularMatroid(groundset=E, matrix=self._matrix_())
         return M

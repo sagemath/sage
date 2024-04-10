@@ -2002,17 +2002,18 @@ class GraphicMatroid(Matroid):
         X = [l for u, v, l in self._G.edge_iterator()]
         return ConstructorMatroid(groundset=X, graph=self._G, regular=True)
 
-    def relabel(self, f):
+    def relabel(self, mapping):
         r"""
         Return an isomorphic matroid with relabeled groundset.
 
-        The output is obtained by relabeling each element ``e`` by ``f[e]``,
-        where ``f`` is a given injective map. If ``e not in f`` then the
-        identity map is assumed.
+        The output is obtained by relabeling each element ``e`` by
+        ``mapping[e]``, where ``mapping`` is a given injective map. If
+        ``mapping[e]`` is not defined, then the identity map is assumed.
 
         INPUT:
 
-        - ``f`` -- a python object such that ``f[e]`` is the new label of `e`
+        - ``mapping`` -- a python object such that `mapping[e]` is the new
+          label of `e`
 
         OUTPUT: a matroid
 
@@ -2035,7 +2036,7 @@ class GraphicMatroid(Matroid):
             sage: for S in powerset(M.groundset()):
             ....:     assert M.rank(S) == N.rank([f[x] for x in S])
         """
-        d = self._relabel_map(f)
+        d = self._relabel_map(mapping)
         E = [d[x] for x in self.groundset()]
         M = GraphicMatroid(self.graph(), groundset=E)
         return M
