@@ -129,5 +129,6 @@ def set_partition_iterator_blocks(base_set, Py_ssize_t k):
     cdef Py_ssize_t n = len(base)
     cdef list a = list(range(n))
     # TODO: implement _set_partition_block_gen as an iterative algorithm
-    for P in _set_partition_block_gen(n, k, a):
-        yield from_word(<list> P, base)
+    if n >= k:
+        for P in _set_partition_block_gen(n, k, a):
+            yield from_word(<list> P, base)
