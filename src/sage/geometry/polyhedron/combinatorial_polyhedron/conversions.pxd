@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 from sage.geometry.polyhedron.combinatorial_polyhedron.face_list_data_structure cimport face_t
 
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 import sage.all
 from sage.manifolds.differentiable.symplectic_form import SymplecticForm
 from sage.manifolds.differentiable.examples.symplectic_space import (

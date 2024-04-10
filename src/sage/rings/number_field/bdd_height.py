@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 # sage.doctest: needs sage.geometry.polyhedron
 r"""
 Elements of bounded height in number fields

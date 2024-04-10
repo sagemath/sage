@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 # sage.doctest: needs sage.libs.pari
 """
 This file contains all the example code from the published book

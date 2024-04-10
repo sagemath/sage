@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-graphs
 # cython: binding=True
 # distutils: language = c++
 r"""
