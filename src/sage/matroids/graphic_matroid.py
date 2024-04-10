@@ -451,46 +451,6 @@ class GraphicMatroid(Matroid):
 
     # Copying, loading, saving:
 
-    def __copy__(self):
-        """
-        Create a shallow copy.
-
-        Creating a ``GraphicMatroid`` instance will build a new graph, so
-        the copies have no attributes in common.
-
-        EXAMPLES::
-
-            sage: M = Matroid(graphs.PappusGraph())
-            sage: N = copy(M)
-            sage: M == N
-            True
-            sage: M._G is N._G
-            False
-        """
-        N = GraphicMatroid(self._G)
-        N.rename(self.get_custom_name())
-        return N
-
-    def __deepcopy__(self, memo={}):
-        """
-        Create a deep copy.
-
-        .. NOTE::
-
-            Since matroids are immutable, a shallow copy normally suffices.
-
-        EXAMPLES::
-
-            sage: M = Matroid(graphs.PetersenGraph())
-            sage: N = deepcopy(M)
-            sage: N == M
-            True
-        """
-        # The only real difference between this and __copy__() is the memo
-        N = GraphicMatroid(deepcopy(self._G, memo))
-        N.rename(deepcopy(self.get_custom_name(), memo))
-        return N
-
     def __reduce__(self):
         """
         Save the matroid for later reloading.
