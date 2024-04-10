@@ -608,7 +608,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
         return self._repr
 
     # Coercion
-    cpdef _coerce_map_from_(self, S) noexcept:
+    cpdef _coerce_map_from_(self, S):
         """
         There is coercion from the base ring, from any boolean
         polynomial ring with compatible variable names,
@@ -684,7 +684,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
                 return False
             return self._base.has_coerce_map_from(S.base())
 
-    cdef _convert(self, other) noexcept:
+    cdef _convert(self, other):
         r"""
         Canonical conversion of elements from other domains to
         this boolean polynomial ring.
@@ -2270,7 +2270,7 @@ cdef class BooleanMonomial(MonoidElement):
         gens = self._parent.gens()
         return self._parent, (tuple(gens.index(x) for x in self.variables()),)
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Compare BooleanMonomial objects.
 
@@ -2634,7 +2634,7 @@ cdef class BooleanMonomial(MonoidElement):
         """
         return new_BMI_from_BooleanMonomial(self)
 
-    cpdef _mul_(left, right) noexcept:
+    cpdef _mul_(left, right):
         """
         Multiply this boolean monomial with another boolean monomial.
 
@@ -2806,7 +2806,7 @@ cdef class BooleanMonomial(MonoidElement):
 #
 ###
 
-cdef inline BooleanMonomial new_BM(parent, BooleanPolynomialRing ring) noexcept:
+cdef inline BooleanMonomial new_BM(parent, BooleanPolynomialRing ring):
     cdef BooleanMonomial m
     m = <BooleanMonomial>BooleanMonomial.__new__(BooleanMonomial)
     m._parent = parent
@@ -2814,13 +2814,13 @@ cdef inline BooleanMonomial new_BM(parent, BooleanPolynomialRing ring) noexcept:
     return m
 
 cdef inline BooleanMonomial new_BM_from_PBMonom(parent,
-        BooleanPolynomialRing ring, PBMonom juice) noexcept:
+        BooleanPolynomialRing ring, PBMonom juice):
     cdef BooleanMonomial m = new_BM(parent, ring)
     m._pbmonom = juice
     return m
 
 cdef inline BooleanMonomial new_BM_from_PBVar(parent,
-        BooleanPolynomialRing ring, PBVar juice) noexcept:
+        BooleanPolynomialRing ring, PBVar juice):
     cdef BooleanMonomial m = new_BM(parent, ring)
     m._pbmonom = PBMonom(juice)
     return m
@@ -2862,7 +2862,7 @@ cdef class BooleanMonomialVariableIterator:
         return new_BM_from_PBVar(self.parent, self._ring, value)
 
 cdef inline BooleanMonomialVariableIterator new_BMVI_from_BooleanMonomial(
-                            BooleanMonomial monom) noexcept:
+                            BooleanMonomial monom):
     """
     Construct a new iterator over the variable indices of a boolean
     monomial.
@@ -2913,7 +2913,7 @@ cdef class BooleanMonomialIterator:
         return self.pbind[value]
 
 
-cdef inline BooleanMonomialIterator new_BMI_from_BooleanMonomial(BooleanMonomial monom) noexcept:
+cdef inline BooleanMonomialIterator new_BMI_from_BooleanMonomial(BooleanMonomial monom):
     """
     Construct a new BooleanMonomialIterator
     """
@@ -3017,7 +3017,7 @@ cdef class BooleanPolynomial(MPolynomial):
         R = self.parent().cover_ring()
         return R(self)._latex_()
 
-    cpdef _add_(left, right) noexcept:
+    cpdef _add_(left, right):
         """
         EXAMPLES::
 
@@ -3032,7 +3032,7 @@ cdef class BooleanPolynomial(MPolynomial):
         p._pbpoly.iadd((<BooleanPolynomial>right)._pbpoly)
         return p
 
-    cpdef _sub_(left, right) noexcept:
+    cpdef _sub_(left, right):
         """
         EXAMPLES::
 
@@ -3044,7 +3044,7 @@ cdef class BooleanPolynomial(MPolynomial):
         """
         return left._add_(right)
 
-    cpdef _lmul_(self, Element left) noexcept:
+    cpdef _lmul_(self, Element left):
         """
         EXAMPLES::
 
@@ -3067,7 +3067,7 @@ cdef class BooleanPolynomial(MPolynomial):
         else:
             return self._parent.zero()
 
-    cpdef _mul_(left, right) noexcept:
+    cpdef _mul_(left, right):
         """
         EXAMPLES::
 
@@ -3082,7 +3082,7 @@ cdef class BooleanPolynomial(MPolynomial):
         p._pbpoly.imul((<BooleanPolynomial>right)._pbpoly)
         return p
 
-    cpdef _div_(left, right) noexcept:
+    cpdef _div_(left, right):
         """
         EXAMPLES::
 
@@ -3118,7 +3118,7 @@ cdef class BooleanPolynomial(MPolynomial):
         """
         return self._pbpoly == right._pbpoly
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Compare left and right.
 
@@ -4795,7 +4795,7 @@ cdef class BooleanPolynomialIterator:
                 self.obj._parent, value)
 
 
-cdef inline BooleanPolynomialIterator new_BPI_from_BooleanPolynomial(BooleanPolynomial f) noexcept:
+cdef inline BooleanPolynomialIterator new_BPI_from_BooleanPolynomial(BooleanPolynomial f):
     """
     Construct a new BooleanMonomialIterator
     """
@@ -5218,35 +5218,35 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
 ##
 
 
-cdef inline BooleanPolynomial new_BP(BooleanPolynomialRing parent) noexcept:
+cdef inline BooleanPolynomial new_BP(BooleanPolynomialRing parent):
     cdef BooleanPolynomial p
     p = <BooleanPolynomial>BooleanPolynomial.__new__(BooleanPolynomial)
     p._parent = parent
     return p
 
 
-cdef inline BooleanPolynomial new_BP_from_PBVar(BooleanPolynomialRing parent, PBVar juice) noexcept:
+cdef inline BooleanPolynomial new_BP_from_PBVar(BooleanPolynomialRing parent, PBVar juice):
     cdef BooleanPolynomial p = new_BP(parent)
     p._pbpoly = PBBoolePolynomial(juice)
     return p
 
 
-cdef inline BooleanPolynomial new_BP_from_PBPoly(BooleanPolynomialRing parent, PBPoly juice) noexcept:
+cdef inline BooleanPolynomial new_BP_from_PBPoly(BooleanPolynomialRing parent, PBPoly juice):
     cdef BooleanPolynomial p = new_BP(parent)
     p._pbpoly = juice
     return p
 
-cdef inline BooleanPolynomial new_BP_from_PBMonom(BooleanPolynomialRing parent, PBMonom juice) noexcept:
+cdef inline BooleanPolynomial new_BP_from_PBMonom(BooleanPolynomialRing parent, PBMonom juice):
     cdef BooleanPolynomial p = new_BP(parent)
     p._pbpoly = PBBoolePolynomial(juice)
     return p
 
-cdef inline BooleanPolynomial new_BP_from_PBSet(BooleanPolynomialRing parent, PBSet juice) noexcept:
+cdef inline BooleanPolynomial new_BP_from_PBSet(BooleanPolynomialRing parent, PBSet juice):
     cdef BooleanPolynomial p = new_BP(parent)
     p._pbpoly = PBBoolePolynomial(juice)
     return p
 
-cdef inline BooleanPolynomial new_BP_from_int(BooleanPolynomialRing parent, int juice) noexcept:
+cdef inline BooleanPolynomial new_BP_from_int(BooleanPolynomialRing parent, int juice):
     cdef BooleanPolynomial p = new_BP(parent)
     p._pbpoly = PBBoolePolynomial(juice, parent._pbring)
     return p
@@ -5870,7 +5870,7 @@ cdef class BooleSet:
         return self._pbset.sizeDouble()
 
 
-cdef inline BooleSet new_BS_from_PBSet(PBSet juice, BooleanPolynomialRing ring) noexcept:
+cdef inline BooleSet new_BS_from_PBSet(PBSet juice, BooleanPolynomialRing ring):
     """
     Construct a new BooleSet
     """
@@ -5918,7 +5918,7 @@ cdef class BooleSetIterator:
         return new_BM_from_PBMonom(self._parent, self._ring, value)
 
 
-cdef inline BooleSetIterator new_BSI_from_PBSetIter(BooleSet s) noexcept:
+cdef inline BooleSetIterator new_BSI_from_PBSetIter(BooleSet s):
     """
     Construct a new BooleSetIterator
     """
@@ -6137,7 +6137,7 @@ cdef class BooleanPolynomialVector:
         self._vec.push_back(<PBBoolePolynomial>p)
 
 cdef inline BooleanPolynomialVector new_BPV_from_PBPolyVector(
-        BooleanPolynomialRing parent, PBPolyVector juice) noexcept:
+        BooleanPolynomialRing parent, PBPolyVector juice):
     cdef BooleanPolynomialVector m
     m = <BooleanPolynomialVector>BooleanPolynomialVector.__new__(BooleanPolynomialVector)
     m._vec = juice
@@ -6159,7 +6159,7 @@ cdef class BooleanPolynomialVectorIterator:
 
 
 cdef inline BooleanPolynomialVectorIterator new_BPVI_from_PBPolyVectorIter(
-        BooleanPolynomialVector vec) noexcept:
+        BooleanPolynomialVector vec):
     """
     Construct a new BooleanPolynomialVectorIterator
     """
@@ -7001,7 +7001,7 @@ cdef class GroebnerStrategy:
 
 
 cdef class BooleanMulAction(Action):
-    cpdef _act_(self, g, x) noexcept:
+    cpdef _act_(self, g, x):
         """
         EXAMPLES::
 
@@ -7026,7 +7026,7 @@ cdef class BooleanMulAction(Action):
 
 
 cdef inline CCuddNavigator new_CN_from_PBNavigator(PBNavigator juice,
-                                                   Py_ssize_t* pbind) noexcept:
+                                                   Py_ssize_t* pbind):
     """
     Construct a new CCuddNavigator
     """
@@ -7561,7 +7561,7 @@ cdef long PBRing_identifier(PBRing pbring) noexcept:
     return _hash
 
 
-cdef object TermOrder_from_PBRing(PBRing _ring) noexcept:
+cdef object TermOrder_from_PBRing(PBRing _ring):
     cdef int n = _ring.nVariables()
     pb_base_order_code = _ring.ordering().getBaseOrderCode()
     order_str = inv_order_dict[pb_base_order_code]
@@ -7583,7 +7583,7 @@ cdef object TermOrder_from_PBRing(PBRing _ring) noexcept:
     return T
 
 
-cdef BooleanPolynomialRing BooleanPolynomialRing_from_PBRing(PBRing _ring) noexcept:
+cdef BooleanPolynomialRing BooleanPolynomialRing_from_PBRing(PBRing _ring):
     """
     Get BooleanPolynomialRing from C++-implementation
     """
@@ -7638,10 +7638,13 @@ def gauss_on_polys(inp):
         sage: B.<a,b,c,d,e,f> = BooleanPolynomialRing()
         sage: from sage.rings.polynomial.pbori.pbori import *
         sage: l = [B.random_element() for _ in range(B.ngens())]
-        sage: A, v = Sequence(l, B).coefficients_monomials()
+        sage: A, _ = Sequence(l, B).coefficients_monomials()
+        sage: while A.rank() < 6:
+        ....:     l = [B.random_element() for _ in range(B.ngens())]
+        ....:     A, _ = Sequence(l, B).coefficients_monomials()
 
         sage: e = gauss_on_polys(l)
-        sage: E, v = Sequence(e, B).coefficients_monomials()
+        sage: E, _ = Sequence(e, B).coefficients_monomials()
         sage: E == A.echelon_form()
         True
     """
@@ -7900,7 +7903,7 @@ cdef class BooleConstant:
         return self._pbconst.hasConstantPart()
 
 
-cdef object pb_block_order(n, order_str, blocks) noexcept:
+cdef object pb_block_order(n, order_str, blocks):
     T = [TermOrder(order_str, blockend - blockstart, force=True)
          for (blockstart, blockend) in zip([0] + blocks, blocks + [n])]
     if T:
@@ -7911,7 +7914,7 @@ cdef object pb_block_order(n, order_str, blocks) noexcept:
     return order_str
 
 
-cpdef object TermOrder_from_pb_order(int n, order, blocks) noexcept:
+cpdef object TermOrder_from_pb_order(int n, order, blocks):
     if not isinstance(order, str):
         if order == pbblock_dlex:
             order_str = pb_block_order(n, "deglex", blocks)

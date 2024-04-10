@@ -193,29 +193,6 @@ if [ "$1" = '--nodotsage' ]; then
     exit $status
 fi
 
-# Check for '--patchbot' before sourcing sage-env: patchbot needs
-# an unclobbered environment before testing unsafe tickets.
-if [ "$1" = '-patchbot' -o "$1" = "--patchbot" ]; then
-    shift
-    # We ask the Python from Sage where the patchbot is installed.
-    # We set PYTHONPATH to that directory such that the system Python
-    # should also find the sage_patchbot package.
-    cmd='import sage_patchbot as p; import os; print(os.path.dirname(p.__path__[0]))'
-    export PYTHONPATH=`"$SAGE_ROOT/sage" --python3 -c "$cmd"`
-    if [ -z "$PYTHONPATH" ]; then
-        # Something went wrong, assume that the patchbot is not installed
-        echo >&2 "Error: cannot find installation path for sage_patchbot"
-        echo >&2 "See https://wiki.sagemath.org/buildbot for instructions"
-        exit 1
-    fi
-
-    shopt -s execfail  # Do not exit if "exec" fails
-    exec python3 -m sage_patchbot.patchbot "$@"
-    echo >&2 "Error: cannot find a suitable Python 3 program."
-    echo >&2 "The SageMath patchbot requires a system Python 3 installation."
-    exit 127
-fi
-
 # build_sage, sage -b, sage -br, etc. could also be moved to
 # build/bin/sage-site. See #29111; but OTOH #34627.
 

@@ -438,10 +438,6 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
             Check that :issue:`32266` is fixed::
 
-<<<<<<< HEAD
-                sage: # optional - coxeter3
-=======
->>>>>>> @{-1}
                 sage: A3 = CoxeterGroup('A3', implementation='coxeter3')
                 sage: s1,s2,s3 = A3.simple_reflections()
                 sage: s1*s3
@@ -489,10 +485,6 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-<<<<<<< HEAD
-                sage: # optional - coxeter3
-=======
->>>>>>> @{-1}
                 sage: W = CoxeterGroup(['B', 3], implementation='coxeter3')
                 sage: w = W([1,2,3])
                 sage: v = W([3,1,2])
@@ -543,10 +535,6 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             """
             EXAMPLES::
 
-<<<<<<< HEAD
-                sage: # optional - coxeter3
-=======
->>>>>>> @{-1}
                 sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')
                 sage: w0 = W([1,2,1])
                 sage: w0[0]
@@ -562,10 +550,6 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             """
             EXAMPLES::
 
-<<<<<<< HEAD
-                sage: # optional - coxeter3
-=======
->>>>>>> @{-1}
                 sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')
                 sage: s = W.gens()
                 sage: s[1]._mul_(s[1])
@@ -581,10 +565,6 @@ class CoxeterGroup(UniqueRepresentation, Parent):
             """
             EXAMPLES::
 
-<<<<<<< HEAD
-                sage: # optional - coxeter3
-=======
->>>>>>> @{-1}
                 sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')
                 sage: w = W([1,2,1])
                 sage: w.length()
@@ -615,10 +595,6 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-<<<<<<< HEAD
-                sage: # optional - coxeter3
-=======
->>>>>>> @{-1}
                 sage: W = CoxeterGroup(['A', 2], implementation='coxeter3')
                 sage: W.long_element().poincare_polynomial()
                 t^3 + 2*t^2 + 2*t + 1
@@ -672,10 +648,6 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-<<<<<<< HEAD
-                sage: # optional - coxeter3
-=======
->>>>>>> @{-1}
                 sage: W = CoxeterGroup(['B', 3], implementation='coxeter3')
                 sage: R = W.root_system().root_space()
                 sage: v = R.an_element(); v
@@ -703,10 +675,6 @@ class CoxeterGroup(UniqueRepresentation, Parent):
 
             EXAMPLES::
 
-<<<<<<< HEAD
-                sage: # optional - coxeter3
-=======
->>>>>>> @{-1}
                 sage: W = CoxeterGroup(['A', 3], implementation='coxeter3')
                 sage: S = PolynomialRing(QQ, 'x,y,z').fraction_field()
                 sage: x,y,z = S.gens()

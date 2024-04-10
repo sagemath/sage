@@ -59,7 +59,7 @@ class CSDP(Executable):
 
         tf_name = tmp_filename()
         with open(tf_name, 'wb') as tf:
-            tf.write("2\n1\n1 1".encode())
+            tf.write(b"2\n1\n1 1")
         with open(os.devnull, 'wb') as devnull:
             command = ['theta', tf_name]
             try:

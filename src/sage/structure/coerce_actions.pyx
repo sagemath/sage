@@ -27,10 +27,10 @@ from sage.categories.action cimport InverseAction, PrecomposedAction
 from sage.arith.long cimport integer_check_long
 
 
-cdef _record_exception() noexcept:
+cdef _record_exception():
     coercion_model._record_exception()
 
-cdef inline an_element(R) noexcept:
+cdef inline an_element(R):
     if isinstance(R, Parent):
         return R.an_element()
     else:
@@ -119,7 +119,7 @@ cdef class ActOnAction(GenericAction):
     """
     Class for actions defined via the _act_on_ method.
     """
-    cpdef _act_(self, g, x) noexcept:
+    cpdef _act_(self, g, x):
         """
         TESTS::
 
@@ -141,7 +141,7 @@ cdef class ActedUponAction(GenericAction):
     """
     Class for actions defined via the _acted_upon_ method.
     """
-    cpdef _act_(self, g, x) noexcept:
+    cpdef _act_(self, g, x):
         """
         TESTS::
 
@@ -591,7 +591,7 @@ cdef class ModuleAction(Action):
 
 
 cdef class LeftModuleAction(ModuleAction):
-    cpdef _act_(self, g, a) noexcept:
+    cpdef _act_(self, g, a):
         """
         A left module action is an action that takes the ring element as the
         first argument (the left side) and the module element as the second
@@ -628,7 +628,7 @@ cdef class LeftModuleAction(ModuleAction):
 
 
 cdef class RightModuleAction(ModuleAction):
-    cpdef _act_(self, g, a) noexcept:
+    cpdef _act_(self, g, a):
         """
         A right module action is an action that takes the module element as the
         first argument (the left side) and the ring element as the second
@@ -748,7 +748,7 @@ cdef class IntegerMulAction(IntegerAction):
         test = m + (-m)  # make sure addition and negation is allowed
         super().__init__(Z, M, is_left, operator.mul)
 
-    cpdef _act_(self, nn, a) noexcept:
+    cpdef _act_(self, nn, a):
         """
         EXAMPLES:
 
@@ -885,7 +885,7 @@ cdef class IntegerPowAction(IntegerAction):
             raise TypeError(f"no integer powering action defined on {M}")
         super().__init__(Z, M, False, operator.pow)
 
-    cpdef _act_(self, n, a) noexcept:
+    cpdef _act_(self, n, a):
         """
         EXAMPLES:
 
@@ -922,7 +922,7 @@ cdef class IntegerPowAction(IntegerAction):
         return "Integer Powering"
 
 
-cdef inline fast_mul(a, n) noexcept:
+cdef inline fast_mul(a, n):
     if n < 0:
         n = -n
         a = -a
@@ -941,7 +941,7 @@ cdef inline fast_mul(a, n) noexcept:
         n = n >> 1
     return sum
 
-cdef inline fast_mul_long(a, long s) noexcept:
+cdef inline fast_mul_long(a, long s):
     # It's important to change the signed s to an unsigned n,
     # since -LONG_MIN = LONG_MIN.  See Issue #17844.
     cdef unsigned long n

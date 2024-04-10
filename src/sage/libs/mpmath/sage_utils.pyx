@@ -15,7 +15,7 @@ from sage.rings.real_mpfr cimport RealField, RealNumber
 from sage.structure.element cimport Element
 
 
-cdef mpfr_from_mpfval(mpfr_t res, tuple x) noexcept:
+cdef mpfr_from_mpfval(mpfr_t res, tuple x):
     """
     Set value of an MPFR number (in place) to that of a given mpmath mpf
     data tuple.
@@ -40,7 +40,8 @@ cdef mpfr_from_mpfval(mpfr_t res, tuple x) noexcept:
     else:
         mpfr_set_nan(res)
 
-cdef mpfr_to_mpfval(mpfr_t value) noexcept:
+
+cdef mpfr_to_mpfval(mpfr_t value):
     """
     Given an MPFR value, return an mpmath mpf data tuple representing
     the same number.
@@ -67,6 +68,7 @@ cdef mpfr_to_mpfval(mpfr_t value) noexcept:
         exp += trailing
     bc = mpz_sizeinbase(man.value, 2)
     return (sign, man, int(exp), bc)
+
 
 def mpmath_to_sage(x, prec):
     """
@@ -136,6 +138,7 @@ def mpmath_to_sage(x, prec):
     else:
         raise TypeError("cannot convert %r to Sage", x)
 
+
 def sage_to_mpmath(x, prec):
     """
     Convert any Sage number that can be coerced into a RealNumber
@@ -194,6 +197,7 @@ def sage_to_mpmath(x, prec):
     if isinstance(x, dict):
         return dict([(k, sage_to_mpmath(v, prec)) for (k, v) in x.items()])
     return x
+
 
 def call(func, *args, **kwargs):
     """

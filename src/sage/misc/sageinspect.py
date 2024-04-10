@@ -43,7 +43,7 @@ Python classes::
 
     sage: sage_getfile(BlockFinder)
     '.../sage/misc/sageinspect.py'
-    sage: sage_getdoc(BlockFinder).lstrip()[:50]
+    sage: sage_getdoc(BlockFinder).lstrip()[:50]                                        # needs sphinx
     'Provide a "tokeneater()" method to detect the end '
     sage: sage_getsource(BlockFinder)
     'class BlockFinder:...'
@@ -2327,7 +2327,7 @@ def sage_getsourcelines(obj):
          '\n',
          '    cdef GEx _gobj\n',
          '\n',
-         '    cpdef object pyobject(self) noexcept:\n']
+         '    cpdef object pyobject(self):\n']
         sage: lines[-1]    # last line                                                  # needs sage.symbolic
         '        return S\n'
 

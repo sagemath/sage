@@ -120,7 +120,7 @@ cdef class CompiledPolynomialFunction:
     def __call__(self, x):
         return self.eval(x)
 
-    cdef object eval(CompiledPolynomialFunction self, object x) noexcept:
+    cdef object eval(CompiledPolynomialFunction self, object x):
         cdef object temp
         try:
             pd_eval(self._dag, x, self._coeffs)  #see further down
@@ -131,7 +131,7 @@ cdef class CompiledPolynomialFunction:
             self._dag.reset()
             raise TypeError(msg)
 
-    cdef object _parse_structure(CompiledPolynomialFunction self) noexcept:
+    cdef object _parse_structure(CompiledPolynomialFunction self):
         """
         Loop through the coefficients of the polynomial, and collect
         coefficient gap widths.  Meanwhile, construct the evaluation
@@ -170,7 +170,7 @@ cdef class CompiledPolynomialFunction:
 
         return gaps, s
 
-    cdef generic_pd _get_gap(CompiledPolynomialFunction self, BinaryTree gaps, int gap) noexcept:
+    cdef generic_pd _get_gap(CompiledPolynomialFunction self, BinaryTree gaps, int gap):
         """
         Find an entry in the BinaryTree gaps, identified by the int gap.
         If such an entry does not exist, create it and put it in the tree.
@@ -368,7 +368,7 @@ cdef class generic_pd:
     cdef int eval(generic_pd self, object vars, object coeffs) except -2:
         raise NotImplementedError
 
-    cdef generic_pd nodummies(generic_pd self) noexcept:
+    cdef generic_pd nodummies(generic_pd self):
         return self
 
     cdef void reset(generic_pd self) noexcept:
@@ -382,7 +382,7 @@ cdef class dummy_pd(generic_pd):
     cdef void fill(dummy_pd self, generic_pd link) noexcept:
         self.link = link
 
-    cdef generic_pd nodummies(dummy_pd self) noexcept:
+    cdef generic_pd nodummies(dummy_pd self):
         #sorry guys, this is my stop
         self.link.refs = self.refs
         return self.link.nodummies()
@@ -427,7 +427,7 @@ cdef class unary_pd(generic_pd):
         self.operand = operand
         self.operand.refs += 1
 
-    cdef generic_pd nodummies(self) noexcept:
+    cdef generic_pd nodummies(self):
         self.operand = self.operand.nodummies()
         return self
 
@@ -468,7 +468,7 @@ cdef class binary_pd(generic_pd):
         self.left.refs+= 1
         self.right.refs+= 1
 
-    cdef generic_pd nodummies(self) noexcept:
+    cdef generic_pd nodummies(self):
         self.left = self.left.nodummies()
         self.right = self.right.nodummies()
         return self

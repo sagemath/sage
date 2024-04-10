@@ -1212,6 +1212,8 @@ class CoxGroupIterator():
 
 
 CoxGroup_cache = {}
+
+
 def get_CoxGroup(cartan_type):
     """
     TESTS::

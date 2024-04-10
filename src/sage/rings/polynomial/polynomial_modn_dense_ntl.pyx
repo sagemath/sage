@@ -187,7 +187,7 @@ cdef class Polynomial_dense_mod_n(Polynomial):
         """
         return self._poly
 
-    cdef get_unsafe(self, Py_ssize_t n) noexcept:
+    cdef get_unsafe(self, Py_ssize_t n):
         """
         Return the `n`-th coefficient of ``self``.
 
@@ -219,10 +219,10 @@ cdef class Polynomial_dense_mod_n(Polynomial):
             return (~self)**(-n)
         return self.parent()(self._poly**n, construct=True)
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         return self.parent()(self._poly + (<Polynomial_dense_mod_n>right)._poly, construct=True)
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         """
         EXAMPLES::
 
@@ -232,7 +232,7 @@ cdef class Polynomial_dense_mod_n(Polynomial):
         """
         return self.parent()(self._poly * (<Polynomial_dense_mod_n>right)._poly, construct=True)
 
-    cpdef _lmul_(self, Element c) noexcept:
+    cpdef _lmul_(self, Element c):
         try:
             return self.parent()(ZZ_pX([c], self.parent().modulus()) * self._poly, construct=True)
         except RuntimeError as msg: # should this really be a TypeError
@@ -283,7 +283,7 @@ cdef class Polynomial_dense_mod_n(Polynomial):
         return self.parent()(self._poly.left_shift(n),
                              construct=True)
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         return self.parent()(self._poly - (<Polynomial_dense_mod_n>right)._poly, construct=True)
 
     def __floordiv__(self, right):
@@ -315,7 +315,7 @@ cdef class Polynomial_dense_mod_n(Polynomial):
         """
         return smallInteger(max(self._poly.degree(), -1))
 
-    cpdef list list(self, bint copy=True) noexcept:
+    cpdef list list(self, bint copy=True):
         """
         Return a new copy of the list of the underlying
         elements of ``self``.
@@ -673,7 +673,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
         self.x = ntl.x
         self.c = ntl.c
 
-    cdef Polynomial_dense_modn_ntl_zz _new(self) noexcept:
+    cdef Polynomial_dense_modn_ntl_zz _new(self):
         cdef Polynomial_dense_modn_ntl_zz y = <Polynomial_dense_modn_ntl_zz>Polynomial_dense_modn_ntl_zz.__new__(Polynomial_dense_modn_ntl_zz)
         y.c = self.c
         y._parent = self._parent
@@ -697,7 +697,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
         cdef long i
         return [ zz_p_rep(zz_pX_GetCoeff(self.x, i)) for i from 0 <= i <= zz_pX_deg(self.x) ]
 
-    cdef get_unsafe(self, Py_ssize_t n) noexcept:
+    cdef get_unsafe(self, Py_ssize_t n):
         """
         Return the `n`-th coefficient of ``self``.
 
@@ -719,7 +719,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
         self.c.restore_c()
         zz_pX_SetCoeff_long(self.x, n, value)
 
-    cpdef _add_(self, _right) noexcept:
+    cpdef _add_(self, _right):
         """
         TESTS::
 
@@ -736,7 +736,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
         if do_sig: sig_off()
         return r
 
-    cpdef _sub_(self, _right) noexcept:
+    cpdef _sub_(self, _right):
         """
         TESTS::
 
@@ -753,7 +753,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
         if do_sig: sig_off()
         return r
 
-    cpdef _mul_(self, _right) noexcept:
+    cpdef _mul_(self, _right):
         """
         TESTS::
 
@@ -773,7 +773,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
         if do_sig: sig_off()
         return r
 
-    cpdef Polynomial _mul_trunc_(self, Polynomial right, long n) noexcept:
+    cpdef Polynomial _mul_trunc_(self, Polynomial right, long n):
         r"""
         Return the product of ``self`` and ``right`` truncated to the
         given length `n`
@@ -811,7 +811,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
         if do_sig: sig_off()
         return r
 
-    cpdef _rmul_(self, Element c) noexcept:
+    cpdef _rmul_(self, Element c):
         """
         TESTS::
 
@@ -827,7 +827,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
         if do_sig: sig_off()
         return r
 
-    cpdef _lmul_(self, Element c) noexcept:
+    cpdef _lmul_(self, Element c):
         """
         TESTS::
 
@@ -944,7 +944,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
         sig_off()
         return q, r
 
-    cpdef _floordiv_(self, right) noexcept:
+    cpdef _floordiv_(self, right):
         """
         Return the whole part of ``self``/``right``, without remainder.
 
@@ -968,7 +968,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
         sig_off()
         return q
 
-    cpdef _mod_(self, right) noexcept:
+    cpdef _mod_(self, right):
         """
         EXAMPLES::
 
@@ -1175,7 +1175,7 @@ cdef class Polynomial_dense_modn_ntl_zz(Polynomial_dense_mod_n):
         """
         return zz_pX_deg(self.x)
 
-    cpdef Polynomial truncate(self, long n) noexcept:
+    cpdef Polynomial truncate(self, long n):
         """
         Return this polynomial mod `x^n`.
 
@@ -1256,17 +1256,17 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
         if <object>self.c is not None:
             self.c.restore_c()
 
-    cdef Polynomial_dense_modn_ntl_ZZ _new(self) noexcept:
+    cdef Polynomial_dense_modn_ntl_ZZ _new(self):
         cdef Polynomial_dense_modn_ntl_ZZ y = <Polynomial_dense_modn_ntl_ZZ>Polynomial_dense_modn_ntl_ZZ.__new__(Polynomial_dense_modn_ntl_ZZ)
         y.c = self.c
         y._parent = self._parent
         return y
 
 
-    cpdef list list(self, bint copy=True) noexcept:
+    cpdef list list(self, bint copy=True):
         return [self.get_unsafe(n) for n from 0 <= n <= self.degree()]
 
-    cdef get_unsafe(self, Py_ssize_t n) noexcept:
+    cdef get_unsafe(self, Py_ssize_t n):
         """
         Return the `n`-th coefficient of ``self``.
 
@@ -1298,7 +1298,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
         cdef ntl_ZZ_p val = ntl_ZZ_p(a, self.c)
         ZZ_pX_SetCoeff(self.x, n, val.x)
 
-    cpdef _add_(self, _right) noexcept:
+    cpdef _add_(self, _right):
         """
         TESTS::
 
@@ -1315,7 +1315,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
         if do_sig: sig_off()
         return r
 
-    cpdef _sub_(self, _right) noexcept:
+    cpdef _sub_(self, _right):
         """
         TESTS::
 
@@ -1332,7 +1332,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
         if do_sig: sig_off()
         return r
 
-    cpdef _mul_(self, _right) noexcept:
+    cpdef _mul_(self, _right):
         """
         TESTS::
 
@@ -1352,7 +1352,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
         if do_sig: sig_off()
         return r
 
-    cpdef Polynomial _mul_trunc_(self, Polynomial right, long n) noexcept:
+    cpdef Polynomial _mul_trunc_(self, Polynomial right, long n):
         """
         Return the product of ``self`` and ``right`` truncated to the
         given length `n`, only return terms of degree less than `n`.
@@ -1390,7 +1390,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
         if do_sig: sig_off()
         return r
 
-    cpdef _rmul_(self, Element c) noexcept:
+    cpdef _rmul_(self, Element c):
         """
         TESTS::
 
@@ -1407,7 +1407,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
         if do_sig: sig_off()
         return r
 
-    cpdef _lmul_(self, Element c) noexcept:
+    cpdef _lmul_(self, Element c):
         """
         TESTS::
 
@@ -1501,7 +1501,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
         sig_off()
         return q, r
 
-    cpdef _floordiv_(self, right) noexcept:
+    cpdef _floordiv_(self, right):
         """
         Return the whole part of ``self`` / ``right``, without remainder.
 
@@ -1525,7 +1525,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
         sig_off()
         return q
 
-    cpdef _mod_(self, right) noexcept:
+    cpdef _mod_(self, right):
         """
         EXAMPLES::
 
@@ -1736,7 +1736,7 @@ cdef class Polynomial_dense_modn_ntl_ZZ(Polynomial_dense_mod_n):
         """
         return ZZ_pX_deg(self.x)
 
-    cpdef Polynomial truncate(self, long n) noexcept:
+    cpdef Polynomial truncate(self, long n):
         """
         Return this polynomial mod `x^n`.
 

@@ -512,9 +512,7 @@ class BruhatTitsHarmonicCocycleElement(HeckeModuleElement):
         else:
             E = self.parent()._X._BT.subdivide(E, level)
         value = 0
-        ii = 0
         for e in E:
-            ii += 1
             expansion = ((R1([e[1, 1], e[1, 0]]) ** (self.parent()._k - 2) * e.determinant() ** (-(self.parent()._k - 2) / 2)) * f(R1([e[0, 1], e[0, 0]]) / R1([e[1, 1], e[1, 0]]))).truncate(self.parent()._k - 1)
             dist = self.parent()._Sigma0(e.inverse(), check=False) * self.evaluate(e)
             value += eval_dist_at_powseries(dist, expansion)
@@ -1913,18 +1911,14 @@ class pAdicAutomorphicFormElement(ModuleElement):
         R2 = PolynomialRing(f.base_ring(), 'x')
         x = R2.gen()
         value = 0
-        ii = 0
         if method == 'riemann_sum':
             for e in E:
-                ii += 1
                 exp = ((R1([e[1, 1], e[1, 0]])) ** (self.parent()._U.weight()) * e.determinant() ** (-(self.parent()._U.weight()) / 2)) * f(R1([e[0, 1], e[0, 0]]) / R1([e[1, 1], e[1, 0]]))
-                # exp = R2([tmp[jj] for jj in range(self.parent()._k-1)])
                 new = eval_dist_at_powseries(self.evaluate(e), exp.truncate(self.parent()._U.weight() + 1))
                 value += new
         elif method == 'moments':
             n = self.parent()._U.weight()
             for e in E:
-                ii += 1
                 a, b, c, d = e.list()
                 delta = e.determinant()
                 verbose('%s' % (R2([e[0, 1], e[0, 0]])
@@ -2090,8 +2084,7 @@ class pAdicAutomorphicFormElement(ModuleElement):
 
     # So far we cannot break it into two integrals because of the pole
     # at infinity.
-    def coleman(self, t1, t2, E=None, method='moments', mult=False,
-                delta=-1):
+    def coleman(self, t1, t2, E=None, method='moments', mult=False):
         r"""
         If ``self`` is a `p`-adic automorphic form that
         corresponds to a rigid modular form, then this computes the
@@ -2125,21 +2118,21 @@ class pAdicAutomorphicFormElement(ModuleElement):
             sage: p = 7
             sage: lev = 2
             sage: prec = 10
-            sage: X = BruhatTitsQuotient(p,lev, use_magma = True) # optional - magma
-            sage: k = 2 # optional - magma
-            sage: M = X.harmonic_cocycles(k,prec) # optional - magma
-            sage: B = M.basis() # optional - magma
-            sage: f = 3*B[0] # optional - magma
-            sage: MM = X.padic_automorphic_forms(k,prec,overconvergent = True) # optional - magma
-            sage: D = -11 # optional - magma
-            sage: X.is_admissible(D) # optional - magma
+            sage: X = BruhatTitsQuotient(p, lev)
+            sage: k = 2
+            sage: M = X.harmonic_cocycles(k, prec)
+            sage: B = M.basis()
+            sage: f = 3*B[0]
+            sage: MM = X.padic_automorphic_forms(k, prec, overconvergent=True)
+            sage: D = -11
+            sage: X.is_admissible(D)
             True
-            sage: K.<a> = QuadraticField(D) # optional - magma
-            sage: Kp.<g> = Qq(p**2,prec) # optional - magma
-            sage: P = Kp.gen() # optional - magma
-            sage: Q = 2+Kp.gen()+ p*(Kp.gen() +1) # optional - magma
-            sage: F = MM.lift(f) # long time, optional - magma
-            sage: J0 = F.coleman(P,Q,mult = True) # long time, optional - magma
+            sage: K.<a> = QuadraticField(D)
+            sage: Kp.<g> = Qq(p**2, prec)
+            sage: P = Kp.gen()
+            sage: Q = 2 + Kp.gen() + p*(Kp.gen()+1)
+            sage: F = MM.lift(f)  # long time
+            sage: J0 = F.coleman(P, Q, mult=True)  # long time
 
         AUTHORS:
 
@@ -2153,17 +2146,14 @@ class pAdicAutomorphicFormElement(ModuleElement):
         R1 = LaurentSeriesRing(K, 'r1', default_prec=self.parent()._U.base_ring().precision_cap())
         if E is None:
             E = self.parent()._source._BT.find_covering(t1, t2)
-            # print('Got ', len(E), ' open balls.')
         value = 0
-        ii = 0
         value_exp = K(1)
         if method == 'riemann_sum':
             for e in E:
-                ii += 1
                 b = e[0, 1]
                 d = e[1, 1]
                 y = (b - d * t1) / (b - d * t2)
-                poly = R1(y.log())  # R1(our_log(y))
+                poly = R1(y.log())
                 c_e = self.evaluate(e)
                 new = eval_dist_at_powseries(c_e, poly)
                 value += new
@@ -2172,7 +2162,6 @@ class pAdicAutomorphicFormElement(ModuleElement):
 
         elif method == 'moments':
             for e in E:
-                ii += 1
                 f = (x - t1) / (x - t2)
                 a, b, c, d = e.list()
                 y0 = f(R1([b, a]) / R1([d, c]))  # f( (ax+b)/(cx+d) )

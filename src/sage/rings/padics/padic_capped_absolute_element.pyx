@@ -99,7 +99,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
         """
         return self.lift_c()
 
-    cdef lift_c(self) noexcept:
+    cdef lift_c(self):
         """
         Implementation of lift.
 
@@ -126,7 +126,7 @@ cdef class pAdicCappedAbsoluteElement(CAElement):
         """
         return self._to_gen()
 
-    cdef pari_gen _to_gen(self) noexcept:
+    cdef pari_gen _to_gen(self):
         """
         Converts this element to an equivalent pari element.
 

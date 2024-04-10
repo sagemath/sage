@@ -8,4 +8,4 @@ cdef class ArgumentFixer:
     cdef dict _defaults
     cdef public tuple _default_tuple
 
-    cdef fix_to_pos_args_kwds(self, tuple args, dict kwargs) noexcept
+    cdef fix_to_pos_args_kwds(self, tuple args, dict kwargs)

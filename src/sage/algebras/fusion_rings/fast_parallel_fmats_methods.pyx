@@ -33,7 +33,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 #   Fast class methods   #
 ##########################
 
-cpdef _solve_for_linear_terms(factory, list eqns=None) noexcept:
+cpdef _solve_for_linear_terms(factory, list eqns=None):
     r"""
     Solve for a linear term occurring in a two-term equation, and for
     variables appearing in univariate single-term equations.
@@ -108,7 +108,7 @@ cpdef _solve_for_linear_terms(factory, list eqns=None) noexcept:
                 # assert _unflatten_coeffs(factory._field, factory.test_fvars[s]) == fvars[s], "OG value {}, Shared: {}".format(factory.test_fvars[s], fvars[s])
     return linear_terms_exist
 
-cpdef _backward_subs(factory, bint flatten=True) noexcept:
+cpdef _backward_subs(factory, bint flatten=True):
     r"""
     Perform backward substitution on ``self.ideal_basis``, traversing
     variables in reverse lexicographical order.
@@ -172,7 +172,7 @@ cpdef _backward_subs(factory, bint flatten=True) noexcept:
             fvars[sextuple] = res
 
 
-cdef _fmat(fvars, _Nk_ij, id_anyon, a, b, c, d, x, y) noexcept:
+cdef _fmat(fvars, _Nk_ij, id_anyon, a, b, c, d, x, y):
     """
     Cython version of fmat class method. Using cdef for fastest dispatch
     """
@@ -215,7 +215,7 @@ cdef _fmat(fvars, _Nk_ij, id_anyon, a, b, c, d, x, y) noexcept:
 #   Mappers   #
 ###############
 
-cdef req_cy(tuple basis, r_matrix, dict fvars, Nk_ij, id_anyon, tuple sextuple) noexcept:
+cdef req_cy(tuple basis, r_matrix, dict fvars, Nk_ij, id_anyon, tuple sextuple):
     """
     Given an FMatrix factory and a sextuple, return a hexagon equation
     as a polynomial object.
@@ -233,7 +233,7 @@ cdef req_cy(tuple basis, r_matrix, dict fvars, Nk_ij, id_anyon, tuple sextuple) 
 @cython.wraparound(False)
 @cython.nonecheck(False)
 @cython.cdivision(True)
-cdef get_reduced_hexagons(factory, tuple mp_params) noexcept:
+cdef get_reduced_hexagons(factory, tuple mp_params):
     """
     Set up and reduce the hexagon equations corresponding to this worker.
     """
@@ -283,7 +283,7 @@ cdef get_reduced_hexagons(factory, tuple mp_params) noexcept:
 
     return collect_eqns(worker_results)
 
-cdef MPolynomial_libsingular feq_cy(tuple basis, fvars, Nk_ij, id_anyon, zero, tuple nonuple, bint prune=False) noexcept:
+cdef MPolynomial_libsingular feq_cy(tuple basis, fvars, Nk_ij, id_anyon, zero, tuple nonuple, bint prune=False):
     r"""
     Given an FMatrix factory and a nonuple, return a pentagon equation
     as a polynomial object.
@@ -302,7 +302,7 @@ cdef MPolynomial_libsingular feq_cy(tuple basis, fvars, Nk_ij, id_anyon, zero, t
 @cython.wraparound(False)
 @cython.nonecheck(False)
 @cython.cdivision(True)
-cdef get_reduced_pentagons(factory, tuple mp_params) noexcept:
+cdef get_reduced_pentagons(factory, tuple mp_params):
     r"""
     Set up and reduce the pentagon equations corresponding to this worker.
     """
@@ -350,7 +350,7 @@ cdef get_reduced_pentagons(factory, tuple mp_params) noexcept:
                 worker_results.append(red)
     return collect_eqns(worker_results)
 
-cdef list update_reduce(factory, list eqns) noexcept:
+cdef list update_reduce(factory, list eqns):
     r"""
     Substitute known values, known squares, and reduce.
     """
@@ -382,7 +382,7 @@ cdef list update_reduce(factory, list eqns) noexcept:
         res.append(red)
     return collect_eqns(res)
 
-cdef list compute_gb(factory, tuple args) noexcept:
+cdef list compute_gb(factory, tuple args):
     r"""
     Compute the reduced Groebner basis for given equations iterable.
     """
@@ -426,7 +426,7 @@ cdef list compute_gb(factory, tuple args) noexcept:
 #   Reducers   #
 ################
 
-cdef inline list collect_eqns(list eqns) noexcept:
+cdef inline list collect_eqns(list eqns):
     r"""
     Helper function for returning processed results back to parent process.
 
@@ -451,7 +451,7 @@ cdef dict mappers = {
     "pent_verify": pent_verify
     }
 
-cpdef executor(tuple params) noexcept:
+cpdef executor(tuple params):
     r"""
     Execute a function defined in this module
     (``sage.algebras.fusion_rings.fast_parallel_fmats_methods``) in a worker
@@ -498,7 +498,7 @@ cpdef executor(tuple params) noexcept:
 #   Verification   #
 ####################
 
-cdef feq_verif(factory, worker_results, fvars, Nk_ij, id_anyon, tuple nonuple, float tol=5e-8) noexcept:
+cdef feq_verif(factory, worker_results, fvars, Nk_ij, id_anyon, tuple nonuple, float tol=5e-8):
     r"""
     Check the pentagon equation corresponding to the given nonuple.
     """
@@ -517,7 +517,7 @@ cdef feq_verif(factory, worker_results, fvars, Nk_ij, id_anyon, tuple nonuple, f
 @cython.wraparound(False)
 @cython.nonecheck(False)
 @cython.cdivision(True)
-cdef pent_verify(factory, tuple mp_params) noexcept:
+cdef pent_verify(factory, tuple mp_params):
     r"""
     Generate all the pentagon equations assigned to this process,
     and reduce them.

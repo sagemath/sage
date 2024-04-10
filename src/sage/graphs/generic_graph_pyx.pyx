@@ -258,7 +258,7 @@ def spring_layout_fast(G, iterations=50, int dim=2, vpos=None, bint rescale=True
 
 
 @cython.cdivision(True)
-cdef run_spring(int iterations, dimension_t _dim, double* pos, int* edges, int n, int m, bint height) noexcept:
+cdef run_spring(int iterations, dimension_t _dim, double* pos, int* edges, int n, int m, bint height):
     r"""
     Find a locally optimal layout for this graph, according to the
     constraints that neighboring nodes want to be a fixed distance
@@ -1159,7 +1159,7 @@ def _test_vectors_equal_inferior():
 
 
 cpdef tuple find_hamiltonian(G, long max_iter=100000, long reset_bound=30000,
-                             long backtrack_bound=1000, find_path=False) noexcept:
+                             long backtrack_bound=1000, find_path=False):
     r"""
     Randomized backtracking for finding Hamiltonian cycles and paths.
 

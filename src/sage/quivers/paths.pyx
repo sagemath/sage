@@ -111,7 +111,7 @@ cdef class QuiverPath(MonoidElement):
         """
         biseq_dealloc(self._path)
 
-    cdef QuiverPath _new_(self, int start, int end) noexcept:
+    cdef QuiverPath _new_(self, int start, int end):
         """
         TESTS::
 
@@ -262,7 +262,7 @@ cdef class QuiverPath(MonoidElement):
         """
         return self._path.length != 0
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Comparison for :class:`QuiverPaths`.
 
@@ -467,7 +467,7 @@ cdef class QuiverPath(MonoidElement):
         for i in range(self._path.length):
             yield E[biseq_getitem(self._path, i)]
 
-    cpdef _mul_(self, other) noexcept:
+    cpdef _mul_(self, other):
         """
         Compose two paths.
 
@@ -505,7 +505,7 @@ cdef class QuiverPath(MonoidElement):
         biseq_init_concat(OUT._path, self._path,right._path)
         return OUT
 
-    cpdef _mod_(self, other) noexcept:
+    cpdef _mod_(self, other):
         """
         Return what remains of this path after removing the initial segment ``other``.
 
@@ -608,7 +608,7 @@ cdef class QuiverPath(MonoidElement):
             return (None, None, None)
         return (self[:i], self[i:], P[self._path.length-i:])
 
-    cpdef tuple complement(self, QuiverPath subpath) noexcept:
+    cpdef tuple complement(self, QuiverPath subpath):
         """
         Return a pair ``(a,b)`` of paths s.t. ``self = a*subpath*b``,
         or ``(None, None)`` if ``subpath`` is not a subpath of this path.

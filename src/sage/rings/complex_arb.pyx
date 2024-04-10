@@ -339,6 +339,13 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
 
         sage: loads(dumps(ComplexBallField(60))) is ComplexBallField(60)
         True
+
+    .. SEEALSO::
+
+        - :mod:`sage.rings.complex_arb`
+        - :mod:`sage.rings.complex_mpfr`
+        - :mod:`sage.rings.complex_mpfi`
+        - :mod:`sage.rings.real_arb`
     """
     Element = ComplexBall
 
@@ -1295,7 +1302,7 @@ cdef bint arb_gt_neg_one(arb_t b) noexcept:
     arb_clear(neg_one)
     return res
 
-cdef inline real_ball_field(ComplexBall ball) noexcept:
+cdef inline real_ball_field(ComplexBall ball):
     return ball._parent._base
 
 cdef class ComplexBall(RingElement):
@@ -1547,7 +1554,7 @@ cdef class ComplexBall(RingElement):
 
     # Conversions
 
-    cpdef ComplexIntervalFieldElement _complex_mpfi_(self, parent) noexcept:
+    cpdef ComplexIntervalFieldElement _complex_mpfi_(self, parent):
         """
         Return :class:`ComplexIntervalFieldElement` of the same value.
 
@@ -1806,7 +1813,7 @@ cdef class ComplexBall(RingElement):
 
     # Real and imaginary part, midpoint, radius
 
-    cpdef RealBall real(self) noexcept:
+    cpdef RealBall real(self):
         """
         Return the real part of this ball.
 
@@ -1827,7 +1834,7 @@ cdef class ComplexBall(RingElement):
         arb_set(r.value, acb_realref(self.value))
         return r
 
-    cpdef RealBall imag(self) noexcept:
+    cpdef RealBall imag(self):
         """
         Return the imaginary part of this ball.
 
@@ -2332,7 +2339,7 @@ cdef class ComplexBall(RingElement):
         """
         return acb_is_real(self.value)
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Compare ``left`` and ``right``.
 
@@ -2619,7 +2626,7 @@ cdef class ComplexBall(RingElement):
         acb_conj(res.value, self.value)
         return res
 
-    cpdef _add_(self, other) noexcept:
+    cpdef _add_(self, other):
         """
         Return the sum of two balls, rounded to the ambient field's precision.
 
@@ -2637,7 +2644,7 @@ cdef class ComplexBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return res
 
-    cpdef _sub_(self, other) noexcept:
+    cpdef _sub_(self, other):
         """
         Return the difference of two balls, rounded to the ambient field's
         precision.
@@ -2678,7 +2685,7 @@ cdef class ComplexBall(RingElement):
         if _do_sig(prec(self)): sig_off()
         return res
 
-    cpdef _mul_(self, other) noexcept:
+    cpdef _mul_(self, other):
         """
         Return the product of two balls, rounded to the ambient field's
         precision.
@@ -2778,7 +2785,7 @@ cdef class ComplexBall(RingElement):
             raise TypeError("unsupported operand type(s) for >>: '{}' and '{}'"
                             .format(type(val).__name__, type(shift).__name__))
 
-    cpdef _div_(self, other) noexcept:
+    cpdef _div_(self, other):
         """
         Return the quotient of two balls, rounded to the ambient field's
         precision.
@@ -2845,7 +2852,7 @@ cdef class ComplexBall(RingElement):
         else:
             return sage.structure.element.bin_op(base, expo, operator.pow)
 
-    cpdef pow(self, expo, analytic=False) noexcept:
+    cpdef pow(self, expo, analytic=False):
         r"""
         Raise this ball to the power of ``expo``.
 

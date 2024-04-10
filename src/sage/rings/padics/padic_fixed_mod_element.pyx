@@ -158,7 +158,7 @@ cdef class pAdicFixedModElement(FMElement):
         """
         return self.lift_c()
 
-    cdef lift_c(self) noexcept:
+    cdef lift_c(self):
         r"""
         Returns an integer congruent to this element modulo the precision.
 
@@ -190,7 +190,7 @@ cdef class pAdicFixedModElement(FMElement):
         """
         return self._to_gen()
 
-    cdef pari_gen _to_gen(self) noexcept:
+    cdef pari_gen _to_gen(self):
         """
         Convert ``self`` to an equivalent pari element.
 

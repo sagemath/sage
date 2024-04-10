@@ -19,7 +19,7 @@ from sage.rings.qqbar import QQbar
 #   Mappers   #
 ###############
 
-cdef mid_sig_ij(fusion_ring, row, col, a, b) noexcept:
+cdef mid_sig_ij(fusion_ring, row, col, a, b):
     r"""
     Compute the (xi, yi), (xj, yj) entry of generator braiding the middle two
     strands in the tree b -> xi # yi -> (a # a) # (a # a), which results in
@@ -49,7 +49,7 @@ cdef mid_sig_ij(fusion_ring, row, col, a, b) noexcept:
             entry += f1 * f2 * r * f3 * f4
     return entry
 
-cdef odd_one_out_ij(fusion_ring, xi, xj, a, b) noexcept:
+cdef odd_one_out_ij(fusion_ring, xi, xj, a, b):
     r"""
     Compute the `xi`, `xj` entry of the braid generator on the two right-most
     strands, corresponding to the tree b -> (xi # a) -> (a # a) # a, which
@@ -77,7 +77,7 @@ cdef odd_one_out_ij(fusion_ring, xi, xj, a, b) noexcept:
 cdef odd_one_out_ij_cache = dict()
 cdef mid_sig_ij_cache = dict()
 
-cdef cached_mid_sig_ij(fusion_ring, row, col, a, b) noexcept:
+cdef cached_mid_sig_ij(fusion_ring, row, col, a, b):
     r"""
     Cached version of :meth:`mid_sig_ij`.
     """
@@ -87,7 +87,7 @@ cdef cached_mid_sig_ij(fusion_ring, row, col, a, b) noexcept:
     mid_sig_ij_cache[row, col, a, b] = entry
     return entry
 
-cdef cached_odd_one_out_ij(fusion_ring, xi, xj, a, b) noexcept:
+cdef cached_odd_one_out_ij(fusion_ring, xi, xj, a, b):
     r"""
     Cached version of :meth:`odd_one_out_ij`.
     """
@@ -100,7 +100,7 @@ cdef cached_odd_one_out_ij(fusion_ring, xi, xj, a, b) noexcept:
 
 @cython.nonecheck(False)
 @cython.cdivision(True)
-cdef sig_2k(fusion_ring, tuple args) noexcept:
+cdef sig_2k(fusion_ring, tuple args):
     r"""
     Compute entries of the `2k`-th braid generator
     """
@@ -180,7 +180,7 @@ cdef sig_2k(fusion_ring, tuple args) noexcept:
 
 @cython.nonecheck(False)
 @cython.cdivision(True)
-cdef odd_one_out(fusion_ring, tuple args) noexcept:
+cdef odd_one_out(fusion_ring, tuple args):
     r"""
     Compute entries of the rightmost braid generator, in case we have an
     odd number of strands.
@@ -264,7 +264,7 @@ cdef dict mappers = {
     "odd_one_out": odd_one_out
 }
 
-cpdef executor(tuple params) noexcept:
+cpdef executor(tuple params):
     r"""
     Execute a function registered in this module's ``mappers``
     in a worker process, and supply the ``FusionRing`` parameter by
@@ -306,7 +306,7 @@ cpdef executor(tuple params) noexcept:
 #   Pickling circumvention helpers   #
 ######################################
 
-cpdef _unflatten_entries(fusion_ring, list entries) noexcept:
+cpdef _unflatten_entries(fusion_ring, list entries):
     r"""
     Restore cyclotomic coefficient object from its tuple of rational
     coefficients representation.

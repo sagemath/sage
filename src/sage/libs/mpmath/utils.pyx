@@ -46,7 +46,7 @@ cpdef int bitcount(n) noexcept:
         return 0
     return mpz_sizeinbase(m.value, 2)
 
-cpdef isqrt(n) noexcept:
+cpdef isqrt(n):
     """
     Square root (rounded to floor) of a Sage Integer or Python int/long.
     The result is a Sage Integer.
@@ -77,7 +77,7 @@ cpdef isqrt(n) noexcept:
     mpz_sqrt(y.value, m.value)
     return y
 
-cpdef from_man_exp(man, exp, long prec = 0, str rnd = 'd') noexcept:
+cpdef from_man_exp(man, exp, long prec = 0, str rnd = 'd'):
     """
     Create normalized mpf value tuple from mantissa and exponent.
 
@@ -106,7 +106,7 @@ cpdef from_man_exp(man, exp, long prec = 0, str rnd = 'd') noexcept:
     else:
         return normalize(0, res, exp, bc, prec, rnd)
 
-cpdef normalize(long sign, Integer man, exp, long bc, long prec, str rnd) noexcept:
+cpdef normalize(long sign, Integer man, exp, long bc, long prec, str rnd):
     """
     Create normalized mpf value tuple from full list of components.
 

@@ -166,7 +166,7 @@ cdef class CircuitClosuresMatroid(Matroid):
                 self._circuit_closures[k] = frozenset([frozenset(X) for X in circuit_closures[k]])
         self._matroid_rank = self.rank(self._groundset)
 
-    cpdef groundset(self) noexcept:
+    cpdef groundset(self):
         """
         Return the groundset of the matroid.
 
@@ -184,7 +184,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         """
         return frozenset(self._groundset)
 
-    cpdef _rank(self, X) noexcept:
+    cpdef _rank(self, X):
         """
         Return the rank of a set ``X``.
 
@@ -208,7 +208,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         return len(self._max_independent(X))
 
     # OPTIONAL, OPTIMIZED FOR THIS CLASS
-    cpdef full_rank(self) noexcept:
+    cpdef full_rank(self):
         r"""
         Return the rank of the matroid.
 
@@ -229,7 +229,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         """
         return self._matroid_rank
 
-    cpdef _is_independent(self, F) noexcept:
+    cpdef _is_independent(self, F):
         """
         Test if input is independent.
 
@@ -259,7 +259,7 @@ cdef class CircuitClosuresMatroid(Matroid):
                     return False
         return True
 
-    cpdef _max_independent(self, F) noexcept:
+    cpdef _max_independent(self, F):
         """
         Compute a maximal independent subset.
 
@@ -296,7 +296,7 @@ cdef class CircuitClosuresMatroid(Matroid):
 
         return frozenset(I)
 
-    cpdef _circuit(self, F) noexcept:
+    cpdef _circuit(self, F):
         """
         Return a minimal dependent subset.
 
@@ -329,7 +329,7 @@ cdef class CircuitClosuresMatroid(Matroid):
                     return frozenset(S)
         raise ValueError("no circuit in independent set")
 
-    cpdef circuit_closures(self) noexcept:
+    cpdef circuit_closures(self):
         """
         Return the list of closures of circuits of the matroid.
 
@@ -363,7 +363,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         """
         return self._circuit_closures
 
-    cpdef _is_isomorphic(self, other, certificate=False) noexcept:
+    cpdef _is_isomorphic(self, other, certificate=False):
         """
         Test if ``self`` is isomorphic to ``other``.
 

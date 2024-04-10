@@ -23,7 +23,7 @@ cdef class MatroidUnion(Matroid):
         Matroid of rank 1 on 2 elements with 2 bases
         sage: M.bases()
         Iterator over a system of subsets
-        sage: M.circuits()
+        sage: list(M.circuits())
         [frozenset({3, 4})]
 
     INPUT:
@@ -54,7 +54,7 @@ cdef class MatroidUnion(Matroid):
             E.update(M.groundset())
         self._groundset = frozenset(E)
 
-    cpdef groundset(self) noexcept:
+    cpdef groundset(self):
         """
         Return the groundset of the matroid.
 
@@ -73,7 +73,7 @@ cdef class MatroidUnion(Matroid):
         """
         return self._groundset
 
-    cpdef _rank(self, X) noexcept:
+    cpdef _rank(self, X):
         r"""
         Return the rank of a set ``X``.
 
@@ -187,7 +187,7 @@ cdef class MatroidSum(Matroid):
             S = S + M._repr_() +"\n"
         return S[:-1]
 
-    cpdef groundset(self) noexcept:
+    cpdef groundset(self):
         """
         Return the groundset of the matroid.
 
@@ -206,7 +206,7 @@ cdef class MatroidSum(Matroid):
         """
         return self._groundset
 
-    cpdef _rank(self, X) noexcept:
+    cpdef _rank(self, X):
         r"""
         Return the rank of a set ``X``.
 
@@ -286,7 +286,7 @@ cdef class PartitionMatroid(Matroid):
             E.update(P)
         self._groundset = frozenset(E)
 
-    cpdef groundset(self) noexcept:
+    cpdef groundset(self):
         """
         Return the groundset of the matroid.
 
@@ -305,7 +305,7 @@ cdef class PartitionMatroid(Matroid):
         """
         return self._groundset
 
-    cpdef _rank(self, X) noexcept:
+    cpdef _rank(self, X):
         r"""
         Return the rank of a set ``X``.
 

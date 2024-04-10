@@ -335,10 +335,10 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         """
         mzd_write_bit(self._entries, i, j, int(value))
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value) noexcept:
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value):
         mzd_write_bit(self._entries, i, j, int(value))
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         if mzd_read_bit(self._entries, i, j):
             return self._one
         else:
@@ -346,7 +346,9 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
 
     def str(self, rep_mapping=None, zero=None, plus_one=None, minus_one=None,
-            *, unicode=False, shape=None, character_art=False):
+            *, unicode=False, shape=None, character_art=False,
+            left_border=None, right_border=None,
+            top_border=None, bottom_border=None):
         r"""
         Return a nice string representation of the matrix.
 
@@ -384,6 +386,16 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
           :class:`~sage.typeset.unicode_art.UnicodeArt` which support line
           breaking of wide matrices that exceed the window width
 
+        - ``left_border``, ``right_border`` -- sequence (default: ``None``);
+          if not ``None``, call :func:`str` on the elements and use the
+          results as labels for the rows of the matrix. The labels appear
+          outside of the parentheses.
+
+        - ``top_border``, ``bottom_border`` -- sequence (default: ``None``);
+          if not ``None``, call :func:`str` on the elements and use the
+          results as labels for the columns of the matrix. The labels appear
+          outside of the parentheses.
+
         EXAMPLES::
 
             sage: B = matrix(GF(2), 3, 3, [0, 1, 0, 0, 1, 1, 0, 0, 0])
@@ -416,13 +428,19 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         # Set the mapping based on keyword arguments
         # We ignore minus_one (it's only there for compatibility with Matrix)
         if (rep_mapping is not None or zero is not None or plus_one is not None
-                or unicode or shape is not None or character_art):
+                or unicode or shape is not None or character_art
+                or left_border is not None or right_border is not None
+                or top_border is not None or bottom_border is not None):
             # Shunt mappings off to the generic code since they might not be
             # single characters
             return matrix_dense.Matrix_dense.str(self, rep_mapping=rep_mapping,
                                                  zero=zero, plus_one=plus_one,
                                                  unicode=unicode, shape=shape,
-                                                 character_art=character_art)
+                                                 character_art=character_art,
+                                                 left_border=left_border,
+                                                 right_border=right_border,
+                                                 top_border=top_border,
+                                                 bottom_border=bottom_border)
 
         if self._nrows == 0 or self._ncols == 0:
             return "[]"
@@ -521,7 +539,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
     # def _pickle(self):
     # def _unpickle(self, data, int version):   # use version >= 0
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         Matrix addition.
 
@@ -559,7 +577,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         return A
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         Matrix addition.
 
@@ -575,7 +593,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         """
         return self._add_(right)
 
-    cdef _matrix_times_vector_(self, Vector v) noexcept:
+    cdef _matrix_times_vector_(self, Vector v):
         """
         EXAMPLES::
 
@@ -633,7 +651,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         sig_off()
         return c
 
-    cdef _matrix_times_matrix_(self, Matrix right) noexcept:
+    cdef _matrix_times_matrix_(self, Matrix right):
         """
         Matrix multiplication.
 
@@ -646,7 +664,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
 
         return self._multiply_strassen(right, 0)
 
-    cpdef Matrix_mod2_dense _multiply_m4rm(Matrix_mod2_dense self, Matrix_mod2_dense right, int k) noexcept:
+    cpdef Matrix_mod2_dense _multiply_m4rm(Matrix_mod2_dense self, Matrix_mod2_dense right, int k):
         """
         Multiply matrices using the 'Method of the Four Russians
         Multiplication' (M4RM) or Konrod's method.
@@ -775,7 +793,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         A._entries = mzd_mul_naive(A._entries, self._entries,(<Matrix_mod2_dense>right)._entries)
         return A
 
-    cpdef Matrix_mod2_dense _multiply_strassen(Matrix_mod2_dense self, Matrix_mod2_dense right, int cutoff) noexcept:
+    cpdef Matrix_mod2_dense _multiply_strassen(Matrix_mod2_dense self, Matrix_mod2_dense right, int cutoff):
         r"""
         Strassen-Winograd `O(n^{2.807})` multiplication [Str1969]_.
 
@@ -1250,7 +1268,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
                         mzd_write_bit(self._entries, i, j, 1)
             sig_off()
 
-    cdef rescale_row_c(self, Py_ssize_t row, multiple, Py_ssize_t start_col) noexcept:
+    cdef rescale_row_c(self, Py_ssize_t row, multiple, Py_ssize_t start_col):
         """
         EXAMPLES::
 
@@ -1263,7 +1281,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             mzd_row_clear_offset(self._entries, row, start_col)
 
     cdef add_multiple_of_row_c(self, Py_ssize_t row_to, Py_ssize_t row_from, multiple,
-                               Py_ssize_t start_col) noexcept:
+                               Py_ssize_t start_col):
         """
         EXAMPLES::
 
@@ -1276,7 +1294,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         if int(multiple) % 2:
             mzd_row_add_offset(self._entries, row_to, row_from, start_col)
 
-    cdef swap_rows_c(self, Py_ssize_t row1, Py_ssize_t row2) noexcept:
+    cdef swap_rows_c(self, Py_ssize_t row1, Py_ssize_t row2):
         """
         EXAMPLES::
 
@@ -1292,7 +1310,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         """
         mzd_row_swap(self._entries, row1, row2)
 
-    cdef swap_columns_c(self, Py_ssize_t col1, Py_ssize_t col2) noexcept:
+    cdef swap_columns_c(self, Py_ssize_t col1, Py_ssize_t col2):
         """
         EXAMPLES::
 
@@ -1422,7 +1440,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             A.subdivide(*self.subdivisions())
         return A
 
-    cpdef _richcmp_(self, right, int op) noexcept:
+    cpdef _richcmp_(self, right, int op):
         """
         Compare ``self`` with ``right``.
 
@@ -1571,7 +1589,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
             Z._subdivide_on_augment(self, other)
         return Z
 
-    cdef _stack_impl(self, bottom) noexcept:
+    cdef _stack_impl(self, bottom):
         r"""
         Stack ``self`` on top of ``bottom``.
 
@@ -1758,7 +1776,7 @@ cdef class Matrix_mod2_dense(matrix_dense.Matrix_dense):   # dense or sparse
         gdImageDestroy(im)
         return unpickle_matrix_mod2_dense_v2, (r,c, data, size, self._is_immutable)
 
-    cpdef _export_as_string(self) noexcept:
+    cpdef _export_as_string(self):
         """
         Return space separated string of the entries in this matrix.
 

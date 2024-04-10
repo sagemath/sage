@@ -47,7 +47,7 @@ cdef void binary_tree_insert(binary_tree_node *self, int key, object value) noex
         else:
             binary_tree_insert(self.right, key, value)
 
-cdef object binary_tree_get(binary_tree_node *self, int key) noexcept:
+cdef object binary_tree_get(binary_tree_node *self, int key):
     if self.key == key:
         return <object>self.value
     elif self.key > key:
@@ -61,7 +61,7 @@ cdef object binary_tree_get(binary_tree_node *self, int key) noexcept:
         else:
             return binary_tree_get(self.right, key)
 
-cdef object binary_tree_delete(binary_tree_node *self, int key) noexcept:
+cdef object binary_tree_delete(binary_tree_node *self, int key):
     cdef object t
     if self.key > key:
         if self.left == NULL:
@@ -153,7 +153,7 @@ LIST_POSTORDER = 4
 LIST_KEYS = 8
 LIST_VALUES = 16
 
-cdef object binary_tree_list(binary_tree_node *cur, int behavior) noexcept:
+cdef object binary_tree_list(binary_tree_node *cur, int behavior):
     if behavior & LIST_KEYS:
         item = int(cur.key)
     else:
