@@ -644,7 +644,7 @@ class SchemeHomset_points(SchemeHomset_generic):
             except AttributeError:  # no .ambient_space
                 return False
         elif isinstance(other, SchemeHomset_points):
-            #we are converting between scheme points
+            # we are converting between scheme points
             source = other.codomain()
             if isinstance(target, AlgebraicScheme_subscheme):
                 #subscheme coerce when there is containment

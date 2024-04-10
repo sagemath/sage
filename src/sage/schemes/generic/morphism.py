@@ -730,8 +730,9 @@ class SchemeMorphism_sum(SchemeMorphism):
           From: Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
           To:   Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
           Via:  (Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
-          Defn: Identity map, Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
-          Defn: Identity map)
+                   Defn: Identity map,
+                 Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+                   Defn: Identity map)
     """
 
     _phis = None
