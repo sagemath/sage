@@ -154,11 +154,11 @@ class JacobianHomset_divisor_classes(SchemeHomset_points):
 
         EXAMPLES::
 
-            sage: H = HyperellipticCurve(GF(103), [3, 5])
+            sage: H = HyperellipticCurve(polygen(GF(103))^5 + 1)
             sage: J = H.jacobian()
             sage: S = J.point_homset()
             sage: S.zero()
-            (0 : 1 : 0)
+            (1)
             sage: S.zero() == S(0)
             True
         """

@@ -207,7 +207,7 @@ def Hom(X, Y, category=None, check=True):
     with the result for the meet of the categories of the domain and
     the codomain::
 
-        sage: Hom(QQ, ZZ) is Hom(QQ, ZZ, category=QQ.category() | ZZ.category()))
+        sage: Hom(QQ, ZZ) is Hom(QQ, ZZ, category=QQ.category() | ZZ.category())
         True
 
     Some doc tests in :mod:`sage.rings` (need to) break the unique
@@ -269,9 +269,8 @@ def Hom(X, Y, category=None, check=True):
          from <sage.structure.parent.Parent object at ...>
            to <sage.structure.parent.Parent object at ...>
         sage: Hom(PA, PJ).category()
-        Category of homsets of
-         unital magmas and right modules over Rational Field
-          and left modules over Rational Field
+        Category of homsets of unital magmas and right modules over Rational
+        Field and left modules over Rational Field
         sage: Hom(PA, PJ, Rngs())
         Set of Morphisms
          from <sage.structure.parent.Parent object at ...>
@@ -696,10 +695,12 @@ class Homset(Set_generic):
         # We handle abelian varieties as a special case, since they themselves
         # don't have an abelian group, only their point homsets, see discussion
         # under #37768.
-        from sage.categories.schemes import AbelianVarieties
+        from sage.categories.schemes import Sets, AbelianVarieties
         from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 
-        group_cat = Y.category() | CommutativeAdditiveGroups()
+        # TODO: Uncomment this once sum of morphisms is implemented (see #37768)
+        # group_cat = Y.category() | CommutativeAdditiveGroups()
+        group_cat = Sets()
         try:
             if Y in AbelianVarieties(Y._base_scheme):
                 group_cat = CommutativeAdditiveGroups()

@@ -208,12 +208,12 @@ class Schemes_over_base(Category_over_base):
 
 class AbelianVarieties(Schemes_over_base):
     r"""
-    The category of abelian varieties over a given field.
+    The category of abelian varieties over a given field scheme.
 
     EXAMPLES::
 
         sage: AbelianVarieties(QQ)
-        Category of abelian varieties over Spectrum of Rational Field
+        Category of abelian varieties over Rational Field
         sage: AbelianVarieties(ZZ)
         Traceback (most recent call last):
         ...
@@ -247,9 +247,9 @@ class AbelianVarieties(Schemes_over_base):
         EXAMPLES::
 
             sage: A = AbelianVarieties(QQ); A
-            Category of abelian varieties over Spectrum of Rational Field
+            Category of abelian varieties over Rational Field
             sage: B = AbelianVarieties(Spec(QQ)); B
-            Category of abelian varieties over Spectrum of Rational Field
+            Category of abelian varieties over Rational Field
             sage: A is B
             True
 
@@ -267,7 +267,7 @@ class AbelianVarieties(Schemes_over_base):
         EXAMPLES::
 
             sage: AbelianVarieties(QQ).super_categories()
-            [Category of schemes over Spectrum of Rational Field]
+            [Category of schemes over Rational Field]
         """
         return [Schemes(self.base_scheme())]
 
@@ -276,9 +276,13 @@ class AbelianVarieties(Schemes_over_base):
         EXAMPLES::
 
             sage: AbelianVarieties(Spec(QQ))  # indirect doctest
-            Category of abelian varieties over Spectrum of Rational Field
+            Category of abelian varieties over Rational Field
         """
-        return "abelian varieties over %s" % self.base_scheme()
+        from sage.schemes.generic.scheme import is_AffineScheme
+        if is_AffineScheme(self.base_scheme()):
+            return "abelian varieties over %s" % self.base_scheme().coordinate_ring()
+        else:
+            return "abelian varieties over %s" % self.base_scheme()
 
     class ParentMethods:
         def zero(self):
