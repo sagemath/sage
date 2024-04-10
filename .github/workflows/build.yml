@@ -36,7 +36,7 @@ env:
   EXTRA_CONFIGURE_ARGS:   --enable-fat-binary
 
 jobs:
-  build:
+  test-new:
     runs-on: ubuntu-latest
     services:
       # https://docs.docker.com/build/ci/github-actions/local-registry/
@@ -137,9 +137,9 @@ jobs:
           ./sage -t --new -p4
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
-  mod:
+  test-mod:
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [test-new]
     services:
       # https://docs.docker.com/build/ci/github-actions/local-registry/
       registry:
@@ -231,7 +231,7 @@ jobs:
 
   test-long:
     runs-on: ubuntu-latest
-    needs: [build]
+    needs: [test-new]
     services:
       # https://docs.docker.com/build/ci/github-actions/local-registry/
       registry:
