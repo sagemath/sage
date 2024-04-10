@@ -2033,6 +2033,14 @@ class SetPartitions(UniqueRepresentation, Parent):
         sage: SetPartitions('aabcd').cardinality()                                      # needs sage.libs.flint
         15
 
+    If the number of parts exceeds the length of the set,
+    an empty iterator is returned (:issue:`37643`)::
+
+        sage: SetPartitions(range(3), 4).list()
+        []
+        sage: SetPartitions('abcd', 6).list()
+        []
+
     REFERENCES:
 
     - :wikipedia:`Partition_of_a_set`
