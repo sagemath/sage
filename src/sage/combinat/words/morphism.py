@@ -1700,7 +1700,7 @@ class WordMorphism(SageObject):
 
     def is_uniform(self, k=None):
         r"""
-        Return True if self is a `k`-uniform morphism.
+        Return ``True`` if ``self`` is a `k`-uniform morphism.
 
         Let `k` be a positive integer. A morphism `\phi` is called `k`-uniform
         if for every letter `\alpha`, we have `|\phi(\alpha)| = k`. In other
@@ -1709,9 +1709,10 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``k`` - a positive integer or None. If set to a positive integer,
-          then the function return True if self is `k`-uniform. If set to
-          None, then the function return True if self is uniform.
+        - ``k`` - a positive integer or ``None``. If set to a positive integer,
+          then the function return ``True`` if ``self`` is `k`-uniform.
+          If set to ``None``, then the function return ``True`` if ``self``
+          is uniform.
 
         EXAMPLES::
 
@@ -1728,17 +1729,17 @@ class WordMorphism(SageObject):
             sage: tau.is_uniform(k=2)
             True
 
-        TESTS:
+        TESTS::
 
             sage: phi = WordMorphism('')
             sage: phi.is_uniform()
-            False
+            True
         """
         if k is None:
             try:
                 k = self.images()[0].length()
             except IndexError:
-                return False
+                return True
         return all(w.length() == k for w in self.images())
 
     def fixed_point(self, letter):
