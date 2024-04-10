@@ -3,12 +3,12 @@
 //      from .devcontainer/portability-devcontainer.json.in
 // See https://aka.ms/devcontainer.json for format details.
 {
-    "name": "ubuntu-trusty-toolchain-gcc_9-standard (≥ 8-core)",
+    "name": "linuxmint-21.3-standard (≥ 8-core)",
     "build": {
         "dockerfile": "portability-Dockerfile",
         // See tox.ini for definitions
         "args": {
-            "SYSTEM_FACTOR": "ubuntu-trusty-toolchain-gcc_9",
+            "SYSTEM_FACTOR": "linuxmint-21.3",
             "PACKAGE_FACTOR": "standard",
             "DOCKER_TARGET": "with-targets",
             "DOCKER_TAG": "dev"
