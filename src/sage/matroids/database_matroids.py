@@ -314,7 +314,7 @@ def P6(groundset=None):
     [Oxl2011]_, p. 641-2.
     """
     CC = {2: ['abc'], 3: ['abcdef']}
-    M = Matroid(groundset='abcdef', circuit_closures=CC)
+    M = Matroid(circuit_closures=CC)
     M = _rename_and_relabel(M, "P6", groundset)
     return M
 
@@ -724,7 +724,7 @@ def AG32prime(groundset=None):
         ],
         4: ['abcdefgh'],
     }
-    M = Matroid(groundset='abcdefgh', circuit_closures=CC)
+    M = Matroid(circuit_closures=CC)
     M = _rename_and_relabel(M, "AG(3, 2)'", groundset)
     return M
 
@@ -824,7 +824,7 @@ def F8(groundset=None):
         ],
         4: ['abcdefgh'],
     }
-    M = Matroid(groundset='abcdefgh', circuit_closures=CC)
+    M = Matroid(circuit_closures=CC)
     M = _rename_and_relabel(M, "F8", groundset)
     return M
 
@@ -873,7 +873,7 @@ def Q8(groundset=None):
         ],
         4: ['abcdefgh'],
     }
-    M = Matroid(groundset='abcdefgh', circuit_closures=CC)
+    M = Matroid(circuit_closures=CC)
     M = _rename_and_relabel(M, "Q8", groundset)
     return M
 
@@ -920,7 +920,7 @@ def L8(groundset=None):
     """
     CC = {3: ['abfg', 'bcdg', 'defg', 'cdeh', 'aefh', 'abch', 'aceg', 'bdfh'],
           4: ['abcdefgh']}
-    M = Matroid(groundset='abcdefgh', circuit_closures=CC)
+    M = Matroid(circuit_closures=CC)
     M = _rename_and_relabel(M, "L8", groundset)
     return M
 
@@ -1009,7 +1009,7 @@ def Vamos(groundset=None):
     [Oxl2011]_, p. 649.
     """
     CC = {3: ['abcd', 'abef', 'cdef', 'abgh', 'efgh'], 4: ['abcdefgh']}
-    M = Matroid(groundset='abcdefgh', circuit_closures=CC)
+    M = Matroid(circuit_closures=CC)
     M = _rename_and_relabel(M, "Vamos", groundset)
     return M
 
@@ -1160,7 +1160,7 @@ def P8pp(groundset=None):
     [Oxl2011]_, p. 651.
     """
     NSC = ['abfh', 'bceg', 'cdfh', 'adeg', 'acef', 'bdfg', 'acgh', 'bdeh']
-    M = Matroid(groundset='abcdefgh', rank=4, nonspanning_circuits=NSC)
+    M = Matroid(rank=4, nonspanning_circuits=NSC)
     M = _rename_and_relabel(M, "P8''", groundset)
     return M
 
@@ -1410,7 +1410,7 @@ def Pappus(groundset=None):
     [Oxl2011]_, p. 655.
     """
     NSC = ['abc', 'def', 'ceg', 'bfg', 'cdh', 'afh', 'bdi', 'aei', 'ghi']
-    M = Matroid(groundset='abcdefghi', rank=3, nonspanning_circuits=NSC)
+    M = Matroid(rank=3, nonspanning_circuits=NSC)
     M = _rename_and_relabel(M, "Pappus", groundset)
     return M
 
@@ -1444,7 +1444,7 @@ def NonPappus(groundset=None):
     [Oxl2011]_, p. 655.
     """
     NSC = ['abc', 'ceg', 'bfg', 'cdh', 'afh', 'bdi', 'aei', 'ghi']
-    M = Matroid(groundset='abcdefghi', rank=3, nonspanning_circuits=NSC)
+    M = Matroid(rank=3, nonspanning_circuits=NSC)
     M = _rename_and_relabel(M, "NonPappus", groundset)
     return M
 
@@ -2239,7 +2239,7 @@ def Spike(r, t=True, C3=[], groundset=None):
         planes = [['t', 'x'+str(i), 'y'+str(i), 'x'+str(j), 'y'+str(j)]
                   for i in range(1, r+1) for j in range(i+1, r+1)]
         CC = {2: lines, 3: planes, r: [E]}
-        M = Matroid(groundset=E, circuit_closures=CC)
+        M = Matroid(circuit_closures=CC)
     else:
         for S in C3:
             for xy in S:
@@ -2261,7 +2261,7 @@ def Spike(r, t=True, C3=[], groundset=None):
             for j in range(i+1, r+1):
                 NSC += [['x'+str(i), 'y'+str(i), 'x'+str(j), 'y'+str(j)]]
 
-        M = Matroid(groundset=E, rank=r, nonspanning_circuits=NSC)
+        M = Matroid(rank=r, nonspanning_circuits=NSC)
 
     free = "Free " if C3 == [] else ""
     tip = "" if t else "\\t"
@@ -2343,7 +2343,7 @@ def Theta(n, groundset=None):
                     Yu = [Y[i] for i in range(len(Y)) if i != u]
                     C += [Yu + ['x'+str(s)] + ['x'+str(t)]]
 
-    M = Matroid(groundset=E, circuits=C)
+    M = Matroid(circuits=C)
     M = _rename_and_relabel(M, "Theta_" + str(n), groundset)
     return M
 
@@ -4715,7 +4715,7 @@ def NonVamos(groundset=None):
         3: ['abcd', 'abef', 'cdef', 'abgh', 'cdgh', 'efgh'],
         4: ['abcdefgh']
     }
-    M = Matroid(groundset='abcdefgh', circuit_closures=CC)
+    M = Matroid(circuit_closures=CC)
     M = _rename_and_relabel(M, "NonVamos", groundset)
     return M
 
@@ -4773,7 +4773,7 @@ def AG23minus(groundset=None):
     """
     CC = {2: ['abc', 'ceh', 'fgh', 'adf', 'aeg', 'cdg', 'bdh', 'bef'],
           3: ['abcdefgh']}
-    M = Matroid(groundset='abcdefgh', circuit_closures=CC)
+    M = Matroid(circuit_closures=CC)
     M = _rename_and_relabel(M, "AG23minus", groundset)
     return M
 
@@ -4823,7 +4823,7 @@ def R9A(groundset=None):
     """
     NSC = ['abch', 'abde', 'abfi', 'acdi', 'aceg', 'adgh', 'aefh', 'bcdf',
            'bdhi', 'begi', 'cehi', 'defi', 'fghi']
-    M = Matroid(groundset='abcdefghi', rank=4, nonspanning_circuits=NSC)
+    M = Matroid(rank=4, nonspanning_circuits=NSC)
     M = _rename_and_relabel(M, "R9A", groundset)
     return M
 
@@ -4846,7 +4846,7 @@ def R9B(groundset=None):
     """
     NSC = ['abde', 'bcdf', 'aceg', 'abch', 'befh', 'cdgh', 'bcei', 'adfi',
            'abgi', 'degi', 'bdhi', 'aehi', 'fghi']
-    M = Matroid(groundset='abcdefghi', rank=4, nonspanning_circuits=NSC)
+    M = Matroid(rank=4, nonspanning_circuits=NSC)
     M = _rename_and_relabel(M, "R9B", groundset)
     return M
 
@@ -4870,7 +4870,7 @@ def Block_9_4(groundset=None):
     NSC = ['abcd', 'acef', 'bdef', 'cdeg', 'abfg', 'adeh', 'bcfh', 'acgh',
            'begh', 'dfgh', 'abei', 'cdfi', 'bcgi', 'adgi', 'efgi', 'bdhi',
            'cehi', 'afhi']
-    M = Matroid(groundset='abcdefghi', rank=4, nonspanning_circuits=NSC)
+    M = Matroid(rank=4, nonspanning_circuits=NSC)
     M = _rename_and_relabel(M, "Block(9, 4)", groundset)
     return M
 
@@ -4895,7 +4895,7 @@ def TicTacToe(groundset=None):
     """
     NSC = ['abcdg', 'adefg', 'abceh', 'abcfi', 'cdefi', 'adghi', 'beghi',
            'cfghi']
-    M = Matroid(groundset='abcdefghi', rank=5, nonspanning_circuits=NSC)
+    M = Matroid(rank=5, nonspanning_circuits=NSC)
     M = _rename_and_relabel(M, "TicTacToe", groundset)
     return M
 
@@ -4953,7 +4953,7 @@ def Block_10_5(groundset=None):
            'cdegj', 'bcfgj', 'acdhj', 'bcehj', 'defhj', 'bdghj', 'afghj',
            'abcij', 'bdeij', 'cdfij', 'adgij', 'efgij', 'aehij', 'bfhij',
            'cghij']
-    M = Matroid(groundset='abcdefghij', rank=5, nonspanning_circuits=NSC)
+    M = Matroid(rank=5, nonspanning_circuits=NSC)
     M = _rename_and_relabel(M, "Block(10, 5)", groundset)
     return M
 
@@ -5021,7 +5021,7 @@ def BetsyRoss(groundset=None):
     NSC = ['acf', 'acg', 'adi', 'adj', 'afg', 'ahk', 'aij', 'bdg', 'bdh',
            'bef', 'bej', 'bfj', 'bgh', 'bik', 'ceh', 'cei', 'cfg', 'chi',
            'cjk', 'dfk', 'dgh', 'dij', 'efj', 'egk', 'ehi']
-    M = Matroid(groundset='abcdefghijk', rank=3, nonspanning_circuits=NSC)
+    M = Matroid(rank=3, nonspanning_circuits=NSC)
     M = _rename_and_relabel(M, "BetsyRoss", groundset)
     return M
 
