@@ -1811,13 +1811,10 @@ class TilingSolver(SageObject):
             True
             sage: all(B[A[i]] == i for i in A)
             True
-
         """
         if self._reusable:
             return dict(enumerate(self.space()))
-
-        number_of_pieces = len(self._pieces)
-        return {i + number_of_pieces: c for i, c in enumerate(self.space())}
+        return dict(enumerate(self.space(), start=len(self._pieces)))
 
     @cached_method
     def rows_for_piece(self, i, mod_box_isometries=False):

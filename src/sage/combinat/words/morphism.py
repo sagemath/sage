@@ -1727,9 +1727,18 @@ class WordMorphism(SageObject):
             False
             sage: tau.is_uniform(k=2)
             True
+
+        TESTS:
+
+            sage: phi = WordMorphism('')
+            sage: phi.is_uniform()
+            False
         """
         if k is None:
-            k = self.images()[0].length()
+            try:
+                k = self.images()[0].length()
+            except IndexError:
+                return False
         return all(w.length() == k for w in self.images())
 
     def fixed_point(self, letter):
