@@ -13,25 +13,26 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.misc.bindable_class import BindableClass
-from sage.misc.lazy_attribute import lazy_attribute
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import UniqueRepresentation
+from sage.arith.misc import factorial
 from sage.categories.algebras import Algebras
 from sage.categories.commutative_rings import CommutativeRings
-from sage.categories.realizations import Realizations, Category_realization_of_parent
+from sage.categories.fields import Fields
 from sage.categories.finite_dimensional_algebras_with_basis import FiniteDimensionalAlgebrasWithBasis
-from sage.rings.integer_ring import ZZ
-from sage.rings.rational_field import QQ
-from sage.arith.misc import factorial
-from sage.combinat.free_module import CombinatorialFreeModule
-from sage.combinat.permutation import Permutations
+from sage.categories.realizations import Realizations, Category_realization_of_parent
 from sage.combinat.composition import Compositions
+from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.integer_matrices import IntegerMatrices
+from sage.combinat.ncsf_qsym.ncsf import NonCommutativeSymmetricFunctions
+from sage.combinat.permutation import Permutations
 from sage.combinat.subset import SubsetsSorted
 from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra
-from sage.combinat.ncsf_qsym.ncsf import NonCommutativeSymmetricFunctions
+from sage.misc.bindable_class import BindableClass
+from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
+from sage.rings.integer_ring import ZZ
+from sage.rings.rational_field import QQ
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import UniqueRepresentation
 
 
 class DescentAlgebra(UniqueRepresentation, Parent):
@@ -134,9 +135,30 @@ class DescentAlgebra(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: TestSuite(DescentAlgebra(QQ, 4)).run()
+
+        TESTS::
+
+            sage: B = DescentAlgebra(QQ, 4).B()
+            sage: B.is_commutative()
+            False
+            sage: B = DescentAlgebra(QQ, 1).B()
+            sage: B.is_commutative()
+            True
+
+            sage: B = DescentAlgebra(QQ, 4).B()
+            sage: B.is_field()
+            False
+            sage: B = DescentAlgebra(QQ, 1).B()
+            sage: B.is_field()
+            True
         """
         self._n = n
-        self._category = FiniteDimensionalAlgebrasWithBasis(R)
+        cat = FiniteDimensionalAlgebrasWithBasis(R)
+        if R in CommutativeRings() and n <= 2:
+            cat = cat.Commutative()
+        if R in Fields() and n <= 1:
+            cat &= Fields()
+        self._category = cat
         Parent.__init__(self, base=R, category=self._category.WithRealizations())
 
     def _repr_(self):
@@ -838,7 +860,7 @@ class DescentAlgebraBases(Category_realization_of_parent):
         """
         Category_realization_of_parent.__init__(self, base)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return the representation of ``self``.
 
@@ -912,39 +934,6 @@ class DescentAlgebraBases(Category_realization_of_parent):
             if not isinstance(p, tuple):
                 p = [p]
             return self.monomial(C(p))
-
-        def is_field(self, proof=True):
-            """
-            Return whether this descent algebra is a field.
-
-            EXAMPLES::
-
-                sage: B = DescentAlgebra(QQ, 4).B()
-                sage: B.is_field()
-                False
-                sage: B = DescentAlgebra(QQ, 1).B()
-                sage: B.is_field()
-                True
-            """
-            if self.realization_of()._n <= 1:
-                return self.base_ring().is_field()
-            return False
-
-        def is_commutative(self) -> bool:
-            """
-            Return whether this descent algebra is commutative.
-
-            EXAMPLES::
-
-                sage: B = DescentAlgebra(QQ, 4).B()
-                sage: B.is_commutative()
-                False
-                sage: B = DescentAlgebra(QQ, 1).B()
-                sage: B.is_commutative()
-                True
-            """
-            return (self.base_ring() in CommutativeRings()
-                    and self.realization_of()._n <= 2)
 
         @lazy_attribute
         def to_symmetric_group_algebra(self):
