@@ -82,7 +82,7 @@ def _check_polynomials_P3(quadratic1, quadratic2, variables):
     OUTPUT:
 
     This function returns ``variables``, potentially guessed from the
-    polynomial ring. A ``ValueError`` is raised if the polynomial is
+    polynomial ring. A :class:`ValueError` is raised if the polynomial is
     not homogeneous.
 
     EXAMPLES::
