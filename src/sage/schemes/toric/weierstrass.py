@@ -177,7 +177,7 @@ def Discriminant(polynomial, variables=None):
         -1/16
     """
     f, g = WeierstrassForm(polynomial, variables)
-    return 4 * f**3 + 27 * g**2
+    return 4*f**3 + 27*g**2
 
 
 ######################################################################
@@ -221,7 +221,7 @@ def j_invariant(polynomial, variables=None):
         ValueError: curve is singular and has no well-defined j-invariant
     """
     f, g = WeierstrassForm(polynomial, variables)
-    disc = 4 * f**3 + 27 * g**2
+    disc = 4*f**3 + 27*g**2
     if disc != 0:
         return 1728 * 4 * f**3 / disc
     if f != 0:
@@ -286,7 +286,7 @@ def Newton_polytope_vars_coeffs(polynomial, variables):
         e = m.exponents()[0]
         v = tuple([e[i] for i in var_indices])
         m_red = m // prod(x**i for x, i in zip(variables, v))
-        result[v] = result.get(v, R.zero()) + c * m_red
+        result[v] = result.get(v, R.zero()) + c*m_red
     return result
 
 
@@ -552,8 +552,8 @@ def _check_homogeneity(polynomial, variables, weights, total_weight=None):
             total_weight = weight_e
         else:
             if weight_e != total_weight:
-                raise ValueError('the polynomial is not homogeneous with '
-                                 'weights ' + str(weights))
+                msg = f'the polynomial is not homogeneous with weights {weights}'
+                raise ValueError(msg)
 
 
 ######################################################################
@@ -599,11 +599,11 @@ def _extract_coefficients(polynomial, monomials, variables):
     coeffs = {}
     for c, m in polynomial:
         i = index(m)
-        coeffs[i] = c * m + coeffs.pop(i, R.zero())
+        coeffs[i] = c*m + coeffs.pop(i, R.zero())
     result = tuple(coeffs.pop(index(m), R.zero()) // m for m in monomials)
     if coeffs:
-        raise ValueError('the polynomial contains more monomials than '
-                         'given: ' + str(coeffs))
+        msg = f'the polynomial contains more monomials than given: {coeffs}'
+        raise ValueError(msg)
     return result
 
 
@@ -856,7 +856,7 @@ def _partial_discriminant(quadric, y0, y1=None):
         monomials = (y1**2, y0 * y1, y0**2)
         variables = [y0, y1]
     c = _extract_coefficients(quadric, monomials, variables)
-    return c[1]**2 - 4 * c[0] * c[2]
+    return c[1]**2 - 4*c[0]*c[2]
 
 
 ######################################################################
