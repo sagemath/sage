@@ -240,8 +240,8 @@ class SuffixTrie(SageObject):
 
     def __eq__(self, other) -> bool:
         r"""
-        If self and other have the same transition function, the same
-        suffix link, and the same word, then they are equal.
+        If ``self`` and ``other`` have the same transition function,
+        the same suffix link, and the same word, then they are equal.
 
         TESTS::
 
@@ -660,11 +660,13 @@ class ImplicitSuffixTree(SageObject):
 
     def _test_and_split(self, s, k_p, letter):
         r"""
-        Helper function for _process_letter. Test to see whether an edge
-        needs to be split.
+        Helper function for :meth:`_process_letter`. Test to see
+        whether an edge needs to be split.
 
-        This returns ``(True, state)``, where ``state`` is the
-        next state to process (either a newly created state or the original s).
+        OUTPUT:
+
+        ``(True, state)``, where ``state`` is the next state to
+        process (either a newly created state or the original ``s``).
 
         TESTS::
 
@@ -927,8 +929,8 @@ class ImplicitSuffixTree(SageObject):
 
     def __eq__(self, other) -> bool:
         r"""
-        If self and other have the same transition function and the
-        same word, then they are equal.
+        If ``self`` and ``other`` have the same transition function
+        and the same word, then they are equal.
 
         TESTS::
 
@@ -948,14 +950,15 @@ class ImplicitSuffixTree(SageObject):
         Return the node obtained by starting from ``node`` and following the
         edges labelled by the letters of ``word``.
 
-        This returns ``("explicit", end_node)`` if we end at
-        ``end_node``, or ``("implicit", edge, d)`` if we end `d` spots
-        along an edge.
+        OUTPUT:
+
+        ``("explicit", end_node)`` if we end at ``end_node``, or
+        ``("implicit", edge, d)`` if we end `d` spots along an edge.
 
         INPUT:
 
-        - ``word`` - a word
-        - ``node`` - (default: 0) starting node
+        - ``word`` -- a word
+        - ``node`` -- (default: 0) starting node
 
         EXAMPLES::
 
@@ -1085,7 +1088,7 @@ class ImplicitSuffixTree(SageObject):
 
     def to_explicit_suffix_tree(self):
         r"""
-        Convert self to an explicit suffix tree.
+        Convert ``self`` to an explicit suffix tree.
 
         It is obtained by processing an end of string letter as if it
         were a regular letter, except that no new leaf nodes are
@@ -1121,7 +1124,7 @@ class ImplicitSuffixTree(SageObject):
         r"""
         Return an iterator over the edges of the suffix tree.
 
-        The edge from `u` to `v` labelled by `(i,j)` is returned as
+        The edge from `u` to `v` labelled by `(i,j)` is yielded as
         the tuple `(u,v,(i,j))`.
 
         EXAMPLES::
@@ -1513,7 +1516,7 @@ class ImplicitSuffixTree(SageObject):
 
     def uncompactify(self):
         r"""
-        Return the tree obtained from self by splitting edges so that they
+        Return the tree obtained from ``self`` by splitting edges so that they
         are labelled by exactly one letter.
 
         The resulting tree is isomorphic to the suffix trie.
@@ -1800,16 +1803,16 @@ class DecoratedSuffixTree(ImplicitSuffixTree):
 
         def treat_node(current_node, i, j):
             r"""
-            Execute a depth-first search on self and start a suffix walk for
-            labeled points on each edges of T.
+            Execute a depth-first search on ``self`` and start a suffix walk
+            for labeled points on each edges of T.
 
             The function is recursive, call
-            treat_node(0,0,0) to initiate the search.
+            ``treat_node(0,0,0)`` to initiate the search.
 
             INPUT:
 
-            - ``current_node`` - The node to treat
-            - ``(i, j)`` - Pair of index such that the path from 0 to
+            - ``current_node`` -- The node to treat
+            - ``(i, j)`` -- Pair of index such that the path from 0 to
               ``current_node`` reads ``self.word()[i:j]``
             """
 
