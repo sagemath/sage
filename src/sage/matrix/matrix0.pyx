@@ -4551,8 +4551,8 @@ cdef class Matrix(sage.structure.element.Matrix):
         Return ``True`` if this matrix `M` is symplectic with respect to the
         invariant form `E`.
 
-        The matrix `M` is symplectic with respect to `E` if it satisfies `M^T E
-        M = E`. By default, the alternating form `E` is represented by the
+        The matrix `M` is symplectic with respect to `E` if it satisfies `M E
+        M^T = E`. By default, the alternating form `E` is represented by the
         block matrix `\begin{pmatrix} 0 & J_{n / 2} \\ -J_{n / 2} & 0
         \end{pmatrix}`, where `J_{n / 2}` is the `(n / 2) \times (n / 2)`
         antidiagonal matrix with all ones on the diagonal.
@@ -4577,10 +4577,10 @@ cdef class Matrix(sage.structure.element.Matrix):
         We can pass in an invariant form::
 
             sage: E = Matrix(ZZ, [[0, 0, 0, 1], [0, 0, 2, 1], [0, -2, 0, 0], [-1, -1, 0, 0]])
-            sage: M = Matrix(ZZ, [[1, 0, 0, 1], [0, 1, 0, 0], [0, 1, 1, 0], [0, 0, 0, 1]])
+            sage: M = Matrix(ZZ, [[1, 0, 0, 0], [0, 1, 1, 0], [0, 0, 1, 0], [1, 0, 0, 1]])
             sage: M.is_symplectic(invariant_form=E)
             True
-            sage: M.T * E * M == E
+            sage: M * E * M.T == E
             True
         """
         if self._ncols != self._nrows:

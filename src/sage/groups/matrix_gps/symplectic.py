@@ -66,7 +66,7 @@ def Sp(n, R, var='a', invariant_form=None):
 
     .. MATH::
 
-        M^T E M = E.
+        M E M^T = E.
 
     By default, the alternating form `E` is represented by the block matrix
     `\begin{pmatrix} 0 & J_{n / 2} \\ -J_{n / 2} & 0 \end{pmatrix}`, where `J_{n
@@ -109,12 +109,14 @@ def Sp(n, R, var='a', invariant_form=None):
 
         sage: G = Sp(6, 13)
         sage: E = G.invariant_form(); E
-        [ 0  0  0  1]
-        [ 0  0  1  0]
-        [ 0 12  0  0]
-        [12  0  0  0]
+        [ 0  0  0  0  0  1]
+        [ 0  0  0  0  1  0]
+        [ 0  0  0  1  0  0]
+        [ 0  0 12  0  0  0]
+        [ 0 12  0  0  0  0]
+        [12  0  0  0  0  0]
         sage: M = Matrix(G.random_element())
-        sage: M.T * E * M == E
+        sage: M * E * M.T == E
         True
 
     Using the ``invariant_form`` option::

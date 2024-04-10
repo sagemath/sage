@@ -149,6 +149,34 @@ class MatrixGroup_base(Group):
         if not x.is_invertible():
             raise TypeError('matrix is not invertible')
 
+    def __contains__(self, M):
+        """
+        Check whether this matrix group contains ``M``.
+
+        EXAMPLES::
+
+            sage: E = Matrix(ZZ, [[0, 0, 0, 1], [0, 0, 2, 1], [0, -2, 0, 0], [-1, -1, 0, 0]])
+            sage: M = Matrix(ZZ, [[1, 0, 0, 0], [0, 1, 1, 0], [0, 0, 1, 0], [1, 0, 0, 1]])
+            sage: G = Sp(4, ZZ, invariant_form=E)
+            sage: M in G
+            True
+            sage: G._check_matrix(M)
+
+        TESTS::
+
+            sage: for _ in range(50):
+            ....:     M = random_matrix(ZZ, 4, x=0, y=2)
+            ....:     assert (M * E * M.T == E) == (M in G)
+        """
+        # TODO: Why does _check_matrix throw an error... that's very slow
+        if M.parent() is self:
+            return True
+        try:
+            self._check_matrix(M)
+            return True
+        except TypeError:
+            return False
+
     def as_matrix_group(self):
         """
         Return a new matrix group from the generators.
