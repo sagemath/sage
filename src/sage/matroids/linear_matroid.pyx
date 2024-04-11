@@ -466,7 +466,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             'Linear matroid of rank 2 on 5 elements represented over the
             Finite Field of size 5'
         """
-        return f'Linear matroid of rank {self.rank()} on {self.size()} elements represented over the {repr(self.base_ring())}'
+        return f'Linear matroid of rank {self.rank()} on {self.size()} elements represented over the {self.base_ring()!r}'
 
     # representations
 
