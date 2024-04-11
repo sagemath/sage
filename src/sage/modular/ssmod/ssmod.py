@@ -837,7 +837,7 @@ class SupersingularModule(HeckeModule_free_module):
         Fp2 = self.__finite_field
         h = len(SS)
         R = self.base_ring()
-        T_L = MatrixSpace(R, h).zero()
+        T_L = MatrixSpace(R, h)(0)  # mutable
         S, X = Fp2['x'].objgen()
 
         for i in range(len(SS)):
