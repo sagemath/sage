@@ -34,9 +34,9 @@ class QmodnZ_Element(AdditiveGroupElement):
 
     INPUT:
 
-    - ``q`` -- a rational number.
+    - ``q`` -- a rational number
 
-    - ``parent`` -- the parent abelian group `\Q/n\Z`.
+    - ``parent`` -- the parent abelian group `\Q/n\Z`
 
     OUTPUT: the element `q` of abelian group `\Q/n\Z`, in standard form
 

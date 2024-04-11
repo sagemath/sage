@@ -117,7 +117,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
     def __init__(self, G, names, base_ring):
         """
-        The Python constructor
+        The Python constructor.
 
         EXAMPLES::
 
@@ -271,7 +271,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         """
         Return the generators for the group.
 
-        OUTPUT: a tuple of group elements generating the group
+        OUTPUT: tuple of group elements generating the group
 
         EXAMPLES::
 
@@ -299,7 +299,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         """
         The orders of the generators of the dual group.
 
-        OUTPUT: a tuple of integers
+        OUTPUT: tuple of integers
 
         EXAMPLES::
 
@@ -328,7 +328,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
     def __contains__(self, X):
         """
-        Implements "in".
+        Implement "in".
 
         EXAMPLES::
 
@@ -373,7 +373,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
     @cached_method
     def list(self):
         """
-        Return tuple of all elements of this group.
+        Return a tuple of all elements of this group.
 
         EXAMPLES::
 

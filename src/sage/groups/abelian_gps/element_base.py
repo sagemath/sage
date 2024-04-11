@@ -214,7 +214,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         """
         Return the order of this element.
 
-        OUTPUT: an integer or ``infinity``
+        OUTPUT: integer or ``infinity``
 
         EXAMPLES::
 
@@ -248,7 +248,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
 
     def _div_(left, right):
         """
-        Divide ``left`` and ``right``
+        Divide ``left`` and ``right``.
 
         TESTS::
 
@@ -266,7 +266,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
 
     def _mul_(left, right):
         """
-        Multiply ``left`` and ``right``
+        Multiply ``left`` and ``right``.
 
         TESTS::
 
@@ -284,7 +284,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
 
     def __pow__(self, n):
         """
-        Exponentiate ``self``
+        Exponentiate ``self``.
 
         TESTS::
 

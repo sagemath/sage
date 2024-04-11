@@ -157,7 +157,7 @@ class PermutationGroup_symalt(PermutationGroup_unique):
 
         INPUT:
 
-        - ``n`` -- an integer or list or tuple thereof
+        - ``n`` -- integer or list or tuple thereof
 
         Calls the constructor with a tuple representing the set.
 
@@ -1077,7 +1077,7 @@ class JankoGroup(PermutationGroup_unique):
 
         INPUT:
 
-        - ``n`` -- an integer among `\{1,2,3\}`.
+        - ``n`` -- integer among `\{1,2,3\}`.
 
         EXAMPLES::
 
@@ -1841,7 +1841,7 @@ class TransitiveGroup(PermutationGroup_unique):
             sage: G.category()
             Category of finite enumerated permutation groups
 
-        .. warning:: this follows GAP's naming convention of indexing
+        .. WARNING:: this follows GAP's naming convention of indexing
           the transitive groups starting from ``1``::
 
             sage: TransitiveGroup(5,0)
@@ -1849,7 +1849,7 @@ class TransitiveGroup(PermutationGroup_unique):
             ...
             ValueError: index n must be in {1,..,5}
 
-        .. warning:: only transitive groups of "small" degree are
+        .. WARNING:: only transitive groups of "small" degree are
           available in GAP's database::
 
             sage: TransitiveGroup(32,1)
@@ -1922,7 +1922,7 @@ def TransitiveGroups(d=None):
     """
     INPUT:
 
-    - ``d`` -- an integer (optional)
+    - ``d`` -- integer (optional)
 
     Return the set of all transitive groups of a given degree
     ``d`` up to isomorphisms. If ``d`` is not specified, it returns the set of all
@@ -1940,7 +1940,7 @@ def TransitiveGroups(d=None):
         sage: TransitiveGroups()
         Transitive Groups
 
-    .. warning:: in practice, the database currently only contains
+    .. WARNING:: in practice, the database currently only contains
       transitive groups up to degree 31::
 
         sage: TransitiveGroups(32).cardinality()
@@ -2229,7 +2229,7 @@ class PrimitiveGroup(PermutationGroup_unique):
         sage: G.category()
         Category of finite enumerated permutation groups
 
-    .. warning::
+    .. WARNING::
 
         this follows GAP's naming convention of indexing the primitive
         groups starting from ``1``::
@@ -2316,7 +2316,7 @@ def PrimitiveGroups(d=None):
 
     INPUT:
 
-    - ``d`` -- an integer (optional)
+    - ``d`` -- integer (optional)
 
     OUTPUT:
 
@@ -2398,7 +2398,7 @@ class PrimitiveGroupsAll(DisjointUnionEnumeratedSets):
         """
         Return a string representation.
 
-        OUTPUT: a string
+        OUTPUT: string
 
         TESTS::
 
@@ -2471,7 +2471,7 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
         """
         Return a string representation.
 
-        OUTPUT: a string
+        OUTPUT: string
 
         TESTS::
 
@@ -2514,7 +2514,7 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
             sage: PrimitiveGroups(5)[3]
             AGL(1, 5)
 
-        .. warning::
+        .. WARNING::
 
             this follows GAP's naming convention of indexing the
             primitive groups starting from ``1``::
@@ -2541,7 +2541,7 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
         r"""
         Return the cardinality of ``self``.
 
-        OUTPUT: an integer; the number of primitive groups of a given degree
+        OUTPUT: integer; the number of primitive groups of a given degree
         up to isomorphism
 
         EXAMPLES::

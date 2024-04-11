@@ -86,11 +86,11 @@ class ParentLibGAP(SageObject):
     INPUT:
 
     - ``libgap_parent`` -- the libgap element that is the parent in
-      GAP.
+      GAP
 
     - ``ambient`` -- A derived class of :class:`ParentLibGAP` or
-      ``None`` (default). The ambient class if ``libgap_parent`` has
-      been defined as a subgroup.
+      ``None`` (default); the ambient class if ``libgap_parent`` has
+      been defined as a subgroup
 
     EXAMPLES::
 
@@ -300,7 +300,7 @@ class ParentLibGAP(SageObject):
         """
         Return the number of generators of ``self``.
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -392,7 +392,7 @@ class ParentLibGAP(SageObject):
         """
         Return the `i`-th generator of ``self``.
 
-        .. warning::
+        .. WARNING::
 
             Indexing starts at `0` as usual in Sage/Python. Not as in
             GAP, where indexing starts at `1`.
@@ -400,7 +400,7 @@ class ParentLibGAP(SageObject):
         INPUT:
 
         - ``i`` -- integer between `0` (inclusive) and :meth:`ngens`
-          (exclusive). The index of the generator.
+          (exclusive); The index of the generator
 
         OUTPUT: the `i`-th generator of the group
 
@@ -453,7 +453,7 @@ class ParentLibGAP(SageObject):
 
 cdef class ElementLibGAP(MultiplicativeGroupElement):
     """
-    A class for LibGAP-based Sage group elements
+    A class for LibGAP-based Sage group elements.
 
     INPUT:
 
@@ -593,7 +593,7 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
 
     def _latex_(self):
         r"""
-        Return a LaTeX representation
+        Return a LaTeX representation.
 
         OUTPUT: a string; a valid LaTeX math command sequence
 
@@ -613,7 +613,7 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
 
     cpdef _mul_(left, right):
         """
-        Multiplication of group elements
+        Multiplication of group elements.
 
         TESTS::
 

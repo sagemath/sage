@@ -21,7 +21,7 @@ must be specified to disambiguate these two possibilities. The index
 of `SO(e,d,q)` in `GO(e,d,q)` is `2` if `q` is odd, but `SO(e,d,q) =
 GO(e,d,q)` if `q` is even.)
 
-.. warning::
+.. WARNING::
 
    GAP and Sage use different notations:
 
@@ -107,10 +107,10 @@ def normalize_args_e(degree, ring, e):
 
     INPUT:
 
-    - ``degree`` -- integer. The degree of the affine group, that is,
-      the dimension of the affine space the group is acting on.
+    - ``degree`` -- integer; the degree of the affine group, that is,
+      the dimension of the affine space the group is acting on
 
-    - ``ring`` -- a ring. The base ring of the affine space.
+    - ``ring`` -- a ring; the base ring of the affine space
 
     - ``e`` -- integer, one of `+1`, `0`, `-1`.  Only relevant for
       finite fields and if the degree is even. A parameter that

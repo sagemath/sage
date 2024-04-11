@@ -124,7 +124,7 @@ class FqfOrthogonalGroup(AbelianGroupAutomorphismGroup_subgroup):
 
     INPUT:
 
-    - ``T`` -- a non degenerate torsion quadratic module.
+    - ``T`` -- a non degenerate torsion quadratic module
 
     EXAMPLES::
 

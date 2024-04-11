@@ -85,13 +85,13 @@ class FinitelyGeneratedMatrixGroup_gap(MatrixGroup_gap):
 
         INPUT:
 
-        - ``algorithm`` -- ``None`` or ``'smaller'``. In the latter
+        - ``algorithm`` -- ``None`` or ``'smaller'``; in the latter
           case, try harder to find a permutation representation of
-          small degree.
+          small degree
         - ``seed`` -- ``None`` or an integer specifying the seed
-          to fix results depending on pseudo-random-numbers. Here
+          to fix results depending on pseudo-random-numbers; here
           it makes sense to be used with respect to the ``'smaller'``
-          option, since GAP produces random output in that context.
+          option, since GAP produces random output in that context
 
         OUTPUT:
 

@@ -211,10 +211,10 @@ def MatrixGroup(*gens, **kwds):
     INPUT:
 
     - ``*gens`` -- matrices, or a single list/tuple/iterable of
-      matrices, or a matrix group.
+      matrices, or a matrix group
 
-    - ``check`` -- boolean keyword argument (optional, default:
-      ``True``). Whether to check that each matrix is invertible.
+    - ``check`` -- boolean keyword argument (default: ``True``);
+      whether to check that each matrix is invertible
 
     EXAMPLES::
 
@@ -410,7 +410,7 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
 
     def gen(self, i):
         """
-        Return the `i`-th generator
+        Return the `i`-th generator.
 
         OUTPUT: the `i`-th generator of the group
 
@@ -430,9 +430,9 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
 
     def ngens(self):
         """
-        Return the number of generators
+        Return the number of generators.
 
-        OUTPUT: an integer; the number of generators
+        OUTPUT: integer; the number of generators
 
         EXAMPLES::
 

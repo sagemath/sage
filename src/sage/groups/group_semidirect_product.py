@@ -136,7 +136,8 @@ class GroupSemidirectProductElement(CartesianProduct.Element):
 
 class GroupSemidirectProduct(CartesianProduct):
     r"""
-    Return the semidirect product of the groups ``G`` and ``H`` using the homomorphism ``twist``.
+    Return the semidirect product of the groups ``G`` and ``H`` using the
+    homomorphism ``twist``.
 
     INPUT:
 

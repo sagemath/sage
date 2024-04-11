@@ -46,7 +46,8 @@ class GroupMorphism_libgap(Morphism):
     INPUT:
 
     - ``homset`` -- the parent
-    - ``gap_hom`` -- a :class:`sage.libs.gap.element.GapElement` consisting of a group homomorphism
+    - ``gap_hom`` -- a :class:`sage.libs.gap.element.GapElement` consisting of
+      a group homomorphism
     - ``check`` -- (default: ``True``) check if the ``gap_hom`` is a group
       homomorphism; this can be expensive
 
@@ -283,7 +284,7 @@ class GroupMorphism_libgap(Morphism):
 
     def __reduce__(self):
         r"""
-        Implements pickling.
+        Implement pickling.
 
         We have to work around the fact that GAP does not provide pickling.
 

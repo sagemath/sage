@@ -196,7 +196,7 @@ class GroupMixinLibGAP:
 
     def cardinality(self):
         """
-        Implements :meth:`EnumeratedSets.ParentMethods.cardinality`.
+        Implement :meth:`EnumeratedSets.ParentMethods.cardinality`.
 
         EXAMPLES::
 
@@ -329,8 +329,8 @@ class GroupMixinLibGAP:
 
         INPUT:
 
-        - ``values`` -- list/tuple/iterable of numbers. The values of the
-          class function on the conjugacy classes, in that order.
+        - ``values`` -- list/tuple/iterable of numbers; the values of the
+          class function on the conjugacy classes, in that order
 
         EXAMPLES::
 
@@ -647,7 +647,7 @@ class GroupMixinLibGAP:
         """
         Return the irreducible characters of the group.
 
-        OUTPUT: a tuple containing all irreducible characters
+        OUTPUT: tuple containing all irreducible characters
 
         EXAMPLES::
 
@@ -853,7 +853,7 @@ class GroupMixinLibGAP:
         """
         List all elements of this group.
 
-        OUTPUT: a tuple containing all group elements in a random but fixed
+        OUTPUT: tuple containing all group elements in a random but fixed
         order
 
         EXAMPLES::
@@ -926,7 +926,7 @@ class GroupMixinLibGAP:
 
         INPUT:
 
-        - ``H`` -- a group.
+        - ``H`` -- a group
 
         OUTPUT: boolean
 

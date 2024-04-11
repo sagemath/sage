@@ -27,7 +27,7 @@ def is_Group(x):
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
     OUTPUT: boolean
 
@@ -48,7 +48,7 @@ def is_Group(x):
 
 cdef class Group(Parent):
     """
-    Base class for all groups
+    Base class for all groups.
 
     TESTS::
 
@@ -76,7 +76,7 @@ cdef class Group(Parent):
     """
     def __init__(self, base=None, category=None):
         """
-        The Python constructor
+        The Python constructor.
 
         TESTS::
 

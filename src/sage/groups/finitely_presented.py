@@ -296,7 +296,7 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         the letter corresponding to the `i`-th generator of the group.
         Negative integers represent the inverses of generators.
 
-        OUTPUT: a tuple of integers
+        OUTPUT: tuple of integers
 
         EXAMPLES::
 
@@ -320,11 +320,11 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         INPUT:
 
         - ``*values`` -- a list/tuple/iterable of the same length as
-          the number of generators.
+          the number of generators
 
-        - ``check=True`` -- boolean keyword (default:
-          ``True``). Whether to verify that ``values`` satisfy the
-          relations in the finitely presented group.
+        - ``check=True`` -- boolean keyword (default: ``True``); whether to
+          verify that ``values`` satisfy the relations in the finitely
+          presented group
 
         OUTPUT: the product of ``values`` in the order and with exponents
         specified by ``self``
@@ -553,7 +553,7 @@ class RewritingSystem:
 
     def reduce(self, element):
         """
-        Applies the rules in the rewriting system to the element, to obtain
+        Apply the rules in the rewriting system to the element, to obtain
         a reduced form.
 
         If the rewriting system is confluent, this reduced form is unique
@@ -683,7 +683,7 @@ class RewritingSystem:
 
     def make_confluent(self):
         """
-        Applies Knuth-Bendix algorithm to try to transform the rewriting
+        Apply the Knuth-Bendix algorithm to try to transform the rewriting
         system into a confluent one.
 
         Note that this method does not return any object, just changes the
@@ -818,9 +818,9 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
     def _latex_(self):
         """
-        Return a LaTeX representation
+        Return a LaTeX representation.
 
-        OUTPUT: a string; a valid LaTeX math command sequence
+        OUTPUT: string; a valid LaTeX math command sequence
 
         TESTS::
 
@@ -887,8 +887,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         INPUT:
 
-        - ``limit`` -- integer (default: 4096000). The maximal number
-          of cosets before the computation is aborted.
+        - ``limit`` -- integer (default: 4096000); the maximal number
+          of cosets before the computation is aborted
 
         OUTPUT: integer or ``Infinity``; the number of elements in the group
 
@@ -937,8 +937,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         INPUT:
 
-        - ``limit`` -- integer (default: 4096000). The maximal number
-          of cosets before the computation is aborted.
+        - ``limit`` -- integer (default: 4096000); the maximal number
+          of cosets before the computation is aborted
 
         OUTPUT:
 
@@ -1536,7 +1536,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         INPUT:
 
-        - `H` -- Another group
+        - `H` -- another group
 
         EXAMPLES::
 
@@ -1654,8 +1654,9 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         OUTPUT:
 
         - ``A`` -- a matrix with coefficients in ``R``
-        - ``ideal`` -- an list of generators of an ideal ``I`` of ``R = A.base_ring()`` such that ``R/I`` is
-          the group algebra of the abelianization of ``self``
+        - ``ideal`` -- an list of generators of an ideal ``I`` of
+          ``R = A.base_ring()`` such that ``R/I`` is the group algebra of the
+          abelianization of ``self``
 
         EXAMPLES::
 
@@ -1720,10 +1721,11 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         r"""
         Return the characteristic varieties of the group ``self``.
 
-        There are several definitions of the characteristic varieties of a group `G`, see e.g. [CS1999a]_. Let `\Lambda` be the
-        group algebra of `G/G'` and `\mathbb{T}` its associated algebraic variety (a torus). Each
-        element `\xi\in\mathbb{T}` defines a local system of coefficients and the `k` th-characteristic
-        variety is
+        There are several definitions of the characteristic varieties of a
+        group `G`, see e.g. [CS1999a]_. Let `\Lambda` be the group algebra of
+        `G/G'` and `\mathbb{T}` its associated algebraic variety (a torus).
+        Each element `\xi\in\mathbb{T}` defines a local system of coefficients
+        and the `k` th-characteristic variety is
 
         .. MATH::
 

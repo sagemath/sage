@@ -77,7 +77,7 @@ def CyclicPresentation(n):
 
     INPUT:
 
-    - ``n`` -- The order of the cyclic presentation to be returned.
+    - ``n`` -- the order of the cyclic presentation to be returned
 
     OUTPUT: the cyclic group of order `n` as finite presentation
 
@@ -110,9 +110,9 @@ def FinitelyGeneratedAbelianPresentation(int_list):
 
     INPUT:
 
-    - ``int_list`` -- List of integers defining the group to be returned, the defining list
+    - ``int_list`` -- list of integers defining the group to be returned, the defining list
       is reduced to the invariants of the input list before generating the corresponding
-      group.
+      group
 
     OUTPUT:
 
@@ -298,7 +298,7 @@ def DihedralPresentation(n):
 
     INPUT:
 
-    - ``n`` -- The size of the set that `D_n` is acting on.
+    - ``n`` -- the size of the set that `D_n` is acting on
 
     OUTPUT: Dihedral group of order `2n`
 
@@ -335,7 +335,7 @@ def DiCyclicPresentation(n):
     INPUT:
 
     - ``n`` -- positive integer, 2 or greater, determining the order of
-      the group (`4n`).
+      the group (`4n`)
 
     OUTPUT: the dicyclic group of order `4n` is defined by the presentation
 
@@ -384,8 +384,8 @@ def SymmetricPresentation(n):
 
     INPUT:
 
-    - ``n`` -- The size of the underlying set of arbitrary symbols being acted
-      on by the Symmetric group of order `n!`.
+    - ``n`` -- the size of the underlying set of arbitrary symbols being acted
+      on by the Symmetric group of order `n!`
 
     OUTPUT:
 
@@ -461,8 +461,8 @@ def AlternatingPresentation(n):
 
     INPUT:
 
-    - ``n`` -- The size of the underlying set of arbitrary symbols being acted
-      on by the Alternating group of order `n!/2`.
+    - ``n`` -- the size of the underlying set of arbitrary symbols being acted
+      on by the Alternating group of order `n!/2`
 
     OUTPUT:
 

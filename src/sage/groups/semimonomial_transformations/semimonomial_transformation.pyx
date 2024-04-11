@@ -265,8 +265,8 @@ cdef class SemimonomialTransformation(MultiplicativeGroupElement):
 
     def __reduce__(self):
         """
-        Returns a function and its arguments needed to create this
-        semimonomial group element.  This is used in pickling.
+        Return a function and its arguments needed to create this
+        semimonomial group element. This is used in pickling.
 
         EXAMPLES::
 
@@ -279,7 +279,7 @@ cdef class SemimonomialTransformation(MultiplicativeGroupElement):
 
     def get_v(self):
         """
-        Returns the component corresponding to `{R^{\times}}^n` of ``self``.
+        Return the component corresponding to `{R^{\times}}^n` of ``self``.
 
         EXAMPLES::
 
@@ -291,7 +291,7 @@ cdef class SemimonomialTransformation(MultiplicativeGroupElement):
 
     def get_v_inverse(self):
         """
-        Returns the (elementwise) inverse of the component corresponding to
+        Return the (elementwise) inverse of the component corresponding to
         `{R^{\times}}^n` of ``self``.
 
         EXAMPLES::
@@ -304,7 +304,7 @@ cdef class SemimonomialTransformation(MultiplicativeGroupElement):
 
     def get_perm(self):
         """
-        Returns the component corresponding to `S_n` of ``self``.
+        Return the component corresponding to `S_n` of ``self``.
 
         EXAMPLES::
 
@@ -316,7 +316,7 @@ cdef class SemimonomialTransformation(MultiplicativeGroupElement):
 
     def get_autom(self):
         """
-        Returns the component corresponding to `Aut(R)` of ``self``.
+        Return the component corresponding to `Aut(R)` of ``self``.
 
         EXAMPLES::
 

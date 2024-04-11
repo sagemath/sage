@@ -140,7 +140,7 @@ class GroupExp(Functor):
 
         INPUT:
 
-        - A homomorphism `f` of commutative additive groups.
+        - A homomorphism `f` of commutative additive groups
 
         OUTPUT: the above homomorphism, but between the corresponding
         multiplicative groups
@@ -180,7 +180,7 @@ class GroupExpElement(ElementWrapper, MultiplicativeGroupElement):
 
     - ``self`` -- the exponentiated group element being created
     - ``parent`` -- the exponential group (parent of ``self``)
-    - ``x`` -- the commutative additive group element being wrapped to form ``self``.
+    - ``x`` -- the commutative additive group element being wrapped to form ``self``
 
     EXAMPLES::
 

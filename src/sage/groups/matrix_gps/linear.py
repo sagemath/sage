@@ -207,13 +207,13 @@ def SL(n, R, var='a'):
 
     INPUT:
 
-    - ``n`` -- a positive integer.
+    - ``n`` -- positive integer
 
-    - ``R`` -- ring or an integer. If an integer is specified, the
-      corresponding finite field is used.
+    - ``R`` -- ring or integer; if an integer is specified, the
+      corresponding finite field is used
 
     - ``var`` -- variable used to represent generator of the finite
-      field, if needed.
+      field, if needed
 
     EXAMPLES::
 

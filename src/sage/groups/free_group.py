@@ -80,7 +80,7 @@ def is_FreeGroup(x):
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
     OUTPUT: boolean
 
@@ -107,9 +107,9 @@ def _lexi_gen(zeroes=False):
 
     INPUT:
 
-    - ``zeroes`` -- Boolean defaulting as ``False``. If ``True``, the
+    - ``zeroes`` -- boolean (default: ``False``); if ``True``, the
       integers appended to the output string begin at zero at the
-      first iteration through the alphabet.
+      first iteration through the alphabet
 
     OUTPUT:
 
@@ -162,11 +162,11 @@ class FreeGroupElement(ElementLibGAP):
 
     INPUT:
 
-    - ``x`` -- something that determines the group element. Either a
+    - ``x`` -- something that determines the group element; either a
       :class:`~sage.libs.gap.element.GapElement` or the Tietze list
-      (see :meth:`Tietze`) of the group element.
+      (see :meth:`Tietze`) of the group element
 
-    - ``parent`` -- the parent :class:`FreeGroup`.
+    - ``parent`` -- the parent :class:`FreeGroup`
 
     EXAMPLES::
 
@@ -241,7 +241,7 @@ class FreeGroupElement(ElementLibGAP):
 
     def _latex_(self):
         r"""
-        Return a LaTeX representation
+        Return a LaTeX representation.
 
         OUTPUT: a string; a valid LaTeX math command sequence
 
@@ -301,7 +301,7 @@ class FreeGroupElement(ElementLibGAP):
         the letter corresponding to the `i`-th generator of the group.
         Negative integers represent the inverses of generators.
 
-        OUTPUT: a tuple of integers
+        OUTPUT: tuple of integers
 
         EXAMPLES::
 
@@ -519,7 +519,7 @@ class FreeGroupElement(ElementLibGAP):
 
         - ``*values`` -- a sequence of values, or a
           list/tuple/iterable of the same length as the number of
-          generators of the free group.
+          generators of the free group
 
         OUTPUT: the product of ``values`` in the order and with exponents
         specified by ``self``
@@ -597,11 +597,11 @@ def FreeGroup(n=None, names='x', index_set=None, abelian=False, **kwds):
 
     INPUT:
 
-    - ``n`` -- integer or ``None`` (default). The number of
-      generators. If not specified the ``names`` are counted.
+    - ``n`` -- integer (default: ``None``); the number of
+      generators (if not specified the ``names`` are counted)
 
     - ``names`` -- string or list/tuple/iterable of strings (default:
-      ``'x'``). The generator names or name prefix.
+      ``'x'``); the generator names or name prefix
 
     - ``index_set`` -- (optional) an index set for the generators; if
       specified then the optional keyword ``abelian`` can be used
@@ -690,7 +690,7 @@ def wrap_FreeGroup(libgap_free_group):
 
     INPUT:
 
-    - ``libgap_free_group`` -- a LibGAP free group.
+    - ``libgap_free_group`` -- a LibGAP free group
 
     OUTPUT: a Sage :class:`FreeGroup_class`
 
@@ -743,12 +743,12 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
 
         INPUT:
 
-        - ``generator_names`` -- a tuple of strings. The names of the
-          generators.
+        - ``generator_names`` -- a tuple of strings; the names of the
+          generators
 
-        - ``libgap_free_group`` -- a LibGAP free group or ``None``
-          (default). The LibGAP free group to wrap. If ``None``, a
-          suitable group will be constructed.
+        - ``libgap_free_group`` -- a LibGAP free group (default: ``None``);
+          the LibGAP free group to wrap (if ``None``, a suitable group will be
+          constructed)
 
         TESTS::
 
@@ -786,7 +786,7 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
 
         Alias for :meth:`ngens`.
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -907,10 +907,10 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
 
         INPUT:
 
-        - ``relations`` -- A list/tuple/iterable with the elements of
-          the free group.
+        - ``relations`` -- a list/tuple/iterable with the elements of
+          the free group
         - further named arguments, that are passed to the constructor
-          of a finitely presented group.
+          of a finitely presented group
 
         OUTPUT:
 

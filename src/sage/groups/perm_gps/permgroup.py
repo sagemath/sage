@@ -1481,7 +1481,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G.largest_moved_point()
             'e'
 
-        .. warning::
+        .. WARNING::
 
            The name of this function is not good; this function
            should be deprecated in term of degree::

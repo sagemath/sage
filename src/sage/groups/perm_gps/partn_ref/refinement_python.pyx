@@ -69,7 +69,7 @@ cdef class PythonPartitionStack:
 
     def __repr__(self):
         """
-        Returns a string representing the stack.
+        Return a string representing the stack.
 
         EXAMPLES::
 
@@ -82,7 +82,7 @@ cdef class PythonPartitionStack:
 
     def display(self):
         """
-        Prints a representation of the stack.
+        Print a representation of the stack.
 
         EXAMPLES::
 
@@ -99,7 +99,7 @@ cdef class PythonPartitionStack:
 
     def is_discrete(self):
         """
-        Returns whether the deepest partition consists only of singleton cells.
+        Return whether the deepest partition consists only of singleton cells.
 
         EXAMPLES::
 
@@ -116,7 +116,7 @@ cdef class PythonPartitionStack:
 
     def num_cells(self):
         """
-        Returns the number of cells in the deepest partition.
+        Return the number of cells in the deepest partition.
 
         EXAMPLES::
 
@@ -129,7 +129,7 @@ cdef class PythonPartitionStack:
 
     def move_min_to_front(self, int start, int end):
         """
-        Makes sure that the first element of the segment of entries i with
+        Make sure that the first element of the segment of entries i with
         start <= i <= end is minimal.
 
         EXAMPLES::
@@ -166,7 +166,7 @@ cdef class PythonPartitionStack:
 
     def clear(self):
         """
-        Sets the current partition to the first shallower one, i.e. forgets about
+        Set the current partition to the first shallower one, i.e. forget about
         boundaries between cells that are new to the current level.
 
         EXAMPLES::
@@ -188,7 +188,7 @@ cdef class PythonPartitionStack:
 
     def entries(self):
         """
-        Returns the entries array as a Python list of ints.
+        Return the entries array as a Python list of ints.
 
         EXAMPLES::
 
@@ -204,7 +204,7 @@ cdef class PythonPartitionStack:
 
     def set_entry(self, int i, int entry):
         """
-        Sets the ith entry of the entries array to entry.
+        Set the ith entry of the entries array to entry.
 
         EXAMPLES::
 
@@ -219,7 +219,7 @@ cdef class PythonPartitionStack:
 
     def get_entry(self, int i):
         """
-        Gets the ith entry of the entries array.
+        Get the ith entry of the entries array.
 
         EXAMPLES::
 
@@ -247,7 +247,7 @@ cdef class PythonPartitionStack:
 
     def set_level(self, int i, int level):
         """
-        Sets the ith entry of the levels array to entry.
+        Set the ith entry of the levels array to entry.
 
         EXAMPLES::
 
@@ -264,7 +264,7 @@ cdef class PythonPartitionStack:
 
     def get_level(self, int i):
         """
-        Gets the ith entry of the levels array.
+        Get the ith entry of the levels array.
 
         EXAMPLES::
 
@@ -277,7 +277,7 @@ cdef class PythonPartitionStack:
 
     def depth(self, new=None):
         """
-        Returns the depth of the deepest partition in the stack, setting it to
+        Return the depth of the deepest partition in the stack, setting it to
         new if new is not None.
 
         EXAMPLES::
@@ -293,7 +293,7 @@ cdef class PythonPartitionStack:
 
     def degree(self, new=None):
         """
-        Returns the degree of the partition stack, setting it to
+        Return the degree of the partition stack, setting it to
         new if new is not None.
 
         EXAMPLES::
@@ -404,13 +404,13 @@ def aut_gp_and_can_lab_python(S, partition, n,
     compare_structures,
     canonical_label, base, order):
     """
-    Calls the automorphism group and canonical label function.
+    Call the automorphism group and canonical label function.
 
     INPUT:
 
-        S -- the object to examine
-        partition -- an ordered partition, as a list of lists
-        n -- the degree of the automorphism group to be computed
+    - S -- the object to examine
+    - partition -- an ordered partition, as a list of lists
+    - n -- the degree of the automorphism group to be computed
 
     ::
 
@@ -493,11 +493,10 @@ def double_coset_python(S1, S2, partition1, ordering2, n,
 
     INPUT:
 
-        S1, S2 -- the objects to examine
-        partition1 -- an ordered partition, as a list of lists
-        ordering2 -- represents a partition of the points of S2,
-            as a relabeling of partition1
-        n -- the degree
+    - S1, S2 -- the objects to examine
+    - partition1 -- an ordered partition, as a list of lists
+    - ordering2 -- represents a partition of the points of S2, as a relabeling of partition1
+    - n -- the degree
 
     ::
 

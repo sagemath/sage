@@ -26,7 +26,7 @@ from sage.misc.superseded import deprecation
 
 cdef class Group(sage.structure.parent.Parent):
     """
-    Generic group class
+    Generic group class.
     """
     def __init__(self, category=None):
         """
@@ -165,8 +165,7 @@ cdef class Group(sage.structure.parent.Parent):
 
     def quotient(self, H, **kwds):
         """
-        Return the quotient of this group by the normal subgroup
-        `H`.
+        Return the quotient of this group by the normal subgroup `H`.
 
         EXAMPLES::
 

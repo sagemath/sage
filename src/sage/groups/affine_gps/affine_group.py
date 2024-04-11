@@ -186,11 +186,11 @@ class AffineGroup(UniqueRepresentation, Group):
 
         INPUT:
 
-        - ``degree`` -- integer. The degree of the affine group, that
+        - ``degree`` -- integer; The degree of the affine group, that
           is, the dimension of the affine space the group is acting on
-          naturally.
+          naturally
 
-        - ``ring`` -- a ring. The base ring of the affine space.
+        - ``ring`` -- a ring; the base ring of the affine space
 
         EXAMPLES::
 
@@ -308,7 +308,7 @@ class AffineGroup(UniqueRepresentation, Group):
         """
         Return the dimension of the affine space.
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -435,7 +435,7 @@ class AffineGroup(UniqueRepresentation, Group):
 
         INPUT:
 
-        - ``v`` -- a vector, or something that determines a vector.
+        - ``v`` -- a vector, or something that determines a vector
 
         OUTPUT:
 

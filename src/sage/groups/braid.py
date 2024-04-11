@@ -1523,7 +1523,7 @@ class Braid(FiniteTypeArtinGroupElement):
         r"""
         Return the left normal form of the braid, in permutation form.
 
-        OUTPUT: a tuple whose first element is the power of `\Delta`, and the
+        OUTPUT: tuple whose first element is the power of `\Delta`, and the
         rest are the permutations corresponding to the simple factors
 
         EXAMPLES::
@@ -1626,7 +1626,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
     def super_summit_set(self):
         """
-        Return a list with the super summit set of the braid
+        Return a list with the super summit set of the braid.
 
         EXAMPLES::
 
@@ -1864,7 +1864,7 @@ class Braid(FiniteTypeArtinGroupElement):
 
     def ultra_summit_set(self):
         """
-        Return a list with the orbits of the ultra summit set of ``self``
+        Return a list with the orbits of the ultra summit set of ``self``.
 
         EXAMPLES::
 
@@ -2411,7 +2411,7 @@ class RightQuantumWord:
 
         INPUT:
 
-        - ``N`` -- an integer; the number of colors
+        - ``N`` -- integer; the number of colors
 
         EXAMPLES::
 
@@ -2637,7 +2637,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         """
         Return the number of strands.
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -2837,10 +2837,10 @@ class BraidGroup_class(FiniteTypeArtinGroup):
 
         INPUT:
 
-        - ``braid`` -- tuple of integers. The Tietze list of the
-          braid.
+        - ``braid`` -- tuple of integers; the Tietze list of the
+          braid
 
-        - ``variab`` -- string. the names of the variables that will
+        - ``variab`` -- string. The names of the variables that will
           appear in the matrix. They must be given as a string,
           separated by a comma
 
@@ -3452,7 +3452,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
 
 def BraidGroup(n=None, names='s'):
     """
-    Construct a Braid Group
+    Construct a Braid Group.
 
     INPUT:
 
@@ -3596,9 +3596,9 @@ class MappingClassGroupAction(Action):
 
         INPUT:
 
-        - ``b`` -- a braid.
+        - ``b`` -- a braid
 
-        - ``x`` -- a free group element.
+        - ``x`` -- a free group element
 
         OUTPUT: a new braid
 

@@ -50,10 +50,10 @@ def ClassFunction(group, values):
 
     INPUT:
 
-    - ``group`` -- a group.
+    - ``group`` -- a group
 
-    - ``values`` -- list/tuple/iterable of numbers. The values of the
-      class function on the conjugacy classes, in that order.
+    - ``values`` -- list/tuple/iterable of numbers; the values of the
+      class function on the conjugacy classes, in that order
 
     EXAMPLES::
 
@@ -167,10 +167,6 @@ class ClassFunction_gap(SageObject):
     def __repr__(self):
         r"""
         Return a string representation.
-
-        OUTPUT:
-
-        A string.
 
         EXAMPLES::
 
@@ -326,7 +322,7 @@ class ClassFunction_gap(SageObject):
         INPUT:
 
         - ``other`` -- a :class:`ClassFunction` of the same group as
-          ``self``.
+          ``self``
 
         OUTPUT: a :class:`ClassFunction`
 
@@ -353,9 +349,9 @@ class ClassFunction_gap(SageObject):
         INPUT:
 
         - ``other`` -- either a number or a :class:`ClassFunction` of
-          the same group as ``self``. A number can be anything that
+          the same group as ``self``; A number can be anything that
           can be converted into GAP: integers, rational, and elements
-          of certain number fields.
+          of certain number fields
 
         OUTPUT: a :class:`ClassFunction`
 
@@ -468,12 +464,9 @@ class ClassFunction_gap(SageObject):
 
         INPUT:
 
-        - ``n`` -- a positive integer.
+        - ``n`` -- positive integer
 
-        OUTPUT:
-
-        The ``n``-th symmetrized power of ``self`` as a
-        :class:`ClassFunction`.
+        OUTPUT: the ``n``-th symmetrized power of ``self`` as a :class:`ClassFunction`
 
         EXAMPLES::
 
@@ -495,10 +488,9 @@ class ClassFunction_gap(SageObject):
 
         INPUT:
 
-        - ``n`` -- a positive integer.
+        - ``n`` -- positive integer.
 
-        OUTPUT: the ``n``-th antisymmetrized power of ``self`` as a
-        :class:`ClassFunction`
+        OUTPUT: the ``n``-th antisymmetrized power of ``self`` as a :class:`ClassFunction`
 
         EXAMPLES::
 
@@ -690,11 +682,9 @@ class ClassFunction_gap(SageObject):
 
         INPUT:
 
-        - ``H`` -- a subgroup of the underlying group of ``self``.
+        - ``H`` -- a subgroup of the underlying group of ``self``
 
-        OUTPUT:
-
-        A :class:`ClassFunction` of ``H`` defined by restriction.
+        OUTPUT: a :class:`ClassFunction` of ``H`` defined by restriction
 
         EXAMPLES::
 
@@ -717,7 +707,7 @@ class ClassFunction_gap(SageObject):
 
         INPUT:
 
-        - ``G`` -- A supergroup of the underlying group of ``self``.
+        - ``G`` -- a supergroup of the underlying group of ``self``
 
         OUTPUT:
 
@@ -851,10 +841,6 @@ class ClassFunction_libgap(SageObject):
         r"""
         Return a string representation.
 
-        OUTPUT:
-
-        A string.
-
         EXAMPLES::
 
             sage: G = SymmetricGroup(4)
@@ -941,9 +927,7 @@ class ClassFunction_libgap(SageObject):
         r"""
         Return the domain of ``self``.
 
-        OUTPUT:
-
-        The underlying group of the class function.
+        OUTPUT: the underlying group of the class function
 
         EXAMPLES::
 
@@ -990,8 +974,7 @@ class ClassFunction_libgap(SageObject):
 
         INPUT:
 
-        - ``other`` -- a :class:`ClassFunction` of the same group as
-          ``self``.
+        - ``other`` -- a :class:`ClassFunction` of the same group as ``self``
 
         OUTPUT: a :class:`ClassFunction`
 
@@ -1015,8 +998,7 @@ class ClassFunction_libgap(SageObject):
 
         INPUT:
 
-        - ``other`` -- a :class:`ClassFunction` of the same group as
-          ``self``.
+        - ``other`` -- a :class:`ClassFunction` of the same group as ``self``
 
         OUTPUT: a :class:`ClassFunction`
 
@@ -1158,10 +1140,9 @@ class ClassFunction_libgap(SageObject):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
-        OUTPUT: the ``n``-th symmetrized power of ``self`` as a
-        :class:`ClassFunction`
+        OUTPUT: the ``n``-th symmetrized power of ``self`` as a :class:`ClassFunction`
 
         EXAMPLES::
 
@@ -1182,10 +1163,9 @@ class ClassFunction_libgap(SageObject):
 
         INPUT:
 
-        - ``n`` -- a positive integer
+        - ``n`` -- positive integer
 
-        OUTPUT: the ``n``-th antisymmetrized power of ``self`` as a
-        :class:`ClassFunction`
+        OUTPUT: the ``n``-th antisymmetrized power of ``self`` as a :class:`ClassFunction`
 
         EXAMPLES::
 
@@ -1381,7 +1361,7 @@ class ClassFunction_libgap(SageObject):
 
         INPUT:
 
-        - ``H`` -- a subgroup of the underlying group of ``self``.
+        - ``H`` -- a subgroup of the underlying group of ``self``
 
         OUTPUT: a :class:`ClassFunction` of ``H`` defined by restriction
 
@@ -1411,7 +1391,7 @@ class ClassFunction_libgap(SageObject):
 
         INPUT:
 
-        - ``G`` -- A supergroup of the underlying group of ``self``.
+        - ``G`` -- a supergroup of the underlying group of ``self``
 
         OUTPUT:
 

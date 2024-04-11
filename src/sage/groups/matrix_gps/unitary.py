@@ -68,7 +68,7 @@ def finite_field_sqrt(ring):
     """
     Helper function.
 
-    OUTPUT: an integer `q` such that ``ring`` is the finite field with `q^2` elements
+    OUTPUT: integer `q` such that ``ring`` is the finite field with `q^2` elements
 
     EXAMPLES::
 

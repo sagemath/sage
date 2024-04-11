@@ -130,9 +130,8 @@ cdef class MatrixStruct:
 
         INPUT:
 
-        partition -- an optional list of lists partition of the columns.
-
-        Default is the unit partition.
+        - partition -- an optional list of lists partition of the columns;
+          default is the unit partition.
 
         EXAMPLES::
 
@@ -174,7 +173,7 @@ cdef class MatrixStruct:
 
     def automorphism_group(self):
         """
-        Returns a list of generators of the automorphism group, along with its
+        Return a list of generators of the automorphism group, along with its
         order and a base for which the list of generators is a strong generating
         set.
 
@@ -203,7 +202,7 @@ cdef class MatrixStruct:
 
     def canonical_relabeling(self):
         """
-        Returns a canonical relabeling (in list permutation format).
+        Return a canonical relabeling (in list permutation format).
 
         For more examples, see self.run().
 
@@ -299,7 +298,7 @@ cdef bint all_matrix_children_are_equivalent(PartitionStack *PS, void *S) noexce
 
 def random_tests(n=10, nrows_max=50, ncols_max=50, nsymbols_max=10, perms_per_matrix=5, density_range=(.1,.9)):
     """
-    Tests to make sure that C(gamma(M)) == C(M) for random permutations gamma
+    Test to make sure that C(gamma(M)) == C(M) for random permutations gamma
     and random matrices M, and that M.is_isomorphic(gamma(M)) returns an
     isomorphism.
 

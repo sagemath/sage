@@ -1,5 +1,5 @@
 r"""
-Automorphism groups and canonical labels.
+Automorphism groups and canonical labels
 
 For details see section 3 of [Feu2013]_.
 
@@ -454,7 +454,7 @@ cdef class LabelledBranching:
 
 cdef class PartitionRefinement_generic:
     r"""
-    Implements the partition and refinement framework for
+    Implement the partition and refinement framework for
     group actions `G \rtimes S_n` on `X^n` as described in
     :mod:`sage.groups.perm_gps.partn_ref2.refinement_generic`.
     """
@@ -592,7 +592,7 @@ cdef class PartitionRefinement_generic:
 
     def get_autom_order_permutation(self):
         r"""
-        Return the order of the automorphism group we have computes
+        Return the order of the automorphism group we have computed.
 
         EXAMPLES::
 
@@ -869,7 +869,7 @@ cdef class PartitionRefinement_generic:
     cdef void _latex_act_node(self, str comment="", int printlvl=0) noexcept:
         r"""
         Append the actual node as a string of latex-commands to
-        ``self._latex_debug_string``
+        ``self._latex_debug_string``.
         """
         raise NotImplementedError  # must be implemented by derived classes
 

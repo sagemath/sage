@@ -188,7 +188,7 @@ class NamedMatrixGroup_generic(CachedRepresentation, MatrixGroup_generic):
     def __init__(self, degree, base_ring, special, sage_name, latex_string,
                  category=None, invariant_form=None):
         """
-        Base class for "named" matrix groups
+        Base class for "named" matrix groups.
 
         INPUT:
 
@@ -260,7 +260,7 @@ class NamedMatrixGroup_generic(CachedRepresentation, MatrixGroup_generic):
         """
         Return a LaTeX representation.
 
-        OUTPUT: a string
+        OUTPUT: string
 
         EXAMPLES::
 

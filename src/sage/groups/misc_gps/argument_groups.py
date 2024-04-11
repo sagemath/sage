@@ -281,7 +281,7 @@ class AbstractArgument(MultiplicativeGroupElement):
 
     def __abs__(self):
         r"""
-        Return the absolute value of this argument which equals `1`
+        Return the absolute value of this argument which equals `1`.
 
         TESTS::
 
@@ -782,7 +782,7 @@ class UnitCircleGroup(AbstractArgumentGroup):
 
         INPUT:
 
-        - ``exponent`` -- the element data.
+        - ``exponent`` -- the element data
 
         OUTPUT: an element
 
@@ -812,7 +812,7 @@ class UnitCircleGroup(AbstractArgumentGroup):
 
         INPUT:
 
-        - ``R`` -- a parent.
+        - ``R`` -- a parent
 
         OUTPUT: boolean
 
@@ -1321,7 +1321,7 @@ class ArgumentByElementGroup(AbstractArgumentGroup):
 
         INPUT:
 
-        - ``element`` -- the element data.
+        - ``element`` -- the element data
 
         OUTPUT: an element
 
@@ -1353,7 +1353,7 @@ class ArgumentByElementGroup(AbstractArgumentGroup):
 
         INPUT:
 
-        - ``R`` -- a parent.
+        - ``R`` -- a parent
 
         OUTPUT: boolean
 

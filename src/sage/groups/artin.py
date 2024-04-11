@@ -77,7 +77,7 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
         """
         Return the exponent sum of ``self``.
 
-        OUTPUT: an integer
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -258,7 +258,7 @@ class FiniteTypeArtinGroupElement(ArtinGroupElement):
         Return the left normal form of the element, in the `\Delta`
         exponent and Coxeter group element form.
 
-        OUTPUT: a tuple whose first element is the power of `\Delta`, and the
+        OUTPUT: tuple whose first element is the power of `\Delta`, and the
         rest are the Coxeter elements corresponding to the simple factors
 
         EXAMPLES::
@@ -596,7 +596,7 @@ class ArtinGroup(FinitelyPresentedGroup):
         """
         Return the index set of ``self``.
 
-        OUTPUT: a tuple
+        OUTPUT: tuple
 
         EXAMPLES::
 
@@ -654,7 +654,7 @@ class ArtinGroup(FinitelyPresentedGroup):
 
         INPUT:
 
-        - ``w`` -- an element of the Coxeter group of ``self``.
+        - ``w`` -- an element of the Coxeter group of ``self``
 
         EXAMPLES::
 
@@ -672,7 +672,7 @@ class ArtinGroup(FinitelyPresentedGroup):
 
         INPUT:
 
-        - ``w`` -- an element of the Coxeter group of ``self``.
+        - ``w`` -- an element of the Coxeter group of ``self``
 
         EXAMPLES::
 
