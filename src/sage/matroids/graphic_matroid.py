@@ -2013,7 +2013,7 @@ class GraphicMatroid(Matroid):
         INPUT:
 
         - ``mapping`` -- a python object such that ``mapping[e]`` is the new
-          label of `e`
+          label of ``e``
 
         OUTPUT: a matroid
 
