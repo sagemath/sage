@@ -1321,7 +1321,7 @@ cdef class LaurentPolynomial_univariate(LaurentPolynomial):
     @coerce_binop
     def xgcd(self, other):
         r"""
-        Extended `gcd` for univariate Laurent polynomial rings over a field.
+        Extended :meth:`gcd` for univariate Laurent polynomial rings over a field.
 
         OUTPUT:
 
