@@ -112,6 +112,8 @@ def U25():
         sage: U25 = matroids.catalog.U25(); U25
         U(2, 5): Matroid of rank 2 on 5 elements with circuit-closures
         {2: {{0, 1, 2, 3, 4}}}
+        sage: U25.is_graphic() or U25.is_regular()
+        False
         sage: U35 = matroids.catalog.U35()
         sage: U25.is_isomorphic(U35.dual())
         True
@@ -135,6 +137,8 @@ def U35():
         sage: U35 = matroids.catalog.U35(); U35
         U(3, 5): Matroid of rank 3 on 5 elements with circuit-closures
         {3: {{0, 1, 2, 3, 4}}}
+        sage: U35.is_graphic() or U35.is_regular()
+        False
         sage: U25 = matroids.catalog.U25()
         sage: U35.is_isomorphic(U25.dual())
         True
@@ -155,6 +159,8 @@ def K4():
 
         sage: M = matroids.catalog.K4(); M
         M(K4): Graphic matroid of rank 3 on 6 elements
+        sage: M.is_graphic()
+        True
 
     `M(K_4)` is isomorphic to `M(\mathcal{W}_3)`, the rank-`3` wheel::
 

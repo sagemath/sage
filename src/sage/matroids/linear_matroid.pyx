@@ -6367,6 +6367,20 @@ cdef class RegularMatroid(LinearMatroid):
 
     # representation
 
+    def is_regular(self):
+        r"""
+        Return if ``self`` is regular.
+
+        This is trivially ``True`` for a class:`RegularMatroid`.
+
+        EXAMPLES::
+
+            sage: M = matroids.catalog.R10()
+            sage: M.is_regular()
+            True
+        """
+        return True
+
     cpdef binary_matroid(self, randomized_tests=1, verify = True):
         r"""
         Return a binary matroid representing ``self``.
