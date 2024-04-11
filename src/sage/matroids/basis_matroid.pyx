@@ -560,7 +560,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         """
         d = self._relabel_map(mapping)
         E = [d[x] for x in self.groundset()]
-        B = [[d[y] for y in list(x)] for x in self.bases()]
+        B = [[d[y] for y in x] for x in self.bases()]
         M = BasisMatroid(groundset=E, bases=B)
         return M
 

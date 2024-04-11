@@ -342,7 +342,7 @@ cdef class FlatsMatroid(Matroid):
         F = {}
         for i in self._F:
             F[i] = []
-            F[i] += [[d[y] for y in list(x)] for x in self._F[i]]
+            F[i] += [[d[y] for y in x] for x in self._F[i]]
         M = FlatsMatroid(groundset=E, flats=F)
         return M
 

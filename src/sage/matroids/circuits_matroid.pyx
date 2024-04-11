@@ -454,7 +454,7 @@ cdef class CircuitsMatroid(Matroid):
         E = [d[x] for x in self._groundset]
         C = []
         for i in self._k_C:
-            C += [[d[y] for y in list(x)] for x in self._k_C[i]]
+            C += [[d[y] for y in x] for x in self._k_C[i]]
         M = CircuitsMatroid(groundset=E, circuits=C)
         return M
 

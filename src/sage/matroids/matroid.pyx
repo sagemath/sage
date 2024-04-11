@@ -8391,15 +8391,16 @@ cdef class Matroid(SageObject):
         matroids.insert(0, self)
         return union_matroid.MatroidSum(iter(matroids))
 
-    cpdef _relabel_map(self, f):
+    cpdef _relabel_map(self, mapping):
         """
         Return a dictionary from the groundset to the relabeled groundset
-        and check that the mapping defined by ``f`` is valid.
+        and check that the mapping defined by ``mapping`` is valid.
 
         INPUT:
 
-        - ``f`` -- a python object such that ``f[e]`` is the new label of `e`; if
-          ``e not in f`` then the identity map is assumed
+        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
+          label of ``e``; if ``mapping[e]`` is not defined then the identity
+          map is assumed
 
         EXAMPLES::
 
@@ -8415,8 +8416,8 @@ cdef class Matroid(SageObject):
         d = {}
         for x in self.groundset():
             try:
-                E.add(f[x])
-                d[x] = f[x]
+                E.add(mapping[x])
+                d[x] = mapping[x]
             except LookupError:
                 E.add(x)
                 d[x] = x
