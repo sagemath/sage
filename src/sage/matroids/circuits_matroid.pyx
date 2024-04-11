@@ -269,9 +269,9 @@ cdef class CircuitsMatroid(Matroid):
             NonDesargues: Matroid of rank 3 on 10 elements with 9 nonspanning circuits
         """
         if self._nsc_defined:
-            return Matroid._repr_(self) + " with " + str(len(self.nonspanning_circuits())) + " nonspanning circuits"
+            return f'{Matroid._repr_(self)} with {len(self.nonspanning_circuits())} nonspanning circuits'
         else:
-            return Matroid._repr_(self) + " with " + str(len(self._C)) + " circuits"
+            return f'{Matroid._repr_(self)} with {len(self._C)} circuits'
 
     # comparison
 

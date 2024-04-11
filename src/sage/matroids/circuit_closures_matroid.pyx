@@ -609,7 +609,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         E = [d[x] for x in self.groundset()]
         CC = {}
         for i in self.circuit_closures():
-            CC[i] = [[d[y] for y in x] for x in list(self._circuit_closures[i])]
+            CC[i] = [[d[y] for y in x] for x in self._circuit_closures[i]]
         M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
         return M
 

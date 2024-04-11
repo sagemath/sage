@@ -205,7 +205,7 @@ cdef class FlatsMatroid(Matroid):
             Matroid of rank 6 on 6 elements with 64 flats
         """
         flats_num = sum(1 for i in self._F for F in self._F[i])
-        return Matroid._repr_(self) + " with " + str(flats_num) + " flats"
+        return f'{Matroid._repr_(self)} with {flats_num} flats'
 
     # comparison
 

@@ -1362,7 +1362,7 @@ def R9(groundset=None):
         R9: Matroid of rank 3 on 9 elements with 15 nonspanning circuits
         sage: M.is_valid()
         True
-        sage: len(list(M.nonspanning_circuits()))
+        sage: len(M.nonspanning_circuits())
         15
         sage: M.is_simple() and M.is_ternary()
         True
@@ -1834,7 +1834,7 @@ def Wheel(r, field=None, ring=None, groundset=None):
         M = RegularMatroid(A)
     else:
         M = Matroid(A)
-    M = _rename_and_relabel(M, "Wheel(" + str(r) + ")", groundset)
+    M = _rename_and_relabel(M, f'Wheel({r})', groundset)
     return M
 
 
@@ -1903,7 +1903,7 @@ def Whirl(r, groundset=None):
         else:
             A[i, 2 * r - 1] = 1
     M = TernaryMatroid(A)
-    M = _rename_and_relabel(M, "Whirl(" + str(r) + ")", groundset)
+    M = _rename_and_relabel(M, f'Whirl({r})', groundset)
     return M
 
 
@@ -1955,7 +1955,7 @@ def Uniform(r, n, groundset=None):
     else:
         CC = {}
     M = Matroid(groundset=E, circuit_closures=CC)
-    M = _rename_and_relabel(M, "U(" + str(r) + ", " + str(n) + ")", groundset)
+    M = _rename_and_relabel(M, f'U({r}, {n})', groundset)
     return M
 
 
@@ -1998,7 +1998,7 @@ def PG(n, q, x=None, groundset=None):
     P = ProjectiveSpace(n, F)
     A = Matrix(F, [list(p) for p in list(P)]).transpose()
     M = Matroid(A)
-    M = _rename_and_relabel(M, "PG(" + str(n) + ", " + str(q) + ")", groundset)
+    M = _rename_and_relabel(M, f'PG({n}, {q})', groundset)
     return M
 
 
@@ -2045,7 +2045,7 @@ def AG(n, q, x=None, groundset=None):
         F, [list(p) for p in list(P) if not list(p)[0] == 0]
     ).transpose()
     M = Matroid(A)
-    M = _rename_and_relabel(M, "AG(" + str(n) + ", " + str(q) + ")", groundset)
+    M = _rename_and_relabel(M, f'AG({n}, {q})', groundset)
     return M
 
 
@@ -2129,15 +2129,15 @@ def Z(r, t=True, groundset=None):
     A = Id.augment(J-Id).augment(tip)
 
     M = Matroid(A)
-    X = ['x'+str(i) for i in range(1, r+1)]
-    Y = ['y'+str(i) for i in range(1, r+1)]
+    X = [f'x{i}' for i in range(1, r + 1)]
+    Y = [f'y{i}' for i in range(1, r + 1)]
     if t:
-        M = M.relabel(X+Y+['t'])
-        M.rename("Z_" + str(r) + ": " + repr(M))
+        M = M.relabel(X + Y + ['t'])
+        M.rename(f'Z_{r}: ' + repr(M))
     else:
-        M = M.delete(2*r)
-        M = M.relabel(X+Y)
-        M.rename("Z_" + str(r) + "\\t: " + repr(M))
+        M = M.delete(2 * r)
+        M = M.relabel(X + Y)
+        M.rename(f'Z_{r}\\t: ' + repr(M))
     M = _rename_and_relabel(M, groundset=groundset)
     return M
 
@@ -2176,7 +2176,7 @@ def Spike(r, t=True, C3=[], groundset=None):
          nonspanning circuits
         sage: M.is_isomorphic(matroids.Uniform(3, 6))
         True
-        sage: len(list(matroids.Spike(8).bases()))
+        sage: len(matroids.Spike(8).bases())
         4864
         sage: import random
         sage: r = random.choice(range(3, 20))
@@ -2228,16 +2228,16 @@ def Spike(r, t=True, C3=[], groundset=None):
     E = ['t']
     X, Y = [], []
     for i in range(1, r + 1):
-        X.append('x' + str(i))
-        Y.append('y' + str(i))
+        X.append(f'x{i}')
+        Y.append(f'y{i}')
     E += X
     E += Y
 
     if C3 == [] and r > 3:
         # free spike (can be defined fast through circuit closures)
-        lines = [['t', 'x'+str(i), 'y'+str(i)] for i in range(1, r+1)]
-        planes = [['t', 'x'+str(i), 'y'+str(i), 'x'+str(j), 'y'+str(j)]
-                  for i in range(1, r+1) for j in range(i+1, r+1)]
+        lines = [['t', f'x{i}', f'y{i}'] for i in range(1, r + 1)]
+        planes = [['t', f'x{i}', f'y{i}', f'x{j}', f'y{j}']
+                  for i in range(1, r + 1) for j in range(i + 1, r + 1)]
         CC = {2: lines, 3: planes, r: [E]}
         M = Matroid(circuit_closures=CC)
     else:
@@ -2256,17 +2256,17 @@ def Spike(r, t=True, C3=[], groundset=None):
 
         NSC = []  # nonspanning_circuits
         NSC += C3
-        for i in range(1, r+1):
-            NSC += [['t', 'x'+str(i), 'y'+str(i)]]
-            for j in range(i+1, r+1):
-                NSC += [['x'+str(i), 'y'+str(i), 'x'+str(j), 'y'+str(j)]]
+        for i in range(1, r + 1):
+            NSC += [['t', f'x{i}', f'y{i}']]
+            for j in range(i + 1, r + 1):
+                NSC += [[f'x{i}', f'y{i}', f'x{j}', f'y{j}']]
 
         M = Matroid(rank=r, nonspanning_circuits=NSC)
 
     free = "Free " if C3 == [] else ""
     tip = "" if t else "\\t"
     M = M if t else M.delete('t')
-    M = _rename_and_relabel(M, free + str(r) + "-spike" + tip, groundset)
+    M = _rename_and_relabel(M, f'{free}{r}-spike{tip}', groundset)
     return M
 
 
@@ -2325,26 +2325,25 @@ def Theta(n, groundset=None):
 
     [Oxl2011]_, p. 663-4.
     """
-    X = ['x'+str(i) for i in range(n)]
-    Y = ['y'+str(i) for i in range(n)]
-    E = X + Y
+    X = [f'x{i}' for i in range(n)]
+    Y = [f'y{i}' for i in range(n)]
 
     import itertools
     C = []
     C += list(itertools.combinations(X, 3))
     for i in range(n):
         Yi = [Y[j] for j in range(len(Y)) if j != i]
-        C += [Yi + ['x'+str(i)]]
+        C += [Yi + [f'x{i}']]
 
     for u in range(n):
         for s in range(n):
-            for t in range(s+1, n):
+            for t in range(s + 1, n):
                 if u != s and u != t and s != t:
                     Yu = [Y[i] for i in range(len(Y)) if i != u]
-                    C += [Yu + ['x'+str(s)] + ['x'+str(t)]]
+                    C += [Yu + [f'x{s}'] + [f'x{t}']]
 
     M = Matroid(circuits=C)
-    M = _rename_and_relabel(M, "Theta_" + str(n), groundset)
+    M = _rename_and_relabel(M, f'Theta_{n}', groundset)
     return M
 
 
@@ -2395,8 +2394,8 @@ def Psi(r, groundset=None):
 
     [Oxl2011]_, p. 664.
     """
-    A = ['a'+str(i) for i in range(0, r)]
-    B = ['b'+str(i) for i in range(0, r)]
+    A = [f'a{i}' for i in range(0, r)]
+    B = [f'b{i}' for i in range(0, r)]
     E = A + B
 
     def generate_binary_strings(bit_count):
@@ -2414,20 +2413,20 @@ def Psi(r, groundset=None):
 
     NSC = []  # nonspanning circuits
     for i in range(0, r):
-        for k in range(1, r-2):
-            I0 = ['a'+str(i), 'b'+str(i)]
-            IK = ['a'+str((i+k) % r), 'b'+str((i+k) % r)]
-            for AB in generate_binary_strings(k-1):
+        for k in range(1, r - 2):
+            I0 = [f'a{i}', f'b{i}']
+            IK = [f'a{(i+k) % r}', f'b{(i+k) % r}']
+            for AB in generate_binary_strings(k - 1):
                 C = []
                 C += I0 + IK
                 j = 1
                 for z in AB:
-                    C += [z+str((i+j) % r)]
+                    C += [f'{z}{(i+j) % r}']
                     j += 1
                 NSC += [C]
 
     M = Matroid(groundset=E, rank=r, nonspanning_circuits=NSC)
-    M = _rename_and_relabel(M, "Psi_" + str(r), groundset)
+    M = _rename_and_relabel(M, f'Psi_{r}', groundset)
     return M
 
 
@@ -5209,7 +5208,7 @@ def CompleteGraphic(n, groundset=None):
         groundset=list(range((n * (n - 1)) // 2)),
         graph=graphs.CompleteGraph(n)
     )
-    M = _rename_and_relabel(M, "M(K" + str(n) + ")", groundset)
+    M = _rename_and_relabel(M, f'M(K{n})', groundset)
     return M
 
 
@@ -5229,9 +5228,7 @@ def _rename_and_relabel(M, name=None, groundset=None):
     - ``name`` -- a string (optional)
     - ``groundset`` -- a string (optional)
 
-    OUTPUT:
-
-    a matroid
+    OUTPUT: a matroid
     """
     if groundset is not None:
         if len(groundset) != len(M.groundset()):

@@ -1197,9 +1197,7 @@ cdef class Matroid(SageObject):
             sage: sage.matroids.matroid.Matroid._repr_(M)
             'Matroid of rank 4 on 8 elements'
         """
-        S = "Matroid of rank "
-        S = S + str(self.rank()) + " on " + str(self.size()) + " elements"
-        return S
+        return f'Matroid of rank {self.rank()} on {self.size()} elements'
 
     # cpdef show(self):
     # Show either the graph, or the matrix with labels, or the lattice,

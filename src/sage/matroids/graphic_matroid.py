@@ -306,8 +306,7 @@ class GraphicMatroid(Matroid):
         """
         self._mrank = str(self._rank(self._groundset))
         self._elts = str(len(self._groundset))
-
-        return "Graphic matroid of rank " + self._mrank + " on " + self._elts + " elements"
+        return f'Graphic matroid of rank {self._mrank} on {self._elts} elements'
 
     # Comparison:
 

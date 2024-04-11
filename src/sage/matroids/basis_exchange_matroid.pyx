@@ -213,9 +213,9 @@ cdef class BasisExchangeMatroid(Matroid):
         cdef long i
         E = []
         for i in range(self._groundset_size):
-            if self._E[i] in mapping:
+            try:
                 E.append(mapping[self._E[i]])
-            else:
+            except LookupError:
                 E.append(self._E[i])
         self._E = tuple(E)
         self._groundset = frozenset(E)

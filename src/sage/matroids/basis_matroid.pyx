@@ -263,7 +263,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             sage: repr(M)  # indirect doctest
             'Matroid of rank 3 on 7 elements with 28 bases'
         """
-        return Matroid._repr_(self) + " with " + str(self.bases_count()) + " bases"
+        return f'{Matroid._repr_(self)} with {self.bases_count()} bases'
 
     # support for parent BasisExchangeMatroid
 
@@ -531,7 +531,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
         INPUT:
 
-        - ``mapping`` -- a python object such that `mapping[e]` is the new
+        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
           label of ``e``
 
         OUTPUT: a matroid
