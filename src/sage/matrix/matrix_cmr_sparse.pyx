@@ -1464,6 +1464,27 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         r"""
         EXAMPLES:
 
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 2, sparse=True),
+            ....:                           [[1, 0], [-1, 1], [0, -1]]); M
+            [ 1  0]
+            [-1  1]
+            [ 0 -1]
+            sage: M.is_network_matrix()
+            True
+            sage: result, certificate = M.is_network_matrix(certificate=True)
+            sage: graph, forest_edges, coforest_edges = certificate
+            sage: graph
+            Digraph on 4 vertices
+            sage: graph.vertices(sort=True)  # the numbers have no meaning
+            [1, 2, 7, 12]
+            sage: graph.edges(sort=True, labels=False)
+            [(2, 1), (2, 7), (7, 1), (7, 12), (12, 1)]
+            sage: forest_edges    # indexed by rows of M
+            ((2, 1), (7, 1), (7, 12))
+            sage: coforest_edges  # indexed by cols of M
+            ((2, 7), (12, 1))
+
         This is test ``Basic`` in CMR's ``test_network.cpp``::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -1532,6 +1553,19 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                                row_keys=None, column_keys=None):
         r"""
         EXAMPLES:
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 4, 9, sparse=True),
+            ....:                           [[1, 0, 0, 0, 1, -1, 1, 0, 0],
+            ....:                            [0, 1, 0, 0, 0, 1, -1, 1, 0],
+            ....:                            [0, 0, 1, 0, 0, 0, 1, -1, 1],
+            ....:                            [0, 0, 0, 1, 1, 0, 0, 1, -1]]); M
+            [ 1  0  0  0  1 -1  1  0  0]
+            [ 0  1  0  0  0  1 -1  1  0]
+            [ 0  0  1  0  0  0  1 -1  1]
+            [ 0  0  0  1  1  0  0  1 -1]
+            sage: M.is_conetwork_matrix()
+            True
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: C3 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 3, sparse=True),

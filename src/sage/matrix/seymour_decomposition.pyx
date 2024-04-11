@@ -520,9 +520,7 @@ cdef class DecompositionNode(SageObject):
                 raise NotImplementedError
             return result
         # compute it... wait for CMR functions
-        if decomposition:
-            raise NotImplementedError
-        return "Graphic/Network Not Determined"
+        raise NotImplementedError("Graphic Not Determined")
 
     def _is_binary_linear_matroid_cographic(self, *, decomposition=False, **kwds):
         r"""
@@ -541,11 +539,9 @@ cdef class DecompositionNode(SageObject):
                 raise NotImplementedError
             return result
         # compute it... wait for CMR functions
-        if decomposition:
-            raise NotImplementedError
-        return "Cographic/Conetwork Not Determined"
+        raise NotImplementedError("Cographic Not Determined")
 
-    def is_regular(self, *, decomposition=False, **kwds):
+    def _is_binary_linear_matroid_regular(self, *, decomposition=False, **kwds):
         r"""
 
         """
@@ -561,9 +557,8 @@ cdef class DecompositionNode(SageObject):
             if certificate:
                 raise NotImplementedError
             return result
-        if decomposition:
-            raise NotImplementedError
-        return "Regular/TU Not Determined"
+        # compute it... wait for CMR functions
+        raise NotImplementedError("Regularity Not Determined")
 
     def _binary_linear_matroid_complete_decomposition(self, *,
                                         time_limit=60.0,
@@ -651,6 +646,63 @@ cdef class DecompositionNode(SageObject):
             sig_off()
         node = create_DecompositionNode(clone, self.matrix(), self.row_keys(), self.column_keys())
         return node
+
+    def is_network_matrix(self, *, decomposition=False, **kwds):
+        r"""
+
+        """
+        certificate = kwds.get('certificate', False)
+        cdef int8_t graphicness = CMRmatroiddecGraphicness(self._dec)
+        if graphicness:
+            result = graphicness == +1
+            if not decomposition and not certificate:
+                return result
+            result = [result]
+            if decomposition:
+                result.append(self)
+            if certificate:
+                raise NotImplementedError
+            return result
+        # compute it... wait for CMR functions
+        raise NotImplementedError("Network Not Determined")
+
+    def is_conetwork_matrix(self, *, decomposition=False, **kwds):
+        r"""
+
+        """
+        certificate = kwds.get('certificate', False)
+        cdef int8_t cographicness = CMRmatroiddecCographicness(self._dec)
+        if cographicness:
+            result = cographicness == +1
+            if not decomposition and not certificate:
+                return result
+            result = [result]
+            if decomposition:
+                result.append(self)
+            if certificate:
+                raise NotImplementedError
+            return result
+        # compute it... wait for CMR functions
+        raise NotImplementedError("Conetwork Not Determined")
+
+    def is_totally_unimodular(self, *, decomposition=False, **kwds):
+        r"""
+
+        """
+        certificate = kwds.get('certificate', False)
+        cdef int8_t regularity = CMRmatroiddecRegularity(self._dec)
+        if regularity:
+            result = regularity > 0
+            if not decomposition and not certificate:
+                return result
+            result = [result]
+            if decomposition:
+                result.append(self)
+            if certificate:
+                raise NotImplementedError
+            return result
+        # compute it... wait for CMR functions
+        raise NotImplementedError("TU Not Determined")
 
     def complete_decomposition(self, *, time_limit=60.0,
                                use_direct_graphicness_test=True,
@@ -857,6 +909,87 @@ cdef class UnknownNode(DecompositionNode):
         if not decomposition and not certificate:
             return matrix._is_binary_linear_matroid_cographic(**kwds)
         result, cert = matrix._is_binary_linear_matroid_cographic(certificate=True,
+                                         row_keys=self.row_keys(),
+                                         column_keys=self.column_keys(), **kwds)
+        result = [result]
+        if decomposition:
+            graph, forest_edges, coforest_edges = cert
+            node = CographicNode(matrix, graph, forest_edges, coforest_edges)
+            result.append(node)
+        if certificate:
+            result.append(cert)
+        return result
+
+    def is_network_matrix(self, *, decomposition=False, certificate=False, **kwds):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.matrix.seymour_decomposition import UnknownNode
+            sage: node = UnknownNode([[1, 0], [-1, 1], [0, -1]]); node
+            UnknownNode (3×2)
+            sage: node.matrix()
+            [ 1  0]
+            [-1  1]
+            [ 0 -1]
+            sage: node.is_network_matrix()
+            True
+            sage: result, certificate = node.is_network_matrix(certificate=True)
+            sage: graph, forest_edges, coforest_edges = certificate
+            sage: graph
+            Digraph on 4 vertices
+            sage: graph.vertices(sort=True)  # the numbers have no meaning
+            [1, 2, 7, 12]
+            sage: graph.edges(sort=True, labels=False)
+            [(2, 1), (2, 7), (7, 1), (7, 12), (12, 1)]
+            sage: forest_edges    # indexed by rows of M
+            ((2, 1), (7, 1), (7, 12))
+            sage: coforest_edges  # indexed by cols of M
+            ((2, 7), (12, 1))
+        """
+        matrix = self.matrix()
+        if not decomposition and not certificate:
+            return matrix.is_network_matrix(**kwds)
+        result, cert = matrix.is_network_matrix(certificate=True,
+                                         row_keys=self.row_keys(),
+                                         column_keys=self.column_keys(), **kwds)
+        result = [result]
+        if decomposition:
+            graph, forest_edges, coforest_edges = cert
+            node = GraphicNode(matrix, graph, forest_edges, coforest_edges)
+            result.append(node)
+        if certificate:
+            result.append(cert)
+        return result
+
+    def is_conetwork_matrix(self, *, decomposition=False, certificate=False, **kwds):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.matrix.seymour_decomposition import UnknownNode
+            sage: node = UnknownNode([[1, -1, 0], [0, 1, -1]]); node
+            UnknownNode (2×3)
+            sage: node.matrix()
+            [ 1 -1  0]
+            [ 0  1 -1]
+            sage: node.is_conetwork_matrix()
+            True
+            sage: result, certificate = node.is_conetwork_matrix(certificate=True)
+            sage: graph, forest_edges, coforest_edges = certificate
+            sage: graph
+            Digraph on 4 vertices
+            sage: graph.vertices(sort=True)  # the numbers have no meaning
+            [1, 2, 7, 12]
+            sage: graph.edges(sort=True, labels=False)
+            [(2, 1), (2, 7), (7, 1), (7, 12), (12, 1)]
+            sage: forest_edges    # indexed by rows of M
+            ((2, 1), (7, 1))
+            sage: coforest_edges  # indexed by cols of M
+            ((2, 7), (12, 1), (2, 1))
+        """
+        matrix = self.matrix()
+        if not decomposition and not certificate:
+            return matrix.is_conetwork_matrix(**kwds)
+        result, cert = matrix.is_conetwork_matrix(certificate=True,
                                          row_keys=self.row_keys(),
                                          column_keys=self.column_keys(), **kwds)
         result = [result]
