@@ -8434,7 +8434,7 @@ cdef class Matroid(SageObject):
 
         INPUT:
 
-        - ``mapping`` -- a python object such that `mapping[e]` is the new
+        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
           label of `e`
 
         OUTPUT: a matroid

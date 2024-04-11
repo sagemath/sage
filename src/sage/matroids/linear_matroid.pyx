@@ -2983,7 +2983,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
         INPUT:
 
-        - ``mapping`` -- a python object such that `mapping[e]` is the new
+        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
           label of `e`
 
         OUTPUT: a matroid
@@ -4085,7 +4085,7 @@ cdef class BinaryMatroid(LinearMatroid):
 
         INPUT:
 
-        - ``mapping`` -- a python object such that `mapping[e]` is the new
+        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
           label of `e`
 
         OUTPUT: a matroid
@@ -5016,7 +5016,7 @@ cdef class TernaryMatroid(LinearMatroid):
 
         INPUT:
 
-        - ``mapping`` -- a python object such that `mapping[e]` is the new
+        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
           label of `e`
 
         OUTPUT: a matroid
@@ -5778,7 +5778,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
 
         INPUT:
 
-        - ``mapping`` -- a python object such that `mapping[e]` is the new
+        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
           label of `e`
 
         OUTPUT: a matroid
@@ -6734,7 +6734,7 @@ cdef class RegularMatroid(LinearMatroid):
 
         INPUT:
 
-        - ``mapping`` -- a python object such that `mapping[e]` is the new
+        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
           label of `e`
 
         OUTPUT: a matroid

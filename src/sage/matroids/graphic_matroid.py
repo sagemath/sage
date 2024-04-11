@@ -2012,7 +2012,7 @@ class GraphicMatroid(Matroid):
 
         INPUT:
 
-        - ``mapping`` -- a python object such that `mapping[e]` is the new
+        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
           label of `e`
 
         OUTPUT: a matroid
@@ -2022,7 +2022,7 @@ class GraphicMatroid(Matroid):
             sage: M = matroids.CompleteGraphic(4)
             sage: sorted(M.groundset())
             [0, 1, 2, 3, 4, 5]
-            sage: N = M.relabel({0:6, 5:'e'})
+            sage: N = M.relabel({0: 6, 5: 'e'})
             sage: sorted(N.groundset(), key=str)
             [1, 2, 3, 4, 6, 'e']
             sage: N.is_isomorphic(M)
