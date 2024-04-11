@@ -5,7 +5,8 @@
 Install from Source Code
 ========================
 
-Building Sage from the :wikipedia:`source code <Source_code>` has the major
+Building Sage from the :wikipedia:`source code <Source_code>`, which
+can be downloaded from the `mirrors <https://www.sagemath.org/download-source.html>`_, has the major
 advantage that your install will be optimized for your particular computer and
 should therefore offer better performance and compatibility than a binary
 install.
