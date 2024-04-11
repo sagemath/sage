@@ -905,7 +905,7 @@ class FaithfulRepresentationPBWPosChar(CombinatorialFreeModule, Representation_a
         """
         Return the `p`-exponents of ``self``.
 
-        Let `p` be the characteristic of the base ring of ``self`.
+        Let `p` be the characteristic of the base ring of ``self``.
         The `p`-*exponents* are the exponents `m_i` such that the `i`-th
         `p`-polynomial `f_i` is of degree `p^{m_i}`.
 
