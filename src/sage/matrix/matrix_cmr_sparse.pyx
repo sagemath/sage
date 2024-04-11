@@ -1304,7 +1304,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [ 1  0]
             [-1  1]
             [ 0 -1]
-            sage: M.is_graphic()
+            sage: M._is_binary_linear_matroid_graphic()
             True
             sage: result, certificate = M._is_binary_linear_matroid_graphic(certificate=True)
             sage: graph, forest_edges, coforest_edges = certificate
@@ -1319,7 +1319,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         With keys::
 
-            sage: result, certificate = M.is_graphic(certificate=True,
+            sage: result, certificate = M._is_binary_linear_matroid_graphic(certificate=True,
             ....:     row_keys=['a', 'b', 'c'], column_keys=['v', 'w'])
             sage: graph, forest_edges, coforest_edges = certificate
             sage: forest_edges
@@ -1329,14 +1329,14 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         Creating a decomposition node::
 
-            sage: result, node = M.is_graphic(decomposition=True,
+            sage: result, node = M._is_binary_linear_matroid_graphic(decomposition=True,
             ....:     row_keys=['a', 'b', 'c'], column_keys=['v', 'w'])
             sage: result, node
             (True, GraphicNode (3×2))
 
         TESTS::
 
-            sage: M.is_graphic(time_limit=0.0)
+            sage: M._is_binary_linear_matroid_graphic(time_limit=0.0)
             Traceback (most recent call last):
             ...
             RuntimeError: Time limit exceeded

@@ -503,7 +503,7 @@ cdef class DecompositionNode(SageObject):
             return cographicness > 0
         raise ValueError('It is not determined whether the decomposition node is cographic/conetwork')
 
-    def is_graphic(self, *, decomposition=False, **kwds):
+    def _is_binary_linear_matroid_graphic(self, *, decomposition=False, **kwds):
         r"""
 
         """
@@ -524,7 +524,7 @@ cdef class DecompositionNode(SageObject):
             raise NotImplementedError
         return "Graphic/Network Not Determined"
 
-    def is_cographic(self, *, decomposition=False, **kwds):
+    def _is_binary_linear_matroid_cographic(self, *, decomposition=False, **kwds):
         r"""
 
         """
@@ -791,7 +791,7 @@ cdef class UnknownNode(DecompositionNode):
         [0 1 1]
     """
 
-    def is_graphic(self, *, decomposition=False, certificate=False, **kwds):
+    def _is_binary_linear_matroid_graphic(self, *, decomposition=False, certificate=False, **kwds):
         r"""
         EXAMPLES::
 
@@ -802,9 +802,9 @@ cdef class UnknownNode(DecompositionNode):
             [ 1  0]
             [-1  1]
             [ 0 -1]
-            sage: node.is_graphic()
+            sage: node._is_binary_linear_matroid_graphic()
             True
-            sage: result, certificate = node.is_graphic(certificate=True)
+            sage: result, certificate = node._is_binary_linear_matroid_graphic(certificate=True)
             sage: graph, forest_edges, coforest_edges = certificate
             sage: graph.vertices(sort=True)  # the numbers have no meaning
             [1, 2, 7, 12]
@@ -817,8 +817,8 @@ cdef class UnknownNode(DecompositionNode):
         """
         matrix = self.matrix()
         if not decomposition and not certificate:
-            return matrix.is_graphic(**kwds)
-        result, cert = matrix.is_graphic(certificate=True,
+            return matrix._is_binary_linear_matroid_graphic(**kwds)
+        result, cert = matrix._is_binary_linear_matroid_graphic(certificate=True,
                                          row_keys=self.row_keys(),
                                          column_keys=self.column_keys(), **kwds)
         result = [result]
@@ -830,7 +830,7 @@ cdef class UnknownNode(DecompositionNode):
             result.append(cert)
         return result
 
-    def is_cographic(self, *, decomposition=False, certificate=False, **kwds):
+    def _is_binary_linear_matroid_cographic(self, *, decomposition=False, certificate=False, **kwds):
         r"""
         EXAMPLES::
 
@@ -840,9 +840,9 @@ cdef class UnknownNode(DecompositionNode):
             sage: node.matrix()
             [ 1 -1  0]
             [ 0  1 -1]
-            sage: node.is_cographic()
+            sage: node._is_binary_linear_matroid_cographic()
             True
-            sage: result, certificate = node.is_cographic(certificate=True)
+            sage: result, certificate = node._is_binary_linear_matroid_cographic(certificate=True)
             sage: graph, forest_edges, coforest_edges = certificate
             sage: graph.vertices(sort=True)  # the numbers have no meaning
             [1, 2, 7, 12]
@@ -855,8 +855,8 @@ cdef class UnknownNode(DecompositionNode):
         """
         matrix = self.matrix()
         if not decomposition and not certificate:
-            return matrix.is_cographic(**kwds)
-        result, cert = matrix.is_cographic(certificate=True,
+            return matrix._is_binary_linear_matroid_cographic(**kwds)
+        result, cert = matrix._is_binary_linear_matroid_cographic(certificate=True,
                                          row_keys=self.row_keys(),
                                          column_keys=self.column_keys(), **kwds)
         result = [result]
@@ -1533,7 +1533,7 @@ cdef class BaseGraphicNode(DecompositionNode):
             b⎜-1  1⎟
             c⎝ 0  1⎠
             sage: phi_node = UnknownNode(phi)
-            sage: is_graphic, rephined_node = phi_node.is_graphic(decomposition=True)
+            sage: is_graphic, rephined_node = phi_node._is_binary_linear_matroid_graphic(decomposition=True)
             sage: is_graphic, rephined_node
             (True, GraphicNode (3×2))
             sage: rephined_node.forest_edges()
