@@ -54,6 +54,16 @@ case $SYSTEM in
             1|y*|Y*)
                 ;;
             *)
+                #
+                # The Ubuntu Docker images are "minimized", meaning that some large
+                # bits such as documentation has been removed. We have to unminimize
+                # once (which reinstalls the full versions of some minimized packages),
+                # or e.g. the maxima documentation (which we depend on for correct operation)
+                # will be missing.
+                #
+                # But we only have to do this once. To save time in incremental builds,
+                # we remove the unminimize binary here after it has done its job.
+                #
                 cat <<EOF
 RUN if command -v unminimize > /dev/null; then  \
         (yes | unminimize) || echo "(ignored)"; \
