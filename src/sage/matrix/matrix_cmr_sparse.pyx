@@ -1288,9 +1288,14 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         return True if result else False
 
-    def is_graphic(self, *, time_limit=60.0, decomposition=False, certificate=False,
+    def _is_binary_linear_matroid_graphic(self, *, time_limit=60.0, decomposition=False, certificate=False,
                    row_keys=None, column_keys=None):
         r"""
+        Return whether the linear matroid of ``self`` over `\GF{2}` is graphic.
+
+        This is an internal method because it should really be exposed
+        as a method of :class:`Matroid`.
+
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -1301,7 +1306,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [ 0 -1]
             sage: M.is_graphic()
             True
-            sage: result, certificate = M.is_graphic(certificate=True)
+            sage: result, certificate = M._is_binary_linear_matroid_graphic(certificate=True)
             sage: graph, forest_edges, coforest_edges = certificate
             sage: graph.vertices(sort=True)  # the numbers have no meaning
             [1, 2, 7, 12]
@@ -1381,9 +1386,14 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
                 result.append(NotImplemented)  # submatrix TBD
         return result
 
-    def is_cographic(self, *, time_limit=60.0, certificate=False,
+    def _is_binary_linear_matroid_cographic(self, *, time_limit=60.0, certificate=False,
                      row_keys=None, column_keys=None):
         r"""
+        Return whether the linear matroid of ``self`` over `\GF{2}` is cographic.
+
+        This is an internal method because it should really be exposed
+        as a method of :class:`Matroid`.
+
         EXAMPLES::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -1396,7 +1406,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [ 0  1  0  0  0  1 -1  1  0]
             [ 0  0  1  0  0  0  1 -1  1]
             [ 0  0  0  1  1  0  0  1 -1]
-            sage: M.is_cographic()
+            sage: M._is_binary_linear_matroid_cographic()
             True
             sage: C3 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 3, sparse=True),
             ....:                           [[1, 1, 0],
@@ -1405,7 +1415,7 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [1 1 0]
             [1 0 1]
             [0 1 1]
-            sage: result, certificate = C3.is_cographic(certificate=True)
+            sage: result, certificate = C3._is_binary_linear_matroid_cographic(certificate=True)
             sage: result
             True
             sage: graph, forest_edges, coforest_edges = certificate

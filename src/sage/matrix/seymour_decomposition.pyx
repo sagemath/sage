@@ -485,6 +485,24 @@ cdef class DecompositionNode(SageObject):
         result._column_keys = column_keys
         return result
 
+    def _regularity(self):
+        cdef int8_t regularity = CMRmatroiddecRegularity(self._dec)
+        if regularity:
+            return regularity > 0
+        raise ValueError('It is not determined whether the decomposition node is regular/TU')
+
+    def _graphicness(self):
+        cdef int8_t graphicness = CMRmatroiddecGraphicness(self._dec)
+        if graphicness:
+            return graphicness > 0
+        raise ValueError('It is not determined whether the decomposition node is graphic/network')
+
+    def _cographicness(self):
+        cdef int8_t cographicness = CMRmatroiddecCographicness(self._dec)
+        if cographicness:
+            return cographicness > 0
+        raise ValueError('It is not determined whether the decomposition node is cographic/conetwork')
+
     def is_graphic(self, *, decomposition=False, **kwds):
         r"""
 
@@ -546,6 +564,185 @@ cdef class DecompositionNode(SageObject):
         if decomposition:
             raise NotImplementedError
         return "Regular/TU Not Determined"
+
+    def _binary_linear_matroid_complete_decomposition(self, *,
+                                        time_limit=60.0,
+                                        use_direct_graphicness_test=True,
+                                        series_parallel_ok=True,
+                                        check_graphic_minors_planar=False,
+                                        complete_tree='find_irregular',
+                                        three_sum_pivot_children=False,
+                                        three_sum_strategy=None,
+                                        construct_graphs=False):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 9, sparse=True),
+            ....:                           [[1, 1, 0, 0, 0, 0, 0, 0, 0],
+            ....:                            [1, 1, 1, 0, 0, 0, 0, 0, 0],
+            ....:                            [1, 0, 0, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 1, 1, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 1, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 0, 0, 1, 1, 1, 0, 0],
+            ....:                            [0, 0, 0, 0, 1, 1, 0, 1, 0],
+            ....:                            [0, 0, 0, 0, 0, 1, 0, 1, 1],
+            ....:                            [0, 0, 0, 0, 0, 0, 1, 1, 1]])
+            sage: result, certificate = M._is_binary_linear_matroid_regular(
+            ....:                           certificate=True, complete_tree=False)
+            sage: result, certificate
+            ('Not Determined', OneSumNode (9×9) with 2 children)
+            sage: unicode_art(certificate)
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            UnknownNode (5×4) UnknownNode (4×5)
+            sage: C1, C2 = certificate.child_nodes()
+            sage: C11 = C1._binary_linear_matroid_complete_decomposition(complete_tree=False); C11
+            GraphicNode (5×4)
+            sage: unicode_art(C11)
+            GraphicNode (5×4)
+            sage: C1.matrix()
+            [1 1 0 0]
+            [1 1 1 0]
+            [0 1 1 1]
+            [1 0 0 1]
+            [0 0 1 1]
+            sage: C11.matrix()
+            [1 1 0 0]
+            [1 1 1 0]
+            [0 1 1 1]
+            [1 0 0 1]
+            [0 0 1 1]
+            sage: C22 = C2._binary_linear_matroid_complete_decomposition(complete_tree=False); C22
+            CographicNode (4×5)
+            sage: unicode_art(C22)
+            CographicNode (4×5)
+            sage: C2.matrix()
+            [1 1 1 0 0]
+            [0 0 1 1 1]
+            [0 1 0 1 1]
+            [1 1 0 1 0]
+            sage: C22.matrix()
+            [1 1 1 0 0]
+            [0 0 1 1 1]
+            [0 1 0 1 1]
+            [1 1 0 1 0]
+        """
+        cdef CMR_REGULAR_PARAMS params
+        cdef CMR_REGULAR_STATS stats
+        cdef CMR_MATROID_DEC *clone = NULL
+
+        cdef CMR_MATROID_DEC **pclone = &clone
+
+        cdef dict kwds = dict(use_direct_graphicness_test=use_direct_graphicness_test,
+                              series_parallel_ok=series_parallel_ok,
+                              check_graphic_minors_planar=check_graphic_minors_planar,
+                              complete_tree=complete_tree,
+                              three_sum_pivot_children=three_sum_pivot_children,
+                              three_sum_strategy=three_sum_strategy,
+                              construct_graphs=construct_graphs)
+        _set_cmr_regular_parameters(&params, kwds)
+
+        sig_on()
+        try:
+            CMR_CALL(CMRmatroiddecCloneUnknown(cmr, self._dec, pclone))
+            CMR_CALL(CMRregularCompleteDecomposition(cmr, clone, &params, &stats, time_limit))
+        finally:
+            sig_off()
+        node = create_DecompositionNode(clone, self.matrix(), self.row_keys(), self.column_keys())
+        return node
+
+    def complete_decomposition(self, *, time_limit=60.0,
+                               use_direct_graphicness_test=True,
+                               series_parallel_ok=True,
+                               check_graphic_minors_planar=False,
+                               complete_tree='find_irregular',
+                               three_sum_pivot_children=False,
+                               three_sum_strategy=None,
+                               construct_graphs=False):
+        r"""
+        EXAMPLES::
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 9, sparse=True),
+            ....:                           [[1, 1, 0, 0, 0, 0, 0, 0, 0],
+            ....:                            [1, 1, 1, 0, 0, 0, 0, 0, 0],
+            ....:                            [1, 0, 0, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 1, 1, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 1, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 0, 0, 1, 1, 1, 0, 0],
+            ....:                            [0, 0, 0, 0, 1, 1, 0, 1, 0],
+            ....:                            [0, 0, 0, 0, 0, 1, 0, 1, 1],
+            ....:                            [0, 0, 0, 0, 0, 0, 1, 1, 1]])
+            sage: result, certificate = M.is_totally_unimodular(
+            ....:                           certificate=True, complete_tree=False)
+            sage: result, certificate
+            ('Not Determined', OneSumNode (9×9) with 2 children)
+            sage: unicode_art(certificate)
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            UnknownNode (5×4) UnknownNode (4×5)
+            sage: C1, C2 = certificate.child_nodes()
+            sage: C11 = C1.complete_decomposition(complete_tree=False); C11
+            SubmatrixNode (5×4)
+            sage: unicode_art(C11)
+            SubmatrixNode (5×4)
+            │
+            Isomorphic to a minor of |det| = 2 submatrix
+            sage: C1.matrix()
+            [1 1 0 0]
+            [1 1 1 0]
+            [0 1 1 1]
+            [1 0 0 1]
+            [0 0 1 1]
+            sage: C11.matrix()
+            [1 1 0 0]
+            [1 1 1 0]
+            [0 1 1 1]
+            [1 0 0 1]
+            [0 0 1 1]
+            sage: C22 = C2.complete_decomposition(complete_tree=False); C22
+            SubmatrixNode (4×5)
+            sage: unicode_art(C22)
+            SubmatrixNode (4×5)
+            │
+            Isomorphic to a minor of |det| = 2 submatrix
+            sage: C2.matrix()
+            [1 1 1 0 0]
+            [0 0 1 1 1]
+            [0 1 0 1 1]
+            [1 1 0 1 0]
+            sage: C22.matrix()
+            [1 1 1 0 0]
+            [0 0 1 1 1]
+            [0 1 0 1 1]
+            [1 1 0 1 0]
+        """
+        cdef CMR_TU_PARAMS params
+        cdef CMR_TU_STATS stats
+        cdef CMR_MATROID_DEC *clone = NULL
+
+        cdef CMR_MATROID_DEC **pclone = &clone
+
+        cdef dict kwds = dict(use_direct_graphicness_test=use_direct_graphicness_test,
+                              series_parallel_ok=series_parallel_ok,
+                              check_graphic_minors_planar=check_graphic_minors_planar,
+                              complete_tree=complete_tree,
+                              three_sum_pivot_children=three_sum_pivot_children,
+                              three_sum_strategy=three_sum_strategy,
+                              construct_graphs=construct_graphs)
+        params.algorithm = CMR_TU_ALGORITHM_DECOMPOSITION
+        params.directCamion = False
+        _set_cmr_regular_parameters(&params.regular, kwds)
+
+        sig_on()
+        try:
+            CMR_CALL(CMRmatroiddecCloneUnknown(cmr, self._dec, pclone))
+            CMR_CALL(CMRtuCompleteDecomposition(cmr, clone, &params, &stats, time_limit))
+        finally:
+            sig_off()
+        node = create_DecompositionNode(clone, self.matrix(), self.row_keys(), self.column_keys())
+        return node
 
 
 cdef class ThreeConnectedIrregularNode(DecompositionNode):
@@ -670,98 +867,6 @@ cdef class UnknownNode(DecompositionNode):
         if certificate:
             result.append(cert)
         return result
-
-    def complete_decomposition(self, *, time_limit=60.0,
-                               use_direct_graphicness_test=True,
-                               series_parallel_ok=True,
-                               check_graphic_minors_planar=False,
-                               complete_tree='find_irregular',
-                               three_sum_pivot_children=False,
-                               three_sum_strategy=None,
-                               construct_graphs=False,):
-        r"""
-        EXAMPLES::
-
-            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
-            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 9, sparse=True),
-            ....:                           [[1, 1, 0, 0, 0, 0, 0, 0, 0],
-            ....:                            [1, 1, 1, 0, 0, 0, 0, 0, 0],
-            ....:                            [1, 0, 0, 1, 0, 0, 0, 0, 0],
-            ....:                            [0, 1, 1, 1, 0, 0, 0, 0, 0],
-            ....:                            [0, 0, 1, 1, 0, 0, 0, 0, 0],
-            ....:                            [0, 0, 0, 0, 1, 1, 1, 0, 0],
-            ....:                            [0, 0, 0, 0, 1, 1, 0, 1, 0],
-            ....:                            [0, 0, 0, 0, 0, 1, 0, 1, 1],
-            ....:                            [0, 0, 0, 0, 0, 0, 1, 1, 1]])
-            sage: result, certificate = M.is_totally_unimodular(
-            ....:                           certificate=True, complete_tree=False)
-            sage: result, certificate
-            ('Not Determined', OneSumNode (9×9) with 2 children)
-            sage: unicode_art(certificate)
-            ╭───────────OneSumNode (9×9) with 2 children
-            │                 │
-            UnknownNode (5×4) UnknownNode (4×5)
-            sage: C1, C2 = certificate.child_nodes()
-            sage: C11 = C1.complete_decomposition(complete_tree=False); C11
-            SubmatrixNode (5×4)
-            sage: unicode_art(C11)
-            SubmatrixNode (5×4)
-            │
-            Isomorphic to a minor of |det| = 2 submatrix
-            sage: C1.matrix()
-            [1 1 0 0]
-            [1 1 1 0]
-            [0 1 1 1]
-            [1 0 0 1]
-            [0 0 1 1]
-            sage: C11.matrix()
-            [1 1 0 0]
-            [1 1 1 0]
-            [0 1 1 1]
-            [1 0 0 1]
-            [0 0 1 1]
-            sage: C22 = C2.complete_decomposition(complete_tree=False); C22
-            SubmatrixNode (4×5)
-            sage: unicode_art(C22)
-            SubmatrixNode (4×5)
-            │
-            Isomorphic to a minor of |det| = 2 submatrix
-            sage: C2.matrix()
-            [1 1 1 0 0]
-            [0 0 1 1 1]
-            [0 1 0 1 1]
-            [1 1 0 1 0]
-            sage: C22.matrix()
-            [1 1 1 0 0]
-            [0 0 1 1 1]
-            [0 1 0 1 1]
-            [1 1 0 1 0]
-        """
-        cdef CMR_TU_PARAMS params
-        cdef CMR_TU_STATS stats
-        cdef CMR_MATROID_DEC *clone = NULL
-
-        cdef CMR_MATROID_DEC **pclone = &clone
-
-        cdef dict kwds = dict(use_direct_graphicness_test=use_direct_graphicness_test,
-                              series_parallel_ok=series_parallel_ok,
-                              check_graphic_minors_planar=check_graphic_minors_planar,
-                              complete_tree=complete_tree,
-                              three_sum_pivot_children=three_sum_pivot_children,
-                              three_sum_strategy=three_sum_strategy,
-                              construct_graphs=construct_graphs)
-        params.algorithm = CMR_TU_ALGORITHM_DECOMPOSITION
-        params.directCamion = False
-        _set_cmr_regular_parameters(&params.regular, kwds)
-
-        sig_on()
-        try:
-            CMR_CALL(CMRmatroiddecCloneUnknown(cmr, self._dec, pclone))
-            CMR_CALL(CMRtuCompleteDecomposition(cmr, clone, &params, &stats, time_limit))
-        finally:
-            sig_off()
-        node = create_DecompositionNode(clone, self.matrix(), self.row_keys(), self.column_keys())
-        return node
 
 
 cdef class SumNode(DecompositionNode):
@@ -1028,6 +1133,32 @@ cdef class ThreeSumNode(SumNode):
             [-1 -1  0  0  1]
             sage: C.child_indices()
             (((0, 1, a, 3), (b, c, d, e, +3+e)), ((0, 2, 3, 5), (+0+d, d, 4, e, f)))
+            sage: result, certificate = R12.is_totally_unimodular(certificate=True,
+            ....:                           complete_tree=False,
+            ....:                           three_sum_strategy="Wide_Wide",
+            ....:                           row_keys=range(6),
+            ....:                           column_keys='abcdef')
+            sage: result, certificate
+            ('Not Determined', PivotsNode (6×6))
+            sage: unicode_art(certificate)
+                    PivotsNode (6×6)
+                    │
+            ╭──────────ThreeSumNode (6×6) with 2 children
+            │                 │
+            UnknownNode (4×5) UnknownNode (4×5)
+            sage: unicode_art(certificate.complete_decomposition(complete_tree=True,
+            ....:                           three_sum_strategy="Wide_Wide"))
+                    PivotsNode (6×6)
+                    │
+            ╭─────────────ThreeSumNode (6×6) with 2 children
+            │                   │
+            CographicNode (4×5) GraphicNode (4×5)
+            sage: unicode_art(certificate)
+                    PivotsNode (6×6)
+                    │
+            ╭──────────ThreeSumNode (6×6) with 2 children
+            │                 │
+            UnknownNode (4×5) UnknownNode (4×5)
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: R12_large = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 12, sparse=True),
