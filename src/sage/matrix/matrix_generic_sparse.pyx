@@ -188,7 +188,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
         """
         return bool(self._entries)
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value) noexcept:
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value):
         if not value:
             try:
                 del self._entries[(i,j)]
@@ -197,7 +197,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
         else:
             self._entries[(i,j)] = value
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         return self._entries.get((i,j), self._zero)
 
     cdef bint get_is_zero_unsafe(self, Py_ssize_t i, Py_ssize_t j) except -1:
@@ -248,7 +248,7 @@ cdef class Matrix_generic_sparse(matrix_sparse.Matrix_sparse):
     # x  * _dict -- copy of the sparse dictionary of underlying elements
     ########################################################################
 
-    cpdef _add_(self, _other) noexcept:
+    cpdef _add_(self, _other):
         """
         EXAMPLES::
 

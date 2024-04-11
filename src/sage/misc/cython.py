@@ -377,12 +377,6 @@ def cython(filename, verbose=0, compile_message=False,
             "Placing it before 'except' or 'noexcept' will be disallowed in a future version of Cython.\n",
             "", cython_messages, 0, re.MULTILINE)
 
-        # workaround for https://github.com/sagemath/sage/issues/37560
-        # triggered by Cython 3.0.9
-        cython_messages = re.sub(
-            "^warning: .*noexcept clause is ignored for function returning Python object\n",
-            "", cython_messages, 0, re.MULTILINE)
-
         sys.stderr.write(cython_messages)
         sys.stderr.flush()
 

@@ -86,7 +86,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
         self._order = self._degree / domain.absolute_f().gcd(self._power)
         RingHomomorphism.__init__(self, Hom(domain, domain))
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -105,7 +105,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
         slots['_order'] = self._order
         return slots
 
-    cdef _update_slots(self, dict slots) noexcept:
+    cdef _update_slots(self, dict slots):
         """
         Helper for copying and pickling.
 
@@ -166,7 +166,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
             s = "Frob^%s" % self._power
         return s
 
-    cpdef Element _call_ (self, x) noexcept:
+    cpdef Element _call_ (self, x):
         """
         TESTS::
 
@@ -330,7 +330,7 @@ cdef class FrobeniusEndomorphism_padics(RingHomomorphism):
         codomain = self.codomain()
         return hash((domain, codomain, ('Frob', self._power)))
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Compare ``left`` and ``right``
 

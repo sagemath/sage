@@ -110,7 +110,7 @@ cdef class ObjectWrapper:
     cdef PyObject* obj
 
 
-cdef inline ObjectWrapper wrap(obj) noexcept:
+cdef inline ObjectWrapper wrap(obj):
     """
     Wrap a given Python object in an :class:`ObjectWrapper`.
     """
@@ -126,7 +126,7 @@ cdef inline PyObject* unwrap(w) except? NULL:
     return (<ObjectWrapper?>w).obj
 
 
-cdef extract_mono_cell(mono_cell* cell) noexcept:
+cdef extract_mono_cell(mono_cell* cell):
     """
     Take the refcounted components from a mono_cell, put them in a
     tuple and return it. The mono_cell itself is marked as "freed".
@@ -151,7 +151,7 @@ cdef extract_mono_cell(mono_cell* cell) noexcept:
     return t
 
 
-cdef extract_triple_cell(triple_cell* cell) noexcept:
+cdef extract_triple_cell(triple_cell* cell):
     # See extract_mono_cell for documentation
     assert valid(cell.key_id1)
     t = PyTuple_New(4)
@@ -644,7 +644,7 @@ cdef class MonoDict:
         """
         return self.get(k)
 
-    cdef get(self, k) noexcept:
+    cdef get(self, k):
         cdef mono_cell* cursor = self.lookup(<PyObject*>k)
         if not valid(cursor.key_id):
             raise KeyError(k)
@@ -1320,7 +1320,7 @@ cdef class TripleDict:
             raise KeyError(k)
         return self.get(k1, k2, k3)
 
-    cdef get(self, k1, k2, k3) noexcept:
+    cdef get(self, k1, k2, k3):
         cdef triple_cell* cursor = self.lookup(<PyObject*>k1, <PyObject*>k2, <PyObject*>k3)
         if not valid(cursor.key_id1):
             raise KeyError((k1, k2, k3))

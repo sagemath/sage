@@ -67,7 +67,7 @@ cdef int celement_gen(GF2X_c *e, long i, long parent) except -2:
     cdef unsigned char g = 2
     GF2XFromBytes(e[0], <unsigned char *>(&g), 1)
 
-cdef object celement_repr(GF2X_c *e, long parent) noexcept:
+cdef object celement_repr(GF2X_c *e, long parent):
     """
     We ignore NTL's printing.
 
