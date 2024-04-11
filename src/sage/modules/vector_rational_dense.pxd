@@ -7,7 +7,7 @@ cdef class Vector_rational_dense(FreeModuleElement):
     cdef mpq_t* _entries
     cdef int _init(self, Py_ssize_t degree, Parent parent) except -1
 
-    cdef inline Vector_rational_dense _new_c(self) noexcept:
+    cdef inline Vector_rational_dense _new_c(self):
         cdef type t = type(self)
         cdef Vector_rational_dense x = <Vector_rational_dense>(t.__new__(t))
         x._init(self._degree, self._parent)
