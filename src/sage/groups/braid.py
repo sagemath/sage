@@ -2590,8 +2590,8 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         rels = []
         for i in range(1, n):
             rels.append(free_group([i, i + 1, i, -i - 1, -i, -i - 1]))
-            for j in range(i + 2, n + 1):
-                rels.append(free_group([i, j, -i, -j]))
+            rels.extend(free_group([i, j, -i, -j])
+                        for j in range(i + 2, n + 1))
         cat = Groups().Infinite()
         FinitelyPresentedGroup.__init__(self, free_group, tuple(rels),
                                         category=cat)

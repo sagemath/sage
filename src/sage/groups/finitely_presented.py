@@ -1005,7 +1005,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         from sage.combinat.permutation import Permutation
         from sage.groups.perm_gps.permgroup import PermutationGroup
         return PermutationGroup([
-                Permutation(coset_table[2*i]) for i in range(len(coset_table)//2)])
+            Permutation(coset_table[2*i]) for i in range(len(coset_table)//2)])
 
     def direct_product(self, H, reduced=False, new_names=True):
         r"""
@@ -1548,14 +1548,13 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         L1 = []
         for rel in L0:
             C = [rel]
-            for j in range(len(rel) - 1):
-                C.append(rel[j + 1:] + rel[:j + 1])
+            C.extend(rel[j + 1:] + rel[:j + 1] for j in range(len(rel) - 1))
             C1 = [tuple(-j for j in reversed(l)) for l in C]
             C += C1
             C.sort()
             L1.append(C[0])
         L1.sort()
-        return F/L1
+        return F / L1
 
     def epimorphisms(self, H):
         r"""

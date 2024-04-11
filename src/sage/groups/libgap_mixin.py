@@ -277,7 +277,7 @@ class GroupMixinLibGAP:
         if not self.is_finite():
             raise NotImplementedError("only implemented for finite groups")
         G = self.gap()
-        reps = [ cc.Representative() for cc in G.ConjugacyClasses() ]
+        reps = [cc.Representative() for cc in G.ConjugacyClasses()]
         return tuple(self(g) for g in reps)
 
     def conjugacy_classes(self):
@@ -676,9 +676,7 @@ class GroupMixinLibGAP:
         if not self.is_finite():
             raise NotImplementedError("only implemented for finite groups")
         Irr = self.gap().Irr()
-        L = []
-        for irr in Irr:
-            L.append(ClassFunction_libgap(self, irr))
+        L = [ClassFunction_libgap(self, irr) for irr in Irr]
         return tuple(L)
 
     def character(self, values):
@@ -731,7 +729,7 @@ class GroupMixinLibGAP:
         """
         if not self.is_finite():
             raise NotImplementedError("only implemented for finite groups")
-        values = [1]*self._gap_().NrConjugacyClasses().sage()
+        values = [1] * self._gap_().NrConjugacyClasses().sage()
         return self.character(values)
 
     def character_table(self):
@@ -763,8 +761,8 @@ class GroupMixinLibGAP:
             [ 4  0 -1 -1  2  1  0]
             [ 1  1  1  1  1  1  1]
         """
-        #code from function in permgroup.py, but modified for
-        #how gap handles these groups.
+        # code from function in permgroup.py, but modified for
+        # how gap handles these groups.
         G = self._gap_()
         cl = self.conjugacy_classes()
         from sage.rings.integer import Integer

@@ -311,8 +311,8 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
         R = self.base_ring()
         l = [self(v=([R.primitive_element()] + [R.one()] * (self.degree() - 1)))]
-        for g in SymmetricGroup(self.degree()).gens():
-            l.append(self(perm=Permutation(g)))
+        l.extend(self(perm=Permutation(g))
+                 for g in SymmetricGroup(self.degree()).gens())
         if R.is_field() and not R.is_prime_field():
             l.append(self(autom=R.hom([R.primitive_element()**R.characteristic()])))
         return tuple(l)

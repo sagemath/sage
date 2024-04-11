@@ -196,18 +196,18 @@ def _OG(n, R, special, e=0, var='a', invariant_form=None):
                 inserted_text = "with respect to symmetric form"
 
             name = '{0} Orthogonal Group of degree {1} over {2} {3}\n{4}'.format(
-                            prefix, degree, ring, inserted_text,invariant_form)
+                prefix, degree, ring, inserted_text, invariant_form)
             ltx = r'\text{{{0}O}}_{{{1}}}({2})\text{{ {3} }}{4}'.format(
-                            ltx_prefix, degree, latex(ring), inserted_text,
-                            latex(invariant_form))
+                ltx_prefix, degree, latex(ring), inserted_text,
+                latex(invariant_form))
         else:
             name = '{0} Orthogonal Group of degree {1} over {2}'.format(prefix, degree, ring)
             ltx = r'\text{{{0}O}}_{{{1}}}({2})'.format(ltx_prefix, degree, latex(ring))
     else:
         name = '{0} Orthogonal Group of degree {1} and form parameter {2} over {3}'.format(prefix, degree, e, ring)
         ltx = r'\text{{{0}O}}_{{{1}}}({2}, {3})'.format(ltx_prefix, degree,
-                                                         latex(ring),
-                                                         '+' if e == 1 else '-')
+                                                        latex(ring),
+                                                        '+' if e == 1 else '-')
 
     if isinstance(ring, FiniteField):
         try:
@@ -522,11 +522,14 @@ class OrthogonalMatrixGroup_generic(NamedMatrixGroup_generic):
         m.set_immutable()
         return m
 
-    invariant_quadratic_form = invariant_bilinear_form # this is identical in the generic case
-    invariant_form = invariant_bilinear_form # alias (analogues to symplectic and unitary cases)
+    invariant_quadratic_form = invariant_bilinear_form
+    # this is identical in the generic case
+
+    invariant_form = invariant_bilinear_form
+    # alias (analogues to symplectic and unitary cases)
 
     def _check_matrix(self, x, *args):
-        """a
+        """
         Check whether the matrix ``x`` is orthogonal.
 
         See :meth:`~sage.groups.matrix_gps.matrix_group._check_matrix`
