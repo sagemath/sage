@@ -21,7 +21,7 @@ AUTHORS:
 
 - Eric Gourgoulhon, Michal Bejger (2013, 2014): initial version
 - Joris Vankerschaver (2010): developed a previous class,
-  ``DifferentialForm`` (cf. :trac:`24444`), which inspired the storage of the
+  ``DifferentialForm`` (cf. :issue:`24444`), which inspired the storage of the
   non-zero components as a dictionary whose keys are the indices.
 - Travis Scrimshaw (2016): review tweaks
 
@@ -1653,7 +1653,7 @@ class DiffFormParal(FreeModuleAltForm, TensorFieldParal, DiffForm):
 
         TESTS:
 
-        Check that :trac:`33780` is fixed::
+        Check that :issue:`33780` is fixed::
 
             sage: v = X.frame()[1]  # vector field d/dx
             sage: f = X.coframe()[2]  # 1-form dy

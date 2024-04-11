@@ -118,7 +118,7 @@ class ShuffleProduct_w1w2(Parent, UniqueRepresentation):
             sage: w in S
             False
 
-        We check that :trac:`14121` is solved::
+        We check that :issue:`14121` is solved::
 
             sage: w = W('ab')
             sage: x = W('ac')
@@ -199,7 +199,7 @@ class ShuffleProduct_w1w2(Parent, UniqueRepresentation):
         TESTS:
 
         Sage is no longer confused by a too-restrictive parent of `I`
-        when shuffling compositions `I` and `J` (cf. :trac:`15131`)::
+        when shuffling compositions `I` and `J` (cf. :issue:`15131`)::
 
             sage: I = Compositions(2)([1, 1])
             sage: J = Composition([2])

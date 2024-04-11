@@ -38,7 +38,7 @@ from sage.misc.randstate cimport current_randstate
 from sage.libs.gmp.mpz cimport *
 
 
-cdef inline make_ZZ_p(ZZ_p_c* x, ntl_ZZ_pContext_class ctx) noexcept:
+cdef inline make_ZZ_p(ZZ_p_c* x, ntl_ZZ_pContext_class ctx):
     cdef ntl_ZZ_p y
     sig_off()
     y = ntl_ZZ_p(modulus = ctx)
@@ -47,7 +47,7 @@ cdef inline make_ZZ_p(ZZ_p_c* x, ntl_ZZ_pContext_class ctx) noexcept:
     return y
 
 
-cdef make_ZZ_pX(ZZ_pX_c* x, ntl_ZZ_pContext_class ctx) noexcept:
+cdef make_ZZ_pX(ZZ_pX_c* x, ntl_ZZ_pContext_class ctx):
     cdef ntl_ZZ_pX y
     y = <ntl_ZZ_pX>ntl_ZZ_pX.__new__(ntl_ZZ_pX)
     y.c = ctx
@@ -111,7 +111,7 @@ cdef class ntl_ZZ_pX():
                     cc = x
                 ZZ_pX_SetCoeff(self.x, i, cc.x)
         elif v is not None:
-            s = str(v).replace(',', ' ').replace('L', '')  # can change the modulus trac #25790
+            s = str(v).replace(',', ' ').replace('L', '')  # can change the modulus; Issue #25790
             self.c.restore_c()
             ccreadstr(self.x, s)
 
@@ -138,7 +138,7 @@ cdef class ntl_ZZ_pX():
             self.c = <ntl_ZZ_pContext_class>ntl_ZZ_pContext(ntl_ZZ(modulus))
             self.c.restore_c()
 
-    cdef ntl_ZZ_pX _new(self) noexcept:
+    cdef ntl_ZZ_pX _new(self):
         cdef ntl_ZZ_pX r
         self.c.restore_c()
         r = ntl_ZZ_pX.__new__(ntl_ZZ_pX)

@@ -501,7 +501,7 @@ class CoxeterGroups(Category_singleton):
             TESTS:
 
             We iterate over each level (i.e., breadth-first-search in the
-            search forest), see :trac:`19926`::
+            search forest), see :issue:`19926`::
 
                 sage: W = CoxeterGroup(['A',2])                                         # needs sage.groups sage.rings.number_field
                 sage: [x.length() for x in W]                                           # needs sage.groups sage.rings.number_field
@@ -952,13 +952,51 @@ class CoxeterGroups(Category_singleton):
                 Sign representation of
                  Weyl Group of type ['A', 1, 1] (as a matrix group acting on the root space)
                  over Integer Ring
-
             """
             if base_ring is None:
                 from sage.rings.integer_ring import ZZ
                 base_ring = ZZ
             from sage.modules.with_basis.representation import SignRepresentationCoxeterGroup
             return SignRepresentationCoxeterGroup(self, base_ring)
+
+        def reflection_representation(self, base_ring=None, side="left"):
+            r"""
+            Return the reflection representation of ``self``.
+
+            This is also the canonical faithful representation of a
+            Coxeter group.
+
+            INPUT:
+
+            - ``base_ring`` -- (optional) the base ring; the default is
+              the base ring of :meth:`canonical_representation`
+            - ``side`` -- ignored
+
+            EXAMPLES::
+
+                sage: W = CoxeterGroup(['D', 4])
+                sage: W.reflection_representation()
+                Reflection representation of Finite Coxeter group over
+                 Integer Ring with Coxeter matrix:
+                [1 3 2 2]
+                [3 1 3 3]
+                [2 3 1 2]
+                [2 3 2 1]
+
+                sage: W = CoxeterGroup(['I', 13])
+                sage: W.reflection_representation()
+                Reflection representation of Finite Coxeter group over
+                 Universal Cyclotomic Field with Coxeter matrix:
+                [ 1 13]
+                [13  1]
+
+                sage: W = WeylGroup(["B", 3, 1])
+                sage: W.reflection_representation(QQ)
+                Reflection representation of Weyl Group of type ['B', 3, 1]
+                 (as a matrix group acting on the root space)
+            """
+            from sage.modules.with_basis.representation import ReflectionRepresentation
+            return ReflectionRepresentation(self, base_ring)
 
         def demazure_product(self, Q):
             r"""
@@ -1121,7 +1159,7 @@ class CoxeterGroups(Category_singleton):
                 Digraph on 10 vertices
 
             Check that the graph has the correct number of edges
-            (see :trac:`17744`)::
+            (see :issue:`17744`)::
 
                 sage: len(G.edges(sort=False))                                          # needs sage.combinat sage.graphs sage.groups
                 16
@@ -1168,6 +1206,11 @@ class CoxeterGroups(Category_singleton):
         def canonical_representation(self):
             r"""
             Return the canonical faithful representation of ``self``.
+
+            .. SEEALSO::
+
+                To obtain the underlying module with the action, use
+                :meth:`reflection_representation`.
 
             EXAMPLES::
 
@@ -2138,7 +2181,7 @@ class CoxeterGroups(Category_singleton):
 
             TESTS:
 
-            Check that this is independent of the implementation of the group, see :trac:`34799`::
+            Check that this is independent of the implementation of the group, see :issue:`34799`::
 
                 sage: # needs sage.combinat sage.groups
                 sage: W1 = WeylGroup(['A', 2])
@@ -2364,7 +2407,7 @@ class CoxeterGroups(Category_singleton):
                 sage: w0.binary_factorizations().category()                             # needs sage.combinat sage.groups
                 Category of finite enumerated sets
 
-            Check that this is independent of the implementation of the group, see :trac:`34799`::
+            Check that this is independent of the implementation of the group, see :issue:`34799`::
 
                 sage: # needs sage.combinat sage.groups
                 sage: W1 = WeylGroup(['A', 3])
@@ -2511,7 +2554,7 @@ class CoxeterGroups(Category_singleton):
 
             TESTS:
 
-            Check bug discovered in :trac:`32669` is fixed::
+            Check bug discovered in :issue:`32669` is fixed::
 
                 sage: W = CoxeterGroup(['A', 3], implementation='permutation')          # needs sage.combinat sage.groups
                 sage: W.w0.bruhat_lower_covers_reflections()                            # needs sage.combinat sage.groups

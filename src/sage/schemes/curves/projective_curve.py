@@ -874,7 +874,7 @@ class ProjectivePlaneCurve(ProjectiveCurve):
             sage: E.is_singular()                                                       # needs sage.rings.function_field
             False
 
-        Showing that :trac:`12187` is fixed::
+        Showing that :issue:`12187` is fixed::
 
             sage: F.<X,Y,Z> = GF(2)[]
             sage: G = Curve(X^2 + Y*Z)
@@ -1595,13 +1595,30 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
         if not A.base_ring() in Fields():
             raise TypeError("curve not defined over a field")
 
+    @lazy_attribute
+    def _genus(self):
+        """
+        The geometric genus of this projective curve.
+
+        TESTS:
+
+        Geometric genus is not defined for geometrically reducible curves. You
+        may get a nonsensical answer if the condition is not met::
+
+            sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: C = Curve(x^2 + y^2)
+            sage: C.genus()  # indirect test
+            -1
+        """
+        return self.defining_ideal().genus()
+
     def arithmetic_genus(self):
         r"""
         Return the arithmetic genus of this projective curve.
 
-        This is the arithmetic genus `g_a(C)` as defined in [Har1977]_. If `P` is the
-        Hilbert polynomial of the defining ideal of this curve, then the arithmetic genus
-        of this curve is `1 - P(0)`. This curve must be irreducible.
+        This is the arithmetic genus `p_a(C)` as defined in [Har1977]_. If `P`
+        is the Hilbert polynomial of the defining ideal of this curve, then the
+        arithmetic genus of this curve is `1 - P(0)`.
 
         EXAMPLES::
 
@@ -1617,8 +1634,6 @@ class ProjectiveCurve_field(ProjectiveCurve, AlgebraicScheme_subscheme_projectiv
             sage: C.arithmetic_genus()
             10
         """
-        if not self.is_irreducible():
-            raise TypeError("this curve must be irreducible")
         return 1 - self.defining_ideal().hilbert_polynomial()(0)
 
     def is_complete_intersection(self):
@@ -1687,10 +1702,11 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
         r"""
         Return the arithmetic genus of this projective curve.
 
-        This is the arithmetic genus `g_a(C)` as defined in [Har1977]_. For a
-        projective plane curve of degree `d`, this is simply `(d-1)(d-2)/2`. It
-        need *not* equal the geometric genus (the genus of the normalization of
-        the curve). This curve must be irreducible.
+        This is the arithmetic genus `p_a(C)` as defined in [Har1977]_.
+
+        For an irreducible projective plane curve of degree `d`, this is simply
+        `(d - 1)(d - 2)/2`. It need *not* equal the geometric genus (the genus
+        of the normalization of the curve).
 
         EXAMPLES::
 
@@ -1700,7 +1716,7 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
              defined by -x^9 + y^2*z^7 - x*z^8
             sage: C.arithmetic_genus()
             28
-            sage: C.genus()
+            sage: C.genus()  # geometric
             4
 
         ::
@@ -1710,10 +1726,11 @@ class ProjectivePlaneCurve_field(ProjectivePlaneCurve, ProjectiveCurve_field):
             sage: C.arithmetic_genus()
             3
         """
-        if not self.is_irreducible():
-            raise TypeError("this curve must be irreducible")
-        d = self.defining_polynomial().total_degree()
-        return Integer(d - 1).binomial(2)
+        if self.is_irreducible():
+            # use genus-degree formula
+            d = self.defining_polynomial().total_degree()
+            return Integer(d - 1).binomial(2)
+        return super().arithmetic_genus()
 
     def fundamental_group(self):
         r"""
@@ -2290,9 +2307,9 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         EXAMPLES::
 
-            sage: P.<x,y,z> = ProjectiveSpace(GF(4), 2)                                 # needs sage.rings.finite_rings
-            sage: C = Curve(x^5 + y^5 + x*y*z^3 + z^5)                                  # needs sage.rings.finite_rings
-            sage: C.genus()  # indirect doctest                                         # needs sage.rings.finite_rings
+            sage: P.<x,y,z> = ProjectiveSpace(GF(4), 2)
+            sage: C = Curve(x^5 + y^5 + x*y*z^3 + z^5)
+            sage: C.genus()  # indirect doctest
             1
         """
         return self._open_affine.genus()

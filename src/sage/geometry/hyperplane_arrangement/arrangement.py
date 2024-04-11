@@ -1354,7 +1354,7 @@ class HyperplaneArrangementElement(Element):
             ...
             TypeError: base field must have characteristic zero
 
-        Check that :trac:`30749` is fixed::
+        Check that :issue:`30749` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: R.<y> = QQ[]
@@ -3303,7 +3303,7 @@ class HyperplaneArrangementElement(Element):
 
         TESTS:
 
-        Check that :trac:`26705` is fixed::
+        Check that :issue:`26705` is fixed::
 
             sage: # needs sage.combinat sage.groups
             sage: w = WeylGroup(['A', 4]).from_reduced_word([3, 4, 2, 1])

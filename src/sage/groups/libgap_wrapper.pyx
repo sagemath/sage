@@ -117,7 +117,7 @@ class ParentLibGAP(SageObject):
             sage: G = FreeGroup(3)
             sage: TestSuite(G).run()
 
-        We check that :trac:`19270` is fixed::
+        We check that :issue:`19270` is fixed::
 
             sage: G = GL(2,5)
             sage: g = G( matrix([[1,0],[0,4]]))
@@ -242,7 +242,7 @@ class ParentLibGAP(SageObject):
             sage: F.0 * G.0
             a^3*b
 
-        Checking that :trac:`19270` is fixed::
+        Checking that :issue:`19270` is fixed::
 
             sage: gens = [w.matrix() for w in WeylGroup(['B', 3])]
             sage: G = MatrixGroup(gens)
@@ -254,7 +254,7 @@ class ParentLibGAP(SageObject):
 
         TESTS:
 
-        Check that :trac:`19010` is fixed::
+        Check that :issue:`19010` is fixed::
 
             sage: G = WeylGroup(['B',3])
             sage: H = G.subgroup([G[14], G[17]])
@@ -518,7 +518,7 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
             else:
                 raise TypeError('need a libgap group element or "1" in constructor')
 
-    cpdef GapElement gap(self) noexcept:
+    cpdef GapElement gap(self):
         """
         Return a LibGAP representation of the element.
 
@@ -640,7 +640,7 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
             from sage.misc.latex import latex
             return latex(self._repr_())
 
-    cpdef _mul_(left, right) noexcept:
+    cpdef _mul_(left, right):
         """
         Multiplication of group elements
 
@@ -662,7 +662,7 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
         return P.element_class(P, (<ElementLibGAP> left)._libgap *
                                   (<ElementLibGAP> right)._libgap)
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         This method implements comparison.
 
@@ -682,7 +682,7 @@ cdef class ElementLibGAP(MultiplicativeGroupElement):
         return richcmp((<ElementLibGAP>left)._libgap,
                        (<ElementLibGAP>right)._libgap, op)
 
-    cpdef _div_(left, right) noexcept:
+    cpdef _div_(left, right):
         """
         Division of group elements.
 

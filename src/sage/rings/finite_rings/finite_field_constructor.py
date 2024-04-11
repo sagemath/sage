@@ -279,7 +279,7 @@ class FiniteFieldFactory(UniqueFactory):
     .. NOTE::
 
         Magma only supports ``proof=False`` for making finite fields,
-        so falsely appears to be faster than Sage -- see :trac:`10975`.
+        so falsely appears to be faster than Sage -- see :issue:`10975`.
 
     ::
 
@@ -448,9 +448,9 @@ class FiniteFieldFactory(UniqueFactory):
         sage: GF(3^40).gen().minimal_polynomial()(k.gen()^((3^120-1)/(3^40-1)))  # long time (because of previous line)
         0
 
-    Before :trac:`17569`, the boolean keyword argument ``conway``
+    Before :issue:`17569`, the boolean keyword argument ``conway``
     was required when creating finite fields without a variable
-    name.  This keyword argument is now removed (:trac:`21433`).
+    name.  This keyword argument is now removed (:issue:`21433`).
     You can still pass in ``prefix`` as an argument, which has the
     effect of changing the variable name of the algebraic closure::
 
@@ -463,7 +463,7 @@ class FiniteFieldFactory(UniqueFactory):
 
     TESTS:
 
-    Check that :trac:`16934` has been fixed::
+    Check that :issue:`16934` has been fixed::
 
         sage: k1.<a> = GF(17^14, impl="pari")
         sage: _ = a/2
@@ -471,7 +471,7 @@ class FiniteFieldFactory(UniqueFactory):
         sage: k1 is k2
         True
 
-    Check that :trac:`21433` has been fixed::
+    Check that :issue:`21433` has been fixed::
 
         sage: K = GF(5^2)
         sage: L = GF(5^4)
@@ -479,12 +479,12 @@ class FiniteFieldFactory(UniqueFactory):
         sage: pushout(K,L) is L
         True
 
-    Check that :trac:`25182` has been fixed::
+    Check that :issue:`25182` has been fixed::
 
         sage: GF(next_prime(2^63)^6)
         Finite Field in z6 of size 9223372036854775837^6
 
-    Check that :trac:`31547` has been fixed::
+    Check that :issue:`31547` has been fixed::
 
         sage: q=2**152
         sage: GF(q,'a',modulus='primitive') == GF(q,'a',modulus='primitive')
@@ -547,7 +547,7 @@ class FiniteFieldFactory(UniqueFactory):
 
         We explicitly take ``structure``, ``implementation`` and ``prec`` attributes
         for compatibility with :class:`~sage.categories.pushout.AlgebraicExtensionFunctor`
-        but we ignore them as they are not used, see :trac:`21433`::
+        but we ignore them as they are not used, see :issue:`21433`::
 
             sage: GF.create_key_and_extra_args(9, 'a', structure=None)                  # needs sage.libs.linbox
             ((9, ('a',), x^2 + 2*x + 2, 'givaro', 3, 2, True, None, 'poly', True, True, True), {})

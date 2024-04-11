@@ -1173,7 +1173,7 @@ class MultivectorFieldParal(AlternatingContrTensor, TensorFieldParal):
 
         TESTS:
 
-        Check that :trac:`33780` is fixed::
+        Check that :issue:`33780` is fixed::
 
             sage: v = X.frame()[0]  # vector field d/dt
             sage: f = X.coframe()[1]  # 1-form dx

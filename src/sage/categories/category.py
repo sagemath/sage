@@ -242,7 +242,7 @@ class Category(UniqueRepresentation, SageObject):
         ....:         def fD(self):
         ....:             return "D"
 
-    Categories should always have unique representation; by :trac:`12215`,
+    Categories should always have unique representation; by :issue:`12215`,
     this means that it will be kept in cache, but only
     if there is still some strong reference to it.
 
@@ -426,7 +426,7 @@ class Category(UniqueRepresentation, SageObject):
         """
         Input mangling for unique representation.
 
-        Let ``C = Cs(...)`` be a category. Since :trac:`12895`, the
+        Let ``C = Cs(...)`` be a category. Since :issue:`12895`, the
         class of ``C`` is a dynamic subclass ``Cs_with_category`` of
         ``Cs`` in order for ``C`` to inherit code from the
         ``SubcategoryMethods`` nested classes of its super categories.
@@ -669,7 +669,7 @@ class Category(UniqueRepresentation, SageObject):
 
             This test is incomplete for categories in
             :class:`CategoryWithParameters`, as introduced by
-            :trac:`11935`. This method is therefore overwritten by
+            :issue:`11935`. This method is therefore overwritten by
             :meth:`~sage.categories.category.CategoryWithParameters._subcategory_hook_`.
 
         EXAMPLES::
@@ -821,7 +821,7 @@ class Category(UniqueRepresentation, SageObject):
 
         .. NOTE::
 
-            Since :trac:`10963`, the order of the categories in the
+            Since :issue:`10963`, the order of the categories in the
             result is irrelevant. For details, see
             :ref:`category-primer-category-order`.
 
@@ -837,7 +837,7 @@ class Category(UniqueRepresentation, SageObject):
         r"""
         All the super categories of this category, including this category.
 
-        Since :trac:`11943`, the order of super categories is
+        Since :issue:`11943`, the order of super categories is
         determined by Python's method resolution order C3 algorithm.
 
         .. SEEALSO:: :meth:`all_super_categories`
@@ -872,7 +872,7 @@ class Category(UniqueRepresentation, SageObject):
         r"""
         All the proper super categories of this category.
 
-        Since :trac:`11943`, the order of super categories is
+        Since :issue:`11943`, the order of super categories is
         determined by Python's method resolution order C3 algorithm.
 
         .. SEEALSO:: :meth:`all_super_categories`
@@ -933,7 +933,7 @@ class Category(UniqueRepresentation, SageObject):
 
          - ``proper`` -- a boolean (default: ``False``); whether to exclude this category.
 
-        Since :trac:`11943`, the order of super categories is
+        Since :issue:`11943`, the order of super categories is
         determined by Python's method resolution order C3 algorithm.
 
         .. note::
@@ -1183,7 +1183,7 @@ class Category(UniqueRepresentation, SageObject):
                 False
 
             The support for modeling full subcategories has been
-            introduced in :trac:`16340`.
+            introduced in :issue:`16340`.
         """
         return self
 
@@ -1377,7 +1377,7 @@ class Category(UniqueRepresentation, SageObject):
 
         .. note::
 
-            By :trac:`11943`, the list of categories returned by
+            By :issue:`11943`, the list of categories returned by
             :meth:`all_super_categories` is supposed to match with the
             method resolution order of the parent and element
             classes. This method checks this.
@@ -1600,7 +1600,7 @@ class Category(UniqueRepresentation, SageObject):
 
         .. SEEALSO::
 
-            - :trac:`12895`
+            - :issue:`12895`
             - :meth:`parent_class`
             - :meth:`element_class`
             - :meth:`_make_named_class`
@@ -1652,7 +1652,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: type(C)
             <class 'sage.structure.dynamic_class.DynamicMetaclass'>
 
-        By :trac:`11935`, some categories share their parent
+        By :issue:`11935`, some categories share their parent
         classes. For example, the parent class of an algebra only
         depends on the category of the base ring. A typical example is
         the category of algebras over a finite field versus algebras
@@ -1697,7 +1697,7 @@ class Category(UniqueRepresentation, SageObject):
             sage: type(C)
             <class 'sage.structure.dynamic_class.DynamicMetaclass'>
 
-        By :trac:`11935`, some categories share their element
+        By :issue:`11935`, some categories share their element
         classes. For example, the element class of an algebra only
         depends on the category of the base. A typical example is the
         category of algebras over a field versus algebras over a
@@ -2630,7 +2630,7 @@ def category_graph(categories=None):
 
     For readability, the names of the category are shortened.
 
-    .. TODO:: Further remove the base ring (see also :trac:`15801`).
+    .. TODO:: Further remove the base ring (see also :issue:`15801`).
 
     EXAMPLES::
 
@@ -2677,7 +2677,7 @@ class CategoryWithParameters(Category):
     depend only on the super categories of ``C``. For example, the
     vector space operations are provided if and only if ``K`` is a
     field, since ``VectorSpaces(K)`` is a super category of ``C`` only
-    in that case. In such cases, and as an optimization (see :trac:`11935`),
+    in that case. In such cases, and as an optimization (see :issue:`11935`),
     we want to use the same parent and element class for all fields.
     This is the purpose of this abstract class.
 
@@ -2913,7 +2913,7 @@ class JoinCategory(CategoryWithParameters):
          Category of commutative additive monoids, ..., Category of additive magmas,
          Category of sets, Category of sets with partial maps, Category of objects]
 
-    By :trac:`11935`, join categories and categories over base rings
+    By :issue:`11935`, join categories and categories over base rings
     inherit from :class:`CategoryWithParameters`. This allows for
     sharing parent and element classes between similar categories. For
     example, since group algebras belong to a join category and since
@@ -2964,7 +2964,7 @@ class JoinCategory(CategoryWithParameters):
         r"""
         Return what the element/parent/... classes depend on.
 
-        Since :trac:`11935`, the element/parent classes of a join
+        Since :issue:`11935`, the element/parent classes of a join
         category over base only depend on the element/parent class of
         its super categories.
 

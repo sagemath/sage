@@ -82,7 +82,7 @@ cdef class InteractiveLPBackend:
 
         self.row_names = []
 
-    cpdef __copy__(self) noexcept:
+    cpdef __copy__(self):
         """
         Returns a copy of self.
 
@@ -105,7 +105,7 @@ cdef class InteractiveLPBackend:
         cp.prob_name = self.prob_name
         return cp
 
-    cpdef base_ring(self) noexcept:
+    cpdef base_ring(self):
         """
         Return the base ring.
 
@@ -253,7 +253,7 @@ cdef class InteractiveLPBackend:
                                        problem_type, ring, objective_constant_term=d)
         return self.ncols() - 1
 
-    cpdef  set_variable_type(self, int variable, int vtype) noexcept:
+    cpdef  set_variable_type(self, int variable, int vtype):
         """
         Set the type of a variable.
 
@@ -307,7 +307,7 @@ cdef class InteractiveLPBackend:
         d = self.lp.objective_constant_term()
         return A, b, c, x, constraint_types, variable_types, problem_type, base_ring, d
 
-    cpdef set_sense(self, int sense) noexcept:
+    cpdef set_sense(self, int sense):
         """
         Set the direction (maximization/minimization).
 
@@ -337,7 +337,7 @@ cdef class InteractiveLPBackend:
                                        constraint_types, variable_types,
                                        problem_type, ring, objective_constant_term=d)
 
-    cpdef objective_coefficient(self, int variable, coeff=None) noexcept:
+    cpdef objective_coefficient(self, int variable, coeff=None):
         """
         Set or get the coefficient of a variable in the objective
         function
@@ -370,7 +370,7 @@ cdef class InteractiveLPBackend:
                                            constraint_types, variable_types,
                                            problem_type, ring, objective_constant_term=d)
 
-    cpdef objective_constant_term(self, d=None) noexcept:
+    cpdef objective_constant_term(self, d=None):
         """
         Set or get the constant term in the objective function
 
@@ -396,7 +396,7 @@ cdef class InteractiveLPBackend:
                                            constraint_types, variable_types,
                                            problem_type, ring, objective_constant_term=d)
 
-    cpdef set_objective(self, list coeff, d = 0) noexcept:
+    cpdef set_objective(self, list coeff, d=0):
         """
         Set the objective function.
 
@@ -446,7 +446,7 @@ cdef class InteractiveLPBackend:
                                        constraint_types, variable_types,
                                        problem_type, ring, objective_constant_term=d)
 
-    cpdef set_verbosity(self, int level) noexcept:
+    cpdef set_verbosity(self, int level):
         """
         Set the log (verbosity) level
 
@@ -462,7 +462,7 @@ cdef class InteractiveLPBackend:
         """
         self.verbosity = level
 
-    cpdef remove_constraint(self, int i) noexcept:
+    cpdef remove_constraint(self, int i):
         r"""
         Remove a constraint.
 
@@ -496,7 +496,7 @@ cdef class InteractiveLPBackend:
                                        constraint_types, variable_types,
                                        problem_type, ring, objective_constant_term=d)
 
-    cpdef add_linear_constraint(self, coefficients, lower_bound, upper_bound, name=None) noexcept:
+    cpdef add_linear_constraint(self, coefficients, lower_bound, upper_bound, name=None):
         """
         Add a linear constraint.
 
@@ -558,7 +558,7 @@ cdef class InteractiveLPBackend:
                                        problem_type, ring, objective_constant_term=d)
 
 
-    cpdef add_col(self, indices, coeffs) noexcept:
+    cpdef add_col(self, indices, coeffs):
         """
         Add a column.
 
@@ -633,7 +633,7 @@ cdef class InteractiveLPBackend:
         else:
             raise MIPSolverException("InteractiveLP: Problem is unbounded")
 
-    cpdef get_objective_value(self) noexcept:
+    cpdef get_objective_value(self):
         """
         Return the value of the objective function.
 
@@ -664,7 +664,7 @@ cdef class InteractiveLPBackend:
             v = - v
         return v
 
-    cpdef get_variable_value(self, int variable) noexcept:
+    cpdef get_variable_value(self, int variable):
         """
         Return the value of a variable given by the solver.
 
@@ -741,7 +741,7 @@ cdef class InteractiveLPBackend:
         """
         return self.lp.problem_type() == "max"
 
-    cpdef problem_name(self, name=None) noexcept:
+    cpdef problem_name(self, name=None):
         """
         Return or define the problem's name
 
@@ -766,7 +766,7 @@ cdef class InteractiveLPBackend:
         else:
             self.prob_name = str(name)
 
-    cpdef row(self, int i) noexcept:
+    cpdef row(self, int i):
         """
         Return a row
 
@@ -800,7 +800,7 @@ cdef class InteractiveLPBackend:
                 coeffs.append(A[i][j])
         return (indices, coeffs)
 
-    cpdef row_bounds(self, int index) noexcept:
+    cpdef row_bounds(self, int index):
         """
         Return the bounds of a specific constraint.
 
@@ -835,7 +835,7 @@ cdef class InteractiveLPBackend:
         else:
             raise ValueError("Bad constraint_type")
 
-    cpdef col_bounds(self, int index) noexcept:
+    cpdef col_bounds(self, int index):
         """
         Return the bounds of a specific variable.
 
@@ -936,7 +936,7 @@ cdef class InteractiveLPBackend:
         """
         return True
 
-    cpdef row_name(self, int index) noexcept:
+    cpdef row_name(self, int index):
         """
         Return the ``index`` th row name
 
@@ -955,7 +955,7 @@ cdef class InteractiveLPBackend:
         """
         return self.row_names[index]
 
-    cpdef col_name(self, int index) noexcept:
+    cpdef col_name(self, int index):
         """
         Return the ``index``-th column name
 
@@ -977,7 +977,7 @@ cdef class InteractiveLPBackend:
         """
         return str(self.lp.decision_variables()[index])
 
-    cpdef variable_upper_bound(self, int index, value = False) noexcept:
+    cpdef variable_upper_bound(self, int index, value=False):
         """
         Return or define the upper bound on a variable
 
@@ -1021,7 +1021,7 @@ cdef class InteractiveLPBackend:
                                                constraint_types, variable_types,
                                                problem_type, ring, objective_constant_term=d)
 
-    cpdef variable_lower_bound(self, int index, value = False) noexcept:
+    cpdef variable_lower_bound(self, int index, value=False):
         """
         Return or define the lower bound on a variable
 
@@ -1185,7 +1185,7 @@ cdef class InteractiveLPBackend:
         """
         return self.lp_std_form.slack_variables()[index] in self.final_dictionary.nonbasic_variables()
 
-    cpdef dictionary(self) noexcept:
+    cpdef dictionary(self):
         # Proposed addition to the general interface,
         # which would for other solvers return backend dictionaries (#18804)
         """
@@ -1221,7 +1221,7 @@ cdef class InteractiveLPBackend:
         """
         return self.final_dictionary
 
-    cpdef interactive_lp_problem(self) noexcept:
+    cpdef interactive_lp_problem(self):
 
         """
         Return the :class:`InteractiveLPProblem` object associated with this backend.

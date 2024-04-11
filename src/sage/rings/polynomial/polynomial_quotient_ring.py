@@ -169,7 +169,7 @@ class PolynomialQuotientRingFactory(UniqueFactory):
         sage: R.quotient(f)
         Univariate Quotient Polynomial Ring in xbar over Integer Ring with modulus x^2 + 1
 
-    This shows that the issue at :trac:`5482` is solved::
+    This shows that the issue at :issue:`5482` is solved::
 
         sage: R.<x> = PolynomialRing(QQ)
         sage: f = x^2 - 1
@@ -312,7 +312,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
     TESTS:
 
-    By :trac:`11900`, polynomial quotient rings use Sage's
+    By :issue:`11900`, polynomial quotient rings use Sage's
     category framework. They do so in an unusual way: During their
     initialisation, they are declared to be objects in the category of
     quotients of commutative algebras over a base ring. However, if it
@@ -404,7 +404,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: S == PolynomialQuotientRing_generic(R, x^2 - 4, 'xbar')
             True
 
-        Check that :trac:`26161` has been resolved::
+        Check that :issue:`26161` has been resolved::
 
             sage: R.<x> = GF(2)[]
             sage: S = R.quo(x)                                                          # needs sage.rings.finite_rings
@@ -473,7 +473,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
         TESTS:
 
         Conversion should work even if there is no coercion.
-        This was fixed in :trac:`8800`::
+        This was fixed in :issue:`8800`::
 
             sage: P.<x> = QQ[]
             sage: Q1 = P.quo([(x^2+1)^2*(x^2-3)])
@@ -483,7 +483,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: Q1(Q.gen())
             xbar
 
-        Here we test against several issues discussed in :trac:`8992`::
+        Here we test against several issues discussed in :issue:`8992`::
 
             sage: P.<x> = QQ[]
             sage: Q1 = P.quo([(x^2+1)^2*(x^2-3)])
@@ -561,7 +561,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         AUTHOR:
 
-        - Simon King (2010-12): :trac:`8800`
+        - Simon King (2010-12): :issue:`8800`
 
         TESTS::
 
@@ -577,7 +577,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
             sage: Q1.has_coerce_map_from(Q2)
             False
 
-        The following tests against a bug fixed in :trac:`8992`::
+        The following tests against a bug fixed in :issue:`8992`::
 
             sage: P.<x> = QQ[]
             sage: Q1 = P.quo([(x^2+1)^2*(x^2-3)])
@@ -1472,7 +1472,7 @@ class PolynomialQuotientRing_generic(QuotientRing_generic):
 
         By using the ideal `(a)`, we cut the part of the class group coming from
         `x^2 + 31` from 12 to 2, i.e. we lose a generator of order 6 (this was
-        fixed in :trac:`14489`)::
+        fixed in :issue:`14489`)::
 
             sage: S.S_class_group([K.ideal(a)])  # representation varies        # not tested, needs sage.rings.number_field
             [((1/4*xbar^2 + 31/4, (-1/8*a + 1/8)*xbar^2 - 31/8*a + 31/8,
@@ -2321,12 +2321,12 @@ class PolynomialQuotientRing_domain(PolynomialQuotientRing_generic, IntegralDoma
             sage: S.<xbar> = R.quotient(x^2 + 1)
             sage: TestSuite(S).run()
 
-        Check that :trac:`17450` is fixed::
+        Check that :issue:`17450` is fixed::
 
             sage: S in IntegralDomains()
             True
 
-        Check that :trac:`29017` is fixed::
+        Check that :issue:`29017` is fixed::
 
             sage: R.<x> = ZZ[]
             sage: Q = R.quo(x - 1)

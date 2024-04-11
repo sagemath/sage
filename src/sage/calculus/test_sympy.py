@@ -188,7 +188,7 @@ Mixing SymPy with Sage::
 
 TESTS:
 
-This was fixed in Sympy, see :trac:`14437`::
+This was fixed in Sympy, see :issue:`14437`::
 
     sage: # needs sympy
     sage: from sympy import Function, Symbol, rsolve

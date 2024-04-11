@@ -573,7 +573,7 @@ def _discrete_log_pgroup(p, vals, aa, b):
 
     TESTS:
 
-    Check for :trac:`34716`::
+    Check for :issue:`34716`::
 
         sage: # needs sage.rings.finite_rings sage.schemes
         sage: E = EllipticCurve(GF(487^2), [311,205])

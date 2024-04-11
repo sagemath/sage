@@ -230,7 +230,7 @@ class FqfOrthogonalGroup(AbelianGroupAutomorphismGroup_subgroup):
             [1 3]
             [3 4]
 
-        Note that the following does not work since it may lead to ambiguities, see :trac:`30669`::
+        Note that the following does not work since it may lead to ambiguities, see :issue:`30669`::
 
             sage: Oq(f.matrix())                                                        # needs sage.graphs
             Traceback (most recent call last):

@@ -126,10 +126,10 @@ primes ?
 AUTHORS:
 
 - Thierry Monteil (2012-02-10 -- 2013-06-21): initial version.
-- Vincent Delecroix (2014): modifies continued fractions because of :trac:`14567`
-- Moritz Firsching (2016): modifies handling of dead sequence, see :trac:`17330`
-- Thierry Monteil (2019): refactorization (unique representation :trac:`28480`,
-  laziness :trac:`28627`)
+- Vincent Delecroix (2014): modifies continued fractions because of :issue:`14567`
+- Moritz Firsching (2016): modifies handling of dead sequence, see :issue:`17330`
+- Thierry Monteil (2019): refactorization (unique representation :issue:`28480`,
+  laziness :issue:`28627`)
 
 """
 
@@ -1266,7 +1266,7 @@ class OEISSequence(SageObject, UniqueRepresentation):
             sage: f.first_terms()[:10]                  # optional -- internet
             (0, 1, 1, 2, 3, 5, 8, 13, 21, 34)
 
-        Handle dead sequences, see :trac:`17330` ::
+        Handle dead sequences, see :issue:`17330` ::
 
             sage: oeis(5000).first_terms(12)            # optional -- internet
             doctest:warning
@@ -2103,7 +2103,7 @@ class FancyTuple(tuple):
             sage: ft[-1] == 'ç'
             True
 
-        Check that :trac:`26997` is fixed::
+        Check that :issue:`26997` is fixed::
 
             sage: FancyTuple([[1,2,3],(4,5,6)])
             0: [1, 2, 3]

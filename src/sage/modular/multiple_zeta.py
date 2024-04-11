@@ -640,7 +640,7 @@ class Multizetas(CombinatorialFreeModule):
         sage: (u*M((2,))+M((3,)))*M((2,))
         4*u*ζ(1,3) + 6*ζ(1,4) + 2*u*ζ(2,2) + 3*ζ(2,3) + ζ(3,2)
 
-    Check for :trac:`30925`::
+    Check for :issue:`30925`::
 
         sage: M = Multizetas(QQ)
         sage: l = [1,2,3]

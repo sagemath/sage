@@ -487,7 +487,7 @@ For example,
     <matplotlib.image.AxesImage object at ...>
 
 We test that ``imshow`` works as well, verifying that
-:trac:`2900` is fixed (in Matplotlib).
+:issue:`2900` is fixed (in Matplotlib).
 
 ::
 
@@ -521,7 +521,7 @@ Verify that a clean sage startup does *not* import matplotlib::
     sage: os.system("sage -c \"if 'matplotlib' in sys.modules: sys.exit(1)\"")  # long time
     0
 
-Verify that :trac:`10980` is fixed::
+Verify that :issue:`10980` is fixed::
 
     sage: plot(x,0,2,gridlines=([sqrt(2)],[]))
     Graphics object consisting of 1 graphics primitive
@@ -559,11 +559,11 @@ AUTHORS:
 
 - Jason Grout (2010-10): rewrote aspect ratio portions of the code
 
-- Jeroen Demeyer (2012-04-19): move parts of this file to graphics.py (:trac:`12857`)
+- Jeroen Demeyer (2012-04-19): move parts of this file to graphics.py (:issue:`12857`)
 
 - Aaron Lauve (2016-07-13): reworked handling of 'color' when passed
   a list of functions; now more in-line with other CAS's. Added list functionality
-  to linestyle and legend_label options as well. (:trac:`12962`)
+  to linestyle and legend_label options as well. (:issue:`12962`)
 
 - Eric Gourgoulhon (2019-04-24): add :func:`multi_graphics` and insets
 """
@@ -791,7 +791,7 @@ def xydata_from_point_list(points):
         ([0.0, 1.0], [0.0, 0.0])
 
     This function should work for anything than can be turned into a
-    list, such as iterators and such (see :trac:`10478`)::
+    list, such as iterators and such (see :issue:`10478`)::
 
         sage: xydata_from_point_list(iter([(0,0), (sqrt(3), 2)]))
         ([0.0, 1.7320508075688772], [0.0, 2.0])
@@ -1318,7 +1318,7 @@ def plot(funcs, *args, **kwds):
         g = p1 + p2
         sphinx_plot(g)
 
-    Prior to :trac:`19485`, legends by default had a shadowless gray
+    Prior to :issue:`19485`, legends by default had a shadowless gray
     background. This behavior can be recovered by setting the legend
     options on your plot object::
 
@@ -1970,14 +1970,14 @@ def plot(funcs, *args, **kwds):
         ...
         ValueError: plot start point and end point must be different
 
-    We test that we can plot `f(x)=x` (see :trac:`10246`)::
+    We test that we can plot `f(x)=x` (see :issue:`10246`)::
 
         sage: f(x)=x; f
         x |--> x
         sage: plot(f,(x,-1,1))
         Graphics object consisting of 1 graphics primitive
 
-    Check that :trac:`15030` is fixed::
+    Check that :issue:`15030` is fixed::
 
         sage: plot(abs(log(x)), x)
         Graphics object consisting of 1 graphics primitive
@@ -1995,14 +1995,14 @@ def plot(funcs, *args, **kwds):
 
         sage: set_verbose(0)
 
-    Legends can contain variables with long names, :trac:`13543`::
+    Legends can contain variables with long names, :issue:`13543`::
 
         sage: hello = var('hello')
         sage: label = '$' + latex(hello) + '$'
         sage: plot(x, x, 0, 1, legend_label=label)
         Graphics object consisting of 1 graphics primitive
 
-    Extra keywords should be saved if object has a plot method, :trac:`20924`::
+    Extra keywords should be saved if object has a plot method, :issue:`20924`::
 
         sage: G = graphs.PetersenGraph()
         sage: p = G.plot()
@@ -2119,7 +2119,7 @@ def _plot(funcs, xrange, parametric=False,
     TESTS:
 
     Make sure that we get the right number of legend entries as the number of
-    functions varies (:trac:`10514`)::
+    functions varies (:issue:`10514`)::
 
         sage: p1 = plot(1*x, legend_label='1x')
         sage: p2 = plot(2*x, legend_label='2x', color='green')
@@ -2144,7 +2144,7 @@ def _plot(funcs, xrange, parametric=False,
         Graphics object consisting of 2 graphics primitives
 
     Make sure that we don't get multiple legend labels for plot segments
-    (:trac:`11998`)::
+    (:issue:`11998`)::
 
         sage: p1 = plot(1/(x^2-1),(x,-2,2),legend_label="foo",detect_poles=True)
         sage: len(p1.matplotlib().axes[0].legend().texts)
@@ -2152,12 +2152,12 @@ def _plot(funcs, xrange, parametric=False,
         sage: p1.show(ymin=-10,ymax=10) # should be one legend
 
     Parametric plots that get evaluated at invalid points should still
-    plot properly (:trac:`13246`)::
+    plot properly (:issue:`13246`)::
 
         sage: parametric_plot((x, arcsec(x)), (x, -2, 2))
         Graphics object consisting of 1 graphics primitive
 
-    Verify that :trac:`31089` is fixed::
+    Verify that :issue:`31089` is fixed::
 
         sage: plot(x, -1, 1, detect_poles=True)
         Graphics object consisting of 1 graphics primitive
@@ -2495,7 +2495,7 @@ def _plot(funcs, xrange, parametric=False,
             exclusion_point = excluded_points.pop()
         else:
             # default value of exclusion point must be outside the plot interval
-            # (see :trac:`31089`)
+            # (see :issue:`31089`)
             exclusion_point = xmax + 1
 
         flag = True
@@ -2725,7 +2725,7 @@ def parametric_plot(funcs, *args, **kwargs):
         ...
         ValueError: there are more variables than variable ranges
 
-    One test for :trac:`7165`::
+    One test for :issue:`7165`::
 
         sage: m = SR.var('m')
         sage: parametric_plot([real(exp(i*m)), imaginary(exp(i*m))], (m, 0, 7))
@@ -3084,7 +3084,7 @@ def list_plot(data, plotjoined=False, **kwargs):
     TESTS:
 
     We check to see whether elements of the Symbolic Ring are properly
-    handled; see :trac:`16378` ::
+    handled; see :issue:`16378` ::
 
         sage: list_plot([1+I, 2+I])
         Graphics object consisting of 1 graphics primitive

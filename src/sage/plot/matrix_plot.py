@@ -108,7 +108,7 @@ class MatrixPlot(GraphicPrimitive):
 
         TESTS:
 
-        We verify that :trac:`27891` is fixed::
+        We verify that :issue:`27891` is fixed::
 
             sage: p = matrix_plot(identity_matrix(5)) + point((2, 2), zorder=1)
             sage: sorted(p.get_minmax_data().items())
@@ -545,7 +545,7 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
         sage: matrix_plot(sparse, subdivisions=True, subdivision_boundaries=[[2,4],[6,8]])
         Graphics object consisting of 1 graphics primitive
 
-    Test that matrix plots have aspect ratio one (see :trac:`15315`)::
+    Test that matrix plots have aspect ratio one (see :issue:`15315`)::
 
         sage: P = matrix_plot(random_matrix(RDF, 5))
         sage: P.aspect_ratio()
