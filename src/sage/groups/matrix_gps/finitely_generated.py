@@ -83,9 +83,7 @@ def normalize_square_matrices(matrices):
     """
     Find a common space for all matrices.
 
-    OUTPUT:
-
-    A list of matrices, all elements of the same matrix space.
+    OUTPUT: a list of matrices, all elements of the same matrix space
 
     EXAMPLES::
 
@@ -151,7 +149,8 @@ def QuaternionMatrixGroupGF3():
     is not isomorphic to the group of symmetries of a square
     (the dihedral group `D_4`).
 
-    .. note::
+    .. NOTE::
+
         This group is most easily available via ``groups.matrix.QuaternionGF3()``.
 
     EXAMPLES:
@@ -413,9 +412,7 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
         """
         Return the `i`-th generator
 
-        OUTPUT:
-
-        The `i`-th generator of the group.
+        OUTPUT: the `i`-th generator of the group
 
         EXAMPLES::
 
@@ -435,9 +432,7 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
         """
         Return the number of generators
 
-        OUTPUT:
-
-        An integer. The number of generators.
+        OUTPUT: an integer; the number of generators
 
         EXAMPLES::
 

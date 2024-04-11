@@ -79,9 +79,7 @@ def CyclicPresentation(n):
 
     - ``n`` -- The order of the cyclic presentation to be returned.
 
-    OUTPUT:
-
-    The cyclic group of order `n` as finite presentation.
+    OUTPUT: the cyclic group of order `n` as finite presentation
 
     EXAMPLES::
 
@@ -219,10 +217,8 @@ def FinitelyGeneratedHeisenbergPresentation(n=1, p=0):
     - ``p`` -- (optional) a prime number, where we construct the
       Heisenberg group over the finite field `\ZZ/p\ZZ`
 
-    OUTPUT:
-
-    Finitely generated Heisenberg group over the finite field
-    of order ``p`` or over the integers.
+    OUTPUT: finitely generated Heisenberg group over the finite field
+    of order ``p`` or over the integers
 
     .. SEEALSO::
 
@@ -304,9 +300,7 @@ def DihedralPresentation(n):
 
     - ``n`` -- The size of the set that `D_n` is acting on.
 
-    OUTPUT:
-
-    Dihedral group of order `2n`.
+    OUTPUT: Dihedral group of order `2n`
 
     EXAMPLES::
 
@@ -343,9 +337,7 @@ def DiCyclicPresentation(n):
     - ``n`` -- positive integer, 2 or greater, determining the order of
       the group (`4n`).
 
-    OUTPUT:
-
-    The dicyclic group of order `4n` is defined by the presentation
+    OUTPUT: the dicyclic group of order `4n` is defined by the presentation
 
     .. MATH::
 
@@ -441,9 +433,7 @@ def QuaternionPresentation():
     r"""
     Build the Quaternion group of order 8 as a finitely presented group.
 
-    OUTPUT:
-
-    Quaternion group as a finite presentation.
+    OUTPUT: Quaternion group as a finite presentation
 
     EXAMPLES::
 
@@ -520,9 +510,7 @@ def KleinFourPresentation():
     r"""
     Build the Klein group of order `4` as a finitely presented group.
 
-    OUTPUT:
-
-    Klein four group (`C_2 \times C_2`) as a finitely presented group.
+    OUTPUT: Klein four group (`C_2 \times C_2`) as a finitely presented group
 
     EXAMPLES::
 
@@ -548,9 +536,7 @@ def BinaryDihedralPresentation(n):
 
     - ``n`` -- the value `n`
 
-    OUTPUT:
-
-    The binary dihedral group of order `4n` as finite presentation.
+    OUTPUT: the binary dihedral group of order `4n` as finite presentation
 
     EXAMPLES::
 
@@ -579,9 +565,7 @@ def CactusPresentation(n):
     r"""
     Build the `n`-fruit cactus group as a finitely presented group.
 
-    OUTPUT:
-
-    Cactus group `J_n` as a finitely presented group.
+    OUTPUT: Cactus group `J_n` as a finitely presented group
 
     EXAMPLES::
 

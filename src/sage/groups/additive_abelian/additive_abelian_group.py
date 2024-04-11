@@ -25,9 +25,8 @@ def AdditiveAbelianGroup(invs, remember_generators=True):
       generators (corresponding to the given invariants, which need not be in
       Smith form).
 
-    OUTPUT:
-
-    The abelian group `\bigoplus_i \ZZ / n_i \ZZ`, where `n_i` are the invariants.
+    OUTPUT: the abelian group `\bigoplus_i \ZZ / n_i \ZZ`, where `n_i` are the
+    invariants
 
     EXAMPLES::
 
@@ -246,7 +245,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class):
 
     def _latex_(self):
         r"""
-        Returns a Latex representation of the group, using the invariants.
+        Return a Latex representation of the group, using the invariants.
 
         EXAMPLES::
 
@@ -375,7 +374,7 @@ class AdditiveAbelianGroup_class(FGP_Module_class):
 
     def is_cyclic(self):
         r"""
-        Returns ``True`` if the group is cyclic.
+        Return ``True`` if the group is cyclic.
 
         EXAMPLES:
 
@@ -422,7 +421,7 @@ class AdditiveAbelianGroup_fixed_gens(AdditiveAbelianGroup_class):
 
     def gens(self) -> tuple:
         r"""
-        Return the specified generators for self (as a tuple). Compare
+        Return the specified generators for ``self`` (as a tuple). Compare
         ``self.smithform_gens()``.
 
         EXAMPLES::

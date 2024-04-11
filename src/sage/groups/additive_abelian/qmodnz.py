@@ -54,9 +54,7 @@ class QmodnZ(Parent, UniqueRepresentation):
         - `n` -- an integer (including 0 or negative integers).
 
 
-    OUTPUT:
-
-    The abelian group `\Q/n\Z`.
+    OUTPUT: the abelian group `\Q/n\Z`
 
     EXAMPLES::
 

@@ -448,7 +448,7 @@ def AbelianGroup(n, gens_orders=None, names="f"):
 
 def is_AbelianGroup(x):
     """
-    Return True if ``x`` is an Abelian group.
+    Return ``True`` if ``x`` is an Abelian group.
 
     EXAMPLES::
 
@@ -558,9 +558,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
         - ``right`` -- anything.
 
-        OUTPUT:
-
-        Boolean. Whether ``left`` and ``right`` are isomorphic as abelian groups.
+        OUTPUT: boolean; whether ``left`` and ``right`` are isomorphic as abelian groups
 
         EXAMPLES::
 
@@ -682,9 +680,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         - ``base_ring`` -- the base ring. If ``None`` (default), then
           a suitable cyclotomic field is picked automatically.
 
-        OUTPUT:
-
-        The :class:`dual abelian group <sage.groups.abelian_gps.dual_abelian_group.DualAbelianGroup_class>`.
+        OUTPUT: the :class:`dual abelian group <sage.groups.abelian_gps.dual_abelian_group.DualAbelianGroup_class>`
 
         EXAMPLES::
 
@@ -721,7 +717,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         r"""
         This returns the elementary divisors of the group, using Pari.
 
-        .. note::
+        .. NOTE::
 
             Here is another algorithm for computing the elementary divisors
             `d_1, d_2, d_3, \ldots`, of a finite abelian group (where `d_1 | d_2 | d_3 | \ldots`
@@ -736,9 +732,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             on these "smaller invariants" to compute `d_{i-1}`, and so on.
             (Thanks to Robert Miller for communicating this algorithm.)
 
-        OUTPUT:
-
-        A tuple of integers.
+        OUTPUT: a tuple of integers
 
         EXAMPLES::
 
@@ -806,15 +800,13 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
     def _group_notation(self, eldv):
         """
-        Return abstract group notation for generator orders ``eldv``
+        Return abstract group notation for generator orders ``eldv``.
 
         INPUT:
 
         - ``eldv`` -- iterable of integers.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: a string
 
         EXAMPLES::
 
@@ -955,9 +947,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         Use :meth:`elementary_divisors` if you are looking for an
         invariant of the group.
 
-        OUTPUT:
-
-        A tuple of integers.
+        OUTPUT: a tuple of integers
 
         EXAMPLES::
 
@@ -1018,9 +1008,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         Use :meth:`elementary_divisors` if you are looking for an
         invariant of the group.
 
-        OUTPUT:
-
-        A tuple of integers. Zero means infinite cyclic factor.
+        OUTPUT: a tuple of integers; zero means infinite cyclic factor
 
         EXAMPLES::
 
@@ -1043,7 +1031,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
     def is_cyclic(self):
         """
-        Return True if the group is a cyclic group.
+        Return ``True`` if the group is a cyclic group.
 
         EXAMPLES::
 
@@ -1153,7 +1141,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
     def is_commutative(self):
         """
-        Return True since this group is commutative.
+        Return ``True`` since this group is commutative.
 
         EXAMPLES::
 
@@ -1787,11 +1775,9 @@ class AbelianGroup_subgroup(AbelianGroup_class):
 
     def ambient_group(self):
         """
-        Return the ambient group related to self.
+        Return the ambient group related to ``self``.
 
-        OUTPUT:
-
-        A multiplicative Abelian group.
+        OUTPUT: a multiplicative Abelian group
 
         EXAMPLES::
 
@@ -1879,9 +1865,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
         """
         Return the generators for this subgroup.
 
-        OUTPUT:
-
-        A tuple of group elements generating the subgroup.
+        OUTPUT: a tuple of group elements generating the subgroup
 
         EXAMPLES::
 

@@ -269,10 +269,6 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
-
         EXAMPLES::
 
             sage: G.<a,b> = FreeGroup()
@@ -300,9 +296,7 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         the letter corresponding to the `i`-th generator of the group.
         Negative integers represent the inverses of generators.
 
-        OUTPUT:
-
-        A tuple of integers.
+        OUTPUT: a tuple of integers
 
         EXAMPLES::
 
@@ -332,10 +326,8 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
           ``True``). Whether to verify that ``values`` satisfy the
           relations in the finitely presented group.
 
-        OUTPUT:
-
-        The product of ``values`` in the order and with exponents
-        specified by ``self``.
+        OUTPUT: the product of ``values`` in the order and with exponents
+        specified by ``self``
 
         EXAMPLES::
 
@@ -386,9 +378,7 @@ def wrap_FpGroup(libgap_fpgroup):
 
     - ``libgap_fpgroup`` -- a LibGAP finitely presented group
 
-    OUTPUT:
-
-    A Sage :class:`FinitelyPresentedGroup`.
+    OUTPUT: a Sage :class:`FinitelyPresentedGroup`
 
     EXAMPLES:
 
@@ -813,10 +803,6 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
-
         TESTS::
 
             sage: G.<a,b> = FreeGroup()
@@ -834,9 +820,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         """
         Return a LaTeX representation
 
-        OUTPUT:
-
-        String. A valid LaTeX math command sequence.
+        OUTPUT: a string; a valid LaTeX math command sequence
 
         TESTS::
 
@@ -864,9 +848,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         """
         Return the free group (without relations).
 
-        OUTPUT:
-
-        A :func:`~sage.groups.free_group.FreeGroup`.
+        OUTPUT: a :func:`~sage.groups.free_group.FreeGroup`
 
         EXAMPLES::
 
@@ -883,9 +865,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         """
         Return the relations of the group.
 
-        OUTPUT:
-
-        The relations as a tuple of elements of :meth:`free_group`.
+        OUTPUT: the relations as a tuple of elements of :meth:`free_group`
 
         EXAMPLES::
 
@@ -910,9 +890,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         - ``limit`` -- integer (default: 4096000). The maximal number
           of cosets before the computation is aborted.
 
-        OUTPUT:
-
-        Integer or ``Infinity``. The number of elements in the group.
+        OUTPUT: integer or ``Infinity``; the number of elements in the group
 
         EXAMPLES::
 
@@ -1036,10 +1014,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
           to keep the old variable names, as they may change meaning
           in the output group if its presentation is reduced.
 
-        OUTPUT:
-
-        The direct product of ``self`` with ``H`` as a finitely
-        presented group.
+        OUTPUT: the direct product of ``self`` with ``H`` as a finitely
+        presented group
 
         EXAMPLES::
 
@@ -1358,9 +1334,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         r"""
         Return the abelianization map of ``self``.
 
-        OUTPUT:
-
-        The abelianization map of ``self`` as a homomorphism of finitely presented groups.
+        OUTPUT: the abelianization map of ``self`` as a homomorphism of
+        finitely presented groups
 
         EXAMPLES::
 
@@ -1530,11 +1505,10 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
     def sorted_presentation(self):
         """
-        Return the same presentation with the relations sorted to ensure equality.
+        Return the same presentation with the relations sorted to ensure
+        equality.
 
-        OUTPUT:
-
-        A new finitely presented group with the relations sorted.
+        OUTPUT: a new finitely presented group with the relations sorted
 
         EXAMPLES::
 

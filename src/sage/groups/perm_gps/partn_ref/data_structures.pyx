@@ -659,7 +659,7 @@ cdef inline void SC_dealloc(StabilizerChain *SC) noexcept:
 
 cdef StabilizerChain *SC_symmetric_group(int n) noexcept:
     """
-    Returns a stabilizer chain for the symmetric group on {0, 1, ..., n-1}.
+    Return a stabilizer chain for the symmetric group on {0, 1, ..., n-1}.
 
     Returns NULL in the case of an allocation failure.
     """
@@ -700,7 +700,7 @@ cdef StabilizerChain *SC_symmetric_group(int n) noexcept:
 
 cdef StabilizerChain *SC_alternating_group(int n) noexcept:
     """
-    Returns a stabilizer chain for the alternating group on {0, 1, ..., n-1}.
+    Return a stabilizer chain for the alternating group on {0, 1, ..., n-1}.
 
     Returns NULL in the case of an allocation failure.
     """
@@ -1142,8 +1142,8 @@ cdef bint SC_is_giant(int n, int num_perms, int *perms, float p, bitset_t suppor
     If the group is not a giant, this routine will return False. This could also
     indicate an allocation failure.
 
-    If the group is a giant, this routine will return True with approximate
-    probability p. It will set `support' to the support of the group in this
+    If the group is a giant, this routine will return ``True`` with approximate
+    probability ``p``. It will set `support' to the support of the group in this
     case. Use bitset_len to get the size of support.
 
     The bitset `support' must be initialized. Must have 0 <= p < 1.

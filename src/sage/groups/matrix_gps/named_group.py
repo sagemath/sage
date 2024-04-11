@@ -78,9 +78,7 @@ def normalize_args_vectorspace(*args, **kwds):
         field generator name in the case where ``ring`` is a prime
         power.
 
-    OUTPUT:
-
-    A pair ``(degree, ring)``.
+    OUTPUT: a pair ``(degree, ring)``
 
     TESTS::
 
@@ -237,9 +235,7 @@ class NamedMatrixGroup_generic(CachedRepresentation, MatrixGroup_generic):
         """
         Return an element.
 
-        OUTPUT:
-
-        A group element.
+        OUTPUT: a group element
 
         EXAMPLES::
 
@@ -253,10 +249,6 @@ class NamedMatrixGroup_generic(CachedRepresentation, MatrixGroup_generic):
         """
         Return a string representation.
 
-        OUTPUT:
-
-        String.
-
         EXAMPLES::
 
             sage: GL(2, QQ)._repr_()
@@ -266,11 +258,9 @@ class NamedMatrixGroup_generic(CachedRepresentation, MatrixGroup_generic):
 
     def _latex_(self):
         """
-        Return a LaTeX representation
+        Return a LaTeX representation.
 
-        OUTPUT:
-
-        String.
+        OUTPUT: a string
 
         EXAMPLES::
 

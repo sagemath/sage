@@ -97,7 +97,7 @@ cpdef is_MatrixGroupElement(x):
 
     - ``x`` -- anything.
 
-    OUTPUT: Boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -372,7 +372,7 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
         """
         Return the inverse group element
 
-        OUTPUT: A matrix group element.
+        OUTPUT: a matrix group element
 
         EXAMPLES::
 

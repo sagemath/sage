@@ -676,12 +676,12 @@ cdef int compare_graphs(int *gamma_1, int *gamma_2, void *S1, void *S2, int degr
 
 cdef bint all_children_are_equivalent(PartitionStack *PS, void *S) noexcept:
     """
-    Return True if every refinement of the current partition results in the
+    Return ``True`` if every refinement of the current partition results in the
     same structure.
 
-    WARNING:
+    .. WARNING::
 
-    Converse does not hold in general!  See Lemma 2.25 of [1] for details.
+        Converse does not hold in general!  See Lemma 2.25 of [1] for details.
 
     INPUT:
 

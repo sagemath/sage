@@ -15,7 +15,6 @@ In the latter case, the caller must provide an identity, ``inverse()`` and
     multiplication_names = ('multiplication', 'times', 'product', '*')
     addition_names       = ('addition', 'plus', 'sum', '+')
 
-
 Also included are a generic function for computing multiples (or
 powers), and an iterator for general multiples and powers.
 
@@ -401,10 +400,12 @@ def bsgs(a, b, bounds, operation='*', identity=None, inverse=None, op=None):
     An integer `n` such that `a^n = b` (or `na = b`).  If no
     such `n` exists, this function raises a :class:`ValueError` exception.
 
-    NOTE: This is a generalization of discrete logarithm.  One
-    situation where this version is useful is to find the order of
-    an element in a group where we only have bounds on the group
-    order (see the elliptic curve example below).
+    .. NOTE::
+
+        This is a generalization of discrete logarithm.  One
+        situation where this version is useful is to find the order of
+        an element in a group where we only have bounds on the group
+        order (see the elliptic curve example below).
 
     ALGORITHM: Baby step giant step.  Time and space are soft
     `O(\sqrt{n})` where `n` is the difference between upper and lower
@@ -992,7 +993,7 @@ def discrete_log_lambda(a, base, bounds, operation='*', identity=None, inverse=N
     - op() -- function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
     - hash_function -- having an efficient hash function is critical for this algorithm
 
-    OUTPUT: Returns an integer `n` such that `a=base^n` (or `a=n*base`)
+    OUTPUT: an integer `n` such that `a=base^n` (or `a=n*base`)
 
     ALGORITHM: Pollard Lambda, if bounds are (lb,ub) it has time complexity
         O(sqrt(ub-lb)) and space complexity O(log(ub-lb))
@@ -1213,10 +1214,10 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
     - ``inverse()`` -- function of 1 argument ``x``, returning inverse of ``x``;
     - ``op()`` - function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group.
 
-    .. note::
+    .. NOTE::
 
-       It is more efficient for the caller to factor ``m`` and cache
-       the factors for subsequent calls.
+        It is more efficient for the caller to factor ``m`` and cache
+        the factors for subsequent calls.
 
     EXAMPLES::
 
@@ -1362,8 +1363,7 @@ def order_from_bounds(P, bounds, d=None, operation='+',
       - ``op()`` -- a function of 2 arguments defining the group binary
         operation.
 
-
-    .. note::
+    .. NOTE::
 
        Typically ``lb`` and ``ub`` will be bounds on the group order,
        and from previous calculation we know that the group order is
@@ -1549,9 +1549,7 @@ def merge_points(P1, P2, operation='+',
       - ``op()`` -- a function of 2 arguments defining the group
         binary operation.
 
-    OUTPUT:
-
-    A pair `(g_3,n_3)` where `g_3` has order `n_3=\hbox{lcm}(n_1,n_2)`.
+    OUTPUT: a pair `(g_3,n_3)` where `g_3` has order `n_3=\hbox{lcm}(n_1,n_2)`
 
     EXAMPLES::
 
@@ -1631,9 +1629,7 @@ def structure_description(G, latex=False):
     - ``latex`` -- a boolean (default: ``False``). If ``True``, return a
       LaTeX formatted string.
 
-    OUTPUT:
-
-    string
+    OUTPUT: a string
 
     .. WARNING::
 

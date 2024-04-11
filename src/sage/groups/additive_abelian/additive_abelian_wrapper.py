@@ -160,7 +160,7 @@ class AdditiveAbelianGroupWrapperElement(addgp.AdditiveAbelianGroupElement):
 
     def _repr_(self):
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -290,7 +290,7 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
         r"""
         Given a list (or other iterable) of length equal to the number of
         generators of this group, compute the element of the ambient group
-        with those exponents in terms of the generators of self.
+        with those exponents in terms of the generators of ``self``.
 
         EXAMPLES::
 

@@ -165,10 +165,6 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         """
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        String.
-
         EXAMPLES::
 
             sage: G = AbelianGroup([2])
@@ -199,9 +195,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
 
         The comparison is based on the exponents.
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -220,9 +214,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         """
         Return the order of this element.
 
-        OUTPUT:
-
-        An integer or ``infinity``.
+        OUTPUT: an integer or ``infinity``
 
         EXAMPLES::
 
@@ -335,9 +327,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         """
         Test whether ``self`` is the trivial group element ``1``.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 

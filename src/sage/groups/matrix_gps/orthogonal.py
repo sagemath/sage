@@ -116,9 +116,7 @@ def normalize_args_e(degree, ring, e):
       finite fields and if the degree is even. A parameter that
       distinguishes inequivalent invariant forms.
 
-    OUTPUT:
-
-    The integer ``e`` with values required by GAP.
+    OUTPUT: the integer ``e`` with values required by GAP
 
     TESTS::
 
@@ -263,10 +261,8 @@ def GO(n, R, e=0, var='a', invariant_form=None):
       by the orthogonal group; the form is checked to be
       non-degenerate and symmetric but not to be positive definite
 
-    OUTPUT:
-
-    The general orthogonal group of given degree, base ring, and
-    choice of invariant form.
+    OUTPUT: the general orthogonal group of given degree, base ring, and
+    choice of invariant form
 
     EXAMPLES::
 
@@ -373,10 +369,8 @@ def SO(n, R, e=None, var='a', invariant_form=None):
       by the orthogonal group; the form is checked to be
       non-degenerate and symmetric but not to be positive definite
 
-    OUTPUT:
-
-    The special orthogonal group of given degree, base ring, and choice of
-    invariant form.
+    OUTPUT: the special orthogonal group of given degree, base ring, and choice
+    of invariant form
 
     EXAMPLES::
 
@@ -482,9 +476,7 @@ class OrthogonalMatrixGroup_generic(NamedMatrixGroup_generic):
         """
         Return the symmetric bilinear form preserved by ``self``.
 
-        OUTPUT:
-
-        A matrix.
+        OUTPUT: a matrix
 
         EXAMPLES::
 

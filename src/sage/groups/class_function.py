@@ -4,11 +4,13 @@ Class functions of groups.
 
 This module implements a wrapper of GAP's ClassFunction function.
 
-NOTE: The ordering of the columns of the character table of a group
-corresponds to the ordering of the list. However, in general there is
-no way to canonically list (or index) the conjugacy classes of a group.
-Therefore the ordering of  the columns of the character table of
-a group is somewhat random.
+.. NOTE:
+
+    The ordering of the columns of the character table of a group
+    corresponds to the ordering of the list. However, in general there is
+    no way to canonically list (or index) the conjugacy classes of a group.
+    Therefore the ordering of  the columns of the character table of
+    a group is somewhat random.
 
 AUTHORS:
 
@@ -52,7 +54,6 @@ def ClassFunction(group, values):
 
     - ``values`` -- list/tuple/iterable of numbers. The values of the
       class function on the conjugacy classes, in that order.
-
 
     EXAMPLES::
 
@@ -132,7 +133,7 @@ class ClassFunction_gap(SageObject):
 
     def _gap_init_(self):
         r"""
-        Return a string showing how to declare / initialize self in Gap.
+        Return a string showing how to declare / initialize ``self`` in Gap.
         Stored in the \code{self._gap_string} attribute.
 
         EXAMPLES::
@@ -146,7 +147,7 @@ class ClassFunction_gap(SageObject):
 
     def _gap_(self, *args):
         r"""
-        Coerce self into a GAP element.
+        Coerce ``self`` into a GAP element.
 
         EXAMPLES::
 
@@ -182,7 +183,7 @@ class ClassFunction_gap(SageObject):
 
     def __iter__(self):
         r"""
-        Iterate through the values of self evaluated on the conjugacy
+        Iterate through the values of ``self`` evaluated on the conjugacy
         classes.
 
         EXAMPLES::
@@ -296,16 +297,13 @@ class ClassFunction_gap(SageObject):
 
     def __add__(self, other):
         r"""
-        Return the sum of the characters self and other.
+        Return the sum of the characters of ``self`` and other.
 
         INPUT:
 
-        - ``other`` -- a :class:`ClassFunction` of the same group as
-          ``self``.
+        - ``other`` -- a :class:`ClassFunction` of the same group as ``self``
 
-        OUTPUT:
-
-        A :class:`ClassFunction`
+        OUTPUT: a :class:`ClassFunction`
 
         EXAMPLES::
 
@@ -330,9 +328,7 @@ class ClassFunction_gap(SageObject):
         - ``other`` -- a :class:`ClassFunction` of the same group as
           ``self``.
 
-        OUTPUT:
-
-        A :class:`ClassFunction`
+        OUTPUT: a :class:`ClassFunction`
 
         EXAMPLES::
 
@@ -361,9 +357,7 @@ class ClassFunction_gap(SageObject):
           can be converted into GAP: integers, rational, and elements
           of certain number fields.
 
-        OUTPUT:
-
-        A :class:`ClassFunction`
+        OUTPUT: a :class:`ClassFunction`
 
         EXAMPLES::
 
@@ -375,7 +369,6 @@ class ClassFunction_gap(SageObject):
             True
             sage: (3*chi1).values()
             [9, 3, -3, 0, -3]
-
 
             sage: (1/2*chi1).values()
             [3/2, 1/2, -1/2, 0, -1/2]
@@ -420,9 +413,7 @@ class ClassFunction_gap(SageObject):
         r"""
         Return ``self``.
 
-        OUTPUT:
-
-        A :class:`ClassFunction`
+        OUTPUT: a :class:`ClassFunction`
 
         EXAMPLES::
 
@@ -440,9 +431,7 @@ class ClassFunction_gap(SageObject):
         r"""
         Return the additive inverse of ``self``.
 
-        OUTPUT:
-
-        A :class:`ClassFunction`
+        OUTPUT: a :class:`ClassFunction`
 
         EXAMPLES::
 
@@ -458,7 +447,7 @@ class ClassFunction_gap(SageObject):
 
     def __pow__(self, other):
         r"""
-        Return the product of self with itself other times.
+        Return the product of ``self`` with itself other times.
 
         EXAMPLES::
 
@@ -475,7 +464,7 @@ class ClassFunction_gap(SageObject):
 
     def symmetric_power(self, n):
         r"""
-        Return the symmetrized product of self with itself ``n`` times.
+        Return the symmetrized product of ``self`` with itself ``n`` times.
 
         INPUT:
 
@@ -501,21 +490,20 @@ class ClassFunction_gap(SageObject):
 
     def exterior_power(self, n):
         r"""
-        Return the anti-symmetrized product of self with itself ``n`` times.
+        Return the antisymmetrized product of ``self`` with itself ``n``
+        times.
 
         INPUT:
 
         - ``n`` -- a positive integer.
 
-        OUTPUT:
-
-        The ``n``-th anti-symmetrized power of ``self`` as a
-        :class:`ClassFunction`.
+        OUTPUT: the ``n``-th antisymmetrized power of ``self`` as a
+        :class:`ClassFunction`
 
         EXAMPLES::
 
             sage: chi = ClassFunction(SymmetricGroup(4), gap([3, 1, -1, 0, -1]))
-            sage: p = chi.exterior_power(3)   # the highest anti-symmetric power for a 3-d character
+            sage: p = chi.exterior_power(3)   # the highest antisymmetric power for a 3-d character
             sage: p
             Character of Symmetric group of order 4! as a permutation group
             sage: p.values()
@@ -529,7 +517,7 @@ class ClassFunction_gap(SageObject):
 
     def scalar_product(self, other):
         r"""
-        Return the scalar product of self with other.
+        Return the scalar product of ``self`` with other.
 
         EXAMPLES::
 
@@ -546,8 +534,8 @@ class ClassFunction_gap(SageObject):
 
     def is_irreducible(self):
         r"""
-        Return True if self cannot be written as the sum of two nonzero
-        characters of self.
+        Return ``True`` if ``self`` cannot be written as the sum of two nonzero
+        characters of ``self``.
 
         EXAMPLES::
 
@@ -635,7 +623,7 @@ class ClassFunction_gap(SageObject):
 
     def values(self) -> list:
         r"""
-        Return the list of values of self on the conjugacy classes.
+        Return the list of values of ``self`` on the conjugacy classes.
 
         EXAMPLES::
 
@@ -1005,9 +993,7 @@ class ClassFunction_libgap(SageObject):
         - ``other`` -- a :class:`ClassFunction` of the same group as
           ``self``.
 
-        OUTPUT:
-
-        A :class:`ClassFunction`
+        OUTPUT: a :class:`ClassFunction`
 
         EXAMPLES::
 
@@ -1032,9 +1018,7 @@ class ClassFunction_libgap(SageObject):
         - ``other`` -- a :class:`ClassFunction` of the same group as
           ``self``.
 
-        OUTPUT:
-
-        A :class:`ClassFunction`
+        OUTPUT: a :class:`ClassFunction`
 
         EXAMPLES::
 
@@ -1063,9 +1047,7 @@ class ClassFunction_libgap(SageObject):
           can be converted into GAP: integers, rational, and elements
           of certain number fields.
 
-        OUTPUT:
-
-        A :class:`ClassFunction`
+        OUTPUT: a :class:`ClassFunction`
 
         EXAMPLES::
 
@@ -1077,7 +1059,6 @@ class ClassFunction_libgap(SageObject):
             True
             sage: (3*chi1).values()
             [9, 3, -3, 0, -3]
-
 
             sage: (1/2*chi1).values()
             [3/2, 1/2, -1/2, 0, -1/2]
@@ -1122,9 +1103,7 @@ class ClassFunction_libgap(SageObject):
         r"""
         Return ``self``.
 
-        OUTPUT:
-
-        A :class:`ClassFunction`
+        OUTPUT: a :class:`ClassFunction`
 
         EXAMPLES::
 
@@ -1142,9 +1121,7 @@ class ClassFunction_libgap(SageObject):
         r"""
         Return the additive inverse of ``self``.
 
-        OUTPUT:
-
-        A :class:`ClassFunction`
+        OUTPUT: a :class:`ClassFunction`
 
         EXAMPLES::
 
@@ -1183,10 +1160,8 @@ class ClassFunction_libgap(SageObject):
 
         - ``n`` -- a positive integer
 
-        OUTPUT:
-
-        The ``n``-th symmetrized power of ``self`` as a
-        :class:`ClassFunction`.
+        OUTPUT: the ``n``-th symmetrized power of ``self`` as a
+        :class:`ClassFunction`
 
         EXAMPLES::
 
@@ -1203,21 +1178,19 @@ class ClassFunction_libgap(SageObject):
 
     def exterior_power(self, n):
         r"""
-        Return the anti-symmetrized product of ``self`` with itself ``n`` times.
+        Return the antisymmetrized product of ``self`` with itself ``n`` times.
 
         INPUT:
 
         - ``n`` -- a positive integer
 
-        OUTPUT:
-
-        The ``n``-th anti-symmetrized power of ``self`` as a
-        :class:`ClassFunction`.
+        OUTPUT: the ``n``-th antisymmetrized power of ``self`` as a
+        :class:`ClassFunction`
 
         EXAMPLES::
 
             sage: chi = ClassFunction(SymmetricGroup(4), [3, 1, -1, 0, -1])
-            sage: p = chi.exterior_power(3)   # the highest anti-symmetric power for a 3-d character
+            sage: p = chi.exterior_power(3)   # the highest antisymmetric power for a 3-d character
             sage: p
             Character of Symmetric group of order 4! as a permutation group
             sage: p.values()
@@ -1338,7 +1311,7 @@ class ClassFunction_libgap(SageObject):
 
     def values(self):
         r"""
-        Return the list of values of self on the conjugacy classes.
+        Return the list of values of ``self`` on the conjugacy classes.
 
         EXAMPLES::
 
@@ -1410,9 +1383,7 @@ class ClassFunction_libgap(SageObject):
 
         - ``H`` -- a subgroup of the underlying group of ``self``.
 
-        OUTPUT:
-
-        A :class:`ClassFunction` of ``H`` defined by restriction.
+        OUTPUT: a :class:`ClassFunction` of ``H`` defined by restriction
 
         EXAMPLES::
 

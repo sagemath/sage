@@ -807,10 +807,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         r"""
         Return a string representation.
 
-        OUTPUT:
-
-        String describing ``self``.
-
         EXAMPLES::
 
             sage: CubicBraidGroup(2)
@@ -1423,10 +1419,8 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         Return a :class:`BraidGroup` with identical generators, such that
         there exists an epimorphism to ``self``.
 
-        OUTPUT:
-
-        A :class:`BraidGroup` having conversion maps to and from ``self``
-        (which is just a section in the latter case).
+        OUTPUT: a :class:`BraidGroup` having conversion maps to and from
+        ``self`` (which is just a section in the latter case)
 
         EXAMPLES::
 
@@ -1973,9 +1967,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         To avoid long wait-time on calculations the order will be obtained
         using the classical realization.
 
-        OUTPUT:
-
-        Cardinality of the group as Integer or infinity.
+        OUTPUT: cardinality of the group as integer or infinity
 
         EXAMPLES::
 

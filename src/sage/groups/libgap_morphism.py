@@ -378,9 +378,7 @@ class GroupMorphism_libgap(Morphism):
 
         - ``J`` -- a subgroup or an element of the domain of ``self``
 
-        OUTPUT:
-
-        The image of ``J`` under ``self``.
+        OUTPUT: the image of ``J`` under ``self``
 
         .. NOTE::
 
@@ -558,13 +556,11 @@ class GroupMorphism_libgap(Morphism):
 
     def section(self):
         r"""
-        This method returns a section map of self by use of :meth:`lift`.
+        This method returns a section map of ``self`` by use of :meth:`lift`.
         See :meth:`section` of :class:`sage.categories.map.Map`, as well.
 
-        OUTPUT:
-
-        an instance of :class:`sage.categories.morphism.SetMorphism`
-        mapping an element of the codomain of self to one of its preimages
+        OUTPUT: an instance of :class:`sage.categories.morphism.SetMorphism`
+        mapping an element of the codomain of ``self`` to one of its preimages
 
         EXAMPLES::
 
@@ -596,9 +592,7 @@ class GroupHomset_libgap(HomsetWithBase):
     - ``H`` -- a libgap group
     - ``category`` -- a category
 
-    OUTPUT:
-
-    The homset of two libgap groups.
+    OUTPUT: the homset of two libgap groups
 
     EXAMPLES::
 
@@ -730,9 +724,10 @@ class GroupHomset_libgap(HomsetWithBase):
 
         OUTPUT:
 
-        an instance of the element class of self if there exists a group homomorphism
-        mapping the generators of the domain of self to the according generators of
-        the codomain. Else the method falls back to the default.
+        An instance of the element class of ``self`` if there exists a group
+        homomorphism mapping the generators of the domain of ``self`` to the
+        according generators of the codomain. Otherwise, the method falls back
+        to the default.
 
         EXAMPLES::
 

@@ -252,7 +252,6 @@ cdef tuple PS_refinement(PartitionStack * part, long *refine_vals, long *best,
 
                 j += 1
 
-
             loc_begin = i + 1
         i += 1
     return (True, newly_fixed)
@@ -495,17 +494,15 @@ cdef class PartitionRefinement_generic:
     #####################################################################
     cdef bint _inner_min_(self, int pos, bint * inner_group_changed) noexcept:
         """
-        Minimize the node by the action of the inner group on the i-th position.
+        Minimize the node by the action of the inner group on the ith position.
 
         INPUT:
 
-            - `pos` - A position in  `range(self.n)`
-            - `inner_group_changed` - will be set to true if `G_y` got smaller
+        - ``pos`` -- A position in ``range(self.n)``
+        - ``inner_group_changed`` -- will be set to ``True`` if `G_y` got smaller
 
-        OUTPUT:
-
-            - `True` if and only if the actual node compares less or equal to
-              the candidate for the canonical form.
+        OUTPUT: ``True`` if and only if the actual node compares less or equal
+        to the candidate for the canonical form.
         """
         raise NotImplementedError
 
@@ -517,10 +514,8 @@ cdef class PartitionRefinement_generic:
         to a smaller subgroup of `S_n`. This function also has to take
         care on ``self._is_candidate_initialized``.
 
-        OUTPUT:
-
-            - `False` only if the actual node compares larger than the candidate
-              for the canonical form.
+        OUTPUT: ``False`` only if the actual node compares larger than the
+        candidate for the canonical form
         """
         raise NotImplementedError
 

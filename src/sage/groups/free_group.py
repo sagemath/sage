@@ -82,9 +82,7 @@ def is_FreeGroup(x):
 
     - ``x`` -- anything.
 
-    OUTPUT:
-
-    Boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -245,9 +243,7 @@ class FreeGroupElement(ElementLibGAP):
         r"""
         Return a LaTeX representation
 
-        OUTPUT:
-
-        String. A valid LaTeX math command sequence.
+        OUTPUT: a string; a valid LaTeX math command sequence
 
         EXAMPLES::
 
@@ -305,9 +301,7 @@ class FreeGroupElement(ElementLibGAP):
         the letter corresponding to the `i`-th generator of the group.
         Negative integers represent the inverses of generators.
 
-        OUTPUT:
-
-        A tuple of integers.
+        OUTPUT: a tuple of integers
 
         EXAMPLES::
 
@@ -527,10 +521,8 @@ class FreeGroupElement(ElementLibGAP):
           list/tuple/iterable of the same length as the number of
           generators of the free group.
 
-        OUTPUT:
-
-        The product of ``values`` in the order and with exponents
-        specified by ``self``.
+        OUTPUT: the product of ``values`` in the order and with exponents
+        specified by ``self``
 
         EXAMPLES::
 
@@ -700,9 +692,7 @@ def wrap_FreeGroup(libgap_free_group):
 
     - ``libgap_free_group`` -- a LibGAP free group.
 
-    OUTPUT:
-
-    A Sage :class:`FreeGroup_class`.
+    OUTPUT: a Sage :class:`FreeGroup_class`
 
     EXAMPLES:
 
@@ -792,13 +782,11 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
 
     def rank(self):
         """
-        Return the number of generators of self.
+        Return the number of generators of ``self``.
 
         Alias for :meth:`ngens`.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: an integer
 
         EXAMPLES::
 
@@ -951,7 +939,6 @@ class FreeGroup_class(UniqueRepresentation, Group, ParentLibGAP):
             Free Group on generators {a, b}
             sage: F1/[r]
             Finitely presented group < a, b, c, d | a*b*a^-1 >
-
         """
         from sage.groups.finitely_presented import FinitelyPresentedGroup
         return FinitelyPresentedGroup(self, tuple(map(self, relations) ), **kwds)

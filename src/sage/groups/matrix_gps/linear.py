@@ -201,7 +201,7 @@ def SL(n, R, var='a'):
     matrices that are invertible over the ring `R` with determinant
     one.
 
-    .. note::
+    .. NOTE::
 
         This group is also available via ``groups.matrix.SL()``.
 

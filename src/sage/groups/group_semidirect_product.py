@@ -291,8 +291,8 @@ class GroupSemidirectProduct(CartesianProduct):
 
     def act_to_right(self):
         r"""
-        True if the left factor acts on the right factor and
-        False if the right factor acts on the left factor.
+        Return ``True`` if the left factor acts on the right factor and
+        ``False`` if the right factor acts on the left factor.
 
         EXAMPLES::
 

@@ -536,7 +536,7 @@ cdef void deallocate_sgd(void *data) noexcept:
 
 cdef void *subset_generator_next(void *data, int *degree, bint *mem_err) noexcept:
     r"""
-    Returns the next element to consider adding to the set.
+    Return the next element to consider adding to the set.
     """
     cdef subset_generator_data *sgd = <subset_generator_data *> data
     while True:
@@ -694,11 +694,11 @@ def sets_modulo_perm_group(list generators, int max_size,
 
     INPUT:
 
-        - ``generators`` - (list of lists) list of generators in list form
-        - ``max_size`` - (int) maximum size of subsets to be generated
-        - ``indicate_mem_err`` - (bool) whether to raise an error
-            if we run out of memory, or simply append a MemoryError
-            instance to the end of the output
+    - ``generators`` -- (list of lists) list of generators in list form
+    - ``max_size`` -- (int) maximum size of subsets to be generated
+    - ``indicate_mem_err`` -- (bool) whether to raise an error
+        if we run out of memory, or simply append a MemoryError
+        instance to the end of the output
 
     EXAMPLES::
 

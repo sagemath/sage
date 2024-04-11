@@ -30,8 +30,6 @@ with
 and an elementwisely defined multiplication of vectors. (The indexing
 of vectors is `0`-based here, so `\psi = (\psi_0, \psi_1, \ldots, \psi_{n-1})`.)
 
-
-
 The parent is
 :class:`~sage.groups.semimonomial_transformations.semimonomial_transformation_group.SemimonomialTransformationGroup`.
 
@@ -77,7 +75,7 @@ def _is_id(f, R):
 
 def _inverse(f, R):
     """
-    Returns the inverse to the automorphism `f` of a ring `R`.
+    Return the inverse to the automorphism `f` of a ring `R`.
 
     EXAMPLES::
 

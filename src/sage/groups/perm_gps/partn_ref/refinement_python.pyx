@@ -12,12 +12,11 @@ in pure Python, and still use the Cython algorithms. Experimentation with
 specific partition backtrack implementations no longer requires compilation, as
 the input functions can be dynamically changed at runtime.
 
-NOTE:
+.. NOTE::
 
-This is not intended for production quality implementations of partition
-refinement, but instead for experimentation, learning, and use of the Python
-debugger.
-
+    This is not intended for production quality implementations of partition
+    refinement, but instead for experimentation, learning, and use of the
+    Python debugger.
 """
 
 #*****************************************************************************
@@ -53,7 +52,6 @@ cdef class PythonPartitionStack:
 
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7) # implicit doctest
-
         """
         self.c_ps = PS_new(n, 1)
 
@@ -66,7 +64,6 @@ cdef class PythonPartitionStack:
             sage: from sage.groups.perm_gps.partn_ref.refinement_python import PythonPartitionStack
             sage: P = PythonPartitionStack(7)
             sage: del(P) # implicit doctest
-
         """
         PS_dealloc(self.c_ps)
 
@@ -80,7 +77,6 @@ cdef class PythonPartitionStack:
             sage: P = PythonPartitionStack(7)
             sage: P # implicit doctest
             PythonPartitionStack of degree 7 and depth 0.
-
         """
         return "PythonPartitionStack of degree %d and depth %d."%(self.c_ps.degree, self.c_ps.depth)
 
@@ -98,7 +94,6 @@ cdef class PythonPartitionStack:
             sage: P.display()
             (0 1 2 3 4 5 6)
             (0 1 2|3 4 5 6)
-
         """
         PS_print(self.c_ps)
 
@@ -116,7 +111,6 @@ cdef class PythonPartitionStack:
             [None, None, None, None, None, None, None]
             sage: P.is_discrete()
             True
-
         """
         return PS_is_discrete(self.c_ps)
 
@@ -130,7 +124,6 @@ cdef class PythonPartitionStack:
             sage: P = PythonPartitionStack(7)
             sage: P.num_cells()
             1
-
         """
         return PS_num_cells(self.c_ps)
 
@@ -150,7 +143,6 @@ cdef class PythonPartitionStack:
             sage: P.move_min_to_front(0,1)
             sage: P.display()
             (0 1 2 3 4 5 6)
-
         """
         PS_move_min_to_front(self.c_ps, start, end)
 
@@ -166,7 +158,6 @@ cdef class PythonPartitionStack:
             (0 1 2 3 4 5 6)
             sage: Q.display()
             (0 1 2 3 4 5 6)
-
         """
         cdef PythonPartitionStack cpy
         cpy = PythonPartitionStack(self.c_ps.degree)
@@ -192,7 +183,6 @@ cdef class PythonPartitionStack:
             sage: P.display()
             (0 1 2 3 4 5 6)
             (0 1 2 3 4 5 6)
-
         """
         PS_clear(self.c_ps)
 
@@ -208,7 +198,6 @@ cdef class PythonPartitionStack:
             [0, 1, 2, 3, 4, 5, 6]
             sage: P.levels()
             [7, 7, 7, 7, 7, 7, -1]
-
         """
         cdef int i
         return [self.c_ps.entries[i] for i from 0 <= i < self.c_ps.degree]
@@ -225,7 +214,6 @@ cdef class PythonPartitionStack:
             sage: P.set_entry(0,1)
             sage: P.display()
             (1 0 2 3 4 5 6)
-
         """
         self.c_ps.entries[i] = entry
 
@@ -239,7 +227,6 @@ cdef class PythonPartitionStack:
             sage: P = PythonPartitionStack(7)
             sage: P.get_entry(0)
             0
-
         """
         return self.c_ps.entries[i]
 
@@ -255,7 +242,6 @@ cdef class PythonPartitionStack:
             [0, 1, 2, 3, 4, 5, 6]
             sage: P.levels()
             [7, 7, 7, 7, 7, 7, -1]
-
         """
         return [self.c_ps.levels[i] for i from 0 <= i < self.c_ps.degree]
 
@@ -273,7 +259,6 @@ cdef class PythonPartitionStack:
             sage: P.display()
             (0 1 2 3 4 5 6)
             (0 1 2|3 4 5 6)
-
         """
         self.c_ps.levels[i] = level
 
@@ -287,7 +272,6 @@ cdef class PythonPartitionStack:
             sage: P = PythonPartitionStack(7)
             sage: P.get_level(0)
             7
-
         """
         return self.c_ps.levels[i]
 
@@ -302,7 +286,6 @@ cdef class PythonPartitionStack:
             sage: P = PythonPartitionStack(7)
             sage: P.depth()
             0
-
         """
         if new is not None:
             self.c_ps.depth = new
@@ -319,7 +302,6 @@ cdef class PythonPartitionStack:
             sage: P = PythonPartitionStack(7)
             sage: P.degree()
             7
-
         """
         if new is not None:
             self.c_ps.degree = new
@@ -340,7 +322,6 @@ cdef class PythonPartitionStack:
             [[0, 1, 2, 3, 4, 5, 6]]
             sage: P.partition(1)
             [[0, 1, 2], [3, 4, 5, 6]]
-
         """
         cdef int i
         cdef list partition = [], cell = []
@@ -380,7 +361,6 @@ class PythonObjectWrapper:
             <function rari at ...>
             sage: P.cs_fn
             <function cs at ...>
-
         """
         self.degree = degree
         self.obj = obj
