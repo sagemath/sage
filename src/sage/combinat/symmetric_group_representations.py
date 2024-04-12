@@ -1015,3 +1015,124 @@ def partition_to_vector_of_contents(partition, reverse=False):
     if reverse:
         return tuple(v)[::-1]
     return tuple(v)
+
+
+# #### Garsia-Procesi modules ################################################
+
+from sage.rings.quotient_ring import QuotientRing_generic
+from sage.combinat.specht_module import SymmetricGroupRepresentation
+class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricGroupRepresentation):
+    @staticmethod
+    def __classcall_private__(cls, SGA, shape):
+        return super().__classcall__(cls, SGA, Partition(shape))
+
+    def __init__(self, SGA, shape):
+        """
+        Initialize ``self``.
+        """
+        self._shape = shape
+        SymmetricGroupRepresentation.__init__(self, SGA)
+
+        # Construct the Tanisaki ideal
+        from sage.combinat.sf.sf import SymmetricFunctions
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+        from itertools import combinations
+        n = SGA.n
+
+        conj = list(shape.conjugate())
+        conj += [0]*(n - len(conj))
+
+        def p(k):
+            return sum(conj[i] for i in range(n-k, n))
+
+        BR = SGA.base_ring()
+        R = PolynomialRing(BR, 'x', n)
+        gens = R.gens()
+        e = SymmetricFunctions(BR).e()
+        I = R.ideal([e[d].expand(k)(*S)
+                     for k in range(n+1) for d in range(k-p(k)+1, k+1)
+                     for S in combinations(gens, k)])
+
+        # Finalize the initialization
+        names = tuple([f"gp{i}" for i in range(n)])
+        from sage.categories.commutative_rings import CommutativeRings
+        from sage.categories.algebras import Algebras
+        cat = CommutativeRings().Quotients() & Algebras(SGA.base_ring()).WithBasis().FiniteDimensional()
+        QuotientRing_generic.__init__(self, R, I, names=names, category=cat)
+
+    def _repr_(self):
+        """
+        Return a string representation of ``self``.
+        """
+        return "Garsia-Procesi module of shape {} of {}".format(self._shape, self._semigroup_algebra)
+
+    def _coerce_map_from_base_ring(self):
+        return None  # don't need anything special
+
+    @cached_method
+    def basis(self):
+        from sage.sets.family import Family
+        B = self.defining_ideal().normal_basis()
+        return Family([self.retract(b) for b in B])
+
+    @cached_method
+    def one_basis(self):
+        B = self.defining_ideal().normal_basis()
+        for i, b in enumerate(B):
+            if b.is_one():
+                return ZZ(i)
+
+    @cached_method
+    def dimension(self):
+        r"""
+        Return the dimension of ``self``.
+
+        The graded Frobenius character of the Garsia-Procesi module
+        `R_{\lambda}` is given by the modified Hall-Littlewood polynomial
+        `\widetilde{H}_{\lambda'}(x; q)`.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: for la in Partitions(5):
+            ....:     print(SGA.garsia_procesi_module(la).dimension(),
+            ....:           sum(c * StandardTableaux(la).cardinality()
+            ....:               for la, c in s(Qp[la])))
+            1, 1
+            5, 5
+            10, 10
+            20, 20
+            30, 30
+            60, 60
+            120, 120
+        """
+        return self.defining_ideal().vector_space_dimension()
+
+    class Element(QuotientRing_generic.Element):
+        def _acted_upon_(self, scalar, self_on_left=True):
+            P = self.parent()
+            if scalar in P.base_ring():
+                return super()._acted_upon_(scalar, self_on_left)
+            if scalar in P._semigroup:
+                gens = P.ambient().gens()
+                return P.retract(self.lift().subs({g: gens[scalar(i+1)-1] for i, g in enumerate(gens)}))
+            if not self_on_left and scalar in P._semigroup_algebra:
+                scalar = P._semigroup_algebra(scalar)
+                gens = P.ambient().gens()
+                return P.sum(c * P.retract(self.lift().subs({g: gens[sigma(i+1)-1] for i, g in enumerate(gens)}))
+                             for sigma, c in scalar.monomial_coefficients(copy=False).items())
+            return super()._acted_upon_(scalar, self_on_left)
+
+        def to_vector(self):
+            P = self.parent()
+            B = P.basis()
+            FM = P._dense_free_module()
+            f = self.lift()
+            return FM([f.monomial_coefficient(b.lift()) for b in B])
+
+        _vector_ = to_vector
+
+        def monomial_coefficients(self, copy=None):
+            B = self.parent().basis()
+            return {i: f.monomial_coefficient(b.lift()) for i, b in enumerate(B)}
+

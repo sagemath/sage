@@ -1764,6 +1764,15 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         from sage.combinat.specht_module import simple_module_rank
         return simple_module_rank(la, self.base_ring())
 
+    def garsia_procesi_module(self, la):
+        """
+        Return the Garsia-Procesi module of ``self`` indexed by ``la``.
+        """
+        if sum(la) != self.n:
+            raise ValueError(f"{la} is not a partition of {self.n}")
+        from sage.combinat.symmetric_group_representations import GarsiaProcesiModule
+        return GarsiaProcesiModule(self, la)
+
     def jucys_murphy(self, k):
         r"""
         Return the Jucys-Murphy element `J_k` (also known as a
