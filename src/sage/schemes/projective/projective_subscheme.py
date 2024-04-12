@@ -1546,6 +1546,10 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
         r"""
         Return the arithmetic genus of this subscheme of a projective space.
 
+        The arithmetic genus is by definition `(-1)^r(\chi(\OO_X) - 1)` where
+        `\chi(\OO_X)` is the Euler characteristic of the structure sheaf of
+        the scheme `X` of dimension `r`.
+
         EXAMPLES:
 
         This is an example of a curve whose geometric genus is smaller than
