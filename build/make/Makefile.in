@@ -614,6 +614,11 @@ $(1)-$(4)-no-deps:
 
 $(1)-no-deps: $(1)-$(4)-no-deps
 
+$(1)-$(4)-check:
+	$(PLUS)@sage-logger -p 'PATH=$$(SAGE_SRC)/bin:$$($(4))/bin:$$$$PATH $$(SAGE_SPKG) --check-only $(1)-$(2) $$($(4))' '$$(SAGE_LOGS)/$(1)-$(2).log'
+
+$(1)-check: $(1)-$(4)-check
+
 $(1)-$(4)-uninstall:
 	if [ -d '$$($(4))' ]; then \
 	    sage-spkg-uninstall $(if $(filter $(1),$(TOOLCHAIN_DEPS)),--keep-files) \
@@ -760,22 +765,7 @@ $(1)-$(4)-no-deps:
 $(1)-no-deps: $(1)-$(4)-no-deps
 
 $(1)-$(4)-check:
-	$(PLUS)@if [ -x $$(SAGE_ROOT)/build/pkgs/$(1)/spkg-check ]; then \
-	    cd '$$(SAGE_ROOT)/build/pkgs/$(1)' && \
-		. '$$(SAGE_ROOT)/src/bin/sage-src-env-config' && \
-		. '$$(SAGE_ROOT)/src/bin/sage-env-config' && \
-		. '$$(SAGE_ROOT)/src/bin/sage-env' && \
-		. '$$(SAGE_ROOT)/build/bin/sage-build-env-config' && \
-		. '$$(SAGE_ROOT)/build/bin/sage-build-env' && \
-		PKG_BASE="$(1)" \
-		PKG_VER="$(2)" \
-		PKG_NAME="$(1)-$(2)" \
-		SAGE_SPKG_WHEELS=$$($(4))/var/lib/sage/wheels \
-		SAGE_SPKG_SCRIPTS=$$($(4))/var/lib/sage/scripts \
-		SAGE_INST_LOCAL=$$($(4)) \
-		SAGE_CHECK=$$(SAGE_CHECK_$(1)) \
-		sage-logger -p '$$(SAGE_ROOT)/build/pkgs/$(1)/spkg-check' '$$(SAGE_LOGS)/$(1)-$(2).log'; \
-	    fi
+	$(PLUS)@sage-logger -p 'PATH=$$(SAGE_SRC)/bin:$$($(4))/bin:$$$$PATH $$(SAGE_SPKG) --check-only $(1)-$(2) $$($(4))' '$$(SAGE_LOGS)/$(1)-$(2).log'
 
 $(1)-check: $(1)-$(4)-check
 

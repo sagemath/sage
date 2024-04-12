@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 from sage.graphs.base.static_sparse_graph cimport short_digraph
 
 cdef maximum_cardinality_search_M_short_digraph(short_digraph sd,
@@ -5,4 +6,4 @@ cdef maximum_cardinality_search_M_short_digraph(short_digraph sd,
                                                 int* alpha,
                                                 int* alpha_inv,
                                                 list F,
-                                                bint* X) noexcept
+                                                bint* X)

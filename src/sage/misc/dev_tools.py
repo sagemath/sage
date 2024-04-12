@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Some tools for developers
 
@@ -148,6 +149,7 @@ def load_submodules(module=None, exclude_pattern=None):
     EXAMPLES::
 
         sage: sage.misc.dev_tools.load_submodules(sage.combinat)
+        load sage.combinat.affine_permutation... succeeded
         load sage.combinat.algebraic_combinatorics... succeeded
         ...
         load sage.combinat.words.suffix_trees... succeeded
@@ -501,7 +503,7 @@ def import_statements(*objects, **kwds):
         sage: import_statements('deprecated_RR')
         Traceback (most recent call last):
         ...
-        LookupError: object named 'deprecated_RR' is deprecated (see github issue 17458)
+        LookupError: object named 'deprecated_RR' is deprecated (see Issue #17458)
         sage: lazy_import('sage.all', 'RR', namespace=sage.__dict__, deprecation=17458)
         sage: import_statements('RR')
         from sage.rings.real_mpfr import RR
@@ -612,7 +614,7 @@ def import_statements(*objects, **kwds):
             except IndexError:
                 if deprecation:
                     raise LookupError(
-                        "object named {!r} is deprecated (see github issue "
+                        "object named {!r} is deprecated (see Issue #"
                         "{})".format(name, deprecation))
                 else:
                     raise LookupError("no object named {!r}".format(name))

@@ -1,0 +1,1 @@
+SAGE_SPKG_CONFIGURE([pygraphviz], [SAGE_PYTHON_PACKAGE_CHECK([pygraphviz])])

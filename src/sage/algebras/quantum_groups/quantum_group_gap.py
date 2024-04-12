@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: optional - gap_package_quagroup sage.combinat sage.libs.gap sage.modules
 """
 Quantum Groups Using GAP's QuaGroup Package
@@ -6,9 +7,8 @@ AUTHORS:
 
 - Travis Scrimshaw (03-2017): initial version
 
-The documentation for GAP's QuaGroup package, originally authored by
-Willem Adriaan de Graaf, can be found at
-https://www.gap-system.org/Packages/quagroup.html.
+See the :gap_package:`documentation for GAP's QuaGroup package <quagroup/doc/chap0_mj.html>`,
+originally authored by Willem Adriaan de Graaf.
 """
 
 # ****************************************************************************

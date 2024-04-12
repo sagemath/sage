@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 # distutils: sources = sage/rings/bernmm/bern_modp.cpp sage/rings/bernmm/bern_modp_util.cpp sage/rings/bernmm/bern_rat.cpp
 # distutils: libraries = NTL_LIBRARIES pthread gmp
 # distutils: extra_compile_args = NTL_CFLAGS

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Join features
 """
@@ -152,7 +153,9 @@ class JoinFeature(Feature):
 
     def unhide(self):
         r"""
-        Revert what :meth:`hide` does.
+        Revert what :meth:`hide` did.
+
+        OUTPUT: The number of events a present feature has been hidden.
 
         EXAMPLES::
 
@@ -165,11 +168,14 @@ class JoinFeature(Feature):
             FeatureTestResult('sage.groups.perm_gps.permgroup', False)
 
             sage: f.unhide()
+            4
             sage: f.is_present()    # optional sage.groups
             FeatureTestResult('sage.groups', True)
             sage: f._features[0].is_present() # optional sage.groups
             FeatureTestResult('sage.groups.perm_gps.permgroup', True)
         """
+        num_hidings = 0
         for f in self._features:
-            f.unhide()
-        super().unhide()
+            num_hidings += f.unhide()
+        num_hidings += super().unhide()
+        return num_hidings

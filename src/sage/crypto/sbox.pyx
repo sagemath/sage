@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 S-Boxes and Their Algebraic Representations
@@ -268,7 +269,7 @@ cdef class SBox(SageObject):
         """
         return not self.__eq__(other)
 
-    cpdef list to_bits(self, x, n=None) noexcept:
+    cpdef list to_bits(self, x, n=None):
         """
         Return bitstring of length ``n`` for integer ``x``. The
         returned bitstring is guaranteed to have length ``n``.
@@ -333,7 +334,7 @@ cdef class SBox(SageObject):
 
         return ZZ(self._rpad(x, n), 2)
 
-    cdef list _rpad(self, list x, Py_ssize_t n=-1) noexcept:
+    cdef list _rpad(self, list x, Py_ssize_t n=-1):
         """
         Right pads ``x`` such that ``len(x) == n``.
 
@@ -1977,7 +1978,7 @@ cdef Py_ssize_t misty_substitute(Py_ssize_t x, Py_ssize_t input_size, list sboxe
 ctypedef Py_ssize_t (*_SBOX_CONSTR) (Py_ssize_t, Py_ssize_t, list) noexcept
 
 
-cdef sbox_construction(_SBOX_CONSTR construction, list args) noexcept:
+cdef sbox_construction(_SBOX_CONSTR construction, list args):
     """
     Construct an Sbox from the given input sboxes that has a twice
     as big input size.

@@ -168,7 +168,7 @@ class CDFInterpreter(StackInterpreter):
                 cdef double cimag(double_complex)
                 cdef double_complex _Complex_I
 
-            cdef inline double_complex CDE_to_dz(zz):
+            cdef inline double_complex CDE_to_dz(zz) noexcept:
                 cdef ComplexDoubleElement z = <ComplexDoubleElement>(zz if isinstance(zz, ComplexDoubleElement) else CDF(zz))
                 return GSL_REAL(z._complex) + _Complex_I * GSL_IMAG(z._complex)
 

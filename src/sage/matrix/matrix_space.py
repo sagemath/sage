@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Matrix Spaces
 
@@ -7,11 +8,11 @@ columns over any commutative or noncommutative ring.
 
 EXAMPLES::
 
-    sage: MS = MatrixSpace(QQ,6,6,sparse=True); MS
+    sage: MS = MatrixSpace(QQ, 6,6, sparse=True); MS
     Full MatrixSpace of 6 by 6 sparse matrices over Rational Field
     sage: MS.base_ring()
     Rational Field
-    sage: MS = MatrixSpace(ZZ,3,5,sparse=False); MS
+    sage: MS = MatrixSpace(ZZ, 3,5, sparse=False); MS
     Full MatrixSpace of 3 by 5 dense matrices over Integer Ring
 
 TESTS::
@@ -2091,8 +2092,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
         :issue:`10628` allowed to provide the data as lists of matrices, but
         :issue:`13012` prohibited it::
 
-            sage: MS = MatrixSpace(ZZ,4,2)
-            sage: MS0 = MatrixSpace(ZZ,2)
+            sage: MS = MatrixSpace(ZZ, 4,2)
+            sage: MS0 = MatrixSpace(ZZ, 2)
             sage: MS.matrix([MS0([1,2,3,4]), MS0([5,6,7,8])])
             Traceback (most recent call last):
             ...
@@ -2164,7 +2165,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: M = Mat(ZZ['x'],200000,500000,sparse=True)
+            sage: M = Mat(ZZ['x'], 200000, 500000, sparse=True)
             sage: M.ncols()
             500000
         """
@@ -2176,7 +2177,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: M = Mat(ZZ,200000,500000)
+            sage: M = Mat(ZZ, 200000, 500000)
             sage: M.nrows()
             200000
         """
@@ -2381,12 +2382,12 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         ::
 
-            sage: magma(MatrixSpace(QQ,3))                      # optional - magma
+            sage: magma(MatrixSpace(QQ, 3))                     # optional - magma
             Full Matrix Algebra of degree 3 over Rational Field
 
         ::
 
-            sage: magma(MatrixSpace(Integers(8),2,3))           # optional - magma
+            sage: magma(MatrixSpace(Integers(8), 2, 3))         # optional - magma
             Full RMatrixSpace of 2 by 3 matrices over IntegerRing(8)
         """
         K = magma(self.base_ring())

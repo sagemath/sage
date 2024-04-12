@@ -1,10 +1,10 @@
-webcolors: A library for working with the color formats defined by HTML and CSS.
-================================================================================
+webcolors: Library for working with the color formats defined by HTML and CSS
+=============================================================================
 
 Description
 -----------
 
-A library for working with the color formats defined by HTML and CSS.
+Library for working with the color formats defined by HTML and CSS
 
 License
 -------
