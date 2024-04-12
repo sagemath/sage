@@ -408,9 +408,9 @@ def aut_gp_and_can_lab_python(S, partition, n,
 
     INPUT:
 
-    - S -- the object to examine
-    - partition -- an ordered partition, as a list of lists
-    - n -- the degree of the automorphism group to be computed
+    - ``S`` -- the object to examine
+    - ``partition`` -- an ordered partition, as a list of lists
+    - ``n`` -- the degree of the automorphism group to be computed
 
     ::
 
@@ -493,10 +493,10 @@ def double_coset_python(S1, S2, partition1, ordering2, n,
 
     INPUT:
 
-    - S1, S2 -- the objects to examine
-    - partition1 -- an ordered partition, as a list of lists
-    - ordering2 -- represents a partition of the points of S2, as a relabeling of partition1
-    - n -- the degree
+    - ``S1``, ``S2`` -- the objects to examine
+    - ``partition1`` -- an ordered partition, as a list of lists
+    - ``ordering2`` -- represents a partition of the points of ``S2``, as a relabeling of ``partition1``
+    - ``n`` -- the degree
 
     ::
 

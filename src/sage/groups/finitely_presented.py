@@ -1536,7 +1536,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
 
         INPUT:
 
-        - `H` -- another group
+        - ``H`` -- another group
 
         EXAMPLES::
 

@@ -1119,7 +1119,7 @@ cdef class PermutationGroupElement(MultiplicativeGroupElement):
 
     cpdef ClonableIntArray _act_on_array_on_position(self, ClonableIntArray x):
         r"""
-        Return the right action of ``self`` on the ClonableIntArray
+        Return the right action of ``self`` on the :class:`ClonableIntArray`
         ``x``. This is the action on positions.
 
         EXAMPLES::

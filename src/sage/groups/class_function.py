@@ -349,7 +349,7 @@ class ClassFunction_gap(SageObject):
         INPUT:
 
         - ``other`` -- either a number or a :class:`ClassFunction` of
-          the same group as ``self``; A number can be anything that
+          the same group as ``self``; a number can be anything that
           can be converted into GAP: integers, rational, and elements
           of certain number fields
 

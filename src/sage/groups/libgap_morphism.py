@@ -557,7 +557,8 @@ class GroupMorphism_libgap(Morphism):
 
     def section(self):
         r"""
-        This method returns a section map of ``self`` by use of :meth:`lift`.
+        Return a section map of ``self`` by use of :meth:`lift`.
+
         See :meth:`section` of :class:`sage.categories.map.Map`, as well.
 
         OUTPUT: an instance of :class:`sage.categories.morphism.SetMorphism`

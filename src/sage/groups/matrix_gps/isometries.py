@@ -47,7 +47,7 @@ class GroupOfIsometries(FinitelyGeneratedMatrixGroup_gap):
     A base class for Orthogonal matrix groups with a gap backend.
 
     Main difference to :class:`~sage.groups.matrix_gps.orthogonal.OrthogonalMatrixGroup_gap`
-    is that we can specify generators and a bilinear form. Following gap the group action is
+    is that we can specify generators and a bilinear form. Following GAP, the group action is
     from the right.
 
     INPUT:

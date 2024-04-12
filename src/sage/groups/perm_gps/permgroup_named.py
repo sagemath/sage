@@ -1394,8 +1394,8 @@ class GeneralDihedralGroup(PermutationGroup_generic):
             gens.append([tuple(range(jumppoint, jumppoint + a))])
             # make contribution to the generator that dihedralizes the
             # abelian group
-            genx.extend((jumppoint+i, jumppoint+a-i)
-                        for i in range(1, (a//2)+1) if i != a-i)
+            genx.extend((jumppoint + i, jumppoint + a - i)
+                        for i in range(1, (a//2) + 1) if i != a - i)
             jumppoint += a
         # If all of the direct factors are C2, then the action turning
         # each element into its inverse is trivial, and the
@@ -2214,7 +2214,7 @@ class PrimitiveGroup(PermutationGroup_unique):
     - ``n`` -- positive integer. the index of the group in the GAP
       database, starting at 1
 
-    OUTPUT: Tthe ``n``-th primitive group of degree ``d``
+    OUTPUT: the ``n``-th primitive group of degree ``d``
 
     EXAMPLES::
 

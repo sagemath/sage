@@ -147,7 +147,7 @@ class GroupExp(Functor):
 
         - The above homomorphism, but between the corresponding multiplicative groups.
 
-        In the following example, ``self`` is the functor `GroupExp()` and `f`
+        In the following example, ``self`` is the functor :class:`GroupExp` and `f`
         is an endomorphism of the additive group of integers.
 
         EXAMPLES::

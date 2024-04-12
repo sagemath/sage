@@ -698,8 +698,8 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
     - ``bounds`` -- a priori bounds on the log
     - ``operation`` -- string: ``'*'``, ``'+'``, other
     - ``identity`` -- the group's identity
-    - ``inverse()`` - function of 1 argument ``x``, returning inverse of ``x``
-    - ``op()`` - function of 2 arguments ``x``, ``y``, returning ``x*y`` in the group
+    - ``inverse`` -- function of 1 argument ``x``, returning inverse of ``x``
+    - ``op`` -- function of 2 arguments ``x``, ``y``, returning ``x*y`` in the group
     - ``algorithm`` -- string denoting what algorithm to use for prime-order
       logarithms: ``'bsgs'``, ``'rho'``, ``'lambda'``
 
@@ -1211,8 +1211,8 @@ def order_from_multiple(P, m, plist=None, factorization=None, check=True,
       prefer the use of ``factorization``
     - ``operation`` -- string: ``'+'`` (default), ``'*'`` or ``None``
     - ``identity`` -- the identity element of the group
-    - ``inverse()`` -- function of 1 argument ``x``, returning inverse of ``x``
-    - ``op()`` - function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
+    - ``inverse`` -- function of 1 argument ``x``, returning inverse of ``x``
+    - ``op`` -- function of 2 arguments ``x``, ``y`` returning ``x*y`` in the group
 
     .. NOTE::
 

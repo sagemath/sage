@@ -49,8 +49,8 @@ from sage.groups.abelian_gps.element_base import AbelianGroupElementBase
 
 def is_AbelianGroupElement(x):
     """
-    Return ``True`` if x is an abelian group element, i.e., an element of
-    type ``AbelianGroupElement``.
+    Return ``True`` if ``x`` is an abelian group element, i.e., an element of
+    type :class:`AbelianGroupElement`.
 
     EXAMPLES: Though the integer 3 is in the integers, and the integers
     have an abelian group structure, 3 is not an AbelianGroupElement::

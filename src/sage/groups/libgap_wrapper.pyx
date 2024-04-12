@@ -260,7 +260,7 @@ class ParentLibGAP(SageObject):
 
     def gap(self):
         """
-        Return the gap representation of ``self``.
+        Return the GAP representation of ``self``.
 
         OUTPUT: a :class:`~sage.libs.gap.element.GapElement`
 
@@ -400,7 +400,7 @@ class ParentLibGAP(SageObject):
         INPUT:
 
         - ``i`` -- integer between `0` (inclusive) and :meth:`ngens`
-          (exclusive); The index of the generator
+          (exclusive); the index of the generator
 
         OUTPUT: the `i`-th generator of the group
 

@@ -221,7 +221,7 @@ cdef class Group(Parent):
 
     def is_multiplicative(self):
         r"""
-        Return ``True`` if the group operation is given by \* (rather than +).
+        Return ``True`` if the group operation is given by ``*`` (rather than ``+``).
 
         Override for additive groups.
 

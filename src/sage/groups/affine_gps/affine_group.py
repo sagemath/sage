@@ -186,7 +186,7 @@ class AffineGroup(UniqueRepresentation, Group):
 
         INPUT:
 
-        - ``degree`` -- integer; The degree of the affine group, that
+        - ``degree`` -- integer; the degree of the affine group, that
           is, the dimension of the affine space the group is acting on
           naturally
 

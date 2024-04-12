@@ -118,7 +118,7 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
 
         INPUT:
 
-        - partition -- an optional list of lists partition of the columns;
+        - ``partition`` -- an optional list of lists partition of the columns;
           default is the unit partition
 
         EXAMPLES::
@@ -1055,15 +1055,15 @@ cdef inline int sort_by_function_codes(PartitionStack *PS, int start, int *degre
 
 def random_tests(num=50, n_max=50, k_max=6, nwords_max=200, perms_per_code=10, density_range=(.1,.9)):
     """
-    Test to make sure that C(gamma(B)) == C(B) for random permutations gamma
-    and random codes B, and that is_isomorphic returns an isomorphism.
+    Test to make sure that ``C(gamma(B)) == C(B)`` for random permutations ``gamma``
+    and random codes ``B``, and that :meth:`is_isomorphic` returns an isomorphism.
 
     INPUT:
 
-    - num -- run tests for this many codes
-    - n_max -- test codes with at most this many columns
-    - k_max -- test codes with at most this for dimension
-    - perms_per_code -- test each code with this many random permutations
+    - ``num`` -- run tests for this many codes
+    - ``n_max`` -- test codes with at most this many columns
+    - ``k_max`` -- test codes with at most this for dimension
+    - ``perms_per_code`` -- test each code with this many random permutations
 
     DISCUSSION:
 

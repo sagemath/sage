@@ -315,7 +315,7 @@ class _SubGaloisMixin(_GMixin):
         - ``name`` -- a variable name for the new field
 
         - ``polred`` -- whether to optimize the generator of the newly created field
-            for a simpler polynomial, using pari's polredbest;
+            for a simpler polynomial, using Pari's :pari:`polredbest`;
             defaults to ``True`` when the degree of the fixed field is at most 8
 
         - ``threshold`` -- positive number; polred only performed if the cost
@@ -381,7 +381,7 @@ class GaloisGroup_ab(_GaloisMixin, AbelianGroup_class):
     @lazy_attribute
     def _gcdata(self):
         r"""
-        Return the Galois closure (ie, the finite field itself) together with the identity.
+        Return the Galois closure (i.e., the finite field itself) together with the identity.
 
         EXAMPLES::
 
