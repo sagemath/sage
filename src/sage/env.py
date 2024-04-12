@@ -183,7 +183,7 @@ SAGE_SPKG_INST = var("SAGE_SPKG_INST", join(SAGE_LOCAL, "var", "lib", "sage", "i
 
 # source tree of the Sage distribution
 SAGE_ROOT = var("SAGE_ROOT")  # no fallback for SAGE_ROOT
-SAGE_SRC = var("SAGE_SRC", join(SAGE_ROOT, "src"), SAGE_LIB)
+SAGE_SRC = var("SAGE_SRC", join(SAGE_ROOT, "src"))
 SAGE_DOC_SRC = var("SAGE_DOC_SRC", join(SAGE_ROOT, "src", "doc"), SAGE_DOC)
 SAGE_PKGS = var("SAGE_PKGS", join(SAGE_ROOT, "build", "pkgs"))
 SAGE_ROOT_GIT = var("SAGE_ROOT_GIT", join(SAGE_ROOT, ".git"))
