@@ -1725,7 +1725,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation, Group, Pare
         group `G`, see e.g. [CS1999a]_. Let `\Lambda` be the group algebra of
         `G/G'` and `\mathbb{T}` its associated algebraic variety (a torus).
         Each element `\xi\in\mathbb{T}` defines a local system of coefficients
-        and the `k` th-characteristic variety is
+        and the `k`-th characteristic variety is
 
         .. MATH::
 
