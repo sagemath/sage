@@ -608,8 +608,8 @@ class DocTestController(SageObject):
 
         Float. The wall time on your computer that would be equivalent
         to one second on a modern computer. Unless you have kick-ass
-        hardware this should always be >= 1.0. Raises a
-        ``RuntimeError`` if there are no stored timings to use as
+        hardware this should always be >= 1.0. This raises a
+        :class:`RuntimeError` if there are no stored timings to use as
         benchmark.
 
         EXAMPLES::
