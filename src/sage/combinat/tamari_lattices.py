@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # sage.doctest: needs sage.modules
 r"""
 Generalized Tamari lattices
@@ -92,11 +93,11 @@ def paths_in_triangle(i, j, a, b) -> list[tuple[int, ...]]:
         return [tuple([1] * j)]
 
     if (j - 1) * a >= (i) * b:
-        result = [u + tuple([1]) for u in paths_in_triangle(i, j - 1, a, b)]
-        result += [u + tuple([0]) for u in paths_in_triangle(i - 1, j, a, b)]
+        result = [u + (1,) for u in paths_in_triangle(i, j - 1, a, b)]
+        result += [u + (0,) for u in paths_in_triangle(i - 1, j, a, b)]
         return result
 
-    return [u + tuple([0]) for u in paths_in_triangle(i - 1, j, a, b)]
+    return [u + (0,) for u in paths_in_triangle(i - 1, j, a, b)]
 
 
 def swap(p, i, m=1) -> tuple[int, ...]:
@@ -156,7 +157,7 @@ def swap(p, i, m=1) -> tuple[int, ...]:
             height -= 1
         if height <= 0:
             found = True
-    q = [k for k in p]
+    q = list(p)
     for k in range(i, j):
         q[k] = p[k + 1]
     q[j] = 0

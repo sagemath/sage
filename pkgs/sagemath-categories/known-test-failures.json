@@ -1136,6 +1136,7 @@
         "ntests": 128
     },
     "sage.repl.configuration": {
+        "failed": true,
         "ntests": 22
     },
     "sage.repl.display.fancy_repr": {
@@ -1161,6 +1162,7 @@
         "ntests": 42
     },
     "sage.repl.inputhook": {
+        "failed": true,
         "ntests": 7
     },
     "sage.repl.interface_magic": {

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 from sage.structure.element cimport RingElement, ModuleElement, Element, FieldElement
 from sage.rings.ring cimport Field
 cimport sage.rings.abc
