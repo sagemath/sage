@@ -338,7 +338,7 @@ class YangBaxterGraph_generic(SageObject):
         seen[self._root] = True
         while queue:
             u = queue.pop()
-            l = sorted(list(digraph.neighbor_out_iterator(u)))
+            l = sorted(digraph.neighbor_out_iterator(u))
             for w in l:
                 if w not in seen:
                     seen[w] = True
@@ -588,7 +588,7 @@ class YangBaxterGraph_partition(YangBaxterGraph_generic):
         """
         self._partition = partition
         beta = sorted(self._partition, reverse=True)
-        root = sum([tuple(range(b)) for b in beta], tuple())[::-1]
+        root = sum((tuple(range(b)) for b in beta), ())[::-1]
         operators = [SwapIncreasingOperator(i)
                      for i in range(sum(partition) - 1)]
         super().__init__(root, operators)

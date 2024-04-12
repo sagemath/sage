@@ -477,32 +477,6 @@ cdef class LeanMatrix:
 
     #    Copying, loading, saving:
 
-    def __copy__(self):
-        """
-        Return a copy of ``self``.
-
-        EXAMPLES::
-
-            sage: from sage.matroids.lean_matrix import *
-            sage: A = GenericMatrix(2, 5, Matrix(GF(5), [[1, 0, 1, 1, 1], [0, 1, 1, 2, 3]]))
-            sage: A == copy(A)  # indirect doctest
-            True
-        """
-        return self.copy()
-
-    def __deepcopy__(self, memo=None):
-        """
-        Return a deep copy of ``self``.
-
-        EXAMPLES::
-
-            sage: from sage.matroids.lean_matrix import *
-            sage: A = GenericMatrix(2, 5, Matrix(GF(5), [[1, 0, 1, 1, 1], [0, 1, 1, 2, 3]]))
-            sage: A == deepcopy(A)  # indirect doctest
-            True
-        """
-        return self.copy()
-
     def __reduce__(self):
         """
         Save the object.

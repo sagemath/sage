@@ -46,7 +46,7 @@ jobs:
       targets: build doc-html
       targets_optional: ptest
       tox_system_factors: >-
-        ["ubuntu-focal"]
+        ["ubuntu-jammy"]
       tox_packages_factors: >-
         ["standard"]
       docker_push_repository: ghcr.io/${{ github.repository }}/
