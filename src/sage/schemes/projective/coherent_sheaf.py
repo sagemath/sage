@@ -214,6 +214,15 @@ class CoherentSheaf(SageObject):
             2
             sage: sh.twist(2).euler_characteristic()
             6
+
+        TESTS::
+
+            sage: sh.defining_twist()
+            0
+            sage: twisted = sh.twist(1)
+            sage: twisted_twisted = twisted.twist(2)
+            sage: twisted_twisted.defining_twist()
+            3
         """
         return type(self)(self._base_scheme, self._module, self._twist + t)
 
