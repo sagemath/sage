@@ -27,7 +27,7 @@ be a minimal free resolution of `M`. Then it induces a complex of (top) cohomolo
 
     \bigoplus_{j=1}^{t_{i+1}}H^r(\OO_{\PP^r}(-m^{(i+1)}_j))\overset{H^r(f_{i+1})}{\longrightarrow}
     \bigoplus_{j=1}^{t_i}H^r(\OO_{\PP^r}(-m^{(i)}_j))\overset{H^r(f_{i})}{\longrightarrow}
-    \bigoplus_{j=1}^{t_{i-1}}H^r(\OO_{\PP^r}(-m^{(i-1)}_j))
+    \bigoplus_{j=1}^{t_{i-1}}H^r(\OO_{\PP^r}(-m^{(i-1)}_j)),
 
 where `i` runs from `1` to `r`. Now it holds that
 
@@ -58,7 +58,7 @@ in which the complex of (bottom) cohomology groups
 
     \bigoplus_{j=1}^{t_{i+1}}H^0(\OO_{\PP^r}(-m^{(i+1)}_j))\overset{H^0(f_{i+1})}{\longrightarrow}
     \bigoplus_{j=1}^{t_i}H^0(\OO_{\PP^r}(-m^{(i)}_j))\overset{H^0(f_{i})}{\longrightarrow}
-    \bigoplus_{j=1}^{t_{i-1}}H^0(\OO_{\PP^r}(-m^{(i-1)}_j))
+    \bigoplus_{j=1}^{t_{i-1}}H^0(\OO_{\PP^r}(-m^{(i-1)}_j)),
 
 where `i` runs from `1` to `r` is used.
 
