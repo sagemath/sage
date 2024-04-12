@@ -118,6 +118,7 @@ from sage.misc.flatten import flatten
 from sage.combinat.integer_lists.invlex import IntegerListsLex
 from sage.modules.free_module import VectorSpace
 from sage.modules.free_module_element import vector
+from sage.rings.integer import Integer
 
 
 class CohomologyGroupBottom:
@@ -496,5 +497,5 @@ class MaruyamaComplex:
             b = self.differential_bottom(1).rank() + self.differential_top(r).rank()
             return a - b
         elif q > r:
-            return 0
+            return Integer(0)
         raise IndexError('index must be non-negative')
