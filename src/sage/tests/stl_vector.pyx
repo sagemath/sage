@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 # distutils: language = c++
 
 """
@@ -115,7 +116,7 @@ cdef class stl_int_vector(SageObject):
             s += ' data[' + str(i) + '] = ' + str(self.data.at(i)) + '\n'
         return s.strip()
 
-    cpdef sum(self) noexcept:
+    cpdef sum(self):
         """
         Add the elements.
 

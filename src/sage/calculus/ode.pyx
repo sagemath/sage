@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Solving ODE numerically by GSL
 
@@ -33,7 +34,7 @@ cdef class PyFunctionWrapper:
     cdef object the_parameters
     cdef int y_n
 
-    cdef set_yn(self,x) noexcept:
+    cdef set_yn(self,x):
         self.y_n = x
 
 cdef class ode_system:

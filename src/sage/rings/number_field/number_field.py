@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 # sage.doctest: needs sage.libs.linbox
 r"""
 Number fields
@@ -8474,6 +8475,27 @@ class NumberField_absolute(NumberField_generic):
         """
         return QQ
 
+    def __iter__(self):
+        r"""
+        Iterate over ``self``.
+
+        EXAMPLES::
+
+            sage: K = CyclotomicField(5)
+            sage: it = iter(K)
+            sage: [next(it) for _ in range(20)]
+            [0, 1, zeta5, zeta5^2, zeta5^3, -1, zeta5 + 1, zeta5^2 + 1,
+             zeta5^3 + 1, -zeta5, zeta5^2 + zeta5, zeta5^3 + zeta5, -zeta5^2,
+             zeta5^3 + zeta5^2, -zeta5^3, 1/2, zeta5 - 1, zeta5^2 - 1,
+             zeta5^3 - 1, -zeta5 + 1]
+        """
+        from sage.categories.sets_cat import cartesian_product
+        M, f, g = self.free_module()
+        # We iterate over the Cartesian product since the free module does
+        #   not iterate using the diagonal embedding.
+        for v in cartesian_product([M.base_ring()] * M.dimension()):
+            yield f(M(list(v)))
+
     def is_absolute(self):
         r"""
         Return ``True`` since ``self`` is an absolute field.
@@ -10438,9 +10460,8 @@ class NumberField_absolute(NumberField_generic):
                 L.append(P)
 
         # This adds some infinite places to L
-        for sigma in self.real_places():
-            if sigma(b) < 0 and sigma not in S:
-                L.append(sigma)
+        L.extend(sigma for sigma in self.real_places()
+                 if sigma(b) < 0 and sigma not in S)
         Cl = self.class_group(proof=False)
         U = self.unit_group(proof=False).gens()
         SL = S + L
@@ -10462,10 +10483,8 @@ class NumberField_absolute(NumberField_generic):
         # on the set of generators
 
         def phi(x):
-            v = []
-            for p in SL:
-                v.append((1-self.hilbert_symbol(x, b, p))//2)
-            return V(v)
+            return V([(1 - self.hilbert_symbol(x, b, p)) // 2 for p in SL])
+
         M = matrix([phi(g) for g in U])
 
         # we have to work around the inconvenience that multiplicative

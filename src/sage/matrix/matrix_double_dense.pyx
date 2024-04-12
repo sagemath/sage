@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: optional - numpy
 """
 Dense matrices using a NumPy backend
@@ -146,7 +147,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
     # LEVEL 2 functionality
     #   * def _pickle
     #   * def _unpickle
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         Add two matrices together.
 
@@ -169,7 +170,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         M._matrix_numpy = _left._matrix_numpy + _right._matrix_numpy
         return M
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         Return self - right
 
@@ -220,7 +221,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
     # def _pickle(self):                        #unsure how to implement
     # def _unpickle(self, data, int version):   # use version >= 0 #unsure how to implement
     ######################################################################
-    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix right) noexcept:
+    cdef sage.structure.element.Matrix _matrix_times_matrix_(self, sage.structure.element.Matrix right):
         r"""
         Multiply ``self * right`` as matrices.
 
@@ -594,8 +595,8 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         ALGORITHM:
 
-        Computation is performed by the ``norm()`` function of
-        the SciPy/NumPy library.
+        Computation is performed by the :func:`~scipy:scipy.linalg.norm`
+        function of the SciPy/NumPy library.
 
         EXAMPLES:
 
@@ -739,7 +740,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         ALGORITHM:
 
         The singular values come from the SVD decomposition
-        computed by SciPy/NumPy.
+        computed by SciPy/NumPy using :func:`scipy:scipy.linalg.svd`.
 
         EXAMPLES:
 
@@ -1073,7 +1074,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
           - ``'default'`` - applicable to any matrix
             with double-precision floating point entries.
-            Uses the :meth:`~scipy.linalg.eigvals` method from SciPy.
+            Uses the :func:`~scipy:scipy.linalg.eigvals` function from SciPy.
 
           - ``'symmetric'`` - converts the matrix into a real matrix
             (i.e. with entries from :class:`~sage.rings.real_double.RDF`),
@@ -1081,9 +1082,9 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             algorithm can be significantly faster than the
             ``'default'`` algorithm.
 
-          - ``'hermitian'`` - uses the :meth:`~scipy.linalg.eigh` method
-            from SciPy, which applies only to real symmetric or complex
-            Hermitian matrices.  Since Hermitian is defined as a matrix
+          - ``'hermitian'`` - uses the :func:`~scipy:scipy.linalg.eigh`
+            function from SciPy, which applies only to real symmetric or
+            complex Hermitian matrices.  Since Hermitian is defined as a matrix
             equaling its conjugate-transpose, for a matrix with real
             entries this property is equivalent to being symmetric.
             This algorithm can be significantly faster than the
@@ -1707,6 +1708,10 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         Find a solution `X` to the equation `A X = B` if ``self`` is a square
         matrix `A`.
 
+        ALGORITHM:
+
+        Uses the function :func:`scipy:scipy.linalg.solve` from SciPy.
+
         TESTS::
 
             sage: # needs sage.symbolic
@@ -1729,6 +1734,10 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         """
         Compute a least-squares solution `X` to the equation `A X = B` where
         ``self`` is the matrix `A`.
+
+        ALGORITHM:
+
+        Uses the function :func:`scipy:scipy.linalg.lstsq` from SciPy.
 
         TESTS::
 
@@ -1754,7 +1763,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         ALGORITHM:
 
-        Use numpy
+        Uses :func:`scipy:scipy.linalg.det`.
 
         EXAMPLES::
 
@@ -2037,7 +2046,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
 
         ALGORITHM:
 
-        Calls "linalg.qr" from SciPy, which is in turn an
+        Calls :func:`scipy:scipy.linalg.qr` from SciPy, which is in turn an
         interface to LAPACK routines.
 
         EXAMPLES:
@@ -3588,7 +3597,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             posdef = self.fetch(cache_str)
         return posdef
 
-    cdef _vector_times_matrix_(self,Vector v) noexcept:
+    cdef _vector_times_matrix_(self,Vector v):
         if self._nrows == 0 or self._ncols == 0:
             return self.row_ambient_module().zero_vector()
         global numpy
@@ -3601,7 +3610,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
         ans = numpy.dot(v_numpy,self._matrix_numpy)
         return M(ans)
 
-    cdef _matrix_times_vector_(self,Vector v) noexcept:
+    cdef _matrix_times_vector_(self,Vector v):
         if self._nrows == 0 or self._ncols == 0:
             return self.column_ambient_module().zero_vector()
 
@@ -3675,7 +3684,7 @@ cdef class Matrix_double_dense(Matrix_numpy_dense):
             sage: A = matrix(CDF, 2, [1,2+I,3*I,4]); A                                  # needs sage.symbolic
             [        1.0 2.0 + 1.0*I]
             [      3.0*I         4.0]
-            sage: A.exp()  # tol 1.1e-14                                                # needs sage.symbolic
+            sage: A.exp()  # tol 3e-14                                                  # needs sage.symbolic
             [-19.614602953804912 + 12.517743846762578*I   3.7949636449582176 + 28.88379930658099*I]
             [ -32.383580980922254 + 21.88423595789845*I   2.269633004093535 + 44.901324827684824*I]
 

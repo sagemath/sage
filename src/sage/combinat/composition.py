@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Integer compositions
 
@@ -1417,10 +1418,7 @@ class Composition(CombinatorialElement):
             from sage.rings.rational_field import QQ
             base_ring = QQ
         R = SymmetricGroupAlgebra(base_ring, sum(self))
-        cells = []
-        for i, row in enumerate(self):
-            for j in range(row):
-                cells.append((i, j))
+        cells = [(i, j) for i, row in enumerate(self) for j in range(row)]
         return SpechtModule(R, cells)
 
     def specht_module_dimension(self, base_ring=None):

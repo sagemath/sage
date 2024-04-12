@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 from sage.libs.ntl.types cimport ZZ_pContext_c
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.types cimport ZZ_c
@@ -14,7 +15,7 @@ cdef class ntl_ZZ_pContext_class():
 
 cdef class ntl_ZZ_pContext_factory():
     cdef object context_dict
-    cdef ntl_ZZ_pContext_class make_c(self, ntl_ZZ v) noexcept
+    cdef ntl_ZZ_pContext_class make_c(self, ntl_ZZ v)
 
 
 cdef extern from "ntlwrap.h":

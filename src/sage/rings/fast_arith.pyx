@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.libs.pari
 """
 Basic arithmetic with C integers
@@ -40,7 +41,7 @@ from libc.math cimport sqrt
 
 from sage.rings.integer cimport Integer
 
-cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False) noexcept:
+cpdef prime_range(start, stop=None, algorithm=None, bint py_ints=False):
     r"""
     Return a list of all primes between ``start`` and ``stop - 1``, inclusive.
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 r"""
 Tableaux
 
@@ -2613,16 +2614,12 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             sage: t.slide_multiply(t2)
             [[1, 1, 2, 2, 3], [2, 2, 3, 5], [3, 4, 5], [4, 6, 6], [5]]
         """
-        st = []
         if len(self) == 0:
             return other
-        else:
-            l = len(self[0])
 
-        for row in other:
-            st.append((None,)*l + row)
-        for row in self:
-            st.append(row)
+        l = len(self[0])
+        st = [(None,) * l + row for row in other]
+        st.extend(self)
 
         from sage.combinat.skew_tableau import SkewTableau
         return SkewTableau(st).rectify()

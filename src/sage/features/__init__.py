@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-environment
 r"""
 Testing for features of the environment at runtime
 
@@ -162,7 +162,7 @@ class Feature(TrivialUniqueRepresentation):
         # shared among subprocesses. Thus we use the Value class from the
         # multiprocessing module (cf. self._seen of class AvailableSoftware)
         from multiprocessing import Value
-        self._num_hidings = Value('i', 0)
+        self._num_hidings = Value('i', 0, lock=False)
 
         try:
             from sage.misc.package import spkg_type

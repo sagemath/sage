@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 cdef extern from 'symmetrica/def.h':
     INT mult_schubert_schubert(OP a, OP b, OP result)
     INT m_perm_sch(OP a, OP b)
@@ -12,7 +13,7 @@ cdef extern from 'symmetrica/def.h':
     INT mult_schubert_polynom(OP a,OP b,OP c)
 
 
-cdef object _check_schubert(object a, OP ca) noexcept:
+cdef object _check_schubert(object a, OP ca):
     if a in Permutations():
         if isinstance(a, builtinlist):
             a = Permutation(a)
