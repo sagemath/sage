@@ -63,7 +63,6 @@ class CoherentSheaf(SageObject):
         self._module = module
         self._twist = twist
 
-    @cached_property
     def _cohomology(self):
         """
         Return an object that computes the cohomology.
