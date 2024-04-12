@@ -2307,21 +2307,24 @@ class ProjectiveSpace_field(ProjectiveSpace_ring):
         r"""
         Return the arithmetic genus of this projective space.
 
-        This is known to be zero. This method simply checks the fact.
+        This is known to be 0.
 
         EXAMPLES::
 
             sage: P1 = ProjectiveSpace(QQ, 1)
             sage: P1.arithmetic_genus()
             0
+
+        We verify that the arithmetic genus of the `2`-dimensional projective space
+        is indeed 0::
+
             sage: P2 = ProjectiveSpace(QQ, 2)
             sage: P2.arithmetic_genus()
             0
+            sage: P2.structure_sheaf().euler_characteristic() - 1
+            0
         """
-        p = self.structure_sheaf().euler_characteristic() - 1
-        if self.dimension() % 2:
-            p = -p
-        return p
+        return 0
 
 
 class ProjectiveSpace_finite_field(ProjectiveSpace_field):

@@ -1504,7 +1504,7 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
 
         - ``module`` -- a free module or a quotient module
 
-        - ``twist`` -- (default: `0`) an integer
+        - ``twist`` -- (default: ``0``) an integer
 
         EXAMPLES::
 
