@@ -146,10 +146,10 @@ class DescentAlgebra(UniqueRepresentation, Parent):
             True
 
             sage: B = DescentAlgebra(QQ, 4).B()
-            sage: B.is_field()
+            sage: B in Fields()
             False
             sage: B = DescentAlgebra(QQ, 1).B()
-            sage: B.is_field()
+            sage: B in Fields()
             True
         """
         self._n = n
@@ -161,7 +161,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
         self._category = cat
         Parent.__init__(self, base=R, category=self._category.WithRealizations())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -261,7 +261,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
             return CombinatorialFreeModule._element_constructor_(self, x)
 
         # We need to overwrite this since our basis elements must be indexed by tuples
-        def _repr_term(self, S):
+        def _repr_term(self, S) -> str:
             r"""
             EXAMPLES::
 
@@ -285,7 +285,7 @@ class DescentAlgebra(UniqueRepresentation, Parent):
             return self(self.to_B_basis(S) * self.to_B_basis(T))
 
         @cached_method
-        def one_basis(self):
+        def one_basis(self) -> tuple:
             r"""
             Return the identity element, as per
             ``AlgebrasWithBasis.ParentMethods.one_basis``.
@@ -331,7 +331,8 @@ class DescentAlgebra(UniqueRepresentation, Parent):
 
             n = self.realization_of()._n
             C = Compositions(n)
-            return B.sum_of_terms([(C.from_subset(T, n), (-1)**(len(S) - len(T)))
+            lenS = len(S)
+            return B.sum_of_terms([(C.from_subset(T, n), (-1)**(lenS - len(T)))
                                    for T in SubsetsSorted(S)])
 
         def to_symmetric_group_algebra_on_basis(self, S):
@@ -873,7 +874,7 @@ class DescentAlgebraBases(Category_realization_of_parent):
         """
         return "Category of bases of {}".format(self.base())
 
-    def super_categories(self):
+    def super_categories(self) -> list:
         r"""
         The super categories of ``self``.
 
@@ -889,7 +890,7 @@ class DescentAlgebraBases(Category_realization_of_parent):
         return [self.base()._category, Realizations(self.base())]
 
     class ParentMethods:
-        def _repr_(self):
+        def _repr_(self) -> str:
             """
             Text representation of this basis of a descent algebra.
 
