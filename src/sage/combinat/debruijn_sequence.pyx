@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-combinat
 r"""
 De Bruijn sequences
 
@@ -95,7 +95,7 @@ def debruijn_sequence(int k, int n):
     return sequence
 
 
-cdef gen(int t, int p, k, n) noexcept:
+cdef gen(int t, int p, k, n):
     """
     The internal generation function. This should not be accessed by the
     user.

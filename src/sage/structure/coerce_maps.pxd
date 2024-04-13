@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 from sage.categories.map cimport Map
 
 
@@ -24,4 +25,4 @@ cdef class CallableConvertMap(Map):
     cdef _func
 
 
-cdef Map CCallableConvertMap(domain, codomain, void* func, name) noexcept
+cdef Map CCallableConvertMap(domain, codomain, void* func, name)

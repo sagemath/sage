@@ -110,9 +110,9 @@ class PackageCreator(object):
         Write the file ``dependencies`` and other files for Python packages.
 
         If ``source`` is ``"normal"``, write the files ``spkg-install.in`` and
-        ``install-requires.txt``.
+        ``version_requirements.txt``.
 
-        If ``source`` is ``"wheel"``, write the file ``install-requires.txt``.
+        If ``source`` is ``"wheel"``, write the file ``version_requirements.txt``.
 
         If ``source`` is ``"pip"``, write the file ``requirements.txt``.
 
@@ -126,12 +126,12 @@ class PackageCreator(object):
         if source == 'normal':
             with open(os.path.join(self.path, 'spkg-install.in'), 'w+') as f:
                 f.write('cd src\nsdh_pip_install .\n')
-            with open(os.path.join(self.path, 'install-requires.txt'), 'w+') as f:
+            with open(os.path.join(self.path, 'version_requirements.txt'), 'w+') as f:
                 f.write('{0}\n'.format(pypi_package_name))
             # Remove this file, which would mark the package as a pip package.
             self._remove_files(['requirements.txt'])
         elif source == 'wheel':
-            with open(os.path.join(self.path, 'install-requires.txt'), 'w+') as f:
+            with open(os.path.join(self.path, 'version_requirements.txt'), 'w+') as f:
                 f.write('{0}\n'.format(pypi_package_name))
             # Remove this file, which would mark the package as a pip package.
             self._remove_files(['requirements.txt'])

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Graded quasimodular forms ring
 
@@ -822,6 +823,6 @@ class QuasiModularForms(Parent, UniqueRepresentation):
             basis += [f*E2_pow for f
                       in M.modular_forms_of_weight(weight - 2*j).basis()]
             E2_pow *= E2
-        if not weight%2:
+        if not weight % 2:
             basis.append(E2_pow)
         return basis

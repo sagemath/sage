@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 # distutils: libraries = NTL_LIBRARIES gmp m
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -146,7 +147,7 @@ cdef class PowComputer_class(SageObject):
 
         return richcmp(s.in_field, o.in_field, op)
 
-    cdef Integer pow_Integer(self, long n) noexcept:
+    cdef Integer pow_Integer(self, long n):
         """
         Returns self.prime^n
 
@@ -601,7 +602,7 @@ cdef class PowComputer_base(PowComputer_class):
         return self.temp_m
 
 pow_comp_cache = {}
-cdef PowComputer_base PowComputer_c(Integer m, Integer cache_limit, Integer prec_cap, in_field, prec_type=None) noexcept:
+cdef PowComputer_base PowComputer_c(Integer m, Integer cache_limit, Integer prec_cap, in_field, prec_type=None):
     """
     Returns a PowComputer.
 
