@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-groups
 r"""
 Cubic Braid Groups
 

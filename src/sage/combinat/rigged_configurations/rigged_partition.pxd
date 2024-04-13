@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 from sage.structure.sage_object cimport SageObject
 
 cdef class RiggedPartition(SageObject):

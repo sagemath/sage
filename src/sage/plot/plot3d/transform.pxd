@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-plot
 cdef struct point_c:
     double x, y, z
 

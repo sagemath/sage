@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 Symmetric Functions
@@ -641,7 +642,8 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 sage: Sym = SymmetricFunctions(P)
                 sage: mj = Sym.macdonald().J()
                 sage: mj.corresponding_basis_over(Integers(13)['q','t'])
-                Symmetric Functions over Multivariate Polynomial Ring in q, t over Ring of integers modulo 13 in the Macdonald J basis
+                Symmetric Functions over Multivariate Polynomial Ring in q, t over
+                 Ring of integers modulo 13 in the Macdonald J basis
 
             TESTS:
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 """
 Floating point template for complete discrete valuation rings
 

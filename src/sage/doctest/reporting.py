@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 r"""
 Reporting doctest results
 
@@ -109,10 +109,8 @@ class DocTestReporter(SageObject):
 
             sage: from sage.doctest.reporting import DocTestReporter
             sage: from sage.doctest.control import DocTestController, DocTestDefaults
-            sage: from sage.env import SAGE_SRC
-            sage: import os
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','reporting.py')
-            sage: DC = DocTestController(DocTestDefaults(),[filename])
+            sage: filename = sage.doctest.reporting.__file__
+            sage: DC = DocTestController(DocTestDefaults(), [filename])
             sage: DTR = DocTestReporter(DC)
         """
         self.controller = controller
@@ -133,10 +131,8 @@ class DocTestReporter(SageObject):
 
             sage: from sage.doctest.reporting import DocTestReporter
             sage: from sage.doctest.control import DocTestController, DocTestDefaults
-            sage: from sage.env import SAGE_SRC
-            sage: import os
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','reporting.py')
-            sage: DC = DocTestController(DocTestDefaults(),[filename])
+            sage: filename = sage.doctest.reporting.__file__
+            sage: DC = DocTestController(DocTestDefaults(), [filename])
             sage: DTR = DocTestReporter(DC)
 
         ::
@@ -150,7 +146,7 @@ class DocTestReporter(SageObject):
         ``latex`` are run by default since :issue:`32174`::
 
             sage: filename = os.path.join(SAGE_SRC,'sage','misc','latex.py')
-            sage: DC = DocTestController(DocTestDefaults(),[filename])
+            sage: DC = DocTestController(DocTestDefaults(), [filename])
             sage: DTR = DocTestReporter(DC)
             sage: DTR.were_doctests_with_optional_tag_run('latex')   # optional - latex
             True
@@ -178,10 +174,9 @@ class DocTestReporter(SageObject):
             sage: from sage.doctest.control import DocTestController, DocTestDefaults
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.forker import SageDocTestRunner
-            sage: from sage.env import SAGE_SRC
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','reporting.py')
+            sage: filename = sage.doctest.reporting.__file__
             sage: DD = DocTestDefaults()
-            sage: FDS = FileDocTestSource(filename,DD)
+            sage: FDS = FileDocTestSource(filename, DD)
             sage: DC = DocTestController(DD, [filename])
             sage: DTR = DocTestReporter(DC)
             sage: print(DTR.report_head(FDS))
@@ -261,12 +256,11 @@ class DocTestReporter(SageObject):
             sage: from sage.doctest.forker import SageDocTestRunner
             sage: from sage.doctest.parsing import SageOutputChecker
             sage: from sage.doctest.util import Timer
-            sage: from sage.env import SAGE_SRC
-            sage: import os, sys, doctest
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','reporting.py')
+            sage: import doctest
+            sage: filename = sage.doctest.reporting.__file__
             sage: DD = DocTestDefaults()
-            sage: FDS = FileDocTestSource(filename,DD)
-            sage: DC = DocTestController(DD,[filename])
+            sage: FDS = FileDocTestSource(filename, DD)
+            sage: DC = DocTestController(DD, [filename])
             sage: DTR = DocTestReporter(DC)
 
         You can report a timeout::
@@ -339,13 +333,15 @@ class DocTestReporter(SageObject):
         Or tell the user that everything succeeded::
 
             sage: doctests, extras = FDS.create_doctests(globals())
-            sage: runner = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD,
-            ....:                            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            sage: runner = SageDocTestRunner(
+            ....:     SageOutputChecker(), verbose=False, sage_options=DD,
+            ....:     optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: Timer().start().stop().annotate(runner)
             sage: D = DictAsObject({'err':None})
             sage: runner.update_results(D)
             0
-            sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D), "Good tests")
+            sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D),
+            ....:            "Good tests")
                 [... tests, ... s]
             sage: DTR.stats
             {'sage.doctest.reporting': {'ntests': ..., 'walltime': ...}}
@@ -355,7 +351,8 @@ class DocTestReporter(SageObject):
             sage: runner.failures = 1
             sage: runner.update_results(D)
             1
-            sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D), "Doctest output including the failure...")
+            sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D),
+            ....:            "Doctest output including the failure...")
                 [... tests, 1 failure, ... s]
 
         If the user has requested that we report on skipped doctests,
@@ -365,7 +362,7 @@ class DocTestReporter(SageObject):
             sage: from collections import defaultdict
             sage: optionals = defaultdict(int)
             sage: optionals['magma'] = 5; optionals['long time'] = 4; optionals[''] = 1; optionals['not tested'] = 2
-            sage: D = DictAsObject(dict(err=None,optionals=optionals))
+            sage: D = DictAsObject(dict(err=None, optionals=optionals))
             sage: runner.failures = 0
             sage: runner.update_results(D)
             0
@@ -391,20 +388,23 @@ class DocTestReporter(SageObject):
             sage: DC = DocTestController(DD, [filename])
             sage: DTR = DocTestReporter(DC)
             sage: doctests, extras = FDS.create_doctests(globals())
-            sage: runner = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD,
-            ....:                            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            sage: runner = SageDocTestRunner(
+            ....:     SageOutputChecker(), verbose=False, sage_options=DD,
+            ....:     optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: Timer().start().stop().annotate(runner)
             sage: D = DictAsObject({'err':None})
             sage: runner.update_results(D)
             0
-            sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D), "Good tests")
+            sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D),
+            ....:            "Good tests")
 
         However, failures are still output in the errors-only mode::
 
             sage: runner.failures = 1
             sage: runner.update_results(D)
             1
-            sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D), "Failed test")
+            sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D),
+            ....:            "Failed test")
                 [... tests, 1 failure, ... s]
         """
         log = self.controller.log
@@ -598,12 +598,11 @@ class DocTestReporter(SageObject):
             sage: from sage.doctest.forker import SageDocTestRunner
             sage: from sage.doctest.parsing import SageOutputChecker
             sage: from sage.doctest.util import Timer
-            sage: from sage.env import SAGE_SRC
-            sage: import os, sys, doctest
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','reporting.py')
+            sage: import doctest
+            sage: filename = sage.doctest.reporting.__file__
             sage: DD = DocTestDefaults()
-            sage: FDS = FileDocTestSource(filename,DD)
-            sage: DC = DocTestController(DD,[filename])
+            sage: FDS = FileDocTestSource(filename, DD)
+            sage: DC = DocTestController(DD, [filename])
             sage: DTR = DocTestReporter(DC)
 
         Now we pretend to run some doctests::
@@ -621,19 +620,23 @@ class DocTestReporter(SageObject):
             Output before bad exit
             **********************************************************************
             sage: doctests, extras = FDS.create_doctests(globals())
-            sage: runner = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD,optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+            sage: runner = SageDocTestRunner(
+            ....:     SageOutputChecker(), verbose=False, sage_options=DD,
+            ....:     optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: t = Timer().start().stop()
             sage: t.annotate(runner)
             sage: DC.timer = t
             sage: D = DictAsObject({'err':None})
             sage: runner.update_results(D)
             0
-            sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D), "Good tests")
+            sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D),
+            ....:            "Good tests")
                 [... tests, ... s]
             sage: runner.failures = 1
             sage: runner.update_results(D)
             1
-            sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D), "Doctest output including the failure...")
+            sage: DTR.report(FDS, False, 0, (sum([len(t.examples) for t in doctests]), D),
+            ....:            "Doctest output including the failure...")
                 [... tests, 1 failure, ... s]
 
         Now we can show the output of finalize::
