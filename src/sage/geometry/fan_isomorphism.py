@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 """
 Find isomorphisms between fans
 """
@@ -346,7 +347,7 @@ def fan_2d_echelon_forms(fan):
         ....:     fan2 = Fan(perm_cones, rays=[m*vector(r) for r in perm_rays])
         ....:     assert fan_2d_echelon_form(fan2) in echelon_forms
 
-    The trivial case was fixed in :trac:`18613`::
+    The trivial case was fixed in :issue:`18613`::
 
         sage: fan = Fan([], lattice=ToricLattice(2))
         sage: fan_2d_echelon_forms(fan)

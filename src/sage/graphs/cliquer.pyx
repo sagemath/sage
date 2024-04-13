@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # cython: binding=True
 r"""
 Interface with Cliquer (clique-related problems)
@@ -10,9 +11,9 @@ AUTHORS:
 
 - Nathann Cohen (2009-08-14): Initial version
 
-- Jeroen Demeyer (2011-05-06): Make cliquer interruptible (:trac:`11252`)
+- Jeroen Demeyer (2011-05-06): Make cliquer interruptible (:issue:`11252`)
 
-- Nico Van Cleemput (2013-05-27): Handle the empty graph (:trac:`14525`)
+- Nico Van Cleemput (2013-05-27): Handle the empty graph (:issue:`14525`)
 
 REFERENCE:
 

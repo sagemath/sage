@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Submodules of Hecke modules
@@ -506,7 +507,7 @@ class HeckeSubmodule(module.HeckeModule_free_module):
             sage: S.dual_free_module().dimension() == S.dimension()
             True
 
-        We test that :trac:`5080` is fixed::
+        We test that :issue:`5080` is fixed::
 
             sage: EllipticCurve('128a').congruence_number()
             32

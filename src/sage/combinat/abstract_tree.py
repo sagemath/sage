@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 r"""
 Abstract Recursive Trees
 
@@ -814,7 +815,7 @@ class AbstractTree:
 
         TESTS:
 
-        Check that the empty tree has no nodes (:trac:`29134`)::
+        Check that the empty tree has no nodes (:issue:`29134`)::
 
             sage: T = BinaryTree()
             sage: T
@@ -2061,7 +2062,7 @@ class AbstractLabelledTree(AbstractTree):
             None[None[], None[None[], None[]], None[]]
 
         We test that inheriting from `LabelledOrderedTree` allows construction from a
-        `LabelledOrderedTree` (:trac:`16314`)::
+        `LabelledOrderedTree` (:issue:`16314`)::
 
             sage: LBTS = LabelledOrderedTrees()
             sage: class Foo(LabelledOrderedTree):

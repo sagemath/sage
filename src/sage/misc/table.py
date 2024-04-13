@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Tables
 
@@ -510,7 +511,7 @@ class table(SageObject):
             sage: T._str_table_row([1,2,3], False)
             '│  1 ║   2 |     3 |\n├────╫─────┼───────┤\n'
 
-        Check that :trac:`14601` has been fixed::
+        Check that :issue:`14601` has been fixed::
 
             sage: table([['111111', '222222', '333333']])._str_table_row([False,True,None], False)
             '  False    True     None\n'

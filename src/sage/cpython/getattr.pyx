@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Variants of getattr()
 """
@@ -111,7 +112,7 @@ cdef class AttributeErrorMessage:
 cdef AttributeErrorMessage dummy_error_message = AttributeErrorMessage()
 
 
-cpdef raw_getattr(obj, name) noexcept:
+cpdef raw_getattr(obj, name):
     """
     Like ``getattr(obj, name)`` but without invoking the binding
     behavior of descriptors under normal attribute access.
@@ -227,7 +228,7 @@ cpdef raw_getattr(obj, name) noexcept:
     raise AttributeError(dummy_error_message)
 
 
-cpdef getattr_from_other_class(self, cls, name) noexcept:
+cpdef getattr_from_other_class(self, cls, name):
     """
     Emulate ``getattr(self, name)``, as if ``self`` was an instance of
     ``cls``.
@@ -307,7 +308,7 @@ cpdef getattr_from_other_class(self, cls, name) noexcept:
         ...
         AttributeError: 'sage.rings.integer.Integer' object has no attribute '__weakref__'...
 
-    This was caught by :trac:`8296` for which we do a couple more tests::
+    This was caught by :issue:`8296` for which we do a couple more tests::
 
         sage: "__weakref__" in dir(A)
         True
@@ -334,7 +335,7 @@ cpdef getattr_from_other_class(self, cls, name) noexcept:
     TESTS:
 
     Check that we do not pick up special attributes from the ``type``
-    class, see :trac:`20686`::
+    class, see :issue:`20686`::
 
         sage: getattr_from_other_class(1, type, "__name__")
         Traceback (most recent call last):
@@ -419,7 +420,7 @@ def dir_with_other_class(self, *cls):
 
     TESTS:
 
-    Check that :trac:`13043` is fixed::
+    Check that :issue:`13043` is fixed::
 
         sage: len(dir(RIF))==len(set(dir(RIF)))                                         # needs sage.rings.real_interval_field
         True

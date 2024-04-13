@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.rings.finite_rings
 """
 Specific algorithms to compute cardinality of elliptic curves over a finite field
@@ -106,7 +107,7 @@ def _cardinality_with_j_invariant_1728(self):
 
     TESTS:
 
-    Check that a bug noted at :trac:`15667` is fixed::
+    Check that a bug noted at :issue:`15667` is fixed::
 
         sage: F.<a> = GF(3^6,'a')
         sage: EllipticCurve([a^5 + 2*a^3 + 2*a^2 + 2*a, a^4 + a^3 + 2*a + 1]).cardinality()

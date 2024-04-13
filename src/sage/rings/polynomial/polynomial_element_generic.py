@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Univariate Polynomials over domains and fields
 
@@ -248,7 +249,7 @@ class Polynomial_generic_sparse(Polynomial):
             sage: f._derivative(x)
             3*x^2*y^4
 
-        Check that :trac:`28187` is fixed::
+        Check that :issue:`28187` is fixed::
 
             sage: R = PolynomialRing(ZZ, 't', sparse=True)
             sage: t, u = var('t, u')                                                    # needs sage.symbolic
@@ -297,7 +298,7 @@ class Polynomial_generic_sparse(Polynomial):
 
         TESTS:
 
-        Check that :trac:`18600` is fixed::
+        Check that :issue:`18600` is fixed::
 
             sage: R.<x> = PolynomialRing(ZZ, sparse=True)
             sage: (x^2^100).integral()
@@ -446,7 +447,7 @@ class Polynomial_generic_sparse(Polynomial):
             sage: f[:2]                                                                 # needs sage.rings.real_mpfr
             -42.000*x + 8.0000
 
-        Any other kind of slicing is an error, see :trac:`18940`::
+        Any other kind of slicing is an error, see :issue:`18940`::
 
             sage: f[1:3]                                                                # needs sage.rings.real_mpfr
             Traceback (most recent call last):
@@ -769,7 +770,7 @@ class Polynomial_generic_sparse(Polynomial):
 
         TESTS:
 
-        Check that :trac:`18600` is fixed::
+        Check that :issue:`18600` is fixed::
 
             sage: R.<x> = PolynomialRing(ZZ, sparse=True)
             sage: p = x^2^100 - 5
@@ -869,7 +870,7 @@ class Polynomial_generic_sparse(Polynomial):
             sage: g == f*q + r and r.degree() < f.degree()
             True
 
-        The following shows that :trac:`16649` is indeed fixed. ::
+        The following shows that :issue:`16649` is indeed fixed. ::
 
             sage: P.<x> = PolynomialRing(ZZ, sparse=True)
             sage: (4*x).quo_rem(2*x)
@@ -946,7 +947,7 @@ class Polynomial_generic_sparse(Polynomial):
 
         TESTS:
 
-        Check that :trac:`19676` is fixed::
+        Check that :issue:`19676` is fixed::
 
             sage: S.<y> = R[]
             sage: x.gcd(y)
@@ -954,7 +955,7 @@ class Polynomial_generic_sparse(Polynomial):
             sage: (6*x).gcd(9)
             3
 
-        Check that :trac:`36427` is fixed::
+        Check that :issue:`36427` is fixed::
 
             sage: P = PolynomialRing(ZZ, "q", sparse=True)
             sage: q = P.gen()
@@ -1209,7 +1210,7 @@ class Polynomial_generic_cdv(Polynomial_generic_domain):
 
         TESTS:
 
-        Check that :trac:`22936` is fixed::
+        Check that :issue:`22936` is fixed::
 
             sage: S.<x> = PowerSeriesRing(GF(5))
             sage: R.<y> = S[]

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.pari
 """
 Module of supersingular points
@@ -455,7 +456,7 @@ class SupersingularModule(HeckeModule_free_module):
             sage: X.free_module()
             Ambient free module of rank 3 over the principal ideal domain Integer Ring
 
-        This illustrates the fix at :trac:`4306`::
+        This illustrates the fix at :issue:`4306`::
 
             sage: X = SupersingularModule(389)
             sage: X.basis()

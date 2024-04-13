@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.combinat
 r"""
 Univariate Ore polynomial rings
@@ -1141,7 +1142,7 @@ class OrePolynomialRing(UniqueRepresentation, Parent):
 
         TESTS:
 
-        We check that :trac:`31470` is fixed::
+        We check that :issue:`31470` is fixed::
 
             sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(5^3)

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 r"""
 Datatypes for words defined by iterators and callables
 """
@@ -226,7 +227,7 @@ class WordDatatype_callable(WordDatatype):
             ...
             ValueError: for infinite words, start and stop values cannot be negative
 
-        Out of range index (:trac:`8673`)::
+        Out of range index (:issue:`8673`)::
 
             sage: w = Word(lambda n:n^2, length=23)
             sage: w[100]

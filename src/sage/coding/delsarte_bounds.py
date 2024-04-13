@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Delsarte (or linear programming) bounds
 
@@ -74,7 +75,7 @@ def krawtchouk(n, q, l, x, check=True):
 
     TESTS:
 
-    Check that the bug reported on :trac:`19561` is fixed::
+    Check that the bug reported on :issue:`19561` is fixed::
 
         sage: codes.bounds.krawtchouk(3,2,3,3)
         -1

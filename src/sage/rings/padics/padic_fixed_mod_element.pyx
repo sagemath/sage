@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 """
 `p`-adic Fixed-Mod Element
 
@@ -156,7 +157,7 @@ cdef class pAdicFixedModElement(FMElement):
         """
         return self.lift_c()
 
-    cdef lift_c(self) noexcept:
+    cdef lift_c(self):
         r"""
         Returns an integer congruent to this element modulo the precision.
 
@@ -188,7 +189,7 @@ cdef class pAdicFixedModElement(FMElement):
         """
         return self._to_gen()
 
-    cdef pari_gen _to_gen(self) noexcept:
+    cdef pari_gen _to_gen(self):
         """
         Convert ``self`` to an equivalent pari element.
 
@@ -206,7 +207,7 @@ cdef class pAdicFixedModElement(FMElement):
               p^l : [&=...] INT(lg=3):... (+,lgefint=3):... ...
                 I : gen_0
 
-        This checks that :trac:`15653` is fixed::
+        This checks that :issue:`15653` is fixed::
 
             sage: x = polygen(ZpFM(3,10))
             sage: (x^3 + x + 1).__pari__().poldisc()

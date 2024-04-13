@@ -9,7 +9,7 @@ on:
       platform:
         description: 'Platform'
         required: true
-        default: 'ubuntu-focal-standard'
+        default: 'ubuntu-jammy-standard'
       docker_tag:
         description: 'Docker tag'
         required: true
@@ -29,13 +29,13 @@ jobs:
         uses: actions/checkout@v4
       - name: Merge CI fixes from sagemath/sage
         run: |
-          .ci/merge-fixes.sh
+          mkdir -p upstream
+          .ci/merge-fixes.sh 2>&1 | tee upstream/ci_fixes.log
         env:
           GH_TOKEN: ${{ github.token }}
           SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
       - name: Store CI fixes in upstream artifact
         run: |
-          mkdir -p upstream
           if git format-patch --stdout test_base > ci_fixes.patch; then
             cp ci_fixes.patch upstream/
           fi
@@ -46,7 +46,7 @@ jobs:
 
   build-docs-pdf:
     runs-on: ubuntu-latest
-    container: ghcr.io/sagemath/sage/sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:${{ github.event.inputs.docker_tag || 'dev'}}
+    container: ghcr.io/sagemath/sage/sage-${{ github.event.inputs.platform || 'ubuntu-jammy-standard' }}-with-targets:${{ github.event.inputs.docker_tag || 'dev'}}
     needs: [get_ci_fixes]
     steps:
       - name: Checkout

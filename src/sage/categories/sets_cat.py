@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Sets
 """
@@ -942,7 +943,7 @@ class Sets(Category_singleton):
             TESTS:
 
             Check that multiple categories initialisation
-            works (:trac:`13801`)::
+            works (:issue:`13801`)::
 
                 sage: class A(Parent):
                 ....:   def __init__(self):
@@ -2674,7 +2675,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     True
 
                 This also works for structures such as monoid algebras (see
-                :trac:`27937`)::
+                :issue:`27937`)::
 
                     sage: A = FreeAbelianMonoid('x,y').algebra(QQ)                      # needs sage.groups sage.modules
                     sage: F, arg = A.construction(); F, arg                             # needs sage.groups sage.modules

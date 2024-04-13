@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 This file collects tests requiring Cython.
 """
@@ -17,7 +18,7 @@ from sage.misc.fast_methods cimport FastHashable_class
 cdef class ClassWithLargeHash(FastHashable_class):
     """
     This class tests against a bug with :class:`FastHashable_class`
-    (in an earlier version of the patch at :trac:`11900`) that occurred
+    (in an earlier version of the patch at :issue:`11900`) that occurred
     on systems where ``sys.maxsize`` does not fit into a C int.
 
     TESTS::

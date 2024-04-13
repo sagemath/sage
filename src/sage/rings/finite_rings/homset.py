@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.rings.finite_rings
 """
 Homset for finite fields
@@ -265,7 +266,7 @@ class FiniteFieldHomset(RingHomset_generic):
 
         TESTS:
 
-        Check that :trac:`11390` is fixed::
+        Check that :issue:`11390` is fixed::
 
             sage: K = GF(1<<16,'a'); L = GF(1<<32,'b')
             sage: K.Hom(L)[0]
@@ -347,7 +348,7 @@ class FiniteFieldHomset(RingHomset_generic):
 
         .. TODO::
 
-            Use a more sophisticated algorithm; see also :trac:`8751`.
+            Use a more sophisticated algorithm; see also :issue:`8751`.
 
         """
         K = self.domain()

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.groups sage.modules
 r"""
 Group algebras
@@ -185,7 +186,7 @@ class GroupAlgebra_class(CombinatorialFreeModule):
             sage: [a, b] = kH.gens()
             sage: x = kH(a) + kH(b) + kH.one(); print(x)
             () + (5,6,7)(12,14,18) + (1,2)(3,4)
-            sage: x*x  #checks :trac:34292
+            sage: x*x  #checks :issue:34292
             (5,7,6)(12,18,14)
 
         As expected, there is no coercion when restricting the

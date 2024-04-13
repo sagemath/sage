@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-brial
 # distutils: libraries = brial brial_groebner M4RI_LIBRARIES LIBPNG_LIBRARIES
 # distutils: library_dirs = M4RI_LIBDIR LIBPNG_LIBDIR
 # distutils: include_dirs = M4RI_INCDIR LIBPNG_INCDIR
@@ -451,7 +452,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
         A boolean polynomial ring is the quotient of a polynomial ring,
         in a special implementation.
 
-        Before :trac:`15223`, the boolean polynomial rings returned the
+        Before :issue:`15223`, the boolean polynomial rings returned the
         construction of a polynomial ring, which was of course wrong.
 
         Now, a :class:`~sage.categories.pushout.QuotientFunctor` is returned
@@ -607,7 +608,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
         return self._repr
 
     # Coercion
-    cpdef _coerce_map_from_(self, S) noexcept:
+    cpdef _coerce_map_from_(self, S):
         """
         There is coercion from the base ring, from any boolean
         polynomial ring with compatible variable names,
@@ -615,7 +616,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
         names, and any polynomial ring with compatible variable
         names and base ring.
 
-        Before :trac:`9138`, boolean polynomial rings had
+        Before :issue:`9138`, boolean polynomial rings had
         a custom containment test, but that is not needed now
         since it now uses Sage's new coercion model. So, we
         move the tests from the old ``__contains__`` to here.
@@ -648,7 +649,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
             sage: 7 in GF(2)
             True
 
-        We test that :trac:`10173` is fixed::
+        We test that :issue:`10173` is fixed::
 
             sage: R = BooleanPolynomialRing(256,'x')
             sage: S = PolynomialRing(GF(2),256,'y')
@@ -665,7 +666,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
             sage: ZZ['a'].gen() + c
             a + c
 
-        Check that :trac:`13284` is fixed::
+        Check that :issue:`13284` is fixed::
 
             sage: from sage.rings.ideal import Cyclic
             sage: R = BooleanPolynomialRing(10, 'x')
@@ -683,7 +684,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
                 return False
             return self._base.has_coerce_map_from(S.base())
 
-    cdef _convert(self, other) noexcept:
+    cdef _convert(self, other):
         r"""
         Canonical conversion of elements from other domains to
         this boolean polynomial ring.
@@ -800,7 +801,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
             sage: P(x)
             x
 
-        Test that :trac:`10797` is really fixed::
+        Test that :issue:`10797` is really fixed::
 
             sage: B.<a,b,c,d,e,f> = BooleanPolynomialRing()
             sage: I = ideal(a*b + a + b*e + c*e + 1, a + b + c*d + c + 1, a*c + c + d*f + d + 1, a*c + c*f + c + d*f + 1, c*f + c + d + e + 1, a + b*c + b*d + e*f + 1)
@@ -927,7 +928,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
             TypeError: cannot convert polynomial z*x^2 + 5*y^3 to Boolean PolynomialRing in x, y: name z not defined
 
         We test that univariate polynomials convert into the
-        boolean polynomial ring (:trac:`9138`)::
+        boolean polynomial ring (:issue:`9138`)::
 
             sage: R.<x> = ZZ[]
             sage: p = x^3+2*x^2+x+1
@@ -1206,7 +1207,7 @@ cdef class BooleanPolynomialRing(BooleanPolynomialRing_base):
             sage: all(t in [x, y, x*y, P(1)] for t in f.terms())
             True
 
-        We test that :trac:`13845` is fixed::
+        We test that :issue:`13845` is fixed::
 
             sage: n = 10
             sage: B = BooleanPolynomialRing(n, 'x')
@@ -1873,7 +1874,7 @@ class BooleanMonomialMonoid(UniqueRepresentation, Monoid_class):
         sage: type(M.gen(0))
         <class 'sage.rings.polynomial.pbori.pbori.BooleanMonomial'>
 
-    Since :trac:`9138`, boolean monomial monoids are
+    Since :issue:`9138`, boolean monomial monoids are
     unique parents and are fit into the category framework::
 
         sage: loads(dumps(M)) is M
@@ -2269,7 +2270,7 @@ cdef class BooleanMonomial(MonoidElement):
         gens = self._parent.gens()
         return self._parent, (tuple(gens.index(x) for x in self.variables()),)
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Compare BooleanMonomial objects.
 
@@ -2429,7 +2430,7 @@ cdef class BooleanMonomial(MonoidElement):
 
         TESTS:
 
-        Check that :trac:`13133` is resolved::
+        Check that :issue:`13133` is resolved::
 
             sage: B(1).lm().index()
             Traceback (most recent call last):
@@ -2633,7 +2634,7 @@ cdef class BooleanMonomial(MonoidElement):
         """
         return new_BMI_from_BooleanMonomial(self)
 
-    cpdef _mul_(left, right) noexcept:
+    cpdef _mul_(left, right):
         """
         Multiply this boolean monomial with another boolean monomial.
 
@@ -2805,7 +2806,7 @@ cdef class BooleanMonomial(MonoidElement):
 #
 ###
 
-cdef inline BooleanMonomial new_BM(parent, BooleanPolynomialRing ring) noexcept:
+cdef inline BooleanMonomial new_BM(parent, BooleanPolynomialRing ring):
     cdef BooleanMonomial m
     m = <BooleanMonomial>BooleanMonomial.__new__(BooleanMonomial)
     m._parent = parent
@@ -2813,13 +2814,13 @@ cdef inline BooleanMonomial new_BM(parent, BooleanPolynomialRing ring) noexcept:
     return m
 
 cdef inline BooleanMonomial new_BM_from_PBMonom(parent,
-        BooleanPolynomialRing ring, PBMonom juice) noexcept:
+        BooleanPolynomialRing ring, PBMonom juice):
     cdef BooleanMonomial m = new_BM(parent, ring)
     m._pbmonom = juice
     return m
 
 cdef inline BooleanMonomial new_BM_from_PBVar(parent,
-        BooleanPolynomialRing ring, PBVar juice) noexcept:
+        BooleanPolynomialRing ring, PBVar juice):
     cdef BooleanMonomial m = new_BM(parent, ring)
     m._pbmonom = PBMonom(juice)
     return m
@@ -2861,7 +2862,7 @@ cdef class BooleanMonomialVariableIterator:
         return new_BM_from_PBVar(self.parent, self._ring, value)
 
 cdef inline BooleanMonomialVariableIterator new_BMVI_from_BooleanMonomial(
-                            BooleanMonomial monom) noexcept:
+                            BooleanMonomial monom):
     """
     Construct a new iterator over the variable indices of a boolean
     monomial.
@@ -2912,7 +2913,7 @@ cdef class BooleanMonomialIterator:
         return self.pbind[value]
 
 
-cdef inline BooleanMonomialIterator new_BMI_from_BooleanMonomial(BooleanMonomial monom) noexcept:
+cdef inline BooleanMonomialIterator new_BMI_from_BooleanMonomial(BooleanMonomial monom):
     """
     Construct a new BooleanMonomialIterator
     """
@@ -3016,7 +3017,7 @@ cdef class BooleanPolynomial(MPolynomial):
         R = self.parent().cover_ring()
         return R(self)._latex_()
 
-    cpdef _add_(left, right) noexcept:
+    cpdef _add_(left, right):
         """
         EXAMPLES::
 
@@ -3031,7 +3032,7 @@ cdef class BooleanPolynomial(MPolynomial):
         p._pbpoly.iadd((<BooleanPolynomial>right)._pbpoly)
         return p
 
-    cpdef _sub_(left, right) noexcept:
+    cpdef _sub_(left, right):
         """
         EXAMPLES::
 
@@ -3043,7 +3044,7 @@ cdef class BooleanPolynomial(MPolynomial):
         """
         return left._add_(right)
 
-    cpdef _lmul_(self, Element left) noexcept:
+    cpdef _lmul_(self, Element left):
         """
         EXAMPLES::
 
@@ -3066,7 +3067,7 @@ cdef class BooleanPolynomial(MPolynomial):
         else:
             return self._parent.zero()
 
-    cpdef _mul_(left, right) noexcept:
+    cpdef _mul_(left, right):
         """
         EXAMPLES::
 
@@ -3081,7 +3082,7 @@ cdef class BooleanPolynomial(MPolynomial):
         p._pbpoly.imul((<BooleanPolynomial>right)._pbpoly)
         return p
 
-    cpdef _div_(left, right) noexcept:
+    cpdef _div_(left, right):
         """
         EXAMPLES::
 
@@ -3117,7 +3118,7 @@ cdef class BooleanPolynomial(MPolynomial):
         """
         return self._pbpoly == right._pbpoly
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Compare left and right.
 
@@ -4794,7 +4795,7 @@ cdef class BooleanPolynomialIterator:
                 self.obj._parent, value)
 
 
-cdef inline BooleanPolynomialIterator new_BPI_from_BooleanPolynomial(BooleanPolynomial f) noexcept:
+cdef inline BooleanPolynomialIterator new_BPI_from_BooleanPolynomial(BooleanPolynomial f):
     """
     Construct a new BooleanMonomialIterator
     """
@@ -4837,7 +4838,7 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
 
         TESTS:
 
-        Check that :trac:`13155` is solved::
+        Check that :issue:`13155` is solved::
 
             sage: R = BooleanPolynomialRing(11, 'x')
             sage: R2 = PolynomialRing(GF(2), 11, 'x')
@@ -4916,20 +4917,20 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
         Another somewhat bigger example::
 
             sage: sr = mq.SR(2,1,1,4,gf2=True, polybori=True)
-            sage: while True:  # workaround (see :trac:`31891`)
+            sage: while True:  # workaround (see :issue:`31891`)
             ....:     try:
             ....:         F, s = sr.polynomial_system()
             ....:         break
             ....:     except ZeroDivisionError:
             ....:         pass
             sage: I = F.ideal()
-            sage: I.groebner_basis()  # not tested, known bug, unstable (see :trac:`32083`)
+            sage: I.groebner_basis()  # not tested, known bug, unstable (see :issue:`32083`)
             Polynomial Sequence with 36 Polynomials in 36 Variables
 
         We compute the same example with Magma::
 
             sage: sr = mq.SR(2,1,1,4,gf2=True, polybori=True)
-            sage: while True:  # workaround (see :trac:`31891`)
+            sage: while True:  # workaround (see :issue:`31891`)
             ....:     try:
             ....:         F, s = sr.polynomial_system()
             ....:         break
@@ -4968,7 +4969,7 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
             sage: I.groebner_basis()
             [x, y, z]
 
-        Check that this no longer crash (:trac:`12792`)::
+        Check that this no longer crash (:issue:`12792`)::
 
             sage: names = [ "s{0}s{1}".format(i,j) for i in range(4) for j in range(8)]
             sage: R = BooleanPolynomialRing(32, names)
@@ -5074,7 +5075,7 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
             [{x1: 0, x2: 0, x3: 0, x4: 0, x5: 0, x6: 0}, {x1: 1, x2: 1, x3: 1, x4: 0, x5: 0, x6: 1}]
 
 
-        Check that :trac:`13976` is fixed::
+        Check that :issue:`13976` is fixed::
 
             sage: R.<x,y,z> = BooleanPolynomialRing()
             sage: I = ideal( [ x*y*z + x*z + y + 1, x+y+z+1 ] )
@@ -5083,7 +5084,7 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
             1
 
         Make sure the result is a key converting dict, as discussed in
-        :trac:`9788` and consistent with
+        :issue:`9788` and consistent with
         :meth:`sage.rings.polynomial.multi_polynomial_ideal.MPolynomialIdeal_singular_repr.variety`::
 
             sage: sols[0]["y"]
@@ -5142,7 +5143,7 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
         EXAMPLES::
 
             sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)
-            sage: while True:  # workaround (see :trac:`31891`)
+            sage: while True:  # workaround (see :issue:`31891`)
             ....:     try:
             ....:         F, s = sr.polynomial_system()
             ....:         break
@@ -5167,7 +5168,7 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
         EXAMPLES::
 
             sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)
-            sage: while True:  # workaround (see :trac:`31891`)
+            sage: while True:  # workaround (see :issue:`31891`)
             ....:     try:
             ....:         F, s = sr.polynomial_system()
             ....:         break
@@ -5193,7 +5194,7 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
         EXAMPLES::
 
             sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)
-            sage: while True:  # workaround (see :trac:`31891`)
+            sage: while True:  # workaround (see :issue:`31891`)
             ....:     try:
             ....:         F, s = sr.polynomial_system()
             ....:         break
@@ -5217,35 +5218,35 @@ class BooleanPolynomialIdeal(MPolynomialIdeal):
 ##
 
 
-cdef inline BooleanPolynomial new_BP(BooleanPolynomialRing parent) noexcept:
+cdef inline BooleanPolynomial new_BP(BooleanPolynomialRing parent):
     cdef BooleanPolynomial p
     p = <BooleanPolynomial>BooleanPolynomial.__new__(BooleanPolynomial)
     p._parent = parent
     return p
 
 
-cdef inline BooleanPolynomial new_BP_from_PBVar(BooleanPolynomialRing parent, PBVar juice) noexcept:
+cdef inline BooleanPolynomial new_BP_from_PBVar(BooleanPolynomialRing parent, PBVar juice):
     cdef BooleanPolynomial p = new_BP(parent)
     p._pbpoly = PBBoolePolynomial(juice)
     return p
 
 
-cdef inline BooleanPolynomial new_BP_from_PBPoly(BooleanPolynomialRing parent, PBPoly juice) noexcept:
+cdef inline BooleanPolynomial new_BP_from_PBPoly(BooleanPolynomialRing parent, PBPoly juice):
     cdef BooleanPolynomial p = new_BP(parent)
     p._pbpoly = juice
     return p
 
-cdef inline BooleanPolynomial new_BP_from_PBMonom(BooleanPolynomialRing parent, PBMonom juice) noexcept:
+cdef inline BooleanPolynomial new_BP_from_PBMonom(BooleanPolynomialRing parent, PBMonom juice):
     cdef BooleanPolynomial p = new_BP(parent)
     p._pbpoly = PBBoolePolynomial(juice)
     return p
 
-cdef inline BooleanPolynomial new_BP_from_PBSet(BooleanPolynomialRing parent, PBSet juice) noexcept:
+cdef inline BooleanPolynomial new_BP_from_PBSet(BooleanPolynomialRing parent, PBSet juice):
     cdef BooleanPolynomial p = new_BP(parent)
     p._pbpoly = PBBoolePolynomial(juice)
     return p
 
-cdef inline BooleanPolynomial new_BP_from_int(BooleanPolynomialRing parent, int juice) noexcept:
+cdef inline BooleanPolynomial new_BP_from_int(BooleanPolynomialRing parent, int juice):
     cdef BooleanPolynomial p = new_BP(parent)
     p._pbpoly = PBBoolePolynomial(juice, parent._pbring)
     return p
@@ -5869,7 +5870,7 @@ cdef class BooleSet:
         return self._pbset.sizeDouble()
 
 
-cdef inline BooleSet new_BS_from_PBSet(PBSet juice, BooleanPolynomialRing ring) noexcept:
+cdef inline BooleSet new_BS_from_PBSet(PBSet juice, BooleanPolynomialRing ring):
     """
     Construct a new BooleSet
     """
@@ -5917,7 +5918,7 @@ cdef class BooleSetIterator:
         return new_BM_from_PBMonom(self._parent, self._ring, value)
 
 
-cdef inline BooleSetIterator new_BSI_from_PBSetIter(BooleSet s) noexcept:
+cdef inline BooleSetIterator new_BSI_from_PBSetIter(BooleSet s):
     """
     Construct a new BooleSetIterator
     """
@@ -6136,7 +6137,7 @@ cdef class BooleanPolynomialVector:
         self._vec.push_back(<PBBoolePolynomial>p)
 
 cdef inline BooleanPolynomialVector new_BPV_from_PBPolyVector(
-        BooleanPolynomialRing parent, PBPolyVector juice) noexcept:
+        BooleanPolynomialRing parent, PBPolyVector juice):
     cdef BooleanPolynomialVector m
     m = <BooleanPolynomialVector>BooleanPolynomialVector.__new__(BooleanPolynomialVector)
     m._vec = juice
@@ -6158,7 +6159,7 @@ cdef class BooleanPolynomialVectorIterator:
 
 
 cdef inline BooleanPolynomialVectorIterator new_BPVI_from_PBPolyVectorIter(
-        BooleanPolynomialVector vec) noexcept:
+        BooleanPolynomialVector vec):
     """
     Construct a new BooleanPolynomialVectorIterator
     """
@@ -6206,7 +6207,7 @@ cdef class ReductionStrategy:
 
         TESTS:
 
-        Check if :trac:`8966` is fixed::
+        Check if :issue:`8966` is fixed::
 
             sage: red = ReductionStrategy(B)
             sage: red.add_generator(None)
@@ -6474,7 +6475,7 @@ cdef class FGLMStrategy:
             sage: FGLMStrategy(old_ring, new_ring, ideal)
             <sage.rings.polynomial.pbori.pbori.FGLMStrategy object at 0x...>
 
-        Check that :trac:`13883` is fixed::
+        Check that :issue:`13883` is fixed::
 
             sage: nonreduced = BooleanPolynomialVector([x+z, x+y])
             sage: FGLMStrategy(old_ring, new_ring, nonreduced) # optional - debug
@@ -7000,7 +7001,7 @@ cdef class GroebnerStrategy:
 
 
 cdef class BooleanMulAction(Action):
-    cpdef _act_(self, g, x) noexcept:
+    cpdef _act_(self, g, x):
         """
         EXAMPLES::
 
@@ -7025,7 +7026,7 @@ cdef class BooleanMulAction(Action):
 
 
 cdef inline CCuddNavigator new_CN_from_PBNavigator(PBNavigator juice,
-                                                   Py_ssize_t* pbind) noexcept:
+                                                   Py_ssize_t* pbind):
     """
     Construct a new CCuddNavigator
     """
@@ -7560,7 +7561,7 @@ cdef long PBRing_identifier(PBRing pbring) noexcept:
     return _hash
 
 
-cdef object TermOrder_from_PBRing(PBRing _ring) noexcept:
+cdef object TermOrder_from_PBRing(PBRing _ring):
     cdef int n = _ring.nVariables()
     pb_base_order_code = _ring.ordering().getBaseOrderCode()
     order_str = inv_order_dict[pb_base_order_code]
@@ -7582,7 +7583,7 @@ cdef object TermOrder_from_PBRing(PBRing _ring) noexcept:
     return T
 
 
-cdef BooleanPolynomialRing BooleanPolynomialRing_from_PBRing(PBRing _ring) noexcept:
+cdef BooleanPolynomialRing BooleanPolynomialRing_from_PBRing(PBRing _ring):
     """
     Get BooleanPolynomialRing from C++-implementation
     """
@@ -7637,10 +7638,13 @@ def gauss_on_polys(inp):
         sage: B.<a,b,c,d,e,f> = BooleanPolynomialRing()
         sage: from sage.rings.polynomial.pbori.pbori import *
         sage: l = [B.random_element() for _ in range(B.ngens())]
-        sage: A, v = Sequence(l, B).coefficients_monomials()
+        sage: A, _ = Sequence(l, B).coefficients_monomials()
+        sage: while A.rank() < 6:
+        ....:     l = [B.random_element() for _ in range(B.ngens())]
+        ....:     A, _ = Sequence(l, B).coefficients_monomials()
 
         sage: e = gauss_on_polys(l)
-        sage: E, v = Sequence(e, B).coefficients_monomials()
+        sage: E, _ = Sequence(e, B).coefficients_monomials()
         sage: E == A.echelon_form()
         True
     """
@@ -7899,7 +7903,7 @@ cdef class BooleConstant:
         return self._pbconst.hasConstantPart()
 
 
-cdef object pb_block_order(n, order_str, blocks) noexcept:
+cdef object pb_block_order(n, order_str, blocks):
     T = [TermOrder(order_str, blockend - blockstart, force=True)
          for (blockstart, blockend) in zip([0] + blocks, blocks + [n])]
     if T:
@@ -7910,7 +7914,7 @@ cdef object pb_block_order(n, order_str, blocks) noexcept:
     return order_str
 
 
-cpdef object TermOrder_from_pb_order(int n, order, blocks) noexcept:
+cpdef object TermOrder_from_pb_order(int n, order, blocks):
     if not isinstance(order, str):
         if order == pbblock_dlex:
             order_str = pb_block_order(n, "deglex", blocks)

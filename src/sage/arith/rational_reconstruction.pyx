@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Rational reconstruction
 
@@ -9,7 +10,7 @@ AUTHORS:
 - ??? (2006 or before)
 
 - Jeroen Demeyer (2014-10-20): move this function from ``gmp.pxi``,
-  simplify and fix some bugs, see :trac:`17180`
+  simplify and fix some bugs, see :issue:`17180`
 """
 # ****************************************************************************
 #       Copyright (C) 2006 ???

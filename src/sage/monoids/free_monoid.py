@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 r"""
 Free Monoids
 
@@ -135,7 +136,7 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
             True
 
         Fix a bug when ``index_set`` is ``None`` and ``names`` is a
-        string (:trac:`26221`)::
+        string (:issue:`26221`)::
 
             sage: FreeMonoid(2, names=['a','b']) is FreeMonoid(names='a,b')
             True
@@ -196,7 +197,7 @@ class FreeMonoid(Monoid_class, UniqueRepresentation):
         Monoid_class.__init__(self, names)
 
     def _repr_(self):
-        return "Free monoid on %s generators %s" % (self.__ngens, self.gens())
+        return f"Free monoid on {self.__ngens} generators {self.gens()}"
 
     def _element_constructor_(self, x, check=True):
         """

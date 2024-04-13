@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 r"""
 Power series implemented using PARI
 
@@ -81,7 +82,7 @@ from sage.structure.parent cimport Parent
 from sage.rings.infinity import infinity
 
 
-cdef PowerSeries_pari construct_from_pari(parent, pari_gen g) noexcept:
+cdef PowerSeries_pari construct_from_pari(parent, pari_gen g):
     r"""
     Fast construction of power series from PARI objects of suitable
     type (series, polynomials, scalars and rational functions).
@@ -92,7 +93,7 @@ cdef PowerSeries_pari construct_from_pari(parent, pari_gen g) noexcept:
 
     TESTS:
 
-    Check for :trac:`33224`::
+    Check for :issue:`33224`::
 
         sage: R.<z> = LaurentSeriesRing(QQ, implementation='pari')
         sage: (z^-2).prec()
@@ -318,7 +319,7 @@ cdef class PowerSeries_pari(PowerSeries):
             True
 
         The following demonstrates that the problems raised in
-        :trac:`3979` and :trac:`5367` are solved::
+        :issue:`3979` and :issue:`5367` are solved::
 
             sage: [f(t^2 + O(t^n)) for n in [9, 10, 11]]
             [t^4 + t^6 + O(t^11), t^4 + t^6 + O(t^12), t^4 + t^6 + O(t^12)]
@@ -557,7 +558,7 @@ cdef class PowerSeries_pari(PowerSeries):
             return self._parent.laurent_series_ring()(h)
         return construct_from_pari(self._parent, h)
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         Addition of power series.
 
@@ -574,7 +575,7 @@ cdef class PowerSeries_pari(PowerSeries):
         """
         return construct_from_pari(self._parent, self.g + (<PowerSeries_pari>right).g)
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         Subtraction of power series.
 
@@ -588,7 +589,7 @@ cdef class PowerSeries_pari(PowerSeries):
         """
         return construct_from_pari(self._parent, self.g - (<PowerSeries_pari>right).g)
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         """
         Multiplication of power series.
 
@@ -601,7 +602,7 @@ cdef class PowerSeries_pari(PowerSeries):
         """
         return construct_from_pari(self._parent, self.g * (<PowerSeries_pari>right).g)
 
-    cpdef _rmul_(self, Element c) noexcept:
+    cpdef _rmul_(self, Element c):
         """
         Right multiplication by a scalar.
 
@@ -615,7 +616,7 @@ cdef class PowerSeries_pari(PowerSeries):
         """
         return construct_from_pari(self._parent, self.g * c)
 
-    cpdef _lmul_(self, Element c) noexcept:
+    cpdef _lmul_(self, Element c):
         """
         Left multiplication by a scalar.
 
@@ -629,7 +630,7 @@ cdef class PowerSeries_pari(PowerSeries):
         """
         return construct_from_pari(self._parent, c * self.g)
 
-    cpdef _div_(self, right) noexcept:
+    cpdef _div_(self, right):
         """
         Division of power series.
 

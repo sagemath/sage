@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # cython: old_style_globals=True
 """
 Interpreter reset
@@ -7,7 +8,7 @@ import sys
 
 # Exclude these from the reset command.
 # DATA, base64 -- needed by the notebook
-# Add exit and quit to EXCLUDE to resolve trac #22529 and trac #16704
+# Add exit and quit to EXCLUDE to resolve Issue #22529 and Issue #16704
 EXCLUDE = set(['sage_mode', '__DIR__', 'DIR', 'DATA', 'base64', 'exit', 'quit'])
 
 
@@ -55,7 +56,7 @@ def reset(vars=None, attached=False):
 
     TESTS:
 
-    Confirm that assumptions don't survive a reset (:trac:`10855`)::
+    Confirm that assumptions don't survive a reset (:issue:`10855`)::
 
         sage: # needs sage.symbolic
         sage: assume(x > 3)

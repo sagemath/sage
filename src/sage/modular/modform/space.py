@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.pari
 r"""
 Generic spaces of modular forms
@@ -1053,7 +1054,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             sage: f = q-24*q^2+O(q^3) ; S(f)
             q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)
 
-        Test that :trac:`13156` is fixed::
+        Test that :issue:`13156` is fixed::
 
             sage: R.<q> = QQ[[]]
             sage: ModularForms(1, 12)(R(0))
@@ -1069,7 +1070,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             sage: g.is_old()
             True
 
-        Test that :trac:`32168` is fixed::
+        Test that :issue:`32168` is fixed::
 
             sage: M0 = ModularForms(Gamma0(8), 10)
             sage: M1 = ModularForms(Gamma1(8), 10)
@@ -1334,7 +1335,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             ...
             ArithmeticError: vector is not in free module
 
-        We check that :trac:`10450` is fixed::
+        We check that :issue:`10450` is fixed::
 
             sage: M = CuspForms(Gamma1(22), 2).new_submodule()  # long time (3s on sage.math, 2011)
             sage: M.hecke_matrix(3)  # long time
@@ -1532,7 +1533,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             sage: N.cuspidal_submodule().dimension()
             1
 
-        We check that a bug noticed on :trac:`10450` is fixed::
+        We check that a bug noticed on :issue:`10450` is fixed::
 
             sage: M = ModularForms(6, 10)
             sage: W = M.span_of_basis(M.basis()[0:2])
@@ -1721,7 +1722,7 @@ class ModularFormsSpace(hecke.HeckeModule_generic):
             sage: M.eisenstein_submodule()
             Eisenstein subspace of dimension 1 of Modular Forms space of dimension 2 for Congruence Subgroup Gamma0(11) of weight 2 over Rational Field
 
-        We check that a bug noticed on :trac:`10450` is fixed::
+        We check that a bug noticed on :issue:`10450` is fixed::
 
             sage: M = ModularForms(6, 10)
             sage: W = M.span_of_basis(M.basis()[0:2])

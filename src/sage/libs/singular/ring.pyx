@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-singular
 """
 Wrapper for Singular's Rings
 
@@ -139,7 +140,7 @@ cdef ring *singular_ring_new(base_ring, n, names, term_order) except NULL:
     TESTS:
 
     Check that ``degneglex`` and ``degrevlex`` are the same up to reversal of
-    variables (:trac:`29635`)::
+    variables (:issue:`29635`)::
 
         sage: R = PolynomialRing(QQ, 'x', 4, order='degrevlex')
         sage: S = PolynomialRing(QQ, tuple(reversed(R.gens())), order='degneglex')
@@ -618,7 +619,7 @@ cdef class ring_wrapper_Py():
         return (self._ring == r._ring) == (op == Py_EQ)
 
 
-cdef wrap_ring(ring* R) noexcept:
+cdef wrap_ring(ring* R):
     """
     Wrap a C ring pointer into a Python object.
 
@@ -745,7 +746,7 @@ cdef void singular_ring_delete(ring *doomed) noexcept:
 #############################################################################
 # helpers for debugging
 
-cpdef poison_currRing(frame, event, arg) noexcept:
+cpdef poison_currRing(frame, event, arg):
     """
     Poison the ``currRing`` pointer.
 
@@ -778,7 +779,7 @@ cpdef poison_currRing(frame, event, arg) noexcept:
     return poison_currRing
 
 
-cpdef print_currRing() noexcept:
+cpdef print_currRing():
     """
     Print the ``currRing`` pointer.
 

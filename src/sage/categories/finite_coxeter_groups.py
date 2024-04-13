@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.combinat sage.groups
 r"""
 Finite Coxeter Groups
@@ -66,7 +67,7 @@ class FiniteCoxeterGroups(CategoryWithAxiom):
         is preferable to that of :class:`FiniteGroups`. The same holds
         for ``__iter__``, although a breadth first search would be more
         natural; at least this maintains backward compatibility after
-        :trac:`13589`.
+        :issue:`13589`.
 
         TESTS::
 

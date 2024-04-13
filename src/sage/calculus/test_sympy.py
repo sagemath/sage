@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.symbolic
 r"""
 A Sample Session using SymPy
@@ -188,7 +189,7 @@ Mixing SymPy with Sage::
 
 TESTS:
 
-This was fixed in Sympy, see :trac:`14437`::
+This was fixed in Sympy, see :issue:`14437`::
 
     sage: # needs sympy
     sage: from sympy import Function, Symbol, rsolve

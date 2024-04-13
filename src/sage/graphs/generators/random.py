@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 r"""
 Random graphs
 
@@ -221,7 +222,7 @@ def RandomBipartite(n1, n2, p, set_position=False, seed=None):
         ...
         ValueError: parameter p is a probability, and so should be a real value between 0 and 1
 
-    :trac:`12155`::
+    :issue:`12155`::
 
         sage: graphs.RandomBipartite(5, 6, .2).complement()                             # needs numpy
         complement(Random bipartite graph of order 5+6 with edge probability 0.200000000000000): Graph on 11 vertices
@@ -629,7 +630,7 @@ def RandomBoundedToleranceGraph(n, seed=None):
 
     TESTS:
 
-    Check that :trac:`32186` is fixed::
+    Check that :issue:`32186` is fixed::
 
         sage: for _ in range(100): _ = graphs.RandomBoundedToleranceGraph(1)
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 r"""
 Undirected graphs
 
@@ -761,7 +762,7 @@ class Graph(GenericGraph):
             ...
             ValueError: there must be one or two nonzero entries per column in an incidence matrix, got entries [1, 1] in column 2
 
-        Check that :trac:`9714` is fixed::
+        Check that :issue:`9714` is fixed::
 
             sage: # needs sage.modules
             sage: MA = Matrix([[1,2,0], [0,2,0], [0,0,1]])
@@ -909,7 +910,7 @@ class Graph(GenericGraph):
         sage: G.edges(sort=True)
         [(1, 2, None)]
 
-    Check that :trac:`27505` is fixed::
+    Check that :issue:`27505` is fixed::
 
         sage: Graph(Graph().networkx_graph(), weighted=None, format='NX')               # needs networkx
         Graph on 0 vertices
@@ -942,7 +943,7 @@ class Graph(GenericGraph):
             sage: g.get_pos() == h.get_pos()
             True
 
-        The position dictionary is not the input one (:trac:`22424`)::
+        The position dictionary is not the input one (:issue:`22424`)::
 
             sage: my_pos = {0:(0,0), 1:(1,1)}
             sage: G = Graph([[0,1], [(0,1)]], pos=my_pos)
@@ -958,7 +959,7 @@ class Graph(GenericGraph):
             sage: g.get_pos() == h.get_pos()
             True
 
-        Loops are not counted as multiedges (see :trac:`11693`) and edges are
+        Loops are not counted as multiedges (see :issue:`11693`) and edges are
         not counted twice ::
 
             sage: Graph({1:[1]}).num_edges()
@@ -967,7 +968,7 @@ class Graph(GenericGraph):
             2
 
         An empty list or dictionary defines a simple graph
-        (:trac:`10441` and :trac:`12910`)::
+        (:issue:`10441` and :issue:`12910`)::
 
             sage: Graph([])
             Graph on 0 vertices
@@ -975,7 +976,7 @@ class Graph(GenericGraph):
             Graph on 0 vertices
             sage: # not "Multi-graph on 0 vertices"
 
-        Verify that the int format works as expected (:trac:`12557`)::
+        Verify that the int format works as expected (:issue:`12557`)::
 
             sage: Graph(2).adjacency_matrix()                                           # needs sage.modules
             [0 0]
@@ -983,7 +984,7 @@ class Graph(GenericGraph):
             sage: Graph(3) == Graph(3,format='int')
             True
 
-        Problem with weighted adjacency matrix (:trac:`13919`)::
+        Problem with weighted adjacency matrix (:issue:`13919`)::
 
             sage: B = {0:{1:2,2:5,3:4},1:{2:2,4:7},2:{3:1,4:4,5:3},3:{5:4},4:{5:1,6:5},5:{6:7}}
             sage: grafo3 = Graph(B, weighted=True)
@@ -1005,7 +1006,7 @@ class Graph(GenericGraph):
             Petersen graph: Graph on 10 vertices
 
         Check error messages for graphs built from incidence matrices (see
-        :trac:`18440`)::
+        :issue:`18440`)::
 
             sage: Graph(matrix([[-1, 1, 0],[1, 0, 0]]))                                 # needs sage.modules
             Traceback (most recent call last):
@@ -1022,7 +1023,7 @@ class Graph(GenericGraph):
             ...
             ValueError: each column of a non-oriented incidence matrix must sum to 2, but column 0 does not
 
-        Vertex labels are retained in the graph (:trac:`14708`)::
+        Vertex labels are retained in the graph (:issue:`14708`)::
 
             sage: g = Graph()
             sage: g.add_vertex(0)
@@ -1223,7 +1224,7 @@ class Graph(GenericGraph):
             if weighted is None:
                 weighted = False
             self.allow_loops(loops, check=False)
-            self.allow_multiple_edges(True if multiedges else False, check=False)
+            self.allow_multiple_edges(bool(multiedges), check=False)
             self.add_vertices(verts)
             self.add_edges(e for e in itertools.combinations(verts, 2) if f(*e))
             if loops:
@@ -1254,9 +1255,9 @@ class Graph(GenericGraph):
                 self.add_vertices(range(data))
 
         elif format == 'list_of_edges':
-            self.allow_multiple_edges(True if multiedges else False,
+            self.allow_multiple_edges(bool(multiedges),
                                       check=False)
-            self.allow_loops(True if loops else False, check=False)
+            self.allow_loops(bool(loops), check=False)
             self.add_edges(data)
         else:
             raise ValueError("Unknown input format '{}'".format(format))
@@ -1355,12 +1356,12 @@ class Graph(GenericGraph):
             sage: G.sparse6_string()
             ':?'
 
-        Check that :trac:`18445` is fixed::
+        Check that :issue:`18445` is fixed::
 
             sage: Graph(graphs.KneserGraph(5,2).sparse6_string()).size()
             15
 
-        Graphs with 1 vertex are correctly handled (:trac:`24923`)::
+        Graphs with 1 vertex are correctly handled (:issue:`24923`)::
 
             sage: Graph([(0, 0)], loops=True).sparse6_string()
             ':@^'
@@ -1373,7 +1374,7 @@ class Graph(GenericGraph):
             sage: H.order(), H.size()
             (1, 2)
 
-        Sparse6 encoding of canonical graph is unique (:trac:`31026`)::
+        Sparse6 encoding of canonical graph is unique (:issue:`31026`)::
 
             sage: G = Graph([(0,1),(1,2),(2,3),(3,0),(0,2)])
             sage: H = Graph([(0,1),(1,2),(2,3),(3,0),(1,3)])
@@ -1390,7 +1391,7 @@ class Graph(GenericGraph):
             sage: G_.sparse6_string() == H_.sparse6_string()
             True
 
-        The method can handle vertices with different types (:trac:`31026`)::
+        The method can handle vertices with different types (:issue:`31026`)::
 
             sage: G = Graph([(1, 'a')])
             sage: H = Graph(G.sparse6_string())
@@ -1523,7 +1524,7 @@ class Graph(GenericGraph):
 
         TESTS:
 
-        :trac:`14434` is fixed::
+        :issue:`14434` is fixed::
 
             sage: g = Graph({0:[1,4,5],3:[4,8,9],4:[9],5:[7,8],7:[9]})
             sage: _,cycle = g.is_tree(certificate=True)
@@ -1540,7 +1541,7 @@ class Graph(GenericGraph):
             sage: graphs.EmptyGraph().is_tree(certificate=True)
             (False, None)
 
-        :trac:`22912` is fixed::
+        :issue:`22912` is fixed::
 
             sage: G = Graph([(0,0), (0,1)], loops=True)
             sage: G.is_tree(certificate=True)
@@ -1548,7 +1549,7 @@ class Graph(GenericGraph):
             sage: G.is_tree(certificate=True, output='edge')
             (False, [(0, 0, None)])
 
-        Case of edges with incomparable types (see :trac:`35903`)::
+        Case of edges with incomparable types (see :issue:`35903`)::
 
             sage: G = Graph(multiedges=True)
             sage: G.add_cycle(['A', 1, 2, 3])
@@ -1710,7 +1711,7 @@ class Graph(GenericGraph):
             sage: Graph('Fli@?').is_cactus()
             False
 
-        Test a graph that is not outerplanar, see :trac:`24480`::
+        Test a graph that is not outerplanar, see :issue:`24480`::
 
             sage: graphs.Balaban10Cage().is_cactus()                                    # needs networkx
             False
@@ -2274,7 +2275,7 @@ class Graph(GenericGraph):
 
         TESTS:
 
-        Bug reported in :trac:`9925`, and fixed by :trac:`9420`::
+        Bug reported in :issue:`9925`, and fixed by :issue:`9420`::
 
             sage: g = Graph(':SiBFGaCEF_@CE`DEGH`CEFGaCDGaCDEHaDEF`CEH`ABCDEF',
             ....:           loops=False, multiedges=False)
@@ -2647,7 +2648,7 @@ class Graph(GenericGraph):
 
         TESTS:
 
-        Check that :trac:`13546` has been fixed::
+        Check that :issue:`13546` has been fixed::
 
             sage: Graph(':FgGE@I@GxGs', loops=False, multiedges=False).is_perfect()     # needs sage.modules
             False
@@ -3488,7 +3489,7 @@ class Graph(GenericGraph):
             An orientation of Petersen graph: Digraph on 10 vertices
 
         An orientation must have the same ground set of vertices as the original
-        graph (:trac:`24366`)::
+        graph (:issue:`24366`)::
 
             sage: G = Graph(1)
             sage: next(G.orientations())
@@ -3787,7 +3788,7 @@ class Graph(GenericGraph):
             ...
             ValueError: the 'algorithm' keyword must be set to either 'DLX', 'MILP', 'CP' or 'parallel'
 
-        Test on a random graph (:trac:`33559`, modified in :trac:`12379`)::
+        Test on a random graph (:issue:`33559`, modified in :issue:`12379`)::
 
             sage: G = graphs.RandomGNP(15, .2)
             sage: algorithms = ['DLX', 'MILP', 'CP', 'parallel']
@@ -3928,6 +3929,16 @@ class Graph(GenericGraph):
         - ``R`` -- (optional) the base ring for the symmetric functions;
           this uses `\ZZ` by default
 
+        ALGORITHM:
+
+        We traverse a binary tree whose leaves correspond to subsets of
+        edges, and whose internal vertices at depth `d` correspond to a
+        choice of whether to include the `d`-th edge in a given subset.
+        The components of the induced subgraph are incrementally
+        updated using a disjoint-set forest. If the next edge would
+        introduce a cycle to the subset, we prune the branch as the
+        terms produced by the two subtrees cancel in this case.
+
         EXAMPLES::
 
             sage: s = SymmetricFunctions(ZZ).s()                                        # needs sage.combinat sage.modules
@@ -3963,18 +3974,56 @@ class Graph(GenericGraph):
             sage: XG3 = G3.chromatic_symmetric_function()
             sage: XG == XG1 + XG2 - XG3
             True
+
+        TESTS::
+
+            sage: Graph([]).chromatic_symmetric_function() == 1
+            True
+
+            sage: e = SymmetricFunctions(ZZ).e()
+            sage: e(graphs.CompleteGraph(5).chromatic_symmetric_function())
+            120*e[5]
         """
         from sage.combinat.sf.sf import SymmetricFunctions
         from sage.combinat.partition import _Partitions
-        from sage.combinat.subset import powerset
         if R is None:
             R = ZZ
         p = SymmetricFunctions(R).p()
-        ret = p.zero()
-        for F in powerset(self.edges(sort=True)):
-            la = _Partitions(self.subgraph(edges=F).connected_components_sizes())
-            ret += (-1)**len(F) * p[la]
-        return ret
+
+        # Dict to store parent of each vertex in disjoint-set forest
+        # representing components of current induced subgraph.
+        dsf = {v: None for v in self.vertices()}
+
+        # Dict to store size of tree rooted at each vertex.
+        sizes = {v: 1 for v in self.vertices()}
+
+        def find(dsf, v):
+            # Find root of tree in disjoint-set forest.
+            return v if dsf[v] is None else find(dsf, dsf[v])
+
+        def summand(stack, dsf, sizes):
+            # Compute powersum terms obtained by adding each subset of
+            # edges in stack to current subgraph.
+            if not stack:
+                return p.monomial(_Partitions(sorted(
+                            [s for v, s in sizes.items() if dsf[v] is None],
+                            reverse=True)))
+            ret = p.zero()
+            e = stack.pop()
+            u = find(dsf, e[0])
+            v = find(dsf, e[1])
+            # Terms cancel if edge creates a cycle.
+            if u is not v:
+                ret = summand(stack, dsf, sizes)
+                dsf[v] = u
+                sizes[u] += sizes[v]
+                ret -= summand(stack, dsf, sizes)
+                dsf[v] = None
+                sizes[u] -= sizes[v]
+            stack.append(e)
+            return ret
+
+        return summand(list(self.edges(labels=False)), dsf, sizes)
 
     @doc_index("Coloring")
     def chromatic_quasisymmetric_function(self, t=None, R=None):
@@ -5945,7 +5994,7 @@ class Graph(GenericGraph):
 
         AUTHOR:
 
-        Rob Beezer, 2009-11-25, :trac:`7533`
+        Rob Beezer, 2009-11-25, :issue:`7533`
         """
         from sage.rings.infinity import Infinity
         # If input is not a list, make a list with this single object
@@ -6024,12 +6073,12 @@ class Graph(GenericGraph):
             sage: Graph([[1, 2]], immutable=True).to_directed()._backend
             <sage.graphs.base.static_sparse_backend.StaticSparseBackend object at ...>
 
-        :trac:`17005`::
+        :issue:`17005`::
 
             sage: Graph([[1,2]], immutable=True).to_directed()
             Digraph on 2 vertices
 
-        :trac:`22424`::
+        :issue:`22424`::
 
             sage: G1 = graphs.RandomGNP(5,0.5)
             sage: gp1 = G1.graphplot(save_pos=True)                                     # needs sage.plot
@@ -6039,7 +6088,7 @@ class Graph(GenericGraph):
             sage: gp2 = G2.graphplot()                                                  # needs sage.plot
             sage: gp1 = G1.graphplot()                                                  # needs sage.plot
 
-        Vertex labels will be retained (:trac:`14708`)::
+        Vertex labels will be retained (:issue:`14708`)::
 
             sage: G = Graph({0: [1, 2], 1: [0]})
             sage: G.set_vertex(0, 'foo')
@@ -7184,7 +7233,7 @@ class Graph(GenericGraph):
             ...
             ValueError: the algorithm must be "Cliquer", "MILP" or "mcqd"
 
-        Issue :trac:`24287` is fixed::
+        Issue :issue:`24287` is fixed::
 
             sage: G = Graph([(0,1)]*5 + [(1,2)]*2, multiedges=True)
             sage: G.vertex_cover(reduction_rules=True, algorithm='MILP')                # needs sage.numerical.mip
@@ -7192,7 +7241,7 @@ class Graph(GenericGraph):
             sage: G.vertex_cover(reduction_rules=False)                                 # needs sage.numerical.mip
             [1]
 
-        Issue :trac:`25988` is fixed::
+        Issue :issue:`25988` is fixed::
 
             sage: B = BipartiteGraph(graphs.CycleGraph(6))
             sage: B.vertex_cover(algorithm='Cliquer', reduction_rules=True)
@@ -8048,7 +8097,7 @@ class Graph(GenericGraph):
         .. NOTE::
 
             A buggy implementation of linear time algorithm from [TCHP2008]_ was
-            removed in Sage 9.7, see :trac:`25872`.
+            removed in Sage 9.7, see :issue:`25872`.
 
         TESTS:
 
@@ -8066,7 +8115,7 @@ class Graph(GenericGraph):
             sage: Graph(1).modular_decomposition(style='tree')
             PRIME[0[]]
 
-        Vertices may be arbitrary --- check that :trac:`24898` is fixed::
+        Vertices may be arbitrary --- check that :issue:`24898` is fixed::
 
             sage: md = Graph({(1,2):[(2,3)],(2,3):[(1,2)]}).modular_decomposition()
             sage: md[0]
@@ -8081,7 +8130,7 @@ class Graph(GenericGraph):
             ...
             ValueError: style must be 'tuple' or 'tree'
 
-        Check that :trac:`25872` is fixed::
+        Check that :issue:`25872` is fixed::
 
             sage: G1 = Graph('FwA]w')
             sage: G2 = Graph('F@Nfg')
@@ -8091,6 +8140,13 @@ class Graph(GenericGraph):
             (PRIME, [1, 2, 5, 6, 0, (PARALLEL, [3, 4])])
             sage: G2.modular_decomposition()
             (PRIME, [5, 6, 3, 4, 2, (PARALLEL, [0, 1])])
+
+        Check that :issue:`37631` is fixed::
+
+            sage: G = Graph('GxJEE?')
+            sage: G.modular_decomposition(style='tree')
+            PRIME[2[], SERIES[0[], 1[]], PARALLEL[3[], 4[]],
+                  PARALLEL[5[], 6[], 7[]]]
         """
         from sage.graphs.graph_decompositions.modular_decomposition import (NodeType,
                                                                             habib_maurer_algorithm,
@@ -8129,14 +8185,15 @@ class Graph(GenericGraph):
             def to_tree(x):
                 if x.node_type == NodeType.NORMAL:
                     return LabelledRootedTree([], label=x.children[0])
-                return LabelledRootedTree([to_tree(y) for y in x.children], label=x.node_type)
+                return LabelledRootedTree([to_tree(y) for y in x.children],
+                                          label=x.node_type)
 
             return to_tree(D)
 
         raise ValueError("style must be 'tuple' or 'tree'")
 
     @doc_index("Graph properties")
-    def is_polyhedral(self):
+    def is_polyhedral(self) -> bool:
         """
         Check whether the graph is the graph of the polyhedron.
 
@@ -8567,7 +8624,7 @@ class Graph(GenericGraph):
 
         TESTS:
 
-        :trac:`16475`::
+        :issue:`16475`::
 
             sage: G = graphs.PetersenGraph()
             sage: for u,v in G.edge_iterator(labels=False):
@@ -10134,7 +10191,7 @@ class Graph(GenericGraph):
     from sage.graphs.tutte_polynomial import tutte_polynomial
     from sage.graphs.lovasz_theta import lovasz_theta
     from sage.graphs.partial_cube import is_partial_cube
-    from sage.graphs.orientations import strong_orientations_iterator, random_orientation
+    from sage.graphs.orientations import strong_orientations_iterator, random_orientation, acyclic_orientations
     from sage.graphs.connectivity import bridges, cleave, spqr_tree
     from sage.graphs.connectivity import is_triconnected
     from sage.graphs.comparability import is_comparability
@@ -10180,6 +10237,7 @@ _additional_categories = {
     "lovasz_theta"              : "Leftovers",
     "strong_orientations_iterator" : "Connectivity, orientations, trees",
     "random_orientation"        : "Connectivity, orientations, trees",
+    "acyclic_orientations"      : "Connectivity, orientations, trees",
     "bridges"                   : "Connectivity, orientations, trees",
     "cleave"                    : "Connectivity, orientations, trees",
     "spqr_tree"                 : "Connectivity, orientations, trees",

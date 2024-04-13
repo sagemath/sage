@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 """
 Randomized tests of GiNaC / PyNaC
 """
@@ -428,7 +429,7 @@ def test_symbolic_expression_order(repetitions=100):
 
     This is important because the C++ extension class uses
     ``std::sort()`` which requires a strict weak order. See also
-    :trac:`9880`.
+    :issue:`9880`.
 
     EXAMPLES::
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 # distutils: libraries = NTL_LIBRARIES gmp m
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -183,12 +184,12 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
         TESTS:
 
-        Check that :trac:`3865` is fixed::
+        Check that :issue:`3865` is fixed::
 
             sage: W(gp('2 + O(5^2)'))
             2
 
-        Check that :trac:`13612` has been fixed::
+        Check that :issue:`13612` has been fixed::
 
             sage: # needs sage.libs.flint
             sage: R = ZpFM(3)
@@ -419,7 +420,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         holder.x = self.value
         return make_ZZpXFMElement, (self.parent(), holder)
 
-    cdef pAdicZZpXFMElement _new_c(self) noexcept:
+    cdef pAdicZZpXFMElement _new_c(self):
         """
         Return a new element with the same parent as ``self``.
 
@@ -438,7 +439,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         ans.prime_pow = self.prime_pow
         return ans
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         First compare valuations, then compare the values.
 
@@ -508,7 +509,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         sig_off()
         return ans
 
-    cdef pAdicZZpXFMElement _lshift_c(self, long n) noexcept:
+    cdef pAdicZZpXFMElement _lshift_c(self, long n):
         """
         Multiply ``self`` by the uniformizer raised to the power ``n``.
 
@@ -569,7 +570,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             return ans
         return self._lshift_c(mpz_get_si((<Integer>shift).value))
 
-    cdef pAdicZZpXFMElement _rshift_c(self, long n) noexcept:
+    cdef pAdicZZpXFMElement _rshift_c(self, long n):
         """
         Divide ``self`` by the uniformizer raised to the power ``n``.
 
@@ -660,7 +661,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             return ans
         return self._rshift_c(mpz_get_si((<Integer>shift).value))
 
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         """
         Returns ``-self``.
 
@@ -704,7 +705,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
 
         TESTS:
 
-        We define ``0^0`` to be unity, :trac:`13786`::
+        We define ``0^0`` to be unity, :issue:`13786`::
 
             sage: R = ZpFM(5,5)
             sage: S.<x> = R[]
@@ -751,7 +752,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sig_off()
         return ans
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         Return ``self`` + ``right``.
 
@@ -770,7 +771,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         ZZ_pX_add(ans.value, self.value, (<pAdicZZpXFMElement>right).value)
         return ans
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         """
         Return the product of ``self`` and ``right``.
 
@@ -794,7 +795,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         ZZ_pX_MulMod_pre(ans.value, self.value, (<pAdicZZpXFMElement>right).value, self.prime_pow.get_top_modulus()[0])
         return ans
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         Return the difference of ``self`` and ``right``.
 
@@ -817,7 +818,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         ZZ_pX_sub(ans.value, self.value, (<pAdicZZpXFMElement>right).value)
         return ans
 
-    cpdef _div_(self, _right) noexcept:
+    cpdef _div_(self, _right):
         """
         Returns the quotient of ``self`` by ``right``.
 
@@ -838,7 +839,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             ...
             ValueError: cannot invert non-unit
 
-        We check that :trac:`11403` has been resolved::
+        We check that :issue:`11403` has been resolved::
 
             sage: R.<t> = Zq(8,2,'fixed-mod')
             sage: 1/(t+t^2)
@@ -1344,7 +1345,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             sage: list(A(0,4).expansion())
             []
 
-        Check that :trac:`25879` has been resolved::
+        Check that :issue:`25879` has been resolved::
 
             sage: K = ZpCA(3,5)
             sage: R.<a> = K[]
@@ -1601,7 +1602,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
         mpz_set_ui(ans.value, self.prime_pow.ram_prec_cap - self.valuation_c())
         return ans
 
-    cpdef pAdicZZpXFMElement unit_part(self) noexcept:
+    cpdef pAdicZZpXFMElement unit_part(self):
         """
         Return the unit part of ``self``, ie
         ``self / uniformizer^(self.valuation())``
@@ -1673,7 +1674,7 @@ cdef class pAdicZZpXFMElement(pAdicZZpXElement):
             else:
                 return index + valuation * self.prime_pow.e
 
-    cdef ext_p_list(self, bint pos) noexcept:
+    cdef ext_p_list(self, bint pos):
         r"""
         Return a list giving a series representation of ``self``.
 

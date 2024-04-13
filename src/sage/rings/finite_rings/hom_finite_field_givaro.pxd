@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-linbox
 from sage.rings.finite_rings.hom_finite_field cimport (SectionFiniteFieldHomomorphism_generic,
     FiniteFieldHomomorphism_generic, FrobeniusEndomorphism_finite_field)
 
@@ -11,7 +12,7 @@ cdef class SectionFiniteFieldHomomorphism_givaro(SectionFiniteFieldHomomorphism_
     cdef long _power
     cdef Cache_givaro _codomain_cache
 
-    cpdef Element _call_(self, x) noexcept
+    cpdef Element _call_(self, x)
 
 
 cdef class FiniteFieldHomomorphism_givaro(FiniteFieldHomomorphism_generic):
@@ -20,7 +21,7 @@ cdef class FiniteFieldHomomorphism_givaro(FiniteFieldHomomorphism_generic):
     cdef long _power
     cdef Cache_givaro _codomain_cache
 
-    cpdef Element _call_(self, x) noexcept
+    cpdef Element _call_(self, x)
 
 
 cdef class FrobeniusEndomorphism_givaro(FrobeniusEndomorphism_finite_field):

@@ -1,8 +1,8 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-flint
 r"""
 Compute Hilbert series of monomial ideals
 
-This implementation was provided at :trac:`26243` and is supposed to be a way
+This implementation was provided at :issue:`26243` and is supposed to be a way
 out when Singular fails with an int overflow, which will regularly be the case
 in any example with more than 34 variables.
 """
@@ -84,7 +84,7 @@ cdef inline bint indivisible_in_list(ETuple m, list L, size_t i) noexcept:
             return False
     return True
 
-cdef inline list interred(list L) noexcept:
+cdef inline list interred(list L):
     """
     Return interreduction of a list of monomials.
 
@@ -106,7 +106,7 @@ cdef inline list interred(list L) noexcept:
     # that appears later in L.
     if not L:
         return []
-    L.sort(key=ETuple.unweighted_degree)
+    L.sort(key=ETuple._unweighted_degree)
     cdef size_t i
     cdef ETuple m
     cdef list result = [<ETuple> PyList_GET_ITEM(L, 0)]
@@ -116,7 +116,7 @@ cdef inline list interred(list L) noexcept:
             result.append(m)
     return result
 
-cdef list quotient(list L, ETuple m) noexcept:
+cdef list quotient(list L, ETuple m):
     """
     Return the quotient of the ideal represented by ``L`` and the
     monomial represented by ``m``.
@@ -127,7 +127,7 @@ cdef list quotient(list L, ETuple m) noexcept:
         result.append((<ETuple>PyList_GET_ITEM(L,i)).divide_by_gcd(m))
     return interred(result)
 
-cdef list quotient_by_var(list L, size_t index) noexcept:
+cdef list quotient_by_var(list L, size_t index):
     """
     Return the quotient of the ideal represented by ``L`` and the
     variable number ``index``.
@@ -140,7 +140,7 @@ cdef list quotient_by_var(list L, size_t index) noexcept:
             result.append((<ETuple> PyList_GET_ITEM(L, i)).divide_by_var(index))
     return interred(result)
 
-cdef ETuple sum_from_list(list L, size_t s, size_t l) noexcept:
+cdef ETuple sum_from_list(list L, size_t s, size_t l):
     """
     Compute the vector sum of the ETuples in ``L[s:s+l]`` in a balanced way.
     """
@@ -286,7 +286,7 @@ cdef bint HilbertBaseCase(Polynomial_integer_dense_flint fhs, Node D, tuple w) n
     # We are in a truly difficult case and give up for now...
     return False
 
-cdef make_children(Node D, tuple w) noexcept:
+cdef make_children(Node D, tuple w):
     """
     Create child nodes in ``D`` that allow to compute the first Hilbert
     series of ``D.Id``.
@@ -572,7 +572,7 @@ def hilbert_poincare_series(I, grading=None):
         sage: hilbert_poincare_series((R * R.gens())^2, grading=range(1,10))
         t^9 + t^8 + t^7 + t^6 + t^5 + t^4 + t^3 + t^2 + t + 1
 
-    The following example is taken from :trac:`20145`::
+    The following example is taken from :issue:`20145`::
 
         sage: # needs sage.libs.singular
         sage: n=4; m=11; P = PolynomialRing(QQ, n*m, "x"); x = P.gens(); M = Matrix(n, x)

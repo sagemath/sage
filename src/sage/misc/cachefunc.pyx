@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Cached Functions and Methods
 
@@ -15,7 +16,7 @@ AUTHORS:
 
 EXAMPLES:
 
-By :trac:`11115`, cached functions and methods are now also
+By :issue:`11115`, cached functions and methods are now also
 available in Cython code. The following examples cover various ways
 of usage.
 
@@ -31,7 +32,7 @@ Python functions::
     True
 
 In some cases, one would only want to keep the result in cache as long
-as there is any other reference to the result. By :trac:`12215`, this is
+as there is any other reference to the result. By :issue:`12215`, this is
 enabled for :class:`~sage.structure.unique_representation.UniqueRepresentation`,
 which is used to create unique parents: If an algebraic structure, such
 as a finite field, is only temporarily used, then it will not stay in
@@ -41,7 +42,7 @@ that behaves the same as ``cached_function``, except that it uses a
 
 Cython cdef functions do not allow arbitrary decorators.
 However, one can wrap a Cython function and turn it into
-a cached function, by :trac:`11115`. We need to provide
+a cached function, by :issue:`11115`. We need to provide
 the name that the wrapped method or function should have,
 since otherwise the name of the original function would
 be used::
@@ -61,9 +62,9 @@ be used::
 We can proceed similarly for cached methods of Cython classes,
 provided that they allow attribute assignment or have a public
 attribute ``_cached_methods`` of type ``<dict>``. Since
-:trac:`11115`, this is the case for all classes inheriting from
+:issue:`11115`, this is the case for all classes inheriting from
 :class:`~sage.structure.parent.Parent`. See below for a more explicit
-example. By :trac:`12951`, cached methods of extension classes can
+example. By :issue:`12951`, cached methods of extension classes can
 be defined by simply using the decorator. However, an indirect
 approach is still needed for cpdef methods::
 
@@ -97,7 +98,7 @@ approach is still needed for cpdef methods::
     True
 
 In some cases, one would only want to keep the result in cache as long
-as there is any other reference to the result. By :trac:`12215`, this is
+as there is any other reference to the result. By :issue:`12215`, this is
 enabled for :class:`~sage.structure.unique_representation.UniqueRepresentation`,
 which is used to create unique parents: If an algebraic structure, such
 as a finite field, is only temporarily used, then it will not stay in
@@ -105,7 +106,7 @@ cache forever. That behaviour is implemented using ``weak_cached_function``,
 that behaves the same as ``cached_function``, except that it uses a
 :class:`~sage.misc.weak_dict.CachedWeakValueDictionary` for storing the results.
 
-By :trac:`11115`, even if a parent does not allow attribute
+By :issue:`11115`, even if a parent does not allow attribute
 assignment, it can inherit a cached method from the parent class of a
 category (previously, the cache would have been broken)::
 
@@ -300,7 +301,7 @@ ought to be chosen. A typical example is
     sage: type(I.groebner_basis)
     <class 'sage.misc.cachefunc.CachedMethodCaller'>
 
-By :trac:`12951`, the cached_method decorator is also supported on non-c(p)def
+By :issue:`12951`, the cached_method decorator is also supported on non-c(p)def
 methods of extension classes, as long as they either support attribute assignment
 or have a public attribute of type ``<dict>`` called ``_cached_methods``. The
 latter is easy::
@@ -535,7 +536,7 @@ cdef class NonpicklingDict(dict):
 
 cdef unhashable_key = object()
 
-cpdef inline dict_key(o) noexcept:
+cpdef inline dict_key(o):
     """
     Return a key to cache object ``o`` in a dict.
 
@@ -560,7 +561,7 @@ cpdef inline dict_key(o) noexcept:
     return o
 
 
-cpdef inline cache_key(o) noexcept:
+cpdef inline cache_key(o):
     r"""
     Helper function to return a hashable key for ``o`` which can be used for
     caching.
@@ -600,7 +601,7 @@ cpdef inline cache_key(o) noexcept:
     return o
 
 
-cdef cache_key_unhashable(o) noexcept:
+cdef cache_key_unhashable(o):
     """
     Return a key for caching an item which is unhashable.
     """
@@ -786,7 +787,7 @@ cdef class CachedFunction():
     def __module__(self):
         return self.__cached_module__
 
-    cdef get_key_args_kwds(self, tuple args, dict kwds) noexcept:
+    cdef get_key_args_kwds(self, tuple args, dict kwds):
         """
         Return the key in the cache to be used when ``args`` and
         ``kwds`` are passed in as parameters.
@@ -814,7 +815,7 @@ cdef class CachedFunction():
         self._argument_fixer = ArgumentFixer(self.f,
                 classmethod=self.is_classmethod)
 
-    cdef fix_args_kwds(self, tuple args, dict kwds) noexcept:
+    cdef fix_args_kwds(self, tuple args, dict kwds):
         r"""
         Normalize parameters to obtain a key for the cache.
 
@@ -872,7 +873,7 @@ cdef class CachedFunction():
                Return the reduced Groebner basis of this ideal.
             ...
 
-        Test that :trac:`15184` is fixed::
+        Test that :issue:`15184` is fixed::
 
             sage: from sage.misc.sageinspect import sage_getfile
             sage: type(I.groebner_basis)
@@ -880,7 +881,7 @@ cdef class CachedFunction():
             sage: os.path.exists(sage_getfile(I.groebner_basis))
             True
 
-        Test that :trac:`18064` is fixed::
+        Test that :issue:`18064` is fixed::
 
             sage: @cached_function
             ....: def f():
@@ -945,7 +946,7 @@ cdef class CachedFunction():
         """
         Return the argspec of the wrapped function or method.
 
-        This was implemented in :trac:`11115`.
+        This was implemented in :issue:`11115`.
 
         EXAMPLES::
 
@@ -980,7 +981,7 @@ cdef class CachedFunction():
             sage: a is number_of_partitions(10^5)
             True
 
-        Check that :trac:`16316` has been fixed, i.e., caching works for
+        Check that :issue:`16316` has been fixed, i.e., caching works for
         immutable unhashable objects which define
         :meth:`sage.structure.sage_object.SageObject._cache_key`::
 
@@ -1062,7 +1063,7 @@ cdef class CachedFunction():
 
         TESTS:
 
-        Check that :trac:`16316` has been fixed, i.e., caching works for
+        Check that :issue:`16316` has been fixed, i.e., caching works for
         immutable unhashable objects which define
         :meth:`sage.structure.sage_object.SageObject._cache_key`::
 
@@ -1108,7 +1109,7 @@ cdef class CachedFunction():
 
         TESTS:
 
-        Check that :trac:`16316` has been fixed, i.e., caching works for
+        Check that :issue:`16316` has been fixed, i.e., caching works for
         immutable unhashable objects which define
         :meth:`sage.structure.sage_object.SageObject._cache_key`::
 
@@ -1335,7 +1336,7 @@ cdef class WeakCachedFunction(CachedFunction):
 
     TESTS:
 
-    Check that :trac:`16316` has been fixed, i.e., caching works for
+    Check that :issue:`16316` has been fixed, i.e., caching works for
     immutable unhashable objects which define
     :meth:`sage.structure.sage_object.SageObject._cache_key`::
 
@@ -1380,7 +1381,7 @@ cdef class WeakCachedFunction(CachedFunction):
         sage: f.is_in_cache(5)
         False
 
-    Check that :trac:`16316` has been fixed, i.e., caching works for
+    Check that :issue:`16316` has been fixed, i.e., caching works for
     immutable unhashable objects which define
     :meth:`sage.structure.sage_object.SageObject._cache_key`::
 
@@ -1407,7 +1408,7 @@ cdef class WeakCachedFunction(CachedFunction):
         sage: f(5)
         Integer Ring
 
-    Check that :trac:`16316` has been fixed, i.e., caching works for
+    Check that :issue:`16316` has been fixed, i.e., caching works for
     immutable unhashable objects which define
     :meth:`sage.structure.sage_object.SageObject._cache_key`::
 
@@ -1459,7 +1460,7 @@ class CachedMethodPickle():
 
     .. NOTE::
 
-        Since :trac:`8611`, a cached method is an attribute
+        Since :issue:`8611`, a cached method is an attribute
         of the instance (provided that it has a ``__dict__``).
         Hence, when pickling the instance, it would be attempted
         to pickle that attribute as well, but this is a problem,
@@ -1500,7 +1501,7 @@ class CachedMethodPickle():
 
     TESTS:
 
-    Since :trac:`11115`, there is a special implementation for
+    Since :issue:`11115`, there is a special implementation for
     cached methods that don't take arguments::
 
         sage: class A:
@@ -1691,7 +1692,7 @@ cdef class CachedMethodCaller(CachedFunction):
 
     .. NOTE::
 
-        Since :trac:`11115`, there is a special implementation
+        Since :issue:`11115`, there is a special implementation
         :class:`CachedMethodCallerNoArgs` for methods that do not take
         arguments.
 
@@ -1711,7 +1712,7 @@ cdef class CachedMethodCaller(CachedFunction):
 
     TESTS:
 
-    As of :trac:`15692` the contents of the cache are not pickled anymore::
+    As of :issue:`15692` the contents of the cache are not pickled anymore::
 
         sage: import __main__
         sage: __main__.A = A
@@ -1841,7 +1842,7 @@ cdef class CachedMethodCaller(CachedFunction):
         """
         return self.f(self._instance, *args, **kwds)
 
-    cdef fix_args_kwds(self, tuple args, dict kwds) noexcept:
+    cdef fix_args_kwds(self, tuple args, dict kwds):
         r"""
         Normalize parameters to obtain a key for the cache.
 
@@ -1913,7 +1914,7 @@ cdef class CachedMethodCaller(CachedFunction):
             sage: Foo.g(a, y=1,x=5) is a.f(5)
             True
 
-        We test that :trac:`5843` is fixed::
+        We test that :issue:`5843` is fixed::
 
             sage: class Foo:
             ....:     def __init__(self, x):
@@ -1926,7 +1927,7 @@ cdef class CachedMethodCaller(CachedFunction):
             sage: a.f(b.f)
             2
 
-        Check that :trac:`16316` has been fixed, i.e., caching works for
+        Check that :issue:`16316` has been fixed, i.e., caching works for
         immutable unhashable objects which define
         :meth:`sage.structure.sage_object.SageObject._cache_key`::
 
@@ -2046,7 +2047,7 @@ cdef class CachedMethodCaller(CachedFunction):
             sage: b2 = Bar()
 
         The :class:`CachedMethod` is replaced by an instance
-        of :class:`CachedMethodCaller` that (by :trac:`8611`)
+        of :class:`CachedMethodCaller` that (by :issue:`8611`)
         is set as an attribute. Hence, we have::
 
             sage: b1.f is b1.f
@@ -2069,10 +2070,10 @@ cdef class CachedMethodCaller(CachedFunction):
             True
 
         An extension class can inherit a cached method from the
-        parent or element class of a category (:trac:`11115`).
+        parent or element class of a category (:issue:`11115`).
         See :class:`CachedMethodCaller` for examples.
 
-        Verify that :trac:`16337` has been resolved::
+        Verify that :issue:`16337` has been resolved::
 
             sage: class Foo:
             ....:     @cached_method(key=lambda self,y: y+1)
@@ -2181,7 +2182,7 @@ cdef class CachedMethodCallerNoArgs(CachedFunction):
 
     TESTS:
 
-    As of :trac:`15692` the contents of the cache are not pickled anymore::
+    As of :issue:`15692` the contents of the cache are not pickled anymore::
 
         sage: class A:
         ....:    @cached_method
@@ -2505,7 +2506,7 @@ cdef class GloballyCachedMethodCaller(CachedMethodCaller):
     The only difference is that the instance is used as part of the
     key.
     """
-    cdef get_key_args_kwds(self, tuple args, dict kwds) noexcept:
+    cdef get_key_args_kwds(self, tuple args, dict kwds):
         """
         Return the key in the cache to be used when ``args`` and
         ``kwds`` are passed in as parameters.
@@ -2618,7 +2619,7 @@ cdef class CachedMethod():
         sage: len(b.f.cache)
         1
 
-    Cached methods cannot be copied like usual methods, see :trac:`12603`.
+    Cached methods cannot be copied like usual methods, see :issue:`12603`.
     Copying them can lead to very surprising results::
 
         sage: class A:
@@ -2750,7 +2751,7 @@ cdef class CachedMethod():
         """
         return self.__get__(inst)(*args, **kwds)
 
-    cpdef _get_instance_cache(self, inst) noexcept:
+    cpdef _get_instance_cache(self, inst):
         """
         Return the cache dictionary.
 
@@ -2805,7 +2806,7 @@ cdef class CachedMethod():
             sage: type(a.g)
             <class 'sage.misc.cachefunc.CachedMethodCaller'>
 
-        By :trac:`8611`, it is attempted to set the
+        By :issue:`8611`, it is attempted to set the
         CachedMethodCaller as an attribute of the instance ``a``,
         replacing the original cached attribute. Therefore, the
         ``__get__`` method will be used only once, which saves much
@@ -2816,7 +2817,7 @@ cdef class CachedMethod():
             sage: a.g is a.g
             True
 
-        Verify that :trac:`16337` has been resolved::
+        Verify that :issue:`16337` has been resolved::
 
             sage: class Foo:
             ....:     @cached_method(key=lambda self, x:x+1)
@@ -2915,7 +2916,7 @@ cdef class CachedSpecialMethod(CachedMethod):
         <class 'sage.misc.cachefunc.CachedMethodCallerNoArgs'>
 
     The hash is computed only once, subsequent calls will use the value from
-    the cache. This was implemented in :trac:`12601`.
+    the cache. This was implemented in :issue:`12601`.
 
     ::
 
@@ -2946,7 +2947,7 @@ cdef class CachedSpecialMethod(CachedMethod):
             sage: hash(c)
             5
 
-        Verify that :trac:`16337` has been resolved::
+        Verify that :issue:`16337` has been resolved::
 
             sage: class Foo:
             ....:     @cached_method(key=lambda self, x:x+1)
@@ -3068,7 +3069,7 @@ def cached_method(f, name=None, key=None, do_pickle=None):
         8
 
     Using cached methods for the hash and other special methods was
-    implemented in :trac:`12601`, by means of :class:`CachedSpecialMethod`. We
+    implemented in :issue:`12601`, by means of :class:`CachedSpecialMethod`. We
     show that it is used behind the scenes::
 
         sage: cached_method(c.__hash__)
@@ -3175,7 +3176,7 @@ cdef class CachedInParentMethod(CachedMethod):
 
         For speeding up internal computations, this dictionary
         is also accessible as an attribute of the CachedMethodCaller
-        (by :trac:`8611`)::
+        (by :issue:`8611`)::
 
             sage: a.parent()._cache__element_f is a.f.cache
             True
@@ -3238,7 +3239,7 @@ cdef class CachedInParentMethod(CachedMethod):
         self._cache_name = '_cache__' + 'element_' + (name or f.__name__)
         self._cachedfunc = CachedFunction(f, classmethod=True, name=name, key=key, do_pickle=do_pickle)
 
-    cpdef _get_instance_cache(self, inst) noexcept:
+    cpdef _get_instance_cache(self, inst):
         """
         Return the cache dictionary, which is stored in the parent.
 

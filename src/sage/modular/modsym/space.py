@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Base class of the space of modular symbols
@@ -218,7 +219,7 @@ class ModularSymbolsSpace(HeckeModule_free_module):
 
         TESTS:
 
-        Verify that :trac:`12772` is fixed::
+        Verify that :issue:`12772` is fixed::
 
             sage: M = ModularSymbols(1,12,sign=1).cuspidal_subspace().new_subspace()
             sage: A = M.decomposition()[0]

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 Littelmann paths
@@ -1338,7 +1339,7 @@ class InfinityCrystalOfLSPaths(UniqueRepresentation, Parent):
                 sage: [x.epsilon(i) for i in B.index_set()]
                 [1, 1, 0, 1]
 
-            Check that :trac:`21671` is fixed::
+            Check that :issue:`21671` is fixed::
 
                 sage: B = crystals.infinity.LSPaths(['G',2])
                 sage: len(B.subcrystal(max_depth=7))

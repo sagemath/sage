@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Period lattices of elliptic curves and related functions
 
@@ -39,8 +40,9 @@ The first basis period is real::
     True
 
 For a basis `\omega_1,\omega_2` normalised so that `\omega_1/\omega_2`
-is in the fundamental region of the upper half-plane, use the function
-``normalised_basis()`` instead::
+is in the fundamental region of the upper half-plane, use the method
+:meth:`~sage.schemes.elliptic_curves.period_lattice.PeriodLattice_ell.normalised_basis`
+instead::
 
     sage: L.normalised_basis()                                                          # needs sage.rings.number_field
     (1.90726488608927 - 1.34047785962440*I, -1.90726488608927 - 1.34047785962440*I)
@@ -70,7 +72,7 @@ upper half plane::
     sage: L.normalised_basis()
     (-1.37588604166076 - 2.58560946624443*I, -2.10339907847356 + 0.428378776460622*I)
 
-We test that bug :trac:`8415` (caused by a PARI bug fixed in v2.3.5) is OK::
+We test that bug :issue:`8415` (caused by a PARI bug fixed in v2.3.5) is OK::
 
     sage: # needs sage.rings.number_field
     sage: E = EllipticCurve('37a')
@@ -165,8 +167,8 @@ class PeriodLattice_ell(PeriodLattice):
         .. NOTE::
 
             No periods are computed on creation of the lattice; see the
-            functions ``basis()``, ``normalised_basis()`` and
-            ``real_period()`` for precision setting.
+            methods :meth:`basis`, :meth:`normalised_basis` and
+            :meth:`real_period` for precision setting.
 
         EXAMPLES:
 
@@ -403,9 +405,9 @@ class PeriodLattice_ell(PeriodLattice):
         - ``prec`` (default: ``None``) -- precision in bits (default
           precision if ``None``).
 
-        - ``algorithm`` (string, default 'sage') -- choice of
-          implementation (for real embeddings only) between 'sage'
-          (native Sage implementation) or 'pari' (use the PARI
+        - ``algorithm`` (string, default ``'sage'``) -- choice of
+          implementation (for real embeddings only) between ``'sage'``
+          (native Sage implementation) or ``'pari'`` (use the PARI
           library: only available for real embeddings).
 
         OUTPUT:
@@ -417,7 +419,7 @@ class PeriodLattice_ell(PeriodLattice):
         lattices) or `\frac{1}{2}` (for non-rectangular lattices).
         Otherwise, `\omega_1/\omega_2` is in the fundamental region of
         the upper half-plane.  If the latter normalisation is required
-        for real lattices, use the function ``normalised_basis()``
+        for real lattices, use the method :meth:`normalised_basis`
         instead.
 
         EXAMPLES::
@@ -426,7 +428,7 @@ class PeriodLattice_ell(PeriodLattice):
             sage: E.period_lattice().basis()
             (2.99345864623196, 2.45138938198679*I)
 
-        This shows that the issue reported at :trac:`3954` is fixed::
+        This shows that the issue reported at :issue:`3954` is fixed::
 
             sage: E = EllipticCurve('37a')
             sage: b1 = E.period_lattice().basis(prec=30)
@@ -434,7 +436,7 @@ class PeriodLattice_ell(PeriodLattice):
             sage: b1 == b2
             True
 
-        This shows that the issue reported at :trac:`4064` is fixed::
+        This shows that the issue reported at :issue:`4064` is fixed::
 
             sage: E = EllipticCurve('37a')
             sage: E.period_lattice().basis(prec=30)[0].parent()
@@ -488,9 +490,9 @@ class PeriodLattice_ell(PeriodLattice):
         - ``prec`` (default: ``None``) -- precision in bits (default
           precision if ``None``).
 
-        - ``algorithm`` (string, default 'sage') -- choice of
-          implementation (for real embeddings only) between 'sage'
-          (native Sage implementation) or 'pari' (use the PARI
+        - ``algorithm`` (string, default ``'sage'``) -- choice of
+          implementation (for real embeddings only) between ``'sage'``
+          (native Sage implementation) or ``'pari'`` (use the PARI
           library: only available for real embeddings).
 
         OUTPUT:
@@ -502,7 +504,7 @@ class PeriodLattice_ell(PeriodLattice):
         lattices) or `\frac{1}{2}` (for non-rectangular lattices).
         Otherwise, `\omega_1/\omega_2` is in the fundamental region of
         the upper half-plane.  If the latter normalisation is required
-        for real lattices, use the function ``normalised_basis()``
+        for real lattices, use the method :meth:`normalised_basis`
         instead.
 
         EXAMPLES::
@@ -526,9 +528,9 @@ class PeriodLattice_ell(PeriodLattice):
         - ``prec`` (default: ``None``) -- precision in bits (default
           precision if ``None``).
 
-        - ``algorithm`` (string, default 'sage') -- choice of
-          implementation (for real embeddings only) between 'sage'
-          (native Sage implementation) or 'pari' (use the PARI
+        - ``algorithm`` (string, default ``'sage'``) -- choice of
+          implementation (for real embeddings only) between ``'sage'``
+          (native Sage implementation) or ``'pari'`` (use the PARI
           library: only available for real embeddings).
 
         OUTPUT:
@@ -537,8 +539,8 @@ class PeriodLattice_ell(PeriodLattice):
         the form `\ZZ\omega_1 + \ZZ\omega_2`.  The basis is normalised
         so that `\omega_1/\omega_2` is in the fundamental region of
         the upper half-plane.  For an alternative normalisation for
-        real lattices (with the first period real), use the function
-        basis() instead.
+        real lattices (with the first period real), use the method
+        :meth:`basis` instead.
 
         EXAMPLES::
 
@@ -710,10 +712,10 @@ class PeriodLattice_ell(PeriodLattice):
 
         INPUT:
 
-        - `prec` (int or ``None`` (default)) -- floating point precision (in bits); if None,
+        - ``prec`` (integer or ``None`` (default)) -- floating point precision (in bits); if ``None``,
           use the default precision.
 
-        - `normalise` (bool, default True) -- whether to normalise the
+        - ``normalise`` (bool, default ``True``) -- whether to normalise the
           basis after computation.
 
         OUTPUT:
@@ -780,7 +782,7 @@ class PeriodLattice_ell(PeriodLattice):
 
     def is_real(self):
         r"""
-        Return True if this period lattice is real.
+        Return ``True`` if this period lattice is real.
 
         EXAMPLES::
 
@@ -854,12 +856,12 @@ class PeriodLattice_ell(PeriodLattice):
 
         INPUT:
 
-        - ``prec`` (int or ``None`` (default)) -- real precision in
+        - ``prec`` (integer or ``None`` (default)) -- real precision in
           bits (default real precision if ``None``)
 
-        - ``algorithm`` (string, default 'sage') -- choice of
-          implementation (for real embeddings only) between 'sage'
-          (native Sage implementation) or 'pari' (use the PARI
+        - ``algorithm`` (string, default ``'sage'``) -- choice of
+          implementation (for real embeddings only) between ``'sage'``
+          (native Sage implementation) or ``'pari'`` (use the PARI
           library: only available for real embeddings).
 
         .. NOTE::
@@ -894,7 +896,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         INPUT:
 
-        - ``prec`` (int or ``None``(default)) -- real precision in
+        - ``prec`` (int or ``None`` (default)) -- real precision in
           bits (default real precision if ``None``)
 
         - ``bsd_normalise`` (bool, default ``False``) -- flag to use
@@ -950,7 +952,7 @@ class PeriodLattice_ell(PeriodLattice):
         A complex example (taken from J.E.Cremona and E.Whitley,
         *Periods of cusp forms and elliptic curves over imaginary
         quadratic fields*, Mathematics of Computation 62 No. 205
-        (1994), 407-429).  See :trac:`29645` and :trac:`29782`::
+        (1994), 407-429).  See :issue:`29645` and :issue:`29782`::
 
             sage: # needs sage.rings.number_field
             sage: K.<i> = QuadraticField(-1)
@@ -977,16 +979,16 @@ class PeriodLattice_ell(PeriodLattice):
 
         INPUT:
 
-        - ``prec`` (int or ``None``(default)) -- real precision in
+        - ``prec`` (int or ``None`` (default)) -- real precision in
           bits (default real precision if ``None``).
 
-        - ``normalised`` (bool, default False) -- if True and the
+        - ``normalised`` (bool, default ``False``) -- if ``True`` and the
           embedding is real, use the normalised basis (see
-          ``normalised_basis()``) instead of the default.
+          :meth:`normalised_basis`) instead of the default.
 
         OUTPUT:
 
-        A 2x2 real matrix whose rows are the lattice basis vectors,
+        A `2\times 2` real matrix whose rows are the lattice basis vectors,
         after identifying `\CC` with `\RR^2`.
 
         EXAMPLES::
@@ -1008,7 +1010,7 @@ class PeriodLattice_ell(PeriodLattice):
             [ 3.81452977217854509 0.000000000000000000]
             [ 1.90726488608927255  1.34047785962440202]
 
-        See :trac:`4388`::
+        See :issue:`4388`::
 
             sage: L = EllipticCurve('11a1').period_lattice()
             sage: L.basis_matrix()
@@ -1046,7 +1048,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         INPUT:
 
-        - ``prec`` (int or ``None``(default)) -- real precision in
+        - ``prec`` (int or ``None`` (default)) -- real precision in
           bits (default real precision if ``None``).
 
         EXAMPLES::
@@ -1079,7 +1081,7 @@ class PeriodLattice_ell(PeriodLattice):
         - ``z`` -- a complex number
 
         - ``prec`` (default: ``None``) -- real precision in bits
-            (default real precision if None).
+            (default real precision if ``None``).
 
         - ``flag`` --
 
@@ -1329,6 +1331,8 @@ class PeriodLattice_ell(PeriodLattice):
         r"""
         Return the elliptic logarithm of a real or complex point.
 
+        INPUT:
+
         - ``xP, yP`` (real or complex) -- Coordinates of a point on
           the embedded elliptic curve associated with this period
           lattice.
@@ -1537,7 +1541,7 @@ class PeriodLattice_ell(PeriodLattice):
           with this period lattice.
 
         - ``prec`` (default: ``None``) -- real precision in bits
-          (default real precision if None).
+          (default real precision if ``None``).
 
         - ``reduce`` (default: ``True``) -- if ``True``, the result
           is reduced with respect to the period lattice basis.
@@ -1680,7 +1684,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         TESTS:
 
-        See :trac:`10026` and :trac:`11767`::
+        See :issue:`10026` and :issue:`11767`::
 
             sage: # needs sage.rings.number_field
             sage: K.<w> = QuadraticField(2)
@@ -1730,7 +1734,7 @@ class PeriodLattice_ell(PeriodLattice):
 
         - ``z`` (complex) -- A complex number (viewed modulo this period lattice).
 
-        - ``to_curve`` (bool, default True):  see below.
+        - ``to_curve`` (bool, default ``True``):  see below.
 
         OUTPUT:
 
@@ -1746,8 +1750,8 @@ class PeriodLattice_ell(PeriodLattice):
           lattice this is.
 
         - If the lattice is real and `z` is also real then the output
-          is a pair of real numbers if ``to_curve`` is True, or a
-          point in `E(\RR)` if ``to_curve`` is False.
+          is a pair of real numbers if ``to_curve`` is ``True``, or a
+          point in `E(\RR)` if ``to_curve`` is ``False``.
 
         .. NOTE::
 
@@ -1817,7 +1821,7 @@ class PeriodLattice_ell(PeriodLattice):
             sage: [embs[2](c) for c in Q]
             [0.259921049894873, -0.587401051968200, 1.00000000000000]
 
-        Test to show that :trac:`8820` is fixed::
+        Test to show that :issue:`8820` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: E = EllipticCurve('37a')
@@ -1852,7 +1856,7 @@ class PeriodLattice_ell(PeriodLattice):
              y^2 + 1.00000000000000*y = x^3 + (-1.00000000000000)*x
              over Complex Field with 53 bits of precision
 
-        Very small `z` are handled properly (see :trac:`8820`)::
+        Very small `z` are handled properly (see :issue:`8820`)::
 
             sage: # needs sage.rings.number_field
             sage: K.<a> = QuadraticField(-1)
@@ -1861,8 +1865,8 @@ class PeriodLattice_ell(PeriodLattice):
             sage: L.elliptic_exponential(1e-100)
             (0.000000000000000 : 1.00000000000000 : 0.000000000000000)
 
-        The elliptic exponential of `z` is returned as (0 : 1 : 0) if
-        the coordinates of z with respect to the period lattice are
+        The elliptic exponential of `z` is returned as `(0 : 1 : 0)` if
+        the coordinates of `z` with respect to the period lattice are
         approximately integral::
 
             sage: (100/log(2.0,10))/0.8

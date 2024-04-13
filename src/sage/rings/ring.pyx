@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Rings
 
@@ -8,7 +9,7 @@ specific base classes.
 .. WARNING::
 
     Those classes, except maybe for the lowest ones like
-    :class:`CommutativeRing` and :class:`CommutativeAlgebra`,
+    :class:`CommutativeRing` and :class:`Field`,
     are being progressively deprecated in favor of the corresponding
     categories. which are more flexible, in particular with respect to multiple
     inheritance.
@@ -21,7 +22,7 @@ The class inheritance hierarchy is:
   - :class:`CommutativeRing`
 
     - :class:`NoetherianRing` (deprecated)
-    - :class:`CommutativeAlgebra` (to be deprecated)
+    - :class:`CommutativeAlgebra` (deprecated and essentially removed)
     - :class:`IntegralDomain` (deprecated)
 
       - :class:`DedekindDomain` (deprecated and essentially removed)
@@ -58,7 +59,7 @@ TESTS:
 
 This is to test a deprecation::
 
-    sage: from sage.rings.ring import DedekindDomain
+    sage: from sage.rings.ring import DedekindDomain, CommutativeAlgebra
     sage: class No(DedekindDomain):
     ....:     pass
     sage: F = No(QQ)
@@ -67,6 +68,15 @@ This is to test a deprecation::
     See https://github.com/sagemath/sage/issues/37234 for details.
     sage: F.category()
     Category of Dedekind domains
+
+    sage: class Nein(CommutativeAlgebra):
+    ....:     pass
+    sage: F = Nein(QQ, QQ)
+    ...:
+    DeprecationWarning: use the category CommutativeAlgebras
+    See https://github.com/sagemath/sage/issues/37999 for details.
+    sage: F.category()
+    Category of commutative rings
 """
 
 # ****************************************************************************
@@ -101,7 +111,7 @@ cdef class Ring(ParentWithGens):
 
     TESTS:
 
-    This is to test against the bug fixed in :trac:`9138`::
+    This is to test against the bug fixed in :issue:`9138`::
 
         sage: R.<x> = QQ[]
         sage: R.sum([x,x])
@@ -149,7 +159,7 @@ cdef class Ring(ParentWithGens):
         sage: TestSuite(ZZ['x','y']).run(skip='_test_elements')                         # needs sage.libs.singular
         sage: TestSuite(ZZ['x','y']['t']).run()
 
-    Test against another bug fixed in :trac:`9944`::
+    Test against another bug fixed in :issue:`9944`::
 
         sage: QQ['x'].category()
         Join of Category of euclidean domains and Category of commutative algebras over
@@ -390,7 +400,7 @@ cdef class Ring(ParentWithGens):
 
         TESTS:
 
-        Make sure that :trac:`11139` is fixed::
+        Make sure that :issue:`11139` is fixed::
 
             sage: R.<x> = QQ[]
             sage: R.ideal([])
@@ -441,7 +451,8 @@ cdef class Ring(ParentWithGens):
             g = gens[0]
             if len(gens) == 1:
                 try:
-                    g = g.gcd(g) # note: we set g = gcd(g, g) to "canonicalize" the generator: make polynomials monic, etc.
+                    # note: we set g = gcd(g, g) to "canonicalize" the generator: make polynomials monic, etc.
+                    g = g.gcd(g)
                 except (AttributeError, NotImplementedError):
                     pass
             else:
@@ -472,7 +483,7 @@ cdef class Ring(ParentWithGens):
             Ideal (x + y, y^3 + z) of Multivariate Polynomial Ring in x, y, z
              over Finite Field of size 7
 
-        The following was implemented in :trac:`7797`::
+        The following was implemented in :issue:`7797`::
 
             sage: # needs sage.combinat sage.modules
             sage: A = SteenrodAlgebra(2)
@@ -552,7 +563,7 @@ cdef class Ring(ParentWithGens):
             sage: T._ideal_class_(1)                                                    # needs sage.libs.singular
             <class 'sage.rings.ideal.Ideal_principal'>
 
-        Since :trac:`7797`, non-commutative rings have ideals as well::
+        Since :issue:`7797`, non-commutative rings have ideals as well::
 
             sage: A = SteenrodAlgebra(2)                                                # needs sage.combinat sage.modules
             sage: A._ideal_class_()                                                     # needs sage.combinat sage.modules
@@ -622,7 +633,7 @@ cdef class Ring(ParentWithGens):
 
         TESTS:
 
-        Make sure that :trac:`13644` is fixed::
+        Make sure that :issue:`13644` is fixed::
 
             sage: # needs sage.rings.padics
             sage: K = Qp(3)
@@ -782,7 +793,7 @@ cdef class Ring(ParentWithGens):
             sage: QQ.is_subring(ZZ)
             False
 
-        Every ring is a subring of itself, :trac:`17287`::
+        Every ring is a subring of itself, :issue:`17287`::
 
             sage: QQbar.is_subring(QQbar)                                               # needs sage.rings.number_field
             True
@@ -875,7 +886,7 @@ cdef class Ring(ParentWithGens):
 
         TESTS:
 
-        Make sure :trac:`10481` is fixed::
+        Make sure :issue:`10481` is fixed::
 
             sage: x = polygen(ZZ, 'x')
             sage: R.<a> = ZZ['x'].quo(x^2)                                              # needs sage.libs.pari
@@ -886,7 +897,7 @@ cdef class Ring(ParentWithGens):
             sage: R.is_integral_domain()                                                # needs sage.libs.pari
             False
 
-        Forward the proof flag to ``is_field``, see :trac:`22910`::
+        Forward the proof flag to ``is_field``, see :issue:`22910`::
 
             sage: # needs sage.libs.singular
             sage: R1.<x> = GF(5)[]
@@ -1813,7 +1824,7 @@ cdef class PrincipalIdealDomain(IntegralDomain):
 
         In a field, any nonzero element is a GCD of any nonempty set
         of nonzero elements. In previous versions, Sage used to return
-        1 in the case of the rational field. However, since :trac:`10771`,
+        1 in the case of the rational field. However, since :issue:`10771`,
         the rational field is considered as the
         *fraction field* of the integer ring. For the fraction field
         of an integral domain that provides both GCD and LCM, it is
@@ -2150,55 +2161,11 @@ cdef class Algebra(Ring):
 
 
 cdef class CommutativeAlgebra(CommutativeRing):
-    """
-    Generic commutative algebra
-    """
-    def __init__(self, base_ring, names=None, normalize=True, category=None):
-        r"""
-        Standard init function. This just checks that the base is a commutative
-        ring and then passes the buck.
+    __default_category = CommutativeRings()
 
-        EXAMPLES::
-
-            sage: sage.rings.ring.CommutativeAlgebra(QQ)
-            <sage.rings.ring.CommutativeAlgebra object at ...>
-
-            sage: sage.rings.ring.CommutativeAlgebra(QuaternionAlgebra(QQ, -1, -1))     # needs sage.combinat sage.modules
-            Traceback (most recent call last):
-            ...
-            TypeError: base ring must be a commutative ring
-        """
-        # TODO: use the idiom base_ring in CommutativeRings()
-        try:
-            if not base_ring.is_commutative():
-                raise TypeError("base ring must be a commutative ring")
-        except (AttributeError, NotImplementedError):
-            raise TypeError("base ring must be a commutative ring")
-        # This is a low-level class. For performance, we trust that
-        # the category is fine, if it is provided. If it isn't, we use
-        # the category of commutative algebras.
-        if category is None:
-            category = CommutativeAlgebras(base_ring)
-        CommutativeRing.__init__(self, base_ring, names=names, normalize=normalize, category=category)
-
-    def is_commutative(self):
-        """
-        Return ``True`` since this algebra is commutative.
-
-        EXAMPLES:
-
-        Any commutative ring is a commutative algebra over itself::
-
-            sage: A = sage.rings.ring.CommutativeAlgebra
-            sage: A(ZZ).is_commutative()
-            True
-            sage: A(QQ).is_commutative()
-            True
-
-        Trying to create a commutative algebra over a non-commutative ring
-        will result in a ``TypeError``.
-        """
-        return True
+    def __init__(self, base_ring, *args, **kwds):
+        deprecation(37999, "use the category CommutativeAlgebras")
+        super().__init__(*args, **kwds)
 
 
 def is_Ring(x):

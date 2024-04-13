@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 # cython: binding=True
 # sage.doctest: needs sage.libs.flint sage.graphs
 """
@@ -124,12 +125,12 @@ def chromatic_polynomial(G, return_tree_basis=False, algorithm='C', cache=None):
 
     TESTS:
 
-    Check that :trac:`21502` is solved::
+    Check that :issue:`21502` is solved::
 
         sage: graphs.EmptyGraph().chromatic_polynomial()
         1
 
-    Check that :trac:`27966` is solved::
+    Check that :issue:`27966` is solved::
 
         sage: Graph([[1, 1]], multiedges=True, loops=True).chromatic_polynomial()
         0

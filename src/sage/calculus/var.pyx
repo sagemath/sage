@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 # cython: old_style_globals=True
 """
 Symbolic variables
@@ -342,7 +343,7 @@ def function(s, **kwds):
 
     TESTS:
 
-    Make sure that :trac:`15860` is fixed and whitespaces are removed::
+    Make sure that :issue:`15860` is fixed and whitespaces are removed::
 
         sage: function('A, B')
         (A, B)

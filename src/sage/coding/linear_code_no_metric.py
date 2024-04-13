@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Generic structures for linear codes of any metric
@@ -313,7 +314,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
         TESTS:
 
-        Check that :trac:`21156` is fixed::
+        Check that :issue:`21156` is fixed::
 
             sage: from sage.coding.linear_code import AbstractLinearCode
             sage: from sage.coding.encoder import Encoder
@@ -796,7 +797,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
             0 and 'q^k -1' (=624), inclusive, where 'q' is the size of the
             base field and 'k' is the dimension of the code.
 
-        Check that codewords are immutable. See :trac:`16338`::
+        Check that codewords are immutable. See :issue:`16338`::
 
             sage: C[0].is_immutable()
             True
@@ -846,7 +847,7 @@ class AbstractLinearCodeNoMetric(AbstractCode, Module):
 
         If ``C1`` and ``C2`` are two codes which only differ by the
         coefficients of their generator matrices, their hashes are
-        different (we check that the bug found in :trac:`18813` is
+        different (we check that the bug found in :issue:`18813` is
         fixed)::
 
             sage: G = Matrix(GF(2), [[1,1,1,0,0,0,0],[1,0,0,1,1,0,0],[0,1,0,1,0,1,0],[1,1,0,1,0,0,1]])

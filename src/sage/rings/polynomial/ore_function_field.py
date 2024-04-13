@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Fraction fields of Ore polynomial rings
 
@@ -653,7 +654,7 @@ class OreFunctionField(Parent, UniqueRepresentation):
 
         TESTS:
 
-        We check that :trac:`31470` is fixed::
+        We check that :issue:`31470` is fixed::
 
             sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(5^3)

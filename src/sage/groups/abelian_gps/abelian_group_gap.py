@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 r"""
 Finitely generated abelian groups with GAP.
 
@@ -331,7 +332,7 @@ class AbelianGroup_gap(UniqueRepresentation, GroupMixinLibGAP, ParentLibGAP, Abe
 
         TESTS:
 
-        Document that :trac:`31428` is fixed::
+        Document that :issue:`31428` is fixed::
 
             sage: A = AbelianGroupGap([])
             sage: A([]) == A.one()

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.all
 r"""
 Interface to Sage
@@ -356,7 +357,7 @@ class Sage(ExtraTabCompletion, Expect):
         Clear the variable named var.
 
         Note that the exact format of the NameError for a cleared variable
-        is slightly platform dependent, see :trac:`10539`.
+        is slightly platform dependent, see :issue:`10539`.
 
         EXAMPLES::
 

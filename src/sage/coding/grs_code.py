@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Reed-Solomon codes and Generalized Reed-Solomon codes
@@ -127,7 +128,7 @@ class GeneralizedReedSolomonCode(AbstractLinearCode):
 
     TESTS:
 
-    Test that the bug in :trac:`30045` is fixed::
+    Test that the bug in :issue:`30045` is fixed::
 
         sage: F = GF(5)
         sage: C = codes.GeneralizedReedSolomonCode(F.list()[:5], 2)
@@ -993,7 +994,7 @@ class GRSEvaluationPolynomialEncoder(Encoder):
 
         TESTS:
 
-        The bug described in :trac:`20744` is now fixed::
+        The bug described in :issue:`20744` is now fixed::
 
             sage: F = GF(11)
             sage: Fm.<my_variable> = F[]
@@ -1305,7 +1306,7 @@ class GRSBerlekampWelchDecoder(Decoder):
             ...
             ValueError: The word to decode has to be in the ambient space of the code
 
-        The bug detailed in :trac:`20340` has been fixed::
+        The bug detailed in :issue:`20340` has been fixed::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(59).list()[:40], 12)
             sage: c = C.random_element()
@@ -1367,7 +1368,7 @@ class GRSBerlekampWelchDecoder(Decoder):
             ...
             ValueError: The word to decode has to be in the ambient space of the code
 
-        The bug detailed in :trac:`20340` has been fixed::
+        The bug detailed in :issue:`20340` has been fixed::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(59).list()[:40], 12)
             sage: c = C.random_element()
@@ -1690,7 +1691,7 @@ class GRSGaoDecoder(Decoder):
             ...
             ValueError: The word to decode has to be in the ambient space of the code
 
-        The bug detailed in :trac:`20340` has been fixed::
+        The bug detailed in :issue:`20340` has been fixed::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(59).list()[:40], 12)
             sage: c = C.random_element()
@@ -1753,7 +1754,7 @@ class GRSGaoDecoder(Decoder):
             ...
             ValueError: The word to decode has to be in the ambient space of the code
 
-        The bug detailed in :trac:`20340` has been fixed::
+        The bug detailed in :issue:`20340` has been fixed::
 
             sage: C = codes.GeneralizedReedSolomonCode(GF(59).list()[:40], 12)
             sage: c = C.random_element()

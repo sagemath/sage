@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 Kirillov-Reshetikhin Crystals
@@ -1602,7 +1603,7 @@ class KR_type_A2(KirillovReshetikhinGenericCrystal):
 
         TESTS:
 
-        Check that :trac:`23028` is fixed::
+        Check that :issue:`23028` is fixed::
 
             sage: ct = CartanType(['A',8,2]).dual()
             sage: K = crystals.KirillovReshetikhin(ct, 4, 3)
@@ -2888,7 +2889,7 @@ class KR_type_Dn_twistedElement(KirillovReshetikhinGenericCrystalElement):
 
         TESTS:
 
-        Check that :trac:`19982` is fixed::
+        Check that :issue:`19982` is fixed::
 
             sage: K = crystals.KirillovReshetikhin(['D',3,2], 2,3)
             sage: def eps0_defn(elt):
@@ -2921,7 +2922,7 @@ class KR_type_Dn_twistedElement(KirillovReshetikhinGenericCrystalElement):
 
         TESTS:
 
-        Check that :trac:`19982` is fixed::
+        Check that :issue:`19982` is fixed::
 
             sage: K = crystals.KirillovReshetikhin(['D',3,2], 2,3)
             sage: def phi0_defn(elt):

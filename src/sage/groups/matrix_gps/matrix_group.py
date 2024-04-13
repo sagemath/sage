@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Base classes for Matrix Groups
 
@@ -14,7 +15,7 @@ Loading, saving, ... works::
     [4 0]
     sage: TestSuite(g).run()
 
-We test that :trac:`9437` is fixed::
+We test that :issue:`9437` is fixed::
 
     sage: len(list(SL(2, Zmod(4))))
     48
@@ -38,7 +39,7 @@ AUTHORS:
 - Simon King (2010-05): Improve invariant_generators by using GAP
   for the construction of the Reynolds operator in Singular.
 
-- Sebastian Oehms (2018-07): Add :meth:`subgroup` and :meth:`ambient` see :trac:`25894`
+- Sebastian Oehms (2018-07): Add :meth:`subgroup` and :meth:`ambient` see :issue:`25894`
 """
 
 # ****************************************************************************

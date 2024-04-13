@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.rings.complex_double sage.symbolic
 r"""
 Regions in fundamental domains of period lattices
@@ -607,7 +608,7 @@ cdef class PeriodicRegion:
 
     def innermost_point(self):
         """
-        Returns a point well inside the region, specifically the center of
+        Return a point well inside the region, specifically the center of
         (one of) the last tile(s) to be removed on contraction.
 
         EXAMPLES::
@@ -635,7 +636,7 @@ cdef class PeriodicRegion:
 
     def plot(self, **kwds):
         """
-        Plots this region in the fundamental lattice.  If full is False plots
+        Plot this region in the fundamental lattice.  If ``full`` is ``False``, plots
         only the lower half.  Note that the true nature of this region is periodic.
 
         EXAMPLES::
@@ -665,7 +666,7 @@ cdef class PeriodicRegion:
         return sum(L, F)
 
 
-cdef frame_data(data, bint full=True) noexcept:
+cdef frame_data(data, bint full=True):
     """
     Helper function for PeriodicRegion.expand() and
     PeriodicRegion.border().  This makes "wrapping around" work
@@ -695,7 +696,7 @@ cdef frame_data(data, bint full=True) noexcept:
     framed[-1,:] = framed[-3,:]
     return framed
 
-cdef unframe_data(framed, bint full=True) noexcept:
+cdef unframe_data(framed, bint full=True):
     """
     Helper function for PeriodicRegion.expand().  This glues the
     borders together using the "or" operator.

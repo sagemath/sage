@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-singular
 """
 Homogeneous ideals of free algebras
 
@@ -29,7 +30,7 @@ forms and can test containment in the ideal::
 
 AUTHOR:
 
-- Simon King (2011-03-22):  See :trac:`7797`.
+- Simon King (2011-03-22):  See :issue:`7797`.
 """
 # ****************************************************************************
 #       Copyright (C) 2011 Simon King <simon.king@uni-jena.de>
@@ -310,7 +311,7 @@ class LetterplaceIdeal(Ideal_nc):
                 degbound = max_deg
 
         # The following is a workaround for calling Singular's new Letterplace
-        # API (see :trac:`25993`). We construct a temporary polynomial ring L
+        # API (see :issue:`25993`). We construct a temporary polynomial ring L
         # with letterplace attributes set as required by the API. As L has
         # duplicate variable names, we need to handle this ring carefully; in
         # particular, we cannot coerce to and from L, so we use homomorphisms

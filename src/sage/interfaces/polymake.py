@@ -567,7 +567,7 @@ class PolymakeAbstract(ExtraTabCompletion, Interface):
             sage: polymake.get('$myvar[0]')                     # optional - jupymake
             'Polymake::polytope::Polytope__Rational=ARRAY(...)'
 
-        The following tests against :trac:`22658`::
+        The following tests against :issue:`22658`::
 
             sage: P = polymake.new_object("Polytope", FACETS=[[12, -2, -3, -5, -8, -13, -21, -34, -55],   # optional - jupymake
             ....:  [0, 1, 0, 0, 0, 0, 0, 0, 0],

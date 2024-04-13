@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-categories
 r"""
 Class to flatten polynomial rings over polynomial ring
 
@@ -488,7 +488,7 @@ class SpecializationMorphism(Morphism):
             ...
             TypeError: no conversion of this rational to integer
 
-        The following was fixed in :trac:`23811`::
+        The following was fixed in :issue:`23811`::
 
             sage: R.<c> = RR[]
             sage: P.<z> = AffineSpace(R, 1)

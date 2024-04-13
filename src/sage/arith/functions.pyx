@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Fast Arithmetic Functions
 """
@@ -30,7 +31,7 @@ def lcm(a, b=None):
 
     - ``a,b`` -- two elements of a ring with lcm or
 
-    - ``a`` -- a list or tuple of elements of a ring with lcm
+    - ``a`` -- a list, tuple or iterable of elements of a ring with lcm
 
     OUTPUT:
 
@@ -55,7 +56,7 @@ def lcm(a, b=None):
 
     TESTS:
 
-    The following tests against a bug that was fixed in :trac:`10771`::
+    The following tests against a bug that was fixed in :issue:`10771`::
 
         sage: lcm(4/1,2)
         4
@@ -70,7 +71,7 @@ def lcm(a, b=None):
         sage: parent(lcm([1/p,q]))
         Fraction Field of Univariate Polynomial Ring in x over Rational Field
 
-    Make sure we try `\QQ` and not merely `\ZZ` (:trac:`13014`)::
+    Make sure we try `\QQ` and not merely `\ZZ` (:issue:`13014`)::
 
         sage: bool(lcm(2/5, 3/7) == lcm(SR(2/5), SR(3/7)))                              # needs sage.symbolic
         True
@@ -95,14 +96,14 @@ def lcm(a, b=None):
         ...
         TypeError: unable to find lcm of x and y
 
-    Check rational and integers (:trac:`17852`)::
+    Check rational and integers (:issue:`17852`)::
 
         sage: lcm(1/2, 4)
         4
         sage: lcm(4, 1/2)
         4
 
-    Check that we do not mutate the list (:trac:`22630`)::
+    Check that we do not mutate the list (:issue:`22630`)::
 
         sage: L = [int(1), int(2)]
         sage: lcm(L)
@@ -124,7 +125,7 @@ def lcm(a, b=None):
     raise TypeError(f"unable to find lcm of {a!r} and {b!r}")
 
 
-cpdef LCM_list(v) noexcept:
+cpdef LCM_list(v):
     """
     Return the LCM of an iterable ``v``.
 
@@ -135,7 +136,7 @@ cpdef LCM_list(v) noexcept:
 
     INPUT:
 
-    -  ``v`` -- an iterable
+    - ``v`` -- an iterable
 
     OUTPUT: integer
 
@@ -206,7 +207,7 @@ cpdef LCM_list(v) noexcept:
     return z
 
 
-cdef LCM_generic(itr, ret) noexcept:
+cdef LCM_generic(itr, ret):
     """
     Return the least common multiple of the element ``ret`` and the
     elements in the iterable ``itr``.

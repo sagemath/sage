@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Jacobian 'morphism' as a class in the Picard group
 
@@ -703,7 +704,7 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
 
         TESTS:
 
-        The following was fixed in :trac:`14264`::
+        The following was fixed in :issue:`14264`::
 
             sage: # needs sage.rings.number_field
             sage: P.<x> = QQ[]

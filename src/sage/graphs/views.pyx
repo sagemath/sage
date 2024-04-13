@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 r"""
 View classes
 
@@ -564,7 +565,7 @@ cdef class EdgesView:
             sage: G == E
             False
 
-        Check that :trac:`29180` is fixed::
+        Check that :issue:`29180` is fixed::
 
             sage: G = graphs.CycleGraph(4)
             sage: E = graphs.EmptyGraph()

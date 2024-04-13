@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # cython: old_style_globals=True
 r"""
 Base class for objects of a category
@@ -63,7 +64,7 @@ from sage.misc.cachefunc import cached_method
 from sage.structure.dynamic_class import DynamicMetaclass
 
 
-cpdef inline check_default_category(default_category, category) noexcept:
+cpdef inline check_default_category(default_category, category):
     ## The resulting category is guaranteed to be
     ## a sub-category of the default.
     if category is None:
@@ -352,7 +353,7 @@ cdef class CategoryObject(SageObject):
             Univariate Polynomial Ring in x over Rational Field
 
         For orders, we correctly use the ring generator, see
-        :trac:`15348`::
+        :issue:`15348`::
 
             sage: A.<i> = ZZ.extension(x^2 + 1)                                         # needs sage.rings.number_field
             sage: i                                                                     # needs sage.rings.number_field
@@ -395,7 +396,7 @@ cdef class CategoryObject(SageObject):
             (x,)
 
         For orders, we correctly use the ring generator, see
-        :trac:`15348`::
+        :issue:`15348`::
 
             sage: B.<z> = EquationOrder(x^2 + 3)                                        # needs sage.rings.number_field
             sage: B._defining_names()                                                   # needs sage.rings.number_field
@@ -508,7 +509,7 @@ cdef class CategoryObject(SageObject):
         In an old version, it was impossible to temporarily change
         the names if no names were previously assigned. But if one
         wants to print elements of the quotient of such an "unnamed"
-        ring, an error resulted. That was fixed in :trac:`11068`::
+        ring, an error resulted. That was fixed in :issue:`11068`::
 
             sage: # needs sage.modules
             sage: MS = MatrixSpace(GF(5), 2, 2)
@@ -848,7 +849,7 @@ cdef class CategoryObject(SageObject):
         """
         return self.getattr_from_category(name)
 
-    cdef getattr_from_category(self, name) noexcept:
+    cdef getattr_from_category(self, name):
         # Lookup a method or attribute from the category abstract classes.
         # See __getattr__ above for documentation.
         try:
@@ -913,7 +914,7 @@ cdef class CategoryObject(SageObject):
         """
         return dir_with_other_class(self, self.category().parent_class)
 
-cpdef normalize_names(Py_ssize_t ngens, names) noexcept:
+cpdef normalize_names(Py_ssize_t ngens, names):
     r"""
     Return a tuple of strings of variable names of length ngens given
     the input names.

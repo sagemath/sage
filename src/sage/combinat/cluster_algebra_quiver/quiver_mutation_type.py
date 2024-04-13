@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # sage.doctest: needs sage.graphs
 r"""
 Quiver mutation types
@@ -1732,7 +1733,7 @@ class QuiverMutationType_Irreducible(QuiverMutationType_abstract):
             Warning: This method uses a formula which has not been proved correct.
             504
 
-        Check that :trac:`14048` is fixed::
+        Check that :issue:`14048` is fixed::
 
             sage: mut_type = QuiverMutationType( ['F',4,(2, 1)] )
             sage: mut_type.class_size()

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-categories
 r"""
 Homomorphisms of rings
 
@@ -464,7 +464,7 @@ cdef class RingMap_lift(RingMap):
         sage: S.lift() == 0                                                             # needs sage.libs.singular
         False
 
-    Since :trac:`11068`, it is possible to create
+    Since :issue:`11068`, it is possible to create
     quotient rings of non-commutative rings by two-sided
     ideals. It was needed to modify :class:`RingMap_lift`
     so that rings can be accepted that are no instances
@@ -514,7 +514,7 @@ cdef class RingMap_lift(RingMap):
         H = R.Hom(S, Sets())
         RingMap.__init__(self, H)
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         Helper for copying and pickling.
 
@@ -533,7 +533,7 @@ cdef class RingMap_lift(RingMap):
         self.to_S = _slots['to_S']
         Morphism._update_slots(self, _slots)
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -549,7 +549,7 @@ cdef class RingMap_lift(RingMap):
         slots['to_S'] = self.to_S
         return slots
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         """
         Compare a ring lifting maps ``self`` to ``other``.
 
@@ -566,7 +566,7 @@ cdef class RingMap_lift(RingMap):
             sage: f == g
             False
 
-        Verify that :trac:`5758` has been fixed::
+        Verify that :issue:`5758` has been fixed::
 
             sage: Zmod(8).lift() == 1
             False
@@ -613,7 +613,7 @@ cdef class RingMap_lift(RingMap):
         """
         return "Choice of lifting map"
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         Evaluate this function at ``x``.
 
@@ -700,7 +700,7 @@ cdef class RingHomomorphism(RingMap):
             raise TypeError("lift must have correct codomain")
         self._lift = lift
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         Helper for copying and pickling.
 
@@ -719,7 +719,7 @@ cdef class RingHomomorphism(RingMap):
             self._lift = _slots['_lift']
         Morphism._update_slots(self, _slots)
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -1023,7 +1023,7 @@ cdef class RingHomomorphism(RingMap):
 
         TESTS:
 
-        Check that :trac:`31367` is fixed::
+        Check that :issue:`31367` is fixed::
 
             sage: A.<t> = QQ[]
             sage: B.<x,y> = QQ['x,y'].quotient('y')                                     # needs sage.libs.singular
@@ -1084,7 +1084,7 @@ cdef class RingHomomorphism(RingMap):
             (0, 0)
 
         Check cases involving quotient rings in which a generator is constant
-        (:trac:`31178`)::
+        (:issue:`31178`)::
 
             sage: # needs sage.libs.singular
             sage: R.<x,y> = QQ[]
@@ -1103,7 +1103,7 @@ cdef class RingHomomorphism(RingMap):
             sage: h.inverse_image(d^2)
             a
 
-        Check that quotient rings are handled correctly (:trac:`33217`)::
+        Check that quotient rings are handled correctly (:issue:`33217`)::
 
             sage: # needs sage.libs.singular
             sage: A.<x,y,z> = QQ['X,Y,Z'].quotient('X^2+Y^2+Z^2-1')
@@ -1280,7 +1280,7 @@ cdef class RingHomomorphism(RingMap):
             ...
             NotImplementedError: base map must be trivial
 
-        Non-commutative rings are not supported (:trac:`32824`)::
+        Non-commutative rings are not supported (:issue:`32824`)::
 
             sage: A = GradedCommutativeAlgebra(QQ, 'x,y,z')                             # needs sage.combinat sage.modules
             sage: A.hom(A.gens(), A).kernel()                                           # needs sage.combinat sage.modules
@@ -1810,7 +1810,7 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
         """
         return self._base_map
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         Helper for copying and pickling.
 
@@ -1830,7 +1830,7 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
         self._base_map = _slots.get('_base_map')
         RingHomomorphism._update_slots(self, _slots)
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -1851,7 +1851,7 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
         slots['_base_map'] = self._base_map
         return slots
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         r"""
         EXAMPLES:
 
@@ -1907,7 +1907,7 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
             sage: loads(dumps(f2)) == f2                                                # needs sage.libs.pari
             True
 
-        This was fixed in :trac:`24277`::
+        This was fixed in :issue:`24277`::
 
             sage: H = End(QQ)
             sage: H(1) == H.identity()
@@ -1961,7 +1961,7 @@ cdef class RingHomomorphism_im_gens(RingHomomorphism):
             s += '\nwith map of base ring'
         return s
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         Evaluate this homomorphism at ``x``.
 
@@ -2125,7 +2125,7 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
         """
         return self._underlying
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         Helper for copying and pickling.
 
@@ -2155,7 +2155,7 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
         self._underlying = _slots['__underlying'] # double underscore for legacy pickles
         RingHomomorphism._update_slots(self, _slots)
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -2186,7 +2186,7 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
         slots['__underlying'] = self._underlying
         return slots
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         r"""
         EXAMPLES:
 
@@ -2270,7 +2270,7 @@ cdef class RingHomomorphism_from_base(RingHomomorphism):
         U = repr(self._underlying).split('\n')
         return 'Induced from base ring by\n'+'\n'.join(U)
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         Evaluate this homomorphism at ``x``.
 
@@ -2374,7 +2374,7 @@ cdef class RingHomomorphism_from_fraction_field(RingHomomorphism):
         """
         return self._morphism._repr_defn()
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         r"""
         Return the value of this morphism at ``x``.
 
@@ -2393,7 +2393,7 @@ cdef class RingHomomorphism_from_fraction_field(RingHomomorphism):
         """
         return self._morphism(x.numerator()) / self._morphism(x.denominator())
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         Helper function for copying and pickling.
 
@@ -2412,7 +2412,7 @@ cdef class RingHomomorphism_from_fraction_field(RingHomomorphism):
         self._morphism = _slots['_morphism']
         RingHomomorphism._update_slots(self, _slots)
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Helper function for copying and pickling.
 
@@ -2479,7 +2479,7 @@ cdef class RingHomomorphism_cover(RingHomomorphism):
         """
         RingHomomorphism.__init__(self, parent)
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         Evaluate this covering homomorphism at ``x``, which just involves
         coercing ``x`` into the domain, then codomain.
@@ -2538,7 +2538,7 @@ cdef class RingHomomorphism_cover(RingHomomorphism):
         """
         return self.codomain().defining_ideal()
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         """
         Compare ``self`` to ``other``.
 
@@ -2689,7 +2689,7 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
         self._lift = pi.lift()
         self.phi = phi
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         Helper for copying and pickling.
 
@@ -2718,7 +2718,7 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
         self.phi = _slots['phi']
         RingHomomorphism._update_slots(self, _slots)
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Helper for copying and pickling.
 
@@ -2782,7 +2782,7 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
         """
         return self.phi
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         """
         Compare ``self`` to ``other``.
 
@@ -2843,7 +2843,7 @@ cdef class RingHomomorphism_from_quotient(RingHomomorphism):
         return '\n'.join('{} |--> {}'.format(D.gen(i), ig[i])
                          for i in range(D.ngens()))
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         Evaluate this function at ``x``.
 
@@ -2902,7 +2902,7 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
         self._q = self._p ** self._power
         RingHomomorphism.__init__(self, Hom(domain, domain))
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         Update information with the given slots.
 
@@ -2922,7 +2922,7 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
         self._q = self._p ** self._power
         RingHomomorphism._update_slots(self, _slots)
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Return additional information about this morphism
         as a dictionary.
@@ -3012,7 +3012,7 @@ cdef class FrobeniusEndomorphism_generic(RingHomomorphism):
             s = '\\verb"Frob"^{%s}' % self._power
         return s
 
-    cpdef Element _call_ (self, x) noexcept:
+    cpdef Element _call_ (self, x):
         """
         TESTS::
 

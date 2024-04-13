@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 r"""
 Cyclic sieving phenomenon
 
@@ -72,7 +73,7 @@ def CyclicSievingPolynomial(L, cyc_act=None, order=None, get_order=False):
 
     TESTS:
 
-    We check that :trac:`13997` is handled::
+    We check that :issue:`13997` is handled::
 
         sage: CyclicSievingPolynomial(S42, cyc_act, order=8, get_order=True)
         [q^6 + 2*q^4 + q^2 + 2, 8]

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Generalized functions
 
@@ -411,7 +412,7 @@ class FunctionSignum(BuiltinFunction):
 
     TESTS:
 
-    Check if conversions to sympy and others work (:trac:`11921`)::
+    Check if conversions to sympy and others work (:issue:`11921`)::
 
         sage: sgn(x)._sympy_()                                                          # needs sympy sage.symbolic
         sign(x)
@@ -420,7 +421,7 @@ class FunctionSignum(BuiltinFunction):
         sage: sgn(x)._giac_()                                                           # needs sage.libs.giac sage.symbolic
         sign(sageVARx)
 
-    Test for :trac:`31085`::
+    Test for :issue:`31085`::
 
         sage: fricas(sign(x)).eval(x=-3)        # optional - fricas                     # needs sage.symbolic
         - 1
@@ -499,7 +500,7 @@ class FunctionSignum(BuiltinFunction):
         """
         TESTS:
 
-        Check that :trac:`16587` is fixed::
+        Check that :issue:`16587` is fixed::
 
             sage: # needs sage.symbolic
             sage: M = sgn(3/2, hold=True); M

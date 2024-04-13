@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Finite prime fields
 
@@ -118,7 +119,7 @@ class FiniteField_prime_modn(FiniteField_generic, integer_mod_ring.IntegerModRin
              To:   Finite Field of size 13
              Defn: 1 |--> 1
 
-        Check that :trac:`19573` is resolved::
+        Check that :issue:`19573` is resolved::
 
             sage: Integers(9).hom(GF(3))
             Natural morphism:

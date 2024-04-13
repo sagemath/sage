@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 r"""
 Reflection group elements
 
@@ -51,7 +52,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
 
         TESTS:
 
-        Check that types B and C are hashed differently, see :trac:`29726`::
+        Check that types B and C are hashed differently, see :issue:`29726`::
 
             sage: WB = ReflectionGroup(['B',5])                     # optional - gap3
             sage: WC = ReflectionGroup(['C',5])                     # optional - gap3
@@ -68,7 +69,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
             sage: WB_hash.intersection(WC_hash)                     # optional - gap3
             set()
 
-        Check that :trac:`34912` is fixed::
+        Check that :issue:`34912` is fixed::
 
             sage: # optional - gap3
             sage: G4 = ReflectionGroup(4)
@@ -348,7 +349,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
         mat.set_immutable()
         return mat
 
-    cpdef action(self, vec, on_space="primal") noexcept:
+    cpdef action(self, vec, on_space="primal"):
         r"""
         Return the image of ``vec`` under the action of ``self``.
 
@@ -373,7 +374,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
         mat = self.matrix(on_space=on_space)
         return vec * mat
 
-    cpdef _act_on_(self, vec, bint self_on_left) noexcept:
+    cpdef _act_on_(self, vec, bint self_on_left):
         r"""
         Defines the action of ``self`` as a linear transformation
         on the vector space, in the basis given by the simple
@@ -397,7 +398,7 @@ cdef class ComplexReflectionGroupElement(PermutationGroupElement):
             return (~self).action(vec)
         return self.action(vec)
 
-    cpdef action_on_root_indices(self, i) noexcept:
+    cpdef action_on_root_indices(self, i):
         """
         Return the right action on the set of roots.
 
@@ -959,7 +960,7 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
 
     matrix = to_matrix
 
-    cpdef action(self, vec, side="right", on_space="primal") noexcept:
+    cpdef action(self, vec, side="right", on_space="primal"):
         r"""
         Return the image of ``vec`` under the action of ``self``.
 
@@ -1022,7 +1023,7 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
         else:
             raise ValueError('on_space must be "primal" or "dual"')
 
-    cpdef _act_on_(self, vec, bint self_on_left) noexcept:
+    cpdef _act_on_(self, vec, bint self_on_left):
         r"""
         Give the action of ``self`` as a linear transformation on
         the vector space, in the basis given by the simple roots.
@@ -1054,7 +1055,7 @@ cdef class RealReflectionGroupElement(ComplexReflectionGroupElement):
             return self.action(vec, side="left")
         return self.action(vec, side="right")
 
-    cpdef action_on_root_indices(self, i, side="right") noexcept:
+    cpdef action_on_root_indices(self, i, side="right"):
         """
         Return the action on the set of roots.
 

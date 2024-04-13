@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs numpy sage.modules
 r"""
 Hidden Markov Models
@@ -224,7 +225,7 @@ cdef class HiddenMarkovModel:
     # Some internal functions used for various general
     # HMM algorithms.
     #########################################################
-    cdef TimeSeries _baum_welch_gamma(self, TimeSeries alpha, TimeSeries beta) noexcept:
+    cdef TimeSeries _baum_welch_gamma(self, TimeSeries alpha, TimeSeries beta):
         r"""
         Used internally to compute the scaled quantity gamma_t(j)
         appearing in the Baum-Welch reestimation algorithm.
@@ -897,7 +898,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         else:
             return self._viterbi(obs)
 
-    cpdef _viterbi(self, IntList obs) noexcept:
+    cpdef _viterbi(self, IntList obs):
         r"""
         Used internally to compute the viterbi path, without
         rescaling.  This can be useful for short sequences.
@@ -977,7 +978,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         return state_sequence, log(mx)
 
 
-    cpdef _viterbi_scale(self, IntList obs) noexcept:
+    cpdef _viterbi_scale(self, IntList obs):
         r"""
         Used internally to compute the viterbi path with rescaling.
 
@@ -1061,7 +1062,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
 
         return state_sequence, mx
 
-    cdef TimeSeries _backward_scale_all(self, IntList obs, TimeSeries scale) noexcept:
+    cdef TimeSeries _backward_scale_all(self, IntList obs, TimeSeries scale):
         r"""
         Return the scaled matrix of values `\beta_t(i)` that appear in
         the backtracking algorithm.  This function is used internally
@@ -1108,7 +1109,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
             t -= 1
         return beta
 
-    cdef _forward_scale_all(self, IntList obs) noexcept:
+    cdef _forward_scale_all(self, IntList obs):
         r"""
         Return scaled values alpha_t(i), the sequence of scalings, and
         the log probability.
@@ -1169,7 +1170,7 @@ cdef class DiscreteHiddenMarkovModel(HiddenMarkovModel):
         # Termination
         return alpha, scale, log_probability
 
-    cdef TimeSeries _baum_welch_xi(self, TimeSeries alpha, TimeSeries beta, IntList obs) noexcept:
+    cdef TimeSeries _baum_welch_xi(self, TimeSeries alpha, TimeSeries beta, IntList obs):
         r"""
         Used internally to compute the scaled quantity xi_t(i,j)
         appearing in the Baum-Welch reestimation algorithm.
@@ -1376,7 +1377,7 @@ def unpickle_discrete_hmm_v1(A, B, pi, n_out, emission_symbols, emission_symbols
         sage: m2 == m
         True
 
-    Test that :trac:`15711` has been resolved::
+    Test that :issue:`15711` has been resolved::
 
         sage: str(m2) == str(m)
         True

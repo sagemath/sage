@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 """
 A class to keep information about faces of a polyhedron
 
@@ -601,7 +602,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         TESTS:
 
-        Check that :trac:`28650` is fixed::
+        Check that :issue:`28650` is fixed::
 
             sage: P = Polyhedron(vertices=[[1,0]], rays=[[1,0], [0,1]])
             sage: P.faces(2)
@@ -960,7 +961,7 @@ class PolyhedronFace(ConvexSet_closed):
 
         TESTS:
 
-        Check that :trac:`32658` is fixed::
+        Check that :issue:`32658` is fixed::
 
             sage: P = polytopes.hypercube(2)
             sage: P.faces(-1)[0].affine_tangent_cone()

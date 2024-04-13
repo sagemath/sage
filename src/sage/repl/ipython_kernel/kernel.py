@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-repl
 """
 The Sage ZMQ Kernel
 
@@ -202,7 +202,7 @@ class SageKernel(IPythonKernel):
         attribute. This is needed because Jupyter needs to change the
         ``SIGINT`` handler.
 
-        See :trac:`19135`.
+        See :issue:`19135`.
 
         TESTS::
 

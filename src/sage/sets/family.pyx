@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Families
 
@@ -15,7 +16,7 @@ AUTHORS:
 
 TESTS:
 
-Check :trac:`12482` (shall be run in a fresh session)::
+Check :issue:`12482` (shall be run in a fresh session)::
 
     sage: P = Partitions(3)                                                             # needs sage.combinat
     sage: Family(P, lambda x: x).category()                                             # needs sage.combinat
@@ -373,7 +374,7 @@ def Family(indices, function=None, hidden_keys=[], hidden_function=None, lazy=Fa
         sage: list(f)
         ['cc', 'aa', 'bb']
 
-    Even with hidden keys (see :trac:`22955`)::
+    Even with hidden keys (see :issue:`22955`)::
 
         sage: f = Family(["c", "a", "b"], lambda i: 2*i,
         ....:           hidden_keys=[5], hidden_function=lambda i: i%2)
@@ -590,7 +591,7 @@ cdef class FiniteFamily(AbstractFamily):
             sage: f = FiniteFamily({3: 'a', 4: 'b', 7: 'd'})
             sage: TestSuite(f).run()
 
-        Check for bug :trac:`5538`::
+        Check for bug :issue:`5538`::
 
             sage: d = {1:"a", 3:"b", 4:"c"}
             sage: f = Family(d)
@@ -935,7 +936,7 @@ class FiniteFamilyWithHiddenKeys(FiniteFamily):
             hidden_function = unpickle_function(hidden_function)
         self.__init__(d['dictionary'], d['hidden_keys'], hidden_function)
         self.hidden_dictionary = d['hidden_dictionary']
-        # Old pickles from before trac #22955 may not have a 'keys'
+        # Old pickles from before Issue #22955 may not have a 'keys'
         if 'keys' in d:
             self._keys = d['keys']
         else:
@@ -959,7 +960,7 @@ class LazyFamily(AbstractFamily):
             Lazy family (<lambda>(i))_{i in [3, 4, 7]}
             sage: TestSuite(f).run()
 
-        Check for :trac:`5538`::
+        Check for :issue:`5538`::
 
             sage: l = [3,4,7]
             sage: f = LazyFamily(l, lambda i: 2*i)
@@ -1121,7 +1122,7 @@ class LazyFamily(AbstractFamily):
 
         TESTS:
 
-        Check that :trac:`15195` is fixed::
+        Check that :issue:`15195` is fixed::
 
             sage: C = cartesian_product([PositiveIntegers(), [1,2,3]])
             sage: C.cardinality()
@@ -1432,7 +1433,7 @@ class EnumeratedFamily(LazyFamily):
 
         TESTS:
 
-        Check that category and keys are set correctly (:trac:`28274`)::
+        Check that category and keys are set correctly (:issue:`28274`)::
 
             sage: from sage.sets.family import EnumeratedFamily
             sage: f = EnumeratedFamily(Permutations(4))
