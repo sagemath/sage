@@ -131,7 +131,7 @@ def find_python_sources(src_dir, modules=['sage'], distributions=None,
         sage: find_python_sources(SAGE_SRC, modules=['sage_setup'])
         (['sage_setup', ...], [...'sage_setup.find'...], [])
     """
-    from setuptools import Extension
+    from setuptools.extension import Extension
 
     PYMOD_EXT = get_extensions('source')[0]
 
@@ -147,13 +147,12 @@ def find_python_sources(src_dir, modules=['sage'], distributions=None,
         for module in modules:
             for dirpath, dirnames, filenames in os.walk(module):
                 package = dirpath.replace(os.path.sep, '.')
-                if not is_package_or_namespace_package_dir(dirpath):
+                if not is_package_or_namespace_package_dir(dirpath, distribution_filter=distribution_filter):
                     # Skip any subdirectories
                     dirnames[:] = []
                     continue
                 # Ordinary package or namespace package.
-                if distributions is None or '' in distributions:
-                    python_packages.append(package)
+                python_packages.append(package)
 
                 for filename in filenames:
                     base, ext = os.path.splitext(filename)
@@ -260,7 +259,7 @@ def _cythonized_dir(src_dir=None, editable_install=None):
 
 
 def find_extra_files(src_dir, modules, cythonized_dir, special_filenames=[], *,
-                     distributions=None):
+                     distributions=None, exclude_distributions=None):
     """
     Find all extra files which should be installed.
 
@@ -293,6 +292,11 @@ def find_extra_files(src_dir, modules, cythonized_dir, special_filenames=[], *,
       ``distribution`` (from a ``# sage_setup: distribution = PACKAGE``
       directive in the file) is an element of ``distributions``.
 
+    - ``exclude_distributions`` -- (default: ``None``) if not ``None``,
+      should be a sequence or set of strings: exclude modules whose
+      ``distribution`` (from a ``# sage_setup: distribution = PACKAGE``
+      directive in the module source file) is in ``exclude_distributions``.
+
     OUTPUT: dict with items ``{dir: files}`` where ``dir`` is a
     directory relative to ``src_dir`` and ``files`` is a list of
     filenames inside that directory.
@@ -311,12 +315,14 @@ def find_extra_files(src_dir, modules, cythonized_dir, special_filenames=[], *,
     data_files = {}
     cy_exts = ('.pxd', '.pxi', '.pyx')
 
+    distribution_filter = SourceDistributionFilter(distributions, exclude_distributions)
+
     cwd = os.getcwd()
     try:
         os.chdir(src_dir)
         for module in modules:
             for dir, dirnames, filenames in os.walk(module):
-                if not is_package_or_namespace_package_dir(dir):
+                if not is_package_or_namespace_package_dir(dir, distribution_filter=distribution_filter):
                     continue
                 sdir = os.path.join(src_dir, dir)
                 cydir = os.path.join(cythonized_dir, dir)
