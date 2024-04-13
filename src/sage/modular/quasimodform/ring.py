@@ -260,7 +260,7 @@ class QuasiModularForms(Parent, UniqueRepresentation):
         elif not is_CongruenceSubgroup(group):
             raise ValueError("Group (=%s) should be a congruence subgroup" % group)
 
-        # Check if the base ring is the rationnal field
+        # Check if the base ring is the rational field
         if base_ring != QQ:
             raise NotImplementedError("base ring other than Q are not yet supported for quasimodular forms ring")
 
@@ -425,12 +425,12 @@ class QuasiModularForms(Parent, UniqueRepresentation):
             NotImplementedError: conversion from q-expansion not yet implemented
         """
         if isinstance(datum, list):
-            if len(datum) == 0:
+            if not datum:
                 raise ValueError("the given list should be non-empty")
             for idx, f in enumerate(datum):
                 if not isinstance(f, (GradedModularFormElement, ModularFormElement)):
                     raise ValueError("one list element is not a modular form")
-                datum[idx] = self.__modular_forms_subring(f)  # to ensure that every forms is a GradedModularFormElement
+                datum[idx] = self.__modular_forms_subring(f)  # to ensure that every form is a GradedModularFormElement
             datum = self.__polynomial_subring(datum)
         elif isinstance(datum, (GradedModularFormElement, ModularFormElement)):
             datum = self.__modular_forms_subring(datum)  # GradedModularFormElement
