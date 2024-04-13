@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-objects
+
 cpdef tuple _sort_uniq(categories)
 cdef class AxiomContainer(dict):
     pass

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.graphs sage.modules
 r"""
 Subword complex
@@ -1854,8 +1855,8 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         """
         N = len(self.group().long_element(as_word=True))
         F = self.greedy_facet(side="positive")
-        Fs = set([F])
-        seen = set([F])
+        Fs = {F}
+        seen = {F}
         covers = []
         while Fs:
             F = Fs.pop()
@@ -1895,7 +1896,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         from sage.graphs.digraph import DiGraph
         return DiGraph(self.cover_relations(label=label))
 
-    def interval(self, I, J):
+    def interval(self, I, J) -> set:
         """
         Return the interval [I,J] in the increasing flip graph subword complex.
 
@@ -1924,7 +1925,7 @@ class SubwordComplex(UniqueRepresentation, SimplicialComplex):
         """
         G = self.increasing_flip_graph()
         paths = G.all_paths(I, J)
-        return set(K for path in paths for K in path)
+        return {K for path in paths for K in path}
 
     def increasing_flip_poset(self):
         """
@@ -2125,8 +2126,8 @@ def _greedy_flip_algorithm(Q, w):
                     flip_to_ancestors.append(j)
                     next_index = i + 1
                     has_new_child = True
-                    facet_list.append([x for x in F])
-                    extended_root_conf_indices_list.append([x for x in R])
+                    facet_list.append(list(F))
+                    extended_root_conf_indices_list.append(list(R))
         if not has_new_child:
             i = flip_to_ancestors.pop()
             if i != -1:

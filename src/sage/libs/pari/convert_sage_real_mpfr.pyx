@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 # sage.doctest: needs sage.rings.real_mpfr
 
 from cypari2.stack cimport new_gen

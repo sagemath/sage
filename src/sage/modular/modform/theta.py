@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 `q`-expansions of theta series
 
