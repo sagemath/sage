@@ -55,6 +55,7 @@ from sage.rings.ideal import Ideal_fractional
 from sage.rings.rational_field import is_RationalField, QQ
 from sage.rings.infinity import infinity
 from sage.rings.number_field.number_field_base import NumberField
+from sage.rings.qqbar import AA
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.structure.category_object import normalize_names
@@ -1235,7 +1236,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         # Since we need the list of real embeddings of the number field (instead
         # of just the number of them), we avoid a call of the `is_totally_real()`-
         # method by directly comparing the embedding list's length to the degree
-        E = F.real_embeddings()
+        E = F.embeddings(AA)
         return len(E) == F.degree() and all(F.hilbert_symbol(self._a, self._b, e) == -1
                                             for e in E)
 
@@ -1260,7 +1261,11 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         Additionally, if ``inf`` is set to ``True``, then the Archimedean
         (AKA infinite) places at which the quaternion algebra ramifies are
-        also returned, given by real embeddings of the base field.
+        also returned, given as
+
+        - the embeddings of `\QQ` into `\RR` if the base field is `\QQ`, or
+
+        - the embeddings of the base number field into the Algebraic Real Field.
 
         .. NOTE::
 
@@ -1296,12 +1301,12 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             ([],
              [Ring morphism:
                 From: Number Field in a with defining polynomial x^2 - 3 with a = 1.732050807568878?
-                To:   Real Field with 53 bits of precision
-                Defn: a |--> -1.73205080756888,
+                To:   Algebraic Real Field
+                Defn: a |--> -1.732050807568878?,
               Ring morphism:
                 From: Number Field in a with defining polynomial x^2 - 3 with a = 1.732050807568878?
-                To:   Real Field with 53 bits of precision
-                Defn: a |--> 1.73205080756888])
+                To:   Algebraic Real Field
+                Defn: a |--> 1.732050807568878?])
 
         Extending the base field can also get rid of ramification at infinite
         places while still leaving some ramification at finite places::
@@ -1318,8 +1323,8 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             ([Fractional ideal (2)],
              [Ring morphism:
                 From: Number Field in a with defining polynomial x^2 - x - 1
-                To: Real Field with 53 bits of precision
-                Defn: a |--> -0.618033988749895])
+                To: Algebraic Real Field
+                Defn: a |--> -0.618033988749895?])
 
         The method does not make sense over an arbitrary base ring::
 
@@ -1370,7 +1375,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             return ram_fin
 
         # At this point the infinite ramified places also need to be computed
-        return ram_fin, [e for e in F.real_embeddings() if F.hilbert_symbol(a, b, e) == -1]
+        return ram_fin, [e for e in F.embeddings(AA) if F.hilbert_symbol(a, b, e) == -1]
 
     @cached_method
     def ramified_primes(self):
