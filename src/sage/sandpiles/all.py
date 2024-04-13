@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.sandpiles.sandpile', 'Sandpile')
@@ -9,3 +10,4 @@ lazy_import('sage.sandpiles.sandpile', 'wilmes_algorithm')
 lazy_import('sage.sandpiles.sandpile', 'triangle_sandpile')
 
 lazy_import('sage.sandpiles.examples', 'sandpiles')
+del lazy_import

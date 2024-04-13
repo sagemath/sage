@@ -1,9 +1,10 @@
+# sage_setup: distribution = sagemath-modules
 
-from .random_variable import (
-     DiscreteRandomVariable,
-     DiscreteProbabilitySpace )
+from sage.probability.random_variable import (
+    DiscreteRandomVariable,
+    DiscreteProbabilitySpace)
 
-from .probability_distribution import (
+from sage.probability.probability_distribution import (
     RealDistribution,
     SphericalDistribution,
-    GeneralDiscreteDistribution )
+    GeneralDiscreteDistribution)

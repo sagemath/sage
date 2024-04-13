@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Linear matroids
 
@@ -2882,48 +2883,6 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
     # Copying, loading, saving
 
-    def __copy__(self):
-        """
-        Create a shallow copy.
-
-        EXAMPLES::
-
-            sage: M = Matroid(Matrix(GF(7), [[1, 0, 0, 1, 1], [0, 1, 0, 1, 2],
-            ....:                                           [0, 0, 1, 1, 3]]))
-            sage: N = copy(M)  # indirect doctest
-            sage: M == N
-            True
-        """
-        cdef LinearMatroid N
-        if self._representation is not None:
-            N = LinearMatroid(groundset=self._E, matrix=self._representation, keep_initial_representation=True)
-        else:
-            rows, cols = self._current_rows_cols()
-            N = LinearMatroid(groundset=rows + cols, reduced_matrix=self._A)
-        N.rename(self.get_custom_name())
-        return N
-
-    def __deepcopy__(self, memo):
-        """
-        Create a deep copy.
-
-        EXAMPLES::
-
-            sage: M = Matroid(Matrix(GF(7), [[1, 0, 0, 1, 1], [0, 1, 0, 1, 2],
-            ....:                                           [0, 0, 1, 1, 3]]))
-            sage: N = deepcopy(M)  # indirect doctest
-            sage: M == N
-            True
-        """
-        cdef LinearMatroid N
-        if self._representation is not None:
-            N = LinearMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._representation, memo), keep_initial_representation=True)
-        else:
-            rows, cols = self._current_rows_cols()
-            N = LinearMatroid(groundset=deepcopy(rows + cols, memo), reduced_matrix=deepcopy(self._A, memo))
-        N.rename(deepcopy(self.get_custom_name(), memo))
-        return N
-
     def __reduce__(self):
         """
         Save the matroid for later reloading.
@@ -3931,55 +3890,6 @@ cdef class BinaryMatroid(LinearMatroid):
         """
         return True
 
-    def __copy__(self):
-        """
-        Create a shallow copy.
-
-        EXAMPLES::
-
-            sage: M = Matroid(Matrix(GF(2), [[1, 0, 0, 1, 1], [0, 1, 0, 1, 2],
-            ....:      [0, 0, 1, 1, 3]]))
-            sage: N = copy(M)  # indirect doctest
-            sage: M == N
-            True
-        """
-        cdef BinaryMatroid N
-        cdef list basis
-        if self._representation is not None:
-            N = BinaryMatroid(groundset=self._E, matrix=self._representation, keep_initial_representation=True)
-        else:
-            basis = [0] * self.full_rank()
-            for e in self.basis():
-                basis[self._prow[self._idx[e]]] = e
-            N = BinaryMatroid(groundset=self._E, matrix=self._A, basis=basis)
-        N.rename(self.get_custom_name())
-        return N
-
-    def __deepcopy__(self, memo):
-        """
-        Create a deep copy.
-
-        EXAMPLES::
-
-            sage: M = Matroid(Matrix(GF(2), [[1, 0, 0, 1, 1], [0, 1, 0, 1, 2],
-            ....:      [0, 0, 1, 1, 3]]))
-            sage: N = deepcopy(M)  # indirect doctest
-            sage: M == N
-            True
-        """
-        from copy import deepcopy
-        cdef BinaryMatroid N
-        cdef list basis
-        if self._representation is not None:
-            N = BinaryMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._representation, memo), keep_initial_representation=True)
-        else:
-            basis = [0] * self.full_rank()
-            for e in self.basis():
-                basis[self._prow[self._idx[e]]] = e
-            N = BinaryMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._A, memo), basis=deepcopy(basis, memo))
-        N.rename(deepcopy(self.get_custom_name(), memo))
-        return N
-
     def __reduce__(self):
         """
         Save the matroid for later reloading.
@@ -4821,55 +4731,6 @@ cdef class TernaryMatroid(LinearMatroid):
         """
         return True
 
-    def __copy__(self):
-        """
-        Create a shallow copy.
-
-        EXAMPLES::
-
-            sage: M = Matroid(Matrix(GF(3), [[1, 0, 0, 1, 1], [0, 1, 0, 1, 2],
-            ....:     [0, 0, 1, 1, 3]]))
-            sage: N = copy(M)  # indirect doctest
-            sage: M == N
-            True
-        """
-        cdef TernaryMatroid N
-        cdef list basis
-        if self._representation is not None:
-            N = TernaryMatroid(groundset=self._E, matrix=self._representation, keep_initial_representation=True)
-        else:
-            basis = [0] * self.full_rank()
-            for e in self.basis():
-                basis[self._prow[self._idx[e]]] = e
-            N = TernaryMatroid(groundset=self._E, matrix=self._A, basis=basis)
-        N.rename(self.get_custom_name())
-        return N
-
-    def __deepcopy__(self, memo):
-        """
-        Create a deep copy.
-
-        EXAMPLES::
-
-            sage: M = Matroid(Matrix(GF(3), [[1, 0, 0, 1, 1], [0, 1, 0, 1, 2],
-            ....:           [0, 0, 1, 1, -1]]))
-            sage: N = deepcopy(M)  # indirect doctest
-            sage: M == N
-            True
-        """
-        from copy import deepcopy
-        cdef TernaryMatroid N
-        cdef list basis
-        if self._representation is not None:
-            N = TernaryMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._representation, memo), keep_initial_representation=True)
-        else:
-            basis = [0] * self.full_rank()
-            for e in self.basis():
-                basis[self._prow[self._idx[e]]] = e
-            N = TernaryMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._A, memo), basis=deepcopy(basis, memo))
-        N.rename(deepcopy(self.get_custom_name(), memo))
-        return N
-
     def __reduce__(self):
         """
         Save the matroid for later reloading.
@@ -5549,55 +5410,6 @@ cdef class QuaternaryMatroid(LinearMatroid):
             True
         """
         return True
-
-    def __copy__(self):
-        """
-        Create a shallow copy.
-
-        EXAMPLES::
-
-            sage: M = Matroid(Matrix(GF(4, 'x'), [[1, 0, 0, 1, 1],                      # needs sage.rings.finite_rings
-            ....:        [0, 1, 0, 1, 2], [0, 0, 1, 1, 3]]))
-            sage: N = copy(M)  # indirect doctest                                       # needs sage.rings.finite_rings
-            sage: M == N                                                                # needs sage.rings.finite_rings
-            True
-        """
-        cdef QuaternaryMatroid N
-        cdef list basis
-        if self._representation is not None:
-            N = QuaternaryMatroid(groundset=self._E, matrix=self._representation, keep_initial_representation=True)
-        else:
-            basis = [0] * self.full_rank()
-            for e in self.basis():
-                basis[self._prow[self._idx[e]]] = e
-            N = QuaternaryMatroid(groundset=self._E, matrix=self._A, basis=basis)
-        N.rename(self.get_custom_name())
-        return N
-
-    def __deepcopy__(self, memo):
-        """
-        Create a deep copy.
-
-        EXAMPLES::
-
-            sage: M = Matroid(Matrix(GF(4, 'x'), [[1, 0, 0, 1, 1],                      # needs sage.rings.finite_rings
-            ....:               [0, 1, 0, 1, 2], [0, 0, 1, 1, -1]]))
-            sage: N = deepcopy(M)  # indirect doctest                                   # needs sage.rings.finite_rings
-            sage: M == N                                                                # needs sage.rings.finite_rings
-            True
-        """
-        from copy import deepcopy
-        cdef QuaternaryMatroid N
-        cdef list basis
-        if self._representation is not None:
-            N = QuaternaryMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._representation, memo), keep_initial_representation=True)
-        else:
-            basis = [0] * self.full_rank()
-            for e in self.basis():
-                basis[self._prow[self._idx[e]]] = e
-            N = QuaternaryMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._A, memo), basis=deepcopy(basis, memo))
-        N.rename(deepcopy(self.get_custom_name(), memo))
-        return N
 
     def __reduce__(self):
         """
@@ -6486,46 +6298,6 @@ cdef class RegularMatroid(LinearMatroid):
         return True
 
     # Copying, loading, saving
-
-    def __copy__(self):
-        """
-        Create a shallow copy.
-
-        EXAMPLES::
-
-            sage: M = matroids.catalog.R10()
-            sage: N = copy(M)  # indirect doctest
-            sage: M == N
-            True
-        """
-        cdef RegularMatroid N
-        if self._representation is not None:
-            N = RegularMatroid(groundset=self._E, matrix=self._representation, keep_initial_representation=True)
-        else:
-            rows, cols = self._current_rows_cols()
-            N = RegularMatroid(groundset=rows + cols, reduced_matrix=self._A)
-        N.rename(self.get_custom_name())
-        return N
-
-    def __deepcopy__(self, memo):
-        """
-        Create a deep copy.
-
-        EXAMPLES::
-
-            sage: M = matroids.catalog.R10()
-            sage: N = deepcopy(M)  # indirect doctest
-            sage: M == N
-            True
-        """
-        cdef RegularMatroid N
-        if self._representation is not None:
-            N = RegularMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._representation, memo), keep_initial_representation=True)
-        else:
-            rows, cols = self._current_rows_cols()
-            N = RegularMatroid(groundset=deepcopy(rows + cols, memo), reduced_matrix=deepcopy(self._A, memo))
-        N.rename(deepcopy(self.get_custom_name(), memo))
-        return N
 
     def __reduce__(self):
         """

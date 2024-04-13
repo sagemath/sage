@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 r"""
 TableauTuples
 
@@ -597,7 +598,7 @@ class TableauTuple(CombinatorialElement):
               6  7
               8  9
         """
-        return [t for t in self]
+        return list(self)
 
     def to_list(self):
         """
@@ -2371,9 +2372,8 @@ class TableauTuples(UniqueRepresentation, Parent):
              ([[3, 5], [4]], [[1, 2]])]
         """
         if self.is_finite():
-            return [y for y in self]
-        else:
-            raise NotImplementedError('this is an infinite set of tableaux')
+            return list(self)
+        raise NotImplementedError('this is an infinite set of tableaux')
 
 
 class TableauTuples_all(TableauTuples):
@@ -2666,7 +2666,7 @@ class TableauTuples_level_size(TableauTuples):
         if self.size() == 0:
             return self.element_class(self, [[] for _ in range(self.level())])
 
-        tab = [[[m for m in range(1, self.size() + 1)]]]
+        tab = [[list(range(1, self.size() + 1))]]
         for _ in range(self.level() - 1):
             tab.append([])
         return self.element_class(self, tab)

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 """
 Generic dual bases symmetric functions
@@ -292,7 +293,7 @@ class SymmetricFunctionAlgebra_dual(classical.SymmetricFunctionAlgebra_classical
         Return the name of the basis of ``self``.
 
         This is used for output and, for the classical bases of
-        symmetric functions, to connect this basis with Symmetrica.
+        symmetric functions, to connect this basis with :ref:`Symmetrica <spkg_symmetrica>`.
 
         EXAMPLES::
 

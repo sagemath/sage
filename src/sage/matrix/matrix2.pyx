@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Base class for matrices, part 2
 
@@ -9964,6 +9965,33 @@ cdef class Matrix(Matrix1):
         chi = self.charpoly()
         return chi.is_monomial()
 
+    def is_semisimple(self) -> bool:
+        r"""
+        Return if ``self`` is semisimple.
+
+        A (square) matrix `A` is *semisimple* if the
+        :meth:`minimal polynomial <minpoly>` of `A` is sqaure-free.
+
+        If `A` represents a linear map from `F^n \to F^n` for some field `F`,
+        then this is equivalent to every `A`-invariant subspace of `F^n`
+        has a complementary `A`-invariant subspace. This is also equivalent
+        to saying the matrix is diagonalizable over `\bar{F}`, the algebraic
+        closure of `F`.
+
+        EXAMPLES::
+
+            sage: A = matrix([[0, -1], [1, 0]]); A
+            [ 0 -1]
+            [ 1  0]
+            sage: A.is_semisimple()
+            True
+            sage: A.change_ring(QQ).is_diagonalizable()
+            False
+            sage: A.change_ring(CyclotomicField(4)).is_diagonalizable()
+            True
+        """
+        return self.minpoly().is_squarefree()
+
     def as_sum_of_permutations(self):
         r"""
         Returns the current matrix as a sum of permutation matrices
@@ -11659,6 +11687,95 @@ cdef class Matrix(Matrix1):
             return J, transformation_matrix
         else:
             return J
+
+    def jordan_decomposition(self):
+        r"""
+        Return the Jordan decomposition of ``self``.
+
+        The Jordan decomposition of a matrix `A` is a pair of
+        matrices `(S, N)` such that
+
+        - `A = S + N`,
+        - `S` is semisimple,
+        - `N` is nilpotent.
+
+        EXAMPLES::
+
+            sage: A = matrix(QQ, 5, 5, {(0,1): -1, (1,0): 1, (2,3): -1}); A
+            [ 0 -1  0  0  0]
+            [ 1  0  0  0  0]
+            [ 0  0  0 -1  0]
+            [ 0  0  0  0  0]
+            [ 0  0  0  0  0]
+            sage: S, N = A.jordan_decomposition()
+            sage: S
+            [ 0 -1  0  0  0]
+            [ 1  0  0  0  0]
+            [ 0  0  0  0  0]
+            [ 0  0  0  0  0]
+            [ 0  0  0  0  0]
+            sage: N
+            [ 0  0  0  0  0]
+            [ 0  0  0  0  0]
+            [ 0  0  0 -1  0]
+            [ 0  0  0  0  0]
+            [ 0  0  0  0  0]
+            sage: A == S + N
+            True
+            sage: S.is_semisimple()
+            True
+            sage: N.is_nilpotent()
+            True
+            sage: A.jordan_form()
+            Traceback (most recent call last):
+            ...
+            RuntimeError: Some eigenvalue does not exist in Rational Field.
+
+        TESTS::
+
+            sage: X = random_matrix(QQ, 4)
+            sage: S, N = X.jordan_decomposition()
+            sage: X == S + N
+            True
+            sage: S is X.jordan_decomposition()[0]  # result is cached
+            True
+            sage: N is X.jordan_decomposition()[1]  # result is cached
+            True
+            sage: A = matrix(ZZ, 5, 5, {(0,1): -1, (1,0): 1, (2,3): -1})
+            sage: A.jordan_decomposition()
+            Traceback (most recent call last):
+            ...
+            ValueError: unable to compute Jordan decomposition
+            sage: B = A.change_ring(RR)
+            sage: B.jordan_decomposition()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: Jordan decomposition not implemented over inexact rings
+        """
+        if not self.base_ring().is_exact():
+            raise NotImplementedError("Jordan decomposition not implemented over inexact rings")
+        JD = self.fetch('jordan_decomposition')
+        if JD is not None:
+            return JD
+        f = self.minpoly()
+        h = f // f.gcd(f.diff())
+        o, p, q = h.xgcd(h.diff())
+        if not o.is_one():
+            raise ValueError("unable to compute Jordan decomposition")
+        A = self
+        hq = h * q
+        # very bad bound, but requires no extra computation
+        # a better bound is the maximum multiplicity in the minpoly,
+        #   but this requires factoring the minpoly
+        for _ in range(self.nrows()):
+            if not h(A):
+                ret = (A, self - A)
+                ret[0].set_immutable()
+                ret[1].set_immutable()
+                self.cache('jordan_decomposition', ret)
+                return ret
+            A -= hq(A)
+        raise ValueError("Jordan decomposition does not exist")
 
     def diagonalization(self, base_field=None):
         """
