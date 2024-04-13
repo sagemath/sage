@@ -16,6 +16,7 @@ Representations of the Symmetric Group
 """
 # ****************************************************************************
 #       Copyright (C) 2009 Franco Saliola <saliola@gmail.com>
+#                     2024 Travis Scrimshaw <tcscrims at gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -1020,10 +1021,18 @@ def partition_to_vector_of_contents(partition, reverse=False):
 # #### Garsia-Procesi modules ################################################
 
 from sage.rings.quotient_ring import QuotientRing_generic
-from sage.combinat.specht_module import SymmetricGroupRepresentation
-class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricGroupRepresentation):
+from sage.combinat.specht_module import SymmetricGroupRepresentation as SymmetricGroupRepresentation_mixin
+class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricGroupRepresentation_mixin):
+    """
+    A Garsia-Procesi module.
+
+    Isomorphic to the cohomology ring of the Springer fiber.
+    """
     @staticmethod
     def __classcall_private__(cls, SGA, shape):
+        """
+        Normalize input to ensure a unique representation.
+        """
         return super().__classcall__(cls, SGA, Partition(shape))
 
     def __init__(self, SGA, shape):
@@ -1031,7 +1040,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
         Initialize ``self``.
         """
         self._shape = shape
-        SymmetricGroupRepresentation.__init__(self, SGA)
+        SymmetricGroupRepresentation_mixin.__init__(self, SGA)
 
         # Construct the Tanisaki ideal
         from sage.combinat.sf.sf import SymmetricFunctions
@@ -1057,26 +1066,44 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
         names = tuple([f"gp{i}" for i in range(n)])
         from sage.categories.commutative_rings import CommutativeRings
         from sage.categories.algebras import Algebras
-        cat = CommutativeRings().Quotients() & Algebras(SGA.base_ring()).WithBasis().FiniteDimensional()
+        cat = CommutativeRings().Quotients() & Algebras(SGA.base_ring()).Graded().WithBasis().FiniteDimensional()
         QuotientRing_generic.__init__(self, R, I, names=names, category=cat)
 
     def _repr_(self):
-        """
+        r"""
         Return a string representation of ``self``.
         """
-        return "Garsia-Procesi module of shape {} of {}".format(self._shape, self._semigroup_algebra)
+        return "Garsia-Procesi module of shape {} over {}".format(self._shape, self.base_ring())
+
+    def _latex_(self):
+        r"""
+        Return a latex representation of ``self``.
+
+        EXAMPLES::
+        """
+        from sage.misc.latex import latex
+        return "R_{{{}}}^{{{}}}".format(latex(self._shape), latex(self.base_ring()))
 
     def _coerce_map_from_base_ring(self):
+        r"""
+        Disable the coercion from the base ring from the category.
+        """
         return None  # don't need anything special
 
     @cached_method
     def basis(self):
+        r"""
+        Return a basis of ``self``.
+        """
         from sage.sets.family import Family
         B = self.defining_ideal().normal_basis()
         return Family([self.retract(b) for b in B])
 
     @cached_method
     def one_basis(self):
+        r"""
+        Return the index of the basis element `1`.
+        """
         B = self.defining_ideal().normal_basis()
         for i, b in enumerate(B):
             if b.is_one():
@@ -1094,22 +1121,93 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
         EXAMPLES::
 
             sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: Sym = SymmetricFunctions(QQ)
+            sage: s = Sym.s()
+            sage: Qp = Sym.hall_littlewood(1).Qp()
             sage: for la in Partitions(5):
             ....:     print(SGA.garsia_procesi_module(la).dimension(),
             ....:           sum(c * StandardTableaux(la).cardinality()
             ....:               for la, c in s(Qp[la])))
-            1, 1
-            5, 5
-            10, 10
-            20, 20
-            30, 30
-            60, 60
-            120, 120
+            1 1
+            5 5
+            10 10
+            20 20
+            30 30
+            60 60
+            120 120
         """
         return self.defining_ideal().vector_space_dimension()
 
+    @cached_method
+    def graded_frobenius_image(self):
+        r"""
+        Return the graded Frobenius image of ``self``.
+
+        The graded Frobenius image is the sum of the :meth:`frobenius_image`
+        of each graded component, which is known to result in the modified
+        Hall-Littlewood polynomial `\widetilde{H}_{\lambda}(x; q)`.
+
+        EXAMPLES::
+
+        We verify that the result is the modified Hall-Littlewood polynomial
+        for `n = 5`::
+
+            sage: R.<q> = QQ[]
+            sage: Sym = SymmetricFunctions(R)
+            sage: s = Sym.s()
+            sage: Qp = Sym.hall_littlewood(q).Qp()
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: for la in Partitions(5):
+            ....:     f = SGA.garsia_procesi_module(la).graded_frobenius_image()
+            ....:     d = f[la].degree()
+            ....:     assert f.map_coefficients(lambda c: R(c(~q)*q^d)) == s(Qp[la])
+        """
+        from sage.combinat.sf.sf import SymmetricFunctions
+        R = QQ['q']
+        q = R.gen()
+        Sym = SymmetricFunctions(R)
+        p = Sym.p()
+        s = Sym.s()
+        G = self._semigroup
+        CCR = [(elt, elt.cycle_type()) for elt in G.conjugacy_classes_representatives()]
+        B = self.basis()
+        return s(p._from_dict({la: coeff / la.centralizer_size() for elt, la in CCR
+                               if (coeff := sum(q**b.degree() * (elt * b).lift().monomial_coefficient(b.lift())
+                                                for b in B))},
+                              remove_zeros=False))
+
+    @cached_method
+    def graded_character(self):
+        r"""
+        Return the graded character of ``self``.
+
+        EXAMPLES::
+        """
+        q = QQ['q'].gen()
+        G = self._semigroup
+        from sage.modules.free_module_element import vector
+        return vector([sum(q**b.degree() * (g * b).lift().monomial_coefficient(b.lift()) for b in B)
+                       for g in G.conjugacy_classes_representatives()],
+                      immutable=True)
+
+    def graded_representation_matrix(self, elt, q=None):
+        r"""
+        Return the matrix corresponding to the left action of the symmetric
+        group (algebra) element ``elt`` on ``self``.
+
+        EXAMPLES::
+        """
+        if q is None:
+            q = self.base_ring()['q']
+        R = q.parent()
+        return matrix(R, [q**b.degree() * (elt * b).to_vector().change_ring(R)
+                          for b in self.basis()])
+
     class Element(QuotientRing_generic.Element):
         def _acted_upon_(self, scalar, self_on_left=True):
+            """
+            Return the action of ``scalar`` on ``self``.
+            """
             P = self.parent()
             if scalar in P.base_ring():
                 return super()._acted_upon_(scalar, self_on_left)
@@ -1124,6 +1222,9 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
             return super()._acted_upon_(scalar, self_on_left)
 
         def to_vector(self):
+            """
+            Return ``self`` as a (dense) free module vector.
+            """
             P = self.parent()
             B = P.basis()
             FM = P._dense_free_module()
@@ -1133,6 +1234,20 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
         _vector_ = to_vector
 
         def monomial_coefficients(self, copy=None):
+            """
+            Return the monomial coefficients of ``self``.
+            """
             B = self.parent().basis()
+            f = self.lift()
             return {i: f.monomial_coefficient(b.lift()) for i, b in enumerate(B)}
 
+        def degree(self):
+            return self.lift().degree()
+
+        def homogeneous_degree(self):
+            if not self:
+                raise ValueError("the zero element does not have a well-defined degree")
+            f = self.lift()
+            if not f.is_homogeneous():
+                raise ValueError("element is not homogeneous")
+            return f.degree()

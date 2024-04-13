@@ -123,7 +123,8 @@ class SymmetricGroupRepresentation:
         s = SymmetricFunctions(QQ).s()
         G = self._semigroup
         CCR = [(elt, elt.cycle_type()) for elt in G.conjugacy_classes_representatives()]
-        return s(p.sum(QQ(self.representation_matrix(elt).trace()) / la.centralizer_size() * p[la]
+        B = self.basis()
+        return s(p.sum(QQ(sum((elt * B[k])[k] for k in B.keys())) / la.centralizer_size() * p[la]
                        for elt, la in CCR))
 
     # TODO: Move these methods up to methods of general representations
@@ -208,7 +209,8 @@ class SymmetricGroupRepresentation:
             [ 1  1  1  1  1  1  1]
         """
         G = self._semigroup
-        chi = [self.representation_matrix(g).trace()
+        B = self.basis()
+        chi = [sum((g * B[k])[k] for k in B.keys())
                for g in G.conjugacy_classes_representatives()]
         try:
             return G.character(chi)
