@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 r"""
 Modular Decomposition
 
@@ -11,10 +12,10 @@ of undirected graphs.
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from enum import Enum
+from enum import Enum, IntEnum
 
 from sage.misc.lazy_import import lazy_import
 from sage.misc.random_testing import random_testing
@@ -22,7 +23,7 @@ from sage.misc.random_testing import random_testing
 lazy_import('sage.groups.perm_gps.permgroup_element', 'PermutationGroupElement')
 
 
-class NodeType(Enum):
+class NodeType(IntEnum):
     """
     NodeType is an enumeration class used to define the various types of nodes
     in modular decomposition tree.
@@ -45,7 +46,7 @@ class NodeType(Enum):
     NORMAL = 3
     FOREST = -1
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         String representation of this node type.
 

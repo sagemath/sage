@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 # distutils: libraries = NTL_LIBRARIES gmp m
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -1469,7 +1470,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                     shift = shift >> 1
                     i += 1
 
-    cdef pAdicZZpXCRElement _new_c(self, long relprec) noexcept:
+    cdef pAdicZZpXCRElement _new_c(self, long relprec):
         """
         Return a new element with the same parent as ``self`` and
         relative precision ``relprec``
@@ -1594,7 +1595,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         sig_off()
         return ans
 
-    cdef pAdicZZpXCRElement _lshift_c(self, long n) noexcept:
+    cdef pAdicZZpXCRElement _lshift_c(self, long n):
         """
         Multiplies ``self`` by the uniformizer raised to the power ``n``.  If
         ``n`` is negative, right shifts by ``-n``.
@@ -1661,7 +1662,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                 return ans
         return self._lshift_c(mpz_get_si((<Integer>shift).value))
 
-    cdef pAdicZZpXCRElement _rshift_c(self, long n) noexcept:
+    cdef pAdicZZpXCRElement _rshift_c(self, long n):
         """
         Divides self by the uniformizer raised to the power ``n``.  If
         parent is not a field, throws away the non-positive part of
@@ -1764,7 +1765,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                 return ans
         return self._rshift_c(mpz_get_si((<Integer>shift).value))
 
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         """
         Negation
 
@@ -2044,7 +2045,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         sig_off()
         return ans
 
-    cpdef _add_(self, _right) noexcept:
+    cpdef _add_(self, _right):
         """
         Compute the sum of ``self`` and ``right``.
 
@@ -2161,7 +2162,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                 ans.relprec = -ans.relprec
         return ans
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         Return the difference of two elements
 
@@ -2187,7 +2188,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         # For now, a simple implementation
         return self + (-right)
 
-    cpdef _mul_(self, _right) noexcept:
+    cpdef _mul_(self, _right):
         """
         Return the product of two elements
 
@@ -2240,7 +2241,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             sig_off()
         return ans
 
-    cpdef _div_(self, right) noexcept:
+    cpdef _div_(self, right):
         """
         Return the quotient of two elements
 
@@ -2384,7 +2385,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
                     ans = (self.ordp >= aprec)
         return ans
 
-    cpdef ntl_ZZ_pX _ntl_rep_unnormalized(self) noexcept:
+    cpdef ntl_ZZ_pX _ntl_rep_unnormalized(self):
         """
         Return an ``ntl_ZZ_pX`` holding the current unit part of this element
 
@@ -2413,7 +2414,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         ans.x = self.unit
         return ans
 
-    cpdef ntl_ZZ_pX _ntl_rep(self) noexcept:
+    cpdef ntl_ZZ_pX _ntl_rep(self):
         """
         Return an ``ntl_ZZ_pX`` that holds the unit part of this element
 
@@ -2434,7 +2435,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         self._normalize()
         return self._ntl_rep_unnormalized()
 
-    cpdef _ntl_rep_abs(self) noexcept:
+    cpdef _ntl_rep_abs(self):
         """
         Return a pair ``(f, k)`` where ``f`` is an ``ntl_ZZ_pX`` and ``k`` is a
         non-positive integer such that ``self = f(self.parent.gen())*p^k``
@@ -2620,7 +2621,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
 #        """
 #        raise NotImplementedError
 
-    cpdef pAdicZZpXCRElement lift_to_precision(self, absprec=None) noexcept:
+    cpdef pAdicZZpXCRElement lift_to_precision(self, absprec=None):
         """
         Return a ``pAdicZZpXCRElement`` congruent to this element but with
         absolute precision at least ``absprec``.
@@ -3168,7 +3169,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
         self._normalize()
         return self.ordp
 
-    cpdef pAdicZZpXCRElement unit_part(self) noexcept:
+    cpdef pAdicZZpXCRElement unit_part(self):
         """
         Return the unit part of this element, ie ``self / uniformizer^(self.valuation())``.
 
@@ -3206,7 +3207,7 @@ cdef class pAdicZZpXCRElement(pAdicZZpXElement):
             ans.unit = self.unit
         return ans
 
-    cdef ext_p_list(self, bint pos) noexcept:
+    cdef ext_p_list(self, bint pos):
         """
         Return a list of integers (in the Eisenstein case) or a list
         of lists of integers (in the unramified case).  ``self`` can be

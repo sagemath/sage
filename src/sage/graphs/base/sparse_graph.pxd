@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # ****************************************************************************
 #       Copyright (C) 2008-2009 Robert L. Miller <rlmillster@gmail.com>
 #
@@ -70,5 +71,5 @@ cdef class SparseGraphBackend(CGraphBackend):
     cdef int edge_labels_max
     cdef list edge_labels_available_ids
     cdef SparseGraph _cg
-    cdef inline CGraph cg(self) noexcept:
+    cdef inline CGraph cg(self):
         return <CGraph> self._cg

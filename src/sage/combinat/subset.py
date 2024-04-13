@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Subsets
 
@@ -741,7 +742,8 @@ class Subsets_sk(Subsets_s):
         if self._k > self._s.cardinality():
             raise EmptySetError
 
-        return self.element_class([i for i in itertools.islice(reversed(self._s), int(self._k))])
+        return self.element_class(list(itertools.islice(reversed(self._s),
+                                                        int(self._k))))
 
     def _fast_iterator(self):
         r"""

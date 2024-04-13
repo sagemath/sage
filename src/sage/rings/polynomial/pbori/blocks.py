@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-brial
 import sys
 from itertools import chain, islice
 

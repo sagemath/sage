@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs primecountpy
 r"""
 Counting primes
@@ -210,7 +211,7 @@ cdef class PrimePi(BuiltinFunction):
 prime_pi = PrimePi()
 
 
-cpdef Integer legendre_phi(x, a) noexcept:
+cpdef Integer legendre_phi(x, a):
     r"""
     Legendre's formula, also known as the partial sieve function, is a useful
     combinatorial function for computing the prime counting function (the

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 """
 Abelian Monoid Elements
 
@@ -263,7 +264,7 @@ cdef class FreeAbelianMonoidElement(MonoidElement):
             s = "1"
         return s
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Rich comparison.
 

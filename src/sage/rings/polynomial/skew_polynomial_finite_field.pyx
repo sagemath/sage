@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.combinat sage.rings.finite_rings
 r"""
 Univariate dense skew polynomials over finite fields
@@ -44,7 +45,7 @@ from sage.combinat.q_analogues import q_jordan
 
 
 cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
-    cdef inline _reduced_norm_factored(self) noexcept:
+    cdef inline _reduced_norm_factored(self):
         """
         Return the reduced norm of this polynomial factorized in the center.
         """
@@ -213,7 +214,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
     # Finding divisors
     # ----------------
 
-    cdef SkewPolynomial_finite_field_dense _rdivisor_c(self, N) noexcept:
+    cdef SkewPolynomial_finite_field_dense _rdivisor_c(self, N):
         r"""
         Return a right divisor of this skew polynomial whose
         reduced norm is `N`.
@@ -748,7 +749,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
     # Finding factorizations
     # ----------------------
 
-    cdef _factor_c(self) noexcept:
+    cdef _factor_c(self):
         r"""
         Compute a factorization of ``self``.
 
@@ -819,7 +820,7 @@ cdef class SkewPolynomial_finite_field_dense(SkewPolynomial_finite_order_dense):
         factors.reverse()
         return Factorization(factors, sort=False, unit=unit)
 
-    cdef _factor_uniform_c(self) noexcept:
+    cdef _factor_uniform_c(self):
         r"""
         Compute a uniformly distributed factorization of ``self``.
 

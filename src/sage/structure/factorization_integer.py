@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 "IntegerFactorization objects"
 
 from sage.structure.factorization import Factorization

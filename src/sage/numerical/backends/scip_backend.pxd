@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 #*****************************************************************************
 #       Copyright (C) 2017 Matthias Koeppe <mkoeppe@math.ucdavis.edu>
 #
@@ -16,6 +17,6 @@ cdef class SCIPBackend(GenericBackend):
     cdef object variables
     cdef object constraints
 
-    cpdef _get_model(self) noexcept
-    cpdef get_row_prim(self, int i) noexcept
-    cpdef write_cip(self, filename) noexcept
+    cpdef _get_model(self)
+    cpdef get_row_prim(self, int i)
+    cpdef write_cip(self, filename)

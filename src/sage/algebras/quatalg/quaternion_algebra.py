@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-singular
 """
 Quaternion Algebras
 
@@ -756,8 +757,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
             sage: for d in ( m for m in range(1, 750) if is_squarefree(m) ):        # long time (3s)
             ....:     A = QuaternionAlgebra(d)
-            ....:     R = A.maximal_order(take_shortcuts=False)
-            ....:     assert A.discriminant() == R.discriminant()
+            ....:     assert A.maximal_order(take_shortcuts=False).is_maximal()
 
         We do not support number fields other than the rationals yet::
 
@@ -767,9 +767,24 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             ...
             NotImplementedError: maximal order only implemented
             for rational quaternion algebras
+
+        TESTS:
+
+        Check that :issue:`37417` and the first part of :issue:`37217` are fixed::
+
+            sage: invars = [(-4, -28), (-292, -732), (-48, -564), (-436, -768),
+            ....:           (-752, -708), (885, 545), (411, -710), (-411, 593),
+            ....:           (805, -591), (-921, 353), (409, 96), (394, 873),
+            ....:           (353, -722), (730, 830), (-466, -427), (-213, -630),
+            ....:           (-511, 608), (493, 880), (105, -709), (-213, 530),
+            ....:           (97, 745)]
+            sage: all(QuaternionAlgebra(a, b).maximal_order().is_maximal()
+            ....:           for (a, b) in invars)
+            True
         """
         if self.base_ring() != QQ:
-            raise NotImplementedError("maximal order only implemented for rational quaternion algebras")
+            raise NotImplementedError("maximal order only implemented for "
+                                      "rational quaternion algebras")
 
         d_A = self.discriminant()
 
@@ -812,15 +827,17 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         # The following code should always work (over QQ)
         # Start with <1,i,j,k>
-        R = self.quaternion_order((1,) + self.gens())
+        order_basis = (self.one(),) + self.gens()
+        R = self.quaternion_order(order_basis)
         d_R = R.discriminant()
 
         e_new_gens = []
 
         # For each prime at which R is not yet maximal, make it bigger
         for p, _ in d_R.factor():
-            e = R.basis()
-            while self.quaternion_order(e).discriminant().valuation(p) > d_A.valuation(p):
+            e = order_basis
+            disc = d_R
+            while disc.valuation(p) > d_A.valuation(p):
                 # Compute a normalized basis at p
                 f = normalize_basis_at_p(list(e), p)
 
@@ -893,13 +910,18 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
                             e_n = basis_for_quaternion_lattice(list(e) + e_n[1:], reverse=True)
 
                 # e_n now contains elements that locally at p give a bigger order,
-                # but the basis may be messed up at other primes (it might not even
-                # be an order). We will join them all together at the end
+                # but the basis may be messed up at other primes (it might not
+                # even be an order). We will join them all together at the end
                 e = e_n
+
+                # Since e might not define an order at this point, we need to
+                # manually calculate the updated discriminant
+                L = [[x.pair(y) for y in e] for x in e]
+                disc = matrix(QQ, 4, 4, L).determinant().sqrt()
 
             e_new_gens.extend(e[1:])
 
-        e_new = basis_for_quaternion_lattice(list(R.basis()) + e_new_gens, reverse=True)
+        e_new = basis_for_quaternion_lattice(list(order_basis) + e_new_gens, reverse=True)
         return self.quaternion_order(e_new)
 
     def order_with_level(self, level):
@@ -1190,9 +1212,12 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         if not is_RationalField(self.base_ring()):
             raise ValueError("base field must be the rational numbers")
 
-        return sorted([p for p in set([2]).union(prime_divisors(self._a.numerator()),
-                prime_divisors(self._a.denominator()), prime_divisors(self._b.numerator()),
-                prime_divisors(self._b.denominator())) if hilbert_symbol(self._a, self._b, p) == -1])
+        a, b = self._a, self._b
+        return sorted(p for p in {2}.union(prime_divisors(a.numerator()),
+                                           prime_divisors(a.denominator()),
+                                           prime_divisors(b.numerator()),
+                                           prime_divisors(b.denominator()))
+                      if hilbert_symbol(self._a, self._b, p) == -1)
 
     def is_isomorphic(self, A) -> bool:
         """
@@ -1894,8 +1919,9 @@ class QuaternionOrder(Parent):
             sage: type(S.discriminant())
             <... 'sage.rings.rational.Rational'>
         """
-        L = [[d.pair(e) for e in self.basis()] for d in self.basis()]
-        return (MatrixSpace(QQ, 4, 4)(L)).determinant().sqrt()
+        e = self.basis()
+        L = [[x.pair(y) for y in e] for x in e]
+        return matrix(QQ, 4, 4, L).determinant().sqrt()
 
     def is_maximal(self) -> bool:
         r"""
@@ -3909,7 +3935,18 @@ def normalize_basis_at_p(e, p, B=QuaternionAlgebraElement_abstract.pair):
         sage: e = [A(1), k, j, 1/2 + 1/2*i + 1/2*j + 1/2*k]
         sage: normalize_basis_at_p(e, 2)
         [(1, 0), (1/2 + 1/2*i + 1/2*j + 1/2*k, 0), (-34/105*i - 463/735*j + 71/105*k, 1),
-         (-34/105*i - 463/735*j + 71/105*k, 1)]
+         (1/7*i - 8/49*j + 1/7*k, 1)]
+
+    TESTS:
+
+    We check that the second part of :issue:`37217` is fixed::
+
+        sage: A.<i,j,k> = QuaternionAlgebra(-1,-7)
+        sage: e = [A(1), k, j, 1/2 + 1/2*i + 1/2*j + 1/2*k]
+        sage: e_norm = normalize_basis_at_p(e, 2)
+        sage: V = QQ**4
+        sage: V.span([V(x.coefficient_tuple()) for (x,_) in e_norm]).dimension()
+        4
     """
 
     N = len(e)
@@ -3957,8 +3994,7 @@ def normalize_basis_at_p(e, p, B=QuaternionAlgebraElement_abstract.pair):
 
             # Ensures that (B(f0,f0)/2).valuation(p) <= B(f0,f1).valuation(p)
             if B(f0, f1).valuation(p) + 1 < B(f0, f0).valuation(p):
-                f0 += f1
-                f1 = f0
+                f0, f1 = f0 + f1, f0
 
             # Make remaining vectors orthogonal to span of f0, f1
             e[min_m] = e[0]
@@ -3971,7 +4007,7 @@ def normalize_basis_at_p(e, p, B=QuaternionAlgebraElement_abstract.pair):
             tu = [(B01 * B(f1, e[l]) - B11 * B(f0, e[l]),
                    B01 * B(f0, e[l]) - B00 * B(f1, e[l])) for l in range(2, N)]
 
-            e[2:n] = [e[l] + tu[l-2][0]/d * f0 + tu[l-2][1]/d * f1 for l in range(2, N)]
+            e[2:N] = [e[l] + tu[l-2][0]/d * f0 + tu[l-2][1]/d * f1 for l in range(2, N)]
 
             # Recursively normalize remaining vectors
             f = normalize_basis_at_p(e[2:N], p)
