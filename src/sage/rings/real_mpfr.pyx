@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Arbitrary precision floating point real numbers using GNU MPFR
 
