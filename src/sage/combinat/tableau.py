@@ -1911,7 +1911,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         if not self.is_rectangular():
             raise TypeError("the tableau must be rectangular to use vertical_flip()")
 
-        return Tableau([row for row in reversed(self)])
+        return Tableau(list(reversed(self)))
 
     def rotate_180(self):
         """
@@ -1927,7 +1927,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
         if not self.is_rectangular():
             raise TypeError("the tableau must be rectangular to use rotate_180()")
 
-        return Tableau([[rline for rline in reversed(row)] for row in reversed(self)])
+        return Tableau([list(reversed(row)) for row in reversed(self)])
 
     def cells(self):
         """
@@ -2448,7 +2448,7 @@ class Tableau(ClonableList, metaclass=InheritComparisonClasscallMetaclass):
             [[1, 3], [2, 5], [4]]
         """
         if left:
-            w = [i for i in reversed(w)]
+            w = list(reversed(w))
         res = self
         for i in w:
             res = res.schensted_insert(i, left=left)
@@ -7562,7 +7562,7 @@ class RowStandardTableaux_shape(RowStandardTableaux):
             sage: RowStandardTableaux([]).cardinality()
             1
         """
-        return Integer(multinomial([m for m in self.shape]))
+        return Integer(multinomial(list(self.shape)))
 
 
 ########################
@@ -7955,7 +7955,7 @@ class StandardTableaux_size(StandardTableaux, DisjointUnionEnumeratedSets):
         matching = PerfectMatchings(set(range(1, self.size + 1))
                                     - set(fixed_point_positions)).random_element()
         permutation_cycle_rep = ([(fixed_point,) for fixed_point in fixed_point_positions]
-                                 + [(a, b) for a, b in matching])
+                                 + list(matching))
         return from_cycles(self.size, permutation_cycle_rep).robinson_schensted()[0]
 
 
@@ -8199,7 +8199,7 @@ class StandardTableaux_shape(StandardTableaux):
              [[1, 2, 4], [3, 5], [6]],
              [[1, 2, 3], [4, 5], [6]]]
         """
-        return [y for y in self]
+        return list(self)
 
     def random_element(self):
         """

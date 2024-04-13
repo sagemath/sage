@@ -4280,7 +4280,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             # TODO, some day: accept an iterator
             if isinstance(element, (tuple, list, range)):
                 # Action by a (reduced) word
-                the_word = [x for x in element]
+                the_word = list(element)
                 I = self.parent().index_set()
                 if not all(i in I for i in the_word):
                     raise ValueError("Not all members of %s are in the index set of the %s" % (element, self.parent()))
