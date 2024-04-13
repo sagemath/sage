@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 Plane curves
 """
@@ -19,11 +20,12 @@ Plane curves
 #
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
+
 from sage.misc.lazy_import import lazy_import
 
-from .constructor import Curve
+from sage.schemes.curves.constructor import Curve
 
-from .projective_curve import Hasse_bounds
+from sage.schemes.curves.projective_curve import Hasse_bounds
 
 lazy_import('sage.schemes.curves.plane_curve_arrangement', 'PlaneCurveArrangements')
 

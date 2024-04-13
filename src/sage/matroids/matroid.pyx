@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-modules
 r"""
 The abstract Matroid class
 
@@ -516,6 +516,98 @@ cdef class Matroid(SageObject):
             NotImplementedError: subclasses need to implement this.
         """
         raise NotImplementedError("subclasses need to implement this.")
+
+    # copying
+
+    def __copy__(self):
+        """
+        Create a shallow copy.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.advanced import *
+            sage: matroids_lst = [
+            ....:     BasisMatroid(matroids.catalog.Vamos()),
+            ....:     CircuitsMatroid(matroids.catalog.Vamos()),
+            ....:     CircuitClosuresMatroid(matroids.catalog.Vamos()),
+            ....:     Matroid(groundset=range(10), rank_function=lambda X: min(len(X), 4)),
+            ....:     Matroid(Matrix(GF(7), [[1,0,0,1,1],[0,1,0,1,2],[0,0,1,1,3]])),
+            ....:     Matroid(Matrix(GF(2), [[1,0,0,1,1],[0,1,0,1,2],[0,0,1,1,3]])),
+            ....:     Matroid(Matrix(GF(3), [[1,0,0,1,1],[0,1,0,1,2],[0,0,1,1,3]])),
+            ....:     Matroid(Matrix(GF(4, 'x'), [[1,0,0,1,1],[0,1,0,1,2],[0,0,1,1,3]])),
+            ....:     matroids.catalog.R10()
+            ....: ]
+            sage: for M in matroids_lst:  # indirect doctest
+            ....:     N = copy(M)
+            ....:     assert M == N
+            ....:     assert M.groundset() is N.groundset()
+
+            sage: M = Matroid(graphs.PappusGraph())
+            sage: N = copy(M)
+            sage: M == N
+            True
+            sage: M._G is N._G
+            True
+
+            sage: M = MinorMatroid(matroid=matroids.catalog.Vamos(),
+            ....:                  contractions={'a', 'b'}, deletions={'f'})
+            sage: N = copy(M)  # indirect doctest
+            sage: M == N
+            True
+            sage: M._matroid is N._matroid
+            True
+
+            sage: from sage.matroids.lean_matrix import *
+            sage: A = GenericMatrix(2, 5, Matrix(GF(5), [[1, 0, 1, 1, 1], [0, 1, 1, 2, 3]]))
+            sage: A == copy(A)  # indirect doctest
+            True
+        """
+        return self
+
+    def __deepcopy__(self, memo=None):
+        """
+        Create a deep copy.
+
+        EXAMPLES::
+
+            sage: from sage.matroids.advanced import *
+            sage: matroids_lst = [
+            ....:     BasisMatroid(matroids.catalog.Vamos()),
+            ....:     CircuitsMatroid(matroids.catalog.Vamos()),
+            ....:     CircuitClosuresMatroid(matroids.catalog.Vamos()),
+            ....:     Matroid(groundset=range(10), rank_function=lambda X: min(len(X), 4)),
+            ....:     Matroid(Matrix(GF(7), [[1,0,0,1,1],[0,1,0,1,2],[0,0,1,1,3]])),
+            ....:     Matroid(Matrix(GF(2), [[1,0,0,1,1],[0,1,0,1,2],[0,0,1,1,3]])),
+            ....:     Matroid(Matrix(GF(3), [[1,0,0,1,1],[0,1,0,1,2],[0,0,1,1,3]])),
+            ....:     Matroid(Matrix(GF(4, 'x'), [[1,0,0,1,1],[0,1,0,1,2],[0,0,1,1,3]])),
+            ....:     matroids.catalog.R10()
+            ....: ]
+            sage: for M in matroids_lst:  # indirect doctest
+            ....:     N = deepcopy(M)
+            ....:     assert M == N
+            ....:     assert M.groundset() is N.groundset()
+
+            sage: M = Matroid(graphs.PappusGraph())
+            sage: N = deepcopy(M)
+            sage: M == N
+            True
+            sage: M._G is N._G
+            True
+
+            sage: M = MinorMatroid(matroid=matroids.catalog.Vamos(),
+            ....:                  contractions={'a', 'b'}, deletions={'f'})
+            sage: N = deepcopy(M)  # indirect doctest
+            sage: M == N
+            True
+            sage: M._matroid is N._matroid
+            True
+
+            sage: from sage.matroids.lean_matrix import *
+            sage: A = GenericMatrix(2, 5, Matrix(GF(5), [[1, 0, 1, 1, 1], [0, 1, 1, 2, 3]]))
+            sage: A == deepcopy(A)  # indirect doctest
+            True
+        """
+        return self
 
     # internal methods, assuming verified input
 
