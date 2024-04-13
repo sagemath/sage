@@ -497,14 +497,14 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             Traceback (most recent call last):
             ...
             ValueError: index (=9) must be >= 1 and <= deg(a)*rank (=4)
-            sage: M.coefficient_form(1, 1/T)
+            sage: M.coefficient_form(1, 1/(T+1))
             Traceback (most recent call last):
             ...
-            ValueError: a should be in the ring of regular functions
-            sage: M.coefficient_form(1, x)
+            ValueError: a must be an integral element
+            sage: M.coefficient_form(1, 'x')
             Traceback (most recent call last):
             ...
-            TypeError: a should be an element of the base ring
+            TypeError: unable to convert a to an element in Fq[T]
         """
         i = ZZ(i)
         if a is None:
@@ -513,14 +513,12 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
                                  f"(={self.rank()})")
             return self._generator_coefficient_form(i)
         try:
-            K = self._base_ring
-            T = K.gen()
-            a = K(a)
+            A = self._base_ring.base()
+            a = A(a)
         except TypeError:
-            raise TypeError("a should be an element of the base ring")
-        if a.valuation(T) < 0:
-            raise ValueError("a should be in the ring of regular functions")
-        a = a.numerator()
+            raise TypeError("unable to convert a to an element in Fq[T]")
+        except ValueError:
+            raise ValueError("a must be an integral element")
         if i < 1 or i > a.degree()*self.rank():
             raise ValueError(f"index (={i}) must be >= 1 and <= deg(a)*rank "
                              f"(={a.degree()*self.rank()})")
@@ -570,11 +568,11 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             sage: M.coefficient_forms(1/T)
             Traceback (most recent call last):
             ...
-            ValueError: a should be in the ring of regular functions
-            sage: M.coefficient_forms(x)
+            ValueError: a must be an integral element
+            sage: M.coefficient_forms('x')
             Traceback (most recent call last):
             ...
-            TypeError: a should be an element of the base ring
+            TypeError: unable to convert a to an element in Fq[T]
         """
         K = self._base_ring
         T = K.gen()
@@ -582,11 +580,12 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             return [self._generator_coefficient_form(i)
                     for i in range(1, self.rank() + 1)]
         try:
-            a = K(a)
+            A = self._base_ring.base()
+            a = A(a)
         except TypeError:
-            raise TypeError("a should be an element of the base ring")
-        if a.valuation(T) < 0:
-            raise ValueError("a should be in the ring of regular functions")
+            raise TypeError("unable to convert a to an element in Fq[T]")
+        except ValueError:
+            raise ValueError("a must be an integral element")
         return self._coefficient_forms(a)
 
     def gen(self, n):
