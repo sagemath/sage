@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Circuit closures matroids
 
@@ -46,15 +47,6 @@ Note that the class does not implement custom minor and dual operations::
 AUTHORS:
 
 - Rudi Pendavingh, Stefan van Zwam (2013-04-01): initial version
-
-TESTS::
-
-    sage: from sage.matroids.advanced import *
-    sage: M = CircuitClosuresMatroid(matroids.catalog.Fano())
-    sage: TestSuite(M).run()
-
-Methods
-=======
 """
 # ****************************************************************************
 #       Copyright (C) 2013 Rudi Pendavingh <rudi.pendavingh@gmail.com>
@@ -131,7 +123,8 @@ cdef class CircuitClosuresMatroid(Matroid):
         True
     """
 
-    # NECESSARY
+    # necessary
+
     def __init__(self, M=None, groundset=None, circuit_closures=None):
         """
         Initialization of the matroid. See class docstring for full
@@ -154,6 +147,12 @@ cdef class CircuitClosuresMatroid(Matroid):
             ....:                          4: ['abcdefgh']})
             sage: M.equals(matroids.catalog.P8())
             True
+
+        TESTS::
+
+            sage: from sage.matroids.advanced import *
+            sage: M = CircuitClosuresMatroid(matroids.catalog.Fano())
+            sage: TestSuite(M).run()
         """
         if M is not None:
             self._groundset = M.groundset()
@@ -165,7 +164,7 @@ cdef class CircuitClosuresMatroid(Matroid):
                 self._circuit_closures[k] = frozenset([frozenset(X) for X in circuit_closures[k]])
         self._matroid_rank = self.rank(self._groundset)
 
-    cpdef groundset(self) noexcept:
+    cpdef groundset(self):
         """
         Return the groundset of the matroid.
 
@@ -183,7 +182,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         """
         return frozenset(self._groundset)
 
-    cpdef _rank(self, X) noexcept:
+    cpdef _rank(self, X):
         """
         Return the rank of a set ``X``.
 
@@ -206,8 +205,9 @@ cdef class CircuitClosuresMatroid(Matroid):
         """
         return len(self._max_independent(X))
 
-    # OPTIONAL, OPTIMIZED FOR THIS CLASS
-    cpdef full_rank(self) noexcept:
+    # optional
+
+    cpdef full_rank(self):
         r"""
         Return the rank of the matroid.
 
@@ -228,7 +228,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         """
         return self._matroid_rank
 
-    cpdef _is_independent(self, F) noexcept:
+    cpdef _is_independent(self, F):
         """
         Test if input is independent.
 
@@ -258,7 +258,7 @@ cdef class CircuitClosuresMatroid(Matroid):
                     return False
         return True
 
-    cpdef _max_independent(self, F) noexcept:
+    cpdef _max_independent(self, F):
         """
         Compute a maximal independent subset.
 
@@ -295,7 +295,7 @@ cdef class CircuitClosuresMatroid(Matroid):
 
         return frozenset(I)
 
-    cpdef _circuit(self, F) noexcept:
+    cpdef _circuit(self, F):
         """
         Return a minimal dependent subset.
 
@@ -328,7 +328,7 @@ cdef class CircuitClosuresMatroid(Matroid):
                     return frozenset(S)
         raise ValueError("no circuit in independent set")
 
-    cpdef circuit_closures(self) noexcept:
+    cpdef circuit_closures(self):
         """
         Return the list of closures of circuits of the matroid.
 
@@ -362,7 +362,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         """
         return self._circuit_closures
 
-    cpdef _is_isomorphic(self, other, certificate=False) noexcept:
+    cpdef _is_isomorphic(self, other, certificate=False):
         """
         Test if ``self`` is isomorphic to ``other``.
 
@@ -413,7 +413,8 @@ cdef class CircuitClosuresMatroid(Matroid):
                 SN.append(C)
         return SM._isomorphism(SN) is not None
 
-    # REPRESENTATION
+    # representation
+
     def _repr_(self):
         """
         Return a string representation of the matroid.
@@ -430,7 +431,7 @@ cdef class CircuitClosuresMatroid(Matroid):
         """
         return Matroid._repr_(self) + " with circuit-closures\n" + setprint_s(self._circuit_closures)
 
-    # COMPARISON
+    # comparison
 
     def __hash__(self):
         r"""
@@ -490,52 +491,7 @@ cdef class CircuitClosuresMatroid(Matroid):
             return rich_to_bool(op, 1)
         return richcmp(lt._circuit_closures, rt._circuit_closures, op)
 
-    # COPYING, LOADING, SAVING
-
-    def __copy__(self):
-        """
-        Create a shallow copy.
-
-        EXAMPLES::
-
-            sage: M = matroids.catalog.Vamos()
-            sage: N = copy(M)  # indirect doctest
-            sage: M == N
-            True
-            sage: M.groundset() is N.groundset()
-            True
-        """
-        N = CircuitClosuresMatroid(groundset=[], circuit_closures={})
-        N._groundset = self._groundset
-        N._circuit_closures = self._circuit_closures
-        N._matroid_rank = self._matroid_rank
-        N.rename(self.get_custom_name())
-        return N
-
-    def __deepcopy__(self, memo=None):
-        """
-        Create a deep copy.
-
-        .. NOTE::
-
-            Since matroids are immutable, a shallow copy normally suffices.
-
-        EXAMPLES::
-
-            sage: M = matroids.catalog.Vamos()
-            sage: N = deepcopy(M)  # indirect doctest
-            sage: M == N
-            True
-            sage: M.groundset() is N.groundset()
-            False
-        """
-        if memo is None:
-            memo = {}
-        from copy import deepcopy
-        # Since matroids are immutable, N cannot reference itself in correct code, so no need to worry about the recursion.
-        N = CircuitClosuresMatroid(groundset=deepcopy(self._groundset, memo), circuit_closures=deepcopy(self._circuit_closures, memo))
-        N.rename(deepcopy(self.get_custom_name(), memo))
-        return N
+    # copying, loading, saving
 
     def __reduce__(self):
         """

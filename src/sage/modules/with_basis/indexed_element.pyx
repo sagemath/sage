@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-modules
 r"""
 An element in an indexed free module
 
@@ -15,7 +15,7 @@ AUTHORS:
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
 from sage.structure.element cimport parent
@@ -228,7 +228,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         """
         return self
 
-    cpdef dict monomial_coefficients(self, bint copy=True) noexcept:
+    cpdef dict monomial_coefficients(self, bint copy=True):
         """
         Return the internal dictionary which has the combinatorial objects
         indexing the basis as keys and their corresponding coefficients as
@@ -372,6 +372,16 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: E2 = L.exterior_power(2)
             sage: ascii_art(E2.an_element())
             2*()/\(5,6,7) + 2*()/\(5,7,6) + 3*()/\(1,2)(3,4)
+
+        We can also get the ascii art when ``one_basis``
+        is ``NotImplemented``::
+
+            sage: TL = TemperleyLiebAlgebra(8, -1, QQ)
+            sage: C = TL.cellular_basis()
+            sage: ascii_art(list(C.basis())[0])
+            C
+             (     .-. .-. .-. .-.   .-. .-. .-. .-. )
+             ( 0,  o o o o o o o o,  o o o o o o o o )
         """
         from sage.misc.repr import coeff_repr
         terms = self._sorted_items_for_printing()
@@ -390,8 +400,8 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         one_basis = None
         try:
-            if self.parent().one_basis is not NotImplemented:
-                one_basis = self.parent().one_basis()
+            if self._parent.one_basis is not NotImplemented:
+                one_basis = self._parent.one_basis()
         except (AttributeError, NotImplementedError, ValueError, TypeError):
             pass
 
@@ -457,6 +467,16 @@ cdef class IndexedFreeModuleElement(ModuleElement):
             sage: E2 = L.exterior_power(2)
             sage: unicode_art(E2.an_element())
             2*()∧(5,6,7) + 2*()∧(5,7,6) + 3*()∧(1,2)(3,4)
+
+        We can also get the unicode art when ``one_basis``
+        is ``NotImplemented``::
+
+            sage: TL = TemperleyLiebAlgebra(8, -1, QQ)
+            sage: C = TL.cellular_basis()
+            sage: unicode_art(list(C.basis())[0])
+            C
+             ⎛     ╭─╮ ╭─╮ ╭─╮ ╭─╮   ╭─╮ ╭─╮ ╭─╮ ╭─╮ ⎞
+             ⎝ 0,  ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬,  ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⎠
         """
         from sage.misc.repr import coeff_repr
         terms = self._sorted_items_for_printing()
@@ -475,8 +495,8 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
         one_basis = None
         try:
-            if self.parent().one_basis is not NotImplemented:
-                one_basis = self.parent().one_basis()
+            if self._parent.one_basis is not NotImplemented:
+                one_basis = self._parent.one_basis()
         except (AttributeError, NotImplementedError, ValueError, TypeError):
             pass
 
@@ -563,7 +583,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                             repr_monomial = self._parent._latex_term,
                             is_latex=True, strip_one=True)
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         """
         Rich comparison for equal parents.
 
@@ -673,7 +693,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         w = sorted(elt._monomial_coefficients.items())
         return richcmp(v, w, op)
 
-    cpdef _add_(self, other) noexcept:
+    cpdef _add_(self, other):
         """
         EXAMPLES::
 
@@ -696,7 +716,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                           add(self._monomial_coefficients,
                               (<IndexedFreeModuleElement>other)._monomial_coefficients))
 
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         """
         EXAMPLES::
 
@@ -714,7 +734,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         """
         return type(self)(self._parent, negate(self._monomial_coefficients))
 
-    cpdef _sub_(self, other) noexcept:
+    cpdef _sub_(self, other):
         """
         EXAMPLES::
 
@@ -853,7 +873,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
 
     to_vector = _vector_
 
-    cpdef _acted_upon_(self, scalar, bint self_on_left) noexcept:
+    cpdef _acted_upon_(self, scalar, bint self_on_left):
         """
         Return the action of ``scalar`` (an element of the base ring) on
         ``self``.
@@ -927,7 +947,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
                           scal(scalar, self._monomial_coefficients,
                                factor_on_left=not self_on_left))
 
-    cpdef _lmul_(self, Element right) noexcept:
+    cpdef _lmul_(self, Element right):
         """
         For backward compatibility.
 
@@ -939,7 +959,7 @@ cdef class IndexedFreeModuleElement(ModuleElement):
         """
         return self._acted_upon_(right, True)
 
-    cpdef _rmul_(self, Element left) noexcept:
+    cpdef _rmul_(self, Element left):
         """
         For backward compatibility.
 

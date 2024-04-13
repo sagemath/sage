@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Quotients of modules with basis
 """
@@ -219,9 +220,9 @@ class SubmoduleWithBasis(CombinatorialFreeModule):
         if category is None and ambient.category().is_subcategory(Mod.Filtered()):
             default_category = default_category.Filtered()
         category = default_category.or_subcategory(category, join=True)
-        return super().__classcall__(cls,
-                    basis, tuple(support_order), ambient, unitriangular, category,
-                    *args, **opts)
+        return super().__classcall__(cls, basis, tuple(support_order),
+                                     ambient, unitriangular, category,
+                                     *args, **opts)
 
     def __init__(self, basis, support_order, ambient, unitriangular, category,
                  *args, **opts):

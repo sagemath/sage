@@ -18,13 +18,13 @@ on:
         # 'tox -e update_docker_platforms' updates below
         default: >-
           [
-           "ubuntu-trusty-toolchain-gcc_9",
            "ubuntu-xenial-toolchain-gcc_9",
            "ubuntu-bionic-gcc_8",
            "ubuntu-focal",
            "ubuntu-jammy",
            "ubuntu-lunar",
            "ubuntu-mantic",
+           "ubuntu-noble",
            "debian-buster-gcc_spkg",
            "debian-bullseye",
            "debian-bookworm",
@@ -36,6 +36,7 @@ on:
            "linuxmint-21",
            "linuxmint-21.1",
            "linuxmint-21.2",
+           "linuxmint-21.3",
            "fedora-30",
            "fedora-31",
            "fedora-32",
@@ -46,6 +47,7 @@ on:
            "fedora-37",
            "fedora-38",
            "fedora-39",
+           "fedora-40",
            "centos-7-devtoolset-gcc_11",
            "centos-stream-8-python3.9",
            "centos-stream-9-python3.9",
@@ -53,9 +55,8 @@ on:
            "almalinux-9-python3.11",
            "gentoo-python3.10",
            "gentoo-python3.11",
+           "gentoo-python3.12",
            "archlinux-latest",
-           "opensuse-15.3-gcc_11-python3.9",
-           "opensuse-15.4-gcc_11-python3.10",
            "opensuse-15.5-gcc_11-python3.11",
            "opensuse-tumbleweed-python3.10",
            "opensuse-tumbleweed",
@@ -244,7 +245,7 @@ jobs:
         # configuration on many platforms.
         run: |
           (sleep ${{ inputs.timeout }}; for id in $(docker ps -q); do docker exec $id find /proc -maxdepth 2 -name cmdline -exec bash -c "grep -l [m][a][k][e] {} | cut -d/ -f3 | xargs --no-run-if-empty kill" \;; done) &
-          set -o pipefail; EXTRA_DOCKER_BUILD_ARGS="--build-arg NUMPROC=4 --build-arg USE_MAKEFLAGS=\"-k V=0 SAGE_NUM_THREADS=3\"" tox -e $TOX_ENV -- $TARGETS 2>&1 | sed "/^configure: notice:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: warning:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: error:/s|^|::error file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;"
+          set -o pipefail; EXTRA_DOCKER_BUILD_ARGS="--build-arg NUMPROC=9 --build-arg USE_MAKEFLAGS=\"-k V=0 SAGE_NUM_THREADS=5\"" tox -e $TOX_ENV -- $TARGETS 2>&1 | sed "/^configure: notice:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: warning:/s|^|::warning file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;/^configure: error:/s|^|::error file=artifacts/$LOGS_ARTIFACT_NAME/config.log::|;"
       - name: Copy logs from the Docker image or build container
         run: |
           mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"

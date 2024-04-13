@@ -15,7 +15,7 @@ on:
       platform:
         description: 'Platform'
         required: true
-        default: 'ubuntu-focal-standard'
+        default: 'ubuntu-jammy-standard'
       docker_tag:
         description: 'Docker tag'
         required: true
@@ -52,7 +52,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    container: ghcr.io/sagemath/sage/sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:${{ github.event.inputs.docker_tag || 'dev'}}
+    container: ghcr.io/sagemath/sage/sage-${{ github.event.inputs.platform || 'ubuntu-jammy-standard' }}-with-targets:${{ github.event.inputs.docker_tag || 'dev'}}
     needs: [get_ci_fixes]
     steps:
       - name: Checkout
@@ -93,16 +93,16 @@ jobs:
           ./bootstrap && make build
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
+          MAKE: make -j4 --output-sync=recurse
+          SAGE_NUM_THREADS: 4
 
       - name: Build modularized distributions
         if: (success() || failure()) && steps.worktree.outcome == 'success'
         run: make V=0 tox && make SAGE_CHECK=no pypi-wheels
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
+          MAKE: make -j4 --output-sync=recurse
+          SAGE_NUM_THREADS: 4
 
       - name: Static code check with pyright
         if: (success() || failure()) && steps.worktree.outcome == 'success'
@@ -137,8 +137,8 @@ jobs:
           ./bootstrap && make doc-clean doc-uninstall sagelib-clean && git clean -fx src/sage && ./config.status
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2
-          SAGE_NUM_THREADS: 2
+          MAKE: make -j4
+          SAGE_NUM_THREADS: 4
 
       - name: Build
         # This step is needed because building the modularized distributions installs some optional packages,
@@ -149,8 +149,8 @@ jobs:
           make build
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
+          MAKE: make -j4 --output-sync=recurse
+          SAGE_NUM_THREADS: 4
 
       # Testing
 
@@ -161,16 +161,16 @@ jobs:
           ./sage -t --new -p2
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
+          MAKE: make -j4 --output-sync=recurse
+          SAGE_NUM_THREADS: 4
 
       - name: Test modularized distributions
         if: (success() || failure()) && steps.build.outcome == 'success'
         run: make V=0 tox && make pypi-wheels-check
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
+          MAKE: make -j4 --output-sync=recurse
+          SAGE_NUM_THREADS: 4
 
       - name: Check that all modules can be imported
         run: |

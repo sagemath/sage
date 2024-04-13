@@ -1,3 +1,5 @@
-cpdef LCM_list(v) noexcept
+# sage_setup: distribution = sagemath-categories
 
-cdef LCM_generic(itr, ret) noexcept
+cpdef LCM_list(v)
+
+cdef LCM_generic(itr, ret)

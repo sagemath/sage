@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 #############################################################################
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #  Distributed under the terms of the GNU General Public License (GPL) v2+.
@@ -13,5 +14,5 @@ cdef class HiddenMarkovModel:
     cdef int N
     cdef TimeSeries A, pi
 
-    cdef TimeSeries _baum_welch_gamma(self, TimeSeries alpha, TimeSeries beta) noexcept
+    cdef TimeSeries _baum_welch_gamma(self, TimeSeries alpha, TimeSeries beta)
 
