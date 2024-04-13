@@ -145,7 +145,8 @@ class DocTestReporter(SageObject):
         When latex is available, doctests marked with optional tag
         ``latex`` are run by default since :issue:`32174`::
 
-            sage: filename = os.path.join(SAGE_SRC,'sage','misc','latex.py')
+            sage: # needs SAGE_SRC
+            sage: filename = os.path.join(SAGE_SRC, 'sage', 'misc', 'latex.py')
             sage: DC = DocTestController(DocTestDefaults(), [filename])
             sage: DTR = DocTestReporter(DC)
             sage: DTR.were_doctests_with_optional_tag_run('latex')   # optional - latex
