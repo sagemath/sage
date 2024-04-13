@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # distutils: extra_compile_args = -D_XPG6
 # distutils: libraries = m
 r"""

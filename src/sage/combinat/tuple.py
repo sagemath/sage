@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Tuples
 """
@@ -77,7 +78,7 @@ class Tuples(Parent, UniqueRepresentation):
         """
         self.S = S
         self.k = k
-        self._index_list = list(set(S.index(s) for s in S))
+        self._index_list = list({S.index(s) for s in S})
         category = FiniteEnumeratedSets()
         Parent.__init__(self, category=category)
 
@@ -168,7 +169,7 @@ class UnorderedTuples(Parent, UniqueRepresentation):
         """
         self.S = S
         self.k = k
-        self._index_list = list(set(S.index(s) for s in S))
+        self._index_list = list({S.index(s) for s in S})
         category = FiniteEnumeratedSets()
         Parent.__init__(self, category=category)
 

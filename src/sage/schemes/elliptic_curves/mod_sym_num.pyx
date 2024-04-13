@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-schemes
 #cdivision=False
 #cython: cdivision_warnings=False
 #cython: profile=False
