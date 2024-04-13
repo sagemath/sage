@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 """
 Local Masses and Siegel Densities
 """

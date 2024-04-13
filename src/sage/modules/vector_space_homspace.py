@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Space of morphisms of vector spaces (linear transformations)
 

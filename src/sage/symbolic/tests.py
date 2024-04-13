@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 """
 Tests for the Sage/Pynac interaction
 """

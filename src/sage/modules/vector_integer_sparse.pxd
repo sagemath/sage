@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 #############################################################
 #
 #    Sparse Vector over mpz_t (the GMP integers)

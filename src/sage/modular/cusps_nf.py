@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.rings.number_field
 r"""
 The set `\mathbb{P}^1(K)` of cusps of a number field `K`

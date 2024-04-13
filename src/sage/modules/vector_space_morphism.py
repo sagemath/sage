@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Morphisms of vector spaces (linear transformations)
 

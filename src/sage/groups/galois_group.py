@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Galois groups of field extensions.
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-gap
 r"""
 Group homomorphisms for groups with a GAP backend
 

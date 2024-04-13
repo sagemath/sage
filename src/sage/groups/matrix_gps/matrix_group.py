@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Base classes for Matrix Groups
 
