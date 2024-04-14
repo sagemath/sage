@@ -1,6 +1,7 @@
 # sage_setup: distribution = sagemath-flint
-# distutils: libraries = gmp flint
-# distutils: depends = arf.h
+
+# Deprecated header file; use sage/libs/flint/arf.pxd instead
+# See https://github.com/sagemath/sage/pull/36449
 
 from sage.libs.flint.types cimport arf_t
 

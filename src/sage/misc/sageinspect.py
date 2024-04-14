@@ -25,7 +25,6 @@ Python modules::
     '.../sageinspect.py'
     sage: print(sage_getdoc(sage.misc.sageinspect).lstrip()[:40])
     Inspect Python, Sage, and Cython objects
-
     sage: sage_getsource(sage.misc.sageinspect).lstrip()[51:-1]
     'Inspect Python, Sage, and Cython objects...'
 
@@ -2269,10 +2268,12 @@ def sage_getsourcelines(obj):
     EXAMPLES::
 
         sage: from sage.misc.sageinspect import sage_getsourcelines
-        sage: from sage.matrix.constructor import matrix                                # needs sage.modules
-        sage: sage_getsourcelines(matrix)[1]                                            # needs sage.modules
+
+        sage: # needs sage.modules
+        sage: from sage.matrix.constructor import matrix
+        sage: sage_getsourcelines(matrix)[1]
         22
-        sage: sage_getsourcelines(matrix)[0][0]                                         # needs sage.modules
+        sage: sage_getsourcelines(matrix)[0][0]
         'def matrix(*args, **kwds):\n'
 
     Some classes customize this using a ``_sage_src_lines_`` method,

@@ -192,9 +192,9 @@ included in one of the following places:
 
   This practice is deprecated, see :issue:`33037`.
 
-In both cases, the files must be listed (explicitly or via wildcards) in
+In all cases, the files must be listed (explicitly or via wildcards) in
 the section ``[tool.setuptools.package-data]`` of the file
-``SAGE_ROOT/pkgs/sagemath-standard/pyproject.toml.m4`` (or the corresponding
+:sage_root:`SAGE_ROOT/pkgs/sagemath-standard/pyproject.toml.m4` (or the corresponding
 file of another distribution).
 
 Large data files should not be added to the Sage source tree. Instead, it

@@ -1,5 +1,6 @@
 # sage_setup: distribution = sagemath-combinat
-#from symmetrica import *
+
+# from symmetrica import *
 
 from sage.libs.symmetrica.symmetrica import start
 

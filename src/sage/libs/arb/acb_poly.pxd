@@ -1,6 +1,7 @@
 # sage_setup: distribution = sagemath-flint
-# distutils: libraries = gmp flint
-# distutils: depends = acb_poly.h
+
+# Deprecated header file; use sage/libs/flint/acb_poly.pxd instead
+# See https://github.com/sagemath/sage/pull/36449
 
 from sage.libs.flint.types cimport acb_poly_struct, acb_poly_t
 

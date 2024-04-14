@@ -1,2 +1,2 @@
 # sage_setup: distribution = sagemath-modules
-from .finite_dimensional_algebra import FiniteDimensionalAlgebra
+from sage.algebras.finite_dimensional_algebras.finite_dimensional_algebra import FiniteDimensionalAlgebra

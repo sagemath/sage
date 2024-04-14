@@ -1,2 +1,3 @@
 # sage_setup: distribution = sagemath-modules
-from .huffman import Huffman
+
+from sage.coding.source_coding.huffman import Huffman

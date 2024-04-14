@@ -1,6 +1,7 @@
 # sage_setup: distribution = sagemath-flint
-# distutils: libraries = gmp flint
-# distutils: depends = arb_fmpz_poly.h
+
+# Deprecated header file; use sage/libs/flint/arb_fmpz_poly.pxd instead
+# See https://github.com/sagemath/sage/pull/36449
 
 from sage.libs.flint.arb_fmpz_poly cimport (
     _arb_fmpz_poly_evaluate_arb_horner,

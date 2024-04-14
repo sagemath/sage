@@ -1,8 +1,20 @@
 # sage_setup: distribution = sagemath-flint
-"""
-Interface to FLINT's ``qsieve_factor()``. This used to interact
-with an external "QuadraticSieve" program, but its functionality has
-been absorbed into flint.
+
+r"""
+Deprecated module.
+
+Functions were moved in qsieve_sage.pyx.
+
+TESTS::
+
+    sage: from sage.libs.flint.qsieve import qsieve
+    sage: qsieve(1000)
+    doctest:warning
+    ...
+    DeprecationWarning:
+    Importing qsieve from here is deprecated; please use "from sage.libs.flint.qsieve_sage import qsieve" instead.
+    See https://github.com/sagemath/sage/issues/36449 for details.
+    [(2, 3), (5, 3)]
 """
 
 from sage.misc.lazy_import import LazyImport

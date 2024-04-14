@@ -1,6 +1,7 @@
 # sage_setup: distribution = sagemath-flint
-# distutils: libraries = gmp flint
-# distutils: depends = arb_hypgeom.h
+
+# Deprecated header file; use sage/libs/flint/arb_hypgeom.pxd instead
+# See https://github.com/sagemath/sage/pull/36449
 
 from sage.libs.flint.arb_hypgeom cimport (
     arb_hypgeom_pfq,

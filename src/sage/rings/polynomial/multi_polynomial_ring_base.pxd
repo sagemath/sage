@@ -1,5 +1,6 @@
 # sage_setup: distribution = sagemath-categories
-cimport sage.rings.ring
+
+from sage.rings.ring cimport CommutativeRing, Ring
 from sage.structure.parent cimport Parent
 
 cdef class MPolynomialRing_base(CommutativeRing):

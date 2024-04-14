@@ -1,5 +1,5 @@
 # sage_setup: distribution = sagemath-combinat
-#******************************************************************************
+# ******************************************************************************
 #       Copyright (C) 2020 Reimundo Heluani <heluani@potuz.net>
 #
 # This program is free software: you can redistribute it and/or modify
