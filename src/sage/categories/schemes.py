@@ -2,14 +2,18 @@
 r"""
 Schemes
 """
+
 # ****************************************************************************
-#  Copyright (C) 2005      David Kohel <kohel@maths.usyd.edu>
+#       Copyright (C) 2013 David Kohel <kohel@maths.usyd.edu>
 #                          William Stein <wstein@math.ucsd.edu>
-#                2008-2012 Nicolas M. Thiery <nthiery at users.sf.net>
+#                2008-2012 Nicolas M. Thiery <nthiery@users.sf.net>
 #
-#  Distributed under the terms of the GNU General Public License (GPL)
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-# *****************************************************************************
+# ****************************************************************************
 
 from sage.categories.category import Category
 from sage.categories.category_types import Category_over_base
@@ -156,9 +160,6 @@ class Schemes(Category):
             raise TypeError("No way to create an object or morphism in %s from %s" % (self, x))
 
 
-#############################################################
-# Schemes over a given base scheme.
-#############################################################
 class Schemes_over_base(Category_over_base):
     """
     The category of schemes over a given base scheme.
@@ -205,6 +206,7 @@ class Schemes_over_base(Category_over_base):
             return "schemes over %s" % self.base_scheme().coordinate_ring()
         else:
             return "schemes over %s" % self.base_scheme()
+
 
 class AbelianVarieties(Schemes_over_base):
     r"""
@@ -295,3 +297,27 @@ class AbelianVarieties(Schemes_over_base):
                     True
                 """
                 return [Rings()]
+
+
+class Jacobians(AbelianVarieties):
+    """
+    The category of Jacobians attached to curves or function fields.
+    """
+    def super_categories(self):
+        """
+        EXAMPLES::
+
+            sage: Jacobians(QQ).super_categories()
+            [Category of abelian varieties over Rational Field]
+        """
+        return [AbelianVarieties(self.base_scheme())]
+
+    def _repr_object_names(self):
+        """
+        EXAMPLES::
+
+            sage: Jacobians(Spec(QQ))  # indirect doctest
+            Category of Jacobians over Rational Field
+        """
+        return "Jacobians over %s" % self.base_scheme()
+
