@@ -143,7 +143,6 @@ from sage.libs.gmp.pylong cimport mpz_set_pylong
 from sage.libs.mpfr cimport *
 from sage.libs.mpmath.utils cimport mpfr_to_mpfval
 from sage.misc.randstate cimport randstate, current_randstate
-from sage.misc.superseded import deprecation_cython as deprecation
 
 from sage.structure.element cimport Element
 from sage.structure.parent cimport Parent
@@ -184,11 +183,12 @@ cdef object numpy_object_interface = {'typestr': '|O'}
 cdef enum:
     SIG_PREC_THRESHOLD = 1000
 
-#*****************************************************************************
+
+# ****************************************************************************
 #
 #       External Python access to constants
 #
-#*****************************************************************************
+# ****************************************************************************
 
 def mpfr_prec_min():
     """
@@ -211,6 +211,7 @@ def mpfr_prec_min():
         ValueError: prec (=0) must be >= 1 and <= ...
     """
     return MPFR_PREC_MIN
+
 
 # see Issue #11666 for the origin of this magical constant
 def mpfr_prec_max():
@@ -253,6 +254,7 @@ def mpfr_get_exp_min():
     """
     return mpfr_get_emin()
 
+
 def mpfr_get_exp_max():
     """
     Return the current maximal exponent for MPFR numbers.
@@ -270,6 +272,7 @@ def mpfr_get_exp_max():
         +infinity
     """
     return mpfr_get_emax()
+
 
 def mpfr_set_exp_min(mp_exp_t e):
     """
@@ -291,6 +294,7 @@ def mpfr_set_exp_min(mp_exp_t e):
     if mpfr_set_emin(e) != 0:
         raise OverflowError("bad value for mpfr_set_exp_min()")
 
+
 def mpfr_set_exp_max(mp_exp_t e):
     """
     Set the maximal exponent for MPFR numbers.
@@ -310,6 +314,7 @@ def mpfr_set_exp_max(mp_exp_t e):
     """
     if mpfr_set_emax(e) != 0:
         raise OverflowError("bad value for mpfr_set_exp_max()")
+
 
 def mpfr_get_exp_min_min():
     """
@@ -331,6 +336,7 @@ def mpfr_get_exp_min_min():
     """
     return mpfr_get_emin_min()
 
+
 def mpfr_get_exp_max_max():
     """
     Get the maximal value allowed for :func:`mpfr_set_exp_max`.
@@ -351,6 +357,7 @@ def mpfr_get_exp_max_max():
     """
     return mpfr_get_emax_max()
 
+
 # On Sage startup, set the exponent range to the maximum allowed
 mpfr_set_exp_min(mpfr_get_emin_min())
 mpfr_set_exp_max(mpfr_get_emax_max())
@@ -366,9 +373,11 @@ mpfr_set_exp_max(mpfr_get_emax_max())
 from sage.arith.long cimport (pyobject_to_long, integer_check_long_py,
                               ERR_OVERFLOW)
 cdef dict rounding_modes = dict(RNDN=MPFR_RNDN, RNDZ=MPFR_RNDZ,
-        RNDD=MPFR_RNDD, RNDU=MPFR_RNDU, RNDA=MPFR_RNDA, RNDF=MPFR_RNDF)
+                                RNDD=MPFR_RNDD, RNDU=MPFR_RNDU,
+                                RNDA=MPFR_RNDA, RNDF=MPFR_RNDF)
 
-cdef double LOG_TEN_TWO_PLUS_EPSILON = 3.321928094887363 # a small overestimate of log(10,2)
+cdef double LOG_TEN_TWO_PLUS_EPSILON = 3.321928094887363
+# a small overestimate of log(10,2)
 
 cdef object RealField_cache = sage.misc.weak_dict.WeakValueDictionary()
 
@@ -444,8 +453,8 @@ cpdef RealField(mpfr_prec_t prec=53, int sci_not=0, rnd=MPFR_RNDN):
         try:
             r = rounding_modes[rnd]
         except KeyError:
-            raise ValueError("rounding mode (={!r}) must be one of {}".format(rnd,
-                sorted(rounding_modes)))
+            msg = "rounding mode (={!r}) must be one of {}"
+            raise ValueError(msg.format(rnd, sorted(rounding_modes)))
 
     try:
         return RealField_cache[prec, sci_not, r]
@@ -571,9 +580,9 @@ cdef class RealField_class(sage.rings.abc.RealField):
             sage: RealField(17,rnd='RNDD') # indirect doctest
             Real Field with 17 bits of precision and rounding RNDD
         """
-        s = "Real Field with %s bits of precision"%self._prec
+        s = "Real Field with %s bits of precision" % self._prec
         if self.rnd != MPFR_RNDN:
-            s = s + " and rounding %s"%(self.rnd_str)
+            s = s + " and rounding %s" % (self.rnd_str)
         return s
 
     def _latex_(self):
@@ -830,8 +839,10 @@ cdef class RealField_class(sage.rings.abc.RealField):
         from sage.categories.pushout import CompletionFunctor
         return (CompletionFunctor(sage.rings.infinity.Infinity,
                                   self.prec(),
-                                  {'type': 'MPFR', 'sci_not': self.scientific_notation(), 'rnd': self.rnd}),
-               sage.rings.rational_field.QQ)
+                                  {'type': 'MPFR',
+                                   'sci_not': self.scientific_notation(),
+                                   'rnd': self.rnd}),
+                sage.rings.rational_field.QQ)
 
     def gen(self, i=0):
         """
@@ -977,7 +988,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
             sage: RealField(100,rnd='RNDU').name()
             'RealField100_2'
         """
-        return "RealField%s_%s"%(self._prec,self.rnd)
+        return "RealField%s_%s" % (self._prec, self.rnd)
 
     def __hash__(self):
         """
@@ -1006,7 +1017,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
         """
         return Integer(self._prec)
 
-    prec=precision # an alias
+    prec = precision  # an alias
 
     def _magma_init_(self, magma):
         r"""
@@ -1061,7 +1072,8 @@ cdef class RealField_class(sage.rings.abc.RealField):
             0.88622692545275801364908374167057259139877473
         """
         cdef RealNumber x = self._new()
-        if self._prec > SIG_PREC_THRESHOLD: sig_on()
+        if self._prec > SIG_PREC_THRESHOLD:
+            sig_on()
         # The docs for mpfr_free_cache say "Free the cache used by
         # the functions computing constants if needed (currently
         # mpfr_const_log2, mpfr_const_pi and mpfr_const_euler)", so
@@ -1071,7 +1083,8 @@ cdef class RealField_class(sage.rings.abc.RealField):
         # functions, but this free is needed for them too!
         mpfr_free_cache()
         mpfr_const_pi(x.value, self.rnd)
-        if self._prec > SIG_PREC_THRESHOLD: sig_off()
+        if self._prec > SIG_PREC_THRESHOLD:
+            sig_off()
         return x
 
     def euler_constant(self):
@@ -1100,10 +1113,12 @@ cdef class RealField_class(sage.rings.abc.RealField):
             0.91596559417721901505460351493
         """
         cdef RealNumber x = self._new()
-        if self._prec > SIG_PREC_THRESHOLD: sig_on()
+        if self._prec > SIG_PREC_THRESHOLD:
+            sig_on()
         mpfr_free_cache()
         mpfr_const_catalan(x.value, self.rnd)
-        if self._prec > SIG_PREC_THRESHOLD: sig_off()
+        if self._prec > SIG_PREC_THRESHOLD:
+            sig_off()
         return x
 
     def log2(self):
@@ -1120,10 +1135,12 @@ cdef class RealField_class(sage.rings.abc.RealField):
             0.69314718055994530941723212146
         """
         cdef RealNumber x = self._new()
-        if self._prec > SIG_PREC_THRESHOLD: sig_on()
+        if self._prec > SIG_PREC_THRESHOLD:
+            sig_on()
         mpfr_free_cache()
         mpfr_const_log2(x.value, self.rnd)
-        if self._prec > SIG_PREC_THRESHOLD: sig_off()
+        if self._prec > SIG_PREC_THRESHOLD:
+            sig_off()
         return x
 
     def random_element(self, min=-1, max=1, distribution=None):
@@ -1190,9 +1207,11 @@ cdef class RealField_class(sage.rings.abc.RealField):
         if n < 0:
             raise ArithmeticError("n must be nonnegative")
         x = self._new()
-        if self._prec > SIG_PREC_THRESHOLD and n < SIG_PREC_THRESHOLD: sig_on()
+        if self._prec > SIG_PREC_THRESHOLD and n < SIG_PREC_THRESHOLD:
+            sig_on()
         mpfr_fac_ui(x.value, n, self.rnd)
-        if self._prec > SIG_PREC_THRESHOLD and n < SIG_PREC_THRESHOLD: sig_off()
+        if self._prec > SIG_PREC_THRESHOLD and n < SIG_PREC_THRESHOLD:
+            sig_off()
         return x
 
     def rounding_mode(self):
@@ -1315,13 +1334,14 @@ cdef class RealField_class(sage.rings.abc.RealField):
         F = list(f._pari_with_name().factor())
 
         from sage.structure.factorization import Factorization
-        return Factorization([(R(g).monic(),e) for g,e in zip(*F)], f.leading_coefficient())
+        return Factorization([(R(g).monic(), e) for g, e in zip(*F)],
+                             f.leading_coefficient())
 
-#*****************************************************************************
+# ****************************************************************************
 #
 #     RealNumber -- element of Real Field
 #
-#*****************************************************************************
+# ****************************************************************************
 
 cdef class RealLiteral(RealNumber)
 
@@ -1497,7 +1517,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         elif type(x) is gmpy2.mpz:
             mpfr_set_z(self.value, (<gmpy2.mpz>x).z, parent.rnd)
         else:
-            s = str(x).replace(' ','').replace('_', '')
+            s = str(x).replace(' ', '').replace('_', '')
             s_lower = s.lower()
             if s_lower == 'infinity':
                 raise ValueError('can only convert signed infinity to RR')
@@ -1743,8 +1763,8 @@ cdef class RealNumber(sage.structure.element.RingElement):
         # and "-1.3*x".)
         cdef bint can_use_float_literal = \
             rnd == MPFR_RNDN and (sib.preparse() or
-                                 ((will_convert or self.prec() <= 53) and
-                                  self._parent(float(self_str)) == self))
+                                  ((will_convert or self.prec() <= 53) and
+                                   self._parent(float(self_str)) == self))
 
         if can_use_int_literal or can_use_float_literal:
             if can_use_int_literal:
@@ -1810,7 +1830,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: RR(2.1)._im_gens_(R, [R(1)])
             2.1000
         """
-        return codomain(self) # since 1 |--> 1
+        return codomain(self)  # since 1 |--> 1
 
     def real(self):
         """
@@ -2538,7 +2558,6 @@ cdef class RealNumber(sage.structure.element.RingElement):
         mpfr_mul(x.value, self.value, (<RealNumber>right).value, (<RealField_class>self._parent).rnd)
         return x
 
-
     cpdef _div_(self, right):
         """
         Divide ``self`` by other, where both are real numbers with the same
@@ -2688,7 +2707,6 @@ cdef class RealNumber(sage.structure.element.RingElement):
         except TypeError:
             raise TypeError("unsupported operands for >>")
 
-
     def multiplicative_order(self):
         """
         Return the multiplicative order of ``self``.
@@ -2739,7 +2757,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         """
         return Integer((<RealField_class>self._parent)._prec)
 
-    prec = precision # alias
+    prec = precision  # alias
 
     def conjugate(self):
         """
@@ -2862,7 +2880,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
                 mpfr_nextabove(x.value)
             elif mpfr_inf_p(self.value):
                 mpfr_set_inf(x.value, 1)
-            else: # NaN
+            else:  # NaN
                 mpfr_set_nan(x.value)
         return x
 
@@ -2941,7 +2959,6 @@ cdef class RealNumber(sage.structure.element.RingElement):
         mpfr_abs(x.value, x.value, _parent.rnd)
         return x
 
-
     ###################
     # Rounding etc
     ###################
@@ -2966,8 +2983,8 @@ cdef class RealNumber(sage.structure.element.RingElement):
         cdef RealNumber x
         x = (<RealNumber>left)._new()
         mpfr_remainder (x.value, (<RealNumber>left).value,
-                (<RealNumber>right).value,
-                (<RealField_class>(<RealNumber>left)._parent).rnd)
+                        (<RealNumber>right).value,
+                        (<RealField_class>(<RealNumber>left)._parent).rnd)
         return x
 
     def round(self):
@@ -3050,7 +3067,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         mpfr_ceil(x.value, self.value)
         return x.integer_part()
 
-    ceiling = ceil # alias
+    ceiling = ceil  # alias
 
     def trunc(self):
         """
@@ -3274,10 +3291,10 @@ cdef class RealNumber(sage.structure.element.RingElement):
         """
         prec = self.parent().prec()
 
-        #Set the precision in Axiom
-        old_prec = axiom('precision(%s)$Float'%prec)
-        res = axiom('%s :: Float'%self.exact_rational())
-        axiom.eval('precision(%s)$Float'%old_prec)
+        # Set the precision in Axiom
+        old_prec = axiom('precision(%s)$Float' % prec)
+        res = axiom('%s :: Float' % self.exact_rational())
+        axiom.eval('precision(%s)$Float' % old_prec)
 
         return res
 
@@ -3413,15 +3430,14 @@ cdef class RealNumber(sage.structure.element.RingElement):
         cdef Integer sign
         cdef mp_exp_t exponent
 
-
-        if mpfr_signbit(self.value)==0:
-            sign=Integer(1)
+        if mpfr_signbit(self.value) == 0:
+            sign = Integer(1)
         else:
-            sign=Integer(-1)
+            sign = Integer(-1)
 
         if mpfr_zero_p(self.value):
-            mantissa=Integer(0)
-            exponent=Integer(0)
+            mantissa = Integer(0)
+            exponent = Integer(0)
         else:
             mantissa = Integer()
             exponent = mpfr_get_z_exp(mantissa.value, self.value)
@@ -3753,7 +3769,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             raise ValueError('cannot convert NaN or infinity to rational number')
 
         if ((max_error is None and max_denominator is None) or
-            (max_error is not None and max_denominator is not None)):
+                (max_error is not None and max_denominator is not None)):
             raise ValueError('Must specify exactly one of max_error or max_denominator in nearby_rational()')
 
         if max_error is not None:
@@ -4193,9 +4209,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
         cdef RealNumber x
         if mpfr_cmp_ui(self.value, 0) >= 0:
             x = self._new()
-            if (<RealField_class>self._parent)._prec > 10*SIG_PREC_THRESHOLD: sig_on()
+            if (<RealField_class>self._parent)._prec > 10*SIG_PREC_THRESHOLD:
+                sig_on()
             mpfr_sqrt(x.value, self.value, (<RealField_class>self._parent).rnd)
-            if (<RealField_class>self._parent)._prec > 10*SIG_PREC_THRESHOLD: sig_off()
+            if (<RealField_class>self._parent)._prec > 10*SIG_PREC_THRESHOLD:
+                sig_off()
             if all:
                 if x.is_zero():
                     return [x]
@@ -4239,9 +4257,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
             -1.42108547152020e-14
         """
         cdef RealNumber x = self._new()
-        if (<RealField_class>self._parent)._prec > 10*SIG_PREC_THRESHOLD: sig_on()
+        if (<RealField_class>self._parent)._prec > 10*SIG_PREC_THRESHOLD:
+            sig_on()
         mpfr_cbrt(x.value, self.value, (<RealField_class>self._parent).rnd)
-        if (<RealField_class>self._parent)._prec > 10*SIG_PREC_THRESHOLD: sig_off()
+        if (<RealField_class>self._parent)._prec > 10*SIG_PREC_THRESHOLD:
+            sig_off()
         return x
 
     def _pow(self, RealNumber exponent):
@@ -4381,9 +4401,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
                 return self._complex_number_().log(base)
         if base is None or base == 'e':
             x = self._new()
-            if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD: sig_on()
+            if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD:
+                sig_on()
             mpfr_log(x.value, self.value, (<RealField_class>self._parent).rnd)
-            if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD: sig_off()
+            if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD:
+                sig_off()
             return x
         elif base == 10:
             return self.log10()
@@ -4422,9 +4444,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
         if self < 0:
             return self._complex_number_().log(2)
         x = self._new()
-        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD: sig_on()
+        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD:
+            sig_on()
         mpfr_log2(x.value, self.value, (<RealField_class>self._parent).rnd)
-        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD: sig_off()
+        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD:
+            sig_off()
         return x
 
     def log10(self):
@@ -4459,9 +4483,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
         if self < 0:
             return self._complex_number_().log(10)
         x = self._new()
-        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD: sig_on()
+        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD:
+            sig_on()
         mpfr_log10(x.value, self.value, (<RealField_class>self._parent).rnd)
-        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD: sig_off()
+        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD:
+            sig_off()
         return x
 
     def log1p(self):
@@ -4508,9 +4534,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
         if self < -1:
             return (self+1.0)._complex_number_().log()
         x = self._new()
-        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD: sig_on()
+        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD:
+            sig_on()
         mpfr_log1p(x.value, self.value, (<RealField_class>self._parent).rnd)
-        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD: sig_off()
+        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD:
+            sig_off()
         return x
 
     def exp(self):
@@ -4566,9 +4594,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
             1.89117248253021e-10
         """
         cdef RealNumber x = self._new()
-        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD: sig_on()
+        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD:
+            sig_on()
         mpfr_exp2(x.value, self.value, (<RealField_class>self._parent).rnd)
-        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD: sig_off()
+        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD:
+            sig_off()
         return x
 
     def exp10(self):
@@ -4594,9 +4624,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
             5.01187233627276e-33
         """
         cdef RealNumber x = self._new()
-        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD: sig_on()
+        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD:
+            sig_on()
         mpfr_exp10(x.value, self.value, (<RealField_class>self._parent).rnd)
-        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD: sig_off()
+        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD:
+            sig_off()
         return x
 
     def expm1(self):
@@ -4618,9 +4650,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
             1.00000000000000e-16
         """
         cdef RealNumber x = self._new()
-        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD: sig_on()
+        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD:
+            sig_on()
         mpfr_expm1(x.value, self.value, (<RealField_class>self._parent).rnd)
-        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD: sig_off()
+        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD:
+            sig_off()
         return x
 
     def eint(self):
@@ -4640,9 +4674,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
             -0.219383934395520
         """
         cdef RealNumber x = self._new()
-        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD: sig_on()
+        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD:
+            sig_on()
         mpfr_eint(x.value, self.value, (<RealField_class>self._parent).rnd)
-        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD: sig_on()
+        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD:
+            sig_on()
         return x
 
     def cos(self):
@@ -4707,13 +4743,13 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: t.sincos()
             (0.500000000000000, 0.866025403784439)
         """
-        cdef RealNumber x,y
+        cdef RealNumber x, y
         x = self._new()
         y = self._new()
         sig_on()
         mpfr_sin_cos(x.value, y.value, self.value, (<RealField_class>self._parent).rnd)
         sig_off()
-        return x,y
+        return x, y
 
     def arccos(self):
         """
@@ -5071,9 +5107,11 @@ cdef class RealNumber(sage.structure.element.RingElement):
             _other = self._parent(other)
 
         x = self._new()
-        if (<RealField_class>self._parent)._prec > 10000: sig_on()
+        if (<RealField_class>self._parent)._prec > 10000:
+            sig_on()
         mpfr_agm(x.value, self.value, _other.value, (<RealField_class>self._parent).rnd)
-        if (<RealField_class>self._parent)._prec > 10000: sig_off()
+        if (<RealField_class>self._parent)._prec > 10000:
+            sig_off()
         return x
 
     def erf(self):
@@ -5226,16 +5264,19 @@ cdef class RealNumber(sage.structure.element.RingElement):
             0.886226925452758
         """
         cdef RealNumber x = self._new()
-        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD: sig_on()
+        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD:
+            sig_on()
         mpfr_gamma(x.value, self.value, (<RealField_class>self._parent).rnd)
-        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD: sig_off()
+        if (<RealField_class>self._parent)._prec > SIG_PREC_THRESHOLD:
+            sig_off()
         return x
 
     def log_gamma(self):
         """
-        Return the principal branch of the log gamma of ``self``. Note that
-        this is not in general equal to log(gamma(``self``)) for negative
-        input.
+        Return the principal branch of the log gamma of ``self``.
+
+        Note that this is not in general equal to log(gamma(``self``))
+        for negative input.
 
         EXAMPLES::
 
@@ -5335,7 +5376,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: r.algebraic_dependency(5)
             x^2 - 2
         """
-        return sage.arith.misc.algdep(self,n)
+        return sage.arith.misc.algdep(self, n)
 
     algdep = algebraic_dependency
 
@@ -5828,9 +5869,9 @@ def create_RealNumber(s, int base=10, int pad=0, rnd="RNDN", int min_prec=53):
 
         if base == 10:
             # hard-code the common case
-            bits = int(LOG_TEN_TWO_PLUS_EPSILON*sigfigs)+1
+            bits = int(LOG_TEN_TWO_PLUS_EPSILON * sigfigs) + 1
         else:
-            bits = int(math.log(base,2)*1.00001*sigfigs)+1
+            bits = int(math.log(base, 2) * 1.00001 * sigfigs) + 1
 
         R = RealField(prec=max(bits + pad, min_prec), rnd=rnd)
 
@@ -5856,6 +5897,7 @@ def is_RealNumber(x):
     """
     return isinstance(x, RealNumber)
 
+
 def __create__RealField_version0(prec, sci_not, rnd):
     """
     Create a :class:`RealField_class` by calling :func:`RealField()`.
@@ -5866,6 +5908,7 @@ def __create__RealField_version0(prec, sci_not, rnd):
         Real Field with 53 bits of precision
     """
     return RealField(prec, sci_not, rnd)
+
 
 def __create__RealNumber_version0(parent, x, base=10):
     """
