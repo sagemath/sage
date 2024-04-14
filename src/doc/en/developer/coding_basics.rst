@@ -190,6 +190,8 @@ included in one of the following places:
     from sage.env import SAGE_EXTCODE
     file = os.path.join(SAGE_EXTCODE, 'directory', 'file')
 
+  This practice is deprecated, see :issue:`33037`.
+
 In both cases, the files must be listed (explicitly or via wildcards) in
 the section ``[tool.setuptools.package-data]`` of the file
 ``SAGE_ROOT/pkgs/sagemath-standard/pyproject.toml.m4`` (or the corresponding

@@ -76,6 +76,11 @@ R = [
 file = "README.rst"
 content-type = "text/x-rst"
 
+[tool.conda-lock]
+platforms = [
+    'osx-64', 'linux-64', 'linux-aarch64', 'osx-arm64'
+]
+
 [tool.setuptools]
 script-files = [
     # The sage script
