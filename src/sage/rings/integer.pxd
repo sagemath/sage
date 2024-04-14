@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 from sage.libs.gmp.types cimport __mpz_struct, mpz_t, mpz_ptr
 from sage.libs.gmp.mpz cimport mpz_set
 

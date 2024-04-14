@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 # sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 Weierstrass form of a toric elliptic curve
@@ -176,8 +177,8 @@ def Discriminant(polynomial, variables=None):
         sage: Discriminant([quadratic1, quadratic2])
         -1/16
     """
-    (f, g) = WeierstrassForm(polynomial, variables)
-    return 4*f**3+27*g**2
+    f, g = WeierstrassForm(polynomial, variables)
+    return 4*f**3 + 27*g**2
 
 
 ######################################################################
@@ -199,7 +200,7 @@ def j_invariant(polynomial, variables=None):
     * A nodal cubic: `j(-y^2 + x^2 + x^3) = \infty`
 
     * A cuspidal cubic `y^2=x^3` has undefined `j`-invariant. In this
-      case, a ``ValueError`` is raised.
+      case, a :class:`ValueError` is raised.
 
     EXAMPLES::
 
@@ -220,10 +221,10 @@ def j_invariant(polynomial, variables=None):
         ...
         ValueError: curve is singular and has no well-defined j-invariant
     """
-    (f, g) = WeierstrassForm(polynomial, variables)
-    disc = 4*f**3+27*g**2
+    f, g = WeierstrassForm(polynomial, variables)
+    disc = 4*f**3 + 27*g**2
     if disc != 0:
-        return 1728 * 4*f**3/disc
+        return 1728 * 4 * f**3 / disc
     if f != 0:
         return Infinity
     raise ValueError('curve is singular and has no well-defined j-invariant')
@@ -505,7 +506,7 @@ def WeierstrassForm(polynomial, variables=None, transformation=False):
 ######################################################################
 def _check_homogeneity(polynomial, variables, weights, total_weight=None):
     """
-    Raise ``ValueError`` if the polynomial is not weighted
+    Raise :class:`ValueError` if the polynomial is not weighted
     homogeneous.
 
     INPUT:
@@ -526,7 +527,7 @@ def _check_homogeneity(polynomial, variables, weights, total_weight=None):
     OUTPUT:
 
     This function returns nothing. If the polynomial is not weighted
-    homogeneous, a ``ValueError`` is raised.
+    homogeneous, a :class:`ValueError` is raised.
 
     EXAMPLES::
 
@@ -552,8 +553,8 @@ def _check_homogeneity(polynomial, variables, weights, total_weight=None):
             total_weight = weight_e
         else:
             if weight_e != total_weight:
-                raise ValueError('the polynomial is not homogeneous with '
-                                 'weights '+str(weights))
+                msg = f'the polynomial is not homogeneous with weights {weights}'
+                raise ValueError(msg)
 
 
 ######################################################################
@@ -602,8 +603,8 @@ def _extract_coefficients(polynomial, monomials, variables):
         coeffs[i] = c*m + coeffs.pop(i, R.zero())
     result = tuple(coeffs.pop(index(m), R.zero()) // m for m in monomials)
     if coeffs:
-        raise ValueError('the polynomial contains more monomials than '
-                         'given: ' + str(coeffs))
+        msg = f'the polynomial contains more monomials than given: {coeffs}'
+        raise ValueError(msg)
     return result
 
 
@@ -623,7 +624,7 @@ def _check_polynomial_P2(cubic, variables):
     OUTPUT:
 
     This functions returns ``variables``, potentially guessed from the
-    polynomial ring. A ``ValueError`` is raised if the polynomial is
+    polynomial ring. A :class:`ValueError` is raised if the polynomial is
     not homogeneous.
 
     EXAMPLES::
@@ -757,7 +758,7 @@ def WeierstrassForm_P2(polynomial, variables=None):
     F = polynomial.base_ring()
     S = cubic.S_invariant()
     T = cubic.T_invariant()
-    return (27*S, -27/F(4)*T)
+    return (27 * S, -27 / F(4) * T)
 
 
 ######################################################################
@@ -780,7 +781,7 @@ def _check_polynomial_P1xP1(biquadric, variables):
     OUTPUT:
 
     This functions returns ``variables``, potentially guessed from the
-    polynomial ring. A ``ValueError`` is raised if the polynomial is
+    polynomial ring. A :class:`ValueError` is raised if the polynomial is
     not homogeneous.
 
     EXAMPLES::
@@ -853,7 +854,7 @@ def _partial_discriminant(quadric, y0, y1=None):
         monomials = (quadric.parent().one(), y0, y0**2)
         variables = [y0]
     else:
-        monomials = (y1**2, y0*y1, y0**2)
+        monomials = (y1**2, y0 * y1, y0**2)
         variables = [y0, y1]
     c = _extract_coefficients(quadric, monomials, variables)
     return c[1]**2 - 4*c[0]*c[2]
@@ -941,7 +942,7 @@ def WeierstrassForm_P1xP1(biquadric, variables=None):
     Q = invariant_theory.binary_quartic(delta, x, y)
     g2 = Q.EisensteinD()
     g3 = -Q.EisensteinE()
-    return (-g2/4, -g3/4)
+    return (-g2 / 4, -g3 / 4)
 
 
 ######################################################################
@@ -964,7 +965,7 @@ def _check_polynomial_P2_112(polynomial, variables):
     OUTPUT:
 
     This functions returns ``variables``, potentially guessed from the
-    polynomial ring. A ``ValueError`` is raised if the polynomial is
+    polynomial ring. A :class:`ValueError` is raised if the polynomial is
     not homogeneous.
 
     EXAMPLES::
@@ -1076,4 +1077,4 @@ def WeierstrassForm_P2_112(polynomial, variables=None):
     Q = invariant_theory.binary_quartic(delta, x, z)
     g2 = Q.EisensteinD()
     g3 = -Q.EisensteinE()
-    return (-g2/4, -g3/4)
+    return (-g2 / 4, -g3 / 4)

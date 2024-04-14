@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.combinat sage.graphs
 r"""
 Elements of Hecke modular forms spaces
