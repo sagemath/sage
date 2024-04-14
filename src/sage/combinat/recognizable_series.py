@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 Recognizable Series
@@ -1437,7 +1438,7 @@ class RecognizableSeries(ModuleElement):
             True
 
         The following is not tested, as `MS^i` for integers `i` does
-        not work, thus ``vector([m])`` fails. (See :trac:`21317` for
+        not work, thus ``vector([m])`` fails. (See :issue:`21317` for
         details.)
 
         ::

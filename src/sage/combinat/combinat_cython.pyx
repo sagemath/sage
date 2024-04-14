@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # cython: binding=True
 """
 Fast computation of combinatorial functions (Cython + mpz)
@@ -38,7 +39,7 @@ cdef void mpz_addmul_alt(mpz_t s, mpz_t t, mpz_t u, unsigned long parity) noexce
         mpz_addmul(s, t, u)
 
 
-cdef mpz_stirling_s2(mpz_t s, unsigned long n, unsigned long k) noexcept:
+cdef mpz_stirling_s2(mpz_t s, unsigned long n, unsigned long k):
     """
     Set s = S(n,k) where S(n,k) denotes a Stirling number of the
     second kind.
@@ -280,7 +281,7 @@ def perfect_matchings_iterator(Py_ssize_t n):
     sig_free(f)
 
 
-cdef list convert(Py_ssize_t* f, Py_ssize_t n) noexcept:
+cdef list convert(Py_ssize_t* f, Py_ssize_t n):
     """
     Convert a list ``f`` representing a fixed-point free involution
     to a set partition.

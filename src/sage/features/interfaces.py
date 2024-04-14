@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing whether interpreter interfaces to ``magma``, ``maple``, ``mathematica`` etc. are functional
 """

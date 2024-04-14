@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Except from the `random` module from Python 2.7.14 used solely for consistency
 in the doctest suite for random results that depend on the Python PRNG.
@@ -6,7 +7,7 @@ It should be made clear that the actual random data from the PRNG is consistent
 between Python versions, but the difference lies in higher-level methods such
 as `random.randint`.
 
-See :trac:`24508`
+See :issue:`24508`
 """
 
 # The following code was copied from

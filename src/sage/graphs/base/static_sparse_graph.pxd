@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 from cpython.object cimport PyObject
 from libc.stdint cimport uint32_t, uint64_t, UINT32_MAX
 from sage.data_structures.bitset cimport *
@@ -27,7 +28,7 @@ cdef void free_short_digraph(short_digraph g) noexcept
 cdef int init_reverse(short_digraph dst, short_digraph src) except -1
 cdef int out_degree(short_digraph g, int u) noexcept
 cdef uint32_t * has_edge(short_digraph g, int u, int v) noexcept
-cdef object edge_label(short_digraph g, uint32_t * edge) noexcept
+cdef object edge_label(short_digraph g, uint32_t * edge)
 cdef int tarjan_strongly_connected_components_C(short_digraph g, int *scc) noexcept
 cdef void strongly_connected_components_digraph_C(short_digraph g, int nscc, int *scc, short_digraph output) noexcept
 

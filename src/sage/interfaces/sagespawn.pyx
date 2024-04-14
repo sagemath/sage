@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: optional - ptyprocess
 """
 Sage wrapper around pexpect's ``spawn`` class and
@@ -5,10 +6,10 @@ the ptyprocess's ``PtyProcess`` class.
 
 AUTHOR:
 
-- Jeroen Demeyer (2015-02-01): initial version, see :trac:`17686`.
+- Jeroen Demeyer (2015-02-01): initial version, see :issue:`17686`.
 
 - Jeroen Demeyer (2015-12-04): add support for pexpect 4 + ptyprocess,
-  see :trac:`10295`.
+  see :issue:`10295`.
 """
 
 # ***************************************************************************

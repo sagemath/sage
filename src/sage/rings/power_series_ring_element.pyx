@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Power Series
 
@@ -12,7 +13,7 @@ AUTHORS:
 - David Harvey (2006-09-11): added solve_linear_de() method
 - Robert Bradshaw (2007-04): sqrt, rmul, lmul, shifting
 - Robert Bradshaw (2007-04): Cython version
-- Simon King (2012-08): use category and coercion framework, :trac:`13412`
+- Simon King (2012-08): use category and coercion framework, :issue:`13412`
 
 EXAMPLES::
 
@@ -254,7 +255,7 @@ cdef class PowerSeries(AlgebraElement):
         else:
             raise NotImplementedError
 
-    cpdef base_extend(self, R) noexcept:
+    cpdef base_extend(self, R):
         """
         Return a copy of this power series but with coefficients in R.
 
@@ -311,7 +312,7 @@ cdef class PowerSeries(AlgebraElement):
         S = self._parent.change_ring(R)
         return S(self)
 
-    cpdef _richcmp_(self, right, int op) noexcept:
+    cpdef _richcmp_(self, right, int op):
         r"""
         Comparison of self and ``right``.
 
@@ -358,7 +359,7 @@ cdef class PowerSeries(AlgebraElement):
 
         TESTS:
 
-        :trac:`9457` is fixed::
+        :issue:`9457` is fixed::
 
             sage: A.<t> = PowerSeriesRing(ZZ)
             sage: g = t + t^3 + t^5 + O(t^6); g
@@ -740,7 +741,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: latex(f)
             -\frac{1}{2} t + \frac{2}{3} t^{2} - \frac{9}{7} t^{15} + O(t^{20})
 
-        Check that :trac:`26606` is fixed::
+        Check that :issue:`26606` is fixed::
 
             sage: R.<beta> = QQ[]
             sage: S.<x> = R[[]]
@@ -813,7 +814,7 @@ cdef class PowerSeries(AlgebraElement):
         v = [a[i] for i in range(min(prec, len(a)))]
         return self._parent._poly_ring()(v)
 
-    cdef _inplace_truncate(self, long prec) noexcept:
+    cdef _inplace_truncate(self, long prec):
         return self.truncate(prec)
 
     def add_bigoh(self, prec):
@@ -917,7 +918,7 @@ cdef class PowerSeries(AlgebraElement):
             return self.prec()
         return min(self.prec(), f.prec())
 
-    cdef common_prec_c(self, PowerSeries f) noexcept:
+    cdef common_prec_c(self, PowerSeries f):
         if self._prec is infinity:
             return f._prec
         elif f._prec is infinity:
@@ -1048,7 +1049,7 @@ cdef class PowerSeries(AlgebraElement):
                     v[k-n] = x
         return self._parent(v, self.prec()-n)
 
-    cpdef _div_(self, denom_r) noexcept:
+    cpdef _div_(self, denom_r):
         """
         EXAMPLES::
 
@@ -1062,7 +1063,7 @@ cdef class PowerSeries(AlgebraElement):
 
         TESTS:
 
-        The following tests against bugs that were fixed in :trac:`8972`::
+        The following tests against bugs that were fixed in :issue:`8972`::
 
             sage: P.<t> = ZZ[]
             sage: R.<x> = P[[]]
@@ -1594,7 +1595,7 @@ cdef class PowerSeries(AlgebraElement):
             ...
             ValueError: unable to take the square root of 1/2
 
-        Check :trac:`30655`::
+        Check :issue:`30655`::
 
             sage: t = polygen(QQ, 't')
             sage: x = t.parent()[['x']].0
@@ -2516,7 +2517,7 @@ cdef class PowerSeries(AlgebraElement):
             sage: (t + O(t^2)).exp(0)
             O(t^0)
 
-        Handle nonzero constant term (fixes :trac:`4477`)::
+        Handle nonzero constant term (fixes :issue:`4477`)::
 
             sage: # needs sage.rings.real_mpfr
             sage: R.<x> = PowerSeriesRing(RR)

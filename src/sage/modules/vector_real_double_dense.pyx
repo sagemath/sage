@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: optional - numpy
 r"""
 Dense real double vectors using a NumPy backend
@@ -106,6 +107,7 @@ def unpickle_v0(parent, entries, degree):
         True
     """
     return unpickle_v1(parent, entries, degree)
+
 
 def unpickle_v1(parent, entries, degree, is_mutable=None):
     """

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs primecountpy
 r"""
 Counting primes
@@ -75,7 +76,7 @@ cdef class PrimePi(BuiltinFunction):
             sage: prime_pi(500509)
             41581
 
-        The following test is to verify that :trac:`4670` has been essentially
+        The following test is to verify that :issue:`4670` has been essentially
         resolved::
 
             sage: prime_pi(10^10)                                                       # needs sage.symbolic
@@ -157,7 +158,7 @@ cdef class PrimePi(BuiltinFunction):
 
         TESTS:
 
-        Check that :trac:`24960` is fixed::
+        Check that :issue:`24960` is fixed::
 
             sage: prime_pi(642763101936913)
             19439675999019
@@ -210,7 +211,7 @@ cdef class PrimePi(BuiltinFunction):
 prime_pi = PrimePi()
 
 
-cpdef Integer legendre_phi(x, a) noexcept:
+cpdef Integer legendre_phi(x, a):
     r"""
     Legendre's formula, also known as the partial sieve function, is a useful
     combinatorial function for computing the prime counting function (the

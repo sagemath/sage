@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.modules
 r"""
 Examples of a finite dimensional Lie algebra with basis
@@ -242,7 +243,7 @@ class AbelianLieAlgebra(Parent, UniqueRepresentation):
 
     lie_algebra_generators = basis
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self``.
 

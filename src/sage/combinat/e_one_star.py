@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 Substitutions over unit cube faces (Rauzy fractals)
@@ -281,7 +282,7 @@ class Face(SageObject):
 
         TESTS:
 
-        We test that types can be given by an int (see :trac:`10699`)::
+        We test that types can be given by an int (see :issue:`10699`)::
 
             sage: f = Face((0,2,0), int(1))
         """
@@ -597,7 +598,7 @@ class Patch(SageObject):
         TESTS:
 
         We test that colors are not anymore mixed up between
-        Patches (see :trac:`11255`)::
+        Patches (see :issue:`11255`)::
 
             sage: P = Patch([Face([0,0,0],2)])
             sage: Q = Patch(P)
@@ -675,7 +676,7 @@ class Patch(SageObject):
 
         TESTS:
 
-        We test that two equal patches have the same hash (see :trac:`11255`)::
+        We test that two equal patches have the same hash (see :issue:`11255`)::
 
             sage: P = Patch([Face([0,0,0],1), Face([0,0,0],2)])
             sage: Q = Patch([Face([0,0,0],2), Face([0,0,0],1)])
@@ -1495,7 +1496,7 @@ class E1Star(SageObject):
 
         TESTS:
 
-        We test that iterations=0 works (see :trac:`10699`)::
+        We test that iterations=0 works (see :issue:`10699`)::
 
             sage: P = Patch([Face((0,0,0),t) for t in [1,2,3]])
             sage: sigma = WordMorphism({1:[1,2], 2:[1,3], 3:[1]})

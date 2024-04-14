@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 r"""
 Ideals of relative number fields
 
@@ -271,7 +272,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
         TESTS:
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(2*x^2 - 1/3)
             sage: L.<b> = K.extension(5*x^2 + 1)
@@ -404,7 +405,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             815730721
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(2*x^2 - 1/3)
             sage: L.<b> = K.extension(5*x^2 + 1)
@@ -523,7 +524,7 @@ class NumberFieldFractionalIdeal_rel(NumberFieldFractionalIdeal):
             True
 
         Number fields defined by non-monic and non-integral
-        polynomials are supported (:trac:`252`)::
+        polynomials are supported (:issue:`252`)::
 
             sage: K.<a> = NumberField(2*x^2 - 1/3)
             sage: L.<b> = K.extension(5*x^2 + 1)

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 r"""
 Fast Lattice Polytopes using PPL.
 
@@ -1072,7 +1073,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             Permutation Group with generators [(), (3,4), (1,6)(2,5), (1,6)(2,5)(3,4)]
 
         Point labels also work for lattice polytopes that are not
-        full-dimensional, see :trac:`16669`::
+        full-dimensional, see :issue:`16669`::
 
             sage: from sage.geometry.polyhedron.ppl_lattice_polytope import LatticePolytope_PPL
             sage: lp = LatticePolytope_PPL((1,0,0), (0,1,0), (-1,-1,0))

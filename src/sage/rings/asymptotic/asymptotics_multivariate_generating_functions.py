@@ -540,7 +540,7 @@ class FractionWithFactoredDenominator(RingElement):
         """
         return self.numerator() / self.denominator()
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -1336,7 +1336,7 @@ class FractionWithFactoredDenominator(RingElement):
             sage: FFPD(1, [(x, 1), (y, 2)]).cohomology_decomposition()
             (0, [])
 
-        The following example was fixed in :trac:`29465`::
+        The following example was fixed in :issue:`29465`::
 
             sage: p = 1
             sage: qs = [(x*y - 1, 1), (x**2 + y**2 - 1, 2)]
@@ -1415,7 +1415,7 @@ class FractionWithFactoredDenominator(RingElement):
             # The parity epsilon from [AY1983, eq. (17.11)] does not
             # enter this computation, since we do not order the
             # coordinates x to the front of X in the representation of
-            # this differential form (:trac:`29465`).
+            # this differential form (:issue:`29465`).
             iteration1.append(Par((-1) ** J * det / new_df[J][1], new_df))
 
         # Now decompose each FFPD of iteration1.
@@ -2647,10 +2647,8 @@ class FractionWithFactoredDenominator(RingElement):
 
         # Test 4: Is p convenient?
         M = matrix(self.log_grads(p))
-        convenient_coordinates = []
-        for j in range(d):
-            if 0 not in M.columns()[j]:
-                convenient_coordinates.append(j)
+        cols = M.columns()
+        convenient_coordinates = [j for j, c in enumerate(cols) if 0 not in c]
         if not convenient_coordinates:
             return (False, 'multiple point but not convenient')
 
@@ -2746,10 +2744,8 @@ class FractionWithFactoredDenominator(RingElement):
         d = self.dimension()
 
         # Expand K by the variables of alpha if there are any.
-        indets = []
-        for a in alpha:
-            if a not in K and a in SR:
-                indets.append(a)
+        indets = [a for a in alpha if a not in K and a in SR]
+
         indets = sorted(set(indets), key=str)   # Delete duplicates in indets.
         if indets:
             L = PolynomialRing(K, indets).fraction_field()
@@ -2845,9 +2841,7 @@ class FractionWithFactoredDenominator(RingElement):
             return coeffs
 
         # Create biggest multi-index needed.
-        alpha = []
-        for i in range(d):
-            alpha.append(max(nu[i] for nu in multi_indices))
+        alpha = [max(nu[i] for nu in multi_indices) for i in range(d)]
 
         # Compute Maclaurin expansion of self up to index alpha.
         # Use iterated univariate expansions.
@@ -3085,7 +3079,7 @@ class FractionWithFactoredDenominatorRing(UniqueRepresentation, Parent):
         self._denominator_ring = denominator_ring
         Parent.__init__(self, denominator_ring, category=category)
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a representation.
 
@@ -3339,7 +3333,7 @@ class FractionWithFactoredDenominatorSum(list):
     - Daniel Krenn (2014-12-01)
     """
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a string representation of ``self``.
 
@@ -3359,7 +3353,7 @@ class FractionWithFactoredDenominatorSum(list):
         """
         return ' + '.join(repr(r) for r in self)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r"""
         Return ``True`` if ``self`` is equal to ``other``.
 
@@ -3385,7 +3379,7 @@ class FractionWithFactoredDenominatorSum(list):
         return (sorted(self, key=methodcaller('_total_order_key_')) ==
                 sorted(other, key=methodcaller('_total_order_key_')))
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Return ``True`` if ``self`` is not equal to ``other``.
 
@@ -3711,7 +3705,7 @@ def permutation_sign(s, u):
     .. NOTE::
 
         This function was intended for internal use and is deprecated now
-        (:trac:`29465`).
+        (:issue:`29465`).
 
     INPUT:
 
@@ -4028,7 +4022,7 @@ def diff_op(A, B, AB_derivs, V, M, r, N):
         sage: B = function('B')(*tuple(T))
         sage: AB_derivs = {}
         sage: M = matrix([[1, 2],[2, 1]])
-        sage: DD = diff_op(A, B, AB_derivs, T, M, 1, 2)  # long time (see :trac:`35207`)
+        sage: DD = diff_op(A, B, AB_derivs, T, M, 1, 2)  # long time (see :issue:`35207`)
         sage: sorted(DD)                                 # long time
         [(0, 0, 0), (0, 1, 0), (0, 1, 1), (0, 1, 2)]
         sage: DD[(0, 1, 2)].number_of_operands()         # long time

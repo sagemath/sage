@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-linbox
 # distutils: language = c++
 # distutils: libraries = CBLAS_LIBRARIES
 # distutils: library_dirs = CBLAS_LIBDIR
@@ -91,7 +92,7 @@ cdef class Matrix_modn_dense_float(Matrix_modn_dense_template):
         """
         self._matrix[i][j] = <float>value
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, x) noexcept:
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, x):
         r"""
         Set the (i,j) entry with no bounds-checking, or any other checks.
 
@@ -121,7 +122,7 @@ cdef class Matrix_modn_dense_float(Matrix_modn_dense_template):
         """
         self._matrix[i][j] = <float>(<IntegerMod_int>x).ivalue
 
-    cdef IntegerMod_int get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
+    cdef IntegerMod_int get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         r"""
         Return the (i,j) entry with no bounds-checking.
 

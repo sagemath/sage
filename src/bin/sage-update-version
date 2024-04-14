@@ -43,9 +43,9 @@ for version_file in "$SAGE_ROOT"/pkgs/*/VERSION.txt; do
     fi
 done
 
-# Update install-requires.txt for all distribution packages
+# Update version_requirements.txt for all distribution packages
 ( cd "$SAGE_ROOT"/build/pkgs/ && for spkg in sage*; do
-      if [ -f "$spkg"/install-requires.txt -a -d "$spkg"/src ]; then
+      if [ -f "$spkg"/version_requirements.txt -a -d "$spkg"/src ]; then
           ( echo "# This file is updated on every release by the sage-update-version script"
             # Normalize the package name to PyPI convention (dashes, not underscores)
             if [ "$spkg" = sagelib ]; then
@@ -58,7 +58,7 @@ done
             version=${version//.beta/b}
             version=${version//.rc/rc}
             # ~= asks for a compatible release. https://peps.python.org/pep-0440/#compatible-release
-            echo "$pkg ~= $version" ) > "$spkg"/install-requires.txt
+            echo "$pkg ~= $version" ) > "$spkg"/version_requirements.txt
       fi
   done )
 
@@ -121,7 +121,7 @@ git commit -m "Updated SageMath version to $SAGE_VERSION" -- \
     "$SAGE_SRC/bin/sage-version.sh" \
     "$SAGE_ROOT/build/pkgs/configure/checksums.ini" \
     "$SAGE_ROOT/build/pkgs/configure/package-version.txt" \
-    "$SAGE_ROOT/build/pkgs/*/install-requires.txt" \
+    "$SAGE_ROOT/build/pkgs/*/version_requirements.txt" \
     "$SAGE_ROOT"/pkgs/*/VERSION.txt \
     "$SAGE_ROOT/.upstream.d/20-github.com-sagemath-sage-releases" \
     || die "Error committing to the repository."

@@ -84,14 +84,14 @@ TESTS::
 
 """
 
-#############################################################################
+# **************************************************************************
 #       Copyright (C) 2008 Mike Hansen <mhansen@gmail.com>
 #                          William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
-#############################################################################
+#                  https://www.gnu.org/licenses/
+# **************************************************************************
 
 import os
 
@@ -281,7 +281,7 @@ command-line version of MuPAD.
         if i == -1:
             raise RuntimeError("%s\nError evaluating code in MuPAD" % z)
         z = z[i+len(START)+2:]
-        z = z.rstrip().rstrip(END).rstrip('"').rstrip().strip('\n').strip('\r').strip('\n').replace('\\\r\n','')
+        z = z.rstrip().rstrip(END).rstrip('"').rstrip().strip('\n').strip('\r').strip('\n').replace('\\\r\n', '')
         i = z.find('Error: ')
         if i != -1:
             raise RuntimeError(z[i + 7:])
@@ -309,7 +309,7 @@ command-line version of MuPAD.
             sage: mupad.get('a').strip() # optional - mupad
             '4'
         """
-        cmd = '%s:=%s:' % (var,value)
+        cmd = '%s:=%s:' % (var, value)
         out = self.eval(cmd)
         i = out.find('Error: ')
         if i != -1:
@@ -578,8 +578,8 @@ class MupadElement(ExtraTabCompletion, ExpectElement):
 
         name = self._name + "::" + attrname
         try:
-            if P.eval('type(%s::%s)' % (self.name(),attrname)).strip() == "DOM_DOMAIN":
-                return P.new("%s::%s" % (self.name(),attrname))
+            if P.eval('type(%s::%s)' % (self.name(), attrname)).strip() == "DOM_DOMAIN":
+                return P.new("%s::%s" % (self.name(), attrname))
             else:
                 return MupadFunctionElement(self, name)
         except RuntimeError as err:
@@ -612,8 +612,7 @@ class MupadElement(ExtraTabCompletion, ExpectElement):
         self._check_valid()
         P = self.parent()
         s = P._eval_line('generate::TeX(%s)' % self.name())
-        s = s.replace('\\\\','\\').strip().strip('"')
-        return s
+        return s.replace('\\\\', '\\').strip().strip('"')
 
     def __len__(self):
         r"""
@@ -647,6 +646,7 @@ class MupadElement(ExtraTabCompletion, ExpectElement):
 
 # An instance
 mupad = Mupad()
+
 
 def reduce_load_mupad():
     """

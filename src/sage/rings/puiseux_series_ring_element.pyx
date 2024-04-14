@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-categories
 r"""
 Puiseux Series Ring Element
 
@@ -49,7 +49,9 @@ Mind the base ring. However, the base ring can be changed::
     sage: I*q                                                                           # needs sage.rings.number_field
     Traceback (most recent call last):
     ...
-    TypeError: unsupported operand parent(s) for *: 'Number Field in I with defining polynomial x^2 + 1 with I = 1*I' and 'Puiseux Series Ring in x over Rational Field'
+    TypeError: unsupported operand parent(s) for *:
+    'Number Field in I with defining polynomial x^2 + 1 with I = 1*I' and
+    'Puiseux Series Ring in x over Rational Field'
     sage: qz = q.change_ring(ZZ); qz
     x^(1/3) + x^(1/2)
     sage: qz.parent()
@@ -354,7 +356,7 @@ cdef class PuiseuxSeries(AlgebraElement):
         n = g / n
         return g, m, n
 
-    cpdef _add_(self, right_m) noexcept:
+    cpdef _add_(self, right_m):
         """
         Return the sum.
 
@@ -376,7 +378,7 @@ cdef class PuiseuxSeries(AlgebraElement):
         l = l1 + l2
         return type(self)(self._parent, l, g)
 
-    cpdef _sub_(self, right_m) noexcept:
+    cpdef _sub_(self, right_m):
         """
         Return the difference.
 
@@ -398,7 +400,7 @@ cdef class PuiseuxSeries(AlgebraElement):
         l = l1 - l2
         return type(self)(self._parent, l, g)
 
-    cpdef _mul_(self, right_r) noexcept:
+    cpdef _mul_(self, right_r):
         """
         Return the product.
 
@@ -420,7 +422,7 @@ cdef class PuiseuxSeries(AlgebraElement):
         l = l1 * l2
         return type(self)(self._parent, l, g)
 
-    cpdef _rmul_(self, Element c) noexcept:
+    cpdef _rmul_(self, Element c):
         """
         Return the right scalar multiplication.
 
@@ -433,7 +435,7 @@ cdef class PuiseuxSeries(AlgebraElement):
         """
         return type(self)(self._parent, self._l._rmul_(c), self._e)
 
-    cpdef _lmul_(self, Element c) noexcept:
+    cpdef _lmul_(self, Element c):
         """
         Return the left scalar multiplication.
 
@@ -446,7 +448,7 @@ cdef class PuiseuxSeries(AlgebraElement):
         """
         return type(self)(self._parent, self._l._lmul_(c), self._e)
 
-    cpdef _div_(self, right_r) noexcept:
+    cpdef _div_(self, right_r):
         """
         Return the quotient.
 
@@ -508,7 +510,7 @@ cdef class PuiseuxSeries(AlgebraElement):
             e = self._e * int(denom)
         return type(self)(self._parent, l, e)
 
-    cpdef _richcmp_(self, right_r, int op) noexcept:
+    cpdef _richcmp_(self, right_r, int op):
         r"""
         Comparison of ``self`` and ``right``.
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # sage.doctest: needs sage.graphs sage.modules
 r"""
 Finite state machines, automata, transducers
@@ -591,8 +592,7 @@ Now we want to divide `13` by `3`::
     ...
     ValueError: Invalid input sequence.
 
-The raised ``ValueError``
-means `13` is not divisible by `3`.
+The raised :class:`ValueError` means `13` is not divisible by `3`.
 
 .. _finite_state_machine_gray_code_example:
 
@@ -806,7 +806,7 @@ seriously.
 .. WARNING::
 
    The arguments used when calling a hook have changed in
-   :trac:`16538` from ``hook(state, process)`` to
+   :issue:`16538` from ``hook(state, process)`` to
    ``hook(process, state, output)``.
 
 Detecting sequences with same number of `0` and `1`
@@ -895,21 +895,21 @@ AUTHORS:
 - Daniel Krenn (2013-11-04): next release candidate for Sage patch
 - Sara Kropf (2013-11-08): fix for adjacency matrix
 - Clemens Heuberger (2013-11-11): fix for prepone_output
-- Daniel Krenn (2013-11-11): comments from :trac:`15078` included:
+- Daniel Krenn (2013-11-11): comments from :issue:`15078` included:
     docstring of FiniteStateMachine rewritten, Automaton and Transducer
     inherited from FiniteStateMachine
 - Daniel Krenn (2013-11-25): documentation improved according to
-    comments from :trac:`15078`
+    comments from :issue:`15078`
 - Clemens Heuberger, Daniel Krenn, Sara Kropf (2014-02-21--2014-07-18):
   A huge bunch of improvements. Details see
-  :trac:`15841`, :trac:`15847`, :trac:`15848`, :trac:`15849`, :trac:`15850`, :trac:`15922`, :trac:`15923`, :trac:`15924`,
-  :trac:`15925`, :trac:`15928`, :trac:`15960`, :trac:`15961`, :trac:`15962`, :trac:`15963`, :trac:`15975`, :trac:`16016`,
-  :trac:`16024`, :trac:`16061`, :trac:`16128`, :trac:`16132`, :trac:`16138`, :trac:`16139`, :trac:`16140`, :trac:`16143`,
-  :trac:`16144`, :trac:`16145`, :trac:`16146`, :trac:`16191`, :trac:`16200`, :trac:`16205`, :trac:`16206`, :trac:`16207`,
-  :trac:`16229`, :trac:`16253`, :trac:`16254`, :trac:`16255`, :trac:`16266`, :trac:`16355`, :trac:`16357`, :trac:`16387`,
-  :trac:`16425`, :trac:`16539`, :trac:`16555`, :trac:`16557`, :trac:`16588`, :trac:`16589`, :trac:`16666`, :trac:`16668`,
-  :trac:`16674`, :trac:`16675`, :trac:`16677`.
-- Daniel Krenn (2015-09-14): cleanup :trac:`18227`
+  :issue:`15841`, :issue:`15847`, :issue:`15848`, :issue:`15849`, :issue:`15850`, :issue:`15922`, :issue:`15923`, :issue:`15924`,
+  :issue:`15925`, :issue:`15928`, :issue:`15960`, :issue:`15961`, :issue:`15962`, :issue:`15963`, :issue:`15975`, :issue:`16016`,
+  :issue:`16024`, :issue:`16061`, :issue:`16128`, :issue:`16132`, :issue:`16138`, :issue:`16139`, :issue:`16140`, :issue:`16143`,
+  :issue:`16144`, :issue:`16145`, :issue:`16146`, :issue:`16191`, :issue:`16200`, :issue:`16205`, :issue:`16206`, :issue:`16207`,
+  :issue:`16229`, :issue:`16253`, :issue:`16254`, :issue:`16255`, :issue:`16266`, :issue:`16355`, :issue:`16357`, :issue:`16387`,
+  :issue:`16425`, :issue:`16539`, :issue:`16555`, :issue:`16557`, :issue:`16588`, :issue:`16589`, :issue:`16666`, :issue:`16668`,
+  :issue:`16674`, :issue:`16675`, :issue:`16677`.
+- Daniel Krenn (2015-09-14): cleanup :issue:`18227`
 
 ACKNOWLEDGEMENT:
 
@@ -1513,7 +1513,7 @@ class FSMState(SageObject):
             True
 
         The exception is raised also when the initial state is a tuple
-        (see :trac:`18990`)::
+        (see :issue:`18990`)::
 
             sage: A = Transducer(initial_states=[(0, 0)])
             sage: A.state((0, 0)).final_word_out = []
@@ -1601,7 +1601,7 @@ class FSMState(SageObject):
             word.
 
         The exception is raised also when the final state is a tuple
-        (see :trac:`18990`)::
+        (see :issue:`18990`)::
 
             sage: A = Transducer(final_states=[(0, 0)])
             sage: A.state((0, 0)).final_word_out = [1]
@@ -2120,7 +2120,7 @@ class FSMState(SageObject):
 
         ``True`` or ``False``
 
-        A ``ValueError`` is raised when ``self`` is not in an epsilon
+        A :class:`ValueError` is raised when ``self`` is not in an epsilon
         cycle.
 
         TESTS::
@@ -2537,7 +2537,9 @@ def duplicate_transition_ignore(old_transition, new_transition):
 def duplicate_transition_raise_error(old_transition, new_transition):
     """
     Alternative function for handling duplicate transitions in finite
-    state machines. This implementation raises a ``ValueError``.
+    state machines.
+
+    This implementation raises a :class:`ValueError`.
 
     See the documentation of the ``on_duplicate_transition`` parameter
     of :class:`FiniteStateMachine`.
@@ -2551,7 +2553,7 @@ def duplicate_transition_raise_error(old_transition, new_transition):
 
     OUTPUT:
 
-    Nothing. A ``ValueError`` is raised.
+    Nothing. A :class:`ValueError` is raised.
 
     EXAMPLES::
 
@@ -2812,7 +2814,7 @@ class FiniteStateMachine(SageObject):
         non-deterministic).
 
         If the transition does not exist, the function should raise a
-        ``LookupError`` or return an empty list.
+        :class:`LookupError` or return an empty list.
 
         When constructing a finite state machine in this way, some
         initial states and an input alphabet have to be specified.
@@ -2982,7 +2984,7 @@ class FiniteStateMachine(SageObject):
         ValueError: with_final_word_out cannot be specified when
         copying another finite state machine.
 
-    :trac:`19454` rewrote automatic detection of the alphabets::
+    :issue:`19454` rewrote automatic detection of the alphabets::
 
         sage: def transition_function(state, letter):
         ....:     return (0, 3 + letter)
@@ -4289,7 +4291,7 @@ class FiniteStateMachine(SageObject):
 
         TESTS:
 
-        Check that :trac:`16357` is fixed::
+        Check that :issue:`16357` is fixed::
 
             sage: T = Transducer()
             sage: T.format_transition_label_reversed([])
@@ -4369,7 +4371,7 @@ class FiniteStateMachine(SageObject):
 
         TESTS:
 
-        Check that :trac:`16357` is fixed::
+        Check that :issue:`16357` is fixed::
 
             sage: T = Transducer()
             sage: T.default_format_transition_label([])
@@ -4770,7 +4772,7 @@ class FiniteStateMachine(SageObject):
 
         TESTS:
 
-            Check that :trac:`16943` is fixed::
+            Check that :issue:`16943` is fixed::
 
                 sage: latex(Transducer(
                 ....:     [(0, 1), (1, 1), (2, 2), (3, 3), (4, 4)]))
@@ -5507,7 +5509,7 @@ class FiniteStateMachine(SageObject):
 
         The state of the finite state machine corresponding to ``state``.
 
-        If no state is found, then a ``LookupError`` is thrown.
+        If no state is found, then a :class:`LookupError` is thrown.
 
         EXAMPLES::
 
@@ -5553,7 +5555,7 @@ class FiniteStateMachine(SageObject):
         The transition of the finite state machine corresponding
         to ``transition``.
 
-        If no transition is found, then a ``LookupError`` is thrown.
+        If no transition is found, then a :class:`LookupError` is thrown.
 
         EXAMPLES::
 
@@ -5740,7 +5742,7 @@ class FiniteStateMachine(SageObject):
             sage: fsm.is_deterministic()
             False
 
-        Check that :trac:`18556` is fixed::
+        Check that :issue:`18556` is fixed::
 
             sage: Automaton().is_deterministic()
             True
@@ -6962,7 +6964,7 @@ class FiniteStateMachine(SageObject):
 
         TESTS:
 
-        This shows that :trac:`16024` is fixed. ::
+        This shows that :issue:`16024` is fixed. ::
 
             sage: F._states_
             ['B']
@@ -7249,7 +7251,7 @@ class FiniteStateMachine(SageObject):
             sage: T.process([0])
             [(True, (0, 0), [1]), (True, (1, 0), [2])]
 
-        Handling of the input alphabet (see :trac:`18989`)::
+        Handling of the input alphabet (see :issue:`18989`)::
 
             sage: A = Automaton([(0, 0, 0)])
             sage: B = Automaton([(0, 0, 1)], input_alphabet=[1, 2])
@@ -7622,7 +7624,7 @@ class FiniteStateMachine(SageObject):
           for `j\in\{1, \ldots, d\}` and returns a pair ``(word_in, word_out)``
           which is the label of the transition `A=(A_1, \ldots, A_d)` to `B=(B_1,
           \ldots, B_d)`. If there is no transition from `A` to `B`,
-          then ``function`` should raise a ``LookupError``.
+          then ``function`` should raise a :class:`LookupError`.
 
         - ``new_input_alphabet`` (optional) -- the new input alphabet
           as a list.
@@ -7637,7 +7639,7 @@ class FiniteStateMachine(SageObject):
           the corresponding state in the new finite state machine. By
           default, the final output is the empty word if both final
           outputs of the constituent states are empty; otherwise, a
-          ``ValueError`` is raised.
+          :class:`ValueError` is raised.
 
         - ``new_class`` -- Class of the new finite state machine. By
           default (``None``), the class of ``self`` is used.
@@ -7797,7 +7799,7 @@ class FiniteStateMachine(SageObject):
             ....:      new_class=Automaton))
             <class 'sage.combinat.finite_state_machine.Automaton'>
 
-        Check that isolated vertices are kept (:trac:`16762`)::
+        Check that isolated vertices are kept (:issue:`16762`)::
 
             sage: F = Transducer(initial_states=[0])
             sage: F.add_state(1)
@@ -8036,7 +8038,7 @@ class FiniteStateMachine(SageObject):
         TESTS:
 
         In the explorative algorithm, transducers with non-empty final
-        output words are implemented in :trac:`16548`::
+        output words are implemented in :issue:`16548`::
 
             sage: A = transducers.GrayCode()
             sage: B = transducers.abs([0, 1])
@@ -8049,7 +8051,7 @@ class FiniteStateMachine(SageObject):
              Transition from (0, 2) to (0, 2): 1|0]
 
         Similarly, the explorative algorithm can handle
-        non-deterministic finite state machines as of :trac:`16548`::
+        non-deterministic finite state machines as of :issue:`16548`::
 
             sage: A = Transducer([(0, 0, 0, 0), (0, 1, 0, 0)],
             ....:                initial_states=[0])
@@ -8255,7 +8257,7 @@ class FiniteStateMachine(SageObject):
              Transition from ('B', 1) to ('B', 1): 0|0,
              Transition from ('B', 1) to ('B', 2): 1|0]
 
-        Check that colors are correctly dealt with, cf. :trac:`19199`.
+        Check that colors are correctly dealt with, cf. :issue:`19199`.
         In particular, the new colors have to be hashable such that
         :meth:`Automaton.determinisation` does not fail::
 
@@ -11232,7 +11234,7 @@ class Automaton(FiniteStateMachine):
             Automaton with 1 state
 
         If the colors of all constituent states are ``None``,
-        the resulting color is ``None``, too (:trac:`19199`)::
+        the resulting color is ``None``, too (:issue:`19199`)::
 
             sage: A = Automaton([(0, 0, 0)],
             ....:               initial_states=[0],
@@ -11242,7 +11244,7 @@ class Automaton(FiniteStateMachine):
 
         TESTS:
 
-        This is from :trac:`15078`, comment 13.
+        This is from :issue:`15078`, comment 13.
 
         ::
 
@@ -11274,7 +11276,7 @@ class Automaton(FiniteStateMachine):
             sage: Ddet.process(list('aaab'))
             (True, frozenset({'A', 'C'}))
 
-        Test that :trac:`18992` is fixed::
+        Test that :issue:`18992` is fixed::
 
             sage: A = Automaton([(0, 1, []), (1, 1, 0)],
             ....:               initial_states=[0], final_states=[1])
@@ -12685,7 +12687,7 @@ class Transducer(FiniteStateMachine):
         - ``full_output`` -- (default: ``True``) a boolean. If set,
           then the full output is given, otherwise only the generated
           output (the third entry below only). If the input is not
-          accepted, a ``ValueError`` is raised.
+          accepted, a :class:`ValueError` is raised.
 
         - ``always_include_output`` -- if set (not by default), always
           include the output. This is inconsequential for a

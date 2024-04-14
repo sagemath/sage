@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Groups
 """
@@ -102,7 +103,7 @@ class Groups(CategoryWithAxiom):
 
                 sage: A = AlternatingGroup(4)                                           # needs sage.groups
                 sage: A.group_generators()                                              # needs sage.groups
-                Family ((2,3,4), (1,2,3))
+                Family ((1,2,3), (2,3,4))
             """
             from sage.sets.family import Family
             try:
@@ -124,7 +125,7 @@ class Groups(CategoryWithAxiom):
                 sage: # needs sage.groups
                 sage: A = AlternatingGroup(4)
                 sage: A.monoid_generators()
-                Family ((2,3,4), (1,2,3))
+                Family ((1,2,3), (2,3,4))
                 sage: F.<x,y> = FreeGroup()
                 sage: F.monoid_generators()
                 Family (x, y, x^-1, y^-1)
@@ -424,7 +425,7 @@ class Groups(CategoryWithAxiom):
                 Arrange an ordering of elements into cosets of a normal
                 subgroup close to size `\sqrt{n}`.  Then the quotient
                 group structure is often apparent in the table.  See
-                comments on :trac:`7555`.
+                comments on :issue:`7555`.
 
             AUTHOR:
 
@@ -589,7 +590,7 @@ class Groups(CategoryWithAxiom):
                             ((), (), (1,2)),
                             ((), (), (2,3)))
 
-                We check the other portion of :trac:`16718` is fixed::
+                We check the other portion of :issue:`16718` is fixed::
 
                     sage: len(C.j_classes())                                            # needs sage.groups
                     1

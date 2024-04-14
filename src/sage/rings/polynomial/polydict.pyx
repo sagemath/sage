@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Generic data structures for multivariate polynomials
 
@@ -69,7 +70,7 @@ cpdef int gen_index(PolyDict x) noexcept:
     return e._data[0]
 
 
-cpdef ETuple monomial_exponent(PolyDict p) noexcept:
+cpdef ETuple monomial_exponent(PolyDict p):
     r"""
     Return the unique exponent of ``p`` if it is a monomial or raise a ``ValueError``.
 
@@ -102,7 +103,7 @@ cdef class PolyDict:
 
     No arithmetic operation on :class:`PolyDict` clear zero coefficients as of
     now there is no reliable way of testing it in the most general setting, see
-    :trac:`35319`. For removing zero coefficients from a :class:`PolyDict` you
+    :issue:`35319`. For removing zero coefficients from a :class:`PolyDict` you
     can use the method :meth:`remove_zeros` which can be parametrized by a zero
     test.
     """
@@ -189,12 +190,12 @@ cdef class PolyDict:
             if remove_zero:
                 self.remove_zeros()
 
-    cdef PolyDict _new(self, dict pdict) noexcept:
+    cdef PolyDict _new(self, dict pdict):
         cdef PolyDict ans = PolyDict.__new__(PolyDict)
         ans.__repn = pdict
         return ans
 
-    cpdef remove_zeros(self, zero_test=None) noexcept:
+    cpdef remove_zeros(self, zero_test=None):
         r"""
         Remove the entries with zero coefficients.
 
@@ -770,7 +771,7 @@ cdef class PolyDict:
 
         TESTS:
 
-        We check that the issue on :trac:`9478` is resolved::
+        We check that the issue on :issue:`9478` is resolved::
 
             sage: R2.<a> = QQ[]
             sage: R3.<xi, x> = R2[]
@@ -779,7 +780,7 @@ cdef class PolyDict:
 
         TESTS:
 
-        Check that :trac:`29604` is fixed::
+        Check that :issue:`29604` is fixed::
 
             sage: PolyDict({(1, 0): GF(2)(1)}).latex(['x', 'y'])
             'x'
@@ -875,7 +876,7 @@ cdef class PolyDict:
 
         TESTS:
 
-        Check that :trac:`29604` is fixed::
+        Check that :issue:`29604` is fixed::
 
             sage: PolyDict({(1, 0): GF(4)(1)}).poly_repr(['x', 'y'])                    # needs sage.rings.finite_rings
             'x'
@@ -1430,7 +1431,7 @@ cdef class ETuple:
     question (although, there is no question that this is much faster
     than the prior use of python dicts).
     """
-    cdef ETuple _new(self) noexcept:
+    cdef ETuple _new(self):
         """
         Quickly creates a new initialized ETuple with the
         same length as self.
@@ -1789,7 +1790,7 @@ cdef class ETuple:
             sage: list(e)
             [4, 0, 0, 2, 0]
 
-        Check that :trac:`28178` is fixed::
+        Check that :issue:`28178` is fixed::
 
             sage: it = iter(e)
             sage: iter(it) is it
@@ -1845,7 +1846,7 @@ cdef class ETuple:
 
     # additional methods
 
-    cpdef int unweighted_degree(self) except *:
+    cdef int _unweighted_degree(self) except *:
         r"""
         Return the sum of entries.
 
@@ -1862,6 +1863,20 @@ cdef class ETuple:
         for i in range(self._nonzero):
             degree += self._data[2 * i + 1]
         return degree
+
+    cpdef int unweighted_degree(self) except *:
+        r"""
+        Return the sum of entries.
+
+        EXAMPLES::
+
+             sage: from sage.rings.polynomial.polydict import ETuple
+             sage: ETuple([1, 1, 0, 2, 0]).unweighted_degree()
+             4
+             sage: ETuple([-1, 1]).unweighted_degree()
+             0
+        """
+        return self._unweighted_degree()
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -1975,7 +1990,7 @@ cdef class ETuple:
             ind1 += 2
         return deg
 
-    cpdef ETuple eadd(self, ETuple other) noexcept:
+    cpdef ETuple eadd(self, ETuple other):
         """
         Return the vector addition of ``self`` with ``other``.
 
@@ -1987,7 +2002,7 @@ cdef class ETuple:
             sage: e.eadd(f)
             (1, 1, 3)
 
-        Verify that :trac:`6428` has been addressed::
+        Verify that :issue:`6428` has been addressed::
 
             sage: # needs sage.libs.singular
             sage: R.<y, z> = Frac(QQ['x'])[]
@@ -2025,7 +2040,7 @@ cdef class ETuple:
                 result._nonzero += 1
         return result
 
-    cpdef ETuple eadd_p(self, int other, size_t pos) noexcept:
+    cpdef ETuple eadd_p(self, int other, size_t pos):
         """
         Add ``other`` to ``self`` at position ``pos``.
 
@@ -2052,7 +2067,7 @@ cdef class ETuple:
 
         TESTS:
 
-        Test segmentation faults occurring as described in :trac:`34000`::
+        Test segmentation faults occurring as described in :issue:`34000`::
 
             sage: ETuple([0, 1, 1]).eadd_p(1, 0)
             (1, 1, 1)
@@ -2113,7 +2128,7 @@ cdef class ETuple:
 
         return result
 
-    cpdef ETuple eadd_scaled(self, ETuple other, int scalar) noexcept:
+    cpdef ETuple eadd_scaled(self, ETuple other, int scalar):
         """
         Vector addition of ``self`` with ``scalar * other``.
 
@@ -2152,7 +2167,7 @@ cdef class ETuple:
                 result._nonzero += 1
         return result
 
-    cpdef ETuple esub(self, ETuple other) noexcept:
+    cpdef ETuple esub(self, ETuple other):
         """
         Vector subtraction of ``self`` with ``other``.
 
@@ -2190,7 +2205,7 @@ cdef class ETuple:
                 result._nonzero += 1
         return result
 
-    cpdef ETuple emul(self, int factor) noexcept:
+    cpdef ETuple emul(self, int factor):
         """
         Scalar Vector multiplication of ``self``.
 
@@ -2214,7 +2229,7 @@ cdef class ETuple:
                 result._data[2 * ind + 1] = self._data[2 * ind + 1] * factor
         return result
 
-    cpdef ETuple emax(self, ETuple other) noexcept:
+    cpdef ETuple emax(self, ETuple other):
         """
         Vector of maximum of components of ``self`` and ``other``.
 
@@ -2261,7 +2276,7 @@ cdef class ETuple:
                 result._nonzero += 1
         return result
 
-    cpdef ETuple emin(self, ETuple other) noexcept:
+    cpdef ETuple emin(self, ETuple other):
         """
         Vector of minimum of components of ``self`` and ``other``.
 
@@ -2331,7 +2346,7 @@ cdef class ETuple:
             result += exp1 * exp2
         return result
 
-    cpdef ETuple escalar_div(self, int n) noexcept:
+    cpdef ETuple escalar_div(self, int n):
         r"""
         Divide each exponent by ``n``.
 
@@ -2372,7 +2387,7 @@ cdef class ETuple:
                 result._nonzero += 1
         return result
 
-    cpdef ETuple divide_by_gcd(self, ETuple other) noexcept:
+    cpdef ETuple divide_by_gcd(self, ETuple other):
         """
         Return ``self / gcd(self, other)``.
 
@@ -2415,7 +2430,7 @@ cdef class ETuple:
             ind1 += 2
         return result
 
-    cpdef ETuple divide_by_var(self, size_t pos) noexcept:
+    cpdef ETuple divide_by_var(self, size_t pos):
         """
         Return division of ``self`` by the variable with index ``pos``.
 
@@ -2542,7 +2557,7 @@ cdef class ETuple:
                 return False
         return True
 
-    cpdef list nonzero_positions(self, bint sort=False) noexcept:
+    cpdef list nonzero_positions(self, bint sort=False):
         """
         Return the positions of non-zero exponents in the tuple.
 
@@ -2561,7 +2576,7 @@ cdef class ETuple:
         cdef size_t ind
         return [self._data[2 * ind] for ind in range(self._nonzero)]
 
-    cpdef common_nonzero_positions(self, ETuple other, bint sort=False) noexcept:
+    cpdef common_nonzero_positions(self, ETuple other, bint sort=False):
         """
         Returns an optionally sorted list of non zero positions either
         in self or other, i.e. the only positions that need to be
@@ -2584,7 +2599,7 @@ cdef class ETuple:
         else:
             return res
 
-    cpdef list nonzero_values(self, bint sort=True) noexcept:
+    cpdef list nonzero_values(self, bint sort=True):
         """
         Return the non-zero values of the tuple.
 
@@ -2606,7 +2621,7 @@ cdef class ETuple:
         cdef size_t ind
         return [self._data[2 * ind + 1] for ind in range(self._nonzero)]
 
-    cpdef ETuple reversed(self) noexcept:
+    cpdef ETuple reversed(self):
         """
         Return the reversed ETuple of ``self``.
 

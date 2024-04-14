@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 include "sage/libs/linkages/padics/fmpz_poly_unram.pxi"
 include "sage/libs/linkages/padics/unram_shared.pxi"
 include "CR_template.pxi"
@@ -52,7 +53,7 @@ cdef class qAdicCappedRelativeElement(CRElement):
             sage: M.base_ring()
             Ring of integers modulo 125
 
-        Check that :trac:`13617` has been fixed::
+        Check that :issue:`13617` has been fixed::
 
             sage: R(0).matrix_mod_pn()
             [0 0 0 0 0]
@@ -153,7 +154,7 @@ cdef class qAdicCappedRelativeElement(CRElement):
     def __hash__(self):
         r"""
         Raise a ``TypeError`` since this element is not hashable
-        (:trac:`11895`.)
+        (:issue:`11895`.)
 
         TESTS::
 

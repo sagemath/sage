@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.graphs
 r"""
 Growth diagrams and dual graded graphs
@@ -914,7 +915,7 @@ class GrowthDiagram(SageObject):
             sage: G.P_chain()
             [word: , word: 1, word: 11, word: 111, word: 1011]
 
-        Check that :trac:`25631` is fixed::
+        Check that :issue:`25631` is fixed::
 
             sage: BinaryWord = GrowthDiagram.rules.BinaryWord()
             sage: BinaryWord(filling = {}).P_chain()
@@ -944,7 +945,7 @@ class GrowthDiagram(SageObject):
             sage: G.Q_chain()
             [word: , word: 1, word: 10, word: 101, word: 1011]
 
-        Check that :trac:`25631` is fixed::
+        Check that :issue:`25631` is fixed::
 
             sage: BinaryWord = GrowthDiagram.rules.BinaryWord()
             sage: BinaryWord(filling = {}).Q_chain()

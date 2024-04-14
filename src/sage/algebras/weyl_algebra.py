@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 Weyl Algebras
@@ -30,7 +31,6 @@ from sage.categories.rings import Rings
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.sets.family import Family
 import sage.data_structures.blas_dict as blas
-from sage.rings.ring import Algebra
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_general
 from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -655,7 +655,7 @@ class DifferentialWeylAlgebraElement(Element):
         return self.parent().diff_action(self, p)
 
 
-class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
+class DifferentialWeylAlgebra(UniqueRepresentation, Parent):
     r"""
     The differential Weyl algebra of a polynomial ring.
 
@@ -780,7 +780,7 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
             sage: DifferentialWeylAlgebra(R)
             Differential Weyl algebra of polynomials in x, y, z over Rational Field
         """
-        poly_gens = ', '.join(repr(x) for x in self.gens()[:self._n])
+        poly_gens = ', '.join(repr(x) for x in self.variables())
         return "Differential Weyl algebra of polynomials in {} over {}".format(
             poly_gens, self.base_ring())
 
@@ -985,6 +985,8 @@ class DifferentialWeylAlgebra(Algebra, UniqueRepresentation):
         """
         d = {x: self.gen(i) for i, x in enumerate(self.variable_names())}
         return Family(self.variable_names(), lambda x: d[x])
+
+    gens = algebra_generators
 
     @cached_method
     def variables(self):

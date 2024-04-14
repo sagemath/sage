@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: optional - sphinx
 r"""
 Process docstrings with Sphinx

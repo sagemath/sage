@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 """
 Linear Functions and Constraints
 
@@ -67,7 +68,7 @@ inequalities as less or equal::
 
 TESTS:
 
-This was fixed in :trac:`24423`::
+This was fixed in :issue:`24423`::
 
     sage: p.<x> = MixedIntegerLinearProgram()
     sage: from sage.numerical.linear_functions import LinearFunctionsParent
@@ -75,7 +76,7 @@ This was fixed in :trac:`24423`::
     sage: 3 <= x[0] <= LF(4)
     3 <= x_0 <= 4
 
-See :trac:`12091`::
+See :issue:`12091`::
 
     sage: p = MixedIntegerLinearProgram()
     sage: b = p.new_variable()
@@ -114,7 +115,7 @@ from sage.misc.cachefunc import cached_function
 #
 #*****************************************************************************
 
-cpdef is_LinearFunction(x) noexcept:
+cpdef is_LinearFunction(x):
     """
     Test whether ``x`` is a linear function
 
@@ -336,7 +337,7 @@ cdef class LinearFunctionOrConstraint(ModuleElement):
             sage: 1 >= x[0]
             x_0 <= 1
 
-        This works with non-Sage types too, see :trac:`14540`::
+        This works with non-Sage types too, see :issue:`14540`::
 
             sage: p.<b> = MixedIntegerLinearProgram()
             sage: int(1) <= b[0] <= int(2)
@@ -663,7 +664,7 @@ cdef class LinearFunctionsParent_class(Parent):
         """
         return 'Linear functions over ' + str(self.base_ring())
 
-    cpdef _element_constructor_(self, x) noexcept:
+    cpdef _element_constructor_(self, x):
         """
         Construct a :class:`LinearFunction` from ``x``.
 
@@ -693,7 +694,7 @@ cdef class LinearFunctionsParent_class(Parent):
             return LinearFunction(self, (<LinearFunction>x)._f)
         return LinearFunction(self, x)
 
-    cpdef _coerce_map_from_(self, R) noexcept:
+    cpdef _coerce_map_from_(self, R):
         """
         Allow coercion of scalars into linear functions.
 
@@ -802,7 +803,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         else:
             self._f = {-1: R(f)}
 
-    cpdef iteritems(self) noexcept:
+    cpdef iteritems(self):
         """
         Iterate over the index, coefficient pairs.
 
@@ -905,7 +906,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         except KeyError:
             return self.parent().base_ring().zero()
 
-    cpdef _add_(self, b) noexcept:
+    cpdef _add_(self, b):
         r"""
         Defining the + operator
 
@@ -922,7 +923,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         P = self.parent()
         return P(e)
 
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         r"""
         Defining the - operator (opposite).
 
@@ -936,7 +937,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         P = self.parent()
         return P({id: -coeff for id, coeff in self._f.iteritems()})
 
-    cpdef _sub_(self, b) noexcept:
+    cpdef _sub_(self, b):
         r"""
         Defining the - operator (subtraction).
 
@@ -955,7 +956,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         P = self.parent()
         return P(e)
 
-    cpdef _lmul_(self, Element b) noexcept:
+    cpdef _lmul_(self, Element b):
         r"""
         Multiplication by scalars
 
@@ -971,7 +972,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         P = self.parent()
         return P(dict([(id,b*coeff) for (id, coeff) in self._f.iteritems()]))
 
-    cpdef _acted_upon_(self, x, bint self_on_left) noexcept:
+    cpdef _acted_upon_(self, x, bint self_on_left):
         """
         Act with scalars that do not have a natural coercion into
         ``self.base_ring()``
@@ -1130,7 +1131,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
         else:
             return t
 
-    cpdef is_zero(self) noexcept:
+    cpdef is_zero(self):
         """
         Test whether ``self`` is zero.
 
@@ -1150,7 +1151,7 @@ cdef class LinearFunction(LinearFunctionOrConstraint):
                 return False
         return True
 
-    cpdef equals(LinearFunction left, LinearFunction right) noexcept:
+    cpdef equals(LinearFunction left, LinearFunction right):
         """
         Logically compare ``left`` and ``right``.
 
@@ -1267,7 +1268,7 @@ cdef class LinearConstraintsParent_class(Parent):
         """
         return 'Linear constraints over ' + str(self.linear_functions_parent().base_ring())
 
-    cpdef _element_constructor_(self, left, right=None, equality=False) noexcept:
+    cpdef _element_constructor_(self, left, right=None, equality=False):
         """
         Construct a :class:`LinearConstraint`.
 
@@ -1332,7 +1333,7 @@ cdef class LinearConstraintsParent_class(Parent):
         else:
             return LinearConstraint(self, [left, right], equality=equality)
 
-    cpdef _coerce_map_from_(self, R) noexcept:
+    cpdef _coerce_map_from_(self, R):
         """
         Allow coercion of scalars into linear functions.
 
@@ -1432,7 +1433,7 @@ cdef class LinearConstraint(LinearFunctionOrConstraint):
         LF = parent.linear_functions_parent()
         self.constraints = [ LF(term) for term in terms ]
 
-    cpdef equals(LinearConstraint left, LinearConstraint right) noexcept:
+    cpdef equals(LinearConstraint left, LinearConstraint right):
         """
         Compare ``left`` and ``right``.
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Unit testing for Sage objects
 """
@@ -553,7 +554,7 @@ class InstanceTester(unittest.TestCase):
             sage: all(s in srange(8) and t in srange(8) for s,t in tester.some_elements(repeat=2))
             True
 
-        Test for :trac:`15919`, :trac:`16244`::
+        Test for :issue:`15919`, :issue:`16244`::
 
             sage: Z = IntegerModRing(25) # random.sample, which was used pre #16244, has a threshold at 21!
             sage: Z[1]                   # since #8389, indexed access is used for ring extensions

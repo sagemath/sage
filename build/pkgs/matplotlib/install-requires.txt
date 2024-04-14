@@ -1,3 +1,0 @@
-# Trac #33642: Set lower bound for use of matplotlib color maps introduced in #33491,
-# and to suppress deprecation warnings (https://github.com/matplotlib/matplotlib/pull/21073)
-matplotlib >=3.5.1

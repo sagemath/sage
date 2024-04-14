@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 r"""
 Combinatorial face of a polyhedron
 
@@ -497,7 +498,7 @@ cdef class CombinatorialFace(SageObject):
             else:
                 raise NotImplementedError("is_subface only implemented for faces of the same polyhedron")
 
-    cpdef dimension(self) noexcept:
+    cpdef dimension(self):
         r"""
         Return the dimension of the face.
 

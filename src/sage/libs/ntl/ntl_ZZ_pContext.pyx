@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 # distutils: libraries = NTL_LIBRARIES gmp m
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -162,7 +163,7 @@ cdef class ntl_ZZ_pContext_factory():
     def __init__(self):
         self.context_dict = {}
 
-    cdef ntl_ZZ_pContext_class make_c(self, ntl_ZZ v) noexcept:
+    cdef ntl_ZZ_pContext_class make_c(self, ntl_ZZ v):
         """
         Creates a new ZZ_pContext.
 

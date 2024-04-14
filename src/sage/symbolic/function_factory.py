@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 r"""
 Factory for symbolic functions
 """
@@ -328,7 +329,7 @@ def function(s, **kwds) -> Union[SymbolicFunction, list[SymbolicFunction]]:
 
     TESTS:
 
-    Make sure that :trac:`15860` is fixed and whitespaces are removed::
+    Make sure that :issue:`15860` is fixed and whitespaces are removed::
 
         sage: C, D, E = function(' C  D E')
         sage: C(D(x))

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 from sage.libs.ntl.types cimport ZZX_c
 
 cdef class ntl_ZZX():

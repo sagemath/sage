@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 r"""
 Rubik's cube group functions
 
@@ -567,7 +568,7 @@ class CubeGroup(PermutationGroup_generic):
 
         TESTS:
 
-        Check that :trac:`11360` is fixed::
+        Check that :issue:`11360` is fixed::
 
             sage: rubik = CubeGroup()
             sage: rubik.order()

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Toric lattices
 
@@ -706,7 +707,7 @@ class ToricLattice_generic(FreeModule_generic_pid):
 
         TESTS:
 
-        We check that :trac:`19603` is fixed::
+        We check that :issue:`19603` is fixed::
 
             sage: K = Cone([(1,0,0),(0,1,0)])
             sage: K.lattice()
@@ -1511,7 +1512,7 @@ class ToricLattice_quotient(FGP_Module_class):
             raise ValueError('You may not specify both positive_point and positive_dual_point.')
         self._flip_sign_of_generator = (scalar_product < 0)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of the quotient.
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Theta Series of Quadratic Forms
 

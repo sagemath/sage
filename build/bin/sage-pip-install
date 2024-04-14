@@ -30,7 +30,7 @@ PIP=pip3
 # running pip. This is implemented in the Python script sage-flock
 LOCK="$SAGE_VENV/var/lock/$PIP.lock"
 
-# Trac #33155: Pythons installed using the python.org macOS installers
+# Issue #33155: Pythons installed using the python.org macOS installers
 # for Python < 3.10 identify macOS Big Sur and newer as "10.16", causing
 # pip to refuse to install wheels tagged macosx_11_0_x86_64
 export SYSTEM_VERSION_COMPAT=0

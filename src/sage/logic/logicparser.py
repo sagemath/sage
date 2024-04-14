@@ -75,7 +75,7 @@ Find the full syntax parse tree of a boolean formula from a list of tokens::
     sage: logicparser.tree_parse(r, polish = True)
     ['|', ['~', ['~', 'a']], 'b']
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 Chris Gorecki <chris.k.gorecki@gmail.com>
 #       Copyright (C) 2013 Paul Scurek <scurek86@gmail.com>
 #
@@ -83,7 +83,7 @@ Find the full syntax parse tree of a boolean formula from a list of tokens::
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
-#*****************************************************************************
+# ****************************************************************************
 
 import string
 
@@ -163,6 +163,7 @@ def polish_parse(s):
     if isinstance(tree, str):
         return vars_order
     return tree
+
 
 def get_trees(*statements):
     r"""
@@ -276,6 +277,7 @@ def recover_formula(prefix_tree):
         return formula
     return formula[1:-1]
 
+
 def recover_formula_internal(prefix_tree):
     r"""
     Recover the formula from a parse tree in prefix form.
@@ -385,6 +387,7 @@ def prefix_to_infix(prefix_tree):
         raise TypeError("the input must be a parse tree as a list")
     return apply_func(prefix_tree, to_infix_internal)
 
+
 def to_infix_internal(prefix_tree):
     r"""
     Convert a simple parse tree from prefix form to infix form.
@@ -433,6 +436,7 @@ def to_infix_internal(prefix_tree):
     if prefix_tree[0] != '~' and len(prefix_tree) == 3:
         return [prefix_tree[1], prefix_tree[0], prefix_tree[2]]
     return prefix_tree
+
 
 def tokenize(s):
     r"""
@@ -516,6 +520,7 @@ def tokenize(s):
     toks.append(')')
     return toks, vars_order
 
+
 def tree_parse(toks, polish=False):
     r"""
     Return a parse tree from the tokens in ``toks``.
@@ -571,6 +576,7 @@ def tree_parse(toks, polish=False):
             branch = parse_ltor(lrtoks[1:-1], polish=polish)
             stack.append(branch)
     return stack[0]
+
 
 def parse_ltor(toks, n=0, polish=False):
     r"""
@@ -656,6 +662,7 @@ def parse_ltor(toks, n=0, polish=False):
     if len(toks) > 1:
         raise SyntaxError
     return toks[0]
+
 
 def apply_func(tree, func):
     r"""

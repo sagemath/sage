@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 "IntegerFactorization objects"
 
 from sage.structure.factorization import Factorization
@@ -57,7 +58,7 @@ class IntegerFactorization(Factorization):
             sage: factor(15)
             3 * 5
 
-        We check that :trac:`13139` is fixed::
+        We check that :issue:`13139` is fixed::
 
             sage: from sage.structure.factorization_integer import IntegerFactorization
             sage: IntegerFactorization([(3, 1)], unsafe=True)

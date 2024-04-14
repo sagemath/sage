@@ -9,7 +9,7 @@
 #
 sys-devel/binutils
 sys-libs/binutils-libs
-sys-devel/make
+dev-build/make
 dev-scheme/guile
 dev-libs/libffi
 app-arch/tar

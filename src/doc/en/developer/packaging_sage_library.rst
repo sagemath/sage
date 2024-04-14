@@ -12,14 +12,14 @@ Modules, packages, distribution packages
 The Sage library consists of a large number of Python modules,
 organized into a hierarchical set of packages that fill the namespace
 :mod:`sage`.  All source files are located in a subdirectory of the
-directory ``SAGE_ROOT/src/sage/``.
+directory :sage_root:`src/sage/`.
 
 For example,
 
-- the file ``SAGE_ROOT/src/sage/coding/code_bounds.py`` provides the
+- the file :sage_root:`src/sage/coding/code_bounds.py` provides the
   module :mod:`sage.coding.code_bounds`;
 
-- the directory containing this file, ``SAGE_ROOT/src/sage/coding/``,
+- the directory containing this file, :sage_root:`src/sage/coding/`,
   thus provides the package :mod:`sage.coding`.
 
 There is another notion of "package" in Python, the **distribution
@@ -28,7 +28,7 @@ package").  Currently, the entire Sage library is provided by a
 single distribution,
 `sagemath-standard <https://pypi.org/project/sagemath-standard/>`_,
 which is generated from the directory
-``SAGE_ROOT/pkgs/sagemath-standard``.
+:sage_root:`pkgs/sagemath-standard`.
 
 Note that the distribution name is not required to be a Python
 identifier. In fact, using dashes (``-``) is preferred to underscores in
@@ -129,7 +129,7 @@ Source directories of distribution packages
 The development of the Sage library uses a monorepo strategy for
 all distribution packages that fill the :mod:`sage.*` namespace.  This
 means that the source trees of these distributions are included in a
-single ``git`` repository, in a subdirectory of ``SAGE_ROOT/pkgs``.
+single ``git`` repository, in a subdirectory of :sage_root:`pkgs`.
 
 All these distribution packages have matching version numbers.  From
 the viewpoint of a single distribution, this means that sometimes
@@ -137,10 +137,10 @@ there will be a new release of some distribution where the only thing
 changing is the version number.
 
 The source directory of a distribution package, such as
-``SAGE_ROOT/pkgs/sagemath-standard``, contains the following files:
+:sage_root:`pkgs/sagemath-standard`, contains the following files:
 
 - ``sage`` -- a relative symbolic link to the monolithic Sage library
-  source tree ``SAGE_ROOT/src/sage/``
+  source tree :sage_root:`src/sage/`
 
 - `MANIFEST.in <https://packaging.python.org/guides/using-manifest-in/>`_ --
   controls which files and directories of the
@@ -174,8 +174,7 @@ The source directory of a distribution package, such as
 
     $ ./sage --fixdistributions --set all --from-egg-info
 
-- `pyproject.toml <https://pip.pypa.io/en/stable/reference/build-system/pyproject-toml/>`_,
-  `setup.cfg <https://setuptools.pypa.io/en/latest/userguide/declarative_config.html>`_,
+- `pyproject.toml <https://pip.pypa.io/en/stable/reference/build-system/pyproject-toml/>`_
   and `requirements.txt <https://pip.pypa.io/en/stable/user_guide/#requirements-files>`_ --
   standard Python packaging metadata, declaring the distribution name, dependencies,
   etc.
@@ -183,7 +182,7 @@ The source directory of a distribution package, such as
 - ``README.rst`` -- a description of the distribution
 
 - ``LICENSE.txt`` -- relative symbolic link to the same files
-  in ``SAGE_ROOT/src``
+  in :sage_root:`src`
 
 - ``VERSION.txt`` -- package version. This file is updated by the release manager by
   running the ``sage-update-version`` script.
@@ -214,15 +213,15 @@ The source directory of a distribution package, such as
 
 - ``tox.ini`` -- configuration for testing with `tox <https://pypi.org/project/tox/>`_
 
-The technique of using symbolic links pointing into ``SAGE_ROOT/src``
-has allowed the modularization effort to keep the ``SAGE_ROOT/src``
+The technique of using symbolic links pointing into :sage_root:`src`
+has allowed the modularization effort to keep the :sage_root:`src`
 tree monolithic: Modularization has been happening behind the scenes
 and will not change where Sage developers find the source files.
 
 Some of these files may actually be generated from source files with suffix ``.m4`` by the
-``SAGE_ROOT/bootstrap`` script via the ``m4`` macro processor.
+:sage_root:`bootstrap` script via the ``m4`` macro processor.
 
-For every distribution package, there is also a subdirectory of ``SAGE_ROOT/build/pkgs/``,
+For every distribution package, there is also a subdirectory of :sage_root:`build/pkgs/`,
 which contains the build infrastructure that is specific to Sage-the-distribution.
 Note that these subdirectories follows a different naming convention,
 using underscores instead of dashes, see :ref:`section-directory-structure`.
@@ -265,7 +264,7 @@ that are imposed by the build-time dependencies.
 
 We can define some meaningful small distributions that just consist of
 a single or a few Cython modules. For example, **sagemath-tdlib**
-(:trac:`29864`) would just package the single
+(:issue:`29864`) would just package the single
 Cython module that must be linked with ``tdlib``,
 :mod:`sage.graphs.graph_decompositions.tdlib`. Starting with the Sage
 9.6 development cycle, as soon as namespace packages are activated, we
@@ -288,8 +287,9 @@ modules must be part of the distribution, or provided by another
 distribution -- which then must be declared as a run-time dependency.
 
 *Declaring run-time dependencies:* These dependencies are declared in
-``setup.cfg`` (generated from ``setup.cfg.m4``) as
-`install_requires <https://setuptools.pypa.io/en/latest/userguide/dependency_management.html#declaring-required-dependency>`_.
+``pyproject.toml`` (generated from ``pyproject.toml.m4``) as
+`[project] dependencies <https://setuptools.pypa.io/en/latest/userguide/dependency_management.html#declaring-required-dependency>`_ (in the older terminology of ``setup.cfg`` and ``setup.py``,
+these dependencies were known as ``install_requires``).
 
 *Reducing module-level run-time dependencies:*
 
@@ -467,14 +467,17 @@ features, which will only be working if the user also has installed
 **sagemath-symbolics**.
 
 *Declaring optional run-time dependencies:* It is possible to declare
-such optional dependencies as `extras_require <https://setuptools.pypa.io/en/latest/userguide/dependency_management.html#optional-dependencies>`_ in ``setup.cfg``
-(generated from ``setup.cfg.m4``).  This is a very limited mechanism
+such dependencies as `[project.optional-dependencies] <https://setuptools.pypa.io/en/latest/userguide/dependency_management.html#optional-dependencies>`_ in ``pyproject.toml``
+(generated from ``pyproject.toml.m4``).
+(In the older terminology of ``setup.cfg`` and ``setup.py``,
+these optional dependencies were known as ``extras_require``.)
+This is a very limited mechanism
 -- in particular it does not affect the build phase of the
 distribution in any way. It basically only provides a way to give a
 nickname to a distribution that can be installed as an add-on.
 
-In our example, we could declare an ``extras_require`` so that users
-could use ``pip install sagemath-coding[symbolics]``.
+In our example, we could declare an optional dependency so that users
+could use ``pip install "sagemath-coding[symbolics]"``.
 
 
 Doctest-only dependencies
@@ -512,11 +515,11 @@ Version constraints of dependencies
 -----------------------------------
 
 The version information for dependencies comes from the files
-``build/pkgs/*/install-requires.txt`` and
+``build/pkgs/*/version_requirements.txt`` and
 ``build/pkgs/*/package-version.txt``.  We use the
 `m4 <https://www.gnu.org/software/m4/manual/html_node/index.html>`_
 macro processor to insert the version information in the generated files
-``pyproject.toml``, ``setup.cfg``, ``requirements.txt``.
+``pyproject.toml`` and ``requirements.txt``.
 
 
 Hierarchy of distribution packages
@@ -546,8 +549,8 @@ Hierarchy of distribution packages
     sphinx_plot(g, figsize=(8, 4), axes=False)
 
 
-Solid arrows indicate ``install_requires``, i.e., a declared runtime dependency.
-Dashed arrows indicate ``extras_require``, i.e., a declared optional runtime dependency.
+Solid arrows indicate declared runtime dependencies (``install_requires``).
+Dashed arrows indicate declared optional runtime dependencies (``extras_require``).
 Not shown in the diagram are build dependencies and optional dependencies for testing.
 
 - `sage_conf <https://pypi.org/project/sage-conf/>`_ is a configuration
@@ -677,17 +680,17 @@ these wheels and our distribution to be tested.  This is where
 `tox <https://pypi.org/project/tox/>`_
 comes into play: It is the standard Python tool for creating
 disposable virtual environments for testing.  Every distribution in
-``SAGE_ROOT/pkgs/`` provides a configuration file ``tox.ini``.
+:sage_root:`pkgs/` provides a configuration file ``tox.ini``.
 
 Following the comments in the file
-``SAGE_ROOT/pkgs/sagemath-standard/tox.ini``, we can try the following
+:sage_root:`pkgs/sagemath-standard/tox.ini`, we can try the following
 command::
 
   $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-standard && SAGE_NUM_THREADS=16 tox -v -v -v -e sagepython-sagewheels-nopypi)'
 
 This command does not make any changes to the normal installation of
 Sage. The virtual environment is created in a subdirectory of
-``SAGE_ROOT/pkgs/sagemath-standard/.tox/``. After the command
+:file:`SAGE_ROOT/pkgs/sagemath-standard/.tox/`. After the command
 finishes, we can start the separate installation of the Sage library
 in its virtual environment::
 
@@ -701,7 +704,7 @@ The whole ``.tox`` directory can be safely deleted at any time.
 
 We can do the same with other distributions, for example the large
 distribution **sagemath-standard-no-symbolics**
-(from :trac:`35095`), which is intended to provide
+(from :issue:`35095`), which is intended to provide
 everything that is currently in the standard Sage library, i.e.,
 without depending on optional packages, but without the packages
 :mod:`sage.symbolic`, :mod:`sage.calculus`, etc.
@@ -713,7 +716,7 @@ Again we can run the test with ``tox`` in a separate virtual environment::
 Some small distributions, for example the ones providing the two
 lowest levels, `sagemath-objects <https://pypi.org/project/sagemath-objects/>`_
 and `sagemath-categories <https://pypi.org/project/sagemath-categories/>`_
-(from :trac:`29865`), can be installed and tested
+(from :issue:`29865`), can be installed and tested
 without relying on the wheels from the Sage build::
 
   $ ./bootstrap && ./sage -sh -c '(cd pkgs/sagemath-objects && SAGE_NUM_THREADS=16 tox -v -v -v -e sagepython)'

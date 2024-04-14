@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-schemes
 r"""
 Dynamical systems on projective schemes
 
@@ -759,7 +759,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
         TESTS:
 
         We check that the dynatomic polynomial has the right
-        parent (see :trac:`18409`)::
+        parent (see :issue:`18409`)::
 
             sage: # needs sage.rings.number_field
             sage: P.<x,y> = ProjectiveSpace(QQbar,1)
@@ -1081,8 +1081,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f.nth_iterate(P(0, 1), 3)
             Traceback (most recent call last):
             ...
-            ValueError: [0, 0] does not define a point in Projective Space of
-            dimension 1 over Rational Field since all entries are zero
+            ValueError: [0, 0] does not define a valid projective point since all entries are zero
 
         ::
 
@@ -1597,8 +1596,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f.orbit(P(0, 1), 3)
             Traceback (most recent call last):
             ...
-            ValueError: [0, 0] does not define a point in Projective Space of
-            dimension 1 over Rational Field since all entries are zero
+            ValueError: [0, 0] does not define a valid projective point since all entries are zero
             sage: f.orbit(P(0, 1), 3, check=False)
             [(0 : 1), (0 : 0), (0 : 0), (0 : 0)]
 
@@ -5487,7 +5485,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
           periodic points of period ``n``
 
         - ``embedding`` -- (default: ``None``) must be ``None``, passing an embedding
-          is no longer supported, see :trac: `32205`.
+          is no longer supported, see :issue: `32205`.
 
         - ``type`` -- (default: ``'point'``) string; either ``'point'``
           or ``'cycle'`` depending on whether you compute with one
@@ -6356,7 +6354,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             sage: f._is_preperiodic(Q)                                                  # needs sage.rings.function_field
             True
 
-        Check that :trac:`23814` is fixed (works even if domain is not specified)::
+        Check that :issue:`23814` is fixed (works even if domain is not specified)::
 
             sage: # needs sage.rings.number_field
             sage: R.<X> = PolynomialRing(QQ)
@@ -8295,7 +8293,7 @@ class DynamicalSystem_projective_field(DynamicalSystem_projective,
 
         TESTS:
 
-        See :trac:`25242`::
+        See :issue:`25242`::
 
             sage: P.<x,y> = ProjectiveSpace(QQ, 1)
             sage: F = DynamicalSystem([x^2 + y^2, x*y])

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-plot
 from sage.structure.sage_object cimport SageObject
 
 

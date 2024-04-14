@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 # distutils: sources = sage/rings/bernmm/bern_modp.cpp sage/rings/bernmm/bern_modp_util.cpp sage/rings/bernmm/bern_rat.cpp
 # distutils: libraries = NTL_LIBRARIES pthread gmp
 # distutils: extra_compile_args = NTL_CFLAGS
@@ -139,7 +140,7 @@ def bernmm_bern_modp(long p, long k):
     TESTS:
 
     Check that bernmm works with the new NTL single precision modular
-    arithmetic from :trac:`19874`::
+    arithmetic from :issue:`19874`::
 
         sage: from sage.rings.bernmm import bernmm_bern_modp
         sage: bernmm_bern_modp(7, 128) == bernoulli(128) % 7

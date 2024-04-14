@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.graphs sage.modules
 r"""
 Free Pre-Lie Algebras
@@ -348,7 +349,7 @@ class FreePreLieAlgebra(CombinatorialFreeModule):
         """
         return FreePreLieAlgebra(R, names=self.variable_names())
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self`` (as an algebra).
 

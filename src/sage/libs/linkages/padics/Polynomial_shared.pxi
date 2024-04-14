@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 r"""
 This linkage file implements the padics API using Sage Polynomials.
 
@@ -332,7 +333,7 @@ cdef inline int ccopy(celement out, celement a, PowComputer_ prime_pow) except -
     """
     out._coeffs = a._coeffs[:]
 
-cdef inline cpickle(celement a, PowComputer_ prime_pow) noexcept:
+cdef inline cpickle(celement a, PowComputer_ prime_pow):
     r"""
     Return a representation of ``a`` for pickling.
 

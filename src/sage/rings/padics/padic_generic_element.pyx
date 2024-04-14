@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 """
 `p`-adic Generic Element
 
@@ -43,7 +44,7 @@ from sage.structure.richcmp cimport rich_to_bool
 cdef long maxordp = (1L << (sizeof(long) * 8 - 2)) - 1
 
 cdef class pAdicGenericElement(LocalGenericElement):
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         r"""
         First compare valuations, then compare normalized
         residue of unit part.
@@ -354,7 +355,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
             raise ZeroDivisionError("cannot divide by zero")
         return self._floordiv_(right)
 
-    cpdef _floordiv_(self, right) noexcept:
+    cpdef _floordiv_(self, right):
         """
         Implements floor division.
 
@@ -465,7 +466,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         """
         return ~self.parent().fraction_field()(self, relprec = self.precision_relative())
 
-    cpdef _mod_(self, right) noexcept:
+    cpdef _mod_(self, right):
         """
         If self is in a field, returns 0.  If in a ring, returns a
         p-adic integer such that
@@ -559,7 +560,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
             sage: Zp(5,5)(1/3)  # indirect doctest
             2 + 3*5 + 5^2 + 3*5^3 + 5^4 + O(5^5)
 
-        We check that :trac:`26479` is fixed::
+        We check that :issue:`26479` is fixed::
 
             sage: # needs sage.libs.ntl
             sage: x = polygen(ZZ, 'x')
@@ -1002,7 +1003,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
             sage: (1/pi).minimal_polynomial()                                           # needs sage.symbolic
             (1 + O(2^5))*x^4 + (a^2 + 1)*2^-1 + O(2^4)
             sage: elt = L.random_element()
-            sage: P = elt.minimal_polynomial()  # not tested, known bug (see :trac:`32111`)
+            sage: P = elt.minimal_polynomial()  # not tested, known bug (see :issue:`32111`)
             sage: P(elt) == 0  # not tested
             True
         """
@@ -1077,7 +1078,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
             sage: x = L.random_element()                                                # needs sage.libs.ntl
             sage: y = L.random_element()                                                # needs sage.libs.ntl
-            sage: (x*y).norm() == x.norm() * y.norm()  # not tested, known bug (see :trac:`32085`)
+            sage: (x*y).norm() == x.norm() * y.norm()  # not tested, known bug (see :issue:`32085`)
             True
 
         """
@@ -1119,7 +1120,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
             sage: x = L.random_element()                                                # needs sage.libs.ntl
             sage: y = L.random_element()                                                # needs sage.libs.ntl
-            sage: (x+y).trace() == x.trace() + y.trace()  # not tested, known bug (see :trac:`32085`)
+            sage: (x+y).trace() == x.trace() + y.trace()  # not tested, known bug (see :issue:`32085`)
             True
 
         """
@@ -1278,7 +1279,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
         TESTS:
 
-        This test was added in :trac:`24433`::
+        This test was added in :issue:`24433`::
 
             sage: F = Qp(7)
             sage: F(4).gamma()
@@ -1366,12 +1367,12 @@ cdef class pAdicGenericElement(LocalGenericElement):
 
         TESTS:
 
-        We check that :trac:`23784` is resolved::
+        We check that :issue:`23784` is resolved::
 
             sage: Zp(5)(0).gamma()
             1 + O(5^20)
 
-        Check the cached version of `dwork_expansion` from :trac:`24433`::
+        Check the cached version of `dwork_expansion` from :issue:`24433`::
 
             sage: p = next_prime(200)
             sage: F = Qp(p)
@@ -2115,7 +2116,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         """
         raise NotImplementedError
 
-    cpdef val_unit(self) noexcept:
+    cpdef val_unit(self):
         r"""
         Return ``(self.valuation(), self.unit_part())``. To be overridden in
         derived classes.
@@ -2873,7 +2874,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         - William Stein: initial version
 
         - David Harvey (2006-09-13): corrected subtle precision bug (need to
-          take denominators into account! -- see :trac:`53`)
+          take denominators into account! -- see :issue:`53`)
 
         - Genya Zaytman (2007-02-14): adapted to new `p`-adic class
 
@@ -3662,7 +3663,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
             ...
             PrecisionError: not enough precision to be sure that this element is a nth power
 
-        Check that :trac:`30314` is fixed::
+        Check that :issue:`30314` is fixed::
 
             sage: # needs sage.libs.ntl
             sage: K = Qp(29)
@@ -4022,7 +4023,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
         """
         return self.abs()
 
-    cpdef abs(self, prec=None) noexcept:
+    cpdef abs(self, prec=None):
         """
         Return the `p`-adic absolute value of ``self``.
 
@@ -4248,7 +4249,7 @@ cdef class pAdicGenericElement(LocalGenericElement):
             ...
             ValueError: polylogarithm only implemented for n at least 0
 
-        Check that :trac:`29222` is fixed::
+        Check that :issue:`29222` is fixed::
 
             sage: K = Qp(7)
             sage: print(K(1 + 7^11).polylog(4))                                         # needs sage.symbolic
@@ -4515,7 +4516,7 @@ def _compute_g(p, n, prec, terms):
         g[i+1] = -(g[i]/(v-v**2)).integral()
     return [x.truncate(terms) for x in g]
 
-cpdef dwork_mahler_coeffs(R, int bd=20) noexcept:
+cpdef dwork_mahler_coeffs(R, int bd=20):
     r"""
     Compute Dwork's formula for Mahler coefficients of `p`-adic Gamma.
 
@@ -4563,7 +4564,7 @@ cpdef dwork_mahler_coeffs(R, int bd=20) noexcept:
                 v.append(R(x << i))
     return v
 
-cpdef evaluate_dwork_mahler(v, x, long long p, int bd, long long a) noexcept:
+cpdef evaluate_dwork_mahler(v, x, long long p, int bd, long long a):
     """
     Evaluate Dwork's Mahler series for `p`-adic Gamma.
 
@@ -4607,7 +4608,7 @@ cdef long long evaluate_dwork_mahler_long(array.array v, long long x, long long 
         s = s % q
     return -s
 
-cpdef gauss_table(long long p, int f, int prec, bint use_longs) noexcept:
+cpdef gauss_table(long long p, int f, int prec, bint use_longs):
     r"""
     Compute a table of Gauss sums using the Gross-Koblitz formula.
 

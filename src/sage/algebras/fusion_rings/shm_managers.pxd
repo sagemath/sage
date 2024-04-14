@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-singular
 cimport numpy as np
 from sage.rings.number_field.number_field_base cimport NumberField
 from sage.rings.number_field.number_field_element cimport NumberFieldElement_absolute
@@ -9,9 +10,9 @@ cdef class KSHandler:
     cdef public object shm
 
     cdef bint contains(self, int idx) noexcept
-    cdef NumberFieldElement_absolute get(self, int idx) noexcept
-    cdef setitem(self, int idx, rhs) noexcept
-    cpdef update(self, list eqns) noexcept
+    cdef NumberFieldElement_absolute get(self, int idx)
+    cdef setitem(self, int idx, rhs)
+    cpdef update(self, list eqns)
 
 cdef class FvarsHandler:
     cdef dict sext_to_idx, obj_cache

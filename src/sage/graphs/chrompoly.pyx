@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 # cython: binding=True
 # sage.doctest: needs sage.libs.flint sage.graphs
 """
@@ -31,7 +32,7 @@ from memory_allocator cimport MemoryAllocator
 from sage.libs.gmp.mpz cimport *
 from sage.rings.integer_ring import ZZ
 from sage.rings.integer cimport Integer
-from sage.rings.ring cimport Algebra
+from sage.rings.ring cimport Ring
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
@@ -124,12 +125,12 @@ def chromatic_polynomial(G, return_tree_basis=False, algorithm='C', cache=None):
 
     TESTS:
 
-    Check that :trac:`21502` is solved::
+    Check that :issue:`21502` is solved::
 
         sage: graphs.EmptyGraph().chromatic_polynomial()
         1
 
-    Check that :trac:`27966` is solved::
+    Check that :issue:`27966` is solved::
 
         sage: Graph([[1, 1]], multiedges=True, loops=True).chromatic_polynomial()
         0
@@ -436,7 +437,7 @@ def chromatic_polynomial_with_cache(G, cache=None):
         ...
         TypeError: parameter cache must be a dictionary or None
     """
-    cdef Algebra R = PolynomialRing(ZZ, "x", implementation="FLINT")
+    cdef Ring R = PolynomialRing(ZZ, "x", implementation="FLINT")
     cdef Polynomial_integer_dense_flint one = R.one()
     cdef Polynomial_integer_dense_flint zero = R.zero()
     cdef Polynomial_integer_dense_flint x = R.gen()

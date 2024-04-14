@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.groups
 r"""
 Finite groups
@@ -48,7 +49,7 @@ class FiniteGroups(CategoryWithAxiom):
 
         def semigroup_generators(self):
             """
-            Returns semigroup generators for self.
+            Return semigroup generators for ``self``.
 
             For finite groups, the group generators are also semigroup
             generators. Hence, this default implementation calls
@@ -58,7 +59,7 @@ class FiniteGroups(CategoryWithAxiom):
 
                 sage: A = AlternatingGroup(4)
                 sage: A.semigroup_generators()
-                Family ((2,3,4), (1,2,3))
+                Family ((1,2,3), (2,3,4))
             """
             return self.group_generators()
 
@@ -74,7 +75,7 @@ class FiniteGroups(CategoryWithAxiom):
 
                 sage: A = AlternatingGroup(4)
                 sage: A.monoid_generators()
-                Family ((2,3,4), (1,2,3))
+                Family ((1,2,3), (2,3,4))
             """
             return self.group_generators()
 
@@ -101,12 +102,9 @@ class FiniteGroups(CategoryWithAxiom):
                 sage: G.cardinality()
                 384
             """
-            try:
-                o = self.order
-            except AttributeError:
-                return self._cardinality_from_iterator()
-            else:
-                return o()
+            if hasattr(self, 'order'):
+                return self.order()
+            return self._cardinality_from_iterator()
 
         def some_elements(self):
             """
@@ -116,7 +114,7 @@ class FiniteGroups(CategoryWithAxiom):
 
                 sage: A = AlternatingGroup(4)
                 sage: A.some_elements()
-                Family ((2,3,4), (1,2,3))
+                Family ((1,2,3), (2,3,4))
             """
             return self.group_generators()
 

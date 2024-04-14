@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: optional - numpy
 r"""
 Distributions used in implementing Hidden Markov Models
@@ -283,7 +284,7 @@ cdef class GaussianMixtureDistribution(Distribution):
         """
         return self.c0._length
 
-    cpdef is_fixed(self, i=None) noexcept:
+    cpdef is_fixed(self, i=None):
         r"""
         Return whether or not this :class:`GaussianMixtureDistribution` is
         fixed when using Baum-Welch to update the corresponding HMM.

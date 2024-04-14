@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Root system data for type D
 """

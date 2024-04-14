@@ -1,1 +1,1 @@
-linbox
+linbox-devel

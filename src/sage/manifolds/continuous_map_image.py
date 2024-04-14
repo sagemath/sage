@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 r"""
 Images of Manifold Subsets under Continuous Maps as Subsets of the Codomain
 

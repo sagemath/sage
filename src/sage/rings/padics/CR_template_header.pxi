@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 """
 This file provides the declaration for ``CRElement`` and the morphisms
 to and from the integers and rationals.
@@ -32,9 +33,9 @@ cdef class CRElement(pAdicTemplateElement):
     cdef long ordp
     cdef long relprec
 
-    cdef CRElement _new_c(self) noexcept
+    cdef CRElement _new_c(self)
     cdef int _normalize(self) except -1
-    cpdef val_unit(self, p=*) noexcept
+    cpdef val_unit(self, p=*)
 
 cdef class pAdicCoercion_ZZ_CR(RingHomomorphism):
     cdef CRElement _zero

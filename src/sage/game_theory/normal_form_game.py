@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-polyhedra
 r"""
 Normal form games with N players.
 
@@ -2413,7 +2413,7 @@ class NormalFormGame(SageObject, MutableMapping):
         search over supports which is a discrete search. A full explanation of
         this is given in [CK2015]_. This problem is known to be NP-Hard
         [Du2009]_.  Another possible implementation is via best response
-        polytopes, see :trac:`18958`.
+        polytopes, see :issue:`18958`.
 
         The game Rock-Paper-Scissors is an example of a non-degenerate game,::
 

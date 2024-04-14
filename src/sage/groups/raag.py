@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-groups
 # sage.doctest: needs sage.graphs sage.rings.number_field
 r"""
 Right-Angled Artin Groups
@@ -817,7 +818,7 @@ class CohomologyRAAG(CombinatorialFreeModule):
         from sage.sets.family import Family
         return Family(V, lambda x: d[x])
 
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self`` (as an algebra).
 

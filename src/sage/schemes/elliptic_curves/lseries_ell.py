@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 """
 `L`-series for elliptic curves
 
@@ -842,7 +843,7 @@ class Lseries_ell(SageObject):
             sage: E.lseries().L_ratio()
             2
 
-        See :trac:`3651` and :trac:`15299`::
+        See :issue:`3651` and :issue:`15299`::
 
             sage: EllipticCurve([0,0,0,-193^2,0]).sha().an()
             4

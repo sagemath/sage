@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Multiplicative Abelian Groups
 
@@ -526,7 +527,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             Multiplicative Abelian group isomorphic to Z x C5 x Z x C7
             sage: TestSuite(G).run()
 
-        We check that :trac:`15140` is fixed::
+        We check that :issue:`15140` is fixed::
 
             sage: A = AbelianGroup([3,3])
             sage: A.category()
@@ -928,7 +929,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             x[i] = 1
         return self.element_class(self, x)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of the group.
 
@@ -981,8 +982,8 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         TESTS::
 
             sage: G, (g0, g1) = AbelianGroup(2, [48, 0]).objgens()
-            sage: G0 = G.subgroup([g0])
-            sage: len(G0.gens()) == len(G0.gens_orders())
+            sage: G0 = G.subgroup([g0])  # optional - gap_package_polycyclic
+            sage: len(G0.gens()) == len(G0.gens_orders())  # optional - gap_package_polycyclic
             True
             sage: F = AbelianGroup(3, [2], names='abc')
             sage: list(map(type, F.gens_orders()))
@@ -1132,11 +1133,11 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: G = AbelianGroup(2,[2,3]); G
             Multiplicative Abelian group isomorphic to C2 x C3
             sage: G.permutation_group()                                                 # needs sage.groups
-            Permutation Group with generators [(3,4,5), (1,2)]
+            Permutation Group with generators [(1,2), (3,4,5)]
 
         TESTS:
 
-        Check that :trac:`25692` is fixed::
+        Check that :issue:`25692` is fixed::
 
             sage: G = AbelianGroup([0])
             sage: G.permutation_group()
@@ -1471,7 +1472,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: AbelianGroup([]).subgroups()
             [Trivial Abelian group]
 
-        Check that :trac:`14196` is fixed::
+        Check that :issue:`14196` is fixed::
 
             sage: B = AbelianGroup([1,2])
             sage: B.subgroups()                                                         # needs sage.libs.gap  # optional - gap_package_polycyclic
@@ -1695,7 +1696,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             sage: F.order()
             +Infinity
 
-        Testing issue :trac:`18863`::
+        Testing issue :issue:`18863`::
 
             sage: G = AbelianGroup(5,[2])
             sage: G.subgroup([prod(g^k for g,k in zip(G.gens(),[1,-2,3,-4,5]))])        # needs sage.libs.gap  # optional - gap_package_polycyclic
@@ -1746,7 +1747,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
 
         TESTS:
 
-        Check that :trac:`32910` is fixed::
+        Check that :issue:`32910` is fixed::
 
             sage: # needs sage.libs.gap  # optional - gap_package_polycyclic
             sage: G.<a,b> = AbelianGroup(2, [4, 576])
@@ -1755,7 +1756,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             sage: [g in H for g in (a^3, b^2, b^3, a^3*b^2, "junk")]
             [False, False, False, True, False]
 
-        Check that :trac:`31507` is fixed::
+        Check that :issue:`31507` is fixed::
 
             sage: # needs sage.libs.gap  # optional - gap_package_polycyclic
             sage: G = AbelianGroup(2, gens_orders=[16, 16])
@@ -1875,7 +1876,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
         s += '{' + ', '.join(map(str, self.gens())) + '}'
         return s
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators for this subgroup.
 

@@ -127,7 +127,7 @@ fi
 # The compilers are set in order of priority by
 # 1) environment variables
 # 2) compiler installed by sage
-# 3) compiler set at configuration time 
+# 3) compiler set at configuration time
 if [ -z "$CC" ]; then
     if [ -n "$SAGE_LOCAL" -a -x "$SAGE_LOCAL/bin/gcc" ]; then
         CC=gcc
@@ -373,7 +373,14 @@ if [ -n "$SAGE_LOCAL" ]; then
     # On OS X, test whether "ld-classic" is present in the installed
     # version of the command-line tools. If so, we add "-ld_classic"
     # to LD_FLAGS. See #36599.
-    if [ "$UNAME" = "Darwin" ] && [ -x "$(xcode-select -p)/usr/bin/ld-classic" ] ; then
+    # When the full XCode is installed and in use, for example after
+    # "sudo xcode-select -s /Applications/Xcode.app", then "xcode-select -p"
+    # gives "/Applications/Xcode.app/Contents/Developer", but "ld-classic"
+    # is not in the subdirectory "usr/bin/" but rather in the subdirectory
+    # "Toolchains/XcodeDefault.xctoolchain/usr/bin/". See #37237.
+    # However, if LD is set explicitly, as it is within conda on macOS,
+    # do not not do this.
+    if [ "$UNAME" = "Darwin" ] && [ -z "$LD" ] && [ -x "$(xcode-select -p)/usr/bin/ld-classic" -o -x "$(xcode-select -p)/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld-classic" ] ; then
         LDFLAGS="-L$SAGE_LOCAL/lib -Wl,-ld_classic,-rpath,$SAGE_LOCAL/lib $LDFLAGS"
     else
         LDFLAGS="-L$SAGE_LOCAL/lib -Wl,-rpath,$SAGE_LOCAL/lib $LDFLAGS"

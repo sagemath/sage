@@ -1,29 +1,24 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Points on projective varieties
 
-Scheme morphism for points on projective varieties
-
-
+This module implements scheme morphism for points on projective varieties.
 
 AUTHORS:
 
-- David Kohel, William Stein
-
-- William Stein (2006-02-11): fixed bug where P(0,0,0) was allowed as
-  a projective point.
-
-- Volker Braun (2011-08-08): Renamed classes, more documentation, misc
-  cleanups.
-
-- Ben Hutz (June 2012) added support for projective ring;
-  (March 2013) iteration functionality and new directory structure
+- David Kohel, William Stein (2006): initial version
+- William Stein (2006-02-11): fixed bug where P(0,0,0) was allowed as a
+  projective point
+- Volker Braun (2011-08-08): Renamed classes, more documentation, misc cleanups
+- Ben Hutz (2012-06): added support for projective ring
+- Ben Hutz (2013-03): added iteration functionality and new directory structure
   for affine/projective, height functionality
 """
 
 # ****************************************************************************
-#       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
 #       Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu.au>
 #       Copyright (C) 2006 William Stein <wstein@gmail.com>
+#       Copyright (C) 2011 Volker Braun <vbraun.name@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,6 +30,7 @@ AUTHORS:
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.number_fields import NumberFields
 _NumberFields = NumberFields()
+from sage.rings.integer_ring import ZZ
 from sage.rings.fraction_field import FractionField
 from sage.rings.number_field.order import is_NumberFieldOrder, Order as NumberFieldOrder
 from sage.rings.qqbar import number_field_elements_from_algebraics
@@ -52,9 +48,11 @@ from sage.structure.element import AdditiveGroupElement
 from sage.structure.sequence import Sequence
 from sage.structure.richcmp import richcmp, op_EQ, op_NE
 
-#*******************************************************************
+
+# --------------------
 # Projective varieties
-#*******************************************************************
+# --------------------
+
 class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
     """
     A rational point of projective space over a ring.
@@ -105,8 +103,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: P(0,0,0,0)
             Traceback (most recent call last):
             ...
-            ValueError: [0, 0, 0, 0] does not define a point in Projective Space of dimension 3
-            over Integer Ring since all entries are zero
+            ValueError: [0, 0, 0, 0] does not define a valid projective point since all entries are zero
 
         ::
 
@@ -120,8 +117,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: P(0,5,10,15)
             Traceback (most recent call last):
             ...
-            ValueError: [0, 5, 10, 0] does not define a point in Projective Space of dimension 3
-            over Ring of integers modulo 15 since it is a multiple of a zero divisor
+            ValueError: [0, 5, 10, 0] does not define a valid projective point since it is a multiple of a zero divisor
 
         It is possible to avoid the possibly time-consuming checks, but be careful!! ::
 
@@ -164,6 +160,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             ValueError: +Infinity not well defined in dimension > 1
         """
         SchemeMorphism.__init__(self, X)
+
         if check:
             from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
             from sage.rings.ring import CommutativeRing
@@ -184,27 +181,26 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             R = X.value_ring()
             v = Sequence(v, R)
             if len(v) == d-1:     # very common special case
-                v.append(R(1))
+                v.append(R.one())
 
             if R in IntegralDomains():
                 # Over integral domains, any tuple with at least one
                 # non-zero coordinate is a valid projective point.
                 if not any(v):
-                    raise ValueError(f"{v} does not define a point "
-                                     f"in {X.codomain()} "
-                                     "since all entries are zero")
+                    raise ValueError(f"{v} does not define a valid projective "
+                                     "point since all entries are zero")
             else:
                 # Over rings with zero divisors, a more careful check
                 # is required: We test whether the coordinates of the
                 # point generate the unit ideal. See #31576.
                 if 1 not in R.ideal(v):
-                    raise ValueError(f"{v} does not define a point "
-                                     f"in {X.codomain()} "
+                    raise ValueError(f"{v} does not define a valid projective point "
                                      "since it is a multiple of a zero divisor")
 
             X.extended_codomain()._check_satisfies_equations(v)
 
         self._coords = tuple(v)
+        self._normalized = False
 
     def _richcmp_(self, right, op):
         """
@@ -275,7 +271,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: P == Q
             False
 
-        Check that :trac:`17433` is fixed::
+        Check that :issue:`17433` is fixed::
 
             sage: P.<x,y> = ProjectiveSpace(Zmod(10), 1)
             sage: p1 = P(1/3, 1)
@@ -296,7 +292,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: P == Q
             True
 
-        Check that :trac:`17429` is fixed::
+        Check that :issue:`17429` is fixed::
 
             sage: # needs sage.rings.complex_interval_field
             sage: R.<x> = PolynomialRing(QQ)
@@ -526,16 +522,17 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: Q.scale_by(1/2);Q
             (1 : 1 : 1)
         """
-        if t == 0:  #what if R(t) == 0 ?
+        if t.is_zero():  #what if R(t) == 0 ?
             raise ValueError("Cannot scale by 0")
         R = self.codomain().base_ring()
         if isinstance(R, QuotientRing_generic):
             for i in range(self.codomain().ambient_space().dimension_relative()+1):
-                new_coords = [R(u.lift()*t) for u in self]
+                new_coords = [R(u.lift()*t) for u in self._coords]
         else:
             for i in range(self.codomain().ambient_space().dimension_relative()+1):
-                new_coords = [R(u*t) for u in self]
+                new_coords = [R(u*t) for u in self._coords]
         self._coords = tuple(new_coords)
+        self._normalized = False
 
     def normalize_coordinates(self):
         """
@@ -596,7 +593,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         ::
 
             sage: # needs sage.libs.singular
-            sage: R.<t> = PolynomialRing(QQ, 1)
+            sage: R.<t> = QQ[]
             sage: S = R.quotient_ring(R.ideal(t^3))
             sage: P.<x,y> = ProjectiveSpace(S, 1)
             sage: Q = P(t + 1, t^2 + t)
@@ -604,39 +601,36 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             sage: Q
             (1 : tbar)
         """
+        if self._normalized:
+            return
         R = self.codomain().base_ring()
-        if isinstance(R,(QuotientRing_generic)):
-            GCD = gcd(self[0].lift(),self[1].lift())
-            index = 2
-            if self[0].lift() > 0 or self[1].lift() > 0:
-                neg = 1
-            else:
-                neg = -1
-            while GCD != 1 and index < len(self._coords):
-                if self[index].lift() > 0:
-                    neg = 1
-                GCD = gcd(GCD,self[index].lift())
-                index += 1
+        if isinstance(R, QuotientRing_generic):
+            index = len(self._coords) - 1
+            while not self._coords[index]:
+                index -= 1
+            last = self._coords[index].lift()
+            mod, = R.defining_ideal().gens()
+            unit = last
+            while not (zdiv := mod.gcd(unit)).is_unit():
+                unit //= zdiv
+            self.scale_by(unit.inverse_mod(mod))
         else:
-            GCD = R(gcd(self[0], self[1]))
+            GCD = R(gcd(self._coords[0], self._coords[1]))
             index = 2
-            if self[0] > 0 or self[1] > 0:
-                neg = R(1)
-            else:
-                neg = R(-1)
-            while GCD != 1 and index < len(self._coords):
-                if self[index] > 0:
-                    neg = R(1)
-                GCD = R(gcd(GCD,self[index]))
+            neg = self._coords[0] <= 0 and self._coords[1] <= 0
+            while not GCD.is_one() and index < len(self._coords):
+                neg = self._coords[index] <= 0
+                GCD = R(gcd(GCD, self._coords[index]))
                 index += 1
-        if GCD != 1:
-            self.scale_by(neg/GCD)
-        elif neg == -1:
-            self.scale_by(neg)
+            if not GCD.is_one():
+                self.scale_by(~GCD)
+            if neg:
+                self.scale_by(-ZZ.one())
+        self._normalized = True
 
     def dehomogenize(self,n):
         r"""
-        Dehomogenizes at the nth coordinate.
+        Dehomogenizes at the `n`-th coordinate.
 
         INPUT:
 
@@ -680,7 +674,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
             ...
             ValueError: can...t dehomogenize at 0 coordinate
         """
-        if self[n] == 0:
+        if self[n].is_zero():
             raise ValueError("can't dehomogenize at 0 coordinate")
         PS = self.codomain()
         A = PS.affine_patch(n)
@@ -1058,6 +1052,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
         except AttributeError:
             raise TypeError("map must be a dynamical system")
 
+
 class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring):
     """
     A rational point of projective space over a field.
@@ -1103,8 +1098,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
             sage: P(0, 0, 0, 0)
             Traceback (most recent call last):
             ...
-            ValueError: [0, 0, 0, 0] does not define a point in Projective Space of dimension 3
-            over Rational Field since all entries are zero
+            ValueError: [0, 0, 0, 0] does not define a valid projective point since all entries are zero
 
         ::
 
@@ -1141,6 +1135,9 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
             ValueError: +Infinity not well defined in dimension > 1
         """
         SchemeMorphism.__init__(self, X)
+
+        self._normalized = False
+
         if check:
             from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
             from sage.rings.ring import CommutativeRing
@@ -1161,25 +1158,21 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
             R = X.value_ring()
             v = Sequence(v, R)
             if len(v) == d-1:     # very common special case
-                v.append(R(1))
+                v.append(R.one())
 
-            n = len(v)
-            all_zero = True
-            for i in range(n):
-                last = n-1-i
-                if v[last]:
-                    all_zero = False
-                    c = v[last]
-                    if c == R.one():
-                        break
+            for last in reversed(range(len(v))):
+                c = v[last]
+                if c.is_one():
+                    break
+                if c:
                     for j in range(last):
                         v[j] /= c
                     v[last] = R.one()
                     break
-            if all_zero:
-                raise ValueError(f"{v} does not define a point "
-                                 f"in {X.codomain()} "
-                                 "since all entries are zero")
+            else:
+                raise ValueError(f"{v} does not define a valid projective "
+                                 "point since all entries are zero")
+            self._normalized = True
 
             X.extended_codomain()._check_satisfies_equations(v)
 
@@ -1224,10 +1217,22 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
             sage: Q.normalize_coordinates(); Q
             (1/2 : 1/2 : 1)
         """
-        index = self.codomain().ambient_space().dimension_relative()
-        while self[index] == 0:
-            index -= 1
-        self.scale_by(1/self[index])
+        if self._normalized:
+            return
+        for index in reversed(range(len(self._coords))):
+            c = self._coords[index]
+            if c.is_one():
+                break
+            if c:
+                inv = c.inverse()
+                new_coords = [d * inv for d in self._coords[:index]]
+                new_coords.append(self.base_ring().one())
+                new_coords.extend(self._coords[index+1:])
+                self._coords = tuple(new_coords)
+                break
+        else:
+            assert False, 'bug: invalid projective point'
+        self._normalized = True
 
     def _number_field_from_algebraics(self):
         r"""
@@ -1250,7 +1255,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
             Projective Space of dimension 1 over Number Field in a with defining
              polynomial y^4 + 1 with a = 0.7071067811865475? + 0.7071067811865475?*I
 
-        The following was fixed in :trac:`23808`::
+        The following was fixed in :issue:`23808`::
 
             sage: # needs sage.rings.number_field sage.symbolic
             sage: R.<x> = PolynomialRing(QQ)
@@ -1394,6 +1399,35 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
             raise TypeError("this point must be a point on a projective subscheme")
         return self.codomain().multiplicity(self)
 
+    def as_subscheme(self):
+        r"""
+        Return the subscheme associated with this rational point.
+
+        EXAMPLES::
+
+            sage: P2.<x,y,z> = ProjectiveSpace(QQ,2)
+            sage: p1 = P2.point([0,0,1]).as_subscheme(); p1
+            Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+              x, y
+            sage: p2 = P2.point([1,1,1]).as_subscheme(); p2
+            Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+              x - z, y - z
+            sage: p1 + p2
+            Closed subscheme of Projective Space of dimension 2 over Rational Field defined by:
+              x - y, y^2 - y*z
+        """
+        P = self.codomain().ambient_space()
+        g = P.gens()
+        v = self._coords
+        n = len(v)
+        for i in range(n - 1, -1, -1):
+            if v[i]:
+                break
+        a = v[i]
+        x = g[i]
+        return P.subscheme([a*g[j] - v[j]*x for j in range(n) if j != i])
+
+
 class SchemeMorphism_point_projective_finite_field(SchemeMorphism_point_projective_field):
 
     def __hash__(self):
@@ -1431,9 +1465,11 @@ class SchemeMorphism_point_projective_finite_field(SchemeMorphism_point_projecti
         N = self.codomain().ambient_space().dimension_relative()
         return hash(sum(hash(self[i]) * p**i for i in range(N + 1)))
 
-#*******************************************************************
+
+# -----------------
 # Abelian varieties
-#*******************************************************************
+# -----------------
+
 class SchemeMorphism_point_abelian_variety_field(AdditiveGroupElement, SchemeMorphism_point_projective_field):
     """
     A rational point of an abelian variety over a field.

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Homsets
 
@@ -130,7 +131,7 @@ def Hom(X, Y, category=None, check=True):
            to Ambient free module of rank 1 over the principal ideal domain Integer Ring
            in Category of commutative additive groups
 
-    Here, we test against a memory leak that has been fixed at :trac:`11521` by
+    Here, we test against a memory leak that has been fixed at :issue:`11521` by
     using a weak cache::
 
         sage: # needs sage.libs.pari
@@ -216,7 +217,7 @@ def Hom(X, Y, category=None, check=True):
     found in the cache will have a (co)domain that is equal to, but
     not identical with, the given (co)domain.
 
-    By :trac:`9138`, we abandon the uniqueness of homsets, if the
+    By :issue:`9138`, we abandon the uniqueness of homsets, if the
     domain or codomain break uniqueness::
 
         sage: from sage.rings.polynomial.multi_polynomial_ring import MPolynomialRing_polydict_domain
@@ -258,7 +259,7 @@ def Hom(X, Y, category=None, check=True):
         sage: H1 == H2, H1 is H2
         (False, False)
 
-    Since :trac:`11900`, the meet of the categories of the given arguments is
+    Since :issue:`11900`, the meet of the categories of the given arguments is
     used to determine the default category of the homset. This can also be a
     join category, as in the following example::
 
@@ -316,7 +317,7 @@ def Hom(X, Y, category=None, check=True):
 
     Those checks are done with the natural idiom ``X in category``,
     and not ``X.category().is_subcategory(category)`` as it used to be
-    before :trac:`16275` (see :trac:`15801` for a real use case)::
+    before :issue:`16275` (see :issue:`15801` for a real use case)::
 
         sage: # needs sage.graphs
         sage: class PermissiveCategory(Category):
@@ -702,7 +703,7 @@ class Homset(Set_generic):
             Beside speed considerations, this is the main rationale
             for disabling checks upon unpickling.
 
-            .. SEEALSO:: :trac:`14793`, :trac:`16275`
+            .. SEEALSO:: :issue:`14793`, :issue:`16275`
 
         EXAMPLES::
 
@@ -865,7 +866,7 @@ class Homset(Set_generic):
             sage: f(1), f(2), f(3)
             (2/3, 2/3, 2/3)
 
-        By :trac:`14711`, conversion and coerce maps should be copied
+        By :issue:`14711`, conversion and coerce maps should be copied
         before using them outside of the coercion system::
 
             sage: H = Hom(ZZ,QQ['t'], CommutativeAdditiveGroups())
@@ -1244,16 +1245,18 @@ class Homset(Set_generic):
             Set of Morphisms from Ambient free module of rank 2 over
              the principal ideal domain Integer Ring to Ambient free module
              of rank 3 over the principal ideal domain Integer Ring in
-             Category of finite dimensional modules with basis over (euclidean
-             domains and infinite enumerated sets and metric spaces)
+             Category of finite dimensional modules with basis over (Dedekind
+             domains and euclidean domains
+             and infinite enumerated sets and metric spaces)
             sage: type(H)
             <class 'sage.modules.free_module_homspace.FreeModuleHomspace_with_category'>
             sage: H.reversed()
             Set of Morphisms from Ambient free module of rank 3 over
              the principal ideal domain Integer Ring to Ambient free module
              of rank 2 over the principal ideal domain Integer Ring in
-             Category of finite dimensional modules with basis over (euclidean
-             domains and infinite enumerated sets and metric spaces)
+             Category of finite dimensional modules with basis over (Dedekind
+             domains and euclidean domains
+             and infinite enumerated sets and metric spaces)
             sage: type(H.reversed())
             <class 'sage.modules.free_module_homspace.FreeModuleHomspace_with_category'>
         """

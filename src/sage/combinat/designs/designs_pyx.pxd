@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # Cached informations about OA(k,n)
 #
 # - max_true: max k such that OA(k,n,existence=True) previously returned True
@@ -17,4 +18,4 @@ cdef struct cache_entry:
 cdef cache_entry * _OA_cache
 cdef int _OA_cache_size
 
-cpdef _OA_cache_get(int k, int n) noexcept
+cpdef _OA_cache_get(int k, int n)

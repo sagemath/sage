@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.modules
 """
 Yokonuma-Hecke Algebras
@@ -474,7 +475,7 @@ class YokonumaHeckeAlgebra(CombinatorialFreeModule):
 
             TESTS:
 
-            Check that :trac:`26424` is fixed::
+            Check that :issue:`26424` is fixed::
 
                 sage: Y = algebras.YokonumaHecke(3, 3)
                 sage: t = 3 * prod(Y.t())

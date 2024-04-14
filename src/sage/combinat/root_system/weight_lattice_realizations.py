@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Weight lattice realizations
 """
@@ -1061,7 +1062,7 @@ class WeightLatticeRealizations(Category_over_base_ring):
                 sage: [al[i].symmetric_form(al[i]) for i in P.index_set()]              # needs sage.graphs
                 [2, 4, 8]
 
-            Check that :trac:`31410` is fixed, and the symmetric form
+            Check that :issue:`31410` is fixed, and the symmetric form
             computed on the weight space is the same as the symmetric
             form computed on the root space::
 

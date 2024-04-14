@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from sage.libs.gsl.types cimport *
 
 from sage.libs.gsl.math cimport *

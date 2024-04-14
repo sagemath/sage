@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Fast methods via Cython
 
@@ -166,7 +167,7 @@ cdef class WithEqualityById:
             sage: a == AlwaysEqual()
             True
 
-        Check that :trac:`19628` is fixed::
+        Check that :issue:`19628` is fixed::
 
             sage: from sage.misc.lazy_import import LazyImport
             sage: lazyQQ = LazyImport('sage.rings.rational_field', 'QQ')

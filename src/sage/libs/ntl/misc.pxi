@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 # distutils: depends = NTL/ZZ.h
 
 from cysignals.memory cimport sig_free
@@ -8,7 +9,7 @@ from cysignals.signals cimport sig_off
 cdef extern from *:
     void del_charstar "delete[]"(char*)
 
-cdef object string(char* s) noexcept:
+cdef object string(char* s):
     """
     Takes a char* allocated using malloc, and converts it to a Python
     string, then deletes the allocated memory.  Also unsets the signal
@@ -20,7 +21,7 @@ cdef object string(char* s) noexcept:
     sig_free(s)
     return t
 
-cdef object string_delete(char* s) noexcept:
+cdef object string_delete(char* s):
     """
     Takes a char* allocated using C++ new, and converts it to a Python
     string, then deletes the allocated memory.  Also unsets the signal

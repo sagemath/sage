@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-environment
 r"""
 Features for testing the presence of Python modules in the Sage library
 
@@ -360,7 +361,7 @@ class sage__libs__ecl(PythonModule):
 class sage__libs__flint(JoinFeature):
     r"""
     A :class:`sage.features.Feature` describing the presence of :mod:`sage.libs.flint`
-    and other modules depending on FLINT and arb.
+    and other modules depending on FLINT.
 
     In addition to the modularization purposes that this tag serves, it also provides attribution
     to the upstream project.

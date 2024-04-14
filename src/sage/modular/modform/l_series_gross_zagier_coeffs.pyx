@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 from cysignals.memory cimport check_allocarray, check_calloc, sig_free
 from cysignals.signals cimport sig_check, sig_on, sig_off
 
@@ -12,7 +13,7 @@ from libc.math cimport ceil, floor, sqrt
 from libc.string cimport memcpy
 
 
-cpdef to_series(L, var) noexcept:
+cpdef to_series(L, var):
     """
     Create a power series element out of a list ``L`` in the variable`` var``.
 

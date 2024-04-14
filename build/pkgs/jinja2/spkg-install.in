@@ -1,6 +1,0 @@
-cd src
-
-sdh_pip_install .
-
-### The Jinja2 docs use Sphinx which requires Jinja2... do not build!
-# make -C docs html

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-singular
 """
 Direct low-level access to SINGULAR's Groebner basis engine via libSINGULAR
 
@@ -67,7 +68,7 @@ from sage.structure.sequence import Sequence
 
 from sage.rings.polynomial.plural cimport NCPolynomialRing_plural, NCPolynomial_plural
 
-cdef object singular_ideal_to_sage_sequence(ideal *i, ring *r, object parent) noexcept:
+cdef object singular_ideal_to_sage_sequence(ideal *i, ring *r, object parent):
     """
     convert a SINGULAR ideal to a Sage Sequence (the format Sage
     stores a Groebner basis in)

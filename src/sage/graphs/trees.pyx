@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 r"""
 Generation of trees
 
@@ -119,7 +120,7 @@ cdef class TreeIterator:
         TESTS:
 
         This used to be broken for trees with no vertices
-        and was fixed in :trac:`13719` ::
+        and was fixed in :issue:`13719` ::
 
             sage: from sage.graphs.trees import TreeIterator
             sage: T = TreeIterator(0)

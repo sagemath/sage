@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 r"""
 Database of small combinatorial designs
 
@@ -2469,7 +2470,7 @@ for ((n,k,lmbda,mu,u),f) in [((19,6,1,1,1), QDM_19_6_1_1_1),
                              ((45,7,1,1,9), QDM_45_7_1_1_9),
                              ((54,7,1,1,8), QDM_54_7_1_1_8),
                              ((57,9,1,1,8), QDM_57_9_1_1_8)]:
-    if not (n+u,lmbda) in QDM:
+    if (n+u,lmbda) not in QDM:
         QDM[n+u,lmbda] = {}
     QDM[n+u,lmbda][n,lmbda,mu,u] = (k,f)
 
@@ -2701,7 +2702,7 @@ Vmt_vectors = {
 # Translate all V(m,t) into (mt+1,m+2;1,0;t)-QDM constructors
 for (m,t),(vec,source) in Vmt_vectors.items():
     n,k,lmbda,mu,u = (m*t+1,m+2,1,0,t)
-    if not (n+u,lmbda) in QDM:
+    if (n+u,lmbda) not in QDM:
         QDM[n+u,lmbda] = {}
     QDM[n+u,lmbda][n,lmbda,mu,u] = (k,lambda m=m,t=t,vec=vec:QDM_from_Vmt(m,t,vec))
 
@@ -3663,18 +3664,18 @@ def DM_51_6_1():
         [  34,  32,  36,  26,  20]
         ]
 
-    Mb = [[0,0,0,0,0]]
+    Mb = [[0, 0, 0, 0, 0]]
 
     for R in zip(*M):
         for i in range(5):
-            for RR in [list(R), [-x for x in R]]:
-                Mb.append(RR)
-            R = cyclic_shift(R,1)
+            Mb.extend([list(R), [-x for x in R]])
+            R = cyclic_shift(R, 1)
 
     for R in Mb:
         R.append(0)
 
-    return G,Mb
+    return G, Mb
+
 
 def DM_52_6_1():
     r"""

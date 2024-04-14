@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 r"""
 Vector Field Modules
 
@@ -17,7 +18,7 @@ parallelizable. Accordingly, there are two classes for vector field modules:
 AUTHORS:
 
 - Eric Gourgoulhon, Michal Bejger (2014-2015): initial version
-- Travis Scrimshaw (2016): structure of Lie algebroid (:trac:`20771`)
+- Travis Scrimshaw (2016): structure of Lie algebroid (:issue:`20771`)
 
 REFERENCES:
 

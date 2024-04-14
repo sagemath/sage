@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 cimport cython
 from sage.structure.sage_object cimport SageObject
 from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces             cimport ListOfFaces
@@ -32,7 +33,7 @@ cdef class CombinatorialFace(SageObject):
     # If ``dual == 0``, then coatoms are facets, atoms vertices and vice versa.
     cdef ListOfFaces atoms, coatoms
 
-    cpdef dimension(self) noexcept
+    cpdef dimension(self)
     cdef size_t n_atom_rep(self) except -1
     cdef size_t set_coatom_rep(self) except -1
     cdef size_t set_atom_rep(self) except -1

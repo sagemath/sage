@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Finite dimensional algebras with basis
 
@@ -818,7 +819,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
             TESTS:
 
             We check each idempotent belong to its own Peirce summand
-            (see :trac:`24687`)::
+            (see :issue:`24687`)::
 
                 sage: # needs sage.groups
                 sage: from sage.monoids.hecke_monoid import HeckeMonoid

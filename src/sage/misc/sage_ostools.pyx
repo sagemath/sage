@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Miscellaneous operating system functions
 """
@@ -80,7 +81,7 @@ def restore_cwd(chdir=None):
         os.chdir(orig_cwd)
 
 
-cdef file_and_fd(x, int* fd) noexcept:
+cdef file_and_fd(x, int* fd):
     """
     If ``x`` is a file, return ``x`` and set ``*fd`` to its file
     descriptor. If ``x`` is an integer, return ``None`` and set

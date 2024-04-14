@@ -19,6 +19,12 @@ dependencies = [
 dynamic = ["version"]
 include(`pyproject_toml_metadata.m4')dnl'
 
+[project.optional-dependencies]
+# Improved formatting of docstrings in the help system
+sphinx = [
+    SPKG_INSTALL_REQUIRES_sphinx
+]
+
 [project.readme]
 file = "README.rst"
 content-type = "text/x-rst"

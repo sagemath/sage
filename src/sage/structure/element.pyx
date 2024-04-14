@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # Compile this with -Os because it works around a bug with
 # GCC-4.7.3 + Cython 0.19 on Itanium, see Issue #14452. Moreover, it
 # actually results in faster code than -O3.
@@ -26,7 +27,7 @@ AUTHORS:
 - Maarten Derickx (2010-07): added architecture for is_square and sqrt
 
 - Jeroen Demeyer (2016-08): moved all coercion to the base class
-  :class:`Element`, see :trac:`20767`
+  :class:`Element`, see :issue:`20767`
 
 The Abstract Element Class Hierarchy
 ====================================
@@ -324,7 +325,7 @@ def make_element(_class, _dict, parent):
     return make_element_old(_class, _dict, parent)
 
 
-cdef unary_op_exception(op, x) noexcept:
+cdef unary_op_exception(op, x):
     try:
         op = op.__name__
         op = _coerce_op_symbols[op]
@@ -334,7 +335,7 @@ cdef unary_op_exception(op, x) noexcept:
     return TypeError(f"unsupported operand parent for {op}: '{px}'")
 
 
-cdef bin_op_exception(op, x, y) noexcept:
+cdef bin_op_exception(op, x, y):
     try:
         op = op.__name__
         op = _coerce_op_symbols[op]
@@ -488,7 +489,7 @@ cdef class Element(SageObject):
         """
         return self.getattr_from_category(name)
 
-    cdef getattr_from_category(self, name) noexcept:
+    cdef getattr_from_category(self, name):
         # Lookup a method or attribute from the category abstract classes.
         # See __getattr__ above for documentation.
         cdef Parent P = self._parent
@@ -524,7 +525,7 @@ cdef class Element(SageObject):
 
         TESTS:
 
-        Check that morphism classes are handled correctly (:trac:`29776`)::
+        Check that morphism classes are handled correctly (:issue:`29776`)::
 
             sage: R.<x,y> = QQ[]
             sage: f = R.hom([x, y+1], R)
@@ -636,7 +637,7 @@ cdef class Element(SageObject):
         """
         raise NotImplementedError
 
-    cpdef base_extend(self, R) noexcept:
+    cpdef base_extend(self, R):
         cdef Parent V
         V = self._parent.base_extend(R)
         return V.coerce(self)
@@ -827,6 +828,28 @@ cdef class Element(SageObject):
                 variables.append(gen)
         return self(*variables)
 
+    def substitute(self, *args, **kwds):
+        """
+        This calls :meth:`self.subs`.
+
+        EXAMPLES::
+
+            sage: x, y = PolynomialRing(ZZ, 2, 'xy').gens()
+            sage: f = x^2 + y + x^2*y^2 + 5
+            sage: f((5,y))
+            25*y^2 + y + 30
+            sage: f.substitute({x: 5})
+            25*y^2 + y + 30
+            sage: f.substitute(x=5)
+            25*y^2 + y + 30
+            sage: (1/f).substitute(x=5)
+            1/(25*y^2 + y + 30)
+            sage: Integer(5).substitute(x=4)
+            5
+        """
+        return self.subs(*args, **kwds)
+
+
     def numerical_approx(self, prec=None, digits=None, algorithm=None):
         """
         Return a numerical approximation of ``self`` with ``prec`` bits
@@ -858,7 +881,7 @@ cdef class Element(SageObject):
 
         TESTS:
 
-        Check that :trac:`14778` is fixed::
+        Check that :issue:`14778` is fixed::
 
             sage: (0).n(algorithm='foo')                                                # needs sage.rings.real_mpfr
             0.000000000000000
@@ -906,38 +929,7 @@ cdef class Element(SageObject):
         """
         return self.n(prec)._mpmath_(prec=prec)
 
-    def substitute(self,in_dict=None,**kwds):
-        """
-        This is an alias for self.subs().
-
-        INPUT:
-
-        - ``in_dict`` - (optional) dictionary of inputs
-
-        - ``**kwds``  - named parameters
-
-        OUTPUT:
-
-        - new object if substitution is possible, otherwise self.
-
-        EXAMPLES::
-
-            sage: x, y = PolynomialRing(ZZ, 2, 'xy').gens()
-            sage: f = x^2 + y + x^2*y^2 + 5
-            sage: f((5,y))
-            25*y^2 + y + 30
-            sage: f.substitute({x: 5})
-            25*y^2 + y + 30
-            sage: f.substitute(x=5)
-            25*y^2 + y + 30
-            sage: (1/f).substitute(x=5)
-            1/(25*y^2 + y + 30)
-            sage: Integer(5).substitute(x=4)
-            5
-         """
-        return self.subs(in_dict,**kwds)
-
-    cpdef _act_on_(self, x, bint self_on_left) noexcept:
+    cpdef _act_on_(self, x, bint self_on_left):
         """
         Use this method to implement ``self`` acting on ``x``.
 
@@ -946,7 +938,7 @@ cdef class Element(SageObject):
         """
         return None
 
-    cpdef _acted_upon_(self, x, bint self_on_left) noexcept:
+    cpdef _acted_upon_(self, x, bint self_on_left):
         """
         Use this method to implement ``self`` acted on by x.
 
@@ -1024,7 +1016,7 @@ cdef class Element(SageObject):
 
         TESTS:
 
-        Verify that :trac:`5185` is fixed::
+        Verify that :issue:`5185` is fixed::
 
             sage: # needs sage.modules
             sage: v = vector({1: 1, 3: -1})
@@ -1106,7 +1098,7 @@ cdef class Element(SageObject):
         else:
             return coercion_model.richcmp(self, other, op)
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         r"""
         Basic default implementation of rich comparisons for elements with
         equal parents.
@@ -1248,7 +1240,7 @@ cdef class Element(SageObject):
             # reversed addition (__radd__).
             return NotImplemented
 
-    cdef _add_(self, other) noexcept:
+    cdef _add_(self, other):
         """
         Virtual addition method for elements with identical parents.
 
@@ -1278,7 +1270,7 @@ cdef class Element(SageObject):
         else:
             return python_op(other)
 
-    cdef _add_long(self, long n) noexcept:
+    cdef _add_long(self, long n):
         """
         Generic path for adding a C long, assumed to commute.
 
@@ -1360,7 +1352,7 @@ cdef class Element(SageObject):
         except TypeError:
             return NotImplemented
 
-    cdef _sub_(self, other) noexcept:
+    cdef _sub_(self, other):
         """
         Virtual subtraction method for elements with identical parents.
 
@@ -1414,7 +1406,7 @@ cdef class Element(SageObject):
         """
         return self._neg_()
 
-    cdef _neg_(self) noexcept:
+    cdef _neg_(self):
         """
         Virtual unary negation method for elements.
 
@@ -1528,7 +1520,7 @@ cdef class Element(SageObject):
         except TypeError:
             return NotImplemented
 
-    cdef _mul_(self, other) noexcept:
+    cdef _mul_(self, other):
         """
         Virtual multiplication method for elements with identical parents.
 
@@ -1558,7 +1550,7 @@ cdef class Element(SageObject):
         else:
             return python_op(other)
 
-    cdef _mul_long(self, long n) noexcept:
+    cdef _mul_long(self, long n):
         """
         Generic path for multiplying by a C long, assumed to commute.
 
@@ -1640,7 +1632,7 @@ cdef class Element(SageObject):
         except TypeError:
             return NotImplemented
 
-    cdef _matmul_(self, other) noexcept:
+    cdef _matmul_(self, other):
         """
         Virtual matrix multiplication method for elements with
         identical parents.
@@ -1743,7 +1735,7 @@ cdef class Element(SageObject):
         except TypeError:
             return NotImplemented
 
-    cdef _div_(self, other) noexcept:
+    cdef _div_(self, other):
         """
         Virtual division method for elements with identical parents.
         This is called for Python 2 division as well as true division.
@@ -1844,7 +1836,7 @@ cdef class Element(SageObject):
         except TypeError:
             return NotImplemented
 
-    cdef _floordiv_(self, other) noexcept:
+    cdef _floordiv_(self, other):
         """
         Virtual floor division method for elements with identical parents.
 
@@ -1944,7 +1936,7 @@ cdef class Element(SageObject):
         except TypeError:
             return NotImplemented
 
-    cdef _mod_(self, other) noexcept:
+    cdef _mod_(self, other):
         """
         Virtual modulo method for elements with identical parents.
 
@@ -2071,7 +2063,7 @@ cdef class Element(SageObject):
         except TypeError:
             return NotImplemented
 
-    cdef _pow_(self, other) noexcept:
+    cdef _pow_(self, other):
         """
         Virtual powering method for elements with identical parents.
 
@@ -2101,7 +2093,7 @@ cdef class Element(SageObject):
         else:
             return python_op(other)
 
-    cdef _pow_int(self, other) noexcept:
+    cdef _pow_int(self, other):
         """
         Virtual powering method for powering to an integer exponent.
 
@@ -2131,7 +2123,7 @@ cdef class Element(SageObject):
         else:
             return python_op(other)
 
-    cdef _pow_long(self, long n) noexcept:
+    cdef _pow_long(self, long n):
         """
         Generic path for powering with a C long.
         """
@@ -2164,7 +2156,7 @@ cdef class ElementWithCachedMethod(Element):
 
     The :class:`~sage.misc.cachefunc.cached_method` decorator provides
     a convenient way to automatically cache the result of a computation.
-    Since :trac:`11115`, the cached method decorator applied to a
+    Since :issue:`11115`, the cached method decorator applied to a
     method without optional arguments is faster than a hand-written cache
     in Python, and a cached method without any arguments (except ``self``)
     is actually faster than a Python method that does nothing more but
@@ -2308,7 +2300,7 @@ cdef class ElementWithCachedMethod(Element):
         True
 
     """
-    cdef getattr_from_category(self, name) noexcept:
+    cdef getattr_from_category(self, name):
         """
         This getattr method ensures that cached methods and lazy attributes
         can be inherited from the element class of a category.
@@ -2376,7 +2368,7 @@ cdef class ModuleElement(Element):
     """
     Generic element of a module.
     """
-    cpdef _add_(self, other) noexcept:
+    cpdef _add_(self, other):
         """
         Abstract addition method
 
@@ -2391,7 +2383,7 @@ cdef class ModuleElement(Element):
         """
         raise NotImplementedError(f"addition not implemented for {self._parent}")
 
-    cdef _add_long(self, long n) noexcept:
+    cdef _add_long(self, long n):
         """
         Generic path for adding a C long, assumed to commute.
         """
@@ -2399,21 +2391,21 @@ cdef class ModuleElement(Element):
             return self
         return coercion_model.bin_op(self, n, add)
 
-    cpdef _sub_(self, other) noexcept:
+    cpdef _sub_(self, other):
         """
         Default implementation of subtraction using addition and
         negation.
         """
         return self + (-other)
 
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         """
         Default implementation of negation using multiplication
         with -1.
         """
         return self._mul_long(-1)
 
-    cdef _mul_long(self, long n) noexcept:
+    cdef _mul_long(self, long n):
         """
         Generic path for multiplying by a C long, assumed to commute.
         """
@@ -2422,7 +2414,7 @@ cdef class ModuleElement(Element):
         return coercion_model.bin_op(self, n, mul)
 
     # rmul -- left * self
-    cpdef _rmul_(self, Element left) noexcept:
+    cpdef _rmul_(self, Element left):
         """
         Reversed scalar multiplication for module elements with the
         module element on the right and the scalar on the left.
@@ -2432,7 +2424,7 @@ cdef class ModuleElement(Element):
         return self._lmul_(left)
 
     # lmul -- self * right
-    cpdef _lmul_(self, Element right) noexcept:
+    cpdef _lmul_(self, Element right):
         """
         Scalar multiplication for module elements with the module
         element on the left and the scalar on the right.
@@ -2551,7 +2543,7 @@ cdef class MonoidElement(Element):
         """
         raise NotImplementedError
 
-    cpdef _pow_int(self, n) noexcept:
+    cpdef _pow_int(self, n):
         """
         Return the (integral) power of self.
         """
@@ -2619,7 +2611,7 @@ cdef class MultiplicativeGroupElement(MonoidElement):
         """
         return self.multiplicative_order()
 
-    cpdef _div_(self, right) noexcept:
+    cpdef _div_(self, right):
         """
         Default implementation of division using multiplication by
         the inverse.
@@ -2644,7 +2636,7 @@ def is_RingElement(x):
 
 
 cdef class RingElement(ModuleElement):
-    cpdef _mul_(self, other) noexcept:
+    cpdef _mul_(self, other):
         """
         Abstract multiplication method
 
@@ -2662,13 +2654,13 @@ cdef class RingElement(ModuleElement):
     def is_one(self):
         return self == self._parent.one()
 
-    cpdef _pow_int(self, n) noexcept:
+    cpdef _pow_int(self, n):
         """
-        Return the (integral) power of self.
+        Return the (integral) power of ``self``.
 
         EXAMPLES::
 
-            sage: a = Integers(389)['x']['y'](37)
+            sage: a = GF(389)['x']['y'](37)
             sage: p = sage.structure.element.RingElement.__pow__
             sage: p(a,2)
             202
@@ -2706,7 +2698,7 @@ cdef class RingElement(ModuleElement):
             sage: 2r^(1/2)                                                              # needs sage.symbolic
             sqrt(2)
 
-        Exponent overflow should throw an :class:`OverflowError` (:trac:`2956`)::
+        Exponent overflow should throw an :class:`OverflowError` (:issue:`2956`)::
 
             sage: K.<x,y> = AA[]                                                        # needs sage.rings.number_field
             sage: x^(2^64 + 12345)                                                      # needs sage.rings.number_field
@@ -2714,7 +2706,7 @@ cdef class RingElement(ModuleElement):
             ...
             OverflowError: exponent overflow (2147483648)
 
-        Another example from :trac:`2956` which always overflows
+        Another example from :issue:`2956` which always overflows
         with Singular 4::
 
             sage: K.<x,y> = ZZ[]
@@ -2745,7 +2737,7 @@ cdef class RingElement(ModuleElement):
             l.append(x)
         return l
 
-    cpdef _div_(self, other) noexcept:
+    cpdef _div_(self, other):
         """
         Default implementation of division using the fraction field.
         """
@@ -2854,9 +2846,7 @@ cdef class RingElement(ModuleElement):
             True
             sage: m = matrix(QQ, 3, [[3,2,3], [9,0,3], [-9,0,-3]])                      # needs sage.modules
             sage: m.is_nilpotent()                                                      # needs sage.modules
-            Traceback (most recent call last):
-            ...
-            AttributeError: '...' object has no attribute 'is_nilpotent'...
+            True
         """
         if self.is_unit():
             return False
@@ -3041,7 +3031,7 @@ cdef class CommutativeRingElement(RingElement):
             sage: (x^2 + 2).divides(x)
             False
 
-        :trac:`5347` has been fixed::
+        :issue:`5347` has been fixed::
 
             sage: K = GF(7)
             sage: K(3).divides(1)
@@ -3067,7 +3057,7 @@ cdef class CommutativeRingElement(RingElement):
 
         If ``x`` has different parent than ``self``, they are first coerced to a
         common parent if possible. If this coercion fails, it returns a
-        TypeError. This fixes :trac:`5759`. ::
+        TypeError. This fixes :issue:`5759`. ::
 
             sage: Zmod(2)(0).divides(Zmod(2)(0))
             True
@@ -3344,12 +3334,12 @@ cdef class CommutativeRingElement(RingElement):
         #This code is very general, it works for all integral domains that have the
         #is_square(root = True) option
 
-        from sage.rings.ring import IntegralDomain
+        from sage.categories.integral_domains import IntegralDomains
         P = self._parent
         is_sqr, sq_rt = self.is_square(root=True)
         if is_sqr:
             if all:
-                if not isinstance(P, IntegralDomain):
+                if P not in IntegralDomains():
                     raise NotImplementedError('sqrt() with all=True is only implemented for integral domains, not for %s' % P)
                 if P.characteristic()==2 or sq_rt==0:
                     #0 has only one square root, and in characteristic 2 everything also has only 1 root
@@ -3357,7 +3347,7 @@ cdef class CommutativeRingElement(RingElement):
                 return [ sq_rt, -sq_rt ]
             return sq_rt
         #from now on we know that self is not a square
-        if not isinstance(P, IntegralDomain):
+        if P not in IntegralDomains():
             raise NotImplementedError('sqrt() of non squares is only implemented for integral domains, not for %s' % P)
         if not extend:
             #all square roots of a non-square should be an empty list
@@ -3684,13 +3674,13 @@ cdef class Vector(ModuleElementWithMutability):
             return (<Vector>left)._dot_product_(<Vector>right)
         return coercion_model.bin_op(left, right, mul)
 
-    cpdef _dot_product_(Vector left, Vector right) noexcept:
+    cpdef _dot_product_(Vector left, Vector right):
         return left._dot_product_coerce_(right)
 
-    cpdef _dot_product_coerce_(Vector left, Vector right) noexcept:
+    cpdef _dot_product_coerce_(Vector left, Vector right):
         raise bin_op_exception('*', left, right)
 
-    cpdef _pairwise_product_(Vector left, Vector right) noexcept:
+    cpdef _pairwise_product_(Vector left, Vector right):
         raise TypeError("unsupported operation for '%s' and '%s'"%(parent(left), parent(right)))
 
     def __truediv__(self, right):
@@ -3859,7 +3849,7 @@ cdef class Matrix(ModuleElement):
              'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in x over Rational Field' and
              'Full MatrixSpace of 2 by 2 dense matrices over Univariate Polynomial Ring in y over Rational Field'
 
-        We test that the bug reported in :trac:`27352` has been fixed::
+        We test that the bug reported in :issue:`27352` has been fixed::
 
             sage: A = matrix(QQ, [[1, 2], [-1, 0], [1, 1]])                                                             # needs sage.modules
             sage: B = matrix(QQ, [[0, 4], [1, -1], [1, 2]])                                                             # needs sage.modules
@@ -4153,13 +4143,13 @@ cdef class Matrix(ModuleElement):
             return right.solve_left(left)
         return coercion_model.bin_op(left, right, truediv)
 
-    cdef _vector_times_matrix_(matrix_right, Vector vector_left) noexcept:
+    cdef _vector_times_matrix_(matrix_right, Vector vector_left):
         raise TypeError
 
-    cdef _matrix_times_vector_(matrix_left, Vector vector_right) noexcept:
+    cdef _matrix_times_vector_(matrix_left, Vector vector_right):
         raise TypeError
 
-    cdef _matrix_times_matrix_(left, Matrix right) noexcept:
+    cdef _matrix_times_matrix_(left, Matrix right):
         raise TypeError
 
 
@@ -4200,7 +4190,7 @@ cdef class PrincipalIdealDomainElement(DedekindDomainElement):
 
         TESTS:
 
-        :trac:`30849`::
+        :issue:`30849`::
 
             sage: 2.gcd(pari(3))                                                        # needs sage.libs.pari
             1
@@ -4239,7 +4229,7 @@ cdef class PrincipalIdealDomainElement(DedekindDomainElement):
 
         TESTS:
 
-        :trac:`30849`::
+        :issue:`30849`::
 
             sage: 2.lcm(pari(3))                                                        # needs sage.libs.pari
             6
@@ -4289,7 +4279,7 @@ cdef class EuclideanDomainElement(PrincipalIdealDomainElement):
     def quo_rem(self, other):
         raise NotImplementedError
 
-    cpdef _floordiv_(self, right) noexcept:
+    cpdef _floordiv_(self, right):
         """
         Quotient of division of ``self`` by other.  This is denoted //.
 
@@ -4312,7 +4302,7 @@ cdef class EuclideanDomainElement(PrincipalIdealDomainElement):
         Q, _ = self.quo_rem(right)
         return Q
 
-    cpdef _mod_(self, other) noexcept:
+    cpdef _mod_(self, other):
         """
         Remainder of division of ``self`` by other.
 
@@ -4351,7 +4341,7 @@ def is_FieldElement(x):
     return isinstance(x, FieldElement)
 
 cdef class FieldElement(CommutativeRingElement):
-    cpdef _floordiv_(self, right) noexcept:
+    cpdef _floordiv_(self, right):
         """
         Return the quotient of self and other. Since these are field
         elements, the floor division is exactly the same as usual division.
@@ -4412,7 +4402,7 @@ cdef class FieldElement(CommutativeRingElement):
 
         TESTS:
 
-        Test if :trac:`8671` is fixed::
+        Test if :issue:`8671` is fixed::
 
             sage: # needs sage.libs.pari sage.libs.singular
             sage: R.<x,y> = QQ[]
@@ -4508,7 +4498,7 @@ cdef class InfinityElement(RingElement):
 #
 #################################################################################
 
-cpdef canonical_coercion(x, y) noexcept:
+cpdef canonical_coercion(x, y):
     """
     ``canonical_coercion(x,y)`` is what is called before doing an
     arithmetic operation between ``x`` and ``y``.  It returns a pair ``(z,w)``
@@ -4527,7 +4517,7 @@ cpdef canonical_coercion(x, y) noexcept:
     return coercion_model.canonical_coercion(x,y)
 
 
-cpdef bin_op(x, y, op) noexcept:
+cpdef bin_op(x, y, op):
     return coercion_model.bin_op(x, y, op)
 
 
@@ -4676,7 +4666,7 @@ def coerce_binop(method):
     TESTS:
 
     Test that additional arguments given to the method do not override
-    the ``self`` argument, see :trac:`21322`::
+    the ``self`` argument, see :issue:`21322`::
 
         sage: f.gcd(g, 1)
         Traceback (most recent call last):

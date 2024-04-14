@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 r"""
 Interface to Frobby for fast computations on monomial ideals.
 
@@ -274,7 +273,7 @@ class Frobby:
         We now try the special case of the zero ideal in different rings.
 
         We should also try PolynomialRing(QQ, names=[]), but it has a bug
-        which makes that impossible (see :trac:`3028`). ::
+        which makes that impossible (see :issue:`3028`). ::
 
             sage: # optional - frobby
             sage: rings = [ZZ['x'], CC['x,y']]

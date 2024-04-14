@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Elements of Hecke modules
@@ -244,7 +245,7 @@ class HeckeModuleElement(ModuleElement):
 
         TESTS:
 
-        Verify that :trac:`21497` is fixed::
+        Verify that :issue:`21497` is fixed::
 
             sage: M = ModularSymbols(Gamma0(3),weight=22,sign=1)
             sage: N = next(S for S in M.decomposition(anemic=False) if S.hecke_matrix(3).trace()==-128844)

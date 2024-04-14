@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 # distutils: libraries = NTL_LIBRARIES gmp m
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -232,7 +233,7 @@ cdef class ntl_zz_pX():
         zz_pX_SetCoeff_long(self.x, i, val)
         return
 
-    cdef ntl_zz_pX _new(self) noexcept:
+    cdef ntl_zz_pX _new(self):
         """
         Quick and dirty method for creating a new object with the
         same zz_pContext as self.

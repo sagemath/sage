@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.graphs sage.modules
 r"""
 Hadamard matrices
@@ -3122,7 +3123,7 @@ def skew_hadamard_matrix(n, existence=False, skew_normalize=True, check=True):
         sage: skew_hadamard_matrix(356,existence=True)
         Unknown
 
-    Check that :trac:`28526` is fixed::
+    Check that :issue:`28526` is fixed::
 
         sage: skew_hadamard_matrix(0)
         Traceback (most recent call last):

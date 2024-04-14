@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 """nodoctest
 All Documented GAP Functions
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Some tools for developers
 
@@ -148,6 +149,7 @@ def load_submodules(module=None, exclude_pattern=None):
     EXAMPLES::
 
         sage: sage.misc.dev_tools.load_submodules(sage.combinat)
+        load sage.combinat.affine_permutation... succeeded
         load sage.combinat.algebraic_combinatorics... succeeded
         ...
         load sage.combinat.words.suffix_trees... succeeded
@@ -488,25 +490,25 @@ def import_statements(*objects, **kwds):
         ...
         ValueError: no import statement found for '5'.
 
-    We test that it behaves well with lazy imported objects (:trac:`14767`)::
+    We test that it behaves well with lazy imported objects (:issue:`14767`)::
 
         sage: import_statements(NN)
         from sage.rings.semirings.non_negative_integer_semiring import NN
         sage: import_statements('NN')
         from sage.rings.semirings.non_negative_integer_semiring import NN
 
-    Deprecated lazy imports are ignored (see :trac:`17458`)::
+    Deprecated lazy imports are ignored (see :issue:`17458`)::
 
         sage: lazy_import('sage.all', 'RR', 'deprecated_RR', namespace=sage.__dict__, deprecation=17458)
         sage: import_statements('deprecated_RR')
         Traceback (most recent call last):
         ...
-        LookupError: object named 'deprecated_RR' is deprecated (see github issue 17458)
+        LookupError: object named 'deprecated_RR' is deprecated (see Issue #17458)
         sage: lazy_import('sage.all', 'RR', namespace=sage.__dict__, deprecation=17458)
         sage: import_statements('RR')
         from sage.rings.real_mpfr import RR
 
-    The following were fixed with :trac:`15351`::
+    The following were fixed with :issue:`15351`::
 
         sage: import_statements('Rationals')
         from sage.rings.rational_field import RationalField as Rationals
@@ -524,7 +526,7 @@ def import_statements(*objects, **kwds):
         import sage.graphs.graph_decompositions
 
     Check that a name from the global namespace is properly found (see
-    :trac:`23779`)::
+    :issue:`23779`)::
 
         sage: import_statements('log')
         from sage.misc.functional import log
@@ -612,7 +614,7 @@ def import_statements(*objects, **kwds):
             except IndexError:
                 if deprecation:
                     raise LookupError(
-                        "object named {!r} is deprecated (see github issue "
+                        "object named {!r} is deprecated (see Issue #"
                         "{})".format(name, deprecation))
                 else:
                     raise LookupError("no object named {!r}".format(name))

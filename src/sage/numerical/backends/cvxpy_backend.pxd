@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 ##############################################################################
 #       Copyright (C) 2010 Nathann Cohen <nathann.cohen@gmail.com>
 #       Copyright (C) 2022 Matthias Koeppe <mkoeppe@math.ucdavis.edu>
@@ -37,4 +38,4 @@ cdef class CVXPYBackend(GenericBackend):
                            coefficients=*) \
                            except -1
 
-    cpdef cvxpy_problem(self) noexcept
+    cpdef cvxpy_problem(self)

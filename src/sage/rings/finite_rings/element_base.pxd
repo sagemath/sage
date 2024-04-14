@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 from sage.structure.element cimport CommutativeRingElement
 from sage.structure.sage_object cimport SageObject
 
@@ -8,5 +9,5 @@ cdef class FinitePolyExtElement(FiniteRingElement):
     pass
 
 cdef class Cache_base(SageObject):
-    cpdef FinitePolyExtElement fetch_int(self, number) noexcept
+    cpdef FinitePolyExtElement fetch_int(self, number)
 

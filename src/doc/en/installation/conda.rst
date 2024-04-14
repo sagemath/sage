@@ -9,17 +9,17 @@ SageMath can be installed on Linux and macOS via Conda from the
 Both the ``x86_64`` (Intel) architecture and the ``arm64``/``aarch64``
 architectures (including Apple Silicon, M1) are supported.
 
-You will need a working Conda installation: either Mambaforge/Miniforge,
+You will need a working Conda installation: either Miniforge (or Mambaforge),
 Miniconda or Anaconda. If you don't have one yet, we recommend installing
-`Mambaforge <https://github.com/conda-forge/miniforge#mambaforge>`_ as
+`Miniforge <https://github.com/conda-forge/miniforge>`_ as
 follows. In a terminal,
 
 .. code-block:: shell
 
-   $ curl -L -O https://github.com/conda-forge/miniforge/releases/latest/download/Mambaforge-$(uname)-$(uname -m).sh
-   $ sh Mambaforge-$(uname)-$(uname -m).sh
+   $ curl -L -O "https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-$(uname)-$(uname -m).sh"
+   $ bash Miniforge3-$(uname)-$(uname -m).sh
 
-* Mambaforge and Miniforge use conda-forge as the default channel.
+* Miniforge (and Mambaforge) use conda-forge as the default channel.
 
 * If you are using Miniconda or Anaconda, set it up to use conda-forge:
 
@@ -27,14 +27,9 @@ follows. In a terminal,
 
   * Change channel priority to strict: ``conda config --set channel_priority strict``
 
-Optionally, use `mamba <https://github.com/mamba-org/mamba>`_,
+If you installed Miniforge (or Mambaforge), we recommend to use 
+`mamba <https://mamba.readthedocs.io/en/latest/index.html>`_ in the following, 
 which uses a faster dependency solver than ``conda``.
-If you installed Mambaforge, it is already provided. Otherwise, use
-
-.. code-block:: shell
-
-   $ conda install mamba
-
 
 .. _sec-installation-conda-binary:
 
@@ -43,10 +38,17 @@ Installing all of SageMath from conda (not for development)
 
 Create a new conda environment containing SageMath, either with ``mamba`` or ``conda``:
 
-.. code-block:: shell
+.. tab:: mamba
 
-    $ mamba create -n sage sage python=X        # either
-    $ conda create -n sage sage python=X        # or
+  .. code-block:: shell
+
+      $ mamba create -n sage sage python=X
+
+.. tab:: conda
+
+  .. code-block:: shell
+
+      $ conda create -n sage sage python=X
 
 where ``X`` is version of Python, e.g. ``3.9``.
 
@@ -109,17 +111,22 @@ Here we assume that you are using a git checkout.
 
       $ export SAGE_NUM_THREADS=24
 
-  - As a recommended step, install the ``mamba`` package manager. If
-    you skip this step, replace ``mamba`` by ``conda`` in the
-    following steps::
-
-      $ conda install mamba
-
   - Create and activate a new conda environment with the dependencies of Sage
     and a few additional developer tools::
 
-      $ mamba env create --file src/environment-dev-3.11-linux.yml --name sage-dev
-      $ conda activate sage-dev
+      .. tab:: mamba
+      
+        .. code-block:: shell
+      
+            $ mamba env create --file src/environment-dev-3.11-linux.yml --name sage-dev
+            $ conda activate sage-dev
+      
+      .. tab:: conda
+      
+        .. code-block:: shell
+      
+            $ conda env create --file src/environment-dev-3.11-linux.yml --name sage-dev
+            $ conda activate sage-dev
 
     Alternatively, you can use ``src/environment-3.11-linux.yml`` or
     ``src/environment-optional-3.11-linux.yml``, which will only install standard

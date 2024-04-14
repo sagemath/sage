@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-groups
 # sage.doctest: needs sage.rings.number_field
 r"""
 Cactus Groups
@@ -218,7 +219,7 @@ class CactusGroup(UniqueRepresentation, Group):
         return Family(l, lambda x: self.element_class(self, [x]))
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of ``self`` as a tuple.
 
@@ -943,7 +944,7 @@ class PureCactusGroup(KernelSubgroup):
         return self.gens()[i]
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         r"""
         Return the generators of ``self``.
 

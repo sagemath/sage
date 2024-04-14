@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-plot
 # sage.doctest: needs sage.symbolic
 """
 Plotting 3D fields
@@ -123,7 +124,7 @@ def plot_vector_field3d(functions, xrange, yrange, zrange,
 
     TESTS:
 
-    This tests that :trac:`2100` is fixed in a way compatible with this command::
+    This tests that :issue:`2100` is fixed in a way compatible with this command::
 
         sage: plot_vector_field3d((x*cos(z),-y*cos(z),sin(z)), (x,0,pi), (y,0,pi), (z,0,pi),center_arrows=True,aspect_ratio=(1,2,1))
         Graphics3d Object

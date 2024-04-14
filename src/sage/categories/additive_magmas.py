@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Additive magmas
 """
@@ -817,7 +818,7 @@ class AdditiveMagmas(Category_singleton):
 
                 TESTS:
 
-                Check that :trac:`18275` is fixed::
+                Check that :issue:`18275` is fixed::
 
                     sage: C = GF(5).cartesian_product(GF(5))
                     sage: C.one() - C.one()

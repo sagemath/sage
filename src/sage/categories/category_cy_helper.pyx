@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Fast functions for the category framework
 
@@ -21,7 +22,7 @@ AUTHOR:
 #######################################
 #  Sorting
 
-cpdef inline tuple category_sort_key(object category) noexcept:
+cpdef inline tuple category_sort_key(object category):
     """
     Return ``category._cmp_key``.
 
@@ -38,7 +39,7 @@ cpdef inline tuple category_sort_key(object category) noexcept:
     """
     return category._cmp_key
 
-cpdef tuple _sort_uniq(categories) noexcept:
+cpdef tuple _sort_uniq(categories):
     """
     Return the categories after sorting them and removing redundant categories.
 
@@ -72,7 +73,7 @@ cpdef tuple _sort_uniq(categories) noexcept:
             result.append(category)
     return tuple(result)
 
-cpdef tuple _flatten_categories(categories, ClasscallMetaclass JoinCategory) noexcept:
+cpdef tuple _flatten_categories(categories, ClasscallMetaclass JoinCategory):
     """
     Return the tuple of categories in ``categories``, while
     flattening join categories.
@@ -116,7 +117,7 @@ cdef bint is_supercategory_of_done(new_cat, dict done) noexcept:
             return True
     return False
 
-cpdef tuple join_as_tuple(tuple categories, tuple axioms, tuple ignore_axioms) noexcept:
+cpdef tuple join_as_tuple(tuple categories, tuple axioms, tuple ignore_axioms):
     """
     Helper for :meth:`~sage.categories.category.Category.join`.
 
@@ -267,7 +268,7 @@ cdef class AxiomContainer(dict):
         return self
 
 
-cpdef inline get_axiom_index(AxiomContainer all_axioms, str axiom) noexcept:
+cpdef inline get_axiom_index(AxiomContainer all_axioms, str axiom):
     """
     Helper function: Return the rank of an axiom.
 
@@ -286,7 +287,7 @@ cpdef inline get_axiom_index(AxiomContainer all_axioms, str axiom) noexcept:
     return (<dict>all_axioms)[axiom]
 
 
-cpdef tuple canonicalize_axioms(AxiomContainer all_axioms, axioms) noexcept:
+cpdef tuple canonicalize_axioms(AxiomContainer all_axioms, axioms):
     r"""
     Canonicalize a set of axioms.
 

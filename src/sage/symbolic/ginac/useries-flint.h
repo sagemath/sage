@@ -27,9 +27,6 @@
 #include "flint/fmpq_poly.h"
 #include "flint/fmpq.h"
 
-extern "C" void fmpq_get_mpz_frac(mpz_t a, mpz_t b, fmpq_t c);
-extern "C" void fmpq_init_set_mpz_frac_readonly(fmpq_t z, const mpz_t p, const mpz_t q);
-
 #include <stdexcept>
 
 

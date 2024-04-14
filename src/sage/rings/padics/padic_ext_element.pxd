@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 from sage.rings.padics.padic_generic_element cimport pAdicGenericElement
 from sage.libs.ntl.types cimport ZZ_pX_c, ZZ_pE_c, ZZ_pEX_c, ZZ_p_c, ZZX_c
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
@@ -32,6 +33,6 @@ cdef class pAdicExtElement(pAdicGenericElement):
     cdef long _check_ZZ_pContext(self, ntl_ZZ_pContext_class ctx) except -1
     cdef long _check_ZZ_pEContext(self, ntl_ZZ_pEContext_class ctx) except -1
 
-    cdef ext_p_list(self, bint pos) noexcept
-    cdef ext_p_list_precs(self, bint pos, long prec) noexcept
+    cdef ext_p_list(self, bint pos)
+    cdef ext_p_list_precs(self, bint pos, long prec)
     cdef ZZ_p_c _const_term(self) noexcept

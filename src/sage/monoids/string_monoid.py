@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 r"""
 Free String Monoids
 
@@ -8,20 +9,21 @@ AUTHORS:
 Sage supports a wide range of specific free string monoids.
 """
 
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2007 David Kohel <kohel@maths.usyd.edu.au>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 2 of the License, or
 # (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 
 from .free_monoid import FreeMonoid
 from .string_monoid_element import StringMonoidElement
 from .string_ops import strip_encoding
+
 
 class StringMonoid_class(FreeMonoid):
     r"""
@@ -108,12 +110,13 @@ class StringMonoid_class(FreeMonoid):
         n = self.ngens()
         if i < 0 or not i < n:
             raise IndexError(
-                "Argument i (= %s) must be between 0 and %s." % (i, n-1))
+                f"Argument i (= {i}) must be between 0 and {n-1}.")
         return StringMonoidElement(self, [int(i)])
 
-#*****************************************************************************
+
+# ****************************************************************************
 # Specific global string monoids
-#*****************************************************************************
+# ****************************************************************************
 
 class BinaryStringMonoid(StringMonoid_class):
     r"""
@@ -182,7 +185,7 @@ class BinaryStringMonoid(StringMonoid_class):
             sage: S.gen(1)
             1
         """
-        ## There should really some careful type checking here...
+        # There should really some careful type checking here...
         if isinstance(x, StringMonoidElement) and x.parent() == self:
             return x
         elif isinstance(x, list):
@@ -276,7 +279,7 @@ class OctalStringMonoid(StringMonoid_class):
             sage: x[0] * x[3]^3 * x[5]^4 * x[6]
             033355556
         """
-        StringMonoid_class.__init__(self, 8, [ str(i) for i in range(8) ])
+        StringMonoid_class.__init__(self, 8, [str(i) for i in range(8)])
 
     def __repr__(self):
         return "Free octal string monoid"
@@ -300,7 +303,7 @@ class OctalStringMonoid(StringMonoid_class):
             sage: S([ i for i in range(8) ])
             01234567
         """
-        ## There should really some careful type checking here...
+        # There should really some careful type checking here...
         if isinstance(x, StringMonoidElement) and x.parent() == self:
             return x
         elif isinstance(x, list):
@@ -344,7 +347,7 @@ class HexadecimalStringMonoid(StringMonoid_class):
             0aaaf
         """
         alph = '0123456789abcdef'
-        StringMonoid_class.__init__(self, 16, [ alph[i] for i in range(16) ])
+        StringMonoid_class.__init__(self, 16, [alph[i] for i in range(16)])
 
     def __repr__(self):
         return "Free hexadecimal string monoid"
@@ -368,7 +371,7 @@ class HexadecimalStringMonoid(StringMonoid_class):
             sage: S([ i for i in range(16) ])
             0123456789abcdef
         """
-        ## There should really some careful type checking here...
+        # There should really some careful type checking here...
         if isinstance(x, StringMonoidElement) and x.parent() == self:
             return x
         elif isinstance(x, list):
@@ -453,7 +456,7 @@ class Radix64StringMonoid(StringMonoid_class):
             /
         """
         alph = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-        StringMonoid_class.__init__(self, 64, [ alph[i] for i in range(64) ])
+        StringMonoid_class.__init__(self, 64, [alph[i] for i in range(64)])
 
     def __repr__(self):
         return "Free radix 64 string monoid"
@@ -480,7 +483,7 @@ class Radix64StringMonoid(StringMonoid_class):
             sage: S([ i for i in range(64) ])
             ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/
         """
-        ## There should really some careful type checking here...
+        # There should really some careful type checking here...
         if isinstance(x, StringMonoidElement) and x.parent() == self:
             return x
         elif isinstance(x, list):
@@ -560,7 +563,7 @@ class AlphabeticStringMonoid(StringMonoid_class):
             "W": RR(0.023), "X": RR(0.001),
             "Y": RR(0.020), "Z": RR(0.001)}
         alph = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-        StringMonoid_class.__init__(self, 26, [ alph[i] for i in range(26) ])
+        StringMonoid_class.__init__(self, 26, [alph[i] for i in range(26)])
 
     def __repr__(self):
         return "Free alphabetic string monoid on A-Z"
@@ -584,7 +587,7 @@ class AlphabeticStringMonoid(StringMonoid_class):
             sage: S([ i for i in range(26) ])
             ABCDEFGHIJKLMNOPQRSTUVWXYZ
         """
-        ## There should really some careful type checking here...
+        # There should really some careful type checking here...
         if isinstance(x, StringMonoidElement) and x.parent() == self:
             return x
         elif isinstance(x, list):

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 # distutils: libraries = NTL_LIBRARIES gmp m
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -43,6 +44,7 @@ from sage.misc.randstate cimport current_randstate
 
 
 ZZ_sage = IntegerRing()
+
 
 def ntl_ZZ_p_random_element(v):
     """
@@ -127,7 +129,7 @@ cdef class ntl_ZZ_p():
                 mpz_to_ZZ(&den, (<Integer>v.denominator()).value)
                 ZZ_p_div(self.x, ZZ_to_ZZ_p(num), ZZ_to_ZZ_p(den))
             else:
-                str_v = str(v)  # can cause modulus to change  trac #25790
+                str_v = str(v)  # can cause modulus to change; Issue #25790
                 self.c.restore_c()
                 ccreadstr(self.x, str_v)
 
@@ -154,7 +156,7 @@ cdef class ntl_ZZ_p():
             self.c = <ntl_ZZ_pContext_class>ntl_ZZ_pContext(modulus)
             self.c.restore_c()
 
-    cdef ntl_ZZ_p _new(self) noexcept:
+    cdef ntl_ZZ_p _new(self):
         cdef ntl_ZZ_p r
         self.c.restore_c()
         r = ntl_ZZ_p.__new__(ntl_ZZ_p)

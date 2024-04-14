@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.rings.number_field
 r"""
 Dual groups of Finite Multiplicative Abelian Groups
@@ -267,7 +268,7 @@ class DualAbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             x[i] = 1
         return self.element_class(self, x)
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators for the group.
 

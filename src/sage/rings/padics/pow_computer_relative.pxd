@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-pari
 from sage.rings.padics.pow_computer cimport PowComputer_class
 from sage.rings.polynomial.polynomial_element cimport Polynomial_generic_dense
 
@@ -26,4 +26,4 @@ cdef class PowComputer_relative_eis(PowComputer_relative):
     # (x^e - modulus)/p
     cdef public Polynomial_generic_dense _shift_seed
     cdef public Polynomial_generic_dense _inv_shift_seed
-    cpdef Polynomial_generic_dense invert(self, Polynomial_generic_dense element, long prec) noexcept
+    cpdef Polynomial_generic_dense invert(self, Polynomial_generic_dense element, long prec)

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 r"""
 Library of commonly used, famous, or interesting polytopes
 
@@ -3234,7 +3235,7 @@ class Polytopes:
             sage: P = polytopes.hypercube(4, intervals, backend='field')
             sage: TestSuite(P).run()
 
-        Check that :trac:`29904` is fixed::
+        Check that :issue:`29904` is fixed::
 
             sage: intervals = [[-2,2]]
             sage: P = polytopes.hypercube(1, intervals, 'field')

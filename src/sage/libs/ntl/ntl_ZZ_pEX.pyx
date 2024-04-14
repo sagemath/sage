@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 # distutils: libraries = NTL_LIBRARIES gmp m
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -133,7 +134,7 @@ cdef class ntl_ZZ_pEX():
             raise ValueError("modulus must not be None")
         self.c.restore_c()
 
-    cdef ntl_ZZ_pEX _new(self) noexcept:
+    cdef ntl_ZZ_pEX _new(self):
         cdef ntl_ZZ_pEX r
         self.c.restore_c()
         r = ntl_ZZ_pEX.__new__(ntl_ZZ_pEX)

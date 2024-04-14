@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.graphs sage.combinat
 r"""
 Crystals
@@ -482,7 +483,7 @@ class Crystals(Category_singleton):
 
             TESTS:
 
-            Check that :trac:`23942` is fixed::
+            Check that :issue:`23942` is fixed::
 
                 sage: B = crystals.infinity.Tableaux(['A',2])
                 sage: S = B.subcrystal(max_depth=3, category=HighestWeightCrystals())
@@ -877,7 +878,7 @@ class Crystals(Category_singleton):
 
             TESTS:
 
-            We check that infinite crystals raise an error (:trac:`21986`)::
+            We check that infinite crystals raise an error (:issue:`21986`)::
 
                 sage: B = crystals.infinity.Tableaux(['A',2])
                 sage: B.digraph()
@@ -1744,7 +1745,7 @@ class Crystals(Category_singleton):
 
             TESTS:
 
-            Check that :trac:`23942` is fixed::
+            Check that :issue:`23942` is fixed::
 
                 sage: K = crystals.KirillovReshetikhin(['A',2,1], 1,1)
                 sage: cat = HighestWeightCrystals().Finite()

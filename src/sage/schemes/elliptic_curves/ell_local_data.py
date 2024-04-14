@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Local data for elliptic curves over number fields
 
@@ -358,7 +359,7 @@ class EllipticCurveLocalData(SageObject):
             sage: E.local_data(ZZ.ideal(2), algorithm="pari").minimal_model()
             Elliptic Curve defined by y^2 = x^3 - x^2 - 3*x + 2 over Rational Field
 
-        :trac:`14476`::
+        :issue:`14476`::
 
             sage: # needs sage.rings.number_field
             sage: t = QQ['t'].0
@@ -705,7 +706,7 @@ class EllipticCurveLocalData(SageObject):
         - ``KS`` (string) is the Kodaira symbol
         - ``cp`` (int) is the Tamagawa number
 
-        EXAMPLES (this raised a type error in sage prior to 4.4.4, see :trac:`7930`) ::
+        EXAMPLES (this raised a type error in sage prior to 4.4.4, see :issue:`7930`) ::
 
             sage: # needs sage.rings.number_field
             sage: E = EllipticCurve('99d1')
@@ -720,7 +721,7 @@ class EllipticCurveLocalData(SageObject):
 
         EXAMPLES:
 
-        The following example shows that the bug at :trac:`9324` is fixed::
+        The following example shows that the bug at :issue:`9324` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: x = polygen(ZZ, 'x')
@@ -729,7 +730,7 @@ class EllipticCurveLocalData(SageObject):
             sage: E.conductor() # indirect doctest
             Fractional ideal (18, 6*a)
 
-        The following example shows that the bug at :trac:`9417` is fixed::
+        The following example shows that the bug at :issue:`9417` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: K.<a> = NumberField(x^2 + 18*x + 1)
@@ -737,12 +738,12 @@ class EllipticCurveLocalData(SageObject):
             sage: E.tamagawa_number(K.ideal(2))
             4
 
-        This is to show that the bug :trac:`11630` is fixed. (The computation of the class group would produce a warning)::
+        This is to show that the bug :issue:`11630` is fixed. (The computation of the class group would produce a warning)::
 
             sage: # needs sage.rings.number_field
             sage: K.<t> = NumberField(x^7 - 2*x + 177)
             sage: E = EllipticCurve([0,1,0,t,t])
-            sage: P = K.ideal(2,t^3 + t + 1)
+            sage: P = K.ideal(2, t^3 + t + 1)
             sage: E.local_data(P).kodaira_symbol()
             II
         """
@@ -1142,17 +1143,17 @@ def check_prime(K, P):
 
     .. NOTE::
 
-        If `P` is not a prime and does not generate a prime, a ``TypeError``
+        If `P` is not a prime and does not generate a prime, a :class:`TypeError`
         is raised.
 
     EXAMPLES::
 
         sage: from sage.schemes.elliptic_curves.ell_local_data import check_prime
-        sage: check_prime(QQ,3)
+        sage: check_prime(QQ, 3)
         3
-        sage: check_prime(QQ,QQ(3))
+        sage: check_prime(QQ, QQ(3))
         3
-        sage: check_prime(QQ,ZZ.ideal(31))
+        sage: check_prime(QQ, ZZ.ideal(31))
         31
 
         sage: # needs sage.rings.number_field
@@ -1160,11 +1161,11 @@ def check_prime(K, P):
         sage: K.<a> = NumberField(x^2 - 5)
         sage: check_prime(K, a)
         Fractional ideal (a)
-        sage: check_prime(K,a+1)
+        sage: check_prime(K, a + 1)
         Fractional ideal (a + 1)
-        sage: [check_prime(K,P) for P in K.primes_above(31)]
+        sage: [check_prime(K, P) for P in K.primes_above(31)]
         [Fractional ideal (5/2*a + 1/2), Fractional ideal (5/2*a - 1/2)]
-        sage: L.<b> = NumberField(x^2+3)
+        sage: L.<b> = NumberField(x^2 + 3)
         sage: check_prime(K, L.ideal(5))
         Traceback (most recent call last):
         ...

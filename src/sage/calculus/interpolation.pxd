@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from sage.libs.gsl.interp cimport *
 
 cdef class Spline:
@@ -8,5 +9,5 @@ cdef class Spline:
     cdef int started
     cdef object v
 
-    cdef start_interp(self) noexcept
-    cdef stop_interp(self) noexcept
+    cdef start_interp(self)
+    cdef stop_interp(self)

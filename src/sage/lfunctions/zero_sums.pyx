@@ -1109,7 +1109,7 @@ cdef class LFunctionZeroSum_EllipticCurve(LFunctionZeroSum_abstract):
         logp = c_log(p)
         return -(t - logp) * (logp / p) * ap
 
-    cpdef _zerosum_sincsquared_fast(self, Delta=1, bad_primes=None) noexcept:
+    cpdef _zerosum_sincsquared_fast(self, Delta=1, bad_primes=None):
         r"""
         A faster cythonized implementation of self._zerosum_sincsquared().
 

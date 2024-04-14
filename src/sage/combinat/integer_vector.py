@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 (Non-negative) Integer vectors
 
@@ -460,7 +461,7 @@ class IntegerVector(ClonableArray):
             sage: elt = IV([1,2,1])
             sage: elt.check()
 
-        Check :trac:`34510`::
+        Check :issue:`34510`::
 
             sage: IV3 = IntegerVectors(n=3)
             sage: IV3([2,2])
@@ -696,7 +697,7 @@ class IntegerVectors(Parent, metaclass=ClasscallMetaclass):
             ...
             ValueError: k and length both specified
 
-        :trac:`29524`::
+        :issue:`29524`::
 
             sage: IntegerVectors(3, 3/1)
             Traceback (most recent call last):
@@ -1288,7 +1289,7 @@ class IntegerVectors_nk(UniqueRepresentation, IntegerVectors):
             sage: [3,2,2,1] in IntegerVectors(8, 4)
             True
 
-        Check :trac:`34510`::
+        Check :issue:`34510`::
 
             sage: IV33 = IntegerVectors(n=3, k=3)
             sage: IV33([0])

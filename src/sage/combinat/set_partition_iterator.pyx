@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # cython: binding=True
 r"""
 Fast set partition iterators
@@ -7,7 +8,7 @@ cimport cython
 
 @cython.wraparound(False)
 @cython.boundscheck(False)
-cdef list from_word(list w, list base_set) noexcept:
+cdef list from_word(list w, list base_set):
     cdef list sp = []
     cdef Py_ssize_t i
     cdef Py_ssize_t b

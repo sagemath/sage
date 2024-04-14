@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Finite Enumerated Sets
 """
@@ -128,7 +129,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
             We ignore additional inputs since during doctests classes which
             override ``cardinality()`` call up to the category rather than
-            their own ``cardinality()`` method (see :trac:`13688`)::
+            their own ``cardinality()`` method (see :issue:`13688`)::
 
                 sage: C = FiniteEnumeratedSets().example()
                 sage: C._cardinality_from_iterator(algorithm='testing')
@@ -181,7 +182,7 @@ class FiniteEnumeratedSets(CategoryWithAxiom):
 
             We ignore additional inputs since during doctests classes which
             override ``cardinality()`` call up to the category rather than
-            their own ``cardinality()`` method (see :trac:`13688`)::
+            their own ``cardinality()`` method (see :issue:`13688`)::
 
                 sage: C = FiniteEnumeratedSets().example()
                 sage: C._cardinality_from_list(algorithm='testing')

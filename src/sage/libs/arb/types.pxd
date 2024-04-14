@@ -1,3 +1,5 @@
+# sage_setup: distribution = sagemath-flint
+
 # Deprecated header file; use sage/libs/flint/types.pxd instead
 # See https://github.com/sagemath/sage/pull/36449
 
@@ -29,12 +31,8 @@ from sage.libs.flint.types cimport (
     acb_mat_t,
     acb_poly_struct,
     acb_poly_t,
-    acb_poly_ptr,
-    acb_poly_srcptr,
     acb_calc_integrate_opt_struct,
     acb_calc_integrate_opt_t,
     acb_calc_func_t,
     arb_poly_struct,
-    arb_poly_t,
-    arb_poly_ptr,
-    arb_poly_srcptr)
+    arb_poly_t)

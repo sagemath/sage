@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-plot
 # sage.doctest: needs sage.symbolic
 """
 Plotting utilities
@@ -114,7 +115,7 @@ def setup_for_eval_on_grid(funcs,
     TESTS:
 
     Ensure that we can plot expressions with intermediate complex
-    terms as in :trac:`8450`::
+    terms as in :issue:`8450`::
 
         sage: x, y = SR.var('x y')
         sage: contour_plot(abs(x+i*y), (x,-1,1), (y,-1,1))

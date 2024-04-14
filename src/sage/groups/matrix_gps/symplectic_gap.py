@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 """
 Symplectic Linear Groups with GAP
 """
@@ -35,7 +36,7 @@ class SymplecticMatrixGroup_gap(SymplecticMatrixGroup_generic, NamedMatrixGroup_
 
     TESTS:
 
-    Check that :trac:`20867` is fixed::
+    Check that :issue:`20867` is fixed::
 
         sage: from sage.groups.matrix_gps.finitely_generated_gap import FinitelyGeneratedMatrixGroup_gap
         sage: G = Sp(4,3)

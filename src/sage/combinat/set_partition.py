@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 r"""
 Set Partitions
 
@@ -582,7 +583,7 @@ class SetPartition(AbstractSetPartition,
          {{1, 2}, {3}, {4}},
          {{1}, {2, 3}, {4}}]
 
-    Since :trac:`14140`, we can create a set partition directly by
+    Since :issue:`14140`, we can create a set partition directly by
     :class:`SetPartition`, which creates the base set by taking the
     union of the parts passed in::
 
@@ -1873,8 +1874,7 @@ class SetPartition(AbstractSetPartition,
         arcs = []
         for p in self:
             p = sorted(p)
-            for i in range(len(p) - 1):
-                arcs.append((p[i], p[i + 1]))
+            arcs.extend((p[i], p[i + 1]) for i in range(len(p) - 1))
         return arcs
 
     def plot(self, angle=None, color='black', base_set_dict=None):
@@ -2027,7 +2027,7 @@ class SetPartitions(UniqueRepresentation, Parent):
         70
 
     In strings, repeated letters are not considered distinct as of
-    :trac:`14140`::
+    :issue:`14140`::
 
         sage: SetPartitions('abcde').cardinality()                                      # needs sage.libs.flint
         52

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Elements of function fields
 
@@ -122,7 +123,7 @@ cdef class FunctionFieldElement(FieldElement):
         return (make_FunctionFieldElement,
                 (self._parent, type(self), self._x))
 
-    cdef FunctionFieldElement _new_c(self) noexcept:
+    cdef FunctionFieldElement _new_c(self):
         cdef type t = type(self)
         cdef FunctionFieldElement x = <FunctionFieldElement>t.__new__(t)
         x._parent = self._parent
@@ -137,7 +138,7 @@ cdef class FunctionFieldElement(FieldElement):
 
         TESTS:
 
-        Check that :trac:`16369` has been resolved::
+        Check that :issue:`16369` has been resolved::
 
             sage: K.<a> = FunctionField(QQ)
             sage: R.<b> = K[]
@@ -401,7 +402,7 @@ cdef class FunctionFieldElement(FieldElement):
 
         TESTS:
 
-        Verify that :trac:`27712` is resolved::
+        Verify that :issue:`27712` is resolved::
 
             sage: K.<x> = FunctionField(GF(31))
             sage: R.<y> = K[]
@@ -698,7 +699,7 @@ cdef class FunctionFieldElement(FieldElement):
         """
         raise NotImplementedError("is_nth_power() not implemented for generic elements")
 
-    cpdef FunctionFieldElement nth_root(self, n) noexcept:
+    cpdef FunctionFieldElement nth_root(self, n):
         """
         Return an ``n``-th root of this element in the function field.
 

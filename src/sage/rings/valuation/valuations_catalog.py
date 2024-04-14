@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.rings.padics.padic_valuation', 'pAdicValuation')

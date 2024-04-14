@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 # distutils: libraries = NTL_LIBRARIES gmp
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -250,6 +251,7 @@ cdef class ntl_GF2():
         """
         cdef long l = GF2_conv_to_long(self.x)
         return int(l)
+
 
 def unpickle_class_value(cls, x):
     """

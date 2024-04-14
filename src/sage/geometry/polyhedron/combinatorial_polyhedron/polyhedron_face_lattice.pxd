@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 cimport cython
 from sage.geometry.polyhedron.combinatorial_polyhedron.list_of_faces             cimport ListOfFaces
 from sage.geometry.polyhedron.combinatorial_polyhedron.face_data_structure       cimport face_t
@@ -41,7 +42,7 @@ cdef class PolyhedronFaceLattice:
 
     cdef int _sort(self) except -1
     cdef inline size_t find_face(self, int dimension, face_t face) except -2
-    cpdef CombinatorialFace get_face(self, int dimension, size_t index) noexcept
+    cpdef CombinatorialFace get_face(self, int dimension, size_t index)
     cdef size_t set_coatom_rep(self, int dimension, size_t index) except -1
     cdef size_t set_atom_rep(self, int dimension, size_t index) except -1
     cdef void incidence_init(self, int dimension_one, int dimension_two) noexcept

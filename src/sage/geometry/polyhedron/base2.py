@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 r"""
 Base class for polyhedra: Methods related to lattice points
 """
@@ -459,7 +460,7 @@ class Polyhedron_base2(Polyhedron_base1):
 
         TESTS:
 
-        Test some trivial cases (see :trac:`17937`)::
+        Test some trivial cases (see :issue:`17937`)::
 
             sage: P = Polyhedron(ambient_dim=1)  # empty polyhedron in 1 dimension
             sage: P.integral_points()

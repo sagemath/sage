@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Processes for running doctests
 
@@ -258,8 +259,7 @@ def showwarning_with_traceback(message, category, filename, lineno, file=None, l
 
         sage: from sage.doctest.forker import showwarning_with_traceback
         sage: showwarning_with_traceback("bad stuff", UserWarning, "myfile.py", 0)
-        doctest:warning
-          ...
+        doctest:warning...
           File "<doctest sage.doctest.forker.showwarning_with_traceback[1]>", line 1, in <module>
             showwarning_with_traceback("bad stuff", UserWarning, "myfile.py", Integer(0))
         :
@@ -271,6 +271,10 @@ def showwarning_with_traceback(message, category, filename, lineno, file=None, l
     # Get traceback to display in warning
     tb = traceback.extract_stack()
     tb = tb[:-1]  # Drop this stack frame for showwarning_with_traceback()
+    for i, frame_summary in enumerate(tb):
+        if frame_summary.filename.endswith('sage/doctest/forker.py') and frame_summary.name == 'compile_and_execute':
+            tb = tb[i + 1:]
+            break
 
     # Format warning
     lines = ["doctest:warning\n"]  # Match historical warning messages in doctests
@@ -572,18 +576,17 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: from sage.doctest.forker import SageDocTestRunner
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
-            sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os
             sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
-            sage: FDS = FileDocTestSource(filename,DD)
+            sage: filename = sage.doctest.forker.__file__
+            sage: FDS = FileDocTestSource(filename, DD)
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: DTR.run(doctests[0], clear_globs=False) # indirect doctest
             TestResults(failed=0, attempted=4)
 
         TESTS:
 
-        Check that :trac:`26038` is fixed::
+        Check that :issue:`26038` is fixed::
 
             sage: a = 1
             ....: b = 2
@@ -873,12 +876,11 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: from sage.doctest.forker import SageDocTestRunner
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
-            sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os
             sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD,
             ....:                         optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
-            sage: FDS = FileDocTestSource(filename,DD)
+            sage: filename = sage.doctest.forker.__file__
+            sage: FDS = FileDocTestSource(filename, DD)
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: DTR.run(doctests[0], clear_globs=False)
             TestResults(failed=0, attempted=4)
@@ -1018,11 +1020,10 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: from sage.doctest.forker import SageDocTestRunner
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
-            sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os, hashlib
             sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
-            sage: FDS = FileDocTestSource(filename,DD)
+            sage: filename = sage.doctest.forker.__file__
+            sage: FDS = FileDocTestSource(filename, DD)
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: DTR.running_global_digest.hexdigest()
             'd41d8cd98f00b204e9800998ecf8427e'
@@ -1080,12 +1081,11 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.util import RecordingDict
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
-            sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os, hashlib
             sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD,
             ....:           optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
             sage: DTR.running_doctest_digest = hashlib.md5()
-            sage: filename = os.path.join(SAGE_SRC, 'sage', 'doctest', 'forker.py')
+            sage: filename = sage.doctest.forker.__file__
             sage: FDS = FileDocTestSource(filename, DD)
             sage: globs = RecordingDict(globals())
             sage: 'doctest_var' in globs
@@ -1200,16 +1200,15 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: from sage.doctest.forker import SageDocTestRunner
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
-            sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os
             sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
-            sage: FDS = FileDocTestSource(filename,DD)
+            sage: filename = sage.doctest.forker.__file__
+            sage: FDS = FileDocTestSource(filename, DD)
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
             sage: print(DTR._failure_header(doctests[0], ex))
             **********************************************************************
-            File ".../sage/doctest/forker.py", line 11, in sage.doctest.forker
+            File ".../sage/doctest/forker.py", line 12, in sage.doctest.forker
             Failed example:
                 doctest_var = 42; doctest_var^2
             <BLANKLINE>
@@ -1219,7 +1218,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: import doctest
             sage: print(doctest.DocTestRunner._failure_header(DTR, doctests[0], ex))
             **********************************************************************
-            File ".../sage/doctest/forker.py", line 11, in sage.doctest.forker
+            File ".../sage/doctest/forker.py", line 12, in sage.doctest.forker
             Failed example:
                 doctest_var = Integer(42); doctest_var**Integer(2)
             <BLANKLINE>
@@ -1228,23 +1227,64 @@ class SageDocTestRunner(doctest.DocTestRunner):
 
             sage: print(DTR._failure_header(doctests[0], ex, message='Hello there!'))
             **********************************************************************
-            File ".../sage/doctest/forker.py", line 11, in sage.doctest.forker
+            File ".../sage/doctest/forker.py", line 12, in sage.doctest.forker
             Hello there!
                 doctest_var = 42; doctest_var^2
             <BLANKLINE>
         """
         out = [self.DIVIDER]
         with OriginalSource(example):
-            if test.filename:
-                if test.lineno is not None and example.lineno is not None:
-                    lineno = test.lineno + example.lineno + 1
+            if self.options.format == 'sage':
+                if test.filename:
+                    if test.lineno is not None and example.lineno is not None:
+                        lineno = test.lineno + example.lineno + 1
+                    else:
+                        lineno = '?'
+                    out.append('File "%s", line %s, in %s' %
+                               (test.filename, lineno, test.name))
                 else:
-                    lineno = '?'
-                out.append('File "%s", line %s, in %s' %
-                           (test.filename, lineno, test.name))
+                    out.append('Line %s, in %s' % (example.lineno + 1, test.name))
+                out.append(message)
+            elif self.options.format == 'github':
+                # https://docs.github.com/en/actions/using-workflows/workflow-commands-for-github-actions#using-workflow-commands-to-access-toolkit-functions
+                if message.startswith('Warning: '):
+                    command = f'::warning title={message}'
+                    message = message[len('Warning: '):]
+                elif self.baseline.get('failed', False):
+                    command = f'::notice title={message}'
+                    message += ' [failed in baseline]'
+                else:
+                    command = f'::error title={message}'
+                if extra := getattr(example, 'extra', None):
+                    message += f': {extra}'
+                if test.filename:
+                    command += f',file={test.filename}'
+                    if test.lineno is not None and example.lineno is not None:
+                        lineno = test.lineno + example.lineno + 1
+                        command += f',line={lineno}'
+                    lineno = None
+                else:
+                    command += f',line={example.lineno + 1}'
+                #
+                # Urlencoding trick for multi-line annotations
+                # https://github.com/actions/starter-workflows/issues/68#issuecomment-581479448
+                #
+                # This only affects the display in the workflow Summary, after clicking "Show more";
+                # the message needs to be long enough so that "Show more" becomes available.
+                # https://github.com/actions/toolkit/issues/193#issuecomment-1867084340
+                #
+                # Unfortunately, this trick does not make the annotations in the diff view multi-line.
+                #
+                if '\n' in message:
+                    message = message.replace('\n', '%0A')
+                    # The actual threshold for "Show more" to appear depends on the window size.
+                    show_more_threshold = 500
+                    if (pad := show_more_threshold - len(message)) > 0:
+                        message += ' ' * pad
+                command += f'::{message}'
+                out.append(command)
             else:
-                out.append('Line %s, in %s' % (example.lineno + 1, test.name))
-            out.append(message)
+                raise ValueError(f'unknown format option: {self.options.format}')
             source = example.source
             out.append(doctest._indent(source))
             return '\n'.join(out)
@@ -1271,15 +1311,14 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: from sage.doctest.forker import SageDocTestRunner
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
-            sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os
             sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=True, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
-            sage: FDS = FileDocTestSource(filename,DD)
+            sage: filename = sage.doctest.forker.__file__
+            sage: FDS = FileDocTestSource(filename, DD)
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
             sage: DTR.report_start(sys.stdout.write, doctests[0], ex)
-            Trying (line 11):    doctest_var = 42; doctest_var^2
+            Trying (line 12):    doctest_var = 42; doctest_var^2
             Expecting:
                 1764
         """
@@ -1325,11 +1364,10 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
             sage: from sage.misc.timing import walltime
-            sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os
             sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=True, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
-            sage: FDS = FileDocTestSource(filename,DD)
+            sage: filename = sage.doctest.forker.__file__
+            sage: FDS = FileDocTestSource(filename, DD)
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
             sage: ex.walltime = 0.0
@@ -1366,17 +1404,16 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: from sage.doctest.forker import SageDocTestRunner
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
-            sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os
             sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=True, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
-            sage: FDS = FileDocTestSource(filename,DD)
+            sage: filename = sage.doctest.forker.__file__
+            sage: FDS = FileDocTestSource(filename, DD)
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
             sage: DTR.no_failure_yet = True
             sage: DTR.report_failure(sys.stdout.write, doctests[0], ex, 'BAD ANSWER\n', {})
             **********************************************************************
-            File ".../sage/doctest/forker.py", line 11, in sage.doctest.forker
+            File ".../sage/doctest/forker.py", line 12, in sage.doctest.forker
             Failed example:
                 doctest_var = 42; doctest_var^2
             Expected:
@@ -1417,6 +1454,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         """
         if not self.options.initial or self.no_failure_yet:
             self.no_failure_yet = False
+            example.extra = f'Got: {got}'
             returnval = doctest.DocTestRunner.report_failure(self, out, test, example, got)
             if self.options.debug:
                 self._fakeout.stop_spoofing()
@@ -1499,17 +1537,16 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
             sage: from sage.misc.timing import walltime
-            sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os
             sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=True, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
-            sage: FDS = FileDocTestSource(filename,DD)
+            sage: filename = sage.doctest.forker.__file__
+            sage: FDS = FileDocTestSource(filename, DD)
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: ex = doctests[0].examples[0]
             sage: ex.walltime = 1.23
             sage: DTR.report_overtime(sys.stdout.write, doctests[0], ex, 'BAD ANSWER\n', check_duration=2.34)
             **********************************************************************
-            File ".../sage/doctest/forker.py", line 11, in sage.doctest.forker
+            File ".../sage/doctest/forker.py", line 12, in sage.doctest.forker
             Warning, slow doctest:
                 doctest_var = 42; doctest_var^2
             Test ran for 1.23 s, check ran for 2.34 s
@@ -1569,6 +1606,8 @@ class SageDocTestRunner(doctest.DocTestRunner):
         """
         if not self.options.initial or self.no_failure_yet:
             self.no_failure_yet = False
+
+            example.extra = "Exception raised:\n" + "".join(traceback.format_exception(*exc_info))
             returnval = doctest.DocTestRunner.report_unexpected_exception(self, out, test, example, exc_info)
             if self.options.debug:
                 self._fakeout.stop_spoofing()
@@ -1625,11 +1664,10 @@ class SageDocTestRunner(doctest.DocTestRunner):
             sage: from sage.doctest.forker import SageDocTestRunner
             sage: from sage.doctest.sources import FileDocTestSource, DictAsObject
             sage: from sage.doctest.control import DocTestDefaults; DD = DocTestDefaults()
-            sage: from sage.env import SAGE_SRC
             sage: import doctest, sys, os
             sage: DTR = SageDocTestRunner(SageOutputChecker(), verbose=False, sage_options=DD, optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','forker.py')
-            sage: FDS = FileDocTestSource(filename,DD)
+            sage: filename = sage.doctest.forker.__file__
+            sage: FDS = FileDocTestSource(filename, DD)
             sage: doctests, extras = FDS.create_doctests(globals())
             sage: from sage.doctest.util import Timer
             sage: T = Timer().start()
@@ -1707,7 +1745,6 @@ class DocTestDispatcher(SageObject):
             sage: from sage.doctest.forker import DocTestDispatcher
             sage: from sage.doctest.reporting import DocTestReporter
             sage: from sage.doctest.util import Timer
-            sage: from sage.env import SAGE_SRC
             sage: import os
             sage: homset = os.path.join(SAGE_SRC, 'sage', 'rings', 'homset.py')
             sage: ideal = os.path.join(SAGE_SRC, 'sage', 'rings', 'ideal.py')
@@ -1754,7 +1791,6 @@ class DocTestDispatcher(SageObject):
             sage: from sage.doctest.forker import DocTestDispatcher
             sage: from sage.doctest.reporting import DocTestReporter
             sage: from sage.doctest.util import Timer
-            sage: from sage.env import SAGE_SRC
             sage: import os
             sage: crem = os.path.join(SAGE_SRC, 'sage', 'databases', 'cremona.py')
             sage: bigo = os.path.join(SAGE_SRC, 'sage', 'rings', 'big_oh.py')
@@ -2089,7 +2125,6 @@ class DocTestDispatcher(SageObject):
             sage: from sage.doctest.forker import DocTestDispatcher
             sage: from sage.doctest.reporting import DocTestReporter
             sage: from sage.doctest.util import Timer
-            sage: from sage.env import SAGE_SRC
             sage: import os
             sage: freehom = os.path.join(SAGE_SRC, 'sage', 'modules', 'free_module_homspace.py')
             sage: bigo = os.path.join(SAGE_SRC, 'sage', 'rings', 'big_oh.py')
@@ -2144,10 +2179,9 @@ class DocTestWorker(multiprocessing.Process):
         sage: from sage.doctest.sources import FileDocTestSource
         sage: from sage.doctest.reporting import DocTestReporter
         sage: from sage.doctest.control import DocTestController, DocTestDefaults
-        sage: from sage.env import SAGE_SRC
-        sage: filename = os.path.join(SAGE_SRC,'sage','doctest','util.py')
+        sage: filename = sage.doctest.util.__file__
         sage: DD = DocTestDefaults()
-        sage: FDS = FileDocTestSource(filename,DD)
+        sage: FDS = FileDocTestSource(filename, DD)
         sage: W = DocTestWorker(FDS, DD)
         sage: W.start()
         sage: DC = DocTestController(DD, filename)
@@ -2269,10 +2303,9 @@ class DocTestWorker(multiprocessing.Process):
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.reporting import DocTestReporter
             sage: from sage.doctest.control import DocTestController, DocTestDefaults
-            sage: from sage.env import SAGE_SRC
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','util.py')
+            sage: filename = sage.doctest.util.__file__
             sage: DD = DocTestDefaults()
-            sage: FDS = FileDocTestSource(filename,DD)
+            sage: FDS = FileDocTestSource(filename, DD)
             sage: W = DocTestWorker(FDS, DD)
             sage: W.start()
             sage: try:
@@ -2309,10 +2342,9 @@ class DocTestWorker(multiprocessing.Process):
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.reporting import DocTestReporter
             sage: from sage.doctest.control import DocTestController, DocTestDefaults
-            sage: from sage.env import SAGE_SRC
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','util.py')
+            sage: filename = sage.doctest.util.__file__
             sage: DD = DocTestDefaults(verbose=True,nthreads=2)
-            sage: FDS = FileDocTestSource(filename,DD)
+            sage: FDS = FileDocTestSource(filename, DD)
             sage: W = DocTestWorker(FDS, DD)
             sage: W.start()
             sage: while W.rmessages is not None:
@@ -2344,10 +2376,9 @@ class DocTestWorker(multiprocessing.Process):
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.reporting import DocTestReporter
             sage: from sage.doctest.control import DocTestController, DocTestDefaults
-            sage: from sage.env import SAGE_SRC
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','util.py')
+            sage: filename = sage.doctest.util.__file__
             sage: DD = DocTestDefaults()
-            sage: FDS = FileDocTestSource(filename,DD)
+            sage: FDS = FileDocTestSource(filename, DD)
             sage: W = DocTestWorker(FDS, DD)
             sage: W.start()
             sage: W.join()
@@ -2405,10 +2436,9 @@ class DocTestWorker(multiprocessing.Process):
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.reporting import DocTestReporter
             sage: from sage.doctest.control import DocTestController, DocTestDefaults
-            sage: from sage.env import SAGE_SRC
             sage: filename = os.path.join(SAGE_SRC,'sage','doctest','tests','99seconds.rst')
             sage: DD = DocTestDefaults()
-            sage: FDS = FileDocTestSource(filename,DD)
+            sage: FDS = FileDocTestSource(filename, DD)
 
         We set up the worker to start by blocking ``SIGQUIT``, such that
         killing will fail initially::
@@ -2475,11 +2505,10 @@ class DocTestTask():
         sage: from sage.doctest.forker import DocTestTask
         sage: from sage.doctest.sources import FileDocTestSource
         sage: from sage.doctest.control import DocTestDefaults, DocTestController
-        sage: from sage.env import SAGE_SRC
         sage: import os
-        sage: filename = os.path.join(SAGE_SRC,'sage','doctest','sources.py')
+        sage: filename = sage.doctest.sources.__file__
         sage: DD = DocTestDefaults()
-        sage: FDS = FileDocTestSource(filename,DD)
+        sage: FDS = FileDocTestSource(filename, DD)
         sage: DTT = DocTestTask(FDS)
         sage: DC = DocTestController(DD,[filename])
         sage: ntests, results = DTT(options=DD)
@@ -2498,10 +2527,9 @@ class DocTestTask():
             sage: from sage.doctest.forker import DocTestTask
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults
-            sage: from sage.env import SAGE_SRC
             sage: import os
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','sources.py')
-            sage: FDS = FileDocTestSource(filename,DocTestDefaults())
+            sage: filename = sage.doctest.sources.__file__
+            sage: FDS = FileDocTestSource(filename, DocTestDefaults())
             sage: DocTestTask(FDS)
             <sage.doctest.forker.DocTestTask object at ...>
         """
@@ -2541,11 +2569,10 @@ class DocTestTask():
             sage: from sage.doctest.forker import DocTestTask
             sage: from sage.doctest.sources import FileDocTestSource
             sage: from sage.doctest.control import DocTestDefaults, DocTestController
-            sage: from sage.env import SAGE_SRC
             sage: import os
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','parsing.py')
+            sage: filename = sage.doctest.parsing.__file__
             sage: DD = DocTestDefaults()
-            sage: FDS = FileDocTestSource(filename,DD)
+            sage: FDS = FileDocTestSource(filename, DD)
             sage: DTT = DocTestTask(FDS)
             sage: DC = DocTestController(DD, [filename])
             sage: ntests, runner = DTT(options=DD)

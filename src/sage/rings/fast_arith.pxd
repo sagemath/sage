@@ -1,4 +1,6 @@
-cpdef prime_range(start, stop=*, algorithm=*, bint py_ints=*) noexcept
+# sage_setup: distribution = sagemath-categories
+
+cpdef prime_range(start, stop=*, algorithm=*, bint py_ints=*)
 
 cdef class arith_int:
     cdef int abs_int(self, int x) except -1

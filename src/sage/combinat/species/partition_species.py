@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.libs.flint
 """
 Partition Species
@@ -182,7 +183,7 @@ class PartitionSpecies(GenericCombinatorialSpecies):
             yield structure_class(self, labels, [])
             return
 
-        u = [i for i in reversed(range(1, n + 1))]
+        u = list(range(n, 0, -1))
         s0 = u.pop()
 
         # Reconstruct the set partitions from

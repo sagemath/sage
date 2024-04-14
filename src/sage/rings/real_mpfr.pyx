@@ -1,5 +1,6 @@
+# sage_setup: distribution = sagemath-modules
 r"""
-Arbitrary Precision Real Numbers
+Arbitrary precision floating point real numbers using GNU MPFR
 
 AUTHORS:
 
@@ -25,7 +26,7 @@ AUTHORS:
 - Robert Bradshaw (2009-09): decimal literals, optimizations
 
 - Jeroen Demeyer (2012-05-27): set the MPFR exponent range to the
-  maximal possible value (:trac:`13033`)
+  maximal possible value (:issue:`13033`)
 
 - Travis Scrimshaw (2012-11-02): Added doctests for full coverage
 
@@ -371,7 +372,7 @@ cdef double LOG_TEN_TWO_PLUS_EPSILON = 3.321928094887363 # a small overestimate 
 
 cdef object RealField_cache = sage.misc.weak_dict.WeakValueDictionary()
 
-cpdef RealField(mpfr_prec_t prec=53, int sci_not=0, rnd=MPFR_RNDN) noexcept:
+cpdef RealField(mpfr_prec_t prec=53, int sci_not=0, rnd=MPFR_RNDN):
     """
     RealField(prec, sci_not, rnd):
 
@@ -427,6 +428,12 @@ cpdef RealField(mpfr_prec_t prec=53, int sci_not=0, rnd=MPFR_RNDN) noexcept:
        computations with double-precision machine floating-point
        numbers (double type in C), except the default exponent range
        is much wider and subnormal numbers are not implemented.'
+
+    .. SEEALSO::
+
+        - :mod:`sage.rings.real_mpfr`
+        - :class:`sage.rings.real_arb.RealBallField` (real numbers with rigorous
+          error bounds)
     """
     # We allow specifying the rounding mode as string or integer.
     # But we pass an integer to __init__
@@ -457,8 +464,12 @@ cdef class RealField_class(sage.rings.abc.RealField):
     numbers. This is due to the rounding errors inherent to finite
     precision calculations.
 
-    See the documentation for the module :mod:`sage.rings.real_mpfr` for more
-    details.
+    .. SEEALSO::
+
+        - :mod:`sage.rings.real_mpfr`
+        - :class:`sage.rings.real_arb.RealBallField` (real numbers with rigorous
+          error bounds)
+        - :mod:`sage.rings.complex_mpfr`
     """
     def __init__(self, mpfr_prec_t prec=53, int sci_not=0, long rnd=MPFR_RNDN):
         """
@@ -665,7 +676,7 @@ cdef class RealField_class(sage.rings.abc.RealField):
         z._set(x, base)
         return z
 
-    cpdef _coerce_map_from_(self, S) noexcept:
+    cpdef _coerce_map_from_(self, S):
         """
         Canonical coercion of x to this MPFR real field.
 
@@ -1451,7 +1462,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         else:
             return numpy_object_interface
 
-    cdef _set(self, x, int base) noexcept:
+    cdef _set(self, x, int base):
         # This should not be called except when the number is being created.
         # Real Numbers are supposed to be immutable.
         cdef RealField_class parent
@@ -1620,7 +1631,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         """
         TESTS:
 
-        Check that :trac:`28814` is fixed::
+        Check that :issue:`28814` is fixed::
 
             sage: mathematica(3.5e-15)           # optional - mathematica
             3.5*^-15
@@ -2425,7 +2436,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         else:
             return Element.__rtruediv__(right, left)
 
-    cpdef _add_(self, other) noexcept:
+    cpdef _add_(self, other):
         """
         Add two real numbers with the same parent.
 
@@ -2454,7 +2465,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         """
         return self._parent(1) / self
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         Subtract two real numbers with the same parent.
 
@@ -2481,13 +2492,13 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         TESTS:
 
-        An indirect doctest to check this (see :trac:`14915`)::
+        An indirect doctest to check this (see :issue:`14915`)::
 
             sage: x,y = var('x, y')                                                     # needs sage.symbolic
             sage: integrate(y, y, 0.5, 8*log(x), algorithm='sympy')                     # needs sympy sage.symbolic
             32*log(x)^2 - 0.125000000000000
 
-        Check that :trac:`28903` is fixed::
+        Check that :issue:`28903` is fixed::
 
             sage: (10.0^400)._sympy_()                                                  # needs sympy
             1.00000000000000e+400
@@ -2495,7 +2506,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         import sympy
         return sympy.Float(self, precision=self._parent.precision())
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         """
         Multiply two real numbers with the same parent.
 
@@ -2528,7 +2539,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         return x
 
 
-    cpdef _div_(self, right) noexcept:
+    cpdef _div_(self, right):
         """
         Divide ``self`` by other, where both are real numbers with the same
         parent.
@@ -2548,7 +2559,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
                  (<RealNumber>right).value, (<RealField_class>self._parent).rnd)
         return x
 
-    cpdef _neg_(self) noexcept:
+    cpdef _neg_(self):
         """
         Return the negative of ``self``.
 
@@ -2582,7 +2593,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         """
         return self.abs()
 
-    cdef RealNumber abs(RealNumber self) noexcept:
+    cdef RealNumber abs(RealNumber self):
         """
         Return the absolute value of ``self``.
 
@@ -2935,7 +2946,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
     # Rounding etc
     ###################
 
-    cpdef _mod_(left, right) noexcept:
+    cpdef _mod_(left, right):
         """
         Return the value of ``left - n*right``, rounded according to the
         rounding mode of the parent, where ``n`` is the integer quotient of
@@ -3376,7 +3387,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: sign*mantissa*(2**exponent) == a
             True
 
-        The mantissa is always a nonnegative number (see :trac:`14448`)::
+        The mantissa is always a nonnegative number (see :issue:`14448`)::
 
             sage: RR(-1).sign_mantissa_exponent()
             (-1, 4503599627370496, -52)
@@ -4050,7 +4061,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         TESTS:
 
-        Check that :trac:`20502` is fixed::
+        Check that :issue:`20502` is fixed::
 
             sage: bool(RR('nan'))
             True
@@ -4059,7 +4070,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
         """
         return not mpfr_zero_p(self.value)
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         """
         Compare ``self`` and ``other`` according to the rich
         comparison operator ``op``.
@@ -4286,7 +4297,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
 
         TESTS:
 
-        We see that :trac:`10736` is fixed::
+        We see that :issue:`10736` is fixed::
 
             sage: 16^0.5
             4.00000000000000
@@ -4295,7 +4306,9 @@ cdef class RealNumber(sage.structure.element.RingElement):
             sage: (1/2)^2.0
             0.250000000000000
             sage: [n^(1.5) for n in range(10)]
-            [0.000000000000000, 1.00000000000000, 2.82842712474619, 5.19615242270663, 8.00000000000000, 11.1803398874989, 14.6969384566991, 18.5202591774521, 22.6274169979695, 27.0000000000000]
+            [0.000000000000000, 1.00000000000000, 2.82842712474619, 5.19615242270663,
+             8.00000000000000, 11.1803398874989, 14.6969384566991, 18.5202591774521,
+             22.6274169979695, 27.0000000000000]
             sage: int(-2)^(0.333333)
             0.629961522017056 + 1.09112272417509*I
             sage: int(0)^(1.0)
@@ -5450,7 +5463,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
              1.2840254166877414840734205680624364583362808652814630892176,
              1.2840254166877414840734205680624364583362808652814630892175]
 
-        Check that :trac:`12105` is fixed::
+        Check that :issue:`12105` is fixed::
 
             sage: RealField(53)(0.05).nth_root(7 * 10^8)
             0.999999995720382
@@ -5785,7 +5798,7 @@ def create_RealNumber(s, int base=10, int pad=0, rnd="RNDN", int min_prec=53):
         60
 
     Make sure we've rounded up ``log(10,2)`` enough to guarantee
-    sufficient precision (:trac:`10164`)::
+    sufficient precision (:issue:`10164`)::
 
         sage: ks = 5*10**5, 10**6
         sage: all(RealNumber("1." + "0"*k +"1")-1 > 0 for k in ks)
@@ -5867,7 +5880,7 @@ def __create__RealNumber_version0(parent, x, base=10):
 
 
 cdef class RRtoRR(Map):
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         EXAMPLES::
 
@@ -5916,7 +5929,7 @@ cdef class RRtoRR(Map):
         return RRtoRR(self._codomain, self.domain())
 
 cdef class ZZtoRR(Map):
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         EXAMPLES::
 
@@ -5931,7 +5944,7 @@ cdef class ZZtoRR(Map):
         return y
 
 cdef class QQtoRR(Map):
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         EXAMPLES::
 
@@ -5946,7 +5959,7 @@ cdef class QQtoRR(Map):
         return y
 
 cdef class double_toRR(Map):
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         Takes anything that can be converted to a double.
 
@@ -5966,7 +5979,7 @@ cdef class double_toRR(Map):
         return y
 
 cdef class int_toRR(Map):
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         Takes Python int/long instances.
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 r"""
 Differentiable Maps between Differentiable Manifolds
 
@@ -936,7 +937,7 @@ class DiffMap(ContinuousMap):
 
         TESTS:
 
-        Check that :trac:`31904` is fixed::
+        Check that :issue:`31904` is fixed::
 
             sage: E.<x,y> = EuclideanSpace()
             sage: polar.<r,ph> = E.polar_coordinates()

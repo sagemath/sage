@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 # sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 The Chow group of a toric variety
@@ -230,12 +231,14 @@ class ChowCycle(FGP_Element):
 
     def degree(self) -> int:
         r"""
-        The degree of the Chow cycle.
+        Return the degree of the Chow cycle.
 
         OUTPUT:
 
         Integer. The complex dimension of the subvariety representing
-        the Chow cycle. Raises a ``ValueError`` if the Chow cycle is a
+        the Chow cycle.
+
+        This raises a :class:`ValueError` if the Chow cycle is a
         sum of mixed degree cycles.
 
         EXAMPLES::
@@ -354,7 +357,7 @@ class ChowCycle(FGP_Element):
         OUTPUT:
 
         A new :class:`ChowCycle`. If the divisor is not Cartier then
-        this method potentially raises a ``ValueError``, indicating
+        this method potentially raises a :class:`ValueError`, indicating
         that the divisor cannot be made transversal to the Chow cycle.
 
         EXAMPLES::
@@ -471,7 +474,7 @@ class ChowCycle(FGP_Element):
         If the toric variety is not simplicial, that is, has worse
         than orbifold singularities, there is no way to associate a
         cohomology class of the correct degree. In this case,
-        :meth:`cohomology_class` raises a ``ValueError``.
+        :meth:`cohomology_class` raises a :class:`ValueError`.
 
         EXAMPLES::
 

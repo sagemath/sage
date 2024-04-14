@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Extension of rings
 
@@ -122,7 +123,7 @@ from sage.structure.category_object import normalize_names
 from sage.categories.map cimport Map
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.fields import Fields
-from sage.rings.ring cimport CommutativeRing, CommutativeAlgebra
+from sage.rings.ring cimport CommutativeRing
 from sage.rings.integer_ring import ZZ
 from sage.rings.infinity import Infinity
 
@@ -174,8 +175,8 @@ def tower_bases(ring, degree):
           5-adic Field with capped relative precision 20],
          [1, 3, 6])
     """
-    bases = [ ]
-    degrees = [ ]
+    bases = []
+    degrees = []
     base = ring
     deg = 1
     while True:
@@ -454,7 +455,7 @@ class RingExtensionFactory(UniqueFactory):
 
         # We figure out what are the best constructors
         if constructors is None:
-            constructors = [ ]
+            constructors = []
             if gens is not None and len(gens) == 1:
                 constructors.append((RingExtensionWithGen,
                                      {'gen': gens[0], 'names': names,
@@ -498,7 +499,7 @@ RingExtension = RingExtensionFactory("sage.rings.ring_extension.RingExtension")
 # General extensions
 ####################
 
-cdef class RingExtension_generic(CommutativeAlgebra):
+cdef class RingExtension_generic(CommutativeRing):
     r"""
     A generic class for all ring extensions.
 
@@ -580,7 +581,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
             # but CommutativeRings() seems safer, especially when dealing with
             # morphisms which do not need to preserve the base
             category = CommutativeRings()
-        CommutativeAlgebra.__init__(self, ZZ, category=category)
+        CommutativeRing.__init__(self, ZZ, category=category)
         self._base = base
         self._backend = ring
         self._backend_defining_morphism = defining_morphism
@@ -1007,7 +1008,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
             raise RuntimeError("backend is not exposed to the user; cannot print")
         return latex(self._backend)
 
-    cpdef _coerce_map_from_(self, other) noexcept:
+    cpdef _coerce_map_from_(self, other):
         r"""
         Return a coerce map from this extension to ``other`` if defined.
 
@@ -1135,7 +1136,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
 
             :meth:`base`, :meth:`absolute_base`, :meth:`is_defined_over`
         """
-        L = [ self ]
+        L = [self]
         base = self
         while isinstance(base, RingExtension_generic):
             base = base.base_ring()
@@ -1168,7 +1169,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
         """
         return self.bases()[-1]
 
-    cpdef is_defined_over(self, base) noexcept:
+    cpdef is_defined_over(self, base):
         r"""
         Return whether or not ``base`` is one of the bases of this
         extension.
@@ -1216,7 +1217,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
             b = (<RingExtension_generic>b)._base
         return b is base
 
-    cpdef CommutativeRing _check_base(self, CommutativeRing base) noexcept:
+    cpdef CommutativeRing _check_base(self, CommutativeRing base):
         r"""
         Check if ``base`` is one of the successive bases of this
         extension and, if it is, normalize it.
@@ -1358,7 +1359,8 @@ cdef class RingExtension_generic(CommutativeAlgebra):
             (y, x)
         """
         self._check_base(base)
-        return tuple([ self(x) for x in generators(self._backend, backend_parent(self._base)) ])
+        return tuple([self(x) for x in generators(self._backend,
+                                                  backend_parent(self._base))])
 
     def ngens(self, base=None):
         r"""
@@ -1463,7 +1465,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
         base = self._check_base(base)
         return self._degree_over(base)
 
-    cpdef _degree_over(self, CommutativeRing base) noexcept:
+    cpdef _degree_over(self, CommutativeRing base):
         r"""
         Return the degree of this extension over ``base``.
 
@@ -1603,7 +1605,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
             b = (<RingExtension_generic?>b)._base
         raise NotImplementedError
 
-    cpdef _is_finite_over(self, CommutativeRing base) noexcept:
+    cpdef _is_finite_over(self, CommutativeRing base):
         r"""
         Return whether or not this extension is finite over ``base``.
 
@@ -1666,7 +1668,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
             b = (<RingExtension_generic?>b)._base
         raise NotImplementedError
 
-    cpdef _is_free_over(self, CommutativeRing base) noexcept:
+    cpdef _is_free_over(self, CommutativeRing base):
         r"""
         Return whether or not this extension is finite over ``base``.
 
@@ -1784,7 +1786,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
         constructor = RingExtensionFractionField, {'ring': self, 'is_backend_exposed': self._is_backend_exposed}
         return RingExtension(ring, defining_morphism, constructors=[constructor])
 
-    cdef Map _defining_morphism_fraction_field(self, bint extend_base) noexcept:
+    cdef Map _defining_morphism_fraction_field(self, bint extend_base):
         r"""
         Return the defining morphism of the fraction field of this extension.
 
@@ -1968,7 +1970,7 @@ cdef class RingExtension_generic(CommutativeAlgebra):
 
         TESTS:
 
-            Ensure issue :trac:`34692` is fixed::
+            Ensure issue :issue:`34692` is fixed::
 
             sage: Fq = GF(11)
             sage: FqX.<X> = Fq[]
@@ -2026,7 +2028,6 @@ cdef class RingExtensionFractionField(RingExtension_generic):
              Maximal Order generated by a in Number Field in a
              with defining polynomial x^2 - 2 over its base
             sage: TestSuite(K).run()
-
         """
         RingExtension_generic.__init__(self, defining_morphism, **kwargs)
         if ring is None:
@@ -2138,9 +2139,9 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
             sage: TestSuite(E).run()                                                    # needs sage.rings.number_field
         """
         RingExtension_generic.__init__(self, defining_morphism, **kwargs)
-        self._basis = [ self(b) for b in basis ]
+        self._basis = [self(b) for b in basis]
         if names is None:
-            names = [ ]
+            names = []
             for b in self._basis:
                 b = b._backend
                 if b == 1:
@@ -2154,7 +2155,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
             if len(names) != len(self._basis):
                 raise ValueError("the number of names does not match the cardinality of the basis")
         self._basis_names = names
-        self._basis_latex_names = [ latex_variable_name(name) for name in names ]
+        self._basis_latex_names = [latex_variable_name(name) for name in names]
         self._names = tuple(names)
         if check:
             try:
@@ -2210,7 +2211,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
             b = b.base_ring()
         return base
 
-    cpdef _degree_over(self, CommutativeRing base) noexcept:
+    cpdef _degree_over(self, CommutativeRing base):
         r"""
         Return the degree of this extension over ``base``.
 
@@ -2237,7 +2238,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         else:
             return len(self._basis) * self._base._degree_over(base)
 
-    cpdef _is_finite_over(self, CommutativeRing base) noexcept:
+    cpdef _is_finite_over(self, CommutativeRing base):
         r"""
         Return whether or not this extension is finite over ``base``.
 
@@ -2256,7 +2257,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
             return True
         return self._base._is_finite_over(base)
 
-    cpdef _is_free_over(self, CommutativeRing base) noexcept:
+    cpdef _is_free_over(self, CommutativeRing base):
         r"""
         Return whether or not this extension is free over ``base``.
 
@@ -2317,7 +2318,7 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
         base = self._check_base(base)
         return self._basis_over(base)
 
-    cpdef _basis_over(self, CommutativeRing base) noexcept:
+    cpdef _basis_over(self, CommutativeRing base):
         r"""
         Return a basis of this extension over ``base``.
 
@@ -2335,12 +2336,11 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
             [1, u, u^2]
         """
         if base is self:
-            return [ self.one() ]
-        elif base is self._base:
+            return [self.one()]
+        if base is self._base:
             return self._basis[:]
-        else:
-            b = self._base._basis_over(base)
-            return [ x*y for x in self._basis for y in b ]
+        b = self._base._basis_over(base)
+        return [x * y for x in self._basis for y in b]
 
     def free_module(self, base=None, map=True):
         r"""
@@ -2461,8 +2461,8 @@ cdef class RingExtensionWithBasis(RingExtension_generic):
             sage: L = GF(7^15).over(K)                                                  # needs sage.rings.finite_rings
             sage: for base in L.bases():                                                # needs sage.rings.finite_rings
             ....:     V, i, j = L.free_module(base)
-            ....:     assert([ i(v) for v in V.basis() ] == L.basis_over(base))
-            ....:     assert([ j(x) for x in L.basis_over(base) ] == V.basis())
+            ....:     assert([i(v) for v in V.basis()] == L.basis_over(base))
+            ....:     assert([j(x) for x in L.basis_over(base)] == V.basis())
 
         """
         d = self._degree_over(base)
@@ -2599,15 +2599,15 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
         backend_base = backend_parent(defining_morphism.domain())
         _, deg_domain, deg_codomain = common_base(backend_base, defining_morphism.codomain(), True)
         degree = deg_codomain // deg_domain
-        basis_names = [ "" ]
-        basis_latex_names = [ "" ]
+        basis_names = [""]
+        basis_latex_names = [""]
         if degree == 1:
             self._name = None
         else:
-            basis_names += [ self._name ] + [ "%s^%s" % (self._name, i) for i in range(2,degree) ]
+            basis_names += [self._name] + ["%s^%s" % (self._name, i) for i in range(2, degree)]
             latex_name = latex_variable_name(self._name)
-            basis_latex_names += [ latex_name ] + [ "%s^{%s}" % (latex_name, i) for i in range(2,degree) ]
-        basis = [ gen ** i for i in range(degree) ]
+            basis_latex_names += [latex_name] + ["%s^{%s}" % (latex_name, i) for i in range(2, degree)]
+        basis = [gen ** i for i in range(degree)]
         RingExtensionWithBasis.__init__(self, defining_morphism, basis, basis_names, check, **kwargs)
         self._gen = self._backend(gen)
         self._names = (self._name,)
@@ -2681,7 +2681,7 @@ cdef class RingExtensionWithGen(RingExtensionWithBasis):
         from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
         _, _, j = self.free_module(map=True)
         d = self.relative_degree()
-        coeffs = [ -c for c in j(self._gen**d) ] + [ 1 ]
+        coeffs = [-c for c in j(self._gen**d)] + [1]
         S = PolynomialRing(self._base, name=var)
         return S(coeffs)
 

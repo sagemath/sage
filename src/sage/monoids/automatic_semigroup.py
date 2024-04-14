@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-combinat
 """
 Automatic Semigroups
 
@@ -418,7 +418,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
         else:
             of = ""
 
-        return "%s%s with %s generators" % (typ, of, len(self._generators))
+        return f"{typ}{of} with {len(self._generators)} generators"
 
     def repr_element_method(self, style="ambient"):
         """
@@ -514,7 +514,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
             if element not in self._elements_set:
                 cache = self._retract.cache
                 del cache[((ambient_element,), ())]
-                raise ValueError("%s not in %s" % (ambient_element, self))
+                raise ValueError(f"{ambient_element} not in {self}")
         return element
 
     @cached_method
@@ -884,7 +884,7 @@ class AutomaticSemigroup(UniqueRepresentation, Parent):
 
             TESTS:
 
-            We check that :trac:`19631` is fixed::
+            We check that :issue:`19631` is fixed::
 
                 sage: R = IntegerModRing(101)
                 sage: M = AutomaticSemigroup(Family({1: R(3), 2: R(5)}), one=R.one())

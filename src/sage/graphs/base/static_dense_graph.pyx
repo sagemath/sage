@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # cython: binding=True
 r"""
 Static dense graphs
@@ -54,7 +55,7 @@ from itertools import product
 from sage.misc.flatten import flatten
 
 
-cdef dict dense_graph_init(binary_matrix_t m, g, translation=None, force_undirected=False) noexcept:
+cdef dict dense_graph_init(binary_matrix_t m, g, translation=None, force_undirected=False):
     r"""
     Fill a binary matrix with the information from a Sage (di)graph.
 
@@ -175,7 +176,7 @@ def is_strongly_regular(g, parameters=False):
         sage: g.is_strongly_regular()
         False
 
-    Complete graphs are not strongly regular. (:trac:`14297`) ::
+    Complete graphs are not strongly regular. (:issue:`14297`) ::
 
         sage: g = graphs.CompleteGraph(5)
         sage: g.is_strongly_regular()

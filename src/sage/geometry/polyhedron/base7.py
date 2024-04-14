@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 r"""
 Base class for polyhedra: Methods for triangulation and volume computation
 """
@@ -660,7 +661,7 @@ class Polyhedron_base7(Polyhedron_base6):
             sage: Q.volume.is_in_cache()
             True
 
-        Induced volumes work with lrs (:trac:`33410`)::
+        Induced volumes work with lrs (:issue:`33410`)::
 
             sage: P = Polyhedron([[0, 0], [1, 1]])
             sage: P.volume(measure='induced', engine='lrs')             # optional - lrslib

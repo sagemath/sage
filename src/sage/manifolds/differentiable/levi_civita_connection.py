@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-symbolics
 r"""
 Levi-Civita Connections
 

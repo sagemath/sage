@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 r"""
 Word morphisms/substitutions
 
@@ -401,7 +402,7 @@ class WordMorphism(SageObject):
 
             self._morph = {}
 
-            dom_alph = list()
+            dom_alph = []
             for key, val in data.items():
                 dom_alph.append(key)
                 if val in codomain.alphabet():
@@ -463,7 +464,7 @@ class WordMorphism(SageObject):
 
     def _build_codomain(self, data):
         r"""
-        Return a Words domain containing all the letter in the keys of
+        Return a Words domain containing all the letters in the values of
         data (which must be a dictionary).
 
         TESTS:
@@ -489,10 +490,10 @@ class WordMorphism(SageObject):
             Finite words over {0, 1, 2}
         """
         codom_alphabet = set()
-        for key, val in data.items():
+        for val in data.values():
             try:
                 it = iter(val)
-            except Exception:
+            except TypeError:
                 it = [val]
             codom_alphabet.update(it)
         try:
@@ -558,7 +559,7 @@ class WordMorphism(SageObject):
             sage: n != o
             True
 
-        This solves :trac:`12475`::
+        This solves :issue:`12475`::
 
             sage: s = WordMorphism('1->121,2->131,3->4,4->1')
             sage: s == s.reversal()
@@ -950,7 +951,8 @@ class WordMorphism(SageObject):
             sage: m * WordMorphism('')
             WordMorphism:
         """
-        return WordMorphism(dict((key, self(w)) for key, w in other._morph.items()), codomain=self.codomain())
+        return WordMorphism({key: self(w) for key, w in other._morph.items()},
+                            codomain=self.codomain())
 
     def __pow__(self, exp):
         r"""
@@ -1090,7 +1092,8 @@ class WordMorphism(SageObject):
             ...
             TypeError: 'sage.rings.integer.Integer' object is not iterable
         """
-        return WordMorphism(dict((a, self(a)) for a in alphabet if a in self.domain().alphabet()))
+        return WordMorphism({a: self(a) for a in alphabet
+                             if a in self.domain().alphabet()})
 
     def _matrix_(self, R=None):
         r"""
@@ -1202,7 +1205,7 @@ class WordMorphism(SageObject):
             sage: m.is_endomorphism()
             True
 
-        We check that :trac:`8674` is fixed::
+        We check that :issue:`8674` is fixed::
 
             sage: P = WordPaths('abcd')                                                 # needs sage.modules
             sage: m = WordMorphism('a->adab,b->ab,c->cbcd,d->cd',                       # needs sage.modules
@@ -1276,7 +1279,7 @@ class WordMorphism(SageObject):
         """
         return self._morph[letter]
 
-    def images(self):
+    def images(self) -> list:
         r"""
         Return the list of all the images of the letters of the alphabet
         under ``self``.
@@ -1365,7 +1368,7 @@ class WordMorphism(SageObject):
             sage: WordMorphism({0:[0],1:[1]}).is_identity()
             True
 
-        We check that :trac:`8618` is fixed::
+        We check that :issue:`8618` is fixed::
 
             sage: t = WordMorphism({'a1':['a2'], 'a2':['a1']})
             sage: (t*t).is_identity()
@@ -1668,7 +1671,7 @@ class WordMorphism(SageObject):
             sage: WordMorphism('a->bb,b->aac').is_prolongable(letter='a')
             False
 
-        We check that :trac:`8595` is fixed::
+        We check that :issue:`8595` is fixed::
 
             sage: s = WordMorphism({('a', 1) : [('a', 1), ('a', 2)], ('a', 2) : [('a', 1)]})
             sage: s.is_prolongable(('a',1))
@@ -1698,7 +1701,7 @@ class WordMorphism(SageObject):
 
     def is_uniform(self, k=None):
         r"""
-        Return True if self is a `k`-uniform morphism.
+        Return ``True`` if ``self`` is a `k`-uniform morphism.
 
         Let `k` be a positive integer. A morphism `\phi` is called `k`-uniform
         if for every letter `\alpha`, we have `|\phi(\alpha)| = k`. In other
@@ -1707,9 +1710,10 @@ class WordMorphism(SageObject):
 
         INPUT:
 
-        - ``k`` - a positive integer or None. If set to a positive integer,
-          then the function return True if self is `k`-uniform. If set to
-          None, then the function return True if self is uniform.
+        - ``k`` - a positive integer or ``None``. If set to a positive integer,
+          then the function return ``True`` if ``self`` is `k`-uniform.
+          If set to ``None``, then the function return ``True`` if ``self``
+          is uniform.
 
         EXAMPLES::
 
@@ -1725,11 +1729,19 @@ class WordMorphism(SageObject):
             False
             sage: tau.is_uniform(k=2)
             True
+
+        TESTS::
+
+            sage: phi = WordMorphism('')
+            sage: phi.is_uniform()
+            True
         """
         if k is None:
-            return len(set(w.length() for w in self.images())) == 1
-        else:
-            return all(w.length() == k for w in self.images())
+            try:
+                k = self.images()[0].length()
+            except IndexError:
+                return True
+        return all(w.length() == k for w in self.images())
 
     def fixed_point(self, letter):
         r"""
@@ -1863,7 +1875,7 @@ class WordMorphism(SageObject):
             sage: for w in f.fixed_points(): print(w)
             abcabbccabcabcabbccbccabcabbccabcabbccab...
 
-        This shows that issue :trac:`13668` has been resolved::
+        This shows that issue :issue:`13668` has been resolved::
 
             sage: d = {1:[1,2],2:[2,3],3:[4],4:[5],5:[6],6:[7],7:[8],8:[9],9:[10],10:[1]}
             sage: s = WordMorphism(d)
@@ -1874,7 +1886,7 @@ class WordMorphism(SageObject):
             sage: s7r.periodic_point(2)
             word: 2,1,1,10,9,8,7,6,5,4,3,2,1,10,9,8,7,6,5,4,3,2,10,9,8,7,6,5,4,3,2,9,8,7,6,5,4,3,2,8,...
 
-        This shows that issue :trac:`13668` has been resolved::
+        This shows that issue :issue:`13668` has been resolved::
 
             sage: s = "1->321331332133133,2->133321331332133133,3->2133133133321331332133133"
             sage: s = WordMorphism(s)
@@ -1902,7 +1914,7 @@ class WordMorphism(SageObject):
             ...
             TypeError: self must be prolongable on a
 
-        Make sure that :trac:`31759` is fixed::
+        Make sure that :issue:`31759` is fixed::
 
             sage: WordMorphism('a->b,b->a').periodic_point('a')
             word: a
@@ -1950,7 +1962,7 @@ class WordMorphism(SageObject):
             sage: f.fixed_points()
             []
 
-        This shows that issue :trac:`13668` has been resolved::
+        This shows that issue :issue:`13668` has been resolved::
 
             sage: d = {1:[1,2],2:[2,3],3:[4],4:[5],5:[6],6:[7],7:[8],8:[9],9:[10],10:[1]}
             sage: s = WordMorphism(d)
@@ -1968,7 +1980,7 @@ class WordMorphism(SageObject):
              word: 7654326543254324323221654325432432322154...,
              word: 4,3,2,3,2,2,1,3,2,2,1,2,1,1,10,9,8,7,6,5...]
 
-        Make sure that :trac:`31454` is fixed::
+        Make sure that :issue:`31454` is fixed::
 
             sage: WordMorphism('a->a,b->bb').periodic_points()
             [[word: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb...]]
@@ -1980,7 +1992,7 @@ class WordMorphism(SageObject):
             raise NotImplementedError("f should be non erasing")
 
         A = self.domain().alphabet()
-        d = dict((letter, self(letter)[0]) for letter in A)
+        d = {letter: self(letter)[0] for letter in A}
         G = set(self.growing_letters())
 
         res = []
@@ -2173,7 +2185,8 @@ class WordMorphism(SageObject):
             sage: m.conjugate(2)
             WordMorphism: a->cdeab, b->zxy
         """
-        return WordMorphism(dict((key, w.conjugate(pos)) for (key, w) in self._morph.items()))
+        return WordMorphism({key: w.conjugate(pos)
+                             for (key, w) in self._morph.items()})
 
     def has_left_conjugate(self):
         r"""
@@ -3066,7 +3079,7 @@ class WordMorphism(SageObject):
 
         TESTS:
 
-        Make sure that :trac:`31454` is fixed::
+        Make sure that :issue:`31454` is fixed::
 
             sage: WordMorphism('a->a').is_growing('a')
             False
@@ -3103,7 +3116,7 @@ class WordMorphism(SageObject):
 
         TESTS:
 
-        Make sure that :trac:`31454` is fixed::
+        Make sure that :issue:`31454` is fixed::
 
             sage: WordMorphism('a->a').growing_letters()
             []
@@ -3785,7 +3798,7 @@ class WordMorphism(SageObject):
             h = {letter: [letter] if image else [] for letter, image in f.items()}
         elif len(Y) < len(X):  # Trivial case #2.
             k = {x: [y] for x, y in zip(X, Y)}
-            k_inverse = {y: x for y, x in zip(Y, X)}
+            k_inverse = dict(zip(Y, X))
             h = {x: [k_inverse[y] for y in image] for x, image in f.items()}
         elif not self.is_injective():  # Non-trivial but a fast case.
             k = dict(f)
@@ -3822,7 +3835,7 @@ class WordMorphism(SageObject):
             for comb in combinations(factors, len(X) - 1):
                 if any(x.is_proper_prefix(y) for x in comb for y in comb):
                     continue
-                k = {x: image for x, image in zip(X, comb)}
+                k = dict(zip(X, comb))
                 h = try_create_h(f, k)
                 if h:
                     break

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 """
 This file provides the declaration for the ``FMElement`` and the morphisms
 to and from the integers and rationals.
@@ -31,7 +32,7 @@ cdef class FMElement(pAdicTemplateElement):
     cdef celement value
     cdef long absprec
 
-    cdef FMElement _new_c(self) noexcept
+    cdef FMElement _new_c(self)
 
 cdef class pAdicCoercion_ZZ_FM(RingHomomorphism):
     cdef FMElement _zero

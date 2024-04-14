@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 r"""
 Routines for computing special values of `L`-functions
 

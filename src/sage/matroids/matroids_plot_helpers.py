@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: optional - scipy
 r"""
 Helper functions for plotting the geometric representation of matroids
@@ -20,8 +21,9 @@ AUTHORS:
     via an optimization that gives aesthetically pleasing point placement (in
     some sense. This is not yet implemented).    One can then use
     ``createline`` function to produce sequence of ``100`` points on a smooth
-    curve containing the points in the specified line which inturn uses
-    ``scipy.interpolate.splprep`` and ``scipy.interpolate.splev``.  Then one
+    curve containing the points in the specified line which in turn uses
+    :func:`scipy:scipy.interpolate.splprep` and
+    :func:`scipy:scipy.interpolate.splev`.  Then one
     can use sage's graphics primitives ``line``, ``point``, ``text`` and
     ``points`` to produce graphics object containing points (ground set
     elements) and lines (for a rank 3 matroid, these are flats of rank 2 of

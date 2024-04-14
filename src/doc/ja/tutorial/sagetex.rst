@@ -12,8 +12,8 @@ SageTeXパッケージを使うと，Sageによる処理結果をLaTeX文書に�
 =======
 
 ここでは，ごく簡単な例題を通してSageTeXの利用手順を紹介する．
-完全な解説ドキュメントと例題ファイルは，ディレクトリ ``SAGE_ROOT/venv/share/doc/sagetex`` に置いてある．
-``SAGE_ROOT/venv/share/texmf/tex/latex/sagetex`` にあるPythonスクリプトは何か役に立つ場面があるはずだ．
+完全な解説ドキュメントと例題ファイルは，ディレクトリ :file:`SAGE_ROOT/venv/share/doc/sagetex` に置いてある．
+:file:`SAGE_ROOT/venv/share/texmf/tex/latex/sagetex` にあるPythonスクリプトは何か役に立つ場面があるはずだ．
 以上の ``SAGE_ROOT`` は，Sageをインストールしたディレクトリである．
 
 
@@ -98,7 +98,7 @@ SageTeXの動作を体験するために，まずSageTeXのインストール手
 
 
 SageTeXは到底以上で語り尽せるものでなく，SageとLaTeXは共に複雑で強力なツールだ．
-``SAGE_ROOT/venv/share/doc/sagetex`` にあるSageTeXのドキュメントを読むことを強くお勧めする．
+:file:`SAGE_ROOT/venv/share/doc/sagetex` にあるSageTeXのドキュメントを読むことを強くお勧めする．
 
 
 .. _sec-sagetex_install:
@@ -118,7 +118,7 @@ SageTeXはデフォルトでSageにインストールされるが，LaTeX文書�
 
 鍵になるのは， TeXが ``sagetex.sty`` を発見できるかどうかである．
 この ``sagetex.sty`` は， ``SAGE_ROOT`` をSageがビルトあるいはインストールされたディレクトリとすると，
-``SAGE_ROOT/venv/share/texmf/tex/latex/sagetex/`` に置かれているはずだ．
+:file:`SAGE_ROOT/venv/share/texmf/tex/latex/sagetex/` に置かれているはずだ．
 TeXが ``sagetex.sty`` を読めるようにしてやらなければ，SageTeXも動作できないのである．
 これを実現するには何通りかのやり方がある．
 
@@ -163,7 +163,7 @@ TeXが ``sagetex.sty`` を読めるようにしてやらなければ，SageTeX�
 
       kpsewhich -var-value=TEXMFHOME
 
-  を実行する．すると ``/home/drake/texmf`` や ``/Users/drake/Library/texmf`` などと表示されるはずだから， ``SAGE_ROOT/venv/share/texmf/`` 内の ``tex/`` ディレクトリをホームディレクトリの ``texmf`` にコピーするには
+  を実行する．すると ``/home/drake/texmf`` や ``/Users/drake/Library/texmf`` などと表示されるはずだから， :file:`SAGE_ROOT/venv/share/texmf/` 内の ``tex/`` ディレクトリをホームディレクトリの ``texmf`` にコピーするには
 
   ::
 
@@ -210,7 +210,7 @@ SageTeXドキュメント
 ---------------------
 
 厳密にはSageのインストール一式には含まれないものの，ここで
-SageTeXのドキュメントが ``SAGE_ROOT/venv/share/doc/sagetex/sagetex.pdf`` に配置されていることに触れておきたい．
+SageTeXのドキュメントが :file:`SAGE_ROOT/venv/share/doc/sagetex/sagetex.pdf` に配置されていることに触れておきたい．
 同じディレクトリには例題ファイルと，これをLaTeXとSageTeXによってすでに組版処理した結果も用意されている(``example.tex`` と ``example.pdf`` を参照)．
 これらのファイルは `SageTeX ページ <https://github.com/sagemath/sagetex>`_ からダンロードすることもできる．
 

@@ -16,7 +16,7 @@ locale) pour plus de détails.
 
 Voici un bref exemple d'utilisation de SageTeX. La documentation
 complète se trouve dans
-``SAGE_ROOT/venv/share/texmf/tex/latex/sagetex``, où ``SAGE_ROOT``
+:file:`SAGE_ROOT/venv/share/texmf/tex/latex/sagetex`, où ``SAGE_ROOT``
 désigne le répertoire racine de votre installation Sage. Elle est
 accompagnée d'un fichier exemple et de scripts Python potentiellement
 utiles.
@@ -114,4 +114,4 @@ compilation précédente.)
 SageTeX offre bien d'autres possibilités. Puisque Sage
 comme LaTeX sont des outils complexes et puissants, le mieux est sans
 doute de consulter la documentation complète de SageTeX, qui se trouve
-dans ``SAGE_ROOT/venv/share/texmf/tex/latex/sagetex``.
+dans :file:`SAGE_ROOT/venv/share/texmf/tex/latex/sagetex`.

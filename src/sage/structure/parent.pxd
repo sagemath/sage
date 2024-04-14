@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 #*****************************************************************************
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,10 +24,10 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
     cdef inline bint get_flag(self, int flag) noexcept:
         return self.flags & flag
 
-    cpdef register_coercion(self, mor) noexcept
-    cpdef register_action(self, action) noexcept
-    cpdef register_conversion(self, mor) noexcept
-    cpdef register_embedding(self, embedding) noexcept
+    cpdef register_coercion(self, mor)
+    cpdef register_action(self, action)
+    cpdef register_conversion(self, mor)
+    cpdef register_embedding(self, embedding)
 
     cpdef bint is_exact(self) except -2
 
@@ -37,33 +38,33 @@ cdef class Parent(sage.structure.category_object.CategoryObject):
     cpdef bint has_coerce_map_from(self, S) except -2
 
     # returns a Morphism from S to self, or None
-    cpdef coerce_map_from(self, S) noexcept
-    cpdef _internal_coerce_map_from(self, S) noexcept
-    cpdef _coerce_map_from_(self, S) noexcept
+    cpdef coerce_map_from(self, S)
+    cpdef _internal_coerce_map_from(self, S)
+    cpdef _coerce_map_from_(self, S)
 
     # returns a Map from S to self, or None
-    cpdef convert_map_from(self, S) noexcept
-    cpdef _internal_convert_map_from(self, S) noexcept
-    cpdef _convert_map_from_(self, S) noexcept
-    cdef convert_method_map(self, S, method_name) noexcept
+    cpdef convert_map_from(self, S)
+    cpdef _internal_convert_map_from(self, S)
+    cpdef _convert_map_from_(self, S)
+    cdef convert_method_map(self, S, method_name)
 
     # returns the Action by/on self on/by S
     # corresponding to op and self_on_left
-    cpdef get_action(self, S, op=*, bint self_on_left=*, self_el=*, S_el=*) noexcept
-    cpdef _get_action_(self, S, op, bint self_on_left) noexcept
+    cpdef get_action(self, S, op=*, bint self_on_left=*, self_el=*, S_el=*)
+    cpdef _get_action_(self, S, op, bint self_on_left)
 
     # coerce x into self
-    cpdef coerce(self, x) noexcept
+    cpdef coerce(self, x)
 
-    cpdef an_element(self) noexcept
+    cpdef an_element(self)
     cdef public object _cache_an_element
 
     # For internal use
-    cpdef _generic_convert_map(self, S, category=*) noexcept
-    cpdef _generic_coerce_map(self, S) noexcept
-    cdef discover_coerce_map_from(self, S) noexcept
-    cdef discover_convert_map_from(self, S) noexcept
-    cdef discover_action(self, S, op, bint self_on_left, self_el=*, S_el=*) noexcept
+    cpdef _generic_convert_map(self, S, category=*)
+    cpdef _generic_coerce_map(self, S)
+    cdef discover_coerce_map_from(self, S)
+    cdef discover_convert_map_from(self, S)
+    cdef discover_action(self, S, op, bint self_on_left, self_el=*, S_el=*)
 
     # List consisting of Morphisms (from anything to self)
     # and Parents for which the __call__ method of self

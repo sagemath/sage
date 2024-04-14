@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 # sage.doctest: needs sage.geometry.polyhedron sage.graphs sage.libs.singular
 r"""
 Toric ideals
@@ -161,7 +162,7 @@ class ToricIdeal(MPolynomialIdeal):
 
       You may specify the ambient polynomial ring via the
       ``polynomial_ring`` parameter or via the ``names`` and
-      ``base_ring`` parameter. A ``ValueError`` is raised if you
+      ``base_ring`` parameter. A :class:`ValueError` is raised if you
       specify both.
 
     - ``algorithm`` -- string (optional). The algorithm to use. For

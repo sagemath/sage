@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Fraction field elements of Ore polynomial rings
 
@@ -564,7 +565,7 @@ class OreFunction(AlgebraElement):
             ...
             ZeroDivisionError: cannot divide by zero
 
-        We check that :trac:`32109` is fixed::
+        We check that :issue:`32109` is fixed::
 
             sage: K(0)/K(0)                                                             # needs sage.rings.finite_rings
             Traceback (most recent call last):

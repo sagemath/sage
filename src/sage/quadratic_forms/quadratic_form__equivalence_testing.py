@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Equivalence Testing
 
@@ -85,7 +86,7 @@ def is_globally_equivalent_to(self, other, return_matrix=False):
 
     TESTS:
 
-    :trac:`27749` is fixed::
+    :issue:`27749` is fixed::
 
         sage: Q = QuadraticForm(ZZ, 2, [2, 3, 5])
         sage: P = QuadraticForm(ZZ, 2, [8, 6, 5])

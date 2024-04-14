@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Principal ideal domains
 """
@@ -63,7 +64,7 @@ class PrincipalIdealDomains(Category_singleton):
             r"""
             Check that gcd and xgcd are compatible if implemented.
 
-            This test will prevent things like :trac:`17671` to happen again.
+            This test will prevent things like :issue:`17671` to happen again.
 
             TESTS::
 

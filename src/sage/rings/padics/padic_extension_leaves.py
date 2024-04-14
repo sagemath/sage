@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 r"""
 `p`-adic Extension Leaves
 
@@ -397,7 +398,7 @@ class UnramifiedExtensionRingFloatingPoint(UnramifiedExtensionGeneric, pAdicFloa
 
         TESTS:
 
-        Check that :trac:`23228` has been resolved::
+        Check that :issue:`23228` has been resolved::
 
             sage: a % R.prime()                                                         # needs sage.libs.flint
             a

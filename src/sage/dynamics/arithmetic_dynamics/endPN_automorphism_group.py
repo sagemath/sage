@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 r"""
 Automorphism groups of dynamical systems of the projective line
 

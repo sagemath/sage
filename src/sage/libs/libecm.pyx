@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-libecm
 # distutils: libraries = ecm
 # distutils: extra_link_args = LINUX_NOEXECSTACK
 r"""
@@ -60,6 +61,7 @@ cdef extern from "ecm.h":
     void ecm_init (ecm_params)
     void ecm_clear (ecm_params)
     int ECM_NO_FACTOR_FOUND
+
 
 def ecmfactor(number, double B1, verbose=False, sigma=0):
     """

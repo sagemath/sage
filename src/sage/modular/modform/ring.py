@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Graded rings of modular forms
@@ -206,7 +207,7 @@ class ModularFormsRing(Parent):
 
         TESTS:
 
-        Check that :trac:`15037` is fixed::
+        Check that :issue:`15037` is fixed::
 
             sage: ModularFormsRing(3.4)
             Traceback (most recent call last):

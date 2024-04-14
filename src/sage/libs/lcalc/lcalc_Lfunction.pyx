@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-lcalc
 # distutils: libraries = m NTL_LIBRARIES Lfunction
 # distutils: extra_compile_args = NTL_CFLAGS -O3 -ffast-math
 # distutils: include_dirs = NTL_INCDIR
@@ -898,6 +899,7 @@ cdef class Lfunction_Zeta(Lfunction):
         Deallocate memory used
         """
         del_c_Lfunction_Zeta(<c_Lfunction_Zeta *>(self.thisptr))
+
 
 ##############################################################################
 # Tools

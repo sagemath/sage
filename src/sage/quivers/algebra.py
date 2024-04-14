@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 """
 Path Algebras
 """
@@ -172,7 +173,7 @@ class PathAlgebra(CombinatorialFreeModule):
                          bracket=False)
         self._assign_names(self._semigroup.variable_names())
 
-    def order_string(self):
+    def order_string(self) -> str:
         """
         Return the string that defines the monomial order of this algebra.
 
@@ -195,7 +196,7 @@ class PathAlgebra(CombinatorialFreeModule):
         return self._ordstr
 
     @cached_method
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return the generators of this algebra (idempotents and arrows).
 
@@ -640,8 +641,8 @@ class PathAlgebra(CombinatorialFreeModule):
 
         .. WARNING::
 
-             Backward incompatible change: since :trac:`12630` and
-             until :trac:`8678`, this feature was implemented under
+             Backward incompatible change: since :issue:`12630` and
+             until :issue:`8678`, this feature was implemented under
              the syntax ``list(A)`` by means of ``A.__iter__``. This
              was incorrect since ``A.__iter__``, when defined for a
              parent, should iterate through the elements of `A`.

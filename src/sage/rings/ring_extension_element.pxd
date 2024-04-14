@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from sage.rings.ring cimport CommutativeRing
 from sage.structure.element cimport Element
 from sage.structure.element cimport CommutativeAlgebraElement
@@ -13,10 +14,10 @@ cdef class RingExtensionFractionFieldElement(RingExtensionElement):
     pass
 
 cdef class RingExtensionWithBasisElement(RingExtensionElement):
-    cdef _vector(self, CommutativeRing base) noexcept
-    cdef _matrix(self, CommutativeRing base) noexcept
-    cdef _trace(self, CommutativeRing base) noexcept
-    cdef _norm(self, CommutativeRing base) noexcept
-    cpdef minpoly(self, base=*, var=*) noexcept
+    cdef _vector(self, CommutativeRing base)
+    cdef _matrix(self, CommutativeRing base)
+    cdef _trace(self, CommutativeRing base)
+    cdef _norm(self, CommutativeRing base)
+    cpdef minpoly(self, base=*, var=*)
 
 

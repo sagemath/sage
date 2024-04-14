@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.flint
 r"""
 Manin symbols
@@ -199,7 +200,7 @@ cdef class ManinSymbol(Element):
         """
         return self._repr_()
 
-    cpdef _richcmp_(self, right, int op) noexcept:
+    cpdef _richcmp_(self, right, int op):
         """
         Comparison function for ManinSymbols.
 

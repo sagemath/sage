@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-brial
 from .pbori import (top_index, if_then_else,
                     substitute_variables, BooleSet,
                     ll_red_nf_redsb, ll_red_nf_noredsb,
@@ -140,7 +141,7 @@ def eliminate_ll_ranked(ll_system, to_reduce,
                         reduction_function=ll_red_nf_noredsb,
                         reduce_ll_system=False, prot=False):
 
-    assert(ll_system)
+    assert ll_system
     from_ring = ll_system[0].ring()
 
     ll_ranks = rank(ll_system)

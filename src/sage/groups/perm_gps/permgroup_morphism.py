@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-gap
 r"""
 Permutation group homomorphisms
 
@@ -116,7 +117,7 @@ class PermutationGroupMorphism(Morphism):
             sage: G.is_isomorphic(pr1.image(G))
             True
 
-        Check that :trac:`28324` is fixed::
+        Check that :issue:`28324` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: R.<x> = QQ[]

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-groups
 r"""
 Type ``groups.misc.<tab>`` to access examples
 of various groups not listed elsewhere.

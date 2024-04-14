@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.rings.real_interval_field sage.rings.real_mpfr
 """
 Subsets of the Real Line
@@ -358,7 +359,7 @@ class InternalRealInterval(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Check if a bug in sorting is fixed (:trac:`17714`)::
+        Check if a bug in sorting is fixed (:issue:`17714`)::
 
             sage: RealSet((0, 1),[1, 1],(1, 2))
             (0, 2)

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Free module bases
 
@@ -10,9 +11,9 @@ AUTHORS:
 
 - Eric Gourgoulhon, Michal Bejger (2014-2015): initial version
 - Travis Scrimshaw (2016): ABC Basis_abstract and list functionality for bases
-  (:trac:`20770`)
+  (:issue:`20770`)
 - Eric Gourgoulhon (2018): some refactoring and more functionalities in the
-  choice of symbols for basis elements (:trac:`24792`)
+  choice of symbols for basis elements (:issue:`24792`)
 
 REFERENCES:
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 Alternating Sign Matrices
@@ -106,7 +107,7 @@ class AlternatingSignMatrix(Element,
 
         TESTS:
 
-        Check that :trac:`22032` is fixed::
+        Check that :issue:`22032` is fixed::
 
             sage: AlternatingSignMatrix([])
             []

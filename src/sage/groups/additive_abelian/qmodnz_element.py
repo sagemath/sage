@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Elements of `\Q/n\Z`.
 
@@ -112,7 +113,7 @@ class QmodnZ_Element(AdditiveGroupElement):
         Lift to `\Z`.
 
         This is the smallest non-negative integer reducing to this element,
-        or a ``ValueError`` if none exists.
+        or a :class:`ValueError` if none exists.
 
         TESTS::
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Installing the SageMath Jupyter Kernel and Extensions
 
@@ -283,7 +284,7 @@ def have_prerequisites(debug=True):
     Check that we have all prerequisites to run the Jupyter notebook.
 
     In particular, the Jupyter notebook requires OpenSSL whether or
-    not you are using https. See :trac:`17318`.
+    not you are using https. See :issue:`17318`.
 
     INPUT:
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Matrix Spaces
 
@@ -7,11 +8,11 @@ columns over any commutative or noncommutative ring.
 
 EXAMPLES::
 
-    sage: MS = MatrixSpace(QQ,6,6,sparse=True); MS
+    sage: MS = MatrixSpace(QQ, 6,6, sparse=True); MS
     Full MatrixSpace of 6 by 6 sparse matrices over Rational Field
     sage: MS.base_ring()
     Rational Field
-    sage: MS = MatrixSpace(ZZ,3,5,sparse=False); MS
+    sage: MS = MatrixSpace(ZZ, 3,5, sparse=False); MS
     Full MatrixSpace of 3 by 5 dense matrices over Integer Ring
 
 TESTS::
@@ -36,7 +37,7 @@ TESTS::
 import sys
 import operator
 
-# Sage matrix imports see :trac:`34283`
+# Sage matrix imports see :issue:`34283`
 
 # Sage imports
 import sage.structure.coerce_actions
@@ -482,10 +483,12 @@ class MatrixSpace(UniqueRepresentation, Parent):
         Full MatrixSpace of 10 by 5 dense matrices over Integer Ring
         sage: MatrixSpace(ZZ,10,5).category()
         Category of infinite enumerated finite dimensional modules with basis over
-         (euclidean domains and infinite enumerated sets and metric spaces)
+         (Dedekind domains and euclidean domains
+          and infinite enumerated sets and metric spaces)
         sage: MatrixSpace(ZZ,10,10).category()
         Category of infinite enumerated finite dimensional algebras with basis over
-         (euclidean domains and infinite enumerated sets and metric spaces)
+         (Dedekind domains and euclidean domains
+          and infinite enumerated sets and metric spaces)
         sage: MatrixSpace(QQ,10).category()
         Category of infinite finite dimensional algebras with basis over
          (number fields and quotient fields and metric spaces)
@@ -566,7 +569,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             ...
             ValueError: unknown matrix implementation 'foobar' over Integer Ring
 
-        Check that :trac:`29466` is fixed::
+        Check that :issue:`29466` is fixed::
 
             sage: class MyMatrixSpace(MatrixSpace):
             ....:     @staticmethod
@@ -649,10 +652,12 @@ class MatrixSpace(UniqueRepresentation, Parent):
             Full MatrixSpace of 10 by 5 dense matrices over Integer Ring
             sage: MatrixSpace(ZZ,10,5).category()
             Category of infinite enumerated finite dimensional modules with basis over
-             (euclidean domains and infinite enumerated sets and metric spaces)
+             (Dedekind domains and euclidean domains
+              and infinite enumerated sets and metric spaces)
             sage: MatrixSpace(ZZ,10,10).category()
             Category of infinite enumerated finite dimensional algebras with basis over
-             (euclidean domains and infinite enumerated sets and metric spaces)
+             (Dedekind domains and euclidean domains
+              and infinite enumerated sets and metric spaces)
             sage: MatrixSpace(QQ,10).category()
             Category of infinite finite dimensional algebras with basis over
              (number fields and quotient fields and metric spaces)
@@ -661,7 +666,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         We test that in the real or complex double dense case,
         conversion from the base ring is done by a call morphism.
-        Note that by :trac:`9138`, other algebras usually
+        Note that by :issue:`9138`, other algebras usually
         get a conversion map by multiplication with the one element.
         ::
 
@@ -676,7 +681,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
               From: Complex Double Field
               To:   Full MatrixSpace of 2 by 2 dense matrices over Complex Double Field
 
-        We check that :trac:`10095` is fixed::
+        We check that :issue:`10095` is fixed::
 
             sage: M = Matrix(QQ, [[1 for dummy in range(125)]])
             sage: V = M.right_kernel()
@@ -694,7 +699,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             sage: # needs numpy (otherwise timeout)
             sage: C = A * B
 
-        We check that :trac:`18186` is fixed::
+        We check that :issue:`18186` is fixed::
 
             sage: MatrixSpace(ZZ,0,3) in FiniteSets()
             True
@@ -907,7 +912,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Ensure that :trac:`12020` is fixed::
+        Ensure that :issue:`12020` is fixed::
 
             sage: rings = [ZZ, QQ, RDF]
             sage: rings.extend([RealField(100), ComplexField(100)])                     # needs sage.rings.real_mpfr
@@ -925,7 +930,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             ....:     A = MatrixSpace(R, 60, 30, sparse=True)(0)
             ....:     B = A.augment(A)
 
-        Check that :trac:`13012` is fixed::
+        Check that :issue:`13012` is fixed::
 
             sage: m = zero_matrix(2, 3)
             sage: m
@@ -945,7 +950,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             ...
             ValueError: inconsistent number of rows: should be 3 but got 2
 
-        Check that :trac:`15110` is fixed::
+        Check that :issue:`15110` is fixed::
 
             sage: S.<t> = LaurentSeriesRing(ZZ)
             sage: MS = MatrixSpace(S,1,1)
@@ -958,7 +963,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         Calling a matrix space `M` with a matrix in `M` as argument
         returns the original matrix unless ``copy=True`` is specified
-        (:trac:`31078`)::
+        (:issue:`31078`)::
 
             sage: m = Matrix([[0, 1], [2, 3]])
             sage: M = m.parent()
@@ -1179,7 +1184,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Check that :trac:`22091` is fixed::
+        Check that :issue:`22091` is fixed::
 
             sage: A = Zmod(4)
             sage: R = MatrixSpace(A, 2)
@@ -2041,7 +2046,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         Note that the last "flip" cannot be performed if ``x`` is a
         matrix, no matter what is ``rows`` (it used to be possible but
-        was fixed by :trac:`10793`)::
+        was fixed by :issue:`10793`)::
 
             sage: projection = matrix(ZZ,[[1,0,0],[0,1,0]])
             sage: projection
@@ -2069,7 +2074,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
         TESTS:
 
         The following corner cases were problematic while working on
-        :trac:`10628`::
+        :issue:`10628`::
 
             sage: MS = MatrixSpace(ZZ,2,1)
             sage: MS([[1],[2]])
@@ -2084,11 +2089,11 @@ class MatrixSpace(UniqueRepresentation, Parent):
             [ 1.00000000000000]
             [0.000000000000000]
 
-        :trac:`10628` allowed to provide the data as lists of matrices, but
-        :trac:`13012` prohibited it::
+        :issue:`10628` allowed to provide the data as lists of matrices, but
+        :issue:`13012` prohibited it::
 
-            sage: MS = MatrixSpace(ZZ,4,2)
-            sage: MS0 = MatrixSpace(ZZ,2)
+            sage: MS = MatrixSpace(ZZ, 4,2)
+            sage: MS0 = MatrixSpace(ZZ, 2)
             sage: MS.matrix([MS0([1,2,3,4]), MS0([5,6,7,8])])
             Traceback (most recent call last):
             ...
@@ -2101,7 +2106,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             ...
             TypeError: unable to coerce <class 'sage.matrix.matrix_integer_dense.Matrix_integer_dense'> to an integer
 
-        Check that :trac:`13302` is fixed::
+        Check that :issue:`13302` is fixed::
 
             sage: MatrixSpace(Qp(3), 1,1)([Qp(3).zero()])                               # needs sage.rings.padics
             [0]
@@ -2109,7 +2114,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             [3^-1 + 1 + O(3^19)]
 
         One-rowed matrices over combinatorial free modules used to break
-        the constructor (:trac:`17124`). Check that this is fixed::
+        the constructor (:issue:`17124`). Check that this is fixed::
 
             sage: # needs sage.combinat
             sage: Sym = SymmetricFunctions(ZZ)
@@ -2121,7 +2126,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             [h[2]]
 
         Converting sparse to dense matrices used to be too slow
-        (:trac:`20470`). Check that this is fixed::
+        (:issue:`20470`). Check that this is fixed::
 
             sage: m = identity_matrix(GF(2), 2000, sparse=True)
             sage: MS = MatrixSpace(GF(2), 2000, sparse=False)
@@ -2160,7 +2165,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: M = Mat(ZZ['x'],200000,500000,sparse=True)
+            sage: M = Mat(ZZ['x'], 200000, 500000, sparse=True)
             sage: M.ncols()
             500000
         """
@@ -2172,7 +2177,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         EXAMPLES::
 
-            sage: M = Mat(ZZ,200000,500000)
+            sage: M = Mat(ZZ, 200000, 500000)
             sage: M.nrows()
             200000
         """
@@ -2377,12 +2382,12 @@ class MatrixSpace(UniqueRepresentation, Parent):
 
         ::
 
-            sage: magma(MatrixSpace(QQ,3))                      # optional - magma
+            sage: magma(MatrixSpace(QQ, 3))                     # optional - magma
             Full Matrix Algebra of degree 3 over Rational Field
 
         ::
 
-            sage: magma(MatrixSpace(Integers(8),2,3))           # optional - magma
+            sage: magma(MatrixSpace(Integers(8), 2, 3))         # optional - magma
             Full RMatrixSpace of 2 by 3 matrices over IntegerRing(8)
         """
         K = magma(self.base_ring())
@@ -2497,7 +2502,7 @@ def _test_trivial_matrices_inverse(ring, sparse=True, implementation=None, check
     .. TODO::
 
         This must be adapted to category check framework when ready
-        (see :trac:`5274`).
+        (see :issue:`5274`).
 
     TESTS::
 

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-groups
 """
 Artin Groups
 
@@ -57,7 +58,7 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
 
         TESTS::
 
-            sage: A = ArtinGroup(['B',3])                                               # needs sage.rings.number_field
+            sage: A = ArtinGroup(['B', 3])                                              # needs sage.rings.number_field
             sage: b = A([1, 2, 3, -1, 2, -3])                                           # needs sage.rings.number_field
             sage: b._latex_()                                                           # needs sage.rings.number_field
             '\\sigma_{1}\\sigma_{2}\\sigma_{3}\\sigma_{1}^{-1}\\sigma_{2}\\sigma_{3}^{-1}'
@@ -66,9 +67,14 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
             sage: b = B([1, 2, 3, -1, 2, -3])
             sage: b._latex_()
             '\\sigma_{1}\\sigma_{2}\\sigma_{3}\\sigma_{1}^{-1}\\sigma_{2}\\sigma_{3}^{-1}'
+            sage: B.one()._latex_()
+            '1'
         """
+        word = self.Tietze()
+        if not word:
+            return '1'
         return ''.join(r"\sigma_{%s}^{-1}" % (-i) if i < 0 else r"\sigma_{%s}" % i
-                       for i in self.Tietze())
+                       for i in word)
 
     def exponent_sum(self):
         """
@@ -534,8 +540,8 @@ class ArtinGroup(FinitelyPresentedGroup):
         """
         Return an isomorphic permutation group.
 
-        Raises a ``ValueError`` error since Artin groups are infinite
-        and have no corresponding permutation group.
+        This raises a :class:`ValueError` error since Artin groups are
+        infinite and have no corresponding permutation group.
 
         EXAMPLES::
 
@@ -715,7 +721,7 @@ class FiniteTypeArtinGroup(ArtinGroup):
         Artin group of type ['E', 7]
 
     Since the word problem for finite-type Artin groups is solvable, their
-    Cayley graph can be locally obtained as follows (see :trac:`16059`)::
+    Cayley graph can be locally obtained as follows (see :issue:`16059`)::
 
         sage: def ball(group, radius):
         ....:     ret = set()

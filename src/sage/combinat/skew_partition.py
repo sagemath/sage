@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 r"""
 Skew Partitions
 
@@ -271,7 +272,7 @@ class SkewPartition(CombinatorialElement):
 
         TESTS:
 
-        Check that :trac:`34760` is fixed::
+        Check that :issue:`34760` is fixed::
 
             sage: print(SkewPartition([[],[]])._latex_diagram())
             {\emptyset}
@@ -306,7 +307,7 @@ class SkewPartition(CombinatorialElement):
 
         TESTS:
 
-        Check that :trac:`34760` is fixed::
+        Check that :issue:`34760` is fixed::
 
             sage: print(SkewPartition([[],[]])._latex_young_diagram())
             {\emptyset}
@@ -338,7 +339,7 @@ class SkewPartition(CombinatorialElement):
 
         TESTS:
 
-        Check that :trac:`34760` is fixed::
+        Check that :issue:`34760` is fixed::
 
             sage: print(SkewPartition([[],[]])._latex_marked())
             {\emptyset}
