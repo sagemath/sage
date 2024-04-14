@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Factories to construct function fields
 
@@ -156,7 +157,7 @@ class FunctionFieldExtensionFactory(UniqueFactory):
 
         TESTS:
 
-        Verify that :trac:`16530` has been resolved::
+        Verify that :issue:`16530` has been resolved::
 
             sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)

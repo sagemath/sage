@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Laurent Series
 
@@ -303,7 +304,7 @@ cdef class LaurentSeries(AlgebraElement):
         x = im_gens[0]
         return codomain(self.__u._im_gens_(codomain, im_gens, base_map=base_map) * x**self.__n)
 
-    cdef _normalize(self) noexcept:
+    cdef _normalize(self):
         r"""
         A Laurent series is a pair (u(t), n), where either u=0 (to some
         precision) or u is a unit. This pair corresponds to
@@ -438,7 +439,7 @@ cdef class LaurentSeries(AlgebraElement):
             sage: latex(f)
             \frac{\frac{17}{2}}{x^{2}} + x + x^{2} + 3x^{4} + O(x^{7})
 
-        Verify that :trac:`6656` has been fixed::
+        Verify that :issue:`6656` has been fixed::
 
             sage: R.<a,b> = PolynomialRing(QQ)
             sage: T.<x> = LaurentSeriesRing(R)
@@ -526,7 +527,7 @@ cdef class LaurentSeries(AlgebraElement):
             sage: f[:2]
             -5*t^-10 + 1/3 + t + O(t^5)
 
-        Any other kind of slicing is an error, see :trac:`18940`::
+        Any other kind of slicing is an error, see :issue:`18940`::
 
             sage: f[-10:2:2]
             Traceback (most recent call last):
@@ -729,7 +730,7 @@ cdef class LaurentSeries(AlgebraElement):
                 self.__u = self.__u._parent(coeffs)
         self._normalize()
 
-    cpdef _add_(self, right_m) noexcept:
+    cpdef _add_(self, right_m):
         """
         Add two power series with the same parent.
 
@@ -756,7 +757,7 @@ cdef class LaurentSeries(AlgebraElement):
 
         TESTS:
 
-        Verify that :trac:`35860` is fixed::
+        Verify that :issue:`35860` is fixed::
 
             sage: R.<t> = LaurentPolynomialRing(ZZ)
             sage: sqrt(t^2) + t^-1
@@ -787,7 +788,7 @@ cdef class LaurentSeries(AlgebraElement):
         # 3. Add
         return type(self)(self._parent, f1 + f2, m)
 
-    cpdef _sub_(self, right_m) noexcept:
+    cpdef _sub_(self, right_m):
         """
         Subtract two power series with the same parent.
 
@@ -843,7 +844,7 @@ cdef class LaurentSeries(AlgebraElement):
 
         TESTS:
 
-        Check that :trac:`28239` is fixed::
+        Check that :issue:`28239` is fixed::
 
             sage: (t^(-2)).add_bigoh(-1)
             t^-2 + O(t^-1)
@@ -915,7 +916,7 @@ cdef class LaurentSeries(AlgebraElement):
         """
         return type(self)(self._parent, -self.__u, self.__n)
 
-    cpdef _mul_(self, right_r) noexcept:
+    cpdef _mul_(self, right_r):
         """
         EXAMPLES::
 
@@ -930,10 +931,10 @@ cdef class LaurentSeries(AlgebraElement):
                           self.__u * right.__u,
                           self.__n + right.__n)
 
-    cpdef _rmul_(self, Element c) noexcept:
+    cpdef _rmul_(self, Element c):
         return type(self)(self._parent, self.__u._rmul_(c), self.__n)
 
-    cpdef _lmul_(self, Element c) noexcept:
+    cpdef _lmul_(self, Element c):
         return type(self)(self._parent, self.__u._lmul_(c), self.__n)
 
     def __pow__(_self, r, dummy):
@@ -1082,7 +1083,7 @@ cdef class LaurentSeries(AlgebraElement):
         """
         return type(self)(self._parent, self.__u >> (n - self.__n), n)
 
-    cpdef _div_(self, right_r) noexcept:
+    cpdef _div_(self, right_r):
         """
         EXAMPLES::
 
@@ -1203,7 +1204,7 @@ cdef class LaurentSeries(AlgebraElement):
         """
         return min(self.valuation(), other.valuation())
 
-    cpdef _richcmp_(self, right_r, int op) noexcept:
+    cpdef _richcmp_(self, right_r, int op):
         r"""
         Comparison of ``self`` and ``right``.
 
@@ -1247,7 +1248,7 @@ cdef class LaurentSeries(AlgebraElement):
             sage: f > g
             True
 
-        Check that :trac:`19664` is fixed::
+        Check that :issue:`19664` is fixed::
 
             sage: R.<x> = LaurentSeriesRing(RR)
             sage: x^(10^9) > 0
@@ -1311,7 +1312,7 @@ cdef class LaurentSeries(AlgebraElement):
         TESTS:
 
         The valuation of the zero element is ``+Infinity``
-        (see :trac:`15088`)::
+        (see :issue:`15088`)::
 
             sage: zero = R(0)
             sage: zero.valuation()
@@ -1753,7 +1754,7 @@ cdef class LaurentSeries(AlgebraElement):
         TESTS:
 
         Check whether a polynomial over a Laurent series ring is contained in the
-        polynomial ring over the power series ring (see :trac:`19459`):
+        polynomial ring over the power series ring (see :issue:`19459`):
 
             sage: # needs sage.rings.finite_rings
             sage: L.<t> = LaurentSeriesRing(GF(2))
@@ -1763,7 +1764,7 @@ cdef class LaurentSeries(AlgebraElement):
             False
 
         There used to be an issue with non-canonical representations of zero,
-        see :trac:`31383`::
+        see :issue:`31383`::
 
             sage: S.<x> = PowerSeriesRing(QQ)
             sage: L = Frac(S)
@@ -1777,7 +1778,7 @@ cdef class LaurentSeries(AlgebraElement):
             ...
             TypeError: self is not a power series
 
-        Test for :trac:`32440`::
+        Test for :issue:`32440`::
 
             sage: L.<x> = LaurentSeriesRing(QQ, implementation='pari')                  # needs sage.libs.pari
             sage: (x + O(x^3)).power_series()                                           # needs sage.libs.pari
@@ -1839,7 +1840,7 @@ cdef class LaurentSeries(AlgebraElement):
             ...
             ValueError: Can only substitute elements of positive valuation
 
-        Test for :trac:`23928`::
+        Test for :issue:`23928`::
 
             sage: R.<x> = LaurentSeriesRing(QQ, implementation='pari')                  # needs sage.libs.pari
             sage: f = x.add_bigoh(7)                                                    # needs sage.libs.pari
@@ -1886,7 +1887,7 @@ cdef class LaurentSeries(AlgebraElement):
             sage: f.__pari__()                                                          # needs sage.libs.pari
             x^-1 + x + O(x^2)
 
-        Check that :trac:`32437` is fixed::
+        Check that :issue:`32437` is fixed::
 
             sage: # needs sage.rings.finite_rings
             sage: F.<u> = GF(257^2)

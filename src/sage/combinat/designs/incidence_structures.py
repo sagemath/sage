@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 r"""
 Incidence structures (i.e. hypergraphs, i.e. set systems)
 
@@ -120,7 +121,7 @@ class IncidenceStructure:
         [[(0, 'a'), (0, 'b'), (1, 'a')], [(0, 'a'), (1, 'a')], [(0, 'b'), (1, 'a')]]
 
     The order of the points and blocks does not matter as they are sorted on
-    input (see :trac:`11333`)::
+    input (see :issue:`11333`)::
 
         sage: A = IncidenceStructure([0,1,2], [[0],[0,2]])
         sage: B = IncidenceStructure([1,0,2], [[0],[2,0]])
@@ -1810,8 +1811,7 @@ class IncidenceStructure:
 
         REFERENCE:
 
-        - Soicher, Leonard, Design package manual, available at
-          https://www.gap-system.org/Manuals/pkg/design/htm/CHAP003.htm
+        - Leonard Soicher, :gap_package:`Design package manual <design/htm/CHAP003.htm>`
         """
         if algorithm == "gap":
             libgap.load_package("design")
@@ -2226,7 +2226,7 @@ class IncidenceStructure:
 
         TESTS::
 
-            # verify that :trac:`30976` is fixed
+            # verify that :issue:`30976` is fixed
             sage: IS = IncidenceStructure([1,2,3], [[1,2], [2,3]])
             sage: if latex.has_file("tikz.sty"):          # optional - latex
             ....:     IS._latex_()

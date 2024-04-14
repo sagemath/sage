@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-eclib
 "Cremona modular symbols"
 
 from cysignals.signals cimport sig_on, sig_off
@@ -259,7 +260,7 @@ cdef class ModularSymbols:
             sage: print(T == U.change_ring(GF(7)))
             True
 
-        This concerns an issue reported on :trac:`21303`::
+        This concerns an issue reported on :issue:`21303`::
 
             sage: C = CremonaModularSymbols(45, cuspidal=True,sign=-1)
             sage: T2a = C.hecke_matrix(2).sage_matrix_over_ZZ()

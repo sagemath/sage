@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Punctured code
@@ -328,7 +329,7 @@ class PuncturedCode(AbstractLinearCode):
         C = self.original_code()
         pts = copy(self.punctured_positions())
         list_pts = list(pts)
-        while(isinstance(C, PuncturedCode)):
+        while isinstance(C, PuncturedCode):
             cur_pts = list(C.punctured_positions())
             list_len = len(list_pts)
             for p in cur_pts:

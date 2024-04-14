@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 """
 Tests for the Sage/Pynac interaction
 """
@@ -21,7 +22,7 @@ def rational_powers_memleak():
 
     Boolean. Whether the memory leak was detected.
 
-    See :trac:`9129`.
+    See :issue:`9129`.
 
     EXAMPLES::
 

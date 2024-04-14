@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-schemes
 #cdivision=False
 #cython: cdivision_warnings=False
 #cython: profile=False
@@ -2014,7 +2014,7 @@ cdef class ModularSymbolNumerical:
                                      Integer epsQ, Integer epsQQ,
                                     llong* wQ, llong* wQQ,
                                     int T, int prec, double eps,
-                                    int use_partials=2) noexcept:
+                                    int use_partials=2):
         r"""
         This is just a helper function for _from_r_to_rr_approx. In case
         the integral is evaluated directly this function is called.
@@ -2684,7 +2684,7 @@ cdef class ModularSymbolNumerical:
             sage: M._symbol_non_unitary(1/7,sign=-1)
             5/28
 
-        Test for :trac:`28476` ::
+        Test for :issue:`28476` ::
 
             sage: M = ModularSymbolNumerical(EllipticCurve("361a1"))
             sage: M._symbol_non_unitary(1/19)
@@ -3302,7 +3302,7 @@ cdef class ModularSymbolNumerical:
             sage: M._evaluate_approx(1/17,0.01) # abs tol 1e-11
             1.08712572498569 - 0.548379313090719*I
 
-       Test that is also works for non-unitary cusps (:trac:`29476`) ::
+       Test that is also works for non-unitary cusps (:issue:`29476`) ::
 
             sage: E = EllipticCurve("20a1")
             sage: m = E.modular_symbol_numerical()

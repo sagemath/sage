@@ -17,13 +17,6 @@ name: CI Linux incremental
 
 on:
   pull_request:
-    types:
-      # Defaults
-      - opened
-      - synchronize
-      - reopened
-      # When a CI label is added
-      - labeled
     paths:
       - 'build/pkgs/**'
       - 'pkgs/**'
@@ -49,7 +42,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Get all packages that have changed
         id: changed-packages
-        uses: tj-actions/changed-files@v41
+        uses: tj-actions/changed-files@v42
         with:
           files_yaml: |
             configures:
@@ -81,14 +74,6 @@ jobs:
 
   test:
     needs: [changed_files]
-    if: |
-      github.event_name != 'pull_request' ||
-      ((github.event.action != 'labeled' &&
-         (contains(github.event.pull_request.labels.*.name, 'c: packages: standard') ||
-          contains(github.event.pull_request.labels.*.name, 'c: packages: optional'))) ||
-       (github.event.action == 'labeled' &&
-         (github.event.label.name == 'c: packages: optional' ||
-          github.event.label.name == 'c: packages: standard')))
     uses: ./.github/workflows/docker.yml
     with:
       # Build incrementally from published Docker image
@@ -139,7 +124,7 @@ jobs:
       # with only a small number of test failures as of 10.2.rc0
       tox_system_factors: >-
         ["gentoo-python3.11",
-         "archlinux"]
+         "archlinux-latest"]
       tox_packages_factors: >-
           ["standard-sitepackages"]
       docker_push_repository: ghcr.io/${{ github.repository }}/

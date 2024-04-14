@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 """
 Free algebras
@@ -27,7 +28,7 @@ EXAMPLES::
     Free Algebra on 3 generators (x, y, z) over Integer Ring
 
 The above free algebra is based on a generic implementation. By
-:trac:`7797`, there is a different implementation
+:issue:`7797`, there is a different implementation
 :class:`~sage.algebras.letterplace.free_algebra_letterplace.FreeAlgebra_letterplace`
 based on Singular's letterplace rings. It is currently restricted to
 weighted homogeneous elements and is therefore not the default. But the
@@ -53,7 +54,7 @@ two-sided ideals, and thus provide ideal containment tests::
     True
 
 Positive integral degree weights for the letterplace implementation
-was introduced in :trac:`7797`::
+was introduced in :issue:`7797`::
 
     sage: # needs sage.libs.singular
     sage: F.<x,y,z> = FreeAlgebra(QQ, implementation='letterplace', degrees=[2,1,3])
@@ -163,10 +164,12 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.ring import Algebra
+from sage.rings.integer_ring import ZZ
 from sage.categories.algebras_with_basis import AlgebrasWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.words.word import Word
 from sage.structure.category_object import normalize_names
+
 
 lazy_import('sage.algebras.letterplace.free_algebra_letterplace', 'FreeAlgebra_letterplace')
 
@@ -211,7 +214,7 @@ class FreeAlgebraFactory(UniqueFactory):
         True
         sage: TestSuite(F).run()
 
-    By :trac:`7797`, we provide a different implementation of free
+    By :issue:`7797`, we provide a different implementation of free
     algebras, based on Singular's "letterplace rings". Our letterplace
     wrapper allows for choosing positive integral degree weights for the
     generators of the free algebra. However, only (weighted) homogeneous
@@ -330,7 +333,11 @@ class FreeAlgebraFactory(UniqueFactory):
         if arg2 is None:
             arg2 = len(arg1)
         names = normalize_names(arg2, arg1)
-        return base_ring, names
+        if degrees is None:
+            return base_ring, names
+        if degrees in ZZ:
+            return base_ring, names, (degrees,) * len(names)
+        return base_ring, names, tuple(degrees)
 
     def create_object(self, version, key):
         """
@@ -354,7 +361,9 @@ class FreeAlgebraFactory(UniqueFactory):
         if isinstance(key[0], tuple):
             from sage.algebras.letterplace.free_algebra_letterplace import FreeAlgebra_letterplace
             return FreeAlgebra_letterplace(key[1], degrees=key[0])
-        return FreeAlgebra_generic(key[0], len(key[1]), key[1])
+        if len(key) == 2:
+            return FreeAlgebra_generic(key[0], len(key[1]), key[1])
+        return FreeAlgebra_generic(key[0], len(key[1]), key[1], key[2])
 
 
 FreeAlgebra = FreeAlgebraFactory('FreeAlgebra')
@@ -391,6 +400,9 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
     - ``R`` -- a ring
     - ``n`` -- an integer
     - ``names`` -- the generator names
+    - ``degrees`` -- (optional) a tuple or list specifying the
+      degrees of all the generators, if omitted, the algebra is not
+      graded
 
     EXAMPLES::
 
@@ -438,14 +450,14 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
         sage: F == FreeAlgebra(QQ,3,'y')
         False
 
-    Note that since :trac:`7797` there is a different
+    Note that since :issue:`7797` there is a different
     implementation of free algebras. Two corresponding free
     algebras in different implementations are not equal, but there
     is a coercion.
     """
     Element = FreeAlgebraElement
 
-    def __init__(self, R, n, names):
+    def __init__(self, R, n, names, degrees=None):
         """
         The free algebra on `n` generators over a base ring.
 
@@ -468,9 +480,18 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
         self.__ngens = n
         indices = FreeMonoid(n, names=names)
         cat = AlgebrasWithBasis(R)
+        if degrees is not None:
+            if len(degrees) != len(names) or not all(d in ZZ for d in degrees):
+                raise ValueError("argument degrees must specify an integer for each generator")
+            cat = cat.Graded()
+
         CombinatorialFreeModule.__init__(self, R, indices, prefix='F',
                                          category=cat)
         self._assign_names(indices.variable_names())
+        if degrees is None:
+            self._degrees = None
+        else:
+            self._degrees = {g: ZZ(d) for g, d in zip(self.monoid().gens(), degrees)}
 
     def one_basis(self):
         """
@@ -527,17 +548,23 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
 
         EXAMPLES::
 
-            sage: F = FreeAlgebra(QQ,3,'x')
-            sage: F  # indirect doctest
+            sage: F = FreeAlgebra(QQ, 3, 'x')
+            sage: F                                                             # indirect doctest
             Free Algebra on 3 generators (x0, x1, x2) over Rational Field
             sage: F.rename('QQ<<x0,x1,x2>>')
-            sage: F #indirect doctest
+            sage: F                                                             # indirect doctest
             QQ<<x0,x1,x2>>
-            sage: FreeAlgebra(ZZ,1,['a'])
+            sage: FreeAlgebra(ZZ, 1, ['a'])
             Free Algebra on 1 generators (a,) over Integer Ring
+
+            sage: FreeAlgebra(QQ, 2, ['x', 'y'], degrees=(2,1))
+            Free Algebra on 2 generators (x, y) with degrees (2, 1) over Rational Field
         """
-        return "Free Algebra on {} generators {} over {}".format(
-            self.__ngens, self.gens(), self.base_ring())
+        if self._degrees is None:
+            return "Free Algebra on {} generators {} over {}".format(
+                self.__ngens, self.gens(), self.base_ring())
+        return "Free Algebra on {} generators {} with degrees {} over {}".format(
+            self.__ngens, self.gens(), tuple(self._degrees.values()), self.base_ring())
 
     def _latex_(self) -> str:
         r"""
@@ -587,7 +614,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             sage: F.1 + (z+1)*L.2
             b + (z+1)*c
 
-        Check that :trac:`15169` is fixed::
+        Check that :issue:`15169` is fixed::
 
             sage: A.<x> = FreeAlgebra(CC)
             sage: A(2)
@@ -622,11 +649,8 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
                 M = self._indices
 
                 def exp_to_monomial(T):
-                    out = []
-                    for i in range(len(T)):
-                        if T[i]:
-                            out.append((i % ngens, T[i]))
-                    return M(out)
+                    return M([(i % ngens, Ti) for i, Ti in enumerate(T) if Ti])
+
                 return self.element_class(self, {exp_to_monomial(T): c
                                                  for T, c in x.letterplace_polynomial().dict().items()})
         # ok, not a free algebra element (or should not be viewed as one).
@@ -773,6 +797,23 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             (x, y, z)
         """
         return tuple(self.gen(i) for i in range(self.__ngens))
+
+    def degree_on_basis(self, m):
+        r"""
+        Return the degree of the basis element indexed by ``m``.
+
+        EXAMPLES::
+
+            sage: A.<a, b> = FreeAlgebra(QQ, degrees=(1, -1))
+            sage: m = A.basis().keys()[42]
+            sage: m
+            a*b*a*b^2
+            sage: A.degree_on_basis(m)
+            -1
+            sage: (a*b*a*b^2).degree()
+            -1
+        """
+        return ZZ.sum(self._degrees[g] * e for g, e in m)
 
     def product_on_basis(self, x, y):
         """
@@ -1025,7 +1066,7 @@ class FreeAlgebra_generic(CombinatorialFreeModule, Algebra):
             sage: F.lie_polynomial('')
             1
 
-        We check that :trac:`22251` is fixed::
+        We check that :issue:`22251` is fixed::
 
             sage: F.lie_polynomial(x*y*z)
             x*y*z - x*z*y - y*z*x + z*y*x

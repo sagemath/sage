@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 # sage.doctest: needs sage.libs.ntl
 include "sage/libs/linkages/padics/Polynomial_ram.pxi"
 include "CR_template.pxi"

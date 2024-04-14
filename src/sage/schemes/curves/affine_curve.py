@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.singular
 r"""
 Affine curves
@@ -1801,6 +1802,7 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
         to the algebraic field::
 
             sage: # needs sage.rings.number_field
+            sage: x = polygen(ZZ)
             sage: a = QQ[x](x^2 + 5).roots(QQbar)[0][0]
             sage: F = NumberField(a.minpoly(), 'a', embedding=a)
             sage: F.inject_variables()
@@ -2064,13 +2066,21 @@ class IntegralAffineCurve(AffineCurve_field):
             sage: C = Curve(x^5 + y^5 + x*y + 1)
             sage: C.genus()   # indirect doctest
             1
-        """
-        k = self.base_ring()
 
+        TESTS::
+
+            sage: # needs sage.rings.number_field
+            sage: R.<T> = QQ[]
+            sage: N.<a> = NumberField(T^2 + 1)
+            sage: A2.<x,y> = AffineSpace(N, 2)
+            sage: C = Curve(y^2 - x^3 + x, A2)
+            sage: C.genus()
+            1
+        """
         # Singular's genus command is usually much faster than the genus method
         # of function fields in Sage. But unfortunately Singular's genus
-        # command does not yet work over non-prime finite fields.
-        if k.is_finite() and k.degree() > 1:
+        # command does not work over extension fields.
+        if self.base_ring().degree() > 1:
             return self._function_field.genus()
 
         # call Singular's genus command

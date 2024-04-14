@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 ##############################################################################
 #       Copyright (C) 2010 Nathann Cohen <nathann.cohen@gmail.com>
 #       Copyright (C) 2016 Matthias Koeppe <mkoeppe@math.ucdavis.edu>
@@ -30,6 +31,6 @@ cdef class InteractiveLPBackend(GenericBackend):
                            coefficients=*) \
                            except -1
 
-    cpdef dictionary(self) noexcept
+    cpdef dictionary(self)
 
-    cpdef interactive_lp_problem(self) noexcept
+    cpdef interactive_lp_problem(self)

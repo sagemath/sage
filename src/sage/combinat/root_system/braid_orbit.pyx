@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # cython: wraparound=False, boundscheck=False
 """
 Braid Orbit
@@ -7,7 +8,7 @@ Cython function to compute the orbit of the braid moves on a reduced word.
 from cysignals.signals cimport sig_check
 
 
-cpdef set BraidOrbit(list word, list rels) noexcept:
+cpdef set BraidOrbit(list word, list rels):
     r"""
     Return the orbit of ``word`` by all replacements given by ``rels``.
 

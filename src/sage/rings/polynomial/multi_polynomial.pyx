@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Base class for elements of multivariate polynomial rings
 """
@@ -434,7 +435,7 @@ cdef class MPolynomial(CommutativePolynomial):
             z *= var
         return ring(v)
 
-    cpdef dict _mpoly_dict_recursive(self, tuple vars=None, base_ring=None) noexcept:
+    cpdef dict _mpoly_dict_recursive(self, tuple vars=None, base_ring=None):
         r"""
         Return a ``dict`` of coefficient entries suitable for construction
         of a ``MPolynomial_polydict`` with the given variables.
@@ -465,7 +466,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: R(S.0)
             p
 
-        See :trac:`2601`::
+        See :issue:`2601`::
 
             sage: R.<a,b,c> = PolynomialRing(QQ, 3)
             sage: a._mpoly_dict_recursive(('c', 'b', 'a'))
@@ -562,7 +563,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         TESTS:
 
-        Verify that :trac:`16251` has been resolved, i.e., polynomials with
+        Verify that :issue:`16251` has been resolved, i.e., polynomials with
         unhashable coefficients are unhashable::
 
             sage: K.<a> = Qq(9)                                                         # needs sage.rings.padics
@@ -813,7 +814,7 @@ cdef class MPolynomial(CommutativePolynomial):
                 d[e.unweighted_degree()][e] = c
         return {k: self._parent(d[k]) for k in d}
 
-    cpdef _mod_(self, other) noexcept:
+    cpdef _mod_(self, other):
         r"""
         EXAMPLES::
 
@@ -1253,7 +1254,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         TESTS:
 
-        Since :trac:`10771`, the gcd in QQ restricts to the gcd in ZZ::
+        Since :issue:`10771`, the gcd in QQ restricts to the gcd in ZZ::
 
             sage: R.<x,y> = QQ[]
             sage: f = 4*x+6*y
@@ -1589,7 +1590,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         TESTS:
 
-        Test polynomials over QQbar (:trac:`25265`)::
+        Test polynomials over QQbar (:issue:`25265`)::
 
             sage: # needs sage.rings.number_field
             sage: R.<x,y> = QQbar[]
@@ -1831,7 +1832,7 @@ cdef class MPolynomial(CommutativePolynomial):
             1.00000000000000
 
         Check that the denominator is an element over the base whenever the base
-        has no denominator function. This closes :trac:`9063`::
+        has no denominator function. This closes :issue:`9063`::
 
             sage: R.<a,b,c> = GF(5)[]
             sage: x = R(0)
@@ -2595,7 +2596,7 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: R(2).is_unit()
             True
 
-        Check that :trac:`22454` is fixed::
+        Check that :issue:`22454` is fixed::
 
             sage: _.<x,y> = Zmod(4)[]
             sage: (1 + 2*x).is_unit()
@@ -2926,7 +2927,7 @@ def _is_M_convex_(points):
     return True
 
 
-cdef remove_from_tuple(e, int ind) noexcept:
+cdef remove_from_tuple(e, int ind):
     w = list(e)
     del w[ind]
     if len(w) == 1:

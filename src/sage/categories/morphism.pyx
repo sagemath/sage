@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Morphisms
 
@@ -178,8 +179,9 @@ cdef class Morphism(Map):
             sage: f = R.hom([t**2])
             sage: f.category()
             Category of endsets of unital magmas and right modules over
-             (euclidean domains and infinite enumerated sets and metric spaces)
-             and left modules over (euclidean domains
+             (Dedekind domains and euclidean domains
+              and infinite enumerated sets and metric spaces)
+             and left modules over (Dedekind domains and euclidean domains
              and infinite enumerated sets and metric spaces)
 
             sage: # needs sage.rings.number_field
@@ -344,7 +346,7 @@ cdef class Morphism(Map):
             definition = repr(self)
         return hash((domain, codomain, definition))
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         """
         Generic comparison function for morphisms.
 
@@ -364,14 +366,14 @@ cdef class Morphism(Map):
             NotImplementedError: unable to compare morphisms of type <... 'sage.categories.morphism.IdentityMorphism'>
             and <... 'sage.categories.morphism.SetMorphism'> with domain Partitions of the integer 5
 
-        We check that :trac:`28617` is fixed::
+        We check that :issue:`28617` is fixed::
 
             sage: FF = GF(2^20)                                                         # needs sage.rings.finite_rings
             sage: f = FF.frobenius_endomorphism()                                       # needs sage.rings.finite_rings
             sage: f == FF.frobenius_endomorphism()                                      # needs sage.rings.finite_rings
             True
 
-        and that :trac:`29632` is fixed::
+        and that :issue:`29632` is fixed::
 
             sage: R.<x,y> = QuadraticField(-1)[]                                        # needs sage.rings.number_field
             sage: f = R.hom(R.gens(), R)                                                # needs sage.rings.number_field
@@ -453,7 +455,7 @@ cdef class FormalCoercionMorphism(Morphism):
     def _repr_type(self):
         return "Coercion"
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         return self._codomain.coerce(x)
 
 cdef class CallMorphism(Morphism):
@@ -461,7 +463,7 @@ cdef class CallMorphism(Morphism):
     def _repr_type(self):
         return "Call"
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         return self._codomain(x)
 
 cdef class IdentityMorphism(Morphism):
@@ -475,10 +477,10 @@ cdef class IdentityMorphism(Morphism):
     def _repr_type(self):
         return "Identity"
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         return x
 
-    cpdef Element _call_with_args(self, x, args=(), kwds={}) noexcept:
+    cpdef Element _call_with_args(self, x, args=(), kwds={}):
         if not args and not kwds:
             return x
         cdef Parent C = self._codomain
@@ -499,7 +501,7 @@ cdef class IdentityMorphism(Morphism):
         else:
             return left
 
-    cpdef _pow_int(self, n) noexcept:
+    cpdef _pow_int(self, n):
         return self
 
     def __invert__(self):
@@ -515,7 +517,7 @@ cdef class IdentityMorphism(Morphism):
             sage: E.identity().is_identity()                                            # needs sage.combinat
             True
 
-        Check that :trac:`15478` is fixed::
+        Check that :issue:`15478` is fixed::
 
             sage: # needs sage.rings.finite_rings
             sage: K.<z> = GF(4)
@@ -586,7 +588,7 @@ cdef class SetMorphism(Morphism):
         Morphism.__init__(self, parent)
         self._function = function
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         INPUT:
 
@@ -607,7 +609,7 @@ cdef class SetMorphism(Morphism):
         """
         return self._function(x)
 
-    cpdef Element _call_with_args(self, x, args=(), kwds={}) noexcept:
+    cpdef Element _call_with_args(self, x, args=(), kwds={}):
         """
         Extra arguments are passed to the defining function.
 
@@ -629,7 +631,7 @@ cdef class SetMorphism(Morphism):
         except Exception:
             raise TypeError("Underlying map %s does not accept additional arguments" % type(self._function))
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         INPUT:
 
@@ -651,7 +653,7 @@ cdef class SetMorphism(Morphism):
         slots['_function'] = self._function
         return slots
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         INPUT:
 

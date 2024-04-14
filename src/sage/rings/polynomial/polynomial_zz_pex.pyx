@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 # sage.doctest: needs sage.libs.ntl sage.rings.finite_rings
 # distutils: libraries = NTL_LIBRARIES gmp
 # distutils: extra_compile_args = NTL_CFLAGS
@@ -44,7 +45,7 @@ include "polynomial_template.pxi"
 
 from sage.libs.ntl.ntl_ZZ_pE cimport ntl_ZZ_pE
 
-cdef inline ZZ_pE_c_to_list(ZZ_pE_c x) noexcept:
+cdef inline ZZ_pE_c_to_list(ZZ_pE_c x):
     cdef list L = []
     cdef ZZ_pX_c c_pX
     cdef ZZ_p_c c_p
@@ -87,7 +88,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
 
         TESTS:
 
-        The following tests against a bug that was fixed in :trac:`9944`.
+        The following tests against a bug that was fixed in :issue:`9944`.
         With the ring definition above, we now have::
 
             sage: R([3,'1234'])
@@ -102,7 +103,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             TypeError: not a constant polynomial
 
         Check that NTL contexts are correctly restored and that
-        :trac:`9524` has been fixed::
+        :issue:`9524` has been fixed::
 
             sage: x = polygen(GF(9, 'a'))
             sage: x = polygen(GF(49, 'a'))
@@ -111,7 +112,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             sage: 5*x
             5*x
 
-        Check that :trac:`11239` is fixed::
+        Check that :issue:`11239` is fixed::
 
             sage: Fq.<a> = GF(2^4); Fqq.<b> = GF(3^7)
             sage: PFq.<x> = Fq[]; PFqq.<y> = Fqq[]
@@ -152,7 +153,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
 
         Polynomial_template.__init__(self, parent, x, check, is_gen, construct)
 
-    cdef get_unsafe(self, Py_ssize_t i) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i):
         r"""
         Return the `i`-th coefficient of ``self``.
 
@@ -176,7 +177,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         cdef ZZ_pE_c c_pE = ZZ_pEX_coeff(self.x, i)
         return self._parent._base(ZZ_pE_c_to_list(c_pE))
 
-    cpdef list list(self, bint copy=True) noexcept:
+    cpdef list list(self, bint copy=True):
         r"""
         Return the list of coefficients.
 
@@ -198,7 +199,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         return [K(ZZ_pE_c_to_list(ZZ_pEX_coeff(self.x, i)))
                 for i in range(celement_len(&self.x, (<Polynomial_template>self)._cparent))]
 
-    cpdef _lmul_(self, Element left) noexcept:
+    cpdef _lmul_(self, Element left):
         r"""
         EXAMPLES::
 
@@ -235,7 +236,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
 
         TESTS:
 
-        The work around provided in :trac:`10475` is superseded by :trac:`24072`::
+        The work around provided in :issue:`10475` is superseded by :issue:`24072`::
 
             sage: F.<x> = GF(4)
             sage: P.<y> = F[]
@@ -246,7 +247,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             TypeError: positive characteristic not allowed in symbolic computations
 
         Check that polynomial evaluation works when using logarithmic
-        representation of finite field elements (:trac:`16383`)::
+        representation of finite field elements (:issue:`16383`)::
 
             sage: for i in range(10):
             ....:     F = FiniteField(random_prime(15) ** ZZ.random_element(2, 5), 'a', repr='log')
@@ -410,7 +411,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
         ZZ_pEX_MinPolyMod(r.x, (<Polynomial_ZZ_pEX>(self % other)).x, (<Polynomial_ZZ_pEX>other).x)
         return r
 
-    cpdef _richcmp_(self, other, int op) noexcept:
+    cpdef _richcmp_(self, other, int op):
         r"""
         EXAMPLES::
 

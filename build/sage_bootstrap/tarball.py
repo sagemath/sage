@@ -153,7 +153,7 @@ class Tarball(object):
             else:
                 # Garbage in the upstream directory? Ignore it.
                 # Don't delete it because maybe somebody just forgot to
-                # update the checksum (Trac #23972).
+                # update the checksum (Issue #23972).
                 log.warning('Invalid checksum; ignoring cached file {destination}'
                             .format(destination=destination))
         successful_download = False

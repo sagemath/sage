@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 """
 `q`-Bernoulli Numbers and Polynomials
 """
@@ -104,7 +105,8 @@ def q_bernoulli_polynomial(m):
         sage: all(q_bernoulli_polynomial(i)(q=1) == bernoulli_polynomial(x,i)           # needs sage.libs.flint
         ....:     for i in range(12))
         True
-        sage: all(q_bernoulli_polynomial(i)(x=0)==q_bernoulli(i) for i in range(12))
+        sage: all(q_bernoulli_polynomial(i)(x=0) == q_bernoulli(i)
+        ....:     for i in range(12))
         True
 
     The function does not accept negative arguments::

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 """
 p-adic Flat Polynomials
 """
@@ -20,7 +21,7 @@ class Polynomial_padic_flat(Polynomial_generic_dense, Polynomial_padic):
         """
         TESTS:
 
-        Check that :trac:`13620` has been fixed::
+        Check that :issue:`13620` has been fixed::
 
             sage: K = ZpFM(3)
             sage: R.<t> = K[]

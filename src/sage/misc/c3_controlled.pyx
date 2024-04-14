@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 The C3 algorithm, under control of a total order
 
@@ -415,7 +416,7 @@ cdef class CmpKey:
     is a facade set. The second bit is set if ``self`` is finite.
     And so on. The choice of the flags is adhoc and was primarily
     crafted so that the order between categories would not change
-    too much upon integration of :trac:`13589` and would be
+    too much upon integration of :issue:`13589` and would be
     reasonably session independent. The number ``i`` is there
     to resolve ambiguities; it is session dependent, and is
     assigned increasingly when new categories are created.
@@ -659,7 +660,7 @@ def C3_merge(list lists):
             raise ValueError("Cannot merge the items %s."%', '.join(repr(head) for head in heads))
     return out
 
-cpdef identity(x) noexcept:
+cpdef identity(x):
     r"""
     EXAMPLES::
 
@@ -669,7 +670,7 @@ cpdef identity(x) noexcept:
     """
     return x
 
-cpdef tuple C3_sorted_merge(list lists, key=identity) noexcept:
+cpdef tuple C3_sorted_merge(list lists, key=identity):
     r"""
     Return the sorted input lists merged using the ``C3`` algorithm, with a twist.
 

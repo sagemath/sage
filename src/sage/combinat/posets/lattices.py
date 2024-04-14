@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # sage.doctest: needs sage.modules
 r"""
 Finite lattices and semilattices
@@ -1368,7 +1369,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: L.is_meet_semidistributive()
             False
 
-        Confirm that :trac:`21340` is fixed::
+        Confirm that :issue:`21340` is fixed::
 
             sage: posets.BooleanLattice(4).is_meet_semidistributive()
             True
@@ -1460,7 +1461,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: L.is_join_semidistributive()
             False
 
-        Confirm that :trac:`21340` is fixed::
+        Confirm that :issue:`21340` is fixed::
 
             sage: posets.BooleanLattice(3).is_join_semidistributive()
             True
@@ -1782,7 +1783,7 @@ class FiniteLatticePoset(FiniteMeetSemilattice, FiniteJoinSemilattice):
             sage: L.is_relatively_complemented()
             False
 
-        Confirm that :trac:`22292` is fixed::
+        Confirm that :issue:`22292` is fixed::
 
             sage: L = LatticePoset(DiGraph('IYOS`G?CE?@?C?_@??'))
             sage: L.is_relatively_complemented(certificate=True)

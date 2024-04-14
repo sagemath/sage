@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.pari sage.rings.padics
 r"""
 Overconvergent `p`-adic modular forms for small primes
@@ -261,7 +262,7 @@ def OverconvergentModularForms(prime, weight, radius, base_ring=QQ, prec=20, cha
     if key in __ocmfdict:
         w = __ocmfdict[key]
         M = w()
-        if not (M is None):
+        if M is not None:
             return M
     M = OverconvergentModularFormsSpace(*key)
     __ocmfdict[key] = weakref.ref(M)

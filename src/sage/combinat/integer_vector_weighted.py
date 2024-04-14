@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 """
 Weighted Integer Vectors
 
@@ -361,7 +362,7 @@ def iterator_fast(n, l):
         sage: list(iterator_fast(2, [2]))
         [[1]]
 
-    Test that :trac:`20491` is fixed::
+    Test that :issue:`20491` is fixed::
 
         sage: type(list(iterator_fast(2, [2]))[0][0])
         <class 'sage.rings.integer.Integer'>

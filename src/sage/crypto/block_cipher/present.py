@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.modules sage.rings.finite_rings
 r"""
 PRESENT
@@ -73,7 +74,7 @@ def _smallscale_present_linearlayer(nsboxes=16):
     .. TODO::
 
         switch to sage.crypto.linearlayer
-        (:trac:`25735`) as soon as it is included in sage
+        (:issue:`25735`) as soon as it is included in sage
 
     EXAMPLES::
 

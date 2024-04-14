@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Algebraic schemes
 
@@ -807,7 +808,7 @@ class AlgebraicScheme_quasi(AlgebraicScheme):
 
         TESTS:
 
-        The bug reported at :trac:`12211` has been fixed::
+        The bug reported at :issue:`12211` has been fixed::
 
             sage: P.<x, y, z, w> = ProjectiveSpace(3, QQ)
             sage: S = P.subscheme([x])
@@ -1219,7 +1220,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             ]
 
         We verify that the irrelevant ideal is not accidentally returned
-        (see :trac:`6920`)::
+        (see :issue:`6920`)::
 
             sage: PP.<x,y,z,w> = ProjectiveSpace(3, QQ)
             sage: f = x^3 + y^3 + z^3 + w^3
@@ -1322,7 +1323,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             [   z   -y   -x    w]
             [   0    z -2*y    x]
 
-        This example addresses issue :trac:`20512`::
+        This example addresses issue :issue:`20512`::
 
             sage: X = P3.subscheme([])
             sage: X.Jacobian_matrix().base_ring() == P3.coordinate_ring()               # needs sage.libs.singular
@@ -1369,7 +1370,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
             Ideal (-x^2 + w*y, -x*y + w*z, -y^2 + x*z)
              of Multivariate Polynomial Ring in w, x, y, z over Rational Field
 
-        This example addresses issue :trac:`20512`::
+        This example addresses issue :issue:`20512`::
 
             sage: X = P3.subscheme([])
             sage: X.Jacobian() == P3.coordinate_ring().unit_ideal()                     # needs sage.libs.singular
@@ -1638,7 +1639,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
     def intersection(self, other):
         """
-        Return the scheme-theoretic intersection of self and other in their
+        Return the scheme-theoretic intersection of ``self`` and ``other`` in their
         common ambient space.
 
         EXAMPLES::
@@ -1660,12 +1661,12 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
     def complement(self, other=None):
         """
-        Return the scheme-theoretic complement other - self, where
-        self and other are both closed algebraic subschemes of the
+        Return the scheme-theoretic complement ``other - self``, where
+        ``self`` and ``other`` are both closed algebraic subschemes of the
         same ambient space.
 
-        If other is unspecified, it is taken to be the ambient space
-        of self.
+        If ``other`` is unspecified, it is taken to be the ambient space
+        of ``self``.
 
         EXAMPLES::
 

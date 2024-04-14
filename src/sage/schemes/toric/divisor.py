@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 # sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 Toric divisors and divisor classes
@@ -567,7 +568,7 @@ class ToricDivisor_generic(Divisor_generic):
           returned.
 
         - If there is no such vector (i.e. ``self`` is not even a
-          `\QQ`-Cartier divisor), a ``ValueError`` is raised.
+          `\QQ`-Cartier divisor), a :class:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -773,7 +774,7 @@ class ToricDivisor_generic(Divisor_generic):
         .. NOTE::
 
             A divisor that is Weil but not Cartier might be impossible
-            to move away. In this case, a ``ValueError`` is raised.
+            to move away. In this case, a :class:`ValueError` is raised.
 
         EXAMPLES::
 
@@ -1360,7 +1361,7 @@ class ToricDivisor_generic(Divisor_generic):
             sage: D._sheaf_cohomology( SimplicialComplex([[1,2],[2,3],[3,1]]) )
             (0, 0, 1)
 
-        A more complicated example to test that :trac:`10731` is fixed::
+        A more complicated example to test that :issue:`10731` is fixed::
 
             sage: cell24 = Polyhedron(vertices=[
             ....:  (1,0,0,0),(0,1,0,0),(0,0,1,0),(0,0,0,1),(1,-1,-1,1),(0,0,-1,1),
@@ -1806,7 +1807,7 @@ class ToricDivisorGroup(DivisorGroup_generic):
 
         TESTS:
 
-        Check for :trac:`12812`::
+        Check for :issue:`12812`::
 
             sage: TDiv(0)
             0

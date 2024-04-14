@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Encoders
@@ -241,7 +242,7 @@ class Encoder(SageObject):
             ...
             EncodingError: Given word is not in the code
 
-        Note that since :trac:`21326`, codes cannot be of length zero::
+        Note that since :issue:`21326`, codes cannot be of length zero::
 
             sage: G = Matrix(GF(17), [])
             sage: C = LinearCode(G)

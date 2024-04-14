@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Cyclic code
@@ -577,16 +578,17 @@ class CyclicCode(AbstractLinearCode):
               To:   Finite Field in z3 of size 2^3
               Defn: 1 |--> 1
         """
-        if not(hasattr(self, "_field_embedding")):
+        if not hasattr(self, "_field_embedding"):
             self.defining_set()
         return self._field_embedding
 
     def defining_set(self, primitive_root=None):
         r"""
         Return the set of exponents of the roots of ``self``'s generator
-        polynomial over the extension field. Of course, it depends on the
-        choice of the primitive root of the splitting field.
+        polynomial over the extension field.
 
+        Of course, it depends on the choice of the primitive root of
+        the splitting field.
 
         INPUT:
 

@@ -6,14 +6,12 @@ cp "$SAGE_ROOT"/config/config.* .
 # Note: The following doesn't work with spaces in `$SAGE_LOCAL`, but we don't
 #       support that anyway, since many upstream packages don't.
 #       On the other hand, the only packages GLPK uses that Sage provides are
-#       GMP/MPIR and zlib, so we should just use `$SAGE_CONFIGURE_GMP` and
+#       GMP and zlib, so we should just use `$SAGE_CONFIGURE_GMP` and
 #       `--with-zlib="$SAGE_LOCAL"` below (which is safe), and omit the fol-
 #       lowing two lines. (TODO)
 #
 #       Turns out that (as of version 4.55)
-#       1) GLPK unconditionally uses its own copy of zlib (cf. `SPKG.txt`),
-#          and the `configure` option `--with-zlib` is no longer valid;
-#       2) `configure` doesn't support specifying the location of the GMP
+#          `configure` doesn't support specifying the location of the GMP
 #          library to use; only `--with-gmp[=yes]` or `--with-gmp=no`
 #          are valid options.  So we *have to* add Sage's include and
 #          library directories to `CPPFLAGS` (done here) and `LDFLAGS`

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 """
 Units of measurement
 
@@ -65,7 +66,7 @@ Trying to multiply temperatures by another unit then converting raises a ValueEr
 
 TESTS:
 
-Check that :trac:`12373` is fixed::
+Check that :issue:`12373` is fixed::
 
     sage: b = units.amount_of_substance.mole
     sage: b.convert(units.amount_of_substance.elementary_entity)

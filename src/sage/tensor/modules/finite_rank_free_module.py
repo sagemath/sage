@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Free modules of finite rank
 
@@ -39,7 +40,7 @@ AUTHORS:
 
 - Eric Gourgoulhon, Michal Bejger (2014-2015): initial version
 - Travis Scrimshaw (2016): category set to ``Modules(ring).FiniteDimensional()``
-  (:trac:`20770`)
+  (:issue:`20770`)
 - Michael Jung (2019): improve treatment of the zero element
 - Eric Gourgoulhon (2021): unicode symbols for tensor and exterior products
 - Matthias Koeppe (2022): ``FiniteRankFreeModule_abstract``, symmetric powers
@@ -248,7 +249,8 @@ This is also revealed by the category of each module::
     Category of finite dimensional modules over Integer Ring
     sage: N.category()
     Category of finite dimensional modules with basis over
-     (euclidean domains and infinite enumerated sets and metric spaces)
+     (Dedekind domains and euclidean domains
+     and infinite enumerated sets and metric spaces)
 
 In other words, the module created by ``FreeModule`` is actually `\ZZ^3`,
 while, in the absence of any distinguished basis, no *canonical* isomorphism
@@ -997,7 +999,7 @@ class FiniteRankFreeModule(ReflexiveModule_base, FiniteRankFreeModule_abstract):
         :class:`~sage.combinat.free_module.CombinatorialFreeModule`, since
         both classes deal with modules with a *distinguished basis* (see
         details :ref:`above <diff-FreeModule>`).
-        Moreover, following the recommendation exposed in :trac:`16427`
+        Moreover, following the recommendation exposed in :issue:`16427`
         the class :class:`FiniteRankFreeModule` inherits directly from
         :class:`~sage.structure.parent.Parent` (with the category set to
         :class:`~sage.categories.modules.Modules`) and not from the Cython

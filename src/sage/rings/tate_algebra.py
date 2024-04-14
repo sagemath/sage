@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 r"""
 Tate algebras
 
@@ -1301,7 +1302,7 @@ class TateAlgebra_generic(Parent):
 
         TESTS:
 
-        Check that :trac:`34372` is fixed::
+        Check that :issue:`34372` is fixed::
 
             sage: A.<x,y> = TateAlgebra(Zp(3))
             sage: R.<a,b> = PolynomialRing(A)

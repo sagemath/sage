@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # sage.doctest: needs sage.graphs
 """
 Examples of simplicial complexes
@@ -195,7 +196,7 @@ class UniqueSimplicialComplex(SimplicialComplex, UniqueRepresentation):
     """
     This combines :class:`SimplicialComplex` and
     :class:`UniqueRepresentation`. It is intended to be used to make
-    standard examples of simplicial complexes unique. See :trac:`13566`.
+    standard examples of simplicial complexes unique. See :issue:`13566`.
 
     INPUT:
 

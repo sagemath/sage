@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Elements, Array and Lists With Clone Protocol, demonstration classes
 
@@ -30,7 +31,7 @@ cdef class IncreasingArray(ClonableArray):
         sage: TestSuite(IncreasingArrays()([])).run()
     """
 
-    cpdef check(self) noexcept:
+    cpdef check(self):
         """
         Check that ``self`` is increasing.
 
@@ -113,7 +114,7 @@ cdef class IncreasingList(ClonableList):
         sage: TestSuite(IncreasingLists()([])).run()
     """
 
-    cpdef check(self) noexcept:
+    cpdef check(self):
         """
         Check that ``self`` is increasing
 
@@ -146,7 +147,7 @@ cdef class IncreasingIntArray(ClonableIntArray):
         sage: TestSuite(IncreasingIntArrays()([])).run()
     """
 
-    cpdef check(self) noexcept:
+    cpdef check(self):
         """
         Check that ``self`` is increasing.
 
@@ -193,7 +194,7 @@ cdef class SortedList(NormalizedClonableList):
         sage: TestSuite(IncreasingIntArrays()([1,2,3])).run()
         sage: TestSuite(IncreasingIntArrays()([])).run()
     """
-    cpdef normalize(self) noexcept:
+    cpdef normalize(self):
         """
         Normalize ``self``
 
@@ -213,7 +214,7 @@ cdef class SortedList(NormalizedClonableList):
         self._require_mutable()
         self._get_list().sort()
 
-    cpdef check(self) noexcept:
+    cpdef check(self):
         """
         Check that ``self`` is strictly increasing
 

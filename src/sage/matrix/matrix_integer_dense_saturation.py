@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-linbox
 """
 Saturation over ZZ
 """
@@ -316,7 +317,7 @@ def index_in_saturation(A, proof=True):
         sage: W.index_in(S)
         18
 
-    For any zero matrix the index in its saturation is 1 (see :trac:`13034`)::
+    For any zero matrix the index in its saturation is 1 (see :issue:`13034`)::
 
         sage: m = matrix(ZZ, 3)
         sage: m

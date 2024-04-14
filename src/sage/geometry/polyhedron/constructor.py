@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 r"""
 Polyhedra
 
@@ -505,9 +506,9 @@ def Polyhedron(vertices=None, rays=None, lines=None,
         sage: p.add_constraint(x >= -1)
         sage: p.add_constraint(y <= 1)
         sage: p.add_constraint(y >= -1)
-        sage: Polyhedron(o)
+        sage: Polyhedron(p, base_ring=ZZ)
         A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 4 vertices
-        sage: Polyhedron(o, base_ring=QQ)
+        sage: Polyhedron(p)
         A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 4 vertices
 
         sage: # needs sage.combinat
@@ -530,18 +531,18 @@ def Polyhedron(vertices=None, rays=None, lines=None,
 
     TESTS:
 
-    Check that giving ``float`` input gets converted to ``RDF`` (see :trac:`22605`)::
+    Check that giving ``float`` input gets converted to ``RDF`` (see :issue:`22605`)::
 
         sage: f = float(1.1)
         sage: Polyhedron(vertices=[[f]])
         A 0-dimensional polyhedron in RDF^1 defined as the convex hull of 1 vertex
 
-    Check that giving ``int`` input gets converted to ``ZZ`` (see :trac:`22605`)::
+    Check that giving ``int`` input gets converted to ``ZZ`` (see :issue:`22605`)::
 
         sage: Polyhedron(vertices=[[int(42)]])
         A 0-dimensional polyhedron in ZZ^1 defined as the convex hull of 1 vertex
 
-    Check that giving ``Fraction`` input gets converted to ``QQ`` (see :trac:`22605`)::
+    Check that giving ``Fraction`` input gets converted to ``QQ`` (see :issue:`22605`)::
 
         sage: from fractions import Fraction
         sage: f = Fraction(int(6), int(8))
@@ -549,7 +550,7 @@ def Polyhedron(vertices=None, rays=None, lines=None,
         A 0-dimensional polyhedron in QQ^1 defined as the convex hull of 1 vertex
 
     Check that non-compact polyhedra given by V-representation have base ring ``QQ``,
-    not ``ZZ`` (see :trac:`27840`)::
+    not ``ZZ`` (see :issue:`27840`)::
 
         sage: Q = Polyhedron(vertices=[(1, 2, 3), (1, 3, 2), (2, 1, 3),
         ....:                          (2, 3, 1), (3, 1, 2), (3, 2, 1)],
@@ -568,7 +569,7 @@ def Polyhedron(vertices=None, rays=None, lines=None,
         TypeError: no conversion of this rational to integer
 
     Check that input with too many bits of precision returns an error (see
-    :trac:`22552`)::
+    :issue:`22552`)::
 
         sage: Polyhedron(vertices=[(8.3319544851638732, 7.0567045956967727),            # needs sage.rings.real_mpfr
         ....:                      (6.4876921900819049, 4.8435898415984129)])
@@ -576,7 +577,7 @@ def Polyhedron(vertices=None, rays=None, lines=None,
         ...
         ValueError: the only allowed inexact ring is 'RDF' with backend 'cdd'
 
-    Check that setting ``base_ring`` to a ``RealField`` returns an error (see :trac:`22552`)::
+    Check that setting ``base_ring`` to a ``RealField`` returns an error (see :issue:`22552`)::
 
         sage: Polyhedron(vertices=[(8.3, 7.0), (6.4, 4.8)], base_ring=RealField(40))    # needs sage.rings.real_mpfr
         Traceback (most recent call last):
@@ -587,7 +588,7 @@ def Polyhedron(vertices=None, rays=None, lines=None,
         ...
         ValueError: no default backend for computations with Real Field with 53 bits of precision
 
-    Check that :trac:`17339` is fixed::
+    Check that :issue:`17339` is fixed::
 
         sage: Polyhedron(ambient_dim=0, ieqs=[], eqns=[[1]], base_ring=QQ)
         The empty polyhedron in QQ^0

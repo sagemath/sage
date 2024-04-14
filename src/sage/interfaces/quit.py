@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Quitting interfaces
 """
@@ -57,6 +58,7 @@ def register_spawned_process(pid, cmd=''):
 
 
 expect_objects = []
+
 
 def expect_quitall(verbose=False):
     """

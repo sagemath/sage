@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage_setup: distribution = sagemath-graphs
 r"""
 Database of strongly regular graphs
 
@@ -1736,7 +1736,7 @@ def is_nowhere0_twoweight(int v, int k, int l, int mu):
         return (Nowhere0WordsTwoWeightCodeGraph, q)
 
 
-cdef eigenvalues(int v, int k, int l, int mu) noexcept:
+cdef eigenvalues(int v, int k, int l, int mu):
     r"""
     Return the eigenvalues of a (v,k,l,mu)-strongly regular graph.
 
@@ -1846,7 +1846,7 @@ def eigenmatrix(int v, int k, int l, int mu):
         return Matrix(ZZ, [[1, k, v-k-1], [1, r, -r-1], [1, s, -s-1]])
 
 
-cpdef latin_squares_graph_parameters(int v, int k, int l,int mu) noexcept:
+cpdef latin_squares_graph_parameters(int v, int k, int l,int mu):
     r"""
     Check whether (v,k,l,mu)-strongly regular graph has parameters of an `L_g(n)` s.r.g.
 
@@ -2698,7 +2698,7 @@ cdef bint seems_feasible(int v, int k, int l, int mu) noexcept:
 
     TESTS:
 
-    :trac:`32306` is fixed::
+    :issue:`32306` is fixed::
 
         sage: from sage.graphs.strongly_regular_db import strongly_regular_graph
         sage: strongly_regular_graph(16384, 8256, 4160, 4160, existence=True)           # needs sage.combinat sage.modules
@@ -2868,7 +2868,7 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
 
     TESTS:
 
-    Check that :trac:`26513` is fixed::
+    Check that :issue:`26513` is fixed::
 
         sage: graphs.strongly_regular_graph(539, 288, 162, 144)                         # needs sage.combinat
         descendant of (540, 264, 138, 120)-strongly regular graph at ... 539 vertices
@@ -2890,7 +2890,7 @@ def strongly_regular_graph(int v, int k, int l, int mu=-1, bint existence=False,
         ....:             if 'Brouwer' not in str(e):
         ....:                 raise
 
-    `\mu=0` behaves correctly (:trac:`19712`)::
+    `\mu=0` behaves correctly (:issue:`19712`)::
 
         sage: graphs.strongly_regular_graph(10,2,1)
         Traceback (most recent call last):
@@ -3256,7 +3256,7 @@ def _build_small_srg_database():
             _small_srg_database[N, K, l, m] = [strongly_regular_from_two_weight_code, code['M']]
 
 
-cdef load_brouwer_database() noexcept:
+cdef load_brouwer_database():
     r"""
     Loads Andries Brouwer's database into _brouwer_database.
     """

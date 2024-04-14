@@ -1,5 +1,6 @@
+# sage_setup: distribution = sagemath-modules
 """
-Arbitrary Precision Floating Point Complex Numbers
+Arbitrary precision floating point complex numbers using GNU MPFR
 
 AUTHORS:
 
@@ -11,7 +12,7 @@ AUTHORS:
 
 - Vincent Delecroix (2010-01): plot function
 
-- Niles Johnson (2010-08): :trac:`3893`: ``random_element()`` should pass on
+- Niles Johnson (2010-08): :issue:`3893`: ``random_element()`` should pass on
   ``*args`` and ``**kwds``.
 
 - Travis Scrimshaw (2012-10-18): Added documentation for full coverage
@@ -176,6 +177,12 @@ def ComplexField(prec=53, names=None):
         sage: i = ComplexField(200).gen()
         sage: i^2
         -1.0000000000000000000000000000000000000000000000000000000000
+
+    .. SEEALSO::
+
+        - :class:`~sage.rings.complex_mpfr.ComplexField_class`
+        - :class:`~sage.rings.real_arb.ComplexBallField` (complex numbers with
+          rigorous error bounds)
     """
     global cache
     if prec in cache:
@@ -261,6 +268,13 @@ class ComplexField_class(sage.rings.abc.ComplexField):
         False
         sage: CC == 1.1
         False
+
+    .. SEEALSO::
+
+        - :func:`~sage.rings.complex_mpfr.ComplexField` (constructor)
+        - :class:`~sage.rings.real_arb.ComplexBallField` (complex numbers with
+          rigorous error bounds)
+        - :mod:`~sage.rings.real_mpfr`
     """
     def __init__(self, prec=53):
         """
@@ -444,7 +458,9 @@ class ComplexField_class(sage.rings.abc.ComplexField):
             sage: CC.gen() + QQ.extension(x^2 + 1, 'I', embedding=None).gen()           # needs sage.rings.number_field
             Traceback (most recent call last):
             ...
-            TypeError: unsupported operand parent(s) for +: 'Complex Field with 53 bits of precision' and 'Number Field in I with defining polynomial x^2 + 1'
+            TypeError: unsupported operand parent(s) for +:
+            'Complex Field with 53 bits of precision' and
+            'Number Field in I with defining polynomial x^2 + 1'
 
         In the absence of arguments we return zero::
 
@@ -469,7 +485,7 @@ class ComplexField_class(sage.rings.abc.ComplexField):
             sage: CC((1,2)) # indirect doctest
             1.00000000000000 + 2.00000000000000*I
 
-        Check that :trac:`14989` is fixed::
+        Check that :issue:`14989` is fixed::
 
             sage: x = polygen(ZZ, 'x')
             sage: QQi = NumberField(x^2 + 1, 'i', embedding=CC(0,1))                    # needs sage.rings.number_field
@@ -873,7 +889,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         True
     """
 
-    cdef ComplexNumber _new(self) noexcept:
+    cdef ComplexNumber _new(self):
         """
         Quickly creates a new initialized complex number with the same
         parent as ``self``.
@@ -959,7 +975,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         """
         TESTS:
 
-        Check that :trac:`12038` is resolved::
+        Check that :issue:`12038` is resolved::
 
             sage: from sage.rings.complex_mpfr import ComplexNumber as CN
             sage: coerce(CN, 1+I)                                                       # needs sage.symbolic
@@ -1035,7 +1051,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         EXAMPLES::
 
-            sage: for prec in (2, 53, 200):  # not tested, known bug (see :trac:`32129`)
+            sage: for prec in (2, 53, 200):  # not tested, known bug (see :issue:`32129`)
             ....:     fld = ComplexField(prec)
             ....:     var = polygen(fld)
             ....:     ins = [-20, 0, 1, -2^4000, 2^-4000] + [fld._real_field().random_element() for _ in range(3)]
@@ -1316,7 +1332,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         Note that the general format does not exactly match the behaviour of
         ``float``. Some Python versions do not implement the full spec
-        (see :trac:`30689`)::
+        (see :issue:`30689`)::
 
             sage: format(CC(3, 0), '.4g')
             '3.000 + 0e-15*I'
@@ -1466,7 +1482,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         import sympy
         return self.real()._sympy_() + self.imag()._sympy_() * sympy.I
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         Add ``self`` to ``right``.
 
@@ -1481,7 +1497,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         mpfr_add(x.__im, self.__im, (<ComplexNumber>right).__im, rnd)
         return x
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         Subtract ``right`` from ``self``.
 
@@ -1496,7 +1512,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         mpfr_sub(x.__im, self.__im, (<ComplexNumber>right).__im, rnd)
         return x
 
-    cpdef _mul_(self, right) noexcept:
+    cpdef _mul_(self, right):
         """
         Multiply ``self`` by ``right``.
 
@@ -1565,7 +1581,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         """
         return self.norm_c()
 
-    cdef RealNumber norm_c(ComplexNumber self) noexcept:
+    cdef RealNumber norm_c(ComplexNumber self):
         cdef RealNumber x
         x = RealNumber(self._parent._real_field(), None)
 
@@ -1582,7 +1598,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         mpfr_clear(t1)
         return x
 
-    cdef RealNumber abs_c(ComplexNumber self) noexcept:
+    cdef RealNumber abs_c(ComplexNumber self):
         cdef RealNumber x
         x = RealNumber(self._parent._real_field(), None)
 
@@ -1600,7 +1616,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         mpfr_clear(t1)
         return x
 
-    cpdef _div_(self, right) noexcept:
+    cpdef _div_(self, right):
         """
         Divide ``self`` by ``right``.
 
@@ -1667,7 +1683,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         TESTS:
 
-        Check that :trac:`11323` is fixed::
+        Check that :issue:`11323` is fixed::
 
             sage: float(5)^(0.5 + 14.1347251*I)
             -1.62414637645790 - 1.53692828324508*I
@@ -1957,7 +1973,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
         return complex(mpfr_get_d(self.__re, rnd),
                        mpfr_get_d(self.__im, rnd))
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Compare ``left`` and ``right``.
 
@@ -2238,7 +2254,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         TESTS:
 
-        Verify that :trac:`29409` is fixed::
+        Verify that :issue:`29409` is fixed::
 
             sage: cot(1 + I).n()
             0.217621561854403 - 0.868014142895925*I
@@ -2868,7 +2884,7 @@ cdef class ComplexNumber(sage.structure.element.FieldElement):
 
         TESTS:
 
-        Check that :trac:`7099` is fixed::
+        Check that :issue:`7099` is fixed::
 
             sage: C = ComplexField(400)
             sage: C(2 + I).gamma_inc(C(3 + I))  # abs tol 1e-120                        # needs sage.libs.pari
@@ -3302,7 +3318,7 @@ def create_ComplexNumber(s_real, s_imag=None, int pad=0, min_prec=53):
     TESTS:
 
     Make sure we've rounded up ``log(10,2)`` enough to guarantee
-    sufficient precision (:trac:`10164`)::
+    sufficient precision (:issue:`10164`)::
 
         sage: s = "1." + "0"*10**6 + "1"
         sage: sage.rings.complex_mpfr.create_ComplexNumber(s,0).real()-1 == 0
@@ -3346,7 +3362,7 @@ cdef class RRtoCC(Map):
         self._zero = ComplexNumber(CC, 0)
         self._repr_type_str = "Natural"
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         A helper for pickling and copying.
 
@@ -3372,7 +3388,7 @@ cdef class RRtoCC(Map):
         slots['_zero'] = self._zero
         return slots
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         A helper for unpickling and copying.
 
@@ -3391,7 +3407,7 @@ cdef class RRtoCC(Map):
         Map._update_slots(self, _slots)
         self._zero = _slots['_zero']
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         EXAMPLES::
 

@@ -46,7 +46,7 @@ class Package(object):
         self._init_checksum()
         self._init_version()
         self._init_type()
-        self._init_install_requires()
+        self._init_version_requirements()
         self._init_dependencies()
         self._init_trees()
 
@@ -344,7 +344,7 @@ class Package(object):
         """
         if self.__trees is not None:
             return self.__trees
-        if self.__install_requires is not None:
+        if self.__version_requirements is not None:
             return 'SAGE_VENV'
         if self.has_file('requirements.txt'):
             return 'SAGE_VENV'
@@ -355,9 +355,9 @@ class Package(object):
         """
         Return the Python distribution name or ``None`` for non-Python packages
         """
-        if self.__install_requires is None:
+        if self.__version_requirements is None:
             return None
-        for line in self.__install_requires.split('\n'):
+        for line in self.__version_requirements.split('\n'):
             line = line.strip()
             if line.startswith('#'):
                 continue
@@ -379,6 +379,23 @@ class Package(object):
         Return a list of strings, the package names of the order-only dependencies
         """
         return self.__dependencies.partition('|')[2].strip().split() + self.__dependencies_order_only.strip().split()
+
+    @property
+    def dependencies_optional(self):
+        """
+        Return a list of strings, the package names of the optional build dependencies
+        """
+        return self.__dependencies_optional.strip().split()
+
+    @property
+    def dependencies_runtime(self):
+        """
+        Return a list of strings, the package names of the runtime dependencies
+        """
+        # after a '|', we have order-only build dependencies
+        return self.__dependencies.partition('|')[0].strip().split()
+
+    dependencies = dependencies_runtime
 
     @property
     def dependencies_check(self):
@@ -493,27 +510,32 @@ class Package(object):
         ]
         self.__type = package_type
 
-    def _init_install_requires(self):
+    def _init_version_requirements(self):
         try:
-            with open(os.path.join(self.path, 'install-requires.txt')) as f:
-                self.__install_requires = f.read().strip()
+            with open(os.path.join(self.path, 'version_requirements.txt')) as f:
+                self.__version_requirements = f.read().strip()
         except IOError:
-            self.__install_requires = None
+            self.__version_requirements = None
 
     def _init_dependencies(self):
         try:
             with open(os.path.join(self.path, 'dependencies')) as f:
-                self.__dependencies = f.readline().strip()
+                self.__dependencies = f.readline().partition('#')[0].strip()
         except IOError:
             self.__dependencies = ''
         try:
             with open(os.path.join(self.path, 'dependencies_check')) as f:
-                self.__dependencies_check = f.readline().strip()
+                self.__dependencies_check = f.readline().partition('#')[0].strip()
         except IOError:
             self.__dependencies_check = ''
         try:
+            with open(os.path.join(self.path, 'dependencies_optional')) as f:
+                self.__dependencies_optional = f.readline().partition('#')[0].strip()
+        except IOError:
+            self.__dependencies_optional = ''
+        try:
             with open(os.path.join(self.path, 'dependencies_order_only')) as f:
-                self.__dependencies_order_only = f.readline()
+                self.__dependencies_order_only = f.readline().partition('#')[0].strip()
         except IOError:
             self.__dependencies_order_only = ''
 

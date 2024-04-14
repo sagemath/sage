@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 """
 Sets of homomorphisms between number fields
 """
@@ -39,7 +40,7 @@ class NumberFieldHomset(RingHomset_generic):
         """
         TESTS:
 
-        Check that :trac:`23647` is fixed::
+        Check that :issue:`23647` is fixed::
 
             sage: x = polygen(ZZ, 'x')
             sage: K.<a, b> = NumberField([x^2 - 2, x^2 - 3])
@@ -84,7 +85,7 @@ class NumberFieldHomset(RingHomset_generic):
             sage: f == End(H1.domain(), category=NumberFields())(g)
             True
 
-        Check that :trac:`28869` is fixed::
+        Check that :issue:`28869` is fixed::
 
             sage: K.<a> = CyclotomicField(8)
             sage: L.<b> = K.absolute_field()
@@ -360,7 +361,7 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
               Defn: a |--> a
                     b |--> b
 
-        Check that :trac:`28869` is fixed::
+        Check that :issue:`28869` is fixed::
 
             sage: K.<a,b> = NumberField((x^2 + 1, x^2 - 2))
             sage: L.<c> = K.absolute_field()
@@ -440,7 +441,7 @@ class RelativeNumberFieldHomset(NumberFieldHomset):
 
         TESTS:
 
-        Check that :trac:`30518` is fixed::
+        Check that :issue:`30518` is fixed::
 
             sage: K.<i> = QuadraticField(-1, embedding=QQbar.gen())
             sage: L.<a> = K.extension(x^2 - 6*x - 4)
@@ -559,7 +560,7 @@ class CyclotomicFieldHomset(NumberFieldHomset):
 
         TESTS:
 
-        Check that :trac:`28869` is fixed::
+        Check that :issue:`28869` is fixed::
 
             sage: K.<a> = CyclotomicField(8)
             sage: L.<b> = K.absolute_field()

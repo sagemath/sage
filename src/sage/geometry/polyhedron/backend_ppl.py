@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 """
 The PPL (Parma Polyhedra Library) backend for polyhedral computations
 """
@@ -162,7 +163,7 @@ class Polyhedron_ppl(Polyhedron_mutable):
 
         TESTS:
 
-        Check that :trac:`33666` is fixed::
+        Check that :issue:`33666` is fixed::
 
             sage: cube = polytopes.cube()
             sage: parent = cube.parent()
@@ -234,7 +235,7 @@ class Polyhedron_ppl(Polyhedron_mutable):
 
         TESTS:
 
-        Check that :trac:`33666` is fixed::
+        Check that :issue:`33666` is fixed::
 
             sage: cube = polytopes.cube()
             sage: parent = cube.parent()

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Euclidean Groups
 
@@ -170,7 +171,7 @@ class EuclideanGroup(AffineGroup):
 
         OUTPUT:
 
-        The return value is ignored. You must raise a ``TypeError`` if
+        The return value is ignored. You must raise a :class:`TypeError` if
         the input does not define a valid group element.
 
         TESTS::

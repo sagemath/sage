@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 # sage.doctest: needs sage.libs.pari
 r"""
 PARI Groups
@@ -12,7 +13,7 @@ from sage.rings.integer import Integer
 lazy_import('sage.groups.perm_gps.permgroup_named', 'TransitiveGroup')
 
 
-class PariGroup():
+class PariGroup:
     def __init__(self, x, degree):
         """
         EXAMPLES::

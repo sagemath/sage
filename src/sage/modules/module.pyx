@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Abstract base class for modules
 
@@ -105,7 +106,7 @@ cdef class Module(Parent):
 
      TESTS:
 
-     We check that :trac:`8119` has been resolved::
+     We check that :issue:`8119` has been resolved::
 
         sage: # needs sage.modules
         sage: M = ZZ^3
@@ -132,7 +133,7 @@ cdef class Module(Parent):
             category = Modules(base)
         Parent.__init__(self, base=base, category=category, names=names)
 
-    cpdef _coerce_map_from_(self, M) noexcept:
+    cpdef _coerce_map_from_(self, M):
         """
         Return a coercion map from `M` to ``self``, or None.
 
@@ -161,7 +162,7 @@ cdef class Module(Parent):
 
         TESTS:
 
-        Make sure :trac:`3638` is fixed::
+        Make sure :issue:`3638` is fixed::
 
             sage: vector(ZZ,[1,2,11]) == vector(Zmod(8),[1,2,3])                        # needs sage.modules
             True
@@ -270,6 +271,7 @@ cdef class Module(Parent):
         from sage.categories.homset import End
         return End(self)
 
+
 def is_Module(x):
     """
     Return ``True`` if ``x`` is a module, ``False`` otherwise.
@@ -286,9 +288,9 @@ def is_Module(x):
         True
         sage: is_Module(10)
         False
-
     """
     return isinstance(x, Module)
+
 
 def is_VectorSpace(x):
     """

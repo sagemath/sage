@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 r"""
 Format Sage documentation for viewing with IPython and the notebook
 
@@ -16,7 +17,7 @@ AUTHORS:
 TESTS:
 
 Check that argspecs of extension function/methods appear correctly,
-see :trac:`12849`::
+see :issue:`12849`::
 
     sage: from sage.env import SAGE_DOC
     sage: docfilename = os.path.join(SAGE_DOC, 'html', 'en', 'reference', 'calculus', 'sage', 'symbolic', 'expression.html')
@@ -338,7 +339,7 @@ def skip_TESTS_block(docstring):
         sage: skip_TESTS_block(start + test + another_fake).rstrip() == start.rstrip()
         True
 
-    Double colons ``::`` are also not considered as headers (:trac:`27896`)::
+    Double colons ``::`` are also not considered as headers (:issue:`27896`)::
 
         sage: colons = ' ::\n\n     sage: 2+2\n     4\n\n'
         sage: skip_TESTS_block(start + test2 + colons).rstrip() == start.rstrip()
@@ -502,18 +503,35 @@ def process_dollars(s):
     return s
 
 
-# Sage github issue shortcuts. For example, :trac:`7549` .
+# When adding roles here, also add them to SAGE_ROOT/src/tox.ini [flake8]
+# and document them in SAGE_ROOT/src/doc/en/developer/sage_manuals.rst
+#
+# Sage github issue shortcuts. For example, :issue:`7549`.
 pythonversion = sys.version.split(' ')[0]
 extlinks = {
     'python': (f'https://docs.python.org/release/{pythonversion}/%s', None),
-    'trac': ('https://github.com/sagemath/sage/issues/%s', 'github issue #%s'), # support :trac: for backward compatibility
-    'issue': ('https://github.com/sagemath/sage/issues/%s', 'github issue #%s'),
+    'issue': ('https://github.com/sagemath/sage/issues/%s', 'Issue #%s'),
+    'sage_root': ('https://github.com/sagemath/sage/tree/develop/%s', 'SAGE_ROOT/%s'),
     'wikipedia': ('https://en.wikipedia.org/wiki/%s', 'Wikipedia article %s'),
     'arxiv': ('https://arxiv.org/abs/%s', 'arXiv %s'),
     'oeis': ('https://oeis.org/%s', 'OEIS sequence %s'),
     'doi': ('https://doi.org/%s', 'doi:%s'),
     'pari': ('https://pari.math.u-bordeaux.fr/dochtml/help/%s', 'pari:%s'),
-    'mathscinet': ('https://www.ams.org/mathscinet-getitem?mr=%s', 'MathSciNet %s')
+    'mathscinet': ('https://www.ams.org/mathscinet-getitem?mr=%s', 'MathSciNet %s'),
+    'common_lisp': ('https://www.lispworks.com/documentation/lw50/CLHS/Body/%s.htm', 'Common Lisp: %s'),
+    'ecl': ('https://ecl.common-lisp.dev/static/manual/%s.html', 'ECL: %s'),
+    'gap': ('https://docs.gap-system.org/doc/ref/%s_mj.html', 'GAP: %s'),
+    'gap_package': ('https://docs.gap-system.org/pkg/%s', 'GAP package %s'),
+    'giac_cascmd': ('https://www-fourier.ujf-grenoble.fr/~parisse/giac/doc/en/cascmd_en/%s.html', 'Giac: %s'),
+    'giac_us': ('https://www-fourier.ujf-grenoble.fr/~parisse/giac_us.html#%s', 'Giac API: %s'),
+    'maxima': ('https://maxima.sourceforge.io/docs/manual/maxima_singlepage.html#%s', 'Maxima: %s'),
+    'meson': ('https://mesonbuild.com/%s', 'Meson: %s'),
+    'polymake': ('https://polymake.org/doku.php/documentation/latest/%s', 'polymake: %s'),
+    'ppl': ('https://www.bugseng.com/products/ppl/documentation/user/ppl-user-1.2-html/%s.html', 'PPL: %s'),
+    'qepcad': ('https://www.usna.edu/CS/qepcadweb/B/%s.html', 'QEPCAD: %s'),
+    'scip': ('https://scipopt.org/doc/html/%s.php', 'SCIP: %s'),
+    'singular': ('https://www.singular.uni-kl.de/Manual/4-3-2/%s.htm', 'Singular: %s'),
+    'soplex': ('https://soplex.zib.de/doc/html/%s.php', 'SoPlex: %s'),
 }
 
 
@@ -541,7 +559,7 @@ def process_extlinks(s, embedded=False):
     EXAMPLES::
 
         sage: from sage.misc.sagedoc import process_extlinks
-        sage: process_extlinks('See :trac:`1234`, :wikipedia:`Wikipedia <Sage_(mathematics_software)>`, and :trac:`4321` ...')
+        sage: process_extlinks('See :issue:`1234`, :wikipedia:`Wikipedia <Sage_(mathematics_software)>`, and :issue:`4321` ...')
         'See https://github.com/sagemath/sage/issues/1234, https://en.wikipedia.org/wiki/Sage_(mathematics_software), and https://github.com/sagemath/sage/issues/4321 ...'
         sage: process_extlinks('See :issue:`1234` for more information.', embedded=True)
         'See :issue:`1234` for more information.'
@@ -684,7 +702,7 @@ def format(s, embedded=False):
         "   Returns ...  Todo: add tests as in combinat::rankers\n"
 
     In the following use case, the ``nodetex`` directive would have been ignored prior
-    to :trac:`11815`::
+    to :issue:`11815`::
 
         sage: cython_code = ["def testfunc(x):",
         ....: "    '''",
@@ -704,7 +722,7 @@ def format(s, embedded=False):
         <BLANKLINE>
 
     We check that the ``noreplace`` directive works, even combined with
-    ``nodetex`` (see :trac:`11817`)::
+    ``nodetex`` (see :issue:`11817`)::
 
         sage: print(format('''nodetex, noreplace\n<<<identity_matrix>>>`\\not= 0`'''))
         <<<identity_matrix>>>`\not= 0`
@@ -722,7 +740,7 @@ def format(s, embedded=False):
            Return the n x n identity matrix over the given ring.
         ...
 
-    Check that backslashes are preserved in code blocks (:trac:`29140`)::
+    Check that backslashes are preserved in code blocks (:issue:`29140`)::
 
         sage: format('::\n'                                                             # needs sphinx
         ....:        '\n'

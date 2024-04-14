@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.rings.finite_rings
 r"""
 Frobenius isogenies of elliptic curves
@@ -324,7 +325,7 @@ class EllipticCurveHom_frobenius(EllipticCurveHom):
 
         TESTS:
 
-        See :trac:`34811`::
+        See :issue:`34811`::
 
             sage: pi.rational_maps()[0].parent()
             Fraction Field of Multivariate Polynomial Ring in x, y over Finite Field of size 11
@@ -349,7 +350,7 @@ class EllipticCurveHom_frobenius(EllipticCurveHom):
 
         TESTS:
 
-        See :trac:`34811`::
+        See :issue:`34811`::
 
             sage: pi.x_rational_map().parent()
             Fraction Field of Sparse Univariate Polynomial Ring in x over Finite Field of size 11

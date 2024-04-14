@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 r"""
 Finite word
 
@@ -1426,7 +1427,7 @@ class FiniteWord_class(Word_class):
             return Set(self.factor_iterator(n))
         elif algorithm == 'naive':
             if n is None:
-                S = set([self[0:0]])
+                S = {self[0:0]}
                 for n in range(1, self.length()+1):
                     for i in range(self.length()-n+1):
                         S.add(self[i:i+n])
@@ -2134,7 +2135,7 @@ class FiniteWord_class(Word_class):
 
         TESTS:
 
-        We check that :trac:`11128` is fixed::
+        We check that :issue:`11128` is fixed::
 
             sage: w = Word([0,0,1,0,2,1])
             sage: [w.conjugate(i).conjugate_position(w) for i in range(w.length())]
@@ -2199,7 +2200,7 @@ class FiniteWord_class(Word_class):
             sage: Word('12131').is_conjugate_with(Word('11213'))
             True
 
-        We make sure that :trac:`11128` is fixed::
+        We make sure that :issue:`11128` is fixed::
 
             sage: Word('abaa').is_conjugate_with(Word('aaba'))
             True
@@ -3006,7 +3007,7 @@ class FiniteWord_class(Word_class):
             [word: , word: ab, word: abbabaab, word: ba, word: baba, word: bbabaa]
         """
         LPS = self.lps_lengths(f)
-        return set(self[i - LPS[i]: i] for i in range(len(self) + 1))
+        return {self[i - LPS[i]: i] for i in range(len(self) + 1)}
 
     def palindromic_complexity(self, n):
         r"""
@@ -4340,7 +4341,7 @@ class FiniteWord_class(Word_class):
 
         TESTS:
 
-        Check that :trac:`12804` is fixed::
+        Check that :issue:`12804` is fixed::
 
             sage: w = Word(iter("ababab"), length="finite")
             sage: w.find("ab")
@@ -4421,7 +4422,7 @@ class FiniteWord_class(Word_class):
 
         TESTS:
 
-        Check that :trac:`12804` is fixed::
+        Check that :issue:`12804` is fixed::
 
             sage: w = Word(iter("abab"), length="finite")
             sage: w.rfind("ab")
@@ -6415,7 +6416,7 @@ class FiniteWord_class(Word_class):
             return Words()([])
         ss = self[0]
         c = 0
-        v = list()
+        v = []
         max_c = 0
         for s in self:
             if s == ss:
@@ -6969,7 +6970,7 @@ class FiniteWord_class(Word_class):
 
         TESTS:
 
-        We make sure that :trac:`8490` is fixed::
+        We make sure that :issue:`8490` is fixed::
 
             sage: Word('11').is_square_free()
             False
@@ -7035,7 +7036,7 @@ class FiniteWord_class(Word_class):
 
         TESTS:
 
-        We make sure that :trac:`8490` is fixed::
+        We make sure that :issue:`8490` is fixed::
 
             sage: Word('111').is_cube_free()
             False

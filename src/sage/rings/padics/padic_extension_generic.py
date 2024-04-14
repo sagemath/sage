@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 # sage.doctest: needs sage.libs.ntl
 """
 `p`-adic Extension Generic
@@ -903,7 +904,7 @@ class DefPolyConversion(Morphism):
 
         TESTS:
 
-        We check that :trac:`25990` has been resolved::
+        We check that :issue:`25990` has been resolved::
 
             sage: R.<a> = Zp(2).extension(x^3 - 2)
             sage: K = R.fraction_field()

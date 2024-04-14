@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 r"""
 Interface to 4ti2
 
@@ -104,7 +105,7 @@ class FourTi2():
         n = 0
         while True:
             project = "project_%s" % n
-            touch_file = os.path.join(self.directory(),project) + '.touch'
+            touch_file = os.path.join(self.directory(), project) + '.touch'
             if not os.path.exists(touch_file):
                 break
             n += 1

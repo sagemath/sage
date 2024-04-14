@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.flint sage.libs.pari
 r"""
 Ambient spaces of modular symbols
@@ -1439,7 +1440,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
             [ 0  0 -1  3 -1 -1  1]
             [ 0 -1 -1  1  0  1 -1]
 
-        Check that :trac:`13198` is fixed::
+        Check that :issue:`13198` is fixed::
 
             sage: M22 = ModularSymbols(Gamma1(22), sign=1)
             sage: M2 = ModularSymbols(Gamma1(2))
@@ -2071,7 +2072,7 @@ class ModularSymbolsAmbient(ModularSymbolsSpace, AmbientHeckeModule):
             sage: [e(d) for d in [0..6]]
             [0, 1, 0, 1, 0, -1, 0]
 
-        We test that the sign issue at :trac:`8620` is fixed::
+        We test that the sign issue at :issue:`8620` is fixed::
 
             sage: M = Newforms(Gamma1(13),names = 'a')[0].modular_symbols(sign=0)
             sage: M.diamond_bracket_operator(4).matrix()

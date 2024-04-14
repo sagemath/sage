@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.libs.pari
 r"""
 Elements of Quotients of Univariate Polynomial Rings
@@ -353,7 +354,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         TESTS:
 
         Raise an exception if the base ring is not a field
-        (see :trac:`13303`)::
+        (see :issue:`13303`)::
 
             sage: Z16x.<x> = Integers(16)[]
             sage: S.<y> =  Z16x.quotient(x^2 + x + 1)
@@ -362,7 +363,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             ...
             NotImplementedError: The base ring (=Ring of integers modulo 16) is not a field
 
-        Check that :trac:`29469` is fixed::
+        Check that :issue:`29469` is fixed::
 
             sage: S(3).is_unit()
             True
@@ -409,7 +410,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         TESTS:
 
         An element is not invertible if the base ring is not a field
-        (see :trac:`13303`)::
+        (see :issue:`13303`)::
 
             sage: Z16x.<x> = Integers(16)[]
             sage: S.<y> =  Z16x.quotient(x^2 + x + 1)
@@ -418,7 +419,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             ...
             NotImplementedError: The base ring (=Ring of integers modulo 16) is not a field
 
-        Check that :trac:`29469` is fixed::
+        Check that :issue:`29469` is fixed::
 
             sage: ~S(3)
             11
@@ -714,7 +715,7 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
             sage: (u + 1).minpoly()                                                     # needs sage.modules
             x^6 + 425*x^5 + 19*x^4 + 125*x^3 + 189*x^2 + 239*x + 302
             sage: ext = F6.over(F2)                                                     # needs sage.modules
-            sage: ext(u + 1).minpoly()  # indirect doctest                              # needs sage.modules
+            sage: ext(u + 1).minpoly()  # indirect doctest                              # needs sage.modules # random
             x^3 + (396*i + 428)*x^2 + (80*i + 39)*x + 9*i + 178
 
         TESTS:

@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Dual matroids
 
@@ -382,15 +383,12 @@ class DualMatroid(Matroid):
             sage: N.rank()
             3
             sage: N
-            Pappus: Matroid of rank 3 on 9 elements with circuit-closures
-            {2: {{'a', 'b', 'c'}, {'a', 'e', 'i'}, {'a', 'f', 'h'},
-                 {'b', 'd', 'i'}, {'b', 'f', 'g'}, {'c', 'd', 'h'},
-                 {'c', 'e', 'g'}, {'d', 'e', 'f'}, {'g', 'h', 'i'}},
-             3: {{'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'}}}
+            Pappus: Matroid of rank 3 on 9 elements with 9 nonspanning circuits
         """
         return self._matroid
 
-    # REPRESENTATION
+    # representation
+
     def _repr_(self):
         """
         Return a string representation of the matroid.
@@ -408,7 +406,7 @@ class DualMatroid(Matroid):
         """
         return "Dual of '" + repr(self._matroid) + "'"
 
-    # COMPARISON
+    # comparison
 
     def __hash__(self):
         r"""
@@ -498,46 +496,7 @@ class DualMatroid(Matroid):
         """
         return not self == other
 
-    # COPYING, LOADING, SAVING
-
-    def __copy__(self):
-        """
-        Create a shallow copy.
-
-        EXAMPLES::
-
-            sage: M = matroids.catalog.Vamos()
-            sage: N = copy(M)  # indirect doctest
-            sage: M == N
-            True
-            sage: M.groundset() is N.groundset()
-            True
-        """
-        N = DualMatroid(self._matroid)
-        N.rename(self.get_custom_name())
-        return N
-
-    def __deepcopy__(self, memo={}):
-        """
-        Create a deep copy.
-
-        .. NOTE::
-
-            Since matroids are immutable, a shallow copy normally suffices.
-
-        EXAMPLES::
-
-            sage: M = matroids.catalog.Vamos().dual()
-            sage: N = deepcopy(M)  # indirect doctest
-            sage: M == N
-            True
-            sage: M.groundset() is N.groundset()
-            False
-        """
-        from copy import deepcopy
-        N = DualMatroid(deepcopy(self._matroid, memo))
-        N.rename(deepcopy(self.get_custom_name(), memo))
-        return N
+    # copying, loading, saving
 
     def __reduce__(self):
         """
