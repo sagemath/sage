@@ -167,7 +167,6 @@ bootstrap-clean:
 	rm -rf src/doc/en/reference/spkg/*.rst
 	for a in environment environment-optional src/environment src/environment-dev src/environment-optional; do rm -f $$a.yml $$a-3.[89].yml $$a-3.1[0-9].yml; done
 	rm -f src/Pipfile
-	rm -f src/pyproject.toml
 	rm -f src/requirements.txt
 	rm -f src/setup.cfg
 
