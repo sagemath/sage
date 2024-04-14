@@ -54,8 +54,8 @@ cdef class RealDoubleElement_gsl(RealDoubleElement):
                 return self._complex_double_(CDF).nth_root(n)
             else:
                 return - ((-self) ** (float(1)/n))
-        else:
-            return self ** (float(1)/n)
+
+        return self ** (float(1)/n)
 
     cdef __pow_double(self, double exponent, double sign):
         """
