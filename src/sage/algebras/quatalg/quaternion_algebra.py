@@ -264,6 +264,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
 
     Check that construction via ramification yields the correct algebra, i.e.
     that the differences between Sage and PARI are incorporated correctly::
+
         sage: x = polygen(ZZ, 'x')
         sage: K.<v> = NumberField(-3*x^5 - 11*x^4 - 4*x^3 + 1)
         sage: QuaternionAlgebra(K, [], [1/2, 0, 1/2])       # not tested
@@ -281,7 +282,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
         sage: inv_arch = [1/2, 1/2, 0, 0]
         sage: QuaternionAlgebra(K, [P,Q], inv_arch)         # not tested
         Quaternion Algebra (-51/4*j^3 - 11/4*j^2 + 523/4*j + 47/4, 149/2*j^3 + 85*j^2 - 1073/2*j - 900)
-        with base ring Number Field in j with defining polynomial 5*x^4 - 50*x^2 + 5            
+        with base ring Number Field in j with defining polynomial 5*x^4 - 50*x^2 + 5
 
     """
     def create_key(self, arg0, arg1=None, arg2=None, names='i,j,k'):
