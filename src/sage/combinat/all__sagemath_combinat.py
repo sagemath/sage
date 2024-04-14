@@ -148,7 +148,7 @@ lazy_import('sage.combinat.integer_vector_weighted', 'WeightedIntegerVectors')
 lazy_import('sage.combinat.integer_vectors_mod_permgroup',
             'IntegerVectorsModPermutationGroup')
 
-lazy_import('sage.combinat.q_analogues', ['gaussian_binomial', 'q_binomial'])
+lazy_import('sage.combinat.q_analogues', ['gaussian_binomial', 'q_binomial', 'number_of_irreducible_polynomials'])
 
 from sage.combinat.species.all import *
 
@@ -173,8 +173,6 @@ lazy_import('sage.combinat.binary_recurrence_sequences',
             'BinaryRecurrenceSequence')
 lazy_import('sage.combinat.recognizable_series', 'RecognizableSeriesSpace')
 lazy_import('sage.combinat.regular_sequence', 'RegularSequenceRing')
-
-
 
 # Six Vertex Model
 lazy_import('sage.combinat.six_vertex_model', 'SixVertexModel')

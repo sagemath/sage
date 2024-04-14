@@ -2267,8 +2267,10 @@ def sage_getsourcelines(obj):
     EXAMPLES::
 
         sage: from sage.misc.sageinspect import sage_getsourcelines
-        sage: from sage.matrix.constructor import matrix                                # needs sage.modules
-        sage: sage_getsourcelines(matrix)[1]                                            # needs sage.modules
+
+        sage: # needs sage.modules
+        sage: from sage.matrix.constructor import matrix
+        sage: sage_getsourcelines(matrix)[1]
         21
         sage: sage_getsourcelines(matrix)[0][0]
         'def matrix(*args, **kwds):\n'

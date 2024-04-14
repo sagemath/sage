@@ -14,7 +14,7 @@ Algebras
 #  The full text of the GPL is available at:
 #
 #                  https://www.gnu.org/licenses/
-# ****************************************************************************
+# *****************************************************************************
 
 from sage.algebras.all__sagemath_modules import *
 from sage.algebras.all__sagemath_combinat import *
