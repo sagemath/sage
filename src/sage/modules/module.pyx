@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 """
 Abstract base class for modules
 
@@ -132,7 +133,7 @@ cdef class Module(Parent):
             category = Modules(base)
         Parent.__init__(self, base=base, category=category, names=names)
 
-    cpdef _coerce_map_from_(self, M) noexcept:
+    cpdef _coerce_map_from_(self, M):
         """
         Return a coercion map from `M` to ``self``, or None.
 
@@ -270,6 +271,7 @@ cdef class Module(Parent):
         from sage.categories.homset import End
         return End(self)
 
+
 def is_Module(x):
     """
     Return ``True`` if ``x`` is a module, ``False`` otherwise.
@@ -286,9 +288,9 @@ def is_Module(x):
         True
         sage: is_Module(10)
         False
-
     """
     return isinstance(x, Module)
+
 
 def is_VectorSpace(x):
     """

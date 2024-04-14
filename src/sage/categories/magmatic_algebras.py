@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Non-unital non-associative algebras
 """
@@ -221,8 +222,8 @@ class MagmaticAlgebras(Category_over_base_ring):
 
                 """
                 return self.linear_combination((self.product_on_basis(mon_left, mon_right), coeff_left * coeff_right )
-                                                for (mon_left, coeff_left) in left.monomial_coefficients().items()
-                                                for (mon_right, coeff_right) in right.monomial_coefficients().items() )
+                                                for (mon_left, coeff_left) in left.monomial_coefficients(copy=False).items()
+                                                for (mon_right, coeff_right) in right.monomial_coefficients(copy=False).items() )
 
         class FiniteDimensional(CategoryWithAxiom_over_base_ring):
             class ParentMethods:

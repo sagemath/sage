@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # Copyright (c) 2009, Tom Boothby <boothby@math.washington.edu>
 # All rights reserved.
 #
@@ -284,7 +285,7 @@ cdef class ArgumentFixer:
         """
         return self.fix_to_pos_args_kwds(args, kwds)
 
-    cdef fix_to_pos_args_kwds(self, tuple args, dict kwds) noexcept:
+    cdef fix_to_pos_args_kwds(self, tuple args, dict kwds):
         """
         Fast Cython implementation of :meth:`fix_to_pos`.
         """

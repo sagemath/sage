@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # cython: binding=True
 # distutils: language = c++
 r"""
@@ -459,7 +460,7 @@ cdef inline uint32_t * has_edge(short_digraph g, int u, int v) noexcept:
                               sizeof(uint32_t), compare_uint32_p)
 
 
-cdef inline object edge_label(short_digraph g, uint32_t * edge) noexcept:
+cdef inline object edge_label(short_digraph g, uint32_t * edge):
     r"""
     Return the label associated with a given edge
     """
@@ -928,7 +929,7 @@ def strongly_connected_components_digraph(G):
     return output, {v: scc[i] for i, v in enumerate(int_to_vertex)}
 
 
-cdef strongly_connected_component_containing_vertex(short_digraph g, short_digraph g_reversed, int v, bitset_t scc) noexcept:
+cdef strongly_connected_component_containing_vertex(short_digraph g, short_digraph g_reversed, int v, bitset_t scc):
     """
     Feed ``scc`` with the vertices in the strongly connected component of ``v``.
     """

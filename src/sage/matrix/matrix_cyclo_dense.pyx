@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-linbox
 # distutils: language = c++
 # distutils: libraries = NTL_LIBRARIES
 # distutils: extra_compile_args = NTL_CFLAGS
@@ -159,7 +160,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         QQmat = Matrix_rational_dense(QQspace, L, False, False)
         self._matrix = QQmat.transpose()
 
-    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value) noexcept:
+    cdef set_unsafe(self, Py_ssize_t i, Py_ssize_t j, value):
         """
         Set the ij-th entry of self.
 
@@ -286,7 +287,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         mpz_clear(numer)
         mpz_clear(denom)
 
-    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j) noexcept:
+    cdef get_unsafe(self, Py_ssize_t i, Py_ssize_t j):
         """
         Get the ij-th of self.
 
@@ -488,7 +489,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
     #   * _dict -- sparse dictionary of underlying elements (need not be a copy)
     ########################################################################
 
-    cpdef _add_(self, right) noexcept:
+    cpdef _add_(self, right):
         """
         Return the sum of two dense cyclotomic matrices.
 
@@ -516,7 +517,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         A._matrix = self._matrix + (<Matrix_cyclo_dense>right)._matrix
         return A
 
-    cpdef _sub_(self, right) noexcept:
+    cpdef _sub_(self, right):
         """
         Return the difference of two dense cyclotomic matrices.
 
@@ -543,7 +544,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         A._matrix = self._matrix - (<Matrix_cyclo_dense>right)._matrix
         return A
 
-    cpdef _lmul_(self, Element right) noexcept:
+    cpdef _lmul_(self, Element right):
         """
         Multiply a dense cyclotomic matrix by a scalar.
 
@@ -584,7 +585,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
             A._matrix = T * self._matrix
         return A
 
-    cdef _matrix_times_matrix_(self, baseMatrix right) noexcept:
+    cdef _matrix_times_matrix_(self, baseMatrix right):
         """
         Return the product of two cyclotomic dense matrices.
 
@@ -719,7 +720,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         """
         return hash(self._matrix)
 
-    cpdef _richcmp_(self, right, int op) noexcept:
+    cpdef _richcmp_(self, right, int op):
         """
         Implement comparison of two cyclotomic matrices with
         identical parents.
@@ -977,7 +978,7 @@ cdef class Matrix_cyclo_dense(Matrix_dense):
         return ht
 
     cdef _randomize_rational_column_unsafe(Matrix_cyclo_dense self,
-        Py_ssize_t col, mpz_t nump1, mpz_t denp1, distribution=None) noexcept:
+        Py_ssize_t col, mpz_t nump1, mpz_t denp1, distribution=None):
         """
         Randomizes all entries in column ``col``.  This is a helper method
         used in the implementation of dense matrices over cyclotomic fields.

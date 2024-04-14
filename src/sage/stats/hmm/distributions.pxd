@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 #############################################################################
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -25,7 +26,7 @@ cdef class GaussianMixtureDistribution(Distribution):
     cdef double _sample(self, randstate rstate) noexcept
     cpdef double prob(self, double x) noexcept
     cpdef double prob_m(self, double x, int m) noexcept
-    cpdef is_fixed(self, i=?) noexcept
+    cpdef is_fixed(self, i=?)
 
 
 

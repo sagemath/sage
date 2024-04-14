@@ -1,5 +1,6 @@
+# sage_setup: distribution = sagemath-flint
 r"""
-Field of Arbitrary Precision Complex Intervals
+Arbitrary precision complex intervals (parent class)
 
 AUTHORS:
 
@@ -171,6 +172,12 @@ class ComplexIntervalField_class(sage.rings.abc.ComplexIntervalField):
 
         sage: CIF.is_finite()
         False
+
+    .. SEEALSO::
+
+        - :mod:`sage.rings.real_mpfi`
+        - :class:`sage.rings.complex_arb.ComplexBallField` (alternative
+          implementation of complex intervals, with more features)
     """
     Element = complex_interval.ComplexIntervalFieldElement
 

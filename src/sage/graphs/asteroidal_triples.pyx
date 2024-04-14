@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 # cython: binding=True
 r"""
 Asteroidal triples
@@ -185,7 +186,7 @@ cdef list is_asteroidal_triple_free_C(uint32_t n,
                                       short_digraph sd,
                                       uint32_t** connected_structure,
                                       uint32_t* waiting_list,
-                                      bitset_t seen) noexcept:
+                                      bitset_t seen):
     """
     INPUT:
 

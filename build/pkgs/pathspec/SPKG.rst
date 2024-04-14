@@ -1,10 +1,10 @@
-pathspec: Utility library for gitignore style pattern matching of file paths.
-=============================================================================
+pathspec: Utility library for gitignore style pattern matching of file paths
+============================================================================
 
 Description
 -----------
 
-Utility library for gitignore style pattern matching of file paths.
+Utility library for gitignore style pattern matching of file paths
 
 License
 -------

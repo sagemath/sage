@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from cpython.object cimport PyObject
 from sage.structure.element cimport Element, Matrix
 from sage.structure.parent cimport Parent
@@ -33,7 +34,7 @@ cdef class SparseEntry:
     cdef public object entry
 
 
-cdef inline SparseEntry make_SparseEntry(long i, long j, entry) noexcept:
+cdef inline SparseEntry make_SparseEntry(long i, long j, entry):
     e = <SparseEntry>SparseEntry.__new__(SparseEntry)
     e.i = i
     e.j = j
@@ -53,9 +54,9 @@ cdef class MatrixArgs:
     cdef public dict kwds     # **kwds for MatrixSpace()
     cdef bint is_finalized
 
-    cpdef Matrix matrix(self, bint convert=?) noexcept
-    cpdef list list(self, bint convert=?) noexcept
-    cpdef dict dict(self, bint convert=?) noexcept
+    cpdef Matrix matrix(self, bint convert=?)
+    cpdef list list(self, bint convert=?)
+    cpdef dict dict(self, bint convert=?)
 
     cdef inline bint ref_safe(self) noexcept:
         """
@@ -119,4 +120,4 @@ cdef class MatrixArgs:
     cdef int set_seq_flat(self, entries) except -1
 
 
-cpdef MatrixArgs MatrixArgs_init(space, entries) noexcept
+cpdef MatrixArgs MatrixArgs_init(space, entries)

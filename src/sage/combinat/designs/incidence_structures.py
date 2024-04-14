@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 r"""
 Incidence structures (i.e. hypergraphs, i.e. set systems)
 
@@ -1810,8 +1811,7 @@ class IncidenceStructure:
 
         REFERENCE:
 
-        - Soicher, Leonard, Design package manual, available at
-          https://www.gap-system.org/Manuals/pkg/design/htm/CHAP003.htm
+        - Leonard Soicher, :gap_package:`Design package manual <design/htm/CHAP003.htm>`
         """
         if algorithm == "gap":
             libgap.load_package("design")

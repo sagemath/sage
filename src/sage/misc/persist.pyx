@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 # cython: old_style_globals=True
 # The old_style_globals directive is important for load() to work correctly.
 # However, this should be removed in favor of user_globals; see
@@ -75,7 +76,7 @@ already_pickled = { }
 already_unpickled = { }
 
 
-cdef _normalize_filename(s) noexcept:
+cdef _normalize_filename(s):
     """
     Append the .sobj extension to a filename if it doesn't already have it.
     """

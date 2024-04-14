@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 # sage.doctest: needs sage.groups sage.rings.number_field
 """
 Galois groups of number fields

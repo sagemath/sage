@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 Commutative Differential Graded Algebras
@@ -1580,6 +1581,83 @@ class GCAlgebra(UniqueRepresentation, QuotientRing_nc):
                 [((0, 1, 1, 0), -5), ((1, 1, 0, 0), 1), ((1, 2, 3, 1), 7)]
             """
             return self.lift().dict()
+
+        def __call__(self, *values, **kwargs):
+            r"""
+            Evaluate the reduced expression of this element at ``x``, where ``x``
+            is either the tuple of values to evaluate in, a dictionary indicating
+            to which value is each generator evaluated, or keywords giving
+            the value to which generators should be evaluated.
+
+            INPUT:
+
+            - ``values`` -- (optional) either the values in which the variables
+              will be evaluated or a dictionary
+
+            OUTPUT:
+
+            this element evaluated at the given values
+
+            EXAMPLES::
+
+                sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1, 2, 2, 3))
+                sage: f = x*y - 5*y*z + 7*x*y^2*z^3*t
+                sage: f(3, y, x^2, x*z)
+                3*y
+                sage: f(x=3)
+                21*y^2*z^3*t - 5*y*z + 3*y
+                sage: f({x:3, z:x^2})
+                3*y
+
+            If the wrong number of values is provided, it results in an error::
+
+                sage: f(3, 5, y)
+                Traceback (most recent call last):
+                ...
+                ValueError: number of arguments does not match number of variables in parent
+
+            It is also possible to use keywords like this::
+
+                sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1, 2, 2, 3))
+                sage: f = x*y - 5*y*z + 7*x*y^2*z^3*t
+                sage: f(x=3)
+                21*y^2*z^3*t - 5*y*z + 3*y
+                sage: f(t=x,y=z)
+                -5*z^2 + x*z
+
+            If both a dictionary and keywords are used, only the dictionary is
+            considered::
+
+                sage: A.<x,y,z,t> = GradedCommutativeAlgebra(QQ, degrees=(1, 2, 2, 3))
+                sage: f = x*y - 5*y*z + 7*x*y^2*z^3*t
+                sage: f({x:1}, t=x,y=z)
+                7*y^2*z^3*t - 5*y*z + y
+            """
+            gens = self.parent().gens()
+            images = list(gens)
+            if values and not isinstance(values[0], dict):
+                for (i, p) in enumerate(values):
+                    images[i] = p
+            if len(values) == 1 and isinstance(values[0], dict):
+                images = list(gens)
+                for (i, g) in enumerate(gens):
+                    if g in values[0]:
+                        images[i] = values[0][g]
+            elif len(values) == len(gens):
+                images = list(values)
+            elif values:
+                raise ValueError("number of arguments does not match number of variables in parent")
+            else:
+                images = list(gens)
+                for (i, g) in enumerate(gens):
+                    gstr = str(g)
+                    if gstr in kwargs:
+                        images[i] = kwargs[gstr]
+            res = 0
+            for (m, c) in self.dict().items():
+                term = prod((gen**y for (y, gen) in zip(m, images)), c)
+                res += term
+            return res
 
         def basis_coefficients(self, total=False):
             """

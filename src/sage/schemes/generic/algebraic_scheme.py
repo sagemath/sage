@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Algebraic schemes
 
@@ -1638,7 +1639,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
     def intersection(self, other):
         """
-        Return the scheme-theoretic intersection of self and other in their
+        Return the scheme-theoretic intersection of ``self`` and ``other`` in their
         common ambient space.
 
         EXAMPLES::
@@ -1660,12 +1661,12 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
 
     def complement(self, other=None):
         """
-        Return the scheme-theoretic complement other - self, where
-        self and other are both closed algebraic subschemes of the
+        Return the scheme-theoretic complement ``other - self``, where
+        ``self`` and ``other`` are both closed algebraic subschemes of the
         same ambient space.
 
-        If other is unspecified, it is taken to be the ambient space
-        of self.
+        If ``other`` is unspecified, it is taken to be the ambient space
+        of ``self``.
 
         EXAMPLES::
 

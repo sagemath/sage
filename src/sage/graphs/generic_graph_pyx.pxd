@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-graphs
 from sage.structure.sage_object cimport SageObject
 from sage.graphs.base.dense_graph cimport DenseGraph
 from memory_allocator cimport MemoryAllocator
@@ -8,7 +9,7 @@ ctypedef fused dimension_t:
     D_TWO
     D_THREE
 
-cdef run_spring(int, dimension_t, double*, int*, int, int, bint) noexcept
+cdef run_spring(int, dimension_t, double*, int*, int, int, bint)
 
 cdef class GenericGraph_pyx(SageObject):
     pass
