@@ -77,21 +77,20 @@ jobs:
           conda info
           conda list
 
-      - name: Configure
+      - name: Bootstrap
         shell: bash -l {0}
-        continue-on-error: true
-        run: |
-          ./bootstrap
-          echo "::add-matcher::.github/workflows/configure-systempackage-problem-matcher.json"
-          ./configure --enable-build-as-root --with-python=$CONDA_PREFIX/bin/python --prefix=$CONDA_PREFIX --enable-system-site-packages $(for pkg in $(./sage -package list :standard: --has-file spkg-configure.m4 --has-file distros/conda.txt --exclude rpy2); do echo --with-system-$pkg=force; done)
-          echo "::remove-matcher owner=configure-system-package-warning::"
-          echo "::remove-matcher owner=configure-system-package-error::"
+        run: ./bootstrap
 
       - name: Build
         shell: bash -l {0}
         run: |
           # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda.
-          pip install --no-build-isolation --no-deps -v -v -e ./pkgs/sage-conf ./pkgs/sage-setup
+          echo "::group::sage-setup"
+          pip install --no-build-isolation --no-deps -v -v -e ./pkgs/sage-setup
+          echo "::endgroup::"
+          echo "::group::sage-conf"
+          pip install --no-build-isolation --no-deps -v -v -e ./pkgs/sage-conf_meson 
+          echo "::endgroup::"
           pip install --no-build-isolation --no-deps --config-settings editable_mode=compat -v -v -e ./src
         env:
           SAGE_NUM_THREADS: 2
@@ -105,6 +104,12 @@ jobs:
         if: success() || failure()
         shell: bash -l {0}
         run: ./sage -t --all --baseline-stats-path=.github/workflows/ci-conda-known-test-failures.json -p0
+
+      # We keep this step for now to make sure that the configure-based setup still works.
+      - name: Test configure
+        shell: bash -l {0}
+        run: |
+          ./configure --enable-build-as-root --with-python=$CONDA_PREFIX/bin/python --prefix=$CONDA_PREFIX --enable-system-site-packages $(for pkg in $(./sage -package list :standard: --has-file spkg-configure.m4 --has-file distros/conda.txt --exclude rpy2); do echo --with-system-$pkg=force; done) || true
 
       - name: Print logs
         if: always()
