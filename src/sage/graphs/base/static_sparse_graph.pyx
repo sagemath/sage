@@ -85,7 +85,7 @@ Technical details
 -----------------
 
 * When creating a ``short_digraph`` from a ``Graph`` or ``DiGraph`` named ``G``,
-  the `i^{\text{th}}` vertex corresponds *by default* to ``G.vertices(sort=True)[i]``.
+  the `i^{\text{th}}` vertex corresponds *by default* to ``list(G)[i]``.
   Using optional parameter ``vertex_list``, you can specify the order of the
   vertices. Then `i^{\text{th}}` vertex will corresponds to ``vertex_list[i]``.
 
@@ -117,7 +117,7 @@ Cython functions
     :widths: 30, 70
     :delim: |
 
-    ``init_short_digraph(short_digraph g, G)`` | Initialize ``short_digraph g`` from a Sage (Di)Graph.
+    ``init_short_digraph(short_digraph g, G, edge_labelled, vertex_list, sort_neighbors)`` | Initialize ``short_digraph g`` from a Sage (Di)Graph.
     ``int n_edges(short_digraph g)`` | Return the number of edges in ``g``
     ``int out_degree(short_digraph g, int i)`` | Return the out-degree of vertex `i` in ``g``
     ``has_edge(short_digraph g, int u, int v)`` | Test the existence of an edge.
@@ -215,19 +215,16 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False,
     - ``g`` -- a short_digraph
 
     - ``G`` -- a ``Graph`` or a ``DiGraph``. If ``G`` is a ``Graph`` object,
-    then any edge between two vertices `u` and `v` is replaced by two arcs in
-    both directions.
+      then any edge between two vertices `u` and `v` is replaced by two arcs in
+      both directions.
 
     - ``edge_labelled`` -- boolean (default: ``False``); whether to store the
       label of edges or not
 
     - ``vertex_list`` -- list (default: ``None``); list of all vertices of ``G``
       in some order. When given, it is used to map the vertices of the graph to
-      consecutive integers. Otherwise, the result of ``G.vertices(sort=True)``
-      is used instead. Because this only works if the vertices can be sorted,
-      using ``vertex_list`` is useful when working with possibly non-sortable
-      objects in Python 3.
-      **Beware that no checks are made that this input is correct**.
+      consecutive integers. Otherwise, the result of ``list(G)`` is used
+      instead.
 
     - ``sort_neighbors`` -- boolean (default: ``True``); whether to ensure that
       the vertices in the list of neighbors of a vertex are sorted by increasing
@@ -262,7 +259,7 @@ cdef int init_short_digraph(short_digraph g, G, edge_labelled=False,
         raise ValueError("The source graph must be either a DiGraph or a Graph object !")
 
     cdef int i, j, v_id
-    cdef list vertices = vertex_list if vertex_list is not None else G.vertices(sort=True)
+    cdef list vertices = vertex_list if vertex_list is not None else list(G)
     cdef dict v_to_id = {v: i for i, v in enumerate(vertices)}
     cdef list neighbor_label
     cdef list edge_labels
@@ -367,6 +364,7 @@ cdef int init_empty_copy(short_digraph dst, short_digraph src) except -1:
     """
     dst.n = src.n
     dst.m = src.m
+    dst.sorted_neighbors = src.sorted_neighbors
     dst.edge_labels = NULL
     cdef list edge_labels
 
@@ -392,7 +390,7 @@ cdef int init_reverse(short_digraph dst, short_digraph src) except -1:
     if not dst.n:
         return 0
 
-    # 1/3
+    # 1/4
     #
     # In a first pass, we count the in-degrees of each vertex and store it in a
     # vector. With this information, we can initialize dst.neighbors to its
@@ -408,7 +406,7 @@ cdef int init_reverse(short_digraph dst, short_digraph src) except -1:
         dst.neighbors[i] = dst.neighbors[i - 1] + in_degree[i - 1]
     sig_free(in_degree)
 
-    # 2/3
+    # 2/4
     #
     # Second pass : we list the edges again, and add them in dst.edges. Doing
     # so, we will change the value of dst.neighbors, but that is not so bad as
@@ -423,13 +421,21 @@ cdef int init_reverse(short_digraph dst, short_digraph src) except -1:
 
             dst.neighbors[v] += 1
 
-    # 3/3
+    # 3/4
     #
-    # Final step : set the correct values of dst.neighbors again. It is easy, as
+    # Third step : set the correct values of dst.neighbors again. It is easy, as
     # the correct value of dst.neighbors[i] is actually dst.neighbors[i-1]
     for i in range(src.n - 1, 0, -1):
         dst.neighbors[i] = dst.neighbors[i - 1]
     dst.neighbors[0] = dst.edges
+
+    # 4/4
+    #
+    # Final step : if the neighbors of src are assumed to be sorted by
+    # increasing labels, we do the same for dst.
+    if src.sorted_neighbors:
+        for i in range(dst.n):
+            qsort(dst.neighbors[i], dst.neighbors[i + 1] - dst.neighbors[i], sizeof(int), compare_uint32_p)
 
     return 0
 
@@ -450,7 +456,7 @@ cdef inline uint32_t * has_edge(short_digraph g, int u, int v) noexcept:
     """
     if g.sorted_neighbors:
         # The neighbors of u are sorted by increasing label. We can use binary
-        # search to decide g has edge (u, v)
+        # search to decide if g has edge (u, v)
         return <uint32_t *> bsearch(&v, g.neighbors[u], g.neighbors[u + 1] - g.neighbors[u],
                                     sizeof(uint32_t), compare_uint32_p)
 
@@ -466,8 +472,7 @@ cdef inline object edge_label(short_digraph g, uint32_t * edge):
     """
     if not g.edge_labels:
         return None
-    else:
-        return (<list> g.edge_labels)[edge - g.edges]
+    return (<list> g.edge_labels)[edge - g.edges]
 
 
 cdef uint32_t simple_BFS(short_digraph g,
@@ -792,7 +797,7 @@ def tarjan_strongly_connected_components(G):
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef list int_to_vertex = list(G)
     cdef short_digraph g
-    init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex)
+    init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex, sort_neighbors=False)
     cdef int * scc = <int*> mem.malloc(g.n * sizeof(int))
     sig_on()
     cdef int nscc = tarjan_strongly_connected_components_C(g, scc)
@@ -909,7 +914,7 @@ def strongly_connected_components_digraph(G):
     cdef MemoryAllocator mem = MemoryAllocator()
     cdef list int_to_vertex = list(G)
     cdef short_digraph g, scc_g
-    init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex)
+    init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex, sort_neighbors=False)
     cdef int * scc = <int*> mem.malloc(g.n * sizeof(int))
     cdef int i, j, nscc
     cdef list edges = []
@@ -974,7 +979,7 @@ def triangles_count(G):
     # g is a copy of G. If G is internally a static sparse graph, we use it.
     cdef list int_to_vertex = list(G)
     cdef short_digraph g
-    init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex)
+    init_short_digraph(g, G, edge_labelled=False, vertex_list=int_to_vertex, sort_neighbors=True)
 
     cdef uint64_t * count = <uint64_t *> check_calloc(G.order(), sizeof(uint64_t))
 
