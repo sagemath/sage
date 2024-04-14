@@ -324,7 +324,7 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
                     right_n.remove(min(l))
                 else:
                     left_unbracketed += [m]
-            return [list(left_unbracketed),list(right_n)]
+            return [list(left_unbracketed), list(right_n)]
 
         def to_tableau(self):
             """

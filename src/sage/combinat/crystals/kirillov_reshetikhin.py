@@ -3998,7 +3998,7 @@ def horizontal_dominoes_removed(r, s):
         sage: sage.combinat.crystals.kirillov_reshetikhin.horizontal_dominoes_removed(3,2)
         [[], [2], [2, 2], [2, 2, 2]]
     """
-    ulist = [ list(x) + [0]*(r-x.length()) for x in partitions_in_box(r, s//2) ]
+    ulist = [list(x) + [0]*(r-x.length()) for x in partitions_in_box(r, s//2)]
     two = lambda x : 2 * (x - s // 2) + s
     return [Partition([two(y) for y in x]) for x in ulist]
 
