@@ -1381,7 +1381,7 @@ class IncidenceStructure:
         And one can also verify that we have exactly two automorphisms::
 
             sage: I.automorphism_group()                                                # needs sage.groups
-            Permutation Group with generators [(2,4)]
+            Permutation Group with generators [(2,4)] and domain {0, 1, 2, 3, 4}
         """
         if not inplace:
             from copy import copy
@@ -1840,6 +1840,8 @@ class IncidenceStructure:
             True
             sage: G
             Permutation Group with generators [...]
+            and domain {(0, 0, 1), (1, 0, 1), (0, 1, 1), (1, 1, 1), (0, 1, 0), (1, 1, 0), (1, 0, 0)}
+
             sage: G.cardinality()
             168
 
@@ -1855,9 +1857,9 @@ class IncidenceStructure:
 
             sage: I = IncidenceStructure('abc', ('ab','ac','bc'))
             sage: I.automorphism_group()                                                # needs sage.groups
-            Permutation Group with generators [('b','c'), ('a','b')]
+            Permutation Group with generators [('b','c'), ('a','b')] and domain {'a', 'b', 'c'}
             sage: IncidenceStructure([[(1,2),(3,4)]]).automorphism_group()              # needs sage.groups
-            Permutation Group with generators [((1,2),(3,4))]
+            Permutation Group with generators [((1,2),(3,4))] and domain {(1, 2), (3, 4)}
         """
         from sage.graphs.graph import Graph
         from sage.groups.perm_gps.permgroup import PermutationGroup

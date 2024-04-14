@@ -657,6 +657,7 @@ class Polyhedron_base4(Polyhedron_base3):
             sage: P = Polyhedron(vertices=[(1,0), (1,1)], rays=[(1,0)])
             sage: P.combinatorial_automorphism_group(vertex_graph_only=True)
             Permutation Group with generators [(A vertex at (1,0),A vertex at (1,1))]
+            and domain {A vertex at (1, 0), A vertex at (1, 1)}
 
         This shows an example of two polytopes whose vertex-edge graphs are isomorphic,
         but their face lattices are not isomorphic::
@@ -834,7 +835,7 @@ class Polyhedron_base4(Polyhedron_base3):
             sage: P.Vrepresentation()
             (A vertex at (0, 0), A ray in the direction (0, 1), A ray in the direction (1, 0))
             sage: P.restricted_automorphism_group(output="permutation")
-            Permutation Group with generators [(1,2)]
+            Permutation Group with generators [(1,2)] and domain {0, 1, 2}
 
         Also, the polyhedron need not be full-dimensional::
 
@@ -910,7 +911,7 @@ class Polyhedron_base4(Polyhedron_base3):
 
             sage: P = Polyhedron(vertices=[(1,0), (1,1)], rays=[(1,0)])
             sage: P.restricted_automorphism_group(output="permutation")
-            Permutation Group with generators [(1,2)]
+            Permutation Group with generators [(1,2)] and domain {0, 1, 2}
             sage: P.restricted_automorphism_group(output="matrix")
             Matrix group over Rational Field with 1 generators (
             [ 1  0  0]

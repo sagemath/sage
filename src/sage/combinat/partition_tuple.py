@@ -242,7 +242,7 @@ subgroup::
 
     sage: mu.young_subgroup()                                                           # needs sage.groups
     Permutation Group with generators
-     [(), (12,13), (11,12), (8,9), (6,7), (3,4), (2,3), (1,2)]
+     [(12,13), (11,12), (8,9), (6,7), (3,4), (2,3), (1,2)]
     sage: mu.young_subgroup_generators()                                                # needs sage.groups
     [1, 2, 3, 6, 8, 11, 12]
 
@@ -1491,7 +1491,8 @@ class PartitionTuple(CombinatorialElement):
         EXAMPLES::
 
             sage: PartitionTuple([[2,1],[4,2],[1]]).young_subgroup()                    # needs sage.groups
-            Permutation Group with generators [(), (8,9), (6,7), (5,6), (4,5), (1,2)]
+            Permutation Group with generators [(8,9), (6,7), (5,6), (4,5), (1,2)]
+            and domain {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
         """
         gens = []
         m = 0
@@ -1499,8 +1500,8 @@ class PartitionTuple(CombinatorialElement):
             for row in comp:
                 gens.extend([(c, c+1) for c in range(m+1, m+row)])
                 m += row
-        gens.append(list(range(1, self.size()+1)))  # to ensure we get a subgroup of Sym_n
-        return PermutationGroup(gens)
+        domain = list(range(1, self.size()+1))  # to ensure we get a subgroup of Sym_n
+        return PermutationGroup(gens, domain=domain)
 
     def young_subgroup_generators(self):
         """

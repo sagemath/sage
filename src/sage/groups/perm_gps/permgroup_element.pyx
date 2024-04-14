@@ -31,7 +31,7 @@ There are several ways to define a permutation group element:
 
 EXAMPLES:
 
-We illustrate construction of permutation using several
+We illustrate construction of permutations using several
 different methods.
 
 First we construct elements by multiplying together generators for

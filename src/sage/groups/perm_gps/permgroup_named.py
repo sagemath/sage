@@ -784,7 +784,7 @@ class CyclicPermutationGroup(PermutationGroup_unique):
         if n < 1:
             raise ValueError("n (=%s) must be >= 1" % n)
         gens = tuple(range(1, n+1))
-        PermutationGroup_generic.__init__(self, [gens], n)
+        PermutationGroup_generic.__init__(self, [gens])
 
     def _repr_(self):
         """

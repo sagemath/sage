@@ -155,7 +155,7 @@ from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.groups.conjugacy_classes import ConjugacyClassGAP
 from sage.structure.richcmp import (richcmp_method,
-                                    richcmp, rich_to_bool, op_EQ, op_NE)
+                                    richcmp, rich_to_bool, op_EQ, op_NE, op_LE, op_LT, op_GE, op_GT)
 
 
 def load_hap():
@@ -270,6 +270,8 @@ def PermutationGroup(gens=None, *args, **kwds):
 
     -  ``gens`` -- (default: ``None``) list of generators
 
+    - ``domain`` -- (default: ``None``) the set the generators act on
+
     -  ``gap_group`` -- (optional) a gap permutation group
 
     -  ``canonicalize`` -- boolean (default: ``True``); if ``True``,
@@ -279,11 +281,30 @@ def PermutationGroup(gens=None, *args, **kwds):
 
     - a permutation group
 
+    .. NOTE::
+
+        If the domain is not specified, and all generators act on
+        integers, the domain is the smallest interval of integers
+        containing all numbers appearing in the generators and the
+        number `1`.  Otherwise, the domain is the set of elements the
+        generators act on.
+
     EXAMPLES::
 
         sage: G = PermutationGroup([[(1,2,3),(4,5)],[(3,4)]])
         sage: G
         Permutation Group with generators [(3,4), (1,2,3)(4,5)]
+
+    Permutation groups can work on any domain. In the following
+    examples, the permutations are specified in list notation,
+    according to the order of the elements of the domain::
+
+        sage: list(PermutationGroup([['b','c','a']], domain=['a','b','c']))
+        [(), ('a','b','c'), ('a','c','b')]
+        sage: list(PermutationGroup([['b','c','a']], domain=['b','c','a']))
+        [()]
+        sage: list(PermutationGroup([['b','c','a']], domain=['a','c','b']))
+        [(), ('a','b')]
 
     We can also make permutation groups from PARI groups::
 
@@ -303,17 +324,6 @@ def PermutationGroup(gens=None, *args, **kwds):
         (1,2)(3,7)(4,6)(5,8)
         sage: PermutationGroup([p])
         Permutation Group with generators [(1,2)(3,7)(4,6)(5,8)]
-
-    Permutation groups can work on any domain. In the following
-    examples, the permutations are specified in list notation,
-    according to the order of the elements of the domain::
-
-        sage: list(PermutationGroup([['b','c','a']], domain=['a','b','c']))
-        [(), ('a','b','c'), ('a','c','b')]
-        sage: list(PermutationGroup([['b','c','a']], domain=['b','c','a']))
-        [()]
-        sage: list(PermutationGroup([['b','c','a']], domain=['a','c','b']))
-        [(), ('a','b')]
 
     There is an underlying gap object that implements each
     permutation group::
@@ -608,7 +618,7 @@ class PermutationGroup_generic(FiniteGroup):
             (1,2)(3,4,5)('a','b')
             sage: P = parent(p)
             sage: P
-            Permutation Group with generators [('a','b'), (1,2), (1,2,3,4,5)]
+            Permutation Group with generators [('a','b'), (1,2), (1,2,3,4,5)] and domain {1, 2, 3, 4, 5, 'a', 'b'}
         """
         gens = self.gens()
         if len(gens) == 1 and gens[0].is_one():
@@ -770,19 +780,36 @@ class PermutationGroup_generic(FiniteGroup):
         return 'PermutationGroup<%s | %s>' % (self.degree(), g)
 
     def __richcmp__(self, right, op):
-        """
+        r"""
         Compare ``self`` and ``right``.
 
-        The comparison extends the subgroup relation. Hence, it is first checked
-        whether one of the groups is subgroup of the other. If this is not the
-        case then the ordering is whatever it is in GAP.
+        Two permutation groups are equal if and only if their domains
+        coincide as sets and their underlying groups are equal.
 
-        .. NOTE::
+        The relation `G < H` means that the domains of `G` and `H`
+        coincide as sets and that the underlying group of `G` is a
+        proper subgroup of `H`.
 
-            The comparison does not provide a total ordering, as can be seen
-            in the examples below.
+        The meaning of the other relations is analogous.
 
-        EXAMPLES::
+        Therefore, the comparison does not provide a total ordering.
+
+        EXAMPLES:
+
+        Different orderings of the domain do not matter::
+
+            sage: gens = [("a", "b", "c"), ("d", "e")]
+            sage: domain = ["a", "b", "c", "d", "e"]
+            sage: G = PermutationGroup(gens, domain=domain)
+            sage: H = PermutationGroup(gens, domain=domain[::-1])
+            sage: G == H
+            True
+
+            sage: gens = [("a", "b", "c", "d")]
+            sage: domain = ("a", "b", "c", "d")
+            sage: G = PermutationGroup(gens, domain=domain)
+            sage: all(G == PermutationGroup(gens, domain=pi) for pi in Permutations(domain))
+            True
 
             sage: G1 = PermutationGroup([[(1,2,3),(4,5)],[(3,4)]])
             sage: G2 = PermutationGroup([[(1,2,3),(4,5)]])
@@ -796,12 +823,22 @@ class PermutationGroup_generic(FiniteGroup):
 
             sage: H1 = PermutationGroup([[(1,2)],[(5,6)]])
             sage: H2 = PermutationGroup([[(3,4)]])
+            sage: H1 < H2
+            False
+            sage: H2 < H1
+            False
+
+        The domain of `H1` is `\{1,2,3,4,5,6\}`, whereas the domain
+        of the permutation group `H3` below is `\{1,2\}`.  Therefore
+        `H3` is not a permutation subgroup of `H1`::
+
             sage: H3 = PermutationGroup([[(1,2)]])
-            sage: H1 < H2 # according to GAP's ordering
-            True
-            sage: H2 < H3 # according to GAP's ordering
-            True
-            sage: H3 < H1 # since H3 is a subgroup of H1
+            sage: H3 < H1
+            False
+
+        It is, however, a subgroup::
+
+            sage: H3.is_subgroup(H1)
             True
 
         TESTS:
@@ -815,6 +852,26 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G != H
             False
 
+        A comprehensive test::
+
+            sage: A = PermutationGroup([(1,3)])
+            sage: B = PermutationGroup([(1,3)], domain=[1,2,3,4])
+            sage: C = PermutationGroup([(1,3), (2,4)])
+            sage: D = PermutationGroup([(1,3)], domain=[1,3,4])
+            sage: E = PermutationGroup([(1,3)], domain=[1,4,3])
+            sage: F = PermutationGroup([(1,3)], domain=[1,3])
+            sage: G = PermutationGroup([("a","c")], domain="abcd")
+            sage: H = PermutationGroup([("a","c"), ("b", "d")])
+            sage: groups = [A, B, C, D, E, F, G, H]
+            sage: [[ZZ(X >= Y) for X in groups] for Y in groups]
+            [[1, 0, 0, 0, 0, 0, 0, 0],
+             [0, 1, 1, 0, 0, 0, 0, 0],
+             [0, 0, 1, 0, 0, 0, 0, 0],
+             [0, 0, 0, 1, 1, 0, 0, 0],
+             [0, 0, 0, 1, 1, 0, 0, 0],
+             [0, 0, 0, 0, 0, 1, 0, 0],
+             [0, 0, 0, 0, 0, 0, 1, 1],
+             [0, 0, 0, 0, 0, 0, 0, 1]]
         """
         if not isinstance(right, PermutationGroup_generic):
             return NotImplemented
@@ -822,17 +879,31 @@ class PermutationGroup_generic(FiniteGroup):
         if self is right:
             return rich_to_bool(op, 0)
 
-        gSelf = self._libgap_()
+        if set(self._domain) != set(right._domain):
+            # domains differ
+            return op is op_NE
+
+        if self._domain == right._domain:
+            gSelf = self._libgap_()
+        else:
+            n = len(self.domain())
+            g = [right._domain_to_gap[self._domain_from_gap[i]]
+                 for i in range(1, n + 1)]
+            g = PermutationConstructor(g)
+            gSelf = libgap.ConjugateGroup(self._libgap_(), g)
         gRight = right._libgap_()
-        if op in [op_EQ,op_NE]:
+
+        if op in [op_EQ, op_NE]:
             return gSelf._richcmp_(gRight, op)
-
-        if gSelf.IsSubgroup(gRight):
-            return rich_to_bool(op, 1)
-        if gRight.IsSubgroup(gSelf):
-            return rich_to_bool(op, -1)
-
-        return gSelf._richcmp_(gRight, op)
+        # IsSubset should be sufficient
+        if op is op_LE:
+            return bool(gRight.IsSubgroup(gSelf))
+        if op is op_LT:
+            return gSelf._richcmp_(gRight, op_NE) and bool(gRight.IsSubgroup(gSelf))
+        if op is op_GE:
+            return bool(gSelf.IsSubgroup(gRight))
+        if op is op_GT:
+            return gSelf._richcmp_(gRight, op_NE) and bool(gSelf.IsSubgroup(gRight))
 
     Element = PermutationGroupElement
 
@@ -1058,7 +1129,7 @@ class PermutationGroup_generic(FiniteGroup):
              (1,3), (2,3), (1,4), (1,2,4,3), (1,3,4,2)]
 
             sage: G = PermutationGroup([[('a','b')]], domain=('a', 'b')); G
-            Permutation Group with generators [('a','b')]
+            Permutation Group with generators [('a','b')] and domain {'a', 'b'}
             sage: G.list()
             [(), ('a','b')]
 
@@ -1877,13 +1948,17 @@ class PermutationGroup_generic(FiniteGroup):
 
             sage: G = PermutationGroup([ [('c','d')], [('a','c')] ], domain='abcd')
             sage: G.stabilizer('a')
-            Subgroup generated by [('c','d')] of (Permutation Group with generators [('c','d'), ('a','c')])
+            Subgroup generated by [('c','d')] of (Permutation Group with generators [('c','d'), ('a','c')]
+            and domain {'a', 'b', 'c', 'd'})
             sage: G.stabilizer('b')
-            Subgroup generated by [('c','d'), ('a','c')] of (Permutation Group with generators [('c','d'), ('a','c')])
+            Subgroup generated by [('c','d'), ('a','c')] of (Permutation Group with generators [('c','d'), ('a','c')]
+            and domain {'a', 'b', 'c', 'd'})
             sage: G.stabilizer('c')
-            Subgroup generated by [('a','d')] of (Permutation Group with generators [('c','d'), ('a','c')])
+            Subgroup generated by [('a','d')] of (Permutation Group with generators [('c','d'), ('a','c')]
+            and domain {'a', 'b', 'c', 'd'})
             sage: G.stabilizer('d')
-            Subgroup generated by [('a','c')] of (Permutation Group with generators [('c','d'), ('a','c')])
+            Subgroup generated by [('a','c')] of (Permutation Group with generators [('c','d'), ('a','c')]
+            and domain {'a', 'b', 'c', 'd'})
 
         TESTS::
 
@@ -2140,8 +2215,32 @@ class PermutationGroup_generic(FiniteGroup):
             'Permutation Group with generators [(2,3,4), (1,2,3)]'
             sage: AlternatingGroup(4)._repr_()
             'Alternating group of order 4!/2 as a permutation group'
+
+        The domain is printed if it is not of the form `{1,...,n}`,
+        where `n` is the largest moved point::
+
+            sage: PermutationGroup([(1,3)], domain=[1,3])
+            Permutation Group with generators [(1,3)] and domain {1, 3}
+
+            sage: PermutationGroup([(1,3)], domain=[1,2,3])
+            Permutation Group with generators [(1,3)]
+
+            sage: PermutationGroup([(1,3)], domain=[1,3,2])
+            Permutation Group with generators [(1,3)] and domain {1, 3, 2}
+
+            sage: PermutationGroup([(1,3)], domain=[1,2,3,4])
+            Permutation Group with generators [(1,3)] and domain {1, 2, 3, 4}
+
+        TESTS::
+
+            sage: PermutationGroup([], domain=[])
+            Permutation Group with generators [()]
+
         """
-        return "Permutation Group with generators %s" % list(self.gens())
+        if (self._has_natural_domain()
+            and self.largest_moved_point() == max(self.domain(), default=0)):
+            return "Permutation Group with generators %s" % list(self.gens())
+        return "Permutation Group with generators %s and domain %s" % (list(self.gens()), self.domain())
 
     def _latex_(self):
         r"""
@@ -2650,12 +2749,33 @@ class PermutationGroup_generic(FiniteGroup):
             Traceback (most recent call last):
             ...
             TypeError: junk does not convert to a permutation group element
+
+        The domain is taken into account properly::
+
+            sage: G = PermutationGroup([['b','c','a']], domain=['a','b','c'])
+            sage: G.conjugate([('a', 'b')])
+            Permutation Group with generators [('a','c','b')] and domain {'a', 'b', 'c'}
         """
+        if self._has_natural_domain():
+            try:
+                g = PermutationConstructor(g)
+            except Exception:
+                raise TypeError("{0} does not convert to a permutation group element".format(g))
+            return PermutationGroup(gap_group=libgap.ConjugateGroup(self, g))
+
         try:
-            g = PermutationConstructor(g)
-        except Exception:
-            raise TypeError("{0} does not convert to a permutation group element".format(g))
-        return PermutationGroup(gap_group=libgap.ConjugateGroup(self, g))
+            g = self(g)
+        except (ValueError, KeyError):
+            try:
+                H = PermutationGroup(gens=[g], domain=self.domain())
+                g = H.gen(0)
+            except Exception:
+                gens = [[tuple([g(e) for e in c]) for c in x.cycle_tuples()]
+                        for x in self.gens()]
+                return PermutationGroup(gens=gens)
+
+        return PermutationGroup(gap_group=libgap.ConjugateGroup(self, g._gap_()),
+                                domain=self.domain())
 
     def direct_product(self, other, maps=True):
         """
@@ -4446,12 +4566,19 @@ class PermutationGroup_generic(FiniteGroup):
         """
         Return ``True`` if ``self`` is a subgroup of ``other``.
 
+        This method only considers the underlying groups and
+        disregards the domains.  More precisely, ``self`` is a
+        subgroup of ``other``, if all group elements of ``self`` can
+        be regarded as group elements of ``other`` by restricting to
+        the moved points.
+
         EXAMPLES::
 
             sage: G = AlternatingGroup(5)
             sage: H = SymmetricGroup(5)
             sage: G.is_subgroup(H)
             True
+
         """
         return all((x in other) for x in self.gens())
 
@@ -5159,7 +5286,6 @@ class PermutationGroup_subgroup(PermutationGroup_generic):
             True
             sage: G.subgroup([G((1,2,3))]) == G.subgroup([G((1,3,2))])
             True
-
         """
         if self is other:
             return rich_to_bool(op, 0)

@@ -984,8 +984,9 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             sage: G1234 == PermutationGroup([[(2,3)], [(1,2),(3,4)]])
             True
             sage: G = Z3square.restricted_automorphism_group()
-            sage: G == PermutationGroup([[((1,2),(2,1))], [((0,0),(1,2)),
-            ....:                         ((2,1),(3,3))], [((0,0),(3,3))]])
+            sage: H = PermutationGroup([[((1,2),(2,1))], [((0,0),(1,2)),
+            ....:                        ((2,1),(3,3))], [((0,0),(3,3))]])
+            sage: G.conjugate(tuple) == H
             True
             sage: set(G.domain()) == set(Z3square.vertices())
             True
@@ -1053,6 +1054,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             sage: Z3square.lattice_automorphism_group()                                 # needs sage.graphs sage.groups
             Permutation Group with generators [(), ((1,2),(2,1)),
             ((0,0),(3,3)), ((0,0),(3,3))((1,2),(2,1))]
+            and domain {(0, 0), (1, 2), (2, 1), (3, 3)}
 
             sage: G1 = Z3square.lattice_automorphism_group(point_labels=(1,2,3,4))      # needs sage.graphs sage.groups
             sage: G1                                                                    # needs sage.graphs sage.groups
@@ -1079,6 +1081,7 @@ class LatticePolytope_PPL_class(C_Polyhedron):
             sage: lp = LatticePolytope_PPL((1,0,0), (0,1,0), (-1,-1,0))
             sage: lp.lattice_automorphism_group(point_labels=(0,1,2))                   # needs sage.graphs sage.groups
             Permutation Group with generators [(), (1,2), (0,1), (0,1,2), (0,2,1), (0,2)]
+            and domain {0, 1, 2}
         """
         if not self.is_full_dimensional():
             return self.affine_lattice_polytope().lattice_automorphism_group(
