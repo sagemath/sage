@@ -1405,8 +1405,9 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
         # compatibility for singular 4.3.2p10 and before
         if s.startswith("polynomial ring,"):
             from sage.rings.polynomial.term_order import singular_name_mapping
+            from sage.repl.rich_output import get_display_manager
             # this is our cue that singular uses `rp` instead of `ip`
-            if singular_name_mapping['invlex'] == 'rp':
+            if singular_name_mapping['invlex'] == 'rp' and 'doctest' in str(get_display_manager()):
                 s = re.sub('^(// .*block.* : ordering )rp$', '\\1ip',
                            s, 0, re.MULTILINE);
         return s
