@@ -30,6 +30,8 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         sage: f = x**5 + 1184*x**3 + 1846*x**2 + 956*x + 560
         sage: C = HyperellipticCurve(f)
         sage: J = C.jacobian()
+        sage: J in AbelianVarieties(FF)
+        True
         sage: a = x**2 + 376*x + 245; b = 1015*x + 1368
         sage: X = J(FF)
         sage: D = X([a,b])
@@ -166,7 +168,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
 
     def point(self, mumford, check=True):
         try:
-            return self(self.base_ring())(mumford)
+            return self.point_homset()(mumford)
         except AttributeError:
             raise ValueError("Arguments must determine a valid Mumford divisor.")
 

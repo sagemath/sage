@@ -290,6 +290,17 @@ class Scheme(Parent):
             Set of rational points of Projective Space of dimension 3 over
              Finite Field of size 11
 
+        The set of S-valued points of an abelian variety has an abelian group structure::
+
+            sage: E = EllipticCurve(QQ, [3, 6])
+            sage: E in AbelianVarieties(QQ)
+            True
+            sage: E.point_homset() in CommutativeAdditiveGroups()
+            True
+            sage: K.<a> = NumberField(x^3 + 2)
+            sage: E.point_homset(K) in CommutativeAdditiveGroups()
+            True
+
         TESTS::
 
             sage: P = ProjectiveSpace(QQ, 3)
@@ -302,6 +313,7 @@ class Scheme(Parent):
         if S is None:
             S = self.base_ring()
         SpecS = AffineScheme(S, self.base_ring())
+
         from sage.schemes.generic.homset import SchemeHomset
         return SchemeHomset(SpecS, self, as_point_homset=True)
 

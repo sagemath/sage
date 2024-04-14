@@ -18,6 +18,7 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 from sage.categories.fields import Fields
+from sage.categories.schemes import AbelianVarieties
 _Fields = Fields()
 from sage.schemes.generic.scheme import Scheme, is_Scheme
 from sage.structure.richcmp import richcmp_method, richcmp
@@ -92,13 +93,13 @@ class Jacobian_generic(Scheme):
 
         Note: this is an abstract parent, so we skip element tests::
 
-            sage: TestSuite(J).run(skip =["_test_an_element",\
-                                          "_test_elements",\
-                                          "_test_elements_eq_reflexive",\
-                                          "_test_elements_eq_symmetric",\
-                                          "_test_elements_eq_transitive",\
-                                          "_test_elements_neq",\
-                                          "_test_some_elements"])
+            sage: TestSuite(J).run(skip=["_test_an_element",\
+                                         "_test_elements",\
+                                         "_test_elements_eq_reflexive",\
+                                         "_test_elements_eq_symmetric",\
+                                         "_test_elements_eq_transitive",\
+                                         "_test_elements_neq",\
+                                         "_test_some_elements"])
 
         ::
 
@@ -129,7 +130,10 @@ class Jacobian_generic(Scheme):
         if C.dimension() != 1:
             raise ValueError("C (=%s) must have dimension 1." % C)
         self.__curve = C
-        Scheme.__init__(self, C.base_scheme())
+        # I am not sure how to deal with non-smooth curves...
+        # TODO: Isolate the smooth case into a Jacobian_AbelianVariety or something
+        category = AbelianVarieties(C.base_scheme()) if C.is_smooth() else None
+        Scheme.__init__(self, C.base_scheme(), category=category)
 
     def __richcmp__(self, J, op):
         """

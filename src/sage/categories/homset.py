@@ -208,7 +208,7 @@ def Hom(X, Y, category=None, check=True):
     with the result for the meet of the categories of the domain and
     the codomain::
 
-        sage: Hom(QQ, ZZ) is Hom(QQ,ZZ, Category.meet([QQ.category(), ZZ.category()]))
+        sage: Hom(QQ, ZZ) is Hom(QQ, ZZ, category=QQ.category() | ZZ.category())
         True
 
     Some doc tests in :mod:`sage.rings` (need to) break the unique
@@ -270,9 +270,8 @@ def Hom(X, Y, category=None, check=True):
          from <sage.structure.parent.Parent object at ...>
            to <sage.structure.parent.Parent object at ...>
         sage: Hom(PA, PJ).category()
-        Category of homsets of
-         unital magmas and right modules over Rational Field
-          and left modules over Rational Field
+        Category of homsets of unital magmas and right modules over Rational
+        Field and left modules over Rational Field
         sage: Hom(PA, PJ, Rngs())
         Set of Morphisms
          from <sage.structure.parent.Parent object at ...>
@@ -412,7 +411,7 @@ def Hom(X, Y, category=None, check=True):
 
     # Determines the category
     if category is None:
-        category = X.category()._meet_(Y.category())
+        category = X.category() | Y.category()
         # Recurse to make sure that Hom(X, Y) and Hom(X, Y, category) are identical
         # No need to check the input again
         H = Hom(X, Y, category, check=False)
@@ -656,11 +655,23 @@ class Homset(Set_generic):
 
             sage: MyHomset(ZZ^3, ZZ^3, base=QQ).base_ring()                             # needs sage.modules
             Rational Field
+
+        Check that :issue:`37730` is resolved::
+
+            sage: E = EllipticCurve(QQ, [3, 5])
+            sage: E.point_homset().category()
+            Join of Category of commutative additive groups and Category of
+             homsets of schemes over Rational Field
+            sage: E.point_homset() in CommutativeAdditiveGroups()
+            True
+            sage: from sage.schemes.generic.homset import SchemeHomset_points
+            sage: SchemeHomset_points(Spec(QQ), E) in CommutativeAdditiveGroups()
+            True
         """
         self._domain = X
         self._codomain = Y
         if category is None:
-            category = X.category()
+            category = X.category() | Y.category()
         self.__category = category
         if check:
             if not isinstance(category, Category):
@@ -678,8 +689,26 @@ class Homset(Set_generic):
             # See also #15801.
             base = X.base_ring()
 
-        Parent.__init__(self, base=base,
-                        category=category.Endsets() if X is Y else category.Homsets())
+        # Hom(X, AbGrp) has an AbGrp structure by pointwise operation. Not sure
+        # if we should also inherit the multiplication operation when it exists
+        category = category.Endsets() if X is Y else category.Homsets()
+
+        # We handle abelian varieties as a special case, since they themselves
+        # don't have an abelian group, only their point homsets, see discussion
+        # under #37768.
+        from sage.categories.schemes import Sets, AbelianVarieties
+        from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
+
+        # TODO: Uncomment this once sum of morphisms is implemented (see #37768)
+        # group_cat = Y.category() | CommutativeAdditiveGroups()
+        group_cat = Sets()
+        try:
+            if Y in AbelianVarieties(Y._base_scheme):
+                group_cat = CommutativeAdditiveGroups()
+        except (AttributeError, ValueError):
+            pass
+
+        Parent.__init__(self, base=base, category=category & group_cat)
 
     def __reduce__(self):
         """
