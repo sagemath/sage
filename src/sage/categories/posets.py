@@ -331,7 +331,7 @@ class Posets(Category):
 
             OUTPUT:
 
-            - A subset of Y that satisfies the upset condition.
+            - A subset of `Y` that satisfies the upset condition.
 
             EXAMPLES::
 
@@ -342,15 +342,15 @@ class Posets(Category):
                 Xm = Y[len(Y) // 2]
                 Y1 = []
                 Y2 = []
-                for Xi in Y:
+                for i, Xi in enumerate(Y):
                     if Poset[(Xi, Xm)] == 1:
-                        U[Y.index(Xi)] = 0
+                        U[i] = 0
                     else:
                         Y1.append(Xi)
                 yield from Posets.generate_upsets(U.copy(), Y1, Poset)
-                for Xj in Y:
+                for j, Xj in enumerate(Y):
                     if Poset[(Xm, Xj)] == 1:
-                        U[Y.index(Xj)] = 1
+                        U[j] = 1
                     else:
                         Y2.append(Xj)
                 yield from Posets.generate_upsets(U.copy(), Y2, Poset)
