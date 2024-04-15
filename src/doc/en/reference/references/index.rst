@@ -5881,6 +5881,10 @@ REFERENCES:
             Journal of Algorithms, Volume 26, Issue 2, Pages 275 - 290, 1998.
             (https://doi.org/10.1006/jagm.1997.0891)
 
+.. [Sq2002] Matthew B. Squire.
+            *Enumerating the Ideals of a Poset*.
+            (https://citeseer.ist.psu.edu/465417.html)
+
 .. [SS1983] Shorey and Stewart. "On the Diophantine equation a
             x^{2t} + b x^t y + c y^2 = d and pure powers in recurrence
             sequences." Mathematica Scandinavica, 1983.
