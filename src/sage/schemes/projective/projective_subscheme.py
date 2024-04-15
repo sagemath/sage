@@ -1569,4 +1569,3 @@ class AlgebraicScheme_subscheme_projective_field(AlgebraicScheme_subscheme_proje
         if self.dimension() % 2:
             p = -p
         return p
-
