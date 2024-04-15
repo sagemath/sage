@@ -115,12 +115,13 @@ class QuaternionAlgebraFactory(UniqueFactory):
       as above are deduced from `D`.
 
     - ``QuaternionAlgebra(K, primes, inv_archimedean)``, where `K` is a
-      number field or `\QQ`, `primes` is a list of prime ideals of `K`
-      and `inv_archimedean` is a list of local invariants (0 or 1/2)
-      specifying the ramification at the (infinite) real places of `K`.
-      This constructs a quaternion algebra ramified exacly at the places
-      given by `primes` and those in `K.embeddings(AA)` indexed by `i`
-      with `inv_archimedean[i]=1/2`.
+      number field or `\QQ`, ``primes`` is a list of prime ideals of `K`
+      and ``inv_archimedean`` is a list of local invariants (`0` or
+      `\frac{1}{2}`) specifying the ramification at the (infinite) real
+      places of `K`. This constructs a quaternion algebra ramified exacly
+      at the places given by ``primes`` and those (algebraic) real
+      embeddings of `K` indexed in ``K.embeddings(AA)`` by ``l`` with
+      ``inv_archimedean[l] = 1/2``.
 
     OUTPUT:
 
@@ -198,8 +199,9 @@ class QuaternionAlgebraFactory(UniqueFactory):
         sage: QuaternionAlgebra(2*3*5*7)
         Quaternion Algebra (-22, 210) with base ring Rational Field
 
-    ``QuaternionAlgebra(K, primes, inv_archimedean)`` -- return the quaternion
-    algebra over `K` with the specified ramification::
+    ``QuaternionAlgebra(K, primes, inv_archimedean)`` -- return the
+    quaternion algebra over `K` with the ramification specified by
+    ``primes`` and ``inv_archimedean``::
 
         sage: QuaternionAlgebra(QQ, [(2), (3)], [0])
         Quaternion Algebra (-1, 3) with base ring Rational Field
