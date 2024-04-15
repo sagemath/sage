@@ -194,9 +194,10 @@ def downward_monotonic(ambient_dim=None, lattice=None):
 
     OUTPUT:
 
-    A :class:`.ConvexRationalPolyhedralCone` living in ``lattice``
-    whose elements' entries are arranged in nonincreasing order. Each
-    generating ray has the integer ring as its base ring.
+    A :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone` living
+    in ``lattice`` whose elements' entries are arranged in
+    nonincreasing order. Each generating ray has the integer ring as
+    its base ring.
 
     A ``ValueError`` can be raised if the inputs are incompatible or
     insufficient. See the INPUT documentation for details.
