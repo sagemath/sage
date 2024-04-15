@@ -10,5 +10,3 @@ try:
     from sage.geometry.all__sagemath_gap import *
 except ImportError:
     pass
-
-from sage.geometry.hyperplane_arrangement.all import *
