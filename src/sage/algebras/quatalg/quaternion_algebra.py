@@ -83,6 +83,8 @@ from sage.misc.cachefunc import cached_method
 from sage.categories.algebras import Algebras
 from sage.categories.number_fields import NumberFields
 
+from sage.structure.richcmp import richcmp_method
+
 ########################################################
 # Constructor
 ########################################################
@@ -1526,6 +1528,7 @@ def unpickle_QuaternionAlgebra_v0(*key):
     return QuaternionAlgebra(*key)
 
 
+@richcmp_method
 class QuaternionOrder(Parent):
     """
     An order in a quaternion algebra.
@@ -1739,116 +1742,58 @@ class QuaternionOrder(Parent):
         """
         return self.__basis[n]
 
-    def __eq__(self, other):
+    def __richcmp__(self, other, op):
         """
-        Compare orders ``self`` and ``other``.
+        Compare this quaternion order to ``other``.
 
         EXAMPLES::
 
-            sage: R = QuaternionAlgebra(-11,-1).maximal_order()
+            sage: R = QuaternionAlgebra(-1, -11).maximal_order()
             sage: R == R                       # indirect doctest
             True
-            sage: R == QuaternionAlgebra(-1,-1).maximal_order()
-            False
             sage: R == 5
             False
-            sage: Q.<i,j,k> = QuaternionAlgebra(-1,-19)
+            sage: R == QuaternionAlgebra(-1, -7).maximal_order()
+            False
 
         Orders can be equal even if they are defined by different
         bases (see :issue:`32245`)::
 
+            sage: Q.<i,j,k> = QuaternionAlgebra(-1, -19)
             sage: Q.quaternion_order([1,-i,k,j+i*7]) == Q.quaternion_order([1,i,j,k])
             True
-        """
-        if not isinstance(other, QuaternionOrder):
-            return False
-        return (self.__quaternion_algebra == other.__quaternion_algebra and
-                self.unit_ideal() == other.unit_ideal())
 
-    def __ne__(self, other):
-        """
-        Compare orders ``self`` and ``other``.
+        TESTS::
 
-        Two orders are equal if they have the same
-        basis and are in the same quaternion algebra.
-
-        EXAMPLES::
-
-            sage: R = QuaternionAlgebra(-11,-1).maximal_order()
-            sage: R != R                       # indirect doctest
-            False
-            sage: R != QuaternionAlgebra(-1,-1).maximal_order()
-            True
-        """
-        return not self.__eq__(other)
-
-    def __le__(self, other):
-        """
-        Compare orders ``self`` and ``other``.
-
-        EXAMPLES::
-
-            sage: B.<i,j,k> = QuaternionAlgebra(-1, -11)
+            sage: B = QuaternionAlgebra(-1, -11)
+            sage: i,j,k = B.gens()
             sage: O = B.quaternion_order([1,i,j,k])
-            sage: R = B.quaternion_order([1,i,(i+j)/2,(1+k)/2])
-            sage: O <= R
+            sage: O == O
             True
-            sage: R <= O
-            False
-        """
-        if not isinstance(other, QuaternionOrder):
-            return False
-        return self.unit_ideal().__le__(other.unit_ideal())
-
-    def __lt__(self, other):
-        """
-        Compare orders ``self`` and ``other``.
-
-        EXAMPLES::
-
-            sage: B.<i,j,k> = QuaternionAlgebra(-1, -11)
-            sage: O = B.quaternion_order([1,i,j,k])
             sage: R = B.quaternion_order([1,i,(i+j)/2,(1+k)/2])
-            sage: O < R
+            sage: O <= R                # indirect doctest
             True
-            sage: R < O
-            False
-        """
-        return self.__le__(other) and self.__ne__(other)
-
-    def __ge__(self, other):
-        """
-        Compare orders ``self`` and ``other``.
-
-        EXAMPLES::
-
-            sage: B.<i,j,k> = QuaternionAlgebra(-1, -11)
-            sage: O = B.quaternion_order([1,i,j,k])
-            sage: R = B.quaternion_order([1,i,(i+j)/2,(1+k)/2])
             sage: O >= R
             False
-            sage: R >= O
+            sage: O != R
             True
-        """
-        if not isinstance(other, QuaternionOrder):
-            return False
-        return self.unit_ideal().__ge__(other.unit_ideal())
-
-    def __gt__(self, other):
-        """
-        Compare orders ``self`` and ``other``.
-
-        EXAMPLES::
-
-            sage: B.<i,j,k> = QuaternionAlgebra(-1, -11)
-            sage: O = B.quaternion_order([1,i,j,k])
-            sage: R = B.quaternion_order([1,i,(i+j)/2,(1+k)/2])
-            sage: O > R
+            sage: O == R
             False
-            sage: R > O
+            sage: O != O
+            False
+            sage: O < O
+            False
+            sage: O < R
+            True
+            sage: O <= O
+            True
+            sage: R >= R
             True
         """
-        return self.__ge__(other) and self.__ne__(other)
+        from sage.structure.richcmp import richcmp, op_NE
+        if not isinstance(other, QuaternionOrder):
+            return op == op_NE
+        return richcmp(self.unit_ideal(), other.unit_ideal(), op)
 
     def __hash__(self):
         """
