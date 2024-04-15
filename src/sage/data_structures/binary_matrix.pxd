@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 A binary matrix datatype in Cython
 

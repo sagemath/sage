@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules sage.rings.number_field
 r"""
 N=2 Super Lie Conformal Algebra
