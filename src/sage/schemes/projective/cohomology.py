@@ -74,7 +74,12 @@ We define the Fermat cubic surface (a curve in `\PP^2`) and compute its cohomolo
     sage: sh = X.structure_sheaf()
     sage: sh.cohomology(1)
     3
-    sage: sh._cohomology_group(1)
+
+Internally the cohomology is computed by Maruyama's method::
+
+    sage: sh._cohomology
+    Maruyama Method using S(0) <-- S(-4) <-- 0
+    sage: sh._cohomology.H(1)
     Vector space quotient V/W of dimension 3 over Rational Field where
     V: Vector space of degree 3 and dimension 3 over Rational Field
     Basis matrix:
@@ -84,22 +89,23 @@ We define the Fermat cubic surface (a curve in `\PP^2`) and compute its cohomolo
     W: Vector space of degree 3 and dimension 0 over Rational Field
     Basis matrix:
     []
-    sage: sh._cohomology_group(1).dimension()
-    3
+    sage: sh._cohomology.H(1).dimension() == sh.cohomology(1)
+    True
     sage: sh.cohomology(2)
     0
-    sage: sh._cohomology_group(2)
+    sage: sh._cohomology.H(2)
     Vector space quotient V/W of dimension 0 over Rational Field where
     V: Vector space of dimension 0 over Rational Field
     W: Vector space of degree 0 and dimension 0 over Rational Field
     Basis matrix:
     []
-    sage: sh._cohomology_group(2).dimension()
-    0
+    sage: sh._cohomology.H(2).dimension() == sh.cohomology(2)
+    True
 
-The rather complicated form (as a quotient of vector spaces) of the cohomology
-group reflects the internal representation of the cohomology group in terms of
-the cohomology groups of twisted structure sheaves of a projective space.
+The rather complicated form (as a quotient of vector spaces) of the `r`-th
+cohomology group ``H(r)`` reflects the internal representation of the
+cohomology group in terms of the cohomology groups of twisted structure sheaves
+of a projective space.
 
 On the other hand, it is not clear how to represent `H^0(\tilde M)` in terms of
 twisted structure sheaves of a projective space. Hence it is merely created
@@ -110,10 +116,11 @@ as a vector space over `k` with the correct dimension::
     sage: sh = X.structure_sheaf()
     sage: sh.cohomology(0)
     1
-    sage: sh._cohomology_group(0)
+    sage: sh._cohomology.H(0)
     Vector space of dimension 1 over Rational Field
 """
 
+from sage.structure.sage_object import SageObject
 from sage.misc.flatten import flatten
 from sage.combinat.integer_lists.invlex import IntegerListsLex
 from sage.modules.free_module import VectorSpace
@@ -121,7 +128,7 @@ from sage.modules.free_module_element import vector
 from sage.rings.integer import Integer
 
 
-class CohomologyGroupBottom:
+class CohomologyGroupBottom(SageObject):
     r"""
     Bottom cohomology group of the twisted structure sheaf of a projective space.
 
@@ -191,7 +198,7 @@ class CohomologyGroupBottom:
         return f'Bottom Cohomology Group of dimension {self.rank}'
 
 
-class CohomologyGroupTop:
+class CohomologyGroupTop(SageObject):
     r"""
     Top cohomology group of the twisted structure sheaf of a projective space.
 
@@ -261,7 +268,7 @@ class CohomologyGroupTop:
         return f'Top Cohomology Group of dimension {self.rank}'
 
 
-class MaruyamaComplex:
+class MaruyamaMethod(SageObject):
     r"""
     This class implements Maruyama's method to compute the cohomology group
     `H^q(\tilde M(n))` as a vector space over the base field `k` and
@@ -283,7 +290,7 @@ class MaruyamaComplex:
         sage: X = P2.subscheme([x^4 + y^4 + z^4])
         sage: sh = X.structure_sheaf(1)  # twisted sheaf
         sage: sh._cohomology
-        Maruyama Complex induced from S(1) <-- S(-3) <-- 0
+        Maruyama Method using S(1) <-- S(-3) <-- 0
     """
     def __init__(self, M, twist=0):
         """
@@ -310,9 +317,9 @@ class MaruyamaComplex:
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P2.subscheme([x^4 + y^4 + z^4])
             sage: X.structure_sheaf()._cohomology
-            Maruyama Complex induced from S(0) <-- S(-4) <-- 0
+            Maruyama Method using S(0) <-- S(-4) <-- 0
         """
-        return f'Maruyama Complex induced from {self.resolution}'
+        return f'Maruyama Method using {self.resolution}'
 
     def cohomology_group_bottom(self, i):
         r"""
