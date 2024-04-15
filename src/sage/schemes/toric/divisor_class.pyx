@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 # sage.doctest: needs sage.geometry.polyhedron sage.graphs
 r"""
 Toric rational divisor classes
@@ -204,7 +205,7 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
 
     cpdef _dot_product_(self, Vector right):
         r"""
-        Raise a ``TypeError`` exception.
+        Raise a :class:`TypeError` exception.
 
         Dot product is not defined on toric rational divisor classes.
 
@@ -214,7 +215,7 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
 
         OUTPUT:
 
-        - ``TypeError`` exception is raised.
+        A :class:`TypeError` exception is raised.
 
         TESTS::
 

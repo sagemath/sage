@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 Tiling Solver
@@ -991,12 +992,13 @@ class Polyomino(SageObject):
         """
         if mod_box_isometries:
             L = ncube_isometry_group_cosets(self._dimension, orientation_preserving)
-            P_cosets = set(frozenset((m * self).canonical() for m in coset) for coset in L)
+            P_cosets = {frozenset((m * self).canonical() for m in coset)
+                        for coset in L}
             P_cosets_representents = [min(s, key=lambda a: a.sorted_list()) for s in P_cosets]
-            return sorted(P_cosets_representents, key=lambda a:a.sorted_list())
+            return sorted(P_cosets_representents, key=lambda a: a.sorted_list())
         else:
             L = ncube_isometry_group(self._dimension, orientation_preserving)
-            P_images = set((m * self).canonical() for m in L)
+            P_images = {(m * self).canonical() for m in L}
             return sorted(P_images, key=lambda a: a.sorted_list())
 
     def translated_copies(self, box):
@@ -1222,8 +1224,8 @@ class Polyomino(SageObject):
             raise ValueError("Dimension of input box must match the "
                              "dimension of the polyomino")
         box_min_coords, box_max_coords = box.bounding_box()
-        if mod_box_isometries and len(set(b-a for (a,b) in zip(box_min_coords,
-                                      box_max_coords))) < box._dimension:
+        if mod_box_isometries and len({b - a for a, b in zip(box_min_coords,
+                                                             box_max_coords)}) < box._dimension:
             raise NotImplementedError("The code below assumes that the"
                     " sizes of the box (={}) are all distinct when"
                     " argument `mod_box_isometries` is True.".format(box))
@@ -1267,8 +1269,8 @@ class Polyomino(SageObject):
         """
         all_distinct_cano = self.canonical_isometric_copies(orientation_preserving,
                                                             mod_box_isometries=False)
-        return set([t for cano in all_distinct_cano
-                    for t in cano.translated_copies_intersection(box=box)])
+        return {t for cano in all_distinct_cano
+                for t in cano.translated_copies_intersection(box=box)}
 
     def neighbor_edges(self):
         r"""
@@ -1766,11 +1768,10 @@ class TilingSolver(SageObject):
              ((2, 0), 4), ((2, 1), 5)]
         """
         if self._reusable:
-            return dict((c, i) for i, c in enumerate(self.space()))
-        else:
-            number_of_pieces = len(self._pieces)
-            return dict((c, i+number_of_pieces)
-                        for i, c in enumerate(self.space()))
+            return {c: i for i, c in enumerate(self.space())}
+
+        number_of_pieces = len(self._pieces)
+        return {c: i + number_of_pieces for i, c in enumerate(self.space())}
 
     @cached_method
     def int_to_coord_dict(self):
@@ -1811,14 +1812,10 @@ class TilingSolver(SageObject):
             True
             sage: all(B[A[i]] == i for i in A)
             True
-
         """
         if self._reusable:
-            return dict((i, c) for i, c in enumerate(self.space()))
-        else:
-            number_of_pieces = len(self._pieces)
-            return dict((i+number_of_pieces, c)
-                        for i, c in enumerate(self.space()))
+            return dict(enumerate(self.space()))
+        return dict(enumerate(self.space(), start=len(self._pieces)))
 
     @cached_method
     def rows_for_piece(self, i, mod_box_isometries=False):

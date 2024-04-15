@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from sage.rings.polynomial.skew_polynomial_finite_order cimport SkewPolynomial_finite_order_dense
 
 cdef class SkewPolynomial_finite_field_dense (SkewPolynomial_finite_order_dense):
