@@ -146,39 +146,6 @@ class CoherentSheaf(SageObject):
         """
         return self._module
 
-    def _cohomology_group(self, r=0):
-        """
-        Return the `r`-th cohomology group as a vector space.
-
-        The vector space is the internal representation of the cohomology group.
-
-        See :mod:`sage.schemes.projective.cohomology` to see how the internal
-        representation is computed.
-
-        INPUT:
-
-        - ``r`` -- (default: 0) a non-negative integer
-
-        EXAMPLES::
-
-            sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
-            sage: X = P2.subscheme(x^4 + y^4 + z^4)
-            sage: s = X.structure_sheaf()
-            sage: s._cohomology_group(1)
-            Vector space quotient V/W of dimension 3 over Rational Field where
-            V: Vector space of degree 3 and dimension 3 over Rational Field
-            Basis matrix:
-            [1 0 0]
-            [0 1 0]
-            [0 0 1]
-            W: Vector space of degree 3 and dimension 0 over Rational Field
-            Basis matrix:
-            []
-            sage: s._cohomology_group(1).dimension()  == s.cohomology(1)
-            True
-        """
-        return self._cohomology.H(r)
-
     def cohomology(self, r=0):
         """
         Return the dimension of the `r`-th cohomology as a vector space.
@@ -268,10 +235,10 @@ class CoherentSheaf_on_projective_space(CoherentSheaf):
 
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: P2.structure_sheaf()._cohomology
-            Maruyama Complex induced from S(0) <-- 0
+            Maruyama Method using S(0) <-- 0
         """
-        from sage.schemes.projective.cohomology import MaruyamaComplex
-        return MaruyamaComplex(self._module, twist=self._twist)
+        from sage.schemes.projective.cohomology import MaruyamaMethod
+        return MaruyamaMethod(self._module, twist=self._twist)
 
 
 class CoherentSheaf_on_projective_subscheme(CoherentSheaf):
@@ -296,7 +263,7 @@ class CoherentSheaf_on_projective_subscheme(CoherentSheaf):
             sage: P2.<x,y,z> = ProjectiveSpace(QQ, 2)
             sage: X = P2.subscheme(x^4 + y^4 + z^4)
             sage: X.structure_sheaf()._cohomology
-            Maruyama Complex induced from S(0) <-- S(-4) <-- 0
+            Maruyama Method using S(0) <-- S(-4) <-- 0
         """
         return self.image_to_ambient_space()._cohomology
 
