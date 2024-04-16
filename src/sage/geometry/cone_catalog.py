@@ -187,9 +187,9 @@ def downward_monotonic(ambient_dim=None, lattice=None):
     rank of ``lattice``. If the ``lattice`` is omitted, then the
     default lattice of rank ``ambient_dim`` will be used.
 
-    A ``ValueError`` is raised if neither ``ambient_dim`` nor
-    ``lattice`` are specified. It is also a ``ValueError`` to specify
-    both ``ambient_dim`` and ``lattice`` unless the rank of
+    A :class:`ValueError` is raised if neither ``ambient_dim`` nor
+    ``lattice`` are specified. It is also a :class:`ValueError` to
+    specify both ``ambient_dim`` and ``lattice`` unless the rank of
     ``lattice`` is equal to ``ambient_dim``.
 
     OUTPUT:
@@ -199,8 +199,8 @@ def downward_monotonic(ambient_dim=None, lattice=None):
     nonincreasing order. Each generating ray has the integer ring as
     its base ring.
 
-    A ``ValueError`` can be raised if the inputs are incompatible or
-    insufficient. See the INPUT documentation for details.
+    A :class:`ValueError` can be raised if the inputs are incompatible
+    or insufficient. See the INPUT documentation for details.
 
     .. SEEALSO::
 
@@ -318,20 +318,20 @@ def nonnegative_orthant(ambient_dim=None, lattice=None):
     rank of ``lattice``. If the ``lattice`` is omitted, then the
     default lattice of rank ``ambient_dim`` will be used.
 
-    A ``ValueError`` is raised if neither ``ambient_dim`` nor
-    ``lattice`` are specified. It is also a ``ValueError`` to specify
-    both ``ambient_dim`` and ``lattice`` unless the rank of
+    A :class:`ValueError` is raised if neither ``ambient_dim`` nor
+    ``lattice`` are specified. It is also a :class:`ValueError` to
+    specify both ``ambient_dim`` and ``lattice`` unless the rank of
     ``lattice`` is equal to ``ambient_dim``.
 
     OUTPUT:
 
-    A :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone` living in ``lattice``
-    and having ``ambient_dim`` standard basis vectors as its
-    generators. Each generating ray has the integer ring as its
+    A :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone` living
+    in ``lattice`` and having ``ambient_dim`` standard basis vectors
+    as its generators. Each generating ray has the integer ring as its
     base ring.
 
-    A ``ValueError`` can be raised if the inputs are incompatible or
-    insufficient. See the INPUT documentation for details.
+    A :class:`ValueError` can be raised if the inputs are incompatible
+    or insufficient. See the INPUT documentation for details.
 
     REFERENCES:
 
@@ -426,22 +426,22 @@ def rearrangement(p, ambient_dim=None, lattice=None):
     rank of ``lattice``. If the ``lattice`` is omitted, then the
     default lattice of rank ``ambient_dim`` will be used.
 
-    A ``ValueError`` is raised if neither ``ambient_dim`` nor
-    ``lattice`` are specified. It is also a ``ValueError`` to specify
-    both ``ambient_dim`` and ``lattice`` unless the rank of
+    A :class:`ValueError` is raised if neither ``ambient_dim`` nor
+    ``lattice`` are specified. It is also a :class:`ValueError` to
+    specify both ``ambient_dim`` and ``lattice`` unless the rank of
     ``lattice`` is equal to ``ambient_dim``.
 
-    It is also a ``ValueError`` to specify a non-integer ``p``.
+    It is also a :class:`ValueError` to specify a non-integer ``p``.
 
     OUTPUT:
 
-    A :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone` representing the
-    rearrangement cone of order ``p`` living in ``lattice``, with
-    ambient dimension ``ambient_dim``. Each generating ray has the
-    integer ring as its base ring.
+    A :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone`
+    representing the rearrangement cone of order ``p`` living in
+    ``lattice``, with ambient dimension ``ambient_dim``. Each
+    generating ray has the integer ring as its base ring.
 
-    A ``ValueError`` can be raised if the inputs are incompatible or
-    insufficient. See the INPUT documentation for details.
+    A :class:`ValueError` can be raised if the inputs are incompatible
+    or insufficient. See the INPUT documentation for details.
 
     ALGORITHM:
 
@@ -647,19 +647,20 @@ def schur(ambient_dim=None, lattice=None):
     rank of ``lattice``. If the ``lattice`` is omitted, then the
     default lattice of rank ``ambient_dim`` will be used.
 
-    A ``ValueError`` is raised if neither ``ambient_dim`` nor
-    ``lattice`` are specified. It is also a ``ValueError`` to specify
-    both ``ambient_dim`` and ``lattice`` unless the rank of
+    A :class:`ValueError` is raised if neither ``ambient_dim`` nor
+    ``lattice`` are specified. It is also a :class:`ValueError` to
+    specify both ``ambient_dim`` and ``lattice`` unless the rank of
     ``lattice`` is equal to ``ambient_dim``.
 
     OUTPUT:
 
-    A :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone` representing the Schur
-    cone living in ``lattice``, with ambient dimension ``ambient_dim``.
-    Each generating ray has the integer ring as its base ring.
+    A :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone`
+    representing the Schur cone living in ``lattice``, with ambient
+    dimension ``ambient_dim``.  Each generating ray has the integer
+    ring as its base ring.
 
-    A ``ValueError`` can be raised if the inputs are incompatible or
-    insufficient. See the INPUT documentation for details.
+    A :class:`ValueError` can be raised if the inputs are incompatible
+    or insufficient. See the INPUT documentation for details.
 
     .. SEEALSO::
 
@@ -785,19 +786,19 @@ def trivial(ambient_dim=None, lattice=None):
     rank of ``lattice``. If the ``lattice`` is omitted, then the
     default lattice of rank ``ambient_dim`` will be used.
 
-    A ``ValueError`` is raised if neither ``ambient_dim`` nor
-    ``lattice`` are specified. It is also a ``ValueError`` to specify
-    both ``ambient_dim`` and ``lattice`` unless the rank of
+    A :class:`ValueError` is raised if neither ``ambient_dim`` nor
+    ``lattice`` are specified. It is also a :class:`ValueError` to
+    specify both ``ambient_dim`` and ``lattice`` unless the rank of
     ``lattice`` is equal to ``ambient_dim``.
 
     OUTPUT:
 
-    A :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone` representing the
-    trivial cone with no nonzero generators living in ``lattice``,
-    with ambient dimension ``ambient_dim``.
+    A :class:`~sage.geometry.cone.ConvexRationalPolyhedralCone`
+    representing the trivial cone with no nonzero generators living in
+    ``lattice``, with ambient dimension ``ambient_dim``.
 
-    A ``ValueError`` can be raised if the inputs are incompatible or
-    insufficient. See the INPUT documentation for details.
+    A :class:`ValueError` can be raised if the inputs are incompatible
+    or insufficient. See the INPUT documentation for details.
 
     EXAMPLES:
 
