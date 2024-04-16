@@ -1495,7 +1495,7 @@ class DocTestController(SageObject):
             Features to be detected: ...
             Doctesting 1 file.
             sage -t ....py
-                [4 tests, ... s]
+                [4 tests, ...s wall]
             ----------------------------------------------------------------------
             All tests passed!
             ----------------------------------------------------------------------
