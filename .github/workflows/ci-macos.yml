@@ -95,7 +95,7 @@ jobs:
       - name: make dist
         run: |
           ./configure --enable-download-from-upstream-url && make dist
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: "dist/*.tar.gz"
           name: dist
@@ -119,7 +119,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         if: "!contains(matrix.tox_system_factor, 'nobootstrap')"
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           path: .
           name: dist
@@ -147,7 +147,7 @@ jobs:
         run: |
           mkdir -p "artifacts/$LOGS_ARTIFACT_NAME"; cp -r .tox/*/log "artifacts/$LOGS_ARTIFACT_NAME"
         if: always()
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: artifacts
           name: ${{ env.LOGS_ARTIFACT_NAME }}
