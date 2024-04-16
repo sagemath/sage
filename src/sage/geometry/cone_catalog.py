@@ -5,7 +5,7 @@ Catalog of common polyhedral convex cones
 This module provides shortcut functions, grouped under the
 globally-available ``cones`` prefix, to create some common cones:
 
-- The downward-monotonic cone,
+- The downward-monotone cone,
 - The nonnegative orthant,
 - The rearrangement cone of order ``p``,
 - The Schur cone,
@@ -20,7 +20,7 @@ the ambient space.
 
 Here are some typical usage examples::
 
-    sage: cones.downward_monotonic(3).rays()
+    sage: cones.downward_monotone(3).rays()
     N( 1,  0,  0),
     N( 1,  1,  0),
     N( 1,  1,  1),
@@ -161,18 +161,18 @@ def _preprocess_args(ambient_dim, lattice):
     return (ambient_dim, lattice)
 
 
-def downward_monotonic(ambient_dim=None, lattice=None):
+def downward_monotone(ambient_dim=None, lattice=None):
     r"""
-    The downward-monotonic cone in ``ambient_dim`` dimensions, or
+    The downward-monotone cone in ``ambient_dim`` dimensions, or
     living in ``lattice``.
 
-    The elements of the downward-monotonic cone are vectors whose
+    The elements of the downward-monotone cone are vectors whose
     components are arranged in non-increasing order. Vectors whose
     entries are arranged in the reverse (non-decreasing) order are
     sometimes called isotone vectors, and are used in statistics
     for isotonic regression.
 
-    The downward-monotonic cone is the dual of the Schur cone. It
+    The downward-monotone cone is the dual of the Schur cone. It
     is also often referred to as the downward-monotone cone.
 
     INPUT:
@@ -214,11 +214,11 @@ def downward_monotonic(ambient_dim=None, lattice=None):
 
     EXAMPLES:
 
-    The entries of the elements of the downward-monotonic cone are in
+    The entries of the elements of the downward-monotone cone are in
     non-increasing order::
 
         sage: ambient_dim = ZZ.random_element(10)
-        sage: K = cones.downward_monotonic(ambient_dim)
+        sage: K = cones.downward_monotone(ambient_dim)
         sage: all( x[i] >= x[i + 1]
         ....:      for i in range(ambient_dim - 1)
         ....:      for x in K.rays() )
@@ -227,12 +227,12 @@ def downward_monotonic(ambient_dim=None, lattice=None):
         sage: all( x[i] >= x[i + 1] for i in range(ambient_dim - 1) )
         True
 
-    A nontrivial downward-monotonic cone is solid but not proper,
+    A nontrivial downward-monotone cone is solid but not proper,
     since it contains both the vector of all ones and its negation;
     that, however, is the only subspace it contains::
 
         sage: ambient_dim = ZZ.random_element(1,10)
-        sage: K = cones.downward_monotonic(ambient_dim)
+        sage: K = cones.downward_monotone(ambient_dim)
         sage: K.is_solid()
         True
         sage: K.is_proper()
@@ -240,40 +240,40 @@ def downward_monotonic(ambient_dim=None, lattice=None):
         sage: K.lineality()
         1
 
-    The dual of the downward-monotonic cone is the Schur cone
+    The dual of the downward-monotone cone is the Schur cone
     [GS2010]_ that induces the majorization preordering::
 
         sage: ambient_dim = ZZ.random_element(10)
-        sage: K = cones.downward_monotonic(ambient_dim).dual()
+        sage: K = cones.downward_monotone(ambient_dim).dual()
         sage: J = cones.schur(ambient_dim, K.lattice())
         sage: K.is_equivalent(J)
         True
 
     TESTS:
 
-    We can construct the trivial cone as the downward-monotonic cone
+    We can construct the trivial cone as the downward-monotone cone
     in a trivial vector space::
 
-        sage: cones.downward_monotonic(0)
+        sage: cones.downward_monotone(0)
         0-d cone in 0-d lattice N
 
     If a ``lattice`` was given, it is actually used::
 
         sage: L = ToricLattice(3, 'M')
-        sage: cones.downward_monotonic(lattice=L)
+        sage: cones.downward_monotone(lattice=L)
         3-d cone in 3-d lattice M
 
     Unless the rank of the lattice disagrees with ``ambient_dim``::
 
         sage: L = ToricLattice(1, 'M')
-        sage: cones.downward_monotonic(3, lattice=L)
+        sage: cones.downward_monotone(3, lattice=L)
         Traceback (most recent call last):
         ...
         ValueError: lattice rank=1 and ambient_dim=3 are incompatible
 
     We also get an error if no arguments are given::
 
-        sage: cones.downward_monotonic()
+        sage: cones.downward_monotone()
         Traceback (most recent call last):
         ...
         ValueError: either the ambient dimension or the lattice must
@@ -633,7 +633,7 @@ def schur(ambient_dim=None, lattice=None):
     preordering on the ambient space. If `\left\{e_{1}, e_{2}, \ldots,
     e_{n}\right\}` is the standard basis for the space, then its
     generators are `\left\{e_{i} - e_{i+1}\ |\ 1 \le i \le
-    n-1\right\}`. Its dual is the downward monotonic cone.
+    n-1\right\}`. Its dual is the downward monotone cone.
 
     INPUT:
 
@@ -664,7 +664,7 @@ def schur(ambient_dim=None, lattice=None):
 
     .. SEEALSO::
 
-        :func:`downward_monotonic`
+        :func:`downward_monotone`
 
     REFERENCES:
 
@@ -690,12 +690,12 @@ def schur(ambient_dim=None, lattice=None):
         sage: abs(actual - expected).n() < 1e-12
         True
 
-    The dual of the Schur cone is the downward-monotonic cone
+    The dual of the Schur cone is the downward-monotone cone
     [GS2010]_, whose elements' entries are in non-increasing order::
 
         sage: ambient_dim = ZZ.random_element(10)
         sage: K = cones.schur(ambient_dim).dual()
-        sage: J = cones.downward_monotonic(ambient_dim, K.lattice())
+        sage: J = cones.downward_monotone(ambient_dim, K.lattice())
         sage: K.is_equivalent(J)
         True
 
