@@ -1023,21 +1023,47 @@ def partition_to_vector_of_contents(partition, reverse=False):
 from sage.rings.quotient_ring import QuotientRing_generic
 from sage.combinat.specht_module import SymmetricGroupRepresentation as SymmetricGroupRepresentation_mixin
 class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricGroupRepresentation_mixin):
-    """
+    r"""
     A Garsia-Procesi module.
 
-    Isomorphic to the cohomology ring of the Springer fiber.
+    Over `\QQ`, this is isomorphic to the cohomology ring of the Springer fiber.
     """
     @staticmethod
     def __classcall_private__(cls, SGA, shape):
         """
         Normalize input to ensure a unique representation.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: from sage.combinat.symmetric_group_representations import GarsiaProcesiModule
+            sage: GP1 = GarsiaProcesiModule(SGA, [2, 2, 1])
+            sage: GP2 = GarsiaProcesiModule(SGA, Partitions(5)([2, 2, 1]))
+            sage: GP1 is GP2
+            True
+            sage: GarsiaProcesiModule(SGA, [3])
+            Traceback (most recent call last):
+            ...
+            ValueError: [3] is not a partition of 5
         """
-        return super().__classcall__(cls, SGA, Partition(shape))
+        shape = Partition(shape)
+        if sum(shape) != SGA.n:
+            raise ValueError(f"{shape} is not a partition of {SGA.n}")
+        return super().__classcall__(cls, SGA, shape)
 
     def __init__(self, SGA, shape):
-        """
+        r"""
         Initialize ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 4)
+            sage: GP = SGA.garsia_procesi_module([2, 2])
+            sage: TestSuite(GP).run()
+
+            sage: SGA = SymmetricGroupAlgebra(GF(2), 5)
+            sage: GP = SGA.garsia_procesi_module([3, 1, 1])
+            sage: TestSuite(GP).run()
         """
         self._shape = shape
         SymmetricGroupRepresentation_mixin.__init__(self, SGA)
@@ -1072,6 +1098,12 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
     def _repr_(self):
         r"""
         Return a string representation of ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 4)
+            sage: SGA.garsia_procesi_module([2, 2])
+            Garsia-Procesi module of shape [2, 2] over Rational Field
         """
         return "Garsia-Procesi module of shape {} over {}".format(self._shape, self.base_ring())
 
@@ -1080,6 +1112,16 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
         Return a latex representation of ``self``.
 
         EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 4)
+            sage: GP = SGA.garsia_procesi_module([2, 2])
+            sage: latex(GP)
+            R_{{\def\lr#1{\multicolumn{1}{|@{\hspace{.6ex}}c@{\hspace{.6ex}}|}{\raisebox{-.3ex}{$#1$}}}
+            \raisebox{-.6ex}{$\begin{array}[b]{*{2}c}\cline{1-2}
+            \lr{\phantom{x}}&\lr{\phantom{x}}\\\cline{1-2}
+            \lr{\phantom{x}}&\lr{\phantom{x}}\\\cline{1-2}
+            \end{array}$}
+            }}^{\Bold{Q}}
         """
         from sage.misc.latex import latex
         return "R_{{{}}}^{{{}}}".format(latex(self._shape), latex(self.base_ring()))
@@ -1087,13 +1129,41 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
     def _coerce_map_from_base_ring(self):
         r"""
         Disable the coercion from the base ring from the category.
+
+        TESTS::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 4)
+            sage: GP = SGA.garsia_procesi_module([2, 2])
+            sage: GP._coerce_map_from_base_ring() is None
+            True
         """
         return None  # don't need anything special
+
+    @cached_method
+    def get_order(self):
+        """
+        Return the order of the elements in the basis.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 4)
+            sage: GP = SGA.garsia_procesi_module([2, 2])
+            sage: GP.get_order()
+            (0, 1, 2, 3, 4, 5)
+        """
+        return tuple(self.basis().keys())
 
     @cached_method
     def basis(self):
         r"""
         Return a basis of ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 4)
+            sage: GP = SGA.garsia_procesi_module([2, 2])
+            sage: GP.basis()
+            Family (gp2*gp3, gp1*gp3, gp3, gp2, gp1, 1)
         """
         from sage.sets.family import Family
         B = self.defining_ideal().normal_basis()
@@ -1103,6 +1173,13 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
     def one_basis(self):
         r"""
         Return the index of the basis element `1`.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 4)
+            sage: GP = SGA.garsia_procesi_module([2, 2])
+            sage: GP.one_basis()
+            5
         """
         B = self.defining_ideal().normal_basis()
         for i, b in enumerate(B):
@@ -1147,7 +1224,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
         of each graded component, which is known to result in the modified
         Hall-Littlewood polynomial `\widetilde{H}_{\lambda}(x; q)`.
 
-        EXAMPLES::
+        EXAMPLES:
 
         We verify that the result is the modified Hall-Littlewood polynomial
         for `n = 5`::
@@ -1182,13 +1259,48 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
         Return the graded character of ``self``.
 
         EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: GP = SGA.garsia_procesi_module([2, 2, 1])
+            sage: gchi = GP.graded_character(); gchi
+            (5*q^4 + 11*q^3 + 9*q^2 + 4*q + 1, -q^4 + q^3 + 3*q^2 + 2*q + 1,
+             q^4 - q^3 + q^2 + 1, -q^4 - q^3 + q + 1, -q^4 + q^3 - q + 1,
+             q^4 - q^3 - q^2 + 1, q^3 - q^2 - q + 1)
+            sage: R.<q> = QQ[]
+            sage: gchi == sum(q^d * D.character()
+            ....:             for d, D in GP.graded_decomposition().items())
+            True
         """
         q = QQ['q'].gen()
         G = self._semigroup
+        B = self.basis()
         from sage.modules.free_module_element import vector
         return vector([sum(q**b.degree() * (g * b).lift().monomial_coefficient(b.lift()) for b in B)
                        for g in G.conjugacy_classes_representatives()],
                       immutable=True)
+
+    def graded_decomposition(self):
+        r"""
+        Return the decomposition of ``self`` as a direct sum of
+        representations given by a fixed grading.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(2), 5)
+            sage: GP32 = SGA.garsia_procesi_module([3, 2])
+            sage: GP32.graded_decomposition()
+            {0: Subrepresentation with basis {0} of Garsia-Procesi ...,
+             1: Subrepresentation with basis {0, 1, 2, 3} of Garsia-Procesi ...,
+             2: Subrepresentation with basis {0, 1, 2, 3, 4} of Garsia-Procesi ...}
+        """
+        d = {}
+        for b in self.basis():
+            deg = b.degree()
+            if deg not in d:
+                d[deg] = [b]
+            else:
+                d[deg].append(b)
+        return {deg: self.subrepresentation(gens) for deg, gens in sorted(d.items())}
 
     def graded_representation_matrix(self, elt, q=None):
         r"""
@@ -1196,12 +1308,50 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
         group (algebra) element ``elt`` on ``self``.
 
         EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(3), 3)
+            sage: GP = SGA.garsia_procesi_module([1, 1, 1])
+            sage: elt = SGA.an_element(); elt
+            [1, 2, 3] + 2*[1, 3, 2] + [3, 1, 2]
+            sage: X = GP.graded_representation_matrix(elt); X
+            [  0   0   0   0   0   0]
+            [  0 q^2   0   0   0   0]
+            [  0 q^2   0   0   0   0]
+            [  0   0   0   q   0   0]
+            [  0   0   0   q   0   0]
+            [  0   0   0   0   0   1]
+            sage: X.parent()
+            Full MatrixSpace of 6 by 6 dense matrices over
+             Univariate Polynomial Ring in q over Finite Field of size 3
+            sage: R.<q> = GF(3)[]
+            sage: t = R.quotient([q^2+2*q+1]).gen()
+            sage: GP.graded_representation_matrix(elt, t)
+            [       0        0        0        0        0        0]
+            [       0 qbar + 2        0        0        0        0]
+            [       0 qbar + 2        0        0        0        0]
+            [       0        0        0     qbar        0        0]
+            [       0        0        0     qbar        0        0]
+            [       0        0        0        0        0        1]
         """
         if q is None:
-            q = self.base_ring()['q']
+            q = self.base_ring()['q'].gen()
         R = q.parent()
         return matrix(R, [q**b.degree() * (elt * b).to_vector().change_ring(R)
                           for b in self.basis()])
+
+    def graded_brauer_character(self):
+        r"""
+        Return the graded Brauer character of ``self``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(2), 5)
+            sage: GP311 = SGA.garsia_procesi_module([3, 1, 1])
+            sage: GP311.graded_brauer_character()
+            (6*q^3 + 9*q^2 + 4*q + 1, q + 1, q^3 - q^2 - q + 1)
+        """
+        q = QQ['q'].gen()
+        return sum(q**d * SM.brauer_character() for d, SM in self.graded_decomposition().items())
 
     class Element(QuotientRing_generic.Element):
         def _acted_upon_(self, scalar, self_on_left=True):
@@ -1221,7 +1371,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
                              for sigma, c in scalar.monomial_coefficients(copy=False).items())
             return super()._acted_upon_(scalar, self_on_left)
 
-        def to_vector(self):
+        def to_vector(self, order=None):
             """
             Return ``self`` as a (dense) free module vector.
             """
@@ -1242,9 +1392,16 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
             return {i: f.monomial_coefficient(b.lift()) for i, b in enumerate(B)}
 
         def degree(self):
+            """
+            Return the degree of ``self``.
+            """
             return self.lift().degree()
 
         def homogeneous_degree(self):
+            """
+            Return the (homogeneous) degree of ``self`` if homogeneous
+            otherwise raise an error.
+            """
             if not self:
                 raise ValueError("the zero element does not have a well-defined degree")
             f = self.lift()
