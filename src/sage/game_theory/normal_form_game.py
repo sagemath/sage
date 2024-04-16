@@ -6,17 +6,18 @@ This module implements a class for normal form games (strategic form games)
 [NN2007]_. At present the following algorithms are implemented to
 compute equilibria of these games:
 
- * ``'enumeration'`` - An implementation of the support enumeration
-   algorithm built in Sage.
+* ``'enumeration'`` -- An implementation of the support enumeration
+  algorithm built in Sage.
 
- * ``'LCP'`` - An interface with the 'gambit' solver's implementation
-   of the Lemke-Howson algorithm.
+* ``'LCP'`` -- An interface with the :ref:`pygambit <spkg_pygambit>`
+  solver's implementation of the Lemke-Howson algorithm.
 
- * ``'lp'`` - A built-in Sage implementation (with a gambit alternative)
-   of a zero-sum game solver using linear programming. See
-   :class:`MixedIntegerLinearProgram` for more on MILP solvers in Sage.
+* ``'lp'`` -- A built-in Sage implementation (with a gambit alternative)
+  of a zero-sum game solver using linear programming. See
+  :class:`MixedIntegerLinearProgram` for more on MILP solvers in Sage.
 
- * ``'lrs'`` - A solver interfacing with the 'lrslib' library.
+* ``'lrs'`` -- A solver interfacing with the :ref:`lrslib <spkg_lrslib>`
+  library.
 
 The architecture for the class is based on the gambit architecture to
 ensure an easy transition between gambit and Sage.  At present the
@@ -222,22 +223,22 @@ currently available:
 
 * ``'lp'``: A solver for constant sum 2 player games using linear
   programming. This constructs a
-  :mod:`MixedIntegerLinearProgram <sage.numerical.MILP>` using the
+  :mod:`MixedIntegerLinearProgram <sage.numerical.mip>` using the
   solver which was passed in with ``solver`` to solve the linear
   programming representation of the game. See
   :class:`MixedIntegerLinearProgram` for more on MILP solvers in Sage.
 
 * ``'lrs'``: Reverse search vertex enumeration for 2 player games. This
-  algorithm uses the optional 'lrslib' package. To install it, type
+  algorithm uses the optional :ref:`lrslib <spkg_lrslib>` package. To install it, type
   ``sage -i lrslib`` in the shell. For more information, see [Av2000]_.
 
 * ``'LCP'``: Linear complementarity program algorithm for 2 player games.
-  This algorithm uses the open source game theory package:
-  `Gambit <http://gambit.sourceforge.net/>`_ [Gambit]_. At present this is
-  the only gambit algorithm available in sage but further development will
+  This algorithm uses the open source game theory package
+  :ref:`pygambit <spkg_pygambit>` [Gambit]_. At present this is
+  the only gambit algorithm available in Sage but further development will
   hope to implement more algorithms
   (in particular for games with more than 2 players). To install it,
-  type ``sage -i gambit`` in the shell.
+  type ``sage -i pygambit`` in the shell.
 
 * ``'enumeration'``: Support enumeration for 2 player games. This
   algorithm is hard coded in Sage and checks through all potential
@@ -255,7 +256,7 @@ Below we show how the these algorithms are called::
     [[(0.5, 0.5), (0.5, 0.5)]]
     sage: matching_pennies.obtain_nash(algorithm='lp', solver='PPL')
     [[(1/2, 1/2), (1/2, 1/2)]]
-    sage: matching_pennies.obtain_nash(algorithm='lp', solver='gambit') # optional - pygambit
+    sage: matching_pennies.obtain_nash(algorithm='lp', solver='gambit')  # optional - pygambit
     [[(0.5, 0.5), (0.5, 0.5)]]
     sage: matching_pennies.obtain_nash(algorithm='enumeration')
     [[(1/2, 1/2), (1/2, 1/2)]]
