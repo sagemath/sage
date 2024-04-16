@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.groups
 """
 Representations of a semigroup
@@ -1420,7 +1421,6 @@ class Representation_Symmetric(Representation_abstract):
         return self.element_class(self, data)
 
 
-
 class RegularRepresentation(Representation):
     r"""
     The regular representation of a semigroup.
@@ -1501,7 +1501,6 @@ class RegularRepresentation(Representation):
             sage: R._test_representation()  # indirect doctest
         """
         return self.monomial(m * g)
-
 
 
 class TrivialRepresentation(Representation_abstract):

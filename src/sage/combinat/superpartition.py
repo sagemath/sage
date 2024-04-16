@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 r"""
 Super Partitions
 
@@ -691,7 +692,7 @@ class SuperPartition(ClonableArray,
                       # TODO: Check that this is not supposed to be
                       #   a tuple of size 1
                       + [(i) for i in circ_list if row_changed[i[0]] == 0]]
-            if len(set([k for (j, k) in new_sp[1]])) == len(new_sp[1]):
+            if len({k for j, k in new_sp[1]}) == len(new_sp[1]):
                 out += [SuperPartition.from_circled_diagram(*new_sp)]
         return out
 

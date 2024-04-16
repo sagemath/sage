@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-repl
 """
 Classes involved in doctesting
 
@@ -1102,9 +1103,7 @@ class DocTestController(SageObject):
         EXAMPLES::
 
             sage: from sage.doctest.control import DocTestDefaults, DocTestController
-            sage: from sage.env import SAGE_SRC
-            sage: import os
-            sage: filename = os.path.join(SAGE_SRC,'sage','doctest','util.py')
+            sage: filename = sage.doctest.util.__file__
             sage: DD = DocTestDefaults()
             sage: DC = DocTestController(DD, [filename])
             sage: DC.expand_files_into_sources()

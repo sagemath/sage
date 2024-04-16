@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 """
 Data structures for maps between finite sets
 

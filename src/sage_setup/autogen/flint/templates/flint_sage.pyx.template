@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 # distutils: extra_compile_args = -D_XPG6
 
 # WARNING: src/sage/libs/flint/flint_sage.pyx is generated from
