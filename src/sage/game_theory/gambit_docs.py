@@ -18,8 +18,8 @@ that can be run easily in IPython. To run the IPython packaged with Sage run
 
 Here is an example that constructs the Prisoner's Dilemma::
 
-    In [1]: import gambit
-    In [2]: g = gambit.Game.new_table([2,2])
+    In [1]: import pygambit
+    In [2]: g = pygambit.Game.new_table([2,2])
     In [3]: g.title = "A prisoner's dilemma game"
     In [4]: g.players[0].label = "Alphonse"
     In [5]: g.players[1].label = "Gaston"
@@ -79,7 +79,7 @@ Here is a list of the various solvers available in gambit:
 
 Here is how to use the ``ExternalEnumPureSolver``::
 
-    In [21]: solver = gambit.nash.ExternalEnumPureSolver()
+    In [21]: solver = pygambit.nash.ExternalEnumPureSolver()
     In [22]: solver.solve(g)
     Out[22]: [<NashProfile for 'A prisoner's dilemma game': [Fraction(0, 1), Fraction(1, 1), Fraction(0, 1), Fraction(1, 1)]>]
 
@@ -87,8 +87,8 @@ Note that the above finds the equilibria by investigating all potential pure
 pure strategy pairs. This will fail to find all Nash equilibria in certain
 games.  For example here is an implementation of Matching Pennies::
 
-    In [1]: import gambit
-    In [2]: g = gambit.Game.new_table([2,2])
+    In [1]: import pygambit
+    In [2]: g = pygambit.Game.new_table([2,2])
     In [3]: g[0, 0][0] = 1
     In [4]: g[0, 0][1] = -1
     In [5]: g[0, 1][0] = -1
@@ -97,13 +97,13 @@ games.  For example here is an implementation of Matching Pennies::
     In [8]: g[1, 0][1] = 1
     In [9]: g[1, 1][0] = 1
     In [10]: g[1, 1][1] = -1
-    In [11]: solver = gambit.nash.ExternalEnumPureSolver()
+    In [11]: solver = pygambit.nash.ExternalEnumPureSolver()
     In [12]: solver.solve(g)
     Out[12]: []
 
 If we solve this with the ``LCP`` solver we get the expected Nash equilibrium::
 
-    In [13]: solver = gambit.nash.ExternalLCPSolver()
+    In [13]: solver = pygambit.nash.ExternalLCPSolver()
     In [14]: solver.solve(g)
     Out[14]: [<NashProfile for '': [0.5, 0.5, 0.5, 0.5]>]
 
@@ -117,8 +117,8 @@ converted to Python integers (due to the preparser). Here is an example
 showing the Battle of the Sexes::
 
     sage: # optional - pygambit
-    sage: import gambit
-    sage: g = gambit.Game.new_table([2,2])
+    sage: import pygambit
+    sage: g = pygambit.Game.new_table([2,2])
     sage: g[int(0), int(0)][int(0)] = int(2)
     sage: g[int(0), int(0)][int(1)] = int(1)
     sage: g[int(0), int(1)][int(0)] = int(0)
@@ -127,7 +127,7 @@ showing the Battle of the Sexes::
     sage: g[int(1), int(0)][int(1)] = int(0)
     sage: g[int(1), int(1)][int(0)] = int(1)
     sage: g[int(1), int(1)][int(1)] = int(2)
-    sage: solver = gambit.nash.ExternalLCPSolver()
+    sage: solver = pygambit.nash.ExternalLCPSolver()
     sage: solver.solve(g)
     [<NashProfile for '': [[1.0, 0.0], [1.0, 0.0]]>,
      <NashProfile for '': [[0.6666666667, 0.3333333333], [0.3333333333, 0.6666666667]]>,

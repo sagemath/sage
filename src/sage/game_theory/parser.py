@@ -196,9 +196,9 @@ class Parser():
         Here we construct a two by two game in gambit::
 
             sage: # optional - pygambit
-            sage: import gambit
+            sage: import pygambit
             sage: from sage.game_theory.parser import Parser
-            sage: g = gambit.Game.new_table([2,2])
+            sage: g = pygambit.Game.new_table([2,2])
             sage: g[int(0), int(0)][int(0)] = int(2)
             sage: g[int(0), int(0)][int(1)] = int(1)
             sage: g[int(0), int(1)][int(0)] = int(0)
@@ -207,7 +207,7 @@ class Parser():
             sage: g[int(1), int(0)][int(1)] = int(0)
             sage: g[int(1), int(1)][int(0)] = int(1)
             sage: g[int(1), int(1)][int(1)] = int(2)
-            sage: solver = gambit.nash.ExternalLCPSolver()
+            sage: solver = pygambit.nash.ExternalLCPSolver()
 
         Here is the output of the LCP algorithm::
 
@@ -228,7 +228,7 @@ class Parser():
         Here is another game::
 
             sage: # optional - pygambit
-            sage: g = gambit.Game.new_table([2,2])
+            sage: g = pygambit.Game.new_table([2,2])
             sage: g[int(0), int(0)][int(0)] = int(4)
             sage: g[int(0), int(0)][int(1)] = int(8)
             sage: g[int(0), int(1)][int(0)] = int(0)
@@ -237,7 +237,7 @@ class Parser():
             sage: g[int(1), int(0)][int(1)] = int(3)
             sage: g[int(1), int(1)][int(0)] = int(1)
             sage: g[int(1), int(1)][int(1)] = int(0)
-            sage: solver = gambit.nash.ExternalLCPSolver()
+            sage: solver = pygambit.nash.ExternalLCPSolver()
 
         Here is the LCP output::
 
@@ -254,7 +254,7 @@ class Parser():
         Here is a larger degenerate game::
 
             sage: # optional - pygambit
-            sage: g = gambit.Game.new_table([3,3])
+            sage: g = pygambit.Game.new_table([3,3])
             sage: g[int(0), int(0)][int(0)] = int(-7)
             sage: g[int(0), int(0)][int(1)] = int(-9)
             sage: g[int(0), int(1)][int(0)] = int(-5)
@@ -273,7 +273,7 @@ class Parser():
             sage: g[int(2), int(1)][int(1)] = int(6)
             sage: g[int(2), int(2)][int(0)] = int(1)
             sage: g[int(2), int(2)][int(1)] = int(-10)
-            sage: solver = gambit.nash.ExternalLCPSolver()
+            sage: solver = pygambit.nash.ExternalLCPSolver()
 
         Here is the LCP output::
 
