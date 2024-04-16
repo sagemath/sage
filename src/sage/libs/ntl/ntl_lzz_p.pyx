@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 # distutils: libraries = NTL_LIBRARIES gmp m
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -150,7 +151,7 @@ cdef class ntl_zz_p():
         ## now that we've determined the modulus, set that modulus.
         self.c.restore_c()
 
-    cdef ntl_zz_p _new(self) noexcept:
+    cdef ntl_zz_p _new(self):
         """
         Quick and dirty zz_p object creation.
 

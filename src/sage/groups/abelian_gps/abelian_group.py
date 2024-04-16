@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 r"""
 Multiplicative Abelian Groups
 
@@ -981,8 +982,8 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         TESTS::
 
             sage: G, (g0, g1) = AbelianGroup(2, [48, 0]).objgens()
-            sage: G0 = G.subgroup([g0])
-            sage: len(G0.gens()) == len(G0.gens_orders())
+            sage: G0 = G.subgroup([g0])  # optional - gap_package_polycyclic
+            sage: len(G0.gens()) == len(G0.gens_orders())  # optional - gap_package_polycyclic
             True
             sage: F = AbelianGroup(3, [2], names='abc')
             sage: list(map(type, F.gens_orders()))

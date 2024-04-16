@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 r"""
 Finite Dimensional Lie Algebras With Basis
 
@@ -445,7 +446,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: H.centralizer_basis(H)
                 [z]
 
-                sage: # needs sage.combinat sage.groupssage.modules
+                sage: # needs sage.combinat sage.groups sage.modules
                 sage: D = DescentAlgebra(QQ, 4).D()
                 sage: L = LieAlgebra(associative=D)
                 sage: L.centralizer_basis(L)
@@ -456,6 +457,15 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 (D{},
                  D{1} + D{1, 2} + D{2, 3} + D{3},
                  D{1, 2, 3} + D{1, 3} + D{2})
+
+                sage: scoeffs = {('a','d'): {'a':1}, ('a','e'): {'b':-1},
+                ....:            ('b','d'): {'b':1}, ('b','e'): {'a':1},
+                ....:            ('d','e'): {'c':1}}
+                sage: L.<a,b,c,d,e> = LieAlgebra(QQ, scoeffs)
+                sage: L.centralizer_basis([a, c])
+                [a, b, c]
+                sage: L.centralizer_basis([a, e])
+                [c]
             """
             from sage.matrix.constructor import matrix
 
@@ -481,7 +491,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                            [[sum(m[i,j] * sc[x,xp][k] for j,xp in enumerate(X)
                                  if (x, xp) in sc)
                              for x in X]
-                            for i in range(d) for k in range(d)])
+                            for i in range(m.nrows()) for k in range(d)])
             C = c_mat.right_kernel().basis_matrix()
             return [self.from_vector(c) for c in C]
 
@@ -530,6 +540,99 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 [0 0 1]
             """
             return self.centralizer(self)
+
+        def normalizer_basis(self, S):
+            r"""
+            Return a basis of the normalizer of ``S`` in ``self``.
+
+            INPUT:
+
+            - ``S`` -- a subalgebra of ``self`` or a list of elements that
+              represent generators for a subalgebra
+
+            .. SEEALSO::
+
+                :meth:`normalizer`
+
+            EXAMPLES::
+
+                sage: scoeffs = {('a','d'): {'a':1}, ('a','e'): {'b':-1},
+                ....:            ('b','d'): {'b':1}, ('b','e'): {'a':1},
+                ....:            ('d','e'): {'c':1}}
+                sage: L.<a,b,c,d,e> = LieAlgebra(QQ, scoeffs)
+                sage: L.normalizer_basis([a, e])
+                [b, c]
+
+                sage: S = L.subalgebra([a, e])
+                sage: L.normalizer_basis(S)
+                [a, b, c, e]
+
+            When the subalgebra is the ambient Lie algebra, we return the
+            basis of the ambient Lie algebra::
+
+                sage: L.normalizer_basis(L)
+                Finite family {'a': a, 'b': b, 'c': c, 'd': d, 'e': e}
+                sage: L.normalizer_basis([a, b, c, a, d + e, a + e])
+                Finite family {'a': a, 'b': b, 'c': c, 'd': d, 'e': e}
+            """
+            from sage.matrix.constructor import matrix
+
+            if S is self:
+                return self.basis()
+            if isinstance(S, (list, tuple)):
+                m = matrix([v.to_vector() for v in self.echelon_form(S)])
+            else:
+                m = self.subalgebra(S).basis_matrix()
+
+            if m.nrows() == self.dimension():
+                return self.basis()
+
+            S = self.structure_coefficients()
+            sc = {}
+            for k in S.keys():
+                v = S[k].to_vector()
+                sc[k] = v
+                sc[k[1], k[0]] = -v
+            X = self.basis().keys()
+            d = len(X)
+            ret = []
+            t = m.nrows()
+            c_mat = matrix(self.base_ring(),
+                           [[sum(m[i,j] * sc[x,xp][k] for j, xp in enumerate(X)
+                                 if (x, xp) in sc)
+                             for x in X]
+                            + [0]*(i*t) + [-m[j,k] for j in range(t)] + [0]*((t-i-1)*t)
+                            for i in range(t) for k in range(d)])
+            C = c_mat.right_kernel().basis_matrix()
+            return [self.from_vector(c[:d]) for c in C]
+
+        def normalizer(self, S):
+            r"""
+            Return the normalizer of ``S`` in ``self``.
+
+            INPUT:
+
+            - ``S`` -- a subalgebra of ``self`` or a list of elements that
+              represent generators for a subalgebra
+
+            .. SEEALSO::
+
+                :meth:`normalizer_basis`
+
+            EXAMPLES::
+
+                sage: scoeffs = {('a','d'): {'a':1}, ('a','e'): {'b':-1},
+                ....:            ('b','d'): {'b':1}, ('b','e'): {'a':1},
+                ....:            ('d','e'): {'c':1}}
+                sage: L.<a,b,c,d,e> = LieAlgebra(QQ, scoeffs)
+                sage: L.normalizer([a, e])
+                Subalgebra generated by (b, c) of Lie algebra on
+                 5 generators (a, b, c, d, e) over Rational Field
+                sage: L.normalizer([a, c, e])
+                Subalgebra generated by (b, c, d) of Lie algebra on
+                 5 generators (a, b, c, d, e) over Rational Field
+            """
+            return self.subalgebra(self.normalizer_basis(S))
 
         @cached_method
         def derivations_basis(self):
@@ -1926,6 +2029,90 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             return [UEA.sum(to_prod(vec, index) for index in vec.support())
                     for vec in tens]
+
+        def faithful_representation(self, algorithm=None):
+            r"""
+            Return a faithful representation of ``self``.
+
+            By Ado's and Iwasawa's theorems, every finite dimensional
+            Lie algebra has a faithful finite dimensional representation.
+
+            INPUT:
+
+            - ``algorithm`` -- one of the following depending on the
+              classification of the Lie algebra:
+
+              Nilpotent Lie algebras:
+
+              * ``'regular'`` -- use the universal enveloping algebra quotient
+                :class:`~sage.algebras.lie_algebras.representation.FaithfulRepresentationNilpotentPBW`
+              * ``'minimal'`` -- construct the minimal representation (for
+                precise details, see the documentation of
+                :class:`~sage.algebras.lie_algebras.representation.FaithfulRepresentationNilpotentPBW`)
+
+              Solvable but not nilpotent:
+
+              * Not implemented
+
+              Semisimple:
+
+              * Not implemented
+
+              General case
+
+              * Not implemented
+
+            EXAMPLES::
+
+                sage: H2 = lie_algebras.Heisenberg(QQ, 2)
+                sage: H2.is_nilpotent()
+                True
+                sage: F = H2.faithful_representation(); F
+                Faithful 16 dimensional representation of
+                 Heisenberg algebra of rank 2 over Rational Field
+                sage: M = H2.faithful_representation(algorithm="minimal"); M
+                Minimal faithful representation of
+                 Heisenberg algebra of rank 2 over Rational Field
+                sage: M.dimension()
+                4
+                sage: H2.faithful_representation(algorithm="invalid")
+                Traceback (most recent call last):
+                ...
+                ValueError: invalid algorithm 'invalid'
+
+                sage: scoeffs = {('a','d'): {'a':1}, ('a','e'): {'b':-1},
+                ....:            ('b','d'): {'b':1}, ('b','e'): {'a':1},
+                ....:            ('d','e'): {'c':1}}
+                sage: L.<a,b,c,d,e> = LieAlgebra(QQ, scoeffs)
+                sage: L.is_nilpotent()
+                False
+                sage: L.is_solvable()
+                True
+                sage: L.faithful_representation()
+                Traceback (most recent call last):
+                ...
+                NotImplementedError: only implemented for nilpotent Lie algebras
+
+                sage: sl3 = LieAlgebra(QQ, cartan_type=['A', 2])
+                sage: sl3.is_semisimple()
+                True
+                sage: sl3.faithful_representation()
+                Traceback (most recent call last):
+                ...
+                NotImplementedError: only implemented for nilpotent Lie algebras
+            """
+            if self.is_nilpotent():
+                if algorithm is None:
+                    algorithm = "regular"
+                if algorithm == "regular":
+                    from sage.algebras.lie_algebras.representation import FaithfulRepresentationNilpotentPBW
+                    return FaithfulRepresentationNilpotentPBW(self, minimal=False)
+                if algorithm == "minimal":
+                    from sage.algebras.lie_algebras.representation import FaithfulRepresentationNilpotentPBW
+                    return FaithfulRepresentationNilpotentPBW(self, minimal=True)
+            else:
+                raise NotImplementedError("only implemented for nilpotent Lie algebras")
+            raise ValueError("invalid algorithm '{}'".format(algorithm))
 
     class ElementMethods:
         def adjoint_matrix(self, sparse=False): # In #11111 (more or less) by using matrix of a morphism

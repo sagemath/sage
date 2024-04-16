@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 r"""
 Iterator for Weil polynomials.
 
@@ -175,7 +176,7 @@ cdef class dfs_manager:
             count += self.dy_data_buf[i].node_count
         return count
 
-    cpdef object advance_exhaust(self) noexcept:
+    cpdef object advance_exhaust(self):
         """
         Advance the tree exhaustion.
 

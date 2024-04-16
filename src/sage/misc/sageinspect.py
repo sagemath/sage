@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 r"""
 Inspect Python, Sage, and Cython objects
 
@@ -16,7 +17,7 @@ Cython modules::
     sage: sage_getdoc(sage.rings.rational).lstrip()
     'Rational Numbers...'
     sage: sage_getsource(sage.rings.rational)
-    '# distutils: ...Rational Numbers...'
+    '# sage_setup: distribution = sagemath-categories...# distutils: ...Rational Numbers...'
 
 Python modules::
 
@@ -24,7 +25,7 @@ Python modules::
     '.../sageinspect.py'
     sage: print(sage_getdoc(sage.misc.sageinspect).lstrip()[:40])
     Inspect Python, Sage, and Cython objects
-    sage: sage_getsource(sage.misc.sageinspect).lstrip()[5:-1]
+    sage: sage_getsource(sage.misc.sageinspect).lstrip()[51:-1]
     'Inspect Python, Sage, and Cython objects...'
 
 Test introspection of classes defined in Python and Cython files:
@@ -42,7 +43,7 @@ Python classes::
 
     sage: sage_getfile(BlockFinder)
     '.../sage/misc/sageinspect.py'
-    sage: sage_getdoc(BlockFinder).lstrip()[:50]
+    sage: sage_getdoc(BlockFinder).lstrip()[:50]                                        # needs sphinx
     'Provide a "tokeneater()" method to detect the end '
     sage: sage_getsource(BlockFinder)
     'class BlockFinder:...'
@@ -1308,6 +1309,7 @@ def sage_getfile(obj):
         sage: from sage.misc.sageinspect import sage_getfile
         sage: sage_getfile(sage.rings.rational)
         '...sage/rings/rational.pyx'
+        sage: from sage.algebras.steenrod.steenrod_algebra import Sq                    # needs sage.combinat sage.modules
         sage: sage_getfile(Sq)                                                          # needs sage.combinat sage.modules
         '...sage/algebras/steenrod/steenrod_algebra.py'
         sage: sage_getfile(x)                                                           # needs sage.symbolic
@@ -1386,6 +1388,7 @@ def sage_getfile_relative(obj):
         sage: from sage.misc.sageinspect import sage_getfile_relative
         sage: sage_getfile_relative(sage.rings.rational)
         'sage/rings/rational.pyx'
+        sage: from sage.algebras.steenrod.steenrod_algebra import Sq                    # needs sage.combinat sage.modules
         sage: sage_getfile_relative(Sq)                                                 # needs sage.combinat sage.modules
         'sage/algebras/steenrod/steenrod_algebra.py'
         sage: sage_getfile_relative(x)                                                  # needs sage.symbolic
@@ -2267,8 +2270,9 @@ def sage_getsourcelines(obj):
         sage: from sage.misc.sageinspect import sage_getsourcelines
 
         sage: # needs sage.modules
+        sage: from sage.matrix.constructor import matrix
         sage: sage_getsourcelines(matrix)[1]
-        21
+        22
         sage: sage_getsourcelines(matrix)[0][0]
         'def matrix(*args, **kwds):\n'
 
@@ -2297,7 +2301,7 @@ def sage_getsourcelines(obj):
         sage: sage_getsourcelines(test_func)
         (['def base(x):\n',
         ...
-        '    return x\n'], 7)
+        '    return x\n'], 8)
 
     Here are some cases that were covered in :issue:`11298`;
     note that line numbers may easily change, and therefore we do
@@ -2319,7 +2323,7 @@ def sage_getsourcelines(obj):
          '\n',
          '    cdef GEx _gobj\n',
          '\n',
-         '    cpdef object pyobject(self) noexcept:\n']
+         '    cpdef object pyobject(self):\n']
         sage: lines[-1]    # last line                                                  # needs sage.symbolic
         '        return S\n'
 
