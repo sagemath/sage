@@ -111,8 +111,8 @@ class Timer:
         ``pid``.
 
         This also includes the times for child processes, but only
-        those that have been ``wait()``ed for and that have already
-        terminated. It is important to note that pexpect processes DO
+        those that have already terminated and for which ``wait()``
+        was called. It is important to note that pexpect processes DO
         NOT fall into that category.
 
         INPUT:
@@ -142,7 +142,6 @@ class Timer:
             True
             sage: isinstance(cputime, float)
             True
-
         """
         try:
             with open(f"/proc/{pid}/stat", "r") as statfile:
