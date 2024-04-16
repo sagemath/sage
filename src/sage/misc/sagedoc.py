@@ -528,6 +528,7 @@ extlinks = {
     'meson': ('https://mesonbuild.com/%s', 'Meson: %s'),
     'polymake': ('https://polymake.org/doku.php/documentation/latest/%s', 'polymake: %s'),
     'ppl': ('https://www.bugseng.com/products/ppl/documentation/user/ppl-user-1.2-html/%s.html', 'PPL: %s'),
+    'pygambit': ('https://gambitproject.readthedocs.io/en/latest/api/%s.html', '%s'),
     'qepcad': ('https://www.usna.edu/CS/qepcadweb/B/%s.html', 'QEPCAD: %s'),
     'scip': ('https://scipopt.org/doc/html/%s.php', 'SCIP: %s'),
     'singular': ('https://www.singular.uni-kl.de/Manual/4-3-2/%s.htm', 'Singular: %s'),

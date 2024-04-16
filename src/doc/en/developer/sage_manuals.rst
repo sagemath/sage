@@ -248,6 +248,10 @@ by Sage, you can link toward it without specifying its full path:
      - ``:ppl:`Linear_Expression <classParma__Polyhedra__Library_1_1 Linear__Expression>```
      - :ppl:`Linear_Expression <classParma__Polyhedra__Library_1_1Linear__Expression>`
 
+   * - :ref:`pygambit <spkg_pygambit>`
+     - ``:pygambit:`pygambit.nash.lcp_solve```
+     - :pygambit:`pygambit.nash.lcp_solve`
+
    * - :ref:`QEPCAD <spkg_qepcad>`
      - ``:qepcad:`QEPCAD: Entering formulas <user/EnterForm>```
      - :qepcad:`QEPCAD: Entering formulas <user/EnterForm>`
