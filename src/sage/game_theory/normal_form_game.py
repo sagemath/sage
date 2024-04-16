@@ -236,8 +236,7 @@ currently available:
   `Gambit <http://gambit.sourceforge.net/>`_ [Gambit]_. At present this is
   the only gambit algorithm available in sage but further development will
   hope to implement more algorithms
-  (in particular for games with more than 2 players). To install it,
-  type ``sage -i gambit`` in the shell.
+  (in particular for games with more than 2 players).
 
 * ``'enumeration'``: Support enumeration for 2 player games. This
   algorithm is hard coded in Sage and checks through all potential
