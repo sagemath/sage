@@ -116,7 +116,7 @@ If one really wants to use gambit directly in Sage (without using the
 converted to Python integers (due to the preparser). Here is an example
 showing the Battle of the Sexes::
 
-    sage: # optional - gambit
+    sage: # optional - pygambit
     sage: import gambit
     sage: g = gambit.Game.new_table([2,2])
     sage: g[int(0), int(0)][int(0)] = int(2)
