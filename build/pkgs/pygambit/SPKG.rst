@@ -1,30 +1,18 @@
-gambit: Computations on finite, noncooperative games
+pygambit: The package for computation in game theory
 ====================================================
 
 Description
 -----------
 
-Gambit is a set of software tools for doing computation on finite,
-noncooperative games. The Gambit Project was founded in the mid-1980s by
-Richard McKelvey at the California Institute of Technology.
+The package for computation in game theory
 
 License
 -------
 
-GPL v2+
-
+GPL2+
 
 Upstream Contact
 ----------------
 
--  Website: http://www.gambit-project.org/
--  Mailing List: http://sourceforge.net/p/gambit/mailman/gambit-devel/
+https://pypi.org/project/pygambit/
 
-Dependencies
-------------
-
--  python
--  cython
--  setuptools
--  IPython
--  scipy
