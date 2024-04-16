@@ -283,7 +283,7 @@ def downward_monotonic(ambient_dim=None, lattice=None):
     from sage.matrix.constructor import matrix
     from sage.rings.integer_ring import ZZ
 
-    (ambient_dim, lattice) = _preprocess_args(ambient_dim, lattice)
+    ambient_dim, lattice = _preprocess_args(ambient_dim, lattice)
 
     # The generators for this cone are mentioned in Niezgoda's
     # Example 2.2 if you don't want to compute them yourself.
@@ -386,7 +386,7 @@ def nonnegative_orthant(ambient_dim=None, lattice=None):
     from sage.matrix.constructor import matrix
     from sage.rings.integer_ring import ZZ
 
-    (ambient_dim, lattice) = _preprocess_args(ambient_dim, lattice)
+    ambient_dim, lattice = _preprocess_args(ambient_dim, lattice)
 
     I = matrix.identity(ZZ, ambient_dim)
     return Cone(I.rows(), lattice)
@@ -612,7 +612,7 @@ def rearrangement(p, ambient_dim=None, lattice=None):
     from sage.matrix.constructor import matrix
     from sage.rings.integer_ring import ZZ
 
-    (ambient_dim, lattice) = _preprocess_args(ambient_dim, lattice)
+    ambient_dim, lattice = _preprocess_args(ambient_dim, lattice)
 
     if p < 1 or p > ambient_dim or p not in ZZ:
         raise ValueError("order p=%s should be an integer between 1 "
@@ -753,7 +753,7 @@ def schur(ambient_dim=None, lattice=None):
     from sage.matrix.constructor import matrix
     from sage.rings.integer_ring import ZZ
 
-    (ambient_dim, lattice) = _preprocess_args(ambient_dim, lattice)
+    ambient_dim, lattice = _preprocess_args(ambient_dim, lattice)
 
     def _f(i,j):
         if i == j:
@@ -841,6 +841,6 @@ def trivial(ambient_dim=None, lattice=None):
     """
     from sage.geometry.cone import Cone
 
-    (ambient_dim, lattice) = _preprocess_args(ambient_dim, lattice)
+    ambient_dim, lattice = _preprocess_args(ambient_dim, lattice)
 
     return Cone([], lattice)
