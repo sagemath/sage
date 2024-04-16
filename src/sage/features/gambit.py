@@ -23,7 +23,7 @@ class pygambit(PythonModule):
 
     EXAMPLES::
 
-        sage: from sage.features.pygambit import pygambit
+        sage: from sage.features.gambit import pygambit
         sage: pygambit().is_present()                           # optional - pygambit
         FeatureTestResult('pygambit', True)
     """
@@ -31,7 +31,7 @@ class pygambit(PythonModule):
         r"""
         TESTS::
 
-            sage: from sage.features.pygambit import pygambit
+            sage: from sage.features.gambit import pygambit
             sage: isinstance(pygambit(), pygambit)
             True
         """
