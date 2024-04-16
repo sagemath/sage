@@ -169,7 +169,7 @@ jobs:
 
       - name: Upload docs
         if: (success() || failure()) && steps.copy.outcome == 'success'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: docs
           path: docs.zip
@@ -203,7 +203,7 @@ jobs:
 
       - name: Upload live doc
         if: (success() || failure()) && steps.copylivedoc.outcome == 'success'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: livedoc
           path: livedoc.zip

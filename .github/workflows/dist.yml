@@ -47,7 +47,7 @@ jobs:
           ./configure && make dist
         env:
           MAKE: make -j8
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v3
         if: success() || failure()
         with:
           path: |
@@ -61,7 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     if: (success() || failure()) && github.repository == 'sagemath/sage' && startsWith(github.ref, 'refs/tags/') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc')
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v3
         with:
           name: release_dist
       - uses: softprops/action-gh-release@v2
@@ -91,7 +91,7 @@ jobs:
           make pypi-sdists V=0
           (mkdir dist && mv upstream/sage*.tar.gz dist/)
           ls -l dist
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v3
         with:
           path: "dist/*.tar.gz"
           name: dist
@@ -136,7 +136,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v3
         with:
           name: dist
           path: dist
@@ -159,7 +159,7 @@ jobs:
               pipx run cibuildwheel==2.16.2 unpacked/$pkg*
           done
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v3
         with:
           name: wheels
           path: ./wheelhouse/*.whl
@@ -171,7 +171,7 @@ jobs:
       CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
     steps:
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v3
         with:
           name: wheels
           path: wheelhouse
