@@ -219,12 +219,12 @@ def downward_monotonic(ambient_dim=None, lattice=None):
 
         sage: ambient_dim = ZZ.random_element(10)
         sage: K = cones.downward_monotonic(ambient_dim)
-        sage: all( x[i] >= x[i+1]
+        sage: all( x[i] >= x[i + 1]
         ....:      for i in range(ambient_dim - 1)
         ....:      for x in K.rays() )
         True
         sage: x = K.random_element()
-        sage: all( x[i] >= x[i+1] for i in range(ambient_dim - 1) )
+        sage: all( x[i] >= x[i + 1] for i in range(ambient_dim - 1) )
         True
 
     A nontrivial downward-monotonic cone is solid but not proper,
@@ -289,7 +289,7 @@ def downward_monotonic(ambient_dim=None, lattice=None):
     # Example 2.2 if you don't want to compute them yourself.
     G = matrix.identity(ZZ, ambient_dim)
     for i in range(1, ambient_dim):
-        G.add_multiple_of_row(i, i-1, 1)
+        G.add_multiple_of_row(i, i - 1, 1)
 
     if G.nrows() > 0:
         # Special case for when the ambient space is trivial.
@@ -723,7 +723,7 @@ def schur(ambient_dim=None, lattice=None):
         True
         sage: x = V.random_element()
         sage: y = V.random_element()
-        sage: majorized_by(x,y) == ((rearrange(y)-rearrange(x)) in S)
+        sage: majorized_by(x,y) == ((rearrange(y) - rearrange(x)) in S)
         True
 
     If a ``lattice`` was given, it is actually used::
