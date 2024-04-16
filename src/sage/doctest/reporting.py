@@ -625,7 +625,7 @@ class DocTestReporter(SageObject):
                     else:
                         total = count_noun(ntests, "test")
                     if not (self.controller.options.only_errors and not f):
-                        log("    [%s, %s%.2fs wall]" % (total, "%s, "%(count_noun(f, "failure")) if f else "", wall))
+                        log("    [%s, %s%.2fs wall]" % (total, "%s, " % (count_noun(f, "failure")) if f else "", wall))
 
             self.sources_completed += 1
 
