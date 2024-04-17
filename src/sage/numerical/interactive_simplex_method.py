@@ -2548,17 +2548,18 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
                 x_B[self.b().list().index(bm)] = self.auxiliary_variable()
         return LPRevisedDictionary(self, x_B)
 
-    def run_revised_simplex_method(self, pivot_rule = None, *args):
+    def run_revised_simplex_method(self, pivot_rule=None, *args):
         r"""
         Apply the revised simplex method and return all steps.
-                
+
         INPUT:
-        
-        - :string: or :SimplexMethodPivot: Optional- set a pivot rule. 
-          Supported rules are "steepest_edge", "blands_rule", "dantzig", "NW_rule".
-          One can pass in a custom instance of `SimplexMethodPivot` too.
-        
-        - :*args: Optional - arguments needed for pivot rule.
+
+        - ``pivot_rule`` -- string or :class:`~sage.src.numerical.pivot_rules_for_simplex_method.SimplexMethodPivot` (default: None);
+          Supported rules are ``"steepest_edge"``, ``"blands_rule"``, ``"dantzig"``, ``"NW_rule"``.
+          One can pass in a custom instance of :class:`~sage.src.numerical.pivot_rules_for_simplex_method.SimplexMethodPivot` too.
+
+        - Additional arguments are passed directly into the method.
+          Not specifiying additional arguments will use the default parameters set by the class.
 
         OUTPUT:
 
@@ -2620,17 +2621,17 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
         self._final_revised_dictionary = d
         return HtmlFragment("\n".join(output))
 
-    def run_simplex_method(self, pivot_rule = None, *args):
+    def run_simplex_method(self, pivot_rule=None, *args):
         r"""
         Apply the simplex method and return all steps and intermediate states.
-        
+
         INPUT:
-        
-        - :string: or :SimplexMethodPivot: Optional- set a pivot rule. 
-          Supported rules are "steepest_edge", "blands_rule", "dantzig", "NW_rule".
-          One can pass in a custom instance of `SimplexMethodPivot` too.
-        
-        - :*args: Optional - arguments needed for pivot rule.
+
+        - ``pivot_rule`` -- string or :class:`~sage.src.numerical.pivot_rules_for_simplex_method.SimplexMethodPivot` (default: None);
+          Supported rules are ``"steepest_edge"``, ``"blands_rule"``, ``"dantzig"``, ``"NW_rule"``.
+          One can pass in a custom instance of :class:`~sage.src.numerical.pivot_rules_for_simplex_method.SimplexMethodPivot` too.
+
+        - :\*args: Optional -- arguments needed for pivot rule.
 
         OUTPUT:
 
@@ -2674,9 +2675,9 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
             Entering: $x_{2}$. Leaving: $x_{3}$.
             ...
             The optimal value: $6250$. An optimal solution: $\left(250,\,750\right)$.
-            
-        Using a differnt pivot rule::
-        
+
+        Using a different pivot rule.::
+
             sage: A = ([1, 1], [3, 1], [-1, -1])
             sage: b = (1000, 1500, -400)
             sage: c = (10, 5)
@@ -2698,19 +2699,19 @@ class InteractiveLPProblemStandardForm(InteractiveLPProblem):
             Entering: $x_{2}$. Leaving: $x_{3}$.
             ...
             The optimal value: $6250$. An optimal solution: $\left(250,\,750\right)$.
-            
-        Normalized weight rules are not suppored for problems which require both phase I and Phase II. See :NWRule: for detials. :: 
-        
-        sage: A = ([1, 1], [3, 1], [-1, -1])
-        sage: b = (1000, 1500, -400)
-        sage: c = (10, 5)
-        sage: P = InteractiveLPProblemStandardForm(A, b, c)
-        sage: def eta(v):
-        ....:     return v.norm() 
-        sage: P.run_simplex_method('NW_rule', eta, [1,2])
-        Traceback (most recent call last):
-        ...
-        TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 2 over the principal ideal domain Integer Ring' and 'Vector space of dimension 3 over Rational Field'
+
+        Normalized weight rules are not supported for problems which require both Phase I and Phase II. See :class:`~sage.src.numerical.pivot_rules_for_simplex_method.NWRule` for details.::
+
+            sage: A = ([1, 1], [3, 1], [-1, -1])
+            sage: b = (1000, 1500, -400)
+            sage: c = (10, 5)
+            sage: P = InteractiveLPProblemStandardForm(A, b, c)
+            sage: def eta(v):
+            ....:     return v.norm()
+            sage: P.run_simplex_method('NW_rule', eta, [1,2])
+            Traceback (most recent call last):
+            ...
+            TypeError: unsupported operand parent(s) for *: 'Ambient free module of rank 2 over the principal ideal domain Integer Ring' and 'Vector space of dimension 3 over Rational Field'
         """
         output = []
         d = self.initial_dictionary()
@@ -3696,14 +3697,14 @@ class LPAbstractDictionary(SageObject):
 
         If either entering or leaving variables were already set, they will be
         used.
-                
+
         INPUT:
-        
-        - :string: or :SimplexMethodPivot: Optional- set a pivot rule. 
-          Supported rules are "steepest_edge", "blands_rule", "dantzig", "NW_rule".
-          One can pass in a custom instance of `SimplexMethodPivot` too.
-        
-        - :*args: Optional - arguments needed for pivot rule.
+
+        - ``pivot_rule`` -- string or :class:`~sage.src.numerical.pivot_rules_for_simplex_method.SimplexMethodPivot` (default: None);
+          Supported rules are ``"steepest_edge"``, ``"blands_rule"``, ``"dantzig"``, ``"NW_rule"``.
+          One can pass in a custom instance of :class:`~sage.src.numerical.pivot_rules_for_simplex_method.SimplexMethodPivot` too.
+
+        - :\*args: Optional -- arguments needed for pivot rule.
 
         OUTPUT:
 
@@ -3754,17 +3755,13 @@ class LPAbstractDictionary(SageObject):
             ...
             \end{equation*}
             The problem is infeasible because of $x_{3}$ constraint.
-            
-        Differnet pivot rules can be used.
+
+        Different pivot rules can be used.
         """
         pivot = SimplexMethodPivot(pivot_rule)
-        if pivot.has_dual_method():
-            pivot.set_mode("dual")
-        else:
-            raise ValueError("The pivot rule defined does not have a dual method implemented.")
         output = []
         while not self.is_optimal():
-            pivot(self, *args)
+            pivot(self, True, *args)
             output.append(self._html_())
             if self.entering() is None:
                 output.append("The problem is infeasible because of "
@@ -3776,21 +3773,20 @@ class LPAbstractDictionary(SageObject):
             output.append(self._html_())
         return HtmlFragment("\n".join(output))
 
-    def run_simplex_method(self, pivot_rule = None, *args):
+    def run_simplex_method(self, pivot_rule=None, *args):
         r"""
         Apply the simplex method and return all steps and intermediate states.
 
         If either entering or leaving variables were already set, they will be
         used.
-        
-                
+
         INPUT:
-        
-        - :string: or :SimplexMethodPivot: Optional- set a pivot rule. 
-          Supported rules are "steepest_edge", "blands_rule", "dantzig", "NW_rule".
-          One can pass in a custom instance of `SimplexMethodPivot` too.
-        
-        - :*args: Optional - arguments needed for pivot rule.
+
+        - string or :class:`~sage.src.numerical.pivot_rules_for_simplex_method.SimplexMethodPivot` Optional- set a pivot rule.
+          Supported rules are ``"steepest_edge"``, ``"blands_rule"``, ``"dantzig"``, ``"NW_rule"``.
+          One can pass in a custom instance of :class:`~sage.src.numerical.pivot_rules_for_simplex_method.SimplexMethodPivot` too.
+
+        - :\*args: Optional - arguments needed for pivot rule.
 
         OUTPUT:
 
@@ -3847,10 +3843,9 @@ class LPAbstractDictionary(SageObject):
             The problem is unbounded in $x_{2}$ direction.
         """
         pivot = SimplexMethodPivot(pivot_rule)
-        pivot.set_mode("primal")
         output = []
         while not self.is_optimal():
-            pivot(self, *args) # Sets entering and leaving variables 
+            pivot(self, False, *args) # Sets entering and leaving variables
             output.append(self._html_())
             if self.leaving() is None:
                 output.append("The problem is unbounded in ${}$ direction."
@@ -5476,5 +5471,6 @@ class LPRevisedDictionary(LPAbstractDictionary):
     # Aliases for the standard notation
     x_B = basic_variables
     x_N = nonbasic_variables
-    
+
+
 from sage.numerical.pivot_rules_for_simplex_method import SimplexMethodPivot
