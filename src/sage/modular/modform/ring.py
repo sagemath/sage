@@ -300,8 +300,8 @@ class ModularFormsRing(Parent):
         - ``i`` (Integer) -- correspond to the `i`-th modular form
           generating the ring of modular forms.
 
-        OUTPUT: A generator this ring, which is an instance of
-        :class:`sage.modular.modform.GradedModularFormElement`
+        OUTPUT: A generator of this ring, which is an instance of
+        :class:`~sage.modular.modform.GradedModularFormElement`
 
         EXAMPLES::
 
