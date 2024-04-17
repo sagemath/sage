@@ -2229,6 +2229,25 @@ def _is_function(v):
     return isinstance(v, Function) or isinstance(v, FunctionType)
 
 def _parse_maxima_conj(s):
+    r"""
+    Function to parse maxima conjugates of a maxima string
+    within an inequality expression. Private helper function, 
+    only takes in from preparsed maxima strings.
+
+    INPUT:
+        - ``s`` -- a string that has been preparsed from maxima
+    TESTS:
+    Check if real and imaginary parts are fixed::
+        sage: x = var('x')
+        sage: maxima("realpart(3 < _SAGE_VAR_x) + %i*imagpart(3 < _SAGE_VAR_x)").sage()
+        (3*I + 3) < (I + 1)*x
+        sage: maxima("realpart(3+_SAGE_VAR_x > 2) + %i*imagpart(_SAGE_VAR_x-3 < _SAGE_VAR_x)").sage()
+        [2 < I*x - 3*I, x + 3 < I*x]
+        sage: maxima("realpart(4+_SAGE_VAR_x < 6) + %i*imagpart(_SAGE_VAR_x - 2 > 8)").sage()
+        [(8*I) < I*x - 2*I, x + 4 < 6]
+        sage: maxima('realpart(_SAGE_VAR_x > -((13*sqrt(455))/(18*sqrt(113146))))+imagpart(%i*(_SAGE_VAR_x > -((13*sqrt(455))/(18*sqrt(113146)))))').sage()
+        x > -13/2036628*sqrt(113146)*sqrt(455)
+    """
     if "realpart" in s:
         # realpart always comes first therefore is OK to rfind bracket before I 
         realpart = s[s.find("realpart("):s[:s.find("%i")].rfind(")")]
@@ -2403,6 +2422,9 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
     # symbolic expression.
     s = s.replace("'","")
 
+    # remove realpart and imagpart replace with sequence
+    s = _parse_maxima_conj(s)
+    
     delayed_functions = maxima_qp.findall(s)
     if len(delayed_functions):
         for X in delayed_functions:
