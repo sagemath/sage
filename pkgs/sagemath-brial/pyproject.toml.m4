@@ -17,8 +17,6 @@ build-backend = "setuptools.build_meta"
 name = "sagemath-brial"
 description = "Sage: Open Source Mathematics Software: Boolean Ring Algebra with BRiAl"
 dependencies = [
-    SPKG_INSTALL_REQUIRES_sagemath_categories
-    SPKG_INSTALL_REQUIRES_sagemath_environment
     SPKG_INSTALL_REQUIRES_cysignals
 ]
 dynamic = ["version"]
