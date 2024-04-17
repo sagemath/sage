@@ -232,8 +232,7 @@ save () {
 	src/environment-optional-3.[89].yml src/environment-optional-3.1[0-9].yml \
 	src/Pipfile \
 	src/pyproject.toml \
-	src/requirements.txt \
-	src/setup.cfg
+	src/requirements.txt
 
     # Update version
     echo "$NEWCONFVERSION" >$PKG/package-version.txt

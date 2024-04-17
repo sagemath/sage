@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 # distutils: depends = NTL/ZZ.h
 # distutils: libraries = NTL_LIBRARIES gmp
 # distutils: extra_compile_args = NTL_CFLAGS

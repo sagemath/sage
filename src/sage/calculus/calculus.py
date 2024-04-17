@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-symbolics
 r"""
 Symbolic Computation
 
@@ -2231,12 +2232,14 @@ def _is_function(v):
 def _parse_maxima_conj(s):
     r"""
     Function to parse maxima conjugates of a maxima string
-    within an inequality expression. Private helper function, 
+    within an inequality expression. Private helper function,
     only takes in from preparsed maxima strings.
 
     INPUT:
-        - ``s`` -- a string that has been preparsed from maxima
+    - ``s`` -- a string that has been preparsed from maxima
+
     TESTS:
+
     Check if real and imaginary parts are fixed::
         sage: x = var('x')
         sage: maxima("realpart(3 < _SAGE_VAR_x) + %i*imagpart(3 < _SAGE_VAR_x)").sage()
@@ -2247,9 +2250,10 @@ def _parse_maxima_conj(s):
         [(8*I) < I*x - 2*I, x + 4 < 6]
         sage: maxima('realpart(_SAGE_VAR_x > -((13*sqrt(455))/(18*sqrt(113146))))+imagpart(%i*(_SAGE_VAR_x > -((13*sqrt(455))/(18*sqrt(113146)))))').sage()
         x > -13/2036628*sqrt(113146)*sqrt(455)
+
     """
     if "realpart" in s:
-        # realpart always comes first therefore is OK to rfind bracket before I 
+        # realpart always comes first therefore is OK to rfind bracket before I
         realpart = s[s.find("realpart("):s[:s.find("%i")].rfind(")")]
         realpart = realpart.replace("realpart(","")
         if "imagpart" in s:
@@ -2269,8 +2273,8 @@ def _parse_maxima_conj(s):
                 real_split = re.search("[<>]", realpart)
                 arr = []
                 if real_split and imag_split is not None:
-                    real_split_i = real_split.start() 
-                    imag_split_i = imag_split.start() 
+                    real_split_i = real_split.start()
+                    imag_split_i = imag_split.start()
                     # ineqs the same
                     if imag_split.group(0) == real_split.group(0):
                         arr = [imagpart[:imag_split_i], "+",
@@ -2281,15 +2285,15 @@ def _parse_maxima_conj(s):
                         # if imag parts not the same as real part
                         imag_expr = imagpart[imag_split_i+1:].replace("%i*(","")[:-1].replace(" ","")
                         real_expr = realpart[real_split_i+1:].replace(" ","")
-                        # if has variables then imag and real is diff arr is same 
+                        # if has variables then imag and real is diff arr is same
                         # if not can cancel and same remove imag part so take off imag part
                         if not("_SAGE_VAR_" in imag_expr or "_SAGE_VAR_" in real_expr) and imag_expr == real_expr:
                                 arr = arr[:-2]
                     else:
-                       # then real split is > imag < 
+                       # then real split is > imag <
                         arr = [realpart[real_split_i+1:], "<",
                                imagpart[:imag_split_i], ",",
-                               realpart[:real_split_i], "<", 
+                               realpart[:real_split_i], "<",
                                imagpart[imag_split_i+1:]
                         ]
                         if imag_split.group(0) == '>':
@@ -2310,7 +2314,7 @@ def _parse_maxima_conj(s):
             s = realpart + ")"
     # strip spaces helps with parsing
     s = s.replace(" ", "")
-    return s 
+    return s
 
 
 def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
@@ -2424,7 +2428,7 @@ def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
 
     # remove realpart and imagpart replace with sequence
     s = _parse_maxima_conj(s)
-    
+
     delayed_functions = maxima_qp.findall(s)
     if len(delayed_functions):
         for X in delayed_functions:
