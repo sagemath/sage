@@ -248,13 +248,13 @@ class ModularFormsRing(Parent):
 
     def change_ring(self, base_ring):
         r"""
-        Return the ring of modular forms over the given base ring and the same
-        group as ``self``.
+        Return a ring of modular forms over a new base ring of the same
+        congruence subgroup.
 
         INPUT:
 
-        - ``base_ring`` -- a base ring, which should be `\QQ`, `\ZZ`, or the
-          integers mod `p` for some prime `p`.
+        - ``base_ring`` -- a base ring, which should be `\QQ`, `\ZZ`, or
+          the integers mod `p` for some prime `p`.
 
         EXAMPLES::
 
@@ -269,7 +269,7 @@ class ModularFormsRing(Parent):
 
     def some_elements(self):
         r"""
-        Return a list of generators of ``self``.
+        Return some elements of this ring.
 
         EXAMPLES::
 
@@ -281,7 +281,7 @@ class ModularFormsRing(Parent):
 
     def group(self):
         r"""
-        Return the congruence subgroup for which this is the ring of modular forms.
+        Return the congruence subgroup of this ring of modular forms.
 
         EXAMPLES::
 
@@ -293,14 +293,15 @@ class ModularFormsRing(Parent):
 
     def gen(self, i):
         r"""
-        Return the `i`-th generator of ``self``.
+        Return the `i`-th generator of this ring.
 
         INPUT:
 
-        - ``i`` (Integer) -- correspond to the `i`-th modular form generating
-          the ring of modular forms.
+        - ``i`` (Integer) -- correspond to the `i`-th modular form
+          generating the ring of modular forms.
 
-        OUTPUT: A ``GradedModularFormElement``
+        OUTPUT: A generator this ring, which is an instance of
+        :class:`sage.modular.modform.GradedModularFormElement`
 
         EXAMPLES::
 
@@ -316,7 +317,7 @@ class ModularFormsRing(Parent):
 
     def ngens(self):
         r"""
-        Return the number of generators of ``self``
+        Return the number of generators of this ring.
 
         EXAMPLES::
 
@@ -336,17 +337,22 @@ class ModularFormsRing(Parent):
 
     def polynomial_ring(self, names, gens=None):
         r"""
-        Return a polynomial ring of which ``self`` is a quotient.
+        Return a polynomial ring of which this ring of modular forms is
+        a quotient.
 
         INPUT:
 
-        - ``names`` -- a list or tuple of names (strings), or a comma separated string
-        - ``gens`` (default: None) -- (list) a list of generator of ``self``. If ``gens`` is
-          ``None`` then the generators returned by :meth:`~sage.modular.modform.find_generator.ModularFormsRing.gen_forms`
+        - ``names`` -- a list or tuple of names (strings), or a comma
+          separated string
+        - ``gens`` (default: None) -- (list) a list of generator of
+          ``self``. If ``gens`` is ``None`` then the generators returned by
+          :meth:`~sage.modular.modform.find_generator.ModularFormsRing.gen_forms`
           is used instead.
 
-        OUTPUT: A multivariate polynomial ring in the variable ``names``. Each variable of the
-        polynomial ring correspond to a generator given in gens (following the ordering of the list).
+        OUTPUT: A multivariate polynomial ring in the variable
+        ``names``. Each variable of the polynomial ring correspond to a
+        generator given in the list ``gens`` (following the ordering of
+        the list).
 
         EXAMPLES::
 
@@ -359,7 +365,8 @@ class ModularFormsRing(Parent):
             sage: M.polynomial_ring('g', gens)
             Multivariate Polynomial Ring in g0, g1, g2 over Rational Field
 
-        The degrees of the variables are the weights of the corresponding forms::
+        The degrees of the variables are the weights of the
+        corresponding forms::
 
             sage: M = ModularFormsRing(1)
             sage: P.<E4, E6> = M.polynomial_ring()
@@ -373,12 +380,13 @@ class ModularFormsRing(Parent):
         if gens is None:
             gens = self.gen_forms()
         degs = [f.weight() for f in gens]
-        return PolynomialRing(self.base_ring(), len(gens), names, order=TermOrder('wdeglex', degs)) # Should we remove the deg lexicographic ordering here?
+        return PolynomialRing(self.base_ring(), len(gens), names,
+                              order=TermOrder('wdeglex', degs))
 
     def _generators_variables_dictionnary(self, poly_parent, gens):
         r"""
-        Utility function that returns a dictionary giving an association between
-        polynomial ring generators and generators of modular forms ring.
+        Return a dictionary giving an association between polynomial
+        ring generators and generators of modular forms ring.
 
         INPUT:
 
@@ -404,18 +412,19 @@ class ModularFormsRing(Parent):
 
     def from_polynomial(self, polynomial, gens=None):
         r"""
-        Convert the given polynomial to a graded form living in ``self``. If
-        ``gens`` is ``None`` then the list of generators given by the method
-        :meth:`gen_forms` will be used. Otherwise, ``gens`` should be a list of
-        generators.
+        Return a graded modular form constructed by evaluating a given
+        multivariate polynomial at a set of generators.
 
         INPUT:
 
-        - ``polynomial`` -- A multivariate polynomial. The variables names of
-          the polynomial should be different from ``'q'``. The number of
-          variable of this polynomial should equal the number of generators
-        - ``gens`` -- list (default: ``None``) of generators of the modular
-          forms ring
+        - ``polynomial`` -- A multivariate polynomial. The variables
+          names of the polynomial should be different from ``'q'``. The
+          number of variable of this polynomial should equal the number
+          of given generators.
+        - ``gens`` (default: ``None``) -- a list of generators of this
+          ring. If this parameter is ``None``, then the generators given
+          by the method :meth:`gen_forms` will be used. Note that we do
+          not check if the list is indeed a generating set.
 
         OUTPUT: A ``GradedModularFormElement`` given by the polynomial
         relation ``polynomial``.
@@ -438,7 +447,8 @@ class ModularFormsRing(Parent):
             sage: M.from_polynomial(P(1/2))
             1/2
 
-        Note that the number of variables must be equal to the number of generators::
+        Note that the number of variables must be equal to the number of
+        generators::
 
             sage: x, y = polygens(QQ, 'x, y')
             sage: M(x + y)
@@ -471,7 +481,7 @@ class ModularFormsRing(Parent):
 
     def _element_constructor_(self, forms_datum):
         r"""
-        The call method of self.
+        Return the graded modular form corresponding to the given data.
 
         INPUT:
 
@@ -578,7 +588,8 @@ class ModularFormsRing(Parent):
 
     def _coerce_map_from_(self, M):
         r"""
-        Code to make ModularFormRing work well with coercion framework.
+        Return ``True`` if there is a coercion map from ``M`` to this
+        ring.
 
         TESTS::
 
@@ -624,7 +635,7 @@ class ModularFormsRing(Parent):
 
     def _repr_(self):
         r"""
-        String representation of self.
+        Return the string representation of self.
 
         EXAMPLES::
 
@@ -637,7 +648,8 @@ class ModularFormsRing(Parent):
 
     def modular_forms_of_weight(self, weight):
         """
-        Return the space of modular forms on this group of the given weight.
+        Return the space of modular forms of the given weight and the
+        same congruence subgroup.
 
         EXAMPLES::
 
@@ -651,9 +663,15 @@ class ModularFormsRing(Parent):
 
     def generators(self, maxweight=8, prec=10, start_gens=[], start_weight=2):
         r"""
-        If `R` is the base ring of self, then this function calculates a set of
-        modular forms which generate the `R`-algebra of all modular forms of
-        weight up to ``maxweight`` with coefficients in `R`.
+        Return a list of generator of this ring as a list of pairs
+        `(k, f)` where `k` is an integer and `f` is a univariate power
+        series in `q` corresponding to the `q`-expansion of a modular
+        form of weight `k`.
+
+        More precisely, if `R` is the base ring of self, then this
+        function calculates a set of modular forms which generate the
+        `R`-algebra of all modular forms of weight up to ``maxweight``
+        with coefficients in `R`.
 
         INPUT:
 
@@ -667,7 +685,8 @@ class ModularFormsRing(Parent):
           triples `(k, f, F)`, where:
 
           - `k` is an integer,
-          - `f` is the `q`-expansion of a modular form of weight `k`, as a power series over the base ring of self,
+          - `f` is the `q`-expansion of a modular form of weight `k`,
+            as a power series over the base ring of self,
           - `F` (if provided) is a modular form object corresponding to F.
 
           If this list is nonempty, we find a minimal generating set containing
@@ -681,8 +700,8 @@ class ModularFormsRing(Parent):
 
         OUTPUT:
 
-        a list of pairs (k, f), where f is the q-expansion to precision
-        ``prec`` of a modular form of weight k.
+        a list of pairs `(k, f)`, where `f` is the `q`-expansion to precision
+        ``prec`` of a modular form of weight `k`.
 
         .. SEEALSO::
 
@@ -788,7 +807,8 @@ class ModularFormsRing(Parent):
         for x in start_gens:
             if len(x) == 2:
                 if x[1].prec() < prec:
-                    raise ValueError("Requested precision cannot be higher than precision of approximate starting generators!")
+                    raise ValueError("Requested precision cannot be higher"
+                                     " than precision of approximate starting generators!")
                 sgs.append((x[0], x[1], None))
             else:
                 sgs.append(x)
@@ -808,8 +828,8 @@ class ModularFormsRing(Parent):
 
     def gen_forms(self, maxweight=8, start_gens=[], start_weight=2):
         r"""
-        Return a list of modular forms generating this ring (as an algebra over
-        the appropriate base ring).
+        Return a list of modular forms generating this ring (as an algebra
+        over the appropriate base ring).
 
         This method differs from :meth:`generators` only in that it returns
         graded modular form objects, rather than bare `q`-expansions.
@@ -852,10 +872,12 @@ class ModularFormsRing(Parent):
 
     def _find_generators(self, maxweight, start_gens, start_weight):
         r"""
-        For internal use. This function is called by :meth:`generators` and
-        :meth:`gen_forms`: it returns a list of triples `(k, f, F)` where `F`
+        Returns a list of triples `(k, f, F)` where `F`
         is a modular form of weight `k` and `f` is its `q`-expansion coerced
         into the base ring of self.
+
+        For internal use. This function is called by :meth:`generators` and
+        :meth:`gen_forms`.
 
         INPUT:
 
@@ -977,7 +999,7 @@ class ModularFormsRing(Parent):
     @cached_method
     def q_expansion_basis(self, weight, prec=None, use_random=True):
         r"""
-        Calculate a basis of q-expansions for the space of modular forms of the
+        Return a basis of q-expansions for the space of modular forms of the
         given weight for this group, calculated using the ring generators given
         by ``find_generators``.
 
@@ -1045,8 +1067,8 @@ class ModularFormsRing(Parent):
 
     def cuspidal_ideal_generators(self, maxweight=8, prec=None):
         r"""
-        Calculate generators for the ideal of cuspidal forms in this ring, as a
-        module over the whole ring.
+        Return a set of generators for the ideal of cuspidal forms in
+        this ring, as a module over the whole ring.
 
         EXAMPLES::
 
@@ -1127,7 +1149,7 @@ class ModularFormsRing(Parent):
 
     def cuspidal_submodule_q_expansion_basis(self, weight, prec=None):
         r"""
-        Calculate a basis of `q`-expansions for the space of cusp forms of
+        Return a basis of `q`-expansions for the space of cusp forms of
         weight ``weight`` for this group.
 
         INPUT:
