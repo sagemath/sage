@@ -243,7 +243,8 @@ class ModularFormsRing(Parent):
         self.__cached_gens = []
         self.__cached_cusp_maxweight = ZZ(-1)
         self.__cached_cusp_gens = []
-        Parent.__init__(self, base=base_ring, category=GradedAlgebras(base_ring))
+        cat = GradedAlgebras(base_ring).Commutative()
+        Parent.__init__(self, base=base_ring, category=cat)
 
     def change_ring(self, base_ring):
         r"""
