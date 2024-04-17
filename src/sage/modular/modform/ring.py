@@ -407,7 +407,9 @@ class ModularFormsRing(Parent):
         nb_var = poly_parent.ngens()
         nb_gens = self.ngens()
         if nb_var != nb_gens:
-            raise ValueError('the number of variables (%s) must be equal to the number of generators of the modular forms ring (%s)' % (nb_var, self.ngens()))
+            raise ValueError('the number of variables (%s) must be equal to'
+                             ' the number of generators of the modular forms'
+                             ' ring (%s)' % (nb_var, self.ngens()))
         return {poly_parent.gen(i): self(gens[i]) for i in range(0, nb_var)}
 
     def from_polynomial(self, polynomial, gens=None):
@@ -535,7 +537,7 @@ class ModularFormsRing(Parent):
             else:
                 raise ValueError('the group (%s) and/or the base ring (%s) of the given modular form is not consistant with the base space: %s' % (forms_datum.group(), forms_datum.base_ring(), self))
         elif forms_datum in self.base_ring():
-            forms_dictionary = {0:forms_datum}
+            forms_dictionary = {0: forms_datum}
         elif isinstance(forms_datum, MPolynomial):
             return self.from_polynomial(forms_datum)
         elif isinstance(forms_datum, PowerSeries_poly):
@@ -864,9 +866,9 @@ class ModularFormsRing(Parent):
             Modular Forms space of dimension 2 for Congruence Subgroup Gamma0(11) of weight 2 over Rational Field
 
         """
-        sgs = tuple( (F.weight(), None, F) for F in start_gens )
+        sgs = tuple((F.weight(), None, F) for F in start_gens)
         G = self._find_generators(maxweight, sgs, start_weight)
-        return [F for k,f,F in G]
+        return [F for k, f, F in G]
 
     gens = gen_forms
 
@@ -1089,7 +1091,7 @@ class ModularFormsRing(Parent):
             for j,f,F in self.__cached_cusp_gens:
                 if f.prec() >= working_prec:
                     f = F.qexp(working_prec).change_ring(self.base_ring())
-                G.append( (j,f,F) )
+                G.append((j, f, F))
         else:
             k = 2
             G = []
@@ -1140,10 +1142,10 @@ class ModularFormsRing(Parent):
         if prec is None:
             return G
         elif prec <= working_prec:
-            return [ (k, f.truncate_powerseries(prec), F) for k,f,F in G]
+            return [(k, f.truncate_powerseries(prec), F) for k,f,F in G]
         else:
             # user wants increased precision, so we may as well cache that
-            Gnew = [ (k, F.qexp(prec).change_ring(self.base_ring()), F) for k,f,F in G]
+            Gnew = [(k, F.qexp(prec).change_ring(self.base_ring()), F) for k, f, F in G]
             self.__cached_cusp_gens = Gnew
             return Gnew
 
