@@ -1,1 +1,1 @@
-cypari memory_allocator sagemath_categories brial | $(PYTHON_TOOLCHAIN) sage_setup sagemath_environment cython pkgconfig $(PYTHON)
+cypari memory_allocator brial sagelib | $(PYTHON_TOOLCHAIN) sage_setup cython pkgconfig $(PYTHON)
