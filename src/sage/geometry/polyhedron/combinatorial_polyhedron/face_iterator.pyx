@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 # distutils: extra_compile_args = OPENMP_CFLAGS
 # distutils: extra_link_args = OPENMP_CFLAGS
 r"""
