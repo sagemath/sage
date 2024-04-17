@@ -2228,6 +2228,71 @@ def _is_function(v):
     # note that Sage variables are callable, so we only check the type
     return isinstance(v, Function) or isinstance(v, FunctionType)
 
+def _parse_maxima_conj(s):
+    if "realpart" in s:
+        # realpart always comes first therefore is OK to rfind bracket before I 
+        realpart = s[s.find("realpart("):s[:s.find("%i")].rfind(")")]
+        realpart = realpart.replace("realpart(","")
+        if "imagpart" in s:
+            # remove bracket
+            i_start = s.find("%i")
+            i_end = s.rfind(")")+1
+            imagpart = s[i_start:i_end]
+            # get only imag
+            imagpart = imagpart.replace("imagpart(", "(")
+            # inequalities can have an imaginary part to them so we expand them out
+            inq = re.search("[<>]", imagpart)
+            if inq is not None:
+                inq = inq.start()
+                imagpart = imagpart[:inq] + ")" + imagpart[inq:]
+                imagpart = imagpart.replace(">", "> %i*(").replace("<", "< %i*(")
+                imag_split = re.search("[<>]", imagpart)
+                real_split = re.search("[<>]", realpart)
+                arr = []
+                if real_split and imag_split is not None:
+                    real_split_i = real_split.start() 
+                    imag_split_i = imag_split.start() 
+                    # ineqs the same
+                    if imag_split.group(0) == real_split.group(0):
+                        arr = [imagpart[:imag_split_i], "+",
+                                realpart[:real_split_i], real_split.group(0),
+                                realpart[real_split_i+1:],
+                            "+", imagpart[imag_split_i+1:]]
+
+                        # if imag parts not the same as real part
+                        imag_expr = imagpart[imag_split_i+1:].replace("%i*(","")[:-1].replace(" ","")
+                        real_expr = realpart[real_split_i+1:].replace(" ","")
+                        # if has variables then imag and real is diff arr is same 
+                        # if not can cancel and same remove imag part so take off imag part
+                        if not("_SAGE_VAR_" in imag_expr or "_SAGE_VAR_" in real_expr) and imag_expr == real_expr:
+                                arr = arr[:-2]
+                    else:
+                       # then real split is > imag < 
+                        arr = [realpart[real_split_i+1:], "<",
+                               imagpart[:imag_split_i], ",",
+                               realpart[:real_split_i], "<", 
+                               imagpart[imag_split_i+1:]
+                        ]
+                        if imag_split.group(0) == '>':
+                            # then real_split is < and imag >
+                            # swap last element with first
+                            arr = [*arr[-1], *arr[1:-1], *arr[0]]
+                        # make arr list of sols
+                        arr = ["[", *arr, "]"]
+                elif real_split is None:
+                    arr = [s[:i_start], imagpart, s[i_end:]]
+                else:
+                    arr = [s[:i_start], "+", imagpart, "+", s[i_end:]]
+                s = ''.join(arr)
+            else:
+                s = s[:i_start] + imagpart
+        else:
+            # add bracket back on
+            s = realpart + ")"
+    # strip spaces helps with parsing
+    s = s.replace(" ", "")
+    return s 
+
 
 def symbolic_expression_from_maxima_string(x, equals_sub=False, maxima=maxima):
     r"""
