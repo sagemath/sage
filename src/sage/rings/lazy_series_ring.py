@@ -807,6 +807,29 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: g
             <repr(...) failed: ValueError: no solution as 5 != 0 in the equation at degree -3>
 
+        A bivariate example::
+
+            sage: L.<x, y> = LazyPowerSeriesRing(QQ)
+            sage: B = L.undefined()
+            sage: eq = y*B^2 + 1 - B(x, x-y)
+            sage: L.define_implicitly([B], [eq])
+            sage: B
+            1 + (x-y) + (2*x*y-2*y^2) + (4*x^2*y-7*x*y^2+3*y^3)
+             + (2*x^3*y+6*x^2*y^2-18*x*y^3+10*y^4)
+             + (30*x^3*y^2-78*x^2*y^3+66*x*y^4-18*y^5)
+             + (28*x^4*y^2-12*x^3*y^3-128*x^2*y^4+180*x*y^5-68*y^6) + O(x,y)^7
+
+        Knödel walks::
+
+             sage: L.<z, x> = LazyPowerSeriesRing(QQ)
+             sage: F = L.undefined()
+             sage: eq = F(z, x)*(x^2*z-x+z) - (z - x*z^2 - x^2*z^2)*F(z, 0) + x
+             sage: L.define_implicitly([F], [eq])
+             sage: F
+             1 + (2*z^2+z*x) + (z^3+z^2*x) + (5*z^4+3*z^3*x+z^2*x^2)
+              + (5*z^5+4*z^4*x+z^3*x^2) + (15*z^6+10*z^5*x+4*z^4*x^2+z^3*x^3)
+              + O(z,x)^7
+
         TESTS::
 
             sage: L.<z> = LazyPowerSeriesRing(QQ)

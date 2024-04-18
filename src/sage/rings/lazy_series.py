@@ -5268,16 +5268,22 @@ class LazyPowerSeries(LazyCauchyProductSeries):
 
         # The arity is at least 2
         gv = min(h._coeff_stream._approximate_order for h in g)
+        gR = None
 
         def coefficient(n):
+            nonlocal gR
             r = R.zero()
             for i in range(n // gv + 1):
                 c = coeff_stream[i]
                 if c in self.base_ring():
                     c = P(c)
                     r += c[n]
-                else:
+                elif c.parent().base_ring() is self.base_ring():
                     r += c(g)[n]
+                else:
+                    if gR is None:
+                        gR = [h.change_ring(c.parent().base_ring()) for h in g]
+                    r += c(gR)[n]
             return r
 
         return P.element_class(P, Stream_function(coefficient,
