@@ -596,10 +596,20 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
             sage: A = GF(3)['T']; K = Frac(A); T = K.gen()
             sage: M = DrinfeldModularForms(K, 2)
-            sage: M.0
+            sage: M.gen(0)
             g1
-            sage: M.1
+            sage: M.1  # equivalent to M.gen(1)
             g2
+
+        .. NOTE::
+
+            Recall that the ring of Drinfeld modular forms is generated
+            by the `r` coefficient forms of the universal Drinfeld
+            module at `T`, `g_1, g_2, \ldots, g_r`, see
+            :meth:`coefficient_forms`. We highlight however that we make
+            a shift in the indexing so that the `i`-th generator
+            corresponds to the `i+1`-th coefficient form for
+            `0\leq i \leq r-1`.
         """
         return self(self._poly_ring.gen(n))
 
