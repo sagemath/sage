@@ -710,10 +710,11 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
 
     def basis_of_weight(self, k):
         r"""
-        Return a list of Drinfeld modular forms which forms a basis for the
-        subspace of weight `k`.
+        Return a list of Drinfeld modular forms which forms a basis for
+        the subspace of weight `k`.
 
-        Note that if `k\not\equiv 0` modulo `q-1`, then the subspace is 0.
+        Note that if `k\not\equiv 0` modulo `q-1`, then the subspace is
+        0.
 
         An alias of this method is ``basis``.
 
