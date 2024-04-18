@@ -3,8 +3,6 @@ CryptoMiniSat Solver
 
 This solver relies on Python bindings provided by upstream cryptominisat.
 
-The ``cryptominisat`` package should be installed on your Sage installation.
-
 AUTHORS:
 
 - Thierry Monteil (2017): complete rewrite, using upstream Python bindings,
