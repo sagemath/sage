@@ -82,7 +82,7 @@ into the structure of Sage. In particular, much of Sage is implemented
 in the object-oriented language Python, and there is a hierarchy of
 classes that organize code and functionality. For example, if you
 implement elements of a ring, your class should derive from
-``sage.structure.element.RingElement``, rather than starting from
+:class:`sage.structure.element.RingElement`, rather than starting from
 scratch. Try to figure out how your code should fit in with other Sage
 code, and design it accordingly.
 
@@ -90,15 +90,15 @@ code, and design it accordingly.
 Special Sage functions
 ======================
 
-Functions with leading and trailing double underscores ``__XXX__`` are
+Functions with leading and trailing double underscores :meth:`__XXX__` are
 all predefined by Python. Functions with leading and trailing single
-underscores ``_XXX_`` are defined for Sage. Functions with a single
+underscores :meth:`_XXX_` are defined for Sage. Functions with a single
 leading underscore are meant to be semi-private, and those with a
 double leading underscore are considered really private. Users can
 create functions with leading and trailing underscores.
 
 Just as Python has many standard special methods for objects, Sage
-also has special methods. They are typically of the form ``_XXX_``.
+also has special methods. They are typically of the form :meth:`_XXX_`.
 In a few cases, the trailing underscore is not included, but this will
 eventually be changed so that the trailing underscore is always
 included. This section describes these special methods.
@@ -122,7 +122,7 @@ or from some other already existing Sage class:
     class MyFavoriteAlgebra(Parent):
         ...
 
-You should implement the ``_latex_`` and ``_repr_`` method for every
+You should implement the :meth:`_latex_` and :meth:`_repr_` method for every
 object. The other methods depend on the nature of the object.
 
 
@@ -132,7 +132,7 @@ LaTeX representation
 Every object ``x`` in Sage should support the command ``latex(x)``, so
 that any Sage object can be easily and accurately displayed via
 LaTeX. Here is how to make a class (and therefore its instances)
-support the command ``latex``.
+support the command :func:`latex`.
 
 #. Define a method ``_latex_(self)`` that returns a LaTeX
    representation of your object. It should be something that can be
@@ -140,10 +140,10 @@ support the command ``latex``.
    closing $'s.
 
 #. Often objects are built up out of other Sage objects, and these
-   components should be typeset using the ``latex`` function. For
+   components should be typeset using :func:`latex` function. For
    example, if ``c`` is a coefficient of your object, and you want to
    typeset ``c`` using LaTeX, use ``latex(c)`` instead of
-   ``c._latex_()``, since ``c`` might not have a ``_latex_`` method,
+   ``c._latex_()``, since ``c`` might not have a :meth:`_latex_` method,
    and ``latex(c)`` knows how to deal with this.
 
 #. Do not forget to include a docstring and an example that
@@ -152,7 +152,7 @@ support the command ``latex``.
 #. You can use any macros included in ``amsmath``, ``amssymb``, or
    ``amsfonts``, or the ones defined in :mod:`sage.misc.latex_macros`.
 
-An example template for a ``_latex_`` method follows. Note that the
+An example template for a :meth:`_latex_` method follows. Note that the
 ``.. skip`` line should not be included in your code; it is here to
 prevent doctests from running on this fake example.
 
@@ -190,8 +190,8 @@ preferable because if you only define ``_repr_(self)`` and not
 they like. Also, some objects should print differently depending on
 the context.
 
-Here is an example of the ``_latex_`` and ``_repr_`` functions for the
-``Pi`` class. It is from the file
+Here is an example of the :meth:`_latex_` and :meth:`_repr_` methods for the
+:class:`Pi` class. It is from the file
 :sage_root:`src/sage/symbolic/constants.py`:
 
 .. CODE-BLOCK:: python
@@ -218,8 +218,8 @@ Here is an example of the ``_latex_`` and ``_repr_`` functions for the
 Matrix or vector from object
 ============================
 
-Provide a ``_matrix_`` method for an object that can be coerced to a
-matrix over a ring `R`. Then the Sage function ``matrix`` will work
+Provide a :meth:`_matrix_` method for an object that can be coerced to a
+matrix over a ring `R`. Then the Sage function :func:`matrix` will work
 for this object.
 
 The following is from
@@ -239,8 +239,8 @@ The following is from
         def adjacency_matrix(self, sparse=None, boundary_first=False):
             ...
 
-Similarly, provide a ``_vector_`` method for an object that can be
-coerced to a vector over a ring `R`. Then the Sage function ``vector``
+Similarly, provide a :meth:`_vector_` method for an object that can be
+coerced to a vector over a ring `R`. Then the Sage function :func:`vector`
 will work for this object. The following is from the file
 :sage_root:`src/sage/modules/free_module_element.pyx`:
 
@@ -260,7 +260,7 @@ Sage preparsing
 To make Python even more usable interactively, there are a number of
 tweaks to the syntax made when you use Sage from the commandline or
 via the notebook (but not for Python code in the Sage
-library). Technically, this is implemented by a ``preparse()``
+library). Technically, this is implemented by a :func:`preparse`
 function that rewrites the input string. Most notably, the following
 replacements are made:
 
@@ -301,7 +301,7 @@ replacements are made:
   are very small.  Large Sage integers are much more efficient than
   Python integers since they are implemented using the GMP C library.
 
-Consult the file ``preparser.py`` for more details about Sage
+Consult :mod:`sage.repl.preparse` for more details about Sage
 preparsing, more examples involving raw literals, etc.
 
 When a file ``foo.sage`` is loaded or attached in a Sage session, a
@@ -334,7 +334,7 @@ The Sage coercion model
 
 The primary goal of coercion is to be able to transparently do
 arithmetic, comparisons, etc. between elements of distinct sets. For
-example, when one writes `3 + 1/2`, one wants to perform arithmetic on
+example, when one writes ``3 + 1/2``, one wants to perform arithmetic on
 the operands as rational numbers, despite the left term being an
 integer.  This makes sense given the obvious and natural inclusion of
 the integers into the rational numbers. The goal of the coercion
@@ -364,29 +364,28 @@ scope variable.
 .. {Put a tutorial on this here}
 
 Certain objects, e.g. matrices, may start out mutable and become
-immutable later. See the file
-:sage_root:`src/sage/structure/mutability.py`.
+immutable later. See :mod:`sage.structure.mutability`.
 
 
 The  __hash__ special method
 ============================
 
-Here is the definition of ``__hash__`` from the Python reference
+Here is the definition of :meth:`__hash__` from the Python reference
 manual:
 
-    Called by built-in function ``hash()`` and for operations on members
-    of hashed collections including ``set``, ``frozenset``, and
-    ``dict``. ``__hash__()`` should return an integer. The only required
+    Called by built-in function :func:`hash` and for operations on members
+    of hashed collections including :class:`set`, :class:`frozenset`, and
+    :class:`dict`. :meth:`__hash__` should return an integer. The only required
     property is that objects which compare equal have the same hash
     value; it is advised to mix together the hash values of the
     components of the object that also play a part in comparison of
     objects by packing them into a tuple and hashing the tuple.
 
-    If a class does not define an ``__eq__()`` method it should not define
-    a ``__hash__()`` operation either; if it defines ``__eq__()`` but not
-    ``__hash__()``, its instances will not be usable as items in hashable
+    If a class does not define an :meth:`__eq__` method, it should not define
+    a :meth:`__hash__` operation either; if it defines :meth:`__eq__` but not
+    :meth:`__hash__`, its instances will not be usable as items in hashable
     collections. If a class defines mutable objects and implements an
-    ``__eq__()`` method, it should not implement ``__hash__()``, since the
+    :meth:`__eq__` method, it should not implement :meth:`__hash__`, since the
     implementation of hashable collections requires that a key’s hash
     value is immutable (if the object’s hash value changes, it will be
     in the wrong hash bucket).
@@ -439,7 +438,7 @@ Unfortunately, in Sage we simply cannot require
 
 because serious mathematics is simply too complicated for this
 rule. For example, the equalities ``z == Mod(z, 2)`` and
-``z == Mod(z, 3)`` would force ``hash()`` to be constant on the
+``z == Mod(z, 3)`` would force :func:`hash` to be constant on the
 integers.
 
 The only way we could "fix" this problem for good would be to abandon
@@ -478,7 +477,7 @@ Please avoid catch-all code like this:
         more_code()
 
 If you do not have any exceptions explicitly listed (as a tuple), your
-code will catch absolutely anything, including ``ctrl-C``, typos in
+code will catch absolutely anything, including :kbd:`Ctrl` + :kbd:`C`, typos in
 the code, and alarms, and this will lead to confusion. Also, this
 might catch real errors which should be propagated to the user.
 
@@ -535,7 +534,7 @@ to explore the resulting integers' number-theoretic properties
 such as prime factorization. Exceptions should be made when
 there are good reasons such as performance or compatibility
 with Python code, for instance in methods such as
-``__hash__``, ``__len__``, and ``__int__``.
+:meth:`__hash__`, :meth:`__len__`, and :meth:`__int__`.
 
 To return a Python integer ``i`` as a Sage integer, use:
 
@@ -544,7 +543,7 @@ To return a Python integer ``i`` as a Sage integer, use:
     from sage.rings.integer import Integer
     return Integer(i)
 
-To return a Sage integer ``i`` as a Python ineger, use:
+To return a Sage integer ``i`` as a Python integer, use:
 
 .. CODE-BLOCK:: python
 
