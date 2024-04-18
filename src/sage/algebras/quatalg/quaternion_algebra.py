@@ -701,12 +701,12 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 
         INPUT:
 
-        - ``order_basis`` -- (optional, default: ``None``) a basis of an
-          order of this quaternion algebra
-
         - ``take_shortcuts`` -- (default: ``True``) if the discriminant is
           prime and the invariants of the algebra are of a nice form, use
           Proposition 5.2 of [Piz1980]_.
+
+        - ``order_basis`` -- (optional, default: ``None``) a basis of an
+          order of this quaternion algebra
 
         OUTPUT:
 
@@ -814,7 +814,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         #  of such a form though)
         a, b = self.invariants()
         if (not order_basis and take_shortcuts and d_A.is_prime()
-        and a in ZZ and b in ZZ):
+            and a in ZZ and b in ZZ):
             a = ZZ(a)
             b = ZZ(b)
             i, j, k = self.gens()
