@@ -139,9 +139,13 @@ such that
 
 * `f` is holomorphic at infinity.
 
-The second condition is similar to the classical case. Furthermore, in
-the rank two situation, the expansion of `f` is simply given by
+Without diving into the details, we mention that the second condition is
+similar to the classical case. More specifically, in the rank two
+situation, the expansion of `f` is given by a power series in `u`
 `f = \sum_{n\geq 0} a_n(f) u^n` where `a_n(f)\in \mathbb{C}_{\infty}`.
+
+Lastly, we also mention that the integer `m` only depends on its class
+modulo `q-1`.
 
 Note that all the above theory is covered in much greater details in
 part I of [BRP2018]_.
@@ -149,8 +153,8 @@ part I of [BRP2018]_.
 .. RUBRIC:: Ring of Drinfeld modular forms
 
 Letting `M_k^{r, m}(\mathrm{GL}_r(A))` denote the space of rank `r`,
-weight `k\in (q - 1)\mathbb{Z}` and type `m~(\mathrm{mod}~q-1)`
-Drinfeld modular forms, we define
+weight `k\in (q - 1)\mathbb{Z}` and type `m` Drinfeld modular forms,
+we define
 
 .. MATH::
 
