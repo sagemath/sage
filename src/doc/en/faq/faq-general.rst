@@ -406,4 +406,4 @@ What are DOI records for Sage?
 e.g. see `record for Sage 9.5 <https://zenodo.org/record/6259615>`_.
 The corresponding :doi:`10.5281/zenodo.6259615`.
 
-There is also DOI for the latest version, :doi:`10.5281/zenodo.593563`.
+There is also DOI for the latest version, :doi:`10.5281/zenodo.8042260`.
