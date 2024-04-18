@@ -56,7 +56,9 @@ using one of two mechanisms:
   For example, on Linux distributions that only ship newer versions
   of Python, the backport packages may not be available as
   system packages. Hence, if there is a need to use the backport
-  packages, they should be imported like this::
+  packages, they should be imported like this:
+
+  .. CODE-BLOCK:: python
 
         import sys
 
@@ -102,7 +104,7 @@ eventually be changed so that the trailing underscore is always
 included. This section describes these special methods.
 
 All objects in Sage should derive from the Cython extension class
-``SageObject``:
+:class:`SageObject`:
 
 .. CODE-BLOCK:: python
 
