@@ -1142,7 +1142,7 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
     @lazy_attribute
     def fcp(self):
         r"""
-        Return the factorization of the characteristic polynomial.
+        Return the factorization of the characteristic polynomial of ``self``.
 
         INPUT:
 
@@ -1166,7 +1166,7 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
     @lazy_attribute
     def minimal_polynomial(self):
         r"""
-        Return the minimal polynomial of this endomorphism.
+        Return the minimal polynomial of ``self``.
 
         :meth:`minimal_polynomial` and :meth:`minpoly` are the same method.
 
