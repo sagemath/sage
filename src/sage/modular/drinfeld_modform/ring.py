@@ -203,7 +203,7 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             sage: DrinfeldModularForms(K, 2)
             Traceback (most recent call last):
             ...
-            TypeError: the base of the base ring must be a polynomial ring
+            NotImplementedError: Drinfeld modular forms are currently only implemented for A = Fq[T]
 
             sage: DrinfeldModularForms(Frac(ZZ['T']))
             Traceback (most recent call last):
@@ -257,8 +257,8 @@ class DrinfeldModularForms(Parent, UniqueRepresentation):
             raise TypeError("base ring must be a fraction field of a "
                             "polynomial ring")
         if not isinstance(base_ring.base(), PolynomialRing_general):
-            raise TypeError("the base of the base ring must be a "
-                            "polynomial ring")
+            raise NotImplementedError("Drinfeld modular forms are currently "
+                                      "only implemented for A = Fq[T]")
         if not base_ring.characteristic():
             raise ValueError("base ring characteristic must be finite")
         if not base_ring.base().base().is_field():
