@@ -1022,6 +1022,24 @@ class FiniteRankFreeModuleMorphism(Morphism):
     # End of Morphism methods
     #
 
+    def _modules_and_bases(self, basis1=None, basis2=None):
+        fmodule1 = self.domain()
+        fmodule2 = self.codomain()
+        if basis1 is None:
+            basis1 = fmodule1.default_basis()
+        elif basis1 not in fmodule1.bases():
+            raise TypeError(str(basis1) + " is not a basis on the " +
+                            str(fmodule1) + ".")
+        if basis2 is None:
+            if self.is_endomorphism():
+                basis2 = basis1
+            else:
+                basis2 = fmodule2.default_basis()
+        elif basis2 not in fmodule2.bases():
+            raise TypeError(str(basis2) + " is not a basis on the " +
+                            str(fmodule2) + ".")
+        return fmodule1, fmodule2, basis1, basis2
+
     def matrix(self, basis1=None, basis2=None):
         r"""
         Return the matrix of ``self`` w.r.t to a pair of bases.
@@ -1109,21 +1127,7 @@ class FiniteRankFreeModuleMorphism(Morphism):
 
         """
         from sage.matrix.constructor import matrix
-        fmodule1 = self.domain()
-        fmodule2 = self.codomain()
-        if basis1 is None:
-            basis1 = fmodule1.default_basis()
-        elif basis1 not in fmodule1.bases():
-            raise TypeError(str(basis1) + " is not a basis on the " +
-                            str(fmodule1) + ".")
-        if basis2 is None:
-            if self.is_endomorphism():
-                basis2 = basis1
-            else:
-                basis2 = fmodule2.default_basis()
-        elif basis2 not in fmodule2.bases():
-            raise TypeError(str(basis2) + " is not a basis on the " +
-                            str(fmodule2) + ".")
+        fmodule1, fmodule2, basis1, basis2 = self._modules_and_bases(basis1, basis2)
         if (basis1, basis2) not in self._matrices:
             if self._is_identity:
                 # The identity endomorphism
