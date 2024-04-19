@@ -121,7 +121,7 @@ class Tarball(object):
         import hashlib
         return self._compute_hash(hashlib.sha256())
 
-    def checksum_verifies(self):
+    def checksum_verifies(self, force_sha256=False):
         """
         Test whether the checksum of the downloaded file is correct.
         """
@@ -129,8 +129,11 @@ class Tarball(object):
             sha256 = self._compute_sha256()
             if sha256 != self.package.sha256:
                 return False
+        elif force_sha256:
+            log.warning('sha256 not available for {0}'.format(self.package.name))
+            return False
         else:
-            log.warning('sha1 used for {0} checksum'.format(self.package.name))
+            log.warning('sha256 not available for {0}, using sha1'.format(self.package.name))
         sha1 = self._compute_sha1()
         return sha1 == self.package.sha1
 
