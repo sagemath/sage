@@ -1083,7 +1083,7 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
 
         INPUT:
 
-        - ``var`` -- variable
+        - ``var`` -- string (default: ``'x'``); a variable name
 
         EXAMPLES::
 
@@ -1146,7 +1146,7 @@ class FreeModuleAutomorphism(FreeModuleTensor, MultiplicativeGroupElement):
 
         INPUT:
 
-        - ``var`` -- variable
+        - ``var`` -- string (default: ``'x'``); a variable name
 
         EXAMPLES::
 
