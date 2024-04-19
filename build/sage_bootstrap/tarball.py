@@ -116,7 +116,7 @@ class Tarball(object):
     def _compute_sha1(self):
         import hashlib
         return self._compute_hash(hashlib.sha1())
-    
+
     def _compute_sha256(self):
         import hashlib
         return self._compute_hash(hashlib.sha256())
@@ -127,11 +127,12 @@ class Tarball(object):
         """
         if self.package.sha256:
             sha256 = self._compute_sha256()
-            return sha256 == self.package.sha256
+            if sha256 != self.package.sha256:
+                return False
         else:
-            log.warning('sha1 used for {pn} checksum'.format(pn=self.package.name))
-            sha1 = self._compute_sha1()
-            return sha1 == self.package.sha1
+            log.warning('sha1 used for {0} checksum'.format(self.package.name))
+        sha1 = self._compute_sha1()
+        return sha1 == self.package.sha1
 
     def is_distributable(self):
         return 'do-not-distribute' not in self.filename
