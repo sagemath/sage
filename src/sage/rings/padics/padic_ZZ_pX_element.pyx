@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 # distutils: libraries = NTL_LIBRARIES gmp m
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -228,7 +229,7 @@ cdef class pAdicZZpXElement(pAdicExtElement):
         else:
             raise ValueError("context must be a power of the appropriate prime")
 
-    cdef ext_p_list_precs(self, bint pos, long prec) noexcept:
+    cdef ext_p_list_precs(self, bint pos, long prec):
         """
         Returns a list giving a series representation of ``self``.
 
@@ -623,7 +624,7 @@ def _test_preprocess_list(R, L):
     return preprocess_list(R(0), L)
 
 
-cdef preprocess_list(pAdicZZpXElement elt, L) noexcept:
+cdef preprocess_list(pAdicZZpXElement elt, L):
     """
     See the documentation for :func:`_test_preprocess_list`.
     """
@@ -738,7 +739,7 @@ def _find_val_aprec_test(R, L):
     """
     return find_val_aprec(R.prime_pow, L)
 
-cdef find_val_aprec(PowComputer_ext pp, L) noexcept:
+cdef find_val_aprec(PowComputer_ext pp, L):
     r"""
     Given a list ``L``, finds the minimum valuation, minimum absolute
     precision and minimum common type of the elements.
@@ -843,7 +844,7 @@ def _test_get_val_prec(R, a):
     """
     return get_val_prec(R.prime_pow, a)
 
-cdef get_val_prec(PowComputer_ext pp, a) noexcept:
+cdef get_val_prec(PowComputer_ext pp, a):
     r"""
     Return valuation, absolute precision and type of an input element.
 

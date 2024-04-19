@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.libs.gap sage.libs.flint sage.libs.pari sage.modules
 r"""
 Functions that compute some of the sequences in Sloane's tables
@@ -859,7 +860,7 @@ class A003418(SloaneSequence):
             sage: [sloane.A003418._eval(n) for n in range(1,11)]
             [1, 2, 6, 12, 60, 60, 420, 840, 2520, 2520]
         """
-        return arith.lcm([i for i in range(1, n+1)])
+        return arith.lcm(range(1, n + 1))
 
 
 class A007318(SloaneSequence):

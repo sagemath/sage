@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 from sage.misc.lazy_import import lazy_import
 
 from .anf2cnf import ANF2CNFConverter

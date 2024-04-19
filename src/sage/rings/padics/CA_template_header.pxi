@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-pari
 """
 This file provides the declaration for ``CAElement`` and the morphisms to
 the integers and rationals.
@@ -31,7 +32,7 @@ cdef class CAElement(pAdicTemplateElement):
     cdef celement value
     cdef long absprec
 
-    cdef CAElement _new_c(self) noexcept
+    cdef CAElement _new_c(self)
 
 cdef class pAdicCoercion_ZZ_CA(RingHomomorphism):
     cdef CAElement _zero
