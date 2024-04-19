@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.flint
 r"""
 This module is now called ``ring.py`` (see :issue:`31559`). Do not import from here as

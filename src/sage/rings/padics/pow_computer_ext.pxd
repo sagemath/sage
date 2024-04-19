@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-ntl
 from sage.rings.padics.pow_computer cimport PowComputer_class
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
 from sage.libs.ntl.types cimport *

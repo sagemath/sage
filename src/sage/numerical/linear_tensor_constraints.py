@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-polyhedra
 """
 Constraints on Linear Functions Tensored with a Free Module
 

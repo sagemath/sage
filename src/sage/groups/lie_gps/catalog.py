@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-groups
 r"""
 Type ``groups.lie.<tab>`` to access examples of Lie groups.
 """

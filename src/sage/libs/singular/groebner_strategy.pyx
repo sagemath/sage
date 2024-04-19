@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-singular
 """
 Singular's Groebner Strategy Objects
 
