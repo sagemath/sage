@@ -614,7 +614,7 @@ class Bijectionist(SageObject):
         P = sorted(self._sorter["A"](p) for p in P)
         for p in P:
             for a in p:
-                self._P.union(p[0], a)
+                self._P._union(p[0], a)
 
         self._compute_possible_block_values()
 
@@ -1678,7 +1678,7 @@ class Bijectionist(SageObject):
                         try:
                             solution = different_values(tP[i1], tP[i2])
                         except StopIteration:
-                            tmp_P.union(tP[i1], tP[i2])
+                            tmp_P._union(tP[i1], tP[i2])
                             if len(multiple_preimages[tZ]) == 2:
                                 del multiple_preimages[tZ]
                             else:
@@ -1772,14 +1772,14 @@ class Bijectionist(SageObject):
         # convert input to set of block representatives
         blocks = set()
         if p in self._A:
-            blocks.add(self._P.find(p))
+            blocks.add(self._P._find(p))
         elif isinstance(p, list):  # TODO: this looks very brittle
             for p1 in p:
                 if p1 in self._A:
-                    blocks.add(self._P.find(p1))
+                    blocks.add(self._P._find(p1))
                 elif isinstance(p1, list):
                     for p2 in p1:
-                        blocks.add(self._P.find(p2))
+                        blocks.add(self._P._find(p2))
 
         if optimal:
             if self._bmilp is None:
@@ -1941,9 +1941,9 @@ class Bijectionist(SageObject):
 
             # try to find a solution which has a different
             # subdistribution on d than s0
-            z_in_d = sum(d[p] * bmilp._x[self._P.find(p), z]
+            z_in_d = sum(d[p] * bmilp._x[self._P._find(p), z]
                          for p in P
-                         if z in self._possible_block_values[self._P.find(p)])
+                         if z in self._possible_block_values[self._P._find(p)])
 
             # it is sufficient to require that z occurs less often as
             # a value among {a | d[a] == 1} than it does in
@@ -2191,14 +2191,14 @@ class Bijectionist(SageObject):
             # the blocks of the elements of the preimage
             updated_images = defaultdict(set)  # (p_1,...,p_k) to {a_1,....}
             for a_tuple, image_set in images.items():
-                representatives = tuple(P.find(a) for a in a_tuple)
+                representatives = tuple(P._find(a) for a in a_tuple)
                 updated_images[representatives].update(image_set)
 
             # merge blocks
             for a_tuple, image_set in updated_images.items():
                 image = image_set.pop()
                 while image_set:
-                    P.union(image, image_set.pop())
+                    P._union(image, image_set.pop())
                     something_changed = True
                 # we keep a representative
                 image_set.add(image)
@@ -2525,7 +2525,7 @@ class _BijectionistMILP:
         self._solution_cache = []
         if solutions is not None:
             for solution in solutions:
-                self._add_solution({(P.find(a), z): value
+                self._add_solution({(P._find(a), z): value
                                     for (a, z), value in solution.items()})
 
     def show(self, variables=True):
@@ -2813,7 +2813,7 @@ class _BijectionistMILP:
         Z_dict = {z: i for i, z in enumerate(Z)}
 
         for a in self._bijectionist._A:
-            p = self._bijectionist._P.find(a)
+            p = self._bijectionist._P._find(a)
             for z in self._bijectionist._possible_block_values[p]:
                 w_index = W_dict[self._bijectionist._alpha(a)]
                 z_index = Z_dict[z]
@@ -2867,7 +2867,7 @@ class _BijectionistMILP:
             tA_sum = [zero] * len(Z_dict)
             tZ_sum = [zero] * len(Z_dict)
             for a in tA:
-                p = self._bijectionist._P.find(a)
+                p = self._bijectionist._P._find(a)
                 for z in self._bijectionist._possible_block_values[p]:
                     tA_sum[Z_dict[z]] += self._x[p, z]
             for z in tZ:
@@ -2940,8 +2940,8 @@ class _BijectionistMILP:
                     continue
                 a = pi_rho.pi(*a_tuple)
                 if a in A:
-                    p_tuple = tuple(P.find(a) for a in a_tuple)
-                    p = P.find(a)
+                    p_tuple = tuple(P._find(a) for a in a_tuple)
+                    p = P._find(a)
                     if (p_tuple, p) not in pi_blocks:
                         pi_blocks.add((p_tuple, p))
                         for z_tuple in itertools.product(*[tZ[p] for p in p_tuple]):
@@ -3008,7 +3008,7 @@ class _BijectionistMILP:
                 z0 = phi(p)
                 assert all(phi(a) == z0 for a in block), "phi must be constant on the block %s" % block
                 for z in self._bijectionist._possible_block_values[p]:
-                    p0 = P.find(psi(z))
+                    p0 = P._find(psi(z))
                     if z0 in self._bijectionist._possible_block_values[p0]:
                         c = self._x[p, z] - self._x[p0, z0]
                         if c.is_zero():
@@ -3046,7 +3046,7 @@ class _BijectionistMILP:
         tZ = self._bijectionist._possible_block_values
 
         def sum_q(q):
-            return sum(sum(z * self._x[P.find(a), z] for z in tZ[P.find(a)])
+            return sum(sum(z * self._x[P._find(a), z] for z in tZ[P._find(a)])
                        for a in q)
         q0 = Q[0]
         v0 = sum_q(q0)

@@ -1062,11 +1062,11 @@ class PolynomialSequence_generic(Sequence_generic):
         DS = DisjointSet(set().union(*vss))
         for u, *vs in vss:
             for v in vs:
-                DS.union(u, v)
+                DS._union(u, v)
 
         Ps = {}  # map root element -> polynomials in this component
         for f, vs in zip(self, vss):
-            r = DS.find(vs[0])
+            r = DS._find(vs[0])
             if r in Ps:
                 Ps[r].append(f)
             else:

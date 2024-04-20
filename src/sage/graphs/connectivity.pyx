@@ -2540,7 +2540,7 @@ def spqr_tree(G, algorithm="Hopcroft_Tarjan", solver=None, verbose=0,
         if cocycles_count[fe] == 2 and len(virtual_edge_to_cycles[fe]) == 2:
             # This virtual edge is only between 2 cycles
             C1, C2 = virtual_edge_to_cycles[fe]
-            DS.union(C1, C2)
+            DS._union(C1, C2)
             cycles_list[C1].delete_edge(fe)
             cycles_list[C2].delete_edge(fe)
             cocycles_count[fe] -= 2

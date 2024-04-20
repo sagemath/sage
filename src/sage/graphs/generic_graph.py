@@ -12657,11 +12657,11 @@ class GenericGraph(GenericGraph_pyx):
         DS = DisjointSet(self.vertex_iterator())
 
         for u, v, label in edge_list:
-            DS.union(u, v)
+            DS._union(u, v)
 
         self.delete_edges(edge_list)
         edges_incident = []
-        vertices = [v for v in vertices if v != DS.find(v)]
+        vertices = [v for v in vertices if v != DS._find(v)]
         if self.is_directed():
             for v in vertices:
                 out_edges = self.edge_boundary([v])
@@ -12674,8 +12674,8 @@ class GenericGraph(GenericGraph_pyx):
                 self.delete_vertex(v)
 
         for (u, v, label) in edges_incident:
-            root_u = DS.find(u)
-            root_v = DS.find(v)
+            root_u = DS._find(u)
+            root_v = DS._find(v)
             if root_v != root_u or self.allows_loops():
                 self.add_edge(root_u, root_v, label)
 

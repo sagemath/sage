@@ -576,12 +576,12 @@ def RandomBlockGraph(m, k, kmax=None, incidence_structure=False, seed=None):
         # structure to keep a unique identifier per merged vertices
         DS = DisjointSet([i for u in B for i in B[u]])
         for u, v in T.edges(sort=True, labels=0):
-            DS.union(choice(B[u]), choice(B[v]))
+            DS._union(choice(B[u]), choice(B[v]))
 
         # We relabel vertices in the range [0, m*(k-1)] and build the incidence
         # structure
         new_label = {root: i for i, root in enumerate(DS.root_to_elements_dict())}
-        IS = [[new_label[DS.find(v)] for v in B[u]] for u in B]
+        IS = [[new_label[DS._find(v)] for v in B[u]] for u in B]
 
     if incidence_structure:
         return IS
