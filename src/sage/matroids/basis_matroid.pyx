@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 """
 Basis matroids
 
@@ -1160,46 +1161,6 @@ cdef class BasisMatroid(BasisExchangeMatroid):
             return rich_to_bool(op, 0)
         else:
             return rich_to_bool(op, 1)
-
-    def __copy__(self):
-        """
-        Create a shallow copy.
-
-        EXAMPLES::
-
-            sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.catalog.Vamos())
-            sage: N = copy(M)  # indirect doctest
-            sage: M == N
-            True
-        """
-        N = BasisMatroid(M=self)
-        N.rename(self.get_custom_name())
-        return N
-
-    def __deepcopy__(self, memo=None):
-        """
-        Create a deep copy.
-
-        .. NOTE::
-
-            Identical to shallow copy for BasisMatroid class.
-
-        EXAMPLES::
-
-            sage: from sage.matroids.advanced import *
-            sage: M = BasisMatroid(matroids.catalog.Vamos())
-            sage: N = deepcopy(M)  # indirect doctest
-            sage: M == N
-            True
-            sage: M.groundset() is N.groundset()
-            False
-        """
-        if memo is None:
-            memo = {}
-        N = BasisMatroid(M=self)
-        N.rename(self.get_custom_name())
-        return N
 
     def __reduce__(self):
         """

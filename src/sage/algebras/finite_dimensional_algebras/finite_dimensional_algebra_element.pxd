@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from sage.structure.element cimport AlgebraElement, Element, Vector
 from sage.matrix.matrix cimport Matrix
 
