@@ -31,6 +31,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from sage.categories.morphism import Morphism
+from sage.misc.lazy_attribute import lazy_attribute
 from sage.rings.integer import Integer
 
 if TYPE_CHECKING:
@@ -1451,3 +1452,156 @@ class FiniteRankFreeModuleEndomorphism(FiniteRankFreeModuleMorphism):
             except ValueError:
                 pass
         return self.matrix()
+
+    @lazy_attribute
+    def characteristic_polynomial(self):
+        r"""
+        Return the characteristic polynomial of ``self``.
+
+        :meth:`characteristic_polynomial` and :meth:`charpoly` are the same method.
+
+        INPUT:
+
+        - ``var`` -- string (default: ``'x'``); a variable name
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: a = M.automorphism(matrix=[[-1,0,0],[0,1,2],[0,1,3]], basis=e)
+            sage: ep = e.new_basis(a, 'ep', latex_symbol="e'")
+            sage: phi = M.endomorphism([[1,2,3], [4,5,6], [7,8,9]], basis=ep)
+            sage: phi.matrix(e)
+            [  1  -3   1]
+            [-18  39 -18]
+            [-25  54 -25]
+            sage: phi.characteristic_polynomial()
+            x^3 - 15*x^2 - 18*x
+            sage: phi.charpoly()
+            x^3 - 15*x^2 - 18*x
+            sage: phi.charpoly('T')
+            T^3 - 15*T^2 - 18*T
+        """
+        return self._some_matrix().characteristic_polynomial
+
+    charpoly = characteristic_polynomial
+
+    @lazy_attribute
+    def det(self):
+        r"""
+        Return the determinant of ``self``.
+
+        OUTPUT:
+
+        - element of the base ring of the modules on which ``self`` is defined,
+          equal to the determinant of ``self``.
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: a = M.automorphism(matrix=[[-1,0,0],[0,1,2],[0,1,3]], basis=e)
+            sage: ep = e.new_basis(a, 'ep', latex_symbol="e'")
+            sage: phi = M.endomorphism([[1,2,3], [4,5,6], [7,8,9]], basis=ep)
+            sage: phi.matrix(e)
+            [  1  -3   1]
+            [-18  39 -18]
+            [-25  54 -25]
+            sage: phi.det()
+            0
+            sage: det(phi)
+            0
+        """
+        return self._some_matrix().det
+
+    determinant = det
+
+    @lazy_attribute
+    def fcp(self):
+        r"""
+        Return the factorization of the characteristic polynomial of ``self``.
+
+        INPUT:
+
+        - ``var`` -- string (default: ``'x'``); a variable name
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: a = M.automorphism(matrix=[[-1,0,0],[0,1,2],[0,1,3]], basis=e)
+            sage: ep = e.new_basis(a, 'ep', latex_symbol="e'")
+            sage: phi = M.endomorphism([[1,2,3], [4,5,6], [7,8,9]], basis=ep)
+            sage: phi.matrix(e)
+            [  1  -3   1]
+            [-18  39 -18]
+            [-25  54 -25]
+            sage: phi.fcp()                                                             # needs sage.libs.pari
+            x * (x^2 - 15*x - 18)
+            sage: phi.fcp('T')                                                          # needs sage.libs.pari
+            T * (T^2 - 15*T - 18)
+        """
+        return self._some_matrix().fcp
+
+    @lazy_attribute
+    def minimal_polynomial(self):
+        r"""
+        Return the minimal polynomial of ``self``.
+
+        :meth:`minimal_polynomial` and :meth:`minpoly` are the same method.
+
+        INPUT:
+
+        - ``var`` -- string (default: ``'x'``); a variable name
+
+        EXAMPLES::
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: a = M.automorphism(matrix=[[-1,0,0],[0,1,2],[0,1,3]], basis=e)
+            sage: ep = e.new_basis(a, 'ep', latex_symbol="e'")
+            sage: phi = M.endomorphism([[1,2,3], [4,5,6], [7,8,9]], basis=ep)
+            sage: phi.matrix(e)
+            [  1  -3   1]
+            [-18  39 -18]
+            [-25  54 -25]
+            sage: phi.minpoly()                                                         # needs sage.libs.pari
+            x^3 - 15*x^2 - 18*x
+            sage: phi.minimal_polynomial()                                              # needs sage.libs.pari
+            x^3 - 15*x^2 - 18*x
+            sage: phi.minimal_polynomial('T')                                           # needs sage.libs.pari
+            T^3 - 15*T^2 - 18*T
+        """
+        return self._some_matrix().minimal_polynomial
+
+    minpoly = minimal_polynomial
+
+    @lazy_attribute
+    def trace(self):
+        r"""
+        Return the trace of ``self``.
+
+        OUTPUT:
+
+        - element of the base ring of the modules on which ``self`` is defined,
+          equal to the trace of ``self``.
+
+        EXAMPLES:
+
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: e = M.basis('e')
+            sage: a = M.automorphism(matrix=[[-1,0,0],[0,1,2],[0,1,3]], basis=e)
+            sage: ep = e.new_basis(a, 'ep', latex_symbol="e'")
+            sage: phi = M.endomorphism([[1,2,3], [4,5,6], [7,8,9]], basis=ep)
+            sage: phi.matrix(e)
+            [  1  -3   1]
+            [-18  39 -18]
+            [-25  54 -25]
+            sage: phi.trace()
+            15
+            sage: id = M.identity_map()
+            sage: id.trace()
+            3
+
+        """
+        return self._some_matrix().trace
