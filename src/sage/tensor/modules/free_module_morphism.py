@@ -1323,7 +1323,7 @@ class FiniteRankFreeModuleEndomorphism(FiniteRankFreeModuleMorphism):
       constructed object is the identity endomorphism; if set to ``True``,
       then the entry ``matrix_rep`` is not used.
 
-    EXAMPLES::
+    EXAMPLES:
 
     The identity endomorphism::
 

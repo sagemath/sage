@@ -502,7 +502,6 @@ class FreeModuleEndset(FreeModuleHomset):
                                            other.base_module() is self.domain()
         return False
 
-
     #### Methods required for any Parent
 
     def _element_constructor_(self, matrix_rep, bases=None, name=None,
