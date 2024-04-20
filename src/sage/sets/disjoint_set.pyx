@@ -397,7 +397,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             sage: d.__getstate__()
             [0, 1, 0, 0, 4]
         """
-        l = []
+        cdef list l = []
         cdef int i
         for i in range(self.cardinality()):
             l.append(self._nodes.parent[i])
@@ -454,22 +454,19 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         EXAMPLES::
 
             sage: e = DisjointSet(5)
-            sage: e.union(4,2)
-            sage: e
+            sage: e.union(4,2); e
             {{0}, {1}, {2, 4}, {3}}
             sage: e.find(2)
             4
             sage: e.find(4)
             4
-            sage: e.union(1,3)
-            sage: e
+            sage: e.union(1,3); e
             {{0}, {1, 3}, {2, 4}}
             sage: e.find(1)
             1
             sage: e.find(3)
             1
-            sage: e.union(3,2)
-            sage: e
+            sage: e.union(3,2); e
             {{0}, {1, 2, 3, 4}}
             sage: [e.find(i) for i in range(5)]
             [0, 1, 1, 1, 1]
@@ -481,6 +478,38 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         card = self.cardinality()
         if i < 0 or i>= card:
             raise ValueError('i(=%s) must be between 0 and %s' % (i, card - 1))
+        return OP_find(self._nodes, i)
+
+    cpdef _find(self, int i):
+        r"""
+        Return the representative of the set that ``i`` currently belongs to.
+
+        INPUT:
+
+        - ``i`` -- element in ``self`` (no input checking)
+
+        EXAMPLES::
+
+            sage: e = DisjointSet(5)
+            sage: e._union(4,2); e
+            {{0}, {1}, {2, 4}, {3}}
+            sage: e._find(2)
+            4
+            sage: e._find(4)
+            4
+            sage: e._union(1,3); e
+            {{0}, {1, 3}, {2, 4}}
+            sage: e._find(1)
+            1
+            sage: e._find(3)
+            1
+            sage: e._union(3,2); e
+            {{0}, {1, 2, 3, 4}}
+            sage: [e.find(i) for i in range(5)]
+            [0, 1, 1, 1, 1]
+            sage: e._find(5)  # no input checking
+            0
+        """
         return OP_find(self._nodes, i)
 
     def union(self, int i, int j):
@@ -497,17 +526,13 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
 
         EXAMPLES::
 
-            sage: d = DisjointSet(5)
-            sage: d
+            sage: d = DisjointSet(5); d
             {{0}, {1}, {2}, {3}, {4}}
-            sage: d.union(0,1)
-            sage: d
+            sage: d.union(0,1); d
             {{0, 1}, {2}, {3}, {4}}
-            sage: d.union(2,4)
-            sage: d
+            sage: d.union(2,4); d
             {{0, 1}, {2, 4}, {3}}
-            sage: d.union(1,4)
-            sage: d
+            sage: d.union(1,4); d
             {{0, 1, 2, 4}, {3}}
             sage: d.union(1,5)
             Traceback (most recent call last):
@@ -519,6 +544,33 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             raise ValueError('i(=%s) must be between 0 and %s' % (i, card - 1))
         if j < 0 or j >= card:
             raise ValueError('j(=%s) must be between 0 and %s' % (j, card - 1))
+        OP_join(self._nodes, i, j)
+
+    cpdef _union(self, int i, int j):
+        r"""
+        Combine the set of ``i`` and the set of ``j`` into one.
+
+        All elements in those two sets will share the same representative
+        that can be gotten using find.
+
+        INPUT:
+
+        - ``i`` -- element in ``self`` (no input checking)
+        - ``j`` -- element in ``self`` (no input checking)
+
+        EXAMPLES::
+
+            sage: d = DisjointSet(5); d
+            {{0}, {1}, {2}, {3}, {4}}
+            sage: d._union(0,1); d
+            {{0, 1}, {2}, {3}, {4}}
+            sage: d._union(2,4); d
+            {{0, 1}, {2, 4}, {3}}
+            sage: d._union(1,4); d
+            {{0, 1, 2, 4}, {3}}
+            sage: d._union(1,5); d
+            {{0, 1, 2, 4}, {3}}
+        """
         OP_join(self._nodes, i, j)
 
     def root_to_elements_dict(self):
@@ -540,7 +592,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             sage: d
             {{0, 2, 3}, {1}, {4}}
         """
-        s = {}
+        cdef dict s = {}
         cdef int i
         for i in range(self.cardinality()):
             o = self.find(i)
@@ -564,7 +616,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             sage: WordMorphism(e)                                                       # needs sage.combinat
             WordMorphism: 0->0, 1->4, 2->2, 3->2, 4->4
         """
-        d = {}
+        cdef dict d = {}
         cdef int i
         for i in range(self.cardinality()):
             d[i] = self.find(i)
@@ -609,11 +661,9 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
 
     EXAMPLES::
 
-        sage: d = DisjointSet('abcde')
-        sage: d
+        sage: d = DisjointSet('abcde'); d
         {{'a'}, {'b'}, {'c'}, {'d'}, {'e'}}
-        sage: d.union('a', 'c')
-        sage: d
+        sage: d.union('a', 'c'); d
         {{'a', 'c'}, {'b'}, {'d'}, {'e'}}
         sage: d.find('a')
         'a'
@@ -755,22 +805,19 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
         EXAMPLES::
 
             sage: e = DisjointSet(range(5))
-            sage: e.union(4,2)
-            sage: e
+            sage: e.union(4,2); e
             {{0}, {1}, {2, 4}, {3}}
             sage: e.find(2)
             4
             sage: e.find(4)
             4
-            sage: e.union(1,3)
-            sage: e
+            sage: e.union(1,3); e
             {{0}, {1, 3}, {2, 4}}
             sage: e.find(1)
             1
             sage: e.find(3)
             1
-            sage: e.union(3,2)
-            sage: e
+            sage: e.union(3,2); e
             {{0}, {1, 2, 3, 4}}
             sage: [e.find(i) for i in range(5)]
             [0, 1, 1, 1, 1]
@@ -779,8 +826,44 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             ...
             KeyError: 5
         """
-        i = self._el_to_int[e]
-        r = self._d.find(i)
+        cdef int i = self._el_to_int[e]
+        cdef int r = self._d.find(i)
+        return self._int_to_el[r]
+
+    cpdef _find(self, e):
+        r"""
+        Return the representative of the set that ``e`` currently belongs to.
+
+        INPUT:
+
+        - ``e`` -- element in ``self`` (no input checking)
+
+        EXAMPLES::
+
+            sage: e = DisjointSet(range(5))
+            sage: e._union(4,2); e
+            {{0}, {1}, {2, 4}, {3}}
+            sage: e._find(2)
+            4
+            sage: e._find(4)
+            4
+            sage: e._union(1,3); e
+            {{0}, {1, 3}, {2, 4}}
+            sage: e._find(1)
+            1
+            sage: e._find(3)
+            1
+            sage: e._union(3,2); e
+            {{0}, {1, 2, 3, 4}}
+            sage: [e._find(i) for i in range(5)]
+            [0, 1, 1, 1, 1]
+            sage: e._find(5)
+            Traceback (most recent call last):
+            ...
+            KeyError: 5
+        """
+        cdef int i = self._el_to_int[e]
+        cdef int r = self._d._find(i)
         return self._int_to_el[r]
 
     def union(self, e, f):
@@ -797,22 +880,45 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
 
         EXAMPLES::
 
-            sage: e = DisjointSet('abcde')
-            sage: e
+            sage: e = DisjointSet('abcde'); e
             {{'a'}, {'b'}, {'c'}, {'d'}, {'e'}}
-            sage: e.union('a','b')
-            sage: e
+            sage: e.union('a','b'); e
             {{'a', 'b'}, {'c'}, {'d'}, {'e'}}
-            sage: e.union('c','e')
-            sage: e
+            sage: e.union('c','e'); e
             {{'a', 'b'}, {'c', 'e'}, {'d'}}
-            sage: e.union('b','e')
-            sage: e
+            sage: e.union('b','e'); e
             {{'a', 'b', 'c', 'e'}, {'d'}}
         """
-        i = self._el_to_int[e]
-        j = self._el_to_int[f]
+        cdef int i = self._el_to_int[e]
+        cdef int j = self._el_to_int[f]
         self._d.union(i, j)
+
+    cpdef _union(self, e, f):
+        r"""
+        Combine the set of ``e`` and the set of ``f`` into one.
+
+        All elements in those two sets will share the same representative
+        that can be gotten using find.
+
+        INPUT:
+
+        - ``e`` -- element in ``self`` (no input checking)
+        - ``f`` -- element in ``self`` (no input checking)
+
+        EXAMPLES::
+
+            sage: e = DisjointSet('abcde'); e
+            {{'a'}, {'b'}, {'c'}, {'d'}, {'e'}}
+            sage: e._union('a','b'); e
+            {{'a', 'b'}, {'c'}, {'d'}, {'e'}}
+            sage: e._union('c','e'); e
+            {{'a', 'b'}, {'c', 'e'}, {'d'}}
+            sage: e._union('b','e'); e
+            {{'a', 'b', 'c', 'e'}, {'d'}}
+        """
+        cdef int i = self._el_to_int[e]
+        cdef int j = self._el_to_int[f]
+        self._d._union(i, j)
 
     def root_to_elements_dict(self):
         r"""

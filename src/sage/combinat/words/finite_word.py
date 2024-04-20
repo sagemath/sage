@@ -5201,16 +5201,16 @@ class FiniteWord_class(Word_class):
         S = zip(islice(self, int(delay), None), other)
         if involution is None:
             for a, b in S:
-                p.union(a, b)
+                p._union(a, b)
         elif isinstance(involution, WordMorphism):
             for a, b in S:
-                p.union(a, b)
+                p._union(a, b)
                 # take the first letter of the word
-                p.union(involution(a)[0], involution(b)[0])
+                p._union(involution(a)[0], involution(b)[0])
         elif callable(involution):
             for a, b in S:
-                p.union(a, b)
-                p.union(involution(a), involution(b))
+                p._union(a, b)
+                p._union(involution(a), involution(b))
         else:
             raise TypeError("involution (=%s) must be callable" % involution)
         return p

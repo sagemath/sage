@@ -16,9 +16,12 @@ cdef class DisjointSet_class(SageObject):
     cdef OrbitPartition *_nodes
 
 cdef class DisjointSet_of_integers(DisjointSet_class):
-    pass
+    cpdef _find(self, int i)
+    cpdef _union(self, int i, int j)
 
 cdef class DisjointSet_of_hashables(DisjointSet_class):
     cdef list _int_to_el
     cdef dict _el_to_int
     cdef DisjointSet_of_integers _d
+    cpdef _find(self, e)
+    cpdef _union(self, e, f)

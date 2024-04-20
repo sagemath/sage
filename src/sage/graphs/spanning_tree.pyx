@@ -416,12 +416,12 @@ def kruskal_iterator_from_edges(edges, union_find, by_weight=True,
     # Kruskal's algorithm
     for e in edges:
         # acyclic test via union-find
-        u = union_find.find(e[0])
-        v = union_find.find(e[1])
+        u = union_find._find(e[0])
+        v = union_find._find(e[1])
         if u != v:
             yield e
             # merge the trees
-            union_find.union(u, v)
+            union_find._union(u, v)
             if union_find.number_of_subsets() == 1:
                 return
 
@@ -668,7 +668,7 @@ def filter_kruskal_iterator(G, threshold=10000, by_weight=True, weight_function=
         if end - begin < threshold:
             # Filter edges connecting vertices of a same tree
             L = [edges[e_index[i]] for i in range(begin, end + 1)
-                 if union_find.find(edges[e_index[i]][0]) != union_find.find(edges[e_index[i]][1])]
+                 if union_find._find(edges[e_index[i]][0]) != union_find._find(edges[e_index[i]][1])]
             yield from kruskal_iterator_from_edges(L, union_find,
                                                    by_weight=by_weight,
                                                    weight_function=weight_function,
@@ -874,8 +874,8 @@ def boruvka(G, by_weight=True, weight_function=None, check_weight=True, check=Fa
         # each pair of components (trees of the forest), as well as cheapest
         # active edge incident to a component.
         for e, e_weight in edge_list:
-            component1 = partitions.find(e[0])
-            component2 = partitions.find(e[1])
+            component1 = partitions._find(e[0])
+            component2 = partitions._find(e[1])
 
             if component1 != component2:
                 if component1 in cheapest:
@@ -904,11 +904,11 @@ def boruvka(G, by_weight=True, weight_function=None, check_weight=True, check=Fa
         # possible
         for v in cheapest:
             e, e_weight = cheapest[v]
-            component1 = partitions.find(e[0])
-            component2 = partitions.find(e[1])
+            component1 = partitions._find(e[0])
+            component2 = partitions._find(e[1])
 
             if component1 != component2:
-                partitions.union(component1, component2)
+                partitions._union(component1, component2)
                 T.append(e)
                 numConComp = numConComp - 1
 
@@ -1373,7 +1373,7 @@ def edge_disjoint_spanning_trees(G, k, by_weight=False, weight_function=None, ch
     for x, y, _ in G.edges(sort=by_weight, key=weight_function):
         # {x, y} is edge e0 in the algorithm
 
-        if partition[0].find(x) == partition[0].find(y):
+        if partition[0]._find(x) == partition[0]._find(y):
             # x and y are in a same clump. That is x and y are in a same tree
             # in every forest Fi. We proceed with the next edge.
             continue
@@ -1404,7 +1404,7 @@ def edge_disjoint_spanning_trees(G, k, by_weight=False, weight_function=None, ch
             fe = frozenset(e)
             i = (edge_index[fe] % k) + 1
             v, w = e
-            if partition[i].find(v) != partition[i].find(w):
+            if partition[i]._find(v) != partition[i]._find(w):
                 # v and w are in different subtrees of Fi. We have detected an
                 # augmenting sequence since we can join the two subtrees.
                 augmenting_sequence_found = True
@@ -1436,7 +1436,7 @@ def edge_disjoint_spanning_trees(G, k, by_weight=False, weight_function=None, ch
 
         if augmenting_sequence_found:
             # We perform the corresponding augmentation
-            partition[i].union(v, w)
+            partition[i]._union(v, w)
 
             while fe in edge_label:
                 F[edge_index[fe]].delete_edge(fe)
@@ -1450,7 +1450,7 @@ def edge_disjoint_spanning_trees(G, k, by_weight=False, weight_function=None, ch
 
         else:
             # x and y are in a same tree in every Fi, so in a same clump
-            partition[0].union(x, y)
+            partition[0]._union(x, y)
 
     res = [F[i] for i in range(1, k + 1) if F[i].size() == G.order() - 1]
     if len(res) != k:

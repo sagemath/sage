@@ -3230,7 +3230,7 @@ class HasseDiagram(DiGraph):
                 if part:  # Skip empty parts
                     c = part[0]
                     for e in fill_to_interval(part):
-                        cong.union(e, c)
+                        cong._union(e, c)
             t = cong.number_of_subsets()
 
             # Following is needed for cases like
@@ -3238,28 +3238,28 @@ class HasseDiagram(DiGraph):
             for c in list(cong):
                 r = c[0]
                 for v in fill_to_interval(c):
-                    cong.union(r, v)
+                    cong._union(r, v)
 
-        todo = {cong.find(e) for part in parts for e in part}
+        todo = {cong._find(e) for part in parts for e in part}
 
         while todo:
 
             # First check if we should stop now.
             for a, b in stop_pairs:
-                if cong.find(a) == cong.find(b):
+                if cong._find(a) == cong._find(b):
                     return None
 
             # We take one block and try to find as big interval
             # as possible to unify as a new block by the quadrilateral
             # argument.
-            block = sorted(cong.root_to_elements_dict()[cong.find(todo.pop())])
+            block = sorted(cong.root_to_elements_dict()[cong._find(todo.pop())])
 
             b = block[-1]
             for a in block:  # Quadrilateral up
                 for c in self.neighbor_out_iterator(a):
                     if c not in block:
                         d = jn[c, b]
-                        if cong.find(d) != cong.find(c):
+                        if cong._find(d) != cong._find(c):
                             break
                 else:
                     continue
@@ -3271,7 +3271,7 @@ class HasseDiagram(DiGraph):
                     for d in self.neighbor_in_iterator(b):
                         if d not in block:
                             c = mt[d, a]
-                            if cong.find(c) != cong.find(d):
+                            if cong._find(c) != cong._find(d):
                                 break
                     else:
                         continue
@@ -3289,10 +3289,10 @@ class HasseDiagram(DiGraph):
             # recursive process. In particular it may also combine to
             # [a, b] block we just used.
             while c is not None:
-                newblock = cong.find(c)
+                newblock = cong._find(c)
                 for i in self.interval(c, d):
-                    cong.union(newblock, i)
-                C = cong.root_to_elements_dict()[cong.find(newblock)]
+                    cong._union(newblock, i)
+                C = cong.root_to_elements_dict()[cong._find(newblock)]
                 mins = [i for i in C if all(i_ not in C for i_ in self.neighbor_in_iterator(i))]
                 maxs = [i for i in C if all(i_ not in C for i_ in self.neighbor_out_iterator(i))]
                 c = None  # To stop loop, if this is not changed below.
@@ -3305,7 +3305,7 @@ class HasseDiagram(DiGraph):
                         d = jn[d, m]
 
             # This removes duplicates from todo.
-            todo = {cong.find(x) for x in todo}
+            todo = {cong._find(x) for x in todo}
 
         return cong
 

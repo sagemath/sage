@@ -492,7 +492,7 @@ def is_group_divisible_design(groups,blocks,v,G=None,K=None,lambd=1,verbose=Fals
         for i in range(n):
             for j in range(i + 1, n):
                 if matrix[i * n + j] == 0:
-                    groups.union(i, j)
+                    groups._union(i, j)
         groups = list(groups.root_to_elements_dict().values())
 
     # Group sizes are element of G

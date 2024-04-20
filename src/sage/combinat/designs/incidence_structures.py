@@ -1029,7 +1029,7 @@ class IncidenceStructure:
         for B in self._blocks:
             x = B[0]
             for i in range(1, len(B)):
-                D.union(x, B[i])
+                D._union(x, B[i])
         return D.number_of_subsets() == 1
 
     def is_simple(self) -> bool:
