@@ -104,7 +104,6 @@ cdef class MatrixWindow:
 
     def __getitem__(self, ij):
         cdef Py_ssize_t i, j
-        cdef object x
 
         if isinstance(ij, tuple):
             # ij is a tuple, so we get i and j efficiently, construct corresponding integer entry.
@@ -112,7 +111,7 @@ cdef class MatrixWindow:
                 raise IndexError("index must be an integer or pair of integers")
             i = <object> PyTuple_GET_ITEM(ij, 0)
             j = <object> PyTuple_GET_ITEM(ij, 1)
-            if i<0 or i >= self._nrows or j<0 or j >= self._ncols:
+            if i < 0 or i >= self._nrows or j < 0 or j >= self._ncols:
                 raise IndexError("matrix index out of range")
             return self.get_unsafe(i, j)
         else:

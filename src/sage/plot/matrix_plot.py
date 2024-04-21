@@ -121,9 +121,9 @@ class MatrixPlot(GraphicPrimitive):
         # for example, the square representing the (0,0) entry is centered on
         # the origin.
         if not xrange:
-            xrange = (-.5, self.xy_array_col -.5)
+            xrange = (-.5, self.xy_array_col - .5)
         if not yrange:
-            yrange = (-.5, self.xy_array_row -.5)
+            yrange = (-.5, self.xy_array_row - .5)
         return minmax_data(xrange, yrange, dict=True)
 
     def _allowed_options(self):
@@ -162,7 +162,7 @@ class MatrixPlot(GraphicPrimitive):
             sage: m = M[0]; m                                                           # needs sage.symbolic
             MatrixPlot defined by a 5 x 5 data grid
         """
-        return "MatrixPlot defined by a %s x %s data grid"%(self.xy_array_row, self.xy_array_col)
+        return "MatrixPlot defined by a %s x %s data grid" % (self.xy_array_row, self.xy_array_col)
 
     def _render_on_subplot(self, subplot):
         """
@@ -175,29 +175,29 @@ class MatrixPlot(GraphicPrimitive):
         cmap = get_cmap(options.pop('cmap',None))
         flip_y = options['flip_y']
 
-        norm=options['norm']
+        norm = options['norm']
 
-        if norm=='value':
+        if norm == 'value':
             import matplotlib
-            norm=matplotlib.colors.NoNorm()
+            norm = matplotlib.colors.NoNorm()
 
-        lim=self.get_minmax_data()
+        lim = self.get_minmax_data()
         if options['subdivisions']:
-            subdiv_options=options['subdivision_options']
+            subdiv_options = options['subdivision_options']
             if isinstance(subdiv_options['boundaries'], (list, tuple)):
-                rowsub,colsub=subdiv_options['boundaries']
+                rowsub,colsub = subdiv_options['boundaries']
             else:
-                rowsub=subdiv_options['boundaries']
-                colsub=subdiv_options['boundaries']
+                rowsub = subdiv_options['boundaries']
+                colsub = subdiv_options['boundaries']
             if isinstance(subdiv_options['style'], (list, tuple)):
-                rowstyle,colstyle=subdiv_options['style']
+                rowstyle,colstyle = subdiv_options['style']
             else:
-                rowstyle=subdiv_options['style']
-                colstyle=subdiv_options['style']
+                rowstyle = subdiv_options['style']
+                colstyle = subdiv_options['style']
             if rowstyle is None:
-                rowstyle=dict()
+                rowstyle = dict()
             if colstyle is None:
-                colstyle=dict()
+                colstyle = dict()
 
             # Make line objects for subdivisions
             from .line import line2d
@@ -215,7 +215,7 @@ class MatrixPlot(GraphicPrimitive):
 
         if hasattr(self.xy_data_array, 'tocoo'):
             # Sparse matrix -- use spy
-            opts=options.copy()
+            opts = options.copy()
             for opt in ['vmin', 'vmax', 'norm', 'flip_y', 'subdivisions',
                         'subdivision_options', 'colorbar', 'colorbar_options']:
                 del opts[opt]
@@ -233,7 +233,7 @@ class MatrixPlot(GraphicPrimitive):
             if options.get('colorbar', False):
                 colorbar_options = options['colorbar_options']
                 from matplotlib import colorbar
-                cax,kwds=colorbar.make_axes_gridspec(subplot,**colorbar_options)
+                cax,kwds = colorbar.make_axes_gridspec(subplot,**colorbar_options)
                 colorbar.Colorbar(cax, image, **kwds)
 
         if flip_y:
@@ -569,7 +569,7 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
     from sage.plot.all import Graphics
     from sage.structure.element import is_Matrix
     from sage.rings.real_double import RDF
-    orig_mat=mat
+    orig_mat = mat
     if is_Matrix(mat):
         sparse = mat.is_sparse()
         if sparse:
@@ -612,7 +612,7 @@ def matrix_plot(mat, xrange=None, yrange=None, **options):
         yrange = tuple(float(v) for v in yrange)
 
     if options['subdivisions'] and options['subdivision_options']['boundaries'] is None:
-        options['subdivision_options']['boundaries']=orig_mat.get_subdivisions()
+        options['subdivision_options']['boundaries'] = orig_mat.get_subdivisions()
 
     # Custom position the title. Otherwise it overlaps with tick labels
     if options['flip_y'] and 'title_pos' not in options:

@@ -254,35 +254,38 @@ def word_problem(words, g, verbose=False):
 
     EXAMPLES::
 
-        sage: G.<a,b,c> = AbelianGroup(3,[2,3,4]); G
+        sage: # needs sage.libs.gap
+        sage: G.<a,b,c> = AbelianGroup(3, [2,3,4]); G
         Multiplicative Abelian group isomorphic to C2 x C3 x C4
-        sage: w = word_problem([a*b,a*c], b*c); w #random
+        sage: w = word_problem([a*b,a*c], b*c); w       # random
         [[a*b, 1], [a*c, 1]]
         sage: prod([x^i for x,i in w]) == b*c
         True
-        sage: w = word_problem([a*c,c],a); w #random
+        sage: w = word_problem([a*c,c], a); w           # random
         [[a*c, 1], [c, -1]]
         sage: prod([x^i for x,i in w]) == a
         True
-        sage: word_problem([a*c,c],a,verbose=True) #random
+        sage: word_problem([a*c,c], a, verbose=True)    # random
         a = (a*c)^1*(c)^-1
         [[a*c, 1], [c, -1]]
 
     ::
 
-        sage: A.<a,b,c,d,e> = AbelianGroup(5,[4, 5, 5, 7, 8])
+        sage: # needs sage.libs.gap
+        sage: A.<a,b,c,d,e> = AbelianGroup(5, [4, 5, 5, 7, 8])
         sage: b1 = a^3*b*c*d^2*e^5
         sage: b2 = a^2*b*c^2*d^3*e^3
         sage: b3 = a^7*b^3*c^5*d^4*e^4
         sage: b4 = a^3*b^2*c^2*d^3*e^5
         sage: b5 = a^2*b^4*c^2*d^4*e^5
-        sage: w = word_problem([b1,b2,b3,b4,b5],e); w #random
-        [[a^3*b*c*d^2*e^5, 1], [a^2*b*c^2*d^3*e^3, 1], [a^3*b^3*d^4*e^4, 3], [a^2*b^4*c^2*d^4*e^5, 1]]
+        sage: w = word_problem([b1,b2,b3,b4,b5], e); w  # random
+        [[a^3*b*c*d^2*e^5, 1], [a^2*b*c^2*d^3*e^3, 1],
+         [a^3*b^3*d^4*e^4, 3], [a^2*b^4*c^2*d^4*e^5, 1]]
         sage: prod([x^i for x,i in w]) == e
         True
-        sage: word_problem([a,b,c,d,e],e)
+        sage: word_problem([a,b,c,d,e], e)
         [[e, 1]]
-        sage: word_problem([a,b,c,d,e],b)
+        sage: word_problem([a,b,c,d,e], b)
         [[b, 1]]
 
     .. warning::
@@ -413,7 +416,7 @@ def AbelianGroup(n, gens_orders=None, names="f"):
         a^2*b^2*c^2*d^2
         sage: d * b**2 * c**3
         b^2*c^3*d
-        sage: F = AbelianGroup(3,[2]*3); F
+        sage: F = AbelianGroup(3, [2]*3); F
         Multiplicative Abelian group isomorphic to C2 x C2 x C2
         sage: H = AbelianGroup([2,3], names="xy"); H
         Multiplicative Abelian group isomorphic to C2 x C3
@@ -447,7 +450,7 @@ def is_AbelianGroup(x):
     EXAMPLES::
 
         sage: from sage.groups.abelian_gps.abelian_group import is_AbelianGroup
-        sage: F = AbelianGroup(5,[5,5,7,8,9],names = list("abcde")); F
+        sage: F = AbelianGroup(5,[5,5,7,8,9], names=list("abcde")); F
         Multiplicative Abelian group isomorphic to C5 x C5 x C7 x C8 x C9
         sage: is_AbelianGroup(F)
         True
@@ -487,9 +490,9 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         sage: Z2xZ3.is_isomorphic(Z6)
         True
 
-        sage: F = AbelianGroup(5,[5,5,7,8,9],names = list("abcde")); F
+        sage: F = AbelianGroup(5,[5,5,7,8,9], names=list("abcde")); F
         Multiplicative Abelian group isomorphic to C5 x C5 x C7 x C8 x C9
-        sage: F = AbelianGroup(5,[2, 4, 12, 24, 120],names = list("abcde")); F
+        sage: F = AbelianGroup(5,[2, 4, 12, 24, 120], names=list("abcde")); F
         Multiplicative Abelian group isomorphic to C2 x C4 x C12 x C24 x C120
         sage: F.elementary_divisors()
         (2, 4, 12, 24, 120)
@@ -516,7 +519,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
         TESTS::
 
-            sage: G = AbelianGroup([0,5,0,7],names = list("abcd")); G
+            sage: G = AbelianGroup([0,5,0,7], names=list("abcd")); G
             Multiplicative Abelian group isomorphic to Z x C5 x Z x C7
             sage: TestSuite(G).run()
 
@@ -577,8 +580,8 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: G.is_subgroup(G)
             True
 
-            sage: H = G.subgroup([G.1])
-            sage: H.is_subgroup(G)
+            sage: H = G.subgroup([G.1])                                                 # needs sage.libs.gap
+            sage: H.is_subgroup(G)                                                      # needs sage.libs.gap
             True
 
             sage: G.<a, b> = AbelianGroup(2)
@@ -654,7 +657,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         EXAMPLES::
 
             sage: T = AbelianGroup([2, 3])
-            sage: bool(T) # indirect doctest
+            sage: bool(T)  # indirect doctest
             True
             sage: bool(AbelianGroup([]))
             False
@@ -683,11 +686,11 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         EXAMPLES::
 
             sage: G = AbelianGroup([2])
-            sage: G.dual_group()
+            sage: G.dual_group()                                                        # needs sage.rings.number_field
             Dual of Abelian Group isomorphic to Z/2Z over Cyclotomic Field of order 2 and degree 1
-            sage: G.dual_group().gens()
+            sage: G.dual_group().gens()                                                 # needs sage.rings.number_field
             (X,)
-            sage: G.dual_group(names='Z').gens()
+            sage: G.dual_group(names='Z').gens()                                        # needs sage.rings.number_field
             (Z,)
 
             sage: G.dual_group(base_ring=QQ)
@@ -736,13 +739,13 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
         EXAMPLES::
 
-            sage: G = AbelianGroup(2,[2,3])
+            sage: G = AbelianGroup(2, [2,3])
             sage: G.elementary_divisors()
             (6,)
             sage: G = AbelianGroup(1, [6])
             sage: G.elementary_divisors()
             (6,)
-            sage: G = AbelianGroup(2,[2,6])
+            sage: G = AbelianGroup(2, [2,6])
             sage: G
             Multiplicative Abelian group isomorphic to C2 x C6
             sage: G.gens_orders()
@@ -752,7 +755,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: J = AbelianGroup([1,3,5,12])
             sage: J.elementary_divisors()
             (3, 60)
-            sage: G = AbelianGroup(2,[0,6])
+            sage: G = AbelianGroup(2, [0,6])
             sage: G.elementary_divisors()
             (6, 0)
             sage: AbelianGroup([3,4,5]).elementary_divisors()
@@ -845,12 +848,12 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         EXAMPLES::
 
             sage: G = AbelianGroup([2,3,9])
-            sage: libgap(G)
+            sage: libgap(G)                                                             # needs sage.libs.gap
             <pc group of size 54 with 3 generators>
 
         The result is cached::
 
-            sage: libgap(G) is libgap(G)
+            sage: libgap(G) is libgap(G)                                                # needs sage.libs.gap
             True
 
         Requires the optional ``gap_packages`` for infinite groups::
@@ -878,7 +881,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             sage: G = AbelianGroup([2,3,9])
             sage: G._gap_init_()
             'AbelianGroup([2, 3, 9])'
-            sage: gap(G)
+            sage: gap(G)                                                                # needs sage.libs.gap
             Group( [ f1, f2, f3 ] )
 
         Requires the optional ``gap_packages`` for infinite groups::
@@ -933,10 +936,10 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
         EXAMPLES::
 
-            sage: F = AbelianGroup(5,[3,2],names='abcde')
+            sage: F = AbelianGroup(5, [3,2], names='abcde')
             sage: F.gens()
             (a, b, c, d, e)
-            sage: [ g.order() for g in F.gens() ]
+            sage: [g.order() for g in F.gens()]
             [+Infinity, +Infinity, +Infinity, 3, 2]
         """
         return tuple( self.gen(i) for i in range(self.ngens()) )
@@ -1059,12 +1062,12 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             (2, 4)
             sage: H.is_cyclic()
             False
-            sage: H.permutation_group().is_cyclic()
+            sage: H.permutation_group().is_cyclic()                                     # needs sage.groups
             False
             sage: T = AbelianGroup([])
             sage: T.is_cyclic()
             True
-            sage: T = AbelianGroup(1,[0]); T
+            sage: T = AbelianGroup(1, [0]); T
             Multiplicative Abelian group isomorphic to Z
             sage: T.is_cyclic()
             True
@@ -1094,10 +1097,10 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
         EXAMPLES::
 
-            sage: G = AbelianGroup(2,[2,3])
+            sage: G = AbelianGroup(2, [2,3])
             sage: G.order()
             6
-            sage: G = AbelianGroup(3,[2,3,0])
+            sage: G = AbelianGroup(3, [2,3,0])
             sage: G.order()
             +Infinity
         """
@@ -1121,7 +1124,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
             sage: G = AbelianGroup(2,[2,3]); G
             Multiplicative Abelian group isomorphic to C2 x C3
-            sage: G.permutation_group()
+            sage: G.permutation_group()                                                 # needs sage.groups
             Permutation Group with generators [(3,4,5), (1,2)]
 
         TESTS:
@@ -1198,27 +1201,29 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
          INPUT:
 
          - ``gensH`` -- list of elements which are products of the
-            generators of the ambient abelian group G = self
+            generators of the ambient abelian group `G` = ``self``
 
          EXAMPLES::
 
-             sage: G.<a,b,c> = AbelianGroup(3, [2,3,4]); G
-             Multiplicative Abelian group isomorphic to C2 x C3 x C4
-             sage: H = G.subgroup([a*b,a]); H
-             Multiplicative Abelian subgroup isomorphic to C2 x C3 generated by {a*b, a}
-             sage: H < G
-             True
-             sage: F = G.subgroup([a,b^2])
-             sage: F
-             Multiplicative Abelian subgroup isomorphic to C2 x C3 generated by {a, b^2}
-             sage: F.gens()
-             (a, b^2)
-             sage: F = AbelianGroup(5,[30,64,729],names = list("abcde"))
-             sage: a,b,c,d,e = F.gens()
-             sage: F.subgroup([a,b])
-             Multiplicative Abelian subgroup isomorphic to Z x Z generated by {a, b}
-             sage: F.subgroup([c,e])
-             Multiplicative Abelian subgroup isomorphic to C2 x C3 x C5 x C729 generated by {c, e}
+            sage: # needs sage.libs.gap
+            sage: G.<a,b,c> = AbelianGroup(3, [2,3,4]); G
+            Multiplicative Abelian group isomorphic to C2 x C3 x C4
+            sage: H = G.subgroup([a*b,a]); H
+            Multiplicative Abelian subgroup isomorphic to C2 x C3 generated by {a*b, a}
+            sage: H < G
+            True
+            sage: F = G.subgroup([a,b^2])
+            sage: F
+            Multiplicative Abelian subgroup isomorphic to C2 x C3 generated by {a, b^2}
+            sage: F.gens()
+            (a, b^2)
+            sage: F = AbelianGroup(5, [30,64,729], names=list("abcde"))
+            sage: a,b,c,d,e = F.gens()
+            sage: F.subgroup([a,b])
+            Multiplicative Abelian subgroup isomorphic to Z x Z generated by {a, b}
+            sage: F.subgroup([c,e])
+            Multiplicative Abelian subgroup isomorphic to C2 x C3 x C5 x C729
+             generated by {c, e}
          """
         G = self
         gensH = tuple(gensH)
@@ -1327,10 +1332,12 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
         EXAMPLES::
 
-            sage: AbelianGroup([2,3]).number_of_subgroups()
-            4
             sage: AbelianGroup([2,0,0,3,0]).number_of_subgroups()
             +Infinity
+
+            sage: # needs sage.combinat
+            sage: AbelianGroup([2,3]).number_of_subgroups()
+            4
             sage: AbelianGroup([2,4,8]).number_of_subgroups()
             81
             sage: AbelianGroup([2,4,8]).number_of_subgroups(order=4)
@@ -1344,6 +1351,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
         TESTS::
 
+            sage: # needs sage.combinat
             sage: AbelianGroup([]).number_of_subgroups()
             1
             sage: AbelianGroup([1,3,1]).number_of_subgroups()
@@ -1352,7 +1360,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
             0
             sage: AbelianGroup([1,3,1]).number_of_subgroups(order=2)
             0
-            sage: AbelianGroup([1,3,0,1]).number_of_subgroups(order=3)
+            sage: AbelianGroup([1,3,0,1]).number_of_subgroups(order=3)                  # needs sage.libs.gap
             1
             sage: AbelianGroup([1,3,1]).number_of_subgroups(order=-2)
             Traceback (most recent call last):
@@ -1442,12 +1450,12 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
         EXAMPLES::
 
-            sage: AbelianGroup([2,3]).subgroups()
+            sage: AbelianGroup([2,3]).subgroups()                                       # needs sage.libs.gap
             [Multiplicative Abelian subgroup isomorphic to C2 x C3 generated by {f0*f1^2},
              Multiplicative Abelian subgroup isomorphic to C2 generated by {f0},
              Multiplicative Abelian subgroup isomorphic to C3 generated by {f1},
              Trivial Abelian subgroup]
-            sage: len(AbelianGroup([2,4,8]).subgroups())
+            sage: len(AbelianGroup([2,4,8]).subgroups())                                # needs sage.libs.gap
             81
 
         TESTS::
@@ -1458,10 +1466,10 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         Check that :trac:`14196` is fixed::
 
             sage: B = AbelianGroup([1,2])
-            sage: B.subgroups()
+            sage: B.subgroups()                                                         # needs sage.libs.gap
             [Multiplicative Abelian subgroup isomorphic to C2 generated by {f1},
              Trivial Abelian subgroup]
-            sage: B.subgroups(check=True)
+            sage: B.subgroups(check=True)                                               # needs sage.libs.gap
             [Multiplicative Abelian subgroup isomorphic to C2 generated by {f1},
              Trivial Abelian subgroup]
         """
@@ -1525,10 +1533,10 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         EXAMPLES::
 
             sage: G = AbelianGroup([4,4])
-            sage: G.subgroup( [ G([1,0]), G([1,2]) ])
+            sage: G.subgroup( [ G([1,0]), G([1,2]) ])                                   # needs sage.libs.gap
             Multiplicative Abelian subgroup isomorphic to C2 x C4
             generated by {f0, f0*f1^2}
-            sage: AbelianGroup([4,4]).subgroup_reduced( [ [1,0], [1,2] ])
+            sage: AbelianGroup([4,4]).subgroup_reduced( [ [1,0], [1,2] ])               # needs sage.libs.gap
             Multiplicative Abelian subgroup isomorphic to C2 x C4
             generated by {f0^2*f1^2, f0^3}
         """
@@ -1559,6 +1567,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
 
         EXAMPLES::
 
+            sage: # needs sage.libs.gap
             sage: G = AbelianGroup([2, 3])
             sage: G.torsion_subgroup()
             Multiplicative Abelian subgroup isomorphic to C2 x C3 generated
@@ -1577,7 +1586,7 @@ class AbelianGroup_class(UniqueRepresentation, AbelianGroupBase):
         ::
 
             sage: G = AbelianGroup([2, 2*3, 2*3*5, 0, 2*3*5*7, 2*3*5*7*11])
-            sage: G.torsion_subgroup(5)
+            sage: G.torsion_subgroup(5)                                                 # needs sage.libs.gap
             Multiplicative Abelian subgroup isomorphic to C5 x C5 x C5 generated by {f2^6, f4^42, f5^462}
         """
         if n is None:
@@ -1610,7 +1619,8 @@ class AbelianGroup_subgroup(AbelianGroup_class):
         """
         EXAMPLES::
 
-            sage: F = AbelianGroup(5,[30,64,729],names = list("abcde"))
+            sage: # needs sage.libs.gap
+            sage: F = AbelianGroup(5, [30,64,729], names=list("abcde"))
             sage: a,b,c,d,e = F.gens()
             sage: F.subgroup([a^3,b])
             Multiplicative Abelian subgroup isomorphic to Z x Z generated by {a^3, b}
@@ -1622,11 +1632,11 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             Multiplicative Abelian subgroup isomorphic to Z x Z generated by {a, b*c}
             sage: F.subgroup([b*c, d])
             Multiplicative Abelian subgroup isomorphic to C64 x Z generated by {b*c, d}
-            sage: F.subgroup([a*b, c^6, d],names=list("xyz"))
+            sage: F.subgroup([a*b, c^6, d], names=list("xyz"))
             Multiplicative Abelian subgroup isomorphic to C5 x C64 x Z generated by {a*b, c^6, d}
             sage: H.<x,y,z> = F.subgroup([a*b, c^6, d]); H
             Multiplicative Abelian subgroup isomorphic to C5 x C64 x Z generated by {a*b, c^6, d}
-            sage: G = F.subgroup([a*b, c^6, d],names = list("xyz")); G
+            sage: G = F.subgroup([a*b, c^6, d], names=list("xyz")); G
             Multiplicative Abelian subgroup isomorphic to C5 x C64 x Z generated by {a*b, c^6, d}
             sage: x,y,z = G.gens()
             sage: x.order()
@@ -1635,7 +1645,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             5
             sage: z.order()
             64
-            sage: A = AbelianGroup(5,[3, 5, 5, 7, 8], names = "abcde")
+            sage: A = AbelianGroup(5, [3, 5, 5, 7, 8], names="abcde")
             sage: a,b,c,d,e = A.gens()
             sage: A.subgroup([a,b])
             Multiplicative Abelian subgroup isomorphic to C3 x C5 generated by {a, b}
@@ -1647,7 +1657,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             Multiplicative Abelian subgroup isomorphic to C4 x C5 x C5 x C7 generated by {b, c, d, e^2}
             sage: B.gens_orders()
             (4, 5, 5, 7)
-            sage: A = AbelianGroup(4,[1009, 2003, 3001, 4001], names = "abcd")
+            sage: A = AbelianGroup(4,[1009, 2003, 3001, 4001], names="abcd")
             sage: a,b,c,d = A.gens()
             sage: B = A.subgroup([a^3,b,c,d])
             sage: B.gens_orders()
@@ -1656,7 +1666,7 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             24266473210027
             sage: B.order()
             24266473210027
-            sage: A = AbelianGroup(4,[1008, 2003, 3001, 4001], names = "abcd")
+            sage: A = AbelianGroup(4, [1008, 2003, 3001, 4001], names="abcd")
             sage: a,b,c,d = A.gens()
             sage: B = A.subgroup([a^3,b,c,d]); B
             Multiplicative Abelian subgroup isomorphic
@@ -1664,23 +1674,25 @@ class AbelianGroup_subgroup(AbelianGroup_class):
 
         Infinite groups can also be handled::
 
-            sage: G = AbelianGroup([3,4,0], names = "abc")
+            sage: G = AbelianGroup([3,4,0], names="abc")
             sage: a,b,c = G.gens()
-            sage: F = G.subgroup([a, b^2, c]); F
-            Multiplicative Abelian subgroup isomorphic to C2 x C3 x Z generated by {a, b^2, c}
+            sage: F = G.subgroup([a, b^2, c]); F                                        # needs sage.libs.gap
+            Multiplicative Abelian subgroup isomorphic to C2 x C3 x Z
+             generated by {a, b^2, c}
 
-            sage: F.gens_orders()
+            sage: F.gens_orders()                                                       # needs sage.libs.gap
             (2, 3, 0)
-            sage: F.gens()
+            sage: F.gens()                                                              # needs sage.libs.gap
             (a, b^2, c)
-            sage: F.order()
+            sage: F.order()                                                             # needs sage.libs.gap
             +Infinity
 
         Testing issue :trac:`18863`::
 
             sage: G = AbelianGroup(5,[2])
-            sage: G.subgroup([prod(g^k for g,k in zip(G.gens(),[1,-2,3,-4,5]))])
-            Multiplicative Abelian subgroup isomorphic to Z generated by {f0*f1^-2*f2^3*f3^-4*f4}
+            sage: G.subgroup([prod(g^k for g,k in zip(G.gens(),[1,-2,3,-4,5]))])        # needs sage.libs.gap
+            Multiplicative Abelian subgroup isomorphic to Z
+             generated by {f0*f1^-2*f2^3*f3^-4*f4}
         """
         from sage.libs.gap.libgap import libgap
         if not isinstance(ambient, AbelianGroup_class):
@@ -1713,10 +1725,10 @@ class AbelianGroup_subgroup(AbelianGroup_class):
         EXAMPLES::
 
             sage: G.<a,b> = AbelianGroup(2)
-            sage: A = G.subgroup([a])
+            sage: A = G.subgroup([a])                                                   # needs sage.libs.gap
             sage: a in G
             True
-            sage: a in A
+            sage: a in A                                                                # needs sage.libs.gap
             True
 
         TESTS:
@@ -1725,22 +1737,22 @@ class AbelianGroup_subgroup(AbelianGroup_class):
 
             sage: G.<a,b> = AbelianGroup(2, [4, 576])
             sage: Hgens = [a^2, a*b^2]
-            sage: H = G.subgroup(Hgens)
-            sage: [g in H for g in (a^3, b^2, b^3, a^3*b^2, "junk")]
+            sage: H = G.subgroup(Hgens)                                                 # needs sage.libs.gap
+            sage: [g in H for g in (a^3, b^2, b^3, a^3*b^2, "junk")]                    # needs sage.libs.gap
             [False, False, False, True, False]
 
         Check that :trac:`31507` is fixed::
 
             sage: G = AbelianGroup(2, gens_orders=[16, 16])
             sage: f0, f1 = G.gens()
-            sage: H = G.subgroup([f0*f1^3])
-            sage: [g in H for g in (f0, f0*f1^2, f0*f1^3, f0*f1^4)]
+            sage: H = G.subgroup([f0*f1^3])                                             # needs sage.libs.gap
+            sage: [g in H for g in (f0, f0*f1^2, f0*f1^3, f0*f1^4)]                     # needs sage.libs.gap
             [False, False, True, False]
 
             sage: G.<a,b> = AbelianGroup(2)
             sage: Hgens =  [a*b, a*b^-1]
-            sage: H = G.subgroup(Hgens)
-            sage: b^2 in H
+            sage: H = G.subgroup(Hgens)                                                 # needs sage.libs.gap
+            sage: b^2 in H                                                              # needs sage.libs.gap
             True
         """
         if not isinstance(x, AbelianGroupElement):
@@ -1769,8 +1781,8 @@ class AbelianGroup_subgroup(AbelianGroup_class):
         EXAMPLES::
 
             sage: G.<a,b,c> = AbelianGroup([2,3,4])
-            sage: H = G.subgroup([a, b^2])
-            sage: H.ambient_group() is G
+            sage: H = G.subgroup([a, b^2])                                              # needs sage.libs.gap
+            sage: H.ambient_group() is G                                                # needs sage.libs.gap
             True
         """
         return self._ambient_group
@@ -1795,15 +1807,16 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             sage: G = AbelianGroup(3, [2,3,4], names="abc"); G
             Multiplicative Abelian group isomorphic to C2 x C3 x C4
             sage: a,b,c = G.gens()
-            sage: F = G.subgroup([a,b^2]); F
+            sage: F = G.subgroup([a,b^2]); F                                            # needs sage.libs.gap
             Multiplicative Abelian subgroup isomorphic to C2 x C3 generated by {a, b^2}
-            sage: F<G
+            sage: F<G                                                                   # needs sage.libs.gap
             True
 
             sage: A = AbelianGroup(1, [6])
-            sage: A.subgroup(list(A.gens())) == A
+            sage: A.subgroup(list(A.gens())) == A                                       # needs sage.libs.gap
             True
 
+            sage: # needs sage.libs.gap
             sage: G.<a,b> = AbelianGroup(2)
             sage: A = G.subgroup([a])
             sage: B = G.subgroup([b])
@@ -1835,8 +1848,8 @@ class AbelianGroup_subgroup(AbelianGroup_class):
             sage: G.<a,b> = AbelianGroup(2)
             sage: G._repr_()
             'Multiplicative Abelian group isomorphic to Z x Z'
-            sage: A = G.subgroup([a])
-            sage: A._repr_()
+            sage: A = G.subgroup([a])                                                   # needs sage.libs.gap
+            sage: A._repr_()                                                            # needs sage.libs.gap
             'Multiplicative Abelian subgroup isomorphic to Z generated by {a}'
        """
         eldv = self._abinvs
@@ -1859,10 +1872,10 @@ class AbelianGroup_subgroup(AbelianGroup_class):
         EXAMPLES::
 
             sage: G.<a,b> = AbelianGroup(2)
-            sage: A = G.subgroup([a])
+            sage: A = G.subgroup([a])                                                   # needs sage.libs.gap
             sage: G.gens()
             (a, b)
-            sage: A.gens()
+            sage: A.gens()                                                              # needs sage.libs.gap
             (a,)
         """
         return self._gens
@@ -1874,8 +1887,8 @@ class AbelianGroup_subgroup(AbelianGroup_class):
         EXAMPLES::
 
             sage: G.<a,b> = AbelianGroup(2)
-            sage: A = G.subgroup([a])
-            sage: A.gen(0)
+            sage: A = G.subgroup([a])                                                   # needs sage.libs.gap
+            sage: A.gen(0)                                                              # needs sage.libs.gap
             a
         """
         return self._gens[n]

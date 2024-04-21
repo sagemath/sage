@@ -263,7 +263,7 @@ class _Coordinates():
         """
         all_vars = sage_getargspec(self.transform).args[1:]
         if set(all_vars) != set(indep_vars + [dep_var]):
-            raise ValueError('variables were specified incorrectly for this coordinate system; incorrect variables were %s'%list(set(all_vars).symmetric_difference(set(indep_vars+[dep_var]))))
+            raise ValueError('variables were specified incorrectly for this coordinate system; incorrect variables were %s' % list(set(all_vars).symmetric_difference(set(indep_vars+[dep_var]))))
         self.dep_var = dep_var
         self.indep_vars = indep_vars
 
@@ -1372,11 +1372,11 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
 
         from sage.modules.vector_callable_symbolic_dense import Vector_callable_symbolic_dense
         if isinstance(transformation, (tuple, list,Vector_callable_symbolic_dense)):
-            if len(transformation)==3:
+            if len(transformation) == 3:
                 if params is None:
                     raise ValueError("must specify independent variable names in the ranges when using generic transformation")
                 indep_vars = params
-            elif len(transformation)==4:
+            elif len(transformation) == 4:
                 indep_vars = transformation[3]
                 transformation = transformation[0:3]
             else:
@@ -1384,8 +1384,8 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
             # find out which variable is the function variable by
             # eliminating the parameter variables.
             all_vars = set(sum([list(s.variables()) for s in transformation],[]))
-            dep_var=all_vars - set(indep_vars)
-            if len(dep_var)==1:
+            dep_var = all_vars - set(indep_vars)
+            if len(dep_var) == 1:
                 dep_var = dep_var.pop()
                 transformation = _ArbitraryCoordinates(transformation, dep_var, indep_vars)
             else:

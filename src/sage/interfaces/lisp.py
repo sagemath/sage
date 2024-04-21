@@ -136,7 +136,7 @@ class Lisp(Expect):
                         x.append(M.strip())
                         self.__in_seq = s
                     except TypeError as s:
-                        return 'error evaluating "%s":\n%s'%(code,s)
+                        return 'error evaluating "%s":\n%s' % (code,s)
             return '\n'.join(x)
 
     def _an_element_impl(self):
@@ -165,10 +165,10 @@ class Lisp(Expect):
             sage: lisp.eval('x')
             '2'
         """
-        cmd = '(setq %s %s)'%(var, value)
+        cmd = '(setq %s %s)' % (var, value)
         out = self.eval(cmd)
         if '***' in out:
-            raise TypeError("Error executing code in Sage\nCODE:\n\t%s\nSAGE ERROR:\n\t%s"%(cmd, out))
+            raise TypeError("Error executing code in Sage\nCODE:\n\t%s\nSAGE ERROR:\n\t%s" % (cmd, out))
 
     def get(self, var):
         """
@@ -202,7 +202,7 @@ class Lisp(Expect):
             E = self._expect
         r = random.randrange(2147483647)
         s = str(r+1)
-        cmd = "(+ 1 %s)"%r
+        cmd = "(+ 1 %s)" % r
         E.sendline(cmd)
         E.expect(s)
         E.expect(self._prompt)
@@ -410,9 +410,9 @@ class LispElement(RingElement, ExpectElement):
         if parent(other) is not P:
             other = P(other)
 
-        if P.eval('(= %s %s)'%(self.name(), other.name())) == P._true_symbol():
+        if P.eval('(= %s %s)' % (self.name(), other.name())) == P._true_symbol():
             return rich_to_bool(op, 0)
-        elif P.eval('(< %s %s)'%(self.name(), other.name())) == P._true_symbol():
+        elif P.eval('(< %s %s)' % (self.name(), other.name())) == P._true_symbol():
             return rich_to_bool(op, -1)
         else:
             return rich_to_bool(op, 1)
@@ -454,7 +454,7 @@ class LispElement(RingElement, ExpectElement):
             -1
         """
         P = self._check_valid()
-        return P.new('(- %s %s)'%(self._name, right._name))
+        return P.new('(- %s %s)' % (self._name, right._name))
 
     def _mul_(self, right):
         """
@@ -465,7 +465,7 @@ class LispElement(RingElement, ExpectElement):
             2
         """
         P = self._check_valid()
-        return P.new('(* %s %s)'%(self._name, right._name))
+        return P.new('(* %s %s)' % (self._name, right._name))
 
     def _div_(self, right):
         """
@@ -476,7 +476,7 @@ class LispElement(RingElement, ExpectElement):
             1/2
         """
         P = self._check_valid()
-        return P.new('(/ %s %s)'%(self._name, right._name))
+        return P.new('(/ %s %s)' % (self._name, right._name))
 
     def __pow__(self, n):
         """

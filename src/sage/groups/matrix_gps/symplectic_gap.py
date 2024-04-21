@@ -27,7 +27,7 @@ class SymplecticMatrixGroup_gap(SymplecticMatrixGroup_generic, NamedMatrixGroup_
 
     EXAMPLES::
 
-        sage: Sp(2,4)
+        sage: Sp(2,4)                                                                   # needs sage.rings.finite_rings
         Symplectic Group of degree 2 over Finite Field in a of size 2^2
 
         sage: latex(Sp(4,5))

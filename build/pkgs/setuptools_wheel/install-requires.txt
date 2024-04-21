@@ -1,1 +1,1 @@
-# We use this file to mark the package as a Python package
+setuptools >= 65.6

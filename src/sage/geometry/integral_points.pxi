@@ -545,13 +545,13 @@ cpdef rectangular_box_points(list box_min, list box_max,
     assert not (count_only and return_saturated)
     cdef int d = len(box_min)
     cdef int i, j
-    cdef list diameter = sorted([ (box_max[i]-box_min[i], i) for i in range(d) ],
+    cdef list diameter = sorted([(box_max[i]-box_min[i], i) for i in range(d)],
                                 reverse=True)
     cdef list diameter_value = [x[0] for x in diameter]
     cdef list diameter_index = [x[1] for x in diameter]
 
     # Construct the inverse permutation
-    cdef list orig_perm = list(xrange(len(diameter_index)))
+    cdef list orig_perm = list(range(len(diameter_index)))
     for i, j in enumerate(diameter_index):
         orig_perm[j] = i
 

@@ -733,9 +733,10 @@ class QuasiModularFormsElement(ModuleElement):
 
     def _compute(self, X):
         r"""
-        Compute the coefficients of `q^n` of the power series of self,
-        for `n` in the list `X`.  The results are not cached.  (Use
-        coefficients for cached results).
+        Compute the coefficients of `q^n` of the q-expansion of this,
+        graded quasimodular form for `n` in the list `X`. 
+        
+        The results are not cached.  (Use coefficients for cached results).
 
         EXAMPLES::
 

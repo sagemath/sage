@@ -97,7 +97,7 @@ class VectorBundles(Category_over_base_ring):
         """
         base_space = self._base_space
         return Category_over_base_ring._repr_object_names(self) + \
-               " with base space %s"%base_space
+               " with base space %s" % base_space
 
     class SubcategoryMethods:
         @cached_method

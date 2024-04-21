@@ -643,7 +643,7 @@ class RewritingSystem():
                 bfg = self._monoid_isomorphism.PreImagesRepresentative(bfpmon)
                 btz = bfg.UnderlyingElement().TietzeWordAbstractWord(self._free_group.gap().GeneratorsOfGroup())
                 bf = self._free_group(btz.sage())
-                dic[af]=bf
+                dic[af] = bf
         return dic
 
     def is_confluent(self):
@@ -826,7 +826,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
         """
         gens = ', '.join(self.variable_names())
         rels = ', '.join([ str(r) for r in self.relations() ])
-        return 'Finitely presented group ' + '< '+ gens + ' | ' + rels + ' >'
+        return 'Finitely presented group ' + '< ' + gens + ' | ' + rels + ' >'
 
     def _latex_(self):
         """
@@ -1112,7 +1112,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             name_itr = _lexi_gen() # Python generator for lexicographical variable names
             gen_names = [next(name_itr) for i in GAP_gens]
         else:
-            gen_names= [str(g) for g in self.gens()] + [str(g) for g in H.gens()]
+            gen_names = [str(g) for g in self.gens()] + [str(g) for g in H.gens()]
         # Build the direct product in Sage for better variable names
         ret_F = FreeGroup(gen_names)
         ret_rls = tuple([ret_F(rel_word.TietzeWordAbstractWord(GAP_gens).sage())
@@ -1313,10 +1313,10 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, UniqueRepresentation,
             sage: H([1, 2, 1, -2]) # indirect doctest
             a*b*a*b^-1
         """
-        if len(args)!=1:
+        if len(args) != 1:
             return self.element_class(self, *args, **kwds)
         x = args[0]
-        if x==1:
+        if x == 1:
             return self.one()
         try:
             P = x.parent()

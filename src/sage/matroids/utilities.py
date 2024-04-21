@@ -572,26 +572,28 @@ def lift_cross_ratios(A, lift_map=None):
 
     G = Graph([((r, 0), (c, 1), (r, c)) for r, c in A.nonzero_positions()])
     # write the entries of (a scaled version of) A as products of cross ratios of A
-    T = set()
+    T = Graph()
     for C in G.connected_components_subgraphs():
-        T.update(C.min_spanning_tree())
+        T.add_edges(C.min_spanning_tree())
     # - fix a tree of the support graph G to units (= empty dict, product of 0 terms)
-    F = {entry[2]: dict() for entry in T}
-    W = set(G.edge_iterator()) - set(T)
-    H = G.subgraph(edges=T)
+    F = {entry: dict() for entry in T.edge_labels()}
+    W = set(G.edge_iterator()) - set(T.edge_iterator())
+    H = G.subgraph(edges=T.edge_iterator())
     while W:
         # - find an edge in W to process, closing a circuit in H which is induced in G
         edge = W.pop()
         path = H.shortest_path(edge[0], edge[1])
+        path_s = set(path)
         retry = True
         while retry:
             retry = False
             for edge2 in W:
-                if edge2[0] in path and edge2[1] in path:
+                if edge2[0] in path_s and edge2[1] in path_s:
                     W.add(edge)
                     edge = edge2
                     W.remove(edge)
                     path = H.shortest_path(edge[0], edge[1])
+                    path_s = set(path)
                     retry = True
                     break
         entry = edge[2]

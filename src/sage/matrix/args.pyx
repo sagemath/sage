@@ -739,7 +739,6 @@ cdef class MatrixArgs:
         """
         self.finalize()
 
-        cdef long i
         cdef list L
         if self.typ == MA_ENTRIES_SEQ_FLAT and not convert:
             # Try to re-use existing list
@@ -788,7 +787,6 @@ cdef class MatrixArgs:
         """
         self.finalize()
 
-        R = self.base
         cdef dict D = {}
         for t in self.iter(convert, True):
             se = <SparseEntry>t

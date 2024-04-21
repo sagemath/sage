@@ -383,7 +383,7 @@ def sets_isom_py(generators, set1, set2):
     set2 = set(set2)
     if not generators:
         if set1 == set2:
-            return list(xrange(max(set1) + 1))
+            return list(range(max(set1) + 1))
         else:
             return False
 
@@ -800,7 +800,6 @@ def sets_modulo_perm_group(list generators, int max_size,
         sage: X = sets_modulo_perm_group([[0,2,1,4,3,5,8,7,6],[8,7,6,3,5,4,2,1,0]], 9)
         sage: len(X)
         74
-
     """
     cdef list out_list = []
     cdef int i
@@ -809,7 +808,7 @@ def sets_modulo_perm_group(list generators, int max_size,
     if len(generators) == 0:
         ll = []
         for i in range(max_size,-1,-1):
-            ll.append(list(xrange(i)))
+            ll.append(list(range(i)))
         return ll
     cdef int n = len(generators[0]), n_gens = len(generators)
     cdef iterator *subset_iterator

@@ -1,4 +1,4 @@
- | $(PYTHON_TOOLCHAIN) ipython_genutils decorator six hatchling $(PYTHON)
+ | $(PYTHON_TOOLCHAIN) ipython_genutils decorator hatchling $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.

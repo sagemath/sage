@@ -87,7 +87,7 @@ def isomorphic(G1, G2, partn, ordering2, dig, use_indicator_function, sparse=Fal
                 n = G_in.num_verts()
             elif n != G_in.num_verts():
                 return False
-            if G_in.vertices(sort=True) != list(xrange(n)):
+            if G_in.vertices(sort=True) != list(range(n)):
                 G_in = copy(G_in)
                 to = G_in.relabel(return_map=True)
                 frm = {}
@@ -98,7 +98,7 @@ def isomorphic(G1, G2, partn, ordering2, dig, use_indicator_function, sparse=Fal
             else:
                 if first:
                     partition = partn
-                to = list(xrange(n))
+                to = list(range(n))
                 frm = to
             if sparse:
                 G = SparseGraph(n)
@@ -304,7 +304,10 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
         ....:        if bde.has_arc(i,j):
         ....:            bdg.add_edge(i,j)
         sage: a, b.graph6_string()
-        ([[0, 19, 3, 2, 6, 5, 4, 17, 18, 11, 10, 9, 13, 12, 16, 15, 14, 7, 8, 1], [0, 1, 8, 9, 13, 14, 7, 6, 2, 3, 19, 18, 17, 4, 5, 15, 16, 12, 11, 10], [1, 8, 9, 10, 11, 12, 13, 14, 7, 6, 2, 3, 4, 5, 15, 16, 17, 18, 19, 0]], 'S?[PG__OQ@?_?_?P?CO?_?AE?EC?Ac?@O')
+        ([[0, 19, 3, 2, 6, 5, 4, 17, 18, 11, 10, 9, 13, 12, 16, 15, 14, 7, 8, 1],
+          [0, 1, 8, 9, 13, 14, 7, 6, 2, 3, 19, 18, 17, 4, 5, 15, 16, 12, 11, 10],
+          [1, 8, 9, 10, 11, 12, 13, 14, 7, 6, 2, 3, 4, 5, 15, 16, 17, 18, 19, 0]],
+         'S?[PG__OQ@?_?_?P?CO?_?AE?EC?Ac?@O')
         sage: a == asp
         True
         sage: a == ade
@@ -389,7 +392,7 @@ def search_tree(G_in, partition, lab=True, dig=False, dict_rep=False, certificat
     if isinstance(G_in, GenericGraph):
         loops = G_in.has_loops()
         n = G_in.num_verts()
-        if G_in.vertices(sort=False) != list(xrange(n)):
+        if G_in.vertices(sort=False) != list(range(n)):
             G_in = copy(G_in)
             to = G_in.relabel(return_map=True)
             frm = {}
@@ -851,7 +854,7 @@ def random_tests(num=10, n_max=60, perms_per_graph=5):
                 print(H.graph6_string())
                 print(perm)
                 return
-            isom = isomorphic(G, H, [list(xrange(n))], list(xrange(n)), 0, 1)
+            isom = isomorphic(G, H, [list(range(n))], list(range(n)), 0, 1)
             if not isom or G.relabel(isom, inplace=False) != H:
                 print("isom FAILURE: graph6-")
                 print(H.graph6_string())
@@ -876,7 +879,7 @@ def random_tests(num=10, n_max=60, perms_per_graph=5):
                 print(E.dig6_string())
                 print(perm)
                 return
-            isom = isomorphic(D, E, [list(xrange(n))], list(xrange(n)), 1, 1)
+            isom = isomorphic(D, E, [list(range(n))], list(range(n)), 1, 1)
             if not isom or D.relabel(isom, inplace=False) != E:
                 print("isom FAILURE: dig6-")
                 print(E.dig6_string())
@@ -886,6 +889,7 @@ def random_tests(num=10, n_max=60, perms_per_graph=5):
         num_tests += 4*perms_per_graph
         num_graphs += 2
     print("All passed: %d random tests on %d graphs." % (num_tests, num_graphs))
+
 
 def orbit_partition(gamma, list_perm=False):
     r"""
@@ -903,6 +907,7 @@ def orbit_partition(gamma, list_perm=False):
 
     EXAMPLES::
 
+        sage: # needs sage.groups
         sage: from sage.groups.perm_gps.partn_ref.refinement_graphs import orbit_partition
         sage: G = graphs.PetersenGraph()
         sage: S = SymmetricGroup(10)
@@ -1294,7 +1299,7 @@ def generate_dense_graphs_edge_addition(int n, bint loops, G=None, depth=None,
         34
         156
         1044
-        sage: generate_dense_graphs_edge_addition(8,0) # long time - about 14 seconds at 2.4 GHz
+        sage: generate_dense_graphs_edge_addition(8,0)  # long time (about 14 seconds at 2.4 GHz)
         12346
 
     """
@@ -1563,7 +1568,7 @@ def generate_dense_graphs_vert_addition(int n, base_G=None,
         53
         209
         1253
-        sage: generate_dense_graphs_vert_addition(8) # long time
+        sage: generate_dense_graphs_vert_addition(8)  # long time
         13599
 
     TESTS::

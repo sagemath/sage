@@ -1189,14 +1189,13 @@ class SignedPermutation(ColoredPermutation,
             return self._colors[i] == 1 or self._perm[i - 1] < self._perm[i]
         return self._colors[i] == 1 and self._perm[i - 1] > self._perm[i]
 
-    def to_cycles(self, singletons=True, use_min=True, negative_singletons=True):
-        """
+    def to_cycles(self, singletons=True, use_min=True, negative_cycles=True):
+        r"""
         Return the signed permutation ``self`` as a list of disjoint cycles.
 
         The cycles are returned in the order of increasing smallest
         elements, and each cycle is returned as a tuple which starts
-        with its smallest positive element. We do not include the
-        corresponding negative cycles.
+        with its smallest positive element.
 
         INPUT:
 
@@ -1205,18 +1204,30 @@ class SignedPermutation(ColoredPermutation,
         - ``use_min`` -- (default: ``True``) if ``False``, the cycles are
           returned in the order of increasing *largest* (not smallest)
           elements, and each cycle starts with its largest element
+        - ``negative_cycles`` -- (default: ``True``) if ``False``, for any
+          two cycles `C^{\pm} = \{\pm c_1, \ldots, \pm c_k\}` such that
+          `C^+ \neq C^-`, this does not include the cycle `C^-`
+
+        .. WARNING::
+
+            The arugment ``negative_cycles`` does not refer to the usual
+            definition of a negative cycle; see :meth:`cycle_type`.
 
         EXAMPLES::
 
             sage: pi = SignedPermutations(7)([2,-1,4,-6,-5,-3,7])
             sage: pi.to_cycles()
-            [(1, 2, -1, -2), (3, 4, -6), (5, -5), (7,)]
+            [(1, 2, -1, -2), (3, 4, -6), (-3, -4, 6), (5, -5), (7,), (-7,)]
             sage: pi.to_cycles(singletons=False)
+            [(1, 2, -1, -2), (3, 4, -6), (-3, -4, 6), (5, -5)]
+            sage: pi.to_cycles(negative_cycles=False)
+            [(1, 2, -1, -2), (3, 4, -6), (5, -5), (7,)]
+            sage: pi.to_cycles(singletons=False, negative_cycles=False)
             [(1, 2, -1, -2), (3, 4, -6), (5, -5)]
             sage: pi.to_cycles(use_min=False)
-            [(7,), (6, -3, -4), (5, -5), (2, -1, -2, 1)]
+            [(7,), (-7,), (6, -3, -4), (-6, 3, 4), (5, -5), (2, -1, -2, 1)]
             sage: pi.to_cycles(singletons=False, use_min=False)
-            [(6, -3, -4), (5, -5), (2, -1, -2, 1)]
+            [(6, -3, -4), (-6, 3, 4), (5, -5), (2, -1, -2, 1)]
         """
         cycles = []
 
@@ -1235,18 +1246,69 @@ class SignedPermutation(ColoredPermutation,
             cycle = [cycle_first]
             l[i], next_val = False, l[i]
             s = self._colors[i]
+            add_neg = True
             while next_val != cycle_first:
                 cycle.append(s * next_val)
                 s *= self._colors[next_val - 1]
                 l[next_val - 1], next_val = False, l[next_val - 1]
             if s != 1:
                 cycle.extend([-e for e in cycle])
+                add_neg = False
 
             # Add the cycle to the list of cycles
             if singletons or len(cycle) > 1:
                 cycles.append(tuple(cycle))
+                if negative_cycles and add_neg:
+                    cycles.append(tuple([-e for e in cycle]))
 
         return cycles
+
+    def cycle_type(self):
+        r"""
+        Return a pair of partitions of ``len(self)`` corresponding to the
+        signed cycle type of ``self``.
+
+        A *cycle* is a tuple `C = (c_0, \ldots, c_{k-1})` with
+        `\pi(c_i) = c_{i+1}` for `0 \leq i < k` and `\pi(c_{k-1}) = c_0`.
+        If `C` is a cycle, `\overline{C} = (-c_0, \ldots, -c_{k-1})` is
+        also a cycle. A cycle is *negative*, if `C = \overline{C}` up
+        to cyclic reordering. In this case, `k` is necessarily even
+        and the length of `C` is `k/2`. A *positive cycle* is a pair
+        `C \overline{C}`, its length is `k`.
+
+        Let `\alpha` be the partition whose parts are the lengths of the
+        positive cycles and let `\beta` be the partition whose parts are
+        the lengths of the negative cycles.  Then `(\alpha, \beta)` is
+        the cycle type of `\pi`.
+
+        EXAMPLES::
+
+            sage: G = SignedPermutations(7)
+            sage: pi = G([2, -1, 4, -6, -5, -3, 7])
+            sage: pi.cycle_type()
+            ([3, 1], [2, 1])
+
+            sage: G = SignedPermutations(5)
+            sage: all(pi.cycle_type().size() == 5 for pi in G)
+            True
+            sage: set(pi.cycle_type() for pi in G) == set(PartitionTuples(2, 5))
+            True
+        """
+        cycles = self.to_cycles(negative_cycles=False)
+        pos_cycles = []
+        neg_cycles = []
+        for C in cycles:
+            if (not len(C) % 2) and C[0] == -C[len(C)//2]:
+                neg_cycles.append(C)
+            else:
+                pos_cycles.append(C)
+        pos_type = [len(C) for C in pos_cycles]
+        pos_type.sort(reverse=True)
+        neg_type = [len(C) // 2 for C in neg_cycles]
+        neg_type.sort(reverse=True)
+        from sage.combinat.partition_tuple import PartitionTuples
+        PT = PartitionTuples(2, self.parent()._n)
+        return PT([pos_type, neg_type])
 
     def order(self):
         """
@@ -1256,11 +1318,11 @@ class SignedPermutation(ColoredPermutation,
 
             sage: pi = SignedPermutations(7)([2,-1,4,-6,-5,-3,7])
             sage: pi.to_cycles(singletons=False)
-            [(1, 2, -1, -2), (3, 4, -6), (5, -5)]
+            [(1, 2, -1, -2), (3, 4, -6), (-3, -4, 6), (5, -5)]
             sage: pi.order()
             12
         """
-        return lcm(len(c) for c in self.to_cycles(singletons=False))
+        return lcm(len(c) for c in self.to_cycles(singletons=False, negative_cycles=False))
 
 
 class SignedPermutations(ColoredPermutations):
@@ -1318,7 +1380,6 @@ class SignedPermutations(ColoredPermutations):
 
     - :wikipedia:`Hyperoctahedral_group`
     """
-
     def __init__(self, n):
         """
         Initialize ``self``.
@@ -1528,6 +1589,69 @@ class SignedPermutations(ColoredPermutations):
         if index_set is not None:
             return super(SignedPermutations, self).long_element()
         return self.element_class(self, [-ZZ.one()] * self._n, self._P.one())
+
+    def conjugacy_class_representative(self, nu):
+        r"""
+        Return a permutation with (signed) cycle type ``nu``.
+
+        EXAMPLES::
+
+            sage: G = SignedPermutations(4)
+            sage: for nu in PartitionTuples(2, 4):
+            ....:     print(nu, G.conjugacy_class_representative(nu))
+            ....:     assert nu == G.conjugacy_class_representative(nu).cycle_type(), nu
+            ([4], []) [2, 3, 4, 1]
+            ([3, 1], []) [2, 3, 1, 4]
+            ([2, 2], []) [2, 1, 4, 3]
+            ([2, 1, 1], []) [2, 1, 3, 4]
+            ([1, 1, 1, 1], []) [1, 2, 3, 4]
+            ([3], [1]) [2, 3, 1, -4]
+            ([2, 1], [1]) [2, 1, 3, -4]
+            ([1, 1, 1], [1]) [1, 2, 3, -4]
+            ([2], [2]) [2, 1, 4, -3]
+            ([2], [1, 1]) [2, 1, -3, -4]
+            ([1, 1], [2]) [1, 2, 4, -3]
+            ([1, 1], [1, 1]) [1, 2, -3, -4]
+            ([1], [3]) [1, 3, 4, -2]
+            ([1], [2, 1]) [1, 3, -2, -4]
+            ([1], [1, 1, 1]) [1, -2, -3, -4]
+            ([], [4]) [2, 3, 4, -1]
+            ([], [3, 1]) [2, 3, -1, -4]
+            ([], [2, 2]) [2, -1, 4, -3]
+            ([], [2, 1, 1]) [2, -1, -3, -4]
+            ([], [1, 1, 1, 1]) [-1, -2, -3, -4]
+
+        TESTS::
+
+            sage: all(nu == SignedPermutations(n).conjugacy_class_representative(nu).cycle_type()
+            ....:     for n in range(1, 6) for nu in PartitionTuples(2, n))
+            True
+        """
+        from sage.combinat.partition_tuple import PartitionTuple
+        nu = PartitionTuple(nu)
+        if nu.size() != self._n:
+            raise ValueError("the size of the partition pair (=%s) must equal"
+                             " the rank (=%s)" % (nu.size(), self._n))
+        la, mu = nu
+        cyc = []
+        cnt = 0
+
+        for i in la:
+            cyc += [tuple(range(cnt+1, cnt+i+1))] + [tuple(range(-cnt-1, -cnt-i-1, -1))]
+            cnt += i
+        for i in mu:
+            cyc += [tuple(range(cnt+1, cnt+i+1)) + tuple(range(-cnt-1, -cnt-i-1, -1))]
+            cnt += i
+
+        p = [None] * self._n
+        for c in cyc:
+            for i in range(len(c)-1):
+                if c[i] > 0:
+                    p[c[i]-1] = c[i+1]
+            if c[-1] > 0:
+                p[c[-1]-1] = c[0]
+
+        return self(p)
 
     Element = SignedPermutation
 

@@ -165,12 +165,12 @@ class JmolData(SageObject):
                 datafile = cygwin.cygpath(datafile, 'w')
 
         launchscript = ""
-        if (datafile_cmd!='script'):
+        if (datafile_cmd != 'script'):
             launchscript = "load "
         launchscript = launchscript + datafile
 
         imagescript = 'write {} {!r}\n'.format(image_type, target_native)
-        size_arg = "%sx%s" %(figsize*100,figsize*100)
+        size_arg = "%sx%s" % (figsize*100,figsize*100)
         # Scratch file for Jmol errors
         scratchout = tmp_filename(ext=".txt")
         with open(scratchout, 'w') as jout:

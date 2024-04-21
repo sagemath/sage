@@ -3254,7 +3254,7 @@ cdef class Matroid(SageObject):
         OUTPUT:
 
         Boolean,
-        and, if certificate = True, a dictionary giving the isomorphism or None
+        and, if ``certificate=True``, a dictionary giving the isomorphism or ``None``
 
         .. NOTE::
 
@@ -3419,12 +3419,23 @@ cdef class Matroid(SageObject):
             False
             sage: M1 == M3
             True
+
+        TESTS:
+
+        Check that :issue:`35946` is fixed::
+
+            sage: M = matroids.Uniform(3,5)
+            sage: N = matroids.Uniform(2,5)
+            sage: M.equals(N)
+            False
         """
         if self is other:
             return True
         if not isinstance(other, Matroid):
             raise TypeError("can only test for isomorphism between matroids.")
         if (self.size() != other.size() or other.groundset().difference(self.groundset())):
+            return False
+        if self.full_rank() != other.full_rank():
             return False
         morphism = {e: e for e in self.groundset()}
         return self._is_isomorphism(other, morphism)
@@ -3532,6 +3543,15 @@ cdef class Matroid(SageObject):
             sage: # needs sage.graphs
             sage: N.is_isomorphism(M, g)
             True
+
+        TESTS:
+
+        Check that :issue:`35946` is fixed::
+
+            sage: M = matroids.Uniform(3,5)
+            sage: N = matroids.Uniform(2,5)
+            sage: M.is_isomorphism(N, {e: e for e in M.groundset()})
+            False
         """
         from copy import copy
         if not isinstance(other, Matroid):
@@ -3555,11 +3575,16 @@ cdef class Matroid(SageObject):
             raise ValueError("range of morphism does not contain groundset of other matroid.")
         if self is other:
             return self._is_isomorphism(copy(other), mf)
+        if self.full_rank() != other.full_rank():
+            return False
         return self._is_isomorphism(other, mf)
 
     cpdef _is_isomorphism(self, other, morphism):
         r"""
-        Version of is_isomorphism() that does no type checking.
+        Version of :meth:`is_isomorphism` that does no type checking.
+
+        This method assumes that ``self`` and ``other`` have the same rank
+        and does not check this condition.
 
         INPUT:
 

@@ -46,7 +46,7 @@ class GSets(Category):
             sage: GSets(SymmetricGroup(8))  # indirect doctests                         # needs sage.groups
             Category of G-sets for Symmetric group of order 8! as a permutation group
         """
-        return "G-sets for %s"%self.__G
+        return "G-sets for %s" % self.__G
 
     #def construction(self):
     #    return (self.__class__, self.__G)

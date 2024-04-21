@@ -3214,7 +3214,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         cdef list pl, ml
 
         pl = list()
-        ml = list(xrange(r.N))
+        ml = list(range(r.N))
         if as_ETuples:
             while p:
                 for v from 1 <= v <= r.N:

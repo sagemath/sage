@@ -1250,7 +1250,7 @@ class Sets(Category_singleton):
             S = list(tester.some_elements()) + [None, 0]
             from sage.misc.misc import some_tuples
             for x, y in some_tuples(S, 2, tester._max_runs):
-                tester.assertEqual(x==y, y==x,
+                tester.assertEqual(x == y, y == x,
                     LazyFormat("non symmetric equality: %s but %s") % (
                         print_compare(x, y), print_compare(y, x)))
 
@@ -1297,7 +1297,7 @@ class Sets(Category_singleton):
                             continue
                         tester.assertEqual(x, z,
                             LazyFormat("non transitive equality:\n"
-                                       "%s and %s but %s")%(
+                                       "%s and %s but %s") % (
                                 print_compare(x, y),
                                 print_compare(y, z),
                                 print_compare(x, z)))
@@ -1343,7 +1343,7 @@ class Sets(Category_singleton):
             for x,y in some_tuples(S, 2, tester._max_runs):
                 tester.assertNotEqual(x == y, x != y,
                     LazyFormat("__eq__ and __ne__ inconsistency:\n"
-                        "  %s == %s returns %s  but  %s != %s returns %s")%(
+                        "  %s == %s returns %s  but  %s != %s returns %s") % (
                             x, y, (x == y), x, y, (x != y)))
 
         def some_elements(self):
@@ -1404,7 +1404,7 @@ class Sets(Category_singleton):
             #               "self.some_elements() should return an iterable, not an iterator")
             for x in elements:
                 tester.assertIn(x, self, LazyFormat(
-                    "the object %s in self.some_elements() is not in self")%(x,))
+                    "the object %s in self.some_elements() is not in self") % (x,))
 
         #Note: the four methods 'cardinality', 'is_finite_, 'is_empty' and
         # 'random_element' might or might not be implemented in the parent
@@ -1972,7 +1972,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     sage: S._repr_()
                     'A subquotient of An example of a semigroup: the left zero semigroup'
                 """
-                return "A subquotient of %s"%(self.ambient())
+                return "A subquotient of %s" % (self.ambient())
 
             @abstract_method
             def ambient(self):
@@ -2176,7 +2176,7 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                     sage: S._repr_()
                     'The image by some isomorphism of An example of a finite enumerated set: {1,2,3}'
                 """
-                return "The image by some isomorphism of %s"%(self.ambient())
+                return "The image by some isomorphism of %s" % (self.ambient())
 
     class CartesianProducts(CartesianProductsCategory):
         """

@@ -196,6 +196,19 @@ components are in the correct ring::
     sage: L = LazySymmetricFunctions(s)                                                 # needs sage.combinat
     sage: check(L, lambda n: sum(k*s(la) for k, la in enumerate(Partitions(n))),        # needs sage.combinat
     ....:       valuation=0)
+
+Check that we can invert matrices::
+
+    sage: L.<z> = LazyLaurentSeriesRing(QQ)
+    sage: a11 = 1 + L(lambda n: 1 if not n else 0, valuation=0)
+    sage: a12 = 1 + L(lambda n: 1 if n == 1 else 0, valuation=0)
+    sage: a21 = 1 + L(lambda n: 1 if n == 2 else 0, valuation=0)
+    sage: a22 = 1 + L(lambda n: 1 if n == 3 else 0, valuation=0)
+    sage: m = matrix([[a11, a12], [a21, a22]])
+    sage: m.inverse()
+    [   1 + z + 2*z^2 + 3*z^3 + 4*z^4 + 5*z^5 + 6*z^6 + O(z^7) -1 - 2*z - 3*z^2 - 4*z^3 - 5*z^4 - 6*z^5 - 7*z^6 + O(z^7)]
+    [  -1 - z - 3*z^2 - 3*z^3 - 5*z^4 - 5*z^5 - 7*z^6 + O(z^7)  2 + 2*z + 4*z^2 + 4*z^3 + 6*z^4 + 6*z^5 + 8*z^6 + O(z^7)]
+
 """
 
 # ****************************************************************************
@@ -219,6 +232,7 @@ from sage.arith.misc import divisors, factorial, moebius
 from sage.combinat.partition import Partition, Partitions
 from sage.misc.derivative import derivative_parse
 from sage.categories.integral_domains import IntegralDomains
+from sage.categories.rings import Rings
 from sage.rings.infinity import infinity
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -228,6 +242,7 @@ from sage.categories.tensor import tensor
 from sage.data_structures.stream import (
     Stream_add,
     Stream_cauchy_mul,
+    Stream_cauchy_mul_commutative,
     Stream_sub,
     Stream_cauchy_compose,
     Stream_lmul,
@@ -939,6 +954,15 @@ class LazyModuleElement(Element):
 
             sage: fz = L(lambda n: 0, valuation=0)
             sage: L.zero() == fz
+            False
+            sage: fz == L.zero()
+            False
+
+        With using secure computations::
+
+            sage: L.options.secure = True
+            sage: fz = L(lambda n: 0, valuation=0)
+            sage: L.zero() == fz
             Traceback (most recent call last):
             ...
             ValueError: undecidable
@@ -946,6 +970,22 @@ class LazyModuleElement(Element):
             Traceback (most recent call last):
             ...
             ValueError: undecidable
+            sage: fz != L.zero()
+            Traceback (most recent call last):
+            ...
+            ValueError: undecidable
+
+        With using finite halting precision (which ignores
+        the ``secure`` option)::
+
+            sage: L.options.halting_precision = 40
+            sage: fz = L(lambda n: 0, valuation=0)
+            sage: L.zero() == fz
+            True
+            sage: fz == L.zero()
+            True
+
+            sage: L.options._reset()
 
         TESTS::
 
@@ -954,33 +994,17 @@ class LazyModuleElement(Element):
             sage: g = L([0,0,1,0,1,0,0], degree=7, constant=1)
             sage: f == g
             True
-
         """
         if op is op_EQ:
-            if isinstance(self._coeff_stream, Stream_zero):
-                if isinstance(other._coeff_stream, Stream_zero):
-                    return True
-                if other._coeff_stream.is_nonzero():
-                    return False
-            elif isinstance(other._coeff_stream, Stream_zero):
-                if self._coeff_stream.is_nonzero():
-                    return False
-            elif isinstance(self._coeff_stream, Stream_exact):
-                if isinstance(other._coeff_stream, Stream_exact):
-                    return self._coeff_stream == other._coeff_stream
-                if self._coeff_stream != other._coeff_stream:
-                    return False
-            elif isinstance(other._coeff_stream, Stream_exact):
-                if other._coeff_stream != self._coeff_stream:
-                    return False
-            else:
-                # both streams are inexact, perhaps they are equal by
-                # construction
-                if self._coeff_stream == other._coeff_stream:
-                    return True
-                # perhaps their caches are different
-                if self._coeff_stream != other._coeff_stream:
-                    return False
+            if self._coeff_stream == other._coeff_stream:
+                return True
+
+            if (not self.parent().options['secure']
+                and self.parent().options['halting_precision'] is None):
+                return False
+
+            if self._coeff_stream != other._coeff_stream:
+                return False
 
             # undecidable otherwise
             prec = self.parent().options['halting_precision']
@@ -992,8 +1016,12 @@ class LazyModuleElement(Element):
             return all(self[i] == other[i] for i in range(m, m + prec))
 
         if op is op_NE:
-            return not (self == other)
+            ret = (self == other)
+            if ret is None:
+                return ret
+            return not ret
 
+        # FIXME: This should check for equality in <= and >= and other return NotImplemented
         return False
 
     def __hash__(self):
@@ -1016,9 +1044,8 @@ class LazyModuleElement(Element):
         """
         Test whether ``self`` is not zero.
 
-        An uninitialized series returns ``True`` as it is considered
-        as a formal variable, such as a generator of a polynomial
-        ring.
+        When the halting precision is infinite, then any series that is
+        not known to be zero will be ``True``.
 
         TESTS::
 
@@ -1035,11 +1062,9 @@ class LazyModuleElement(Element):
             False
             sage: M = L(lambda n: 2*n if n < 10 else 1, valuation=0); M
             O(z^7)
-            sage: bool(M)
-            Traceback (most recent call last):
-            ...
-            ValueError: undecidable as lazy Laurent series
-            sage: M[15]
+            sage: bool(M)                                                               # optional - sage.rings.finite_rings
+            True
+            sage: M[15]                                                                 # optional - sage.rings.finite_rings
             1
             sage: bool(M)
             True
@@ -1048,11 +1073,9 @@ class LazyModuleElement(Element):
             sage: L.<z> = LazyLaurentSeriesRing(GF(2), sparse=True)
             sage: M = L(lambda n: 2*n if n < 10 else 1, valuation=0); M
             O(z^7)
-            sage: bool(M)
-            Traceback (most recent call last):
-            ...
-            ValueError: undecidable as lazy Laurent series
-            sage: M[15]
+            sage: bool(M)                                                               # optional - sage.rings.finite_rings
+            True
+            sage: M[15]                                                                 # optional - sage.rings.finite_rings
             1
             sage: bool(M)
             True
@@ -1082,34 +1105,149 @@ class LazyModuleElement(Element):
             sage: g.define(1 + z*g)
             sage: bool(g)
             True
+
+        Comparison with finite halting precision::
+
+            sage: M = L(lambda n: 2*n if n < 10 else 0, valuation=0)
+            sage: bool(M)
+            True
+            sage: M.is_zero()
+            False
+
+            sage: L.options.halting_precision = 20
+            sage: bool(M)
+            False
+            sage: M.is_zero()
+            True
+
+        With finite halting precision, it can be considered to
+        be indistinguishable from zero until possibly enough
+        coefficients are computed::
+
+            sage: L.<z> = LazyLaurentSeriesRing(GF(2))
+            sage: L.options.halting_precision = 20
+            sage: f = L(lambda n: 0, valuation=0)
+            sage: f.is_zero()
+            True
+
+            sage: g = L(lambda n: 0 if n < 50 else 1, valuation=2)
+            sage: bool(g)  # checks up to degree 22 = 2 + 20
+            False
+            sage: bool(g)  # checks up to degree 42 = 22 + 20
+            False
+            sage: bool(g)  # checks up to degree 62 = 42 + 20
+            True
+            sage: L.options._reset()
         """
         if isinstance(self._coeff_stream, Stream_zero):
             return False
-        if isinstance(self._coeff_stream, Stream_exact):
-            return True
-        if isinstance(self._coeff_stream, Stream_uninitialized):
-            if self._coeff_stream._target is None:
-                return True
-            if isinstance(self._coeff_stream._target, Stream_zero):
-                return False
-            if isinstance(self._coeff_stream._target, Stream_exact):
-                return True
-        if self._coeff_stream._is_sparse:
-            cache = self._coeff_stream._cache
-            if any(cache[a] for a in cache):
-                return True
-        else:
-            if any(self._coeff_stream._cache):
-                return True
-
-        v = self._coeff_stream._approximate_order
-        if self[v]:
-            return True
 
         prec = self.parent().options['halting_precision']
+        if prec is None and not self.parent().options['secure']:
+            return True
+
+        if isinstance(self._coeff_stream, Stream_exact):
+            return True
+        if self._coeff_stream.is_uninitialized():
+            return True
+        if self._coeff_stream.is_nonzero():
+            return True
+
         if prec is None:
-            raise ValueError("undecidable as lazy Laurent series")
+            raise ValueError("undecidable")
+        v = self._coeff_stream._approximate_order
         return any(self[i] for i in range(v, v + prec))
+
+    def is_nonzero(self, proof=False):
+        r"""
+        Return ``True`` if ``self`` is *known* to be nonzero.
+
+        INPUT:
+
+        - ``proof`` -- (default: ``False``) if ``True``, this will also return
+          an index such that ``self`` has a nonzero coefficient
+
+        .. WARNING::
+
+            If the stream is exactly zero, this will run forever.
+
+        EXAMPLES:
+
+        A series that it not known to be nonzero with no halting precision::
+
+            sage: L.<z> = LazyLaurentSeriesRing(GF(2))
+            sage: f = L(lambda n: 0, valuation=0)
+            sage: f.is_nonzero()
+            False
+            sage: bool(f)
+            True
+            sage: g = L(lambda n: 0 if n < 50 else 1, valuation=2)
+            sage: g.is_nonzero()
+            False
+            sage: g[60]
+            1
+            sage: g.is_nonzero()
+            True
+
+        With finite halting precision, it can be considered to
+        be indistinguishable from zero until possibly enough
+        coefficients are computed::
+
+            sage: L.options.halting_precision = 20
+            sage: f = L(lambda n: 0, valuation=0)
+            sage: f.is_zero()
+            True
+
+            sage: g = L(lambda n: 0 if n < 50 else 1, valuation=2)
+            sage: g.is_nonzero()  # checks up to degree 22 = 2 + 20
+            False
+            sage: g.is_nonzero()  # checks up to degree 42 = 22 + 20
+            False
+            sage: g.is_nonzero()  # checks up to degree 62 = 42 + 20
+            True
+            sage: L.options._reset()
+
+        With a proof::
+
+            sage: L.<z> = LazyLaurentSeriesRing(GF(5))
+            sage: g = L(lambda n: 5 if n < 50 else 1, valuation=2)
+            sage: g.is_nonzero(proof=True)
+            (True, 50)
+
+            sage: L.zero().is_nonzero(proof=True)
+            (False, None)
+        """
+        if proof:
+            if isinstance(self._coeff_stream, Stream_zero):
+                return (False, None)
+
+            i = self._coeff_stream._approximate_order
+            while True:
+                if self[i]:
+                    return (True, i)
+                i += 1
+
+        if self._coeff_stream.is_nonzero():
+            return True
+        if self.parent().options['halting_precision'] is not None:
+            return bool(self)
+        return False
+
+    def is_trivial_zero(self):
+        r"""
+        Return whether ``self`` is known to be trivially zero.
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyLaurentSeriesRing(ZZ)
+            sage: f = L(lambda n: 0, valuation=2)
+            sage: f.is_trivial_zero()
+            False
+
+            sage: L.zero().is_trivial_zero()
+            True
+        """
+        return isinstance(self._coeff_stream, Stream_zero)
 
     def define(self, s):
         r"""
@@ -1131,7 +1269,7 @@ class LazyModuleElement(Element):
             sage: binomial(2000, 1000) / C[1000]                                        # needs sage.symbolic
             1001
 
-        The Catalan numbers but with a valuation 1::
+        The Catalan numbers but with a valuation `1`::
 
             sage: B = L.undefined(valuation=1)
             sage: B.define(z + B^2)
@@ -1358,6 +1496,24 @@ class LazyModuleElement(Element):
             sage: (f*s[1]).revert() + 1 - f                                             # needs lrcalc_python sage.combinat
             O^7
 
+        Undefined series inside of another series (see :issue:`35071`)::
+
+            sage: L.<z> = LazyPowerSeriesRing(QQ)
+            sage: f = z^2
+            sage: b = L.undefined(valuation=1)
+            sage: b.define(z*f(f(b)))
+            sage: b
+            O(z^8)
+
+            sage: L.<x> = LazyPowerSeriesRing(ZZ)
+            sage: f = L.undefined()
+            sage: f.define(L(lambda n: 0 if not n else sigma(f[n-1]+1)))
+            sage: f
+            x + 3*x^2 + 7*x^3 + 15*x^4 + 31*x^5 + 63*x^6 + O(x^7)
+            sage: f = L.undefined()
+            sage: f.define((1/(1-L(lambda n: 0 if not n else sigma(f[n-1]+1)))))
+            sage: f
+            1 + 3*x + 16*x^2 + 87*x^3 + 607*x^4 + 4518*x^5 + 30549*x^6 + O(x^7)
         """
         if not isinstance(self._coeff_stream, Stream_uninitialized) or self._coeff_stream._target is not None:
             raise ValueError("series already defined")
@@ -1404,8 +1560,10 @@ class LazyModuleElement(Element):
             sage: L(lambda x: x if x > 0 else 0, valuation=-10)
             O(z^-3)
 
-            sage: L.undefined(valuation=0)
-            Uninitialized Lazy Laurent Series
+            sage: s = L.undefined(valuation=0); s
+            Uninitialized Lazy Series
+            sage: (s + s^2).map_coefficients(lambda f: f % 3)
+            Uninitialized Lazy Series
             sage: L(0)
             0
 
@@ -1418,8 +1576,8 @@ class LazyModuleElement(Element):
         """
         if isinstance(self._coeff_stream, Stream_zero):
             return '0'
-        if isinstance(self._coeff_stream, Stream_uninitialized) and self._coeff_stream._target is None:
-            return 'Uninitialized Lazy Laurent Series'
+        if self._coeff_stream.is_uninitialized():
+            return 'Uninitialized Lazy Series'
         return self._format_series(repr)
 
     def _latex_(self):
@@ -1451,7 +1609,10 @@ class LazyModuleElement(Element):
             sage: latex(L(lambda x: x if x > 0 else 0, valuation=-10))
             O(\frac{1}{z^{3}})
 
-            sage: latex(L.undefined(valuation=0))
+            sage: s = L.undefined(valuation=0)
+            sage: latex(s)
+            \text{\texttt{Undef}}
+            sage: latex((s + s^2).map_coefficients(lambda f: f % 3))
             \text{\texttt{Undef}}
             sage: latex(L(0))
             0
@@ -1468,7 +1629,7 @@ class LazyModuleElement(Element):
         from sage.misc.latex import latex
         if isinstance(self._coeff_stream, Stream_zero):
             return latex('0')
-        if isinstance(self._coeff_stream, Stream_uninitialized) and self._coeff_stream._target is None:
+        if self._coeff_stream.is_uninitialized():
             return latex("Undef")
         return self._format_series(latex)
 
@@ -1484,13 +1645,16 @@ class LazyModuleElement(Element):
             sage: L.options.display_length = 3
             sage: ascii_art(1 / (1 - e[1]*z))
             e[] + e[1]*z + e[1, 1]*z^2 + O(e[]*z^3)
+            sage: x = L.undefined(valuation=0)                                          # optional - sage.combinat
+            sage: ascii_art(x + x^2 - 5)                                                # optional - sage.combinat
+            Uninitialized Lazy Series
             sage: L.options._reset()
         """
         from sage.typeset.ascii_art import ascii_art, AsciiArt
         if isinstance(self._coeff_stream, Stream_zero):
             return AsciiArt('0')
-        if isinstance(self._coeff_stream, Stream_uninitialized) and self._coeff_stream._target is None:
-            return AsciiArt('Uninitialized Lazy Laurent Series')
+        if self._coeff_stream.is_uninitialized():
+            return AsciiArt(['Uninitialized Lazy Series'])
         return self._format_series(ascii_art, True)
 
     def _unicode_art_(self):
@@ -1505,13 +1669,16 @@ class LazyModuleElement(Element):
             sage: L.options.display_length = 3
             sage: unicode_art(1 / (1 - e[1]*z))
             e[] + e[1]*z + e[1, 1]*z^2 + O(e[]*z^3)
+            sage: x = L.undefined(valuation=0)                                          # optional - sage.combinat
+            sage: unicode_art(x + x^2 - 5)                                              # optional - sage.combinat
+            Uninitialized Lazy Series
             sage: L.options._reset()
         """
         from sage.typeset.unicode_art import unicode_art, UnicodeArt
         if isinstance(self._coeff_stream, Stream_zero):
             return UnicodeArt('0')
-        if isinstance(self._coeff_stream, Stream_uninitialized) and self._coeff_stream._target is None:
-            return UnicodeArt('Uninitialized Lazy Laurent Series')
+        if self._coeff_stream.is_uninitialized():
+            return UnicodeArt(['Uninitialized Lazy Series'])
         return self._format_series(unicode_art, True)
 
     def change_ring(self, ring):
@@ -1792,9 +1959,19 @@ class LazyModuleElement(Element):
         Different scalars potentially give different series::
 
             sage: 2 * M == 3 * M
+            False
+
+            sage: L.options.secure = True
+            sage: 2 * M == 3 * M
             Traceback (most recent call last):
             ...
             ValueError: undecidable
+
+            sage: L.options.halting_precision = 30
+            sage: 2 * M == 3 * M
+            False
+
+            sage: L.options._reset()
 
         Sparse series can be multiplied with a scalar::
 
@@ -1865,6 +2042,19 @@ class LazyModuleElement(Element):
             sage: f = L(constant=2)
             sage: 2*f
             0
+
+        Check that non-commutativity is taken into account::
+
+            sage: M = MatrixSpace(ZZ, 2)
+            sage: L.<z> = LazyPowerSeriesRing(M)
+            sage: f = L(lambda n: matrix([[1,n],[0,1]]))
+            sage: m = matrix([[1,0],[1,1]])
+            sage: (m * f - f * m)[1]
+            [-1  0]
+            [ 0  1]
+            sage: m * f[1] - f[1] * m
+            [-1  0]
+            [ 0  1]
         """
         # With the current design, the coercion model does not have
         # enough information to detect a priori that this method only
@@ -1905,7 +2095,7 @@ class LazyModuleElement(Element):
                                                    order=v,
                                                    constant=c,
                                                    degree=coeff_stream._degree))
-        if self_on_left or R.is_commutative():
+        if self_on_left or R in Rings().Commutative():
             return P.element_class(P, Stream_lmul(coeff_stream, scalar,
                                                   P.is_sparse()))
         return P.element_class(P, Stream_rmul(coeff_stream, scalar,
@@ -2873,6 +3063,9 @@ class LazyCauchyProductSeries(LazyModuleElement):
             and right.order() == 0
             and not right._constant):
             return self  # right == 1
+        if ((isinstance(left, Stream_cauchy_invert) and left._series == right)
+            or (isinstance(right, Stream_cauchy_invert) and right._series == left)):
+            return P.one()
         # The product is exact if and only if both factors are exact
         # and one of the factors has eventually 0 coefficients:
         # (p + a x^d/(1-x))(q + b x^e/(1-x))
@@ -2920,7 +3113,11 @@ class LazyCauchyProductSeries(LazyModuleElement):
                                         constant=c)
             return P.element_class(P, coeff_stream)
 
-        return P.element_class(P, Stream_cauchy_mul(left, right, P.is_sparse()))
+        if P in Rings().Commutative():
+            coeff_stream = Stream_cauchy_mul_commutative(left, right, P.is_sparse())
+        else:
+            coeff_stream = Stream_cauchy_mul(left, right, P.is_sparse())
+        return P.element_class(P, coeff_stream)
 
     def __pow__(self, n):
         r"""
@@ -3063,7 +3260,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
             sage: g = L([2], valuation=-1, constant=1); g
             2*x^-1 + 1 + x + x^2 + O(x^3)
             sage: g * g^-1
-            1 + O(x^7)
+            1
 
             sage: L.<x> = LazyPowerSeriesRing(QQ)
             sage: ~(x + x^2)
@@ -3207,8 +3404,28 @@ class LazyCauchyProductSeries(LazyModuleElement):
             sage: f / f
             s[]
 
+        Dividing when the coefficient ring is a lazy Dirichlet ring::
+
+            sage: D = LazyDirichletSeriesRing(QQ, "s")
+            sage: zeta = D(constant=1)
+            sage: L.<t> = LazyLaurentSeriesRing(D)
+            sage: 1 / (1 - t*zeta)
+            (1 + O(1/(8^s)))
+             + (1 + 1/(2^s) + 1/(3^s) + 1/(4^s) + 1/(5^s) + 1/(6^s) + 1/(7^s) + O(1/(8^s)))*t
+             + ... + O(t^7)
+
+        Check for dividing by other type of `0` series::
+
+            sage: L.<t> = LazyPowerSeriesRing(QQ)
+            sage: f = L(lambda n: 0, valuation=0)
+            sage: L.options.halting_precision = 20
+            sage: 1 / f
+            Traceback (most recent call last):
+            ...
+            ZeroDivisionError: cannot divide by 0
+            sage: L.options._reset()
         """
-        if isinstance(other._coeff_stream, Stream_zero):
+        if not other:
             raise ZeroDivisionError("cannot divide by 0")
 
         P = self.parent()
@@ -3226,7 +3443,7 @@ class LazyCauchyProductSeries(LazyModuleElement):
             return self
 
         # self is right
-        if left is right:
+        if left == right:
             return P.one()
 
         if (P._minimal_valuation is not None
@@ -3301,7 +3518,11 @@ class LazyCauchyProductSeries(LazyModuleElement):
         # P._minimal_valuation is zero, because we allow division by
         # series of positive valuation
         right_inverse = Stream_cauchy_invert(right)
-        return P.element_class(P, Stream_cauchy_mul(left, right_inverse, P.is_sparse()))
+        if P in Rings().Commutative():
+            coeff_stream = Stream_cauchy_mul_commutative(left, right_inverse, P.is_sparse())
+        else:
+            coeff_stream = Stream_cauchy_mul(left, right_inverse, P.is_sparse())
+        return P.element_class(P, coeff_stream)
 
     def _floordiv_(self, other):
         r"""
@@ -3384,7 +3605,8 @@ class LazyCauchyProductSeries(LazyModuleElement):
         coeff_stream = self._coeff_stream
         # TODO: coefficients should not be checked here, it prevents
         # us from using self.define in some cases!
-        if any(coeff_stream[i] for i in range(coeff_stream._approximate_order, 1)):
+        if ((not coeff_stream.is_uninitialized())
+            and any(coeff_stream[i] for i in range(coeff_stream._approximate_order, 1))):
             raise ValueError("can only compose with a positive valuation series")
         # WARNING: d_self need not be a proper element of P, e.g. for
         # multivariate power series
@@ -3392,7 +3614,9 @@ class LazyCauchyProductSeries(LazyModuleElement):
         d_self = Stream_function(lambda n: (n + 1) * coeff_stream[n + 1],
                                  False, 0)
         f = P.undefined(valuation=0)
-        d_self_f = Stream_cauchy_mul(d_self, f._coeff_stream, False)
+        # d_self and f._coeff_stream always commute, the coefficients
+        # of the product are of the form sum_{k=1}^n a_k a_{n+1-k}.
+        d_self_f = Stream_cauchy_mul_commutative(d_self, f._coeff_stream, False)
         int_d_self_f = Stream_function(lambda n: d_self_f[n-1] / R(n) if n else R.one(),
                                        False, 0)
         f._coeff_stream._target = int_d_self_f
@@ -3434,16 +3658,19 @@ class LazyCauchyProductSeries(LazyModuleElement):
         coeff_stream = self._coeff_stream
         # TODO: coefficients should not be checked here, it prevents
         # us from using self.define in some cases!
-        if (any(coeff_stream[i] for i in range(coeff_stream._approximate_order, 0))
-            or coeff_stream[0] != R.one()):
+        if ((not coeff_stream.is_uninitialized())
+            and (any(coeff_stream[i] for i in range(coeff_stream._approximate_order, 0))
+                 or coeff_stream[0] != R.one())):
             raise ValueError("can only compose with a positive valuation series")
         # WARNING: d_self need not be a proper element of P, e.g. for
         # multivariate power series
         d_self = Stream_function(lambda n: (n + 1) * coeff_stream[n + 1],
                                  P.is_sparse(), 0)
-        d_self_quo_self = Stream_cauchy_mul(d_self,
-                                            Stream_cauchy_invert(coeff_stream),
-                                            P.is_sparse())
+        coeff_stream_inverse = Stream_cauchy_invert(coeff_stream)
+        # d_self and coeff_stream_inverse always commute
+        d_self_quo_self = Stream_cauchy_mul_commutative(d_self,
+                                                        coeff_stream_inverse,
+                                                        P.is_sparse())
         int_d_self_quo_self = Stream_function(lambda n: d_self_quo_self[n-1] / R(n),
                                               P.is_sparse(), 1)
         return P.element_class(P, int_d_self_quo_self)

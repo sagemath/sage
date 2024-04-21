@@ -139,7 +139,7 @@ class PlotField(GraphicPrimitive):
             20
 
         """
-        return "PlotField defined by a %s x %s vector grid"%(
+        return "PlotField defined by a %s x %s vector grid" % (
                self._options['plot_points'], self._options['plot_points'])
 
     def _render_on_subplot(self, subplot):

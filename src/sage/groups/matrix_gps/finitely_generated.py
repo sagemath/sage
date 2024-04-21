@@ -6,10 +6,10 @@ finite set of generating matrices.
 
 EXAMPLES::
 
-    sage: F = GF(3)                                                                     # optional - sage.rings.finite_rings
-    sage: gens = [matrix(F, 2, [1,0, -1,1]), matrix(F, 2, [1,1,0,1])]                   # optional - sage.rings.finite_rings
-    sage: G = MatrixGroup(gens)                                                         # optional - sage.rings.finite_rings
-    sage: G.conjugacy_classes_representatives()                                         # optional - sage.rings.finite_rings
+    sage: F = GF(3)
+    sage: gens = [matrix(F, 2, [1,0, -1,1]), matrix(F, 2, [1,1,0,1])]
+    sage: G = MatrixGroup(gens)
+    sage: G.conjugacy_classes_representatives()
     (
     [1 0]  [0 2]  [0 1]  [2 0]  [0 2]  [0 1]  [0 2]
     [0 1], [1 1], [2 1], [0 2], [1 2], [2 2], [1 0]
@@ -161,37 +161,37 @@ def QuaternionMatrixGroupGF3():
     is the product of `I` and `J`. ::
 
         sage: from sage.groups.matrix_gps.finitely_generated import QuaternionMatrixGroupGF3
-        sage: Q = QuaternionMatrixGroupGF3()                                            # optional - sage.rings.finite_rings
-        sage: Q.order()                                                                 # optional - sage.rings.finite_rings
+        sage: Q = QuaternionMatrixGroupGF3()
+        sage: Q.order()
         8
-        sage: aye = Q.gens()[0]; aye                                                    # optional - sage.rings.finite_rings
+        sage: aye = Q.gens()[0]; aye
         [1 1]
         [1 2]
-        sage: jay = Q.gens()[1]; jay                                                    # optional - sage.rings.finite_rings
+        sage: jay = Q.gens()[1]; jay
         [2 1]
         [1 1]
-        sage: kay = aye*jay; kay                                                        # optional - sage.rings.finite_rings
+        sage: kay = aye*jay; kay
         [0 2]
         [1 0]
 
     TESTS::
 
-        sage: groups.matrix.QuaternionGF3()                                             # optional - sage.rings.finite_rings
+        sage: groups.matrix.QuaternionGF3()                                             # needs sage.modules sage.rings.finite_rings
         Matrix group over Finite Field of size 3 with 2 generators (
         [1 1]  [2 1]
         [1 2], [1 1]
         )
 
-        sage: Q = QuaternionMatrixGroupGF3()                                            # optional - sage.rings.finite_rings
-        sage: QP = Q.as_permutation_group()                                             # optional - sage.rings.finite_rings
-        sage: QP.is_isomorphic(QuaternionGroup())                                       # optional - sage.rings.finite_rings
+        sage: Q = QuaternionMatrixGroupGF3()
+        sage: QP = Q.as_permutation_group()
+        sage: QP.is_isomorphic(QuaternionGroup())
         True
-        sage: H = DihedralGroup(4)                                                      # optional - sage.groups sage.rings.finite_rings
-        sage: H.order()                                                                 # optional - sage.groups sage.rings.finite_rings
+        sage: H = DihedralGroup(4)                                                      # needs sage.groups
+        sage: H.order()                                                                 # needs sage.groups
         8
-        sage: QP.is_abelian(), H.is_abelian()                                           # optional - sage.groups sage.rings.finite_rings
+        sage: QP.is_abelian(), H.is_abelian()                                           # needs sage.groups
         (False, False)
-        sage: QP.is_isomorphic(H)                                                       # optional - sage.groups sage.rings.finite_rings
+        sage: QP.is_isomorphic(H)                                                       # needs sage.groups
         False
     """
     from sage.rings.finite_rings.finite_field_constructor import FiniteField
@@ -216,9 +216,9 @@ def MatrixGroup(*gens, **kwds):
 
     EXAMPLES::
 
-        sage: F = GF(5)                                                                 # optional - sage.rings.finite_rings
-        sage: gens = [matrix(F, 2, [1,2, -1,1]), matrix(F,2, [1,1, 0,1])]               # optional - sage.rings.finite_rings
-        sage: G = MatrixGroup(gens); G                                                  # optional - sage.rings.finite_rings
+        sage: F = GF(5)
+        sage: gens = [matrix(F, 2, [1,2, -1,1]), matrix(F,2, [1,1, 0,1])]
+        sage: G = MatrixGroup(gens); G
         Matrix group over Finite Field of size 5 with 2 generators (
         [1 2]  [1 1]
         [4 1], [0 1]
@@ -230,8 +230,8 @@ def MatrixGroup(*gens, **kwds):
     matrices over the finite field, so creates that matrix group
     there::
 
-        sage: gens = [matrix(2, [1,2, -1,1]), matrix(GF(7), 2, [1,1, 0,1]), 2]          # optional - sage.rings.finite_rings
-        sage: G = MatrixGroup(gens); G                                                  # optional - sage.rings.finite_rings
+        sage: gens = [matrix(2, [1,2, -1,1]), matrix(GF(7), 2, [1,1, 0,1]), 2]
+        sage: G = MatrixGroup(gens); G
         Matrix group over Finite Field of size 7 with 3 generators (
         [1 2]  [1 1]  [2 0]
         [6 1], [0 1], [0 2]
@@ -244,12 +244,12 @@ def MatrixGroup(*gens, **kwds):
         ...
         ValueError: each generator must be an invertible matrix
 
-        sage: F = GF(5); MS = MatrixSpace(F, 2, 2)                                      # optional - sage.rings.finite_rings
-        sage: MatrixGroup([MS.0])                                                       # optional - sage.rings.finite_rings
+        sage: F = GF(5); MS = MatrixSpace(F, 2, 2)
+        sage: MatrixGroup([MS.0])
         Traceback (most recent call last):
         ...
         ValueError: each generator must be an invertible matrix
-        sage: MatrixGroup([MS.0], check=False)  # works formally but is mathematical nonsense   # optional - sage.rings.finite_rings
+        sage: MatrixGroup([MS.0], check=False)  # works formally but is mathematical nonsense
         Matrix group over Finite Field of size 5 with 1 generators (
         [1 0]
         [0 0]
@@ -319,15 +319,16 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
     """
     TESTS::
 
-        sage: m1 = matrix(SR, [[1,2], [3,4]])                                           # optional - sage.symbolic
-        sage: m2 = matrix(SR, [[1,3], [-1,0]])                                          # optional - sage.symbolic
-        sage: MatrixGroup(m1) == MatrixGroup(m1)                                        # optional - sage.symbolic
+        sage: # needs sage.symbolic
+        sage: m1 = matrix(SR, [[1,2], [3,4]])
+        sage: m2 = matrix(SR, [[1,3], [-1,0]])
+        sage: MatrixGroup(m1) == MatrixGroup(m1)
         True
-        sage: MatrixGroup(m1) == MatrixGroup(m1.change_ring(QQ))                        # optional - sage.symbolic
+        sage: MatrixGroup(m1) == MatrixGroup(m1.change_ring(QQ))
         False
-        sage: MatrixGroup(m1) == MatrixGroup(m2)                                        # optional - sage.symbolic
+        sage: MatrixGroup(m1) == MatrixGroup(m2)
         False
-        sage: MatrixGroup(m1, m2) == MatrixGroup(m2, m1)                                # optional - sage.symbolic
+        sage: MatrixGroup(m1, m2) == MatrixGroup(m2, m1)
         False
 
         sage: m1 = matrix(QQ, [[1,2], [3,4]])
@@ -339,9 +340,9 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
         sage: MatrixGroup(m1, m2) == MatrixGroup(m2, m1)
         False
 
-        sage: G = GL(2, GF(3))                                                          # optional - sage.rings.finite_rings
-        sage: H = G.as_matrix_group()                                                   # optional - sage.rings.finite_rings
-        sage: H == G, G == H                                                            # optional - sage.rings.finite_rings
+        sage: G = GL(2, GF(3))
+        sage: H = G.as_matrix_group()
+        sage: H == G, G == H
         (True, True)
     """
 
@@ -351,11 +352,12 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
 
         EXAMPLES::
 
-            sage: m1 = matrix(SR, [[1,2], [3,4]])                                       # optional - sage.symbolic
-            sage: m2 = matrix(SR, [[1,3], [-1,0]])                                      # optional - sage.symbolic
-            sage: G = MatrixGroup(m1, m2)                                               # optional - sage.symbolic
-            sage: TestSuite(G).run()                                                    # optional - sage.symbolic
-            sage: type(G)                                                               # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: m1 = matrix(SR, [[1,2], [3,4]])
+            sage: m2 = matrix(SR, [[1,3], [-1,0]])
+            sage: G = MatrixGroup(m1, m2)
+            sage: TestSuite(G).run()
+            sage: type(G)
             <class 'sage.groups.matrix_gps.finitely_generated.FinitelyGeneratedMatrixGroup_generic_with_category'>
 
             sage: from sage.groups.matrix_gps.finitely_generated import \
@@ -377,24 +379,24 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
 
         EXAMPLES::
 
-            sage: F = GF(3); MS = MatrixSpace(F, 2, 2)                                  # optional - sage.rings.finite_rings
-            sage: gens = [MS([[1,0], [0,1]]), MS([[1,1], [0,1]])]                       # optional - sage.rings.finite_rings
-            sage: G = MatrixGroup(gens)                                                 # optional - sage.rings.finite_rings
-            sage: gens[0] in G                                                          # optional - sage.rings.finite_rings
+            sage: F = GF(3); MS = MatrixSpace(F, 2, 2)
+            sage: gens = [MS([[1,0], [0,1]]), MS([[1,1], [0,1]])]
+            sage: G = MatrixGroup(gens)
+            sage: gens[0] in G
             True
-            sage: gens = G.gens()                                                       # optional - sage.rings.finite_rings
-            sage: gens[0] in G                                                          # optional - sage.rings.finite_rings
+            sage: gens = G.gens()
+            sage: gens[0] in G
             True
-            sage: gens = [MS([[1,0], [0,1]]), MS([[1,1], [0,1]])]                       # optional - sage.rings.finite_rings
+            sage: gens = [MS([[1,0], [0,1]]), MS([[1,1], [0,1]])]
 
-            sage: F = GF(5); MS = MatrixSpace(F, 2, 2)                                  # optional - sage.rings.finite_rings
-            sage: G = MatrixGroup([MS(1), MS([1,2, 3,4])])                              # optional - sage.rings.finite_rings
-            sage: G                                                                     # optional - sage.rings.finite_rings
+            sage: F = GF(5); MS = MatrixSpace(F, 2, 2)
+            sage: G = MatrixGroup([MS(1), MS([1,2, 3,4])])
+            sage: G
             Matrix group over Finite Field of size 5 with 2 generators (
             [1 0]  [1 2]
             [0 1], [3 4]
             )
-            sage: G.gens()                                                              # optional - sage.rings.finite_rings
+            sage: G.gens()
             (
             [1 0]  [1 2]
             [0 1], [3 4]
@@ -413,13 +415,13 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
 
         EXAMPLES::
 
-            sage: H = GL(2, GF(3))                                                      # optional - sage.rings.finite_rings
-            sage: h1, h2 = H([[1,0], [2,1]]), H([[1,1], [0,1]])                         # optional - sage.rings.finite_rings
-            sage: G = H.subgroup([h1, h2])                                              # optional - sage.rings.finite_rings
-            sage: G.gen(0)                                                              # optional - sage.rings.finite_rings
+            sage: H = GL(2, GF(3))
+            sage: h1, h2 = H([[1,0], [2,1]]), H([[1,1], [0,1]])
+            sage: G = H.subgroup([h1, h2])
+            sage: G.gen(0)
             [1 0]
             [2 1]
-            sage: G.gen(0).matrix() == h1.matrix()                                      # optional - sage.rings.finite_rings
+            sage: G.gen(0).matrix() == h1.matrix()
             True
         """
         return self.gens()[i]
@@ -434,10 +436,10 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
 
         EXAMPLES::
 
-            sage: H = GL(2, GF(3))                                                      # optional - sage.rings.finite_rings
-            sage: h1, h2 = H([[1,0], [2,1]]), H([[1,1], [0,1]])                         # optional - sage.rings.finite_rings
-            sage: G = H.subgroup([h1, h2])                                              # optional - sage.rings.finite_rings
-            sage: G.ngens()                                                             # optional - sage.rings.finite_rings
+            sage: H = GL(2, GF(3))
+            sage: h1, h2 = H([[1,0], [2,1]]), H([[1,1], [0,1]])
+            sage: G = H.subgroup([h1, h2])
+            sage: G.ngens()
             2
         """
         return len(self._gens_matrix)
@@ -455,10 +457,11 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
 
         Check that :trac:`22128` is fixed::
 
-            sage: R = MatrixSpace(SR, 2)                                                # optional - sage.symbolic
-            sage: G = MatrixGroup([R([[1, 1], [0, 1]])])                                # optional - sage.symbolic
-            sage: G.register_embedding(R)                                               # optional - sage.symbolic
-            sage: loads(dumps(G))                                                       # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: R = MatrixSpace(SR, 2)
+            sage: G = MatrixGroup([R([[1, 1], [0, 1]])])
+            sage: G.register_embedding(R)
+            sage: loads(dumps(G))
             Matrix group over Symbolic Ring with 1 generators (
             [1 1]
             [0 1]
@@ -470,10 +473,11 @@ class FinitelyGeneratedMatrixGroup_generic(MatrixGroup_generic):
         """
         EXAMPLES::
 
-            sage: m1 = matrix(SR, [[1,2], [3,4]])                                       # optional - sage.symbolic
-            sage: m2 = matrix(SR, [[1,3], [-1,0]])                                      # optional - sage.symbolic
-            sage: G = MatrixGroup(m1, m2)                                               # optional - sage.symbolic
-            sage: G._test_matrix_generators()                                           # optional - sage.symbolic
+            sage: # needs sage.symbolic
+            sage: m1 = matrix(SR, [[1,2], [3,4]])
+            sage: m2 = matrix(SR, [[1,3], [-1,0]])
+            sage: G = MatrixGroup(m1, m2)
+            sage: G._test_matrix_generators()
         """
         tester = self._tester(**options)
         for g,h in zip(self.gens(), MatrixGroup(self.gens()).gens()):

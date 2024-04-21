@@ -94,7 +94,7 @@ class PackageCreator(object):
         if pypi_package_name is None:
             pypi_package_name = self.package_name
         with open(os.path.join(self.path, 'dependencies'), 'w+') as f:
-            f.write('$(PYTHON) | $(PYTHON_TOOLCHAIN)\n\n')
+            f.write(' | $(PYTHON_TOOLCHAIN) $(PYTHON)\n\n')
             f.write('----------\nAll lines of this file are ignored except the first.\n')
         if source == 'normal':
             with open(os.path.join(self.path, 'spkg-install.in'), 'w+') as f:

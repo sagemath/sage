@@ -868,8 +868,11 @@ cdef class BasisMatroid(BasisExchangeMatroid):
         Return if the application of a groundset morphism to this matroid
         yields a relaxation of the given matroid.
 
-        M is a relaxation of N if the set of bases of M is a subset of the
-        bases of N.
+        `M` is a relaxation of `N` if the set of bases of `M` is a superset of the
+        bases of `N`.
+
+        This method assumes that ``self`` and ``other`` have the same rank
+        and does not check this condition.
 
         INPUT:
 
@@ -922,7 +925,10 @@ cdef class BasisMatroid(BasisExchangeMatroid):
 
     cpdef _is_isomorphism(self, other, morphism):
         """
-        Version of is_isomorphism() that does no type checking.
+        Version of :meth:`is_isomorphism` that does no type checking.
+
+        This method assumes that ``self`` and ``other`` have the same rank
+        and does not check this condition.
 
         INPUT:
 

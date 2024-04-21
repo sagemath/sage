@@ -187,7 +187,7 @@ class Groups(CategoryWithAxiom):
                 NotImplementedError: holomorph of General Linear Group of degree 4
                 over Rational Field not yet implemented
             """
-            raise NotImplementedError("holomorph of %s not yet implemented"%self)
+            raise NotImplementedError("holomorph of %s not yet implemented" % self)
 
         def cayley_table(self, names='letters', elements=None):
             r"""

@@ -98,7 +98,6 @@ cdef strassen_window_multiply_c(MatrixWindow C, MatrixWindow A,
 
     cdef MatrixWindow S0, S1, S2, S3, T0, T1 ,T2, T3, P0, P1, P2, P3, P4, P5, P6, U0, U1, U2, U3, U4, U5, U6
     cdef MatrixWindow X, Y
-    cdef Py_ssize_t tmp_cols, start_row
     X = A.new_empty_window(A_sub_nrows, max(A_sub_ncols,B_sub_ncols))
     Y = B.new_empty_window(A_sub_ncols, B_sub_ncols)
 

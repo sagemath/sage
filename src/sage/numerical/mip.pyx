@@ -993,11 +993,11 @@ cdef class MixedIntegerLinearProgram(SageObject):
         cdef str s
         cdef GenericBackend b = self._backend
 
-        result = list()
+        result = []
 
         # If indices is None, we actually want to return all constraints
         if indices is None:
-            indices = list(xrange(b.nrows()))
+            indices = list(range(b.nrows()))
 
         # Only one constraint
         if isinstance(indices, (int, Integer)):

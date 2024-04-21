@@ -4676,7 +4676,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
         """
         if self._nrows == 0:
             pivots = []
-            nonpivots = list(xrange(self._ncols))
+            nonpivots = list(range(self._ncols))
             X = self.__copy__()
             d = Integer(1)
             return pivots, nonpivots, X, d
@@ -4945,7 +4945,6 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 new_top = s*row_i  +  t*row_n
                 new_bot = bg*row_i - ag*row_n
 
-
                 # OK -- now we have to make sure the top part of the matrix
                 # but with row i replaced by
                 #     r = s*row_i[j]  +  t*row_n[j]
@@ -4953,7 +4952,7 @@ cdef class Matrix_integer_dense(Matrix_dense):
                 # function with the top part of A (all but last row) and the
                 # row r.
 
-                zz = list(xrange(A.nrows() - 1))
+                zz = list(range(A.nrows() - 1))
                 del zz[i]
                 top_mat = A.matrix_from_rows(zz)
                 new_pivots = list(pivots)

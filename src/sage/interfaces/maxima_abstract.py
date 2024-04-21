@@ -131,7 +131,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
 
             sage: maxima.chdir('/')
         """
-        self.lisp('(ext::cd "%s")'%dir)
+        self.lisp('(ext::cd "%s")' % dir)
 
     ###########################################
     # Interactive help
@@ -291,7 +291,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         # create NAME-IMPL, without the leading $).  This causes
         # name-impl to show up in $APROPOS.  We remove it.
         # https://sourceforge.net/p/maxima/bugs/3643/
-        cmd_list = self._eval_line('apropos("%s")'%s, error_check=False)
+        cmd_list = self._eval_line('apropos("%s")' % s, error_check=False)
         cmd_list = cmd_list.replace(' ', '').replace('\n', '').replace('\\ - ','-').replace('\\-','-')
         cmd_list = [x for x in cmd_list[1:-1].split(',') if x[0] != '?' and not x.endswith('-impl')]
         return [x for x in cmd_list if x.find(s) == 0]
@@ -322,7 +322,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             return self.__commands
         except AttributeError:
             self.__commands = sum(
-                [self.completions(chr(65+n), verbose=verbose)+
+                [self.completions(chr(65+n), verbose=verbose) +
                  self.completions(chr(97+n), verbose=verbose)
                  for n in range(26)], [])
         return self.__commands
@@ -826,12 +826,12 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         umax = urange[1]
         vmin = vrange[0]
         vmax = vrange[1]
-        cmd = 'plot3d([%s, %s, %s], [%s, %s, %s], [%s, %s, %s]'%(
+        cmd = 'plot3d([%s, %s, %s], [%s, %s, %s], [%s, %s, %s]' % (
             r[0], r[1], r[2], vars[0], umin, umax, vars[1], vmin, vmax)
         if options is None:
             cmd += ')'
         else:
-            cmd += ', %s)'%options
+            cmd += ', %s)' % options
         self(cmd)
 
     def de_solve(self, de, vars, ics=None):
@@ -861,18 +861,18 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             y = -...%e^-1*(5*%e^x-3*%e*x-3*%e)...
         """
         if not isinstance(vars, str):
-            str_vars = '%s, %s'%(vars[1], vars[0])
+            str_vars = '%s, %s' % (vars[1], vars[0])
         else:
             str_vars = vars
-        self.eval('depends(%s)'%str_vars)
+        self.eval('depends(%s)' % str_vars)
         m = self(de)
-        a = 'ode2(%s, %s)'%(m.name(), str_vars)
+        a = 'ode2(%s, %s)' % (m.name(), str_vars)
         if ics is not None:
             if len(ics) == 3:
-                cmd = "ic2("+a+",%s=%s,%s=%s,diff(%s,%s)=%s);"%(vars[0],ics[0], vars[1],ics[1], vars[1], vars[0], ics[2])
+                cmd = "ic2("+a+",%s=%s,%s=%s,diff(%s,%s)=%s);" % (vars[0],ics[0], vars[1],ics[1], vars[1], vars[0], ics[2])
                 return self(cmd)
             if len(ics) == 2:
-                return self("ic1("+a+",%s=%s,%s=%s);"%(vars[0],ics[0], vars[1],ics[1]))
+                return self("ic1("+a+",%s=%s,%s=%s);" % (vars[0],ics[0], vars[1],ics[1]))
         return self(a+";")
 
     def de_solve_laplace(self, de, vars, ics=None):
@@ -921,10 +921,10 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         if not (ics is None):
             d = len(ics)
             for i in range(0,d-1):
-                ic = 'atvalue(diff(%s(%s), %s, %s), %s = %s, %s)'%(
+                ic = 'atvalue(diff(%s(%s), %s, %s), %s = %s, %s)' % (
                     vars[1], vars[0], vars[0], i, vars[0], ics[0], ics[1+i])
                 self.eval(ic)
-        return self('desolve(%s, %s(%s))'%(de, vars[1], vars[0]))
+        return self('desolve(%s, %s(%s))' % (de, vars[1], vars[0]))
 
     def solve_linear(self, eqns,vars):
         """
@@ -1026,11 +1026,11 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
             sage: opts='[gnuplot_preamble, "set nokey"], [gnuplot_term, ps], [gnuplot_out_file, "zeta.eps"]'
             sage: maxima.plot_list(zeta_ptsx, zeta_ptsy, opts)      # not tested
         """
-        cmd = 'plot2d([discrete,%s, %s]'%(ptsx, ptsy)
+        cmd = 'plot2d([discrete,%s, %s]' % (ptsx, ptsy)
         if options is None:
             cmd += ')'
         else:
-            cmd += ', %s)'%options
+            cmd += ', %s)' % options
         self(cmd)
 
     def plot_multilist(self, pts_list, options=None):
@@ -1074,7 +1074,7 @@ class MaximaAbstract(ExtraTabCompletion, Interface):
         for i in range(n):
             if i < n-1:
                 cmd = cmd+'[discrete,'+str(pts_list[i][0])+','+str(pts_list[i][1])+'],'
-            if i==n-1:
+            if i == n-1:
                 cmd = cmd+'[discrete,'+str(pts_list[i][0])+','+str(pts_list[i][1])+']]'
         if options is None:
             self('plot2d('+cmd+')')
@@ -1182,11 +1182,11 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         # are what Maxima needs
         P = self.parent()
         try:
-            if P.eval("is (%s < %s)"%(self.name(), other.name())) == P._true_symbol():
+            if P.eval("is (%s < %s)" % (self.name(), other.name())) == P._true_symbol():
                 return rich_to_bool(op, -1)
-            elif P.eval("is (%s > %s)"%(self.name(), other.name())) == P._true_symbol():
+            elif P.eval("is (%s > %s)" % (self.name(), other.name())) == P._true_symbol():
                 return rich_to_bool(op, 1)
-            elif P.eval("is (%s = %s)"%(self.name(), other.name())) == P._true_symbol():
+            elif P.eval("is (%s = %s)" % (self.name(), other.name())) == P._true_symbol():
                 return rich_to_bool(op, 0)
         except TypeError:
             pass
@@ -1608,7 +1608,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         try:
             return float(repr(self.numer()))
         except ValueError:
-            raise TypeError("unable to coerce '%s' to float"%repr(self))
+            raise TypeError("unable to coerce '%s' to float" % repr(self))
 
     def __len__(self):
         """
@@ -1625,7 +1625,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
             6
         """
         P = self._check_valid()
-        return int(P.eval('length(%s)'%self.name()))
+        return int(P.eval('length(%s)' % self.name()))
 
     def dot(self, other):
         """
@@ -1646,7 +1646,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         """
         P = self._check_valid()
         Q = P(other)
-        return P('%s . %s'%(self.name(), Q.name()))
+        return P('%s . %s' % (self.name(), Q.name()))
 
     def __getitem__(self, n):
         r"""
@@ -1678,7 +1678,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         """
         n = int(n)
         if n < 0 or n >= len(self):
-            raise IndexError("n = (%s) must be between %s and %s"%(n, 0, len(self)-1))
+            raise IndexError("n = (%s) must be between %s and %s" % (n, 0, len(self)-1))
         # If you change the n+1 to n below, better change __iter__ as well.
         return InterfaceElement.__getitem__(self, n+1)
 
@@ -1740,7 +1740,7 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         """
         self._check_valid()
         P = self.parent()
-        return P('%s, %s'%(self.name(), args))
+        return P('%s, %s' % (self.name(), args))
 
     def _latex_(self):
         r"""
@@ -1849,10 +1849,10 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         from sage.matrix.matrix_space import MatrixSpace
         self._check_valid()
         P = self.parent()
-        nrows = int(P.eval('length(%s)'%self.name()))
+        nrows = int(P.eval('length(%s)' % self.name()))
         if nrows == 0:
             return MatrixSpace(R, 0, 0)(0)
-        ncols = int(P.eval('length(%s[1])'%self.name()))
+        ncols = int(P.eval('length(%s[1])' % self.name()))
         M = MatrixSpace(R, nrows, ncols)
         s = self.str().replace('matrix','').replace(',',"','").\
             replace("]','[","','").replace('([',"['").replace('])',"']")
@@ -1920,12 +1920,12 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
         P = self._check_valid()
 
         if other is None:
-            cmd = '%s %s'%(operation, self._name)
+            cmd = '%s %s' % (operation, self._name)
         elif isinstance(other, P._object_function_class()):
             fself = P.function('', repr(self))
             return fself._operation(operation, other)
         else:
-            cmd = '%s %s %s'%(self._name, operation, other._name)
+            cmd = '%s %s %s' % (self._name, operation, other._name)
         try:
             return P.new(cmd)
         except Exception as msg:
@@ -2026,8 +2026,8 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
         """
         P = self._check_valid()
         if len(args) == 1:
-            args = '(%s)'%args
-        return P('%s%s'%(self.name(), args))
+            args = '(%s)' % args
+        return P('%s%s' % (self.name(), args))
 
     def _repr_(self):
         """
@@ -2132,7 +2132,7 @@ class MaximaAbstractElementFunction(MaximaAbstractElement):
         """
         var = str(var)
         P = self._check_valid()
-        f = P('integrate(%s(%s), %s)'%(self.name(),
+        f = P('integrate(%s(%s), %s)' % (self.name(),
                         self.arguments(split=False), var))
 
         args = self.arguments()

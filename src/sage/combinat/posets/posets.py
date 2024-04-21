@@ -2065,7 +2065,7 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         if cover_labels is not None:
             if callable(cover_labels):
-                for v, w in graph.edges(sort=True, labels=False):
+                for v, w in graph.edges(sort=False, labels=False):
                     graph.set_edge_label(v, w, cover_labels(v, w))
             elif isinstance(cover_labels, dict):
                 for v, w in cover_labels:
@@ -2453,7 +2453,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             min_elmt = d[0]
             max_elmt = d[3]
 
-            if len(H.neighbors_in(max_elmt)) != 2:
+            if H.in_degree(max_elmt) != 2:
                 # Top of a diamond cannot cover anything but the two side elements
                 return False
 
@@ -2469,7 +2469,7 @@ class FinitePoset(UniqueRepresentation, Parent):
                         continue
                     for mx in potential_max:
                         if len(H.all_paths(mn, mx)) == 2:
-                            if len(H.neighbors_in(mx)) != 1:
+                            if H.in_degree(mx) != 1:
                                 # Max element covers something outside of double tailed diamond
                                 return False
                             # Success
@@ -3632,7 +3632,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         P = Poset(self._hasse_diagram)  # work on an int-labelled poset
         hasse_diagram = P.hasse_diagram()
         inc_graph = P.incomparability_graph()
-        inc_P = inc_graph.edges(sort=True, labels=False)
+        inc_P = inc_graph.edges(sort=False, labels=False)
 
         # cycles is the list of all cycles found during the execution of the
         # algorithm
@@ -5323,9 +5323,9 @@ class FinitePoset(UniqueRepresentation, Parent):
 
         for i0, i1 in Subsets(factors_range, 2):
             for x in prod_dg:
-                neigh0 = [y for y in prod_dg.neighbors(x)
+                neigh0 = [y for y in prod_dg.neighbor_iterator(x)
                           if edge_color(x, y) == i0]
-                neigh1 = [z for z in prod_dg.neighbors(x)
+                neigh1 = [z for z in prod_dg.neighbor_iterator(x)
                           if edge_color(x, z) == i1]
                 for x0, x1 in cartesian_product_iterator([neigh0, neigh1]):
                     x2 = list(x0)
@@ -7175,7 +7175,7 @@ class FinitePoset(UniqueRepresentation, Parent):
         """
         from sage.geometry.polyhedron.constructor import Polyhedron
         ineqs = [[0] + [ZZ(j == v) - ZZ(j == u) for j in self]
-                 for u, v, w in self.hasse_diagram().edges(sort=True)]
+                 for u, v in self.hasse_diagram().edges(sort=False, labels=False)]
         for i in self.maximal_elements():
             ineqs += [[1] + [-ZZ(j == i) for j in self]]
         for i in self.minimal_elements():
@@ -8369,7 +8369,7 @@ class FinitePoset(UniqueRepresentation, Parent):
             pdict[(0, i)] = [(1, j) for j in self if self.ge(i, j)]
             pdict[(1, i)] = [(2, 0)]
         G = DiGraph(pdict, format="dict_of_lists")
-        a = {(u, v): 0 for (u, v, l) in G.edge_iterator()}
+        a = {e: 0 for e in G.edge_iterator(labels=False)}
         for i in self:
             a[((0, i), (1, i))] = 1
         return (G, a)
@@ -9108,19 +9108,19 @@ def _ford_fulkerson_chronicle(G, s, t, a):
         (11, 2)
     """
     # pi: potential function as a dictionary.
-    pi = {v: 0 for v in G.vertex_iterator()}
+    pi = {v: 0 for v in G}
     # p: value of the potential pi.
     p = 0
 
     # f: flow function as a dictionary.
-    f = {(u, v): 0 for (u, v, l) in G.edge_iterator()}
+    f = {edge: 0 for edge in G.edge_iterator(labels=False)}
     # val: value of the flow f. (Cannot call it v due to Python's asinine
     # handling of for loops.)
     val = 0
 
     # capacity: capacity function as a dictionary. Here, just the
     # indicator function of the set of arcs of G.
-    capacity = {(u, v): 1 for (u, v, l) in G.edge_iterator()}
+    capacity = {edge: 1 for edge in G.edge_iterator(labels=False)}
 
     while True:
 
@@ -9128,30 +9128,29 @@ def _ford_fulkerson_chronicle(G, s, t, a):
 
         # Gprime: directed graph G' from Britz-Fomin, Section 7.
         Gprime = DiGraph()
-        Gprime.add_vertices(G.vertices(sort=False))
-        for (u, v, l) in G.edge_iterator():
+        Gprime.add_vertices(G)
+        for u, v in G.edge_iterator(labels=False):
             if pi[v] - pi[u] == a[(u, v)]:
                 if f[(u, v)] < capacity[(u, v)]:
                     Gprime.add_edge(u, v)
                 elif f[(u, v)] > 0:
                     Gprime.add_edge(v, u)
 
-        # X: list of vertices of G' reachable from s, along with
-        # the shortest paths from s to them.
-        X = Gprime.shortest_paths(s)
+        # X: list of vertices of G' reachable from s
+        X = set(Gprime.depth_first_search(s))
         if t in X:
             # Step MC2a in Britz-Fomin, Algorithm 7.2.
-            shortest_path = X[t]
+            shortest_path = Gprime.shortest_path(s, t, by_weight=False)
             shortest_path_in_edges = zip(shortest_path[:-1], shortest_path[1:])
-            for (u, v) in shortest_path_in_edges:
-                if v in G.neighbors_out(u):
+            for u, v in shortest_path_in_edges:
+                if v in G.neighbor_out_iterator(u):
                     f[(u, v)] += 1
                 else:
                     f[(v, u)] -= 1
             val += 1
         else:
             # Step MC2b in Britz-Fomin, Algorithm 7.2.
-            for v in G.vertex_iterator():
+            for v in G:
                 if v not in X:
                     pi[v] += 1
             p += 1

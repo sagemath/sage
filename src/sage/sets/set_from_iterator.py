@@ -509,7 +509,7 @@ class Decorator():
             sage: S[0][2]
             '        Return the number of elements of this group.\n'
             sage: S[0][25]
-            '            return Integer(1)\n'
+            '        if not gens:\n'
         """
         from sage.misc.sageinspect import sage_getsourcelines
         return sage_getsourcelines(self.f)

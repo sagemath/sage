@@ -2,12 +2,12 @@
 r"""
 Weyl Groups
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2009    Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 
 from sage.misc.cachefunc import cached_method, cached_in_parent_method
 from sage.misc.lazy_import import LazyImport
@@ -315,7 +315,7 @@ class WeylGroups(Category_singleton):
 
             from sage.graphs.digraph import DiGraph
             return DiGraph(visited,
-                           name="Parabolic Quantum Bruhat Graph of %s for nodes %s"%(self, index_set),
+                           name="Parabolic Quantum Bruhat Graph of %s for nodes %s" % (self, index_set),
                            format="dict_of_dicts",
                            data_structure="static_sparse")
 
@@ -493,13 +493,13 @@ class WeylGroups(Category_singleton):
             W = self.parent()
             pieri_factors = W.pieri_factors()
             from sage.rings.rational_field import QQ
-            R = QQ[','.join('x%s'%l for l in range(1,pieri_factors.max_length()+1))]
+            R = QQ[','.join('x%s' % l for l in range(1, pieri_factors.max_length()+1))]
             x = R.gens()
             if self.is_one():
                 return R.one()
 
             return R(sum(2**(pieri_factors.stanley_symm_poly_weight(u))*x[u.length()-1] * v.stanley_symmetric_function_as_polynomial(max_length=u.length())
-                           for (u,v) in self.left_pieri_factorizations(max_length)
+                           for (u, v) in self.left_pieri_factorizations(max_length)
                            if u != W.one()))
 
         def stanley_symmetric_function(self):
@@ -747,7 +747,7 @@ class WeylGroups(Category_singleton):
                 [(s1*s2*s1, alphacheck[1] + alphacheck[2] + alphacheck[3]),
                  (s3*s2*s1, alphacheck[2]), (s3*s1*s2, alphacheck[1])]
             """
-            return [(x[0],x[1].reflection_to_coroot())
+            return [(x[0], x[1].reflection_to_coroot())
                     for x in self.bruhat_lower_covers_reflections()]
 
         def bruhat_upper_covers_coroots(self):
@@ -770,7 +770,7 @@ class WeylGroups(Category_singleton):
                  (s3*s4*s1*s2*s1, alphacheck[4]),
                  (s4*s3*s1*s2*s1, alphacheck[1] + alphacheck[2] + alphacheck[3] + alphacheck[4])]
             """
-            return [(x[0],x[1].reflection_to_coroot())
+            return [(x[0], x[1].reflection_to_coroot())
                     for x in self.bruhat_upper_covers_reflections()]
 
         def quantum_bruhat_successors(self, index_set=None, roots=False, quantum_only=False):
@@ -840,12 +840,12 @@ class WeylGroups(Category_singleton):
                 wrc = wr.coset_representative(index_set)
                 if wrc == wr and wr.length() == w_length_plus_one and not quantum_only:
                     if roots:
-                        successors.append((wr,alpha))
+                        successors.append((wr, alpha))
                     else:
                         successors.append(wr)
                 elif alpha.quantum_root() and wrc.length() == w_length_plus_one - lattice.nonparabolic_positive_root_sum(index_set).scalar(alpha.associated_coroot()):
                     if roots:
-                        successors.append((wrc,alpha))
+                        successors.append((wrc, alpha))
                     else:
                         successors.append(wrc)
             return successors

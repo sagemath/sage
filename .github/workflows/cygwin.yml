@@ -73,14 +73,14 @@ jobs:
         choco install git python39 python39-pip --source cygwin
 
     - name: Check out SageMath
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: ${{ inputs.sage_repo }}
         ref: ${{ inputs.sage_ref }}
         fetch-depth: 2000
 
     - name: Check out git-trac-command
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         repository: sagemath/git-trac-command
         path: git-trac-command

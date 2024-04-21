@@ -146,7 +146,7 @@ jobs:
       EXTRA_SAGE_PACKAGES:  ${{ inputs.extra_sage_packages }}
     steps:
       - name: Check out SageMath
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: ${{ inputs.sage_repo }}
           ref: ${{ inputs.sage_ref }}

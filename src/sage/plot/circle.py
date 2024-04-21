@@ -133,7 +133,7 @@ class Circle(GraphicPrimitive):
             sage: c = C[0]; c
             Circle defined by (2.0,3.0) with r=5.0
         """
-        return "Circle defined by (%s,%s) with r=%s"%(self.x, self.y, self.r)
+        return "Circle defined by (%s,%s) with r=%s" % (self.x, self.y, self.r)
 
     def _render_on_subplot(self, subplot):
         """
@@ -148,7 +148,7 @@ class Circle(GraphicPrimitive):
         options = self.options()
         p = patches.Circle((float(self.x), float(self.y)), float(self.r), clip_on=options['clip'])
         if not options['clip']:
-            self._bbox_extra_artists=[p]
+            self._bbox_extra_artists = [p]
         p.set_linewidth(float(options['thickness']))
         p.set_fill(options['fill'])
         a = float(options['alpha'])

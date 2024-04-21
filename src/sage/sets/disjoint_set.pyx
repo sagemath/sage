@@ -86,7 +86,7 @@ def DisjointSet(arg):
 
     INPUT:
 
-    -  ``arg`` -- non negative integer or an iterable of hashable objects.
+    - ``arg`` -- non negative integer or an iterable of hashable objects.
 
     EXAMPLES:
 
@@ -140,6 +140,7 @@ def DisjointSet(arg):
         return DisjointSet_of_integers(arg)
     else:
         return DisjointSet_of_hashables(arg)
+
 
 cdef class DisjointSet_class(SageObject):
     r"""
@@ -398,7 +399,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         """
         l = []
         cdef int i
-        for i from 0 <= i < self.cardinality():
+        for i in range(self.cardinality()):
             l.append(self._nodes.parent[i])
         return l
 
@@ -439,7 +440,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             sage: d
             {{0, 1, 2, 3}, {4}}
         """
-        for i,parent in enumerate(l):
+        for i, parent in enumerate(l):
             self.union(parent, i)
 
     def find(self, int i):
@@ -491,8 +492,8 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
 
         INPUT:
 
-        -  ``i`` - element in ``self``
-        -  ``j`` - element in ``self``
+        - ``i`` -- element in ``self``
+        - ``j`` -- element in ``self``
 
         EXAMPLES::
 
@@ -515,9 +516,9 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         """
         cdef int card = self._nodes.degree
         if i < 0 or i >= card:
-            raise ValueError('i(=%s) must be between 0 and %s'%(i, card-1))
+            raise ValueError('i(=%s) must be between 0 and %s' % (i, card - 1))
         if j < 0 or j >= card:
-            raise ValueError('j(=%s) must be between 0 and %s'%(j, card-1))
+            raise ValueError('j(=%s) must be between 0 and %s' % (j, card - 1))
         OP_join(self._nodes, i, j)
 
     def root_to_elements_dict(self):
@@ -541,7 +542,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         """
         s = {}
         cdef int i
-        for i from 0 <= i < self.cardinality():
+        for i in range(self.cardinality()):
             o = self.find(i)
             if o not in s:
                 s[o] = []
@@ -565,7 +566,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         """
         d = {}
         cdef int i
-        for i from 0 <= i < self.cardinality():
+        for i in range(self.cardinality()):
             d[i] = self.find(i)
         return d
 
@@ -597,11 +598,8 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             {{0}, {1, 2, 3, 4}}
             sage: d.to_digraph().edges(sort=True)
             [(0, 0, None), (1, 1, None), (2, 1, None), (3, 1, None), (4, 1, None)]
-
         """
-        d = {}
-        for i from 0 <= i < self.cardinality():
-            d[i] = [self._nodes.parent[i]]
+        d = {i: [self._nodes.parent[i]] for i in range(self.cardinality())}
         from sage.graphs.graph import DiGraph
         return DiGraph(d)
 
@@ -639,7 +637,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
 
         INPUT:
 
-        -  ``iterable`` -- An iterable of hashable objects.
+        - ``iterable`` -- An iterable of hashable objects.
 
         EXAMPLES::
 
@@ -654,7 +652,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
         """
         self._int_to_el = []
         self._el_to_int = {}
-        for (i,e) in enumerate(iterable):
+        for i, e in enumerate(iterable):
             self._int_to_el.append(e)
             self._el_to_int[e] = i
         self._d = DisjointSet_of_integers(len(self._int_to_el))
@@ -716,7 +714,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
         gs = self._d.__getstate__()
         l = []
         cdef int i
-        for i from 0 <= i < self.cardinality():
+        for i in range(self.cardinality()):
             l.append(self._int_to_el[gs[i]])
         return list(zip(self._int_to_el, l))
 
@@ -743,7 +741,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: d
             {{'a', 'b', 'c', 'd', 'e'}}
         """
-        for a,b in l:
+        for a, b in l:
             self.union(a, b)
 
     def find(self, e):
@@ -794,8 +792,8 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
 
         INPUT:
 
-        -  ``e`` - element in ``self``
-        -  ``f`` - element in ``self``
+        - ``e`` -- element in ``self``
+        - ``f`` -- element in ``self``
 
         EXAMPLES::
 
@@ -889,7 +887,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             [(0, 0, None), (1, 1, None), (2, 1, None), (3, 1, None), (4, 1, None)]
         """
         d = {}
-        for i from 0 <= i < self.cardinality():
+        for i in range(self.cardinality()):
             e = self._int_to_el[i]
             p = self._int_to_el[self._nodes.parent[i]]
             d[e] = [p]

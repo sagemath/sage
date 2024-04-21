@@ -151,7 +151,7 @@ class HeckeModules(Category_module):
             """
             # TODO: double check that it's the correct HeckeModules category below:
             if category is not None and not category.is_subcategory(HeckeModules(self.base_ring())):
-                raise TypeError("%s is not a subcategory of %s"%(category, HeckeModules(self.base_ring())))
+                raise TypeError("%s is not a subcategory of %s" % (category, HeckeModules(self.base_ring())))
             from sage.modular.hecke.homspace import HeckeModuleHomspace
             return HeckeModuleHomspace(self, Y, category=category)
 

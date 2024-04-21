@@ -84,8 +84,10 @@ def get_basename(path):
         sage: from sage.doctest.sources import get_basename
         sage: from sage.env import SAGE_SRC
         sage: import os
-        sage: get_basename(os.path.join(SAGE_SRC,'sage','doctest','sources.py'))
+        sage: get_basename(os.path.join(SAGE_SRC, 'sage', 'doctest', 'sources.py'))
         'sage.doctest.sources'
+        sage: get_basename(os.path.join(SAGE_SRC, 'sage', 'structure', 'element.pxd'))
+        'sage.structure.element.pxd'
     """
     if path is None:
         return None
@@ -111,10 +113,14 @@ def get_basename(path):
         # it goes.
         while is_package_or_sage_namespace_package_dir(root):
             root = os.path.dirname(root)
-    fully_qualified_path = os.path.splitext(path[len(root) + 1:])[0]
+    fully_qualified_path, ext = os.path.splitext(path[len(root) + 1:])
     if os.path.split(path)[1] == '__init__.py':
         fully_qualified_path = fully_qualified_path[:-9]
-    return fully_qualified_path.replace(os.path.sep, '.')
+    basename = fully_qualified_path.replace(os.path.sep, '.')
+    if ext in ['.pxd', '.pxi']:
+        # disambiguate from .pyx with the same basename
+        basename += ext
+    return basename
 
 
 class DocTestSource():

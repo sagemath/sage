@@ -203,7 +203,7 @@ class FiniteDimensionalSemisimpleAlgebrasWithBasis(CategoryWithAxiom_over_base_r
                                       for subalgebra in subalgebras
                                       for idempotent in subalgebra._orthogonal_decomposition()])
                 # TODO: Should this be an assertion check?
-                raise Exception("Unable to fully decompose %s!"%self)
+                raise Exception("Unable to fully decompose %s!" % self)
 
             @cached_method
             def central_orthogonal_idempotents(self):

@@ -92,6 +92,7 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.polynomial.laurent_polynomial_ring import LaurentPolynomialRing
 from sage.sets.set import Set
+from sage.structure.element import Expression
 from sage.structure.richcmp import richcmp, rich_to_bool
 
 lazy_import('sage.libs.braiding',
@@ -519,14 +520,14 @@ class Braid(FiniteTypeArtinGroupElement):
             False
             sage: B = BraidGroup(4, 's')
             sage: b = B([1, 2, 3, 1, 2, 1])
-            sage: b.plot()
+            sage: b.plot()                                                              # needs sage.plot
             Graphics object consisting of 30 graphics primitives
-            sage: b.plot(color=["red", "blue", "red", "blue"])
+            sage: b.plot(color=["red", "blue", "red", "blue"])                          # needs sage.plot
             Graphics object consisting of 30 graphics primitives
 
             sage: B.<s,t> = BraidGroup(3)
             sage: b = t^-1*s^2
-            sage: b.plot(orientation="left-right", color="red")
+            sage: b.plot(orientation="left-right", color="red")                         # needs sage.plot
             Graphics object consisting of 12 graphics primitives
         """
         from sage.plot.bezier_path import bezier_path
@@ -620,11 +621,11 @@ class Braid(FiniteTypeArtinGroupElement):
 
             sage: B = BraidGroup(4, 's')
             sage: b = B([1, 2, 3, 1, 2, 1])
-            sage: b.plot3d()
+            sage: b.plot3d()                                                            # needs sage.plot sage.symbolic
             Graphics3d Object
-            sage: b.plot3d(color="red")
+            sage: b.plot3d(color="red")                                                 # needs sage.plot sage.symbolic
             Graphics3d Object
-            sage: b.plot3d(color=["red", "blue", "red", "blue"])
+            sage: b.plot3d(color=["red", "blue", "red", "blue"])                        # needs sage.plot sage.symbolic
             Graphics3d Object
         """
         from sage.plot.plot3d.shapes2 import bezier3d
@@ -826,8 +827,8 @@ class Braid(FiniteTypeArtinGroupElement):
             Univariate Quotient Polynomial Ring in Yrbar
               over Multivariate Laurent Polynomial Ring in s0r, s1r
               over Integer Ring with modulus Yr^2 + s0r^2*s1r^2 - s0r^2 - s1r^2 + 1
-            sage: HopfLGs = Hopf.links_gould_matrix(symbolics=True)
-            sage: HopfLGs.base_ring()
+            sage: HopfLGs = Hopf.links_gould_matrix(symbolics=True)                     # needs sage.symbolic
+            sage: HopfLGs.base_ring()                                                   # needs sage.symbolic
             Symbolic Ring
         """
         rep = self.parent()._links_gould_representation(symbolics=symbolics)
@@ -1030,15 +1031,15 @@ class Braid(FiniteTypeArtinGroupElement):
 
             sage: B = BraidGroup(9)
             sage: b = B([1, 2, 3, 4, 5, 6, 7, 8])
-            sage: b.jones_polynomial()
+            sage: b.jones_polynomial()                                                  # needs sage.symbolic
             1
 
             sage: B = BraidGroup(2)
             sage: b = B([])
-            sage: b._jones_polynomial
+            sage: b._jones_polynomial                                                   # needs sage.symbolic
             -A^-2 - A^2
             sage: b = B([-1, -1, -1])
-            sage: b._jones_polynomial
+            sage: b._jones_polynomial                                                   # needs sage.symbolic
             -A^-16 + A^-12 + A^-4
         """
         trace = self.markov_trace(normalized=False)
@@ -1086,25 +1087,26 @@ class Braid(FiniteTypeArtinGroupElement):
 
             sage: B = BraidGroup(9)
             sage: b = B([1, 2, 3, 4, 5, 6, 7, 8])
-            sage: b.jones_polynomial()
+            sage: b.jones_polynomial()                                                  # needs sage.symbolic
             1
 
         Two unlinked unknots::
 
             sage: B = BraidGroup(2)
             sage: b = B([])
-            sage: b.jones_polynomial()
+            sage: b.jones_polynomial()                                                  # needs sage.symbolic
             -sqrt(t) - 1/sqrt(t)
 
         The Hopf link::
 
             sage: B = BraidGroup(2)
             sage: b = B([-1,-1])
-            sage: b.jones_polynomial()
+            sage: b.jones_polynomial()                                                  # needs sage.symbolic
             -1/sqrt(t) - 1/t^(5/2)
 
         Different representations of the trefoil and one of its mirror::
 
+            sage: # needs sage.symbolic
             sage: B = BraidGroup(2)
             sage: b = B([-1, -1, -1])
             sage: b.jones_polynomial(skein_normalization=True)
@@ -1129,7 +1131,7 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: B = BraidGroup(4)
             sage: b11n42 = B([1, -2, 3, -2, 3, -2, -2, -1, 2, -3, -3, 2, 2])
             sage: b11n34 = B([1, 1, 2, -3, 2, -3, 1, -2, -2, -3, -3])
-            sage: bool(b11n42.jones_polynomial() == b11n34.jones_polynomial())
+            sage: bool(b11n42.jones_polynomial() == b11n34.jones_polynomial())          # needs sage.symbolic
             True
         """
         if skein_normalization:
@@ -1138,12 +1140,14 @@ class Braid(FiniteTypeArtinGroupElement):
             else:
                 return self._jones_polynomial(variab)
         else:
-            from sage.symbolic.ring import SR
             from sage.rings.integer_ring import ZZ
             if variab is None:
                 variab = 't'
+            if not isinstance(variab, Expression):
+                from sage.symbolic.ring import SR
+                variab = SR(variab)
             # We force the result to be in the symbolic ring because of the expand
-            return self._jones_polynomial(SR(variab)**(ZZ(1)/ZZ(4))).expand()
+            return self._jones_polynomial(variab**(ZZ(1)/ZZ(4))).expand()
 
     @cached_method
     def _enhanced_states(self):
@@ -1505,15 +1509,15 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: b = B([-2, 2, -4, -4, 4, -5, -1, 4, -1, 1])
             sage: L1 = b.left_normal_form(); L1
             (s0^-1*s1^-1*s0^-1*s2^-1*s1^-1*s0^-1*s3^-1*s2^-1*s1^-1*s0^-1*s4^-1*s3^-1*s2^-1*s1^-1*s0^-1,
-            s0*s2*s1*s0*s3*s2*s1*s0*s4*s3*s2*s1,
-            s3)
+             s0*s2*s1*s0*s3*s2*s1*s0*s4*s3*s2*s1,
+             s3)
             sage: L1 == b.left_normal_form()
             True
             sage: B([1]).left_normal_form(algorithm='artin')
             (1, s0)
             sage: B([-3]).left_normal_form(algorithm='artin')
             (s0^-1*s1^-1*s0^-1*s2^-1*s1^-1*s0^-1*s3^-1*s2^-1*s1^-1*s0^-1*s4^-1*s3^-1*s2^-1*s1^-1*s0^-1,
-            s0*s1*s2*s3*s4*s0*s1*s2*s3*s1*s2*s0*s1*s0)
+             s0*s1*s2*s3*s4*s0*s1*s2*s3*s1*s2*s0*s1*s0)
             sage: B = BraidGroup(3)
             sage: B([1,2,-1]).left_normal_form()
             (s0^-1*s1^-1*s0^-1, s1*s0, s0*s1)
@@ -1646,9 +1650,9 @@ class Braid(FiniteTypeArtinGroupElement):
             sage: b = B([1, 2, -1, -2, -2, 1])
             sage: b.super_summit_set()
             [s0^-1*s1^-1*s0^-2*s1^2*s0^2,
-            (s0^-1*s1^-1*s0^-1)^2*s1^2*s0^3*s1,
-            (s0^-1*s1^-1*s0^-1)^2*s1*s0^3*s1^2,
-            s0^-1*s1^-1*s0^-2*s1^-1*s0*s1^3*s0]
+             (s0^-1*s1^-1*s0^-1)^2*s1^2*s0^3*s1,
+             (s0^-1*s1^-1*s0^-1)^2*s1*s0^3*s1^2,
+             s0^-1*s1^-1*s0^-2*s1^-1*s0*s1^3*s0]
 
         """
         sss = supersummitset(self)
@@ -1733,8 +1737,8 @@ class Braid(FiniteTypeArtinGroupElement):
             True
             sage: d1 * a / d1 == c
             False
-            sage: l = sage.groups.braid.conjugatingbraid(a,c)
-            sage: d1 == B._element_from_libbraiding(l)
+            sage: l = sage.groups.braid.conjugatingbraid(a,c)                           # needs sage.groups
+            sage: d1 == B._element_from_libbraiding(l)                                  # needs sage.groups
             True
             sage: b = B([2, 2, 2, 2, 1])
             sage: c = b * a / b
@@ -1747,9 +1751,9 @@ class Braid(FiniteTypeArtinGroupElement):
             False
             sage: d1
             s1^2*s0^2*s1^2*s0
-            sage: l = sage.groups.braid.conjugatingbraid(a,c)
-            sage: d2 = B._element_from_libbraiding(l)
-            sage: len(d2.Tietze())
+            sage: l = sage.groups.braid.conjugatingbraid(a,c)                           # needs sage.groups
+            sage: d2 = B._element_from_libbraiding(l)                                   # needs sage.groups
+            sage: len(d2.Tietze())                                                      # needs sage.groups
             13
             sage: c.conjugating_braid(b) is None
             True
@@ -1891,17 +1895,17 @@ class Braid(FiniteTypeArtinGroupElement):
             [[s0*s1*s0^2, (s0*s1)^2]]
             sage: a.ultra_summit_set()
             [[(s0^-1*s1^-1*s0^-1)^2*s1^3*s0^2*s1^3,
-            (s0^-1*s1^-1*s0^-1)^2*s1^2*s0^2*s1^4,
-            (s0^-1*s1^-1*s0^-1)^2*s1*s0^2*s1^5,
-            s0^-1*s1^-1*s0^-2*s1^5*s0,
-            (s0^-1*s1^-1*s0^-1)^2*s1^5*s0^2*s1,
-            (s0^-1*s1^-1*s0^-1)^2*s1^4*s0^2*s1^2],
-            [s0^-1*s1^-1*s0^-2*s1^-1*s0^2*s1^2*s0^3,
-            s0^-1*s1^-1*s0^-2*s1^-1*s0*s1^2*s0^4,
-            s0^-1*s1^-1*s0^-2*s1*s0^5,
-            (s0^-1*s1^-1*s0^-1)^2*s1*s0^6*s1,
-            s0^-1*s1^-1*s0^-2*s1^-1*s0^4*s1^2*s0,
-            s0^-1*s1^-1*s0^-2*s1^-1*s0^3*s1^2*s0^2]]
+              (s0^-1*s1^-1*s0^-1)^2*s1^2*s0^2*s1^4,
+              (s0^-1*s1^-1*s0^-1)^2*s1*s0^2*s1^5,
+              s0^-1*s1^-1*s0^-2*s1^5*s0,
+              (s0^-1*s1^-1*s0^-1)^2*s1^5*s0^2*s1,
+              (s0^-1*s1^-1*s0^-1)^2*s1^4*s0^2*s1^2],
+             [s0^-1*s1^-1*s0^-2*s1^-1*s0^2*s1^2*s0^3,
+              s0^-1*s1^-1*s0^-2*s1^-1*s0*s1^2*s0^4,
+              s0^-1*s1^-1*s0^-2*s1*s0^5,
+              (s0^-1*s1^-1*s0^-1)^2*s1*s0^6*s1,
+              s0^-1*s1^-1*s0^-2*s1^-1*s0^4*s1^2*s0,
+              s0^-1*s1^-1*s0^-2*s1^-1*s0^3*s1^2*s0^2]]
         """
         uss = ultrasummitset(self)
         B = self.parent()
@@ -2573,10 +2577,10 @@ class BraidGroup_class(FiniteTypeArtinGroup):
              d*f*d^-1*f^-1,
              e*f*e*f^-1*e^-1*f^-1)
 
-             sage: BraidGroup([])
-             Traceback (most recent call last):
-             ...
-             ValueError: the number of strands must be at least 2
+            sage: BraidGroup([])
+            Traceback (most recent call last):
+            ...
+            ValueError: the number of strands must be at least 2
         """
         n = len(names)
         # n is the number of generators, not the number of strands
@@ -2625,7 +2629,7 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         TESTS::
 
             sage: B1 = BraidGroup(5)
-            sage: B1 # indirect doctest
+            sage: B1  # indirect doctest
             Braid group on 5 strands
         """
         return "Braid group on %s strands" % self._nstrands
@@ -2989,11 +2993,11 @@ class BraidGroup_class(FiniteTypeArtinGroup):
         The direct sum of endomorphism spaces of these vector spaces make up
         the entire Temperley--Lieb algebra::
 
-            sage: import sage.combinat.diagram_algebras as da
+            sage: import sage.combinat.diagram_algebras as da                           # needs sage.combinat
             sage: B = BraidGroup(6)
             sage: dimensions = [B.dimension_of_TL_space(d)**2 for d in [0, 2, 4, 6]]
             sage: total_dim = sum(dimensions)
-            sage: total_dim == len(list(da.temperley_lieb_diagrams(6)))  # long time
+            sage: total_dim == len(list(da.temperley_lieb_diagrams(6)))         # long time, needs sage.combinat
             True
         """
         n = self.strands()
@@ -3539,14 +3543,14 @@ def BraidGroup(n=None, names='s'):
         ....:              ret.add(prod(w))
         ....:     return ret
         sage: B = BraidGroup(4)
-        sage: GB = B.cayley_graph(elements=ball(B, 4), generators=B.gens()); GB
+        sage: GB = B.cayley_graph(elements=ball(B, 4), generators=B.gens()); GB         # needs sage.combinat sage.graphs
         Digraph on 31 vertices
 
     Since the braid group has nontrivial relations, this graph contains less
     vertices than the one associated to the free group (which is a tree)::
 
         sage: F = FreeGroup(3)
-        sage: GF = F.cayley_graph(elements=ball(F, 4), generators=F.gens()); GF
+        sage: GF = F.cayley_graph(elements=ball(F, 4), generators=F.gens()); GF         # needs sage.combinat sage.graphs
         Digraph on 40 vertices
 
     TESTS::

@@ -598,7 +598,7 @@ class HasseDiagram(DiGraph):
         """
         n = self.order()
         v_up = (frozenset(self.depth_first_search(v)) for v in range(n))
-        v_down = [frozenset(self.depth_first_search(v, neighbors=self.neighbors_in))
+        v_down = [frozenset(self.depth_first_search(v, neighbors=self.neighbor_in_iterator))
                   for v in range(n)]
         self._intervals = [[sorted(up.intersection(down)) for down in v_down]
                            for up in v_up]
@@ -1232,7 +1232,7 @@ class HasseDiagram(DiGraph):
             [0, 1, 2, 3, 4, 5, 6, 7, 8, 10]
         """
         return sorted(self.depth_first_search(elements,
-                                              neighbors=self.neighbors_in))
+                                              neighbors=self.neighbor_in_iterator))
 
     def order_ideal_cardinality(self, elements):
         r"""
@@ -1256,7 +1256,7 @@ class HasseDiagram(DiGraph):
                 continue
             size += 1
             seen.add(v)
-            q.extend(self.neighbors_in(v))
+            q.extend(self.neighbor_in_iterator(v))
 
         return ZZ(size)
 
@@ -2545,9 +2545,9 @@ class HasseDiagram(DiGraph):
             sage: H.common_upper_covers([4, 5])                                         # optional - sage.combinat
             [6]
         """
-        covers = set(self.neighbors_out(vertices.pop()))
+        covers = set(self.neighbor_out_iterator(vertices.pop()))
         for v in vertices:
-            covers = covers.intersection(self.neighbors_out(v))
+            covers = covers.intersection(self.neighbor_out_iterator(v))
         return list(covers)
 
     def common_lower_covers(self, vertices):
@@ -2566,9 +2566,9 @@ class HasseDiagram(DiGraph):
             sage: H.common_lower_covers([4, 5])                                         # optional - sage.combinat
             [3]
         """
-        covers = set(self.neighbors_in(vertices.pop()))
+        covers = set(self.neighbor_in_iterator(vertices.pop()))
         for v in vertices:
-            covers = covers.intersection(self.neighbors_in(v))
+            covers = covers.intersection(self.neighbor_in_iterator(v))
         return list(covers)
 
     def _trivial_nonregular_congruence(self):
@@ -2764,7 +2764,7 @@ class HasseDiagram(DiGraph):
                     break
 
         # Special case to handle at last.
-        if len(self.neighbors_out(0)) == 1:
+        if self.out_degree(0) == 1:
             result.append(set(range(1, N)))
 
         return result
@@ -2830,8 +2830,8 @@ class HasseDiagram(DiGraph):
         uc = next(self.neighbor_out_iterator(a))
         if self.in_degree(uc) == 1:
             return uc
-        lt_a = set(self.depth_first_search(a, neighbors=self.neighbors_in))
-        tmp = list(self.depth_first_search(uc, neighbors=lambda v: [v_ for v_ in self.neighbor_in_iterator(v) if v_ not in lt_a]))
+        lt_a = set(self.depth_first_search(a, neighbors=self.neighbor_in_iterator))
+        tmp = set(self.depth_first_search(uc, neighbors=lambda v: [v_ for v_ in self.neighbor_in_iterator(v) if v_ not in lt_a]))
         result = None
         for e in tmp:
             if all(x not in tmp for x in self.neighbor_in_iterator(e)):
@@ -2990,7 +2990,7 @@ class HasseDiagram(DiGraph):
 
         def is_neutral(a):
             noncomp = all_elements.difference(self.depth_first_search(a))
-            noncomp.difference_update(self.depth_first_search(a, neighbors=self.neighbors_in))
+            noncomp.difference_update(self.depth_first_search(a, neighbors=self.neighbor_in_iterator))
 
             for x in noncomp.intersection(todo):
                 meet_ax = mt[a, x]
@@ -3071,7 +3071,7 @@ class HasseDiagram(DiGraph):
         if self.out_degree(lc) == 1:
             return lc
         gt_a = set(self.depth_first_search(a))
-        tmp = list(self.depth_first_search(lc, neighbors=lambda v: [v_ for v_ in self.neighbor_out_iterator(v) if v_ not in gt_a]))
+        tmp = set(self.depth_first_search(lc, neighbors=lambda v: [v_ for v_ in self.neighbor_out_iterator(v) if v_ not in gt_a]))
         result = None
         for e in tmp:
             if all(x not in tmp for x in self.neighbor_out_iterator(e)):
@@ -3346,9 +3346,9 @@ class HasseDiagram(DiGraph):
         join_irreducibles = [v for v in self if self.in_degree(v) == 1]
         meet_irreducibles = [v for v in self if self.out_degree(v) == 1]
         if len(join_irreducibles) < len(meet_irreducibles):
-            irr = [(v, self.neighbors_in(v)[0]) for v in join_irreducibles]
+            irr = [(v, next(self.neighbor_in_iterator(v))) for v in join_irreducibles]
         else:
-            irr = [(self.neighbors_out(v)[0], v) for v in meet_irreducibles]
+            irr = [(next(self.neighbor_out_iterator(v)), v) for v in meet_irreducibles]
         irr.sort(key=lambda x: x[0] - x[1])
         tried = []
         for pair in irr:

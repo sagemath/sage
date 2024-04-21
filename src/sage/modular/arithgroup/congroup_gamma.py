@@ -240,6 +240,12 @@ class Gamma_class(CongruenceSubgroup):
             sage: G = Gamma(50)
             sage: all(c == G.reduce_cusp(c) for c in G.cusps())
             True
+
+        We test that :trac:`36163` is fixed::
+
+            sage: Gamma(7).reduce_cusp(Cusp(6,7))
+            Infinity
+
         """
         N = self.level()
         c = Cusp(c)
@@ -341,7 +347,7 @@ def _lift_pair(U,V,N):
     u = U % N
     v = V % N
     if v == 0:
-        if u == 1:
+        if u == 1 or u == N-1:
             return (1,0)
         else:
             v = N

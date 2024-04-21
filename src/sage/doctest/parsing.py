@@ -1631,6 +1631,17 @@ class SageOutputChecker(doctest.OutputChecker):
             got = ld_pie_warning_regex.sub('', got)
             did_fixup = True
 
+        if "Overriding pythran description" in got:
+            # Some signatures changed in numpy-1.25.x that may yet be
+            # reverted, but which pythran would otherwise warn about.
+            # Pythran has a special case for numpy.random that hides
+            # the warning -- I guess until we know if the changes will
+            # be reverted -- but only in v0.14.0 of pythran. Ignoring
+            # This warning allows us to support older pythran with e.g.
+            # numpy-1.25.2.
+            pythran_numpy_warning_regex = re.compile(r'WARNING: Overriding pythran description with argspec information for: numpy\.random\.[a-z_]+')
+            got = pythran_numpy_warning_regex.sub('', got)
+            did_fixup = True
         return did_fixup, want, got
 
     def output_difference(self, example, got, optionflags):

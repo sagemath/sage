@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.number_field
 r"""
 Cactus Groups
 
@@ -970,7 +971,7 @@ class PureCactusGroup(KernelSubgroup):
             sage: gen == b
             True
         """
-        from sage.functions.other import factorial
+        from sage.arith.misc import factorial
         J = self.ambient()
         G = J.gens()
         one = J.one()

@@ -8,9 +8,8 @@ A group of isometries is a subgroup of `GL(M)` consisting of isometries.
 
 EXAMPLES::
 
-    sage: L = IntegralLattice("D4")
-    sage: O = L.orthogonal_group()
-    sage: O
+    sage: L = IntegralLattice("D4")                                                     # needs sage.graphs
+    sage: O = L.orthogonal_group(); O                                                   # needs sage.graphs
     Group of isometries with 3 generators (
     [0 0 0 1]  [ 1  1  0  0]  [ 1  0  0  0]
     [0 1 0 0]  [ 0  0  1  0]  [-1 -1 -1 -1]
@@ -20,9 +19,9 @@ EXAMPLES::
 
 Basic functionality is provided by GAP::
 
-    sage: O.cardinality()
+    sage: O.cardinality()                                                               # needs sage.graphs
     1152
-    sage: len(O.conjugacy_classes_representatives())
+    sage: len(O.conjugacy_classes_representatives())                                    # needs sage.graphs
     25
 
 AUTHORS:

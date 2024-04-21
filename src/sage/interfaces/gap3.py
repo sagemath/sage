@@ -490,7 +490,7 @@ class Gap3(Gap_generic):
             elif x == 10:
                 # matched @n (normal input mode); it seems we're done
                 break
-            elif x==11:
+            elif x == 11:
                 # matched @r (echoing input); skip to end of line
                 E.expect_list(self._compiled_small_pattern)
 
@@ -743,7 +743,7 @@ class GAP3Element(GapElement_generic):
         """
         gap3_session = self._check_valid()
         try:
-            s = gap3_session.eval('FormatLaTeX(%s)'%self.name())
+            s = gap3_session.eval('FormatLaTeX(%s)' % self.name())
             s = s.replace('\\\\','\\').replace('"','')
             s = s.replace('%\\n',' ')
             return s

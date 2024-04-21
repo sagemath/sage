@@ -1092,7 +1092,7 @@ cdef class Map(Element):
         - ``self`` -- a Map in some ``Hom(X, Y, category_right)``
         - ``left`` -- a Map in some ``Hom(Y, Z, category_left)``
 
-        Returns the composition of ``self`` followed by ``right`` as a
+        Returns the composition of ``self`` followed by ``left`` as a
         morphism in ``Hom(X, Z, category)`` where ``category`` is the
         meet of ``category_left`` and ``category_right``.
 

@@ -45,7 +45,11 @@ static inline void ecl_sig_off(void)
     sig_off();
 }
 
+#if ECL_VERSION_NUMBER < 230909
 #define ecl_mpz_from_bignum(obj) ((obj)->big.big_num)
+#else
+#define ecl_mpz_from_bignum(obj) ecl_bignum(obj)
+#endif
 
 cl_object ecl_bignum_from_mpz(mpz_t num)
 {

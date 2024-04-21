@@ -91,7 +91,7 @@ class SymmetricGroup(UniqueRepresentation, Parent):
             The symmetric group on {0, ..., 3}
 
         """
-        return "The symmetric group on {0, ..., %s}"%(self.n-1)
+        return "The symmetric group on {0, ..., %s}" % (self.n-1)
 
     @cached_method
     def one(self):

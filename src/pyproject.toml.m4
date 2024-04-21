@@ -6,7 +6,7 @@ requires = [
     # https://github.com/pypa/pip/issues/6144
      esyscmd(`sage-get-system-packages install-requires-toml \
         sage_conf      \
-        setuptools     \
+        setuptools_wheel \
         wheel          \
         sage_setup     \
         cypari         \

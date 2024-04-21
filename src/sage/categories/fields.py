@@ -179,7 +179,7 @@ class Fields(CategoryWithAxiom):
         try:
             return x.fraction_field()
         except AttributeError:
-            raise TypeError("unable to associate a field to %s"%x)
+            raise TypeError("unable to associate a field to %s" % x)
 
     Finite = LazyImport('sage.categories.finite_fields', 'FiniteFields', at_startup=True)
 

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# sage.doctest: needs sage.graphs sage.rings.number_field
 r"""
 Right-Angled Artin Groups
 

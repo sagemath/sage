@@ -111,7 +111,7 @@ class VectorSpaces(Category_module):
             if V.base_field() != self.base_field():
                 V = V.change_ring(self.base_field())
         except (TypeError, AttributeError) as msg:
-            raise TypeError("%s\nunable to coerce x (=%s) into %s"%(msg,x,self))
+            raise TypeError("%s\nunable to coerce x (=%s) into %s" % (msg,x,self))
         return V
 
     def base_field(self):

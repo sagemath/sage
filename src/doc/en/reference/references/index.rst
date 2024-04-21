@@ -1108,6 +1108,9 @@ REFERENCES:
             complexes and combinatorics of simplicial manifolds,"
             *Uspekhi Mat. Nauk* 55 (2000), 171--172.
 
+.. [BP2014] \V. M. Bukhshtaber and T. E. Panov. "Toric Topology",
+            2014. :arxiv:`1210.2368`
+
 .. [BP2015] \P. Butera and M. Pernici "Sums of permanental minors
             using Grassmann algebra", International Journal of Graph
             Theory and its Applications, 1 (2015),
@@ -2787,6 +2790,10 @@ REFERENCES:
 
 .. [GL1996] \G. Golub and C. van Loan. *Matrix Computations*. 3rd
             edition, Johns Hopkins Univ. Press, 1996.
+
+.. [GL2019] \J. Grbić and A. Linton.
+            "Lowest-degree triple Massey products in moment-angle complexes",
+            2019. :arxiv:`1908.02222v2`
 
 .. [GrLe1996] \J. Graham and G.I. Lehrer
               *Cellular algebras*. Invent. Math. 123 (1996), 1–34.

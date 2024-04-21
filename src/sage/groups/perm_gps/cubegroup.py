@@ -191,7 +191,8 @@ def polygon_plot3d(points, tilt=30, turn=30, **kwargs):
     EXAMPLES::
 
         sage: from sage.groups.perm_gps.cubegroup import polygon_plot3d,green
-        sage: P = polygon_plot3d([[1,3,1],[2,3,1],[2,3,2],[1,3,2],[1,3,1]],rgbcolor=green)
+        sage: P = polygon_plot3d([[1,3,1],[2,3,1],[2,3,2],[1,3,2],[1,3,1]],             # needs sage.plot
+        ....:                    rgbcolor=green)
     """
     rot = rotation_list(tilt, turn)
     points2 = [(xproj(x, y, z, rot), yproj(x, y, z, rot))
@@ -288,7 +289,7 @@ def create_poly(face, color):
     EXAMPLES::
 
         sage: from sage.groups.perm_gps.cubegroup import create_poly, red
-        sage: create_poly('ur', red)
+        sage: create_poly('ur', red)                                                    # needs sage.plot
         Graphics object consisting of 1 graphics primitive
     """
     return polygon(face_polys[face], rgbcolor=color)
@@ -492,7 +493,7 @@ def plot3d_cubie(cnt, clrs):
 
         sage: from sage.groups.perm_gps.cubegroup import plot3d_cubie, blue, red, green
         sage: clrF = blue; clrU = red; clrR = green
-        sage: P = plot3d_cubie([1/2,1/2,1/2],[clrF,clrU,clrR])
+        sage: P = plot3d_cubie([1/2,1/2,1/2],[clrF,clrU,clrR])                          # needs sage.plot
     """
     half = QQ((1, 2))
     x = cnt[0] - half
@@ -955,11 +956,11 @@ class CubeGroup(PermutationGroup_generic):
         EXAMPLES::
 
             sage: rubik = CubeGroup()
-            sage: P = rubik.plot_cube("R^2*U^2*R^2*U^2*R^2*U^2", title = False)
+            sage: P = rubik.plot_cube("R^2*U^2*R^2*U^2*R^2*U^2", title=False)           # needs sage.plot
             sage: # (R^2U^2)^3  permutes 2 pairs of edges (uf,ub)(fr,br)
-            sage: P = rubik.plot_cube("R*L*D^2*B^3*L^2*F^2*R^2*U^3*D*R^3*D^2*F^3*B^3*D^3*F^2*D^3*R^2*U^3*F^2*D^3")
+            sage: P = rubik.plot_cube("R*L*D^2*B^3*L^2*F^2*R^2*U^3*D*R^3*D^2*F^3*B^3*D^3*F^2*D^3*R^2*U^3*F^2*D^3")      # needs sage.plot
             sage: # the superflip (in 20f* moves)
-            sage: P = rubik.plot_cube("U^2*F*U^2*L*R^(-1)*F^2*U*F^3*B^3*R*L*U^2*R*D^3*U*L^3*R*D*R^3*L^3*D^2")
+            sage: P = rubik.plot_cube("U^2*F*U^2*L*R^(-1)*F^2*U*F^3*B^3*R*L*U^2*R*D^3*U*L^3*R*D*R^3*L^3*D^2")           # needs sage.plot
             sage: # "superflip+4 spot" (in 26q* moves)
         """
         g = self.parse(mv)
@@ -992,8 +993,8 @@ class CubeGroup(PermutationGroup_generic):
         EXAMPLES::
 
             sage: rubik = CubeGroup()
-            sage: P = rubik.plot3d_cube("U^2*F*U^2*L*R^(-1)*F^2*U*F^3*B^3*R*L*U^2*R*D^3*U*L^3*R*D*R^3*L^3*D^2")
-            sage: P = rubik.plot3d_cube("R*L*D^2*B^3*L^2*F^2*R^2*U^3*D*R^3*D^2*F^3*B^3*D^3*F^2*D^3*R^2*U^3*F^2*D^3")
+            sage: P = rubik.plot3d_cube("U^2*F*U^2*L*R^(-1)*F^2*U*F^3*B^3*R*L*U^2*R*D^3*U*L^3*R*D*R^3*L^3*D^2")         # needs sage.plot
+            sage: P = rubik.plot3d_cube("R*L*D^2*B^3*L^2*F^2*R^2*U^3*D*R^3*D^2*F^3*B^3*D^3*F^2*D^3*R^2*U^3*F^2*D^3")    # needs sage.plot
         """
         g = self.parse(mv)
         state = self.facets(g)
@@ -1196,7 +1197,7 @@ class RubiksCube(SageObject):
     EXAMPLES::
 
         sage: C = RubiksCube().move("R U R'")
-        sage: C.show3d()
+        sage: C.show3d()                                                                # needs sage.plot
 
     ::
 
@@ -1214,7 +1215,7 @@ class RubiksCube(SageObject):
                      | 37 bottom 21 |
                      | 35   47   24 |
                      +--------------+
-        sage: C.show()
+        sage: C.show()                                                                  # needs sage.plot
         sage: C.solve(algorithm='gap')  # long time
         'L*R'
         sage: C == RubiksCube("L*R")
@@ -1317,7 +1318,7 @@ class RubiksCube(SageObject):
         EXAMPLES::
 
             sage: C = RubiksCube("R*U")
-            sage: C.plot()
+            sage: C.plot()                                                              # needs sage.plot
             Graphics object consisting of 55 graphics primitives
         """
         return self._group.plot_cube(self._state)
@@ -1329,7 +1330,7 @@ class RubiksCube(SageObject):
         EXAMPLES::
 
             sage: C = RubiksCube("R*U")
-            sage: C.show()
+            sage: C.show()                                                              # needs sage.plot
         """
         self.plot().show()
 
@@ -1348,7 +1349,7 @@ class RubiksCube(SageObject):
         EXAMPLES::
 
             sage: C = RubiksCube("R*U")
-            sage: C.cubie(0.15, 0.025, 0,0,0, C.colors*3)
+            sage: C.cubie(0.15, 0.025, 0,0,0, C.colors*3)                               # needs sage.plot
             Graphics3d Object
         """
         sides = cubie_face_list[x,y,z]
@@ -1368,7 +1369,7 @@ class RubiksCube(SageObject):
         EXAMPLES::
 
             sage: C = RubiksCube("R*U")
-            sage: C.plot3d()
+            sage: C.plot3d()                                                            # needs sage.plot
             Graphics3d Object
         """
         while len(self.colors) < 7:
@@ -1391,7 +1392,7 @@ class RubiksCube(SageObject):
         EXAMPLES::
 
             sage: C = RubiksCube("R*U")
-            sage: C.show3d()
+            sage: C.show3d()                                                            # needs sage.plot
         """
         return self.plot3d().show()
 

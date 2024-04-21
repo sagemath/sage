@@ -170,7 +170,7 @@ class Ellipse(GraphicPrimitive):
             sage: Ellipse(0,0,2,1,0,{})._repr_()
             'Ellipse centered at (0.0, 0.0) with radii (2.0, 1.0) and angle 0.0'
         """
-        return "Ellipse centered at (%s, %s) with radii (%s, %s) and angle %s"%(self.x, self.y, self.r1, self.r2, self.angle)
+        return "Ellipse centered at (%s, %s) with radii (%s, %s) and angle %s" % (self.x, self.y, self.r1, self.r2, self.angle)
 
     def _render_on_subplot(self, subplot):
         """
@@ -362,7 +362,7 @@ def ellipse(center, r1, r2, angle=0, **options):
     if options['legend_label']:
         g.legend(True)
         g._legend_colors = [options['legend_color']]
-    if len(center)==2:
+    if len(center) == 2:
         return g
-    elif len(center)==3:
+    elif len(center) == 3:
         raise NotImplementedError("plotting ellipse in 3D is not implemented")

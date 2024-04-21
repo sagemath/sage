@@ -444,7 +444,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
                 - :meth:`peirce_summand`
             """
-            return self.submodule([(a * b if side=='right' else b * a)
+            return self.submodule([(a * b if side == 'right' else b * a)
                                    for b in self.basis()])
 
         @cached_method
@@ -585,7 +585,7 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 x = x.lift()
             p = self.semisimple_quotient().retract(x)
             if p * p != p:
-                raise ValueError("%s does not retract to an idempotent."%p)
+                raise ValueError("%s does not retract to an idempotent." % p)
             x_prev = None
             one = self.one()
             while x != x_prev:

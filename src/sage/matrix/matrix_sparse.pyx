@@ -363,10 +363,10 @@ cdef class Matrix_sparse(matrix.Matrix):
         return data, version
 
     def _unpickle_generic(self, data, int version):
-        cdef Py_ssize_t i, j, k
+        cdef Py_ssize_t i, j
         if version == -1:
-            for ij, x in data.iteritems():
-                self.set_unsafe(ij[0], ij[1], x)
+            for (i, j), x in data.iteritems():
+                self.set_unsafe(i, j, x)
         else:
             raise RuntimeError("unknown matrix version (=%s)" % version)
 
@@ -929,7 +929,6 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         cdef Py_ssize_t nrows, ncols,k,r,i,j
 
-        r = 0
         ncols = PyList_GET_SIZE(columns)
         nrows = PyList_GET_SIZE(rows)
         cdef Matrix_sparse A = self.new_matrix(nrows = nrows, ncols = ncols)
@@ -963,7 +962,7 @@ cdef class Matrix_sparse(matrix.Matrix):
             i = get_ij(nz, k, 0)
             j = get_ij(nz, k, 1)
             if i in row_map and j in col_map:
-                entry = self.get_unsafe(i,j)
+                entry = self.get_unsafe(i, j)
                 for new_row in row_map[i]:
                     for new_col in col_map[j]:
                         A.set_unsafe(new_row, new_col, entry)

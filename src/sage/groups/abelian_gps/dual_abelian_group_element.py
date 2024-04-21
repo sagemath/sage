@@ -8,13 +8,13 @@ To obtain the dual group of a finite Abelian group, use the
     sage: F
     Multiplicative Abelian group isomorphic to C2 x C3 x C5 x C7 x C8
 
-    sage: Fd = F.dual_group(names="ABCDE")
-    sage: Fd
+    sage: Fd = F.dual_group(names="ABCDE"); Fd                                          # needs sage.rings.number_field
     Dual of Abelian Group isomorphic to Z/2Z x Z/3Z x Z/5Z x Z/7Z x Z/8Z
     over Cyclotomic Field of order 840 and degree 192
 
 The elements of the dual group can be evaluated on elements of the original group::
 
+    sage: # needs sage.rings.number_field
     sage: a,b,c,d,e = F.gens()
     sage: A,B,C,D,E = Fd.gens()
     sage: A*B^2*D^7
@@ -71,10 +71,10 @@ def is_DualAbelianGroupElement(x) -> bool:
     EXAMPLES::
 
         sage: from sage.groups.abelian_gps.dual_abelian_group import is_DualAbelianGroupElement
-        sage: F = AbelianGroup(5, [5,5,7,8,9], names=list("abcde")).dual_group()
-        sage: is_DualAbelianGroupElement(F)
+        sage: F = AbelianGroup(5, [5,5,7,8,9], names=list("abcde")).dual_group()        # needs sage.rings.number_field
+        sage: is_DualAbelianGroupElement(F)                                             # needs sage.rings.number_field
         False
-        sage: is_DualAbelianGroupElement(F.an_element())
+        sage: is_DualAbelianGroupElement(F.an_element())                                # needs sage.rings.number_field
         True
     """
     return isinstance(x, DualAbelianGroupElement)
@@ -96,6 +96,7 @@ class DualAbelianGroupElement(AbelianGroupElementBase):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: F = AbelianGroup(5, [2,3,5,7,8], names="abcde")
             sage: a,b,c,d,e = F.gens()
             sage: Fd = F.dual_group(names="ABCDE")
@@ -117,7 +118,7 @@ class DualAbelianGroupElement(AbelianGroupElementBase):
             sage: a, = F.gens()
             sage: Fd = F.dual_group(names="A", base_ring=GF(29))
             sage: A, = Fd.gens()
-            sage: A(a)
+            sage: A(a)                                                                  # needs sage.libs.pari
             16
         """
         F = self.parent().base_ring()
@@ -146,6 +147,7 @@ class DualAbelianGroupElement(AbelianGroupElementBase):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: G = AbelianGroup(5,[3, 5, 5, 7, 8], names="abcde")
             sage: Gd = G.dual_group(names="abcde")
             sage: a,b,c,d,e = Gd.gens()

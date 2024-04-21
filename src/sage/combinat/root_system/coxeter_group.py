@@ -9,9 +9,11 @@ Coxeter Groups
 #                  https://www.gnu.org/licenses/
 # ***************************************************************************
 
-from sage.combinat.root_system.weyl_group import WeylGroup
-from sage.combinat.root_system.reflection_group_real import ReflectionGroup
 from sage.combinat.root_system.cartan_type import CartanType
+from sage.misc.lazy_import import lazy_import
+
+lazy_import('from sage.combinat.root_system.reflection_group_real', 'ReflectionGroup')
+lazy_import('sage.combinat.root_system.weyl_group', 'WeylGroup')
 
 
 def CoxeterGroup(data, implementation="reflection", base_ring=None, index_set=None):

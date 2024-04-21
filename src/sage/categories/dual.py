@@ -36,4 +36,4 @@ class DualObjectsCategory(CovariantConstructionCategory):
             Category of duals of vector spaces over Rational Field
         """
         # Just to remove the `objects`
-        return "duals of %s"%(self.base_category()._repr_object_names())
+        return "duals of %s" % (self.base_category()._repr_object_names())

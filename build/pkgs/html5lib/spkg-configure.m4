@@ -1,1 +1,0 @@
-SAGE_SPKG_CONFIGURE([html5lib], [SAGE_PYTHON_PACKAGE_CHECK([html5lib])])

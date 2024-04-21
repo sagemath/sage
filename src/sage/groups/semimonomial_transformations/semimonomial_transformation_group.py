@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.rings.finite_rings
 r"""
 Semimonomial transformation group
 
@@ -105,13 +106,17 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
         sage: g = S(v = [2, a, 1, 2])
         sage: h = S(perm = Permutation('(1,2,3,4)'), autom=F.hom([a**3]))
         sage: g*h
-        ((2, a, 1, 2); (1,2,3,4), Ring endomorphism of Finite Field in a of size 3^2 Defn: a |--> 2*a + 1)
+        ((2, a, 1, 2); (1,2,3,4),
+         Ring endomorphism of Finite Field in a of size 3^2 Defn: a |--> 2*a + 1)
         sage: h*g
-        ((2*a + 1, 1, 2, 2); (1,2,3,4), Ring endomorphism of Finite Field in a of size 3^2 Defn: a |--> 2*a + 1)
+        ((2*a + 1, 1, 2, 2); (1,2,3,4),
+         Ring endomorphism of Finite Field in a of size 3^2 Defn: a |--> 2*a + 1)
         sage: S(g)
-        ((2, a, 1, 2); (), Ring endomorphism of Finite Field in a of size 3^2 Defn: a |--> a)
+        ((2, a, 1, 2); (),
+         Ring endomorphism of Finite Field in a of size 3^2 Defn: a |--> a)
         sage: S(1)
-        ((1, 1, 1, 1); (), Ring endomorphism of Finite Field in a of size 3^2 Defn: a |--> a)
+        ((1, 1, 1, 1); (),
+         Ring endomorphism of Finite Field in a of size 3^2 Defn: a |--> a)
     """
     Element = SemimonomialTransformation
 
@@ -256,7 +261,7 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
         EXAMPLES::
 
             sage: F.<a> = GF(4)
-            sage: SemimonomialTransformationGroup(F, 3).an_element() # indirect doctest
+            sage: SemimonomialTransformationGroup(F, 3).an_element()  # indirect doctest
             ((a, 1, 1); (1,3,2), Ring endomorphism of Finite Field in a of size 2^2 Defn: a |--> a + 1)
         """
         R = self.base_ring()
@@ -275,9 +280,9 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
 
             sage: F.<a> = GF(4)
             sage: S = SemimonomialTransformationGroup(F, 3)
-            sage: 1 in S # indirect doctest
+            sage: 1 in S  # indirect doctest
             True
-            sage: a in S # indirect doctest
+            sage: a in S  # indirect doctest
             False
         """
         try:
@@ -294,11 +299,14 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
 
             sage: F.<a> = GF(4)
             sage: SemimonomialTransformationGroup(F, 3).gens()
-            (((a, 1, 1); (), Ring endomorphism of Finite Field in a of size 2^2
-              Defn: a |--> a), ((1, 1, 1); (1,2,3), Ring endomorphism of Finite Field in a of size 2^2
-              Defn: a |--> a), ((1, 1, 1); (1,2), Ring endomorphism of Finite Field in a of size 2^2
-              Defn: a |--> a), ((1, 1, 1); (), Ring endomorphism of Finite Field in a of size 2^2
-              Defn: a |--> a + 1))
+            (((a, 1, 1); (),
+              Ring endomorphism of Finite Field in a of size 2^2 Defn: a |--> a),
+             ((1, 1, 1); (1,2,3),
+              Ring endomorphism of Finite Field in a of size 2^2 Defn: a |--> a),
+             ((1, 1, 1); (1,2),
+              Ring endomorphism of Finite Field in a of size 2^2 Defn: a |--> a),
+             ((1, 1, 1); (),
+              Ring endomorphism of Finite Field in a of size 2^2 Defn: a |--> a + 1))
         """
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
         R = self.base_ring()
@@ -349,7 +357,7 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
             sage: s*v   # indirect doctest
             (0, 1, 0)
             sage: M = MatrixSpace(F, 3).one()
-            sage: s*M # indirect doctest
+            sage: s*M   # indirect doctest
             [    0     1     0]
             [    0     0     1]
             [a + 1     0     0]
@@ -376,7 +384,7 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
         EXAMPLES::
 
             sage: F.<a> = GF(4)
-            sage: SemimonomialTransformationGroup(F, 3) # indirect doctest
+            sage: SemimonomialTransformationGroup(F, 3)  # indirect doctest
             Semimonomial transformation group over Finite Field in a of size 2^2 of degree 3
         """
         return ('Semimonomial transformation group over %s' % self.base_ring() +
@@ -389,7 +397,7 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
         EXAMPLES::
 
             sage: F.<a> = GF(4)
-            sage: latex(SemimonomialTransformationGroup(F, 3)) # indirect doctest
+            sage: latex(SemimonomialTransformationGroup(F, 3))  # indirect doctest
             \left(\Bold{F}_{2^{2}}^3\wr\langle (1,2,3), (1,2) \rangle \right) \rtimes \operatorname{Aut}(\Bold{F}_{2^{2}})
         """
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -470,7 +478,7 @@ class SemimonomialActionMat(Action):
             sage: F.<a> = GF(4)
             sage: s = SemimonomialTransformationGroup(F, 3).an_element()
             sage: M = MatrixSpace(F, 3).one()
-            sage: s*M # indirect doctest
+            sage: s*M  # indirect doctest
             [    0     1     0]
             [    0     0     1]
             [a + 1     0     0]
@@ -497,7 +505,7 @@ class SemimonomialActionMat(Action):
             sage: F.<a> = GF(4)
             sage: s = SemimonomialTransformationGroup(F, 3).an_element()
             sage: M = MatrixSpace(F, 3).one()
-            sage: s*M # indirect doctest
+            sage: s*M  # indirect doctest
             [    0     1     0]
             [    0     0     1]
             [a + 1     0     0]

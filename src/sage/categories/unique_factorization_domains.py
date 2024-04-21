@@ -296,4 +296,4 @@ class UniqueFactorizationDomains(Category_singleton):
 
             """
             decomp = self.squarefree_decomposition()
-            return prod(fac for fac, mult in decomp if mult%2 == 1)
+            return prod(fac for fac, mult in decomp if mult % 2 == 1)

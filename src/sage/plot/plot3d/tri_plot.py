@@ -64,7 +64,7 @@ class Triangle:
             sage: print(tri.str())
             [0, 0, 0] [-1, 2, 3] [0, 2, 0] 0
         """
-        return "%s %s %s %s"%(self._a, self._b, self._c, self._color)
+        return "%s %s %s %s" % (self._a, self._b, self._c, self._color)
 
     def set_color(self, color):
         """
@@ -135,7 +135,7 @@ class SmoothTriangle(Triangle):
             sage: print(t.str())
             [1, 2, 3] [2, 3, 4] [0, 0, 0] 0 [0, 0, 1] [0, 1, 0] [1, 0, 0]
         """
-        return "%s %s %s %s %s %s %s"%(self._a, self._b, self._c, self._color, self._da, self._db, self._dc)
+        return "%s %s %s %s %s %s %s" % (self._a, self._b, self._c, self._color, self._da, self._db, self._dc)
 
     def get_normals(self):
         """

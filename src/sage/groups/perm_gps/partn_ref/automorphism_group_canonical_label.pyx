@@ -1,3 +1,4 @@
+# sage.doctest: needs sage.groups
 r"""
 Automorphism groups and canonical labels
 
@@ -282,8 +283,8 @@ def coset_rep(list perm=[0,1,2,3,4,5], list gens=[[1,2,3,4,5,0]]):
     output = get_aut_gp_and_can_lab(<void *> perm, part, n, &all_children_are_equivalent_trivial, &refine_and_return_invariant_trivial, &compare_perms, 1, group, NULL, NULL)
     SC_order(output.group, 0, I.value)
     assert I == 1
-    r_inv = list(xrange(n))
-    for i from 0 <= i < n:
+    r_inv = list(range(n))
+    for i in range(n):
         r_inv[output.relabeling[i]] = i
     label = [perm[r_inv[i]] for i in range(n)]
     PS_dealloc(part)

@@ -845,7 +845,7 @@ class Macaulay2(ExtraTabCompletion, Expect):
         """
         type = self(type)
         value = self(value)
-        return self.new("new %s from %s"%(type.name(), value.name()))
+        return self.new("new %s from %s" % (type.name(), value.name()))
 
     def _macaulay2_input_ring(self, base_ring, vars, order='GRevLex'):
         """
@@ -972,13 +972,13 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
            'QQ(monoid[x..y, Degrees => {2:1}, Heft => {1}, MonomialOrder => VerticalList{MonomialSize => 32, GRevLex => {2:1}, Position => Up}, DegreeRank => 1])'
         """
         P = self._check_valid()
-        code = 'toExternalString(%s)'%self.name()
+        code = 'toExternalString(%s)' % self.name()
         X = P.eval(code, strip=True)
 
         if 'stdio:' in X:
             if 'to external string' in X:
-                return P.eval('%s'%self.name())
-            raise RuntimeError("Error evaluating Macaulay2 code.\nIN:%s\nOUT:%s"%(code, X))
+                return P.eval('%s' % self.name())
+            raise RuntimeError("Error evaluating Macaulay2 code.\nIN:%s\nOUT:%s" % (code, X))
 
         s = multiple_replace({'\r':'', '\n':' '}, X)
         return s
@@ -1050,7 +1050,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
         """
         self._check_valid()
         # we use str instead of repr to avoid wrapping
-        return int(str(self.parent()("#%s"%self.name())))
+        return int(str(self.parent()("#%s" % self.name())))
 
     def __getitem__(self, n):
         """
@@ -1062,7 +1062,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
         """
         self._check_valid()
         n = self.parent()(n)
-        return self.parent().new('%s # %s'%(self.name(), n.name()))
+        return self.parent().new('%s # %s' % (self.name(), n.name()))
 
     def __setitem__(self, index, value):
         """
@@ -1077,7 +1077,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
         P = self.parent()
         index = P(index)
         value = P(value)
-        res = P.eval("%s # %s = %s"%(self.name(), index.name(), value.name()))
+        res = P.eval("%s # %s = %s" % (self.name(), index.name(), value.name()))
         if "assignment attempted to element of immutable list" in res:
             raise TypeError("item assignment not supported")
 
@@ -1095,7 +1095,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
         self._check_valid()
         P = self.parent()
         r = P(x)
-        return P('%s %s'%(self.name(), r.name()))
+        return P('%s %s' % (self.name(), r.name()))
 
     def __floordiv__(self, x):
         """
@@ -1119,10 +1119,10 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
         """
         if isinstance(x, (list, tuple)):
             y = self.parent(x)
-            z = self.parent().new('%s // matrix{%s}'%(self.name(), y.name()))
+            z = self.parent().new('%s // matrix{%s}' % (self.name(), y.name()))
             return list(z.entries().flatten())
         else:
-            return self.parent().new('%s // %s'%(self.name(), x.name()))
+            return self.parent().new('%s // %s' % (self.name(), x.name()))
 
     def __mod__(self, x):
         """
@@ -1148,10 +1148,10 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
         """
         if isinstance(x, (list, tuple)):
             y = self.parent(x)
-            return self.parent().new('%s %% matrix{%s}'%(self.name(), y.name()))
+            return self.parent().new('%s %% matrix{%s}' % (self.name(), y.name()))
         if not isinstance(x, Macaulay2Element):
             x = self.parent(x)
-        return self.parent().new('%s %% %s'%(self.name(), x.name()))
+        return self.parent().new('%s %% %s' % (self.name(), x.name()))
 
     def __bool__(self):
         """
@@ -1219,7 +1219,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
         """
         from sage.misc.superseded import deprecation
         deprecation(27848, 'The function `structure_sheaf` is deprecated. Use `self.sheaf()` instead.')
-        return self.parent()('OO_%s'%self.name())
+        return self.parent()('OO_%s' % self.name())
 
     def substitute(self, *args, **kwds):
         """
@@ -1300,7 +1300,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
             Ring
 
         """
-        return self.parent()("class %s"%self.name())
+        return self.parent()("class %s" % self.name())
 
     def after_print_text(self):
         r"""
@@ -1356,7 +1356,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
         """
         parent = self.parent()
         x = parent(x)
-        return parent("%s%s%s"%(self.name(), opstr, x.name()))
+        return parent("%s%s%s" % (self.name(), opstr, x.name()))
 
     def sharp(self, x):
         """
@@ -1683,7 +1683,7 @@ class Macaulay2Element(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Ma
         try:
             return sage_eval(repr_str)
         except Exception:
-            raise NotImplementedError("cannot convert %s to a Sage object"%repr_str)
+            raise NotImplementedError("cannot convert %s to a Sage object" % repr_str)
 
     to_sage = deprecated_function_alias(27848, ExpectElement.sage)
 
