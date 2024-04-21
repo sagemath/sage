@@ -756,11 +756,11 @@ class QuasiModularFormsElement(ModuleElement):
 
     def coefficients(self, X):
         r"""
-        The coefficients a_n of self, for integers n>=0 in the list
-        X. If X is an Integer, return coefficients for indices from 1
-        to X.
-
-        This function caches the results of the compute function.
+        Return the coefficients of `q^n` of the q-expansion of this,
+        graded quasimodular form for `n` in the list `X`.
+        
+        If X is an Integer, return coefficients for indices from 1
+        to X. This function caches the results of the `_compute` function.
 
         TESTS::
 
