@@ -557,8 +557,15 @@ class ModularForm_abstract(ModuleElement):
             ...
             ValueError: prec (= -1) must be non-negative
         """
+        from sage.rings.infinity import PlusInfinity
         if prec is None:
             prec = self.parent().prec()
+        if prec is PlusInfinity():
+            from sage.rings.lazy_series_ring import LazyPowerSeriesRing
+            L = LazyPowerSeriesRing(self.base_ring(),
+                                    names=defaults.DEFAULT_VARIABLE)
+            an = lambda n: self._compute([n])[0]
+            return L(an)
         prec = Integer(prec)
         try:
             current_prec, f = self.__q_expansion
