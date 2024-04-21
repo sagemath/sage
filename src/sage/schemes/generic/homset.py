@@ -177,7 +177,7 @@ class SchemeHomsetFactory(UniqueFactory):
             from sage.categories.schemes import Schemes
             category = Schemes(base_spec)
         key = (id(X), id(Y), category, as_point_homset)
-        extra = {'X':X, 'Y':Y, 'base_ring':base_ring, 'check':check}
+        extra = {'X': X, 'Y': Y, 'base_ring': base_ring, 'check': check}
         return key, extra
 
     def create_object(self, version, key, **extra_args):
@@ -246,9 +246,7 @@ class SchemeHomset_generic(HomsetWithBase):
         sage: from sage.schemes.generic.homset import SchemeHomset_generic
         sage: A2 = AffineSpace(QQ,2)
         sage: Hom = SchemeHomset_generic(A2, A2); Hom
-        Set of morphisms
-          From: Affine Space of dimension 2 over Rational Field
-          To:   Affine Space of dimension 2 over Rational Field
+        Set of scheme endomorphisms of Affine Space of dimension 2 over Rational Field
         sage: Hom.category()
         Category of endsets of schemes over Rational Field
     """
@@ -266,8 +264,9 @@ class SchemeHomset_generic(HomsetWithBase):
             sage: loads(Hom.dumps()) == Hom
             True
         """
-        return SchemeHomset, (self.domain(), self.codomain(), self.homset_category(),
-                              self.base_ring(), False, False)
+        return SchemeHomset, (self.domain(), self.codomain(),
+                              self.homset_category(), self.base_ring(), False,
+                              False)
 
     def __call__(self, *args, **kwds):
         r"""
@@ -296,15 +295,20 @@ class SchemeHomset_generic(HomsetWithBase):
         EXAMPLES::
 
             sage: A = AffineSpace(4, QQ)
-            sage: print(A.structure_morphism()._repr_())
-            Scheme morphism:
+            sage: print(repr(A.structure_morphism().parent()))
+            Set of morphisms
               From: Affine Space of dimension 4 over Rational Field
               To:   Spectrum of Rational Field
-              Defn: Structure map
+
+            sage: print(repr(Spec(QQ).End()))
+            Set of scheme endomorphisms of Spectrum of Rational Field
         """
-        s = 'Set of morphisms'
-        s += '\n  From: %s' % self.domain()
-        s += '\n  To:   %s' % self.codomain()
+        if self.is_endomorphism_set():
+            return f"Set of scheme endomorphisms of {self.domain()}"
+
+        s = "Set of morphisms"
+        s += f'\n  From: {self.domain()}'
+        s += f'\n  To:   {self.codomain()}'
         return s
 
     def natural_map(self):
@@ -325,12 +329,73 @@ class SchemeHomset_generic(HomsetWithBase):
               From: Affine Space of dimension 4 over Rational Field
               To:   Spectrum of Rational Field
               Defn: Structure map
+
+            sage: Spec(QQ).End().natural_map()
+            Scheme endomorphism of Spectrum of Rational Field
+              Defn: Identity map
         """
         X = self.domain()
         Y = self.codomain()
         if is_AffineScheme(Y) and Y.coordinate_ring() == X.base_ring():
             return SchemeMorphism_structure_map(self)
+        if self.is_endomorphism_set():
+            return self.identity()
         raise NotImplementedError
+
+    def identity(self):
+        r"""
+        Return the identity morphism in this homset.
+
+        Only implemented when this homset is an endomorphism set. In this case,
+        either the :meth:`identity_morphism` of the domain is returned, or a
+        :class:`SchemeMorphism_id` class is constructed.
+
+        .. SEEALSO:: :meth:`natural_map`
+
+        EXAMPLES::
+
+            sage: End(Spec(QQ)).identity()
+            Scheme endomorphism of Spectrum of Rational Field
+              Defn: Identity map
+
+            sage: Hom(Spec(ZZ), Spec(QQ)).identity()
+            Traceback (most recent call last):
+            ...
+            ValueError: domain and codomain must be equal
+
+        Elliptic curves have a custom :meth:`identity_morphism`::
+
+            sage: E = EllipticCurve(j=42)
+            sage: End(E).identity()
+            Elliptic-curve endomorphism of Elliptic Curve defined by y^2 = x^3 + 5901*x + 1105454 over Rational Field
+              Via:  (u,r,s,t) = (1, 0, 0, 0)
+            sage: End(E).identity() == E.scalar_multiplication(1)
+            True
+        """
+        if not self.is_endomorphism_set():
+            raise ValueError('domain and codomain must be equal')
+        try:
+            return self.domain().identity_morphism()
+        except AttributeError:
+            from sage.schemes.generic.morphism import SchemeMorphism_id
+            return SchemeMorphism_id(self.domain())
+
+    def _an_element_(self):
+        r"""
+        Return a morphism from this homset via the
+        :meth:`natural_map`, or :meth:`zero` if a natural map does
+        not exist.
+
+        EXAMPLES::
+
+            sage: Spec(QQ).End().an_element()
+            Scheme endomorphism of Spectrum of Rational Field
+              Defn: Identity map
+        """
+        try:
+            return self.natural_map()
+        except NotImplementedError:
+            return self.zero()
 
     def _element_constructor_(self, x, check=True):
         """
@@ -381,11 +446,9 @@ class SchemeHomset_generic(HomsetWithBase):
             sage: A.<x,y> = AffineSpace(R)
             sage: C = A.subscheme(x*y - 1)
             sage: H = C.Hom(C); H
-            Set of morphisms
-              From: Closed subscheme of Affine Space of dimension 2 over Rational Field
-                    defined by: x*y - 1
-              To:   Closed subscheme of Affine Space of dimension 2 over Rational Field
-                    defined by: x*y - 1
+            Set of scheme endomorphisms of Closed subscheme of Affine Space of
+             dimension 2 over Rational Field defined by:
+             x*y - 1
             sage: H(1)
             Traceback (most recent call last):
             ...
@@ -401,7 +464,6 @@ class SchemeHomset_generic(HomsetWithBase):
             return SchemeMorphism_spec(self, x, check=check)
 
         raise TypeError("x must be a ring homomorphism, list or tuple")
-
 
 # *******************************************************************
 #  Base class for points
@@ -583,7 +645,7 @@ class SchemeHomset_points(SchemeHomset_generic):
             except AttributeError:  # no .ambient_space
                 return False
         elif isinstance(other, SchemeHomset_points):
-        #we are converting between scheme points
+            # we are converting between scheme points
             source = other.codomain()
             if isinstance(target, AlgebraicScheme_subscheme):
                 #subscheme coerce when there is containment

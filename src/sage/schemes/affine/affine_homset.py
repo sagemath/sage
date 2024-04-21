@@ -114,9 +114,7 @@ class SchemeHomset_polynomial_affine_space(SchemeHomset_generic):
 
         sage: A.<x,y> = AffineSpace(2, QQ)
         sage: Hom(A, A)
-        Set of morphisms
-          From: Affine Space of dimension 2 over Rational Field
-          To:   Affine Space of dimension 2 over Rational Field
+        Set of scheme endomorphisms of Affine Space of dimension 2 over Rational Field
     """
     def identity(self):
         """
@@ -127,9 +125,7 @@ class SchemeHomset_polynomial_affine_space(SchemeHomset_generic):
             sage: A.<x,y> = AffineSpace(2, QQ)
             sage: I = A.identity_morphism()
             sage: I.parent()
-            Set of morphisms
-              From: Affine Space of dimension 2 over Rational Field
-              To:   Affine Space of dimension 2 over Rational Field
+            Set of scheme endomorphisms of Affine Space of dimension 2 over Rational Field
             sage: _.identity() == I
             True
         """

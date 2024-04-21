@@ -221,6 +221,41 @@ class ProjectiveCurve(Curve_generic, AlgebraicScheme_subscheme_projective):
 
         Curve_generic.__init__(self, A, X, category=category)
 
+    def _an_element_(self):
+        r"""
+        Return an element of this projective curve.
+
+        ALGORITHM:
+
+        We try to find variables that never appear as a pure monomial, and fail otherwise.
+
+        EXAMPLES::
+
+            sage: P.<x,y,z> = ProjectiveSpace(QQ, 2)
+            sage: C = Curve(x*y^2*z^7 - x^10 - x^2*z^8)
+            sage: C.an_element()
+            (0 : 1 : 0)
+            sage: C.an_element() in C
+            True
+        """
+        # The dimension won't be too large anyways.
+        gens = list(self.ambient_space().gens())
+        counts = [0] * len(gens)
+        for poly in self.defining_polynomials():
+            for m in poly.monomials():
+                mvs = m.variables()
+                if len(mvs) == 1:
+                    counts[gens.index(mvs[0])] += 1
+        if min(counts) > 0:
+            return NotImplemented
+
+        # Set this to 1 and others to 0
+        ring = self.base_ring()
+        idx = counts.index(0)
+        coordinate = [ring.zero()] * len(gens)
+        coordinate[idx] = ring.one()
+        return self(coordinate)
+
     def _repr_type(self):
         r"""
         Return a string representation of the type of this curve.

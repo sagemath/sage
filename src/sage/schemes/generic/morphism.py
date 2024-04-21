@@ -61,6 +61,8 @@ AUTHORS:
 
 - Simon King (2013-10): copy the changes of :class:`~sage.categories.morphism.Morphism`
   that have been introduced in :issue:`14711`.
+
+- Lorenz Panny, Gareth Ma (Mar 2024): introduce :class:`SchemeMorphism_sum`.
 """
 
 # ****************************************************************************
@@ -77,17 +79,18 @@ AUTHORS:
 
 
 import operator
-from sage.structure.element import Element, parent, coercion_model
 from sage.arith.power import generic_power
+from sage.structure.element import Element, parent, coercion_model
 from sage.structure.richcmp import richcmp
 from sage.structure.sequence import Sequence
+from sage.categories.additive_magmas import AdditiveMagmas
 from sage.categories.homset import Homset, Hom, End
+from sage.categories.map import FormalCompositeMap, Map
+from sage.categories.morphism import SetMorphism
 from sage.rings.fraction_field_element import FractionFieldElement
 from sage.rings.fraction_field import is_FractionField
-from sage.categories.map import FormalCompositeMap, Map
 from sage.misc.constant_function import ConstantFunction
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.categories.morphism import SetMorphism
 from sage.schemes.generic.algebraic_scheme import AlgebraicScheme_subscheme
 
 
@@ -101,8 +104,7 @@ def is_SchemeMorphism(f):
 
     OUTPUT:
 
-    Boolean. Return ``True`` if ``f`` is a scheme morphism or a point
-    on an elliptic curve.
+    Boolean. Return ``True`` if ``f`` is a scheme morphism.
 
     EXAMPLES::
 
@@ -113,9 +115,13 @@ def is_SchemeMorphism(f):
         sage: from sage.schemes.generic.morphism import is_SchemeMorphism
         sage: is_SchemeMorphism(f)
         True
+
+        sage: E = EllipticCurve(GF(103), [3, 5])
+        sage: P = E.random_point()
+        sage: is_SchemeMorphism(P)
+        True
     """
-    from sage.schemes.elliptic_curves.ell_point import EllipticCurvePoint_field
-    return isinstance(f, (SchemeMorphism, EllipticCurvePoint_field))
+    return isinstance(f, SchemeMorphism)
 
 
 class SchemeMorphism(Element):
@@ -338,13 +344,52 @@ class SchemeMorphism(Element):
             s += "\n  To:   %s" % self._codomain
         d = self._repr_defn()
         if d != '':
-            s += "\n  Defn: %s" % ('\n        '.join(self._repr_defn().split('\n')))
+            s += "\n  Defn: %s" % '\n        '.join(d.split('\n'))
         return s
+
+    def _add_(self, other):
+        r"""
+        Add two :class:`SchemeMorphism` objects by constructing a
+        formal :class:`SchemeMorphism_sum`.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: J = HyperellipticCurve(x^5 + x + 1).jacobian()
+            sage: phi = End(J).identity()
+            sage: phi + phi
+            Sum morphism:
+              From: Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + x + 1
+              To:   Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + x + 1
+              Via:  (Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + x + 1
+              Defn: Identity map, Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + x + 1
+              Defn: Identity map)
+        """
+        # TODO: Move this to category level
+        from sage.categories.additive_magmas import AdditiveMagmas
+        if self not in AdditiveMagmas():
+            raise TypeError(f"{self} is not an additive magma")
+        if other not in AdditiveMagmas():
+            raise TypeError(f"{other} is not an additive magma")
+
+        # TODO: should probably try to simplify some more?
+        if other.domain() != self.domain() and other.codomain() != self.codomain():
+            raise TypeError(f"{self} and {other} must have the same domains and codomains")
+
+        phis = []
+        if isinstance(self, SchemeMorphism_sum):
+            phis.extend(self.summands())
+        else:
+            phis.append(self)
+        if isinstance(other, SchemeMorphism_sum):
+            phis.extend(other.summands())
+        else:
+            phis.append(other)
+
+        return SchemeMorphism_sum(phis, domain=self.domain(), codomain=self.codomain())
 
     def __mul__(self, right):
         """
-        We can currently only multiply scheme morphisms.
-
         If one factor is an identity morphism, the other is returned.
         Otherwise, a formal composition of maps obtained from the scheme
         morphisms is returned.
@@ -670,6 +715,237 @@ class SchemeMorphism(Element):
         return glue.GluedScheme(self, other)
 
 
+class SchemeMorphism_sum(SchemeMorphism):
+    """
+    Formal sum of scheme morphisms.
+
+    EXAMPLES::
+
+        sage: R.<x> = QQ[]
+        sage: J = HyperellipticCurve(x^5 - 8*x).jacobian()
+        sage: phi = End(J).identity(); phi
+        Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+          Defn: Identity map
+        sage: psi = phi + phi; psi
+        Sum morphism:
+          From: Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+          To:   Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+          Via:  (Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+                   Defn: Identity map,
+                 Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+                   Defn: Identity map)
+    """
+
+    _phis = None
+
+    def __init__(self, phis, domain=None, codomain=None, check=True):
+        r"""
+        Construct a sum morphism from its summands.
+
+        The codomain scheme should implement addition. For empty sums, the
+        domain and codomain schemes must be given.
+
+        EXAMPLES::
+
+            sage: from sage.schemes.generic.morphism import SchemeMorphism_sum
+            sage: R.<x> = QQ[]
+            sage: J = HyperellipticCurve(x^5 - 8*x).jacobian()
+            sage: phi = End(J).identity(); phi
+            Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+              Defn: Identity map
+            sage: psi = SchemeMorphism_sum([phi, phi, phi]); psi
+            Sum morphism:
+              From: Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+              To:   Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+              Via:  (Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+              Defn: Identity map, Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+              Defn: Identity map, Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+              Defn: Identity map)
+            sage: phi + phi == phi + phi
+            True
+            sage: psi == phi + phi + phi
+            True
+
+            sage: P = J(2, 4); (P, psi(P), P * 3)
+            ((2, y - 4), (1), (1))
+
+        The codomain should implement addition::
+
+            sage: phi = Spec(QQ).identity_morphism()
+            sage: SchemeMorphism_sum([phi, phi])
+            Traceback (most recent call last):
+            ...
+            ValueError: addition is not implemented for Spectrum of Rational Field
+
+        The zero morphism can be defined when the codomain implements addition::
+
+            sage: SchemeMorphism_sum([], Spec(QQ), ZZ)
+            Sum morphism:
+              From: Spectrum of Rational Field
+              To:   Spectrum of Integer Ring
+              Via:  ()
+        """
+        phis = tuple(phis)
+
+        if not phis and (domain is None or codomain is None):
+            raise ValueError('need either phis or both domain and codomain')
+
+        for phi in phis:
+            if not isinstance(phi, SchemeMorphism):
+                raise ValueError(f'not a scheme morphism: {phi}')
+
+        if domain is None:
+            domain = phis[0].domain()
+        if codomain is None:
+            codomain = phis[0].codomain()
+        if check and codomain not in AdditiveMagmas():
+            # If you see this message but it seems wrong, you should initialize codomain
+            # within the AdditiveMagma category.
+            raise ValueError(f"addition is not implemented for {codomain}")
+        for phi in phis:
+            if phi.domain() != domain:
+                raise ValueError(f'summand {phi} has incorrect domain (need {domain})')
+            if phi.codomain() != codomain:
+                raise ValueError(f'summand {phi} has incorrect codomain (need {codomain})')
+
+        self._phis = phis
+        self._domain = domain
+        SchemeMorphism.__init__(self, self._domain, codomain)
+
+    def _call_(self, P):
+        r"""
+        Evaluate this sum morphism at a point.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: J = HyperellipticCurve(x^5 - 8*x).jacobian()
+            sage: phi = End(J).identity()
+            sage: P = J(2, 4)
+            sage: (phi + phi)(P) == P * 2
+            True
+
+        ::
+
+            sage: E = EllipticCurve(GF(101), [5,5])
+            sage: phi = E.isogenies_prime_degree(7)[0]
+            sage: P = E.lift_x(0)
+            sage: (phi + phi)(P)
+            (72 : 56 : 1)
+            sage: (phi - phi)(P)
+            (0 : 1 : 0)
+        """
+        return sum((phi(P) for phi in self._phis), self._codomain.zero())
+
+    def _repr_(self):
+        r"""
+        Return basic facts about this sum morphism as a string.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: J = HyperellipticCurve(x^5 - 8*x).jacobian()
+            sage: phi = End(J).identity()
+            sage: phi + phi
+            Sum morphism:
+              From: Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+              To:   Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+              Via:  (Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+              Defn: Identity map, Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+              Defn: Identity map)
+        """
+        # PR_TODO: Remove the "Via:" part?
+        return f'Sum morphism:' \
+                f'\n  From: {self._domain}' \
+                f'\n  To:   {self._codomain}' \
+                f'\n  Via:  {self._phis}'
+
+    def summands(self):
+        r"""
+        Return the individual summands making up this sum morphism.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: J = HyperellipticCurve(x^5 - 8*x).jacobian()
+            sage: phi = End(J).identity()
+            sage: (phi + phi).summands()
+            (Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+               Defn: Identity map,
+             Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+               Defn: Identity map)
+            sage: _ == (phi, phi)
+            True
+
+        ::
+
+            sage: E = EllipticCurve(j=5)
+            sage: m2 = E.scalar_multiplication(2)
+            sage: m3 = E.scalar_multiplication(3)
+            sage: m2 + m3
+            Sum morphism:
+              From: Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field
+              To:   Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field
+              Via:  (Scalar-multiplication endomorphism [2] of Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field, Scalar-multiplication endomorphism [3] of Elliptic Curve defined by y^2 + x*y = x^3 + x^2 + 180*x + 17255 over Rational Field)
+        """
+        return self._phis
+
+    # PR_TODO: Implement equality check
+    # How to do it non-stupidly?
+    def _richcmp_(self, other, op):
+        r"""
+        Compare two scheme morphisms.
+
+        INPUT:
+
+        - ``other`` -- anything. To compare against the scheme
+          morphism ``self``.
+
+        OUTPUT:
+
+        A boolean or ``NotImplemented``
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: J = HyperellipticCurve(x^5 - 8*x).jacobian()
+            sage: phi = End(J).identity()
+            sage: phi == phi
+            True
+            sage: phi + phi == phi + phi
+            True
+            sage: phi + phi == phi + phi + phi
+            False
+            sage: sorted([phi + phi, phi + phi])
+            Traceback (most recent call last):
+            ...
+            TypeError: '<' not supported between instances of 'SchemeMorphism_sum' and 'SchemeMorphism_sum'
+        """
+        if not isinstance(other, SchemeMorphism_sum):
+            return self._richcmp_(SchemeMorphism_sum([other]), op)
+
+        from sage.structure.richcmp import op_EQ
+        if op != op_EQ:
+            return NotImplemented
+
+        return self._phis == other._phis
+
+    def __hash__(self):
+        """
+        Return a hash for this sum of scheme morhpisms.
+
+        EXAMPLES::
+
+            sage: R.<x> = QQ[]
+            sage: J = HyperellipticCurve(x^5 - 8*x).jacobian()
+            sage: phi = End(J).identity()
+            sage: psi = phi + phi
+            sage: hash(psi) == hash((psi.__class__, J, J, (phi, phi)))
+            True
+        """
+        return hash((self.__class__, self.codomain(), self.domain(), self._phis))
+
+
 class SchemeMorphism_id(SchemeMorphism):
     """
     Return the identity morphism from `X` to itself.
@@ -699,6 +975,8 @@ class SchemeMorphism_id(SchemeMorphism):
         """
         SchemeMorphism.__init__(self, X.Hom(X))
 
+    # TODO: Replace all _repr_defn with just _repr_ overload
+    # For example, this should be an "Identity endomorphism of ..." directly
     def _repr_defn(self):
         r"""
         Return a string representation of the definition of ``self``.
@@ -713,6 +991,48 @@ class SchemeMorphism_id(SchemeMorphism):
             'Identity map'
         """
         return 'Identity map'
+
+    def _call_(self, P):
+        r"""
+        Compute image of `P` under the identity morphism, which is `P`.
+
+        INPUT:
+
+        - ``P`` -- a scheme.
+
+        OUTPUT:
+
+        The scheme `P`.
+
+        EXAMPLES::
+
+            sage: S = Spec(QQ).an_element()
+            sage: End(Spec(QQ)).identity()(S) == S
+            True
+
+            sage: R.<x> = QQ[]
+            sage: J = HyperellipticCurve(x^5 - 8*x).jacobian()
+            sage: P = J(2, 4); P
+            (2, y - 4)
+            sage: phi = End(J).identity(); phi
+            Scheme endomorphism of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 8*x
+              Defn: Identity map
+            sage: phi(P)
+            (2, y - 4)
+        """
+        return P
+
+    def __hash__(self):
+        """
+        Return a hash for self.
+
+        EXAMPLES::
+
+            sage: phi = Spec(QQ).End().identity()
+            sage: hash(phi) == hash((phi.__class__, Spec(QQ)))
+            True
+        """
+        return hash((self.__class__, self.domain()))
 
 
 class SchemeMorphism_structure_map(SchemeMorphism):
@@ -1020,6 +1340,19 @@ class SchemeMorphism_polynomial(SchemeMorphism):
         self._polys = tuple(polys)
 
         SchemeMorphism.__init__(self, parent)
+
+    def __hash__(self):
+        """
+        Return a hash for self.
+
+        EXAMPLES::
+
+            sage: A.<x,y> = AffineSpace(2, QQ)
+            sage: phi = A.hom([2*x, 2*y], A)
+            sage: hash(phi) == hash((phi.__class__, A, A, (2*x, 2*y)))
+            True
+        """
+        return hash((self.__class__, self.domain(), self.codomain(), self._polys))
 
     def __eq__(self, other):
         """
@@ -2147,3 +2480,17 @@ class SchemeMorphism_point(SchemeMorphism):
                 ambient = ambient.change_ring(phi.codomain().base_ring())
         psi = ambient.ambient_space().coordinate_ring().hom([0 for i in range(ambient.ambient_space().ngens())], ambient.base_ring())
         return ambient([psi(phi(t)) for t in self])
+
+    def _add_(self, point):
+        r"""
+        Add two scheme points.
+
+        EXAMPLES::
+
+            sage: A = AffineSpace(QQ, 2)
+            sage: A(2, 3) + A(3, 5)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
+        """
+        raise NotImplementedError

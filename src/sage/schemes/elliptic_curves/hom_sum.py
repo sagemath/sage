@@ -61,13 +61,21 @@ from sage.schemes.elliptic_curves.hom import EllipticCurveHom, compare_via_evalu
 
 class EllipticCurveHom_sum(EllipticCurveHom):
 
-    _degree = None
     _phis = None
+    _degree = None
 
     def __init__(self, phis, domain=None, codomain=None):
         r"""
         Construct a sum morphism of elliptic curves from its summands.
         (For empty sums, the domain and codomain curves must be given.)
+
+        .. TODO::
+
+            This class :class:`EllipticCurveHom_sum` really should inherit from
+            :class:`SchemeMorphism_sum`. However, there's a lot of issues that
+            I can't figure out how to resolve, mainly regarding
+            multi-inheritance in Python and which methods the coercion model
+            should use. See :issue:`37705` for some of my thoughts.
 
         EXAMPLES::
 
