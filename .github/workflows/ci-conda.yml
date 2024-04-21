@@ -95,7 +95,7 @@ jobs:
           pip install --no-build-isolation --no-deps --config-settings editable_mode=compat -v -v -e ./src
         env:
           SAGE_NUM_THREADS: 2
-
+        
       - name: Verify dependencies
         if: success() || failure()
         shell: bash -l {0}

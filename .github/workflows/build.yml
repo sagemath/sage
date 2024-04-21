@@ -372,7 +372,7 @@ jobs:
         shell: sh .ci/docker-exec-script.sh BUILD /sage {0}
 
       - name: Upload coverage to codecov
-        if: (success() || failure()) && steps.build.outcome == 'success'
+        if: (success() || failure()) && steps.container.outcome == 'success'
         uses: codecov/codecov-action@v4
         with:
           directory: ./coverage-report
