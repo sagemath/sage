@@ -106,7 +106,7 @@ jobs:
 
       - name: Static code check with pyright
         if: (success() || failure()) && steps.worktree.outcome == 'success'
-        uses: jakebailey/pyright-action@v1
+        uses: jakebailey/pyright-action@v2
         with:
           version: 1.1.332
           # Many warnings issued by pyright are not yet helpful because there is not yet enough type information.
@@ -118,7 +118,7 @@ jobs:
       
       - name: Static code check with pyright (annotated)
         if: (success() || failure()) && steps.worktree.outcome == 'success'
-        uses: jakebailey/pyright-action@v1
+        uses: jakebailey/pyright-action@v2
         with:
           version: 1.1.332
           # Issue errors
