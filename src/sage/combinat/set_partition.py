@@ -2356,7 +2356,7 @@ class SetPartitions(UniqueRepresentation, Parent):
         """
         P = DisjointSet(range(1, n + 1))
         for i, j in arcs:
-            P._union(i, j)
+            P.union(i, j)
         return self.element_class(self, P)
 
     def from_rook_placement_gamma(self, rooks, n):

@@ -233,7 +233,7 @@ def is_valid_tree_decomposition(G, T):
         for Xi in X:
             for Xj in T.neighbor_iterator(Xi):
                 if Xj in X:
-                    D._union(Xi, Xj)
+                    D.union(Xi, Xj)
         if D.number_of_subsets() > 1:
             return False
 

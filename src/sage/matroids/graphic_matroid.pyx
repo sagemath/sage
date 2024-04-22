@@ -286,7 +286,7 @@ cdef class GraphicMatroid(Matroid):
         # This counts components:
         DS_vertices = DisjointSet_of_hashables(vertices)
         for (u, v, l) in edges:
-            DS_vertices._union(u, v)
+            DS_vertices.union(u, v)
         return (len(vertices) - DS_vertices.number_of_subsets())
 
     # Representation:
@@ -663,7 +663,7 @@ cdef class GraphicMatroid(Matroid):
         cdef list not_our_edges = self.groundset_to_edges(self._groundset.difference(X))
         DS_vertices = DisjointSet_of_hashables(all_vertices)
         for u, v, l in not_our_edges:
-            DS_vertices._union(u, v)
+            DS_vertices.union(u, v)
         return len(X) - (DS_vertices.number_of_subsets() - Integer(1))
 
     cpdef _is_circuit(self, X):
@@ -773,8 +773,8 @@ cdef class GraphicMatroid(Matroid):
         cdef set our_set = set()
         DS_vertices = DisjointSet_of_hashables(vertices)
         for (u, v, l) in edges:
-            if DS_vertices._find(u) != DS_vertices._find(v):
-                DS_vertices._union(u, v)
+            if DS_vertices.find(u) != DS_vertices.find(v):
+                DS_vertices.union(u, v)
                 our_set.add(l)
         return frozenset(our_set)
 
@@ -807,13 +807,13 @@ cdef class GraphicMatroid(Matroid):
         cdef set our_set = set()
         DS_vertices = DisjointSet_of_hashables(all_vertices)
         for (u, v, l) in not_our_edges:
-            DS_vertices._union(u, v)
+            DS_vertices.union(u, v)
 
         for (u, v, l) in edges:
-            if DS_vertices._find(u) == DS_vertices._find(v):
+            if DS_vertices.find(u) == DS_vertices.find(v):
                 our_set.add(l)
             else:
-                DS_vertices._union(u, v)
+                DS_vertices.union(u, v)
         return frozenset(our_set)
 
     cpdef _circuit(self, X):
@@ -876,8 +876,8 @@ cdef class GraphicMatroid(Matroid):
         DS_vertices = DisjointSet_of_hashables(vertices)
         for (u, v, l) in edges:
             edge_set.add((u, v, l))
-            if DS_vertices._find(u) != DS_vertices._find(v):
-                DS_vertices._union(u, v)
+            if DS_vertices.find(u) != DS_vertices.find(v):
+                DS_vertices.union(u, v)
             else:
                 break
         else:

@@ -456,7 +456,7 @@ def gamma_classes(graph):
             e = frozenset([v1, v])
             for vi in component[1:]:
                 ei = frozenset([vi, v])
-                pieces._union(e, ei)
+                pieces.union(e, ei)
     return {frozenset(chain.from_iterable(loe)): loe for loe in pieces}
 
 
