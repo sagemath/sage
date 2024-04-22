@@ -5124,6 +5124,9 @@ REFERENCES:
             Computational and Applied Mathematics 39(2), 2020.
             :doi:`10.1007/s40314-020-1115-y`.
 
+.. [Or2024] \M. Orlitzky. Continuity of the conic hull.
+            Journal of Convex Analysis 31(1):255-264, 2024.
+
 .. [ORS2013] Peter Ozsvath, Jacob Rasmussen, Zoltan Szabo,
              *Odd Khovanov homology*,
              Algebraic & Geometric Topology 13 (2013) 1465–1488,
