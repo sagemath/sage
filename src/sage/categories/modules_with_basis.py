@@ -2097,8 +2097,18 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: a = s([2,1]) + 2*s([3,2])                                         # needs sage.combinat sage.modules
                 sage: a.map_coefficients(lambda x: x * 2)                               # needs sage.combinat sage.modules
                 2*s[2, 1] + 4*s[3, 2]
+
+            TESTS:
+
+            map_coefficients works on Matrix::
+
+                sage: M = Matrix([[1, 0], [0, 1]])
+                sage: f = lambda x: x + 1
+                sage: M.map_coefficients(f)             # This actually failed at some point!!! See #37320
+                [2 0]
+                [0 2]
             """
-            return self.parent().sum_of_terms( (m, f(c)) for m,c in self )
+            return self.parent().sum_of_terms( (m, f(c)) for m,c in self.monomial_coefficients(copy=False).items() )
 
         def map_support(self, f):
             """
@@ -2140,7 +2150,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: y.parent() is B                                                   # needs sage.modules
                 True
             """
-            return self.parent().sum_of_terms( (f(m), c) for m,c in self )
+            return self.parent().sum_of_terms( (f(m), c) for m,c in self.monomial_coefficients(copy=False).items() )
 
         def map_support_skip_none(self, f):
             """
@@ -2174,7 +2184,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: y.parent() is B                                                   # needs sage.modules
                 True
             """
-            return self.parent().sum_of_terms( (fm,c) for (fm,c) in ((f(m), c) for m,c in self) if fm is not None)
+            return self.parent().sum_of_terms( (fm,c) for (fm,c) in ((f(m), c) for m,c in self.monomial_coefficients(copy=False).items()) if fm is not None)
 
         def map_item(self, f):
             """
@@ -2207,8 +2217,16 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: a = s([2,1]) + s([1,1,1])                                         # needs sage.combinat sage.modules
                 sage: a.map_item(f)                                                     # needs sage.combinat sage.modules
                 2*s[2, 1] + 2*s[3]
+
+            To apply the function on all entries including 0 coefficient::
+
+                sage: M = Matrix([[1, 0], [0, 1]])
+                sage: f = lambda x: x + 1
+                sage: M.parent()(map(f, M.list()))
+                [2 1]
+                [1 2]
             """
-            return self.parent().sum_of_terms( f(m,c) for m,c in self )
+            return self.parent().sum_of_terms( f(m,c) for m,c in self.monomial_coefficients(copy=False).items() )
 
         def tensor(*elements):
             """
