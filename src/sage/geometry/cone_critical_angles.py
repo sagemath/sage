@@ -559,59 +559,61 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
     This function should return the same solutions (with zero included,
     of course) as the naive implementation even for random cones::
 
+        sage: # long time
         sage: from itertools import chain
-        sage: from sage.geometry.cone_critical_angles import (    # long time
-        ....:   _normalize_gevp_solution,                         # long time
-        ....:    _random_admissible_cone,                         # long time
-        ....:   _solve_gevp_naive,                                # long time
-        ....:   gevp_licis,                                       # long time
-        ....:   solve_gevp_nonzero,                               # long time
-        ....:   solve_gevp_zero)                                  # long time
-        sage: n = ZZ.random_element(1,3)                          # long time
-        sage: P = _random_admissible_cone(ambient_dim=n)          # long time
-        sage: Q = _random_admissible_cone(ambient_dim=n)          # long time
-        sage: gs = [g.change_ring(AA).normalized() for g in P]    # long time
-        sage: G = matrix.column(gs)                               # long time
-        sage: GG = G.transpose()*G                                # long time
-        sage: hs = [h.change_ring(AA).normalized() for h in Q]    # long time
-        sage: H = matrix.column(hs)                               # long time
-        sage: HH = H.transpose()*H                                # long time
-        sage: M = G.transpose()*H                                 # long time
-        sage: G_index_sets = list(gevp_licis(G))                  # long time
-        sage: H_index_sets = list(gevp_licis(H))                  # long time
-        sage: all( set( _normalize_gevp_solution(s) for s in      # long time
-        ....:              chain(solve_gevp_zero(M,I,J),          # long time
-        ....:              solve_gevp_nonzero(GG,HH,M,I,J)) )     # long time
-        ....:      ==                                             # long time
-        ....:      set( _normalize_gevp_solution(s) for s in      # long time
-        ....:            _solve_gevp_naive(GG,HH,M,I,J) )         # long time
-        ....:      for I in G_index_sets                          # long time
-        ....:      for J in H_index_sets )                        # long time
+        sage: from sage.geometry.cone_critical_angles import (
+        ....:   _normalize_gevp_solution,
+        ....:    _random_admissible_cone,
+        ....:   _solve_gevp_naive,
+        ....:   gevp_licis,
+        ....:   solve_gevp_nonzero,
+        ....:   solve_gevp_zero)
+        sage: n = ZZ.random_element(1,3)
+        sage: P = _random_admissible_cone(ambient_dim=n)
+        sage: Q = _random_admissible_cone(ambient_dim=n)
+        sage: gs = [g.change_ring(AA).normalized() for g in P]
+        sage: G = matrix.column(gs)
+        sage: GG = G.transpose()*G
+        sage: hs = [h.change_ring(AA).normalized() for h in Q]
+        sage: H = matrix.column(hs)
+        sage: HH = H.transpose()*H
+        sage: M = G.transpose()*H
+        sage: G_index_sets = list(gevp_licis(G))
+        sage: H_index_sets = list(gevp_licis(H))
+        sage: all( set( _normalize_gevp_solution(s) for s in
+        ....:              chain(solve_gevp_zero(M,I,J),
+        ....:              solve_gevp_nonzero(GG,HH,M,I,J)) )
+        ....:      ==
+        ....:      set( _normalize_gevp_solution(s) for s in
+        ....:            _solve_gevp_naive(GG,HH,M,I,J) )
+        ....:      for I in G_index_sets
+        ....:      for J in H_index_sets )
         True
 
     According to Proposition 7, the only eigenvalues that arise when
     either ``G`` or ``H`` is invertible are `-1`, `0`, and `1`::
 
-        sage: from sage.geometry.cone_critical_angles import (    # long time
-        ....:   _random_admissible_cone,                          # long time
-        ....:   gevp_licis,                                       # long time
-        ....:   solve_gevp_nonzero)                               # long time
-        sage: n = ZZ.random_element(1,3)                          # long time
-        sage: P = _random_admissible_cone(ambient_dim=n)          # long time
-        sage: Q = _random_admissible_cone(ambient_dim=n)          # long time
-        sage: gs = [g.change_ring(AA).normalized() for g in P]    # long time
-        sage: hs = [h.change_ring(AA).normalized() for h in Q]    # long time
-        sage: G = matrix.column(gs)                               # long time
-        sage: GG = G.transpose()*G                                # long time
-        sage: H = matrix.column(hs)                               # long time
-        sage: HH = H.transpose()*H                                # long time
-        sage: M = G.transpose()*H                                 # long time
-        sage: from itertools import product                       # long time
-        sage: all(                                                # long time
-        ....:  (v in [-1,0,1]                                     # long time
-        ....:   for (v,_,_,_) in solve_gevp_nonzero(GG,HH,M,I,J)) # long time
-        ....:   for (I,J) in product(gevp_licis(G),gevp_licis(H)) # long time
-        ....:   if len(I) == n or len(J) == n )                   # long time
+        sage: # long time
+        sage: from sage.geometry.cone_critical_angles import (
+        ....:   _random_admissible_cone,
+        ....:   gevp_licis,
+        ....:   solve_gevp_nonzero)
+        sage: n = ZZ.random_element(1,3)
+        sage: P = _random_admissible_cone(ambient_dim=n)
+        sage: Q = _random_admissible_cone(ambient_dim=n)
+        sage: gs = [g.change_ring(AA).normalized() for g in P]
+        sage: hs = [h.change_ring(AA).normalized() for h in Q]
+        sage: G = matrix.column(gs)
+        sage: GG = G.transpose()*G
+        sage: H = matrix.column(hs)
+        sage: HH = H.transpose()*H
+        sage: M = G.transpose()*H
+        sage: from itertools import product
+        sage: all(
+        ....:  (v in [-1,0,1]
+        ....:   for (v,_,_,_) in solve_gevp_nonzero(GG,HH,M,I,J))
+        ....:   for (I,J) in product(gevp_licis(G),gevp_licis(H))
+        ....:   if len(I) == n or len(J) == n )
         True
     """
     if len(J) < len(I):
