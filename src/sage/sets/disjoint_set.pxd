@@ -22,6 +22,8 @@ cdef class DisjointSet_class(SageObject):
 cdef class DisjointSet_of_integers(DisjointSet_class):
     cpdef int find(self, int i)
     cpdef void union(self, int i, int j)
+    cdef inline int _find(self, int i)
+    cdef inline void _union(self, int i, int j)
     cpdef root_to_elements_dict(self)
     cpdef element_to_root_dict(self)
     cpdef to_digraph(self)
