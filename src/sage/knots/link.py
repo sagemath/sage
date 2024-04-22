@@ -3637,7 +3637,7 @@ class Link(SageObject):
         lr = len(regions)
         for i in range(lr):
             r = regions[i]
-            if i <  lr - 1:
+            if i < lr - 1:
                 # capacity of interior region, sink if positive, source if negative
                 capacity = len(r) - 4
             else:
