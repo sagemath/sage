@@ -1725,6 +1725,19 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             (x*y, y, z, 1)
             sage: A*v
             (x*y + y + 1, z + 1)
+
+        TESTS:
+
+        Check that :issue:`37837` has been fixed::
+
+            sage: R.<a,b,c> = PolynomialRing(GF(2), ['a', 'b', 'c'])
+            sage: A, v = Sequence([a+b+c]).coefficients_monomials()
+            sage: A
+            [1 1 1]
+            sage: v
+            (a, b, c)
+            sage: A*v
+            (a + b + c)
         """
         from sage.modules.free_module_element import vector
         from sage.matrix.constructor import Matrix
@@ -1743,6 +1756,8 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         A = Matrix(R, len(self), len(v), sparse=sparse)
         for x, poly in enumerate(self):
             for m in poly:
+                if isinstance(m, tuple):
+                    m = m[1]
                 try:
                     A[x, y[m]] = one
                 except KeyError:
