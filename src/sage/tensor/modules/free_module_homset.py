@@ -132,6 +132,16 @@ class FreeModuleHomset(Homset, metaclass=ClasscallMetaclass):
     def __classcall_private__(cls, fmodule1, fmodule2, name=None, latex_name=None):
         r"""
         Delegate to the subclass :class:`FreeModuleEndset` if ``fmodule1 == fmodule2``.
+
+        TESTS::
+
+            sage: from sage.tensor.modules.free_module_homset import FreeModuleEndset, FreeModuleHomset
+            sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
+            sage: N = FiniteRankFreeModule(ZZ, 2, name='N')
+            sage: isinstance(FreeModuleHomset(M, N), FreeModuleEndset)
+            False
+            sage: isinstance(FreeModuleHomset(M, M), FreeModuleEndset)
+            True
         """
         from .finite_rank_free_module import FiniteRankFreeModule
         if not isinstance(fmodule1, FiniteRankFreeModule):
