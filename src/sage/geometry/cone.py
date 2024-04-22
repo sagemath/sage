@@ -6273,30 +6273,31 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         :meth:`max_angle`, and every returned pair/angle is indeed
         critical according to Definition 2 in [Or2020]_::
 
-            sage: P = cones.nonnegative_orthant(5)               # long time
-            sage: Q = cones.schur(5)                             # long time
-            sage: gamma = P.critical_angles(Q)                   # long time
-            sage: actual = max([theta for (theta,_,_) in gamma]) # long time
-            sage: expected = P.max_angle(Q)[0]                   # long time
-            sage: bool(actual == expected)                       # long time
+            sage: # long time
+            sage: P = cones.nonnegative_orthant(5)
+            sage: Q = cones.schur(5)
+            sage: gamma = P.critical_angles(Q)
+            sage: actual = max([theta for (theta,_,_) in gamma])
+            sage: expected = P.max_angle(Q)[0]
+            sage: bool(actual == expected)
             True
-            sage: (theta,u,v) = choice(gamma)                    # long time
-            sage: u.norm() == 1                                  # long time
+            sage: (theta,u,v) = choice(gamma)
+            sage: u.norm() == 1
             True
-            sage: v.norm() == 1                                  # long time
+            sage: v.norm() == 1
             True
-            sage: all(g.inner_product(u) >= 0 for g in P.dual()) # long time
+            sage: all(g.inner_product(u) >= 0 for g in P.dual())
             True
-            sage: all(h.inner_product(v) >= 0 for h in Q.dual()) # long time
+            sage: all(h.inner_product(v) >= 0 for h in Q.dual())
             True
-            sage: u_dot_v = u.inner_product(v)                   # long time
-            sage: y = v - u_dot_v*u                              # long time
-            sage: all( y.inner_product(g) >= 0 for g in P )      # long time
+            sage: u_dot_v = u.inner_product(v)
+            sage: y = v - u_dot_v*u
+            sage: all( y.inner_product(g) >= 0 for g in P )
             True
-            sage: z = u - u_dot_v*v                              # long time
-            sage: all( z.inner_product(h) >= 0 for h in Q )      # long time
+            sage: z = u - u_dot_v*v
+            sage: all( z.inner_product(h) >= 0 for h in Q )
             True
-            sage: bool(abs(cos(theta) - u_dot_v) <= 1e-12)       # long time
+            sage: bool(abs(cos(theta) - u_dot_v) <= 1e-12)
             True
 
         TESTS:
@@ -6307,23 +6308,24 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         can raise an error if there are big eigenspaces, so we just
         punt in that case::
 
-            sage: from sage.geometry.cone_critical_angles import ( # long time
-            ....:   _is_critical,                                  # long time
-            ....:   _random_admissible_cone )                      # long time
-            sage: n = ZZ.random_element(1,3)                       # long time
-            sage: P = _random_admissible_cone(ambient_dim=n)       # long time
-            sage: Q = _random_admissible_cone(ambient_dim=n)       # long time
-            sage: gamma = P.critical_angles(Q)                     # long time
-            sage: actual = max([ theta for (theta,_,_) in gamma ]) # long time
-            sage: expected = actual                                # long time
-            sage: try:                                             # long time
-            ....:     expected = P.max_angle(Q)[0]                 # long time
-            ....: except ValueError:                               # long time
-            ....:     pass                                         # long time
-            sage: bool(actual == expected)                         # long time
+            sage: # long time
+            sage: from sage.geometry.cone_critical_angles import (
+            ....:   _is_critical,
+            ....:   _random_admissible_cone )
+            sage: n = ZZ.random_element(1,3)
+            sage: P = _random_admissible_cone(ambient_dim=n)
+            sage: Q = _random_admissible_cone(ambient_dim=n)
+            sage: gamma = P.critical_angles(Q)
+            sage: actual = max([ theta for (theta,_,_) in gamma ])
+            sage: expected = actual
+            sage: try:
+            ....:     expected = P.max_angle(Q)[0]
+            ....: except ValueError:
+            ....:     pass
+            sage: bool(actual == expected)
             True
-            sage: all( _is_critical(P,Q,theta,u,v)                 # long time
-            ....:      for (theta,u,v) in gamma )                  # long time
+            sage: all( _is_critical(P,Q,theta,u,v)
+            ....:      for (theta,u,v) in gamma )
             True
         """
         # We do the argument checking here, in the public cone method,
@@ -6430,14 +6432,15 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         result can be obtained faster using inexact arithmetic, but
         only confidently so because we already know the answer::
 
-            sage: P = cones.nonnegative_orthant(5)           # long time
-            sage: Q = cones.schur(5)                         # long time
-            sage: actual = P.max_angle(Q)[0]                 # long time
-            sage: expected = 0.8524*pi                       # long time
-            sage: bool( (actual - expected).abs() < 0.0001 ) # long time
+            sage: # long time
+            sage: P = cones.nonnegative_orthant(5)
+            sage: Q = cones.schur(5)
+            sage: actual = P.max_angle(Q)[0]
+            sage: expected = 0.8524*pi
+            sage: bool( (actual - expected).abs() < 0.0001 )
             True
-            sage: actual = P.max_angle(Q,exact=False)[0]     # long time
-            sage: bool( (actual - expected).abs() < 0.0001 ) # long time
+            sage: actual = P.max_angle(Q,exact=False)[0]
+            sage: bool( (actual - expected).abs() < 0.0001 )
             True
 
         The maximal angle within the Schur cone is known explicitly via
@@ -6473,14 +6476,15 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         When ``self`` and ``-other`` have nontrivial intersection, we
         expect the maximal angle to be `\pi`::
 
-            sage: from sage.geometry.cone_critical_angles import ( # long time
-            ....:   _random_admissible_cone )                      # long time
-            sage: n = ZZ.random_element(1,3)                       # long time
-            sage: P = _random_admissible_cone(ambient_dim=n)       # long time
-            sage: Q = _random_admissible_cone(ambient_dim=n)       # long time
-            sage: expected = P.intersection(-Q).is_trivial()       # long time
-            sage: actual = bool(P.max_angle(Q)[0] != pi)           # long time
-            sage: actual == expected                               # long time
+            sage: # long time
+            sage: from sage.geometry.cone_critical_angles import (
+            ....:   _random_admissible_cone )
+            sage: n = ZZ.random_element(1,3)
+            sage: P = _random_admissible_cone(ambient_dim=n)
+            sage: Q = _random_admissible_cone(ambient_dim=n)
+            sage: expected = P.intersection(-Q).is_trivial()
+            sage: actual = bool(P.max_angle(Q)[0] != pi)
+            sage: actual == expected
             True
         """
         # We do the argument checking here, in the public cone method,
