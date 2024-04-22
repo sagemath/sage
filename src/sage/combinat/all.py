@@ -89,7 +89,8 @@ from .yang_baxter_graph import YangBaxterGraph
 # Permutations
 from .permutation import Permutation, Permutations, Arrangements, CyclicPermutations, CyclicPermutationsOfPartition
 from .affine_permutation import AffinePermutationGroup
-lazy_import('sage.combinat.colored_permutations', ['ColoredPermutations',
+lazy_import('sage.combinat.colored_permutations', ['ComplexReflectionGroup',
+                                                   'ColoredPermutations',
                                                    'SignedPermutation',
                                                    'SignedPermutations'])
 from .derangements import Derangements
