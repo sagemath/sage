@@ -508,9 +508,8 @@ cdef class DecompositionNode(SageObject):
 
         """
         certificate = kwds.get('certificate', False)
-        cdef int8_t graphicness = CMRmatroiddecGraphicness(self._dec)
-        if graphicness:
-            result = graphicness == +1
+        try:
+            result = self._graphicness()
             if not decomposition and not certificate:
                 return result
             result = [result]
@@ -519,17 +518,17 @@ cdef class DecompositionNode(SageObject):
             if certificate:
                 raise NotImplementedError
             return result
-        # compute it... wait for CMR functions
-        raise NotImplementedError("Graphic Not Determined")
+        except ValueError:
+            # compute it... wait for CMR functions
+            raise NotImplementedError("Graphic Not Determined")
 
     def _is_binary_linear_matroid_cographic(self, *, decomposition=False, **kwds):
         r"""
 
         """
         certificate = kwds.get('certificate', False)
-        cdef int8_t cographicness = CMRmatroiddecCographicness(self._dec)
-        if cographicness:
-            result = cographicness == +1
+        try:
+            result = self._cographicness()
             if not decomposition and not certificate:
                 return result
             result = [result]
@@ -538,17 +537,17 @@ cdef class DecompositionNode(SageObject):
             if certificate:
                 raise NotImplementedError
             return result
-        # compute it... wait for CMR functions
-        raise NotImplementedError("Cographic Not Determined")
+        except ValueError:
+            # compute it... wait for CMR functions
+            raise NotImplementedError("Cographic Not Determined")
 
     def _is_binary_linear_matroid_regular(self, *, decomposition=False, **kwds):
         r"""
 
         """
         certificate = kwds.get('certificate', False)
-        cdef int8_t regularity = CMRmatroiddecRegularity(self._dec)
-        if regularity:
-            result = regularity > 0
+        try:
+            result = self._regularity()
             if not decomposition and not certificate:
                 return result
             result = [result]
@@ -557,8 +556,9 @@ cdef class DecompositionNode(SageObject):
             if certificate:
                 raise NotImplementedError
             return result
-        # compute it... wait for CMR functions
-        raise NotImplementedError("Regularity Not Determined")
+        except ValueError:
+            # compute it... wait for CMR functions
+            raise NotImplementedError("Regularity Not Determined")
 
     def _binary_linear_matroid_complete_decomposition(self, *,
                                         time_limit=60.0,
@@ -652,9 +652,8 @@ cdef class DecompositionNode(SageObject):
 
         """
         certificate = kwds.get('certificate', False)
-        cdef int8_t graphicness = CMRmatroiddecGraphicness(self._dec)
-        if graphicness:
-            result = graphicness == +1
+        try:
+            result = self._graphicness()
             if not decomposition and not certificate:
                 return result
             result = [result]
@@ -663,17 +662,17 @@ cdef class DecompositionNode(SageObject):
             if certificate:
                 raise NotImplementedError
             return result
-        # compute it... wait for CMR functions
-        raise NotImplementedError("Network Not Determined")
+        except ValueError:
+            # compute it... wait for CMR functions
+            raise NotImplementedError("Network Not Determined")
 
     def is_conetwork_matrix(self, *, decomposition=False, **kwds):
         r"""
 
         """
         certificate = kwds.get('certificate', False)
-        cdef int8_t cographicness = CMRmatroiddecCographicness(self._dec)
-        if cographicness:
-            result = cographicness == +1
+        try:
+            result = self._cographicness()
             if not decomposition and not certificate:
                 return result
             result = [result]
@@ -682,17 +681,17 @@ cdef class DecompositionNode(SageObject):
             if certificate:
                 raise NotImplementedError
             return result
-        # compute it... wait for CMR functions
-        raise NotImplementedError("Conetwork Not Determined")
+        except ValueError:
+            # compute it... wait for CMR functions
+            raise NotImplementedError("Conetwork Not Determined")
 
     def is_totally_unimodular(self, *, decomposition=False, **kwds):
         r"""
 
         """
         certificate = kwds.get('certificate', False)
-        cdef int8_t regularity = CMRmatroiddecRegularity(self._dec)
-        if regularity:
-            result = regularity > 0
+        try:
+            result = self._regularity()
             if not decomposition and not certificate:
                 return result
             result = [result]
@@ -701,8 +700,9 @@ cdef class DecompositionNode(SageObject):
             if certificate:
                 raise NotImplementedError
             return result
-        # compute it... wait for CMR functions
-        raise NotImplementedError("TU Not Determined")
+        except ValueError:
+            # compute it... wait for CMR functions
+            raise NotImplementedError("TU Not Determined")
 
     def complete_decomposition(self, *, time_limit=60.0,
                                use_direct_graphicness_test=True,

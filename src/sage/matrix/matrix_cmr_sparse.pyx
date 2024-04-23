@@ -1485,6 +1485,21 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: coforest_edges  # indexed by cols of M
             ((2, 7), (12, 1))
 
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: K33 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 4, sparse=True),
+            ....:                           [[-1, -1, -1, -1],
+            ....:                            [ 1,  1,  0,  0],
+            ....:                            [ 0,  0,  1,  1],
+            ....:                            [ 1,  0,  1,  0],
+            ....:                            [ 0,  1,  0,  1]]); K33
+            [-1 -1 -1 -1]
+            [ 1  1  0  0]
+            [ 0  0  1  1]
+            [ 1  0  1  0]
+            [ 0  1  0  1]
+            sage: K33.is_network_matrix()
+            True
+
         This is test ``Basic`` in CMR's ``test_network.cpp``::
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
@@ -1566,6 +1581,21 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [ 0  0  0  1  1  0  0  1 -1]
             sage: M.is_conetwork_matrix()
             True
+
+            sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
+            sage: K33 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 5, 4, sparse=True),
+            ....:                           [[-1, -1, -1, -1],
+            ....:                            [ 1,  1,  0,  0],
+            ....:                            [ 0,  0,  1,  1],
+            ....:                            [ 1,  0,  1,  0],
+            ....:                            [ 0,  1,  0,  1]]); K33
+            [-1 -1 -1 -1]
+            [ 1  1  0  0]
+            [ 0  0  1  1]
+            [ 1  0  1  0]
+            [ 0  1  0  1]
+            sage: K33.is_conetwork_matrix()
+            False
 
             sage: from sage.matrix.matrix_cmr_sparse import Matrix_cmr_chr_sparse
             sage: C3 = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 3, 3, sparse=True),
@@ -1936,6 +1966,33 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [0 1 1]
             [1 0 1]
             [1 1 0]
+
+            sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 9, sparse=True),
+            ....:                           [[-1,-1,-1,-1, 0, 0, 0, 0, 0],
+            ....:                            [1, 1, 0, 0, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 1, 1, 0, 0, 0, 0, 0],
+            ....:                            [1, 0, 1, 0, 0, 0, 0, 0, 0],
+            ....:                            [0, 1, 0, 1, 0, 0, 0, 0, 0],
+            ....:                            [0, 0, 0, 0,-1, 1, 0, 1, 0],
+            ....:                            [0, 0, 0, 0,-1, 1, 0, 0, 1],
+            ....:                            [0, 0, 0, 0,-1, 0, 1, 1, 0],
+            ....:                            [0, 0, 0, 0,-1, 0, 1, 0, 1]])
+            sage: result, certificate = M.is_totally_unimodular(
+            ....:                           certificate=True, complete_tree=False)
+            sage: result, certificate
+            ('Not Determined', OneSumNode (9×9) with 2 children)
+            sage: unicode_art(certificate)
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            UnknownNode (5×4) UnknownNode (4×5)
+            sage: result, certificate = M.is_totally_unimodular(
+            ....:                           certificate=True, complete_tree=True)
+            sage: result, certificate
+            (True, OneSumNode (9×9) with 2 children)
+            sage: unicode_art(certificate)
+            ╭───────────OneSumNode (9×9) with 2 children
+            │                 │
+            GraphicNode (5×4) CographicNode (4×5)
 
         This is test ``TreeFlagsNorecurse``, ``TreeFlagsStopNoncographic``,
         and ``TreeFlagsStopNongraphic`` in CMR's ``test_regular.cpp``::
