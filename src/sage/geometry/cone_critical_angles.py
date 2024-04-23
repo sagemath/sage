@@ -1105,8 +1105,8 @@ def max_angle(P, Q, exact, epsilon):
     if min_ip >= 0: # The maximal angle is acute!
         return (arccos(min_ip), min_u, min_v)
 
-    # Also check to see if the maximal angle is pi, so that we can
-    # rule it out later on.
+    # Also check to see if the maximal angle is pi. In particular this
+    # is true when either P or Q is the entire ambient space.
     P_and_negative_Q = P.intersection(-Q)
     if not (P_and_negative_Q.is_trivial()):
         u = P_and_negative_Q.ray(0).change_ring(ring).normalized()
@@ -1187,8 +1187,25 @@ def max_angle(P, Q, exact, epsilon):
 
     for (cos_theta, xi, eta, mult) in big_eigenspaces:
         if cos_theta < min_ip:
-            # This is only a problem if cos_theta could actually
-            # be minimal.
+            # The existence of a big eigenspace is only a problem if
+            # cos_theta could actually be minimal.
+
+            if exact and P.is_strictly_convex():
+                if Q_is_P or Q.is_strictly_convex():
+                    # The maximal angle composed with the conic hull
+                    # is continuous at (gs,hs), so we can retry with
+                    # inexact arithmetic. That will "perturb"
+                    # everything, hopefully eliminating any larger
+                    # eigenspaces and without changing the answer too
+                    # much.
+                    return max_angle(P, Q, False, epsilon)
+
+            # Either we don't know that the maximal angle of the conic
+            # hull is continuous at (gs,hs), or we're already using
+            # inexact arithmetic. There's nothing left to try. (Note
+            # that the case where either P or Q is the ambient space
+            # was handled much earlier, since in that case the maximal
+            # angle is obviously pi.)
             raise ValueError('eigenspace of dimension %d > 1 '
                              'corresponding to eigenvalue %s'
                               % (mult, cos_theta))
