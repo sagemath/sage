@@ -562,68 +562,9 @@ def package_manifest(package):
     raise RuntimeError('package manifest directory changed at runtime')
 
 
-class PackageNotFoundError(RuntimeError):
-    """
-    This class defines the exception that should be raised when a
-    function, method, or class cannot detect a Sage package that it
-    depends on.
-
-    This exception should be raised with a single argument, namely
-    the name of the package.
-
-    When a ``PackageNotFoundError`` is raised, this means one of the
-    following:
-
-    - The required optional package is not installed.
-
-    - The required optional package is installed, but the relevant
-      interface to that package is unable to detect the package.
-
-    Raising a ``PackageNotFoundError`` is deprecated.  Use
-    :class:`sage.features.FeatureNotPresentError` instead.
-
-    User code can continue to catch ``PackageNotFoundError`` exceptions
-    for compatibility with older versions of the Sage library.
-    This does not cause deprecation warnings.
-
-    EXAMPLES::
-
-        sage: from sage.misc.package import PackageNotFoundError
-        sage: try:
-        ....:     pass
-        ....: except PackageNotFoundError:
-        ....:     pass
-
-    """
-
-    def __init__(self, *args):
-        """
-        TESTS::
-
-            sage: from sage.misc.package import PackageNotFoundError
-            sage: raise PackageNotFoundError("my_package")
-            Traceback (most recent call last):
-            ...
-            PackageNotFoundError: the package 'my_package' was not found. You can install it by running 'sage -i my_package' in a shell
-        """
-        super().__init__(*args)
-        # We do not deprecate the whole class because we want
-        # to allow user code to handle this exception without causing
-        # a deprecation warning.
-        from sage.misc.superseded import deprecation
-        deprecation(30607, "Instead of raising PackageNotFoundError, raise sage.features.FeatureNotPresentError")
-
-    def __str__(self):
-        """
-        Return the actual error message.
-
-        EXAMPLES::
-
-            sage: from sage.misc.package import PackageNotFoundError
-            sage: str(PackageNotFoundError("my_package"))
-            doctest:warning...
-            "the package 'my_package' was not found. You can install it by running 'sage -i my_package' in a shell"
-        """
-        return ("the package {0!r} was not found. "
-            "You can install it by running 'sage -i {0}' in a shell"
-            .format(self.args[0]))
+# PackageNotFoundError used to be an exception class.
+# It was deprecated in #30607 and removed afterwards.
+# User code can continue to use PackageNotFoundError in
+# try...except statements using this definition, which
+# catches no exception.
+PackageNotFoundError = ()
