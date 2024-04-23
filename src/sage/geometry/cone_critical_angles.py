@@ -937,8 +937,9 @@ def critical_angles(P, Q, exact, epsilon, debug):
 
     # First check if P is contained in the dual of Q. Keep track of
     # the minimum inner product (and associated vectors) while doing
-    # so; then if P is contained in dual(Q), we just return the pair
-    # with the smallest inner product.
+    # so; then if P is contained in dual(Q), we will have already
+    # computed one critical angle: the maximal angle, corresponding
+    # to the smallest inner product.
     gs = [g.change_ring(ring).normalized() for g in P]
     Q_is_P = (P == Q) # This is used again later
     if Q_is_P:
