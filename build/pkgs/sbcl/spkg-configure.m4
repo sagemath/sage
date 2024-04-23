@@ -15,6 +15,6 @@ SAGE_SPKG_CONFIGURE([sbcl], [dnl
   AS_IF([test -z "$ac_cv_path_SBCL" ], [
         sage_spkg_install_sbcl=yes
         AC_SUBST(SAGE_FRICAS_LISP, ecl)], [
-        AC_SUBST(SAGE_FRICAS_LISP, sbcl)])
+        AC_SUBST(SAGE_FRICAS_LISP, "sbcl --dynamic-space-size 4Gb")])
   m4_popdef([SAGE_SBCL_MINVER])
 ])
