@@ -150,7 +150,7 @@ def _random_admissible_cone(ambient_dim):
         ...
         ValueError: there are no nontrivial cones in dimension 0
     """
-    if ambient_dim < 1 or not ambient_dim in ZZ:
+    if ambient_dim < 1 or ambient_dim not in ZZ:
         # The random_cone() method already crashes if we ask the
         # impossible of it, but having this here emits a more sensible
         # error message.
@@ -391,7 +391,7 @@ def _solve_gevp_naive(GG, HH, M, I, J):
     # We'll format the result to match the solve_gevp_nonzero() return value.
     for (evalue, evectors, multiplicity) in M.eigenvectors_right():
         for z in evectors:
-            xi =  z[0:len(I)]
+            xi = z[0:len(I)]
             xi.set_immutable()
             eta = z[len(I):]
             eta.set_immutable()
@@ -943,7 +943,6 @@ def max_angle(P, Q, exact, epsilon):
 
     (M, min_ip, min_u, min_v) = compute_gevp_M(gs,hs)
 
-
     if min_ip >= 0: # The maximal angle is acute!
         return (arccos(min_ip), min_u, min_v)
 
@@ -987,11 +986,11 @@ def max_angle(P, Q, exact, epsilon):
 
     for I in G_index_sets:
         G_I = G[range(n),I]
-        I_complement = [i for i in range(P.nrays()) if not i in I]
+        I_complement = [i for i in range(P.nrays()) if i not in I]
         G_I_c_T = G[range(n),I_complement].transpose()
 
         for J in H_index_sets:
-            J_complement = [j for j in range(Q.nrays()) if not j in J]
+            J_complement = [j for j in range(Q.nrays()) if j not in J]
             H_J = H[range(n),J]
             H_J_c_T = H[range(n),J_complement].transpose()
 

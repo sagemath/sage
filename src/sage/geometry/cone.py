@@ -6358,7 +6358,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         return max_angle(P, Q, exact, epsilon)
 
 
-
 def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
                 min_rays=0, max_rays=None, strictly_convex=None, solid=None):
     r"""
