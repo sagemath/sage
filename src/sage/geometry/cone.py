@@ -6249,10 +6249,15 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         - [IS2005]_
         - [SS2016]_
         - [Or2020]_
+        - [Or2024]_
 
         ALGORITHM:
 
-        Algorithm 3 in [Or2020]_ is used.
+        Algorithm 3 in [Or2020]_ is used. If a potentially-maximal
+        angle corresponds to an eigenspace of dimension two or more,
+        we sometimes fall back to inexact arithmetic which has the
+        effect of perturbing the cones. That this will not affect the
+        answer too much is one conclusion of [Or2024]_.
 
         EXAMPLES:
 
