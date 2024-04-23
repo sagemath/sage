@@ -6,7 +6,7 @@ The main entry point is :func:`DisjointSet` which chooses the appropriate
 type to return. For more on the data structure, see :func:`DisjointSet`.
 
 This module defines a class for mutable partitioning of a set, which
-cannot be used as a key of a dictionary, vertex of a graph etc. For
+cannot be used as a key of a dictionary, a vertex of a graph, etc. For
 immutable partitioning see :class:`SetPartition`.
 
 AUTHORS:
@@ -24,8 +24,7 @@ Disjoint set of integers from ``0`` to ``n - 1``::
     {{0}, {1}, {2}, {3}, {4}, {5}}
     sage: s.union(2, 4)
     sage: s.union(1, 3)
-    sage: s.union(5, 1)
-    sage: s
+    sage: s.union(5, 1); s
     {{0}, {1, 3, 5}, {2, 4}}
     sage: s.find(3)
     1
@@ -40,8 +39,7 @@ Disjoint set of hashables objects::
     {{'a'}, {'b'}, {'c'}, {'d'}, {'e'}}
     sage: d.union('a', 'b')
     sage: d.union('b', 'c')
-    sage: d.union('c', 'd')
-    sage: d
+    sage: d.union('c', 'd'); d
     {{'a', 'b', 'c', 'd'}, {'e'}}
     sage: d.find('c')
     'a'
@@ -57,7 +55,7 @@ Disjoint set of hashables objects::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.integer import Integer
+from sage.rings.integer cimport Integer
 from sage.structure.sage_object cimport SageObject
 from cpython.object cimport PyObject_RichCompare
 from sage.groups.perm_gps.partn_ref.data_structures cimport *
@@ -84,11 +82,11 @@ cpdef DisjointSet(arg):
 
     INPUT:
 
-    - ``arg`` -- non negative integer or an iterable of hashable objects
+    - ``arg`` -- nonnegative integer or an iterable of hashable objects
 
     EXAMPLES:
 
-    From a non-negative integer::
+    From a nonnegative integer::
 
         sage: DisjointSet(5)
         {{0}, {1}, {2}, {3}, {4}}
@@ -111,12 +109,12 @@ cpdef DisjointSet(arg):
         sage: DisjointSet([])
         {}
 
-    The argument must be a non negative integer::
+    The argument must be a nonnegative integer::
 
         sage: DisjointSet(-1)
         Traceback (most recent call last):
         ...
-        ValueError: arg (=-1) must be a non negative integer
+        ValueError: arg must be a nonnegative integer (-1 given)
 
     or an iterable::
 
@@ -134,7 +132,7 @@ cpdef DisjointSet(arg):
     """
     if isinstance(arg, (Integer, int)):
         if arg < 0:
-            raise ValueError('arg (=%s) must be a non negative integer' % arg)
+            raise ValueError('arg must be a nonnegative integer (%s given)' % arg)
         return DisjointSet_of_integers(arg)
     else:
         return DisjointSet_of_hashables(arg)
@@ -146,7 +144,7 @@ cdef class DisjointSet_class(SageObject):
     """
     def _repr_(self):
         r"""
-        Return ``self`` as a unique str.
+        Return ``self`` as a unique ``str``.
 
         EXAMPLES::
 
@@ -183,7 +181,6 @@ cdef class DisjointSet_class(SageObject):
             sage: d.union(2, 0)
             sage: sorted(d)
             [[0, 2], [1], [3]]
-
             sage: d = DisjointSet('abc')
             sage: sorted(d)
             [['a'], ['b'], ['c']]
@@ -243,6 +240,42 @@ cdef class DisjointSet_class(SageObject):
             return NotImplemented
         return PyObject_RichCompare(s, t, op)
 
+    def __dealloc__(self):
+        r"""
+        Deallocate ``self`` (i.e. the ``self._nodes``).
+
+        EXAMPLES::
+
+            sage: d = DisjointSet(5)
+            sage: del d
+            sage: d = DisjointSet('abc')
+            sage: del d
+        """
+        OP_dealloc(self._nodes)
+
+    def __reduce__(self):
+        r"""
+        Return a tuple of three elements:
+
+        - The function :func:`DisjointSet`
+        - Arguments for the function :func:`DisjointSet`
+        - The actual state of ``self``.
+
+        EXAMPLES::
+
+            sage: d = DisjointSet(5)
+            sage: d.__reduce__()
+            (<built-in function DisjointSet>, (5,), [0, 1, 2, 3, 4])
+
+        ::
+
+            sage: d.union(2, 4)
+            sage: d.union(1, 3)
+            sage: d.__reduce__()
+            (<built-in function DisjointSet>, (5,), [0, 1, 2, 1, 2])
+        """
+        return DisjointSet, (self._nodes.degree,), self.__getstate__()
+
     cpdef cardinality(self):
         r"""
         Return the number of elements in ``self``, *not* the number of subsets.
@@ -291,12 +324,10 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
 
     EXAMPLES::
 
-        sage: d = DisjointSet(5)
-        sage: d
+        sage: d = DisjointSet(5); d
         {{0}, {1}, {2}, {3}, {4}}
         sage: d.union(2, 4)
-        sage: d.union(0, 2)
-        sage: d
+        sage: d.union(0, 2); d
         {{0, 2, 4}, {1}, {3}}
         sage: d.find(2)
         2
@@ -320,7 +351,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
 
         INPUT:
 
-        - ``n`` -- non negative integer
+        - ``n`` -- nonnegative integer
 
         EXAMPLES::
 
@@ -332,40 +363,6 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             {}
         """
         self._nodes = OP_new(n)
-
-    def __dealloc__(self):
-        r"""
-        Deallocate ``self`` (i.e. the ``self._nodes``).
-
-        EXAMPLES::
-
-            sage: d = DisjointSet(5)
-            sage: del d
-        """
-        OP_dealloc(self._nodes)
-
-    def __reduce__(self):
-        r"""
-        Return a tuple of three elements:
-
-        - The function :func:`DisjointSet`
-        - Arguments for the function :func:`DisjointSet`
-        - The actual state of ``self``.
-
-        EXAMPLES::
-
-            sage: d = DisjointSet(5)
-            sage: d.__reduce__()
-            (<built-in function DisjointSet>, (5,), [0, 1, 2, 3, 4])
-
-        ::
-
-            sage: d.union(2, 4)
-            sage: d.union(1, 3)
-            sage: d.__reduce__()
-            (<built-in function DisjointSet>, (5,), [0, 1, 2, 1, 2])
-        """
-        return DisjointSet, (self._nodes.degree,), self.__getstate__()
 
     def __getstate__(self):
         r"""
@@ -383,8 +380,8 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             sage: d.__getstate__()
             [2, 1, 2, 2, 4]
 
-        Other parents are obtained when the operations are done is a
-        distinct order::
+        Other parents are obtained when the operations are done in a
+        different order::
 
             sage: d = DisjointSet(5)
             sage: d.union(0, 3)
@@ -413,29 +410,25 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         EXAMPLES::
 
             sage: d = DisjointSet(5)
-            sage: d.__setstate__([0, 1, 2, 3, 4])
-            sage: d
+            sage: d.__setstate__([0, 1, 2, 3, 4]); d
             {{0}, {1}, {2}, {3}, {4}}
 
         ::
 
             sage: d = DisjointSet(5)
-            sage: d.__setstate__([1, 2, 3, 4, 0])
-            sage: d
+            sage: d.__setstate__([1, 2, 3, 4, 0]); d
             {{0, 1, 2, 3, 4}}
 
         ::
 
             sage: d = DisjointSet(5)
-            sage: d.__setstate__([1, 1, 1])
-            sage: d
+            sage: d.__setstate__([1, 1, 1]); d
             {{0, 1, 2}, {3}, {4}}
 
         ::
 
             sage: d = DisjointSet(5)
-            sage: d.__setstate__([3, 3, 3])
-            sage: d
+            sage: d.__setstate__([3, 3, 3]); d
             {{0, 1, 2, 3}, {4}}
         """
         cdef int i, parent
@@ -470,31 +463,17 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             sage: [e.find(i) for i in range(5)]
             [0, 1, 1, 1, 1]
             sage: e.find(2**10)
-            ValueError: i(=1024) must be between 0 and 4
+            ValueError: i must be between 0 and 4 (1024 given)
             ...
+
+        .. NOTE::
+
+            This method performs input checks. To avoid them you may directly
+            use :meth:`~sage.groups.perm_gps.partn_ref.data_structures.OP_find`.
         """
         card = self.cardinality()
-        if i < 0 or i>= card:
-            raise ValueError('i(=%s) must be between 0 and %s' % (i, card - 1))
-        return OP_find(self._nodes, i)
-
-    cdef inline int _find(self, int i):
-        r"""
-        Return the representative of the set that ``i`` currently belongs to.
-
-        INPUT:
-
-        - ``i`` -- element in ``self``
-
-        EXAMPLES::
-
-            sage: e = DisjointSet(5)
-            sage: e._find(5)  # only C-callable
-            Traceback (most recent call last):
-            ...
-            AttributeError: 'sage.sets.disjoint_set.DisjointSet_of_integers'
-             object has no attribute '_find'. Did you mean: 'find'?
-        """
+        if i < 0 or i >= card:
+            raise ValueError('i must be between 0 and %s (%s given)' % (card - 1, i))
         return OP_find(self._nodes, i)
 
     cpdef void union(self, int i, int j):
@@ -502,7 +481,8 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         Combine the set of ``i`` and the set of ``j`` into one.
 
         All elements in those two sets will share the same representative
-        that can be gotten using find.
+        that can be retrieved using
+        :meth:`~sage.sets.disjoint_set.DisjointSet_of_integers.find`.
 
         INPUT:
 
@@ -520,38 +500,19 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             sage: d.union(1, 4); d
             {{0, 1, 2, 4}, {3}}
             sage: d.union(1, 5)
-            ValueError: j(=5) must be between 0 and 4
+            ValueError: j must be between 0 and 4 (5 given)
             ...
+
+        .. NOTE::
+
+            This method performs input checks. To avoid them you may directly
+            use :meth:`~sage.groups.perm_gps.partn_ref.data_structures.OP_union`.
         """
         cdef int card = self._nodes.degree
         if i < 0 or i >= card:
-            raise ValueError('i(=%s) must be between 0 and %s' % (i, card - 1))
+            raise ValueError('i must be between 0 and %s (%s given)' % (card - 1, i))
         if j < 0 or j >= card:
-            raise ValueError('j(=%s) must be between 0 and %s' % (j, card - 1))
-        OP_join(self._nodes, i, j)
-
-    cdef inline void _union(self, int i, int j):
-        r"""
-        Combine the set of ``i`` and the set of ``j`` into one.
-
-        All elements in those two sets will share the same representative
-        that can be gotten using find.
-
-        INPUT:
-
-        - ``i`` -- element in ``self``
-        - ``j`` -- element in ``self``
-
-        EXAMPLES::
-
-            sage: d = DisjointSet(5); d
-            {{0}, {1}, {2}, {3}, {4}}
-            sage: d._union(0, 1)  # only C-callable
-            Traceback (most recent call last):
-            ...
-            AttributeError: 'sage.sets.disjoint_set.DisjointSet_of_integers'
-             object has no attribute '_union'. Did you mean: 'union'?
-        """
+            raise ValueError('j must be between 0 and %s (%s given)' % (card - 1, j))
         OP_join(self._nodes, i, j)
 
     cpdef root_to_elements_dict(self):
@@ -605,7 +566,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
 
     cpdef to_digraph(self):
         r"""
-        Return the current digraph of ``self`` where `(a,b)` is an oriented
+        Return the current digraph of ``self`` where `(a, b)` is an oriented
         edge if `b` is the parent of `a`.
 
         EXAMPLES::
@@ -613,21 +574,19 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             sage: d = DisjointSet(5)
             sage: d.union(2, 3)
             sage: d.union(4, 1)
-            sage: d.union(3, 4)
-            sage: d
+            sage: d.union(3, 4); d
             {{0}, {1, 2, 3, 4}}
             sage: g = d.to_digraph(); g                                                 # needs sage.graphs
             Looped digraph on 5 vertices
             sage: g.edges(sort=True)                                                    # needs sage.graphs
             [(0, 0, None), (1, 2, None), (2, 2, None), (3, 2, None), (4, 2, None)]
 
-        The result depends on the ordering of the join::
+        The result depends on the ordering of the union::
 
             sage: d = DisjointSet(5)
             sage: d.union(1, 2)
             sage: d.union(1, 3)
-            sage: d.union(1, 4)
-            sage: d
+            sage: d.union(1, 4); d
             {{0}, {1, 2, 3, 4}}
             sage: d.to_digraph().edges(sort=True)                                       # needs sage.graphs
             [(0, 0, None), (1, 1, None), (2, 1, None), (3, 1, None), (4, 1, None)]
@@ -675,7 +634,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             {{'a'}, {'b'}, {'c'}, {'d'}, {'e'}}
             sage: DisjointSet(range(6))
             {{0}, {1}, {2}, {3}, {4}, {5}}
-            sage: DisjointSet(['yi',45,'cheval'])
+            sage: DisjointSet(['yi', 45, 'cheval'])
             {{'cheval'}, {'yi'}, {45}}
             sage: DisjointSet(set([0, 1, 2, 3, 4]))
             {{0}, {1}, {2}, {3}, {4}}
@@ -686,8 +645,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
         for i, e in enumerate(iterable):
             self._int_to_el.append(e)
             self._el_to_int[e] = i
-        self._d = DisjointSet_of_integers(len(self._int_to_el))
-        self._nodes = self._d._nodes
+        self._nodes = OP_new(len(self._int_to_el))
 
     def __reduce__(self):
         r"""
@@ -734,7 +692,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: d.__getstate__()
             [('a', 'c'), ('b', 'b'), ('c', 'c'), ('d', 'c'), ('e', 'e')]
 
-        Other parents are obtained when the operations are done is a
+        Other parents are obtained when the operations are done in a
         different order::
 
             sage: d = DisjointSet('abcde')
@@ -742,11 +700,11 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: d.__getstate__()
             [('a', 'a'), ('b', 'b'), ('c', 'd'), ('d', 'd'), ('e', 'e')]
         """
-        gs = self._d.__getstate__()
-        l = []
+        cdef Py_ssize_t card = self.cardinality()
+        cdef list l = [None] * card
         cdef int i
-        for i in range(self.cardinality()):
-            l.append(self._int_to_el[gs[i]])
+        for i in range(card):
+            l[i] = self._int_to_el[self._nodes.parent[i]]
         return list(zip(self._int_to_el, l))
 
     def __setstate__(self, l):
@@ -808,7 +766,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             KeyError: 5
         """
         cdef int i = <int> self._el_to_int[e]
-        cdef int r = <int> self._d._find(i)
+        cdef int r = <int> OP_find(self._nodes, i)
         return self._int_to_el[r]
 
     cpdef void union(self, e, f):
@@ -816,7 +774,8 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
         Combine the set of ``e`` and the set of ``f`` into one.
 
         All elements in those two sets will share the same representative
-        that can be gotten using find.
+        that can be retrieved using
+        :meth:`~sage.sets.disjoint_set.DisjointSet_of_hashables.find`.
 
         INPUT:
 
@@ -839,7 +798,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
         """
         cdef int i = <int> self._el_to_int[e]
         cdef int j = <int> self._el_to_int[f]
-        self._d._union(i, j)
+        OP_join(self._nodes, i, j)
 
     cpdef root_to_elements_dict(self):
         r"""
@@ -894,8 +853,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: d = DisjointSet(range(5))
             sage: d.union(2, 3)
             sage: d.union(4, 1)
-            sage: d.union(3, 4)
-            sage: d
+            sage: d.union(3, 4); d
             {{0}, {1, 2, 3, 4}}
             sage: g = d.to_digraph(); g                                                 # needs sage.graphs
             Looped digraph on 5 vertices
@@ -907,8 +865,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: d = DisjointSet(range(5))
             sage: d.union(1, 2)
             sage: d.union(1, 3)
-            sage: d.union(1, 4)
-            sage: d
+            sage: d.union(1, 4); d
             {{0}, {1, 2, 3, 4}}
             sage: d.to_digraph().edges(sort=True)                                       # needs sage.graphs
             [(0, 0, None), (1, 1, None), (2, 1, None), (3, 1, None), (4, 1, None)]
