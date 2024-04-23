@@ -229,34 +229,6 @@ class PackageInfo(NamedTuple):
         """
         return self.installed_version is not None
 
-    def __getitem__(self, key: Union[int, str]):
-        r"""
-        Only for backwards compatibility to allow dict-like access.
-
-        TESTS::
-
-            sage: from sage.misc.package import PackageInfo
-            sage: package = PackageInfo("test_package")
-            sage: package["name"]
-            doctest:warning...
-            dict-like access is deprecated, use pkg.name instead of pkg['name'], for example
-            See https://github.com/sagemath/sage/issues/31013 for details.
-            'test_package'
-            sage: package[0]
-            'test_package'
-        """
-        if isinstance(key, str):
-            from sage.misc.superseded import deprecation
-
-            if key == "installed":
-                deprecation(31013, "dict-like access via 'installed' is deprecated, use method is_installed instead")
-                return self.is_installed()
-            else:
-                deprecation(31013, "dict-like access is deprecated, use pkg.name instead of pkg['name'], for example")
-                return self.__getattribute__(key)
-        else:
-            return tuple.__getitem__(self, key)
-
 
 def list_packages(*pkg_types: str, pkg_sources: List[str] = ['normal', 'pip', 'script'],
                   local: bool = False, ignore_URLError: bool = False, exclude_pip: bool = False) -> Dict[str, PackageInfo]:
