@@ -133,7 +133,7 @@ class Timer:
         nonnegative float or raise an ``OSError``::
 
             sage: from sage.doctest.util import Timer
-            sage: cputime = 0.0
+            sage: cputime = float(0.0)
             sage: try:
             ....:     cputime = Timer()._pid_cpu_seconds(1)
             ....: except OSError:
