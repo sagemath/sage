@@ -520,109 +520,6 @@ def package_versions(package_type, local=False):
     return {pkg.name: (pkg.installed_version, pkg.remote_version) for pkg in list_packages(package_type, local=local).values()}
 
 
-def standard_packages():
-    """
-    Return two lists. The first contains the installed and the second
-    contains the not-installed standard packages that are available
-    from the Sage repository.
-
-    OUTPUT:
-
-    - installed standard packages (as a list)
-
-    - NOT installed standard packages (as a list)
-
-    Run ``sage -i package_name`` from a shell to install a given
-    package or ``sage -f package_name`` to re-install it.
-
-    .. SEEALSO:: :func:`sage.misc.package.list_packages`
-
-    EXAMPLES::
-
-        sage: from sage.misc.package import standard_packages
-        sage: installed, not_installed = standard_packages()  # optional - sage_spkg
-        doctest:...: DeprecationWarning: ...
-        sage: 'numpy' in installed                            # optional - sage_spkg
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(30747,
-                'the functions standard_packages, optional_packages, experimental_packages '
-                'are deprecated, use sage.features instead')
-    pkgs = list_packages('standard', local=True).values()
-    return (sorted(pkg.name for pkg in pkgs if pkg.is_installed()),
-            sorted(pkg.name for pkg in pkgs if not pkg.is_installed()))
-
-
-def optional_packages():
-    """
-    Return two lists. The first contains the installed and the second
-    contains the not-installed optional packages that are available
-    from the Sage repository.
-
-    OUTPUT:
-
-    - installed optional packages (as a list)
-
-    - NOT installed optional packages (as a list)
-
-    Run ``sage -i package_name`` from a shell to install a given
-    package or ``sage -f package_name`` to re-install it.
-
-    .. SEEALSO:: :func:`sage.misc.package.list_packages`
-
-    EXAMPLES::
-
-        sage: # optional - sage_spkg
-        sage: from sage.misc.package import optional_packages
-        sage: installed, not_installed = optional_packages()
-        doctest:...: DeprecationWarning: ...
-        sage: 'biopython' in installed + not_installed
-        True
-        sage: 'biopython' in installed          # optional - biopython
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(30747,
-                'the functions standard_packages, optional_packages, experimental_packages '
-                'are deprecated, use sage.features instead')
-    pkgs = list_packages('optional', local=True)
-    pkgs = pkgs.values()
-    return (sorted(pkg.name for pkg in pkgs if pkg.is_installed()),
-            sorted(pkg.name for pkg in pkgs if not pkg.is_installed()))
-
-
-def experimental_packages():
-    """
-    Return two lists. The first contains the installed and the second
-    contains the not-installed experimental packages that are available
-    from the Sage repository.
-
-    OUTPUT:
-
-    - installed experimental packages (as a list)
-
-    - NOT installed experimental packages (as a list)
-
-    Run ``sage -i package_name`` from a shell to install a given
-    package or ``sage -f package_name`` to re-install it.
-
-    .. SEEALSO:: :func:`sage.misc.package.list_packages`
-
-    EXAMPLES::
-
-        sage: from sage.misc.package import experimental_packages
-        sage: installed, not_installed = experimental_packages()  # optional - sage_spkg
-        doctest:...: DeprecationWarning: ...
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(30747,
-                'the functions standard_packages, optional_packages, experimental_packages '
-                'are deprecated, use sage.features instead')
-    pkgs = list_packages('experimental', local=True).values()
-    return (sorted(pkg.name for pkg in pkgs if pkg.is_installed()),
-            sorted(pkg.name for pkg in pkgs if not pkg.is_installed()))
-
 def package_manifest(package):
     """
     Return the manifest for ``package``.
@@ -663,6 +560,7 @@ def package_manifest(package):
         except FileNotFoundError:
             pass
     raise RuntimeError('package manifest directory changed at runtime')
+
 
 class PackageNotFoundError(RuntimeError):
     """

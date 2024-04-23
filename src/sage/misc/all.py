@@ -40,8 +40,7 @@ lazy_import('sage.misc.profiler', 'Profiler', deprecation=34259)
 lazy_import('sage.misc.dist', 'install_scripts', deprecation=34259)
 lazy_import('sage.misc.trace', 'trace', deprecation=34259)
 lazy_import('sage.misc.package', ('installed_packages', 'is_package_installed',
-                                  'standard_packages', 'optional_packages',
-                                  'experimental_packages', 'package_versions'),
+                                  'package_versions'),
             deprecation=34259)
 lazy_import('sage.misc.benchmark', 'benchmark', deprecation=34259)
 lazy_import('sage.repl.interpreter', 'logstr', deprecation=34259)
