@@ -75,10 +75,8 @@ class Bliss(JoinFeature):
             sage: Bliss()
             Feature('bliss')
         """
-        # Currently part of sagemath_standard, conditionally built.
-        # Will be changed to spkg='sagemath_bliss' later
         JoinFeature.__init__(self, "bliss",
-                             [PythonModule("sage.graphs.bliss", spkg="bliss",
+                             [PythonModule("sage.graphs.bliss", spkg="sagemath_bliss",
                                            url="http://www.tcs.hut.fi/Software/bliss/")])
 
 
