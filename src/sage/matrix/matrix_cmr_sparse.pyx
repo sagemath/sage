@@ -1342,8 +1342,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             RuntimeError: Time limit exceeded
         """
         base_ring = self.parent().base_ring()
-        if base_ring.characteristic():
-            raise ValueError(f'only defined over characteristic 0, got {base_ring}')
+        from sage.rings.finite_rings.finite_field_constructor import GF
+        GF2 = GF(2)
+        if not GF2.has_coerce_map_from(base_ring):
+            raise ValueError('not well-defined')
 
         cdef bool result_bool
         cdef CMR_GRAPH *graph = NULL
@@ -1427,8 +1429,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             ((2, 0), (2, 1), (0, 1))
         """
         base_ring = self.parent().base_ring()
-        if base_ring.characteristic():
-            raise ValueError(f'only defined over characteristic 0, got {base_ring}')
+        from sage.rings.finite_rings.finite_field_constructor import GF
+        GF2 = GF(2)
+        if not GF2.has_coerce_map_from(base_ring):
+            raise ValueError('not well-defined')
 
         cdef bool result
         cdef CMR_GRAPH *graph = NULL
