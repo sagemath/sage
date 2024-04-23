@@ -57,7 +57,7 @@ Disjoint set of hashables objects::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.rings.integer import Integer
+from sage.rings.integer cimport Integer
 from sage.structure.sage_object cimport SageObject
 from cpython.object cimport PyObject_RichCompare
 from sage.groups.perm_gps.partn_ref.data_structures cimport *
@@ -474,7 +474,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             ...
         """
         card = self.cardinality()
-        if i < 0 or i>= card:
+        if i < 0 or i >= card:
             raise ValueError('i(=%s) must be between 0 and %s' % (i, card - 1))
         return OP_find(self._nodes, i)
 
@@ -492,8 +492,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             sage: e._find(5)  # only C-callable
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.sets.disjoint_set.DisjointSet_of_integers'
-             object has no attribute '_find'. Did you mean: 'find'?
+            AttributeError: ...
         """
         return OP_find(self._nodes, i)
 
@@ -549,8 +548,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             sage: d._union(0, 1)  # only C-callable
             Traceback (most recent call last):
             ...
-            AttributeError: 'sage.sets.disjoint_set.DisjointSet_of_integers'
-             object has no attribute '_union'. Did you mean: 'union'?
+            AttributeError: ...
         """
         OP_join(self._nodes, i, j)
 
@@ -621,7 +619,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             sage: g.edges(sort=True)                                                    # needs sage.graphs
             [(0, 0, None), (1, 2, None), (2, 2, None), (3, 2, None), (4, 2, None)]
 
-        The result depends on the ordering of the join::
+        The result depends on the ordering of the union::
 
             sage: d = DisjointSet(5)
             sage: d.union(1, 2)
@@ -808,7 +806,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             KeyError: 5
         """
         cdef int i = <int> self._el_to_int[e]
-        cdef int r = <int> self._d._find(i)
+        cdef int r = <int> OP_find(self._nodes, i)
         return self._int_to_el[r]
 
     cpdef void union(self, e, f):
@@ -839,7 +837,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
         """
         cdef int i = <int> self._el_to_int[e]
         cdef int j = <int> self._el_to_int[f]
-        self._d._union(i, j)
+        OP_join(self._nodes, i, j)
 
     cpdef root_to_elements_dict(self):
         r"""
