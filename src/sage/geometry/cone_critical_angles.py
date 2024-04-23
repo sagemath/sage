@@ -1,5 +1,5 @@
 r"""
-Find critical and maximal angles between polyhedral convex cones.
+Find maximal angles between polyhedral convex cones.
 
 Finding the maximal (or equivalently, the minimal) angle between two
 polyhedral convex cones is a hard nonconvex optimization problem. The
@@ -7,17 +7,14 @@ problem for a single cone was introduced in [IS2005]_, and was later
 extended in [SS2016]_ to two cones as a generalization of the
 principal angle between two vector subspaces.
 
-A critical angle is simply one that satisfies the Karush-Kuhn-Tucker
-conditions for maximality. Seeger and Sossa proposed an algorithm to
-find the critical and maximal angles, and [Or2020]_ elaborates on that
-algorithm. It is this latest improvement that is implemented more or
-less verbatim by this module.
+Seeger and Sossa proposed an algorithm to find maximal angles, and
+[Or2020]_ elaborates on that algorithm. It is this latest improvement
+that is implemented more or less verbatim by this module.
 
 This module is internal to SageMath; the interface presented to users
-consists of two public methods,
-:meth:`sage.geometry.cone.ConvexRationalPolyhedralCone.critical_angles`
-and :meth:`sage.geometry.cone.ConvexRationalPolyhedralCone.max_angle`,
-for polyhedral convex cones. Even though all of the functions in this
+consists of a public method,
+:meth:`sage.geometry.cone.ConvexRationalPolyhedralCone.max_angle` for
+polyhedral convex cones. Even though all of the functions in this
 module are internal, some are more internal than others. There are a
 few functions that are used only in doctests, and not by any code that
 an end-user would run. Breaking somewhat with tradition, only those
@@ -897,162 +894,6 @@ def check_gevp_feasibility(cos_theta, xi, eta, G_I, G_I_c_T,
         return infeasible_result
 
     return (True, u, v)
-
-
-def critical_angles(P, Q, exact, epsilon, debug):
-    r"""
-    Find all critical angles between the cones `P` and `Q`.
-
-    This implements
-    :meth:`sage.geometry.cone.ConvexRationalPolyhedralCone.critical_angles`,
-    which should be fully documented.
-
-    EXAMPLES:
-
-    For the sake of the user interface, the argument validation for
-    this function is performed in the associated cone method; we can
-    therefore crash it by feeding it invalid input like an
-    inadmissible cone::
-
-        sage: from sage.geometry.cone_critical_angles import critical_angles
-        sage: K = cones.trivial(3)
-        sage: critical_angles(K,K,True,0,False)
-        Traceback (most recent call last):
-        ...
-        IndexError: list index out of range
-    """
-    from itertools import chain
-
-    # The lattice dimensions of P and Q are guaranteed to be equal
-    # because the cone method checks it before calling us.
-    n = P.lattice_dim()
-
-    ring = RDF
-    if exact:
-        ring = AA
-        # For some reason we can go RDF -> QQ -> AA, but not
-        # straight from RDF to AA.
-        epsilon = QQ(epsilon)
-    epsilon = ring(epsilon)
-
-    # First check if P is contained in the dual of Q. Keep track of
-    # the minimum inner product (and associated vectors) while doing
-    # so; then if P is contained in dual(Q), we will have already
-    # computed one critical angle: the maximal angle, corresponding
-    # to the smallest inner product.
-    gs = [g.change_ring(ring).normalized() for g in P]
-    Q_is_P = (P == Q) # This is used again later
-    if Q_is_P:
-        hs = gs
-    else:
-        hs = [h.change_ring(ring).normalized() for h in Q]
-
-    # The return value that will EVENTUALLY contain all triples of the
-    # critical angles along with the vectors that form them. But until
-    # we're about to return it, the first components will contain inner
-    # products instead.
-    result = []
-
-    (M, min_ip, min_u, min_v) = compute_gevp_M(gs,hs)
-
-    if min_ip >= 0:
-        # The maximal angle, which is critical, is acute.
-        result.append( (min_ip, min_u, min_v) )
-
-    # Also check to see if pi is a critical angle (in particular, the
-    # maximal one). This way we can skip eigenspaces of dimension
-    # greater than one corresponding to cos(theta) = -1 later on.
-    P_and_negative_Q = P.intersection(-Q)
-    if not (P_and_negative_Q.is_trivial()):
-        u = P_and_negative_Q.ray(0).change_ring(ring).normalized()
-        v = -u
-        result.append( (-1, u, v) )
-
-    # When P == Q, GG and HH are both just M.
-    #
-    # It's VERY IMPORTANT that we construct lists from the index set
-    # generators, because we're going to use them in a nested loop!
-    G = matrix.column(gs)
-    G_index_sets = [s for s in gevp_licis(G)]
-
-    if Q_is_P:
-        GG = M
-        H = G
-        HH = M
-        H_index_sets = G_index_sets
-    else:
-        GG = G.transpose()*G
-        H = matrix.column(hs)
-        HH = H.transpose()*H
-        H_index_sets = [s for s in gevp_licis(H)]
-
-    # Keep track of the (cos-theta, xi, eta, multiplicity) tuples with
-    # multiplicity > 1. These are only a problem if they could
-    # potentially be maximal. Therefore, we want to inspect them AFTER
-    # we've checked all of the multiplicity=1 angles and found the
-    # largest. This allows us to ignore most of the problematic
-    # eigenspaces, independent of the order in which we run through I,J.
-    big_eigenspaces = []
-
-    for I in G_index_sets:
-        G_I = G[range(n),I]
-        I_complement = [i for i in range(P.nrays()) if not i in I]
-        G_I_c_T = G[range(n),I_complement].transpose()
-
-        for J in H_index_sets:
-            J_complement = [j for j in range(Q.nrays()) if not j in J]
-            H_J = H[range(n),J]
-            H_J_c_T = H[range(n),J_complement].transpose()
-
-            zero_ev_solutions = []
-            if 0 not in [ct for (ct,_,_) in result]:
-                zero_ev_solutions = solve_gevp_zero(M,I,J)
-
-            for (cos_theta, xi, eta, mult) in chain(
-                                                solve_gevp_nonzero(GG,HH,
-                                                                   M,I,J),
-                                                zero_ev_solutions):
-
-                if cos_theta <= min_ip and min_ip >= 0:
-                    # If min_ip >= 0, then it should be the true minimum.
-                    continue
-
-                if cos_theta in [ct for (ct,_,_) in result]:
-                    # We already know that this angle is critical.
-                    continue
-
-                if cos_theta == -1:
-                    # We already handled this eigenvalue with the
-                    # "P_and_negative_Q" trick.
-                    continue
-
-                (is_feasible, u, v) = check_gevp_feasibility(cos_theta,
-                                                             xi,
-                                                             eta,
-                                                             G_I,
-                                                             G_I_c_T,
-                                                             H_J,
-                                                             H_J_c_T,
-                                                             epsilon)
-
-                if is_feasible:
-                    result.append( (cos_theta, u, v) )
-                elif mult > 1:
-                    # Save this for later. The eigenvalue cos_theta might
-                    # be so big that we can ignore it.
-                    big_eigenspaces.append( (cos_theta, xi, eta, mult) )
-                    continue
-
-    for (cos_theta, xi, eta, mult) in big_eigenspaces:
-        if cos_theta not in [ct for (ct,_,_) in result]:
-            # This is only a problem if cos_theta isn't already known
-            # to be critical.
-            if debug:
-                print ('WARNING: eigenspace of dimension %d > 1 '
-                                'corresponding to eigenvalue %s'
-                                 % (mult, cos_theta))
-
-    return [(arccos(cos_theta), u, v) for (cos_theta, u, v) in result]
 
 
 def max_angle(P, Q, exact, epsilon):
