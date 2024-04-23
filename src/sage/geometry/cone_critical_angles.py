@@ -24,7 +24,10 @@ methods have been prefixed with an underscore.
 from sage.functions.trig import arccos, cos
 from sage.matrix.constructor import matrix
 from sage.misc.misc import powerset
-from sage.rings.all import QQ, AA, RDF, ZZ
+from sage.rings.integer_ring import ZZ
+from sage.rings.qqbar import AA
+from sage.rings.rational_field import QQ
+from sage.rings.real_double import RDF
 from sage.symbolic.constants import pi
 
 def _normalize_gevp_solution(gevp_solution):
