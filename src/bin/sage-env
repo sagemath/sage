@@ -493,31 +493,6 @@ if [ -d "$SAGE_ROOT" -a -z "$CCACHE_BASEDIR" ]; then
     export CCACHE_BASEDIR="$SAGE_ROOT"
 fi
 
-# Set AS to assembler used by $CC ("as" by default)
-if [ "$AS" = "" ]; then
-    CC_as=`$CC -print-prog-name=as 2>/dev/null`
-    if command -v $CC_as >/dev/null 2>/dev/null; then
-        AS="$CC_as"
-    fi
-    if [ "$AS" = "" ]; then
-        AS=as
-    fi
-fi
-export AS
-
-# Set LD to linker used by $CC ("ld" by default)
-if [ "$LD" = "" ]; then
-    CC_ld=`$CC -print-prog-name=ld 2>/dev/null`
-    if command -v $CC_ld >/dev/null 2>/dev/null; then
-        LD="$CC_ld"
-    fi
-    if [ "$LD" = "" ]; then
-        LD=ld
-    fi
-fi
-export LD
-
-
 if [ "$LDFLAGS" = "" ]; then
     LDFLAGS=""          && export LDFLAGS
 fi
