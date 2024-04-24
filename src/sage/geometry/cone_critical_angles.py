@@ -49,11 +49,9 @@ def _normalize_gevp_solution(gevp_solution):
 
     - ``eigenvalue`` -- ignored
 
-    - ``xi`` -- the first component `\xi` of the
-      `( \xi, \eta )` eigenvector
+    - ``xi`` -- first component of the `( \xi, \eta )` eigenvector
 
-    - ``eta`` -- the second component `\eta` of the
-      `( \xi, \eta )` eigenvector
+    - ``eta`` -- second component of the `( \xi, \eta )` eigenvector
 
     - ``multiplicity`` -- ignored
 
@@ -218,9 +216,9 @@ def gevp_licis(G):
         sage: list(gevp_licis(matrix.column(trivial_cone.rays())))
         []
 
-    All rays in the nonnegative orthant of `R^{n}` are linearly-
-    independent, so we should get back `2^{n} - 1` subsets after
-    accounting for the absence of the empty set::
+    All rays in the nonnegative orthant of `R^{n}` are
+    linearly-independent, so we should get back `2^{n} - 1` subsets
+    after accounting for the absence of the empty set::
 
         sage: from sage.geometry.cone_critical_angles import gevp_licis
         sage: K = cones.nonnegative_orthant(3)
@@ -329,8 +327,8 @@ def solve_gevp_zero(M, I, J):
 
     INPUT:
 
-    - ``M`` -- the matrix whose `(i,j)`th entry is the inner product of
-      `g_{i}` and `h_{j}` as in Proposition 6 [Or2020]_
+    - ``M`` -- the matrix whose `(i,j)^{th}` entry is the inner
+      product of `g_{i}` and `h_{j}` as in Proposition 6 [Or2020]_
 
     - ``I`` -- a linearly-independent column-index set for the matrix
       `G` that appears in Theorem 3
@@ -402,16 +400,16 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
 
     INPUT:
 
-    - ``GG`` -- the matrix whose `(i,j)`th entry is the inner product
-      of `g_{i}` and `g_{j}`, which are in turn the `i`th and `j`th
-      columns of the matrix `G` in Theorem 3
+    - ``GG`` -- the matrix whose `(i,j)^{th}` entry is the inner
+      product of `g_{i}` and `g_{j}`, which are in turn the `i^{th}`
+      and `j^{th}` columns of the matrix `G` in Theorem 3
 
-    - ``HH`` -- the matrix whose `(i,j)`th entry is the inner product
-      of `h_{i}` and `h_{j}`, which are in turn the `i`th and `j`th
-      columns of the matrix `H` in Theorem 3
+    - ``HH`` -- the matrix whose `(i,j)^{th}` entry is the inner
+      product of `h_{i}` and `h_{j}`, which are in turn the `i^{th}`
+      and `j^{th}` columns of the matrix `H` in Theorem 3
 
-    - ``M`` -- the matrix whose `(i,j)`th entry is the inner product of
-      `g_{i}` and `h_{j}` as in Proposition 6 in [Or2020]_
+    - ``M`` -- the matrix whose `(i,j)^{th}` entry is the inner
+      product of `g_{i}` and `h_{j}` as in Proposition 6 in [Or2020]_
 
     - ``I`` -- a linearly-independent column-index set for the matrix
       `G` that appears in Theorem 3
@@ -565,7 +563,7 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
 
 def compute_gevp_M(gs, hs):
     r"""
-    Compute the matrix `M` whose `( i,j )^{th}` entry is the
+    Compute the matrix `M` whose `(i,j)^{th}` entry is the
     inner product of ``gs[i]`` and ``hs[j]``.
 
     This is the "generalized gram matrix" appearing in Proposition 6
@@ -684,11 +682,9 @@ def check_gevp_feasibility(cos_theta, xi, eta, G_I, G_I_c_T,
     - ``cos_theta`` -- an eigenvalue corresponding to
       `( \xi, \eta )`
 
-    - ``xi`` -- the first component `xi` of the `( \xi, \eta )`
-      eigenvector
+    - ``xi`` -- first component of the `( \xi, \eta )` eigenvector
 
-    - ``eta`` -- the second component `eta` of the `( \xi, \eta )`
-      eigenvector
+    - ``eta`` -- second component of the `( \xi, \eta )` eigenvector
 
     - ``G_I`` -- the submatrix of `G` with columns indexed by `I`
 
