@@ -107,8 +107,9 @@ def _normalize_gevp_solution(gevp_solution):
 
 def _random_admissible_cone(ambient_dim):
     r"""
-    Generate a random cone in a lattice of dimension ``ambient_dim`` that
-    isn't trivial and isn't equal to the full ambient space.
+    Generate a random cone in a lattice of dimension
+    ``ambient_dim`` that isn't trivial and isn't equal to the full
+    ambient space.
 
     This is called an "admissible cone" in [Or2020]_, and it's a
     nontrivial random cone whose dual is also nontrivial. It is used
@@ -175,8 +176,9 @@ def _random_admissible_cone(ambient_dim):
 
 def gevp_licis(G):
     r"""
-    Return all nonempty subsets of indices for the columns of ``G`` that
-    correspond to linearly-independent sets (of columns of ``G``).
+    Return all nonempty subsets of indices for the columns of
+    ``G`` that correspond to linearly-independent sets (of columns of
+    ``G``).
 
     Mnemonic: linearly-independent column-index subsets (LICIS).
 
@@ -208,8 +210,8 @@ def gevp_licis(G):
         sage: list(gevp_licis(G))
         [[0], [1]]
 
-    The matrix for the trivial cone has no linearly-independent subsets,
-    since we require them to be nonempty::
+    The matrix for the trivial cone has no linearly-independent
+    subsets, since we require them to be nonempty::
 
         sage: from sage.geometry.cone_critical_angles import gevp_licis
         sage: trivial_cone = cones.trivial(0)
@@ -249,9 +251,9 @@ def gevp_licis(G):
 
 def _solve_gevp_naive(GG, HH, M, I, J):
     r"""
-    Solve the generalized eigenvalue problem in Theorem 3 [Or2020]_ in
-    a very naive way, by (slowly) inverting the matrices and finding the
-    eigenvalues in the product space.
+    Solve the generalized eigenvalue problem in Theorem 3
+    [Or2020]_ in a very naive way, by (slowly) inverting the matrices
+    and finding the eigenvalues in the product space.
 
     This is used only for testing, to ensure that the smart way of
     solving the generalized eigenvalue problem via
@@ -269,8 +271,8 @@ def _solve_gevp_naive(GG, HH, M, I, J):
 
     We construct the two matrices `A` and `B` in Theorem 3 in block
     form, and then use the naive "inverse" method on `B` to move it to
-    the left and obtain `M = B^{-1}A`. We then compute the
-    right eigenvectors of the whole big matrix `M`.
+    the left and obtain `M = B^{-1}A`. We then compute the right
+    eigenvectors of the whole big matrix `M`.
 
     EXAMPLES:
 
@@ -332,23 +334,24 @@ def solve_gevp_zero(M, I, J):
     - ``M`` -- the matrix whose `(i,j)`th entry is the inner product of
       `g_{i}` and `h_{j}` as in Proposition 6 [Or2020]_
 
-    - ``I`` -- a linearly-independent column-index set for the matrix `G` that
-      appears in Theorem 3
+    - ``I`` -- a linearly-independent column-index set for the matrix
+      `G` that appears in Theorem 3
 
     - ``J`` -- a linearly-independent column-index set for the matrix
       `H` that appears in Theorem 3
 
     OUTPUT:
 
-    A generator of ``(eigenvalue, xi, eta, multiplicity)`` quartets where
+    A generator of ``(eigenvalue, xi, eta, multiplicity)`` quartets
+    where
 
     - ``eigenvalue`` is zero (the eigenvalue of the system)
 
-    - ``xi`` is the first (length ``len(I)``) component of an eigenvector
-      associated with ``eigenvalue``
+    - ``xi`` is the first (length ``len(I)``) component of an
+      eigenvector associated with ``eigenvalue``
 
-    - ``eta`` is the second (length ``len(J)``) component of an eigenvector
-      associated with ``eigenvalue``
+    - ``eta`` is the second (length ``len(J)``) component of an
+      eigenvector associated with ``eigenvalue``
 
     - ``multiplicity`` is the dimension of the eigenspace associated
       with ``eigenvalue``
@@ -396,8 +399,8 @@ def solve_gevp_zero(M, I, J):
 
 def solve_gevp_nonzero(GG, HH, M, I, J):
     r"""
-    Solve the generalized eigenvalue problem in Theorem 3 for a nonzero
-    eigenvalue using Propositions 3 and 5 [Or2020]_.
+    Solve the generalized eigenvalue problem in Theorem 3 for a
+    nonzero eigenvalue using Propositions 3 and 5 [Or2020]_.
 
     INPUT:
 
@@ -412,45 +415,47 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
     - ``M`` -- the matrix whose `(i,j)`th entry is the inner product of
       `g_{i}` and `h_{j}` as in Proposition 6 in [Or2020]_
 
-    - ``I`` -- a linearly-independent column-index set for the matrix `G` that
-      appears in Theorem 3
+    - ``I`` -- a linearly-independent column-index set for the matrix
+      `G` that appears in Theorem 3
 
-    - ``J`` -- a linearly-independent column-index set for the matrix `H` that
-      appears in Theorem 3
+    - ``J`` -- a linearly-independent column-index set for the matrix
+      `H` that appears in Theorem 3
 
     OUTPUT:
 
-    A generator of ``(eigenvalue, xi, eta, multiplicity)`` quartets where
+    A generator of ``(eigenvalue, xi, eta, multiplicity)`` quartets
+    where
 
     - ``eigenvalue`` is a real eigenvalue of the system
 
-    - ``xi`` is the first (length ``len(I)``) component of an eigenvector
-      associated with ``eigenvalue``
+    - ``xi`` is the first (length ``len(I)``) component of an
+      eigenvector associated with ``eigenvalue``
 
-    - ``eta`` is the second (length ``len(J)``) component of an eigenvector
-      associated with ``eigenvalue``
+    - ``eta`` is the second (length ``len(J)``) component of an
+      eigenvector associated with ``eigenvalue``
 
     - ``multiplicity`` is the dimension of the eigenspace associated
       with ``eigenvalue``
 
-    Note that we don't return a basis for each eigenspace along with its
-    eigenvalue. For the application we have in mind, an eigenspace of
-    dimension greater than one (so, ``multiplicity > 1``) is an
-    error. As such, our return value is optimized for convenience in the
-    non-error case, where there is only one eigenvector (spanning a
-    one-dimensional eigenspace) associated with each eigenvalue.
+    Note that we don't return a basis for each eigenspace along with
+    its eigenvalue. For the application we have in mind, an eigenspace
+    of dimension greater than one (so, ``multiplicity > 1``) is an
+    error. As such, our return value is optimized for convenience in
+    the non-error case, where there is only one eigenvector (spanning
+    a one-dimensional eigenspace) associated with each eigenvalue.
 
     ALGORITHM:
 
-    According to Proposition 5 [Or2020]_, the solutions corresponding to
-    non-zero eigenvalues can be found by solving a smaller eigenvalue
-    problem in only the variable `\xi`. So, we do that, and then solve
-    for `\eta` in terms of `\xi` as described in the proposition.
+    According to Proposition 5 [Or2020]_, the solutions corresponding
+    to non-zero eigenvalues can be found by solving a smaller
+    eigenvalue problem in only the variable `\xi`. So, we do that, and
+    then solve for `\eta` in terms of `\xi` as described in the
+    proposition.
 
     EXAMPLES:
 
-    When the zero solutions are included, this function returns the same
-    solutions as the naive method on the Schur cone in three
+    When the zero solutions are included, this function returns the
+    same solutions as the naive method on the Schur cone in three
     dimensions::
 
         sage: from itertools import chain
@@ -664,16 +669,17 @@ def compute_gevp_M(gs, hs):
 def check_gevp_feasibility(cos_theta, xi, eta, G_I, G_I_c_T,
                            H_J, H_J_c_T, epsilon):
     r"""
-    Determine if a solution to the generalized eigenvalue problem in
-    Theorem 3 [Or2020]_ is feasible.
+    Determine if a solution to the generalized eigenvalue problem
+    in Theorem 3 [Or2020]_ is feasible.
 
-    Implementation detail: we take four matrices that we are capable of
-    computing as parameters instead, because we will be called in a
-    nested loop "for all `I`... and for all `J`..." The data corresponding
-    to `I` should be computed only once, which means that we can't do it
-    here -- it needs to be done outside of the `J` loop. For symmetry
-    (and to avoid relying on too many cross-function implementation
-    details), we also insist that the `J` data be passed in.
+    Implementation detail: we take four matrices that we are capable
+    of computing as parameters instead, because we will be called in a
+    nested loop "for all `I`... and for all `J`..." The data
+    corresponding to `I` should be computed only once, which means
+    that we can't do it here -- it needs to be done outside of the `J`
+    loop. For symmetry (and to avoid relying on too many
+    cross-function implementation details), we also insist that the
+    `J` data be passed in.
 
     INPUT:
 
