@@ -9,7 +9,9 @@ principal angle between two vector subspaces.
 
 Seeger and Sossa proposed an algorithm to find maximal angles, and
 [Or2020]_ elaborates on that algorithm. It is this latest improvement
-that is implemented more or less verbatim by this module.
+that is implemented (more or less) by this module. The fact that
+perturbations of pointed cones may not change the answer too much
+[Or2024]_ is taken into consideration to avoid pathological cases.
 
 This module is internal to SageMath; the interface presented to users
 consists of a public method,
@@ -128,7 +130,8 @@ def _random_admissible_cone(ambient_dim):
     A "random" nontrivial closed convex cone in a lattice of dimension
     ``ambient_dim``.
 
-    A ``ValueError`` is raised if ``ambient_dim`` is not positive.
+    A :class:`ValueError` is raised if ``ambient_dim`` is not
+    positive.
 
     EXAMPLES:
 

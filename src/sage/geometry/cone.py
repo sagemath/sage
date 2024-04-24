@@ -6203,9 +6203,14 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         The maximal angle between two closed convex cones is the
         unique largest angle formed by any two unit-norm vectors in
-        those cones. The algorithm underlying this optimization
-        problem can fail if an eigenspace of dimension greater than
-        one is encountered. At present, that situation is fatal.
+        those cones. In pathological cases, this computation can fail.
+
+        If it fails when ``exact`` is ``True`` and if both of your
+        cones :meth:`is_strictly_convex`, then a second attempt will
+        be made using inexact arithmetic. (This sometimes avoids the
+        problem [Or2024]_). If the computation fails when your cones
+        are not strictly convex or when ``exact`` is ``False``, a
+        :class:`ValueError` is raised.
 
         INPUT:
 
@@ -6213,17 +6218,13 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
           convex cone
 
         - ``exact`` -- (default: ``True``) whether or not to use exact
-          rational arithmetic instead of floating point computations
+          rational arithmetic instead of floating point computations;
+          beware that ``True`` is not guaranteed to avoid floating
+          point computations if the algorithm runs into trouble in
+          rational arithmetic
 
         - ``epsilon`` -- (default: ``0``) the tolerance to use when
           making comparisons
-
-        .. WARNING::
-
-          Using inexact arithmetic (``exact=False``) will speed things
-          up, but at the risk of overlooking an eigenspace of
-          dimension two or more (which would normally be fatal) due to
-          numerical issues.
 
         OUTPUT:
 
@@ -6240,11 +6241,20 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         If ``other`` is ``None`` (the default), then the maximal angle
         within this cone (between this cone and itself) is returned.
 
-        If an eigenspace of dimension greater than one is encountered,
+        If an eigenspace of dimension greater than one is encountered
         and if the corresponding angle cannot be ruled out as a
-        maximum, then a ``ValueError`` is raised to indicate that we
-        have basically failed; the angle returned might not have been
-        maximal, and no workarounds are known.
+        maximum, the behavior of this function depends on
+        ``exact``:
+
+        - If ``exact`` is ``True`` and if both ``self`` and ``other``
+          are strictly convex, then the algorithm may fall back to
+          inexact arithmetic. In that case, the returned angle and
+          vectors will be over :class:`sage.rings.real_double.RDF`.
+
+        - If ``exact`` is ``False`` or if either cone is not strictly
+          convex, then a :class:`ValueError` is raised to indicate
+          that we have failed; i.e. we cannot say with certainty what
+          the maximal angle is.
 
         REFERENCES:
 
@@ -6352,7 +6362,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             pi
             sage: Q.max_angle(P)[0]
             pi
-
         """
         # We do the argument checking here, in the public cone method,
         # because the error message should say something like "this
