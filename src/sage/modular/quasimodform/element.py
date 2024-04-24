@@ -759,8 +759,8 @@ class QuasiModularFormsElement(ModuleElement):
         Return the coefficients of `q^n` of the q-expansion of this,
         graded quasimodular form for `n` in the list `X`.
         
-        If X is an Integer, return coefficients for indices from 1
-        to X. This function caches the results of the `_compute` function.
+        If X is an integer, return coefficients for indices from 1
+        to X. This method caches the result.
 
         TESTS::
 
