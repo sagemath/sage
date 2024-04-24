@@ -762,7 +762,7 @@ class QuasiModularFormsElement(ModuleElement):
         If X is an integer, return coefficients for indices from 1
         to X. This method caches the result.
 
-        TESTS::
+        EXAMPLES::
 
             sage: E2, E4 = QuasiModularForms(1).0, QuasiModularForms(1).1
             sage: f = E2^2
