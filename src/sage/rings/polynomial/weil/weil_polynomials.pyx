@@ -540,7 +540,10 @@ class WeilPolynomials():
         sage: list(WeilPolynomials(10, 2, lead=(1,-3,5,-5,5,-5)))
         [x^10 - 3*x^9 + 5*x^8 - 5*x^7 + 5*x^6 - 5*x^5 + 10*x^4 - 20*x^3 + 40*x^2 - 48*x + 32]
 
+    Test that :issue:`37860` is resolved::
 
+        sage: list(WeilPolynomials(0, 1, sign=-1))
+        []
     """
     def __init__(self, d, q, sign=1, lead=1, node_limit=None, parallel=False, squarefree=False, polring=None):
         r"""
