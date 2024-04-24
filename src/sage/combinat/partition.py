@@ -2945,6 +2945,55 @@ class Partition(CombinatorialElement):
         t[row+1][col-b+1:col+1] = [m+a+col-b+1+i for i in range(b)]
         return tableau.StandardTableau(t)
 
+    def ladder_tableau(self, e, ladder_sizes=False):
+        r"""
+        Return the ladder tableau of shape ``self``.
+
+        The *ladder tableau* is the standard Young tableau obtained by reading
+        the *ladders*, the set of cells `(i, j)` that differ from `(i+e, j-1)`,
+        of the partition `\lambda` from left-to-right.
+
+        INPUT:
+
+        - ``e`` -- a positive integer
+        - ``ladder_sizes`` -- (default: ``False``) if ``True``, also return
+          the sizes of the ladders
+
+        EXAMPLES::
+
+            sage: la = Partition([6, 5, 3, 1])
+            sage: ascii_art(la.ladder_tableau(2))
+              1  2  3  5  7 10
+              4  6  8 11 13
+              9 12 14
+             15
+            sage: la.ladder_tableau(2, ladder_sizes=True)[1]
+            [1, 1, 2, 2, 3, 3, 3]
+        """
+        Tlad = [[None] * val for val in self]
+        counter = 0
+        start = 0
+        n = sum(self)
+        sizes = []
+        while counter < n:
+            cur = start
+            size = 0
+            for i, val in enumerate(self):
+                if cur < 0:
+                    break
+                if cur < val:
+                    counter += 1
+                    Tlad[i][cur] = counter
+                    size += 1
+                cur -= e
+            if ladder_sizes and size:
+                sizes.append(size)
+            start += 1
+        ret = tableau.StandardTableaux(self)(Tlad)
+        if ladder_sizes:
+            return (ret, sizes)
+        return ret
+
     @cached_method
     def young_subgroup(self):
         r"""
