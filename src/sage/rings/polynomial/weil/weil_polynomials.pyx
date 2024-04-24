@@ -268,6 +268,9 @@ class WeilPolynomials_iter():
             raise ValueError("Invalid sign")
         if not q.is_integer() or q <= 0:
             raise ValueError("q must be a positive integer")
+        if d == 0 and sign == -1: # No results
+            self.process = None
+            return
         if d % 2 == 0:
             if sign == 1:
                 d2 = d//2
