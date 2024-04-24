@@ -6209,13 +6209,14 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         INPUT:
 
-        - ``other`` -- (default: ``None``) a rational, polyhedral convex cone
+        - ``other`` -- (default: ``None``) a rational, polyhedral
+          convex cone
 
         - ``exact`` -- (default: ``True``) whether or not to use exact
           rational arithmetic instead of floating point computations
 
-        - ``epsilon`` -- (default: ``0``) the tolerance to use when making
-          comparisons
+        - ``epsilon`` -- (default: ``0``) the tolerance to use when
+          making comparisons
 
         .. WARNING::
 
@@ -6226,7 +6227,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         OUTPUT:
 
-        A triple `\left( \theta_{\text{max}}, u, v \right)` containing,
+        A triple `\left( \theta_{\text{max}}, u, v \right)`
+        containing,
 
         - the maximal angle `\theta_{\text{max}}` between ``self`` and
           ``other``
@@ -6289,16 +6291,16 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: bool( (actual - expected).abs() < 0.0001 )
             True
 
-        The maximal angle within the Schur cone is known explicitly via
-        Gourion and Seeger's Proposition 2 [GS2010]_::
+        The maximal angle within the Schur cone is known explicitly
+        via Gourion and Seeger's Proposition 2 [GS2010]_::
 
             sage: n = 3
             sage: K = cones.schur(n)
             sage: bool(K.max_angle()[0] == ((n-1)/n)*pi)
             True
 
-        We check the numerical values for the next two, because otherwise
-        Maxima crashes for some unknown reason::
+        We check the numerical values for the next two, because
+        otherwise Maxima crashes for some unknown reason::
 
             sage: n = 4
             sage: K = cones.schur(n)
@@ -6338,7 +6340,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         # cone" and not reference the argument of a function the user
         # has never heard of in some internal module.
         if self.is_trivial() or self.is_full_space():
-            raise ValueError("cone should not be trivial or the ambient space")
+            raise ValueError("cone should not be trivial or the "
+                             "ambient space")
 
         if other is None:
             other = self
