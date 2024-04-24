@@ -1069,8 +1069,8 @@ see `PEP 725 <https://peps.python.org/pep-0725/#concrete-package-specification-t
 
 An equivalent command uses the SPKG name of the new package::
 
-    [alice@localhost sage]$ sage --package create scikit_spatial --pypi   \
-                                             --type optional
+    [alice@localhost sage]$ ./sage --package create scikit_spatial --pypi   \
+                                               --type optional
 
 Either of these two commands automatically downloads the most recent version
 from PyPI and also obtains most of the necessary information by querying PyPI.
