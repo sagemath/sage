@@ -6337,6 +6337,22 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: actual = bool(P.max_angle(Q)[0] != pi)
             sage: actual == expected
             True
+
+        In particular, this should happen when either cone is the full
+        space::
+
+            sage: from sage.geometry.cone_critical_angles import (
+            ....:   _random_admissible_cone )
+            sage: n = ZZ.random_element(1,5)
+            sage: P = _random_admissible_cone(ambient_dim=n)
+            sage: Q = cones.trivial(n, P.dual().lattice()).dual()
+            sage: Q.is_full_space()
+            True
+            sage: P.max_angle(Q)[0]
+            pi
+            sage: Q.max_angle(P)[0]
+            pi
+
         """
         # We do the argument checking here, in the public cone method,
         # because the error message should say something like "this
