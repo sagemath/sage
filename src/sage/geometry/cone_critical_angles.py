@@ -108,16 +108,15 @@ def _normalize_gevp_solution(gevp_solution):
 def _random_admissible_cone(ambient_dim):
     r"""
     Generate a random cone in a lattice of dimension
-    ``ambient_dim`` that isn't trivial and isn't equal to the full
-    ambient space.
+    ``ambient_dim`` that isn't trivial.
 
-    This is called an "admissible cone" in [Or2020]_, and it's a
-    nontrivial random cone whose dual is also nontrivial. It is used
-    to simplify some critical angle test cases. The number of rays
-    that the cone possesses is limited to two more than
+    This is a convenience method used to simplify some test cases. The
+    number of rays that the cone possesses is limited to two more than
     ``ambient_dim``; so, for example, you will not get more than five
     rays in a three-dimensional space. This limits the amount of time
-    spent in any one test case.
+    spent in any one test case. In contrast with the definition in
+    [Or2020]_ we consider the full ambient space to be admissible (it
+    doesn't hurt anything, and [Or2024]_ was forced to allow it).
 
     INPUT:
 
@@ -126,8 +125,8 @@ def _random_admissible_cone(ambient_dim):
 
     OUTPUT:
 
-    A "random" closed convex cone that is nontrivial, not equal to its
-    ambient space, and lives in a lattice of dimension ``ambient_dim``.
+    A "random" nontrivial closed convex cone in a lattice of dimension
+    ``ambient_dim``.
 
     A ``ValueError`` is raised if ``ambient_dim`` is not positive.
 
@@ -141,8 +140,6 @@ def _random_admissible_cone(ambient_dim):
         sage: K.lattice_dim()
         5
         sage: K.is_trivial()
-        False
-        sage: K.is_full_space()
         False
 
     Unless the ``ambient_dim`` argument is nonsense::
@@ -167,9 +164,7 @@ def _random_admissible_cone(ambient_dim):
              'max_rays': ambient_dim+2 }
 
     from sage.geometry.cone import random_cone
-    K = random_cone(**args)
-    while (K.is_full_space()):
-        K = random_cone(**args)
+    return random_cone(**args)
 
     return K
 
