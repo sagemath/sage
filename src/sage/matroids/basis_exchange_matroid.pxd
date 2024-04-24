@@ -15,7 +15,7 @@ cdef class BasisExchangeMatroid(Matroid):
     cdef _weak_invariant_var, _strong_invariant_var, _heuristic_invariant_var
     cdef SetSystem _weak_partition_var, _strong_partition_var, _heuristic_partition_var
 
-    cdef _relabel(self, l)
+    cdef _relabel(self, mapping)
 
     cdef _pack(self, bitset_t, X)
     cdef __unpack(self, bitset_t)
