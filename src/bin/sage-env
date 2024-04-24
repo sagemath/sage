@@ -493,18 +493,6 @@ if [ -d "$SAGE_ROOT" -a -z "$CCACHE_BASEDIR" ]; then
     export CCACHE_BASEDIR="$SAGE_ROOT"
 fi
 
-if [ "$LDFLAGS" = "" ]; then
-    LDFLAGS=""          && export LDFLAGS
-fi
-
-if [ -z "$CFLAGS" ]; then
-    unset CFLAGS
-fi
-
-if [ -z "$CXXFLAGS" ]; then
-    unset CXXFLAGS
-fi
-
 if [ -n "$CFLAGS" -a -z "$CXXFLAGS" ]; then
     export CXXFLAGS="$CFLAGS"
 fi
