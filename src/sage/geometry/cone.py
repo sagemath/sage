@@ -6226,6 +6226,14 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         - ``epsilon`` -- (default: ``0``) the tolerance to use when
           making comparisons
 
+        .. WARNING::
+
+          Using inexact arithmetic (``exact=False``) is faster, but
+          this computation is only known to be stable when both of
+          your cones are strictly convex (or when one of them is the
+          entire space, but the maximal angle is obviously `\pi` in
+          that case).
+
         OUTPUT:
 
         A triple `\left( \theta_{\text{max}}, u, v \right)`
@@ -6247,7 +6255,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         ``exact``:
 
         - If ``exact`` is ``True`` and if both ``self`` and ``other``
-          are strictly convex, then the algorithm may fall back to
+          are strictly convex, then the algorithm will fall back to
           inexact arithmetic. In that case, the returned angle and
           vectors will be over :class:`sage.rings.real_double.RDF`.
 
