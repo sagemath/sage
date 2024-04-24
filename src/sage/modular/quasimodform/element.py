@@ -734,8 +734,8 @@ class QuasiModularFormsElement(ModuleElement):
     def _compute(self, X):
         r"""
         Compute the coefficients of `q^n` of the q-expansion of this,
-        graded quasimodular form for `n` in the list `X`. 
-        
+        graded quasimodular form for `n` in the list `X`.
+
         The results are not cached.  (Use coefficients for cached results).
 
         EXAMPLES::
@@ -752,13 +752,13 @@ class QuasiModularFormsElement(ModuleElement):
             return []
         bound = max(X)
         q_exp = self.q_expansion(bound + 1)
-        return [q_exp[i] for i in X]        
+        return [q_exp[i] for i in X]
 
     def coefficients(self, X):
         r"""
         Return the coefficients of `q^n` of the q-expansion of this,
         graded quasimodular form for `n` in the list `X`.
-        
+
         If X is an integer, return coefficients for indices from 1
         to X. This method caches the result.
 
