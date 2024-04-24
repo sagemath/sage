@@ -6311,11 +6311,13 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         Sage can't prove that the actual and expected results are
         equal in the next two cases without a little nudge in the
-        right direction::
+        right direction, and, moreover, it's crashy about it::
 
             sage: n = 4
             sage: K = cones.schur(n)
-            sage: bool( K.max_angle()[0].simplify() == ((n-1)/n)*pi )
+            sage: actual = K.max_angle()[0].simplify()._sympy_()._sage_()
+            sage: expected = ((n-1)/n)*pi
+            sage: bool( actual == expected )
             True
             sage: n = 5
             sage: K = cones.schur(n)
