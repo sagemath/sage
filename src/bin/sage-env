@@ -493,10 +493,6 @@ if [ -d "$SAGE_ROOT" -a -z "$CCACHE_BASEDIR" ]; then
     export CCACHE_BASEDIR="$SAGE_ROOT"
 fi
 
-if [ -n "$CFLAGS" -a -z "$CXXFLAGS" ]; then
-    export CXXFLAGS="$CFLAGS"
-fi
-
 # Handle parallel building/testing/...
 case "$SAGE_NUM_THREADS,$SAGE_NUM_THREADS_PARALLEL" in
     [1-9][0-9]*,[1-9][0-9]*)
