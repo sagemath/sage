@@ -25,6 +25,7 @@ from sage.misc.decorators import rename_keyword
 
 from sage.plot.plot3d.parametric_plot3d import parametric_plot3d
 
+
 @rename_keyword(alpha='opacity')
 def revolution_plot3d(curve,trange,phirange=None,parallel_axis='z',axis=(0,0),print_vector=False,show_curve=False,**kwds):
     r"""
