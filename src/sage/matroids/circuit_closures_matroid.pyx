@@ -524,4 +524,49 @@ cdef class CircuitClosuresMatroid(Matroid):
         version = 0
         return sage.matroids.unpickling.unpickle_circuit_closures_matroid, (version, data)
 
+    cpdef relabel(self, mapping):
+        r"""
+        Return an isomorphic matroid with relabeled groundset.
+
+        The output is obtained by relabeling each element ``e`` by
+        ``mapping[e]``, where ``mapping`` is a given injective map. If
+        ``mapping[e]`` is not defined, then the identity map is assumed.
+
+        INPUT:
+
+        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
+          label of ``e``
+
+        OUTPUT: a matroid
+
+        EXAMPLES::
+
+            sage: from sage.matroids.circuit_closures_matroid import CircuitClosuresMatroid
+            sage: M = CircuitClosuresMatroid(matroids.catalog.RelaxedNonFano())
+            sage: sorted(M.groundset())
+            [0, 1, 2, 3, 4, 5, 6]
+            sage: N = M.relabel({'g': 'x', 0: 'z'})  # 'g': 'x' is ignored
+            sage: from sage.matroids.utilities import cmp_elements_key
+            sage: sorted(N.groundset(), key=cmp_elements_key)
+            [1, 2, 3, 4, 5, 6, 'z']
+            sage: M.is_isomorphic(N)
+            True
+
+        TESTS::
+
+            sage: from sage.matroids.circuit_closures_matroid import CircuitClosuresMatroid
+            sage: M = CircuitClosuresMatroid(matroids.catalog.RelaxedNonFano())
+            sage: f = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e', 5: 'f', 6: 'g'}
+            sage: N = M.relabel(f)
+            sage: for S in powerset(M.groundset()):
+            ....:     assert M.rank(S) == N.rank([f[x] for x in S])
+        """
+        d = self._relabel_map(mapping)
+        E = [d[x] for x in self.groundset()]
+        CC = {}
+        for i in self.circuit_closures():
+            CC[i] = [[d[y] for y in x] for x in self._circuit_closures[i]]
+        M = CircuitClosuresMatroid(groundset=E, circuit_closures=CC)
+        return M
+
 # todo: customized minor, extend methods.

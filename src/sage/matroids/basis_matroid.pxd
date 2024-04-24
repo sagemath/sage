@@ -26,7 +26,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
     cpdef truncation(self)
     cpdef _extension(self, e, H)
     cpdef _with_coloop(self, e)
-    cpdef relabel(self, l)
+    # cpdef relabel(self, mapping)
 
     cpdef _bases_invariant(self)
     cpdef _bases_partition(self)
