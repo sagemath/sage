@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-objects
 cdef extern from "Python.h":
     cdef size_t SIZEOF_VOID_P
 

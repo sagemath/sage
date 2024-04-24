@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-flint
 from sage.structure.element cimport MonoidElement, Element
 from sage.data_structures.bounded_integer_sequences cimport biseq_t
 

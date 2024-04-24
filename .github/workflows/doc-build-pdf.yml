@@ -9,7 +9,7 @@ on:
       platform:
         description: 'Platform'
         required: true
-        default: 'ubuntu-focal-standard'
+        default: 'ubuntu-jammy-standard'
       docker_tag:
         description: 'Docker tag'
         required: true
@@ -46,7 +46,7 @@ jobs:
 
   build-docs-pdf:
     runs-on: ubuntu-latest
-    container: ghcr.io/sagemath/sage/sage-${{ github.event.inputs.platform || 'ubuntu-focal-standard' }}-with-targets:${{ github.event.inputs.docker_tag || 'dev'}}
+    container: ghcr.io/sagemath/sage/sage-${{ github.event.inputs.platform || 'ubuntu-jammy-standard' }}-with-targets:${{ github.event.inputs.docker_tag || 'dev'}}
     needs: [get_ci_fixes]
     steps:
       - name: Checkout
@@ -87,8 +87,8 @@ jobs:
           ./bootstrap && make build
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
+          MAKE: make -j4 --output-sync=recurse
+          SAGE_NUM_THREADS: 4
 
       - name: Build (fallback to non-incremental)
         id: build
@@ -98,8 +98,8 @@ jobs:
           make sagelib-clean && git clean -fx src/sage && ./config.status && make build
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
+          MAKE: make -j4 --output-sync=recurse
+          SAGE_NUM_THREADS: 4
 
       - name: Build docs (PDF)
         id: docbuild
@@ -108,8 +108,8 @@ jobs:
           make doc-clean doc-uninstall; make sagemath_doc_html-build-deps sagemath_doc_pdf-no-deps
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
+          MAKE: make -j4 --output-sync=recurse
+          SAGE_NUM_THREADS: 4
 
       - name: Copy docs
         id: copy

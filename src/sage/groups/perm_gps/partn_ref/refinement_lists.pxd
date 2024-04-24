@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-categories
 #*****************************************************************************
 #       Copyright (C) 2006 - 2011 Robert L. Miller <rlmillster@gmail.com>
 #       Copyright (C) 2009 Nicolas Borie <nicolas.borie@math.u-psud.fr>

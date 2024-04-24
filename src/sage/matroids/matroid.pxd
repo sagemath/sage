@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-modules
 from sage.structure.sage_object cimport SageObject
 
 cdef class Matroid(SageObject):

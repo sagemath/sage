@@ -1,3 +1,4 @@
+# sage_setup: distribution = sagemath-combinat
 r"""
 Rigged configurations
 
@@ -41,3 +42,5 @@ from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.combinat.rigged_configurations.rigged_configurations',
             'RiggedConfigurations')
+del lazy_import
+del install_doc
