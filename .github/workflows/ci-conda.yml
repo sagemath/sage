@@ -77,21 +77,16 @@ jobs:
           conda info
           conda list
 
-      - name: Configure
+      - name: Bootstrap
         shell: bash -l {0}
         continue-on-error: true
         run: |
           ./bootstrap
-          echo "::add-matcher::.github/workflows/configure-systempackage-problem-matcher.json"
-          ./configure --enable-build-as-root --with-python=$CONDA_PREFIX/bin/python --prefix=$CONDA_PREFIX --enable-system-site-packages $(for pkg in $(./sage -package list :standard: --has-file spkg-configure.m4 --has-file distros/conda.txt --exclude rpy2); do echo --with-system-$pkg=force; done)
-          echo "::remove-matcher owner=configure-system-package-warning::"
-          echo "::remove-matcher owner=configure-system-package-error::"
 
       - name: Build
         shell: bash -l {0}
         run: |
           # Use --no-deps and pip check below to verify that all necessary dependencies are installed via conda.
-          pip install --no-build-isolation --no-deps -v -v -e ./pkgs/sage-conf ./pkgs/sage-setup
           pip install --no-build-isolation --no-deps --config-settings editable_mode=compat -v -v -e ./src
         env:
           SAGE_NUM_THREADS: 2
