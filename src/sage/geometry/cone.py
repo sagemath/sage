@@ -6299,16 +6299,19 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: bool(K.max_angle()[0] == ((n-1)/n)*pi)
             True
 
-        We check the numerical values for the next two, because
-        otherwise Maxima crashes for some unknown reason::
+        Sage can't prove that the actual and expected results are
+        equal in the next two cases without a little nudge in the
+        right direction::
 
             sage: n = 4
             sage: K = cones.schur(n)
-            sage: bool(K.max_angle()[0].n() == (((n-1)/n)*pi).n())
+            sage: bool( K.max_angle()[0].simplify() == ((n-1)/n)*pi )
             True
             sage: n = 5
             sage: K = cones.schur(n)
-            sage: bool(K.max_angle()[0].n() == (((n-1)/n)*pi).n())
+            sage: actual = K.max_angle()[0].simplify()._sympy_()._sage_()
+            sage: expected = ((n-1)/n)*pi
+            sage: bool( actual == expected )
             True
 
         When there's a unit norm vector in ``self`` whose negation is
