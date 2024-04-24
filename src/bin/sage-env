@@ -518,10 +518,6 @@ fi
 export LD
 
 
-if [ "$AR" = "" ]; then
-    AR="ar"  && export AR
-fi
-
 if [ "$LDFLAGS" = "" ]; then
     LDFLAGS=""          && export LDFLAGS
 fi
@@ -536,34 +532,6 @@ fi
 
 if [ -n "$CFLAGS" -a -z "$CXXFLAGS" ]; then
     export CXXFLAGS="$CFLAGS"
-fi
-
-if [ "$CP" = "" ]; then
-    CP="cp"  && export CP
-fi
-
-if [ "$MV" = "" ]; then
-    MV="mv"  && export MV
-fi
-
-if [ "$RANLIB" = "" ]; then
-    RANLIB="ranlib"  && export RANLIB
-fi
-
-if [ "$LN" = "" ]; then
-    LN="ln"  && export LN
-fi
-
-if [ "$MKDIR" = "" ]; then
-    MKDIR="mkdir"  && export MKDIR
-fi
-
-if [ "$CHMOD" = "" ]; then
-    CHMOD="chmod"  && export CHMOD
-fi
-
-if [ "$TOUCH" = "" ]; then
-    TOUCH="touch"  && export TOUCH
 fi
 
 # Handle parallel building/testing/...
