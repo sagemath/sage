@@ -6339,9 +6339,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         # because the error message should say something like "this
         # cone" and not reference the argument of a function the user
         # has never heard of in some internal module.
-        if self.is_trivial() or self.is_full_space():
-            raise ValueError("cone should not be trivial or the "
-                             "ambient space")
+        if self.is_trivial():
+            raise ValueError("cone should not be trivial")
 
         if other is None:
             other = self
@@ -6349,9 +6348,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             if (other.lattice_dim() != self.lattice_dim()):
                 raise ValueError("lattice dimensions of self and other "
                                  "must agree")
-            if other.is_trivial() or other.is_full_space():
-                raise ValueError("other cone cannot be trivial or the "
-                                 "ambient space")
+            if other.is_trivial():
+                raise ValueError("other cone cannot be trivial")
 
         # Use the names from the paper to keep things understandable.
         P = self
