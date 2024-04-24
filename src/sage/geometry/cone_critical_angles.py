@@ -1,5 +1,5 @@
 r"""
-Find maximal angles between polyhedral convex cones.
+Find maximal angles between polyhedral convex cones
 
 Finding the maximal (or equivalently, the minimal) angle between two
 polyhedral convex cones is a hard nonconvex optimization problem. The
