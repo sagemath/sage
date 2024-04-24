@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-gap
 r"""
 Finitely generated abelian groups with GAP.
 

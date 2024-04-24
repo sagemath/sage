@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-plot
 r"""
 Classes for Lines, Frames, Rulers, Spheres, Points, Dots, and Text
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-gap
 # sage.doctest: needs sage.modules
 """
 Mix-in Class for GAP-based Groups

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 A data structure to store lists of integer pairs of large size.
 """

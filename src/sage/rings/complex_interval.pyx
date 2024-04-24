@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 """
 Arbitrary precision complex intervals
 

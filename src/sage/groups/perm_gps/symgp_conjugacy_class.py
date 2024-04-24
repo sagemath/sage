@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-gap
 r"""
 Conjugacy Classes Of The Symmetric Group
 

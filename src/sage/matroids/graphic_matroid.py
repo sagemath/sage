@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: optional - sage.graphs
 r"""
 Graphic Matroids

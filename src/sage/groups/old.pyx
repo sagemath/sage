@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Deprecated base class for groups
 """

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-gap
 r"""
 Matrix group over a ring that GAP understands
 """
