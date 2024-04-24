@@ -1669,18 +1669,10 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
 
         - ``certificate``: ``False`` or ``True``
         - ``complete_tree``: one of the following values
-          ``True`` - return the full decomposition node
-          ``False`` - return the decomposition node with only children (no grandchildren).
-                      If the node type is not determined, return a UnknownNode.
-          ``'find_irregular'``  - return the decomposition node which only stops
-                                  when you find an irregular node
-          ``'find_nongraphic'`` - return the decomposition node which only stops
-                                  when you find a nongraphic node
-          ``'find_noncographic'`` - return the decomposition node which only stops
-                                  when you find a noncographic node
-          ``'find_nongraphic_and_noncographic'``
-            - return the decomposition node which stops
-              when you find a nongraphic node and a noncographic node
+          ``True`` - return the node with full decomposition
+          ``'find_irregular'`` or ``False``
+                   - return the node when the decomposition detects
+                     an irregular node
 
         EXAMPLES::
 
@@ -1726,11 +1718,13 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: result, certificate = MFR2cmr._is_binary_linear_matroid_regular(
             ....:                           certificate=True, complete_tree=False)
             sage: result, certificate
-            ('Not Determined', OneSumNode (6×14) with 2 children)
-            sage: unicode_art(certificate)
-            ╭───────────OneSumNode (6×14) with 2 children
-            │                 │
-            UnknownNode (3×7) UnknownNode (3×7)
+            (False, (OneSumNode (6×14) with 2 children, NotImplemented))
+            sage: unicode_art(certificate[0])
+            ╭OneSumNode (6×14) with 2 children╮
+            │                                 │
+            SeriesParallelReductionNode (3×7) UnknownNode (3×7)
+            │
+            ThreeConnectedIrregularNode (3×4)
             sage: result, certificate = MFR2cmr._is_binary_linear_matroid_regular(
             ....:                           certificate=True, complete_tree=True)
             sage: result, certificate
@@ -1792,15 +1786,6 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: result, certificate = M._is_binary_linear_matroid_regular(
             ....:                           certificate=True, complete_tree=False)
             sage: result, certificate
-            ('Not Determined', OneSumNode (9×9) with 2 children)
-            sage: unicode_art(certificate)
-            ╭───────────OneSumNode (9×9) with 2 children
-            │                 │
-            UnknownNode (5×4) UnknownNode (4×5)
-            sage: result, certificate = M._is_binary_linear_matroid_regular(
-            ....:                           certificate=True,
-            ....:                           complete_tree='find_noncographic')
-            sage: result, certificate
             (True, OneSumNode (9×9) with 2 children)
             sage: unicode_art(certificate)
             ╭───────────OneSumNode (9×9) with 2 children
@@ -1808,46 +1793,12 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             GraphicNode (5×4) CographicNode (4×5)
             sage: result, certificate = M._is_binary_linear_matroid_regular(
             ....:                           certificate=True,
-            ....:                           check_graphic_minors_planar=True,
             ....:                           complete_tree='find_noncographic')
-            sage: result, certificate
-            ('Not Determined', OneSumNode (9×9) with 2 children)
-            sage: unicode_art(certificate)
-            ╭───────────OneSumNode (9×9) with 2 children
-            │                 │
-            GraphicNode (5×4) UnknownNode (4×5)
-
-        This is the same example, but tests stopping at nongraphic nodes::
-            sage: result, certificate = M._is_binary_linear_matroid_regular(
-            ....:                           certificate=True,
-            ....:                           complete_tree='find_nongraphic')
-            sage: result, certificate
-            ('Not Determined', OneSumNode (9×9) with 2 children)
-            sage: unicode_art(certificate)
-            ╭───────────OneSumNode (9×9) with 2 children
-            │                 │
-            GraphicNode (5×4) UnknownNode (4×5)
-            sage: result, certificate = M._is_binary_linear_matroid_regular(
-            ....:                           certificate=True,
-            ....:                           check_graphic_minors_planar=True,
-            ....:                           complete_tree='find_nongraphic')
-            sage: result, certificate
-            ('Not Determined', OneSumNode (9×9) with 2 children)
-            sage: unicode_art(certificate)
-            ╭───────────OneSumNode (9×9) with 2 children
-            │                 │
-            GraphicNode (5×4) UnknownNode (4×5)
-            sage: MT = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 9, sparse=True), M.transpose())
-            sage: result, certificate = MT._is_binary_linear_matroid_regular(
-            ....:                           certificate=True,
-            ....:                           check_graphic_minors_planar=True,
-            ....:                           complete_tree='find_nongraphic')
-            sage: result, certificate
-            ('Not Determined', OneSumNode (9×9) with 2 children)
-            sage: unicode_art(certificate)
-            ╭───────────OneSumNode (9×9) with 2 children
-            │                 │
-            UnknownNode (4×5) UnknownNode (5×4)
+            Traceback (most recent call last):
+            ...
+            ValueError: Unknown complete tree parameter find_noncographic
+            either stop when an irregular child is found
+            or return the full complete tree
 
         Base ring check::
 
@@ -1868,7 +1819,14 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         if not GF2.has_coerce_map_from(base_ring):
             raise ValueError('not well-defined')
 
-        cdef bool result_bool = True
+        if complete_tree not in ["find_irregular", False, True]:
+            raise ValueError(f'Unknown complete tree parameter {complete_tree} '
+                             f'either stop when an irregular child is found '
+                             f'or return the full complete tree')
+        if complete_tree == False:
+            complete_tree = "find_irregular"
+
+        cdef bool result_bool
         cdef CMR_REGULAR_PARAMS params
         cdef CMR_REGULAR_STATS stats
         cdef CMR_MATROID_DEC *dec = NULL
@@ -1894,13 +1852,11 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sig_off()
 
         result = <bint> result_bool
-        if result == True and CMRmatroiddecRegularity(dec) == 0:
-            result = 'Not Determined'
         if not certificate:
             return result
         node = create_DecompositionNode(dec, self, row_keys, column_keys)
 
-        if result != False:
+        if result:
             return result, node
         return result, (node, NotImplemented)
 
@@ -1922,6 +1878,15 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
         REFERENCES:
 
         - [Sch1986]_, Chapter 19
+
+        INPUT:
+
+        - ``certificate``: ``False`` or ``True``
+        - ``complete_tree``: one of the following values
+          ``True`` - return the node with full decomposition
+          ``'find_irregular'`` or ``False``
+                   - return the node when the decomposition detects
+                     a not totally unimodular node
 
         EXAMPLES::
 
@@ -1971,6 +1936,8 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             [1 0 1]
             [1 1 0]
 
+        If the matrix is totally unimodular, it always returns
+        a full decomposition as a certificate::
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 9, sparse=True),
             ....:                           [[-1,-1,-1,-1, 0, 0, 0, 0, 0],
             ....:                            [1, 1, 0, 0, 0, 0, 0, 0, 0],
@@ -1984,11 +1951,11 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: result, certificate = M.is_totally_unimodular(
             ....:                           certificate=True, complete_tree=False)
             sage: result, certificate
-            ('Not Determined', OneSumNode (9×9) with 2 children)
+            (True, OneSumNode (9×9) with 2 children)
             sage: unicode_art(certificate)
             ╭───────────OneSumNode (9×9) with 2 children
             │                 │
-            UnknownNode (5×4) UnknownNode (4×5)
+            GraphicNode (5×4) CographicNode (4×5)
             sage: result, certificate = M.is_totally_unimodular(
             ....:                           certificate=True, complete_tree=True)
             sage: result, certificate
@@ -1999,7 +1966,9 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             GraphicNode (5×4) CographicNode (4×5)
 
         This is test ``TreeFlagsNorecurse``, ``TreeFlagsStopNoncographic``,
-        and ``TreeFlagsStopNongraphic`` in CMR's ``test_regular.cpp``::
+        and ``TreeFlagsStopNongraphic`` in CMR's ``test_regular.cpp``,
+        the underlying binary linear matroid is regular,
+        but the matrix is not totally unimodular::
 
             sage: M = Matrix_cmr_chr_sparse(MatrixSpace(ZZ, 9, 9, sparse=True),
             ....:                           [[1, 1, 0, 0, 0, 0, 0, 0, 0],
@@ -2014,14 +1983,16 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: result, certificate = M.is_totally_unimodular(
             ....:                           certificate=True, complete_tree=False)
             sage: result, certificate
-            ('Not Determined', OneSumNode (9×9) with 2 children)
-            sage: unicode_art(certificate)
-            ╭───────────OneSumNode (9×9) with 2 children
-            │                 │
-            UnknownNode (5×4) UnknownNode (4×5)
+            (False, (OneSumNode (9×9) with 2 children, ((3, 2, 0), (3, 1, 0))))
+            sage: unicode_art(certificate[0])
+            ╭──────OneSumNode (9×9) with 2 children──────╮
+            │                                            │
+            SubmatrixNode (5×4)                          UnknownNode (4×5)
+            │
+            Isomorphic to a minor of |det| = 2 submatrix
             sage: result, certificate = M.is_totally_unimodular(
             ....:                           certificate=True,
-            ....:                           complete_tree='find_noncographic')
+            ....:                           complete_tree=True)
             sage: result, certificate
             (False, (OneSumNode (9×9) with 2 children, ((3, 2, 0), (3, 1, 0))))
             sage: unicode_art(certificate[0])
@@ -2033,20 +2004,24 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sage: result, certificate = M.is_totally_unimodular(
             ....:                           certificate=True,
             ....:                           complete_tree='find_nongraphic')
-            sage: result, certificate
-            (False, (OneSumNode (9×9) with 2 children, ((3, 2, 0), (3, 1, 0))))
-            sage: unicode_art(certificate[0])
-            ╭──────OneSumNode (9×9) with 2 children──────╮
-            │                                            │
-            SubmatrixNode (5×4)                          UnknownNode (4×5)
-            │
-            Isomorphic to a minor of |det| = 2 submatrix
+            Traceback (most recent call last):
+            ...
+            ValueError: Unknown complete tree parameter find_nongraphic
+            either stop when a not TU child is found
+            or return the full complete tree
         """
         base_ring = self.parent().base_ring()
         if base_ring.characteristic():
             raise ValueError(f'only defined over characteristic 0, got {base_ring}')
 
-        cdef bool result_bool = True
+        if complete_tree not in ["find_irregular", False, True]:
+            raise ValueError(f'Unknown complete tree parameter {complete_tree} '
+                             f'either stop when a not TU child is found '
+                             f'or return the full complete tree')
+        if complete_tree == False:
+            complete_tree = "find_irregular"
+
+        cdef bool result_bool
         cdef CMR_TU_PARAMS params
         cdef CMR_TU_STATS stats
         cdef CMR_MATROID_DEC *dec = NULL
@@ -2076,13 +2051,11 @@ cdef class Matrix_cmr_chr_sparse(Matrix_cmr_sparse):
             sig_off()
 
         result = <bint> result_bool
-        if result == True and CMRmatroiddecRegularity(dec) == 0:
-            result = 'Not Determined'
         if not certificate:
             return result
         node = create_DecompositionNode(dec, self, row_keys, column_keys)
 
-        if result != False:
+        if result:
             return result, node
 
         if submat == NULL:

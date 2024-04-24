@@ -12,6 +12,7 @@ cdef class DecompositionNode(SageObject):
     cdef object _child_nodes
 
     cdef _set_dec(self, CMR_MATROID_DEC *dec)
+    cdef _set_root_dec(self, isTernary=?)
     cdef _set_row_keys(self, row_keys)
     cdef _set_column_keys(self, column_keys)
 

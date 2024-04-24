@@ -259,6 +259,7 @@ cdef extern from "cmr/matroid.h":
     CMR_ERROR CMRmatroiddecCloneUnknown(CMR* cmr, CMR_MATROID_DEC* dec, CMR_MATROID_DEC** pclone)
     CMR_ERROR CMRmatroiddecCapture(CMR* cmr, CMR_MATROID_DEC* dec)
     CMR_ERROR CMRmatroiddecRelease(CMR* cmr, CMR_MATROID_DEC** pdec)
+    CMR_ERROR CMRmatroiddecCreateMatrixRoot(CMR* cmr, CMR_MATROID_DEC** pdec, bool isTernary, CMR_CHRMAT* matrix)
 
 cdef extern from "cmr/separation.h":
 

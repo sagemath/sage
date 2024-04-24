@@ -74,6 +74,22 @@ cdef class DecompositionNode(SageObject):
             CMR_CALL(CMRmatroiddecCapture(cmr, dec))
         self._dec = dec
 
+    cdef _set_root_dec(self, isTernary=True):
+        cdef CMR_MATROID_DEC *root
+        cdef Matrix_cmr_chr_sparse matrix
+        try:
+            matrix = self.matrix()
+        except:
+            raise ValueError('no Matrix_cmr_chr_sparse matrix')
+        cdef CMR_CHRMAT *mat = matrix._mat
+
+        sig_on()
+        try:
+            CMR_CALL(CMRmatroiddecCreateMatrixRoot(cmr, &root, isTernary, mat))
+        finally:
+            sig_off()
+        self._set_dec(root)
+
     cdef _set_row_keys(self, row_keys):
         """
         Set the row keys with consistency checking: if the
@@ -583,15 +599,18 @@ cdef class DecompositionNode(SageObject):
             ....:                            [0, 0, 0, 0, 1, 1, 0, 1, 0],
             ....:                            [0, 0, 0, 0, 0, 1, 0, 1, 1],
             ....:                            [0, 0, 0, 0, 0, 0, 1, 1, 1]])
-            sage: result, certificate = M._is_binary_linear_matroid_regular(
-            ....:                           certificate=True, complete_tree=False)
-            sage: result, certificate
-            ('Not Determined', OneSumNode (9×9) with 2 children)
-            sage: unicode_art(certificate)
+            sage: from sage.matrix.seymour_decomposition import UnknownNode
+            sage: node = UnknownNode(M); node
+            UnknownNode (9×9)
+            sage: C0 = node._binary_linear_matroid_complete_decomposition(
+            ....:                            complete_tree=False)
+            sage: C0
+            OneSumNode (9×9) with 2 children
+            sage: unicode_art(C0)
             ╭───────────OneSumNode (9×9) with 2 children
             │                 │
             UnknownNode (5×4) UnknownNode (4×5)
-            sage: C1, C2 = certificate.child_nodes()
+            sage: C1, C2 = C0.child_nodes()
             sage: C11 = C1._binary_linear_matroid_complete_decomposition(complete_tree=False); C11
             GraphicNode (5×4)
             sage: unicode_art(C11)
@@ -628,6 +647,9 @@ cdef class DecompositionNode(SageObject):
         cdef CMR_MATROID_DEC *clone = NULL
 
         cdef CMR_MATROID_DEC **pclone = &clone
+
+        if self._dec == NULL:
+            self._set_root_dec(isTernary=False)
 
         cdef dict kwds = dict(use_direct_graphicness_test=use_direct_graphicness_test,
                               series_parallel_ok=series_parallel_ok,
@@ -726,15 +748,15 @@ cdef class DecompositionNode(SageObject):
             ....:                            [0, 0, 0, 0, 1, 1, 0, 1, 0],
             ....:                            [0, 0, 0, 0, 0, 1, 0, 1, 1],
             ....:                            [0, 0, 0, 0, 0, 0, 1, 1, 1]])
-            sage: result, certificate = M.is_totally_unimodular(
-            ....:                           certificate=True, complete_tree=False)
-            sage: result, certificate
-            ('Not Determined', OneSumNode (9×9) with 2 children)
-            sage: unicode_art(certificate)
+            sage: from sage.matrix.seymour_decomposition import UnknownNode
+            sage: node = UnknownNode(M); node
+            UnknownNode (9×9)
+            sage: C0 = node.complete_decomposition(complete_tree=False)
+            sage: unicode_art(C0)
             ╭───────────OneSumNode (9×9) with 2 children
             │                 │
             UnknownNode (5×4) UnknownNode (4×5)
-            sage: C1, C2 = certificate.child_nodes()
+            sage: C1, C2 = C0.child_nodes()
             sage: C11 = C1.complete_decomposition(complete_tree=False); C11
             SubmatrixNode (5×4)
             sage: unicode_art(C11)
@@ -775,6 +797,9 @@ cdef class DecompositionNode(SageObject):
         cdef CMR_MATROID_DEC *clone = NULL
 
         cdef CMR_MATROID_DEC **pclone = &clone
+
+        if self._dec == NULL:
+            self._set_root_dec(isTernary=True)
 
         cdef dict kwds = dict(use_direct_graphicness_test=use_direct_graphicness_test,
                               series_parallel_ok=series_parallel_ok,
@@ -1266,27 +1291,31 @@ cdef class ThreeSumNode(SumNode):
             [-1 -1  0  0  1]
             sage: C.child_indices()
             (((0, 1, a, 3), (b, c, d, e, +3+e)), ((0, 2, 3, 5), (+0+d, d, 4, e, f)))
-            sage: result, certificate = R12.is_totally_unimodular(certificate=True,
-            ....:                           complete_tree=False,
-            ....:                           three_sum_strategy="Wide_Wide",
-            ....:                           row_keys=range(6),
-            ....:                           column_keys='abcdef')
-            sage: result, certificate
-            ('Not Determined', PivotsNode (6×6))
-            sage: unicode_art(certificate)
+            sage: from sage.matrix.seymour_decomposition import UnknownNode
+            sage: node = UnknownNode(R12,
+            ....:                    row_keys=range(6),
+            ....:                    column_keys='abcdef'); node
+            UnknownNode (6×6)
+            sage: C0 = node.complete_decomposition(
+            ....:                            complete_tree=False,
+            ....:                            three_sum_strategy="Wide_Wide",
+            ....:                            )
+            sage: C0
+            PivotsNode (6×6)
+            sage: unicode_art(C0)
                     PivotsNode (6×6)
                     │
             ╭──────────ThreeSumNode (6×6) with 2 children
             │                 │
             UnknownNode (4×5) UnknownNode (4×5)
-            sage: unicode_art(certificate.complete_decomposition(complete_tree=True,
+            sage: unicode_art(C0.complete_decomposition(complete_tree=True,
             ....:                           three_sum_strategy="Wide_Wide"))
                     PivotsNode (6×6)
                     │
             ╭─────────────ThreeSumNode (6×6) with 2 children
             │                   │
             CographicNode (4×5) GraphicNode (4×5)
-            sage: unicode_art(certificate)
+            sage: unicode_art(C0)
                     PivotsNode (6×6)
                     │
             ╭──────────ThreeSumNode (6×6) with 2 children
