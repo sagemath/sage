@@ -1355,8 +1355,25 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
 
     class Element(QuotientRing_generic.Element):
         def _acted_upon_(self, scalar, self_on_left=True):
-            """
+            r"""
             Return the action of ``scalar`` on ``self``.
+
+            EXAMPLES::
+
+                sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
+                sage: GP22 = SGA.garsia_procesi_module([2, 2])
+                sage: x = SGA.an_element(); x
+                [1, 2, 3, 4] + 2*[1, 2, 4, 3] + [4, 1, 2, 3]
+                sage: v = GP22.an_element(); v
+                -gp1 - gp2 - gp3
+                sage: g = SGA.group().an_element(); g
+                [4, 1, 2, 3]
+                sage: g * v
+                gp3
+                sage: x * v
+                gp3
+                sage: 2 * v
+                gp1 + gp2 + gp3
             """
             P = self.parent()
             if scalar in P.base_ring():
@@ -1372,8 +1389,17 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
             return super()._acted_upon_(scalar, self_on_left)
 
         def to_vector(self, order=None):
-            """
+            r"""
             Return ``self`` as a (dense) free module vector.
+
+            EXAMPLES::
+
+                sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
+                sage: GP22 = SGA.garsia_procesi_module([2, 2])
+                sage: v = GP22.an_element(); v
+                -gp1 - gp2 - gp3
+                sage: v.to_vector()
+                (0, 0, 2, 2, 2, 0)
             """
             P = self.parent()
             B = P.basis()
@@ -1384,23 +1410,74 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
         _vector_ = to_vector
 
         def monomial_coefficients(self, copy=None):
-            """
+            r"""
             Return the monomial coefficients of ``self``.
+
+            EXAMPLES::
+
+                sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
+                sage: GP31 = SGA.garsia_procesi_module([3, 1])
+                sage: v = GP31.an_element(); v
+                -gp1 - gp2 - gp3
+                sage: v.monomial_coefficients()
+                {0: 2, 1: 2, 2: 2, 3: 0}
             """
             B = self.parent().basis()
             f = self.lift()
             return {i: f.monomial_coefficient(b.lift()) for i, b in enumerate(B)}
 
         def degree(self):
-            """
+            r"""
             Return the degree of ``self``.
+
+            EXAMPLES::
+
+                sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
+                sage: GP22 = SGA.garsia_procesi_module([2, 2])
+                sage: for b in GP22.basis():
+                ....:     print(b, b.degree())
+                gp2*gp3 2
+                gp1*gp3 2
+                gp3 1
+                gp2 1
+                gp1 1
+                1 0
+                sage: v = sum(GP22.basis())
+                sage: v.degree()
+                2
             """
             return self.lift().degree()
 
         def homogeneous_degree(self):
-            """
+            r"""
             Return the (homogeneous) degree of ``self`` if homogeneous
             otherwise raise an error.
+
+            EXAMPLES::
+
+                sage: SGA = SymmetricGroupAlgebra(GF(2), 4)
+                sage: GP31 = SGA.garsia_procesi_module([3, 1])
+                sage: for b in GP31.basis():
+                ....:     print(b, b.homogeneous_degree())
+                gp3 1
+                gp2 1
+                gp1 1
+                1 0
+                sage: v = sum(GP31.basis()); v
+                gp1 + gp2 + gp3 + 1
+                sage: v.homogeneous_degree()
+                Traceback (most recent call last):
+                ...
+                ValueError: element is not homogeneous
+
+            TESTS::
+
+                sage: SGA = SymmetricGroupAlgebra(GF(3), 4)
+                sage: GP4 = SGA.garsia_procesi_module([4])
+                sage: GP4.zero().homogeneous_degree()
+                Traceback (most recent call last):
+                ...
+                ValueError: the zero element does not have a well-defined degree
             """
             if not self:
                 raise ValueError("the zero element does not have a well-defined degree")

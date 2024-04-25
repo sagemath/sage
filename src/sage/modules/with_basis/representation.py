@@ -95,9 +95,8 @@ class Representation_abstract:
 
             sage: G = SymmetricGroup(4)
             sage: M = CombinatorialFreeModule(QQ, ['v'])
-            sage: from sage.modules.with_basis.representation import Representation
             sage: on_basis = lambda g,m: M.term(m, g.sign())
-            sage: R = Representation(G, M, on_basis)
+            sage: R = G.representation(M, on_basis)
             sage: R.semigroup()
             Symmetric group of order 4! as a permutation group
         """
@@ -111,9 +110,8 @@ class Representation_abstract:
 
             sage: G = SymmetricGroup(4)
             sage: M = CombinatorialFreeModule(QQ, ['v'])
-            sage: from sage.modules.with_basis.representation import Representation
             sage: on_basis = lambda g,m: M.term(m, g.sign())
-            sage: R = Representation(G, M, on_basis)
+            sage: R = G.representation(M, on_basis)
             sage: R.semigroup_algebra()
             Symmetric group algebra of order 4 over Rational Field
         """
@@ -688,8 +686,20 @@ class Representation_abstract:
                               already_echelonized=already_echelonized, **opts)
 
     def quotient_representation(self, subrepr, already_echelonized=False, **kwds):
-        """
+        r"""
         Construct a quotient representation of ``self`` by ``subrepr``.
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(2), 5)
+            sage: SM = SGA.specht_module([3, 2])
+            sage: v = sum(list(SM.basis())[1:])
+            sage: Q = SM.quotient_representation([v]); Q
+            Quotient representation with basis {[[1, 3, 5], [2, 4]],
+             [[1, 3, 4], [2, 5]], [[1, 2, 4], [3, 5]], [[1, 2, 3], [4, 5]]}
+             of Specht module of [3, 2] over Finite Field of size 2
+            sage: Q.is_irreducible()
+            True
         """
         if not isinstance(subrepr, Subrepresentation):
             subrepr = self.subrepresentation(subrepr, unitriangular=True,
@@ -831,6 +841,26 @@ class Representation_abstract:
         for testing purposes::
 
             sage: set_random_seed(0)
+            sage: G = groups.permutation.Dihedral(5)
+            sage: CFM = CombinatorialFreeModule(GF(2), [1, 2, 3, 4, 5],
+            ....:                               bracket=False, prefix='e')
+            sage: CFM.an_element()
+            e3
+            sage: R = G.representation(CFM, lambda g, i: CFM.basis()[g(i)], side='right')
+            sage: CS = R.composition_series()
+            sage: len(CS)
+            3
+            sage: [[R(b) for b in F.basis()] for F in CS]
+            [[e1, e2, e3, e4, e5], [e1 + e5, e2 + e5, e3 + e5, e4 + e5], []]
+            sage: [F.brauer_character() for F in CS]
+            [(5, 0, 0), (4, -1, -1), (0, 0, 0)]
+            sage: [F.brauer_character() for F in R.composition_factors()]
+            [(1, 1, 1), (4, -1, -1)]
+            sage: Reg = G.regular_representation(GF(2))
+            sage: simple_brauer_chars = set([F.brauer_character()
+            ....:                            for F in Reg.composition_factors()])
+            sage: sorted(simple_brauer_chars)
+            [(1, 1, 1), (4, -1, -1)]
         """
         return self._composition_series_data()[0]
 
@@ -1006,9 +1036,8 @@ class Representation(Representation_abstract, CombinatorialFreeModule):
 
         sage: G = SymmetricGroup(4)
         sage: M = CombinatorialFreeModule(QQ, ['v'])
-        sage: from sage.modules.with_basis.representation import Representation
         sage: on_basis = lambda g,m: M.term(m, g.sign())
-        sage: R = Representation(G, M, on_basis)
+        sage: R = G.representation(M, on_basis)
         sage: x = R.an_element(); x
         2*B['v']
         sage: c,s = G.gens()
@@ -1052,17 +1081,17 @@ class Representation(Representation_abstract, CombinatorialFreeModule):
 
             sage: G = SymmetricGroup(4)
             sage: M = CombinatorialFreeModule(QQ, ['v'])
-            sage: from sage.modules.with_basis.representation import Representation
-            sage: on_basis = lambda g,m: M.term(m, g.sign())
-            sage: R = Representation(G, M, on_basis)
+            sage: def on_basis(g, m):
+            ....:     return M.term(m, g.sign())
+            sage: R = G.representation(M, on_basis)
             sage: R._test_representation()
 
             sage: G = CyclicPermutationGroup(3)
             sage: M = algebras.Exterior(QQ, 'x', 3)
-            sage: from sage.modules.with_basis.representation import Representation
-            sage: on_basis = lambda g,m: M.prod([M.monomial(FrozenBitset([g(j+1)-1])) for j in m]) #cyclically permute generators
+            sage: def on_basis(g, m):  # cyclically permute generators
+            ....:     return M.prod([M.monomial(FrozenBitset([g(j+1)-1])) for j in m])
             sage: from sage.categories.algebras import Algebras
-            sage: R = Representation(G, M, on_basis, category=Algebras(QQ).WithBasis().FiniteDimensional())
+            sage: R = G.representation(M, on_basis, category=Algebras(QQ).WithBasis().FiniteDimensional())
             sage: r = R.an_element(); r
             1 + 2*x0 + x0*x1 + 3*x1
             sage: r*r
@@ -1081,11 +1110,10 @@ class Representation(Representation_abstract, CombinatorialFreeModule):
 
             sage: G = SymmetricGroup(4)
             sage: A = SymmetricGroup(4).algebra(QQ)
-            sage: from sage.categories.algebras import Algebras
-            sage: from sage.modules.with_basis.representation import Representation
-            sage: action = lambda g,x: A.monomial(g*x)
+            sage: def action(g, x):
+            ....:     return A.monomial(g*x)
             sage: category = Algebras(QQ).WithBasis().FiniteDimensional()
-            sage: R = Representation(G, A, action, 'left', category=category)
+            sage: R = G.representation(A, action, 'left', category=category)
             sage: r = R.an_element(); r
             () + (2,3,4) + 2*(1,3)(2,4) + 3*(1,4)(2,3)
             sage: r^2
@@ -1129,9 +1157,9 @@ class Representation(Representation_abstract, CombinatorialFreeModule):
 
             sage: G = CoxeterGroup(['A',4,1], base_ring=ZZ)
             sage: M = CombinatorialFreeModule(QQ, ['v'])
-            sage: from sage.modules.with_basis.representation import Representation
-            sage: on_basis = lambda g,m: M.term(m, (-1)**g.length())
-            sage: R = Representation(G, M, on_basis, side="right")
+            sage: def on_basis(g, m):
+            ....:     return M.term(m, (-1)**g.length())
+            sage: R = G.representation(M, on_basis, side="right")
             sage: R._test_representation(max_runs=500)
         """
         from sage.misc.functional import sqrt
@@ -1159,9 +1187,8 @@ class Representation(Representation_abstract, CombinatorialFreeModule):
 
             sage: P = Permutations(4)
             sage: M = CombinatorialFreeModule(QQ, ['v'])
-            sage: from sage.modules.with_basis.representation import Representation
             sage: on_basis = lambda g,m: M.term(m, g.sign())
-            sage: Representation(P, M, on_basis)
+            sage: P.representation(M, on_basis)
             Representation of Standard permutations of 4 indexed by {'v'}
              over Rational Field
         """
@@ -1222,8 +1249,7 @@ class Representation(Representation_abstract, CombinatorialFreeModule):
             sage: G = groups.permutation.KleinFour()
             sage: E = algebras.Exterior(QQ,'e',4)
             sage: on_basis = lambda g,m: E.monomial(m) # the trivial representation
-            sage: from sage.modules.with_basis.representation import Representation
-            sage: R = Representation(G, E, on_basis)
+            sage: R = G.representation(E, on_basis)
             sage: r = R.an_element(); r
             1 + 2*e0 + 3*e1 + e1*e2
             sage: g = G.an_element();
@@ -1240,7 +1266,7 @@ class Representation(Representation_abstract, CombinatorialFreeModule):
 
             sage: from sage.categories.algebras import Algebras
             sage: category = Algebras(QQ).FiniteDimensional().WithBasis()
-            sage: T = Representation(G, E, on_basis, category=category)
+            sage: T = G.representation(E, on_basis, category=category)
             sage: t = T.an_element(); t
             1 + 2*e0 + 3*e1 + e1*e2
             sage: g * t == t  # indirect doctest
@@ -1266,8 +1292,7 @@ class Representation(Representation_abstract, CombinatorialFreeModule):
             sage: G = groups.permutation.KleinFour()
             sage: E = algebras.Exterior(QQ,'e',4)
             sage: on_basis = lambda g,m: E.monomial(m) # the trivial representation
-            sage: from sage.modules.with_basis.representation import Representation
-            sage: R = Representation(G, E, on_basis)
+            sage: R = G.representation(E, on_basis)
             sage: R._semigroup_action(G.an_element(), R.an_element(), True)
             1 + 2*e0 + 3*e1 + e1*e2
         """
@@ -1278,8 +1303,12 @@ class Representation(Representation_abstract, CombinatorialFreeModule):
 
 
 class Subrepresentation(Representation_abstract, SubmoduleWithBasis):
-    """
+    r"""
     A subrepresentation.
+
+    Let `R` be a representation of an algebraic object `X`. A
+    subrepresentation is a submodule of `R` that is closed under
+    the action of `X`.
     """
     # Use the same normalization as the base class
     __classcall_private__ = SubmoduleWithBasis.__classcall_private__
@@ -1314,6 +1343,36 @@ class Subrepresentation(Representation_abstract, SubmoduleWithBasis):
 
     class Element(SubmoduleWithBasis.Element):
         def _acted_upon_(self, scalar, self_on_left=True):
+            """
+            Return the action of ``scalar`` on ``self``.
+
+            EXAMPLES::
+
+                sage: G = groups.permutation.Dihedral(4)
+                sage: CFM = CombinatorialFreeModule(GF(2), [1, 2, 3, 4],
+                ....:                               bracket=False, prefix='e')
+                sage: R = G.representation(CFM, lambda g, i: CFM.basis()[g(i)], side='right')
+                sage: e1, e2, e3, e4 = R.basis()
+                sage: S = R.subrepresentation([e1 + e3, e2 + e4], is_closed=True)
+                sage: x = G.an_element(); x
+                (1,3)
+                sage: v = sum(S.basis()); v
+                B[0] + B[1]
+                sage: x * v
+                B[0] + B[1]
+                sage: [x * b for b in S.basis()]
+                [B[0], B[1]]
+                sage: [[g * b for g in G] for b in S.basis()]
+                [[B[0], B[0], B[1], B[1], B[0], B[0], B[1], B[1]],
+                 [B[1], B[1], B[0], B[0], B[1], B[1], B[0], B[0]]]
+                sage: 2 * v
+                0
+
+                sage: Q = R.quotient_representation(S)
+                sage: [[g * b for g in G] for b in Q.basis()]
+                [[B[3], B[3], B[4], B[4], B[3], B[3], B[4], B[4]],
+                 [B[4], B[4], B[3], B[3], B[4], B[4], B[3], B[3]]]
+            """
             ret = super()._acted_upon_(scalar, self_on_left)
             if ret is not None:
                 return ret
