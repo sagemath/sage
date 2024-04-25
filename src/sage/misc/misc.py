@@ -71,44 +71,6 @@ LOCAL_IDENTIFIER = '%s.%s' % (HOSTNAME, os.getpid())
 # File and directory utilities
 #################################################################
 
-
-def sage_makedirs(dirname, mode=0o777):
-    """
-    Python version of ``mkdir -p``: try to create a directory, and also
-    create all intermediate directories as necessary.  Succeed silently
-    if the directory already exists (unlike ``os.makedirs()``).
-    Raise other errors (like permission errors) normally.
-
-    This function is deprecated; use ``os.makedirs(..., exist_ok=True)``
-    instead.
-
-    EXAMPLES::
-
-        sage: from sage.misc.misc import sage_makedirs
-        sage: sage_makedirs(DOT_SAGE) # no output
-        doctest:warning...
-        DeprecationWarning: sage_makedirs is deprecated; use os.makedirs(..., exist_ok=True) instead
-        See https://github.com/sagemath/sage/issues/32987 for details.
-
-    The following fails because we are trying to create a directory in
-    place of an ordinary file::
-
-        sage: filename = tmp_filename()
-        sage: sage_makedirs(filename)
-        Traceback (most recent call last):
-        ...
-        FileExistsError: [Errno ...] File exists: ...
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(32987,
-                'sage_makedirs is deprecated; use os.makedirs(..., exist_ok=True) instead')
-    try:
-        os.makedirs(dirname)
-    except OSError:
-        if not os.path.isdir(dirname):
-            raise
-
-
 # We create the DOT_SAGE directory (if it does not exist yet; note in particular
 # that it may already have been created by the bin/sage script) with
 # restrictive permissions, since otherwise possibly just anybody can easily see
