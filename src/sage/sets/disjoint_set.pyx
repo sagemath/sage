@@ -506,7 +506,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         .. NOTE::
 
             This method performs input checks. To avoid them you may directly
-            use :meth:`~sage.groups.perm_gps.partn_ref.data_structures.OP_union`.
+            use :meth:`~sage.groups.perm_gps.partn_ref.data_structures.OP_join`.
         """
         cdef int card = self._nodes.degree
         if i < 0 or i >= card:
@@ -700,7 +700,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: d.__getstate__()
             [('a', 'a'), ('b', 'b'), ('c', 'd'), ('d', 'd'), ('e', 'e')]
         """
-        cdef Py_ssize_t card = self.cardinality()
+        cdef int card = self.cardinality()
         cdef list l = [None] * card
         cdef int i
         for i in range(card):
