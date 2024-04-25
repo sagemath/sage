@@ -52,9 +52,6 @@ from sage.misc.lazy_import import lazy_import
 lazy_import("sage.combinat.subset", ["powerset", "subsets", "uniq"],
             deprecation=35564)
 
-lazy_import("sage.misc.repr", ["coeff_repr", "repr_lincomb"],
-            deprecation=29892)
-
 lazy_import("sage.misc.timing", ["cputime", "GlobalCputime", "walltime"],
             deprecation=35816)
 
