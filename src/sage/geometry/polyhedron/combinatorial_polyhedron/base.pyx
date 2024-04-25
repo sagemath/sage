@@ -1359,7 +1359,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         adjacency_matrix.set_immutable()
         return adjacency_matrix
 
-    def ridges(self, add_equations=False, names=True, add_equalities=False, algorithm=None):
+    def ridges(self, add_equations=False, names=True, algorithm=None):
         r"""
         Return the ridges.
 
@@ -1453,21 +1453,7 @@ cdef class CombinatorialPolyhedron(SageObject):
             sage: C = CombinatorialPolyhedron(polytopes.simplex())
             sage: C.ridges(names=False, add_equations=True)
             ((2, 3), (1, 3), (0, 3), (1, 2), (0, 2), (0, 1))
-
-        The keyword ``add_equalities`` is deprecated::
-
-            sage: C = CombinatorialPolyhedron(polytopes.simplex())
-            sage: r = C.ridges(add_equations=True)
-            sage: r1 = C.ridges(add_equalities=True)
-            doctest:...: DeprecationWarning: the keyword ``add_equalities`` is deprecated; use ``add_equations``
-            See https://github.com/sagemath/sage/issues/31834 for details.
-            sage: r == r1
-            True
         """
-        if add_equalities:
-            from sage.misc.superseded import deprecation
-            deprecation(31834, "the keyword ``add_equalities`` is deprecated; use ``add_equations``", 3)
-            add_equations = True
         self._compute_ridges(self._algorithm_to_dual(algorithm))
         cdef size_t n_ridges = self._ridges.length
 
@@ -3272,11 +3258,6 @@ cdef class CombinatorialPolyhedron(SageObject):
         If not equations are given, return ``None``.
         """
         return self._equations
-
-    cdef tuple equalities(self):
-        from sage.misc.superseded import deprecation
-        deprecation(31834, "the method equalities of CombinatorialPolyhedron is deprecated; use equations", 3)
-        return self.equations()
 
     cdef unsigned int n_Vrepresentation(self) noexcept:
         r"""
