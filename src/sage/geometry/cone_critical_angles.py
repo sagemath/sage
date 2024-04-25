@@ -566,7 +566,7 @@ def compute_gevp_M(gs, hs):
     Compute the matrix `M` whose `(i,j)^{th}` entry is the
     inner product of ``gs[i]`` and ``hs[j]``.
 
-    This is the "generalized gram matrix" appearing in Proposition 6
+    This is the "generalized Gram matrix" appearing in Proposition 6
     in [Or2020]_. For efficiency, we also return the minimal pair,
     whose inner product is minimal among the entries of `M`. This
     allows our consumer to bail out immediately (knowing the optimal
@@ -611,7 +611,7 @@ def compute_gevp_M(gs, hs):
     TESTS:
 
     The products `(G_{I})^{T}H_{J}` correspond to
-    submatrices of the "generalized gram matrix" `M` in Proposition
+    submatrices of the "generalized Gram matrix" `M` in Proposition
     6. Note that SageMath does (row,column) indexing but [Or2020]_
     does (column,row) indexing::
 
