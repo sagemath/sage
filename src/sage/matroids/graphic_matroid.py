@@ -1120,6 +1120,34 @@ class GraphicMatroid(Matroid):
         """
         return True
 
+    def is_graphic(self):
+        r"""
+        Return if ``self`` is graphic.
+
+        This is trivially ``True`` for a class:`GraphicMatroid`.
+
+        EXAMPLES::
+
+            sage: M = Matroid(graphs.PetersenGraph())
+            sage: M.is_graphic()
+            True
+        """
+        return True
+
+    def is_regular(self):
+        r"""
+        Return if ``self`` is regular.
+
+        This is always ``True`` for a class:`GraphicMatroid`.
+
+        EXAMPLES::
+
+            sage: M = Matroid(graphs.DesarguesGraph())
+            sage: M.is_regular()
+            True
+        """
+        return True
+
     # Graphic methods:
 
     def graph(self):

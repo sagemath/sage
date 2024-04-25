@@ -116,6 +116,8 @@ additional functionality (e.g. linear extensions).
     - :meth:`girth() <sage.matroids.matroid.Matroid.girth>`
 
 - Representation
+    - :meth:`is_graphic() <sage.matroids.matroid.Matroid.is_graphic>`
+    - :meth:`is_regular() <sage.matroids.matroid.Matroid.is_regular>`
     - :meth:`binary_matroid() <sage.matroids.matroid.Matroid.binary_matroid>`
     - :meth:`is_binary() <sage.matroids.matroid.Matroid.is_binary>`
     - :meth:`ternary_matroid() <sage.matroids.matroid.Matroid.ternary_matroid>`
@@ -6555,6 +6557,71 @@ cdef class Matroid(SageObject):
             True
         """
         return self.ternary_matroid(randomized_tests=randomized_tests, verify=True) is not None
+
+    cpdef is_graphic(self):
+        r"""
+        Return if ``self`` is graphic.
+
+        A matroid is graphic if and only if it has no minor isomorphic to any
+        of the matroids `U_{2, 4}`, `F_7`, `F_7^*`, `M^*(K_5)`, and
+        `M^*(K_{3, 3})`.
+
+        EXAMPLES::
+
+            sage: M = matroids.catalog.Wheel4()
+            sage: M.is_graphic()
+            True
+            sage: M = matroids.catalog.U24()
+            sage: M.is_graphic()
+            False
+
+        REFERENCES:
+
+        [Oxl2011]_, p. 385.
+        """
+        from sage.matroids.database_matroids import (
+            U24,
+            Fano,
+            FanoDual,
+            K5dual,
+            K33dual
+        )
+        excluded_minors = [U24(), Fano(), FanoDual(), K5dual(), K33dual()]
+        for M in excluded_minors:
+            if self.has_minor(M):
+                return False
+        return True
+
+    cpdef is_regular(self):
+        r"""
+        Return if ``self`` is regular.
+
+        A regular matroid is one that can be represented by a totally
+        unimodular matrix, the latter being a matrix over `\mathbb{R}` for
+        which every square submatrix has determinant in `\{0, 1, -1\}`. A
+        matroid is regular if and only if it is representable over every field.
+        Alternatively, a matroid is regular if and only if it has no minor
+        isomorphic to `U_{2, 4}`, `F_7`, or `F_7^*`.
+
+        EXAMPLES::
+
+            sage: M = matroids.catalog.Wheel4()
+            sage: M.is_regular()
+            True
+            sage: M = matroids.catalog.R9()
+            sage: M.is_regular()
+            False
+
+        REFERENCES:
+
+        [Oxl2011]_, p. 373.
+        """
+        if not self.is_binary():  # equivalent to checking for a U24 minor
+            return False
+        from sage.matroids.database_matroids import Fano, FanoDual
+        if self.has_minor(Fano()) or self.has_minor(FanoDual()):
+            return False
+        return True
 
     # matroid k-closed
 

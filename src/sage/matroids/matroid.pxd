@@ -194,6 +194,8 @@ cdef class Matroid(SageObject):
     cpdef _local_ternary_matroid(self, basis=*)
     cpdef ternary_matroid(self, randomized_tests=*, verify=*)
     cpdef is_ternary(self, randomized_tests=*)
+    cpdef is_regular(self)
+    cpdef is_graphic(self)
 
     # matroid k-closed
     cpdef is_k_closed(self, int k)
