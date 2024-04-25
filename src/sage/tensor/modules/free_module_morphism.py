@@ -10,6 +10,7 @@ special case of endomorphisms.
 AUTHORS:
 
 - Eric Gourgoulhon, Michal Bejger (2014-2015): initial version
+- Matthias Koeppe (2024): add subclass :class:`FiniteRankFreeModuleEndomorphism`
 
 REFERENCES:
 
@@ -1586,7 +1587,7 @@ class FiniteRankFreeModuleEndomorphism(FiniteRankFreeModuleMorphism):
         - element of the base ring of the modules on which ``self`` is defined,
           equal to the trace of ``self``.
 
-        EXAMPLES:
+        EXAMPLES::
 
             sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
             sage: e = M.basis('e')

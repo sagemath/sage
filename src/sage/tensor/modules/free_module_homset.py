@@ -10,6 +10,7 @@ sets of endomorphisms.
 AUTHORS:
 
 - Eric Gourgoulhon, Michal Bejger (2014-2015): initial version
+- Matthias Koeppe (2024): add :class:`FreeModuleEndset` 
 
 REFERENCES:
 
@@ -481,7 +482,6 @@ class FreeModuleEndset(FreeModuleHomset):
         EXAMPLES:
 
         The module of type-`(1,1)` tensors coerces to ``self``::
-        is some endomorphism set::
 
             sage: M = FiniteRankFreeModule(ZZ, 3, name='M')
             sage: e = M.basis('e')
