@@ -173,10 +173,10 @@ def _random_admissible_cone(ambient_dim):
 def gevp_licis(G):
     r"""
     Return all nonempty subsets of indices for the columns of
-    ``G`` that correspond to linearly-independent sets (of columns of
+    ``G`` that correspond to linearly independent sets (of columns of
     ``G``).
 
-    Mnemonic: linearly-independent column-index subsets (LICIS).
+    Mnemonic: linearly independent column-index subsets (LICIS).
 
     The returned lists are all sorted in the same (the natural) order;
     and are returned as lists so that they may be used to index into
@@ -184,21 +184,21 @@ def gevp_licis(G):
 
     INPUT:
 
-    - ``G`` -- the matrix whose linearly-independent column index sets
+    - ``G`` -- the matrix whose linearly independent column index sets
       we want
 
     OUTPUT:
 
     A generator that returns sorted lists of natural numbers. Each
     generated list ``I`` is a set of indices corresponding to columns
-    of ``G`` that, when considered as a set, is linearly-independent.
+    of ``G`` that, when considered as a set, is linearly independent.
 
     EXAMPLES:
 
-    The linearly-independent subsets of the matrix corresponding to a
+    The linearly independent subsets of the matrix corresponding to a
     line (with two generators pointing in opposite directions) are the
     one-element subsets, since the only two-element subset isn't
-    linearly-independent::
+    linearly independent::
 
         sage: from sage.geometry.cone_critical_angles import gevp_licis
         sage: K = Cone([(1,0),(-1,0)])
@@ -206,7 +206,7 @@ def gevp_licis(G):
         sage: list(gevp_licis(G))
         [[0], [1]]
 
-    The matrix for the trivial cone has no linearly-independent
+    The matrix for the trivial cone has no linearly independent
     subsets, since we require them to be nonempty::
 
         sage: from sage.geometry.cone_critical_angles import gevp_licis
@@ -217,7 +217,7 @@ def gevp_licis(G):
         []
 
     All rays in the nonnegative orthant of `R^{n}` are
-    linearly-independent, so we should get back `2^{n} - 1` subsets
+    linearly independent, so we should get back `2^{n} - 1` subsets
     after accounting for the absence of the empty set::
 
         sage: from sage.geometry.cone_critical_angles import gevp_licis
@@ -330,10 +330,10 @@ def solve_gevp_zero(M, I, J):
     - ``M`` -- the matrix whose `(i,j)^{th}` entry is the inner
       product of `g_{i}` and `h_{j}` as in Proposition 6 [Or2020]_
 
-    - ``I`` -- a linearly-independent column-index set for the matrix
+    - ``I`` -- a linearly independent column-index set for the matrix
       `G` that appears in Theorem 3
 
-    - ``J`` -- a linearly-independent column-index set for the matrix
+    - ``J`` -- a linearly independent column-index set for the matrix
       `H` that appears in Theorem 3
 
     OUTPUT:
@@ -411,10 +411,10 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
     - ``M`` -- the matrix whose `(i,j)^{th}` entry is the inner
       product of `g_{i}` and `h_{j}` as in Proposition 6 in [Or2020]_
 
-    - ``I`` -- a linearly-independent column-index set for the matrix
+    - ``I`` -- a linearly independent column-index set for the matrix
       `G` that appears in Theorem 3
 
-    - ``J`` -- a linearly-independent column-index set for the matrix
+    - ``J`` -- a linearly independent column-index set for the matrix
       `H` that appears in Theorem 3
 
     OUTPUT:
@@ -575,10 +575,10 @@ def compute_gevp_M(gs, hs):
 
     INPUT:
 
-    - ``gs`` -- a linearly-independent list of unit-norm generators
+    - ``gs`` -- a linearly independent list of unit-norm generators
       for the cone `P`
 
-    - ``hs`` -- a linearly-independent list of unit-norm generators
+    - ``hs`` -- a linearly independent list of unit-norm generators
       for the cone `Q`
 
     OUTPUT:
