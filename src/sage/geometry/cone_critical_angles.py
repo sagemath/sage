@@ -327,8 +327,8 @@ def solve_gevp_zero(M, I, J):
 
     INPUT:
 
-    - ``M`` -- the matrix whose `(i,j)^{th}` entry is the inner
-      product of `g_{i}` and `h_{j}` as in Proposition 6 [Or2020]_
+    - ``M`` -- the matrix whose `(i,j)`-th entry is the inner product
+      of `g_{i}` and `h_{j}` as in Proposition 6 [Or2020]_
 
     - ``I`` -- a linearly independent column-index set for the matrix
       `G` that appears in Theorem 3
@@ -400,16 +400,16 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
 
     INPUT:
 
-    - ``GG`` -- the matrix whose `(i,j)^{th}` entry is the inner
-      product of `g_{i}` and `g_{j}`, which are in turn the `i^{th}`
-      and `j^{th}` columns of the matrix `G` in Theorem 3
+    - ``GG`` -- the matrix whose `(i,j)`-th entry is the inner product
+      of `g_{i}` and `g_{j}`, which are in turn the `i`-th and `j`-th
+      columns of the matrix `G` in Theorem 3
 
-    - ``HH`` -- the matrix whose `(i,j)^{th}` entry is the inner
-      product of `h_{i}` and `h_{j}`, which are in turn the `i^{th}`
-      and `j^{th}` columns of the matrix `H` in Theorem 3
+    - ``HH`` -- the matrix whose `(i,j)`-th entry is the inner product
+      of `h_{i}` and `h_{j}`, which are in turn the `i`-th and `j`-th
+      columns of the matrix `H` in Theorem 3
 
-    - ``M`` -- the matrix whose `(i,j)^{th}` entry is the inner
-      product of `g_{i}` and `h_{j}` as in Proposition 6 in [Or2020]_
+    - ``M`` -- the matrix whose `(i,j)`-th entry is the inner product
+      of `g_{i}` and `h_{j}` as in Proposition 6 in [Or2020]_
 
     - ``I`` -- a linearly independent column-index set for the matrix
       `G` that appears in Theorem 3
@@ -583,8 +583,8 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
 
 def compute_gevp_M(gs, hs):
     r"""
-    Compute the matrix `M` whose `(i,j)^{th}` entry is the
-    inner product of ``gs[i]`` and ``hs[j]``.
+    Compute the matrix `M` whose `(i,j)`-th entry is the inner
+    product of ``gs[i]`` and ``hs[j]``.
 
     This is the "generalized Gram matrix" appearing in Proposition 6
     in [Or2020]_. For efficiency, we also return the minimal pair,
