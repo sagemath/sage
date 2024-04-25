@@ -42,7 +42,7 @@ from sage.arith.misc import is_prime as n_is_prime
 
 cdef inline OrbitPartition *OP_new(int n) noexcept:
     """
-    Allocate and return a pointer to a new OrbitPartition of degree n. Returns a
+    Allocate and return a pointer to a new OrbitPartition of degree n. Return a
     null pointer in the case of an allocation failure.
     """
     cdef OrbitPartition *OP = <OrbitPartition *> \
@@ -181,7 +181,7 @@ def OP_represent(int n, merges, perm):
 
 cdef inline PartitionStack *PS_new(int n, bint unit_partition) noexcept:
     """
-    Allocate and return a pointer to a new PartitionStack of degree n. Returns a
+    Allocate and return a pointer to a new PartitionStack of degree n. Return a
     null pointer in the case of an allocation failure.
     """
     cdef PartitionStack *PS = <PartitionStack *> \
@@ -213,7 +213,7 @@ cdef void PS_unit_partition(PartitionStack *PS) noexcept:
 
 cdef inline PartitionStack *PS_copy(PartitionStack *PS) noexcept:
     """
-    Allocate and return a pointer to a copy of PartitionStack PS. Returns a null
+    Allocate and return a pointer to a copy of PartitionStack PS. Return a null
     pointer in the case of an allocation failure.
     """
     cdef int n = PS.degree
@@ -237,7 +237,7 @@ cdef inline void PS_dealloc(PartitionStack *PS) noexcept:
 
 cdef PartitionStack *PS_from_list(list L) noexcept:
     """
-    Allocate and return a pointer to a PartitionStack representing L. Returns a
+    Allocate and return a pointer to a PartitionStack representing L. Return a
     null pointer in the case of an allocation failure.
     """
     cdef int cell, i, num_cells = len(L), cur_start = 0, cur_len, n = 0
@@ -286,7 +286,7 @@ cdef int PS_first_smallest(PartitionStack *PS, bitset_t b, int *second_pos=NULL)
     """
     Find the first occurrence of the smallest cell of size greater than one,
     which is admissible (checked by the function ``test_allowance``).
-    Its entries are stored to b and its minimum element is returned.
+    Its entries are stored to `b` and its minimum element is returned.
     """
     cdef int i = 0, j = 0, location = 0, n = PS.degree
     bitset_zero(b)
@@ -383,7 +383,7 @@ cdef int PS_find_element(PartitionStack *PS, bitset_t b, int x) except -1:
 
 cdef list PS_singletons(PartitionStack * part):
     """
-    Return the list of all singletons in the PartitionStack.
+    Return the list of all singletons in the ``PartitionStack``.
     """
     cdef list l = []
     cdef int i
@@ -552,7 +552,7 @@ cdef enum:
 
 cdef StabilizerChain *SC_new(int n, bint init_gens=True) noexcept:
     """
-    Allocate and return a pointer to a new StabilizerChain of degree n. Returns
+    Allocate and return a pointer to a new StabilizerChain of degree n. Return
     a null pointer in the case of an allocation failure.
     """
     cdef int i
@@ -624,7 +624,7 @@ cdef inline int SC_realloc_gens(StabilizerChain *SC, int level, int size) noexce
     """
     Reallocate generator array at level `level` to size `size`.
 
-    Returns 1 in case of an allocation failure.
+    Return 1 in case of an allocation failure.
     """
     cdef int *temp
     cdef int n = SC.degree
@@ -659,9 +659,9 @@ cdef inline void SC_dealloc(StabilizerChain *SC) noexcept:
 
 cdef StabilizerChain *SC_symmetric_group(int n) noexcept:
     """
-    Returns a stabilizer chain for the symmetric group on {0, 1, ..., n-1}.
+    Return a stabilizer chain for the symmetric group on {0, 1, ..., n-1}.
 
-    Returns NULL in the case of an allocation failure.
+    Return ``NULL`` in the case of an allocation failure.
     """
     cdef int i, j, b
     cdef StabilizerChain *SC = SC_new(n, False)
@@ -700,9 +700,9 @@ cdef StabilizerChain *SC_symmetric_group(int n) noexcept:
 
 cdef StabilizerChain *SC_alternating_group(int n) noexcept:
     """
-    Returns a stabilizer chain for the alternating group on {0, 1, ..., n-1}.
+    Return a stabilizer chain for the alternating group on {0, 1, ..., n-1}.
 
-    Returns NULL in the case of an allocation failure.
+    Return ``NULL`` in the case of an allocation failure.
     """
     cdef int i, j, b
     cdef StabilizerChain *SC = SC_new(n, False)
@@ -747,7 +747,7 @@ cdef int SC_realloc_bitsets(StabilizerChain *SC, unsigned long size) noexcept:
     If size is larger than current allocation, double the size of the bitsets
     until it is not.
 
-    Returns 1 in case of an allocation failure.
+    Return 1 in case of an allocation failure.
     """
     cdef unsigned long size_old = SC.gen_used.size
     if size <= size_old:
@@ -780,7 +780,7 @@ cdef StabilizerChain *SC_copy(StabilizerChain *SC, int level) noexcept:
     """
     Creates a copy of the first `level` levels of SC. Must have 0 < level.
 
-    Returns a null pointer in case of allocation failure.
+    Return a null pointer in case of allocation failure.
     """
     cdef int i, n = SC.degree
     cdef StabilizerChain *SCC = SC_new(n, False)
@@ -847,7 +847,7 @@ cdef StabilizerChain *SC_new_base(StabilizerChain *SC, int *base, int base_len) 
 
     Use SC_cleanup to remove redundant base points.
 
-    Returns a null pointer in case of an allocation failure.
+    Return a null pointer in case of an allocation failure.
     """
     cdef StabilizerChain *NEW = SC_new(SC.degree)
     if NEW is NULL:
@@ -908,7 +908,7 @@ cdef StabilizerChain *SC_insert_base_point(StabilizerChain *SC, int level, int p
 
     Use SC_cleanup to remove redundant base points.
 
-    Returns a null pointer in case of an allocation failure.
+    Return a null pointer in case of an allocation failure.
     """
     cdef int i, b, n = SC.degree
     cdef StabilizerChain *NEW
@@ -994,7 +994,7 @@ cdef int SC_sift(StabilizerChain *SC, int level, int x, int *gens, int num_gens,
     num_gens - how many of these there are
     new_gens - space of size at least num_gens*n for the sifted perms to go
 
-    Returns 1 in case of an allocation failure.
+    Return 1 in case of an allocation failure.
     """
     cdef int n = SC.degree
     if num_gens == 0:
@@ -1142,8 +1142,8 @@ cdef bint SC_is_giant(int n, int num_perms, int *perms, float p, bitset_t suppor
     If the group is not a giant, this routine will return False. This could also
     indicate an allocation failure.
 
-    If the group is a giant, this routine will return True with approximate
-    probability p. It will set `support' to the support of the group in this
+    If the group is a giant, this routine will return ``True`` with approximate
+    probability ``p``. It will set `support' to the support of the group in this
     case. Use bitset_len to get the size of support.
 
     The bitset `support' must be initialized. Must have 0 <= p < 1.
@@ -1619,10 +1619,11 @@ cdef int sort_by_function(PartitionStack *PS, int start, int *degrees) noexcept:
     A simple counting sort, given the degrees of vertices to a certain cell.
 
     INPUT:
-    PS -- the partition stack to be checked
-    start -- beginning index of the cell to be sorted
-    degrees -- the values to be sorted by, must have extra scratch space for a
-        total of 3*n+1
+
+    - PS -- the partition stack to be checked
+    - start -- beginning index of the cell to be sorted
+    - degrees -- the values to be sorted by, must have extra scratch space for a
+      total of `3*n+1`
 
     """
     cdef int n = PS.degree

@@ -579,7 +579,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
     INPUT:
 
-    - ``names`` -- see the corresponding documentation of :class:`BraidGroup_class`.
+    - ``names`` -- see the corresponding documentation of :class:`BraidGroup_class`
     - ``cbg_type`` -- (default: ``CubicBraidGroup.type.Coxeter``;
       see explanation below) enum type :class:`CubicBraidGroup.type`
 
@@ -806,10 +806,6 @@ class CubicBraidGroup(FinitelyPresentedGroup):
     def _repr_(self):
         r"""
         Return a string representation.
-
-        OUTPUT:
-
-        String describing ``self``.
 
         EXAMPLES::
 
@@ -1076,18 +1072,17 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
             This is a local function of :meth:`_create_classical_realization`.
 
-            It handles the common part of symplectic and unitary version and creates conversion maps.
+            It handles the common part of symplectic and unitary version and
+            creates conversion maps.
 
             INPUT:
 
-            - ``base_group`` -- The symplectic or unitary groups Sp(m,3) resp. GU(m,2).
-            - ``proj_group`` -- The corresponding projective group of base_group.
-            - ``centralizing_matrix`` -- The centralizing matrix according to Assion.
-            - ``transvec_matrices`` -- List of transvection matrices according to Assion.
+            - ``base_group`` -- the symplectic or unitary groups Sp(m,3) resp. GU(m,2)
+            - ``proj_group`` -- the corresponding projective group of base_group
+            - ``centralizing_matrix`` -- the centralizing matrix according to Assion
+            - ``transvec_matrices`` -- list of transvection matrices according to Assion
 
-            OUTPUT:
-
-            No output, but the function sets the attributes of ``self`` described above.
+            OUTPUT: no output, but the function sets the attributes of ``self`` described above
             """
             centralizing_element = None
 
@@ -1155,10 +1150,12 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
             INPUT:
 
-            - ``m`` --  Integer, the dimension of the classical groups vector-space of operation.
+            - ``m`` --  integer; the dimension of the classical groups
+              vector-space of operation
 
-            The function calculates the centralizing matrix and the transvections as given by Assion
-            and then uses set_classical_realization to complete the construction.
+            The function calculates the centralizing matrix and the
+            transvections as given by Assion and then uses
+            ``set_classical_realization`` to complete the construction.
             """
             # -----------------------------------------------------------
             # getting the invariant bilinear form of the group
@@ -1226,10 +1223,12 @@ class CubicBraidGroup(FinitelyPresentedGroup):
 
             INPUT:
 
-            - ``m`` --  Integer, the dimension of the classical groups vector-space of operation.
+            - ``m`` --  integer; the dimension of the classical groups
+              vector-space of operation
 
-            The function calculates the centralizing_matrix and the transvections as given by Assion
-            and then uses set_classical_realization to complete the construction.
+            The function calculates the centralizing_matrix and the
+            transvections as given by Assion and then uses
+            ``set_classical_realization`` to complete the construction.
             """
             # ---------------------------------------------------------------------
             # getting the invariant bilinear form of the group
@@ -1423,10 +1422,8 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         Return a :class:`BraidGroup` with identical generators, such that
         there exists an epimorphism to ``self``.
 
-        OUTPUT:
-
-        A :class:`BraidGroup` having conversion maps to and from ``self``
-        (which is just a section in the latter case).
+        OUTPUT: a :class:`BraidGroup` having conversion maps to and from
+        ``self`` (which is just a section in the latter case)
 
         EXAMPLES::
 
@@ -1465,7 +1462,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
     @cached_method
     def as_matrix_group(self, root_bur=None, domain=None, characteristic=None, var='t', reduced=False):
         r"""
-        Creates an epimorphic image of ``self`` as a matrix group by use of
+        Create an epimorphic image of ``self`` as a matrix group by use of
         the burau representation.
 
         INPUT:
@@ -1973,9 +1970,7 @@ class CubicBraidGroup(FinitelyPresentedGroup):
         To avoid long wait-time on calculations the order will be obtained
         using the classical realization.
 
-        OUTPUT:
-
-        Cardinality of the group as Integer or infinity.
+        OUTPUT: cardinality of the group as integer or infinity
 
         EXAMPLES::
 

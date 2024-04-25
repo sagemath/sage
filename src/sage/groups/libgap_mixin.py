@@ -56,10 +56,8 @@ class GroupMixinLibGAP:
         r"""
         Return whether the group is Abelian.
 
-        OUTPUT:
-
-        Boolean. ``True`` if this group is an Abelian group and ``False``
-        otherwise.
+        OUTPUT: boolean; ``True`` if this group is an Abelian group and
+        ``False`` otherwise
 
         EXAMPLES::
 
@@ -184,9 +182,7 @@ class GroupMixinLibGAP:
         """
         Test whether the matrix group is finite.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -200,7 +196,7 @@ class GroupMixinLibGAP:
 
     def cardinality(self):
         """
-        Implements :meth:`EnumeratedSets.ParentMethods.cardinality`.
+        Implement :meth:`EnumeratedSets.ParentMethods.cardinality`.
 
         EXAMPLES::
 
@@ -272,7 +268,6 @@ class GroupMixinLibGAP:
             Traceback (most recent call last):
             ...
             NotImplementedError: only implemented for finite groups
-
         """
         if not self.is_finite():
             raise NotImplementedError("only implemented for finite groups")
@@ -334,8 +329,8 @@ class GroupMixinLibGAP:
 
         INPUT:
 
-        - ``values`` -- list/tuple/iterable of numbers. The values of the
-          class function on the conjugacy classes, in that order.
+        - ``values`` -- list/tuple/iterable of numbers; the values of the
+          class function on the conjugacy classes, in that order
 
         EXAMPLES::
 
@@ -352,9 +347,7 @@ class GroupMixinLibGAP:
         """
         Return the center of this group as a subgroup.
 
-        OUTPUT:
-
-        The center as a subgroup.
+        OUTPUT: the center as a subgroup
 
         EXAMPLES::
 
@@ -654,9 +647,7 @@ class GroupMixinLibGAP:
         """
         Return the irreducible characters of the group.
 
-        OUTPUT:
-
-        A tuple containing all irreducible characters.
+        OUTPUT: tuple containing all irreducible characters
 
         EXAMPLES::
 
@@ -784,9 +775,7 @@ class GroupMixinLibGAP:
         """
         Return a random element of this group.
 
-        OUTPUT:
-
-        A group element.
+        OUTPUT: a group element
 
         EXAMPLES::
 
@@ -864,10 +853,8 @@ class GroupMixinLibGAP:
         """
         List all elements of this group.
 
-        OUTPUT:
-
-        A tuple containing all group elements in a random but fixed
-        order.
+        OUTPUT: tuple containing all group elements in a random but fixed
+        order
 
         EXAMPLES::
 
@@ -939,11 +926,9 @@ class GroupMixinLibGAP:
 
         INPUT:
 
-        - ``H`` -- a group.
+        - ``H`` -- a group
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 

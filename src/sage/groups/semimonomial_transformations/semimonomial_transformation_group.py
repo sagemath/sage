@@ -128,11 +128,9 @@ class SemimonomialTransformationGroup(FiniteGroup, UniqueRepresentation):
 
         - ``R`` -- a ring
 
-        - ``len`` -- the  degree of the monomial group
+        - ``len`` -- the degree of the monomial group
 
-        OUTPUT:
-
-        - the complete semimonomial group
+        OUTPUT: the complete semimonomial group
 
         EXAMPLES::
 

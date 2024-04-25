@@ -21,7 +21,7 @@ must be specified to disambiguate these two possibilities. The index
 of `SO(e,d,q)` in `GO(e,d,q)` is `2` if `q` is odd, but `SO(e,d,q) =
 GO(e,d,q)` if `q` is even.)
 
-.. warning::
+.. WARNING::
 
    GAP and Sage use different notations:
 
@@ -107,18 +107,16 @@ def normalize_args_e(degree, ring, e):
 
     INPUT:
 
-    - ``degree`` -- integer. The degree of the affine group, that is,
-      the dimension of the affine space the group is acting on.
+    - ``degree`` -- integer; the degree of the affine group, that is,
+      the dimension of the affine space the group is acting on
 
-    - ``ring`` -- a ring. The base ring of the affine space.
+    - ``ring`` -- a ring; the base ring of the affine space
 
     - ``e`` -- integer, one of `+1`, `0`, `-1`.  Only relevant for
       finite fields and if the degree is even. A parameter that
       distinguishes inequivalent invariant forms.
 
-    OUTPUT:
-
-    The integer ``e`` with values required by GAP.
+    OUTPUT: the integer ``e`` with values required by GAP
 
     TESTS::
 
@@ -263,10 +261,8 @@ def GO(n, R, e=0, var='a', invariant_form=None):
       by the orthogonal group; the form is checked to be
       non-degenerate and symmetric but not to be positive definite
 
-    OUTPUT:
-
-    The general orthogonal group of given degree, base ring, and
-    choice of invariant form.
+    OUTPUT: the general orthogonal group of given degree, base ring, and
+    choice of invariant form
 
     EXAMPLES::
 
@@ -373,10 +369,8 @@ def SO(n, R, e=None, var='a', invariant_form=None):
       by the orthogonal group; the form is checked to be
       non-degenerate and symmetric but not to be positive definite
 
-    OUTPUT:
-
-    The special orthogonal group of given degree, base ring, and choice of
-    invariant form.
+    OUTPUT: the special orthogonal group of given degree, base ring, and choice
+    of invariant form
 
     EXAMPLES::
 
@@ -482,9 +476,7 @@ class OrthogonalMatrixGroup_generic(NamedMatrixGroup_generic):
         """
         Return the symmetric bilinear form preserved by ``self``.
 
-        OUTPUT:
-
-        A matrix.
+        OUTPUT: a matrix
 
         EXAMPLES::
 

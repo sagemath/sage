@@ -2,7 +2,7 @@ r"""
 Wrapper class for abelian groups
 
 This class is intended as a template for anything in Sage that needs the
-functionality of abelian groups. One can create an AdditiveAbelianGroupWrapper
+functionality of abelian groups. One can create an ``AdditiveAbelianGroupWrapper``
 object from any given set of elements in some given parent, as long as an
 ``_add_`` method has been defined.
 
@@ -41,10 +41,10 @@ We check that ridiculous operations are being avoided::
 
 .. TODO::
 
-    - Think about subgroups and quotients, which probably won't work
-      in the current implementation -- some fiddly adjustments will be
-      needed in order to be able to pass extra arguments to the
-      subquotient's init method.
+    Think about subgroups and quotients, which probably won't work
+    in the current implementation -- some fiddly adjustments will be
+    needed in order to be able to pass extra arguments to the
+    subquotient's init method.
 
 AUTHORS:
 
@@ -160,7 +160,7 @@ class AdditiveAbelianGroupWrapperElement(addgp.AdditiveAbelianGroupElement):
 
     def _repr_(self):
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -290,7 +290,7 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
         r"""
         Given a list (or other iterable) of length equal to the number of
         generators of this group, compute the element of the ambient group
-        with those exponents in terms of the generators of self.
+        with those exponents in terms of the generators of ``self``.
 
         EXAMPLES::
 
