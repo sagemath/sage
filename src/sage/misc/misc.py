@@ -52,9 +52,6 @@ from sage.misc.lazy_import import lazy_import
 lazy_import("sage.combinat.subset", ["powerset", "subsets", "uniq"],
             deprecation=35564)
 
-lazy_import("sage.misc.call", ["AttrCallObject", "attrcall", "call_method"],
-            deprecation=29869)
-
 lazy_import("sage.misc.verbose", ["verbose", "set_verbose", "set_verbose_files",
                                   "get_verbose_files", "unset_verbose_files", "get_verbose"],
             deprecation=17815)
