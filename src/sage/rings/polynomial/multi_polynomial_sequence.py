@@ -1752,13 +1752,13 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             else:
                 raise ValueError("order argument can only accept list or tuple")
 
-        PolyRing = self.ring()
-        BaseRing = PolyRing.base_ring()
+        R = self.ring()
+        K = R.base_ring()
         y = dict(zip(v, range(len(v))))  # construct dictionary for fast lookups
-        A = Matrix(BaseRing, len(self), len(v), sparse=sparse)
+        A = Matrix(K, len(self), len(v), sparse=sparse)
 
-        if isinstance(PolyRing, BooleanPolynomialRing_base):
-            one = BaseRing.one()
+        if isinstance(R, BooleanPolynomialRing_base):
+            one = K.one()
             for x, poly in enumerate(self):
                 for m in poly:
                     try:
