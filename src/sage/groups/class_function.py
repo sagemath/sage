@@ -605,10 +605,9 @@ class ClassFunction_gap(SageObject):
         L = self._gap_classfunction.ConstituentsOfCharacter()
         return tuple(ClassFunction(self._group, list(l)) for l in L)
 
-    def decompose(self):
+    def decompose(self) -> tuple:
         r"""
-        Returns a list of the characters that appear in the decomposition
-        of chi.
+        Return a list of the characters appearing the decomposition of ``self``.
 
         EXAMPLES::
 
@@ -618,14 +617,13 @@ class ClassFunction_gap(SageObject):
             ((3, Character of Symmetric group of order 5! as a permutation group),
              (2, Character of Symmetric group of order 5! as a permutation group))
         """
-        L = []
-        for irr in self.irreducible_constituents():
-            L.append((self.scalar_product(irr), irr))
+        L = [(self.scalar_product(irr), irr)
+             for irr in self.irreducible_constituents()]
         return tuple(L)
 
     def norm(self):
         r"""
-        Returns the norm of self.
+        Return the norm of ``self``.
 
         EXAMPLES::
 
@@ -635,7 +633,7 @@ class ClassFunction_gap(SageObject):
         """
         return self._gap_classfunction.Norm()
 
-    def values(self):
+    def values(self) -> list:
         r"""
         Return the list of values of self on the conjugacy classes.
 
@@ -665,7 +663,7 @@ class ClassFunction_gap(SageObject):
 
     def central_character(self):
         r"""
-        Returns the central character of self.
+        Return the central character of ``self``.
 
         EXAMPLES::
 
@@ -677,7 +675,7 @@ class ClassFunction_gap(SageObject):
 
     def determinant_character(self):
         r"""
-        Returns the determinant character of self.
+        Return the determinant character of ``self``.
 
         EXAMPLES::
 
@@ -1310,10 +1308,9 @@ class ClassFunction_libgap(SageObject):
         L = self._gap_classfunction.ConstituentsOfCharacter()
         return tuple(ClassFunction_libgap(self._group, l) for l in L)
 
-    def decompose(self):
+    def decompose(self) -> tuple:
         r"""
-        Return a list of the characters that appear in the decomposition
-        of ``self``.
+        Return a list of the characters appearing the decomposition of ``self``.
 
         EXAMPLES::
 
@@ -1323,9 +1320,8 @@ class ClassFunction_libgap(SageObject):
             ((3, Character of Symmetric group of order 5! as a permutation group),
              (2, Character of Symmetric group of order 5! as a permutation group))
         """
-        L = []
-        for irr in self.irreducible_constituents():
-            L.append((self.scalar_product(irr), irr))
+        L = [(self.scalar_product(irr), irr)
+             for irr in self.irreducible_constituents()]
         return tuple(L)
 
     def norm(self):

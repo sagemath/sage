@@ -901,7 +901,7 @@ def discrete_log(a, base, ord=None, bounds=None, operation='*', identity=None, i
         power = lambda x, y: multiple(x, y, operation=operation, identity=identity, inverse=inverse, op=op)
     if bounds:
         lb, ub = map(integer_ring.ZZ, bounds)
-    if (op is None or identity is None or inverse is None or ord is None) and operation not in addition_names+multiplication_names:
+    if (op is None or identity is None or inverse is None or ord is None) and operation not in addition_names + multiplication_names:
         raise ValueError("ord, op, identity, and inverse must all be specified for this operation")
     if ord is None:
         if operation in multiplication_names:
@@ -1500,7 +1500,6 @@ def has_order(P, n, operation='+'):
             return False
         n = n.factor()
 
-    G = P.parent()
     if operation in addition_names:
         isid = lambda el: not el
         mult = lambda el, n: multiple(el, n, operation='+')

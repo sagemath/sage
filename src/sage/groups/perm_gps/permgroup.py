@@ -203,6 +203,7 @@ def hap_decorator(f):
         return f(self, n, p=p)
     return wrapped
 
+
 def direct_product_permgroups(P):
     """
     Takes the direct product of the permutation groups listed in ``P``.
@@ -230,6 +231,7 @@ def direct_product_permgroups(P):
         G = libgap.DirectProduct(*P)
         return PermutationGroup(gap_group=G)
 
+
 def from_gap_list(G, src):
     r"""
     Convert a string giving a list of GAP permutations into a list of
@@ -249,7 +251,7 @@ def from_gap_list(G, src):
     # src is a list of strings, each of which is a permutation of
     # integers in cycle notation. It may contain \n and spaces.
     src = [str(g)[1:].split(")(")
-           for g in str(src).replace(" ","").replace("\n","")[1:-2].split("),")]
+           for g in str(src).replace(" ", "").replace("\n", "")[1:-2].split("),")]
 
     # src is a list of list of strings. Each string is a list of
     # integers separated by ','
@@ -259,6 +261,7 @@ def from_gap_list(G, src):
 
     # src is now a list of group elements
     return src
+
 
 def PermutationGroup(gens=None, *args, **kwds):
     """
@@ -539,7 +542,7 @@ class PermutationGroup_generic(FiniteGroup):
             # to make the domain contain all integers up to the max.
             # This is needed for backward compatibility
             if all(isinstance(p, (int, Integer)) for p in domain):
-                domain = list(range(min([1] + domain), max([1] + domain)+1))
+                domain = list(range(min([1] + domain), max([1] + domain) + 1))
 
         if domain not in FiniteEnumeratedSets():
             domain = FiniteEnumeratedSet(domain)
@@ -823,7 +826,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         gSelf = self._libgap_()
         gRight = right._libgap_()
-        if op in [op_EQ,op_NE]:
+        if op in [op_EQ, op_NE]:
             return gSelf._richcmp_(gRight, op)
 
         if gSelf.IsSubgroup(gRight):
@@ -906,7 +909,7 @@ class PermutationGroup_generic(FiniteGroup):
             # We check if we can lift ``x`` to ``self`` directly
             #   so we can pass check=False for speed.
             if (isinstance(x_parent, PermutationGroup_subgroup)
-                and x_parent._ambient_group is self):
+                    and x_parent._ambient_group is self):
                 return self.element_class(x, self, check=False)
 
             from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -1268,9 +1271,9 @@ class PermutationGroup_generic(FiniteGroup):
             else:
                 enumeration = "depth"
             return iter(RecursivelyEnumeratedSet(
-                                    seeds=seeds,
-                                    successors=successors,
-                                    enumeration=enumeration))
+                seeds=seeds,
+                successors=successors,
+                enumeration=enumeration))
         else:
             raise ValueError("the input algorithm (='%s') must be 'SGS', 'BFS' or 'DFS'" % algorithm)
 
@@ -1558,12 +1561,12 @@ class PermutationGroup_generic(FiniteGroup):
             '[1, 2, 3, 4, 5]'
         """
         if domain is None:
-            return repr(list(range(1, self.degree()+1)))
-        else:
-            try:
-                return repr([self._domain_to_gap[point] for point in domain])
-            except KeyError:
-                raise ValueError("domain must be a subdomain of self.domain()")
+            return repr(list(range(1, self.degree() + 1)))
+
+        try:
+            return repr([self._domain_to_gap[point] for point in domain])
+        except KeyError:
+            raise ValueError("domain must be a subdomain of self.domain()")
 
     @cached_method
     def smallest_moved_point(self):
@@ -1588,7 +1591,7 @@ class PermutationGroup_generic(FiniteGroup):
         p = self._libgap_().SmallestMovedPoint()
         return self._domain_from_gap[Integer(p)]
 
-    def representative_action(self,x,y):
+    def representative_action(self, x, y):
         r"""
         Return an element of self that maps `x` to `y` if it exists.
 
@@ -3709,12 +3712,9 @@ class PermutationGroup_generic(FiniteGroup):
 
         - Rob Beezer (2011-01-24)
         """
-        all_sg = []
         ccs = self._libgap_().ConjugacyClassesSubgroups()
-        for cc in ccs:
-            for h in cc.Elements():
-                all_sg.append(self.subgroup(gap_group=h))
-        return all_sg
+        return [self.subgroup(gap_group=h) for cc in ccs
+                for h in cc.Elements()]
 
     @cached_method
     def _regular_subgroup_gap(self):
@@ -4166,7 +4166,7 @@ class PermutationGroup_generic(FiniteGroup):
         return [self.subgroup(gap_group=gap_subgroup)
                 for gap_subgroup in self._libgap_().MaximalNormalSubgroups()]
 
-    ######################  Boolean tests #####################
+    # #####################  Boolean tests #####################
 
     def is_abelian(self):
         """
@@ -4715,7 +4715,7 @@ class PermutationGroup_generic(FiniteGroup):
         """
         return bool(self._libgap_().IsNormal(other))
 
-    ############## Series ######################
+    # ############# Series ######################
 
     def composition_series(self):
         """
@@ -4857,7 +4857,8 @@ class PermutationGroup_generic(FiniteGroup):
             sage: PG.molien_series() == PG1.molien_series()*(1-x)^2
             True
         """
-        pi = self._libgap_().PermutationCharacter(list(self.domain()),libgap.OnPoints)
+        pi = self._libgap_().PermutationCharacter(list(self.domain()),
+                                                  libgap.OnPoints)
         M = pi.MolienSeries()
 
         R = QQ['x']
@@ -5217,7 +5218,7 @@ class PermutationGroup_subgroup(PermutationGroup_generic):
         gens = '\\langle ' + \
                ', '.join([x._latex_() for x in self.gens()]) + ' \\rangle'
         return '\\hbox{Subgroup } %s \\hbox{ of } %s' % \
-                 (gens, self.ambient_group()._latex_())
+            (gens, self.ambient_group()._latex_())
 
     def ambient_group(self):
         """
@@ -5262,6 +5263,7 @@ class PermutationGroup_subgroup(PermutationGroup_generic):
 
 # Allow for subclasses to use a different subgroup class
 PermutationGroup_generic.Subgroup = PermutationGroup_subgroup
+
 
 class PermutationGroup_action(PermutationGroup_generic):
     """
