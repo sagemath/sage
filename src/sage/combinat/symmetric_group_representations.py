@@ -1026,7 +1026,71 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
     r"""
     A Garsia-Procesi module.
 
-    Over `\QQ`, this is isomorphic to the cohomology ring of the Springer fiber.
+    Let `\lambda` be a partition of `n` and `R` be a commutative
+    ring. The *Garsia-Procesi module* is defined by `R_{\lambda}
+    := R[x_1, \ldots, x_n] / I_{\lambda}`, where
+
+    .. MATH::
+
+        I_{\lambda} := \langle e_r(x_{i_1}, \ldots, x_{i_k}) \mid
+        \{i_1, \ldots, i_k\} \subseteq [n] \text{ and }
+        k \geq r > k - d_k(\lambda) \rangle,
+
+    with `e_r` being the `r`-the elementary symmetric function and
+    `d_k(\lambda) = \lambda'_n + \cdots + \lambda'_{n+1-k}`, is the
+    *Tanisaki ideal*.
+
+    If we consider `R = \QQ`, then the Garsia-Procesi module has the
+    following interpretation. Let `\mathcal{F}_n = GL_n / B` denote
+    the (complex type A) flag variety. Consider the Springer fiber
+    `F_{\lambda} \subseteq \mathcal{F}_n` associated to a nilpotent
+    matrix with Jordan blocks sizes `\lambda`. Springer showed that
+    the cohomology ring `H^*(F_{\lambda})` admits a graded `S_n`-action
+    that agrees with the induced representation of the sign representation
+    of the Young subgroup `S_{\lambda}`. From work of De Concini
+    and Procesi, this `S_n`-representation is isomorphic to `R_{\lambda}`.
+    Moreover, the graded Frobenius image is known to be a modified
+    Hall-Littlewood polynomial.
+
+    EXAMPLES::
+
+        sage: SGA = SymmetricGroupAlgebra(QQ, 7)
+        sage: GP421 = SGA.garsia_procesi_module([4, 2, 1])
+        sage: GP421.dimension()
+        105
+        sage: v = GP421.an_element(); v
+        -gp1 - gp2 - gp3 - gp4 - gp5 - gp6
+        sage: SGA.an_element() * v
+        -6*gp1 - 6*gp2 - 6*gp3 - 6*gp4 - 6*gp5 - 5*gp6
+
+    We verify the result is a modified Hall-Littlewood polynomial by using
+    the `Q'` Hall-Littlewood polynomials, replacing `q \mapsto q^{-1}` and
+    multiplying by the smallest power of `q` so the coefficients are again
+    polynomials::
+
+        sage: GP421.graded_frobenius_image()
+        q^4*s[4, 2, 1] + q^3*s[4, 3] + q^3*s[5, 1, 1] + (q^3+q^2)*s[5, 2]
+         + (q^2+q)*s[6, 1] + s[7]
+        sage: R.<q> = QQ[]
+        sage: Sym = SymmetricFunctions(R)
+        sage: s = Sym.s()
+        sage: Qp = Sym.hall_littlewood(q).Qp()
+        sage: mHL = s(Qp[4,2,1]); mHL
+        s[4, 2, 1] + q*s[4, 3] + q*s[5, 1, 1] + (q^2+q)*s[5, 2]
+         + (q^3+q^2)*s[6, 1] + q^4*s[7]
+        sage: mHL.map_coefficients(lambda c: R(q^4*c(q^-1)))
+        q^4*s[4, 2, 1] + q^3*s[4, 3] + q^3*s[5, 1, 1] + (q^3+q^2)*s[5, 2]
+         + (q^2+q)*s[6, 1] + s[7]
+
+    We show that the maximal degree component corresponds to the Yamanouchi
+    words of content `\lambda`::
+
+        sage: B = GP421.graded_decomposition(4).basis()
+        sage: top_deg = [Word([i+1 for i in b.lift().lift().exponents()[0]]) for b in B]
+        sage: yamanouchi = [P.to_packed_word() for P in OrderedSetPartitions(range(7), [4, 2, 1])
+        ....:               if P.to_packed_word().reversal().is_yamanouchi()]
+        sage: set(top_deg) == set(yamanouchi)
+        True
     """
     @staticmethod
     def __classcall_private__(cls, SGA, shape):
@@ -1279,16 +1343,17 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
                        for g in G.conjugacy_classes_representatives()],
                       immutable=True)
 
-    def graded_decomposition(self):
-        r"""
-        Return the decomposition of ``self`` as a direct sum of
-        representations given by a fixed grading.
+    @lazy_attribute
+    def _graded_decomposition(self):
+        """
+        Construct the (internal) dictionary that encodes the graded
+        decomposition of ``self``.
 
         EXAMPLES::
 
             sage: SGA = SymmetricGroupAlgebra(GF(2), 5)
             sage: GP32 = SGA.garsia_procesi_module([3, 2])
-            sage: GP32.graded_decomposition()
+            sage: GP32._graded_decomposition
             {0: Subrepresentation with basis {0} of Garsia-Procesi ...,
              1: Subrepresentation with basis {0, 1, 2, 3} of Garsia-Procesi ...,
              2: Subrepresentation with basis {0, 1, 2, 3, 4} of Garsia-Procesi ...}
@@ -1300,7 +1365,38 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
                 d[deg] = [b]
             else:
                 d[deg].append(b)
-        return {deg: self.subrepresentation(gens) for deg, gens in sorted(d.items())}
+        return {deg: self.subrepresentation(gens, is_closed=True)
+                for deg, gens in sorted(d.items())}
+
+    def graded_decomposition(self, k=None):
+        r"""
+        Return the decomposition of ``self`` as a direct sum of
+        representations given by a fixed grading.
+
+        INPUT:
+
+        - ``k`` -- (optional) integer; if given, return the `k`-th graded part
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(2), 5)
+            sage: GP32 = SGA.garsia_procesi_module([3, 2])
+            sage: decomp = GP32.graded_decomposition(); decomp
+            {0: Subrepresentation with basis {0} of Garsia-Procesi ...,
+             1: Subrepresentation with basis {0, 1, 2, 3} of Garsia-Procesi ...,
+             2: Subrepresentation with basis {0, 1, 2, 3, 4} of Garsia-Procesi ...}
+            sage: decomp[2] is GP32.graded_decomposition(2)
+            True
+            sage: GP32.graded_decomposition(10)
+            Subrepresentation with basis {} of Garsia-Procesi module
+             of shape [3, 2] over Finite Field of size 2
+        """
+        if k is None:
+            # make a copy since mutable
+            return dict(self._graded_decomposition)
+        if k < 0 or k not in self._graded_decomposition:
+            return self.subrepresentation([], is_closed=True)
+        return self._graded_decomposition[k]
 
     def graded_representation_matrix(self, elt, q=None):
         r"""
@@ -1351,7 +1447,7 @@ class GarsiaProcesiModule(UniqueRepresentation, QuotientRing_generic, SymmetricG
             (6*q^3 + 9*q^2 + 4*q + 1, q + 1, q^3 - q^2 - q + 1)
         """
         q = QQ['q'].gen()
-        return sum(q**d * SM.brauer_character() for d, SM in self.graded_decomposition().items())
+        return sum(q**d * SM.brauer_character() for d, SM in self._graded_decomposition.items())
 
     class Element(QuotientRing_generic.Element):
         def _acted_upon_(self, scalar, self_on_left=True):
