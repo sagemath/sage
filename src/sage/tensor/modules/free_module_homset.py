@@ -10,7 +10,7 @@ sets of endomorphisms.
 AUTHORS:
 
 - Eric Gourgoulhon, Michal Bejger (2014-2015): initial version
-- Matthias Koeppe (2024): add :class:`FreeModuleEndset` 
+- Matthias Koeppe (2024): add :class:`FreeModuleEndset`
 
 REFERENCES:
 
