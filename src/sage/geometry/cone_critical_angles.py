@@ -485,7 +485,7 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
         sage: from itertools import chain
         sage: from sage.geometry.cone_critical_angles import (
         ....:   _normalize_gevp_solution,
-        ....:    _random_admissible_cone,
+        ....:   _random_admissible_cone,
         ....:   _solve_gevp_naive,
         ....:   gevp_licis,
         ....:   solve_gevp_nonzero,
