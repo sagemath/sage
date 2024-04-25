@@ -466,14 +466,24 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
         sage: G = matrix.column(gs)
         sage: GG = G.transpose()*G
         sage: G_index_sets = list(gevp_licis(G))
-        sage: all( set( _normalize_gevp_solution(s) for s in
-        ....:              chain(solve_gevp_zero(GG,I,J),
-        ....:                    solve_gevp_nonzero(GG,GG,GG,I,J)) )
-        ....:      ==
-        ....:      set( _normalize_gevp_solution(s) for s in
-        ....:            _solve_gevp_naive(GG,GG,GG,I,J) )
-        ....:      for I in G_index_sets
-        ....:      for J in G_index_sets )
+        sage: all(
+        ....:   set(
+        ....:     _normalize_gevp_solution(s)
+        ....:     for s in
+        ....:     chain(
+        ....:       solve_gevp_zero(GG,I,J),
+        ....:       solve_gevp_nonzero(GG,GG,GG,I,J)
+        ....:     )
+        ....:   )
+        ....:   ==
+        ....:   set(
+        ....:     _normalize_gevp_solution(s)
+        ....:     for s in
+        ....:     _solve_gevp_naive(GG,GG,GG,I,J)
+        ....:   )
+        ....:   for I in G_index_sets
+        ....:   for J in G_index_sets
+        ....: )
         True
 
     TESTS:
@@ -502,14 +512,24 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
         sage: M = G.transpose()*H
         sage: G_index_sets = list(gevp_licis(G))
         sage: H_index_sets = list(gevp_licis(H))
-        sage: all( set( _normalize_gevp_solution(s) for s in
-        ....:              chain(solve_gevp_zero(M,I,J),
-        ....:              solve_gevp_nonzero(GG,HH,M,I,J)) )
-        ....:      ==
-        ....:      set( _normalize_gevp_solution(s) for s in
-        ....:            _solve_gevp_naive(GG,HH,M,I,J) )
-        ....:      for I in G_index_sets
-        ....:      for J in H_index_sets )
+        sage: all(
+        ....:   set(
+        ....:     _normalize_gevp_solution(s)
+        ....:     for s in
+        ....:     chain(
+        ....:       solve_gevp_zero(M,I,J),
+        ....:       solve_gevp_nonzero(GG,HH,M,I,J)
+        ....:     )
+        ....:   )
+        ....:   ==
+        ....:   set(
+        ....:     _normalize_gevp_solution(s)
+        ....:     for s in
+        ....:     _solve_gevp_naive(GG,HH,M,I,J)
+        ....:   )
+        ....:   for I in G_index_sets
+        ....:   for J in H_index_sets
+        ....: )
         True
 
     According to Proposition 7, the only eigenvalues that arise when
