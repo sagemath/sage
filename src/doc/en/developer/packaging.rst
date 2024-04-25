@@ -1084,7 +1084,7 @@ on PyPI, but may still need some manual editing.
 
 For ``normal`` and ``pip`` packages, the ``dependencies`` file is initialized
 to the bare minimum and will need manual editing. (Watch out for warnings
-regarding ``--no-deps`` that Sage issues during installation of the package!).
+regarding ``--no-deps`` that Sage issues during installation of the package!)
 
 Also you may want to set lower and upper bounds for acceptable package versions
 in the file ``version_requirements.txt``. (Make sure that the version in
