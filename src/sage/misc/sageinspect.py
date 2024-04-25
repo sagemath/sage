@@ -167,28 +167,6 @@ def is_function_or_cython_function(obj):
     return hasattr(type(obj), "__code__")
 
 
-def loadable_module_extension():
-    r"""
-    Return the filename extension of loadable modules, including the dot.
-
-    This function is deprecated.
-
-    EXAMPLES::
-
-        sage: from sage.misc.sageinspect import loadable_module_extension
-        sage: from importlib.machinery import EXTENSION_SUFFIXES
-        sage: loadable_module_extension() in EXTENSION_SUFFIXES
-        doctest:warning...
-        DeprecationWarning: loadable_module_extension is deprecated; use importlib.machinery.EXTENSION_SUFFIXES instead
-        See https://github.com/sagemath/sage/issues/33636 for details.
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(33636, "loadable_module_extension is deprecated; use importlib.machinery.EXTENSION_SUFFIXES instead")
-    # Return the full platform-specific extension module suffix
-    return import_machinery.EXTENSION_SUFFIXES[0]
-
-
 def isclassinstance(obj):
     r"""
     Check if argument is instance of non built-in class
