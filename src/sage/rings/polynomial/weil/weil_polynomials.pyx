@@ -268,9 +268,6 @@ class WeilPolynomials_iter():
             raise ValueError("Invalid sign")
         if not q.is_integer() or q <= 0:
             raise ValueError("q must be a positive integer")
-        if d == 0 and sign == -1: # No results
-            self.process = None
-            return
         if d % 2 == 0:
             if sign == 1:
                 d2 = d//2
@@ -327,7 +324,7 @@ class WeilPolynomials_iter():
         if node_limit is None:
             node_limit = -1
         force_squarefree = Integer(squarefree)
-        self.process = dfs_manager(d2, q, coefflist, modlist, coeffsign,
+        self.process = None if d2<0 else dfs_manager(d2, q, coefflist, modlist, coeffsign,
                                    num_cofactor, node_limit, parallel,
                                    force_squarefree)
         self.q = q
@@ -542,6 +539,8 @@ class WeilPolynomials():
 
     Test that :issue:`37860` is resolved::
 
+        sage: list(WeilPolynomials(-1, 1))
+        []
         sage: list(WeilPolynomials(0, 1, sign=-1))
         []
     """
