@@ -3611,11 +3611,13 @@ class Link(SageObject):
         edges.sort()
         MLP = MixedIntegerLinearProgram(maximization=False, solver=solver)
         # v will be the list of variables in the MLP problem. There will be
-        # two variables for each edge: number of bendings concerning the
-        # left-hand-side region (source, even index if positive oriented)
-        # and number of bendings concerning the right-hand-side region
-        # (sink, odd index if positive oriented). At the end, since
-        # we are minimizing the total, only one of each will be nonzero.
+        # two variables for each edge counting the number of bendings needed.
+        # The one with even index corresponds to the flow of this number from
+        # the left-hand-side region to the right-hand-side region if the edge
+        # is positive oriented. The one with odd index corresponds to the
+        # flow in the opposite direction. For a negative oriented edge the
+        # same is true but with exchanged directions. At the end, since we
+        # are minimizing the total, only one of each will be nonzero.
         v = MLP.new_variable(nonnegative=True, integer=True)
 
         def flow_from_source(e):
