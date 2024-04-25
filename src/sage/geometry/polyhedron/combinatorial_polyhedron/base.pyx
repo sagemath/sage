@@ -2659,7 +2659,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         """
         return self.face_generator().meet_of_Hrep(*indices)
 
-    def face_generator(self, dimension=None, algorithm=None, **kwds):
+    def face_generator(self, dimension=None, algorithm=None):
         r"""
         Iterator over all proper faces of specified dimension.
 
@@ -2746,16 +2746,6 @@ cdef class CombinatorialPolyhedron(SageObject):
             (A ray in the direction (1, 0), A vertex at (1, 0))
             (A ray in the direction (0, 1), A vertex at (0, 1))
 
-        TESTS:
-
-        The kewword ``dual`` is deprecated::
-
-            sage: C = CombinatorialPolyhedron([[0,1,2],[0,1,3],[0,2,3],[1,2,3]])
-            sage: it = C.face_generator(1, False)
-            doctest:...: DeprecationWarning: the keyword dual is deprecated; use algorithm instead
-            See https://github.com/sagemath/sage/issues/33646 for details.
-            sage: it = C.face_generator(1, dual=True)
-
         .. SEEALSO::
 
             :class:`~sage.geometry.polyhedron.combinatorial_polyhedron.face_iterator.FaceIterator`,
@@ -2763,18 +2753,7 @@ cdef class CombinatorialPolyhedron(SageObject):
         """
         cdef int dual
 
-        if algorithm in (False, True):
-            from sage.misc.superseded import deprecation
-            deprecation(33646, "the keyword dual is deprecated; use algorithm instead")
-            dual = int(algorithm)
-        else:
-            dual = self._algorithm_to_dual(algorithm)
-
-        if kwds:
-            from sage.misc.superseded import deprecation
-            deprecation(33646, "the keyword dual is deprecated; use algorithm instead")
-            if 'dual' in kwds and dual == -1 and kwds['dual'] in (False, True):
-                dual = int(kwds['dual'])
+        dual = self._algorithm_to_dual(algorithm)
 
         if dual == -1:
             # Determine the faster way, to iterate through all faces.
