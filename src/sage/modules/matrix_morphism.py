@@ -217,9 +217,9 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             x = self.domain().coordinate_vector(x)
         C = self.codomain()
         if self.side() == "left":
-            v = x.change_ring(C.base_ring()) * self.matrix()
+            v = x.change_ring(C.base_ring()) * self._matrix_()
         else:
-            v = self.matrix() * x.change_ring(C.base_ring())
+            v = self._matrix_() * x.change_ring(C.base_ring())
         if not C.is_ambient():
             v = C.linear_combination_of_basis(v)
         # The call method of parents uses (coercion) morphisms.
@@ -252,7 +252,10 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         else:
             x = self.domain().coordinate_vector(x)
         C = self.codomain()
-        v = x.change_ring(C.base_ring()) * self.matrix()
+        if self.side() == "left":
+            v = x.change_ring(C.base_ring()) * self._matrix_()
+        else:
+            v = self._matrix_() * x.change_ring(C.base_ring())
         if not C.is_ambient():
             v = C.linear_combination_of_basis(v)
         # The call method of parents uses (coercion) morphisms.
@@ -284,7 +287,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             ZeroDivisionError: matrix morphism not invertible
         """
         try:
-            B = ~(self.matrix())
+            B = ~(self._matrix_())
         except ZeroDivisionError:
             raise ZeroDivisionError("matrix morphism not invertible")
         try:
@@ -337,7 +340,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             [0 1]
         """
         side = "left" if self.side() == "right" else "right"
-        return self.parent()(self.matrix().transpose(), side=side)
+        return self.parent()(self._matrix_().transpose(), side=side)
 
     def inverse(self):
         r"""
@@ -481,7 +484,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             [0 4]...
         """
         R = self.base_ring()
-        return self.parent()(R(left) * self.matrix(), side=self.side())
+        return self.parent()(R(left) * self._matrix_(), side=self.side())
 
     def __mul__(self, right):
         r"""
@@ -646,14 +649,14 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             raise TypeError("Incompatible composition of morphisms: domain of left morphism must be codomain of right.")
         if self.side() == "left":
             if right.side() == "left":
-                return H(right.matrix() * self.matrix(), side=self.side())
+                return H(right._matrix_() * self._matrix_(), side=self.side())
             else:
-                return H(right.matrix().transpose() * self.matrix(), side=self.side())
+                return H(right._matrix_().transpose() * self._matrix_(), side=self.side())
         else:
             if right.side() == "right":
-                return H(self.matrix() * right.matrix(), side=self.side())
+                return H(self._matrix_() * right._matrix_(), side=self.side())
             else:
-                return H(right.matrix() * self.matrix().transpose(), side="left")
+                return H(right._matrix_() * self._matrix_().transpose(), side="left")
 
     def __add__(self, right):
         """
@@ -723,19 +726,19 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         # TODO: move over to any coercion model!
         if not isinstance(right, MatrixMorphism):
             R = self.base_ring()
-            return self.parent()(self.matrix() + R(right))
+            return self.parent()(self._matrix_() + R(right))
         if not right.parent() == self.parent():
             right = self.parent()(right, side=right.side())
         if self.side() == "left":
             if right.side() == "left":
-                return self.parent()(self.matrix() + right.matrix(), side=self.side())
+                return self.parent()(self._matrix_() + right._matrix_(), side=self.side())
             elif right.side() == "right":
-                return self.parent()(self.matrix() + right.matrix().transpose(), side="left")
+                return self.parent()(self._matrix_() + right._matrix_().transpose(), side="left")
         if self.side() == "right":
             if right.side() == "right":
-                return self.parent()(self.matrix() + right.matrix(), side=self.side())
+                return self.parent()(self._matrix_() + right._matrix_(), side=self.side())
             elif right.side() == "left":
-                return self.parent()(self.matrix().transpose() + right.matrix(), side="left")
+                return self.parent()(self._matrix_().transpose() + right._matrix_(), side="left")
 
     def __neg__(self):
         """
@@ -751,7 +754,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             [-1  0]
             [-1 -2]...
         """
-        return self.parent()(-self.matrix(), side=self.side())
+        return self.parent()(-self._matrix_(), side=self.side())
 
     def __sub__(self, other):
         """
@@ -794,19 +797,19 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         # TODO: move over to any coercion model!
         if not isinstance(other, MatrixMorphism):
             R = self.base_ring()
-            return self.parent()(self.matrix() - R(other), side=self.side())
+            return self.parent()(self._matrix_() - R(other), side=self.side())
         if not other.parent() == self.parent():
             other = self.parent()(other, side=other.side())
         if self.side() == "left":
             if other.side() == "left":
-                return self.parent()(self.matrix() - other.matrix(), side=self.side())
+                return self.parent()(self._matrix_() - other._matrix_(), side=self.side())
             elif other.side() == "right":
-                return self.parent()(self.matrix() - other.matrix().transpose(), side="left")
+                return self.parent()(self._matrix_() - other._matrix_().transpose(), side="left")
         if self.side() == "right":
             if other.side() == "right":
-                return self.parent()(self.matrix() - other.matrix(), side=self.side())
+                return self.parent()(self._matrix_() - other._matrix_(), side=self.side())
             elif other.side() == "left":
-                return self.parent()(self.matrix().transpose() - other.matrix(), side="left")
+                return self.parent()(self._matrix_().transpose() - other._matrix_(), side="left")
 
     def base_ring(self):
         """
@@ -855,10 +858,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         if not self.is_endomorphism():
             raise ArithmeticError("matrix morphism must be an endomorphism")
         D = self.domain()
-        if self.side() == "left":
-            E = self.matrix().decomposition(*args, **kwds)
-        else:
-            E = self.matrix().transpose().decomposition(*args, **kwds)
+        E = self.matrix(side='right').decomposition(*args, **kwds)
         if D.is_ambient():
             return Sequence([D.submodule(V, check=False) for V, _ in E],
                             cr=True, check=False)
@@ -906,10 +906,10 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             Basis matrix:
             [0 1 0]
         """
-        if self.side() == "left":
-            V = self.matrix().left_kernel()
+        if self.side() == 'left':
+            V = self._matrix_().left_kernel()
         else:
-            V = self.matrix().right_kernel()
+            V = self._matrix_().right_kernel()
         D = self.domain()
         if not D.is_ambient():
             # Transform V to ambient space
@@ -971,9 +971,9 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             True
         """
         if self.side() == 'left':
-            V = self.matrix().row_space()
+            V = self._matrix_().row_space()
         else:
-            V = self.matrix().column_space()
+            V = self._matrix_().column_space()
         C = self.codomain()
         if not C.is_ambient():
             # Transform V to ambient space
@@ -1044,7 +1044,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             sage: phi.rank()
             1
         """
-        return self.matrix().rank()
+        return self._matrix_().rank()
 
     def nullity(self):
         r"""
@@ -1073,9 +1073,9 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             0
         """
         if self.side() == "left":
-            return self._matrix.left_nullity()
+            return self._matrix_().left_nullity()
         else:
-            return self._matrix.right_nullity()
+            return self._matrix_().right_nullity()
 
     def is_identity(self):
         r"""
@@ -1191,7 +1191,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         """
         # any nonzero entry in any matrix representation
         #   disqualifies the morphism as having totally zero outputs
-        return self._matrix.is_zero()
+        return self._matrix_().is_zero()
 
     def is_equal_function(self, other):
         r"""
@@ -1651,7 +1651,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
             sage: phi._repr_()
             'Free module morphism defined by the matrix\n[3 0]\n[0 2]\nDomain: Ambient free module of rank 2 over the principal ideal domain Integer Ring\nCodomain: Ambient free module of rank 2 over the principal ideal domain Integer Ring'
         """
-        rep = "Morphism defined by the matrix\n{}".format(self.matrix())
+        rep = "Morphism defined by the matrix\n{}".format(self._matrix_())
         if self._side == 'right':
             rep += " acting by multiplication on the left"
         return rep
