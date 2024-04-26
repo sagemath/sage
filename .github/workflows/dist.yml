@@ -47,7 +47,7 @@ jobs:
           ./configure && make dist
         env:
           MAKE: make -j8
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: success() || failure()
         with:
           path: |
@@ -61,7 +61,7 @@ jobs:
     runs-on: ubuntu-latest
     if: (success() || failure()) && github.repository == 'sagemath/sage' && startsWith(github.ref, 'refs/tags/') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc')
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: release_dist
       - uses: softprops/action-gh-release@v1
@@ -91,7 +91,7 @@ jobs:
           make pypi-sdists V=0
           (mkdir dist && mv upstream/sage*.tar.gz dist/)
           ls -l dist
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: "dist/*.tar.gz"
           name: dist
@@ -121,7 +121,7 @@ jobs:
           make pypi-noarch-wheels V=0
           (mkdir dist && mv venv/var/lib/sage/wheels/sage*-none-any.whl dist/)
           ls -l dist
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: "dist/*.whl"
           name: noarch-wheels
@@ -148,6 +148,7 @@ jobs:
           - os: macos-latest
             arch: auto
     env:
+      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
       # SPKGs to install as system packages
       SPKGS: _bootstrap _prereq
       # Non-Python packages to install as spkgs
@@ -166,7 +167,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: dist
           path: dist
@@ -189,22 +190,10 @@ jobs:
               pipx run cibuildwheel==2.16.2 unpacked/$pkg*
           done
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
-          name: wheels
+          name: ${{ matrix.os }}-${{ matrix.arch }}-wheels
           path: ./wheelhouse/*.whl
-
-  upload_wheels:
-    needs: build_wheels
-    runs-on: ubuntu-latest
-    env:
-      CAN_DEPLOY: ${{ secrets.SAGEMATH_PYPI_API_TOKEN != '' }}
-    steps:
-
-      - uses: actions/download-artifact@v3
-        with:
-          name: wheels
-          path: wheelhouse
 
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
