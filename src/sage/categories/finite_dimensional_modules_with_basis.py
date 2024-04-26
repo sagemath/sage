@@ -798,6 +798,124 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             return C.submodule(self.image_basis(), already_echelonized=True,
                                category=self.category_for())
 
+        def is_bijective(self):
+            r"""
+            Tell whether ``self`` is bijective.
+
+            EXAMPLES:
+
+            Two morphisms that are obviously not bijective, simply on
+            considerations of the dimensions.  However, each fulfills
+            half of the requirements to be a bijection.  ::
+
+                sage: V1 = QQ^2
+                sage: V2 = QQ^3
+                sage: m = matrix(QQ, [[1, 2, 3], [4, 5, 6]])
+                sage: phi = V1.hom(m, V2)
+                sage: phi.is_injective()
+                True
+                sage: phi.is_bijective()
+                False
+                sage: rho = V2.hom(m.transpose(), V1)
+                sage: rho.is_surjective()
+                True
+                sage: rho.is_bijective()
+                False
+
+            We construct a simple bijection between two one-dimensional
+            vector spaces.  ::
+
+                sage: V1 = QQ^3
+                sage: V2 = QQ^2
+                sage: phi = V1.hom(matrix(QQ, [[1, 2], [3, 4], [5, 6]]), V2)
+                sage: x = vector(QQ, [1, -1, 4])
+                sage: y = phi(x); y
+                (18, 22)
+                sage: rho = phi.restrict_domain(V1.span([x]))
+                sage: zeta = rho.restrict_codomain(V2.span([y]))
+                sage: zeta.is_bijective()
+                True
+
+            AUTHOR:
+
+            - Rob Beezer (2011-06-28)
+            """
+            return self.is_injective() and self.is_surjective()
+
+        def is_injective(self):
+            """
+            Tell whether ``self`` is injective.
+
+            EXAMPLES::
+
+                sage: V1 = QQ^2
+                sage: V2 = QQ^3
+                sage: phi = V1.hom(Matrix([[1,2,3], [4,5,6]]),V2)
+                sage: phi.is_injective()
+                True
+                sage: psi = V2.hom(Matrix([[1,2], [3,4], [5,6]]),V1)
+                sage: psi.is_injective()
+                False
+
+            AUTHOR:
+
+            -- Simon King (2010-05)
+            """
+            ker = self.matrix(side='left').left_kernel()
+            return ker.dimension() == 0
+
+        def is_surjective(self):
+            r"""
+            Tell whether ``self`` is surjective.
+
+            EXAMPLES::
+
+                sage: V1 = QQ^2
+                sage: V2 = QQ^3
+                sage: phi = V1.hom(Matrix([[1,2,3], [4,5,6]]), V2)
+                sage: phi.is_surjective()
+                False
+                sage: psi = V2.hom(Matrix([[1,2], [3,4], [5,6]]), V1)
+                sage: psi.is_surjective()
+                True
+
+            An example over a PID that is not `\ZZ`.  ::
+
+                sage: R.<x> = PolynomialRing(QQ)
+                sage: A = R^2
+                sage: B = R^2
+                sage: H = A.hom([B([x^2 - 1, 1]), B([x^2, 1])])
+                sage: H.image()
+                Free module of degree 2 and rank 2 over Univariate Polynomial Ring in x over Rational Field
+                Echelon basis matrix:
+                [ 1  0]
+                [ 0 -1]
+                sage: H.is_surjective()
+                True
+
+            This tests if :issue:`11552` is fixed. ::
+
+                sage: V = ZZ^2
+                sage: m = matrix(ZZ, [[1,2], [0,2]])
+                sage: phi = V.hom(m, V)
+                sage: phi.lift(vector(ZZ, [0, 1]))
+                Traceback (most recent call last):
+                ...
+                ValueError: element is not in the image
+                sage: phi.is_surjective()
+                False
+
+            AUTHORS:
+
+            - Simon King (2010-05)
+            - Rob Beezer (2011-06-28)
+            """
+            # Testing equality of free modules over PIDs is unreliable
+            #   see Issue #11579 for explanation and status
+            # We test if image equals codomain with two inclusions
+            #   reverse inclusion of below is trivially true
+            return self.codomain().is_submodule(self.image())
+
     class TensorProducts(TensorProductsCategory):
 
         def extra_super_categories(self):
