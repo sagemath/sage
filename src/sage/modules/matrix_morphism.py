@@ -1597,7 +1597,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
 
             The meaning and the default value of the parameter
             ``side`` have changed in Sage 10.4 to match
-            :method:`~sage.categories.finite_dimensional_modules_with_basis.FiniteDimensionalModulesWithBasis.MorphismMethods.matrix`.
+            :meth:`~sage.categories.finite_dimensional_modules_with_basis.FiniteDimensionalModulesWithBasis.MorphismMethods.matrix`.
 
             Note that the meaning of ``'left'`` and ``'right'` for
             the parameter ``side`` is now opposite to :meth:`side`,
