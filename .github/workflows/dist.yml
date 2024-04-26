@@ -119,7 +119,7 @@ jobs:
           ./bootstrap
           ./configure
           make pypi-noarch-wheels V=0
-          (mkdir dist && mv upstream/sage*-none-any.whl dist/)
+          (mkdir dist && mv venv/var/lib/sage/wheels/sage*-none-any.whl dist/)
           ls -l dist
       - uses: actions/upload-artifact@v3
         with:
