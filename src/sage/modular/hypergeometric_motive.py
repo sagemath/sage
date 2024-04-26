@@ -83,7 +83,7 @@ from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
 
 
-def characteristic_polynomial_from_traces(traces, d, q, i, sign):
+def characteristic_polynomial_from_traces(traces, d, q, i, sign, deg=None, use_fe=True):
     r"""
     Given a sequence of traces `t_1, \dots, t_k`, return the
     corresponding characteristic polynomial with Weil numbers as roots.
@@ -108,10 +108,18 @@ def characteristic_polynomial_from_traces(traces, d, q, i, sign):
     - ``i`` -- integer, the weight in the motivic sense
 
     - ``sign`` -- integer, the sign
+    
+    - ``deg`` -- an integer or None
+    
+    - ``use_fe`` -- a boolean (default True)
 
     OUTPUT:
 
     a polynomial
+    
+    If ``deg`` is specified, only the coefficients up to this degree (inclusive) are computed.
+    
+    If ``use_fe`` is False, we ignore the local functional equation.
 
     EXAMPLES::
 
@@ -140,6 +148,11 @@ def characteristic_polynomial_from_traces(traces, d, q, i, sign):
         sage: characteristic_polynomial_from_traces([22, 484], 4, 31, 2, -1)
         -923521*T^4 + 21142*T^3 - 22*T + 1
 
+        sage: characteristic_polynomial_from_traces([22], 4, 31, 2, -1, deg=1)
+        -22*T + 1
+        sage: characteristic_polynomial_from_traces([22, 484], 4, 31, 2, -1, deg=4)
+        -923521*T^4 + 21142*T^3 - 22*T + 1
+
     TESTS::
 
         sage: characteristic_polynomial_from_traces([-36], 4, 17, 3, 1)
@@ -147,25 +160,29 @@ def characteristic_polynomial_from_traces(traces, d, q, i, sign):
         ...
         ValueError: not enough traces were given
     """
-    if len(traces) < d // 2:
+    if use_fe:
+        bound = d // 2 if deg is None else min(d // 2, deg)
+    else:
+        bound = deg
+    if len(traces) < bound:
         raise ValueError('not enough traces were given')
-    if i % 2 and d % 2:
+    if i % 2 and d % 2 and use_fe:
         raise ValueError('i and d may not both be odd')
     t = PowerSeriesRing(QQ, 't').gen()
     ring = PolynomialRing(ZZ, 'T')
 
     series = sum(- api * t**(i + 1) / (i + 1) for i, api in enumerate(traces))
-    series = series.O(d // 2 + 1).exp()
+    series = series.O(bound + 1).exp()
     coeffs = list(series)
-    coeffs += [0] * max(0, d // 2 + 1 - len(coeffs))
+    coeffs += [0] * max(0, bound + 1 - len(coeffs))
 
-    data = [0 for _ in range(d + 1)]
-    for k in range(d // 2 + 1):
+    fulldeg = d if deg is None else deg
+    data = [0 for _ in range(fulldeg + 1)]
+    for k in range(bound + 1):
         data[k] = coeffs[k]
-    for k in range(d // 2 + 1, d + 1):
+    for k in range(bound + 1, fulldeg + 1):
         data[k] = sign * coeffs[d - k] * q**(i * (k - d / 2))
     return ring(data)
-
 
 def enumerate_hypergeometric_data(d, weight=None):
     r"""
@@ -1357,7 +1374,7 @@ class HypergeometricData():
             raise ValueError('p not prime')
         if not all(x.denominator() % p for x in self._alpha + self._beta):
             raise NotImplementedError('p is wild')
-        if (t.numerator()*t.denominator() % p == 0 or (t-1) % p == 0):
+        if (t.numerator()*t.denominator() % p == 0):
             raise NotImplementedError('p is tame')
 
         if 0 in alpha:
@@ -1581,7 +1598,7 @@ class HypergeometricData():
         return sign
 
     @cached_method
-    def euler_factor(self, t, p, cache_p=False):
+    def euler_factor(self, t, p, deg=None, cache_p=False):
         """
         Return the Euler factor of the motive `H_t` at prime `p`.
 
@@ -1590,6 +1607,8 @@ class HypergeometricData():
         - `t` -- rational number, not 0 or 1
 
         - `p` -- prime number of good reduction
+        
+        - `deg` -- integer or None
 
         OUTPUT:
 
@@ -1599,6 +1618,11 @@ class HypergeometricData():
 
         For odd weight, the sign of the functional equation is +1. For even
         weight, the sign is computed by a recipe found in 11.1 of [Watkins]_.
+        
+        If ``deg`` is specified, then the polynomial is only computed up to degree
+        ``deg`` (inclusive).
+        
+        The prime `p` may not be wild. It may be tame if `t` is a `p`-adic unit.
 
         EXAMPLES::
 
@@ -1647,6 +1671,8 @@ class HypergeometricData():
             sage: H = Hyp(cyclotomic=([11], [7, 12]))
             sage: H.euler_factor(2, 13)
             371293*T^10 - 85683*T^9 + 26364*T^8 + 1352*T^7 - 65*T^6 + 394*T^5 - 5*T^4 + 8*T^3 + 12*T^2 - 3*T + 1
+            sage: H.euler_factor(2, 13, deg=4)
+            -5*T^4 + 8*T^3 + 12*T^2 - 3*T + 1
             sage: H.euler_factor(2, 19) # long time
             2476099*T^10 - 651605*T^9 + 233206*T^8 - 77254*T^7 + 20349*T^6 - 4611*T^5 + 1071*T^4 - 214*T^3 + 34*T^2 - 5*T + 1
 
@@ -1680,6 +1706,19 @@ class HypergeometricData():
             ....:     print(s)
             p^f cannot exceed 2^31
 
+        Check handling of some tame cases::
+        
+            sage: H = Hyp(cyclotomic=[[4,2,2],[3,1,1]])
+            sage: H.euler_factor(8, 7)
+            -7*T^3 + 7*T^2 - T + 1
+            sage: H.euler_factor(50, 7)
+            -7*T^3 + 7*T^2 - T + 1
+            sage: H = Hyp(cyclotomic=[[4,2,2,2],[3,1,1,1]])
+            sage: H.euler_factor(8, 7)
+            2401*T^4 - 392*T^3 + 46*T^2 - 8*T + 1
+            sage: H.euler_factor(50, 7)
+            16807*T^5 - 343*T^4 - 70*T^3 - 10*T^2 - T + 1
+
         Check error handling for wild and tame primes::
 
             sage: H = Hyp(alpha_beta=([1/5,2/5,3/5,4/5,1/5,2/5,3/5,4/5], [1/4,3/4,1/7,2/7,3/7,4/7,5/7,6/7]))
@@ -1710,11 +1749,22 @@ class HypergeometricData():
             raise ValueError('p not prime')
         if not all(x.denominator() % p for x in self._alpha + self._beta):
             raise NotImplementedError('p is wild')
-        if (t.numerator()*t.denominator() % p == 0 or (t-1) % p == 0):
+        if (t.numerator()*t.denominator() % p == 0):
             raise NotImplementedError('p is tame')
         # now p is good
-        d = self.degree()
-        bound = d // 2
+        if (t-1) % p == 0:
+            d = self.degree()-1
+            bound = d
+            if deg is not None:
+                bound = min(deg, bound)
+            deg = bound
+            use_fe = False
+        else:
+            d = self.degree()
+            bound = d // 2
+            if deg is not None:
+                bound = min(deg, bound)
+            use_fe = True
         if p ** bound > 2 ** 31:
             raise ValueError("p^f cannot exceed 2^31")
 
@@ -1723,4 +1773,11 @@ class HypergeometricData():
 
         w = self.weight()
         sign = self.sign(t, p)
-        return characteristic_polynomial_from_traces(traces, d, p, w, sign)
+        ans = characteristic_polynomial_from_traces(traces, d, p, w, sign, deg=deg, use_fe=use_fe)
+        if (w % 2 == 0 and (t-1) % p == 0 and QQ(t-1).valuation(p) % 2 == 0):
+            m1 = self.cyclotomic_data()[1].count(1)
+            K = (-1)**((m1-1)//2)*2*prod(abs(x) for x in self.gamma_list())
+            t0 = (~t-1)/p**(QQ(t-1).valuation(p))
+            c = kronecker_symbol(K*t0, p)*p**(w//2)
+            ans *= 1 - c*ans.parent().gen()
+        return ans
