@@ -961,7 +961,7 @@ class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
         """
         s = ('\\text{vector space morphism from }\n', self.domain()._latex_(),
              '\\text{ to }\n', self.codomain()._latex_(),
-             '\\text{ represented by the matrix }\n', self.matrix()._latex_())
+             '\\text{ represented by the matrix }\n', self._matrix_()._latex_())
         return ''.join(s)
 
     def _repr_(self):
@@ -979,7 +979,7 @@ class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
             'Rational', 'Field\nCodomain:', 'Vector', 'space', 'of',
             'dimension', '2', 'over', 'Rational', 'Field']
         """
-        m = self.matrix()
+        m = self._matrix_()
         act = ""
         if self.side() == "right":
             act = "as left-multiplication "

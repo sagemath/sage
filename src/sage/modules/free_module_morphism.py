@@ -194,7 +194,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         act = ""
         if self.side() == "right":
             act = "as left-multiplication "
-        return r.format(act, self.matrix(), self.domain(), self.codomain())
+        return r.format(act, self._matrix_(), self.domain(), self.codomain())
 
     def change_ring(self, R):
         """
@@ -342,10 +342,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             return self.domain()
 
         R = self.base_ring()
-        if self.side() == "left":
-            A = self.matrix()
-        else:
-            A = self.matrix().transpose()
+        A = self.matrix(side='right')
 
         # Replace the module V that we are going to pullback by a
         # submodule that is contained in the image of self, since our
@@ -461,10 +458,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         """
         from .free_module_element import vector
         x = self.codomain()(x)
-        if self.side() == "right":
-            A = self.matrix().transpose()
-        else:
-            A = self.matrix()
+        A = self.matrix(side='right')
         R = self.base_ring()
         if R.is_field():
             try:
@@ -568,9 +562,9 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         if self.base_ring().is_field():
             if self.is_endomorphism():
                 if self.side() == "right":
-                    seigenvec = self.matrix().eigenvectors_right(extend=extend)
+                    seigenvec = self._matrix_().eigenvectors_right(extend=extend)
                 else:
-                    seigenvec = self.matrix().eigenvectors_left(extend=extend)
+                    seigenvec = self._matrix_().eigenvectors_left(extend=extend)
                 resu = []
                 for i in seigenvec:
                     V = self.domain().base_extend(i[0].parent())

@@ -1271,6 +1271,31 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         # check agreement on any basis of the domain
         return all(self(u) == other(u) for u in self.domain().basis())
 
+    def is_injective(self):
+        """
+        Tell whether ``self`` is injective.
+
+        EXAMPLES::
+
+            sage: V1 = QQ^2
+            sage: V2 = QQ^3
+            sage: phi = V1.hom(Matrix([[1,2,3], [4,5,6]]),V2)
+            sage: phi.is_injective()
+            True
+            sage: psi = V2.hom(Matrix([[1,2], [3,4], [5,6]]),V1)
+            sage: psi.is_injective()
+            False
+
+        AUTHOR:
+
+        -- Simon King (2010-05)
+        """
+        if self.side() == 'left':
+            ker = self._matrix_().left_kernel()
+        else:
+            ker = self._matrix_().right_kernel()
+        return ker.dimension() == 0
+
     def restrict_domain(self, sub):
         """
         Restrict this matrix morphism to a subspace sub of the domain. The
@@ -1311,9 +1336,9 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         else:
             V = sub.free_module()
         if self.side() == "right":
-            A = self.matrix().transpose().restrict_domain(V).transpose()
+            A = self._matrix_().transpose().restrict_domain(V).transpose()
         else:
-            A = self.matrix().restrict_domain(V)
+            A = self._matrix_().restrict_domain(V)
         H = sub.Hom(self.codomain())
         try:
             return H(A, side=self.side())
@@ -1397,9 +1422,9 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             V = sub.free_module()
         try:
             if self.side() == "right":
-                return H(self.matrix().transpose().restrict_codomain(V).transpose(), side="right")
+                return H(self._matrix_().transpose().restrict_codomain(V).transpose(), side="right")
             else:
-                return H(self.matrix().restrict_codomain(V))
+                return H(self._matrix_().restrict_codomain(V))
         except Exception:
             return H(self.matrix().restrict_codomain(V))
 
@@ -1488,9 +1513,9 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         else:
             V = sub.free_module()
         if self.side() == "right":
-            A = self.matrix().transpose().restrict(V).transpose()
+            A = self._matrix_().transpose().restrict(V).transpose()
         else:
-            A = self.matrix().restrict(V)
+            A = self._matrix_().restrict(V)
         H = sage.categories.homset.End(sub, self.domain().category())
         return H(A, side=self.side())
 
@@ -1613,31 +1638,6 @@ class MatrixMorphism(MatrixMorphism_abstract):
         if side != self.side():  # opposite!
             return self._matrix
         return self._matrix.transpose()
-
-    def is_injective(self):
-        """
-        Tell whether ``self`` is injective.
-
-        EXAMPLES::
-
-            sage: V1 = QQ^2
-            sage: V2 = QQ^3
-            sage: phi = V1.hom(Matrix([[1,2,3], [4,5,6]]),V2)
-            sage: phi.is_injective()
-            True
-            sage: psi = V2.hom(Matrix([[1,2], [3,4], [5,6]]),V1)
-            sage: psi.is_injective()
-            False
-
-        AUTHOR:
-
-        -- Simon King (2010-05)
-        """
-        if self.side() == 'left':
-            ker = self._matrix.left_kernel()
-        else:
-            ker = self._matrix.right_kernel()
-        return ker.dimension() == 0
 
     def _repr_(self):
         r"""
