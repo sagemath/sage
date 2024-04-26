@@ -395,7 +395,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         r"""
         Given an element of the image, return an element of the codomain that maps onto it.
 
-        Note that ``lift`` and ``preimage_representative`` are
+        Note that :meth:`lift` and :meth:`preimage_representative` are
         equivalent names for this method, with the latter suggesting
         that the return value is a coset representative of the domain
         modulo the kernel of the morphism.
