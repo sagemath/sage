@@ -1898,6 +1898,21 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                 return False
             raise NotImplementedError
 
+        def is_surjective(self):
+            """
+            Return whether the map is surjective.
+
+            TESTS::
+
+                sage: from sage.categories.map import Map
+                sage: f = Map(Hom(QQ, ZZ, Rings()))
+                sage: f.is_surjective()
+                Traceback (most recent call last):
+                ...
+                NotImplementedError
+            """
+            raise NotImplementedError
+
         def image(self, domain_subset=None):
             r"""
             Return the image of the domain or of ``domain_subset``.
