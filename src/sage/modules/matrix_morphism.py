@@ -1016,7 +1016,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             ...
             ValueError: matrix is immutable; please change a copy instead (i.e., use copy(M) to change a copy of M).
         """
-        return self.matrix()
+        return self.matrix(side='left' if self.side() == 'right' else 'right')
 
     def rank(self):
         r"""
@@ -1545,14 +1545,21 @@ class MatrixMorphism(MatrixMorphism_abstract):
         self._matrix = A
         MatrixMorphism_abstract.__init__(self, parent, side)
 
-    def matrix(self, side=None):
+    def matrix(self, base_ring=None, side="left"):
         r"""
         Return a matrix that defines this morphism.
 
         INPUT:
 
-        - ``side`` -- (default: ``'None'``) the side of the matrix
-          where a vector is placed to effect the morphism (function)
+        - ``base_ring`` -- a ring (default: ``None``, meaning the
+          base ring of the codomain)
+
+        - ``side`` -- ``'left'`` (the default) or ``'right'``
+
+          If ``side`` is ``'left'``, this morphism is considered as
+          acting on the left; i.e. each column of the matrix
+          represents the image of an element of the basis of the
+          domain.
 
         OUTPUT:
 
@@ -1561,13 +1568,22 @@ class MatrixMorphism(MatrixMorphism_abstract):
         with user bases, then the representation is relative to
         these bases.
 
-        Internally, Sage represents a matrix morphism with the
-        matrix multiplying a row vector placed to the left of the
-        matrix.  If the option ``side='right'`` is used, then a
-        matrix is returned that acts on a vector to the right of
-        the matrix.  These two matrices are just transposes of
-        each other and the difference is just a preference for
-        the style of representation.
+        .. WARNING::
+
+            The meaning and the default value of the parameter
+            ``side`` have changed in Sage 10.4 to match
+            :method:`~sage.categories.finite_dimensional_modules_with_basis.FiniteDimensionalModulesWithBasis.MorphismMethods.matrix`.
+
+            Note that the meaning of ``'left'`` and ``'right'` for
+            the parameter ``side`` is now opposite to :meth:`side`,
+            the constructors of
+            :class:`MatrixMorphism_abstract`, :class:`MatrixMorphism`,
+            :class:`sage.modules.free_module_morphism.FreeModuleMorphism`,
+            :class:`~sage.modules.vector_space_morphism.VectorSpaceMorphism`,
+            the function :func:`linear_transformation`, and
+            the methods of
+            `sage.modules.free_module_homspace.FreeModuleHomspace`,
+            `sage.modules.vector_space_homspace.VectorSpaceHomspace`,
 
         EXAMPLES::
 
@@ -1592,9 +1608,9 @@ class MatrixMorphism(MatrixMorphism_abstract):
             ...
             ValueError: side must be 'left' or 'right', not junk
         """
-        if side not in ['left', 'right', None]:
-            raise ValueError("side must be 'left' or 'right', not {}".format(side))
-        if side == self.side() or side is None:
+        if side not in ['left', 'right']:
+            raise ValueError(f"side must be 'left' or 'right', not {side}")
+        if side != self.side():  # opposite!
             return self._matrix
         return self._matrix.transpose()
 
