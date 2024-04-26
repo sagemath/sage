@@ -1213,21 +1213,6 @@ cdef class Map(Element):
         else:
             return self.post_compose(connecting.__copy__())
 
-    def is_surjective(self):
-        """
-        Tells whether the map is surjective (not implemented in the base class).
-
-        TESTS::
-
-            sage: from sage.categories.map import Map
-            sage: f = Map(Hom(QQ, ZZ, Rings()))
-            sage: f.is_surjective()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: <class 'sage.categories.map.Map'>
-        """
-        raise NotImplementedError(type(self))
-
     cpdef _pow_int(self, n):
         """
         TESTS::
