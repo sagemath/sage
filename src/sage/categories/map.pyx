@@ -1221,6 +1221,10 @@ cdef class Map(Element):
             ...
             NotImplementedError: <class 'sage.categories.map.Map'>
         """
+        try:
+            return self.getattr_from_category('is_surjective')()
+        except (AttributeError, NotImplementedError):
+            pass
         raise NotImplementedError(type(self))
 
     cpdef _pow_int(self, n):
