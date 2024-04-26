@@ -124,7 +124,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           path: "dist/*.whl"
-          name: dist
+          name: noarch-wheels
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: __token__
