@@ -978,23 +978,10 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             V = B.row_module(self.domain().base_ring())
         return self.codomain().submodule(V, check=False)
 
-    def matrix(self):
-        """
-        EXAMPLES::
-
-            sage: V = ZZ^2; phi = V.hom(V.basis())
-            sage: phi.matrix()
-            [1 0]
-            [0 1]
-            sage: sage.modules.matrix_morphism.MatrixMorphism_abstract.matrix(phi)
-            Traceback (most recent call last):
-            ...
-            NotImplementedError: this method must be overridden in the extension class
-        """
-        raise NotImplementedError("this method must be overridden in the extension class")
-
     def _matrix_(self):
         """
+        Return the matrix representing ``self``.
+
         EXAMPLES:
 
         Check that this works with the :func:`matrix` function
