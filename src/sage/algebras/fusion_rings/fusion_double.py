@@ -133,7 +133,7 @@ class FusionDouble(CombinatorialFreeModule):
         sage: G = SmallPermutationGroup(16,9)
         sage: F = FusionDouble(G, prefix='b', inject_variables=True)
         sage: b13^2 # long time (4s)
-        b0 + b2 + b4 + b15 + b16 + b17 + b18 + b24 + b26 + b27
+        b0 + b3 + b4
     """
     @staticmethod
     def __classcall_private__(cls, G, prefix='s', inject_variables=False):
