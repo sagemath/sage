@@ -816,11 +816,24 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: psi.is_injective()
                 False
 
+                sage: X = CombinatorialFreeModule(QQ, [1,2,3]);   X.rename("X")
+                sage: Y = CombinatorialFreeModule(QQ, [1,2,3,4]); Y.rename("Y")
+                sage: def f(i):
+                ....:     return Y.monomial(i) + 2*Y.monomial(i+1)
+                sage: phi = X.module_morphism(f, codomain=Y)
+                sage: phi.matrix()
+                [1 0 0]
+                [2 1 0]
+                [0 2 1]
+                [0 0 2]
+                sage: phi.is_injective()
+                True
+
             AUTHOR:
 
             -- Simon King (2010-05)
             """
-            ker = self.matrix(side='left').left_kernel()
+            ker = self.matrix(side='left').right_kernel()
             return ker.dimension() == 0
 
         def is_surjective(self):
