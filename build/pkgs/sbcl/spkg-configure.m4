@@ -1,5 +1,5 @@
 SAGE_SPKG_CONFIGURE([sbcl], [dnl
-  m4_pushdef([SAGE_SBCL_MINVER], ["2.4.1"])
+  m4_pushdef([SAGE_SBCL_MINVER], ["1.4.16"])
    AC_CACHE_CHECK([for sbcl >= SAGE_SBCL_MINVER], [ac_cv_path_SBCL], [
        AC_PATH_PROGS_FEATURE_CHECK([SBCL], [sbcl], [
             sbcl_version=`$ac_path_SBCL --version 2>&1 \
