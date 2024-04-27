@@ -42,6 +42,7 @@ TESTS::
 # be coercible into vector space of appropriate dimension.
 
 import sage.modules.free_module as free_module
+
 from sage.categories.morphism import Morphism
 from sage.modules import free_module_homspace, matrix_morphism
 from sage.structure.richcmp import rich_to_bool, richcmp
@@ -50,18 +51,29 @@ from sage.structure.sequence import Sequence
 
 def is_FreeModuleMorphism(x):
     """
+    This function is deprecated.
+
     EXAMPLES::
 
         sage: V = ZZ^2; f = V.hom([V.1, -2*V.0])
         sage: sage.modules.free_module_morphism.is_FreeModuleMorphism(f)
+        doctest:warning...
+        DeprecationWarning: is_FreeModuleMorphism is deprecated;
+        use isinstance(..., FreeModuleMorphism) or categories instead
+        See https://github.com/sagemath/sage/issues/37731 for details.
         True
         sage: sage.modules.free_module_morphism.is_FreeModuleMorphism(0)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37731,
+                "is_FreeModuleMorphism is deprecated; "
+                "use isinstance(..., FreeModuleMorphism) or categories instead")
     return isinstance(x, FreeModuleMorphism)
 
 
 class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
+
     def __init__(self, parent, A, side="left"):
         """
         INPUT:
@@ -182,7 +194,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         act = ""
         if self.side() == "right":
             act = "as left-multiplication "
-        return r.format(act, self.matrix(), self.domain(), self.codomain())
+        return r.format(act, self._matrix_(), self.domain(), self.codomain())
 
     def change_ring(self, R):
         """
@@ -330,10 +342,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             return self.domain()
 
         R = self.base_ring()
-        if self.side() == "left":
-            A = self.matrix()
-        else:
-            A = self.matrix().transpose()
+        A = self.matrix(side='right')
 
         # Replace the module V that we are going to pullback by a
         # submodule that is contained in the image of self, since our
@@ -386,7 +395,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         r"""
         Given an element of the image, return an element of the codomain that maps onto it.
 
-        Note that ``lift`` and ``preimage_representative`` are
+        Note that :meth:`lift` and :meth:`preimage_representative` are
         equivalent names for this method, with the latter suggesting
         that the return value is a coset representative of the domain
         modulo the kernel of the morphism.
@@ -449,10 +458,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         """
         from .free_module_element import vector
         x = self.codomain()(x)
-        if self.side() == "right":
-            A = self.matrix().transpose()
-        else:
-            A = self.matrix()
+        A = self.matrix(side='right')
         R = self.base_ring()
         if R.is_field():
             try:
@@ -556,9 +562,9 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         if self.base_ring().is_field():
             if self.is_endomorphism():
                 if self.side() == "right":
-                    seigenvec = self.matrix().eigenvectors_right(extend=extend)
+                    seigenvec = self._matrix_().eigenvectors_right(extend=extend)
                 else:
-                    seigenvec = self.matrix().eigenvectors_left(extend=extend)
+                    seigenvec = self._matrix_().eigenvectors_left(extend=extend)
                 resu = []
                 for i in seigenvec:
                     V = self.domain().base_extend(i[0].parent())
@@ -635,55 +641,6 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         ev = self.eigenvectors(extend)
         return [(vec[0], Sequence(vec[1]).universe().subspace(vec[1]))
                 for vec in ev]
-
-    def minimal_polynomial(self, var='x'):
-        r"""
-        Computes the minimal polynomial.
-
-        ``minpoly()`` and ``minimal_polynomial()`` are the same method.
-
-        INPUT:
-
-        - ``var`` - string (default: 'x') a variable name
-
-        OUTPUT:
-
-        polynomial in var - the minimal polynomial of the endomorphism.
-
-        EXAMPLES:
-
-        Compute the minimal polynomial, and check it. ::
-
-            sage: V = GF(7)^3
-            sage: H = V.Hom(V)([[0,1,2], [-1,0,3], [2,4,1]])
-            sage: H
-            Vector space morphism represented by the matrix:
-            [0 1 2]
-            [6 0 3]
-            [2 4 1]
-            Domain:   Vector space of dimension 3 over Finite Field of size 7
-            Codomain: Vector space of dimension 3 over Finite Field of size 7
-
-            sage: H.minpoly()                                                           # needs sage.libs.pari
-            x^3 + 6*x^2 + 6*x + 1
-
-            sage: H.minimal_polynomial()                                                # needs sage.libs.pari
-            x^3 + 6*x^2 + 6*x + 1
-
-            sage: H^3 + (H^2)*6 + H*6 + 1
-            Vector space morphism represented by the matrix:
-            [0 0 0]
-            [0 0 0]
-            [0 0 0]
-            Domain:   Vector space of dimension 3 over Finite Field of size 7
-            Codomain: Vector space of dimension 3 over Finite Field of size 7
-        """
-        if self.is_endomorphism():
-            return self.matrix().minpoly(var)
-        else:
-            raise TypeError("not an endomorphism")
-
-    minpoly = minimal_polynomial
 
 
 class BaseIsomorphism1D(Morphism):

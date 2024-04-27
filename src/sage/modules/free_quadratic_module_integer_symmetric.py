@@ -546,7 +546,7 @@ def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
         ....:                          [gA7, 7 * gA7, 2 * gD5, gD5]], True)
         sage: L.determinant()
         1
-        sage: B = phi[0].matrix()
+        sage: B = phi[0].matrix(side='right')
         sage: B*L.gram_matrix()*B.transpose() == A7.gram_matrix()
         True
 
@@ -563,33 +563,33 @@ def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
         Free module morphism defined by the matrix
         [ 2  2 -2 -1]
         [ 0  2 -1  0]
-        Domain: Lattice of degree 4 and rank 2 over Integer Ring
-        Basis matrix:
-        [1 1 0 0]
-        [0 1 1 0]
-        Inner product matrix:
-        [ 2 -1  0  0]
-        [-1  2 -1 -1]
-        [ 0 -1  2  0]
-        [ 0 -1  0  2]
+        Domain:   Lattice of degree 4 and rank 2 over Integer Ring
+                  Basis matrix:
+                  [1 1 0 0]
+                  [0 1 1 0]
+                  Inner product matrix:
+                  [ 2 -1  0  0]
+                  [-1  2 -1 -1]
+                  [ 0 -1  2  0]
+                  [ 0 -1  0  2]
         Codomain: Lattice of degree 10 and rank 4 over Integer Ring
-        Basis matrix:
-        [ 1/2    0 -1/2    0    0  1/2    0    0  1/2  1/2]
-        [   0  1/2  1/2    0    0  1/2    0    0    0    0]
-        [   0    0    0    0    0    1    0    0    0    0]
-        [   0    0    0    0    0    0    0    0    1    1]
-        Inner product matrix:
-        [ 2 -1  0  0  0  0  0  0  0  0]
-        [-1  2 -1 -1  0  0  0  0  0  0]
-        [ 0 -1  2  0  0  0  0  0  0  0]
-        [ 0 -1  0  2  0  0  0  0  0  0]
-        [ 0  0  0  0  2  0 -1  0  0  0]
-        [ 0  0  0  0  0  2  0 -1  0  0]
-        [ 0  0  0  0 -1  0  2 -1  0  0]
-        [ 0  0  0  0  0 -1 -1  2 -1  0]
-        [ 0  0  0  0  0  0  0 -1  2 -1]
-        [ 0  0  0  0  0  0  0  0 -1  2]
-        sage: B = phi[0].matrix()
+                  Basis matrix:
+                  [ 1/2    0 -1/2    0    0  1/2    0    0  1/2  1/2]
+                  [   0  1/2  1/2    0    0  1/2    0    0    0    0]
+                  [   0    0    0    0    0    1    0    0    0    0]
+                  [   0    0    0    0    0    0    0    0    1    1]
+                  Inner product matrix:
+                  [ 2 -1  0  0  0  0  0  0  0  0]
+                  [-1  2 -1 -1  0  0  0  0  0  0]
+                  [ 0 -1  2  0  0  0  0  0  0  0]
+                  [ 0 -1  0  2  0  0  0  0  0  0]
+                  [ 0  0  0  0  2  0 -1  0  0  0]
+                  [ 0  0  0  0  0  2  0 -1  0  0]
+                  [ 0  0  0  0 -1  0  2 -1  0  0]
+                  [ 0  0  0  0  0 -1 -1  2 -1  0]
+                  [ 0  0  0  0  0  0  0 -1  2 -1]
+                  [ 0  0  0  0  0  0  0  0 -1  2]
+        sage: B = phi[0].matrix(side='right')
         sage: B * L.gram_matrix() * B.transpose() == L1.gram_matrix()
         True
     """
@@ -612,7 +612,7 @@ def IntegralLatticeGluing(Lattices, glue, return_embeddings=False):
         return glued_lattice
     HomSpaces = [Lattices[i].Hom(glued_lattice) for i in range(N)]
     G = glued_lattice.basis_matrix().solve_left(direct_sum.basis_matrix())
-    f = [HomSpaces[i](phi[i].matrix() * G) for i in range(N)]
+    f = [HomSpaces[i](phi[i].matrix(side='right') * G) for i in range(N)]
     return [glued_lattice, f]
 
 ###############################################################################
