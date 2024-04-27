@@ -331,8 +331,10 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             Free module morphism defined as left-multiplication by the matrix
             [1 0]
             [1 1]
-            Domain: Ambient free module of rank 2 over the principal ideal domain Integer Ring
-            Codomain: Ambient free module of rank 2 over the principal ideal domain Integer Ring
+            Domain:   Ambient free module of rank 2 over the principal ideal domain
+                      Integer Ring
+            Codomain: Ambient free module of rank 2 over the principal ideal domain
+                      Integer Ring
             sage: h2.side()
             'right'
             sage: h2.side_switch().matrix()
