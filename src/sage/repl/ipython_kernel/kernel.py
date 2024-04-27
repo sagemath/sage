@@ -103,23 +103,6 @@ class SageKernel(IPythonKernel):
               'url': 'https://doc.sagemath.org/html/en/index.html'},
              ...]
         """
-        # DEPRECATED: The URLs in the form 'kernelspecs/...' were used for
-        # classical Jupyter notebooks. For instance,
-        #
-        #  'kernelspecs/sagemath/doc/html/en/index.html'
-        #
-        # is constructed by kernel_url('doc/html/en/index.html'), but these
-        # URLs of local files don't work for JupyterLab. Hence all URLs here
-        # have been replaced with URLs of online documents.
-
-        from sage.repl.ipython_kernel.install import SageKernelSpec
-        identifier = SageKernelSpec.identifier()
-
-        def kernel_url(x):
-            # URLs starting with 'kernelspecs' are prepended by the
-            # browser with the appropriate path
-            return 'kernelspecs/{0}/{1}'.format(identifier, x)
-
         from sage.env import SAGE_DOC_SERVER_URL as url
 
         if url:
