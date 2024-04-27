@@ -117,6 +117,7 @@ else:
                 compiler_directives=compiler_directives(False),
                 aliases=aliases,
                 create_extension=create_extension,
+                show_all_warnings=True,
                 gdb_debug=gdb_debug,
                 nthreads=nthreads)
     except Exception as exception:
