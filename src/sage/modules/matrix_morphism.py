@@ -1059,50 +1059,6 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         else:
             return self._matrix.right_nullity()
 
-    def is_bijective(self):
-        r"""
-        Tell whether ``self`` is bijective.
-
-        EXAMPLES:
-
-        Two morphisms that are obviously not bijective, simply on
-        considerations of the dimensions.  However, each fullfills
-        half of the requirements to be a bijection.  ::
-
-            sage: V1 = QQ^2
-            sage: V2 = QQ^3
-            sage: m = matrix(QQ, [[1, 2, 3], [4, 5, 6]])
-            sage: phi = V1.hom(m, V2)
-            sage: phi.is_injective()
-            True
-            sage: phi.is_bijective()
-            False
-            sage: rho = V2.hom(m.transpose(), V1)
-            sage: rho.is_surjective()
-            True
-            sage: rho.is_bijective()
-            False
-
-        We construct a simple bijection between two one-dimensional
-        vector spaces.  ::
-
-            sage: V1 = QQ^3
-            sage: V2 = QQ^2
-            sage: phi = V1.hom(matrix(QQ, [[1, 2], [3, 4], [5, 6]]), V2)
-            sage: x = vector(QQ, [1, -1, 4])
-            sage: y = phi(x); y
-            (18, 22)
-            sage: rho = phi.restrict_domain(V1.span([x]))
-            sage: zeta = rho.restrict_codomain(V2.span([y]))
-            sage: zeta.is_bijective()
-            True
-
-        AUTHOR:
-
-        - Rob Beezer (2011-06-28)
-        """
-        return self.is_injective() and self.is_surjective()
-
     def is_identity(self):
         r"""
         Determines if this morphism is an identity function or not.
