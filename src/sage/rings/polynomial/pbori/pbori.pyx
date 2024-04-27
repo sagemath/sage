@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-brial
 # distutils: libraries = brial brial_groebner M4RI_LIBRARIES LIBPNG_LIBRARIES
 # distutils: library_dirs = M4RI_LIBDIR LIBPNG_LIBDIR
 # distutils: include_dirs = M4RI_INCDIR LIBPNG_INCDIR

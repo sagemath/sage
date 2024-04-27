@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Delsarte (or linear programming) bounds
 

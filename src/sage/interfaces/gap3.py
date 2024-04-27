@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-gap
 r"""
 Interface to GAP3
 

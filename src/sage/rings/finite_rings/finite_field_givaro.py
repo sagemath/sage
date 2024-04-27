@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-linbox
 """
 Givaro finite fields
 

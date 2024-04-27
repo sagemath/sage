@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 """Symbolic Integration via External Software
 
 TESTS::

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Sets of Morphisms between Topological Manifolds
 

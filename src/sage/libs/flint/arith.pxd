@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 # distutils: libraries = flint
 # distutils: depends = flint/arith.h
 

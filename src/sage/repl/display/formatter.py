@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-repl
+# -*- coding: utf-8 -*-
 r"""
 IPython Displayhook Formatters
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Generic Asymptotically Fast Strassen Algorithms
 

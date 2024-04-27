@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.flint sage.libs.pari
 """
 Graded rings of modular forms
@@ -213,7 +212,7 @@ class ModularFormsRing(Parent):
             Traceback (most recent call last):
             ...
             ValueError: group (=3.40000000000000) should be a congruence subgroup
-            sage: ModularFormsRing(Gamma0(2), base_ring=PolynomialRing(ZZ,x))
+            sage: ModularFormsRing(Gamma0(2), base_ring=PolynomialRing(ZZ, 'x'))
             Traceback (most recent call last):
             ...
             ValueError: base ring (=Univariate Polynomial Ring in x over Integer Ring) should be QQ, ZZ or a finite prime field

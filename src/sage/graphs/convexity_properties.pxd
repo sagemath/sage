@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 from sage.data_structures.bitset cimport bitset_t
 from sage.data_structures.binary_matrix cimport binary_matrix_t
 

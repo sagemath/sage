@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 from sage.libs.gmp.types cimport mpz_t
 from sage.modules.free_module_element cimport FreeModuleElement
 from sage.structure.parent cimport Parent

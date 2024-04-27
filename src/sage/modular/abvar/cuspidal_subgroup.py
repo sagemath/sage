@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 """
 Cuspidal subgroups of modular abelian varieties
 

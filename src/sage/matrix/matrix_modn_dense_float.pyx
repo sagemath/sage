@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-linbox
 # distutils: language = c++
 # distutils: libraries = CBLAS_LIBRARIES
 # distutils: library_dirs = CBLAS_LIBDIR

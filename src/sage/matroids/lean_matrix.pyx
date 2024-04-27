@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: optional - sage.rings.finite_rings
 """
 Lean matrices

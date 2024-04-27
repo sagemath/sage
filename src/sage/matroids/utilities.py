@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Some useful functions for the matroid class.
 

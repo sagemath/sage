@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-plot
 """
 Text in plots
 """
@@ -86,7 +85,7 @@ class Text(GraphicPrimitive):
             sage: t = T[0];t                                                            # needs sage.symbolic
             Text 'I like cool constants' at the point (3.1415926535...,2.7182818284...)
         """
-        return "Text '%s' at the point (%s,%s)" % (self.string, self.x, self.y)
+        return f"Text '{self.string}' at the point ({self.x},{self.y})"
 
     def _allowed_options(self):
         """

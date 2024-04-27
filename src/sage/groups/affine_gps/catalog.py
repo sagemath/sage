@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Type ``groups.affine.<tab>`` to access examples
 of groups implemented as affine groups.

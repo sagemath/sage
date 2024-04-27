@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Generic data structures and algorithms for rings
 

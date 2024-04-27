@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-singular
 """
 Homogeneous ideals of free algebras
 

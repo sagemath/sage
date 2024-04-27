@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.symbolic
 r"""
 A Sample Session using SymPy

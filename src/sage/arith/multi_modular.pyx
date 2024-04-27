@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: optional - primecountpy
 """
 Utility classes for multi-modular algorithms

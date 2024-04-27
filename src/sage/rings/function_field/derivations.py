@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Derivations of function fields
 

@@ -17,10 +17,9 @@ AUTHORS:
 # ****************************************************************************
 from sage.misc.lazy_import import lazy_import
 
-from sage.interacts import calculus
-from sage.interacts import geometry
-from sage.interacts import statistics
-from sage.interacts import fractals
-from sage.interacts import algebra
+from . import calculus
+from . import geometry
+from . import statistics
+from . import fractals
+from . import algebra
 lazy_import('sage.interacts.library', 'demo')
-del lazy_import

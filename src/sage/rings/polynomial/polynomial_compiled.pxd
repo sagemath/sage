@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 from sage.misc.binary_tree import BinaryTree
 from sage.misc.binary_tree cimport BinaryTree
 

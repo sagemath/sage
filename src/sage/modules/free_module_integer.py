@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Discrete subgroups of `\\ZZ^n`
 

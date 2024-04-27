@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.symbolic
 """
 Functional notation support for common calculus methods

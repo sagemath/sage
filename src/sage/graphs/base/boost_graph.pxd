@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 # distutils: language = c++
 # distutils: extra_compile_args = -std=c++11
 

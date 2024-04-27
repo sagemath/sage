@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-plot
 # sage.doctest: needs sage.plot
 r"""
 Colors
@@ -255,7 +254,7 @@ def html_to_float(c):
         raise ValueError("'%s' must be a valid HTML hex color (e.g., '#f07' or '#d6e7da')" % c)
     h = c[1:]
     if len(h) == 3:
-        h = '%s%s%s%s%s%s' % (h[0], h[0], h[1], h[1], h[2], h[2])
+        h = f'{h[0]}{h[0]}{h[1]}{h[1]}{h[2]}{h[2]}'
     elif len(h) != 6:
         raise ValueError("color hex string (= '%s') must have length 3 or 6" % h)
     return tuple([int(h[i:i + 2], base=16) / 255 for i in [0, 2, 4]])
@@ -339,8 +338,8 @@ def rgbcolor(c, space='rgb'):
 
     elif isinstance(c, (list, tuple)):
         if len(c) != 3:
-            raise ValueError("color list or tuple '%s' must have 3 entries, one for each RGB, HSV, HLS, or HSL channel" % (c, ))
-        c = [mod_one(_) for _ in list(c)]
+            raise ValueError(f"color list or tuple '{c}' must have 3 entries, one for each RGB, HSV, HLS, or HSL channel")
+        c = [mod_one(comp) for comp in c]
         if space == 'rgb':
             return tuple(c)
         elif space == 'hsv':
@@ -359,7 +358,7 @@ def rgbcolor(c, space='rgb'):
 to_mpl_color = rgbcolor
 
 
-class Color():
+class Color:
     def __init__(self, r='#0000ff', g=None, b=None, space='rgb'):
         """
         A Red-Green-Blue (RGB) color model color object.  For most
@@ -422,7 +421,7 @@ class Color():
             sage: Color(1, 0.5, 1/16, space='hsl').__repr__()
             'RGB color (0.09375, 0.03125, 0.03125)'
         """
-        return "RGB color %s" % (self._rgb, )
+        return f"RGB color {self._rgb}"
 
     def __lt__(self, right):
         """
@@ -646,7 +645,7 @@ class Color():
             color = [float(_) for _ in color]
             return Color(rgbcolor([(1 - fraction) * a + fraction * b
                                    for a, b in zip(self._rgb, color)]))
-        raise TypeError("%s must be a Color or float-convertible 3-tuple/list" % (color, ))
+        raise TypeError(f"{color} must be a Color or float-convertible 3-tuple/list")
 
     def __add__(self, right):
         """
@@ -1105,7 +1104,7 @@ class ColorsDict(dict):
         try:
             return self[name]
         except KeyError:
-            raise AttributeError("'%s' has no attribute or colormap %s" % (type(self).__name__, name))
+            raise AttributeError("'{}' has no attribute or colormap {}".format(type(self).__name__, name))
 
     def __dir__(self):
         """
@@ -1612,7 +1611,7 @@ class Colormaps(MutableMapping):
         try:
             return self[name]
         except KeyError:
-            raise AttributeError("'%s' has no attribute or colormap %s" % (type(self).__name__, name))
+            raise AttributeError("'{}' has no attribute or colormap {}".format(type(self).__name__, name))
 
     def __repr__(self):
         """

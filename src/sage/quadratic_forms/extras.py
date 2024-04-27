@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Extra functions for quadratic forms
 """

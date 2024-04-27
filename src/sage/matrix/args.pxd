@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 from cpython.object cimport PyObject
 from sage.structure.element cimport Element, Matrix
 from sage.structure.parent cimport Parent

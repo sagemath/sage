@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 """
 The polymake backend for polyhedral computations
 

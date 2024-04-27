@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.pari
 r"""
 Modular forms for `\Gamma_0(N)` over `\QQ`

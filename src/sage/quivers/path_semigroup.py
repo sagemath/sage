@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-flint
+# -*- encoding: utf-8 -*-
 """
 Path Semigroups
 """

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 from sage.numerical.backends.generic_sdp_backend cimport GenericSDPBackend
 
 

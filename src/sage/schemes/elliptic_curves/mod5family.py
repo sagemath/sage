@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 """
 Elliptic curves with congruent mod-5 representation
 

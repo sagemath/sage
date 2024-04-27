@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Index of bounds on the parameters of codes
 

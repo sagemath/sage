@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 # sage.doctest: needs sage.schemes
 r"""
 Hypersurfaces in affine and projective space

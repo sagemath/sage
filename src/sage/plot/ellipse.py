@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-plot
 """
 Ellipses
 """
@@ -171,7 +170,7 @@ class Ellipse(GraphicPrimitive):
             sage: Ellipse(0,0,2,1,0,{})._repr_()
             'Ellipse centered at (0.0, 0.0) with radii (2.0, 1.0) and angle 0.0'
         """
-        return "Ellipse centered at (%s, %s) with radii (%s, %s) and angle %s" % (self.x, self.y, self.r1, self.r2, self.angle)
+        return "Ellipse centered at ({}, {}) with radii ({}, {}) and angle {}".format(self.x, self.y, self.r1, self.r2, self.angle)
 
     def _render_on_subplot(self, subplot):
         """
@@ -227,6 +226,7 @@ class Ellipse(GraphicPrimitive):
             NotImplementedError
         """
         raise NotImplementedError
+
 
 @rename_keyword(color='rgbcolor')
 @options(alpha=1, fill=False, thickness=1, edgecolor='blue', facecolor='blue', linestyle='solid', zorder=5,

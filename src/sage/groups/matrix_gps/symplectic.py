@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Symplectic Linear Groups
 
@@ -212,7 +211,7 @@ class SymplecticMatrixGroup_generic(NamedMatrixGroup_generic):
         """
         Return the quadratic form preserved by the symplectic group.
 
-        OUTPUT: A matrix.
+        OUTPUT: a matrix
 
         EXAMPLES::
 

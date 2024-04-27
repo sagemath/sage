@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 #*****************************************************************************
 #       Copyright (C) 2006 - 2011 Robert L. Miller <rlmillster@gmail.com>
 #       Copyright (C) 2009 Nicolas Borie <nicolas.borie@math.u-psud.fr>
@@ -11,7 +10,6 @@
 #*****************************************************************************
 
 from sage.groups.perm_gps.partn_ref.data_structures cimport *
-
 
 # name of the three functions to customize
 cdef int refine_list(PartitionStack *, void *, int *, int) noexcept

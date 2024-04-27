@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Utility functions for namespace packages in Sage
 """

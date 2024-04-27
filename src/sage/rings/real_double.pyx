@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Double precision floating point real numbers
 

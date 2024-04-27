@@ -1,5 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
-
-from sage.modular.pollack_stevens.space import PollackStevensModularSymbols
-from sage.modular.pollack_stevens.distributions import Symk
-from sage.modular.pollack_stevens.distributions import OverconvergentDistributions
+from .space import PollackStevensModularSymbols
+from .distributions import Symk
+from .distributions import OverconvergentDistributions

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # We put all definitions together, whether they appear in def.h or
 # macro.h
 cdef extern from 'symmetrica/def.h':

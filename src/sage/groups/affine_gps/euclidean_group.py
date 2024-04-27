@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Euclidean Groups
 
@@ -165,9 +164,9 @@ class EuclideanGroup(AffineGroup):
 
         INPUT:
 
-        - ``A`` -- an element of :meth:`matrix_space`.
+        - ``A`` -- an element of :meth:`matrix_space`
 
-        - ``b`` -- an element of :meth:`vector_space`.
+        - ``b`` -- an element of :meth:`vector_space`
 
         OUTPUT:
 

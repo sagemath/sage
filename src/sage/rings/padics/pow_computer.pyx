@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 # distutils: libraries = NTL_LIBRARIES gmp m
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR

@@ -236,7 +236,7 @@ $ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap bootstrap-
 $ADD config/config.rpath config/config.rpath
 $ADD src/doc/bootstrap src/doc/bootstrap
 $ADD src/bin src/bin
-$ADD src/Pipfile.m4 src/pyproject.toml.m4 src/requirements.txt.m4 src/VERSION.txt src/
+$ADD src/Pipfile.m4 src/pyproject.toml.m4 src/requirements.txt.m4 src/setup.cfg.m4 src/VERSION.txt src/
 $ADD m4 ./m4
 $ADD pkgs pkgs
 $ADD build ./build

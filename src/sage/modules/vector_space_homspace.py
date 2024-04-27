@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Space of morphisms of vector spaces (linear transformations)
 
@@ -369,14 +368,14 @@ class VectorSpaceHomspace(sage.modules.free_module_homspace.FreeModuleHomspace):
         Previously the above code resulted in a :class:`TypeError` because the
         dimensions of the matrix were incorrect.
         """
-        from .vector_space_morphism import is_VectorSpaceMorphism, VectorSpaceMorphism
+        from .vector_space_morphism import VectorSpaceMorphism
         D = self.domain()
         C = self.codomain()
         side = kwds.get("side", "left")
         from sage.structure.element import is_Matrix
         if is_Matrix(A):
             pass
-        elif is_VectorSpaceMorphism(A):
+        elif isinstance(A, VectorSpaceMorphism):
             A = A.matrix()
         elif callable(A):
             try:

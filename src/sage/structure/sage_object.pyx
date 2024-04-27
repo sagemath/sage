@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-objects
+# -*- encoding: utf-8 -*-
 r"""
 Abstract base class for Sage objects
 """

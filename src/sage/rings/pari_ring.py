@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 """
 Ring of pari objects
 

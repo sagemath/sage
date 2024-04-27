@@ -1,5 +1,3 @@
-# sage_setup: distribution = sagemath-flint
-
 r"""
 Deprecated module.
 

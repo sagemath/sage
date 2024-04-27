@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 #*****************************************************************************
 #       Copyright (C) 2009 Sebastien Labbe <slabqc at gmail.com>
 #

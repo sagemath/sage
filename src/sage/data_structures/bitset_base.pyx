@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Few functions from ``bitset_base.pxd`` that are not inlined.
 """

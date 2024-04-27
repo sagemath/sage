@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Abstract base classes for interface elements
 """

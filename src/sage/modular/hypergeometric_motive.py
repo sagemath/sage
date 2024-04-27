@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 """
 Hypergeometric motives
 
@@ -21,7 +20,7 @@ EXAMPLES::
     sage: H = Hyp(cyclotomic=([30], [1,2,3,5]))
     sage: H.alpha_beta()
     ([1/30, 7/30, 11/30, 13/30, 17/30, 19/30, 23/30, 29/30],
-    [0, 1/5, 1/3, 2/5, 1/2, 3/5, 2/3, 4/5])
+     [0, 1/5, 1/3, 2/5, 1/2, 3/5, 2/3, 4/5])
     sage: H.M_value() == 30**30 / (15**15 * 10**10 * 6**6)
     True
     sage: H.euler_factor(2, 7)
@@ -1458,7 +1457,7 @@ class HypergeometricData:
 
         - `t` -- a rational parameter
 
-        - ``ring`` -- optional (default ``UniversalCyclotomicfield``)
+        - ``ring`` -- optional (default :class:`UniversalCyclotomicfield`)
 
         The ring could be also ``ComplexField(n)`` or ``QQbar``.
 
@@ -1469,9 +1468,9 @@ class HypergeometricData:
         .. WARNING::
 
             This is apparently working correctly as can be tested
-            using ComplexField(70) as value ring.
+            using ``ComplexField(70)`` as the value ring.
 
-            Using instead UniversalCyclotomicfield, this is much
+            Using instead :class:`UniversalCyclotomicfield`, this is much
             slower than the `p`-adic version :meth:`padic_H_value`.
 
         EXAMPLES:

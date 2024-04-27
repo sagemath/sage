@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.groups sage.modules
 r"""
 Specht Modules
@@ -1352,12 +1351,12 @@ def tabloid_gram_matrix(la, base_ring):
         [4 1 1 2 4]
     """
     from sage.combinat.tableau import StandardTableaux
-    ST = StandardTableaux(la)
+    ST = list(StandardTableaux(la))
 
     def bilinear_form(p1, p2):
         if len(p2) < len(p1):
             p1, p2 = p2, p1
-        return sum(c1 * p2.get(T1, 0) for T1, c1 in p1.items() if c1)
+        return sum(c1 * p2[T1] for T1, c1 in p1.items() if c1 and T1 in p2)
 
     PT = {T: polytabloid(T) for T in ST}
     gram_matrix = [[bilinear_form(PT[T1], PT[T2]) for T1 in ST] for T2 in ST]

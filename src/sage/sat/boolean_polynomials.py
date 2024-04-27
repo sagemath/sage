@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # sage.doctest: optional - pycryptosat, needs sage.modules sage.rings.polynomial.pbori
 """
 SAT Functions for Boolean Polynomials

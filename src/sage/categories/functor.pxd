@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 from sage.structure.sage_object cimport SageObject
 
 cdef class Functor(SageObject):

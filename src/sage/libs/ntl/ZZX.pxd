@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-ntl
 # distutils: depends = NTL/ZZ.h
 
 from sage.libs.gmp.types cimport mpz_t

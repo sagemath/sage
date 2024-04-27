@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 from sage.categories.action cimport Action
 from sage.categories.map cimport Map
 

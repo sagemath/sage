@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-combinat
+# -*- coding: utf-8 -*-
 r"""
 Lazy Series
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Minimal Polynomials of Linear Recurrence Sequences
 

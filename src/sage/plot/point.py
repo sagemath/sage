@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-plot
+# -*- coding: utf-8 -*-
 r"""
 Points
 

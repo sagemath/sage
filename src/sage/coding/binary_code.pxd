@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 cdef int *hamming_weights() noexcept
 
 ctypedef unsigned int codeword

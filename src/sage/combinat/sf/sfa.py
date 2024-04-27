@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 # sage.doctest: needs sage.combinat sage.modules
 r"""
 Symmetric Functions
@@ -6636,7 +6635,7 @@ class SymmetricFunctionsFamilyFunctor(SymmetricFunctionsFunctor):
             sage: F(QQ)
             Traceback (most recent call last):
             ...
-            TypeError: not a constant polynomial
+            TypeError: t is not a constant polynomial
         """
         from sage.combinat.sf.sf import SymmetricFunctions
         return self._basis(self._family(SymmetricFunctions(R), *self._args))

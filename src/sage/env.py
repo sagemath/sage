@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-environment
 r"""
 Sage Runtime Environment
 

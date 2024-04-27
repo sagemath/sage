@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Finite dimensional modules with basis
 """
@@ -11,10 +10,13 @@ Finite dimensional modules with basis
 # *****************************************************************************
 
 import operator
-from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
+from sage.categories.category_with_axiom import CategoryWithAxiom, CategoryWithAxiom_over_base_ring
 from sage.categories.fields import Fields
+from sage.categories.homsets import HomsetsCategory
 from sage.categories.tensor import TensorProductsCategory
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
+
 
 class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
     """
@@ -797,6 +799,165 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             C = self.codomain()
             return C.submodule(self.image_basis(), already_echelonized=True,
                                category=self.category_for())
+
+    class Homsets(HomsetsCategory):
+
+        class Endset(CategoryWithAxiom):
+
+            class ElementMethods:
+
+                @lazy_attribute
+                def characteristic_polynomial(self):
+                    r"""
+                    Return the characteristic polynomial of this endomorphism.
+
+                    :meth:`characteristic_polynomial` and :meth:`charpoly` are the same method.
+
+                    INPUT:
+
+                    - ``var`` -- variable
+
+                    EXAMPLES::
+
+                        sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
+                        sage: phi.characteristic_polynomial()
+                        x^2 - 3*x + 2
+                        sage: phi.charpoly()
+                        x^2 - 3*x + 2
+                        sage: phi.matrix().charpoly()
+                        x^2 - 3*x + 2
+                        sage: phi.charpoly('T')
+                        T^2 - 3*T + 2
+
+                        sage: W = CombinatorialFreeModule(ZZ, ['x', 'y'])
+                        sage: M = matrix(ZZ, [[1, 0], [1, 2]])
+                        sage: psi = W.module_morphism(matrix=M, codomain=W)
+                        sage: psi.charpoly()
+                        x^2 - 3*x + 2
+                    """
+                    return self.matrix().charpoly
+
+                charpoly = characteristic_polynomial
+
+                @lazy_attribute
+                def determinant(self):
+                    """
+                    Return the determinant of this endomorphism.
+
+                    :meth:`determinant` and :meth:`det` are the same method.
+
+                    EXAMPLES::
+
+                        sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
+                        sage: phi.determinant()
+                        2
+                        sage: phi.det()
+                        2
+
+                        sage: W = CombinatorialFreeModule(ZZ, ['x', 'y'])
+                        sage: M = matrix(ZZ, [[1, 0], [1, 2]])
+                        sage: psi = W.module_morphism(matrix=M, codomain=W)
+                        sage: psi.det()
+                        2
+                    """
+                    return self.matrix().determinant
+
+                det = determinant
+
+                @lazy_attribute
+                def fcp(self):
+                    """
+                    Return the factorization of the characteristic polynomial.
+
+                    INPUT:
+
+                    - ``var`` -- variable
+
+                    EXAMPLES::
+
+                        sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
+                        sage: phi.fcp()                                                         # needs sage.libs.pari
+                        (x - 2) * (x - 1)
+                        sage: phi.fcp('T')                                                      # needs sage.libs.pari
+                        (T - 2) * (T - 1)
+
+                        sage: W = CombinatorialFreeModule(ZZ, ['x', 'y'])
+                        sage: M = matrix(ZZ, [[1, 0], [1, 2]])
+                        sage: psi = W.module_morphism(matrix=M, codomain=W)
+                        sage: psi.fcp()                                                         # needs sage.libs.pari
+                        (x - 2) * (x - 1)
+                    """
+                    return self.matrix().fcp
+
+                @lazy_attribute
+                def minimal_polynomial(self):
+                    r"""
+                    Return the minimal polynomial of this endomorphism.
+
+                    :meth:`minimal_polynomial` and :meth:`minpoly` are the same method.
+
+                    INPUT:
+
+                    - ``var`` -- string (default: ``'x'``); a variable name
+
+                    EXAMPLES:
+
+                    Compute the minimal polynomial, and check it. ::
+
+                        sage: V = GF(7)^3
+                        sage: H = V.Hom(V)([[0,1,2], [-1,0,3], [2,4,1]]); H
+                        Vector space morphism represented by the matrix:
+                        [0 1 2]
+                        [6 0 3]
+                        [2 4 1]
+                        Domain:   Vector space of dimension 3 over Finite Field of size 7
+                        Codomain: Vector space of dimension 3 over Finite Field of size 7
+                        sage: H.minpoly()                                                       # needs sage.libs.pari
+                        x^3 + 6*x^2 + 6*x + 1
+                        sage: H.minimal_polynomial()                                            # needs sage.libs.pari
+                        x^3 + 6*x^2 + 6*x + 1
+                        sage: H^3 + (H^2)*6 + H*6 + 1
+                        Vector space morphism represented by the matrix:
+                        [0 0 0]
+                        [0 0 0]
+                        [0 0 0]
+                        Domain:   Vector space of dimension 3 over Finite Field of size 7
+                        Codomain: Vector space of dimension 3 over Finite Field of size 7
+
+                        sage: # needs sage.rings.finite_rings
+                        sage: k = GF(9, 'c')
+                        sage: V = CombinatorialFreeModule(k, ['x', 'y', 'z', 'w'])
+                        sage: A = matrix(k, 4, [1,1,0,0, 0,1,0,0, 0,0,5,0, 0,0,0,5])
+                        sage: phi = V.module_morphism(matrix=A, codomain=V)
+                        sage: factor(phi.minpoly())
+                        (x + 1) * (x + 2)^2
+                        sage: A.minpoly()(A) == 0
+                        True
+                        sage: factor(phi.charpoly())
+                        (x + 1)^2 * (x + 2)^2
+                    """
+                    return self.matrix().minimal_polynomial
+
+                minpoly = minimal_polynomial
+
+                @lazy_attribute
+                def trace(self):
+                    r"""
+                    Return the trace of this endomorphism.
+
+                    EXAMPLES::
+
+                        sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
+                        sage: phi.trace()
+                        3
+
+                        sage: W = CombinatorialFreeModule(ZZ, ['x', 'y'])
+                        sage: M = matrix(ZZ, [[1, 0], [1, 2]])
+                        sage: psi = W.module_morphism(matrix=M, codomain=W)
+                        sage: psi.trace()
+                        3
+                    """
+                    return self.matrix().trace
 
     class TensorProducts(TensorProductsCategory):
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Base class for abelian group elements
 
@@ -166,10 +165,6 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         """
         Return a string representation of ``self``.
 
-        OUTPUT:
-
-        String.
-
         EXAMPLES::
 
             sage: G = AbelianGroup([2])
@@ -200,9 +195,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
 
         The comparison is based on the exponents.
 
-        OUTPUT:
-
-        boolean
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -221,9 +214,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         """
         Return the order of this element.
 
-        OUTPUT:
-
-        An integer or ``infinity``.
+        OUTPUT: integer or ``infinity``
 
         EXAMPLES::
 
@@ -257,7 +248,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
 
     def _div_(left, right):
         """
-        Divide ``left`` and ``right``
+        Divide ``left`` and ``right``.
 
         TESTS::
 
@@ -275,7 +266,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
 
     def _mul_(left, right):
         """
-        Multiply ``left`` and ``right``
+        Multiply ``left`` and ``right``.
 
         TESTS::
 
@@ -293,7 +284,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
 
     def __pow__(self, n):
         """
-        Exponentiate ``self``
+        Exponentiate ``self``.
 
         TESTS::
 
@@ -336,9 +327,7 @@ class AbelianGroupElementBase(MultiplicativeGroupElement):
         """
         Test whether ``self`` is the trivial group element ``1``.
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 

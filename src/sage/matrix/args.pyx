@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # cython: wraparound=False
 # cython: boundscheck=False
 """
@@ -326,21 +325,27 @@ cdef class MatrixArgs:
 
             sage: from sage.matrix.args import MatrixArgs
             sage: MatrixArgs().finalized()
-            <MatrixArgs for Full MatrixSpace of 0 by 0 dense matrices over Integer Ring; typ=ZERO; entries=None>
+            <MatrixArgs for Full MatrixSpace of 0 by 0 dense matrices over
+             Integer Ring; typ=ZERO; entries=None>
             sage: MatrixArgs(1).finalized()
-            <MatrixArgs for Full MatrixSpace of 1 by 1 dense matrices over Integer Ring; typ=ZERO; entries=None>
+            <MatrixArgs for Full MatrixSpace of 1 by 1 dense matrices over
+             Integer Ring; typ=ZERO; entries=None>
             sage: MatrixArgs(1, 1, 3).finalized()
-            <MatrixArgs for Full MatrixSpace of 1 by 1 dense matrices over Integer Ring; typ=SCALAR; entries=3>
+            <MatrixArgs for Full MatrixSpace of 1 by 1 dense matrices over
+             Integer Ring; typ=SCALAR; entries=3>
             sage: MatrixArgs(1, 1, 1, 1).finalized()
             Traceback (most recent call last):
             ...
             TypeError: too many arguments in matrix constructor
             sage: MatrixArgs(3, nrows=1, ncols=1).finalized()
-            <MatrixArgs for Full MatrixSpace of 1 by 1 dense matrices over Integer Ring; typ=SCALAR; entries=3>
+            <MatrixArgs for Full MatrixSpace of 1 by 1 dense matrices over
+             Integer Ring; typ=SCALAR; entries=3>
             sage: MatrixArgs(3, nrows=1).finalized()
-            <MatrixArgs for Full MatrixSpace of 1 by 1 dense matrices over Integer Ring; typ=SCALAR; entries=3>
+            <MatrixArgs for Full MatrixSpace of 1 by 1 dense matrices over
+             Integer Ring; typ=SCALAR; entries=3>
             sage: MatrixArgs(3, ncols=1).finalized()
-            <MatrixArgs for Full MatrixSpace of 1 by 1 dense matrices over Integer Ring; typ=SCALAR; entries=3>
+            <MatrixArgs for Full MatrixSpace of 1 by 1 dense matrices over
+             Integer Ring; typ=SCALAR; entries=3>
         """
         if "ring" in kwds.keys():
             deprecation_cython(issue_number=33380, message="ring is deprecated (keyword will be removed in the future). Use base_ring instead", stacklevel=3)
@@ -646,8 +651,8 @@ cdef class MatrixArgs:
 
         INPUT:
 
-        - ``convert`` -- if True, the matrix is guaranteed to have
-          the correct parent matrix space. If False, the input matrix
+        - ``convert`` -- if ``True``, the matrix is guaranteed to have
+          the correct parent matrix space. If ``False``, the input matrix
           may be returned even if it lies in the wrong space.
 
         .. NOTE::
@@ -737,7 +742,7 @@ cdef class MatrixArgs:
 
         INPUT:
 
-        - ``convert`` -- If True, the entries are converted to the base
+        - ``convert`` -- If ``True``, the entries are converted to the base
           ring. Otherwise, the entries are returned as given.
 
         .. NOTE::
@@ -797,11 +802,12 @@ cdef class MatrixArgs:
 
     cpdef dict dict(self, bint convert=True):
         """
-        Return the entries of the matrix as a dict. The keys of this
-        dict are the non-zero positions ``(i,j)``. The corresponding
-        value is the entry at that position. Zero values are skipped.
+        Return the entries of the matrix as a :class:`dict`.
 
-        If ``convert`` is True, the entries are converted to the base
+        The keys of this :class:`dict` are the non-zero positions ``(i,j)``. The
+        corresponding value is the entry at that position. Zero values are skipped.
+
+        If ``convert`` is ``True``, the entries are converted to the base
         ring. Otherwise, the entries are returned as given.
 
         EXAMPLES::

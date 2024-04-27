@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 r"""
 Base class for polyhedra: Methods related to lattice points
 """

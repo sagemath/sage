@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 """
 This linkage file implements the padics API using MPIR mpz_t
 multiprecision integers.

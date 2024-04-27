@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 from sage.structure.element cimport Element, Matrix, Vector
 from sage.structure.parent cimport Parent
 from sage.categories.action cimport Action

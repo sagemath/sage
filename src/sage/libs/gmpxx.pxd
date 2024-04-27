@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 # distutils: language = c++
 # distutils: libraries = gmpxx gmp
 

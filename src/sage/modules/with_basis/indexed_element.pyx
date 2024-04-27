@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-modules
+# -*- coding: utf-8 -*-
 r"""
 An element in an indexed free module
 

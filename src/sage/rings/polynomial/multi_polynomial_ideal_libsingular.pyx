@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-singular
 """
 Direct low-level access to SINGULAR's Groebner basis engine via libSINGULAR
 

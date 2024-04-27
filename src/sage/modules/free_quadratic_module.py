@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Free quadratic modules
 

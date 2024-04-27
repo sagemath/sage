@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-plot
 from sage.plot.plot3d.parametric_surface cimport ParametricSurface
 
 

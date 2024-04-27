@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 r"""
 Some tools for developers
 
@@ -149,7 +148,6 @@ def load_submodules(module=None, exclude_pattern=None):
     EXAMPLES::
 
         sage: sage.misc.dev_tools.load_submodules(sage.combinat)
-        load sage.combinat.affine_permutation... succeeded
         load sage.combinat.algebraic_combinatorics... succeeded
         ...
         load sage.combinat.words.suffix_trees... succeeded

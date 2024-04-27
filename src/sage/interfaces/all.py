@@ -1,16 +1,15 @@
-# sage_setup: distribution = sagemath-categories
 # interfaces to other interpreters
 
-from sage.interfaces.sage0 import sage0, sage0_version, Sage
-from sage.interfaces.gap import gap, gap_reset_workspace, Gap
-from sage.interfaces.gp import gp, gp_version, Gp
+from .sage0 import sage0, sage0_version, Sage
+from .gap import gap, gap_reset_workspace, Gap
+from .gp import gp, gp_version, Gp
 # import problems
 # from maxima_lib import maxima_lib
-from sage.interfaces.maxima import maxima, Maxima
-from sage.interfaces.singular import singular, singular_version, Singular
+from .maxima import maxima, Maxima
+from .singular import singular, singular_version, Singular
 
-from sage.interfaces.magma import magma, Magma
-from sage.interfaces.polymake import polymake
+from .magma import magma, Magma
+from .polymake import polymake
 
 from sage.misc.lazy_import import lazy_import
 
@@ -49,4 +48,3 @@ interfaces = ['gap', 'gap3', 'giac', 'gp', 'mathematica', 'gnuplot',
               'kash', 'magma', 'macaulay2', 'maple', 'maxima',
               'mathematica', 'mwrank', 'octave', 'r', 'singular',
               'sage0', 'sage']
-del lazy_import

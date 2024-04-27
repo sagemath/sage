@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 # A class that allows for a more efficient creation
 # of attribute errors, so that raising them requires
 # less time.

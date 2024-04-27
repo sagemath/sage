@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.pari
 r"""
 Arithmetic subgroups, finite index subgroups of `\SL_2(\ZZ)`

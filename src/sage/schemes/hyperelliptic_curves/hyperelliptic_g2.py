@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 """
 Hyperelliptic curves of genus 2 over a general ring
 """

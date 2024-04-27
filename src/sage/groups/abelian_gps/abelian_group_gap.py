@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-gap
 r"""
 Finitely generated abelian groups with GAP.
 
@@ -93,9 +92,7 @@ class AbelianGroupElement_gap(ElementLibGAP):
         r"""
         Implement pickling.
 
-        OUTPUT:
-
-        - a tuple ``f`` such that this element is ``f[0](*f[1])``
+        OUTPUT: tuple ``f`` such that this element is ``f[0](*f[1])``
 
         EXAMPLES::
 
@@ -113,9 +110,7 @@ class AbelianGroupElement_gap(ElementLibGAP):
         r"""
         Return the tuple of exponents of this element.
 
-        OUTPUT:
-
-        - a tuple of integers
+        OUTPUT: tuple of integers
 
         EXAMPLES::
 
@@ -173,9 +168,7 @@ class AbelianGroupElement_gap(ElementLibGAP):
         r"""
         Return the order of this element.
 
-        OUTPUT:
-
-        - an integer or infinity
+        OUTPUT: integer or infinity
 
         EXAMPLES::
 
@@ -205,9 +198,7 @@ class AbelianGroupElement_polycyclic(AbelianGroupElement_gap):
         r"""
         Return the tuple of exponents of ``self``.
 
-        OUTPUT:
-
-        - a tuple of integers
+        OUTPUT: tuple of integers
 
         EXAMPLES::
 
@@ -273,9 +264,7 @@ class AbelianGroup_gap(UniqueRepresentation, GroupMixinLibGAP, ParentLibGAP, Abe
 
         - ``S`` -- anything
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 
@@ -294,7 +283,7 @@ class AbelianGroup_gap(UniqueRepresentation, GroupMixinLibGAP, ParentLibGAP, Abe
 
     def _element_constructor_(self, x, check=True):
         r"""
-        Defines coercions and conversions.
+        Define coercions and conversions.
 
         INPUT:
 
@@ -493,9 +482,7 @@ class AbelianGroup_gap(UniqueRepresentation, GroupMixinLibGAP, ParentLibGAP, Abe
         Use :meth:`elementary_divisors` if you are looking for an
         invariant of the group.
 
-        OUTPUT:
-
-        - a tuple of integers
+        OUTPUT: tuple of integers
 
         EXAMPLES::
 
@@ -599,9 +586,7 @@ class AbelianGroup_gap(UniqueRepresentation, GroupMixinLibGAP, ParentLibGAP, Abe
 
         - ``gens`` -- a list of elements coercible into this group
 
-        OUTPUT:
-
-        - a subgroup
+        OUTPUT: a subgroup
 
         EXAMPLES::
 
@@ -644,9 +629,7 @@ class AbelianGroupGap(AbelianGroup_gap):
     - ``generator_orders`` -- a list of nonnegative integers where `0`
       gives a factor isomorphic to `\ZZ`
 
-    OUTPUT:
-
-    - an abelian group
+    OUTPUT: an abelian group
 
     EXAMPLES::
 
@@ -732,7 +715,7 @@ class AbelianGroupGap(AbelianGroup_gap):
 
     def __reduce__(self):
         r"""
-        Implements pickling.
+        Implement pickling.
 
         We have to work around the fact that gap does not provide pickling.
 
@@ -821,7 +804,7 @@ class AbelianGroupSubgroup_gap(AbelianGroup_gap):
 
     def __reduce__(self):
         r"""
-        Implements pickling.
+        Implement pickling.
 
         We have to work around the fact that gap does not provide pickling.
 
@@ -851,9 +834,7 @@ class AbelianGroupSubgroup_gap(AbelianGroup_gap):
 
         - ``x`` -- an element of this subgroup
 
-        OUTPUT:
-
-        The corresponding element of the ambient group
+        OUTPUT: the corresponding element of the ambient group
 
         EXAMPLES::
 
@@ -882,9 +863,7 @@ class AbelianGroupSubgroup_gap(AbelianGroup_gap):
 
         - ``x`` -- an element of the ambient group that actually lies in this subgroup.
 
-        OUTPUT:
-
-        The corresponding element of this subgroup
+        OUTPUT: the corresponding element of this subgroup
 
         EXAMPLES::
 
@@ -956,7 +935,7 @@ class AbelianGroupQuotient_gap(AbelianGroup_gap):
 
     def __reduce__(self):
         r"""
-        Implements pickling.
+        Implement pickling.
 
         We have to work around the fact that gap does not provide pickling.
 
@@ -981,9 +960,7 @@ class AbelianGroupQuotient_gap(AbelianGroup_gap):
 
         - ``S`` -- anything
 
-        OUTPUT:
-
-        Boolean.
+        OUTPUT: boolean
 
         EXAMPLES::
 

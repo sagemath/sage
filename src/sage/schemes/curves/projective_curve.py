@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.singular
 r"""
 Projective curves
@@ -2724,6 +2723,46 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
             if all(f.valuation(p) > 0 for f in fs):
                 places.append(p)
         return places
+
+    def jacobian(self, model, base_div=None):
+        """
+        Return the Jacobian of this curve.
+
+        INPUT:
+
+        - ``model`` -- model to use for arithmetic
+
+        - ``base_div`` -- an effective divisor for the model
+
+        The degree of the base divisor should satisfy certain degree condition
+        corresponding to the model used. The following table lists these
+        conditions. Let `g` be the geometric genus of the curve.
+
+        - ``hess``: ideal-based arithmetic; requires base divisor of degree `g`
+
+        - ``km_large``: Khuri-Makdisi's large model; requires base divisor of
+          degree at least `2g + 1`
+
+        - ``km_medium``: Khuri-Makdisi's medium model; requires base divisor of
+          degree at least `2g + 1`
+
+        - ``km_small``: Khuri-Makdisi's small model requires base divisor of
+          degree at least `g + 1`
+
+        We assume the curve (or its function field) has a rational place. If a
+        base divisor is not given, one is chosen using a rational place.
+
+        EXAMPLES::
+
+            sage: A.<x,y> = AffineSpace(GF(5), 2)
+            sage: C = Curve(y^2*(x^3 - 1) - (x^3 - 2)).projective_closure()
+            sage: J = C.jacobian(model='hess'); J
+            Jacobian of Projective Plane Curve over Finite Field of size 5
+             defined by 2*x0^5 - x0^2*x1^3 - x0^3*x2^2 + x1^3*x2^2 (Hess model)
+            sage: J.base_divisor().degree() == C.genus()
+            True
+        """
+        return self.function_field().jacobian(model, base_div, curve=self)
 
 
 class IntegralProjectiveCurve_finite_field(IntegralProjectiveCurve):

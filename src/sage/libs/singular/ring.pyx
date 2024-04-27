@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-singular
 """
 Wrapper for Singular's Rings
 

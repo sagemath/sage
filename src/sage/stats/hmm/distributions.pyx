@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: optional - numpy
 r"""
 Distributions used in implementing Hidden Markov Models

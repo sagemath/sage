@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Root system data for affine Cartan types
 """

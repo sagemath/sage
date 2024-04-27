@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 # distutils: language = c++
 # sage.doctest: optional - pyscipopt
 """
@@ -1275,7 +1274,7 @@ cdef class SCIPBackend(GenericBackend):
         EXAMPLES:
 
             sage: from sage.numerical.backends.generic_backend import get_solver
-            sage: lp = get_solver(solver="SCIP")
+            sage: p = get_solver(solver="SCIP")
             sage: p.solver_parameter("limits/time", 1)
             sage: p.solver_parameter("limits/time")
             1.0

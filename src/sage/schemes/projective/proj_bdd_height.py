@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Points of bounded height in projective spaces
 

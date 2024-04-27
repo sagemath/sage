@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Partition backtrack functions for lists -- a simple example of using partn_ref
 

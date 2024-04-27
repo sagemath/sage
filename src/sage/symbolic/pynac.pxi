@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 """
 Declarations for pynac, a Python frontend for ginac
 

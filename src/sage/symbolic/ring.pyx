@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-symbolics
+# -*- coding: utf-8 -*-
 """
 The symbolic ring
 """

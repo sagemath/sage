@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-plot
 r"""
 The Tachyon 3D Ray Tracer
 
@@ -630,7 +629,7 @@ class Tachyon(WithEqualityById, SageObject):
             sage: t._res()
             '\nresolution 300 700\n'
         """
-        return '\nresolution %s %s\n' % (self._xres, self._yres)
+        return f'\nresolution {self._xres} {self._yres}\n'
 
     def _camera(self):
         r"""
@@ -652,20 +651,14 @@ class Tachyon(WithEqualityById, SageObject):
         if self._aperture != '':
             camera_out = camera_out + r"""
               aperture %s""" % (float(self._aperture))
-        camera_out = camera_out + r"""
-              zoom %s
-              aspectratio %s
-              antialiasing %s
-              raydepth %s
-              center %s
-              viewdir %s
-              updir %s""" % (float(self._zoom),
-                             float(self._aspectratio),
-                             int(self._antialiasing),
-                             int(self._raydepth),
-                             tostr(self._camera_position),
-                             tostr(self._viewdir),
-                             tostr(self._updir))
+        camera_out = camera_out + fr"""
+              zoom {float(self._zoom)}
+              aspectratio {float(self._aspectratio)}
+              antialiasing {int(self._antialiasing)}
+              raydepth {int(self._raydepth)}
+              center {tostr(self._camera_position)}
+              viewdir {tostr(self._viewdir)}
+              updir {tostr(self._updir)}"""
         if self._frustum != '':
             camera_out = camera_out + r"""
               frustum %s""" % (tostr(self._frustum))
@@ -692,10 +685,10 @@ class Tachyon(WithEqualityById, SageObject):
         """
         return r"""
         begin_scene
-        %s
-        %s
-        %s
-        end_scene""" % (self._res(),
+        {}
+        {}
+        {}
+        end_scene""".format(self._res(),
                         self._camera(),
                         '\n'.join(x.str() for x in self._objects))
 
@@ -1084,7 +1077,7 @@ class Tachyon(WithEqualityById, SageObject):
                            e_rel=.01, e_abs=.01))
 
 
-class Light():
+class Light:
     r"""
     Represent lighting objects.
 
@@ -1126,15 +1119,14 @@ class Light():
                           color  1.0 1.0 1.0
 
         """
-        return r"""
-        light center %s
-              rad %s
-              color %s
-        """ % (tostr(self._center), self._radius,
-               tostr(self._color))
+        return fr"""
+        light center {tostr(self._center)}
+              rad {self._radius}
+              color {tostr(self._color)}
+        """
 
 
-class Texfunc():
+class Texfunc:
 
     def __init__(self, ttype=0, center=(0, 0, 0), rotate=(0, 0, 0),
                  scale=(1, 1, 1), imagefile=''):
@@ -1196,7 +1188,7 @@ class Texfunc():
             raise ValueError
 
 
-class Texture():
+class Texture:
 
     def __init__(self, name, ambient=0.2, diffuse=0.8,
                  specular=0.0, opacity=1.0,
@@ -1256,10 +1248,10 @@ class Texture():
             ['ambient', '0.2', 'diffuse', '0.8']
         """
         return r"""
-        texdef %s ambient %s diffuse %s specular %s opacity %s
-        phong %s %s phong_size %s
-        color %s texfunc %s
-        """ % (self._name,
+        texdef {} ambient {} diffuse {} specular {} opacity {}
+        phong {} {} phong_size {}
+        color {} texfunc {}
+        """.format(self._name,
                self._ambient,
                self._diffuse,
                self._specular,
@@ -1271,7 +1263,7 @@ class Texture():
                self._texfunc)
 
 
-class Sphere():
+class Sphere:
     r"""
     A class for creating spheres in tachyon.
     """
@@ -1306,12 +1298,12 @@ class Sphere():
             sage: s.str()
             '\n        sphere center  1.0 1.0 1.0  rad 1.0 r\n        '
         """
-        return r"""
-        sphere center %s rad %s %s
-        """ % (tostr(self._center), self._radius, self._texture)
+        return fr"""
+        sphere center {tostr(self._center)} rad {self._radius} {self._texture}
+        """
 
 
-class Ring():
+class Ring:
     r"""
     An annulus of zero thickness.
     """
@@ -1347,12 +1339,12 @@ class Ring():
             '\n        ring center  0.0 0.0 0.0  normal  1.0 1.0 0.0  inner 1.0 outer 2.0 s\n        '
         """
         return r"""
-        ring center %s normal %s inner %s outer %s %s
-        """ % (tostr(self._center), tostr(self._normal),
+        ring center {} normal {} inner {} outer {} {}
+        """.format(tostr(self._center), tostr(self._normal),
                self._inner, self._outer, self._texture)
 
 
-class FractalLandscape():
+class FractalLandscape:
     r"""
     Axis-aligned fractal landscape.
 
@@ -1389,12 +1381,12 @@ class FractalLandscape():
             '\n        scape res  20 20  scale  30 30  center  1.0 2.0 3.0  s\n        '
         """
         return r"""
-        scape res %s scale %s center %s %s
-        """ % (tostr(self._res, 2, int), tostr(self._scale, 2, int),
+        scape res {} scale {} center {} {}
+        """.format(tostr(self._res, 2, int), tostr(self._scale, 2, int),
                tostr(self._center), self._texture)
 
 
-class Cylinder():
+class Cylinder:
     r"""
     An infinite cylinder.
     """
@@ -1430,11 +1422,11 @@ class Cylinder():
             '\n        cylinder center  0.0 0.0 0.0  axis  1.0 1.0 1.0  rad 0.1 s\n        '
         """
         return r"""
-        cylinder center %s axis %s rad %s %s
-        """ % (tostr(self._center), tostr(self._axis), self._radius, self._texture)
+        cylinder center {} axis {} rad {} {}
+        """.format(tostr(self._center), tostr(self._axis), self._radius, self._texture)
 
 
-class Plane():
+class Plane:
     r"""
     An infinite plane.
     """
@@ -1466,12 +1458,12 @@ class Plane():
             sage: p.str()
             '\n        plane center  1.0 2.0 3.0  normal  1.0 2.0 4.0  s\n        '
         """
-        return r"""
-        plane center %s normal %s %s
-        """ % (tostr(self._center), tostr(self._normal), self._texture)
+        return fr"""
+        plane center {tostr(self._center)} normal {tostr(self._normal)} {self._texture}
+        """
 
 
-class FCylinder():
+class FCylinder:
     r"""
     A finite cylinder.
     """
@@ -1505,11 +1497,11 @@ class FCylinder():
             '\n        fcylinder base  0.0 0.0 0.0  apex  1.0 1.0 1.0  rad 0.1 s\n        '
         """
         return r"""
-        fcylinder base %s apex %s rad %s %s
-        """ % (tostr(self._center), tostr(self._axis), self._radius, self._texture)
+        fcylinder base {} apex {} rad {} {}
+        """.format(tostr(self._center), tostr(self._axis), self._radius, self._texture)
 
 
-class Axis_aligned_box():
+class Axis_aligned_box:
     r"""
     Box with axis-aligned edges with the given min and max coordinates.
     """
@@ -1541,9 +1533,9 @@ class Axis_aligned_box():
             sage: aab.str()
             '\n        box min  0.0 0.0 0.0  max  1.0 1.0 1.0  s\n        '
         """
-        return r"""
-        box min %s max %s %s
-        """ % (tostr(self._min_p), tostr(self._max_p), self._texture)
+        return fr"""
+        box min {tostr(self._min_p)} max {tostr(self._max_p)} {self._texture}
+        """
 
 
 class TachyonTriangle(Triangle):
@@ -1561,10 +1553,10 @@ class TachyonTriangle(Triangle):
             sage: t.str()
             '\n        TRI V0  -1.0 -1.0 -1.0   V1  0.0 0.0 0.0    V2  1.0 2.0 3.0 \n            0\n        '
         """
-        return r"""
-        TRI V0 %s  V1 %s   V2 %s
-            %s
-        """ % (tostr(self._a), tostr(self._b), tostr(self._c), self._color)
+        return fr"""
+        TRI V0 {tostr(self._a)}  V1 {tostr(self._b)}   V2 {tostr(self._c)}
+            {self._color}
+        """
 
 
 class TachyonSmoothTriangle(SmoothTriangle):
@@ -1582,12 +1574,11 @@ class TachyonSmoothTriangle(SmoothTriangle):
             sage: t.str()
             '\n        STRI V0  ...  1.0 0.0 0.0  N1  0.0 1.0 0.0   N2  0.0 0.0 1.0 \n             0\n        '
         """
-        return r"""
-        STRI V0 %s V1 %s  V2 %s
-             N0 %s N1 %s  N2 %s
-             %s
-        """ % (tostr(self._a), tostr(self._b), tostr(self._c),
-               tostr(self._da), tostr(self._db), tostr(self._dc), self._color)
+        return fr"""
+        STRI V0 {tostr(self._a)} V1 {tostr(self._b)}  V2 {tostr(self._c)}
+             N0 {tostr(self._da)} N1 {tostr(self._db)}  N2 {tostr(self._dc)}
+             {self._color}
+        """
 
 
 class TachyonTriangleFactory(TriangleFactory):
@@ -1664,7 +1655,7 @@ class TachyonTriangleFactory(TriangleFactory):
         return self._tachyon.texture_recolor(self._texture, list)
 
 
-class ParametricPlot():
+class ParametricPlot:
     r"""
     Parametric plotting routines.
     """

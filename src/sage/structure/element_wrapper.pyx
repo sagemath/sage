@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-objects
+# -*- coding: utf-8 -*-
 """
 Element Wrapper
 

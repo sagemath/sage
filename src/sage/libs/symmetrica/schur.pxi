@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 cdef extern from 'symmetrica/def.h':
     INT outerproduct_schur(OP parta, OP partb, OP result)
     INT dimension_schur(OP a, OP result)

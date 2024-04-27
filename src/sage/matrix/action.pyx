@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Actions used by the coercion model for matrix and vector multiplications
 

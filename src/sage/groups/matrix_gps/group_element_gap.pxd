@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-gap
 from sage.groups.libgap_wrapper cimport ElementLibGAP
 
 cdef class MatrixGroupElement_gap(ElementLibGAP):

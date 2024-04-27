@@ -1,3 +1,4 @@
+# coding: utf-8
 r"""
 Solution of polynomial systems using msolve
 

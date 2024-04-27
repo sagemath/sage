@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-ntl
 r"""
 Finite residue fields (NTL implementation)
 """

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: optional - sage.groups sage.modules
 r"""
 Enumerating binary self-dual codes

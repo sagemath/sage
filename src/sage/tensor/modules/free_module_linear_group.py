@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 General linear group of a free module
 

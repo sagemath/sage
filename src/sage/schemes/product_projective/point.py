@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Points for products of projective spaces
 

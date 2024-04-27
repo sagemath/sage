@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 cimport cython
 
 cdef struct pair_s:

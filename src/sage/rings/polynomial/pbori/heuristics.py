@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-brial
 from .PyPolyBoRi import Polynomial, gauss_on_polys
 
 

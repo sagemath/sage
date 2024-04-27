@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 r"""
 Balanced Incomplete Block Designs (BIBD)
 

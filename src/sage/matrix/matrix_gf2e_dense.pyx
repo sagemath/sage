@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-linbox
+# -*- coding: utf-8 -*-
 # distutils: libraries = m4rie M4RI_LIBRARIES m
 # distutils: library_dirs = M4RI_LIBDIR
 # distutils: include_dirs = M4RI_INCDIR

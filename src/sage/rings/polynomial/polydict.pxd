@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 cdef class PolyDict:
     cdef dict __repn
 

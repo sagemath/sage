@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-plot
 r"""
 Adaptive refinement code for 3d surface plotting
 
@@ -25,6 +24,7 @@ AUTHOR:
 from sage.plot.colors import hue
 from math import sqrt
 import random
+
 
 class Triangle:
     """
@@ -65,7 +65,7 @@ class Triangle:
             sage: print(tri.str())
             [0, 0, 0] [-1, 2, 3] [0, 2, 0] 0
         """
-        return "%s %s %s %s" % (self._a, self._b, self._c, self._color)
+        return f"{self._a} {self._b} {self._c} {self._color}"
 
     def set_color(self, color):
         """
@@ -95,6 +95,7 @@ class Triangle:
             ([0, 0, 0], [-1, 2, 3], [0, 2, 1])
         """
         return (self._a, self._b, self._c)
+
 
 class SmoothTriangle(Triangle):
     """
@@ -136,7 +137,7 @@ class SmoothTriangle(Triangle):
             sage: print(t.str())
             [1, 2, 3] [2, 3, 4] [0, 0, 0] 0 [0, 0, 1] [0, 1, 0] [1, 0, 0]
         """
-        return "%s %s %s %s %s %s %s" % (self._a, self._b, self._c, self._color, self._da, self._db, self._dc)
+        return "{} {} {} {} {} {} {}".format(self._a, self._b, self._c, self._color, self._da, self._db, self._dc)
 
     def get_normals(self):
         """

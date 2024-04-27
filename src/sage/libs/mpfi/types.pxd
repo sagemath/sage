@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-ntl
 from sage.libs.mpfr.types cimport __mpfr_struct
 
 cdef extern from "mpfi.h":

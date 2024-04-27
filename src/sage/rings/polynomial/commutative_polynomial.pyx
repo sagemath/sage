@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 cdef class CommutativePolynomial(CommutativeAlgebraElement):
     r"""
     Abstract base class for commutative polynomials in any number of variables

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-ntl
 # sage.doctest: needs sage.libs.ntl sage.rings.finite_rings
 # distutils: libraries = NTL_LIBRARIES gmp
 # distutils: extra_compile_args = NTL_CFLAGS
@@ -21,7 +20,9 @@ from sage.libs.ntl.ntl_ZZ_pEContext cimport ntl_ZZ_pEContext_class
 from sage.libs.ntl.ZZ_pE cimport ZZ_pE_to_ZZ_pX
 from sage.libs.ntl.ZZ_pX cimport ZZ_pX_deg, ZZ_pX_coeff
 from sage.libs.ntl.ZZ_p cimport ZZ_p_rep
-from sage.libs.ntl.convert cimport ZZ_to_mpz
+from sage.libs.ntl.convert cimport ZZ_to_mpz, mpz_to_ZZ
+
+from sage.structure.element import have_same_parent, canonical_coercion
 
 # We need to define this stuff before including the templating stuff
 # to make sure the function get_cparent is found since it is used in
@@ -100,7 +101,7 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             sage: R([3,x])
             Traceback (most recent call last):
             ...
-            TypeError: not a constant polynomial
+            TypeError: x is not a constant polynomial
 
         Check that NTL contexts are correctly restored and that
         :issue:`9524` has been fixed::
@@ -616,4 +617,98 @@ cdef class Polynomial_ZZ_pEX(Polynomial_template):
             sig_on()
             ZZ_pEX_InvTrunc(r.x, self.x, prec)
             sig_off()
+        return r
+
+    def __pow__(self, exp, modulus):
+        r"""
+        Exponentiation of ``self``.
+
+        If ``modulus`` is not ``None``, the exponentiation is performed
+        modulo the polynomial ``modulus``.
+
+        EXAMPLES::
+
+            sage: K.<a> = GF(101^2, 'a', modulus=[1,1,1])
+            sage: R.<x> = PolynomialRing(K, implementation="NTL")
+            sage: pow(x, 100)
+            x^100
+            sage: pow(x + 3, 5)
+            x^5 + 15*x^4 + 90*x^3 + 68*x^2 + x + 41
+
+        If modulus is not ``None``, performs modular exponentiation::
+
+            sage: K.<a> = GF(101^2, 'a', modulus=[1,1,1])
+            sage: R.<x> = PolynomialRing(K, implementation="NTL")
+            sage: pow(x, 100, x^2 + x + a)
+            (19*a + 64)*x + 30*a + 2
+            sage: pow(x, 100 * 101**200, x^2 + x + a)
+            (19*a + 64)*x + 30*a + 2
+
+        The modulus can have smaller degree than ``self``::
+
+            sage: K.<a> = GF(101^2, 'a', modulus=[1,1,1])
+            sage: R.<x> = PolynomialRing(K, implementation="NTL")
+            sage: pow(x^4, 25, x^2 + x + a)
+            (19*a + 64)*x + 30*a + 2
+
+        TESTS:
+
+        Canonical coercion should apply::
+
+            sage: xx = GF(101)["x"].gen()
+            sage: pow(x+1, 25, 2)
+            0
+            sage: pow(x + a, 101**2, xx^3 + xx + 1)
+            4*x^2 + 44*x + a + 70
+            sage: pow(x + a, int(101**2), xx^3 + xx + 1)
+            4*x^2 + 44*x + a + 70
+            sage: xx = polygen(GF(97))
+            sage: _ = pow(x + a, 101**2, xx^3 + xx + 1)
+            Traceback (most recent call last):
+            ...
+            TypeError: no common canonical parent for objects with parents: ...
+         """
+        exp = Integer(exp)
+        if modulus is not None:
+            # Handle when modulus is zero
+            if modulus.is_zero():
+                raise ZeroDivisionError("modulus must be nonzero")
+
+            # Similar to coerce_binop
+            if not have_same_parent(self, modulus):
+                a, m = canonical_coercion(self, modulus)
+                if a is not self:
+                    return pow(a, exp, m)
+                modulus = m
+            self = self % modulus
+            if exp > 0 and exp.bit_length() >= 32:
+                return (<Polynomial_ZZ_pEX>self)._powmod_bigexp(Integer(exp), modulus)
+        return Polynomial_template.__pow__(self, exp, modulus)
+
+    cdef _powmod_bigexp(Polynomial_ZZ_pEX self, Integer exp, Polynomial_ZZ_pEX modulus):
+        """
+        Modular exponentiation for large exponents.
+        """
+        self._parent._modulus.restore()
+        cdef Polynomial_ZZ_pEX r
+        cdef ZZ_c e_ZZ
+        cdef ZZ_pEX_c y
+        cdef ZZ_pEX_Modulus_c mod
+
+        mpz_to_ZZ(&e_ZZ, exp.value)
+        r = Polynomial_ZZ_pEX.__new__(Polynomial_ZZ_pEX)
+        celement_construct(&r.x, (<Polynomial_template>self)._cparent)
+        r._parent = (<Polynomial_template>self)._parent
+        r._cparent = (<Polynomial_template>self)._cparent
+        ZZ_pEX_Modulus_build(mod, modulus.x)
+
+        sig_on()
+        if ZZ_pEX_IsX(self.x):
+            ZZ_pEX_PowerXMod_ZZ_pre(r.x, e_ZZ, mod)
+        elif ZZ_pEX_deg(self.x) < ZZ_pEX_deg(modulus.x):
+            ZZ_pEX_PowerMod_ZZ_pre(r.x, self.x, e_ZZ, mod)
+        else:
+            ZZ_pEX_rem_pre(y, self.x, mod)
+            ZZ_pEX_PowerMod_ZZ_pre(r.x, y, e_ZZ, mod)
+        sig_off()
         return r

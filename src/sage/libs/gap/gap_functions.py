@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-gap
 """Common global functions defined by GAP."""
 
 ###############################################################################

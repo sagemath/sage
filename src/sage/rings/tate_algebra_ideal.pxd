@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 from sage.rings.tate_algebra_element cimport TateAlgebraTerm
 from sage.rings.tate_algebra_element cimport TateAlgebraElement
 

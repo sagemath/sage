@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs numpy sage.modules
 r"""
 Hidden Markov Models

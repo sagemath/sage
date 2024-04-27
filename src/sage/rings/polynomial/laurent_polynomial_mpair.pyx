@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Elements of multivariate Laurent polynomial rings
 """
@@ -17,7 +16,8 @@ from sage.structure.factorization import Factorization
 from sage.misc.derivative import multi_derivative
 from sage.rings.polynomial.polydict cimport monomial_exponent
 from sage.matrix.matrix0 cimport Matrix
-from sage.rings.infinity import Infinity
+from sage.rings.infinity import Infinity, minus_infinity
+
 
 cdef class LaurentPolynomial_mpair(LaurentPolynomial):
     """
@@ -1156,21 +1156,56 @@ cdef class LaurentPolynomial_mpair(LaurentPolynomial):
         return [a.eadd(self._mon) for a in self._poly.exponents()]
 
     def degree(self, x=None):
-        """
-        Return the degree of ``x`` in ``self``.
+        r"""
+        Return the degree of ``self``.
+
+        INPUT:
+
+        - ``x`` -- (default: ``None``) a generator of the parent ring
+
+        OUTPUT:
+
+        If ``x`` is ``None``, return the total degree of ``self``.
+        If ``x`` is a given generator of the parent ring,
+        the output is the maximum degree of ``x`` in ``self``.
 
         EXAMPLES::
 
             sage: R.<x,y,z> = LaurentPolynomialRing(QQ)
             sage: f = 4*x^7*z^-1 + 3*x^3*y + 2*x^4*z^-2 + x^6*y^-7
+            sage: f.degree()
+            6
             sage: f.degree(x)
             7
             sage: f.degree(y)
             1
             sage: f.degree(z)
             0
+
+        The zero polynomial is defined to have degree `-\infty`::
+
+            sage: R.<x, y, z> = LaurentPolynomialRing(ZZ)
+            sage: R.zero().degree()
+            -Infinity
+            sage: R.zero().degree(x)
+            -Infinity
+            sage: R.zero().degree(x) == R.zero().degree(y) == R.zero().degree(z)
+            True
+
+        TESTS::
+
+            sage: R.<x, y, z> = LaurentPolynomialRing(ZZ)
+            sage: f = x + y + z
+            sage: f.degree(1)
+            Traceback (most recent call last):
+            ...
+            TypeError: 1 is not a generator of parent
         """
-        if not x:
+        # The zero polynomial is defined to have degree -Infinity
+        if self.is_zero():
+            return minus_infinity
+
+        if x is None:
             return self._poly.total_degree() + sum(self._mon)
 
         # Get the index of the generator or error

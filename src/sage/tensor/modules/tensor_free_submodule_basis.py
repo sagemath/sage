@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Standard bases of free submodules of tensor modules defined by some monoterm symmetries
 

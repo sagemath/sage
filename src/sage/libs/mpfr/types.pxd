@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 from sage.libs.gmp.types cimport mp_limb_t
 
 cdef extern from "mpfr.h":

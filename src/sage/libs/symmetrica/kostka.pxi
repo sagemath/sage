@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 from cpython.object cimport *
 from cysignals.signals cimport sig_on, sig_off
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-linbox
 ##############################################################################
 #       Copyright (C) 2010 Martin Albrecht <martinralbrecht@googlemail.com>
 #  Distributed under the terms of the GNU General Public License (GPL)

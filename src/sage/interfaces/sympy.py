@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 # sage.doctest: optional - sympy
 """
 SymPy --> Sage conversion

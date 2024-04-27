@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-categories
+# -*- encoding: utf-8 -*-
 """
 Gosper iterator for homographic transformations
 

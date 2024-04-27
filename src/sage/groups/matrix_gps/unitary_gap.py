@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-gap
 # sage.doctest: needs sage.rings.finite_rings
 r"""
 Unitary Groups `GU(n,q)` and `SU(n,q)` with GAP
@@ -42,9 +41,7 @@ class UnitaryMatrixGroup_gap(UnitaryMatrixGroup_generic, NamedMatrixGroup_gap, F
         """
         Return the hermitian form preserved by the unitary group.
 
-        OUTPUT:
-
-        A square matrix describing the bilinear form
+        OUTPUT: a square matrix describing the bilinear form
 
         EXAMPLES::
 

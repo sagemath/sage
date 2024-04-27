@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-plot
 # sage.doctest: needs sage.symbolic
 r"""
 2D plotting
@@ -581,17 +580,17 @@ AUTHORS:
 
 from functools import reduce
 
-## IMPORTANT: Do *not* import matplotlib at module scope.  It takes a
-## surprisingly long time to initialize itself.  It's better if it is
-## imported in functions, so it only gets started if it is actually
-## going to be used.
+# IMPORTANT: Do *not* import matplotlib at module scope.  It takes a
+# surprisingly long time to initialize itself.  It's better if it is
+# imported in functions, so it only gets started if it is actually
+# going to be used.
 
-#DEFAULT_FIGSIZE=(6, 3.70820393249937)
+# DEFAULT_FIGSIZE=(6, 3.70820393249937)
 import sage.misc.verbose
 from sage.arith.srange import srange
 
-from sage.misc.randstate import current_randstate #for plot adaptive refinement
-from math import sin, cos, pi, log, exp #for polar_plot and log scaling
+from sage.misc.randstate import current_randstate  # for plot adaptive refinement
+from math import sin, cos, pi, log, exp  # for polar_plot and log scaling
 
 from sage.ext.fast_eval import fast_float, is_fast_float
 from sage.structure.element import Expression
@@ -606,10 +605,10 @@ from sage.plot.line import line
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.plot.line', 'line2d', deprecation=28717)
 
-#Currently not used - see comment immediately above about
-#figure.canvas.mpl_connect('draw_event', pad_for_tick_labels)
+# Currently not used - see comment immediately above about
+# figure.canvas.mpl_connect('draw_event', pad_for_tick_labels)
 # TODO - figure out how to use this, add documentation
-#def pad_for_tick_labels(event):
+# def pad_for_tick_labels(event):
 #    import matplotlib.transforms as mtransforms
 #    figure=event.canvas.figure
 #    bboxes = []
@@ -639,10 +638,10 @@ lazy_import('sage.plot.line', 'line2d', deprecation=28717)
 #        figure.canvas.draw()
 #    return False
 #
-#Currently not used - see comment above about
-#figure.canvas.mpl_connect('draw_event', pad_for_tick_labels)
+# Currently not used - see comment above about
+# figure.canvas.mpl_connect('draw_event', pad_for_tick_labels)
 # TODO - figure out how to use this, add documentation
-#def adjust_figure_to_contain_bbox(fig, bbox,pad=1.1):
+# def adjust_figure_to_contain_bbox(fig, bbox,pad=1.1):
 #    """
 #    For each amount we are over (in axes coordinates), we adjust by over*pad
 #    to give ourselves a bit of padding.
@@ -673,6 +672,7 @@ lazy_import('sage.plot.line', 'line2d', deprecation=28717)
 #        return False
 
 _SelectiveFormatterClass = None
+
 
 def SelectiveFormatter(formatter, skip_values):
     """
@@ -774,6 +774,7 @@ def SelectiveFormatter(formatter, skip_values):
 
     return _SelectiveFormatterClass(formatter, skip_values)
 
+
 def xydata_from_point_list(points):
     r"""
     Return two lists (xdata, ydata), each coerced to a list of floats,
@@ -837,6 +838,7 @@ def xydata_from_point_list(points):
                 xdata.append(float(x))
                 ydata.append(float(y))
     return xdata, ydata
+
 
 @options(alpha=1, thickness=1, fill=False, fillcolor='automatic',
          fillalpha=0.5, plot_points=200, adaptive_tolerance=0.01,
@@ -2067,15 +2069,16 @@ def plot(funcs, *args, **kwds):
             xmax = kwds.pop('xmax', 1)
             G = _plot(funcs, (xmin, xmax), *args, **kwds)
         else:
-            sage.misc.verbose.verbose("there were %s extra arguments (besides %s)" % (n, funcs), level=0)
+            sage.misc.verbose.verbose(f"there were {n} extra arguments (besides {funcs})", level=0)
 
     G._set_extra_kwds(G_kwds)
     if do_show:
         G.show()
     return G
 
+
 def _plot(funcs, xrange, parametric=False,
-              polar=False, fill=False, label='', randomize=True, **options):
+          polar=False, fill=False, label='', randomize=True, **options):
     """
     Internal function which does the actual plotting.
 
@@ -2428,7 +2431,7 @@ def _plot(funcs, xrange, parametric=False,
                         fstr = 'max'
                     else:
                         fstr = 'min'
-                    msg = "WARNING: You use the built-in function %s for filling. You probably wanted the string '%s'." % (fstr, fstr)
+                    msg = "WARNING: You use the built-in function {} for filling. You probably wanted the string '{}'.".format(fstr, fstr)
                     sage.misc.verbose.verbose(msg, level=0)
                 if not is_fast_float(fill):
                     fill_f = fast_float(fill, expect_one_var=True)
@@ -2761,6 +2764,7 @@ def parametric_plot(funcs, *args, **kwargs):
     else:
         raise ValueError("the number of functions and the number of variable ranges is not a supported combination for a 2d or 3d parametric plots")
 
+
 @options(aspect_ratio=1.0)
 def polar_plot(funcs, *args, **kwds):
     r"""
@@ -2865,6 +2869,7 @@ def polar_plot(funcs, *args, **kwds):
     """
     kwds['polar'] = True
     return plot(funcs, *args, **kwds)
+
 
 @options(aspect_ratio='automatic')
 def list_plot(data, plotjoined=False, **kwargs):
@@ -3155,6 +3160,8 @@ def list_plot(data, plotjoined=False, **kwargs):
             return point(data, **kwargs)
 
 #------------------------ Graphs on log scale ---------------------------#
+
+
 @options(base=10)
 def plot_loglog(funcs, *args, **kwds):
     """
@@ -3204,6 +3211,7 @@ def plot_loglog(funcs, *args, **kwds):
 
     """
     return plot(funcs, *args, scale='loglog', **kwds)
+
 
 @options(base=10)
 def plot_semilogx(funcs, *args, **kwds):
@@ -3257,6 +3265,7 @@ def plot_semilogx(funcs, *args, **kwds):
     """
     return plot(funcs, *args, scale='semilogx', **kwds)
 
+
 @options(base=10)
 def plot_semilogy(funcs, *args, **kwds):
     """
@@ -3294,6 +3303,7 @@ def plot_semilogy(funcs, *args, **kwds):
 
     """
     return plot(funcs, *args, scale='semilogy', **kwds)
+
 
 @options(base=10)
 def list_plot_loglog(data, plotjoined=False, **kwds):
@@ -3362,6 +3372,7 @@ def list_plot_loglog(data, plotjoined=False, **kwds):
     """
     return list_plot(data, plotjoined=plotjoined, scale='loglog', **kwds)
 
+
 @options(base=10)
 def list_plot_semilogx(data, plotjoined=False, **kwds):
     """
@@ -3416,6 +3427,7 @@ def list_plot_semilogx(data, plotjoined=False, **kwds):
 
     """
     return list_plot(data, plotjoined=plotjoined, scale='semilogx', **kwds)
+
 
 @options(base=10)
 def list_plot_semilogy(data, plotjoined=False, **kwds):
@@ -3475,6 +3487,7 @@ def list_plot_semilogy(data, plotjoined=False, **kwds):
     """
     return list_plot(data, plotjoined=plotjoined, scale='semilogy', **kwds)
 
+
 def to_float_list(v):
     """
     Given a list or tuple or iterable v, coerce each element of v to a
@@ -3487,6 +3500,7 @@ def to_float_list(v):
         [1.0, 0.5, 3.0]
     """
     return [float(x) for x in v]
+
 
 def reshape(v, n, m):
     """
@@ -3553,6 +3567,7 @@ def reshape(v, n, m):
         L.append(w)
 
     return L
+
 
 def graphics_array(array, nrows=None, ncols=None):
     r"""
@@ -3724,6 +3739,7 @@ def graphics_array(array, nrows=None, ncols=None):
         array = reshape(array, nrows, ncols)
     return GraphicsArray(array)
 
+
 def multi_graphics(graphics_list):
     r"""
     Plot a list of graphics at specified positions on a single canvas.
@@ -3798,6 +3814,7 @@ def multi_graphics(graphics_list):
     """
     return MultiGraphics(graphics_list)
 
+
 def minmax_data(xdata, ydata, dict=False):
     """
     Return the minimums and maximums of ``xdata`` and ``ydata``.
@@ -3832,6 +3849,7 @@ def minmax_data(xdata, ydata, dict=False):
                 'ymin': ymin, 'ymax': ymax}
     else:
         return xmin, xmax, ymin, ymax
+
 
 def adaptive_refinement(f, p1, p2, adaptive_tolerance=0.01,
                         adaptive_recursion=5, level=0, *, excluded=False):
@@ -3914,14 +3932,14 @@ def adaptive_refinement(f, p1, p2, adaptive_tolerance=0.01,
     try:
         y = float(f(x))
         if str(y) in ['nan', 'NaN', 'inf', '-inf']:
-            sage.misc.verbose.verbose("%s\nUnable to compute f(%s)" % (msg, x),1)
+            sage.misc.verbose.verbose(f"{msg}\nUnable to compute f({x})",1)
             # give up for this branch
             if excluded:
                 return [(x, 'NaN')]
             return []
 
     except (ZeroDivisionError, TypeError, ValueError, OverflowError) as msg:
-        sage.misc.verbose.verbose("%s\nUnable to compute f(%s)" % (msg, x), 1)
+        sage.misc.verbose.verbose(f"{msg}\nUnable to compute f({x})", 1)
         # give up for this branch
         if excluded:
             return [(x, 'NaN')]
@@ -3942,6 +3960,7 @@ def adaptive_refinement(f, p1, p2, adaptive_tolerance=0.01,
                     excluded=excluded)
     else:
         return []
+
 
 def generate_plot_points(f, xrange, plot_points=5, adaptive_tolerance=0.01,
                          adaptive_recursion=5, randomize=True,
@@ -4074,7 +4093,7 @@ def generate_plot_points(f, xrange, plot_points=5, adaptive_tolerance=0.01,
                 exception_indices.append(i)
 
         except (ArithmeticError, TypeError, ValueError) as m:
-            sage.misc.verbose.verbose("%s\nUnable to compute f(%s)" % (m, xi), 1)
+            sage.misc.verbose.verbose(f"{m}\nUnable to compute f({xi})", 1)
 
             if i == 0: # Given an error for left endpoint, try to move it in slightly
                 for j in range(1, 99):

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 r"""
 The functions in this file are used in creating new p-adic elements.
 

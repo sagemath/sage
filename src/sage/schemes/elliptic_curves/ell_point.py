@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 Points on elliptic curves
 
@@ -2338,6 +2337,62 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         ret = ret**e
         return ret
 
+    def point_of_jacobian_of_curve(self):
+        r"""
+        Return the point in the Jacobian of the curve.
+
+        The Jacobian is the one attached to the projective curve associated
+        with this elliptic curve.
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.finite_rings
+            sage: k.<a> = GF((5,2))
+            sage: E = EllipticCurve(k,[1,0]); E
+            Elliptic Curve defined by y^2 = x^3 + x over Finite Field in a of size 5^2
+            sage: E.order()
+            32
+            sage: P = E([a, 2*a + 4])
+            sage: P
+            (a : 2*a + 4 : 1)
+            sage: P.order()
+            8
+            sage: p = P.point_of_jacobian_of_curve()
+            sage: p
+            [Place (x + 4*a, y + 3*a + 1)]
+            sage: p.order()
+            8
+            sage: Q = 3*P
+            sage: q = Q.point_of_jacobian_of_curve()
+            sage: q == 3*p
+            True
+            sage: G = p.parent()
+            sage: G.order()
+            32
+            sage: G
+            Group of rational points of Jacobian over Finite Field in a of size 5^2 (Hess model)
+            sage: J = G.parent(); J
+            Jacobian of Projective Plane Curve over Finite Field in a of size 5^2
+             defined by x^2*y + y^3 - x*z^2 (Hess model)
+            sage: J.curve() == E.affine_patch(2).projective_closure()
+            True
+        """
+        from sage.schemes.curves.constructor import Curve
+        C = self.curve()
+        A = C.ambient_space()  # projective plane
+        x, y, z = self
+
+        X = Curve(C.defining_ideal().gens(), A)
+        X = X.affine_patch(2).projective_closure()
+        F = X.function_field()
+        P = X(z,x,y).place()
+
+        Pinf = F.places_infinite()[0]
+        assert Pinf.degree() == 1, "no rational point at infinity"
+
+        J = X.jacobian(model='hess', base_div=F.genus()*Pinf)
+        G = J.group(self.base_ring())
+        return G(P - P.degree()*Pinf)
 
 class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
     """

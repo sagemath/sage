@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Declaration file for simple set datastructures
 

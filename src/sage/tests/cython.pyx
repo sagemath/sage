@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-repl
 """
 This file collects tests requiring Cython.
 """

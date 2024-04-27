@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Parallel iterator built using the ``fork()`` system call
 """

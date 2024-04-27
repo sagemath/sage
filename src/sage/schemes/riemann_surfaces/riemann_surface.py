@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs scipy sage.graphs sage.groups
 r"""
 Riemann matrices and endomorphism rings of algebraic Riemann surfaces

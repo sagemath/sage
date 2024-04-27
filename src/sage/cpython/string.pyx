@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-objects
+# -*- encoding: utf-8 -*-
 """
 String <-> bytes encoding/decoding
 

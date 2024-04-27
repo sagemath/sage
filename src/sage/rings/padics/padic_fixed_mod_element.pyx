@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 """
 `p`-adic Fixed-Mod Element
 

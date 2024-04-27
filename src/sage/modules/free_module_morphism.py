@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 """
 Morphisms of free modules
 
@@ -42,6 +41,7 @@ TESTS::
 # be coercible into vector space of appropriate dimension.
 
 import sage.modules.free_module as free_module
+
 from sage.categories.morphism import Morphism
 from sage.modules import free_module_homspace, matrix_morphism
 from sage.structure.richcmp import rich_to_bool, richcmp
@@ -50,18 +50,29 @@ from sage.structure.sequence import Sequence
 
 def is_FreeModuleMorphism(x):
     """
+    This function is deprecated.
+
     EXAMPLES::
 
         sage: V = ZZ^2; f = V.hom([V.1, -2*V.0])
         sage: sage.modules.free_module_morphism.is_FreeModuleMorphism(f)
+        doctest:warning...
+        DeprecationWarning: is_FreeModuleMorphism is deprecated;
+        use isinstance(..., FreeModuleMorphism) or categories instead
+        See https://github.com/sagemath/sage/issues/37731 for details.
         True
         sage: sage.modules.free_module_morphism.is_FreeModuleMorphism(0)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37731,
+                "is_FreeModuleMorphism is deprecated; "
+                "use isinstance(..., FreeModuleMorphism) or categories instead")
     return isinstance(x, FreeModuleMorphism)
 
 
 class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
+
     def __init__(self, parent, A, side="left"):
         """
         INPUT:
@@ -635,55 +646,6 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
         ev = self.eigenvectors(extend)
         return [(vec[0], Sequence(vec[1]).universe().subspace(vec[1]))
                 for vec in ev]
-
-    def minimal_polynomial(self, var='x'):
-        r"""
-        Computes the minimal polynomial.
-
-        ``minpoly()`` and ``minimal_polynomial()`` are the same method.
-
-        INPUT:
-
-        - ``var`` - string (default: 'x') a variable name
-
-        OUTPUT:
-
-        polynomial in var - the minimal polynomial of the endomorphism.
-
-        EXAMPLES:
-
-        Compute the minimal polynomial, and check it. ::
-
-            sage: V = GF(7)^3
-            sage: H = V.Hom(V)([[0,1,2], [-1,0,3], [2,4,1]])
-            sage: H
-            Vector space morphism represented by the matrix:
-            [0 1 2]
-            [6 0 3]
-            [2 4 1]
-            Domain:   Vector space of dimension 3 over Finite Field of size 7
-            Codomain: Vector space of dimension 3 over Finite Field of size 7
-
-            sage: H.minpoly()                                                           # needs sage.libs.pari
-            x^3 + 6*x^2 + 6*x + 1
-
-            sage: H.minimal_polynomial()                                                # needs sage.libs.pari
-            x^3 + 6*x^2 + 6*x + 1
-
-            sage: H^3 + (H^2)*6 + H*6 + 1
-            Vector space morphism represented by the matrix:
-            [0 0 0]
-            [0 0 0]
-            [0 0 0]
-            Domain:   Vector space of dimension 3 over Finite Field of size 7
-            Codomain: Vector space of dimension 3 over Finite Field of size 7
-        """
-        if self.is_endomorphism():
-            return self.matrix().minpoly(var)
-        else:
-            raise TypeError("not an endomorphism")
-
-    minpoly = minimal_polynomial
 
 
 class BaseIsomorphism1D(Morphism):

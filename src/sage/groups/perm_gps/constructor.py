@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-gap
 """
 Constructor for permutations
 
@@ -171,10 +170,8 @@ def standardize_generator(g, convert_dict=None, as_cycles=False):
     - ``as_cycles`` -- (default: ``False``) whether the output should be
       as cycles or in one-line notation
 
-    OUTPUT:
-
-    The permutation in as a list in one-line notation or a list of cycles
-    as tuples.
+    OUTPUT: the permutation in as a list in one-line notation or a list of
+    cycles as tuples.
 
     EXAMPLES::
 

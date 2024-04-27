@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 cdef class ode_system:
    cdef int  c_j(self,double , double *, double *,double *) noexcept
 

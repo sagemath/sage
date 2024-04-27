@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 from sage.libs.mpc.types cimport mpc_t, mpc_rnd_t
 
 cimport sage.structure.element

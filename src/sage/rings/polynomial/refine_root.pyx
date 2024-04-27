@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 """
 Refine polynomial roots using Newton--Raphson
 

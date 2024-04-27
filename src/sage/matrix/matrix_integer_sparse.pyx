@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-linbox
+# -*- coding: utf-8 -*-
 r"""
 Sparse integer matrices
 

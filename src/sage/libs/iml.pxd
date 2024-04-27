@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-linbox
 from sage.libs.gmp.types cimport mpz_t
 
 cdef extern from "iml.h":

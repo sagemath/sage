@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 cpdef call_registered_function(unsigned serial,
                                int nargs,
                                list args,

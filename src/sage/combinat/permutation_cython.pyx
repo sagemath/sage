@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Permutations (Cython file)
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Manifold Subsets Defined as Pullbacks of Subsets under Continuous Maps
 """

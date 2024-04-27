@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 r"""
 Library of commonly used, famous, or interesting polytopes
 

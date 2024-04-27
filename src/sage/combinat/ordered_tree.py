@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 """
 Ordered Rooted Trees
 

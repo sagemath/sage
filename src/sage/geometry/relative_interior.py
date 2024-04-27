@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 r"""
 Relative Interiors of Polyhedra and Cones
 """

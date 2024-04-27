@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-singular
 from sage.libs.singular.decl cimport *
 from sage.rings.ring cimport Ring
 from sage.structure.element cimport RingElement, Element

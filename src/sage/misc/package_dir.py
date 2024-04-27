@@ -116,7 +116,7 @@ def read_distribution(src_file):
         sage: read_distribution(os.path.join(SAGE_SRC, 'sage', 'graphs', 'graph_decompositions', 'tdlib.pyx'))
         'sagemath-tdlib'
         sage: read_distribution(os.path.join(SAGE_SRC, 'sage', 'graphs', 'graph_decompositions', 'modular_decomposition.py'))
-        'sagemath-graphs'
+        ''
     """
     with open(src_file, encoding='utf-8', errors='ignore') as fh:
         for line in fh:
@@ -200,8 +200,8 @@ def update_distribution(src_file, distribution, *, verbose=False):
     try:
         with open(src_file, 'r') as f:
             src_lines = f.read().splitlines()
-    except (UnicodeDecodeError, FileNotFoundError):
-        # Silently skip binary files, nonexisting files
+    except UnicodeDecodeError:
+        # Silently skip binary files
         return
     any_found = False
     any_change = False
@@ -262,8 +262,6 @@ def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
     :mod:`sage.cpython` is an ordinary package::
 
         sage: from sage.misc.package_dir import is_package_or_sage_namespace_package_dir
-        sage: len(sage.cpython.__path__)
-        1
         sage: directory = sage.cpython.__path__[0]; directory
         '.../sage/cpython'
         sage: is_package_or_sage_namespace_package_dir(directory)
@@ -272,26 +270,23 @@ def is_package_or_sage_namespace_package_dir(path, *, distribution_filter=None):
     :mod:`sage.libs.mpfr` only has an ``__init__.pxd`` file, but we consider
     it a package directory for consistency with Cython::
 
-        sage: directories = [os.path.join(p, 'mpfr')
-        ....:                for p in sage.libs.__path__]; directories
-        ['.../sage/libs/mpfr'...]
-        sage: any(is_package_or_sage_namespace_package_dir(d) for d in directories)
+        sage: directory = os.path.join(sage.libs.__path__[0], 'mpfr'); directory
+        '.../sage/libs/mpfr'
+        sage: is_package_or_sage_namespace_package_dir(directory)
         True
 
-    :mod:`sage` is an implicit namespace package::
+    :mod:`sage` is designated to become an implicit namespace package::
 
-        sage: sage.__path__[0]
+        sage: directory = sage.__path__[0]; directory
         '.../sage'
-        sage: all(is_package_or_sage_namespace_package_dir(p) for p in sage.__path__)
+        sage: is_package_or_sage_namespace_package_dir(directory)
         True
 
     Not a package::
 
-        sage: directories = [os.path.join(p, 'ginac')                                   # needs sage.symbolic
-        ....:                for p in sage.symbolic.__path__]; directories
-        ['.../sage/symbolic/ginac'...]
-        sage: any(is_package_or_sage_namespace_package_dir(d)                           # needs sage.symbolic
-        ....:     for d in directories)
+        sage: directory = os.path.join(sage.symbolic.__path__[0], 'ginac'); directory   # needs sage.symbolic
+        '.../sage/symbolic/ginac'
+        sage: is_package_or_sage_namespace_package_dir(directory)                       # needs sage.symbolic
         False
     """
     if os.path.exists(os.path.join(path, '__init__.py')):                # ordinary package

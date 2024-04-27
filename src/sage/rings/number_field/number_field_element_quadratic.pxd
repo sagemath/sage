@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 from sage.libs.gmp.types cimport mpz_t
 from sage.libs.flint.types cimport arb_t
 from sage.rings.integer cimport Integer

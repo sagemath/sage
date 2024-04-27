@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 """
 Construct elliptic curves as Jacobians
 
@@ -100,7 +99,7 @@ def Jacobian(X, **kwds):
     """
     try:
         return X.jacobian(**kwds)
-    except AttributeError:
+    except (AttributeError, TypeError):
         pass
 
     morphism = kwds.pop('morphism', False)

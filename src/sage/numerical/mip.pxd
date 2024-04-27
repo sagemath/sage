@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 cdef extern from *:
     cdef int BINARY = 1
     cdef int REAL = -1

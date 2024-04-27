@@ -1,9 +1,8 @@
-# sage_setup: distribution = sagemath-categories
 """nodoctest
 all.py -- export of projective schemes to Sage
 """
 
-# *****************************************************************************
+#*****************************************************************************
 #
 #   Sage: Open Source Mathematical Software
 #
@@ -18,7 +17,7 @@ all.py -- export of projective schemes to Sage
 #
 #  The full text of the GPL is available at:
 #
-#                  https://www.gnu.org/licenses/
-# *****************************************************************************
+#                  http://www.gnu.org/licenses/
+#*****************************************************************************
 
-from sage.schemes.projective.projective_space import ProjectiveSpace, is_ProjectiveSpace
+from .projective_space import ProjectiveSpace, is_ProjectiveSpace

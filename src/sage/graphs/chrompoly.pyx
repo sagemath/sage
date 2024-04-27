@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 # cython: binding=True
 # sage.doctest: needs sage.libs.flint sage.graphs
 """

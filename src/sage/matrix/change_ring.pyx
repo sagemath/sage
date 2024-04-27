@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-linbox
 """
 Functions for changing the base ring of matrices quickly
 """

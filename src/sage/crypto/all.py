@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 import sage.crypto.sbox
 from sage.misc.persist import register_unpickle_override
 register_unpickle_override('sage.crypto.mq.sbox', 'SBox', sage.crypto.sbox.SBox)
@@ -11,14 +10,13 @@ lazy_import('sage.crypto.classical', ['AffineCryptosystem',
                                       'ShiftCryptosystem',
                                       'TranspositionCryptosystem',
                                       'VigenereCryptosystem',
-                                      ])
+                                     ])
 
 lazy_import('sage.crypto.stream', ['LFSRCryptosystem',
                                    'ShrinkingGeneratorCryptosystem',
-                                   ])
+                                  ])
 
 lazy_import('sage.crypto.lfsr', ['lfsr_sequence',
                                  'lfsr_autocorrelation',
                                  'lfsr_connection_polynomial',
-                                 ])
-del lazy_import
+                                ])
