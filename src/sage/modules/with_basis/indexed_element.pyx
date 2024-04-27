@@ -852,7 +852,11 @@ cdef class IndexedFreeModuleElement(ModuleElement):
              Other use cases may call for different or further
              optimizations.
         """
-        free_module = self._parent._dense_free_module(new_base_ring)
+        if order is None:
+            free_module = self._parent._dense_free_module(new_base_ring)
+        else:
+            from sage.modules.free_module import FreeModule
+            free_module = FreeModule(self.parent().base_ring(), len(order))
         if sparse:
             free_module = free_module.sparse_module()
         d = self._monomial_coefficients
