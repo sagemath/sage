@@ -120,42 +120,53 @@ class SageKernel(IPythonKernel):
             # browser with the appropriate path
             return 'kernelspecs/{0}/{1}'.format(identifier, x)
 
+        from sage.env import SAGE_DOC_SERVER_URL as url
+
+        if url:
+            def doc_url(path):
+                return '{}/{}'.format(url, path)
+        else:
+            from sage.env import SAGE_DOC_LOCAL_PORT as port
+
+            def doc_url(path):
+                return 'http://localhost:{}/{}'.format(port, path)
+
         return [
             {
                 'text': 'Sage Documentation',
-                'url': "https://doc.sagemath.org/html/en/index.html",
+                'url': doc_url('html/en/index.html'),
             },
             {
                 'text': 'A Tour of Sage',
-                'url': "https://doc.sagemath.org/html/en/a_tour_of_sage/index.html",
+                'url': doc_url('html/en/a_tour_of_sage/index.html'),
             },
             {
                 'text': 'Tutorial',
-                'url': "https://doc.sagemath.org/html/en/tutorial/index.html",
+                'url': doc_url('html/en/tutorial/index.html'),
             },
             {
                 'text': 'Thematic Tutorials',
-                'url': "https://doc.sagemath.org/html/en/thematic_tutorials/index.html",
+                'url': doc_url('html/en/thematic_tutorials/index.html'),
             },
             {
                 'text': 'PREP Tutorials',
-                'url': "https://doc.sagemath.org/html/en/prep/index.html",
+                'url': doc_url('html/en/prep/index.html'),
             },
             {
                 'text': 'Constructions',
-                'url': "https://doc.sagemath.org/html/en/constructions/index.html",
+                'url': doc_url('html/en/constructions/index.html'),
             },
             {
-                'text': 'FAQ',
-                'url': "https://doc.sagemath.org/html/en/faq/index.html",
+                'text': 'FAQs',
+                'url': doc_url('html/en/faq/index.html'),
             },
             {
                 'text': 'Reference',
-                'url': "https://doc.sagemath.org/html/en/reference/index.html",
+                'url': doc_url('html/en/reference/index.html'),
             },
             {
-                'text': "Developer's Guide",
-                'url': "https://doc.sagemath.org/html/en/developer/index.html",
+                'text': "Developer Guide",
+                'url': doc_url('html/en/developer/index.html'),
             },
             {
                 'text': "Python",
