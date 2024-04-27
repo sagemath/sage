@@ -2535,30 +2535,42 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             from sage.rings.infinity import Infinity
 
             if row_order is None:
-                if self.domain().dimension() == Infinity:
+                nrows = self.domain().dimension()
+                if nrows == Infinity:
                     raise ValueError(f"domain or codomain are not finite-dimensional; "
                                      f"use row_order or column_order to obtain the matrix "
                                      f"of a finite-dimensional restriction or projection")
-                row_order = sorted(domain_basis.keys())
+                try:
+                    row_order = sorted(domain_basis.keys())
+                except AttributeError:  # Not a family, assume it is list-like
+                    row_order = range(nrows)
             elif not isinstance(row_order, collections.abc.Sequence):
                 raise ValueError("row_order and column_order must be either None or a sequence")
-            nrows = len(row_order)
+            else:
+                nrows = len(row_order)
 
             if column_order is None:
-                if self.codomain().dimension() == Infinity:
+                ncols = self.codomain().dimension()
+                if ncols == Infinity:
                     raise ValueError(f"domain or codomain are not finite-dimensional; "
                                      f"use row_order or column_order to obtain the matrix "
                                      f"of a finite-dimensional restriction or projection")
-                column_order = sorted(codomain_basis.keys())
+                try:
+                    column_order = sorted(codomain_basis.keys())
+                except AttributeError:  # Not a family, assume it is list-like
+                    column_order = range(ncols)
+                vector_kwds = {}
             elif not isinstance(row_order, collections.abc.Sequence):
                 raise ValueError("row_order and column_order must be either None or a sequence")
-            ncols = len(column_order)
+            else:
+                ncols = len(column_order)
+                vector_kwds = dict(order=column_order)
 
             from sage.matrix.matrix_space import MatrixSpace
             if base_ring is None:
                 base_ring = self.codomain().base_ring()
             MS = MatrixSpace(base_ring, nrows, ncols)
-            m = MS([on_basis(x)._vector_(order=column_order)
+            m = MS([on_basis(x)._vector_(**vector_kwds)
                     for x in row_order])
 
             if side == 'left':
