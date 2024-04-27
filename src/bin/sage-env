@@ -371,7 +371,7 @@ fi
 
 if [ -n "$SAGE_LOCAL" ]; then
     # On OS X, test whether "ld-classic" is present in the selected XCode
-    # toolchain. If so, add "-Wl,-ld_classic" to LD_FLAGS (see #36599) unless
+    # toolchain. If so, add "-Wl,-ld_classic" to LDFLAGS (see #36599) unless
     # LD is already set, as it will be with conda on macOS.  When the selected
     # toolchain is in the Xcode app the output of "xcode-select -p" is
     # "/Applications/Xcode.app/Contents/Developer", but "ld-classic" is not in
@@ -385,7 +385,7 @@ if [ -n "$SAGE_LOCAL" ]; then
 	if [ -n $XCODE_PATH ]; then
             if [ -x "$XCODE_PATH/usr/bin/ld-classic" -o \
 		 -x "$XCODE_PATH/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld-classic" ]; then
-		LDFLAGS="$LDFLAGS -Wl,-ldclassic"
+		LDFLAGS="$LDFLAGS -Wl,-ld_classic"
             fi
         else
             # On a macOS system with no toolchain we don't want this script
