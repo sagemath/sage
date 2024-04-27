@@ -7,7 +7,7 @@ with `1/t` to match the classical literature on hypergeometric series.
 (E.g., see [BeukersHeckman]_)
 
 The computation of Euler factors is currently only supported for primes `p`
-of good reduction. That is, it is required that `v_p(t) = v_p(t-1) = 0`.
+for which `v_p(t) = 0`.
 
 AUTHORS:
 
@@ -42,6 +42,8 @@ REFERENCES:
 
 - [Roberts2015]_
 
+- [RR2022]_
+
 - [BeCoMe]_
 
 - [Watkins]_
@@ -60,7 +62,7 @@ REFERENCES:
 
 from collections import defaultdict
 from itertools import combinations
-from sage.arith.misc import divisors, gcd, euler_phi, moebius, is_prime
+from sage.arith.misc import divisors, gcd, euler_phi, is_prime, moebius
 from sage.arith.misc import gauss_sum, kronecker_symbol
 from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
 from sage.functions.generalized import sgn
@@ -1623,6 +1625,8 @@ class HypergeometricData():
         ``deg`` (inclusive).
         
         The prime `p` may not be wild. It may be tame if `t` is a `p`-adic unit.
+        When `v_p(t-1)` is nonzero and even, the Euler factor includes a linear term
+        described in 11.2 of [Watkins]_.
 
         EXAMPLES::
 
@@ -1749,9 +1753,10 @@ class HypergeometricData():
             raise ValueError('p not prime')
         if not all(x.denominator() % p for x in self._alpha + self._beta):
             raise NotImplementedError('p is wild')
+        e = t.valuation(p)
         if (t.numerator()*t.denominator() % p == 0):
             raise NotImplementedError('p is tame')
-        # now p is good
+        # now p is good, or p is tame and t is a p-adic unit
         if (t-1) % p == 0:
             d = self.degree()-1
             bound = d
@@ -1774,10 +1779,12 @@ class HypergeometricData():
         w = self.weight()
         sign = self.sign(t, p)
         ans = characteristic_polynomial_from_traces(traces, d, p, w, sign, deg=deg, use_fe=use_fe)
-        if (w % 2 == 0 and (t-1) % p == 0 and QQ(t-1).valuation(p) % 2 == 0):
+
+        # Add an extra factor when w is even and t-1 has nonzero even valuation.
+        if (w % 2 == 0 and (t-1) % p == 0 and (t-1).valuation(p) % 2 == 0):
             m1 = self.cyclotomic_data()[1].count(1)
             K = (-1)**((m1-1)//2)*2*prod(abs(x) for x in self.gamma_list())
-            t0 = (~t-1)/p**(QQ(t-1).valuation(p))
+            t0 = (~t-1)/p**((t-1).valuation(p))
             c = kronecker_symbol(K*t0, p)*p**(w//2)
             ans *= 1 - c*ans.parent().gen()
         return ans

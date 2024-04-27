@@ -5471,6 +5471,9 @@ REFERENCES:
             Hecke algebras of type A*. J. Algebraic Combin.
             **6** (1997), 59-87.
 
+.. [RR2022] David Roberts and Fernando Rodriguez Villegas, Hypergeometric motives,
+            Notices of the American Mathematical Society 69 (2022), 914-929.
+
 .. [RSS] :wikipedia:`Residual_sum_of_squares`, accessed 13th
          October 2009.
 
