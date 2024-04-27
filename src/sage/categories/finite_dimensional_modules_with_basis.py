@@ -827,6 +827,32 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 matrix=inv_mat,
                 codomain=self.domain(), category=self.category_for())
 
+        def is_injective(self):
+            """
+            Tell whether ``self`` is injective.
+
+            EXAMPLES::
+
+                sage: V1 = QQ^2
+                sage: V2 = QQ^3
+                sage: phi = V1.hom(Matrix([[1,2,3], [4,5,6]]),V2)
+                sage: phi.is_injective()
+                True
+                sage: psi = V2.hom(Matrix([[1,2], [3,4], [5,6]]),V1)
+                sage: psi.is_injective()
+                False
+
+            AUTHOR:
+
+            -- Simon King (2010-05)
+            """
+            mat, side, *_ = self._matrix_side_bases_orders()
+            if side == 'left':
+                ker = mat.right_kernel()
+            else:
+                ker = mat.left_kernel()
+            return ker.dimension() == 0
+
         def kernel_basis(self):
             """
             Return a basis of the kernel of ``self`` in echelon form.
