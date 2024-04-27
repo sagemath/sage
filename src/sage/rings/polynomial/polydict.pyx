@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Generic data structures for multivariate polynomials
 

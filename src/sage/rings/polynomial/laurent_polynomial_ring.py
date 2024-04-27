@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Ring of Laurent Polynomials
 
@@ -437,9 +436,7 @@ class LaurentPolynomialRing_univariate(LaurentPolynomialRing_generic):
             sage: L = LaurentPolynomialRing(QQ,'x')
             sage: type(L)
             <class 'sage.rings.polynomial.laurent_polynomial_ring.LaurentPolynomialRing_univariate_with_category'>
-            sage: L == loads(dumps(L))
-            True
-
+            sage: TestSuite(L).run()
 
         TESTS::
 

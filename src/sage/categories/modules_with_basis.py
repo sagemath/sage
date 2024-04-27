@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Modules With Basis
 
@@ -29,6 +28,7 @@ from sage.categories.category_with_axiom import CategoryWithAxiom_over_base_ring
 from sage.categories.fields import Fields
 from sage.categories.modules import Modules
 from sage.categories.poor_man_map import PoorManMap
+from sage.categories.map import Map
 from sage.structure.element import Element, parent
 
 
@@ -116,9 +116,10 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
     Some more playing around with categories and higher order homsets::
 
         sage: H.category()                                                              # needs sage.modules
-        Category of homsets of modules with basis over Rational Field
+        Category of homsets of finite dimensional modules with basis over Rational Field
         sage: Hom(H, H).category()                                                      # needs sage.modules
-        Category of endsets of homsets of modules with basis over Rational Field
+        Category of endsets of
+         homsets of finite dimensional modules with basis over Rational Field
 
     .. TODO:: ``End(X)`` is an algebra.
 
@@ -174,7 +175,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             if M.base_ring() != self.base_ring():
                 M = M.change_ring(self.base_ring())
         except (TypeError, AttributeError) as msg:
-            raise TypeError("%s\nunable to coerce x (=%s) into %s" % (msg,x,self))
+            raise TypeError("%s\nunable to coerce x (=%s) into %s" % (msg, x, self))
         return M
 
     def is_abelian(self):
@@ -582,7 +583,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 return ModuleMorphismByLinearity(
                     domain=self, on_basis=on_basis, **keywords)
             else:
-                return ModuleMorphismFromFunction( # Or just SetMorphism?
+                return ModuleMorphismFromFunction(  # Or just SetMorphism?
                     domain=self, function=function, **keywords)
 
         _module_morphism = module_morphism
@@ -1265,7 +1266,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 except Exception:
                     raise ValueError('codomain could not be determined')
 
-            if hasattr( codomain, 'linear_combination' ):
+            if hasattr(codomain, 'linear_combination'):
                 mc = x.monomial_coefficients(copy=False)
                 return codomain.linear_combination((on_basis(key), coeff)
                                                    for key, coeff in mc.items())
@@ -1289,8 +1290,8 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 2*s[2, 1] + 2*s[3]
             """
             mc = x.monomial_coefficients(copy=False)
-            return self.linear_combination( (on_basis(key), coeff)
-                                            for key, coeff in mc.items())
+            return self.linear_combination((on_basis(key), coeff)
+                                           for key, coeff in mc.items())
 
         def dimension(self):
             """
@@ -1333,7 +1334,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: A._from_dict(d, coerce=True)                                      # needs sage.modules
                 Traceback (most recent call last):
                 ...
-                TypeError: not a constant polynomial
+                TypeError: y is not a constant polynomial
             """
             R = self.base_ring()
             B = self.basis()
@@ -2063,17 +2064,26 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             """
             return self.parent().term(*self.trailing_item(*args, **kwds))
 
-        def map_coefficients(self, f):
+        def map_coefficients(self, f, new_base_ring=None):
             """
-            Mapping a function on coefficients.
+            Return the element obtained by applying ``f`` to the non-zero
+            coefficients of ``self``.
+
+            If ``f`` is a :class:`sage.categories.map.Map`, then the resulting
+            polynomial will be defined over the codomain of ``f``. Otherwise, the
+            resulting polynomial will be over the same ring as ``self``. Set
+            ``new_base_ring`` to override this behaviour.
+
+            An error is raised if the coefficients cannot be
+            converted to the new base ring.
 
             INPUT:
 
-            - ``f`` -- an endofunction on the coefficient ring of the
-              free module
+            - ``f`` -- a callable that will be applied to the
+              coefficients of ``self``
 
-            Return a new element of ``self.parent()`` obtained by applying the
-            function ``f`` to all of the coefficients of ``self``.
+            - ``new_base_ring`` -- (optional) if given, the resulting element
+              will be defined over this ring
 
             EXAMPLES::
 
@@ -2097,8 +2107,42 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: a = s([2,1]) + 2*s([3,2])                                         # needs sage.combinat sage.modules
                 sage: a.map_coefficients(lambda x: x * 2)                               # needs sage.combinat sage.modules
                 2*s[2, 1] + 4*s[3, 2]
+
+            We can map into a different base ring::
+
+                sage: F = CombinatorialFreeModule(QQ, ['a','b','c'])
+                sage: B = F.basis()
+                sage: a = 1/2*(B['a'] + 3*B['c']); a
+                1/2*B['a'] + 3/2*B['c']
+                sage: b = a.map_coefficients(lambda c: 2*c, ZZ); b
+                B['a'] + 3*B['c']
+                sage: b.parent()
+                Free module generated by {'a', 'b', 'c'} over Integer Ring
+                sage: b.map_coefficients(lambda c: 1/2*c, ZZ)
+                Traceback (most recent call last):
+                ...
+                TypeError: no conversion of this rational to integer
+
+            Coefficients are converted to the new base ring after
+            applying the map::
+
+                sage: B['a'].map_coefficients(lambda c: 2*c, GF(2))
+                0
+                sage: B['a'].map_coefficients(lambda c: GF(2)(c), QQ)
+                B['a']
+
             """
-            return self.parent().sum_of_terms( (m, f(c)) for m,c in self )
+            R = self.parent()
+            if isinstance(f, Map):
+                B = f.codomain()
+            else:
+                B = self.base_ring()
+            if new_base_ring is not None:
+                B = new_base_ring
+            if B is not self.base_ring():
+                R = R.change_ring(B)
+            mc = self.monomial_coefficients(copy=False)
+            return R.sum_of_terms((m, B(f(c))) for m, c in mc.items())
 
         def map_support(self, f):
             """
@@ -2140,7 +2184,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: y.parent() is B                                                   # needs sage.modules
                 True
             """
-            return self.parent().sum_of_terms( (f(m), c) for m,c in self )
+            return self.parent().sum_of_terms((f(m), c) for m, c in self)
 
         def map_support_skip_none(self, f):
             """
@@ -2174,7 +2218,9 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: y.parent() is B                                                   # needs sage.modules
                 True
             """
-            return self.parent().sum_of_terms( (fm,c) for (fm,c) in ((f(m), c) for m,c in self) if fm is not None)
+            return self.parent().sum_of_terms((fm, c)
+                                              for fm, c in ((f(m), c) for m, c in self)
+                                              if fm is not None)
 
         def map_item(self, f):
             """
@@ -2208,7 +2254,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: a.map_item(f)                                                     # needs sage.combinat sage.modules
                 2*s[2, 1] + 2*s[3]
             """
-            return self.parent().sum_of_terms( f(m,c) for m,c in self )
+            return self.parent().sum_of_terms(f(m, c) for m, c in self)
 
         def tensor(*elements):
             """
@@ -2544,11 +2590,13 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     except AttributeError:
                         codomain = f(*[module.zero() for module in modules]).parent()
                 if codomain in ModulesWithBasis(K):
-                    return codomain.linear_combination((f(*[module.monomial(t) for (module,t) in zip(modules, m)]), c)
-                                                       for m,c in self)
+                    return codomain.linear_combination((f(*[module.monomial(t)
+                                                            for module, t in zip(modules, m)]), c)
+                                                       for m, c in self)
                 else:
-                    return sum((c * f(*[module.monomial(t) for (module,t) in zip(modules, m)])
-                                for m,c in self),
+                    return sum((c * f(*[module.monomial(t)
+                                        for module, t in zip(modules, m)])
+                                for m, c in self),
                                codomain.zero())
 
     class DualObjects(DualObjectsCategory):

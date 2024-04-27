@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 """
 This file defines the common API for p-adic elements.
 Elements using different precision models (e.g. capped relative,

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-plot
 # sage.doctest: needs sage.symbolic
 r"""
 Arcs in hyperbolic geometry
@@ -228,7 +227,8 @@ class HyperbolicArc(HyperbolicArcCore):
             sage: HyperbolicArc(0, 1/2+I*sqrt(3)/2, "UHP", {})
             Hyperbolic arc (0.000000000000000, 0.500000000000000 + 0.866025403784439*I)
         """
-        return "Hyperbolic arc (%s, %s)" % (self.A, self.B)
+        return f"Hyperbolic arc ({self.A}, {self.B})"
+
 
 @rename_keyword(color='rgbcolor')
 @options(alpha=1, fill=False, thickness=1, rgbcolor="blue", zorder=2, linestyle='solid')
@@ -390,9 +390,9 @@ def hyperbolic_arc(a, b, model="UHP", **options):
 
         # Check for valid points
         if a[2] < 0 or a[0]**2+a[1]**2-a[2]**2 + 1 > EPSILON:
-            raise ValueError("%s is not a valid point in the HM model" % (a,))
+            raise ValueError(f"{a} is not a valid point in the HM model")
         if b[2] < 0 or b[0]**2+b[1]**2-b[2]**2 + 1 > EPSILON:
-            raise ValueError("%s is not a valid point in the HM model" % (b,))
+            raise ValueError(f"{b} is not a valid point in the HM model")
 
         HM = HyperbolicPlane().HM()
         geodesic = HM.get_geodesic(a, b)

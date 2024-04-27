@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: needs sage.graphs          (because all doctests use the catalog simplicial_complexes)
 r"""
 Induced morphisms on homology

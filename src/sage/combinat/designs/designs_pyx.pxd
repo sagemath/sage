@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 # Cached informations about OA(k,n)
 #
 # - max_true: max k such that OA(k,n,existence=True) previously returned True

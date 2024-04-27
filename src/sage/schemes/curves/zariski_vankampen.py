@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.geometry.polyhedron sage.graphs sage.groups sage.rings.number_field
 r"""
 Zariski-Van Kampen method implementation

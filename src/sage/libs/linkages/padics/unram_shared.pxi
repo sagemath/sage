@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 cimport cython
 
 @cython.binding(True)
