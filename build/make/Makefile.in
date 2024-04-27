@@ -9,7 +9,7 @@
 # obscure the substance of the actual rules, this file can be debugged by
 # running:
 #
-#     $ make -f build/make/Makefile -n DEBUG_RULES=1
+#     $ make -f build/make/Makefile -n DEBUG_RULES=1 SAGE_PKGCONFIG=1
 #
 # This will not actually run any rules (the -n flag) but will print all the
 # rules generated from the templates.
