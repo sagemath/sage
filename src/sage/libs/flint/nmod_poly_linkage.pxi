@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 r"""
 Linkage for arithmetic with FLINT's nmod_poly_t elements.
 

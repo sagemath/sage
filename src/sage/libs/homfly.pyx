@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-homfly
 # distutils: libraries = homfly gc
 r"""
 Cython wrapper for libhomfly library

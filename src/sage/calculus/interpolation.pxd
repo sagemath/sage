@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 from sage.libs.gsl.interp cimport *
 
 cdef class Spline:

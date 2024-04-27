@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Support for persistent functions in .sage files
 

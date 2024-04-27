@@ -1,3 +1,3 @@
-from sage.logic.logic import SymbolicLogic
+from .logic import SymbolicLogic
 
-from sage.logic import propcalc
+from . import propcalc

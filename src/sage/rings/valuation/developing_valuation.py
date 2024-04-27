@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-pari
+# -*- coding: utf-8 -*-
 r"""
 Valuations on polynomial rings based on `\phi`-adic expansions
 

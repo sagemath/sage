@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Combinatorial Functions
 
@@ -2919,42 +2918,123 @@ def unshuffle_iterator(a, one=1) -> Iterator:
                (one if sign else - one))
 
 
-def bell_polynomial(n: Integer, k: Integer):
+def bell_polynomial(n: Integer, k=None, ordinary=False):
     r"""
-    Return the Bell Polynomial
+    Return the (partial) (exponential/ordinary) bell Polynomial.
+
+    The partial (exponential) *Bell polynomial* is defined by the formula
 
     .. MATH::
 
-       B_{n,k}(x_0, x_1, \ldots, x_{n-k}) =
-            \sum_{\sum{j_i}=k, \sum{(i+1) j_i}=n}
+        B_{n,k}(x_0, x_1, \ldots, x_{n-k}) =
+            \sum_{\substack{j_0 + \ldots + j_{n-k} = k \\ 1 j_0 + \ldots + (n-k+1) j_{n-k} = n}}
             \frac{n!}{j_0!j_1!\cdots j_{n-k}!}
             \left(\frac{x_0}{(0+1)!}\right)^{j_0}
             \left(\frac{x_1}{(1+1)!}\right)^{j_1} \cdots
             \left(\frac{x_{n-k}}{(n-k+1)!}\right)^{j_{n-k}}.
 
+    The complete (exponential) Bell Polynomial is defined as
+
+    .. MATH::
+
+        B_n(x_0, x_1, \ldots, x_{n-k}) =
+            \sum_{k=0}^n B_{n,k}(x_0, x_1, \ldots, x_{n-k}).
+
+    The ordinary variant of the partial Bell polynomial is defined by
+
+    .. MATH::
+
+        \hat B_{n,k}(x_0, x_1, \ldots, x_{n-k}) =
+            \sum_{\substack{j_0 + \ldots + j_{n-k} = k \\ 1 j_0 + \ldots + (n-k+1) j_{n-k} = n}}
+            \binom{k}{j_0, j_1, \ldots, j_{n-k}}
+            x_0^{j_0} x_1^{j_1} \cdots x_{n-k}^{j_{n-k}},
+
+    where we have used the multinomial coefficient.
+    The complete version has the same definition as its exponential counterpart.
+
+    If we define `f(z) = \sum_{n=1}^\infty x_{n-1} z^n/n!`
+    then these are alternative definitions for exponential Bell polynomials
+
+    .. MATH::
+
+        \begin{aligned}
+        \exp(f(z)) & = \sum_{n=0}^\infty B_n(x_0, \ldots, x_{n-1}) \frac{z^n}{n!}, \\
+        \frac{f(z)^k}{k!} & = \sum_{n=k}^\infty B_{n, k}(x_0, \ldots, x_{n-k}) \frac{z^n}{n!}.
+        \end{aligned}
+
+    Defining `g(z) = \sum_{n=1}^\infty x_{n-1} z^n`,
+    we have the analoguous alternative definitions
+
+    .. MATH::
+
+        \begin{aligned}
+        \frac1{1-f(z)} & = \sum_{n=0}^\infty \hat B_n(x_0, \ldots, x_{n-1}) z^n, \\
+        f(z)^k & = \sum_{n=k}^\infty \hat B_{n, k}(x_0, \ldots, x_{n-k}) z^n,
+        \end{aligned}
+
+    (see reference).
+
     INPUT:
 
-    - ``n`` -- integer
+    - ``k`` -- (optional) if specified, returns the partial Bell
+      polynomial, otherwise returns the complete Bell polynomial
+    - ``ordinary`` -- (default: ``False``) if ``True``, returns the
+      (partial) ordinary Bell polynomial, otherwise returns
+      the (partial) exponential Bell polynomial
 
-    - ``k`` -- integer
+    EXAMPLES:
 
-    OUTPUT:
+    The complete and partial Bell polynomials::
 
-    - a polynomial in `n-k+1` variables over `\ZZ`
-
-    EXAMPLES::
-
-        sage: bell_polynomial(6,2)                                                      # needs sage.combinat
-        10*x2^2 + 15*x1*x3 + 6*x0*x4
-        sage: bell_polynomial(6,3)                                                      # needs sage.combinat
+        sage: # needs sage.combinat
+        sage: bell_polynomial(3)
+        x0^3 + 3*x0*x1 + x2
+        sage: bell_polynomial(4)
+        x0^4 + 6*x0^2*x1 + 3*x1^2 + 4*x0*x2 + x3
+        sage: bell_polynomial(6, 3)
         15*x1^3 + 60*x0*x1*x2 + 15*x0^2*x3
+        sage: bell_polynomial(6, 6)
+        x0^6
+
+    The ordinary variants are::
+
+        sage: # needs sage.combinat sage.arith
+        sage: bell_polynomial(3, ordinary=True)
+        x0^3 + 2*x0*x1 + x2
+        sage: bell_polynomial(4, ordinary=True)
+        x0^4 + 3*x0^2*x1 + x1^2 + 2*x0*x2 + x3
+        sage: bell_polynomial(6, 3, True)
+        x1^3 + 6*x0*x1*x2 + 3*x0^2*x3
+        sage: bell_polynomial(6, 6, True)
+        x0^6
+
+    We verify the alternative definition of the different Bell polynomials
+    using the functions `f` and `g` given above::
+
+        sage: # needs sage.combinat sage.arith
+        sage: n = 6 # positive integer
+        sage: k = 4 # positive integer
+        sage: R.<x> = InfinitePolynomialRing(QQ)
+        sage: PR = PolynomialRing(QQ, 'x', n)
+        sage: d = {x[i]: PR.gen(i) for i in range(n)} #substitution dictionnary
+        sage: L.<z> = LazyPowerSeriesRing(R)
+        sage: f = L(lambda i: x[i-1]/factorial(i), valuation=1)
+        sage: all(exp(f)[i].subs(d) * factorial(i) == bell_polynomial(i) for i in range(n+1))
+        True
+        sage: all((f^k/factorial(k))[i].subs(d) * factorial(i) == bell_polynomial(i, k) for i in range(k, n+k))
+        True
+        sage: g = L(lambda i: x[i-1], valuation=1)
+        sage: all((1/(1-g))[i].subs(d) == bell_polynomial(i, ordinary=True) for i in range(n+1))
+        True
+        sage: all((g^k)[i].subs(d) == bell_polynomial(i, k, True) for i in range(k, n+k))
+        True
 
     TESTS:
 
     Check that :issue:`18338` is fixed::
 
-        sage: bell_polynomial(0,0).parent()                                             # needs sage.combinat
-        Multivariate Polynomial Ring in x over Integer Ring
+        sage: bell_polynomial(0, 0).parent()                                            # needs sage.combinat
+        Univariate Polynomial Ring in x0 over Integer Ring
 
         sage: for n in (0..4):                                                          # needs sage.combinat
         ....:     print([bell_polynomial(n,k).coefficients() for k in (0..n)])
@@ -2964,28 +3044,65 @@ def bell_polynomial(n: Integer, k: Integer):
         [[], [1], [3], [1]]
         [[], [1], [3, 4], [6], [1]]
 
+    Further checks for :issue:`37727`::
+
+        sage: # needs sage.combinat sage.arith
+        sage: bell_polynomial(0, 0)
+        1
+        sage: bell_polynomial(0, 0, True)
+        1
+        sage: bell_polynomial(1, 1)
+        x0
+        sage: bell_polynomial(2, 2, True)
+        x0^2
+        sage: bell_polynomial(5)
+        x0^5 + 10*x0^3*x1 + 15*x0*x1^2 + 10*x0^2*x2 + 10*x1*x2 + 5*x0*x3 + x4
+        sage: sum(bell_polynomial(5, k) for k in range(6))
+        x0^5 + 10*x0^3*x1 + 15*x0*x1^2 + 10*x0^2*x2 + 10*x1*x2 + 5*x0*x3 + x4
+        sage: bell_polynomial(5, None, True)
+        x0^5 + 4*x0^3*x1 + 3*x0*x1^2 + 3*x0^2*x2 + 2*x1*x2 + 2*x0*x3 + x4
+        sage: sum(bell_polynomial(5, k, True) for k in range(6))
+        x0^5 + 4*x0^3*x1 + 3*x0*x1^2 + 3*x0^2*x2 + 2*x1*x2 + 2*x0*x3 + x4
+        sage: bell_polynomial(0).parent()
+        Univariate Polynomial Ring in x0 over Integer Ring
 
     REFERENCES:
 
     - [Bel1927]_
+    - [Com1974]_
 
     AUTHORS:
 
     - Blair Sutton (2009-01-26)
     - Thierry Monteil (2015-09-29): the result must always be a polynomial.
+    - Kei Beauduin (2024-04-06): when univariate,
+      the polynomial is in variable ``x0``. extended to complete exponential,
+      partial ordinary and complete ordinary Bell polynomials.
     """
     from sage.combinat.partition import Partitions
-    R = PolynomialRing(ZZ, 'x', n - k + 1)
+    from sage.arith.misc import multinomial
+    if k is None:
+        partitions = Partitions(n)
+        # We set k = 1 to use the correct ring
+        # It is not used in the computation otherwise
+        k = 1
+    else:
+        partitions = Partitions(n, length=k)
+    if n <= k:
+        R = PolynomialRing(ZZ, 'x0')
+    else:
+        R = PolynomialRing(ZZ, 'x', n - k + 1)
     vars = R.gens()
     result = R.zero()
-    for p in Partitions(n, length=k):  # type:ignore
-        factorial_product = 1
-        power_factorial_product = 1
-        for part, count in p.to_exp_dict().items():
-            factorial_product *= factorial(count)
-            power_factorial_product *= factorial(part)**count
-        coefficient = factorial(n) // (factorial_product * power_factorial_product)
-        result += coefficient * prod([vars[i - 1] for i in p])
+    for p in partitions:
+        if ordinary:
+            coefficient = multinomial(p.to_exp())
+        else:
+            factorial_product = 1
+            for part, count in p.to_exp_dict().items():
+                factorial_product *= factorial(count) * factorial(part)**count
+            coefficient = factorial(n) // factorial_product
+        result += coefficient * prod(vars[i - 1] for i in p)
     return result
 
 

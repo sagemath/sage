@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 """
 Splitting fields of polynomials over number fields
 

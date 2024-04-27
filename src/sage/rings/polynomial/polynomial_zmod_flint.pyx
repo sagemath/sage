@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 # distutils: libraries = gmp NTL_LIBRARIES
 # distutils: extra_compile_args = NTL_CFLAGS
 # distutils: include_dirs = NTL_INCDIR
@@ -42,7 +41,7 @@ AUTHORS:
 
 from sage.libs.ntl.ntl_lzz_pX import ntl_zz_pX
 from sage.structure.element cimport parent
-from sage.structure.element import coerce_binop
+from sage.structure.element import coerce_binop, canonical_coercion, have_same_parent
 from sage.rings.polynomial.polynomial_integer_dense_flint cimport Polynomial_integer_dense_flint
 
 from sage.misc.superseded import deprecated_function_alias
@@ -63,6 +62,7 @@ include "sage/libs/flint/nmod_poly_linkage.pxi"
 # and then the interface
 include "polynomial_template.pxi"
 
+from sage.libs.flint.fmpz cimport *
 from sage.libs.flint.fmpz_poly cimport *
 from sage.libs.flint.nmod_poly cimport *
 
@@ -482,6 +482,95 @@ cdef class Polynomial_zmod_flint(Polynomial_template):
         return res
 
     _mul_short_opposite = _mul_trunc_opposite
+
+    def __pow__(self, exp, modulus):
+        r"""
+        Exponentiation of ``self``.
+
+        If ``modulus`` is not ``None``, the exponentiation is performed
+        modulo the polynomial ``modulus``.
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(5)[]
+            sage: pow(x+1, 5**50, x^5 + 4*x + 3)
+            x + 1
+            sage: pow(x+1, 5**64, x^5 + 4*x + 3)
+            x + 4
+            sage: pow(x, 5**64, x^5 + 4*x + 3)
+            x + 3
+
+        The modulus can have smaller degree than ``self``::
+
+            sage: R.<x> = PolynomialRing(GF(5), implementation="FLINT")
+            sage: pow(x^4, 6, x^2 + x + 1)
+            1
+
+        TESTS:
+
+        Canonical coercion applies::
+
+            sage: R.<x> = PolynomialRing(GF(5), implementation="FLINT")
+            sage: x_ZZ = ZZ["x"].gen()
+            sage: pow(x+1, 25, 2)
+            0
+            sage: pow(x+1, 4, x_ZZ^2 + x_ZZ + 1)
+            4*x + 4
+            sage: pow(x+1, int(4), x_ZZ^2 + x_ZZ + 1)
+            4*x + 4
+            sage: xx = polygen(GF(97))
+            sage: pow(x + 1, 3, xx^3 + xx + 1)
+            Traceback (most recent call last):
+            ...
+            TypeError: no common canonical parent for objects with parents: ...
+        """
+        exp = Integer(exp)
+        if modulus is not None:
+            # Similar to coerce_binop
+            if not have_same_parent(self, modulus):
+                a, m = canonical_coercion(self, modulus)
+                if a is not self:
+                    return pow(a, exp, m)
+                modulus = m
+            self = self % modulus
+            if exp > 0 and exp.bit_length() >= 32:
+                return (<Polynomial_zmod_flint>self)._powmod_bigexp(exp, modulus)
+
+        return Polynomial_template.__pow__(self, exp, modulus)
+
+    cdef Polynomial _powmod_bigexp(Polynomial_zmod_flint self, Integer exp, Polynomial_zmod_flint m):
+        r"""
+        Modular exponentiation with a large integer exponent.
+
+        It is assumed that checks and coercions have been already performed on arguments.
+
+        TESTS::
+
+            sage: R.<x> = PolynomialRing(GF(5), implementation="FLINT")
+            sage: f = x+1
+            sage: pow(f, 5**50, x^5 + 4*x + 3) # indirect doctest
+            x + 1
+            sage: pow(x, 5**64, x^5 + 4*x + 3) # indirect doctest
+            x + 3
+        """
+        cdef Polynomial_zmod_flint ans = self._new()
+        # Preconditioning is useful for large exponents: the inverse
+        # power series helps computing fast quotients.
+        cdef Polynomial_zmod_flint minv = self._new()
+        cdef fmpz_t exp_fmpz
+
+        fmpz_init(exp_fmpz)
+        fmpz_set_mpz(exp_fmpz, (<Integer>exp).value)
+        nmod_poly_reverse(&minv.x, &m.x, nmod_poly_length(&m.x))
+        nmod_poly_inv_series(&minv.x, &minv.x, nmod_poly_length(&m.x))
+
+        if self == self._parent.gen():
+            nmod_poly_powmod_x_fmpz_preinv(&ans.x, exp_fmpz, &m.x, &minv.x)
+        else:
+            nmod_poly_powmod_fmpz_binexp_preinv(&ans.x, &self.x, exp_fmpz, &m.x, &minv.x)
+
+        fmpz_clear(exp_fmpz)
+        return ans
 
     cpdef Polynomial _power_trunc(self, unsigned long n, long prec):
         r"""

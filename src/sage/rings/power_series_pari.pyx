@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 r"""
 Power series implemented using PARI
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Sphinx configuration shared by sage.misc.sphinxify and sage_docbuild
 """
