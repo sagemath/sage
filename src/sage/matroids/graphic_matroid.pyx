@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: optional - sage.graphs
 r"""
 Graphic Matroids
@@ -1111,6 +1110,34 @@ cdef class GraphicMatroid(Matroid):
         """
         return True
 
+    def is_graphic(self):
+        r"""
+        Return if ``self`` is graphic.
+
+        This is trivially ``True`` for a class:`GraphicMatroid`.
+
+        EXAMPLES::
+
+            sage: M = Matroid(graphs.PetersenGraph())
+            sage: M.is_graphic()
+            True
+        """
+        return True
+
+    def is_regular(self):
+        r"""
+        Return if ``self`` is regular.
+
+        This is always ``True`` for a class:`GraphicMatroid`.
+
+        EXAMPLES::
+
+            sage: M = Matroid(graphs.DesarguesGraph())
+            sage: M.is_regular()
+            True
+        """
+        return True
+
     # graphic methods
 
     cpdef graph(self):
@@ -1949,3 +1976,42 @@ cdef class GraphicMatroid(Matroid):
         from sage.matroids.constructor import Matroid as ConstructorMatroid
         X = [l for u, v, l in self._G.edge_iterator()]
         return ConstructorMatroid(groundset=X, graph=self._G, regular=True)
+
+    def relabel(self, mapping):
+        r"""
+        Return an isomorphic matroid with relabeled groundset.
+
+        The output is obtained by relabeling each element ``e`` by
+        ``mapping[e]``, where ``mapping`` is a given injective map. If
+        ``mapping[e]`` is not defined, then the identity map is assumed.
+
+        INPUT:
+
+        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
+          label of ``e``
+
+        OUTPUT: a matroid
+
+        EXAMPLES::
+
+            sage: M = matroids.CompleteGraphic(4)
+            sage: sorted(M.groundset())
+            [0, 1, 2, 3, 4, 5]
+            sage: N = M.relabel({0: 6, 5: 'e'})
+            sage: sorted(N.groundset(), key=str)
+            [1, 2, 3, 4, 6, 'e']
+            sage: N.is_isomorphic(M)
+            True
+
+        TESTS::
+
+            sage: M = matroids.CompleteGraphic(4)
+            sage: f = {0: 'a', 1: 'b', 2: 'c', 3: 'd', 4: 'e', 5: 'f', 6: 'g'}
+            sage: N = M.relabel(f)
+            sage: for S in powerset(M.groundset()):
+            ....:     assert M.rank(S) == N.rank([f[x] for x in S])
+        """
+        d = self._relabel_map(mapping)
+        E = [d[x] for x in self.groundset()]
+        M = GraphicMatroid(self.graph(), groundset=E)
+        return M

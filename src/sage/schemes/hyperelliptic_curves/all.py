@@ -1,7 +1,4 @@
-# sage_setup: distribution = sagemath-schemes
-
-from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
-from sage.schemes.hyperelliptic_curves.kummer_surface import KummerSurface
-from sage.schemes.hyperelliptic_curves.mestre import (
-    Mestre_conic, HyperellipticCurve_from_invariants)
-from sage.schemes.hyperelliptic_curves import monsky_washnitzer
+from .constructor import HyperellipticCurve
+from .kummer_surface import KummerSurface
+from .mestre import (Mestre_conic, HyperellipticCurve_from_invariants)
+from . import monsky_washnitzer

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 Square‑root Vélu algorithm for elliptic-curve isogenies
 

@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-symbolics
+# -*- coding: utf-8 -*-
 r"""
 Abstract interface to Maxima
 

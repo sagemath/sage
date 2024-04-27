@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-mpmath
 """
 Faster versions of some key functions in mpmath.libmp
 """

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 r"""
 Ordered Multiset Partitions into Sets and the Minimaj Crystal
 

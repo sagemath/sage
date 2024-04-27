@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Parallel Iterator built using Python's multiprocessing module
 """

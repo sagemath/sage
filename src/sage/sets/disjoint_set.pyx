@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-categories
+# -*- coding: utf-8 -*-
 r"""
 Disjoint-set data structure
 
@@ -20,11 +20,13 @@ EXAMPLES:
 
 Disjoint set of integers from ``0`` to ``n - 1``::
 
-    sage: s = DisjointSet(6); s
+    sage: s = DisjointSet(6)
+    sage: s
     {{0}, {1}, {2}, {3}, {4}, {5}}
     sage: s.union(2, 4)
     sage: s.union(1, 3)
-    sage: s.union(5, 1); s
+    sage: s.union(5, 1)
+    sage: s
     {{0}, {1, 3, 5}, {2, 4}}
     sage: s.find(3)
     1
@@ -35,11 +37,13 @@ Disjoint set of integers from ``0`` to ``n - 1``::
 
 Disjoint set of hashables objects::
 
-    sage: d = DisjointSet('abcde'); d
+    sage: d = DisjointSet('abcde')
+    sage: d
     {{'a'}, {'b'}, {'c'}, {'d'}, {'e'}}
     sage: d.union('a', 'b')
     sage: d.union('b', 'c')
-    sage: d.union('c', 'd'); d
+    sage: d.union('c', 'd')
+    sage: d
     {{'a', 'b', 'c', 'd'}, {'e'}}
     sage: d.find('c')
     'a'
@@ -149,19 +153,23 @@ cdef class DisjointSet_class(SageObject):
         EXAMPLES::
 
             sage: e = DisjointSet(5)
-            sage: e.union(2, 4); e._repr_()
+            sage: e.union(2, 4)
+            sage: e._repr_()
             '{{0}, {1}, {2, 4}, {3}}'
             sage: e = DisjointSet(5)
-            sage: e.union(4, 2); e._repr_()
+            sage: e.union(4, 2)
+            sage: e._repr_()
             '{{0}, {1}, {2, 4}, {3}}'
 
         ::
 
             sage: e = DisjointSet(range(5))
-            sage: e.union(2, 4); e._repr_()
+            sage: e.union(2, 4)
+            sage: e._repr_()
             '{{0}, {1}, {2, 4}, {3}}'
             sage: e = DisjointSet(range(5))
-            sage: e.union(4, 2); e._repr_()
+            sage: e.union(4, 2)
+            sage: e._repr_()
             '{{0}, {1}, {2, 4}, {3}}'
         """
         res = []
@@ -324,10 +332,12 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
 
     EXAMPLES::
 
-        sage: d = DisjointSet(5); d
+        sage: d = DisjointSet(5)
+        sage: d
         {{0}, {1}, {2}, {3}, {4}}
         sage: d.union(2, 4)
-        sage: d.union(0, 2); d
+        sage: d.union(0, 2)
+        sage: d
         {{0, 2, 4}, {1}, {3}}
         sage: d.find(2)
         2
@@ -391,7 +401,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             sage: d.__getstate__()
             [0, 1, 0, 0, 4]
         """
-        cdef Py_ssize_t card = self.cardinality()
+        cdef Py_ssize_t card = self._nodes.degree
         cdef list l = [None] * card
         cdef int i
         for i in range(card):
@@ -410,25 +420,29 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         EXAMPLES::
 
             sage: d = DisjointSet(5)
-            sage: d.__setstate__([0, 1, 2, 3, 4]); d
+            sage: d.__setstate__([0, 1, 2, 3, 4])
+            sage: d
             {{0}, {1}, {2}, {3}, {4}}
 
         ::
 
             sage: d = DisjointSet(5)
-            sage: d.__setstate__([1, 2, 3, 4, 0]); d
+            sage: d.__setstate__([1, 2, 3, 4, 0])
+            sage: d
             {{0, 1, 2, 3, 4}}
 
         ::
 
             sage: d = DisjointSet(5)
-            sage: d.__setstate__([1, 1, 1]); d
+            sage: d.__setstate__([1, 1, 1])
+            sage: d
             {{0, 1, 2}, {3}, {4}}
 
         ::
 
             sage: d = DisjointSet(5)
-            sage: d.__setstate__([3, 3, 3]); d
+            sage: d.__setstate__([3, 3, 3])
+            sage: d
             {{0, 1, 2, 3}, {4}}
         """
         cdef int i, parent
@@ -446,19 +460,22 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         EXAMPLES::
 
             sage: e = DisjointSet(5)
-            sage: e.union(4, 2); e
+            sage: e.union(4, 2)
+            sage: e
             {{0}, {1}, {2, 4}, {3}}
             sage: e.find(2)
             4
             sage: e.find(4)
             4
-            sage: e.union(1, 3); e
+            sage: e.union(1, 3)
+            sage: e
             {{0}, {1, 3}, {2, 4}}
             sage: e.find(1)
             1
             sage: e.find(3)
             1
-            sage: e.union(3, 2); e
+            sage: e.union(3, 2)
+            sage: e
             {{0}, {1, 2, 3, 4}}
             sage: [e.find(i) for i in range(5)]
             [0, 1, 1, 1, 1]
@@ -471,7 +488,7 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             This method performs input checks. To avoid them you may directly
             use :meth:`~sage.groups.perm_gps.partn_ref.data_structures.OP_find`.
         """
-        card = self.cardinality()
+        card = self._nodes.degree
         if i < 0 or i >= card:
             raise ValueError('i must be between 0 and %s (%s given)' % (card - 1, i))
         return OP_find(self._nodes, i)
@@ -491,13 +508,17 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
 
         EXAMPLES::
 
-            sage: d = DisjointSet(5); d
+            sage: d = DisjointSet(5)
+            sage: d
             {{0}, {1}, {2}, {3}, {4}}
-            sage: d.union(0, 1); d
+            sage: d.union(0, 1)
+            sage: d
             {{0, 1}, {2}, {3}, {4}}
-            sage: d.union(2, 4); d
+            sage: d.union(2, 4)
+            sage: d
             {{0, 1}, {2, 4}, {3}}
-            sage: d.union(1, 4); d
+            sage: d.union(1, 4)
+            sage: d
             {{0, 1, 2, 4}, {3}}
             sage: d.union(1, 5)
             ValueError: j must be between 0 and 4 (5 given)
@@ -536,8 +557,8 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
         """
         cdef dict s = {}
         cdef int i, o
-        for i in range(self.cardinality()):
-            o = self.find(i)
+        for i in range(self._nodes.degree):
+            o = OP_find(self._nodes, i)
             if o not in s:
                 s[o] = []
             s[o].append(i)
@@ -553,15 +574,16 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             sage: d = DisjointSet(5)
             sage: d.union(2, 3)
             sage: d.union(4, 1)
-            sage: e = d.element_to_root_dict(); e
+            sage: e = d.element_to_root_dict()
+            sage: e
             {0: 0, 1: 4, 2: 2, 3: 2, 4: 4}
             sage: WordMorphism(e)                                                       # needs sage.combinat
             WordMorphism: 0->0, 1->4, 2->2, 3->2, 4->4
         """
         cdef dict d = {}
         cdef int i
-        for i in range(self.cardinality()):
-            d[i] = self.find(i)
+        for i in range(self._nodes.degree):
+            d[i] = OP_find(self._nodes, i)
         return d
 
     cpdef to_digraph(self):
@@ -574,7 +596,8 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             sage: d = DisjointSet(5)
             sage: d.union(2, 3)
             sage: d.union(4, 1)
-            sage: d.union(3, 4); d
+            sage: d.union(3, 4)
+            sage: d
             {{0}, {1, 2, 3, 4}}
             sage: g = d.to_digraph(); g                                                 # needs sage.graphs
             Looped digraph on 5 vertices
@@ -586,12 +609,13 @@ cdef class DisjointSet_of_integers(DisjointSet_class):
             sage: d = DisjointSet(5)
             sage: d.union(1, 2)
             sage: d.union(1, 3)
-            sage: d.union(1, 4); d
+            sage: d.union(1, 4)
+            sage: d
             {{0}, {1, 2, 3, 4}}
             sage: d.to_digraph().edges(sort=True)                                       # needs sage.graphs
             [(0, 0, None), (1, 1, None), (2, 1, None), (3, 1, None), (4, 1, None)]
         """
-        cdef dict d = {i: [self._nodes.parent[i]] for i in range(self.cardinality())}
+        cdef dict d = {i: [self._nodes.parent[i]] for i in range(self._nodes.degree)}
         from sage.graphs.digraph import DiGraph
         return DiGraph(d)
 
@@ -601,9 +625,11 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
 
     EXAMPLES::
 
-        sage: d = DisjointSet('abcde'); d
+        sage: d = DisjointSet('abcde')
+        sage: d
         {{'a'}, {'b'}, {'c'}, {'d'}, {'e'}}
-        sage: d.union('a', 'c'); d
+        sage: d.union('a', 'c')
+        sage: d
         {{'a', 'c'}, {'b'}, {'d'}, {'e'}}
         sage: d.find('a')
         'a'
@@ -700,7 +726,7 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: d.__getstate__()
             [('a', 'a'), ('b', 'b'), ('c', 'd'), ('d', 'd'), ('e', 'e')]
         """
-        cdef int card = self.cardinality()
+        cdef int card = self._nodes.degree
         cdef list l = [None] * card
         cdef int i
         for i in range(card):
@@ -744,19 +770,22 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
         EXAMPLES::
 
             sage: e = DisjointSet(range(5))
-            sage: e.union(4, 2); e
+            sage: e.union(4, 2)
+            sage: e
             {{0}, {1}, {2, 4}, {3}}
             sage: e.find(2)
             4
             sage: e.find(4)
             4
-            sage: e.union(1,3); e
+            sage: e.union(1,3)
+            sage: e
             {{0}, {1, 3}, {2, 4}}
             sage: e.find(1)
             1
             sage: e.find(3)
             1
-            sage: e.union(3, 2); e
+            sage: e.union(3, 2)
+            sage: e
             {{0}, {1, 2, 3, 4}}
             sage: [e.find(i) for i in range(5)]
             [0, 1, 1, 1, 1]
@@ -784,13 +813,17 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
 
         EXAMPLES::
 
-            sage: e = DisjointSet('abcde'); e
+            sage: e = DisjointSet('abcde')
+            sage: e
             {{'a'}, {'b'}, {'c'}, {'d'}, {'e'}}
-            sage: e.union('a', 'b'); e
+            sage: e.union('a', 'b')
+            sage: e
             {{'a', 'b'}, {'c'}, {'d'}, {'e'}}
-            sage: e.union('c', 'e'); e
+            sage: e.union('c', 'e')
+            sage: e
             {{'a', 'b'}, {'c', 'e'}, {'d'}}
-            sage: e.union('b', 'e'); e
+            sage: e.union('b', 'e')
+            sage: e
             {{'a', 'b', 'c', 'e'}, {'d'}}
             sage: e.union('a', 2**10)
             KeyError: 1024
@@ -853,9 +886,11 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: d = DisjointSet(range(5))
             sage: d.union(2, 3)
             sage: d.union(4, 1)
-            sage: d.union(3, 4); d
+            sage: d.union(3, 4)
+            sage: d
             {{0}, {1, 2, 3, 4}}
-            sage: g = d.to_digraph(); g                                                 # needs sage.graphs
+            sage: g = d.to_digraph()
+            sage: g                                                                     # needs sage.graphs
             Looped digraph on 5 vertices
             sage: g.edges(sort=True)                                                    # needs sage.graphs
             [(0, 0, None), (1, 2, None), (2, 2, None), (3, 2, None), (4, 2, None)]
@@ -865,14 +900,15 @@ cdef class DisjointSet_of_hashables(DisjointSet_class):
             sage: d = DisjointSet(range(5))
             sage: d.union(1, 2)
             sage: d.union(1, 3)
-            sage: d.union(1, 4); d
+            sage: d.union(1, 4)
+            sage: d
             {{0}, {1, 2, 3, 4}}
             sage: d.to_digraph().edges(sort=True)                                       # needs sage.graphs
             [(0, 0, None), (1, 1, None), (2, 1, None), (3, 1, None), (4, 1, None)]
         """
         cdef dict d = {}
         cdef int i
-        for i in range(self.cardinality()):
+        for i in range(self._nodes.degree):
             e = self._int_to_el[i]
             p = self._int_to_el[self._nodes.parent[i]]
             d[e] = [p]

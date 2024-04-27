@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 # distutils: libraries = flint
 
 include "sage/libs/linkages/padics/fmpz_poly_unram.pxi"

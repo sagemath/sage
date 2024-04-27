@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 r"""
 Group, ring, etc. actions on objects
 
@@ -149,7 +148,7 @@ cdef class Action(Functor):
             sage: A(x, 5)
             Traceback (most recent call last):
             ...
-            TypeError: not a constant polynomial
+            TypeError: x is not a constant polynomial
             sage: A = IntegerMulAction(ZZ, R, False)  # Right action
             sage: A(x, 5)
             5*x
@@ -158,7 +157,7 @@ cdef class Action(Functor):
             sage: A(5, x)
             Traceback (most recent call last):
             ...
-            TypeError: not a constant polynomial
+            TypeError: x is not a constant polynomial
         """
         if len(args) == 2:
             # Normal case, called with (g, x) or (x, g) as arguments
