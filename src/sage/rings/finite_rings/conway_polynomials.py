@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 """
 Routines for Conway and pseudo-Conway polynomials
 

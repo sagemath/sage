@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 r"""
 Tensor Fields with Values on a Parallelizable Manifold
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 from sage.libs.gsl.wavelet cimport *
 from sage.libs.gsl.array cimport GSLDoubleArray
 

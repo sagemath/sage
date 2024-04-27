@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: optional - sage.modules sage.rings.finite_rings
 r"""
 Reed-Solomon codes and Generalized Reed-Solomon codes

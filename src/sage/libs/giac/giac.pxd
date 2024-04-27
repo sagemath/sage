@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-giac
 # distutils: language = c++
 # ****************************************************************************
 #       Copyright (C) 2012, Frederic Han <frederic.han@imj-prg.fr>

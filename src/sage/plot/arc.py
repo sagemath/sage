@@ -1,8 +1,7 @@
-# sage_setup: distribution = sagemath-plot
 """
 Arcs of circles and ellipses
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Vincent Delecroix <20100.delecroix@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -14,8 +13,8 @@ Arcs of circles and ellipses
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 
 from sage.plot.primitive import GraphicPrimitive
 from sage.plot.colors import to_mpl_color
@@ -337,7 +336,7 @@ class Arc(GraphicPrimitive):
         g.add_primitive(BezierPath(cutlist, opt))
         return g
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of ``Arc`` primitive.
 
@@ -347,7 +346,7 @@ class Arc(GraphicPrimitive):
             sage: print(Arc(2,3,2.2,2.2,0,2,3,{}))
             Arc with center (2.0,3.0) radii (2.2,2.2) angle 0.0 inside the sector (2.0,3.0)
         """
-        return "Arc with center (%s,%s) radii (%s,%s) angle %s inside the sector (%s,%s)" % (self.x, self.y, self.r1, self.r2, self.angle, self.s1, self.s2)
+        return f"Arc with center ({self.x},{self.y}) radii ({self.r1},{self.r2}) angle {self.angle} inside the sector ({self.s1},{self.s2})"
 
     def _render_on_subplot(self, subplot):
         """

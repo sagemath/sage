@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-ntl
 """
 Polynomial Template for C/C++ Library Interfaces
 """
