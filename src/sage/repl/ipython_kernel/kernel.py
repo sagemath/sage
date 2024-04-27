@@ -100,7 +100,7 @@ class SageKernel(IPythonKernel):
             sage: sk = SageKernel.__new__(SageKernel)
             sage: sk.help_links
             [{'text': 'Sage Documentation',
-              'url': 'https://doc.sagemath.org/html/en/index.html'},
+              'url': '.../html/en/index.html'},
              ...]
         """
         from sage.env import SAGE_DOC_SERVER_URL as url
