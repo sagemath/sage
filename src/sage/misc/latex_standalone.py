@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Standalone LaTeX Document class and TikzPicture
 

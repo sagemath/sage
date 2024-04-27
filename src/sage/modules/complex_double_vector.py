@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Pickling for the old CDF vector class
 

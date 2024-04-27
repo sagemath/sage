@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-repl
+# -*- encoding: utf-8 -*-
 r"""
 Catalog of all available output container types.
 

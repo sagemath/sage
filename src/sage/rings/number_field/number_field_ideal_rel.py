@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 r"""
 Ideals of relative number fields
 

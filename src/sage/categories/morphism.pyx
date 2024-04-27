@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Morphisms
 
@@ -571,7 +570,7 @@ cdef class SetMorphism(Morphism):
 
         - ``parent`` -- a Homset
         - ``function`` -- a Python function that takes elements
-          of the domain as input and returns elements of the domain.
+          of the domain as input and returns elements of the codomain.
 
         EXAMPLES::
 
@@ -737,3 +736,159 @@ cdef class SetMorphism(Morphism):
             return not (isinstance(right, Element) and self._eq_c_impl(right))
         else:
             return False
+
+
+cdef class SetIsomorphism(SetMorphism):
+    r"""
+    An isomorphism of sets.
+
+    INPUT:
+
+    - ``parent`` -- a Homset
+    - ``function`` -- a Python function that takes elements
+      of the domain as input and returns elements of the codomain.
+
+    EXAMPLES::
+
+        sage: f = sage.categories.morphism.SetIsomorphism(Hom(ZZ, ZZ, Sets()),
+        ....:                                             operator.__neg__); f
+        Generic endomorphism of Integer Ring
+        sage: f._set_inverse(f)
+        sage: ~f is f
+        True
+    """
+    def _set_inverse(self, inverse):
+        r"""
+        Set the inverse morphism of ``self`` to be ``inverse``.
+
+        INPUT:
+
+        - ``inverse`` -- a :class:`SetIsomorphism`
+
+        EXAMPLES::
+
+            sage: f = sage.categories.morphism.SetIsomorphism(Hom(ZZ, ZZ, Sets()),
+            ....:                                             operator.__neg__)
+            sage: f._set_inverse(f)
+            sage: ~f is f
+            True
+        """
+        self._inverse = inverse
+
+    def __invert__(self):
+        r"""
+        Return the inverse morphism of ``self``.
+
+        If :meth:`_set_inverse` has not been called yet, an error is raised.
+
+        EXAMPLES::
+
+            sage: f = sage.categories.morphism.SetIsomorphism(Hom(ZZ, ZZ, Sets()),
+            ....:                                             operator.__neg__)
+            sage: ~f
+            Traceback (most recent call last):
+            ...
+            RuntimeError: inverse morphism has not been set
+            sage: f._set_inverse(f)
+            sage: ~f
+            Generic endomorphism of Integer Ring
+        """
+        if not self._inverse:
+            raise RuntimeError('inverse morphism has not been set')
+        return self._inverse
+
+    cdef dict _extra_slots(self) noexcept:
+        """
+        Extend the dictionary with extra slots for this class.
+
+        INPUT:
+
+        - ``_slots`` -- a dictionary
+
+        EXAMPLES::
+
+            sage: f = sage.categories.morphism.SetIsomorphism(Hom(ZZ, ZZ, Sets()),
+            ....:                                             operator.__neg__)
+            sage: f._set_inverse(f)
+            sage: f._extra_slots_test()
+            {'_codomain': Integer Ring,
+             '_domain': Integer Ring,
+             '_function': <built-in function neg>,
+             '_inverse': Generic endomorphism of Integer Ring,
+             '_is_coercion': False,
+             '_repr_type_str': None}
+        """
+        slots = SetMorphism._extra_slots(self)
+        slots['_inverse'] = self._inverse
+        return slots
+
+    cdef _update_slots(self, dict _slots) noexcept:
+        """
+        Update the slots of ``self`` from the data in the dictionary.
+
+        INPUT:
+
+        - ``_slots`` -- a dictionary
+
+        EXAMPLES::
+
+            sage: f = sage.categories.morphism.SetIsomorphism(Hom(ZZ, ZZ, Sets()),
+            ....:                                             operator.__neg__)
+            sage: f._update_slots_test({'_function': operator.__neg__,
+            ....:                       '_inverse': f,
+            ....:                       '_domain': QQ,
+            ....:                       '_codomain': QQ,
+            ....:                       '_repr_type_str': 'bla'})
+            sage: f(3)
+            -3
+            sage: f._repr_type()
+            'bla'
+            sage: f.domain()
+            Rational Field
+            sage: f.codomain()
+            Rational Field
+            sage: f.inverse() == f
+            True
+        """
+        self._inverse = _slots['_inverse']
+        SetMorphism._update_slots(self, _slots)
+
+    def section(self):
+        """
+        Return a section of this morphism.
+
+        EXAMPLES::
+
+            sage: f = sage.categories.morphism.SetIsomorphism(Hom(ZZ, ZZ, Sets()),
+            ....:                                             operator.__neg__)
+            sage: f._set_inverse(f)
+            sage: f.section() is f
+            True
+        """
+        return self.__invert__()
+
+    def is_surjective(self):
+        r"""
+        Return whether this morphism is surjective.
+
+        EXAMPLES::
+
+            sage: f = sage.categories.morphism.SetIsomorphism(Hom(ZZ, ZZ, Sets()),
+            ....:                                             operator.__neg__)
+            sage: f.is_surjective()
+            True
+        """
+        return True
+
+    def is_injective(self):
+        r"""
+        Return whether this morphism is injective.
+
+        EXAMPLES::
+
+            sage: f = sage.categories.morphism.SetIsomorphism(Hom(ZZ, ZZ, Sets()),
+            ....:                                             operator.__neg__)
+            sage: f.is_injective()
+            True
+        """
+        return True

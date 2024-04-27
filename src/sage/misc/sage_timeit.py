@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Accurate timing information for Sage commands
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 """
 Generate cdd ``.ext`` / ``.ine`` file format
 """
