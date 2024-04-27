@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Morphisms between finitely generated modules over a PID
 

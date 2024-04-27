@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-objects
 """
 Fast and safe weak value dictionary
 

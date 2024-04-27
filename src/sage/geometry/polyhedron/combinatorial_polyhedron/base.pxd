@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 cimport cython
 from sage.data_structures.list_of_pairs cimport ListOfPairs
 from sage.structure.sage_object         cimport SageObject

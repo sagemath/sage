@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Base class for multivariate polynomial rings
 """

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 Tate's parametrisation of `p`-adic curves with multiplicative reduction
 
