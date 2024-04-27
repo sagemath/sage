@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-singular
 # sage.doctest: optional - sage.rings.function_field
 r"""
 Ideals of function fields: extension

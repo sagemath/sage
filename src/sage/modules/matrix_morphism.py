@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 r"""
 Morphisms defined by a matrix
 
@@ -20,8 +19,6 @@ EXAMPLES::
     [1 0 0]
     [0 1 0]
     [0 0 1]
-    sage: is_MatrixMorphism(m)
-    True
     sage: m.charpoly('x')                                                               # needs sage.libs.pari
     x^3 - 3*x^2 + 3*x - 1
     sage: m.base_ring()
@@ -54,6 +51,7 @@ AUTHOR:
 
 import sage.categories.morphism
 import sage.categories.homset
+from sage.categories.finite_dimensional_modules_with_basis import FiniteDimensionalModulesWithBasis
 from sage.structure.all import Sequence, parent
 from sage.structure.richcmp import richcmp, op_NE, op_EQ
 
@@ -62,18 +60,39 @@ def is_MatrixMorphism(x):
     """
     Return True if x is a Matrix morphism of free modules.
 
+    This function is deprecated.
+
     EXAMPLES::
 
         sage: V = ZZ^2; phi = V.hom([3*V.0, 2*V.1])
         sage: sage.modules.matrix_morphism.is_MatrixMorphism(phi)
+        doctest:warning...
+        DeprecationWarning: is_MatrixMorphism is deprecated;
+        use isinstance(..., MatrixMorphism_abstract) or categories instead
+        See https://github.com/sagemath/sage/issues/37731 for details.
         True
         sage: sage.modules.matrix_morphism.is_MatrixMorphism(3)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37731,
+                "is_MatrixMorphism is deprecated; "
+                "use isinstance(..., MatrixMorphism_abstract) or categories instead")
     return isinstance(x, MatrixMorphism_abstract)
 
 
 class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
+
+    # Copy in methods that delegate to self.matrix.
+    # This is needed because MatrixMorphism_abstract is subclassed
+    # for use with parents that are merely set up as additive abelian groups,
+    # but not as ZZ-modules; see sage.modular.abvar.
+
+    characteristic_polynomial = charpoly = FiniteDimensionalModulesWithBasis.Homsets.Endset.ElementMethods.characteristic_polynomial
+    det = determinant = FiniteDimensionalModulesWithBasis.Homsets.Endset.ElementMethods.determinant
+    fcp = FiniteDimensionalModulesWithBasis.Homsets.Endset.ElementMethods.fcp
+    trace = FiniteDimensionalModulesWithBasis.Homsets.Endset.ElementMethods.trace
+
     def __init__(self, parent, side='left'):
         """
         INPUT:
@@ -800,35 +819,6 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
         """
         return self.domain().base_ring()
 
-    def characteristic_polynomial(self, var='x'):
-        r"""
-        Return the characteristic polynomial of this endomorphism.
-
-        ``characteristic_polynomial`` and ``char_poly`` are the same method.
-
-        INPUT:
-
-        - var -- variable
-
-        EXAMPLES::
-
-            sage: V = ZZ^2; phi = V.hom([V.0+V.1, 2*V.1])
-            sage: phi.characteristic_polynomial()
-            x^2 - 3*x + 2
-            sage: phi.charpoly()
-            x^2 - 3*x + 2
-            sage: phi.matrix().charpoly()
-            x^2 - 3*x + 2
-            sage: phi.charpoly('T')
-            T^2 - 3*T + 2
-        """
-        if not self.is_endomorphism():
-            raise ArithmeticError("charpoly only defined for endomorphisms "
-                                  "(i.e., domain = range)")
-        return self.matrix().charpoly(var)
-
-    charpoly = characteristic_polynomial
-
     def decomposition(self, *args, **kwds):
         """
         Return decomposition of this endomorphism, i.e., sequence of
@@ -877,46 +867,6 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             return Sequence([D.submodule((V.basis_matrix() * B).row_module(R),
                                          check=False) for V, _ in E],
                             cr=True, check=False)
-
-    def trace(self):
-        r"""
-        Return the trace of this endomorphism.
-
-        EXAMPLES::
-
-            sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
-            sage: phi.trace()
-            3
-        """
-        return self._matrix.trace()
-
-    def det(self):
-        """
-        Return the determinant of this endomorphism.
-
-        EXAMPLES::
-
-            sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
-            sage: phi.det()
-            2
-        """
-        if not self.is_endomorphism():
-            raise ArithmeticError("matrix morphism must be an endomorphism")
-        return self.matrix().determinant()
-
-    def fcp(self, var='x'):
-        """
-        Return the factorization of the characteristic polynomial.
-
-        EXAMPLES::
-
-            sage: V = ZZ^2; phi = V.hom([V.0 + V.1, 2*V.1])
-            sage: phi.fcp()                                                             # needs sage.libs.pari
-            (x - 2) * (x - 1)
-            sage: phi.fcp('T')                                                          # needs sage.libs.pari
-            (T - 2) * (T - 1)
-        """
-        return self.charpoly(var).factor()
 
     def kernel(self):
         """
@@ -1367,7 +1317,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
 
         - Rob Beezer (2011-07-15)
         """
-        if not is_MatrixMorphism(other):
+        if not isinstance(other, MatrixMorphism_abstract):
             msg = 'can only compare to a matrix morphism, not {0}'
             raise TypeError(msg.format(other))
         if self.domain() != other.domain():

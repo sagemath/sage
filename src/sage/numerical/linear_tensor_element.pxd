@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 from sage.structure.element cimport Element, ModuleElement
 
 cdef class LinearTensor(ModuleElement):

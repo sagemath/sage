@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 AUTHORS:
 
@@ -12,19 +11,19 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
-from sage.modular.modform_hecketriangle.hecke_triangle_groups import HeckeTriangleGroup
+from .hecke_triangle_groups import HeckeTriangleGroup
 
-from sage.modular.modform_hecketriangle.series_constructor import MFSeriesConstructor
+from .series_constructor import MFSeriesConstructor
 
-from sage.modular.modform_hecketriangle.graded_ring import (QuasiMeromorphicModularFormsRing,
-                                                            QuasiWeakModularFormsRing, QuasiModularFormsRing,
-                                                            QuasiCuspFormsRing, MeromorphicModularFormsRing,
-                                                            WeakModularFormsRing,
-                                                            ModularFormsRing, CuspFormsRing)
+from .graded_ring import (QuasiMeromorphicModularFormsRing,
+                          QuasiWeakModularFormsRing, QuasiModularFormsRing,
+                          QuasiCuspFormsRing, MeromorphicModularFormsRing,
+                          WeakModularFormsRing,
+                          ModularFormsRing, CuspFormsRing)
 
-from sage.modular.modform_hecketriangle.space import (QuasiMeromorphicModularForms, QuasiWeakModularForms,
-                                                      QuasiModularForms, QuasiCuspForms,
-                                                      MeromorphicModularForms, WeakModularForms, ModularForms,
-                                                      CuspForms, ZeroForm)
+from .space import (QuasiMeromorphicModularForms, QuasiWeakModularForms,
+                    QuasiModularForms, QuasiCuspForms,
+                    MeromorphicModularForms, WeakModularForms, ModularForms,
+                    CuspForms, ZeroForm)
 
-from sage.modular.modform_hecketriangle.subspace import ModularFormsSubSpace
+from .subspace import ModularFormsSubSpace

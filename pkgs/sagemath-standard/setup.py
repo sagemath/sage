@@ -69,60 +69,25 @@ if any(x in sys.argv
     from sage_setup.autogen import autogen_all
     autogen_all()
 
-    # TODO: This should be quiet by default
-    print("Discovering Python/Cython source code....")
-    t = time.time()
-    from sage.misc.package import is_package_installed_and_updated
+# TODO: This should be quiet by default
+print("Discovering Python/Cython source code....")
+t = time.time()
+from sage.misc.package import is_package_installed_and_updated
+distributions = ['']
+optional_packages_with_extensions = os.environ.get('SAGE_OPTIONAL_PACKAGES_WITH_EXTENSIONS', '').split(',')
+distributions += ['sagemath-{}'.format(pkg)
+                  for pkg in optional_packages_with_extensions
+                  if is_package_installed_and_updated(pkg)]
+log.warn('distributions = {0}'.format(distributions))
+from sage_setup.find import find_python_sources
+python_packages, python_modules, cython_modules = find_python_sources(
+    SAGE_SRC, ['sage'], distributions=distributions)
 
-    distributions = [
-        '',
-        "sagemath-brial",
-        "sagemath-categories",
-        "sagemath-combinat",
-        "sagemath-eclib",
-        "sagemath-environment",
-        "sagemath-flint",
-        "sagemath-gap",
-        "sagemath-giac",
-        "sagemath-glpk",
-        "sagemath-graphs",
-        "sagemath-groups",
-        "sagemath-homfly",
-        "sagemath-lcalc",
-        "sagemath-libbraiding",
-        "sagemath-libecm",
-        "sagemath-linbox",
-        "sagemath-modules",
-        "sagemath-mpmath",
-        "sagemath-ntl",
-        "sagemath-objects",
-        "sagemath-pari",
-        "sagemath-plot",
-        "sagemath-polyhedra",
-        "sagemath-repl",
-        "sagemath-schemes",
-        "sagemath-singular",
-        "sagemath-symbolics",
-    ]
+log.debug('python_packages = {0}'.format(python_packages))
+log.debug('python_modules = {0}'.format(python_modules))
+log.debug('cython_modules = {0}'.format(cython_modules))
 
-    optional_packages_with_extensions = os.environ.get('SAGE_OPTIONAL_PACKAGES_WITH_EXTENSIONS', '').split(',')
-    distributions += ['sagemath-{}'.format(pkg)
-                      for pkg in optional_packages_with_extensions
-                      if is_package_installed_and_updated(pkg)]
-    log.warn('distributions = {0}'.format(distributions))
-    from sage_setup.find import find_python_sources
-    python_packages, python_modules, cython_modules = find_python_sources(
-        SAGE_SRC, ['sage'], distributions=distributions)
-
-    log.debug('python_packages = {0}'.format(python_packages))
-    log.debug('python_modules = {0}'.format(python_modules))
-    log.debug('cython_modules = {0}'.format(cython_modules))
-
-    print("Discovered Python/Cython sources, time: %.2f seconds." % (time.time() - t))
-else:
-    # sdist, egg_info, dist_info
-    python_packages = []
-    cython_modules = []
+print("Discovered Python/Cython sources, time: %.2f seconds." % (time.time() - t))
 
 #########################################################
 ### Distutils
