@@ -704,7 +704,7 @@ cdef class Expression(Expression_abc):
 
     cdef GEx _gobj
 
-    cpdef object pyobject(self) noexcept:
+    cpdef object pyobject(self):
         """
         Get the underlying Python object.
 
@@ -1577,7 +1577,7 @@ cdef class Expression(Expression_abc):
             return n
         return sage.rings.rational.Rational(n)
 
-    cpdef _eval_self(self, R) noexcept:
+    cpdef _eval_self(self, R):
         """
         Evaluate this expression numerically.
 
@@ -1638,7 +1638,7 @@ cdef class Expression(Expression_abc):
         else:
             raise TypeError("cannot evaluate symbolic expression to a numeric value")
 
-    cpdef _convert(self, kwds) noexcept:
+    cpdef _convert(self, kwds):
         """
         Convert all the numeric coefficients and constants in this expression
         to the given ring ``R``. This results in an expression which contains
@@ -2178,7 +2178,7 @@ cdef class Expression(Expression_abc):
         finally:
             sig_off()
 
-    cpdef _richcmp_(left, right, int op) noexcept:
+    cpdef _richcmp_(left, right, int op):
         """
         Create a formal symbolic inequality or equality.
 
@@ -3798,7 +3798,7 @@ cdef class Expression(Expression_abc):
             return False
         raise NotImplementedError
 
-    cdef Expression coerce_in(self, z) noexcept:
+    cdef Expression coerce_in(self, z):
         """
         Quickly coerce z to be an Expression.
         """
@@ -3807,7 +3807,7 @@ cdef class Expression(Expression_abc):
         except TypeError:
             return self._parent.coerce(z)
 
-    cpdef _add_(left, right) noexcept:
+    cpdef _add_(left, right):
         """
         Add left and right.
 
@@ -3902,7 +3902,7 @@ cdef class Expression(Expression_abc):
             x = left._gobj + _right._gobj
         return new_Expression_from_GEx(left._parent, x)
 
-    cpdef _sub_(left, right) noexcept:
+    cpdef _sub_(left, right):
         """
         EXAMPLES::
 
@@ -3954,7 +3954,7 @@ cdef class Expression(Expression_abc):
             x = left._gobj - _right._gobj
         return new_Expression_from_GEx(left._parent, x)
 
-    cpdef _mul_(left, right) noexcept:
+    cpdef _mul_(left, right):
         """
         Multiply left and right.
 
@@ -4120,7 +4120,7 @@ cdef class Expression(Expression_abc):
             x = left._gobj * _right._gobj
         return new_Expression_from_GEx(left._parent, x)
 
-    cpdef _div_(left, right) noexcept:
+    cpdef _div_(left, right):
         """
         Divide left and right.
 
@@ -4301,7 +4301,7 @@ cdef class Expression(Expression_abc):
         """
         return print_order_compare_mul(left._gobj, right._gobj)
 
-    cpdef _pow_(self, other) noexcept:
+    cpdef _pow_(self, other):
         r"""
         Return ``self`` raised to the power ``other``.
 
@@ -4515,7 +4515,7 @@ cdef class Expression(Expression_abc):
             x = g_pow(self._gobj, nexp._gobj)
         return new_Expression_from_GEx(self._parent, x)
 
-    cpdef _pow_int(self, other) noexcept:
+    cpdef _pow_int(self, other):
         """
         TESTS::
 
@@ -5899,7 +5899,7 @@ cdef class Expression(Expression_abc):
         res = self._gobj.subs_map(smap, 0)
         return new_Expression_from_GEx(self._parent, res)
 
-    cpdef Expression _subs_expr(self, expr) noexcept:
+    cpdef Expression _subs_expr(self, expr):
         """
         EXAMPLES::
 
@@ -7828,9 +7828,9 @@ cdef class Expression(Expression_abc):
             sage: gcd(I + I*x, x^2 - 1)
             x + 1
             sage: alg = SR(QQbar(sqrt(2) + I*sqrt(3)))
-            sage: gcd(alg + alg*x, x^2 - 1)  # known bug (trac #28489)
+            sage: gcd(alg + alg*x, x^2 - 1)  # known bug (Issue #28489)
             x + 1
-            sage: gcd(alg - alg*x, x^2 - 1)  # known bug (trac #28489)
+            sage: gcd(alg - alg*x, x^2 - 1)  # known bug (Issue #28489)
             x - 1
             sage: sqrt2 = SR(QQbar(sqrt(2)))
             sage: gcd(sqrt2 + x, x^2 - 2)    # known bug
@@ -12377,11 +12377,11 @@ cdef class Expression(Expression_abc):
         """
         from sage.symbolic.relation import solve
         return solve(self, x, multiplicities=multiplicities,
-                              solution_dict=solution_dict,
-                              explicit_solutions=explicit_solutions,
-                              to_poly_solve=to_poly_solve,
-                              algorithm=algorithm,
-                              domain=domain)
+                     solution_dict=solution_dict,
+                     explicit_solutions=explicit_solutions,
+                     to_poly_solve=to_poly_solve,
+                     algorithm=algorithm,
+                     domain=domain)
 
     def solve_diophantine(self, x=None, solution_dict=False):
         """
@@ -13530,7 +13530,7 @@ cdef class Expression(Expression_abc):
                 return S
 
 
-cpdef _repr_Expression(x) noexcept:
+cpdef _repr_Expression(x):
     r"""
     Return the string representation of the expression ``x``.
 
@@ -13542,7 +13542,7 @@ cpdef _repr_Expression(x) noexcept:
     return ccrepr((<Expression>x)._gobj)
 
 
-cpdef _latex_Expression(x) noexcept:
+cpdef _latex_Expression(x):
     r"""
     Return the standard LaTeX version of the expression `x`.
 
@@ -13618,7 +13618,7 @@ def _eval_on_operands(f):
 
 
 cdef dict dynamic_class_cache = {}
-cdef get_dynamic_class_for_function(unsigned serial) noexcept:
+cdef get_dynamic_class_for_function(unsigned serial):
     r"""
     Create a dynamic class corresponding to the function with given
     ``serial`` that includes dynamic methods defined by the function.
@@ -13713,7 +13713,7 @@ cdef get_dynamic_class_for_function(unsigned serial) noexcept:
     return cls
 
 
-cdef Expression new_Expression_from_GEx(parent, GEx juice) noexcept:
+cdef Expression new_Expression_from_GEx(parent, GEx juice):
     cdef type cls
     cdef Expression nex
     if is_exactly_a_function(juice):
@@ -13729,7 +13729,7 @@ cdef Expression new_Expression_from_GEx(parent, GEx juice) noexcept:
     return nex
 
 
-cpdef new_Expression(parent, x) noexcept:
+cpdef new_Expression(parent, x):
     r"""
     Convert ``x`` into the symbolic expression ring ``parent``.
 
@@ -13819,7 +13819,7 @@ cpdef new_Expression(parent, x) noexcept:
     return new_Expression_from_GEx(parent, exp)
 
 
-cpdef new_Expression_from_pyobject(parent, x, bint force=True, bint recursive=True) noexcept:
+cpdef new_Expression_from_pyobject(parent, x, bint force=True, bint recursive=True):
     r"""
     Wrap the given Python object in a symbolic expression even if it
     cannot be coerced to the Symbolic Ring.
@@ -13890,7 +13890,7 @@ cpdef new_Expression_from_pyobject(parent, x, bint force=True, bint recursive=Tr
     return new_Expression_from_GEx(parent, exp)
 
 
-cpdef new_Expression_wild(parent, unsigned int n=0) noexcept:
+cpdef new_Expression_wild(parent, unsigned int n=0):
     r"""
     Return the n-th wild-card for pattern matching and substitution.
 
@@ -13920,7 +13920,7 @@ cpdef new_Expression_wild(parent, unsigned int n=0) noexcept:
     return new_Expression_from_GEx(parent, g_wild(n))
 
 
-cpdef new_Expression_symbol(parent, name=None, latex_name=None, domain=None) noexcept:
+cpdef new_Expression_symbol(parent, name=None, latex_name=None, domain=None):
     r"""
     Look up or create a symbol.
 
@@ -14072,7 +14072,7 @@ cdef class ExpressionIterator:
         self._ind+=1
         return new_Expression_from_GEx(self._ex._parent, ex)
 
-cdef inline ExpressionIterator new_ExpIter_from_Expression(Expression ex) noexcept:
+cdef inline ExpressionIterator new_ExpIter_from_Expression(Expression ex):
     """
     Construct a new iterator over a symbolic expression.
 

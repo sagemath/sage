@@ -1,5 +1,5 @@
 """
-Base class for groups
+Deprecated base class for groups
 """
 
 # ****************************************************************************
@@ -17,16 +17,16 @@ Base class for groups
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-doc="""
-Base class for all groups
+doc = """
+Deprecated base class for all groups
 """
-from sage.rings.infinity import infinity
 import sage.rings.integer_ring
+from sage.misc.superseded import deprecation
 
 
 cdef class Group(sage.structure.parent.Parent):
     """
-    Generic group class
+    Generic group class.
     """
     def __init__(self, category=None):
         """
@@ -35,6 +35,9 @@ cdef class Group(sage.structure.parent.Parent):
 
             sage: from sage.groups.old import Group
             sage: G = Group()
+            doctest:warning...:
+            DeprecationWarning: do not use the old Group class
+            See https://github.com/sagemath/sage/issues/37449 for details.
             sage: G.category()
             Category of groups
             sage: G = Group(category = Groups()) # todo: do the same test with some subcategory of Groups when there will exist one
@@ -54,6 +57,7 @@ cdef class Group(sage.structure.parent.Parent):
             sage: h == hash(G)
             True
         """
+        deprecation(37449, 'do not use the old Group class')
         from sage.categories.basic import Groups
         if category is None:
             category = Groups()
@@ -63,15 +67,9 @@ cdef class Group(sage.structure.parent.Parent):
         sage.structure.parent.Parent.__init__(self,
                 base=sage.rings.integer_ring.ZZ, category=category)
 
-    #def __call__(self, x): # this gets in the way of the coercion mechanism
-    #    """
-    #    Coerce x into this group.
-    #    """
-    #    raise NotImplementedError
-
     def __contains__(self, x):
         r"""
-        True if coercion of `x` into self is defined.
+        Return ``True`` if coercion of ``x`` into ``self`` is defined.
 
         EXAMPLES::
 
@@ -88,16 +86,9 @@ cdef class Group(sage.structure.parent.Parent):
             return False
         return True
 
-#    def category(self):
-#        """
-#        The category of all groups
-#        """
-#        import sage.categories.all
-#        return sage.categories.all.Groups()
-
     def is_abelian(self):
         """
-        Return True if this group is abelian.
+        Return ``True`` if this group is abelian.
 
         EXAMPLES::
 
@@ -112,7 +103,7 @@ cdef class Group(sage.structure.parent.Parent):
 
     def is_commutative(self):
         r"""
-        Return True if this group is commutative. This is an alias for
+        Return ``True`` if this group is commutative. This is an alias for
         is_abelian, largely to make groups work well with the Factorization
         class.
 
@@ -128,7 +119,7 @@ cdef class Group(sage.structure.parent.Parent):
 
     def order(self):
         """
-        Returns the number of elements of this group, which is either a
+        Return the number of elements of this group, which is either a
         positive integer or infinity.
 
         EXAMPLES::
@@ -142,25 +133,9 @@ cdef class Group(sage.structure.parent.Parent):
         """
         raise NotImplementedError
 
-    def is_finite(self):
-        """
-        Returns True if this group is finite.
-
-        EXAMPLES::
-
-            sage: from sage.groups.old import Group
-            sage: G = Group()
-            sage: G.is_finite()
-            Traceback (most recent call last):
-            ...
-            NotImplementedError
-        """
-        return self.order() != infinity
-
     def is_multiplicative(self):
         r"""
-        Returns True if the group operation is given by \* (rather than
-        +).
+        Return ``True`` if the group operation is given by \* (rather than +).
 
         Override for additive groups.
 
@@ -190,8 +165,7 @@ cdef class Group(sage.structure.parent.Parent):
 
     def quotient(self, H, **kwds):
         """
-        Return the quotient of this group by the normal subgroup
-        `H`.
+        Return the quotient of this group by the normal subgroup `H`.
 
         EXAMPLES::
 
@@ -237,7 +211,6 @@ cdef class FiniteGroup(Group):
             True
         """
         return True
-
 
 cdef class AlgebraicGroup(Group):
     """

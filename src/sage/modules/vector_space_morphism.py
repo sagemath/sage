@@ -705,9 +705,9 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
         Vector_callable_symbolic_dense = ()
 
     if side not in ['left', 'right']:
-        raise ValueError("side must be 'left' or 'right', not {0}".format(side))
+        raise ValueError("side must be 'left' or 'right', not {}".format(side))
     if not (is_Matrix(arg0) or is_VectorSpace(arg0)):
-        raise TypeError('first argument must be a matrix or a vector space, not {0}'.format(arg0))
+        raise TypeError('first argument must be a matrix or a vector space, not {}'.format(arg0))
     if is_Matrix(arg0):
         R = arg0.base_ring()
         if not R.is_field():
@@ -763,7 +763,7 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
             msg = 'symbolic function must be linear in all the inputs:\n' + e.args[0]
             raise ValueError(msg)
         # have matrix with respect to standard bases, now consider user bases
-        images = [v*arg2 for v in D.basis()]
+        images = [v * arg2 for v in D.basis()]
         try:
             arg2 = matrix([C.coordinates(C(a)) for a in images])
         except (ArithmeticError, TypeError) as e:
@@ -779,9 +779,12 @@ def linear_transformation(arg0, arg1=None, arg2=None, side='left'):
     # __init__ will check matrix sizes versus domain/codomain dimensions
     return H(arg2)
 
-def is_VectorSpaceMorphism(x):
+
+def is_VectorSpaceMorphism(x) -> bool:
     r"""
     Returns ``True`` if ``x`` is a vector space morphism (a linear transformation).
+
+    This function is deprecated.
 
     INPUT:
 
@@ -796,10 +799,18 @@ def is_VectorSpaceMorphism(x):
 
         sage: V = QQ^2; f = V.hom([V.1,-2*V.0])
         sage: sage.modules.vector_space_morphism.is_VectorSpaceMorphism(f)
+        doctest:warning...
+        DeprecationWarning: is_VectorSpaceMorphism is deprecated;
+        use isinstance(..., VectorSpaceMorphism) or categories instead
+        See https://github.com/sagemath/sage/issues/37731 for details.
         True
         sage: sage.modules.vector_space_morphism.is_VectorSpaceMorphism('junk')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37731,
+                "is_VectorSpaceMorphism is deprecated; "
+                "use isinstance(..., VectorSpaceMorphism) or categories instead")
     return isinstance(x, VectorSpaceMorphism)
 
 
@@ -859,7 +870,7 @@ class VectorSpaceMorphism(free_module_morphism.FreeModuleMorphism):
             <class 'sage.modules.vector_space_morphism.VectorSpaceMorphism'>
         """
         if not vector_space_homspace.is_VectorSpaceHomspace(homspace):
-            raise TypeError('homspace must be a vector space hom space, not {0}'.format(homspace))
+            raise TypeError('homspace must be a vector space hom space, not {}'.format(homspace))
         if isinstance(A, matrix_morphism.MatrixMorphism):
             A = A.matrix()
         if not is_Matrix(A):

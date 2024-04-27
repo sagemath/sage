@@ -505,9 +505,9 @@ def Polyhedron(vertices=None, rays=None, lines=None,
         sage: p.add_constraint(x >= -1)
         sage: p.add_constraint(y <= 1)
         sage: p.add_constraint(y >= -1)
-        sage: Polyhedron(o)
+        sage: Polyhedron(p, base_ring=ZZ)
         A 2-dimensional polyhedron in ZZ^2 defined as the convex hull of 4 vertices
-        sage: Polyhedron(o, base_ring=QQ)
+        sage: Polyhedron(p)
         A 2-dimensional polyhedron in QQ^2 defined as the convex hull of 4 vertices
 
         sage: # needs sage.combinat

@@ -20,7 +20,7 @@ EXAMPLES::
     sage: H = Hyp(cyclotomic=([30], [1,2,3,5]))
     sage: H.alpha_beta()
     ([1/30, 7/30, 11/30, 13/30, 17/30, 19/30, 23/30, 29/30],
-    [0, 1/5, 1/3, 2/5, 1/2, 3/5, 2/3, 4/5])
+     [0, 1/5, 1/3, 2/5, 1/2, 3/5, 2/3, 4/5])
     sage: H.M_value() == 30**30 / (15**15 * 10**10 * 6**6)
     True
     sage: H.euler_factor(2, 7)
@@ -42,7 +42,7 @@ REFERENCES:
 
 - [Roberts2015]_
 
-- [RR2022]_
+- [RRV2022]_
 
 - [BeCoMe]_
 
@@ -68,21 +68,24 @@ from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
 from sage.functions.generalized import sgn
 from sage.functions.log import log
 from sage.functions.other import floor, ceil, frac
+from sage.geometry.lattice_polytope import LatticePolytope
+from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.functional import cyclotomic_polynomial
 from sage.misc.misc_c import prod
 from sage.modular.hypergeometric_misc import hgm_coeffs
-from sage.rings.fraction_field import FractionField
+from sage.modules.free_module_element import vector
+from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+from sage.rings.fraction_field import FractionField
 from sage.rings.integer_ring import ZZ
 from sage.rings.padics.padic_generic_element import gauss_table
 from sage.rings.polynomial.polynomial_ring import polygen, polygens
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
-from sage.schemes.generic.spec import Spec
-from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.rings.universal_cyclotomic_field import UniversalCyclotomicField
+from sage.schemes.generic.spec import Spec
 
 
 def characteristic_polynomial_from_traces(traces, d, q, i, sign, deg=None, use_fe=True):
@@ -220,7 +223,7 @@ def enumerate_hypergeometric_data(d, weight=None):
                 yield H
 
 
-def possible_hypergeometric_data(d, weight=None):
+def possible_hypergeometric_data(d, weight=None) -> list:
     """
     Return the list of possible parameters of hypergeometric motives (up to swapping).
 
@@ -239,7 +242,7 @@ def possible_hypergeometric_data(d, weight=None):
     return list(enumerate_hypergeometric_data(d, weight))
 
 
-def cyclotomic_to_alpha(cyclo):
+def cyclotomic_to_alpha(cyclo) -> list:
     """
     Convert a list of indices of cyclotomic polynomials
     to a list of rational numbers.
@@ -265,14 +268,12 @@ def cyclotomic_to_alpha(cyclo):
         sage: cyclotomic_to_alpha([2,3])
         [1/3, 1/2, 2/3]
     """
-    alpha = []
-    for d in cyclo:
-        for k in ZZ(d).coprime_integers(d):
-            alpha.append(QQ((k, d)))
+    alpha = [QQ((k, d)) for d in cyclo
+             for k in ZZ(d).coprime_integers(d)]
     return sorted(alpha)
 
 
-def alpha_to_cyclotomic(alpha):
+def alpha_to_cyclotomic(alpha) -> list:
     """
     Convert from a list of rationals arguments to a list of integers.
 
@@ -333,10 +334,10 @@ def capital_M(n):
         [1, 4, 27, 64, 3125, 432, 823543]
     """
     n = ZZ(n)
-    return QQ.prod(d ** (d * moebius(n / d)) for d in divisors(n))
+    return QQ.prod(d ** (d * moebius(n // d)) for d in divisors(n))
 
 
-def cyclotomic_to_gamma(cyclo_up, cyclo_down):
+def cyclotomic_to_gamma(cyclo_up, cyclo_down) -> dict:
     """
     Convert a quotient of products of cyclotomic polynomials
     to a quotient of products of polynomials `x^n - 1`.
@@ -411,7 +412,7 @@ def gamma_list_to_cyclotomic(galist):
             sorted(d for d in resu for k in range(-resu[d])))
 
 
-class HypergeometricData():
+class HypergeometricData:
     _gauss_table = {}
 
     def __init__(self, cyclotomic=None, alpha_beta=None, gamma_list=None):
@@ -463,7 +464,7 @@ class HypergeometricData():
             deg = sum(euler_phi(x) for x in cyclo_down)
             up_deg = sum(euler_phi(x) for x in cyclo_up)
             if up_deg != deg:
-                msg = 'not the same degree: {} != {}'.format(up_deg, deg)
+                msg = f'not the same degree: {up_deg} != {deg}'
                 raise ValueError(msg)
             cyclo_up.sort()
             cyclo_down.sort()
@@ -502,7 +503,7 @@ class HypergeometricData():
                                         for v in cyclo_up)
 
     # --- Internals ---
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return the string representation.
 
@@ -517,7 +518,7 @@ class HypergeometricData():
         txt = "Hypergeometric data for {} and {}"
         return txt.format(list(self._alpha), list(self._beta))
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Return whether two data are equal.
 
@@ -534,7 +535,7 @@ class HypergeometricData():
         return (self._alpha == other._alpha and
                 self._beta == other._beta)
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         """
         Return whether two data are unequal.
 
@@ -563,7 +564,7 @@ class HypergeometricData():
         return hash((self._alpha, self._beta))
 
     # --- Parameters and invariants ---
-    def cyclotomic_data(self):
+    def cyclotomic_data(self) -> tuple:
         """
         Return the pair of tuples of indices of cyclotomic polynomials.
 
@@ -575,7 +576,7 @@ class HypergeometricData():
         """
         return (list(self._cyclo_up), list(self._cyclo_down))
 
-    def alpha_beta(self):
+    def alpha_beta(self) -> tuple:
         """
         Return the pair of lists of rational arguments.
 
@@ -587,7 +588,7 @@ class HypergeometricData():
         """
         return (list(self._alpha), list(self._beta))
 
-    def alpha(self):
+    def alpha(self) -> list:
         """
         Return the first tuple of rational arguments.
 
@@ -599,7 +600,7 @@ class HypergeometricData():
         """
         return list(self._alpha)
 
-    def beta(self):
+    def beta(self) -> list:
         """
         Return the second tuple of rational arguments.
 
@@ -611,7 +612,7 @@ class HypergeometricData():
         """
         return list(self._beta)
 
-    def defining_polynomials(self):
+    def defining_polynomials(self) -> tuple:
         """
         Return the pair of products of cyclotomic polynomials.
 
@@ -625,7 +626,7 @@ class HypergeometricData():
         down = prod(cyclotomic_polynomial(d) for d in self._cyclo_down)
         return (up, down)
 
-    def gamma_array(self):
+    def gamma_array(self) -> dict:
         r"""
         Return the dictionary `\{v: \gamma_v\}` for the expression
 
@@ -643,7 +644,7 @@ class HypergeometricData():
         """
         return dict(self._gamma_array)
 
-    def gamma_list(self):
+    def gamma_list(self) -> list:
         r"""
         Return a list of integers describing the `x^n - 1` factors.
 
@@ -667,7 +668,7 @@ class HypergeometricData():
             resu += [sgn(n) * v] * abs(n)
         return resu
 
-    def wild_primes(self):
+    def wild_primes(self) -> list:
         r"""
         Return the wild primes.
 
@@ -680,14 +681,15 @@ class HypergeometricData():
             [2, 3, 5]
         """
         gamma = self.gamma_array()
-        return sorted({p for n in gamma.keys() for (p, _) in n.factor()})
+        return sorted({p for n in gamma for p, _ in n.factor()})
 
     def zigzag(self, x, flip_beta=False):
         r"""
         Count ``alpha``'s at most ``x`` minus ``beta``'s at most ``x``.
 
         This function is used to compute the weight and the Hodge numbers.
-        With `flip_beta` set to True, replace each `b` in `\beta` with `1-b`.
+        With `flip_beta` set to ``True``, replace each `b` in `\beta`
+        with `1-b`.
 
         .. SEEALSO::
 
@@ -784,7 +786,7 @@ class HypergeometricData():
         """
         return self._deg
 
-    def hodge_numbers(self):
+    def hodge_numbers(self) -> list:
         """
         Return the Hodge numbers.
 
@@ -895,7 +897,7 @@ class HypergeometricData():
             return j
         return j - (i - x) * (k - 1)
 
-    def hodge_polygon_vertices(self):
+    def hodge_polygon_vertices(self) -> list:
         """
         Return the vertices of the Hodge polygon.
 
@@ -961,7 +963,7 @@ class HypergeometricData():
         gamma_plus = [g for g in gamma if g > 0]
         gamma_minus = [g for g in gamma if g < 0]
 
-        domain = set(d for g in gamma for d in divisors(g.abs()))
+        domain = {d for g in gamma for d in divisors(g.abs())}
 
         m_plus = {d: len([1 for g in gamma_plus if not g % d])
                   for d in domain}
@@ -1016,7 +1018,7 @@ class HypergeometricData():
         """
         return self._M_value
 
-    def is_primitive(self):
+    def is_primitive(self) -> bool:
         """
         Return whether this data is primitive.
 
@@ -1056,7 +1058,7 @@ class HypergeometricData():
         """
         return gcd(self.gamma_list())
 
-    def has_symmetry_at_one(self):
+    def has_symmetry_at_one(self) -> bool:
         """
         If ``True``, the motive H(t=1) is a direct sum of two motives.
 
@@ -1136,8 +1138,8 @@ class HypergeometricData():
         gamma_neg = [u for u in self.gamma_list() if u < 0]
         N_pos = len(gamma_pos)
         N_neg = len(gamma_neg)
-        varX = ['X{}'.format(i) for i in range(N_pos)]
-        varY = ['Y{}'.format(i) for i in range(N_neg)]
+        varX = [f'X{i}' for i in range(N_pos)]
+        varY = [f'Y{i}' for i in range(N_neg)]
         ring = PolynomialRing(basering, varX + varY)
         gens = ring.gens()
         X = gens[:N_pos]
@@ -1149,6 +1151,44 @@ class HypergeometricData():
 
         ideal = ring.ideal([eq0, eq1, self.M_value() * eq2_neg - t * eq2_pos])
         return Spec(ring.quotient(ideal))
+
+    def lattice_polytope(self):
+        """
+        Return the associated lattice polytope.
+
+        This uses the matrix defined in section 3 of [RRV2022]_ and
+        section 3 of [RV2019]_.
+
+        EXAMPLES::
+
+            sage: from sage.modular.hypergeometric_motive import HypergeometricData as Hyp
+            sage: H = Hyp(gamma_list=[-5, -2, 3, 4])
+            sage: P = H.lattice_polytope(); P
+            2-d lattice polytope in 2-d lattice M
+            sage: P.polyhedron().f_vector()
+            (1, 4, 4, 1)
+            sage: len(P.points())
+            7
+
+        The Chebyshev example from [RV2019]_::
+
+            sage: H = Hyp(gamma_list=[-30, -1, 6, 10, 15])
+            sage: P = H.lattice_polytope(); P
+            3-d lattice polytope in 3-d lattice M
+            sage: len(P.points())
+            19
+            sage: P.polyhedron().f_vector()
+            (1, 5, 9, 6, 1)
+        """
+        l = len(self.gamma_list())
+        m = matrix(ZZ, l, 1, self.gamma_list())
+        ext_ker = m.kernel().basis_matrix().insert_row(0, vector(ZZ, [1] * l))
+        unique_relation = ext_ker.kernel().basis()[0]
+        removed = next(i for i, ci in enumerate(unique_relation)
+                       if i and abs(ci) == 1)
+        mat = matrix(ZZ, [v for i, v in enumerate(ext_ker)
+                          if i and i != removed])
+        return LatticePolytope(mat.transpose())
 
     # --- Operations on data ---
     def twist(self):
@@ -1283,7 +1323,7 @@ class HypergeometricData():
         If left unspecified, `prec` is set to the minimum `p`-adic precision
         needed to recover the Euler factor.
 
-        If `cache_p` is True, then the function caches an intermediate
+        If `cache_p` is ``True``, then the function caches an intermediate
         result which depends only on `p` and `f`. This leads to a significant
         speedup when iterating over `t`.
 
@@ -1395,7 +1435,7 @@ class HypergeometricData():
         # also: D = (self.weight() + 1 - m[0]) // 2
 
         if prec is None:
-            prec = ceil((self.weight() * f) / 2 + log(2*self.degree()+1, p))
+            prec = ceil((self.weight() * f) / 2 + log(2 * self.degree() + 1, p))
         use_longs = (p ** prec < 2 ** 31)
 
         gamma = self._gamma_array
@@ -1409,10 +1449,10 @@ class HypergeometricData():
         else:
             gtab = gauss_table(p, f, prec, use_longs)
             trcoeffs = hgm_coeffs(p, f, prec, gamma, m, D, gtab, prec, use_longs)
-        sigma = trcoeffs[p-2]
+        sigma = trcoeffs[p - 2]
         p_ring = sigma.parent()
-        teich = p_ring.teichmuller(M/t)
-        for i in range(p-3, -1, -1):
+        teich = p_ring.teichmuller(M / t)
+        for i in range(p - 3, -1, -1):
             sigma = sigma * teich + trcoeffs[i]
         resu = ZZ(-1) ** m[0] * sigma / (1 - q)
         return IntegerModRing(p**prec)(resu).lift_centered()
@@ -1433,7 +1473,7 @@ class HypergeometricData():
 
         - `t` -- a rational parameter
 
-        - ``ring`` -- optional (default ``UniversalCyclotomicfield``)
+        - ``ring`` -- optional (default :class:`UniversalCyclotomicfield`)
 
         The ring could be also ``ComplexField(n)`` or ``QQbar``.
 
@@ -1444,9 +1484,9 @@ class HypergeometricData():
         .. WARNING::
 
             This is apparently working correctly as can be tested
-            using ComplexField(70) as value ring.
+            using ``ComplexField(70)`` as the value ring.
 
-            Using instead UniversalCyclotomicfield, this is much
+            Using instead :class:`UniversalCyclotomicfield`, this is much
             slower than the `p`-adic version :meth:`padic_H_value`.
 
         EXAMPLES:
@@ -1517,7 +1557,7 @@ class HypergeometricData():
             raise ValueError('p not prime')
         if not all(x.denominator() % p for x in self._alpha + self._beta):
             raise NotImplementedError('p is wild')
-        if (t.numerator()*t.denominator() % p == 0 or (t-1) % p == 0):
+        if (t.numerator() * t.denominator() % p == 0 or (t - 1) % p == 0):
             raise NotImplementedError('p is tame')
 
         if 0 in alpha:
