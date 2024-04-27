@@ -157,12 +157,16 @@ class SageKernel(IPythonKernel):
                 'url': doc_url('html/en/constructions/index.html'),
             },
             {
-                'text': 'FAQs',
+                'text': 'FAQ',
                 'url': doc_url('html/en/faq/index.html'),
             },
             {
-                'text': 'Reference',
+                'text': 'Reference Manual',
                 'url': doc_url('html/en/reference/index.html'),
+            },
+            {
+                'text': "Installation Guide",
+                'url': doc_url('html/en/installation/index.html'),
             },
             {
                 'text': "Developer Guide",
