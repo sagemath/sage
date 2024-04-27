@@ -103,16 +103,24 @@ class SageKernel(IPythonKernel):
               'url': '.../html/en/index.html'},
              ...]
         """
-        from sage.env import SAGE_DOC_SERVER_URL as url
+        # A Sage doc server starts when Jupyter notebook launches if the Sage
+        # documentation is available locally.  See the corresponding code in
+        # src/bin/sage-notebook.
 
-        if url:
+        from sage.env import SAGE_DOC_SERVER_URL
+        from sage.features.sagemath import sagemath_doc_html
+
+        if SAGE_DOC_SERVER_URL:
             def doc_url(path):
-                return '{}/{}'.format(url, path)
-        else:
+                return f'{SAGE_DOC_SERVER_URL}/{path}'
+        elif sagemath_doc_html().is_present():
             from sage.env import SAGE_DOC_LOCAL_PORT as port
 
             def doc_url(path):
-                return 'http://localhost:{}/{}'.format(port, path)
+                return f'http://localhost:{port}/{path}'
+        else:
+            def doc_url(path):
+                return f'https://doc.sagemath.org/{path}'
 
         return [
             {

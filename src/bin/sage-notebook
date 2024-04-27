@@ -186,30 +186,24 @@ def trac_23428_browser_workaround():
 
 @contextmanager
 def sage_doc_server():
-    from sage.env import SAGE_DOC_SERVER_URL
+    from functools import partial
+    from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+    from threading import Thread
 
-    if SAGE_DOC_SERVER_URL:
-        print(f'Sage doc server running at {SAGE_DOC_SERVER_URL}')
+    from sage.env import SAGE_DOC, SAGE_DOC_LOCAL_PORT as port
+
+    server = ThreadingHTTPServer(('localhost', int(port)),
+        partial(SimpleHTTPRequestHandler, directory=SAGE_DOC))
+    server_thread = Thread(target=server.serve_forever, name="sage_doc_server")
+    server_thread.start()
+    print(f'Sage doc server started running at http://localhost:{port}')
+
+    try:
         yield
-    else:
-        from functools import partial
-        from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
-        from threading import Thread
-
-        from sage.env import SAGE_DOC, SAGE_DOC_LOCAL_PORT as port
-
-        server = ThreadingHTTPServer(('localhost', int(port)),
-            partial(SimpleHTTPRequestHandler, directory=SAGE_DOC))
-        server_thread = Thread(target=server.serve_forever, name="sage_doc_server")
-        server_thread.start()
-        print(f'Sage doc server started running at http://localhost:{port}')
-
-        try:
-            yield
-        finally:
-            server.shutdown()
-            server_thread.join()
-            print(f'Sage doc server stopped runnning at http://localhost:{port}')
+    finally:
+        server.shutdown()
+        server_thread.join()
+        print(f'Sage doc server stopped runnning at http://localhost:{port}')
 
 
 if __name__ == '__main__':
@@ -254,5 +248,17 @@ if __name__ == '__main__':
 
     banner()
 
-    with sage_doc_server():
+    # Start a Sage doc server if the Sage documentation is available locally.
+    # See the corresponding code in src/sage/repl/ipython_kernel/kernel.py.
+
+    from sage.env import SAGE_DOC_SERVER_URL
+    from sage.features.sagemath import sagemath_doc_html
+
+    if SAGE_DOC_SERVER_URL:
+        print(f'Sage doc server running at {SAGE_DOC_SERVER_URL}')
+        launcher(unknown)
+    elif sagemath_doc_html().is_present():
+        with sage_doc_server():
+            launcher(unknown)
+    else:
         launcher(unknown)
