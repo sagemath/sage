@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 from sage.libs.gsl.types cimport gsl_complex
 
 cimport sage.structure.element

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-plot
 # sage.doctest: needs sage.symbolic
 r"""
 Plotting functions
@@ -159,7 +158,7 @@ from sage.functions.trig import cos, sin
 from sage.misc.sageinspect import sage_getargspec, is_function_or_cython_function
 
 
-class _Coordinates():
+class _Coordinates:
     """
     This abstract class encapsulates a new coordinate system for plotting.
     Sub-classes must implement the :meth:`transform` method which, given
@@ -349,14 +348,14 @@ class _Coordinates():
             def subs_func(t):
                 # We use eval so that the lambda function has the same
                 # variable names as the original function
-                ll = """lambda {x},{y}: t.subs({{
-                    dep_var_dummy: float(func({x}, {y})),
-                    indep_var_dummies[0]: float({x}),
-                    indep_var_dummies[1]: float({y})
-                }})""".format(x=params[0], y=params[1])
-                return eval(ll, dict(t=t, func=func,
-                                     dep_var_dummy=dep_var_dummy,
-                                     indep_var_dummies=indep_var_dummies))
+                ll = f"""lambda {params[0]},{params[1]}: t.subs({{
+                    dep_var_dummy: float(func({params[0]}, {params[1]})),
+                    indep_var_dummies[0]: float({params[0]}),
+                    indep_var_dummies[1]: float({params[1]})
+                }})"""
+                return eval(ll, {'t': t, 'func': func,
+                                 'dep_var_dummy': dep_var_dummy,
+                                 'indep_var_dummies': indep_var_dummies})
             return [subs_func(m) for m in transformation]
 
     def __repr__(self):
@@ -374,8 +373,7 @@ class _Coordinates():
             sage: c
             My Special Coordinates coordinate transform (z in terms of x, y)
         """
-        return '%s coordinate transform (%s in terms of %s)' % \
-          (self._name, self.dep_var, ', '.join(self.indep_vars))
+        return '{} coordinate transform ({} in terms of {})'.format(self._name, self.dep_var, ', '.join(self.indep_vars))
 
 
 def _find_arguments_for_callable(func):
@@ -472,6 +470,7 @@ class _ArbitraryCoordinates(_Coordinates):
         """
         return tuple(t.subs(**kwds) for t in self.custom_trans)
 
+
 class Spherical(_Coordinates):
     """
     A spherical coordinate system for use with ``plot3d(transformation=...)``
@@ -542,6 +541,7 @@ class Spherical(_Coordinates):
         return (radius * sin(inclination) * cos(azimuth),
                 radius * sin(inclination) * sin(azimuth),
                 radius * cos(inclination))
+
 
 class SphericalElevation(_Coordinates):
     """
@@ -661,6 +661,7 @@ class SphericalElevation(_Coordinates):
                 radius * cos(elevation) * sin(azimuth),
                 radius * sin(elevation))
 
+
 class Cylindrical(_Coordinates):
     """
     A cylindrical coordinate system for use with ``plot3d(transformation=...)``
@@ -731,6 +732,7 @@ class Cylindrical(_Coordinates):
                 radius * sin(azimuth),
                 height)
 
+
 class TrivialTriangleFactory:
     """
     Class emulating behavior of :class:`~sage.plot.plot3d.tri_plot.TriangleFactory`
@@ -795,6 +797,8 @@ class TrivialTriangleFactory:
 
 
 from . import parametric_plot3d
+
+
 def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
     """
     Plots a function in 3d.
@@ -1110,14 +1114,15 @@ def plot3d(f, urange, vrange, adaptive=False, transformation=None, **kwds):
     elif adaptive:
         P = plot3d_adaptive(f, urange, vrange, **kwds)
     else:
-        arg1 = lambda u,v: u
-        arg2 = lambda u,v: v
-        P = parametric_plot3d.parametric_plot3d((arg1,arg2,f),
+        arg1 = lambda u, v: u
+        arg2 = lambda u, v: v
+        P = parametric_plot3d.parametric_plot3d((arg1, arg2, f),
                                                 urange,
                                                 vrange,
                                                 **kwds)
-    P.frame_aspect_ratio([1.0,1.0,0.5])
+    P.frame_aspect_ratio([1.0, 1.0, 0.5])
     return P
+
 
 def plot3d_adaptive(f, x_range, y_range, color="automatic",
                     grad_f=None,
@@ -1324,6 +1329,7 @@ def spherical_plot3d(f, urange, vrange, **kwds):
     """
     return plot3d(f, urange, vrange, transformation=Spherical('radius', ['azimuth', 'inclination']), **kwds)
 
+
 def cylindrical_plot3d(f, urange, vrange, **kwds):
     """
     Plots a function in cylindrical coordinates.  This function is
@@ -1398,6 +1404,7 @@ def cylindrical_plot3d(f, urange, vrange, **kwds):
     """
     return plot3d(f, urange, vrange, transformation=Cylindrical('radius', ['azimuth', 'height']), **kwds)
 
+
 def axes(scale=1, radius=None, **kwds):
     """
     Creates basic axes in three dimensions.  Each axis is a three
@@ -1434,7 +1441,7 @@ def axes(scale=1, radius=None, **kwds):
         sphinx_plot(T)
     """
     if radius is None:
-        radius = scale/100.0
-    return Graphics3dGroup([arrow3d((0,0,0),(scale,0,0), radius, **kwds),
-                            arrow3d((0,0,0),(0,scale,0), radius, **kwds),
-                            arrow3d((0,0,0),(0,0,scale), radius, **kwds)])
+        radius = scale / 100.0
+    return Graphics3dGroup([arrow3d((0, 0, 0), (scale, 0, 0), radius, **kwds),
+                            arrow3d((0, 0, 0), (0, scale, 0), radius, **kwds),
+                            arrow3d((0, 0, 0), (0, 0, scale), radius, **kwds)])

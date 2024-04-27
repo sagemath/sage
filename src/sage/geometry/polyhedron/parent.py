@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 r"""
 Parents for Polyhedra
 """
@@ -481,9 +480,8 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         if self.base_ring() in Fields():
             from sage.modules.free_module import VectorSpace
             return VectorSpace(self.base_ring(), self.ambient_dim())
-        else:
-            from sage.modules.free_module import FreeModule
-            return FreeModule(self.base_ring(), self.ambient_dim())
+        from sage.modules.free_module import FreeModule
+        return FreeModule(self.base_ring(), self.ambient_dim())
 
     ambient_space = Vrepresentation_space
 
@@ -522,7 +520,6 @@ class Polyhedra_base(UniqueRepresentation, Parent):
             sage: Polyhedra(K, 4)._repr_base_ring()                                     # needs sage.rings.number_field
             '(Number Field in sqrt3 with defining polynomial x^2 - 3 with sqrt3 = 1.732050807568878?)'
         """
-
         if self.base_ring() is ZZ:
             return 'ZZ'
         if self.base_ring() is QQ:
@@ -536,9 +533,9 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         else:
             if self.base_ring() is AA:
                 return 'AA'
-        return '({0})'.format(self.base_ring())
+        return f'({self.base_ring()})'
 
-    def _repr_ambient_module(self):
+    def _repr_ambient_module(self) -> str:
         """
         Return an abbreviated string representation of the ambient
         space.
@@ -886,7 +883,7 @@ class Polyhedra_base(UniqueRepresentation, Parent):
         from sage.structure.element import Element
         if isinstance(other, Element):
             other = other.parent()
-        if hasattr(other, "is_ring") and other.is_ring():
+        if other in Rings():
             other_ring = other
         else:
             try:

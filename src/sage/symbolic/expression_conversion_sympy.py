@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 # sage.doctest: needs sympy
 r"""
 Conversion of symbolic expressions to SymPy

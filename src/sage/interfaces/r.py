@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 Interfaces to R
 

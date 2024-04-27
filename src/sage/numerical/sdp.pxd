@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 from sage.structure.sage_object cimport SageObject
 from sage.structure.parent cimport Parent
 from sage.structure.element cimport Element

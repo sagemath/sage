@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 """
 Finite fields implemented via PARI's FFELT type
 
