@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-plot
 """
 Histograms
 """
@@ -181,9 +180,9 @@ class Histogram(GraphicPrimitive):
         """
         L = len(self.datalist)
         if not hasattr(self.datalist[0], '__contains__'):
-            return "Histogram defined by a data list of size {}".format(L)
+            return f"Histogram defined by a data list of size {L}"
         else:
-            return "Histogram defined by {} data lists".format(L)
+            return f"Histogram defined by {L} data lists"
 
     def _render_on_subplot(self, subplot):
         """

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-pari
 """
 Relative extensions of `p`-adic rings
 

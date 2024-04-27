@@ -270,8 +270,16 @@ RUN if [ -d /sage ]; then                                               \
         mv /new /sage;                                                  \
     fi
 WORKDIR /sage
-
-ARG BOOTSTRAP=${BOOTSTRAP-./bootstrap}
+$ADD Makefile VERSION.txt COPYING.txt condarc.yml README.md bootstrap bootstrap-conda configure.ac sage .homebrew-build-env tox.ini Pipfile.m4 ./
+$ADD config/config.rpath config/config.rpath
+$ADD src/doc/bootstrap src/doc/bootstrap
+$ADD src/bin src/bin
+$ADD src/Pipfile.m4 src/pyproject.toml.m4 src/requirements.txt.m4 src/setup.cfg.m4 src/VERSION.txt src/
+$ADD m4 ./m4
+$ADD pkgs pkgs
+$ADD build ./build
+$ADD .upstream.d ./.upstream.d
+ARG BOOTSTRAP=./bootstrap
 $RUN sh -x -c "\${BOOTSTRAP}" $ENDRUN $THEN_SAVE_STATUS
 
 FROM bootstrapped as configured

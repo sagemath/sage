@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 r"""
 Rolfsen database of knots with at most 10 crossings.
 

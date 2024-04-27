@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 r"""
 The On-Line Encyclopedia of Integer Sequences (OEIS)
 

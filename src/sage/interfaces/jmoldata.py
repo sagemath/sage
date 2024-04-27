@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-plot
 r"""
 Interface for extracting data and generating images from Jmol readable files.
 

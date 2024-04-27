@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 from cpython.array cimport array
 
 cdef void reset_swap(int n, int *c, int *o) noexcept
