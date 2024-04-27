@@ -337,7 +337,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
                       Integer Ring
             sage: h2.side()
             'right'
-            sage: h2.side_switch().matrix()
+            sage: h2.side_switch().matrix(side='right')
             [1 1]
             [0 1]
         """
@@ -426,7 +426,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             sage: V = ZZ^2
             sage: q = matrix(ZZ, [[1, 2], [3, 4]])
             sage: phi = V.hom(q, V)
-            sage: phi.matrix().change_ring(QQ).inverse()
+            sage: phi.matrix(side='right').change_ring(QQ).inverse()
             [  -2    1]
             [ 3/2 -1/2]
             sage: phi.is_bijective()
@@ -1337,15 +1337,15 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             V = D.coordinate_module(sub)
         else:
             V = sub.free_module()
-        if self.side() == "right":
-            A = self._matrix_().transpose().restrict_domain(V).transpose()
-        else:
-            A = self._matrix_().restrict_domain(V)
+        A = self.matrix(side='right').restrict_domain(V)
         H = sub.Hom(self.codomain())
         try:
-            return H(A, side=self.side())
+            if self.side() == 'right':
+                return H(A.transpose(), side='right')
+            else:
+                return H(A, side='left')
         except Exception:
-            return H(A)
+            return H(A.transpose())
 
     def restrict_codomain(self, sub):
         """
@@ -1422,13 +1422,14 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
             V = C.coordinate_module(sub)
         else:
             V = sub.free_module()
+        A = self.matrix(side='right').restrict_codomain(V)
         try:
-            if self.side() == "right":
-                return H(self._matrix_().transpose().restrict_codomain(V).transpose(), side="right")
+            if self.side() == 'right':
+                return H(A.transpose(), side='right')
             else:
-                return H(self._matrix_().restrict_codomain(V))
+                return H(A, side='left')
         except Exception:
-            return H(self.matrix().restrict_codomain(V))
+            return H(A)
 
     def restrict(self, sub):
         """
@@ -1617,11 +1618,11 @@ class MatrixMorphism(MatrixMorphism_abstract):
             sage: V = ZZ^2; W = ZZ^3
             sage: m = column_matrix([3*V.0 - 5*V.1, 4*V.0 + 2*V.1, V.0 + V.1])
             sage: phi = V.hom(m, W)
-            sage: phi.matrix()
+            sage: phi.matrix(side='right')
             [ 3  4  1]
             [-5  2  1]
 
-            sage: phi.matrix(side='right')
+            sage: phi.matrix()
             [ 3 -5]
             [ 4  2]
             [ 1  1]

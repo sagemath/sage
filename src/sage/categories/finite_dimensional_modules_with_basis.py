@@ -586,7 +586,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
             - ``base_ring`` -- a ring (default: ``None``, meaning the
               base ring of the codomain)
 
-            - ``side`` -- ``'left'`` or ``'right'`` (default: ``'left'``)
+            - ``side`` -- ``'left'`` (the default) or ``'right'``
 
               If ``side`` is ``'left'``, this morphism is considered as
               acting on the left; i.e. each column of the matrix
