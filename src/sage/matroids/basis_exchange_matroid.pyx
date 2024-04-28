@@ -191,28 +191,31 @@ cdef class BasisExchangeMatroid(Matroid):
         bitset_free(self._output)
         bitset_free(self._temp)
 
-    cdef _relabel(self, l):
+    cdef _relabel(self, mapping):
         """
-        Relabel each element `e` as `l[e]`, where `l` is a given injective map.
+        Relabel each element ``e`` as ``mapping[e]``, where ``mapping`` is a
+        given injective map.
 
         INPUT:
 
-        - `l`, a python object such that `l[e]` is the new label of e.
+        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
+          label of ``e``
 
-        OUTPUT:
+        OUTPUT: ``None``
 
-        ``None``.
+        .. NOTE::
 
-        NOTE:
-        For internal use. Matroids are immutable but this method does modify the matroid. The use this method will only
-        be safe in very limited circumstances, such as perhaps on a fresh copy of a matroid.
+            For internal use. Matroids are immutable but this method does
+            modify the matroid. The use of this method will only be safe in
+            very limited circumstances, such as perhaps on a fresh copy of a
+            matroid.
         """
         cdef long i
         E = []
         for i in range(self._groundset_size):
-            if self._E[i] in l:
-                E.append(l[self._E[i]])
-            else:
+            try:
+                E.append(mapping[self._E[i]])
+            except LookupError:
                 E.append(self._E[i])
         self._E = tuple(E)
         self._groundset = frozenset(E)
@@ -222,12 +225,12 @@ cdef class BasisExchangeMatroid(Matroid):
             self._idx[self._E[i]] = i
 
         if self._weak_partition_var:
-            self._weak_partition_var._relabel(l)
+            self._weak_partition_var._relabel(mapping)
 
         if self._strong_partition_var:
-            self._strong_partition_var._relabel(l)
+            self._strong_partition_var._relabel(mapping)
         if self._heuristic_partition_var:
-            self._heuristic_partition_var._relabel(l)
+            self._heuristic_partition_var._relabel(mapping)
 
     # the engine
     cdef _pack(self, bitset_t I, F):

@@ -2,17 +2,11 @@
 [build-system]
 # Minimum requirements for the build system to execute.
 requires = [
-    "sage_setup[autogen]",
-    # Some version of sage-conf is required.
-    # Note that PEP517/518 have no notion of optional sage_spkg dependencies:
-    # https://github.com/pypa/pip/issues/6144
-    'sage-conf ~= 10.3b4',
     # 68.1.0 Promote pyproject.toml's [tool.setuptools] out of beta.
     # 68.1.1 Fix editable install finder handling of nested packages
     'setuptools >= 68.1.1',
     # version constraint for macOS Big Sur support (see https://github.com/sagemath/sage/issues/31050)
     'wheel >=0.36.2',
-    'sage-setup ~= 10.3b4',
     'cypari2 >=2.1.1',
     'cysignals >=1.10.2',
     # Exclude 3.0.3 because of https://github.com/cython/cython/issues/5748

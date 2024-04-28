@@ -141,6 +141,7 @@ cdef class Matroid(SageObject):
     cpdef equals(self, other)
     cpdef is_isomorphism(self, other, morphism)
     cpdef _is_isomorphism(self, other, morphism)
+    cpdef _relabel_map(self, mapping)
 
     # minors, dual, truncation
     cpdef minor(self, contractions=*, deletions=*)
@@ -193,6 +194,8 @@ cdef class Matroid(SageObject):
     cpdef _local_ternary_matroid(self, basis=*)
     cpdef ternary_matroid(self, randomized_tests=*, verify=*)
     cpdef is_ternary(self, randomized_tests=*)
+    cpdef is_regular(self)
+    cpdef is_graphic(self)
 
     # matroid k-closed
     cpdef is_k_closed(self, int k)
