@@ -845,7 +845,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
             -- Simon King (2010-05)
             """
-            mat, side, *_ = self._matrix_side_bases_orders()
+            mat, side, *_ = self._matrix_side_bases_orders(side='any')
             if side == 'left':
                 ker = mat.right_kernel()
             else:
