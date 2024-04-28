@@ -52,6 +52,7 @@ AUTHOR:
 import sage.categories.morphism
 import sage.categories.homset
 from sage.categories.finite_dimensional_modules_with_basis import FiniteDimensionalModulesWithBasis
+from sage.categories.modules_with_basis import ModulesWithBasis
 from sage.structure.all import Sequence, parent
 from sage.structure.richcmp import richcmp, op_NE, op_EQ
 
@@ -1592,6 +1593,98 @@ class MatrixMorphism(MatrixMorphism_abstract):
         if side == self.side() or side is None:
             return self._matrix
         return self._matrix.transpose()
+
+    def _matrix_side_bases_orders(self, base_ring=None, side='left', *,
+                                  row_order=None, column_order=None):
+        r"""
+        Return the matrix of this morphism in the distinguished
+        bases of the domain and codomain.
+
+        INPUT:
+
+        - ``base_ring`` -- a ring (default: ``None``, meaning the
+          base ring of the codomain)
+
+        - ``side`` -- one of the following:
+
+          - ``'left'`` (the default): this morphism is considered as
+            acting on the left; thus the matrix representing the morphism
+            is to be multiplied by a column vector representing an element
+            of the domain, and each column of the matrix represents the
+            image of an element of the basis of the domain
+
+          - ``'right'``: this morphism is considered as acting on
+            the right; thus a row vector representing an element of the
+            domain is to be multiplied by the matrix representing the
+            morphism, and each row of the matrix represents the image of
+            an element of the basis of the domain
+
+          - ``'any'``: the implementation is allowed to choose a side
+
+        - ``row_order``, ``column_order`` -- each either ``None`` or
+          a sequence that indexes a subfamily of either ``domain_basis`` or
+          ``codomain_basis``, depending on ``side``.
+
+          If ``None``, the basis has to be finite, and the order of
+          the rows or columns matches with the order in which the
+          basis is enumerated.
+
+        OUTPUT: a tuple consisting of:
+
+        - ``matrix`` -- an immutable matrix,
+
+        - ``side`` -- either ``'left'`` or ``'right'``,
+
+        - ``domain_basis``, ``codomain_basis`` -- bases,
+
+        - ``row_order``, ``column_order`` -- sequences of objects,
+          each of which indexes a subfamily of either ``domain_basis``
+          or ``codomain_basis``, depending on ``side``.
+
+        EXAMPLES::
+
+        """
+        if base_ring is not None or base_ring != self._matrix.base_ring() \
+           or row_order is not None or column_order is not None:
+            # Delegate to general method from category
+            return ModulesWithBasis.MorphismMethods._matrix_side_bases_orders(
+                self, base_ring, side=side,
+                row_order=row_order,
+                column_order=column_order)
+
+        # Fast path
+
+        m = self._matrix
+        if side == 'any':
+            # Choose the side that allows us to return our stored _matrix
+            # without transposing it. Note the opposite meaning of side.
+            side = 'left' if self.side() == 'right' else 'right'
+        elif side == 'left':
+            if self.side() == 'left':
+                m = m.transpose()
+        elif side == 'right':
+            if self.side() == 'right':
+                m = m.transpose()
+        else:
+            raise ValueError(f"side must be 'left' or 'right', not {side}")
+
+        domain_basis = self.domain().basis()
+        codomain_basis = self.codomain().basis()
+
+        try:
+            row_order = sorted(domain_basis.keys())
+        except AttributeError:  # Not a family, assume it is list-like
+            row_order = range(self.domain().dimension())
+
+        try:
+            column_order = sorted(codomain_basis.keys())
+        except AttributeError:  # Not a family, assume it is list-like
+            column_order = range(self.codomain().dimension())
+
+        if side == 'left':
+            column_order, row_order = row_order, column_order
+
+        return m, side, domain_basis, codomain_basis, row_order, column_order
 
     def is_surjective(self):
         r"""
