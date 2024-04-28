@@ -26,7 +26,7 @@
         "ntests": 28
     },
     "sage.categories.affine_weyl_groups": {
-        "ntests": 14
+        "ntests": 15
     },
     "sage.categories.algebra_ideals": {
         "failed": true,
@@ -148,7 +148,7 @@
     },
     "sage.categories.coxeter_groups": {
         "failed": true,
-        "ntests": 362
+        "ntests": 392
     },
     "sage.categories.cw_complexes": {
         "failed": true,
@@ -302,7 +302,7 @@
     },
     "sage.categories.finite_complex_reflection_groups": {
         "failed": true,
-        "ntests": 178
+        "ntests": 189
     },
     "sage.categories.finite_coxeter_groups": {
         "ntests": 6
@@ -329,11 +329,11 @@
     },
     "sage.categories.finite_dimensional_lie_algebras_with_basis": {
         "failed": true,
-        "ntests": 44
+        "ntests": 73
     },
     "sage.categories.finite_dimensional_modules_with_basis": {
         "failed": true,
-        "ntests": 55
+        "ntests": 89
     },
     "sage.categories.finite_dimensional_nilpotent_lie_algebras_with_basis": {
         "failed": true,
@@ -494,10 +494,6 @@
         "failed": true,
         "ntests": 13
     },
-    "sage.categories.inner_product_spaces": {
-        "failed": true,
-        "ntests": 9
-    },
     "sage.categories.integral_domains": {
         "failed": true,
         "ntests": 22
@@ -587,7 +583,7 @@
     },
     "sage.categories.modules_with_basis": {
         "failed": true,
-        "ntests": 232
+        "ntests": 240
     },
     "sage.categories.monoid_algebras": {
         "failed": true,
@@ -599,7 +595,7 @@
     },
     "sage.categories.morphism": {
         "failed": true,
-        "ntests": 99
+        "ntests": 126
     },
     "sage.categories.number_fields": {
         "failed": true,
@@ -676,7 +672,7 @@
     },
     "sage.categories.schemes": {
         "failed": true,
-        "ntests": 33
+        "ntests": 41
     },
     "sage.categories.semigroups": {
         "failed": true,
@@ -784,7 +780,7 @@
     },
     "sage.cpython.debug": {
         "failed": true,
-        "ntests": 14
+        "ntests": 13
     },
     "sage.cpython.dict_del_by_value": {
         "failed": true,
@@ -809,7 +805,7 @@
     },
     "sage.doctest.control": {
         "failed": true,
-        "ntests": 232
+        "ntests": 230
     },
     "sage.doctest.external": {
         "ntests": 42
@@ -819,19 +815,18 @@
     },
     "sage.doctest.forker": {
         "failed": true,
-        "ntests": 434
+        "ntests": 413
     },
     "sage.doctest.parsing": {
         "failed": true,
-        "ntests": 321
+        "ntests": 313
     },
     "sage.doctest.reporting": {
-        "failed": true,
-        "ntests": 124
+        "ntests": 115
     },
     "sage.doctest.sources": {
         "failed": true,
-        "ntests": 378
+        "ntests": 343
     },
     "sage.doctest.test": {
         "failed": true,
@@ -1108,7 +1103,7 @@
     },
     "sage.misc.sageinspect": {
         "failed": true,
-        "ntests": 329
+        "ntests": 322
     },
     "sage.misc.superseded": {
         "failed": true,
@@ -1174,7 +1169,7 @@
     },
     "sage.repl.interpreter": {
         "failed": true,
-        "ntests": 118
+        "ntests": 114
     },
     "sage.repl.ipython_extension": {
         "failed": true,
@@ -1189,6 +1184,7 @@
         "ntests": 42
     },
     "sage.repl.ipython_kernel.kernel": {
+        "failed": true,
         "ntests": 12
     },
     "sage.repl.ipython_kernel.widgets": {
@@ -1205,7 +1201,7 @@
     },
     "sage.repl.load": {
         "failed": true,
-        "ntests": 42
+        "ntests": 38
     },
     "sage.repl.preparse": {
         "failed": true,
@@ -1331,9 +1327,6 @@
     },
     "sage.structure.global_options": {
         "ntests": 145
-    },
-    "sage.structure.graphics_file": {
-        "ntests": 8
     },
     "sage.structure.indexed_generators": {
         "failed": true,
