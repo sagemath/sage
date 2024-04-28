@@ -817,8 +817,7 @@ class FiniteDimensionalModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 ...
                 RuntimeError: morphism is not invertible
             """
-            # Avoid using the method matrix() because of Issue #37877
-            mat, *_ = self._matrix_side_bases_orders()
+            mat = self.matrix()
             try:
                 inv_mat = mat.parent()(~mat)
             except (ZeroDivisionError, TypeError):
