@@ -32,7 +32,7 @@ from sage.misc.misc_c import prod
 from sage.modules.free_module_element import vector
 from sage.rings.function_field.drinfeld_modules.drinfeld_module import DrinfeldModule
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-
+from sage.rings.quotient_ring import is_QuotientRing
 
 class DrinfeldModule_finite(DrinfeldModule):
     r"""
@@ -152,12 +152,31 @@ class DrinfeldModule_finite(DrinfeldModule):
             sage: ore_polring = phi.ore_polring()
             sage: phi._gen == ore_polring(gen)
             True
+
+            sage: Fq = GF(25)
+            sage: A.<T> = Fq[]
+            sage: z2 = Fq.gen()
+            sage: ip = A(T^6 + (z2 + 2)*T^5 + (2*z2 + 1)*T^4 + (4*z2 + 3)*T^3 + (z2 + 1)*T^2 + z2*T + 2)
+            sage: K.<z12> = Fq.extension(ip)
+            sage: gen = [(4*z2 + 3)*z12^5 + (4*z2 + 4)*z12^4 + (2*z2 + 1)*z12^3 + 2*z12^2 + z12 + 3*z2 + 1, z2*z12^5 + (z2 + 4)*z12^4 + (3*z2 + 2)*z12^3 + 2*z12^2 + (2*z2 + 2)*z12 + 2*z2, (4*z2 + 4)*z12^5 + (4*z2 + 3)*z12^4 + 2*z12^2 + (4*z2 + 4)*z12 + 4, 3*z12^5 + 3*z12^4 + (z2 + 3)*z12^2 + z12 + 3*z2 + 1, 2*z2*z12^5 + (4*z2 + 2)*z12^4 + (2*z2 + 2)*z12^3 + (3*z2 + 1)*z12^2 + 4*z2 + 2]
+            sage: phi = DrinfeldModule(A, gen)
+            sage: ore_polring = phi.ore_polring()
+            sage: phi._gen == ore_polring(gen)
+            True
         """
         # NOTE: There used to be no __init__ here (which was fine). I
         # added one to ensure that DrinfeldModule_finite would always
         # have _frobenius_norm and _frobenius_trace attributes.
         super().__init__(gen, category)
-        self._base_degree_over_constants = self.base_over_constants_field().degree(self._Fq)
+        K = self.base_over_constants_field().backend()
+        self._over_quotient_ring = is_QuotientRing(K)
+        if self._over_quotient_ring:
+            if self._Fq == K.base_field():
+                self._base_degree_over_constants = K.degree()
+            else:
+                raise NotImplementedError("construction of Drinfeld modules not supported for this type of field structure.")
+        else:
+            self._base_degree_over_constants = self.base_over_constants_field().degree(self._Fq)
         self._frobenius_norm = None
         self._frobenius_trace = None
         self._frobenius_charpoly = None
@@ -254,7 +273,7 @@ class DrinfeldModule_finite(DrinfeldModule):
             True
         """
         t = self.ore_polring().gen()
-        deg = self.base_over_constants_field().degree_over()
+        deg = self._base_degree_over_constants
         return self._Hom_(self, category=self.category())(t**deg)
 
     def frobenius_charpoly(self, var='X', algorithm='crystalline'):

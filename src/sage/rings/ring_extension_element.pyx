@@ -34,6 +34,7 @@ from sage.rings.ring_extension_morphism cimport MapRelativeRingToFreeModule, are
 from sage.rings.ring_extension_conversion cimport backend_parent, backend_element
 from sage.rings.ring_extension_conversion cimport to_backend, from_backend
 
+from sage.rings.quotient_ring import is_QuotientRing
 
 # Classes
 #########
@@ -356,7 +357,10 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             base = f.domain()
             ring = f.codomain()
             if ring.has_coerce_map_from(base) and are_equal_morphisms(f, None):
-                return parent.base()(base(self._backend))
+                if base.has_coerce_map_from(self._backend.parent()):
+                    return parent.base()(base(self._backend))
+                elif is_QuotientRing(self._backend.parent()):
+                    return parent.base()(self._backend.list()[0])
         raise NotImplementedError("cannot cast %s to the base" % self)
 
     cpdef _richcmp_(left, right, int op):
