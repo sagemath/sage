@@ -140,10 +140,9 @@ Cythonソースファイルから生成されたC言語コードをコンパイ�
 
 ::
 
-    #!/usr/bin/env sage -python
+    #!/usr/bin/env sage
 
     import sys
-    from sage.all import *
 
     if len(sys.argv) != 2:
         print("Usage: %s <n>" % sys.argv[0])

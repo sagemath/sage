@@ -51,9 +51,7 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
         r"""
         Return a LaTeX representation of ``self``.
 
-        OUTPUT:
-
-        String. A valid LaTeX math command sequence.
+        OUTPUT: a string; a valid LaTeX math command sequence
 
         TESTS::
 
@@ -79,9 +77,7 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
         """
         Return the exponent sum of ``self``.
 
-        OUTPUT:
-
-        Integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -111,11 +107,10 @@ class ArtinGroupElement(FinitelyPresentedGroupElement):
 
         INPUT:
 
-        - ``W`` -- (default: ``self.parent().coxeter_group()``) the image Coxeter group
+        - ``W`` -- (default: ``self.parent().coxeter_group()``) the image
+          Coxeter group
 
-        OUTPUT:
-
-        An element of the Coxeter group  ``W``.
+        OUTPUT: an element of the Coxeter group  ``W``
 
         EXAMPLES::
 
@@ -263,10 +258,8 @@ class FiniteTypeArtinGroupElement(ArtinGroupElement):
         Return the left normal form of the element, in the `\Delta`
         exponent and Coxeter group element form.
 
-        OUTPUT:
-
-        A tuple whose first element is the power of `\Delta`, and the rest
-        are the Coxeter elements corresponding to the simple factors.
+        OUTPUT: tuple whose first element is the power of `\Delta`, and the
+        rest are the Coxeter elements corresponding to the simple factors
 
         EXAMPLES::
 
@@ -515,9 +508,7 @@ class ArtinGroup(FinitelyPresentedGroup):
         """
         Return the number of elements of ``self``.
 
-        OUTPUT:
-
-        Infinity.
+        OUTPUT: Infinity
 
         EXAMPLES::
 
@@ -605,9 +596,7 @@ class ArtinGroup(FinitelyPresentedGroup):
         """
         Return the index set of ``self``.
 
-        OUTPUT:
-
-        A tuple.
+        OUTPUT: tuple
 
         EXAMPLES::
 
@@ -665,7 +654,7 @@ class ArtinGroup(FinitelyPresentedGroup):
 
         INPUT:
 
-        - ``w`` -- an element of the Coxeter group of ``self``.
+        - ``w`` -- an element of the Coxeter group of ``self``
 
         EXAMPLES::
 
@@ -683,7 +672,7 @@ class ArtinGroup(FinitelyPresentedGroup):
 
         INPUT:
 
-        - ``w`` -- an element of the Coxeter group of ``self``.
+        - ``w`` -- an element of the Coxeter group of ``self``
 
         EXAMPLES::
 

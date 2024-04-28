@@ -41,7 +41,7 @@ jobs:
 
   build-docs:
     runs-on: ubuntu-latest
-    container: ghcr.io/sagemath/sage/sage-ubuntu-focal-standard-with-targets:dev
+    container: ghcr.io/sagemath/sage/sage-ubuntu-jammy-standard-with-targets:dev
     needs: [get_ci_fixes]
     steps:
       - name: Checkout
@@ -95,8 +95,8 @@ jobs:
           ./bootstrap && make sagemath_doc_html-build-deps
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
+          MAKE: make -j4 --output-sync=recurse
+          SAGE_NUM_THREADS: 4
 
       - name: Build (fallback to non-incremental)
         id: build
@@ -106,8 +106,8 @@ jobs:
           make sagelib-clean && git clean -fx src/sage && ./config.status && make sagemath_doc_html-build-deps
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
+          MAKE: make -j4 --output-sync=recurse
+          SAGE_NUM_THREADS: 4
 
       - name: Build docs
         id: docbuild
@@ -124,8 +124,8 @@ jobs:
           ./config.status && make sagemath_doc_html-no-deps
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
+          MAKE: make -j4 --output-sync=recurse
+          SAGE_NUM_THREADS: 4
 
       - name: Copy docs
         id: copy
@@ -169,8 +169,8 @@ jobs:
           ./config.status && make sagemath_doc_html-no-deps sagemath_doc_pdf-no-deps
         working-directory: ./worktree-image
         env:
-          MAKE: make -j2 --output-sync=recurse
-          SAGE_NUM_THREADS: 2
+          MAKE: make -j4 --output-sync=recurse
+          SAGE_NUM_THREADS: 4
 
       - name: Copy live doc
         id: copylivedoc

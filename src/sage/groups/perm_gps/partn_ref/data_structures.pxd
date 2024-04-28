@@ -85,8 +85,7 @@ cdef inline OrbitPartition *OP_copy(OrbitPartition *OP) noexcept:
     """
     Allocate and return a pointer to a copy of a OrbitPartition of degree n.
 
-    Returns a
-    null pointer in the case of an allocation failure.
+    Returns a null pointer in the case of an allocation failure.
     """
     cdef OrbitPartition *OP2 = OP_new(OP.degree)
     if OP is NULL:
@@ -172,7 +171,7 @@ cdef inline int PS_copy_from_to(PartitionStack *PS, PartitionStack *PS2) noexcep
 
 cdef inline bint PS_is_discrete(PartitionStack *PS) noexcept:
     """
-    Returns whether the deepest partition consists only of singleton cells.
+    Return whether the deepest partition consists only of singleton cells.
     """
     cdef int i
     for i from 0 <= i < PS.degree:
@@ -182,7 +181,7 @@ cdef inline bint PS_is_discrete(PartitionStack *PS) noexcept:
 
 cdef inline int PS_num_cells(PartitionStack *PS) noexcept:
     """
-    Returns the number of cells.
+    Return the number of cells.
     """
     cdef int i, ncells = 0
     for i from 0 <= i < PS.degree:
@@ -206,13 +205,13 @@ cdef inline void PS_move_min_to_front(PartitionStack *PS, int start, int end) no
 
 cdef inline bint PS_is_mcr(PartitionStack *PS, int m) noexcept:
     """
-    Returns whether PS.elements[m] (not m!) is the smallest element of its cell.
+    Return whether PS.elements[m] (not m!) is the smallest element of its cell.
     """
     return m == 0 or PS.levels[m-1] <= PS.depth
 
 cdef inline bint PS_is_fixed(PartitionStack *PS, int m) noexcept:
     """
-    Returns whether PS.elements[m] (not m!) is in a singleton cell, assuming
+    Return whether PS.elements[m] (not m!) is in a singleton cell, assuming
     PS_is_mcr(PS, m) is already true.
     """
     return PS.levels[m] <= PS.depth
