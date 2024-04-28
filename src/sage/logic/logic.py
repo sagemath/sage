@@ -171,7 +171,7 @@ class SymbolicLogic:
 
         TESTS:
 
-        Verify that :trac:`32676` is fixed::
+        Verify that :issue:`32676` is fixed::
 
             sage: s = log.statement("a&b|!(c|a)")
             sage: copy_s2 = copy(s[2])
@@ -243,7 +243,7 @@ class SymbolicLogic:
 
         TESTS:
 
-        Verify that :trac:`32676` is fixed::
+        Verify that :issue:`32676` is fixed::
 
             sage: table = log.truthtable(log.statement("A->B"))
             sage: table_copy = table.copy()

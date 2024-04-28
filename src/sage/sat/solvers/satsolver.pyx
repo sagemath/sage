@@ -98,7 +98,7 @@ cdef class SatSolver:
         http://elis.dvo.ru/~lab_11/glpk-doc/cnfsat.pdf.
 
         The differences were summarized in the discussion on the issue
-        :trac:`16924`. This method assumes the following DIMACS format:
+        :issue:`16924`. This method assumes the following DIMACS format:
 
         - Any line starting with "c" is a comment
         - Any line starting with "p" is a header

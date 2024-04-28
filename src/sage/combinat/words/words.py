@@ -9,8 +9,8 @@ AUTHORS:
     - Franco Saliola (2008-12-17): merged into sage
     - Sebastien Labbe (2008-12-17): merged into sage
     - Arnaud Bergeron (2008-12-17): merged into sage
-    - Sebastien Labbe (2009-07-21): Improved morphism iterator (:trac:`6571`).
-    - Vincent Delecroix (2015): classes simplifications (:trac:`19619`)
+    - Sebastien Labbe (2009-07-21): Improved morphism iterator (:issue:`6571`).
+    - Vincent Delecroix (2015): classes simplifications (:issue:`19619`)
 
 EXAMPLES::
 
@@ -117,7 +117,7 @@ class AbstractLanguage(Parent):
     Abstract base class
 
     This is *not* to be used by any means. This class gather previous features
-    of set of words (prior to :trac:`19619`). In the future that class might
+    of set of words (prior to :issue:`19619`). In the future that class might
     simply disappear or become a common base class for all languages. In the
     latter case, its name would possibly change to ``Language``.
     """
@@ -2217,7 +2217,7 @@ class Words_n(Parent):
 
             sage: _ = Words(GF(5),4).random_element()                                   # needs sage.rings.finite_rings
 
-        Check that :trac:`18283` is fixed::
+        Check that :issue:`18283` is fixed::
 
             sage: w = Words('abc', 5).random_element()
             sage: w.length()

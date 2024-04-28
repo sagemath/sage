@@ -176,7 +176,7 @@ def SymmetricGroupAlgebra(R, W, category=None):
         usual multiplication function, but rather use the methods
         :meth:`left_action_product` and :meth:`right_action_product`
         for multiplying permutations (these methods don't depend on the
-        setting). See :trac:`14885` for more information.
+        setting). See :issue:`14885` for more information.
 
     We conclude by constructing the algebra of the symmetric group as
     a monoid algebra::
@@ -242,7 +242,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             sage: QS3 in FiniteDimensionalAlgebrasWithBasis(QQ)
             True
 
-        Check that :trac:`16926` works::
+        Check that :issue:`16926` works::
 
             sage: S = SymmetricGroup(4)
             sage: SGA = S.algebra(QQ)
@@ -1267,7 +1267,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
         TESTS:
 
-        Check that :trac:`15309` is fixed::
+        Check that :issue:`15309` is fixed::
 
             sage: S3 = SymmetricGroupAlgebra(QQ, 3)
             sage: S3.algebra_generators()
@@ -1572,19 +1572,39 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             sage: SGA = SymmetricGroupAlgebra(QQ, 5)
             sage: SM = SGA.specht_module(Partition([3,1,1]))
             sage: SM
-            Specht module of [(0, 0), (0, 1), (0, 2), (1, 0), (2, 0)] over Rational Field
-            sage: s = SymmetricFunctions(QQ).s()
-            sage: s(SM.frobenius_image())
+            Specht module of [3, 1, 1] over Rational Field
+            sage: SM.frobenius_image()
             s[3, 1, 1]
 
             sage: SM = SGA.specht_module([(1,1),(1,3),(2,2),(3,1),(3,2)])
             sage: SM
             Specht module of [(1, 1), (1, 3), (2, 2), (3, 1), (3, 2)] over Rational Field
-            sage: s(SM.frobenius_image())
+            sage: SM.frobenius_image()
             s[2, 2, 1] + s[3, 1, 1] + s[3, 2]
         """
         from sage.combinat.specht_module import SpechtModule
         return SpechtModule(self, D)
+
+    def tabloid_module(self, D):
+        r"""
+        Return the module of tabloids with the natural action of ``self``.
+
+        .. SEEALSO::
+
+            :class:`~sage.combinat.specht_module.TabloidModule`
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: TM = SGA.tabloid_module(Partition([3,1,1]))
+            sage: TM
+            Tabloid module of [3, 1, 1] over Rational Field
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: s(TM.frobenius_image())
+            s[3, 1, 1] + s[3, 2] + 2*s[4, 1] + s[5]
+        """
+        from sage.combinat.specht_module import TabloidModule
+        return TabloidModule(self, D)
 
     def specht_module_dimension(self, D):
         r"""
@@ -1602,6 +1622,29 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         D = _to_diagram(D)
         span_set = specht_module_spanning_set(D, self)
         return matrix(self.base_ring(), [v.to_vector() for v in span_set]).rank()
+
+    def simple_module(self, la):
+        r"""
+        Return the simple module of ``self`` indexed by the partition ``la``.
+
+        Over a field of characteristic `0`, this simply returns the Specht
+        module.
+
+        .. SEEALSO::
+
+            :class:`sage.combinat.specht_module.SimpleModule`
+
+        EXAMPLES::
+
+            sage: SGA = SymmetricGroupAlgebra(GF(3), 5)
+            sage: D = SGA.simple_module(Partition([3,1,1]))
+            sage: D
+            Simple module of [3, 1, 1] over Finite Field of size 3
+            sage: D.brauer_character()
+            (6, 0, -2, 0, 1)
+        """
+        from sage.combinat.specht_module import SpechtModule
+        return SpechtModule(self, la).simple_module()
 
     def simple_module_dimension(self, la):
         r"""
@@ -1842,9 +1885,14 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
                     basis.append(self.epsilon_ik(t1, t2, mult=mult))
         return basis
 
-    def dft(self, form="seminormal", mult='l2r'):
-        """
+    def dft(self, form=None, mult='l2r'):
+        r"""
         Return the discrete Fourier transform for ``self``.
+
+        See [Mur1983]_ for the construction of central primitive orthogonal idempotents.
+        For each idempotent `e_i` we have a homomorphic projection `v \mapsto v e_i`.
+        Choose a basis for each submodule spanned by `\{\sigma e_i | \sigma \in S_n\}`.
+        The change-of-basis from the standard basis `\{\sigma\}_\sigma` is returned.
 
         INPUT:
 
@@ -1863,15 +1911,32 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             [   0    1    0   -1    1   -1]
             [   1 -1/2    1 -1/2 -1/2 -1/2]
             [   1   -1   -1    1    1   -1]
+
+        Over fields of characteristic `p > 0` such that `p \mid n!`, we use the
+        modular Fourier transform (:issue:`37751`)::
+
+            sage: GF2S3 = SymmetricGroupAlgebra(GF(2), 3)
+            sage: GF2S3.dft()
+            [1 0 0 0 1 0]
+            [0 1 0 0 0 1]
+            [0 0 1 0 0 1]
+            [0 0 0 1 1 0]
+            [1 0 0 1 1 0]
+            [0 1 1 0 0 1]
         """
+        if form is None:
+            form = "modular" if self.base_ring().characteristic().divides(self.group().cardinality()) else "seminormal"
         if form == "seminormal":
+            if self.base_ring().characteristic().divides(self.group().cardinality()):
+                raise ValueError("seminormal does not work when p | n!")
             return self._dft_seminormal(mult=mult)
-        else:
-            raise ValueError("invalid form (= %s)" % form)
+        if form == "modular":
+            return self._dft_modular()
+        raise ValueError("invalid form (= %s)" % form)
 
     def _dft_seminormal(self, mult='l2r'):
         """
-        Return the seminormal form of the discrete Fourier for ``self``.
+        Return the seminormal form of the discrete Fourier transform for ``self``.
 
         INPUT:
 
@@ -1897,6 +1962,32 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         """
         snb = self.seminormal_basis(mult=mult)
         return matrix([vector(b) for b in snb]).inverse().transpose()
+
+    def _dft_modular(self):
+        r"""
+        Return the discrete Fourier transform when the characteristic divides the order of the group.
+
+        EXAMPLES::
+
+            sage: GF3S3 = SymmetricGroupAlgebra(GF(3), 3)
+            sage: GF3S3._dft_modular()
+            [1 0 0 0 0 0]
+            [0 1 0 0 0 0]
+            [0 0 1 0 0 0]
+            [0 0 0 1 0 0]
+            [0 0 0 0 1 0]
+            [0 0 0 0 0 1]
+        """
+        idempotents = self.central_orthogonal_idempotents()
+        # project v onto each block U_i = F_p[S_n]*e_i via \pi_i: v |--> v*e_i
+        B = self.basis()
+        blocks = [self.submodule([b * idem for b in B]) for idem in idempotents]
+        # compute the list of basis vectors lifted to the SGA from each block
+        block_decomposition_basis = [u.lift() for block in blocks for u in block.basis()]
+        # construct the matrix to the standard basis in the order given by the group
+        G = self.group()
+        mat = [[b[g] for b in block_decomposition_basis] for g in G]
+        return matrix(self.base_ring(), mat)
 
     def epsilon_ik(self, itab, ktab, star=0, mult='l2r'):
         r"""
@@ -2591,10 +2682,10 @@ def e(tableau, star=0):
         one = QQ.one()
         P = Permutation
 
-        rd = dict((P(h), one) for h in rs)
+        rd = {P(h): one for h in rs}
         sym = QSn._from_dict(rd)
 
-        cd = dict((P(v), v.sign() * one) for v in cs)
+        cd = {P(v): QQ(v.sign()) for v in cs}
         antisym = QSn._from_dict(cd)
 
         res = QSn.right_action_product(antisym, sym)
@@ -2604,7 +2695,7 @@ def e(tableau, star=0):
         # being [1] rather than [] (which seems to have its origins in
         # permutation group code).
         # TODO: Fix this.
-        if len(tableau) == 0:
+        if not tableau:
             res = QSn.one()
 
         e_cache[t] = res

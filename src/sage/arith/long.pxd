@@ -53,7 +53,7 @@ cdef inline long pyobject_to_long(x) except? LONG_MIN:
         OverflowError: exponent must be at most 2147483647           # 32-bit
         OverflowError: exponent must be at most 9223372036854775807  # 64-bit
 
-    See :trac:`22319`::
+    See :issue:`22319`::
 
         sage: a^pari(10)
         10000000000

@@ -564,7 +564,7 @@ class OreFunction(AlgebraElement):
             ...
             ZeroDivisionError: cannot divide by zero
 
-        We check that :trac:`32109` is fixed::
+        We check that :issue:`32109` is fixed::
 
             sage: K(0)/K(0)                                                             # needs sage.rings.finite_rings
             Traceback (most recent call last):
@@ -708,13 +708,13 @@ class ConstantOreFunctionSection(Map):
             sage: F(g)                                                                  # needs sage.rings.function_field
             Traceback (most recent call last):
             ...
-            TypeError: not a constant function
+            TypeError: (x + t^2)^(-1) * x is not a constant function
         """
         numerator = x._numerator
         denominator = x._denominator
         if numerator.degree() == denominator.degree() and denominator.right_divides(numerator):
             return numerator.leading_coefficient() / denominator.leading_coefficient()
-        raise TypeError("not a constant function")
+        raise TypeError(f"{x} is not a constant function")
 
 class OreFunctionBaseringInjection(Morphism):
     r"""

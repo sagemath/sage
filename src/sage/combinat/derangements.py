@@ -500,7 +500,7 @@ class Derangements(UniqueRepresentation, Parent):
 
         TESTS:
 
-        Check that index error discovered in :trac:`29974` is fixed::
+        Check that index error discovered in :issue:`29974` is fixed::
 
             sage: D = Derangements([1,1,2,2])
             sage: _ = [D.random_element() for _ in range(20)]

@@ -316,7 +316,7 @@ def torsion_bound(E, number_of_places=20):
         sage: [E.torsion_order() for E in CDB.iter([14])]
         [6, 6, 2, 6, 2, 6]
 
-    An example over a relative number field (see :trac:`16011`)::
+    An example over a relative number field (see :issue:`16011`)::
 
         sage: # needs sage.rings.number_field
         sage: R.<x> = QQ[]

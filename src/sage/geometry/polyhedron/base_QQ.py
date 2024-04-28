@@ -160,7 +160,7 @@ class Polyhedron_QQ(Polyhedron_base):
 
         TESTS:
 
-        We check that :trac:`21491` is fixed::
+        We check that :issue:`21491` is fixed::
 
             sage: P = Polyhedron(ieqs=[], eqns=[[-10,0,1],[-10,1,0]])
             sage: P.integral_points_count()

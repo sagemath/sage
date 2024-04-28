@@ -60,13 +60,13 @@ AUTHORS:
 - Daniel Krenn (2014-04-15): improved common docstring during review
 - Clemens Heuberger, Daniel Krenn, Sara Kropf (2014-04-16--2014-05-02):
   A couple of improvements. Details see
-  :trac:`16141`, :trac:`16142`, :trac:`16143`, :trac:`16186`.
+  :issue:`16141`, :issue:`16142`, :issue:`16143`, :issue:`16186`.
 - Sara Kropf (2014-04-29): weight transducer
 - Clemens Heuberger, Daniel Krenn (2014-07-18): transducers Wait, all,
   any
 - Clemens Heuberger (2014-08-10): transducer Recursion
 - Clemens Heuberger (2015-07-31): automaton word
-- Daniel Krenn (2015-09-14): cleanup :trac:`18227`
+- Daniel Krenn (2015-09-14): cleanup :issue:`18227`
 
 ACKNOWLEDGEMENT:
 

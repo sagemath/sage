@@ -201,19 +201,19 @@ def SL(n, R, var='a'):
     matrices that are invertible over the ring `R` with determinant
     one.
 
-    .. note::
+    .. NOTE::
 
         This group is also available via ``groups.matrix.SL()``.
 
     INPUT:
 
-    - ``n`` -- a positive integer.
+    - ``n`` -- positive integer
 
-    - ``R`` -- ring or an integer. If an integer is specified, the
-      corresponding finite field is used.
+    - ``R`` -- ring or integer; if an integer is specified, the
+      corresponding finite field is used
 
     - ``var`` -- variable used to represent generator of the finite
-      field, if needed.
+      field, if needed
 
     EXAMPLES::
 
@@ -322,14 +322,14 @@ class LinearMatrixGroup_generic(NamedMatrixGroup_generic):
 
         TESTS:
 
-        Check if :trac:`36876` is fixed::
+        Check if :issue:`36876` is fixed::
 
             sage: SL(1, QQ).order()
             1
             sage: SL(2, ZZ).cardinality()
             +Infinity
 
-        Check if :trac:`35490` is fixed::
+        Check if :issue:`35490` is fixed::
 
             sage: q = 7
             sage: FqT.<T> = GF(q)[]

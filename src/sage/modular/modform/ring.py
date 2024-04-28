@@ -206,13 +206,13 @@ class ModularFormsRing(Parent):
 
         TESTS:
 
-        Check that :trac:`15037` is fixed::
+        Check that :issue:`15037` is fixed::
 
             sage: ModularFormsRing(3.4)
             Traceback (most recent call last):
             ...
             ValueError: group (=3.40000000000000) should be a congruence subgroup
-            sage: ModularFormsRing(Gamma0(2), base_ring=PolynomialRing(ZZ,x))
+            sage: ModularFormsRing(Gamma0(2), base_ring=PolynomialRing(ZZ, 'x'))
             Traceback (most recent call last):
             ...
             ValueError: base ring (=Univariate Polynomial Ring in x over Integer Ring) should be QQ, ZZ or a finite prime field

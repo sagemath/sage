@@ -186,11 +186,11 @@ class AffineGroup(UniqueRepresentation, Group):
 
         INPUT:
 
-        - ``degree`` -- integer. The degree of the affine group, that
+        - ``degree`` -- integer; the degree of the affine group, that
           is, the dimension of the affine space the group is acting on
-          naturally.
+          naturally
 
-        - ``ring`` -- a ring. The base ring of the affine space.
+        - ``ring`` -- a ring; the base ring of the affine space
 
         EXAMPLES::
 
@@ -308,7 +308,7 @@ class AffineGroup(UniqueRepresentation, Group):
         """
         Return the dimension of the affine space.
 
-        OUTPUT: An integer.
+        OUTPUT: integer
 
         EXAMPLES::
 
@@ -327,10 +327,8 @@ class AffineGroup(UniqueRepresentation, Group):
         Return the space of matrices representing the general linear
         transformations.
 
-        OUTPUT:
-
-        The parent of the matrices `A` defining the affine group
-        element `Ax+b`.
+        OUTPUT: the parent of the matrices `A` defining the affine group
+        element `Ax+b`
 
         EXAMPLES::
 
@@ -393,7 +391,7 @@ class AffineGroup(UniqueRepresentation, Group):
 
         - ``A`` -- anything that determines a matrix
 
-        OUTPUT: The affine group element `x \mapsto A x`.
+        OUTPUT: The affine group element `x \mapsto A x`
 
         EXAMPLES::
 
@@ -414,7 +412,7 @@ class AffineGroup(UniqueRepresentation, Group):
 
         - ``b`` -- anything that determines a vector
 
-        OUTPUT: The affine group element `x \mapsto x + b`.
+        OUTPUT: The affine group element `x \mapsto x + b`
 
         EXAMPLES::
 
@@ -437,7 +435,7 @@ class AffineGroup(UniqueRepresentation, Group):
 
         INPUT:
 
-        - ``v`` -- a vector, or something that determines a vector.
+        - ``v`` -- a vector, or something that determines a vector
 
         OUTPUT:
 

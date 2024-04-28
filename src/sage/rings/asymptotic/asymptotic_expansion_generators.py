@@ -169,7 +169,7 @@ class AsymptoticExpansionGenerators(SageObject):
             ...
             ValueError: precision must be at least 3
 
-        Check that :trac:`20066` is resolved::
+        Check that :issue:`20066` is resolved::
 
             sage: set_series_precision(5)
             sage: asymptotic_expansions.Stirling('n')
@@ -558,7 +558,7 @@ class AsymptoticExpansionGenerators(SageObject):
             ....:     for k in [2, 3, 4])
             True
 
-        Check that :trac:`20066` is resolved::
+        Check that :issue:`20066` is resolved::
 
             sage: set_series_precision(3)
             sage: asymptotic_expansions.Binomial_kn_over_n('n', k=2)
@@ -1073,7 +1073,7 @@ class AsymptoticExpansionGenerators(SageObject):
         .. NOTE::
 
             In the given case, the radius of convergence of the function of
-            interest is known to be `\rho = \tau/\Phi(\tau)`.  Until :trac:`20050`
+            interest is known to be `\rho = \tau/\Phi(\tau)`.  Until :issue:`20050`
             is implemented, the variable in the returned asymptotic expansion
             represents a singular element of the form `(1 - z/\rho)^{-1}`,
             for the variable `z\to\rho`.
@@ -1246,7 +1246,7 @@ class AsymptoticExpansionGenerators(SageObject):
         .. NOTE::
 
             In the given case, the radius of convergence of the function of
-            interest is known to be `\rho = \tau/\Phi(\tau)`. Until :trac:`20050`
+            interest is known to be `\rho = \tau/\Phi(\tau)`. Until :issue:`20050`
             is implemented, the variable in the returned asymptotic expansion
             represents a singular element of the form `(1 - z/\rho)^{-1}`,
             for the variable `z\to\rho`.
