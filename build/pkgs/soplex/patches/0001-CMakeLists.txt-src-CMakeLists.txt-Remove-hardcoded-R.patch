@@ -1,0 +1,52 @@
+From d96dd5fbfb790ab961243ef2cb5f1d0137e1f8a5 Mon Sep 17 00:00:00 2001
+From: Matthias Koeppe <mkoeppe@math.ucdavis.edu>
+Date: Sun, 3 Mar 2024 18:09:53 -0800
+Subject: [PATCH] CMakeLists.txt, src/CMakeLists.txt: Remove hardcoded RPATH
+ settings
+
+---
+ CMakeLists.txt     | 3 ---
+ src/CMakeLists.txt | 6 +-----
+ 2 files changed, 1 insertion(+), 8 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 25317fc0..310d29a0 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -65,9 +65,6 @@ if(NOT CMAKE_BUILD_TYPE)
+     set(CMAKE_BUILD_TYPE Release)
+ endif()
+ 
+-# set the correct rpath for OS X
+-set(CMAKE_MACOSX_RPATH ON)
+-
+ # use C++14 standard
+ set(CMAKE_CXX_STANDARD 14)
+ 
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index d259115d..ffdf0435 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -3,8 +3,7 @@
+ #
+ function(setLibProperties targetname outputname)
+     set_target_properties(${targetname} PROPERTIES
+-        OUTPUT_NAME ${outputname}
+-	MACOSX_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
++        OUTPUT_NAME ${outputname})
+ endfunction(setLibProperties)
+ 
+ include(GNUInstallDirs)
+@@ -208,9 +207,6 @@ endif()
+ add_executable(example EXCLUDE_FROM_ALL example.cpp)
+ target_link_libraries(example libsoplex)
+ 
+-# set the install rpath to the installed destination
+-set_target_properties(soplex PROPERTIES INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+-
+ # install the header files of soplex
+ install(FILES ${headers} ${PROJECT_BINARY_DIR}/soplex/config.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/soplex)
+ install(FILES soplex.h soplex.hpp soplex_interface.h DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+-- 
+2.42.0
+

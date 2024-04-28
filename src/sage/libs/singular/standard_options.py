@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-singular
 """
 Highlevel functions for managing options of the libSingular interface
 

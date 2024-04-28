@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-ntl
 # distutils: libraries = gmp mpfr mpfi
 
 from sage.libs.gmp.types cimport *

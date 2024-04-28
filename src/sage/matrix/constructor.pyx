@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # cython: binding=True
 """
 General matrix Constructor and display options
@@ -38,7 +37,7 @@ def matrix(*args, **kwds):
 
     INPUT:
 
-    The matrix command takes the entries of a matrix, optionally
+    The :func:`matrix` command takes the entries of a matrix, optionally
     preceded by a ring and the dimensions of the matrix, and returns a
     matrix.
 
@@ -50,11 +49,11 @@ def matrix(*args, **kwds):
     columns. You can create a matrix of zeros by passing an empty list
     or the integer zero for the entries.  To construct a multiple of
     the identity (`cI`), you can specify square dimensions and pass in
-    `c`. Calling matrix() with a Sage object may return something that
-    makes sense. Calling matrix() with a NumPy array will convert the
+    `c`. Calling :func:`matrix` with a Sage object may return something that
+    makes sense. Calling :func:`matrix` with a NumPy array will convert the
     array to a matrix.
 
-    All arguments (even the positional) are optional.
+    All arguments (even the positional ones) are optional.
 
     Positional and keyword arguments:
 
@@ -136,8 +135,8 @@ def matrix(*args, **kwds):
 
     ::
 
-        sage: v1=vector((1,2,3))
-        sage: v2=vector((4,5,6))
+        sage: v1 = vector((1,2,3))
+        sage: v2 = vector((4,5,6))
         sage: m = matrix([v1,v2]); m; m.parent()
         [1 2 3]
         [4 5 6]
@@ -145,28 +144,28 @@ def matrix(*args, **kwds):
 
     ::
 
-        sage: m = matrix(QQ,2,[1,2,3,4,5,6]); m; m.parent()
+        sage: m = matrix(QQ, 2, [1,2,3,4,5,6]); m; m.parent()
         [1 2 3]
         [4 5 6]
         Full MatrixSpace of 2 by 3 dense matrices over Rational Field
 
     ::
 
-        sage: m = matrix(QQ,2,3,[1,2,3,4,5,6]); m; m.parent()
+        sage: m = matrix(QQ, 2, 3, [1,2,3,4,5,6]); m; m.parent()
         [1 2 3]
         [4 5 6]
         Full MatrixSpace of 2 by 3 dense matrices over Rational Field
 
     ::
 
-        sage: m = matrix({(0,1): 2, (1,1):2/5}); m; m.parent()
+        sage: m = matrix({(0,1): 2, (1,1): 2/5}); m; m.parent()
         [  0   2]
         [  0 2/5]
         Full MatrixSpace of 2 by 2 sparse matrices over Rational Field
 
     ::
 
-        sage: m = matrix(QQ,2,3,{(1,1): 2}); m; m.parent()
+        sage: m = matrix(QQ, 2, 3, {(1,1): 2}); m; m.parent()
         [0 0 0]
         [0 2 0]
         Full MatrixSpace of 2 by 3 sparse matrices over Rational Field
@@ -235,7 +234,7 @@ def matrix(*args, **kwds):
 
     ::
 
-        sage: M = Matrix([[1,2,3],[4,5,6],[7,8,9]], immutable=True)
+        sage: M = Matrix([[1,2,3], [4,5,6], [7,8,9]], immutable=True)
         sage: M[0] = [9,9,9]
         Traceback (most recent call last):
         ...
