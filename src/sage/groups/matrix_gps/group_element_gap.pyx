@@ -306,14 +306,14 @@ cdef class MatrixGroupElement_gap(ElementLibGAP):
 
         This method writes the group element as a product of the
         elements of the list ``gens``, or the standard generators of
-        the parent of self if ``gens`` is None.
+        the parent of ``self`` if ``gens`` is ``None``.
 
         INPUT:
 
         - ``gens`` -- a list/tuple/iterable of elements (or objects
           that can be converted to group elements), or ``None``
-          (default). By default, the generators of the parent group
-          are used.
+          (default); by default, the generators of the parent group
+          are used
 
         OUTPUT:
 

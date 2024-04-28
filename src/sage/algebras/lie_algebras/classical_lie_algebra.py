@@ -1700,10 +1700,53 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
             [((alpha[1], -alpha[1]), {alphacheck[1]: 1}),
              ((alpha[1], alphacheck[1]), {alpha[1]: -2}),
              ((alphacheck[1], -alpha[1]), {-alpha[1]: -2})]
+
+        TESTS:
+
+        Check that we can construct Lie algebras over positive characteristic
+        fields (:issue:`37773`)::
+
+            sage: sl3 = LieAlgebra(GF(3), cartan_type=['A',2])
+            sage: sl3.center().basis()
+            Family (2*h1 + h2,)
+            sage: sl4 = lie_algebras.sl(GF(3), 4)
+            sage: sl4.center().dimension()
+            0
+            sage: sl4.is_nilpotent()
+            False
+            sage: sl4.lower_central_series()
+            (Lie algebra of ['A', 3] in the Chevalley basis,)
+            sage: sl4.is_solvable()
+            False
+            sage: sl4.is_semisimple()
+            True
+            sage: sl4.killing_form_matrix().det()
+            2
+            sage: sl5 = lie_algebras.sl(GF(3), 5)
+            sage: sl5.killing_form_matrix().det()
+            2
+
+        This also includes characteristic 2::
+
+            sage: sl4 = LieAlgebra(GF(2), cartan_type=['A',3])
+            sage: sl4.center().basis()
+            Family (h1 + h3,)
+            sage: sp6 = LieAlgebra(GF(2), cartan_type=['C',3])
+            sage: sp6.killing_form_matrix().det()
+            0
+            sage: F4 = LieAlgebra(GF(2), cartan_type=['F',4])
+            sage: F4.killing_form_matrix().det()  # long time
+            0
+            sage: G2 = LieAlgebra(GF(2), cartan_type=['G',2])
+            sage: G2.killing_form_matrix().det()
+            0
         """
         alphacheck = self._Q.simple_coroots()
         roots = frozenset(self._Q.roots())
-        one = R.one()
+        # We do everything initially over QQ and then convert to R at the end
+        #   since this is a ZZ-basis.
+        from sage.rings.rational_field import QQ
+        one = QQ.one()
 
         # Determine the signs for the structure coefficients from the root system
         # We first create the special roots
@@ -1755,15 +1798,15 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
         for i,r in enumerate(p_roots):
             # [e_r, h_i] and [h_i, f_r]
             for ac in alphacheck:
-                c = r.scalar(ac)
+                c = R(r.scalar(ac))
                 if c == 0:
                     continue
                 s_coeffs[(r, ac)] = {r: -c}
                 s_coeffs[(ac, -r)] = {-r: -c}
 
             # [e_r, f_r]
-            s_coeffs[(r, -r)] = {alphacheck[j]: c
-                                 for j, c in r.associated_coroot()}
+            s_coeffs[(r, -r)] = {alphacheck[j]: Rc
+                                 for j, c in r.associated_coroot() if (Rc := R(c))}
 
             # [e_r, e_s] and [e_r, f_s] with r != +/-s
             # We assume s is positive, as otherwise we negate
@@ -1779,16 +1822,19 @@ class LieAlgebraChevalleyBasis(LieAlgebraWithStructureCoefficients):
                         c *= -sp_sign[(b, a)]
                     else:
                         c *= sp_sign[(a, b)]
-                    s_coeffs[(-r, s)] = {a: -c}
-                    s_coeffs[(r, -s)] = {-a: c}
+                    c = R(c)
+                    if c:
+                        s_coeffs[(-r, s)] = {a: -c}
+                        s_coeffs[(r, -s)] = {-a: c}
 
                 # [e_r, e_s]
                 a = r + s
                 if a in p_roots:
                     # (r, s) is a special pair
-                    c = e_coeff(r, s) * sp_sign[(r, s)]
-                    s_coeffs[(r, s)] = {a: c}
-                    s_coeffs[(-r, -s)] = {-a: -c}
+                    c = R(e_coeff(r, s) * sp_sign[(r, s)])
+                    if c:
+                        s_coeffs[(r, s)] = {a: c}
+                        s_coeffs[(-r, -s)] = {-a: -c}
 
         return s_coeffs
 

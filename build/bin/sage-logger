@@ -63,7 +63,7 @@ fi
 
 timefile="$logdir/$logname.time"
 rm -f "$timefile"
-if /usr/bin/time -h -o /dev/null true; then
+if /usr/bin/time -h -o /dev/null true 2>/dev/null; then
     TIME="/usr/bin/time -h -o $timefile"
 else
     TIME=""
@@ -71,7 +71,7 @@ fi
 
 report_time ()
 {
-    time=$(echo $(cat $timefile))
+    time=$(echo $(cat $timefile 2>/dev/null))
     case "$time" in
         *m*real*|*h*real*|*[1-9][0-9].*real*|*[1-9][0-9],*real*)
             # at least 10 seconds wall time

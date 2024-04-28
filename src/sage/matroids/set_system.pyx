@@ -207,24 +207,23 @@ cdef class SetSystem:
             S._append(self._subsets[i])
         return S
 
-    cdef _relabel(self, l):
+    cdef _relabel(self, mapping):
         """
-        Relabel each element `e` of the ground set as `l(e)`, where `l` is a
-        given injective map.
+        Relabel each element ``e`` of the ground set as ``mapping[e]``, where
+        ``mapping`` is a given injective map.
 
         INPUT:
 
-        - ``l`` -- a python object such that `l[e]` is the new label of e.
+        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
+          label of ``e``
 
-        OUTPUT:
-
-        ``None``.
+        OUTPUT: ``None``
         """
         cdef long i
         E = []
         for i in range(self._groundset_size):
-            if self._groundset[i] in l:
-                E.append(l[self._E[i]])
+            if self._groundset[i] in mapping:
+                E.append(mapping[self._E[i]])
             else:
                 E.append(self._E[i])
         self._groundset = E
