@@ -1892,19 +1892,28 @@ cdef class FormalCompositeMap(Map):
         If it cannot be determined whether the composition is injective,
         an error is raised::
 
-            sage: psi1 = V2.hom(Matrix([[1, 2], [3, 4], [5, 6]]), V1)                   # needs sage.modules
-            sage: c2 = FormalCompositeMap(Hom(V1, V1, phi2.category_for()),             # needs sage.modules
+            sage: # needs sage.modules
+            sage: psi1 = V2.hom(Matrix([[1, 2], [3, 4], [5, 6]]), V1)
+            sage: c2_Sets = FormalCompositeMap(Hom(V1, V1, Sets()),
             ....:                         phi2, psi1)
-            sage: c2.is_injective()                                                     # needs sage.modules
+            sage: c2_Sets.is_injective()
             Traceback (most recent call last):
             ...
             NotImplementedError: not enough information to deduce injectivity
+
+        Note that we invoke the injectivity test from the category first,
+        which can determine injectivity in this case::
+
+            sage: c2 = FormalCompositeMap(Hom(V1, V1, phi2.category_for()),             # needs sage.modules
+            ....:                         phi2, psi1)
+            sage: c2.is_injective()                                                     # needs sage.modules
+            True
 
         If the first map is surjective and the second map is not injective,
         then the composition is not injective::
 
             sage: psi2 = V1.hom([[1], [1]], QQ^1)                                       # needs sage.modules
-            sage: c3 = FormalCompositeMap(Hom(V2, QQ^1, phi2.category_for()),           # needs sage.modules
+            sage: c3 = FormalCompositeMap(Hom(V2, QQ^1, Sets()),                        # needs sage.modules
             ....:                         psi2, psi1)
             sage: c3.is_injective()                                                     # needs sage.modules
             False
