@@ -1,15 +1,9 @@
 [build-system]
 # Minimum requirements for the build system to execute.
 requires = [
-    "sage_setup[autogen]",
-    # Some version of sage-conf is required.
-    # Note that PEP517/518 have no notion of optional sage_spkg dependencies:
-    # https://github.com/pypa/pip/issues/6144
      esyscmd(`sage-get-system-packages install-requires-toml \
-        sage_conf      \
         setuptools \
         wheel          \
-        sage_setup     \
         cypari         \
         cysignals      \
         cython         \

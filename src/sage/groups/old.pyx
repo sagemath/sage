@@ -26,7 +26,7 @@ from sage.misc.superseded import deprecation
 
 cdef class Group(sage.structure.parent.Parent):
     """
-    Generic group class
+    Generic group class.
     """
     def __init__(self, category=None):
         """
@@ -69,7 +69,7 @@ cdef class Group(sage.structure.parent.Parent):
 
     def __contains__(self, x):
         r"""
-        True if coercion of `x` into self is defined.
+        Return ``True`` if coercion of ``x`` into ``self`` is defined.
 
         EXAMPLES::
 
@@ -88,7 +88,7 @@ cdef class Group(sage.structure.parent.Parent):
 
     def is_abelian(self):
         """
-        Return True if this group is abelian.
+        Return ``True`` if this group is abelian.
 
         EXAMPLES::
 
@@ -103,7 +103,7 @@ cdef class Group(sage.structure.parent.Parent):
 
     def is_commutative(self):
         r"""
-        Return True if this group is commutative. This is an alias for
+        Return ``True`` if this group is commutative. This is an alias for
         is_abelian, largely to make groups work well with the Factorization
         class.
 
@@ -119,7 +119,7 @@ cdef class Group(sage.structure.parent.Parent):
 
     def order(self):
         """
-        Returns the number of elements of this group, which is either a
+        Return the number of elements of this group, which is either a
         positive integer or infinity.
 
         EXAMPLES::
@@ -135,8 +135,7 @@ cdef class Group(sage.structure.parent.Parent):
 
     def is_multiplicative(self):
         r"""
-        Returns True if the group operation is given by \* (rather than
-        +).
+        Return ``True`` if the group operation is given by \* (rather than +).
 
         Override for additive groups.
 
@@ -166,8 +165,7 @@ cdef class Group(sage.structure.parent.Parent):
 
     def quotient(self, H, **kwds):
         """
-        Return the quotient of this group by the normal subgroup
-        `H`.
+        Return the quotient of this group by the normal subgroup `H`.
 
         EXAMPLES::
 
@@ -213,7 +211,6 @@ cdef class FiniteGroup(Group):
             True
         """
         return True
-
 
 cdef class AlgebraicGroup(Group):
     """

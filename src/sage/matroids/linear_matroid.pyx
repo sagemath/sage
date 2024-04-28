@@ -466,8 +466,7 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             'Linear matroid of rank 2 on 5 elements represented over the
             Finite Field of size 5'
         """
-        S = "Linear matroid of rank " + str(self.rank()) + " on " + str(self.size()) + " elements represented over the " + repr(self.base_ring())
-        return S
+        return f'Linear matroid of rank {self.rank()} on {self.size()} elements represented over the {self.base_ring()!r}'
 
     # representations
 
@@ -2882,48 +2881,6 @@ cdef class LinearMatroid(BasisExchangeMatroid):
 
     # Copying, loading, saving
 
-    def __copy__(self):
-        """
-        Create a shallow copy.
-
-        EXAMPLES::
-
-            sage: M = Matroid(Matrix(GF(7), [[1, 0, 0, 1, 1], [0, 1, 0, 1, 2],
-            ....:                                           [0, 0, 1, 1, 3]]))
-            sage: N = copy(M)  # indirect doctest
-            sage: M == N
-            True
-        """
-        cdef LinearMatroid N
-        if self._representation is not None:
-            N = LinearMatroid(groundset=self._E, matrix=self._representation, keep_initial_representation=True)
-        else:
-            rows, cols = self._current_rows_cols()
-            N = LinearMatroid(groundset=rows + cols, reduced_matrix=self._A)
-        N.rename(self.get_custom_name())
-        return N
-
-    def __deepcopy__(self, memo):
-        """
-        Create a deep copy.
-
-        EXAMPLES::
-
-            sage: M = Matroid(Matrix(GF(7), [[1, 0, 0, 1, 1], [0, 1, 0, 1, 2],
-            ....:                                           [0, 0, 1, 1, 3]]))
-            sage: N = deepcopy(M)  # indirect doctest
-            sage: M == N
-            True
-        """
-        cdef LinearMatroid N
-        if self._representation is not None:
-            N = LinearMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._representation, memo), keep_initial_representation=True)
-        else:
-            rows, cols = self._current_rows_cols()
-            N = LinearMatroid(groundset=deepcopy(rows + cols, memo), reduced_matrix=deepcopy(self._A, memo))
-        N.rename(deepcopy(self.get_custom_name(), memo))
-        return N
-
     def __reduce__(self):
         """
         Save the matroid for later reloading.
@@ -2972,6 +2929,43 @@ cdef class LinearMatroid(BasisExchangeMatroid):
             reduced = True
         data = (A, gs, reduced, self.get_custom_name())
         return sage.matroids.unpickling.unpickle_linear_matroid, (version, data)
+
+    cpdef relabel(self, mapping):
+        r"""
+        Return an isomorphic matroid with relabeled groundset.
+
+        The output is obtained by relabeling each element ``e`` by
+        ``mapping[e]``, where ``mapping`` is a given injective map. If
+        ``mapping[e]`` is not defined, then the identity map is assumed.
+
+        INPUT:
+
+        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
+          label of ``e``
+
+        OUTPUT: a matroid
+
+        EXAMPLES::
+
+            sage: M = matroids.catalog.Fano()
+            sage: sorted(M.groundset())
+            ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+            sage: N = M.relabel({'g': 'x'})
+            sage: sorted(N.groundset())
+            ['a', 'b', 'c', 'd', 'e', 'f', 'x']
+
+        TESTS::
+
+            sage: M = matroids.catalog.Fano()
+            sage: f = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7}
+            sage: N = M.relabel(f)
+            sage: for S in powerset(M.groundset()):
+            ....:     assert M.rank(S) == N.rank([f[x] for x in S])
+        """
+        d = self._relabel_map(mapping)
+        E = [d[x] for x in self.groundset_list()]
+        M = LinearMatroid(groundset=E, matrix=self._matrix_())
+        return M
 
 # Binary matroid
 
@@ -3210,8 +3204,7 @@ cdef class BinaryMatroid(LinearMatroid):
             sage: repr(M)  # indirect doctest
             'Binary matroid of rank 3 on 7 elements, type (3, 0)'
         """
-        S = "Binary matroid of rank " + str(self.rank()) + " on " + str(self.size()) + " elements, type (" + str(self.bicycle_dimension()) + ', ' + str(self.brown_invariant()) + ')'
-        return S
+        return f'Binary matroid of rank {self.rank()} on {self.size()} elements, type ({self.bicycle_dimension()}, {self.brown_invariant()})'
 
     cpdef _current_rows_cols(self, B=None):
         """
@@ -3931,55 +3924,6 @@ cdef class BinaryMatroid(LinearMatroid):
         """
         return True
 
-    def __copy__(self):
-        """
-        Create a shallow copy.
-
-        EXAMPLES::
-
-            sage: M = Matroid(Matrix(GF(2), [[1, 0, 0, 1, 1], [0, 1, 0, 1, 2],
-            ....:      [0, 0, 1, 1, 3]]))
-            sage: N = copy(M)  # indirect doctest
-            sage: M == N
-            True
-        """
-        cdef BinaryMatroid N
-        cdef list basis
-        if self._representation is not None:
-            N = BinaryMatroid(groundset=self._E, matrix=self._representation, keep_initial_representation=True)
-        else:
-            basis = [0] * self.full_rank()
-            for e in self.basis():
-                basis[self._prow[self._idx[e]]] = e
-            N = BinaryMatroid(groundset=self._E, matrix=self._A, basis=basis)
-        N.rename(self.get_custom_name())
-        return N
-
-    def __deepcopy__(self, memo):
-        """
-        Create a deep copy.
-
-        EXAMPLES::
-
-            sage: M = Matroid(Matrix(GF(2), [[1, 0, 0, 1, 1], [0, 1, 0, 1, 2],
-            ....:      [0, 0, 1, 1, 3]]))
-            sage: N = deepcopy(M)  # indirect doctest
-            sage: M == N
-            True
-        """
-        from copy import deepcopy
-        cdef BinaryMatroid N
-        cdef list basis
-        if self._representation is not None:
-            N = BinaryMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._representation, memo), keep_initial_representation=True)
-        else:
-            basis = [0] * self.full_rank()
-            for e in self.basis():
-                basis[self._prow[self._idx[e]]] = e
-            N = BinaryMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._A, memo), basis=deepcopy(basis, memo))
-        N.rename(deepcopy(self.get_custom_name(), memo))
-        return N
-
     def __reduce__(self):
         """
         Save the matroid for later reloading.
@@ -4037,6 +3981,43 @@ cdef class BinaryMatroid(LinearMatroid):
             basis = self._current_rows_cols()[0]
         data = (A, gs, basis, self.get_custom_name())
         return sage.matroids.unpickling.unpickle_binary_matroid, (version, data)
+
+    cpdef relabel(self, mapping):
+        r"""
+        Return an isomorphic matroid with relabeled groundset.
+
+        The output is obtained by relabeling each element ``e`` by
+        ``mapping[e]``, where ``mapping`` is a given injective map. If
+        ``mapping[e]`` is not defined, then the identity map is assumed.
+
+        INPUT:
+
+        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
+          label of ``e``
+
+        OUTPUT: a matroid
+
+        EXAMPLES::
+
+            sage: M = matroids.catalog.Fano()
+            sage: sorted(M.groundset())
+            ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+            sage: N = M.relabel({'g': 'x'})
+            sage: sorted(N.groundset())
+            ['a', 'b', 'c', 'd', 'e', 'f', 'x']
+
+        TESTS::
+
+            sage: M = matroids.catalog.Fano()
+            sage: f = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7}
+            sage: N = M.relabel(f)
+            sage: for S in powerset(M.groundset()):
+            ....:     assert M.rank(S) == N.rank([f[x] for x in S])
+        """
+        d = self._relabel_map(mapping)
+        E = [d[x] for x in self.groundset_list()]
+        M = BinaryMatroid(groundset=E, matrix=self._matrix_())
+        return M
 
 cdef class TernaryMatroid(LinearMatroid):
     r"""
@@ -4277,7 +4258,7 @@ cdef class TernaryMatroid(LinearMatroid):
             sage: repr(M)  # indirect doctest
             'Ternary matroid of rank 3 on 7 elements, type 0-'
         """
-        S = "Ternary matroid of rank " + str(self.rank()) + " on " + str(self.size()) + " elements, type " + str(self.bicycle_dimension())
+        S = f'Ternary matroid of rank {self.rank()} on {self.size()} elements, type {self.bicycle_dimension()}'
         if self.character() == 1:
             S = S + '+'
         else:
@@ -4821,55 +4802,6 @@ cdef class TernaryMatroid(LinearMatroid):
         """
         return True
 
-    def __copy__(self):
-        """
-        Create a shallow copy.
-
-        EXAMPLES::
-
-            sage: M = Matroid(Matrix(GF(3), [[1, 0, 0, 1, 1], [0, 1, 0, 1, 2],
-            ....:     [0, 0, 1, 1, 3]]))
-            sage: N = copy(M)  # indirect doctest
-            sage: M == N
-            True
-        """
-        cdef TernaryMatroid N
-        cdef list basis
-        if self._representation is not None:
-            N = TernaryMatroid(groundset=self._E, matrix=self._representation, keep_initial_representation=True)
-        else:
-            basis = [0] * self.full_rank()
-            for e in self.basis():
-                basis[self._prow[self._idx[e]]] = e
-            N = TernaryMatroid(groundset=self._E, matrix=self._A, basis=basis)
-        N.rename(self.get_custom_name())
-        return N
-
-    def __deepcopy__(self, memo):
-        """
-        Create a deep copy.
-
-        EXAMPLES::
-
-            sage: M = Matroid(Matrix(GF(3), [[1, 0, 0, 1, 1], [0, 1, 0, 1, 2],
-            ....:           [0, 0, 1, 1, -1]]))
-            sage: N = deepcopy(M)  # indirect doctest
-            sage: M == N
-            True
-        """
-        from copy import deepcopy
-        cdef TernaryMatroid N
-        cdef list basis
-        if self._representation is not None:
-            N = TernaryMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._representation, memo), keep_initial_representation=True)
-        else:
-            basis = [0] * self.full_rank()
-            for e in self.basis():
-                basis[self._prow[self._idx[e]]] = e
-            N = TernaryMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._A, memo), basis=deepcopy(basis, memo))
-        N.rename(deepcopy(self.get_custom_name(), memo))
-        return N
-
     def __reduce__(self):
         """
         Save the matroid for later reloading.
@@ -4931,6 +4863,43 @@ cdef class TernaryMatroid(LinearMatroid):
             basis = self._current_rows_cols()[0]
         data = (A, gs, basis, self.get_custom_name())
         return sage.matroids.unpickling.unpickle_ternary_matroid, (version, data)
+
+    cpdef relabel(self, mapping):
+        r"""
+        Return an isomorphic matroid with relabeled groundset.
+
+        The output is obtained by relabeling each element ``e`` by
+        ``mapping[e]``, where ``mapping`` is a given injective map. If
+        ``mapping[e]`` is not defined, then the identity map is assumed.
+
+        INPUT:
+
+        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
+          label of ``e``
+
+        OUTPUT: a matroid
+
+        EXAMPLES::
+
+            sage: M = matroids.catalog.NonFano()
+            sage: sorted(M.groundset())
+            ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+            sage: N = M.relabel({'g': 'x'})
+            sage: sorted(N.groundset())
+            ['a', 'b', 'c', 'd', 'e', 'f', 'x']
+
+        TESTS::
+
+            sage: M = matroids.catalog.NonFano()
+            sage: f = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7}
+            sage: N = M.relabel(f)
+            sage: for S in powerset(M.groundset()):
+            ....:     assert M.rank(S) == N.rank([f[x] for x in S])
+        """
+        d = self._relabel_map(mapping)
+        E = [d[x] for x in self.groundset_list()]
+        M = TernaryMatroid(groundset=E, matrix=self._matrix_())
+        return M
 
 # Quaternary Matroids
 
@@ -5167,8 +5136,7 @@ cdef class QuaternaryMatroid(LinearMatroid):
             sage: repr(M)  # indirect doctest                                           # needs sage.rings.finite_rings
             'Quaternary matroid of rank 2 on 3 elements'
         """
-        S = "Quaternary matroid of rank " + str(self.rank()) + " on " + str(self.size()) + " elements"
-        return S
+        return f'Quaternary matroid of rank {self.rank()} on {self.size()} elements'
 
     cpdef _current_rows_cols(self, B=None):
         """
@@ -5550,55 +5518,6 @@ cdef class QuaternaryMatroid(LinearMatroid):
         """
         return True
 
-    def __copy__(self):
-        """
-        Create a shallow copy.
-
-        EXAMPLES::
-
-            sage: M = Matroid(Matrix(GF(4, 'x'), [[1, 0, 0, 1, 1],                      # needs sage.rings.finite_rings
-            ....:        [0, 1, 0, 1, 2], [0, 0, 1, 1, 3]]))
-            sage: N = copy(M)  # indirect doctest                                       # needs sage.rings.finite_rings
-            sage: M == N                                                                # needs sage.rings.finite_rings
-            True
-        """
-        cdef QuaternaryMatroid N
-        cdef list basis
-        if self._representation is not None:
-            N = QuaternaryMatroid(groundset=self._E, matrix=self._representation, keep_initial_representation=True)
-        else:
-            basis = [0] * self.full_rank()
-            for e in self.basis():
-                basis[self._prow[self._idx[e]]] = e
-            N = QuaternaryMatroid(groundset=self._E, matrix=self._A, basis=basis)
-        N.rename(self.get_custom_name())
-        return N
-
-    def __deepcopy__(self, memo):
-        """
-        Create a deep copy.
-
-        EXAMPLES::
-
-            sage: M = Matroid(Matrix(GF(4, 'x'), [[1, 0, 0, 1, 1],                      # needs sage.rings.finite_rings
-            ....:               [0, 1, 0, 1, 2], [0, 0, 1, 1, -1]]))
-            sage: N = deepcopy(M)  # indirect doctest                                   # needs sage.rings.finite_rings
-            sage: M == N                                                                # needs sage.rings.finite_rings
-            True
-        """
-        from copy import deepcopy
-        cdef QuaternaryMatroid N
-        cdef list basis
-        if self._representation is not None:
-            N = QuaternaryMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._representation, memo), keep_initial_representation=True)
-        else:
-            basis = [0] * self.full_rank()
-            for e in self.basis():
-                basis[self._prow[self._idx[e]]] = e
-            N = QuaternaryMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._A, memo), basis=deepcopy(basis, memo))
-        N.rename(deepcopy(self.get_custom_name(), memo))
-        return N
-
     def __reduce__(self):
         """
         Save the matroid for later reloading.
@@ -5656,6 +5575,43 @@ cdef class QuaternaryMatroid(LinearMatroid):
             basis = self._current_rows_cols()[0]
         data = (A, gs, basis, self.get_custom_name())
         return sage.matroids.unpickling.unpickle_quaternary_matroid, (version, data)
+
+    cpdef relabel(self, mapping):
+        r"""
+        Return an isomorphic matroid with relabeled groundset.
+
+        The output is obtained by relabeling each element ``e`` by
+        ``mapping[e]``, where ``mapping`` is a given injective map. If
+        ``mapping[e]`` is not defined, then the identity map is assumed.
+
+        INPUT:
+
+        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
+          label of ``e``
+
+        OUTPUT: a matroid
+
+        EXAMPLES::
+
+            sage: M = matroids.catalog.RelaxedNonFano("abcdefg")
+            sage: sorted(M.groundset())
+            ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+            sage: N = M.relabel({'g':'x'})
+            sage: sorted(N.groundset())
+            ['a', 'b', 'c', 'd', 'e', 'f', 'x']
+
+        TESTS::
+
+            sage: M = matroids.catalog.RelaxedNonFano("abcdefg")
+            sage: f = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7}
+            sage: N = M.relabel(f)
+            sage: for S in powerset(M.groundset()):
+            ....:     assert M.rank(S) == N.rank([f[x] for x in S])
+        """
+        d = self._relabel_map(mapping)
+        E = [d[x] for x in self.groundset_list()]
+        M = QuaternaryMatroid(groundset=E, matrix=self._matrix_())
+        return M
 
 # Regular Matroids
 
@@ -5875,8 +5831,7 @@ cdef class RegularMatroid(LinearMatroid):
             sage: repr(M)  # indirect doctest
             'Regular matroid of rank 5 on 10 elements with 162 bases'
         """
-        S = "Regular matroid of rank " + str(self.rank()) + " on " + str(self.size()) + " elements with " + str(self.bases_count()) + " bases"
-        return S
+        return f'Regular matroid of rank {self.rank()} on {self.size()} elements with {self.bases_count()} bases'
 
     cpdef bases_count(self):
         """
@@ -6367,6 +6322,20 @@ cdef class RegularMatroid(LinearMatroid):
 
     # representation
 
+    def is_regular(self):
+        r"""
+        Return if ``self`` is regular.
+
+        This is trivially ``True`` for a class:`RegularMatroid`.
+
+        EXAMPLES::
+
+            sage: M = matroids.catalog.R10()
+            sage: M.is_regular()
+            True
+        """
+        return True
+
     cpdef binary_matroid(self, randomized_tests=1, verify = True):
         r"""
         Return a binary matroid representing ``self``.
@@ -6487,46 +6456,6 @@ cdef class RegularMatroid(LinearMatroid):
 
     # Copying, loading, saving
 
-    def __copy__(self):
-        """
-        Create a shallow copy.
-
-        EXAMPLES::
-
-            sage: M = matroids.catalog.R10()
-            sage: N = copy(M)  # indirect doctest
-            sage: M == N
-            True
-        """
-        cdef RegularMatroid N
-        if self._representation is not None:
-            N = RegularMatroid(groundset=self._E, matrix=self._representation, keep_initial_representation=True)
-        else:
-            rows, cols = self._current_rows_cols()
-            N = RegularMatroid(groundset=rows + cols, reduced_matrix=self._A)
-        N.rename(self.get_custom_name())
-        return N
-
-    def __deepcopy__(self, memo):
-        """
-        Create a deep copy.
-
-        EXAMPLES::
-
-            sage: M = matroids.catalog.R10()
-            sage: N = deepcopy(M)  # indirect doctest
-            sage: M == N
-            True
-        """
-        cdef RegularMatroid N
-        if self._representation is not None:
-            N = RegularMatroid(groundset=deepcopy(self._E, memo), matrix=deepcopy(self._representation, memo), keep_initial_representation=True)
-        else:
-            rows, cols = self._current_rows_cols()
-            N = RegularMatroid(groundset=deepcopy(rows + cols, memo), reduced_matrix=deepcopy(self._A, memo))
-        N.rename(deepcopy(self.get_custom_name(), memo))
-        return N
-
     def __reduce__(self):
         """
         Save the matroid for later reloading.
@@ -6575,3 +6504,40 @@ cdef class RegularMatroid(LinearMatroid):
             reduced = True
         data = (A, gs, reduced, self.get_custom_name())
         return sage.matroids.unpickling.unpickle_regular_matroid, (version, data)
+
+    cpdef relabel(self, mapping):
+        r"""
+        Return an isomorphic matroid with relabeled groundset.
+
+        The output is obtained by relabeling each element ``e`` by
+        ``mapping[e]``, where ``mapping`` is a given injective map. If
+        ``mapping[e]`` is not defined, then the identity map is assumed.
+
+        INPUT:
+
+        - ``mapping`` -- a python object such that ``mapping[e]`` is the new
+          label of ``e``
+
+        OUTPUT: a matroid
+
+        EXAMPLES::
+
+            sage: M = matroids.catalog.R10()
+            sage: sorted(M.groundset())
+            ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j']
+            sage: N = M.relabel({'g': 'x'})
+            sage: sorted(N.groundset())
+            ['a', 'b', 'c', 'd', 'e', 'f', 'h', 'i', 'j', 'x']
+
+        TESTS::
+
+            sage: M = matroids.catalog.R10()
+            sage: f = {'a': 1, 'b': 2, 'c': 3, 'd': 4, 'e': 5, 'f': 6, 'g': 7}
+            sage: N = M.relabel(f)
+            sage: for S in powerset(M.groundset()):
+            ....:     assert M.rank(S) == N.rank([M._relabel_map(f)[x] for x in S])
+        """
+        d = self._relabel_map(mapping)
+        E = [d[x] for x in self.groundset_list()]
+        M = RegularMatroid(groundset=E, matrix=self._matrix_())
+        return M
