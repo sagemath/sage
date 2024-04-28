@@ -2559,18 +2559,16 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                     column_order = sorted(codomain_basis.keys())
                 except AttributeError:  # Not a family, assume it is list-like
                     column_order = range(ncols)
-                vector_kwds = {}
             elif not isinstance(row_order, collections.abc.Sequence):
                 raise ValueError("row_order and column_order must be either None or a sequence")
             else:
                 ncols = len(column_order)
-                vector_kwds = dict(order=column_order)
 
             from sage.matrix.matrix_space import MatrixSpace
             if base_ring is None:
                 base_ring = self.codomain().base_ring()
             MS = MatrixSpace(base_ring, nrows, ncols)
-            m = MS([on_basis(x)._vector_(**vector_kwds)
+            m = MS([on_basis(x).dense_coefficient_list(order=column_order)
                     for x in row_order])
 
             if side == 'left':
