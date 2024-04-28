@@ -189,21 +189,25 @@ def sage_doc_server():
     from functools import partial
     from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
     from threading import Thread
-
     from sage.env import SAGE_DOC, SAGE_DOC_LOCAL_PORT as port
 
-    server = ThreadingHTTPServer(('localhost', int(port)),
+    server = ThreadingHTTPServer(('127.0.0.1', int(port)),
         partial(SimpleHTTPRequestHandler, directory=SAGE_DOC))
+
+    if port == '0':
+        port = str(server.server_address[1])
+        os.environ['SAGE_DOC_LOCAL_PORT'] = port
+
     server_thread = Thread(target=server.serve_forever, name="sage_doc_server")
     server_thread.start()
-    print(f'Sage doc server started running at http://localhost:{port}')
+    print(f'Sage doc server started running at http://127.0.0.1:{port}')
 
     try:
         yield
     finally:
         server.shutdown()
         server_thread.join()
-        print(f'Sage doc server stopped runnning at http://localhost:{port}')
+        print(f'Sage doc server stopped runnning at http://127.0.0.1:{port}')
 
 
 if __name__ == '__main__':

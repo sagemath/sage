@@ -189,7 +189,8 @@ SAGE_ROOT_GIT = var("SAGE_ROOT_GIT", join(SAGE_ROOT, ".git"))
 
 # Sage doc server (local server with PORT if URL is not given)
 SAGE_DOC_SERVER_URL = var("SAGE_DOC_SERVER_URL")
-SAGE_DOC_LOCAL_PORT = var("SAGE_DOC_LOCAL_PORT", "8000")
+# The default port is 0 so that the system will assign a random unused port > 1024
+SAGE_DOC_LOCAL_PORT = var("SAGE_DOC_LOCAL_PORT", "0")
 
 # ~/.sage
 DOT_SAGE = var("DOT_SAGE", join(os.environ.get("HOME"), ".sage"))

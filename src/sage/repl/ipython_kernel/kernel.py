@@ -117,7 +117,7 @@ class SageKernel(IPythonKernel):
             from sage.env import SAGE_DOC_LOCAL_PORT as port
 
             def doc_url(path):
-                return f'http://localhost:{port}/{path}'
+                return f'http://127.0.0.1:{port}/{path}'
         else:
             def doc_url(path):
                 return f'https://doc.sagemath.org/{path}'
