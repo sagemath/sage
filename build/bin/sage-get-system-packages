@@ -54,9 +54,8 @@ for PKG_BASE in $SPKGS; do
     if [ $FROM_PYPROJECT_TOML -eq 1 ]; then
         if [ -f "$SAGE_ROOT/src/pyproject.toml" ]; then
             # Extract from the "requires" block in src/pyproject.toml
-            REQUIRES=$(sed -n '/requires = \[/,/^\]/p' "$SAGE_ROOT/src/pyproject.toml")
             # Packages are in the format "'sage-conf ~= 10.3b3',"
-            PACKAGE_INFO=$(echo "$REQUIRES" | sed -n "s/^\s*'\($PKG_BASE.*\)',/\1/p")
+            PACKAGE_INFO=$(sed -n '/requires *= *\[/,/^\]/s/^ *'\''\('$PKG_BASE'.*\)'\'',/\1/p' "$SAGE_ROOT/src/pyproject.toml")
             if [ -n "$PACKAGE_INFO" ]; then
                 echo "$PACKAGE_INFO" | ${STRIP_COMMENTS}
                 continue
