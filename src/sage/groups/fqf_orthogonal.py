@@ -5,7 +5,6 @@ The orthogonal group of a torsion quadratic module `T`
 consists of all linear self-maps of `T` which preserve
 the torsion quadratic form.
 
-
 EXAMPLES::
 
     sage: L = IntegralLattice("A2").twist(2)                                            # needs sage.graphs
@@ -125,7 +124,7 @@ class FqfOrthogonalGroup(AbelianGroupAutomorphismGroup_subgroup):
 
     INPUT:
 
-    - ``T`` -- a non degenerate torsion quadratic module.
+    - ``T`` -- a non degenerate torsion quadratic module
 
     EXAMPLES::
 
@@ -230,7 +229,7 @@ class FqfOrthogonalGroup(AbelianGroupAutomorphismGroup_subgroup):
             [1 3]
             [3 4]
 
-        Note that the following does not work since it may lead to ambiguities, see :trac:`30669`::
+        Note that the following does not work since it may lead to ambiguities, see :issue:`30669`::
 
             sage: Oq(f.matrix())                                                        # needs sage.graphs
             Traceback (most recent call last):
@@ -436,9 +435,7 @@ class ActionOnFqf(Action):
         - ``a`` -- an element of the invariant submodule
         - ``g`` -- an element of the acting group
 
-        OUTPUT:
-
-        - an element of the invariant submodule
+        OUTPUT: an element of the invariant submodule
 
         EXAMPLES::
 

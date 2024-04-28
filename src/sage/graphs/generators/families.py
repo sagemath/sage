@@ -513,12 +513,13 @@ def BalancedTree(r, h):
     OUTPUT:
 
     The perfectly balanced tree of height `h \geq 1` and whose root has
-    degree `r \geq 2`. A ``NetworkXError`` is returned if `r < 2` or
-    `h < 1`.
+    degree `r \geq 2`. A :exc:`~networkx.exception.NetworkXError` is raised
+    if `r < 2` or `h < 1`.
 
     ALGORITHM:
 
-    Uses `NetworkX <http://networkx.lanl.gov>`_.
+    Uses the :ref:`NetworkX <spkg_networkx>` function
+    :func:`~networkx.generators.classic.balanced_tree`.
 
     EXAMPLES:
 
@@ -4063,7 +4064,7 @@ def TuranGraph(n, r):
         True
 
     The Turan graph `T(n,r)` has `\frac{(r-1)(n^2-s^2)}{2r} + \frac{s(s-1)}{2}`
-    edges, where `s = n \mod r` (:trac:`34249`)::
+    edges, where `s = n \mod r` (:issue:`34249`)::
 
         sage: n = 12
         sage: r = 8

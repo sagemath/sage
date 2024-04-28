@@ -5,7 +5,7 @@ Base class for finite field elements
 AUTHORS:
 
 - David Roe (2010-01-14): factored out of sage.structure.element
-- Sebastian Oehms (2018-07-19): added :meth:`conjugate` (see :trac:`26761`)
+- Sebastian Oehms (2018-07-19): added :meth:`conjugate` (see :issue:`26761`)
 """
 
 # ****************************************************************************
@@ -143,7 +143,7 @@ cdef class FiniteRingElement(CommutativeRingElement):
             raise ValueError("unknown algorithm")
 
     def to_bytes(self, byteorder="big"):
-        """
+        r"""
         Return an array of bytes representing an integer.
 
         Internally relies on the python ``int.to_bytes()`` method.
@@ -558,7 +558,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS:
 
-        The following tests against a bug fixed in :trac:`11530`::
+        The following tests against a bug fixed in :issue:`11530`::
 
             sage: F.<d> = GF(3^4)
             sage: F.modulus()
@@ -1025,7 +1025,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
 
         TESTS:
 
-        Check that :trac:`26761` is fixed::
+        Check that :issue:`26761` is fixed::
 
             sage: # needs sage.libs.gap
             sage: G32 = GU(3,2)
@@ -1136,7 +1136,7 @@ cdef class FinitePolyExtElement(FiniteRingElement):
         return self.to_integer().to_bytes(length=length, byteorder=byteorder)
 
 cdef class Cache_base(SageObject):
-    cpdef FinitePolyExtElement fetch_int(self, number) noexcept:
+    cpdef FinitePolyExtElement fetch_int(self, number):
         r"""
         Given an integer less than `p^n` with base `2`
         representation `a_0 + a_1 \cdot 2 + \cdots + a_k 2^k`, this returns

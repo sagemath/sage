@@ -73,7 +73,7 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
     We construct a very small-scale AES system of equations::
 
         sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)
-        sage: while True:  # workaround (see :trac:`31891`)
+        sage: while True:  # workaround (see :issue:`31891`)
         ....:     try:
         ....:         F, s = sr.polynomial_system()
         ....:         break
@@ -130,7 +130,7 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
         sage: solve_sat(F, n=infinity, target_variables=[a,b])
         [{b: 0, a: 0}, {b: 1, a: 1}]
 
-    Here, we generate and solve the cubic equations of the AES SBox (see :trac:`26676`)::
+    Here, we generate and solve the cubic equations of the AES SBox (see :issue:`26676`)::
 
         sage: # long time
         sage: from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
@@ -150,7 +150,7 @@ def solve(F, converter=None, solver=None, n=1, target_variables=None, **kwds):
 
     TESTS:
 
-    Test that :trac:`26676` is fixed::
+    Test that :issue:`26676` is fixed::
 
         sage: varl = ['k{0}'.format(p) for p in range(29)]
         sage: B = BooleanPolynomialRing(names=varl)

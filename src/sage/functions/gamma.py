@@ -124,7 +124,7 @@ class Function_gamma(GinacFunction):
             sage: latex(gamma1(z))                                                      # needs sage.symbolic
             \Gamma\left(z\right)
 
-        Test that :trac:`5556` is fixed::
+        Test that :issue:`5556` is fixed::
 
             sage: gamma1(3/4)                                                           # needs sage.symbolic
             gamma(3/4)
@@ -145,7 +145,7 @@ class Function_gamma(GinacFunction):
             sage: CDF(-1).gamma()                                                       # needs sage.libs.pari sage.rings.complex_double
             Infinity
 
-        Check if :trac:`8297` is fixed::
+        Check if :issue:`8297` is fixed::
 
             sage: latex(gamma(1/4))                                                     # needs sage.symbolic
             \Gamma\left(\frac{1}{4}\right)
@@ -204,7 +204,7 @@ class Function_log_gamma(GinacFunction):
         EXAMPLES:
 
         Numerical evaluation happens when appropriate, to the
-        appropriate accuracy (see :trac:`10072`)::
+        appropriate accuracy (see :issue:`10072`)::
 
             sage: # needs sage.symbolic
             sage: log_gamma(6)
@@ -223,7 +223,7 @@ class Function_log_gamma(GinacFunction):
             sage: log_gamma(RealField(100)(6))                                          # needs sage.rings.real_mpfr
             4.7874917427820459942477009345
 
-        Symbolic input works (see :trac:`10075`)::
+        Symbolic input works (see :issue:`10075`)::
 
             sage: log_gamma(3*x)                                                        # needs sage.symbolic
             log_gamma(3*x)
@@ -232,7 +232,7 @@ class Function_log_gamma(GinacFunction):
             sage: log_gamma(3 + I + x)                                                  # needs sage.symbolic
             log_gamma(x + I + 3)
 
-        Check that :trac:`12521` is fixed::
+        Check that :issue:`12521` is fixed::
 
             sage: # needs sage.symbolic
             sage: log_gamma(-2.1)
@@ -345,14 +345,14 @@ class Function_gamma_inc(BuiltinFunction):
 
         TESTS:
 
-        Check that :trac:`21407` is fixed::
+        Check that :issue:`21407` is fixed::
 
             sage: gamma(-1, 5)._sympy_()                                                # needs sympy sage.symbolic
             expint(2, 5)/5
             sage: gamma(-3/2, 5)._sympy_()                                              # needs sympy sage.symbolic
             -6*sqrt(5)*exp(-5)/25 + 4*sqrt(pi)*erfc(sqrt(5))/3
 
-        Check that :trac:`25597` is fixed::
+        Check that :issue:`25597` is fixed::
 
             sage: gamma(-1, 5)._fricas_()                                       # optional - fricas, needs sage.symbolic
             Gamma(- 1,5)
@@ -438,7 +438,7 @@ class Function_gamma_inc(BuiltinFunction):
 
         TESTS:
 
-        Check that :trac:`7099` is fixed::
+        Check that :issue:`7099` is fixed::
 
             sage: R = RealField(1024)                                                   # needs sage.rings.real_mpfr
             sage: gamma(R(9), R(10^-3))  # rel tol 1e-308                               # needs sage.rings.real_mpfr
@@ -446,7 +446,7 @@ class Function_gamma_inc(BuiltinFunction):
             sage: numerical_approx(gamma(9, 10^(-3)) - gamma(9), digits=40)  # abs tol 1e-36        # needs sage.symbolic
             -1.110111598370794007949063502542063148294e-28
 
-        Check that :trac:`17328` is fixed::
+        Check that :issue:`17328` is fixed::
 
             sage: gamma_inc(float(-1), float(-1))                                       # needs sage.rings.real_mpfr
             (-0.8231640121031085+3.141592653589793j)
@@ -455,7 +455,7 @@ class Function_gamma_inc(BuiltinFunction):
             sage: gamma_inc(-1, float(-log(3))) - gamma_inc(-1, float(-log(2)))  # abs tol 1e-15    # needs sage.symbolic
             (1.2730972164471142+0j)
 
-        Check that :trac:`17130` is fixed::
+        Check that :issue:`17130` is fixed::
 
             sage: r = gamma_inc(float(0), float(1)); r                                  # needs sage.rings.real_mpfr
             0.21938393439552029
@@ -1059,7 +1059,7 @@ class Function_beta(GinacFunction):
             sage: loads(dumps(beta))
             beta
 
-        Check that :trac:`15196` is fixed::
+        Check that :issue:`15196` is fixed::
 
             sage: beta(-1.3, -0.4)                                                      # needs sage.symbolic
             -4.92909641669610

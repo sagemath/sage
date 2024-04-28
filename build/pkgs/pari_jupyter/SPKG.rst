@@ -1,10 +1,10 @@
-pari_jupyter: A Jupyter kernel for PARI/GP
-==========================================
+pari_jupyter: Jupyter kernel for PARI/GP
+========================================
 
 Description
 -----------
 
-A Jupyter kernel for PARI/GP
+Jupyter kernel for PARI/GP
 
 License
 -------

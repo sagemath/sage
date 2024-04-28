@@ -12,7 +12,7 @@ AUTHORS:
 
 EXAMPLES:
 
-Examples from :trac:`9908`::
+Examples from :issue:`9908`::
 
     sage: maxima('integrate(bessel_j(2, x), x)').sage()
     1/24*x^3*hypergeometric((3/2,), (5/2, 3), -1/4*x^2)

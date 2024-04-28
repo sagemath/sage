@@ -29,6 +29,7 @@ include 'decl.pxi'
 from cpython.object cimport Py_EQ, Py_NE
 from sage.cpython.string cimport char_to_str
 from sage.rings.integer cimport Integer
+from sage.libs.ntl.convert cimport PyLong_to_ZZ
 from sage.libs.ntl.ntl_ZZ cimport ntl_ZZ
 from sage.libs.ntl.ntl_ZZ_p cimport ntl_ZZ_p
 from sage.libs.ntl.ntl_ZZ_pContext cimport ntl_ZZ_pContext_class
@@ -38,7 +39,7 @@ from sage.misc.randstate cimport current_randstate
 from sage.libs.gmp.mpz cimport *
 
 
-cdef inline make_ZZ_p(ZZ_p_c* x, ntl_ZZ_pContext_class ctx) noexcept:
+cdef inline make_ZZ_p(ZZ_p_c* x, ntl_ZZ_pContext_class ctx):
     cdef ntl_ZZ_p y
     sig_off()
     y = ntl_ZZ_p(modulus = ctx)
@@ -47,7 +48,7 @@ cdef inline make_ZZ_p(ZZ_p_c* x, ntl_ZZ_pContext_class ctx) noexcept:
     return y
 
 
-cdef make_ZZ_pX(ZZ_pX_c* x, ntl_ZZ_pContext_class ctx) noexcept:
+cdef make_ZZ_pX(ZZ_pX_c* x, ntl_ZZ_pContext_class ctx):
     cdef ntl_ZZ_pX y
     y = <ntl_ZZ_pX>ntl_ZZ_pX.__new__(ntl_ZZ_pX)
     y.c = ctx
@@ -111,7 +112,7 @@ cdef class ntl_ZZ_pX():
                     cc = x
                 ZZ_pX_SetCoeff(self.x, i, cc.x)
         elif v is not None:
-            s = str(v).replace(',', ' ').replace('L', '')  # can change the modulus trac #25790
+            s = str(v).replace(',', ' ').replace('L', '')  # can change the modulus; Issue #25790
             self.c.restore_c()
             ccreadstr(self.x, s)
 
@@ -138,7 +139,7 @@ cdef class ntl_ZZ_pX():
             self.c = <ntl_ZZ_pContext_class>ntl_ZZ_pContext(ntl_ZZ(modulus))
             self.c.restore_c()
 
-    cdef ntl_ZZ_pX _new(self) noexcept:
+    cdef ntl_ZZ_pX _new(self):
         cdef ntl_ZZ_pX r
         self.c.restore_c()
         r = ntl_ZZ_pX.__new__(ntl_ZZ_pX)
@@ -489,9 +490,12 @@ cdef class ntl_ZZ_pX():
         sig_off()
         return r
 
-    def __pow__(ntl_ZZ_pX self, long n, ignored):
+    def __pow__(self, n, modulus):
         """
-        Return the n-th nonnegative power of self.
+        Return the ``n``-th nonnegative power of ``self``.
+
+        If ``modulus`` is not ``None``, the exponentiation is performed
+        modulo the polynomial ``modulus``.
 
         EXAMPLES::
 
@@ -499,13 +503,65 @@ cdef class ntl_ZZ_pX():
             sage: g = ntl.ZZ_pX([-1,0,1],c)
             sage: g**10
             [1 0 10 0 5 0 0 0 10 0 8 0 10 0 0 0 5 0 10 0 1]
+
+            sage: x = ntl.ZZ_pX([0,1],c)
+            sage: x**10
+            [0 0 0 0 0 0 0 0 0 0 1]
+
+        Modular exponentiation::
+
+            sage: c = ntl.ZZ_pContext(20)
+            sage: f = ntl.ZZ_pX([1,0,1],c)
+            sage: m = ntl.ZZ_pX([1,0,0,0,0,1],c)
+            sage: pow(f, 123**45, m)
+            [1 19 3 0 3]
+
+        Modular exponentiation of ``x``::
+
+            sage: f = ntl.ZZ_pX([0,1],c)
+            sage: f.is_x()
+            True
+            sage: m = ntl.ZZ_pX([1,1,0,0,0,1],c)
+            sage: pow(f, 123**45, m)
+            [15 5 5 11]
+        """
+        if modulus is None:
+            return (<ntl_ZZ_pX>self)._pow(n)
+        else:
+            return (<ntl_ZZ_pX>self)._powmod(Integer(n), modulus)
+
+    cdef ntl_ZZ_pX _pow(ntl_ZZ_pX self, long n):
+        """
+        Compute the ``n``-th power of ``self``.
         """
         if n < 0:
             raise NotImplementedError
+        cdef long ln = n
         #self.c.restore_c() # restored in _new()
         cdef ntl_ZZ_pX r = self._new()
+        if self.is_x() and n >= 1:
+            ZZ_pX_LeftShift(r.x, self.x, n-1)
+        else:
+            sig_on()
+            ZZ_pX_power(r.x, self.x, ln)
+            sig_off()
+        return r
+
+    cdef ntl_ZZ_pX _powmod(ntl_ZZ_pX self, Integer n, ntl_ZZ_pX modulus):
+        r"""
+        Compute the ``n``-th power of ``self`` modulo a polynomial.
+        """
+        cdef ntl_ZZ_pX r = self._new()
+        cdef ZZ_c n_ZZ
+        cdef ZZ_pX_Modulus_c mod
+        is_x = self.is_x()
         sig_on()
-        ZZ_pX_power(r.x, self.x, n)
+        mpz_to_ZZ(&n_ZZ, (<Integer>n).value)
+        ZZ_pX_Modulus_build(mod, modulus.x)
+        if is_x:
+            ZZ_pX_PowerXMod_pre(r.x, n_ZZ, mod)
+        else:
+            ZZ_pX_PowerMod_pre(r.x, self.x, n_ZZ, mod)
         sig_off()
         return r
 

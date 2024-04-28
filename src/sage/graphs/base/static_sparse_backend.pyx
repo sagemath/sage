@@ -84,7 +84,7 @@ cdef class StaticSparseCGraph(CGraph):
             sage: from sage.graphs.base.static_sparse_backend import StaticSparseCGraph
             sage: g = StaticSparseCGraph(graphs.PetersenGraph())
 
-        Check that the digraph methods are working (see :trac:`20253`)::
+        Check that the digraph methods are working (see :issue:`20253`)::
 
             sage: G = DiGraph([(0, 1), (1, 0)])
             sage: G2 = G.copy(immutable=True)
@@ -196,7 +196,7 @@ cdef class StaticSparseCGraph(CGraph):
         """
         self.add_vertex_unsafe(k)
 
-    cpdef del_vertex(self, int k) noexcept:
+    cpdef del_vertex(self, int k):
         r"""
         Remove a vertex from the graph. No way.
 
@@ -211,7 +211,7 @@ cdef class StaticSparseCGraph(CGraph):
         """
         self.del_vertex_unsafe(k)
 
-    cpdef list verts(self) noexcept:
+    cpdef list verts(self):
         r"""
         Returns the list of vertices
 
@@ -318,7 +318,7 @@ cdef class StaticSparseCGraph(CGraph):
             neighbors[i] = self.g_rev.neighbors[u][i]
         return -1 if size < degree else degree
 
-    cpdef list out_neighbors(self, int u) noexcept:
+    cpdef list out_neighbors(self, int u):
         r"""
         List the out-neighbors of a vertex
 
@@ -343,7 +343,7 @@ cdef class StaticSparseCGraph(CGraph):
         cdef int i
         return [<int> self.g.neighbors[u][i] for i in range(out_degree(self.g, u))]
 
-    cpdef list in_neighbors(self, int u) noexcept:
+    cpdef list in_neighbors(self, int u):
         r"""
         Return the in-neighbors of a vertex
 
@@ -505,7 +505,7 @@ cdef class StaticSparseBackend(CGraphBackend):
             sage: g.edges(sort=True)
             [(1, 1, 1), (1, 1, 2), (1, 1, 3)]
 
-        :trac:`15810` is fixed::
+        :issue:`15810` is fixed::
 
             sage: DiGraph({1: {2: ['a', 'b'], 3: ['c']}, 2: {3: ['d']}}, immutable=True).is_directed_acyclic()
             True
@@ -556,7 +556,7 @@ cdef class StaticSparseBackend(CGraphBackend):
         """
         return v in self._vertex_to_int
 
-    cpdef add_edge(self, object u, object v, object l, bint directed) noexcept:
+    cpdef add_edge(self, object u, object v, object l, bint directed):
         r"""
         Set edge label. No way.
 
@@ -601,7 +601,7 @@ cdef class StaticSparseBackend(CGraphBackend):
         """
         raise ValueError("graph is immutable; please change a copy instead (use function copy())")
 
-    cpdef del_edge(self, object u, object v, object l, bint directed) noexcept:
+    cpdef del_edge(self, object u, object v, object l, bint directed):
         r"""
         Set edge label. No way.
 
@@ -698,7 +698,7 @@ cdef class StaticSparseBackend(CGraphBackend):
             return self._all_edge_labels(u, v, edge)
         return edge_label(cg.g, edge)
 
-    cdef inline list _all_edge_labels(self, int u, int v, uint32_t* edge=NULL) noexcept:
+    cdef inline list _all_edge_labels(self, int u, int v, uint32_t* edge=NULL):
         """
         Gives the labels of all arcs from ``u`` to ``v``.
 
@@ -978,7 +978,7 @@ cdef class StaticSparseBackend(CGraphBackend):
             ...
             NotImplementedError: Sorry, I have no idea what is expected in this situation. I don't think that it is well-defined either, especially for multigraphs.
 
-        :trac:`15491`::
+        :issue:`15491`::
 
             sage: g = digraphs.RandomDirectedGNP(10, .3)
             sage: gi = DiGraph(g, data_structure="static_sparse")
@@ -1025,7 +1025,7 @@ cdef class StaticSparseBackend(CGraphBackend):
             [(0, 1), (0, 4), (0, 5), (1, 2), (1, 6), (2, 3), (2, 7),
             (3, 4), (3, 8), (4, 9), (5, 7), (5, 8), (6, 8), (6, 9), (7, 9)]
 
-        :trac:`15665`::
+        :issue:`15665`::
 
             sage: Graph(immutable=True).edges(sort=False)
             []
@@ -1215,7 +1215,7 @@ cdef class StaticSparseBackend(CGraphBackend):
             sage: g.degree(0)
             3
 
-        :trac:`17225` about the degree of a vertex with a loop::
+        :issue:`17225` about the degree of a vertex with a loop::
 
             sage: Graph({0: [0]}, immutable=True).degree(0)
             2
@@ -1308,7 +1308,7 @@ cdef class StaticSparseBackend(CGraphBackend):
 
         TESTS:
 
-        Issue :trac:`25550` is fixed::
+        Issue :issue:`25550` is fixed::
 
             sage: g = DiGraph({0: [1]}, immutable=True)
             sage: g.neighbors(1)

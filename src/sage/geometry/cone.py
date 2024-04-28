@@ -2547,7 +2547,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         C1 and C2 are equal, but not identical. We currently want them
         to have non identical face lattices, even if the faces
-        themselves are equal (see :trac:`10998`)::
+        themselves are equal (see :issue:`10998`)::
 
             sage: C1.face_lattice() is C2.face_lattice()                                # needs sage.combinat sage.graphs
             False
@@ -2737,7 +2737,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         TESTS:
 
         Now we check that "general" cones whose dimension is smaller than the
-        dimension of the ambient space work as expected (see :trac:`9188`)::
+        dimension of the ambient space work as expected (see :issue:`9188`)::
 
             sage: c = Cone([(1,1,1,3),(1,-1,1,3),(-1,-1,1,3)])
             sage: c.faces()                                                             # needs sage.graphs
@@ -2751,7 +2751,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
              (3-d cone in 4-d lattice N,))
 
         We also ensure that a call to this function does not break
-        :meth:`facets` method (see :trac:`9780`)::
+        :meth:`facets` method (see :issue:`9780`)::
 
             sage: # needs palp sage.graphs
             sage: cone = toric_varieties.dP8().fan().generating_cone(0); cone
@@ -2987,7 +2987,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: halfspace.incidence_matrix().is_immutable()
             True
 
-        Check that the base ring is ``ZZ``, see :trac:`29840`::
+        Check that the base ring is ``ZZ``, see :issue:`29840`::
 
             sage: halfspace.incidence_matrix().base_ring()
             Integer Ring
@@ -3264,7 +3264,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: classify_cone_2d(*cone2.rays())
             (3, 2)
 
-        We check that :trac:`18613` is fixed::
+        We check that :issue:`18613` is fixed::
 
             sage: K = cones.trivial(0)
             sage: K.is_isomorphic(K)                                                    # needs sage.graphs
@@ -3547,7 +3547,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             A 1-dimensional polyhedron in ZZ^2 defined as the convex hull
             of 1 vertex and 1 line
 
-        Here is an example of a trivial cone (see :trac:`10237`)::
+        Here is an example of a trivial cone (see :issue:`10237`)::
 
             sage: origin = Cone([], lattice=ZZ^2)
             sage: origin.polyhedron()
@@ -4046,7 +4046,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         TESTS:
 
-        We check that :trac:`24541` is fixed::
+        We check that :issue:`24541` is fixed::
 
             sage: c = Cone([(1,0)], lattice=ZZ^2)
             sage: c.orthogonal_sublattice()
@@ -4323,7 +4323,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: sorted(wedge.semigroup_generators())
             [N(0, 0, -1), N(0, 0, 1), N(1, 0, 0), N(1, 1, 0), N(1, 2, 0)]
 
-        Nor does it have to be full-dimensional (see :trac:`11312`)::
+        Nor does it have to be full-dimensional (see :issue:`11312`)::
 
             sage: Cone([(1,1,0), (-1,1,0)]).semigroup_generators()
             N( 0, 1, 0),
@@ -4499,7 +4499,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             N(1, 1,  0)
             in 3-d lattice N
 
-        Not full-dimensional cones are ok, too (see :trac:`11312`)::
+        Not full-dimensional cones are ok, too (see :issue:`11312`)::
 
             sage: Cone([(1,1,0), (-1,1,0)]).Hilbert_basis()
             N( 1, 1, 0),

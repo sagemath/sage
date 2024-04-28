@@ -111,9 +111,8 @@ class GroupExp(Functor):
 
         - A commutative additive group `x`
 
-        OUTPUT:
-
-        - An isomorphic group whose operation is multiplication rather than addition.
+        OUTPUT: an isomorphic group whose operation is multiplication rather
+        than addition
 
         In the following example, ``self`` is the functor `GroupExp()`,
         `x` is the additive group `QQ^2`, and the output group is stored as `EQ2`.
@@ -141,14 +140,15 @@ class GroupExp(Functor):
 
         INPUT:
 
-        - A homomorphism `f` of commutative additive groups.
+        - A homomorphism `f` of commutative additive groups
 
-        OUTPUT:
+        OUTPUT: the above homomorphism, but between the corresponding
+        multiplicative groups
 
         - The above homomorphism, but between the corresponding multiplicative groups.
 
-        In the following example, ``self`` is the functor `GroupExp()` and `f` is an endomorphism of the
-        additive group of integers.
+        In the following example, ``self`` is the functor :class:`GroupExp` and `f`
+        is an endomorphism of the additive group of integers.
 
         EXAMPLES::
 
@@ -180,7 +180,7 @@ class GroupExpElement(ElementWrapper, MultiplicativeGroupElement):
 
     - ``self`` -- the exponentiated group element being created
     - ``parent`` -- the exponential group (parent of ``self``)
-    - ``x`` -- the commutative additive group element being wrapped to form ``self``.
+    - ``x`` -- the commutative additive group element being wrapped to form ``self``
 
     EXAMPLES::
 
@@ -245,11 +245,9 @@ class GroupExp_Class(UniqueRepresentation, Parent):
 
     INPUT:
 
-    - `G`: a commutative additive group
+    - `G` -- a commutative additive group
 
-    OUTPUT:
-
-    - The multiplicative form of `G`.
+    OUTPUT: the multiplicative form of `G`
 
     EXAMPLES::
 
@@ -263,7 +261,6 @@ class GroupExp_Class(UniqueRepresentation, Parent):
 
             sage: EG = GroupExp()(QQ^2)
             sage: TestSuite(EG).run(skip = "_test_elements")
-
         """
         if G not in CommutativeAdditiveGroups():
             raise TypeError("%s must be a commutative additive group" % G)
@@ -307,7 +304,6 @@ class GroupExp_Class(UniqueRepresentation, Parent):
             (1, 0)
             sage: x == x * G.one()
             True
-
         """
         return GroupExpElement(self, self._G.zero())
 
@@ -349,7 +345,6 @@ class GroupExp_Class(UniqueRepresentation, Parent):
 
             sage: GroupExp()(ZZ).group_generators()
             (1,)
-
         """
         if hasattr(self._G, 'gens'):
             additive_generators = self._G.gens()

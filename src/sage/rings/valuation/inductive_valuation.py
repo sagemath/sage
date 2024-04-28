@@ -780,7 +780,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
             sage: eta2                                                                  # needs sage.geometry.polyhedron
             [ Gauss valuation induced by Valuation on rational function field induced by [ Gauss valuation induced by 3-adic valuation, v(x) = 1/3 ], v(y + x) = 2/3 ]
 
-        Check that :trac:`26066` has been resolved::
+        Check that :issue:`26066` has been resolved::
 
             sage: R.<x> = QQ[]
             sage: v = QQ.valuation(2)
@@ -1289,7 +1289,7 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
             sage: v2.is_equivalent(F.prod(), G)
             True
 
-        Check that :trac:`33422` is fixed::
+        Check that :issue:`33422` is fixed::
 
             sage: R.<x> = QQ[]
             sage: v_7 = QQ.valuation(7)

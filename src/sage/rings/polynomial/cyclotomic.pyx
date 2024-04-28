@@ -286,7 +286,7 @@ def cyclotomic_value(n, x):
         sage: cyclotomic_value(10, mod(3,4))
         1
 
-    Check that the issue with symbolic element in :trac:`14982` is fixed::
+    Check that the issue with symbolic element in :issue:`14982` is fixed::
 
         sage: a = cyclotomic_value(3, I)                                                # needs sage.rings.number_fields
         sage: parent(a)                                                                 # needs sage.rings.number_fields

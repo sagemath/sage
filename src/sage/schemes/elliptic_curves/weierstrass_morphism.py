@@ -243,7 +243,7 @@ def _isomorphisms(E, F):
 
     TESTS:
 
-    Check that :trac:`32632` is fixed::
+    Check that :issue:`32632` is fixed::
 
         sage: z8 = GF(2^8).gen()
         sage: E1 = EllipticCurve([z8, z8, z8, z8, z8])
@@ -443,7 +443,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
 
         TESTS:
 
-        Check for :trac:`33215`::
+        Check for :issue:`33215`::
 
             sage: from sage.schemes.elliptic_curves.weierstrass_morphism import WeierstrassIsomorphism
             sage: E = EllipticCurve(GF(71^2), [5,5])                                    # needs sage.rings.finite_rings
@@ -454,7 +454,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
               To:   Elliptic Curve defined by y^2 = x^3 + 5*x + 5 over Finite Field in z2 of size 71^2
               Via:  (u,r,s,t) = (1, 69, 68, 2)
 
-        Test for :trac:`33312`::
+        Test for :issue:`33312`::
 
             sage: type(iso.degree())                                                    # needs sage.rings.finite_rings
             <class 'sage.rings.integer.Integer'>
@@ -798,7 +798,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
 
         TESTS:
 
-        Check for :trac:`34811`::
+        Check for :issue:`34811`::
 
             sage: iso.rational_maps()[0].parent()
             Fraction Field of Multivariate Polynomial Ring in x, y over Rational Field
@@ -829,7 +829,7 @@ class WeierstrassIsomorphism(EllipticCurveHom, baseWI):
 
         TESTS:
 
-        Check for :trac:`34811`::
+        Check for :issue:`34811`::
 
             sage: iso.x_rational_map().parent()
             Fraction Field of Univariate Polynomial Ring in x over Rational Field

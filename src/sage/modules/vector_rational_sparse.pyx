@@ -158,7 +158,7 @@ cdef bint mpq_vector_is_entry_zero_unsafe(mpq_vector* v, Py_ssize_t n) noexcept:
     """
     return binary_search0(v.positions, v.num_nonzero, n) == -1
 
-cdef object mpq_vector_to_list(mpq_vector* v) noexcept:
+cdef object mpq_vector_to_list(mpq_vector* v):
     """
     Returns a Python list of 2-tuples (i,x), where x=v[i] runs
     through the nonzero elements of x, in order.

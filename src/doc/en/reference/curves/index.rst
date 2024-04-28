@@ -1,5 +1,11 @@
+Plane and Space Curves
+======================
+
+Sage enables computations with curves in affine and projective ambient spaces,
+curves over `\CC` as Riemann surfaces, and Jacobians of projective curves.
+
 Curves
-======
+------
 
 .. toctree::
    :maxdepth: 1
@@ -12,10 +18,8 @@ Curves
    sage/schemes/curves/closed_point
    sage/schemes/curves/zariski_vankampen
 
-   sage/schemes/jacobians/abstract_jacobian
-
 Plane conics
-============
+------------
 
 .. toctree::
    :maxdepth: 1
@@ -28,7 +32,7 @@ Plane conics
    sage/schemes/plane_conics/con_rational_function_field
 
 Plane quartics
-=========================
+--------------
 
 .. toctree::
    :maxdepth: 1
@@ -37,11 +41,19 @@ Plane quartics
    sage/schemes/plane_quartics/quartic_generic
 
 Riemann surfaces
-================
+----------------
 
 .. toctree::
    :maxdepth: 1
 
    sage/schemes/riemann_surfaces/riemann_surface
+
+Jacobians
+---------
+
+.. toctree::
+   :maxdepth: 1
+
+   sage/schemes/jacobians/abstract_jacobian
 
 .. include:: ../footer.txt

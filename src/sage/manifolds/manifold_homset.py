@@ -164,7 +164,7 @@ class TopologicalManifoldHomset(UniqueRepresentation, Homset):
              Real Field with 53 bits of precision
             sage: TestSuite(E).run()
 
-        Check whether :trac:`31233` is solved::
+        Check whether :issue:`31233` is solved::
 
             sage: S1 = manifolds.Sphere(1)
             sage: iota = S1.embedding()

@@ -113,7 +113,7 @@ class Polyhedron_cdd(Polyhedron_base):
         TESTS:
 
         The polyhedron with zero inequalities can be initialized from Hrepresentation;
-        see :trac:`29899`::
+        see :issue:`29899`::
 
             sage: Polyhedron(ieqs=[], ambient_dim=5, backend='cdd')
             A 5-dimensional polyhedron in QQ^5 defined as the convex hull of 1 vertex and 5 lines
@@ -220,7 +220,7 @@ class Polyhedron_cdd(Polyhedron_base):
             sage: p.vertices()
             (A vertex at (0, 0), A vertex at (1, 0), A vertex at (0, 1), A vertex at (1, 1))
 
-        Check that :trac:`29176` is fixed::
+        Check that :issue:`29176` is fixed::
 
             sage: e = [[11582947.657000002, 5374.38, 4177.06, 1.0], [11562795.9322, 5373.62, 4168.38, 1.0]]
             sage: p = Polyhedron(ieqs=e); p
@@ -241,7 +241,7 @@ class Polyhedron_cdd(Polyhedron_base):
             (P(-2686.81000000000, -2084.19000000000),
              A 2-dimensional polyhedron in RDF^2 defined as the convex hull of 1 vertex, 1 ray, 1 line)
 
-        Check that :trac:`31253` is fixed::
+        Check that :issue:`31253` is fixed::
 
             sage: P = polytopes.permutahedron(2, backend='cdd')
             sage: P.Hrepresentation()
@@ -431,7 +431,7 @@ class Polyhedron_QQ_cdd(Polyhedron_cdd, Polyhedron_QQ):
 
     TESTS:
 
-    Check that :trac:`19803` is fixed::
+    Check that :issue:`19803` is fixed::
 
         sage: from sage.geometry.polyhedron.parent import Polyhedra
         sage: P_cdd = Polyhedra(QQ, 3, 'cdd')

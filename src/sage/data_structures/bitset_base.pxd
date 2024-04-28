@@ -13,9 +13,9 @@ AUTHORS:
 - Rudi Pendavingh, Stefan van Zwam (2013-06-06): added functions map, lex_cmp,
   pickle, unpickle
 - Jeroen Demeyer (2014-09-05): use mpn_* functions from MPIR in the
-  implementation (:trac:`13352` and :trac:`16937`)
+  implementation (:issue:`13352` and :issue:`16937`)
 - Simon King (2014-10-28): ``bitset_rshift`` and ``bitset_lshift`` respecting
-  the size of the given bitsets (:trac:`15820`)
+  the size of the given bitsets (:issue:`15820`)
 """
 
 #*****************************************************************************
@@ -911,12 +911,12 @@ cdef int bitset_from_char(bitset_t bits, char* s, char zero=*, char one=*) excep
 
 cdef int bitset_from_str(bitset_t bits, object s, char zero=*, char one=*) except -1
 
-cdef bitset_string(fused_bitset_t bits) noexcept
+cdef bitset_string(fused_bitset_t bits)
 
-cdef bitset_bytes(fused_bitset_t bits) noexcept
+cdef bitset_bytes(fused_bitset_t bits)
 
-cdef list bitset_list(fused_bitset_t bits) noexcept
+cdef list bitset_list(fused_bitset_t bits)
 
-cdef bitset_pickle(bitset_t bs) noexcept
+cdef bitset_pickle(bitset_t bs)
 
-cdef bitset_unpickle(bitset_t bs, tuple input) noexcept
+cdef bitset_unpickle(bitset_t bs, tuple input)

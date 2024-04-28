@@ -53,7 +53,7 @@ if [ "$SAGE_EDITABLE" = yes ]; then
     (cd "$SITEPACKAGESDIR" && rm -rf sage sage-[1-9]*.egg-info sage-[1-9]*.dist-info)
     # Until https://github.com/sagemath/sage/issues/34209 switches us to PEP 660 editable wheels
     export SETUPTOOLS_ENABLE_FEATURES=legacy-editable
-    time sdh_pip_editable_install .
+    sdh_pip_editable_install .
 
     if [ "$SAGE_WHEELS" = yes ]; then
         # Additionally build a wheel (for use in other venvs)
@@ -69,12 +69,17 @@ else
     if [ "$SAGE_WHEELS" = yes ]; then
         # Use --no-build-isolation to avoid rebuilds because of dependencies:
         # Compiling sage/interfaces/sagespawn.pyx because it depends on /private/var/folders/38/wnh4gf1552g_crsjnv2vmmww0000gp/T/pip-build-env-609n5985/overlay/lib/python3.10/site-packages/Cython/Includes/posix/unistd.pxd
-        time sdh_pip_install --no-build-isolation .
+        sdh_pip_install --no-build-isolation .
     else
         SAGE_OPTIONAL_PACKAGES_WITH_EXTENSIONS+="mcqd,tdlib,coxeter3,sirocco,meataxe,bliss"
-        time python3 -u setup.py --no-user-cfg build install || exit 1
+        python3 -u setup.py --no-user-cfg build install || exit 1
     fi
 fi
+
+# Remove (potentially invalid) star import caches.
+# lazy star imports are not used by the Sage library, but could still be used by
+# downstream code.
+python3 -c 'import pathlib; from sage.misc.lazy_import_cache import get_cache_file; pathlib.Path(get_cache_file()).unlink(missing_ok=True)'
 
 # Issue #33103: The temp.* directories are large after a full build.
 # We remove them to save space; they are not needed for fast rebuilds.

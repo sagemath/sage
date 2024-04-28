@@ -85,8 +85,7 @@ cdef inline OrbitPartition *OP_copy(OrbitPartition *OP) noexcept:
     """
     Allocate and return a pointer to a copy of a OrbitPartition of degree n.
 
-    Returns a
-    null pointer in the case of an allocation failure.
+    Returns a null pointer in the case of an allocation failure.
     """
     cdef OrbitPartition *OP2 = OP_new(OP.degree)
     if OP is NULL:
@@ -95,7 +94,7 @@ cdef inline OrbitPartition *OP_copy(OrbitPartition *OP) noexcept:
     OP_copy_from_to(OP, OP2)
     return OP2
 
-cdef OP_string(OrbitPartition *OP) noexcept
+cdef OP_string(OrbitPartition *OP)
 
 cdef inline void OP_clear(OrbitPartition *OP) noexcept:
     cdef int i, n = OP.degree
@@ -172,7 +171,7 @@ cdef inline int PS_copy_from_to(PartitionStack *PS, PartitionStack *PS2) noexcep
 
 cdef inline bint PS_is_discrete(PartitionStack *PS) noexcept:
     """
-    Returns whether the deepest partition consists only of singleton cells.
+    Return whether the deepest partition consists only of singleton cells.
     """
     cdef int i
     for i from 0 <= i < PS.degree:
@@ -182,7 +181,7 @@ cdef inline bint PS_is_discrete(PartitionStack *PS) noexcept:
 
 cdef inline int PS_num_cells(PartitionStack *PS) noexcept:
     """
-    Returns the number of cells.
+    Return the number of cells.
     """
     cdef int i, ncells = 0
     for i from 0 <= i < PS.degree:
@@ -206,13 +205,13 @@ cdef inline void PS_move_min_to_front(PartitionStack *PS, int start, int end) no
 
 cdef inline bint PS_is_mcr(PartitionStack *PS, int m) noexcept:
     """
-    Returns whether PS.elements[m] (not m!) is the smallest element of its cell.
+    Return whether PS.elements[m] (not m!) is the smallest element of its cell.
     """
     return m == 0 or PS.levels[m-1] <= PS.depth
 
 cdef inline bint PS_is_fixed(PartitionStack *PS, int m) noexcept:
     """
-    Returns whether PS.elements[m] (not m!) is in a singleton cell, assuming
+    Return whether PS.elements[m] (not m!) is in a singleton cell, assuming
     PS_is_mcr(PS, m) is already true.
     """
     return PS.levels[m] <= PS.depth
@@ -255,7 +254,7 @@ cdef PartitionStack *PS_copy(PartitionStack *PS) noexcept
 
 cdef void PS_dealloc(PartitionStack *PS) noexcept
 
-cdef PS_print(PartitionStack *PS) noexcept
+cdef PS_print(PartitionStack *PS)
 
 cdef void PS_unit_partition(PartitionStack *PS) noexcept
 
@@ -263,7 +262,7 @@ cdef int PS_first_smallest(PartitionStack *PS, bitset_t b, int *second_pos=?) no
 
 cdef PartitionStack *PS_from_list(list L) noexcept
 
-cdef list PS_singletons(PartitionStack * part) noexcept
+cdef list PS_singletons(PartitionStack * part)
 
 cdef int PS_all_new_cells(PartitionStack *PS, bitset_t** nonsingletons_ptr) noexcept
 
