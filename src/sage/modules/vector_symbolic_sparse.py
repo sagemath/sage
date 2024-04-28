@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-symbolics
 """
 Sparse vectors over the symbolic ring
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 Eta-products on modular curves `X_0(N)`
 

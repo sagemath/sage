@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Educational versions of Groebner basis algorithms
 

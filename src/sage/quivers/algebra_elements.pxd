@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 """
 Cython types for elements of path algebras
 """

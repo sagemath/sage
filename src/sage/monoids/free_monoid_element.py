@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 """
 Elements of Free Monoids
 

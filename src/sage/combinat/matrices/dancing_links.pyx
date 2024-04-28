@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-categories
+# -*- coding: utf-8 -*-
 # distutils: language = c++
 """
 Dancing Links internal pyx code

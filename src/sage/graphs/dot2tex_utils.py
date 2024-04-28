@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-graphs
 r"""
 This file contains some utility functions for the interface with dot2tex
 """
