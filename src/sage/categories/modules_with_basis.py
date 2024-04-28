@@ -1587,14 +1587,19 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
 
                 sage: # needs sage.modules
                 sage: V = QQ^ZZ
-                sage: v = V({3: 1, 5: -1})
+                sage: v = V._from_dict({3: 1, 5: -1})
                 sage: v.dense_coefficient_list()
+                Traceback (most recent call last):
+                ...
+                ValueError: module is not finite-dimensional;
+                use order to obtain the coefficients of a finite-dimensional projection
                 sage: v.dense_coefficient_list([2, 3, 4])
+                [0, 1, 0]
             """
             if order is None:
                 raise ValueError(f"module is not finite-dimensional; "
                                  f"use order to obtain the coefficients "
-                                 f"of a finite-dimensional restriction")
+                                 f"of a finite-dimensional projection")
             return [self[i] for i in order]
 
         def is_zero(self):
