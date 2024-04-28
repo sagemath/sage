@@ -259,7 +259,7 @@ if __name__ == '__main__':
     from sage.features.sagemath import sagemath_doc_html
 
     if SAGE_DOC_SERVER_URL:
-        print(f'Sage doc server running at {SAGE_DOC_SERVER_URL}')
+        print(f'Sage doc server is running at {SAGE_DOC_SERVER_URL}')
         launcher(unknown)
     elif sagemath_doc_html().is_present():
         with sage_doc_server():
