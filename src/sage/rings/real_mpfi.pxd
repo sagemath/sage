@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-ntl
 from sage.libs.mpfr.types cimport mpfr_prec_t
 from sage.libs.mpfi.types cimport mpfi_t
 

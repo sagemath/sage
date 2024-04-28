@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 """
 `q`-Bernoulli Numbers and Polynomials
 """

@@ -1,5 +1,3 @@
-# sage_setup: distribution = sagemath-flint
-
 # Deprecated header file; use sage/libs/flint/acb_hypgeom.pxd instead
 # See https://github.com/sagemath/sage/pull/36449
 

@@ -329,11 +329,11 @@
     },
     "sage.categories.finite_dimensional_lie_algebras_with_basis": {
         "failed": true,
-        "ntests": 44
+        "ntests": 73
     },
     "sage.categories.finite_dimensional_modules_with_basis": {
         "failed": true,
-        "ntests": 55
+        "ntests": 89
     },
     "sage.categories.finite_dimensional_nilpotent_lie_algebras_with_basis": {
         "failed": true,
@@ -583,7 +583,7 @@
     },
     "sage.categories.modules_with_basis": {
         "failed": true,
-        "ntests": 232
+        "ntests": 240
     },
     "sage.categories.monoid_algebras": {
         "failed": true,
@@ -595,7 +595,7 @@
     },
     "sage.categories.morphism": {
         "failed": true,
-        "ntests": 99
+        "ntests": 126
     },
     "sage.categories.number_fields": {
         "failed": true,
@@ -672,7 +672,7 @@
     },
     "sage.categories.schemes": {
         "failed": true,
-        "ntests": 33
+        "ntests": 41
     },
     "sage.categories.semigroups": {
         "failed": true,
@@ -805,7 +805,7 @@
     },
     "sage.doctest.control": {
         "failed": true,
-        "ntests": 232
+        "ntests": 230
     },
     "sage.doctest.external": {
         "ntests": 42
@@ -815,18 +815,18 @@
     },
     "sage.doctest.forker": {
         "failed": true,
-        "ntests": 434
+        "ntests": 413
     },
     "sage.doctest.parsing": {
         "failed": true,
-        "ntests": 321
+        "ntests": 313
     },
     "sage.doctest.reporting": {
-        "ntests": 125
+        "ntests": 115
     },
     "sage.doctest.sources": {
         "failed": true,
-        "ntests": 378
+        "ntests": 343
     },
     "sage.doctest.test": {
         "failed": true,
@@ -1136,7 +1136,6 @@
         "ntests": 128
     },
     "sage.repl.configuration": {
-        "failed": true,
         "ntests": 22
     },
     "sage.repl.display.fancy_repr": {
@@ -1162,7 +1161,6 @@
         "ntests": 42
     },
     "sage.repl.inputhook": {
-        "failed": true,
         "ntests": 7
     },
     "sage.repl.interface_magic": {
@@ -1186,6 +1184,7 @@
         "ntests": 42
     },
     "sage.repl.ipython_kernel.kernel": {
+        "failed": true,
         "ntests": 12
     },
     "sage.repl.ipython_kernel.widgets": {

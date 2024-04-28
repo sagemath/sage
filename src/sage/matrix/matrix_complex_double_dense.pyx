@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 # sage.doctest: optional - numpy
 """
 Dense matrices over the Complex Double Field using NumPy

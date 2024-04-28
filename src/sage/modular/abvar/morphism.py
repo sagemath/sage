@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 # sage.doctest: needs sage.libs.flint
 r"""
 Hecke operators and morphisms between modular abelian varieties
@@ -869,6 +868,20 @@ class HeckeOperator(Morphism):
             y^2 + 3*y + 3
         """
         return self.characteristic_polynomial(var)
+
+    def fcp(self, var='x'):
+        """
+        Return the factorization of the characteristic polynomial.
+
+        EXAMPLES::
+
+            sage: t2 = J0(33).hecke_operator(2)
+            sage: t2.charpoly()
+            x^3 + 3*x^2 - 4
+            sage: t2.fcp()
+            (x - 1) * (x + 2)^2
+        """
+        return self.charpoly(var).factor()
 
     def action_on_homology(self, R=ZZ):
         r"""

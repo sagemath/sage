@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-repl
+# -*- encoding: utf-8 -*-
 r"""
 Test Backend
 
