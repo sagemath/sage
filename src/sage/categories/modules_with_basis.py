@@ -1575,6 +1575,28 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 m = C(m)
             return self[m]
 
+        def dense_coefficient_list(self, order=None):
+            """
+            Return a list of some coefficients of ``self``.
+
+            INPUT:
+
+            - ``order`` -- (optional) an ordering of a subset of the basis indexing set
+
+            EXAMPLES::
+
+                sage: # needs sage.modules
+                sage: V = QQ^ZZ
+                sage: v = V({3: 1, 5: -1})
+                sage: v.dense_coefficient_list()
+                sage: v.dense_coefficient_list([2, 3, 4])
+            """
+            if order is None:
+                raise ValueError(f"module is not finite-dimensional; "
+                                 f"use order to obtain the coefficients "
+                                 f"of a finite-dimensional restriction")
+            return [self[i] for i in order]
+
         def is_zero(self):
             """
             Return ``True`` if and only if ``self == 0``.
