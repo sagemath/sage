@@ -20,7 +20,7 @@ from sage.rings.integer import Integer
 
 from cpython.object cimport PyObject_RichCompare as richcmp
 
-cpdef FiniteDimensionalAlgebraElement unpickle_FiniteDimensionalAlgebraElement(A, vec, mat) noexcept:
+cpdef FiniteDimensionalAlgebraElement unpickle_FiniteDimensionalAlgebraElement(A, vec, mat):
     """
     Helper for unpickling of finite dimensional algebra elements.
 
@@ -222,7 +222,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             sage: B(5).vector()
             (5, 0, 5)
         """
-        # By :trac:`23707`, ``self._vector`` now is a single row matrix,
+        # By :issue:`23707`, ``self._vector`` now is a single row matrix,
         # not a vector, which results in a speed-up.
         # For backwards compatibility, this method still returns a vector.
         return self._vector[0]
@@ -365,7 +365,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         return self._vector.ncols()
 
     # (Rich) comparison
-    cpdef _richcmp_(self, right, int op) noexcept:
+    cpdef _richcmp_(self, right, int op):
         """
         EXAMPLES::
 
@@ -384,7 +384,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
             sage: B(1) != 0
             True
 
-        By :trac:`23707`, an ordering is defined on finite-dimensional algebras, corresponding
+        By :issue:`23707`, an ordering is defined on finite-dimensional algebras, corresponding
         to the ordering of the defining vectors; this may be handy if the vector space basis of
         the algebra corresponds to the standard monomials of the relation ideal, when
         the algebra is considered as a quotient of a path algebra. ::
@@ -400,7 +400,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         return richcmp(self._vector, <FiniteDimensionalAlgebraElement>right._vector, op)
 
-    cpdef _add_(self, other) noexcept:
+    cpdef _add_(self, other):
         """
         EXAMPLES::
 
@@ -411,7 +411,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         return self._parent.element_class(self._parent, self._vector + <FiniteDimensionalAlgebraElement>other._vector)
 
-    cpdef _sub_(self, other) noexcept:
+    cpdef _sub_(self, other):
         """
         EXAMPLES::
 
@@ -422,7 +422,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         return self._parent.element_class(self._parent, self._vector - <FiniteDimensionalAlgebraElement>other._vector)
 
-    cpdef _mul_(self, other) noexcept:
+    cpdef _mul_(self, other):
         """
         EXAMPLES::
 
@@ -434,7 +434,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
         """
         return self._parent.element_class(self._parent, self._vector * <FiniteDimensionalAlgebraElement>(other)._matrix)
 
-    cpdef _lmul_(self, Element other) noexcept:
+    cpdef _lmul_(self, Element other):
         """
         TESTS::
 
@@ -450,7 +450,7 @@ cdef class FiniteDimensionalAlgebraElement(AlgebraElement):
                             .format(self.parent(), other.parent()))
         return self._parent.element_class(self._parent, self._vector * other)
 
-    cpdef _rmul_(self, Element other) noexcept:
+    cpdef _rmul_(self, Element other):
         """
         TESTS::
 

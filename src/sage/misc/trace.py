@@ -46,7 +46,7 @@ def trace(code, preparse=True):
 
     TESTS:
 
-    For tests we disable garbage collection, see :trac:`21258` ::
+    For tests we disable garbage collection, see :issue:`21258` ::
 
         sage: import gc
         sage: gc.disable()

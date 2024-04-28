@@ -110,7 +110,6 @@ cdef class MatrixStruct:
             00011
             01100
             4
-
         """
         print(self.matrix)
         print("")
@@ -127,13 +126,12 @@ cdef class MatrixStruct:
     def run(self, partition=None):
         """
         Perform the canonical labeling and automorphism group computation,
-        storing results to self.
+        storing results to ``self``.
 
         INPUT:
 
-        partition -- an optional list of lists partition of the columns.
-
-        Default is the unit partition.
+        - ``partition`` -- an optional list of lists partition of the columns;
+          default is the unit partition.
 
         EXAMPLES::
 
@@ -153,7 +151,6 @@ cdef class MatrixStruct:
             sage: M = MatrixStruct(matrix(GF(3),[[0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2]]))
             sage: M.automorphism_group()[1] == factorial(14)
             True
-
         """
         cdef int i, n = self.degree
         cdef PartitionStack *part
@@ -176,7 +173,7 @@ cdef class MatrixStruct:
 
     def automorphism_group(self):
         """
-        Returns a list of generators of the automorphism group, along with its
+        Return a list of generators of the automorphism group, along with its
         order and a base for which the list of generators is a strong generating
         set.
 
@@ -189,7 +186,6 @@ cdef class MatrixStruct:
             sage: M = MatrixStruct(matrix(GF(3),[[0,1,2],[0,2,1]]))
             sage: M.automorphism_group()
             ([[0, 2, 1]], 2, [1])
-
         """
         cdef int i, j
         cdef list generators, base
@@ -206,7 +202,7 @@ cdef class MatrixStruct:
 
     def canonical_relabeling(self):
         """
-        Returns a canonical relabeling (in list permutation format).
+        Return a canonical relabeling (in list permutation format).
 
         For more examples, see self.run().
 
@@ -217,7 +213,6 @@ cdef class MatrixStruct:
             sage: M = MatrixStruct(matrix(GF(3),[[0,1,2],[0,2,1]]))
             sage: M.canonical_relabeling()
             [0, 1, 2]
-
         """
         cdef int i
         if self.output is NULL:
@@ -226,7 +221,7 @@ cdef class MatrixStruct:
 
     def is_isomorphic(self, MatrixStruct other):
         """
-        Calculate whether self is isomorphic to other.
+        Calculate whether ``self`` is isomorphic to ``other``.
 
         EXAMPLES::
 
@@ -235,7 +230,6 @@ cdef class MatrixStruct:
             sage: N = MatrixStruct(Matrix(GF(11), [[0,1,0,2,0,3],[1,0,2,0,3,0]]))
             sage: M.is_isomorphic(N)
             [0, 2, 4, 1, 3, 5]
-
         """
         cdef int i, n = self.degree
         cdef int *output
@@ -304,8 +298,8 @@ cdef bint all_matrix_children_are_equivalent(PartitionStack *PS, void *S) noexce
 
 def random_tests(n=10, nrows_max=50, ncols_max=50, nsymbols_max=10, perms_per_matrix=5, density_range=(.1,.9)):
     """
-    Tests to make sure that C(gamma(M)) == C(M) for random permutations gamma
-    and random matrices M, and that M.is_isomorphic(gamma(M)) returns an
+    Test to make sure that ``C(gamma(M)) == C(M)`` for random permutations ``gamma``
+    and random matrices ``M``, and that ``M.is_isomorphic(gamma(M))`` returns an
     isomorphism.
 
     INPUT:

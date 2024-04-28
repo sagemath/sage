@@ -292,7 +292,7 @@ class RationalFunctionField(FunctionField):
 
         TESTS:
 
-        Verify that :trac:`21872` has been resolved::
+        Verify that :issue:`21872` has been resolved::
 
             sage: K(1) in QQ
             True

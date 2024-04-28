@@ -1182,7 +1182,7 @@ class ClusterAlgebraSeed(SageObject):
             sage: S._mutated_F(0, (1, 0))
             u0 + 1
 
-        Check that :trac:`28176` is fixed::
+        Check that :issue:`28176` is fixed::
 
             sage: A = ClusterAlgebra(matrix([[0,2],[-2,0]]))
             sage: S = A.initial_seed()
@@ -1280,7 +1280,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
             A Cluster Algebra with cluster variables x0, x1 and no coefficients
             over Integer Ring
 
-        Check that :trac:`28176` is fixed::
+        Check that :issue:`28176` is fixed::
 
             sage: A1 = ClusterAlgebra(['A',2])
             sage: A2 = ClusterAlgebra(['A',2], cluster_variable_prefix='x')
@@ -1503,7 +1503,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
             sage: S.cluster_variable(seq2[-1]) == g(A3.cluster_variable((1, -2, 2)))
             True
 
-         Check that :trac:`23654` is fixed::
+         Check that :issue:`23654` is fixed::
 
             sage: A = ClusterAlgebra(['A',2])
             sage: AA = ClusterAlgebra(['A',3])
@@ -2443,7 +2443,7 @@ class ClusterAlgebra(Parent, UniqueRepresentation):
             sage: A.mutate_initial([0,1]*10, mutating_F=False)
             A Cluster Algebra with cluster variables x20, x21 and no coefficients over Integer Ring
 
-        Check that :trac:`28176` is fixed::
+        Check that :issue:`28176` is fixed::
 
             sage: A = ClusterAlgebra( matrix(5,[0,1,-1,1,-1]), cluster_variable_names=['p13'], coefficient_names=['p12','p23','p34','p41']); A
             A Cluster Algebra with cluster variable p13 and coefficients p12, p23, p34, p41 over Integer Ring

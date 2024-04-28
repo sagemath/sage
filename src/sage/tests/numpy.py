@@ -2,7 +2,7 @@
 r"""
 TESTS:
 
-Sage integers can index NumPy matrices (see :trac:`10928`)::
+Sage integers can index NumPy matrices (see :issue:`10928`)::
 
     sage: import numpy as np
     sage: m = np.matrix(np.arange(4).reshape(2, 2))

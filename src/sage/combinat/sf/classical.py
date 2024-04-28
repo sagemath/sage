@@ -47,7 +47,7 @@ def init():
         sage: sage.combinat.sf.classical.conversion_functions[('Schur', 'powersum')]
         <built-in function t_SCHUR_POWSYM_symmetrica>
 
-    The following checks if the bug described in :trac:`15312` is fixed. ::
+    The following checks if the bug described in :issue:`15312` is fixed. ::
 
         sage: change = sage.combinat.sf.classical.conversion_functions[('powersum', 'Schur')]
         sage: hideme = change({Partition([1]*47):ZZ(1)}) # long time
@@ -111,7 +111,7 @@ class SymmetricFunctionAlgebra_classical(sfa.SymmetricFunctionAlgebra_generic):
         TESTS:
 
         Check that non-Schur bases raise an error when given skew partitions
-        (:trac:`19218`)::
+        (:issue:`19218`)::
 
             sage: e = SymmetricFunctions(QQ).e()
             sage: e([[2,1],[1]])
@@ -119,7 +119,7 @@ class SymmetricFunctionAlgebra_classical(sfa.SymmetricFunctionAlgebra_generic):
             ...
             TypeError: do not know how to make x (= [[2, 1], [1]]) an element of self
 
-        Check that :trac:`34576` is fixed::
+        Check that :issue:`34576` is fixed::
 
             sage: s = SymmetricFunctions(ZZ).s()
             sage: f = s(0/2); f

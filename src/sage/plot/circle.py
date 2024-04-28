@@ -133,7 +133,7 @@ class Circle(GraphicPrimitive):
             sage: c = C[0]; c
             Circle defined by (2.0,3.0) with r=5.0
         """
-        return "Circle defined by (%s,%s) with r=%s" % (self.x, self.y, self.r)
+        return f"Circle defined by ({self.x},{self.y}) with r={self.r}"
 
     def _render_on_subplot(self, subplot):
         """

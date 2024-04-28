@@ -1246,14 +1246,14 @@ class MaximaAbstractElement(ExtraTabCompletion, InterfaceElement):
 
         TESTS:
 
-        Check if :trac:`7661` is fixed::
+        Check if :issue:`7661` is fixed::
 
             sage: var('delta')
             delta
             sage: (2*delta).simplify()
             2*delta
 
-        Check conversion of Booleans (:trac:`28705`)::
+        Check conversion of Booleans (:issue:`28705`)::
 
             sage: maxima('true')._sage_(), maxima('false')._sage_()
             (True, False)

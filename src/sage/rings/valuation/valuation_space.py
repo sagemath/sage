@@ -96,7 +96,7 @@ class DiscretePseudoValuationSpace(UniqueRepresentation, Homset):
 
     .. TODO::
 
-        The comparison problem might be fixed by :trac:`22029` or similar.
+        The comparison problem might be fixed by :issue:`22029` or similar.
 
     TESTS::
 

@@ -313,14 +313,13 @@ cdef int double_coset(void *S1, void *S2, PartitionStack *partition1, int *order
     isom -- space to store the isomorphism to,
         or NULL if isomorphism is not needed
 
-    NOTE:
-    The partition ``partition1`` and the resulting partition from ``ordering2``
-    *must* satisfy the property that in each cell, the smallest element occurs
-    first!
+    .. NOTE::
 
-    OUTPUT:
-    1 if S1 and S2 are isomorphic, otherwise 0.
+        The partition ``partition1`` and the resulting partition from
+        ``ordering2`` *must* satisfy the property that in each cell, the
+        smallest element occurs first!
 
+    OUTPUT: ``1`` if ``S1`` and ``S2`` are isomorphic, otherwise ``0``
     """
     cdef PartitionStack *current_ps
     cdef PartitionStack *first_ps

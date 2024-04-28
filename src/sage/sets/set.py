@@ -184,7 +184,7 @@ def Set(X=None, category=None):
         sage: S = Set([])
         sage: TestSuite(S).run()
 
-    Check that :trac:`16090` is fixed::
+    Check that :issue:`16090` is fixed::
 
         sage: Set()
         {}
@@ -461,7 +461,7 @@ class Set_object(Set_generic, Set_base, Set_boolean_operators, Set_add_sub_opera
 
     TESTS:
 
-    See :trac:`14486`::
+    See :issue:`14486`::
 
         sage: 0 == Set([1]), Set([1]) == 0
         (False, False)
@@ -1361,7 +1361,7 @@ class Set_object_binary(Set_object, metaclass=ClasscallMetaclass):
 
         TESTS:
 
-        Test that :trac:`14432` has been resolved::
+        Test that :issue:`14432` has been resolved::
 
             sage: S = Set(ZZ).union(Set([infinity]))
             sage: T = Set(ZZ).union(Set([infinity]))
@@ -1645,7 +1645,7 @@ class Set_object_intersection(Set_object_binary):
             2
 
         Check that known finite intersections have finite iterators (see
-        :trac:`18159`)::
+        :issue:`18159`)::
 
             sage: P = Set(ZZ).intersection(Set(range(10,20)))
             sage: list(P)

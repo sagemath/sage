@@ -99,7 +99,7 @@ class VectorSpaces(Category_module):
 
         TESTS:
 
-        Check whether :trac:`30174` is fixed::
+        Check whether :issue:`30174` is fixed::
 
             sage: Q3 = FiniteRankFreeModule(QQ, 3)                                      # needs sage.modules
             sage: Modules(QQ)(Q3) is Q3                                                 # needs sage.modules

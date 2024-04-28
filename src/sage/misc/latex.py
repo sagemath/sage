@@ -112,7 +112,7 @@ def tuple_function(x, combine_all=False):
         sage: tuple_function((1,2,3))
         '\\left(1, 2, 3\\right)'
 
-    Check that :trac:`11775` is fixed::
+    Check that :issue:`11775` is fixed::
 
         sage: tuple_function((1,2,3), combine_all=True)
         '1 2 3'
@@ -298,7 +298,7 @@ def float_function(x):
 
     TESTS:
 
-    Check that :trac:`7356` is fixed::
+    Check that :issue:`7356` is fixed::
 
         sage: latex(float(2e-13))
         2 \times 10^{-13}
@@ -865,7 +865,7 @@ class LatexCall:
             sage: print(latex([x, 2]))                                                  # needs sage.symbolic
             \left[x, 2\right]
 
-        Check that :trac:`11775` is fixed::
+        Check that :issue:`11775` is fixed::
 
             sage: latex((x,2), combine_all=True)                                        # needs sage.symbolic
             x 2
@@ -1338,7 +1338,7 @@ class Latex(LatexCall):
             Warning: `some_inexistent_file.sty` is not part of this computer's TeX installation.
             This file is required for blah. It can be downloaded from: http://blah.org/
 
-        This test checks that the bug in :trac:`9091` is fixed::
+        This test checks that the bug in :issue:`9091` is fixed::
 
             sage: latex.check_file("article.cls", "The article class is really critical.")    # optional - latex
         """
@@ -2019,13 +2019,13 @@ def repr_lincomb(symbols, coeffs):
         sage: repr_lincomb(['a', 'b'], [1,1])
         '\\text{\\texttt{a}} + \\text{\\texttt{b}}'
 
-    Verify that a certain corner case works (see :trac:`5707` and
-    :trac:`5766`)::
+    Verify that a certain corner case works (see :issue:`5707` and
+    :issue:`5766`)::
 
         sage: repr_lincomb([1,5,-3],[2,8/9,7])
         '2\\cdot 1 + \\frac{8}{9}\\cdot 5 + 7\\cdot -3'
 
-    Verify that :trac:`17299` (latex representation of modular symbols)
+    Verify that :issue:`17299` (latex representation of modular symbols)
     is fixed::
 
         sage: x = EllipticCurve('64a1').modular_symbol_space(sign=1).basis()[0]         # needs sage.schemes

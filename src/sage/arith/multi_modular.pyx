@@ -101,7 +101,7 @@ cdef class MultiModularBasis_base():
         mpz_init(self.product)
         mpz_init(self.half_product)
 
-    cdef _realloc_to_new_count(self, new_count) noexcept:
+    cdef _realloc_to_new_count(self, new_count):
         self.moduli = <mod_int*>check_reallocarray(self.moduli, new_count, sizeof(mod_int))
         self.partial_products = <mpz_t*>check_reallocarray(self.partial_products, new_count, sizeof(mpz_t))
         self.C = <mod_int*>check_reallocarray(self.C, new_count, sizeof(mod_int))
@@ -328,7 +328,7 @@ cdef class MultiModularBasis_base():
 
         TESTS:
 
-        Verify that :trac:`11358` is fixed::
+        Verify that :issue:`11358` is fixed::
 
             sage: set_random_seed(0); m = sage.arith.multi_modular.MultiModularBasis_base(0)
             sage: m._extend_moduli_to_height(prod(prime_range(50)))
@@ -339,7 +339,7 @@ cdef class MultiModularBasis_base():
             ...
             RuntimeError: there are not enough primes in the interval [2, 100] to complete this multimodular computation
 
-        Another check (which fails horribly before :trac:`11358` is fixed)::
+        Another check (which fails horribly before :issue:`11358` is fixed)::
 
             sage: set_random_seed(0); m = sage.arith.multi_modular.MultiModularBasis_base(0); m._extend_moduli_to_height(10**10000)
             sage: len(set(m)) == len(m)

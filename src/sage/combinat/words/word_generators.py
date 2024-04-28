@@ -7,7 +7,7 @@ AUTHORS:
 - Sébastien Labbé (2008-12-17): merged into sage
 - Arnaud Bergeron (2008-12-17): merged into sage
 - Amy Glen (2008-12-17): merged into sage
-- Sébastien Labbé (2009-12-19): Added S-adic words (:trac:`7543`)
+- Sébastien Labbé (2009-12-19): Added S-adic words (:issue:`7543`)
 
 USE:
 
@@ -1150,7 +1150,7 @@ class WordGenerator:
             sage: m[:500] == s[:500]                                                    # needs sage.symbolic
             True
 
-        Check that this returns a word in an alphabet (:trac:`10054`)::
+        Check that this returns a word in an alphabet (:issue:`10054`)::
 
             sage: words.UpperMechanicalWord(1/golden_ratio^2).parent()                  # needs sage.symbolic
             Infinite words over {0, 1}
@@ -1210,7 +1210,7 @@ class WordGenerator:
             sage: m[:500] == s[:500]                                                    # needs sage.symbolic
             True
 
-        Check that this returns a word in an alphabet (:trac:`10054`)::
+        Check that this returns a word in an alphabet (:issue:`10054`)::
 
             sage: words.UpperMechanicalWord(1/golden_ratio^2).parent()                  # needs sage.symbolic
             Infinite words over {0, 1}
