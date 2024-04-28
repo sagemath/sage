@@ -110,6 +110,7 @@ class HyperbolicPolygon(HyperbolicArcCore):
         """
         return "Hyperbolic polygon ({})".format(", ".join(map(str, self._pts)))
 
+
 def _winding_number(vertices, point):
     r"""
     Compute the winding number of the given point in the plane `z = 0`.

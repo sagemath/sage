@@ -44,7 +44,7 @@ class CactusGroup(UniqueRepresentation, Group):
 
     INPUT:
 
-    - ``n`` -- an integer
+    - ``n`` -- integer
 
     EXAMPLES:
 

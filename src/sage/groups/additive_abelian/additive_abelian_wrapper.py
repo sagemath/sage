@@ -3,7 +3,7 @@ r"""
 Wrapper class for abelian groups
 
 This class is intended as a template for anything in Sage that needs the
-functionality of abelian groups. One can create an AdditiveAbelianGroupWrapper
+functionality of abelian groups. One can create an ``AdditiveAbelianGroupWrapper``
 object from any given set of elements in some given parent, as long as an
 ``_add_`` method has been defined.
 
@@ -42,10 +42,10 @@ We check that ridiculous operations are being avoided::
 
 .. TODO::
 
-    - Think about subgroups and quotients, which probably won't work
-      in the current implementation -- some fiddly adjustments will be
-      needed in order to be able to pass extra arguments to the
-      subquotient's init method.
+    Think about subgroups and quotients, which probably won't work
+    in the current implementation -- some fiddly adjustments will be
+    needed in order to be able to pass extra arguments to the
+    subquotient's init method.
 
 AUTHORS:
 
@@ -77,6 +77,7 @@ from sage.structure.sequence import Sequence
 from sage.modules.free_module_element import vector
 
 from sage.misc.superseded import deprecated_function_alias
+
 
 class UnwrappingMorphism(Morphism):
     r"""
@@ -160,7 +161,7 @@ class AdditiveAbelianGroupWrapperElement(addgp.AdditiveAbelianGroupElement):
 
     def _repr_(self):
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -214,7 +215,7 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
         self._universe = universe
         self._gen_elements = tuple(universe(x) for x in gens)
         self._gen_orders = invariants
-        cover,rels = addgp.cover_and_relations_from_invariants(invariants)
+        cover, rels = addgp.cover_and_relations_from_invariants(invariants)
         addgp.AdditiveAbelianGroup_fixed_gens.__init__(self, cover, rels, cover.gens())
         self._unset_coercions_used()
         self.register_embedding(UnwrappingMorphism(self))
@@ -290,7 +291,7 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
         r"""
         Given a list (or other iterable) of length equal to the number of
         generators of this group, compute the element of the ambient group
-        with those exponents in terms of the generators of self.
+        with those exponents in terms of the generators of ``self``.
 
         EXAMPLES::
 
@@ -489,13 +490,13 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
             if n <= 0:
                 raise ValueError('n must be a positive integer')
             gens, ords = [], []
-            for g,o in genords:
+            for g, o in genords:
                 if not o:
                     continue
                 d = n.gcd(o)
                 if d == 1:
                     continue
-                gens.append(o//d * g)
+                gens.append(o // d * g)
                 ords.append(d)
         return AdditiveAbelianGroupWrapper(self.universe(), gens, ords)
 
@@ -692,9 +693,9 @@ def _expand_basis_pgroup(p, alphas, vals, beta, h, rel):
     if not (isinstance(alphas, list) and isinstance(vals, list)):
         raise TypeError('alphas and vals must be lists for mutability')
     if not len(alphas) == len(vals) == k - 1:
-        raise ValueError(f'alphas and/or vals have incorrect length')
-#    assert not sum(r*a for r,a in zip(rel, alphas+[beta]))
-#    assert all(a.order() == p**v for a,v in zip(alphas,vals))
+        raise ValueError('alphas and/or vals have incorrect length')
+    #    assert not sum(r*a for r,a in zip(rel, alphas+[beta]))
+    #    assert all(a.order() == p**v for a,v in zip(alphas,vals))
 
     if rel[-1] < 0:
         raise ValueError('rel must have nonnegative entries')
@@ -727,8 +728,8 @@ def _expand_basis_pgroup(p, alphas, vals, beta, h, rel):
         return
 
     # step 3
-    j = next(j for j,r in enumerate(rel) if r == min_r)
-    alphas[j] = sum(a * (r//rel[j]) for a,r in zip(alphas+[beta], rel))
+    j = next(j for j, r in enumerate(rel) if r == min_r)
+    alphas[j] = sum(a * (r // rel[j]) for a, r in zip(alphas + [beta], rel))
 
     # step 4
     if not alphas[j]:
@@ -753,7 +754,8 @@ def _expand_basis_pgroup(p, alphas, vals, beta, h, rel):
     else:
         alphas.append(beta)
         vals.append(h)
-#    assert alphas[-1].order() == p**vals[-1]
+    #    assert alphas[-1].order() == p**vals[-1]
+
 
 def basis_from_generators(gens, ords=None):
     r"""
@@ -804,7 +806,8 @@ def basis_from_generators(gens, ords=None):
     gammas = []
     ms = []
     for p in ps:
-        pgens = [(o.prime_to_m_part(p) * g, o.p_primary_part(p)) for g, o in zip(gens, ords) if not o % p]
+        pgens = [(o.prime_to_m_part(p) * g, o.p_primary_part(p))
+                 for g, o in zip(gens, ords) if not o % p]
         assert pgens
         pgens.sort(key=lambda tup: tup[1])
 
@@ -815,7 +818,7 @@ def basis_from_generators(gens, ords=None):
         while pgens:
             beta, ord_beta = pgens.pop()
             try:
-                dlog = _discrete_log_pgroup(p, vals, alphas, beta)
+                _ = _discrete_log_pgroup(p, vals, alphas, beta)
             except ValueError:
                 pass
             else:
@@ -846,8 +849,8 @@ def basis_from_generators(gens, ords=None):
                 gammas.append(a)
                 ms.append(p ** v)
 
-##    assert len({sum(i*g for i,g in zip(vec,gammas))
-##                for vec in __import__('itertools').product(*map(range,ms))}) \
-##               == __import__('sage').misc.misc_c.prod(ms)
+#    assert len({sum(i*g for i,g in zip(vec,gammas))
+#                for vec in __import__('itertools').product(*map(range,ms))}) \
+#               == __import__('sage').misc.misc_c.prod(ms)
 
     return gammas, ms

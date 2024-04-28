@@ -65,9 +65,7 @@ def is_DualAbelianGroupElement(x) -> bool:
 
     - ``x`` -- anything
 
-    OUTPUT:
-
-    Boolean
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -90,10 +88,8 @@ class DualAbelianGroupElement(AbelianGroupElementBase):
         """
         Evaluate ``self`` on a group element ``g``.
 
-        OUTPUT:
-
-        An element in
-        :meth:`~sage.groups.abelian_gps.dual_abelian_group.DualAbelianGroup_class.base_ring`.
+        OUTPUT: an element in
+        :meth:`~sage.groups.abelian_gps.dual_abelian_group.DualAbelianGroup_class.base_ring`
 
         EXAMPLES::
 

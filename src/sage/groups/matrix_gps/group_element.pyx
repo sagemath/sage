@@ -92,13 +92,13 @@ except ImportError:
 
 cpdef is_MatrixGroupElement(x):
     """
-    Test whether ``x`` is a matrix group element
+    Test whether ``x`` is a matrix group element.
 
     INPUT:
 
-    - ``x`` -- anything.
+    - ``x`` -- anything
 
-    OUTPUT: Boolean.
+    OUTPUT: boolean
 
     EXAMPLES::
 
@@ -371,9 +371,9 @@ cdef class MatrixGroupElement_generic(MultiplicativeGroupElement):
 
     def __invert__(self):
         """
-        Return the inverse group element
+        Return the inverse group element.
 
-        OUTPUT: A matrix group element.
+        OUTPUT: a matrix group element
 
         EXAMPLES::
 

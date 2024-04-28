@@ -677,12 +677,12 @@ cdef int compare_graphs(int *gamma_1, int *gamma_2, void *S1, void *S2, int degr
 
 cdef bint all_children_are_equivalent(PartitionStack *PS, void *S) noexcept:
     """
-    Return True if every refinement of the current partition results in the
+    Return ``True`` if every refinement of the current partition results in the
     same structure.
 
-    WARNING:
+    .. WARNING::
 
-    Converse does not hold in general!  See Lemma 2.25 of [1] for details.
+        Converse does not hold in general!  See Lemma 2.25 of [1] for details.
 
     INPUT:
 
@@ -1164,7 +1164,7 @@ cdef void *apply_dg_edge_aug(void *parent, void *aug, void *child, int *degree, 
 
 cdef void *allocate_dg_edge(int n, bint loops) noexcept:
     r"""
-    Allocates an object for this augmentation scheme.
+    Allocate an object for this augmentation scheme.
     """
     cdef GraphStruct GS
     cdef DenseGraph G
@@ -1188,7 +1188,7 @@ cdef void *allocate_dg_edge(int n, bint loops) noexcept:
 
 cdef void free_dg_edge(void *child) noexcept:
     r"""
-    Deallocates an object for this augmentation scheme.
+    Deallocate an object for this augmentation scheme.
     """
     cdef GraphStruct GS = <GraphStruct> child
     sig_free(GS.scratch)
@@ -1197,9 +1197,9 @@ cdef void free_dg_edge(void *child) noexcept:
 
 cdef void *canonical_dg_edge_parent(void *child, void *parent, int *permutation, int *degree, bint *mem_err) noexcept:
     r"""
-    Applies ``permutation`` to ``child``, determines an arbitrary parent by
-    deleting the lexicographically largest edge, applies the inverse of
-    ``permutation`` to the result and stores the result in ``parent``.
+    Apply ``permutation`` to ``child``, determine an arbitrary parent by
+    deleting the lexicographically largest edge, apply the inverse of
+    ``permutation`` to the result and store the result in ``parent``.
     """
     cdef GraphStruct GS_par = <GraphStruct> parent, GS = <GraphStruct> child
     cdef DenseGraph DG_par = <DenseGraph> GS_par.G, DG = <DenseGraph> GS.G
@@ -1227,7 +1227,7 @@ cdef void *canonical_dg_edge_parent(void *child, void *parent, int *permutation,
 
 cdef iterator *allocate_dg_edge_gen(int degree, int depth, bint loops) noexcept:
     r"""
-    Allocates the iterator for generating graphs.
+    Allocate the iterator for generating graphs.
     """
     cdef iterator *dg_edge_gen = <iterator *> sig_malloc(sizeof(iterator))
     cdef canonical_generator_data *cgd = allocate_cgd(depth, degree)
@@ -1257,7 +1257,7 @@ cdef iterator *allocate_dg_edge_gen(int degree, int depth, bint loops) noexcept:
 
 cdef void free_dg_edge_gen(iterator *dg_edge_gen) noexcept:
     r"""
-    Deallocates the iterator for generating graphs.
+    Deallocate the iterator for generating graphs.
     """
     cdef canonical_generator_data *cgd = <canonical_generator_data *> dg_edge_gen.data
     deallocate_cgd(cgd)
@@ -1432,7 +1432,7 @@ cdef void *apply_dg_vert_aug(void *parent, void *aug, void *child, int *degree, 
 
 cdef void *allocate_dg_vert(int n, int depth) noexcept:
     r"""
-    Allocates an object for this augmentation scheme.
+    Allocate an object for this augmentation scheme.
     """
     cdef GraphStruct GS
     cdef DenseGraph G
@@ -1458,7 +1458,7 @@ cdef void *allocate_dg_vert(int n, int depth) noexcept:
 
 cdef void free_dg_vert(void *child) noexcept:
     r"""
-    Deallocates an object for this augmentation scheme.
+    Deallocate an object for this augmentation scheme.
     """
     cdef GraphStruct GS = <GraphStruct> child
     sig_free(GS.scratch)
@@ -1467,9 +1467,9 @@ cdef void free_dg_vert(void *child) noexcept:
 
 cdef void *canonical_dg_vert_parent(void *child, void *parent, int *permutation, int *degree, bint *mem_err) noexcept:
     r"""
-    Applies ``permutation`` to ``child``, determines an arbitrary parent by
-    deleting the lexicographically largest vertex, applies the inverse of
-    ``permutation`` to the result and stores the result in ``parent``.
+    Apply ``permutation`` to ``child``, determines an arbitrary parent by
+    deleting the lexicographically largest vertex, apply the inverse of
+    ``permutation`` to the result and store the result in ``parent``.
     """
     cdef GraphStruct GS_par = <GraphStruct> parent, GS = <GraphStruct> child
     cdef DenseGraph DG_par = <DenseGraph> GS_par.G, DG = <DenseGraph> GS.G
@@ -1489,7 +1489,7 @@ cdef void *canonical_dg_vert_parent(void *child, void *parent, int *permutation,
 
 cdef iterator *allocate_dg_vert_gen(int degree, int depth) noexcept:
     r"""
-    Allocates the iterator for generating graphs.
+    Allocate the iterator for generating graphs.
     """
     cdef iterator *dg_vert_gen = <iterator *> sig_malloc(sizeof(iterator))
     cdef canonical_generator_data *cgd = allocate_cgd(depth, degree)
@@ -1530,7 +1530,7 @@ cdef iterator *allocate_dg_vert_gen(int degree, int depth) noexcept:
 
 cdef void free_dg_vert_gen(iterator *dg_vert_gen) noexcept:
     r"""
-    Deallocates the iterator for generating graphs.
+    Deallocate the iterator for generating graphs.
     """
     cdef canonical_generator_data *cgd = <canonical_generator_data *> dg_vert_gen.data
     deallocate_cgd(cgd)

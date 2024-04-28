@@ -49,7 +49,7 @@ class SymplecticMatrixGroup_gap(SymplecticMatrixGroup_generic, NamedMatrixGroup_
         """
         Return the quadratic form preserved by the symplectic group.
 
-        OUTPUT: A matrix.
+        OUTPUT: a matrix
 
         EXAMPLES::
 
