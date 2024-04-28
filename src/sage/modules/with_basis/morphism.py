@@ -123,6 +123,7 @@ from sage.categories.sets_cat import Sets
 from sage.categories.sets_with_partial_maps import SetsWithPartialMaps
 from sage.structure.richcmp import op_EQ, op_NE
 from sage.structure.element import is_Matrix
+from sage.structure.sage_object import SageObject
 
 
 class ModuleMorphism(Morphism):
@@ -767,14 +768,15 @@ class TriangularModuleMorphism(ModuleMorphism):
         from sage.misc.lazy_format import LazyFormat
         tester = self._tester(**options)
         on_basis = self.on_basis()
-        for x in self.domain().basis().keys().some_elements(): # any better set?
+        for x in self.domain().basis().keys().some_elements():
+            # is there any better set to use ?
             bs, co = self._dominant_item(on_basis(x))
             if self._unitriangular:
                 tester.assertEqual(co, self.domain().base_ring().one(),
-                    LazyFormat("morphism is not unitriangular on %s") % (x))
+                    LazyFormat("morphism is not unitriangular on %s") % x)
             xback = self._inverse_on_support(bs)
             tester.assertEqual(x, xback,
-                LazyFormat("morphism is not triangular on %s") % (x))
+                LazyFormat("morphism is not triangular on %s") % x)
 
     def __invert__(self):
         """
@@ -962,7 +964,7 @@ class TriangularModuleMorphism(ModuleMorphism):
 
         out = F.zero()
         while not remainder.is_zero():
-            (j,c) = self._dominant_item(remainder)
+            (j, c) = self._dominant_item(remainder)
 
             j_preimage = self._inverse_on_support(j)
             if j_preimage is None:
@@ -1058,10 +1060,10 @@ class TriangularModuleMorphism(ModuleMorphism):
         remainder = y
 
         while not remainder.is_zero():
-            (j,c) = self._dominant_item(remainder)
+            (j, c) = self._dominant_item(remainder)
             j_preimage = self._inverse_on_support(j)
             if j_preimage is None:
-                dom_term = G.term(j,c)
+                dom_term = G.term(j, c)
                 remainder -= dom_term
                 result += dom_term
             else:
@@ -1158,6 +1160,7 @@ class TriangularModuleMorphism(ModuleMorphism):
         return codomain.module_morphism(function=self.coreduced,
                                         codomain=codomain, category=category)
 
+
 class TriangularModuleMorphismByLinearity(ModuleMorphismByLinearity, TriangularModuleMorphism):
     r"""
     A concrete class for triangular module morphisms obtained by extending a function by linearity.
@@ -1208,6 +1211,7 @@ class TriangularModuleMorphismByLinearity(ModuleMorphismByLinearity, TriangularM
             return not (self == other)
         return NotImplemented
 
+
 class TriangularModuleMorphismFromFunction(ModuleMorphismFromFunction, TriangularModuleMorphism):
     r"""
     A concrete class for triangular module morphisms implemented by a function.
@@ -1234,7 +1238,8 @@ class TriangularModuleMorphismFromFunction(ModuleMorphismFromFunction, Triangula
             sage: TestSuite(phi).run()
         """
         ModuleMorphismFromFunction.__init__(self, function=function,
-                                          domain=domain, codomain=codomain, category=category)
+                                            domain=domain, codomain=codomain,
+                                            category=category)
         TriangularModuleMorphism.__init__(self, **keywords)
 
 
@@ -1393,6 +1398,7 @@ class ModuleMorphismFromMatrix(ModuleMorphismByLinearity):
             return not (self == other)
         return NotImplemented
 
+
 class DiagonalModuleMorphism(ModuleMorphismByLinearity):
     r"""
     A class for diagonal module morphisms.
@@ -1550,7 +1556,6 @@ def pointwise_inverse_function(f):
     return PointwiseInverseFunction(f)
 
 
-from sage.structure.sage_object import SageObject
 class PointwiseInverseFunction(SageObject):
     r"""
     A class for pointwise inverse functions.

@@ -28,6 +28,7 @@ from sage.structure.element cimport Element, RingElement, Vector
 from sage.arith.long cimport pyobject_to_long
 from sage.misc.misc_c import sized_iter
 from sage.categories import monoids
+from sage.misc.superseded import deprecation_cython
 
 
 try:
@@ -311,7 +312,7 @@ cdef class MatrixArgs:
         self.sparse = -1
         self.kwds = {}
 
-    def __init__(self, *args, ring=None, nrows=None, ncols=None, entries=None, sparse=None, space=None, **kwds):
+    def __init__(self, *args, base_ring=None, nrows=None, ncols=None, entries=None, sparse=None, space=None, **kwds):
         """
         Parse arguments for creating a new matrix.
 
@@ -324,23 +325,34 @@ cdef class MatrixArgs:
 
             sage: from sage.matrix.args import MatrixArgs
             sage: MatrixArgs().finalized()
-            <MatrixArgs for Full MatrixSpace of 0 by 0 dense matrices over Integer Ring; typ=ZERO; entries=None>
+            <MatrixArgs for Full MatrixSpace of 0 by 0 dense matrices over
+             Integer Ring; typ=ZERO; entries=None>
             sage: MatrixArgs(1).finalized()
-            <MatrixArgs for Full MatrixSpace of 1 by 1 dense matrices over Integer Ring; typ=ZERO; entries=None>
+            <MatrixArgs for Full MatrixSpace of 1 by 1 dense matrices over
+             Integer Ring; typ=ZERO; entries=None>
             sage: MatrixArgs(1, 1, 3).finalized()
-            <MatrixArgs for Full MatrixSpace of 1 by 1 dense matrices over Integer Ring; typ=SCALAR; entries=3>
+            <MatrixArgs for Full MatrixSpace of 1 by 1 dense matrices over
+             Integer Ring; typ=SCALAR; entries=3>
             sage: MatrixArgs(1, 1, 1, 1).finalized()
             Traceback (most recent call last):
             ...
             TypeError: too many arguments in matrix constructor
             sage: MatrixArgs(3, nrows=1, ncols=1).finalized()
-            <MatrixArgs for Full MatrixSpace of 1 by 1 dense matrices over Integer Ring; typ=SCALAR; entries=3>
+            <MatrixArgs for Full MatrixSpace of 1 by 1 dense matrices over
+             Integer Ring; typ=SCALAR; entries=3>
             sage: MatrixArgs(3, nrows=1).finalized()
-            <MatrixArgs for Full MatrixSpace of 1 by 1 dense matrices over Integer Ring; typ=SCALAR; entries=3>
+            <MatrixArgs for Full MatrixSpace of 1 by 1 dense matrices over
+             Integer Ring; typ=SCALAR; entries=3>
             sage: MatrixArgs(3, ncols=1).finalized()
-            <MatrixArgs for Full MatrixSpace of 1 by 1 dense matrices over Integer Ring; typ=SCALAR; entries=3>
+            <MatrixArgs for Full MatrixSpace of 1 by 1 dense matrices over
+             Integer Ring; typ=SCALAR; entries=3>
         """
-        self.base = ring
+        if "ring" in kwds.keys():
+            deprecation_cython(issue_number=33380, message="ring is deprecated (keyword will be removed in the future). Use base_ring instead", stacklevel=3)
+            self.base = kwds.pop("ring")
+        else:
+            self.base = base_ring
+
         if nrows is not None:
             self.set_nrows(pyobject_to_long(nrows))
         if ncols is not None:
@@ -630,7 +642,7 @@ cdef class MatrixArgs:
         self.finalize()
         return self.nrows * self.ncols
 
-    cpdef Matrix matrix(self, bint convert=True) noexcept:
+    cpdef Matrix matrix(self, bint convert=True):
         """
         Return the entries of the matrix as a Sage Matrix.
 
@@ -639,8 +651,8 @@ cdef class MatrixArgs:
 
         INPUT:
 
-        - ``convert`` -- if True, the matrix is guaranteed to have
-          the correct parent matrix space. If False, the input matrix
+        - ``convert`` -- if ``True``, the matrix is guaranteed to have
+          the correct parent matrix space. If ``False``, the input matrix
           may be returned even if it lies in the wrong space.
 
         .. NOTE::
@@ -721,7 +733,7 @@ cdef class MatrixArgs:
         self.typ = MA_ENTRIES_MATRIX
         return M
 
-    cpdef list list(self, bint convert=True) noexcept:
+    cpdef list list(self, bint convert=True):
         """
         Return the entries of the matrix as a flat list of scalars.
 
@@ -730,7 +742,7 @@ cdef class MatrixArgs:
 
         INPUT:
 
-        - ``convert`` -- If True, the entries are converted to the base
+        - ``convert`` -- If ``True``, the entries are converted to the base
           ring. Otherwise, the entries are returned as given.
 
         .. NOTE::
@@ -788,13 +800,14 @@ cdef class MatrixArgs:
         self.typ = MA_ENTRIES_SEQ_FLAT
         return L
 
-    cpdef dict dict(self, bint convert=True) noexcept:
+    cpdef dict dict(self, bint convert=True):
         """
-        Return the entries of the matrix as a dict. The keys of this
-        dict are the non-zero positions ``(i,j)``. The corresponding
-        value is the entry at that position. Zero values are skipped.
+        Return the entries of the matrix as a :class:`dict`.
 
-        If ``convert`` is True, the entries are converted to the base
+        The keys of this :class:`dict` are the non-zero positions ``(i,j)``. The
+        corresponding value is the entry at that position. Zero values are skipped.
+
+        If ``convert`` is ``True``, the entries are converted to the base
         ring. Otherwise, the entries are returned as given.
 
         EXAMPLES::
@@ -1392,7 +1405,7 @@ cdef class MatrixArgs:
             return MA_ENTRIES_SEQ_SEQ
 
 
-cpdef MatrixArgs MatrixArgs_init(space, entries) noexcept:
+cpdef MatrixArgs MatrixArgs_init(space, entries):
     """
     Construct a :class:`MatrixArgs` object from a matrix space and
     entries. This is the typical use in a matrix constructor.

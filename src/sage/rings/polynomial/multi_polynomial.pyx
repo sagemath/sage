@@ -434,7 +434,7 @@ cdef class MPolynomial(CommutativePolynomial):
             z *= var
         return ring(v)
 
-    cpdef dict _mpoly_dict_recursive(self, tuple vars=None, base_ring=None) noexcept:
+    cpdef dict _mpoly_dict_recursive(self, tuple vars=None, base_ring=None):
         r"""
         Return a ``dict`` of coefficient entries suitable for construction
         of a ``MPolynomial_polydict`` with the given variables.
@@ -813,7 +813,7 @@ cdef class MPolynomial(CommutativePolynomial):
                 d[e.unweighted_degree()][e] = c
         return {k: self._parent(d[k]) for k in d}
 
-    cpdef _mod_(self, other) noexcept:
+    cpdef _mod_(self, other):
         r"""
         EXAMPLES::
 
@@ -2926,7 +2926,7 @@ def _is_M_convex_(points):
     return True
 
 
-cdef remove_from_tuple(e, int ind) noexcept:
+cdef remove_from_tuple(e, int ind):
     w = list(e)
     del w[ind]
     if len(w) == 1:

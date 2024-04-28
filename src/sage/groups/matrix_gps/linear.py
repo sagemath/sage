@@ -201,19 +201,19 @@ def SL(n, R, var='a'):
     matrices that are invertible over the ring `R` with determinant
     one.
 
-    .. note::
+    .. NOTE::
 
         This group is also available via ``groups.matrix.SL()``.
 
     INPUT:
 
-    - ``n`` -- a positive integer.
+    - ``n`` -- positive integer
 
-    - ``R`` -- ring or an integer. If an integer is specified, the
-      corresponding finite field is used.
+    - ``R`` -- ring or integer; if an integer is specified, the
+      corresponding finite field is used
 
     - ``var`` -- variable used to represent generator of the finite
-      field, if needed.
+      field, if needed
 
     EXAMPLES::
 

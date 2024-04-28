@@ -114,11 +114,12 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
     def run(self, partition=None):
         """
         Perform the canonical labeling and automorphism group computation,
-        storing results to self.
+        storing results to ``self``.
 
         INPUT:
-        partition -- an optional list of lists partition of the columns.
-            default is the unit partition.
+
+        - ``partition`` -- an optional list of lists partition of the columns;
+          default is the unit partition
 
         EXAMPLES::
 
@@ -253,17 +254,17 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
 
     def automorphism_group(self):
         """
-        Returns a list of generators of the automorphism group, along with its
+        Return a list of generators of the automorphism group, along with its
         order and a base for which the list of generators is a strong generating
         set.
 
-        EXAMPLES: (For more examples, see self.run())
+        EXAMPLES: (For more examples, see self.run())::
+
             sage: from sage.groups.perm_gps.partn_ref.refinement_binary import LinearBinaryCodeStruct
 
             sage: B = LinearBinaryCodeStruct(matrix(GF(2),[[1,1,1,1]]))
             sage: B.automorphism_group()
             ([[0, 1, 3, 2], [0, 2, 1, 3], [1, 0, 2, 3]], 24, [0, 1, 2])
-
         """
         cdef int i, j
         cdef list generators, base
@@ -280,9 +281,10 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
 
     def canonical_relabeling(self):
         """
-        Returns a canonical relabeling (in list permutation format).
+        Return a canonical relabeling (in list permutation format).
 
-        EXAMPLES: (For more examples, see self.run())
+        EXAMPLES: (For more examples, see self.run())::
+
             sage: from sage.groups.perm_gps.partn_ref.refinement_binary import LinearBinaryCodeStruct
 
             sage: B = LinearBinaryCodeStruct(matrix(GF(2), [[1,1,0]]))
@@ -295,7 +297,6 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
             ([[2, 1, 0]], 2, [0])
             sage: B.canonical_relabeling()
             [1, 0, 2]
-
         """
         cdef int i
         if self.output is NULL:
@@ -304,7 +305,7 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
 
     def is_isomorphic(self, LinearBinaryCodeStruct other):
         """
-        Calculate whether self is isomorphic to other.
+        Calculate whether ``self`` is isomorphic to ``other``.
 
         EXAMPLES::
 
@@ -314,7 +315,6 @@ cdef class LinearBinaryCodeStruct(BinaryCodeStruct):
             sage: C = LinearBinaryCodeStruct(Matrix(GF(2), [[1,1,1,0,0,1],[1,1,0,1,1,0]]))
             sage: B.is_isomorphic(C)
             [0, 1, 2, 5, 3, 4]
-
         """
         cdef int i, n = self.degree
         cdef int *output
@@ -512,7 +512,6 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
              [4, 0, 1, 2])
             sage: B.canonical_relabeling()
             [2, 3, 4, 5, 0, 1]
-
         """
         cdef int n = self.degree
         cdef PartitionStack *part
@@ -530,11 +529,12 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
 
     def automorphism_group(self):
         """
-        Returns a list of generators of the automorphism group, along with its
+        Return a list of generators of the automorphism group, along with its
         order and a base for which the list of generators is a strong generating
         set.
 
-        EXAMPLES: (For more examples, see self.run())
+        EXAMPLES: (For more examples, see self.run())::
+
             sage: from sage.groups.perm_gps.partn_ref.refinement_binary import NonlinearBinaryCodeStruct
 
             sage: B = NonlinearBinaryCodeStruct(Matrix(GF(2), [[1,1,1,0,0,0],[1,1,0,1,0,0],[1,0,1,1,0,0],[0,1,1,1,0,0],[0,0,0,0,1,0],[0,0,0,0,0,1]]))
@@ -546,7 +546,6 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
               [0, 1, 2, 3, 5, 4]],
              48,
              [4, 0, 1, 2])
-
         """
         cdef int i, j
         cdef list generators, base
@@ -563,16 +562,16 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
 
     def canonical_relabeling(self):
         """
-        Returns a canonical relabeling (in list permutation format).
+        Return a canonical relabeling (in list permutation format).
 
-        EXAMPLES: (For more examples, see self.run())
+        EXAMPLES: (For more examples, see self.run())::
+
             sage: from sage.groups.perm_gps.partn_ref.refinement_binary import NonlinearBinaryCodeStruct
 
             sage: B = NonlinearBinaryCodeStruct(Matrix(GF(2), [[1,1,1,0,0,0],[1,1,0,1,0,0],[1,0,1,1,0,0],[0,1,1,1,0,0],[0,0,0,0,1,0],[0,0,0,0,0,1]]))
             sage: B.run()
             sage: B.canonical_relabeling()
             [2, 3, 4, 5, 0, 1]
-
         """
         cdef int i
         if self.output is NULL:
@@ -581,7 +580,7 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
 
     def is_isomorphic(self, NonlinearBinaryCodeStruct other):
         """
-        Calculate whether self is isomorphic to other.
+        Calculate whether ``self`` is isomorphic to ``other``.
 
         EXAMPLES::
 
@@ -591,7 +590,6 @@ cdef class NonlinearBinaryCodeStruct(BinaryCodeStruct):
             sage: C = NonlinearBinaryCodeStruct(Matrix(GF(2), [[1,1,0,0,1,1],[1,1,1,1,0,0]]))
             sage: B.is_isomorphic(C)
             [2, 3, 0, 1, 4, 5]
-
         """
         cdef int i, n = self.degree
         cdef int *output
@@ -628,17 +626,17 @@ cdef int ith_word_nonlinear(BinaryCodeStruct self, int i, bitset_s *word) noexce
 
 cdef int refine_by_bip_degree(PartitionStack *col_ps, void *S, int *cells_to_refine_by, int ctrb_len) noexcept:
     r"""
-    Refines the input partition by checking degrees of vertices to the given
+    Refine the input partition by checking degrees of vertices to the given
     cells in the associated bipartite graph (vertices split into columns and
     words).
 
     INPUT:
-    col_ps -- a partition stack, whose finest partition is the partition to be
-        refined.
-    S -- a binary code struct object
-    cells_to_refine_by -- a list of pointers to cells to check degrees against
-        in refining the other cells (updated in place)
-    ctrb_len -- how many cells in cells_to_refine_by
+
+    - col_ps -- a partition stack, whose finest partition is the partition to be refined
+    - S -- a binary code struct object
+    - cells_to_refine_by -- a list of pointers to cells to check degrees against
+      in refining the other cells (updated in place)
+    - ctrb_len -- how many cells in cells_to_refine_by
 
     OUTPUT:
 
@@ -914,17 +912,19 @@ cdef int compare_nonlinear_codes(int *gamma_1, int *gamma_2, void *S1, void *S2,
 
 cdef bint all_children_are_equivalent(PartitionStack *col_ps, void *S) noexcept:
     """
-    Returns True if any refinement of the current partition results in the same
-    structure.
-
-    WARNING:
-    Converse does not hold in general! See Lemma 2.25 of [1] for details, noting
-    that the binary code is interpreted as a bipartite graph (see module docs
-    for details).
+    Return ``True`` if any refinement of the current partition results in the
+    same structure.
 
     INPUT:
-    col_ps -- the partition stack to be checked
-    S -- a binary code struct object
+
+    - ``col_ps`` -- the partition stack to be checked
+    - ``S`` -- a binary code struct object
+
+    .. WARNING::
+
+        Converse does not hold in general! See Lemma 2.25 of [1] for details, noting
+        that the binary code is interpreted as a bipartite graph (see module docs
+        for details).
     """
     cdef BinaryCodeStruct BCS = <BinaryCodeStruct> S
     cdef PartitionStack *word_ps = BCS.word_ps
@@ -957,16 +957,16 @@ cdef bint all_children_are_equivalent(PartitionStack *col_ps, void *S) noexcept:
 
 cdef inline int word_degree(PartitionStack *word_ps, BinaryCodeStruct BCS, int entry, int cell_index, PartitionStack *col_ps) noexcept:
     """
-    Returns the number of edges from the vertex corresponding to entry to
+    Return the number of edges from the vertex corresponding to entry to
     vertices in the cell corresponding to cell_index.
 
     INPUT:
-    word_ps -- the partition stack to be checked
-    col_ps -- corresponding partition stack on columns
-    BCS -- a binary code struct object
-    entry -- the position of the vertex in question in the entries of word_ps
-    cell_index -- the starting position of the cell in question in the entries
-        of PS
+
+    - word_ps -- the partition stack to be checked
+    - col_ps -- corresponding partition stack on columns
+    - BCS -- a binary code struct object
+    - entry -- the position of the vertex in question in the entries of word_ps
+    - cell_index -- the starting position of the cell in question in the entries of PS
     """
     cdef bitset_t cell, word
     cdef int h
@@ -987,16 +987,16 @@ cdef inline int word_degree(PartitionStack *word_ps, BinaryCodeStruct BCS, int e
 
 cdef inline int col_degree(PartitionStack *col_ps, BinaryCodeStruct BCS, int entry, int cell_index, PartitionStack *word_ps) noexcept:
     """
-    Returns the number of edges from the vertex corresponding to entry to
+    Return the number of edges from the vertex corresponding to entry to
     vertices in the cell corresponding to cell_index.
 
     INPUT:
-    col_ps -- the partition stack to be checked
-    word_ps -- corresponding partition stack on words
-    BCS -- a binary code struct object
-    entry -- the position of the vertex in question in the entries of word_ps
-    cell_index -- the starting position of the cell in question in the entries
-        of PS
+
+    - col_ps -- the partition stack to be checked
+    - word_ps -- corresponding partition stack on words
+    - BCS -- a binary code struct object
+    - entry -- the position of the vertex in question in the entries of word_ps
+    - cell_index -- the starting position of the cell in question in the entries of PS
     """
     cdef bitset_t word
     bitset_init(word, BCS.degree)
@@ -1055,14 +1055,15 @@ cdef inline int sort_by_function_codes(PartitionStack *PS, int start, int *degre
 
 def random_tests(num=50, n_max=50, k_max=6, nwords_max=200, perms_per_code=10, density_range=(.1,.9)):
     """
-    Tests to make sure that C(gamma(B)) == C(B) for random permutations gamma
-    and random codes B, and that is_isomorphic returns an isomorphism.
+    Test to make sure that ``C(gamma(B)) == C(B)`` for random permutations ``gamma``
+    and random codes ``B``, and that :meth:`is_isomorphic` returns an isomorphism.
 
     INPUT:
-    num -- run tests for this many codes
-    n_max -- test codes with at most this many columns
-    k_max -- test codes with at most this for dimension
-    perms_per_code -- test each code with this many random permutations
+
+    - ``num`` -- run tests for this many codes
+    - ``n_max`` -- test codes with at most this many columns
+    - ``k_max`` -- test codes with at most this for dimension
+    - ``perms_per_code`` -- test each code with this many random permutations
 
     DISCUSSION:
 
