@@ -165,6 +165,20 @@ class ImageSubobject(Parent):
         """
         return not (self == other)
 
+    def __hash__(self):
+        r"""
+        TESTS::
+
+            sage: from sage.sets.image_set import ImageSubobject
+            sage: def f(x):
+            ....:     return 2 * x
+            sage: I = ImageSubobject(f, ZZ)
+            sage: hash(I) == hash(ImageSubobject(f, ZZ))
+            True
+        """
+        return hash((self._map, self._inverse, self._domain_subset,
+                     self._is_injective, self.category()))
+
     def _element_constructor_(self, x):
         """
         EXAMPLES::
