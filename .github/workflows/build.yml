@@ -187,7 +187,7 @@ jobs:
       - name: Pytest
         if: contains(github.ref, 'pytest')
         run: |
-          ../sage -python -m pip install coverage pytest-xdist
+          ../sage -python -m pip install -r requirements/test-requirements.txt
           ../sage -python -m coverage run -m pytest -c tox.ini --doctest || true
         working-directory: ./worktree-image/src
         env:
@@ -197,7 +197,7 @@ jobs:
       - name: Test all files (sage -t --all --long)
         if: (success() || failure()) && steps.build.outcome == 'success'
         run: |
-          ./sage -python -m pip install coverage
+          ./sage -python -m pip install -r requirements/test-requirements.txt
           ./sage -python -m coverage run --rcfile=src/tox.ini src/bin/sage-runtests --all --long -p2 --format github --random-seed=286735480429121101562228604801325644303
         working-directory: ./worktree-image
 
