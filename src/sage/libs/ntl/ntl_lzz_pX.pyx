@@ -232,7 +232,7 @@ cdef class ntl_zz_pX():
         zz_pX_SetCoeff_long(self.x, i, val)
         return
 
-    cdef ntl_zz_pX _new(self) noexcept:
+    cdef ntl_zz_pX _new(self):
         """
         Quick and dirty method for creating a new object with the
         same zz_pContext as self.

@@ -228,7 +228,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         sage: e = EllipticCurve([0, 0, 1, -1, 0]); g = e.gens(); loads(dumps(e)) == e
         True
 
-    Test that the refactoring from :trac:`14711` did preserve the behaviour
+    Test that the refactoring from :issue:`14711` did preserve the behaviour
     of domain and codomain::
 
         sage: E = EllipticCurve(QQ,[1,1])
@@ -415,7 +415,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             [Mod(1, 11), Mod(2, 11)]
 
         We no longer need to explicitly call ``pari(O)`` and ``pari(P)``
-        after :trac:`11868`::
+        after :issue:`11868`::
 
             sage: pari(E).elladd(O, P)
             [Mod(1, 11), Mod(2, 11)]
@@ -719,14 +719,14 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: P._add_(Q) == P + Q
             True
 
-        Example to show that bug :trac:`4820` is fixed::
+        Example to show that bug :issue:`4820` is fixed::
 
             sage: [type(c) for c in 2*EllipticCurve('37a1').gen(0)]
             [<... 'sage.rings.rational.Rational'>,
             <... 'sage.rings.rational.Rational'>,
             <... 'sage.rings.rational.Rational'>]
 
-        Checks that :trac:`15964` is fixed::
+        Checks that :issue:`15964` is fixed::
 
             sage: N = 1715761513
             sage: E = EllipticCurve(Integers(N), [3,-13])
@@ -746,7 +746,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             ZeroDivisionError: Inverse of 7 does not exist
             (characteristic = 35 = 7*5)
 
-        Checks that :trac:`34681` is fixed::
+        Checks that :issue:`34681` is fixed::
 
             sage: P+P
             (15 : 14 : 1)
@@ -794,7 +794,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         x3 = -x1 - x2 - a2 + m*(m+a1)
         y3 = -y1 - a3 - a1*x3 + m*(x1-x3)
         # See trac #4820 for why we need to coerce 1 into the base ring here:
-        return E.point([x3, y3, E.base_ring()(1)], check=False)
+        return E.point([x3, y3, E.base_ring().one()], check=False)
 
     def _sub_(self, right):
         """
@@ -828,7 +828,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: Q + P
             (0 : 1 : 0)
 
-        Example to show that bug :trac:`4820` is fixed::
+        Example to show that bug :issue:`4820` is fixed::
 
             sage: [type(c) for c in -EllipticCurve('37a1').gen(0)]
             [<... 'sage.rings.rational.Rational'>,
@@ -839,7 +839,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             return self
         E, x, y = self.curve(), self[0], self[1]
         # See trac #4820 for why we need to coerce 1 into the base ring here:
-        return E.point([x, -y - E.a1()*x - E.a3(), E.base_ring()(1)], check=False)
+        return E.point([x, -y - E.a1()*x - E.a3(), E.base_ring().one()], check=False)
 
     def xy(self):
         """
@@ -954,7 +954,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         TESTS:
 
-        This shows that the bug reported at :trac:`10076` is fixed::
+        This shows that the bug reported at :issue:`10076` is fixed::
 
             sage: # needs sage.rings.number_field
             sage: K = QuadraticField(8,'a')
@@ -1109,7 +1109,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: P.division_points(5)                                                  # needs sage.rings.finite_rings
             [(1 : 1 : 1)]
 
-        An example over a number field (see :trac:`3383`)::
+        An example over a number field (see :issue:`3383`)::
 
             sage: # needs sage.rings.number_field
             sage: E = EllipticCurve('19a1')
@@ -1128,7 +1128,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
 
         TESTS:
 
-        Check that :trac:`24844` is fixed::
+        Check that :issue:`24844` is fixed::
 
             sage: # needs sage.rings.finite_rings
             sage: p = next_prime(1000000)
@@ -1538,7 +1538,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             sage: P._line_(P,Q) == a^4 + a^3 + a^2 + 1
             True
 
-        See :trac:`7116`::
+        See :issue:`7116`::
 
             sage: P._line_ (Q,O)                                                        # needs sage.rings.finite_rings
             Traceback (most recent call last):
@@ -1808,7 +1808,7 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
             ...
             ValueError: points must both be n-torsion
 
-        A larger example (see :trac:`4964`)::
+        A larger example (see :issue:`4964`)::
 
             sage: # needs sage.rings.finite_rings
             sage: P, Q = EllipticCurve(GF((19,4),'a'), [-1,0]).gens()
@@ -2337,6 +2337,62 @@ class EllipticCurvePoint_field(SchemeMorphism_point_abelian_variety_field):
         ret = ret**e
         return ret
 
+    def point_of_jacobian_of_curve(self):
+        r"""
+        Return the point in the Jacobian of the curve.
+
+        The Jacobian is the one attached to the projective curve associated
+        with this elliptic curve.
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.finite_rings
+            sage: k.<a> = GF((5,2))
+            sage: E = EllipticCurve(k,[1,0]); E
+            Elliptic Curve defined by y^2 = x^3 + x over Finite Field in a of size 5^2
+            sage: E.order()
+            32
+            sage: P = E([a, 2*a + 4])
+            sage: P
+            (a : 2*a + 4 : 1)
+            sage: P.order()
+            8
+            sage: p = P.point_of_jacobian_of_curve()
+            sage: p
+            [Place (x + 4*a, y + 3*a + 1)]
+            sage: p.order()
+            8
+            sage: Q = 3*P
+            sage: q = Q.point_of_jacobian_of_curve()
+            sage: q == 3*p
+            True
+            sage: G = p.parent()
+            sage: G.order()
+            32
+            sage: G
+            Group of rational points of Jacobian over Finite Field in a of size 5^2 (Hess model)
+            sage: J = G.parent(); J
+            Jacobian of Projective Plane Curve over Finite Field in a of size 5^2
+             defined by x^2*y + y^3 - x*z^2 (Hess model)
+            sage: J.curve() == E.affine_patch(2).projective_closure()
+            True
+        """
+        from sage.schemes.curves.constructor import Curve
+        C = self.curve()
+        A = C.ambient_space()  # projective plane
+        x, y, z = self
+
+        X = Curve(C.defining_ideal().gens(), A)
+        X = X.affine_patch(2).projective_closure()
+        F = X.function_field()
+        P = X(z,x,y).place()
+
+        Pinf = F.places_infinite()[0]
+        assert Pinf.degree() == 1, "no rational point at infinity"
+
+        J = X.jacobian(model='hess', base_div=F.genus()*Pinf)
+        G = J.group(self.base_ring())
+        return G(P - P.degree()*Pinf)
 
 class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
     """
@@ -2646,7 +2702,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         TESTS:
 
-        An example showing that :trac:`8498` is fixed::
+        An example showing that :issue:`8498` is fixed::
 
             sage: E = EllipticCurve('11a1')
             sage: K.<t> = NumberField(x^2 + 47)                                         # needs sage.rings.number_field
@@ -2936,7 +2992,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: Q.height(precision=100)                                               # needs sage.rings.number_field
             0.051111408239968840235886099757
 
-        An example to show that the bug at :trac:`5252` is fixed::
+        An example to show that the bug at :issue:`5252` is fixed::
 
             sage: E = EllipticCurve([1, -1, 1, -2063758701246626370773726978, 32838647793306133075103747085833809114881])
             sage: P = E([-30987785091199, 258909576181697016447])
@@ -2952,7 +3008,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: P.height(precision=100) == P.non_archimedean_local_height(prec=100)+P.archimedean_local_height(prec=100)
             True
 
-        An example to show that the bug at :trac:`8319` is fixed (correct height when the curve is not minimal)::
+        An example to show that the bug at :issue:`8319` is fixed (correct height when the curve is not minimal)::
 
             sage: E = EllipticCurve([-5580472329446114952805505804593498080000,-157339733785368110382973689903536054787700497223306368000000])
             sage: xP = 204885147732879546487576840131729064308289385547094673627174585676211859152978311600/23625501907057948132262217188983681204856907657753178415430361
@@ -2965,7 +3021,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: Q.height()-4*P.height() # long time
             0.000000000000000
 
-        An example to show that the bug at :trac:`12509` is fixed (precision issues)::
+        An example to show that the bug at :issue:`12509` is fixed (precision issues)::
 
             sage: # needs sage.rings.number_field
             sage: x = polygen(QQ)
@@ -2982,7 +3038,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: (2*P).height(precision=1000)/P.height(precision=1000)
             4.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 
-        This shows that the bug reported at :trac:`13951` has been fixed::
+        This shows that the bug reported at :issue:`13951` has been fixed::
 
             sage: E = EllipticCurve([0,17])
             sage: P1 = E(2,5)
@@ -3109,7 +3165,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         TESTS:
 
-        See :trac:`12509`::
+        See :issue:`12509`::
 
             sage: # needs sage.rings.number_field
             sage: x = polygen(QQ)
@@ -3120,7 +3176,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: P.archimedean_local_height()
             -0.220660795546828
 
-        See :trac:`19276`::
+        See :issue:`19276`::
 
             sage: # needs sage.rings.number_field
             sage: K.<a> = NumberField(x^2 - x - 104)
@@ -3129,7 +3185,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: P.height()
             0.974232017827741
 
-        See :trac:`29966`::
+        See :issue:`29966`::
 
             sage: # needs sage.rings.number_field
             sage: K.<a> = NumberField(x^3 - x^2 - 6*x + 2)
@@ -3265,23 +3321,23 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
     def non_archimedean_local_height(self, v=None, prec=None,
                                      weighted=False, is_minimal=None):
         """
-        Compute the local height of self at the non-archimedean place `v`.
+        Compute the local height of ``self`` at the non-archimedean place `v`.
 
         INPUT:
 
         - ``self`` -- a point on an elliptic curve over a number field
           `K`.
 
-        - ``v`` -- a non-archimedean place of `K`, or None (default).
+        - ``v`` -- a non-archimedean place of `K`, or ``None`` (default).
           If `v` is a non-archimedean place, return the local height
-          of self at `v`. If `v` is None, return the total
+          of self at `v`. If `v` is ``None``, return the total
           non-archimedean contribution to the global height.
 
-        - ``prec`` -- integer, or None (default). The precision of the
-          computation. If None, the height is returned symbolically.
+        - ``prec`` -- integer, or ``None`` (default). The precision of the
+          computation. If ``None``, the height is returned symbolically.
 
-        - ``weighted`` -- boolean. If False (default), the height is
-          normalised to be invariant under extension of `K`. If True,
+        - ``weighted`` -- boolean. If ``False`` (default), the height is
+          normalised to be invariant under extension of `K`. If ``True``,
           return this normalised height multiplied by the local degree
           if `v` is a single place, or by the degree of `K` if `v` is
           None.
@@ -3364,7 +3420,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: P.non_archimedean_local_height()
             0
 
-        This shows that the bug reported at :trac:`13951` has been fixed::
+        This shows that the bug reported at :issue:`13951` has been fixed::
 
             sage: E = EllipticCurve([0,17])
             sage: P = E(2,5)
@@ -3527,7 +3583,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: P.elliptic_logarithm(algorithm='sage')  # 100 bits
             0.27656204014107061464076203097
 
-        This shows that the bug reported at :trac:`4901` has been fixed::
+        This shows that the bug reported at :issue:`4901` has been fixed::
 
             sage: E = EllipticCurve("4390c2")
             sage: P = E(683762969925/44944,-565388972095220019/9528128)
@@ -3695,7 +3751,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
 
         .. TODO::
 
-            See comments at :trac:`4805`.  Currently the absolute
+            See comments at :issue:`4805`.  Currently the absolute
             precision of the result may be less than the given value
             of absprec, and error-handling is imperfect.
 
@@ -3717,7 +3773,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             sage: [(5*P).padic_elliptic_logarithm(p)/P.padic_elliptic_logarithm(p) for p in prime_range(12)]  # long time, needs sage.rings.padics
             [1 + 2^2 + O(2^19), 2 + 3 + O(3^20), 5 + O(5^19), 5 + O(7^19), 5 + O(11^19)]
 
-        An example which arose during reviewing :trac:`4741`::
+        An example which arose during reviewing :issue:`4741`::
 
             sage: E = EllipticCurve('794a1')
             sage: P = E(-1,2)
@@ -4161,7 +4217,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
 
         TESTS:
 
-        Check that the order actually gets cached (:trac:`32786`)::
+        Check that the order actually gets cached (:issue:`32786`)::
 
             sage: # needs sage.rings.finite_rings
             sage: E = EllipticCurve(GF(31337), [42,1])

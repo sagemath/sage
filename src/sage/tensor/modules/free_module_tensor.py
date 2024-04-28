@@ -678,7 +678,7 @@ class FreeModuleTensor(ModuleElementWithMutability):
             sage: v.display(format_spec=10)  # 10 bits of precision
             v = 0.33 e_1 - 2.0 e_2
 
-        Check that the bug reported in :trac:`22520` is fixed::
+        Check that the bug reported in :issue:`22520` is fixed::
 
             sage: # needs sage.symbolic
             sage: M = FiniteRankFreeModule(SR, 3, name='M')

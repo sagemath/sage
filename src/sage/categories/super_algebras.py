@@ -87,7 +87,7 @@ class SuperAlgebras(SuperModulesCategory):
                 sage: A.rename(None)
 
             This also works when the other elements do not have
-            a signed tensor product (:trac:`31266`)::
+            a signed tensor product (:issue:`31266`)::
 
                 sage: # needs sage.combinat sage.modules
                 sage: a = SteenrodAlgebra(3).an_element()

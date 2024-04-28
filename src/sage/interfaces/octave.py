@@ -173,7 +173,7 @@ class Octave(Expect):
 
     TESTS:
 
-    We check that the interface can handle large inputs (see :trac:`940`)::
+    We check that the interface can handle large inputs (see :issue:`940`)::
 
         sage: t = '"{}"'.format(10^10000)
         sage: a = octave(t)                     # optional - octave

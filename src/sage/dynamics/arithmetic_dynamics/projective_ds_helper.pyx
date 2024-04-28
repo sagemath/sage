@@ -24,7 +24,7 @@ from sage.rings.finite_rings.finite_field_constructor import GF
 from sage.combinat.subset import subsets
 
 
-cpdef _fast_possible_periods(self, return_points=False) noexcept:
+cpdef _fast_possible_periods(self, return_points=False):
     r"""
     Return the list of possible minimal periods of a periodic point
     over `\QQ` and (optionally) a point in each cycle.
@@ -151,7 +151,8 @@ cpdef _fast_possible_periods(self, return_points=False) noexcept:
     if not return_points:
         return sorted(periods)
     else:
-        return(points_periods)
+        return points_periods
+
 
 def _enum_points(int prime, int dimension):
     """
@@ -198,7 +199,7 @@ cpdef int _hash(list Point, int prime) noexcept:
 
     return hash_q
 
-cpdef list _get_point_from_hash(int value, int prime, int dimension) noexcept:
+cpdef list _get_point_from_hash(int value, int prime, int dimension):
     """
     Hash unique number to point as a list.
 
@@ -240,7 +241,7 @@ cdef inline int _mod_inv(int num, int prime) noexcept:
     else:
         return y
 
-cpdef _normalize_coordinates(list point, int prime, int len_points) noexcept:
+cpdef _normalize_coordinates(list point, int prime, int len_points):
     """
     Normalize the coordinates of the point for the given prime.
 
@@ -269,7 +270,7 @@ cpdef _normalize_coordinates(list point, int prime, int len_points) noexcept:
     for coefficient in range(len_points):
         point[coefficient] = (point[coefficient] * mod_inverse) % prime
 
-cpdef _all_periodic_points(self) noexcept:
+cpdef _all_periodic_points(self):
     """
     Find all periodic points over a finite field.
 

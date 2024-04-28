@@ -1898,7 +1898,7 @@ class RegularSequenceRing(RecognizableSeriesSpace):
             d = len(seq(0)) + len(lines)
 
             # The following search for an inverse works but is inefficient;
-            # see :trac:`35748` for details.
+            # see :issue:`35748` for details.
             for m_indices in cantor_product(xsrange(n_verify), repeat=d, min_slope=1):
                 # Iterate over all increasing lists of length d consisting
                 # of non-negative integers less than `n_verify`.
@@ -2745,7 +2745,7 @@ class RecurrenceParser:
             sage: RP.parse_recurrence([f(2*n) == 0, f(2*n + 1) == 0], f, n)
             (1, 0, {}, {})
 
-        We check that the output is of the correct type (:trac:`33158`)::
+        We check that the output is of the correct type (:issue:`33158`)::
 
             sage: RP = RecurrenceParser(2, QQ)
             sage: equations = [
@@ -2764,7 +2764,7 @@ class RecurrenceParser:
             sage: all(v.parent() == QQ for v in initial_values.values())
             True
 
-        This results in giving the correct (see :trac:`33158`) minimization in::
+        This results in giving the correct (see :issue:`33158`) minimization in::
 
             sage: Seq2 = RegularSequenceRing(2, QQ)
             sage: P = Seq2.from_recurrence(equations, f, n)

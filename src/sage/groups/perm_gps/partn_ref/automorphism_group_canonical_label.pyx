@@ -438,12 +438,12 @@ cdef aut_gp_and_can_lab *get_aut_gp_and_can_lab(void *S,
         int -- 0 if gamma_1(S1) = gamma_2(S2), otherwise -1 or 1 (see docs for cmp),
             such that the set of all structures is well-ordered
 
-    NOTE:
-    The partition ``partition1`` *must* satisfy the property that in each cell,
-    the smallest element occurs first!
+    .. NOTE::
 
-    OUTPUT:
-    pointer to a aut_gp_and_can_lab struct
+        The partition ``partition1`` *must* satisfy the property that in each
+        cell, the smallest element occurs first!
+
+    OUTPUT: a pointer to a ``aut_gp_and_can_lab`` struct
 
     """
     cdef PartitionStack *current_ps

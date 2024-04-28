@@ -1186,7 +1186,7 @@ class CubicalComplex(GenericCellComplex):
             sage: C1.homology(subcomplex=S0)
             {0: 0, 1: Z}
 
-        Check that :trac:`32203` has been fixed::
+        Check that :issue:`32203` has been fixed::
 
             sage: # needs sage.modules
             sage: Square = CubicalComplex([([0,1],[0,1])])

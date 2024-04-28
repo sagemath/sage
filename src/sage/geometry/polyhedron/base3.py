@@ -280,7 +280,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
         TESTS:
 
-        Check that :trac:`28828` is fixed::
+        Check that :issue:`28828` is fixed::
 
             sage: R.incidence_matrix().is_immutable()
             True
@@ -583,7 +583,7 @@ class Polyhedron_base3(Polyhedron_base2):
             sage: list(Polyhedron().face_generator())
             [A -1-dimensional face of a Polyhedron in ZZ^0]
 
-        Check that :trac:`29155` is fixed::
+        Check that :issue:`29155` is fixed::
 
             sage: P = polytopes.permutahedron(3)
             sage: [f] = P.face_generator(2)
@@ -844,7 +844,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
         TESTS:
 
-        Check that :trac:`28828` is fixed::
+        Check that :issue:`28828` is fixed::
 
             sage: P.f_vector().is_immutable()
             True
@@ -1016,7 +1016,7 @@ class Polyhedron_base3(Polyhedron_base2):
 
         TESTS:
 
-        Check that :trac:`28828` is fixed::
+        Check that :issue:`28828` is fixed::
 
                 sage: P.adjacency_matrix().is_immutable()
                 True
@@ -1067,12 +1067,12 @@ class Polyhedron_base3(Polyhedron_base2):
 
         TESTS:
 
-        Check that :trac:`28828` is fixed::
+        Check that :issue:`28828` is fixed::
 
             sage: s4.facet_adjacency_matrix().is_immutable()
             True
 
-        Checks that :trac:`22455` is fixed::
+        Checks that :issue:`22455` is fixed::
 
             sage: s = polytopes.simplex(2)
             sage: s.facet_adjacency_matrix()

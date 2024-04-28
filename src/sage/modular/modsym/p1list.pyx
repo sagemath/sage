@@ -305,7 +305,7 @@ cdef int c_p1_normalize_llong(int N, int u, int v,
 
     TESTS:
 
-    This test reflects :trac:`20932`::
+    This test reflects :issue:`20932`::
 
         sage: N = 3*61379
         sage: import sage.modular.modsym.p1list as p1list
@@ -460,7 +460,7 @@ def p1list_llong(int N):
 
     TESTS:
 
-    This test shows that :trac:`20932` has been resolved::
+    This test shows that :issue:`20932` has been resolved::
 
         sage: import sage.modular.modsym.p1list as p1list
         sage: [(i,j) for (i,j) in p1list.P1List(103809) if i != 1 and i != 3] # not tested -- too long
@@ -991,7 +991,7 @@ cdef class P1List():
         _, j = search(self.__list, (uu,vv))
         return j
 
-    cpdef index(self, int u, int v) noexcept:
+    cpdef index(self, int u, int v):
         r"""
         Return the index of the class of `(u,v)` in the fixed list
         of representatives of
@@ -1034,7 +1034,7 @@ cdef class P1List():
         except KeyError:
             return -1
 
-    cdef index_and_scalar(self, int u, int v, int* i, int* s) noexcept:
+    cdef index_and_scalar(self, int u, int v, int* i, int* s):
         r"""
         Compute the index of the class of `(u,v)` in the fixed list
         of representatives of `\mathbb{P}^1(\ZZ/N\ZZ)` and scalar s

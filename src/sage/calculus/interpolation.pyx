@@ -163,7 +163,7 @@ cdef class Spline:
             sage: S
             [(1, 1), (4, 5)]
 
-        The spline is recomputed when points are deleted (:trac:`13519`)::
+        The spline is recomputed when points are deleted (:issue:`13519`)::
 
             sage: S = spline([(1,1), (2,3), (4,5), (5, 5)]); S
             [(1, 1), (2, 3), (4, 5), (5, 5)]
@@ -185,7 +185,7 @@ cdef class Spline:
             sage: S = spline([(1,1), (2,3), (4,5)]); S.append((5,7)); S
             [(1, 1), (2, 3), (4, 5), (5, 7)]
 
-        The spline is recomputed when points are appended (:trac:`13519`)::
+        The spline is recomputed when points are appended (:issue:`13519`)::
 
             sage: S = spline([(1,1), (2,3), (4,5)]); S
             [(1, 1), (2, 3), (4, 5)]
@@ -209,7 +209,7 @@ cdef class Spline:
             sage: S = spline([(1,1), (2,3), (4,5)]); S.list()
             [(1, 1), (2, 3), (4, 5)]
 
-        This is a copy of the list, not a reference (:trac:`13530`)::
+        This is a copy of the list, not a reference (:issue:`13530`)::
 
             sage: S = spline([(1,1), (2,3), (4,5)])
             sage: L = S.list(); L
@@ -243,7 +243,7 @@ cdef class Spline:
         """
         return str(self.v)
 
-    cdef start_interp(self) noexcept:
+    cdef start_interp(self):
         if self.started:
             sig_free(self.x)
             sig_free(self.y)
@@ -271,7 +271,7 @@ cdef class Spline:
         gsl_spline_init (self.spline, self.x, self.y, n)
         self.started = 1
 
-    cdef stop_interp(self) noexcept:
+    cdef stop_interp(self):
         if not self.started:
             return
         sig_free(self.x)

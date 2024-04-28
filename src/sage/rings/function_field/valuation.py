@@ -303,7 +303,7 @@ class FunctionFieldValuationFactory(UniqueFactory):
             sage: w = GaussValuation(R, valuations.TrivialValuation(QQ)).augmentation(x - 1, 1)
             sage: v = K.valuation(w) # indirect doctest
 
-        Check that :trac:`25294` has been resolved::
+        Check that :issue:`25294` has been resolved::
 
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]

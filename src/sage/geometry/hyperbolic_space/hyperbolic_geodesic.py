@@ -1592,7 +1592,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
 
         TESTS:
 
-        Check the result is independent of the order (:trac:`29936`)::
+        Check the result is independent of the order (:issue:`29936`)::
 
             sage: def bisector_gets_midpoint(a, b):
             ....:     UHP = HyperbolicPlane().UHP()
@@ -1653,7 +1653,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
 
         TESTS:
 
-        This checks :trac:`20330` so that geodesics defined by symbolic
+        This checks :issue:`20330` so that geodesics defined by symbolic
         expressions do not generate runtime errors. ::
 
             sage: g=HyperbolicPlane().UHP().get_geodesic(-1+I,1+I)
@@ -1672,7 +1672,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             sage: parent(g.midpoint().coordinates())
             Complex Field with 53 bits of precision
 
-        Check that the midpoint is independent of the order (:trac:`29936`)::
+        Check that the midpoint is independent of the order (:issue:`29936`)::
 
             sage: g = UHP.get_geodesic(1+I, 2+0.5*I)
             sage: h = UHP.get_geodesic(2+0.5*I, 1+I)

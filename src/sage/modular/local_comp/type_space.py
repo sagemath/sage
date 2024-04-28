@@ -371,7 +371,7 @@ class TypeSpace(SageObject):
             sage: TypeSpace(g, 7).is_minimal()
             True
 
-        Test that :trac:`13158` is fixed::
+        Test that :issue:`13158` is fixed::
 
             sage: f = Newforms(256,names='a')[0]
             sage: T = TypeSpace(f,2)                            # long time

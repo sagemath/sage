@@ -542,7 +542,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             sage: b^125 == b
             True
 
-        We check that :trac:`23736` is resolved::
+        We check that :issue:`23736` is resolved::
 
             sage: # needs sage.libs.ntl
             sage: R.teichmuller(GF(5)(2))
@@ -582,7 +582,7 @@ class pAdicGeneric(PrincipalIdealDomain, LocalGeneric):
             sage: R.teichmuller_system()
             [1, 242]
 
-        Check that :trac:`20457` is fixed::
+        Check that :issue:`20457` is fixed::
 
             sage: F.<a> = Qq(5^2,6)                                                     # needs sage.libs.ntl
             sage: F.teichmuller_system()[3]                                             # needs sage.libs.ntl

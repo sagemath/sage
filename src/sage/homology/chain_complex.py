@@ -418,6 +418,15 @@ class Chain_class(ModuleElement):
                d_2       d_1       d_0  [1]  d_-1
             0 <---- [0] <---- [4] <---- [2] <----- 0
                               [5]       [3]
+
+        TESTS:
+
+        check that :issue:`37678` is fixed::
+
+            sage: C = ChainComplex(base_ring=ZZ)
+            sage: ascii_art(C())
+            0
+
         """
         from sage.typeset.ascii_art import AsciiArt
 
@@ -444,6 +453,8 @@ class Chain_class(ModuleElement):
             for n in ordered:
                 result_ordered += arrow_art(n) + vector_art(n)
             result = [result_ordered] + result
+        if len(result) == 0:
+            return AsciiArt(['0'])
         concatenated = result[0]
         for r in result[1:]:
             concatenated += AsciiArt([' ... ']) + r
@@ -465,6 +476,12 @@ class Chain_class(ModuleElement):
                                         ⎛1⎞
                d_2       d_1  ⎛4⎞  d_0  ⎜2⎟  d_-1
             0 <──── (0) <──── ⎝5⎠ <──── ⎝3⎠ <───── 0
+            sage: unicode_art(C())
+                                        ⎛0⎞
+               d_2       d_1  ⎛0⎞  d_0  ⎜0⎟  d_-1
+            0 <──── (0) <──── ⎝0⎠ <──── ⎝0⎠ <───── 0
+            sage: unicode_art(ChainComplex())
+            0
         """
         from sage.typeset.unicode_art import UnicodeArt
 
@@ -492,6 +509,8 @@ class Chain_class(ModuleElement):
             for n in ordered:
                 result_ordered += arrow_art(n) + vector_art(n)
             result = [result_ordered] + result
+        if len(result) == 0:
+            return UnicodeArt([u'0'])
         concatenated = result[0]
         for r in result[1:]:
             concatenated += UnicodeArt([u' ... ']) + r
@@ -1193,7 +1212,7 @@ class ChainComplex_class(Parent):
 
         - ``generators`` -- boolean (optional, default ``False``); if
           ``True``, return generators for the homology groups along with
-          the groups. See :trac:`6100`
+          the groups. See :issue:`6100`
 
         - ``verbose`` - boolean (optional, default ``False``); if
           ``True``, print some messages as the homology is computed
@@ -1239,7 +1258,7 @@ class ChainComplex_class(Parent):
         CHomP. CHomP is available at the web page
         http://chomp.rutgers.edu/, although the software has not been
         tested recently in Sage. The use of this option is deprecated;
-        see :trac:`33777`.
+        see :issue:`33777`.
 
         As of this writing, ``'pari'`` is the fastest standard option.
 
@@ -1267,7 +1286,7 @@ class ChainComplex_class(Parent):
             sage: C.homology(1, generators=True)
             [(C3, Chain(1:(1, 0))), (Z, Chain(1:(0, 1)))]
 
-        Tests for :trac:`6100`, the Klein bottle with generators::
+        Tests for :issue:`6100`, the Klein bottle with generators::
 
             sage: d0 = matrix(ZZ, 0,1)
             sage: d1 = matrix(ZZ, 1,3, [[0,0,0]])
@@ -1775,6 +1794,8 @@ class ChainComplex_class(Parent):
             sage: ascii_art(D)
                         [1]                             [1]       [0]       [1]
              0 <-- C_7 <---- C_6 <-- 0  ...  0 <-- C_3 <---- C_2 <---- C_1 <---- C_0 <-- 0
+             sage: ascii_art(ChainComplex(base_ring=ZZ))
+             0
         """
         from sage.typeset.ascii_art import AsciiArt
 
@@ -1803,6 +1824,8 @@ class ChainComplex_class(Parent):
             for n in ordered:
                 result_ordered += arrow_art(n) + module_art(n)
             result = [result_ordered] + result
+        if len(result) == 0:
+            return AsciiArt(['0'])
         concatenated = result[0]
         for r in result[1:]:
             concatenated += AsciiArt([' ... ']) + r
@@ -1828,6 +1851,14 @@ class ChainComplex_class(Parent):
             sage: unicode_art(D)
                       (1)                           (1)     (0)     (1)
             0 <── C_7 <── C_6 <── 0  ...  0 <── C_3 <── C_2 <── C_1 <── C_0 <── 0
+
+        TESTS:
+
+        check that :issue:`37678` is fixed::
+
+            sage: C = ChainComplex(base_ring=ZZ)
+            sage: unicode_art(C)
+            0
         """
         from sage.typeset.unicode_art import UnicodeArt
 
@@ -1856,6 +1887,8 @@ class ChainComplex_class(Parent):
             for n in ordered:
                 result_ordered += arrow_art(n) + module_art(n)
             result = [result_ordered] + result
+        if len(result) == 0:
+            return UnicodeArt([u'0'])
         concatenated = result[0]
         for r in result[1:]:
             concatenated += UnicodeArt([u' ... ']) + r
@@ -2140,7 +2173,7 @@ class ChainComplex_class(Parent):
                              [ x -y]            [x]
              0 <-- C_(8, 3) <-------- C_(6, 2) <---- C_(4, 1) <-- 0
 
-        Check that :trac:`21760` is fixed::
+        Check that :issue:`21760` is fixed::
 
             sage: C = ChainComplex({0: matrix(ZZ, 0, 2)}, degree=-1)
             sage: ascii_art(C)

@@ -6,10 +6,10 @@ AUTHORS:
 - Robert Bradshaw: initial implementation
 
 - Sebastien Besnier (2014-05-5): :class:`FormalCompositeMap` contains
-  a list of Map instead of only two Map. See :trac:`16291`.
+  a list of Map instead of only two Map. See :issue:`16291`.
 
 - Sebastian Oehms   (2019-01-19): :meth:`section` added to :class:`FormalCompositeMap`.
-  See :trac:`27081`.
+  See :issue:`27081`.
 """
 # ****************************************************************************
 #       Copyright (C) 2008 Robert Bradshaw <robertwb@math.washington.edu>
@@ -264,7 +264,7 @@ cdef class Map(Element):
             sage: Q = QuadraticField(-5)                                                # needs sage.rings.number_field
             sage: phi = CDF._internal_convert_map_from(Q)                               # needs sage.rings.number_field
 
-        By :trac:`14711`, maps used in the coercion and conversion system
+        By :issue:`14711`, maps used in the coercion and conversion system
         use *weak* references to domain and codomain, in contrast to other
         maps::
 
@@ -332,7 +332,7 @@ cdef class Map(Element):
             sage: Q = QuadraticField(-5)                                                # needs sage.rings.number_field
             sage: phi = CDF._internal_convert_map_from(Q)                               # needs sage.rings.number_field
 
-        By :trac:`14711`, maps used in the coercion and conversion system
+        By :issue:`14711`, maps used in the coercion and conversion system
         use *weak* references to domain and codomain, in contrast to other
         maps::
 
@@ -389,7 +389,7 @@ cdef class Map(Element):
         self.domain = ConstantFunction(D)
         self._parent = homset.Hom(D, C, self._category_for)
 
-    cdef _update_slots(self, dict slots) noexcept:
+    cdef _update_slots(self, dict slots):
         """
         Set various attributes of this map to implement unpickling.
 
@@ -451,7 +451,7 @@ cdef class Map(Element):
         """
         self._update_slots(_slots)
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Return a dict with attributes to pickle and copy this map.
         """
@@ -718,7 +718,7 @@ cdef class Map(Element):
 
         We test that the map can be applied to something that converts
         (but not coerces) into the domain and can *not* be dealt with
-        by :meth:`pushforward` (see :trac:`10496`)::
+        by :meth:`pushforward` (see :issue:`10496`)::
 
             sage: D = {(0, 2): -1, (0, 0): -1, (1, 1): 7, (2, 0): 1/3}
             sage: phi(D)
@@ -736,7 +736,7 @@ cdef class Map(Element):
             but a `pushforward` method is not properly implemented
 
         We test that the default call method really works as described
-        above (that was fixed in :trac:`10496`)::
+        above (that was fixed in :issue:`10496`)::
 
             sage: class FOO(Map):
             ....:   def _call_(self, x):
@@ -816,7 +816,7 @@ cdef class Map(Element):
             return self._call_(x)
         return self._call_with_args(x, args, kwds)
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         Call method with a single argument, not implemented in the base class.
 
@@ -831,7 +831,7 @@ cdef class Map(Element):
         """
         raise NotImplementedError(type(self))
 
-    cpdef Element _call_with_args(self, x, args=(), kwds={}) noexcept:
+    cpdef Element _call_with_args(self, x, args=(), kwds={}):
         """
         Call method with multiple arguments, not implemented in the base class.
 
@@ -1222,7 +1222,7 @@ cdef class Map(Element):
         """
         raise NotImplementedError(type(self))
 
-    cpdef _pow_int(self, n) noexcept:
+    cpdef _pow_int(self, n):
         """
         TESTS::
 
@@ -1272,7 +1272,7 @@ cdef class Map(Element):
 
     def section(self):
         """
-        Return a section of self.
+        Return a section of ``self``.
 
         .. NOTE::
 
@@ -1368,7 +1368,7 @@ cdef class Section(Map):
         Map.__init__(self, Hom(map.codomain(), map.domain(), SetsWithPartialMaps()))
         self._inverse = map    # TODO: Use this attribute somewhere!
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Helper for pickling and copying.
 
@@ -1387,7 +1387,7 @@ cdef class Section(Map):
         slots['_inverse'] = self._inverse
         return slots
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         Helper for pickling and copying.
 
@@ -1438,6 +1438,7 @@ cdef class Section(Map):
                     y |--> x - y
         """
         return self._inverse
+
 
 cdef class FormalCompositeMap(Map):
     """
@@ -1576,7 +1577,7 @@ cdef class FormalCompositeMap(Map):
         """
         return FormalCompositeMap(self.parent(), [f.__copy__() for f in self.__list])
 
-    cdef _update_slots(self, dict _slots) noexcept:
+    cdef _update_slots(self, dict _slots):
         """
         Used in pickling and copying.
 
@@ -1595,7 +1596,7 @@ cdef class FormalCompositeMap(Map):
         self.__list = _slots['__list']
         Map._update_slots(self, _slots)
 
-    cdef dict _extra_slots(self) noexcept:
+    cdef dict _extra_slots(self):
         """
         Used in pickling and copying.
 
@@ -1708,7 +1709,7 @@ cdef class FormalCompositeMap(Map):
         """
         return self.__list[i]
 
-    cpdef Element _call_(self, x) noexcept:
+    cpdef Element _call_(self, x):
         """
         Call with a single argument
 
@@ -1726,7 +1727,7 @@ cdef class FormalCompositeMap(Map):
             x = f._call_(x)
         return x
 
-    cpdef Element _call_with_args(self, x, args=(), kwds={}) noexcept:
+    cpdef Element _call_with_args(self, x, args=(), kwds={}):
         """
         Additional arguments are only passed to the last applied map.
 
@@ -1920,7 +1921,7 @@ cdef class FormalCompositeMap(Map):
 
         TESTS:
 
-        Check that :trac:`23205` has been resolved::
+        Check that :issue:`23205` has been resolved::
 
             sage: f = QQ.hom(QQbar) * ZZ.hom(QQ)                                        # needs sage.rings.number_field
             sage: f.is_injective()                                                      # needs sage.rings.number_field
@@ -2087,7 +2088,7 @@ cdef class FormalCompositeMap(Map):
             sage: ZZ(3*x + 45)              # indirect doctest
             Traceback (most recent call last):
             ...
-            TypeError: not a constant polynomial
+            TypeError: 3*x + 45 is not a constant polynomial
         """
         sections = []
         for m in reversed(list(self)):

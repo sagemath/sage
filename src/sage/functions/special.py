@@ -269,7 +269,7 @@ class SphericalHarmonic(BuiltinFunction):
             sage: spherical_harmonic(3 + I, 2., 1, 2)
             -0.351154337307488 - 0.415562233975369*I
 
-        Check that :trac:`20939` is fixed::
+        Check that :issue:`20939` is fixed::
 
             sage: ex = spherical_harmonic(3, 2, 1, 2*pi/3)                              # needs sage.symbolic
             sage: QQbar(ex * sqrt(pi)/cos(1)/sin(1)^2).minpoly()                        # needs sage.rings.number_field sage.symbolic
@@ -277,7 +277,7 @@ class SphericalHarmonic(BuiltinFunction):
 
         Check whether Sage yields correct results compared to Maxima,
         up to the Condon-Shortley phase factor `(-1)^m`
-        (see :trac:`25034` and :trac:`33117`)::
+        (see :issue:`25034` and :issue:`33117`)::
 
             sage: # needs sage.symbolic
             sage: spherical_harmonic(1, 1, pi/3, pi/6).n()  # abs tol 1e-14
@@ -289,7 +289,7 @@ class SphericalHarmonic(BuiltinFunction):
             sage: maxima.spherical_harmonic(1, -1, pi/3, pi/6).n()  # abs tol 1e-14
             -0.259120612103502 + 0.149603355150537*I
 
-        Check that :trac:`33501` is fixed::
+        Check that :issue:`33501` is fixed::
 
             sage: spherical_harmonic(2, 1, x, y)                                        # needs sage.symbolic
             -1/4*sqrt(6)*sqrt(5)*cos(x)*e^(I*y)*sin(x)/sqrt(pi)
@@ -344,7 +344,7 @@ class SphericalHarmonic(BuiltinFunction):
             sage: Ynm.diff(phi)
             I*m*spherical_harmonic(n, m, theta, phi)
 
-        Check that :trac:`33117` is fixed::
+        Check that :issue:`33117` is fixed::
 
             sage: # needs sage.symbolic
             sage: DY_theta.subs({n: 1, m: 0})
@@ -436,7 +436,7 @@ def elliptic_j(z, prec=53):
         640320
 
     This example shows the need for higher precision than the default one of
-    the `ComplexField`, see :trac:`28355`::
+    the `ComplexField`, see :issue:`28355`::
 
         sage: # needs sage.symbolic
         sage: -elliptic_j(tau)  # rel tol 1e-2
@@ -508,7 +508,7 @@ class EllipticE(BuiltinFunction):
             sage: elliptic_e(x, x)._sympy_()                                            # needs sympy sage.symbolic
             elliptic_e(x, x)
 
-        Check that :trac:`34085` is fixed::
+        Check that :issue:`34085` is fixed::
 
             sage: _ = var("x y")                                                        # needs sage.symbolic
             sage: fricas(elliptic_e(x, y))                                          # optional - fricas, needs sage.symbolic
@@ -585,7 +585,7 @@ class EllipticE(BuiltinFunction):
 
         TESTS:
 
-        This gave an error in Maxima (:trac:`15046`)::
+        This gave an error in Maxima (:issue:`15046`)::
 
             sage: elliptic_e(2.5, 2.5)                                                  # needs mpmath
             0.535647771608740 + 1.63996015168665*I
@@ -874,7 +874,7 @@ class EllipticF(BuiltinFunction):
             sage: elliptic_f(x, 2)._sympy_()                                            # needs sympy sage.symbolic
             elliptic_f(x, 2)
 
-        Check that :trac:`34186` is fixed::
+        Check that :issue:`34186` is fixed::
 
             sage: _ = var("x y")                                                        # needs sage.symbolic
             sage: fricas(elliptic_f(x, y))                                          # optional - fricas, needs sage.symbolic
@@ -1040,7 +1040,7 @@ class EllipticKC(BuiltinFunction):
         TESTS:
 
         Check if complex numbers in the arguments are converted to maxima
-        correctly (see :trac:`7557`)::
+        correctly (see :issue:`7557`)::
 
             sage: t = jacobi_sn(1.2 + 2*I*elliptic_kc(1 - .5), .5)                      # needs sage.symbolic
             sage: maxima(t)  # abs tol 1e-13                                            # needs sage.symbolic
