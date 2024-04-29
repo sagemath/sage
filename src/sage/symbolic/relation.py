@@ -145,7 +145,7 @@ We can solve equations::
     sage: solve(z^2 == sqrt(3),z)
     Traceback (most recent call last):
     ...
-    TypeError: 5 is not a valid variable.
+    TypeError: 5 is not a symbolic variable.
 
 We can also solve equations involving matrices. The following
 example defines a multivariable function ``f(x,y)``, then solves
@@ -699,7 +699,7 @@ def solve(f, *args, **kwds):
         sage: solve([8*z + y == 3, -z +7*y == 0],y,z)
         Traceback (most recent call last):
         ...
-        TypeError: 5 is not a valid variable.
+        TypeError: 5 is not a symbolic variable.
 
     If we ask for dictionaries containing the solutions, we get them::
 
@@ -985,22 +985,22 @@ def solve(f, *args, **kwds):
         sage: solve([a+b+a*b == 1], a)
         Traceback (most recent call last):
         ...
-        TypeError: a is not a valid variable.
+        TypeError: a is not a symbolic variable.
         sage: a,b = var('a,b')
         sage: solve([a+b+a*b == 1], a)
         [a == -(b - 1)/(b + 1)]
         sage: solve([a, b], (1, a))
         Traceback (most recent call last):
         ...
-        TypeError: 1 is not a valid variable.
+        TypeError: 1 is not a symbolic variable.
         sage: solve([x == 1], (1, a))
         Traceback (most recent call last):
         ...
-        TypeError: 1 is not a valid variable.
+        TypeError: 1 is not a symbolic variable.
         sage: x.solve((1,2))
         Traceback (most recent call last):
         ...
-        TypeError: 1 is not a valid variable.
+        TypeError: 1 is not a symbolic variable.
 
     Test that the original version of a system in the French Sage book
     now works (:issue:`14306`)::
@@ -1043,7 +1043,7 @@ def solve(f, *args, **kwds):
     if isinstance(x, (list, tuple)):
         for i in x:
             if not isinstance(i, Expression):
-                raise TypeError("%s is not a valid variable." % repr(i))
+                raise TypeError("%s is not a symbolic variable." % repr(i))
     elif x is None:
         vars = f.variables()
         if len(vars) == 0:
@@ -1053,7 +1053,7 @@ def solve(f, *args, **kwds):
                 return []
         x = vars[0]
     elif not isinstance(x, Expression):
-        raise TypeError("%s is not a valid variable." % repr(x))
+        raise TypeError("%s is not a symbolic variable." % repr(x))
 
     if isinstance(f, (list, tuple)) and len(f) == 1:
         # f is a list with a single element
@@ -1081,7 +1081,7 @@ def solve(f, *args, **kwds):
 
     for v in variables:
         if not (isinstance(v, Expression) and v.is_symbol()):
-            raise TypeError("%s is not a valid variable." % repr(v))
+            raise TypeError("%s is not a symbolic variable." % repr(v))
 
     try:
         f = [s for s in f if s is not True]
