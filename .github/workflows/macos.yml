@@ -93,7 +93,7 @@ jobs:
         run: |
           "${{ steps.python.outputs.python-path }}" -m pip install pipx
       - name: Download upstream artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: upstream
           name: ${{ inputs.upstream_artifact }}
@@ -110,7 +110,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           SAGE_CI_FIXES_FROM_REPOSITORIES: ${{ vars.SAGE_CI_FIXES_FROM_REPOSITORIES }}
 
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           path: sage-local-artifact
           name: ${{ env.LOCAL_ARTIFACT_NAME }}

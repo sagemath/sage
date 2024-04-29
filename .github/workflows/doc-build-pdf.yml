@@ -68,7 +68,7 @@ jobs:
           .ci/retrofit-worktree.sh worktree-image /sage
 
       - name: Download upstream artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           path: upstream
           name: upstream
