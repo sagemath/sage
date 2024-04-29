@@ -84,7 +84,7 @@ class HeckeAlgebraElement(AlgebraElement):
             sage: sage.modular.hecke.hecke_operator.HeckeAlgebraElement(R)  # please don't do this!
             Generic element of a structure
         """
-        if not isinstance(parent, algebra.HeckeAlgebra):
+        if not isinstance(parent, algebra.HeckeAlgebra_base):
             raise TypeError("parent (=%s) must be a Hecke algebra" % parent)
         AlgebraElement.__init__(self, parent)
 
