@@ -307,10 +307,16 @@ def is_QuaternionAlgebra(A):
     EXAMPLES::
 
         sage: sage.algebras.quatalg.quaternion_algebra.is_QuaternionAlgebra(QuaternionAlgebra(QQ,-1,-1))
+        doctest:warning...
+        DeprecationWarning: the function is_QuaternionAlgebra is deprecated;
+        use 'isinstance(..., QuaternionAlgebra_abstract)' instead
+        See https://github.com/sagemath/sage/issues/37895 for details.
         True
         sage: sage.algebras.quatalg.quaternion_algebra.is_QuaternionAlgebra(ZZ)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37895, "the function is_QuaternionAlgebra is deprecated; use 'isinstance(..., QuaternionAlgebra_abstract)' instead")
     return isinstance(A, QuaternionAlgebra_abstract)
 
 
