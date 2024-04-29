@@ -93,6 +93,7 @@ class MatrixMorphism_abstract(sage.categories.morphism.Morphism):
     det = determinant = FiniteDimensionalModulesWithBasis.Homsets.Endset.ElementMethods.determinant
     fcp = FiniteDimensionalModulesWithBasis.Homsets.Endset.ElementMethods.fcp
     trace = FiniteDimensionalModulesWithBasis.Homsets.Endset.ElementMethods.trace
+    rank = FiniteDimensionalModulesWithBasis.MorphismMethods.rank
 
     def __init__(self, parent, side='left'):
         """
