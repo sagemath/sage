@@ -58,6 +58,7 @@ from sage.misc.lazy_import import lazy_import
 from sage.features import PythonModule
 lazy_import('sage.matrix.matrix_gfpn_dense', ['Matrix_gfpn_dense'],
             feature=PythonModule('sage.matrix.matrix_gfpn_dense', spkg='meataxe'))
+lazy_import('sage.groups.matrix_gps.matrix_group', ['MatrixGroup_base'])
 
 _Rings = Rings()
 _Fields = Fields()
@@ -1392,14 +1393,8 @@ class MatrixSpace(UniqueRepresentation, Parent):
             pass
         else:
             MS = meth_matrix_space()
-
-            try:
-                from sage.groups.matrix_gps.matrix_group import is_MatrixGroup
-            except ImportError:
-                pass
-            else:
-                if is_MatrixGroup(S):
-                    return self.has_coerce_map_from(MS)
+            if isinstance(S, MatrixGroup_base):
+                return self.has_coerce_map_from(MS)
 
             try:
                 from sage.modular.arithgroup.arithgroup_generic import is_ArithmeticSubgroup
