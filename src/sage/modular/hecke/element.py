@@ -156,7 +156,7 @@ class HeckeModuleElement(ModuleElement):
         EXAMPLES::
 
             sage: M = ModularSymbols(11, 2)
-            sage: M.0 == M.1 # indirect doctest
+            sage: M.0 == M.1  # indirect doctest
             False
             sage: M.0 == (M.1 + M.0 - M.1)
             True

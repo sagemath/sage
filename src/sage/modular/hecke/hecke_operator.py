@@ -81,7 +81,7 @@ class HeckeAlgebraElement(AlgebraElement):
         EXAMPLES::
 
             sage: R = ModularForms(Gamma0(7), 4).hecke_algebra()
-            sage: sage.modular.hecke.hecke_operator.HeckeAlgebraElement(R) # please don't do this!
+            sage: sage.modular.hecke.hecke_operator.HeckeAlgebraElement(R)  # please don't do this!
             Generic element of a structure
         """
         if not isinstance(parent, algebra.HeckeAlgebra):
@@ -97,9 +97,9 @@ class HeckeAlgebraElement(AlgebraElement):
 
             sage: R = ModularForms(Gamma0(7), 4).hecke_algebra()
             sage: sage.modular.hecke.hecke_operator.HeckeAlgebraElement(R).domain()
-             Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) of weight 4 over Rational Field
+            Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7)
+             of weight 4 over Rational Field
         """
-
         return self.parent().module()
 
     def codomain(self):
@@ -111,7 +111,8 @@ class HeckeAlgebraElement(AlgebraElement):
 
             sage: R = ModularForms(Gamma0(7), 4).hecke_algebra()
             sage: sage.modular.hecke.hecke_operator.HeckeAlgebraElement(R).codomain()
-            Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) of weight 4 over Rational Field
+            Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7)
+             of weight 4 over Rational Field
         """
         return self.parent().module()
 
@@ -125,7 +126,8 @@ class HeckeAlgebraElement(AlgebraElement):
             sage: M = ModularSymbols(Gamma1(13))
             sage: t = M.hecke_operator(2)
             sage: t
-            Hecke operator T_2 on Modular Symbols space of dimension 15 for Gamma_1(13) of weight 2 with sign 0 over Rational Field
+            Hecke operator T_2 on Modular Symbols space of dimension 15 for Gamma_1(13)
+             of weight 2 with sign 0 over Rational Field
             sage: t.hecke_module_morphism()
             Hecke module morphism T_2 defined by the matrix
             [ 2  0  0  0  0  0  0  1  0  0  1  0  0  0  0]
@@ -143,7 +145,7 @@ class HeckeAlgebraElement(AlgebraElement):
             [ 0  0  0  0  0  1  1  0  0  1  0  0  0  0  0]
             [ 0  0  0  0  0  1  0  0  1 -1  2  0  0  0 -1]
             [ 0  0  0  0  0  0  0  0  0  1  0 -1  2  0 -1]
-            Domain: Modular Symbols space of dimension 15 for Gamma_1(13) of weight ...
+            Domain:   Modular Symbols space of dimension 15 for Gamma_1(13) of weight ...
             Codomain: Modular Symbols space of dimension 15 for Gamma_1(13) of weight ...
         """
         try:

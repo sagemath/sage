@@ -106,21 +106,21 @@ class HeckeModuleHomspace(HomsetWithBase):
             [ -7   0   0]
             [  0   1 240]
             [  0   0 343]
-            Domain: Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) ...
+            Domain:   Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) ...
             Codomain: Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) ...
             sage: H(H(M.hecke_operator(7)))
             Hecke module morphism T_7 defined by the matrix
             [ -7   0   0]
             [  0   1 240]
             [  0   0 343]
-            Domain: Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) ...
+            Domain:   Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) ...
             Codomain: Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) ...
             sage: H(matrix(QQ, 3, srange(9)))
             Hecke module morphism defined by the matrix
             [0 1 2]
             [3 4 5]
             [6 7 8]
-            Domain: Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) ...
+            Domain:   Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) ...
             Codomain: Modular Forms space of dimension 3 for Congruence Subgroup Gamma0(7) ...
 
         TESTS:
@@ -128,7 +128,7 @@ class HeckeModuleHomspace(HomsetWithBase):
         Make sure that the element is created correctly when the codomain is
         not the full module (related to :issue:`21497`)::
 
-            sage: M = ModularSymbols(Gamma0(3),weight=22,sign=1)
+            sage: M = ModularSymbols(Gamma0(3), weight=22, sign=1)
             sage: S = M.cuspidal_subspace()
             sage: H = S.Hom(S)
             sage: H(S.gens())
@@ -139,7 +139,7 @@ class HeckeModuleHomspace(HomsetWithBase):
             [0 0 0 1 0 0]
             [0 0 0 0 1 0]
             [0 0 0 0 0 1]
-            Domain: Modular Symbols subspace of dimension 6 of Modular Symbols space ...
+            Domain:   Modular Symbols subspace of dimension 6 of Modular Symbols space ...
             Codomain: Modular Symbols subspace of dimension 6 of Modular Symbols space ...
 
             sage: H.zero() in H
@@ -195,7 +195,7 @@ class HeckeModuleHomspace(HomsetWithBase):
             Hecke module morphism defined by the matrix
             [      260 -2108/135]
             [     4860      -284]
-            Domain: Modular Symbols subspace of dimension 2 of Modular Symbols space ...
+            Domain:   Modular Symbols subspace of dimension 2 of Modular Symbols space ...
             Codomain: Modular Symbols subspace of dimension 2 of Modular Symbols space ...
         """
         if self.domain() != self.codomain():
