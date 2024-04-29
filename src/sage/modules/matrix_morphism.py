@@ -1579,9 +1579,8 @@ class MatrixMorphism(MatrixMorphism_abstract):
           a sequence that indexes a subfamily of either ``domain_basis`` or
           ``codomain_basis``, depending on ``side``.
 
-          If ``None``, the basis has to be finite, and the order of
-          the rows or columns matches with the order in which the
-          basis is enumerated.
+          If ``None``, the order of the rows or columns matches with
+          the order in which the basis is enumerated.
 
         OUTPUT: a tuple consisting of:
 
@@ -1597,8 +1596,43 @@ class MatrixMorphism(MatrixMorphism_abstract):
 
         EXAMPLES::
 
+            sage: V = ZZ^2; W = ZZ^3
+            sage: m = column_matrix([3*V.0 - 5*V.1, 4*V.0 + 2*V.1, V.0 + V.1])
+            sage: phi = V.hom(m, W)
+            sage: phi._matrix_side_bases_orders(side='any')
+            (                               [
+                                   [        (1, 0, 0),
+                                   (1, 0),  (0, 1, 0),
+              [ 3  4  1]           (0, 1)   (0, 0, 1)
+              [-5  2  1], 'right', ]      , ]         , range(0, 2), range(0, 3) )
+            sage: _[0] is phi._matrix
+            True
+            sage: phi._matrix_side_bases_orders(side='right')
+            (                               [
+                                   [        (1, 0, 0),
+                                   (1, 0),  (0, 1, 0),
+              [ 3  4  1]           (0, 1)   (0, 0, 1)
+              [-5  2  1], 'right', ]      , ]         , range(0, 2), range(0, 3) )
+            sage: _[0] is phi._matrix
+            True
+            sage: phi._matrix_side_bases_orders(side='left')
+            (                           [
+                               [        (1, 0, 0),
+              [ 3 -5]          (1, 0),  (0, 1, 0),
+              [ 4  2]          (0, 1)   (0, 0, 1)
+              [ 1  1], 'left', ]      , ]         , range(0, 3), range(0, 2) )
+            sage: _[0].parent()
+            Full MatrixSpace of 3 by 2 dense matrices over Integer Ring
+            sage: phi._matrix_side_bases_orders(base_ring=QQ)
+            (                           [
+                               [        (1, 0, 0),
+              [ 3 -5]          (1, 0),  (0, 1, 0),
+              [ 4  2]          (0, 1)   (0, 0, 1)
+              [ 1  1], 'left', ]      , ]         , range(0, 3), range(0, 2) )
+            sage: _[0].parent()
+            Full MatrixSpace of 3 by 2 dense matrices over Rational Field
         """
-        if base_ring is not None or base_ring != self._matrix.base_ring() \
+        if (base_ring is not None and base_ring != self._matrix.base_ring()) \
            or row_order is not None or column_order is not None:
             # Delegate to general method from category
             return ModulesWithBasis.MorphismMethods._matrix_side_bases_orders(
