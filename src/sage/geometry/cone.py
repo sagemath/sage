@@ -258,6 +258,9 @@ def is_Cone(x):
 
         sage: from sage.geometry.cone import is_Cone
         sage: is_Cone(1)
+        doctest:warning...
+        DeprecationWarning: is_Cone is deprecated, use isinstance instead
+        See https://github.com/sagemath/sage/issues/34307 for details.
         False
         sage: quadrant = Cone([(1,0), (0,1)])
         sage: quadrant

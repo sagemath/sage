@@ -9,6 +9,8 @@ Parents for Polyhedra
 #                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
+import sage.geometry.abc
+
 from sage.structure.parent import Parent
 from sage.structure.element import get_coercion_model
 from sage.structure.unique_representation import UniqueRepresentation

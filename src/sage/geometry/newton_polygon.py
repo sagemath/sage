@@ -14,6 +14,8 @@ slopes (and hence a last infinite slope).
 #                  https://www.gnu.org/licenses/
 #############################################################################
 
+import sage.geometry.abc
+
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.parent import Parent
 from sage.structure.element import Element
