@@ -110,6 +110,9 @@ Classes and functions
 # ****************************************************************************
 
 from copy import copy
+
+import sage.geometry.abc
+
 from sage.topology.cell_complex import GenericCellComplex
 from sage.geometry.polyhedron.constructor import Polyhedron
 from sage.modules.free_module_element import vector
