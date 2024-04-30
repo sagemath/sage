@@ -773,7 +773,7 @@ class FreeQuadraticModule_integer_symmetric(FreeQuadraticModule_submodule_with_b
             sage: L.is_submodule(Ldual)                                                 # needs sage.graphs
             True
         """
-        return self.span(self.gram_matrix().inverse()*self.basis_matrix())
+        return self.span(self.basis_matrix()*self.gram_matrix().inverse())
 
     def discriminant_group(self, s=0):
         r"""
