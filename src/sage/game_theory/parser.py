@@ -194,10 +194,10 @@ class Parser():
 
         Here we construct a two by two game in gambit::
 
-            sage: # optional - gambit
-            sage: import gambit
+            sage: # optional - pygambit
+            sage: import pygambit
             sage: from sage.game_theory.parser import Parser
-            sage: g = gambit.Game.new_table([2,2])
+            sage: g = pygambit.Game.new_table([2,2])
             sage: g[int(0), int(0)][int(0)] = int(2)
             sage: g[int(0), int(0)][int(1)] = int(1)
             sage: g[int(0), int(1)][int(0)] = int(0)
@@ -206,28 +206,28 @@ class Parser():
             sage: g[int(1), int(0)][int(1)] = int(0)
             sage: g[int(1), int(1)][int(0)] = int(1)
             sage: g[int(1), int(1)][int(1)] = int(2)
-            sage: solver = gambit.nash.ExternalLCPSolver()
+            sage: solver = pygambit.nash.ExternalLCPSolver()
 
         Here is the output of the LCP algorithm::
 
-            sage: LCP_output = solver.solve(g)  # optional - gambit
-            sage: LCP_output  # optional - gambit
+            sage: LCP_output = solver.solve(g)  # optional - pygambit
+            sage: LCP_output  # optional - pygambit
             [<NashProfile for '': [[1.0, 0.0], [1.0, 0.0]]>,
              <NashProfile for '': [[0.6666666667, 0.3333333333], [0.3333333333, 0.6666666667]]>,
              <NashProfile for '': [[0.0, 1.0], [0.0, 1.0]]>]
 
         The Parser class outputs the equilibrium::
 
-            sage: nasheq = Parser(LCP_output).format_gambit(g)  # optional - gambit
-            sage: nasheq                                        # optional - gambit
+            sage: nasheq = Parser(LCP_output).format_gambit(g)  # optional - pygambit
+            sage: nasheq                                        # optional - pygambit
             [[(1.0, 0.0), (1.0, 0.0)],
              [(0.6666666667, 0.3333333333), (0.3333333333, 0.6666666667)],
              [(0.0, 1.0), (0.0, 1.0)]]
 
         Here is another game::
 
-            sage: # optional - gambit
-            sage: g = gambit.Game.new_table([2,2])
+            sage: # optional - pygambit
+            sage: g = pygambit.Game.new_table([2,2])
             sage: g[int(0), int(0)][int(0)] = int(4)
             sage: g[int(0), int(0)][int(1)] = int(8)
             sage: g[int(0), int(1)][int(0)] = int(0)
@@ -236,24 +236,24 @@ class Parser():
             sage: g[int(1), int(0)][int(1)] = int(3)
             sage: g[int(1), int(1)][int(0)] = int(1)
             sage: g[int(1), int(1)][int(1)] = int(0)
-            sage: solver = gambit.nash.ExternalLCPSolver()
+            sage: solver = pygambit.nash.ExternalLCPSolver()
 
         Here is the LCP output::
 
-            sage: LCP_output = solver.solve(g)  # optional - gambit
-            sage: LCP_output  # optional - gambit
+            sage: LCP_output = solver.solve(g)  # optional - pygambit
+            sage: LCP_output  # optional - pygambit
             [<NashProfile for '': [[1.0, 0.0], [1.0, 0.0]]>]
 
         The corresponding parsed equilibrium::
 
-            sage: nasheq = Parser(LCP_output).format_gambit(g)  # optional - gambit
-            sage: nasheq  # optional - gambit
+            sage: nasheq = Parser(LCP_output).format_gambit(g)  # optional - pygambit
+            sage: nasheq  # optional - pygambit
             [[(1.0, 0.0), (1.0, 0.0)]]
 
         Here is a larger degenerate game::
 
-            sage: # optional - gambit
-            sage: g = gambit.Game.new_table([3,3])
+            sage: # optional - pygambit
+            sage: g = pygambit.Game.new_table([3,3])
             sage: g[int(0), int(0)][int(0)] = int(-7)
             sage: g[int(0), int(0)][int(1)] = int(-9)
             sage: g[int(0), int(1)][int(0)] = int(-5)
@@ -272,20 +272,20 @@ class Parser():
             sage: g[int(2), int(1)][int(1)] = int(6)
             sage: g[int(2), int(2)][int(0)] = int(1)
             sage: g[int(2), int(2)][int(1)] = int(-10)
-            sage: solver = gambit.nash.ExternalLCPSolver()
+            sage: solver = pygambit.nash.ExternalLCPSolver()
 
         Here is the LCP output::
 
-            sage: LCP_output = solver.solve(g)  # optional - gambit
-            sage: LCP_output  # optional - gambit
+            sage: LCP_output = solver.solve(g)  # optional - pygambit
+            sage: LCP_output  # optional - pygambit
             [<NashProfile for '': [[1.0, 0.0, 0.0], [0.0, 0.0, 1.0]]>,
              <NashProfile for '': [[0.3333333333, 0.6666666667, 0.0], [0.1428571429, 0.0, 0.8571428571]]>,
              <NashProfile for '': [[0.0, 1.0, 0.0], [1.0, 0.0, 0.0]]>]
 
         The corresponding parsed equilibrium::
 
-            sage: nasheq = Parser(LCP_output).format_gambit(g)  # optional - gambit
-            sage: nasheq  # optional - gambit
+            sage: nasheq = Parser(LCP_output).format_gambit(g)  # optional - pygambit
+            sage: nasheq  # optional - pygambit
             [[(1.0, 0.0, 0.0), (0.0, 0.0, 1.0)],
              [(0.3333333333, 0.6666666667, 0.0), (0.1428571429, 0.0, 0.8571428571)],
              [(0.0, 1.0, 0.0), (1.0, 0.0, 0.0)]]
