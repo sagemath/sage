@@ -474,8 +474,10 @@ def cython_aliases(required_modules=None, optional_modules=None):
     # file (possibly because of confusion between CFLAGS and CXXFLAGS?).
     # This is not a problem in practice since LinBox depends on
     # fflas-ffpack and fflas-ffpack does add such a C++11 flag.
+    #
+    # Based on the above, we have updated mechanically from -std=gnu++11 to -std=gnu++17.
     if "LINBOX_CFLAGS" in aliases:
-        aliases["LINBOX_CFLAGS"].append("-std=gnu++11")
+        aliases["LINBOX_CFLAGS"].append("-std=gnu++17")
 
     try:
         aliases["M4RI_CFLAGS"].remove("-pedantic")
@@ -483,7 +485,7 @@ def cython_aliases(required_modules=None, optional_modules=None):
         pass
 
     # NTL
-    aliases["NTL_CFLAGS"] = ['-std=c++11']
+    aliases["NTL_CFLAGS"] = ['-std=c++17']
     aliases["NTL_INCDIR"] = [NTL_INCDIR] if NTL_INCDIR else []
     aliases["NTL_LIBDIR"] = [NTL_LIBDIR] if NTL_LIBDIR else []
     aliases["NTL_LIBRARIES"] = ['ntl']
