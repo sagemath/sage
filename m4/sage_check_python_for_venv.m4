@@ -92,7 +92,7 @@ AC_DEFUN([SAGE_PYTHON_CHECK_DISTUTILS], [
         echo PYTHON_EXE conftest.py --verbose build --build-base=conftest.dir >& AS_MESSAGE_LOG_FD 2>&1
         AS_IF([PYTHON_EXE conftest.py --verbose build --build-base=conftest.dir >& AS_MESSAGE_LOG_FD 2>&1 ], [
             COMMANDS_IF_DISTUTILS_GOOD], [
-            reason="distutils cannot build a C++ 11 extension"
+            reason="distutils cannot build a C++ 17 extension"
             COMMANDS_IF_DISTUTILS_NOT_GOOD
         ])
     ], [
@@ -172,16 +172,12 @@ PyInit_spam(void)
     m = PyModule_Create(&spammodule);
     return m;
 }
-// Partial C++11 test, from ax_cxx_compile_stdcxx.m4
+// Partial C++17 test, from ax_cxx_compile_stdcxx.m4
 
-  namespace test_noexcept
+  namespace test_constexpr_lambdas
   {
 
-    int f() { return 0; }
-    int g() noexcept { return 0; }
-
-    static_assert(noexcept(f()) == false, "");
-    static_assert(noexcept(g()) == true, "");
+    constexpr int foo = [](){return 42;}();
 
   }
 
@@ -194,7 +190,7 @@ from $distutils_core import setup
 from $distutils_extension import Extension
 from sys import exit
 modules = list((Extension("config_check_distutils_cxx", list(("conftest.cpp",)),
-                          extra_compile_args=list(("-std=c++11",)), language="c++"),))
+                          extra_compile_args=list(("-std=c++17",)), language="c++"),))
 setup(name="config_check_distutils_cxx", ext_modules=modules)
 exit(0)
 EOF
