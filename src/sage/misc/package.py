@@ -180,10 +180,10 @@ def pip_installed_packages(normalization=None):
         sage: d = pip_installed_packages()
         sage: 'scipy' in d or 'SciPy' in d                                              # needs scipy
         True
-        sage: d['beautifulsoup4']                                                       # needs beautifulsoup4
-        '...'
-        sage: d['prompt-toolkit']
-        '...'
+        sage: 'beautifulsoup4' in d                             # needs beautifulsoup4
+        True
+        sage: 'prompt-toolkit' in d or 'prompt_toolkit' in d    # whether - or _ appears in the name depends on the setuptools version used for building the package
+        True
         sage: d = pip_installed_packages(normalization='spkg')
         sage: d['prompt_toolkit']
         '...'
