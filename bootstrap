@@ -242,7 +242,18 @@ save () {
 	src/Pipfile \
 	src/pyproject.toml \
 	src/requirements.txt \
-	src/setup.cfg
+	src/setup.cfg \
+    build/pkgs/cypari/version_requirements.txt \
+    build/pkgs/cysignals/version_requirements.txt \
+    build/pkgs/cython/version_requirements.txt \
+    build/pkgs/gmpy2/version_requirements.txt \
+    build/pkgs/jupyter_core/version_requirements.txt \
+    build/pkgs/memory_allocator/version_requirements.txt \
+    build/pkgs/numpy/version_requirements.txt \
+    build/pkgs/pkgconfig/version_requirements.txt \
+    build/pkgs/pplpy/version_requirements.txt \
+    build/pkgs/setuptools/version_requirements.txt \
+    build/pkgs/wheel/version_requirements.txt
 
     # Update version
     echo "$NEWCONFVERSION" >$PKG/package-version.txt
