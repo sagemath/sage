@@ -5003,6 +5003,11 @@ REFERENCES:
 .. [Nie] Johan S. R. Nielsen, Codinglib,
          https://bitbucket.org/jsrn/codinglib/.
 
+.. [Niez1998] Marek Niezgoda.
+              Group majorization and Schur type inequalities.
+              Linear Algebra and its Applications, 268(1):9-30, 1998.
+              :doi:`10.1016/S0024-3795(97)89322-6`.
+
 .. [NW1978] \A. Nijenhuis and H. Wilf, Combinatorial Algorithms,
             Academic Press (1978).
 
