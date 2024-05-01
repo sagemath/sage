@@ -1305,7 +1305,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         la = _Partitions(la)
         if sum(la) != n:
             raise ValueError(f"{la} is not a partition of {n}")
-        Tlad, alpha = la.ladder_tableau(p-1, ladder_sizes=True)
+        Tlad, alpha = la.ladder_tableau(p, ladder_lengths=True)
         if not all(val < p for val in alpha):
             raise ValueError(f"{la} is not {p}-ladder restricted")
         Tclass = Tlad.residue_sequence(p).standard_tableaux()

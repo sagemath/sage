@@ -2945,13 +2945,13 @@ class Partition(CombinatorialElement):
         t[row+1][col-b+1:col+1] = [m+a+col-b+1+i for i in range(b)]
         return tableau.StandardTableau(t)
 
-    def ladder_tableau(self, e, ladder_sizes=False):
+    def ladder_tableau(self, e, ladder_lengths=False):
         r"""
         Return the ladder tableau of shape ``self``.
 
-        The *ladder tableau* is the standard Young tableau obtained by reading
-        the *ladders*, the set of cells `(i, j)` that differ from `(i+e, j-1)`,
-        of the partition `\lambda` from left-to-right.
+        The `e`-*ladder tableau* is the standard Young tableau obtained
+        by reading the *ladders*, the set of cells `(i, j)` that differ
+        from `(i+e-1, j-1)`, of the partition `\lambda` from left-to-right.
 
         INPUT:
 
@@ -2959,15 +2959,19 @@ class Partition(CombinatorialElement):
         - ``ladder_sizes`` -- (default: ``False``) if ``True``, also return
           the sizes of the ladders
 
+        .. SEEALSO::
+
+            :meth:`ladders`
+
         EXAMPLES::
 
             sage: la = Partition([6, 5, 3, 1])
-            sage: ascii_art(la.ladder_tableau(2))
+            sage: ascii_art(la.ladder_tableau(3))
               1  2  3  5  7 10
               4  6  8 11 13
               9 12 14
              15
-            sage: la.ladder_tableau(2, ladder_sizes=True)[1]
+            sage: la.ladder_tableau(3, ladder_lengths=True)[1]
             [1, 1, 2, 2, 3, 3, 3]
         """
         Tlad = [[None] * val for val in self]
@@ -2975,6 +2979,7 @@ class Partition(CombinatorialElement):
         start = 0
         n = sum(self)
         sizes = []
+        e -= 1
         while counter < n:
             cur = start
             size = 0
@@ -2986,13 +2991,38 @@ class Partition(CombinatorialElement):
                     Tlad[i][cur] = counter
                     size += 1
                 cur -= e
-            if ladder_sizes and size:
+            if ladder_lengths and size:
                 sizes.append(size)
             start += 1
         ret = tableau.StandardTableaux(self)(Tlad)
-        if ladder_sizes:
+        if ladder_lengths:
             return (ret, sizes)
         return ret
+
+    def ladders(self, e):
+        r"""
+        Return a dictionary containing the ladders in the diagram of ``self``.
+
+        A node `(i, j)` in a partition belongs to the `l`-th `e`-ladder if
+        `l = (e - 1) r + c`.
+
+        INPUT:
+
+        - ``e`` -- a positive integer
+
+        EXAMPLES::
+
+            sage: Partition([3, 2]).ladders(3)
+            {0: [(0, 0)], 1: [(0, 1)], 2: [(0, 2), (1, 0)], 3: [(1, 1)]}
+        """
+        ladders = {}
+        for row, val in enumerate(self):
+            for col in range(val):
+                ell = col + row * (e - 1)
+                if ell not in ladders:
+                    ladders[ell] = []
+                ladders[ell].append((row, col))
+        return ladders
 
     @cached_method
     def young_subgroup(self):
