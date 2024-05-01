@@ -641,7 +641,8 @@ class SymmetricFunctionsBases(Category_realization_of_parent):
                 sage: Sym = SymmetricFunctions(P)
                 sage: mj = Sym.macdonald().J()
                 sage: mj.corresponding_basis_over(Integers(13)['q','t'])
-                Symmetric Functions over Multivariate Polynomial Ring in q, t over Ring of integers modulo 13 in the Macdonald J basis
+                Symmetric Functions over Multivariate Polynomial Ring in q, t over
+                 Ring of integers modulo 13 in the Macdonald J basis
 
             TESTS:
 
@@ -6634,7 +6635,7 @@ class SymmetricFunctionsFamilyFunctor(SymmetricFunctionsFunctor):
             sage: F(QQ)
             Traceback (most recent call last):
             ...
-            TypeError: not a constant polynomial
+            TypeError: t is not a constant polynomial
         """
         from sage.combinat.sf.sf import SymmetricFunctions
         return self._basis(self._family(SymmetricFunctions(R), *self._args))

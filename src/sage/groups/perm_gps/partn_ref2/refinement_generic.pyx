@@ -1,5 +1,5 @@
 r"""
-Automorphism groups and canonical labels.
+Automorphism groups and canonical labels
 
 For details see section 3 of [Feu2013]_.
 
@@ -252,7 +252,6 @@ cdef tuple PS_refinement(PartitionStack * part, long *refine_vals, long *best,
 
                 j += 1
 
-
             loc_begin = i + 1
         i += 1
     return (True, newly_fixed)
@@ -455,7 +454,7 @@ cdef class LabelledBranching:
 
 cdef class PartitionRefinement_generic:
     r"""
-    Implements the partition and refinement framework for
+    Implement the partition and refinement framework for
     group actions `G \rtimes S_n` on `X^n` as described in
     :mod:`sage.groups.perm_gps.partn_ref2.refinement_generic`.
     """
@@ -495,17 +494,15 @@ cdef class PartitionRefinement_generic:
     #####################################################################
     cdef bint _inner_min_(self, int pos, bint * inner_group_changed) noexcept:
         """
-        Minimize the node by the action of the inner group on the i-th position.
+        Minimize the node by the action of the inner group on the ith position.
 
         INPUT:
 
-            - `pos` - A position in  `range(self.n)`
-            - `inner_group_changed` - will be set to true if `G_y` got smaller
+        - ``pos`` -- A position in ``range(self.n)``
+        - ``inner_group_changed`` -- will be set to ``True`` if `G_y` got smaller
 
-        OUTPUT:
-
-            - `True` if and only if the actual node compares less or equal to
-              the candidate for the canonical form.
+        OUTPUT: ``True`` if and only if the actual node compares less or equal
+        to the candidate for the canonical form.
         """
         raise NotImplementedError
 
@@ -517,10 +514,8 @@ cdef class PartitionRefinement_generic:
         to a smaller subgroup of `S_n`. This function also has to take
         care on ``self._is_candidate_initialized``.
 
-        OUTPUT:
-
-            - `False` only if the actual node compares larger than the candidate
-              for the canonical form.
+        OUTPUT: ``False`` only if the actual node compares larger than the
+        candidate for the canonical form
         """
         raise NotImplementedError
 
@@ -597,7 +592,7 @@ cdef class PartitionRefinement_generic:
 
     def get_autom_order_permutation(self):
         r"""
-        Return the order of the automorphism group we have computes
+        Return the order of the automorphism group we have computed.
 
         EXAMPLES::
 
@@ -874,7 +869,7 @@ cdef class PartitionRefinement_generic:
     cdef void _latex_act_node(self, str comment="", int printlvl=0) noexcept:
         r"""
         Append the actual node as a string of latex-commands to
-        ``self._latex_debug_string``
+        ``self._latex_debug_string``.
         """
         raise NotImplementedError  # must be implemented by derived classes
 
