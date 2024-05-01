@@ -159,7 +159,7 @@ cdef class ActedUponAction(GenericAction):
 
 def detect_element_action(Parent X, Y, bint X_on_left, X_el=None, Y_el=None):
     r"""
-    Return an action of X on Y as defined by elements of X, if any.
+    Return an action of Y on X as defined by elements of X, if any.
 
     EXAMPLES:
 
@@ -197,6 +197,23 @@ def detect_element_action(Parent X, Y, bint X_on_left, X_el=None, Y_el=None):
         Traceback (most recent call last):
         ...
         RuntimeError: an_element() for <__main__.MyParent object at ...> returned None
+
+    Check that we have a right action of the symmetric group on the
+    polynomial ring, but not a left action::
+
+        sage: S3 = SymmetricGroup(3)
+        sage: R.<x,y,z> = QQ[]
+        sage: detect_element_action(R, S3, True)
+        Right action by Symmetric group of order 3! as a permutation group on
+         Multivariate Polynomial Ring in x, y, z over Rational Field
+        sage: detect_element_action(R, S3, False)
+
+    Also, we don't have an action of the polynomial ring on the
+    symmetric group::
+
+        sage: detect_element_action(S3, R, True)
+        sage: detect_element_action(S3, R, False)
+
     """
     cdef Element x
 
@@ -224,15 +241,15 @@ def detect_element_action(Parent X, Y, bint X_on_left, X_el=None, Y_el=None):
         except CoercionException as msg:
             _record_exception()
 
-    # element x defining _act_on_
-    try:
-        if x._act_on_(y, X_on_left) is not None:
-            return ActOnAction(X, Y, X_on_left, False)
-    except CoercionException:
-        _record_exception()
-
-    # element x defining _acted_upon_
     if isinstance(Y, Parent):
+        # element y defining _act_on_
+        try:
+            if y._act_on_(x, not X_on_left) is not None:
+                return ActOnAction(Y, X, not X_on_left, False)
+        except CoercionException:
+            _record_exception()
+
+        # element x defining _acted_upon_
         try:
             if x._acted_upon_(y, X_on_left) is not None:
                 return ActedUponAction(Y, X, not X_on_left, False)
