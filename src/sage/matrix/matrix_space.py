@@ -2638,7 +2638,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
                 return self.element_class(self, vector, coerce=coerce)
             else:
                 nc = self.ncols()
-                d = {(k//nc, k%nc): c for k, c in vector.dict().items()}
+                d = {(k // nc, k % nc): c for k, c in vector.dict().items()}
                 return self.element_class(self, d, coerce=coerce)
         return super().from_vector(vector, order=order, coerce=coerce)
 
