@@ -1470,7 +1470,7 @@ def exponential_integral_1(x, n=0):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.pari
+        sage: # needs sage.libs.pari sage.rings.real_mpfr
         sage: exponential_integral_1(2)
         0.0489005107080611
         sage: exponential_integral_1(2, 4)  # abs tol 1e-18
@@ -1519,7 +1519,7 @@ def exponential_integral_1(x, n=0):
         ....:         if e >= c:
         ....:             print("exponential_integral_1(%s, %s)[%s] with precision %s has error of %s >= %s"%(a, n, i, prec, e, c))
 
-    ALGORITHM: use the PARI C-library function ``eint1``.
+    ALGORITHM: use the PARI C-library function :pari:`eint1`.
 
     REFERENCE:
 

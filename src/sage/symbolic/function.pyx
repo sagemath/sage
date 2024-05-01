@@ -290,7 +290,7 @@ cdef class Function(SageObject):
 
             sage: coth(5)  # indirect doctest                                           # needs sage.symbolic
             coth(5)
-            sage: coth(0.5)
+            sage: coth(0.5)                                                             # needs sage.rings.real_mpfr
             2.16395341373865
             sage: from sage.symbolic.function import BuiltinFunction
             sage: class Test(BuiltinFunction):
@@ -307,13 +307,13 @@ cdef class Function(SageObject):
             ....:         else:
             ....:             return
             sage: test = Test()
-            sage: test(1.3, 4)
+            sage: test(1.3, 4)                                                          # needs sage.rings.real_mpfr
             2.30000000000000
             sage: test(pi, 4)                                                           # needs sage.symbolic
             test(pi, 4)
             sage: test(2, x)                                                            # needs sage.symbolic
             3
-            sage: test(2., 4)
+            sage: test(2., 4)                                                           # needs sage.rings.real_mpfr
             3.00000000000000
             sage: test(1 + 1.0*I, 2)                                                    # needs sage.symbolic
             2.00000000000000 + 1.00000000000000*I
@@ -329,7 +329,7 @@ cdef class Function(SageObject):
             ....:         else:
             ....:             return 3
             sage: test2 = Test2()
-            sage: test2(1.3)
+            sage: test2(1.3)                                                            # needs sage.rings.real_mpfr
             0.500000000000000
             sage: test2(pi)                                                             # needs sage.symbolic
             3
@@ -456,7 +456,7 @@ cdef class Function(SageObject):
 
         Precision of the result depends on the precision of the input::
 
-            sage: arctan(RR(1))
+            sage: arctan(RR(1))                                                         # needs sage.rings.real_mpfr
             0.785398163397448
             sage: arctan(RealField(100)(1))                                             # needs sage.rings.real_mpfr
             0.78539816339744830961566084582
@@ -646,7 +646,7 @@ cdef class Function(SageObject):
 
             sage: airy_ai(iv)                                                           # needs sage.rings.real_interval_field
             airy_ai(1.0001?)
-            sage: airy_ai(CIF(iv))                                                      # needs sage.rings.complex_interval_field
+            sage: airy_ai(CIF(iv))                                                      # needs sage.rings.complex_interval_field sage.rings.real_interval_field
             airy_ai(1.0001?)
         """
         if isinstance(x, (float, complex)):
