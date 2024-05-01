@@ -5039,19 +5039,19 @@ cdef class Matrix(Matrix1):
 
     def _test_right_kernel(self, **options):
         """
-        Checks that :meth:`right_kernel` works.
+        Check that :meth:`right_kernel` works.
 
         EXAMPLES::
 
-            sage: a=matrix([[1,2],[3,4]])
+            sage: a = matrix([[1,2], [3,4]])
             sage: a._test_right_kernel()
 
         """
         tester = self._tester(**options)
         # At least we'll check that the basis of the kernel kills the matrix
-        V=self.right_kernel()
-        tester.assert_(self.ncols()-self.rank()==V.dimension())
-        tester.assert_((self*V.basis_matrix().transpose()).is_zero())
+        V = self.right_kernel()
+        tester.assert_(self.ncols() - self.rank() == V.dimension())
+        tester.assert_((self * V.basis_matrix().transpose()).is_zero())
 
     def left_kernel(self, *args, **kwds):
         r"""
@@ -5211,19 +5211,19 @@ cdef class Matrix(Matrix1):
 
     def _test_left_kernel(self, **options):
         """
-        Checks that :meth:`left_kernel` works.
+        Check that :meth:`left_kernel` works.
 
         EXAMPLES::
 
-            sage: a=matrix([[1,2],[3,4]])
+            sage: a = matrix([[1,2], [3,4]])
             sage: a._test_left_kernel()
 
         """
         tester = self._tester(**options)
         # At least we'll check that the basis of the kernel kills the matrix
-        V=self.left_kernel()
-        tester.assert_(self.nrows()-self.rank()==V.dimension())
-        tester.assert_((V.basis_matrix()*self).is_zero())
+        V = self.left_kernel()
+        tester.assert_(self.nrows() - self.rank() == V.dimension())
+        tester.assert_((V.basis_matrix() * self).is_zero())
 
     def kernel_on(self, V, poly=None, check=True):
         """
