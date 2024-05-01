@@ -2955,7 +2955,8 @@ class Partition(CombinatorialElement):
 
         INPUT:
 
-        - ``e`` -- a positive integer
+        - ``e`` -- a nonnegative integer; ``0`` is considered as `\infty`
+          (analogous to the characteristic of a ring)
         - ``ladder_sizes`` -- (default: ``False``) if ``True``, also return
           the sizes of the ladders
 
@@ -2973,13 +2974,21 @@ class Partition(CombinatorialElement):
              15
             sage: la.ladder_tableau(3, ladder_lengths=True)[1]
             [1, 1, 2, 2, 3, 3, 3]
+
+            sage: ascii_art(la.ladder_tableau(0))
+              1  2  3  4  5  6
+              7  8  9 10 11
+             12 13 14
+             15
+            sage: all(ll == 1 for ll in la.ladder_tableau(0, ladder_lengths=True)[1])
+            True
         """
         Tlad = [[None] * val for val in self]
         counter = 0
         start = 0
         n = sum(self)
         sizes = []
-        e -= 1
+        e = e - 1 if e > 0 else n  # change to the slope
         while counter < n:
             cur = start
             size = 0
@@ -3003,18 +3012,24 @@ class Partition(CombinatorialElement):
         r"""
         Return a dictionary containing the ladders in the diagram of ``self``.
 
-        A node `(i, j)` in a partition belongs to the `l`-th `e`-ladder if
-        `l = (e - 1) r + c`.
+        For `e > 0`, a node `(i, j)` in a partition belongs to the `l`-th
+        `e`-ladder if `l = (e - 1) r + c`.
 
         INPUT:
 
-        - ``e`` -- a positive integer
+        - ``e`` -- a nonnegative integer; if ``0``, then we
+          set ``e = self.size() + 1``
 
         EXAMPLES::
 
             sage: Partition([3, 2]).ladders(3)
             {0: [(0, 0)], 1: [(0, 1)], 2: [(0, 2), (1, 0)], 3: [(1, 1)]}
+
+            sage: Partition([3, 2]).ladders(0)
+            {0: [(0, 0)], 1: [(0, 1)], 2: [(0, 2)], 5: [(1, 0)], 6: [(1, 1)]}
         """
+        if e == 0:
+            e = sum(self) + 1
         ladders = {}
         for row, val in enumerate(self):
             for col in range(val):
