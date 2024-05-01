@@ -961,7 +961,7 @@ class PolyhedralComplex(GenericCellComplex):
             sage: (0, 0) in pc  # not a polyhedron
             False
         """
-        if not is_Polyhedron(x):
+        if not isinstance(x, sage.geometry.abc.Polyhedron):
             return False
         dim = x.dimension()
         return dim in self.cells() and x in self.cells()[dim]
@@ -2030,7 +2030,7 @@ class PolyhedralComplex(GenericCellComplex):
         """
         if self._is_immutable:
             raise ValueError("this polyhedral complex is not mutable")
-        if not is_Polyhedron(cell) or cell.ambient_dim() != self._ambient_dim:
+        if not isinstance(cell, sage.geometry.abc.Polyhedron) or cell.ambient_dim() != self._ambient_dim:
             raise ValueError("the given cell is not a polyhedron " +
                              "in the same ambient space")
         # if cell is already in self, do nothing.
@@ -2193,7 +2193,7 @@ class PolyhedralComplex(GenericCellComplex):
         """
         if self._is_immutable:
             raise ValueError("this polyhedral complex is not mutable")
-        if not is_Polyhedron(cell) or cell.ambient_dim() != self._ambient_dim:
+        if not isinstance(cell, sage.geometry.abc.Polyhedron) or cell.ambient_dim() != self._ambient_dim:
             raise ValueError("the given cell is not a polyhedron " +
                              "in the same ambient space")
         # if cell is not in self, delete nothing.
