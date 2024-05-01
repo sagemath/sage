@@ -1544,7 +1544,6 @@ cdef inline number *sa2si_ZZmod(IntegerMod_abstract d, ring *_ring) noexcept:
         sage: P(3)
         3
     """
-    nr2mModul = d.parent().characteristic()
     if _ring != currRing: rChangeCurrRing(_ring)
 
     cdef number *nn
