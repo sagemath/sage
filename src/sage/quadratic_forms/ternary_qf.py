@@ -837,8 +837,8 @@ class TernaryQF(SageObject):
         a, b, c, r, s, t = self.coefficients()
         while True:
 
-            r1 = randint(0,p-1)
-            r2 = randint(0,p-1)
+            r1 = randint(0, p-1)
+            r2 = randint(0, p-1)
             alpha = (b*r1**2+t*r1+a) % p
             if alpha != 0:
 
