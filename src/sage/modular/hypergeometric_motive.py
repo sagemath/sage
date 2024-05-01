@@ -1391,9 +1391,9 @@ class HypergeometricData:
 
         Check that :issue:`37910` is resolved::
 
-            sage: H = Hyp(alpha_beta=[[1/2,1/3,2/3,1/6,5/6], [0,0,0,0,0]])
-            sage: H.padic_H_value(6211, 2, -512000) # long time
-            2791959433670741
+            sage: H = Hyp(alpha_beta=[[1/2,1/2,1/2,1/2,1/2,1/3,2/3,1/6,5/6], [0,0,0,0,0,0,0,0,0]])
+            sage: H.padic_H_value(151, 2, -512000)
+            50178940126155881
 
         REFERENCES:
 
