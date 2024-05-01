@@ -113,7 +113,7 @@ class PiecewiseFunction(BuiltinFunction):
 
         OUTPUT:
 
-        A piecewise-defined function. A ``ValueError`` will be raised
+        A piecewise-defined function. A :class:`ValueError` will be raised
         if the domains of the pieces are not pairwise disjoint.
 
         EXAMPLES::
