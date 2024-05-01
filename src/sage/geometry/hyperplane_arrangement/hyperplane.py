@@ -108,9 +108,10 @@ Which you can't do with hyperplane arrangements::
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
 
+import sage.geometry.abc
 
-from sage.misc.cachefunc import cached_method
 from sage.geometry.linear_expression import LinearExpression, LinearExpressionModule
+from sage.misc.cachefunc import cached_method
 
 
 class Hyperplane(LinearExpression):
