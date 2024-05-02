@@ -98,7 +98,7 @@ from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence_g
 from sage.libs.singular.decl cimport *
 from sage.libs.singular.option import opt_ctx
 from sage.libs.singular.polynomial cimport singular_vector_maximal_component
-from sage.libs.singular.singular cimport sa2si, si2sa, si2sa_intvec
+from sage.libs.singular.singular cimport sa2si, si2sa, si2sa_intvec, si2sa_bigintvec
 from sage.libs.singular.singular import error_messages
 
 from sage.interfaces.singular import get_docstring
@@ -954,6 +954,8 @@ cdef class Converter(SageObject):
             return si2sa(<number *>to_convert.data, self._singular_ring, self._sage_ring.base_ring())
         elif rtyp == INTVEC_CMD:
             return si2sa_intvec(<intvec *> to_convert.data)
+        elif rtyp == BIGINTVEC_CMD:
+            return si2sa_bigintvec(<bigintmat *> to_convert.data)
         elif rtyp == STRING_CMD:
             # TODO: Need to determine what kind of data can be returned by a
             # STRING_CMD--is it just ASCII strings or can it be an arbitrary
@@ -1048,6 +1050,17 @@ cdef class LibraryCallHandler(BaseCallHandler):
         """
         return False
 
+# mapping int --> string for function arity
+arity_dict = {
+        CMD_1: "CMD_1",
+        CMD_2: "CMD_2",
+        CMD_3: "CMD_3",
+        CMD_12: "CMD_12",
+        CMD_13: "CMD_13",
+        CMD_23: "CMD_23",
+        CMD_123: "CMD_123",
+        CMD_M: "CMD_M"
+}
 
 cdef class KernelCallHandler(BaseCallHandler):
     """
@@ -1125,8 +1138,9 @@ cdef class KernelCallHandler(BaseCallHandler):
 
         errorreported += 1
         error_messages.append(
-                "Wrong number of arguments (got {} arguments, arity code is {})"
-                .format(number_of_arguments, self.arity))
+                "Wrong number of arguments (got {} arguments, arity is {})"
+                .format(number_of_arguments,
+                        arity_dict.get(self.arity) or self.arity))
         return NULL
 
     cdef bint free_res(self) noexcept:
@@ -1231,7 +1245,7 @@ cdef class SingularFunction(SageObject):
             Traceback (most recent call last):
             ...
             RuntimeError: error in Singular function call 'size':
-            Wrong number of arguments (got 2 arguments, arity code is 302)
+            Wrong number of arguments (got 2 arguments, arity is CMD_1)
             sage: size('foobar', ring=P)
             6
 
@@ -1634,17 +1648,17 @@ def singular_function(name):
         Traceback (most recent call last):
         ...
         RuntimeError: error in Singular function call 'factorize':
-        Wrong number of arguments (got 0 arguments, arity code is 305)
+        Wrong number of arguments (got 0 arguments, arity is CMD_12)
         sage: factorize(f, 1, 2)
         Traceback (most recent call last):
         ...
         RuntimeError: error in Singular function call 'factorize':
-        Wrong number of arguments (got 3 arguments, arity code is 305)
+        Wrong number of arguments (got 3 arguments, arity is CMD_12)
         sage: factorize(f, 1, 2, 3)
         Traceback (most recent call last):
         ...
         RuntimeError: error in Singular function call 'factorize':
-        Wrong number of arguments (got 4 arguments, arity code is 305)
+        Wrong number of arguments (got 4 arguments, arity is CMD_12)
 
     The Singular function ``list`` can be called with any number of
     arguments::

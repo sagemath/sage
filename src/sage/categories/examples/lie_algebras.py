@@ -198,6 +198,20 @@ class LieAlgebraFromAssociative(Parent, UniqueRepresentation):
             """
             return not self.__eq__(rhs)
 
+        def __hash__(self):
+            r"""
+            Return the hash of ``self``.
+
+            EXAMPLES::
+
+                sage: # needs sage.combinat sage.groups
+                sage: L = LieAlgebras(QQ).example()
+                sage: x, y = L.lie_algebra_generators()
+                sage: hash(x) == hash(x.value)
+                True
+            """
+            return hash(self.value)
+
         def __bool__(self) -> bool:
             """
             Check non-zero.
