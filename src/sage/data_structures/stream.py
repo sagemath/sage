@@ -1284,9 +1284,9 @@ class VariablePool(UniqueRepresentation):
             sage: TestSuite(P).run()
         """
         self._gen = ring.gen(0)  # alternatively, make :class:`InfinitePolynomialGen` inherit from `UniqueRepresentation`.
-        self._pool = []   # list of variables actually used
+        self._pool = dict()   # dict of variables actually used to names
 
-    def new_variable(self):
+    def new_variable(self, name=None):
         """
         Return an unused variable.
 
@@ -1312,7 +1312,10 @@ class VariablePool(UniqueRepresentation):
         for i in range(len(self._pool) + 1):
             v = self._gen[i]
             if v not in self._pool:
-                self._pool.append(v)
+                if name is None:
+                    self._pool[v] = v
+                else:
+                    self._pool[v] = name
                 return v
 
     def del_variable(self, v):
@@ -1331,7 +1334,10 @@ class VariablePool(UniqueRepresentation):
             sage: v = P.new_variable(); v
             a_1
         """
-        self._pool.remove(v)
+        del self._pool[v]
+
+    def variables(self):
+        return self._pool
 
 
 class Stream_uninitialized(Stream):
@@ -1361,7 +1367,7 @@ class Stream_uninitialized(Stream):
         sage: C[4]
         0
     """
-    def __init__(self, approximate_order, true_order=False):
+    def __init__(self, approximate_order, true_order=False, name=None):
         """
         Initialize ``self``.
 
@@ -1379,6 +1385,7 @@ class Stream_uninitialized(Stream):
         self._approximate_order = approximate_order
         self._initializing = False
         self._is_sparse = False
+        self._name = name
 
     def input_streams(self):
         r"""
@@ -1476,6 +1483,13 @@ class Stream_uninitialized(Stream):
         self._eqs = equations
         self._series = series
         self._terms_of_degree = terms_of_degree
+        # currently name is used only for error messages
+        if self._name is None:
+            # if used for something global (e.g. an expression tree)
+            # need to make this unique
+            self._name = "series"
+            if len(self._series) > 1:
+                self._name += str(self._series.index(self))
 
     @lazy_attribute
     def _input_streams(self):
@@ -1620,8 +1634,13 @@ class Stream_uninitialized(Stream):
         if len(self._cache) > n - self._approximate_order:
             return self._cache[n - self._approximate_order]
 
-        x = sum(self._pool.new_variable() * m
-                for m in self._terms_of_degree(n, self._PF))
+        if self._coefficient_ring == self._base_ring:
+            x = sum(self._PF(self._pool.new_variable(self._name + "[%s]" % n)) * m
+                    for m in self._terms_of_degree(n, self._PF))
+        else:
+            x = sum(self._PF(self._pool.new_variable(self._name + "[%s]" % m)) * m
+                    for m in self._terms_of_degree(n, self._PF))
+
         self._cache.append(x)
         return x
 
@@ -1740,7 +1759,7 @@ class Stream_uninitialized(Stream):
         """
         # determine the next linear equations
         coeffs = []
-        non_linear_coeffs = []
+        all_coeffs = []  # only for the error message
         for i, eq in enumerate(self._eqs):
             while True:
                 ao = eq._approximate_order
@@ -1753,39 +1772,46 @@ class Stream_uninitialized(Stream):
                     eq._approximate_order += 1
 
             if self._base_ring == self._coefficient_ring:
-                lcoeff = [coeff]
+                lcoeff = [(ao, coeff)]
             else:
                 # TODO: it is a coincidence that `coefficients`
-                # currently exists in all examples
-                lcoeff = coeff.coefficients()
+                # currently exists in all examples;
+                # the monomials are only needed for the error messages
+                lcoeff = list(zip(coeff.monomials(), coeff.coefficients()))
 
-            for c in lcoeff:
-                c = self._PF(c).numerator()
-                V = c.variables()
+            all_coeffs.append(lcoeff)
+
+            for idx, c in lcoeff:
+                c_num = self._PF(c).numerator()
+                V = c_num.variables()
                 if not V:
                     if len(self._eqs) == 1:
-                        raise ValueError(f"no solution as {coeff} != 0 in the equation at degree {eq._approximate_order}")
-                    raise ValueError(f"no solution as {coeff} != 0 in equation {i} at degree {eq._approximate_order}")
-                if c.degree() <= 1:
-                    coeffs.append(c)
-                elif c.is_monomial() and sum(1 for d in c.degrees() if d):
+                        if self._base_ring == self._coefficient_ring:
+                            raise ValueError(f"no solution as the coefficient in degree {idx} of the equation is {coeff} != 0")
+                        raise ValueError(f"no solution as the coefficient of {idx} of the equation is {coeff} != 0")
+                    raise ValueError(f"no solution as the coefficient of {idx} in equation {i} is {coeff} != 0")
+                if c_num.degree() <= 1:
+                    coeffs.append(c_num)
+                elif c_num.is_monomial() and sum(1 for d in c_num.degrees() if d):
                     # if we have a single variable, we can remove the
                     # exponent - maybe we could also remove the
                     # coefficient - are we computing in an integral
                     # domain?
-                    c1 = c.coefficients()[0]
-                    v = self._P(c.variables()[0])
+                    c1 = c_num.coefficients()[0]
+                    v = self._P(c_num.variables()[0])
                     coeffs.append(c1 * v)
-                else:
-                    # nonlinear equations must not be discarded, we
-                    # collect them to improve any error messages
-                    non_linear_coeffs.append(c)
 
         if not coeffs:
             if len(self._eqs) == 1:
-                raise ValueError(f"there are no linear equations in degree {self._approximate_order}: {non_linear_coeffs}")
-            degrees = [eq._approximate_order for eq in self._eqs]
-            raise ValueError(f"there are no linear equations in degrees {degrees}: {non_linear_coeffs}")
+                raise ValueError(f"there are no linear equations:\n    "
+                                 + "\n    ".join(self._eq_str(idx, eq)
+                                                 for idx, eq in all_coeffs[0]))
+            raise ValueError(f"there are no linear equations:\n"
+                             + "\n".join(f"equation {i}:\n    "
+                                         + "\n    ".join(self._eq_str(idx, eq)
+                                                         for idx, eq in eqs)
+                                         for i, eqs in enumerate(all_coeffs)))
+
         # solve
         from sage.rings.polynomial.multi_polynomial_sequence import PolynomialSequence
         eqs = PolynomialSequence(coeffs)
@@ -1805,7 +1831,7 @@ class Stream_uninitialized(Stream):
         x = m.solve_right(b)
         k = m.right_kernel_matrix()
         # substitute
-        bad = True
+        bad = True  # indicates whether we could not determine any coefficients
         for i, (var, y) in enumerate(zip(v, x)):
             if k.column(i).is_zero():
                 val = self._base_ring(y)
@@ -1813,10 +1839,41 @@ class Stream_uninitialized(Stream):
                 bad = False
         if bad:
             if len(self._eqs) == 1:
-                assert len(coeffs) + len(non_linear_coeffs) == 1
-                raise ValueError(f"could not determine any coefficients using the equation in degree {self._eqs[0]._approximate_order}: {(coeffs + non_linear_coeffs)[0]}")
-            degrees = [eq._approximate_order for eq in self._eqs]
-            raise ValueError(f"could not determine any coefficients using the equations in degrees {degrees}: {coeffs + non_linear_coeffs}")
+                raise ValueError(f"could not determine any coefficients:\n    "
+                                 + "\n    ".join(self._eq_str(idx, eq)
+                                                 for idx, eq in all_coeffs[0]))
+
+            raise ValueError(f"could not determine any coefficients:\n"
+                             + "\n".join(f"equation {i}:\n    "
+                                         + "\n    ".join(self._eq_str(idx, eq)
+                                                         for idx, eq in eqs)
+                                         for i, eqs in enumerate(all_coeffs)))
+
+    def _eq_str(self, idx, eq):
+        """
+        Return a string describing the equation ``eq`` obtained by setting
+        the coefficient ``idx`` to zero.
+
+        EXAMPLES::
+
+            sage: from sage.data_structures.stream import Stream_uninitialized, Stream_cauchy_mul, Stream_sub
+            sage: terms_of_degree = lambda n, R: [R.one()]
+            sage: C = Stream_uninitialized(0)
+            sage: eq = Stream_sub(C, Stream_cauchy_mul(C, C, True), True)
+            sage: C.define_implicitly([C], [], [eq], QQ, QQ, terms_of_degree)
+            sage: C[3]  # implicit doctest
+            Traceback (most recent call last):
+            ...
+            ValueError: there are no linear equations:
+                [0]: -series[0]^2 + series[0] == 0
+
+        """
+        s = repr(eq)
+        d = self._pool.variables()
+        # we have to replace longer variables first
+        for v in sorted(d, key=lambda v: -len(str(v))):
+            s = s.replace(repr(v), d[v])
+        return repr([idx]) + ": " + s + " == 0"
 
     def iterate_coefficients(self):
         """

@@ -93,6 +93,7 @@ from sage.data_structures.stream import (
 
 from types import GeneratorType
 
+
 class LazySeriesRing(UniqueRepresentation, Parent):
     """
     Abstract base class for lazy series.
@@ -620,7 +621,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
 
         raise ValueError(f"unable to convert {x} into {self}")
 
-    def undefined(self, valuation=None):
+    def undefined(self, valuation=None, name=None):
         r"""
         Return an uninitialized series.
 
@@ -654,7 +655,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         """
         if valuation is None:
             valuation = self._minimal_valuation
-        coeff_stream = Stream_uninitialized(valuation)
+        coeff_stream = Stream_uninitialized(valuation, name=name)
         return self.element_class(self, coeff_stream)
 
     unknown = undefined
@@ -784,12 +785,14 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: F = L.undefined()
             sage: L.define_implicitly([F], [F(2*z) - (1+exp(x*z)+exp(y*z))*F - exp((x+y)*z)*F(-z)])
             sage: F
-            <repr(...) failed: ValueError: could not determine any coefficients using the equation in degree 3: 6*FESDUMMY_2 + (-2*x - 2*y)*FESDUMMY_1 + (x*y)*FESDUMMY_0>
+            <repr(...) failed: ValueError: could not determine any coefficients:
+                [3]: 6*series[3] + (-2*x - 2*y)*series[2] + (x*y)*series[1] == 0>
 
             sage: F = L.undefined()
             sage: L.define_implicitly([(F, [0, f1])], [F(2*z) - (1+exp(x*z)+exp(y*z))*F - exp((x+y)*z)*F(-z)])
             sage: F
-            <repr(...) failed: ValueError: could not determine any coefficients using the equation in degree 3: 6*FESDUMMY_4 + (-2*x - 2*y)*FESDUMMY_3 + (x*y*f1)>
+            <repr(...) failed: ValueError: could not determine any coefficients:
+                [3]: 6*series[3] + (-2*x - 2*y)*series[2] + (x*y*f1) == 0>
 
         Laurent series examples::
 
@@ -804,7 +807,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: g = L.undefined(-2)
             sage: L.define_implicitly([(g, [5])], [2+z*g(z^2) - g])
             sage: g
-            <repr(...) failed: ValueError: no solution as 5 != 0 in the equation at degree -3>
+            <repr(...) failed: ValueError: no solution as the coefficient in degree -3 of the equation is 5 != 0>
 
         A bivariate example::
 
@@ -828,6 +831,45 @@ class LazySeriesRing(UniqueRepresentation, Parent):
              1 + (2*z^2+z*x) + (z^3+z^2*x) + (5*z^4+3*z^3*x+z^2*x^2)
               + (5*z^5+4*z^4*x+z^3*x^2) + (15*z^6+10*z^5*x+4*z^4*x^2+z^3*x^3)
               + O(z,x)^7
+
+        Bicolored rooted trees with black and white roots::
+
+            sage: L.<x, y> = LazyPowerSeriesRing(QQ)
+            sage: A = L.undefined()
+            sage: B = L.undefined()
+            sage: L.define_implicitly([A, B], [A - x*exp(B), B - y*exp(A)])
+            sage: A
+            x + x*y + (x^2*y+1/2*x*y^2) + (1/2*x^3*y+2*x^2*y^2+1/6*x*y^3)
+            + (1/6*x^4*y+3*x^3*y^2+2*x^2*y^3+1/24*x*y^4)
+            + (1/24*x^5*y+8/3*x^4*y^2+27/4*x^3*y^3+4/3*x^2*y^4+1/120*x*y^5)
+            + O(x,y)^7
+
+            sage: h = SymmetricFunctions(QQ).h()
+            sage: S = LazySymmetricFunctions(h)
+            sage: E = S(lambda n: h[n])
+            sage: T = LazySymmetricFunctions(tensor([h, h]))
+            sage: X = tensor([h[1],h[[]]])
+            sage: Y = tensor([h[[]],h[1]])
+            sage: A = T.undefined()
+            sage: B = T.undefined()
+            sage: T.define_implicitly([A, B], [A - X*E(B), B - Y*E(A)])
+            sage: A[:3]
+            [h[1] # h[], h[1] # h[1]]
+
+        Permutations with two kinds of labels such that each cycle
+        contains at least one element of each kind (defined
+        implicitly to have a test)::
+
+            sage: p = SymmetricFunctions(QQ).p()
+            sage: S = LazySymmetricFunctions(p)
+            sage: P = S(lambda n: sum(p[la] for la in Partitions(n)))
+            sage: T = LazySymmetricFunctions(tensor([p, p]))
+            sage: X = tensor([p[1],p[[]]])
+            sage: Y = tensor([p[[]],p[1]])
+            sage: A = T.undefined()
+            sage: T.define_implicitly([A], [P(X)*P(Y)*A - P(X+Y)])
+            sage: A[:4]
+            [p[] # p[], 0, p[1] # p[1], p[1] # p[1, 1] + p[1, 1] # p[1]]
 
         TESTS::
 
@@ -919,7 +961,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: C = L.undefined()
             sage: D = L.undefined()
             sage: L.define_implicitly([(A, [0,0,0]), (B, [0,0]), (C, [0,0]), (D, [0,0])], [C^2 + D^2, A + B + C + D, A*D])
-            sage: B[2]  # known bug, not tested
+            sage: B[2]  # not tested
 
         A bivariate example::
 
@@ -937,55 +979,38 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: g
             z*q + z^2*q + z^3*q + (z^4*q+z^3*q^2) + (z^5*q+3*z^4*q^2) + O(z,q)^7
 
-        The following does not work currently, because the equations
+        The following does not work, because the equations
         determining the coefficients come in bad order::
 
             sage: L.<x,y,t> = LazyPowerSeriesRing(QQ)
-            sage: M1 = L.undefined()
-            sage: M2 = L.undefined()
-            sage: eq1 = t*x*y*M2(0, 0, t) + (t - x*y)*M1(x, y, t) + x*y - t*M1(0, y, t)
-            sage: eq2 = (t*x-t)*M2(0, y, t) + (t - x*y)*M2(x, y, t)
-            sage: L.define_implicitly([M1, M2], [eq1, eq2])
-            sage: M1[1]  # known bug, not tested
+            sage: A = L.undefined(name="A")
+            sage: B = L.undefined(name="B")
+            sage: eq0 = t*x*y*B(0, 0, t) + (t - x*y)*A(x, y, t) + x*y - t*A(0, y, t)
+            sage: eq1 = (t*x-t)*B(0, y, t) + (t - x*y)*B(x, y, t)
+            sage: L.define_implicitly([A, B], [eq0, eq1])
+            sage: A[1]
+            Traceback (most recent call last):
+            ...
+            ValueError: could not determine any coefficients:
+            equation 0:
+                [x*y*t]: A[x*y] - A[t] == 0
+            equation 1:
+                [x*y*t]: B[x*y] - B[t] == 0
+                [x*t^2]: B[x*t] + B[t] == 0
 
-        Bicolored rooted trees with black and white roots::
-
-            sage: L.<x, y> = LazyPowerSeriesRing(QQ)
-            sage: A = L.undefined()
-            sage: B = L.undefined()
-            sage: L.define_implicitly([A, B], [A - x*exp(B), B - y*exp(A)])
-            sage: A
-            x + x*y + (x^2*y+1/2*x*y^2) + (1/2*x^3*y+2*x^2*y^2+1/6*x*y^3)
-            + (1/6*x^4*y+3*x^3*y^2+2*x^2*y^3+1/24*x*y^4)
-            + (1/24*x^5*y+8/3*x^4*y^2+27/4*x^3*y^3+4/3*x^2*y^4+1/120*x*y^5)
-            + O(x,y)^7
-
-            sage: h = SymmetricFunctions(QQ).h()
-            sage: S = LazySymmetricFunctions(h)
-            sage: E = S(lambda n: h[n])
-            sage: T = LazySymmetricFunctions(tensor([h, h]))
-            sage: X = tensor([h[1],h[[]]])
-            sage: Y = tensor([h[[]],h[1]])
-            sage: A = T.undefined()
-            sage: B = T.undefined()
-            sage: T.define_implicitly([A, B], [A - X*E(B), B - Y*E(A)])
-            sage: A[:3]
-            [h[1] # h[], h[1] # h[1]]
-
-        Permutations with two kinds of labels such that each cycle
-        contains at least one element of each kind (defined
-        implicitly to have a test)::
+        Check the error message in the case of symmetric functions::
 
             sage: p = SymmetricFunctions(QQ).p()
             sage: S = LazySymmetricFunctions(p)
-            sage: P = S(lambda n: sum(p[la] for la in Partitions(n)))
-            sage: T = LazySymmetricFunctions(tensor([p, p]))
             sage: X = tensor([p[1],p[[]]])
             sage: Y = tensor([p[[]],p[1]])
-            sage: A = T.undefined()
-            sage: T.define_implicitly([A], [P(X)*P(Y)*A - P(X+Y)])
-            sage: A[:4]
-            [p[] # p[], 0, p[1] # p[1], p[1] # p[1, 1] + p[1, 1] # p[1]]
+            sage: A = T.undefined(name="A")
+            sage: B = T.undefined(name="B")
+            sage: T.define_implicitly([A, B], [X*A - Y*B])
+            sage: A
+            <repr(...) failed: ValueError: could not determine any coefficients:
+                [p[1] # p[1]]: -B[p[1] # p[]] + A[p[] # p[1]] == 0>
+
         """
         s = [a[0]._coeff_stream if isinstance(a, (tuple, list))
              else a._coeff_stream
@@ -1574,6 +1599,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
                 # tester.assertEqual(e1, self.gen())
         # we want to test at least 2 elements
         tester.assertGreater(count, 1, msg="only %s elements in %s.some_elements() have a compositional inverse" % (count, self))
+
 
 class LazyLaurentSeriesRing(LazySeriesRing):
     r"""
@@ -3475,6 +3501,7 @@ class LazyCompletionGradedAlgebra(LazySeriesRing):
         return elts
 
 ######################################################################
+
 
 class LazySymmetricFunctions(LazyCompletionGradedAlgebra):
     """
