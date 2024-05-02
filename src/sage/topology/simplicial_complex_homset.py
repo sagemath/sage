@@ -79,6 +79,8 @@ def is_SimplicialComplexHomset(x) -> bool:
         sage: is_SimplicialComplexHomset(H)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37922, "the function is_SimplicialComplexHomset is deprecated; use 'isinstance(..., SimplicialComplexHomset)' instead")
     return isinstance(x, SimplicialComplexHomset)
 
 
