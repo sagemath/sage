@@ -157,7 +157,8 @@ jobs:
       - name: Print out logs for immediate inspection
         # and markup the output with GitHub Actions logging commands
         run: |
-          .github/workflows/scan-logs.sh "artifacts/$LOGS_ARTIFACT_NAME"
+          if [ -x .ci/scan-logs.sh ]; then .ci/scan-logs.sh "artifacts/$LOGS_ARTIFACT_NAME"; fi
+          if [ -x .github/workflows/scan-logs.sh ]; then .github/workflows/scan-logs.sh "artifacts/$LOGS_ARTIFACT_NAME"; fi
         if: always()
       - name: Prepare sage-local artifact
         # This also includes the copies of homebrew or conda installed in the tox environment.
