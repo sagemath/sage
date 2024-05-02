@@ -34,7 +34,7 @@ from sage.rings.ring_extension_morphism cimport MapRelativeRingToFreeModule, are
 from sage.rings.ring_extension_conversion cimport backend_parent, backend_element
 from sage.rings.ring_extension_conversion cimport to_backend, from_backend
 
-from sage.rings.quotient_ring import is_QuotientRing
+from sage.rings.polynomial.polynomial_quotient_ring import is_PolynomialQuotientRing
 
 # Classes
 #########
@@ -344,6 +344,17 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             sage: x.in_base()
             u
 
+        We test the case where the ring is a quotient ring over its base::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F = GF(4, 'z2')
+            sage: A.<T> = F[]
+            sage: ip = A(T^2 + T + F.gen() + 1)
+            sage: K.<z> = F.extension(ip)
+            sage: L = K.over(F)
+            sage: f = L(F.gen() + 1)
+            sage: f.in_base()
+            z2 + 1
         """
         cdef RingExtension_generic parent = <RingExtension_generic>self._parent
         if isinstance(parent, RingExtensionWithGen):
@@ -356,11 +367,13 @@ cdef class RingExtensionElement(CommutativeAlgebraElement):
             f = parent._backend_defining_morphism
             base = f.domain()
             ring = f.codomain()
+            parent_ring = self._backend.parent()
             if ring.has_coerce_map_from(base) and are_equal_morphisms(f, None):
-                if base.has_coerce_map_from(self._backend.parent()):
-                    return parent.base()(base(self._backend))
-                elif is_QuotientRing(self._backend.parent()):
-                    return parent.base()(self._backend.list()[0])
+                if is_PolynomialQuotientRing(parent_ring):
+                    if base.has_coerce_map_from(parent_ring.base_ring()):
+                        if self._backend.lift().degree() == 0:
+                            return parent.base()(self._backend.list()[0])
+                return parent.base()(base(self._backend))
         raise NotImplementedError("cannot cast %s to the base" % self)
 
     cpdef _richcmp_(left, right, int op):
