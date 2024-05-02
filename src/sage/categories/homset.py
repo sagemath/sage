@@ -1304,7 +1304,10 @@ def is_Homset(x):
         sage: is_Homset(f.parent())
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37922, "the function is_Homset is deprecated; use 'isinstance(..., Homset)' instead")
     return isinstance(x, Homset)
+
 
 def is_Endset(x):
     """
@@ -1321,4 +1324,6 @@ def is_Endset(x):
         sage: is_Endset(g.parent())
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37922, "the function is_Endset is deprecated; use 'isinstance(..., Homset) and ....is_endomorphism_set()' instead")
     return isinstance(x, Homset) and x.is_endomorphism_set()
