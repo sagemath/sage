@@ -90,7 +90,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             sage: type(phi)
             <class 'sage.modules.free_module_morphism.FreeModuleMorphism'>
         """
-        if not free_module_homspace.is_FreeModuleHomspace(parent):
+        if not isinstance(parent, free_module_homspace.FreeModuleHomspace):
             raise TypeError("parent (=%s) must be a free module hom space" % parent)
         if isinstance(A, matrix_morphism.MatrixMorphism):
             A = A.matrix()

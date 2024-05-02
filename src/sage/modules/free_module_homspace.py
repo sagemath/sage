@@ -120,6 +120,8 @@ def is_FreeModuleHomspace(x):
         sage: sage.modules.free_module_homspace.is_FreeModuleHomspace('junk')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37924, "the function is_FreeModuleHomspace is deprecated; use 'isinstance(..., FreeModuleHomspace)' instead")
     return isinstance(x, FreeModuleHomspace)
 
 
