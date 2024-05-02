@@ -313,6 +313,23 @@ cdef class ModuleAction(Action):
             sage: 1/S.0
             1/x
 
+        If there is a coercion from ``G`` to ``S``, we do not create
+        the module action of ``G`` on the pushout of ``G`` and ``S``::
+
+            sage: G = PolynomialRing(QQ, "x")
+            sage: S = PolynomialRing(MatrixSpace(QQ, 2), "x")
+            sage: G.gen() * S.gen()
+            [1 0]
+            [0 1]*x^2
+
+        Contrast the previous example with the following, where we
+        have no coercion from ``G`` to ``S``::
+
+            sage: S = PolynomialRing(MatrixSpace(QQ, 2), "y")
+            sage: G.gen() * S.gen()
+            [x 0]
+            [0 x]*y
+
         """
         Action.__init__(self, G, S, not isinstance(self, RightModuleAction), operator.mul)
         if not isinstance(G, Parent):
@@ -328,6 +345,8 @@ cdef class ModuleAction(Action):
             # first we try the easy case of coercing G to the base ring of S
             self.connecting = base._internal_coerce_map_from(G)
             if self.connecting is None:
+                if S._internal_coerce_map_from(G) is not None:
+                    raise CoercionException("Best viewed as standard coercion multiplication.")
                 # otherwise, we try and find a base extension
                 from sage.categories.pushout import pushout
                 # this may raise a type error, which we propagate
