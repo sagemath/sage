@@ -786,13 +786,13 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: L.define_implicitly([F], [F(2*z) - (1+exp(x*z)+exp(y*z))*F - exp((x+y)*z)*F(-z)])
             sage: F
             <repr(...) failed: ValueError: could not determine any coefficients:
-                [3]: 6*series[3] + (-2*x - 2*y)*series[2] + (x*y)*series[1] == 0>
+                coefficient [3]: 6*series[3] + (-2*x - 2*y)*series[2] + (x*y)*series[1] == 0>
 
             sage: F = L.undefined()
             sage: L.define_implicitly([(F, [0, f1])], [F(2*z) - (1+exp(x*z)+exp(y*z))*F - exp((x+y)*z)*F(-z)])
             sage: F
             <repr(...) failed: ValueError: could not determine any coefficients:
-                [3]: 6*series[3] + (-2*x - 2*y)*series[2] + (x*y*f1) == 0>
+                coefficient [3]: 6*series[3] + (-2*x - 2*y)*series[2] + (x*y*f1) == 0>
 
         Laurent series examples::
 
@@ -993,10 +993,10 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             ...
             ValueError: could not determine any coefficients:
             equation 0:
-                [x*y*t]: A[x*y] - A[t] == 0
+                coefficient [x*y*t]: A[x*y] - A[t] == 0
             equation 1:
-                [x*y*t]: B[x*y] - B[t] == 0
-                [x*t^2]: B[x*t] + B[t] == 0
+                coefficient [x*y*t]: B[x*y] - B[t] == 0
+                coefficient [x*t^2]: B[x*t] + B[t] == 0
 
         Check the error message in the case of symmetric functions::
 
@@ -1009,7 +1009,24 @@ class LazySeriesRing(UniqueRepresentation, Parent):
             sage: T.define_implicitly([A, B], [X*A - Y*B])
             sage: A
             <repr(...) failed: ValueError: could not determine any coefficients:
-                [p[1] # p[1]]: -B[p[1] # p[]] + A[p[] # p[1]] == 0>
+                coefficient [p[1] # p[1]]: -B[p[1] # p[]] + A[p[] # p[1]] == 0>
+
+        An example we cannot solve because we only look at the next
+        non-vanishing equations::
+
+            sage: L.<x> = LazyPowerSeriesRing(QQ)
+            sage: A = L.undefined()
+            sage: eq1 = diff(A, x) + diff(A, x, 2)
+            sage: eq2 = A + diff(A, x) + diff(A, x, 2)
+            sage: L.define_implicitly([A], [eq1, eq2])
+            sage: A[1]
+            Traceback (most recent call last):
+            ...
+            ValueError: could not determine any coefficients:
+            equation 0:
+                coefficient [0]: 2*series[2] + series[1] == 0
+            equation 1:
+                coefficient [0]: 2*series[2] + series[1] == 0
 
         """
         s = [a[0]._coeff_stream if isinstance(a, (tuple, list))

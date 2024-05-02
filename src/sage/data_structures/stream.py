@@ -1582,6 +1582,48 @@ class Stream_uninitialized(Stream):
 
         - ``n`` -- integer; the index
 
+        This method handles uninitialized streams no matter whether
+        they are defined using :meth:`define` or
+        :meth:`define_implicitly`.
+
+        In the first case, we rely on coefficients being computed
+        lazily.  More precisely, the value of the requested
+        coefficient must only depend on the preceding coefficients.
+
+        In the second case, we use a variable to represent the
+        undetermined coefficient.  Let us consider the simplest case
+        where each term of the stream corresponds to an element of
+        the series, i.e., ``self._coefficient_ring ==
+        self._base_ring``, and suppose that we are requesting the
+        first coefficient which has not yet been determined.
+
+        The logic of this method is such that, when called while
+        ``self._uncomputed == True``, it only returns (without error)
+        once the value of the variable representing the coefficient
+        has been successfully determined.  In this case the variable
+        is replaced by its value in all caches of the
+        :meth:`input_streams`.
+
+        When retrieving the next non-vanishing terms of the given
+        equations (in :meth:`_compute`), this method
+        (:meth:`__getitem__`) will be called again (possibly also for
+        other coefficients), however with the flag ``self._uncomputed
+        == False``.  This entails that a variable is created for the
+        requested coefficients.
+
+        Note that, only when ``self._uncomputed == False``, elements
+        from the cache which contain undetermined coefficients (i.e.,
+        variables) are returned.  This is achieved by storing the
+        number of valid coefficients in the cache in
+        :meth:`_good_cache`.
+
+        From these equations we select the linear ones (in
+        :meth:`_compute`).  We then solve this system of linear
+        equations, and substitute back any uniquely determined
+        coefficients in the caches of all input streams (in
+        :meth:`_subs_in_caches`).  We repeat, until the requested
+        coefficient has been determined.
+
         EXAMPLES::
 
             sage: from sage.data_structures.stream import Stream_uninitialized, Stream_exact, Stream_cauchy_mul, Stream_add, Stream_cauchy_compose
@@ -1590,6 +1632,7 @@ class Stream_uninitialized(Stream):
             sage: A.define(Stream_add(x, Stream_cauchy_mul(x, Stream_cauchy_compose(A, A, True), True), True))
             sage: [A[n] for n in range(10)]
             [0, 1, 1, 2, 6, 23, 104, 531, 2982, 18109]
+
         """
         if n < self._approximate_order:
             return ZZ.zero()
@@ -1634,14 +1677,17 @@ class Stream_uninitialized(Stream):
         if len(self._cache) > n - self._approximate_order:
             return self._cache[n - self._approximate_order]
 
-        if self._coefficient_ring == self._base_ring:
-            x = sum(self._PF(self._pool.new_variable(self._name + "[%s]" % n)) * m
-                    for m in self._terms_of_degree(n, self._PF))
-        else:
-            x = sum(self._PF(self._pool.new_variable(self._name + "[%s]" % m)) * m
-                    for m in self._terms_of_degree(n, self._PF))
+        # it may happen, that a variable for a coefficient of higher
+        # degree is requested, so we have to fill in all the degrees
+        for n0 in range(len(self._cache) + self._approximate_order, n+1):
+            if self._coefficient_ring == self._base_ring:
+                x = (self._PF(self._pool.new_variable(self._name + "[%s]" % n0))
+                     * self._terms_of_degree(n0, self._PF)[0])
+            else:
+                x = sum(self._PF(self._pool.new_variable(self._name + "[%s]" % m)) * m
+                        for m in self._terms_of_degree(n0, self._PF))
+            self._cache.append(x)
 
-        self._cache.append(x)
         return x
 
     def _subs_in_caches(self, var, val):
@@ -1865,7 +1911,7 @@ class Stream_uninitialized(Stream):
             Traceback (most recent call last):
             ...
             ValueError: there are no linear equations:
-                [0]: -series[0]^2 + series[0] == 0
+                coefficient [0]: -series[0]^2 + series[0] == 0
 
         """
         s = repr(eq)
@@ -1873,7 +1919,7 @@ class Stream_uninitialized(Stream):
         # we have to replace longer variables first
         for v in sorted(d, key=lambda v: -len(str(v))):
             s = s.replace(repr(v), d[v])
-        return repr([idx]) + ": " + s + " == 0"
+        return "coefficient " + repr([idx]) + ": " + s + " == 0"
 
     def iterate_coefficients(self):
         """
