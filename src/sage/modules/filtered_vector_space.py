@@ -148,6 +148,8 @@ def is_FilteredVectorSpace(X):
         sage: is_FilteredVectorSpace('ceci n\'est pas une pipe')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37924, "the function is_FilteredVectorSpace is deprecated; use 'isinstance(..., FilteredVectorSpace_class)' instead")
     return isinstance(X, FilteredVectorSpace_class)
 
 
