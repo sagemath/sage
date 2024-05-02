@@ -5804,8 +5804,8 @@ class FreeModule_ambient(FreeModule_generic):
         """
         if self.base_ring() is R:
             return self
-        from sage.modules.free_quadratic_module import is_FreeQuadraticModule
-        if is_FreeQuadraticModule(self):
+        from sage.modules.free_quadratic_module import FreeQuadraticModule_generic
+        if isinstance(self, FreeQuadraticModule_generic):
             return FreeModule(R, self.rank(),
                               inner_product_matrix=self.inner_product_matrix(),
                               sparse=self.is_sparse())

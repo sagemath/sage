@@ -249,6 +249,8 @@ def is_FreeQuadraticModule(M):
         sage: is_FreeQuadraticModule(W)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37924, "the function is_FreeQuadraticModule is deprecated; use 'isinstance(..., FreeQuadraticModule_generic)' instead")
     return isinstance(M, FreeQuadraticModule_generic)
 
 
