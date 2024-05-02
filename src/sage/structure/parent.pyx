@@ -148,6 +148,10 @@ def is_Parent(x):
 
         sage: from sage.structure.parent import is_Parent
         sage: is_Parent(2/3)
+        doctest:warning...
+        DeprecationWarning: the function is_Parent is deprecated;
+        use 'isinstance(..., Parent)' instead
+        See https://github.com/sagemath/sage/issues/37922 for details.
         False
         sage: is_Parent(ZZ)
         True

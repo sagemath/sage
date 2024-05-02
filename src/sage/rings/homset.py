@@ -26,6 +26,10 @@ def is_RingHomset(H):
 
         sage: from sage.rings.homset import is_RingHomset as is_RH
         sage: is_RH(Hom(ZZ, QQ))
+        doctest:warning...
+        DeprecationWarning: the function is_RingHomset is deprecated;
+        use 'isinstance(..., RingHomset_generic)' instead
+        See https://github.com/sagemath/sage/issues/37922 for details.
         True
         sage: is_RH(ZZ)
         False

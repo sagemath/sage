@@ -2571,6 +2571,10 @@ def is_Category(x):
     EXAMPLES::
 
         sage: sage.categories.category.is_Category(CommutativeAdditiveSemigroups())
+        doctest:warning...
+        DeprecationWarning: the function is_Category is deprecated;
+        use 'isinstance(..., Category)' instead
+        See https://github.com/sagemath/sage/issues/37922 for details.
         True
         sage: sage.categories.category.is_Category(ZZ)
         False
