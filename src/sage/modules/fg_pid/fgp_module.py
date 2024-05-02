@@ -284,6 +284,8 @@ def is_FGP_Module(x):
         sage: sage.modules.fg_pid.fgp_module.is_FGP_Module(Q)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37924, "the function is_FGP_Module is deprecated; use 'isinstance(..., FGP_Module_class)' instead")
     return isinstance(x, FGP_Module_class)
 
 
@@ -441,7 +443,7 @@ class FGP_Module_class(Module):
             sage: Q._coerce_map_from_(V.scale(2))
             True
         """
-        if is_FGP_Module(S):
+        if isinstance(S, FGP_Module_class):
             return S.has_canonical_map_to(self)
         return self._V.has_coerce_map_from(S)
 
@@ -500,7 +502,7 @@ class FGP_Module_class(Module):
             sage: Q/Q
             Finitely generated module V/W over Integer Ring with invariants ()
         """
-        if not is_FGP_Module(other):
+        if not isinstance(other, FGP_Module_class):
             if isinstance(other, FreeModule_generic):
                 other = other / other.zero_submodule()
             else:
@@ -525,7 +527,7 @@ class FGP_Module_class(Module):
             sage: Q == V/V.zero_submodule()
             False
         """
-        if not is_FGP_Module(other):
+        if not isinstance(other, FGP_Module_class):
             return False
         return self._V == other._V and self._W == other._W
 
@@ -745,7 +747,7 @@ class FGP_Module_class(Module):
             ...
             ValueError: x.V() must be contained in self's V.
         """
-        if is_FGP_Module(x):
+        if isinstance(x, FGP_Module_class):
             if not x._W.is_submodule(self._W):
                 raise ValueError("x.W() must be contained in self's W.")
 
@@ -759,7 +761,7 @@ class FGP_Module_class(Module):
             raise TypeError("x must be a list, tuple, or FGP module")
 
         x = Sequence(x)
-        if is_FGP_Module(x.universe()):
+        if isinstance(x.universe(), FGP_Module_class):
             # TODO: possibly inefficient in some cases
             x = [self(v).lift() for v in x]
         V = self._V.submodule(x) + self._W
@@ -791,7 +793,7 @@ class FGP_Module_class(Module):
             False
 
         """
-        if not is_FGP_Module(A):
+        if not isinstance(A, FGP_Module_class):
             return False
         if self.cardinality() == 0 and self.base_ring() == A.base_ring():
             return True
@@ -2047,7 +2049,7 @@ def random_fgp_morphism_0(*args, **kwds):
         sage: mor = fgp.random_fgp_morphism_0(4)
         sage: mor.domain() == mor.codomain()
         True
-        sage: fgp.is_FGP_Module(mor.domain())
+        sage: isinstance(mor.domain(), fgp.FGP_Module_class)
         True
 
     Each generator is sent to a random multiple of itself::
