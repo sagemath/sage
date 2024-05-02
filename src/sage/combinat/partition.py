@@ -3025,8 +3025,18 @@ class Partition(CombinatorialElement):
             sage: Partition([3, 2]).ladders(3)
             {0: [(0, 0)], 1: [(0, 1)], 2: [(0, 2), (1, 0)], 3: [(1, 1)]}
 
+        When ``e`` is ``0``, the cells are in bijection with the ladders,
+        but the index of the ladder depends on the size of the partition::
+
             sage: Partition([3, 2]).ladders(0)
             {0: [(0, 0)], 1: [(0, 1)], 2: [(0, 2)], 5: [(1, 0)], 6: [(1, 1)]}
+            sage: Partition([3, 2, 1]).ladders(0)
+            {0: [(0, 0)], 1: [(0, 1)], 2: [(0, 2)], 6: [(1, 0)], 7: [(1, 1)],
+             12: [(2, 0)]}
+            sage: Partition([3, 1, 1]).ladders(0)
+            {0: [(0, 0)], 1: [(0, 1)], 2: [(0, 2)], 5: [(1, 0)], 10: [(2, 0)]}
+            sage: Partition([1, 1, 1]).ladders(0)
+            {0: [(0, 0)], 3: [(1, 0)], 6: [(2, 0)]}
         """
         if e == 0:
             e = sum(self) + 1

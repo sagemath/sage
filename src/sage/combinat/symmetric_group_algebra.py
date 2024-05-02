@@ -1248,7 +1248,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         r"""
         Return the ladder idempontent of ``self``.
 
-        Let `F` be a field of characteristic `p > 0`. The *ladder idempotent*
+        Let `F` be a field of characteristic `p`. The *ladder idempotent*
         of shape `\lambda` is the idempotent of `F[S_n]` defined as follows.
         Let `T` be the :meth:`ladder tableau
         <sage.combinat.partition.Partition.ladder_tableau>` of shape `\lambda`.
@@ -1264,7 +1264,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
         where `E_{UU}` is the :meth:`seminormal_basis` element over `\QQ`
         and we project the sum to `F`, `S_{\alpha}` is the Young subgroup
-        corresponding to `\alpha`, and `\alpha! = \alpha_1 ! \cdots \alpha_k !`.
+        corresponding to `\alpha`, and `\alpha! = \alpha_1! \cdots \alpha_k!`.
 
         EXAMPLES::
 
@@ -1292,6 +1292,24 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             [1, 1, 1, 1]
             2*[1, 2, 3, 4] + [1, 2, 4, 3] + [2, 1, 3, 4] + 2*[2, 1, 4, 3]
              + 2*[3, 4, 1, 2] + [3, 4, 2, 1] + [4, 3, 1, 2] + 2*[4, 3, 2, 1]
+
+        When `p = 0`, these idempotents will generate all of the simple
+        modules (which are the :meth:`specht_modules` and also projective)::
+
+            sage: SGA = SymmetricGroupAlgebra(QQ, 5)
+            sage: for la in Partitions(SGA.n):
+            ....:     idem = SGA.ladder_idemponent(la)
+            ....:     assert idem^2 == idem
+            ....:     print(la, SGA.principal_ideal(idem).dimension())
+            [5] 1
+            [4, 1] 4
+            [3, 2] 5
+            [3, 1, 1] 6
+            [2, 2, 1] 5
+            [2, 1, 1, 1] 4
+            [1, 1, 1, 1, 1] 1
+            sage: [StandardTableaux(la).cardinality() for la in Partitions(SGA.n)]
+            [1, 4, 5, 6, 5, 4, 1]
 
         REFERENCES:
 
