@@ -592,7 +592,7 @@ def williamson_type_quadruples_smallcases(n, existence=False):
     if n not in db:
         raise ValueError("The Williamson type quadruple of order %s is not yet implemented." % n)
 
-    a, b, c, d = map(lambda s: vector(pmtoZ(s)), db[n])
+    a, b, c, d = (vector(pmtoZ(s)) for s in db[n])
     return a, b, c, d
 
 
@@ -736,7 +736,7 @@ def construction_four_symbol_delta_code_I(X, Y, Z, W):
     def autocorrelation(seq, j):
         return sum([seq[i]*seq[i+j] for i in range(len(seq)-j)])
     for j in range(1, n):
-        assert sum(map(lambda seq: autocorrelation(seq, j), [X, Y, Z, W])) == 0
+        assert sum(autocorrelation(seq, j) for seq in [X, Y, Z, W]) == 0
 
     T1 = X + Z
     T2 = X + [-z for z in Z]
@@ -812,7 +812,7 @@ def construction_four_symbol_delta_code_II(X, Y, Z, W):
         return sum([seq[i]*seq[i+j] for i in range(len(seq)-j)])
 
     for j in range(1, n):
-        assert sum(map(lambda seq: autocorrelation(seq, j), [X, Y, Z, W])) == 0
+        assert sum(autocorrelation(seq, j) for seq in [X, Y, Z, W]) == 0
 
     def alternate(seq1, seq2):
         return [seq1[i//2] if i % 2 == 0 else seq2[(i-1)//2] for i in range(len(seq1)+len(seq2))]

@@ -400,7 +400,7 @@ class Constellation_class(Element):
             sage: c is copy(c)
             False
         """
-        return self.parent()([gg for gg in self._g],
+        return self.parent()(list(self._g),
                              check=False,
                              mutable=self._mutable)
 
@@ -417,7 +417,7 @@ class Constellation_class(Element):
             sage: d.is_mutable()
             True
         """
-        return self.parent()([gg for gg in self._g],
+        return self.parent()(list(self._g),
                              check=False,
                              mutable=True)
 

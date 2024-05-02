@@ -2936,7 +2936,7 @@ def complementary_difference_setsII(n, check=True):
     if t % 2 == 0:
         rho = G.multiplicative_generator()
         C0 = list({el**8 for el in G if el != 0})
-        C1, C2, C3, C6, C7 = map(lambda i: [rho**i * el for el in C0], [1, 2, 3, 6, 7])
+        C1, C2, C3, C6, C7 = ([rho**i * el for el in C0] for i in [1, 2, 3, 6, 7])
         A = C0 + C1 + C2 + C3
         B = C0 + C1 + C6 + C7
     else:

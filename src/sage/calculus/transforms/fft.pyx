@@ -243,7 +243,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
         EXAMPLES::
 
             sage: a = FastFourierTransform(4)
-            sage: a._plot_polar(0,2)                                                    # needs sage.plot
+            sage: a._plot_polar(0,2)                                                    # needs sage.plot sage.symbolic
             Graphics object consisting of 2 graphics primitives
 
         """
@@ -304,9 +304,9 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
 
         - ``style`` -- Style of the plot, options are ``"rect"`` or ``"polar"``
 
-          - ``rect`` -- height represents real part, color represents
+          - ``"rect"`` -- height represents real part, color represents
             imaginary part.
-          - ``polar`` -- height represents absolute value, color
+          - ``"polar"`` -- height represents absolute value, color
             represents argument.
 
         - ``xmin`` -- The lower bound of the slice to plot. 0 by default.
@@ -319,13 +319,14 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
 
         EXAMPLES::
 
+            sage: # needs sage.plot
             sage: a = FastFourierTransform(16)
             sage: for i in range(16): a[i] = (random(),random())
-            sage: A = plot(a)                                                           # needs sage.plot
-            sage: B = plot(a, style='polar')                                            # needs sage.plot
-            sage: type(A)                                                               # needs sage.plot
+            sage: A = plot(a)
+            sage: B = plot(a, style='polar')                                            # needs sage.symbolic
+            sage: type(A)
             <class 'sage.plot.graphics.Graphics'>
-            sage: type(B)                                                               # needs sage.plot
+            sage: type(B)                                                               # needs sage.symbolic
             <class 'sage.plot.graphics.Graphics'>
             sage: a = FastFourierTransform(125)
             sage: b = FastFourierTransform(125)
@@ -333,7 +334,7 @@ cdef class FastFourierTransform_complex(FastFourierTransform_base):
             sage: for i in range(1, 60): b[i]=1
             sage: a.forward_transform()
             sage: a.inverse_transform()
-            sage: a.plot() + b.plot()                                                   # needs sage.plot
+            sage: a.plot() + b.plot()
             Graphics object consisting of 250 graphics primitives
 
         """
