@@ -753,7 +753,7 @@ class FreeQuadraticModule_generic_field(free_module.FreeModule_generic_field,
             Basis matrix:
             [1 1 1]
         """
-        if free_module.is_FreeModule(gens):
+        if isinstance(gens, free_module.FreeModule_generic):
             gens = gens.gens()
         if not isinstance(gens, (list, tuple)):
             raise TypeError("gens (=%s) must be a list or tuple" % gens)

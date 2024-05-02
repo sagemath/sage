@@ -1268,7 +1268,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
                     if is_MatrixSpace(S):
                         # matrix multiplications
                         return matrix_action.MatrixMatrixAction(self, S)
-                    elif sage.modules.free_module.is_FreeModule(S):
+                    elif isinstance(S, sage.modules.free_module.FreeModule_generic):
                         return matrix_action.MatrixVectorAction(self, S)
                     elif isinstance(S, SchemeHomset_points):
                         return matrix_action.MatrixSchemePointAction(self, S)
@@ -1281,7 +1281,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
                     if is_MatrixSpace(S):
                         # matrix multiplications
                         return matrix_action.MatrixMatrixAction(S, self)
-                    elif sage.modules.free_module.is_FreeModule(S):
+                    elif isinstance(S, sage.modules.free_module.FreeModule_generic):
                         return matrix_action.VectorMatrixAction(self, S)
                     elif isinstance(S, SchemeHomset_generic):
                         return matrix_action.PolymapMatrixAction(self, S)

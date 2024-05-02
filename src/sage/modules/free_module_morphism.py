@@ -128,7 +128,7 @@ class FreeModuleMorphism(matrix_morphism.MatrixMorphism):
             sage: phi(2*W.1)
             (6, 0, 8/3)
         """
-        if free_module.is_FreeModule(x):
+        if isinstance(x, free_module.FreeModule_generic):
             V = self.domain().submodule(x)
             return self.restrict_domain(V).image()
         raise TypeError("`pushforward` is only defined for submodules")

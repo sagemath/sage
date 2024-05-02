@@ -214,7 +214,7 @@ AUTHOR:
 from itertools import product
 
 from sage.modules.module import Module
-from sage.modules.free_module import is_FreeModule
+from sage.modules.free_module import FreeModule_generic
 from sage.structure.all import parent
 from sage.structure.sequence import Sequence
 from .fgp_element import DEBUG, FGP_Element
@@ -356,9 +356,9 @@ class FGP_Module_class(Module):
             <class 'sage.modules.fg_pid.fgp_module.FGP_Module_class_with_category'>
         """
         if check:
-            if not is_FreeModule(V):
+            if not isinstance(V, FreeModule_generic):
                 raise TypeError("V must be a FreeModule")
-            if not is_FreeModule(W):
+            if not isinstance(W, FreeModule_generic):
                 raise TypeError("W must be a FreeModule")
             if not W.is_submodule(V):
                 raise ValueError("W must be a submodule of V")
@@ -501,7 +501,7 @@ class FGP_Module_class(Module):
             Finitely generated module V/W over Integer Ring with invariants ()
         """
         if not is_FGP_Module(other):
-            if is_FreeModule(other):
+            if isinstance(other, FreeModule_generic):
                 other = other / other.zero_submodule()
             else:
                 raise TypeError("other must be an FGP module")
@@ -1598,7 +1598,7 @@ class FGP_Module_class(Module):
                 N = codomain
                 im_gens = Sequence(im_gens, universe=N)
 
-        if is_FreeModule(N):
+        if isinstance(N, FreeModule_generic):
             # If im_smith_gens are not in an R-module, but are in a Free-module,
             # then we quotient out by the 0 submodule and get an R-module.
             N = FGP_Module(N, N.zero_submodule(), check=DEBUG)

@@ -5786,7 +5786,7 @@ cdef class Matrix(Matrix1):
             sage: t.decomposition_of_subspace(v, check_restrict=False) == t.decomposition_of_subspace(v)                # needs sage.libs.pari
             True
         """
-        if not sage.modules.free_module.is_FreeModule(M):
+        if not isinstance(M, sage.modules.free_module.FreeModule_generic):
             raise TypeError("M must be a free module.")
         if not self.is_square():
             raise ArithmeticError("self must be a square matrix")

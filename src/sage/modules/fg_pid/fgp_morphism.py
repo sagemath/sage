@@ -506,8 +506,8 @@ class FGP_Homset_class(Homset):
             <class 'sage.modules.fg_pid.fgp_morphism.FGP_Homset_class_with_category'>
         """
         if category is None:
-            from sage.modules.free_module import is_FreeModule
-            if is_FreeModule(X) and is_FreeModule(Y):
+            from sage.modules.free_module import FreeModule_generic
+            if isinstance(X, FreeModule_generic) and isinstance(Y, FreeModule_generic):
                 from sage.categories.modules_with_basis import ModulesWithBasis
                 category = ModulesWithBasis(X.base_ring())
             else:

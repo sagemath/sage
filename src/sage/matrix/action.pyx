@@ -67,7 +67,7 @@ AUTHOR:
 import operator
 
 from sage.matrix.matrix_space import MatrixSpace, is_MatrixSpace
-from sage.modules.free_module import FreeModule, is_FreeModule
+from sage.modules.free_module import FreeModule, FreeModule_generic
 from sage.structure.coerce cimport coercion_model
 from sage.categories.homset import Hom, End
 
@@ -304,7 +304,7 @@ cdef class MatrixVectorAction(MatrixMulAction):
             ...
             TypeError: incompatible dimensions 3, 4
             """
-        if not is_FreeModule(S):
+        if not isinstance(S, FreeModule_generic):
             raise TypeError("Not a free module: %s" % S)
         MatrixMulAction.__init__(self, G, S, True)
 
@@ -355,7 +355,7 @@ cdef class VectorMatrixAction(MatrixMulAction):
             ...
             TypeError: incompatible dimensions 5, 3
         """
-        if not is_FreeModule(S):
+        if not isinstance(S, FreeModule_generic):
             raise TypeError("Not a free module: %s" % S)
         MatrixMulAction.__init__(self, G, S, False)
 
