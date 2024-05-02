@@ -238,6 +238,8 @@ def is_VectorSpaceHomspace(x):
         sage: sage.modules.vector_space_homspace.is_VectorSpaceHomspace('junk')
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37924, "the function is_VectorSpaceHomspace is deprecated; use 'isinstance(..., VectorSpaceHomspace)' instead")
     return isinstance(x, VectorSpaceHomspace)
 
 
