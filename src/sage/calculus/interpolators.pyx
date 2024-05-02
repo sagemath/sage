@@ -50,13 +50,14 @@ def polygon_spline(pts):
         sage: ps = polygon_spline(pts)
         sage: fx = lambda x: ps.value(x).real
         sage: fy = lambda x: ps.value(x).imag
-        sage: show(parametric_plot((fx, fy), (0, 2*pi)))                                # needs sage.plot
+        sage: show(parametric_plot((fx, fy), (0, 2*pi)))                                # needs sage.plot sage.symbolic
         sage: m = Riemann_Map([lambda x: ps.value(real(x))],
         ....:                 [lambda x: ps.derivative(real(x))], 0)
         sage: show(m.plot_colored() + m.plot_spiderweb())                               # needs sage.plot
 
     Polygon approximation of a circle::
 
+        sage: # needs sage.symbolic
         sage: pts = [e^(I*t / 25) for t in range(25)]
         sage: ps = polygon_spline(pts)
         sage: ps.derivative(2)

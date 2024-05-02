@@ -323,7 +323,7 @@ class AffineFactorizationCrystal(UniqueRepresentation, Parent):
                     right_n.remove(min(l))
                 else:
                     left_unbracketed += [m]
-            return [[j for j in left_unbracketed],[j for j in right_n]]
+            return [list(left_unbracketed), list(right_n)]
 
         def to_tableau(self):
             """
@@ -473,16 +473,16 @@ class FactorizationToTableaux(CrystalMorphism):
         """
         p = []
         q = []
-        for i,factor in enumerate(reversed(x.value)):
+        for i, factor in enumerate(reversed(x.value)):
             word = factor.reduced_word()
-            p += [i+1]*len(word)
+            p += [i + 1] * len(word)
             # We sort for those pesky commutative elements
             # The word is most likely in reverse order to begin with
             q += sorted(reversed(word))
         C = self.codomain()
         return C(RSK(p, q, insertion=RSK.rules.EG)[1])
 
-    def is_isomorphism(self):
+    def is_isomorphism(self) -> bool:
         """
         Return ``True`` as this is an isomorphism.
 

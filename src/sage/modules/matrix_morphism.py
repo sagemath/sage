@@ -1607,7 +1607,7 @@ class MatrixMorphism(MatrixMorphism_abstract):
 
         INPUT:
 
-        - ``side`` -- (default: ``'None'``) the side of the matrix
+        - ``side`` -- (default: ``None``) the side of the matrix
           where a vector is placed to effect the morphism (function)
 
         OUTPUT:

@@ -499,7 +499,7 @@ class ComplexReflectionGroup(UniqueRepresentation, PermutationGroup_generic):
         """
         # makes sure that the simple reflections come first
         gens = self.gens()
-        R = [t for t in gens]
+        R = list(gens)
         # Then import all distinguished reflections from gap,
         #   the Set is used as every such appears multiple times.
         for r in self._gap_group.Reflections():

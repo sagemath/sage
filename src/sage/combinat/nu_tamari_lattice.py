@@ -263,7 +263,7 @@ def AltNuTamariLattice(nu, delta=None):
     deltamax = [len(a) for a in nu.split(sep='1')[1:]]
     if delta is None:
         delta = deltamax
-    elif len(delta) != len(deltamax) or any([delta[i] > deltamax[i] for i in range(len(delta))]):
+    elif len(delta) != len(deltamax) or any(delta[i] > deltamax[i] for i in range(len(delta))):
         raise ValueError("delta is not a valid increment vector")
 
     def covers(p):

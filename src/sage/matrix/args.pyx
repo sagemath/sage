@@ -312,7 +312,8 @@ cdef class MatrixArgs:
         self.sparse = -1
         self.kwds = {}
 
-    def __init__(self, *args, base_ring=None, nrows=None, ncols=None, entries=None, sparse=None, space=None, **kwds):
+    def __init__(self, *args, base_ring=None, nrows=None, ncols=None, entries=None,
+                 sparse=None, row_keys=None, column_keys=None, space=None, **kwds):
         """
         Parse arguments for creating a new matrix.
 
@@ -360,6 +361,10 @@ cdef class MatrixArgs:
         self.entries = entries
         if sparse is not None:
             self.sparse = sparse
+        if row_keys is not None:
+            self.set_row_keys(row_keys)
+        if column_keys is not None:
+            self.set_column_keys(column_keys)
         if space is not None:
             self.set_space(space)
         self.kwds.update(kwds)
@@ -375,18 +380,20 @@ cdef class MatrixArgs:
         if self.entries is None and isinstance(arg, (list, tuple, dict)):
             self.entries = arg
             argc -= 1
-            if argi == argc: return
+            if argi == argc:
+                return
 
         # check for base ring argument
         if self.base is None and isinstance(args[argi], Parent):
             self.base = args[argi]
             argi += 1
-            if argi == argc: return
+            if argi == argc:
+                return
 
         # check nrows and ncols argument
         cdef int k
         cdef long v
-        if self.nrows == -1 and self.ncols == -1:
+        if self.nrows == -1 and self.ncols == -1 and self.row_keys is None and self.column_keys is None:
             for k in range(2):
                 arg = args[argi]
                 if is_numpy_type(type(arg)):
@@ -550,12 +557,14 @@ cdef class MatrixArgs:
             if sparse:
                 pass
             else:
+                self._ensure_nrows_ncols()
                 zero = self.base.zero()
                 for i in range(self.nrows):
                     for j in range(self.ncols):
                         sig_check()
                         yield zero
         elif self.typ == MA_ENTRIES_SCALAR:
+            self._ensure_nrows_ncols()
             diag = self.entries
             if convert and self.need_to_convert(diag):
                 diag = self.base(diag)
@@ -570,6 +579,7 @@ cdef class MatrixArgs:
                         sig_check()
                         yield diag if (i == j) else zero
         elif self.typ == MA_ENTRIES_SEQ_SEQ:
+            self._ensure_nrows_ncols()
             row_iter = sized_iter(self.entries, self.nrows)
             for i in range(self.nrows):
                 row = sized_iter(next(row_iter), self.ncols)
@@ -583,6 +593,7 @@ cdef class MatrixArgs:
                     else:
                         yield x
         elif self.typ == MA_ENTRIES_SEQ_FLAT:
+            self._ensure_nrows_ncols()
             it = sized_iter(self.entries, self.nrows * self.ncols)
             for i in range(self.nrows):
                 for j in range(self.ncols):
@@ -606,8 +617,14 @@ cdef class MatrixArgs:
                 raise TypeError("dense iteration is not supported for sparse input")
         elif self.typ == MA_ENTRIES_CALLABLE:
             f = self.entries
-            for i in range(self.nrows):
-                for j in range(self.ncols):
+            row_keys = self.row_keys
+            if row_keys is None:
+                row_keys = range(self.nrows)
+            column_keys = self.column_keys
+            if column_keys is None:
+                column_keys = range(self.ncols)
+            for i in row_keys:
+                for j in column_keys:
                     sig_check()
                     x = f(i, j)
                     if convert and self.need_to_convert(x):
@@ -640,6 +657,7 @@ cdef class MatrixArgs:
             42
         """
         self.finalize()
+        self._ensure_nrows_ncols()
         return self.nrows * self.ncols
 
     cpdef Matrix matrix(self, bint convert=True):
@@ -726,12 +744,66 @@ cdef class MatrixArgs:
                         M = M.__copy__()
                     break
         else:
-            M = self.space(self, coerce=convert)
+            space = self.space
+            if not isinstance(space, MatrixSpace):
+                space = space.zero().matrix(side='left').parent()
+            M = space(self, coerce=convert)
 
         # Also store the matrix to support multiple calls of matrix()
         self.entries = M
         self.typ = MA_ENTRIES_MATRIX
         return M
+
+    cpdef element(self, bint immutable=False):
+        r"""
+        Return the matrix or morphism.
+
+        INPUT:
+
+        - ``immutable`` -- boolean; if ``True``, the result will be immutable.
+
+        OUTPUT: an element of ``self.space``
+
+        .. NOTE::
+
+            This may change ``self.entries``, making it unsafe to access the
+            ``self.entries`` attribute after calling this method.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.args import MatrixArgs
+            sage: M = matrix(2, 3, range(6), sparse=True)
+            sage: ma = MatrixArgs(M); ma.finalized()
+            <MatrixArgs for
+              Full MatrixSpace of 2 by 3 sparse matrices over Integer Ring;
+             typ=MATRIX; entries=[0 1 2]
+                                 [3 4 5]>
+            sage: M2 = ma.element(immutable=True); M2.parent()
+            Full MatrixSpace of 2 by 3 sparse matrices over Integer Ring
+            sage: M2.is_immutable()
+            True
+
+            sage: ma = MatrixArgs(M, row_keys=['u','v'], column_keys=['a','b','c'])
+            sage: ma.finalized()
+            <MatrixArgs for
+              Set of Morphisms
+               from Free module generated by {'a', 'b', 'c'} over Integer Ring
+                 to Free module generated by {'u', 'v'} over Integer Ring
+                 in Category of finite dimensional modules with basis over Integer Ring;
+             typ=MATRIX; entries=[0 1 2]
+                                 [3 4 5]>
+            sage: phi = ma.element(); phi
+            Generic morphism:
+            From: Free module generated by {'a', 'b', 'c'} over Integer Ring
+            To:   Free module generated by {'u', 'v'} over Integer Ring
+        """
+        self.finalize()
+        cdef Matrix M = self.matrix(convert=True)
+        if immutable:
+            M.set_immutable()
+        if isinstance(self.space, MatrixSpace):
+            return M
+        return self.space(matrix=M, side='left')
 
     cpdef list list(self, bint convert=True):
         """
@@ -835,13 +907,84 @@ cdef class MatrixArgs:
                 D[se.i, se.j] = x
         return D
 
+    cpdef int set_column_keys(self, column_keys) except -1:
+        """
+        Set the column keys with consistency checking.
+
+        If the value was previously set, it must remain the same.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.args import MatrixArgs
+            sage: ma = MatrixArgs(2, 4)
+            sage: ma.set_column_keys('xyz')
+            Traceback (most recent call last):
+            ...
+            ValueError: inconsistent column keys: should be of cardinality 4 but got xyz
+            sage: ma.set_column_keys('abcd')
+            0
+            sage: ma.finalized()
+            <MatrixArgs for
+              Set of Morphisms
+               from Free module generated by {'a', 'b', 'c', 'd'} over Integer Ring
+                 to Ambient free module of rank 2 over the principal ideal domain
+                    Integer Ring
+                 in Category of finite dimensional modules with basis over
+                    (Dedekind domains and euclidean domains
+                     and infinite enumerated sets and metric spaces);
+             typ=ZERO; entries=None>
+        """
+        if self.column_keys is not None and self.column_keys != column_keys:
+            raise ValueError(f"inconsistent column keys: should be {self.column_keys} "
+                             f"but got {column_keys}")
+        cdef long p = self.ncols
+        if p != -1 and p != len(column_keys):
+            raise ValueError(f"inconsistent column keys: should be of cardinality {self.ncols} "
+                             f"but got {column_keys}")
+        self.column_keys = column_keys
+
+    cpdef int set_row_keys(self, row_keys) except -1:
+        """
+        Set the row keys with consistency checking.
+
+        If the value was previously set, it must remain the same.
+
+        EXAMPLES::
+
+            sage: from sage.matrix.args import MatrixArgs
+            sage: ma = MatrixArgs(2, 4)
+            sage: ma.set_row_keys('xyz')
+            Traceback (most recent call last):
+            ...
+            ValueError: inconsistent row keys: should be of cardinality 2 but got xyz
+            sage: ma.set_row_keys(['u', 'v'])
+            0
+            sage: ma.finalized()
+            <MatrixArgs for
+              Set of Morphisms
+               from Ambient free module of rank 4 over the principal ideal domain
+                    Integer Ring
+                 to Free module generated by {'u', 'v'} over Integer Ring
+                 in Category of finite dimensional modules with basis over
+                    (Dedekind domains and euclidean domains
+                     and infinite enumerated sets and metric spaces);
+             typ=ZERO; entries=None>
+        """
+        if self.row_keys is not None and self.row_keys != row_keys:
+            raise ValueError(f"inconsistent row keys: should be {self.row_keys} "
+                             f"but got {row_keys}")
+        if self.nrows != -1 and self.nrows != len(row_keys):
+            raise ValueError(f"inconsistent row keys: should be of cardinality {self.nrows} "
+                             f"but got {row_keys}")
+        self.row_keys = row_keys
+
     cpdef int set_space(self, space) except -1:
         """
         Set inputs from a given matrix space.
 
         INPUT:
 
-        - ``space`` -- a :class:`MatrixSpace`
+        - ``space`` -- a :class:`MatrixSpace` or a homset of modules with basis
 
         EXAMPLES::
 
@@ -858,12 +1001,37 @@ cdef class MatrixArgs:
             [0 0]
             sage: M.parent() is S
             True
+
+        From a homset::
+
+            sage: C = CombinatorialFreeModule(ZZ, ['a', 'b', 'c'])
+            sage: R = CombinatorialFreeModule(ZZ, ['u', 'v'])
+            sage: S = Hom(C, R); S
+            Set of Morphisms
+             from Free module generated by {'a', 'b', 'c'} over Integer Ring
+               to Free module generated by {'u', 'v'} over Integer Ring
+               in Category of finite dimensional modules with basis over Integer Ring
+            sage: ma = MatrixArgs()
+            sage: _ = ma.set_space(S)
+            sage: ma.finalized()
+            <MatrixArgs for Set of Morphisms
+             from Free module generated by {'a', 'b', 'c'} over Integer Ring
+               to Free module generated by {'u', 'v'} over Integer Ring
+               in Category of finite dimensional modules with basis over Integer Ring;
+             typ=ZERO; entries=None>
         """
+        if self.space is not None:
+            return 0  # TODO: ??????
         self.space = <Parent?>space
-        self.set_nrows(space.nrows())
-        self.set_ncols(space.ncols())
-        self.base = space._base
-        self.sparse = space.is_sparse()
+        try:
+            self.set_nrows(space.nrows())
+            self.set_ncols(space.ncols())
+            self.base = space._base
+            self.sparse = space.is_sparse()
+        except AttributeError:
+            self.set_row_keys(space.codomain().basis().keys())
+            self.set_column_keys(space.domain().basis().keys())
+            self.base = space.base_ring()
 
     def finalized(self):
         """
@@ -945,6 +1113,7 @@ cdef class MatrixArgs:
 
         # Can we assume a square matrix?
         if self.typ & MA_FLAG_ASSUME_SQUARE:
+            # TODO: Handle column_keys/row_keys
             if self.ncols == -1:
                 if self.nrows != -1:
                     self.ncols = self.nrows
@@ -977,7 +1146,7 @@ cdef class MatrixArgs:
 
         # Error if size is required
         if self.typ & MA_FLAG_DIM_REQUIRED:
-            if self.nrows == -1 or self.ncols == -1:
+            if (self.nrows == -1 and self.row_keys is None) or (self.ncols == -1 and self.column_keys is None):
                 raise TypeError("the dimensions of the matrix must be specified")
 
         # Determine base in easy cases
@@ -993,7 +1162,9 @@ cdef class MatrixArgs:
             if self.base is None:
                 raise TypeError(f"unable to determine base of {self.entries!r}")
 
-        if self.nrows == -1 or self.ncols == -1 or self.base is None:
+        if ((self.nrows == -1 and self.row_keys is None)
+                or (self.ncols == -1 and self.column_keys is None)
+                or self.base is None):
             # Determine dimensions or base in the cases where we
             # really need to look at the entries.
             if self.typ == MA_ENTRIES_SEQ_SEQ:
@@ -1013,9 +1184,9 @@ cdef class MatrixArgs:
                     self.typ = MA_ENTRIES_ZERO
             except Exception:
                 # "not self.entries" has failed, self.entries cannot be determined to be zero
-                if self.nrows != self.ncols:
+                if self.nrows != self.ncols or self.row_keys != self.column_keys:
                     raise TypeError("scalar matrix must be square if the value cannot be determined to be zero")
-            if self.typ == MA_ENTRIES_SCALAR and self.nrows != self.ncols:
+            if self.typ == MA_ENTRIES_SCALAR and (self.nrows != self.ncols or self.row_keys != self.column_keys):
                 # self.typ is still SCALAR -> "not self.entries" has successfully evaluated, to False
                 raise TypeError("nonzero scalar matrix must be square")
 
@@ -1026,8 +1197,17 @@ cdef class MatrixArgs:
             global MatrixSpace
             if MatrixSpace is None:
                 from sage.matrix.matrix_space import MatrixSpace
-            self.space = MatrixSpace(self.base, self.nrows, self.ncols,
-                    sparse=self.sparse, **self.kwds)
+            nrows = self.nrows
+            if nrows == -1:
+                nrows = None
+            ncols = self.ncols
+            if ncols == -1:
+                ncols = None
+            self.space = MatrixSpace(self.base, nrows, ncols,
+                                     sparse=self.sparse,
+                                     row_keys=self.row_keys,
+                                     column_keys=self.column_keys,
+                                     **self.kwds)
 
         self.is_finalized = True
 
@@ -1197,10 +1377,11 @@ cdef class MatrixArgs:
         e = PySequence_Fast(self.entries, "not a sequence")
         self.set_nrows(len(e))
         if self.nrows == 0:
-            if self.ncols == -1: self.ncols = 0
+            if self.ncols == -1 and self.column_keys is None:
+                self.set_ncols(0)
             self.setdefault_base(ZZ)
             return 0
-        elif self.ncols != -1 and self.base is not None:
+        elif (self.ncols != -1 or self.column_keys is not None) and self.base is not None:
             # Everything known => OK
             return 0
 
@@ -1246,14 +1427,20 @@ cdef class MatrixArgs:
                 self.nrows = 0
             if self.ncols == -1:
                 self.ncols = 0
-        elif self.ncols == -1:
+        elif self.ncols == -1 and self.column_keys is None:
             if self.nrows == -1:
-                # Assume row matrix
-                self.nrows = 1
-                self.ncols = N
+                if self.row_keys is None:
+                    # Assume row matrix
+                    self.nrows = 1
+                    self.ncols = N
+                else:
+                    self.nrows = len(self.row_keys)
+                    self.ncols = N // self.nrows
             else:
                 self.ncols = N // self.nrows
-        elif self.nrows == -1:
+        elif self.nrows == -1 and self.row_keys is None:
+            if self.ncols == -1:
+                self.ncols = len(self.column_keys)
             self.nrows = N // self.ncols
 
         self.set_seq_flat(entries)

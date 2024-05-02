@@ -1285,7 +1285,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/2[a]/(a^8+a^4+a^3+a^2+1)
             //   number of vars : 10
-            //        block   1 : ordering rp
+            //        block   1 : ordering ip
             //                  : names    x0 x1 x2 x3 x4 x5 x6 x7 x8 x9
             //        block   2 : ordering C
 
@@ -1294,7 +1294,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             polynomial ring, over a field, global ordering
             //   coefficients: ZZ/127
             //   number of vars : 2
-            //        block   1 : ordering rp
+            //        block   1 : ordering ip
             //                  : names    x0 x1
             //        block   2 : ordering C
 
@@ -1303,7 +1303,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
             polynomial ring, over a field, global ordering
             //   coefficients: QQ
             //   number of vars : 2
-            //        block   1 : ordering rp
+            //        block   1 : ordering ip
             //                  : names    x0 x1
             //        block   2 : ordering C
 
