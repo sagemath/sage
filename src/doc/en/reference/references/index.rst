@@ -1819,6 +1819,10 @@ REFERENCES:
 .. [Com2019] Camille Combe, *Réalisation cubique du poset des
              intervalles de Tamari*, preprint :arxiv:`1904.00658`
 
+.. [Com1974] Comtet Louis, *Identities and Expansions*.
+             In: Advanced Combinatorics. 1974. pp. 127-175
+             :doi:`10.1007/978-94-010-2196-8_3`
+
 .. [Con] Keith Conrad, *Groups of order 12*,
          http://www.math.uconn.edu/~kconrad/blurbs/grouptheory/group12.pdf,
          accessed 21 October 2009.
@@ -3181,6 +3185,9 @@ REFERENCES:
             Cryptanalysis* ; 2002' available at
             http://www.engr.mun.ca/~howard/PAPERS/ldc_tutorial.pdf
 
+.. [Hes2004] Florian Hess, "Computing relations in divisor class groups of
+              algebraic curves over finite fields," Preprint, 2004.
+
 .. [Hes2002] Florian Hess, "Computing Riemann-Roch spaces in algebraic
              function fields and related topics," J. Symbolic
              Comput. 33 (2002), no. 4, 425--445.
@@ -3775,6 +3782,9 @@ REFERENCES:
 .. [KG2016] \P. Karpmann and Benjamin Gregoire, *The LITTLUN S-box and the FLY
             block cipher*, Lightweight Cryptography Workshop, 2016.
             https://www.nist.gov/sites/default/files/documents/2016/10/18/karpman-paper-lwc2016.pdf
+
+.. [Khu2004] \K. Khuri-Makdisi. *Linear algebra algorithms for divisors on an algebraic curve*,
+             Mathematics of Computation 73, no. 245 (2004) pp. 333-357.
 
 .. [Kin1992] Nancy G. Kinnersley, *The vertex separation number of a graph
              equals its path-width*, Information Processing Letters

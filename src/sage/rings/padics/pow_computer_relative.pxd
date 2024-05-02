@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-pari
+# -*- coding: utf-8 -*-
 from sage.rings.padics.pow_computer cimport PowComputer_class
 from sage.rings.polynomial.polynomial_element cimport Polynomial_generic_dense
 

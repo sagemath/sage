@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-categories
+# -*- coding: utf-8 -*-
 """
 Power Series Methods
 
