@@ -80,6 +80,8 @@ def is_MatrixSpace(x):
         sage: is_MatrixSpace(5)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37924, "the function is_MatrixSpace is deprecated; use 'isinstance(..., MatrixSpace)' instead")
     return isinstance(x, MatrixSpace)
 
 
@@ -1265,7 +1267,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
             if op is operator.mul:
                 from . import action as matrix_action
                 if self_on_left:
-                    if is_MatrixSpace(S):
+                    if isinstance(S, MatrixSpace):
                         # matrix multiplications
                         return matrix_action.MatrixMatrixAction(self, S)
                     elif isinstance(S, sage.modules.free_module.FreeModule_generic):
@@ -1278,7 +1280,7 @@ class MatrixSpace(UniqueRepresentation, Parent):
                         # action of base ring
                         return sage.structure.coerce_actions.RightModuleAction(S, self)
                 else:
-                    if is_MatrixSpace(S):
+                    if isinstance(S, MatrixSpace):
                         # matrix multiplications
                         return matrix_action.MatrixMatrixAction(S, self)
                     elif isinstance(S, sage.modules.free_module.FreeModule_generic):
