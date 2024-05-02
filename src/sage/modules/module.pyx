@@ -174,9 +174,9 @@ cdef class Module(Parent):
 
         """
         try:
-            if (is_Module(M)
-                and self.base_ring().has_coerce_map_from(M.base_ring())
-                and M.change_ring(self.base_ring()).is_submodule(self)):
+            if (isinstance(M, Module)
+                    and self.base_ring().has_coerce_map_from(M.base_ring())
+                    and M.change_ring(self.base_ring()).is_submodule(self)):
                 return M.hom([self._element_constructor_(x) for x in M.gens()], self)
         except (TypeError, NotImplementedError, AttributeError, ArithmeticError):
             pass
@@ -288,6 +288,8 @@ def is_Module(x):
         sage: is_Module(10)
         False
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(37924, "the function is_Module is deprecated; use 'isinstance(..., Module)' instead")
     return isinstance(x, Module)
 
 
@@ -313,6 +315,8 @@ def is_VectorSpace(x):
         False
 
     """
+    from sage.misc.superseded import deprecation_cython
+    deprecation_cython(37924, "the function is_VectorSpace is deprecated; use 'isinstance(..., Module)' and check the base ring instead")
     try:
         return is_Module(x) and x.base_ring().is_field()
     except AttributeError:
