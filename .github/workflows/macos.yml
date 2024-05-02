@@ -119,7 +119,8 @@ jobs:
         # This is macOS tar -- cannot use --listed-incremental
         run: |
           export SAGE_LOCAL=$(pwd)/.tox/$TOX_ENV/local
-          .github/workflows/extract-sage-local.sh sage-local-artifact/sage-local-*.tar
+          if [ -x .ci/extract-sage-local.sh ]; then .ci/extract-sage-local.sh sage-local-artifact/sage-local-*.tar; fi
+          if [ -x .github/workflows/extract-sage-local.sh ]; then .github/workflows/extract-sage-local.sh sage-local-artifact/sage-local-*.tar; fi
         if: contains(inputs.stage, '2')
       - name: Build and test with tox
         # We use a high parallelization on purpose in order to catch possible parallelization bugs in the build scripts.
