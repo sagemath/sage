@@ -2575,6 +2575,8 @@ def is_Category(x):
         sage: sage.categories.category.is_Category(ZZ)
         False
     """
+    from sage.misc.superseded import deprecation
+    deprecation(37922, "the function is_Category is deprecated; use 'isinstance(..., Category)' instead")
     return isinstance(x, Category)
 
 
