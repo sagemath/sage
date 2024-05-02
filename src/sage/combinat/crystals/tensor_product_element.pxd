@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-combinat
 from sage.structure.list_clone cimport ClonableArray
 
 cdef class ImmutableListWithParent(ClonableArray):

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-polyhedra
 """
 The Python backend
 

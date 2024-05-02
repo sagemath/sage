@@ -1,4 +1,4 @@
-# sage_setup: distribution = sagemath-flint
+# -*- coding: utf-8
 r"""
 Univariate polynomials over `\CC` with Arb ball coefficients.
 

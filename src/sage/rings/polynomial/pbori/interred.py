@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-brial
 from .pbori import ReductionStrategy
 from .PyPolyBoRi import Polynomial
 

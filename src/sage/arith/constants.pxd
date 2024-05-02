@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 #
 # Various mathematical constants, represented as double precision hex
 # float. We use these instead of decimal constants like 3.1415...

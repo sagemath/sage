@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-singular
 # sage.doctest: optional - sage.rings.function_field
 r"""
 Function Fields: extension
@@ -1926,6 +1925,50 @@ class FunctionField_simple(FunctionField_polymod):
         """
         return place.residue_field(name=name)
 
+    def places_infinite(self, degree=1):
+        """
+        Return a list of the infinite places with ``degree``.
+
+        INPUT:
+
+        - ``degree`` -- positive integer (default: `1`)
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(2)
+            sage: K.<x> = FunctionField(F)
+            sage: R.<t> = PolynomialRing(K)
+            sage: L.<y> = K.extension(t^4 + t - x^5)
+            sage: L.places_infinite(1)
+            [Place (1/x, 1/x^4*y^3)]
+        """
+        return list(self._places_infinite(degree))
+
+    def _places_infinite(self, degree):
+        """
+        Return a generator of *infinite* places with ``degree``.
+
+        INPUT:
+
+        - ``degree`` -- positive integer
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(2)
+            sage: K.<x> = FunctionField(F)
+            sage: R.<t> = PolynomialRing(K)
+            sage: L.<y> = K.extension(t^4 + t - x^5)
+            sage: L._places_infinite(1)
+            <generator object ...>
+        """
+        Oinf = self.maximal_order_infinite()
+        for prime, _, _ in Oinf.decomposition():
+            place = prime.place()
+            if place.degree() == degree:
+                yield place
+
 
 class FunctionField_char_zero(FunctionField_simple):
     """
@@ -2158,50 +2201,6 @@ class FunctionField_global(FunctionField_simple):
                     place = prime.place()
                     if place.degree() == degree:
                         yield place
-
-    def places_infinite(self, degree=1):
-        """
-        Return a list of the infinite places with ``degree``.
-
-        INPUT:
-
-        - ``degree`` -- positive integer (default: `1`)
-
-        EXAMPLES::
-
-            sage: # needs sage.rings.finite_rings
-            sage: F.<a> = GF(2)
-            sage: K.<x> = FunctionField(F)
-            sage: R.<t> = PolynomialRing(K)
-            sage: L.<y> = K.extension(t^4 + t - x^5)
-            sage: L.places_infinite(1)
-            [Place (1/x, 1/x^4*y^3)]
-        """
-        return list(self._places_infinite(degree))
-
-    def _places_infinite(self, degree):
-        """
-        Return a generator of *infinite* places with ``degree``.
-
-        INPUT:
-
-        - ``degree`` -- positive integer
-
-        EXAMPLES::
-
-            sage: # needs sage.rings.finite_rings
-            sage: F.<a> = GF(2)
-            sage: K.<x> = FunctionField(F)
-            sage: R.<t> = PolynomialRing(K)
-            sage: L.<y> = K.extension(t^4 + t - x^5)
-            sage: L._places_infinite(1)
-            <generator object ...>
-        """
-        Oinf = self.maximal_order_infinite()
-        for prime, _, _ in Oinf.decomposition():
-            place = prime.place()
-            if place.degree() == degree:
-                yield place
 
     def gaps(self):
         """

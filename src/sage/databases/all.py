@@ -5,7 +5,7 @@ This file gathers together all the tables in Sage.
 
     * CremonaDatabase() - Cremona's tables of elliptic curves and related data.
 
-    * findstat -- The FindStat database (https://www.findstat.org/).
+    * findstat -- The FindStat database (http://www.findstat.org/).
 
     * JonesDatabase() -- returns the John Jones table of number fields
       with bounded ramification and degree <= 6.
@@ -48,7 +48,7 @@ EXAMPLES::
 # ****************************************************************************
 from sage.misc.lazy_import import lazy_import
 
-from sage.databases.sql_db import SQLQuery, SQLDatabase
+from .sql_db import SQLQuery, SQLDatabase
 
 lazy_import('sage.databases.conway', 'ConwayPolynomials')
 
@@ -67,17 +67,16 @@ lazy_import('sage.databases.symbolic_data', 'SymbolicData')
 
 lazy_import('sage.databases.odlyzko', 'zeta_zeros')
 
-from sage.databases.db_modular_polynomials import \
-    ClassicalModularPolynomialDatabase, \
-    DedekindEtaModularPolynomialDatabase, \
-    DedekindEtaModularCorrespondenceDatabase, \
-    AtkinModularPolynomialDatabase, \
-    AtkinModularCorrespondenceDatabase
+from .db_modular_polynomials import \
+     ClassicalModularPolynomialDatabase, \
+     DedekindEtaModularPolynomialDatabase, \
+     DedekindEtaModularCorrespondenceDatabase, \
+     AtkinModularPolynomialDatabase, \
+     AtkinModularCorrespondenceDatabase
 
-from sage.databases.db_class_polynomials import \
-    HilbertClassPolynomialDatabase
+from .db_class_polynomials import \
+     HilbertClassPolynomialDatabase
 
 lazy_import('sage.databases.cunningham_tables', 'cunningham_prime_factors')
 
 lazy_import('sage.databases.findstat', ['findstat', 'findmap'])
-del lazy_import

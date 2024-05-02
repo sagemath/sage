@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-modules
 from sage.data_structures.bitset cimport bitset_t
 from sage.matroids.matroid cimport Matroid
 from sage.matroids.basis_exchange_matroid cimport BasisExchangeMatroid
@@ -26,7 +25,7 @@ cdef class BasisMatroid(BasisExchangeMatroid):
     cpdef truncation(self)
     cpdef _extension(self, e, H)
     cpdef _with_coloop(self, e)
-    cpdef relabel(self, l)
+    # cpdef relabel(self, mapping)
 
     cpdef _bases_invariant(self)
     cpdef _bases_partition(self)

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-plot
 r"""
 Classes for Lines, Frames, Rulers, Spheres, Points, Dots, and Text
 
@@ -943,9 +942,8 @@ class Point(PrimitiveObject):
 
         radius = self.size * TACHYON_PIXEL
         texture = self.texture.id
-        return ("Sphere center {center[0]!r} {center[1]!r} {center[2]!r} "
-                "Rad {radius!r} {texture}").format(center=cen, radius=radius,
-                                                   texture=texture)
+        return (f"Sphere center {cen[0]!r} {cen[1]!r} {cen[2]!r} "
+                f"Rad {radius!r} {texture}")
 
     def obj_repr(self, render_params):
         """
@@ -981,7 +979,7 @@ class Point(PrimitiveObject):
         name = render_params.unique_name('point')
         transform = render_params.transform
         cen = self.loc if transform is None else transform(self.loc)
-        return ["draw %s DIAMETER %s {%s %s %s}\n%s" % (name, int(self.size), cen[0], cen[1], cen[2], self.texture.jmol_str('$' + name))]
+        return ["draw {} DIAMETER {} {{{} {} {}}}\n{}".format(name, int(self.size), cen[0], cen[1], cen[2], self.texture.jmol_str('$' + name))]
 
     def threejs_repr(self, render_params):
         r"""
@@ -1011,7 +1009,7 @@ class Point(PrimitiveObject):
         color = '#' + str(self.texture.hex_rgb())
         opacity = float(self.texture.opacity)
         size = float(self.size)
-        point = dict(point=center, size=size, color=color, opacity=opacity)
+        point = {'point': center, 'size': size, 'color': color, 'opacity': opacity}
         return [('point', point)]
 
     def stl_binary_repr(self, render_params):
@@ -1199,13 +1197,13 @@ class Line(PrimitiveObject):
             TP = P if T is None else T(P)
             if P in corners:
                 if cmd:
-                    cmds.append(cmd + " {%s %s %s} " % TP)
+                    cmds.append(cmd + " {{{} {} {}}} ".format(*TP))
                     cmds.append(self.texture.jmol_str('$' + name))
                 type = 'arrow' if self.arrow_head and P is last_corner else 'curve'
                 name = render_params.unique_name('line')
-                cmd = "draw %s diameter %s %s {%s %s %s} " % (name, int(self.thickness), type, TP[0], TP[1], TP[2])
+                cmd = "draw {} diameter {} {} {{{} {} {}}} ".format(name, int(self.thickness), type, TP[0], TP[1], TP[2])
             else:
-                cmd += " {%s %s %s} " % TP
+                cmd += " {{{} {} {}}} ".format(*TP)
         cmds.append(cmd)
         cmds.append(self.texture.jmol_str('$' + name))
         return cmds
@@ -1393,7 +1391,7 @@ class Line(PrimitiveObject):
             transform = render_params.transform
             if transform is not None:
                 points = [transform(p) for p in points]
-            line = dict(points=points, color=color, opacity=opacity, linewidth=thickness)
+            line = {'points': points, 'color': color, 'opacity': opacity, 'linewidth': thickness}
             reprs.append(('line', line))
         return reprs
 

@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-flint
 r"""
 Enumeration of primitive totally real fields
 

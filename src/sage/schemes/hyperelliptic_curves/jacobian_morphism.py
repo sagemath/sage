@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-schemes
 r"""
 Jacobian 'morphism' as a class in the Picard group
 
@@ -490,32 +489,102 @@ class JacobianMorphism_divisor_class_field(AdditiveGroupElement, SchemeMorphism)
         r"""
         Return the scheme this morphism maps to; or, where this divisor lives.
 
-        .. warning::
+        .. WARNING::
 
-           Although a pointset is defined over a specific field, the
-           scheme returned may be over a different (usually smaller)
-           field.  The example below demonstrates this: the pointset
-           is determined over a number field of absolute degree 2 but
-           the scheme returned is defined over the rationals.
+            Although a pointset is defined over a specific field, the
+            scheme returned may be over a different (usually smaller)
+            field.  The example below demonstrates this: the pointset
+            is determined over a number field of absolute degree 2 but
+            the scheme returned is defined over the rationals.
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: x = QQ['x'].gen()
             sage: f = x^5 + x
             sage: H = HyperellipticCurve(f)
-            sage: F.<a> = NumberField(x^2 - 2, 'a')                                     # needs sage.rings.number_field
-            sage: J = H.jacobian()(F); J                                                # needs sage.rings.number_field
+            sage: F.<a> = NumberField(x^2 - 2, 'a')
+            sage: J = H.jacobian()(F); J
             Set of rational points of Jacobian of Hyperelliptic Curve
              over Number Field in a with defining polynomial x^2 - 2
              defined by y^2 = x^5 + x
-
-        ::
-
-            sage: P = J(H.lift_x(F(1)))                                                 # needs sage.rings.number_field
-            sage: P.scheme()                                                            # needs sage.rings.number_field
+            sage: P = J(H.lift_x(F(1)))
+            sage: P.scheme()
             Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + x
         """
         return self.codomain()
+
+    def point_of_jacobian_of_curve(self):
+        r"""
+        Return the point in the Jacobian of the curve.
+
+        The Jacobian is the one attached to the projective curve
+        corresponding to this hyperelliptic curve.
+
+        EXAMPLES::
+
+            sage: R.<x> = PolynomialRing(GF(11))
+            sage: f = x^6 + x + 1
+            sage: H = HyperellipticCurve(f)
+            sage: J = H.jacobian()
+            sage: D = J(H.lift_x(1))
+            sage: D  # divisor in Mumford representation
+            (x + 10, y + 6)
+            sage: jacobian_order = sum(H.frobenius_polynomial())
+            sage: jacobian_order
+            234
+            sage: p = D.point_of_jacobian_of_curve(); p
+            [Place (1/x0, 1/x0^3*x1 + 1)
+             + Place (x0 + 10, x1 + 6)]
+            sage: p  # Jacobian point represented by an effective divisor
+            [Place (1/x0, 1/x0^3*x1 + 1)
+             + Place (x0 + 10, x1 + 6)]
+            sage: p.order()
+            39
+            sage: 234*p == 0
+            True
+            sage: G = p.parent()
+            sage: G
+            Group of rational points of Jacobian over Finite Field of size 11 (Hess model)
+            sage: J = G.parent()
+            sage: J
+            Jacobian of Projective Plane Curve over Finite Field of size 11
+             defined by x0^6 + x0^5*x1 + x1^6 - x0^4*x2^2 (Hess model)
+            sage: C = J.curve()
+            sage: C
+            Projective Plane Curve over Finite Field of size 11
+             defined by x0^6 + x0^5*x1 + x1^6 - x0^4*x2^2
+            sage: C.affine_patch(0) == H.affine_patch(2)
+            True
+        """
+        from sage.schemes.curves.constructor import Curve
+        C = self.parent().curve()
+        P = C.ambient_space()  # projective plane
+        x0, x1, x2 = P.gens()
+
+        # X is the curve positioned in the ambient space
+        # such that x1 = x and x2 = y
+        X = Curve(C.defining_ideal().gens(), P)
+        X = X.affine_patch(2).projective_closure()
+
+        u0, v0 = list(self)
+        u1 = u0.subs(x1).homogenize(x0)
+        v1 = (x2 - v0.subs(x1)).homogenize(x0)
+        u2 = u1/x0**u1.degree()
+        v2 = v1/x0**v1.degree()
+        u = X.function(u2)
+        v = X.function(v2)
+
+        F = X.function_field()
+        O = F.maximal_order()
+        D = O.ideal([u,v]).divisor()
+
+        Pinf = F.places_infinite()[0]
+        assert Pinf.degree() == 1, "no rational point at infinity"
+
+        J = X.jacobian(model='hess', base_div=F.genus()*Pinf)
+        G = J.group(self.base_ring())
+        return G(D - D.degree()*Pinf)
 
     def __list__(self):
         r"""

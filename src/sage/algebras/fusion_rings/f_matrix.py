@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-singular
 r"""
 The F-Matrix of a Fusion Ring
 """
