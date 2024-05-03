@@ -305,10 +305,10 @@ def _solve_gevp_naive(GG, HH, M, I, J):
         ....:      for (v,_,_,m) in _solve_gevp_naive(GG,HH,M,I,J) )
         True
     """
-    A = matrix.block([ [ ZZ(0),              M[I,J] ],
-                       [ M.transpose()[J,I], ZZ(0)  ] ])
-    B = matrix.block([ [ GG[I,I], ZZ(0)   ],
-                       [ ZZ(0),   HH[J,J] ] ])
+    A = matrix.block([ [ ZZ.zero(),          M[I,J]    ],
+                       [ M.transpose()[J,I], ZZ.zero() ] ])
+    B = matrix.block([ [ GG[I,I],   ZZ.zero() ],
+                       [ ZZ.zero(), HH[J,J]   ] ])
     M = B.inverse() * A
 
     # We'll format the result to match the solve_gevp_nonzero() return value.
