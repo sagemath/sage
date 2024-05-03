@@ -695,32 +695,32 @@ class FriCASConverter(InterfaceInit):
         EXAMPLES::
 
             sage: 2._fricas_().domainOf()                                       # optional - fricas
-            PositiveInteger()
+            PositiveInteger...
 
             sage: (-1/2)._fricas_().domainOf()                                  # optional - fricas
-            Fraction(Integer())
+            Fraction(Integer...)
 
             sage: SR(2)._fricas_().domainOf()                                   # optional - fricas
-            Expression(Integer())
+            Expression(Integer...)
 
             sage: (sqrt(2))._fricas_().domainOf()                               # optional - fricas
-            Expression(Integer())
+            Expression(Integer...)
 
             sage: pi._fricas_().domainOf()                                      # optional - fricas
-            Pi()
+            Pi...
 
             sage: asin(pi)._fricas_()                                           # optional - fricas
             asin(%pi)
 
             sage: I._fricas_().domainOf()                                   # optional - fricas
-            Complex(Integer())
+            Complex(Integer...)
 
             sage: SR(I)._fricas_().domainOf()                                   # optional - fricas
-            Expression(Complex(Integer()))
+            Expression(Complex(Integer...))
 
             sage: ex = (I+sqrt(2)+2)
             sage: ex._fricas_().domainOf()                                      # optional - fricas
-            Expression(Complex(Integer()))
+            Expression(Complex(Integer...))
 
             sage: ex._fricas_()^2                                               # optional - fricas
                        +-+
@@ -759,7 +759,7 @@ class FriCASConverter(InterfaceInit):
             Variable(x)
 
             sage: (x^2)._fricas_().domainOf()                                   # optional - fricas
-            Expression(Integer())
+            Expression(Integer...)
 
             sage: (2*x)._fricas_().integrate(x)                                 # optional - fricas
              2

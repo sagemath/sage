@@ -1562,16 +1562,10 @@ class GapElement(GapElement_generic, sage.interfaces.abc.GapElement):
 
             sage: s = gap("[[1,2], [3/4, 5/6]]")
             sage: latex(s)
-            \left(\begin{array}{rr} 1&2\\ 3/4&\frac{5}{6}\\ \end{array}\right)
+            \left[\left[1, 2\right], \left[\frac{3}{4}, \frac{5}{6}\right]\right]
         """
-        P = self._check_valid()
-        try:
-            s = P.eval('LaTeXObj(%s)' % self.name())
-            s = s.replace('\\\\', '\\').replace('"', '')
-            s = s.replace('%\\n', ' ')
-            return s
-        except RuntimeError:
-            return str(self)
+        from sage.misc.latex import latex
+        return latex(self._sage_())
 
     @cached_method
     def _tab_completion(self):

@@ -616,11 +616,11 @@ def gaunt(l_1, l_2, l_3, m_1, m_2, m_3, prec=None):
 
     It is an error to use non-integer values for `l` or `m`::
 
-        sage: gaunt(1.2,0,1.2,0,0,0)
+        sage: gaunt(1.2,0,1.2,0,0,0)                                                    # needs sage.rings.real_mpfr
         Traceback (most recent call last):
         ...
         TypeError: Attempt to coerce non-integral RealNumber to Integer
-        sage: gaunt(1,0,1,1.1,0,-1.1)
+        sage: gaunt(1,0,1,1.1,0,-1.1)                                                   # needs sage.rings.real_mpfr
         Traceback (most recent call last):
         ...
         TypeError: Attempt to coerce non-integral RealNumber to Integer

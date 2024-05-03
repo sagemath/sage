@@ -132,9 +132,9 @@ class DiffMap(ContinuousMap):
         sage: Phi.display()
         Phi: S^2 → R^3
         on U: (x, y) ↦ (X, Y, Z) = (2*x/(x^2 + y^2 + 1), 2*y/(x^2 + y^2 + 1),
-         (x^2 + y^2 - 1)/(x^2 + y^2 + 1))
+                                    (x^2 + y^2 - 1)/(x^2 + y^2 + 1))
         on V: (u, v) ↦ (X, Y, Z) = (2*u/(u^2 + v^2 + 1), 2*v/(u^2 + v^2 + 1),
-         -(u^2 + v^2 - 1)/(u^2 + v^2 + 1))
+                                    -(u^2 + v^2 - 1)/(u^2 + v^2 + 1))
 
     It is possible to create the map via the method
     :meth:`~sage.manifolds.differentiable.manifold.DifferentiableManifold.diff_map`
@@ -162,7 +162,7 @@ class DiffMap(ContinuousMap):
         sage: Phi1.display()
         Phi: S^2 → R^3
         on U: (x, y) ↦ (X, Y, Z) = (2*x/(x^2 + y^2 + 1), 2*y/(x^2 + y^2 + 1),
-         (x^2 + y^2 - 1)/(x^2 + y^2 + 1))
+                                    (x^2 + y^2 - 1)/(x^2 + y^2 + 1))
 
     The definition can be completed by means of the method
     :meth:`~sage.manifolds.continuous_map.ContinuousMap.add_expr`::
@@ -172,9 +172,9 @@ class DiffMap(ContinuousMap):
         sage: Phi1.display()
         Phi: S^2 → R^3
         on U: (x, y) ↦ (X, Y, Z) = (2*x/(x^2 + y^2 + 1), 2*y/(x^2 + y^2 + 1),
-         (x^2 + y^2 - 1)/(x^2 + y^2 + 1))
+                                    (x^2 + y^2 - 1)/(x^2 + y^2 + 1))
         on V: (u, v) ↦ (X, Y, Z) = (2*u/(u^2 + v^2 + 1), 2*v/(u^2 + v^2 + 1),
-         -(u^2 + v^2 - 1)/(u^2 + v^2 + 1))
+                                    -(u^2 + v^2 - 1)/(u^2 + v^2 + 1))
 
     At this stage, ``Phi1`` and ``Phi`` are fully equivalent::
 
@@ -225,6 +225,14 @@ class DiffMap(ContinuousMap):
         sage: Phi.differential(np).codomain().default_basis()
         Basis (∂/∂X,∂/∂Y,∂/∂Z) on the Tangent space at Point Phi(N) on the
          3-dimensional differentiable manifold R^3
+
+    A convenient way to display the matrix of the differential::
+
+        sage: Phi.differential(np).display()
+             ∂/∂u ∂/∂v
+        ∂/∂X⎛   2    0⎞
+        ∂/∂Y⎜   0    2⎟
+        ∂/∂Z⎝   0    0⎠
 
     Differentiable maps can be composed by means of the operator ``*``: let
     us introduce the map `\RR^3\rightarrow \RR^2` corresponding to

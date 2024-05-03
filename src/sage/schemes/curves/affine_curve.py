@@ -174,10 +174,11 @@ class AffineCurve(Curve_generic, AlgebraicScheme_subscheme_affine):
 
     EXAMPLES::
 
+        sage: # needs sage.rings.number_field
         sage: R.<v> = QQ[]
-        sage: K.<u> = NumberField(v^2 + 3)                                              # needs sage.rings.number_field
-        sage: A.<x,y,z> = AffineSpace(K, 3)                                             # needs sage.rings.number_field
-        sage: C = Curve([z - u*x^2, y^2], A); C                                         # needs sage.rings.number_field
+        sage: K.<u> = NumberField(v^2 + 3)
+        sage: A.<x,y,z> = AffineSpace(K, 3)
+        sage: C = Curve([z - u*x^2, y^2], A); C
         Affine Curve over Number Field in u with defining polynomial v^2 + 3
         defined by (-u)*x^2 + z, y^2
 
@@ -194,10 +195,11 @@ class AffineCurve(Curve_generic, AlgebraicScheme_subscheme_affine):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<v> = QQ[]
-            sage: K.<u> = NumberField(v^2 + 3)                                          # needs sage.rings.number_field
-            sage: A.<x,y,z> = AffineSpace(K, 3)                                         # needs sage.rings.number_field
-            sage: C = Curve([z - u*x^2, y^2], A); C                                     # needs sage.rings.number_field
+            sage: K.<u> = NumberField(v^2 + 3)
+            sage: A.<x,y,z> = AffineSpace(K, 3)
+            sage: C = Curve([z - u*x^2, y^2], A); C
             Affine Curve over Number Field in u with defining polynomial v^2 + 3
             defined by (-u)*x^2 + z, y^2
 
@@ -456,23 +458,25 @@ class AffinePlaneCurve(AffineCurve):
 
             sage: R.<x, y> = QQ[]
             sage: C = Curve(x^3 - y^2)
-            sage: C.plot()                                                              # needs sage.plot
+            sage: C.plot()                                      # needs sage.plot
             Graphics object consisting of 1 graphics primitive
 
         A 5-nodal curve of degree 11.  This example also illustrates
         some of the optional arguments::
 
+            sage: # needs sage.plot()
             sage: R.<x, y> = ZZ[]
             sage: C = Curve(32*x^2 - 2097152*y^11 + 1441792*y^9
             ....:            - 360448*y^7 + 39424*y^5 - 1760*y^3 + 22*y - 1)
-            sage: C.plot((x, -1, 1), (y, -1, 1), plot_points=400)                       # needs sage.plot
+            sage: C.plot((x, -1, 1), (y, -1, 1), plot_points=400)
             Graphics object consisting of 1 graphics primitive
 
         A line over `\mathbf{RR}`::
 
+            sage: # needs sage.symbolic sage.plot
             sage: R.<x, y> = RR[]
-            sage: C = Curve(R(y - sqrt(2)*x))                                           # needs sage.symbolic
-            sage: C.plot()                                                              # needs sage.plot
+            sage: C = Curve(R(y - sqrt(2)*x))
+            sage: C.plot()
             Graphics object consisting of 1 graphics primitive
         """
         Id = self.defining_ideal()
@@ -843,10 +847,11 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         EXAMPLES::
 
+            sage: # needs sage.rings.number_field
             sage: R.<v> = QQ[]
-            sage: K.<u> = NumberField(v^2 + 3)                                          # needs sage.rings.number_field
-            sage: A.<x,y,z> = AffineSpace(K, 3)                                         # needs sage.rings.number_field
-            sage: C = Curve([z - u*x^2, y^2], A); C                                     # needs sage.rings.number_field
+            sage: K.<u> = NumberField(v^2 + 3)
+            sage: A.<x,y,z> = AffineSpace(K, 3)
+            sage: C = Curve([z - u*x^2, y^2], A); C
             Affine Curve over Number Field in u with defining polynomial v^2 + 3
             defined by (-u)*x^2 + z, y^2
 
@@ -1293,9 +1298,10 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
 
         ::
 
-            sage: A.<x,y> = AffineSpace(QuadraticField(-1), 2)                          # needs sage.rings.number_field
-            sage: C = A.curve([y^2 + x^2])                                              # needs sage.rings.number_field
-            sage: C.blowup()                                                            # needs sage.rings.number_field
+            sage: # needs sage.rings.number_field
+            sage: A.<x,y> = AffineSpace(QuadraticField(-1), 2)
+            sage: C = A.curve([y^2 + x^2])
+            sage: C.blowup()
             Traceback (most recent call last):
             ...
             TypeError: this curve must be irreducible
@@ -1725,7 +1731,6 @@ class AffineCurve_field(AffineCurve, AlgebraicScheme_subscheme_affine_field):
              defined by: -2*y + z + 1, x + y + z
             sage: _ == C.tangent_line(p)
             True
-
         """
         A = self.ambient_space()
         R = A.coordinate_ring()
@@ -1752,8 +1757,48 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
     """
     _point = AffinePlaneCurvePoint_field
 
+    def has_vertical_asymptote(self):
+        """
+        Check if the curve is not a line and has vertical asymptotes.
+
+        EXAMPLES::
+
+            sage: A2.<x,y> = AffineSpace(2, QQ)
+            sage: Curve(x).has_vertical_asymptote()
+            False
+            sage: Curve(y^2 * x + x + y).has_vertical_asymptote()
+            True
+        """
+        A = self.ambient_space()
+        R = A.coordinate_ring()
+        x, y = R.gens()
+        f = self.defining_polynomial().radical()
+        dy = f.degree(y)
+        dxy = f.coefficient({y: dy}).degree()
+        return dxy > 0 and f.degree() > 1
+
+    def is_vertical_line(self):
+        """
+        Check if the curve is a vertical line.
+
+        EXAMPLES::
+
+            sage: A2.<x, y> = AffineSpace(2, QQ)
+            sage: Curve(x - 1).is_vertical_line()
+            True
+            sage: Curve(x - y).is_vertical_line()
+            False
+            sage: Curve(y^2 * x + x + y).is_vertical_line()
+            False
+        """
+        A = self.ambient_space()
+        R = A.coordinate_ring()
+        x, y = R.gens()
+        f = self.defining_polynomial().radical()
+        return f.degree(y) == 0 and f.degree() == 1
+
     @cached_method
-    def fundamental_group(self, simplified=True, puiseux=False):
+    def fundamental_group(self, simplified=True, puiseux=True):
         r"""
         Return a presentation of the fundamental group of the complement
         of ``self``.
@@ -1762,9 +1807,9 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
 
         - ``simplified`` -- (default: ``True``) boolean to simplify the presentation.
 
-        - ``puiseux`` -- (default: ``False``) boolean to decide if the
+        - ``puiseux`` -- (default: ``True``) boolean to decide if the
           presentation is constructed in the classical way or using Puiseux
-          shortcut. If ``True``, ``simplified`` is set to ``False``.
+          shortcut.
 
         OUTPUT:
 
@@ -1781,17 +1826,18 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
         .. NOTE::
 
             The curve must be defined over the rationals or a number field
-            with an embedding over `\QQbar`.
+            with an embedding over `\QQbar`. This functionality requires
+            the ``sirocco`` package to be installed.
 
         EXAMPLES::
 
-            sage: # optional - sirocco
+            sage: # needs sirocco
             sage: A.<x,y> = AffineSpace(QQ, 2)
             sage: C = A.curve(y^2 - x^3 - x^2)
-            sage: C.fundamental_group()
+            sage: C.fundamental_group(puiseux=False)
             Finitely presented group < x0 |  >
             sage: bm = C.braid_monodromy()
-            sage: g = C.fundamental_group(puiseux=True)
+            sage: g = C.fundamental_group(simplified=False)
             sage: g.sorted_presentation()
             Finitely presented group < x0, x1 | x1^-1*x0^-1*x1*x0, x1^-1*x0 >
             sage: g.simplified()
@@ -1808,15 +1854,28 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
             Defining a
             sage: A.<x,y> = AffineSpace(F, 2)
             sage: C = A.curve(y^2 - a*x^3 - x^2)
-            sage: C.fundamental_group()         # optional - sirocco
+            sage: C.fundamental_group()                     # needs sirocco
             Finitely presented group < x0 |  >
-
-        .. WARNING::
-
-            This functionality requires the sirocco package to be installed.
+            sage: C = A.curve(x * (x - 1))
+            sage: C.fundamental_group()                     # needs sirocco
+            Finitely presented group < x0, x1 |  >
         """
         from sage.schemes.curves.zariski_vankampen import fundamental_group_from_braid_mon
-        return fundamental_group_from_braid_mon(self.braid_monodromy(), simplified=simplified, puiseux=puiseux)
+        bm = self.braid_monodromy()
+        if not bm:
+            f = self.defining_polynomial()
+            x, y = f.parent().gens()
+            d0 = f.degree(y)
+            f0 = f.coefficient({y: d0})
+            d = d0 + f0.degree(x)
+        else:
+            d = bm[0].parent().strands()
+        G = fundamental_group_from_braid_mon(bm, degree=d,
+                                             simplified=simplified,
+                                             puiseux=puiseux)
+        if simplified:
+            G = G.simplified()
+        return G
 
     @cached_method
     def braid_monodromy(self):
@@ -1829,20 +1888,31 @@ class AffinePlaneCurve_field(AffinePlaneCurve, AffineCurve_field):
         each of this paths is the conjugated of a loop around one of the points
         in the discriminant of the projection of ``self``.
 
-        NOTE:
+        .. NOTE::
 
-        The projection over the `x` axis is used if there are no vertical asymptotes.
-        Otherwise, a linear change of variables is done to fall into the previous case.
+            The projection over the `x` axis is used if there are no vertical asymptotes.
+            Otherwise, a linear change of variables is done to fall into the previous case.
+
+        .. NOTE::
+
+            This functionality requires the ``sirocco`` package to be installed.
 
         EXAMPLES::
 
             sage: A.<x,y> = AffineSpace(QQ, 2)
             sage: C = A.curve((x^2-y^3)*(x+3*y-5))
-            sage: C.braid_monodromy()               # optional - sirocco
+            sage: C.braid_monodromy()                                   # needs sirocco
             [s1*s0*(s1*s2)^2*s0*s2^2*s0^-1*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
              s1*s0*(s1*s2)^2*(s0*s2^-1*s1*s2*s1*s2^-1)^2*(s2^-1*s1^-1)^2*s0^-1*s1^-1,
              s1*s0*(s1*s2)^2*s2*s1^-1*s2^-1*s1^-1*s0^-1*s1^-1,
              s1*s0*s2*s0^-1*s2*s1^-1]
+            sage: T.<t> = QQ[]
+            sage: K.<a> = NumberField(t^3 + 2, 'a')
+            sage: A.<x, y> = AffineSpace(K, 2)
+            sage: Curve(y^2 + a * x).braid_monodromy()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: the base field must have an embedding to the algebraic field
 
         """
         from sage.schemes.curves.zariski_vankampen import braid_monodromy
@@ -2047,9 +2117,10 @@ class IntegralAffineCurve(AffineCurve_field):
 
         ::
 
-            sage: A.<x,y> = AffineSpace(GF(8), 2)                                       # needs sage.rings.finite_rings
-            sage: C = Curve(x^5 + y^5 + x*y + 1)                                        # needs sage.rings.finite_rings
-            sage: C.function_field()                                                    # needs sage.rings.finite_rings
+            sage: # needs sage.rings.finite_rings
+            sage: A.<x,y> = AffineSpace(GF(8), 2)
+            sage: C = Curve(x^5 + y^5 + x*y + 1)
+            sage: C.function_field()
             Function field in y defined by y^5 + x*y + x^5 + 1
         """
         return self._function_field

@@ -70,7 +70,7 @@ def setprint(X):
         sage: from sage.matroids.advanced import setprint
         sage: M = matroids.catalog.Fano().delete('efg')
         sage: M.bases()
-        Iterator over a system of subsets
+        SetSystem of 3 sets over 4 elements
         sage: setprint(M.bases())
         [{'a', 'b', 'c'}, {'a', 'b', 'd'}, {'a', 'c', 'd'}]
 

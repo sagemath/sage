@@ -211,7 +211,6 @@ from sage.arith.functions import lcm
 from sage.combinat.posets.posets import FinitePoset
 from sage.geometry.point_collection import PointCollection
 from sage.geometry.polyhedron.constructor import Polyhedron
-from sage.geometry.polyhedron.base import is_Polyhedron
 from sage.geometry.hasse_diagram import lattice_from_incidences
 from sage.geometry.toric_lattice import (ToricLattice, is_ToricLattice,
                                          is_ToricLatticeQuotient)
@@ -259,6 +258,9 @@ def is_Cone(x):
 
         sage: from sage.geometry.cone import is_Cone
         sage: is_Cone(1)
+        doctest:warning...
+        DeprecationWarning: is_Cone is deprecated, use isinstance instead
+        See https://github.com/sagemath/sage/issues/34307 for details.
         False
         sage: quadrant = Cone([(1,0), (0,1)])
         sage: quadrant
@@ -266,6 +268,8 @@ def is_Cone(x):
         sage: is_Cone(quadrant)
         True
     """
+    from sage.misc.superseded import deprecation
+    deprecation(34307, "is_Cone is deprecated, use isinstance instead")
     return isinstance(x, ConvexRationalPolyhedralCone)
 
 
@@ -439,7 +443,7 @@ def Cone(rays, lattice=None, check=True, normalize=True):
         0-d cone in 2-d lattice N
     """
     # Cone from Polyhedron
-    if is_Polyhedron(rays):
+    if isinstance(rays, sage.geometry.abc.Polyhedron):
         polyhedron = rays
         if lattice is None:
             lattice = ToricLattice(polyhedron.ambient_dim())
@@ -1894,7 +1898,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             N+N(0, 1)
             in 2-d lattice N+N
         """
-        assert is_Cone(other)
+        assert isinstance(other, sage.geometry.abc.ConvexRationalPolyhedralCone)
         rc = super().cartesian_product(other, lattice)
         return ConvexRationalPolyhedralCone(rc.rays(), rc.lattice())
 
@@ -1952,7 +1956,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: c2 is c3
             False
         """
-        if is_Cone(right):
+        if isinstance(right, sage.geometry.abc.ConvexRationalPolyhedralCone):
             # We don't care about particular type of right in this case
             return richcmp((self.lattice(), self.rays()),
                            (right.lattice(), right.rays()), op)
@@ -2413,7 +2417,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             ValueError: 2-d cone in 3-d lattice N is not a face
             of 3-d cone in 3-d lattice N!
         """
-        assert is_Cone(cone)
+        assert isinstance(cone, sage.geometry.abc.ConvexRationalPolyhedralCone)
         if cone.ambient() is self:
             return cone
         if self.is_strictly_convex():
@@ -2935,7 +2939,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         L = self._ambient._face_lattice_function()
         H = L.hasse_diagram()
         return self._sort_faces(
-            f for f in H.neighbors_out(L(self)) if is_Cone(f))
+            f for f in H.neighbors_out(L(self)) if isinstance(f, sage.geometry.abc.ConvexRationalPolyhedralCone))
 
     def facets(self):
         r"""
@@ -6387,9 +6391,8 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
     It's hard to test the output of a random process, but we can at
     least make sure that we get a cone back::
 
-        sage: from sage.geometry.cone import is_Cone
         sage: K = random_cone(max_ambient_dim=6, max_rays=10)
-        sage: is_Cone(K)
+        sage: isinstance(K, sage.geometry.abc.ConvexRationalPolyhedralCone)
         True
 
     The upper/lower bounds are respected::
