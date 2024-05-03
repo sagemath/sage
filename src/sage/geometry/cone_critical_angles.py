@@ -279,7 +279,7 @@ def _solve_gevp_naive(GG, HH, M, I, J):
         sage: from sage.geometry.cone_critical_angles import _solve_gevp_naive
         sage: K = cones.nonnegative_orthant(2)
         sage: G = matrix.column(K.rays())
-        sage: GG = G.transpose()*G
+        sage: GG = G.transpose() * G
         sage: I = [0]
         sage: J = [1]
         sage: list(_solve_gevp_naive(GG,GG,GG,I,J))
@@ -296,9 +296,9 @@ def _solve_gevp_naive(GG, HH, M, I, J):
         sage: hs = [[h11,h12], [h21,h22]]
         sage: G = matrix.column(gs)
         sage: H = matrix.column(hs)
-        sage: GG = G.transpose()*G
-        sage: HH = H.transpose()*H
-        sage: M = G.transpose()*H
+        sage: GG = G.transpose() * G
+        sage: HH = H.transpose() * H
+        sage: M = G.transpose() * H
         sage: I = [0, 1]
         sage: J = [0, 1]
         sage: all( v in [-1,1] and m == 2
@@ -366,7 +366,7 @@ def solve_gevp_zero(M, I, J):
         sage: from sage.geometry.cone_critical_angles import solve_gevp_zero
         sage: K = cones.nonnegative_orthant(2)
         sage: G = matrix.column(K.rays())
-        sage: GG = G.transpose()*G
+        sage: GG = G.transpose() * G
         sage: I = [0]
         sage: J = [1]
         sage: list(solve_gevp_zero(GG,I,J))
@@ -465,7 +465,7 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
         sage: K = cones.schur(3)
         sage: gs = [g.change_ring(AA).normalized() for g in K]
         sage: G = matrix.column(gs)
-        sage: GG = G.transpose()*G
+        sage: GG = G.transpose() * G
         sage: G_index_sets = list(gevp_licis(G))
         sage: all(
         ....:   set(
@@ -506,11 +506,11 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
         sage: Q = _random_admissible_cone(ambient_dim=n)
         sage: gs = [g.change_ring(AA).normalized() for g in P]
         sage: G = matrix.column(gs)
-        sage: GG = G.transpose()*G
+        sage: GG = G.transpose() * G
         sage: hs = [h.change_ring(AA).normalized() for h in Q]
         sage: H = matrix.column(hs)
-        sage: HH = H.transpose()*H
-        sage: M = G.transpose()*H
+        sage: HH = H.transpose() * H
+        sage: M = G.transpose() * H
         sage: G_index_sets = list(gevp_licis(G))
         sage: H_index_sets = list(gevp_licis(H))
         sage: all(
@@ -547,10 +547,10 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
         sage: gs = [g.change_ring(AA).normalized() for g in P]
         sage: hs = [h.change_ring(AA).normalized() for h in Q]
         sage: G = matrix.column(gs)
-        sage: GG = G.transpose()*G
+        sage: GG = G.transpose() * G
         sage: H = matrix.column(hs)
-        sage: HH = H.transpose()*H
-        sage: M = G.transpose()*H
+        sage: HH = H.transpose() * H
+        sage: M = G.transpose() * H
         sage: from itertools import product
         sage: all(
         ....:  (v in [-1,0,1]
@@ -819,23 +819,23 @@ def check_gevp_feasibility(cos_theta, xi, eta, G_I, G_I_c_T,
     # because (xi,eta) needs to remain in the same one-dimensional
     # eigenspace.
     scale = ~((G_I*xi).norm())
-    xi_hat = xi*scale
-    eta_hat = eta*scale
+    xi_hat = xi * scale
+    eta_hat = eta * scale
 
     # Now check that (45) is satisfied.
     if ((H_J*eta_hat).norm() - 1).abs() > epsilon:
         return infeasible_result
 
     # And check that (42,43) are satisfied.
-    v = H_J*eta_hat
+    v = H_J * eta_hat
     rhs = v - cos_theta*G_I*xi_hat
 
-    if any( x < -epsilon for x in G_I_c_T*rhs ):
+    if any(x < -epsilon for x in G_I_c_T*rhs):
         return infeasible_result
 
-    u = G_I*xi_hat
+    u = G_I * xi_hat
     rhs = u - cos_theta*H_J*eta_hat
-    if any( x < -epsilon for x in H_J_c_T*rhs):
+    if any(x < -epsilon for x in H_J_c_T*rhs):
         return infeasible_result
 
     return (True, u, v)
@@ -916,9 +916,9 @@ def max_angle(P, Q, exact, epsilon):
         HH = M
         H_index_sets = G_index_sets
     else:
-        GG = G.transpose()*G
+        GG = G.transpose() * G
         H = matrix.column(hs)
-        HH = H.transpose()*H
+        HH = H.transpose() * H
         H_index_sets = [s for s in gevp_licis(H) if not len(s) == n]
 
     # Keep track of the (cos-theta, xi, eta, multiplicity) tuples with
@@ -968,7 +968,7 @@ def max_angle(P, Q, exact, epsilon):
                 elif mult > 1:
                     # Save this for later. The eigenvalue cos_theta
                     # might be so big that we can ignore it.
-                    big_eigenspaces.append( (cos_theta, xi, eta, mult) )
+                    big_eigenspaces.append((cos_theta, xi, eta, mult))
                     continue
 
     for (cos_theta, xi, eta, mult) in big_eigenspaces:
