@@ -565,9 +565,9 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
         # convince yourself that switching GG <-> HH, I <-> J, and
         # transposing M does in fact switch from the "xi problem" to
         # the "eta problem."
-        yield from ( (l, xi, eta, m)
-                     for (l, eta, xi, m)
-                     in solve_gevp_nonzero(HH,GG,M.transpose(),J,I) )
+        yield from ((l, xi, eta, m)
+                    for (l, eta, xi, m)
+                    in solve_gevp_nonzero(HH, GG, M.transpose(), J, I))
     else:
         G_I_pinv_H_J = GG[I,I].inverse_positive_definite()*M[I,J]
         H_J_pinv_G_I = HH[J,J].inverse_positive_definite()*M.transpose()[J,I]
