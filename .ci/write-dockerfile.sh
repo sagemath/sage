@@ -324,6 +324,7 @@ RUN if command -v git; then                             \
     else                                                \
         rm -rf /sage/src;                               \
         mv /new/src /sage/src;                          \
+        ./bootstrap && ./config.status;                 \
     fi
 
 ARG TARGETS="build"
