@@ -6389,12 +6389,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             if other.is_trivial():
                 raise ValueError("other cone cannot be trivial")
 
-        # Use the names from the paper to keep things understandable.
-        P = self
-        Q = other
-
         from sage.geometry.cone_critical_angles import max_angle
-        return max_angle(P, Q, exact, epsilon)
+        return max_angle(self, other, exact, epsilon)
 
 
 def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
