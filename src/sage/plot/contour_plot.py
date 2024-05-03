@@ -209,12 +209,12 @@ class ContourPlot(GraphicPrimitive):
                                  extent=(x0, x1, y0, y1),
                                  linewidths=linewidths, linestyles=linestyles)
 
-        if options.get('legend_label',None):
+        if options.get('legend_label', None):
             if plot_subtype == 'implicit':
-                        CSartists, CSlabels = CS.legend_elements()
-                        CSartists[0].set_label(options['legend_label'])
-                        subplot.add_line(CSartists[0])
-                        subplot.legend()
+                CSartists, CSlabels = CS.legend_elements()
+                CSartists[0].set_label(options['legend_label'])
+                subplot.add_line(CSartists[0])
+                subplot.legend()
 
         if options.get('labels', False):
             label_options = options['label_options']
