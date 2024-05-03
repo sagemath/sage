@@ -1274,7 +1274,7 @@ class VariablePool(UniqueRepresentation):
     """
     def __init__(self, ring):
         """
-        Inititialize the pool.
+        Initialize the pool.
 
         EXAMPLES::
 
@@ -1709,7 +1709,7 @@ class Stream_uninitialized(Stream):
             sage: D = Stream_add(x, Stream_cauchy_mul(C, C, True), True)
             sage: eq = Stream_sub(C, D, True)
             sage: C.define_implicitly([C], [], [eq], QQ, QQ, terms_of_degree)
-            sage: C[3]  # implicit doctest
+            sage: C[3]  # indirect doctest
             2
         """
         def subs(c, var, val):
@@ -1800,7 +1800,7 @@ class Stream_uninitialized(Stream):
             sage: D = Stream_add(x, Stream_cauchy_mul(C, C, True), True)
             sage: eq = Stream_sub(C, D, True)
             sage: C.define_implicitly([C], [], [eq], QQ, QQ, terms_of_degree)
-            sage: C[3]  # implicit doctest
+            sage: C[3]  # indirect doctest
             2
         """
         # determine the next linear equations
@@ -1907,7 +1907,7 @@ class Stream_uninitialized(Stream):
             sage: C = Stream_uninitialized(0)
             sage: eq = Stream_sub(C, Stream_cauchy_mul(C, C, True), True)
             sage: C.define_implicitly([C], [], [eq], QQ, QQ, terms_of_degree)
-            sage: C[3]  # implicit doctest
+            sage: C[3]  # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: there are no linear equations:
