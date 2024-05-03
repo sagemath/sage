@@ -1001,7 +1001,7 @@ class LazySeriesRing(UniqueRepresentation, Parent):
         Check the error message in the case of symmetric functions::
 
             sage: p = SymmetricFunctions(QQ).p()
-            sage: S = LazySymmetricFunctions(p)
+            sage: T = LazySymmetricFunctions(tensor([p, p]))
             sage: X = tensor([p[1],p[[]]])
             sage: Y = tensor([p[[]],p[1]])
             sage: A = T.undefined(name="A")
