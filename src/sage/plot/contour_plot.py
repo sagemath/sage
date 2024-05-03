@@ -215,7 +215,7 @@ class ContourPlot(GraphicPrimitive):
                         CSartists[0].set_label(options['legend_label'])
                         subplot.add_line(CSartists[0])
                         subplot.legend()
-            
+
         if options.get('labels', False):
             label_options = options['label_options']
             label_options['fontsize'] = int(label_options['fontsize'])
