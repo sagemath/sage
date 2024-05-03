@@ -266,10 +266,10 @@ def _solve_gevp_naive(GG, HH, M, I, J):
 
     ALGORITHM:
 
-    We construct the two matrices `A` and `B` in Theorem 3 in block
-    form, and then use the naive "inverse" method on `B` to move it to
-    the left and obtain `M = B^{-1}A`. We then compute the right
-    eigenvectors of the whole big matrix `M`.
+    We construct the two matrices `A` and `B` in Theorem 3 [Or2020]_
+    in block form, and then use the naive "inverse" method on `B` to
+    move it to the left and obtain `M = B^{-1}A`. We then compute the
+    right eigenvectors of the whole big matrix `M`.
 
     EXAMPLES:
 
@@ -323,8 +323,9 @@ def _solve_gevp_naive(GG, HH, M, I, J):
 
 def solve_gevp_zero(M, I, J):
     r"""
-    Solve the generalized eigenvalue problem in Theorem 3 for a zero
-    eigenvalue using Propositions 3 and 4 [Or2020]_.
+    Solve the generalized eigenvalue problem in Theorem 3
+    [Or2020]_ for a zero eigenvalue using Propositions 3 and 4
+    [Or2020]_.
 
     INPUT:
 
@@ -332,10 +333,10 @@ def solve_gevp_zero(M, I, J):
       of `g_{i}` and `h_{j}` as in Proposition 6 [Or2020]_
 
     - ``I`` -- a linearly independent column-index set for the matrix
-      `G` that appears in Theorem 3
+      `G` that appears in Theorem 3 [Or2020]_
 
     - ``J`` -- a linearly independent column-index set for the matrix
-      `H` that appears in Theorem 3
+      `H` that appears in Theorem 3 [Or2020]_
 
     OUTPUT:
 
@@ -396,27 +397,28 @@ def solve_gevp_zero(M, I, J):
 
 def solve_gevp_nonzero(GG, HH, M, I, J):
     r"""
-    Solve the generalized eigenvalue problem in Theorem 3 for a
-    nonzero eigenvalue using Propositions 3 and 5 [Or2020]_.
+    Solve the generalized eigenvalue problem in Theorem 3
+    [Or2020]_ for a nonzero eigenvalue using Propositions 3 and 5
+    [Or2020]_.
 
     INPUT:
 
     - ``GG`` -- the matrix whose `(i,j)`-th entry is the inner product
       of `g_{i}` and `g_{j}`, which are in turn the `i`-th and `j`-th
-      columns of the matrix `G` in Theorem 3
+      columns of the matrix `G` in Theorem 3 [Or2020]_
 
     - ``HH`` -- the matrix whose `(i,j)`-th entry is the inner product
       of `h_{i}` and `h_{j}`, which are in turn the `i`-th and `j`-th
-      columns of the matrix `H` in Theorem 3
+      columns of the matrix `H` in Theorem 3 [Or2020]_
 
     - ``M`` -- the matrix whose `(i,j)`-th entry is the inner product
       of `g_{i}` and `h_{j}` as in Proposition 6 in [Or2020]_
 
     - ``I`` -- a linearly independent column-index set for the matrix
-      `G` that appears in Theorem 3
+      `G` that appears in Theorem 3 [Or2020]_
 
     - ``J`` -- a linearly independent column-index set for the matrix
-      `H` that appears in Theorem 3
+      `H` that appears in Theorem 3 [Or2020]_
 
     OUTPUT:
 
@@ -533,8 +535,9 @@ def solve_gevp_nonzero(GG, HH, M, I, J):
         ....: )
         True
 
-    According to Proposition 7, the only eigenvalues that arise when
-    either ``G`` or ``H`` is invertible are `-1`, `0`, and `1`::
+    According to Proposition 7 [Or2020]_, the only eigenvalues that
+    arise when either ``G`` or ``H`` is invertible are `-1`, `0`, and
+    `1`::
 
         sage: # long time
         sage: from sage.geometry.cone_critical_angles import (
