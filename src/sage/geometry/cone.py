@@ -6228,11 +6228,11 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         .. WARNING::
 
-          Using inexact arithmetic (``exact=False``) is faster, but
-          this computation is only known to be stable when both of
-          the cones are strictly convex (or when one of them is the
-          entire space, but the maximal angle is obviously `\pi` in
-          that case).
+            Using inexact arithmetic (``exact=False``) is faster, but
+            this computation is only known to be stable when both of
+            the cones are strictly convex (or when one of them is the
+            entire space, but the maximal angle is obviously `\pi` in
+            that case).
 
         OUTPUT:
 
