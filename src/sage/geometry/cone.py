@@ -6205,10 +6205,10 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         unique largest angle formed by any two unit-norm vectors in
         those cones. In pathological cases, this computation can fail.
 
-        If it fails when ``exact`` is ``True`` and if each of your
+        If it fails when ``exact`` is ``True`` and if each of the
         cones :meth:`is_strictly_convex`, then a second attempt will
         be made using inexact arithmetic. (This sometimes avoids the
-        problem [Or2024]_). If the computation fails when your cones
+        problem [Or2024]_). If the computation fails when the cones
         are not strictly convex or when ``exact`` is ``False``, a
         :class:`ValueError` is raised.
 
@@ -6230,7 +6230,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
           Using inexact arithmetic (``exact=False``) is faster, but
           this computation is only known to be stable when both of
-          your cones are strictly convex (or when one of them is the
+          the cones are strictly convex (or when one of them is the
           entire space, but the maximal angle is obviously `\pi` in
           that case).
 
