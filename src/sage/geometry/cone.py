@@ -6208,9 +6208,9 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         If it fails when ``exact`` is ``True`` and if each of the
         cones :meth:`is_strictly_convex`, then a second attempt will
         be made using inexact arithmetic. (This sometimes avoids the
-        problem [Or2024]_). If the computation fails when the cones
-        are not strictly convex or when ``exact`` is ``False``, a
-        :class:`ValueError` is raised.
+        problem noted in [Or2024]_). If the computation fails when the
+        cones are not strictly convex or when ``exact`` is ``False``,
+        a :class:`ValueError` is raised.
 
         INPUT:
 
