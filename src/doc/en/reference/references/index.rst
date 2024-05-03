@@ -5078,6 +5078,10 @@ REFERENCES:
 .. [MoPa1994] \P. Morton and P. Patel. The Galois theory of periodic points
               of polynomial maps. Proc. London Math. Soc., 68 (1994), 225-263.
 
+.. [Morris1981] \A. O. Morris. *Representations of Weyl groups over an arbitrary field*.
+                Asterisque. **87-88** (1981) pp. 267-287.
+                http://www.numdam.org/article/AST_1981__87-88__267_0.pdf
+
 .. [Motsak2006] Olekasandr Motsak. *Computation of the central elements and
                 centralizers of sets of elements in non-commutative polynomial
                 algebras*. PhD Thesis, 2006.
